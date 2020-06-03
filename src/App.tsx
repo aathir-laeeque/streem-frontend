@@ -1,21 +1,17 @@
 import React, { FC } from 'react';
+import { Provider } from 'react-redux';
 
-interface IAppProps {
-  userName?: string;
-  language?: string;
-}
+import Counter from './components/Counter';
+import { configureStore } from './store/configureStore';
 
-const App: FC<IAppProps> = ({ userName, language }) => {
+const App: FC = () => {
+  const store = configureStore({}); // passing empty object as app state
+
   return (
-    <div>
-      Hi {userName} you are using {language}
-    </div>
+    <Provider store={store}>
+      <Counter />
+    </Provider>
   );
-};
-
-App.defaultProps = {
-  userName: 'Test',
-  language: 'Typescript',
 };
 
 export default App;
