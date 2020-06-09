@@ -7,7 +7,7 @@ import { rootSaga } from './rootSaga';
 
 const sagaMiddleware = createSagaMiddleware();
 
-export const configureStore = (initialState) => {
+const configureStore = (initialState) => {
   const middlewares = [sagaMiddleware];
 
   const composeEnhancers =
@@ -23,3 +23,5 @@ export const configureStore = (initialState) => {
 
   return store;
 };
+
+export const store = configureStore({});
