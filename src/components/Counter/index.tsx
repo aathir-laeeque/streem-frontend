@@ -1,12 +1,19 @@
+import { RouteComponentProps } from '@reach/router';
 import React, { FC } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { RootState } from '../../store/types';
+import { useTypedSelector } from '../../store/helpers';
+import { AppDispatch } from '../../store/types';
 import { decrement, increment, reset } from './actions';
 
-const Test: FC = () => {
-  const count = useSelector((state: RootState) => state.counter.count);
-  const dispatch = useDispatch();
+interface Props extends RouteComponentProps {
+  someValue?: string;
+}
+
+const Counter: FC<Props> = () => {
+  const { count } = useTypedSelector((state) => state.counter);
+
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <div>
@@ -21,4 +28,4 @@ const Test: FC = () => {
   );
 };
 
-export default Test;
+export default Counter;
