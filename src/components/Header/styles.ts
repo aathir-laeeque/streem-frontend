@@ -9,7 +9,7 @@ export const Wrapper = styled.div`
   flex-direction: row;
   grid-area: header;
   justify-content: space-between;
-  padding: 18px 12px;
+  padding: 0 12px;
 `;
 
 export const HeaderMenu = styled.div`

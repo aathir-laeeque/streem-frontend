@@ -3,7 +3,6 @@ import React, { FC } from 'react';
 
 import AddEditView from './AddEditView';
 import ListView from './ListView';
-
 import { ChecklistViewProps } from './types';
 
 const ChecklistView: FC<ChecklistViewProps> = () => (

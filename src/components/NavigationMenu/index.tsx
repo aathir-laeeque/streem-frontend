@@ -32,7 +32,7 @@ const NavigationMenu: FC = () => (
             return {
               style: {
                 color: isActive ? '#ffffff' : '#808080',
-                backgroundColor: isActive ? '#12aab3' : '#ffffff',
+                backgroundColor: isActive ? '#12aab3' : 'transparent',
                 textDecoration: 'none',
               },
             };

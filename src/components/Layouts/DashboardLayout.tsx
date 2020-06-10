@@ -4,9 +4,9 @@ import styled from 'styled-components';
 const Layout = styled.div`
   display: grid;
   grid-template-areas:
-    'header header header'
-    'nav-menu workarea workarea';
-  grid-template-rows: auto 1fr;
+    'header header'
+    'nav-menu workarea';
+  grid-template-rows: 50px 1fr;
   grid-template-columns: 120px 1fr;
   height: inherit;
   width: inherit;

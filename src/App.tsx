@@ -2,9 +2,9 @@ import { Router } from '@reach/router';
 import React, { FC } from 'react';
 import { Provider } from 'react-redux';
 
-import { Header, NavigationMenu } from './components';
+import { Header, NavigationMenu, WorkArea } from './components';
 
-import { DashboardLayout, WorkAreaLayout } from './components/Layouts';
+import { DashboardLayout } from './components/Layouts';
 
 import { store } from './store/configureStore';
 
@@ -23,7 +23,7 @@ const App: FC = () => (
     <DashboardLayout>
       <Header />
       <NavigationMenu />
-      <WorkAreaLayout>
+      <WorkArea>
         <Router basepath="/">
           <DashboardView path="/" />
           <AuditLogsView path="audit/*" />
@@ -31,7 +31,7 @@ const App: FC = () => (
           <ReportsView path="reports/*" />
           <TasksView path="tasks/*" />
         </Router>
-      </WorkAreaLayout>
+      </WorkArea>
     </DashboardLayout>
     <GlobalStyles />
   </Provider>
