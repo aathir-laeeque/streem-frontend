@@ -10,6 +10,7 @@ const Layout = styled.div`
   grid-template-columns: 120px 1fr;
   height: inherit;
   width: inherit;
+  background-color: #fafafa;
 `;
 
 const DashboardLayout: FC = ({ children }) => {

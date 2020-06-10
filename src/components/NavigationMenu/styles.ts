@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
-  background-color: #fafafa;
   flex: 1;
   grid-area: nav-menu;
   padding-top: 15px;

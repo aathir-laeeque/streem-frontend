@@ -14,11 +14,6 @@ const GlobalStyles = createGlobalStyle`
   #root {
     height: inherit;
     width: inherit;
-
-    > div {
-      height: inherit;
-      width: inherit;
-    }
   }
 `;
 

@@ -48,6 +48,7 @@ export const ListContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow: hidden;
 `;
 
 export const StagesList = styled.ol`
@@ -58,7 +59,7 @@ export const StagesList = styled.ol`
   list-style-type: none;
   margin: 0;
   padding: 8px;
-  max-height: 570px;
+  max-height: calc(100% - 80px);
   overflow: scroll;
 `;
 
@@ -79,6 +80,14 @@ export const StageItem = styled.li`
     css`
       border-color: #12aab3;
     `}
+
+  :last-child {
+    margin-bottom: 0;
+  }
+
+  &::last-child {
+    margin-bottom: 0;
+  }
 
   &::before {
     content: counter(item) ' ';

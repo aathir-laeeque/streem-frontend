@@ -1,5 +1,4 @@
 import { AccountCircle, KeyboardArrowDown } from '@material-ui/icons';
-// import  from '@material-ui/icons/KeyboardArrowDown';
 import React, { FC } from 'react';
 
 import Logo from '../../assets/images/streem-logo.svg';
