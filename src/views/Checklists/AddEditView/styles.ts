@@ -71,7 +71,7 @@ export const StageItem = styled.li`
   display: flex;
   line-height: normal;
   list-style-position: inside;
-  padding: 8px 16px;
+  padding: 8px;
   margin-bottom: 8px;
   border: 1px solid transparent;
 
@@ -85,21 +85,16 @@ export const StageItem = styled.li`
     margin-bottom: 0;
   }
 
-  &::last-child {
-    margin-bottom: 0;
-  }
-
   &::before {
     content: counter(item) ' ';
     counter-increment: item;
-    margin-left: 8px;
-    margin-right: 16px;
+    margin: 0 16px;
   }
 
   > span {
     display: flex;
     flex: 1;
-    background-color: #fafafa;
+    background-color: #f4f4f4;
     padding: 8px;
     border-radius: 4px;
     font-size: 16px;
@@ -126,6 +121,11 @@ export const ListControlButtons = styled.div`
     align-items: center;
     justify-content: center;
     padding: 8px 12px;
+    border-right: 1.5px solid #f4f4f4;
+
+    :last-child {
+      border: none;
+    }
 
     > img {
       margin-bottom: 8px;
@@ -142,4 +142,25 @@ export const ListControlButtons = styled.div`
 
 export const Steps = styled.div`
   grid-area: steps;
+  display: grid;
+  grid-template-areas: 'stagenumber stagenumber' 'stageName stageName' 'steps media';
+  grid-template-rows: 16px 32px 1fr;
+  grid-template-columns: 1fr 1fr;
+
+  padding: 24px 16px;
+  overflow: hidden;
+`;
+
+export const StageNumber = styled.span`
+  grid-area: stagenumber;
+  color: #666666;
+  font-size: 12px;
+`;
+
+export const StageName = styled.span`
+  grid-area: stageName;
+  color: #000000;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 4px;
 `;

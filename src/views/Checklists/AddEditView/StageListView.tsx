@@ -1,32 +1,29 @@
 import React, { FC } from 'react';
 
+import moveDown from '../../../assets/images/arrow-downward.svg';
+import moveUp from '../../../assets/images/arrow-upward.svg';
+import duplicate from '../../../assets/images/content-copy.svg';
+import addNewSection from '../../../assets/images/playlist-add.svg';
 import {
   ListContainer,
   ListControlButtons,
   StageItem,
   StagesList,
 } from './styles';
+import { StageListViewProps } from './types';
 
-import moveDown from '../../../assets/images/arrow-downward.svg';
-import moveUp from '../../../assets/images/arrow-upward.svg';
-import duplicate from '../../../assets/images/content-copy.svg';
-import addNewSection from '../../../assets/images/playlist-add.svg';
-
-import { Stage } from '../types';
-import { StageListView } from './types';
-
-const StageListView: FC<StageListView> = ({
+const StageListView: FC<StageListViewProps> = ({
   stages,
   activeStage,
   setActiveStage,
 }) => (
   <ListContainer>
     <StagesList>
-      {(stages as Array<Stage>).map((stage, index) => (
+      {stages.map((stage, index) => (
         <StageItem
           key={`${stage.name}-${index}`}
-          active={index === activeStage}
-          onClick={() => setActiveStage(index)}
+          active={stage === activeStage}
+          onClick={() => setActiveStage(stage)}
         >
           <span>{stage.name}</span>
         </StageItem>

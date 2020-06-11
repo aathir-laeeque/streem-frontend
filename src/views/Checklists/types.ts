@@ -12,21 +12,20 @@ export type ChecklistViewProps = RouteComponentProps;
 
 // checklist interfaces
 export enum InteractionType {
-  MATERIAL = 'material',
-  INSTRUCTION = 'instruction',
-  MEDIA_IMAGES = 'images',
-  MULTIPLE_CHOICE = 'multiplechoice',
-  YES_NO = 'yesno',
-  CEHCKLIST = 'checklist',
-  SHOULD_BE = 'shouldbe',
-  COMMENT = 'comment',
-  SIGNATURE = 'signature',
+  MATERIAL = 'MATERIAL',
+  INSTRUCTION = 'INSTRUCTION',
+  MEDIA_IMAGES = 'MEDIA_IMAGES',
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+  YES_NO = 'YES_NO',
+  CEHCKLIST = 'CHECKLIST',
+  SHOULD_BE = 'SHOULD_BE',
+  COMMENT = 'COMMENT',
+  SIGNATURE = 'SIGNATURE',
 }
 
 export interface Interaction {
   type: InteractionType;
   id: string | number;
-  name: string;
   data: any[];
 }
 
@@ -37,7 +36,7 @@ export interface Step {
   hasStop?: boolean;
   timed?: boolean;
   dueOn?: Date;
-  interactions?: Interaction[] | [];
+  interactions: Interaction[] | [];
 }
 
 export interface Stage {

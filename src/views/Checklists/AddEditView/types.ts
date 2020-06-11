@@ -7,11 +7,12 @@ export interface AddEditViewProps extends RouteComponentProps {
 }
 
 export interface StepsViewProps {
-  stageNumber: number;
+  stageNumber?: number;
+  stage: Stage | null;
 }
 
-export interface StageListView {
+export interface StageListViewProps {
   stages: Stage[];
-  activeStage: number;
-  setActiveStage: (stageNumber: number) => void;
+  activeStage: Stage | null;
+  setActiveStage: (stage: Stage) => void;
 }

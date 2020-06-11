@@ -1,14 +1,13 @@
-import { RouteComponentProps, navigate as navigateTo } from '@reach/router';
+import { navigate as navigateTo, RouteComponentProps } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useTypedSelector } from '../../../store/helpers';
 import { AppDispatch } from '../../../store/types';
-import { setSelectedChecklist, loadChecklists } from '../actions';
-import { Checklist } from '../types';
+import { loadChecklists, setSelectedChecklist } from '../actions';
 
 const ListView: FC<RouteComponentProps> = ({ navigate = navigateTo }) => {
-  const { checklists, loading, error } = useTypedSelector(
+  const { checklists = [], loading, error } = useTypedSelector(
     (state) => state.checklist,
   );
 
@@ -35,7 +34,7 @@ const ListView: FC<RouteComponentProps> = ({ navigate = navigateTo }) => {
 
   return (
     <div>
-      {(checklists as Array<Checklist>)?.map((checklist, index) => (
+      {checklists.map((checklist, index) => (
         <div
           key={index}
           style={{ padding: '10px', borderBottom: '1px solid #0000' }}

@@ -9,9 +9,10 @@ import StageListView from './StageListView';
 import StepsView from './StepsView';
 import { Layout } from './styles';
 import { AddEditViewProps } from './types';
+import { Stage } from '../types';
 
 const AddEditView: FC<AddEditViewProps> = ({ checklistId }) => {
-  const [activeStage, setActiveStage] = useState<number>(0);
+  const [activeStage, setActiveStage] = useState<Stage | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -34,6 +35,12 @@ const AddEditView: FC<AddEditViewProps> = ({ checklistId }) => {
     }
   }, [checklists]);
 
+  useEffect(() => {
+    if (selectedChecklist && activeStage === null) {
+      setActiveStage(selectedChecklist.stages[0]);
+    }
+  }, [selectedChecklist]);
+
   const { stages = [] } = selectedChecklist || {};
 
   if (loading) {
@@ -46,9 +53,9 @@ const AddEditView: FC<AddEditViewProps> = ({ checklistId }) => {
       <StageListView
         stages={stages}
         activeStage={activeStage}
-        setActiveStage={(stageNumber) => setActiveStage(stageNumber)}
+        setActiveStage={(stage) => setActiveStage(stage)}
       />
-      <StepsView stageNumber={activeStage + 1} />
+      <StepsView stage={activeStage} />
     </Layout>
   );
 };
