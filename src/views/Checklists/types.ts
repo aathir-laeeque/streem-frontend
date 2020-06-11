@@ -26,7 +26,7 @@ export enum InteractionType {
 export interface Interaction {
   type: InteractionType;
   id: string | number;
-  data: any[];
+  data: any[] | [];
 }
 
 export interface Step {
