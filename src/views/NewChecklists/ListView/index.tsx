@@ -38,8 +38,6 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   } else {
     return null;
   }
-
-  return <div>List View</div>;
 };
 
 export default ListView;

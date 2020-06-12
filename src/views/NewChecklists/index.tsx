@@ -1,9 +1,10 @@
+import { RouteComponentProps, Router } from '@reach/router';
 import React, { FC } from 'react';
-import { Router } from '@reach/router';
-import ListView from './ListView';
-import ChecklistComposer from './ChecklistComposer';
 
-const ChecklistView: FC = () => (
+import ChecklistComposer from './ChecklistComposer';
+import ListView from './ListView';
+
+const ChecklistView: FC<RouteComponentProps> = () => (
   <Router>
     <ListView path="/" />
     <ChecklistComposer path=":checklistId" />

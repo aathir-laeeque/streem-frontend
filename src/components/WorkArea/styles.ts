@@ -11,9 +11,9 @@ export const Wrapper = styled.div`
 `;
 
 export const ContentArea = styled.div`
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
   border-radius: 5px;
-  box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1); */
   height: 100%;
 
   > div {
