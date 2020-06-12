@@ -2,7 +2,7 @@
 // import all sagas and pass them in the array
 import { all, fork } from 'redux-saga/effects';
 
-import { ChecklistListViewSaga } from '../views/NewChecklists/ListView/saga';
+import { ChecklistListViewSaga } from '../views/Checklists/ListView/saga';
 
 export function* rootSaga() {
   yield all([

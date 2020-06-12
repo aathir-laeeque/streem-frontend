@@ -12,8 +12,8 @@ function* fetchChecklists() {
   try {
     yield put(fetchChecklistsOngoing());
 
-    const list = checklists;
-    yield delay(3000);
+    const list = checklists.data;
+    yield delay(1500);
 
     yield put(fetchChecklistsSuccess(list));
   } catch (error) {
