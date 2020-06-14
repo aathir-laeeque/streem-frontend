@@ -1,0 +1,298 @@
+{
+  "object": "list",
+  "status": "ok",
+  "message": "success",
+  "data": [
+    {
+      "id": 1,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN10-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 2,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 3,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 4,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 5,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 6,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 7,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 8,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 9,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 10,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 11,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 12,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 13,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 14,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 15,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 16,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 17,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 18,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 19,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    },
+    {
+      "id": 20,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN11-1",
+      "noOfTasks": 8,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "EQUIPMENT ID": "ZYD/SOP/001",
+        "TYPE": "GROUP",
+        "SOP NO": "ZYD/SOP/CLN/001",
+        "SL NO": null
+      }
+    }
+  ],
+  "pageable": {
+    "page": 0,
+    "pageSize": 20,
+    "numberOfElements": 20,
+    "totalPages": 2,
+    "totalElements": 25,
+    "first": true,
+    "last": false,
+    "empty": false
+  },
+  "errors": null
+}

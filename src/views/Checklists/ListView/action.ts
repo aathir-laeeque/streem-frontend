@@ -1,15 +1,14 @@
-import { actionSpreader } from '#store';
-
-import { Checklist } from '../types';
 import { ListViewAction } from './types';
+import { actionSpreader } from '../../../store/helpers';
+import { ChecklistsObj } from '../types';
 
-export const fetchChecklists = () =>
-  actionSpreader(ListViewAction.FETCH_CHECKLISTS);
+export const fetchChecklists = (params: { page: number; size: number }) =>
+  actionSpreader(ListViewAction.FETCH_CHECKLISTS, params);
 
 export const fetchChecklistsOngoing = () =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS_ONGOING);
 
-export const fetchChecklistsSuccess = (checklists: Checklist[]) =>
+export const fetchChecklistsSuccess = (checklists: ChecklistsObj) =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS_SUCCESS, { checklists });
 
 export const fetchChecklistsError = (error: any) =>

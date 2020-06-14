@@ -30,7 +30,7 @@ const ChecklistComposer: FC<ChecklistComposerProps> = ({ checklistId }) => {
 
   if (loading) {
     return <div>Loading...</div>;
-  } else if (checklist) {
+  } else if (checklist && checklist?.stages) {
     return (
       <Composer>
         <div className="header">
