@@ -285,12 +285,12 @@ const apiGetChecklist = (checklistId: number) => ({
                 data: [
                   {
                     name: 'Positive',
-                    text: 'Yes',
+                    type: 'yes',
                     value: 1,
                   },
                   {
                     name: 'Negative',
-                    text: 'No',
+                    type: 'no',
                     value: 2,
                   },
                 ],
@@ -344,12 +344,12 @@ const apiGetChecklist = (checklistId: number) => ({
                 data: [
                   {
                     name: 'Positive',
-                    text: 'Yes',
+                    type: 'yes',
                     value: 1,
                   },
                   {
                     name: 'Negative',
-                    text: 'No',
+                    type: 'no',
                     value: 2,
                   },
                 ],
@@ -371,12 +371,12 @@ const apiGetChecklist = (checklistId: number) => ({
                 data: [
                   {
                     name: 'Positive',
-                    text: 'Yes',
+                    type: 'yes',
                     value: 1,
                   },
                   {
                     name: 'Negative',
-                    text: 'No',
+                    type: 'no',
                     value: 2,
                   },
                 ],
@@ -623,16 +623,16 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 17,
-                type: 'SHOULDBE',
+                type: 'YESNO',
                 data: [
                   {
                     name: 'Positive',
-                    text: 'Yes',
+                    type: 'yes',
                     value: 1,
                   },
                   {
                     name: 'Negative',
-                    text: 'No',
+                    type: 'no',
                     value: 2,
                   },
                 ],
@@ -686,13 +686,13 @@ const apiGetChecklist = (checklistId: number) => ({
                 type: 'YESNO',
                 data: [
                   {
-                    name: 'Positive',
-                    text: 'All Clean',
+                    type: 'yes',
+                    name: 'All Clean',
                     value: 1,
                   },
                   {
-                    name: 'Negative',
-                    text: 'Not Clean',
+                    type: 'no',
+                    name: 'Not Clean',
                     value: 0,
                   },
                 ],
