@@ -1,9 +1,6 @@
 import React, { FC } from 'react';
-import { Interaction } from './types';
 
-interface ShouldBeInteractionProps {
-  interaction: Interaction;
-}
+import { InteractionViewProps } from './types';
 
 const TARGET_RULES = [
   { label: 'Equal To', value: 'Equal To' },
@@ -14,7 +11,7 @@ const TARGET_RULES = [
   { label: 'Is Between and Equal To', value: 'Is Between and Equal To' },
 ];
 
-const ShouldBeInteraction: FC<ShouldBeInteractionProps> = ({ interaction }) => (
+const ShouldBeInteraction: FC<InteractionViewProps> = ({ interaction }) => (
   <div className="step-interaction-container">
     <div className="shouldbe-interaction">
       <div className="form-field">

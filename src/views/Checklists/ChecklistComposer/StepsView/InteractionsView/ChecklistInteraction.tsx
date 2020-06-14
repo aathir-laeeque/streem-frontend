@@ -1,13 +1,8 @@
 import React, { FC } from 'react';
-import { Interaction } from './types';
 
-interface ChecklistInteractionProps {
-  interaction: Interaction;
-}
+import { InteractionViewProps } from './types';
 
-const ChecklistInteraction: FC<ChecklistInteractionProps> = ({
-  interaction,
-}) => (
+const ChecklistInteraction: FC<InteractionViewProps> = ({ interaction }) => (
   <div className="step-interaction-container">
     <div className="checklist-interaction">
       <div className="form-field">

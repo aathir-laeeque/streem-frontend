@@ -7,3 +7,7 @@ export interface Interaction {
 export interface InteractionsViewProps {
   interactions: Interaction[];
 }
+
+export interface InteractionViewProps {
+  interaction: Interaction;
+}

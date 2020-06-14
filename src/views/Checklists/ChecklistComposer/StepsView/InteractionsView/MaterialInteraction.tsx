@@ -1,12 +1,8 @@
 import React, { FC } from 'react';
 
-import { Interaction } from './types';
+import { InteractionViewProps } from './types';
 
-interface MaterialInteractionProps {
-  interaction: Interaction;
-}
-
-const MaterialInteraction: FC<MaterialInteractionProps> = ({ interaction }) => (
+const MaterialInteraction: FC<InteractionViewProps> = ({ interaction }) => (
   <div className="step-interaction-container">
     <ol className="material-interaction">
       {interaction.data.map((el, index) => (

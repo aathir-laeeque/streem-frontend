@@ -1,14 +1,8 @@
 import React, { FC } from 'react';
 
-import { Interaction } from './types';
+import { InteractionViewProps } from './types';
 
-interface InstructionInteractionProps {
-  interaction: Interaction;
-}
-
-const InstructionInteraction: FC<InstructionInteractionProps> = ({
-  interaction,
-}) => (
+const InstructionInteraction: FC<InteractionViewProps> = ({ interaction }) => (
   <div className="step-interaction-container">
     <div className="instruction-interaction">
       <textarea

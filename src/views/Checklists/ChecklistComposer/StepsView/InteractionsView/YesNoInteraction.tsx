@@ -1,11 +1,8 @@
 import React, { FC } from 'react';
-import { Interaction } from './types';
 
-interface YesNoInteractionProps {
-  interaction: Interaction;
-}
+import { InteractionViewProps } from './types';
 
-const YesNoInteraction: FC<YesNoInteractionProps> = ({ interaction }) => (
+const YesNoInteraction: FC<InteractionViewProps> = ({ interaction }) => (
   <div className="step-interaction-container">
     <div className="yes-no-interaction">
       <div className="form-field">

@@ -1,15 +1,15 @@
-import React, { FC } from 'react';
 import {
-  ArrowUpwardOutlined,
   ArrowDownwardOutlined,
+  ArrowUpwardOutlined,
   MoreVertOutlined,
 } from '@material-ui/icons';
+import React, { FC } from 'react';
 
-import { InteractionsViewProps } from './types';
 import ChecklistInteraction from './ChecklistInteraction';
 import InstructionInteraction from './InstructionInteraction';
 import MaterialInteraction from './MaterialInteraction';
 import ShouldBeInteraction from './ShouldBeInteraction';
+import { InteractionsViewProps } from './types';
 import YesNoInteraction from './YesNoInteraction';
 
 const InteractionsView: FC<InteractionsViewProps> = ({ interactions }) => (
