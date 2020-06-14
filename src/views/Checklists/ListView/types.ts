@@ -1,6 +1,6 @@
 import { RouteComponentProps } from '@reach/router';
 
-import { Checklist } from '../types';
+import { Checklist, Pageable } from '../types';
 import {
   fetchChecklists,
   fetchChecklistsError,
@@ -9,9 +9,10 @@ import {
 } from './action';
 
 export type ListViewProps = RouteComponentProps;
-
 export interface ListViewState {
   readonly checklists: Checklist[] | [] | undefined;
+  readonly pageable: Pageable | undefined;
+  readonly properties: string[] | [] | undefined;
   readonly loading: boolean;
   readonly error: any;
 }
