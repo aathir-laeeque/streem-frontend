@@ -184,6 +184,7 @@ const apiGetChecklist = (checklistId: number) => ({
             name: 'Ensure that you have the following cleaning aids:',
             code: 'STEP-JUN10-1',
             hasStop: false,
+            hasTimed: false,
             interactions: [
               {
                 id: 1,
@@ -233,15 +234,17 @@ const apiGetChecklist = (checklistId: number) => ({
                     filename: 'static.jpg',
                   },
                 ],
+                mandatory: false,
               },
             ],
-            mandatory: false,
+            medias: [],
           },
           {
             id: 2,
             name: 'Get the Cleaning Agent',
             code: 'STEP-JUN10-2',
             hasStop: false,
+            hasTimed: false,
             interactions: [
               {
                 id: 2,
@@ -250,36 +253,41 @@ const apiGetChecklist = (checklistId: number) => ({
                   text:
                     'Use 5% KOH when Eudragit is used. Use Acetone for scrubbing where Omeprazole is used. In all other cases use 1.0% v/v Hempton solution',
                 },
+                mandatory: false,
               },
               {
                 id: 3,
                 type: 'multiselect',
+                label: 'Choose the ones you have selected',
                 data: [
                   { name: 'Item1: 1.0% v/v Hempton Solution', value: 1 },
                   { name: 'Item 2: Acetone ', value: 2 },
                   { name: 'Item 3: 5% KOH Solution', value: 3 },
                 ],
+                mandatory: true,
               },
             ],
-            mandatory: false,
+            medias: [],
           },
           {
             id: 3,
             name: 'Ensure that TO BE CLEANED label is affixed on the Equipment',
             code: 'STEP-JUN10-3',
             hasStop: true,
+            hasTimed: false,
             interactions: [
               {
                 id: 4,
                 type: 'yes-no',
-                label: 'Is the tag fixed?',
+                label: 'Is the tag affixed?',
                 data: [
                   { name: 'Positive', type: 'yes', value: 1 },
                   { name: 'Negative', type: 'no', value: 2 },
                 ],
+                mandatory: true,
               },
             ],
-            mandatory: false,
+            medias: [],
           },
         ],
       },
@@ -292,11 +300,13 @@ const apiGetChecklist = (checklistId: number) => ({
             id: 4,
             name: 'Clean the finger bag',
             code: 'STEP-JUN10-1',
-            hasStop: true,
+            hasStop: false,
+            hasTimed: false,
             interactions: [
               {
                 id: 5,
                 type: 'multiselect',
+                label: 'Use one of the following methods:',
                 data: [
                   {
                     name:
@@ -309,27 +319,30 @@ const apiGetChecklist = (checklistId: number) => ({
                     value: 2,
                   },
                 ],
+                mandatory: true,
               },
             ],
-            mandatory: false,
+            medias: [],
           },
           {
             id: 5,
             name: 'Remove hose pipe from the charging and discharging assembly',
             code: 'STEP-JUN10-2',
             hasStop: false,
+            hasTimed: false,
             interactions: [
               {
                 id: 6,
                 type: 'yes-no',
-                label: 'Spray Gun Removed?',
+                label: 'Pipe Removed?',
                 data: [
                   { name: 'Positive', type: 'yes', value: 1 },
                   { name: 'Negative', type: 'no', value: 2 },
                 ],
+                mandatory: true,
               },
             ],
-            mandatory: false,
+            medias: [],
           },
           {
             id: 6,
@@ -337,17 +350,20 @@ const apiGetChecklist = (checklistId: number) => ({
               'Remove the Spray gun assembly from Gun Port, Silicon Tubes, Atomisation Air Pipe from Spray Gun Assembly',
             code: 'STEP-JUN10-3',
             hasStop: false,
+            hasTimed: false,
             interactions: [
               {
                 id: 7,
                 type: 'yes-no',
+                label: 'Spray Gun removed?',
                 data: [
                   { name: 'Positive', type: 'yes', value: 1 },
                   { name: 'Negative', type: 'no', value: 2 },
                 ],
+                mandatory: true,
               },
             ],
-            mandatory: false,
+            medias: [],
           },
           {
             id: 7,
@@ -355,6 +371,7 @@ const apiGetChecklist = (checklistId: number) => ({
               'Collect the material in double polythene bag and Affix the REJECT TO BE DESTROYED LABEL on collected scrap material and transfer it to reject bin',
             code: 'STEP-JUN10-4',
             hasStop: true,
+            hasTimed: false,
             interactions: [
               {
                 id: 8,
@@ -375,10 +392,12 @@ const apiGetChecklist = (checklistId: number) => ({
                     quantity: 1,
                   },
                 ],
+                mandatory: false,
               },
               {
                 id: 9,
                 type: 'checklist',
+                label: 'no name',
                 data: [
                   {
                     name: 'Item 1: Material put in double polythene bag',
@@ -387,9 +406,10 @@ const apiGetChecklist = (checklistId: number) => ({
                   { name: 'Item 2: To Be Destroyed label affixed', value: 2 },
                   { name: 'Item 3: Material transferred in bin', value: 3 },
                 ],
+                mandatory: true,
               },
             ],
-            mandatory: false,
+            medias: [],
           },
         ],
       },
@@ -402,7 +422,8 @@ const apiGetChecklist = (checklistId: number) => ({
             id: 8,
             name: 'Dispose of the Finger Bag',
             code: 'STEP-JUN10-1',
-            hasStop: true,
+            hasStop: false,
+            hasTimed: false,
             interactions: [
               {
                 id: 10,
@@ -411,10 +432,12 @@ const apiGetChecklist = (checklistId: number) => ({
                   text:
                     'Collect the finger bag in polythene bag and close the bag with cable tie and transfer it to the wash area with “To be cleaned label”  in closed condition.',
                 },
+                mandatory: false,
               },
               {
                 id: 11,
                 type: 'checklist',
+                label: 'no name',
                 data: [
                   {
                     name: 'Item 1: Finger Bag closed in the polythene?',
@@ -422,53 +445,34 @@ const apiGetChecklist = (checklistId: number) => ({
                   },
                   { name: 'Item 2: To Be Cleaned label affixed?', value: 2 },
                 ],
+                mandatory: true,
               },
             ],
-            mandatory: false,
+            medias: [],
           },
           {
             id: 9,
             name: 'Clean the Finger Bag',
             code: 'STEP-JUN10-1',
             hasStop: true,
+            hasTimed: false,
             interactions: [
-              {
-                id: 13,
-                type: 'media',
-                data: [
-                  {
-                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
-                    name: 'Image name',
-                    type: 'image',
-                    filename: 'static.jpg',
-                  },
-                  {
-                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
-                    name: 'Image name',
-                    type: 'image',
-                    filename: 'static.jpg',
-                  },
-                  {
-                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
-                    name: 'Image name',
-                    type: 'image',
-                    filename: 'static.jpg',
-                  },
-                  {
-                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
-                    name: 'Image name',
-                    type: 'image',
-                    filename: 'static.jpg',
-                  },
-                ],
-              },
               {
                 id: 12,
                 type: 'instruction',
                 data: { text: 'Clean the Finger Bag as per SOP-MFG-01344' },
+                mandatory: false,
               },
             ],
-            mandatory: false,
+            medias: [
+              {
+                id: 1,
+                name: 'Image name',
+                link: 'http://api.streem.leucinetech.com/medias/static.jpg',
+                type: 'image',
+                filename: 'static.jpg',
+              },
+            ],
           },
         ],
       },
@@ -482,23 +486,27 @@ const apiGetChecklist = (checklistId: number) => ({
             name: 'Choose the applicable Bowls',
             code: 'STEP-JUN10-1',
             hasStop: false,
+            hasTimed: false,
             interactions: [
               {
                 id: 14,
                 type: 'multiselect',
+                label: 'Bowls',
                 data: [
                   { name: 'Item 1: Bowl No. 01D', value: 1 },
                   { name: 'Item 2: Bowl No. 02D', value: 2 },
                 ],
+                mandatory: true,
               },
             ],
-            mandatory: false,
+            medias: [],
           },
           {
             id: 11,
             name: 'Dismantle the Container Bowls',
             code: 'STEP-JUN10-1',
             hasStop: true,
+            hasTimed: false,
             interactions: [
               {
                 id: 15,
@@ -512,9 +520,10 @@ const apiGetChecklist = (checklistId: number) => ({
                   { name: 'Item 5: View Glasses', value: 5 },
                   { name: 'Item 6: Discharging Port', value: 6 },
                 ],
+                mandatory: true,
               },
             ],
-            mandatory: false,
+            medias: [],
           },
         ],
       },
@@ -529,6 +538,7 @@ const apiGetChecklist = (checklistId: number) => ({
               'Switch on the High Pressure Jet Cleaning Machine and set its Pressure at NLT 50 bar',
             code: 'STEP-JUN10-1',
             hasStop: true,
+            hasTimed: false,
             interactions: [
               {
                 id: 16,
@@ -536,23 +546,31 @@ const apiGetChecklist = (checklistId: number) => ({
                 data: [
                   {
                     uom: 'Bar',
-                    rule: 'not-less-than',
                     type: 'quantity',
                     value: '50',
+                    operator: 'not-less-than',
                     parameter: 'Pressure',
                   },
                 ],
+                mandatory: true,
               },
             ],
-            mandatory: false,
+            medias: [],
           },
           {
             id: 13,
             name: 'Wash the exhaust air duct flap for NLT 2 minutes',
             code: 'STEP-JUN10-1',
             hasStop: true,
+            hasTimed: true,
             interactions: [],
-            mandatory: false,
+            medias: [],
+            timed: {
+              id: 1,
+              operator: 'not-less-than',
+              value: '2',
+              unit: 'min',
+            },
           },
           {
             id: 14,
@@ -560,8 +578,15 @@ const apiGetChecklist = (checklistId: number) => ({
               'Wash the outer surface of inlet & exhaust air duct for NLT 3 minutes',
             code: 'STEP-JUN10-1',
             hasStop: true,
+            hasTimed: true,
             interactions: [],
-            mandatory: false,
+            medias: [],
+            timed: {
+              id: 2,
+              operator: 'not-less-than',
+              value: '2',
+              unit: 'min',
+            },
           },
         ],
       },
@@ -576,6 +601,7 @@ const apiGetChecklist = (checklistId: number) => ({
               'Flush the inlet air duct up-to bent and both sides of damper flap, gasket with process water using high pressure jet.',
             code: 'STEP-JUN10-1',
             hasStop: false,
+            hasTimed: false,
             interactions: [
               {
                 id: 17,
@@ -585,37 +611,35 @@ const apiGetChecklist = (checklistId: number) => ({
                   { name: 'Positive', type: 'yes', value: 1 },
                   { name: 'Negative', type: 'no', value: 2 },
                 ],
+                mandatory: true,
               },
             ],
-            mandatory: false,
+            medias: [],
           },
           {
             id: 16,
             name:
               'Scrub the inlet air duct flap with 1.0 v/v Hem-top from both sides and gasket rim with nylon scrubber',
             code: 'STEP-JUN10-1',
-            hasStop: false,
-            interactions: [
+            hasStop: true,
+            hasTimed: false,
+            interactions: [],
+            medias: [
               {
-                id: 21,
-                type: 'media',
-                data: [
-                  {
-                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
-                    name: 'Image name',
-                    type: 'image',
-                    filename: 'static.jpg',
-                  },
-                  {
-                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
-                    name: 'Image name',
-                    type: 'image',
-                    filename: 'static.jpg',
-                  },
-                ],
+                id: 2,
+                name: 'Image name',
+                link: 'http://api.streem.leucinetech.com/medias/static.jpg',
+                type: 'image',
+                filename: 'static.jpg',
+              },
+              {
+                id: 3,
+                name: 'Image name',
+                link: 'http://api.streem.leucinetech.com/medias/static.jpg',
+                type: 'image',
+                filename: 'static.jpg',
               },
             ],
-            mandatory: false,
           },
         ],
       },
@@ -629,6 +653,7 @@ const apiGetChecklist = (checklistId: number) => ({
             name: 'Inspect View Glasses in dismantled condition',
             code: 'STEP-JUN10-1',
             hasStop: true,
+            hasTimed: false,
             interactions: [
               {
                 id: 18,
@@ -638,11 +663,18 @@ const apiGetChecklist = (checklistId: number) => ({
                   { name: 'All Clean', type: 'no', value: 1 },
                   { name: 'Not Clean', type: 'yes', value: 2 },
                 ],
+                mandatory: true,
               },
-              { id: 20, type: 'signature', data: [] },
-              { id: 19, type: 'textbox', data: [] },
+              {
+                id: 19,
+                type: 'textbox',
+                label: 'Remarks:',
+                data: [],
+                mandatory: true,
+              },
+              { id: 20, type: 'signature', data: [], mandatory: true },
             ],
-            mandatory: false,
+            medias: [],
           },
         ],
       },

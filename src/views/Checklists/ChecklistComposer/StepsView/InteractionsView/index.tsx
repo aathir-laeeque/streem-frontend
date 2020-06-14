@@ -23,6 +23,7 @@ const InteractionsView: FC<InteractionsViewProps> = ({ interactions }) => (
         )}
 
         {(() => {
+          console.log('interaction :: ', interaction.type);
           switch (interaction.type) {
             case InteractionType.MATERIAL:
               return <MaterialInteraction interaction={interaction} />;

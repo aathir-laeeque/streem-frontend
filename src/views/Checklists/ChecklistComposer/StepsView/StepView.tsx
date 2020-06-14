@@ -10,7 +10,7 @@ import React, { FC } from 'react';
 
 import Interactions from './InteractionsView';
 import { InteractionType } from './InteractionsView/types';
-import MediaInteraction from './Media';
+import StepMedia from './StepMedia';
 import { StepViewProps } from './types';
 
 const StepView: FC<StepViewProps> = ({
@@ -21,9 +21,7 @@ const StepView: FC<StepViewProps> = ({
   isLastStep,
   stepNumber,
 }) => {
-  const mediaInteractions = step.interactions.filter(
-    (el) => el.type === InteractionType.MEDIA,
-  );
+  const stepMedias = step.medias;
 
   return (
     <div style={{ display: 'flex' }}>
@@ -78,9 +76,7 @@ const StepView: FC<StepViewProps> = ({
         </div>
       </div>
       <div style={{ flex: 1, marginLeft: '16px' }}>
-        {mediaInteractions.map((interaction, index) => (
-          <MediaInteraction interaction={interaction} key={index} />
-        ))}
+        {stepMedias.length ? <StepMedia medias={stepMedias} /> : null}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { Stage } from '../StagesView/types';
 import { Interaction } from './InteractionsView/types';
+import { StepMedia } from './StepMedia/types';
 
 export interface Step {
   id: number;
@@ -7,6 +8,7 @@ export interface Step {
   code: string;
   hasStop: boolean;
   interactions: Interaction[];
+  medias: StepMedia[];
 }
 
 export interface StepsViewProps {

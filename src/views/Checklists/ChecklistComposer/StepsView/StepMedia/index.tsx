@@ -1,12 +1,14 @@
 import { Delete, MoreVertOutlined, Publish } from '@material-ui/icons';
 import React, { FC, useState } from 'react';
 
-import { InteractionViewProps } from '../InteractionsView/types';
 import { Wrapper } from './styles';
+import { StepMediaProps } from './types';
 
-const MediaInteraction: FC<InteractionViewProps> = ({ interaction }) => {
-  console.log('interaction from MediaInteraction :: ', interaction);
-  const [activeMedia, setActiveMedia] = useState(interaction.data[0]);
+const StepMedia: FC<StepMediaProps> = ({ medias }) => {
+  console.log('interaction from StepMedia :: ', medias);
+  const [activeMedia, setActiveMedia] = useState(medias[0]);
+
+  console.log('activeMEdia :: ', activeMedia);
 
   return (
     <Wrapper>
@@ -21,19 +23,20 @@ const MediaInteraction: FC<InteractionViewProps> = ({ interaction }) => {
       </div>
 
       <div className="media-interaction-media-container">
-        {interaction.data.map((el, index) => (
+        {medias.map((media, index) => (
           <div
             className="media-interaction-media-item"
             key={index}
-            onClick={() => setActiveMedia(el)}
+            onClick={() => setActiveMedia(media)}
           >
-            <img src={el.link} />
+            <img src={media.link} />
             <div>
-              <span>{el.name}</span>
+              <span>{media.name}</span>
               <MoreVertOutlined className="icon" />
             </div>
           </div>
         ))}
+
         <div className="upload-button">
           <Publish className="icon" style={{ color: '#12aab3' }} />
         </div>
@@ -42,4 +45,4 @@ const MediaInteraction: FC<InteractionViewProps> = ({ interaction }) => {
   );
 };
 
-export default MediaInteraction;
+export default StepMedia;
