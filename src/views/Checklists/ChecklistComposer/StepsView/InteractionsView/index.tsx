@@ -9,7 +9,7 @@ import ChecklistInteraction from './ChecklistInteraction';
 import InstructionInteraction from './InstructionInteraction';
 import MaterialInteraction from './MaterialInteraction';
 import ShouldBeInteraction from './ShouldBeInteraction';
-import { InteractionsViewProps } from './types';
+import { InteractionsViewProps, InteractionType } from './types';
 import YesNoInteraction from './YesNoInteraction';
 
 const InteractionsView: FC<InteractionsViewProps> = ({ interactions }) => (
@@ -23,22 +23,20 @@ const InteractionsView: FC<InteractionsViewProps> = ({ interactions }) => (
         )}
 
         {(() => {
-          console.log('interaction :: ', interaction);
-
           switch (interaction.type) {
-            case 'MATERIAL':
+            case InteractionType.MATERIAL:
               return <MaterialInteraction interaction={interaction} />;
 
-            case 'INSTRUCTION':
+            case InteractionType.INSTRUCTION:
               return <InstructionInteraction interaction={interaction} />;
 
-            case 'YESNO':
+            case InteractionType.YESNO:
               return <YesNoInteraction interaction={interaction} />;
 
-            case 'CHECKLIST':
+            case InteractionType.CHECKLIST:
               return <ChecklistInteraction interaction={interaction} />;
 
-            case 'SHOULDBE':
+            case InteractionType.SHOULDBE:
               return <ShouldBeInteraction interaction={interaction} />;
 
             default:

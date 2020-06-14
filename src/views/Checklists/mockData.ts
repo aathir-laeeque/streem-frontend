@@ -169,9 +169,10 @@ const apiGetChecklist = (checklistId: number) => ({
   message: 'success',
   data: {
     id: 1,
-    name: 'CHECKLIST',
+    name: 'Fuild Bed Dryer Checklist',
     code: 'CHK-JUN10-1',
-    version: null,
+    version: 1,
+    archived: false,
     stages: [
       {
         id: 1,
@@ -186,45 +187,52 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 1,
-                type: 'MATERIAL',
+                type: 'material',
                 data: [
                   {
-                    name: 'Nylon scrubber',
-                    image: '/medias/static.jpg',
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
+                    name: 'Nylon Scrubber',
+                    type: 'image',
+                    filename: 'static.jpg',
                     quantity: 1,
                   },
                   {
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
                     name: 'Nylon Brush',
-                    image: '/medias/static.jpg',
-                    quantity: 1,
+                    type: 'image',
+                    filename: 'static.jpg',
                   },
                   {
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
                     name: 'Scrapper',
-                    image: '/medias/static.jpg',
-                    quantity: 1,
+                    type: 'image',
+                    filename: 'static.jpg',
                   },
                   {
-                    name: 'Vacuum Cleaner',
-                    image: '/medias/static.jpg',
-                    quantity: 1,
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
+                    name: 'Vaccum Cleaner',
+                    type: 'image',
+                    filename: 'static.jpg',
                   },
                   {
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
                     name: 'High Pressure Jet',
-                    image: '/medias/static.jpg',
-                    quantity: 1,
+                    type: 'image',
+                    filename: 'static.jpg',
                   },
                   {
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
                     name: 'Telescopic Pole',
-                    image: '/medias/static.jpg',
-                    quantity: 1,
+                    type: 'image',
+                    filename: 'static.jpg',
                   },
                   {
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
                     name: 'Link Free Cloth',
-                    image: '/medias/static.jpg',
-                    quantity: 1,
+                    type: 'image',
+                    filename: 'static.jpg',
                   },
                 ],
-                medias: [],
               },
             ],
             mandatory: false,
@@ -237,38 +245,20 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 2,
-                type: 'INSTRUCTION',
-                data: [
-                  {
-                    name: 'Use 5% KOH when Eudragit is used',
-                  },
-                  {
-                    name: 'Use Acetone for scrubbing where Omeprazole is used',
-                  },
-                  {
-                    name: 'In all other cases use 1.0% v/v Hempton solution',
-                  },
-                ],
-                medias: [],
+                type: 'instruction',
+                data: {
+                  text:
+                    'Use 5% KOH when Eudragit is used. Use Acetone for scrubbing where Omeprazole is used. In all other cases use 1.0% v/v Hempton solution',
+                },
               },
               {
                 id: 3,
-                type: 'MULTIPLECHOICE',
+                type: 'multiselect',
                 data: [
-                  {
-                    name: 'Item1: 1.0% v/v Hempton Solution',
-                    value: 1,
-                  },
-                  {
-                    name: 'Item 2: Acetone ',
-                    value: 2,
-                  },
-                  {
-                    name: 'Item 3: 5% KOH Solution',
-                    value: 3,
-                  },
+                  { name: 'Item1: 1.0% v/v Hempton Solution', value: 1 },
+                  { name: 'Item 2: Acetone ', value: 2 },
+                  { name: 'Item 3: 5% KOH Solution', value: 3 },
                 ],
-                medias: [],
               },
             ],
             mandatory: false,
@@ -281,20 +271,12 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 4,
-                type: 'YESNO',
+                type: 'yes-no',
+                label: 'Is the tag fixed?',
                 data: [
-                  {
-                    name: 'Positive',
-                    type: 'yes',
-                    value: 1,
-                  },
-                  {
-                    name: 'Negative',
-                    type: 'no',
-                    value: 2,
-                  },
+                  { name: 'Positive', type: 'yes', value: 1 },
+                  { name: 'Negative', type: 'no', value: 2 },
                 ],
-                medias: [],
               },
             ],
             mandatory: false,
@@ -314,7 +296,7 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 5,
-                type: 'MULTIPLECHOICE',
+                type: 'multiselect',
                 data: [
                   {
                     name:
@@ -327,7 +309,6 @@ const apiGetChecklist = (checklistId: number) => ({
                     value: 2,
                   },
                 ],
-                medias: [],
               },
             ],
             mandatory: false,
@@ -340,20 +321,12 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 6,
-                type: 'YESNO',
+                type: 'yes-no',
+                label: 'Spray Gun Removed?',
                 data: [
-                  {
-                    name: 'Positive',
-                    type: 'yes',
-                    value: 1,
-                  },
-                  {
-                    name: 'Negative',
-                    type: 'no',
-                    value: 2,
-                  },
+                  { name: 'Positive', type: 'yes', value: 1 },
+                  { name: 'Negative', type: 'no', value: 2 },
                 ],
-                medias: [],
               },
             ],
             mandatory: false,
@@ -367,20 +340,11 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 7,
-                type: 'YESNO',
+                type: 'yes-no',
                 data: [
-                  {
-                    name: 'Positive',
-                    type: 'yes',
-                    value: 1,
-                  },
-                  {
-                    name: 'Negative',
-                    type: 'no',
-                    value: 2,
-                  },
+                  { name: 'Positive', type: 'yes', value: 1 },
+                  { name: 'Negative', type: 'no', value: 2 },
                 ],
-                medias: [],
               },
             ],
             mandatory: false,
@@ -394,39 +358,35 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 8,
-                type: 'MATERIAL',
+                type: 'material',
                 data: [
                   {
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
                     name: 'Polythene Bag',
-                    image: '/medias/static.jpg',
+                    type: 'image',
+                    filename: 'static.jpg',
                     quantity: 1,
                   },
                   {
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
                     name: 'To be destroyed label',
-                    image: '/medias/static.jpg',
+                    type: 'image',
+                    filename: 'static.jpg',
                     quantity: 1,
                   },
                 ],
-                medias: [],
               },
               {
                 id: 9,
-                type: 'CHECKLIST',
+                type: 'checklist',
                 data: [
                   {
                     name: 'Item 1: Material put in double polythene bag',
                     value: 1,
                   },
-                  {
-                    name: 'Item 2: To Be Destroyed label affixed',
-                    value: 2,
-                  },
-                  {
-                    name: 'Item 3: Material transferred in bin',
-                    value: 3,
-                  },
+                  { name: 'Item 2: To Be Destroyed label affixed', value: 2 },
+                  { name: 'Item 3: Material transferred in bin', value: 3 },
                 ],
-                medias: [],
               },
             ],
             mandatory: false,
@@ -446,29 +406,22 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 10,
-                type: 'INSTRUCTION',
-                data: [
-                  {
-                    name:
-                      'Collect the finger bag in polythene bag and close the bag with cable tie and transfer it to the wash area with “To be cleaned label”  in closed condition.',
-                  },
-                ],
-                medias: [],
+                type: 'instruction',
+                data: {
+                  text:
+                    'Collect the finger bag in polythene bag and close the bag with cable tie and transfer it to the wash area with “To be cleaned label”  in closed condition.',
+                },
               },
               {
                 id: 11,
-                type: 'CHECKLIST',
+                type: 'checklist',
                 data: [
                   {
                     name: 'Item 1: Finger Bag closed in the polythene?',
                     value: 1,
                   },
-                  {
-                    name: 'Item 2: To Be Cleaned label affixed?',
-                    value: 2,
-                  },
+                  { name: 'Item 2: To Be Cleaned label affixed?', value: 2 },
                 ],
-                medias: [],
               },
             ],
             mandatory: false,
@@ -480,26 +433,39 @@ const apiGetChecklist = (checklistId: number) => ({
             hasStop: true,
             interactions: [
               {
-                id: 12,
-                type: 'INSTRUCTION',
+                id: 13,
+                type: 'media',
                 data: [
                   {
-                    name: 'Clean the Finger Bag as per SOP-MFG-01344',
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
+                    name: 'Image name',
+                    type: 'image',
+                    filename: 'static.jpg',
+                  },
+                  {
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
+                    name: 'Image name',
+                    type: 'image',
+                    filename: 'static.jpg',
+                  },
+                  {
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
+                    name: 'Image name',
+                    type: 'image',
+                    filename: 'static.jpg',
+                  },
+                  {
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
+                    name: 'Image name',
+                    type: 'image',
+                    filename: 'static.jpg',
                   },
                 ],
-                medias: [],
               },
               {
-                id: 13,
-                type: 'MEDIA',
-                data: {},
-                medias: [
-                  {
-                    name: 'Image',
-                    type: '/medias/static.jpg',
-                    link: '/medias/static.jpg',
-                  },
-                ],
+                id: 12,
+                type: 'instruction',
+                data: { text: 'Clean the Finger Bag as per SOP-MFG-01344' },
               },
             ],
             mandatory: false,
@@ -519,18 +485,11 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 14,
-                type: 'MULTISELECT',
+                type: 'multiselect',
                 data: [
-                  {
-                    name: 'Item 1: Bowl No. 01D',
-                    value: 1,
-                  },
-                  {
-                    name: 'Item 2: Bowl No. 02D',
-                    value: 2,
-                  },
+                  { name: 'Item 1: Bowl No. 01D', value: 1 },
+                  { name: 'Item 2: Bowl No. 02D', value: 2 },
                 ],
-                medias: [],
               },
             ],
             mandatory: false,
@@ -543,34 +502,16 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 15,
-                type: 'CHECKLIST',
+                type: 'checklist',
+                label: 'Following parts are to be dismantled',
                 data: [
-                  {
-                    name: 'Item 1: Base Plate',
-                    value: 1,
-                  },
-                  {
-                    name: 'Item 2: Dutch Mesh Assembly',
-                    value: 2,
-                  },
-                  {
-                    name: 'Item 3: Support Cross',
-                    value: 3,
-                  },
-                  {
-                    name: 'Item 4: Sampling Port',
-                    value: 4,
-                  },
-                  {
-                    name: 'Item 5: View Glasses',
-                    value: 5,
-                  },
-                  {
-                    name: 'Item 6: Discharging Port',
-                    value: 6,
-                  },
+                  { name: 'Item 1: Base Plate', value: 1 },
+                  { name: 'Item 2: Dutch Mesh Assembly', value: 2 },
+                  { name: 'Item 3: Support Cross', value: 3 },
+                  { name: 'Item 4: Sampling Port', value: 4 },
+                  { name: 'Item 5: View Glasses', value: 5 },
+                  { name: 'Item 6: Discharging Port', value: 6 },
                 ],
-                medias: [],
               },
             ],
             mandatory: false,
@@ -591,20 +532,35 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 16,
-                type: 'SHOULDBE',
+                type: 'should-be',
                 data: [
                   {
-                    UOM: 'Bar',
-                    type: 'Quantity',
-                    Target: {
-                      Rule: 'Not less than',
-                      Value: 50,
-                    },
+                    uom: 'Bar',
+                    rule: 'not-less-than',
+                    type: 'quantity',
+                    value: '50',
+                    parameter: 'Pressure',
                   },
                 ],
-                medias: [],
               },
             ],
+            mandatory: false,
+          },
+          {
+            id: 13,
+            name: 'Wash the exhaust air duct flap for NLT 2 minutes',
+            code: 'STEP-JUN10-1',
+            hasStop: true,
+            interactions: [],
+            mandatory: false,
+          },
+          {
+            id: 14,
+            name:
+              'Wash the outer surface of inlet & exhaust air duct for NLT 3 minutes',
+            code: 'STEP-JUN10-1',
+            hasStop: true,
+            interactions: [],
             mandatory: false,
           },
         ],
@@ -623,20 +579,12 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 17,
-                type: 'YESNO',
+                type: 'yes-no',
+                label: 'Inlet Air Duct flushed with water?',
                 data: [
-                  {
-                    name: 'Positive',
-                    type: 'yes',
-                    value: 1,
-                  },
-                  {
-                    name: 'Negative',
-                    type: 'no',
-                    value: 2,
-                  },
+                  { name: 'Positive', type: 'yes', value: 1 },
+                  { name: 'Negative', type: 'no', value: 2 },
                 ],
-                medias: [],
               },
             ],
             mandatory: false,
@@ -650,18 +598,19 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 21,
-                type: 'MEDIA',
-                data: {},
-                medias: [
+                type: 'media',
+                data: [
                   {
-                    name: 'Image',
-                    type: '/medias/static.jpg',
-                    link: '/medias/static.jpg',
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
+                    name: 'Image name',
+                    type: 'image',
+                    filename: 'static.jpg',
                   },
                   {
-                    name: 'Image',
-                    type: '/medias/static.jpg',
-                    link: '/medias/static.jpg',
+                    link: 'http://api.streem.leucinetech.com/medias/static.jpg',
+                    name: 'Image name',
+                    type: 'image',
+                    filename: 'static.jpg',
                   },
                 ],
               },
@@ -683,39 +632,27 @@ const apiGetChecklist = (checklistId: number) => ({
             interactions: [
               {
                 id: 18,
-                type: 'YESNO',
+                type: 'yes-no',
+                label: 'Cleaning Status',
                 data: [
-                  {
-                    type: 'yes',
-                    name: 'All Clean',
-                    value: 1,
-                  },
-                  {
-                    type: 'no',
-                    name: 'Not Clean',
-                    value: 0,
-                  },
+                  { name: 'All Clean', type: 'no', value: 1 },
+                  { name: 'Not Clean', type: 'yes', value: 2 },
                 ],
-                medias: [],
               },
-              {
-                id: 19,
-                type: 'TEXTBOX',
-                data: [],
-                medias: [],
-              },
-              {
-                id: 20,
-                type: 'SIGNATURE',
-                data: [],
-                medias: [],
-              },
+              { id: 20, type: 'signature', data: [] },
+              { id: 19, type: 'textbox', data: [] },
             ],
             mandatory: false,
           },
         ],
       },
     ],
+    properties: {
+      'EQUIPMENT ID': 'ZYD/SOP/001',
+      TYPE: 'GROUP',
+      'SOP NO': 'ZYD/SOP/CLN/001',
+      'SL NO': null,
+    },
   },
   pageable: null,
   errors: null,

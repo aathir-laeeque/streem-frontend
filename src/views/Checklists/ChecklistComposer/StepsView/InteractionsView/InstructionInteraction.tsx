@@ -7,7 +7,7 @@ const InstructionInteraction: FC<InteractionViewProps> = ({ interaction }) => (
     <div className="instruction-interaction">
       <textarea
         name="instruction"
-        value={interaction.data.map((el) => el.name).join('. ')}
+        value={interaction.data.text}
         rows={3}
         onChange={undefined}
       />

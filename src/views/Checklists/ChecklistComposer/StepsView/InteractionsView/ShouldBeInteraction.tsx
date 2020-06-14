@@ -67,7 +67,7 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({ interaction }) => (
             className="form-input form-input-value"
             name="target-value"
             type="text"
-            value={interaction.data[0].Target.Value}
+            value={interaction.data[0].value}
             placeholder="Value"
             onChange={undefined}
           />

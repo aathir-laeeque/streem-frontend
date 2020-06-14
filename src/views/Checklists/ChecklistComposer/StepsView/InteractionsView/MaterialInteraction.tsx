@@ -7,14 +7,11 @@ const MaterialInteraction: FC<InteractionViewProps> = ({ interaction }) => (
     <ol className="material-interaction">
       {interaction.data.map((el, index) => (
         <li key={index} className="material-interaction-item">
-          <img
-            src={`http://api.streem.leucinetech.com${el.image}`}
-            className="material-interaction-item-image"
-          />
+          <img src={el.link} className="material-interaction-item-image" />
           <span>{el.name}</span>
           <div className="material-interaction-item-controls">
             <span className="control-button">-</span>
-            <span className="quantity">{el.quantity}</span>
+            <span className="quantity">{el.quantity || 1}</span>
             <span className="control-button">+</span>
           </div>
         </li>
