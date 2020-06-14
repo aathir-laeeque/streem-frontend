@@ -183,7 +183,7 @@ export const Composer = styled.div`
         margin-bottom: 24px;
         padding: 24px 16px;
         display: flex;
-        flex: 1.5;
+        flex: 1.25;
         border: 1px solid transparent;
         background-color: #ffff;
 
