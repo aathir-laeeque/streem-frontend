@@ -30,19 +30,19 @@ const StagesView: FC<StagesViewProps> = ({
       </ol>
       <div className="stage-control-buttons">
         <div>
-          <PlaylistAddOutlined />
+          <PlaylistAddOutlined className="icon" />
           <span>New Section</span>
         </div>
         <div>
-          <FileCopyOutlined />
+          <FileCopyOutlined className="icon" />
           <span>Duplicate</span>
         </div>
         <div>
-          <ArrowUpwardOutlined />
+          <ArrowUpwardOutlined className="icon" />
           <span>Move up</span>
         </div>
         <div>
-          <ArrowDownwardOutlined />
+          <ArrowDownwardOutlined className="icon" />
           <span>move down</span>
         </div>
       </div>

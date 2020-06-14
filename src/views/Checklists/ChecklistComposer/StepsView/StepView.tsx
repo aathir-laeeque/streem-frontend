@@ -3,21 +3,42 @@ import {
   DateRangeOutlined,
   ErrorOutlineOutlined,
   TimerOutlined,
+  ArrowUpwardOutlined,
+  ArrowDownwardOutlined,
 } from '@material-ui/icons';
 import React, { FC } from 'react';
 
 import { StepViewProps } from './types';
 import Interactions from './InteractionsView';
 
-export const StepView: FC<StepViewProps> = ({ step, active, onClick }) => (
+export const StepView: FC<StepViewProps> = ({
+  step,
+  active,
+  onClick,
+  isFirstStep,
+  isLastStep,
+  stepNumber,
+}) => (
   <div style={{ display: 'flex' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        marginRight: '16px',
+        alignItems: 'center',
+      }}
+    >
+      {!isFirstStep ? <ArrowUpwardOutlined className="icon" /> : null}
+      <span style={{ margin: '5px 0', color: '#999999' }}>{stepNumber}</span>
+      {!isLastStep ? <ArrowDownwardOutlined className="icon" /> : null}
+    </div>
     <div
       className={`steps-list-item ${active ? 'steps-list-item-active' : ''}`}
       onClick={onClick}
     >
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex' }}>
-          <div style={{ marginLeft: '40px' }}>
+          <div style={{ marginLeft: '40px', flex: 1 }}>
             <div className={`step-name ${active ? 'step-name-active' : ''}`}>
               {step?.name}
             </div>

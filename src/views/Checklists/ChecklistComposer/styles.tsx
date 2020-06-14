@@ -137,6 +137,7 @@ export const Composer = styled.div`
           line-height: 0.5;
           color: #333333;
           text-transform: capitalize;
+          margin-top: 5px;
         }
       }
     }

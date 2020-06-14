@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 
+import StepView from './StepView';
 import { StepsViewProps } from './types';
-import Step from './Step';
 
 const StepsView: FC<StepsViewProps> = ({ steps, activeStage, stage }) => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -12,8 +12,11 @@ const StepsView: FC<StepsViewProps> = ({ steps, activeStage, stage }) => {
       <span className="steps-active-stage-name">{stage?.name}</span>
       <div className="steps-list-container">
         {steps.map((step, index) => (
-          <Step
+          <StepView
+            stepNumber={index + 1}
             key={index}
+            isFirstStep={index === 0}
+            isLastStep={index === steps.length - 1}
             step={step}
             active={index === activeStep}
             onClick={() => setActiveStep(index)}
