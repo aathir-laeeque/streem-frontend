@@ -194,17 +194,60 @@ export const Composer = styled.div`
         .add-circle {
           margin-left: 16px;
         }
+
+        .timed-card {
+          margin-left: 40px;
+          margin-top: 24px;
+          margin-right: 40px;
+          border: 1px dashed #bababa;
+          border-radius: 5px;
+          padding: 16px;
+
+          .timed-rule {
+            display: flex;
+
+            .form-field {
+              flex: 1;
+              margin-right: 16px;
+
+              :last-child {
+                margin-right: 0;
+                margin-top: 10px;
+              }
+            }
+          }
+
+          .clock {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            > svg {
+              height: 48px;
+              width: 48px;
+            }
+
+            > span {
+              padding: 8px 20px;
+              text-align: center;
+              color: #666666;
+              font-size: 20px;
+            }
+          }
+        }
       }
     }
   }
 
   .step {
     &-name {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 400;
       padding: 16px 8px;
       background-color: #f4f4f4;
       border-bottom: 2px solid transparent;
+      border-bottom-color: #00aab4;
 
       &-active {
         border-bottom-color: #00aab4;
@@ -221,11 +264,32 @@ export const Composer = styled.div`
         display: flex;
         justify-content: center;
         border-right: 1px solid #dadada;
-        padding: 16px;
-        color: #00aab4;
+        padding: 8px 16px;
+
+        > .icon {
+          margin-right: 5px;
+          height: 18px;
+          width: 18px;
+        }
+
+        > span {
+          color: #999999;
+          font-size: 10px;
+          line-height: 1;
+        }
 
         :last-child {
           border-right: none;
+        }
+      }
+
+      .item-active {
+        > svg {
+          color: #00aab4;
+        }
+
+        > span {
+          color: #00aab4;
         }
       }
     }
@@ -269,31 +333,37 @@ export const Composer = styled.div`
       margin-bottom: 20px;
       align-items: center;
 
+      > span {
+        color: #666666;
+        font-size: 16px;
+      }
+
       &-controls {
         display: flex;
         margin-left: auto;
         border: solid 1px #dadada;
         border-radius: 5px;
 
-        > span {
-          border-right: 1px solid #dadada;
-          padding: 0 8px;
+        > * {
+          padding: 4px 8px;
           display: flex;
           align-items: center;
           justify-content: center;
+          border-right: 1px solid #dadada;
 
           :last-child {
             border-right: none;
           }
         }
 
-        > .control-button {
+        > svg {
+          height: 16px;
+          width: 16px;
           color: #00aab4;
-          font-size: 24px;
         }
 
         > .quantity {
-          font-size: 16px;
+          font-size: 14px;
           color: #666666;
         }
       }
@@ -313,8 +383,17 @@ export const Composer = styled.div`
     }
 
     &-add-new {
-      font-size: 20px;
-      color: #12aab3;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      > * {
+        color: #12aab3 !important;
+      }
+
+      > svg {
+        margin-right: 5px;
+      }
     }
   }
 
@@ -386,19 +465,11 @@ export const Composer = styled.div`
           margin-bottom: 0;
         }
 
-        &-value {
-          margin-left: 16px;
-          color: #666666;
-          font-size: 18px;
-        }
-
-        > .checkbox {
-          margin-top: 3px;
-        }
-
-        > .remove-button {
+        > .icon {
+          height: 12px;
+          width: 12px;
           margin-left: auto;
-          color: #999999;
+          align-self: flex-start;
           margin-top: 3px;
         }
       }
@@ -425,6 +496,11 @@ export const Composer = styled.div`
 
   .icon {
     color: #999999;
+    cursor: pointer;
+  }
+
+  button {
+    cursor: pointer;
   }
 
   .form {

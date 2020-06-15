@@ -5,6 +5,8 @@ import {
   DateRangeOutlined,
   ErrorOutlineOutlined,
   TimerOutlined,
+  Timer,
+  RadioButtonUnchecked,
 } from '@material-ui/icons';
 import React, { FC } from 'react';
 
@@ -49,28 +51,75 @@ const StepView: FC<StepViewProps> = ({
               </div>
 
               <div className="step-controls">
-                <div className="step-controls-item">
-                  <ErrorOutlineOutlined />
-                  App Stop
+                <div
+                  className={`step-controls-item ${
+                    step.hasStop ? 'item-active' : ''
+                  }`}
+                >
+                  <ErrorOutlineOutlined className="icon" />
+                  <span>Add Stop</span>
                 </div>
                 <div className="step-controls-item">
-                  <DateRangeOutlined />
-                  Due On
+                  <DateRangeOutlined className="icon" />
+                  <span>Due On</span>
+                </div>
+                <div
+                  className={`step-controls-item ${
+                    step.hasTimed ? 'item-active' : ''
+                  }`}
+                >
+                  <TimerOutlined className="icon" />
+                  <span>Timed</span>
                 </div>
                 <div className="step-controls-item">
-                  <TimerOutlined />
-                  Timed
+                  <RadioButtonUnchecked className="icon" />
+                  <span>Optional</span>
                 </div>
-                <div className="step-controls-item">Optional</div>
               </div>
             </div>
             <AddCircleOutline className="icon add-circle" />
           </div>
+
+          {step.hasTimed ? (
+            <div className="timed-card">
+              <div className="timed-rule">
+                <div className="form-field">
+                  <label className="form-input-label">Time Rule</label>
+                  <input
+                    className="form-input form-input-value"
+                    value={step.timed.operator}
+                    onChange={undefined}
+                    type="text"
+                    name="timed-operator"
+                    placeholder="Not more than"
+                  />
+                </div>
+                <div className="form-field">
+                  <label className="form-input-label">{''}</label>
+                  <input
+                    className="form-input form-input-value"
+                    value={step.timed.value}
+                    onChange={undefined}
+                    type="text"
+                    name="timed-value"
+                    placeholder="Value"
+                  />
+                </div>
+              </div>
+              <div className="clock">
+                <Timer className="icon" />
+                <span>A timer will be displayed at the time of execution</span>
+              </div>
+            </div>
+          ) : null}
+
           <Interactions
             interactions={step.interactions.filter(
               (el) =>
                 el.type !== InteractionType.MEDIA &&
-                el.type !== InteractionType.MULTISELECT,
+                el.type !== InteractionType.MULTISELECT &&
+                el.type !== InteractionType.TEXTBOX &&
+                el.type !== InteractionType.SIGNATURE,
             )}
           />
         </div>
