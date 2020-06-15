@@ -6,12 +6,15 @@ export enum InteractionType {
   SHOULDBE = 'should-be',
   MEDIA = 'media',
   MULTISELECT = 'multiselect',
+  TEXTBOX = 'textbox',
+  SIGNATURE = 'signature',
 }
 
 export interface Interaction {
   id: number;
   type: InteractionType;
   data: any;
+  mandatory: boolean;
 }
 
 export interface InteractionsViewProps {

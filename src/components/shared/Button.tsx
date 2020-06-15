@@ -11,4 +11,5 @@ export const Button = styled.button.attrs({
   border: none;
   outline: none;
   margin-right: 8px;
+  cursor: pointer;
 `;

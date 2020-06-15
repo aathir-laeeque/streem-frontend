@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
+import { Close } from '@material-ui/icons';
 
 import { InteractionViewProps } from './types';
+import { Checkbox } from '../../../../../components';
 
 const ChecklistInteraction: FC<InteractionViewProps> = ({ interaction }) => (
   <div className="step-interaction-container">
@@ -17,9 +19,8 @@ const ChecklistInteraction: FC<InteractionViewProps> = ({ interaction }) => (
       <div className="checklist-container">
         {interaction.data.map((el, index) => (
           <div className="list-item" key={index}>
-            <input type="checkbox" className="checkbox" />
-            <span className="list-item-value">{el.name}</span>
-            <span className="remove-button">x</span>
+            <Checkbox label={el.name} onClick={undefined} />
+            <Close className="icon" />
           </div>
         ))}
       </div>
