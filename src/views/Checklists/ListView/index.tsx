@@ -7,6 +7,7 @@ import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { Settings } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
+import { Settings } from '@material-ui/icons';
 
 import SideBar from './SideBar';
 import { fetchChecklists } from './actions';
@@ -27,6 +28,9 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
   const [sideBarOpen, setSideBarOpen] = useState(false);
+
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
 
   useEffect(() => {
     if (!checklists?.length) {
