@@ -1,6 +1,6 @@
-const baseUrl = 'http://api.streem.leucinetech.com/api/v1/';
+const baseUrl = 'http://api.streem.leucinetech.com/api/v1';
 
-export const apiGetChecklists = () => `${baseUrl}checklist`;
+export const apiGetChecklists = () => `${baseUrl}/checklist`;
 
 export const apiGetChecklist = (checklistId: string) =>
-  `${baseUrl}checklist/${checklistId}`;
+  `${baseUrl}/checklist/${checklistId}`;

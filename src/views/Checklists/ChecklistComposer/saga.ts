@@ -1,19 +1,23 @@
-import { put, takeLatest, delay } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 
+import { apiGetChecklist } from '../../../utils/apiUrls';
+import { request } from './../../../utils/request';
 import {
+  fetchChecklistError,
   fetchChecklistOngoing,
   fetchCHecklistSuccess,
-  fetchChecklistError,
 } from './actions';
 import { ChecklistComposerAction } from './types';
-import { getChecklist } from '../mockData';
 
-function* fetchChecklist(payload: any) {
+function* fetchChecklist(action: any) {
   try {
     yield put(fetchChecklistOngoing());
 
-    const checklist = getChecklist(payload.payload.checklistId);
-    delay(1500);
+    const checklist = yield call(
+      request,
+      'GET',
+      apiGetChecklist(action.payload?.checklistId),
+    );
     yield put(fetchCHecklistSuccess(checklist.data));
   } catch (error) {
     console.error(
