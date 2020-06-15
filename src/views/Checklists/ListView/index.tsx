@@ -58,18 +58,25 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
         </div>
         <div className="list-body">
           {(checklists as Array<Checklist>).map((el, index) => (
-            <div
-              key={index}
-              className="checklist-card"
-              onClick={() => selectChecklist(el.id)}
-            >
+            <div key={index} className="checklist-card">
               <div className="checklist-card-columns">
                 <Settings
-                  style={{ fontSize: 20, color: '#12aab3', width: 40 }}
+                  style={{
+                    fontSize: 20,
+                    color: '#12aab3',
+                    width: 40,
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => selectChecklist(el.id)}
                 />
                 <div className="title-group">
                   <span className="checklist-code">{el.code}</span>
-                  <span className="checklist-title">{el.name}</span>
+                  <span
+                    className="checklist-title"
+                    onClick={() => selectChecklist(el.id)}
+                  >
+                    {el.name}
+                  </span>
                 </div>
               </div>
               {(properties as Array<string | null>).map((property, index) => (
