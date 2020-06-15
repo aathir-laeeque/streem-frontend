@@ -1,5 +1,5 @@
-import { Router } from '@reach/router';
-import React, { FC } from 'react';
+import { Router, navigate } from '@reach/router';
+import React, { FC, useEffect } from 'react';
 import { Provider } from 'react-redux';
 
 import { Header, NavigationMenu, WorkArea } from './components';
@@ -18,23 +18,29 @@ import {
   TasksView,
 } from './views';
 
-const App: FC = () => (
-  <Provider store={store}>
-    <DashboardLayout>
-      <Header />
-      <NavigationMenu />
-      <WorkArea>
-        <Router basepath="/">
-          <DashboardView path="/" />
-          <AuditLogsView path="audit/*" />
-          <ChecklistView path="checklist/*" />
-          <ReportsView path="reports/*" />
-          <TasksView path="tasks/*" />
-        </Router>
-      </WorkArea>
-    </DashboardLayout>
-    <GlobalStyles />
-  </Provider>
-);
+const App: FC = () => {
+  useEffect(() => {
+    navigate('/checklist');
+  }, []);
+
+  return (
+    <Provider store={store}>
+      <DashboardLayout>
+        <Header />
+        <NavigationMenu />
+        <WorkArea>
+          <Router basepath="/">
+            <DashboardView path="/" />
+            <AuditLogsView path="audit/*" />
+            <ChecklistView path="checklist/*" />
+            <ReportsView path="reports/*" />
+            <TasksView path="tasks/*" />
+          </Router>
+        </WorkArea>
+      </DashboardLayout>
+      <GlobalStyles />
+    </Provider>
+  );
+};
 
 export default App;
