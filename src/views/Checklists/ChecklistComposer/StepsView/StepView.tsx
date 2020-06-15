@@ -12,6 +12,7 @@ import React, { FC } from 'react';
 
 import Interactions from './InteractionsView';
 import { InteractionType } from './InteractionsView/types';
+import { TARGET_RULES } from './InteractionsView/constants';
 import StepMedia from './StepMedia';
 import { StepViewProps } from './types';
 
@@ -85,20 +86,26 @@ const StepView: FC<StepViewProps> = ({
               <div className="timed-rule">
                 <div className="form-field">
                   <label className="form-input-label">Time Rule</label>
-                  <input
-                    className="form-input form-input-value"
+                  <select
+                    id="target-rule-select"
+                    className="form-input"
                     value={step.timed.operator}
-                    onChange={undefined}
-                    type="text"
-                    name="timed-operator"
-                    placeholder="Not more than"
-                  />
+                  >
+                    <option value="" selected disabled hidden>
+                      Choose here
+                    </option>
+                    {TARGET_RULES.map((rule, index) => (
+                      <option key={index} value={rule.value}>
+                        {rule.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="form-field">
                   <label className="form-input-label">{''}</label>
                   <input
                     className="form-input form-input-value"
-                    value={step.timed.value}
+                    value={`${step.timed.value} \t\t\t\t ${step.timed.unit}`}
                     onChange={undefined}
                     type="text"
                     name="timed-value"

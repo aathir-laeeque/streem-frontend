@@ -1,15 +1,7 @@
 import React, { FC } from 'react';
 
 import { InteractionViewProps } from './types';
-
-const TARGET_RULES = [
-  { label: 'Equal To', value: 'Equal To' },
-  { label: 'Not Equal To', value: 'Not Equal To' },
-  { label: 'Not Less Than', value: 'Not Less Than' },
-  { label: 'Not More Than', value: 'Not More Than' },
-  { label: 'Is Between', value: 'Is Between' },
-  { label: 'Is Between and Equal To', value: 'Is Between and Equal To' },
-];
+import { TARGET_RULES } from './constants';
 
 const ShouldBeInteraction: FC<InteractionViewProps> = ({ interaction }) => (
   <div className="step-interaction-container">
@@ -42,7 +34,7 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({ interaction }) => (
           className="form-input form-input-value"
           name="uom"
           type="text"
-          value={interaction.data[0].UOM}
+          value={interaction.data[0].uom}
           placeholder="UOM"
           onChange={undefined}
         />
