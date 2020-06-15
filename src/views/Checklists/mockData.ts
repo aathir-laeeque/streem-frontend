@@ -1,5 +1,5 @@
 import { ChecklistsObj, Checklist } from './types';
-import { default as tempData } from './tempData.json';
+import { default as checklistsData } from './checklists.json';
 
 // const uuid = () => {
 //   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -9,7 +9,7 @@ import { default as tempData } from './tempData.json';
 //   });
 // };
 
-const generateChecklists = (): ChecklistsObj => tempData;
+const generateChecklists = (): ChecklistsObj => checklistsData;
 
 export const checklists = generateChecklists();
 
