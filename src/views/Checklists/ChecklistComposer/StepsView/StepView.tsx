@@ -132,7 +132,7 @@ const StepView: FC<StepViewProps> = ({
         </div>
       </div>
       <div style={{ flex: 1, marginLeft: '16px' }}>
-        {stepMedias.length ? <StepMedia medias={stepMedias} /> : null}
+        {stepMedias.length && active ? <StepMedia medias={stepMedias} /> : null}
       </div>
     </div>
   );

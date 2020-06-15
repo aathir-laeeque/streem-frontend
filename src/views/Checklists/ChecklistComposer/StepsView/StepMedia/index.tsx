@@ -5,10 +5,7 @@ import { Wrapper } from './styles';
 import { StepMediaProps } from './types';
 
 const StepMedia: FC<StepMediaProps> = ({ medias }) => {
-  console.log('interaction from StepMedia :: ', medias);
   const [activeMedia, setActiveMedia] = useState(medias[0]);
-
-  console.log('activeMEdia :: ', activeMedia);
 
   return (
     <Wrapper>
@@ -28,6 +25,9 @@ const StepMedia: FC<StepMediaProps> = ({ medias }) => {
             className="media-interaction-media-item"
             key={index}
             onClick={() => setActiveMedia(media)}
+            {...(activeMedia === media && {
+              style: { borderColor: '#12aab3' },
+            })}
           >
             <img src={media.link} />
             <div>

@@ -63,11 +63,13 @@ export const Wrapper = styled.div.attrs({
         border-radius: 5px;
         margin-right: 8px;
         margin-bottom: 8px;
-        flex: 0 47.9%;
+        flex: 0 47.3%;
         display: flex;
+        border: 1px solid transparent;
 
         > img {
           width: 54px;
+          border-radius: 5px;
         }
 
         > div {
