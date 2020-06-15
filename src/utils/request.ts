@@ -1,5 +1,10 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
+interface RequestOptions {
+  data?: { [k: string]: any };
+  headers?: { [k: string]: any };
+}
+
 const checkStatus = (response: any) => {
   if (response.status === 204 || response.status === 205) {
     return null;
@@ -8,7 +13,6 @@ const checkStatus = (response: any) => {
     return response.data;
   } else {
     const error = new Error(response.error);
-    error.response = response;
 
     throw error;
   }
@@ -26,7 +30,7 @@ const checkStatus = (response: any) => {
 export const request = (
   method: AxiosRequestConfig['method'],
   url: string,
-  options: any,
+  options: RequestOptions,
 ) =>
   axios({
     method,
@@ -34,6 +38,7 @@ export const request = (
     withCredentials: false,
     headers: {
       'Access-Control-Allow-Origin': '*',
+      ...options?.headers,
     },
-    ...options,
+    data: { ...options?.data },
   }).then(checkStatus);
