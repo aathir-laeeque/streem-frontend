@@ -5,7 +5,9 @@ import { AppDispatch, useTypedSelector } from '#store';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-// relative imports
+import { Button } from '../../../components';
+import { useTypedSelector } from '../../../store/helpers';
+import { AppDispatch } from '../../../store/types';
 import { fetchChecklist } from './actions';
 import Checklist from './Checklist';
 import { ChecklistComposerProps, ChecklistState, TemplateMode } from './types';

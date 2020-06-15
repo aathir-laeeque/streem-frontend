@@ -16,7 +16,7 @@ export const Button = styled.button.attrs({
 `;
 
 export const Button1 = styled.button.attrs({
-  // style: (props) => props.customStyle || {},
+  // style: (props: any) => props.customStyle || {},
 })`
   border-radius: 3px;
   background-color: #12aab3;

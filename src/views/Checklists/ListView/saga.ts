@@ -1,21 +1,22 @@
-import { delay, put, takeLatest } from 'redux-saga/effects';
-
-import { checklists } from './../mockData';
+import { put, takeLatest, call } from 'redux-saga/effects';
+import { apiGetChecklists } from '../../../utils/apiUrls';
+import { request } from './../../../utils/request';
+// import { checklists } from '../mockData';
 import {
   fetchChecklistsError,
   fetchChecklistsOngoing,
   fetchChecklistsSuccess,
 } from './action';
-import { ListViewAction } from './types';
+import { ListViewAction, ListViewActionType } from './types';
 
-function* fetchChecklists() {
+function* fetchChecklists(action: ListViewActionType) {
   try {
     yield put(fetchChecklistsOngoing());
 
-    const list = checklists.data;
-    yield delay(1500);
+    const params = action.payload;
+    const response = yield call(request, 'GET', apiGetChecklists(), { params });
 
-    yield put(fetchChecklistsSuccess(list));
+    yield put(fetchChecklistsSuccess(response));
   } catch (error) {
     console.error(
       'error from fetchChecklist function in ChecklistListViewSaga :: ',
