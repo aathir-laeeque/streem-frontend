@@ -74,9 +74,9 @@ export const Composer = styled.div`
       list-style-position: inside;
       padding: 8px;
       margin-bottom: 8px;
-      /* border: 1px solid transparent; */
       border: 1.5px solid transparent;
       border-color: #f4f4f4;
+      cursor: pointer;
 
       :last-child {
         margin-bottom: 0;
