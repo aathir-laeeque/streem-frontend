@@ -1,18 +1,17 @@
 import { Stage } from './ChecklistComposer/StagesView/types';
-
 export interface Properties {
   [key: string]: string | null;
 }
 
 export interface Checklist {
-  id: string | number;
+  id: number;
   name: string;
   code: string;
-  noOfTasks: number;
-  version: number;
-  archived: boolean;
-  properties: Properties;
+  version: number | null;
   stages?: Stage[];
+  noOfTasks?: number;
+  archived?: boolean;
+  properties?: Properties;
 }
 export interface Pageable {
   page: number;
@@ -24,7 +23,6 @@ export interface Pageable {
   last: boolean;
   empty: boolean;
 }
-
 export interface ChecklistsObj {
   object: string;
   status: string;

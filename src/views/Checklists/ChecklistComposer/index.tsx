@@ -1,12 +1,9 @@
-// alias imports
-import { Button } from '#components';
-import { AppDispatch, useTypedSelector } from '#store';
-
-// library imports
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-// relative imports
+import { Button } from '../../../components';
+import { useTypedSelector } from '../../../store/helpers';
+import { AppDispatch } from '../../../store/types';
 import { fetchChecklist } from './actions';
 import Stages from './StagesView';
 import Steps from './StepsView';
