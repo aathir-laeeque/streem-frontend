@@ -1,10 +1,29 @@
-import React, { FC } from 'react';
-import { FlatButton, Button } from '../../../../components';
+import React, { FC, useState } from 'react';
+import { FlatButton, Button, Modal, FloatInput } from '../../../../components';
 import { Check } from '@material-ui/icons';
 
 import { SideBarProps } from './types';
 
-const SideBar: FC<SideBarProps> = ({ sideBarOpen, closeNav }) => {
+const SideBar: FC<SideBarProps> = ({
+  sideBarOpen,
+  closeNav,
+  selectedChecklist,
+}) => {
+  const [taskDetails, setTaskDetails] = useState<Record<string, string>>({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const toggleState = () => {
+    if (!isModalOpen) {
+      closeNav();
+    }
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const onInputChange = (id: string, value: string) => {
+    const temp = { ...taskDetails };
+    temp[id] = value;
+    setTaskDetails(temp);
+  };
+
   return (
     <div>
       {sideBarOpen && (
@@ -21,7 +40,9 @@ const SideBar: FC<SideBarProps> = ({ sideBarOpen, closeNav }) => {
       )}
       <div id="mySidenav" className="sidenav">
         <div style={{ margin: 16 }}>
-          <Button className="sidebar-button">Start A Task</Button>
+          <Button className="sidebar-button" onClick={toggleState}>
+            Start A Task
+          </Button>
           <FlatButton className="sidebar-flat-button">
             Edit Checklist
           </FlatButton>
@@ -84,6 +105,53 @@ const SideBar: FC<SideBarProps> = ({ sideBarOpen, closeNav }) => {
           </div>
         </div>
       </div>
+      {isModalOpen && selectedChecklist && (
+        <Modal
+          toggleState={toggleState}
+          isModalOpen={isModalOpen}
+          title="Creating a Task"
+          successText="Create Task"
+          cancelText="Cancel"
+          modalFooterOptions={
+            <span style={{ color: `#12aab3`, fontWeight: 600, fontSize: 12 }}>
+              Schedule Task
+            </span>
+          }
+        >
+          <FloatInput
+            placeHolder="Choose a Checklist"
+            label="Checklist"
+            value={`${selectedChecklist.code} ${selectedChecklist.name}`}
+            id="checklistId"
+            onChange={onInputChange}
+            required
+            disabled
+          />
+          <FloatInput
+            placeHolder="Name of the product being cleand"
+            label="Product Manufactured"
+            id="productManufactured"
+            value={taskDetails.productManufactured || ''}
+            onChange={onInputChange}
+            required
+          />
+          <FloatInput
+            placeHolder="Batch No. of the manufactured Product"
+            label="Batch Number"
+            id="batchNo"
+            value={taskDetails.batchNo || ''}
+            onChange={onInputChange}
+            required
+          />
+          <FloatInput
+            placeHolder="Room ID for the Equipment"
+            label="Room ID"
+            id="roomId"
+            value={taskDetails.roomId || ''}
+            onChange={onInputChange}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

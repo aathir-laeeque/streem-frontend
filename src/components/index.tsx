@@ -3,5 +3,7 @@ export { default as NavigationMenu } from './NavigationMenu';
 export { default as WorkArea } from './WorkArea';
 
 export { Button, FlatButton } from './shared/Button';
+export { Modal } from './shared/Modal';
+export { FloatInput } from './shared/FloatInput';
 export { Checkbox } from './shared/Checkbox';
 export { ListView as ListViewComponent } from './shared/ListView';
