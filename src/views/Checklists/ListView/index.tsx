@@ -31,6 +31,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
 
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
+  const [sideBarOpen, setSideBarOpen] = useState(false);
 
   useEffect(() => {
     if (!checklists?.length) {
