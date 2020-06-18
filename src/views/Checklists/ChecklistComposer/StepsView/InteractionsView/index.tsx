@@ -11,6 +11,8 @@ import MaterialInteraction from './MaterialInteraction';
 import ShouldBeInteraction from './ShouldBeInteraction';
 import { InteractionsViewProps, InteractionType } from './types';
 import YesNoInteraction from './YesNoInteraction';
+import TextboxInteraction from './TextboxInteraction';
+import SignatureInteraction from './SignatureInteraction';
 
 const InteractionsView: FC<InteractionsViewProps> = ({ interactions }) => (
   <div className="step-interactions">
@@ -38,6 +40,12 @@ const InteractionsView: FC<InteractionsViewProps> = ({ interactions }) => (
 
             case InteractionType.SHOULDBE:
               return <ShouldBeInteraction interaction={interaction} />;
+
+            case InteractionType.TEXTBOX:
+              return <TextboxInteraction interaction={interaction} />;
+
+            case InteractionType.SIGNATURE:
+              return <SignatureInteraction interaction={interaction} />;
 
             default:
               return null;

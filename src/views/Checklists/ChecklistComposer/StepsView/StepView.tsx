@@ -124,9 +124,7 @@ const StepView: FC<StepViewProps> = ({
             interactions={step.interactions.filter(
               (el) =>
                 el.type !== InteractionType.MEDIA &&
-                el.type !== InteractionType.MULTISELECT &&
-                el.type !== InteractionType.TEXTBOX &&
-                el.type !== InteractionType.SIGNATURE,
+                el.type !== InteractionType.MULTISELECT,
             )}
           />
         </div>

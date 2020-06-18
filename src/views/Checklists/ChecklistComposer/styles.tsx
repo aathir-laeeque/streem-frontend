@@ -397,18 +397,6 @@ export const Composer = styled.div`
     }
   }
 
-  .instruction-interaction {
-    > textarea {
-      outline: none;
-      border: none;
-      padding: 8px;
-      width: calc(100% - 16px);
-      resize: none;
-      color: #666666;
-      border-bottom: 2px solid #12aab3;
-    }
-  }
-
   .yes-no-interaction {
     display: flex;
     flex-direction: column;
@@ -494,6 +482,26 @@ export const Composer = styled.div`
     }
   }
 
+  .signature-interaction {
+    border: 1px dashed #bababa;
+    border-radius: 5px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    > span {
+      color: #666666;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    > .icon-container {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
   .icon {
     color: #999999;
     cursor: pointer;
@@ -511,6 +519,16 @@ export const Composer = styled.div`
 
       :last-child {
         margin-bottom: 0;
+      }
+
+      > textarea {
+        outline: none;
+        border: none;
+        padding: 8px;
+        width: calc(100% - 16px);
+        resize: none;
+        color: #666666;
+        border-bottom: 2px solid #12aab3;
       }
     }
 
