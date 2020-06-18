@@ -20,7 +20,7 @@ const ChecklistComposer: FC<ChecklistComposerProps> = ({ checklistId }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    if (!checklist && checklistId) {
+    if (!!checklistId && (!checklist || checklist?.id !== checklistId)) {
       dispatch(fetchChecklist(checklistId));
     }
   }, []);
