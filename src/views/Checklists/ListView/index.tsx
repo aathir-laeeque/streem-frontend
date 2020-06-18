@@ -1,12 +1,13 @@
 // alias imports
 import { AppDispatch, useTypedSelector } from '#store';
-
+import { FlatButton, Button } from '#components';
 // library imports
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Settings, ArrowDropDown, Search } from '@material-ui/icons';
-import { FlatButton, Button1 } from '../../../components';
+
+import SideBar from './SideBar';
 import { Checklist } from '../types';
 import { fetchChecklists } from './action';
 import { ListViewProps } from './types';
@@ -23,12 +24,30 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
 
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
+  const [sideBarOpen, setSideBarOpen] = useState(false);
 
   useEffect(() => {
     if (!checklists?.length) {
       dispatch(fetchChecklists({ page, size }));
     }
   }, []);
+
+  const openNav = () => {
+    const mySidenav = document.getElementById('mySidenav');
+    if (mySidenav && !sideBarOpen) {
+      setSideBarOpen(true);
+      mySidenav.style.cssText = 'right: 0px;';
+    }
+  };
+
+  const closeNav = () => {
+    console.log('closeNav', sideBarOpen);
+    const mySidenav = document.getElementById('mySidenav');
+    if (mySidenav && sideBarOpen) {
+      setSideBarOpen(false);
+      mySidenav.style.cssText = 'right: -300px;';
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -44,7 +63,9 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
             <Search className="searchsubmit" />
           </div>
           <span className="resetOption">Reset</span>
-          <Button1>Create Checklist</Button1>
+          <Button style={{ marginLeft: `auto`, marginRight: 0 }}>
+            Create Checklist
+          </Button>
         </div>
         <div className="list-header">
           <div className="list-header-columns">
@@ -67,7 +88,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
                     width: 40,
                     cursor: 'pointer',
                   }}
-                  onClick={() => selectChecklist(el.id)}
+                  onClick={() => openNav()}
                 />
                 <div className="title-group">
                   <span className="checklist-code">{el.code}</span>
@@ -89,6 +110,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
             </div>
           ))}
         </div>
+        <SideBar sideBarOpen={sideBarOpen} closeNav={closeNav} />
       </Composer>
     );
   } else {

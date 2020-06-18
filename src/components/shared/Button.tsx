@@ -14,19 +14,6 @@ export const Button = styled.button.attrs({
   cursor: pointer;
 `;
 
-export const Button1 = styled.button.attrs({
-  // style: (props: any) => props.customStyle || {},
-})`
-  border-radius: 3px;
-  background-color: #12aab3;
-  color: #ffffff;
-  line-height: 0.75;
-  padding: 10px 16px;
-  border: none;
-  outline: none;
-  margin-left: auto;
-`;
-
 export const FlatButton = styled.button.attrs({
   // style: (props) => props.customStyle || {},
 })`
