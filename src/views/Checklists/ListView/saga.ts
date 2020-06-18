@@ -1,7 +1,6 @@
 import { put, takeLatest, call } from 'redux-saga/effects';
 import { apiGetChecklists } from '../../../utils/apiUrls';
 import { request } from './../../../utils/request';
-// import { checklists } from '../mockData';
 import {
   fetchChecklistsError,
   fetchChecklistsOngoing,
