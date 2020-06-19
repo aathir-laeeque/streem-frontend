@@ -4,7 +4,9 @@
   "author": "Snehal Seth <sethsnehal95@gmail.com>",
   "scripts": {
     "watch": "parcel -p 5000 src/index.html",
-    "build": "parcel build src/index.html"
+    "build": "parcel build src/index.html",
+    "lint:check": "eslint -c .eslintrc 'src/**/*{.ts,.tsx}'",
+    "lint:fix": "eslint --fix"
   },
   "devDependencies": {
     "@types/node": "^14.0.13",
