@@ -5,7 +5,7 @@ import { request } from './../../../utils/request';
 import {
   fetchChecklistError,
   fetchChecklistOngoing,
-  fetchCHecklistSuccess,
+  fetchChecklistSuccess,
 } from './actions';
 import { ChecklistComposerAction } from './types';
 
@@ -18,7 +18,7 @@ function* fetchChecklist(action: any) {
       'GET',
       apiGetChecklist(action.payload?.checklistId),
     );
-    yield put(fetchCHecklistSuccess(checklist.data));
+    yield put(fetchChecklistSuccess(checklist.data));
   } catch (error) {
     console.error(
       'error frmo fetchChecklist in checklistCOmposerSaga :: ',

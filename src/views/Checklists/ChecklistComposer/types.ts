@@ -5,15 +5,15 @@ import {
   fetchChecklist,
   fetchChecklistError,
   fetchChecklistOngoing,
-  fetchCHecklistSuccess,
+  fetchChecklistSuccess,
 } from './actions';
 
 export interface ChecklistComposerProps extends RouteComponentProps {
-  checklistId?: number;
+  checklistId: string;
 }
 
 export interface ChecklistComposerState {
-  readonly checklist: Checklist | undefined;
+  readonly checklist?: Checklist;
   readonly loading: boolean;
   readonly error: any;
 }
@@ -29,5 +29,5 @@ export type ChecklistComposerActionType = ReturnType<
   | typeof fetchChecklist
   | typeof fetchChecklistOngoing
   | typeof fetchChecklistError
-  | typeof fetchCHecklistSuccess
+  | typeof fetchChecklistSuccess
 >;

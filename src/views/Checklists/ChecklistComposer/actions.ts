@@ -2,7 +2,7 @@ import { actionSpreader } from './../../../store/helpers';
 import { ChecklistComposerAction } from './types';
 import { Checklist } from '../types';
 
-export const fetchChecklist = (checklistId: number) =>
+export const fetchChecklist = (checklistId: string) =>
   actionSpreader(ChecklistComposerAction.FETCH_CHECKLIST, { checklistId });
 
 export const fetchChecklistOngoing = () =>
@@ -11,7 +11,7 @@ export const fetchChecklistOngoing = () =>
 export const fetchChecklistError = (error: any) =>
   actionSpreader(ChecklistComposerAction.FETCH_CHECKLIST_ERROR, { error });
 
-export const fetchCHecklistSuccess = (checklist: Checklist) =>
+export const fetchChecklistSuccess = (checklist: Checklist) =>
   actionSpreader(ChecklistComposerAction.FETCH_CHECKLIST_SUCCESS, {
     checklist,
   });

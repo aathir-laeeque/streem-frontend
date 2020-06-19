@@ -42,10 +42,12 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({ interaction }) => (
       <div id="target-rules">
         <div className="form-field">
           <label className="form-input-label">Target</label>
-          <select id="target-rule-select" className="form-input">
-            <option value="" selected disabled hidden>
-              Choose here
-            </option>
+          <select
+            id="target-rule-select"
+            className="form-input"
+            defaultValue="Choose Here"
+            value={interaction?.data[0]?.operator}
+          >
             {TARGET_RULES.map((rule, index) => (
               <option key={index} value={rule.value}>
                 {rule.label}

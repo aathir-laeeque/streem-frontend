@@ -8,9 +8,11 @@ const InstructionInteraction: FC<InteractionViewProps> = ({ interaction }) => (
       <div className="form-field">
         <textarea
           name="instruction"
-          value={interaction.data.text}
+          value={interaction.data?.text}
           rows={3}
           onChange={undefined}
+          readOnly
+          defaultValue={interaction.data?.text}
         />
       </div>
     </div>
