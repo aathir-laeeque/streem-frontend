@@ -8,9 +8,10 @@ interface ModalProps {
   successText: string;
   cancelText: string;
   isModalOpen: boolean;
+  onSuccess: () => void;
   toggleState: () => void;
   children: ReactNode;
-  modalFooterOptions: ReactNode;
+  modalFooterOptions?: ReactNode;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -154,6 +155,7 @@ const Wrapper = styled.div.attrs({})`
 export const Modal: FC<ModalProps> = ({
   isModalOpen,
   toggleState,
+  onSuccess,
   children,
   modalFooterOptions,
   title,
@@ -167,7 +169,9 @@ export const Modal: FC<ModalProps> = ({
     if (container) {
       container.classList.add('out');
     }
-    toggleState();
+    setTimeout(() => {
+      toggleState();
+    }, 500);
   };
 
   return (
@@ -192,7 +196,13 @@ export const Modal: FC<ModalProps> = ({
                 >
                   {cancelText}
                 </FlatButton>
-                <Button style={{ marginRight: 0, fontWeight: 600 }}>
+                <Button
+                  style={{ marginRight: 0, fontWeight: 600 }}
+                  onClick={() => {
+                    onModalContainerClick();
+                    onSuccess();
+                  }}
+                >
                   {successText}
                 </Button>
               </div>

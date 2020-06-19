@@ -8,6 +8,7 @@ import { IntearctionViewSaga } from '../views/Checklists/ChecklistComposer/Steps
 import { StepViewSaga } from '../views/Checklists/ChecklistComposer/StepsList/StepView/saga';
 import { ChecklistListViewSaga } from '../views/Checklists/ListView/saga';
 import { PropertiesSaga } from './properties/saga';
+import { showNotificationSaga } from '../components/Notification/saga';
 
 // TODO: move this saga import to checklistcomposer saga
 export function* rootSaga() {
@@ -20,5 +21,6 @@ export function* rootSaga() {
     fork(StepViewSaga),
     fork(IntearctionViewSaga),
     fork(PropertiesSaga),
+    fork(showNotificationSaga),
   ]);
 }

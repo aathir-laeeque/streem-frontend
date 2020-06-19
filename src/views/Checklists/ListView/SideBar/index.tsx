@@ -1,6 +1,10 @@
 import React, { FC, useState } from 'react';
-import { FlatButton, Button, Modal, FloatInput } from '../../../../components';
+import { useDispatch } from 'react-redux';
 import { Check } from '@material-ui/icons';
+import { FlatButton, Button, Modal, FloatInput } from '../../../../components';
+import { showNotification } from '../../../../components/Notification/actions';
+import { NotificationType } from '../../../../components/Notification/types';
+import { AppDispatch } from '../../../../store/types';
 
 import { SideBarProps } from './types';
 
@@ -9,6 +13,8 @@ const SideBar: FC<SideBarProps> = ({
   closeNav,
   selectedChecklist,
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const [taskDetails, setTaskDetails] = useState<Record<string, string>>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const toggleState = () => {
@@ -22,6 +28,16 @@ const SideBar: FC<SideBarProps> = ({
     const temp = { ...taskDetails };
     temp[id] = value;
     setTaskDetails(temp);
+  };
+
+  const onCreateTask = () => {
+    dispatch(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'Task Created Successfully !!',
+      }),
+    );
+    console.log('onCreate Task');
   };
 
   return (
@@ -112,6 +128,7 @@ const SideBar: FC<SideBarProps> = ({
           title="Creating a Task"
           successText="Create Task"
           cancelText="Cancel"
+          onSuccess={onCreateTask}
           modalFooterOptions={
             <span style={{ color: `#12aab3`, fontWeight: 600, fontSize: 12 }}>
               Schedule Task
