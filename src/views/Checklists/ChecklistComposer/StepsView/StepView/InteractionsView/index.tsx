@@ -1,3 +1,4 @@
+// library imports
 import {
   ArrowDownwardOutlined,
   ArrowUpwardOutlined,
@@ -5,14 +6,17 @@ import {
 } from '@material-ui/icons';
 import React, { FC } from 'react';
 
+// relative imports
 import ChecklistInteraction from './ChecklistInteraction';
 import InstructionInteraction from './InstructionInteraction';
 import MaterialInteraction from './MaterialInteraction';
 import ShouldBeInteraction from './ShouldBeInteraction';
-import { InteractionsViewProps, InteractionType } from './types';
-import YesNoInteraction from './YesNoInteraction';
-import TextboxInteraction from './TextboxInteraction';
 import SignatureInteraction from './SignatureInteraction';
+import TextboxInteraction from './TextboxInteraction';
+import YesNoInteraction from './YesNoInteraction';
+
+// types
+import { InteractionsViewProps, InteractionType } from './types';
 
 const InteractionsView: FC<InteractionsViewProps> = ({ interactions }) => (
   <div className="step-interactions">

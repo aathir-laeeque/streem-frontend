@@ -1,4 +1,4 @@
-import { ListViewActionType, ListViewState, ListViewAction } from './types';
+import { ListViewAction, ListViewActionType, ListViewState } from './types';
 
 const initialState: ListViewState = {
   checklists: undefined,

@@ -9,7 +9,7 @@ import {
 } from './actions';
 
 export interface ChecklistComposerProps extends RouteComponentProps {
-  checklistId: string;
+  checklistId?: string;
 }
 
 export interface ChecklistComposerState {

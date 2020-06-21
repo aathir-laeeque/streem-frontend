@@ -1,9 +1,12 @@
+// alias imports
+import { AppDispatch, useTypedSelector } from '#store';
+
+// library imports
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { useTypedSelector } from '../../../store/helpers';
-import { AppDispatch } from '../../../store/types';
+// relative imports
 import { Checklist } from '../types';
 import { fetchChecklists } from './action';
 import { ListViewProps } from './types';
@@ -13,7 +16,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
     (state) => state.checklistListView,
   );
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch: AppDispatch = useDispatch();
 
   const selectChecklist = (id: string | number) => navigate(`/checklist/${id}`);
 

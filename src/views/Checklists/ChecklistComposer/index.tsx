@@ -1,9 +1,12 @@
+// alias imports
+import { Button } from '#components';
+import { AppDispatch, useTypedSelector } from '#store';
+
+// library imports
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Button } from '../../../components';
-import { useTypedSelector } from '../../../store/helpers';
-import { AppDispatch } from '../../../store/types';
+// relative imports
 import { fetchChecklist } from './actions';
 import Stages from './StagesView';
 import Steps from './StepsView';
@@ -17,7 +20,7 @@ const ChecklistComposer: FC<ChecklistComposerProps> = ({ checklistId }) => {
     (state) => state.checklistComposer,
   );
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     if (!!checklistId && checklist?.id !== parseInt(checklistId)) {

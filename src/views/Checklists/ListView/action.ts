@@ -1,6 +1,7 @@
-import { ListViewAction } from './types';
-import { actionSpreader } from './../../../store/helpers';
+import { actionSpreader } from '#store';
+
 import { Checklist } from '../types';
+import { ListViewAction } from './types';
 
 export const fetchChecklists = () =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS);

@@ -1,7 +1,7 @@
 import {
-  ChecklistComposerState,
-  ChecklistComposerActionType,
   ChecklistComposerAction,
+  ChecklistComposerActionType,
+  ChecklistComposerState,
 } from './types';
 
 const initialState: ChecklistComposerState = {

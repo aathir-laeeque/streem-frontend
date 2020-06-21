@@ -1,9 +1,13 @@
-import React, { FC } from 'react';
+// alias imports
+import { Checkbox } from '#components';
+
+// library imports
 import { Close } from '@material-ui/icons';
 import { noop } from 'lodash';
+import React, { FC } from 'react';
 
+// relative imports
 import { InteractionViewProps } from './types';
-import { Checkbox } from '../../../../../../components';
 
 const ChecklistInteraction: FC<InteractionViewProps> = ({ interaction }) => (
   <div className="step-interaction-container">

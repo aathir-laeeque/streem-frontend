@@ -1,15 +1,15 @@
-import { Router, navigate } from '@reach/router';
+// alias imports
+import { Header, NavigationMenu, WorkArea } from '#components';
+import { DashboardLayout } from '#components/Layouts';
+import { store } from '#store';
+
+// library imports
+import { navigate, Router } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { Provider } from 'react-redux';
 
-import { Header, NavigationMenu, WorkArea } from './components';
-
-import { DashboardLayout } from './components/Layouts';
-
-import { store } from './store/configureStore';
-
+// relative imports
 import GlobalStyles from './styles/GlobalStyles';
-
 import {
   AuditLogsView,
   ChecklistView,

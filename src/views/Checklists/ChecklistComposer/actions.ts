@@ -1,6 +1,7 @@
-import { actionSpreader } from './../../../store/helpers';
-import { ChecklistComposerAction } from './types';
+import { actionSpreader } from '#store';
+
 import { Checklist } from '../types';
+import { ChecklistComposerAction } from './types';
 
 export const fetchChecklist = (checklistId: Checklist['id']) =>
   actionSpreader(ChecklistComposerAction.FETCH_CHECKLIST, { checklistId });
