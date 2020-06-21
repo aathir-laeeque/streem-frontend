@@ -2,7 +2,7 @@ import { actionSpreader } from './../../../store/helpers';
 import { ChecklistComposerAction } from './types';
 import { Checklist } from '../types';
 
-export const fetchChecklist = (checklistId: string) =>
+export const fetchChecklist = (checklistId: Checklist['id']) =>
   actionSpreader(ChecklistComposerAction.FETCH_CHECKLIST, { checklistId });
 
 export const fetchChecklistOngoing = () =>

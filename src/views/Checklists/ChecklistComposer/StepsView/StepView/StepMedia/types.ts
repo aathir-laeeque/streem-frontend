@@ -1,4 +1,4 @@
-export interface StepMedia {
+export interface Media {
   id: number;
   name: string;
   link: string;
@@ -7,5 +7,5 @@ export interface StepMedia {
 }
 
 export interface StepMediaProps {
-  medias: StepMedia[];
+  medias: Media[];
 }

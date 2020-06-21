@@ -15,6 +15,8 @@ export interface Interaction {
   type: InteractionType;
   data: any;
   mandatory: boolean;
+  orderTree: number;
+  label?: string;
 }
 
 export interface InteractionsViewProps {

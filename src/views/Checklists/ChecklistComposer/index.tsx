@@ -11,7 +11,7 @@ import { Composer } from './styles';
 import { ChecklistComposerProps } from './types';
 
 const ChecklistComposer: FC<ChecklistComposerProps> = ({ checklistId }) => {
-  const [activeStage, setActiveStage] = useState<number>(0);
+  const [activeStage, setActiveStage] = useState(0);
 
   const { checklist, loading } = useTypedSelector(
     (state) => state.checklistComposer,
@@ -20,8 +20,8 @@ const ChecklistComposer: FC<ChecklistComposerProps> = ({ checklistId }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    if (!!parseInt(checklistId) && checklist?.id !== parseInt(checklistId)) {
-      dispatch(fetchChecklist(checklistId));
+    if (!!checklistId && checklist?.id !== parseInt(checklistId)) {
+      dispatch(fetchChecklist(parseInt(checklistId)));
     }
   }, []);
 

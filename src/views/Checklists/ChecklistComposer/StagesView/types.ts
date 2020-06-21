@@ -4,6 +4,7 @@ export interface Stage {
   id: number;
   name: string;
   code: string;
+  orderTree: number;
   steps: Step[];
 }
 

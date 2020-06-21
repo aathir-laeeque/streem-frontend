@@ -4,6 +4,7 @@ export interface Checklist {
   id: number;
   name: string;
   code: string;
-  version: number | null;
+  version: number;
+  archived: boolean;
   stages: Stage[];
 }
