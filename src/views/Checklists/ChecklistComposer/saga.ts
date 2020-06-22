@@ -1,7 +1,8 @@
+import { apiGetChecklist } from '#utils/apiUrls';
+import { request } from '#utils/request';
+
 import { call, put, takeLatest } from 'redux-saga/effects';
 
-import { apiGetChecklist } from '../../../utils/apiUrls';
-import { request } from './../../../utils/request';
 import {
   fetchChecklistError,
   fetchChecklistOngoing,
@@ -13,6 +14,7 @@ function* fetchChecklist(action: any) {
   try {
     yield put(fetchChecklistOngoing());
 
+    // TODO: add type here for API response
     const checklist = yield call(
       request,
       'GET',
