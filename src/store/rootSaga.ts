@@ -6,6 +6,7 @@ import { ChecklistListViewSaga } from '../views/Checklists/ListView/saga';
 import { ChecklistComposerSaga } from '../views/Checklists/ChecklistComposer/saga';
 import { PropertiesSaga } from './properties/saga';
 import { showNotificationSaga } from '../components/Notification/saga';
+import { TaskListViewSaga } from '../views/Tasks/ListView/saga';
 
 export function* rootSaga() {
   yield all([
@@ -14,5 +15,6 @@ export function* rootSaga() {
     fork(ChecklistComposerSaga),
     fork(PropertiesSaga),
     fork(showNotificationSaga),
+    fork(TaskListViewSaga),
   ]);
 }

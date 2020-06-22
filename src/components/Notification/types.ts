@@ -1,6 +1,6 @@
 import { showNotification } from './actions';
 
-export enum NotificationAction {
+export enum NotificationActions {
   SHOW_NOTIFICATION = '@@notification/SHOW_NOTIFICATION',
 }
 

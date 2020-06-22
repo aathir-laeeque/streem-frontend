@@ -1,3 +1,4 @@
+import { Dispatch } from 'redux';
 import { store } from './configureStore';
 import { rootReducer } from './rootReducer';
 import { NotificationActionType } from '../components/Notification/types';
@@ -9,4 +10,6 @@ export interface BaseAction<T, P> {
   payload?: P;
 }
 
-export type AppDispatch = typeof store.dispatch | NotificationActionType;
+export type AppDispatch =
+  | Dispatch<NotificationActionType>
+  | typeof store.dispatch;

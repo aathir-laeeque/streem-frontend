@@ -33,11 +33,10 @@ const SideBar: FC<SideBarProps> = ({
   const onCreateTask = () => {
     dispatch(
       showNotification({
-        type: NotificationType.SUCCESS,
-        msg: 'Task Created Successfully !!',
+        type: NotificationType.ERROR,
+        msg: 'Task created successfully',
       }),
     );
-    console.log('onCreate Task');
   };
 
   return (
