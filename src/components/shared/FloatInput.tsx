@@ -46,7 +46,7 @@ const Wrapper = styled.div.attrs({})`
 
     .input-active {
       border: none;
-      border-bottom: 2px solid #12aab3;
+      border-bottom: 2px solid #ff6b6b;
       ::-webkit-input-placeholder {
         color: #bababa;
       }

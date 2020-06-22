@@ -8,22 +8,47 @@ export const Notification = styled(ToastContainer).attrs({
   .Toastify__toast-container {
   }
   .Toastify__toast {
+    min-height: 48px;
+    border-radius: 4px;
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12),
+      0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
   }
-  .Toastify__toast--error {
-  }
-  .Toastify__toast--warning {
-  }
-  .Toastify__toast--success {
-    background: #fff;
-    border-left: 4px solid #5aa700;
+  .Toastify__toast--default {
+    padding: 0 8px 0 0;
   }
   .Toastify__toast-body {
-    color: #000;
+    color: #666666;
+    font-size: 14px;
+    display: flex;
+    margin: 0;
+
+    .notification-layout {
+      align-items: center;
+      display: flex;
+      padding: 8px 0 8px 8px;
+    }
+    .notification--success {
+      border-left: 4px solid #5aa700;
+    }
+    .notification--error {
+      border-left: 4px solid red;
+    }
+
+    .toast_icon {
+      font-size: 18px;
+      margin-right: 10px;
+    }
+    .toast_icon--success {
+      color: #5aa700;
+    }
+    .toast_icon--error {
+      color: red;
+    }
   }
   .Toastify__progress-bar {
   }
   .Toastify__close-button {
-    color: #000;
+    color: #999999;
     align-self: center;
   }
 `;
