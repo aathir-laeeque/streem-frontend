@@ -4,3 +4,4 @@ export { default as WorkArea } from './WorkArea';
 
 export { Button, FlatButton } from './shared/Button';
 export { Checkbox } from './shared/Checkbox';
+export { ListView as ListViewComponent } from './shared/ListView';

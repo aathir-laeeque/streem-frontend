@@ -1,26 +1,27 @@
 // alias imports
 import { AppDispatch, useTypedSelector } from '#store';
-import { FlatButton, Button } from '#components';
+import { ListViewComponent } from '#components';
+import { fetchProperties } from '#store/properties/actions';
 // library imports
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
+import { Settings } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
-import { Settings, ArrowDropDown, Search } from '@material-ui/icons';
 
 import SideBar from './SideBar';
-import { Checklist } from '../types';
-import { fetchChecklists } from './action';
+import { fetchChecklists } from './actions';
 import { ListViewProps } from './types';
 import { Composer } from './styles';
 
 const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
-  const { checklists, properties, pageable, loading } = useTypedSelector(
+  const { checklists, pageable, loading } = useTypedSelector(
     (state) => state.checklistListView,
   );
+  const { checklist, task } = useTypedSelector((state) => state.properties);
 
   const dispatch: AppDispatch = useDispatch();
 
-  const selectChecklist = (id: string | number) => navigate(`/checklist/${id}`);
+  const selectChecklist = (id: number) => navigate(`/checklist/${id}`);
 
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
@@ -29,6 +30,12 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   useEffect(() => {
     if (!checklists?.length) {
       dispatch(fetchChecklists({ page, size }));
+    }
+    if (!task?.length) {
+      dispatch(fetchProperties({ type: 'task' }));
+    }
+    if (!checklist?.length) {
+      dispatch(fetchProperties({ type: 'checklist' }));
     }
   }, []);
 
@@ -41,7 +48,6 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   };
 
   const closeNav = () => {
-    console.log('closeNav', sideBarOpen);
     const mySidenav = document.getElementById('mySidenav');
     if (mySidenav && sideBarOpen) {
       setSideBarOpen(false);
@@ -51,65 +57,36 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
 
   if (loading) {
     return <div>Loading...</div>;
-  } else if (checklists && properties && pageable) {
+  } else if (checklists && task && pageable) {
     return (
       <Composer>
-        <div className="list-options">
-          <FlatButton>
-            Filters <ArrowDropDown style={{ fontSize: 20, color: '#12aab3' }} />
-          </FlatButton>
-          <div className="searchboxwrapper">
-            <input className="searchbox" type="text" placeholder="Search" />
-            <Search className="searchsubmit" />
-          </div>
-          <span className="resetOption">Reset</span>
-          <Button style={{ marginLeft: `auto`, marginRight: 0 }}>
-            Create Checklist
-          </Button>
-        </div>
-        <div className="list-header">
-          <div className="list-header-columns">
-            <span style={{ marginLeft: 40 }}></span>NAME
-          </div>
-          {(properties as Array<string>).map((el, index) => (
-            <div key={index} className="list-header-columns">
-              {el}
-            </div>
-          ))}
-        </div>
-        <div className="list-body">
-          {(checklists as Array<Checklist>).map((el, index) => (
-            <div key={index} className="checklist-card">
-              <div className="checklist-card-columns">
-                <Settings
-                  style={{
-                    fontSize: 20,
-                    color: '#12aab3',
-                    width: 40,
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => openNav()}
-                />
-                <div className="title-group">
-                  <span className="checklist-code">{el.code}</span>
-                  <span
-                    className="checklist-title"
-                    onClick={() => selectChecklist(el.id)}
-                  >
-                    {el.name}
-                  </span>
-                </div>
+        <ListViewComponent
+          properties={checklist}
+          data={checklists}
+          primaryButtonText="Create Checklist"
+          nameItemTemplate={(item) => (
+            <div className="list-card-columns">
+              <Settings
+                style={{
+                  fontSize: 20,
+                  color: '#12aab3',
+                  width: 40,
+                  cursor: 'pointer',
+                }}
+                onClick={() => openNav()}
+              />
+              <div className="title-group">
+                <span className="lsit-code">{item.code}</span>
+                <span
+                  className="list-title"
+                  onClick={() => selectChecklist(item.id)}
+                >
+                  {item.name}
+                </span>
               </div>
-              {(properties as Array<string | null>).map((property, index) => (
-                <div key={index} className="checklist-card-columns">
-                  {el.properties && property && el.properties[property]
-                    ? el.properties[property]
-                    : ''}
-                </div>
-              ))}
             </div>
-          ))}
-        </div>
+          )}
+        />
         <SideBar sideBarOpen={sideBarOpen} closeNav={closeNav} />
       </Composer>
     );
