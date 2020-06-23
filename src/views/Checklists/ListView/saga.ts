@@ -5,7 +5,7 @@ import {
   fetchChecklistsError,
   fetchChecklistsOngoing,
   fetchChecklistsSuccess,
-} from './action';
+} from './actions';
 import { ListViewAction, ListViewActionType } from './types';
 
 function* fetchChecklists(action: ListViewActionType) {

@@ -6,13 +6,12 @@ import {
   fetchChecklistsError,
   fetchChecklistsOngoing,
   fetchChecklistsSuccess,
-} from './action';
+} from './actions';
 
 export type ListViewProps = RouteComponentProps;
 export interface ListViewState {
   readonly checklists: Checklist[] | [] | undefined;
   readonly pageable: Pageable | undefined;
-  readonly properties: string[] | [] | undefined;
   readonly loading: boolean;
   readonly error: any;
 }

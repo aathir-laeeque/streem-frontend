@@ -3,7 +3,6 @@ import { ListViewAction, ListViewActionType, ListViewState } from './types';
 const initialState: ListViewState = {
   checklists: undefined,
   pageable: undefined,
-  properties: undefined,
   loading: false,
   error: undefined,
 };
@@ -21,7 +20,6 @@ const reducer = (
         ...state,
         loading: false,
         checklists: action.payload?.checklists.data,
-        properties: ['EQUIPMENT ID', 'SOP NO', 'TYPE'],
         pageable: action.payload?.checklists.pageable,
       };
 
