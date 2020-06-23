@@ -19,9 +19,9 @@ import {
 } from './views';
 
 const App: FC = () => {
-  useEffect(() => {
-    navigate('/checklist');
-  }, []);
+  // useEffect(() => {
+  //   navigate('/checklist');
+  // }, []);
 
   return (
     <Provider store={store}>

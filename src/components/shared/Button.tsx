@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const Button = styled.button.attrs({
   // style: (props) => props.customStyle || {},
+  // type: (props) => props.type,
 })`
   border-radius: 3px;
   background-color: #12aab3;

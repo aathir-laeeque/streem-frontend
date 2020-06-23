@@ -1,4 +1,4 @@
-import { Step } from '../StepsView/types';
+import { Step } from '../StepListView/StepView/types';
 
 export interface Stage {
   id: number;
@@ -8,8 +8,8 @@ export interface Stage {
   steps: Step[];
 }
 
-export interface StagesViewProps {
-  stages: Stage[];
+export interface StageListViewProps {
+  stages: Stage[] | [];
   activeStage: number;
   setActiveStage: (index: number) => void;
 }

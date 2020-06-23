@@ -21,7 +21,8 @@ export interface Step {
 }
 
 export interface StepViewProps {
-  stepNumber: number;
+  stageNumber: number;
+  stepIndex: number;
   isFirstStep: boolean;
   isLastStep: boolean;
   step: Step;
