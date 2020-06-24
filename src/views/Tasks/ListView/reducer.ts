@@ -3,7 +3,6 @@ import { ListViewActionType, ListViewState, ListViewAction } from './types';
 const initialState: ListViewState = {
   tasks: undefined,
   pageable: undefined,
-  properties: undefined,
   loading: false,
   error: undefined,
 };
@@ -21,12 +20,18 @@ const reducer = (
         ...state,
         loading: false,
         tasks: action.payload?.tasks.data,
-        properties: ['PRODUCT MANUFACTURED', 'BATCH NUMBER', 'ROOM ID'],
         pageable: action.payload?.tasks.pageable,
       };
 
     case ListViewAction.FETCH_TASKS_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
+
+    case ListViewAction.CREATE_TASK_SUCCESS:
+      let newTasks = state.tasks || [];
+      if (action.payload?.task) {
+        newTasks = [...newTasks, action.payload?.task];
+      }
+      return { ...state, tasks: newTasks };
 
     default:
       return { ...state };

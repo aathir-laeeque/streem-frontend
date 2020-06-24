@@ -1,7 +1,7 @@
 import { PropertiesAction, Properties } from './types';
 import { actionSpreader } from '../helpers';
 
-export const fetchProperties = (params: { type: string }) =>
+export const fetchProperties = (params: Record<string, string>) =>
   actionSpreader(PropertiesAction.FETCH_PROPERTIES, params);
 
 export const fetchPropertiesOngoing = () =>

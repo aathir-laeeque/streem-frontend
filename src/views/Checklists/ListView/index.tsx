@@ -7,11 +7,11 @@ import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { Settings } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
-import { Settings } from '@material-ui/icons';
 
 import SideBar from './SideBar';
 import { fetchChecklists } from './actions';
 import { ListViewProps } from './types';
+import { Checklist } from '../types';
 import { Composer } from './styles';
 
 const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
@@ -23,10 +23,6 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   const dispatch: AppDispatch = useDispatch();
 
   const selectChecklist = (id: number) => navigate(`/checklist/${id}`);
-
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(10);
-  const [sideBarOpen, setSideBarOpen] = useState(false);
 
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
@@ -65,7 +61,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
 
   if (loading) {
     return <div>Loading...</div>;
-  } else if (checklists && task && pageable) {
+  } else if (checklists && task && checklist && pageable) {
     return (
       <Composer>
         <ListViewComponent
@@ -81,10 +77,13 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
                   width: 40,
                   cursor: 'pointer',
                 }}
-                onClick={() => openNav()}
+                onClick={() => {
+                  setSelectedChecklist(item);
+                  openNav();
+                }}
               />
               <div className="title-group">
-                <span className="lsit-code">{item.code}</span>
+                <span className="list-code">{item.code}</span>
                 <span
                   className="list-title"
                   onClick={() => selectChecklist(item.id)}
@@ -95,7 +94,12 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
             </div>
           )}
         />
-        <SideBar sideBarOpen={sideBarOpen} closeNav={closeNav} />
+        <SideBar
+          sideBarOpen={sideBarOpen}
+          selectedChecklist={selectedChecklist}
+          closeNav={closeNav}
+          properties={task}
+        />
       </Composer>
     );
   } else {

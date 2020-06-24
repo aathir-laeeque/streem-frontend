@@ -93,7 +93,7 @@ const Wrapper = styled.div.attrs({})`
           justify-content: flex-end;
         }
         .modal-body {
-          padding: 16px;
+          padding: 15px 15px 22px 15px;
         }
       }
     }

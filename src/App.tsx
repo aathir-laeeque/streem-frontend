@@ -1,5 +1,5 @@
 // alias imports
-import { Header, NavigationMenu, WorkArea } from '#components';
+import { Header, NavigationMenu, WorkArea, Notification } from '#components';
 import { DashboardLayout } from '#components/Layouts';
 import { store } from '#store';
 
@@ -37,6 +37,17 @@ const App: FC = () => {
             <TasksView path="tasks/*" />
           </Router>
         </WorkArea>
+        <Notification
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={true}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </DashboardLayout>
       <GlobalStyles />
     </Provider>
