@@ -5,16 +5,19 @@ import styled from 'styled-components';
 import { ArrowDropDown, Search } from '@material-ui/icons';
 // relative imports
 import { Checklist } from 'src/views/Checklists/types';
+import { Task } from 'src/views/Tasks/types';
 import { FlatButton, Button } from './Button';
 
 interface ListViewProps {
   nameItemTemplate: (item: any) => JSX.Element;
   primaryButtonText: string;
   properties: Properties;
-  data: Checklist[];
+  data: Checklist[] | Task[];
 }
 
 const Wrapper = styled.div.attrs({})`
+  height: inherit;
+
   .list-header {
     display: flex;
     padding: 13px 0px 13px 0px;
@@ -38,7 +41,7 @@ const Wrapper = styled.div.attrs({})`
     align-items: center;
 
     :first-child {
-      width: 35%;
+      width: 30%;
       flex: initial;
     }
   }
@@ -64,7 +67,7 @@ const Wrapper = styled.div.attrs({})`
     align-items: center;
 
     :first-child {
-      width: 35%;
+      width: 30%;
       flex: initial;
     }
   }
@@ -161,7 +164,7 @@ export const ListView: FC<ListViewProps> = ({
       ))}
     </div>
     <div className="list-body">
-      {data.map((el, index) => (
+      {(data as Array<Checklist | Task>).map((el, index) => (
         <div key={index} className="list-card">
           {nameItemTemplate(el)}
           {properties.map((property, propertyIndex) => (

@@ -3,9 +3,8 @@ import { RouteComponentProps } from '@reach/router';
 export type TasksViewProps = RouteComponentProps;
 
 export interface Properties {
-  [key: string]: string | null;
+  [key: string]: string | undefined;
 }
-
 export interface Task {
   id: number;
   name: string;

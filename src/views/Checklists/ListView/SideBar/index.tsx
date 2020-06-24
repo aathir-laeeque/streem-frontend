@@ -2,16 +2,15 @@ import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Check } from '@material-ui/icons';
 import { FlatButton, Button, Modal, FloatInput } from '../../../../components';
-import { showNotification } from '../../../../components/Notification/actions';
-import { NotificationType } from '../../../../components/Notification/types';
 import { AppDispatch } from '../../../../store/types';
-
+import { createTask } from '../../../Tasks/ListView/actions';
 import { SideBarProps } from './types';
 
 const SideBar: FC<SideBarProps> = ({
   sideBarOpen,
   closeNav,
   selectedChecklist,
+  properties,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -31,12 +30,24 @@ const SideBar: FC<SideBarProps> = ({
   };
 
   const onCreateTask = () => {
-    dispatch(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: 'Task created successfully',
-      }),
-    );
+    const tempProperties: any = [];
+    properties.map((property) => {
+      if (property.name && taskDetails[property.name]) {
+        tempProperties.push({
+          id: property.id,
+          value: taskDetails[property.name],
+        });
+      }
+    });
+    if (tempProperties && selectedChecklist) {
+      const parsedProperties: { id: number; value: string }[] = tempProperties;
+      dispatch(
+        createTask({
+          properties: parsedProperties,
+          checklistId: selectedChecklist.id,
+        }),
+      );
+    }
   };
 
   return (
@@ -143,29 +154,18 @@ const SideBar: FC<SideBarProps> = ({
             required
             disabled
           />
-          <FloatInput
-            placeHolder="Name of the product being cleand"
-            label="Product Manufactured"
-            id="productManufactured"
-            value={taskDetails.productManufactured || ''}
-            onChange={onInputChange}
-            required
-          />
-          <FloatInput
-            placeHolder="Batch No. of the manufactured Product"
-            label="Batch Number"
-            id="batchNo"
-            value={taskDetails.batchNo || ''}
-            onChange={onInputChange}
-            required
-          />
-          <FloatInput
-            placeHolder="Room ID for the Equipment"
-            label="Room ID"
-            id="roomId"
-            value={taskDetails.roomId || ''}
-            onChange={onInputChange}
-          />
+          {properties.map((property, index) => (
+            <FloatInput
+              key={`property_${index}`}
+              placeHolder={'placeholder - ' + property.name}
+              label={property.name}
+              id={property.name}
+              value={taskDetails[property.name] || ''}
+              onChange={onInputChange}
+              required={index === 2 ? false : true}
+              // required={property.mandatory}
+            />
+          ))}
         </Modal>
       )}
     </div>

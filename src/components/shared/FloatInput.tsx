@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
+import { capitalize } from 'lodash';
 
 interface FloatInputProps {
   id: string;
@@ -17,7 +18,7 @@ const Wrapper = styled.div.attrs({})`
     position: relative;
     flex-direction: column;
     flex: 1;
-    margin-top: 25px;
+    margin-top: 22px;
 
     .input {
       font-size: 16px;
@@ -46,7 +47,7 @@ const Wrapper = styled.div.attrs({})`
 
     .input-active {
       border: none;
-      border-bottom: 2px solid #ff6b6b;
+      border-bottom: 2px solid #12aab3;
       ::-webkit-input-placeholder {
         color: #bababa;
       }
@@ -67,7 +68,6 @@ const Wrapper = styled.div.attrs({})`
     top: -13px;
     left: 0;
     font-size: 16px;
-    font-size: 16px;
     color: blue;
     transition: all 0.2s linear;
     opacity: 0;
@@ -75,13 +75,13 @@ const Wrapper = styled.div.attrs({})`
   }
 
   .wrapper > label.on {
-    font-size: 10px;
+    font-size: 8px;
     opacity: 1;
   }
 
   .optional-text {
     color: #666666;
-    font-size: 10px;
+    font-size: 9px;
     text-align: left;
     padding: 3px 0px;
   }
@@ -96,6 +96,7 @@ export const FloatInput: FC<FloatInputProps> = ({
   onChange,
   id,
 }) => {
+  const [error, setError] = useState(false);
   const [className, setClassName] = useState(disabled ? 'on' : '');
   const [placeHolderText, setPlaceHolderText] = useState(label);
 
@@ -104,6 +105,7 @@ export const FloatInput: FC<FloatInputProps> = ({
   };
 
   const onFocus = (event: React.FocusEvent<HTMLInputElement>): void => {
+    setError(false);
     if (event.target.value === '') {
       setClassName('on');
     }
@@ -113,6 +115,9 @@ export const FloatInput: FC<FloatInputProps> = ({
   const onBlur = (event: React.FocusEvent<HTMLInputElement>): void => {
     if (event.target.value === '') {
       setClassName('');
+      if (required) {
+        setError(true);
+      }
     }
     setPlaceHolderText(label);
   };
@@ -130,7 +135,13 @@ export const FloatInput: FC<FloatInputProps> = ({
       <div className="wrapper">
         <label
           style={{
-            color: isActive ? '#12aab3' : '#666666',
+            color: error
+              ? isActive
+                ? '#12aab3'
+                : '#ff6b6b'
+              : isActive
+              ? '#12aab3'
+              : '#666666',
             ...opacity,
           }}
           className={className}
@@ -148,9 +159,21 @@ export const FloatInput: FC<FloatInputProps> = ({
           type="text"
           style={{
             opacity: disabled ? 0.4 : 1,
+            borderColor: error
+              ? isActive
+                ? '#12aab3'
+                : '#ff6b6b'
+              : isActive
+              ? '#12aab3'
+              : '#666666',
           }}
           disabled={disabled || false}
         />
+        {error && (
+          <span className="optional-text" style={{ color: '#ff6b6b' }}>
+            {capitalize(label)} is mandatory.
+          </span>
+        )}
         {!required && <span className="optional-text">Optional</span>}
       </div>
     </Wrapper>
