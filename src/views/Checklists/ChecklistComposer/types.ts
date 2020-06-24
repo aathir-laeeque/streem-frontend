@@ -1,6 +1,7 @@
 import { RouteComponentProps } from '@reach/router';
 
 import { Checklist } from '../types';
+import { Stage } from './StageListView/types';
 import {
   fetchChecklist,
   fetchChecklistError,
@@ -13,9 +14,11 @@ export interface ChecklistComposerProps extends RouteComponentProps {
 }
 
 export interface ChecklistComposerState {
-  readonly checklist?: Checklist;
+  readonly activeChecklist?: Checklist;
+  readonly activeStageIndex?: number;
   readonly loading: boolean;
   readonly error: any;
+  readonly stages?: Stage[] | [];
 }
 
 export enum ChecklistComposerAction {

@@ -1,18 +1,24 @@
 import {
+  StageListViewActionType,
+  StageListViewAction,
+} from './StageListView/types';
+import {
   ChecklistComposerAction,
   ChecklistComposerActionType,
   ChecklistComposerState,
 } from './types';
 
 const initialState: ChecklistComposerState = {
-  checklist: undefined,
-  loading: false,
+  activeChecklist: undefined,
+  activeStageIndex: 0,
   error: null,
+  loading: false,
+  stages: [],
 };
 
 const reducer = (
   state = initialState,
-  action: ChecklistComposerActionType,
+  action: ChecklistComposerActionType | StageListViewActionType,
 ): ChecklistComposerState => {
   switch (action.type) {
     case ChecklistComposerAction.FETCH_CHECKLIST_ONGOING:
@@ -22,7 +28,15 @@ const reducer = (
       return { ...state, loading: false, error: action.payload?.error };
 
     case ChecklistComposerAction.FETCH_CHECKLIST_SUCCESS:
-      return { ...state, loading: false, checklist: action.payload?.checklist };
+      return {
+        ...state,
+        loading: false,
+        activeChecklist: action.payload?.checklist,
+        stages: action.payload?.checklist.stages,
+      };
+
+    case StageListViewAction.SET_ACTIVE_STAGE:
+      return { ...state, activeStageIndex: action.payload?.index };
 
     default:
       return { ...state };

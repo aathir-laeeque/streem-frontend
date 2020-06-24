@@ -1,4 +1,5 @@
 import { Step } from '../StepListView/StepView/types';
+import { setActiveStage } from './actions';
 
 export interface Stage {
   id: number;
@@ -13,3 +14,9 @@ export interface StageListViewProps {
   activeStage: number;
   setActiveStage: (index: number) => void;
 }
+
+export enum StageListViewAction {
+  SET_ACTIVE_STAGE = '@@checklist/composer/stage_list/SET_ACTIVE_STAGE',
+}
+
+export type StageListViewActionType = ReturnType<typeof setActiveStage>;

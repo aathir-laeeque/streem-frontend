@@ -1,44 +1,29 @@
-import React, { FC, useState } from 'react';
-import { FieldArray } from 'formik';
+import { RootState } from '#store';
 
-import StepView from './StepView';
-import { StepListViewProps } from './types';
+import React, { FC } from 'react';
+import { connect } from 'react-redux';
+import { formValueSelector } from 'redux-form';
 
+import StepsListForm from './StepsListForm';
 import { StepsWrapper } from './styles';
 
-const StepListView: FC<StepListViewProps> = ({
-  steps,
-  activeStage,
-  stageName,
-}) => {
-  const [activeStep, setActiveStep] = useState(0);
+const StepListView: FC = ({ formStages, activeStageIndex, stages }) => (
+  <StepsWrapper>
+    <span className="stage-number">Stage {activeStageIndex + 1}</span>
+    <span className="stage-name">{formStages[activeStageIndex].name}</span>
 
-  return (
-    <StepsWrapper>
-      <span className="stage-number">Stage {activeStage + 1}</span>
-      <span className="stage-name">{stageName}</span>
+    <StepsListForm initialValues={{ steps: stages[activeStageIndex].steps }} />
+  </StepsWrapper>
+);
 
-      <FieldArray
-        name="steps"
-        render={() => (
-          <ul className="step-list">
-            {steps.map((step, index) => (
-              <StepView
-                stageNumber={activeStage}
-                key={index}
-                step={step}
-                active={activeStep === index}
-                onClick={() => setActiveStep(index)}
-                isFirstStep={index === 0}
-                isLastStep={steps.length - 1 === index}
-                stepIndex={index}
-              />
-            ))}
-          </ul>
-        )}
-      />
-    </StepsWrapper>
-  );
-};
+const stageFormSelector = formValueSelector('stageListForm');
 
-export default StepListView;
+const mapStateToProps = (state: RootState) => ({
+  formStages: stageFormSelector(state, 'stages'),
+  activeStageIndex: state.checklistComposer.activeStageIndex,
+  stages: state.checklistComposer.stages,
+});
+
+const withConnect = connect(mapStateToProps, null);
+
+export default withConnect(StepListView);

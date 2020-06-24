@@ -7,26 +7,26 @@ import { useDispatch } from 'react-redux';
 
 // relative imports
 import { fetchChecklist } from './actions';
-import ChecklistForm from './ChecklistForm';
+import Checklist from './Checklist';
 import { ChecklistComposerProps } from './types';
 
 const ChecklistComposer: FC<ChecklistComposerProps> = ({ checklistId }) => {
-  const { checklist, loading } = useTypedSelector(
+  const dispatch: AppDispatch = useDispatch();
+
+  const { activeChecklist, loading } = useTypedSelector(
     (state) => state.checklistComposer,
   );
 
-  const dispatch: AppDispatch = useDispatch();
-
   useEffect(() => {
-    if (!!checklistId && checklist?.id !== parseInt(checklistId)) {
+    if (!!checklistId && activeChecklist?.id !== parseInt(checklistId)) {
       dispatch(fetchChecklist(parseInt(checklistId)));
     }
   }, []);
 
   if (loading) {
     return <div>Loading...</div>;
-  } else if (checklist) {
-    return <ChecklistForm checklist={checklist} />;
+  } else if (activeChecklist) {
+    return <Checklist />;
   } else {
     return null;
   }

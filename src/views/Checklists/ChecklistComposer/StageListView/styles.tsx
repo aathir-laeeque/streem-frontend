@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const ListView = styled.div`
+export const Wrapper = styled.div`
   background-color: #fff;
   box-shadow: 1px 0 3px 0 rgba(0, 0, 0, 0.12), 1px 0 1px 0 rgba(0, 0, 0, 0.14);
   grid-area: stagelist;
@@ -46,7 +46,11 @@ export const ListView = styled.div`
           margin: 0 16px;
         }
 
-        > input {
+        div {
+          flex: 1;
+        }
+
+        input {
           display: flex;
           flex: 1;
           background-color: #f4f4f4;
@@ -57,6 +61,7 @@ export const ListView = styled.div`
           color: #333333;
           border: none;
           outline: none;
+          width: 100%;
         }
       }
 
