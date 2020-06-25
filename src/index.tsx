@@ -7,4 +7,6 @@ import App from './App';
 
 render(<App />, document.getElementById('root'));
 
-(module as any)?.hot?.accept();
+if (module.hot) {
+  module.hot.accept();
+}

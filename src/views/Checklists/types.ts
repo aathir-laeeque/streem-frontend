@@ -1,4 +1,4 @@
-import { Stage } from './ChecklistComposer/StageListView/types';
+import { Stage } from './ChecklistComposer/StageList/types';
 
 export interface Checklist {
   id: number;

@@ -1,4 +1,4 @@
-import { renderInputField } from '#components/FormComponents';
+// import { useTypedSelector } from '#store';
 import {
   AddCircleOutline,
   DateRangeOutlined,
@@ -8,33 +8,33 @@ import {
 } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import { change, Field } from 'redux-form';
 
-import { Step } from '../types';
+import { updateStep } from './actions';
+import { Step } from './types';
 
-interface HeaderProps {
-  step: Step;
-  field: string;
-}
+const Header: FC<{ step: Step }> = ({ step }) => {
+  // const { activeStepIndex } = useTypedSelector((state) => ({
+  //   activeStepIndex: state.checklistComposer.activeStepIndex,
+  // }));
 
-const Header: FC<HeaderProps> = ({ step, field }) => {
   const dispatch = useDispatch();
 
   return (
     <div className="step-item-content-header">
       <div>
-        <Field name={`${field}.name`} component={renderInputField} />
+        <input
+          type="text"
+          name="header"
+          value={step.name}
+          onChange={(e) => dispatch(updateStep({ name: e.target.value }))}
+        />
 
         <div className="step-item-controls">
           <div
             className={`step-item-controls-item ${
               step.hasStop ? 'item-active' : ''
             }`}
-            onClick={() =>
-              dispatch(
-                change('stepsListForm', `${field}.hasStop`, !step.hasStop),
-              )
-            }
+            onClick={() => dispatch(updateStep({ hasStop: !step.hasStop }))}
           >
             <ErrorOutlineOutlined className="icon" />
             <span>Add Stop</span>
@@ -47,9 +47,7 @@ const Header: FC<HeaderProps> = ({ step, field }) => {
             className={`step-item-controls-item ${
               step.timed ? 'item-active' : ''
             }`}
-            onClick={() =>
-              dispatch(change('stepsListForm', `${field}.timed`, !step.timed))
-            }
+            onClick={() => dispatch(updateStep({ timed: !step.timed }))}
           >
             <TimerOutlined className="icon" />
             <span>Timed</span>

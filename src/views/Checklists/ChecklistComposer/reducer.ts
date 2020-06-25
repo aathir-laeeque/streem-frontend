@@ -1,7 +1,15 @@
+import { omit } from 'lodash';
+
 import {
-  StageListViewActionType,
-  StageListViewAction,
-} from './StageListView/types';
+  InteractionActions,
+  InteractionActionType,
+} from './StepsList/StepView/InteractionView/types';
+import {
+  StepViewActions,
+  StepViewActionType,
+} from './StepsList/StepView/types';
+import { StepsListActions, StepsListActionType } from './StepsList/types';
+import { StageListActions, StageListActionType } from './StageList/types';
 import {
   ChecklistComposerAction,
   ChecklistComposerActionType,
@@ -11,14 +19,23 @@ import {
 const initialState: ChecklistComposerState = {
   activeChecklist: undefined,
   activeStageIndex: 0,
+  activeStepIndex: 0,
   error: null,
   loading: false,
-  stages: [],
+  stages: undefined,
+  steps: undefined,
 };
+
+type redeucerAction =
+  | ChecklistComposerActionType
+  | StageListActionType
+  | StepsListActionType
+  | StepViewActionType
+  | InteractionActionType;
 
 const reducer = (
   state = initialState,
-  action: ChecklistComposerActionType | StageListViewActionType,
+  action: redeucerAction,
 ): ChecklistComposerState => {
   switch (action.type) {
     case ChecklistComposerAction.FETCH_CHECKLIST_ONGOING:
@@ -32,11 +49,54 @@ const reducer = (
         ...state,
         loading: false,
         activeChecklist: action.payload?.checklist,
-        stages: action.payload?.checklist.stages,
+        stages: action.payload?.checklist.stages.map((el) => ({
+          ...omit(el, ['steps']),
+        })),
       };
 
-    case StageListViewAction.SET_ACTIVE_STAGE:
-      return { ...state, activeStageIndex: action.payload?.index };
+    case StageListActions.SET_ACTIVE_STAGE:
+      return {
+        ...state,
+        activeStageIndex: action.payload?.index,
+        steps: state.activeChecklist?.stages[action.payload?.index].steps,
+      };
+
+    case StageListActions.UPDATE_STAGE_NAME:
+      return {
+        ...state,
+        stages: state.stages?.map((el, i) => ({
+          ...el,
+          ...(i === action.payload?.index && { name: action.payload?.name }),
+        })),
+      };
+
+    case StepsListActions.SET_ACTIVE_STEP:
+      return { ...state, activeStepIndex: action.payload?.index };
+
+    case StepViewActions.UPDATE_STEP:
+      return {
+        ...state,
+        steps: state?.steps?.map((el, i) => ({
+          ...el,
+          ...(i === state.activeStepIndex && { ...action.payload }),
+        })),
+      };
+
+    case InteractionActions.UPDATE_INTERACTIONS:
+      return {
+        ...state,
+        steps: state?.steps?.map((el, i) => ({
+          ...el,
+          ...(i === state.activeStepIndex && {
+            interactions: el.interactions.map((z, ii) => ({
+              ...z,
+              ...(ii === action.payload?.interactionIndex && {
+                ...action.payload?.interaction,
+              }),
+            })),
+          }),
+        })),
+      };
 
     default:
       return { ...state };

@@ -34,8 +34,8 @@ const Wrapper = styled.div.attrs({
     position: absolute;
     top: 0;
     left: 0;
-    height: 15px;
-    width: 15px;
+    height: 18px;
+    width: 18px;
     background-color: #dadada;
     border: 1px solid #bababa;
     border-radius: 50%;
@@ -65,8 +65,8 @@ const Wrapper = styled.div.attrs({
 
   /* Style the checkmark/indicator */
   .container .checkmark:after {
-    left: 5px;
-    top: 2px;
+    left: 6px;
+    top: 3px;
     width: 3px;
     height: 7px;
     border: solid white;

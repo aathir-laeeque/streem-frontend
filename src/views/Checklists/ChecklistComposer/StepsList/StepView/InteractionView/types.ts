@@ -1,3 +1,5 @@
+import { updateInteraction } from './actions';
+
 export enum InteractionType {
   MATERIAL = 'material',
   INSTRUCTION = 'instruction',
@@ -13,16 +15,21 @@ export enum InteractionType {
 export interface Interaction {
   id: number;
   type: InteractionType;
+  // TODO: look into type for data in interaction
   data: any;
   mandatory: boolean;
   orderTree: number;
   label?: string;
 }
 
-export interface InteractionsViewProps {
-  interactions: Interaction[];
-}
-
 export interface InteractionViewProps {
   interaction: Interaction;
+  interactionIndex: number;
 }
+
+export enum InteractionActions {
+  UPDATE_INTERACTIONS = '@@interaction_view/UPDATE_INTERACTION',
+  UPDATE_INTERACTIONS_IN_REDUX = '@@interaction_view/UPDATE_INTERACTIONS_IN_REDUX',
+}
+
+export type InteractionActionType = ReturnType<typeof updateInteraction>;

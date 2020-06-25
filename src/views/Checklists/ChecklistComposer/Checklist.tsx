@@ -1,31 +1,18 @@
-import { useTypedSelector } from '#store';
-import { omit } from 'lodash';
 import React, { FC } from 'react';
 
 import Header from './Header';
-import { Wrapper } from './newStyles';
-import StageListView from './StageListView';
-import { Stage } from './StageListView/types';
-import StepListView from './StepListView';
+import StageList from './StageList';
+import StepsList from './StepsList';
+import { Wrapper } from './styles';
 
-const Checklist: FC = () => {
-  const { stages } = useTypedSelector((state) => state.checklistComposer);
+const NewChecklist: FC = () => (
+  <Wrapper>
+    <Header />
 
-  return (
-    <Wrapper>
-      <Header />
+    <StageList />
 
-      <StageListView
-        initialValues={{
-          stages: (stages as Array<Stage>)?.map((el) => ({
-            ...omit(el, ['steps']),
-          })),
-        }}
-      />
+    <StepsList />
+  </Wrapper>
+);
 
-      <StepListView />
-    </Wrapper>
-  );
-};
-
-export default Checklist;
+export default NewChecklist;

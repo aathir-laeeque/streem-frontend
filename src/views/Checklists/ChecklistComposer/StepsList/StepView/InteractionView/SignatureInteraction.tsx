@@ -3,8 +3,8 @@ import { Maximize, Close } from '@material-ui/icons';
 
 import { InteractionViewProps } from './types';
 
-const SignatureInteraction: FC<InteractionViewProps> = () => (
-  <div className="step-interaction-container">
+const SignatureInteraction: FC<InteractionViewProps> = () => {
+  return (
     <div className="signature-interaction">
       <div className="icon-container">
         <Close className="icon" />
@@ -12,7 +12,7 @@ const SignatureInteraction: FC<InteractionViewProps> = () => (
       </div>
       <span>Signature upload will be enabled during execution</span>
     </div>
-  </div>
-);
+  );
+};
 
 export default SignatureInteraction;

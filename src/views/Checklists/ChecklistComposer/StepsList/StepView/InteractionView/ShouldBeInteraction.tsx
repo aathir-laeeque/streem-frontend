@@ -2,9 +2,22 @@ import React, { FC } from 'react';
 
 import { InteractionViewProps } from './types';
 import { TARGET_RULES } from './constants';
+import { useDispatch } from 'react-redux';
+import { updateInteraction } from './actions';
 
-const ShouldBeInteraction: FC<InteractionViewProps> = ({ interaction }) => (
-  <div className="step-interaction-container">
+const ShouldBeInteraction: FC<InteractionViewProps> = ({
+  interaction,
+  interactionIndex,
+}) => {
+  const dispatch = useDispatch();
+
+  // TODO: look into type of data in the interaction
+  const update = (data: any) =>
+    dispatch(
+      updateInteraction({ ...data }, interactionIndex, interaction.type),
+    );
+
+  return (
     <div className="shouldbe-interaction">
       <div className="form-field">
         <label className="form-input-label">Parameter</label>
@@ -12,9 +25,16 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({ interaction }) => (
           className="form-input form-input-value"
           name="parameter"
           type="text"
-          value=""
+          value={interaction.data[0].parameter}
           placeholder="Pressure"
-          onChange={undefined}
+          onChange={(e) =>
+            update({
+              data: interaction.data.map((ele) => ({
+                ...ele,
+                parameter: e.target.value,
+              })),
+            })
+          }
         />
       </div>
       <div className="form-field">
@@ -25,7 +45,14 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({ interaction }) => (
           type="text"
           value={interaction.data[0].type}
           placeholder="Type"
-          onChange={undefined}
+          onChange={(e) =>
+            update({
+              data: interaction.data.map((ele) => ({
+                ...ele,
+                type: e.target.value,
+              })),
+            })
+          }
         />
       </div>
       <div className="form-field">
@@ -36,7 +63,14 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({ interaction }) => (
           type="text"
           value={interaction.data[0].uom}
           placeholder="UOM"
-          onChange={undefined}
+          onChange={(e) =>
+            update({
+              data: interaction.data.map((ele) => ({
+                ...ele,
+                uom: e.target.value,
+              })),
+            })
+          }
         />
       </div>
       <div id="target-rules">
@@ -47,6 +81,14 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({ interaction }) => (
             className="form-input"
             defaultValue="Choose Here"
             value={interaction?.data[0]?.operator}
+            onChange={(e) =>
+              update({
+                data: interaction.data.map((ele) => ({
+                  ...ele,
+                  operator: e.target.value,
+                })),
+              })
+            }
           >
             {TARGET_RULES.map((rule, index) => (
               <option key={index} value={rule.value}>
@@ -61,9 +103,17 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({ interaction }) => (
             className="form-input form-input-value"
             name="target-value"
             type="text"
-            value={interaction.data[0].value}
+            // TODO 10 os made dedault value, remove this later
+            value={interaction.data[0].target || 10}
             placeholder="Value"
-            onChange={undefined}
+            onChange={(e) =>
+              update({
+                data: interaction.data.map((ele) => ({
+                  ...ele,
+                  target: e.target.value,
+                })),
+              })
+            }
           />
         </div>
       </div>
@@ -74,11 +124,19 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({ interaction }) => (
           name="observed-value"
           type="text"
           placeholder="To be entered at execution"
-          onChange={undefined}
+          value={interaction.data[0].value}
+          onChange={(e) =>
+            update({
+              data: interaction.data.map((ele) => ({
+                ...ele,
+                value: e.target.value,
+              })),
+            })
+          }
         />
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default ShouldBeInteraction;

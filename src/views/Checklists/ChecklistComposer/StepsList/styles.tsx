@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StepsWrapper = styled.div`
+export const Wrapper = styled.div`
   display: grid;
   grid-template-areas: 'stagenumber' 'stagename' 'steps';
   grid-template-rows: 16px 32px 1fr;

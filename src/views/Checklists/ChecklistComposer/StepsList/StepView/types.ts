@@ -1,5 +1,5 @@
-import { Media } from './StepMedia/types';
-import { Interaction } from './InteractionsView/types';
+import { updateStep } from './actions';
+import { Interaction } from './InteractionView/types';
 
 export interface Timer {
   id: number;
@@ -15,13 +15,18 @@ export interface Step {
   orderTree: number;
   hasStop: boolean;
   interactions: Interaction[];
-  medias: Media[];
+  // medias: Media[];
   timed: boolean;
   timer?: Timer;
 }
 
 export interface StepViewProps {
-  active: boolean;
-  onClick: () => void;
-  field: string;
+  step: Step;
+  stepIndex: number;
 }
+
+export enum StepViewActions {
+  UPDATE_STEP = '@@step_view/UPDATE_STEP',
+}
+
+export type StepViewActionType = ReturnType<typeof updateStep>;

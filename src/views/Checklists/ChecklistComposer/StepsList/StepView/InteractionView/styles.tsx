@@ -25,7 +25,7 @@ export const Wrapper = styled.div.attrs({
   .step-interaction {
     &-container {
       flex: 1;
-      padding: 32px 16px;
+      padding: 24px 16px;
       border-radius: 4px;
       box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.12),
         0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
@@ -54,7 +54,6 @@ export const Wrapper = styled.div.attrs({
             border-radius: 5px;
 
             > * {
-              padding: 4px 8px;
               display: flex;
               align-items: center;
               justify-content: center;
@@ -66,12 +65,11 @@ export const Wrapper = styled.div.attrs({
             }
 
             > svg {
-              height: 16px;
-              width: 16px;
               color: #00aab4;
             }
 
             > .quantity {
+              padding: 4px 8px;
               font-size: 14px;
               color: #666666;
             }
@@ -242,10 +240,14 @@ export const Wrapper = styled.div.attrs({
         outline: none;
         border: none;
         padding: 8px;
-        width: calc(100% - 16px);
+        /* width: calc(100% - 16px); */
         resize: none;
         color: #666666;
-        border-bottom: 2px solid #12aab3;
+        border-bottom: 2px solid transparent;
+
+        :focus {
+          border-bottom-color: #12aab3;
+        }
       }
     }
 

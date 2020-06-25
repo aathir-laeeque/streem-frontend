@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 
 // relative imports
 import { fetchChecklist } from './actions';
-import Checklist from './Checklist';
+import NewChecklist from './Checklist';
 import { ChecklistComposerProps } from './types';
 
 const ChecklistComposer: FC<ChecklistComposerProps> = ({ checklistId }) => {
@@ -26,7 +26,7 @@ const ChecklistComposer: FC<ChecklistComposerProps> = ({ checklistId }) => {
   if (loading) {
     return <div>Loading...</div>;
   } else if (activeChecklist) {
-    return <Checklist />;
+    return <NewChecklist />;
   } else {
     return null;
   }
