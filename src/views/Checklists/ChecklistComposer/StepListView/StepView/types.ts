@@ -21,11 +21,7 @@ export interface Step {
 }
 
 export interface StepViewProps {
-  stageNumber: number;
-  stepIndex: number;
-  isFirstStep: boolean;
-  isLastStep: boolean;
-  step: Step;
   active: boolean;
   onClick: () => void;
+  field: string;
 }

@@ -5,6 +5,22 @@ export const Wrapper = styled.li.attrs({
 })`
   display: flex;
 
+  :first-child {
+    .step-item-position-control {
+      > .icon-up {
+        visibility: hidden;
+      }
+    }
+  }
+
+  :last-child {
+    .step-item-position-control {
+      > .icon-down {
+        visibility: hidden;
+      }
+    }
+  }
+
   .step-item {
     &-position-control {
       align-items: center;
@@ -70,6 +86,7 @@ export const Wrapper = styled.li.attrs({
       flex-direction: column;
       margin-bottom: 24px;
       padding: 24px 16px;
+      height: max-content;
 
       &-active {
         border-color: #12aab3;
@@ -112,5 +129,10 @@ export const Wrapper = styled.li.attrs({
       flex: 1;
       margin-left: 15px;
     }
+  }
+
+  .step-interactions-list {
+    display: flex;
+    flex-direction: column;
   }
 `;

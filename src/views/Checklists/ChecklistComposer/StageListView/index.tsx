@@ -10,7 +10,7 @@ import {
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { Field, FieldArray, formValueSelector, reduxForm } from 'redux-form';
+import { Field, FieldArray, reduxForm } from 'redux-form';
 
 import { setActiveStage } from './actions';
 import { Wrapper } from './styles';
@@ -74,10 +74,7 @@ const formName = 'stageListForm';
 
 const withReduxForm = reduxForm({ form: formName });
 
-// const valueSelector = formValueSelector(formName);
-
 const mapStateToProps = (state: RootState) => ({
-  // stages: valueSelector(state, 'stages'),
   activeStageIndex: state.checklistComposer.activeStageIndex,
 });
 

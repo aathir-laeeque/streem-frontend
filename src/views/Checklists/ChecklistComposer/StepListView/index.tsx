@@ -6,8 +6,13 @@ import { formValueSelector } from 'redux-form';
 
 import StepsListForm from './StepsListForm';
 import { StepsWrapper } from './styles';
+import { StepListViewProps } from './types';
 
-const StepListView: FC = ({ formStages, activeStageIndex, stages }) => (
+const StepListView: FC<StepListViewProps> = ({
+  formStages,
+  activeStageIndex,
+  stages,
+}) => (
   <StepsWrapper>
     <span className="stage-number">Stage {activeStageIndex + 1}</span>
     <span className="stage-name">{formStages[activeStageIndex].name}</span>

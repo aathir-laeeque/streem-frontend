@@ -1,3 +1,4 @@
+import { renderInputField } from '#components/FormComponents';
 import {
   AddCircleOutline,
   DateRangeOutlined,
@@ -5,28 +6,35 @@ import {
   RadioButtonUnchecked,
   TimerOutlined,
 } from '@material-ui/icons';
-import { Field } from 'formik';
 import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
+import { change, Field } from 'redux-form';
 
 import { Step } from '../types';
 
 interface HeaderProps {
   step: Step;
-  stageNumber: number;
-  stepIndex: number;
+  field: string;
 }
 
-const Header: FC<HeaderProps> = ({ step, stageNumber, stepIndex }) => {
+const Header: FC<HeaderProps> = ({ step, field }) => {
+  const dispatch = useDispatch();
+
   return (
     <div className="step-item-content-header">
       <div>
-        <Field name={`stages.${stageNumber}.steps.${stepIndex}.name`} />
+        <Field name={`${field}.name`} component={renderInputField} />
 
         <div className="step-item-controls">
           <div
             className={`step-item-controls-item ${
               step.hasStop ? 'item-active' : ''
             }`}
+            onClick={() =>
+              dispatch(
+                change('stepsListForm', `${field}.hasStop`, !step.hasStop),
+              )
+            }
           >
             <ErrorOutlineOutlined className="icon" />
             <span>Add Stop</span>
@@ -39,6 +47,9 @@ const Header: FC<HeaderProps> = ({ step, stageNumber, stepIndex }) => {
             className={`step-item-controls-item ${
               step.timed ? 'item-active' : ''
             }`}
+            onClick={() =>
+              dispatch(change('stepsListForm', `${field}.timed`, !step.timed))
+            }
           >
             <TimerOutlined className="icon" />
             <span>Timed</span>

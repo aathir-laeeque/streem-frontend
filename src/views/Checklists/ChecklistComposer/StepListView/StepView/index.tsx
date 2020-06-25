@@ -1,36 +1,27 @@
+import { useTypedSelector } from '#store';
+import { ArrowDownwardOutlined, ArrowUpwardOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
-import {
-  AddCircleOutline,
-  ArrowDownwardOutlined,
-  ArrowUpwardOutlined,
-  DateRangeOutlined,
-  ErrorOutlineOutlined,
-  RadioButtonUnchecked,
-  // Timer,
-  TimerOutlined,
-} from '@material-ui/icons';
-import { Field } from 'formik';
+import { formValueSelector, FieldArray } from 'redux-form';
 
-import { StepViewProps } from './types';
-import { Wrapper } from './styles';
 import Header from './Header';
-import TimedCard from './TimedCard';
+import { Wrapper } from './styles';
+import { StepViewProps } from './types';
+import InteractionsView from './InteractionsView';
 
-const StepView: FC<StepViewProps> = ({
-  active,
-  isFirstStep,
-  isLastStep,
-  onClick,
-  stageNumber,
-  step,
-  stepIndex,
-}) => {
+const StepView: FC<StepViewProps> = ({ active, onClick, field }) => {
+  const formSelector = formValueSelector('stepsListForm');
+  const { step } = useTypedSelector((state) => ({
+    step: formSelector(state, field),
+  }));
+
+  const stepIndex = parseInt(field.replace(/[^0-9]/g, ''));
+
   return (
     <Wrapper>
       <div className="step-item-position-control">
-        {!isFirstStep ? <ArrowUpwardOutlined className="icon" /> : null}
+        <ArrowUpwardOutlined className="icon icon-up" />
         <span className="step-number">{stepIndex + 1}</span>
-        {!isLastStep ? <ArrowDownwardOutlined className="icon" /> : null}
+        <ArrowDownwardOutlined className="icon icon-down" />
       </div>
 
       <div
@@ -39,11 +30,21 @@ const StepView: FC<StepViewProps> = ({
         }`}
         onClick={onClick}
       >
-        <Header step={step} stageNumber={stageNumber} stepIndex={stepIndex} />
+        <Header step={step} field={field} />
 
-        <TimedCard step={step} />
+        {/* <TimedCard step={step} /> */}
 
-        {/* <div>rest interactions</div> */}
+        <FieldArray
+          name={`${field}.interactions`}
+          // TODO: look into the type fo fields
+          component={({ fields }: { fields: any }) => (
+            <div className="step-interactions-list">
+              {fields.map((field: string, index: number) => (
+                <InteractionsView key={index} field={field} />
+              ))}
+            </div>
+          )}
+        />
       </div>
 
       <div className="step-item-media">step media</div>

@@ -1,39 +1,31 @@
-import { Form, renderInputField } from '#components/FormComponents';
-import { RootState } from '#store';
+import { Form } from '#components/FormComponents';
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { Field, FieldArray, reduxForm } from 'redux-form';
+import { FieldArray, reduxForm } from 'redux-form';
+import { noop } from 'lodash';
 
-const renderSteps = ({ fields }) => (
-  <ul className="step-list">
-    {fields.map((field, index) => (
-      <li key={index}>
-        <Field
-          name={`${field}.name`}
-          type="text"
-          component={renderInputField}
-          placeHolder="Step header"
-        />
-      </li>
-    ))}
-  </ul>
-);
+import StepView from './StepView';
 
 const StepsListForm = () => (
-  <Form>
-    <FieldArray name="steps" component={renderSteps} />
+  <Form style={{ overflow: 'scroll' }}>
+    <FieldArray
+      name="steps"
+      // TODO: replace any type for fields
+      component={({ fields }: { fields: any }) => (
+        <ul className="step-list">
+          {fields.map((field: string, index: number) => (
+            <StepView field={field} key={index} active={false} onClick={noop} />
+          ))}
+        </ul>
+      )}
+    />
   </Form>
 );
-
-const mapStateToProps = (state: RootState) => ({});
-
-const withConnect = connect(mapStateToProps, null);
 
 const withReduxForm = reduxForm({
   form: 'stepsListForm',
   enableReinitialize: true,
 });
 
-export default compose(withReduxForm, withConnect)(StepsListForm);
+export default compose(withReduxForm)(StepsListForm);
