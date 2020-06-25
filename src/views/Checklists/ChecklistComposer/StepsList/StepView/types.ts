@@ -1,5 +1,6 @@
 import { updateStep } from './actions';
 import { Interaction } from './InteractionView/types';
+import { Media } from './Media/types';
 
 export interface Timer {
   id: number;
@@ -15,7 +16,7 @@ export interface Step {
   orderTree: number;
   hasStop: boolean;
   interactions: Interaction[];
-  // medias: Media[];
+  medias: Media[];
   timed: boolean;
   timer?: Timer;
 }

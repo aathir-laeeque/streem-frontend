@@ -9,6 +9,7 @@ import { Wrapper } from './styles';
 import { StepViewProps } from './types';
 import InteractionView from './InteractionView';
 import { InteractionType } from './InteractionView/types';
+import StepMedia from './Media';
 
 const StepView: FC<StepViewProps> = ({ step, stepIndex }) => {
   const { activeStepIndex } = useTypedSelector(
@@ -58,7 +59,11 @@ const StepView: FC<StepViewProps> = ({ step, stepIndex }) => {
         </div>
       </div>
 
-      <div className="step-item-media">step media</div>
+      <div className="step-item-media">
+        {isStepActive && step.medias.length ? (
+          <StepMedia medias={step.medias} />
+        ) : null}
+      </div>
     </Wrapper>
   );
 };

@@ -128,6 +128,7 @@ export const Wrapper = styled.li.attrs({
     &-media {
       flex: 1;
       margin-left: 15px;
+      margin-bottom: 15px;
     }
   }
 
