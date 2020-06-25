@@ -14,7 +14,7 @@ import { MenuItem } from './types';
 const menuItems: MenuItem[] = [
   { name: 'Dashboard', icon: Dashboard, path: '/' },
   { name: 'Tasks', icon: FeaturedPlayList, path: '/tasks' },
-  { name: 'Checklists', icon: LibraryAddCheck, path: '/checklist' },
+  { name: 'Checklists', icon: LibraryAddCheck, path: '/checklists' },
   { name: 'Reports', icon: Assessment, path: '/reports' },
   { name: 'Audit Logs', icon: MenuBook, path: '/audit' },
 ];

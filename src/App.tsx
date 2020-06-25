@@ -32,7 +32,7 @@ const App: FC = () => {
           <Router basepath="/">
             <DashboardView path="/" />
             <AuditLogsView path="audit/*" />
-            <ChecklistView path="checklist/*" />
+            <ChecklistView path="checklists/*" />
             <ReportsView path="reports/*" />
             <TasksView path="tasks/*" />
           </Router>

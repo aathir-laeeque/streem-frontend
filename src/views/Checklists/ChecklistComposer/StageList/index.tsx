@@ -1,20 +1,20 @@
 import { useTypedSelector } from '#store';
-
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import {
   ArrowDownwardOutlined,
   ArrowUpwardOutlined,
   FileCopyOutlined,
   PlaylistAddOutlined,
 } from '@material-ui/icons';
+import React, { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
+import { setActiveStage, updateStageName } from './actions';
 import { Wrapper } from './styles';
 import { Stage } from './types';
-import { setActiveStage, updateStageName } from './actions';
+import { ChecklistState, TemplateMode } from '../types';
 
-const StageList = () => {
-  const { stages, activeStageIndex } = useTypedSelector(
+const StageList: FC = () => {
+  const { stages, activeStageIndex, templateMode } = useTypedSelector(
     (state) => state.checklistComposer,
   );
 
@@ -35,7 +35,11 @@ const StageList = () => {
             className={`stage-list-item${
               index === activeStageIndex ? ' stage-list-item-active' : ''
             }`}
-            onClick={() => dispatch(setActiveStage(index))}
+            onClick={() =>
+              index !== activeStageIndex
+                ? dispatch(setActiveStage(index))
+                : undefined
+            }
           >
             <input
               type="text"
@@ -44,6 +48,9 @@ const StageList = () => {
               onChange={(e) =>
                 dispatch(updateStageName({ name: e.target.value, index }))
               }
+              {...(templateMode === TemplateMode.NON_EDITABLE && {
+                disabled: true,
+              })}
             />
           </li>
         ))}

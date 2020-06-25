@@ -7,10 +7,14 @@ import { useDispatch } from 'react-redux';
 
 // relative imports
 import { fetchChecklist } from './actions';
-import NewChecklist from './Checklist';
-import { ChecklistComposerProps } from './types';
+import Checklist from './Checklist';
+import { ChecklistComposerProps, ChecklistState, TemplateMode } from './types';
 
-const ChecklistComposer: FC<ChecklistComposerProps> = ({ checklistId }) => {
+const ChecklistComposer: FC<ChecklistComposerProps> = ({
+  checklistId,
+  checklistState,
+  templateMode,
+}) => {
   const dispatch: AppDispatch = useDispatch();
 
   const { activeChecklist, loading } = useTypedSelector(
@@ -26,10 +30,17 @@ const ChecklistComposer: FC<ChecklistComposerProps> = ({ checklistId }) => {
   if (loading) {
     return <div>Loading...</div>;
   } else if (activeChecklist) {
-    return <NewChecklist />;
+    return (
+      <Checklist checklistState={checklistState} templateMode={templateMode} />
+    );
   } else {
     return null;
   }
+};
+
+ChecklistComposer.defaultProps = {
+  checklistState: ChecklistState.ADD_EDIT,
+  templateMode: TemplateMode.EDITABLE,
 };
 
 export default ChecklistComposer;

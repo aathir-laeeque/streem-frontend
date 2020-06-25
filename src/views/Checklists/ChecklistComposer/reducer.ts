@@ -14,16 +14,20 @@ import {
   ChecklistComposerAction,
   ChecklistComposerActionType,
   ChecklistComposerState,
+  ChecklistState,
+  TemplateMode,
 } from './types';
 
 const initialState: ChecklistComposerState = {
   activeChecklist: undefined,
   activeStageIndex: 0,
   activeStepIndex: 0,
+  checklistState: undefined,
   error: null,
   loading: false,
   stages: undefined,
   steps: undefined,
+  templateMode: undefined,
 };
 
 type redeucerAction =
@@ -52,6 +56,13 @@ const reducer = (
         stages: action.payload?.checklist.stages.map((el) => ({
           ...omit(el, ['steps']),
         })),
+      };
+
+    case ChecklistComposerAction.SET_CHECKLIST_MODE:
+      return {
+        ...state,
+        checklistState: action.payload?.checklistState,
+        templateMode: action.payload?.templateMode,
       };
 
     case StageListActions.SET_ACTIVE_STAGE:

@@ -1,18 +1,29 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 import Header from './Header';
 import StageList from './StageList';
 import StepsList from './StepsList';
 import { Wrapper } from './styles';
+import { ChecklistProps } from './types';
+import { setChecklistModes } from './actions';
 
-const NewChecklist: FC = () => (
-  <Wrapper>
-    <Header />
+const Checklist: FC<ChecklistProps> = ({ checklistState, templateMode }) => {
+  const dispatch = useDispatch();
 
-    <StageList />
+  useEffect(() => {
+    dispatch(setChecklistModes({ checklistState, templateMode }));
+  }, []);
 
-    <StepsList />
-  </Wrapper>
-);
+  return (
+    <Wrapper>
+      <Header />
 
-export default NewChecklist;
+      <StageList />
+
+      <StepsList />
+    </Wrapper>
+  );
+};
+
+export default Checklist;
