@@ -27,11 +27,13 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
 
   useEffect(() => {
     // if (!tasks[selectedStatus].list?.length) {
-    const filters = JSON.stringify({
+    const filters = {
       op: 'AND',
       fields: [{ field: 'status', op: 'EQ', values: [selectedStatus] }],
-    });
+    };
+
     dispatch(fetchTasks({ page, size, filters }, selectedStatus));
+
     // }
     if (!task?.length) {
       dispatch(fetchProperties({ type: 'task', sort: 'orderTree' }));
