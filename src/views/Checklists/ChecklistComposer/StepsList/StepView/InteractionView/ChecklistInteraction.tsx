@@ -42,20 +42,23 @@ const ChecklistInteraction: FC<InteractionViewProps> = ({
         />
       </div>
 
+      {/* TODO: add support for adding new items to checklist s*/}
       <div className="checklist-container">
         {interaction.data.map((el: any, index: number) => (
           <div className="list-item" key={index}>
             <Checkbox
               label={el.name}
-              onClick={() =>
-                update({
-                  data: interaction.data.map((ele, i) => ({
-                    ...ele,
-                    ...(i === index && { value: !!!el.value }),
-                  })),
-                })
-              }
-              checked={!!el.value}
+              onClick={() => {
+                !isCreatingChecklist
+                  ? update({
+                      data: interaction.data.map((ele, i) => ({
+                        ...ele,
+                        ...(i === index && { value: !!!el.value }),
+                      })),
+                    })
+                  : null;
+              }}
+              checked={isCreatingChecklist ? false : !!el.value}
             />
             <Close className={`icon${!isCreatingChecklist ? ' hide' : ''}`} />
           </div>

@@ -25,6 +25,7 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({
       updateInteraction({ ...data }, interactionIndex, interaction.type),
     );
 
+  // TODO: make SHouldbe interaction in executing state
   if (!isCreatingChecklist) {
     return null;
   }

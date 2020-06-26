@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ChecklistState } from '../../../types';
-import { updateInteraction } from './actions';
+import { updateInteraction, executeInteraction } from './actions';
 import { InteractionViewProps } from './types';
 
 const YesNoInteraction: FC<InteractionViewProps> = ({
@@ -67,7 +67,16 @@ const YesNoInteraction: FC<InteractionViewProps> = ({
                 }
               />
             </div>
-            <button className={`${el.type}-button`}>{el.name}</button>
+            <button
+              className={`${el.type}-button`}
+              onClick={() =>
+                !isCreatingChecklist
+                  ? dispatch(executeInteraction(interaction, el))
+                  : undefined
+              }
+            >
+              {el.name}
+            </button>
           </div>
         ))}
       </div>

@@ -27,7 +27,7 @@ const TextboxInteraction: FC<InteractionViewProps> = ({
   return (
     <div className="textbox-interaction">
       <div className="form-field">
-        <label className="form-input-label">Label</label>
+        <label className="form-input-label">{interaction.label}</label>
         <textarea
           className="form-input form-input-value"
           rows={4}

@@ -22,5 +22,11 @@ export const udpateInteractionInRedux = (
     interactionIndex,
   });
 
-export const executeInteraction = (interaction: Partial<Interaction>) =>
-  actionSpreader(InteractionActions.EXECUTE_INTERACTION, { interaction });
+export const executeInteraction = (
+  interaction: Partial<Interaction>,
+  interactionData: any,
+) =>
+  actionSpreader(InteractionActions.EXECUTE_INTERACTION, {
+    interaction,
+    interactionData,
+  });

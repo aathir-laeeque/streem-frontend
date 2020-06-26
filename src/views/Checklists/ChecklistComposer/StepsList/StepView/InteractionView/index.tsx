@@ -35,7 +35,7 @@ const InteractionView: FC<InteractionViewProps> = ({
         }`}
       >
         <ArrowUpwardOutlined className="icon arrow-up" />
-        {/* <span>{index + 1}</span> */}
+        {/* <span>{interactionIndex + 1}</span> */}
         <ArrowDownwardOutlined className="icon arrow-down" />
       </div>
 
