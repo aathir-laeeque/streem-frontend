@@ -1,4 +1,4 @@
-import { apiCreateTask, apiGetTasks } from '#utils/apiUrls';
+import { apiGetTasks } from '#utils/apiUrls';
 import { request } from '#utils/request';
 
 import { put, takeLatest, call } from 'redux-saga/effects';
@@ -13,16 +13,16 @@ import {
   createTaskOngoing,
   createTaskSuccess,
 } from './actions';
-import { ListViewAction, ListViewActionType } from './types';
+import { ListViewAction } from './types';
 
-function* fetchTasks(action: ListViewActionType) {
+function* fetchTasks(action: any) {
   try {
     yield put(fetchTasksOngoing());
 
-    const params = action.payload;
-    console.log('params', params);
+    const params = action.payload.params;
+    const type = action.payload.type;
     const response = yield call(request, 'GET', apiGetTasks(), { params });
-    yield put(fetchTasksSuccess(response));
+    yield put(fetchTasksSuccess(response, type));
   } catch (error) {
     console.error(
       'error from fetchTask function in TaskListView Saga :: ',
@@ -37,12 +37,10 @@ function* createTask(action: any) {
     yield put(createTaskOngoing());
 
     const params = action.payload;
-    const response = yield call(
-      request,
-      'POST',
-      apiCreateTask(params.checklistId),
-      { data: { properties: params.properties } },
-    );
+    console.log('params', { params });
+    const response = yield call(request, 'POST', apiGetTasks(), {
+      data: params,
+    });
     console.log('response', response);
     yield put(
       showNotification({

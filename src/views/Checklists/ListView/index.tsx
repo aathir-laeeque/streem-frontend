@@ -33,9 +33,9 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   const [sideBarOpen, setSideBarOpen] = useState(false);
 
   useEffect(() => {
-    if (!checklists?.length) {
-      dispatch(fetchChecklists({ page, size }));
-    }
+    // if (!checklists?.length) {
+    dispatch(fetchChecklists({ page, size }));
+    // }
     if (!task?.length) {
       dispatch(fetchProperties({ type: 'task' }));
     }

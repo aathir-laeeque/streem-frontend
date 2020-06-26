@@ -7,12 +7,12 @@ import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { fetchTasks } from './actions';
-import { ListViewProps } from './types';
+import { fetchTasks, setselectedStatus } from './actions';
+import { ListViewProps, TaskStatus } from './types';
 import { Composer } from './styles';
 
 const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
-  const { tasks, pageable, loading } = useTypedSelector(
+  const { tasks, loading, selectedStatus } = useTypedSelector(
     (state) => state.taskListView,
   );
 
@@ -26,40 +26,74 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   const [size, setSize] = useState(100);
 
   useEffect(() => {
-    if (!tasks?.length) {
-      dispatch(fetchTasks({ page, size }));
-    }
+    // if (!tasks[selectedStatus].list?.length) {
+    const filters = JSON.stringify({
+      op: 'AND',
+      fields: [{ field: 'status', op: 'EQ', values: [selectedStatus] }],
+    });
+    dispatch(fetchTasks({ page, size, filters }, selectedStatus));
+    // }
     if (!task?.length) {
       dispatch(fetchProperties({ type: 'task', sort: 'orderTree' }));
     }
-  }, []);
+  }, [selectedStatus]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  } else if (task && tasks && pageable) {
+  const setSelectedTab = (status: string) => {
+    if (selectedStatus !== status) {
+      dispatch(setselectedStatus(status));
+    }
+  };
+
+  if (task && tasks[selectedStatus].list?.length) {
     return (
       <Composer>
-        <ListViewComponent
-          properties={task}
-          data={tasks}
-          primaryButtonText="Create Checklist"
-          nameItemTemplate={(item) => (
-            <div className="list-card-columns">
-              <div
-                className="title-group"
-                style={{ paddingLeft: `40px`, marginTop: 0 }}
-              >
-                <span className="list-code">{item.code}</span>
-                <span
-                  className="list-title"
-                  onClick={() => selectTask(item.id)}
-                >
-                  {item.checklist.name}
-                </span>
-              </div>
-            </div>
-          )}
-        />
+        <div className="tabs-row">
+          <span
+            className={
+              selectedStatus === TaskStatus.UNASSIGNED
+                ? 'tab-title tab-active'
+                : 'tab-title'
+            }
+            onClick={() => setSelectedTab(TaskStatus.UNASSIGNED)}
+          >
+            Unassigned
+          </span>
+          <span
+            className={
+              selectedStatus === TaskStatus.ASSIGNED
+                ? 'tab-title tab-active'
+                : 'tab-title'
+            }
+            onClick={() => setSelectedTab(TaskStatus.ASSIGNED)}
+          >
+            Active
+          </span>
+        </div>
+        {(loading && <div>Loading...</div>) || (
+          <div style={{ height: `calc(100% - 30px)` }}>
+            <ListViewComponent
+              properties={task}
+              data={tasks[selectedStatus].list}
+              primaryButtonText="Create Checklist"
+              nameItemTemplate={(item) => (
+                <div className="list-card-columns">
+                  <div
+                    className="title-group"
+                    style={{ paddingLeft: `40px`, marginTop: 0 }}
+                  >
+                    <span className="list-code">{item.code}</span>
+                    <span
+                      className="list-title"
+                      onClick={() => selectTask(item.id)}
+                    >
+                      {item.checklist.name}
+                    </span>
+                  </div>
+                </div>
+              )}
+            />
+          </div>
+        )}
       </Composer>
     );
   } else {

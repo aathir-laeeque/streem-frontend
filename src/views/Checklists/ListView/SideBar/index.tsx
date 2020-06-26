@@ -29,18 +29,28 @@ const SideBar: FC<SideBarProps> = ({
     setTaskDetails(temp);
   };
 
-  const onCreateTask = () => {
+  const onCreateTask = (onModalContainerClick: () => void) => {
     const tempProperties: any = [];
-    properties.map((property) => {
-      if (property.name && taskDetails[property.name]) {
-        tempProperties.push({
-          id: property.id,
-          value: taskDetails[property.name],
-        });
+    let error = false;
+    properties.every((property) => {
+      if (property.name) {
+        if (!taskDetails[property.name]) {
+          if (property.mandatory) {
+            error = true;
+            return false;
+          }
+        } else {
+          tempProperties.push({
+            id: property.id,
+            value: taskDetails[property.name],
+          });
+          return true;
+        }
       }
     });
-    if (tempProperties && selectedChecklist) {
+    if (!error && tempProperties && selectedChecklist) {
       const parsedProperties: { id: number; value: string }[] = tempProperties;
+      onModalContainerClick();
       dispatch(
         createTask({
           properties: parsedProperties,

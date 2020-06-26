@@ -10,14 +10,28 @@ import {
   createTaskOngoing,
   createTaskSuccess,
   createTaskError,
+  setselectedStatus,
 } from './actions';
 
 export type ListViewProps = RouteComponentProps;
+
+export type Tasks = Record<
+  string,
+  {
+    list: Task[] | undefined;
+    pageable: Pageable | undefined;
+  }
+>;
 export interface ListViewState {
-  readonly tasks: Task[] | undefined;
-  readonly pageable: Pageable | undefined;
+  readonly tasks: Tasks;
   readonly loading: boolean;
   readonly error: any;
+  readonly selectedStatus: string;
+}
+
+export enum TaskStatus {
+  ASSIGNED = 'assigned',
+  UNASSIGNED = 'unassigned',
 }
 
 export enum ListViewAction {
@@ -29,6 +43,7 @@ export enum ListViewAction {
   CREATE_TASK_ERROR = '@@task/ListView/CREATE_TASK_ERROR',
   CREATE_TASK_ONGOING = '@@task/ListView/CREATE_TASK_ONGOING',
   CREATE_TASK_SUCCESS = '@@task/ListView/CREATE_TASK_SUCCESS',
+  SET_SELECTED_STATUS = '@@task/ListView/SET_SELECTED_STATUS',
 }
 
 export type ListViewActionType = ReturnType<
@@ -40,4 +55,5 @@ export type ListViewActionType = ReturnType<
   | typeof createTaskOngoing
   | typeof createTaskSuccess
   | typeof createTaskError
+  | typeof setselectedStatus
 >;
