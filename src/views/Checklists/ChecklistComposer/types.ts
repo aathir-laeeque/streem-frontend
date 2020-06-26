@@ -23,6 +23,7 @@ export enum TemplateMode {
 }
 
 export interface ChecklistComposerProps extends RouteComponentProps {
+  taskid?: string;
   checklistId?: string;
   checklistState: ChecklistState;
   templateMode: TemplateMode;

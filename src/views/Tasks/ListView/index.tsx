@@ -20,17 +20,17 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const selectTask = (id: string | number) => navigate(`/task/${id}`);
+  const selectTask = (id: string | number) => navigate(`/tasks/${id}`);
 
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(100);
 
   useEffect(() => {
     // if (!tasks[selectedStatus].list?.length) {
-    const filters = {
+    const filters = JSON.stringify({
       op: 'AND',
       fields: [{ field: 'status', op: 'EQ', values: [selectedStatus] }],
-    };
+    });
 
     dispatch(fetchTasks({ page, size, filters }, selectedStatus));
 
