@@ -8,7 +8,7 @@ interface ModalProps {
   successText: string;
   cancelText: string;
   isModalOpen: boolean;
-  onSuccess: () => void;
+  onSuccess: (onModalContainerClick: () => void) => void;
   toggleState: () => void;
   children: ReactNode;
   modalFooterOptions?: ReactNode;
@@ -199,8 +199,7 @@ export const Modal: FC<ModalProps> = ({
                 <Button
                   style={{ marginRight: 0, fontWeight: 600 }}
                   onClick={() => {
-                    onModalContainerClick();
-                    onSuccess();
+                    onSuccess(onModalContainerClick);
                   }}
                 >
                   {successText}

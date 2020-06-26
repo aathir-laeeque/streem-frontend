@@ -29,6 +29,7 @@ const Wrapper = styled.div.attrs({})`
     display: flex;
     padding: 8px 16px;
     align-items: center;
+    border-top: 1px solid #dadada;
   }
 
   .list-header-columns {
@@ -47,7 +48,8 @@ const Wrapper = styled.div.attrs({})`
   }
 
   .list-body {
-    overflow: scroll;
+    overflow-x: auto;
+    overflow-y: scroll;
     height: calc(100% - 88px);
   }
 
