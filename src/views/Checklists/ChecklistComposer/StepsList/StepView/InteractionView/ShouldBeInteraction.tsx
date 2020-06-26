@@ -1,9 +1,11 @@
+import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
-
-import { InteractionViewProps } from './types';
-import { TARGET_RULES } from './constants';
 import { useDispatch } from 'react-redux';
+
+import { ChecklistState } from '../../../types';
 import { updateInteraction } from './actions';
+import { TARGET_RULES } from './constants';
+import { InteractionViewProps } from './types';
 
 const ShouldBeInteraction: FC<InteractionViewProps> = ({
   interaction,
@@ -11,11 +13,21 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({
 }) => {
   const dispatch = useDispatch();
 
+  const { checklistState } = useTypedSelector(
+    (state) => state.checklistComposer,
+  );
+
+  const isCreatingChecklist = checklistState === ChecklistState.ADD_EDIT;
+
   // TODO: look into type of data in the interaction
   const update = (data: any) =>
     dispatch(
       updateInteraction({ ...data }, interactionIndex, interaction.type),
     );
+
+  if (!isCreatingChecklist) {
+    return null;
+  }
 
   return (
     <div className="shouldbe-interaction">

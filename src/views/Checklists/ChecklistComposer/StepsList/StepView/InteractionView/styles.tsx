@@ -42,6 +42,24 @@ export const Wrapper = styled.div.attrs({
           margin-bottom: 20px;
           align-items: center;
 
+          &-header {
+            display: flex;
+            margin-bottom: 8px;
+
+            > div {
+              flex: 1;
+              display: flex;
+              justify-content: flex-end;
+              color: #333333;
+              font-size: 16px;
+              font-weight: 600;
+
+              :first-child {
+                justify-content: center;
+              }
+            }
+          }
+
           > span {
             color: #666666;
             font-size: 16px;
@@ -132,6 +150,7 @@ export const Wrapper = styled.div.attrs({
               padding: 5px 0;
               align-items: center;
               justify-content: center;
+              cursor: pointer;
             }
 
             .yes-button {

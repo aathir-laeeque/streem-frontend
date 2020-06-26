@@ -1,4 +1,4 @@
-import { updateStep } from './actions';
+import { updateStep, completeStep } from './actions';
 import { Interaction } from './InteractionView/types';
 import { Media } from './Media/types';
 
@@ -28,6 +28,9 @@ export interface StepViewProps {
 
 export enum StepViewActions {
   UPDATE_STEP = '@@step_view/UPDATE_STEP',
+  COMPLETE_STEP = '@@step_view/COMPLETE_STEP',
 }
 
-export type StepViewActionType = ReturnType<typeof updateStep>;
+export type StepViewActionType = ReturnType<
+  typeof updateStep | typeof completeStep
+>;

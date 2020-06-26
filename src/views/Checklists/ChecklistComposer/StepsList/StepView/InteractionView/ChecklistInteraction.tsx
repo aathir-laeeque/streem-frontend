@@ -1,9 +1,11 @@
 // alias imports
 import { Checkbox } from '#components';
+import { useTypedSelector } from '#store';
 import { Close } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { ChecklistState } from '../../../types';
 import { updateInteraction } from './actions';
 import { InteractionViewProps } from './types';
 
@@ -12,6 +14,12 @@ const ChecklistInteraction: FC<InteractionViewProps> = ({
   interactionIndex,
 }) => {
   const dispatch = useDispatch();
+
+  const { checklistState } = useTypedSelector(
+    (state) => state.checklistComposer,
+  );
+
+  const isCreatingChecklist = checklistState === ChecklistState.ADD_EDIT;
 
   // TODO: look into type of data for interaction
   const update = (data: any) =>
@@ -23,11 +31,14 @@ const ChecklistInteraction: FC<InteractionViewProps> = ({
     <div className="checklist-interaction">
       <div className="form-field">
         <input
-          className="form-input form-input-value"
+          className={`form-input form-input-value${
+            !isCreatingChecklist ? ' no-border' : ''
+          }`}
           type="text"
           value={interaction.label}
           onChange={(e) => update({ label: e.target.value })}
           placeholder="Enter a title for the checklist"
+          {...(!isCreatingChecklist && { disabled: true })}
         />
       </div>
 
@@ -46,7 +57,7 @@ const ChecklistInteraction: FC<InteractionViewProps> = ({
               }
               checked={!!el.value}
             />
-            <Close className="icon" />
+            <Close className={`icon${!isCreatingChecklist ? ' hide' : ''}`} />
           </div>
         ))}
       </div>

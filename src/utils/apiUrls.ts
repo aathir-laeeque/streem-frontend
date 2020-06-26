@@ -4,3 +4,6 @@ export const apiGetChecklists = () => `${baseUrl}/checklists`;
 
 export const apiGetChecklist = (checklistId: number) =>
   `${baseUrl}/checklists/${checklistId}`;
+
+export const apiExecuteIntearction = (interactionId: number) =>
+  `${baseUrl}/interactions/${interactionId}/execute`;

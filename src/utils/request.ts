@@ -25,6 +25,7 @@ export const request = async (
     method,
     headers: {
       'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json',
     },
     // TODO: check this when using POST request
     ...(options?.data && { body: JSON.stringify(options?.data) }),

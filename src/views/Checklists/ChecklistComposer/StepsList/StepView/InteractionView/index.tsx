@@ -1,27 +1,39 @@
-import React, { FC } from 'react';
+import { useTypedSelector } from '#store';
 import {
   ArrowDownwardOutlined,
   ArrowUpwardOutlined,
   MoreVertOutlined,
 } from '@material-ui/icons';
+import React, { FC } from 'react';
 
-import { InteractionViewProps, InteractionType } from './types';
-import { Wrapper } from './styles';
-import MaterialInteraction from './MaterialInteraction';
-import InstructionInteraction from './InstructionInteraction';
-import YesNoInteraction from './YesNoInteraction';
+import { ChecklistState } from '../../../types';
 import ChecklistInteraction from './ChecklistInteraction';
+import InstructionInteraction from './InstructionInteraction';
+import MaterialInteraction from './MaterialInteraction';
 import ShouldBeInteraction from './ShouldBeInteraction';
-import TextboxInteraction from './TextboxInteraction';
 import SignatureInteraction from './SignatureInteraction';
+import { Wrapper } from './styles';
+import TextboxInteraction from './TextboxInteraction';
+import { InteractionType, InteractionViewProps } from './types';
+import YesNoInteraction from './YesNoInteraction';
 
 const InteractionView: FC<InteractionViewProps> = ({
   interaction,
   interactionIndex,
 }) => {
+  const { checklistState } = useTypedSelector(
+    (state) => state.checklistComposer,
+  );
+
+  const isCreatingChecklist = checklistState === ChecklistState.ADD_EDIT;
+
   return (
     <Wrapper>
-      <div className="step-interaction-position-control">
+      <div
+        className={`step-interaction-position-control${
+          !isCreatingChecklist ? ' hide' : ''
+        }`}
+      >
         <ArrowUpwardOutlined className="icon arrow-up" />
         {/* <span>{index + 1}</span> */}
         <ArrowDownwardOutlined className="icon arrow-down" />
@@ -92,7 +104,9 @@ const InteractionView: FC<InteractionViewProps> = ({
         })()}
       </div>
 
-      <MoreVertOutlined className="icon more-options" />
+      <MoreVertOutlined
+        className={`icon more-options${!isCreatingChecklist ? ' hide' : ''}`}
+      />
     </Wrapper>
   );
 };

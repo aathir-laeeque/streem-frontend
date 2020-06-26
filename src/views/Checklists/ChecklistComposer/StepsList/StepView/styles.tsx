@@ -123,6 +123,35 @@ export const Wrapper = styled.li.attrs({
           margin-left: 24px;
         }
       }
+
+      .complete-step {
+        border-radius: 3px;
+        border: 1px solid #12aab3;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 24px;
+        font-size: 20px;
+        padding: 4px 0;
+        color: #12aab3;
+        cursor: pointer;
+
+        > .icon {
+          color: #12aab3;
+          margin-left: 16px;
+        }
+      }
+
+      .skip-step {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        font-size: 16px;
+        color: #12aab3;
+        margin-top: 15px;
+      }
     }
 
     &-media {

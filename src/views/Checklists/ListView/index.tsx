@@ -18,7 +18,8 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const selectChecklist = (id: string | number) => navigate(`/checklist/${id}`);
+  const selectChecklist = (id: string | number) =>
+    navigate(`/checklists/${id}`);
 
   useEffect(() => {
     if (!checklists?.length) {

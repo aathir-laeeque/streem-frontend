@@ -4,12 +4,19 @@ import { useDispatch } from 'react-redux';
 
 import { InteractionViewProps } from './types';
 import { updateInteraction } from './actions';
+import { useTypedSelector } from '#store';
+import { ChecklistState } from '../../../types';
 
 const MaterialInteraction: FC<InteractionViewProps> = ({
   interaction,
   interactionIndex,
 }) => {
   const dispatch = useDispatch();
+  const { checklistState } = useTypedSelector(
+    (state) => state.checklistComposer,
+  );
+
+  const isCreatingChecklist = checklistState === ChecklistState.ADD_EDIT;
 
   // TODO: look into type for data in interaction
   const update = (data: any) =>
@@ -19,12 +26,20 @@ const MaterialInteraction: FC<InteractionViewProps> = ({
 
   return (
     <ol className="material-interaction">
+      {!isCreatingChecklist ? (
+        <li className="material-interaction-item-header">
+          <div>Name</div>
+          <div>Quantity</div>
+        </li>
+      ) : null}
       {interaction.data.map((el, index) => (
         <li key={index} className="material-interaction-item">
           <img src={el.link} className="material-interaction-item-image" />
 
           <input
-            className="form-input form-input-value"
+            className={`form-input form-input-value${
+              !isCreatingChecklist ? ' no-border' : ''
+            }`}
             type="text"
             name="material"
             value={el.name}
@@ -38,11 +53,16 @@ const MaterialInteraction: FC<InteractionViewProps> = ({
                 ],
               })
             }
+            {...(!isCreatingChecklist && { disabled: true })}
           />
 
-          <div className="material-interaction-item-controls">
+          <div
+            className={`material-interaction-item-controls${
+              !isCreatingChecklist ? ' no-border' : ''
+            }`}
+          >
             <Remove
-              className="icon"
+              className={`icon${!isCreatingChecklist ? ' hide' : ''}`}
               onClick={() =>
                 update({
                   data: [
@@ -54,9 +74,13 @@ const MaterialInteraction: FC<InteractionViewProps> = ({
                 })
               }
             />
-            <span className="quantity">{el.quantity || 1}</span>
+            <span
+              className={`quantity${!isCreatingChecklist ? ' no-border' : ''}`}
+            >
+              {el.quantity || 0}
+            </span>
             <Add
-              className="icon"
+              className={`icon${!isCreatingChecklist ? ' hide' : ''}`}
               onClick={() =>
                 update({
                   data: [

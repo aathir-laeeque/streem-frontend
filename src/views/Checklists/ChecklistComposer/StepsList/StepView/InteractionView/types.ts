@@ -1,4 +1,4 @@
-import { updateInteraction } from './actions';
+import { updateInteraction, executeInteraction } from './actions';
 
 export enum InteractionType {
   MATERIAL = 'material',
@@ -30,6 +30,9 @@ export interface InteractionViewProps {
 export enum InteractionActions {
   UPDATE_INTERACTIONS = '@@interaction_view/UPDATE_INTERACTION',
   UPDATE_INTERACTIONS_IN_REDUX = '@@interaction_view/UPDATE_INTERACTIONS_IN_REDUX',
+  EXECUTE_INTERACTION = '@@interaction_view/EXECUTE_INTERACTION',
 }
 
-export type InteractionActionType = ReturnType<typeof updateInteraction>;
+export type InteractionActionType = ReturnType<
+  typeof updateInteraction | typeof executeInteraction
+>;

@@ -32,6 +32,18 @@ const GlobalStyles = createGlobalStyle`
       margin-top: 2px;
     }
   }
+
+  .hide {
+    display: none !important;
+  }
+
+  .no-margin {
+    margin: 0 !important;
+  }
+
+  .no-border {
+    border: 0 !important;
+  }
 `;
 
 export default GlobalStyles;

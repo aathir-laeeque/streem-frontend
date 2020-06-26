@@ -1,14 +1,22 @@
+import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
-
-import { InteractionViewProps } from './types';
 import { useDispatch } from 'react-redux';
+
+import { ChecklistState } from '../../../types';
 import { updateInteraction } from './actions';
+import { InteractionViewProps } from './types';
 
 const YesNoInteraction: FC<InteractionViewProps> = ({
   interaction,
   interactionIndex,
 }) => {
   const dispatch = useDispatch();
+
+  const { checklistState } = useTypedSelector(
+    (state) => state.checklistComposer,
+  );
+
+  const isCreatingChecklist = checklistState === ChecklistState.ADD_EDIT;
 
   // TODO: look into type for data in interaction
   const update = (data: any) =>
@@ -19,23 +27,32 @@ const YesNoInteraction: FC<InteractionViewProps> = ({
   return (
     <div className="yes-no-interaction">
       <div className="form-field">
-        <label className="form-input-label">Label</label>
+        <label
+          className={`form-input-label${!isCreatingChecklist ? ' hide' : ''}`}
+        >
+          Label
+        </label>
         <input
-          className="form-input form-input-value"
+          className={`form-input form-input-value${
+            !isCreatingChecklist ? ' no-border' : ''
+          }`}
           type="text"
           value={interaction.label}
           onChange={(e) => update({ label: e.target.value })}
+          {...(!isCreatingChecklist && { disabled: true })}
         />
       </div>
       <div className="buttons-container">
         {interaction.data.map((el, index) => (
           <div key={index} className="button-item">
-            <div className="form-field">
+            <div className={`form-field${!isCreatingChecklist ? ' hide' : ''}`}>
               <label className="form-input-label">
                 {el.type === 'yes' ? 'Positive' : 'Negative'} Button Label
               </label>
               <input
-                className="form-input form-input-value"
+                className={`form-input form-input-value${
+                  !isCreatingChecklist ? ' no-border' : ''
+                }`}
                 type="text"
                 value={el.name}
                 onChange={(e) =>
