@@ -1,5 +1,11 @@
 // alias imports
-import { Header, NavigationMenu, WorkArea, Notification } from '#components';
+import {
+  Header,
+  NavigationMenu,
+  WorkArea,
+  Notification,
+  ModalContainer,
+} from '#components';
 import { DashboardLayout } from '#components/Layouts';
 import { store } from '#store';
 
@@ -48,6 +54,7 @@ const App: FC = () => {
           draggable
           pauseOnHover
         />
+        <ModalContainer />
       </DashboardLayout>
       <GlobalStyles />
     </Provider>

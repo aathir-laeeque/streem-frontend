@@ -1,8 +1,11 @@
-import React, { FC, useState } from 'react';
+import { FlatButton, Button } from '#components';
+import { AppDispatch } from '#store';
+import { openModalAction } from '#components/ModalContainer/actions';
+import { ModalNames } from '#components/ModalContainer/types';
+
+import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { Check } from '@material-ui/icons';
-import { FlatButton, Button, Modal, FloatInput } from '../../../../components';
-import { AppDispatch } from '../../../../store/types';
 import { createTask } from '../../../Tasks/ListView/actions';
 import { SideBarProps } from './types';
 
@@ -14,23 +17,22 @@ const SideBar: FC<SideBarProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [taskDetails, setTaskDetails] = useState<Record<string, string>>({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const toggleState = () => {
-    if (!isModalOpen) {
-      closeNav();
-    }
-    setIsModalOpen(!isModalOpen);
+    closeNav();
+    dispatch(
+      openModalAction({
+        type: ModalNames.CREATE_TASK_MODAL,
+        props: {
+          selectedChecklist: selectedChecklist,
+          properties: properties,
+          onCreateTask: onCreateTask,
+        },
+      }),
+    );
   };
 
-  const onInputChange = (id: string, value: string) => {
-    const temp = { ...taskDetails };
-    temp[id] = value;
-    setTaskDetails(temp);
-  };
-
-  const onCreateTask = (onModalContainerClick: () => void) => {
-    const tempProperties: any = [];
+  const onCreateTask = (taskDetails: Record<string, string>) => {
+    const tempProperties: { id: number; value: string }[] = [];
     let error = false;
     properties.every((property) => {
       if (property.name) {
@@ -50,7 +52,6 @@ const SideBar: FC<SideBarProps> = ({
     });
     if (!error && tempProperties && selectedChecklist) {
       const parsedProperties: { id: number; value: string }[] = tempProperties;
-      onModalContainerClick();
       dispatch(
         createTask({
           properties: parsedProperties,
@@ -141,43 +142,6 @@ const SideBar: FC<SideBarProps> = ({
           </div>
         </div>
       </div>
-      {isModalOpen && selectedChecklist && (
-        <Modal
-          toggleState={toggleState}
-          isModalOpen={isModalOpen}
-          title="Creating a Task"
-          successText="Create Task"
-          cancelText="Cancel"
-          onSuccess={onCreateTask}
-          modalFooterOptions={
-            <span style={{ color: `#12aab3`, fontWeight: 600, fontSize: 12 }}>
-              Schedule Task
-            </span>
-          }
-        >
-          <FloatInput
-            placeHolder="Choose a Checklist"
-            label="Checklist"
-            value={`${selectedChecklist.code} ${selectedChecklist.name}`}
-            id="checklistId"
-            onChange={onInputChange}
-            required
-            disabled
-          />
-          {properties.map((property, index) => (
-            <FloatInput
-              key={`property_${index}`}
-              placeHolder={'placeholder - ' + property.name}
-              label={property.name}
-              id={property.name}
-              value={taskDetails[property.name] || ''}
-              onChange={onInputChange}
-              required={index === 2 ? false : true}
-              // required={property.mandatory}
-            />
-          ))}
-        </Modal>
-      )}
     </div>
   );
 };
