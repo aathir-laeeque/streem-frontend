@@ -1,117 +1,84 @@
 import { omit } from 'lodash';
 
-import {
-  InteractionActions,
-  InteractionActionType,
-} from './StepsList/StepView/InteractionView/types';
-import {
-  StepViewActions,
-  StepViewActionType,
-} from './StepsList/StepView/types';
-import { StepsListActions, StepsListActionType } from './StepsList/types';
-import { StageListActions, StageListActionType } from './StageList/types';
-import {
-  ChecklistComposerAction,
-  ChecklistComposerActionType,
-  ChecklistComposerState,
-  ChecklistState,
-  TemplateMode,
-} from './types';
+import { ChecklistState } from '../types';
+import { Stage, StageListAction } from './StageList/types';
+import { ComposerAction, ComposerActionType, ComposerState } from './types';
+import { StepViewAction } from './StepsList/StepView/types';
+import { InteractionAction } from './StepsList/StepView/InteractionsList/types';
 
-const initialState: ChecklistComposerState = {
-  activeChecklist: undefined,
+const initialState: ComposerState = {
   activeStageIndex: 0,
   activeStepIndex: 0,
-  checklistState: undefined,
+  checklist: undefined,
   error: null,
   loading: false,
-  stages: undefined,
-  steps: undefined,
-  templateMode: undefined,
+  stages: [],
+  steps: null,
+  state: ChecklistState.ADD_EDIT,
 };
-
-type redeucerAction =
-  | ChecklistComposerActionType
-  | StageListActionType
-  | StepsListActionType
-  | StepViewActionType
-  | InteractionActionType;
 
 const reducer = (
   state = initialState,
-  action: redeucerAction,
-): ChecklistComposerState => {
+  action: ComposerActionType,
+): ComposerState => {
   switch (action.type) {
-    case ChecklistComposerAction.FETCH_CHECKLIST_ONGOING:
+    case ComposerAction.FETCH_CHECKLIST_ONGOING:
       return { ...state, loading: true };
 
-    case ChecklistComposerAction.FETCH_CHECKLIST_ERROR:
-      return { ...state, loading: false, error: action.payload?.error };
+    case ComposerAction.FETCH_CHECKLIST_SUCCESS:
+      const checklist = action.payload?.checklist;
 
-    case ChecklistComposerAction.FETCH_CHECKLIST_SUCCESS:
       return {
         ...state,
+        checklist: checklist,
         loading: false,
-        activeChecklist: action.payload?.checklist,
-        stages: action.payload?.checklist.stages.map((el) => ({
-          ...omit(el, ['steps']),
-        })),
+        stages: checklist?.stages.map((el) => ({ ...omit(el, ['steps']) })),
+        steps: checklist?.stages[state.activeStageIndex].steps,
       };
 
-    case ChecklistComposerAction.SET_CHECKLIST_MODE:
-      return {
-        ...state,
-        checklistState: action.payload?.checklistState,
-        templateMode: action.payload?.templateMode,
-      };
+    case ComposerAction.FETCH_CHECKLIST_ERROR:
+      return { ...state, error: action.payload?.error, loading: false };
 
-    case StageListActions.SET_ACTIVE_STAGE:
+    case ComposerAction.SET_CHECKLIST_STATE:
+      return { ...state, state: action.payload?.state };
+
+    case StageListAction.SET_ACTIVE_STAGE:
       return {
         ...state,
         activeStageIndex: action.payload?.index,
-        steps: state.activeChecklist?.stages[action.payload?.index].steps,
+        steps: state.checklist?.stages[action.payload?.index].steps,
       };
 
-    case StageListActions.UPDATE_STAGE_NAME:
+    case StageListAction.UPDATE_STAGE:
       return {
         ...state,
-        stages: state.stages?.map((el, i) => ({
+        stages: (state.stages as Array<Stage>).map((el, i) => ({
           ...el,
-          ...(i === action.payload?.index && { name: action.payload?.name }),
+          ...(i === action.payload?.index && { ...action.payload?.stage }),
         })),
       };
 
-    case StepsListActions.SET_ACTIVE_STEP:
+    case StepViewAction.SET_ACTIVE_STEP:
       return { ...state, activeStepIndex: action.payload?.index };
 
-    case StepViewActions.UPDATE_STEP:
+    case InteractionAction.UPDATE_INTERACTION_REDUX:
       return {
         ...state,
-        steps: state?.steps?.map((el, i) => ({
-          ...el,
-          ...(i === state.activeStepIndex && { ...action.payload }),
-        })),
-      };
-
-    case InteractionActions.UPDATE_INTERACTIONS:
-      return {
-        ...state,
-        steps: state?.steps?.map((el, i) => ({
-          ...el,
+        steps: state.steps.map((step, i) => ({
+          ...step,
           ...(i === state.activeStepIndex && {
-            interactions: el.interactions.map((z, ii) => ({
-              ...z,
-              ...(ii === action.payload?.interactionIndex && {
-                ...action.payload?.interaction,
-              }),
+            interactions: step.interactions.map((interaction, j) => ({
+              ...(j === action.payload?.index
+                ? { ...action.payload?.data }
+                : { ...interaction }),
             })),
           }),
         })),
       };
 
     default:
-      return { ...state };
+      return state;
   }
 };
 
-export { reducer as ChecklistComposerReducer };
+export { reducer as composerReducer };

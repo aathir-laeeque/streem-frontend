@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div.attrs({
+  className: 'steps-container',
+})`
   display: grid;
   grid-template-areas: 'stagenumber' 'stagename' 'steps';
   grid-template-rows: 16px 32px 1fr;
@@ -30,7 +32,7 @@ export const Wrapper = styled.div`
     }
   }
 
-  .step {
+  .steps {
     &-list {
       counter-reset: item;
       grid-area: steps;

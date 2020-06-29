@@ -1,41 +1,43 @@
+import { ChecklistState } from '#views/Checklists/types';
 import { useTypedSelector } from '#store';
-import {
-  ArrowDownwardOutlined,
-  ArrowUpwardOutlined,
-  ArrowForward,
-} from '@material-ui/icons';
+import { ArrowDownwardOutlined, ArrowUpwardOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ChecklistState } from '../../types';
-import { setActiveStep } from '../actions';
+import { setActiveStep } from './actions';
 import Header from './Header';
-import InteractionView from './InteractionView';
-import { InteractionType } from './InteractionView/types';
-import StepMedia from './Media';
 import { Wrapper } from './styles';
-import { StepViewProps } from './types';
-import { completeStep } from './actions';
+import { Step } from './types';
+import InteractionsList from './InteractionsList';
+import { InteractionType } from './InteractionsList/types';
+import StepMedia from './Media';
+
+interface StepViewProps {
+  step: Step;
+  stepIndex: number;
+}
 
 const StepView: FC<StepViewProps> = ({ step, stepIndex }) => {
-  const { activeStepIndex, checklistState } = useTypedSelector(
+  const { state, activeStepIndex } = useTypedSelector(
     (state) => state.checklistComposer,
   );
-
   const dispatch = useDispatch();
 
+  const isEditingTemplate = state === ChecklistState.ADD_EDIT;
   const isStepActive = stepIndex === activeStepIndex;
-  const isCreatingChecklist = checklistState === ChecklistState.ADD_EDIT;
+
+  const setAsActive = () =>
+    !isStepActive ? dispatch(setActiveStep(stepIndex)) : undefined;
 
   return (
     <Wrapper>
       <div className="step-item-position-control">
         <ArrowUpwardOutlined
-          className={`icon icon-up${!isCreatingChecklist ? ' hide' : ''}`}
+          className={`icon icon-up${!isEditingTemplate ? ' hide' : ''}`}
         />
         <span className="step-number">{stepIndex + 1}</span>
         <ArrowDownwardOutlined
-          className={`icon icon-down${!isCreatingChecklist ? ' hide' : ''}`}
+          className={`icon icon-down${!isEditingTemplate ? ' hide' : ''}`}
         />
       </div>
 
@@ -43,44 +45,18 @@ const StepView: FC<StepViewProps> = ({ step, stepIndex }) => {
         className={`step-item-content${
           isStepActive ? ' step-item-content-active' : ''
         }`}
-        onClick={() =>
-          !isStepActive ? dispatch(setActiveStep(stepIndex)) : undefined
-        }
+        onClick={setAsActive}
       >
         <Header step={step} />
 
-        {/* TODO: build the timed card here */}
-        {/* <TimedCard step={step} /> */}
-
-        {/* render the interactions here */}
-        <div className="step-interactions-list">
-          {step.interactions
-            .filter(
-              (el) =>
-                el.type !== InteractionType.MULTISELECT &&
-                el.type !== InteractionType.MEDIA,
-            )
-            .map((interaction, index) => (
-              <InteractionView
-                key={index}
-                interaction={interaction}
-                interactionIndex={index}
-              />
-            ))}
-        </div>
-
-        {!isCreatingChecklist ? (
-          <div
-            className="complete-step"
-            onClick={() => dispatch(completeStep({ id: step.id }))}
-          >
-            Complete Step <ArrowForward className="icon" />
-          </div>
-        ) : null}
-
-        {!isCreatingChecklist ? (
-          <div className="skip-step">Skip this step</div>
-        ) : null}
+        <InteractionsList
+          // TODO remove this filter when MEDIA and MULTISELECT interactions are complete
+          interactions={step.interactions.filter(
+            (el) =>
+              el.type !== InteractionType.MEDIA &&
+              el.type !== InteractionType.MULTISELECT,
+          )}
+        />
       </div>
 
       <div className="step-item-media">

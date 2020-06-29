@@ -1,46 +1,49 @@
-// alias imports
-import { AppDispatch, useTypedSelector } from '#store';
-
-// library imports
+import { useTypedSelector } from '#store';
+import { isEmpty } from 'lodash';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-// relative imports
-import { fetchChecklist } from './actions';
-import Checklist from './Checklist';
-import { ChecklistComposerProps, ChecklistState, TemplateMode } from './types';
+import { ChecklistState } from '../types';
+import { fetchChecklist, setChecklistState } from './actions';
+import Header from './Header';
+import StagesList from './StageList';
+import StepsList from './StepsList';
+import { Wrapper } from './styles';
+import { ComposerProps } from './types';
 
-const ChecklistComposer: FC<ChecklistComposerProps> = ({
-  checklistId,
-  checklistState,
-  templateMode,
-}) => {
-  const dispatch: AppDispatch = useDispatch();
+const Composer: FC<ComposerProps> = ({ checklistId, checklistState }) => {
+  const dispatch = useDispatch();
 
-  const { activeChecklist, loading } = useTypedSelector(
+  const { loading, checklist } = useTypedSelector(
     (state) => state.checklistComposer,
   );
 
   useEffect(() => {
-    if (!!checklistId && activeChecklist?.id !== parseInt(checklistId)) {
-      dispatch(fetchChecklist(parseInt(checklistId)));
-    }
+    dispatch(fetchChecklist(parseInt(checklistId)));
+
+    checklistState !== ChecklistState.ADD_EDIT &&
+      dispatch(setChecklistState(checklistState));
   }, []);
 
   if (loading) {
     return <div>Loading...</div>;
-  } else if (activeChecklist) {
+  } else if (!isEmpty(checklist)) {
     return (
-      <Checklist checklistState={checklistState} templateMode={templateMode} />
+      <Wrapper>
+        <Header />
+
+        <StagesList />
+
+        <StepsList />
+      </Wrapper>
     );
   } else {
     return null;
   }
 };
 
-ChecklistComposer.defaultProps = {
+Composer.defaultProps = {
   checklistState: ChecklistState.ADD_EDIT,
-  templateMode: TemplateMode.EDITABLE,
 };
 
-export default ChecklistComposer;
+export default Composer;

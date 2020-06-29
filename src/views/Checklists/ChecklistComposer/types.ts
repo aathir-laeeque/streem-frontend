@@ -6,58 +6,51 @@ import {
   fetchChecklistError,
   fetchChecklistOngoing,
   fetchChecklistSuccess,
-  setChecklistModes,
+  setChecklistState,
 } from './actions';
+import { setActiveStage, updateStage } from './StageList/actions';
 import { Stage } from './StageList/types';
-import { Step } from './StepsList/StepView/types';
+import { setActiveStep } from './StepsList/StepView/actions';
+import { updateInteractionInRedux } from './StepsList/StepView/InteractionsList/actions';
 
 export enum ChecklistState {
-  ADD_EDIT = 'add-edit',
+  ADD_EDIT = 'add/edit',
   EXECUTING = 'executing',
   EXECUTED = 'executed',
 }
 
-export enum TemplateMode {
-  EDITABLE = 'editable',
-  NON_EDITABLE = 'non-editable',
-}
-
-export interface ChecklistComposerProps extends RouteComponentProps {
-  checklistId?: string;
+export interface ComposerProps extends RouteComponentProps {
+  checklistId: string;
   checklistState: ChecklistState;
-  templateMode: TemplateMode;
 }
 
-export interface ChecklistProps {
-  checklistState: ChecklistState;
-  templateMode: TemplateMode;
+export interface ComposerState {
+  activeStageIndex: number;
+  activeStepIndex: number;
+  checklist?: Checklist;
+  error: unknown;
+  loading: boolean;
+  stages: Stage[] | [];
+  steps: any;
+  state: ChecklistState;
 }
 
-export interface ChecklistComposerState {
-  readonly activeChecklist?: Checklist;
-  readonly activeStageIndex?: number;
-  readonly activeStepIndex?: number;
-  readonly checklistState?: ChecklistState;
-  readonly error: any;
-  readonly loading: boolean;
-  readonly stages?: Partial<Stage>[];
-  readonly steps?: Step[];
-  readonly templateMode?: TemplateMode;
-}
-
-export enum ChecklistComposerAction {
+export enum ComposerAction {
   FETCH_CHECKLIST = '@@checklist/composer/FETCH_CHECKLIST',
   FETCH_CHECKLIST_ERROR = '@@checklist/composer/FETCH_CHECKLIST_ERROR',
   FETCH_CHECKLIST_ONGOING = '@@checklist/composer/FETCH_CHECKLIST_ONGOING',
   FETCH_CHECKLIST_SUCCESS = '@@checklist/composer/FETCH_CHECKLIST_SUCCESS',
-
-  SET_CHECKLIST_MODE = '@@checklist/composer/SET_CHECKLIST_MODE',
+  SET_CHECKLIST_STATE = '@@checklist/composer/SET_CHECKLIST_STATE',
 }
 
-export type ChecklistComposerActionType = ReturnType<
+export type ComposerActionType = ReturnType<
   | typeof fetchChecklist
-  | typeof fetchChecklistOngoing
   | typeof fetchChecklistError
+  | typeof fetchChecklistOngoing
   | typeof fetchChecklistSuccess
-  | typeof setChecklistModes
+  | typeof setChecklistState
+  | typeof setActiveStage
+  | typeof updateStage
+  | typeof setActiveStep
+  | typeof updateInteractionInRedux
 >;

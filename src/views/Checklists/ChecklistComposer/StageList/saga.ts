@@ -1,11 +1,11 @@
+import { ComposerActionType } from './../types';
 import { takeLatest } from 'redux-saga/effects';
+import { StageListAction } from './types';
 
-import { StageListActions, StageListActionType } from './types';
-
-function* updateStage(action: StageListActionType) {
-  console.log('action from updateStage saga :: ', action);
+function* updateStageSaga({ payload }: ComposerActionType) {
+  console.log('payload frmo updateStageSaga :: ', payload);
 }
 
 export function* StageListSaga() {
-  yield takeLatest(StageListActions.UPDATE_STAGE_NAME, updateStage);
+  yield takeLatest(StageListAction.UPDATE_STAGE, updateStageSaga);
 }

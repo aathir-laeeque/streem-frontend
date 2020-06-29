@@ -1,4 +1,3 @@
-import { useTypedSelector } from '#store';
 import {
   AddCircleOutline,
   DateRangeOutlined,
@@ -7,45 +6,28 @@ import {
   TimerOutlined,
 } from '@material-ui/icons';
 import React, { FC } from 'react';
-import { useDispatch } from 'react-redux';
 
-import { TemplateMode, ChecklistState } from '../../types';
-import { updateStep } from './actions';
-import { Step } from './types';
+import { HeaderWrapper } from './styles';
+import { StepHeaderProps } from './types';
 
-const Header: FC<{ step: Step }> = ({ step }) => {
-  const { templateMode, checklistState } = useTypedSelector(
-    (state) => state.checklistComposer,
-  );
-
-  const dispatch = useDispatch();
-
-  const allowEditing = templateMode === TemplateMode.EDITABLE;
-  const isCreatingChecklist = checklistState === ChecklistState.ADD_EDIT;
-
+const Header: FC<StepHeaderProps> = ({ step }) => {
   return (
-    <div
-      className={`step-item-content-header${
-        !isCreatingChecklist ? ' no-margin' : ''
-      }`}
-    >
+    <HeaderWrapper>
       <div>
         <input
           type="text"
           name="header"
           value={step.name}
-          onChange={(e) => dispatch(updateStep({ name: e.target.value }))}
-          {...(!allowEditing && { disabled: true })}
+          // onChange={(e) => dispatch(updateStep({ name: e.target.value }))}
+          // {...(!allowEditing && { disabled: true })}
         />
 
-        <div
-          className={`step-item-controls${!isCreatingChecklist ? ' hide' : ''}`}
-        >
+        <div className={`step-item-controls`}>
           <div
             className={`step-item-controls-item ${
               step.hasStop ? 'item-active' : ''
             }`}
-            onClick={() => dispatch(updateStep({ hasStop: !step.hasStop }))}
+            // onClick={() => dispatch(updateStep({ hasStop: !step.hasStop }))}
           >
             <ErrorOutlineOutlined className="icon" />
             <span>Add Stop</span>
@@ -58,7 +40,7 @@ const Header: FC<{ step: Step }> = ({ step }) => {
             className={`step-item-controls-item ${
               step.timed ? 'item-active' : ''
             }`}
-            onClick={() => dispatch(updateStep({ timed: !step.timed }))}
+            // onClick={() => dispatch(updateStep({ timed: !step.timed }))}
           >
             <TimerOutlined className="icon" />
             <span>Timed</span>
@@ -69,10 +51,8 @@ const Header: FC<{ step: Step }> = ({ step }) => {
           </div>
         </div>
       </div>
-      <AddCircleOutline
-        className={`icon${!isCreatingChecklist ? ' hide' : ''}`}
-      />
-    </div>
+      <AddCircleOutline className={`icon`} />
+    </HeaderWrapper>
   );
 };
 

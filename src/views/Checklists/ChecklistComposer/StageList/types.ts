@@ -1,5 +1,5 @@
+import { setActiveStage, updateStage } from './actions';
 import { Step } from '../StepsList/StepView/types';
-import { setActiveStage, updateStageName } from './actions';
 
 export interface Stage {
   id: number;
@@ -9,11 +9,11 @@ export interface Stage {
   steps: Step[];
 }
 
-export enum StageListActions {
-  SET_ACTIVE_STAGE = '@@stage_list/SET_ACTIVE_STAGE',
-  UPDATE_STAGE_NAME = '@@stage_list/UPDATE_STAGE_NAME',
+export enum StageListAction {
+  SET_ACTIVE_STAGE = '@@checklist/composer/stage_list/SET_ACTIVE_STAGE',
+  UPDATE_STAGE = '@@checklist/composer/stage_list/UPDATE_STAGE',
 }
 
 export type StageListActionType = ReturnType<
-  typeof setActiveStage | typeof updateStageName
+  typeof setActiveStage | typeof updateStage
 >;

@@ -1,5 +1,5 @@
-import { updateStep, completeStep } from './actions';
-import { Interaction } from './InteractionView/types';
+import { setActiveStep } from './actions';
+import { Interaction } from './InteractionsList/types';
 import { Media } from './Media/types';
 
 export interface Timer {
@@ -21,16 +21,13 @@ export interface Step {
   timer?: Timer;
 }
 
-export interface StepViewProps {
+export interface StepHeaderProps {
   step: Step;
-  stepIndex: number;
 }
 
-export enum StepViewActions {
-  UPDATE_STEP = '@@step_view/UPDATE_STEP',
-  COMPLETE_STEP = '@@step_view/COMPLETE_STEP',
+export enum StepViewAction {
+  SET_ACTIVE_STEP = '@@checklist/composer/step_view/SET_ACTIVE_STEP',
+  UPDATE_STEP = '@@checklist/composer/step_view/UPDATE_STEP',
 }
 
-export type StepViewActionType = ReturnType<
-  typeof updateStep | typeof completeStep
->;
+export type StepViewActionType = ReturnType<typeof setActiveStep>;

@@ -1,41 +1,22 @@
-import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ChecklistState } from '../../../types';
-import { updateInteraction } from './actions';
+import { updateInteraction } from '../actions';
+import { InteractionProps } from '../types';
 import { TARGET_RULES } from './constants';
-import { InteractionViewProps } from './types';
 
-const ShouldBeInteraction: FC<InteractionViewProps> = ({
-  interaction,
-  interactionIndex,
-}) => {
+const ShouldBeInteraction: FC<InteractionProps> = ({ interaction, index }) => {
   const dispatch = useDispatch();
 
-  const { checklistState } = useTypedSelector(
-    (state) => state.checklistComposer,
-  );
-
-  const isCreatingChecklist = checklistState === ChecklistState.ADD_EDIT;
-
   // TODO: look into type of data in the interaction
-  const update = (data: any) =>
-    dispatch(
-      updateInteraction({ ...data }, interactionIndex, interaction.type),
-    );
-
-  // TODO: make SHouldbe interaction in executing state
-  if (!isCreatingChecklist) {
-    return null;
-  }
+  const update = (data: any) => dispatch(updateInteraction({ ...data }, index));
 
   return (
     <div className="shouldbe-interaction">
       <div className="form-field">
-        <label className="form-input-label">Parameter</label>
+        <label className="form-field-label">Parameter</label>
         <input
-          className="form-input form-input-value"
+          className="form-field-input"
           name="parameter"
           type="text"
           value={interaction.data[0].parameter}
@@ -51,9 +32,9 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({
         />
       </div>
       <div className="form-field">
-        <label className="form-input-label">Type</label>
+        <label className="form-field-label">Type</label>
         <input
-          className="form-input form-input-value"
+          className="form-field-input"
           name="type"
           type="text"
           value={interaction.data[0].type}
@@ -69,9 +50,9 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({
         />
       </div>
       <div className="form-field">
-        <label className="form-input-label">UOM</label>
+        <label className="form-field-label">UOM</label>
         <input
-          className="form-input form-input-value"
+          className="form-field-input"
           name="uom"
           type="text"
           value={interaction.data[0].uom}
@@ -88,10 +69,10 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({
       </div>
       <div id="target-rules">
         <div className="form-field">
-          <label className="form-input-label">Target</label>
+          <label className="form-field-label">Target</label>
           <select
             id="target-rule-select"
-            className="form-input"
+            className="form-field-select"
             defaultValue="Choose Here"
             value={interaction?.data[0]?.operator}
             onChange={(e) =>
@@ -111,13 +92,12 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({
           </select>
         </div>
         <div className="form-field">
-          <label className="form-input-label">Value</label>
+          <label className="form-field-label">Value</label>
           <input
-            className="form-input form-input-value"
+            className="form-field-input"
             name="target-value"
             type="text"
-            // TODO 10 os made dedault value, remove this later
-            value={interaction.data[0].target || 10}
+            value={interaction.data[0].target}
             placeholder="Value"
             onChange={(e) =>
               update({
@@ -131,9 +111,9 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({
         </div>
       </div>
       <div className="form-field">
-        <label className="form-input-label">Observed</label>
+        <label className="form-field-label">Observed</label>
         <input
-          className="form-input form-input-value"
+          className="form-field-input"
           name="observed-value"
           type="text"
           placeholder="To be entered at execution"

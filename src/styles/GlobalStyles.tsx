@@ -22,14 +22,55 @@ const GlobalStyles = createGlobalStyle`
     cursor: pointer;
   }
 
-  .form-field {
-    display: flex;
-    flex-direction: column;
+  .form {
+    &-field {
+      display: flex;
+      flex-direction: column;
 
-    > .field-label {}
+      &-label {
+        font-size: 8px;
+        color: #666666;
+      }
 
-    > .field-value {
-      margin-top: 2px;
+      &-input[type="text"] {
+        border: none;
+        border-bottom: 1px solid #bababa;
+        color: #666666;
+        flex: 1;
+        outline: none;
+
+        :focus {
+          border-bottom-color: #12aab3;
+        }
+
+        ::placeholder {
+          color: #999999;
+        }
+      }
+
+      &-input[type="checkbox"] {
+        margin-right: 5px;
+        margin-top: 3px;
+      }
+
+      &-textarea {
+        border: none;
+        border-bottom: 1px solid #bababa;
+        color: #666666;
+        outline: none;
+        resize: none;
+
+        :focus {
+          border-bottom-color: #12aab3;
+        }
+      }
+
+      &-select {
+        border: none;
+        outline: none;
+        border-bottom: 1px solid #bababa;
+        color: #666666;
+      }
     }
   }
 
