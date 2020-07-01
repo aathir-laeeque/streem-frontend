@@ -1,5 +1,5 @@
 // alias imports
-import { AppDispatch, useTypedSelector } from '#store';
+import { useTypedSelector } from '#store';
 import { ListViewComponent } from '#components';
 import { fetchProperties } from '#store/properties/actions';
 // library imports
@@ -20,7 +20,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   );
   const { checklist, task } = useTypedSelector((state) => state.properties);
 
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const selectChecklist = (id: string | number) =>
     navigate(`/checklists/${id}`);
@@ -33,9 +33,8 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   const [sideBarOpen, setSideBarOpen] = useState(false);
 
   useEffect(() => {
-    // if (!checklists?.length) {
     dispatch(fetchChecklists({ page, size }));
-    // }
+
     if (!task?.length) {
       dispatch(fetchProperties({ type: 'task' }));
     }

@@ -13,6 +13,7 @@ interface ListViewProps {
   primaryButtonText: string;
   properties: Properties;
   data: Checklist[] | Task[];
+  actionItemTemplate?: (item: any) => JSX.Element;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -40,10 +41,12 @@ const Wrapper = styled.div.attrs({})`
     letter-spacing: 1px;
     display: flex;
     align-items: center;
+    margin-left: -10px;
 
     :first-child {
       width: 30%;
       flex: initial;
+      margin-left: 0px;
     }
   }
 
@@ -115,7 +118,7 @@ const Wrapper = styled.div.attrs({})`
 
   .searchsubmit {
     width: 14px;
-    height: 31px;
+    height: 29px;
     position: absolute;
     top: 0;
     right: 0;
@@ -140,6 +143,7 @@ export const ListView: FC<ListViewProps> = ({
   primaryButtonText,
   properties,
   data,
+  actionItemTemplate,
 }) => (
   <Wrapper>
     <div className="list-options">
@@ -157,13 +161,14 @@ export const ListView: FC<ListViewProps> = ({
     </div>
     <div className="list-header">
       <div className="list-header-columns">
-        <span style={{ marginLeft: 40 }}></span>NAME
+        <span key={`name_header`} style={{ marginLeft: 40 }}></span>NAME
       </div>
       {properties.map((el, index) => (
         <div key={index} className="list-header-columns">
           {el.name}
         </div>
       ))}
+      {actionItemTemplate && <div className="list-header-columns">ACTIONS</div>}
     </div>
     <div className="list-body">
       {(data as Array<Checklist | Task>).map((el, index) => (
@@ -176,9 +181,10 @@ export const ListView: FC<ListViewProps> = ({
               property.name &&
               el.properties[property.name]
                 ? el.properties[property.name]
-                : ''}
+                : '-N/A-'}
             </div>
           ))}
+          {actionItemTemplate && actionItemTemplate(el)}
         </div>
       ))}
     </div>

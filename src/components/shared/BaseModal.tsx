@@ -60,6 +60,10 @@ const Wrapper = styled.div.attrs({})`
         font-weight: 300;
         position: relative;
         border-radius: 16px;
+        overflow: auto;
+        min-width: 600px;
+        max-height: calc(100vh - 15%);
+        max-width: calc(100vw - 40%);
         box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12),
           0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
         h2 {
@@ -187,7 +191,9 @@ export const BaseModal: FC<BaseModalProps> = ({
             </div>
             <div className="modal-body">{children}</div>
             <div className="modal-footer">
-              <div className="modal-footer-options">{modalFooterOptions}</div>
+              {modalFooterOptions && (
+                <div className="modal-footer-options">{modalFooterOptions}</div>
+              )}
               <div className="modal-footer-buttons">
                 <FlatButton
                   style={{ padding: `5px 16px`, fontWeight: 600 }}

@@ -1,10 +1,11 @@
-import { AppDispatch, useTypedSelector } from '#store';
+import { useTypedSelector } from '#store';
+import { CreateTaskModal } from '#views/Tasks/Modals/CreateTaskModal';
+import { TaskUserAssignModal } from '#views/Tasks/Modals/TaskUserAssignModal';
 import React, { FC } from 'react';
-import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 
-import { closeModalAction, closeAllModalAction } from './actions';
-import { CreateTaskModal } from './components/CreateTaskModal';
+import { closeAllModalAction, closeModalAction } from './actions';
 import { ModalNames } from './types';
 
 const Wrapper = styled.div``;
@@ -21,14 +22,26 @@ const getModal = (
       return (
         <CreateTaskModal
           {...props}
-          onInputChange={props.onInputChange}
-          taskDetails={props.taskDetails}
           properties={props.properties}
           selectedChecklist={props.selectedChecklist}
           onCreateTask={props.onCreateTask}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
             closeModal(ModalNames.CREATE_TASK_MODAL, ...args)
+          }
+          key={i}
+        />
+      );
+    case ModalNames.TASK_USER_ASSIGN:
+      return (
+        <TaskUserAssignModal
+          {...props}
+          users={props.users}
+          selectedTask={props.selectedTask}
+          onAssignTask={props.onAssignTask}
+          closeAllModals={closeAllModals}
+          closeModal={(...args) =>
+            closeModal(ModalNames.TASK_USER_ASSIGN, ...args)
           }
           key={i}
         />
@@ -40,8 +53,8 @@ const getModal = (
 };
 
 const ModalContainer: FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { currentModals } = useTypedSelector((state) => state.ModalContainer);
+  const dispatch = useDispatch();
+  const { currentModals } = useTypedSelector((state) => state.modalContainer);
   const closeModal = (params: string) => {
     dispatch(closeModalAction(params));
   };

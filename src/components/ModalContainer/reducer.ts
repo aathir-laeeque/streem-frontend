@@ -14,7 +14,11 @@ const reducer = (
 ): ModalContainerState => {
   switch (action.type) {
     case ModalContainerAction.OPEN_MODAL:
-      return { ...state, currentModals: [action.payload] };
+      if (action.payload) {
+        return { ...state, currentModals: [action.payload] };
+      } else {
+        return { ...state };
+      }
 
     case ModalContainerAction.CLOSE_MODAL:
       return {

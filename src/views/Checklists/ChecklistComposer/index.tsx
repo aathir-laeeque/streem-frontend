@@ -1,23 +1,19 @@
 // alias imports
-import { AppDispatch, useTypedSelector } from '#store';
-
-// library imports
+import { useTypedSelector } from '#store';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Button } from '../../../components';
-import { useTypedSelector } from '../../../store/helpers';
-import { AppDispatch } from '../../../store/types';
 import { fetchChecklist } from './actions';
 import Checklist from './Checklist';
 import { ChecklistComposerProps, ChecklistState, TemplateMode } from './types';
 
+// library imports
 const ChecklistComposer: FC<ChecklistComposerProps> = ({
   checklistId,
   checklistState,
   templateMode,
 }) => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const { activeChecklist, loading } = useTypedSelector(
     (state) => state.checklistComposer,

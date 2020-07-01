@@ -4,6 +4,7 @@ export { default as WorkArea } from './WorkArea';
 export { default as Notification } from './Notification';
 export { default as ModalContainer } from './ModalContainer';
 
+export { BaseModal } from './shared/BaseModal';
 export { Button, FlatButton } from './shared/Button';
 export { FloatInput } from './shared/FloatInput';
 export { Checkbox } from './shared/Checkbox';

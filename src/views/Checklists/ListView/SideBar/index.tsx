@@ -1,5 +1,4 @@
 import { FlatButton, Button } from '#components';
-import { AppDispatch } from '#store';
 import { openModalAction } from '#components/ModalContainer/actions';
 import { ModalNames } from '#components/ModalContainer/types';
 
@@ -15,7 +14,7 @@ const SideBar: FC<SideBarProps> = ({
   selectedChecklist,
   properties,
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
 
   const toggleState = () => {
     closeNav();

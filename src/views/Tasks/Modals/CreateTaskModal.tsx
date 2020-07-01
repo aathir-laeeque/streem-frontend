@@ -1,9 +1,8 @@
-import { FloatInput } from '#components';
+import { BaseModal, FloatInput } from '#components';
 import { Properties } from '#store/properties/types';
 import { Checklist } from '#views/Checklists/types';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
-import { BaseModal } from '../BaseModal';
 
 interface CreateTaskModalProps {
   closeAllModals: () => void;

@@ -14,3 +14,6 @@ export const apiGetTasks = () => `${baseUrl}/tasks`;
 
 // Properties
 export const apiGetProperties = () => `${baseUrl}/properties`;
+
+//Users
+export const apiGetUsers = () => `${baseUrl}/users`;

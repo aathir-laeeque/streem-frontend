@@ -6,6 +6,7 @@ import {
 
 export enum ModalNames {
   CREATE_TASK_MODAL = 'CREATE_TASK_MODAL',
+  TASK_USER_ASSIGN = 'TASK_USER_ASSIGN',
 }
 
 export interface Modal {

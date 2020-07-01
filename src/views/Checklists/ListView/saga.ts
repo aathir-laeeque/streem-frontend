@@ -1,6 +1,7 @@
-import { put, takeLatest, call } from 'redux-saga/effects';
-import { apiGetChecklists } from '../../../utils/apiUrls';
-import { request } from './../../../utils/request';
+import { apiGetChecklists } from '#utils/apiUrls';
+import { request } from '#utils/request';
+import { call, put, takeLatest } from 'redux-saga/effects';
+
 import {
   fetchChecklistsError,
   fetchChecklistsOngoing,

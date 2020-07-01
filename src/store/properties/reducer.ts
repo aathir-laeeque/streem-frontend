@@ -35,4 +35,4 @@ const reducer = (
   }
 };
 
-export { reducer as propertiesReducer };
+export { reducer as PropertiesReducer };

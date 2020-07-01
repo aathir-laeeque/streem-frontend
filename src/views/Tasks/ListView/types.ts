@@ -10,7 +10,7 @@ import {
   createTaskOngoing,
   createTaskSuccess,
   createTaskError,
-  setselectedStatus,
+  setSelectedStatus,
 } from './actions';
 
 export type ListViewProps = RouteComponentProps;
@@ -55,5 +55,5 @@ export type ListViewActionType = ReturnType<
   | typeof createTaskOngoing
   | typeof createTaskSuccess
   | typeof createTaskError
-  | typeof setselectedStatus
+  | typeof setSelectedStatus
 >;

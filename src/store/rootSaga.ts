@@ -10,6 +10,7 @@ import { TaskListViewSaga } from '#views/Tasks/ListView/saga';
 import { all, fork } from 'redux-saga/effects';
 
 import { PropertiesSaga } from './properties/saga';
+import { UsersSaga } from './users/saga';
 
 // TODO: move this saga import to checklistcomposer saga
 export function* rootSaga() {
@@ -24,5 +25,6 @@ export function* rootSaga() {
     fork(PropertiesSaga),
     fork(showNotificationSaga),
     fork(TaskListViewSaga),
+    fork(UsersSaga),
   ]);
 }
