@@ -11,18 +11,22 @@ import StepsList from './StepsList';
 import { Wrapper } from './styles';
 import { ComposerProps } from './types';
 
-const Composer: FC<ComposerProps> = ({ checklistId, checklistState }) => {
+const Composer: FC<ComposerProps> = ({
+  checklistId,
+  checklistState = ChecklistState.ADD_EDIT,
+}) => {
   const dispatch = useDispatch();
 
   const { loading, checklist } = useTypedSelector(
-    (state) => state.checklistComposer,
+    (state) => state.checklist.composer,
   );
 
   useEffect(() => {
-    dispatch(fetchChecklist(parseInt(checklistId)));
+    !!checklistId && dispatch(fetchChecklist(parseInt(checklistId)));
 
-    checklistState !== ChecklistState.ADD_EDIT &&
+    if (checklistState !== ChecklistState.ADD_EDIT) {
       dispatch(setChecklistState(checklistState));
+    }
   }, []);
 
   if (loading) {
@@ -40,10 +44,6 @@ const Composer: FC<ComposerProps> = ({ checklistId, checklistState }) => {
   } else {
     return null;
   }
-};
-
-Composer.defaultProps = {
-  checklistState: ChecklistState.ADD_EDIT,
 };
 
 export default Composer;

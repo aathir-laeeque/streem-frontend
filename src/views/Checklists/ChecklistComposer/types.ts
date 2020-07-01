@@ -1,6 +1,6 @@
 import { RouteComponentProps } from '@reach/router';
 
-import { Checklist } from '../types';
+import { Checklist, ChecklistState } from '../types';
 import {
   fetchChecklist,
   fetchChecklistError,
@@ -13,16 +13,15 @@ import { Stage } from './StageList/types';
 import { setActiveStep } from './StepsList/StepView/actions';
 import { updateInteractionInRedux } from './StepsList/StepView/InteractionsList/actions';
 
-export enum ChecklistState {
-  ADD_EDIT = 'add/edit',
-  EXECUTING = 'executing',
-  EXECUTED = 'executed',
+interface ComposerDefaultProps {
+  checklistState?: ChecklistState;
 }
 
-export interface ComposerProps extends RouteComponentProps {
+interface Props {
   checklistId: string;
-  checklistState: ChecklistState;
 }
+
+export type ComposerProps = RouteComponentProps<Props> & ComposerDefaultProps;
 
 export interface ComposerState {
   activeStageIndex: number;

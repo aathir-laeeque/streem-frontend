@@ -6,7 +6,6 @@ import { updateInteraction } from '../actions';
 import { InteractionProps } from '../types';
 
 // TODO: fix the interaction UI when checklist is in executing or executed state
-
 const ChecklistInteraction: FC<InteractionProps> = ({ interaction, index }) => {
   const dispatch = useDispatch();
 
