@@ -1,5 +1,5 @@
 import { useTypedSelector } from '#store';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ChecklistState } from '../../../types';
@@ -12,6 +12,10 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({
   interactionIndex,
 }) => {
   const dispatch = useDispatch();
+
+  const [observedValue, setObservedValue] = useState<number | undefined>(
+    undefined,
+  );
 
   const { checklistState } = useTypedSelector(
     (state) => state.checklistComposer,
@@ -27,7 +31,36 @@ const ShouldBeInteraction: FC<InteractionViewProps> = ({
 
   // TODO: make SHouldbe interaction in executing state
   if (!isCreatingChecklist) {
-    return null;
+    const operator = TARGET_RULES.find(
+      (el) => el.value === interaction?.data[0]?.operator,
+    )?.label;
+
+    const value = interaction.data[0].value;
+    const unit = interaction.data[0].uom;
+
+    const temp = `Pressure ${operator} ${value} ${unit}`;
+
+    return (
+      <div
+        className="shouldbe-interaction"
+        style={{ display: 'flex', flexDirection: 'row' }}
+      >
+        <div className="form-field" style={{ flex: 1, marginBottom: 0 }}>
+          <label className="form-input-label">Required Value</label>
+          <div className="form-input-value">{temp}</div>
+        </div>
+        <div className="form-field" style={{ flex: 1, marginLeft: '15px' }}>
+          <label className="form-input-label">Observed Value</label>
+          <input
+            className="form-input form-input-value"
+            type="number"
+            style={{ padding: 0 }}
+            value={observedValue}
+            onChange={(e) => setObservedValue(e.target.value)}
+          />
+        </div>
+      </div>
+    );
   }
 
   return (

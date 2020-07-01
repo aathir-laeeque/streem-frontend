@@ -1,22 +1,20 @@
 // alias imports
 import { AppDispatch, useTypedSelector } from '#store';
-
-// library imports
+import { propsTransformer } from '#utils/propsTransformer';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Button } from '../../../components';
-import { useTypedSelector } from '../../../store/helpers';
-import { AppDispatch } from '../../../store/types';
 import { fetchChecklist } from './actions';
 import Checklist from './Checklist';
 import { ChecklistComposerProps, ChecklistState, TemplateMode } from './types';
 
+// library imports
 const ChecklistComposer: FC<ChecklistComposerProps> = ({
   checklistId,
   checklistState,
   templateMode,
 }) => {
+  console.log('checklistId :: ', checklistId);
   const dispatch: AppDispatch = useDispatch();
 
   const { activeChecklist, loading } = useTypedSelector(
@@ -45,4 +43,12 @@ ChecklistComposer.defaultProps = {
   templateMode: TemplateMode.EDITABLE,
 };
 
-export default ChecklistComposer;
+export default propsTransformer(
+  (p) => ({
+    ...p,
+    ...(p?.location?.state?.checklistId && {
+      checklistId: p.location.state.checklistId,
+    }),
+  }),
+  ChecklistComposer,
+);

@@ -20,7 +20,10 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const selectTask = (id: string | number) => navigate(`/tasks/${id}`);
+  const selectTask = (item) =>
+    navigate(`/tasks/${item.id}`, {
+      state: { checklistId: item.checklist.id },
+    });
 
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(100);
@@ -86,7 +89,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
                     <span className="list-code">{item.code}</span>
                     <span
                       className="list-title"
-                      onClick={() => selectTask(item.id)}
+                      onClick={() => selectTask(item)}
                     >
                       {item.checklist.name}
                     </span>

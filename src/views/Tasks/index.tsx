@@ -14,8 +14,6 @@ const TasksView: FC<TasksViewProps> = () => (
     <ListView path="/" />
     <ChecklistComposer
       path=":taskId"
-      // TODO pass checklist id from task object
-      checklistId="1"
       checklistState={ChecklistState.EXECUTING}
       templateMode={TemplateMode.NON_EDITABLE}
     />

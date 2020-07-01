@@ -78,9 +78,9 @@ const StepView: FC<StepViewProps> = ({ step, stepIndex }) => {
           </div>
         ) : null}
 
-        {!isCreatingChecklist ? (
+        {/* {!isCreatingChecklist ? (
           <div className="skip-step">Skip this step</div>
-        ) : null}
+        ) : null} */}
       </div>
 
       <div className="step-item-media">
