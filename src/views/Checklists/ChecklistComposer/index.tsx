@@ -14,7 +14,6 @@ const ChecklistComposer: FC<ChecklistComposerProps> = ({
   checklistState,
   templateMode,
 }) => {
-  console.log('checklistId :: ', checklistId);
   const dispatch: AppDispatch = useDispatch();
 
   const { activeChecklist, loading } = useTypedSelector(
