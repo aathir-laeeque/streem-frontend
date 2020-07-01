@@ -1,15 +1,15 @@
-import React, { FC, ReactNode } from 'react';
+import { Button, FlatButton } from '#components';
 import { Close } from '@material-ui/icons';
+import React, { FC, ReactNode } from 'react';
 import styled from 'styled-components';
-import { Button, FlatButton } from './Button';
 
-interface ModalProps {
+interface BaseModalProps {
+  closeAllModals: () => void;
+  closeModal: () => void;
   title: string;
   successText: string;
   cancelText: string;
-  isModalOpen: boolean;
-  onSuccess: (onModalContainerClick: () => void) => void;
-  toggleState: () => void;
+  onSuccess: () => void;
   children: ReactNode;
   modalFooterOptions?: ReactNode;
 }
@@ -60,6 +60,10 @@ const Wrapper = styled.div.attrs({})`
         font-weight: 300;
         position: relative;
         border-radius: 16px;
+        overflow: auto;
+        min-width: 600px;
+        max-height: calc(100vh - 15%);
+        max-width: calc(100vw - 40%);
         box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12),
           0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
         h2 {
@@ -152,17 +156,16 @@ const Wrapper = styled.div.attrs({})`
   }
 `;
 
-export const Modal: FC<ModalProps> = ({
-  isModalOpen,
-  toggleState,
+export const BaseModal: FC<BaseModalProps> = ({
   onSuccess,
   children,
   modalFooterOptions,
   title,
   successText,
   cancelText,
+  closeModal,
 }) => {
-  const onModalContainerClick = () => {
+  const onBaseModalContainerClick = () => {
     const container = document.getElementById(
       'modal-container',
     ) as HTMLDivElement;
@@ -170,36 +173,38 @@ export const Modal: FC<ModalProps> = ({
       container.classList.add('out');
     }
     setTimeout(() => {
-      toggleState();
+      closeModal();
     }, 500);
   };
 
   return (
     <Wrapper>
-      <div id="modal-container" className={isModalOpen ? 'openup' : 'out'}>
+      <div id="modal-container" className="openup">
         <div className="modal-background">
           <div className="modal">
             <div className="modal-header">
               <h2>{title}</h2>
               <Close
                 style={{ cursor: `pointer`, fontSize: 20 }}
-                onClick={onModalContainerClick}
+                onClick={onBaseModalContainerClick}
               />
             </div>
             <div className="modal-body">{children}</div>
             <div className="modal-footer">
-              <div className="modal-footer-options">{modalFooterOptions}</div>
+              {modalFooterOptions && (
+                <div className="modal-footer-options">{modalFooterOptions}</div>
+              )}
               <div className="modal-footer-buttons">
                 <FlatButton
                   style={{ padding: `5px 16px`, fontWeight: 600 }}
-                  onClick={onModalContainerClick}
+                  onClick={onBaseModalContainerClick}
                 >
                   {cancelText}
                 </FlatButton>
                 <Button
                   style={{ marginRight: 0, fontWeight: 600 }}
                   onClick={() => {
-                    onSuccess(onModalContainerClick);
+                    onSuccess();
                   }}
                 >
                   {successText}

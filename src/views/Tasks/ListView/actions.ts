@@ -34,5 +34,5 @@ export const createTaskSuccess = (task: Task) =>
 export const createTaskError = (error: any) =>
   actionSpreader(ListViewAction.CREATE_TASK_ERROR, { error });
 
-export const setselectedStatus = (status: string) =>
+export const setSelectedStatus = (status: string) =>
   actionSpreader(ListViewAction.SET_SELECTED_STATUS, { status });

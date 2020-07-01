@@ -2,7 +2,7 @@ import { ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
 
-export const Notification = styled(ToastContainer).attrs({
+const Notification = styled(ToastContainer).attrs({
   // custom props
 })`
   .Toastify__toast-container {
@@ -52,3 +52,5 @@ export const Notification = styled(ToastContainer).attrs({
     align-self: center;
   }
 `;
+
+export default Notification;
