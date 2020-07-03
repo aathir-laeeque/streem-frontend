@@ -6,7 +6,7 @@
     "watch": "parcel -p 5000 src/index.html",
     "build": "parcel build src/index.html --experimental-scope-hoisting",
     "lint:check": "eslint -c .eslintrc 'src/**/*{.ts,.tsx}'",
-    "lint:fix": "eslint --fix"
+    "lint:fix": "eslint --fix .eslintrc 'src/**/*{.ts,.tsx}'"
   },
   "devDependencies": {
     "@babel/core": "^7.10.3",

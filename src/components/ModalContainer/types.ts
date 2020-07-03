@@ -5,8 +5,8 @@ import {
 } from './actions';
 
 export enum ModalNames {
-  CREATE_TASK_MODAL = 'CREATE_TASK_MODAL',
-  TASK_USER_ASSIGN = 'TASK_USER_ASSIGN',
+  CREATE_JOB_MODAL = 'CREATE_JOB_MODAL',
+  JOB_USER_ASSIGN = 'JOB_USER_ASSIGN',
 }
 
 export interface Modal {

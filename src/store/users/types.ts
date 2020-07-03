@@ -1,10 +1,11 @@
+import { Pageable } from '#utils/globalTypes';
+
 import {
   fetchUsers,
   fetchUsersError,
   fetchUsersOngoing,
   fetchUsersSuccess,
 } from './actions';
-import { Pageable } from '#views/Checklists/types';
 
 export interface User {
   id: number;
@@ -13,19 +14,9 @@ export interface User {
 }
 
 export type Users = User[];
-
-export interface UsersObj {
-  object: string;
-  status: string;
-  message: string;
-  data: User[];
-  pageable: Pageable;
-  errors?: any;
-}
-
 export interface UsersState {
   readonly list: Users | undefined;
-  readonly pageable: Pageable | undefined;
+  readonly pageable: Pageable | undefined | null;
   readonly error: any;
 }
 

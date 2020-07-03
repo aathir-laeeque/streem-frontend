@@ -101,11 +101,18 @@ export const FloatInput: FC<FloatInputProps> = ({
   const [placeHolderText, setPlaceHolderText] = useState(label);
 
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.value === '') {
+      if (required) {
+        setError(true);
+      }
+    } else {
+      setError(false);
+    }
     onChange(id, event.target.value);
   };
 
   const onFocus = (event: React.FocusEvent<HTMLInputElement>): void => {
-    setError(false);
+    // setError(false);
     if (event.target.value === '') {
       setClassName('on');
     }
@@ -114,12 +121,11 @@ export const FloatInput: FC<FloatInputProps> = ({
 
   const onBlur = (event: React.FocusEvent<HTMLInputElement>): void => {
     if (event.target.value === '') {
-      setClassName('');
       if (required) {
         setError(true);
       }
     }
-    setPlaceHolderText(label);
+    // setPlaceHolderText(label);
   };
 
   const isActive = placeHolderText === placeHolder;
@@ -135,13 +141,7 @@ export const FloatInput: FC<FloatInputProps> = ({
       <div className="wrapper">
         <label
           style={{
-            color: error
-              ? isActive
-                ? '#12aab3'
-                : '#ff6b6b'
-              : isActive
-              ? '#12aab3'
-              : '#666666',
+            color: error ? '#ff6b6b' : isActive ? '#12aab3' : '#666666',
             ...opacity,
           }}
           className={className}
@@ -159,13 +159,7 @@ export const FloatInput: FC<FloatInputProps> = ({
           type="text"
           style={{
             opacity: disabled ? 0.4 : 1,
-            borderColor: error
-              ? isActive
-                ? '#12aab3'
-                : '#ff6b6b'
-              : isActive
-              ? '#12aab3'
-              : '#666666',
+            borderColor: error ? '#ff6b6b' : isActive ? '#12aab3' : '#666666',
           }}
           disabled={disabled || false}
         />

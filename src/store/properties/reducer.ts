@@ -5,7 +5,7 @@ import {
 } from './types';
 
 const initialState: PropertiesState = {
-  task: undefined,
+  job: undefined,
   checklist: undefined,
   error: undefined,
 };
@@ -16,10 +16,10 @@ const reducer = (
 ): PropertiesState => {
   switch (action.type) {
     case PropertiesAction.FETCH_PROPERTIES_SUCCESS:
-      if (action.payload.type === 'task') {
+      if (action.payload?.type === 'job') {
         return {
           ...state,
-          task: action.payload?.properties,
+          job: action.payload?.properties,
         };
       } else {
         return {

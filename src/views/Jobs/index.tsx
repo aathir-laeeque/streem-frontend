@@ -7,17 +7,17 @@ import {
   TemplateMode,
 } from '../Checklists/ChecklistComposer/types';
 import ListView from './ListView';
-import { TasksViewProps } from './types';
+import { JobsViewProps } from './types';
 
-const TasksView: FC<TasksViewProps> = () => (
+const JobsView: FC<JobsViewProps> = () => (
   <Router>
     <ListView path="/" />
     <ChecklistComposer
-      path=":taskId"
+      path=":jobId"
       checklistState={ChecklistState.EXECUTING}
       templateMode={TemplateMode.NON_EDITABLE}
     />
   </Router>
 );
 
-export default TasksView;
+export default JobsView;

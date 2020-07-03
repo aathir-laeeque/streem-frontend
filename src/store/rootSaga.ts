@@ -6,7 +6,7 @@ import { StageListSaga } from '#views/Checklists/ChecklistComposer/StageList/sag
 import { IntearctionViewSaga } from '#views/Checklists/ChecklistComposer/StepsList/StepView/InteractionView/saga';
 import { StepViewSaga } from '#views/Checklists/ChecklistComposer/StepsList/StepView/saga';
 import { ChecklistListViewSaga } from '#views/Checklists/ListView/saga';
-import { TaskListViewSaga } from '#views/Tasks/ListView/saga';
+import { JobListViewSaga } from '#views/Jobs/ListView/saga';
 import { all, fork } from 'redux-saga/effects';
 
 import { PropertiesSaga } from './properties/saga';
@@ -24,7 +24,7 @@ export function* rootSaga() {
     fork(IntearctionViewSaga),
     fork(PropertiesSaga),
     fork(showNotificationSaga),
-    fork(TaskListViewSaga),
+    fork(JobListViewSaga),
     fork(UsersSaga),
   ]);
 }

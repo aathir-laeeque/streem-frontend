@@ -8,6 +8,7 @@ import {
 export interface Property {
   id: number;
   name: string;
+  placeHolder: string;
   orderTree: number;
   mandatory: boolean;
 }
@@ -15,7 +16,7 @@ export interface Property {
 export type Properties = Property[];
 
 export interface PropertiesState {
-  readonly task: Properties | undefined;
+  readonly job: Properties | undefined;
   readonly checklist: Properties | undefined;
   readonly error: any;
 }

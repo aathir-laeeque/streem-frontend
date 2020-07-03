@@ -13,7 +13,7 @@ import { MenuItem } from './types';
 
 const menuItems: MenuItem[] = [
   { name: 'Dashboard', icon: Dashboard, path: '/' },
-  { name: 'Tasks', icon: FeaturedPlayList, path: '/tasks' },
+  { name: 'Jobs', icon: FeaturedPlayList, path: '/jobs' },
   { name: 'Checklists', icon: LibraryAddCheck, path: '/checklists' },
   { name: 'Reports', icon: Assessment, path: '/reports' },
   { name: 'Audit Logs', icon: MenuBook, path: '/audit' },

@@ -10,8 +10,8 @@ import { DashboardLayout } from '#components/Layouts';
 import { store } from '#store';
 
 // library imports
-import { navigate, Router } from '@reach/router';
-import React, { FC, useEffect } from 'react';
+import { Router } from '@reach/router';
+import React, { FC } from 'react';
 import { Provider } from 'react-redux';
 
 // relative imports
@@ -21,7 +21,7 @@ import {
   ChecklistView,
   DashboardView,
   ReportsView,
-  TasksView,
+  JobsView,
 } from './views';
 
 const App: FC = () => {
@@ -40,7 +40,7 @@ const App: FC = () => {
             <AuditLogsView path="audit/*" />
             <ChecklistView path="checklists/*" />
             <ReportsView path="reports/*" />
-            <TasksView path="tasks/*" />
+            <JobsView path="jobs/*" />
           </Router>
         </WorkArea>
         <Notification

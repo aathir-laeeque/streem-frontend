@@ -1,42 +1,46 @@
-// alias imports
-import { useTypedSelector } from '#store';
 import { ListViewComponent } from '#components';
+import { useTypedSelector } from '#store';
 import { fetchProperties } from '#store/properties/actions';
-// library imports
+import { Settings } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
-import { Settings } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
 
-import SideBar from './SideBar';
-import { fetchChecklists } from './actions';
-import { ListViewProps } from './types';
 import { Checklist } from '../types';
+import { fetchChecklists } from './actions';
+import SideBar from './SideBar';
 import { Composer } from './styles';
+import { ListViewProps, ListViewState } from './types';
 
 const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
-  const { checklists, pageable, loading } = useTypedSelector(
+  const {
+    checklists,
+    pageable,
+    loading,
+  }: Partial<ListViewState> = useTypedSelector(
     (state) => state.checklistListView,
   );
-  const { checklist, task } = useTypedSelector((state) => state.properties);
+  const { checklist, job } = useTypedSelector((state) => state.properties);
 
   const dispatch = useDispatch();
 
   const selectChecklist = (id: string | number) =>
     navigate(`/checklists/${id}`);
 
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(10);
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(
     null,
   );
   const [sideBarOpen, setSideBarOpen] = useState(false);
 
-  useEffect(() => {
+  const fetchData = (page: number, size: number) => {
     dispatch(fetchChecklists({ page, size }));
+  };
 
-    if (!task?.length) {
-      dispatch(fetchProperties({ type: 'task' }));
+  useEffect(() => {
+    fetchData(0, 10);
+
+    if (!job?.length) {
+      dispatch(fetchProperties({ type: 'job' }));
     }
     if (!checklist?.length) {
       dispatch(fetchProperties({ type: 'checklist' }));
@@ -44,29 +48,33 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   }, []);
 
   const openNav = () => {
-    const mySidenav = document.getElementById('mySidenav');
-    if (mySidenav && !sideBarOpen) {
+    const sideNav = document.getElementById('sideNav');
+    if (sideNav && !sideBarOpen) {
       setSideBarOpen(true);
-      mySidenav.style.cssText = 'right: 0px;';
+      sideNav.style.cssText = 'right: 0px;';
     }
   };
 
   const closeNav = () => {
-    const mySidenav = document.getElementById('mySidenav');
-    if (mySidenav && sideBarOpen) {
+    const sideNav = document.getElementById('sideNav');
+    if (sideNav && sideBarOpen) {
       setSideBarOpen(false);
-      mySidenav.style.cssText = 'right: -300px;';
+      sideNav.style.cssText = 'right: -300px;';
     }
   };
 
   if (loading) {
     return <div>Loading...</div>;
-  } else if (checklists && task && checklist && pageable) {
+  } else if (checklists && job && checklist && pageable) {
     return (
       <Composer>
         <ListViewComponent
           properties={checklist}
+          fetchData={fetchData}
+          isLast={pageable.last}
+          currentPage={pageable.page}
           data={checklists}
+          nameItemHeader="NAME"
           primaryButtonText="Create Checklist"
           nameItemTemplate={(item) => (
             <div className="list-card-columns">
@@ -98,7 +106,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
           sideBarOpen={sideBarOpen}
           selectedChecklist={selectedChecklist}
           closeNav={closeNav}
-          properties={task}
+          properties={job}
         />
       </Composer>
     );

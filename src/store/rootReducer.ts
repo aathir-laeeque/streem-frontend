@@ -1,7 +1,7 @@
 import { ModalContainerReducer } from '#components/ModalContainer/reducer';
 import { ChecklistComposerReducer } from '#views/Checklists/ChecklistComposer/reducer';
 import { ChecklistListViewReducer } from '#views/Checklists/ListView/reducer';
-import { TaskListViewReducer } from '#views/Tasks/ListView/reducer';
+import { JobListViewReducer } from '#views/Jobs/ListView/reducer';
 import { combineReducers } from 'redux';
 
 import { PropertiesReducer } from './properties/reducer';
@@ -12,6 +12,6 @@ export const rootReducer = combineReducers({
   checklistComposer: ChecklistComposerReducer,
   properties: PropertiesReducer,
   users: UsersReducer,
-  taskListView: TaskListViewReducer,
+  jobListView: JobListViewReducer,
   modalContainer: ModalContainerReducer,
 });

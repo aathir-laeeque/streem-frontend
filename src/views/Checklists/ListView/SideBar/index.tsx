@@ -5,7 +5,7 @@ import { ModalNames } from '#components/ModalContainer/types';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { Check } from '@material-ui/icons';
-import { createTask } from '../../../Tasks/ListView/actions';
+import { createJob } from '../../../Jobs/ListView/actions';
 import { SideBarProps } from './types';
 
 const SideBar: FC<SideBarProps> = ({
@@ -20,22 +20,22 @@ const SideBar: FC<SideBarProps> = ({
     closeNav();
     dispatch(
       openModalAction({
-        type: ModalNames.CREATE_TASK_MODAL,
+        type: ModalNames.CREATE_JOB_MODAL,
         props: {
           selectedChecklist: selectedChecklist,
           properties: properties,
-          onCreateTask: onCreateTask,
+          onCreateJob: onCreateJob,
         },
       }),
     );
   };
 
-  const onCreateTask = (taskDetails: Record<string, string>) => {
+  const onCreateJob = (jobDetails: Record<string, string>) => {
     const tempProperties: { id: number; value: string }[] = [];
     let error = false;
     properties.every((property) => {
       if (property.name) {
-        if (!taskDetails[property.name]) {
+        if (!jobDetails[property.name]) {
           if (property.mandatory) {
             error = true;
             return false;
@@ -43,7 +43,7 @@ const SideBar: FC<SideBarProps> = ({
         } else {
           tempProperties.push({
             id: property.id,
-            value: taskDetails[property.name],
+            value: jobDetails[property.name],
           });
           return true;
         }
@@ -52,7 +52,7 @@ const SideBar: FC<SideBarProps> = ({
     if (!error && tempProperties && selectedChecklist) {
       const parsedProperties: { id: number; value: string }[] = tempProperties;
       dispatch(
-        createTask({
+        createJob({
           properties: parsedProperties,
           checklistId: selectedChecklist.id,
         }),
@@ -74,10 +74,10 @@ const SideBar: FC<SideBarProps> = ({
           }}
         />
       )}
-      <div id="mySidenav" className="sidenav">
+      <div id="sideNav" className="sidenav">
         <div style={{ margin: 16 }}>
           <Button className="sidebar-button" onClick={toggleState}>
-            Start A Task
+            Start A Job
           </Button>
           <FlatButton className="sidebar-flat-button">
             Edit Checklist

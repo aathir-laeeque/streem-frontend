@@ -1,47 +1,50 @@
-// alias imports
-import { useTypedSelector } from '#store';
 import { ListViewComponent } from '#components';
-import { fetchProperties } from '#store/properties/actions';
-import { fetchUsers } from '#store/users/actions';
 import { openModalAction } from '#components/ModalContainer/actions';
 import { ModalNames } from '#components/ModalContainer/types';
-// library imports
+import { useTypedSelector } from '#store';
+import { fetchProperties } from '#store/properties/actions';
+import { fetchUsers } from '#store/users/actions';
+import { PersonAdd } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { fetchTasks, setSelectedStatus } from './actions';
-import { ListViewProps, TaskStatus } from './types';
-import { Task } from '../types';
+import { Job } from '../types';
+import { fetchJobs, setSelectedStatus } from './actions';
 import { Composer } from './styles';
+import { JobStatus, ListViewProps, ListViewState } from './types';
 
 const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
-  const { tasks, loading, selectedStatus } = useTypedSelector(
-    (state) => state.taskListView,
-  );
-  const { task } = useTypedSelector((state) => state.properties);
+  const {
+    jobs,
+    loading,
+    selectedStatus,
+  }: Partial<ListViewState> = useTypedSelector((state) => state.jobListView);
+  const { job } = useTypedSelector((state) => state.properties);
   const { list } = useTypedSelector((state) => state.users);
 
   const dispatch = useDispatch();
 
-  const selectTask = (item) =>
-    navigate(`/tasks/${item.id}`, {
+  const selectJob = (item: Job) =>
+    navigate(`/jobs/${item.id}`, {
       state: { checklistId: item.checklist.id },
     });
 
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(100);
-
-  useEffect(() => {
+  const fetchData = (page: number, size: number) => {
     const filters = JSON.stringify({
       op: 'AND',
       fields: [{ field: 'status', op: 'EQ', values: [selectedStatus] }],
     });
+    dispatch(
+      fetchJobs({ page, size, filters, sort: 'id,desc' }, selectedStatus),
+    );
+  };
 
-    dispatch(fetchTasks({ page, size, filters }, selectedStatus));
+  useEffect(() => {
+    fetchData(0, 10);
 
-    if (!task?.length) {
-      dispatch(fetchProperties({ type: 'task', sort: 'orderTree' }));
+    if (!job?.length) {
+      dispatch(fetchProperties({ type: 'job', sort: 'orderTree' }));
     }
 
     if (!list?.length) {
@@ -55,44 +58,46 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
     }
   };
 
-  const onAssignTask = () => {
-    console.log('Task Assgined');
+  const onAssignJob = () => {
+    console.log('Job Assigned');
   };
 
-  const onClickAssign = (item: Task) => {
+  const onClickAssign = (item: Job) => {
     dispatch(
       openModalAction({
-        type: ModalNames.TASK_USER_ASSIGN,
+        type: ModalNames.JOB_USER_ASSIGN,
         props: {
-          selectedTask: item,
+          selectedJob: item,
           users: list,
-          onAssignTask,
+          onAssignJob,
         },
       }),
     );
   };
 
-  if (task && tasks[selectedStatus].list?.length) {
+  const pageable = jobs[selectedStatus].pageable;
+
+  if (job && jobs[selectedStatus].list?.length && pageable) {
     return (
       <Composer>
         <div className="tabs-row">
           <span
             className={
-              selectedStatus === TaskStatus.UNASSIGNED
+              selectedStatus === JobStatus.UNASSIGNED
                 ? 'tab-title tab-active'
                 : 'tab-title'
             }
-            onClick={() => setSelectedTab(TaskStatus.UNASSIGNED)}
+            onClick={() => setSelectedTab(JobStatus.UNASSIGNED)}
           >
             Unassigned
           </span>
           <span
             className={
-              selectedStatus === TaskStatus.ASSIGNED
+              selectedStatus === JobStatus.ASSIGNED
                 ? 'tab-title tab-active'
                 : 'tab-title'
             }
-            onClick={() => setSelectedTab(TaskStatus.ASSIGNED)}
+            onClick={() => setSelectedTab(JobStatus.ASSIGNED)}
           >
             Active
           </span>
@@ -100,23 +105,28 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
         {(loading && <div>Loading...</div>) || (
           <div style={{ height: `calc(100% - 30px)` }}>
             <ListViewComponent
-              properties={task}
-              data={tasks[selectedStatus].list}
+              properties={job}
+              fetchData={fetchData}
+              isLast={pageable.last}
+              currentPage={pageable.page}
+              data={jobs[selectedStatus].list}
               primaryButtonText="Create Checklist"
-              actionItemTemplate={(item) => (
+              actionItemTemplate={(item: Job) => (
                 <div className="list-card-columns">
                   <span
                     className="list-title"
                     onClick={() => {
                       onClickAssign(item);
                     }}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', marginLeft: '15px' }}
                   >
-                    Assign
+                    <PersonAdd />
                   </span>
                 </div>
               )}
-              nameItemTemplate={(item) => (
+              actionItemHeader="ASSIGNEE"
+              nameItemHeader="JOB"
+              nameItemTemplate={(item: Job) => (
                 <div className="list-card-columns">
                   <div
                     className="title-group"
@@ -125,7 +135,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
                     <span className="list-code">{item.code}</span>
                     <span
                       className="list-title"
-                      onClick={() => selectTask(item)}
+                      onClick={() => selectJob(item)}
                     >
                       {item.checklist.name}
                     </span>

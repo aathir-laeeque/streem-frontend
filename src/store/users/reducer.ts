@@ -11,7 +11,7 @@ const reducer = (state = initialState, action: UsersActionType): UsersState => {
     case UsersAction.FETCH_USERS_SUCCESS:
       return {
         ...state,
-        list: action.payload?.users,
+        list: action.payload?.data,
         pageable: action.payload?.pageable,
       };
     case UsersAction.FETCH_USERS_ERROR:

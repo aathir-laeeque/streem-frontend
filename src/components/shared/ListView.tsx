@@ -1,19 +1,23 @@
 import { Properties } from '#store/properties/types';
-// library imports
-import React, { FC } from 'react';
-import styled from 'styled-components';
 import { ArrowDropDown, Search } from '@material-ui/icons';
-// relative imports
+import React, { FC, useEffect, useRef } from 'react';
 import { Checklist } from 'src/views/Checklists/types';
-import { Task } from 'src/views/Tasks/types';
-import { FlatButton, Button } from './Button';
+import { Job } from 'src/views/Jobs/types';
+import styled from 'styled-components';
+
+import { Button, FlatButton } from './Button';
 
 interface ListViewProps {
   nameItemTemplate: (item: any) => JSX.Element;
   primaryButtonText: string;
   properties: Properties;
-  data: Checklist[] | Task[];
+  data: Checklist[] | Job[];
   actionItemTemplate?: (item: any) => JSX.Element;
+  actionItemHeader?: string;
+  nameItemHeader: string;
+  fetchData: (page: number, size: number) => void;
+  isLast: boolean;
+  currentPage: number;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -31,12 +35,13 @@ const Wrapper = styled.div.attrs({})`
     padding: 8px 16px;
     align-items: center;
     border-top: 1px solid #dadada;
+    border-top-left-radius: 10px;
   }
 
   .list-header-columns {
     flex: 1;
     font-size: 12px;
-    color: #666666;
+    color: #999999;
     font-weight: bold;
     letter-spacing: 1px;
     display: flex;
@@ -144,49 +149,83 @@ export const ListView: FC<ListViewProps> = ({
   properties,
   data,
   actionItemTemplate,
-}) => (
-  <Wrapper>
-    <div className="list-options">
-      <FlatButton>
-        Filters <ArrowDropDown style={{ fontSize: 20, color: '#12aab3' }} />
-      </FlatButton>
-      <div className="searchboxwrapper">
-        <input className="searchbox" type="text" placeholder="Search" />
-        <Search className="searchsubmit" />
-      </div>
-      <span className="resetOption">Reset</span>
-      <Button style={{ marginLeft: `auto`, marginRight: 0 }}>
-        {primaryButtonText}
-      </Button>
-    </div>
-    <div className="list-header">
-      <div className="list-header-columns">
-        <span key={`name_header`} style={{ marginLeft: 40 }}></span>NAME
-      </div>
-      {properties.map((el, index) => (
-        <div key={index} className="list-header-columns">
-          {el.name}
+  fetchData,
+  isLast,
+  currentPage,
+  actionItemHeader,
+  nameItemHeader,
+}) => {
+  const scroller = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (scroller && scroller.current) {
+      const div = scroller.current;
+      div.addEventListener('scroll', handleOnScroll);
+      return () => {
+        div.removeEventListener('scroll', handleOnScroll);
+      };
+    }
+  }, [isLast]);
+
+  const handleOnScroll = (e) => {
+    if (scroller && scroller.current && e.target) {
+      if (
+        e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight &&
+        !isLast
+      ) {
+        fetchData(currentPage + 1, 10);
+      }
+    }
+  };
+
+  return (
+    <Wrapper>
+      <div className="list-options">
+        <FlatButton>
+          Filters <ArrowDropDown style={{ fontSize: 20, color: '#12aab3' }} />
+        </FlatButton>
+        <div className="searchboxwrapper">
+          <input className="searchbox" type="text" placeholder="Search" />
+          <Search className="searchsubmit" />
         </div>
-      ))}
-      {actionItemTemplate && <div className="list-header-columns">ACTIONS</div>}
-    </div>
-    <div className="list-body">
-      {(data as Array<Checklist | Task>).map((el, index) => (
-        <div key={index} className="list-card">
-          {nameItemTemplate(el)}
-          {properties.map((property, propertyIndex) => (
-            <div key={propertyIndex} className="list-card-columns">
-              {el.properties &&
-              property &&
-              property.name &&
-              el.properties[property.name]
-                ? el.properties[property.name]
-                : '-N/A-'}
-            </div>
-          ))}
-          {actionItemTemplate && actionItemTemplate(el)}
+        <span className="resetOption">Reset</span>
+        <Button style={{ marginLeft: `auto`, marginRight: 0 }}>
+          {primaryButtonText}
+        </Button>
+      </div>
+      <div className="list-header">
+        <div className="list-header-columns">
+          <span key={`name_header`} style={{ marginLeft: 40 }}>
+            {nameItemHeader}
+          </span>
         </div>
-      ))}
-    </div>
-  </Wrapper>
-);
+        {actionItemTemplate && actionItemHeader && (
+          <div className="list-header-columns">{actionItemHeader}</div>
+        )}
+        {properties.map((el, index) => (
+          <div key={index} className="list-header-columns">
+            {el.name}
+          </div>
+        ))}
+      </div>
+      <div className="list-body" ref={scroller}>
+        {(data as Array<Checklist | Job>).map((el, index) => (
+          <div key={index} className="list-card">
+            {nameItemTemplate(el)}
+            {actionItemTemplate && actionItemTemplate(el)}
+            {properties.map((property, propertyIndex) => (
+              <div key={propertyIndex} className="list-card-columns">
+                {el.properties &&
+                property &&
+                property.name &&
+                el.properties[property.name]
+                  ? el.properties[property.name]
+                  : '-N/A-'}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </Wrapper>
+  );
+};

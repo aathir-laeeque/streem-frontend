@@ -9,8 +9,8 @@ export const apiGetChecklist = (checklistId: string) =>
 export const apiExecuteIntearction = (interactionId: number) =>
   `${baseUrl}/interactions/${interactionId}/execute`;
 
-// Task
-export const apiGetTasks = () => `${baseUrl}/tasks`;
+// Job
+export const apiGetJobs = () => `${baseUrl}/jobs`;
 
 // Properties
 export const apiGetProperties = () => `${baseUrl}/properties`;

@@ -1,0 +1,60 @@
+import { Pageable } from '#utils/globalTypes';
+import { RouteComponentProps } from '@reach/router';
+
+import { Job } from '../types';
+import {
+  createJob,
+  createJobError,
+  createJobOngoing,
+  createJobSuccess,
+  fetchJobs,
+  fetchJobsError,
+  fetchJobsOngoing,
+  fetchJobsSuccess,
+  setSelectedStatus,
+} from './actions';
+
+export type ListViewProps = RouteComponentProps;
+
+export type Jobs = Record<
+  string,
+  {
+    list: Job[] | [];
+    pageable: Pageable | undefined | null;
+  }
+>;
+export interface ListViewState {
+  readonly jobs: Jobs;
+  readonly loading: boolean;
+  readonly error: any;
+  readonly selectedStatus: string;
+}
+
+export enum JobStatus {
+  ASSIGNED = 'assigned',
+  UNASSIGNED = 'unassigned',
+}
+
+export enum ListViewAction {
+  FETCH_JOBS = '@@job/ListView/FETCH_JOBS',
+  FETCH_JOBS_ERROR = '@@job/ListView/FETCH_JOBS_ERROR',
+  FETCH_JOBS_ONGOING = '@@job/ListView/FETCH_JOBS_ONGOING',
+  FETCH_JOBS_SUCCESS = '@@job/ListView/FETCH_JOBS_SUCCESS',
+  CREATE_JOB = '@@job/ListView/CREATE_JOB',
+  CREATE_JOB_ERROR = '@@job/ListView/CREATE_JOB_ERROR',
+  CREATE_JOB_ONGOING = '@@job/ListView/CREATE_JOB_ONGOING',
+  CREATE_JOB_SUCCESS = '@@job/ListView/CREATE_JOB_SUCCESS',
+  SET_SELECTED_STATUS = '@@job/ListView/SET_SELECTED_STATUS',
+}
+
+export type ListViewActionType = ReturnType<
+  | typeof fetchJobs
+  | typeof fetchJobsError
+  | typeof fetchJobsOngoing
+  | typeof fetchJobsSuccess
+  | typeof createJob
+  | typeof createJobOngoing
+  | typeof createJobSuccess
+  | typeof createJobError
+  | typeof setSelectedStatus
+>;

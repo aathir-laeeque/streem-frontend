@@ -2,20 +2,20 @@ import {
   ListViewActionType,
   ListViewState,
   ListViewAction,
-  TaskStatus,
+  JobStatus,
 } from './types';
 
 const initialState: ListViewState = {
   loading: false,
   error: undefined,
-  selectedStatus: TaskStatus.UNASSIGNED,
-  tasks: {
+  selectedStatus: JobStatus.UNASSIGNED,
+  jobs: {
     assigned: {
-      list: undefined,
+      list: [],
       pageable: undefined,
     },
     unassigned: {
-      list: undefined,
+      list: [],
       pageable: undefined,
     },
   },
@@ -25,44 +25,45 @@ const reducer = (
   state = initialState,
   action: ListViewActionType,
 ): ListViewState => {
-  const { tasks } = state;
+  const { jobs } = state;
   switch (action.type) {
-    case ListViewAction.FETCH_TASKS_ONGOING:
+    case ListViewAction.FETCH_JOBS_ONGOING:
       return { ...state, loading: true };
 
-    case ListViewAction.FETCH_TASKS_SUCCESS:
-      if (action.payload?.tasks) {
-        const { data, pageable } = action.payload?.tasks;
+    case ListViewAction.FETCH_JOBS_SUCCESS:
+      if (action.payload?.data) {
+        const { data, pageable } = action.payload;
         const type = action.payload?.type;
+        const oldList = pageable?.page === 0 ? [] : jobs[type].list || [];
         if (type) {
-          tasks[type].list = data;
-          tasks[type].pageable = pageable;
+          jobs[type].list = [...oldList, ...data];
+          jobs[type].pageable = pageable;
         }
       }
       return {
         ...state,
         loading: false,
-        tasks: tasks,
+        jobs: jobs,
       };
-    case ListViewAction.FETCH_TASKS_ERROR:
+    case ListViewAction.FETCH_JOBS_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
     case ListViewAction.SET_SELECTED_STATUS:
       return {
         ...state,
         selectedStatus: action.payload?.status || state.selectedStatus,
       };
-    case ListViewAction.CREATE_TASK_SUCCESS:
-      if (action.payload?.task) {
-        const oldList = tasks[TaskStatus.UNASSIGNED].list || [];
-        tasks[TaskStatus.UNASSIGNED].list = [...oldList, action.payload?.task];
+    case ListViewAction.CREATE_JOB_SUCCESS:
+      if (action.payload?.data) {
+        const oldList = jobs[JobStatus.UNASSIGNED].list || [];
+        jobs[JobStatus.UNASSIGNED].list = [action.payload?.data, ...oldList];
       }
       return {
         ...state,
-        tasks: tasks,
+        jobs: jobs,
       };
     default:
       return { ...state };
   }
 };
 
-export { reducer as TaskListViewReducer };
+export { reducer as JobListViewReducer };

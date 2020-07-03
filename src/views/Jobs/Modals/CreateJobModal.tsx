@@ -4,29 +4,29 @@ import { Checklist } from '#views/Checklists/types';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 
-interface CreateTaskModalProps {
+interface CreateJobModalProps {
   closeAllModals: () => void;
   closeModal: () => void;
   selectedChecklist: Checklist;
   properties: Properties;
-  onCreateTask: (taskDetails: Record<string, string>) => void;
+  onCreateJob: (jobDetails: Record<string, string>) => void;
 }
 
 const Wrapper = styled.div.attrs({})``;
 
-export const CreateTaskModal: FC<CreateTaskModalProps> = ({
+export const CreateJobModal: FC<CreateJobModalProps> = ({
   closeAllModals,
   closeModal,
   properties,
-  onCreateTask,
+  onCreateJob,
   selectedChecklist,
 }) => {
-  const [taskDetails, setTaskDetails] = useState<Record<string, string>>({});
+  const [jobDetails, setJobDetails] = useState<Record<string, string>>({});
 
   const onInputChange = (id: string, value: string) => {
-    const temp = { ...taskDetails };
+    const temp = { ...jobDetails };
     temp[id] = value;
-    setTaskDetails(temp);
+    setJobDetails(temp);
   };
 
   return (
@@ -34,13 +34,13 @@ export const CreateTaskModal: FC<CreateTaskModalProps> = ({
       <BaseModal
         closeAllModals={closeAllModals}
         closeModal={closeModal}
-        title="Creating a Task"
-        successText="Create Task"
+        title="Creating a Job"
+        successText="Create Job"
         cancelText="Cancel"
-        onSuccess={() => onCreateTask(taskDetails)}
+        onSuccess={() => onCreateJob(jobDetails)}
         modalFooterOptions={
           <span style={{ color: `#12aab3`, fontWeight: 600, fontSize: 12 }}>
-            Schedule Task
+            Schedule Job
           </span>
         }
       >
@@ -56,10 +56,10 @@ export const CreateTaskModal: FC<CreateTaskModalProps> = ({
         {properties.map((property, index) => (
           <FloatInput
             key={`property_${index}`}
-            placeHolder={'placeholder - ' + property.name}
+            placeHolder={property.placeHolder}
             label={property.name}
             id={property.name}
-            value={taskDetails[property.name] || ''}
+            value={jobDetails[property.name] || ''}
             onChange={onInputChange}
             required={property.mandatory}
           />

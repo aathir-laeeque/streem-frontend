@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { setActiveStage, updateStageName } from './actions';
 import { Wrapper } from './styles';
 import { Stage } from './types';
-import { ChecklistState, TemplateMode } from '../types';
+import { TemplateMode } from '../types';
 
 const StageList: FC = () => {
   const { stages, activeStageIndex, templateMode } = useTypedSelector(

@@ -19,8 +19,8 @@ const reducer = (
       return {
         ...state,
         loading: false,
-        checklists: action.payload?.checklists.data,
-        pageable: action.payload?.checklists.pageable,
+        checklists: action.payload?.data,
+        pageable: action.payload?.pageable,
       };
 
     case ListViewAction.FETCH_CHECKLISTS_ERROR:

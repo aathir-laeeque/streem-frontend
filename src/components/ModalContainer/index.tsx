@@ -1,6 +1,6 @@
 import { useTypedSelector } from '#store';
-import { CreateTaskModal } from '#views/Tasks/Modals/CreateTaskModal';
-import { TaskUserAssignModal } from '#views/Tasks/Modals/TaskUserAssignModal';
+import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
+import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -18,30 +18,30 @@ const getModal = (
   closeAllModals: () => void,
 ) => {
   switch (type) {
-    case ModalNames.CREATE_TASK_MODAL:
+    case ModalNames.CREATE_JOB_MODAL:
       return (
-        <CreateTaskModal
+        <CreateJobModal
           {...props}
           properties={props.properties}
           selectedChecklist={props.selectedChecklist}
-          onCreateTask={props.onCreateTask}
+          onCreateJob={props.onCreateJob}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
-            closeModal(ModalNames.CREATE_TASK_MODAL, ...args)
+            closeModal(ModalNames.CREATE_JOB_MODAL, ...args)
           }
           key={i}
         />
       );
-    case ModalNames.TASK_USER_ASSIGN:
+    case ModalNames.JOB_USER_ASSIGN:
       return (
-        <TaskUserAssignModal
+        <JobUserAssignModal
           {...props}
           users={props.users}
-          selectedTask={props.selectedTask}
-          onAssignTask={props.onAssignTask}
+          selectedJob={props.selectedJob}
+          onAssignJob={props.onAssignJob}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
-            closeModal(ModalNames.TASK_USER_ASSIGN, ...args)
+            closeModal(ModalNames.JOB_USER_ASSIGN, ...args)
           }
           key={i}
         />

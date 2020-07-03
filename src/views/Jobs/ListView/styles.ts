@@ -20,8 +20,13 @@ export const Composer = styled.div`
   }
 
   .tabs-row {
+    border-top-left-radius: 10px;
     display: flex;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
     margin-bottom: 8px;
+  }
+
+  .list-options {
+    border-top-left-radius: 0px !important;
   }
 `;

@@ -1,16 +1,16 @@
 import { BaseModal, Checkbox } from '#components';
 import { User } from '#store/users/types';
-import { Task } from '#views/Tasks/types';
+import { Job } from '#views/Jobs/types';
 import React, { FC, useState } from 'react';
 import { Search } from '@material-ui/icons';
 import styled from 'styled-components';
 
-interface TaskUserAssignModalProps {
+interface JobUserAssignModalProps {
   closeAllModals: () => void;
   closeModal: () => void;
-  selectedTask: Task;
+  selectedJob: Job;
   users: User[];
-  onAssignTask: () => void;
+  onAssignJob: () => void;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -116,12 +116,12 @@ const capitalizeFirstLetter = (str: string): string => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-export const TaskUserAssignModal: FC<TaskUserAssignModalProps> = ({
+export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
   closeAllModals,
   closeModal,
   users,
-  onAssignTask,
-  selectedTask,
+  onAssignJob,
+  selectedJob,
 }) => {
   const totalUsers = users.length;
   const [selectedCount, setSelectedCount] = useState(0);
@@ -130,10 +130,10 @@ export const TaskUserAssignModal: FC<TaskUserAssignModalProps> = ({
       <BaseModal
         closeAllModals={closeAllModals}
         closeModal={closeModal}
-        title="Assigning a Task"
+        title="Assigning a Job"
         successText="Done"
         cancelText="Go Back"
-        onSuccess={() => onAssignTask()}
+        onSuccess={() => onAssignJob()}
       >
         <div className="top-content">
           <div>
