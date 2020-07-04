@@ -8,11 +8,10 @@ import {
   fetchChecklistSuccess,
   setChecklistState,
 } from './actions';
-import { setActiveStage, updateStage } from './StageList/actions';
-import { Stage } from './StageList/types';
-import { setActiveStep } from './StepsList/StepView/actions';
-import { updateInteractionInRedux } from './StepsList/StepView/InteractionsList/actions';
+import { StageListState } from './StageList/types';
+import { TaskListState } from './TaskList/types';
 
+// PROPS TYPE FOR COMPONENT
 interface ComposerDefaultProps {
   checklistState?: ChecklistState;
 }
@@ -23,14 +22,14 @@ interface Props {
 
 export type ComposerProps = RouteComponentProps<Props> & ComposerDefaultProps;
 
+// TYPES AND INTERFAECS FOR REDUCER
 export interface ComposerState {
-  activeStageIndex: number;
-  activeStepIndex: number;
   checklist?: Checklist;
-  error: unknown;
+  // TODO: replace with error object
+  error: any;
   loading: boolean;
-  stages: Stage[] | [];
-  steps: any;
+  stages: StageListState;
+  tasks: TaskListState;
   state: ChecklistState;
 }
 
@@ -39,6 +38,7 @@ export enum ComposerAction {
   FETCH_CHECKLIST_ERROR = '@@checklist/composer/FETCH_CHECKLIST_ERROR',
   FETCH_CHECKLIST_ONGOING = '@@checklist/composer/FETCH_CHECKLIST_ONGOING',
   FETCH_CHECKLIST_SUCCESS = '@@checklist/composer/FETCH_CHECKLIST_SUCCESS',
+
   SET_CHECKLIST_STATE = '@@checklist/composer/SET_CHECKLIST_STATE',
 }
 
@@ -48,8 +48,4 @@ export type ComposerActionType = ReturnType<
   | typeof fetchChecklistOngoing
   | typeof fetchChecklistSuccess
   | typeof setChecklistState
-  | typeof setActiveStage
-  | typeof updateStage
-  | typeof setActiveStep
-  | typeof updateInteractionInRedux
 >;

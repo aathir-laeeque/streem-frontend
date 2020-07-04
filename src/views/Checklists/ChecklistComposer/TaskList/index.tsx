@@ -10,10 +10,10 @@ import { Wrapper } from './styles';
 const StepsList: FC = () => {
   const { activeStageIndex, activeStage, steps } = useTypedSelector(
     (state) => ({
-      ...state.checklistComposer,
+      ...state.checklist.composer,
       activeStage:
-        state.checklistComposer?.stages[
-          state.checklistComposer?.activeStageIndex
+        state.checklist.composer?.stages[
+          state.checklist.composer?.activeStageIndex
         ],
     }),
   );

@@ -6,13 +6,12 @@ export interface Checklist {
   id: number;
   name: string;
   noOfTasks?: number;
-  // properties?: Properties;
   stages: Stage[];
   version: number | null;
 }
 
 export enum ChecklistState {
-  ADD_EDIT = 'add/edit',
+  ADD_EDIT = 'editing',
   EXECUTING = 'executing',
   EXECUTED = 'executed',
 }

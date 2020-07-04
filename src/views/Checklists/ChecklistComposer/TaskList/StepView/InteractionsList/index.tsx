@@ -98,7 +98,7 @@ const InteractionsList: FC<InteractionsListProps> = ({ interactions }) => {
                   break;
 
                 default:
-                  return null;
+                  return <span>{interaction.type}</span>;
               }
             })()}
           </div>

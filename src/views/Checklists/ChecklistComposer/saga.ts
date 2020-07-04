@@ -2,24 +2,23 @@ import { apiGetChecklist } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 
-import { fetchChecklistOngoing, fetchChecklistSuccess } from './actions';
+import {
+  fetchChecklist,
+  fetchChecklistOngoing,
+  fetchChecklistSuccess,
+} from './actions';
 import { StageListSaga } from './StageList/saga';
-import { InteractionSaga } from './StepsList/StepView/InteractionsList/saga';
-import { ComposerAction, ComposerActionType } from './types';
+import { TaskListSaga } from './TaskList/saga';
+import { ComposerAction } from './types';
 
-function* fetchChecklistSaga({ payload }: ComposerActionType) {
+function* fetchChecklistSaga({ payload }: ReturnType<typeof fetchChecklist>) {
   try {
-    console.log(
-      'came to composer saga fetchChecklist with payload :: ',
-      payload,
-    );
-
     yield put(fetchChecklistOngoing());
 
     const { data: checklist } = yield call(
       request,
       'GET',
-      apiGetChecklist(payload?.checklistId),
+      apiGetChecklist(payload.checklistId),
     );
 
     yield put(fetchChecklistSuccess(checklist));
@@ -31,9 +30,5 @@ function* fetchChecklistSaga({ payload }: ComposerActionType) {
 export function* ComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_CHECKLIST, fetchChecklistSaga);
 
-  yield all([
-    fork(StageListSaga),
-    // TODO: fork steps list saga
-    fork(InteractionSaga),
-  ]);
+  yield all([fork(StageListSaga), fork(TaskListSaga)]);
 }

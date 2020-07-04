@@ -7,7 +7,7 @@ import { ChecklistState } from '../types';
 import { fetchChecklist, setChecklistState } from './actions';
 import Header from './Header';
 import StagesList from './StageList';
-import StepsList from './StepsList';
+// import StepsList from './TaskList';
 import { Wrapper } from './styles';
 import { ComposerProps } from './types';
 
@@ -38,7 +38,7 @@ const Composer: FC<ComposerProps> = ({
 
         <StagesList />
 
-        <StepsList />
+        {/* <StepsList /> */}
       </Wrapper>
     );
   } else {

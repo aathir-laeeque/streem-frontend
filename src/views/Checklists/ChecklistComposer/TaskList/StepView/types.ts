@@ -9,7 +9,7 @@ export interface Timer {
   unit: string;
 }
 
-export interface Step {
+export interface Task {
   id: number;
   name: string;
   code: string;

@@ -10,7 +10,7 @@ function* updateInteractionSaga({ payload }: InteractionActionType) {
   try {
     const interaction = yield select(
       (state: RootState) =>
-        state.checklistComposer.steps[state.checklistComposer.activeStepIndex]
+        state.checklist.composer.steps[state.checklist.composer.activeStepIndex]
           .interactions[payload?.index],
     );
 

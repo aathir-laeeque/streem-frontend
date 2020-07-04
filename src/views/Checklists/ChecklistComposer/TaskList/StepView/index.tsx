@@ -19,7 +19,7 @@ interface StepViewProps {
 
 const StepView: FC<StepViewProps> = ({ step, stepIndex }) => {
   const { state, activeStepIndex } = useTypedSelector(
-    (state) => state.checklistComposer,
+    (state) => state.checklist.composer,
   );
   const dispatch = useDispatch();
 
@@ -60,7 +60,7 @@ const StepView: FC<StepViewProps> = ({ step, stepIndex }) => {
       </div>
 
       <div className="step-item-media">
-        {isStepActive && step.medias.length ? (
+        {isStepActive && step?.medias?.length ? (
           <StepMedia medias={step.medias} />
         ) : null}
       </div>

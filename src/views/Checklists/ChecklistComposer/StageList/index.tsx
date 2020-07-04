@@ -1,5 +1,5 @@
-import { ChecklistState } from '#views/Checklists/types';
 import { useTypedSelector } from '#store';
+import { ChecklistState } from '#views/Checklists/types';
 import {
   ArrowDownwardOutlined,
   ArrowUpwardOutlined,
@@ -16,34 +16,35 @@ import { Stage } from './types';
 const StageList: FC = () => {
   const dispatch = useDispatch();
 
-  const { stages, state, activeStageIndex } = useTypedSelector(
-    (state) => state.checklistComposer,
-  );
+  const {
+    stages: { list = {}, activeStageId },
+    state,
+  } = useTypedSelector((state) => state.checklist.composer);
 
-  const setAsActive = (index: number) =>
-    index !== activeStageIndex ? dispatch(setActiveStage(index)) : undefined;
+  const setAsActive = (stageId: Stage['id']) =>
+    stageId !== activeStageId ? dispatch(setActiveStage(stageId)) : undefined;
 
-  const update = (stage: Partial<Stage>, index: number) =>
-    dispatch(updateStage({ stage, index }));
+  const update = (stage: Pick<Stage, 'id' | 'name'>) =>
+    dispatch(updateStage(stage));
 
   const isEditingEnabled = state === ChecklistState.ADD_EDIT;
 
   return (
     <Wrapper>
       <ol className="stage-list">
-        {(stages as Array<Stage>).map((stage, index) => (
+        {Object.values(list)?.map((stage, index) => (
           <li
             key={index}
             className={`stage-list-item${
-              index === activeStageIndex ? ' stage-list-item-active' : ''
+              stage.id === activeStageId ? ' stage-list-item-active' : ''
             }`}
-            onClick={() => setAsActive(index)}
+            onClick={() => setAsActive(stage.id)}
           >
             <input
               type="text"
               name="stage-name"
               value={stage.name}
-              onChange={(e) => update({ name: e.target.value }, index)}
+              onChange={(e) => update({ name: e.target.value, id: stage.id })}
               {...(!isEditingEnabled && { disable: true })}
             />
           </li>
