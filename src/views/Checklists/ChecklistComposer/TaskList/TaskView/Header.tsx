@@ -2,32 +2,37 @@ import {
   AddCircleOutline,
   DateRangeOutlined,
   ErrorOutlineOutlined,
-  RadioButtonUnchecked,
   TimerOutlined,
 } from '@material-ui/icons';
 import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
 
+import { updateTask } from './actions';
 import { HeaderWrapper } from './styles';
-import { StepHeaderProps } from './types';
+import { HeaderProps, updateParams } from './types';
 
-const Header: FC<StepHeaderProps> = ({ step }) => {
+const Header: FC<HeaderProps> = ({ task }) => {
+  const dispatch = useDispatch();
+
+  const update = (updatedTask: updateParams) =>
+    dispatch(updateTask({ ...updatedTask, id: task.id }));
+
   return (
     <HeaderWrapper>
       <div>
         <input
           type="text"
           name="header"
-          value={step.name}
-          // onChange={(e) => dispatch(updateStep({ name: e.target.value }))}
-          // {...(!allowEditing && { disabled: true })}
+          value={task.name}
+          onChange={(e) => update({ name: e.target.value })}
         />
 
         <div className={`step-item-controls`}>
           <div
             className={`step-item-controls-item ${
-              step.hasStop ? 'item-active' : ''
+              task.hasStop ? 'item-active' : ''
             }`}
-            // onClick={() => dispatch(updateStep({ hasStop: !step.hasStop }))}
+            onClick={() => update({ hasStop: !task.hasStop })}
           >
             <ErrorOutlineOutlined className="icon" />
             <span>Add Stop</span>
@@ -38,16 +43,12 @@ const Header: FC<StepHeaderProps> = ({ step }) => {
           </div>
           <div
             className={`step-item-controls-item ${
-              step.timed ? 'item-active' : ''
+              task.timed ? 'item-active' : ''
             }`}
-            // onClick={() => dispatch(updateStep({ timed: !step.timed }))}
+            onClick={() => update({ timed: !task.timed })}
           >
             <TimerOutlined className="icon" />
             <span>Timed</span>
-          </div>
-          <div className="step-item-controls-item">
-            <RadioButtonUnchecked className="icon" />
-            <span>Optional</span>
           </div>
         </div>
       </div>

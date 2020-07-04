@@ -7,7 +7,7 @@ import { ChecklistState } from '../types';
 import { fetchChecklist, setChecklistState } from './actions';
 import Header from './Header';
 import StagesList from './StageList';
-// import StepsList from './TaskList';
+import TaskList from './TaskList';
 import { Wrapper } from './styles';
 import { ComposerProps } from './types';
 
@@ -17,9 +17,11 @@ const Composer: FC<ComposerProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const { loading, checklist } = useTypedSelector(
-    (state) => state.checklist.composer,
-  );
+  const {
+    loading,
+    checklist,
+    stages: { activeStageId },
+  } = useTypedSelector((state) => state.checklist.composer);
 
   useEffect(() => {
     !!checklistId && dispatch(fetchChecklist(parseInt(checklistId)));
@@ -38,7 +40,7 @@ const Composer: FC<ComposerProps> = ({
 
         <StagesList />
 
-        {/* <StepsList /> */}
+        {!!activeStageId ? <TaskList /> : null}
       </Wrapper>
     );
   } else {

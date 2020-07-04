@@ -1,6 +1,6 @@
 import { ComposerActionType } from './../types';
-import { setActiveTask, setTasks } from './actions';
-import { Task } from './StepView/types';
+import { setTasks } from './actions';
+import { Task, TaskViewActionType } from './TaskView/types';
 
 export type TasksById = Record<Task['id'], Task>;
 export interface TaskListState {
@@ -14,5 +14,6 @@ export enum TaskListAction {
 }
 
 export type TaskListActionType =
-  | ReturnType<typeof setTasks | typeof setActiveTask>
+  | ReturnType<typeof setTasks>
+  | TaskViewActionType
   | ComposerActionType;

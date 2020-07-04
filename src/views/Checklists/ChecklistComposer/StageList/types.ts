@@ -1,4 +1,4 @@
-import { Task } from '../TaskList/StepView/types';
+import { Task } from '../TaskList/TaskView/types';
 import { ComposerActionType } from './../types';
 import { setActiveStage, setStages, updateStage } from './actions';
 

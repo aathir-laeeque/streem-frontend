@@ -1,6 +1,8 @@
 import { Reducer } from 'redux';
+import { omit } from 'lodash';
 
-import { TaskListAction, TaskListState, TaskListActionType } from './types';
+import { TaskViewAction } from './TaskView/types';
+import { TaskListAction, TaskListActionType, TaskListState } from './types';
 
 export const initialState: TaskListState = {
   list: {},
@@ -15,8 +17,20 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
     case TaskListAction.SET_TASKS:
       return { ...state, list: action.payload.tasks };
 
-    case TaskListAction.SET_ACTIVE_TASK:
+    case TaskViewAction.SET_ACTIVE_TASK:
       return { ...state, activeTaskId: action.payload.taskId };
+
+    case TaskViewAction.UPDATE_TASK:
+      return {
+        ...state,
+        list: {
+          ...state.list,
+          [action.payload.task.id]: {
+            ...state.list[action.payload.task.id],
+            ...omit(action.payload.task, ['id']),
+          },
+        },
+      };
 
     default:
       return state;

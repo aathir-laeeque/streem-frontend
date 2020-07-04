@@ -1,9 +1,11 @@
 import { RootState } from '#store';
-import { put, select, takeLatest } from 'redux-saga/effects';
+import { all, fork, put, select, takeLatest } from 'redux-saga/effects';
 
 import { StageListAction, StageListState } from '../StageList/types';
 import { setActiveStage } from './../StageList/actions';
-import { setTasks, setActiveTask } from './actions';
+import { setTasks } from './actions';
+import { setActiveTask } from './TaskView/actions';
+import { TaskViewSaga } from './TaskView/saga';
 import { TasksById } from './types';
 
 function* setTasksSaga({ payload }: ReturnType<typeof setActiveStage>) {
@@ -30,4 +32,6 @@ function* setTasksSaga({ payload }: ReturnType<typeof setActiveStage>) {
 
 export function* TaskListSaga() {
   yield takeLatest(StageListAction.SET_ACTIVE_STAGE, setTasksSaga);
+
+  yield all([fork(TaskViewSaga)]);
 }

@@ -8,8 +8,8 @@ import {
 } from './types';
 
 export const initialState: StageListState = {
-  list: {},
   activeStageId: undefined,
+  list: {},
 };
 
 const reducer: Reducer<StageListState, StageListActionType> = (
@@ -24,6 +24,7 @@ const reducer: Reducer<StageListState, StageListActionType> = (
           acc[el.id] = el;
           return acc;
         }, {}),
+        activeStageId: action.payload.stages[0].id,
       };
 
     case StageListAction.SET_ACTIVE_STAGE:
