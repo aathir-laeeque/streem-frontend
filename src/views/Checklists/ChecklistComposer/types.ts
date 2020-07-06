@@ -9,6 +9,7 @@ import {
   setChecklistState,
 } from './actions';
 import { StageListState } from './StageList/types';
+import { ActivityListState } from './TaskList/TaskView/ActivityList/types';
 import { TaskListState } from './TaskList/types';
 
 // PROPS TYPE FOR COMPONENT
@@ -22,8 +23,9 @@ interface Props {
 
 export type ComposerProps = RouteComponentProps<Props> & ComposerDefaultProps;
 
-// TYPES AND INTERFAECS FOR REDUCER
+// TYPES AND INTERFACES FOR REDUCER
 export interface ComposerState {
+  activities: ActivityListState;
   checklist?: Checklist;
   // TODO: replace with error object
   error: any;

@@ -1,11 +1,6 @@
 import { Reducer } from 'react';
 
-import {
-  StageById,
-  StageListAction,
-  StageListActionType,
-  StageListState,
-} from './types';
+import { StageListAction, StageListActionType, StageListState } from './types';
 
 export const initialState: StageListState = {
   activeStageId: undefined,
@@ -18,14 +13,7 @@ const reducer: Reducer<StageListState, StageListActionType> = (
 ) => {
   switch (action.type) {
     case StageListAction.SET_STAGES:
-      return {
-        ...state,
-        list: action.payload.stages.reduce<StageById>((acc, el) => {
-          acc[el.id] = el;
-          return acc;
-        }, {}),
-        activeStageId: action.payload.stages[0].id,
-      };
+      return { ...state, list: action.payload.stages };
 
     case StageListAction.SET_ACTIVE_STAGE:
       return { ...state, activeStageId: action.payload.stageId };

@@ -1,5 +1,5 @@
-export { default as ChecklistInteraction } from './ChecklistInteraction';
-export { default as InstructionInteraction } from './InstructionInteraction';
+export { default as Checklist } from './Checklist';
+export { default as Instruction } from './Instruction';
 export { default as MaterialInteraction } from './MaterialInteraction';
 export { default as ShouldBeInteraction } from './ShouldBeInteraction';
 export { default as SignatureInteraction } from './SignatureInteraction';

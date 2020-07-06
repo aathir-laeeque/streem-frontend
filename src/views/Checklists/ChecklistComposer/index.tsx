@@ -17,11 +17,9 @@ const Composer: FC<ComposerProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const {
-    loading,
-    checklist,
-    stages: { activeStageId },
-  } = useTypedSelector((state) => state.checklist.composer);
+  const { loading, checklist } = useTypedSelector(
+    (state) => state.checklist.composer,
+  );
 
   useEffect(() => {
     !!checklistId && dispatch(fetchChecklist(parseInt(checklistId)));
@@ -40,7 +38,7 @@ const Composer: FC<ComposerProps> = ({
 
         <StagesList />
 
-        {!!activeStageId ? <TaskList /> : null}
+        <TaskList />
       </Wrapper>
     );
   } else {

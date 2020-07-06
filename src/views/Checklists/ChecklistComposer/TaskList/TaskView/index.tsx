@@ -5,8 +5,8 @@ import { useDispatch } from 'react-redux';
 
 import { setActiveTask } from './actions';
 import Header from './Header';
-import InteractionsList from './InteractionsList';
-import { InteractionType } from './InteractionsList/types';
+import ActivityList from './ActivityList';
+import { ActivityType } from './ActivityList/Activity/types';
 import StepMedia from './Media';
 import { Wrapper } from './styles';
 import { Task } from './types';
@@ -43,13 +43,15 @@ const TaskView: FC<TaskViewProps> = ({ task }) => {
       >
         <Header task={task} />
 
-        <InteractionsList
-          // TODO remove this filter when MEDIA and MULTISELECT interactions are complete
-          interactions={task.activities.filter(
-            (el) =>
-              el.type !== InteractionType.MEDIA &&
-              el.type !== InteractionType.MULTISELECT,
-          )}
+        <ActivityList
+          activitiesId={task.activities
+            // TODO remove this filter when MEDIA and MULTISELECT activity are complete
+            // .filter(
+            //   (el) =>
+            //     el.type !== ActivityType.MEDIA &&
+            //     el.type !== ActivityType.MULTISELECT,
+            // )
+            .map((el) => el.id)}
         />
       </div>
 

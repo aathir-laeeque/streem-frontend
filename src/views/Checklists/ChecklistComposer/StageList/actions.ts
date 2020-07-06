@@ -1,8 +1,8 @@
 import { actionSpreader } from '#store';
 
-import { StageListAction, Stage } from './types';
+import { Stage, StageById, StageListAction } from './types';
 
-export const setStages = (stages: Stage[]) =>
+export const setStages = (stages: StageById) =>
   actionSpreader(StageListAction.SET_STAGES, { stages });
 
 export const setActiveStage = (stageId: Stage['id']) =>

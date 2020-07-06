@@ -3,7 +3,7 @@ import { put, takeLatest } from 'redux-saga/effects';
 import { fetchChecklistSuccess } from '../actions';
 import { ComposerAction } from './../types';
 import { setActiveStage, setStages, updateStage } from './actions';
-import { StageListAction } from './types';
+import { StageById, StageListAction } from './types';
 
 function* setStagesSaga({ payload }: ReturnType<typeof fetchChecklistSuccess>) {
   try {
@@ -11,7 +11,21 @@ function* setStagesSaga({ payload }: ReturnType<typeof fetchChecklistSuccess>) {
       checklist: { stages },
     } = payload;
 
-    yield put(setStages(stages));
+    /**
+     * * Grouping stages by ID for easy state access and update
+     */
+    yield put(
+      setStages(
+        stages.reduce<StageById>((acc, el) => {
+          acc[el.id] = el;
+          return acc;
+        }, {}),
+      ),
+    );
+
+    /**
+     * * Setting the first stage id as active id by default
+     */
     yield put(setActiveStage(stages[0].id));
   } catch (error) {
     console.error('error from setStage saga => StageListSaga :: ', error);

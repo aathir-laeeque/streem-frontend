@@ -8,9 +8,14 @@ import {
   initialState as taskListInitialState,
   tasksListReducer,
 } from './TaskList/reducer';
+import {
+  initialState as activityListInitialState,
+  activityListReducer,
+} from './TaskList/TaskView/ActivityList/reducer';
 import { ComposerAction, ComposerActionType, ComposerState } from './types';
 
 const initialState: ComposerState = {
+  activities: activityListInitialState,
   checklist: undefined,
   error: null,
   loading: false,
@@ -41,6 +46,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         ...state,
         stages: stageListReducer(state.stages, action),
         tasks: tasksListReducer(state.tasks, action),
+        activities: activityListReducer(state.activities, action),
       };
   }
 };

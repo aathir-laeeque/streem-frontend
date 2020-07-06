@@ -1,5 +1,5 @@
 import { setActiveTask, updateTask } from './actions';
-import { Interaction } from './InteractionsList/types';
+import { Activity, ActivityActionType } from './ActivityList/Activity/types';
 import { Media } from './Media/types';
 
 export interface Timer {
@@ -15,7 +15,7 @@ export interface Task {
   code: string;
   orderTree: number;
   hasStop: boolean;
-  activities: Interaction[];
+  activities: Activity[];
   medias: Media[];
   timed: boolean;
   timer?: Timer;
@@ -26,12 +26,12 @@ export interface HeaderProps {
 }
 
 export enum TaskViewAction {
-  SET_ACTIVE_TASK = '@@checklist/composer/step_view/SET_ACTIVE_TASK',
-  UPDATE_TASK = '@@checklist/composer/step_view/UPDATE_TASK',
+  SET_ACTIVE_TASK = '@@checklist/composer/task_view/SET_ACTIVE_TASK',
+  UPDATE_TASK = '@@checklist/composer/task_view/UPDATE_TASK',
 }
 
-export type TaskViewActionType = ReturnType<
-  typeof setActiveTask | typeof updateTask
->;
+export type TaskViewActionType =
+  | ReturnType<typeof setActiveTask | typeof updateTask>
+  | ActivityActionType;
 
 export type updateParams = Partial<Pick<Task, 'name' | 'hasStop' | 'timed'>>;
