@@ -12,11 +12,11 @@ import { useTypedSelector } from '#store';
 import {
   Checklist,
   Instruction,
-  // MaterialInteraction,
-  // ShouldBeInteraction,
-  // SignatureInteraction,
-  // TextboxInteraction,
-  // YesNoInteraction,
+  Material,
+  ShouldBe,
+  Signature,
+  Textbox,
+  YesNo,
 } from './Activity';
 
 const ActivityList: FC<ActivityListProps> = ({ activitiesId }) => {
@@ -45,14 +45,8 @@ const ActivityList: FC<ActivityListProps> = ({ activitiesId }) => {
                   case ActivityType.INSTRUCTION:
                     return <Instruction activity={activity} />;
 
-                  // case ActivityType.MATERIAL:
-                  //   return (
-                  //     <MaterialInteraction
-                  //       interaction={interaction}
-                  //
-                  //     />
-                  //   );
-                  //   break;
+                  case ActivityType.MATERIAL:
+                    return <Material activity={activity} />;
 
                   // case ActivityType.MEDIA:
                   //   break;
@@ -60,41 +54,20 @@ const ActivityList: FC<ActivityListProps> = ({ activitiesId }) => {
                   // case ActivityType.MULTISELECT:
                   //   break;
 
-                  // case ActivityType.SHOULDBE:
-                  //   return (
-                  //     <ShouldBeInteraction
-                  //       interaction={interaction}
-                  //
-                  //     />
-                  //   );
-                  //   break;
+                  case ActivityType.SHOULDBE:
+                    return <ShouldBe activity={activity} />;
 
-                  // case ActivityType.SIGNATURE:
-                  //   return (
-                  //     <SignatureInteraction
-                  //       interaction={interaction}
-                  //
-                  //     />
-                  //   );
-                  //   break;
+                  case ActivityType.SIGNATURE:
+                    return <Signature activity={activity} />;
 
-                  // case ActivityType.TEXTBOX:
-                  //   return (
-                  //     <TextboxInteraction
-                  //       interaction={interaction}
-                  //
-                  //     />
-                  //   );
-                  //   break;
+                  case ActivityType.TEXTBOX:
+                    return <Textbox activity={activity} />;
 
-                  // case ActivityType.YESNO:
-                  //   return (
-                  //     <YesNoInteraction interaction={interaction}  />
-                  //   );
-                  //   break;
+                  case ActivityType.YESNO:
+                    return <YesNo activity={activity} />;
 
                   default:
-                    return <span>{activity.type}</span>;
+                    return null;
                 }
             })()}
           </div>

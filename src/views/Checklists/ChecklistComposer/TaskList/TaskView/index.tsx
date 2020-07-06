@@ -46,11 +46,11 @@ const TaskView: FC<TaskViewProps> = ({ task }) => {
         <ActivityList
           activitiesId={task.activities
             // TODO remove this filter when MEDIA and MULTISELECT activity are complete
-            // .filter(
-            //   (el) =>
-            //     el.type !== ActivityType.MEDIA &&
-            //     el.type !== ActivityType.MULTISELECT,
-            // )
+            .filter(
+              (el) =>
+                el.type !== ActivityType.MEDIA &&
+                el.type !== ActivityType.MULTISELECT,
+            )
             .map((el) => el.id)}
         />
       </div>

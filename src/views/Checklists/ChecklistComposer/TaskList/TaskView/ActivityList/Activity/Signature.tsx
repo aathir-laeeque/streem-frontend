@@ -1,9 +1,9 @@
 import { Close, Maximize } from '@material-ui/icons';
 import React, { FC } from 'react';
 
-import { InteractionProps } from '../types';
+import { ActivityProps } from './types';
 
-const SignatureInteraction: FC<InteractionProps> = ({ interaction, index }) => {
+const Signature: FC<ActivityProps> = ({ activity }) => {
   return (
     <div className="signature-interaction">
       <div className="icon-container">
@@ -16,4 +16,4 @@ const SignatureInteraction: FC<InteractionProps> = ({ interaction, index }) => {
   );
 };
 
-export default SignatureInteraction;
+export default Signature;

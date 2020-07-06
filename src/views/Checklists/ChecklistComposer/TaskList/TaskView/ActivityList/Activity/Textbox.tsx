@@ -1,23 +1,25 @@
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateActivityData } from './actions';
 import { ActivityProps, updateDataParams } from './types';
+import { updateActivityData } from './actions';
 
-const Instruction: FC<ActivityProps> = ({ activity }) => {
+const TextboxInteraction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
+  // TODO: look into type of data in interaction
   const updateData = (data: updateDataParams) =>
     dispatch(updateActivityData(data));
 
   return (
-    <div className="instruction-interaction">
+    <div className="textbox-interaction">
       <div className="form-field">
+        <label className="form-field-label">{activity.label}</label>
         <textarea
           className="form-field-textarea"
-          name="instruction"
-          value={activity.data?.text}
           rows={4}
+          value={activity.data.text}
+          placeholder="Enter your remarks"
           onChange={(e) =>
             updateData({ data: { text: e.target.value }, id: activity.id })
           }
@@ -27,4 +29,4 @@ const Instruction: FC<ActivityProps> = ({ activity }) => {
   );
 };
 
-export default Instruction;
+export default TextboxInteraction;

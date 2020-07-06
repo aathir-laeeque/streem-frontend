@@ -2,18 +2,19 @@ import { Add, Remove } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateInteraction } from '../actions';
-import { InteractionProps } from '../types';
+import { updateActivityData } from './actions';
+import { ActivityProps, updateDataParams } from './types';
 
-const MaterialInteraction: FC<InteractionProps> = ({ interaction, index }) => {
+const Material: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  // TODO: look into type for data in interaction
-  const update = (data: any) => dispatch(updateInteraction({ ...data }, index));
+  const updateData = (data: updateDataParams) =>
+    dispatch(updateActivityData(data));
 
+  // TODO: look into any type
   return (
     <ol className="material-interaction">
-      {interaction.data.map((el, idx) => (
+      {activity.data.map((el: any, idx: number) => (
         <li key={idx} className="material-interaction-item">
           <img src={el.link} className="material-interaction-item-image" />
 
@@ -23,11 +24,12 @@ const MaterialInteraction: FC<InteractionProps> = ({ interaction, index }) => {
             name="material"
             value={el.name}
             onChange={(e) =>
-              update({
-                data: interaction.data.map((ele, i) => ({
+              updateData({
+                data: activity.data.map((ele: any, i: number) => ({
                   ...ele,
                   ...(i === idx && { name: e.target.value }),
                 })),
+                id: activity.id,
               })
             }
           />
@@ -36,11 +38,12 @@ const MaterialInteraction: FC<InteractionProps> = ({ interaction, index }) => {
             <Remove
               className="icon"
               onClick={() =>
-                update({
-                  data: interaction.data.map((ele, i) => ({
+                updateData({
+                  data: activity.data.map((ele: any, i: number) => ({
                     ...ele,
                     ...(i === idx && { quantity: (el.quantity || 0) - 1 }),
                   })),
+                  id: activity.id,
                 })
               }
             />
@@ -48,11 +51,12 @@ const MaterialInteraction: FC<InteractionProps> = ({ interaction, index }) => {
             <Add
               className={`icon`}
               onClick={() =>
-                update({
-                  data: interaction.data.map((ele, i) => ({
+                updateData({
+                  data: activity.data.map((ele: any, i: number) => ({
                     ...ele,
                     ...(i === idx && { quantity: (el.quantity || 0) + 1 }),
                   })),
+                  id: activity.id,
                 })
               }
             />
@@ -63,8 +67,9 @@ const MaterialInteraction: FC<InteractionProps> = ({ interaction, index }) => {
       <div
         className="add-new-item"
         onClick={() =>
-          update({
-            data: [...interaction.data, { name: '', quantity: 0, link: '' }],
+          updateData({
+            data: [...activity.data, { name: '', quantity: 0, link: '' }],
+            id: activity.id,
           })
         }
       >
@@ -75,4 +80,4 @@ const MaterialInteraction: FC<InteractionProps> = ({ interaction, index }) => {
   );
 };
 
-export default MaterialInteraction;
+export default Material;

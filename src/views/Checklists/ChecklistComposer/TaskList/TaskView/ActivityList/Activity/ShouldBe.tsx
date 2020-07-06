@@ -1,15 +1,16 @@
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateInteraction } from '../actions';
-import { InteractionProps } from '../types';
+import { updateActivityData } from './actions';
+import { ActivityProps, updateDataParams } from './types';
 import { TARGET_RULES } from './constants';
 
-const ShouldBeInteraction: FC<InteractionProps> = ({ interaction, index }) => {
+const ShouldBe: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
   // TODO: look into type of data in the interaction
-  const update = (data: any) => dispatch(updateInteraction({ ...data }, index));
+  const updateData = (data: updateDataParams) =>
+    dispatch(updateActivityData(data));
 
   return (
     <div className="shouldbe-interaction">
@@ -19,14 +20,15 @@ const ShouldBeInteraction: FC<InteractionProps> = ({ interaction, index }) => {
           className="form-field-input"
           name="parameter"
           type="text"
-          value={interaction.data[0].parameter}
+          value={activity.data[0].parameter}
           placeholder="Pressure"
           onChange={(e) =>
-            update({
-              data: interaction.data.map((ele) => ({
+            updateData({
+              data: activity.data.map((ele: any) => ({
                 ...ele,
                 parameter: e.target.value,
               })),
+              id: activity.id,
             })
           }
         />
@@ -37,14 +39,15 @@ const ShouldBeInteraction: FC<InteractionProps> = ({ interaction, index }) => {
           className="form-field-input"
           name="type"
           type="text"
-          value={interaction.data[0].type}
+          value={activity.data[0].type}
           placeholder="Type"
           onChange={(e) =>
-            update({
-              data: interaction.data.map((ele) => ({
+            updateData({
+              data: activity.data.map((ele: any) => ({
                 ...ele,
                 type: e.target.value,
               })),
+              id: activity.id,
             })
           }
         />
@@ -55,14 +58,15 @@ const ShouldBeInteraction: FC<InteractionProps> = ({ interaction, index }) => {
           className="form-field-input"
           name="uom"
           type="text"
-          value={interaction.data[0].uom}
+          value={activity.data[0].uom}
           placeholder="UOM"
           onChange={(e) =>
-            update({
-              data: interaction.data.map((ele) => ({
+            updateData({
+              data: activity.data.map((ele: any) => ({
                 ...ele,
                 uom: e.target.value,
               })),
+              id: activity.id,
             })
           }
         />
@@ -74,13 +78,14 @@ const ShouldBeInteraction: FC<InteractionProps> = ({ interaction, index }) => {
             id="target-rule-select"
             className="form-field-select"
             defaultValue="Choose Here"
-            value={interaction?.data[0]?.operator}
+            value={activity.data[0].operator}
             onChange={(e) =>
-              update({
-                data: interaction.data.map((ele) => ({
+              updateData({
+                data: activity.data.map((ele: any) => ({
                   ...ele,
                   operator: e.target.value,
                 })),
+                id: activity.id,
               })
             }
           >
@@ -97,14 +102,15 @@ const ShouldBeInteraction: FC<InteractionProps> = ({ interaction, index }) => {
             className="form-field-input"
             name="target-value"
             type="text"
-            value={interaction.data[0].target}
+            value={activity.data[0].target}
             placeholder="Value"
             onChange={(e) =>
-              update({
-                data: interaction.data.map((ele) => ({
+              updateData({
+                data: activity.data.map((ele: any) => ({
                   ...ele,
                   target: e.target.value,
                 })),
+                id: activity.id,
               })
             }
           />
@@ -117,13 +123,14 @@ const ShouldBeInteraction: FC<InteractionProps> = ({ interaction, index }) => {
           name="observed-value"
           type="text"
           placeholder="To be entered at execution"
-          value={interaction.data[0].value}
+          value={activity.data[0].value}
           onChange={(e) =>
-            update({
-              data: interaction.data.map((ele) => ({
+            updateData({
+              data: activity.data.map((ele: any) => ({
                 ...ele,
                 value: e.target.value,
               })),
+              id: activity.id,
             })
           }
         />
@@ -132,4 +139,4 @@ const ShouldBeInteraction: FC<InteractionProps> = ({ interaction, index }) => {
   );
 };
 
-export default ShouldBeInteraction;
+export default ShouldBe;
