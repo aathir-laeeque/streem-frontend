@@ -1,16 +1,14 @@
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateActivityData } from './actions';
-import { ActivityProps, updateDataParams } from './types';
+import { updateActivity } from './actions';
+import { ActivityProps, Activity } from './types';
 import { TARGET_RULES } from './constants';
 
 const ShouldBe: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  // TODO: look into type of data in the interaction
-  const updateData = (data: updateDataParams) =>
-    dispatch(updateActivityData(data));
+  const update = (data: Activity) => dispatch(updateActivity(data));
 
   return (
     <div className="shouldbe-interaction">
@@ -23,12 +21,12 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
           value={activity.data[0].parameter}
           placeholder="Pressure"
           onChange={(e) =>
-            updateData({
+            update({
+              ...activity,
               data: activity.data.map((ele: any) => ({
                 ...ele,
                 parameter: e.target.value,
               })),
-              id: activity.id,
             })
           }
         />
@@ -42,12 +40,12 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
           value={activity.data[0].type}
           placeholder="Type"
           onChange={(e) =>
-            updateData({
+            update({
+              ...activity,
               data: activity.data.map((ele: any) => ({
                 ...ele,
                 type: e.target.value,
               })),
-              id: activity.id,
             })
           }
         />
@@ -61,12 +59,12 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
           value={activity.data[0].uom}
           placeholder="UOM"
           onChange={(e) =>
-            updateData({
+            update({
+              ...activity,
               data: activity.data.map((ele: any) => ({
                 ...ele,
                 uom: e.target.value,
               })),
-              id: activity.id,
             })
           }
         />
@@ -80,12 +78,12 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
             defaultValue="Choose Here"
             value={activity.data[0].operator}
             onChange={(e) =>
-              updateData({
+              update({
+                ...activity,
                 data: activity.data.map((ele: any) => ({
                   ...ele,
                   operator: e.target.value,
                 })),
-                id: activity.id,
               })
             }
           >
@@ -105,12 +103,12 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
             value={activity.data[0].target}
             placeholder="Value"
             onChange={(e) =>
-              updateData({
+              update({
+                ...activity,
                 data: activity.data.map((ele: any) => ({
                   ...ele,
                   target: e.target.value,
                 })),
-                id: activity.id,
               })
             }
           />
@@ -125,12 +123,12 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
           placeholder="To be entered at execution"
           value={activity.data[0].value}
           onChange={(e) =>
-            updateData({
+            update({
+              ...activity,
               data: activity.data.map((ele: any) => ({
                 ...ele,
                 value: e.target.value,
               })),
-              id: activity.id,
             })
           }
         />

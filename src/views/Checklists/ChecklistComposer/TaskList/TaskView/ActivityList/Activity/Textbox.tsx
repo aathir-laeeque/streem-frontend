@@ -1,15 +1,13 @@
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ActivityProps, updateDataParams } from './types';
-import { updateActivityData } from './actions';
+import { ActivityProps, Activity } from './types';
+import { updateActivity } from './actions';
 
 const TextboxInteraction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  // TODO: look into type of data in interaction
-  const updateData = (data: updateDataParams) =>
-    dispatch(updateActivityData(data));
+  const update = (data: Activity) => dispatch(updateActivity(data));
 
   return (
     <div className="textbox-interaction">
@@ -21,7 +19,7 @@ const TextboxInteraction: FC<ActivityProps> = ({ activity }) => {
           value={activity.data.text}
           placeholder="Enter your remarks"
           onChange={(e) =>
-            updateData({ data: { text: e.target.value }, id: activity.id })
+            update({ ...activity, data: { text: e.target.value } })
           }
         />
       </div>

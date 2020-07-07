@@ -27,7 +27,7 @@ const StageList: FC = () => {
   const update = (stage: Pick<Stage, 'id' | 'name'>) =>
     dispatch(updateStage(stage));
 
-  const isEditingEnabled = state === ChecklistState.ADD_EDIT;
+  const isChecklistEditable = state === ChecklistState.ADD_EDIT;
 
   return (
     <Wrapper>
@@ -45,7 +45,7 @@ const StageList: FC = () => {
               name="stage-name"
               value={stage.name}
               onChange={(e) => update({ name: e.target.value, id: stage.id })}
-              {...(!isEditingEnabled && { disable: true })}
+              {...(!isChecklistEditable && { disabled: true })}
             />
           </li>
         ))}

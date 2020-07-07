@@ -61,9 +61,13 @@ export const Wrapper = styled.li.attrs({
   }
 `;
 
-export const HeaderWrapper = styled.div.attrs({
-  className: 'step-item-header',
-})`
+export const HeaderWrapper = styled.div.attrs(
+  (props: { isChecklistEditable: boolean }) => ({
+    className: `step-item-header${
+      !props.isChecklistEditable ? ' no-margin' : ''
+    }`,
+  }),
+)`
   align-items: center;
   border-radius: 5px;
   display: flex;
@@ -87,6 +91,10 @@ export const HeaderWrapper = styled.div.attrs({
 
     :focus {
       border-bottom-color: #12aab3;
+    }
+
+    :disabled {
+      border-bottom: none;
     }
   }
 

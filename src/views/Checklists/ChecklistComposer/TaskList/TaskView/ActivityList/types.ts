@@ -13,6 +13,10 @@ export interface ActivityListState {
   activeActivityId?: Activity['id'];
 }
 
+export interface OptionalSwitchProps {
+  activityId: Activity['id'];
+}
+
 export enum ActivityListAction {
   SET_ACTIVITY_LIST = '@@checklsit/composer/activity_list/SET_ACTIVITY_LIST',
 }

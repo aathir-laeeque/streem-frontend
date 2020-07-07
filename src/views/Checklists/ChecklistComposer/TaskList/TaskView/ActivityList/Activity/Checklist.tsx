@@ -2,17 +2,14 @@ import { Add, Close } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ActivityProps, updateDataParams, updateActivityParams } from './types';
-import { updateActivityData, updateActivity } from './actions';
+import { ActivityProps, Activity } from './types';
+import { updateActivity } from './actions';
 
 const Checklist: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  const update = (updatedActivity: updateActivityParams) =>
+  const update = (updatedActivity: Activity) =>
     dispatch(updateActivity(updatedActivity));
-
-  const updateData = (updatedData: updateDataParams) =>
-    dispatch(updateActivityData(updatedData));
 
   return (
     <div className="checklist-interaction">
@@ -22,7 +19,7 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
           type="text"
           name="label"
           value={activity.label}
-          onChange={(e) => update({ label: e.target.value, id: activity.id })}
+          onChange={(e) => update({ ...activity, label: e.target.value })}
           placeholder="Enter a title for the checklist"
         />
       </div>
@@ -47,21 +44,21 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
                  * TODO only send the updated data item to action
                  * TODO fix any type here
                  */
-                updateData({
+                update({
+                  ...activity,
                   data: activity.data.map((d: any, i: number) => ({
                     ...d,
                     ...(i === idx && { name: e.target.value }),
                   })),
-                  id: activity.id,
                 })
               }
             />
             <Close
               className={`icon`}
               onClick={() =>
-                updateData({
+                update({
+                  ...activity,
                   data: activity.data.filter((_: any, i: number) => i !== idx),
-                  id: activity.id,
                 })
               }
             />
@@ -70,9 +67,9 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
         <div
           className="add-new-item"
           onClick={() =>
-            updateData({
+            update({
+              ...activity,
               data: [...activity.data, { name: '' }],
-              id: activity.id,
             })
           }
         >

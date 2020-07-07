@@ -1,8 +1,4 @@
-import {
-  updateActivityData,
-  updateActivity,
-  setActiveActivity,
-} from './actions';
+import { updateActivity, setActiveActivity } from './actions';
 
 export enum ActivityType {
   MATERIAL = 'material',
@@ -33,13 +29,8 @@ export interface ActivityProps {
 export enum ActivityAction {
   SET_ACTIVE_ACTIVITY = '@@checklist/composer/activity/SET_ACTIVE_ACTIVITY',
   UPDATE_ACTIVITY = '@@checklist/composer/activity/UPDATE_ACTIVITY',
-  UPDATE_ACTIVITY_DATA = '@@checklist/composer/activity/UPDATE_ACTIVITY_DATA',
 }
 
 export type ActivityActionType = ReturnType<
-  typeof updateActivityData | typeof updateActivity | typeof setActiveActivity
+  typeof updateActivity | typeof setActiveActivity
 >;
-
-export type updateDataParams = Pick<Activity, 'data' | 'id'>;
-
-export type updateActivityParams = Pick<Activity, 'id' | 'label'>;

@@ -57,6 +57,10 @@ export const Wrapper = styled.div.attrs({
         border: none;
         outline: none;
         width: 100%;
+
+        :disabled {
+          cursor: pointer;
+        }
       }
     }
 

@@ -27,13 +27,11 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
     case ActivityAction.SET_ACTIVE_ACTIVITY:
       return { ...state, activeActivityId: action.payload.activityId };
 
-    case ActivityAction.UPDATE_ACTIVITY_DATA:
     case ActivityAction.UPDATE_ACTIVITY:
       return {
         ...state,
         list: {
           ...state.list,
-          // TODO fix this type error
           [action.payload.activity.id]: {
             ...state.list[action.payload.activity.id],
             ...action.payload.activity,

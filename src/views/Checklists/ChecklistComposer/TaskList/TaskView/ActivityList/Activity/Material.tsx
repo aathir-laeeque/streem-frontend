@@ -2,14 +2,13 @@ import { Add, Remove } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateActivityData } from './actions';
-import { ActivityProps, updateDataParams } from './types';
+import { updateActivity } from './actions';
+import { ActivityProps, Activity } from './types';
 
 const Material: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  const updateData = (data: updateDataParams) =>
-    dispatch(updateActivityData(data));
+  const update = (data: Activity) => dispatch(updateActivity(data));
 
   // TODO: look into any type
   return (
@@ -24,12 +23,12 @@ const Material: FC<ActivityProps> = ({ activity }) => {
             name="material"
             value={el.name}
             onChange={(e) =>
-              updateData({
+              update({
+                ...activity,
                 data: activity.data.map((ele: any, i: number) => ({
                   ...ele,
                   ...(i === idx && { name: e.target.value }),
                 })),
-                id: activity.id,
               })
             }
           />
@@ -38,12 +37,12 @@ const Material: FC<ActivityProps> = ({ activity }) => {
             <Remove
               className="icon"
               onClick={() =>
-                updateData({
+                update({
+                  ...activity,
                   data: activity.data.map((ele: any, i: number) => ({
                     ...ele,
                     ...(i === idx && { quantity: (el.quantity || 0) - 1 }),
                   })),
-                  id: activity.id,
                 })
               }
             />
@@ -51,12 +50,12 @@ const Material: FC<ActivityProps> = ({ activity }) => {
             <Add
               className={`icon`}
               onClick={() =>
-                updateData({
+                update({
+                  ...activity,
                   data: activity.data.map((ele: any, i: number) => ({
                     ...ele,
                     ...(i === idx && { quantity: (el.quantity || 0) + 1 }),
                   })),
-                  id: activity.id,
                 })
               }
             />
@@ -67,9 +66,9 @@ const Material: FC<ActivityProps> = ({ activity }) => {
       <div
         className="add-new-item"
         onClick={() =>
-          updateData({
+          update({
+            ...activity,
             data: [...activity.data, { name: '', quantity: 0, link: '' }],
-            id: activity.id,
           })
         }
       >

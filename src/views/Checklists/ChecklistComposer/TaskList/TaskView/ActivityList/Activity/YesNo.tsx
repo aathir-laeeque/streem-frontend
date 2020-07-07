@@ -1,27 +1,25 @@
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateActivityData, updateActivity } from './actions';
-import { ActivityProps, updateDataParams, updateActivityParams } from './types';
+import { updateActivity } from './actions';
+import { ActivityProps, Activity } from './types';
 
 const YesNoInteraction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
   // TODO: look into type for data in interaction
-  const updateData = (data: updateDataParams) =>
-    dispatch(updateActivityData(data));
 
-  const update = (data: updateActivityParams) => dispatch(updateActivity(data));
+  const update = (data: Activity) => dispatch(updateActivity(data));
 
   return (
     <div className="yes-no-interaction">
-      <div className="form-field">
+      <div className="form-field no-margin">
         <label className="form-field-label">Label</label>
         <input
           className="form-field-input"
           type="text"
           value={activity.label}
-          onChange={(e) => update({ label: e.target.value, id: activity.id })}
+          onChange={(e) => update({ ...activity, label: e.target.value })}
         />
       </div>
       <div className="buttons-container">
@@ -38,12 +36,12 @@ const YesNoInteraction: FC<ActivityProps> = ({ activity }) => {
                   type="text"
                   value={el.name}
                   onChange={(e) =>
-                    updateData({
+                    update({
+                      ...activity,
                       data: activity.data.map((ele: any, i: number) => ({
                         ...ele,
                         ...(i === index && { name: e.target.value }),
                       })),
-                      id: activity.id,
                     })
                   }
                 />

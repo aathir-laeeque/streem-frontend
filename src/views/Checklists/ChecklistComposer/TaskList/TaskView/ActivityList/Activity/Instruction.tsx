@@ -1,14 +1,13 @@
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateActivityData } from './actions';
-import { ActivityProps, updateDataParams } from './types';
+import { updateActivity } from './actions';
+import { ActivityProps, Activity } from './types';
 
 const Instruction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  const updateData = (data: updateDataParams) =>
-    dispatch(updateActivityData(data));
+  const update = (data: Activity) => dispatch(updateActivity(data));
 
   return (
     <div className="instruction-interaction">
@@ -19,7 +18,7 @@ const Instruction: FC<ActivityProps> = ({ activity }) => {
           value={activity.data?.text}
           rows={4}
           onChange={(e) =>
-            updateData({ data: { text: e.target.value }, id: activity.id })
+            update({ ...activity, data: { text: e.target.value } })
           }
         />
       </div>

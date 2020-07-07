@@ -118,3 +118,6 @@ dist
 
 # custom
 /src/views/.Checklists
+
+# shell script files
+connect.sh

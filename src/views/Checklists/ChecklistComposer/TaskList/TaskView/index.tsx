@@ -1,12 +1,13 @@
 import { useTypedSelector } from '#store';
+import { ChecklistState } from '#views/Checklists/types';
 import { ArrowDownwardOutlined, ArrowUpwardOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { setActiveTask } from './actions';
-import Header from './Header';
 import ActivityList from './ActivityList';
 import { ActivityType } from './ActivityList/Activity/types';
+import Header from './Header';
 import StepMedia from './Media';
 import { Wrapper } from './styles';
 import { Task } from './types';
@@ -16,11 +17,14 @@ interface TaskViewProps {
 }
 
 const TaskView: FC<TaskViewProps> = ({ task }) => {
-  const { activeTaskId } = useTypedSelector(
-    (state) => state.checklist.composer.tasks,
-  );
+  const {
+    tasks: { activeTaskId },
+    state,
+  } = useTypedSelector((state) => state.checklist.composer);
 
   const dispatch = useDispatch();
+
+  const isChecklistEditable = state === ChecklistState.ADD_EDIT;
 
   const isTaskActive = task.id === activeTaskId;
 
@@ -30,9 +34,13 @@ const TaskView: FC<TaskViewProps> = ({ task }) => {
   return (
     <Wrapper>
       <div className="step-item-position-control">
-        <ArrowUpwardOutlined className={`icon icon-up`} />
+        <ArrowUpwardOutlined
+          className={`icon icon-up${!isChecklistEditable ? ' hide' : ''}`}
+        />
         <span className="step-number">{task.orderTree}</span>
-        <ArrowDownwardOutlined className={`icon icon-down`} />
+        <ArrowDownwardOutlined
+          className={`icon icon-down${!isChecklistEditable ? ' hide' : ''}`}
+        />
       </div>
 
       <div

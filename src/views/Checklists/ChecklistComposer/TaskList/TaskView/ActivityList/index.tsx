@@ -1,3 +1,5 @@
+import { useTypedSelector } from '#store';
+import { ChecklistState } from '#views/Checklists/types';
 import {
   ArrowDownwardOutlined,
   ArrowUpwardOutlined,
@@ -5,10 +7,6 @@ import {
 } from '@material-ui/icons';
 import React, { FC } from 'react';
 
-import { Wrapper } from './styles';
-import { ActivityListProps } from './types';
-import { ActivityType } from './Activity/types';
-import { useTypedSelector } from '#store';
 import {
   Checklist,
   Instruction,
@@ -18,22 +16,44 @@ import {
   Textbox,
   YesNo,
 } from './Activity';
+import { ActivityType } from './Activity/types';
+import { setActiveActivity } from './Activity/actions';
+import OptionalSwitch from './OptionalSwitch';
+import { Wrapper } from './styles';
+import { ActivityListProps } from './types';
+import { useDispatch } from 'react-redux';
 
 const ActivityList: FC<ActivityListProps> = ({ activitiesId }) => {
-  const { list } = useTypedSelector(
-    (state) => state.checklist.composer.activities,
-  ); // TODO remove this filter when MEDIA and MULTISELECT interactions are complete
+  const {
+    activities: { list, activeActivityId },
+    state,
+  } = useTypedSelector((state) => state.checklist.composer);
+
+  const dispatch = useDispatch();
+
+  const isChecklistEditable = state === ChecklistState.ADD_EDIT;
 
   return (
     <Wrapper>
       {activitiesId.map((activityId, index) => (
         <div className="interaction" key={index}>
-          <div className="interaction-position-control">
+          <div
+            className={`interaction-position-control${
+              !isChecklistEditable ? ' hide' : ''
+            }`}
+          >
             <ArrowUpwardOutlined className="icon arrow-up" />
             <ArrowDownwardOutlined className="icon arrow-down" />
           </div>
 
-          <div className="interaction-content">
+          <div
+            className={`interaction-content${
+              activityId === activeActivityId
+                ? ' interaction-content-active'
+                : ''
+            }`}
+            onClick={() => dispatch(setActiveActivity(activityId))}
+          >
             {(() => {
               const activity = list[activityId];
 
@@ -70,9 +90,15 @@ const ActivityList: FC<ActivityListProps> = ({ activitiesId }) => {
                     return null;
                 }
             })()}
+
+            <OptionalSwitch activityId={activityId} />
           </div>
 
-          <MoreVertOutlined className={`icon more-options`} />
+          <MoreVertOutlined
+            className={`icon more-options${
+              !isChecklistEditable ? ' hide' : ''
+            }`}
+          />
         </div>
       ))}
     </Wrapper>
