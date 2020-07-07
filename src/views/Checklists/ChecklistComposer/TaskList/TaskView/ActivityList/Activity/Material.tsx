@@ -4,8 +4,13 @@ import { useDispatch } from 'react-redux';
 
 import { updateActivity } from './actions';
 import { ActivityProps, Activity } from './types';
+import { useTypedSelector } from '#store';
 
 const Material: FC<ActivityProps> = ({ activity }) => {
+  const { isChecklistEditable } = useTypedSelector(
+    (state) => state.checklist.composer,
+  );
+
   const dispatch = useDispatch();
 
   const update = (data: Activity) => dispatch(updateActivity(data));
@@ -13,6 +18,12 @@ const Material: FC<ActivityProps> = ({ activity }) => {
   // TODO: look into any type
   return (
     <ol className="material-interaction">
+      {!isChecklistEditable ? (
+        <div className="header">
+          <span>NAME</span>
+          <span>QUANTITY</span>
+        </div>
+      ) : null}
       {activity.data.map((el: any, idx: number) => (
         <li key={idx} className="material-interaction-item">
           <img src={el.link} className="material-interaction-item-image" />
@@ -31,11 +42,16 @@ const Material: FC<ActivityProps> = ({ activity }) => {
                 })),
               })
             }
+            {...(!isChecklistEditable && { disabled: true })}
           />
 
-          <div className="material-interaction-item-controls">
+          <div
+            className={`material-interaction-item-controls${
+              !isChecklistEditable ? ' no-border' : ''
+            }`}
+          >
             <Remove
-              className="icon"
+              className={`icon${!isChecklistEditable ? ' hide' : ''}`}
               onClick={() =>
                 update({
                   ...activity,
@@ -46,9 +62,13 @@ const Material: FC<ActivityProps> = ({ activity }) => {
                 })
               }
             />
-            <span className="quantity">{el.quantity || 0}</span>
+            <span
+              className={`quantity${!isChecklistEditable ? ' no-border' : ''}`}
+            >
+              {el.quantity || 0}
+            </span>
             <Add
-              className={`icon`}
+              className={`icon${!isChecklistEditable ? ' hide' : ''}`}
               onClick={() =>
                 update({
                   ...activity,
@@ -63,18 +83,20 @@ const Material: FC<ActivityProps> = ({ activity }) => {
         </li>
       ))}
 
-      <div
-        className="add-new-item"
-        onClick={() =>
-          update({
-            ...activity,
-            data: [...activity.data, { name: '', quantity: 0, link: '' }],
-          })
-        }
-      >
-        <Add className="icon" />
-        Add new Item
-      </div>
+      {isChecklistEditable ? (
+        <div
+          className="add-new-item"
+          onClick={() =>
+            update({
+              ...activity,
+              data: [...activity.data, { name: '', quantity: 0, link: '' }],
+            })
+          }
+        >
+          <Add className="icon" />
+          Add new Item
+        </div>
+      ) : null}
     </ol>
   );
 };

@@ -3,9 +3,14 @@ import { useDispatch } from 'react-redux';
 
 import { updateActivity } from './actions';
 import { ActivityProps, Activity } from './types';
+import { useTypedSelector } from '#store';
 
 const Instruction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
+
+  const { isChecklistEditable } = useTypedSelector(
+    (state) => state.checklist.composer,
+  );
 
   const update = (data: Activity) => dispatch(updateActivity(data));
 
@@ -20,6 +25,7 @@ const Instruction: FC<ActivityProps> = ({ activity }) => {
           onChange={(e) =>
             update({ ...activity, data: { text: e.target.value } })
           }
+          disabled={isChecklistEditable ? false : true}
         />
       </div>
     </div>

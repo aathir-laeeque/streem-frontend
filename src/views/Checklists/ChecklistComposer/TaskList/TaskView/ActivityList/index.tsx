@@ -1,5 +1,4 @@
 import { useTypedSelector } from '#store';
-import { ChecklistState } from '#views/Checklists/types';
 import {
   ArrowDownwardOutlined,
   ArrowUpwardOutlined,
@@ -26,12 +25,10 @@ import { useDispatch } from 'react-redux';
 const ActivityList: FC<ActivityListProps> = ({ activitiesId }) => {
   const {
     activities: { list, activeActivityId },
-    state,
+    isChecklistEditable,
   } = useTypedSelector((state) => state.checklist.composer);
 
   const dispatch = useDispatch();
-
-  const isChecklistEditable = state === ChecklistState.ADD_EDIT;
 
   return (
     <Wrapper>
@@ -52,7 +49,11 @@ const ActivityList: FC<ActivityListProps> = ({ activitiesId }) => {
                 ? ' interaction-content-active'
                 : ''
             }`}
-            onClick={() => dispatch(setActiveActivity(activityId))}
+            onClick={() => {
+              if (activeActivityId !== activityId) {
+                dispatch(setActiveActivity(activityId));
+              }
+            }}
           >
             {(() => {
               const activity = list[activityId];
@@ -91,7 +92,9 @@ const ActivityList: FC<ActivityListProps> = ({ activitiesId }) => {
                 }
             })()}
 
-            <OptionalSwitch activityId={activityId} />
+            {isChecklistEditable ? (
+              <OptionalSwitch activityId={activityId} />
+            ) : null}
           </div>
 
           <MoreVertOutlined

@@ -69,6 +69,7 @@ export const Wrapper = styled.div.attrs({
     .checklist-container {
       display: flex;
       flex-direction: column;
+      margin-top: 5px;
 
       .list-item {
         display: flex;
@@ -127,28 +128,35 @@ export const Wrapper = styled.div.attrs({
     counter-reset: item;
     list-style-type: none;
 
+    .header {
+      display: flex;
+      margin-bottom: 8px;
+
+      > span {
+        display: flex;
+        flex: 1;
+        font-size: 16px;
+        letter-spacing: 1px;
+        color: #333333;
+
+        :first-child {
+          justify-content: center;
+        }
+
+        :last-child {
+          justify-content: flex-end;
+        }
+      }
+    }
+
     &-item {
       list-style-position: inside;
       display: flex;
       margin-bottom: 20px;
       align-items: center;
 
-      &-header {
-        display: flex;
-        margin-bottom: 8px;
-
-        > div {
-          flex: 1;
-          display: flex;
-          justify-content: flex-end;
-          color: #333333;
-          font-size: 16px;
-          font-weight: 600;
-
-          :first-child {
-            justify-content: center;
-          }
-        }
+      :last-child {
+        margin-bottom: 0;
       }
 
       > span {

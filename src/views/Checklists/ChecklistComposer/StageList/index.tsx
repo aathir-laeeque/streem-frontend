@@ -1,5 +1,4 @@
 import { useTypedSelector } from '#store';
-import { ChecklistState } from '#views/Checklists/types';
 import {
   ArrowDownwardOutlined,
   ArrowUpwardOutlined,
@@ -17,8 +16,8 @@ const StageList: FC = () => {
   const dispatch = useDispatch();
 
   const {
+    isChecklistEditable,
     stages: { list = {}, activeStageId },
-    state,
   } = useTypedSelector((state) => state.checklist.composer);
 
   const setAsActive = (stageId: Stage['id']) =>
@@ -26,8 +25,6 @@ const StageList: FC = () => {
 
   const update = (stage: Pick<Stage, 'id' | 'name'>) =>
     dispatch(updateStage(stage));
-
-  const isChecklistEditable = state === ChecklistState.ADD_EDIT;
 
   return (
     <Wrapper>

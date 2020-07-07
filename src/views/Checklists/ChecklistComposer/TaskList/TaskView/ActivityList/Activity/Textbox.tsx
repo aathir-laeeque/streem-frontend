@@ -3,9 +3,14 @@ import { useDispatch } from 'react-redux';
 
 import { ActivityProps, Activity } from './types';
 import { updateActivity } from './actions';
+import { useTypedSelector } from '#store';
 
 const TextboxInteraction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
+
+  const { isChecklistEditable } = useTypedSelector(
+    (state) => state.checklist.composer,
+  );
 
   const update = (data: Activity) => dispatch(updateActivity(data));
 
@@ -21,6 +26,7 @@ const TextboxInteraction: FC<ActivityProps> = ({ activity }) => {
           onChange={(e) =>
             update({ ...activity, data: { text: e.target.value } })
           }
+          disabled={isChecklistEditable}
         />
       </div>
     </div>

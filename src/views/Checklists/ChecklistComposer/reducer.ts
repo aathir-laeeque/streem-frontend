@@ -18,6 +18,7 @@ const initialState: ComposerState = {
   activities: activityListInitialState,
   checklist: undefined,
   error: null,
+  isChecklistEditable: true,
   loading: false,
   stages: stageListInitialState,
   state: ChecklistState.ADD_EDIT,
@@ -39,7 +40,11 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       return { ...state, error: action.payload.error, loading: false };
 
     case ComposerAction.SET_CHECKLIST_STATE:
-      return { ...state, state: action.payload.state };
+      return {
+        ...state,
+        state: action.payload.state,
+        isChecklistEditable: action.payload.state === ChecklistState.ADD_EDIT,
+      };
 
     default:
       return {

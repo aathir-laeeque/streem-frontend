@@ -1,12 +1,18 @@
 import { Add, Close } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
+import { Checkbox } from '#components';
 
 import { ActivityProps, Activity } from './types';
 import { updateActivity } from './actions';
+import { useTypedSelector } from '#store';
 
 const Checklist: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
+
+  const { isChecklistEditable } = useTypedSelector(
+    (state) => state.checklist.composer,
+  );
 
   const update = (updatedActivity: Activity) =>
     dispatch(updateActivity(updatedActivity));
@@ -15,7 +21,7 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
     <div className="checklist-interaction">
       <div className="form-field">
         <input
-          className={`form-input form-input-value`}
+          className="form-field-input"
           type="text"
           name="label"
           value={activity.label}
@@ -27,11 +33,13 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
       <div className="checklist-container">
         {activity.data.map((el: any, idx: number) => (
           <div className="list-item" key={idx}>
-            <input
-              checked={false}
-              className="form-field-input"
-              onChange={() => console.log('toggle checkbox')}
-              type="checkbox"
+            <Checkbox
+              checked={isChecklistEditable ? false : true}
+              onClick={() => {
+                if (!isChecklistEditable) {
+                  console.log('trigger on click hadler for checkbox');
+                }
+              }}
             />
 
             <input
@@ -40,10 +48,6 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
               name="item-label"
               value={el.name}
               onChange={(e) =>
-                /**
-                 * TODO only send the updated data item to action
-                 * TODO fix any type here
-                 */
                 update({
                   ...activity,
                   data: activity.data.map((d: any, i: number) => ({
@@ -52,30 +56,39 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
                   })),
                 })
               }
+              disabled={isChecklistEditable ? false : true}
             />
-            <Close
-              className={`icon`}
-              onClick={() =>
-                update({
-                  ...activity,
-                  data: activity.data.filter((_: any, i: number) => i !== idx),
-                })
-              }
-            />
+
+            {isChecklistEditable ? (
+              <Close
+                className={`icon`}
+                onClick={() =>
+                  update({
+                    ...activity,
+                    data: activity.data.filter(
+                      (_: any, i: number) => i !== idx,
+                    ),
+                  })
+                }
+              />
+            ) : null}
           </div>
         ))}
-        <div
-          className="add-new-item"
-          onClick={() =>
-            update({
-              ...activity,
-              data: [...activity.data, { name: '' }],
-            })
-          }
-        >
-          <Add className="icon" />
-          Add new Item
-        </div>
+
+        {isChecklistEditable ? (
+          <div
+            className="add-new-item"
+            onClick={() =>
+              update({
+                ...activity,
+                data: [...activity.data, { name: '' }],
+              })
+            }
+          >
+            <Add className="icon" />
+            Add new Item
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { useTypedSelector } from '#store';
 import {
   AddCircleOutline,
   DateRangeOutlined,
@@ -10,13 +11,11 @@ import { useDispatch } from 'react-redux';
 import { updateTask } from './actions';
 import { HeaderWrapper } from './styles';
 import { HeaderProps, updateParams } from './types';
-import { useTypedSelector } from '#store';
-import { ChecklistState } from '#views/Checklists/types';
 
 const Header: FC<HeaderProps> = ({ task }) => {
-  const { state } = useTypedSelector((state) => state.checklist.composer);
-
-  const isChecklistEditable = state === ChecklistState.ADD_EDIT;
+  const { isChecklistEditable } = useTypedSelector(
+    (state) => state.checklist.composer,
+  );
 
   const dispatch = useDispatch();
 

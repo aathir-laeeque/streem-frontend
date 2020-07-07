@@ -46,6 +46,11 @@ const GlobalStyles = createGlobalStyle`
         ::placeholder {
           color: #999999;
         }
+
+        :disabled {
+          border-bottom: none;
+          background-color: transparent;
+        }
       }
 
       &-input[type="checkbox"] {
@@ -62,6 +67,11 @@ const GlobalStyles = createGlobalStyle`
 
         :focus {
           border-bottom-color: #12aab3;
+        }
+
+        :disabled {
+          border-bottom: none;
+          background-color: transparent;
         }
       }
 

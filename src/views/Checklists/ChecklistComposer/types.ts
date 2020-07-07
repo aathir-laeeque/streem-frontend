@@ -29,6 +29,7 @@ export interface ComposerState {
   checklist?: Checklist;
   // TODO: replace with error object
   error: any;
+  isChecklistEditable: boolean;
   loading: boolean;
   stages: StageListState;
   tasks: TaskListState;

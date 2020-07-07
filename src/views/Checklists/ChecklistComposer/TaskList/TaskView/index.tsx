@@ -1,5 +1,4 @@
 import { useTypedSelector } from '#store';
-import { ChecklistState } from '#views/Checklists/types';
 import { ArrowDownwardOutlined, ArrowUpwardOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
@@ -18,13 +17,11 @@ interface TaskViewProps {
 
 const TaskView: FC<TaskViewProps> = ({ task }) => {
   const {
+    isChecklistEditable,
     tasks: { activeTaskId },
-    state,
   } = useTypedSelector((state) => state.checklist.composer);
 
   const dispatch = useDispatch();
-
-  const isChecklistEditable = state === ChecklistState.ADD_EDIT;
 
   const isTaskActive = task.id === activeTaskId;
 

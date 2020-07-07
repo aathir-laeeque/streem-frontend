@@ -3,9 +3,14 @@ import { useDispatch } from 'react-redux';
 
 import { updateActivity } from './actions';
 import { ActivityProps, Activity } from './types';
+import { useTypedSelector } from '#store';
 
 const YesNoInteraction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
+
+  const { isChecklistEditable } = useTypedSelector(
+    (state) => state.checklist.composer,
+  );
 
   // TODO: look into type for data in interaction
 
@@ -14,12 +19,17 @@ const YesNoInteraction: FC<ActivityProps> = ({ activity }) => {
   return (
     <div className="yes-no-interaction">
       <div className="form-field no-margin">
-        <label className="form-field-label">Label</label>
+        <label
+          className={`form-field-label${!isChecklistEditable ? ' hide' : ''}`}
+        >
+          Label
+        </label>
         <input
           className="form-field-input"
           type="text"
           value={activity.label}
           onChange={(e) => update({ ...activity, label: e.target.value })}
+          disabled={isChecklistEditable ? false : true}
         />
       </div>
       <div className="buttons-container">
@@ -27,7 +37,9 @@ const YesNoInteraction: FC<ActivityProps> = ({ activity }) => {
           .sort((a: any, b: any) => (a.name > b.name ? -1 : 1)) // sorting to make yes type come first
           .map((el: any, index: number) => (
             <div key={index} className="button-item">
-              <div className="form-field">
+              <div
+                className={`form-field${!isChecklistEditable ? ' hide' : ''}`}
+              >
                 <label className="form-field-label">
                   {el.type === 'yes' ? 'Positive' : 'Negative'} Button Label
                 </label>
