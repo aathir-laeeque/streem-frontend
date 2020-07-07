@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import styled from 'styled-components';
 
 interface CheckboxProps {
-  label: string;
+  label?: string;
   checked?: boolean;
   onClick: () => void;
 }

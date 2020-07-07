@@ -14,7 +14,6 @@ import { Router } from '@reach/router';
 import React, { FC } from 'react';
 import { Provider } from 'react-redux';
 
-// relative imports
 import GlobalStyles from './styles/GlobalStyles';
 import {
   AuditLogsView,

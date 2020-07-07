@@ -1,45 +1,48 @@
-// alias imports
 import { useTypedSelector } from '#store';
 import { propsTransformer } from '#utils/propsTransformer';
+import { isEmpty } from 'lodash';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { fetchChecklist } from './actions';
-import Checklist from './Checklist';
-import { ChecklistComposerProps, ChecklistState, TemplateMode } from './types';
+import { ChecklistState } from '../types';
+import { fetchChecklist, setChecklistState } from './actions';
+import Header from './Header';
+import StagesList from './StageList';
+import { Wrapper } from './styles';
+import TaskList from './TaskList';
+import { ComposerProps } from './types';
 
-// library imports
-const ChecklistComposer: FC<ChecklistComposerProps> = ({
+const Composer: FC<ComposerProps> = ({
   checklistId,
-  checklistState,
-  templateMode,
+  checklistState = ChecklistState.ADD_EDIT,
 }) => {
   const dispatch = useDispatch();
 
-  const { activeChecklist, loading } = useTypedSelector(
-    (state) => state.checklistComposer,
+  const { loading, checklist } = useTypedSelector(
+    (state) => state.checklist.composer,
   );
 
   useEffect(() => {
-    if (!!checklistId && activeChecklist?.id !== parseInt(checklistId)) {
-      dispatch(fetchChecklist(parseInt(checklistId)));
-    }
+    !!checklistId && dispatch(fetchChecklist(parseInt(checklistId)));
+
+    dispatch(setChecklistState(checklistState));
   }, []);
 
   if (loading) {
     return <div>Loading...</div>;
-  } else if (activeChecklist) {
+  } else if (!isEmpty(checklist)) {
     return (
-      <Checklist checklistState={checklistState} templateMode={templateMode} />
+      <Wrapper>
+        <Header />
+
+        <StagesList />
+
+        <TaskList />
+      </Wrapper>
     );
   } else {
     return null;
   }
-};
-
-ChecklistComposer.defaultProps = {
-  checklistState: ChecklistState.ADD_EDIT,
-  templateMode: TemplateMode.EDITABLE,
 };
 
 export default propsTransformer(
@@ -49,5 +52,5 @@ export default propsTransformer(
       checklistId: p.location.state.checklistId,
     }),
   }),
-  ChecklistComposer,
+  Composer,
 );

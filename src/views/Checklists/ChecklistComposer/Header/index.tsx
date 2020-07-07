@@ -1,24 +1,33 @@
 import { Button } from '#components';
-
-import React, { FC } from 'react';
-
-import { Wrapper } from './styles';
 import { useTypedSelector } from '#store';
-import { ChecklistState } from '../types';
+import { ChecklistState } from '#views/Checklists/types';
+import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
+
+import { setChecklistState } from '../actions';
+import { Wrapper } from './styles';
 
 const Header: FC = () => {
-  const { checklistState } = useTypedSelector(
-    (state) => state.checklistComposer,
-  );
+  const dispatch = useDispatch();
 
-  const isCreatingChecklist = checklistState === ChecklistState.ADD_EDIT;
+  const { isChecklistEditable } = useTypedSelector(
+    (state) => state.checklist.composer,
+  );
 
   return (
     <Wrapper>
       <div className="header-item">Stages</div>
       <span className="auto-save-text">All changes saved automatically</span>
-      <Button>
-        {isCreatingChecklist ? 'Publish Checklist' : 'Complete Job'}
+      <Button
+        onClick={() => {
+          if (isChecklistEditable) {
+            dispatch(setChecklistState(ChecklistState.EXECUTING));
+          } else {
+            dispatch(setChecklistState(ChecklistState.ADD_EDIT));
+          }
+        }}
+      >
+        {isChecklistEditable ? 'Publish Checklist' : 'Complete Job'}
       </Button>
     </Wrapper>
   );

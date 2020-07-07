@@ -1,64 +1,54 @@
 import { RouteComponentProps } from '@reach/router';
 
-import { Checklist } from '../types';
+import { Checklist, ChecklistState } from '../types';
 import {
   fetchChecklist,
   fetchChecklistError,
   fetchChecklistOngoing,
   fetchChecklistSuccess,
-  setChecklistModes,
+  setChecklistState,
 } from './actions';
-import { Stage } from './StageList/types';
-import { Step } from './StepsList/StepView/types';
+import { StageListState } from './StageList/types';
+import { ActivityListState } from './TaskList/TaskView/ActivityList/types';
+import { TaskListState } from './TaskList/types';
 
-export enum ChecklistState {
-  ADD_EDIT = 'add-edit',
-  EXECUTING = 'executing',
-  EXECUTED = 'executed',
+// PROPS TYPE FOR COMPONENT
+interface ComposerDefaultProps {
+  checklistState?: ChecklistState;
 }
 
-export enum TemplateMode {
-  EDITABLE = 'editable',
-  NON_EDITABLE = 'non-editable',
+interface Props {
+  checklistId: string;
 }
 
-export interface ChecklistComposerProps extends RouteComponentProps {
-  jobid?: string;
-  checklistId?: string;
-  checklistState: ChecklistState;
-  templateMode: TemplateMode;
+export type ComposerProps = RouteComponentProps<Props> & ComposerDefaultProps;
+
+// TYPES AND INTERFACES FOR REDUCER
+export interface ComposerState {
+  activities: ActivityListState;
+  checklist?: Checklist;
+  // TODO: replace with error object
+  error: any;
+  isChecklistEditable: boolean;
+  loading: boolean;
+  stages: StageListState;
+  tasks: TaskListState;
+  state: ChecklistState;
 }
 
-export interface ChecklistProps {
-  checklistState: ChecklistState;
-  templateMode: TemplateMode;
-}
-
-export interface ChecklistComposerState {
-  readonly activeChecklist?: Checklist;
-  readonly activeStageIndex?: number;
-  readonly activeStepIndex?: number;
-  readonly checklistState?: ChecklistState;
-  readonly error: any;
-  readonly loading: boolean;
-  readonly stages?: Partial<Stage>[];
-  readonly steps?: Step[];
-  readonly templateMode?: TemplateMode;
-}
-
-export enum ChecklistComposerAction {
+export enum ComposerAction {
   FETCH_CHECKLIST = '@@checklist/composer/FETCH_CHECKLIST',
   FETCH_CHECKLIST_ERROR = '@@checklist/composer/FETCH_CHECKLIST_ERROR',
   FETCH_CHECKLIST_ONGOING = '@@checklist/composer/FETCH_CHECKLIST_ONGOING',
   FETCH_CHECKLIST_SUCCESS = '@@checklist/composer/FETCH_CHECKLIST_SUCCESS',
 
-  SET_CHECKLIST_MODE = '@@checklist/composer/SET_CHECKLIST_MODE',
+  SET_CHECKLIST_STATE = '@@checklist/composer/SET_CHECKLIST_STATE',
 }
 
-export type ChecklistComposerActionType = ReturnType<
+export type ComposerActionType = ReturnType<
   | typeof fetchChecklist
-  | typeof fetchChecklistOngoing
   | typeof fetchChecklistError
+  | typeof fetchChecklistOngoing
   | typeof fetchChecklistSuccess
-  | typeof setChecklistModes
+  | typeof setChecklistState
 >;

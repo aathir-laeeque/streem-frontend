@@ -5,52 +5,44 @@ import {
   FileCopyOutlined,
   PlaylistAddOutlined,
 } from '@material-ui/icons';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { setActiveStage, updateStageName } from './actions';
+import { setActiveStage, updateStage } from './actions';
 import { Wrapper } from './styles';
 import { Stage } from './types';
-import { TemplateMode } from '../types';
 
 const StageList: FC = () => {
-  const { stages, activeStageIndex, templateMode } = useTypedSelector(
-    (state) => state.checklistComposer,
-  );
-
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (!activeStageIndex) {
-      dispatch(setActiveStage(0));
-    }
-  }, []);
+  const {
+    isChecklistEditable,
+    stages: { list = {}, activeStageId },
+  } = useTypedSelector((state) => state.checklist.composer);
+
+  const setAsActive = (stageId: Stage['id']) =>
+    stageId !== activeStageId ? dispatch(setActiveStage(stageId)) : undefined;
+
+  const update = (stage: Pick<Stage, 'id' | 'name'>) =>
+    dispatch(updateStage(stage));
 
   return (
     <Wrapper>
       <ol className="stage-list">
-        {(stages as Array<Stage>)?.map((stage, index) => (
+        {Object.values(list)?.map((stage, index) => (
           <li
             key={index}
             className={`stage-list-item${
-              index === activeStageIndex ? ' stage-list-item-active' : ''
+              stage.id === activeStageId ? ' stage-list-item-active' : ''
             }`}
-            onClick={() =>
-              index !== activeStageIndex
-                ? dispatch(setActiveStage(index))
-                : undefined
-            }
+            onClick={() => setAsActive(stage.id)}
           >
             <input
               type="text"
-              name="stageName"
+              name="stage-name"
               value={stage.name}
-              onChange={(e) =>
-                dispatch(updateStageName({ name: e.target.value, index }))
-              }
-              {...(templateMode === TemplateMode.NON_EDITABLE && {
-                disabled: true,
-              })}
+              onChange={(e) => update({ name: e.target.value, id: stage.id })}
+              {...(!isChecklistEditable && { disabled: true })}
             />
           </li>
         ))}

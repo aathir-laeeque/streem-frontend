@@ -1,19 +1,28 @@
-import { Step } from '../StepsList/StepView/types';
-import { setActiveStage, updateStageName } from './actions';
+import { Task } from '../TaskList/TaskView/types';
+import { ComposerActionType } from './../types';
+import { setActiveStage, setStages, updateStage } from './actions';
 
 export interface Stage {
   id: number;
   name: string;
   code: string;
   orderTree: number;
-  steps: Step[];
+  tasks: Task[];
 }
 
-export enum StageListActions {
-  SET_ACTIVE_STAGE = '@@stage_list/SET_ACTIVE_STAGE',
-  UPDATE_STAGE_NAME = '@@stage_list/UPDATE_STAGE_NAME',
+export type StageById = Record<Stage['id'], Stage>;
+
+export interface StageListState {
+  list: StageById;
+  activeStageId?: Stage['id'];
 }
 
-export type StageListActionType = ReturnType<
-  typeof setActiveStage | typeof updateStageName
->;
+export enum StageListAction {
+  SET_STAGES = '@@checklist/composer/stage_list/SET_STAGES',
+  SET_ACTIVE_STAGE = '@@checklist/composer/stage_list/SET_ACTIVE_STAGE',
+  UPDATE_STAGE = '@@checklist/composer/stage_list/UPDATE_STAGE',
+}
+
+export type StageListActionType =
+  | ReturnType<typeof setActiveStage | typeof updateStage | typeof setStages>
+  | ComposerActionType;
