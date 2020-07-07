@@ -9,6 +9,7 @@ import { ActivityType } from './ActivityList/Activity/types';
 import Header from './Header';
 import StepMedia from './Media';
 import { Wrapper } from './styles';
+// import Timer from './Timer';
 import { Task } from './types';
 
 interface TaskViewProps {
@@ -47,6 +48,8 @@ const TaskView: FC<TaskViewProps> = ({ task }) => {
         onClick={setAsActive}
       >
         <Header task={task} />
+
+        {/* {task.timed ? <Timer period={task?.period} /> : null} */}
 
         <ActivityList
           activitiesId={task.activities

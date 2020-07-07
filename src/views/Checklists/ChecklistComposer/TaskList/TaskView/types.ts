@@ -2,13 +2,6 @@ import { setActiveTask, updateTask } from './actions';
 import { Activity, ActivityActionType } from './ActivityList/Activity/types';
 import { Media } from './Media/types';
 
-export interface Timer {
-  id: number;
-  operator: string;
-  value: string;
-  unit: string;
-}
-
 export interface Task {
   id: number;
   name: string;
@@ -18,7 +11,7 @@ export interface Task {
   activities: Activity[];
   medias: Media[];
   timed: boolean;
-  timer?: Timer;
+  period?: number;
 }
 
 export interface HeaderProps {
