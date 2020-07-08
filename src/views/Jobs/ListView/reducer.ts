@@ -4,6 +4,7 @@ import {
   ListViewAction,
   JobStatus,
 } from './types';
+import { Job } from '../types';
 
 const initialState: ListViewState = {
   loading: false,
@@ -12,11 +13,29 @@ const initialState: ListViewState = {
   jobs: {
     assigned: {
       list: [],
-      pageable: undefined,
+      pageable: {
+        page: 0,
+        pageSize: 10,
+        numberOfElements: 0,
+        totalPages: 0,
+        totalElements: 0,
+        first: true,
+        last: true,
+        empty: true,
+      },
     },
     unassigned: {
       list: [],
-      pageable: undefined,
+      pageable: {
+        page: 0,
+        pageSize: 10,
+        numberOfElements: 0,
+        totalPages: 0,
+        totalElements: 0,
+        first: true,
+        last: true,
+        empty: true,
+      },
     },
   },
 };
@@ -35,7 +54,7 @@ const reducer = (
         const { data, pageable } = action.payload;
         const type = action.payload?.type;
         const oldList = pageable?.page === 0 ? [] : jobs[type].list || [];
-        if (type) {
+        if (type && pageable) {
           jobs[type].list = [...oldList, ...data];
           jobs[type].pageable = pageable;
         }
@@ -61,6 +80,24 @@ const reducer = (
         ...state,
         jobs: jobs,
       };
+    case ListViewAction.ASSIGN_USER:
+      const type = state.selectedStatus;
+      if (action.payload) {
+        const { selectedJobIndex, user } = action.payload;
+        const oldUsers = jobs[type].list[selectedJobIndex].users;
+        jobs[type].list[selectedJobIndex].users = [...oldUsers, user];
+        // if (type === JobStatus.UNASSIGNED) {
+        //   jobs[type].list[selectedJobIndex].status = JobStatus.ASSIGNED;
+        //   (jobs[JobStatus.ASSIGNED].list as Array<Job>).push(
+        //     jobs[type].list[selectedJobIndex],
+        //   );
+        //   jobs[type].list.splice(selectedJobIndex, 1);
+        // }
+        return {
+          ...state,
+          jobs,
+        };
+      }
     default:
       return { ...state };
   }

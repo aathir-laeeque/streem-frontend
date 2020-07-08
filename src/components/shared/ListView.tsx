@@ -8,16 +8,16 @@ import styled from 'styled-components';
 import { Button, FlatButton } from './Button';
 
 interface ListViewProps {
-  nameItemTemplate: (item: any) => JSX.Element;
   primaryButtonText: string;
   properties: Properties;
   data: Checklist[] | Job[];
-  actionItemTemplate?: (item: any) => JSX.Element;
-  actionItemHeader?: string;
-  nameItemHeader: string;
   fetchData: (page: number, size: number) => void;
   isLast: boolean;
   currentPage: number;
+  beforeColumns?: {
+    header: string;
+    template: (item: any, index: number) => JSX.Element;
+  }[];
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -25,7 +25,7 @@ const Wrapper = styled.div.attrs({})`
 
   .list-header {
     display: flex;
-    padding: 13px 0px 13px 0px;
+    padding: 13px 15px 13px 0px;
     border-bottom: 1px solid #999999;
   }
 
@@ -46,12 +46,12 @@ const Wrapper = styled.div.attrs({})`
     letter-spacing: 1px;
     display: flex;
     align-items: center;
-    margin-left: -10px;
 
     :first-child {
       width: 30%;
       flex: initial;
       margin-left: 0px;
+      padding-left: 40px;
     }
   }
 
@@ -141,19 +141,30 @@ const Wrapper = styled.div.attrs({})`
     font-weight: 600;
     font-style: italic;
   }
+
+  .user-thumb {
+    width: 34px;
+    height: 34px;
+    border-radius: 17px;
+    border: solid 1.5px #fff;
+    align-items: center;
+    background-color: #f7f9fa;
+    justify-content: center;
+    display: flex;
+    color: #12aab3;
+    margin-right: -5px;
+    font-size: 13px;
+  }
 `;
 
 export const ListView: FC<ListViewProps> = ({
-  nameItemTemplate,
   primaryButtonText,
   properties,
   data,
-  actionItemTemplate,
   fetchData,
   isLast,
   currentPage,
-  actionItemHeader,
-  nameItemHeader,
+  beforeColumns,
 }) => {
   const scroller = useRef<HTMLDivElement | null>(null);
 
@@ -194,14 +205,16 @@ export const ListView: FC<ListViewProps> = ({
         </Button>
       </div>
       <div className="list-header">
-        <div className="list-header-columns">
-          <span key={`name_header`} style={{ marginLeft: 40 }}>
-            {nameItemHeader}
-          </span>
-        </div>
-        {actionItemTemplate && actionItemHeader && (
-          <div className="list-header-columns">{actionItemHeader}</div>
-        )}
+        {beforeColumns &&
+          beforeColumns.length &&
+          beforeColumns.map((beforeColumn) => (
+            <div
+              key={`beforeColumn_${beforeColumn.header}`}
+              className="list-header-columns"
+            >
+              {beforeColumn.header}
+            </div>
+          ))}
         {properties.map((el, index) => (
           <div key={index} className="list-header-columns">
             {el.name}
@@ -211,8 +224,11 @@ export const ListView: FC<ListViewProps> = ({
       <div className="list-body" ref={scroller}>
         {(data as Array<Checklist | Job>).map((el, index) => (
           <div key={index} className="list-card">
-            {nameItemTemplate(el)}
-            {actionItemTemplate && actionItemTemplate(el)}
+            {beforeColumns &&
+              beforeColumns.length &&
+              beforeColumns.map((beforeColumn) =>
+                beforeColumn.template(el, index),
+              )}
             {properties.map((property, propertyIndex) => (
               <div key={propertyIndex} className="list-card-columns">
                 {el.properties &&

@@ -1,5 +1,6 @@
 import { actionSpreader } from '#store/helpers';
 import { ResponseObj } from '#utils/globalTypes';
+import { User } from '#store/users/types';
 
 import { Job } from '../types';
 import { ListViewAction } from './types';
@@ -37,3 +38,25 @@ export const createJobError = (error: any) =>
 
 export const setSelectedStatus = (status: string) =>
   actionSpreader(ListViewAction.SET_SELECTED_STATUS, { status });
+
+export const assignUser = (params: {
+  selectedJobIndex: number;
+  user: User;
+}) => {
+  console.log('params', params);
+  return actionSpreader(ListViewAction.ASSIGN_USER, params);
+};
+
+export const assignUserError = (error: any) =>
+  actionSpreader(ListViewAction.ASSIGN_USER_ERROR, { error });
+
+export const unAssignUser = (params: {
+  selectedJobIndex: number;
+  user: User;
+}) => {
+  console.log('params', params);
+  return actionSpreader(ListViewAction.UNASSIGN_USER, params);
+};
+
+export const unAssignUserError = (error: any) =>
+  actionSpreader(ListViewAction.UNASSIGN_USER_ERROR, { error });

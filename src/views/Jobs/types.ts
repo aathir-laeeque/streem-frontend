@@ -1,4 +1,5 @@
 import { RouteComponentProps } from '@reach/router';
+import { User } from '#store/users/types';
 
 export type JobsViewProps = RouteComponentProps;
 
@@ -14,4 +15,6 @@ export interface Job {
     id: number;
     name: string;
   };
+  status: string;
+  users: User[];
 }

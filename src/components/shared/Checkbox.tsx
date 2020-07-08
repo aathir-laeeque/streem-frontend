@@ -4,6 +4,7 @@ import styled from 'styled-components';
 interface CheckboxProps {
   label?: string;
   checked?: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }
 
@@ -77,11 +78,21 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-export const Checkbox: FC<CheckboxProps> = ({ label, checked, onClick }) => (
+export const Checkbox: FC<CheckboxProps> = ({
+  label,
+  checked,
+  onClick,
+  disabled = false,
+}) => (
   <Wrapper>
     <label className="container">
       {label}
-      <input type="checkbox" checked={checked} onChange={onClick} />
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onClick}
+        disabled={disabled}
+      />
       <span className="checkmark"></span>
     </label>
   </Wrapper>

@@ -12,6 +12,10 @@ import {
   fetchJobsOngoing,
   fetchJobsSuccess,
   setSelectedStatus,
+  assignUser,
+  assignUserError,
+  unAssignUser,
+  unAssignUserError,
 } from './actions';
 
 export type ListViewProps = RouteComponentProps;
@@ -20,7 +24,7 @@ export type Jobs = Record<
   string,
   {
     list: Job[] | [];
-    pageable: Pageable | undefined | null;
+    pageable: Pageable;
   }
 >;
 export interface ListViewState {
@@ -45,6 +49,10 @@ export enum ListViewAction {
   CREATE_JOB_ONGOING = '@@job/ListView/CREATE_JOB_ONGOING',
   CREATE_JOB_SUCCESS = '@@job/ListView/CREATE_JOB_SUCCESS',
   SET_SELECTED_STATUS = '@@job/ListView/SET_SELECTED_STATUS',
+  ASSIGN_USER = '@@job/ListView/ASSIGN_USER',
+  ASSIGN_USER_ERROR = '@@job/ListView/ASSIGN_USER_ERROR',
+  UNASSIGN_USER = '@@job/ListView/UNASSIGN_USER',
+  UNASSIGN_USER_ERROR = '@@job/ListView/UNASSIGN_USER_ERROR',
 }
 
 export type ListViewActionType = ReturnType<
@@ -57,4 +65,8 @@ export type ListViewActionType = ReturnType<
   | typeof createJobSuccess
   | typeof createJobError
   | typeof setSelectedStatus
+  | typeof assignUser
+  | typeof assignUserError
+  | typeof unAssignUser
+  | typeof unAssignUserError
 >;

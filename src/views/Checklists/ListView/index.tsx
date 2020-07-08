@@ -74,33 +74,39 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
           isLast={pageable.last}
           currentPage={pageable.page}
           data={checklists}
-          nameItemHeader="NAME"
           primaryButtonText="Create Checklist"
-          nameItemTemplate={(item) => (
-            <div className="list-card-columns">
-              <Settings
-                style={{
-                  fontSize: 20,
-                  color: '#12aab3',
-                  width: 40,
-                  cursor: 'pointer',
-                }}
-                onClick={() => {
-                  setSelectedChecklist(item);
-                  openNav();
-                }}
-              />
-              <div className="title-group">
-                <span className="list-code">{item.code}</span>
-                <span
-                  className="list-title"
-                  onClick={() => selectChecklist(item.id)}
-                >
-                  {item.name}
-                </span>
-              </div>
-            </div>
-          )}
+          beforeColumns={[
+            {
+              header: 'NAME',
+              template: function renderComp(item: Checklist) {
+                return (
+                  <div className="list-card-columns" key={`name_${item.code}`}>
+                    <Settings
+                      style={{
+                        fontSize: 20,
+                        color: '#12aab3',
+                        width: 40,
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => {
+                        setSelectedChecklist(item);
+                        openNav();
+                      }}
+                    />
+                    <div className="title-group">
+                      <span className="list-code">{item.code}</span>
+                      <span
+                        className="list-title"
+                        onClick={() => selectChecklist(item.id)}
+                      >
+                        {item.name}
+                      </span>
+                    </div>
+                  </div>
+                );
+              },
+            },
+          ]}
         />
         <SideBar
           sideBarOpen={sideBarOpen}

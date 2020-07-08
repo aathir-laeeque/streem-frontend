@@ -1,16 +1,20 @@
 import { BaseModal, Checkbox } from '#components';
+import { useTypedSelector } from '#store';
 import { User } from '#store/users/types';
-import { Job } from '#views/Jobs/types';
-import React, { FC, useState } from 'react';
+import { capitalizeFirstLetter, getInitials } from '#utils/stringUtils';
 import { Search } from '@material-ui/icons';
+import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+
+import { assignUser } from '../ListView/actions';
+import { ListViewState } from '../ListView/types';
 
 interface JobUserAssignModalProps {
   closeAllModals: () => void;
   closeModal: () => void;
-  selectedJob: Job;
+  selectedJobIndex: number;
   users: User[];
-  onAssignJob: () => void;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -104,70 +108,86 @@ const Wrapper = styled.div.attrs({})`
     font-size: 14px;
     cursor: pointer;
   }
+  .scrollable-content {
+    height: calc(100vh - (40vh + 163px));
+    overflow: auto;
+  }
 `;
-
-const getInitials = (name: string): string => {
-  let initials: RegExpMatchArray | string = name.match(/\b\w/g) || [];
-  initials = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
-  return initials;
-};
-
-const capitalizeFirstLetter = (str: string): string => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
 
 export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
   closeAllModals,
   closeModal,
   users,
-  onAssignJob,
-  selectedJob,
+  selectedJobIndex,
 }) => {
+  const { jobs, selectedStatus }: Partial<ListViewState> = useTypedSelector(
+    (state) => state.jobListView,
+  );
+  const job = jobs[selectedStatus].list[selectedJobIndex];
+  const dispatch = useDispatch();
   const totalUsers = users.length;
-  const [selectedCount, setSelectedCount] = useState(0);
+  const onAssignJob = () => {
+    console.log('onAssignJob');
+  };
   return (
     <Wrapper>
       <BaseModal
         closeAllModals={closeAllModals}
         closeModal={closeModal}
         title="Assigning a Job"
-        successText="Done"
+        successText="Notify"
         cancelText="Go Back"
-        onSuccess={() => onAssignJob()}
+        onSuccess={onAssignJob}
+        modalFooterOptions={
+          <span style={{ color: `#12aab3`, fontWeight: 600, fontSize: 14 }}>
+            Continue Without Notifying
+          </span>
+        }
       >
         <div className="top-content">
           <div>
             <span className="selected-text">
-              {selectedCount} of {totalUsers} users selected{' '}
+              {job.users.length} of {totalUsers} users selected{' '}
             </span>
-            <span className="top-action">Unselect all</span>
+            {/* <span className="top-action">Unselect all</span> */}
           </div>
           <div className="searchboxwrapper">
             <input className="searchbox" type="text" placeholder="Search" />
             <Search className="searchsubmit" />
           </div>
         </div>
-        {users.map((user, index) => (
-          <div className="item" key={`user_${index}`}>
-            <div className="thumb">
-              {getInitials(`${user.firstName} ${user.lastName}`)}
-            </div>
-            <div className="middle">
-              <span className="userId">{user.id}</span>
-              <span className="userName">{`${capitalizeFirstLetter(
-                user.firstName,
-              )} ${capitalizeFirstLetter(user.lastName)}`}</span>
-            </div>
-            <div className="right">
-              <Checkbox
-                label=""
-                onClick={() => {
-                  setSelectedCount(selectedCount + 1);
-                }}
-              />
-            </div>
-          </div>
-        ))}
+        <div className="scrollable-content">
+          {users.map((user, index) => {
+            const checked = job.users.some((item) => item.id === user.id);
+            return (
+              <div className="item" key={`user_${index}`}>
+                <div className="thumb">
+                  {getInitials(`${user.firstName} ${user.lastName}`)}
+                </div>
+                <div className="middle">
+                  <span className="userId">{user.id}</span>
+                  <span className="userName">{`${capitalizeFirstLetter(
+                    user.firstName,
+                  )} ${capitalizeFirstLetter(user.lastName)}`}</span>
+                </div>
+                <div className="right">
+                  <Checkbox
+                    checked={checked}
+                    label=""
+                    onClick={() => {
+                      if (checked) {
+                        // dispatch(assignUser({ user, selectedJobIndex }));
+                        console.log('Already Checked');
+                      } else {
+                        dispatch(assignUser({ user, selectedJobIndex }));
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </BaseModal>
     </Wrapper>
   );

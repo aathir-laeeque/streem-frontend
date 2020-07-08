@@ -12,6 +12,9 @@ export const apiGetChecklist = (checklistId: number) =>
 // Job
 export const apiGetJobs = () => `${baseUrl}/jobs`;
 
+export const apiAssignUser = (jobId: string) =>
+  `${baseUrl}/jobs/${jobId}/assign`;
+
 // Properties
 export const apiGetProperties = () => `${baseUrl}/properties`;
 

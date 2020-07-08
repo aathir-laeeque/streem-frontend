@@ -2,9 +2,18 @@ import { ListViewAction, ListViewActionType, ListViewState } from './types';
 
 const initialState: ListViewState = {
   checklists: undefined,
-  pageable: undefined,
   loading: false,
   error: undefined,
+  pageable: {
+    page: 0,
+    pageSize: 10,
+    numberOfElements: 0,
+    totalPages: 0,
+    totalElements: 0,
+    first: true,
+    last: true,
+    empty: true,
+  },
 };
 
 const reducer = (
