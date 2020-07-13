@@ -22,7 +22,7 @@ function* completeTaskSaga({ payload }: ReturnType<typeof completeTask>) {
 
     yield call(request, 'PUT', apiCompleteTask(payload.taskId), {
       params: { action: 'finish' },
-      data: { jobId },
+      data: { id: jobId },
     });
   } catch (error) {}
 }
