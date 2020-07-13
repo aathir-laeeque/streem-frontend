@@ -13,8 +13,8 @@ export interface TaskListState {
 }
 
 export enum TaskListAction {
-  SET_TASKS = '@@checklist/composer/task_list/SET_TASKS',
-  SET_ACTIVE_TASK = '@@checklist/composer/task_list/SET_ACTIVE_TASK',
+  SET_TASKS = '@@composer/task_list/SET_TASKS',
+  SET_ACTIVE_TASK = '@@composer/task_list/SET_ACTIVE_TASK',
 }
 
 export type TaskListActionType =

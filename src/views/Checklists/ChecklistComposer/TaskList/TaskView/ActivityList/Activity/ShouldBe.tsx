@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateActivity } from './actions';
+import { updateActivity, executeActivity } from './actions';
 import { ActivityProps, Activity } from './types';
 import { TARGET_RULES } from './constants';
 import { useTypedSelector } from '#store';
@@ -15,6 +15,8 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
 
   const update = (data: Activity) => dispatch(updateActivity(data));
 
+  const execute = (data: Activity) => dispatch(executeActivity(data));
+
   return (
     <div className="shouldbe-interaction">
       {isChecklistEditable ? (
@@ -25,15 +27,12 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
               className="form-field-input"
               name="parameter"
               type="text"
-              value={activity.data[0].parameter}
+              value={activity.data.parameter}
               placeholder="Pressure"
               onChange={(e) =>
                 update({
                   ...activity,
-                  data: activity.data.map((ele: any) => ({
-                    ...ele,
-                    parameter: e.target.value,
-                  })),
+                  data: { ...activity.data, parameter: e.target.value },
                 })
               }
             />
@@ -44,15 +43,12 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
               className="form-field-input"
               name="type"
               type="text"
-              value={activity.data[0].type}
+              value={activity.data.type}
               placeholder="Type"
               onChange={(e) =>
                 update({
                   ...activity,
-                  data: activity.data.map((ele: any) => ({
-                    ...ele,
-                    type: e.target.value,
-                  })),
+                  data: { ...activity.data, type: e.target.value },
                 })
               }
             />
@@ -63,15 +59,12 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
               className="form-field-input"
               name="uom"
               type="text"
-              value={activity.data[0].uom}
+              value={activity.data.uom}
               placeholder="UOM"
               onChange={(e) =>
                 update({
                   ...activity,
-                  data: activity.data.map((ele: any) => ({
-                    ...ele,
-                    uom: e.target.value,
-                  })),
+                  data: { ...activity.data, uom: e.target.value },
                 })
               }
             />
@@ -83,14 +76,11 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
                 id="target-rule-select"
                 className="form-field-select"
                 defaultValue="Choose Here"
-                value={activity.data[0].operator}
+                value={activity.data.operator}
                 onChange={(e) =>
                   update({
                     ...activity,
-                    data: activity.data.map((ele: any) => ({
-                      ...ele,
-                      operator: e.target.value,
-                    })),
+                    data: { ...activity.data, operator: e.target.value },
                   })
                 }
               >
@@ -107,15 +97,12 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
                 className="form-field-input"
                 name="target-value"
                 type="text"
-                value={activity.data[0].target}
+                value={activity.data.value}
                 placeholder="Value"
                 onChange={(e) =>
                   update({
                     ...activity,
-                    data: activity.data.map((ele: any) => ({
-                      ...ele,
-                      target: e.target.value,
-                    })),
+                    data: { ...activity.data, value: e.target.value },
                   })
                 }
               />
@@ -128,7 +115,7 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
           <span
             style={{ fontSize: '20px', color: '#666666', marginTop: '8px' }}
           >
-            Pressure ≤ {activity.data[0].target || 50} {activity.data[0].uom}
+            Pressure ≤ {activity.data.value || 50} {activity.data.uom}
           </span>
         </div>
       )}
@@ -139,16 +126,14 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
           name="observed-value"
           type="text"
           placeholder="To be entered at execution"
-          value={activity.data[0].value}
+          value={activity?.response?.value}
           onChange={(e) =>
-            update({
+            execute({
               ...activity,
-              data: activity.data.map((ele: any) => ({
-                ...ele,
-                value: e.target.value,
-              })),
+              data: { ...activity.data, input: e.target.value },
             })
           }
+          disabled={!isChecklistEditable}
         />
       </div>
     </div>

@@ -1,11 +1,15 @@
 import { useTypedSelector } from '#store';
-import { propsTransformer } from '#utils/propsTransformer';
 import { isEmpty } from 'lodash';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ChecklistState } from '../types';
-import { fetchChecklist, setChecklistState } from './actions';
+import {
+  fetchChecklist,
+  fetchSelectedJob,
+  setChecklistState,
+  resetComposer,
+} from './actions';
 import Header from './Header';
 import StagesList from './StageList';
 import { Wrapper } from './styles';
@@ -15,6 +19,7 @@ import { ComposerProps } from './types';
 const Composer: FC<ComposerProps> = ({
   checklistId,
   checklistState = ChecklistState.ADD_EDIT,
+  jobId,
 }) => {
   const dispatch = useDispatch();
 
@@ -23,9 +28,17 @@ const Composer: FC<ComposerProps> = ({
   );
 
   useEffect(() => {
-    !!checklistId && dispatch(fetchChecklist(parseInt(checklistId)));
+    if (checklistId) {
+      dispatch(fetchChecklist(parseInt(checklistId)));
+    } else if (jobId) {
+      dispatch(fetchSelectedJob(parseInt(jobId)));
+    }
 
     dispatch(setChecklistState(checklistState));
+
+    return () => {
+      dispatch(resetComposer());
+    };
   }, []);
 
   if (loading) {
@@ -45,12 +58,4 @@ const Composer: FC<ComposerProps> = ({
   }
 };
 
-export default propsTransformer(
-  (p) => ({
-    ...p,
-    ...(p?.location?.state?.checklistId && {
-      checklistId: p.location.state.checklistId,
-    }),
-  }),
-  Composer,
-);
+export default Composer;

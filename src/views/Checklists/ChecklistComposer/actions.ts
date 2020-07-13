@@ -2,6 +2,7 @@ import { actionSpreader } from '#store';
 
 import { Checklist, ChecklistState } from '../types';
 import { ComposerAction } from './types';
+import { Job } from '../../Jobs/types';
 
 export const fetchChecklist = (checklistId: Checklist['id']) =>
   actionSpreader(ComposerAction.FETCH_CHECKLIST, { checklistId });
@@ -17,3 +18,9 @@ export const fetchChecklistError = (error: any) =>
 
 export const setChecklistState = (state: ChecklistState) =>
   actionSpreader(ComposerAction.SET_CHECKLIST_STATE, { state });
+
+export const resetComposer = () =>
+  actionSpreader(ComposerAction.RESET_COMPOSER);
+
+export const fetchSelectedJob = (jobId: Job['id']) =>
+  actionSpreader(ComposerAction.FETCH_SELSECTED_JOB, { jobId });

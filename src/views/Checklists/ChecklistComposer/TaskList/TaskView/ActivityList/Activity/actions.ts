@@ -7,3 +7,6 @@ export const setActiveActivity = (activityId: Activity['id']) =>
 
 export const updateActivity = (activity: Activity) =>
   actionSpreader(ActivityAction.UPDATE_ACTIVITY, { activity });
+
+export const executeActivity = (activity: Activity) =>
+  actionSpreader(ActivityAction.EXECUTE_ACTIVITY, { activity });

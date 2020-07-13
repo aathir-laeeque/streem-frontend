@@ -1,9 +1,9 @@
+import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ActivityProps, Activity } from './types';
-import { updateActivity } from './actions';
-import { useTypedSelector } from '#store';
+import { executeActivity } from './actions';
+import { Activity, ActivityProps } from './types';
 
 const TextboxInteraction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
@@ -12,7 +12,7 @@ const TextboxInteraction: FC<ActivityProps> = ({ activity }) => {
     (state) => state.checklist.composer,
   );
 
-  const update = (data: Activity) => dispatch(updateActivity(data));
+  const execute = (data: Activity) => dispatch(executeActivity(data));
 
   return (
     <div className="textbox-interaction">
@@ -21,10 +21,10 @@ const TextboxInteraction: FC<ActivityProps> = ({ activity }) => {
         <textarea
           className="form-field-textarea"
           rows={4}
-          value={activity.data.text}
+          value={activity.response.value}
           placeholder="Enter your remarks"
           onChange={(e) =>
-            update({ ...activity, data: { text: e.target.value } })
+            execute({ ...activity, data: { input: e.target.value } })
           }
           disabled={isChecklistEditable}
         />

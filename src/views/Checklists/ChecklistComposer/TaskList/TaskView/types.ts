@@ -19,8 +19,9 @@ export interface HeaderProps {
 }
 
 export enum TaskViewAction {
-  SET_ACTIVE_TASK = '@@checklist/composer/task_view/SET_ACTIVE_TASK',
-  UPDATE_TASK = '@@checklist/composer/task_view/UPDATE_TASK',
+  SET_ACTIVE_TASK = '@@composer/task_view/SET_ACTIVE_TASK',
+  UPDATE_TASK = '@@composer/task_view/UPDATE_TASK',
+  COMPLETE_TASK = '@@composer/task_view/COMPLETE_TASK',
 }
 
 export type TaskViewActionType =

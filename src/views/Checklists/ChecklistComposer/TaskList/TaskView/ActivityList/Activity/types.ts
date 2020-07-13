@@ -20,6 +20,7 @@ export interface Activity {
   mandatory: boolean;
   orderTree: number;
   label?: string;
+  response?: any;
 }
 
 export interface ActivityProps {
@@ -27,8 +28,9 @@ export interface ActivityProps {
 }
 
 export enum ActivityAction {
-  SET_ACTIVE_ACTIVITY = '@@checklist/composer/activity/SET_ACTIVE_ACTIVITY',
-  UPDATE_ACTIVITY = '@@checklist/composer/activity/UPDATE_ACTIVITY',
+  SET_ACTIVE_ACTIVITY = '@@composer/activity/SET_ACTIVE_ACTIVITY',
+  UPDATE_ACTIVITY = '@@composer/activity/UPDATE_ACTIVITY',
+  EXECUTE_ACTIVITY = '@@composer/activity/EXECUTE_ACTIVITY',
 }
 
 export type ActivityActionType = ReturnType<

@@ -18,7 +18,7 @@ export interface OptionalSwitchProps {
 }
 
 export enum ActivityListAction {
-  SET_ACTIVITY_LIST = '@@checklsit/composer/activity_list/SET_ACTIVITY_LIST',
+  SET_ACTIVITY_LIST = '@@composer/activity_list/SET_ACTIVITY_LIST',
 }
 
 export type ActivityListActionType =

@@ -51,6 +51,24 @@ export const Wrapper = styled.li.attrs({
       &-active {
         border-color: #12aab3;
       }
+
+      .complete-task {
+        font-size: 20px;
+        outline: none;
+        border: 1px solid #12aab3;
+        border-radius: 5px;
+        background: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin-top: 24px;
+        color: #12aab3;
+
+        > .icon {
+          color: #12aab3;
+        }
+      }
     }
 
     &-media {

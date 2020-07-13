@@ -19,6 +19,7 @@ const initialState: ComposerState = {
   checklist: undefined,
   error: null,
   isChecklistEditable: true,
+  jobId: undefined,
   loading: false,
   stages: stageListInitialState,
   state: ChecklistState.ADD_EDIT,
@@ -45,6 +46,12 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         state: action.payload.state,
         isChecklistEditable: action.payload.state === ChecklistState.ADD_EDIT,
       };
+
+    case ComposerAction.RESET_COMPOSER:
+      return { ...initialState };
+
+    case ComposerAction.FETCH_SELSECTED_JOB:
+      return { ...state, jobId: action.payload.jobId };
 
     default:
       return {

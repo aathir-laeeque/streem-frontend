@@ -18,9 +18,9 @@ export interface StageListState {
 }
 
 export enum StageListAction {
-  SET_STAGES = '@@checklist/composer/stage_list/SET_STAGES',
-  SET_ACTIVE_STAGE = '@@checklist/composer/stage_list/SET_ACTIVE_STAGE',
-  UPDATE_STAGE = '@@checklist/composer/stage_list/UPDATE_STAGE',
+  SET_STAGES = '@@composer/stage_list/SET_STAGES',
+  SET_ACTIVE_STAGE = '@@composer/stage_list/SET_ACTIVE_STAGE',
+  UPDATE_STAGE = '@@composer/stage_list/UPDATE_STAGE',
 }
 
 export type StageListActionType =

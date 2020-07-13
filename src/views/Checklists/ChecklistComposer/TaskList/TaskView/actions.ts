@@ -7,3 +7,6 @@ export const setActiveTask = (taskId: Task['id']) =>
 
 export const updateTask = (task: updateParams & { id: Task['id'] }) =>
   actionSpreader(TaskViewAction.UPDATE_TASK, { task });
+
+export const completeTask = (taskId: Task['id']) =>
+  actionSpreader(TaskViewAction.COMPLETE_TASK, { taskId });

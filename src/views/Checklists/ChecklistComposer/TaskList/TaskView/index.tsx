@@ -1,9 +1,13 @@
 import { useTypedSelector } from '#store';
-import { ArrowDownwardOutlined, ArrowUpwardOutlined } from '@material-ui/icons';
+import {
+  ArrowDownwardOutlined,
+  ArrowUpwardOutlined,
+  ArrowRightAlt,
+} from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { setActiveTask } from './actions';
+import { setActiveTask, completeTask } from './actions';
 import ActivityList from './ActivityList';
 import { ActivityType } from './ActivityList/Activity/types';
 import Header from './Header';
@@ -61,6 +65,15 @@ const TaskView: FC<TaskViewProps> = ({ task }) => {
             )
             .map((el) => el.id)}
         />
+
+        {!isChecklistEditable ? (
+          <button
+            className="complete-task"
+            onClick={() => dispatch(completeTask(task.id))}
+          >
+            Complete Task <ArrowRightAlt className="icon" fontSize="large" />
+          </button>
+        ) : null}
       </div>
 
       <div className="step-item-media">

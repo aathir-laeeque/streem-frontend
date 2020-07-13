@@ -1,11 +1,12 @@
+import { Checkbox } from '#components';
+import { useTypedSelector } from '#store';
 import { Add, Close } from '@material-ui/icons';
+import { get } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import { Checkbox } from '#components';
 
-import { ActivityProps, Activity } from './types';
-import { updateActivity } from './actions';
-import { useTypedSelector } from '#store';
+import { executeActivity, updateActivity } from './actions';
+import { Activity, ActivityProps } from './types';
 
 const Checklist: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
@@ -27,53 +28,72 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
           value={activity.label}
           onChange={(e) => update({ ...activity, label: e.target.value })}
           placeholder="Enter a title for the checklist"
+          disabled={!isChecklistEditable}
         />
       </div>
 
       <div className="checklist-container">
-        {activity.data.map((el: any, idx: number) => (
-          <div className="list-item" key={idx}>
-            <Checkbox
-              checked={isChecklistEditable ? false : true}
-              onClick={() => {
-                if (!isChecklistEditable) {
-                  console.log('trigger on click hadler for checkbox');
-                }
-              }}
-            />
+        {activity.data.map((el: any, idx: number) => {
+          const isItemSelected =
+            get(activity?.response?.choices, el.id) === 'selected';
 
-            <input
-              className="form-field-input"
-              type="text"
-              name="item-label"
-              value={el.name}
-              onChange={(e) =>
-                update({
-                  ...activity,
-                  data: activity.data.map((d: any, i: number) => ({
-                    ...d,
-                    ...(i === idx && { name: e.target.value }),
-                  })),
-                })
-              }
-              disabled={isChecklistEditable ? false : true}
-            />
+          return (
+            <div className="list-item" key={idx}>
+              <Checkbox
+                checked={isChecklistEditable ? false : isItemSelected}
+                onClick={() => {
+                  if (!isChecklistEditable) {
+                    dispatch(
+                      executeActivity({
+                        ...activity,
+                        data: activity.data.map((e: any) => ({
+                          ...e,
+                          status:
+                            e.id === el.id
+                              ? isItemSelected
+                                ? 'not-selected'
+                                : 'selected'
+                              : get(activity?.response?.choices, e.id),
+                        })),
+                      }),
+                    );
+                  }
+                }}
+              />
 
-            {isChecklistEditable ? (
-              <Close
-                className={`icon`}
-                onClick={() =>
+              <input
+                className="form-field-input"
+                type="text"
+                name="item-label"
+                value={el.name}
+                onChange={(e) =>
                   update({
                     ...activity,
-                    data: activity.data.filter(
-                      (_: any, i: number) => i !== idx,
-                    ),
+                    data: activity.data.map((d: any, i: number) => ({
+                      ...d,
+                      ...(i === idx && { name: e.target.value }),
+                    })),
                   })
                 }
+                disabled={isChecklistEditable ? false : true}
               />
-            ) : null}
-          </div>
-        ))}
+
+              {isChecklistEditable ? (
+                <Close
+                  className={`icon`}
+                  onClick={() =>
+                    update({
+                      ...activity,
+                      data: activity.data.filter(
+                        (_: any, i: number) => i !== idx,
+                      ),
+                    })
+                  }
+                />
+              ) : null}
+            </div>
+          );
+        })}
 
         {isChecklistEditable ? (
           <div

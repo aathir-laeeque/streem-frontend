@@ -310,11 +310,21 @@ export const Wrapper = styled.div.attrs({
         .yes-button {
           border-color: #12aab3;
           color: #12aab3;
+
+          &-filled {
+            background-color: #12aab3;
+            color: #ffffff;
+          }
         }
 
         .no-button {
           color: #e24c4c;
           border-color: #e24c4c;
+
+          &-filled {
+            background-color: #e24c4c;
+            color: #ffffff;
+          }
         }
       }
     }

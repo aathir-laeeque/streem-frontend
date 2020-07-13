@@ -1,9 +1,10 @@
+import { useTypedSelector } from '#store';
+import { get } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateActivity } from './actions';
-import { ActivityProps, Activity } from './types';
-import { useTypedSelector } from '#store';
+import { executeActivity, updateActivity } from './actions';
+import { Activity, ActivityProps } from './types';
 
 const YesNoInteraction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
@@ -58,7 +59,26 @@ const YesNoInteraction: FC<ActivityProps> = ({ activity }) => {
                   }
                 />
               </div>
-              <button className={`${el.type}-button`}>{el.name}</button>
+              <button
+                className={`${el.type}-button${
+                  get(activity?.response?.choices, [el.id]) === 'selected'
+                    ? ` ${el.type}-button-filled`
+                    : ''
+                }`}
+                onClick={() =>
+                  dispatch(
+                    executeActivity({
+                      ...activity,
+                      data: activity.data.map((e: any) => ({
+                        ...e,
+                        status: e.id === el.id ? 'selected' : 'not-selected',
+                      })),
+                    }),
+                  )
+                }
+              >
+                {el.name}
+              </button>
             </div>
           ))}
       </div>
