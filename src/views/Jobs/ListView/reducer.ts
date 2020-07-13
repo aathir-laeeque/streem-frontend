@@ -1,10 +1,9 @@
 import {
+  JobStatus,
+  ListViewAction,
   ListViewActionType,
   ListViewState,
-  ListViewAction,
-  JobStatus,
 } from './types';
-import { Job } from '../types';
 
 const initialState: ListViewState = {
   loading: false,
@@ -50,14 +49,11 @@ const reducer = (
       return { ...state, loading: true };
 
     case ListViewAction.FETCH_JOBS_SUCCESS:
-      if (action.payload?.data) {
-        const { data, pageable } = action.payload;
-        const type = action.payload?.type;
-        const oldList = pageable?.page === 0 ? [] : jobs[type].list || [];
-        if (type && pageable) {
-          jobs[type].list = [...oldList, ...data];
-          jobs[type].pageable = pageable;
-        }
+      const { data, pageable, type } = action.payload;
+      if (data && type && pageable) {
+        const oldList = pageable?.page === 0 ? [] : jobs[type].list;
+        jobs[type].list = [...oldList, ...data];
+        jobs[type].pageable = pageable;
       }
       return {
         ...state,
@@ -81,18 +77,20 @@ const reducer = (
         jobs: jobs,
       };
     case ListViewAction.ASSIGN_USER:
-      const type = state.selectedStatus;
+      const { selectedJobIndex, user } = action.payload;
+      const oldUsers = jobs[type].list[selectedJobIndex].users;
+      jobs[type].list[selectedJobIndex].users = [...oldUsers, user];
+      return {
+        ...state,
+        jobs,
+      };
+    case ListViewAction.UNASSIGN_USER:
       if (action.payload) {
         const { selectedJobIndex, user } = action.payload;
-        const oldUsers = jobs[type].list[selectedJobIndex].users;
-        jobs[type].list[selectedJobIndex].users = [...oldUsers, user];
-        // if (type === JobStatus.UNASSIGNED) {
-        //   jobs[type].list[selectedJobIndex].status = JobStatus.ASSIGNED;
-        //   (jobs[JobStatus.ASSIGNED].list as Array<Job>).push(
-        //     jobs[type].list[selectedJobIndex],
-        //   );
-        //   jobs[type].list.splice(selectedJobIndex, 1);
-        // }
+        const newUsers = jobs[type].list[selectedJobIndex].users.filter(
+          (u) => u.id !== user.id,
+        );
+        jobs[type].list[selectedJobIndex].users = [...newUsers];
         return {
           ...state,
           jobs,

@@ -43,7 +43,6 @@ export const assignUser = (params: {
   selectedJobIndex: number;
   user: User;
 }) => {
-  console.log('params', params);
   return actionSpreader(ListViewAction.ASSIGN_USER, params);
 };
 
@@ -54,7 +53,6 @@ export const unAssignUser = (params: {
   selectedJobIndex: number;
   user: User;
 }) => {
-  console.log('params', params);
   return actionSpreader(ListViewAction.UNASSIGN_USER, params);
 };
 

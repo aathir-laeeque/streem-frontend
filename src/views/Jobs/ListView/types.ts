@@ -3,6 +3,8 @@ import { RouteComponentProps } from '@reach/router';
 
 import { Job } from '../types';
 import {
+  assignUser,
+  assignUserError,
   createJob,
   createJobError,
   createJobOngoing,
@@ -12,13 +14,13 @@ import {
   fetchJobsOngoing,
   fetchJobsSuccess,
   setSelectedStatus,
-  assignUser,
-  assignUserError,
   unAssignUser,
   unAssignUserError,
 } from './actions';
 
+type TabContentProps = Record<string, any>;
 export type ListViewProps = RouteComponentProps;
+export type TabViewProps = RouteComponentProps<TabContentProps>;
 
 export type Jobs = Record<
   string,

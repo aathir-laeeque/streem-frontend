@@ -7,11 +7,14 @@ interface BaseModalProps {
   closeAllModals: () => void;
   closeModal: () => void;
   title: string;
-  successText: string;
-  cancelText: string;
-  onSuccess: () => void;
+  primaryText: string;
+  secondaryText: string;
+  onPrimary: () => void;
+  onSecondary: () => void;
   children: ReactNode;
   modalFooterOptions?: ReactNode;
+  showPrimary?: boolean;
+  showSecondary?: boolean;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -88,7 +91,6 @@ const Wrapper = styled.div.attrs({})`
         }
         .modal-footer-options {
           display: flex;
-          flex: 1;
           justify-content: flex-start;
         }
         .modal-footer-buttons {
@@ -157,15 +159,18 @@ const Wrapper = styled.div.attrs({})`
 `;
 
 export const BaseModal: FC<BaseModalProps> = ({
-  onSuccess,
+  onPrimary,
+  onSecondary,
   children,
   modalFooterOptions,
   title,
-  successText,
-  cancelText,
+  primaryText,
+  secondaryText,
   closeModal,
+  showPrimary = true,
+  showSecondary = true,
 }) => {
-  const onBaseModalContainerClick = () => {
+  const onBaseModalContainerClick = (toExecute: () => void) => {
     const container = document.getElementById(
       'modal-container',
     ) as HTMLDivElement;
@@ -173,7 +178,7 @@ export const BaseModal: FC<BaseModalProps> = ({
       container.classList.add('out');
     }
     setTimeout(() => {
-      closeModal();
+      toExecute();
     }, 500);
   };
 
@@ -186,7 +191,7 @@ export const BaseModal: FC<BaseModalProps> = ({
               <h2>{title}</h2>
               <Close
                 style={{ cursor: `pointer`, fontSize: 20 }}
-                onClick={onBaseModalContainerClick}
+                onClick={() => onBaseModalContainerClick(closeModal)}
               />
             </div>
             <div className="modal-body">{children}</div>
@@ -195,20 +200,22 @@ export const BaseModal: FC<BaseModalProps> = ({
                 <div className="modal-footer-options">{modalFooterOptions}</div>
               )}
               <div className="modal-footer-buttons">
-                <FlatButton
-                  style={{ padding: `5px 16px`, fontWeight: 600 }}
-                  onClick={onBaseModalContainerClick}
-                >
-                  {cancelText}
-                </FlatButton>
-                <Button
-                  style={{ marginRight: 0, fontWeight: 600 }}
-                  onClick={() => {
-                    onSuccess();
-                  }}
-                >
-                  {successText}
-                </Button>
+                {showSecondary && (
+                  <FlatButton
+                    style={{ padding: `5px 16px`, fontWeight: 600 }}
+                    onClick={() => onBaseModalContainerClick(onSecondary)}
+                  >
+                    {secondaryText}
+                  </FlatButton>
+                )}
+                {showPrimary && (
+                  <Button
+                    style={{ marginRight: 0, fontWeight: 600 }}
+                    onClick={() => onBaseModalContainerClick(onPrimary)}
+                  >
+                    {primaryText}
+                  </Button>
+                )}
               </div>
             </div>
           </div>

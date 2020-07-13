@@ -34,10 +34,14 @@ export const CreateJobModal: FC<CreateJobModalProps> = ({
       <BaseModal
         closeAllModals={closeAllModals}
         closeModal={closeModal}
+        onSecondary={closeModal}
         title="Creating a Job"
-        successText="Create Job"
-        cancelText="Cancel"
-        onSuccess={() => onCreateJob(jobDetails)}
+        primaryText="Create Job"
+        secondaryText="Cancel"
+        onPrimary={() => {
+          onCreateJob(jobDetails);
+          closeModal();
+        }}
         modalFooterOptions={
           <span style={{ color: `#12aab3`, fontWeight: 600, fontSize: 12 }}>
             Schedule Job

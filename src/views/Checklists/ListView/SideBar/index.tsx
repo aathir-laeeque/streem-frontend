@@ -1,11 +1,11 @@
-import { FlatButton, Button } from '#components';
+import { Button, FlatButton } from '#components';
 import { openModalAction } from '#components/ModalContainer/actions';
 import { ModalNames } from '#components/ModalContainer/types';
-
+import { createJob } from '#views/Jobs/ListView/actions';
+import { Check } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import { Check } from '@material-ui/icons';
-import { createJob } from '../../../Jobs/ListView/actions';
+
 import { SideBarProps } from './types';
 
 const SideBar: FC<SideBarProps> = ({

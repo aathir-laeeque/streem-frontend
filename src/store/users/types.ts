@@ -1,11 +1,6 @@
 import { Pageable } from '#utils/globalTypes';
 
-import {
-  fetchUsers,
-  fetchUsersError,
-  fetchUsersOngoing,
-  fetchUsersSuccess,
-} from './actions';
+import { fetchUsersError, fetchUsersSuccess } from './actions';
 
 export interface User {
   id: number;
@@ -16,7 +11,7 @@ export interface User {
 export type Users = User[];
 export interface UsersState {
   readonly list: Users | undefined;
-  readonly pageable: Pageable | undefined | null;
+  readonly pageable: Pageable | null;
   readonly error: any;
 }
 
@@ -28,8 +23,5 @@ export enum UsersAction {
 }
 
 export type UsersActionType = ReturnType<
-  | typeof fetchUsers
-  | typeof fetchUsersError
-  | typeof fetchUsersOngoing
-  | typeof fetchUsersSuccess
+  typeof fetchUsersError | typeof fetchUsersSuccess
 >;

@@ -36,9 +36,8 @@ const getModal = (
       return (
         <JobUserAssignModal
           {...props}
-          users={props.users}
-          selectedJob={props.selectedJob}
-          onAssignJob={props.onAssignJob}
+          selectedJobIndex={props.selectedJobIndex}
+          refreshData={props.refreshData}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
             closeModal(ModalNames.JOB_USER_ASSIGN, ...args)

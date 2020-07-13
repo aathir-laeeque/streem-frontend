@@ -3,7 +3,7 @@ import { ResponseObj } from '#utils/globalTypes';
 
 import { User, UsersAction } from './types';
 
-export const fetchUsers = (params: Record<string, string>) =>
+export const fetchUsers = (params: Record<string, string | number>) =>
   actionSpreader(UsersAction.FETCH_USERS, params);
 
 export const fetchUsersOngoing = () =>

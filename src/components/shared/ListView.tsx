@@ -154,6 +154,7 @@ const Wrapper = styled.div.attrs({})`
     color: #12aab3;
     margin-right: -5px;
     font-size: 13px;
+    cursor: pointer;
   }
 `;
 
@@ -178,7 +179,7 @@ export const ListView: FC<ListViewProps> = ({
     }
   }, [isLast]);
 
-  const handleOnScroll = (e) => {
+  const handleOnScroll = (e: Record<string, any>) => {
     if (scroller && scroller.current && e.target) {
       if (
         e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight &&
@@ -223,7 +224,7 @@ export const ListView: FC<ListViewProps> = ({
       </div>
       <div className="list-body" ref={scroller}>
         {(data as Array<Checklist | Job>).map((el, index) => (
-          <div key={index} className="list-card">
+          <div key={`list_el_${el.id}`} className="list-card">
             {beforeColumns &&
               beforeColumns.length &&
               beforeColumns.map((beforeColumn) =>

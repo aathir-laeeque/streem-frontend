@@ -1,20 +1,22 @@
 import { BaseModal, Checkbox } from '#components';
 import { useTypedSelector } from '#store';
-import { User } from '#store/users/types';
+import { fetchUsers } from '#store/users/actions';
+import { User, Users } from '#store/users/types';
 import { capitalizeFirstLetter, getInitials } from '#utils/stringUtils';
+import { usePrevious } from '#utils/usePrevious';
 import { Search } from '@material-ui/icons';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { assignUser } from '../ListView/actions';
+import { assignUser, unAssignUser } from '../ListView/actions';
 import { ListViewState } from '../ListView/types';
 
 interface JobUserAssignModalProps {
   closeAllModals: () => void;
   closeModal: () => void;
   selectedJobIndex: number;
-  users: User[];
+  refreshData: () => void;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -102,12 +104,6 @@ const Wrapper = styled.div.attrs({})`
     color: #999999;
     cursor: pointer;
   }
-  .top-action {
-    font-style: italic;
-    color: #12aab3;
-    font-size: 14px;
-    cursor: pointer;
-  }
   .scrollable-content {
     height: calc(100vh - (40vh + 163px));
     overflow: auto;
@@ -117,76 +113,172 @@ const Wrapper = styled.div.attrs({})`
 export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
   closeAllModals,
   closeModal,
-  users,
   selectedJobIndex,
+  refreshData,
 }) => {
+  const { list, pageable } = useTypedSelector((state) => state.users);
   const { jobs, selectedStatus }: Partial<ListViewState> = useTypedSelector(
     (state) => state.jobListView,
   );
   const job = jobs[selectedStatus].list[selectedJobIndex];
-  const dispatch = useDispatch();
-  const totalUsers = users.length;
-  const onAssignJob = () => {
-    console.log('onAssignJob');
+
+  const scroller = useRef<HTMLDivElement | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [initialUsers, setInitialUsers] = useState<Users | null>(null);
+  const prevSearch = usePrevious(searchQuery);
+
+  const fetchData = (page: number, size: number) => {
+    const filters = JSON.stringify({
+      op: 'OR',
+      fields: [
+        { field: 'firstName', op: 'LIKE', values: [searchQuery] },
+        { field: 'lastName', op: 'LIKE', values: [searchQuery] },
+      ],
+    });
+    dispatch(fetchUsers({ page, size, filters, sort: 'id' }));
   };
+
+  let isLast = true;
+  let currentPage = 0;
+  if (pageable) {
+    isLast = pageable?.last;
+    currentPage = pageable?.page;
+  }
+
+  useEffect(() => {
+    if (!initialUsers) {
+      setInitialUsers(job.users);
+    }
+    if (prevSearch !== searchQuery) {
+      fetchData(0, 10);
+    }
+    if (scroller && scroller.current) {
+      const div = scroller.current;
+      div.addEventListener('scroll', handleOnScroll);
+      return () => {
+        div.removeEventListener('scroll', handleOnScroll);
+      };
+    }
+  }, [searchQuery, isLast, currentPage]);
+
+  const handleOnScroll = (e: Record<string, any>) => {
+    if (scroller && scroller.current && e.target) {
+      if (
+        e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight &&
+        !isLast
+      ) {
+        fetchData(currentPage + 1, 10);
+      }
+    }
+  };
+
+  const topViews: JSX.Element[] = [];
+  const bottomViews: JSX.Element[] = [];
+
+  const dispatch = useDispatch();
+  const userRow = (user: User, index: number, checked: boolean) => (
+    <div className="item" key={`user_${index}`}>
+      <div className="thumb">
+        {getInitials(`${user.firstName} ${user.lastName}`)}
+      </div>
+      <div className="middle">
+        <span className="userId">{user.id}</span>
+        <span className="userName">{`${capitalizeFirstLetter(
+          user.firstName,
+        )} ${capitalizeFirstLetter(user.lastName)}`}</span>
+      </div>
+      <div className="right">
+        <Checkbox
+          checked={checked}
+          label=""
+          onClick={() => {
+            if (checked) {
+              dispatch(unAssignUser({ user, selectedJobIndex }));
+            } else {
+              dispatch(assignUser({ user, selectedJobIndex }));
+            }
+          }}
+        />
+      </div>
+    </div>
+  );
+
+  job.users.forEach((user, index) => {
+    topViews.push(userRow(user, index, true));
+  });
+
+  if (list) {
+    list.forEach((user, index) => {
+      const checked = job.users.some((item) => item.id === user.id);
+      if (!checked) {
+        bottomViews.push(userRow(user, index, checked));
+      }
+    });
+  }
+
+  const jobUsersLength: number = job.users.length || 0;
+  let showButtons = false;
+  if (initialUsers && initialUsers !== job.users) showButtons = true;
+
   return (
     <Wrapper>
       <BaseModal
         closeAllModals={closeAllModals}
-        closeModal={closeModal}
+        closeModal={() => {
+          refreshData();
+          closeModal();
+        }}
         title="Assigning a Job"
-        successText="Notify"
-        cancelText="Go Back"
-        onSuccess={onAssignJob}
+        primaryText="Notify"
+        secondaryText="Continue Without Notifying"
+        onSecondary={() => {
+          refreshData();
+          closeModal();
+        }}
+        onPrimary={() => {
+          refreshData();
+          closeModal();
+          refreshData;
+        }}
+        showPrimary={showButtons}
+        showSecondary={showButtons}
         modalFooterOptions={
-          <span style={{ color: `#12aab3`, fontWeight: 600, fontSize: 14 }}>
-            Continue Without Notifying
+          <span
+            style={{
+              color: `#12aab3`,
+              cursor: 'pointer',
+              fontWeight: 600,
+              fontSize: 14,
+            }}
+            onClick={() => {
+              refreshData();
+              closeModal();
+            }}
+          >
+            Go Back
           </span>
         }
       >
         <div className="top-content">
           <div>
             <span className="selected-text">
-              {job.users.length} of {totalUsers} users selected{' '}
+              {jobUsersLength} {(jobUsersLength > 1 && 'users') || 'user'}{' '}
+              selected.
             </span>
-            {/* <span className="top-action">Unselect all</span> */}
           </div>
           <div className="searchboxwrapper">
-            <input className="searchbox" type="text" placeholder="Search" />
+            <input
+              className="searchbox"
+              type="text"
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search"
+            />
             <Search className="searchsubmit" />
           </div>
         </div>
-        <div className="scrollable-content">
-          {users.map((user, index) => {
-            const checked = job.users.some((item) => item.id === user.id);
-            return (
-              <div className="item" key={`user_${index}`}>
-                <div className="thumb">
-                  {getInitials(`${user.firstName} ${user.lastName}`)}
-                </div>
-                <div className="middle">
-                  <span className="userId">{user.id}</span>
-                  <span className="userName">{`${capitalizeFirstLetter(
-                    user.firstName,
-                  )} ${capitalizeFirstLetter(user.lastName)}`}</span>
-                </div>
-                <div className="right">
-                  <Checkbox
-                    checked={checked}
-                    label=""
-                    onClick={() => {
-                      if (checked) {
-                        // dispatch(assignUser({ user, selectedJobIndex }));
-                        console.log('Already Checked');
-                      } else {
-                        dispatch(assignUser({ user, selectedJobIndex }));
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            );
-          })}
+        <div className="scrollable-content" ref={scroller}>
+          {topViews}
+          {bottomViews}
         </div>
       </BaseModal>
     </Wrapper>

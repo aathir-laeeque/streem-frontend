@@ -1,58 +1,61 @@
-import { apiGetJobs, apiAssignUser } from '#utils/apiUrls';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
+import { RootState } from '#store';
+import { apiAssignUser, apiGetJobs, apiUnAssignUser } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { RootState } from '#store';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
-import { showNotification } from '../../../components/Notification/actions';
-import { NotificationType } from '../../../components/Notification/types';
 import { Job } from '../types';
 import {
+  assignUser,
+  createJob,
   createJobError,
   createJobOngoing,
   createJobSuccess,
+  fetchJobs,
   fetchJobsError,
   fetchJobsOngoing,
   fetchJobsSuccess,
-  assignUserError,
-  unAssignUserError,
+  unAssignUser,
 } from './actions';
-import { ListViewAction, ListViewActionType } from './types';
+import { ListViewAction } from './types';
 
-function* fetchJobs(action: ListViewActionType) {
+function* fetchJobsSaga({ payload }: ReturnType<typeof fetchJobs>) {
   try {
-    const params = action.payload.params;
-    const type = action.payload.type;
+    const { params, type } = payload;
 
     if (params.page === 0) {
       yield put(fetchJobsOngoing());
     }
 
-    const { data, pageable }: ResponseObj<Job> = yield call(
+    const { data, pageable, errors }: ResponseObj<Job> = yield call(
       request,
       'GET',
       apiGetJobs(),
       { params },
     );
+    if (errors) {
+      throw new Error(errors[0].message);
+    }
     yield put(fetchJobsSuccess({ data, pageable }, type));
   } catch (error) {
     console.error(
-      'error from fetchJob function in JobListView Saga :: ',
+      'error from fetchJobsSaga function in JobListView Saga :: ',
       error,
     );
     yield put(fetchJobsError(error));
   }
 }
 
-function* createJob(action: ListViewActionType) {
+function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
   try {
     yield put(createJobOngoing());
-    const payloadData = action.payload;
     const { data, errors }: ResponseObj<Job> = yield call(
       request,
       'POST',
       apiGetJobs(),
-      { data: payloadData },
+      { data: payload },
     );
     if (errors) {
       throw new Error(errors[0].message);
@@ -66,7 +69,7 @@ function* createJob(action: ListViewActionType) {
     yield put(createJobSuccess({ data }));
   } catch (error) {
     console.error(
-      'error from createJob function in JobListView Saga :: ',
+      'error from createJobSaga function in JobListView Saga :: ',
       error.message,
     );
     yield put(
@@ -79,7 +82,7 @@ function* createJob(action: ListViewActionType) {
   }
 }
 
-function* assignUserSaga(action: ListViewActionType) {
+function* assignUserSaga({ payload }: ReturnType<typeof assignUser>) {
   try {
     const { selectedStatus } = yield select(
       (state: RootState) => state?.jobListView,
@@ -87,11 +90,9 @@ function* assignUserSaga(action: ListViewActionType) {
 
     const { id } = yield select(
       (state: RootState) =>
-        state?.jobListView.jobs[selectedStatus].list[
-          action.payload?.selectedJobIndex
-        ],
+        state?.jobListView.jobs[selectedStatus].list[payload.selectedJobIndex],
     );
-    const user = action.payload.user;
+    const user = payload.user;
     const { data, errors }: ResponseObj<Job> = yield call(
       request,
       'PUT',
@@ -101,20 +102,44 @@ function* assignUserSaga(action: ListViewActionType) {
     if (errors) {
       throw new Error(errors[0].message);
     }
-    console.log('data', data);
-    console.log('errors', errors);
-    console.log('action', action);
   } catch (error) {
     console.error(
-      'error from createJob function in JobListView Saga :: ',
+      'error from assignUserSaga function in JobListView Saga :: ',
+      error.message,
+    );
+  }
+}
+
+function* unAssignUserSaga({ payload }: ReturnType<typeof unAssignUser>) {
+  try {
+    const { selectedStatus } = yield select(
+      (state: RootState) => state?.jobListView,
+    );
+
+    const { id } = yield select(
+      (state: RootState) =>
+        state?.jobListView.jobs[selectedStatus].list[payload.selectedJobIndex],
+    );
+    const user = payload.user;
+    const { data, errors }: ResponseObj<Job> = yield call(
+      request,
+      'DELETE',
+      apiUnAssignUser(id, user.id),
+    );
+    if (errors) {
+      throw new Error(errors[0].message);
+    }
+  } catch (error) {
+    console.error(
+      'error from assignUserSaga function in JobListView Saga :: ',
       error.message,
     );
   }
 }
 
 export function* JobListViewSaga() {
-  yield takeLatest(ListViewAction.FETCH_JOBS, fetchJobs);
-  yield takeLatest(ListViewAction.CREATE_JOB, createJob);
+  yield takeLatest(ListViewAction.FETCH_JOBS, fetchJobsSaga);
+  yield takeLatest(ListViewAction.CREATE_JOB, createJobSaga);
   yield takeLatest(ListViewAction.ASSIGN_USER, assignUserSaga);
-  // yield takeLatest(ListViewAction.UNASSIGN_USER, unAssignUser);
+  yield takeLatest(ListViewAction.UNASSIGN_USER, unAssignUserSaga);
 }
