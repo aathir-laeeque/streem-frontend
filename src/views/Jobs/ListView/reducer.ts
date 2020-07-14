@@ -43,7 +43,7 @@ const reducer = (
   state = initialState,
   action: ListViewActionType,
 ): ListViewState => {
-  const { jobs } = state;
+  const { jobs, selectedStatus } = state;
   switch (action.type) {
     case ListViewAction.FETCH_JOBS_ONGOING:
       return { ...state, loading: true };
@@ -78,8 +78,8 @@ const reducer = (
       };
     case ListViewAction.ASSIGN_USER:
       const { selectedJobIndex, user } = action.payload;
-      const oldUsers = jobs[type].list[selectedJobIndex].users;
-      jobs[type].list[selectedJobIndex].users = [...oldUsers, user];
+      const oldUsers = jobs[selectedStatus].list[selectedJobIndex].users;
+      jobs[selectedStatus].list[selectedJobIndex].users = [...oldUsers, user];
       return {
         ...state,
         jobs,
@@ -87,10 +87,10 @@ const reducer = (
     case ListViewAction.UNASSIGN_USER:
       if (action.payload) {
         const { selectedJobIndex, user } = action.payload;
-        const newUsers = jobs[type].list[selectedJobIndex].users.filter(
-          (u) => u.id !== user.id,
-        );
-        jobs[type].list[selectedJobIndex].users = [...newUsers];
+        const newUsers = jobs[selectedStatus].list[
+          selectedJobIndex
+        ].users.filter((u) => u.id !== user.id);
+        jobs[selectedStatus].list[selectedJobIndex].users = [...newUsers];
         return {
           ...state,
           jobs,
