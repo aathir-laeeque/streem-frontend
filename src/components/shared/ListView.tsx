@@ -57,7 +57,7 @@ const Wrapper = styled.div.attrs({})`
 
   .list-body {
     overflow-x: auto;
-    overflow-y: scroll;
+    overflow-y: auto;
     height: calc(100% - 88px);
   }
 

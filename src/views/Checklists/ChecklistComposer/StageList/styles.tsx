@@ -16,7 +16,7 @@ export const Wrapper = styled.div.attrs({
     list-style-type: none;
     margin: 0;
     max-height: calc(100% - 80px);
-    overflow: scroll;
+    overflow: auto;
     padding: 8px;
 
     &-item {
