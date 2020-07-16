@@ -38,7 +38,7 @@ export const Wrapper = styled.div.attrs({
       grid-area: steps;
       margin: 0;
       margin-top: 16px;
-      overflow: scroll;
+      overflow: auto;
       padding: 0;
     }
   }
