@@ -1,0 +1,214 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CreateJobModal /> it matches the snapshot 1`] = `
+<div
+  className="sc-fzoyAV lgNqAT"
+>
+  <div
+    className="sc-fznyAO ctDhaX"
+  >
+    <div
+      className="openup"
+      id="modal-container"
+    >
+      <div
+        className="modal-background"
+      >
+        <div
+          className="modal"
+        >
+          <div
+            className="modal-header"
+          >
+            <h2>
+              Creating a Job
+            </h2>
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              onClick={[Function]}
+              style={
+                Object {
+                  "cursor": "pointer",
+                  "fontSize": 20,
+                }
+              }
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+              />
+            </svg>
+          </div>
+          <div
+            className="modal-body"
+          >
+            <div
+              className="sc-fzokOt daYHNr"
+            >
+              <div
+                className="wrapper"
+              >
+                <label
+                  className="on"
+                  style={
+                    Object {
+                      "color": "#666666",
+                      "opacity": 0.4,
+                    }
+                  }
+                >
+                  Checklist
+                </label>
+                <input
+                  className="input"
+                  data-testid="checklistId"
+                  disabled={true}
+                  name="checklistId"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  placeholder="Checklist"
+                  style={
+                    Object {
+                      "borderColor": "#666666",
+                      "opacity": 0.4,
+                    }
+                  }
+                  type="text"
+                  value="123 Test Checklist"
+                />
+              </div>
+            </div>
+            <div
+              className="sc-fzokOt daYHNr"
+            >
+              <div
+                className="wrapper"
+              >
+                <label
+                  className=""
+                  style={
+                    Object {
+                      "color": "#666666",
+                    }
+                  }
+                >
+                  test_property
+                </label>
+                <input
+                  className="input"
+                  data-testid="test_property"
+                  disabled={false}
+                  name="test_property"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  placeholder="test_property"
+                  style={
+                    Object {
+                      "borderColor": "#666666",
+                      "opacity": 1,
+                    }
+                  }
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <div
+              className="sc-fzokOt daYHNr"
+            >
+              <div
+                className="wrapper"
+              >
+                <label
+                  className=""
+                  style={
+                    Object {
+                      "color": "#666666",
+                    }
+                  }
+                >
+                  test_property2
+                </label>
+                <input
+                  className="input"
+                  data-testid="test_property2"
+                  disabled={false}
+                  name="test_property2"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  placeholder="test_property2"
+                  style={
+                    Object {
+                      "borderColor": "#666666",
+                      "opacity": 1,
+                    }
+                  }
+                  type="text"
+                  value=""
+                />
+                <span
+                  className="optional-text"
+                >
+                  Optional
+                </span>
+              </div>
+            </div>
+          </div>
+          <div
+            className="modal-footer"
+          >
+            <div
+              className="modal-footer-options"
+            >
+              <span
+                style={
+                  Object {
+                    "color": "#12aab3",
+                    "fontSize": 12,
+                    "fontWeight": 600,
+                  }
+                }
+              >
+                Schedule Job
+              </span>
+            </div>
+            <div
+              className="modal-footer-buttons"
+            >
+              <button
+                className="sc-fznZeY fIRQkD"
+                onClick={[Function]}
+                style={
+                  Object {
+                    "fontWeight": 600,
+                    "padding": "5px 16px",
+                  }
+                }
+              >
+                Cancel
+              </button>
+              <button
+                className="sc-fznKkj dICuB"
+                onClick={[Function]}
+                style={
+                  Object {
+                    "fontWeight": 600,
+                    "marginRight": 0,
+                  }
+                }
+              >
+                Create Job
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

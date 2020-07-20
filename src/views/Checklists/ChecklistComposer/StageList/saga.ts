@@ -11,6 +11,7 @@ function* setStagesSaga({ payload }: ReturnType<typeof fetchChecklistSuccess>) {
       checklist: { stages },
     } = payload;
 
+    if (!stages) return null;
     /**
      * * Grouping stages by ID for easy state access and update
      */

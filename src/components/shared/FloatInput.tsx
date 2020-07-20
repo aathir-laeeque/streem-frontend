@@ -155,6 +155,7 @@ export const FloatInput: FC<FloatInputProps> = ({
           value={value || ''}
           placeholder={placeHolderText}
           onFocus={onFocus}
+          data-testid={id}
           onBlur={onBlur}
           type="text"
           style={{
