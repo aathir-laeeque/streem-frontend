@@ -7,7 +7,7 @@ import {
   ModalContainer,
 } from '#components';
 import { DashboardLayout } from '#components/Layouts';
-import { store } from '#store';
+import { configureStore } from '#store';
 
 // library imports
 import { Router } from '@reach/router';
@@ -22,6 +22,8 @@ import {
   ReportsView,
   JobsView,
 } from './views';
+
+const store = configureStore({});
 
 const App: FC = () => {
   // useEffect(() => {

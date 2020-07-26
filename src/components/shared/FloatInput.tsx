@@ -125,7 +125,7 @@ export const FloatInput: FC<FloatInputProps> = ({
         setError(true);
       }
     }
-    // setPlaceHolderText(label);
+    setPlaceHolderText('');
   };
 
   const isActive = placeHolderText === placeHolder;
@@ -153,7 +153,7 @@ export const FloatInput: FC<FloatInputProps> = ({
           className={isActive ? 'input input-active' : 'input'}
           onChange={onChangeInput}
           value={value || ''}
-          placeholder={placeHolderText}
+          placeholder={(placeHolderText && placeHolderText) || placeHolder}
           onFocus={onFocus}
           data-testid={id}
           onBlur={onBlur}

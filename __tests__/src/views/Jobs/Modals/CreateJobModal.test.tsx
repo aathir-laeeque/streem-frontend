@@ -1,19 +1,14 @@
-import { Properties } from '#store/properties/types';
-import { Checklist } from '#views/Checklists/types';
-import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
+import {
+  CreateJobModal,
+  CreateJobModalProps,
+} from '#views/Jobs/Modals/CreateJobModal';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { create, ReactTestRenderer } from 'react-test-renderer';
 
 let snapshot: ReactTestRenderer;
 
-const props: {
-  closeAllModals: () => void;
-  closeModal: () => void;
-  selectedChecklist: Checklist;
-  properties: Properties;
-  onCreateJob: () => void;
-} = {
+const props: CreateJobModalProps = {
   closeAllModals: jest.fn(),
   closeModal: jest.fn(),
   selectedChecklist: {
@@ -64,11 +59,24 @@ describe('<CreateJobModal />', () => {
     );
   });
 
-  it.each(props.properties)(
-    'Properties Rendered For : $property.name',
-    (property) => {
-      render(<CreateJobModal {...props} />);
-      expect(screen.getByTestId(property.name)).toBeTruthy();
-    },
-  );
+  it.each(props.properties)('Properties Rendered Successfully', (property) => {
+    render(<CreateJobModal {...props} />);
+    expect(screen.getByTestId(property.name)).toBeTruthy();
+  });
+
+  it('Should Change to Error State for Leaving Manadory Property Input Empty', () => {
+    render(<CreateJobModal {...props} />);
+    const inputNode = screen.getByTestId(props.properties[0].name);
+    inputNode.focus();
+    inputNode.blur();
+    expect(inputNode).toHaveStyle('border-color: #ff6b6b');
+  });
+
+  it('Should Not Change to Error State for Leaving Non-Manadory Property Input Empty', () => {
+    render(<CreateJobModal {...props} />);
+    const inputNode = screen.getByTestId(props.properties[1].name);
+    inputNode.focus();
+    inputNode.blur();
+    expect(inputNode).toHaveStyle('border-color: #666666');
+  });
 });
