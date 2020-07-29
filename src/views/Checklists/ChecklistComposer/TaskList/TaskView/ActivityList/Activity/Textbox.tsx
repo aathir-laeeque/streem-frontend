@@ -21,7 +21,7 @@ const TextboxInteraction: FC<ActivityProps> = ({ activity }) => {
         <textarea
           className="form-field-textarea"
           rows={4}
-          value={activity.response.value}
+          value={activity?.response?.value}
           placeholder="Enter your remarks"
           onChange={(e) =>
             execute({ ...activity, data: { input: e.target.value } })
