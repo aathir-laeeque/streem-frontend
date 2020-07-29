@@ -1,0 +1,259 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SideBar /> should render and match the snapshot 1`] = `
+<div>
+  <div
+    onClick={[MockFunction]}
+    style={
+      Object {
+        "bottom": 0,
+        "left": 0,
+        "position": "absolute",
+        "right": 0,
+        "top": 0,
+      }
+    }
+  />
+  <div
+    className="sidenav"
+    id="sideNav"
+  >
+    <div
+      style={
+        Object {
+          "margin": 16,
+        }
+      }
+    >
+      <button
+        className="sc-fznZeY fxACvd sidebar-button"
+        onClick={[Function]}
+      >
+        Start A Job
+      </button>
+      <button
+        className="sc-fzokOt izNgjE sidebar-flat-button"
+      >
+        Edit Checklist
+      </button>
+      <button
+        className="sc-fzokOt izNgjE sidebar-flat-button"
+      >
+        View Activity
+      </button>
+      <div
+        className="sidebar-sections"
+      >
+        <div
+          className="sidebar-heading"
+        >
+          VERSIONING
+        </div>
+        <div
+          className="space-between"
+        >
+          <div
+            style={
+              Object {
+                "flex": 1,
+              }
+            }
+          >
+            <div
+              className="sidebar-title"
+            >
+              Version no.
+            </div>
+            <div
+              className="sidebar-subtitle"
+            >
+              3
+            </div>
+          </div>
+          <div
+            style={
+              Object {
+                "flex": 1,
+              }
+            }
+          >
+            <div
+              className="sidebar-title"
+            >
+              Published on
+            </div>
+            <div
+              className="sidebar-subtitle"
+            >
+              13 May 2020
+            </div>
+          </div>
+        </div>
+        <div
+          className="space-between"
+        >
+          <div
+            style={
+              Object {
+                "flex": 1,
+              }
+            }
+          >
+            <div
+              className="sidebar-title"
+            >
+              Created By
+            </div>
+            <div
+              className="sidebar-subtitle"
+            >
+              Lottie Carroll
+            </div>
+          </div>
+          <div
+            style={
+              Object {
+                "flex": 1,
+              }
+            }
+          >
+            <div
+              className="sidebar-title"
+            >
+              Created on
+            </div>
+            <div
+              className="sidebar-subtitle"
+            >
+              12 March 2020
+            </div>
+          </div>
+        </div>
+        <div
+          className="sidebar-action"
+        >
+          View Older Verisons
+        </div>
+      </div>
+      <div
+        className="sidebar-sections"
+      >
+        <div
+          className="sidebar-heading"
+        >
+          REVIEWERS
+        </div>
+        <div
+          className="space-between"
+        >
+          <div
+            className="sidebar-subtitle"
+          >
+            Delia Gregory
+          </div>
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root check-icon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
+            />
+          </svg>
+        </div>
+        <div
+          className="space-between"
+        >
+          <div
+            className="sidebar-subtitle"
+          >
+            Arthur Elliot
+          </div>
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root check-icon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
+            />
+          </svg>
+        </div>
+        <div
+          className="sidebar-action"
+        >
+          +2 more
+        </div>
+      </div>
+      <div
+        className="sidebar-sections"
+      >
+        <div
+          className="sidebar-heading"
+        >
+          APPROVERS
+        </div>
+        <div
+          className="space-between"
+        >
+          <div
+            className="sidebar-subtitle"
+          >
+            Delia Gregory
+          </div>
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root check-icon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
+            />
+          </svg>
+        </div>
+        <div
+          className="space-between"
+        >
+          <div
+            className="sidebar-subtitle"
+          >
+            Arthur Elliot
+          </div>
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root check-icon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
+            />
+          </svg>
+        </div>
+      </div>
+      <div
+        className="sidebar-sections"
+      >
+        <div
+          className="sidebar-heading"
+        >
+          ADDITIONAL ACTIONS
+        </div>
+        <button
+          className="sc-fzokOt izNgjE sidebar-flat-button"
+        >
+          Print Checklist
+        </button>
+        <button
+          className="sc-fzokOt izNgjE sidebar-flat-button danger"
+        >
+          Delete Checklist
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,39 @@
+{
+  "object": "list",
+  "status": "ok",
+  "message": "success",
+  "data": [
+    {
+      "id": 1,
+      "name": "EQUIPMENT ID",
+      "placeHolder": "Equipment Id",
+      "orderTree": 1,
+      "mandatory": false
+    },
+    {
+      "id": 2,
+      "name": "TYPE",
+      "placeHolder": "Type of checklist",
+      "orderTree": 2,
+      "mandatory": false
+    },
+    {
+      "id": 3,
+      "name": "SOP NO",
+      "placeHolder": "SOP NO",
+      "orderTree": 3,
+      "mandatory": false
+    }
+  ],
+  "pageable": {
+    "page": 0,
+    "pageSize": 25,
+    "numberOfElements": 3,
+    "totalPages": 1,
+    "totalElements": 3,
+    "first": true,
+    "last": true,
+    "empty": false
+  },
+  "errors": null
+}

@@ -8,7 +8,7 @@ export interface Properties {
 }
 export interface Job {
   id: number;
-  name: string;
+  name?: string;
   code: string;
   properties?: Properties;
   checklist: {

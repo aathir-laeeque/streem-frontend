@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<FloatInput /> should render and match the snapshot 1`] = `
+<div
+  className="sc-fzqBZW hdFZqC"
+>
+  <div
+    className="wrapper"
+  >
+    <label
+      className="on"
+      style={
+        Object {
+          "color": "#666666",
+          "opacity": 0.4,
+        }
+      }
+    >
+      FloatInput Test
+    </label>
+    <input
+      className="input"
+      data-testid="FloatInputTestId"
+      disabled={true}
+      name="FloatInputTestId"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      placeholder="FloatInput Test"
+      style={
+        Object {
+          "borderColor": "#666666",
+          "opacity": 0.4,
+        }
+      }
+      type="text"
+      value=""
+    />
+  </div>
+</div>
+`;

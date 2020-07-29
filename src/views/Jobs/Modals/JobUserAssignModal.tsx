@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import { assignUser, unAssignUser } from '../ListView/actions';
 import { ListViewState } from '../ListView/types';
 
-interface JobUserAssignModalProps {
+export interface JobUserAssignModalProps {
   closeAllModals: () => void;
   closeModal: () => void;
   selectedJobIndex: number;

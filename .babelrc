@@ -5,6 +5,7 @@
       {
         "root": ["."],
         "alias": {
+          "#mocks": "./mocks",
           "#components": "./src/components",
           "#store": "./src/store",
           "#utils": "./src/utils",

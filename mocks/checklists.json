@@ -1,0 +1,31 @@
+{
+  "object": "list",
+  "status": "ok",
+  "message": "success",
+  "data": [
+    {
+      "id": 1,
+      "name": "Fuild Bed Dryer Checklist",
+      "code": "CHK-JUN10-1",
+      "noOfJobs": 13,
+      "version": 1,
+      "archived": false,
+      "properties": {
+        "TYPE": "Group",
+        "SOP NO": "ZYD/SOP/CLN/FBD/002",
+        "EQUIPMENT ID": "ZYD/SOP/001"
+      }
+    }
+  ],
+  "pageable": {
+    "page": 0,
+    "pageSize": 10,
+    "numberOfElements": 1,
+    "totalPages": 1,
+    "totalElements": 1,
+    "first": true,
+    "last": true,
+    "empty": false
+  },
+  "errors": null
+}

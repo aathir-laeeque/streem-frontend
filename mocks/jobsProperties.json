@@ -1,0 +1,39 @@
+{
+  "object": "list",
+  "status": "ok",
+  "message": "success",
+  "data": [
+    {
+      "id": 4,
+      "name": "PRODUCT MANUFACTURED",
+      "placeHolder": "Name of the Product being cleaned",
+      "orderTree": 1,
+      "mandatory": true
+    },
+    {
+      "id": 5,
+      "name": "BATCH NO",
+      "placeHolder": "Batch No. of the manufactured Product",
+      "orderTree": 2,
+      "mandatory": true
+    },
+    {
+      "id": 6,
+      "name": "ROOM ID",
+      "placeHolder": "Room ID for the Equipment",
+      "orderTree": 3,
+      "mandatory": false
+    }
+  ],
+  "pageable": {
+    "page": 0,
+    "pageSize": 25,
+    "numberOfElements": 3,
+    "totalPages": 1,
+    "totalElements": 3,
+    "first": true,
+    "last": true,
+    "empty": false
+  },
+  "errors": null
+}
