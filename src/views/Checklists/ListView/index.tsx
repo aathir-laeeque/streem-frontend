@@ -40,10 +40,10 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
     fetchData(0, 10);
 
     if (!job?.length) {
-      dispatch(fetchProperties({ type: 'job' }));
+      dispatch(fetchProperties({ type: 'JOB' }));
     }
     if (!checklist?.length) {
-      dispatch(fetchProperties({ type: 'checklist' }));
+      dispatch(fetchProperties({ type: 'CHECKLIST' }));
     }
   }, []);
 

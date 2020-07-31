@@ -16,7 +16,7 @@ const reducer = (
 ): PropertiesState => {
   switch (action.type) {
     case PropertiesAction.FETCH_PROPERTIES_SUCCESS:
-      if (action.payload?.type === 'job') {
+      if (action.payload?.type === 'JOB') {
         return {
           ...state,
           job: action.payload?.properties,

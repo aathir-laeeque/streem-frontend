@@ -14,7 +14,7 @@ const ListView: FC = () => {
 
   useEffect(() => {
     if (!job?.length) {
-      dispatch(fetchProperties({ type: 'job' }));
+      dispatch(fetchProperties({ type: 'JOB' }));
     }
   }, []);
 
