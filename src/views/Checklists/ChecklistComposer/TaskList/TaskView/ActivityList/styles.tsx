@@ -65,60 +65,6 @@ export const Wrapper = styled.div.attrs({
   }
 
   /* TODO: make styles better */
-  .checklist-interaction {
-    .checklist-container {
-      display: flex;
-      flex-direction: column;
-      margin-top: 5px;
-
-      .list-item {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 16px;
-
-        :first-child {
-          margin-top: 10px;
-        }
-
-        :last-child {
-          margin-bottom: 0;
-        }
-
-        input[type='text'] {
-          border-bottom-color: transparent;
-
-          :focus {
-            border-bottom-color: #12aab3;
-          }
-        }
-
-        > .icon {
-          height: 12px;
-          width: 12px;
-          margin-left: auto;
-          align-self: flex-start;
-          margin-top: 3px;
-          margin-left: 10px;
-        }
-      }
-
-      .add-new-item {
-        align-items: center;
-        color: #12aab3;
-        cursor: pointer;
-        display: flex;
-        font-size: 20px;
-        width: max-content;
-
-        .icon {
-          color: #12aab3;
-          margin-right: 5px;
-        }
-      }
-    }
-  }
-
-  /* TODO: make styles better */
   .material-interaction {
     margin: 0;
     padding: 0;

@@ -17,3 +17,8 @@ export interface ResponseObj<T> {
   pageable: Pageable | null;
   errors?: any;
 }
+
+export enum ACTIVITY_SELECTIONS {
+  SELECTED = 'SELECTED',
+  NOT_SELECTED = 'NOT_SELECTED',
+}

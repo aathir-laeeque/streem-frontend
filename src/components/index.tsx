@@ -9,4 +9,6 @@ export { BaseModal } from './shared/BaseModal';
 export { Button, FlatButton } from './shared/Button';
 export { FloatInput } from './shared/FloatInput';
 export { Checkbox } from './shared/Checkbox';
+export { default as CheckboxWithLabel } from './shared/CheckboxWithLabel';
 export { ListView as ListViewComponent } from './shared/ListView';
+export { default as AddNewItem } from './shared/AddNew';

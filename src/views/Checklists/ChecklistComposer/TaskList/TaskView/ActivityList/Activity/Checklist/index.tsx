@@ -1,12 +1,19 @@
-import { Checkbox } from '#components';
+import { CheckboxWithLabel, AddNewItem } from '#components';
 import { useTypedSelector } from '#store';
+import { ACTIVITY_SELECTIONS } from '#utils/globalTypes';
 import { Add, Close } from '@material-ui/icons';
 import { get } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { executeActivity, updateActivity } from './actions';
-import { Activity, ActivityProps } from './types';
+import { executeActivity, updateActivity } from '../actions';
+import { Activity, ActivityProps } from '../types';
+import { Wrapper } from './styles';
+
+type ChecklistActivityData = {
+  id: string;
+  name: string;
+};
 
 const Checklist: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
@@ -19,7 +26,7 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
     dispatch(updateActivity(updatedActivity));
 
   return (
-    <div className="checklist-interaction">
+    <Wrapper>
       <div className="form-field">
         <input
           className="form-field-input"
@@ -33,60 +40,65 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
       </div>
 
       <div className="checklist-container">
-        {activity.data.map((el: any, idx: number) => {
+        {(activity?.data as Array<ChecklistActivityData>).map((el, idx) => {
           const isItemSelected =
-            get(activity?.response?.choices, el.id) === 'selected';
+            get(activity?.response?.choices, el.id) ===
+            ACTIVITY_SELECTIONS.SELECTED;
 
           return (
             <div className="list-item" key={idx}>
-              <Checkbox
-                checked={isChecklistEditable ? false : isItemSelected}
-                onClick={() => {
+              <CheckboxWithLabel
+                isChecked={
+                  isChecklistEditable
+                    ? false
+                    : activity?.response?.choices[el.id] ===
+                      ACTIVITY_SELECTIONS.SELECTED
+                }
+                handleCheckboxChange={() => {
                   if (!isChecklistEditable) {
                     dispatch(
                       executeActivity({
                         ...activity,
-                        data: activity.data.map((e: any) => ({
+                        data: (activity.data as Array<
+                          ChecklistActivityData
+                        >).map((e) => ({
                           ...e,
                           status:
                             e.id === el.id
                               ? isItemSelected
-                                ? 'not-selected'
-                                : 'selected'
-                              : get(activity?.response?.choices, e.id),
+                                ? ACTIVITY_SELECTIONS.NOT_SELECTED
+                                : ACTIVITY_SELECTIONS.SELECTED
+                              : get(activity?.response?.choices, e.id) ||
+                                ACTIVITY_SELECTIONS.NOT_SELECTED,
                         })),
                       }),
                     );
                   }
                 }}
-              />
-
-              <input
-                className="form-field-input"
-                type="text"
-                name="item-label"
-                value={el.name}
-                onChange={(e) =>
+                handleLabelChange={(label) => {
                   update({
                     ...activity,
-                    data: activity.data.map((d: any, i: number) => ({
-                      ...d,
-                      ...(i === idx && { name: e.target.value }),
-                    })),
-                  })
-                }
-                disabled={isChecklistEditable ? false : true}
+                    data: (activity.data as Array<ChecklistActivityData>).map(
+                      (d, i) => ({
+                        ...d,
+                        ...(i === idx && { name: label }),
+                      }),
+                    ),
+                  });
+                }}
+                label={el.name}
               />
 
               {isChecklistEditable ? (
                 <Close
-                  className={`icon`}
+                  fontSize="small"
+                  className="icon"
                   onClick={() =>
                     update({
                       ...activity,
-                      data: activity.data.filter(
-                        (_: any, i: number) => i !== idx,
-                      ),
+                      data: (activity.data as Array<
+                        ChecklistActivityData
+                      >).filter((_, i) => i !== idx),
                     })
                   }
                 />
@@ -96,21 +108,17 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
         })}
 
         {isChecklistEditable ? (
-          <div
-            className="add-new-item"
+          <AddNewItem
             onClick={() =>
               update({
                 ...activity,
                 data: [...activity.data, { name: '' }],
               })
             }
-          >
-            <Add className="icon" />
-            Add new Item
-          </div>
+          />
         ) : null}
       </div>
-    </div>
+    </Wrapper>
   );
 };
 
