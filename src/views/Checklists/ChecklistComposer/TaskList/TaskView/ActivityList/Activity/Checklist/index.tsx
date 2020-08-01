@@ -1,7 +1,7 @@
 import { CheckboxWithLabel, AddNewItem } from '#components';
 import { useTypedSelector } from '#store';
 import { ACTIVITY_SELECTIONS } from '#utils/globalTypes';
-import { Add, Close } from '@material-ui/icons';
+import { Close } from '@material-ui/icons';
 import { get } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
@@ -51,7 +51,7 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
                 isChecked={
                   isChecklistEditable
                     ? false
-                    : activity?.response?.choices[el.id] ===
+                    : get(activity?.response?.choices, el.id) ===
                       ACTIVITY_SELECTIONS.SELECTED
                 }
                 handleCheckboxChange={() => {

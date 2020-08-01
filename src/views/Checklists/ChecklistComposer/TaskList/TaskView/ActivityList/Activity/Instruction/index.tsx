@@ -1,45 +1,40 @@
+import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { updateActivity } from '../actions';
-import { ActivityProps, Activity } from '../types';
-import { useTypedSelector } from '#store';
-import { ChecklistState } from '#views/Checklists/types';
+import { Activity, ActivityProps } from '../types';
 import { Wrapper } from './styles';
 
 const Instruction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  const { state } = useTypedSelector((state) => state.checklist.composer);
-
-  const isChecklistEditable = state === ChecklistState.ADD_EDIT;
+  const { isChecklistEditable } = useTypedSelector(
+    (state) => state.checklist.composer,
+  );
 
   const update = (data: Activity) => dispatch(updateActivity(data));
 
   return (
     <Wrapper>
-      {isChecklistEditable ? (
-        <div className="form-field">
-          <textarea
-            className="form-field-textarea"
-            name="instruction"
-            value={activity.data?.text}
-            rows={4}
-            onChange={(e) =>
-              update({ ...activity, data: { text: e.target.value } })
-            }
-            disabled={isChecklistEditable ? false : true}
-          />
-        </div>
-      ) : (
-        <div
-          className="viewing-state"
-          // contentEditable={true}
-          // onChange={(e) => console.log('e', e)}
+      <div className="form-field">
+        <label
+          className={`form-field-label ${isChecklistEditable ? '' : 'hide'}`}
         >
-          {activity.data?.text}
-        </div>
-      )}
+          Comments
+        </label>
+        <textarea
+          className="form-field-textarea"
+          name="instruction"
+          value={activity.data?.text}
+          rows={4}
+          onChange={(e) =>
+            update({ ...activity, data: { text: e.target.value } })
+          }
+          disabled={isChecklistEditable ? false : true}
+          placeholder="Type here..."
+        />
+      </div>
     </Wrapper>
   );
 };

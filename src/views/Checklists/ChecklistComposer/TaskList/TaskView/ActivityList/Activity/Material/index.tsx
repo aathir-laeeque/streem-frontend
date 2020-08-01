@@ -1,10 +1,18 @@
-import { Add, Remove } from '@material-ui/icons';
+import { AddNewItem } from '#components';
+import { useTypedSelector } from '#store';
+import {
+  ArrowDropDown,
+  ArrowDropUp,
+  Close,
+  ImageOutlined,
+} from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateActivity } from './actions';
-import { ActivityProps, Activity } from './types';
-import { useTypedSelector } from '#store';
+import { updateActivity } from '../actions';
+import { Activity, ActivityProps } from '../types';
+import { Wrapper } from './styles';
+import { MaterialActivityData } from './types';
 
 const Material: FC<ActivityProps> = ({ activity }) => {
   const { isChecklistEditable } = useTypedSelector(
@@ -15,24 +23,29 @@ const Material: FC<ActivityProps> = ({ activity }) => {
 
   const update = (data: Activity) => dispatch(updateActivity(data));
 
-  // TODO: look into any type
   return (
-    <ol className="material-interaction">
-      {!isChecklistEditable ? (
-        <div className="header">
-          <span>NAME</span>
-          <span>QUANTITY</span>
-        </div>
-      ) : null}
-      {activity.data.map((el: any, idx: number) => (
-        <li key={idx} className="material-interaction-item">
-          <img src={el.link} className="material-interaction-item-image" />
+    <Wrapper>
+      <div className={`list-header ${isChecklistEditable ? 'hide' : ''}`}>
+        <span>NAME</span>
+        <span>QUANTITY</span>
+      </div>
+
+      {(activity.data as Array<MaterialActivityData>).map((el, idx) => (
+        <li key={idx} className="list-item">
+          {el.link ? (
+            <img src={el.link} className="list-item-image" />
+          ) : (
+            <div className="list-item-image">
+              <ImageOutlined className="icon" />
+            </div>
+          )}
 
           <input
             className="form-field-input"
             type="text"
             name="material"
             value={el.name}
+            placeholder="Type Here..."
             onChange={(e) =>
               update({
                 ...activity,
@@ -46,12 +59,12 @@ const Material: FC<ActivityProps> = ({ activity }) => {
           />
 
           <div
-            className={`material-interaction-item-controls${
-              !isChecklistEditable ? ' no-border' : ''
+            className={`quantity-controls ${
+              !isChecklistEditable ? 'no-background' : ''
             }`}
           >
-            <Remove
-              className={`icon${!isChecklistEditable ? ' hide' : ''}`}
+            <ArrowDropDown
+              className={`icon ${!isChecklistEditable ? 'hide' : ''}`}
               onClick={() =>
                 update({
                   ...activity,
@@ -63,12 +76,12 @@ const Material: FC<ActivityProps> = ({ activity }) => {
               }
             />
             <span
-              className={`quantity${!isChecklistEditable ? ' no-border' : ''}`}
+              className={`quantity ${!isChecklistEditable ? 'no-border' : ''}`}
             >
-              {el.quantity || 0}
+              {(el.quantity || 0).toString().padStart(2, '0')}
             </span>
-            <Add
-              className={`icon${!isChecklistEditable ? ' hide' : ''}`}
+            <ArrowDropUp
+              className={`icon ${!isChecklistEditable ? 'hide' : ''}`}
               onClick={() =>
                 update({
                   ...activity,
@@ -80,24 +93,25 @@ const Material: FC<ActivityProps> = ({ activity }) => {
               }
             />
           </div>
+
+          <Close
+            className={`icon ${!isChecklistEditable ? 'hide' : ''}`}
+            fontSize="small"
+          />
         </li>
       ))}
 
       {isChecklistEditable ? (
-        <div
-          className="add-new-item"
+        <AddNewItem
           onClick={() =>
             update({
               ...activity,
               data: [...activity.data, { name: '', quantity: 0, link: '' }],
             })
           }
-        >
-          <Add className="icon" />
-          Add new Item
-        </div>
+        />
       ) : null}
-    </ol>
+    </Wrapper>
   );
 };
 

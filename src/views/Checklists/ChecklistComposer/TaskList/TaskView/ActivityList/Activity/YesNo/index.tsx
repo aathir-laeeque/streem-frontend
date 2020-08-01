@@ -1,10 +1,13 @@
 import { useTypedSelector } from '#store';
+import { ACTIVITY_SELECTIONS } from '#utils/globalTypes';
 import { get } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { executeActivity, updateActivity } from './actions';
-import { Activity, ActivityProps } from './types';
+import { executeActivity, updateActivity } from '../actions';
+import { Activity, ActivityProps } from '../types';
+import { Wrapper } from './styles';
+import { YesNoActivityData } from './types';
 
 const YesNoInteraction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
@@ -18,7 +21,7 @@ const YesNoInteraction: FC<ActivityProps> = ({ activity }) => {
   const update = (data: Activity) => dispatch(updateActivity(data));
 
   return (
-    <div className="yes-no-interaction">
+    <Wrapper>
       <div className="form-field no-margin">
         <label
           className={`form-field-label${!isChecklistEditable ? ' hide' : ''}`}
@@ -33,13 +36,14 @@ const YesNoInteraction: FC<ActivityProps> = ({ activity }) => {
           disabled={isChecklistEditable ? false : true}
         />
       </div>
+
       <div className="buttons-container">
-        {activity.data
-          .sort((a: any, b: any) => (a.name > b.name ? -1 : 1)) // sorting to make yes type come first
-          .map((el: any, index: number) => (
+        {(activity.data as Array<YesNoActivityData>)
+          .sort((a, b) => (a.name > b.name ? -1 : 1)) // sorting to make yes type come first
+          .map((el, index) => (
             <div key={index} className="button-item">
               <div
-                className={`form-field${!isChecklistEditable ? ' hide' : ''}`}
+                className={`form-field ${!isChecklistEditable ? 'hide' : ''}`}
               >
                 <label className="form-field-label">
                   {el.type === 'yes' ? 'Positive' : 'Negative'} Button Label
@@ -59,30 +63,36 @@ const YesNoInteraction: FC<ActivityProps> = ({ activity }) => {
                   }
                 />
               </div>
-              <button
-                className={`${el.type}-button${
-                  get(activity?.response?.choices, [el.id]) === 'selected'
-                    ? ` ${el.type}-button-filled`
-                    : ''
-                }`}
-                onClick={() =>
-                  dispatch(
-                    executeActivity({
-                      ...activity,
-                      data: activity.data.map((e: any) => ({
-                        ...e,
-                        status: e.id === el.id ? 'selected' : 'not-selected',
-                      })),
-                    }),
-                  )
-                }
-              >
-                {el.name}
-              </button>
+              {!isChecklistEditable ? (
+                <button
+                  className={`${el.type}-button ${
+                    get(activity?.response?.choices, [el.id]) ===
+                    ACTIVITY_SELECTIONS.SELECTED
+                      ? `${el.type}-button-filled`
+                      : 'hide'
+                  }`}
+                  onClick={() =>
+                    dispatch(
+                      executeActivity({
+                        ...activity,
+                        data: activity.data.map((e: any) => ({
+                          ...e,
+                          status:
+                            e.id === el.id
+                              ? ACTIVITY_SELECTIONS.SELECTED
+                              : ACTIVITY_SELECTIONS.NOT_SELECTED,
+                        })),
+                      }),
+                    )
+                  }
+                >
+                  {el.name}
+                </button>
+              ) : null}
             </div>
           ))}
       </div>
-    </div>
+    </Wrapper>
   );
 };
 

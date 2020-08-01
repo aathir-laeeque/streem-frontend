@@ -28,29 +28,36 @@ const GlobalStyles = createGlobalStyle`
       flex-direction: column;
 
       &-label {
-        font-size: 8px;
-        color: #666666;
+        font-size: 12px;
+        color: #393939;
+        line-height: 1.2;
+        letter-spacing: 0.32px;
+        font-weight: normal;
+        font-style: normal;
       }
 
       &-input[type="number"],
       &-input[type="text"] {
-        border: none;
-        border-bottom: 1px solid #bababa;
-        color: #666666;
+        background-color: #f5f5f5;
+        border: 2px solid transparent;
+        border-bottom-color: #4f4f4f;
+        border-bottom-width: 1px;
+        color: #161616;
         flex: 1;
+        letter-spacing: 0.16;
+        line-height: 1.4;
+        padding: 12px 5px;
+        margin-top: 8px;
         outline: none;
 
-        :focus {
-          border-bottom-color: #12aab3;
-        }
-
         ::placeholder {
-          color: #999999;
+          color: #a8a8a8;
         }
 
-        :disabled {
-          border-bottom: none;
-          background-color: transparent;
+        :active,
+        :focus {
+          border-color: #12aab3;
+          border-width: 2px;
         }
       }
 
@@ -95,6 +102,10 @@ const GlobalStyles = createGlobalStyle`
 
   .no-border {
     border: 0 !important;
+  }
+
+  .no-background {
+    background-color: transparent !important;
   }
 `;
 

@@ -1,10 +1,10 @@
+import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { updateActivity, executeActivity } from './actions';
-import { ActivityProps, Activity } from './types';
-import { TARGET_RULES } from './constants';
-import { useTypedSelector } from '#store';
+import { executeActivity, updateActivity } from '../actions';
+import { TARGET_RULES } from '../constants';
+import { Activity, ActivityProps } from '../types';
 
 const ShouldBe: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
