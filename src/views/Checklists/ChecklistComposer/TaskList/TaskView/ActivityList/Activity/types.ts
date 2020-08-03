@@ -1,15 +1,15 @@
 import { updateActivity, setActiveActivity } from './actions';
 
 export enum ActivityType {
-  MATERIAL = 'material',
-  INSTRUCTION = 'instruction',
-  YESNO = 'yes-no',
-  CHECKLIST = 'checklist',
-  SHOULDBE = 'should-be',
-  MEDIA = 'media',
-  MULTISELECT = 'multiselect',
-  TEXTBOX = 'textbox',
-  SIGNATURE = 'signature',
+  MATERIAL = 'MATERIAL',
+  INSTRUCTION = 'INSTRUCTION',
+  YESNO = 'YES_NO',
+  CHECKLIST = 'CHECKLIST',
+  SHOULDBE = 'SHOULD_BE',
+  MEDIA = 'MEDIA',
+  MULTISELECT = 'MULTISELECT',
+  TEXTBOX = 'TEXTBOX',
+  SIGNATURE = 'SIGNATURE',
 }
 
 export interface Activity {

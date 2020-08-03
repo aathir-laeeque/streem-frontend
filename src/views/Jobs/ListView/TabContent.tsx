@@ -33,7 +33,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const fetchData = (page: number, size: number) => {
     const filters = JSON.stringify({
       op: 'AND',
-      fields: [{ field: 'status', op: 'EQ', values: [label] }],
+      fields: [{ field: 'status', op: 'EQ', values: [label.toUpperCase()] }],
     });
     dispatch(fetchJobs({ page, size, filters, sort: 'id,desc' }, label));
   };
