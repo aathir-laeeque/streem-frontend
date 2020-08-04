@@ -1,6 +1,7 @@
 import { useTypedSelector } from '#store';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
+import { SignatureModal } from '#views/Checklists/ChecklistComposer/TaskList/TaskView/ActivityList/Activity/Signature/SignatureModal';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -41,6 +42,19 @@ const getModal = (
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
             closeModal(ModalNames.JOB_USER_ASSIGN, ...args)
+          }
+          key={i}
+        />
+      );
+    case ModalNames.SIGNATURE_MODAL:
+      return (
+        <SignatureModal
+          {...props}
+          user={props.user}
+          onAcceptSignature={props.onAcceptSignature}
+          closeAllModals={closeAllModals}
+          closeModal={(...args) =>
+            closeModal(ModalNames.SIGNATURE_MODAL, ...args)
           }
           key={i}
         />
