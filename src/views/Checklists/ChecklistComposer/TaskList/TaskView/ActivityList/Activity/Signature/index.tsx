@@ -14,6 +14,7 @@ const Signature: FC<ActivityProps> = ({ activity }) => {
   const [imageData, setImageData] = useState<string | null>(null);
   const dispatch = useDispatch();
 
+  // TODO : Remove below line, Only added for testing
   isChecklistEditable = false;
 
   const onAcceptSignature = (imageData: string) => {
