@@ -4,7 +4,7 @@ import { Checklist } from '#views/Checklists/types';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 
-interface CreateJobModalProps {
+export interface CreateJobModalProps {
   closeAllModals: () => void;
   closeModal: () => void;
   selectedChecklist: Checklist;

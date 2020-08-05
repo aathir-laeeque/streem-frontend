@@ -1,4 +1,4 @@
-export { store } from './configureStore';
+export { configureStore } from './configureStore';
 export { actionSpreader, useTypedSelector } from './helpers';
 export { rootReducer } from './rootReducer';
 export { rootSaga } from './rootSaga';

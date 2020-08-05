@@ -1,0 +1,166 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<NavigationMenu /> should render and match the snapshot 1`] = `
+<div
+  className="sc-AxhUy exUKxG"
+>
+  <nav
+    className="sc-AxgMl bKFcdD"
+  >
+    <a
+      aria-current="page"
+      href="/"
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#12aab3",
+          "color": "#ffffff",
+          "textDecoration": "none",
+        }
+      }
+    >
+      <div
+        className="sc-AxheI bmFhew"
+      >
+        <svg
+          aria-hidden={true}
+          className="MuiSvgIcon-root"
+          focusable="false"
+          size="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
+          />
+        </svg>
+        <span>
+          Dashboard
+        </span>
+      </div>
+    </a>
+    <a
+      href="/jobs"
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "transparent",
+          "color": "#808080",
+          "textDecoration": "none",
+        }
+      }
+    >
+      <div
+        className="sc-AxheI bmFhew"
+      >
+        <svg
+          aria-hidden={true}
+          className="MuiSvgIcon-root"
+          focusable="false"
+          size="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 8H3V9h9v2zm0-4H3V5h9v2z"
+          />
+        </svg>
+        <span>
+          Jobs
+        </span>
+      </div>
+    </a>
+    <a
+      href="/checklists"
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "transparent",
+          "color": "#808080",
+          "textDecoration": "none",
+        }
+      }
+    >
+      <div
+        className="sc-AxheI bmFhew"
+      >
+        <svg
+          aria-hidden={true}
+          className="MuiSvgIcon-root"
+          focusable="false"
+          size="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7.53 12L9 10.5l1.4-1.41 2.07 2.08L17.6 6 19 7.41 12.47 14zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6z"
+          />
+        </svg>
+        <span>
+          Checklists
+        </span>
+      </div>
+    </a>
+    <a
+      href="/reports"
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "transparent",
+          "color": "#808080",
+          "textDecoration": "none",
+        }
+      }
+    >
+      <div
+        className="sc-AxheI bmFhew"
+      >
+        <svg
+          aria-hidden={true}
+          className="MuiSvgIcon-root"
+          focusable="false"
+          size="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"
+          />
+        </svg>
+        <span>
+          Reports
+        </span>
+      </div>
+    </a>
+    <a
+      href="/audit"
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "transparent",
+          "color": "#808080",
+          "textDecoration": "none",
+        }
+      }
+    >
+      <div
+        className="sc-AxheI bmFhew"
+      >
+        <svg
+          aria-hidden={true}
+          className="MuiSvgIcon-root"
+          focusable="false"
+          size="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"
+          />
+          <path
+            d="M17.5 10.5c.88 0 1.73.09 2.5.26V9.24c-.79-.15-1.64-.24-2.5-.24-1.7 0-3.24.29-4.5.83v1.66c1.13-.64 2.7-.99 4.5-.99zM13 12.49v1.66c1.13-.64 2.7-.99 4.5-.99.88 0 1.73.09 2.5.26V11.9c-.79-.15-1.64-.24-2.5-.24-1.7 0-3.24.3-4.5.83zM17.5 14.33c-1.7 0-3.24.29-4.5.83v1.66c1.13-.64 2.7-.99 4.5-.99.88 0 1.73.09 2.5.26v-1.52c-.79-.16-1.64-.24-2.5-.24z"
+          />
+        </svg>
+        <span>
+          Audit Logs
+        </span>
+      </div>
+    </a>
+  </nav>
+</div>
+`;

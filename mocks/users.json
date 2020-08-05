@@ -1,0 +1,21 @@
+{
+  "object": "list",
+  "status": "ok",
+  "message": "success",
+  "data": [
+    { "id": 1, "firstName": "sathyam", "lastName": "lokare" },
+    { "id": 2, "firstName": "ashish", "lastName": "choudhary" },
+    { "id": 3, "firstName": "snehal", "lastName": "seth" }
+  ],
+  "pageable": {
+    "page": 0,
+    "pageSize": 10,
+    "numberOfElements": 3,
+    "totalPages": 1,
+    "totalElements": 3,
+    "first": true,
+    "last": true,
+    "empty": false
+  },
+  "errors": null
+}

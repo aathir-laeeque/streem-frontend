@@ -6,7 +6,7 @@ export const renderInputField = ({
   label,
   placeholder,
   meta: { touched, error },
-}) => (
+}: Record<string, any>) => (
   <div>
     {label ? <label>{label}</label> : null}
     <div>

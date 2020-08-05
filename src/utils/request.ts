@@ -30,5 +30,8 @@ export const request = async (
     },
     // TODO: check this when using POST request
     ...(options?.data && { body: JSON.stringify(options?.data) }),
-  }).then((res) => res.json());
+  }).then(async (res) => {
+    const resu = await res.json();
+    return resu;
+  });
 };

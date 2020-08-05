@@ -4,6 +4,7 @@
     "outDir": "./dist",
     "target": "es5",
     "module": "esnext",
+    "esModuleInterop": true,
     "jsx": "react",
     "moduleResolution": "node",
     "noImplicitAny": true,
@@ -12,10 +13,11 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "#*": ["./src/*"]
+      "#*": ["./src/*", "./mocks"]
     }
   },
-  "include": ["./src/*"]
+  "exclude": ["node_modules"],
+  "include": ["./src/*", "./mocks"]
 }
 // {
 //   "compilerOptions": {

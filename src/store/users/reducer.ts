@@ -29,6 +29,7 @@ const reducer = (state = initialState, action: UsersActionType): UsersState => {
           pageable,
         };
       }
+      return { ...state };
     case UsersAction.FETCH_USERS_ERROR:
       return { ...state, error: action.payload?.error };
 

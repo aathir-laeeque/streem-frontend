@@ -6,9 +6,9 @@ import { useDispatch } from 'react-redux';
 
 import { Composer } from './styles';
 import TabContent from './TabContent';
-import { JobStatus } from './types';
+import { JobStatus, ListViewProps } from './types';
 
-const ListView: FC = () => {
+const ListView: FC<ListViewProps> = () => {
   const { job } = useTypedSelector((state) => state.properties);
   const dispatch = useDispatch();
 
