@@ -5,6 +5,7 @@
       {
         "root": ["."],
         "alias": {
+          "#assets": "./src/assets",
           "#components": "./src/components",
           "#store": "./src/store",
           "#utils": "./src/utils",

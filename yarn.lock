@@ -1249,6 +1249,14 @@
     hoist-non-react-statics "^3.3.0"
     redux "^4.0.0"
 
+"@types/react-signature-canvas@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/react-signature-canvas/-/react-signature-canvas-1.0.1.tgz#deb87a49fcb191e0f94eb90545caa8691e3671e2"
+  integrity sha512-YPM6MPzIpZ7CNJtt28IBXG8hciPMWoQk9JQFS2esff+qbG3qqlxTdE46hMyl2hxNfkQTlvBNEgk37+4BL2o9iw==
+  dependencies:
+    "@types/react" "*"
+    "@types/signature_pad" "*"
+
 "@types/react-transition-group@^4.2.0":
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.4.0.tgz#882839db465df1320e4753e6e9f70ca7e9b4d46d"
@@ -1271,6 +1279,11 @@
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
+
+"@types/signature_pad@*":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@types/signature_pad/-/signature_pad-2.3.1.tgz#8404aa2812d3637a98cd8c99328f91c5c9660a7b"
+  integrity sha512-HkR1CI0PevD1SszwHnegaXFKLXL5cAkYf0iiZI4cJqcs/zNL+pMfbnI3X5HRfagrRA40yjC1VKL64q0w3SWIow==
 
 "@types/styled-components@^5.1.0":
   version "5.1.0"
@@ -5624,6 +5637,14 @@ react-redux@^7.2.0:
     prop-types "^15.7.2"
     react-is "^16.9.0"
 
+react-signature-canvas@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-signature-canvas/-/react-signature-canvas-1.0.3.tgz#1eebe3395a206ff37015f5b557e5c0274587064b"
+  integrity sha512-6KBZFWLgjbnV80hh0sYW4ZKLJkojktP+de+xrnBGjB6HBK2dOoYH3rVxjtCvpMhjM/e4cqgAoQVz3lYdKCgWxw==
+  dependencies:
+    signature_pad "^2.3.2"
+    trim-canvas "^0.1.0"
+
 react-toastify@^6.0.6:
   version "6.0.6"
   resolved "https://registry.yarnpkg.com/react-toastify/-/react-toastify-6.0.6.tgz#7409ef8e89d12492308a8e561317031b5d90615e"
@@ -6107,6 +6128,11 @@ signal-exit@^3.0.2:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.3.tgz#a1410c2edd8f077b08b4e253c8eacfcaf057461c"
   integrity sha512-VUJ49FC8U1OxwZLxIbTTrDvLnf/6TDgxZcK8wxR8zs13xpx7xbG60ndBlhNrFi2EMuFRoeDoJO7wthSLq42EjA==
+
+signature_pad@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/signature_pad/-/signature_pad-2.3.2.tgz#ca7230021c89cedeead27b33d8d16ff254e5f04a"
+  integrity sha512-peYXLxOsIY6MES2TrRLDiNg2T++8gGbpP2yaC+6Ohtxr+a2dzoaqWosWDY9sWqTAAk6E/TyQO+LJw9zQwyu5kA==
 
 simple-swizzle@^0.2.2:
   version "0.2.2"
@@ -6640,6 +6666,11 @@ tr46@^1.0.1:
   integrity sha1-qLE/1r/SSJUZZ0zN5VujaTtwbQk=
   dependencies:
     punycode "^2.1.0"
+
+trim-canvas@^0.1.0:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/trim-canvas/-/trim-canvas-0.1.2.tgz#620457f5fecf564b521d35c5fcd4da58304d6e45"
+  integrity sha1-YgRX9f7PVktSHTXF/NTaWDBNbkU=
 
 tslib@^1.8.1, tslib@^1.9.0:
   version "1.13.0"

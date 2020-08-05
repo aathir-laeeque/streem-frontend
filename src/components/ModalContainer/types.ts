@@ -7,6 +7,7 @@ import {
 export enum ModalNames {
   CREATE_JOB_MODAL = 'CREATE_JOB_MODAL',
   JOB_USER_ASSIGN = 'JOB_USER_ASSIGN',
+  SIGNATURE_MODAL = 'SIGNATURE_MODAL',
 }
 
 export interface Modal {

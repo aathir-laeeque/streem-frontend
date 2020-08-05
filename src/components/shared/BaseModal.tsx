@@ -6,15 +6,18 @@ import styled from 'styled-components';
 interface BaseModalProps {
   closeAllModals: () => void;
   closeModal: () => void;
-  title: string;
-  primaryText: string;
-  secondaryText: string;
-  onPrimary: () => void;
-  onSecondary: () => void;
+  title?: string;
+  primaryText?: string;
+  secondaryText?: string;
+  onPrimary?: () => void;
+  onSecondary?: () => void;
   children: ReactNode;
   modalFooterOptions?: ReactNode;
+  showHeader?: boolean;
+  showFooter?: boolean;
   showPrimary?: boolean;
   showSecondary?: boolean;
+  isRound?: boolean;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -159,8 +162,8 @@ const Wrapper = styled.div.attrs({})`
 `;
 
 export const BaseModal: FC<BaseModalProps> = ({
-  onPrimary,
-  onSecondary,
+  onPrimary = () => false,
+  onSecondary = () => false,
   children,
   modalFooterOptions,
   title,
@@ -169,6 +172,9 @@ export const BaseModal: FC<BaseModalProps> = ({
   closeModal,
   showPrimary = true,
   showSecondary = true,
+  showHeader = true,
+  showFooter = true,
+  isRound = true,
 }) => {
   const onBaseModalContainerClick = (toExecute: () => void) => {
     const container = document.getElementById(
@@ -186,38 +192,47 @@ export const BaseModal: FC<BaseModalProps> = ({
     <Wrapper>
       <div id="modal-container" className="openup">
         <div className="modal-background">
-          <div className="modal">
-            <div className="modal-header">
-              <h2>{title}</h2>
-              <Close
-                style={{ cursor: `pointer`, fontSize: 20 }}
-                onClick={() => onBaseModalContainerClick(closeModal)}
-              />
-            </div>
-            <div className="modal-body">{children}</div>
-            <div className="modal-footer">
-              {modalFooterOptions && (
-                <div className="modal-footer-options">{modalFooterOptions}</div>
-              )}
-              <div className="modal-footer-buttons">
-                {showSecondary && (
-                  <FlatButton
-                    style={{ padding: `5px 16px`, fontWeight: 600 }}
-                    onClick={() => onBaseModalContainerClick(onSecondary)}
-                  >
-                    {secondaryText}
-                  </FlatButton>
-                )}
-                {showPrimary && (
-                  <Button
-                    style={{ marginRight: 0, fontWeight: 600 }}
-                    onClick={() => onBaseModalContainerClick(onPrimary)}
-                  >
-                    {primaryText}
-                  </Button>
-                )}
+          <div
+            className="modal"
+            style={{ borderRadius: isRound ? '16px' : '4px' }}
+          >
+            {showHeader && (
+              <div className="modal-header">
+                <h2>{title}</h2>
+                <Close
+                  style={{ cursor: `pointer`, fontSize: 20 }}
+                  onClick={() => onBaseModalContainerClick(closeModal)}
+                />
               </div>
-            </div>
+            )}
+            <div className="modal-body">{children}</div>
+            {showFooter && (
+              <div className="modal-footer">
+                {modalFooterOptions && (
+                  <div className="modal-footer-options">
+                    {modalFooterOptions}
+                  </div>
+                )}
+                <div className="modal-footer-buttons">
+                  {showSecondary && (
+                    <FlatButton
+                      style={{ padding: `5px 16px`, fontWeight: 600 }}
+                      onClick={() => onBaseModalContainerClick(onSecondary)}
+                    >
+                      {secondaryText}
+                    </FlatButton>
+                  )}
+                  {showPrimary && (
+                    <Button
+                      style={{ marginRight: 0, fontWeight: 600 }}
+                      onClick={() => onBaseModalContainerClick(onPrimary)}
+                    >
+                      {primaryText}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
