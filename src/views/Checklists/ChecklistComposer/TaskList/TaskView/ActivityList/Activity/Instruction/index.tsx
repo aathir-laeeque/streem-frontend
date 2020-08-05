@@ -1,40 +1,45 @@
-import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { updateActivity } from '../actions';
-import { Activity, ActivityProps } from '../types';
+import { ActivityProps, Activity } from '../types';
+import { useTypedSelector } from '#store';
+import { ChecklistState } from '#views/Checklists/types';
 import { Wrapper } from './styles';
 
 const Instruction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  const { isChecklistEditable } = useTypedSelector(
-    (state) => state.checklist.composer,
-  );
+  const { state } = useTypedSelector((state) => state.checklist.composer);
+
+  const isChecklistEditable = state === ChecklistState.ADD_EDIT;
 
   const update = (data: Activity) => dispatch(updateActivity(data));
 
   return (
     <Wrapper>
-      <div className="form-field">
-        <label
-          className={`form-field-label ${isChecklistEditable ? '' : 'hide'}`}
+      {isChecklistEditable ? (
+        <div className="form-field">
+          <textarea
+            className="form-field-textarea"
+            name="instruction"
+            value={activity.data?.text}
+            rows={4}
+            onChange={(e) =>
+              update({ ...activity, data: { text: e.target.value } })
+            }
+            disabled={isChecklistEditable ? false : true}
+          />
+        </div>
+      ) : (
+        <div
+          className="viewing-state"
+          // contentEditable={true}
+          // onChange={(e) => console.log('e', e)}
         >
-          Comments
-        </label>
-        <textarea
-          className="form-field-textarea"
-          name="instruction"
-          value={activity.data?.text}
-          rows={4}
-          onChange={(e) =>
-            update({ ...activity, data: { text: e.target.value } })
-          }
-          disabled={isChecklistEditable ? false : true}
-          placeholder="Type here..."
-        />
-      </div>
+          {activity.data?.text}
+        </div>
+      )}
     </Wrapper>
   );
 };
