@@ -3,11 +3,13 @@ import React, { FC } from 'react';
 
 import Composer from './ChecklistComposer';
 import ListView from './ListView';
+import { ChecklistState } from './types';
 
 const ChecklistView: FC = () => (
   <Router>
     <ListView path="/" />
-    <Composer path=":checklistId" />
+    {/* This ChecklistState prop is temporary for now, will be taken care properly when editing mode is done */}
+    <Composer path=":checklistId" checklistState={ChecklistState.VIEW} />
   </Router>
 );
 

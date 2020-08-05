@@ -20,4 +20,5 @@ export enum ChecklistState {
   ADD_EDIT = 'editing',
   EXECUTING = 'executing',
   EXECUTED = 'executed',
+  VIEW = 'viewing',
 }
