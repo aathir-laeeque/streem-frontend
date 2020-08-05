@@ -1,6 +1,6 @@
 import { Button, FlatButton } from '#components';
 import { Close } from '@material-ui/icons';
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useRef } from 'react';
 import styled from 'styled-components';
 
 interface BaseModalProps {
@@ -176,12 +176,11 @@ export const BaseModal: FC<BaseModalProps> = ({
   showFooter = true,
   isRound = true,
 }) => {
+  const modalContainer = useRef<HTMLDivElement | null>(null);
+
   const onBaseModalContainerClick = (toExecute: () => void) => {
-    const container = document.getElementById(
-      'modal-container',
-    ) as HTMLDivElement;
-    if (container) {
-      container.classList.add('out');
+    if (modalContainer && modalContainer.current) {
+      modalContainer.current.classList.add('out');
     }
     setTimeout(() => {
       toExecute();
@@ -190,7 +189,7 @@ export const BaseModal: FC<BaseModalProps> = ({
 
   return (
     <Wrapper>
-      <div id="modal-container" className="openup">
+      <div id="modal-container" ref={modalContainer} className="openup">
         <div className="modal-background">
           <div
             className="modal"
