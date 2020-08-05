@@ -9,7 +9,8 @@ const ChecklistView: FC = () => (
   <Router>
     <ListView path="/" />
     {/* This ChecklistState prop is temporary for now, will be taken care properly when editing mode is done */}
-    <Composer path=":checklistId" checklistState={ChecklistState.VIEW} />
+    {/* <Composer path=":checklistId" checklistState={ChecklistState.VIEW} /> */}
+    <Composer path=":checklistId" />
   </Router>
 );
 

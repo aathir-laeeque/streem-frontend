@@ -60,7 +60,9 @@ const ActivityList: FC<ActivityListProps> = ({ activitiesId }) => {
 
               if (activity)
                 switch (activity.type) {
+                  case ActivityType.MULTISELECT:
                   case ActivityType.CHECKLIST:
+                    console.log('rendering this');
                     return <Checklist activity={activity} />;
 
                   case ActivityType.INSTRUCTION:

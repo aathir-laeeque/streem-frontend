@@ -34,6 +34,10 @@ export const Wrapper = styled.ol`
     border-bottom: 1px solid #f5f5f5;
     padding: 12px 0;
 
+    :last-child {
+      border-bottom: none;
+    }
+
     &::before {
       color: #000000;
       content: counter(item) ' ';

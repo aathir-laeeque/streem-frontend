@@ -1,19 +1,19 @@
 import { useTypedSelector } from '#store';
+import { ChecklistState } from '#views/Checklists/types';
 import {
   ArrowDownwardOutlined,
-  ArrowUpwardOutlined,
   ArrowRightAlt,
+  ArrowUpwardOutlined,
 } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { setActiveTask, completeTask } from './actions';
+import { completeTask, setActiveTask } from './actions';
 import ActivityList from './ActivityList';
 import { ActivityType } from './ActivityList/Activity/types';
 import Header from './Header';
 import StepMedia from './Media';
 import { Wrapper } from './styles';
-// import Timer from './Timer';
 import { Task } from './types';
 
 interface TaskViewProps {
@@ -23,12 +23,15 @@ interface TaskViewProps {
 const TaskView: FC<TaskViewProps> = ({ task }) => {
   const {
     isChecklistEditable,
+    state,
     tasks: { activeTaskId },
   } = useTypedSelector((state) => state.checklist.composer);
 
   const dispatch = useDispatch();
 
   const isTaskActive = task.id === activeTaskId;
+
+  const showCompleteTaskButton = state === ChecklistState.EXECUTING;
 
   const setAsActive = () =>
     !isTaskActive ? dispatch(setActiveTask(task.id)) : undefined;
@@ -53,20 +56,17 @@ const TaskView: FC<TaskViewProps> = ({ task }) => {
       >
         <Header task={task} />
 
-        {/* {task.timed ? <Timer period={task?.period} /> : null} */}
-
         <ActivityList
           activitiesId={task.activities
             // TODO remove this filter when MEDIA and MULTISELECT activity are complete
             .filter(
-              (el) =>
-                el.type !== ActivityType.MEDIA &&
-                el.type !== ActivityType.MULTISELECT,
+              (el) => el.type !== ActivityType.MEDIA,
+              // el.type !== ActivityType.MULTISELECT,
             )
             .map((el) => el.id)}
         />
 
-        {!isChecklistEditable ? (
+        {showCompleteTaskButton ? (
           <button
             className="complete-task"
             onClick={() => dispatch(completeTask(task.id))}

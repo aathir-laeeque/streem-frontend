@@ -5,7 +5,7 @@ const Wrapper = styled.div`
   flex: 1;
   padding: 10px;
   padding-left: 0;
-  border-bottom: 1px solid #8d8d8d;
+  border-bottom: 1px solid #e0e0e0;
 
   label {
     align-items: center;
@@ -21,6 +21,12 @@ const Wrapper = styled.div`
       flex: 1;
       margin-left: 10px;
       outline: none;
+    }
+
+    input[name='item-label'] {
+      color: #161616;
+      font-size: 14px;
+      font-weight: normal;
     }
   }
 `;
@@ -55,7 +61,7 @@ const Checkbox: FC<CheckboxProps> = ({
           name="item-label"
           type="text"
           value={label}
-          disabled={disabled}
+          disabled={!disabled}
           onChange={(e) =>
             handleLabelChange && handleLabelChange(e.target.value)
           }

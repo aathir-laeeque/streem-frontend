@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { executeActivity, updateActivity } from '../actions';
 import { Activity, ActivityProps } from '../types';
 import { Wrapper } from './styles';
+import { ChecklistState } from '#views/Checklists/types';
 
 type ChecklistActivityData = {
   id: string;
@@ -18,12 +19,14 @@ type ChecklistActivityData = {
 const Checklist: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  const { isChecklistEditable } = useTypedSelector(
+  const { isChecklistEditable, state } = useTypedSelector(
     (state) => state.checklist.composer,
   );
 
   const update = (updatedActivity: Activity) =>
     dispatch(updateActivity(updatedActivity));
+
+  const isTempalteEditable = state === ChecklistState.ADD_EDIT;
 
   return (
     <Wrapper>
@@ -35,7 +38,7 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
           value={activity.label}
           onChange={(e) => update({ ...activity, label: e.target.value })}
           placeholder="Enter a title for the checklist"
-          disabled={!isChecklistEditable}
+          disabled={!isTempalteEditable}
         />
       </div>
 
@@ -54,6 +57,7 @@ const Checklist: FC<ActivityProps> = ({ activity }) => {
                     : get(activity?.response?.choices, el.id) ===
                       ACTIVITY_SELECTIONS.SELECTED
                 }
+                disabled={isTempalteEditable}
                 handleCheckboxChange={() => {
                   if (!isChecklistEditable) {
                     dispatch(

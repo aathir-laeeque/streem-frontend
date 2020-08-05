@@ -1,61 +1,5 @@
 import styled from 'styled-components';
 
-// .yes-no-interaction {
-//   display: flex;
-//   flex-direction: column;
-
-//   .form-field {
-//     margin-top: 24px;
-//   }
-
-//   > .buttons-container {
-//     display: flex;
-
-//     > .button-item {
-//       flex: 1;
-//       margin-right: 16px;
-
-//       :last-child {
-//         margin-right: 0;
-//       }
-
-//       > button {
-//         outline: none;
-//         border: 1px solid transparent;
-//         border-radius: 5px;
-//         width: 100%;
-//         background: none;
-//         display: flex;
-//         padding: 5px 0;
-//         align-items: center;
-//         justify-content: center;
-//         cursor: pointer;
-//         margin-top: 24px;
-//       }
-
-//       .yes-button {
-//         border-color: #12aab3;
-//         color: #12aab3;
-
-//         &-filled {
-//           background-color: #12aab3;
-//           color: #ffffff;
-//         }
-//       }
-
-//       .no-button {
-//         color: #e24c4c;
-//         border-color: #e24c4c;
-
-//         &-filled {
-//           background-color: #e24c4c;
-//           color: #ffffff;
-//         }
-//       }
-//     }
-//   }
-// }
-
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -65,8 +9,6 @@ export const Wrapper = styled.div`
     margin-top: 12px;
 
     .button-item {
-      flex: 1;
-
       :first-child {
         input {
           background-color: #ecfff4;
@@ -96,8 +38,8 @@ export const Wrapper = styled.div`
       }
 
       button {
-        width: 100%;
-        padding: 5px;
+        padding: 5px 20px;
+        background-color: transparent;
       }
 
       .yes-button {

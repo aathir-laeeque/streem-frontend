@@ -40,14 +40,13 @@ const GlobalStyles = createGlobalStyle`
       &-input[type="text"] {
         background-color: #f5f5f5;
         border: 2px solid transparent;
-        border-bottom-color: #4f4f4f;
+        border-bottom-color: #8d8d8d;
         border-bottom-width: 1px;
         color: #161616;
         flex: 1;
         letter-spacing: 0.16;
         line-height: 1.4;
-        padding: 12px 5px;
-        margin-top: 8px;
+        padding: 12px 16px;
         outline: none;
 
         ::placeholder {
@@ -58,6 +57,11 @@ const GlobalStyles = createGlobalStyle`
         :focus {
           border-color: #12aab3;
           border-width: 2px;
+        }
+
+        :disabled {
+          background-color: transparent;
+          border: none;
         }
       }
 
@@ -88,8 +92,27 @@ const GlobalStyles = createGlobalStyle`
         outline: none;
         border-bottom: 1px solid #bababa;
         color: #666666;
+        padding: 12px 16px;
+        background-color: #f5f5f5;
+        position: relative;
+
+        :after {
+          position: absolute;
+          content: "";
+          top: 14px;
+          right: 10px;
+          width: 0;
+          height: 0;
+          border: 6px solid transparent;
+          border-color: #000 transparent transparent transparent;
+        }
       }
     }
+  }
+
+  .form-field-label + .form-field-input,
+  .form-field-label + .form-field-select {
+    margin-top: 8px;
   }
 
   .hide {

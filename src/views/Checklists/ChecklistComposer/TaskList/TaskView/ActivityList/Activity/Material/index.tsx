@@ -13,19 +13,23 @@ import { updateActivity } from '../actions';
 import { Activity, ActivityProps } from '../types';
 import { Wrapper } from './styles';
 import { MaterialActivityData } from './types';
+import { ChecklistState } from '#views/Checklists/types';
 
 const Material: FC<ActivityProps> = ({ activity }) => {
-  const { isChecklistEditable } = useTypedSelector(
+  const { isChecklistEditable, state } = useTypedSelector(
     (state) => state.checklist.composer,
   );
 
   const dispatch = useDispatch();
 
+  const isFieldDisabled =
+    state === ChecklistState.EXECUTING || state === ChecklistState.VIEW;
+
   const update = (data: Activity) => dispatch(updateActivity(data));
 
   return (
     <Wrapper>
-      <div className={`list-header ${isChecklistEditable ? 'hide' : ''}`}>
+      <div className={`list-header ${!isFieldDisabled ? 'hide' : ''}`}>
         <span>NAME</span>
         <span>QUANTITY</span>
       </div>
@@ -55,7 +59,7 @@ const Material: FC<ActivityProps> = ({ activity }) => {
                 })),
               })
             }
-            {...(!isChecklistEditable && { disabled: true })}
+            disabled={isFieldDisabled}
           />
 
           <div

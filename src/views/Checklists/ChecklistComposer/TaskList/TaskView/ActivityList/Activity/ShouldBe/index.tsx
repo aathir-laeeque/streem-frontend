@@ -5,20 +5,22 @@ import { useDispatch } from 'react-redux';
 import { executeActivity, updateActivity } from '../actions';
 import { TARGET_RULES } from '../constants';
 import { Activity, ActivityProps } from '../types';
+import { ChecklistState } from '#views/Checklists/types';
+import { Wrapper } from './styles';
 
 const ShouldBe: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  const { isChecklistEditable } = useTypedSelector(
-    (state) => state.checklist.composer,
-  );
+  const { state } = useTypedSelector((state) => state.checklist.composer);
 
   const update = (data: Activity) => dispatch(updateActivity(data));
 
   const execute = (data: Activity) => dispatch(executeActivity(data));
 
+  const isChecklistEditable = state === ChecklistState.ADD_EDIT;
+
   return (
-    <div className="shouldbe-interaction">
+    <Wrapper>
       {isChecklistEditable ? (
         <>
           <div className="form-field">
@@ -119,13 +121,18 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
           </span>
         </div>
       )}
+
       <div className="form-field">
         <label className="form-field-label">Observed</label>
         <input
           className="form-field-input"
           name="observed-value"
           type="text"
-          placeholder="To be entered at execution"
+          placeholder={
+            isChecklistEditable
+              ? 'To be entered at execution'
+              : 'Enter Observed Value'
+          }
           value={activity?.response?.value}
           onChange={(e) =>
             execute({
@@ -133,10 +140,10 @@ const ShouldBe: FC<ActivityProps> = ({ activity }) => {
               data: { ...activity.data, input: e.target.value },
             })
           }
-          disabled={!isChecklistEditable}
+          disabled={isChecklistEditable}
         />
       </div>
-    </div>
+    </Wrapper>
   );
 };
 

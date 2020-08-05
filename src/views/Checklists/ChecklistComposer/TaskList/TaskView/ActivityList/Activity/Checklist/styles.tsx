@@ -1,10 +1,13 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
+  input[name='label'] {
+    margin-top: 0;
+  }
+
   .checklist-container {
     display: flex;
     flex-direction: column;
-    margin-top: 5px;
 
     .list-item {
       display: flex;
