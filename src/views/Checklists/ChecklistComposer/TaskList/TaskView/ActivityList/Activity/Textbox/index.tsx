@@ -1,21 +1,22 @@
 import { useTypedSelector } from '#store';
+import { ChecklistState } from '#views/Checklists/types';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { executeActivity } from './actions';
-import { Activity, ActivityProps } from './types';
+import { executeActivity } from '../actions';
+import { Activity, ActivityProps } from '../types';
+import { Wrapper } from './styles';
 
 const TextboxInteraction: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  const { isChecklistEditable } = useTypedSelector(
-    (state) => state.checklist.composer,
-  );
+  const { state } = useTypedSelector((state) => state.checklist.composer);
+  const isChecklistEditable = state === ChecklistState.ADD_EDIT;
 
   const execute = (data: Activity) => dispatch(executeActivity(data));
 
   return (
-    <div className="textbox-interaction">
+    <Wrapper>
       <div className="form-field">
         <label className="form-field-label">{activity.label}</label>
         <textarea
@@ -29,7 +30,7 @@ const TextboxInteraction: FC<ActivityProps> = ({ activity }) => {
           disabled={isChecklistEditable}
         />
       </div>
-    </div>
+    </Wrapper>
   );
 };
 
