@@ -2,10 +2,10 @@
 
 exports[`<CreateJobModal /> it matches the snapshot 1`] = `
 <div
-  className="sc-fzoyAV lgNqAT"
+  className="sc-fzoLag gqDFwP"
 >
   <div
-    className="sc-fznyAO ctDhaX"
+    className="sc-fznKkj eYPgoK"
   >
     <div
       className="openup"
@@ -16,6 +16,11 @@ exports[`<CreateJobModal /> it matches the snapshot 1`] = `
       >
         <div
           className="modal"
+          style={
+            Object {
+              "borderRadius": "16px",
+            }
+          }
         >
           <div
             className="modal-header"
@@ -45,7 +50,7 @@ exports[`<CreateJobModal /> it matches the snapshot 1`] = `
             className="modal-body"
           >
             <div
-              className="sc-fzokOt daYHNr"
+              className="sc-fzqBZW hdFZqC"
             >
               <div
                 className="wrapper"
@@ -82,7 +87,7 @@ exports[`<CreateJobModal /> it matches the snapshot 1`] = `
               </div>
             </div>
             <div
-              className="sc-fzokOt daYHNr"
+              className="sc-fzqBZW hdFZqC"
             >
               <div
                 className="wrapper"
@@ -118,7 +123,7 @@ exports[`<CreateJobModal /> it matches the snapshot 1`] = `
               </div>
             </div>
             <div
-              className="sc-fzokOt daYHNr"
+              className="sc-fzqBZW hdFZqC"
             >
               <div
                 className="wrapper"
@@ -181,7 +186,7 @@ exports[`<CreateJobModal /> it matches the snapshot 1`] = `
               className="modal-footer-buttons"
             >
               <button
-                className="sc-fznZeY fIRQkD"
+                className="sc-fzokOt izNgjE"
                 onClick={[Function]}
                 style={
                   Object {
@@ -193,7 +198,7 @@ exports[`<CreateJobModal /> it matches the snapshot 1`] = `
                 Cancel
               </button>
               <button
-                className="sc-fznKkj dICuB"
+                className="sc-fznZeY fxACvd"
                 onClick={[Function]}
                 style={
                   Object {

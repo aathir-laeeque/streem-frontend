@@ -26,18 +26,18 @@ exports[`<SideBar /> should render and match the snapshot 1`] = `
       }
     >
       <button
-        className="sc-fznZeY fxACvd sidebar-button"
+        className="sc-fzokOt gDhfqG sidebar-button"
         onClick={[Function]}
       >
         Start A Job
       </button>
       <button
-        className="sc-fzokOt izNgjE sidebar-flat-button"
+        className="sc-fzqBZW cHkWYl sidebar-flat-button"
       >
         Edit Checklist
       </button>
       <button
-        className="sc-fzokOt izNgjE sidebar-flat-button"
+        className="sc-fzqBZW cHkWYl sidebar-flat-button"
       >
         View Activity
       </button>
@@ -243,12 +243,12 @@ exports[`<SideBar /> should render and match the snapshot 1`] = `
           ADDITIONAL ACTIONS
         </div>
         <button
-          className="sc-fzokOt izNgjE sidebar-flat-button"
+          className="sc-fzqBZW cHkWYl sidebar-flat-button"
         >
           Print Checklist
         </button>
         <button
-          className="sc-fzokOt izNgjE sidebar-flat-button danger"
+          className="sc-fzqBZW cHkWYl sidebar-flat-button danger"
         >
           Delete Checklist
         </button>

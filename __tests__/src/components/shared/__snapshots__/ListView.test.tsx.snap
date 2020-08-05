@@ -2,13 +2,13 @@
 
 exports[`<ListViewComponent /> should render and match the snapshot 1`] = `
 <div
-  className="sc-fzoyAV dkfRiU"
+  className="sc-fzoLag ikcvLg"
 >
   <div
     className="list-options"
   >
     <button
-      className="sc-fzokOt izNgjE"
+      className="sc-fzqBZW cHkWYl"
     >
       Filters 
       <svg
@@ -53,7 +53,7 @@ exports[`<ListViewComponent /> should render and match the snapshot 1`] = `
       Reset
     </span>
     <button
-      className="sc-fznZeY fxACvd"
+      className="sc-fzokOt gDhfqG"
       style={
         Object {
           "marginLeft": "auto",

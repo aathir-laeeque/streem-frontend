@@ -3,13 +3,13 @@
 exports[`<Button /> should render and match the snapshot 1`] = `
 <div>
   <button
-    className="sc-fznZeY fxACvd"
+    className="sc-fzokOt gDhfqG"
     onClick={[Function]}
   >
     Button
   </button>
   <button
-    className="sc-fzokOt izNgjE"
+    className="sc-fzqBZW cHkWYl"
     onClick={[Function]}
   >
     FlatButton

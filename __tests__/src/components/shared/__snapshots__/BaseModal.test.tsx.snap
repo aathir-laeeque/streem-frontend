@@ -2,7 +2,7 @@
 
 exports[`<BaseModal /> should render and match the snapshot 1`] = `
 <div
-  className="sc-fznKkj eYPgoK"
+  className="sc-fznZeY iQgKGW"
 >
   <div
     className="openup"
@@ -13,6 +13,11 @@ exports[`<BaseModal /> should render and match the snapshot 1`] = `
     >
       <div
         className="modal"
+        style={
+          Object {
+            "borderRadius": "16px",
+          }
+        }
       >
         <div
           className="modal-header"
@@ -50,7 +55,7 @@ exports[`<BaseModal /> should render and match the snapshot 1`] = `
             className="modal-footer-buttons"
           >
             <button
-              className="sc-fzokOt izNgjE"
+              className="sc-fzqBZW cHkWYl"
               onClick={[Function]}
               style={
                 Object {
@@ -62,7 +67,7 @@ exports[`<BaseModal /> should render and match the snapshot 1`] = `
               Cancel
             </button>
             <button
-              className="sc-fznZeY fxACvd"
+              className="sc-fzokOt gDhfqG"
               onClick={[Function]}
               style={
                 Object {
