@@ -1,9 +1,16 @@
 import styled from 'styled-components';
 
-export const Button = styled.button.attrs({
-  // style: (props) => props.customStyle || {},
-  // type: (props) => props.type,
-})`
+interface ButtonProps {
+  type?: string;
+}
+
+export const Button = styled.button.attrs<ButtonProps>(
+  ({ type, disabled = false }) => ({
+    // style: (props) => props.customStyle || {},
+    disabled,
+    type: type ? type : 'button',
+  }),
+)<ButtonProps>`
   border-radius: 3px;
   background-color: #12aab3;
   color: #ffffff;
@@ -13,6 +20,10 @@ export const Button = styled.button.attrs({
   outline: none;
   margin-right: 8px;
   cursor: pointer;
+  :disabled {
+    opacity: 0.4;
+    cursor: unset;
+  }
 `;
 
 export const FlatButton = styled.button.attrs({
