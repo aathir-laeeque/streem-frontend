@@ -4,8 +4,8 @@ export const Wrapper = styled.div`
   grid-area: workarea;
 
   background-color: #ecedf1;
-  border-top-left-radius: 20px;
-  border-top: 1.5px solid rgb(184, 184, 184);
+  border-top: 1.25px solid rgb(184, 184, 184);
+  border-left: 0.75px solid rgba(0, 0, 0, 0.14);
   padding: 10px 8px 0 12px;
   overflow: hidden;
 `;

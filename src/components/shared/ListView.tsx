@@ -35,7 +35,6 @@ const Wrapper = styled.div.attrs({})`
     padding: 8px 16px;
     align-items: center;
     border-top: 1px solid #dadada;
-    border-top-left-radius: 10px;
   }
 
   .list-header-columns {
