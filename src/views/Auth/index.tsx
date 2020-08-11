@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import Login from './Login';
 import Locked from './Locked';
 import Forgot from './Forgot';
-import Sent from './Sent';
 import Register from './Register';
 import whiteLogo from '#assets/images/streem-logo-white.png';
 import mainBackground from '#assets/images/main-background.png';
@@ -30,39 +29,39 @@ const Wrapper = styled.div`
   .left {
     flex: 6;
     background-image: url(${mainBackground});
+
+    .tagline {
+      margin-top: 16px;
+      font-size: 64px;
+      font-weight: 200;
+      text-align: center;
+      color: #fff;
+    }
   }
 
   .right {
     flex: 4;
     background-image: url(${loginBackground});
-  }
 
-  .tagline {
-    margin-top: 16px;
-    font-size: 64px;
-    font-weight: 200;
-    text-align: center;
-    color: #fff;
-  }
+    .credit-view {
+      bottom: 24px;
+      position: absolute;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
 
-  .credit-view {
-    bottom: 24px;
-    position: absolute;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
+      div {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.5;
+        letter-spacing: 0.15px;
+        color: #999999;
+      }
 
-    div {
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 1.5;
-      letter-spacing: 0.15px;
-      color: #999999;
-    }
-
-    img {
-      margin-top: 8px;
-      width: 100%;
+      img {
+        margin-top: 8px;
+        width: 100%;
+      }
     }
   }
 `;
@@ -78,7 +77,6 @@ const AuthView: FC<AuthViewProps> = () => (
         <Register path="register/:name/:email" />
         <Locked path="locked" />
         <Forgot path="forgot" />
-        <Sent path="sent" />
         <Login path="/*" />
       </Router>
       <div className="credit-view">

@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 
 type Props = RouteComponentProps & {
   as: FC;
+  isProtected?: boolean;
 };
 
 const SessionStates = {
@@ -11,18 +12,28 @@ const SessionStates = {
   LOCKED: 'LOCKED',
 };
 
-export const ProtectedRoute: FC<Props> = ({ as: Component, ...props }) => {
+export const ProtectedRoute: FC<Props> = ({
+  as: Component,
+  isProtected = true,
+  ...props
+}) => {
   const { ...rest } = props;
 
   // TODO Update From Store
-  const currentState = SessionStates.ACTIVE;
+  const currentState = SessionStates.UNACTIVE;
 
-  console.log('currentState', currentState);
+  if (!isProtected) {
+    switch (currentState) {
+      case SessionStates.ACTIVE:
+        return <Redirect from="" to="/" noThrow />;
+      default:
+        return <Component {...rest} />;
+    }
+  }
+
   switch (currentState) {
     case SessionStates.ACTIVE:
       return <Component {...rest} />;
-    case SessionStates.UNACTIVE:
-      return <Redirect from="" to="/auth/register" noThrow />;
     case SessionStates.LOCKED:
       return <Redirect from="" to="/auth/locked" noThrow />;
     default:

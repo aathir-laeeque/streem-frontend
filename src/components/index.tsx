@@ -9,6 +9,8 @@ export { BaseModal } from './shared/BaseModal';
 export { Button, FlatButton } from './shared/Button';
 export { ProtectedRoute } from './shared/ProtectedRoute';
 export { FloatInput } from './shared/FloatInput';
+export { Terms } from './shared/Terms';
+export { Card } from './shared/Card';
 export { LabeledInput } from './shared/LabeledInput';
 export { Checkbox } from './shared/Checkbox';
 export { default as CheckboxWithLabel } from './shared/CheckboxWithLabel';

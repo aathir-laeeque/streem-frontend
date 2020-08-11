@@ -20,7 +20,7 @@ const App: FC = () => {
   return (
     <Provider store={store}>
       <Router style={{ height: 'inherit', width: 'inherit' }} basepath="/">
-        <AuthView path="auth/*" />
+        <ProtectedRoute isProtected={false} as={AuthView} path="auth/*" />
         <ProtectedRoute as={HomeView} path="/*" />
       </Router>
       <Notification
