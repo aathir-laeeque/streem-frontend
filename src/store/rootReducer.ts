@@ -9,6 +9,8 @@ import { PropertiesReducer } from './properties/reducer';
 import { UsersReducer } from './users/reducer';
 import { FacilitiesReducer } from './facilities/reducer';
 
+import { newComposerReducer } from '#views/Checklists/NewComposer/composer.reducer';
+
 export const rootReducer = combineReducers({
   checklistListView: ChecklistListViewReducer,
   checklist: ChecklistReducer,
@@ -18,4 +20,6 @@ export const rootReducer = combineReducers({
   users: UsersReducer,
   facilities: FacilitiesReducer,
   auth: AuthReducer,
+
+  newComposer: newComposerReducer,
 });

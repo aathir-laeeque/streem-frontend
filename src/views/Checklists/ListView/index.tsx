@@ -25,7 +25,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   const dispatch = useDispatch();
 
   const selectChecklist = (id: string | number) =>
-    navigate(`/checklists/${id}`);
+    navigate(`/checklists/new/${id}`);
 
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(
     null,

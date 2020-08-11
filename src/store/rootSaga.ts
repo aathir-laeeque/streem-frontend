@@ -10,6 +10,8 @@ import { PropertiesSaga } from './properties/saga';
 import { UsersSaga } from './users/saga';
 import { FacilitiesSaga } from './facilities/saga';
 
+import { NewComposerSaga } from '#views/Checklists/NewComposer/composer.saga';
+
 export function* rootSaga() {
   yield all([
     // fork all sagas here
@@ -22,5 +24,8 @@ export function* rootSaga() {
     fork(FacilitiesSaga),
     fork(UserAccessSaga),
     fork(ComposerSaga),
+    // fork(ComposerSaga),
+
+    fork(NewComposerSaga),
   ]);
 }
