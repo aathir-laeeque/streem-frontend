@@ -26,7 +26,7 @@ const StepMedia: FC<StepMediaProps> = ({ medias }) => {
             key={index}
             onClick={() => setActiveMedia(media)}
             {...(activeMedia === media && {
-              style: { borderColor: '#12aab3' },
+              style: { borderColor: '#1d84ff' },
             })}
           >
             <img src={media.link} />
@@ -38,7 +38,7 @@ const StepMedia: FC<StepMediaProps> = ({ medias }) => {
         ))}
 
         <div className="upload-button">
-          <Publish className="icon" style={{ color: '#12aab3' }} />
+          <Publish className="icon" style={{ color: '#1d84ff' }} />
         </div>
       </div>
     </Wrapper>

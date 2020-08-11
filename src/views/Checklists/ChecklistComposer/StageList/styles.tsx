@@ -32,7 +32,7 @@ export const Wrapper = styled.div.attrs({
       padding: 8px;
 
       &-active {
-        border-color: #12aab3;
+        border-color: #1d84ff;
       }
 
       :last-child {

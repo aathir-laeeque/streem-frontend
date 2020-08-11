@@ -15,7 +15,9 @@ export const ProtectedRoute: FC<Props> = ({ as: Component, ...props }) => {
   const { ...rest } = props;
 
   // TODO Update From Store
-  const currentState = SessionStates.UNACTIVE;
+  const currentState = SessionStates.ACTIVE;
+
+  console.log('currentState', currentState);
   switch (currentState) {
     case SessionStates.ACTIVE:
       return <Component {...rest} />;
@@ -24,6 +26,6 @@ export const ProtectedRoute: FC<Props> = ({ as: Component, ...props }) => {
     case SessionStates.LOCKED:
       return <Redirect from="" to="/auth/locked" noThrow />;
     default:
-      return <Redirect from="" to="/auth/register" noThrow />;
+      return <Redirect from="" to="/auth/login" noThrow />;
   }
 };

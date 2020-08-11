@@ -12,7 +12,7 @@ export const Button = styled.button.attrs<ButtonProps>(
   }),
 )<ButtonProps>`
   border-radius: 3px;
-  background-color: #12aab3;
+  background-color: #1d84ff;
   color: #ffffff;
   line-height: 0.75;
   padding: 10px 16px;
@@ -31,8 +31,8 @@ export const FlatButton = styled.button.attrs({
 })`
   border-radius: 3px;
   background-color: #fff;
-  border: 1px solid #12aab3;
-  color: #12aab3;
+  border: 1px solid #1d84ff;
+  color: #1d84ff;
   display: flex;
   align-items: center;
   line-height: 0.75;

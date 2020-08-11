@@ -43,7 +43,7 @@ export const CreateJobModal: FC<CreateJobModalProps> = ({
           closeModal();
         }}
         modalFooterOptions={
-          <span style={{ color: `#12aab3`, fontWeight: 600, fontSize: 12 }}>
+          <span style={{ color: `#1d84ff`, fontWeight: 600, fontSize: 12 }}>
             Schedule Job
           </span>
         }

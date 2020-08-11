@@ -49,7 +49,7 @@ const Wrapper = styled.div.attrs({
 
   /* When the checkbox is checked, add a blue background */
   .container input:checked ~ .checkmark {
-    background-color: #12aab3;
+    background-color: #1d84ff;
   }
 
   /* Create the checkmark/indicator (hidden when not checked) */

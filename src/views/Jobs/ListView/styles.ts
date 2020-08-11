@@ -14,8 +14,8 @@ export const Composer = styled.div`
   }
 
   .tab-active {
-    border-bottom: 2px solid #12aab3;
-    color: #12aab3;
+    border-bottom: 2px solid #1d84ff;
+    color: #1d84ff;
     font-weight: 600;
   }
 

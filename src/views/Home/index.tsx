@@ -6,6 +6,7 @@ import {
   DashboardView,
   JobsView,
   ReportsView,
+  UserAccessView,
 } from '#views';
 import { Router, RouteComponentProps } from '@reach/router';
 import React, { FC } from 'react';
@@ -22,6 +23,7 @@ const HomeView: FC<RouteComponentProps> = () => {
           <ChecklistView path="checklists/*" />
           <ReportsView path="reports/*" />
           <JobsView path="jobs/*" />
+          <UserAccessView path="user-access/*" />
         </Router>
       </WorkArea>
     </DashboardLayout>

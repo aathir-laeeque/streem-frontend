@@ -3,6 +3,7 @@ import { LabeledInput, Button } from '#components';
 import { RegisterProps } from './types';
 import styled from 'styled-components';
 import { Visibility } from '@material-ui/icons';
+import { Link } from '@reach/router';
 import { useForm, ValidationRules } from 'react-hook-form';
 
 const Wrapper = styled.div`
@@ -49,7 +50,7 @@ const Wrapper = styled.div`
       text-align: center;
     }
 
-    a {
+    .link {
       color: #1d84ff;
       text-decoration: unset;
     }
@@ -165,7 +166,9 @@ const Register: FC<RegisterProps> = ({ name, email }) => {
             />
           </div>
           <div className="row right-align">
-            <a href="/auth/login">Not you?</a>
+            <Link className="link" to="/auth/login">
+              Not you?
+            </Link>
           </div>
           <div className="row">
             <LabeledInput

@@ -1,5 +1,6 @@
 import { AccountCircle, KeyboardArrowDown } from '@material-ui/icons';
 import React, { FC } from 'react';
+import { navigate } from '@reach/router';
 
 import MemoStreemLogo from '../../assets/svg/StreemLogo';
 import { ImageWrapper } from '../../styles/ImageWrapper';
@@ -11,10 +12,10 @@ const Header: FC = () => {
       <ImageWrapper>
         <MemoStreemLogo fontSize={110} />
       </ImageWrapper>
-      <HeaderMenu>
+      <HeaderMenu onClick={() => navigate('user-access')}>
         <AccountCircle style={{ color: '#999999' }} />
         <MenuText>Account</MenuText>
-        <KeyboardArrowDown style={{ color: '#12aab3' }} />
+        <KeyboardArrowDown style={{ color: '#1d84ff' }} />
       </HeaderMenu>
     </Wrapper>
   );

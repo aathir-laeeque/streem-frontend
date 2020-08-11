@@ -3,6 +3,7 @@ import { LabeledInput, Button } from '#components';
 import { LockedProps } from './types';
 import styled from 'styled-components';
 import { Visibility } from '@material-ui/icons';
+import { Link } from '@reach/router';
 import { useForm } from 'react-hook-form';
 
 const Wrapper = styled.div`
@@ -49,7 +50,7 @@ const Wrapper = styled.div`
       text-align: center;
     }
 
-    a {
+    .link {
       color: #1d84ff;
       text-decoration: unset;
     }
@@ -144,7 +145,9 @@ const Locked: FC<LockedProps> = () => {
             />
           </div>
           <div className="row right-align">
-            <a href="#">Forgot password?</a>
+            <Link className="link" to="forgot">
+              Forgot password?
+            </Link>
           </div>
           <div className="row" style={{ paddingTop: '20px' }}>
             <Button className="primary-button" type="submit" disabled>

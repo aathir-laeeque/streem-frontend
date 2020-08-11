@@ -47,7 +47,7 @@ const Wrapper = styled.div.attrs({})`
 
     .input-active {
       border: none;
-      border-bottom: 2px solid #12aab3;
+      border-bottom: 2px solid #1d84ff;
       ::-webkit-input-placeholder {
         color: #bababa;
       }
@@ -141,7 +141,7 @@ export const FloatInput: FC<FloatInputProps> = ({
       <div className="wrapper">
         <label
           style={{
-            color: error ? '#ff6b6b' : isActive ? '#12aab3' : '#666666',
+            color: error ? '#ff6b6b' : isActive ? '#1d84ff' : '#666666',
             ...opacity,
           }}
           className={className}
@@ -160,7 +160,7 @@ export const FloatInput: FC<FloatInputProps> = ({
           type="text"
           style={{
             opacity: disabled ? 0.4 : 1,
-            borderColor: error ? '#ff6b6b' : isActive ? '#12aab3' : '#666666',
+            borderColor: error ? '#ff6b6b' : isActive ? '#1d84ff' : '#666666',
           }}
           disabled={disabled || false}
         />

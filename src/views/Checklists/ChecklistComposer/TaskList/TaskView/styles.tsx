@@ -49,13 +49,13 @@ export const Wrapper = styled.li.attrs({
       height: max-content;
 
       &-active {
-        border-color: #12aab3;
+        border-color: #1d84ff;
       }
 
       .complete-task {
         font-size: 20px;
         outline: none;
-        border: 1px solid #12aab3;
+        border: 1px solid #1d84ff;
         border-radius: 5px;
         background: none;
         display: flex;
@@ -63,10 +63,10 @@ export const Wrapper = styled.li.attrs({
         justify-content: center;
         cursor: pointer;
         margin-top: 24px;
-        color: #12aab3;
+        color: #1d84ff;
 
         > .icon {
-          color: #12aab3;
+          color: #1d84ff;
         }
       }
     }
@@ -113,7 +113,7 @@ export const HeaderWrapper = styled.div.attrs(
     width: 100%;
 
     :focus {
-      border-bottom-color: #12aab3;
+      border-bottom-color: #1d84ff;
     }
 
     :disabled {

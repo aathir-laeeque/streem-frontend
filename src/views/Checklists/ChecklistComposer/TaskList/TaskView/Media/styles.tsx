@@ -47,7 +47,7 @@ export const Wrapper = styled.div.attrs({
         flex-wrap: wrap;
 
         .upload-button {
-          border: 1px solid #12aab3;
+          border: 1px solid #1d84ff;
           border-radius: 50%;
           height: 48px;
           width: 48px;

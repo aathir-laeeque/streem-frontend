@@ -16,8 +16,8 @@ export const Wrapper = styled.div`
     font-style: normal;
     line-height: 0.75;
     letter-spacing: normal;
-    color: #12aab3;
-    border-bottom: 2px solid #12aab3;
+    color: #1d84ff;
+    border-bottom: 2px solid #1d84ff;
     padding: 18px 32px;
   }
 

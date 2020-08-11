@@ -15,7 +15,7 @@ export const HeaderMenu = styled.div`
 `;
 
 export const MenuText = styled.span`
-  color: #12aab3;
+  color: #1d84ff;
   font-family: 'Open Sans', sans-serif;
   padding: 0 10px 0 7px;
 `;

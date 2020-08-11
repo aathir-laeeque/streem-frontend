@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import { LabeledInput, Button } from '#components';
 import { LoginProps } from './types';
 import styled from 'styled-components';
+import { Link } from '@reach/router';
 import { Visibility } from '@material-ui/icons';
 import { useForm } from 'react-hook-form';
 
@@ -49,7 +50,7 @@ const Wrapper = styled.div`
       text-align: center;
     }
 
-    a {
+    .link {
       color: #1d84ff;
       text-decoration: unset;
     }
@@ -139,7 +140,9 @@ const Login: FC<LoginProps> = () => {
             />
           </div>
           <div className="row right-align">
-            <a href="forgot">Forgot password?</a>
+            <Link className="link" to="forgot">
+              Forgot password?
+            </Link>
           </div>
           <div className="row" style={{ paddingTop: '20px' }}>
             <Button className="primary-button" type="submit">
@@ -148,8 +151,11 @@ const Login: FC<LoginProps> = () => {
           </div>
         </form>
         <span className="row terms">
-          Some text which can explain about <a href="#">terms & conditions</a>,
-          if any
+          Some text which can explain about{' '}
+          <Link className="link" to="#">
+            terms & conditions
+          </Link>
+          , if any
         </span>
       </div>
     </Wrapper>

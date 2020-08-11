@@ -85,7 +85,7 @@ const Wrapper = styled.div.attrs({})`
   .list-title {
     font-size: 16px;
     font-weight: 600;
-    color: #12aab3;
+    color: #1d84ff;
     cursor: pointer;
   }
 
@@ -136,7 +136,7 @@ const Wrapper = styled.div.attrs({})`
 
   .resetOption {
     cursor: pointer;
-    color: #12aab3;
+    color: #1d84ff;
     font-size: 11px;
     font-weight: 600;
     font-style: italic;
@@ -151,7 +151,7 @@ const Wrapper = styled.div.attrs({})`
     background-color: #f7f9fa;
     justify-content: center;
     display: flex;
-    color: #12aab3;
+    color: #1d84ff;
     margin-right: -5px;
     font-size: 13px;
     cursor: pointer;
@@ -194,7 +194,7 @@ export const ListView: FC<ListViewProps> = ({
     <Wrapper>
       <div className="list-options">
         <FlatButton>
-          Filters <ArrowDropDown style={{ fontSize: 20, color: '#12aab3' }} />
+          Filters <ArrowDropDown style={{ fontSize: 20, color: '#1d84ff' }} />
         </FlatButton>
         <div className="searchboxwrapper">
           <input className="searchbox" type="text" placeholder="Search" />

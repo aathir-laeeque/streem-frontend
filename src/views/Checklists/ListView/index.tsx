@@ -84,7 +84,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
                     <Settings
                       style={{
                         fontSize: 20,
-                        color: '#12aab3',
+                        color: '#1d84ff',
                         width: 40,
                         cursor: 'pointer',
                       }}

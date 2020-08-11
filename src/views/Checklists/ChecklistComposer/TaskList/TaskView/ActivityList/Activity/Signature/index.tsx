@@ -64,7 +64,7 @@ const Signature: FC<ActivityProps> = ({ activity }) => {
           <div className="icon-container">
             <MemoSignature
               fontSize={48}
-              color={!isChecklistEditable ? '#BDBDBD' : '#12aab3'}
+              color={!isChecklistEditable ? '#BDBDBD' : '#1d84ff'}
             />
           </div>
         )}

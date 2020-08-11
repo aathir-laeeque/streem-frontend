@@ -245,7 +245,7 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
         modalFooterOptions={
           <span
             style={{
-              color: `#12aab3`,
+              color: `#1d84ff`,
               cursor: 'pointer',
               fontWeight: 600,
               fontSize: 14,

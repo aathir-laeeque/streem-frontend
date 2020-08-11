@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { LabeledInput, Button } from '#components';
 import { ForgotProps } from './types';
 import styled from 'styled-components';
+import { Link, navigate } from '@reach/router';
 import { useForm } from 'react-hook-form';
 
 const Wrapper = styled.div`
@@ -102,6 +103,10 @@ const Forgot: FC<ForgotProps> = () => {
     console.log('Inputs', data);
   };
 
+  const goBack = () => {
+    navigate(-1);
+  };
+
   return (
     <Wrapper>
       <div className="card">
@@ -128,12 +133,15 @@ const Forgot: FC<ForgotProps> = () => {
             </Button>
           </div>
           <div className="row center-align">
-            <a href="javascript:window.history.back()">Go Back</a>
+            <a onClick={goBack}>Go Back</a>
           </div>
         </form>
         <span className="row terms">
-          Some text which can explain about <a href="#">terms & conditions</a>,
-          if any
+          Some text which can explain about{' '}
+          <Link className="link" to="./">
+            terms & conditions
+          </Link>
+          , if any
         </span>
       </div>
     </Wrapper>
