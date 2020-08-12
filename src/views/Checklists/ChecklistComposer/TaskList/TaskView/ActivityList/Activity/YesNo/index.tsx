@@ -68,14 +68,13 @@ const YesNoInteraction: FC<ActivityProps> = ({ activity }) => {
                 </div>
               ) : (
                 <button
-                  // className={`${el.type}-button`}
                   className={`${el.type}-button ${
                     get(activity?.response?.choices, [el.id]) === undefined
                       ? ''
                       : get(activity?.response?.choices, [el.id]) ===
                         ACTIVITY_SELECTIONS.SELECTED
                       ? 'filled'
-                      : 'hide'
+                      : ''
                   }`}
                   onClick={() =>
                     dispatch(
