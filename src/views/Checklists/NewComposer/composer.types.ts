@@ -10,7 +10,8 @@ import {
   resetComposer,
   setComposerState,
 } from './composer.action';
-import { StageListViewState } from './stageListView.reducer';
+import { StageListViewState } from './stageListView.types';
+import { TaskListViewState } from './taskListView.types';
 
 // TYPES RELATED TO THE COMPOSER
 export enum ComposerState {
@@ -39,6 +40,7 @@ export interface ComposerReducerState {
   error: unknown;
   loading: boolean;
   stages: StageListViewState;
+  tasks: TaskListViewState;
 }
 
 // TYPES RELATED TO COMPOSER ACTION
@@ -60,7 +62,7 @@ export type ComposerActionType = ReturnType<
   | typeof fetchChecklistError
   | typeof fetchChecklistOngoing
   | typeof fetchChecklistSuccess
+  | typeof fetchSelectedJob
   | typeof resetComposer
   | typeof setComposerState
-  | typeof fetchSelectedJob
 >;

@@ -21,8 +21,7 @@ const Composer: FC<ComposerProps> = ({
   jobId,
   composerState = ComposerState.EDIT,
 }) => {
-  console.log('composerState from the component :: ', composerState);
-  console.log('render count :: ', ++renderCount);
+  console.log('render count of main composer ::: ', ++renderCount);
 
   const dispatch = useDispatch();
 
@@ -30,10 +29,8 @@ const Composer: FC<ComposerProps> = ({
 
   useEffect(() => {
     if (checklistId) {
-      console.log('fetch the checklist with id : ', checklistId);
       dispatch(fetchChecklist(parseInt(checklistId)));
     } else if (jobId) {
-      console.log('fetch job with jobId : ', jobId);
       dispatch(fetchSelectedJob(parseInt(jobId)));
     }
 

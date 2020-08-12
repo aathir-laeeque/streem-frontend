@@ -1,18 +1,14 @@
 import { Reducer } from 'redux';
 
-import { Stage } from './checklist.types';
-import { StageListViewActionTypes } from './stageListView.types';
 import { ComposerAction } from './composer.types';
-
-export interface StageListViewState {
-  list: Stage[] | [];
-  activeStage: Stage | undefined;
-  activeStageId: Stage['id'] | undefined;
-}
+import {
+  StageListViewAction,
+  StageListViewActionTypes,
+  StageListViewState,
+} from './stageListView.types';
 
 export const initialState: StageListViewState = {
   list: [],
-  activeStage: undefined,
   activeStageId: undefined,
 };
 
@@ -22,7 +18,14 @@ const reducer: Reducer<StageListViewState, StageListViewActionTypes> = (
 ) => {
   switch (action.type) {
     case ComposerAction.FETCH_CHECKLIST_SUCCESS:
-      return { ...state, list: action.payload.checklist.stages };
+      return {
+        ...state,
+        list: action.payload.checklist?.stages || [],
+        activeStageId: (action.payload.checklist?.stages || [])[0].id,
+      };
+
+    case StageListViewAction.SET_ACTIVE_STAGE:
+      return { ...state, activeStageId: action.payload.stageId };
 
     default:
       return state;

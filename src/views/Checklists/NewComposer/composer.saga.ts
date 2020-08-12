@@ -1,6 +1,6 @@
 import { apiGetChecklist, apiGetSelectedJob } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 
 import {
   fetchChecklist,
@@ -10,10 +10,9 @@ import {
   fetchSelectedJob,
 } from './composer.action';
 import { ComposerAction } from './composer.types';
+import { TaskListViewSaga } from './taskListView.saga';
 
 function* fetchChecklistSaga({ payload }: ReturnType<typeof fetchChecklist>) {
-  console.log('payload from fetchChecklistSaga  :: >> ', payload);
-
   try {
     yield put(fetchChecklistOngoing());
 
@@ -34,8 +33,6 @@ function* fetchChecklistSaga({ payload }: ReturnType<typeof fetchChecklist>) {
 function* fetchSelectedJobSaga({
   payload,
 }: ReturnType<typeof fetchSelectedJob>) {
-  console.log('payload from fetchSelectedJobSaga : ', payload);
-
   try {
     yield put(fetchChecklistOngoing());
 
@@ -54,4 +51,9 @@ function* fetchSelectedJobSaga({
 export function* NewComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_CHECKLIST, fetchChecklistSaga);
   yield takeLatest(ComposerAction.FETCH_SELECTED_JOB, fetchSelectedJobSaga);
+
+  yield all([
+    // FORK ALL COMPOSER RELATED SAGA HERE
+    fork(TaskListViewSaga),
+  ]);
 }

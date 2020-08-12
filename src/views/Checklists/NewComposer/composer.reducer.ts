@@ -7,16 +7,22 @@ import {
 } from './composer.types';
 
 import {
-  initialState as StageListViewState,
+  initialState as StageListViewInitialState,
   stageListViewReducer,
 } from './stageListView.reducer';
+
+import {
+  initialState as TaskListViewInitialState,
+  taskListViewReducer,
+} from './taskListView.reducer';
 
 const initialState: ComposerReducerState = {
   checklist: undefined,
   composerState: ComposerState.EDIT,
   error: null,
   loading: false,
-  stages: StageListViewState,
+  stages: StageListViewInitialState,
+  tasks: TaskListViewInitialState,
 };
 
 const reducer: Reducer<ComposerReducerState, ComposerActionType> = (
@@ -33,6 +39,7 @@ const reducer: Reducer<ComposerReducerState, ComposerActionType> = (
         checklist: action.payload.checklist,
         loading: false,
         stages: stageListViewReducer(state.stages, action),
+        tasks: taskListViewReducer(state.tasks, action),
       };
 
     case ComposerAction.FETCH_CHECKLIST_ERROR:
@@ -45,7 +52,11 @@ const reducer: Reducer<ComposerReducerState, ComposerActionType> = (
       return initialState;
 
     default:
-      return state;
+      return {
+        ...state,
+        stages: stageListViewReducer(state.stages, action),
+        tasks: taskListViewReducer(state.tasks, action),
+      };
   }
 };
 
