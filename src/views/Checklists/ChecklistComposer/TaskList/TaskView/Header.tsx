@@ -25,13 +25,17 @@ const Header: FC<HeaderProps> = ({ task }) => {
   return (
     <HeaderWrapper isChecklistEditable={isChecklistEditable}>
       <div>
-        <input
-          type="text"
-          name="header"
-          value={task.name}
-          onChange={(e) => update({ name: e.target.value })}
-          {...(!isChecklistEditable && { disabled: true })}
-        />
+        {isChecklistEditable ? (
+          <input
+            type="text"
+            name="header"
+            value={task.name}
+            onChange={(e) => update({ name: e.target.value })}
+            // {...(!isChecklistEditable && { disabled: true })}
+          />
+        ) : (
+          <span>{task.name}</span>
+        )}
 
         <div
           className={`step-item-controls${!isChecklistEditable ? ' hide' : ''}`}

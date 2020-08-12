@@ -94,6 +94,11 @@ export const HeaderWrapper = styled.div.attrs(
   > div {
     background-color: #f4f4f4;
     flex: 1;
+
+    > span {
+      padding: 12px 16px;
+      display: block;
+    }
   }
 
   input {

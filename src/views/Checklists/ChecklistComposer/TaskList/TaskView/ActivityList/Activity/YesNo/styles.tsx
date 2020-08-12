@@ -46,12 +46,22 @@ export const Wrapper = styled.div`
         border: 1px solid #27ae60;
         border-radius: 4px;
         color: #27ae60;
+
+        &.filled {
+          background-color: #27ae60;
+          color: #ffffff;
+        }
       }
 
       .no-button {
         border: 1px solid #eb5757;
         border-radius: 4px;
         color: #eb5757;
+
+        &.filled {
+          background-color: #eb5757;
+          color: #ffffff;
+        }
       }
     }
   }
