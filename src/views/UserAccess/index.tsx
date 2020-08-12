@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { ListViewComponent } from '#components';
 import { User } from '#store/users/types';
+import { capitalize } from 'lodash';
 import { Properties } from '#store/properties/types';
 import { fetchUsers } from '#store/users/actions';
 import { useTypedSelector } from '#store';
@@ -42,7 +43,7 @@ const UserAccess: FC<UserAccessProps> = ({ navigate = navigateTo }) => {
       };
     });
 
-    const properties = [];
+    const properties: Properties = [];
 
     Object.keys(users[0].properties).forEach((pro, index) => {
       if (pro !== 'id' && pro !== 'firstName' && pro !== 'lastName') {
@@ -56,30 +57,6 @@ const UserAccess: FC<UserAccessProps> = ({ navigate = navigateTo }) => {
       }
     });
 
-    // const properties: Properties = [
-    //   {
-    //     id: 4,
-    //     name: 'EMAIL ID',
-    //     placeHolder: 'Email id',
-    //     orderTree: 1,
-    //     mandatory: true,
-    //   },
-    //   {
-    //     id: 5,
-    //     name: 'ROLE',
-    //     placeHolder: 'Email id',
-    //     orderTree: 2,
-    //     mandatory: true,
-    //   },
-    //   {
-    //     id: 6,
-    //     name: 'LAST ACTIVE',
-    //     placeHolder: 'Email id',
-    //     orderTree: 3,
-    //     mandatory: true,
-    //   },
-    // ];
-
     return (
       <Composer>
         <ListViewComponent
@@ -88,7 +65,7 @@ const UserAccess: FC<UserAccessProps> = ({ navigate = navigateTo }) => {
           isLast={pageable.last}
           currentPage={pageable.page}
           data={users}
-          primaryButtonText="Add User"
+          primaryButtonText="Add a New User"
           beforeColumns={[
             {
               header: 'EMPLOYEE',
@@ -104,7 +81,7 @@ const UserAccess: FC<UserAccessProps> = ({ navigate = navigateTo }) => {
                         className="list-title"
                         // onClick={() => selectUser(item)}
                       >
-                        {item.firstName} {item.lastName}
+                        {capitalize(item.firstName)} {capitalize(item.lastName)}
                       </span>
                     </div>
                   </div>

@@ -12,6 +12,7 @@ export const Wrapper = styled.div`
 export const HeaderMenu = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 export const MenuText = styled.span`

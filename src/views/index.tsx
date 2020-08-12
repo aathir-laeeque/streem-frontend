@@ -6,3 +6,4 @@ export { default as ReportsView } from './Reports';
 export { default as JobsView } from './Jobs';
 export { default as HomeView } from './Home';
 export { default as AuthView } from './Auth';
+export { default as ProfileView } from './Profile';

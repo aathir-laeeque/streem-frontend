@@ -7,6 +7,11 @@ export { default as ModalContainer } from './ModalContainer';
 export { useTabs } from './shared/useTabs';
 export { BaseModal } from './shared/BaseModal';
 export { Button, FlatButton } from './shared/Button';
+export {
+  NestedMenuItem as RightNestedMenuItem,
+  LeftNestedMenuItem,
+  LeftMenuItem,
+} from './shared/NestedMenuItem';
 export { ProtectedRoute } from './shared/ProtectedRoute';
 export { FloatInput } from './shared/FloatInput';
 export { Terms } from './shared/Terms';
