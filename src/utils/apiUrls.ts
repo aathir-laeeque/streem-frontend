@@ -31,3 +31,6 @@ export const apiExecuteActivity = () => `${baseUrl}/activities/execute`;
 
 export const apiCompleteTask = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}`;
+
+// Signature / File
+export const apiUploadFile = () => `${baseUrl}/files/`;

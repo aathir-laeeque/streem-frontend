@@ -23,7 +23,7 @@ const Header: FC = () => {
   return (
     <Wrapper>
       <ImageWrapper>
-        <MemoStreemLogo fontSize={110} />
+        <MemoStreemLogo fontSize={100} />
       </ImageWrapper>
       <HeaderMenu
         aria-controls="top-menu"

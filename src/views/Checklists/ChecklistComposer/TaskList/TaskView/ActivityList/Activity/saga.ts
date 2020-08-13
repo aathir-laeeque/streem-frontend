@@ -1,7 +1,16 @@
 import { apiExecuteActivity } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { call, takeLatest, select, put, delay } from 'redux-saga/effects';
+import {
+  call,
+  takeLatest,
+  select,
+  put,
+  delay,
+  all,
+  fork,
+} from 'redux-saga/effects';
 
+import { SignatureSaga } from './Signature/saga';
 import { executeActivity, updateActivity } from './actions';
 import { ActivityAction } from './types';
 import { RootState } from '#store/types';
@@ -37,4 +46,5 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
 export function* ActivitySaga() {
   yield takeLatest(ActivityAction.UPDATE_ACTIVITY, updateActivitySaga);
   yield takeLatest(ActivityAction.EXECUTE_ACTIVITY, executeActivitySaga);
+  yield all([fork(SignatureSaga)]);
 }

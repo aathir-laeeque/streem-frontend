@@ -5,8 +5,10 @@ import { ModalNames } from '#components/ModalContainer/types';
 import { useDispatch } from 'react-redux';
 import MemoSignature from '#assets/svg/Signature';
 import { ActivityProps } from '../types';
+import { uploadFile } from './actions';
 import { ChecklistState } from '#views/Checklists/types';
 import { useTypedSelector } from '#store';
+import { dataUriToBlob } from '#utils/dataUriToBlob';
 import { Wrapper } from './styles';
 
 const Signature: FC<ActivityProps> = ({ activity }) => {
@@ -14,11 +16,20 @@ const Signature: FC<ActivityProps> = ({ activity }) => {
   const isChecklistEditable =
     state !== ChecklistState.ADD_EDIT && state !== ChecklistState.EXECUTED;
 
-  const [imageData, setImageData] = useState<string | null>(null);
+  let image: string | null = null;
+  if (activity.response?.medias) image = activity.response?.medias[0].link;
+
+  const [imageData, setImageData] = useState<string | null>(image);
   const dispatch = useDispatch();
 
   const onAcceptSignature = (imageData: string) => {
-    if (imageData) setImageData(imageData);
+    if (imageData) {
+      const file = dataUriToBlob(imageData);
+      const formData = new FormData();
+      formData.append('file', file, 'image.jpg');
+      dispatch(uploadFile({ formData, activity }));
+      setImageData(imageData);
+    }
   };
 
   const openSignatureModal = () => {
