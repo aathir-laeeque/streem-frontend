@@ -1,5 +1,6 @@
 interface RequestOptions {
   data?: Record<string | number, any>;
+  formData?: FormData;
   params?: Record<string | number, any>;
   headers?: Record<string, string>;
 }
@@ -25,11 +26,12 @@ export const request = async (
     method,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
+      ...(!options?.formData && { 'Content-Type': 'application/json' }),
       ...options?.headers,
     },
     // TODO: check this when using POST request
     ...(options?.data && { body: JSON.stringify(options?.data) }),
+    ...(options?.formData && { body: options?.formData }),
   }).then(async (res) => {
     const resu = await res.json();
     return resu;

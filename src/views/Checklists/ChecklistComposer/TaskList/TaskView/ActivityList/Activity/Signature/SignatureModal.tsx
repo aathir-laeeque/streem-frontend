@@ -41,6 +41,10 @@ const Wrapper = styled.div.attrs({})`
   .sign-modal-body {
     padding: 40px 33px;
     height: 300px;
+
+    canvas {
+      border-radius: 4px;
+    }
   }
 
   .sign-modal-footer-buttons {

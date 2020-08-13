@@ -7,10 +7,11 @@ import Login from './Login';
 import Locked from './Locked';
 import Forgot from './Forgot';
 import Register from './Register';
-import whiteLogo from '#assets/images/streem-logo-white.png';
+import MemoStreemLogoWhite from '#assets/svg/StreemLogoWhite';
+import MemoLeucineLogo from '#assets/svg/LeucineLogo';
+import AuthBg from '#assets/svg/auth-bg.svg';
 import mainBackground from '#assets/images/main-background.png';
-import loginBackground from '#assets/images/login-module-background.png';
-import leucineLogo from '#assets/images/leucine-logo-colored.png';
+import loginBg from '#assets/svg/login-bg.svg';
 
 const Wrapper = styled.div`
   height: inherit;
@@ -28,7 +29,7 @@ const Wrapper = styled.div`
 
   .left {
     flex: 6;
-    background-image: url(${mainBackground});
+    background-image: url(${AuthBg});
 
     .tagline {
       margin-top: 16px;
@@ -41,7 +42,7 @@ const Wrapper = styled.div`
 
   .right {
     flex: 4;
-    background-image: url(${loginBackground});
+    background-image: url(${loginBg});
 
     .credit-view {
       bottom: 24px;
@@ -57,11 +58,6 @@ const Wrapper = styled.div`
         letter-spacing: 0.15px;
         color: #999999;
       }
-
-      img {
-        margin-top: 8px;
-        width: 100%;
-      }
     }
   }
 `;
@@ -69,7 +65,7 @@ const Wrapper = styled.div`
 const AuthView: FC<AuthViewProps> = () => (
   <Wrapper>
     <div className="sections left">
-      <img src={whiteLogo} style={{ width: '60%' }} />
+      <MemoStreemLogoWhite width="60%" height="20%" />
       <span className="tagline">A tagline, if required</span>
     </div>
     <div className="sections right">
@@ -81,7 +77,11 @@ const AuthView: FC<AuthViewProps> = () => (
       </Router>
       <div className="credit-view">
         <div>A Product By</div>
-        <img src={leucineLogo} />
+        <MemoLeucineLogo
+          height="28px"
+          width="auto"
+          style={{ marginTop: '8px' }}
+        />
       </div>
     </div>
   </Wrapper>
