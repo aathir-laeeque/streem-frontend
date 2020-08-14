@@ -13,6 +13,8 @@ interface LabeledInputProps {
 }
 
 const Wrapper = styled.div.attrs({})`
+  flex: 1;
+
   .wrapper {
     position: relative;
     display: flex;

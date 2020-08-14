@@ -1,13 +1,8 @@
 import React, { FC } from 'react';
 import { useTabs } from '#components';
 import { Composer } from './styles';
-import styled from 'styled-components';
+import MyProfile from './MyProfile';
 import { ProfileProps } from './types';
-
-const TabContent = styled.div`
-  display: flex;
-  flex: 1;
-`;
 
 const Profile: FC<ProfileProps> = () => {
   const passThroughTabContentProps = {};
@@ -15,7 +10,7 @@ const Profile: FC<ProfileProps> = () => {
     {
       label: 'My Profile',
       active: true,
-      TabContent,
+      TabContent: MyProfile,
       passThroughTabContentProps,
     },
   ]);

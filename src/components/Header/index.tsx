@@ -44,7 +44,7 @@ const Header: FC = () => {
       >
         <MenuItem
           onClick={() => {
-            navigate('profile');
+            navigate('/profile');
             handleClose();
           }}
         >
@@ -57,7 +57,7 @@ const Header: FC = () => {
         >
           <MenuItem
             onClick={() => {
-              navigate('user-access');
+              navigate('/user-access');
               handleClose();
             }}
           >
