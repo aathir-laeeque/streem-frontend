@@ -12,8 +12,8 @@ export const apiGetChecklist = (checklistId: number) =>
 // Job
 export const apiGetJobs = () => `${baseUrl}/jobs`;
 
-export const apiAssignUser = (jobId: string) =>
-  `${baseUrl}/jobs/${jobId}/assign`;
+export const apiAssignUser = (jobId: string, userId: string | number) =>
+  `${baseUrl}/jobs/${jobId}/users/${userId}`;
 
 export const apiUnAssignUser = (jobId: string, userId: string | number) =>
   `${baseUrl}/jobs/${jobId}/users/${userId}`;
