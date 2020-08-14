@@ -95,9 +95,8 @@ function* assignUserSaga({ payload }: ReturnType<typeof assignUser>) {
     const user = payload.user;
     const { data, errors }: ResponseObj<Job> = yield call(
       request,
-      'PUT',
-      apiAssignUser(id),
-      { data: user },
+      'POST',
+      apiAssignUser(id, user.id),
     );
     if (errors) {
       throw new Error(errors[0].message);
