@@ -3,8 +3,11 @@ import { ComposerActionType } from './composer.types';
 import { setActiveStage } from './stageListView.action';
 
 export interface StageListViewState {
-  list: Stage[] | [];
+  activeStage: Stage | undefined;
   activeStageId: Stage['id'] | undefined;
+
+  list: Stage[] | [];
+  listById: Record<Stage['id'], Stage>;
 }
 
 export enum StageListViewAction {

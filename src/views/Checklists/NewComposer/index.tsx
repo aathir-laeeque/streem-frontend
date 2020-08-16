@@ -2,6 +2,7 @@ import { useTypedSelector } from '#store';
 import { isEmpty } from 'lodash';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 
 import {
   fetchChecklist,
@@ -12,17 +13,23 @@ import {
 import Header from './composer.header';
 import { ComposerProps, ComposerState } from './composer.types';
 import StageListView from './StageListView';
-import { Wrapper } from './styles';
+import TaskListView from './TaskListView';
 
-let renderCount = 0;
+const Wrapper = styled.div`
+  display: grid;
+  grid-template-areas:
+    'header header'
+    'stagelist steplist';
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: auto 1fr;
+  height: inherit;
+`;
 
 const Composer: FC<ComposerProps> = ({
   checklistId,
   jobId,
   composerState = ComposerState.EDIT,
 }) => {
-  console.log('render count of main composer ::: ', ++renderCount);
-
   const dispatch = useDispatch();
 
   const { loading, checklist } = useTypedSelector((state) => state.newComposer);
@@ -51,6 +58,8 @@ const Composer: FC<ComposerProps> = ({
         <Header />
 
         <StageListView />
+
+        <TaskListView />
       </Wrapper>
     );
   } else {

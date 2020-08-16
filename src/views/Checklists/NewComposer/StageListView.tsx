@@ -52,7 +52,7 @@ const Wrapper = styled.div.attrs({
       }
 
       &.active {
-        border-color: #12aab3;
+        border-color: #1d84ff;
       }
 
       * {
@@ -70,10 +70,12 @@ const Wrapper = styled.div.attrs({
       input {
         border: none;
         outline: none;
+        /* border: 1px solid transparent; */
 
-        :disabled {
-          cursor: pointer;
-        }
+        /* :focus,
+        :active {
+          border-color: #1d84ff;
+        } */
       }
     }
   }
@@ -91,7 +93,6 @@ const StageList: FC = () => {
 
   const { control, register, getValues } = useForm<{ stages: Stage[] }>({
     defaultValues: { stages: list },
-    mode: 'onChange',
   });
 
   const { fields } = useFieldArray({ control, name: 'stages' });
@@ -99,35 +100,41 @@ const StageList: FC = () => {
   return (
     <Wrapper>
       <ol className="stage-list">
-        {fields.map((field, index) => (
-          <li
-            key={field.id}
-            className={`stage-list-item ${
-              field.id === activeStageId ? 'active' : ''
-            }`}
-            // TODO: look in to this type error
-            onClick={() => dispatch(setActiveStage(field.id))}
-          >
-            {isEditing ? (
-              <input
-                name={`stages[${index}].name`}
-                ref={register()}
-                defaultValue={field.name}
-                // TODO: make api call to update data in the BE
-                onChange={debounce(() => {
-                  const updatedValue = getValues()['stages'][index];
-                  console.log('value from onChange event :: ', updatedValue);
-                }, 500)}
-                onBlur={debounce(() => {
-                  const updatedValue = getValues()['stages'][index];
-                  console.log('value from onBlur event :: ', updatedValue);
-                }, 500)}
-              />
-            ) : (
-              <span>{field.name}</span>
-            )}
-          </li>
-        ))}
+        {fields.map((field, index) => {
+          const isStageActive = field.id === activeStageId;
+
+          return (
+            <li
+              key={field.id}
+              className={`stage-list-item ${isStageActive ? 'active' : ''}`}
+              // TODO: look in to this type error
+              onClick={() => {
+                if (!isStageActive) {
+                  dispatch(setActiveStage(parseInt(field?.id ?? '')));
+                }
+              }}
+            >
+              {isEditing ? (
+                <input
+                  name={`stages[${index}].name`}
+                  ref={register()}
+                  defaultValue={field.name}
+                  // TODO: make api call to update data in the BE
+                  onChange={debounce(() => {
+                    const updatedValue = getValues()['stages'][index];
+                    console.log('value from onChange event :: ', updatedValue);
+                  }, 500)}
+                  onBlur={debounce(() => {
+                    const updatedValue = getValues()['stages'][index];
+                    console.log('value from onBlur event :: ', updatedValue);
+                  }, 500)}
+                />
+              ) : (
+                <span>{field.name}</span>
+              )}
+            </li>
+          );
+        })}
       </ol>
     </Wrapper>
   );

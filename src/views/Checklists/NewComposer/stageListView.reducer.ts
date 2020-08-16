@@ -8,8 +8,11 @@ import {
 } from './stageListView.types';
 
 export const initialState: StageListViewState = {
-  list: [],
+  activeStage: undefined,
   activeStageId: undefined,
+
+  list: [],
+  listById: {},
 };
 
 const reducer: Reducer<StageListViewState, StageListViewActionTypes> = (
@@ -18,14 +21,22 @@ const reducer: Reducer<StageListViewState, StageListViewActionTypes> = (
 ) => {
   switch (action.type) {
     case ComposerAction.FETCH_CHECKLIST_SUCCESS:
+      const { stages = [] } = action.payload.checklist;
+
       return {
         ...state,
-        list: action.payload.checklist?.stages || [],
-        activeStageId: (action.payload.checklist?.stages || [])[0].id,
+        activeStage: stages[0],
+        activeStageId: stages[0].id,
+        list: stages,
+        listById: stages.reduce((acc, el) => ({ ...acc, [el.id]: el }), {}),
       };
 
     case StageListViewAction.SET_ACTIVE_STAGE:
-      return { ...state, activeStageId: action.payload.stageId };
+      return {
+        ...state,
+        activeStage: state.listById[action.payload.stageId],
+        activeStageId: action.payload.stageId,
+      };
 
     default:
       return state;
