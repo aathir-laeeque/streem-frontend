@@ -9,6 +9,7 @@ import { Button, FlatButton } from './Button';
 
 interface ListViewProps {
   primaryButtonText: string;
+  onPrimaryClick?: () => void;
   properties: Properties;
   data: Checklist[] | Job[];
   fetchData: (page: number, size: number) => void;
@@ -159,6 +160,7 @@ const Wrapper = styled.div.attrs({})`
 
 export const ListView: FC<ListViewProps> = ({
   primaryButtonText,
+  onPrimaryClick = () => console.log('clicked'),
   properties,
   data,
   fetchData,
@@ -200,7 +202,10 @@ export const ListView: FC<ListViewProps> = ({
           <Search className="searchsubmit" />
         </div>
         <span className="resetOption">Reset</span>
-        <Button style={{ marginLeft: `auto`, marginRight: 0 }}>
+        <Button
+          style={{ marginLeft: `auto`, marginRight: 0 }}
+          onClick={onPrimaryClick}
+        >
           {primaryButtonText}
         </Button>
       </div>

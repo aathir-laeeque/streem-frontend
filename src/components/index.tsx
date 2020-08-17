@@ -14,6 +14,8 @@ export {
 } from './shared/NestedMenuItem';
 export { ProtectedRoute } from './shared/ProtectedRoute';
 export { FloatInput } from './shared/FloatInput';
+export { Role } from './shared/Role';
+export { Thumbnail } from './shared/Thumbnail';
 export { Terms } from './shared/Terms';
 export { Card } from './shared/Card';
 export { LabeledInput } from './shared/LabeledInput';

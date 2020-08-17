@@ -1,12 +1,20 @@
 import { RouteComponentProps } from '@reach/router';
 import { User } from '#store/users/types';
-import { Pageable } from '#utils/globalTypes';
 
-export type UserAccessProps = RouteComponentProps;
+export type UserAccessViewProps = RouteComponentProps;
 
-export interface UserAccessState {
-  readonly list: User[] | undefined;
-  readonly pageable: Pageable | undefined | null;
-  readonly loading: boolean;
-  readonly error: any;
+export interface Properties {
+  [key: string]: string | undefined;
+}
+export interface Job {
+  id: number;
+  name?: string;
+  code: string;
+  properties?: Properties;
+  checklist: {
+    id: number;
+    name: string;
+  };
+  status: string;
+  users: User[];
 }

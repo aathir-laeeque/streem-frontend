@@ -102,5 +102,11 @@ export const Composer = styled.div`
       line-height: 22px;
       background-color: #1d84ff;
     }
+
+    .primary-button.flat {
+      background-color: transparent;
+      color: #1d84ff;
+      font-size: 16px;
+    }
   }
 `;
