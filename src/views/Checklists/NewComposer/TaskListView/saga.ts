@@ -8,13 +8,11 @@ import {
 import { setTasks } from './actions';
 import { ActivitySaga } from './TaskView/ActivityListView/Activity/saga';
 
-// import { setActiveStage } from '../StageListView/action';
-// function* setTasksSaga({ payload }: ReturnType<typeof setActiveStage>) {
 function* setTasksSaga() {
-  // console.log('payload from setTasksSaga  ::', payload);
-
   try {
-    const { activeStage: { tasks } = {} }: StageListViewState = yield select(
+    const {
+      activeStage: { tasks },
+    }: StageListViewState = yield select(
       (state: RootState) => state.newComposer.stages,
     );
 

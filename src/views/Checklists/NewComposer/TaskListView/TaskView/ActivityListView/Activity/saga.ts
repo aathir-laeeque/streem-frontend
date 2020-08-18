@@ -13,11 +13,10 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
 
     const { jobId } = yield select((state: RootState) => state.newComposer);
 
-    console.log('jobId :: ', jobId);
-
     const { data } = yield call(request, 'PUT', apiExecuteActivity(), {
       data: { jobId, activity },
     });
+
     console.log('data :: ', data);
   } catch (error) {
     console.log('error from executeActivitySaga :: ', error);

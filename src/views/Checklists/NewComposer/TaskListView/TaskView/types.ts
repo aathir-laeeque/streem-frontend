@@ -1,7 +1,6 @@
 import { Task } from '../../checklist.types';
 
 export interface TaskViewProps {
-  isActive: boolean;
   task: Task;
 }
 

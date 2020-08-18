@@ -6,7 +6,7 @@ import Header from './Header';
 import { Wrapper } from './styles';
 import { TaskViewProps } from './types';
 
-const TaskView: FC<TaskViewProps> = ({ task, isActive }) => {
+const TaskView: FC<TaskViewProps> = ({ task }) => {
   return (
     <Wrapper>
       <div className="position-control">
@@ -17,7 +17,7 @@ const TaskView: FC<TaskViewProps> = ({ task, isActive }) => {
         <ArrowDownwardOutlined className="icon icon-down" />
       </div>
 
-      <div className={`task${isActive ? ' active' : ''}`}>
+      <div className={`task`}>
         <Header task={task} />
 
         <div className="task-content">
@@ -27,7 +27,7 @@ const TaskView: FC<TaskViewProps> = ({ task, isActive }) => {
         <div className="task-completion-buttons">Task Completion Buttons</div>
       </div>
 
-      {isActive ? <div className="task-media">Task Media</div> : null}
+      <div className="task-media"></div>
     </Wrapper>
   );
 };

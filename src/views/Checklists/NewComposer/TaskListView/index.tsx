@@ -1,16 +1,9 @@
 import { useTypedSelector } from '#store/helpers';
-import React, { FC, useEffect, useState } from 'react';
-import {
-  FormProvider as TaskViewFormProvider,
-  useFieldArray,
-  useForm,
-} from 'react-hook-form';
+import React, { FC } from 'react';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
 
 import { Task } from '../checklist.types';
 import TaskView from './TaskView';
-import { setTaskActive } from './actions';
 
 const Wrapper = styled.div`
   display: grid;
@@ -61,10 +54,8 @@ const Wrapper = styled.div`
 const TaskListView: FC = () => {
   const {
     stages: { activeStage },
-    tasks: { activeTaskId, list },
+    tasks: { list },
   } = useTypedSelector((state) => state.newComposer);
-
-  const dispatch = useDispatch();
 
   return (
     <Wrapper>
@@ -73,16 +64,8 @@ const TaskListView: FC = () => {
 
       <ul className="tasks-list-container">
         {(list as Array<Task>).map((task, index) => (
-          <li
-            key={index}
-            className="tasks-list-item"
-            onClick={() => {
-              if (activeTaskId !== task.id) {
-                dispatch(setTaskActive(task.id));
-              }
-            }}
-          >
-            <TaskView task={task} isActive={task.id === activeTaskId} />
+          <li key={index} className="tasks-list-item">
+            <TaskView task={task} />
           </li>
         ))}
       </ul>

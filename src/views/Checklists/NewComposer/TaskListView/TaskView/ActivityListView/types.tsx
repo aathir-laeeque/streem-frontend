@@ -1,11 +1,12 @@
-import { setActiveActivity } from './actions';
+// import { setActiveActivity } from './actions';
+import { Activity } from '../../../checklist.types';
 
 export interface ActivityListViewProps {
-  taskIndex: number;
+  activities: Activity[];
 }
 
-export enum ActivityListActions {
-  SET_ACTIVE_ACTIVITY = '@@composer/activity_list/SET_ACTIVE_ACTIVITY',
-}
+// export enum ActivityListActions {
+//   SET_ACTIVE_ACTIVITY = '@@composer/activity_list/SET_ACTIVE_ACTIVITY',
+// }
 
-export type ActivityListActionType = ReturnType<typeof setActiveActivity>;
+// export type ActivityListActionType = ReturnType<typeof setActiveActivity>;

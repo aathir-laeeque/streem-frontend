@@ -1,9 +1,7 @@
 import { Activity } from '../../../../checklist.types';
 
 export interface ActivityProps {
-  activityIndex: number;
-  taskIndex: number;
-  activity: any;
+  activity: Activity;
 }
 
 export enum ActivityActions {
@@ -16,9 +14,3 @@ export enum ActivitySelections {
 }
 
 export type ExecuteActivityArguments = Activity;
-
-export interface UpdateActivityArguments {
-  activity: Partial<Activity>;
-  activityIndex: number;
-  taskIndex: number;
-}
