@@ -1,12 +1,18 @@
+import { useTypedSelector } from '#store';
 import { ArrowDownwardOutlined, ArrowUpwardOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
 
+import { ComposerState } from '../../composer.types';
 import ActivityListView from './ActivityListView';
 import Header from './Header';
 import { Wrapper } from './styles';
 import { TaskViewProps } from './types';
 
 const TaskView: FC<TaskViewProps> = ({ task }) => {
+  const { composerState } = useTypedSelector((state) => state.newComposer);
+
+  const isEditing = composerState === ComposerState.EDIT;
+
   return (
     <Wrapper>
       <div className="position-control">
@@ -24,7 +30,9 @@ const TaskView: FC<TaskViewProps> = ({ task }) => {
           <ActivityListView activities={task.activities} />
         </div>
 
-        <div className="task-completion-buttons">Task Completion Buttons</div>
+        <div className="task-completion-buttons">
+          {isEditing ? '' : 'Task Completion Buttons'}
+        </div>
       </div>
 
       <div className="task-media"></div>

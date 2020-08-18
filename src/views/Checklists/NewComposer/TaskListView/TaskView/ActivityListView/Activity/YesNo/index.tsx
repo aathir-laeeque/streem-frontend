@@ -1,7 +1,6 @@
 import { useTypedSelector } from '#store';
-import { customOnChange } from '#utils/formEvents';
 import { ComposerState } from '#views/Checklists/NewComposer/composer.types';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { executeActivity } from '../actions';
@@ -12,6 +11,8 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
   const { composerState } = useTypedSelector((state) => state.newComposer);
 
   const dispatch = useDispatch();
+
+  const [stateActivity, setStateActivity] = useState(activity);
 
   const isEditing = composerState === ComposerState.EDIT;
 
@@ -25,21 +26,15 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
               className="new-form-field-input"
               type="text"
               name="label"
-              value={activity.label}
-              onChange={(e) => {
-                e.persist();
-                customOnChange(e, (event) => {
-                  console.log(
-                    'event.target.value from activity label :: ',
-                    event.target.value,
-                  );
-                });
-              }}
+              value={stateActivity.label}
+              onChange={(e) =>
+                setStateActivity({ ...stateActivity, label: e.target.value })
+              }
             />
           </div>
 
           <div className="buttons-container">
-            {activity.data
+            {stateActivity.data
               .sort((a, b) => (a.type > b.type ? -1 : 1))
               .map((el, index) => (
                 <div key={index} className="button-item">
@@ -54,12 +49,12 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
                       name={`data[${index}].name`}
                       value={el.name}
                       onChange={(e) => {
-                        e.persist();
-                        customOnChange(e, (event) => {
-                          console.log(
-                            `event.target.value from activity data at index ${index}:: `,
-                            event.target.value,
-                          );
+                        setStateActivity({
+                          ...stateActivity,
+                          data: stateActivity.data.map((ele) => ({
+                            ...ele,
+                            ...(ele.id === el.id && { name: e.target.value }),
+                          })),
                         });
                       }}
                     />
@@ -70,10 +65,10 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
         </>
       ) : (
         <>
-          <div>{activity.label}</div>
+          <div>{stateActivity.label}</div>
 
           <div className="buttons-container">
-            {activity.data
+            {stateActivity.data
               .sort((a, b) => (a.type > b.type ? -1 : 1))
               .map((el, index) => (
                 <div key={index} className="button-item editing">
@@ -88,7 +83,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
                       dispatch(
                         executeActivity({
                           ...activity,
-                          data: activity.data.map((x) => ({
+                          data: stateActivity.data.map((x) => ({
                             ...x,
                             status:
                               x.id === el.id
