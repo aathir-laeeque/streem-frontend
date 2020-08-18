@@ -1,11 +1,11 @@
 import { Reducer } from 'redux';
 
-import { ComposerAction } from './composer.types';
+import { ComposerAction } from '../composer.types';
 import {
   StageListViewAction,
   StageListViewActionTypes,
   StageListViewState,
-} from './stageListView.types';
+} from './types';
 
 export const initialState: StageListViewState = {
   activeStage: undefined,

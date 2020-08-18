@@ -13,7 +13,7 @@ import { newComposerReducer } from '#views/Checklists/NewComposer/composer.reduc
 
 export const rootReducer = combineReducers({
   checklistListView: ChecklistListViewReducer,
-  checklist: ChecklistReducer,
+  // checklist: checklistReducer,
   jobListView: JobListViewReducer,
   modalContainer: ModalContainerReducer,
   properties: PropertiesReducer,

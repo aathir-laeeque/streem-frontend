@@ -10,7 +10,7 @@ import {
   fetchSelectedJob,
 } from './composer.action';
 import { ComposerAction } from './composer.types';
-import { TaskListViewSaga } from './taskListView.saga';
+import { TaskListViewSaga } from './TaskListView/saga';
 
 function* fetchChecklistSaga({ payload }: ReturnType<typeof fetchChecklist>) {
   try {

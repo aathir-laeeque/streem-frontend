@@ -1,14 +1,16 @@
 import { useTypedSelector } from '#store/helpers';
-import React, { FC, useEffect } from 'react';
-import styled from 'styled-components';
+import React, { FC, useEffect, useState } from 'react';
 import {
+  FormProvider as TaskViewFormProvider,
   useFieldArray,
   useForm,
-  FormProvider as TaskViewFormProvider,
 } from 'react-hook-form';
+import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
 
-import { Task } from './checklist.types';
+import { Task } from '../checklist.types';
 import TaskView from './TaskView';
+import { setTaskActive } from './actions';
 
 const Wrapper = styled.div`
   display: grid;
@@ -62,38 +64,28 @@ const TaskListView: FC = () => {
     tasks: { activeTaskId, list },
   } = useTypedSelector((state) => state.newComposer);
 
-  const formMethods = useForm<{ tasks: Task[] }>({
-    defaultValues: { tasks: list },
-  });
-
-  const { fields, ...fieldArrayMethods } = useFieldArray({
-    control: formMethods.control,
-    name: 'tasks',
-  });
-
-  useEffect(() => {
-    // formMethods.setValue('tasks', list);
-    formMethods.reset({ tasks: list });
-  }, [list]);
+  const dispatch = useDispatch();
 
   return (
     <Wrapper>
       <span className="stage-number">Stage {activeStage?.orderTree}</span>
       <span className="stage-name">{activeStage?.name}</span>
 
-      <TaskViewFormProvider {...formMethods} {...fieldArrayMethods}>
-        <ul className="tasks-list-container">
-          {fields.map((field, index) => (
-            <li key={index} className="tasks-list-item">
-              <TaskView
-                task={field}
-                isActive={field.id === activeTaskId}
-                index={index}
-              />
-            </li>
-          ))}
-        </ul>
-      </TaskViewFormProvider>
+      <ul className="tasks-list-container">
+        {(list as Array<Task>).map((task, index) => (
+          <li
+            key={index}
+            className="tasks-list-item"
+            onClick={() => {
+              if (activeTaskId !== task.id) {
+                dispatch(setTaskActive(task.id));
+              }
+            }}
+          >
+            <TaskView task={task} isActive={task.id === activeTaskId} />
+          </li>
+        ))}
+      </ul>
     </Wrapper>
   );
 };

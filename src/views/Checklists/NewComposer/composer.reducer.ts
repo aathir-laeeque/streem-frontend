@@ -9,17 +9,18 @@ import {
 import {
   initialState as StageListViewInitialState,
   stageListViewReducer,
-} from './stageListView.reducer';
+} from './StageListView/reducer';
 
 import {
   initialState as TaskListViewInitialState,
   taskListViewReducer,
-} from './taskListView.reducer';
+} from './TaskListView/reducer';
 
 const initialState: ComposerReducerState = {
   checklist: undefined,
   composerState: ComposerState.EDIT,
   error: null,
+  jobId: undefined,
   loading: false,
   stages: StageListViewInitialState,
   tasks: TaskListViewInitialState,
@@ -44,6 +45,9 @@ const reducer: Reducer<ComposerReducerState, ComposerActionType> = (
 
     case ComposerAction.FETCH_CHECKLIST_ERROR:
       return { ...state, error: action.payload.error };
+
+    case ComposerAction.FETCH_SELECTED_JOB:
+      return { ...state, jobId: action.payload.jobId };
 
     case ComposerAction.SET_COMPOSER_STATE:
       return { ...state, composerState: action.payload.state };

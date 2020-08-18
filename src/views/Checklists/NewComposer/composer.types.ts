@@ -10,8 +10,9 @@ import {
   resetComposer,
   setComposerState,
 } from './composer.action';
-import { StageListViewState } from './stageListView.types';
-import { TaskListViewState } from './taskListView.types';
+import { StageListViewState } from './StageListView/types';
+import { TaskListViewState } from './TaskListView/types';
+import { Job } from '../../Jobs/types';
 
 // TYPES RELATED TO THE COMPOSER
 export enum ComposerState {
@@ -34,10 +35,11 @@ export type ComposerProps = RouteComponentProps<{
 
 // TYPES RELATED TO COMPOSER REDUCER
 export interface ComposerReducerState {
-  checklist: Checklist | undefined;
+  checklist?: Checklist;
   composerState: ComposerState;
   // TODO: fix this unknown type
   error: unknown;
+  jobId?: Job['id'];
   loading: boolean;
   stages: StageListViewState;
   tasks: TaskListViewState;

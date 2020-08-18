@@ -5,9 +5,9 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 
-import { ComposerState } from './composer.types';
-import { setActiveStage } from './stageListView.action';
-import { Stage } from './checklist.types';
+import { ComposerState } from '../composer.types';
+import { setActiveStage } from './action';
+import { Stage } from '../checklist.types';
 
 const Wrapper = styled.div.attrs({
   className: 'stage-list-view',
@@ -122,11 +122,17 @@ const StageList: FC = () => {
                   // TODO: make api call to update data in the BE
                   onChange={debounce(() => {
                     const updatedValue = getValues()['stages'][index];
-                    console.log('value from onChange event :: ', updatedValue);
+                    console.log(
+                      'value from onChange event stage list item :: ',
+                      updatedValue,
+                    );
                   }, 500)}
                   onBlur={debounce(() => {
                     const updatedValue = getValues()['stages'][index];
-                    console.log('value from onBlur event :: ', updatedValue);
+                    console.log(
+                      'value from onBlur event stage list item :: ',
+                      updatedValue,
+                    );
                   }, 500)}
                 />
               ) : (

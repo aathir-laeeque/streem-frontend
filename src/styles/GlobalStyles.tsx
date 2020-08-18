@@ -157,10 +157,36 @@ const GlobalStyles = createGlobalStyle`
   }
 
   input:-webkit-autofill,
-  input:-webkit-autofill:hover, 
-  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
   input:-webkit-autofill:active  {
       -webkit-box-shadow: 0 0 0 30px #f4f4f4 inset !important;
+  }
+
+  .new-form-field {
+    display: flex;
+    flex-direction: column;
+
+    &-label {
+      color: #161616;
+      font-size: 14px;
+      letter-spacing: 0.16px;
+      line-height: 1.29;
+      margin-bottom: 8px;
+    }
+
+    &-input[type="text"] {
+      background-color: #f4f4f4;
+      border: 1px solid transparent;
+      border-bottom-color: #bababa;
+      outline: none;
+      padding: 10px 16px;
+
+      :active,
+      :focus {
+        border-color: #1d84ff;
+      }
+    }
   }
 `;
 

@@ -1,6 +1,6 @@
-import { Stage } from './checklist.types';
-import { ComposerActionType } from './composer.types';
-import { setActiveStage } from './stageListView.action';
+import { Stage } from '../checklist.types';
+import { ComposerActionType } from '../composer.types';
+import { setActiveStage } from './action';
 
 export interface StageListViewState {
   activeStage: Stage | undefined;

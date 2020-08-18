@@ -1,13 +1,13 @@
+import { ActivityListActions } from './TaskView/ActivityListView/types';
 import { Reducer } from 'redux';
 import {
   TaskListViewState,
   TaskListViewActionType,
   TaskListAction,
-} from './taskListView.types';
-import { ComposerAction } from './composer.types';
+} from './types';
+import { ComposerAction } from '../composer.types';
 
 export const initialState: TaskListViewState = {
-  activeTaskId: undefined,
   list: [],
   listById: {},
 };
@@ -24,6 +24,7 @@ const reducer: Reducer<TaskListViewState, TaskListViewActionType> = (
 
       return {
         ...state,
+        activeActivityId: _tasks[0].activities[0].id,
         activeTaskId: _tasks[0].id,
         list: _tasks,
         listById: _tasks.reduce((acc, el) => ({ ...acc, [el.id]: el }), {}),
@@ -34,10 +35,21 @@ const reducer: Reducer<TaskListViewState, TaskListViewActionType> = (
 
       return {
         ...state,
+        activeActivityId: tasks[0].activities[0].id,
         activeTaskId: tasks[0].id,
         list: tasks,
         listById: tasks.reduce((acc, el) => ({ ...acc, [el.id]: el }), {}),
       };
+
+    case TaskListAction.SET_ACTIVE_TASK:
+      return {
+        ...state,
+        activeTaskId: action.payload.taskId,
+        activeActivityId: undefined,
+      };
+
+    case ActivityListActions.SET_ACTIVE_ACTIVITY:
+      return { ...state, activeActivityId: action.payload.activityId };
 
     default:
       return state;
