@@ -10,6 +10,7 @@ interface LabeledInputProps {
   disabled?: boolean;
   icon?: JSX.Element;
   error?: string;
+  required?: boolean;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -20,15 +21,24 @@ const Wrapper = styled.div.attrs({})`
     display: flex;
     flex-direction: column;
     flex: 1;
-    border-radius: 4px;
-    background-color: #f4f4f4;
     opacity: 1;
+    background-color: #fff;
+    border-bottom: 1px solid #999999;
+    border-radius: 0px;
 
-    label {
-      font-size: 8px;
+    > label {
+      position: absolute;
+      top: -13px;
       color: #999999;
-      font-weight: 600;
-      padding: 4px;
+      left: 4px;
+      font-size: 16px;
+      transition: all 0.2s linear;
+      opacity: 0;
+    }
+
+    > label.on {
+      font-size: 9px;
+      opacity: 1;
     }
 
     .input {
@@ -78,15 +88,20 @@ const Wrapper = styled.div.attrs({})`
   }
 
   .wrapper.disabled {
-    border: 1px dashed #999999;
-    opacity: 0.6;
+    border: none;
+    border-bottom: 1px dashed #999999;
+    opacity: 0.4;
   }
 
   .optional-text {
-    color: #ff6b6b;
+    color: #666666;
     font-size: 9px;
     text-align: left;
     padding: 3px 0px;
+  }
+
+  .optional-text.error {
+    color: #ff6b6b;
   }
 
   .icon {
@@ -105,31 +120,46 @@ export const LabeledInput: FC<LabeledInputProps> = ({
   type = 'text',
   icon,
   error,
+  required = true,
 }) => {
-  const [isActive, setIsActive] = useState(false);
+  const [state, setState] = useState({
+    isActive: false,
+    placeHolderText: label,
+    className: disabled ? 'on' : '',
+  });
 
   const onFocus = (): void => {
-    setIsActive(true);
+    setState({
+      isActive: true,
+      placeHolderText: placeHolder,
+      className: 'on',
+    });
   };
 
   const onBlur = (): void => {
-    setIsActive(false);
+    setState({
+      ...state,
+      isActive: false,
+      placeHolderText: '',
+    });
   };
 
   return (
     <Wrapper>
       <div className="outerwrapper">
         <div
-          className={`wrapper ${isActive ? 'active' : ''}
+          className={`wrapper ${state.isActive ? 'active' : ''}
           ${error ? 'error' : ''}
           ${disabled ? 'disabled' : ''}`}
         >
-          <label>{label}</label>
+          <label className={state.className}>{label}</label>
           <input
             name={id}
             className="input"
             ref={refFun}
-            placeholder={placeHolder}
+            placeholder={
+              state.placeHolderText ? state.placeHolderText : placeHolder
+            }
             onFocus={onFocus}
             data-testid={id}
             onBlur={onBlur}
@@ -139,7 +169,8 @@ export const LabeledInput: FC<LabeledInputProps> = ({
           />
           {icon && <div className="icon">{icon}</div>}
         </div>
-        {error && <span className="optional-text">{error}</span>}
+        {error && <span className="optional-text error">{error}</span>}
+        {!required && <span className="optional-text">Optional</span>}
       </div>
     </Wrapper>
   );

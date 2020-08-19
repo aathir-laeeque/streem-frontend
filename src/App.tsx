@@ -1,5 +1,5 @@
 // alias imports
-import { Notification, ModalContainer, ProtectedRoute } from '#components';
+import { Notification, ModalContainer, CustomRoute } from '#components';
 import { configureStore } from '#store';
 import { AuthView } from '#views';
 // library imports
@@ -20,8 +20,8 @@ const App: FC = () => {
   return (
     <Provider store={store}>
       <Router style={{ height: 'inherit', width: 'inherit' }} basepath="/">
-        <ProtectedRoute isProtected={false} as={AuthView} path="auth/*" />
-        <ProtectedRoute as={HomeView} path="/*" />
+        <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
+        <CustomRoute as={HomeView} path="/*" />
       </Router>
       <Notification
         position="top-right"

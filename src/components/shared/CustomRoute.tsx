@@ -8,11 +8,11 @@ type Props = RouteComponentProps & {
 
 const SessionStates = {
   ACTIVE: 'ACTIVE',
-  UNACTIVE: 'UNACTIVE',
+  INACTIVE: 'INACTIVE',
   LOCKED: 'LOCKED',
 };
 
-export const ProtectedRoute: FC<Props> = ({
+export const CustomRoute: FC<Props> = ({
   as: Component,
   isProtected = true,
   ...props

@@ -14,6 +14,8 @@ export interface CreateJobModalProps {
 
 const Wrapper = styled.div.attrs({})``;
 
+// TODO Change FloatInput to LabeledInput & Integrate React Form
+
 export const CreateJobModal: FC<CreateJobModalProps> = ({
   closeAllModals,
   closeModal,

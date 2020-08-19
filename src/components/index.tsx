@@ -12,7 +12,7 @@ export {
   LeftNestedMenuItem,
   LeftMenuItem,
 } from './shared/NestedMenuItem';
-export { ProtectedRoute } from './shared/ProtectedRoute';
+export { CustomRoute } from './shared/CustomRoute';
 export { FloatInput } from './shared/FloatInput';
 export { Role } from './shared/Role';
 export { Thumbnail } from './shared/Thumbnail';

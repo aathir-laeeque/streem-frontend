@@ -70,6 +70,7 @@ export const Composer = styled.div`
       background-color: #fff;
       border-bottom: 1px solid #999999;
       border-radius: 0px;
+      margin-top: 13px;
 
       .input {
         color: #333333;

@@ -1,15 +1,11 @@
 import React, { FC } from 'react';
-import { Button, LabeledInput, Checkbox, Role, FloatInput } from '#components';
+import { Button, LabeledInput, Checkbox, Role } from '#components';
+import { navigate } from '@reach/router';
 import { Composer } from './styles';
 import { NewUserProps } from './types';
 import { permissions, roles } from './temp';
 
 const NewUser: FC<NewUserProps> = () => {
-  const onInputChange = (id: string, value: string) => {
-    console.log('id', id);
-    console.log('value', value);
-  };
-
   return (
     <Composer>
       <div className="content">
@@ -58,16 +54,12 @@ const NewUser: FC<NewUserProps> = () => {
               placeHolder="Department"
               label="Department"
               id="username"
+              required={false}
             />
-            {/* <FloatInput
-              placeHolder="Department"
-              label="Department"
-              id="department"
-              onChange={onInputChange}
-            /> */}
           </div>
+          <div className="flex-col left-gutter" />
         </div>
-        <div className="partition" style={{ marginTop: 32 }} />
+        <div className="partition" style={{ marginTop: '16px' }} />
         <div className="sub-heading bold">Roles</div>
         <div className="sub-title">
           Please select at least one (1) role for this user
@@ -103,7 +95,9 @@ const NewUser: FC<NewUserProps> = () => {
           Save Changes
         </Button>
         <div className="flex-row">
-          <Button className="primary-button flat">Go Back</Button>
+          <Button className="primary-button flat" onClick={() => navigate(-1)}>
+            Go Back
+          </Button>
         </div>
       </div>
     </Composer>

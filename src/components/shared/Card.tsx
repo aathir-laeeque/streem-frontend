@@ -23,6 +23,40 @@ const Wrapper = styled.div.attrs({})`
     box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2),
       0 3px 3px -2px rgba(0, 0, 0, 0.12), 0 3px 4px 0 rgba(0, 0, 0, 0.14);
 
+    .wrapper {
+      border-bottom: none;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      background-color: #f4f4f4;
+      padding-top: 15px;
+
+      > label {
+        top: 4px;
+        left: 4px;
+        color: #666666;
+      }
+
+      .input {
+        color: #333333;
+      }
+    }
+
+    .wrapper.disabled {
+      border-bottom: none;
+      border: 1px dashed #999999;
+      opacity: 0.6;
+      padding-top: 0px;
+
+      > label {
+        position: unset;
+        top: unset;
+        color: #999999;
+        left: unset;
+        opacity: unset;
+        padding: 4px 0px 0px 4px;
+      }
+    }
+
     .row {
       padding: 12px;
     }
