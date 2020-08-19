@@ -29,29 +29,43 @@ const ActivityListView: FC<ActivityListViewProps> = ({ activities }) => {
           </div>
 
           <div className={`activity-content`}>
+            <div
+              className={`optional${activity.mandatory ? ' hide' : ''}${
+                isEditing ? ' hide' : ''
+              }`}
+            >
+              Optional Activity
+            </div>
             {(() => {
               switch (activity.type) {
-                case ActivityType.MEDIA:
-                  return `Media ${activity.id}`;
-                case ActivityType.MULTISELECT: // single select activity to be added from BE, support that as well in the component
-                  return `MultiSelect ${activity.id}`;
-                case ActivityType.SHOULDBE: // will be renamed to parameter activity later
-                  return `shouldBe ${activity.id}`;
-                case ActivityType.TEXTBOX: // named as comment activity in zeplin
-                  return `textBiox ${activity.id}`;
-                // Ashish
+                // Ashish will make the changes for this when free, Snehal will migrate it here
                 case ActivityType.SIGNATURE:
                   return `signature ${activity.id}`;
+
                 // Snehal
-                case ActivityType.INSTRUCTION:
-                  return `instruction ${activity.id}`;
-                case ActivityType.CHECKLIST:
-                  return `checklist ${activity.id}`;
+                // PRIORITY
+                case ActivityType.TEXTBOX: // named as comment activity in zeplin
+                  return `textBiox ${activity.id}`;
+
                 case ActivityType.MATERIAL:
                   return `material ${activity.id}`;
-                // case ActivityType.YESNO:
-                //   return `yes no ${activity.id}`;
 
+                case ActivityType.INSTRUCTION:
+                  return `instruction ${activity.id}`;
+
+                case ActivityType.MULTISELECT: // single select activity to be added from BE, support that as well in the component
+                  return `MultiSelect ${activity.id}`;
+
+                case ActivityType.MEDIA:
+                  return `Media ${activity.id}`;
+
+                case ActivityType.SHOULDBE: // will be renamed to parameter activity later
+                  return `shouldBe ${activity.id}`;
+
+                case ActivityType.CHECKLIST:
+                  return `checklist ${activity.id}`;
+
+                // DONE ACTIVITIES
                 case ActivityType.YESNO:
                   return <YesNoActivity activity={activity} />;
                 default:

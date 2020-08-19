@@ -49,6 +49,14 @@ export const Wrapper = styled.div`
       &.active {
         border-color: #1d84ff;
       }
+
+      .optional {
+        font-size: 14px;
+        line-height: 1.43;
+        letter-spacing: 0.16px;
+        margin-bottom: 16px;
+        color: #999999;
+      }
     }
 
     &-icons {
