@@ -27,9 +27,12 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
               type="text"
               name="label"
               value={stateActivity.label}
-              onChange={(e) =>
-                setStateActivity({ ...stateActivity, label: e.target.value })
-              }
+              onChange={(e) => {
+                {
+                  /* TODO: integrate update action for activity */
+                }
+                setStateActivity({ ...stateActivity, label: e.target.value });
+              }}
             />
           </div>
 
@@ -49,6 +52,9 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
                       name={`data[${index}].name`}
                       value={el.name}
                       onChange={(e) => {
+                        {
+                          /* TODO: integrate update action for activity */
+                        }
                         setStateActivity({
                           ...stateActivity,
                           data: stateActivity.data.map((ele) => ({

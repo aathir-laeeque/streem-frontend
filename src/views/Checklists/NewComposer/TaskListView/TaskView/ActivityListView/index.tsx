@@ -8,7 +8,9 @@ import {
 import React, { FC } from 'react';
 
 import { ActivityType } from '../../../checklist.types';
+import MaterialActivity from './Activity/Material';
 import YesNoActivity from './Activity/YesNo';
+import TextboxActivity from './Activity/Textbox';
 import { Wrapper } from './styles';
 import { ActivityListViewProps } from './types';
 
@@ -44,12 +46,6 @@ const ActivityListView: FC<ActivityListViewProps> = ({ activities }) => {
 
                 // Snehal
                 // PRIORITY
-                case ActivityType.TEXTBOX: // named as comment activity in zeplin
-                  return `textBiox ${activity.id}`;
-
-                case ActivityType.MATERIAL:
-                  return `material ${activity.id}`;
-
                 case ActivityType.INSTRUCTION:
                   return `instruction ${activity.id}`;
 
@@ -66,8 +62,15 @@ const ActivityListView: FC<ActivityListViewProps> = ({ activities }) => {
                   return `checklist ${activity.id}`;
 
                 // DONE ACTIVITIES
+                case ActivityType.MATERIAL:
+                  return <MaterialActivity activity={activity} />;
+
+                case ActivityType.TEXTBOX: // named as comment activity in zeplin
+                  return <TextboxActivity activity={activity} />;
+
                 case ActivityType.YESNO:
                   return <YesNoActivity activity={activity} />;
+
                 default:
                   return null;
               }

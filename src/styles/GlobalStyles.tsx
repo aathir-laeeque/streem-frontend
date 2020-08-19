@@ -187,6 +187,51 @@ const GlobalStyles = createGlobalStyle`
         border-color: #1d84ff;
       }
     }
+
+    &-textarea {
+      border: 1px solid #bababa;
+      border-radius: 4px;
+      color: #000000;
+      outline: none;
+      resize: none;
+      padding: 16px;
+
+      :disabled {
+        background-color: #fafafa;
+        border-color: transparent;
+        color: #999999;
+      }
+
+      :active,
+      :focus {
+        border-color: #1d84ff;
+      }
+
+      ::-webkit-input-placeholder {
+        text-align: center;
+        line-height: 74px;
+        color: #a8a8a8;
+      }
+
+      :-moz-placeholder {
+        text-align: center;
+        line-height: 74px;
+        color: #a8a8a8;
+      }
+
+      ::-moz-placeholder {
+        text-align: center;
+        line-height: 74px;
+        color: #a8a8a8;
+      }
+
+      :-ms-input-placeholder {
+        text-align: center;
+        line-height: 74px;
+        color: #a8a8a8;
+      }
+
+    }
   }
 `;
 

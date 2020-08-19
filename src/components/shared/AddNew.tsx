@@ -4,15 +4,15 @@ import styled from 'styled-components';
 
 const Wrapper = styled.div`
   align-items: center;
-  color: #12aab3;
+  color: #1d84ff;
   cursor: pointer;
   display: flex;
   font-size: 14px;
   width: max-content;
-  margin-top: 10px;
+  margin-top: 16px;
 
   .icon {
-    color: #12aab3;
+    color: #1d84ff;
     margin-right: 8px;
   }
 `;
