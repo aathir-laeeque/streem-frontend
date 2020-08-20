@@ -10,6 +10,7 @@ import React, { FC } from 'react';
 import { ActivityType } from '../../../checklist.types';
 import MaterialActivity from './Activity/Material';
 import YesNoActivity from './Activity/YesNo';
+import ShouldBeActivity from './Activity/ShouldBe';
 import TextboxActivity from './Activity/Textbox';
 import { Wrapper } from './styles';
 import { ActivityListViewProps } from './types';
@@ -55,15 +56,15 @@ const ActivityListView: FC<ActivityListViewProps> = ({ activities }) => {
                 case ActivityType.MEDIA:
                   return `Media ${activity.id}`;
 
-                case ActivityType.SHOULDBE: // will be renamed to parameter activity later
-                  return `shouldBe ${activity.id}`;
-
                 case ActivityType.CHECKLIST:
                   return `checklist ${activity.id}`;
 
                 // DONE ACTIVITIES
                 case ActivityType.MATERIAL:
                   return <MaterialActivity activity={activity} />;
+
+                case ActivityType.SHOULDBE: // will be renamed to parameter activity later
+                  return <ShouldBeActivity activity={activity} />;
 
                 case ActivityType.TEXTBOX: // named as comment activity in zeplin
                   return <TextboxActivity activity={activity} />;
