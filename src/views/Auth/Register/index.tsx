@@ -72,7 +72,7 @@ const Register: FC<RegisterProps> = ({ name, email }) => {
           <LabeledInput
             refFun={register}
             placeHolder="troypeters@example.net"
-            label="Username/Employee ID"
+            label="Email/Employee ID"
             id="username"
             disabled
           />

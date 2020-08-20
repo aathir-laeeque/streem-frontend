@@ -1,21 +1,54 @@
-import React, { FC, useState } from 'react';
-import { LabeledInput, Button, Terms, Card } from '#components';
-import { LoginProps } from './types';
-import { Link } from '@reach/router';
+import { Button, Card, LabeledInput, Terms } from '#components';
+import { ValidatorProps } from '#utils/globalTypes';
 import { Visibility } from '@material-ui/icons';
+import { Link } from '@reach/router';
+import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+
+import { login } from '../actions';
+import { LoginProps } from './types';
 
 type Inputs = {
   username: string;
   password: string;
 };
 
+const validators: ValidatorProps = {
+  username: {
+    functions: {
+      smallLength: (value: string) => value.length > 2,
+    },
+    messages: {
+      smallLength: '2 characters minimum',
+    },
+  },
+  password: {
+    functions: {
+      checkStrongness: (value: string) =>
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(
+          value,
+        ),
+    },
+    messages: {
+      checkStrongness:
+        'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character',
+    },
+  },
+};
+
 const Login: FC<LoginProps> = () => {
-  const { register, handleSubmit } = useForm<Inputs>();
+  const dispatch = useDispatch();
   const [passwordInputType, setPasswordInputType] = useState(true);
+
+  const { register, handleSubmit, errors } = useForm<Inputs>({
+    mode: 'onChange',
+    criteriaMode: 'all',
+  });
 
   const onSubmit = (data: Inputs) => {
     console.log('Inputs', data);
+    dispatch(login(data));
   };
 
   return (
@@ -28,9 +61,15 @@ const Login: FC<LoginProps> = () => {
           <LabeledInput
             refFun={register({
               required: true,
+              validate: validators['username'].functions,
             })}
-            placeHolder="Enter your username or employee ID"
-            label="Username/Employee ID"
+            error={
+              errors.username?.type
+                ? validators['username'].messages[errors.username?.type]
+                : ''
+            }
+            placeHolder="Enter your email or employee ID"
+            label="Email/Employee ID"
             id="username"
           />
         </div>
@@ -39,7 +78,11 @@ const Login: FC<LoginProps> = () => {
             placeHolder="Password"
             label="Password"
             id="password"
-            error="Invalid Password"
+            error={
+              errors.password?.type
+                ? validators['password'].messages[errors.password?.type]
+                : ''
+            }
             type={passwordInputType ? 'password' : 'text'}
             icon={
               <Visibility
@@ -49,6 +92,7 @@ const Login: FC<LoginProps> = () => {
             }
             refFun={register({
               required: true,
+              validate: validators['password'].functions,
             })}
           />
         </div>

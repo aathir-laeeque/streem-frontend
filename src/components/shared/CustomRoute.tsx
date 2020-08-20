@@ -20,7 +20,7 @@ export const CustomRoute: FC<Props> = ({
   const { ...rest } = props;
 
   // TODO Update From Store
-  const currentState = SessionStates.ACTIVE;
+  const currentState = SessionStates.INACTIVE;
 
   if (!isProtected) {
     switch (currentState) {

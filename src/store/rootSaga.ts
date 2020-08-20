@@ -1,5 +1,6 @@
 import { showNotificationSaga } from '#components/Notification/saga';
 import { ChecklistListViewSaga } from '#views/Checklists/ListView/saga';
+import { AuthSaga } from '#views/Auth/saga';
 import { JobListViewSaga } from '#views/Jobs/ListView/saga';
 import { all, fork } from 'redux-saga/effects';
 
@@ -11,7 +12,7 @@ export function* rootSaga() {
   yield all([
     // fork all sagas here
     fork(ChecklistListViewSaga),
-
+    fork(AuthSaga),
     fork(PropertiesSaga),
     fork(showNotificationSaga),
     fork(JobListViewSaga),

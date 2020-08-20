@@ -2,6 +2,6 @@ import { combineReducers } from 'redux';
 
 import { composerReducer } from './ChecklistComposer/reducer';
 
-export const checklistReducer = combineReducers({
+export const ChecklistReducer = combineReducers({
   composer: composerReducer,
 });

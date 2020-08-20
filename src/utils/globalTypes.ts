@@ -1,3 +1,4 @@
+import { ValidationRules } from 'react-hook-form';
 export interface Pageable {
   page: number;
   pageSize: number;
@@ -22,3 +23,11 @@ export enum ACTIVITY_SELECTIONS {
   SELECTED = 'SELECTED',
   NOT_SELECTED = 'NOT_SELECTED',
 }
+
+export type ValidatorProps = Record<
+  string,
+  {
+    functions: ValidationRules['validate'];
+    messages: Record<string, string>;
+  }
+>;

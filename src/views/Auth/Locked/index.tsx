@@ -31,8 +31,8 @@ const Locked: FC<LockedProps> = () => {
             refFun={register({
               required: true,
             })}
-            placeHolder="Enter your username or employee ID"
-            label="Username/Employee ID"
+            placeHolder="Enter your email or employee ID"
+            label="Email/Employee ID"
             id="username"
             disabled
           />
