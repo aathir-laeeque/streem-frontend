@@ -1,8 +1,8 @@
 import { Task } from '../views/Checklists/ChecklistComposer/TaskList/TaskView/types';
 import { Job } from '../views/Jobs/types';
+import { fetchBaseUrl } from './constants';
 
-const baseUrl = 'http://api.streem.leucinetech.com/v1';
-
+const baseUrl = fetchBaseUrl();
 //Checklist
 export const apiGetChecklists = () => `${baseUrl}/checklists`;
 
