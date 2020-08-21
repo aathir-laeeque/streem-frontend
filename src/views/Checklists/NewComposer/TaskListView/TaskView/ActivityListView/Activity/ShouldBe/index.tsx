@@ -1,8 +1,9 @@
 import React, { FC, useState } from 'react';
 import Select from 'react-select';
 
+import { customSelectStyles } from '../commonStyles';
 import { ActivityProps } from '../types';
-import { Wrapper, customSelectStyles } from './styles';
+import { Wrapper } from './styles';
 
 const RULES = [
   { label: 'Equal To', value: 'EQUAL_TO' },

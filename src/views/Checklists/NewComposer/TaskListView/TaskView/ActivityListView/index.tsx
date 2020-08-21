@@ -9,13 +9,13 @@ import React, { FC } from 'react';
 
 import { ActivityType } from '../../../checklist.types';
 import ChecklistActivity from './Activity/Checklist';
+import InstructionActivity from './Activity/Instruction';
 import MaterialActivity from './Activity/Material';
+import MediaActivity from './Activity/Media';
 import MultiSelectActivity from './Activity/MultiSelect';
 import ShouldBeActivity from './Activity/ShouldBe';
 import TextboxActivity from './Activity/Textbox';
 import YesNoActivity from './Activity/YesNo';
-import InstructionActivity from './Activity/Instruction';
-import MediaActivity from './Activity/Media';
 import { Wrapper } from './styles';
 import { ActivityListViewProps } from './types';
 
@@ -45,30 +45,37 @@ const ActivityListView: FC<ActivityListViewProps> = ({ activities }) => {
             </div>
             {(() => {
               switch (activity.type) {
+                // Done, execute action integration pending
                 case ActivityType.CHECKLIST:
                   return <ChecklistActivity activity={activity} />;
 
                 case ActivityType.INSTRUCTION:
                   return <InstructionActivity activity={activity} />;
 
+                // Completely Done.
                 case ActivityType.MATERIAL:
                   return <MaterialActivity activity={activity} />;
 
                 case ActivityType.MEDIA:
                   return <MediaActivity activity={activity} />;
 
-                case ActivityType.MULTISELECT: // single select activity to be added from BE, support that as well in the component
+                // Done, execute action integration is pending
+                case ActivityType.MULTISELECT:
                   return <MultiSelectActivity activity={activity} />;
 
-                case ActivityType.SHOULDBE: // will be renamed to parameter activity later
+                // Done, execution state is left => design pending
+                case ActivityType.SHOULDBE:
                   return <ShouldBeActivity activity={activity} />;
 
+                // Completely Done by Ashish
                 case ActivityType.SIGNATURE:
                   return `signature ${activity.id}`;
 
-                case ActivityType.TEXTBOX: // named as comment activity in zeplin
+                // Done, execute action integratio is pending
+                case ActivityType.TEXTBOX:
                   return <TextboxActivity activity={activity} />;
 
+                // Completely Done
                 case ActivityType.YESNO:
                   return <YesNoActivity activity={activity} />;
 

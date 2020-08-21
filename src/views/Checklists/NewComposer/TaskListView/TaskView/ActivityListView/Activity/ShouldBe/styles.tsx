@@ -21,23 +21,3 @@ export const Wrapper = styled.div`
     }
   }
 `;
-
-export const customSelectStyles = {
-  control: (styles) => ({
-    ...styles,
-    backgroundColor: '#f4f4f4',
-    border: 'none',
-    borderBottom: '1px solid #bababa',
-    borderRadius: 'none',
-    boxShadow: 'none',
-    padding: '8px',
-  }),
-  option: (styles, { data, isDisabled, isFocused, isSelected }) => ({
-    ...styles,
-    backgroundColor: isSelected ? '#dadada' : '#f4f4f4',
-    padding: '10px 16px',
-    borderBottom: '1px solid #bababa',
-    color: '#000000',
-  }),
-  menu: (styles) => ({ ...styles, padding: 0, margin: 0 }),
-};
