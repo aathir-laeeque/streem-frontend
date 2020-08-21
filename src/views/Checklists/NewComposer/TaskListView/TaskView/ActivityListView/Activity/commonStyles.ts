@@ -10,7 +10,7 @@ export const customSelectStyles = {
     padding: '8px',
   }),
 
-  option: (styles, { data, isDisabled, isFocused, isSelected }) => ({
+  option: (styles, { isFocused, isSelected }) => ({
     ...styles,
     backgroundColor: isSelected || isFocused ? '#dadada' : '#f4f4f4',
     borderBottom: '1px solid #bababa',
@@ -18,6 +18,4 @@ export const customSelectStyles = {
     cursor: 'pointer',
     padding: '10px 16px',
   }),
-
-  // menu: (styles) => ({ ...styles, padding: 0, margin: 0 }),
 };

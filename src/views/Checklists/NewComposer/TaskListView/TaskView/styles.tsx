@@ -2,31 +2,22 @@ import styled, { css } from 'styled-components';
 
 export const Wrapper = styled.div`
   display: grid;
-  grid-template-areas: 'position-control task task-media';
-  grid-template-columns: 24px 1.5fr 1fr;
+  grid-template-areas: 'task task-media';
+  grid-template-columns: 1.5fr 1fr;
   grid-column-gap: 16px;
 
-  .position-control {
-    grid-area: position-control;
-    display: flex;
-    flex-direction: column;
-
-    span {
-      align-self: center;
-    }
-  }
-
   .task {
-    background-color: #ffff;
-    border: 1px solid transparent;
-    border-radius: 5px;
-    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-      0 3px 1px -2px rgba(0, 0, 0, 0.2);
-
+    background-color: #ffffff;
+    border: 1px solid #eeeeee;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px 0 rgba(18, 170, 179, 0.08);
     display: grid;
-    grid-template-areas: 'header' 'task-content' 'completion-buttons';
+    grid-template-areas: 'top-bar' 'header' 'task-content' 'completion-buttons';
     height: max-content;
-    padding: 24px 16px;
+
+    :hover {
+      box-shadow: 0 8px 8px 0 rgba(153, 153, 153, 0.16);
+    }
 
     &.active {
       border-color: #1d84ff;
@@ -38,6 +29,7 @@ export const Wrapper = styled.div`
 
     &-completion-buttons {
       grid-area: completion-buttons;
+      padding: 32px;
     }
 
     &-media {
@@ -47,111 +39,112 @@ export const Wrapper = styled.div`
 `;
 
 export const HeaderWrapper = styled.div`
+  border-bottom: 1px solid #dadada;
   grid-area: header;
+  background-color: ${(props) =>
+    !props.isEditing ? '#fafafa' : 'transparent'};
 
-  align-items: center;
-  display: grid;
+  .top-bar {
+    align-items: center;
+    background-color: #fafafa;
+    grid-area: top-bar;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    display: flex;
 
-  ${(props) =>
-    props.isEditing
-      ? css`
-          grid-template-areas: 'vacant content header-icons';
-          grid-template-columns: 24px 1fr 24px;
-          grid-column-gap: 16px;
-        `
-      : css`
-          grid-template-areas: 'content';
-          grid-template-columns: 1fr;
-        `}
+    .stop-banner {
+      padding: 16px 52px;
+      display: flex;
+      flex: 1;
+      align-items: center;
+      background-color: #eeeeee;
 
-  .vacant {
-    grid-area: vacant;
+      > .icon {
+        margin-right: 12px;
+        color: #f2c94c;
+      }
 
-    ${(props) =>
-      !props.isEditing
-        ? css`
-            display: none;
-          `
-        : null}
+      > span {
+        font-size: 14px;
+        line-height: 1.43;
+        letter-spacing: 1px;
+        color: #000000;
+      }
+    }
+
+    .position-control-buttons {
+      background-color: #f4f4f4;
+      border-top-left-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      margin-right: 16px;
+    }
+
+    > span {
+      align-self: center;
+    }
+
+    > .icon {
+      margin-left: auto;
+      margin-right: 16px;
+    }
   }
 
   .content {
-    grid-area: content;
-
-    background-color: #f4f4f4;
-    border-radius: 5px;
     display: flex;
-    flex-direction: column;
+    padding: 32px;
+    flex-direction: ${(props) => (props.isEditing ? 'column' : 'row')};
 
-    > input,
-    > span {
-      background-color: transparent;
-      border: none;
-      border-bottom: 2px solid #ddd;
-      font-size: 18px;
-      font-weight: 400;
-      outline: none;
-      padding: 16px 8px;
-      width: 100%;
-
-      :focus {
-        border-bottom-color: #1d84ff;
+    .task {
+      &-orderTree,
+      &-name {
+        font-size: 20px;
+        color: #000000;
       }
-    }
 
-    > span {
-      border-bottom: none;
-    }
+      &-name {
+        margin-left: 8px;
+      }
 
-    .task-control {
-      display: flex;
-
-      &-item {
-        align-items: center;
-        border-right: 1px solid #dadada;
-        cursor: pointer;
+      &-control {
         display: flex;
-        flex: 1;
-        justify-content: center;
-        padding: 8px 16px;
 
-        :last-child {
-          border-right: none;
-        }
+        &-item {
+          align-items: center;
+          border-right: 1px solid #dadada;
+          cursor: pointer;
+          display: flex;
+          flex: 1;
+          justify-content: center;
+          padding: 8px 16px;
 
-        > .icon {
-          margin-right: 5px;
-          height: 18px;
-          width: 18px;
-        }
+          :last-child {
+            border-right: none;
+          }
 
-        > span {
-          color: #999999;
-          font-size: 10px;
-          line-height: 1;
-        }
-
-        &.active {
-          > svg {
-            color: #1d84ff;
+          > .icon {
+            margin-right: 5px;
+            height: 18px;
+            width: 18px;
           }
 
           > span {
-            color: #1d84ff;
+            color: #999999;
+            font-size: 10px;
+            line-height: 1;
+          }
+
+          &.active {
+            > svg {
+              color: #1d84ff;
+            }
+
+            > span {
+              color: #1d84ff;
+            }
           }
         }
       }
     }
-  }
-
-  .header-icons {
-    grid-area: header-icons;
-
-    ${(props) =>
-      !props.isEditing
-        ? css`
-            display: none;
-          `
-        : null}
   }
 `;

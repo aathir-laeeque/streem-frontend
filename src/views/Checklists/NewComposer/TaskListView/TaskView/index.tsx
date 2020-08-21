@@ -1,5 +1,4 @@
 import { useTypedSelector } from '#store';
-import { ArrowDownwardOutlined, ArrowUpwardOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
 
 import { ComposerState } from '../../composer.types';
@@ -14,16 +13,8 @@ const TaskView: FC<TaskViewProps> = ({ task }) => {
   const isEditing = composerState === ComposerState.EDIT;
 
   return (
-    <Wrapper>
-      <div className="position-control">
-        <ArrowUpwardOutlined className="icon icon-up" />
-
-        <span className="step-number">{task.orderTree}</span>
-
-        <ArrowDownwardOutlined className="icon icon-down" />
-      </div>
-
-      <div className={`task`}>
+    <Wrapper isEditing={isEditing}>
+      <div className="task">
         <Header task={task} />
 
         <div className="task-content">

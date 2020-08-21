@@ -4,7 +4,11 @@ import { ActivityProps } from '../types';
 import { Wrapper } from './styles';
 
 const InstructionActivity: FC<ActivityProps> = ({ activity }) => {
-  return <Wrapper>Instruction Activity {activity.id}</Wrapper>;
+  return (
+    <Wrapper>
+      <div className="activity-header">Write your instruction/notes</div>
+    </Wrapper>
+  );
 };
 
 export default InstructionActivity;

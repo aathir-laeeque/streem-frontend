@@ -16,8 +16,6 @@ const MultiSelectActivity: FC<ActivityProps> = ({ activity }) => {
 
   const isEditing = composerState === ComposerState.EDIT;
 
-  console.log('stateActivity :: ', stateActivity);
-
   return (
     <Wrapper isEditing={isEditing}>
       <div className="activity-header">Creating a Multi Choice</div>
@@ -73,7 +71,7 @@ const MultiSelectActivity: FC<ActivityProps> = ({ activity }) => {
           </li>
         ))}
 
-        <AddNewItem onClick={() => {}} />
+        {isEditing ? <AddNewItem onClick={() => {}} /> : null}
       </ul>
     </Wrapper>
   );

@@ -28,13 +28,6 @@ const ActivityListView: FC<ActivityListViewProps> = ({ activities }) => {
     <Wrapper isEditing={isEditing}>
       {activities.map((activity, index) => (
         <div className="activity" key={index}>
-          <div
-            className={`activity-position-control${!isEditing ? ' hide' : ''}`}
-          >
-            <ArrowUpwardOutlined className="icon arrow-up" />
-            <ArrowDownwardOutlined className="icon arrow-down" />
-          </div>
-
           <div className={`activity-content`}>
             <div
               className={`optional${activity.mandatory ? ' hide' : ''}${
@@ -49,6 +42,7 @@ const ActivityListView: FC<ActivityListViewProps> = ({ activities }) => {
                 case ActivityType.CHECKLIST:
                   return <ChecklistActivity activity={activity} />;
 
+                // Parcel build compilation is failing
                 case ActivityType.INSTRUCTION:
                   return <InstructionActivity activity={activity} />;
 
@@ -83,10 +77,6 @@ const ActivityListView: FC<ActivityListViewProps> = ({ activities }) => {
                   return null;
               }
             })()}
-          </div>
-
-          <div className={`activity-icons${!isEditing ? ' hide' : ''}`}>
-            <MoreVertOutlined className="icon" />
           </div>
         </div>
       ))}

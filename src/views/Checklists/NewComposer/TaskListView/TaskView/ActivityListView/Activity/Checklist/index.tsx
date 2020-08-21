@@ -50,7 +50,7 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
           </li>
         ))}
 
-        <AddNewItem onClick={() => {}} />
+        {isEditing ? <AddNewItem onClick={() => {}} /> : null}
       </ul>
     </Wrapper>
   );

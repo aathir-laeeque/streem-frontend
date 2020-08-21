@@ -1,10 +1,13 @@
 import { useTypedSelector } from '#store';
 import { customOnChange } from '#utils/formEvents';
 import {
-  AddCircleOutline,
-  DateRangeOutlined,
+  ArrowDownwardOutlined,
+  ArrowUpwardOutlined,
+  Delete,
   ErrorOutlineOutlined,
+  PermMedia,
   TimerOutlined,
+  PanTool,
 } from '@material-ui/icons';
 import React, { FC } from 'react';
 
@@ -19,51 +22,75 @@ const Header: FC<HeaderProps> = ({ task }) => {
 
   return (
     <HeaderWrapper isEditing={isEditing}>
-      <div className="vacant" />
+      <div className="top-bar">
+        {isEditing ? (
+          <>
+            <div className="position-control-buttons">
+              <ArrowUpwardOutlined className="icon icon-up" />
+              <ArrowDownwardOutlined className="icon icon-down" />
+            </div>
+
+            <span className="step-number">Task {task.orderTree}</span>
+
+            <Delete className="icon" />
+          </>
+        ) : task.hasStop ? (
+          <div className="stop-banner">
+            <PanTool className="icon" />
+            <span>Complete this task before proceeding to the next task.</span>
+          </div>
+        ) : null}
+      </div>
 
       <div className="content">
         {isEditing ? (
-          <input
-            name="name"
-            value={task.name}
-            onChange={(e) => {
-              e.persist();
-              customOnChange(e, (event) =>
-                console.log(
-                  'event.target.value onChange :: ',
-                  event.target.value,
-                ),
-              );
-            }}
-          />
+          <>
+            <div className="new-form-field">
+              <label className="new-form-field-label">Name the Task</label>
+              <input
+                className="new-form-field-input"
+                name="name"
+                type="text"
+                value={task.name}
+                onChange={(e) => {
+                  e.persist();
+                  customOnChange(e, (event) =>
+                    console.log(
+                      'event.target.value onChange :: ',
+                      event.target.value,
+                    ),
+                  );
+                }}
+              />
+            </div>
+
+            <div className="task-control">
+              <div
+                className={`task-control-item${task.timed ? ' active' : ''}`}
+              >
+                <TimerOutlined className="icon" />
+                <span>Timed</span>
+              </div>
+
+              <div className="task-control-item">
+                <PermMedia className="icon" />
+                <span>Attatch Media</span>
+              </div>
+
+              <div
+                className={`task-control-item${task.hasStop ? ' active' : ''}`}
+              >
+                <ErrorOutlineOutlined className="icon" />
+                <span>Add Stop</span>
+              </div>
+            </div>
+          </>
         ) : (
-          <span>{task.name}</span>
+          <>
+            <span className="task-orderTree">{task.orderTree}.</span>
+            <span className="task-name">{task.name}</span>
+          </>
         )}
-
-        <div className={`task-control${!isEditing ? ' hide' : ''}`}>
-          <div
-            className={`task-control-item${task.hasStop ? ' active' : ''}`}
-            // onClick={() => update({ hasStop: !task.hasStop })}
-          >
-            <ErrorOutlineOutlined className="icon" />
-            <span>Add Stop</span>
-          </div>
-          <div className="task-control-item">
-            <DateRangeOutlined className="icon" />
-            <span>Due On</span>
-          </div>
-          <div
-            className={`task-control-item${task.timed ? ' active' : ''}`}
-            // onClick={() => update({ timed: !task.timed })}
-          >
-            <TimerOutlined className="icon" />
-            <span>Timed</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="header-icons">
-        <AddCircleOutline className="icon" />
       </div>
     </HeaderWrapper>
   );

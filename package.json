@@ -48,6 +48,8 @@
     "whatwg-fetch": "^3.2.0"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^21.0.0",
+    "@ckeditor/ckeditor5-react": "^2.1.0",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@reach/router": "^1.3.4",

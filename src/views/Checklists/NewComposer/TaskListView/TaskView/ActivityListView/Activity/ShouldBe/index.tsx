@@ -41,11 +41,6 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity }) => {
 
       <div className="new-form-field">
         <label className="new-form-field-label">Criteria</label>
-        {/* <input
-          className="new-form-field-input"
-          type="text"
-          placeholder="Select"
-        /> */}
         <Select
           options={RULES}
           value={RULES.filter((el) => el.value === stateActivity.data.operator)}
