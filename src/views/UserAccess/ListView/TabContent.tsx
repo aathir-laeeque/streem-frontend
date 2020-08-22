@@ -1,5 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { ListViewComponent } from '#components';
+import WarningIcon from '@material-ui/icons/Warning';
 import { User, UserStatus, UsersState } from '#store/users/types';
 import { capitalize } from 'lodash';
 import { Properties } from '#store/properties/types';
@@ -56,7 +57,7 @@ const TabContent: FC<TabViewProps> = ({
   };
 
   const onResendInvite = (email: string) => {
-    dispatch(resendInvite({ email, fetchData }));
+    dispatch(resendInvite({ email }));
   };
 
   const onCancelInvite = (email: string) => {
@@ -77,9 +78,12 @@ const TabContent: FC<TabViewProps> = ({
 
   const parsedUsers = (users[selectedStatus].list as Array<User>).map(
     (item) => {
-      let role;
+      let role = { ROLE: '-N/A-' };
       if (item.roles && item.roles[0])
-        role = { ROLE: item.roles[0].name || 'System Admin' };
+        role = {
+          ROLE:
+            capitalize(item.roles[0].name.replace('_', ' ')) || 'System Admin',
+        };
       return {
         ...item,
         properties: {
@@ -121,7 +125,7 @@ const TabContent: FC<TabViewProps> = ({
                 <div className="list-card-columns" key={`name_${item.id}`}>
                   <div
                     className="title-group"
-                    style={{ paddingLeft: `40px`, marginTop: 0 }}
+                    style={{ paddingLeft: `16px`, marginTop: 0 }}
                   >
                     <span className="list-code">{item.employeeId}</span>
                     <span
@@ -130,6 +134,18 @@ const TabContent: FC<TabViewProps> = ({
                     >
                       {capitalize(item.firstName)} {capitalize(item.lastName)}
                     </span>
+                    {!item.verified && !item.archived && (
+                      <span className="list-status">
+                        <WarningIcon
+                          style={{
+                            fontSize: 20,
+                            fontWeight: 'bold',
+                            padding: '0px 4px',
+                          }}
+                        />
+                        Unregistered
+                      </span>
+                    )}
                   </div>
                 </div>
               );

@@ -44,6 +44,8 @@ export const apiUploadFile = () => `${baseUrl}/files/`;
 // Auth
 export const apiLogin = () => `${baseUrl}/auth/login`;
 
+export const apiLogOut = () => `${baseUrl}/auth/logout`;
+
 export const apiRefreshToken = () => `${baseUrl}/auth/refresh-token`;
 
 export const apiResendInvite = () => `${baseUrl}/users/resend-invite`;

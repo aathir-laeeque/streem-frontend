@@ -3,16 +3,6 @@ import { PermissionType, RoleType } from './types';
 export const roles: RoleType[] = [
   {
     id: 1,
-    name: 'System Admin',
-    permissions: {
-      'Manage Users and Roles': true,
-      'Manage Facility Access': true,
-      'View User’s Session Activity': true,
-      'Manage Application Security': true,
-    },
-  },
-  {
-    id: 2,
     name: 'Facility Admin',
     permissions: {
       'Create Checklists and Submit Versions': true,
@@ -27,6 +17,16 @@ export const roles: RoleType[] = [
       'Print Jobs': true,
       'View Job Activity': true,
       'View Job Report & Analytics': true,
+    },
+  },
+  {
+    id: 2,
+    name: 'System Admin',
+    permissions: {
+      'Manage Users and Roles': true,
+      'Manage Facility Access': true,
+      'View User’s Session Activity': true,
+      'Manage Application Security': true,
     },
   },
   {

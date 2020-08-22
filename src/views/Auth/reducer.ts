@@ -26,6 +26,10 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
         token: action.payload?.token,
         refreshToken: action.payload?.refreshToken,
       };
+    case AuthAction.LOGOUT_SUCCESS:
+      return {
+        ...initialState,
+      };
     case AuthAction.LOGIN_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
     case AuthAction.FETCH_PROFILE_SUCCESS:

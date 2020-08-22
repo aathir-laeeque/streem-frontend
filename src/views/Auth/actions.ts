@@ -13,11 +13,21 @@ export const loginSuccess = (data: LoginResponse) =>
 export const loginError = (error: any) =>
   actionSpreader(AuthAction.LOGIN_ERROR, error);
 
+// LOGOUT ACTIONS
+
+export const logOut = () => actionSpreader(AuthAction.LOGOUT);
+
+export const logOutSuccess = () => actionSpreader(AuthAction.LOGOUT_SUCCESS);
+
+export const logOutError = (error: any) =>
+  actionSpreader(AuthAction.LOGOUT_ERROR, error);
+
 // REGISTER ACTIONS
 
 export const register = (payload: {
   email: string;
   newPassword: string;
+  username: string;
   token: string;
 }) => actionSpreader(AuthAction.REGISTER, payload);
 

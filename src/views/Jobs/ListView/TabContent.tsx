@@ -165,17 +165,15 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
 
   return (
     <Composer>
-      <div style={{ height: `calc(100% - 30px)` }}>
-        <ListViewComponent
-          properties={job}
-          fetchData={fetchData}
-          isLast={jobs[label].pageable.last}
-          currentPage={jobs[label].pageable.page}
-          data={jobs[label].list}
-          primaryButtonText="Create Task"
-          beforeColumns={beforeColumns}
-        />
-      </div>
+      <ListViewComponent
+        properties={job}
+        fetchData={fetchData}
+        isLast={jobs[label].pageable.last}
+        currentPage={jobs[label].pageable.page}
+        data={jobs[label].list}
+        primaryButtonText="Create Task"
+        beforeColumns={beforeColumns}
+      />
     </Composer>
   );
 };

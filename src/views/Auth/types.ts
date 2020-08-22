@@ -2,6 +2,9 @@ import { RouteComponentProps } from '@reach/router';
 import { User } from '#store/users/types';
 import {
   login,
+  logOut,
+  logOutSuccess,
+  logOutError,
   loginSuccess,
   loginError,
   refreshToken,
@@ -44,6 +47,9 @@ export interface AuthState {
 }
 
 export enum AuthAction {
+  LOGOUT = '@@auth/Login/LOGOUT',
+  LOGOUT_SUCCESS = '@@auth/Login/LOGOUT_SUCCESS',
+  LOGOUT_ERROR = '@@auth/Login/LOGOUT_ERROR',
   LOGIN = '@@auth/Login/LOGIN',
   LOGIN_ERROR = '@@auth/Login/LOGIN_ERROR',
   LOGIN_SUCCESS = '@@auth/Login/LOGIN_SUCCESS',
@@ -66,6 +72,9 @@ export enum AuthAction {
 }
 
 export type AuthActionType = ReturnType<
+  | typeof logOut
+  | typeof logOutSuccess
+  | typeof logOutError
   | typeof login
   | typeof loginSuccess
   | typeof loginError

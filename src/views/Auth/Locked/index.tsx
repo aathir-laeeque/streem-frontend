@@ -31,8 +31,8 @@ const Locked: FC<LockedProps> = () => {
             refFun={register({
               required: true,
             })}
-            placeHolder="Enter your email or employee ID"
-            label="Email/Employee ID"
+            placeHolder="Enter your username or Email ID"
+            label="Username/Email ID"
             id="username"
             disabled
           />
@@ -46,7 +46,7 @@ const Locked: FC<LockedProps> = () => {
             icon={
               <Visibility
                 onClick={() => setPasswordInputType(!passwordInputType)}
-                style={{ color: '#999999' }}
+                style={{ color: passwordInputType ? '#999999' : '#1d84ff' }}
               />
             }
             refFun={register({
@@ -66,7 +66,7 @@ const Locked: FC<LockedProps> = () => {
           </Button>
         </div>
       </form>
-      <Terms />
+      {/* <Terms /> */}
     </Card>
   );
 };

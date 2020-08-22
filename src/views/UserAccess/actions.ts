@@ -1,10 +1,8 @@
 import { actionSpreader } from '#store';
 import { UserAccessAction } from './types';
 
-export const resendInvite = (payload: {
-  email: string;
-  fetchData: (page: number, size: number) => void;
-}) => actionSpreader(UserAccessAction.RESEND_INVITE, payload);
+export const resendInvite = (payload: { email: string }) =>
+  actionSpreader(UserAccessAction.RESEND_INVITE, payload);
 
 export const resendInviteSuccess = () =>
   actionSpreader(UserAccessAction.RESEND_INVITE_SUCCESS);

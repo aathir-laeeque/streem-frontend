@@ -3,6 +3,7 @@ import {
   apiRefreshToken,
   apiGetUser,
   apiRegister,
+  apiLogOut,
 } from '#utils/apiUrls';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
@@ -12,6 +13,8 @@ import { navigate } from '@reach/router';
 import { User } from '#store/users/types';
 import {
   login,
+  logOutSuccess,
+  logOutError,
   loginSuccess,
   loginError,
   refreshToken,
@@ -28,6 +31,7 @@ import {
   updateProfileError,
   updateProfileSuccess,
 } from './actions';
+import { persistor } from '../../App';
 
 import { call, put, takeLatest, delay, select } from 'redux-saga/effects';
 import { AuthAction, LoginResponse, RefreshTokenResponse } from './types';
@@ -91,8 +95,40 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
     yield put(fetchProfile({ id: data.id }));
     yield put(refreshTokenPoll());
   } catch (error) {
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: 'Sorry, Try Again Later',
+      }),
+    );
     console.error('error from loginSaga function in Auth :: ', error);
     yield put(loginError(error));
+  }
+}
+
+function* logOutSaga() {
+  try {
+    const { data, errors }: ResponseObj<LoginResponse> = yield call(
+      request,
+      'POST',
+      apiLogOut(),
+    );
+
+    if (errors) {
+      return false;
+    }
+
+    yield put(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'Logged Out successfully',
+      }),
+    );
+    yield put(logOutSuccess());
+    yield call(persistor.purge);
+  } catch (error) {
+    console.error('error from logOutSaga function in Auth :: ', error);
+    yield put(logOutError(error));
   }
 }
 
@@ -170,6 +206,7 @@ function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
 
 export function* AuthSaga() {
   yield takeLatest(AuthAction.LOGIN, loginSaga);
+  yield takeLatest(AuthAction.LOGOUT, logOutSaga);
   yield takeLatest(AuthAction.REFRESH_TOKEN_POLL, refreshTokenPollSaga);
   yield takeLatest(AuthAction.REFRESH_TOKEN, refreshTokenSaga);
   yield takeLatest(AuthAction.FETCH_PROFILE, fetchProfileSaga);

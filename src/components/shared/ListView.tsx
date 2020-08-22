@@ -103,7 +103,6 @@ const Wrapper = styled.div.attrs({})`
   .list-code {
     font-size: 14px;
     line-height: 14px;
-    font-weight: 600;
     color: #333333;
   }
 

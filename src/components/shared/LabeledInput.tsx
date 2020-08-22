@@ -158,6 +158,7 @@ export const LabeledInput: FC<LabeledInputProps> = ({
           <label className={state.className}>{label}</label>
           <input
             name={id}
+            id={id}
             className="input"
             ref={refFun}
             placeholder={

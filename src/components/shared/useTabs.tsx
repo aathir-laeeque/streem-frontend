@@ -1,4 +1,4 @@
-import { capitalizeFirstLetter } from '#utils/stringUtils';
+import { capitalize } from 'lodash';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 
@@ -50,7 +50,7 @@ export const useTabs = (tabs: Tab[]) => {
               )
             }
           >
-            {capitalizeFirstLetter(tab.label)}
+            {capitalize(tab.label)}
           </span>
         ))}
       </div>

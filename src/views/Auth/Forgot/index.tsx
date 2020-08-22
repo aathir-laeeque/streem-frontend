@@ -65,7 +65,7 @@ const Forgot: FC<ForgotProps> = () => {
           </div>
         </form>
       )}
-      <Terms />
+      {/* <Terms /> */}
     </Card>
   );
 };

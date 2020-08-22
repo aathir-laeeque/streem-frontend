@@ -66,7 +66,7 @@ const AuthView: FC<AuthViewProps> = () => (
   <Wrapper>
     <div className="sections left">
       <MemoStreemLogoWhite width="60%" height="20%" />
-      <span className="tagline">A tagline, if required</span>
+      {/* <span className="tagline">A tagline, if required</span> */}
     </div>
     <div className="sections right">
       <Router style={{ width: '100%' }}>

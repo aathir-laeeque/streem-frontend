@@ -61,6 +61,12 @@ const Wrapper = styled.div.attrs({})`
       padding: 12px;
     }
 
+    .hint {
+      font-size: 10px;
+      line-height: 1.2;
+      color: #666666;
+    }
+
     .right-align {
       display: flex;
       justify-content: flex-end;

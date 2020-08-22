@@ -18,7 +18,7 @@ import { UserAccessAction } from './types';
 
 function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
   try {
-    const { email, fetchData } = payload;
+    const { email } = payload;
     const { data, errors }: ResponseObj<Partial<User>> = yield call(
       request,
       'POST',
@@ -39,7 +39,6 @@ function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
         msg: 'Invite Resent Successfully.',
       }),
     );
-    yield call(fetchData, 0, 10);
   } catch (error) {
     console.error(
       'error from resendInviteSaga function in UserAccessSaga :: ',

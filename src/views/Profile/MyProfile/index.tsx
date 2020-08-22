@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Button, LabeledInput, Role, Thumbnail } from '#components';
 import { Composer } from './styles';
+import { capitalize } from 'lodash';
 import { MyProfileProps } from './types';
 import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '#store';
@@ -36,6 +37,10 @@ const MyProfile: FC<MyProfileProps> = () => {
       roles: profile?.roles?.map((r) => r.name).toString(),
     },
   });
+
+  useEffect(() => {
+    document.getElementById('firstName')?.focus();
+  }, []);
 
   const onSubmit = (data: Inputs) => {
     const payload = {
@@ -107,10 +112,6 @@ const MyProfile: FC<MyProfileProps> = () => {
               <LabeledInput
                 refFun={register({
                   required: true,
-                  pattern: {
-                    value: /^\d+$/,
-                    message: 'Invalid Employee Id',
-                  },
                 })}
                 placeHolder="Employee ID"
                 label="Employee ID"
@@ -164,7 +165,7 @@ const MyProfile: FC<MyProfileProps> = () => {
                 roles={roles}
                 placeHolder={
                   profile?.roles && profile?.roles[0]
-                    ? profile?.roles[0].name
+                    ? capitalize(profile.roles[0].name.replace('_', ' '))
                     : 'N/A'
                 }
                 label="Role"

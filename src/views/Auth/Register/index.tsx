@@ -11,6 +11,7 @@ type Inputs = {
   fullName: string;
   email: string;
   password: string;
+  username: string;
 };
 
 interface ValidatorProps {
@@ -54,13 +55,13 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
   }, []);
 
   const onSubmit = (data: Inputs) => {
-    console.log('Inputs', data);
-    const { email, password } = data;
+    const { email, password, username } = data;
     if (token) {
       dispatch(
         registerAction({
           email: email.toString(),
           newPassword: password.toString(),
+          username: username.toString(),
           token: token.toString(),
         }),
       );
@@ -85,8 +86,8 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
         <div className="row" style={{ paddingTop: '24px' }}>
           <LabeledInput
             refFun={register}
-            placeHolder="troypeters@example.net"
-            label="Email/Employee ID"
+            placeHolder="Enter your username or Email ID"
+            label="Username/Email ID"
             id="email"
             disabled
           />
@@ -98,6 +99,25 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
         </div>
         <div className="row">
           <LabeledInput
+            placeHolder="Enter your username"
+            label="Username"
+            id="username"
+            type="text"
+            refFun={register({
+              required: true,
+              pattern: {
+                value: /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/,
+                message: 'Invalid Username',
+              },
+            })}
+          />
+          <span className="hint">
+            This your unique STREEM ID and is used to log in to the App.
+            Alpha-numeric characters only.
+          </span>
+        </div>
+        <div className="row">
+          <LabeledInput
             placeHolder="Enter your password"
             label="Password"
             id="password"
@@ -105,7 +125,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
             icon={
               <Visibility
                 onClick={() => setPasswordInputType(!passwordInputType)}
-                style={{ color: '#999999' }}
+                style={{ color: passwordInputType ? '#999999' : '#1d84ff' }}
               />
             }
             refFun={register({
@@ -136,7 +156,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
           </Button>
         </div>
       </form>
-      <Terms />
+      {/* <Terms /> */}
     </Card>
   );
 };

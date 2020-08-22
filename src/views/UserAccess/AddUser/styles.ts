@@ -19,6 +19,7 @@ export const Composer = styled.div`
   .content {
     flex: 0.75;
     padding: 16px;
+    padding-bottom: 120px;
     height: 100%;
     border-radius: 4px;
     box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);
@@ -103,6 +104,7 @@ export const Composer = styled.div`
 
   > form {
     display: flex;
+    height: inherit;
     flex: 1;
 
     > .actions {

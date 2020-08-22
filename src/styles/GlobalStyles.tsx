@@ -131,6 +131,37 @@ const GlobalStyles = createGlobalStyle`
   .no-background {
     background-color: transparent !important;
   }
+
+  .MuiMenuItem-root {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    justify-content: space-between !important;
+    font-weight: normal !important;
+    line-height: normal !important;
+    letter-spacing: normal !important;
+    color: #666666 !important;
+    font-family: 'Nunito', sans-serif !important;
+  }
+
+  .MuiMenu-list {
+    padding: 0px !important;
+  }
+
+  .MuiMenu-paper {
+    min-width: 180px !important;
+  }
+
+  .MuiListItem-button:hover {
+    text-decoration: none !important;
+    background-color: rgba(29, 132, 255, 0.2) !important;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active  {
+      -webkit-box-shadow: 0 0 0 30px #f4f4f4 inset !important;
+  }
 `;
 
 export default GlobalStyles;

@@ -118,7 +118,7 @@ export const Composer = styled.div`
       flex: 0.25;
       padding: 0px 0px 8px 8px;
 
-      .primary-button {
+      .button {
         margin-right: 0px;
         flex: 1;
         display: flex;
@@ -126,12 +126,22 @@ export const Composer = styled.div`
         width: 100%;
         justify-content: center;
         line-height: 22px;
-        background-color: #1d84ff;
+        border-radius: 3px;
+        border: 1px solid #1d84ff;
+        background-color: #fff;
+        color: #1d84ff;
+        font-size: 16px;
+        margin-top: 8px;
+
+        :first-child {
+          margin-top: 0px;
+        }
       }
 
-      .primary-button.flat {
+      .button.cancel {
+        border: none;
         background-color: transparent;
-        color: #1d84ff;
+        color: #ff6b6b;
         font-size: 16px;
       }
     }

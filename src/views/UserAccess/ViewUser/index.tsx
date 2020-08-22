@@ -6,12 +6,14 @@ import {
   Thumbnail,
   LabeledInfo,
 } from '#components';
+import { capitalize } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '#store';
 import { navigate } from '@reach/router';
 import { Composer } from './styles';
 import { ViewUserProps } from './types';
 import { permissions, roles } from '../AddUser/temp';
+import { resendInvite } from '../actions';
 
 const ViewUser: FC<ViewUserProps> = () => {
   const dispatch = useDispatch();
@@ -75,7 +77,7 @@ const ViewUser: FC<ViewUserProps> = () => {
                 roles={roles}
                 placeHolder={
                   selectedUser?.roles && selectedUser?.roles[0]
-                    ? selectedUser?.roles[0].name
+                    ? capitalize(selectedUser.roles[0].name.replace('_', ' '))
                     : 'N/A'
                 }
                 label="Role"
@@ -105,15 +107,23 @@ const ViewUser: FC<ViewUserProps> = () => {
           </div>
         </div>
         <div className="actions">
-          <Button className="primary-button">Save Changes</Button>
-          <div className="flex-row">
-            <Button
-              className="primary-button flat"
-              onClick={() => navigate(-1)}
-            >
-              Go Back
-            </Button>
-          </div>
+          {!selectedUser.verified && !selectedUser.archived ? (
+            <>
+              <Button
+                className="button"
+                onClick={() =>
+                  dispatch(resendInvite({ email: selectedUser.email }))
+                }
+              >
+                Resend Invite
+              </Button>
+              <Button className="button cancel">Cancel Invite</Button>
+            </>
+          ) : selectedUser.verified && !selectedUser.archived ? (
+            <Button className="button">Archive</Button>
+          ) : (
+            <Button className="button">Unarchive</Button>
+          )}
         </div>
       </div>
     </Composer>

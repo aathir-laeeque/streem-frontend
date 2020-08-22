@@ -68,8 +68,8 @@ const Login: FC<LoginProps> = () => {
                 ? validators['username'].messages[errors.username?.type]
                 : ''
             }
-            placeHolder="Enter your email or employee ID"
-            label="Email/Employee ID"
+            placeHolder="Enter your username or Email ID"
+            label="Username/Email ID"
             id="username"
           />
         </div>
@@ -87,7 +87,7 @@ const Login: FC<LoginProps> = () => {
             icon={
               <Visibility
                 onClick={() => setPasswordInputType(!passwordInputType)}
-                style={{ color: '#999999' }}
+                style={{ color: passwordInputType ? '#999999' : '#1d84ff' }}
               />
             }
             refFun={register({
@@ -107,7 +107,7 @@ const Login: FC<LoginProps> = () => {
           </Button>
         </div>
       </form>
-      <Terms />
+      {/* <Terms /> */}
     </Card>
   );
 };

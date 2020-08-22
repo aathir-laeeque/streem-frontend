@@ -34,6 +34,10 @@ const AddUser: FC<AddUserProps> = () => {
 
   const { list, loading } = useTypedSelector((state) => state.facilities);
 
+  useEffect(() => {
+    document.getElementById('firstName')?.focus();
+  }, [loading]);
+
   const { register, handleSubmit, errors, formState } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -109,10 +113,6 @@ const AddUser: FC<AddUserProps> = () => {
               <LabeledInput
                 refFun={register({
                   required: true,
-                  pattern: {
-                    value: /^\d+$/,
-                    message: 'Invalid Employee Id',
-                  },
                 })}
                 placeHolder="Employee ID"
                 label="Employee ID"
