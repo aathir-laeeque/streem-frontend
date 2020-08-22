@@ -21,8 +21,14 @@ export const apiUnAssignUser = (jobId: string, userId: string | number) =>
 // Properties
 export const apiGetProperties = () => `${baseUrl}/properties`;
 
+// Facilities
+
+export const apiGetFacilities = () => `${baseUrl}/facilities`;
+
 //Users
 export const apiGetUsers = () => `${baseUrl}/users`;
+
+export const apiGetUser = (id: number | string) => `${baseUrl}/users/${id}`;
 
 export const apiGetSelectedJob = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}`;
@@ -34,3 +40,12 @@ export const apiCompleteTask = (taskId: Task['id']) =>
 
 // Signature / File
 export const apiUploadFile = () => `${baseUrl}/files/`;
+
+// Auth
+export const apiLogin = () => `${baseUrl}/auth/login`;
+
+export const apiRefreshToken = () => `${baseUrl}/auth/refresh-token`;
+
+export const apiResendInvite = () => `${baseUrl}/users/resend-invite`;
+
+export const apiRegister = () => `${baseUrl}/auth/update-password`;

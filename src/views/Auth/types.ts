@@ -1,49 +1,85 @@
 import { RouteComponentProps } from '@reach/router';
+import { User } from '#store/users/types';
 import {
   login,
   loginSuccess,
   loginError,
   refreshToken,
+  refreshTokenPoll,
   refreshTokenSuccess,
   refreshTokenError,
+  fetchProfile,
+  fetchProfileSuccess,
+  fetchProfileError,
+  register,
+  registerSuccess,
+  registerError,
+  updateProfile,
+  updateProfileSuccess,
+  updateProfileError,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
 
-// export interface Profile {
-//   id: number;
-//   name: string;
-//   code: string;
-//   orderTree: number;
-// }
+export interface LoginResponse {
+  id: number;
+  firstName: string;
+  message: string;
+  token: string;
+  refreshToken: string;
+}
 
+export interface RefreshTokenResponse {
+  token: string;
+}
 export interface AuthState {
+  readonly userId: number | null;
   readonly isLoggedIn: boolean;
+  readonly token: string;
+  readonly refreshToken: string;
+  readonly profile: User | null;
+  readonly isRefreshing: boolean;
   readonly loading: boolean;
   readonly error: any;
-  readonly profile: any;
 }
 
 export enum AuthAction {
   LOGIN = '@@auth/Login/LOGIN',
   LOGIN_ERROR = '@@auth/Login/LOGIN_ERROR',
   LOGIN_SUCCESS = '@@auth/Login/LOGIN_SUCCESS',
+  REFRESH_TOKEN_POLL = '@@auth/Login/REFRESH_TOKEN_POLL',
   REFRESH_TOKEN = '@@auth/Login/REFRESH_TOKEN',
   REFRESH_TOKEN_ERROR = '@@auth/Login/REFRESH_TOKEN_ERROR',
   REFRESH_TOKEN_SUCCESS = '@@auth/Login/REFRESH_TOKEN_SUCCESS',
+  FETCH_PROFILE = '@@auth/Login/FETCH_PROFILE',
+  FETCH_PROFILE_ERROR = '@@auth/Login/FETCH_PROFILE_ERROR',
+  FETCH_PROFILE_SUCCESS = '@@auth/Login/FETCH_PROFILE_SUCCESS',
   REGISTER = '@@auth/Register/REGISTER',
   REGISTER_ERROR = '@@auth/Register/REGISTER_ERROR',
   REGISTER_SUCCESS = '@@auth/Register/REGISTER_SUCCESS',
   FORGOT_PASSWORD = '@@auth/Register/FORGOT_PASSWORD',
   FORGOT_PASSWORD_ERROR = '@@auth/Register/FORGOT_PASSWORD_ERROR',
   FORGOT_PASSWORD_SUCCESS = '@@auth/Register/FORGOT_PASSWORD_SUCCESS',
+  UPDATE_PROFILE = '@@auth/MyProfile/UPDATE_PROFILE',
+  UPDATE_PROFILE_ERROR = '@@auth/MyProfile/UPDATE_PROFILE_ERROR',
+  UPDATE_PROFILE_SUCCESS = '@@auth/MyProfile/UPDATE_PROFILE_SUCCESS',
 }
 
 export type AuthActionType = ReturnType<
   | typeof login
   | typeof loginSuccess
   | typeof loginError
+  | typeof register
+  | typeof registerSuccess
+  | typeof registerError
   | typeof refreshToken
+  | typeof refreshTokenPoll
   | typeof refreshTokenSuccess
   | typeof refreshTokenError
+  | typeof fetchProfile
+  | typeof fetchProfileSuccess
+  | typeof fetchProfileError
+  | typeof updateProfile
+  | typeof updateProfileSuccess
+  | typeof updateProfileError
 >;

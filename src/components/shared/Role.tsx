@@ -15,10 +15,11 @@ interface RoleProps {
   roles: RoleType[];
   selected?: number;
   label: string;
-  refFun?: any;
   placeHolder: string;
   disabled?: boolean;
   error?: string;
+  refFun?: any;
+  viewing?: boolean;
 }
 
 type PermissionType = {
@@ -165,6 +166,14 @@ const Wrapper = styled.div.attrs({})`
       opacity: 0.6;
     }
 
+    input.viewing {
+      border-bottom: none !important;
+      opacity: 1 !important;
+      color: #333333;
+      flex: unset;
+      padding: 4px 0px;
+    }
+
     .actions {
       color: #1d84ff;
       font-size: 16px;
@@ -236,6 +245,7 @@ export const Role: FC<RoleProps> = ({
   refFun,
   id,
   error,
+  viewing,
 }) => {
   const [isActive, setIsActive] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -248,7 +258,7 @@ export const Role: FC<RoleProps> = ({
     setIsActive(false);
   };
 
-  const onToggle = (event: Event, expanded: boolean): void => {
+  const onToggle = (event: React.ChangeEvent<any>, expanded: boolean): void => {
     setIsExpanded(expanded);
   };
 
@@ -264,21 +274,24 @@ export const Role: FC<RoleProps> = ({
           ${error ? 'error' : ''}
           ${disabled ? 'disabled' : ''}`}
       >
-        {disabled && <label>{label}</label>}
+        {disabled && !viewing && <label>{label}</label>}
         <div>
           <Accordion onChange={onToggle}>
             <AccordionSummary
               aria-controls="panel1a-content"
               id="panel1a-header"
-              expandIcon={disabled ? <ArrowDropDownIcon /> : false}
+              expandIcon={disabled && !viewing ? <ArrowDropDownIcon /> : false}
             >
               {disabled && (
                 <>
                   <input
                     name={id}
-                    className={`input ${disabled ? 'disabled' : ''}`}
                     ref={refFun}
-                    placeholder={placeHolder}
+                    className={`input ${disabled ? 'disabled' : ''} ${
+                      viewing ? 'viewing' : ''
+                    }`}
+                    style={{ width: `${placeHolder.length * 12}px` }}
+                    value={placeHolder}
                     onFocus={onFocus}
                     data-testid={id}
                     onBlur={onBlur}
@@ -288,6 +301,16 @@ export const Role: FC<RoleProps> = ({
                   <div className="actions">
                     {isExpanded ? 'Hide Permissions' : 'View Permissions'}
                   </div>
+                  {viewing &&
+                    (isExpanded ? (
+                      <ArrowDropUpIcon
+                        style={{ color: 'rgba(0, 0, 0, 0.54)' }}
+                      />
+                    ) : (
+                      <ArrowDropDownIcon
+                        style={{ color: 'rgba(0, 0, 0, 0.54)' }}
+                      />
+                    ))}
                 </>
               )}
               {!disabled && (
@@ -313,6 +336,9 @@ export const Role: FC<RoleProps> = ({
                       <div key={`${role.id}`} className="check-group">
                         <Checkbox
                           key={`${role.id}`}
+                          name="roles"
+                          value={role.id}
+                          refFun={refFun}
                           label={role.name}
                           onClick={() => console.log('cheked')}
                         />
@@ -330,6 +356,7 @@ export const Role: FC<RoleProps> = ({
                       <div
                         key={`${permissionGroup.id}`}
                         className="permission-group"
+                        style={viewing ? { paddingLeft: 12 } : {}}
                       >
                         <div className="permission">
                           {permissionGroup.permissions.map((permission) => {

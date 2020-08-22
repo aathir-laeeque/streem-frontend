@@ -6,7 +6,7 @@ import {
 } from './types';
 
 const initialState: ListViewState = {
-  loading: false,
+  loading: true,
   error: undefined,
   selectedStatus: JobStatus.UNASSIGNED,
   jobs: {

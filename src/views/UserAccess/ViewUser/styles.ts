@@ -1,11 +1,19 @@
 import styled from 'styled-components';
 export const Composer = styled.div`
-  height: calc(100% - 60px);
+  height: inherit;
   display: flex;
   flex: 1;
+  flex-direction: column;
 
   .bold {
     font-weight: 600;
+  }
+
+  .flex-row {
+    display: flex;
+    flex: 1;
+    padding: 16px 0px;
+    flex-wrap: wrap;
   }
 
   .content {
@@ -48,10 +56,17 @@ export const Composer = styled.div`
       flex: 1;
     }
 
-    .flex-row {
-      display: flex;
-      flex: 1;
-      padding: 16px 0px;
+    .facilities {
+      span {
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 2;
+        color: #666666;
+        padding: 0px 16px;
+      }
+      padding: 8px 0px;
+      width: 50%;
+      display: block;
     }
 
     .partition {
@@ -64,6 +79,8 @@ export const Composer = styled.div`
 
     .flex-col {
       flex: 0.5;
+      flex-wrap: wrap;
+      display: flex;
     }
 
     .wrapper {
@@ -82,6 +99,10 @@ export const Composer = styled.div`
       border-bottom: 2px solid #1d84ff;
     }
 
+    .wrapper.error {
+      border-bottom: 2px solid #ff6b6b;
+    }
+
     .wrapper.disabled {
       border: none;
       border-bottom: 1px dashed #999999;
@@ -89,7 +110,7 @@ export const Composer = styled.div`
     }
   }
 
-  > form {
+  > .main {
     display: flex;
     flex: 1;
 

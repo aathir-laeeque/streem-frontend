@@ -1,3 +1,5 @@
+import { store } from '../App';
+
 interface RequestOptions {
   data?: Record<string | number, any>;
   formData?: FormData;
@@ -16,6 +18,10 @@ export const request = async (
   url: string,
   options?: RequestOptions,
 ) => {
+  const {
+    auth: { isLoggedIn, token },
+  } = store.getState();
+
   let apiUrl = url;
   if (options?.params) {
     apiUrl +=
@@ -26,6 +32,7 @@ export const request = async (
     method,
     headers: {
       'Access-Control-Allow-Origin': '*',
+      ...(!!isLoggedIn && { Authorization: `Bearer ${token}` }),
       ...(!options?.formData && { 'Content-Type': 'application/json' }),
       ...options?.headers,
     },

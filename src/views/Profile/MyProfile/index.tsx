@@ -2,114 +2,191 @@ import React, { FC } from 'react';
 import { Button, LabeledInput, Role, Thumbnail } from '#components';
 import { Composer } from './styles';
 import { MyProfileProps } from './types';
-import { permissions, roles } from './temp';
+import { useDispatch } from 'react-redux';
+import { useTypedSelector } from '#store';
+import { useForm } from 'react-hook-form';
+import { updateProfile } from '#views/Auth/actions';
+import { permissions, roles } from '#views/UserAccess/AddUser/temp';
+
+type Inputs = {
+  firstName: string;
+  lastName: string;
+  employeeId: string;
+  username: string;
+  email: string;
+  department: string;
+  facilities: string;
+  roles: string;
+};
 
 const MyProfile: FC<MyProfileProps> = () => {
+  const dispatch = useDispatch();
+  const { profile } = useTypedSelector((state) => state.auth);
+  const { register, handleSubmit, errors, formState } = useForm<Inputs>({
+    mode: 'onChange',
+    criteriaMode: 'all',
+    defaultValues: {
+      firstName: profile?.firstName,
+      lastName: profile?.lastName,
+      username: profile?.username,
+      employeeId: profile?.employeeId,
+      email: profile?.email,
+      department: profile?.department,
+      facilities: profile?.facilities?.map((f) => f.name).toString(),
+      roles: profile?.roles?.map((r) => r.name).toString(),
+    },
+  });
+
+  const onSubmit = (data: Inputs) => {
+    const payload = {
+      firstName: data?.firstName,
+      lastName: data?.lastName,
+    };
+    dispatch(updateProfile({ body: payload, id: profile?.id || 0 }));
+  };
+
   return (
     <Composer>
-      <div className="content">
-        <div className="heading">Managing Your Profile</div>
-        <div className="sub-heading" style={{ marginBottom: '16px' }}>
-          Manage your profile or update the password of your account
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="content">
+          <div className="heading">Managing Your Profile</div>
+          <div className="sub-heading" style={{ marginBottom: '16px' }}>
+            Manage your profile or update the password of your account
+          </div>
+          <div className="flex-row">
+            <div className="sub-heading bold">Basic Information</div>
+          </div>
+          <Thumbnail
+            source={{
+              firstName: profile?.firstName || '',
+              lastName: profile?.lastName || '',
+            }}
+            id="avatar"
+          />
+          <div className="flex-row">
+            <div className="flex-col right-gutter">
+              <LabeledInput
+                refFun={register({
+                  required: true,
+                })}
+                placeHolder="First Name"
+                label="First Name"
+                id="firstName"
+                error={errors['firstName']?.message}
+              />
+            </div>
+            <div className="flex-col left-gutter">
+              <LabeledInput
+                refFun={register({
+                  required: true,
+                })}
+                placeHolder="Last Name"
+                label="Last Name"
+                id="lastName"
+                error={errors['lastName']?.message}
+              />
+            </div>
+          </div>
+          <div className="flex-row">
+            <div className="flex-col right-gutter">
+              <LabeledInput
+                refFun={register({
+                  // required: true,
+                  pattern: {
+                    value: /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/,
+                    message: 'Invalid Username',
+                  },
+                })}
+                placeHolder="Username"
+                label="Username"
+                id="username"
+                disabled
+              />
+            </div>
+            <div className="flex-col left-gutter">
+              <LabeledInput
+                refFun={register({
+                  required: true,
+                  pattern: {
+                    value: /^\d+$/,
+                    message: 'Invalid Employee Id',
+                  },
+                })}
+                placeHolder="Employee ID"
+                label="Employee ID"
+                id="employeeId"
+                disabled
+              />
+            </div>
+          </div>
+          <div className="flex-row">
+            <div className="flex-col right-gutter">
+              <LabeledInput
+                refFun={register({
+                  required: true,
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Invalid email address',
+                  },
+                })}
+                placeHolder="Email ID"
+                label="Email ID"
+                id="email"
+                disabled
+              />
+            </div>
+            <div className="flex-col left-gutter">
+              <LabeledInput
+                refFun={register}
+                placeHolder="Department"
+                label="Department"
+                id="department"
+                disabled
+              />
+            </div>
+          </div>
+          <div className="flex-row" style={{ paddingBottom: 0 }}>
+            <div className="flex-col right-gutter">
+              <LabeledInput
+                refFun={register}
+                placeHolder="Facilities"
+                label="Facilities"
+                id="facilities"
+                disabled
+              />
+            </div>
+            <div className="flex-col left-gutter" style={{ marginTop: '-5px' }}>
+              <Role
+                refFun={register({
+                  required: true,
+                })}
+                permissions={permissions}
+                roles={roles}
+                placeHolder={
+                  profile?.roles && profile?.roles[0]
+                    ? profile?.roles[0].name
+                    : 'N/A'
+                }
+                label="Role"
+                id="roles"
+                disabled
+                selected={
+                  profile?.roles && profile?.roles[0] ? profile?.roles[0].id : 3
+                }
+              />
+            </div>
+          </div>
         </div>
-        <div className="flex-row">
-          <div className="sub-heading bold">Basic Information</div>
+        <div className="actions">
+          <Button
+            className="primary-button"
+            type="submit"
+            disabled={formState.isValid && formState.isDirty ? false : true}
+          >
+            Save Changes
+          </Button>
         </div>
-        <Thumbnail
-          source={{ firstName: 'Paul', lastName: 'Burton' }}
-          id="avatar"
-        />
-        <div className="flex-row">
-          <div className="flex-col right-gutter">
-            <LabeledInput
-              placeHolder="First Name"
-              label="First Name"
-              id="username"
-            />
-          </div>
-          <div className="flex-col left-gutter">
-            <LabeledInput
-              placeHolder="Last Name"
-              label="Last Name"
-              id="username"
-            />
-          </div>
-        </div>
-        <div className="flex-row">
-          <div className="flex-col right-gutter">
-            <LabeledInput
-              placeHolder="Employee ID"
-              label="Employee ID"
-              id="username"
-            />
-          </div>
-          <div className="flex-col left-gutter">
-            <LabeledInput
-              placeHolder="Email ID"
-              label="Email ID"
-              id="username"
-              disabled
-            />
-          </div>
-        </div>
-        <div className="flex-row">
-          <div className="flex-col right-gutter">
-            <LabeledInput
-              placeHolder="Department"
-              label="Department"
-              id="username"
-            />
-          </div>
-          <div className="flex-col left-gutter">
-            <LabeledInput
-              placeHolder="Facilities"
-              label="Facilities"
-              id="username"
-            />
-          </div>
-        </div>
-        <div className="flex-row" style={{ paddingBottom: 0 }}>
-          <div className="flex-col right-gutter">
-            <Role
-              permissions={permissions}
-              roles={roles}
-              placeHolder="System Admin"
-              label="Role"
-              id="role"
-              disabled
-              selected={2}
-            />
-          </div>
-        </div>
-        <div className="partition" />
-        <div className="sub-heading bold">Password</div>
-        <div className="sub-title">
-          Your new password should comply with the Password Policy
-        </div>
-        <div className="flex-row">
-          <div className="flex-col right-gutter">
-            <LabeledInput
-              placeHolder="Enter Current Password"
-              label="Current Password"
-              id="current-password"
-              type="password"
-            />
-          </div>
-          <div className="flex-col left-gutter">
-            <LabeledInput
-              placeHolder="Enter New Password"
-              label="New Password"
-              id="new-password"
-              type="password"
-            />
-          </div>
-        </div>
-      </div>
-      <div className="actions">
-        <Button className="primary-button" type="submit" disabled>
-          Save Changes
-        </Button>
-      </div>
+      </form>
     </Composer>
   );
 };

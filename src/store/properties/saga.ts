@@ -4,6 +4,8 @@ import { put, call, takeEvery } from 'redux-saga/effects';
 import { fetchPropertiesError, fetchPropertiesSuccess } from './actions';
 import { PropertiesAction } from './types';
 
+// TODO Update like others
+
 function* fetchProperties(action: any) {
   try {
     const params = action.payload;

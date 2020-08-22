@@ -8,6 +8,31 @@ export const Composer = styled.div`
     font-weight: 600;
   }
 
+  .error-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 12px 0px;
+
+    > div {
+      display: flex;
+      flex: 0 50%;
+      width: 100%;
+      font-size: 14px;
+      line-height: 19px;
+      color: #666666;
+      align-items: center;
+
+      .indicator {
+        width: 7px;
+        height: 7px;
+        margin-right: 6px;
+        border-radius: 4px;
+        background-color: #5aa700;
+        display: inline-block;
+      }
+    }
+  }
+
   .content {
     flex: 0.75;
     padding: 16px;
@@ -89,25 +114,30 @@ export const Composer = styled.div`
     }
   }
 
-  > .actions {
-    flex: 0.25;
-    padding: 0px 0px 8px 8px;
+  > form {
+    display: flex;
+    flex: 1;
 
-    .primary-button {
-      margin-right: 0px;
-      flex: 1;
-      display: flex;
-      font-size: 20px;
-      width: 100%;
-      justify-content: center;
-      line-height: 22px;
-      background-color: #1d84ff;
-    }
+    > .actions {
+      flex: 0.25;
+      padding: 0px 0px 8px 8px;
 
-    .primary-button.flat {
-      background-color: transparent;
-      color: #1d84ff;
-      font-size: 16px;
+      .primary-button {
+        margin-right: 0px;
+        flex: 1;
+        display: flex;
+        font-size: 20px;
+        width: 100%;
+        justify-content: center;
+        line-height: 22px;
+        background-color: #1d84ff;
+      }
+
+      .primary-button.flat {
+        background-color: transparent;
+        color: #1d84ff;
+        font-size: 16px;
+      }
     }
   }
 `;

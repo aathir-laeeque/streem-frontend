@@ -70,7 +70,7 @@ const AuthView: FC<AuthViewProps> = () => (
     </div>
     <div className="sections right">
       <Router style={{ width: '100%' }}>
-        <Register path="register/:name/:email" />
+        <Register path="register/:name/:email/:token" />
         <Locked path="locked" />
         <Forgot path="forgot" />
         <Login path="/*" />

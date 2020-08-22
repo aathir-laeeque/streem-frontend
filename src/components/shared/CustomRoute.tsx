@@ -1,4 +1,7 @@
 import { Redirect, RouteComponentProps } from '@reach/router';
+import { useTypedSelector } from '#store';
+import { useDispatch } from 'react-redux';
+import { refreshTokenPoll } from '#views/Auth/actions';
 import React, { FC } from 'react';
 
 type Props = RouteComponentProps & {
@@ -18,9 +21,18 @@ export const CustomRoute: FC<Props> = ({
   ...props
 }) => {
   const { ...rest } = props;
+  const { profile, isRefreshing } = useTypedSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
-  // TODO Update From Store
-  const currentState = SessionStates.INACTIVE;
+  let currentState = SessionStates.INACTIVE;
+
+  if (profile) {
+    const { verified, archived } = profile;
+    if (!isRefreshing) dispatch(refreshTokenPoll());
+    if (verified) currentState = SessionStates.ACTIVE;
+  }
+  // console.log('active', active);
+  // console.log('archived', archived);
 
   if (!isProtected) {
     switch (currentState) {

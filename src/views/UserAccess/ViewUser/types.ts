@@ -1,6 +1,6 @@
 import { RouteComponentProps } from '@reach/router';
 
-export type AddUserProps = RouteComponentProps;
+export type ViewUserProps = RouteComponentProps;
 
 export type PermissionType = {
   id: number;

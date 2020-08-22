@@ -3,9 +3,12 @@ import styled from 'styled-components';
 
 interface CheckboxProps {
   label?: string;
+  value?: string | number;
+  name?: string;
   checked?: boolean;
   disabled?: boolean;
   onClick: () => void;
+  refFun?: any;
 }
 
 const Wrapper = styled.div.attrs({
@@ -82,16 +85,22 @@ export const Checkbox: FC<CheckboxProps> = ({
   label,
   checked,
   onClick,
+  value = '',
+  name = '',
   disabled = false,
+  refFun,
 }) => (
   <Wrapper>
     <label className="container">
       {label}
       <input
         type="checkbox"
+        value={value}
+        name={name}
         checked={checked}
         onChange={onClick}
         disabled={disabled}
+        ref={refFun}
       />
       <span className="checkmark"></span>
     </label>

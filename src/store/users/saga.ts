@@ -3,19 +3,30 @@ import { request } from '#utils/request';
 import { ResponseObj } from '#utils/globalTypes';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
-import { fetchUsersError, fetchUsersSuccess } from './actions';
+import {
+  fetchUsers,
+  fetchUsersError,
+  fetchUsersSuccess,
+  fetchUsersOngoing,
+} from './actions';
 import { UsersAction, User } from './types';
 
-function* fetchUsers(action: any) {
+function* fetchUsersSaga({ payload }: ReturnType<typeof fetchUsers>) {
+  console.log('fetchUsersSaga', payload);
   try {
-    const params = action.payload;
+    const { params, type } = payload;
+
+    if (params.page === 0) {
+      yield put(fetchUsersOngoing());
+    }
+
     const { data, pageable }: ResponseObj<User> = yield call(
       request,
       'GET',
       apiGetUsers(),
       { params },
     );
-    yield put(fetchUsersSuccess({ data, pageable }));
+    yield put(fetchUsersSuccess({ data, pageable }, type));
   } catch (error) {
     console.error(
       'error from fetchUsers function in UsersUsersSaga :: ',
@@ -26,5 +37,5 @@ function* fetchUsers(action: any) {
 }
 
 export function* UsersSaga() {
-  yield takeEvery(UsersAction.FETCH_USERS, fetchUsers);
+  yield takeEvery(UsersAction.FETCH_USERS, fetchUsersSaga);
 }

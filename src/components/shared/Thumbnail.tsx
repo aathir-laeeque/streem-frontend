@@ -4,6 +4,9 @@ import { getInitials } from '#utils/stringUtils';
 
 interface ThumbnailProps {
   id: string;
+  status?: string;
+  title?: string;
+  subTitle?: string;
   refFun?: any;
   disabled?: boolean;
   error?: string;
@@ -38,7 +41,7 @@ const Wrapper = styled.div.attrs({})`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 0px 16px;
+    padding: 4px 16px;
   }
 
   .custom-file-input {
@@ -87,8 +90,23 @@ const Wrapper = styled.div.attrs({})`
     outline: none;
   }
 
-  span {
+  .hints {
     color: #999999;
+    font-size: 12px;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333333;
+  }
+
+  .subTitle {
+    font-size: 12px;
+    color: #666666;
+  }
+
+  .status {
     font-size: 12px;
   }
 `;
@@ -98,6 +116,9 @@ export const Thumbnail: FC<ThumbnailProps> = ({
   refFun,
   id,
   error,
+  status,
+  title,
+  subTitle,
   source,
 }) => {
   return (
@@ -110,9 +131,19 @@ export const Thumbnail: FC<ThumbnailProps> = ({
         </div>
       )}
       <div>
-        <input type="file" className="custom-file-input" />
-        <span>JPG, GIF or PNG</span>
-        <span>Max size of 800K</span>
+        {(!disabled && (
+          <>
+            <input type="file" className="custom-file-input" />
+            <span className="hints">JPG, GIF or PNG</span>
+            <span className="hints">Max size of 800K</span>
+          </>
+        )) || (
+          <>
+            <span className="title">{title}</span>
+            <span className="subTitle">#{subTitle}</span>
+            <span className="status">{status}</span>
+          </>
+        )}
       </div>
     </Wrapper>
   );

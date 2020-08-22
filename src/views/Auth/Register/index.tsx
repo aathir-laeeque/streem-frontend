@@ -3,11 +3,13 @@ import { LabeledInput, Button, Terms, Card } from '#components';
 import { RegisterProps } from './types';
 import { Visibility } from '@material-ui/icons';
 import { Link } from '@reach/router';
+import { useDispatch } from 'react-redux';
+import { register as registerAction } from '../actions';
 import { useForm, ValidationRules } from 'react-hook-form';
 
 type Inputs = {
   fullName: string;
-  username: string;
+  email: string;
   password: string;
 };
 
@@ -33,17 +35,19 @@ const validators: ValidatorProps = {
   },
 };
 
-const Register: FC<RegisterProps> = ({ name, email }) => {
+const Register: FC<RegisterProps> = ({ name, email, token }) => {
   const { register, handleSubmit, trigger, errors } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
     defaultValues: {
       fullName: name,
-      username: email,
+      email: email,
     },
   });
   const [passwordInputType, setPasswordInputType] = useState(true);
   const { functions, messages } = validators;
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     trigger('password');
@@ -51,6 +55,16 @@ const Register: FC<RegisterProps> = ({ name, email }) => {
 
   const onSubmit = (data: Inputs) => {
     console.log('Inputs', data);
+    const { email, password } = data;
+    if (token) {
+      dispatch(
+        registerAction({
+          email: email.toString(),
+          newPassword: password.toString(),
+          token: token.toString(),
+        }),
+      );
+    }
   };
 
   return (
@@ -73,7 +87,7 @@ const Register: FC<RegisterProps> = ({ name, email }) => {
             refFun={register}
             placeHolder="troypeters@example.net"
             label="Email/Employee ID"
-            id="username"
+            id="email"
             disabled
           />
         </div>

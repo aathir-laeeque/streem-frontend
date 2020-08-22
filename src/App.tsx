@@ -6,11 +6,13 @@ import { AuthView } from '#views';
 import { Router } from '@reach/router';
 import React, { FC } from 'react';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 
 import GlobalStyles from './styles/GlobalStyles';
 import { HomeView } from './views';
 
-const store = configureStore({});
+export const { store, persistor } = configureStore({});
+// persistor.purge();
 
 const App: FC = () => {
   // useEffect(() => {
@@ -19,23 +21,25 @@ const App: FC = () => {
 
   return (
     <Provider store={store}>
-      <Router style={{ height: 'inherit', width: 'inherit' }} basepath="/">
-        <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
-        <CustomRoute as={HomeView} path="/*" />
-      </Router>
-      <Notification
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={true}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      <ModalContainer />
-      <GlobalStyles />
+      <PersistGate loading={null} persistor={persistor}>
+        <Router style={{ height: 'inherit', width: 'inherit' }} basepath="/">
+          <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
+          <CustomRoute as={HomeView} path="/*" />
+        </Router>
+        <Notification
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={true}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+        <ModalContainer />
+        <GlobalStyles />
+      </PersistGate>
     </Provider>
   );
 };

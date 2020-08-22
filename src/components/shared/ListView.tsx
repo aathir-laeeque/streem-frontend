@@ -1,8 +1,9 @@
 import { Properties } from '#store/properties/types';
 import { ArrowDropDown, Search } from '@material-ui/icons';
 import React, { FC, useEffect, useRef } from 'react';
-import { Checklist } from 'src/views/Checklists/types';
-import { Job } from 'src/views/Jobs/types';
+import { Checklist } from '#views/Checklists/types';
+import { Users } from '#store/users/types';
+import { Job } from '#views/Jobs/types';
 import styled from 'styled-components';
 
 import { Button, FlatButton } from './Button';
@@ -11,11 +12,15 @@ interface ListViewProps {
   primaryButtonText: string;
   onPrimaryClick?: () => void;
   properties: Properties;
-  data: Checklist[] | Job[];
+  data: Checklist[] | Job[] | Users;
   fetchData: (page: number, size: number) => void;
   isLast: boolean;
   currentPage: number;
   beforeColumns?: {
+    header: string;
+    template: (item: any, index: number) => JSX.Element;
+  }[];
+  afterColumns?: {
     header: string;
     template: (item: any, index: number) => JSX.Element;
   }[];
@@ -69,9 +74,9 @@ const Wrapper = styled.div.attrs({})`
 
   .list-card-columns {
     flex: 1;
-    font-size: 12px;
+    font-size: 14px;
     color: #666666;
-    font-weight: bold;
+    font-weight: 600;
     letter-spacing: 1px;
     display: flex;
     align-items: center;
@@ -83,7 +88,7 @@ const Wrapper = styled.div.attrs({})`
   }
 
   .list-title {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
     color: #1d84ff;
     cursor: pointer;
@@ -96,7 +101,7 @@ const Wrapper = styled.div.attrs({})`
   }
 
   .list-code {
-    font-size: 11px;
+    font-size: 14px;
     line-height: 14px;
     font-weight: 600;
     color: #333333;
@@ -167,6 +172,7 @@ export const ListView: FC<ListViewProps> = ({
   isLast,
   currentPage,
   beforeColumns,
+  afterColumns,
 }) => {
   const scroller = useRef<HTMLDivElement | null>(null);
 
@@ -225,6 +231,16 @@ export const ListView: FC<ListViewProps> = ({
             {el.name}
           </div>
         ))}
+        {afterColumns &&
+          afterColumns.length &&
+          afterColumns.map((beforeColumn) => (
+            <div
+              key={`beforeColumn_${beforeColumn.header}`}
+              className="list-header-columns"
+            >
+              {beforeColumn.header}
+            </div>
+          ))}
       </div>
       <div className="list-body" ref={scroller}>
         {(data as Array<Checklist | Job>).map((el, index) => (
@@ -244,6 +260,11 @@ export const ListView: FC<ListViewProps> = ({
                   : '-N/A-'}
               </div>
             ))}
+            {afterColumns &&
+              afterColumns.length &&
+              afterColumns.map((beforeColumn) =>
+                beforeColumn.template(el, index),
+              )}
           </div>
         ))}
       </div>

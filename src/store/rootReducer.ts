@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
 
 import { PropertiesReducer } from './properties/reducer';
 import { UsersReducer } from './users/reducer';
+import { FacilitiesReducer } from './facilities/reducer';
 
 export const rootReducer = combineReducers({
   checklistListView: ChecklistListViewReducer,
@@ -15,5 +16,6 @@ export const rootReducer = combineReducers({
   modalContainer: ModalContainerReducer,
   properties: PropertiesReducer,
   users: UsersReducer,
+  facilities: FacilitiesReducer,
   auth: AuthReducer,
 });

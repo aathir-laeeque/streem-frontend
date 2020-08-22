@@ -11,6 +11,7 @@ interface LabeledInputProps {
   icon?: JSX.Element;
   error?: string;
   required?: boolean;
+  onFocusInput?: () => void;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -121,6 +122,7 @@ export const LabeledInput: FC<LabeledInputProps> = ({
   icon,
   error,
   required = true,
+  onFocusInput,
 }) => {
   const [state, setState] = useState({
     isActive: false,
@@ -129,6 +131,7 @@ export const LabeledInput: FC<LabeledInputProps> = ({
   });
 
   const onFocus = (): void => {
+    if (onFocusInput) onFocusInput();
     setState({
       isActive: true,
       placeHolderText: placeHolder,

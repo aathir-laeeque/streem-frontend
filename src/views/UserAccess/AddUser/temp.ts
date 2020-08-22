@@ -1,20 +1,18 @@
 import { PermissionType, RoleType } from './types';
 
-interface User {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  department?: string;
-  facilities: string[];
-  roles: {
-    id: number;
-  };
-}
-
 export const roles: RoleType[] = [
   {
     id: 1,
+    name: 'System Admin',
+    permissions: {
+      'Manage Users and Roles': true,
+      'Manage Facility Access': true,
+      'View User’s Session Activity': true,
+      'Manage Application Security': true,
+    },
+  },
+  {
+    id: 2,
     name: 'Facility Admin',
     permissions: {
       'Create Checklists and Submit Versions': true,
@@ -29,16 +27,6 @@ export const roles: RoleType[] = [
       'Print Jobs': true,
       'View Job Activity': true,
       'View Job Report & Analytics': true,
-    },
-  },
-  {
-    id: 2,
-    name: 'System Admin',
-    permissions: {
-      'Manage Users and Roles': true,
-      'Manage Facility Access': true,
-      'View User’s Session Activity': true,
-      'Manage Application Security': true,
     },
   },
   {
@@ -104,14 +92,3 @@ export const permissions: PermissionType[] = [
     ],
   },
 ];
-
-export const userData: User = {
-  id: 12435,
-  email: 'paul_burton@example.net',
-  firstName: '',
-  lastName: '',
-  roles: {
-    id: 2,
-  },
-  facilities: ['New Jaiden', 'Rigobertohaven', 'Larsonton'],
-};

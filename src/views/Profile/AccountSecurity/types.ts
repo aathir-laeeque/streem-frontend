@@ -1,6 +1,7 @@
 import { RouteComponentProps } from '@reach/router';
 
-export type AddUserProps = RouteComponentProps;
+type TabContentProps = Record<string, any>;
+export type AccountSecurityProps = RouteComponentProps<TabContentProps>;
 
 export type PermissionType = {
   id: number;

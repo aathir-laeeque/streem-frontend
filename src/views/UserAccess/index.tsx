@@ -2,13 +2,15 @@ import { Router } from '@reach/router';
 import React, { FC } from 'react';
 
 import AddUser from './AddUser';
-import UserAccess from './ListView';
+import ViewUser from './ViewUser';
+import ListView from './ListView';
 import { UserAccessViewProps } from './types';
 
 const UserAccessView: FC<UserAccessViewProps> = () => (
   <Router>
-    <UserAccess path="/" />
+    <ListView path="/" />
     <AddUser path="add-user" />
+    <ViewUser path="view-user" />
   </Router>
 );
 
