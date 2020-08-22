@@ -12,7 +12,7 @@ export const Wrapper = styled.div`
     border-radius: 4px;
     box-shadow: 0 1px 4px 0 rgba(18, 170, 179, 0.08);
     display: grid;
-    grid-template-areas: 'top-bar' 'header' 'task-content' 'completion-buttons';
+    grid-template-areas: 'top-bar' 'header' 'task-content' 'task-buttons';
     height: max-content;
 
     :hover {
@@ -27,9 +27,38 @@ export const Wrapper = styled.div`
       grid-area: task-content;
     }
 
-    &-completion-buttons {
-      grid-area: completion-buttons;
+    &-buttons {
+      grid-area: task-buttons;
       padding: 32px;
+      display: flex;
+      flex-direction: column;
+
+      button {
+        align-items: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        outline: none;
+      }
+
+      .complete-task {
+        border: 1px solid #1d84ff;
+        border-radius: 4px;
+        color: #1d84ff;
+        padding: 10px 0;
+
+        > .icon {
+          color: #1d84ff;
+          margin-left: 12px;
+        }
+      }
+
+      .skip-task {
+        color: #1d84ff;
+        margin-top: 24px;
+      }
     }
 
     &-media {

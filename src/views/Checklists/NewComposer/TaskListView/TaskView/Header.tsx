@@ -27,6 +27,7 @@ const Header: FC<HeaderProps> = ({ task }) => {
           <>
             <div className="position-control-buttons">
               <ArrowUpwardOutlined className="icon icon-up" />
+
               <ArrowDownwardOutlined className="icon icon-down" />
             </div>
 
@@ -37,6 +38,7 @@ const Header: FC<HeaderProps> = ({ task }) => {
         ) : task.hasStop ? (
           <div className="stop-banner">
             <PanTool className="icon" />
+
             <span>Complete this task before proceeding to the next task.</span>
           </div>
         ) : null}
