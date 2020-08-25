@@ -58,7 +58,7 @@ const ActivityListView: FC<ActivityListViewProps> = ({ activities }) => {
                   return <MultiSelectActivity activity={activity} />;
 
                 // Done, execution state is left => design pending
-                case ActivityType.SHOULDBE:
+                case ActivityType.SHOULD_BE:
                   return <ShouldBeActivity activity={activity} />;
 
                 // Completely Done by Ashish
@@ -70,7 +70,7 @@ const ActivityListView: FC<ActivityListViewProps> = ({ activities }) => {
                   return <TextboxActivity activity={activity} />;
 
                 // Completely Done
-                case ActivityType.YESNO:
+                case ActivityType.YES_NO:
                   return <YesNoActivity activity={activity} />;
 
                 default:

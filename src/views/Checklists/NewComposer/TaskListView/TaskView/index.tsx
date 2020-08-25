@@ -9,6 +9,7 @@ import Header from './Header';
 import { Wrapper } from './styles';
 import { TaskViewProps } from './types';
 import { ArrowRightAlt } from '@material-ui/icons';
+import { ActivityType } from '#views/Checklists/NewComposer/checklist.types';
 
 const TaskView: FC<TaskViewProps> = ({ task }) => {
   const { composerState } = useTypedSelector((state) => state.newComposer);
@@ -28,8 +29,12 @@ const TaskView: FC<TaskViewProps> = ({ task }) => {
           {isEditing ? (
             <Select
               placeholder="Add activity"
-              options={[]}
+              options={Object.values(ActivityType).map((key) => ({
+                label: ActivityType[key],
+                value: key,
+              }))}
               styles={customSelectStyles}
+              onChange={(option) => console.log('option on change :: ', option)}
             />
           ) : (
             <>

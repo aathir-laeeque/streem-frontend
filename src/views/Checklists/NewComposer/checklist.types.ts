@@ -5,9 +5,9 @@ interface Properties {
 export enum ActivityType {
   MATERIAL = 'MATERIAL',
   INSTRUCTION = 'INSTRUCTION',
-  YESNO = 'YES_NO',
+  YES_NO = 'YES_NO',
   CHECKLIST = 'CHECKLIST',
-  SHOULDBE = 'SHOULD_BE',
+  SHOULD_BE = 'SHOULD_BE',
   MEDIA = 'MEDIA',
   MULTISELECT = 'MULTISELECT',
   TEXTBOX = 'TEXTBOX',

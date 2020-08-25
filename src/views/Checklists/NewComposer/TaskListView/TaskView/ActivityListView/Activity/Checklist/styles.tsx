@@ -47,6 +47,10 @@ export const Wrapper = styled.div`
           outline: none;
           flex: 1;
         }
+
+        .selected {
+          text-decoration: line-through;
+        }
       }
 
       > .icon {

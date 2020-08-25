@@ -58,6 +58,7 @@ export const Wrapper = styled.div`
       .skip-task {
         color: #1d84ff;
         margin-top: 24px;
+        display: none;
       }
     }
 
