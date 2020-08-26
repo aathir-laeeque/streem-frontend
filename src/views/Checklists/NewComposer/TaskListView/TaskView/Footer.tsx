@@ -21,7 +21,7 @@ const Footer: FC<FooterProps> = ({ isEditingTemplate, isTaskSkipable }) => (
     />
 
     <button className="complete-task">
-      Complte Task <ArrowRightAlt className="icon" />
+      Complete Task <ArrowRightAlt className="icon" />
     </button>
 
     <button className="skip-task">
