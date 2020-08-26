@@ -26,10 +26,6 @@ export const Wrapper = styled.div.attrs({
     &.active {
       border-color: #1d84ff;
     }
-
-    &-media {
-      grid-area: task-media;
-    }
   }
 `;
 

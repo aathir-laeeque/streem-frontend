@@ -8,10 +8,14 @@ import ActivityListView from './ActivityListView';
 import Footer from './Footer';
 import Header from './Header';
 import { Wrapper } from './styles';
+import TaskMedia from './TaskMedia';
 import { TaskViewProps } from './types';
 
 const TaskView: FC<TaskViewProps> = ({ task }) => {
-  const { composerState } = useTypedSelector((state) => state.newComposer);
+  const {
+    composerState,
+    tasks: { activeTaskId },
+  } = useTypedSelector((state) => state.newComposer);
 
   const dispatch = useDispatch();
 
@@ -38,7 +42,7 @@ const TaskView: FC<TaskViewProps> = ({ task }) => {
         />
       </div>
 
-      <div className="task-media"></div>
+      {task.id === activeTaskId ? <TaskMedia medias={task.medias} /> : null}
     </Wrapper>
   );
 };
