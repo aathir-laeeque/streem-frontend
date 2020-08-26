@@ -7,3 +7,6 @@ export const executeActivity = (activity: ExecuteActivityArguments) =>
   actionSpreader(ActivityActions.EXECUTE, {
     activity: { ...omit(activity, ['response', 'code', 'orderTree']) },
   });
+
+export const updateActivity = (activity) =>
+  actionSpreader(ActivityActions.UPDATE, { activity });

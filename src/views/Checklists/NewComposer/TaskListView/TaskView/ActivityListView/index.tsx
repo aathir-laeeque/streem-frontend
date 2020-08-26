@@ -9,6 +9,7 @@ import MaterialActivity from './Activity/Material';
 import MediaActivity from './Activity/Media';
 import MultiSelectActivity from './Activity/MultiSelect';
 import ShouldBeActivity from './Activity/ShouldBe';
+import SignatureActivity from './Activity/Signature';
 import TextboxActivity from './Activity/Textbox';
 import YesNoActivity from './Activity/YesNo';
 import { Wrapper } from './styles';
@@ -58,7 +59,7 @@ const ActivityListView: FC<ActivityListViewProps> = ({ activities }) => {
 
                 // Completely Done by Ashish
                 case ActivityType.SIGNATURE:
-                  return `signature ${activity.id}`;
+                  return <SignatureActivity activity={activity} />;
 
                 // Done, execute action integratio is pending
                 case ActivityType.TEXTBOX:
