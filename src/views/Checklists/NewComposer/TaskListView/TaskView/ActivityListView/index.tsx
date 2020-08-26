@@ -25,13 +25,16 @@ const ActivityListView: FC<ActivityListViewProps> = ({ activities }) => {
       {activities.map((activity, index) => (
         <div className="activity" key={index}>
           <div className={`activity-content`}>
-            <div
-              className={`optional${activity.mandatory ? ' hide' : ''}${
-                isEditing ? ' hide' : ''
-              }`}
-            >
-              Optional Activity
-            </div>
+            {activity.type !== ActivityType.MATERIAL &&
+            activity.type !== ActivityType.INSTRUCTION ? (
+              <div
+                className={`optional${activity.mandatory ? ' hide' : ''}${
+                  isEditing ? ' hide' : ''
+                }`}
+              >
+                Optional Activity
+              </div>
+            ) : null}
             {(() => {
               switch (activity.type) {
                 // Done, execute action integration pending

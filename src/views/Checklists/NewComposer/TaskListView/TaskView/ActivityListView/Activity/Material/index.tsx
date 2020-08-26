@@ -50,7 +50,9 @@ const MaterialActivity: FC<ActivityProps> = ({ activity }) => {
               />
               <span className="quantity">
                 {el.quantity === 0
-                  ? 'Any'
+                  ? isEditing
+                    ? 'Any'
+                    : null
                   : el.quantity.toString().padStart(2, '0')}
               </span>
               <ArrowDropUp className="icon" />
