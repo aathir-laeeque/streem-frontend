@@ -6,4 +6,9 @@ export interface TaskViewProps {
 
 export interface HeaderProps {
   task: Task;
+  isEditingTemplate: boolean;
+}
+
+export interface FooterProps {
+  isEditingtemplate: boolean;
 }

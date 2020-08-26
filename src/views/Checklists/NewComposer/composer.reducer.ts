@@ -31,10 +31,16 @@ const reducer: Reducer<ComposerReducerState, ComposerActionType> = (
   action,
 ) => {
   switch (action.type) {
-    case ComposerAction.FETCH_CHECKLIST_ONGOING:
+    case ComposerAction.FETCH_COMPOSER_DATA:
+      return {
+        ...state,
+        ...(action.payload.type === 'job' && { jobId: action.payload.id }),
+      };
+
+    case ComposerAction.FETCH_COMPOSER_DATA_ONGOING:
       return { ...state, loading: true };
 
-    case ComposerAction.FETCH_CHECKLIST_SUCCESS:
+    case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
       return {
         ...state,
         checklist: action.payload.checklist,
@@ -43,11 +49,8 @@ const reducer: Reducer<ComposerReducerState, ComposerActionType> = (
         tasks: taskListViewReducer(state.tasks, action),
       };
 
-    case ComposerAction.FETCH_CHECKLIST_ERROR:
+    case ComposerAction.FETCH_COMPOSER_DATA_ERROR:
       return { ...state, error: action.payload.error };
-
-    case ComposerAction.FETCH_SELECTED_JOB:
-      return { ...state, jobId: action.payload.jobId };
 
     case ComposerAction.SET_COMPOSER_STATE:
       return { ...state, composerState: action.payload.state };

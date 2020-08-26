@@ -1,18 +1,18 @@
 import { Reducer } from 'redux';
 
 import { ComposerAction } from '../composer.types';
+import { Task } from '../checklist.types';
 import {
   StageListViewAction,
   StageListViewActionTypes,
   StageListViewState,
+  StageListById,
 } from './types';
 
 export const initialState: StageListViewState = {
-  activeStage: undefined,
-  activeStageId: undefined,
-
-  list: [],
-  listById: {},
+  activeStageId: 0,
+  list: {},
+  listOrder: [],
 };
 
 const reducer: Reducer<StageListViewState, StageListViewActionTypes> = (
@@ -20,22 +20,35 @@ const reducer: Reducer<StageListViewState, StageListViewActionTypes> = (
   action,
 ) => {
   switch (action.type) {
-    case ComposerAction.FETCH_CHECKLIST_SUCCESS:
+    case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
       const { stages = [] } = action.payload.checklist;
 
       return {
         ...state,
-        activeStage: stages[0],
         activeStageId: stages[0].id,
-        list: stages,
-        listById: stages.reduce((acc, el) => ({ ...acc, [el.id]: el }), {}),
+        list: stages.reduce<StageListById>((acc, stage) => {
+          acc[stage.id] = {
+            ...stage,
+            tasks: (stage.tasks as Array<Task>).map((task) => task.id),
+          };
+          return acc;
+        }, {}),
+
+        listOrder: stages.map((stage) => stage.id),
       };
 
     case StageListViewAction.SET_ACTIVE_STAGE:
       return {
         ...state,
-        activeStage: state.listById[action.payload.stageId],
         activeStageId: action.payload.stageId,
+      };
+
+    case StageListViewAction.UPDATE_STAGE:
+      const { id: stageId, name } = action.payload.stage;
+
+      return {
+        ...state,
+        list: { ...state.list, [stageId]: { ...state.list[stageId], name } },
       };
 
     default:

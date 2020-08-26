@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import {
-  fetchChecklist,
+  fetchComposerData,
   fetchSelectedJob,
   resetComposer,
   setComposerState,
@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-areas:
     'header header'
-    'stagelist steplist';
+    'stage-list-view tasks-list-view';
   grid-template-columns: 300px 1fr;
   grid-template-rows: auto 1fr;
   height: inherit;
@@ -36,9 +36,9 @@ const Composer: FC<ComposerProps> = ({
 
   useEffect(() => {
     if (checklistId) {
-      dispatch(fetchChecklist(parseInt(checklistId)));
+      dispatch(fetchComposerData(parseInt(checklistId), 'checklist'));
     } else if (jobId) {
-      dispatch(fetchSelectedJob(parseInt(jobId)));
+      dispatch(fetchComposerData(parseInt(jobId), 'job'));
     }
 
     dispatch(setComposerState(composerState));

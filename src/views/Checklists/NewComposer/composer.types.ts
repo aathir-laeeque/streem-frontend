@@ -2,11 +2,10 @@ import { RouteComponentProps } from '@reach/router';
 
 import { Checklist } from './checklist.types';
 import {
-  fetchChecklist,
-  fetchChecklistError,
-  fetchChecklistOngoing,
-  fetchChecklistSuccess,
-  fetchSelectedJob,
+  fetchComposerData,
+  fetchComposerDataError,
+  fetchComposerDataOngoing,
+  fetchComposerDataSuccess,
   resetComposer,
   setComposerState,
 } from './composer.action';
@@ -17,8 +16,8 @@ import { Job } from '../../Jobs/types';
 // TYPES RELATED TO THE COMPOSER
 export enum ComposerState {
   EDIT = 'editing',
-  EXECUTING = 'executing',
   EXECUTED = 'executed',
+  EXECUTING = 'executing',
   VIEW = 'viewing',
 }
 
@@ -47,10 +46,10 @@ export interface ComposerReducerState {
 
 // TYPES RELATED TO COMPOSER ACTION
 export enum ComposerAction {
-  FETCH_CHECKLIST = '@@composer/FETCH_CHECKLIST',
-  FETCH_CHECKLIST_ERROR = '@@composer/FETCH_CHECKLIST_ERROR',
-  FETCH_CHECKLIST_ONGOING = '@@composer/FETCH_CHECKLIST_ONGOING',
-  FETCH_CHECKLIST_SUCCESS = '@@composer/FETCH_CHECKLIST_SUCCESS',
+  FETCH_COMPOSER_DATA = '@@composer/FETCH_COMPOSER_DATA',
+  FETCH_COMPOSER_DATA_ERROR = '@@composer/FETCH_COMPOSER_DATA_ERROR',
+  FETCH_COMPOSER_DATA_ONGOING = '@@composer/FETCH_COMPOSER_DATA_ONGOING',
+  FETCH_COMPOSER_DATA_SUCCESS = '@@composer/FETCH_COMPOSER_DATA_SUCCESS',
 
   RESET_COMPOSER = '@@composer/RESET_COMPOSER',
 
@@ -60,11 +59,10 @@ export enum ComposerAction {
 }
 
 export type ComposerActionType = ReturnType<
-  | typeof fetchChecklist
-  | typeof fetchChecklistError
-  | typeof fetchChecklistOngoing
-  | typeof fetchChecklistSuccess
-  | typeof fetchSelectedJob
+  | typeof fetchComposerData
+  | typeof fetchComposerDataError
+  | typeof fetchComposerDataOngoing
+  | typeof fetchComposerDataSuccess
   | typeof resetComposer
   | typeof setComposerState
 >;

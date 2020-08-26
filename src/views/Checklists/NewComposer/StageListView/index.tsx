@@ -1,20 +1,17 @@
 import { useTypedSelector } from '#store';
-import { debounce } from 'lodash';
 import React, { FC } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
-import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 
 import { ComposerState } from '../composer.types';
-import { setActiveStage } from './action';
-import { Stage } from '../checklist.types';
+import { setActiveStage, updateStage } from './action';
 
 const Wrapper = styled.div.attrs({
   className: 'stage-list-view',
 })`
   background-color: #fff;
   box-shadow: 1px 0 3px 0 rgba(0, 0, 0, 0.12), 1px 0 1px 0 rgba(0, 0, 0, 0.14);
-  grid-area: stagelist;
+  grid-area: stage-list-view;
   overflow: hidden;
   position: relative;
 
@@ -24,7 +21,7 @@ const Wrapper = styled.div.attrs({
     flex-direction: column;
     list-style-type: none;
     margin: 0;
-    /* max-height: calc(100% - 80px); */
+    max-height: calc(100% - 80px);
     height: 100%;
     overflow: auto;
     padding: 8px;
@@ -56,26 +53,18 @@ const Wrapper = styled.div.attrs({
       }
 
       * {
-        display: flex;
-        flex: 1;
         background-color: #f4f4f4;
-        padding: 8px;
         border-radius: 4px;
+        color: #333333;
         font-size: 16px;
         font-weight: 600;
-        color: #333333;
+        padding: 8px;
         width: 100%;
       }
 
       input {
         border: none;
         outline: none;
-        /* border: 1px solid transparent; */
-
-        /* :focus,
-        :active {
-          border-color: #1d84ff;
-        } */
       }
     }
   }
@@ -83,7 +72,7 @@ const Wrapper = styled.div.attrs({
 
 const StageList: FC = () => {
   const {
-    stages: { list, activeStageId },
+    stages: { activeStageId, list, listOrder },
     composerState,
   } = useTypedSelector((state) => state.newComposer);
 
@@ -91,52 +80,32 @@ const StageList: FC = () => {
 
   const isEditing = composerState === ComposerState.EDIT;
 
-  const { control, register, getValues } = useForm<{ stages: Stage[] }>({
-    defaultValues: { stages: list },
-  });
-
-  const { fields } = useFieldArray({ control, name: 'stages' });
-
   return (
     <Wrapper>
       <ol className="stage-list">
-        {fields.map((field, index) => {
-          const isStageActive = field.id === activeStageId;
+        {listOrder.map((stageId) => {
+          const stage = list[stageId];
+
+          const isStageActive = stageId === activeStageId;
 
           return (
             <li
-              key={field.id}
+              key={stageId}
               className={`stage-list-item ${isStageActive ? 'active' : ''}`}
-              // TODO: look in to this type error
-              onClick={() => {
-                if (!isStageActive) {
-                  dispatch(setActiveStage(parseInt(field?.id ?? '')));
-                }
-              }}
+              onClick={() => dispatch(setActiveStage(stageId))}
             >
               {isEditing ? (
                 <input
-                  name={`stages[${index}].name`}
-                  ref={register()}
-                  defaultValue={field.name}
-                  // TODO: make api call to update data in the BE
-                  onChange={debounce(() => {
-                    const updatedValue = getValues()['stages'][index];
-                    console.log(
-                      'value from onChange event stage list item :: ',
-                      updatedValue,
-                    );
-                  }, 500)}
-                  onBlur={debounce(() => {
-                    const updatedValue = getValues()['stages'][index];
-                    console.log(
-                      'value from onBlur event stage list item :: ',
-                      updatedValue,
-                    );
-                  }, 500)}
+                  value={stage.name}
+                  onChange={({ target: { value } }) => {
+                    dispatch(updateStage({ id: stageId, name: value }));
+                  }}
+                  onBlur={({ target: { value } }) => {
+                    dispatch(updateStage({ id: stageId, name: value }));
+                  }}
                 />
               ) : (
-                <span>{field.name}</span>
+                <span>{stage.name}</span>
               )}
             </li>
           );

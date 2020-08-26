@@ -3,54 +3,43 @@ import { request } from '#utils/request';
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 
 import {
-  fetchChecklist,
-  fetchChecklistError,
-  fetchChecklistOngoing,
-  fetchChecklistSuccess,
-  fetchSelectedJob,
+  fetchComposerData,
+  fetchComposerDataError,
+  fetchComposerDataOngoing,
+  fetchComposerDataSuccess,
+  // fetchSelectedJob,
 } from './composer.action';
 import { ComposerAction } from './composer.types';
 import { TaskListViewSaga } from './TaskListView/saga';
 
-function* fetchChecklistSaga({ payload }: ReturnType<typeof fetchChecklist>) {
+function* fetchComposerDataSaga({
+  payload,
+}: ReturnType<typeof fetchComposerData>) {
   try {
-    yield put(fetchChecklistOngoing());
+    yield put(fetchComposerDataOngoing());
 
-    const { data: checklist } = yield call(
+    const { data } = yield call(
       request,
       'GET',
-      apiGetChecklist(payload.checklistId),
+      payload.type === 'checklist'
+        ? apiGetChecklist(payload.id)
+        : apiGetSelectedJob(payload.id),
     );
 
-    yield put(fetchChecklistSuccess(checklist));
+    if (payload.type === 'checklist') {
+      yield put(fetchComposerDataSuccess(data));
+    } else {
+      yield put(fetchComposerDataSuccess(data?.checklist));
+    }
   } catch (error) {
-    console.log('Error from fetchChecklistSaga :: ', error);
+    console.log('Error from fetchComposerDataSaga :: ', error);
 
-    yield put(fetchChecklistError(error));
-  }
-}
-
-function* fetchSelectedJobSaga({
-  payload,
-}: ReturnType<typeof fetchSelectedJob>) {
-  try {
-    yield put(fetchChecklistOngoing());
-
-    const {
-      data: { checklist },
-    } = yield call(request, 'GET', apiGetSelectedJob(payload.jobId));
-
-    yield put(fetchChecklistSuccess(checklist));
-  } catch (error) {
-    console.log('Error from fetchSelectedJobSaga :: ', error);
-
-    yield put(fetchChecklistError(error));
+    yield put(fetchComposerDataError(error));
   }
 }
 
 export function* NewComposerSaga() {
-  yield takeLatest(ComposerAction.FETCH_CHECKLIST, fetchChecklistSaga);
-  yield takeLatest(ComposerAction.FETCH_SELECTED_JOB, fetchSelectedJobSaga);
+  yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchComposerDataSaga);
 
   yield all([
     // FORK ALL COMPOSER RELATED SAGA HERE

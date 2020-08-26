@@ -4,12 +4,14 @@ import {
   TaskListViewState,
   TaskListViewActionType,
   TaskListAction,
+  TaskListById,
 } from './types';
 import { ComposerAction } from '../composer.types';
+import { Task } from '../checklist.types';
 
 export const initialState: TaskListViewState = {
-  list: [],
-  listById: {},
+  activeTaskId: undefined,
+  list: {},
 };
 
 const reducer: Reducer<TaskListViewState, TaskListViewActionType> = (
@@ -17,24 +19,35 @@ const reducer: Reducer<TaskListViewState, TaskListViewActionType> = (
   action,
 ) => {
   switch (action.type) {
-    case ComposerAction.FETCH_CHECKLIST_SUCCESS:
+    case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
       const { stages = [] } = action.payload.checklist;
 
-      const { tasks: _tasks } = stages[0];
+      const tasksById: TaskListById = {};
+
+      stages.forEach((stage) =>
+        (stage.tasks as Array<Task>).forEach(
+          (task) => (tasksById[task.id] = task),
+        ),
+      );
 
       return {
         ...state,
-        list: _tasks,
-        listById: _tasks.reduce((acc, el) => ({ ...acc, [el.id]: el }), {}),
+        activeTaskId: (stages[0].tasks as Array<Task>)[0].id,
+        list: tasksById,
       };
 
-    case TaskListAction.SET_TASKS:
-      const { tasks } = action.payload;
+    case TaskListAction.UPDATE_TASK:
+      // const index = state.list.findIndex(
+      //   (el) => el.id === action.payload.task.id,
+      // );
 
       return {
         ...state,
-        list: tasks,
-        listById: tasks.reduce((acc, el) => ({ ...acc, [el.id]: el }), {}),
+        // list: [
+        //   ...state.list.slice(0, index),
+        //   { ...action.payload.task },
+        //   ...state.list.slice(index + 1),
+        // ],
       };
 
     default:

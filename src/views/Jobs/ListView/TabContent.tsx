@@ -26,7 +26,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   }, []);
 
   const selectJob = (item: Job) =>
-    navigate(`/jobs/new/${item.id}`, {
+    navigate(`/jobs/${item.id}`, {
       state: { checklistId: item.checklist.id },
     });
 

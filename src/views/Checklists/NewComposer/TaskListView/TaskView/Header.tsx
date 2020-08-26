@@ -1,98 +1,80 @@
-import { useTypedSelector } from '#store';
-import { customOnChange } from '#utils/formEvents';
 import {
   ArrowDownwardOutlined,
   ArrowUpwardOutlined,
   Delete,
   ErrorOutlineOutlined,
+  PanTool,
   PermMedia,
   TimerOutlined,
-  PanTool,
 } from '@material-ui/icons';
 import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { ComposerState } from '../../composer.types';
+import { updateTask } from '../actions';
 import { HeaderWrapper } from './styles';
 import { HeaderProps } from './types';
 
-const Header: FC<HeaderProps> = ({ task }) => {
-  const { composerState } = useTypedSelector((state) => state.newComposer);
-
-  const isEditing = composerState === ComposerState.EDIT;
+const Header: FC<HeaderProps> = ({ task, isEditingTemplate }) => {
+  const dispatch = useDispatch();
 
   return (
-    <HeaderWrapper isEditing={isEditing}>
-      <div className="top-bar">
-        {isEditing ? (
-          <>
-            <div className="position-control-buttons">
-              <ArrowUpwardOutlined className="icon icon-up" />
+    <HeaderWrapper isEditing={isEditingTemplate} hasStop={task.hasStop}>
+      {/* task-controller div contains the delete and task position reorder buttons */}
 
-              <ArrowDownwardOutlined className="icon icon-down" />
-            </div>
+      <div className="task-controller">
+        <div className="position-control-buttons">
+          <ArrowUpwardOutlined className="icon icon-up" />
 
-            <span className="step-number">Task {task.orderTree}</span>
+          <ArrowDownwardOutlined className="icon icon-down" />
+        </div>
 
-            <Delete className="icon" />
-          </>
-        ) : task.hasStop ? (
-          <div className="stop-banner">
-            <PanTool className="icon" />
+        <span className="step-number">Task {task.orderTree}</span>
 
-            <span>Complete this task before proceeding to the next task.</span>
-          </div>
-        ) : null}
+        <Delete className="icon delete-task" />
       </div>
 
-      <div className="content">
-        {isEditing ? (
-          <>
-            <div className="new-form-field">
-              <label className="new-form-field-label">Name the Task</label>
-              <input
-                className="new-form-field-input"
-                name="name"
-                type="text"
-                value={task.name}
-                onChange={(e) => {
-                  e.persist();
-                  customOnChange(e, (event) =>
-                    console.log(
-                      'event.target.value onChange :: ',
-                      event.target.value,
-                    ),
-                  );
-                }}
-              />
-            </div>
+      <div className="stop-banner">
+        <PanTool className="icon" />
 
-            <div className="task-control">
-              <div
-                className={`task-control-item${task.timed ? ' active' : ''}`}
-              >
-                <TimerOutlined className="icon" />
-                <span>Timed</span>
-              </div>
+        <span>Complete this task before proceeding to the next task.</span>
+      </div>
 
-              <div className="task-control-item">
-                <PermMedia className="icon" />
-                <span>Attatch Media</span>
-              </div>
+      <div className="task-config">
+        <div className="task-name">
+          <span className="task-orderTree">{task.orderTree}.</span>
 
-              <div
-                className={`task-control-item${task.hasStop ? ' active' : ''}`}
-              >
-                <ErrorOutlineOutlined className="icon" />
-                <span>Add Stop</span>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <span className="task-orderTree">{task.orderTree}.</span>
-            <span className="task-name">{task.name}</span>
-          </>
-        )}
+          <span className="task-name">{task.name}</span>
+
+          <div className="new-form-field">
+            <label className="new-form-field-label">Name the Task</label>
+            <input
+              className="new-form-field-input"
+              name="name"
+              type="text"
+              value={task.name}
+              onChange={(e) => {
+                dispatch(updateTask({ ...task, name: e.target.value }));
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="task-control">
+          <div className={`task-control-item${task.timed ? ' active' : ''}`}>
+            <TimerOutlined className="icon" />
+            <span>Timed</span>
+          </div>
+
+          <div className="task-control-item">
+            <PermMedia className="icon" />
+            <span>Attatch Media</span>
+          </div>
+
+          <div className={`task-control-item${task.hasStop ? ' active' : ''}`}>
+            <ErrorOutlineOutlined className="icon" />
+            <span>Add Stop</span>
+          </div>
+        </div>
       </div>
     </HeaderWrapper>
   );

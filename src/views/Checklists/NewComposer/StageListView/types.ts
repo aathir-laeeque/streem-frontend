@@ -1,13 +1,13 @@
 import { Stage } from '../checklist.types';
 import { ComposerActionType } from '../composer.types';
-import { setActiveStage } from './action';
+import { setActiveStage, updateStage } from './action';
+
+export type StageListById = Record<Stage['id'], Stage>;
 
 export interface StageListViewState {
-  activeStage: Stage | undefined;
-  activeStageId: Stage['id'] | undefined;
-
-  list: Stage[] | [];
-  listById: Record<Stage['id'], Stage>;
+  activeStageId: Stage['id'];
+  list: StageListById;
+  listOrder: Stage['id'][];
 }
 
 export enum StageListViewAction {
@@ -16,5 +16,5 @@ export enum StageListViewAction {
 }
 
 export type StageListViewActionTypes =
-  | ReturnType<typeof setActiveStage>
+  | ReturnType<typeof setActiveStage | typeof updateStage>
   | ComposerActionType;

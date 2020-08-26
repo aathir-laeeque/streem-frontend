@@ -1,10 +1,5 @@
 import { useTypedSelector } from '#store';
 import { ComposerState } from '#views/Checklists/NewComposer/composer.types';
-import {
-  ArrowDownwardOutlined,
-  ArrowUpwardOutlined,
-  MoreVertOutlined,
-} from '@material-ui/icons';
 import React, { FC } from 'react';
 
 import { ActivityType } from '../../../checklist.types';

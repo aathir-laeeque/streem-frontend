@@ -7,66 +7,66 @@ import TaskView from './TaskView';
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-areas: 'stagenumber' 'stagename' 'steps';
+  grid-area: tasks-list-view;
+  grid-template-areas: 'stage-number' 'stage-name' 'tasks-list';
   grid-template-rows: 16px 32px 1fr;
-  grid-area: steplist;
   overflow: hidden;
   padding: 24px 0 0 16px;
 
   .stage {
     &-number {
-      grid-area: stagenumber;
-      color: #666666;
-      font-size: 12px;
-      display: flex;
       align-items: center;
+      color: #666666;
       cursor: default;
+      display: flex;
+      font-size: 12px;
+      grid-area: stage-number;
     }
 
     &-name {
-      grid-area: stagename;
+      align-items: center;
       color: #000000;
+      cursor: default;
+      display: flex;
       font-size: 24px;
       font-weight: bold;
+      grid-area: stage-name;
       margin-top: 4px;
-      display: flex;
-      align-items: center;
-      cursor: default;
     }
   }
 
   .tasks-list {
-    &-container {
-      grid-area: steps;
-      list-style: none;
-      margin: 0;
-      margin-top: 16px;
-      overflow: auto;
-      padding: 0;
-    }
-
-    &-item {
-      margin-bottom: 24px;
-    }
+    grid-area: tasks-list;
+    list-style: none;
+    margin: 0;
+    margin-top: 16px;
+    overflow: auto;
+    padding: 0;
   }
 `;
 
 const TaskListView: FC = () => {
   const {
-    stages: { activeStage },
     tasks: { list },
-  } = useTypedSelector((state) => state.newComposer);
+    activeStage,
+  } = useTypedSelector((state) => ({
+    tasks: {
+      list: state.newComposer.tasks.list,
+    },
+    activeStage:
+      state.newComposer.stages.list[state.newComposer.stages.activeStageId],
+  }));
+
+  const { name: stageName, orderTree: stageOrderTree, tasks } = activeStage;
 
   return (
     <Wrapper>
-      <span className="stage-number">Stage {activeStage?.orderTree}</span>
-      <span className="stage-name">{activeStage?.name}</span>
+      <span className="stage-number">Stage {stageOrderTree}</span>
+      <span className="stage-name">{stageName}</span>
 
-      <ul className="tasks-list-container">
-        {(list as Array<Task>).map((task, index) => (
-          <li key={index} className="tasks-list-item">
-            <TaskView task={task} />
-          </li>
+      <ul className="tasks-list">
+        {(tasks as Array<Task['id']>).map((taskId, index) => (
+          <TaskView task={list[taskId]} key={index} />
         ))}
       </ul>
     </Wrapper>

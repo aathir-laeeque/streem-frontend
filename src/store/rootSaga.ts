@@ -5,7 +5,6 @@ import { UserAccessSaga } from '#views/UserAccess/saga';
 import { JobListViewSaga } from '#views/Jobs/ListView/saga';
 import { all, fork } from 'redux-saga/effects';
 
-import { ComposerSaga } from '../views/Checklists/ChecklistComposer/saga';
 import { PropertiesSaga } from './properties/saga';
 import { UsersSaga } from './users/saga';
 import { FacilitiesSaga } from './facilities/saga';
@@ -23,8 +22,6 @@ export function* rootSaga() {
     fork(UsersSaga),
     fork(FacilitiesSaga),
     fork(UserAccessSaga),
-    fork(ComposerSaga),
-    // fork(ComposerSaga),
 
     fork(NewComposerSaga),
   ]);
