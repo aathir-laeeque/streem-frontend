@@ -1,14 +1,14 @@
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { ComposerState } from '../../composer.types';
+import { setTaskActive } from '../actions';
 import ActivityListView from './ActivityListView';
-import Header from './Header';
 import Footer from './Footer';
+import Header from './Header';
 import { Wrapper } from './styles';
 import { TaskViewProps } from './types';
-import { useDispatch } from 'react-redux';
-import { setTaskActive } from '../actions';
 
 const TaskView: FC<TaskViewProps> = ({ task }) => {
   const { composerState } = useTypedSelector((state) => state.newComposer);

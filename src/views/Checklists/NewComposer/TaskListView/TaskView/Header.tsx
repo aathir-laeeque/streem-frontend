@@ -16,6 +16,12 @@ import { updateTask } from '../actions';
 import { HeaderWrapper } from './styles';
 import { HeaderProps } from './types';
 
+const generateTimerText = (duration) => {
+  const time = moment.duration(duration);
+
+  return `Complete in NLT ${time.hours()} hr : ${time.minutes()} min : ${time.seconds()} sec`;
+};
+
 const Header: FC<HeaderProps> = ({ task, isEditingTemplate }) => {
   const dispatch = useDispatch();
 
@@ -64,10 +70,7 @@ const Header: FC<HeaderProps> = ({ task, isEditingTemplate }) => {
         {task.timed ? (
           <div className="task-timer">
             <Timer className="icon" />
-            <span>
-              Complete Under {moment.duration(task.period).minutes()} min :{' '}
-              {moment.duration(task.period).seconds()} sec
-            </span>
+            <span>{generateTimerText(task.period)}</span>
           </div>
         ) : null}
 
