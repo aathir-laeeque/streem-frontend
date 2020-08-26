@@ -18,14 +18,11 @@ import { UserAccessAction } from './types';
 
 function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
   try {
-    const { email } = payload;
+    const { id } = payload;
     const { data, errors }: ResponseObj<Partial<User>> = yield call(
       request,
-      'POST',
-      apiResendInvite(),
-      {
-        data: { email: email },
-      },
+      'PUT',
+      apiResendInvite(id),
     );
 
     if (errors) {

@@ -25,9 +25,8 @@ export const logOutError = (error: any) =>
 // REGISTER ACTIONS
 
 export const register = (payload: {
-  email: string;
-  newPassword: string;
   username: string;
+  password: string;
   token: string;
 }) => actionSpreader(AuthAction.REGISTER, payload);
 

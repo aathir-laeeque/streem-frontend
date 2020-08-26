@@ -97,10 +97,6 @@ const MyProfile: FC<MyProfileProps> = () => {
               <LabeledInput
                 refFun={register({
                   // required: true,
-                  pattern: {
-                    value: /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/,
-                    message: 'Invalid Username',
-                  },
                 })}
                 placeHolder="Username"
                 label="Username"

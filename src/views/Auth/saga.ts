@@ -66,6 +66,7 @@ function* refreshTokenSaga({ payload }: ReturnType<typeof refreshToken>) {
     );
 
     if (errors) {
+      yield call(persistor.purge);
       return false;
     }
 

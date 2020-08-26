@@ -1,7 +1,7 @@
 import { actionSpreader } from '#store';
 import { UserAccessAction } from './types';
 
-export const resendInvite = (payload: { email: string }) =>
+export const resendInvite = (payload: { id: string | number }) =>
   actionSpreader(UserAccessAction.RESEND_INVITE, payload);
 
 export const resendInviteSuccess = () =>

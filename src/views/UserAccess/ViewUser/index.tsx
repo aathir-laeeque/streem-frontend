@@ -111,9 +111,7 @@ const ViewUser: FC<ViewUserProps> = () => {
             <>
               <Button
                 className="button"
-                onClick={() =>
-                  dispatch(resendInvite({ email: selectedUser.email }))
-                }
+                onClick={() => dispatch(resendInvite({ id: selectedUser.id }))}
               >
                 Resend Invite
               </Button>

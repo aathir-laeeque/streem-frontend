@@ -55,13 +55,12 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
   }, []);
 
   const onSubmit = (data: Inputs) => {
-    const { email, password, username } = data;
+    const { password, username } = data;
     if (token) {
       dispatch(
         registerAction({
-          email: email.toString(),
-          newPassword: password.toString(),
           username: username.toString(),
+          password: password.toString(),
           token: token.toString(),
         }),
       );

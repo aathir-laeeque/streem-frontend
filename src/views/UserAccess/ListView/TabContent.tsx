@@ -56,8 +56,8 @@ const TabContent: FC<TabViewProps> = ({
     dispatch(fetchUsers({ page, size, filters }, selectedStatus));
   };
 
-  const onResendInvite = (email: string) => {
-    dispatch(resendInvite({ email }));
+  const onResendInvite = (id: string | number) => {
+    dispatch(resendInvite({ id }));
   };
 
   const onCancelInvite = (email: string) => {
@@ -171,7 +171,7 @@ const TabContent: FC<TabViewProps> = ({
                         <span
                           className="user-actions"
                           style={{ color: '#1d84ff' }}
-                          onClick={() => onResendInvite(item.email)}
+                          onClick={() => onResendInvite(item.id)}
                         >
                           Resend Invite
                         </span>

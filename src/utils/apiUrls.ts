@@ -48,6 +48,9 @@ export const apiLogOut = () => `${baseUrl}/auth/logout`;
 
 export const apiRefreshToken = () => `${baseUrl}/auth/refresh-token`;
 
-export const apiResendInvite = () => `${baseUrl}/users/resend-invite`;
+export const apiResendInvite = (id: number | string) =>
+  `${baseUrl}/users/${id}/resend-invite`;
 
-export const apiRegister = () => `${baseUrl}/auth/update-password`;
+export const apiRegister = () => `${baseUrl}/auth/register`;
+
+export const apiUpdateUsers = () => `${baseUrl}/auth/update-password`;
