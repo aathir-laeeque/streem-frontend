@@ -61,13 +61,15 @@ const Header: FC<HeaderProps> = ({ task, isEditingTemplate }) => {
           </div>
         </div>
 
-        <div className="task-timer">
-          <Timer className="icon" />
-          <span>
-            Complete Under {moment.duration(task.period).minutes()} min :{' '}
-            {moment.duration(task.period).seconds()} sec
-          </span>
-        </div>
+        {task.timed ? (
+          <div className="task-timer">
+            <Timer className="icon" />
+            <span>
+              Complete Under {moment.duration(task.period).minutes()} min :{' '}
+              {moment.duration(task.period).seconds()} sec
+            </span>
+          </div>
+        ) : null}
 
         <div className="task-control">
           <div className={`task-control-item${task.timed ? ' active' : ''}`}>
