@@ -53,7 +53,7 @@ const Header: FC<HeaderProps> = ({ task, isEditingTemplate }) => {
               type="text"
               value={task.name}
               onChange={(e) => {
-                dispatch(updateTask({ ...task, name: e.target.value }));
+                dispatch(updateTask({ name: e.target.value }));
               }}
             />
           </div>

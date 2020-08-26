@@ -10,7 +10,7 @@ import { ComposerAction } from '../composer.types';
 import { Task } from '../checklist.types';
 
 export const initialState: TaskListViewState = {
-  activeTaskId: undefined,
+  activeTaskId: 0,
   list: {},
 };
 
@@ -37,18 +37,19 @@ const reducer: Reducer<TaskListViewState, TaskListViewActionType> = (
       };
 
     case TaskListAction.UPDATE_TASK:
-      // const index = state.list.findIndex(
-      //   (el) => el.id === action.payload.task.id,
-      // );
-
       return {
         ...state,
-        // list: [
-        //   ...state.list.slice(0, index),
-        //   { ...action.payload.task },
-        //   ...state.list.slice(index + 1),
-        // ],
+        list: {
+          ...state.list,
+          [state.activeTaskId]: {
+            ...state.list[state.activeTaskId],
+            ...action.payload.task,
+          },
+        },
       };
+
+    case TaskListAction.SET_TASK_ACTIVE:
+      return { ...state, activeTaskId: action.payload.taskId };
 
     default:
       return state;

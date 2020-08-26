@@ -1,18 +1,10 @@
 import { actionSpreader } from '#store';
 
-import { Task, Stage } from '../checklist.types';
-import { TaskListAction } from './types';
+import { Task } from '../checklist.types';
+import { TaskListAction, UpdateTaskParams } from './types';
 
-export const setTasks = (
-  tasks: Task[],
-  stageName: Stage['name'],
-  stageOrderTree: Stage['orderTree'],
-) =>
-  actionSpreader(TaskListAction.SET_TASKS, {
-    tasks,
-    stageName,
-    stageOrderTree,
-  });
-
-export const updateTask = (task: Task) =>
+export const updateTask = (task: UpdateTaskParams) =>
   actionSpreader(TaskListAction.UPDATE_TASK, { task });
+
+export const setTaskActive = (taskId: Task['id']) =>
+  actionSpreader(TaskListAction.SET_TASK_ACTIVE, { taskId });
