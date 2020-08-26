@@ -5,6 +5,11 @@ export const Wrapper = styled.div`
     border-bottom: 1px dashed #dadada;
     padding: 32px;
 
+    :last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
     &-content {
       grid-area: activity-content;
 

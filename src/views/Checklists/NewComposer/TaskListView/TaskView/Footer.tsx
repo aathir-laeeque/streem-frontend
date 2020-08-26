@@ -7,7 +7,7 @@ import { customSelectStyles } from './ActivityListView/Activity/commonStyles';
 import { FooterProps } from './types';
 import { FooterWrapper } from './styles';
 
-const Footer: FC<FooterProps> = ({ isEditingTemplate }) => (
+const Footer: FC<FooterProps> = ({ isEditingTemplate, isTaskSkipable }) => (
   <FooterWrapper isEditing={isEditingTemplate}>
     <Select
       className="add-new-activity"
@@ -24,7 +24,9 @@ const Footer: FC<FooterProps> = ({ isEditingTemplate }) => (
       Complte Task <ArrowRightAlt className="icon" />
     </button>
 
-    <button className="skip-task">Skip the task</button>
+    <button className="skip-task">
+      {isTaskSkipable ? 'Skip the task' : 'Force close task'}
+    </button>
   </FooterWrapper>
 );
 

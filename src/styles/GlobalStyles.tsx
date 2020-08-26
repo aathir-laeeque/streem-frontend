@@ -175,7 +175,8 @@ const GlobalStyles = createGlobalStyle`
       margin-bottom: 8px;
     }
 
-    &-input[type="text"] {
+    &-input[type="text"],
+    &-input[type="number"] {
       background-color: #f4f4f4;
       border: 1px solid transparent;
       border-bottom-color: #bababa;

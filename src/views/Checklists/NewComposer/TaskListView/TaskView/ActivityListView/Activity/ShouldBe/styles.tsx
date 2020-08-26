@@ -20,4 +20,11 @@ export const Wrapper = styled.div`
       flex: 1;
     }
   }
+
+  .parameter-text {
+    color: #000;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 24px;
+  }
 `;

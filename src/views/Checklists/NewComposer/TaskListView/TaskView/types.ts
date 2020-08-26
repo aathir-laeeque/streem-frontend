@@ -11,4 +11,5 @@ export interface HeaderProps {
 
 export interface FooterProps {
   isEditingtemplate: boolean;
+  isTaskSkipable: boolean;
 }

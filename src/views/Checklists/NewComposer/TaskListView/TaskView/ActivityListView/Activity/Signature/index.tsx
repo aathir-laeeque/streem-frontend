@@ -1,27 +1,26 @@
-import React, { FC, useState } from 'react';
-
+import MemoSignature from '#assets/svg/Signature';
 import { openModalAction } from '#components/ModalContainer/actions';
 import { ModalNames } from '#components/ModalContainer/types';
-import { useDispatch } from 'react-redux';
-import MemoSignature from '#assets/svg/Signature';
-import { ActivityProps } from '../types';
-import { uploadFile } from './actions';
-import { ChecklistState } from '#views/Checklists/types';
 import { useTypedSelector } from '#store';
 import { dataUriToBlob } from '#utils/dataUriToBlob';
+import { ComposerState } from '#views/Checklists/NewComposer/composer.types';
+import React, { FC, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
+import { ActivityProps } from '../types';
+import { uploadFile } from './actions';
 import { Wrapper } from './styles';
 
 const Signature: FC<ActivityProps> = ({ activity }) => {
-  const { state } = useTypedSelector((state) => state.checklist.composer);
+  const { composerState } = useTypedSelector((state) => state.newComposer);
+  const { profile } = useTypedSelector((state) => state.auth);
   const isChecklistEditable =
-    state !== ChecklistState.ADD_EDIT && state !== ChecklistState.EXECUTED;
-
+    composerState !== ComposerState.EDIT &&
+    composerState !== ComposerState.EXECUTED;
   let image: string | null = null;
   if (activity.response?.medias) image = activity.response?.medias[0].link;
-
   const [imageData, setImageData] = useState<string | null>(image);
   const dispatch = useDispatch();
-
   const onAcceptSignature = (imageData: string) => {
     if (imageData) {
       const file = dataUriToBlob(imageData);
@@ -31,7 +30,6 @@ const Signature: FC<ActivityProps> = ({ activity }) => {
       setImageData(imageData);
     }
   };
-
   const openSignatureModal = () => {
     if (isChecklistEditable)
       dispatch(
@@ -39,8 +37,8 @@ const Signature: FC<ActivityProps> = ({ activity }) => {
           type: ModalNames.SIGNATURE_MODAL,
           props: {
             user: {
-              id: '1235679849',
-              name: 'Janam Shah',
+              id: profile?.employeeId,
+              name: `${profile?.firstName} ${profile?.lastName}`,
             },
             onAcceptSignature: (imageData: string) =>
               onAcceptSignature(imageData),
@@ -48,7 +46,6 @@ const Signature: FC<ActivityProps> = ({ activity }) => {
         }),
       );
   };
-
   return (
     <Wrapper>
       <div
@@ -65,8 +62,8 @@ const Signature: FC<ActivityProps> = ({ activity }) => {
                 <span>06:30 P.M</span>
               </div>
               <div className="top-right">
-                <span>Janam Shah</span>
-                <span>ID: 1235679849</span>
+                <span>{`${profile?.firstName} ${profile?.lastName}`}</span>
+                <span>ID: {profile?.employeeId}</span>
               </div>
             </div>
             <img style={{ width: '100%' }} src={imageData} />
@@ -88,5 +85,4 @@ const Signature: FC<ActivityProps> = ({ activity }) => {
     </Wrapper>
   );
 };
-
 export default Signature;

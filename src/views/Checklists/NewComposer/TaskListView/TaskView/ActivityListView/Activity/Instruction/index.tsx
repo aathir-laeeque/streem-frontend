@@ -57,27 +57,25 @@ const InstructionActivity: FC<ActivityProps> = ({ activity }) => {
     <Wrapper isEditing={isEditing}>
       <div className="activity-header">Write your instruction/notes</div>
 
-      {isEditing ? (
-        <Editor
-          editorState={editorState}
-          wrapperClassName="wrapper-class"
-          editorClassName="editor-class"
-          toolbarClassName="toolbar-class"
-          toolbar={toolbarOptions}
-          onBlur={() => {
-            const value = draftToHtml(
-              convertToRaw(editorState.getCurrentContent()),
-            );
+      {/* {isEditing ? ( */}
+      <Editor
+        editorState={editorState}
+        wrapperClassName="wrapper-class"
+        editorClassName="editor-class"
+        toolbarClassName="toolbar-class"
+        toolbar={toolbarOptions}
+        onBlur={() => {
+          const value = draftToHtml(
+            convertToRaw(editorState.getCurrentContent()),
+          );
 
-            console.log('value :: ', value);
-          }}
-          onEditorStateChange={(newEditorState) =>
-            setEditorState(newEditorState)
-          }
-        />
-      ) : (
+          console.log('value :: ', value);
+        }}
+        onEditorStateChange={(newEditorState) => setEditorState(newEditorState)}
+      />
+      {/* ) : (
         <div dangerouslySetInnerHTML={{ __html: activity.data.text }} />
-      )}
+      )} */}
     </Wrapper>
   );
 };

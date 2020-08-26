@@ -17,6 +17,11 @@ const TaskView: FC<TaskViewProps> = ({ task }) => {
 
   const isEditingTemplate = composerState === ComposerState.EDIT;
 
+  const isTaskSkipable = !task.activities.reduce((acc, activity) => {
+    acc = acc || activity.mandatory;
+    return acc;
+  }, false);
+
   return (
     <Wrapper
       isEditing={isEditingTemplate}
@@ -27,7 +32,10 @@ const TaskView: FC<TaskViewProps> = ({ task }) => {
 
         <ActivityListView activities={task.activities} />
 
-        <Footer isEditingTemplate={isEditingTemplate} />
+        <Footer
+          isEditingTemplate={isEditingTemplate}
+          isTaskSkipable={isTaskSkipable}
+        />
       </div>
 
       <div className="task-media"></div>

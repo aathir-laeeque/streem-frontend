@@ -92,6 +92,18 @@ export const HeaderWrapper = styled.div.attrs({
           : null}
     }
 
+    &-timer {
+      display: flex;
+      margin-top: 12px;
+      align-items: center;
+      font-size: 14px;
+
+      > .icon {
+        margin-right: 12px;
+        #color: #1d84ff;
+      }
+    }
+
     &-name {
       ${({ isEditing }) =>
         isEditing
@@ -192,7 +204,6 @@ export const FooterWrapper = styled.div.attrs({
   .skip-task {
     color: #1d84ff;
     margin-top: 24px;
-    display: none;
   }
 
   ${({ isEditing }) =>

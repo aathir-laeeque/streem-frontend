@@ -6,9 +6,11 @@ import {
   PanTool,
   PermMedia,
   TimerOutlined,
+  Timer,
 } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
+import moment from 'moment';
 
 import { updateTask } from '../actions';
 import { HeaderWrapper } from './styles';
@@ -57,6 +59,14 @@ const Header: FC<HeaderProps> = ({ task, isEditingTemplate }) => {
               }}
             />
           </div>
+        </div>
+
+        <div className="task-timer">
+          <Timer className="icon" />
+          <span>
+            Complete Under {moment.duration(task.period).minutes()} min :{' '}
+            {moment.duration(task.period).seconds()} sec
+          </span>
         </div>
 
         <div className="task-control">

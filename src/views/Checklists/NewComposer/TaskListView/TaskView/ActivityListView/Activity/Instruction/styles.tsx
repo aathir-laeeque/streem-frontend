@@ -56,6 +56,16 @@ export const Wrapper = styled.div`
           .activity-header {
             display: none;
           }
+
+          .toolbar-class {
+            display: none;
+          }
+
+          .editor-class {
+            border: none;
+            padding: 0;
+            pointer-events: none;
+          }
         `
       : null}
 `;
