@@ -15,8 +15,6 @@ const RULES = [
 ];
 
 const ShouldBeActivity: FC<ActivityProps> = ({ activity }) => {
-  const [stateActivity, setStateActivity] = useState(activity);
-
   return (
     <Wrapper>
       <div className="new-form-field">
@@ -25,7 +23,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity }) => {
           className="new-form-field-input"
           type="text"
           placeholder="Parameter"
-          value={stateActivity.data.parameter}
+          value={activity.data.parameter}
         />
       </div>
 
@@ -35,7 +33,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity }) => {
           className="new-form-field-input"
           type="text"
           placeholder="Placeholder Text"
-          value={stateActivity.data.uom}
+          value={activity.data.uom}
         />
       </div>
 
@@ -43,18 +41,13 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity }) => {
         <label className="new-form-field-label">Criteria</label>
         <Select
           options={RULES}
-          value={RULES.filter((el) => el.value === stateActivity.data.operator)}
-          onChange={(option) => {
-            setStateActivity({
-              ...stateActivity,
-              data: { ...stateActivity.data, operator: option.value },
-            });
-          }}
+          value={RULES.filter((el) => el.value === activity.data.operator)}
+          onChange={(option) => {}}
           styles={customSelectStyles}
         />
       </div>
 
-      {stateActivity.data.operator === 'IS_BETWEEN' ? (
+      {activity.data.operator === 'IS_BETWEEN' ? (
         <div className="is-between-values">
           <div className="new-form-field">
             <label className="new-form-field-label">Value</label>
@@ -62,7 +55,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity }) => {
               className="new-form-field-input"
               type="text"
               placeholder="Quantity"
-              value={stateActivity.data.value}
+              value={activity.data.value}
             />
           </div>
 
@@ -74,7 +67,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity }) => {
               className="new-form-field-input"
               type="text"
               placeholder="Quantity"
-              value={stateActivity.data.value}
+              value={activity.data.value}
             />
           </div>
         </div>
@@ -85,7 +78,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity }) => {
             className="new-form-field-input"
             type="text"
             placeholder="Quantity"
-            value={stateActivity.data.value}
+            value={activity.data.value}
           />
         </div>
       )}

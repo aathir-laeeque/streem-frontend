@@ -39,7 +39,7 @@ export const Wrapper = styled.div`
 
   .editor-class {
     border: 1px solid #bababa;
-    padding: 16px;
+    padding: 0 16px;
 
     :active {
       border-color: #1d84ff;

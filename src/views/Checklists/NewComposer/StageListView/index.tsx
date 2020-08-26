@@ -100,9 +100,9 @@ const StageList: FC = () => {
                   onChange={({ target: { value } }) => {
                     dispatch(updateStage({ id: stageId, name: value }));
                   }}
-                  onBlur={({ target: { value } }) => {
-                    dispatch(updateStage({ id: stageId, name: value }));
-                  }}
+                  // onBlur={({ target: { value } }) => {
+                  //   dispatch(updateStage({ id: stageId, name: value }));
+                  // }}
                 />
               ) : (
                 <span>{stage.name}</span>

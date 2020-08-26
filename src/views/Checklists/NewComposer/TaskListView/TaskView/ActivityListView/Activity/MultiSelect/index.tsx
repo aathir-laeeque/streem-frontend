@@ -10,8 +10,6 @@ import { Wrapper } from './styles';
 import { customSelectStyles } from '../commonStyles';
 
 const MultiSelectActivity: FC<ActivityProps> = ({ activity }) => {
-  const [stateActivity, setStateActivity] = useState(activity);
-
   const { composerState } = useTypedSelector((state) => state.newComposer);
 
   const isEditing = composerState === ComposerState.EDIT;
@@ -24,7 +22,7 @@ const MultiSelectActivity: FC<ActivityProps> = ({ activity }) => {
         isMulti
         className="multi-select"
         isDisabled={isEditing}
-        options={stateActivity.data.map((el) => ({
+        options={activity.data.map((el) => ({
           label: el.name,
           value: el.id,
         }))}
@@ -40,7 +38,7 @@ const MultiSelectActivity: FC<ActivityProps> = ({ activity }) => {
       />
 
       <ul className="list-container">
-        {stateActivity.data.map((el, index) => (
+        {activity.data.map((el, index) => (
           <li key={index} className="list-item">
             <div
               className="item-content"
@@ -54,15 +52,7 @@ const MultiSelectActivity: FC<ActivityProps> = ({ activity }) => {
               <input
                 type="text"
                 value={el.name}
-                onChange={(e) =>
-                  setStateActivity({
-                    ...stateActivity,
-                    data: stateActivity.data.map((x) => ({
-                      ...x,
-                      ...(x.id === el.id && { name: e.target.value }),
-                    })),
-                  })
-                }
+                onChange={(e) => {}}
                 disabled={!isEditing}
               />
             </div>

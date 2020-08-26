@@ -11,8 +11,6 @@ import { Wrapper } from './styles';
 import { executeActivity } from '../actions';
 
 const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
-  const [stateActivity, setStateActivity] = useState(activity);
-
   const dispatch = useDispatch();
 
   const { composerState } = useTypedSelector((state) => state.newComposer);
@@ -24,7 +22,7 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
       <div className="activity-header">Creating a checklist</div>
 
       <ul className="list-container">
-        {stateActivity.data.map((el, index) => {
+        {activity.data.map((el, index) => {
           const isItemSelected =
             get(activity?.response?.choices, el.id) ===
             ActivitySelections.SELECTED;
@@ -36,39 +34,6 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
                 onClick={() => {
                   if (!isEditing) {
                     console.log('dispatch execute activity action');
-
-                    const temp = {
-                      ...activity,
-                      data: activity.data.map((e) => ({
-                        ...e,
-                        status:
-                          e.id === el.id
-                            ? isItemSelected
-                              ? ActivitySelections.NOT_SELECTED
-                              : ActivitySelections.SELECTED
-                            : get(activity?.response?.choices, e.id) ||
-                              ActivitySelections.NOT_SELECTED,
-                      })),
-                    };
-
-                    dispatch(executeActivity(temp));
-
-                    const temp2 = {
-                      ...stateActivity,
-                      response: {
-                        ...stateActivity.response,
-                        choices: {
-                          ...stateActivity.response.choices,
-                          [el.id]:
-                            stateActivity.response.choices[el.id] ===
-                            ActivitySelections.SELECTED
-                              ? ActivitySelections.NOT_SELECTED
-                              : ActivitySelections.SELECTED,
-                        },
-                      },
-                    };
-
-                    setStateActivity(temp2);
                   }
                 }}
               >
@@ -78,21 +43,15 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
                   <input
                     type="text"
                     value={el.name}
-                    onChange={(e) =>
-                      setStateActivity({
-                        ...stateActivity,
-                        data: stateActivity.data.map((x) => ({
-                          ...x,
-                          ...(x.id === el.id && { name: e.target.value }),
-                        })),
-                      })
-                    }
+                    onChange={(e) => {
+                      console.log('e.target.value');
+                    }}
                     disabled={!isEditing}
                   />
                 ) : (
                   <div
                     className={
-                      get(stateActivity?.response?.choices, el.id) ===
+                      get(activity?.response?.choices, el.id) ===
                       ActivitySelections.SELECTED
                         ? 'selected'
                         : ''

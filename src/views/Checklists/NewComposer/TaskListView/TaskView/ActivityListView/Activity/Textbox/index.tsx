@@ -7,8 +7,6 @@ import { ActivityProps } from '../types';
 const TextboxActivity: FC<ActivityProps> = ({ activity }) => {
   const { composerState } = useTypedSelector((state) => state.newComposer);
 
-  const [stateActivity, setStateActivity] = useState(activity);
-
   const isEditing = composerState === ComposerState.EDIT;
 
   return (
@@ -18,19 +16,10 @@ const TextboxActivity: FC<ActivityProps> = ({ activity }) => {
         <textarea
           className="new-form-field-textarea"
           placeholder="User will write comments here"
-          value={stateActivity?.data?.value}
+          value={`activity`?.data?.value}
           rows={4}
           disabled={isEditing}
-          onChange={(e) => {
-            {
-              /* TODO: integrate update action for activity and execute action */
-            }
-
-            setStateActivity({
-              ...stateActivity,
-              data: { value: e.target.value },
-            });
-          }}
+          onChange={(e) => {}}
         />
       </div>
     </div>

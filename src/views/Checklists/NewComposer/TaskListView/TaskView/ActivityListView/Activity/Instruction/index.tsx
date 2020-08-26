@@ -33,10 +33,11 @@ const InstructionActivity: FC<ActivityProps> = ({ activity }) => {
   const { composerState } = useTypedSelector((state) => state.newComposer);
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [contentBlock, setContentBlock] = useState(
+    htmlToDraft(activity.data.text),
+  );
 
   useEffect(() => {
-    const contentBlock = htmlToDraft(activity.data.text);
-
     if (contentBlock) {
       const contentState = ContentState.createFromBlockArray(
         contentBlock.contentBlocks,
@@ -44,7 +45,11 @@ const InstructionActivity: FC<ActivityProps> = ({ activity }) => {
 
       setEditorState(EditorState.createWithContent(contentState));
     }
-  }, []);
+  }, [contentBlock]);
+
+  useEffect(() => {
+    setContentBlock(htmlToDraft(activity.data.text));
+  }, [activity]);
 
   const isEditing = composerState === ComposerState.EDIT;
 

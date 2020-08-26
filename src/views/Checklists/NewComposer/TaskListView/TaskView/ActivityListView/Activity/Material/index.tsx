@@ -38,6 +38,7 @@ const MaterialActivity: FC<ActivityProps> = ({ activity }) => {
                 value={el.name}
                 type="text"
                 placeholder="Type here..."
+                onChange={(e) => {}}
               />
             ) : (
               <span className="name">{el.name}</span>

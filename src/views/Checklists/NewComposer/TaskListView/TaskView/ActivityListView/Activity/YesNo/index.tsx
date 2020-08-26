@@ -12,8 +12,6 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
 
   const dispatch = useDispatch();
 
-  const [stateActivity, setStateActivity] = useState(activity);
-
   const isEditing = composerState === ComposerState.EDIT;
 
   return (
@@ -26,18 +24,13 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
               className="new-form-field-input"
               type="text"
               name="label"
-              value={stateActivity.label}
-              onChange={(e) => {
-                {
-                  /* TODO: integrate update action for activity */
-                }
-                setStateActivity({ ...stateActivity, label: e.target.value });
-              }}
+              value={activity.label}
+              onChange={(e) => {}}
             />
           </div>
 
           <div className="buttons-container">
-            {stateActivity.data
+            {activity.data
               .sort((a, b) => (a.type > b.type ? -1 : 1))
               .map((el, index) => (
                 <div key={index} className="button-item">
@@ -51,18 +44,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
                       type="text"
                       name={`data[${index}].name`}
                       value={el.name}
-                      onChange={(e) => {
-                        {
-                          /* TODO: integrate update action for activity */
-                        }
-                        setStateActivity({
-                          ...stateActivity,
-                          data: stateActivity.data.map((ele) => ({
-                            ...ele,
-                            ...(ele.id === el.id && { name: e.target.value }),
-                          })),
-                        });
-                      }}
+                      onChange={(e) => {}}
                     />
                   </div>
                 </div>
@@ -71,10 +53,10 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
         </>
       ) : (
         <>
-          <div>{stateActivity.label}</div>
+          <div>{activity.label}</div>
 
           <div className="buttons-container">
-            {stateActivity.data
+            {activity.data
               .sort((a, b) => (a.type > b.type ? -1 : 1))
               .map((el, index) => (
                 <div key={index} className="button-item editing">
@@ -89,7 +71,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
                       dispatch(
                         executeActivity({
                           ...activity,
-                          data: stateActivity.data.map((x) => ({
+                          data: activity.data.map((x) => ({
                             ...x,
                             status:
                               x.id === el.id
