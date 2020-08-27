@@ -83,9 +83,9 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
                   <div className="list-card-columns" key={`name_${item.code}`}>
                     <Settings
                       style={{
-                        fontSize: 20,
+                        fontSize: '20px',
                         color: '#1d84ff',
-                        width: 40,
+                        width: '36px',
                         cursor: 'pointer',
                       }}
                       onClick={() => {

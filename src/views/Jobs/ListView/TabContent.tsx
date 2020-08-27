@@ -56,10 +56,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       template: function renderComp(item: Job) {
         return (
           <div className="list-card-columns" key={`name_${item.code}`}>
-            <div
-              className="title-group"
-              style={{ paddingLeft: `40px`, marginTop: 0 }}
-            >
+            <div className="title-group">
               <span className="list-code">{item.code}</span>
               <span className="list-title" onClick={() => selectJob(item)}>
                 {item.checklist.name}
@@ -74,13 +71,16 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       template: function renderComp(item: Job, index: number) {
         if (label === JobStatus.UNASSIGNED)
           return (
-            <div className="list-card-columns" key={`assignee_${item.code}`}>
+            <div
+              className="list-card-columns"
+              key={`assignee_${item.code}`}
+              style={{ justifyContent: 'center' }}
+            >
               <span
                 className="list-title"
                 onClick={() => {
                   onClickAssign(item, index);
                 }}
-                style={{ cursor: 'pointer', marginLeft: '15px' }}
               >
                 <PersonAdd />
               </span>
@@ -93,7 +93,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
               className="list-card-columns"
               style={{
                 flexDirection: 'row-reverse',
-                justifyContent: 'flex-end',
+                justifyContent: 'center',
               }}
               onClick={() => {
                 onClickAssign(item, index);

@@ -8,6 +8,16 @@ export const Composer = styled.div`
     height: calc(100% - 150px);
   }
 
+  .list-header-columns {
+    :first-child {
+      padding-left: 16px;
+    }
+
+    :nth-child(2) {
+      justify-content: center;
+    }
+  }
+
   .list-status {
     font-size: 12px;
     line-height: 0.83;
@@ -17,7 +27,8 @@ export const Composer = styled.div`
     margin-left: -4px;
   }
 
-  // .list-title {
-  //   padding: 6px 0px 5px 0px;
-  // }
+  .title-group {
+    padding-left: 12px;
+    margin-top: 0px;
+  }
 `;

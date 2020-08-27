@@ -4,6 +4,12 @@ export const Composer = styled.div`
   box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);
   height: inherit;
 
+  .list-header-columns {
+    :first-child {
+      padding-left: 40px;
+    }
+  }
+
   .sidenav {
     height: 100%;
     width: 300px;

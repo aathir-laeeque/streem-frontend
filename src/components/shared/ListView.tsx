@@ -31,7 +31,7 @@ const Wrapper = styled.div.attrs({})`
 
   .list-header {
     display: flex;
-    padding: 13px 15px 13px 0px;
+    padding: 13px 0px 13px 0px;
     border-bottom: 1px solid #999999;
   }
 
@@ -41,23 +41,6 @@ const Wrapper = styled.div.attrs({})`
     padding: 8px 16px;
     align-items: center;
     border-top: 1px solid #dadada;
-  }
-
-  .list-header-columns {
-    flex: 1;
-    font-size: 12px;
-    color: #999999;
-    font-weight: bold;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-
-    :first-child {
-      width: 30%;
-      flex: initial;
-      margin-left: 0px;
-      padding-left: 40px;
-    }
   }
 
   .list-body {
@@ -72,12 +55,30 @@ const Wrapper = styled.div.attrs({})`
     display: flex;
   }
 
+  .list-header-columns {
+    flex: 1;
+    font-size: 12px;
+    color: #999999;
+    font-weight: bold;
+    letter-spacing: 1px;
+    padding: 0 4px;
+    overflow-wrap: anywhere;
+    display: flex;
+    align-items: center;
+
+    :first-child {
+      width: 30%;
+      flex: initial;
+    }
+  }
+
   .list-card-columns {
     flex: 1;
     font-size: 14px;
     color: #666666;
+    padding: 0 4px;
     font-weight: 600;
-    letter-spacing: 1px;
+    overflow-wrap: anywhere;
     display: flex;
     align-items: center;
 
