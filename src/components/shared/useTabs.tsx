@@ -8,7 +8,7 @@ const Wrapper = styled.div`
     font-weight: normal;
     color: #666666;
     cursor: pointer;
-    padding: 16px 32px;
+    padding: 14px 32px;
   }
 
   .tab-active {
