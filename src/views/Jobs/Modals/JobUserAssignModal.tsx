@@ -116,7 +116,9 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
   selectedJobIndex,
   refreshData,
 }) => {
-  const { list, pageable } = useTypedSelector((state) => state.users);
+  const { list, pageable } = useTypedSelector(
+    (state) => state.users.users.active,
+  );
   const { jobs, selectedStatus }: Partial<ListViewState> = useTypedSelector(
     (state) => state.jobListView,
   );
@@ -135,7 +137,7 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
         { field: 'lastName', op: 'LIKE', values: [searchQuery] },
       ],
     });
-    dispatch(fetchUsers({ page, size, filters, sort: 'id' }));
+    dispatch(fetchUsers({ page, size, filters, sort: 'id' }, 'active'));
   };
 
   let isLast = true;
