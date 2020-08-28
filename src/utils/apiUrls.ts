@@ -46,10 +46,18 @@ export const apiLogin = () => `${baseUrl}/auth/login`;
 
 export const apiLogOut = () => `${baseUrl}/auth/logout`;
 
+export const apiForgotPassword = () => `${baseUrl}/auth/reset-password`;
+
 export const apiRefreshToken = () => `${baseUrl}/auth/refresh-token`;
 
 export const apiResendInvite = (id: number | string) =>
   `${baseUrl}/users/${id}/resend-invite`;
+
+export const apiArchiveUser = (id: number | string) =>
+  `${baseUrl}/users/${id}/archive`;
+
+export const apiUnArchiveUser = (id: number | string) =>
+  `${baseUrl}/users/${id}/restore`;
 
 export const apiRegister = () => `${baseUrl}/auth/register`;
 

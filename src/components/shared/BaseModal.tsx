@@ -59,10 +59,8 @@ const Wrapper = styled.div.attrs({})`
       text-align: center;
       vertical-align: middle;
       .modal {
-        width: 450px;
         background: white;
         display: inline-block;
-        border-radius: 3px;
         font-weight: 300;
         position: relative;
         border-radius: 16px;
@@ -79,17 +77,21 @@ const Wrapper = styled.div.attrs({})`
           line-height: 20px;
           margin: 0;
         }
+        .close-icon {
+          cursor: pointer;
+          font-size: 20px;
+        }
         .modal-header {
           display: flex;
           align-items: center;
-          padding: 14px;
+          padding: 16px;
           border-bottom: 1px solid rgba(0, 0, 0, 0.32);
           justify-content: space-between;
         }
         .modal-footer {
           display: flex;
           align-items: center;
-          padding: 14px;
+          padding: 16px;
           border-top: 1px solid rgba(0, 0, 0, 0.32);
         }
         .modal-footer-options {
@@ -102,7 +104,7 @@ const Wrapper = styled.div.attrs({})`
           justify-content: flex-end;
         }
         .modal-body {
-          padding: 15px 15px 22px 15px;
+          padding: 16px 16px 22px 16px;
         }
       }
     }
@@ -199,7 +201,7 @@ export const BaseModal: FC<BaseModalProps> = ({
               <div className="modal-header">
                 <h2>{title}</h2>
                 <Close
-                  style={{ cursor: `pointer`, fontSize: 20 }}
+                  className="close-icon"
                   onClick={() => onBaseModalContainerClick(closeModal)}
                 />
               </div>

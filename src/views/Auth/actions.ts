@@ -36,6 +36,15 @@ export const registerSuccess = () =>
 export const registerError = (error: any) =>
   actionSpreader(AuthAction.REGISTER_ERROR, error);
 
+export const forgotPassword = (payload: { email: string }) =>
+  actionSpreader(AuthAction.FORGOT_PASSWORD, payload);
+
+export const forgotPasswordSuccess = () =>
+  actionSpreader(AuthAction.FORGOT_PASSWORD_SUCCESS);
+
+export const forgotPasswordError = (error: any) =>
+  actionSpreader(AuthAction.FORGOT_PASSWORD_ERROR, error);
+
 // PROFILE ACTIONS
 
 export const fetchProfile = (payload: { id: string | number }) =>

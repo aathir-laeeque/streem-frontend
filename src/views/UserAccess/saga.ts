@@ -1,4 +1,9 @@
-import { apiResendInvite, apiGetUsers } from '#utils/apiUrls';
+import {
+  apiResendInvite,
+  apiGetUsers,
+  apiArchiveUser,
+  apiUnArchiveUser,
+} from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { navigate } from '@reach/router';
 import { showNotification } from '#components/Notification/actions';
@@ -9,6 +14,12 @@ import {
   resendInvite,
   resendInviteSuccess,
   resendInviteError,
+  archiveUser,
+  archiveUserSuccess,
+  archiveUserError,
+  unArchiveUser,
+  unArchiveUserSuccess,
+  unArchiveUserError,
   addUser,
   addUserSuccess,
   addUserError,
@@ -42,6 +53,66 @@ function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
       error,
     );
     yield put(resendInviteError(error));
+  }
+}
+
+function* archiveUserSaga({ payload }: ReturnType<typeof archiveUser>) {
+  try {
+    const { id, fetchData } = payload;
+    const { data, errors }: ResponseObj<Partial<User>> = yield call(
+      request,
+      'PUT',
+      apiArchiveUser(id),
+    );
+
+    if (errors) {
+      return false;
+    }
+
+    yield put(archiveUserSuccess());
+    yield put(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'User Archived!',
+      }),
+    );
+    yield call(fetchData);
+  } catch (error) {
+    console.error(
+      'error from resendInviteSaga function in UserAccessSaga :: ',
+      error,
+    );
+    yield put(archiveUserError(error));
+  }
+}
+
+function* unArchiveUserSaga({ payload }: ReturnType<typeof unArchiveUser>) {
+  try {
+    const { id, fetchData } = payload;
+    const { data, errors }: ResponseObj<Partial<User>> = yield call(
+      request,
+      'PUT',
+      apiUnArchiveUser(id),
+    );
+
+    if (errors) {
+      return false;
+    }
+
+    yield put(unArchiveUserSuccess());
+    yield put(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'User Un Archived!',
+      }),
+    );
+    yield call(fetchData);
+  } catch (error) {
+    console.error(
+      'error from resendInviteSaga function in UserAccessSaga :: ',
+      error,
+    );
+    yield put(unArchiveUserError(error));
   }
 }
 
@@ -83,5 +154,7 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
 
 export function* UserAccessSaga() {
   yield takeLatest(UserAccessAction.RESEND_INVITE, resendInviteSaga);
+  yield takeLatest(UserAccessAction.ARCHIVE_USER, archiveUserSaga);
+  yield takeLatest(UserAccessAction.UNARCHIVE_USER, unArchiveUserSaga);
   yield takeLatest(UserAccessAction.ADD_USER, addUserSaga);
 }
