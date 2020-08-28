@@ -2,6 +2,7 @@ import { useTypedSelector } from '#store';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
 import { SignatureModal } from '#views/Checklists/ChecklistComposer/TaskList/TaskView/ActivityList/Activity/Signature/SignatureModal';
+import { ConfirmationModal } from './ConfirmationModal';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -13,7 +14,7 @@ const Wrapper = styled.div``;
 
 const getModal = (
   type: string,
-  props: Record<string, any>,
+  props: any,
   closeModal: (name: string) => void,
   i: number,
   closeAllModals: () => void,
@@ -55,6 +56,17 @@ const getModal = (
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
             closeModal(ModalNames.SIGNATURE_MODAL, ...args)
+          }
+          key={i}
+        />
+      );
+    case ModalNames.CONFIRMATION_MODAL:
+      return (
+        <ConfirmationModal
+          {...props}
+          closeAllModals={closeAllModals}
+          closeModal={(...args) =>
+            closeModal(ModalNames.CONFIRMATION_MODAL, ...args)
           }
           key={i}
         />

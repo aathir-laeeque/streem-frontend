@@ -2,6 +2,8 @@ import React, { FC, useEffect } from 'react';
 import { ListViewComponent } from '#components';
 import WarningIcon from '@material-ui/icons/Warning';
 import { User, UserStatus, UsersState } from '#store/users/types';
+import { openModalAction } from '#components/ModalContainer/actions';
+import { ModalNames } from '#components/ModalContainer/types';
 import { capitalize } from 'lodash';
 import { Properties } from '#store/properties/types';
 import {
@@ -12,7 +14,7 @@ import {
 import { useTypedSelector } from '#store';
 import { navigate as navigateTo } from '@reach/router';
 
-import { resendInvite } from '../actions';
+import { resendInvite, archiveUser, unArchiveUser } from '../actions';
 
 import { useDispatch } from 'react-redux';
 import { Composer } from './styles';
@@ -22,7 +24,6 @@ const TabContent: FC<TabViewProps> = ({
   navigate = navigateTo,
   selectedStatus,
 }) => {
-  console.log('selectedStatus', selectedStatus);
   const { users, loading }: Partial<UsersState> = useTypedSelector(
     (state) => state.users,
   );
@@ -39,8 +40,6 @@ const TabContent: FC<TabViewProps> = ({
     navigate(`/user-access/view-user`);
   };
 
-  // const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
   const fetchData = (page: number, size: number) => {
     const filters = JSON.stringify({
       op: 'AND',
@@ -52,7 +51,6 @@ const TabContent: FC<TabViewProps> = ({
         },
       ],
     });
-    console.log('filters', filters);
     dispatch(fetchUsers({ page, size, filters }, selectedStatus));
   };
 
@@ -60,16 +58,68 @@ const TabContent: FC<TabViewProps> = ({
     dispatch(resendInvite({ id }));
   };
 
-  const onCancelInvite = (email: string) => {
-    console.log('onCancelInvite :', email);
+  const onCancelInvite = (id: string | number) => {
+    console.log('onCancelInvite :', id);
   };
 
-  const onArchiveUser = (email: string) => {
-    console.log('onArchiveUser :', email);
+  const onArchiveUser = (user: User) => {
+    dispatch(
+      openModalAction({
+        type: ModalNames.CONFIRMATION_MODAL,
+        props: {
+          title: 'Archiving a User',
+          primaryText: 'Archive User',
+          onPrimary: () =>
+            dispatch(
+              archiveUser({
+                id: user.id,
+                fetchData: () => {
+                  fetchData(0, 10);
+                },
+              }),
+            ),
+          body: (
+            <div className="body-content">
+              You’re about to archive
+              <span
+                style={{ fontWeight: 'bold' }}
+              >{` ${user.firstName} ${user.lastName}`}</span>
+              .
+            </div>
+          ),
+        },
+      }),
+    );
   };
 
-  const onUnArchiveUser = (email: string) => {
-    console.log('onUnArchiveUser :', email);
+  const onUnArchiveUser = (user: User) => {
+    dispatch(
+      openModalAction({
+        type: ModalNames.CONFIRMATION_MODAL,
+        props: {
+          title: 'Unarchiving a User',
+          primaryText: 'Unarchive User',
+          onPrimary: () =>
+            dispatch(
+              unArchiveUser({
+                id: user.id,
+                fetchData: () => {
+                  fetchData(0, 10);
+                },
+              }),
+            ),
+          body: (
+            <div className="body-content">
+              You’re about to unarchive
+              <span
+                style={{ fontWeight: 'bold' }}
+              >{` ${user.firstName} ${user.lastName}`}</span>
+              .
+            </div>
+          ),
+        },
+      }),
+    );
   };
 
   if (loading || users[selectedStatus].list.length === 0) {
@@ -162,7 +212,7 @@ const TabContent: FC<TabViewProps> = ({
                     (item.verified && (
                       <span
                         className="user-actions"
-                        onClick={() => onArchiveUser(item.email)}
+                        onClick={() => onArchiveUser(item)}
                       >
                         Archive
                       </span>
@@ -184,7 +234,7 @@ const TabContent: FC<TabViewProps> = ({
                         <span
                           className="user-actions"
                           style={{ color: '#ff6b6b' }}
-                          onClick={() => onCancelInvite(item.email)}
+                          onClick={() => onCancelInvite(item.id)}
                         >
                           Cancel Invite
                         </span>
@@ -193,7 +243,7 @@ const TabContent: FC<TabViewProps> = ({
                   ) : (
                     <span
                       className="user-actions"
-                      onClick={() => onUnArchiveUser(item.email)}
+                      onClick={() => onUnArchiveUser(item)}
                     >
                       Unarchive
                     </span>

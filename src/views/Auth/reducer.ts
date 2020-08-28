@@ -9,6 +9,7 @@ const initialState: AuthState = {
   loading: false,
   isRefreshing: false,
   error: undefined,
+  resetRequested: false,
 };
 
 const reducer = (state = initialState, action: AuthActionType): AuthState => {
@@ -30,6 +31,8 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
       return {
         ...initialState,
       };
+    case AuthAction.FORGOT_PASSWORD_SUCCESS:
+      return { ...state, loading: false, resetRequested: true };
     case AuthAction.LOGIN_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
     case AuthAction.FETCH_PROFILE_SUCCESS:

@@ -20,6 +20,9 @@ import {
   updateProfile,
   updateProfileSuccess,
   updateProfileError,
+  forgotPassword,
+  forgotPasswordSuccess,
+  forgotPasswordError,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
@@ -43,6 +46,7 @@ export interface AuthState {
   readonly profile: User | null;
   readonly isRefreshing: boolean;
   readonly loading: boolean;
+  readonly resetRequested: boolean;
   readonly error: any;
 }
 
@@ -91,4 +95,7 @@ export type AuthActionType = ReturnType<
   | typeof updateProfile
   | typeof updateProfileSuccess
   | typeof updateProfileError
+  | typeof forgotPassword
+  | typeof forgotPasswordSuccess
+  | typeof forgotPasswordError
 >;

@@ -4,6 +4,7 @@ import {
   apiGetUser,
   apiRegister,
   apiLogOut,
+  apiForgotPassword,
 } from '#utils/apiUrls';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
@@ -30,6 +31,9 @@ import {
   updateProfile,
   updateProfileError,
   updateProfileSuccess,
+  forgotPassword,
+  forgotPasswordError,
+  forgotPasswordSuccess,
 } from './actions';
 import { persistor } from '../../App';
 
@@ -176,6 +180,28 @@ function* registerSaga({ payload }: ReturnType<typeof register>) {
   }
 }
 
+function* forgotPasswordSaga({ payload }: ReturnType<typeof forgotPassword>) {
+  try {
+    const { data, errors }: ResponseObj<any> = yield call(
+      request,
+      'POST',
+      apiForgotPassword(),
+      {
+        data: payload,
+      },
+    );
+
+    if (errors) {
+      return false;
+    }
+
+    yield put(forgotPasswordSuccess());
+  } catch (error) {
+    console.error('error from forgotPasswordSaga function in Auth :: ', error);
+    yield put(forgotPasswordError(error));
+  }
+}
+
 function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
   try {
     const { body, id } = payload;
@@ -212,5 +238,6 @@ export function* AuthSaga() {
   yield takeLatest(AuthAction.REFRESH_TOKEN, refreshTokenSaga);
   yield takeLatest(AuthAction.FETCH_PROFILE, fetchProfileSaga);
   yield takeLatest(AuthAction.REGISTER, registerSaga);
+  yield takeLatest(AuthAction.FORGOT_PASSWORD, forgotPasswordSaga);
   yield takeLatest(AuthAction.UPDATE_PROFILE, updateProfileSaga);
 }

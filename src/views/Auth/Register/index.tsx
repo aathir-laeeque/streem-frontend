@@ -105,7 +105,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
             refFun={register({
               required: true,
               pattern: {
-                value: /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/,
+                value: /^[a-z0-9]+$/i,
                 message: 'Invalid Username',
               },
             })}
