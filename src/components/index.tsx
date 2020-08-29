@@ -25,3 +25,4 @@ export { Checkbox } from './shared/Checkbox';
 export { default as CheckboxWithLabel } from './shared/CheckboxWithLabel';
 export { ListView as ListViewComponent } from './shared/ListView';
 export { default as AddNewItem } from './shared/AddNew';
+export { default as ProgressBar } from './shared/Progressbar';

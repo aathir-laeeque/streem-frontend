@@ -9,7 +9,9 @@ import { PropertiesSaga } from './properties/saga';
 import { UsersSaga } from './users/saga';
 import { FacilitiesSaga } from './facilities/saga';
 
-import { NewComposerSaga } from '#views/Checklists/NewComposer/composer.saga';
+// import { NewComposerSaga } from '#views/Checklists/NewComposer/composer.saga';
+
+import { ComposerSaga } from '../Composer/saga';
 
 export function* rootSaga() {
   yield all([
@@ -23,6 +25,7 @@ export function* rootSaga() {
     fork(FacilitiesSaga),
     fork(UserAccessSaga),
 
-    fork(NewComposerSaga),
+    // fork(NewComposerSaga),
+    fork(ComposerSaga),
   ]);
 }

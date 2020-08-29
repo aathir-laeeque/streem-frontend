@@ -20,7 +20,7 @@ export function actionSpreader<T extends string, P extends any>(
   type: T,
   payload?: P,
 ) {
-  return { type, payload } as any;
+  return { type, payload };
 }
 
 /**

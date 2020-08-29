@@ -3,11 +3,15 @@ import React, { FC } from 'react';
 
 import ListView from './ListView';
 import NewComposer from './NewComposer';
+import Composer from '../../Composer';
+import { Entity } from '../../Composer/types';
 
 const ChecklistView: FC<RouteComponentProps> = () => (
   <Router>
     <ListView path="/" />
-    <NewComposer path="/:checklistId" />
+    {/* <NewComposer path="/:checklistId" /> */}
+
+    <Composer path="/:id" entity={Entity.CHECKLIST} />
   </Router>
 );
 
