@@ -44,10 +44,9 @@ const Header: FC = () => {
   return (
     <Wrapper>
       <div className="header-item">Stages</div>
-      <span className="auto-save-text">All changes saved automatically</span>
-      <Button>
-        {isEditingChecklist ? 'Publish Checklist' : 'Complete Job'}
-      </Button>
+      {/* <span className="auto-save-text">All changes saved automatically</span> */}
+      {isEditingChecklist ? <Button>Publish Checklist</Button> : null}
+      {/* <Button>Complete Job</Button> */}
     </Wrapper>
   );
 };
