@@ -1,4 +1,4 @@
-import { Task } from '../checklist.types';
+import { Task, Media } from '../checklist.types';
 import { ComposerActionType } from '../types';
 import { addNewTask, setActiveTask, setTasksList } from './actions';
 
@@ -26,4 +26,11 @@ export type TaskListActionType =
 export type TaskViewProps = {
   isActive: boolean;
   task: Task;
+};
+
+export type TaskCardProps = TaskViewProps;
+
+export type MediaCardProps = {
+  medias: Media[];
+  isTaskActive: boolean;
 };

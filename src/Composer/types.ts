@@ -9,6 +9,7 @@ import {
   fetchDataSuccess,
   publishChecklist,
   resetComposer,
+  restartJob,
   startJob,
 } from './actions';
 import { Checklist } from './checklist.types';
@@ -20,9 +21,17 @@ export enum Entity {
   CHECKLIST = 'checklist',
 }
 
+// Job assignemt status
 export enum JobStatus {
   ASSIGNED = 'ASSIGNED',
   UNASSIGNED = 'UNASSIGNED',
+}
+
+export enum JobState {
+  NOT_STARTED = 'NOT_STARTED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
 }
 
 export type ComposerProps = RouteComponentProps<{
@@ -35,8 +44,8 @@ export type ComposerState = {
   data?: Checklist | Job;
   entity?: Entity;
   loading: boolean;
-  isJobStarted: boolean;
-  jobStatus?: JobStatus;
+  jobState: JobState;
+  jobStatus: JobStatus;
   stages: StageListState;
   tasks: TaskListState;
 };
@@ -50,9 +59,10 @@ export enum ComposerAction {
 
   PUBLISH_CHECKLIST = '@@composer/PUBLISH_CHECKLIST',
 
-  START_JOB = '@@composer/START_JOB',
   COMPLETE_JOB = '@@composer/COMPLETE_JOB',
   COMPLETE_JOB_WITH_EXCEPTION = '@@composer/COMPLETE_JOB_WITH_EXCEPTION',
+  RESTART_JOB = '@@composer/RESTART_JOB',
+  START_JOB = '@@composer/START_JOB',
 }
 
 export type ComposerActionType = ReturnType<
@@ -64,6 +74,7 @@ export type ComposerActionType = ReturnType<
   | typeof publishChecklist
   | typeof startJob
   | typeof completeJob
+  | typeof restartJob
 >;
 
 export type FetchDataArgs = {

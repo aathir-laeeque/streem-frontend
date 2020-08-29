@@ -31,3 +31,5 @@ export const completeJob = (withException = false) =>
       : ComposerAction.COMPLETE_JOB,
     { withException },
   );
+
+export const restartJob = () => actionSpreader(ComposerAction.RESTART_JOB);

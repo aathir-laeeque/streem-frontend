@@ -12,10 +12,9 @@ function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
 }
 
 function* setTasksSaga({ payload }: ReturnType<typeof setActiveStage>) {
-  console.log('came to setTasksSaga in TaskListSaga with payload :: ', payload);
   try {
-    const { listById } = yield select<RootState>(
-      (state) => state.composer.stages,
+    const { listById } = yield select(
+      (state: RootState) => state.composer.stages,
     );
 
     yield put(setTasksList(listById[payload.id].tasks));

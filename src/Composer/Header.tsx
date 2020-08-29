@@ -1,12 +1,12 @@
 import { Button } from '#components';
 import { useTypedSelector } from '#store/helpers';
+import { ArrowDropDown } from '@material-ui/icons';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { ArrowDropDown } from '@material-ui/icons';
 
-import { completeJob, startJob, publishChecklist } from './actions';
-import { Entity, JobStatus } from './types';
+import { completeJob, publishChecklist, restartJob, startJob } from './actions';
+import { Entity, JobState, JobStatus } from './types';
 
 const Wrapper = styled.div`
   align-items: center;
@@ -58,8 +58,8 @@ const Wrapper = styled.div`
   }
 `;
 
-const JobButton: FC<{ isJobStarted: boolean; jobStatus: JobStatus }> = ({
-  isJobStarted,
+const JobButton: FC<{ jobState: JobState; jobStatus: JobStatus }> = ({
+  jobState,
   jobStatus,
 }) => {
   const [isCompleteWithException, setIsCompleteWithException] = useState(false);
@@ -67,7 +67,7 @@ const JobButton: FC<{ isJobStarted: boolean; jobStatus: JobStatus }> = ({
   const dispatch = useDispatch();
 
   if (jobStatus === JobStatus.ASSIGNED) {
-    if (isJobStarted) {
+    if (jobState === JobState.IN_PROGRESS) {
       return (
         <div className="dropdown-button">
           <Button
@@ -87,16 +87,26 @@ const JobButton: FC<{ isJobStarted: boolean; jobStatus: JobStatus }> = ({
           </div>
         </div>
       );
-    } else {
+    } else if (jobState === JobState.NOT_STARTED) {
       return <Button onClick={() => dispatch(startJob())}>Start Job</Button>;
+    } else if (
+      jobState === JobState.COMPLETED ||
+      jobState === JobState.COMPLETED_WITH_EXCEPTION
+    ) {
+      // INFO: add restart job button here if need be
+      return (
+        <Button onClick={() => dispatch(restartJob())}>Restart Job</Button>
+      );
     }
   } else {
-    return null;
+    return <Button>Assign</Button>;
   }
+
+  return <div />;
 };
 
 const Header: FC = () => {
-  const { entity, isJobStarted, jobStatus } = useTypedSelector(
+  const { entity, jobStatus, jobState } = useTypedSelector(
     (state) => state.composer,
   );
 
@@ -115,7 +125,7 @@ const Header: FC = () => {
           Publish Checklist
         </Button>
       ) : (
-        <JobButton isJobStarted={isJobStarted} jobStatus={jobStatus} />
+        <JobButton jobState={jobState} jobStatus={jobStatus} />
       )}
     </Wrapper>
   );

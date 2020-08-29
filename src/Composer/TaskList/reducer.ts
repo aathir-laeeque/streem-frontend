@@ -41,6 +41,9 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         activeTaskId: action.payload.tasks[0].id,
       };
 
+    case TaskListAction.SET_ACTIVE_TASK:
+      return { ...state, activeTaskId: action.payload.id };
+
     default:
       return state;
   }

@@ -47,10 +47,18 @@ function* publishChecklistSaga() {
   console.log('make api call to publish checklist here');
 }
 
+function* restartJobSaga() {
+  console.log('make api call to restart the job here');
+}
+
 export function* ComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchDataSaga);
-  yield takeLatest(ComposerAction.START_JOB, startJobSaga);
+
   yield takeLatest(ComposerAction.COMPLETE_JOB, completeJobSaga);
+  yield takeLatest(ComposerAction.COMPLETE_JOB_WITH_EXCEPTION, completeJobSaga);
+  yield takeLatest(ComposerAction.START_JOB, startJobSaga);
+  yield takeLatest(ComposerAction.RESTART_JOB, restartJobSaga);
+
   yield takeLatest(ComposerAction.PUBLISH_CHECKLIST, publishChecklistSaga);
 
   yield all([

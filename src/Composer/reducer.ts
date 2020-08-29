@@ -13,14 +13,16 @@ import {
   ComposerActionType,
   ComposerState,
   Entity,
+  JobState,
+  JobStatus,
 } from './types';
 
 const initialState: ComposerState = {
   data: undefined,
   entity: undefined,
   loading: false,
-  isJobStarted: false,
-  jobStatus: undefined,
+  jobState: JobState.NOT_STARTED,
+  jobStatus: JobStatus.UNASSIGNED,
   stages: StageListInitialState,
   tasks: TaskListInitialState,
 };
@@ -45,7 +47,6 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         tasks: taskListReducer(state.tasks, action),
 
         ...(action.payload.entity === Entity.JOB && {
-          isJobStarted: false,
           jobStatus: action.payload.data.status,
         }),
       };
@@ -54,7 +55,14 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       return { ...initialState };
 
     case ComposerAction.START_JOB:
-      return { ...state, isJobStarted: true };
+    case ComposerAction.RESTART_JOB:
+      return { ...state, jobState: JobState.IN_PROGRESS };
+
+    case ComposerAction.COMPLETE_JOB:
+      return { ...state, jobState: JobState.COMPLETED };
+
+    case ComposerAction.COMPLETE_JOB_WITH_EXCEPTION:
+      return { ...state, jobState: JobState.COMPLETED_WITH_EXCEPTION };
 
     default:
       return {
