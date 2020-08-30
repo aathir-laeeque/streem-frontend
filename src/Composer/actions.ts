@@ -22,7 +22,8 @@ export const resetComposer = () =>
 export const publishChecklist = () =>
   actionSpreader(ComposerAction.PUBLISH_CHECKLIST);
 
-export const startJob = () => actionSpreader(ComposerAction.START_JOB);
+export const startJob = (jobId: Job['id']) =>
+  actionSpreader(ComposerAction.START_JOB, { jobId });
 
 export const completeJob = (withException = false) =>
   actionSpreader(

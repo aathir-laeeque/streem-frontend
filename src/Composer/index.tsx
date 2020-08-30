@@ -11,7 +11,7 @@ import { ComposerProps } from './types';
 
 const Wrapper = styled.div`
   display: grid;
-  grid-gap: 16px;
+  grid-row-gap: 16px;
   grid-template-areas: 'header header' 'stages tasks';
   grid-template-columns: 300px 1fr;
   grid-template-rows: auto 1fr;

@@ -48,12 +48,12 @@ const getRefreshToken = (state: any) => state.auth.refreshToken;
 
 function* refreshTokenPollSaga() {
   try {
-    while (true) {
-      const token = yield select(getRefreshToken);
-      yield put(refreshToken({ token }));
-      yield delay(295000);
-      // yield delay(5000);
-    }
+    // while (true) {
+    //   const token = yield select(getRefreshToken);
+    //   yield put(refreshToken({ token }));
+    //   yield delay(295000);
+    //   // yield delay(5000);
+    // }
   } catch (error) {
     console.error(
       'error from refreshTokenPeriodically function in Auth :: ',

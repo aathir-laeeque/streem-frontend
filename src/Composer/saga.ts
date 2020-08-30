@@ -7,6 +7,7 @@ import {
   fetchData,
   fetchDataOngoing,
   fetchDataSuccess,
+  startJob,
 } from './actions';
 import { StageListSaga } from './StageList/saga';
 import { TaskListSaga } from './TaskList/saga';
@@ -31,8 +32,9 @@ function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   }
 }
 
-function* startJobSaga() {
+function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
   console.log('make api call to start the job here');
+  console.log('payload for start job :: ', payload);
 }
 
 function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {

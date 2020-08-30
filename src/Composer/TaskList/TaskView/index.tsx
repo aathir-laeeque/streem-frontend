@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import { TaskViewProps } from './types';
+import { TaskViewProps } from '../types';
 import TaskCard from './TaskCard';
-import MediaCard from './TaskMediaCard';
+import MediaCard from './MediaCard';
 
 const Wrapper = styled.div.attrs({
   className: 'task-list-item',

@@ -1,4 +1,5 @@
 import { useTypedSelector } from '#store';
+import { SignatureModal } from '#views/Checklists/ChecklistComposer/TaskList/TaskView/ActivityList/Activity/Signature/SignatureModal';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
 import { SignatureModal } from '#views/Checklists/ChecklistComposer/TaskList/TaskView/ActivityList/Activity/Signature/SignatureModal';
@@ -7,6 +8,7 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
+import StartJobModal from '../../Composer/StartJobModal';
 import { closeAllModalAction, closeModalAction } from './actions';
 import { ModalNames } from './types';
 
@@ -67,6 +69,18 @@ const getModal = (
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
             closeModal(ModalNames.CONFIRMATION_MODAL, ...args)
+          }
+          key={i}
+        />
+      );
+
+    case ModalNames.START_JOB_MODAL:
+      return (
+        <StartJobModal
+          {...props}
+          closeAllModals={closeAllModals}
+          closeModal={(...args) =>
+            closeModal(ModalNames.START_JOB_MODAL, ...args)
           }
           key={i}
         />

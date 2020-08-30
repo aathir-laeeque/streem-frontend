@@ -10,6 +10,7 @@ const Wrapper = styled.div`
   grid-row-gap: 16px;
   grid-template-areas: 'stage-number' 'stage-name' 'tasks-list';
   grid-template-rows: 16px 32px 1fr;
+  overflow: auto;
 
   .stage {
     &-name {

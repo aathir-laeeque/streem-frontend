@@ -11,3 +11,6 @@ export const addNewTask = (task: Task) =>
 
 export const setTasksList = (tasks: Task[]) =>
   actionSpreader(TaskListAction.SET_TASKS_LIST, { tasks });
+
+export const startTask = (taskId: Task['id']) =>
+  actionSpreader(TaskListAction.START_TASK, { taskId });

@@ -3,11 +3,17 @@ import { Reducer } from 'redux';
 import { fetchDataSuccess } from '../actions';
 import { Task } from '../checklist.types';
 import { ComposerAction, Entity } from '../types';
-import { TaskListActionType, TaskListState, TaskListAction } from './types';
+import {
+  TaskListActionType,
+  TaskListState,
+  TaskListAction,
+  ListById,
+} from './types';
 
 export const initialState: TaskListState = {
-  list: [],
   activeTaskId: undefined,
+  list: [],
+  listById: {},
 };
 
 const getTasks = ({
@@ -30,8 +36,12 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
 
       return {
         ...state,
-        list: tasks,
         activeTaskId: tasks[0].id,
+        list: tasks,
+        listById: tasks.reduce<ListById>((acc, task) => {
+          acc[task.id] = task;
+          return acc;
+        }, {}),
       };
 
     case TaskListAction.SET_TASKS_LIST:

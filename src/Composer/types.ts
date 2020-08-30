@@ -18,20 +18,25 @@ import { TaskListState } from './TaskList/types';
 
 export enum Entity {
   JOB = 'Job',
-  CHECKLIST = 'checklist',
+  CHECKLIST = 'Checklist',
 }
 
 // Job assignemt status
 export enum JobStatus {
   ASSIGNED = 'ASSIGNED',
   UNASSIGNED = 'UNASSIGNED',
-}
-
-export enum JobState {
-  NOT_STARTED = 'NOT_STARTED',
-  IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
   COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
+  IN_PROGRESS = 'IN_PROGRESS',
+  NOT_STARTED = 'NOT_STARTED',
+}
+
+export enum ChecklistState {
+  CREATING = 'CREATING',
+  EDITING = 'EDITING',
+  PUBLISHED = 'PUBLISHED',
+  REVIEWING = 'REVIEWING',
+  VIEWING = 'VIEWING',
 }
 
 export type ComposerProps = RouteComponentProps<{
@@ -41,10 +46,11 @@ export type ComposerProps = RouteComponentProps<{
 };
 
 export type ComposerState = {
+  checklistState: ChecklistState;
   data?: Checklist | Job;
   entity?: Entity;
+  entityId?: Checklist['id'] | Job['id'];
   loading: boolean;
-  jobState: JobState;
   jobStatus: JobStatus;
   stages: StageListState;
   tasks: TaskListState;

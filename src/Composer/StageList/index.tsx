@@ -3,9 +3,10 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
+import { Stage } from '../checklist.types';
+import { Entity } from '../types';
 import { addNewStage } from './actions';
 import StageCard from './StageCard';
-import { Stage } from '../checklist.types';
 
 const Wrapper = styled.div.attrs({
   className: 'stage-list-container',
@@ -15,6 +16,7 @@ const Wrapper = styled.div.attrs({
   display: flex;
   flex-direction: column;
   overflow: auto;
+  padding-right: 16px;
 
   .add-new-item {
     align-items: center;
@@ -35,9 +37,10 @@ const generateNewStage = (): Omit<Stage, 'tasks'> => ({
 });
 
 const StageListView: FC = () => {
-  const { list, activeStageId } = useTypedSelector(
-    (state) => state.composer.stages,
-  );
+  const {
+    entity,
+    stages: { list, activeStageId },
+  } = useTypedSelector((state) => state.composer);
 
   const dispatch = useDispatch();
 
@@ -51,12 +54,14 @@ const StageListView: FC = () => {
         />
       ))}
 
-      <div
-        className="add-new-item"
-        onClick={() => dispatch(addNewStage(generateNewStage()))}
-      >
-        Add new Stage
-      </div>
+      {entity === Entity.CHECKLIST ? (
+        <div
+          className="add-new-item"
+          onClick={() => dispatch(addNewStage(generateNewStage()))}
+        >
+          Add new Stage
+        </div>
+      ) : null}
     </Wrapper>
   );
 };

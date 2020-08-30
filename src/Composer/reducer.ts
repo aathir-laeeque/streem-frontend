@@ -9,19 +9,20 @@ import {
   taskListReducer,
 } from './TaskList/reducer';
 import {
+  ChecklistState,
   ComposerAction,
   ComposerActionType,
   ComposerState,
   Entity,
-  JobState,
   JobStatus,
 } from './types';
 
 const initialState: ComposerState = {
+  checklistState: ChecklistState.CREATING,
   data: undefined,
   entity: undefined,
+  entityId: undefined,
   loading: false,
-  jobState: JobState.NOT_STARTED,
   jobStatus: JobStatus.UNASSIGNED,
   stages: StageListInitialState,
   tasks: TaskListInitialState,
@@ -42,13 +43,19 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       return {
         ...state,
         data: action.payload.data,
+        entityId: action.payload.data.id,
         loading: false,
         stages: stageListReducer(state.stages, action),
         tasks: taskListReducer(state.tasks, action),
 
-        ...(action.payload.entity === Entity.JOB && {
-          jobStatus: action.payload.data.status,
-        }),
+        ...(action.payload.entity === Entity.JOB
+          ? {
+              jobStatus: action.payload.data.status,
+            }
+          : {
+              // TODO: make this as per the API response
+              checklistState: ChecklistState.CREATING,
+            }),
       };
 
     case ComposerAction.RESET_COMPOSER:
@@ -56,13 +63,13 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
 
     case ComposerAction.START_JOB:
     case ComposerAction.RESTART_JOB:
-      return { ...state, jobState: JobState.IN_PROGRESS };
+      return { ...state, jobStatus: JobStatus.IN_PROGRESS };
 
     case ComposerAction.COMPLETE_JOB:
-      return { ...state, jobState: JobState.COMPLETED };
+      return { ...state, jobStatus: JobStatus.COMPLETED };
 
     case ComposerAction.COMPLETE_JOB_WITH_EXCEPTION:
-      return { ...state, jobState: JobState.COMPLETED_WITH_EXCEPTION };
+      return { ...state, jobStatus: JobStatus.COMPLETED_WITH_EXCEPTION };
 
     default:
       return {

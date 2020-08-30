@@ -5,8 +5,9 @@ import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
+import { Job } from '../views/Jobs/types';
 import { completeJob, publishChecklist, restartJob, startJob } from './actions';
-import { Entity, JobState, JobStatus } from './types';
+import { Entity, JobStatus } from './types';
 
 const Wrapper = styled.div`
   align-items: center;
@@ -58,55 +59,49 @@ const Wrapper = styled.div`
   }
 `;
 
-const JobButton: FC<{ jobState: JobState; jobStatus: JobStatus }> = ({
-  jobState,
-  jobStatus,
-}) => {
+const JobButton: FC<{
+  jobStatus: JobStatus;
+  jobId: Job['id'];
+}> = ({ jobStatus, jobId }) => {
   const [isCompleteWithException, setIsCompleteWithException] = useState(false);
 
   const dispatch = useDispatch();
 
-  if (jobStatus === JobStatus.ASSIGNED) {
-    if (jobState === JobState.IN_PROGRESS) {
-      return (
-        <div className="dropdown-button">
-          <Button
-            onClick={() => {
-              dispatch(completeJob(isCompleteWithException));
-            }}
-          >
-            {isCompleteWithException
-              ? 'Complete with exception'
-              : 'Complete Job'}
-          </Button>
-          <div
-            onClick={() => setIsCompleteWithException(!isCompleteWithException)}
-            className="drop-menu"
-          >
-            <ArrowDropDown className="icon" />
-          </div>
+  if (jobStatus === JobStatus.NOT_STARTED || jobStatus === JobStatus.ASSIGNED) {
+    return <Button onClick={() => dispatch(startJob(jobId))}>Start Job</Button>;
+  } else if (jobStatus === JobStatus.IN_PROGRESS) {
+    return (
+      <div className="dropdown-button">
+        <Button
+          onClick={() => {
+            dispatch(completeJob(isCompleteWithException));
+          }}
+        >
+          {isCompleteWithException ? 'Complete with exception' : 'Complete Job'}
+        </Button>
+        <div
+          onClick={() => setIsCompleteWithException(!isCompleteWithException)}
+          className="drop-menu"
+        >
+          <ArrowDropDown className="icon" />
         </div>
-      );
-    } else if (jobState === JobState.NOT_STARTED) {
-      return <Button onClick={() => dispatch(startJob())}>Start Job</Button>;
-    } else if (
-      jobState === JobState.COMPLETED ||
-      jobState === JobState.COMPLETED_WITH_EXCEPTION
-    ) {
-      // INFO: add restart job button here if need be
-      return (
-        <Button onClick={() => dispatch(restartJob())}>Restart Job</Button>
-      );
-    }
-  } else {
-    return <Button>Assign</Button>;
+      </div>
+    );
   }
+  // INFO: enable this if restart job logic is to be implemented
+  // else if (
+  //   jobStatus === JobStatus.COMPLETED ||
+  //   jobStatus === JobStatus.COMPLETED_WITH_EXCEPTION
+  // ) {
+  //   // INFO: add restart job button here if need be
+  //   return <Button onClick={() => dispatch(restartJob())}>Restart Job</Button>;
+  // }
 
   return <div />;
 };
 
 const Header: FC = () => {
-  const { entity, jobStatus, jobState } = useTypedSelector(
+  const { entity, jobStatus, entityId } = useTypedSelector(
     (state) => state.composer,
   );
 
@@ -125,7 +120,7 @@ const Header: FC = () => {
           Publish Checklist
         </Button>
       ) : (
-        <JobButton jobState={jobState} jobStatus={jobStatus} />
+        <JobButton jobStatus={jobStatus} jobId={entityId} />
       )}
     </Wrapper>
   );

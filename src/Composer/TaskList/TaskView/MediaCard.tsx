@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
 
-import { MediaCardProps } from './types';
+import { MediaCardProps } from '../types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-media-card',
