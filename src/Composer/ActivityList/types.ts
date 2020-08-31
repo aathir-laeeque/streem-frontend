@@ -7,3 +7,8 @@ export type ActivityListProps = {
 export type ActivityProps = {
   activity: Activity;
 };
+
+export enum Selections {
+  SELECTED = 'SELECTED',
+  NOT_SELECTED = 'NOT_SELECTED',
+}

@@ -6,6 +6,12 @@ import styled from 'styled-components';
 import { ActivityListProps } from './types';
 import { ActivityType } from '../checklist.types';
 import YesNoActivity from './YesNo';
+import MaterialActivity from './Material';
+import TextboxActivity from './Textbox';
+import ChecklistActivity from './Checklist';
+import InstructionActivity from './Instruction';
+import MultiSelectActivity from './MultiSelect';
+import ShouldBeActivity from './ShouldBe';
 
 const Wrapper = styled.div.attrs({
   className: 'activity-list',
@@ -49,14 +55,28 @@ const ActivityList: FC<ActivityListProps> = ({ activities }) => {
           {(() => {
             switch (activity.type) {
               case ActivityType.CHECKLIST:
+                return <ChecklistActivity activity={activity} />;
+
               case ActivityType.INSTRUCTION:
+                return <InstructionActivity activity={activity} />;
+
               case ActivityType.MATERIAL:
+                return <MaterialActivity activity={activity} />;
+
               case ActivityType.MEDIA:
+                return null;
+
               case ActivityType.MULTISELECT:
+                return <MultiSelectActivity activity={activity} />;
+
               case ActivityType.SHOULD_BE:
+                return <ShouldBeActivity activity={activity} />;
+
               case ActivityType.SIGNATURE:
+                return null;
+
               case ActivityType.TEXTBOX:
-                return activity.type;
+                return <TextboxActivity activity={activity} />;
 
               case ActivityType.YES_NO:
                 return <YesNoActivity activity={activity} />;

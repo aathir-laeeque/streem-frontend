@@ -99,7 +99,7 @@ const generateTimerText = (period: number) => {
     .concat(' hr : ')}${minutes
     .toString()
     .padStart(2, '0')
-    .concat(' min : ')}${seconds.toString().padStart(2, '0').concat(' hr')}`;
+    .concat(' min : ')}${seconds.toString().padStart(2, '0').concat(' sec')}`;
 };
 
 const JobHeader: FC<HeaderProps> = ({ task }) => {
