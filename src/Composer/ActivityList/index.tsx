@@ -25,7 +25,7 @@ const Wrapper = styled.div.attrs({
 
     :last-child {
       border-bottom: none;
-      padding-bottom: 0;
+      /* padding-bottom: 0; */
     }
 
     .optional-badge {

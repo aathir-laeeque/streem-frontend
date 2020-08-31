@@ -41,7 +41,7 @@ const Wrapper = styled.div`
 const TaskListView: FC = () => {
   const {
     activeStage,
-    tasks: { list, activeTaskId },
+    tasks: { listIdOrder, activeTaskId, listById },
   } = useTypedSelector((state) => ({
     activeStage:
       state.composer.stages.listById[state.composer.stages.activeStageId],
@@ -56,11 +56,11 @@ const TaskListView: FC = () => {
       <div className="stage-name">{activeStage.name}</div>
 
       <div className="tasks-list">
-        {list.map((task) => (
+        {listIdOrder.map((taskId) => (
           <TaskView
-            isActive={task.id === activeTaskId}
-            key={task.id}
-            task={task}
+            isActive={taskId === activeTaskId}
+            key={taskId}
+            task={listById[taskId]}
           />
         ))}
       </div>

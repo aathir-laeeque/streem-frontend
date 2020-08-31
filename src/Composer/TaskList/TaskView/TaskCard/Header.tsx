@@ -3,11 +3,12 @@ import { PanTool, Timer } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { Task } from '../../../checklist.types';
 import { Entity } from '../../../types';
 import { startTask } from '../../actions';
+import { TaskExecutionStatus } from '../../types';
 
 type HeaderProps = {
   task: Task;
@@ -27,6 +28,20 @@ const Wrapper = styled.div.attrs({
   .job-header {
     display: flex;
     flex-direction: column;
+
+    ${({ taskExecutionStatus }) => {
+      if (taskExecutionStatus === TaskExecutionStatus.COMPLETED) {
+        return css`
+          border-top: 4px solid #5aa700;
+          border-radius: 4px;
+        `;
+      } else if (taskExecutionStatus === TaskExecutionStatus.SKIPPED) {
+        return css`
+          border-top: 4px solid #f7b500;
+          border-radius: 4px;
+        `;
+      }
+    }}
 
     .stop-banner {
       align-items: center;
@@ -146,6 +161,7 @@ const Header: FC<HeaderProps> = ({ task, showStartButton }) => {
       hasStop={task.hasStop}
       timed={task.timed}
       showStartButton={showStartButton}
+      taskExecutionStatus={task.taskExecution.status}
     >
       {entity === Entity.CHECKLIST ? (
         <ChecklistHeader task={task} />

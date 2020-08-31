@@ -68,7 +68,6 @@ export enum ComposerAction {
   COMPLETE_JOB_WITH_EXCEPTION = '@@composer/COMPLETE_JOB_WITH_EXCEPTION',
   RESTART_JOB = '@@composer/RESTART_JOB',
   START_JOB = '@@composer/START_JOB',
-  UNASSIGN_USERS = '@@composer/JOB/UNASSIGN_USERS',
 }
 
 export type ComposerActionType = ReturnType<

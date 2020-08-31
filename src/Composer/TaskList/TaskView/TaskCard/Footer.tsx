@@ -1,20 +1,25 @@
-import { ArrowRightAlt } from '@material-ui/icons';
-import React from 'react';
-import styled from 'styled-components';
+import { ArrowRightAlt, CheckCircle } from '@material-ui/icons';
+import moment from 'moment';
+import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
+import styled, { css } from 'styled-components';
+
+import { completeTask, skipTask } from '../../actions';
+import { TaskExecutionStatus } from '../../types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-buttons',
 })`
   display: flex;
   flex-direction: column;
-  padding: ${({ isTaskStarted }) => (isTaskStarted ? '32px' : '0 32px 32px')};
+  padding: 0 32px 32px;
 
   button {
     align-items: center;
     background: transparent;
     border: none;
     cursor: pointer;
-    display: ${({ isTaskStarted }) => (isTaskStarted ? 'flex' : 'none')};
+    display: flex;
     justify-content: center;
     outline: none;
   }
@@ -37,21 +42,90 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
+const CompletedWrapper = styled.div.attrs({
+  className: '',
+})`
+  align-items: center;
+  ${({ completed, skipped }) => {
+    if (completed) {
+      return css`
+        background-color: #5aa700;
+      `;
+    } else if (skipped) {
+      return css`
+        background-color: #f7b500;
+      `;
+    }
+  }}
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+
+  > .icon {
+    color: #ffffff;
+    margin-right: 8px;
+    opacity: 0.5;
+  }
+`;
+
 type FooterProps = {
   canSkipTask: boolean;
-  isTaskStarted: boolean;
 };
 
-const Footer: FC<FooterProps> = ({ canSkipTask, isTaskStarted }) => (
-  <Wrapper isTaskStarted={isTaskStarted}>
-    <button className="complete-task">
-      Complete Task <ArrowRightAlt className="icon" />
-    </button>
+const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
 
-    <button className="skip-task">
-      {canSkipTask ? 'Skip the task' : 'Force close task'}
-    </button>
-  </Wrapper>
-);
+const Footer: FC<FooterProps> = ({ canSkipTask, task }) => {
+  const dispatch = useDispatch();
+
+  const {
+    audit: { modifiedBy, modifiedAt },
+    status: taskExecutionStatus,
+  } = task.taskExecution;
+
+  if (taskExecutionStatus === TaskExecutionStatus.COMPLETED) {
+    return (
+      <CompletedWrapper completed>
+        <CheckCircle className="icon" />
+        <span>
+          Task Completed by {generateName(modifiedBy)}, ID: {modifiedBy.id} on{' '}
+          {moment(modifiedAt).format('MMM D, h:mm A')}
+          {}
+        </span>
+      </CompletedWrapper>
+    );
+  } else if (taskExecutionStatus === TaskExecutionStatus.SKIPPED) {
+    return (
+      <CompletedWrapper skipped>
+        <CheckCircle className="icon" />
+        <span>
+          Task skipped by {generateName(modifiedBy)}, ID: {modifiedBy.id} on{' '}
+          {moment(modifiedAt).format('MMM D, h:mm A')}
+          {}
+        </span>
+      </CompletedWrapper>
+    );
+  } else if (task.taskExecution.status === TaskExecutionStatus.INPROGRESS) {
+    return (
+      <Wrapper>
+        <button
+          className="complete-task"
+          onClick={() => dispatch(completeTask(task.id))}
+        >
+          Complete Task <ArrowRightAlt className="icon" />
+        </button>
+
+        <button
+          className="skip-task"
+          onClick={() => dispatch(skipTask(task.id))}
+        >
+          {canSkipTask ? 'Skip the task' : 'Force close task'}
+        </button>
+      </Wrapper>
+    );
+  }
+
+  return null;
+};
 
 export default Footer;

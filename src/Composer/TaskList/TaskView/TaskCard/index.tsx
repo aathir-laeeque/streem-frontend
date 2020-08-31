@@ -37,7 +37,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
   }, false);
 
   const isTaskStarted =
-    task.taskExecution.status === TaskExecutionStatus.STARTED;
+    task.taskExecution.status !== TaskExecutionStatus.NOT_STARTED;
 
   const showStartButton =
     (jobStatus === JobStatus.ASSIGNED || jobStatus === JobStatus.INPROGRESS) &&
@@ -57,7 +57,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
 
       <ActivityList activities={task.activities} />
 
-      <Footer canSkipTask={canSkipTask} isTaskStarted={isTaskStarted} />
+      <Footer canSkipTask={canSkipTask} task={task} />
     </Wrapper>
   );
 };

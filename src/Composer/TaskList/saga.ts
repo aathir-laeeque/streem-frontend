@@ -1,13 +1,20 @@
+import { openModalAction } from '#components/ModalContainer/actions';
+import { ModalNames } from '#components/ModalContainer/types';
 import { RootState } from '#store';
-import { put, select, takeLatest } from 'redux-saga/effects';
+import { apiPerformActionOnTask } from '#utils/apiUrls';
+import { request } from '#utils/request';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { setActiveStage } from '../StageList/actions';
 import { StageListAction } from '../StageList/types';
 import { JobStatus } from '../types';
-import { addNewTask, setTasksList, startTask } from './actions';
+import {
+  addNewTask,
+  setTasksList,
+  startTask,
+  updateTaskExecutionStatus,
+} from './actions';
 import { TaskListAction } from './types';
-import { openModalAction } from '#components/ModalContainer/actions';
-import { ModalNames } from '#components/ModalContainer/types';
 
 function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
   console.log('make api call to create a new task in BE');
@@ -26,9 +33,9 @@ function* setTasksSaga({ payload }: ReturnType<typeof setActiveStage>) {
   }
 }
 
-function* startTaskSaga({ payload }: ReturnType<typeof startTask>) {
+function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
   try {
-    console.log('came to startTaskSaga with payload :: ', payload);
+    console.log('came to performActionOnTaskSaga with payload :: ', payload);
     const { jobStatus, entityId } = yield select(
       (state: RootState) => state.composer,
     );
@@ -39,6 +46,17 @@ function* startTaskSaga({ payload }: ReturnType<typeof startTask>) {
 
     if (isJobStarted) {
       console.log('make api call to start the task with taskId :: ', taskId);
+
+      const { data } = yield call(
+        request,
+        'PUT',
+        apiPerformActionOnTask(taskId, payload.action),
+        { data: { id: entityId } },
+      );
+
+      console.log('data from start task api call :: ', data);
+
+      yield put(updateTaskExecutionStatus(taskId, data.status));
     } else {
       console.log('open modal to start the job');
       yield put(
@@ -49,12 +67,17 @@ function* startTaskSaga({ payload }: ReturnType<typeof startTask>) {
       );
     }
   } catch (error) {
-    console.error('error came in startTaskSaga in TaskListSaga :: ', error);
+    console.error(
+      'error came in performActionOnTaskSaga in TaskListSaga :: ',
+      error,
+    );
   }
 }
 
 export function* TaskListSaga() {
   yield takeLatest(StageListAction.SET_ACTIVE_STAGE, setTasksSaga);
   yield takeLatest(TaskListAction.ADD_NEW_TASK, addNewTaskSaga);
-  yield takeLatest(TaskListAction.START_TASK, startTaskSaga);
+  yield takeLatest(TaskListAction.START_TASK, performActionOnTaskSaga);
+  yield takeLatest(TaskListAction.COMPLETE_TASK, performActionOnTaskSaga);
+  yield takeLatest(TaskListAction.SKIP_TASK, performActionOnTaskSaga);
 }

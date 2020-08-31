@@ -67,34 +67,6 @@ function* restartJobSaga() {
   console.log('make api call to restart the job here');
 }
 
-function* unAssignUsersFromJobSaga({
-  payload,
-}: ReturnType<typeof unAssignUsers>) {
-  console.log('payload from unassignusersSaga :: ', payload);
-
-  const { assignees } = yield select((state) => state.composer.data);
-
-  console.log('assignees :: ', assignees);
-
-  // assignees.map((el) => {
-  yield call(
-    request,
-    'DELETE',
-    apiUnAssignUser(payload.jobId, assignees[0].id),
-  );
-  yield call(
-    request,
-    'DELETE',
-    apiUnAssignUser(payload.jobId, assignees[1].id),
-  );
-  yield call(
-    request,
-    'DELETE',
-    apiUnAssignUser(payload.jobId, assignees[2].id),
-  );
-  // });
-}
-
 export function* ComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchDataSaga);
 
@@ -104,8 +76,6 @@ export function* ComposerSaga() {
   yield takeLatest(ComposerAction.RESTART_JOB, restartJobSaga);
 
   yield takeLatest(ComposerAction.PUBLISH_CHECKLIST, publishChecklistSaga);
-
-  yield takeLatest(ComposerAction.UNASSIGN_USERS, unAssignUsersFromJobSaga);
 
   yield all([
     // fork other sagas here

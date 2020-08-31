@@ -6,13 +6,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { Job } from '../views/Jobs/types';
-import {
-  completeJob,
-  publishChecklist,
-  restartJob,
-  startJob,
-  unAssignUsers,
-} from './actions';
+import { completeJob, publishChecklist, startJob } from './actions';
 import { Entity, JobStatus } from './types';
 
 const Wrapper = styled.div`
@@ -80,10 +74,6 @@ const JobButton: FC<{
   } else if (jobStatus === JobStatus.INPROGRESS) {
     return (
       <div className="dropdown-button">
-        <Button onClick={() => dispatch(unAssignUsers(jobId))}>
-          Unassign Users
-        </Button>
-
         <Button
           onClick={() => {
             dispatch(completeJob(isCompleteWithException));

@@ -1,4 +1,5 @@
-import { Task } from '../views/Checklists/ChecklistComposer/TaskList/TaskView/types';
+import { Task } from '#Composer/checklist.types';
+
 import { Job } from '../views/Jobs/types';
 import { fetchBaseUrl } from './constants';
 
@@ -19,7 +20,10 @@ export const apiUnAssignUser = (jobId: string, userId: string | number) =>
   `${baseUrl}/jobs/${jobId}/users/${userId}`;
 
 export const apiStartJob = (jobId: Job['id'], action: string) =>
-  `${baseUrl}/jobs/${jobId}?action=${action}`;
+  `${baseUrl}/jobs/${jobId}/${action}`;
+
+export const apiPerformActionOnTask = (taskId: Task['id'], action: string) =>
+  `${baseUrl}/tasks/${taskId}/${action}`;
 
 // Properties
 export const apiGetProperties = () => `${baseUrl}/properties`;
