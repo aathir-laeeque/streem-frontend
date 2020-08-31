@@ -3,15 +3,15 @@ import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import { ActivityListProps } from './types';
 import { ActivityType } from '../checklist.types';
-import YesNoActivity from './YesNo';
-import MaterialActivity from './Material';
-import TextboxActivity from './Textbox';
 import ChecklistActivity from './Checklist';
 import InstructionActivity from './Instruction';
+import MaterialActivity from './Material';
 import MultiSelectActivity from './MultiSelect';
 import ShouldBeActivity from './ShouldBe';
+import TextboxActivity from './Textbox';
+import { ActivityListProps } from './types';
+import YesNoActivity from './YesNo';
 
 const Wrapper = styled.div.attrs({
   className: 'activity-list',
