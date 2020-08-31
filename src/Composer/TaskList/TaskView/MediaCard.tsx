@@ -104,8 +104,6 @@ const Wrapper = styled.div`
 const TaskMedia: FC<{ medias: Media[] }> = ({ medias }) => {
   const [activeMedia, setActiveMedia] = useState(medias[0]);
 
-  console.log('medias :: ', medias);
-
   return (
     <Wrapper>
       {medias.length ? (

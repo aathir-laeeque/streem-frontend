@@ -7,14 +7,14 @@ const Wrapper = styled.div.attrs({
 })`
   display: flex;
   flex-direction: column;
-  padding: 32px;
+  padding: ${({ isTaskStarted }) => (isTaskStarted ? '32px' : '0 32px 32px')};
 
   button {
     align-items: center;
     background: transparent;
     border: none;
     cursor: pointer;
-    display: flex;
+    display: ${({ isTaskStarted }) => (isTaskStarted ? 'flex' : 'none')};
     justify-content: center;
     outline: none;
   }
@@ -39,10 +39,11 @@ const Wrapper = styled.div.attrs({
 
 type FooterProps = {
   canSkipTask: boolean;
+  isTaskStarted: boolean;
 };
 
-const Footer: FC<FooterProps> = ({ canSkipTask }) => (
-  <Wrapper>
+const Footer: FC<FooterProps> = ({ canSkipTask, isTaskStarted }) => (
+  <Wrapper isTaskStarted={isTaskStarted}>
     <button className="complete-task">
       Complete Task <ArrowRightAlt className="icon" />
     </button>

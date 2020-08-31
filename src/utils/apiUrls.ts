@@ -18,6 +18,9 @@ export const apiAssignUser = (jobId: string, userId: string | number) =>
 export const apiUnAssignUser = (jobId: string, userId: string | number) =>
   `${baseUrl}/jobs/${jobId}/users/${userId}`;
 
+export const apiStartJob = (jobId: Job['id'], action: string) =>
+  `${baseUrl}/jobs/${jobId}?action=${action}`;
+
 // Properties
 export const apiGetProperties = () => `${baseUrl}/properties`;
 

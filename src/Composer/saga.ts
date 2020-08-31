@@ -1,6 +1,11 @@
-import { apiGetChecklist, apiGetSelectedJob } from '#utils/apiUrls';
+import {
+  apiGetChecklist,
+  apiGetSelectedJob,
+  apiStartJob,
+  apiUnAssignUser,
+} from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest, select } from 'redux-saga/effects';
 
 import {
   completeJob,
@@ -8,6 +13,7 @@ import {
   fetchDataOngoing,
   fetchDataSuccess,
   startJob,
+  unAssignUsers,
 } from './actions';
 import { StageListSaga } from './StageList/saga';
 import { TaskListSaga } from './TaskList/saga';
@@ -33,8 +39,16 @@ function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
 }
 
 function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
-  console.log('make api call to start the job here');
-  console.log('payload for start job :: ', payload);
+  try {
+    console.log('make api call to start the job here');
+    console.log('payload for start job :: ', payload);
+    const { jobId } = payload;
+
+    const data = yield call(request, 'PUT', apiStartJob(jobId, 'start'));
+    console.log('data  ::', data);
+  } catch (error) {
+    console.error('error came in startJobSaga in ComposerSaga :: ', error);
+  }
 }
 
 function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
@@ -53,6 +67,34 @@ function* restartJobSaga() {
   console.log('make api call to restart the job here');
 }
 
+function* unAssignUsersFromJobSaga({
+  payload,
+}: ReturnType<typeof unAssignUsers>) {
+  console.log('payload from unassignusersSaga :: ', payload);
+
+  const { assignees } = yield select((state) => state.composer.data);
+
+  console.log('assignees :: ', assignees);
+
+  // assignees.map((el) => {
+  yield call(
+    request,
+    'DELETE',
+    apiUnAssignUser(payload.jobId, assignees[0].id),
+  );
+  yield call(
+    request,
+    'DELETE',
+    apiUnAssignUser(payload.jobId, assignees[1].id),
+  );
+  yield call(
+    request,
+    'DELETE',
+    apiUnAssignUser(payload.jobId, assignees[2].id),
+  );
+  // });
+}
+
 export function* ComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchDataSaga);
 
@@ -62,6 +104,8 @@ export function* ComposerSaga() {
   yield takeLatest(ComposerAction.RESTART_JOB, restartJobSaga);
 
   yield takeLatest(ComposerAction.PUBLISH_CHECKLIST, publishChecklistSaga);
+
+  yield takeLatest(ComposerAction.UNASSIGN_USERS, unAssignUsersFromJobSaga);
 
   yield all([
     // fork other sagas here

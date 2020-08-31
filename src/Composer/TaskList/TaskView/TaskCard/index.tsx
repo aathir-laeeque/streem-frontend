@@ -1,10 +1,12 @@
+import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import ActivityList from '../../../ActivityList';
+import { JobStatus } from '../../../types';
 import { setActiveTask } from '../../actions';
-import { TaskCardProps } from '../../types';
+import { TaskCardProps, TaskExecutionStatus } from '../../types';
 import Footer from './Footer';
 import Header from './Header';
 
@@ -26,12 +28,22 @@ const Wrapper = styled.div.attrs({
 `;
 
 const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
+  const { jobStatus } = useTypedSelector((state) => state.composer);
   const dispatch = useDispatch();
 
   const canSkipTask = !task.activities.reduce((acc, activity) => {
     acc = acc || activity.mandatory;
     return acc;
   }, false);
+
+  const isTaskStarted =
+    task.taskExecution.status === TaskExecutionStatus.STARTED;
+
+  const showStartButton =
+    (jobStatus === JobStatus.ASSIGNED || jobStatus === JobStatus.INPROGRESS) &&
+    !isTaskStarted;
+
+  console.log('showStartButton :: ', showStartButton);
 
   return (
     <Wrapper
@@ -41,11 +53,11 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
         }
       }}
     >
-      <Header task={task} />
+      <Header task={task} showStartButton={showStartButton} />
 
       <ActivityList activities={task.activities} />
 
-      <Footer canSkipTask={canSkipTask} />
+      <Footer canSkipTask={canSkipTask} isTaskStarted={isTaskStarted} />
     </Wrapper>
   );
 };

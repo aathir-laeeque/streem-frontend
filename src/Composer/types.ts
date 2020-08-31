@@ -27,8 +27,7 @@ export enum JobStatus {
   UNASSIGNED = 'UNASSIGNED',
   COMPLETED = 'COMPLETED',
   COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
-  IN_PROGRESS = 'IN_PROGRESS',
-  NOT_STARTED = 'NOT_STARTED',
+  INPROGRESS = 'INPROGRESS',
 }
 
 export enum ChecklistState {
@@ -69,6 +68,7 @@ export enum ComposerAction {
   COMPLETE_JOB_WITH_EXCEPTION = '@@composer/COMPLETE_JOB_WITH_EXCEPTION',
   RESTART_JOB = '@@composer/RESTART_JOB',
   START_JOB = '@@composer/START_JOB',
+  UNASSIGN_USERS = '@@composer/JOB/UNASSIGN_USERS',
 }
 
 export type ComposerActionType = ReturnType<

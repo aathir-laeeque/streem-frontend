@@ -6,11 +6,12 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { Task } from '../../../checklist.types';
-import { Entity, JobStatus } from '../../../types';
+import { Entity } from '../../../types';
 import { startTask } from '../../actions';
 
 type HeaderProps = {
   task: Task;
+  showStartButton: boolean;
 };
 
 const Wrapper = styled.div.attrs({
@@ -58,8 +59,8 @@ const Wrapper = styled.div.attrs({
           border-radius: 4px;
           color: #1d84ff;
           cursor: pointer;
-          display: ${({ showStartTaskButton }) =>
-            showStartTaskButton ? 'flex' : 'none'};
+          display: ${({ showStartButton }) =>
+            showStartButton ? 'flex' : 'none'};
           font-size: 14px;
           line-height: 1.29;
           letter-spacing: 0.16px;
@@ -137,16 +138,14 @@ const JobHeader: FC<HeaderProps> = ({ task }) => {
   );
 };
 
-const Header: FC<HeaderProps> = ({ task }) => {
-  const { entity, jobStatus } = useTypedSelector((state) => state.composer);
-
-  const showStartTaskButton = jobStatus !== JobStatus.UNASSIGNED;
+const Header: FC<HeaderProps> = ({ task, showStartButton }) => {
+  const { entity } = useTypedSelector((state) => state.composer);
 
   return (
     <Wrapper
       hasStop={task.hasStop}
       timed={task.timed}
-      showStartTaskButton={showStartTaskButton}
+      showStartButton={showStartButton}
     >
       {entity === Entity.CHECKLIST ? (
         <ChecklistHeader task={task} />

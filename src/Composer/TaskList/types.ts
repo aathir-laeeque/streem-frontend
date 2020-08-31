@@ -36,3 +36,8 @@ export type MediaCardProps = {
   medias: Media[];
   isTaskActive: boolean;
 };
+
+export enum TaskExecutionStatus {
+  NOT_STARTED = 'NOT_STARTED',
+  STARTED = 'STARTED',
+}

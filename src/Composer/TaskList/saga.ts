@@ -33,7 +33,7 @@ function* startTaskSaga({ payload }: ReturnType<typeof startTask>) {
       (state: RootState) => state.composer,
     );
 
-    const isJobStarted = jobStatus === JobStatus.IN_PROGRESS;
+    const isJobStarted = jobStatus === JobStatus.INPROGRESS;
 
     const { taskId } = payload;
 

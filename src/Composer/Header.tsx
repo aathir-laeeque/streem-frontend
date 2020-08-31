@@ -6,7 +6,13 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { Job } from '../views/Jobs/types';
-import { completeJob, publishChecklist, restartJob, startJob } from './actions';
+import {
+  completeJob,
+  publishChecklist,
+  restartJob,
+  startJob,
+  unAssignUsers,
+} from './actions';
 import { Entity, JobStatus } from './types';
 
 const Wrapper = styled.div`
@@ -63,15 +69,21 @@ const JobButton: FC<{
   jobStatus: JobStatus;
   jobId: Job['id'];
 }> = ({ jobStatus, jobId }) => {
+  const {};
+
   const [isCompleteWithException, setIsCompleteWithException] = useState(false);
 
   const dispatch = useDispatch();
 
-  if (jobStatus === JobStatus.NOT_STARTED || jobStatus === JobStatus.ASSIGNED) {
+  if (jobStatus === JobStatus.ASSIGNED) {
     return <Button onClick={() => dispatch(startJob(jobId))}>Start Job</Button>;
-  } else if (jobStatus === JobStatus.IN_PROGRESS) {
+  } else if (jobStatus === JobStatus.INPROGRESS) {
     return (
       <div className="dropdown-button">
+        <Button onClick={() => dispatch(unAssignUsers(jobId))}>
+          Unassign Users
+        </Button>
+
         <Button
           onClick={() => {
             dispatch(completeJob(isCompleteWithException));

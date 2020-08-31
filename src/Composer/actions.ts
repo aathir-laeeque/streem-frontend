@@ -33,4 +33,7 @@ export const completeJob = (withException = false) =>
     { withException },
   );
 
+export const unAssignUsers = (jobId: Job['id']) =>
+  actionSpreader(ComposerAction.UNASSIGN_USERS, { jobId });
+
 export const restartJob = () => actionSpreader(ComposerAction.RESTART_JOB);

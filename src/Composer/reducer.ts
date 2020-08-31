@@ -63,7 +63,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
 
     case ComposerAction.START_JOB:
     case ComposerAction.RESTART_JOB:
-      return { ...state, jobStatus: JobStatus.IN_PROGRESS };
+      return { ...state, jobStatus: JobStatus.INPROGRESS };
 
     case ComposerAction.COMPLETE_JOB:
       return { ...state, jobStatus: JobStatus.COMPLETED };
