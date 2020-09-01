@@ -43,8 +43,6 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
     (jobStatus === JobStatus.ASSIGNED || jobStatus === JobStatus.INPROGRESS) &&
     !isTaskStarted;
 
-  console.log('showStartButton :: ', showStartButton);
-
   return (
     <Wrapper
       onClick={() => {

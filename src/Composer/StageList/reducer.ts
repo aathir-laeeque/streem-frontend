@@ -38,7 +38,7 @@ const reducer: Reducer<StageListState, StageListActionType> = (
 
       return {
         ...state,
-        list: stages.map((el) => ({ ...omit(el, ['tasks']) })),
+        list: stages,
         listById: stages.reduce<ListById>((acc, stage) => {
           acc[stage.id] = stage;
           return acc;

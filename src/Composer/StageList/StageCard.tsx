@@ -1,9 +1,11 @@
 import { ProgressBar } from '#components';
+import { useTypedSelector } from '#store';
 import { Assignment, PanTool } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 
+import { TaskExecutionStatus } from '../TaskList/types';
 import { setActiveStage } from './actions';
 import { StageCardProps } from './types';
 
@@ -38,19 +40,24 @@ const Wrapper = styled.div.attrs({
 
       .stage-badge {
         align-items: center;
-        background-color: #f4f4f4;
+        background-color: ${({ isAnyTaskStarted }) =>
+          isAnyTaskStarted ? '#d6e9ff' : '#f4f4f4'};
+
         border-radius: 4px;
         display: flex;
         padding: 4px;
 
         > .icon {
           margin-right: 4px;
+          color: ${({ isAnyTaskStarted }) =>
+            isAnyTaskStarted ? '#1d84ff' : '#999999'};
         }
 
         span {
           font-size: 12px;
           line-height: 0.83;
-          color: #999999;
+          color: ${({ isAnyTaskStarted }) =>
+            isAnyTaskStarted ? '#1d84ff' : '#999999'};
         }
       }
     }
@@ -85,9 +92,30 @@ const Wrapper = styled.div.attrs({
 const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
   const dispatch = useDispatch();
 
+  // const { listById } = useTypedSelector((state) => state.composer.tasks);
+
+  const tasks = stage.tasks;
+
+  const isAnyTaskStarted = tasks.reduce((acc, task) => {
+    acc = acc || task.taskExecution.status !== TaskExecutionStatus.NOT_STARTED;
+
+    return acc;
+  }, false);
+
+  const totalTasks = tasks.length;
+
+  const completedTasks = tasks.filter(
+    (task) => task.taskExecution.status === TaskExecutionStatus.COMPLETED,
+  ).length;
+
+  const precentageOfCompleteTasks = Math.round(
+    (completedTasks / totalTasks) * 100,
+  );
+
   return (
     <Wrapper
       isActive={isActive}
+      isAnyTaskStarted={isAnyTaskStarted}
       onClick={() => {
         if (!isActive) {
           dispatch(setActiveStage(stage.id));
@@ -101,15 +129,15 @@ const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
 
         <div className="stage-badge">
           <Assignment className="icon" />
-          <span>Not Started</span>
+          <span>{isAnyTaskStarted ? 'In Progress' : 'Not Started'}</span>
         </div>
       </div>
 
       <div className="stage-name">{stage.name}</div>
 
       <div className="stage-task-bar">
-        <span>0% Task completed</span>
-        <ProgressBar percentage={isActive ? 50 : 0} />
+        <span>{precentageOfCompleteTasks}% Task completed</span>
+        <ProgressBar percentage={precentageOfCompleteTasks} />
       </div>
     </Wrapper>
   );

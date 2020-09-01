@@ -9,7 +9,7 @@ export type ListById = Record<Stage['id'], Stage>;
 export type StageListState = {
   activeStageId?: Stage['id'];
   // idOrderMapping: IdOrderMapping;
-  list: Omit<Stage, 'tasks'>[];
+  list: Stage[];
   listById: ListById;
 };
 
@@ -24,5 +24,5 @@ export type StageListActionType =
 
 export type StageCardProps = {
   isActive: boolean;
-  stage: Omit<Stage, 'tasks'>;
+  stage: Stage;
 };
