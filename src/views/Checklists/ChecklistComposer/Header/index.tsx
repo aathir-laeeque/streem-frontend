@@ -1,11 +1,11 @@
 import { Button } from '#components';
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
-
+import { navigate } from '@reach/router';
 import { Wrapper } from './styles';
 
 const Header: FC = () => {
-  const { isChecklistEditable } = useTypedSelector(
+  const { isChecklistEditable, jobId } = useTypedSelector(
     (state) => state.checklist.composer,
   );
 
@@ -16,6 +16,11 @@ const Header: FC = () => {
       <Button>
         {isChecklistEditable ? 'Publish Checklist' : 'Complete Job'}
       </Button>
+      {jobId && (
+        <Button onClick={() => navigate(`print/${jobId}`)}>
+          Print Checklist
+        </Button>
+      )}
     </Wrapper>
   );
 };

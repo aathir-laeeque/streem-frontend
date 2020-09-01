@@ -16,5 +16,5 @@ export interface Job {
     name: string;
   };
   status: string;
-  users: User[];
+  assignees: User[];
 }

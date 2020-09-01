@@ -12,6 +12,7 @@ export interface Task {
   medias: Media[];
   timed: boolean;
   period?: number;
+  mandatory: boolean;
 }
 
 export interface HeaderProps {

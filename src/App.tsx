@@ -10,6 +10,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import GlobalStyles from './styles/GlobalStyles';
 import { HomeView } from './views';
+import PrintJob from '#views/Jobs/PrintJob';
 
 export const { store, persistor } = configureStore({});
 // persistor.purge();
@@ -25,6 +26,7 @@ const App: FC = () => {
         <Router style={{ height: 'inherit', width: 'inherit' }} basepath="/">
           <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
           <CustomRoute as={HomeView} path="/*" />
+          <CustomRoute as={PrintJob} path="jobs/print/:jobId" />
         </Router>
         <Notification
           position="top-right"

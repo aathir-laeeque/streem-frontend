@@ -8,6 +8,8 @@ import styled from 'styled-components';
 
 import { Button, FlatButton } from './Button';
 
+// TODO Either make it horizontal scrollable or remove the commented section and table styles.
+
 interface ListViewProps {
   primaryButtonText: string;
   onPrimaryClick?: () => void;
@@ -161,6 +163,41 @@ const Wrapper = styled.div.attrs({})`
     font-size: 13px;
     cursor: pointer;
   }
+
+  .table-td {
+    white-space: nowrap;
+    min-width: 150px;
+    font-size: 14px;
+    color: #666666;
+    padding: 0 4px;
+    font-weight: 600;
+  }
+
+  .table {
+  }
+
+  .table-tr {
+  }
+
+  .table-th {
+    font-size: 12px;
+    color: #999999;
+    font-weight: bold;
+    letter-spacing: 1px;
+    padding: 0 4px;
+  }
+
+  .table-thead {
+    border-bottom: 1px solid #999999;
+    padding: 13px 0px 13px 0px;
+  }
+
+  .table-tbody {
+    tr {
+      border-bottom: 1px solid #dadada;
+      height: 80px;
+    }
+  }
 `;
 
 export const ListView: FC<ListViewProps> = ({
@@ -199,75 +236,111 @@ export const ListView: FC<ListViewProps> = ({
 
   return (
     <Wrapper>
-      <div className="list-options">
-        <FlatButton>
-          Filters <ArrowDropDown style={{ fontSize: 20, color: '#1d84ff' }} />
-        </FlatButton>
-        <div className="searchboxwrapper">
-          <input className="searchbox" type="text" placeholder="Search" />
-          <Search className="searchsubmit" />
-        </div>
-        <span className="resetOption">Reset</span>
-        <Button
-          style={{ marginLeft: `auto`, marginRight: 0 }}
-          onClick={onPrimaryClick}
-        >
-          {primaryButtonText}
-        </Button>
-      </div>
-      <div className="list-header">
-        {beforeColumns &&
-          beforeColumns.length &&
-          beforeColumns.map((beforeColumn) => (
-            <div
-              key={`beforeColumn_${beforeColumn.header}`}
-              className="list-header-columns"
-            >
-              {beforeColumn.header}
-            </div>
-          ))}
-        {properties.map((el, index) => (
-          <div key={index} className="list-header-columns">
-            {el.name}
+      <div style={{ height: '100%' }}>
+        <div className="list-options">
+          <FlatButton>
+            Filters <ArrowDropDown style={{ fontSize: 20, color: '#1d84ff' }} />
+          </FlatButton>
+          <div className="searchboxwrapper">
+            <input className="searchbox" type="text" placeholder="Search" />
+            <Search className="searchsubmit" />
           </div>
-        ))}
-        {afterColumns &&
-          afterColumns.length &&
-          afterColumns.map((beforeColumn) => (
-            <div
-              key={`beforeColumn_${beforeColumn.header}`}
-              className="list-header-columns"
-            >
-              {beforeColumn.header}
-            </div>
-          ))}
-      </div>
-      <div className="list-body" ref={scroller}>
-        {(data as Array<Checklist | Job>).map((el, index) => (
-          <div key={`list_el_${el.id}`} className="list-card">
-            {beforeColumns &&
-              beforeColumns.length &&
-              beforeColumns.map((beforeColumn) =>
-                beforeColumn.template(el, index),
-              )}
-            {properties.map((property, propertyIndex) => (
-              <div key={propertyIndex} className="list-card-columns">
-                {el.properties &&
-                property &&
-                property.name &&
-                el.properties[property.name]
-                  ? el.properties[property.name]
-                  : '-N/A-'}
+          <span className="resetOption">Reset</span>
+          <Button
+            style={{ marginLeft: `auto`, marginRight: 0 }}
+            onClick={onPrimaryClick}
+          >
+            {primaryButtonText}
+          </Button>
+        </div>
+        <div className="list-header">
+          {beforeColumns &&
+            beforeColumns.length &&
+            beforeColumns.map((beforeColumn) => (
+              <div
+                key={`beforeColumn_${beforeColumn.header}`}
+                className="list-header-columns"
+              >
+                {beforeColumn.header}
               </div>
             ))}
-            {afterColumns &&
-              afterColumns.length &&
-              afterColumns.map((beforeColumn) =>
-                beforeColumn.template(el, index),
-              )}
-          </div>
-        ))}
+          {properties.map((el, index) => (
+            <div key={index} className="list-header-columns">
+              {el.name}
+            </div>
+          ))}
+          {afterColumns &&
+            afterColumns.length &&
+            afterColumns.map((afterColumn) => (
+              <div
+                key={`beforeColumn_${afterColumn.header}`}
+                className="list-header-columns"
+              >
+                {afterColumn.header}
+              </div>
+            ))}
+        </div>
+        <div className="list-body" ref={scroller}>
+          {(data as Array<Checklist | Job>).map((el, index) => (
+            <div key={`list_el_${el.id}`} className="list-card">
+              {beforeColumns &&
+                beforeColumns.length &&
+                beforeColumns.map((beforeColumn) =>
+                  beforeColumn.template(el, index),
+                )}
+              {properties.map((property, propertyIndex) => (
+                <div key={propertyIndex} className="list-card-columns">
+                  {el.properties &&
+                  property &&
+                  property.name &&
+                  el.properties[property.name]
+                    ? el.properties[property.name]
+                    : '-N/A-'}
+                </div>
+              ))}
+              {afterColumns &&
+                afterColumns.length &&
+                afterColumns.map((afterColumn) =>
+                  afterColumn.template(el, index),
+                )}
+            </div>
+          ))}
+        </div>
       </div>
+      {/* <table className="table">
+        <thead className="table-thead">
+          <tr className="table-tr">
+            {properties.map((el, index) => (
+              <th key={index} className="table-th">
+                {el.name}
+              </th>
+            ))}
+            {properties.map((el, index) => (
+              <th key={index} className="table-th">
+                {el.name}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="table-tbody">
+          {(data as Array<Checklist | Job>).map((el, index) => (
+            <tr className="table-tr" key={`list_el_${el.id}`}>
+              {properties.map((property, propertyIndex) => (
+                <td key={propertyIndex} className="table-td">
+                  The following style rules collapse the table borders and align
+                  the table header text to left.
+                </td>
+              ))}
+              {properties.map((property, propertyIndex) => (
+                <td key={propertyIndex} className="table-td">
+                  The following style rules collapse the table borders and align
+                  the table header text to left.
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table> */}
     </Wrapper>
   );
 };

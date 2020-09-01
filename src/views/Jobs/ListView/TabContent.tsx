@@ -83,7 +83,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
             <div
               className="list-card-columns"
               key={`assignee_${item.code}`}
-              style={{ justifyContent: 'center' }}
+              style={{ justifyContent: 'flex-start' }}
             >
               <span
                 className="list-title"
@@ -91,29 +91,29 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
                   onClickAssign(item, index);
                 }}
               >
-                <PersonAdd />
+                <PersonAdd style={{ marginLeft: 15 }} />
               </span>
             </div>
           );
-        if (item.users?.length)
+        if (item.assignees?.length)
           return (
             <div
               key={`assignee_${item.code}`}
               className="list-card-columns"
               style={{
                 flexDirection: 'row-reverse',
-                justifyContent: 'center',
+                justifyContent: 'flex-end',
               }}
               onClick={() => {
                 onClickAssign(item, index);
               }}
             >
-              {item.users.length > 4 && (
+              {item.assignees.length > 4 && (
                 <span key={`assignee_length`} className="user-thumb">
-                  +{item.users.length - 4}
+                  +{item.assignees.length - 4}
                 </span>
               )}
-              {item.users.slice(0, 4).map((user) => (
+              {item.assignees.slice(0, 4).map((user) => (
                 <span key={`assignee_${user.id}`} className="user-thumb">
                   {getInitials(`${user.firstName} ${user.lastName}`)}
                 </span>
@@ -138,7 +138,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         },
       },
       {
-        header: 'TASK COMPLETED',
+        header: 'JOBS COMPLETED',
         template: function renderComp(item: Job) {
           return (
             <div
@@ -180,7 +180,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         isLast={jobs[label].pageable.last}
         currentPage={jobs[label].pageable.page}
         data={jobs[label].list}
-        primaryButtonText="Create Task"
+        primaryButtonText="Create a Job"
         beforeColumns={beforeColumns}
       />
     </Composer>

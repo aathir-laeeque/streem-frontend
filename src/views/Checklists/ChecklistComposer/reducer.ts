@@ -24,6 +24,8 @@ const initialState: ComposerState = {
   stages: stageListInitialState,
   state: ChecklistState.ADD_EDIT,
   tasks: taskListInitialState,
+  assignees: undefined,
+  jobExtras: undefined,
 };
 
 const reducer: Reducer<ComposerState, ComposerActionType> = (
@@ -36,6 +38,13 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
 
     case ComposerAction.FETCH_CHECKLIST_SUCCESS:
       return { ...state, checklist: action.payload.checklist, loading: false };
+
+    case ComposerAction.FETCH_CHECKLIST_SUCCESS_SET_USERS:
+      return {
+        ...state,
+        assignees: action.payload.users,
+        jobExtras: action.payload.extras,
+      };
 
     case ComposerAction.FETCH_CHECKLIST_ERROR:
       return { ...state, error: action.payload.error, loading: false };

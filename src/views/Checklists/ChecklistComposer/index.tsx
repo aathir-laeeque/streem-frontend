@@ -37,7 +37,7 @@ const Composer: FC<ComposerProps> = ({
     dispatch(setChecklistState(checklistState));
 
     return () => {
-      dispatch(resetComposer());
+      // dispatch(resetComposer());
     };
   }, []);
 

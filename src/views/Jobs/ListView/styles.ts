@@ -14,7 +14,7 @@ export const Composer = styled.div`
     }
 
     :nth-child(2) {
-      justify-content: center;
+      // justify-content: center;
     }
   }
 

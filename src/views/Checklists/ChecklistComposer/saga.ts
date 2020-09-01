@@ -6,6 +6,7 @@ import {
   fetchChecklist,
   fetchChecklistOngoing,
   fetchChecklistSuccess,
+  fetchChecklistSuccessSetUsers,
   fetchSelectedJob,
 } from './actions';
 import { StageListSaga } from './StageList/saga';
@@ -37,10 +38,16 @@ function* fetchSelectedJobSaga({
     yield put(fetchChecklistOngoing());
 
     const {
-      data: { checklist },
+      data: { checklist, assignees, status, code, properties, totalTasks },
     } = yield call(request, 'GET', apiGetSelectedJob(payload.jobId));
 
     yield put(fetchChecklistSuccess(checklist));
+    yield put(
+      fetchChecklistSuccessSetUsers({
+        users: assignees,
+        extras: { status, code, properties, totalTasks },
+      }),
+    );
   } catch (error) {}
 }
 

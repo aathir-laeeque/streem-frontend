@@ -7,12 +7,14 @@ import {
   fetchChecklistSuccess,
   fetchSelectedJob,
   setChecklistState,
+  fetchChecklistSuccessSetUsers,
 } from './actions';
 import { StageListState } from './StageList/types';
 import { ActivityListState } from './TaskList/TaskView/ActivityList/types';
 import { TaskListState } from './TaskList/types';
 import { resetComposer } from './actions';
 import { Job } from '../../Jobs/types';
+import { Users } from '#store/users/types';
 
 // PROPS TYPE FOR COMPONENT
 interface ComposerDefaultProps {
@@ -38,6 +40,8 @@ export interface ComposerState {
   stages: StageListState;
   tasks: TaskListState;
   state: ChecklistState;
+  assignees?: Users;
+  jobExtras?: any;
 }
 
 export enum ComposerAction {
@@ -51,12 +55,15 @@ export enum ComposerAction {
   SET_CHECKLIST_STATE = '@@composer/SET_CHECKLIST_STATE',
 
   FETCH_SELSECTED_JOB = '@@compsoer/FETCH_SELSECTED_JOB',
+
+  FETCH_CHECKLIST_SUCCESS_SET_USERS = '@@compsoer/FETCH_CHECKLIST_SUCCESS_SET_USERS',
 }
 
 export type ComposerActionType = ReturnType<
   | typeof fetchChecklistError
   | typeof fetchChecklistOngoing
   | typeof fetchChecklistSuccess
+  | typeof fetchChecklistSuccessSetUsers
   | typeof setChecklistState
   | typeof fetchSelectedJob
   | typeof resetComposer

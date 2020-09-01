@@ -78,8 +78,11 @@ const reducer = (
       };
     case ListViewAction.ASSIGN_USER:
       const { selectedJobIndex, user } = action.payload;
-      const oldUsers = jobs[selectedStatus].list[selectedJobIndex].users;
-      jobs[selectedStatus].list[selectedJobIndex].users = [...oldUsers, user];
+      const oldUsers = jobs[selectedStatus].list[selectedJobIndex].assignees;
+      jobs[selectedStatus].list[selectedJobIndex].assignees = [
+        ...oldUsers,
+        user,
+      ];
       return {
         ...state,
         jobs,
@@ -89,8 +92,8 @@ const reducer = (
         const { selectedJobIndex, user } = action.payload;
         const newUsers = jobs[selectedStatus].list[
           selectedJobIndex
-        ].users.filter((u) => u.id !== user.id);
-        jobs[selectedStatus].list[selectedJobIndex].users = [...newUsers];
+        ].assignees.filter((u) => u.id !== user.id);
+        jobs[selectedStatus].list[selectedJobIndex].assignees = [...newUsers];
         return {
           ...state,
           jobs,

@@ -77,7 +77,7 @@ const SideBar: FC<SideBarProps> = ({
       <div id="sideNav" className="sidenav">
         <div style={{ margin: 16 }}>
           <Button className="sidebar-button" onClick={toggleState}>
-            Start A Job
+            Create A New Job
           </Button>
           <FlatButton className="sidebar-flat-button">
             Edit Checklist

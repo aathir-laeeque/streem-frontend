@@ -149,7 +149,7 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
 
   useEffect(() => {
     if (!initialUsers) {
-      setInitialUsers(job.users);
+      setInitialUsers(job.assignees);
     }
     if (prevSearch !== searchQuery) {
       fetchData(0, 10);
@@ -194,6 +194,7 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
           checked={checked}
           label=""
           onClick={() => {
+            console.log('changed');
             if (checked) {
               dispatch(unAssignUser({ user, selectedJobIndex }));
             } else {
@@ -205,22 +206,24 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
     </div>
   );
 
-  job.users.forEach((user, index) => {
+  job.assignees.forEach((user, index) => {
     topViews.push(userRow(user, index, true));
   });
 
+  console.log('list', list);
+
   if (list) {
     list.forEach((user, index) => {
-      const checked = job.users.some((item) => item.id === user.id);
+      const checked = job.assignees.some((item) => item.id === user.id);
       if (!checked) {
         bottomViews.push(userRow(user, index, checked));
       }
     });
   }
 
-  const jobUsersLength: number = job.users.length || 0;
+  const jobUsersLength: number = job.assignees.length || 0;
   let showButtons = false;
-  if (initialUsers && initialUsers !== job.users) showButtons = true;
+  if (initialUsers && initialUsers !== job.assignees) showButtons = true;
 
   return (
     <Wrapper>
