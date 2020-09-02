@@ -26,7 +26,7 @@ function* setTasksSaga({ payload }: ReturnType<typeof setActiveStage>) {
 function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
   try {
     console.log('came to performActionOnTaskSaga with payload :: ', payload);
-    const { jobStatus, entityId } = yield select(
+    const { jobStatus, entityId: jobId } = yield select(
       (state: RootState) => state.composer,
     );
 
@@ -41,7 +41,7 @@ function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
         request,
         'PUT',
         apiPerformActionOnTask(taskId, payload.action),
-        { data: { id: entityId } },
+        { data: { jobId } },
       );
 
       console.log('data from start task api call :: ', data);
@@ -52,7 +52,7 @@ function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
       yield put(
         openModalAction({
           type: ModalNames.START_JOB_MODAL,
-          props: { taskId, jobId: entityId },
+          props: { taskId, jobId },
         }),
       );
     }
