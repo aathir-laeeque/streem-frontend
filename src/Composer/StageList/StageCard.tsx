@@ -1,5 +1,4 @@
 import { ProgressBar } from '#components';
-import { useTypedSelector } from '#store';
 import { Assignment, PanTool } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
