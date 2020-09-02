@@ -56,7 +56,7 @@ function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
 
       console.log('data from start task api call :: ', data);
 
-      yield put(updateTaskExecutionStatus(taskId, data.status));
+      yield put(updateTaskExecutionStatus(taskId, data));
     } else {
       console.log('open modal to start the job');
       yield put(

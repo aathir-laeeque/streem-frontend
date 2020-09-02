@@ -15,13 +15,10 @@ export const setTasksList = (tasks: Task[]) =>
 export const startTask = (taskId: Task['id']) =>
   actionSpreader(TaskListAction.START_TASK, { taskId, action: 'start' });
 
-export const updateTaskExecutionStatus = (
-  taskId: Task['id'],
-  status: TaskExecutionStatus,
-) =>
+export const updateTaskExecutionStatus = (taskId: Task['id'], data: any) =>
   actionSpreader(TaskListAction.UPDATE_TASK_EXECUTION_STATUS, {
     taskId,
-    status,
+    data,
   });
 
 export const completeTask = (taskId: Task['id']) =>

@@ -69,10 +69,7 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
           ...state.listById,
           [action.payload.taskId]: {
             ...taskToUpdate,
-            taskExecution: {
-              ...taskToUpdate.taskExecution,
-              status: action.payload.status,
-            },
+            taskExecution: action.payload.data,
           },
         },
       };
