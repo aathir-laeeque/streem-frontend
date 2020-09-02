@@ -2,7 +2,6 @@ import { Media, Task } from '../checklist.types';
 import { ComposerActionType } from '../types';
 import { ActivityListActionType } from '../ActivityList/types';
 import {
-  addNewTask,
   completeTask,
   setActiveTask,
   setTasksList,
@@ -23,7 +22,6 @@ export type TaskListState = {
 };
 
 export enum TaskListAction {
-  ADD_NEW_TASK = '@@composer/task-list/ADD_NEW_TASK',
   SET_ACTIVE_TASK = '@@composer/task-list/SET_ACTIVE_TASK',
   SET_TASKS_LIST = '@@composer/task-list/SET_TASKS_LIST',
 
@@ -37,7 +35,6 @@ export enum TaskListAction {
 export type TaskListActionType =
   | ReturnType<
       | typeof setActiveTask
-      | typeof addNewTask
       | typeof setTasksList
       | typeof startTask
       | typeof updateTaskExecutionStatus

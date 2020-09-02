@@ -50,7 +50,7 @@ export interface Stage {
   name: string;
   code: string;
   orderTree: number;
-  tasks: Task[] | Task['id'][];
+  tasks: Task[];
 }
 
 export interface Checklist {

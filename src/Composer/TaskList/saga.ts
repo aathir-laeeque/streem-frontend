@@ -8,18 +8,8 @@ import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { setActiveStage } from '../StageList/actions';
 import { StageListAction } from '../StageList/types';
 import { JobStatus } from '../types';
-import {
-  addNewTask,
-  setTasksList,
-  startTask,
-  updateTaskExecutionStatus,
-} from './actions';
+import { setTasksList, startTask, updateTaskExecutionStatus } from './actions';
 import { TaskListAction } from './types';
-
-function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
-  console.log('make api call to create a new task in BE');
-  console.log('payload for the api :: ', payload);
-}
 
 function* setTasksSaga({ payload }: ReturnType<typeof setActiveStage>) {
   try {
@@ -76,7 +66,6 @@ function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
 
 export function* TaskListSaga() {
   yield takeLatest(StageListAction.SET_ACTIVE_STAGE, setTasksSaga);
-  yield takeLatest(TaskListAction.ADD_NEW_TASK, addNewTaskSaga);
   yield takeLatest(TaskListAction.START_TASK, performActionOnTaskSaga);
   yield takeLatest(TaskListAction.COMPLETE_TASK, performActionOnTaskSaga);
   yield takeLatest(TaskListAction.SKIP_TASK, performActionOnTaskSaga);

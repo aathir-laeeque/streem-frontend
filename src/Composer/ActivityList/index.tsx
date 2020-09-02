@@ -55,7 +55,8 @@ const ActivityList: FC<ActivityListProps> = ({ activities, isTaskStarted }) => {
         <div key={activity.id} className="activity">
           {entity === Entity.JOB ? (
             activity.type !== ActivityType.INSTRUCTION &&
-            activity.type !== ActivityType.MATERIAL ? (
+            activity.type !== ActivityType.MATERIAL &&
+            !activity.mandatory ? (
               <div className="optional-badge">Optional</div>
             ) : null
           ) : null}

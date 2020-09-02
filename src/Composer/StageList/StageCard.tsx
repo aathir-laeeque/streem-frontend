@@ -92,8 +92,6 @@ const Wrapper = styled.div.attrs({
 const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
   const dispatch = useDispatch();
 
-  // const { listById } = useTypedSelector((state) => state.composer.tasks);
-
   const tasks = stage.tasks;
 
   const isAnyTaskStarted = tasks.reduce((acc, task) => {

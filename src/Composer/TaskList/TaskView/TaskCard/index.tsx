@@ -50,8 +50,6 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
 
   const isTaskStarted = task.taskExecution.status in StartedTaskStates;
 
-  console.log('isTaskStarted LL ', isTaskStarted);
-
   const showStartButton =
     (jobStatus === JobStatus.ASSIGNED || jobStatus === JobStatus.INPROGRESS) &&
     !isTaskStarted;
