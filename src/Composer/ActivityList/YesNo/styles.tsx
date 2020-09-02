@@ -39,6 +39,7 @@ export const Wrapper = styled.div`
           border: 1px solid #5aa700;
           border-radius: 4px;
           color: #5aa700;
+          outline: none;
 
           &.filled {
             color: #ffffff;

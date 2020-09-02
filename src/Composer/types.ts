@@ -65,7 +65,6 @@ export enum ComposerAction {
   PUBLISH_CHECKLIST = '@@composer/PUBLISH_CHECKLIST',
 
   COMPLETE_JOB = '@@composer/COMPLETE_JOB',
-  COMPLETE_JOB_WITH_EXCEPTION = '@@composer/COMPLETE_JOB_WITH_EXCEPTION',
   RESTART_JOB = '@@composer/RESTART_JOB',
   START_JOB = '@@composer/START_JOB',
 }

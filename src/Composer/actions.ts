@@ -26,11 +26,6 @@ export const startJob = (jobId: Job['id']) =>
   actionSpreader(ComposerAction.START_JOB, { jobId });
 
 export const completeJob = (withException = false) =>
-  actionSpreader(
-    withException
-      ? ComposerAction.COMPLETE_JOB_WITH_EXCEPTION
-      : ComposerAction.COMPLETE_JOB,
-    { withException },
-  );
+  actionSpreader(ComposerAction.COMPLETE_JOB, { withException });
 
 export const restartJob = () => actionSpreader(ComposerAction.RESTART_JOB);

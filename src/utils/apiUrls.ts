@@ -25,6 +25,11 @@ export const apiStartJob = (jobId: Job['id'], action: string) =>
 export const apiPerformActionOnTask = (taskId: Task['id'], action: string) =>
   `${baseUrl}/tasks/${taskId}/${action}`;
 
+export const apiCompleteJob = (withException: boolean, jobId: Job['id']) =>
+  `${baseUrl}/jobs/${jobId}/${
+    withException ? 'complete-with-exception' : 'complete'
+  }`;
+
 // Properties
 export const apiGetProperties = () => `${baseUrl}/properties`;
 

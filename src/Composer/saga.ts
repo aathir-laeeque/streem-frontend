@@ -2,7 +2,7 @@ import {
   apiGetChecklist,
   apiGetSelectedJob,
   apiStartJob,
-  apiUnAssignUser,
+  apiCompleteJob,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { all, call, fork, put, takeLatest, select } from 'redux-saga/effects';
@@ -18,6 +18,7 @@ import { StageListSaga } from './StageList/saga';
 import { TaskListSaga } from './TaskList/saga';
 import { ComposerAction, Entity } from './types';
 import { ActivityListSaga } from './ActivityList/saga';
+import { RootState } from '#store';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   console.log('came to new composer data fetch saga with payload :: ', payload);
@@ -52,10 +53,21 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
 }
 
 function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
-  if (payload.withException) {
-    console.log('make api call to complete the job with exception here');
-  } else {
-    console.log('make api call to complete the job here');
+  console.log('came to completeJob saga with  payload :: ', payload);
+  try {
+    const { entityId: jobId } = yield select(
+      (state: RootState) => state.composer,
+    );
+
+    const { data } = yield call(
+      request,
+      'PUT',
+      apiCompleteJob(payload.withException, jobId),
+    );
+
+    console.log('data on complete job :: ', data);
+  } catch (error) {
+    console.error('error came in completeJobSaga in ComposerSaga :: ', error);
   }
 }
 
@@ -71,7 +83,6 @@ export function* ComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchDataSaga);
 
   yield takeLatest(ComposerAction.COMPLETE_JOB, completeJobSaga);
-  yield takeLatest(ComposerAction.COMPLETE_JOB_WITH_EXCEPTION, completeJobSaga);
   yield takeLatest(ComposerAction.START_JOB, startJobSaga);
   yield takeLatest(ComposerAction.RESTART_JOB, restartJobSaga);
 
