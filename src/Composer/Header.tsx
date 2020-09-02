@@ -1,6 +1,7 @@
 import { Button } from '#components';
 import { useTypedSelector } from '#store/helpers';
 import { ArrowDropDown } from '@material-ui/icons';
+import { navigate } from '@reach/router';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -63,8 +64,6 @@ const JobButton: FC<{
   jobStatus: JobStatus;
   jobId: Job['id'];
 }> = ({ jobStatus, jobId }) => {
-  const {};
-
   const [isCompleteWithException, setIsCompleteWithException] = useState(false);
 
   const dispatch = useDispatch();
@@ -88,6 +87,12 @@ const JobButton: FC<{
           <ArrowDropDown className="icon" />
         </div>
       </div>
+    );
+  } else if (jobStatus === JobStatus.UNASSIGNED) {
+    return (
+      <Button onClick={() => navigate(`print/${jobId}`)}>
+        Print Checklist
+      </Button>
     );
   }
   // INFO: enable this if restart job logic is to be implemented

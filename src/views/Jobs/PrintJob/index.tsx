@@ -390,9 +390,8 @@ const Assigness = () => {
 };
 
 const MyPrintJob: FC = () => {
-  const { checklist, jobExtras } = useTypedSelector(
-    (state) => state.checklist.composer,
-  );
+  const { data } = useTypedSelector((state) => state.composer);
+  const { checklist, ...jobExtras } = data;
   const { profile } = useTypedSelector((state) => state.auth);
 
   const activityTemplateFormatter = (
