@@ -1,9 +1,9 @@
-import { omit } from 'lodash';
 import { Reducer } from 'redux';
 
 import { fetchDataSuccess } from '../actions';
 import { Stage } from '../checklist.types';
 import { ComposerAction, Entity } from '../types';
+import { TaskListAction } from '../TaskList/types';
 import {
   ListById,
   StageListAction,
@@ -12,7 +12,6 @@ import {
 } from './types';
 
 export const initialState: StageListState = {
-  // list: {},
   list: [],
   listById: {},
   activeStageId: undefined,
@@ -49,10 +48,21 @@ const reducer: Reducer<StageListState, StageListActionType> = (
     case StageListAction.SET_ACTIVE_STAGE:
       return { ...state, activeStageId: action.payload.id };
 
-    case StageListAction.ADD_NEW_STAGE:
+    case TaskListAction.UPDATE_TASK_EXECUTION_STATUS:
+      const activeStage = state.listById[state.activeStageId];
+
       return {
         ...state,
-        list: [...state.list, action.payload.stage],
+        listById: {
+          ...state.listById,
+          [state.activeStageId]: {
+            ...activeStage,
+            tasks: activeStage.tasks.map((task) => ({
+              ...task,
+              taskExecution: action.payload.data,
+            })),
+          },
+        },
       };
 
     default:

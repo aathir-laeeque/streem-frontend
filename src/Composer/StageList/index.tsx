@@ -1,11 +1,7 @@
 import { useTypedSelector } from '#store/helpers';
 import React, { FC } from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { Stage } from '../checklist.types';
-import { Entity } from '../types';
-import { addNewStage } from './actions';
 import StageCard from './StageCard';
 
 const Wrapper = styled.div.attrs({
@@ -29,39 +25,20 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const generateNewStage = (): Omit<Stage, 'tasks'> => ({
-  id: 9999,
-  name: '',
-  code: '',
-  orderTree: 9999,
-});
-
 const StageListView: FC = () => {
   const {
-    entity,
-    stages: { list, activeStageId },
+    stages: { activeStageId, listById },
   } = useTypedSelector((state) => state.composer);
-
-  const dispatch = useDispatch();
 
   return (
     <Wrapper>
-      {list.map((stage) => (
+      {Object.values(listById).map((stage) => (
         <StageCard
           isActive={stage.id === activeStageId}
           key={stage.id}
           stage={stage}
         />
       ))}
-
-      {entity === Entity.CHECKLIST ? (
-        <div
-          className="add-new-item"
-          onClick={() => dispatch(addNewStage(generateNewStage()))}
-        >
-          Add new Stage
-        </div>
-      ) : null}
     </Wrapper>
   );
 };
