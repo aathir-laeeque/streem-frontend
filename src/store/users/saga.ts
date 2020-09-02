@@ -12,7 +12,6 @@ import {
 import { UsersAction, User } from './types';
 
 function* fetchUsersSaga({ payload }: ReturnType<typeof fetchUsers>) {
-  console.log('fetchUsersSaga', payload);
   try {
     const { params, type } = payload;
 

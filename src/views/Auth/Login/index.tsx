@@ -2,7 +2,7 @@ import { Button, Card, LabeledInput, Terms } from '#components';
 import { ValidatorProps } from '#utils/globalTypes';
 import { Visibility } from '@material-ui/icons';
 import { Link } from '@reach/router';
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
@@ -47,9 +47,12 @@ const Login: FC<LoginProps> = () => {
   });
 
   const onSubmit = (data: Inputs) => {
-    console.log('Inputs', data);
     dispatch(login(data));
   };
+
+  useEffect(() => {
+    document.getElementById('username')?.focus();
+  }, []);
 
   return (
     <Card

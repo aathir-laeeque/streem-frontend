@@ -17,6 +17,9 @@ import {
   register,
   registerSuccess,
   registerError,
+  resetPassword,
+  resetPasswordSuccess,
+  resetPasswordError,
   updateProfile,
   updateProfileSuccess,
   updateProfileError,
@@ -70,6 +73,9 @@ export enum AuthAction {
   FORGOT_PASSWORD = '@@auth/Register/FORGOT_PASSWORD',
   FORGOT_PASSWORD_ERROR = '@@auth/Register/FORGOT_PASSWORD_ERROR',
   FORGOT_PASSWORD_SUCCESS = '@@auth/Register/FORGOT_PASSWORD_SUCCESS',
+  RESET_PASSWORD = '@@auth/Register/RESET_PASSWORD',
+  RESET_PASSWORD_ERROR = '@@auth/Register/RESET_PASSWORD_ERROR',
+  RESET_PASSWORD_SUCCESS = '@@auth/Register/RESET_PASSWORD_SUCCESS',
   UPDATE_PROFILE = '@@auth/MyProfile/UPDATE_PROFILE',
   UPDATE_PROFILE_ERROR = '@@auth/MyProfile/UPDATE_PROFILE_ERROR',
   UPDATE_PROFILE_SUCCESS = '@@auth/MyProfile/UPDATE_PROFILE_SUCCESS',
@@ -98,4 +104,7 @@ export type AuthActionType = ReturnType<
   | typeof forgotPassword
   | typeof forgotPasswordSuccess
   | typeof forgotPasswordError
+  | typeof resetPassword
+  | typeof resetPasswordSuccess
+  | typeof resetPasswordError
 >;

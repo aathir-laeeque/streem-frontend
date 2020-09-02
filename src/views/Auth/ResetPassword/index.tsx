@@ -1,17 +1,13 @@
 import React, { FC, useEffect, useState } from 'react';
 import { LabeledInput, Button, Terms, Card } from '#components';
-import { RegisterProps } from './types';
+import { ResetPasswordProps } from './types';
 import { Visibility } from '@material-ui/icons';
-import { Link } from '@reach/router';
 import { useDispatch } from 'react-redux';
-import { register as registerAction } from '../actions';
+import { resetPassword } from '../actions';
 import { useForm, ValidationRules } from 'react-hook-form';
 
 type Inputs = {
-  fullName: string;
-  email: string;
-  password: string;
-  username: string;
+  newPassword: string;
 };
 
 interface ValidatorProps {
@@ -36,32 +32,27 @@ const validators: ValidatorProps = {
   },
 };
 
-const Register: FC<RegisterProps> = ({ name, email, token }) => {
+const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
   const { register, handleSubmit, trigger, errors } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
-    defaultValues: {
-      fullName: name,
-      email: email,
-    },
   });
   const [passwordInputType, setPasswordInputType] = useState(true);
+
   const { functions, messages } = validators;
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    trigger('password');
-    document.getElementById('username')?.focus();
+    trigger('newPassword');
   }, []);
 
   const onSubmit = (data: Inputs) => {
-    const { password, username } = data;
+    const { newPassword } = data;
     if (token) {
       dispatch(
-        registerAction({
-          username: username.toString(),
-          password: password.toString(),
+        resetPassword({
+          newPassword: newPassword.toString(),
           token: token.toString(),
         }),
       );
@@ -70,57 +61,15 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
 
   return (
     <Card
-      heading="Welcome to STREEM!"
-      subHeading="Set a new password for your account."
+      heading="Reset your Password"
+      subHeading="Create a new password to login to STREEM. Make sure your password complies with the passsword policy."
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="row">
           <LabeledInput
-            refFun={register}
-            placeHolder="John Doe"
-            label="Full Name"
-            id="fullName"
-            disabled
-          />
-        </div>
-        <div className="row" style={{ paddingTop: '24px' }}>
-          <LabeledInput
-            refFun={register}
-            placeHolder="Enter your username or Email ID"
-            label="Username/Email ID"
-            id="email"
-            disabled
-          />
-        </div>
-        <div className="row right-align">
-          <Link className="link" to="/auth/login">
-            Not you?
-          </Link>
-        </div>
-        <div className="row">
-          <LabeledInput
-            placeHolder="Enter your username"
-            label="Username"
-            id="username"
-            type="text"
-            refFun={register({
-              required: true,
-              pattern: {
-                value: /^[a-z0-9]+$/i,
-                message: 'Invalid Username',
-              },
-            })}
-          />
-          <span className="hint">
-            This your unique STREEM ID and is used to log in to the App.
-            Alpha-numeric characters only.
-          </span>
-        </div>
-        <div className="row">
-          <LabeledInput
-            placeHolder="Enter your password"
-            label="Password"
-            id="password"
+            placeHolder="New password"
+            label="New Password"
+            id="newPassword"
             type={passwordInputType ? 'password' : 'text'}
             icon={
               <Visibility
@@ -140,7 +89,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
                 <div
                   className="indicator"
                   style={
-                    errors.password?.types && errors.password?.types[item]
+                    errors.newPassword?.types && errors.newPassword?.types[item]
                       ? { backgroundColor: '#bababa' }
                       : {}
                   }
@@ -152,7 +101,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
         </div>
         <div className="row">
           <Button className="primary-button" type="submit">
-            Register
+            ResetPassword
           </Button>
         </div>
       </form>
@@ -161,4 +110,4 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
   );
 };
 
-export default Register;
+export default ResetPassword;

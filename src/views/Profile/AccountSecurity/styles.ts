@@ -95,7 +95,13 @@ export const Composer = styled.div`
       background-color: #fff;
       border-bottom: 1px solid #999999;
       border-radius: 0px;
-      margin-top: 13px;
+      padding-top: 15px;
+
+      > label {
+        top: 4px;
+        left: 4px;
+        color: #666666;
+      }
 
       .input {
         color: #333333;

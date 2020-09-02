@@ -14,11 +14,11 @@ const persistConfig = {
   whitelist: ['auth'],
   transforms: [
     createTransform(
-      (inboundState: any, key: string | number) => {
-        return { ...inboundState, isRefreshing: false };
+      (inboundState: any, key: string) => {
+        return { ...inboundState, isRefreshing: false, resetRequested: false };
       },
-      (outboundState: any, key: string | number) => {
-        return { ...outboundState, isRefreshing: false };
+      (outboundState: any, key: string) => {
+        return { ...outboundState, isRefreshing: false, resetRequested: false };
       },
       { whitelist: ['auth'] },
     ),

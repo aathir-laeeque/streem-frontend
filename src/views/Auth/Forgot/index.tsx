@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { useTypedSelector } from '#store';
 import { LabeledInput, Button, Terms, Card } from '#components';
 import { CheckCircleOutline } from '@material-ui/icons';
@@ -15,11 +15,16 @@ type Inputs = {
 const Forgot: FC<ForgotProps> = () => {
   const { resetRequested } = useTypedSelector((state) => state.auth);
   const { register, handleSubmit } = useForm<Inputs>();
-
+  const [emailSentTo, setEmailSentTo] = useState('');
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    document.getElementById('email')?.focus();
+  }, []);
 
   const onSubmit = (data: Inputs) => {
     const { email } = data;
+    setEmailSentTo(email);
     dispatch(
       forgotPassword({
         email: email.toString(),
@@ -38,7 +43,7 @@ const Forgot: FC<ForgotProps> = () => {
       }
       subHeading={
         resetRequested
-          ? 'We’ve sent an email to marcelino.langworth@yahoo.com to reset your password.'
+          ? `We’ve sent an email to ${emailSentTo} to reset your password.`
           : 'Enter your Email ID registered with us below and we’ll send you a link to reset your password.'
       }
     >
