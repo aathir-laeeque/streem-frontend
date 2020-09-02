@@ -59,7 +59,9 @@ const reducer: Reducer<StageListState, StageListActionType> = (
             ...activeStage,
             tasks: activeStage.tasks.map((task) => ({
               ...task,
-              taskExecution: action.payload.data,
+              ...(task.id === action.payload.taskId && {
+                taskExecution: action.payload.data,
+              }),
             })),
           },
         },
