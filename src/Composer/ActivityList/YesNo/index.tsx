@@ -1,12 +1,16 @@
 import { Entity } from '#Composer/types';
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
+import { get } from 'lodash';
 
-import { ActivityProps } from '../types';
+import { ActivityProps, Selections } from '../types';
 import { Wrapper } from './styles';
+import { useDispatch } from 'react-redux';
+import { executeActivity } from '../actions';
 
 const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
   const { entity } = useTypedSelector((state) => state.composer);
+  const dispatch = useDispatch();
 
   return (
     <Wrapper>
@@ -17,9 +21,33 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
             {activity.data
               .sort((a, b) => (a.type > b.type ? -1 : 1))
               .map((el, index) => {
+                const isSelected =
+                  get(activity?.response?.choices, el.id) ===
+                  Selections.SELECTED;
+
+                console.log('isSelected :: ', isSelected);
+
                 return (
                   <div key={index} className="button-item">
-                    <button>{el.name}</button>
+                    <button
+                      className={isSelected ? 'filled' : ''}
+                      onClick={() =>
+                        dispatch(
+                          executeActivity({
+                            ...activity,
+                            data: activity.data.map((e: any) => ({
+                              ...e,
+                              status:
+                                e.id === el.id
+                                  ? Selections.SELECTED
+                                  : Selections.NOT_SELECTED,
+                            })),
+                          }),
+                        )
+                      }
+                    >
+                      {el.name}
+                    </button>
                   </div>
                 );
               })}
