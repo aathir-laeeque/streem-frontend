@@ -1,7 +1,7 @@
 import { Entity } from '#Composer/types';
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { ActivityType } from '../checklist.types';
 import ChecklistActivity from './Checklist';
@@ -18,6 +18,14 @@ const Wrapper = styled.div.attrs({
 })`
   display: flex;
   flex-direction: column;
+
+  ${({ isTaskStarted }) =>
+    !isTaskStarted
+      ? css`
+          opacity: 0.5;
+          pointer-events: none;
+        `
+      : null}
 
   .activity {
     border-bottom: 1px dashed #dadada;
@@ -38,11 +46,11 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const ActivityList: FC<ActivityListProps> = ({ activities }) => {
+const ActivityList: FC<ActivityListProps> = ({ activities, isTaskStarted }) => {
   const { entity } = useTypedSelector((state) => state.composer);
 
   return (
-    <Wrapper>
+    <Wrapper isTaskStarted={isTaskStarted}>
       {activities.map((activity) => (
         <div key={activity.id} className="activity">
           {entity === Entity.JOB ? (

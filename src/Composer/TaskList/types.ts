@@ -59,9 +59,19 @@ export type MediaCardProps = {
   isTaskActive: boolean;
 };
 
-export enum TaskExecutionStatus {
+export enum StartedTaskStates {
   COMPLETED = 'COMPLETED',
   INPROGRESS = 'INPROGRESS',
-  NOT_STARTED = 'NOT_STARTED',
   SKIPPED = 'SKIPPED',
 }
+
+export enum NotStartedTaskStates {
+  NOT_STARTED = 'NOT_STARTED',
+}
+
+export const TaskExecutionStatus = {
+  ...StartedTaskStates,
+  ...NotStartedTaskStates,
+};
+
+export type TaskExecutionStatus = typeof TaskExecutionStatus;

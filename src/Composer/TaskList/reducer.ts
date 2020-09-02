@@ -6,7 +6,6 @@ import { ComposerAction, Entity } from '../types';
 import { ActivityListAction } from '../ActivityList/types';
 import {
   ListById,
-  TaskExecutionStatus,
   TaskListAction,
   TaskListActionType,
   TaskListState,

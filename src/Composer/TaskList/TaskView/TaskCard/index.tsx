@@ -6,7 +6,11 @@ import styled from 'styled-components';
 import ActivityList from '../../../ActivityList';
 import { JobStatus } from '../../../types';
 import { setActiveTask } from '../../actions';
-import { TaskCardProps, TaskExecutionStatus } from '../../types';
+import {
+  TaskCardProps,
+  TaskExecutionStatus,
+  StartedTaskStates,
+} from '../../types';
 import Footer from './Footer';
 import Header from './Header';
 import { ActivityType } from '#Composer/checklist.types';
@@ -44,8 +48,9 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
     return acc;
   }, false);
 
-  const isTaskStarted =
-    task.taskExecution.status !== TaskExecutionStatus.NOT_STARTED;
+  const isTaskStarted = task.taskExecution.status in StartedTaskStates;
+
+  console.log('isTaskStarted LL ', isTaskStarted);
 
   const showStartButton =
     (jobStatus === JobStatus.ASSIGNED || jobStatus === JobStatus.INPROGRESS) &&
@@ -61,7 +66,10 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
     >
       <Header task={task} showStartButton={showStartButton} />
 
-      <ActivityList activities={task.activities} />
+      <ActivityList
+        activities={task.activities}
+        isTaskStarted={isTaskStarted}
+      />
 
       <Footer canSkipTask={canSkipTask} task={task} />
     </Wrapper>

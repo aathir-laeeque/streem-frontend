@@ -3,6 +3,7 @@ import { updateExecutedActivity } from './actions';
 
 export type ActivityListProps = {
   activities: Activity[];
+  isTaskStarted: boolean;
 };
 
 export type ActivityProps = {
