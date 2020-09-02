@@ -39,13 +39,22 @@ export const Wrapper = styled.div`
         .dummy-checkbox {
           border: 1px solid #000000;
           border-radius: 2px;
-          height: 16px;
-          width: 16px;
+          height: 20px;
+          width: 20px;
           margin-right: 12px;
           cursor: not-allowed;
 
           /* override for jobs view */
           cursor: inherit;
+
+          &.checked:before {
+            content: "'\2713'";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            background-color: #1d84ff;
+          }
         }
 
         input {

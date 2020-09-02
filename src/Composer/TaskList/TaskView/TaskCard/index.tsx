@@ -9,6 +9,7 @@ import { setActiveTask } from '../../actions';
 import { TaskCardProps, TaskExecutionStatus } from '../../types';
 import Footer from './Footer';
 import Header from './Header';
+import { ActivityType } from '#Composer/checklist.types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-card',
@@ -32,6 +33,13 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
   const dispatch = useDispatch();
 
   const canSkipTask = !task.activities.reduce((acc, activity) => {
+    if (
+      activity.type === ActivityType.INSTRUCTION ||
+      activity.type === ActivityType.MATERIAL
+    ) {
+      return acc;
+    }
+
     acc = acc || activity.mandatory;
     return acc;
   }, false);

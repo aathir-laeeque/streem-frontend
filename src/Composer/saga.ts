@@ -13,11 +13,11 @@ import {
   fetchDataOngoing,
   fetchDataSuccess,
   startJob,
-  unAssignUsers,
 } from './actions';
 import { StageListSaga } from './StageList/saga';
 import { TaskListSaga } from './TaskList/saga';
 import { ComposerAction, Entity } from './types';
+import { ActivityListSaga } from './ActivityList/saga';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   console.log('came to new composer data fetch saga with payload :: ', payload);
@@ -81,5 +81,6 @@ export function* ComposerSaga() {
     // fork other sagas here
     fork(StageListSaga),
     fork(TaskListSaga),
+    fork(ActivityListSaga),
   ]);
 }

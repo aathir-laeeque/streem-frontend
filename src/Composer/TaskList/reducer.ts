@@ -3,6 +3,7 @@ import { Reducer } from 'redux';
 import { fetchDataSuccess } from '../actions';
 import { Task } from '../checklist.types';
 import { ComposerAction, Entity } from '../types';
+import { ActivityListAction } from '../ActivityList/types';
 import {
   ListById,
   TaskExecutionStatus,
@@ -72,6 +73,24 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
               ...taskToUpdate.taskExecution,
               status: action.payload.status,
             },
+          },
+        },
+      };
+
+    case ActivityListAction.UPDATE_EXECUTE_ACTIVITY:
+      const activeTask = state.listById[state.activeTaskId];
+
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [state.activeTaskId]: {
+            ...activeTask,
+            activities: activeTask.activities.map((el) => ({
+              ...(el.id === action.payload.activity.id
+                ? { ...action.payload.activity }
+                : { ...el }),
+            })),
           },
         },
       };

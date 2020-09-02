@@ -1,5 +1,6 @@
 import { Media, Task } from '../checklist.types';
 import { ComposerActionType } from '../types';
+import { ActivityListActionType } from '../ActivityList/types';
 import {
   addNewTask,
   completeTask,
@@ -43,6 +44,7 @@ export type TaskListActionType =
       | typeof completeTask
       | typeof skipTask
     >
+  | ActivityListActionType
   | ComposerActionType;
 
 export type TaskViewProps = {
