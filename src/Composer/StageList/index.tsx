@@ -16,7 +16,7 @@ const Wrapper = styled.div.attrs({
   display: flex;
   flex-direction: column;
   overflow: auto;
-  padding-right: 16px;
+  padding-right: 8px;
 
   .add-new-item {
     align-items: center;

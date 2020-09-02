@@ -12,6 +12,28 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  /* width */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #eeeeee;
+    border-radius: 10px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #1d84ff;
+    border-radius: 10px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #005dcc;
+  }
+
   #root {
     height: inherit;
     width: inherit;
