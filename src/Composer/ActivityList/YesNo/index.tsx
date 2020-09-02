@@ -25,8 +25,6 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
                   get(activity?.response?.choices, el.id) ===
                   Selections.SELECTED;
 
-                console.log('isSelected :: ', isSelected);
-
                 return (
                   <div key={index} className="button-item">
                     <button

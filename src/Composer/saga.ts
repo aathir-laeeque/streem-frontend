@@ -53,7 +53,6 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
 }
 
 function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
-  console.log('came to completeJob saga with  payload :: ', payload);
   try {
     const { entityId: jobId } = yield select(
       (state: RootState) => state.composer,
