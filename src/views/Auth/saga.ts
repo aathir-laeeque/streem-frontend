@@ -5,6 +5,7 @@ import {
   apiRegister,
   apiLogOut,
   apiForgotPassword,
+  apiResetPassword,
 } from '#utils/apiUrls';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
@@ -34,6 +35,9 @@ import {
   forgotPassword,
   forgotPasswordError,
   forgotPasswordSuccess,
+  resetPassword,
+  resetPasswordError,
+  resetPasswordSuccess,
 } from './actions';
 import { persistor } from '../../App';
 
@@ -202,6 +206,35 @@ function* forgotPasswordSaga({ payload }: ReturnType<typeof forgotPassword>) {
   }
 }
 
+function* resetPasswordSaga({ payload }: ReturnType<typeof resetPassword>) {
+  try {
+    const { data, errors }: ResponseObj<User> = yield call(
+      request,
+      'PUT',
+      apiResetPassword(),
+      {
+        data: payload,
+      },
+    );
+
+    if (errors) {
+      return false;
+    }
+
+    yield put(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'Password Changed successfully',
+      }),
+    );
+    yield put(resetPasswordSuccess());
+    navigate('/auth/login');
+  } catch (error) {
+    console.error('error from resetPasswordSaga function in Auth :: ', error);
+    yield put(resetPasswordError(error));
+  }
+}
+
 function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
   try {
     const { body, id } = payload;
@@ -239,5 +272,6 @@ export function* AuthSaga() {
   yield takeLatest(AuthAction.FETCH_PROFILE, fetchProfileSaga);
   yield takeLatest(AuthAction.REGISTER, registerSaga);
   yield takeLatest(AuthAction.FORGOT_PASSWORD, forgotPasswordSaga);
+  yield takeLatest(AuthAction.RESET_PASSWORD, resetPasswordSaga);
   yield takeLatest(AuthAction.UPDATE_PROFILE, updateProfileSaga);
 }

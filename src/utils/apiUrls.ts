@@ -61,4 +61,4 @@ export const apiUnArchiveUser = (id: number | string) =>
 
 export const apiRegister = () => `${baseUrl}/auth/register`;
 
-export const apiUpdateUsers = () => `${baseUrl}/auth/update-password`;
+export const apiResetPassword = () => `${baseUrl}/auth/update-password`;

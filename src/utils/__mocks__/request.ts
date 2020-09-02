@@ -51,7 +51,6 @@ export const request = async (
       (url.indexOf('?') === -1 ? '?' : '&') + buildQueryParams(options?.params);
   }
   const fullUrl = url + queryStrings;
-  // console.log('INSIDE MOCK REQUEST : FULL URL', fullUrl);
   if (apiGetChecklists() + queryStrings === fullUrl) {
     data = checklists;
   } else if (apiGetJobs() + queryStrings === fullUrl) {

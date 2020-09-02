@@ -36,6 +36,8 @@ export const registerSuccess = () =>
 export const registerError = (error: any) =>
   actionSpreader(AuthAction.REGISTER_ERROR, error);
 
+// FORGOT PASSWORD
+
 export const forgotPassword = (payload: { email: string }) =>
   actionSpreader(AuthAction.FORGOT_PASSWORD, payload);
 
@@ -80,3 +82,16 @@ export const refreshTokenSuccess = (data: RefreshTokenResponse) =>
 
 export const refreshTokenError = (error: any) =>
   actionSpreader(AuthAction.REFRESH_TOKEN_ERROR, error);
+
+// RESET PASSWORD
+
+export const resetPassword = (payload: {
+  newPassword: string;
+  token: string;
+}) => actionSpreader(AuthAction.RESET_PASSWORD, payload);
+
+export const resetPasswordSuccess = () =>
+  actionSpreader(AuthAction.RESET_PASSWORD_SUCCESS);
+
+export const resetPasswordError = (error: any) =>
+  actionSpreader(AuthAction.RESET_PASSWORD_ERROR, error);

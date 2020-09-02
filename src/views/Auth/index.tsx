@@ -7,6 +7,7 @@ import Login from './Login';
 import Locked from './Locked';
 import Forgot from './Forgot';
 import Register from './Register';
+import ResetPassword from './ResetPassword';
 import MemoStreemLogoWhite from '#assets/svg/StreemLogoWhite';
 import MemoLeucineLogo from '#assets/svg/LeucineLogo';
 import AuthBg from '#assets/svg/auth-bg.svg';
@@ -71,6 +72,7 @@ const AuthView: FC<AuthViewProps> = () => (
     <div className="sections right">
       <Router style={{ width: '100%' }}>
         <Register path="register/:name/:email/:token" />
+        <ResetPassword path="change-password/:token" />
         <Locked path="locked" />
         <Forgot path="forgot" />
         <Login path="/*" />

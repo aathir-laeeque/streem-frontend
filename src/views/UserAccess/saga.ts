@@ -117,7 +117,6 @@ function* unArchiveUserSaga({ payload }: ReturnType<typeof unArchiveUser>) {
 }
 
 function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
-  console.log('payload', payload);
   try {
     const { data, errors }: ResponseObj<Partial<User>> = yield call(
       request,
@@ -127,9 +126,6 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
         data: payload,
       },
     );
-
-    console.log('data', data);
-    console.log('errors', errors);
 
     if (errors) {
       return false;

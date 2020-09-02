@@ -2,6 +2,7 @@ import React, { FC, useState, useEffect } from 'react';
 import { Button, LabeledInput } from '#components';
 import { Composer } from './styles';
 import { AccountSecurityProps } from './types';
+import { Visibility } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '#store';
 import { useForm, ValidationRules } from 'react-hook-form';
@@ -37,6 +38,8 @@ const validators: ValidatorProps = {
 const AccountSecurity: FC<AccountSecurityProps> = () => {
   const dispatch = useDispatch();
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [oldPasswordInputType, setOldPasswordInputType] = useState(true);
+  const [newPasswordInputType, setNewPasswordInputType] = useState(true);
   const { profile } = useTypedSelector((state) => state.auth);
   const { register, handleSubmit, errors, formState, trigger } = useForm<
     Inputs
@@ -82,7 +85,17 @@ const AccountSecurity: FC<AccountSecurityProps> = () => {
                 placeHolder="Enter Current Password"
                 label="Current Password"
                 id="oldPassword"
-                type="password"
+                type={oldPasswordInputType ? 'password' : 'text'}
+                icon={
+                  <Visibility
+                    onClick={() =>
+                      setOldPasswordInputType(!oldPasswordInputType)
+                    }
+                    style={{
+                      color: oldPasswordInputType ? '#999999' : '#1d84ff',
+                    }}
+                  />
+                }
               />
             </div>
             <div
@@ -96,7 +109,17 @@ const AccountSecurity: FC<AccountSecurityProps> = () => {
                 placeHolder="Enter New Password"
                 label="New Password"
                 id="newPassword"
-                type="password"
+                type={newPasswordInputType ? 'password' : 'text'}
+                icon={
+                  <Visibility
+                    onClick={() =>
+                      setNewPasswordInputType(!newPasswordInputType)
+                    }
+                    style={{
+                      color: newPasswordInputType ? '#999999' : '#1d84ff',
+                    }}
+                  />
+                }
                 onFocusInput={() => setPasswordFocused(true)}
               />
               {passwordFocused && (
