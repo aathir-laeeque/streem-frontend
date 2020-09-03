@@ -76,14 +76,6 @@ function* taskCompleteErrorSaga(payload: TaskErrorSagaPayload) {
   yield put(setTaskError('Activity Incomplete', taskId));
 }
 
-function* taskStartErrorSaga(payload: TaskErrorSagaPayload) {
-  console.log('payload frm taskStartErrorSaga :: ', payload);
-}
-
-function* taskSkipErrorSaga(payload: TaskErrorSagaPayload) {
-  console.log('payload frm taskSkipErrorSaga :: ', payload);
-}
-
 function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
   try {
     console.log('came to performActionOnTaskSaga with payload :: ', payload);
@@ -96,8 +88,6 @@ function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
     const { taskId, action } = payload;
 
     if (isJobStarted) {
-      console.log('make api call to start the task with taskId :: ', taskId);
-
       const { data, errors } = yield call(
         request,
         'PUT',
@@ -110,16 +100,10 @@ function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
 
         yield put(updateTaskExecutionStatus(taskId, data));
       } else {
-        console.log('Error came is perform action on task api ::: ', errors);
-
         const groupedErrors = groupJobErrors(errors);
 
         if (action === TaskAction.COMPLETE) {
           yield taskCompleteErrorSaga({ ...groupedErrors, taskId });
-        } else if (action === TaskAction.START) {
-          yield taskStartErrorSaga(errors);
-        } else if (action === TaskAction.SKIP) {
-          yield taskSkipErrorSaga(errors);
         }
       }
     } else {
