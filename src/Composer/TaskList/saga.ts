@@ -6,32 +6,13 @@ import { request } from '#utils/request';
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { Error } from '../../utils/globalTypes';
-import { setActivityError } from '../ActivityList/actions';
+import { handleActivityErrorSaga } from '../ActivityList/saga';
 import { ActivityErrors } from '../ActivityList/types';
 import { Task } from '../checklist.types';
-import { setActiveStage } from '../StageList/actions';
-import { StageListAction, StageErrors } from '../StageList/types';
+import { StageErrors } from '../StageList/types';
 import { JobStatus } from '../types';
-import {
-  setTaskError,
-  setTasksList,
-  startTask,
-  updateTaskExecutionStatus,
-} from './actions';
-import { TaskAction, TaskListAction, TaskErrors } from './types';
-import { handleActivityErrorSaga } from '../ActivityList/saga';
-
-function* setTasksSaga({ payload }: ReturnType<typeof setActiveStage>) {
-  try {
-    const { listById } = yield select(
-      (state: RootState) => state.composer.stages,
-    );
-
-    yield put(setTasksList(listById[payload.id].tasks));
-  } catch (error) {
-    console.log('error came in setTasksSaga in TaskListSaga :: => ', error);
-  }
-}
+import { setTaskError, startTask, updateTaskExecutionStatus } from './actions';
+import { TaskAction, TaskErrors, TaskListAction } from './types';
 
 type ErrorGroups = {
   stagesErrors: Error[];
@@ -79,6 +60,7 @@ function* taskCompleteErrorSaga(payload: TaskErrorSagaPayload) {
 function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
   try {
     console.log('came to performActionOnTaskSaga with payload :: ', payload);
+
     const { jobStatus, entityId: jobId } = yield select(
       (state: RootState) => state.composer,
     );
@@ -124,7 +106,6 @@ function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
 }
 
 export function* TaskListSaga() {
-  yield takeLatest(StageListAction.SET_ACTIVE_STAGE, setTasksSaga);
   yield takeLatest(TaskListAction.START_TASK, performActionOnTaskSaga);
   yield takeLatest(TaskListAction.COMPLETE_TASK, performActionOnTaskSaga);
   yield takeLatest(TaskListAction.SKIP_TASK, performActionOnTaskSaga);

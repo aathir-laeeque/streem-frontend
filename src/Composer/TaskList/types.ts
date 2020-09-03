@@ -23,7 +23,6 @@ export type TaskListState = {
 
 export enum TaskListAction {
   SET_ACTIVE_TASK = '@@composer/task-list/SET_ACTIVE_TASK',
-  SET_TASKS_LIST = '@@composer/task-list/SET_TASKS_LIST',
 
   START_TASK = '@@composer/task-list/task/START_TASK',
   COMPLETE_TASK = '@@composer/task-list/task/COMPLETE_TASK',

@@ -10,6 +10,7 @@ import {
   JobStatus,
 } from './types';
 import { transformChecklist } from './utils';
+import { TaskListAction } from './TaskList/types';
 
 const initialState: ComposerState = {
   checklistState: ChecklistState.CREATING,
@@ -84,8 +85,17 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
     case ComposerAction.COMPLETE_JOB:
       return { ...state, jobStatus: JobStatus.COMPLETED };
 
+    // BLOCK START
+    // actions realted to stage list and stage card
     case StageListAction.SET_ACTIVE_STAGE:
       return { ...state, activeStageId: action.payload.id };
+    // BLOCKS END
+
+    // BLOCK START
+    // actions realted to task list and task view, task card and task media
+    case TaskListAction.SET_ACTIVE_TASK:
+      return { ...state, activeTaskId: action.payload.id };
+    // BLOCKS END
 
     default:
       return { ...state };
