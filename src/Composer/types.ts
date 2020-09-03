@@ -15,6 +15,7 @@ import {
 import { Activity, Checklist, Stage, Task } from './checklist.types';
 import { StageListActionType } from './StageList/types';
 import { TaskListActionType } from './TaskList/types';
+import { ActivityListActionType } from './ActivityList/types';
 
 export enum Entity {
   JOB = 'Job',
@@ -45,7 +46,10 @@ export type ComposerProps = RouteComponentProps<{
 };
 
 export type StagesById = Record<Stage['id'], Omit<Stage, 'tasks'>>;
-export type TasksById = Record<Task['id'], Omit<Task, 'activities'>>;
+export type TasksById = Record<
+  Task['id'],
+  Omit<Task, 'activities'> & { hasError?: boolean; errorMessage?: string }
+>;
 export type ActivitiesById = Record<Activity['id'], Activity>;
 
 export type StagesOrder = Stage['id'][];
@@ -103,7 +107,8 @@ export type ComposerActionType =
       | typeof restartJob
     >
   | StageListActionType
-  | TaskListActionType;
+  | TaskListActionType
+  | ActivityListActionType;
 
 export type FetchDataArgs = {
   id: Checklist['id'] | Job['id'];

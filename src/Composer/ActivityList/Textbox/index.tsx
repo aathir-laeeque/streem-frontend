@@ -1,10 +1,15 @@
-import { useTypedSelector } from '#store';
 import { Entity } from '#Composer/types';
+import { useTypedSelector } from '#store';
+import { customOnChange } from '#utils/formEvents';
 import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
 
+import { executeActivity } from '../actions';
 import { ActivityProps } from '../types';
 
 const TextboxActivity: FC<ActivityProps> = ({ activity }) => {
+  const dispatch = useDispatch();
+
   const { entity } = useTypedSelector((state) => state.composer);
 
   if (entity === Entity.JOB) {
@@ -15,9 +20,20 @@ const TextboxActivity: FC<ActivityProps> = ({ activity }) => {
           <textarea
             className="new-form-field-textarea"
             placeholder="User will write comments here"
-            value={activity?.data?.value}
+            value={activity?.response?.value}
             rows={4}
-            onChange={(e) => console.log('value :: ', e.target.value)}
+            onChange={(e) => {
+              e.persist();
+
+              customOnChange(e, (event) => {
+                dispatch(
+                  executeActivity({
+                    ...activity,
+                    data: { input: event.target.value },
+                  }),
+                );
+              });
+            }}
           />
         </div>
       </div>

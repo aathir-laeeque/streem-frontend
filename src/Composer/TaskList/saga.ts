@@ -13,6 +13,7 @@ import { StageErrors } from '../StageList/types';
 import { JobStatus } from '../types';
 import { setTaskError, startTask, updateTaskExecutionStatus } from './actions';
 import { TaskAction, TaskErrors, TaskListAction } from './types';
+import { setActivityError } from '../ActivityList/actions';
 
 type ErrorGroups = {
   stagesErrors: Error[];
@@ -48,9 +49,7 @@ function* taskCompleteErrorSaga(payload: TaskErrorSagaPayload) {
   } else if (activitiesErrors.length) {
     console.log('handle activities level error here');
     yield all(
-      activitiesErrors.map((error) =>
-        call(handleActivityErrorSaga, { error, taskId }),
-      ),
+      activitiesErrors.map((error) => put(setActivityError(error, error.id))),
     );
   }
 
@@ -78,7 +77,7 @@ function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
       );
 
       if (data) {
-        console.log('data from start task api call :: ', data);
+        console.log('data from api call in performActionOnTaskSaga :: ', data);
 
         yield put(updateTaskExecutionStatus(taskId, data));
       } else {

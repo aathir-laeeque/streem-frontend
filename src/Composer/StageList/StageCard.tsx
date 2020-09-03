@@ -1,5 +1,5 @@
 import { ProgressBar } from '#components';
-import { Assignment, PanTool } from '@material-ui/icons';
+import { Assignment, PanTool, CheckCircle, Error } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
@@ -40,24 +40,20 @@ const Wrapper = styled.div.attrs({
 
       .stage-badge {
         align-items: center;
-        background-color: ${({ isAnyTaskStarted }) =>
-          isAnyTaskStarted ? '#d6e9ff' : '#f4f4f4'};
-
+        background-color: #f4f4f4;
         border-radius: 4px;
         display: flex;
         padding: 4px;
 
         > .icon {
           margin-right: 4px;
-          color: ${({ isAnyTaskStarted }) =>
-            isAnyTaskStarted ? '#1d84ff' : '#999999'};
+          color: #999999;
         }
 
         span {
           font-size: 12px;
           line-height: 0.83;
-          color: ${({ isAnyTaskStarted }) =>
-            isAnyTaskStarted ? '#1d84ff' : '#999999'};
+          color: #999999;
         }
       }
     }
@@ -87,6 +83,74 @@ const Wrapper = styled.div.attrs({
           box-shadow: 0 8px 8px 0 rgba(153, 153, 153, 0.16);
         `
       : null}
+
+  ${({ isAnyTaskStarted, allTasksCompleted, anyTaskHasError }) => {
+    if (allTasksCompleted) {
+      return css`
+        ${({ isActive }) =>
+          isActive
+            ? css`
+                border-color: #5aa700;
+              `
+            : null}
+
+        .stage-header {
+          .stage-badge {
+            background-color: #e1fec0;
+
+            .icon,
+            span {
+              color: #5aa700;
+            }
+          }
+        }
+
+        .stage-task-bar {
+          .filler {
+            background-color: #5aa700;
+          }
+        }
+      `;
+    }
+
+    if (anyTaskHasError) {
+      return css`
+        border-color: #ff6b6b;
+
+        .stage-header {
+          .stage-badge {
+            background-color: #ffebeb;
+
+            .icon,
+            span {
+              color: #ff6b6b;
+            }
+          }
+        }
+
+        .stage-task-bar {
+          .filler {
+            background-color: #ff6b6b;
+          }
+        }
+      `;
+    }
+
+    if (isAnyTaskStarted) {
+      return css`
+        .stage-header {
+          .stage-badge {
+            background-color: #d6e9ff;
+
+            .icon,
+            span {
+              color: #1d84ff;
+            }
+          }
+        }
+      `;
+    }
+  }}
 `;
 
 const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
@@ -98,11 +162,18 @@ const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
 
   const tasks = tasksOrderInStage[stage.id].map((taskId) => tasksById[taskId]);
 
-  const isAnyTaskStarted = tasks.reduce((acc, task) => {
-    acc = acc || task.taskExecution.status !== TaskExecutionStatus.NOT_STARTED;
+  const { isAnyTaskStarted, anyTaskHasError } = tasks.reduce(
+    ({ isAnyTaskStarted, anyTaskHasError }, task) => {
+      isAnyTaskStarted =
+        isAnyTaskStarted ||
+        task.taskExecution.status !== TaskExecutionStatus.NOT_STARTED;
 
-    return acc;
-  }, false);
+      anyTaskHasError = anyTaskHasError || !!task.hasError;
+
+      return { isAnyTaskStarted, anyTaskHasError };
+    },
+    { isAnyTaskStarted: false, anyTaskHasError: false },
+  );
 
   const totalTasks = tasks.length;
 
@@ -114,10 +185,14 @@ const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
     (completedTasks / totalTasks) * 100,
   );
 
+  const allTasksCompleted = completedTasks === totalTasks;
+
   return (
     <Wrapper
       isActive={isActive}
       isAnyTaskStarted={isAnyTaskStarted}
+      allTasksCompleted={allTasksCompleted}
+      anyTaskHasError={anyTaskHasError}
       onClick={() => {
         if (!isActive) {
           dispatch(setActiveStage(stage.id));
@@ -130,8 +205,37 @@ const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
         <PanTool className="icon stop-icon" />
 
         <div className="stage-badge">
-          <Assignment className="icon" />
-          <span>{isAnyTaskStarted ? 'In Progress' : 'Not Started'}</span>
+          {(() => {
+            if (anyTaskHasError) {
+              return (
+                <>
+                  <Error className="icon" />
+                  <span>Task Incomplete</span>
+                </>
+              );
+            } else if (allTasksCompleted) {
+              return (
+                <>
+                  <CheckCircle className="icon" />
+                  <span>Completed</span>
+                </>
+              );
+            } else if (isAnyTaskStarted) {
+              return (
+                <>
+                  <Assignment className="icon" />
+                  <span>In Progress</span>
+                </>
+              );
+            } else {
+              return (
+                <>
+                  <Assignment className="icon" />
+                  <span>Not Started</span>
+                </>
+              );
+            }
+          })()}
         </div>
       </div>
 

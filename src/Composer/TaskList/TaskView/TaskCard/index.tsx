@@ -1,19 +1,19 @@
+import ActivityList from '#Composer/ActivityList';
+import { ActivityType } from '#Composer/checklist.types';
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import ActivityList from '../../../ActivityList';
 import { JobStatus } from '../../../types';
 import { setActiveTask } from '../../actions';
 import {
+  StartedTaskStates,
   TaskCardProps,
   TaskExecutionStatus,
-  StartedTaskStates,
 } from '../../types';
 import Footer from './Footer';
 import Header from './Header';
-import { ActivityType } from '#Composer/checklist.types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-card',
@@ -58,7 +58,14 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
     return acc;
   }, false);
 
+  const activitiesHasError = activities.reduce((acc, activity) => {
+    return acc || !!activity.hasError;
+  }, false);
+
   const isTaskStarted = task.taskExecution.status in StartedTaskStates;
+
+  const isTaskCompleted =
+    task.taskExecution.status === TaskExecutionStatus.COMPLETED;
 
   const showStartButton =
     (jobStatus === JobStatus.ASSIGNED || jobStatus === JobStatus.INPROGRESS) &&
@@ -74,9 +81,17 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
     >
       <Header task={task} showStartButton={showStartButton} />
 
-      <ActivityList activities={activities} isTaskStarted={isTaskStarted} />
+      <ActivityList
+        activities={activities}
+        isTaskStarted={isTaskStarted}
+        isTaskCompleted={isTaskCompleted}
+      />
 
-      <Footer canSkipTask={canSkipTask} task={task} />
+      <Footer
+        canSkipTask={canSkipTask}
+        task={task}
+        activitiesHasError={activitiesHasError}
+      />
     </Wrapper>
   );
 };

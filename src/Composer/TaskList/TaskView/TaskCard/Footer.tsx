@@ -41,6 +41,15 @@ const Wrapper = styled.div.attrs({
     color: #1d84ff;
     margin-top: 24px;
   }
+
+  .error-badge {
+    align-items: center;
+    color: #ff6b6b;
+    display: flex;
+    font-size: 12px;
+    justify-content: center;
+    margin-top: 16px;
+  }
 `;
 
 const CompletedWrapper = styled.div.attrs({
@@ -77,7 +86,7 @@ type FooterProps = {
 
 const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
 
-const Footer: FC<FooterProps> = ({ canSkipTask, task }) => {
+const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   const dispatch = useDispatch();
 
   const {
@@ -123,6 +132,12 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task }) => {
         >
           {canSkipTask ? 'Skip the task' : 'Force close task'}
         </button>
+
+        {activitiesHasError ? (
+          <div className="error-badge">
+            Mandatory Activity is incomplete, you cannot complete this Task,
+          </div>
+        ) : null}
       </Wrapper>
     );
   }
