@@ -34,17 +34,13 @@ export enum TaskListAction {
   SET_TASK_ERROR = '@@composer/task-list/task/SET_TASK_ERROR',
 }
 
-export type TaskListActionType =
-  | ReturnType<
-      | typeof setActiveTask
-      | typeof setTasksList
-      | typeof startTask
-      | typeof updateTaskExecutionStatus
-      | typeof completeTask
-      | typeof skipTask
-    >
-  | ActivityListActionType
-  | ComposerActionType;
+export type TaskListActionType = ReturnType<
+  | typeof setActiveTask
+  | typeof startTask
+  | typeof completeTask
+  | typeof skipTask
+  | typeof updateTaskExecutionStatus
+>;
 
 export type TaskViewProps = {
   isActive: boolean;

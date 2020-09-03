@@ -2,10 +2,6 @@ import { Reducer } from 'redux';
 
 import { StageListAction } from './StageList/types';
 import {
-  initialState as TaskListInitialState,
-  taskListReducer,
-} from './TaskList/reducer';
-import {
   ChecklistState,
   ComposerAction,
   ComposerActionType,
@@ -22,7 +18,6 @@ const initialState: ComposerState = {
   entityId: undefined,
   loading: false,
   jobStatus: JobStatus.UNASSIGNED,
-  tasks: TaskListInitialState,
 
   activeStageId: 0,
   activeTaskId: 0,
@@ -60,19 +55,13 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
 
       return {
         ...state,
-        data: action.payload.data,
-        entityId: action.payload.data.id,
+        data: data,
+        entityId: data.id,
         loading: false,
-        tasks: taskListReducer(state.tasks, action),
 
         ...(action.payload.entity === Entity.JOB
-          ? {
-              jobStatus: action.payload.data.status,
-            }
-          : {
-              // TODO: make this as per the API response
-              checklistState: ChecklistState.CREATING,
-            }),
+          ? { jobStatus: data.status }
+          : { checklistState: ChecklistState.CREATING }),
 
         // new keys
         activeStageId: stagesOrder[0],
@@ -99,10 +88,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       return { ...state, activeStageId: action.payload.id };
 
     default:
-      return {
-        ...state,
-        tasks: taskListReducer(state.tasks, action),
-      };
+      return { ...state };
   }
 };
 

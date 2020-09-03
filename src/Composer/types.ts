@@ -14,7 +14,7 @@ import {
 } from './actions';
 import { Activity, Checklist, Stage, Task } from './checklist.types';
 import { StageListActionType } from './StageList/types';
-import { TaskListState } from './TaskList/types';
+import { TaskListActionType } from './TaskList/types';
 
 export enum Entity {
   JOB = 'Job',
@@ -62,7 +62,6 @@ export type ComposerState = {
   entityId?: Checklist['id'] | Job['id'];
   loading: boolean;
   jobStatus: JobStatus;
-  tasks: TaskListState;
 
   // some new keys
   stagesById: StagesById;
@@ -103,7 +102,8 @@ export type ComposerActionType =
       | typeof completeJob
       | typeof restartJob
     >
-  | StageListActionType;
+  | StageListActionType
+  | TaskListActionType;
 
 export type FetchDataArgs = {
   id: Checklist['id'] | Job['id'];
