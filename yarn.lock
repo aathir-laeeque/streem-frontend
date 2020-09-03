@@ -1389,7 +1389,7 @@
   resolved "https://registry.yarnpkg.com/@react-pdf/png-js/-/png-js-1.0.0.tgz#00fcb969dca4ce82a0a7673413ade039e47b361e"
   integrity sha1-APy5adykzoKgp2c0E63gOeR7Nh4=
 
-"@react-pdf/renderer@^1.6.10":
+"@react-pdf/renderer@^1.6.11":
   version "1.6.11"
   resolved "https://registry.yarnpkg.com/@react-pdf/renderer/-/renderer-1.6.11.tgz#a322a2b56737ab7b3587a09bf0b5eb5b6ff605d3"
   integrity sha512-6/6bXi+x59aFovvngQCD3uLAJeFIEvQhN9vNd6n95mFKfTo6JuLmUzunP2In5PmC7fEGFqpJZr2e5Nm/Q1ho9A==
@@ -7719,7 +7719,7 @@ react-transition-group@^4.3.0, react-transition-group@^4.4.0, react-transition-g
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@^16.8.0:
+react@^16.0.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react/-/react-16.13.1.tgz#2e818822f1a9743122c063d6410d85c1e3afe48e"
   integrity sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w==

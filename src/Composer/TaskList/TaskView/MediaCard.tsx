@@ -1,36 +1,19 @@
-// import React, { FC } from 'react';
-// import styled, { css } from 'styled-components';
-import { Media } from '#Composer/checklist.types';
 import React, { FC, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-// import { MediaCardProps } from '../types';
+import { MediaCardProps } from '../types';
 
-// const Wrapper = styled.div.attrs({
-//   className: 'task-media-card',
-// })`
-//   grid-area: task-media-card;
-
-//   ${({ isTaskActive }) =>
-//     !isTaskActive
-//       ? css`
-//           visibility: hidden;
-//         `
-//       : null}
-// `;
-
-// const MediaCard: FC<MediaCardProps> = ({ medias, isTaskActive }) => {
-//   return (
-//     <Wrapper isTaskActive={isTaskActive}>
-//       This is the task Task Media card
-//     </Wrapper>
-//   );
-// };
-
-// export default MediaCard;
-
-const Wrapper = styled.div`
+const Wrapper = styled.div.attrs({
+  className: 'task-media-card',
+})`
   grid-area: task-media-card;
+
+  ${({ isTaskActive }) =>
+    !isTaskActive
+      ? css`
+          visibility: hidden;
+        `
+      : null}
 
   .container {
     background-color: #ffffff;
@@ -101,11 +84,11 @@ const Wrapper = styled.div`
   }
 `;
 
-const TaskMedia: FC<{ medias: Media[] }> = ({ medias }) => {
+const MediaCard: FC<MediaCardProps> = ({ medias, isTaskActive }) => {
   const [activeMedia, setActiveMedia] = useState(medias[0]);
 
   return (
-    <Wrapper>
+    <Wrapper isTaskActive={isTaskActive}>
       {medias.length ? (
         <div className="container">
           {activeMedia ? (
@@ -135,4 +118,4 @@ const TaskMedia: FC<{ medias: Media[] }> = ({ medias }) => {
   );
 };
 
-export default TaskMedia;
+export default MediaCard;
