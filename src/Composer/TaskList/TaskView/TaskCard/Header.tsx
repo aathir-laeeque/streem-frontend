@@ -11,7 +11,7 @@ import { startTask } from '../../actions';
 import { TaskExecutionStatus } from '../../types';
 
 type HeaderProps = {
-  task: Task;
+  task: Omit<Task, 'activities'>;
   showStartButton: boolean;
 };
 

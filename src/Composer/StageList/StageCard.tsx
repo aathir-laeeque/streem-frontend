@@ -7,6 +7,7 @@ import styled, { css } from 'styled-components';
 import { TaskExecutionStatus } from '../TaskList/types';
 import { setActiveStage } from './actions';
 import { StageCardProps } from './types';
+import { useTypedSelector } from '#store/helpers';
 
 const Wrapper = styled.div.attrs({
   className: 'stage-list-item',
@@ -91,7 +92,11 @@ const Wrapper = styled.div.attrs({
 const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
   const dispatch = useDispatch();
 
-  const tasks = stage.tasks;
+  const { tasksById, tasksOrderInStage } = useTypedSelector(
+    (state) => state.composer,
+  );
+
+  const tasks = tasksOrderInStage[stage.id].map((taskId) => tasksById[taskId]);
 
   const isAnyTaskStarted = tasks.reduce((acc, task) => {
     acc = acc || task.taskExecution.status !== TaskExecutionStatus.NOT_STARTED;

@@ -48,7 +48,7 @@ export type TaskListActionType =
 
 export type TaskViewProps = {
   isActive: boolean;
-  task: Task;
+  task: Omit<Task, 'activities'>;
 };
 
 export type TaskCardProps = TaskViewProps;

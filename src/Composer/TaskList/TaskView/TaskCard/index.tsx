@@ -33,10 +33,20 @@ const Wrapper = styled.div.attrs({
 `;
 
 const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
-  const { jobStatus } = useTypedSelector((state) => state.composer);
+  const {
+    jobStatus,
+    activeStageId,
+    activitiesOrderInTaskInStage,
+    activitiesById,
+  } = useTypedSelector((state) => state.composer);
+
   const dispatch = useDispatch();
 
-  const canSkipTask = !task.activities.reduce((acc, activity) => {
+  const activities = activitiesOrderInTaskInStage[activeStageId][task.id].map(
+    (activityId) => activitiesById[activityId],
+  );
+
+  const canSkipTask = !activities.reduce((acc, activity) => {
     if (
       activity.type === ActivityType.INSTRUCTION ||
       activity.type === ActivityType.MATERIAL
@@ -64,10 +74,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
     >
       <Header task={task} showStartButton={showStartButton} />
 
-      <ActivityList
-        activities={task.activities}
-        isTaskStarted={isTaskStarted}
-      />
+      <ActivityList activities={activities} isTaskStarted={isTaskStarted} />
 
       <Footer canSkipTask={canSkipTask} task={task} />
     </Wrapper>

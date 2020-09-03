@@ -22,7 +22,7 @@ const Wrapper = styled.div`
 const Composer: FC<ComposerProps> = ({ id, entity }) => {
   const dispatch = useDispatch();
 
-  const { activeStageId } = useTypedSelector((state) => state.composer.stages);
+  const { activeStageId } = useTypedSelector((state) => state.composer);
 
   useEffect(() => {
     if (id) {

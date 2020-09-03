@@ -1,9 +1,6 @@
 import { Reducer } from 'redux';
 
-import {
-  initialState as StageListInitialState,
-  stageListReducer,
-} from './StageList/reducer';
+import { StageListAction } from './StageList/types';
 import {
   initialState as TaskListInitialState,
   taskListReducer,
@@ -16,6 +13,7 @@ import {
   Entity,
   JobStatus,
 } from './types';
+import { transformChecklist } from './utils';
 
 const initialState: ComposerState = {
   checklistState: ChecklistState.CREATING,
@@ -24,8 +22,16 @@ const initialState: ComposerState = {
   entityId: undefined,
   loading: false,
   jobStatus: JobStatus.UNASSIGNED,
-  stages: StageListInitialState,
   tasks: TaskListInitialState,
+
+  activeStageId: 0,
+  activeTaskId: 0,
+  activitiesById: {},
+  activitiesOrderInTaskInStage: {},
+  stagesById: {},
+  stagesOrder: [],
+  tasksById: {},
+  tasksOrderInStage: {},
 };
 
 const reducer: Reducer<ComposerState, ComposerActionType> = (
@@ -40,12 +46,23 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       return { ...state, loading: true };
 
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
+      const { entity, data } = action.payload;
+      const {
+        activitiesById,
+        activitiesOrderInTaskInStage,
+        stagesById,
+        stagesOrder,
+        tasksById,
+        tasksOrderInStage,
+      } = transformChecklist(
+        entity === Entity.CHECKLIST ? data : data?.checklist,
+      );
+
       return {
         ...state,
         data: action.payload.data,
         entityId: action.payload.data.id,
         loading: false,
-        stages: stageListReducer(state.stages, action),
         tasks: taskListReducer(state.tasks, action),
 
         ...(action.payload.entity === Entity.JOB
@@ -56,6 +73,16 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
               // TODO: make this as per the API response
               checklistState: ChecklistState.CREATING,
             }),
+
+        // new keys
+        activeStageId: stagesOrder[0],
+        activeTaskId: tasksOrderInStage[stagesOrder[0]][0],
+        activitiesById,
+        activitiesOrderInTaskInStage,
+        stagesById,
+        stagesOrder,
+        tasksById,
+        tasksOrderInStage,
       };
 
     case ComposerAction.RESET_COMPOSER:
@@ -68,13 +95,12 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
     case ComposerAction.COMPLETE_JOB:
       return { ...state, jobStatus: JobStatus.COMPLETED };
 
-    case ComposerAction.COMPLETE_JOB_WITH_EXCEPTION:
-      return { ...state, jobStatus: JobStatus.COMPLETED_WITH_EXCEPTION };
+    case StageListAction.SET_ACTIVE_STAGE:
+      return { ...state, activeStageId: action.payload.id };
 
     default:
       return {
         ...state,
-        stages: stageListReducer(state.stages, action),
         tasks: taskListReducer(state.tasks, action),
       };
   }

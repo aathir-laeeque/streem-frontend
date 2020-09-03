@@ -12,8 +12,8 @@ import {
   restartJob,
   startJob,
 } from './actions';
-import { Checklist } from './checklist.types';
-import { StageListState } from './StageList/types';
+import { Activity, Checklist, Stage, Task } from './checklist.types';
+import { StageListActionType } from './StageList/types';
 import { TaskListState } from './TaskList/types';
 
 export enum Entity {
@@ -44,6 +44,17 @@ export type ComposerProps = RouteComponentProps<{
   entity: Entity;
 };
 
+export type StagesById = Record<Stage['id'], Omit<Stage, 'tasks'>>;
+export type TasksById = Record<Task['id'], Omit<Task, 'activities'>>;
+export type ActivitiesById = Record<Activity['id'], Activity>;
+
+export type StagesOrder = Stage['id'][];
+export type TasksOrderInStage = Record<Stage['id'], Task['id'][]>;
+export type ActivitiesOrderInTaskInStage = Record<
+  Stage['id'],
+  Record<Task['id'], Activity['id'][]>
+>;
+
 export type ComposerState = {
   checklistState: ChecklistState;
   data?: Checklist | Job;
@@ -51,8 +62,19 @@ export type ComposerState = {
   entityId?: Checklist['id'] | Job['id'];
   loading: boolean;
   jobStatus: JobStatus;
-  stages: StageListState;
   tasks: TaskListState;
+
+  // some new keys
+  stagesById: StagesById;
+  tasksById: TasksById;
+  activitiesById: ActivitiesById;
+
+  stagesOrder: StagesOrder;
+  tasksOrderInStage: TasksOrderInStage;
+  activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage;
+
+  activeStageId: Stage['id'];
+  activeTaskId: Task['id'];
 };
 
 export enum ComposerAction {
@@ -69,17 +91,19 @@ export enum ComposerAction {
   START_JOB = '@@composer/START_JOB',
 }
 
-export type ComposerActionType = ReturnType<
-  | typeof fetchData
-  | typeof fetchDataError
-  | typeof fetchDataOngoing
-  | typeof fetchDataSuccess
-  | typeof resetComposer
-  | typeof publishChecklist
-  | typeof startJob
-  | typeof completeJob
-  | typeof restartJob
->;
+export type ComposerActionType =
+  | ReturnType<
+      | typeof fetchData
+      | typeof fetchDataError
+      | typeof fetchDataOngoing
+      | typeof fetchDataSuccess
+      | typeof resetComposer
+      | typeof publishChecklist
+      | typeof startJob
+      | typeof completeJob
+      | typeof restartJob
+    >
+  | StageListActionType;
 
 export type FetchDataArgs = {
   id: Checklist['id'] | Job['id'];

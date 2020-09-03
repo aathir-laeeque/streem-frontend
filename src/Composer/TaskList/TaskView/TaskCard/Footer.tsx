@@ -1,3 +1,4 @@
+import { Task } from '#Composer/checklist.types';
 import { ArrowRightAlt, CheckCircle } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC } from 'react';
@@ -71,6 +72,7 @@ const CompletedWrapper = styled.div.attrs({
 
 type FooterProps = {
   canSkipTask: boolean;
+  task: Omit<Task, 'activities'>;
 };
 
 const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
