@@ -8,3 +8,6 @@ export const executeActivity = (activity: Activity) =>
 
 export const updateExecutedActivity = (activity: Activity) =>
   actionSpreader(ActivityListAction.UPDATE_EXECUTE_ACTIVITY, { activity });
+
+export const setActivityError = (error: any, activityId: Activity['id']) =>
+  actionSpreader(ActivityListAction.SET_ACTIVITY_ERROR, { error, activityId });

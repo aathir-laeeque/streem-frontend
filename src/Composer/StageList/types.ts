@@ -27,3 +27,7 @@ export type StageCardProps = {
   isActive: boolean;
   stage: Stage;
 };
+
+export enum StageErrors {
+  E301 = 'STAGE_INCOMPLETE',
+}

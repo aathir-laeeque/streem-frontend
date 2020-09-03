@@ -32,6 +32,10 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
   }
 }
 
+export function* handleActivityErrorSaga(payload) {
+  console.log('came to handleActivityErrorSaga with payload ::: ', payload);
+}
+
 export function* ActivityListSaga() {
   yield takeLatest(ActivityListAction.EXECUTE_ACTIVITY, executeActivitySaga);
 }

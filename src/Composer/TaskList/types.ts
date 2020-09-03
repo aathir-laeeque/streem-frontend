@@ -30,6 +30,8 @@ export enum TaskListAction {
   SKIP_TASK = '@@composer/task-list/task/SKIP_TASK',
 
   UPDATE_TASK_EXECUTION_STATUS = '@@composer/task-list/task/UPDATE_TASK_EXECUTION_STATUS',
+
+  SET_TASK_ERROR = '@@composer/task-list/task/SET_TASK_ERROR',
 }
 
 export type TaskListActionType =
@@ -56,6 +58,12 @@ export type MediaCardProps = {
   isTaskActive: boolean;
 };
 
+export enum TaskAction {
+  START = 'start',
+  COMPLETE = 'complete',
+  SKIP = 'skip',
+}
+
 export enum StartedTaskStates {
   COMPLETED = 'COMPLETED',
   INPROGRESS = 'INPROGRESS',
@@ -72,3 +80,10 @@ export const TaskExecutionStatus = {
 };
 
 export type TaskExecutionStatus = typeof TaskExecutionStatus;
+
+export enum TaskErrors {
+  E201 = 'TASK_INCOMPLETE',
+  E202 = 'TASK_NOT_FOUND',
+}
+// TASK_INCOMPLETE("E201", "Task Incomplete"),
+// TASK_NOT_FOUND("E202", "Task Not Found"),

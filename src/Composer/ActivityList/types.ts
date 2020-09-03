@@ -18,6 +18,11 @@ export enum Selections {
 export enum ActivityListAction {
   EXECUTE_ACTIVITY = '@@composer/activity-list/activity/EXECUTE_ACTIVITY',
   UPDATE_EXECUTE_ACTIVITY = '@@composer/activity-list/activity/UPDATE_EXECUTE_ACTIVITY',
+  SET_ACTIVITY_ERROR = '@@composer/activity-list/activity/SET_ACTIVITY_ERROR',
 }
 
 export type ActivityListActionType = ReturnType<typeof updateExecutedActivity>;
+
+export enum ActivityErrors {
+  E401 = 'ACTIVITY_INCOMPLETE',
+}

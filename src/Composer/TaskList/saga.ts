@@ -3,13 +3,23 @@ import { ModalNames } from '#components/ModalContainer/types';
 import { RootState } from '#store';
 import { apiPerformActionOnTask } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
+import { Error } from '../../utils/globalTypes';
+import { setActivityError } from '../ActivityList/actions';
+import { ActivityErrors } from '../ActivityList/types';
+import { Task } from '../checklist.types';
 import { setActiveStage } from '../StageList/actions';
-import { StageListAction } from '../StageList/types';
+import { StageListAction, StageErrors } from '../StageList/types';
 import { JobStatus } from '../types';
-import { setTasksList, startTask, updateTaskExecutionStatus } from './actions';
-import { TaskListAction } from './types';
+import {
+  setTaskError,
+  setTasksList,
+  startTask,
+  updateTaskExecutionStatus,
+} from './actions';
+import { TaskAction, TaskListAction, TaskErrors } from './types';
+import { handleActivityErrorSaga } from '../ActivityList/saga';
 
 function* setTasksSaga({ payload }: ReturnType<typeof setActiveStage>) {
   try {
@@ -23,6 +33,57 @@ function* setTasksSaga({ payload }: ReturnType<typeof setActiveStage>) {
   }
 }
 
+type ErrorGroups = {
+  stagesErrors: Error[];
+  tasksErrors: Error[];
+  activitiesErrors: Error[];
+};
+
+const groupJobErrors = (errors: Error[]) =>
+  errors.reduce<ErrorGroups>(
+    (acc, error) => {
+      if (error.code in ActivityErrors) {
+        acc.activitiesErrors.push(error);
+      } else if (error.code in TaskErrors) {
+        acc.tasksErrors.push(error);
+      } else if (error.code in StageErrors) {
+        acc.stagesErrors.push(error);
+      }
+
+      return acc;
+    },
+    { stagesErrors: [], tasksErrors: [], activitiesErrors: [] },
+  );
+
+type TaskErrorSagaPayload = ErrorGroups & {
+  taskId: Task['id'];
+};
+
+function* taskCompleteErrorSaga(payload: TaskErrorSagaPayload) {
+  const { activitiesErrors, taskId, tasksErrors } = payload;
+
+  if (tasksErrors.length) {
+    console.log('handle task level error here');
+  } else if (activitiesErrors.length) {
+    console.log('handle activities level error here');
+    yield all(
+      activitiesErrors.map((error) =>
+        call(handleActivityErrorSaga, { error, taskId }),
+      ),
+    );
+  }
+
+  yield put(setTaskError('Activity Incomplete', taskId));
+}
+
+function* taskStartErrorSaga(payload: TaskErrorSagaPayload) {
+  console.log('payload frm taskStartErrorSaga :: ', payload);
+}
+
+function* taskSkipErrorSaga(payload: TaskErrorSagaPayload) {
+  console.log('payload frm taskSkipErrorSaga :: ', payload);
+}
+
 function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
   try {
     console.log('came to performActionOnTaskSaga with payload :: ', payload);
@@ -32,21 +93,35 @@ function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
 
     const isJobStarted = jobStatus === JobStatus.INPROGRESS;
 
-    const { taskId } = payload;
+    const { taskId, action } = payload;
 
     if (isJobStarted) {
       console.log('make api call to start the task with taskId :: ', taskId);
 
-      const { data } = yield call(
+      const { data, errors } = yield call(
         request,
         'PUT',
-        apiPerformActionOnTask(taskId, payload.action),
+        apiPerformActionOnTask(taskId, action),
         { data: { jobId } },
       );
 
-      console.log('data from start task api call :: ', data);
+      if (data) {
+        console.log('data from start task api call :: ', data);
 
-      yield put(updateTaskExecutionStatus(taskId, data));
+        yield put(updateTaskExecutionStatus(taskId, data));
+      } else {
+        console.log('Error came is perform action on task api ::: ', errors);
+
+        const groupedErrors = groupJobErrors(errors);
+
+        if (action === TaskAction.COMPLETE) {
+          yield taskCompleteErrorSaga({ ...groupedErrors, taskId });
+        } else if (action === TaskAction.START) {
+          yield taskStartErrorSaga(errors);
+        } else if (action === TaskAction.SKIP) {
+          yield taskSkipErrorSaga(errors);
+        }
+      }
     } else {
       console.log('open modal to start the job');
       yield put(
