@@ -1,7 +1,7 @@
 import { Task } from '#Composer/checklist.types';
 import { ArrowRightAlt, CheckCircle } from '@material-ui/icons';
 import moment from 'moment';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 
@@ -89,6 +89,8 @@ const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
 const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   const dispatch = useDispatch();
 
+  const [shouldAskForReason, setAskForReason] = useState(false);
+
   const {
     audit: { modifiedBy, modifiedAt },
     status: taskExecutionStatus,
@@ -117,29 +119,53 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
       </CompletedWrapper>
     );
   } else if (task.taskExecution.status === TaskExecutionStatus.INPROGRESS) {
-    return (
-      <Wrapper>
-        <button
-          className="complete-task"
-          onClick={() => dispatch(completeTask(task.id))}
-        >
-          Complete Task <ArrowRightAlt className="icon" />
-        </button>
+    if (shouldAskForReason) {
+      return <div>ask for reason </div>;
+    } else {
+      return (
+        <Wrapper>
+          <button
+            className="complete-task"
+            onClick={() => {
+              console.log(
+                'condition :: ',
+                moment().diff(moment(task.taskExecution.startedAt)) >
+                  task.maxPeriod,
+              );
 
-        <button
-          className="skip-task"
-          onClick={() => dispatch(skipTask(task.id))}
-        >
-          {canSkipTask ? 'Skip the task' : 'Force close task'}
-        </button>
+              if (
+                task.timed &&
+                moment().diff(moment(task.taskExecution.startedAt)) >
+                  task.maxPeriod
+              ) {
+                console.log(
+                  'ask for reason if the timer is exceeded than the defined time :: ',
+                );
 
-        {activitiesHasError ? (
-          <div className="error-badge">
-            Mandatory Activity is incomplete, you cannot complete this Task,
-          </div>
-        ) : null}
-      </Wrapper>
-    );
+                setAskForReason(true);
+              } else {
+                dispatch(completeTask(task.id));
+              }
+            }}
+          >
+            Complete Task <ArrowRightAlt className="icon" />
+          </button>
+
+          <button
+            className="skip-task"
+            onClick={() => dispatch(skipTask(task.id))}
+          >
+            {canSkipTask ? 'Skip the task' : 'Force close task'}
+          </button>
+
+          {activitiesHasError ? (
+            <div className="error-badge">
+              Mandatory Activity is incomplete, you cannot complete this Task,
+            </div>
+          ) : null}
+        </Wrapper>
+      );
+    }
   }
 
   return null;
