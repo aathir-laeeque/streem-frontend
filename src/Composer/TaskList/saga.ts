@@ -6,14 +6,19 @@ import { request } from '#utils/request';
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { Error } from '../../utils/globalTypes';
-import { handleActivityErrorSaga } from '../ActivityList/saga';
+import { setActivityError } from '../ActivityList/actions';
 import { ActivityErrors } from '../ActivityList/types';
 import { Task } from '../checklist.types';
 import { StageErrors } from '../StageList/types';
 import { JobStatus } from '../types';
-import { setTaskError, startTask, updateTaskExecutionStatus } from './actions';
+import {
+  completeTask,
+  setTaskError,
+  skipTask,
+  startTask,
+  updateTaskExecutionStatus,
+} from './actions';
 import { TaskAction, TaskErrors, TaskListAction } from './types';
-import { setActivityError } from '../ActivityList/actions';
 
 type ErrorGroups = {
   stagesErrors: Error[];
@@ -56,7 +61,9 @@ function* taskCompleteErrorSaga(payload: TaskErrorSagaPayload) {
   yield put(setTaskError('Activity Incomplete', taskId));
 }
 
-function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
+function* performActionOnTaskSaga({
+  payload,
+}: ReturnType<typeof startTask | typeof completeTask | typeof skipTask>) {
   try {
     console.log('came to performActionOnTaskSaga with payload :: ', payload);
 
@@ -66,14 +73,19 @@ function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
 
     const isJobStarted = jobStatus === JobStatus.INPROGRESS;
 
-    const { taskId, action } = payload;
+    const { taskId, action, delayReason } = payload;
 
     if (isJobStarted) {
       const { data, errors } = yield call(
         request,
         'PUT',
         apiPerformActionOnTask(taskId, action),
-        { data: { jobId } },
+        {
+          data: {
+            jobId,
+            ...(delayReason && { reason: delayReason }),
+          },
+        },
       );
 
       if (data) {

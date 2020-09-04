@@ -18,8 +18,9 @@ export const updateTaskExecutionStatus = (taskId: Task['id'], data: any) =>
     data,
   });
 
-export const completeTask = (taskId: Task['id']) =>
+export const completeTask = (taskId: Task['id'], delayReason?: string) =>
   actionSpreader(TaskListAction.COMPLETE_TASK, {
+    delayReason,
     taskId,
     action: TaskAction.COMPLETE,
   });

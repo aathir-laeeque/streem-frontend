@@ -52,6 +52,34 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
+const DelayWrapper = styled.div`
+  display: flex;
+  padding: 32px;
+  flex-direction: column;
+
+  .buttons-container {
+    margin-top: 16px;
+
+    button {
+      border: 1px solid transparent;
+      outline: none;
+      padding: 10px 24px;
+      background: transparent;
+
+      :first-child {
+        border-color: #1d84ff;
+        color: #1d84ff;
+      }
+
+      :last-child {
+        margin-left: 24px;
+        border-color: #ff6b6b;
+        color: #ff6b6b;
+      }
+    }
+  }
+`;
+
 const CompletedWrapper = styled.div.attrs({
   className: '',
 })`
@@ -90,6 +118,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   const dispatch = useDispatch();
 
   const [shouldAskForReason, setAskForReason] = useState(false);
+  const [delayReason, setDelayReason] = useState('');
 
   const {
     audit: { modifiedBy, modifiedAt },
@@ -120,7 +149,30 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
     );
   } else if (task.taskExecution.status === TaskExecutionStatus.INPROGRESS) {
     if (shouldAskForReason) {
-      return <div>ask for reason </div>;
+      return (
+        <DelayWrapper>
+          <div className="new-form-field">
+            <label className="new-form-field-label">
+              State your reason for delay
+            </label>
+            <textarea
+              className="new-form-field-textarea"
+              name="reason"
+              value={delayReason}
+              rows={4}
+              onChange={(e) => setDelayReason(e.target.value)}
+            />
+          </div>
+          <div className="buttons-container">
+            <button
+              onClick={() => dispatch(completeTask(task.id, delayReason))}
+            >
+              Submit
+            </button>
+            <button>Cancel</button>
+          </div>
+        </DelayWrapper>
+      );
     } else {
       return (
         <Wrapper>

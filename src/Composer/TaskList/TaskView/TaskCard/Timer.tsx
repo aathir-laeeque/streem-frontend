@@ -20,8 +20,14 @@ const formatTime = (period: number) => {
 };
 
 const Timer: FC = ({ task }) => {
+  const { status, startedAt, endedAt } = task.taskExecution;
+
+  const isTaskCompleted = status === TaskExecutionStatus.COMPLETED;
+
   const [timeElapsed, setTimeElapsed] = useState(
-    moment().diff(moment(task.taskExecution.startedAt)),
+    isTaskCompleted
+      ? moment(endedAt).diff(moment(startedAt))
+      : moment().diff(moment(startedAt)),
   );
 
   const [isLimitCrossed, setLimitCrossed] = useState(false);
@@ -29,9 +35,9 @@ const Timer: FC = ({ task }) => {
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined = undefined;
 
-    if (task.taskExecution.status === TaskExecutionStatus.INPROGRESS) {
+    if (status === TaskExecutionStatus.INPROGRESS) {
       interval = setInterval(() => {
-        setTimeElapsed(moment().diff(moment(task.taskExecution.startedAt)));
+        setTimeElapsed(moment().diff(moment(startedAt)));
       }, 1000);
     }
 
