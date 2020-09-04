@@ -79,7 +79,11 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
         }
       }}
     >
-      <Header task={task} showStartButton={showStartButton} />
+      <Header
+        task={task}
+        showStartButton={showStartButton}
+        isTaskStarted={isTaskStarted}
+      />
 
       <ActivityList
         activities={activities}

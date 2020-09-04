@@ -27,7 +27,6 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
                 <div
                   className="item-content"
                   onClick={() => {
-                    console.log('original activity :: ', activity);
                     dispatch(
                       executeActivity({
                         ...activity,
