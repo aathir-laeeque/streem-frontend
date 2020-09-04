@@ -152,7 +152,7 @@ export const LabeledInput: FC<LabeledInputProps> = ({
       <div className="outerwrapper">
         <div
           className={`wrapper ${state.isActive ? 'active' : ''}
-          ${error ? 'error' : ''}
+          ${error !== undefined ? 'error' : ''}
           ${disabled ? 'disabled' : ''}`}
         >
           <label className={state.className}>{label}</label>
@@ -173,7 +173,9 @@ export const LabeledInput: FC<LabeledInputProps> = ({
           />
           {icon && <div className="icon">{icon}</div>}
         </div>
-        {error && <span className="optional-text error">{error}</span>}
+        {error && error !== '' && (
+          <span className="optional-text error">{error}</span>
+        )}
         {!required && <span className="optional-text">Optional</span>}
       </div>
     </Wrapper>

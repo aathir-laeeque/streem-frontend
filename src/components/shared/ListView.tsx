@@ -1,6 +1,6 @@
 import { Properties } from '#store/properties/types';
 import { ArrowDropDown, Search } from '@material-ui/icons';
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Checklist } from '#views/Checklists/types';
 import { Users } from '#store/users/types';
 import { Job } from '#views/Jobs/types';
@@ -221,7 +221,7 @@ export const ListView: FC<ListViewProps> = ({
         div.removeEventListener('scroll', handleOnScroll);
       };
     }
-  }, [isLast]);
+  }, [isLast, currentPage]);
 
   const handleOnScroll = (e: Record<string, any>) => {
     if (scroller && scroller.current && e.target) {

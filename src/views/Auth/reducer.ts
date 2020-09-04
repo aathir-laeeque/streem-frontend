@@ -22,7 +22,6 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
       return {
         ...state,
         loading: false,
-        isLoggedIn: true,
         userId: action.payload?.id,
         token: action.payload?.token,
         refreshToken: action.payload?.refreshToken,
@@ -34,13 +33,14 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
     case AuthAction.FORGOT_PASSWORD_SUCCESS:
       return { ...state, loading: false, resetRequested: true };
     case AuthAction.LOGIN_ERROR:
-      return { ...state, loading: false, error: action.payload?.error };
+    case AuthAction.FORGOT_PASSWORD_ERROR:
+      return { ...state, loading: false, error: action.payload };
     case AuthAction.FETCH_PROFILE_SUCCESS:
       return { ...state, profile: action.payload };
     case AuthAction.UPDATE_PROFILE_SUCCESS:
       return { ...state, profile: { ...state.profile, ...action.payload } };
     case AuthAction.REFRESH_TOKEN_SUCCESS:
-      return { ...state, token: action.payload?.token };
+      return { ...state, isLoggedIn: true, token: action.payload?.token };
     default:
       return state;
   }

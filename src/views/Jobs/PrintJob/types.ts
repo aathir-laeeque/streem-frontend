@@ -1,3 +1,5 @@
 import { RouteComponentProps } from '@reach/router';
 
-export type PrintJobProps = RouteComponentProps;
+export type PrintJobProps = RouteComponentProps<{
+  jobId: string;
+}>;

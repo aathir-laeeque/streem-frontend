@@ -31,9 +31,9 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
       console.log('no id got to fetch data');
     }
 
-    // return () => {
-    //   dispatch(resetComposer());
-    // };
+    return () => {
+      dispatch(resetComposer());
+    };
   }, []);
 
   return (

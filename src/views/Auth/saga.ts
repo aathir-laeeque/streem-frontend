@@ -45,18 +45,19 @@ import { call, put, takeLatest, delay, select } from 'redux-saga/effects';
 import { AuthAction, LoginResponse, RefreshTokenResponse } from './types';
 
 const getRefreshToken = (state: any) => state.auth.refreshToken;
+const getUserId = (state: any) => state.auth.userId;
 
 function* refreshTokenPollSaga() {
   try {
-    while (true) {
+    const userId = yield select(getUserId);
+    while (userId) {
       const token = yield select(getRefreshToken);
       yield put(refreshToken({ token }));
       yield delay(295000);
-      // yield delay(5000);
     }
   } catch (error) {
     console.error(
-      'error from refreshTokenPeriodically function in Auth :: ',
+      'error from refreshTokenPollSaga function in Auth :: ',
       error,
     );
   }
@@ -74,8 +75,14 @@ function* refreshTokenSaga({ payload }: ReturnType<typeof refreshToken>) {
     );
 
     if (errors) {
-      yield call(persistor.purge);
-      return false;
+      yield put(logOutSuccess());
+      yield put(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: 'Token Expired',
+        }),
+      );
+      throw 'Token Expired';
     }
 
     yield put(refreshTokenSuccess(data));
@@ -97,19 +104,13 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
     );
 
     if (errors) {
-      return false;
+      throw 'Provided credentials are incorrect. Please check and try again.';
     }
 
     yield put(loginSuccess(data));
-    yield put(fetchProfile({ id: data.id }));
     yield put(refreshTokenPoll());
+    yield put(fetchProfile({ id: data.id }));
   } catch (error) {
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: 'Sorry, Try Again Later',
-      }),
-    );
     console.error('error from loginSaga function in Auth :: ', error);
     yield put(loginError(error));
   }
@@ -124,7 +125,7 @@ function* logOutSaga() {
     );
 
     if (errors) {
-      return false;
+      throw 'Logout Error';
     }
 
     yield put(
@@ -134,10 +135,18 @@ function* logOutSaga() {
       }),
     );
     yield put(logOutSuccess());
-    yield call(persistor.purge);
   } catch (error) {
     console.error('error from logOutSaga function in Auth :: ', error);
     yield put(logOutError(error));
+  }
+}
+
+function* logOutSuccessSaga() {
+  try {
+    yield call(persistor.purge);
+    navigate('/auth/login');
+  } catch (error) {
+    console.error('error from logOutSuccessSaga function in Auth :: ', error);
   }
 }
 
@@ -196,7 +205,7 @@ function* forgotPasswordSaga({ payload }: ReturnType<typeof forgotPassword>) {
     );
 
     if (errors) {
-      return false;
+      throw 'This email ID doesn’t exist in our system. Please make sure it is entered correctly.';
     }
 
     yield put(forgotPasswordSuccess());
@@ -267,6 +276,7 @@ function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
 export function* AuthSaga() {
   yield takeLatest(AuthAction.LOGIN, loginSaga);
   yield takeLatest(AuthAction.LOGOUT, logOutSaga);
+  yield takeLatest(AuthAction.LOGOUT_SUCCESS, logOutSuccessSaga);
   yield takeLatest(AuthAction.REFRESH_TOKEN_POLL, refreshTokenPollSaga);
   yield takeLatest(AuthAction.REFRESH_TOKEN, refreshTokenSaga);
   yield takeLatest(AuthAction.FETCH_PROFILE, fetchProfileSaga);

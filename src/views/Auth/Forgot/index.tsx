@@ -13,8 +13,11 @@ type Inputs = {
 };
 
 const Forgot: FC<ForgotProps> = () => {
-  const { resetRequested } = useTypedSelector((state) => state.auth);
-  const { register, handleSubmit } = useForm<Inputs>();
+  const { resetRequested, error } = useTypedSelector((state) => state.auth);
+  const { register, handleSubmit, errors } = useForm<Inputs>({
+    mode: 'onChange',
+    criteriaMode: 'all',
+  });
   const [emailSentTo, setEmailSentTo] = useState('');
   const dispatch = useDispatch();
 
@@ -70,7 +73,13 @@ const Forgot: FC<ForgotProps> = () => {
               placeHolder="Enter your Email ID"
               label="Email ID"
               id="email"
-              // error="This email ID doesn’t exist in our system. Please make sure it is correctly entered."
+              error={
+                errors.email?.type
+                  ? errors['email']?.message
+                  : error
+                  ? error
+                  : undefined
+              }
             />
           </div>
           <div className="row" style={{ paddingTop: '20px' }}>

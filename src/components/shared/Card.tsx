@@ -23,6 +23,14 @@ const Wrapper = styled.div.attrs({})`
     box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2),
       0 3px 3px -2px rgba(0, 0, 0, 0.12), 0 3px 4px 0 rgba(0, 0, 0, 0.14);
 
+    .error-span {
+      color: #ff6b6b;
+      align-self: center;
+      padding-bottom: 8px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
     .wrapper {
       border-bottom: none;
       border-top-left-radius: 4px;

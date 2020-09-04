@@ -32,6 +32,12 @@ const ListView: FC<ListViewProps> = () => {
       TabContent,
       passThroughTabContentProps,
     },
+    {
+      label: JobStatus.COMPLETED,
+      active: false,
+      TabContent,
+      passThroughTabContentProps,
+    },
   ]);
 
   return (

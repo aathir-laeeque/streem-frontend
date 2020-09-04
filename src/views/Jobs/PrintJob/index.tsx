@@ -4,7 +4,12 @@ import {
   Activity,
   ActivityType,
 } from '#views/Checklists/ChecklistComposer/TaskList/TaskView/ActivityList/Activity/types';
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { PrintJobProps } from './types';
+import { fetchData } from '../../../Composer/actions';
+import { TaskExecutionStatus } from '../../../Composer/TaskList/types';
+import { User } from '#store/users/types';
 import checkmark from '#assets/images/checkmark.png';
 import handIcon from '#assets/images/hand.png';
 import clockIcon from '#assets/images/clock.png';
@@ -19,6 +24,7 @@ import {
   Image,
 } from '@react-pdf/renderer';
 import moment from 'moment';
+import { Entity, JobStatus } from '#Composer/types';
 
 const now = moment().format('Do MMM, YYYY, h a');
 
@@ -346,21 +352,54 @@ const TabLookLike = ({
   </View>
 );
 
-const Assigness = () => {
-  const rows = [];
-  for (let i = 0; i < 8; i++) {
-    rows.push(
-      <View style={styles.assigneRow}>
-        <View style={[styles.flexView, styles.assigneInput]} />
+const Assigness = ({
+  assignees,
+  jobStatus,
+}: {
+  assignees: User[];
+  jobStatus: string;
+}) => {
+  let rows = [];
+  console.log('jobStatus', jobStatus);
+  console.log('assignees', assignees);
+  if (jobStatus === JobStatus.UNASSIGNED) {
+    for (let i = 0; i < 8; i++) {
+      rows.push(
+        <View style={styles.assigneRow} key={`assignes_${i}`}>
+          <View style={[styles.flexView, styles.assigneInput]} />
+
+          <View
+            style={[
+              styles.flexView,
+              styles.assigneInput,
+              { margin: '0px 8px' },
+            ]}
+          />
+
+          <View style={[styles.flexView, styles.assigneInput]} />
+        </View>,
+      );
+    }
+  } else {
+    rows = assignees.map(({ firstName, lastName, employeeId }) => (
+      <View style={styles.assigneRow} key={`assignes_${employeeId}`}>
+        <View style={[styles.flexView, styles.assigneInput]}>
+          <Text style={styles.text12}>{firstName}</Text>
+        </View>
 
         <View
           style={[styles.flexView, styles.assigneInput, { margin: '0px 8px' }]}
-        />
+        >
+          <Text style={styles.text12}>{lastName}</Text>
+        </View>
 
-        <View style={[styles.flexView, styles.assigneInput]} />
-      </View>,
-    );
+        <View style={[styles.flexView, styles.assigneInput]}>
+          <Text style={styles.text12}>{employeeId}</Text>
+        </View>
+      </View>
+    ));
   }
+
   return (
     <View
       style={[
@@ -389,10 +428,20 @@ const Assigness = () => {
   );
 };
 
-const MyPrintJob: FC = () => {
+const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
   const { data } = useTypedSelector((state) => state.composer);
-  const { checklist, ...jobExtras } = data;
   const { profile } = useTypedSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (jobId) {
+      dispatch(fetchData({ id: parseInt(jobId, 10), entity: Entity.JOB }));
+    }
+  }, []);
+
+  if (!data || !profile) return null;
+
+  const { checklist, ...jobExtras } = data;
 
   const activityTemplateFormatter = (
     activity: Activity,
@@ -632,10 +681,6 @@ const MyPrintJob: FC = () => {
     }
   };
 
-  if (!profile) {
-    return null;
-  }
-
   return (
     <PDFViewer style={{ width: '100%', height: '100%' }}>
       <Document>
@@ -646,11 +691,6 @@ const MyPrintJob: FC = () => {
               <Text style={[styles.text12, { fontWeight: 'bold' }]}>
                 Job ID : {jobExtras.code}
               </Text>
-              {/* <Text
-                style={[styles.text12, { fontWeight: 'bold', marginLeft: 24 }]}
-              >
-                Job Status : {jobExtras.status}
-              </Text> */}
             </View>
           </View>
 
@@ -716,7 +756,10 @@ const MyPrintJob: FC = () => {
                   />
                 </View>
               </View>
-              <Assigness />
+              <Assigness
+                assignees={jobExtras.assignees}
+                jobStatus={jobExtras.status}
+              />
             </TabLookLike>
 
             <TabLookLike title="Stage and Task Details">
@@ -746,6 +789,11 @@ const MyPrintJob: FC = () => {
                   />
                 </View>
                 {(stage.tasks as Array<Task>).map((task, taskIndex: number) => {
+                  const {
+                    startedAt,
+                    audit: { modifiedBy, modifiedAt },
+                    status: taskExecutionStatus,
+                  } = task.taskExecution;
                   return (
                     <View style={styles.taskView} key={`${task.id}`}>
                       <View style={styles.taskHeader} wrap={false}>
@@ -758,12 +806,15 @@ const MyPrintJob: FC = () => {
                               style={[
                                 styles.taskStartDateInput,
                                 {
-                                  letterSpacing: 2.6,
+                                  letterSpacing: 2.5,
                                   margin: '8px 0px 2px 0px',
                                 },
                               ]}
                             >
-                              ___/__/____
+                              {taskExecutionStatus !==
+                              TaskExecutionStatus.NOT_STARTED
+                                ? moment(startedAt).format('MMM DD YYYY')
+                                : '___/__/____'}
                             </Text>
                             <Text style={styles.taskStartDateInput}>
                               MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;YYYY
@@ -782,7 +833,10 @@ const MyPrintJob: FC = () => {
                                 },
                               ]}
                             >
-                              __:__ am / pm
+                              {taskExecutionStatus !==
+                              TaskExecutionStatus.NOT_STARTED
+                                ? moment(startedAt).format('HH:MM a')
+                                : '__:__ am / pm'}
                             </Text>
                             <Text style={styles.taskStartDateInput}>
                               HH&nbsp;&nbsp;MM
@@ -880,7 +934,7 @@ const MyPrintJob: FC = () => {
                       <View style={styles.taskFooter} wrap={false}>
                         <View style={styles.flexView}>
                           <Text style={styles.taskFooterLabel}>First Name</Text>
-                          <View style={styles.taskFooterInputs} />
+                          <View style={styles.taskFooterInputs}></View>
                         </View>
                         <View
                           style={[

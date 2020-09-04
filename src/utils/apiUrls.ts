@@ -54,6 +54,10 @@ export const apiCompleteTask = (taskId: Task['id']) =>
 export const apiUploadFile = () => `${baseUrl}/files/`;
 
 // Auth
+
+export const apiCheckUsername = (username: string) =>
+  `${baseUrl}/users/check-username?username=${username}`;
+
 export const apiLogin = () => `${baseUrl}/auth/login`;
 
 export const apiLogOut = () => `${baseUrl}/auth/logout`;

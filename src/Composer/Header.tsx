@@ -69,28 +69,58 @@ const JobButton: FC<{
   const dispatch = useDispatch();
 
   if (jobStatus === JobStatus.ASSIGNED) {
-    return <Button onClick={() => dispatch(startJob(jobId))}>Start Job</Button>;
-  } else if (jobStatus === JobStatus.INPROGRESS) {
     return (
-      <div className="dropdown-button">
+      <>
         <Button
           onClick={() => {
-            dispatch(completeJob(isCompleteWithException));
+            window.open(`print/${jobId}`, '_blank');
           }}
         >
-          {isCompleteWithException ? 'Complete with exception' : 'Complete Job'}
+          Print Checklist
         </Button>
-        <div
-          onClick={() => setIsCompleteWithException(!isCompleteWithException)}
-          className="drop-menu"
-        >
-          <ArrowDropDown className="icon" />
-        </div>
-      </div>
+        <Button onClick={() => dispatch(startJob(jobId))}>Start Job</Button>
+      </>
     );
-  } else if (jobStatus === JobStatus.UNASSIGNED) {
+  } else if (jobStatus === JobStatus.INPROGRESS) {
     return (
-      <Button onClick={() => navigate(`print/${jobId}`)}>
+      <>
+        <Button
+          onClick={() => {
+            window.open(`print/${jobId}`, '_blank');
+          }}
+        >
+          Print Checklist
+        </Button>
+        <div className="dropdown-button">
+          <Button
+            onClick={() => {
+              dispatch(completeJob(isCompleteWithException));
+            }}
+          >
+            {isCompleteWithException
+              ? 'Complete with exception'
+              : 'Complete Job'}
+          </Button>
+          <div
+            onClick={() => setIsCompleteWithException(!isCompleteWithException)}
+            className="drop-menu"
+          >
+            <ArrowDropDown className="icon" />
+          </div>
+        </div>
+      </>
+    );
+  } else if (
+    jobStatus === JobStatus.UNASSIGNED ||
+    jobStatus === JobStatus.COMPLETED ||
+    jobStatus === JobStatus.COMPLETED_WITH_EXCEPTION
+  ) {
+    return (
+      <Button
+        onClick={() => {
+          window.open(`print/${jobId}`, '_blank');
+        }}
+      >
         Print Checklist
       </Button>
     );

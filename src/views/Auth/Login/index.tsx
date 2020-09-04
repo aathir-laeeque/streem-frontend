@@ -1,5 +1,6 @@
 import { Button, Card, LabeledInput, Terms } from '#components';
 import { ValidatorProps } from '#utils/globalTypes';
+import { useTypedSelector } from '#store';
 import { Visibility } from '@material-ui/icons';
 import { Link } from '@reach/router';
 import React, { FC, useState, useEffect } from 'react';
@@ -40,6 +41,7 @@ const validators: ValidatorProps = {
 const Login: FC<LoginProps> = () => {
   const dispatch = useDispatch();
   const [passwordInputType, setPasswordInputType] = useState(true);
+  const { error } = useTypedSelector((state) => state.auth);
 
   const { register, handleSubmit, errors } = useForm<Inputs>({
     mode: 'onChange',
@@ -69,7 +71,9 @@ const Login: FC<LoginProps> = () => {
             error={
               errors.username?.type
                 ? validators['username'].messages[errors.username?.type]
-                : ''
+                : error
+                ? ''
+                : undefined
             }
             placeHolder="Enter your username or Email ID"
             label="Username/Email ID"
@@ -84,7 +88,9 @@ const Login: FC<LoginProps> = () => {
             error={
               errors.password?.type
                 ? validators['password'].messages[errors.password?.type]
-                : ''
+                : error
+                ? ''
+                : undefined
             }
             type={passwordInputType ? 'password' : 'text'}
             icon={
@@ -104,7 +110,15 @@ const Login: FC<LoginProps> = () => {
             Forgot password?
           </Link>
         </div>
-        <div className="row" style={{ paddingTop: '20px' }}>
+        <div
+          className="row"
+          style={{
+            paddingTop: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {error && <span className="error-span">{error}</span>}
           <Button className="primary-button" type="submit">
             Login
           </Button>

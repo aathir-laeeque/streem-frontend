@@ -39,6 +39,7 @@ export interface ListViewState {
 export enum JobStatus {
   ASSIGNED = 'assigned',
   UNASSIGNED = 'unassigned',
+  COMPLETED = 'completed',
 }
 
 export enum ListViewAction {

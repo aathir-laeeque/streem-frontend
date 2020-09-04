@@ -10,7 +10,7 @@ export const login = (payload: { username: string; password: string }) =>
 export const loginSuccess = (data: LoginResponse) =>
   actionSpreader(AuthAction.LOGIN_SUCCESS, data);
 
-export const loginError = (error: any) =>
+export const loginError = (error: string) =>
   actionSpreader(AuthAction.LOGIN_ERROR, error);
 
 // LOGOUT ACTIONS

@@ -1,9 +1,12 @@
 import React, { FC, useEffect, useState } from 'react';
 import { LabeledInput, Button, Terms, Card } from '#components';
+import { apiCheckUsername } from '#utils/apiUrls';
 import { RegisterProps } from './types';
+import { debounce } from 'lodash';
 import { Visibility } from '@material-ui/icons';
 import { Link } from '@reach/router';
 import { useDispatch } from 'react-redux';
+import { request } from '#utils/request';
 import { register as registerAction } from '../actions';
 import { useForm, ValidationRules } from 'react-hook-form';
 
@@ -37,7 +40,14 @@ const validators: ValidatorProps = {
 };
 
 const Register: FC<RegisterProps> = ({ name, email, token }) => {
-  const { register, handleSubmit, trigger, errors } = useForm<Inputs>({
+  const {
+    register,
+    handleSubmit,
+    trigger,
+    errors,
+    setError,
+    clearErrors,
+  } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
     defaultValues: {
@@ -54,6 +64,8 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
     trigger('password');
     document.getElementById('username')?.focus();
   }, []);
+
+  console.log('errors', errors);
 
   const onSubmit = (data: Inputs) => {
     const { password, username } = data;
@@ -103,11 +115,34 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
             label="Username"
             id="username"
             type="text"
+            error={errors['username']?.message}
             refFun={register({
               required: true,
               pattern: {
                 value: /^[a-z0-9]+$/i,
                 message: 'Invalid Username',
+              },
+              validate: async (value) => {
+                return new Promise((resolve) => {
+                  debounce(
+                    async (username) => {
+                      const { data } = await request(
+                        'GET',
+                        apiCheckUsername(username),
+                      );
+                      let message = '';
+                      if (!data) {
+                        message = 'Username Already Taken';
+                        setError('username', { message });
+                      } else {
+                        clearErrors('username');
+                      }
+                      resolve(message);
+                    },
+                    500,
+                    { leading: true },
+                  )(value);
+                });
               },
             })}
           />

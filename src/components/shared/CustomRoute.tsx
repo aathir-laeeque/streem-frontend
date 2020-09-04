@@ -5,7 +5,7 @@ import { refreshTokenPoll } from '#views/Auth/actions';
 import React, { FC } from 'react';
 
 type Props = RouteComponentProps & {
-  as: FC;
+  as: FC | FC<RouteComponentProps<{ id: string }>>;
   isProtected?: boolean;
 };
 
@@ -21,18 +21,19 @@ export const CustomRoute: FC<Props> = ({
   ...props
 }) => {
   const { ...rest } = props;
-  const { profile, isRefreshing } = useTypedSelector((state) => state.auth);
+  const { profile, isRefreshing, isLoggedIn } = useTypedSelector(
+    (state) => state.auth,
+  );
   const dispatch = useDispatch();
 
   let currentState = SessionStates.INACTIVE;
 
   if (profile) {
     const { verified, archived } = profile;
-    if (!isRefreshing) dispatch(refreshTokenPoll());
-    if (verified) currentState = SessionStates.ACTIVE;
+    if (!isRefreshing && rest.path !== 'jobs/print/:jobId')
+      dispatch(refreshTokenPoll());
+    if (verified && isLoggedIn) currentState = SessionStates.ACTIVE;
   }
-  // console.log('active', active);
-  // console.log('archived', archived);
 
   if (!isProtected) {
     switch (currentState) {

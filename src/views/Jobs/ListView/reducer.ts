@@ -36,6 +36,19 @@ const initialState: ListViewState = {
         empty: true,
       },
     },
+    completed: {
+      list: [],
+      pageable: {
+        page: 0,
+        pageSize: 10,
+        numberOfElements: 0,
+        totalPages: 0,
+        totalElements: 0,
+        first: true,
+        last: true,
+        empty: true,
+      },
+    },
   },
 };
 
@@ -50,6 +63,7 @@ const reducer = (
 
     case ListViewAction.FETCH_JOBS_SUCCESS:
       const { data, pageable, type } = action.payload;
+      console.log('type', type);
       if (data && type && pageable) {
         const oldList = pageable?.page === 0 ? [] : jobs[type].list;
         jobs[type].list = [...oldList, ...data];
