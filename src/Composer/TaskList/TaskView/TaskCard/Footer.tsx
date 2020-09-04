@@ -132,7 +132,6 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         <span>
           Task Completed by {generateName(modifiedBy)}, ID: {modifiedBy.id} on{' '}
           {moment(modifiedAt).format('MMM D, h:mm A')}
-          {}
         </span>
       </CompletedWrapper>
     );

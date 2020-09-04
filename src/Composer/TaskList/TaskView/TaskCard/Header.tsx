@@ -1,5 +1,6 @@
 import { useTypedSelector } from '#store';
 import { PanTool } from '@material-ui/icons';
+import moment from 'moment';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
@@ -7,7 +8,7 @@ import styled, { css } from 'styled-components';
 import { Task } from '../../../checklist.types';
 import { Entity } from '../../../types';
 import { startTask } from '../../actions';
-import { TaskExecutionStatus } from '../../types';
+import { StartedTaskStates, TaskExecutionStatus } from '../../types';
 import Timer from './Timer';
 
 type HeaderProps = {
@@ -55,6 +56,16 @@ const Wrapper = styled.div.attrs({
         margin-right: 12px;
         color: #f2c94c;
       }
+    }
+
+    .start-audit {
+      background-color: #f4f4f4;
+      padding: 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #999999;
     }
 
     .task-config {
@@ -144,8 +155,15 @@ const ChecklistHeader: FC<HeaderProps> = ({ task }) => {
   return <div>Checklist Header</div>;
 };
 
+const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
+
 const JobHeader: FC<HeaderProps> = ({ task }) => {
   const dispatch = useDispatch();
+
+  const {
+    status,
+    audit: { modifiedBy, modifiedAt },
+  } = task.taskExecution;
 
   return (
     <div className="job-header">
@@ -154,6 +172,14 @@ const JobHeader: FC<HeaderProps> = ({ task }) => {
 
         <span>Complete this task before proceeding to the next task.</span>
       </div>
+
+      {status in StartedTaskStates ? (
+        <div className="start-audit">
+          Task Started by {generateName(modifiedBy)}, ID:{' '}
+          {modifiedBy.employeeId} on{' '}
+          {moment(modifiedAt).format('MMM D, h:mm A')}
+        </div>
+      ) : null}
 
       <div className="task-config">
         <div className="wrapper">
