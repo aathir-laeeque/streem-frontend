@@ -233,6 +233,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#000',
     minHeight: 20,
+    paddingVertical: 2,
+    paddingHorizontal: 2,
   },
   taskFooterLabel: {
     fontSize: 12,
@@ -297,6 +299,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 1,
     width: 20,
     height: 20,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#f5f5f5',
   },
 });
@@ -360,8 +365,6 @@ const Assigness = ({
   jobStatus: string;
 }) => {
   let rows = [];
-  console.log('jobStatus', jobStatus);
-  console.log('assignees', assignees);
   if (jobStatus === JobStatus.UNASSIGNED) {
     for (let i = 0; i < 8; i++) {
       rows.push(
@@ -428,7 +431,7 @@ const Assigness = ({
   );
 };
 
-const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
+const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   const { data } = useTypedSelector((state) => state.composer);
   const { profile } = useTypedSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -450,7 +453,7 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
     switch (activity.type) {
       case ActivityType.INSTRUCTION:
         return (
-          <View>
+          <View style={{ marginTop: 8 }}>
             <View style={styles.activityView}>
               <Text style={styles.text12}>{activity.data.text}</Text>
             </View>
@@ -466,7 +469,13 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
           <View>
             <View style={styles.activityView}>
               <Text style={styles.text12}>Write Your Comments</Text>
-              <View style={styles.comments}>{items}</View>
+              <View style={styles.comments}>
+                {activity.response?.value ? (
+                  <Text style={styles.text12}>{activity.response?.value}</Text>
+                ) : (
+                  items
+                )}
+              </View>
             </View>
             <View style={styles.activitySeprator}></View>
           </View>
@@ -501,10 +510,20 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
                 Write your Observed Value
               </Text>
               <View style={{ display: 'flex', flexDirection: 'row' }}>
-                <View style={styles.lightInput} />
-                <View style={styles.lightInput} />
-                <View style={styles.lightInput} />
-                <View style={styles.lightInput} />
+                {activity.response?.value ? (
+                  [...activity.response?.value].map((char) => (
+                    <View style={styles.lightInput} key={`${char}`}>
+                      <Text style={styles.text12}>{char}</Text>
+                    </View>
+                  ))
+                ) : (
+                  <>
+                    <View style={styles.lightInput} />
+                    <View style={styles.lightInput} />
+                    <View style={styles.lightInput} />
+                    <View style={styles.lightInput} />
+                  </>
+                )}
                 <View
                   style={{
                     width: 2,
@@ -534,6 +553,7 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
                     paddingTop: 2,
                   },
                 ]}
+                wrap={false}
               >
                 <Text style={styles.activityHintText}>
                   Check all the iteams. E.g. -
@@ -555,7 +575,15 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
                     { justifyContent: 'flex-start', borderBottomWidth: 0 },
                   ]}
                 >
-                  <View style={styles.checkBox} />
+                  {activity.response?.choices &&
+                  activity.response?.choices[item.id] === 'SELECTED' ? (
+                    <Image
+                      src={checkmark}
+                      style={{ height: '16px', marginHorizontal: 5 }}
+                    />
+                  ) : (
+                    <View style={styles.checkBox} />
+                  )}
                   <Text style={styles.text12}>{item.name}</Text>
                 </View>
               ))}
@@ -576,6 +604,7 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
                     paddingTop: 2,
                   },
                 ]}
+                wrap={false}
               >
                 <Text style={styles.activityHintText}>
                   You can select multiple iteams . E.g. -
@@ -595,8 +624,17 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
                     styles.materialActivityItems,
                     { justifyContent: 'flex-start', borderBottomWidth: 0 },
                   ]}
+                  wrap={false}
                 >
-                  <View style={styles.checkBox} />
+                  {activity.response?.choices &&
+                  activity.response?.choices[item.id] === 'SELECTED' ? (
+                    <Image
+                      src={checkmark}
+                      style={{ height: '16px', marginHorizontal: 5 }}
+                    />
+                  ) : (
+                    <View style={styles.checkBox} />
+                  )}
                   <Text style={styles.text12}>{item.name}</Text>
                 </View>
               ))}
@@ -617,6 +655,7 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
                     paddingTop: 2,
                   },
                 ]}
+                wrap={false}
               >
                 <Text style={styles.activityHintText}>
                   Check either one option E.g. -
@@ -637,13 +676,32 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
                     borderBottomWidth: 0,
                   },
                 ]}
+                wrap={false}
               >
-                <View style={styles.checkBox} />
+                {(activity.response?.choices &&
+                  activity.response?.choices[activity.data[0].id]) ===
+                'SELECTED' ? (
+                  <Image
+                    src={checkmark}
+                    style={{ height: '16px', marginHorizontal: 5 }}
+                  />
+                ) : (
+                  <View style={styles.checkBox} />
+                )}
                 <Text style={styles.text12}>Yes</Text>
                 <Text style={[styles.text12, { marginHorizontal: 20 }]}>
                   or
                 </Text>
-                <View style={styles.checkBox} />
+                {activity.response?.choices &&
+                activity.response?.choices[activity.data[1].id] ===
+                  'SELECTED' ? (
+                  <Image
+                    src={checkmark}
+                    style={{ height: '16px', marginHorizontal: 5 }}
+                  />
+                ) : (
+                  <View style={styles.checkBox} />
+                )}
                 <Text style={styles.text12}>No</Text>
               </View>
             </View>
@@ -665,6 +723,7 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
                 <View
                   key={`${activity.id}_${itemIndex}`}
                   style={styles.materialActivityItems}
+                  wrap={false}
                 >
                   <Text style={styles.text12}>
                     {itemIndex + 1}. {item.name}
@@ -790,6 +849,7 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
                 </View>
                 {(stage.tasks as Array<Task>).map((task, taskIndex: number) => {
                   const {
+                    endDate,
                     startedAt,
                     audit: { modifiedBy, modifiedAt },
                     status: taskExecutionStatus,
@@ -934,7 +994,14 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
                       <View style={styles.taskFooter} wrap={false}>
                         <View style={styles.flexView}>
                           <Text style={styles.taskFooterLabel}>First Name</Text>
-                          <View style={styles.taskFooterInputs}></View>
+                          <View style={styles.taskFooterInputs}>
+                            <Text style={styles.text12}>
+                              {taskExecutionStatus !==
+                              TaskExecutionStatus.NOT_STARTED
+                                ? modifiedBy.firstName
+                                : ''}
+                            </Text>
+                          </View>
                         </View>
                         <View
                           style={[
@@ -943,7 +1010,14 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
                           ]}
                         >
                           <Text style={styles.taskFooterLabel}>Last Name</Text>
-                          <View style={styles.taskFooterInputs} />
+                          <View style={styles.taskFooterInputs}>
+                            <Text style={styles.text12}>
+                              {taskExecutionStatus !==
+                              TaskExecutionStatus.NOT_STARTED
+                                ? modifiedBy.lastName
+                                : ''}
+                            </Text>
+                          </View>
                         </View>
                         <View style={[styles.flexView, { margin: '0px 4px' }]}>
                           <Text style={styles.taskFooterLabel}>Signature</Text>
@@ -962,7 +1036,12 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
                               },
                             ]}
                           >
-                            ___/__/____
+                            {taskExecutionStatus !==
+                            TaskExecutionStatus.NOT_STARTED
+                              ? moment(modifiedAt || endDate).format(
+                                  'DD/MM/YYYY',
+                                )
+                              : '___/__/____'}
                           </Text>
                         </View>
                       </View>
@@ -991,6 +1070,25 @@ const MyPrintJob: FC<PrintJobProps> = ({ jobId }) => {
   );
 };
 
-const PrintJob = React.memo(MyPrintJob);
+const MemoMyPrintJob = React.memo(MyPrintJob);
+
+const PrintJob: FC<PrintJobProps> = ({ jobId }) => (
+  <>
+    <div
+      style={{
+        display: 'flex',
+        position: 'absolute',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: '100%',
+        zIndex: -1,
+      }}
+    >
+      Loading...
+    </div>
+    {jobId && <MemoMyPrintJob jobId={jobId} />}
+  </>
+);
 
 export default PrintJob;
