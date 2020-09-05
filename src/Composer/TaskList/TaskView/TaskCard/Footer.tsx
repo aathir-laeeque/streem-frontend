@@ -7,6 +7,8 @@ import styled, { css } from 'styled-components';
 
 import { completeTask, skipTask } from '../../actions';
 import { TaskExecutionStatus } from '../../types';
+import { openModalAction } from '../../../../components/ModalContainer/actions';
+import { ModalNames } from '../../../../components/ModalContainer/types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-buttons',
@@ -178,21 +180,16 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
           <button
             className="complete-task"
             onClick={() => {
-              console.log(
-                'condition :: ',
-                moment().diff(moment(task.taskExecution.startedAt)) >
-                  task.maxPeriod,
+              const timeElapsed = moment().diff(
+                moment(task.taskExecution.startedAt),
               );
 
               if (
                 task.timed &&
-                moment().diff(moment(task.taskExecution.startedAt)) >
-                  task.maxPeriod
+                (timeElapsed > task.maxPeriod ||
+                  (task.timerOperator === 'NOT_LESS_THAN' &&
+                    timeElapsed < task.minPeriod))
               ) {
-                console.log(
-                  'ask for reason if the timer is exceeded than the defined time :: ',
-                );
-
                 setAskForReason(true);
               } else {
                 dispatch(completeTask(task.id));
@@ -204,9 +201,25 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
 
           <button
             className="skip-task"
-            onClick={() => dispatch(skipTask(task.id))}
+            onClick={() => {
+              if (canSkipTask) {
+                dispatch(
+                  openModalAction({
+                    type: ModalNames.SKIP_TASK_MODAL,
+                    props: { taskId: task.id },
+                  }),
+                );
+              } else {
+                dispatch(
+                  openModalAction({
+                    type: ModalNames.COMPLETE_TASK_WITH_EXCEPTION,
+                    props: { taskId: task.id },
+                  }),
+                );
+              }
+            }}
           >
-            {canSkipTask ? 'Skip the task' : 'Force close task'}
+            {canSkipTask ? 'Skip the task' : 'Complete with Exception'}
           </button>
 
           {activitiesHasError ? (

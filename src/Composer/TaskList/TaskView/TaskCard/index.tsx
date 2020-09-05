@@ -40,6 +40,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
     activitiesById,
   } = useTypedSelector((state) => state.composer);
 
+  const { status: taskStatus } = task.taskExecution;
+
   const dispatch = useDispatch();
 
   const activities = activitiesOrderInTaskInStage[activeStageId][task.id].map(
@@ -62,10 +64,11 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
     return acc || !!activity.hasError;
   }, false);
 
-  const isTaskStarted = task.taskExecution.status in StartedTaskStates;
+  const isTaskStarted = taskStatus in StartedTaskStates;
 
   const isTaskCompleted =
-    task.taskExecution.status === TaskExecutionStatus.COMPLETED;
+    taskStatus === TaskExecutionStatus.COMPLETED ||
+    taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION;
 
   const showStartButton =
     (jobStatus === JobStatus.ASSIGNED || jobStatus === JobStatus.INPROGRESS) &&

@@ -25,6 +25,9 @@ export const publishChecklist = () =>
 export const startJob = (jobId: Job['id']) =>
   actionSpreader(ComposerAction.START_JOB, { jobId });
 
+export const startJobSuccess = () =>
+  actionSpreader(ComposerAction.START_JOB_SUCCESS);
+
 export const completeJob = (withException = false) =>
   actionSpreader(ComposerAction.COMPLETE_JOB, { withException });
 

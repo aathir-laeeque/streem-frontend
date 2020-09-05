@@ -1,5 +1,6 @@
 import { useTypedSelector } from '#store';
-import { PanTool } from '@material-ui/icons';
+import { PanTool, Assignment } from '@material-ui/icons';
+
 import moment from 'moment';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
@@ -148,6 +149,36 @@ const Wrapper = styled.div.attrs({
         }
       }
     }
+
+    .skip-reason {
+      background-color: #fafafa;
+      border-top: 1px solid #dadada;
+      padding: 16px 32px;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+
+      .badge {
+        background-color: #f7b500;
+        border-radius: 4px;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        color: #ffffff;
+        width: max-content;
+        margin-bottom: 16px;
+
+        .icon {
+          color: #ffffff;
+          margin-right: 4px;
+        }
+      }
+
+      textarea {
+        border: 1px solid #dadada;
+        border-radius: 4px;
+      }
+    }
   }
 `;
 
@@ -162,24 +193,25 @@ const JobHeader: FC<HeaderProps> = ({ task }) => {
 
   const {
     status,
-    audit: { modifiedBy, modifiedAt },
+    startedAt,
+    audit: { modifiedBy },
+    reason,
   } = task.taskExecution;
 
   return (
     <div className="job-header">
+      {status in StartedTaskStates ? (
+        <div className="start-audit">
+          Task Started by {generateName(modifiedBy)}, ID:{' '}
+          {modifiedBy.employeeId} on {moment(startedAt).format('MMM D, h:mm A')}
+        </div>
+      ) : null}
+
       <div className="stop-banner">
         <PanTool className="icon" />
 
         <span>Complete this task before proceeding to the next task.</span>
       </div>
-
-      {status in StartedTaskStates ? (
-        <div className="start-audit">
-          Task Started by {generateName(modifiedBy)}, ID:{' '}
-          {modifiedBy.employeeId} on{' '}
-          {moment(modifiedAt).format('MMM D, h:mm A')}
-        </div>
-      ) : null}
 
       <div className="task-config">
         <div className="wrapper">
@@ -197,6 +229,24 @@ const JobHeader: FC<HeaderProps> = ({ task }) => {
 
         {task.timed ? <Timer task={task} /> : null}
       </div>
+
+      {status === StartedTaskStates.SKIPPED ||
+      status === StartedTaskStates.COMPLETED_WITH_EXCEPTION ? (
+        <div className="skip-reason">
+          <div className="badge">
+            <Assignment className="icon" />
+            {status === StartedTaskStates.COMPLETED_WITH_EXCEPTION
+              ? 'Completed with exception'
+              : 'Task Skipped'}
+          </div>
+          <textarea
+            className="new-form-field-textarea"
+            value={reason}
+            disabled
+            rows={4}
+          />
+        </div>
+      ) : null}
     </div>
   );
 };

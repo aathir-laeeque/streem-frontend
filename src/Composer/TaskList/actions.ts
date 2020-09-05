@@ -18,15 +18,30 @@ export const updateTaskExecutionStatus = (taskId: Task['id'], data: any) =>
     data,
   });
 
-export const completeTask = (taskId: Task['id'], delayReason?: string) =>
-  actionSpreader(TaskListAction.COMPLETE_TASK, {
-    delayReason,
-    taskId,
-    action: TaskAction.COMPLETE,
-  });
+export const completeTask = (
+  taskId: Task['id'],
+  reason?: string,
+  withException?: boolean,
+) =>
+  actionSpreader(
+    withException
+      ? TaskListAction.COMPLETE_TASK_WITH_EXCEPTION
+      : TaskListAction.COMPLETE_TASK,
+    {
+      reason,
+      taskId,
+      action: withException
+        ? TaskAction.COMPLETE_WITH_EXCEPTION
+        : TaskAction.COMPLETE,
+    },
+  );
 
-export const skipTask = (taskId: Task['id']) =>
-  actionSpreader(TaskListAction.SKIP_TASK, { taskId, action: TaskAction.SKIP });
+export const skipTask = (taskId: Task['id'], reason: string) =>
+  actionSpreader(TaskListAction.SKIP_TASK, {
+    reason,
+    taskId,
+    action: TaskAction.SKIP,
+  });
 
 export const setTaskError = (error: any, taskId: Task['id']) =>
   actionSpreader(TaskListAction.SET_TASK_ERROR, { error, taskId });

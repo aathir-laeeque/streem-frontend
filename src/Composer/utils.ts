@@ -1,13 +1,19 @@
-import { Checklist } from './checklist.types';
-import {
-  StagesById,
-  TasksById,
-  ActivitiesById,
-  StagesOrder,
-  TasksOrderInStage,
-  ActivitiesOrderInTaskInStage,
-} from './types';
+import { Error } from '#utils/globalTypes';
 import { omit } from 'lodash';
+
+import { ActivityErrors } from './ActivityList/types';
+import { Checklist } from './checklist.types';
+import { StageErrors } from './StageList/types';
+import { TaskErrors } from './TaskList/types';
+import {
+  ActivitiesById,
+  ActivitiesOrderInTaskInStage,
+  ErrorGroups,
+  StagesById,
+  StagesOrder,
+  TasksById,
+  TasksOrderInStage,
+} from './types';
 
 export const transformChecklist = (checklist: Checklist) => {
   const stagesOrder: StagesOrder = [];
@@ -48,3 +54,19 @@ export const transformChecklist = (checklist: Checklist) => {
     activitiesById,
   };
 };
+
+export const groupJobErrors = (errors: Error[]) =>
+  errors.reduce<ErrorGroups>(
+    (acc, error) => {
+      if (error.code in ActivityErrors) {
+        acc.activitiesErrors.push(error);
+      } else if (error.code in TaskErrors) {
+        acc.tasksErrors.push(error);
+      } else if (error.code in StageErrors) {
+        acc.stagesErrors.push(error);
+      }
+
+      return acc;
+    },
+    { stagesErrors: [], tasksErrors: [], activitiesErrors: [] },
+  );

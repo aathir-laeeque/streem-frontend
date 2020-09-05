@@ -24,6 +24,7 @@ export enum TaskListAction {
 
   START_TASK = '@@composer/task-list/task/START_TASK',
   COMPLETE_TASK = '@@composer/task-list/task/COMPLETE_TASK',
+  COMPLETE_TASK_WITH_EXCEPTION = '@@composer/task-list/task/COMPLETE_TASK_WITH_EXCEPTION',
   SKIP_TASK = '@@composer/task-list/task/SKIP_TASK',
 
   UPDATE_TASK_EXECUTION_STATUS = '@@composer/task-list/task/UPDATE_TASK_EXECUTION_STATUS',
@@ -56,12 +57,14 @@ export enum TaskAction {
   START = 'start',
   COMPLETE = 'complete',
   SKIP = 'skip',
+  COMPLETE_WITH_EXCEPTION = 'complete-with-exception',
 }
 
 export enum StartedTaskStates {
   COMPLETED = 'COMPLETED',
   INPROGRESS = 'INPROGRESS',
   SKIPPED = 'SKIPPED',
+  COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
 }
 
 export enum NotStartedTaskStates {

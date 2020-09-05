@@ -5,12 +5,10 @@ import { apiPerformActionOnTask } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
-import { Error } from '../../utils/globalTypes';
 import { setActivityError } from '../ActivityList/actions';
-import { ActivityErrors } from '../ActivityList/types';
 import { Task } from '../checklist.types';
-import { StageErrors } from '../StageList/types';
-import { JobStatus } from '../types';
+import { ErrorGroups, JobStatus } from '../types';
+import { groupJobErrors } from '../utils';
 import {
   completeTask,
   setTaskError,
@@ -18,29 +16,7 @@ import {
   startTask,
   updateTaskExecutionStatus,
 } from './actions';
-import { TaskAction, TaskErrors, TaskListAction } from './types';
-
-type ErrorGroups = {
-  stagesErrors: Error[];
-  tasksErrors: Error[];
-  activitiesErrors: Error[];
-};
-
-const groupJobErrors = (errors: Error[]) =>
-  errors.reduce<ErrorGroups>(
-    (acc, error) => {
-      if (error.code in ActivityErrors) {
-        acc.activitiesErrors.push(error);
-      } else if (error.code in TaskErrors) {
-        acc.tasksErrors.push(error);
-      } else if (error.code in StageErrors) {
-        acc.stagesErrors.push(error);
-      }
-
-      return acc;
-    },
-    { stagesErrors: [], tasksErrors: [], activitiesErrors: [] },
-  );
+import { TaskAction, TaskListAction } from './types';
 
 type TaskErrorSagaPayload = ErrorGroups & {
   taskId: Task['id'];
@@ -73,7 +49,7 @@ function* performActionOnTaskSaga({
 
     const isJobStarted = jobStatus === JobStatus.INPROGRESS;
 
-    const { taskId, action, delayReason } = payload;
+    const { taskId, action, reason } = payload;
 
     if (isJobStarted) {
       const { data, errors } = yield call(
@@ -83,7 +59,7 @@ function* performActionOnTaskSaga({
         {
           data: {
             jobId,
-            ...(delayReason && { reason: delayReason }),
+            ...(reason && { reason }),
           },
         },
       );
@@ -95,7 +71,10 @@ function* performActionOnTaskSaga({
       } else {
         const groupedErrors = groupJobErrors(errors);
 
-        if (action === TaskAction.COMPLETE) {
+        if (
+          action === TaskAction.COMPLETE ||
+          action === TaskAction.COMPLETE_WITH_EXCEPTION
+        ) {
           yield taskCompleteErrorSaga({ ...groupedErrors, taskId });
         }
       }
@@ -120,4 +99,8 @@ export function* TaskListSaga() {
   yield takeLatest(TaskListAction.START_TASK, performActionOnTaskSaga);
   yield takeLatest(TaskListAction.COMPLETE_TASK, performActionOnTaskSaga);
   yield takeLatest(TaskListAction.SKIP_TASK, performActionOnTaskSaga);
+  yield takeLatest(
+    TaskListAction.COMPLETE_TASK_WITH_EXCEPTION,
+    performActionOnTaskSaga,
+  );
 }

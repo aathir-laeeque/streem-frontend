@@ -10,12 +10,12 @@ import {
   publishChecklist,
   resetComposer,
   restartJob,
-  startJob,
+  startJobSuccess,
 } from './actions';
+import { ActivityListActionType } from './ActivityList/types';
 import { Activity, Checklist, Stage, Task } from './checklist.types';
 import { StageListActionType } from './StageList/types';
 import { TaskListActionType } from './TaskList/types';
-import { ActivityListActionType } from './ActivityList/types';
 
 export enum Entity {
   JOB = 'Job',
@@ -92,6 +92,7 @@ export enum ComposerAction {
   COMPLETE_JOB = '@@composer/COMPLETE_JOB',
   RESTART_JOB = '@@composer/RESTART_JOB',
   START_JOB = '@@composer/START_JOB',
+  START_JOB_SUCCESS = '@@composer/START_JOB_SUCCESS',
 }
 
 export type ComposerActionType =
@@ -102,7 +103,7 @@ export type ComposerActionType =
       | typeof fetchDataSuccess
       | typeof resetComposer
       | typeof publishChecklist
-      | typeof startJob
+      | typeof startJobSuccess
       | typeof completeJob
       | typeof restartJob
     >
@@ -124,3 +125,9 @@ export enum JobErrors {
   E702 = 'JOB_IS_NOT_IN_PROGRESS',
   E703 = 'JOB_ALREADY_COMPLETED',
 }
+
+export type ErrorGroups = {
+  stagesErrors: Error[];
+  tasksErrors: Error[];
+  activitiesErrors: Error[];
+};

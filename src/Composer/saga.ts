@@ -19,6 +19,7 @@ import { TaskListSaga } from './TaskList/saga';
 import { ComposerAction, Entity } from './types';
 import { ActivityListSaga } from './ActivityList/saga';
 import { RootState } from '#store';
+import { startJobSuccess } from './actions';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   console.log('came to new composer data fetch saga with payload :: ', payload);
@@ -45,8 +46,17 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
     console.log('payload for start job :: ', payload);
     const { jobId } = payload;
 
-    const data = yield call(request, 'PUT', apiStartJob(jobId, 'start'));
-    console.log('data  ::', data);
+    const { data, errors } = yield call(
+      request,
+      'PUT',
+      apiStartJob(jobId, 'start'),
+    );
+
+    if (data) {
+      yield put(startJobSuccess());
+    } else {
+      console.error('handle errors on start job :: ', errors);
+    }
   } catch (error) {
     console.error('error came in startJobSaga in ComposerSaga :: ', error);
   }
@@ -58,11 +68,17 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
       (state: RootState) => state.composer,
     );
 
-    const { data } = yield call(
+    const { data, errors } = yield call(
       request,
       'PUT',
       apiCompleteJob(payload.withException, jobId),
     );
+
+    if (data) {
+      console.log('complete job success');
+    } else {
+      console.error('handle complete job errors here:: ', errors);
+    }
 
     console.log('data on complete job :: ', data);
   } catch (error) {

@@ -79,8 +79,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
     case ComposerAction.RESET_COMPOSER:
       return { ...initialState };
 
-    case ComposerAction.START_JOB:
-    case ComposerAction.RESTART_JOB:
+    case ComposerAction.START_JOB_SUCCESS:
       return { ...state, jobStatus: JobStatus.INPROGRESS };
 
     case ComposerAction.COMPLETE_JOB:
