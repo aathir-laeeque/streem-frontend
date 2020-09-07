@@ -11,7 +11,7 @@ const Wrapper = styled.div.attrs({
   ${({ isTaskActive }) =>
     !isTaskActive
       ? css`
-          visibility: hidden;
+          display: none;
         `
       : null}
 
