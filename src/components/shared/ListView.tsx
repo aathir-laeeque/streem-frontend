@@ -53,7 +53,6 @@ const Wrapper = styled.div.attrs({})`
 
   .list-card {
     border-bottom: 1px solid #dadada;
-    height: 80px;
     display: flex;
   }
 
@@ -61,6 +60,7 @@ const Wrapper = styled.div.attrs({})`
     flex: 1;
     font-size: 12px;
     color: #999999;
+    flex-wrap: wrap;
     font-weight: bold;
     letter-spacing: 1px;
     padding: 0 12px;
@@ -76,9 +76,10 @@ const Wrapper = styled.div.attrs({})`
 
   .list-card-columns {
     flex: 1;
+    flex-wrap: wrap;
     font-size: 14px;
     color: #666666;
-    padding: 0 12px;
+    padding: 16px 12px;
     font-weight: 600;
     overflow-wrap: anywhere;
     display: flex;
@@ -92,18 +93,21 @@ const Wrapper = styled.div.attrs({})`
 
   .list-title {
     font-size: 20px;
+    padding: 4px 0px;
     font-weight: 600;
     color: #1d84ff;
     cursor: pointer;
+    align-items: center;
+    display: flex;
   }
 
   .title-group {
     display: flex;
-    margin-top: -10px;
     flex-direction: column;
   }
 
   .list-code {
+    padding-bottom: 4px;
     font-size: 14px;
     line-height: 14px;
     color: #333333;
@@ -194,7 +198,6 @@ export const ListView: FC<ListViewProps> = ({
         e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight &&
         !isLast
       ) {
-        console.log('currentPage', currentPage);
         fetchData(currentPage + 1, 10);
       }
     }

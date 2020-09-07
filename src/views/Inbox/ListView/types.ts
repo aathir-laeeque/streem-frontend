@@ -1,7 +1,7 @@
 import { Pageable } from '#utils/globalTypes';
+import { Job } from '#views/Jobs/types';
 import { RouteComponentProps } from '@reach/router';
 
-import { Job } from '../types';
 import {
   fetchInbox,
   fetchInboxError,

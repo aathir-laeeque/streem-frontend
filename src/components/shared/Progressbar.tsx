@@ -4,9 +4,9 @@ import styled from 'styled-components';
 const Wrapper = styled.div.attrs({
   className: 'progress-bar',
 })`
-  background-color: #f4f4f4;
+  background-color: ${({ bgColor }) => bgColor};
   border-radius: 4px;
-  height: 8px;
+  height: ${({ height }) => `${height}px`};
   position: relative;
   width: 100%;
 
@@ -19,11 +19,23 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const ProgressBar: FC<{ percentage: number; color?: string }> = ({
+const ProgressBar: FC<{
+  percentage: number;
+  color?: string;
+  bgColor?: string;
+  height?: number;
+}> = ({
   percentage = 0,
   color = '#1d84ff',
+  bgColor = '#f4f4f4',
+  height = 8,
 }) => (
-  <Wrapper percentage={percentage} color={color}>
+  <Wrapper
+    percentage={percentage}
+    color={color}
+    bgColor={bgColor}
+    height={height}
+  >
     <div className="filler"></div>
   </Wrapper>
 );

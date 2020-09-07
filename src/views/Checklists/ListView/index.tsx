@@ -81,24 +81,24 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
               template: function renderComp(item: Checklist) {
                 return (
                   <div className="list-card-columns" key={`name_${item.code}`}>
-                    <Settings
-                      style={{
-                        fontSize: '20px',
-                        color: '#1d84ff',
-                        width: '36px',
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => {
-                        setSelectedChecklist(item);
-                        openNav();
-                      }}
-                    />
                     <div className="title-group">
                       <span className="list-code">{item.code}</span>
                       <span
                         className="list-title"
                         onClick={() => selectChecklist(item.id)}
                       >
+                        <Settings
+                          style={{
+                            fontSize: '20px',
+                            color: '#1d84ff',
+                            width: '36px',
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => {
+                            setSelectedChecklist(item);
+                            openNav();
+                          }}
+                        />
                         {item.name}
                       </span>
                     </div>

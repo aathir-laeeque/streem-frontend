@@ -10,24 +10,29 @@ export const Composer = styled.div`
 
   .list-status {
     font-size: 12px;
+    padding-top: 4px;
     line-height: 0.83;
-    color: #f7b500;
     display: flex;
     align-items: center;
-    margin-left: -4px;
-  }
+    color: #f7b500;
 
-  .list-title {
-    padding: 6px 0px 5px 0px;
-  }
+    .list-status-span {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      text-transform: capitalize;
 
-  .list-card {
-    min-height: 90px;
+      .icon {
+        font-size: 12px;
+        margin: 0px 4px 0px 0px;
+        color: inherit;
+      }
+    }
   }
 
   .list-header-columns {
     :first-child {
-      padding-left: 16px;
+      padding-left: 30px;
     }
   }
 

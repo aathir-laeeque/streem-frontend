@@ -728,7 +728,9 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                   <Text style={styles.text12}>
                     {itemIndex + 1}. {item.name}
                   </Text>
-                  <Text style={styles.text12}>{item.quantity}</Text>
+                  <Text style={styles.text12}>
+                    {item.quantity !== 0 ? item.quantity : 'Any'}
+                  </Text>
                 </View>
               ))}
             </View>
@@ -788,7 +790,11 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
               <View style={{ display: 'flex', flex: 1, flexDirection: 'row' }}>
                 <View style={{ display: 'flex', flex: 14.4 }} />
                 <View style={{ display: 'flex', flex: 42.8 }}>
-                  <InputLabelGroup label="Equipment ID" value="" full={false} />
+                  <InputLabelGroup
+                    label="Equipment ID"
+                    value={checklist?.properties['EQUIPMENT ID'] || ''}
+                    full={false}
+                  />
                 </View>
                 <View style={{ display: 'flex', flex: 42.8 }}>
                   <InputLabelGroup

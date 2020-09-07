@@ -139,7 +139,7 @@ const TabContent: FC<TabViewProps> = ({
         properties: {
           'EMAIL ID': item.email,
           ...role,
-          'LAST ACTIVE': '12 May 2020',
+          // 'LAST ACTIVE': '12 May 2020',
         },
       };
     },
@@ -186,14 +186,10 @@ const TabContent: FC<TabViewProps> = ({
                     </span>
                     {!item.verified && !item.archived && (
                       <span className="list-status">
-                        <WarningIcon
-                          style={{
-                            fontSize: 20,
-                            fontWeight: 'bold',
-                            padding: '0px 4px',
-                          }}
-                        />
-                        Unregistered
+                        <span className="list-status-span">
+                          <WarningIcon className="icon" />
+                          Unregistered
+                        </span>
                       </span>
                     )}
                   </div>

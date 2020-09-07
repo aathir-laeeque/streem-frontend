@@ -47,6 +47,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
     errors,
     setError,
     clearErrors,
+    watch,
   } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -55,6 +56,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
       email: email,
     },
   });
+  const { username } = watch();
   const [passwordInputType, setPasswordInputType] = useState(true);
   const { functions, messages } = validators;
 
@@ -65,7 +67,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
     document.getElementById('username')?.focus();
   }, []);
 
-  console.log('errors', errors);
+  console.log('errors', errors['username']?.message);
 
   const onSubmit = (data: Inputs) => {
     const { password, username } = data;
@@ -115,7 +117,11 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
             label="Username"
             id="username"
             type="text"
-            error={errors['username']?.message}
+            error={
+              errors['username']?.message !== ''
+                ? errors['username']?.message
+                : undefined
+            }
             refFun={register({
               required: true,
               pattern: {
@@ -123,25 +129,26 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
                 message: 'Invalid Username',
               },
               validate: async (value) => {
+                console.log('username', username);
+                console.log('value', value);
+                if (value === username) return true;
                 return new Promise((resolve) => {
-                  debounce(
-                    async (username) => {
-                      const { data } = await request(
-                        'GET',
-                        apiCheckUsername(username),
-                      );
-                      let message = '';
-                      if (!data) {
-                        message = 'Username Already Taken';
-                        setError('username', { message });
-                      } else {
-                        clearErrors('username');
-                      }
-                      resolve(message);
-                    },
-                    500,
-                    { leading: true },
-                  )(value);
+                  debounce(async (username) => {
+                    const { data } = await request(
+                      'GET',
+                      apiCheckUsername(username),
+                    );
+                    let message = '';
+                    if (!data) {
+                      message = 'Username Already Taken';
+                      console.log('setError', username);
+                      setError('username', { message });
+                    } else {
+                      console.log('clearErrors', username);
+                      clearErrors('username');
+                    }
+                    resolve(message);
+                  }, 500)(value);
                 });
               },
             })}

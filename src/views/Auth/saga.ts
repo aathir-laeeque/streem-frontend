@@ -182,9 +182,21 @@ function* registerSaga({ payload }: ReturnType<typeof register>) {
     );
 
     if (errors) {
+      yield put(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: 'Token Expired',
+        }),
+      );
       return false;
     }
 
+    yield put(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'Registration Successful',
+      }),
+    );
     yield put(registerSuccess());
     navigate('/auth/login');
   } catch (error) {

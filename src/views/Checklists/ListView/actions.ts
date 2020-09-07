@@ -4,7 +4,7 @@ import { ResponseObj } from '#utils/globalTypes';
 import { Checklist } from '../types';
 import { ListViewAction } from './types';
 
-export const fetchChecklists = (params: { page: number; size: number }) =>
+export const fetchChecklists = (params: Record<string, string | number>) =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS, params);
 
 export const fetchChecklistsOngoing = () =>

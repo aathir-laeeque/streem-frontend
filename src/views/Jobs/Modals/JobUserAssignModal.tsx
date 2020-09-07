@@ -4,7 +4,7 @@ import { fetchUsers } from '#store/users/actions';
 import { User, Users } from '#store/users/types';
 import { capitalizeFirstLetter, getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
-import { Search, CodeSharp } from '@material-ui/icons';
+import { Search } from '@material-ui/icons';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -185,7 +185,7 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
         {getInitials(`${user.firstName} ${user.lastName}`)}
       </div>
       <div className="middle">
-        <span className="userId">{user.id}</span>
+        <span className="userId">{user.employeeId}</span>
         <span className="userName">{`${capitalizeFirstLetter(
           user.firstName,
         )} ${capitalizeFirstLetter(user.lastName)}`}</span>
@@ -210,8 +210,6 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
   job.assignees.forEach((user, index) => {
     topViews.push(userRow(user, index, true));
   });
-
-  console.log('list', list);
 
   if (list) {
     list.forEach((user, index) => {

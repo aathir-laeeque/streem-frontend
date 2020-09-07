@@ -10,6 +10,8 @@ interface FloatInputProps {
   required?: boolean;
   disabled?: boolean;
   onChange: (id: string, value: string) => void;
+  executeOnFocus?: () => void;
+  executeOnBlur?: () => void;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -95,6 +97,8 @@ export const FloatInput: FC<FloatInputProps> = ({
   value,
   onChange,
   id,
+  executeOnFocus,
+  executeOnBlur,
 }) => {
   const [error, setError] = useState(false);
   const [className, setClassName] = useState(disabled ? 'on' : '');
@@ -117,6 +121,7 @@ export const FloatInput: FC<FloatInputProps> = ({
       setClassName('on');
     }
     setPlaceHolderText(placeHolder);
+    if (executeOnFocus) executeOnFocus();
   };
 
   const onBlur = (event: React.FocusEvent<HTMLInputElement>): void => {
@@ -126,6 +131,7 @@ export const FloatInput: FC<FloatInputProps> = ({
       }
     }
     setPlaceHolderText('');
+    if (executeOnBlur) executeOnBlur();
   };
 
   const isActive = placeHolderText === placeHolder;
@@ -155,6 +161,7 @@ export const FloatInput: FC<FloatInputProps> = ({
           value={value || ''}
           placeholder={placeHolderText ? placeHolderText : placeHolder}
           onFocus={onFocus}
+          autoComplete="off"
           data-testid={id}
           onBlur={onBlur}
           type="text"
@@ -164,7 +171,7 @@ export const FloatInput: FC<FloatInputProps> = ({
           }}
           disabled={disabled || false}
         />
-        {error && (
+        {error && !value && (
           <span className="optional-text" style={{ color: '#ff6b6b' }}>
             {capitalize(label)} is mandatory.
           </span>

@@ -10,21 +10,15 @@ export const Composer = styled.div`
 
   .list-header-columns {
     :first-child {
-      padding-left: 16px;
-    }
-
-    :nth-child(2) {
-      // justify-content: center;
+      padding-left: 30px;
+      width: 25%;
     }
   }
 
-  .list-status {
-    font-size: 12px;
-    line-height: 0.83;
-    color: #f7b500;
-    display: flex;
-    align-items: center;
-    margin-left: -4px;
+  .list-card-columns {
+    :first-child {
+      width: 25%;
+    }
   }
 
   .title-group {

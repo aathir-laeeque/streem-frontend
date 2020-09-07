@@ -2,7 +2,7 @@ import { actionSpreader } from '#store/helpers';
 import { ResponseObj } from '#utils/globalTypes';
 import { User } from '#store/users/types';
 
-import { Job } from '../types';
+import { Job } from '#views/Jobs/types';
 import { ListViewAction } from './types';
 
 export const fetchJobs = (

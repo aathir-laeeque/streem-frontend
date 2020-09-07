@@ -10,8 +10,6 @@ import { Entity } from '../../Composer/types';
 const InboxView: FC<InboxViewProps> = () => (
   <Router>
     <ListView path="/" />
-    {/* <NewComposer path="/:jobId" composerState={ComposerState.EXECUTING} /> */}
-
     <Composer path="/:id" entity={Entity.JOB} />
   </Router>
 );

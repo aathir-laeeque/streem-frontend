@@ -1,13 +1,14 @@
-import { ListViewComponent } from '#components';
+import { ListViewComponent, ProgressBar } from '#components';
 import { useTypedSelector } from '#store';
+import JobCard from '#views/Jobs/Compoents/JobCard';
+import { Job } from '#views/Jobs/types';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Job } from '../types';
 import { fetchInbox, setSelectedStatus } from './actions';
 import { Composer } from './styles';
-import { ListViewState, TabViewProps, InboxStatus } from './types';
+import { ListViewState, TabViewProps } from './types';
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { job } = useTypedSelector((state) => state.properties);
@@ -47,41 +48,37 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     {
       header: 'JOB',
       template: function renderComp(item: Job) {
-        return (
-          <div className="list-card-columns" key={`name_${item.code}`}>
-            <div className="title-group">
-              <span className="list-code">{item.code}</span>
-              <span className="list-title" onClick={() => selectJob(item)}>
-                {item.checklist.name}
-              </span>
-            </div>
-          </div>
-        );
+        return <JobCard item={item} onClick={selectJob} />;
       },
     },
     {
       header: 'TASKS COMPLETED',
       template: function renderComp(item: Job) {
+        const percentage = (item.completedTasks * 100) / item.totalTasks;
         return (
           <div
             className="list-card-columns"
             key={`task_completed_${item.code}`}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
           >
+            <div style={{ display: 'flex', flex: 0.8 }}>
+              <ProgressBar
+                bgColor="#dadada"
+                percentage={percentage || 0}
+                height={4}
+              />
+            </div>
             <span
               style={{
-                width: '70%',
-                backgroundColor: '#dadada',
-                height: '5px',
-                borderRadius: '3px',
+                marginLeft: 8,
+                color: '#666666',
+                fontSize: 14,
               }}
             >
-              <div
-                style={{
-                  width: '60%',
-                  backgroundColor: '#6bafb3',
-                  height: '5px',
-                }}
-              />
+              {item.completedTasks}/{item.totalTasks}
             </span>
           </div>
         );

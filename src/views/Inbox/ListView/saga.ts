@@ -1,9 +1,9 @@
 import { apiGetJobs } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { Job } from '#views/Jobs/types';
+import { call, put, takeLatest } from 'redux-saga/effects';
 
-import { Job } from '../types';
 import {
   fetchInbox,
   fetchInboxError,

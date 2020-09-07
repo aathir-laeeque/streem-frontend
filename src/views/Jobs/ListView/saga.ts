@@ -6,7 +6,7 @@ import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
-import { Job } from '../types';
+import { Job } from '#views/Jobs/types';
 import {
   assignUser,
   createJob,

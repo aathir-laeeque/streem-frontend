@@ -49,6 +49,9 @@ const MyProfile: FC<MyProfileProps> = () => {
     };
     dispatch(updateProfile({ body: payload, id: profile?.id || 0 }));
   };
+  let rolePlaceholder = 'N/A';
+  if (profile?.roles && profile?.roles[0])
+    rolePlaceholder = capitalize(profile.roles[0].name.replace('_', ' '));
 
   return (
     <Composer>
@@ -159,11 +162,7 @@ const MyProfile: FC<MyProfileProps> = () => {
                 })}
                 permissions={permissions}
                 roles={roles}
-                placeHolder={
-                  profile?.roles && profile?.roles[0]
-                    ? capitalize(profile.roles[0].name.replace('_', ' '))
-                    : 'N/A'
-                }
+                placeHolder={rolePlaceholder}
                 label="Role"
                 id="roles"
                 disabled

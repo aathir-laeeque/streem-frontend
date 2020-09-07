@@ -10,6 +10,8 @@ export interface Job {
   id: number;
   name?: string;
   code: string;
+  totalTasks: number;
+  completedTasks: number;
   properties?: Properties;
   checklist: {
     id: number;

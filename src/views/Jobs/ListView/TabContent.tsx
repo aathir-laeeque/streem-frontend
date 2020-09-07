@@ -1,14 +1,16 @@
-import { ListViewComponent } from '#components';
+import { ListViewComponent, ProgressBar } from '#components';
 import { openModalAction } from '#components/ModalContainer/actions';
 import { ModalNames } from '#components/ModalContainer/types';
 import { useTypedSelector } from '#store';
+import { createJob } from '#views/Jobs/ListView/actions';
 import { getInitials } from '#utils/stringUtils';
+import JobCard from '#views/Jobs/Compoents/JobCard';
+import { Job } from '#views/Jobs/types';
 import { PersonAdd } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Job } from '../types';
 import { fetchJobs, setSelectedStatus } from './actions';
 import { Composer } from './styles';
 import { JobStatus, ListViewState, TabViewProps } from './types';
@@ -59,20 +61,46 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     );
   };
 
+  const onCreateJob = (jobDetails: Record<string, string>) => {
+    console.log('jobDetails', jobDetails);
+    const tempProperties: { id: number; value: string }[] = [];
+    const selectedId = jobDetails.checklistId;
+    let error = false;
+    if (!job) return false;
+    job.every((property) => {
+      if (property.name) {
+        if (!jobDetails[property.name]) {
+          if (property.mandatory) {
+            error = true;
+            return false;
+          }
+        } else {
+          tempProperties.push({
+            id: property.id,
+            value: jobDetails[property.name],
+          });
+          return true;
+        }
+      }
+    });
+    if (!error && tempProperties && selectedId) {
+      const parsedProperties: { id: number; value: string }[] = tempProperties;
+      console.log('selectedId', selectedId);
+      console.log('parsedProperties', parsedProperties);
+      dispatch(
+        createJob({
+          properties: parsedProperties,
+          checklistId: parseInt(selectedId),
+        }),
+      );
+    }
+  };
+
   let beforeColumns = [
     {
       header: 'JOB',
       template: function renderComp(item: Job) {
-        return (
-          <div className="list-card-columns" key={`name_${item.code}`}>
-            <div className="title-group">
-              <span className="list-code">{item.code}</span>
-              <span className="list-title" onClick={() => selectJob(item)}>
-                {item.checklist.name}
-              </span>
-            </div>
-          </div>
-        );
+        return <JobCard item={item} onClick={selectJob} />;
       },
     },
     {
@@ -128,38 +156,33 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     beforeColumns = [
       ...beforeColumns,
       {
-        header: 'STATUS',
+        header: 'TASKS COMPLETED',
         template: function renderComp(item: Job) {
-          return (
-            <div className="list-card-columns" key={`status_${item.code}`}>
-              <span>{item.status}</span>
-            </div>
-          );
-        },
-      },
-      {
-        header: 'JOBS COMPLETED',
-        template: function renderComp(item: Job) {
+          const percentage = (item.completedTasks * 100) / item.totalTasks;
           return (
             <div
               className="list-card-columns"
               key={`task_completed_${item.code}`}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}
             >
+              <div style={{ display: 'flex', flex: 0.8 }}>
+                <ProgressBar
+                  bgColor="#dadada"
+                  percentage={percentage || 0}
+                  height={4}
+                />
+              </div>
               <span
                 style={{
-                  width: '70%',
-                  backgroundColor: '#dadada',
-                  height: '5px',
-                  borderRadius: '3px',
+                  marginLeft: 8,
+                  color: '#666666',
+                  fontSize: 14,
                 }}
               >
-                <div
-                  style={{
-                    width: '60%',
-                    backgroundColor: '#6bafb3',
-                    height: '5px',
-                  }}
-                />
+                {item.completedTasks}/{item.totalTasks}
               </span>
             </div>
           );
@@ -182,6 +205,18 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         data={jobs[label].list}
         primaryButtonText="Create a Job"
         beforeColumns={beforeColumns}
+        onPrimaryClick={() => {
+          dispatch(
+            openModalAction({
+              type: ModalNames.CREATE_JOB_MODAL,
+              props: {
+                selectedChecklist: null,
+                properties: job,
+                onCreateJob: onCreateJob,
+              },
+            }),
+          );
+        }}
       />
     </Composer>
   );

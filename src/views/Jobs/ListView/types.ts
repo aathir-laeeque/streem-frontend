@@ -1,7 +1,7 @@
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
 
-import { Job } from '../types';
+import { Job } from '#views/Jobs/types';
 import {
   assignUser,
   assignUserError,
@@ -40,6 +40,8 @@ export enum JobStatus {
   ASSIGNED = 'assigned',
   UNASSIGNED = 'unassigned',
   COMPLETED = 'completed',
+  COMPLETED_WITH_EXCEPTION = 'completedWithException',
+  INPROGRESS = 'inprogress',
 }
 
 export enum ListViewAction {
