@@ -31,13 +31,21 @@ const Wrapper = styled.div.attrs({
     display: flex;
     flex-direction: column;
 
-    ${({ taskExecutionStatus }) => {
-      if (taskExecutionStatus === TaskExecutionStatus.COMPLETED) {
+    ${({ taskExecutionStatus, isTaskDelayed }) => {
+      if (isTaskDelayed) {
+        return css`
+          border-top: 4px solid #f7b500;
+          border-radius: 4px;
+        `;
+      } else if (taskExecutionStatus === TaskExecutionStatus.COMPLETED) {
         return css`
           border-top: 4px solid #5aa700;
           border-radius: 4px;
         `;
-      } else if (taskExecutionStatus === TaskExecutionStatus.SKIPPED) {
+      } else if (
+        taskExecutionStatus === TaskExecutionStatus.SKIPPED ||
+        taskExecutionStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION
+      ) {
         return css`
           border-top: 4px solid #f7b500;
           border-radius: 4px;
@@ -251,7 +259,12 @@ const JobHeader: FC<HeaderProps> = ({ task }) => {
   );
 };
 
-const Header: FC<HeaderProps> = ({ task, showStartButton, isTaskStarted }) => {
+const Header: FC<HeaderProps> = ({
+  task,
+  showStartButton,
+  isTaskStarted,
+  isTaskDelayed,
+}) => {
   const { entity } = useTypedSelector((state) => state.composer);
 
   return (
@@ -260,6 +273,7 @@ const Header: FC<HeaderProps> = ({ task, showStartButton, isTaskStarted }) => {
       showStartButton={showStartButton}
       taskExecutionStatus={task.taskExecution.status}
       isTaskStarted={isTaskStarted}
+      isTaskDelayed={isTaskDelayed}
     >
       {entity === Entity.CHECKLIST ? (
         <ChecklistHeader task={task} />

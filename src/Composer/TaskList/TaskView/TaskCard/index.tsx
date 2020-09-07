@@ -40,7 +40,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
     activitiesById,
   } = useTypedSelector((state) => state.composer);
 
-  const { status: taskStatus } = task.taskExecution;
+  const { status: taskStatus, reason } = task.taskExecution;
 
   const dispatch = useDispatch();
 
@@ -66,8 +66,13 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
 
   const isTaskStarted = taskStatus in StartedTaskStates;
 
+  const isTaskDelayed = taskStatus === TaskExecutionStatus.COMPLETED && reason;
+
   const isTaskCompleted =
     taskStatus === TaskExecutionStatus.COMPLETED ||
+    taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION;
+
+  const isCompletedWithException =
     taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION;
 
   const showStartButton =
@@ -86,12 +91,14 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
         task={task}
         showStartButton={showStartButton}
         isTaskStarted={isTaskStarted}
+        isTaskDelayed={isTaskDelayed}
       />
 
       <ActivityList
         activities={activities}
         isTaskStarted={isTaskStarted}
         isTaskCompleted={isTaskCompleted}
+        isCompletedWithException={isCompletedWithException}
       />
 
       <Footer

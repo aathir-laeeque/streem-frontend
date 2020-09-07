@@ -30,6 +30,14 @@ const Wrapper = styled.div.attrs({
         `
       : null}
 
+  ${({ isCompletedWithException }) =>
+    isCompletedWithException
+      ? css`
+          opacity: 0.5;
+          pointer-events: none;
+        `
+      : null}
+
   ${({ isTaskCompleted }) =>
     isTaskCompleted
       ? css`
@@ -81,11 +89,16 @@ const ActivityList: FC<ActivityListProps> = ({
   activities,
   isTaskStarted,
   isTaskCompleted,
+  isCompletedWithException,
 }) => {
   const { entity } = useTypedSelector((state) => state.composer);
 
   return (
-    <Wrapper isTaskStarted={isTaskStarted} isTaskCompleted={isTaskCompleted}>
+    <Wrapper
+      isTaskStarted={isTaskStarted}
+      isTaskCompleted={isTaskCompleted}
+      isCompletedWithException={isCompletedWithException}
+    >
       {activities.map((activity) => {
         const { status, audit } = activity?.response;
 

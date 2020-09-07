@@ -1,5 +1,5 @@
 import { Task } from '#Composer/checklist.types';
-import { ArrowRightAlt, CheckCircle } from '@material-ui/icons';
+import { ArrowRightAlt, CheckCircle, Error } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -86,8 +86,13 @@ const CompletedWrapper = styled.div.attrs({
   className: '',
 })`
   align-items: center;
-  ${({ completed, skipped }) => {
+  ${({ completed, skipped, isTaskDelayed }) => {
     if (completed) {
+      if (isTaskDelayed) {
+        return css`
+          background-color: #f7b500;
+        `;
+      }
       return css`
         background-color: #5aa700;
       `;
@@ -107,6 +112,39 @@ const CompletedWrapper = styled.div.attrs({
     margin-right: 8px;
     opacity: 0.5;
   }
+
+  .task-off-limit-reason {
+    background-color: rgba(247, 181, 0, 0.08);
+    padding: 16px 32px;
+
+    textarea {
+      font-size: 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      color: #000000;
+    }
+  }
+`;
+
+const DelayedWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  background-color: rgba(247, 181, 0, 0.08);
+
+  .task-off-limit-reason {
+    padding: 16px 32px;
+
+    textarea {
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      padding: 16px;
+      font-size: 14px;
+      color: #000000;
+      resize: none;
+      width: 100%;
+    }
+  }
 `;
 
 type FooterProps = {
@@ -125,19 +163,43 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   const {
     audit: { modifiedBy, modifiedAt },
     status: taskExecutionStatus,
+    reason,
   } = task.taskExecution;
 
+  const isTaskDelayed =
+    taskExecutionStatus === TaskExecutionStatus.COMPLETED && reason;
+
   if (taskExecutionStatus === TaskExecutionStatus.COMPLETED) {
-    return (
-      <CompletedWrapper completed>
-        <CheckCircle className="icon" />
-        <span>
-          Task Completed by {generateName(modifiedBy)}, ID:{' '}
-          {modifiedBy.employeeId} on{' '}
-          {moment(modifiedAt).format('MMM D, h:mm A')}
-        </span>
-      </CompletedWrapper>
-    );
+    if (isTaskDelayed) {
+      return (
+        <DelayedWrapper>
+          <CompletedWrapper completed isTaskDelayed={isTaskDelayed}>
+            <Error className="icon" />
+            <span>
+              Task Completed after set time by {generateName(modifiedBy)}, ID:{' '}
+              {modifiedBy.employeeId} on{' '}
+              {moment(modifiedAt).format('MMM D, h:mm A')}
+            </span>
+          </CompletedWrapper>
+          {reason ? (
+            <div className="task-off-limit-reason">
+              <textarea value={reason} rows={4} disabled />
+            </div>
+          ) : null}
+        </DelayedWrapper>
+      );
+    } else {
+      return (
+        <CompletedWrapper completed>
+          <CheckCircle className="icon" />
+          <span>
+            Task Completed by {generateName(modifiedBy)}, ID:{' '}
+            {modifiedBy.employeeId} on{' '}
+            {moment(modifiedAt).format('MMM D, h:mm A')}
+          </span>
+        </CompletedWrapper>
+      );
+    }
   } else if (taskExecutionStatus === TaskExecutionStatus.SKIPPED) {
     return (
       <CompletedWrapper skipped>
@@ -172,7 +234,14 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
             >
               Submit
             </button>
-            <button>Cancel</button>
+            <button
+              onClick={() => {
+                setDelayReason('');
+                setAskForReason(false);
+              }}
+            >
+              Cancel
+            </button>
           </div>
         </DelayWrapper>
       );
