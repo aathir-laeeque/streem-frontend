@@ -11,6 +11,21 @@ const TextboxActivity: FC<ActivityProps> = ({ activity }) => {
   const dispatch = useDispatch();
 
   const { entity } = useTypedSelector((state) => state.composer);
+  const [value, setValue] = React.useState(activity?.response?.value || 0);
+
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    e.persist();
+    customOnChange(e, (event) => {
+      console.log('e.target.value :: ', event.target.value);
+      dispatch(
+        executeActivity({
+          ...activity,
+          data: { ...activity.data, input: e.target.value },
+        }),
+      );
+    });
+    setValue(e.currentTarget.value);
+  };
 
   if (entity === Entity.JOB) {
     return (
@@ -20,20 +35,23 @@ const TextboxActivity: FC<ActivityProps> = ({ activity }) => {
           <textarea
             className="new-form-field-textarea"
             placeholder="User will write comments here"
-            value={activity?.response?.value}
+            value={value}
             rows={4}
             onChange={(e) => {
-              e.persist();
-
-              customOnChange(e, (event) => {
-                dispatch(
-                  executeActivity({
-                    ...activity,
-                    data: { input: event.target.value },
-                  }),
-                );
-              });
+              onChange(e);
             }}
+            // onChange={(e) => {
+            //   e.persist();
+
+            //   customOnChange(e, (event) => {
+            //     dispatch(
+            //       executeActivity({
+            //         ...activity,
+            //         data: { input: event.target.value },
+            //       }),
+            //     );
+            //   });
+            // }}
           />
         </div>
       </div>

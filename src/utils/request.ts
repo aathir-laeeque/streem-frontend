@@ -19,7 +19,7 @@ export const request = async (
   options?: RequestOptions,
 ) => {
   const {
-    auth: { isLoggedIn, token },
+    auth: { token },
   } = store.getState();
 
   let apiUrl = url;
@@ -32,7 +32,7 @@ export const request = async (
     method,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      ...(!!isLoggedIn && { Authorization: `Bearer ${token}` }),
+      ...(token && { Authorization: `Bearer ${token}` }),
       ...(!options?.formData && { 'Content-Type': 'application/json' }),
       ...options?.headers,
     },

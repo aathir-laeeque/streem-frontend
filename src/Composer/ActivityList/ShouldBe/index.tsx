@@ -56,8 +56,22 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity }) => {
   // const { entity } = useTypedSelector((state) => state.composer);
 
   // const isJobsView = entity === Entity.JOB;
-
+  const [value, setValue] = React.useState(activity?.response?.value || 0);
   const dispatch = useDispatch();
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.persist();
+    customOnChange(e, (event) => {
+      console.log('e.target.value :: ', event.target.value);
+      dispatch(
+        executeActivity({
+          ...activity,
+          data: { ...activity.data, input: e.target.value },
+        }),
+      );
+    });
+    setValue(e.currentTarget.value);
+  };
 
   return (
     <Wrapper>
@@ -69,20 +83,22 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity }) => {
           type="number"
           name="observed-value"
           placeholder="Enter Observed Value"
-          value={activity?.response?.value}
+          value={value}
           onChange={(e) => {
-            e.persist();
-
-            customOnChange(e, (event) => {
-              console.log('e.target.value :: ', event.target.value);
-              dispatch(
-                executeActivity({
-                  ...activity,
-                  data: { ...activity.data, input: event.target.value },
-                }),
-              );
-            });
+            onChange(e);
           }}
+          // onChange={(e) => {
+          //   e.persist();
+          //   customOnChange(e, (event) => {
+          //     console.log('e.target.value :: ', event.target.value);
+          //     dispatch(
+          //       executeActivity({
+          //         ...activity,
+          //         data: { ...activity.data, input: event.target.value },
+          //       }),
+          //     );
+          //   });
+          // }}
         />
       </div>
     </Wrapper>

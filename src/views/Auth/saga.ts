@@ -108,20 +108,11 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
     }
 
     yield put(loginSuccess(data));
+    yield put(refreshTokenPoll());
+    yield put(fetchProfile({ id: data.id }));
   } catch (error) {
     console.error('error from loginSaga function in Auth :: ', error);
     yield put(loginError(error));
-  }
-}
-
-function* loginSuccessSaga() {
-  try {
-    yield delay(500);
-    const id = yield select(getUserId);
-    yield put(refreshTokenPoll());
-    yield put(fetchProfile({ id }));
-  } catch (error) {
-    console.error('error from loginSuccessSaga function in Auth :: ', error);
   }
 }
 
@@ -296,7 +287,6 @@ function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
 
 export function* AuthSaga() {
   yield takeLatest(AuthAction.LOGIN, loginSaga);
-  yield takeLatest(AuthAction.LOGIN_SUCCESS, loginSuccessSaga);
   yield takeLatest(AuthAction.LOGOUT, logOutSaga);
   yield takeLatest(AuthAction.LOGOUT_SUCCESS, logOutSuccessSaga);
   yield takeLatest(AuthAction.REFRESH_TOKEN_POLL, refreshTokenPollSaga);

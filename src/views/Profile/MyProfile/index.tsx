@@ -50,8 +50,10 @@ const MyProfile: FC<MyProfileProps> = () => {
     dispatch(updateProfile({ body: payload, id: profile?.id || 0 }));
   };
   let rolePlaceholder = 'N/A';
-  if (profile?.roles && profile?.roles[0])
+  if (profile?.roles && profile?.roles[0]) {
+    console.log('profile?.roles[0]', profile?.roles[0]);
     rolePlaceholder = capitalize(profile.roles[0].name.replace('_', ' '));
+  }
 
   return (
     <Composer>
@@ -164,7 +166,7 @@ const MyProfile: FC<MyProfileProps> = () => {
                 roles={roles}
                 placeHolder={rolePlaceholder}
                 label="Role"
-                id="roles"
+                id="roles-input"
                 disabled
                 selected={
                   profile?.roles && profile?.roles[0] ? profile?.roles[0].id : 3

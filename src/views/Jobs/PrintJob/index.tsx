@@ -730,7 +730,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                     {itemIndex + 1}. {item.name}
                   </Text>
                   <Text style={styles.text12}>
-                    {item.quantity !== 0 ? item.quantity : 'Any'}
+                    {item.quantity !== 0 ? item.quantity : ''}
                   </Text>
                 </View>
               ))}
@@ -861,6 +861,19 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                     audit: { modifiedBy, modifiedAt },
                     status: taskExecutionStatus,
                   } = task.taskExecution;
+                  const canSkipTask = !task.activities.reduce(
+                    (acc, activity) => {
+                      if (
+                        activity.type === ActivityType.INSTRUCTION ||
+                        activity.type === ActivityType.MATERIAL
+                      ) {
+                        return acc;
+                      }
+                      acc = acc || activity.mandatory;
+                      return acc;
+                    },
+                    false,
+                  );
                   return (
                     <View style={styles.taskView} key={`${task.id}`}>
                       <View style={styles.taskHeader} wrap={false}>
@@ -927,7 +940,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                             Task {`${taskIndex + 1}. ${task.name}`}
                           </Text>
                           <Text style={styles.taskTitle}>
-                            {task.mandatory ? `Mandatory` : `Optional`}
+                            {!canSkipTask ? `Mandatory` : `Optional`}
                           </Text>
                         </View>
                         {task.timed && task.period && (
