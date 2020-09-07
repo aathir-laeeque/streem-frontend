@@ -1,5 +1,6 @@
 import { useTypedSelector } from '#store';
-import { PanTool, Timer } from '@material-ui/icons';
+import { PanTool, Assignment } from '@material-ui/icons';
+
 import moment from 'moment';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
@@ -8,10 +9,11 @@ import styled, { css } from 'styled-components';
 import { Task } from '../../../checklist.types';
 import { Entity } from '../../../types';
 import { startTask } from '../../actions';
-import { TaskExecutionStatus } from '../../types';
+import { StartedTaskStates, TaskExecutionStatus } from '../../types';
+import Timer from './Timer';
 
 type HeaderProps = {
-  task: Task;
+  task: Omit<Task, 'activities'>;
   showStartButton: boolean;
 };
 
@@ -57,6 +59,16 @@ const Wrapper = styled.div.attrs({
       }
     }
 
+    .start-audit {
+      background-color: #f4f4f4;
+      padding: 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #999999;
+    }
+
     .task-config {
       .wrapper {
         align-items: flex-start;
@@ -86,13 +98,85 @@ const Wrapper = styled.div.attrs({
       }
 
       .task-timer {
-        align-items: center;
-        display: ${({ timed }) => (timed ? 'flex' : 'none')};
+        align-items: flex-start;
+        display: flex;
         margin-top: 16px;
+        justify-content: space-between;
 
-        > .icon {
-          margin-right: 8px;
+        .timer-config {
+          display: flex;
+
+          > div {
+            display: flex;
+            flex-direction: column;
+
+            span {
+              color: #000000;
+              font-size: 14px;
+
+              :nth-child(2n) {
+                margin-top: 8px;
+                color: #999999;
+              }
+            }
+          }
+
+          > .icon {
+            margin-right: 8px;
+          }
         }
+
+        .timer {
+          display: ${({ isTaskStarted }) => (isTaskStarted ? 'flex' : 'none')};
+          flex-direction: column;
+          align-items: center;
+
+          span {
+            :first-child {
+              background-color: #eeeeee;
+              padding: 4px;
+            }
+
+            :nth-child(2n) {
+              color: #ff6b6b;
+              margin-top: 8px;
+            }
+          }
+
+          &.error {
+            color: #ff6b6b;
+          }
+        }
+      }
+    }
+
+    .skip-reason {
+      background-color: #fafafa;
+      border-top: 1px solid #dadada;
+      padding: 16px 32px;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+
+      .badge {
+        background-color: #f7b500;
+        border-radius: 4px;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        color: #ffffff;
+        width: max-content;
+        margin-bottom: 16px;
+
+        .icon {
+          color: #ffffff;
+          margin-right: 4px;
+        }
+      }
+
+      textarea {
+        border: 1px solid #dadada;
+        border-radius: 4px;
       }
     }
   }
@@ -102,27 +186,27 @@ const ChecklistHeader: FC<HeaderProps> = ({ task }) => {
   return <div>Checklist Header</div>;
 };
 
-const generateTimerText = (period: number) => {
-  const time = moment.duration(period);
-
-  const hours = time.hours();
-  const minutes = time.minutes();
-  const seconds = time.seconds();
-
-  return `${hours
-    .toString()
-    .padStart(2, '0')
-    .concat(' hr : ')}${minutes
-    .toString()
-    .padStart(2, '0')
-    .concat(' min : ')}${seconds.toString().padStart(2, '0').concat(' sec')}`;
-};
+const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
 
 const JobHeader: FC<HeaderProps> = ({ task }) => {
   const dispatch = useDispatch();
 
+  const {
+    status,
+    startedAt,
+    audit: { modifiedBy },
+    reason,
+  } = task.taskExecution;
+
   return (
     <div className="job-header">
+      {status in StartedTaskStates ? (
+        <div className="start-audit">
+          Task Started by {generateName(modifiedBy)}, ID:{' '}
+          {modifiedBy.employeeId} on {moment(startedAt).format('MMM D, h:mm A')}
+        </div>
+      ) : null}
+
       <div className="stop-banner">
         <PanTool className="icon" />
 
@@ -143,25 +227,39 @@ const JobHeader: FC<HeaderProps> = ({ task }) => {
           </button>
         </div>
 
-        <div className="task-timer">
-          <Timer className="icon" />
-
-          <span>Complete in NLT {generateTimerText(task.period)}</span>
-        </div>
+        {task.timed ? <Timer task={task} /> : null}
       </div>
+
+      {status === StartedTaskStates.SKIPPED ||
+      status === StartedTaskStates.COMPLETED_WITH_EXCEPTION ? (
+        <div className="skip-reason">
+          <div className="badge">
+            <Assignment className="icon" />
+            {status === StartedTaskStates.COMPLETED_WITH_EXCEPTION
+              ? 'Completed with exception'
+              : 'Task Skipped'}
+          </div>
+          <textarea
+            className="new-form-field-textarea"
+            value={reason}
+            disabled
+            rows={4}
+          />
+        </div>
+      ) : null}
     </div>
   );
 };
 
-const Header: FC<HeaderProps> = ({ task, showStartButton }) => {
+const Header: FC<HeaderProps> = ({ task, showStartButton, isTaskStarted }) => {
   const { entity } = useTypedSelector((state) => state.composer);
 
   return (
     <Wrapper
       hasStop={task.hasStop}
-      timed={task.timed}
       showStartButton={showStartButton}
       taskExecutionStatus={task.taskExecution.status}
+      isTaskStarted={isTaskStarted}
     >
       {entity === Entity.CHECKLIST ? (
         <ChecklistHeader task={task} />

@@ -15,14 +15,12 @@ const Wrapper = styled.div.attrs({
   margin-bottom: 32px;
 `;
 
-const TaskView: FC<TaskViewProps> = ({ task, isActive }) => {
-  return (
-    <Wrapper>
-      <TaskCard task={task} isActive={isActive} />
+const TaskView: FC<TaskViewProps> = ({ task, isActive }) => (
+  <Wrapper>
+    <TaskCard task={task} isActive={isActive} />
 
-      <MediaCard medias={task.medias} isTaskActive={isActive} />
-    </Wrapper>
-  );
-};
+    <MediaCard medias={task.medias} isTaskActive={isActive} />
+  </Wrapper>
+);
 
 export default TaskView;

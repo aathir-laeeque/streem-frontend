@@ -1,5 +1,6 @@
 import { Entity } from '#Composer/types';
 import { useTypedSelector } from '#store';
+import { Error } from '@material-ui/icons';
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -27,6 +28,13 @@ const Wrapper = styled.div.attrs({
         `
       : null}
 
+  ${({ isTaskCompleted }) =>
+    isTaskCompleted
+      ? css`
+          pointer-events: none;
+        `
+      : null}
+
   .activity {
     border-bottom: 1px dashed #dadada;
     padding: 32px;
@@ -43,14 +51,32 @@ const Wrapper = styled.div.attrs({
       margin-bottom: 16px;
       color: #999999;
     }
+
+    .error-badge {
+      align-items: center;
+      color: #ff6b6b;
+      display: flex;
+      font-size: 12px;
+      margin-bottom: 16px;
+      padding: 4px;
+
+      > .icon {
+        color: #ff6b6b;
+        margin-right: 8px;
+      }
+    }
   }
 `;
 
-const ActivityList: FC<ActivityListProps> = ({ activities, isTaskStarted }) => {
+const ActivityList: FC<ActivityListProps> = ({
+  activities,
+  isTaskStarted,
+  isTaskCompleted,
+}) => {
   const { entity } = useTypedSelector((state) => state.composer);
 
   return (
-    <Wrapper isTaskStarted={isTaskStarted}>
+    <Wrapper isTaskStarted={isTaskStarted} isTaskCompleted={isTaskCompleted}>
       {activities.map((activity) => (
         <div key={activity.id} className="activity">
           {entity === Entity.JOB ? (
@@ -59,6 +85,13 @@ const ActivityList: FC<ActivityListProps> = ({ activities, isTaskStarted }) => {
             !activity.mandatory ? (
               <div className="optional-badge">Optional</div>
             ) : null
+          ) : null}
+
+          {activity.hasError ? (
+            <div className="error-badge">
+              <Error className="icon" />
+              <span>Mandatory Activity Incomplete</span>
+            </div>
           ) : null}
 
           {(() => {

@@ -10,11 +10,12 @@ import {
   publishChecklist,
   resetComposer,
   restartJob,
-  startJob,
+  startJobSuccess,
 } from './actions';
-import { Checklist } from './checklist.types';
-import { StageListState } from './StageList/types';
-import { TaskListState } from './TaskList/types';
+import { ActivityListActionType } from './ActivityList/types';
+import { Activity, Checklist, Stage, Task } from './checklist.types';
+import { StageListActionType } from './StageList/types';
+import { TaskListActionType } from './TaskList/types';
 
 export enum Entity {
   JOB = 'Job',
@@ -44,6 +45,20 @@ export type ComposerProps = RouteComponentProps<{
   entity: Entity;
 };
 
+export type StagesById = Record<Stage['id'], Omit<Stage, 'tasks'>>;
+export type TasksById = Record<
+  Task['id'],
+  Omit<Task, 'activities'> & { hasError?: boolean; errorMessage?: string }
+>;
+export type ActivitiesById = Record<Activity['id'], Activity>;
+
+export type StagesOrder = Stage['id'][];
+export type TasksOrderInStage = Record<Stage['id'], Task['id'][]>;
+export type ActivitiesOrderInTaskInStage = Record<
+  Stage['id'],
+  Record<Task['id'], Activity['id'][]>
+>;
+
 export type ComposerState = {
   checklistState: ChecklistState;
   data?: Checklist | Job;
@@ -51,8 +66,18 @@ export type ComposerState = {
   entityId?: Checklist['id'] | Job['id'];
   loading: boolean;
   jobStatus: JobStatus;
-  stages: StageListState;
-  tasks: TaskListState;
+
+  // some new keys
+  stagesById: StagesById;
+  tasksById: TasksById;
+  activitiesById: ActivitiesById;
+
+  stagesOrder: StagesOrder;
+  tasksOrderInStage: TasksOrderInStage;
+  activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage;
+
+  activeStageId: Stage['id'];
+  activeTaskId: Task['id'];
 };
 
 export enum ComposerAction {
@@ -67,21 +92,42 @@ export enum ComposerAction {
   COMPLETE_JOB = '@@composer/COMPLETE_JOB',
   RESTART_JOB = '@@composer/RESTART_JOB',
   START_JOB = '@@composer/START_JOB',
+  START_JOB_SUCCESS = '@@composer/START_JOB_SUCCESS',
 }
 
-export type ComposerActionType = ReturnType<
-  | typeof fetchData
-  | typeof fetchDataError
-  | typeof fetchDataOngoing
-  | typeof fetchDataSuccess
-  | typeof resetComposer
-  | typeof publishChecklist
-  | typeof startJob
-  | typeof completeJob
-  | typeof restartJob
->;
+export type ComposerActionType =
+  | ReturnType<
+      | typeof fetchData
+      | typeof fetchDataError
+      | typeof fetchDataOngoing
+      | typeof fetchDataSuccess
+      | typeof resetComposer
+      | typeof publishChecklist
+      | typeof startJobSuccess
+      | typeof completeJob
+      | typeof restartJob
+    >
+  | StageListActionType
+  | TaskListActionType
+  | ActivityListActionType;
 
 export type FetchDataArgs = {
   id: Checklist['id'] | Job['id'];
   entity: Entity;
+};
+
+export enum ChecklistErros {
+  E101 = 'CHECKLIST_NOT_FOUND',
+}
+
+export enum JobErrors {
+  E701 = 'JOB_NOT_FOUND',
+  E702 = 'JOB_IS_NOT_IN_PROGRESS',
+  E703 = 'JOB_ALREADY_COMPLETED',
+}
+
+export type ErrorGroups = {
+  stagesErrors: Error[];
+  tasksErrors: Error[];
+  activitiesErrors: Error[];
 };

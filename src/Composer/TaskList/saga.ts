@@ -3,50 +3,79 @@ import { ModalNames } from '#components/ModalContainer/types';
 import { RootState } from '#store';
 import { apiPerformActionOnTask } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
-import { setActiveStage } from '../StageList/actions';
-import { StageListAction } from '../StageList/types';
-import { JobStatus } from '../types';
-import { setTasksList, startTask, updateTaskExecutionStatus } from './actions';
-import { TaskListAction } from './types';
+import { setActivityError } from '../ActivityList/actions';
+import { Task } from '../checklist.types';
+import { ErrorGroups, JobStatus } from '../types';
+import { groupJobErrors } from '../utils';
+import {
+  completeTask,
+  setTaskError,
+  skipTask,
+  startTask,
+  updateTaskExecutionStatus,
+} from './actions';
+import { TaskAction, TaskListAction } from './types';
 
-function* setTasksSaga({ payload }: ReturnType<typeof setActiveStage>) {
-  try {
-    const { listById } = yield select(
-      (state: RootState) => state.composer.stages,
+type TaskErrorSagaPayload = ErrorGroups & {
+  taskId: Task['id'];
+};
+
+function* taskCompleteErrorSaga(payload: TaskErrorSagaPayload) {
+  const { activitiesErrors, taskId } = payload;
+
+  if (activitiesErrors.length) {
+    console.log('handle activities level error here');
+    yield all(
+      activitiesErrors.map((error) => put(setActivityError(error, error.id))),
     );
-
-    yield put(setTasksList(listById[payload.id].tasks));
-  } catch (error) {
-    console.log('error came in setTasksSaga in TaskListSaga :: => ', error);
   }
+
+  yield put(setTaskError('Activity Incomplete', taskId));
 }
 
-function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
+function* performActionOnTaskSaga({
+  payload,
+}: ReturnType<typeof startTask | typeof completeTask | typeof skipTask>) {
   try {
     console.log('came to performActionOnTaskSaga with payload :: ', payload);
+
     const { jobStatus, entityId: jobId } = yield select(
       (state: RootState) => state.composer,
     );
 
     const isJobStarted = jobStatus === JobStatus.INPROGRESS;
 
-    const { taskId } = payload;
+    const { taskId, action, reason } = payload;
 
     if (isJobStarted) {
-      console.log('make api call to start the task with taskId :: ', taskId);
-
-      const { data } = yield call(
+      const { data, errors } = yield call(
         request,
         'PUT',
-        apiPerformActionOnTask(taskId, payload.action),
-        { data: { jobId } },
+        apiPerformActionOnTask(taskId, action),
+        {
+          data: {
+            jobId,
+            ...(reason && { reason }),
+          },
+        },
       );
 
-      console.log('data from start task api call :: ', data);
+      if (data) {
+        console.log('data from api call in performActionOnTaskSaga :: ', data);
 
-      yield put(updateTaskExecutionStatus(taskId, data));
+        yield put(updateTaskExecutionStatus(taskId, data));
+      } else {
+        const groupedErrors = groupJobErrors(errors);
+
+        if (
+          action === TaskAction.COMPLETE ||
+          action === TaskAction.COMPLETE_WITH_EXCEPTION
+        ) {
+          yield taskCompleteErrorSaga({ ...groupedErrors, taskId });
+        }
+      }
     } else {
       console.log('open modal to start the job');
       yield put(
@@ -65,8 +94,11 @@ function* performActionOnTaskSaga({ payload }: ReturnType<typeof startTask>) {
 }
 
 export function* TaskListSaga() {
-  yield takeLatest(StageListAction.SET_ACTIVE_STAGE, setTasksSaga);
   yield takeLatest(TaskListAction.START_TASK, performActionOnTaskSaga);
   yield takeLatest(TaskListAction.COMPLETE_TASK, performActionOnTaskSaga);
   yield takeLatest(TaskListAction.SKIP_TASK, performActionOnTaskSaga);
+  yield takeLatest(
+    TaskListAction.COMPLETE_TASK_WITH_EXCEPTION,
+    performActionOnTaskSaga,
+  );
 }

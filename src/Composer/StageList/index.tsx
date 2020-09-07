@@ -26,17 +26,17 @@ const Wrapper = styled.div.attrs({
 `;
 
 const StageListView: FC = () => {
-  const {
-    stages: { activeStageId, listById },
-  } = useTypedSelector((state) => state.composer);
+  const { activeStageId, stagesById, stagesOrder } = useTypedSelector(
+    (state) => state.composer,
+  );
 
   return (
     <Wrapper>
-      {Object.values(listById).map((stage) => (
+      {stagesOrder.map((stageId) => (
         <StageCard
-          isActive={stage.id === activeStageId}
-          key={stage.id}
-          stage={stage}
+          isActive={stageId === activeStageId}
+          key={stageId}
+          stage={stagesById[stageId]}
         />
       ))}
     </Wrapper>

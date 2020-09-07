@@ -1,3 +1,6 @@
+import { setTaskError } from './TaskList/actions';
+import { setActivityError } from './ActivityList/actions';
+import { groupJobErrors } from './utils';
 import {
   apiGetChecklist,
   apiGetSelectedJob,
@@ -19,6 +22,7 @@ import { TaskListSaga } from './TaskList/saga';
 import { ComposerAction, Entity } from './types';
 import { ActivityListSaga } from './ActivityList/saga';
 import { RootState } from '#store';
+import { startJobSuccess } from './actions';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   console.log('came to new composer data fetch saga with payload :: ', payload);
@@ -45,8 +49,17 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
     console.log('payload for start job :: ', payload);
     const { jobId } = payload;
 
-    const data = yield call(request, 'PUT', apiStartJob(jobId, 'start'));
-    console.log('data  ::', data);
+    const { data, errors } = yield call(
+      request,
+      'PUT',
+      apiStartJob(jobId, 'start'),
+    );
+
+    if (data) {
+      yield put(startJobSuccess());
+    } else {
+      console.error('handle errors on start job :: ', errors);
+    }
   } catch (error) {
     console.error('error came in startJobSaga in ComposerSaga :: ', error);
   }
@@ -58,11 +71,37 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
       (state: RootState) => state.composer,
     );
 
-    const { data } = yield call(
+    const { data, errors } = yield call(
       request,
       'PUT',
       apiCompleteJob(payload.withException, jobId),
     );
+
+    if (data) {
+      console.log('complete job success');
+    } else {
+      console.error('handle complete job errors here:: ', errors);
+
+      const { tasksErrors, activitiesErrors } = groupJobErrors(errors);
+
+      if (tasksErrors.length) {
+        console.log('handle task level error here');
+
+        yield all(
+          tasksErrors.map((error) =>
+            put(setTaskError('Activity Incomplete', error.id)),
+          ),
+        );
+      }
+      if (activitiesErrors.length) {
+        console.log('handle activities level error here');
+        yield all(
+          activitiesErrors.map((error) =>
+            put(setActivityError(error, error.id)),
+          ),
+        );
+      }
+    }
 
     console.log('data on complete job :: ', data);
   } catch (error) {

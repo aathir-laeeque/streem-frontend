@@ -5,6 +5,7 @@ import { Close } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import Select from 'react-select';
+import { get } from 'lodash';
 
 import { ActivityProps, Selections } from '../types';
 import { customSelectStyles } from './commonStyles';
@@ -18,6 +19,8 @@ const MultiSelectActivity: FC<ActivityProps> = ({ activity }) => {
 
   const isJobsView = entity === Entity.JOB;
 
+  const options = activity.data.map((el) => ({ label: el.name, value: el.id }));
+
   return (
     <Wrapper isJobsView={isJobsView}>
       <div className="activity-header">Creating a Multi Choice</div>
@@ -26,10 +29,11 @@ const MultiSelectActivity: FC<ActivityProps> = ({ activity }) => {
         isMulti
         className="multi-select"
         isDisabled={!isJobsView}
-        options={activity.data.map((el) => ({
-          label: el.name,
-          value: el.id,
-        }))}
+        options={options}
+        value={options.filter(
+          (el) =>
+            get(activity?.response?.choices, el.value) === Selections.SELECTED,
+        )}
         placeholder={
           isJobsView
             ? 'Select one more options'

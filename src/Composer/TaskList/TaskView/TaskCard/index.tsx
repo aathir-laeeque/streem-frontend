@@ -1,19 +1,19 @@
+import ActivityList from '#Composer/ActivityList';
+import { ActivityType } from '#Composer/checklist.types';
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import ActivityList from '../../../ActivityList';
 import { JobStatus } from '../../../types';
 import { setActiveTask } from '../../actions';
 import {
+  StartedTaskStates,
   TaskCardProps,
   TaskExecutionStatus,
-  StartedTaskStates,
 } from '../../types';
 import Footer from './Footer';
 import Header from './Header';
-import { ActivityType } from '#Composer/checklist.types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-card',
@@ -33,10 +33,22 @@ const Wrapper = styled.div.attrs({
 `;
 
 const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
-  const { jobStatus } = useTypedSelector((state) => state.composer);
+  const {
+    jobStatus,
+    activeStageId,
+    activitiesOrderInTaskInStage,
+    activitiesById,
+  } = useTypedSelector((state) => state.composer);
+
+  const { status: taskStatus } = task.taskExecution;
+
   const dispatch = useDispatch();
 
-  const canSkipTask = !task.activities.reduce((acc, activity) => {
+  const activities = activitiesOrderInTaskInStage[activeStageId][task.id].map(
+    (activityId) => activitiesById[activityId],
+  );
+
+  const canSkipTask = !activities.reduce((acc, activity) => {
     if (
       activity.type === ActivityType.INSTRUCTION ||
       activity.type === ActivityType.MATERIAL
@@ -48,7 +60,15 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
     return acc;
   }, false);
 
-  const isTaskStarted = task.taskExecution.status in StartedTaskStates;
+  const activitiesHasError = activities.reduce((acc, activity) => {
+    return acc || !!activity.hasError;
+  }, false);
+
+  const isTaskStarted = taskStatus in StartedTaskStates;
+
+  const isTaskCompleted =
+    taskStatus === TaskExecutionStatus.COMPLETED ||
+    taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION;
 
   const showStartButton =
     (jobStatus === JobStatus.ASSIGNED || jobStatus === JobStatus.INPROGRESS) &&
@@ -62,14 +82,23 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
         }
       }}
     >
-      <Header task={task} showStartButton={showStartButton} />
-
-      <ActivityList
-        activities={task.activities}
+      <Header
+        task={task}
+        showStartButton={showStartButton}
         isTaskStarted={isTaskStarted}
       />
 
-      <Footer canSkipTask={canSkipTask} task={task} />
+      <ActivityList
+        activities={activities}
+        isTaskStarted={isTaskStarted}
+        isTaskCompleted={isTaskCompleted}
+      />
+
+      <Footer
+        canSkipTask={canSkipTask}
+        task={task}
+        activitiesHasError={activitiesHasError}
+      />
     </Wrapper>
   );
 };

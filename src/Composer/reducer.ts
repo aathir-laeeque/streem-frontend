@@ -1,13 +1,6 @@
 import { Reducer } from 'redux';
 
-import {
-  initialState as StageListInitialState,
-  stageListReducer,
-} from './StageList/reducer';
-import {
-  initialState as TaskListInitialState,
-  taskListReducer,
-} from './TaskList/reducer';
+import { StageListAction } from './StageList/types';
 import {
   ChecklistState,
   ComposerAction,
@@ -16,6 +9,9 @@ import {
   Entity,
   JobStatus,
 } from './types';
+import { transformChecklist } from './utils';
+import { TaskListAction } from './TaskList/types';
+import { ActivityListAction } from './ActivityList/types';
 
 const initialState: ComposerState = {
   checklistState: ChecklistState.CREATING,
@@ -24,8 +20,15 @@ const initialState: ComposerState = {
   entityId: undefined,
   loading: false,
   jobStatus: JobStatus.UNASSIGNED,
-  stages: StageListInitialState,
-  tasks: TaskListInitialState,
+
+  activeStageId: 0,
+  activeTaskId: 0,
+  activitiesById: {},
+  activitiesOrderInTaskInStage: {},
+  stagesById: {},
+  stagesOrder: [],
+  tasksById: {},
+  tasksOrderInStage: {},
 };
 
 const reducer: Reducer<ComposerState, ComposerActionType> = (
@@ -40,43 +43,136 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       return { ...state, loading: true };
 
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
+      const { entity, data } = action.payload;
+      const {
+        activitiesById,
+        activitiesOrderInTaskInStage,
+        stagesById,
+        stagesOrder,
+        tasksById,
+        tasksOrderInStage,
+      } = transformChecklist(
+        entity === Entity.CHECKLIST ? data : data?.checklist,
+      );
+
       return {
         ...state,
-        data: action.payload.data,
-        entityId: action.payload.data.id,
+        data: data,
+        entityId: data.id,
         loading: false,
-        stages: stageListReducer(state.stages, action),
-        tasks: taskListReducer(state.tasks, action),
 
         ...(action.payload.entity === Entity.JOB
-          ? {
-              jobStatus: action.payload.data.status,
-            }
-          : {
-              // TODO: make this as per the API response
-              checklistState: ChecklistState.CREATING,
-            }),
+          ? { jobStatus: data.status }
+          : { checklistState: ChecklistState.CREATING }),
+
+        // new keys
+        activeStageId: stagesOrder[0],
+        activeTaskId: tasksOrderInStage[stagesOrder[0]][0],
+        activitiesById,
+        activitiesOrderInTaskInStage,
+        stagesById,
+        stagesOrder,
+        tasksById,
+        tasksOrderInStage,
       };
 
     case ComposerAction.RESET_COMPOSER:
       return { ...initialState };
 
-    case ComposerAction.START_JOB:
-    case ComposerAction.RESTART_JOB:
+    case ComposerAction.START_JOB_SUCCESS:
       return { ...state, jobStatus: JobStatus.INPROGRESS };
 
-    case ComposerAction.COMPLETE_JOB:
-      return { ...state, jobStatus: JobStatus.COMPLETED };
+    // case ComposerAction.COMPLETE_JOB:
+    //   return { ...state, jobStatus: JobStatus.COMPLETED };
 
-    case ComposerAction.COMPLETE_JOB_WITH_EXCEPTION:
-      return { ...state, jobStatus: JobStatus.COMPLETED_WITH_EXCEPTION };
+    // BLOCK START
+    // actions realted to stage list and stage card
+    case StageListAction.SET_ACTIVE_STAGE:
+      return { ...state, activeStageId: action.payload.id };
+    // BLOCKS END
 
-    default:
+    // BLOCK START
+    // actions realted to task list and task view, task card and task media
+    case TaskListAction.SET_ACTIVE_TASK:
+      return { ...state, activeTaskId: action.payload.id };
+
+    case TaskListAction.UPDATE_TASK_EXECUTION_STATUS:
+      const taskToUpdate = state.tasksById[action.payload.taskId];
+
       return {
         ...state,
-        stages: stageListReducer(state.stages, action),
-        tasks: taskListReducer(state.tasks, action),
+        tasksById: {
+          ...state.tasksById,
+          [action.payload.taskId]: {
+            ...taskToUpdate,
+            taskExecution: action.payload.data,
+          },
+        },
       };
+
+    case TaskListAction.SET_TASK_ERROR:
+      return {
+        ...state,
+        tasksById: {
+          ...state.tasksById,
+          [action.payload.taskId]: {
+            ...state.tasksById[action.payload.taskId],
+            hasError: true,
+          },
+        },
+      };
+    // BLOCKS END
+
+    // BLOCK START
+    // actions related to activities list and activity
+    case ActivityListAction.UPDATE_EXECUTED_ACTIVITY:
+      return {
+        ...state,
+        activitiesById: {
+          ...state.activitiesById,
+          [action.payload.activity.id]: { ...action.payload.activity },
+        },
+      };
+
+    case ActivityListAction.SET_ACTIVITY_ERROR:
+      const { activityId, error } = action.payload;
+
+      return {
+        ...state,
+        activitiesById: {
+          ...state.activitiesById,
+          [activityId]: {
+            ...state.activitiesById[activityId],
+            hasError: true,
+            errorMessage: error.message,
+          },
+        },
+      };
+
+    case ActivityListAction.EXECUTE_ACTIVITY:
+      return {
+        ...state,
+        activitiesById: {
+          ...state.activitiesById,
+          [action.payload.activity.id]: {
+            ...state.activitiesById[action.payload.activity.id],
+            hasError: false,
+            errorMessage: undefined,
+          },
+        },
+
+        tasksById: {
+          ...state.tasksById,
+          [state.activeTaskId]: {
+            ...state.tasksById[state.activeTaskId],
+            hasError: false,
+          },
+        },
+      };
+    // BLOCK END
+
+    default:
+      return { ...state };
   }
 };
 

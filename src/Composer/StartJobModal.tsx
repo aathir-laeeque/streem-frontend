@@ -38,11 +38,7 @@ const StartJobModal: FC<StartJobModalProps> = ({
       <BaseModal
         closeAllModals={closeAllModals}
         closeModal={closeModal}
-        onPrimary={() => {
-          dispatch(startJob(jobId));
-
-          dispatch(startTask(taskId));
-        }}
+        onPrimary={() => dispatch(startJob(jobId))}
         onSecondary={() => closeModal()}
         primaryText="Start Job"
         secondaryText="Go Back"

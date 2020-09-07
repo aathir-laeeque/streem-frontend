@@ -15,13 +15,9 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
       (state: RootState) => state.composer,
     );
 
-    console.log('jobId :: ', jobId);
-
     const { data } = yield call(request, 'PUT', apiExecuteActivity(), {
       data: { jobId, activity },
     });
-
-    console.log('data ::: ', data);
 
     yield put(updateExecutedActivity(data));
   } catch (error) {
@@ -30,6 +26,10 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
       error,
     );
   }
+}
+
+export function* handleActivityErrorSaga(payload) {
+  console.log('came to handleActivityErrorSaga with payload ::: ', payload);
 }
 
 export function* ActivityListSaga() {

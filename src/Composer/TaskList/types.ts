@@ -1,10 +1,8 @@
 import { Media, Task } from '../checklist.types';
-import { ComposerActionType } from '../types';
-import { ActivityListActionType } from '../ActivityList/types';
 import {
   completeTask,
   setActiveTask,
-  setTasksList,
+  setTaskError,
   skipTask,
   startTask,
   updateTaskExecutionStatus,
@@ -23,30 +21,29 @@ export type TaskListState = {
 
 export enum TaskListAction {
   SET_ACTIVE_TASK = '@@composer/task-list/SET_ACTIVE_TASK',
-  SET_TASKS_LIST = '@@composer/task-list/SET_TASKS_LIST',
 
   START_TASK = '@@composer/task-list/task/START_TASK',
   COMPLETE_TASK = '@@composer/task-list/task/COMPLETE_TASK',
+  COMPLETE_TASK_WITH_EXCEPTION = '@@composer/task-list/task/COMPLETE_TASK_WITH_EXCEPTION',
   SKIP_TASK = '@@composer/task-list/task/SKIP_TASK',
 
   UPDATE_TASK_EXECUTION_STATUS = '@@composer/task-list/task/UPDATE_TASK_EXECUTION_STATUS',
+
+  SET_TASK_ERROR = '@@composer/task-list/task/SET_TASK_ERROR',
 }
 
-export type TaskListActionType =
-  | ReturnType<
-      | typeof setActiveTask
-      | typeof setTasksList
-      | typeof startTask
-      | typeof updateTaskExecutionStatus
-      | typeof completeTask
-      | typeof skipTask
-    >
-  | ActivityListActionType
-  | ComposerActionType;
+export type TaskListActionType = ReturnType<
+  | typeof setActiveTask
+  | typeof startTask
+  | typeof completeTask
+  | typeof skipTask
+  | typeof updateTaskExecutionStatus
+  | typeof setTaskError
+>;
 
 export type TaskViewProps = {
   isActive: boolean;
-  task: Task;
+  task: Omit<Task, 'activities'>;
 };
 
 export type TaskCardProps = TaskViewProps;
@@ -56,10 +53,18 @@ export type MediaCardProps = {
   isTaskActive: boolean;
 };
 
+export enum TaskAction {
+  START = 'start',
+  COMPLETE = 'complete',
+  SKIP = 'skip',
+  COMPLETE_WITH_EXCEPTION = 'complete-with-exception',
+}
+
 export enum StartedTaskStates {
   COMPLETED = 'COMPLETED',
   INPROGRESS = 'INPROGRESS',
   SKIPPED = 'SKIPPED',
+  COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
 }
 
 export enum NotStartedTaskStates {
@@ -72,3 +77,10 @@ export const TaskExecutionStatus = {
 };
 
 export type TaskExecutionStatus = typeof TaskExecutionStatus;
+
+export enum TaskErrors {
+  E201 = 'TASK_INCOMPLETE',
+  E202 = 'TASK_NOT_FOUND',
+}
+// TASK_INCOMPLETE("E201", "Task Incomplete"),
+// TASK_NOT_FOUND("E202", "Task Not Found"),

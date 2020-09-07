@@ -27,7 +27,6 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
                 <div
                   className="item-content"
                   onClick={() => {
-                    console.log('original activity :: ', activity);
                     dispatch(
                       executeActivity({
                         ...activity,
@@ -41,7 +40,7 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
                               }
                             : {
                                 status:
-                                  activity?.response?.choices[e.id] ||
+                                  get(activity?.response?.choices, e.id) ||
                                   Selections.NOT_SELECTED,
                               }),
                         })),
