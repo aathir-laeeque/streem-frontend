@@ -19,7 +19,7 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const ProgressBar: FC<{ percent: number; color: string }> = ({
+const ProgressBar: FC<{ percentage: number; color?: string }> = ({
   percentage = 0,
   color = '#1d84ff',
 }) => (
