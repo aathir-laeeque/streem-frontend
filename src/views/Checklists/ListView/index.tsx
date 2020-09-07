@@ -1,7 +1,7 @@
 import { ListViewComponent } from '#components';
 import { useTypedSelector } from '#store';
 import { fetchProperties } from '#store/properties/actions';
-import { Settings } from '@material-ui/icons';
+import { Settings, FullscreenExitRounded } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -83,9 +83,12 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
                   <div className="list-card-columns" key={`name_${item.code}`}>
                     <div className="title-group">
                       <span className="list-code">{item.code}</span>
-                      <span
-                        className="list-title"
-                        onClick={() => selectChecklist(item.id)}
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}
                       >
                         <Settings
                           style={{
@@ -99,8 +102,13 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
                             openNav();
                           }}
                         />
-                        {item.name}
-                      </span>
+                        <span
+                          className="list-title"
+                          onClick={() => selectChecklist(item.id)}
+                        >
+                          {item.name}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 );

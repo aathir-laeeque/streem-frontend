@@ -4,6 +4,7 @@ import {
   Activity,
   ActivityType,
 } from '#views/Checklists/ChecklistComposer/TaskList/TaskView/ActivityList/Activity/types';
+import { getInitials } from '#utils/stringUtils';
 import React, { FC, ReactNode, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { PrintJobProps } from './types';
@@ -808,8 +809,8 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                 <View style={{ display: 'flex', flex: 14.4 }} />
                 <View style={{ display: 'flex', flex: 42.8 }}>
                   <InputLabelGroup
-                    label="Previous Product"
-                    value=""
+                    label="Product Manufactured"
+                    value={checklist?.properties['PRODUCT MANUFACTURED'] || ''}
                     full={false}
                   />
                 </View>
@@ -1029,7 +1030,16 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                           <Text style={styles.taskFooterLabel}>Signature</Text>
                           <View
                             style={[styles.taskFooterInputs, { minHeight: 50 }]}
-                          />
+                          >
+                            <Text style={styles.text12}>
+                              {taskExecutionStatus !==
+                              TaskExecutionStatus.NOT_STARTED
+                                ? getInitials(
+                                    `${modifiedBy?.firstName} ${modifiedBy?.lastName}`,
+                                  )
+                                : ''}
+                            </Text>
+                          </View>
                         </View>
                         <View style={[styles.flexView, { margin: '0px 4px' }]}>
                           <Text style={styles.taskFooterLabel}>Date</Text>
