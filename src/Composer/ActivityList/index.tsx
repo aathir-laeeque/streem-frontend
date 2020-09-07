@@ -3,6 +3,7 @@ import { useTypedSelector } from '#store';
 import { Error } from '@material-ui/icons';
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
+import moment from 'moment';
 
 import { ActivityType } from '../checklist.types';
 import ChecklistActivity from './Checklist';
@@ -13,6 +14,7 @@ import ShouldBeActivity from './ShouldBe';
 import TextboxActivity from './Textbox';
 import { ActivityListProps } from './types';
 import YesNoActivity from './YesNo';
+import { generateFullName } from '../../utils/stringUtils';
 
 const Wrapper = styled.div.attrs({
   className: 'activity-list',
@@ -65,6 +67,13 @@ const Wrapper = styled.div.attrs({
         margin-right: 8px;
       }
     }
+
+    .activity-audit {
+      color: #999999;
+      font-size: 12px;
+      line-height: 0.83;
+      margin-top: 16px;
+    }
   }
 `;
 
@@ -77,58 +86,70 @@ const ActivityList: FC<ActivityListProps> = ({
 
   return (
     <Wrapper isTaskStarted={isTaskStarted} isTaskCompleted={isTaskCompleted}>
-      {activities.map((activity) => (
-        <div key={activity.id} className="activity">
-          {entity === Entity.JOB ? (
-            activity.type !== ActivityType.INSTRUCTION &&
-            activity.type !== ActivityType.MATERIAL &&
-            !activity.mandatory ? (
-              <div className="optional-badge">Optional</div>
-            ) : null
-          ) : null}
+      {activities.map((activity) => {
+        const { status, audit } = activity?.response;
 
-          {activity.hasError ? (
-            <div className="error-badge">
-              <Error className="icon" />
-              <span>Mandatory Activity Incomplete</span>
-            </div>
-          ) : null}
+        return (
+          <div key={activity.id} className="activity">
+            {entity === Entity.JOB ? (
+              activity.type !== ActivityType.INSTRUCTION &&
+              activity.type !== ActivityType.MATERIAL &&
+              !activity.mandatory ? (
+                <div className="optional-badge">Optional</div>
+              ) : null
+            ) : null}
 
-          {(() => {
-            switch (activity.type) {
-              case ActivityType.CHECKLIST:
-                return <ChecklistActivity activity={activity} />;
+            {activity.hasError ? (
+              <div className="error-badge">
+                <Error className="icon" />
+                <span>Mandatory Activity Incomplete</span>
+              </div>
+            ) : null}
 
-              case ActivityType.INSTRUCTION:
-                return <InstructionActivity activity={activity} />;
+            {(() => {
+              switch (activity.type) {
+                case ActivityType.CHECKLIST:
+                  return <ChecklistActivity activity={activity} />;
 
-              case ActivityType.MATERIAL:
-                return <MaterialActivity activity={activity} />;
+                case ActivityType.INSTRUCTION:
+                  return <InstructionActivity activity={activity} />;
 
-              case ActivityType.MEDIA:
-                return null;
+                case ActivityType.MATERIAL:
+                  return <MaterialActivity activity={activity} />;
 
-              case ActivityType.MULTISELECT:
-                return <MultiSelectActivity activity={activity} />;
+                case ActivityType.MEDIA:
+                  return null;
 
-              case ActivityType.SHOULD_BE:
-                return <ShouldBeActivity activity={activity} />;
+                case ActivityType.MULTISELECT:
+                  return <MultiSelectActivity activity={activity} />;
 
-              case ActivityType.SIGNATURE:
-                return null;
+                case ActivityType.SHOULD_BE:
+                  return <ShouldBeActivity activity={activity} />;
 
-              case ActivityType.TEXTBOX:
-                return <TextboxActivity activity={activity} />;
+                case ActivityType.SIGNATURE:
+                  return null;
 
-              case ActivityType.YES_NO:
-                return <YesNoActivity activity={activity} />;
+                case ActivityType.TEXTBOX:
+                  return <TextboxActivity activity={activity} />;
 
-              default:
-                return null;
-            }
-          })()}
-        </div>
-      ))}
+                case ActivityType.YES_NO:
+                  return <YesNoActivity activity={activity} />;
+
+                default:
+                  return null;
+              }
+            })()}
+
+            {status !== 'NOT_STARTED' ? (
+              <div className="activity-audit">
+                Last updated by {generateFullName(audit?.modifiedBy)}, ID:{' '}
+                {audit?.modifiedBy?.employeeId} on{' '}
+                {moment(audit?.modifiedAt).format('MMM D, h:mm A')}
+              </div>
+            ) : null}
+          </div>
+        );
+      })}
     </Wrapper>
   );
 };

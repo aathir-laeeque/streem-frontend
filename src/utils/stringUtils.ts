@@ -7,3 +7,11 @@ export const getInitials = (name: string): string => {
 export const capitalizeFirstLetter = (str: string): string => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
+
+type FullName = {
+  firstName: string;
+  lastName: string;
+};
+
+export const generateFullName = ({ firstName, lastName }: FullName) =>
+  `${firstName} ${lastName}`;

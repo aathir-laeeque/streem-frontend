@@ -2,6 +2,7 @@ import { RouteComponentProps } from '@reach/router';
 
 import { Job } from '../views/Jobs/types';
 import { Checklist } from './checklist.types';
+import { Error } from '#utils/globalTypes';
 
 export enum Entity {
   JOB = 'Job',

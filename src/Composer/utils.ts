@@ -8,12 +8,12 @@ import { TaskErrors } from './TaskList/types';
 import {
   ActivitiesById,
   ActivitiesOrderInTaskInStage,
-  ErrorGroups,
   StagesById,
   StagesOrder,
   TasksById,
   TasksOrderInStage,
-} from './types';
+} from './reducer.types';
+import { ErrorGroups } from './types';
 
 export const transformChecklist = (checklist: Checklist) => {
   const stagesOrder: StagesOrder = [];

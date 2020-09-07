@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { ActivityProps, Selections } from '../types';
 import { Wrapper } from './styles';
 import { executeActivity } from '../actions';
+import { CheckboxWithLabel } from '#components';
 
 const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
   const { entity } = useTypedSelector((state) => state.composer);
@@ -48,7 +49,7 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
                     );
                   }}
                 >
-                  <div
+                  {/* <div
                     className={`dummy-checkbox${
                       isItemSelected ? ' checked' : ''
                     }`}
@@ -56,7 +57,12 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
 
                   <div className={isItemSelected ? 'selected' : ''}>
                     {el.name}
-                  </div>
+                  </div> */}
+
+                  <CheckboxWithLabel
+                    isChecked={isItemSelected}
+                    label={el.name}
+                  />
                 </div>
 
                 <Close className="icon" />
