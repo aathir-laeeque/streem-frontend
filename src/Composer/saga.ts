@@ -1,14 +1,12 @@
-import { setTaskError } from './TaskList/actions';
-import { setActivityError } from './ActivityList/actions';
-import { groupJobErrors } from './utils';
+import { RootState } from '#store';
 import {
+  apiCompleteJob,
   apiGetChecklist,
   apiGetSelectedJob,
   apiStartJob,
-  apiCompleteJob,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { all, call, fork, put, takeLatest, select } from 'redux-saga/effects';
+import { all, call, fork, put, select, takeLatest } from 'redux-saga/effects';
 
 import {
   completeJob,
@@ -16,13 +14,16 @@ import {
   fetchDataOngoing,
   fetchDataSuccess,
   startJob,
+  startJobSuccess,
 } from './actions';
-import { StageListSaga } from './StageList/saga';
-import { TaskListSaga } from './TaskList/saga';
-import { ComposerAction, Entity } from './types';
+import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
-import { RootState } from '#store';
-import { startJobSuccess } from './actions';
+import { ComposerAction } from './reducer.types';
+import { StageListSaga } from './StageList/saga';
+import { setTaskError } from './TaskList/actions';
+import { TaskListSaga } from './TaskList/saga';
+import { Entity } from './types';
+import { groupJobErrors } from './utils';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   console.log('came to new composer data fetch saga with payload :: ', payload);
@@ -113,16 +114,11 @@ function* publishChecklistSaga() {
   console.log('make api call to publish checklist here');
 }
 
-function* restartJobSaga() {
-  console.log('make api call to restart the job here');
-}
-
 export function* ComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchDataSaga);
 
   yield takeLatest(ComposerAction.COMPLETE_JOB, completeJobSaga);
   yield takeLatest(ComposerAction.START_JOB, startJobSaga);
-  yield takeLatest(ComposerAction.RESTART_JOB, restartJobSaga);
 
   yield takeLatest(ComposerAction.PUBLISH_CHECKLIST, publishChecklistSaga);
 

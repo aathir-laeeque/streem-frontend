@@ -1,18 +1,18 @@
+import CompleteJobWithExceptionModal from '#Composer/modals/CompleteJobWithException';
+import StartJobModal from '#Composer/StartJobModal';
+import CompletetaskWithException from '#Composer/TaskList/TaskView/TaskCard/CompleteWithException';
+import SkipTaskModal from '#Composer/TaskList/TaskView/TaskCard/SkipTaskModal';
 import { useTypedSelector } from '#store';
 import { SignatureModal } from '#views/Checklists/ChecklistComposer/TaskList/TaskView/ActivityList/Activity/Signature/SignatureModal';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
-
-import { ConfirmationModal } from './ConfirmationModal';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import StartJobModal from '../../Composer/StartJobModal';
 import { closeAllModalAction, closeModalAction } from './actions';
+import { ConfirmationModal } from './ConfirmationModal';
 import { ModalNames } from './types';
-import SkipTaskModal from '../../Composer/TaskList/TaskView/TaskCard/SkipTaskModal';
-import CompletetaskWithException from '../../Composer/TaskList/TaskView/TaskCard/CompleteWithException';
 
 const Wrapper = styled.div``;
 
@@ -107,6 +107,18 @@ const getModal = (
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
             closeModal(ModalNames.COMPLETE_TASK_WITH_EXCEPTION, ...args)
+          }
+          key={i}
+        />
+      );
+
+    case ModalNames.COMPLETE_JOB_WITH_EXCEPTION:
+      return (
+        <CompleteJobWithExceptionModal
+          {...props}
+          closeAllModals={closeAllModals}
+          closeModal={(...args) =>
+            closeModal(ModalNames.COMPLETE_JOB_WITH_EXCEPTION, ...args)
           }
           key={i}
         />

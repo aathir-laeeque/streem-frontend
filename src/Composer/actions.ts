@@ -2,7 +2,8 @@ import { actionSpreader } from '#store';
 
 import { Job } from '../views/Jobs/types';
 import { Checklist } from './checklist.types';
-import { ComposerAction, Entity, FetchDataArgs } from './types';
+import { Entity, FetchDataArgs } from './types';
+import { ComposerAction } from './reducer.types';
 
 export const fetchData = ({ id, entity }: FetchDataArgs) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA, { id, entity });
@@ -30,5 +31,3 @@ export const startJobSuccess = () =>
 
 export const completeJob = (withException = false) =>
   actionSpreader(ComposerAction.COMPLETE_JOB, { withException });
-
-export const restartJob = () => actionSpreader(ComposerAction.RESTART_JOB);

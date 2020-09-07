@@ -1,17 +1,15 @@
 import { Reducer } from 'redux';
 
-import { StageListAction } from './StageList/types';
+import { ActivityListAction } from './ActivityList/types';
 import {
-  ChecklistState,
   ComposerAction,
   ComposerActionType,
   ComposerState,
-  Entity,
-  JobStatus,
-} from './types';
-import { transformChecklist } from './utils';
+} from './reducer.types';
+import { StageListAction } from './StageList/types';
 import { TaskListAction } from './TaskList/types';
-import { ActivityListAction } from './ActivityList/types';
+import { ChecklistState, Entity, JobStatus } from './types';
+import { transformChecklist } from './utils';
 
 const initialState: ComposerState = {
   checklistState: ChecklistState.CREATING,
