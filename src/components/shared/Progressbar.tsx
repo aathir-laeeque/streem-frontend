@@ -11,7 +11,7 @@ const Wrapper = styled.div.attrs({
   width: 100%;
 
   .filler {
-    background-color: #1d84ff;
+    background-color: ${({ color }) => color};
     border-radius: inherit;
     height: 100%;
     transition: width 0.2s ease-in;
@@ -19,8 +19,11 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const ProgressBar: FC<{ percent: number }> = ({ percentage = 0 }) => (
-  <Wrapper percentage={percentage}>
+const ProgressBar: FC<{ percent: number; color: string }> = ({
+  percentage = 0,
+  color = '#1d84ff',
+}) => (
+  <Wrapper percentage={percentage} color={color}>
     <div className="filler"></div>
   </Wrapper>
 );
