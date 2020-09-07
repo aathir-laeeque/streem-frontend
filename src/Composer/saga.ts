@@ -1,3 +1,6 @@
+import { setTaskError } from './TaskList/actions';
+import { setActivityError } from './ActivityList/actions';
+import { groupJobErrors } from './utils';
 import {
   apiGetChecklist,
   apiGetSelectedJob,
@@ -78,6 +81,26 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
       console.log('complete job success');
     } else {
       console.error('handle complete job errors here:: ', errors);
+
+      const { tasksErrors, activitiesErrors } = groupJobErrors(errors);
+
+      if (tasksErrors.length) {
+        console.log('handle task level error here');
+
+        yield all(
+          tasksErrors.map((error) =>
+            put(setTaskError('Activity Incomplete', error.id)),
+          ),
+        );
+      }
+      if (activitiesErrors.length) {
+        console.log('handle activities level error here');
+        yield all(
+          activitiesErrors.map((error) =>
+            put(setActivityError(error, error.id)),
+          ),
+        );
+      }
     }
 
     console.log('data on complete job :: ', data);

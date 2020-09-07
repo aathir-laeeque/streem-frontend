@@ -23,11 +23,9 @@ type TaskErrorSagaPayload = ErrorGroups & {
 };
 
 function* taskCompleteErrorSaga(payload: TaskErrorSagaPayload) {
-  const { activitiesErrors, taskId, tasksErrors } = payload;
+  const { activitiesErrors, taskId } = payload;
 
-  if (tasksErrors.length) {
-    console.log('handle task level error here');
-  } else if (activitiesErrors.length) {
+  if (activitiesErrors.length) {
     console.log('handle activities level error here');
     yield all(
       activitiesErrors.map((error) => put(setActivityError(error, error.id))),

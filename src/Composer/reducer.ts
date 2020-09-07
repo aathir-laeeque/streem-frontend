@@ -82,8 +82,8 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
     case ComposerAction.START_JOB_SUCCESS:
       return { ...state, jobStatus: JobStatus.INPROGRESS };
 
-    case ComposerAction.COMPLETE_JOB:
-      return { ...state, jobStatus: JobStatus.COMPLETED };
+    // case ComposerAction.COMPLETE_JOB:
+    //   return { ...state, jobStatus: JobStatus.COMPLETED };
 
     // BLOCK START
     // actions realted to stage list and stage card
