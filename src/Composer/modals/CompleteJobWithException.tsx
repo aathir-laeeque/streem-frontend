@@ -72,6 +72,7 @@ const Wrapper = styled.div`
     textarea {
       border: none;
       border-bottom: 1px solid #999999;
+      outline: none;
       width: 100%;
     }
   }
@@ -88,13 +89,20 @@ type CompleteJobWithExceptionModalProps = {
   closeModal: () => void;
 };
 
+const ExceptionReason = [
+  { label: 'Job got cancelled', value: 'job_got_cancelled' },
+  { label: 'Job created by mistake', value: 'job_created_by_mistake' },
+  { label: 'Job completed offline', value: 'job_completed_offline' },
+  { label: 'Other', value: 'other' },
+];
+
 const CompleteJobWithExceptionModal: FC<CompleteJobWithExceptionModalProps> = ({
   closeAllModals,
   closeModal,
 }) => {
   const dispatch = useDispatch();
 
-  const [values, setValues] = useState({ remarks: '' });
+  const [values, setValues] = useState({ remarks: '', reason: '' });
 
   return (
     <Wrapper>
@@ -118,22 +126,12 @@ const CompleteJobWithExceptionModal: FC<CompleteJobWithExceptionModalProps> = ({
           <label>Please select a reason below:</label>
 
           <div className="reason-list">
-            <div className="reason-item">
-              <div className="radio-button" />
-              <span>Job got canceled</span>
-            </div>
-            <div className="reason-item">
-              <div className="radio-button" />
-              <span>Job created by mistake</span>
-            </div>
-            <div className="reason-item">
-              <div className="radio-button" />
-              <span>Job completed offline</span>
-            </div>
-            <div className="reason-item">
-              <div className="radio-button" />
-              <span>Other</span>
-            </div>
+            {ExceptionReason.map((reason, idx) => (
+              <div className="reason-item" key={idx}>
+                <div className="radio-button" />
+                <span>{reason.label}</span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -142,11 +140,13 @@ const CompleteJobWithExceptionModal: FC<CompleteJobWithExceptionModalProps> = ({
 
           <textarea
             value={values.remarks}
-            placeholder=""
+            placeholder="Provide any additional remarks here"
             rows={3}
-            onChange={(e) =>
-              setValues((val) => ({ ...val, remarks: e.target.value }))
-            }
+            onChange={(e) => {
+              e.persist();
+
+              setValues((val) => ({ ...val, remarks: e.target.value }));
+            }}
           />
         </div>
       </BaseModal>
