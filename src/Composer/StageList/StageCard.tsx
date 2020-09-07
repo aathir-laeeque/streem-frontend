@@ -178,7 +178,11 @@ const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
   const totalTasks = tasks.length;
 
   const completedTasks = tasks.filter(
-    (task) => task.taskExecution.status === TaskExecutionStatus.COMPLETED,
+    (task) =>
+      task.taskExecution.status === TaskExecutionStatus.COMPLETED ||
+      task.taskExecution.status ===
+        TaskExecutionStatus.COMPLETED_WITH_EXCEPTION ||
+      task.taskExecution.status === TaskExecutionStatus.SKIPPED,
   ).length;
 
   const precentageOfCompleteTasks = Math.round(
