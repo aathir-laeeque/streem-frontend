@@ -3,6 +3,7 @@ import { ChecklistListViewSaga } from '#views/Checklists/ListView/saga';
 import { AuthSaga } from '#views/Auth/saga';
 import { UserAccessSaga } from '#views/UserAccess/saga';
 import { JobListViewSaga } from '#views/Jobs/ListView/saga';
+import { InboxListViewSaga } from '#views/Inbox/ListView/saga';
 import { all, fork } from 'redux-saga/effects';
 
 import { PropertiesSaga } from './properties/saga';
@@ -21,6 +22,7 @@ export function* rootSaga() {
     fork(PropertiesSaga),
     fork(showNotificationSaga),
     fork(JobListViewSaga),
+    fork(InboxListViewSaga),
     fork(UsersSaga),
     fork(FacilitiesSaga),
     fork(UserAccessSaga),

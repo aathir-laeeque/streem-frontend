@@ -4,6 +4,7 @@ import {
   FeaturedPlayList,
   LibraryAddCheck,
   MenuBook,
+  Inbox,
 } from '@material-ui/icons';
 import { Link } from '@reach/router';
 import React, { FC } from 'react';
@@ -13,6 +14,7 @@ import { MenuItem } from './types';
 
 const menuItems: MenuItem[] = [
   { name: 'Dashboard', icon: Dashboard, path: '/' },
+  { name: 'Inbox', icon: Inbox, path: '/inbox' },
   { name: 'Jobs', icon: FeaturedPlayList, path: '/jobs' },
   { name: 'Checklists', icon: LibraryAddCheck, path: '/checklists' },
   { name: 'Reports', icon: Assessment, path: '/reports' },

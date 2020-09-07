@@ -2,6 +2,7 @@ import { ModalContainerReducer } from '#components/ModalContainer/reducer';
 import { ChecklistListViewReducer } from '#views/Checklists/ListView/reducer';
 import { AuthReducer } from '#views/Auth/reducer';
 import { JobListViewReducer } from '#views/Jobs/ListView/reducer';
+import { InboxListViewReducer } from '#views/Inbox/ListView/reducer';
 import { combineReducers } from 'redux';
 
 import { PropertiesReducer } from './properties/reducer';
@@ -14,6 +15,7 @@ import { ComposerReducer } from '../Composer/reducer';
 export const rootReducer = combineReducers({
   checklistListView: ChecklistListViewReducer,
   jobListView: JobListViewReducer,
+  inboxListView: InboxListViewReducer,
   modalContainer: ModalContainerReducer,
   properties: PropertiesReducer,
   users: UsersReducer,

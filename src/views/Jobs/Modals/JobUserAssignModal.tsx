@@ -4,7 +4,7 @@ import { fetchUsers } from '#store/users/actions';
 import { User, Users } from '#store/users/types';
 import { capitalizeFirstLetter, getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
-import { Search } from '@material-ui/icons';
+import { Search, CodeSharp } from '@material-ui/icons';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -122,7 +122,8 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
   const { jobs, selectedStatus }: Partial<ListViewState> = useTypedSelector(
     (state) => state.jobListView,
   );
-  const job = jobs[selectedStatus].list[selectedJobIndex];
+
+  const job = jobs[selectedStatus.toLowerCase()].list[selectedJobIndex];
 
   const scroller = useRef<HTMLDivElement | null>(null);
   const [searchQuery, setSearchQuery] = useState('');

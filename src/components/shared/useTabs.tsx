@@ -15,6 +15,7 @@ const Wrapper = styled.div`
     border-bottom: 2px solid #1d84ff;
     color: #1d84ff;
     font-weight: 600;
+    text-transform: capitalize;
   }
 
   .tabs-row {

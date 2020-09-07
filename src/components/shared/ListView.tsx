@@ -11,7 +11,7 @@ import { Button, FlatButton } from './Button';
 // TODO Either make it horizontal scrollable or remove the commented section and table styles.
 
 interface ListViewProps {
-  primaryButtonText: string;
+  primaryButtonText?: string;
   onPrimaryClick?: () => void;
   properties: Properties;
   data: Checklist[] | Job[] | Users;
@@ -63,7 +63,7 @@ const Wrapper = styled.div.attrs({})`
     color: #999999;
     font-weight: bold;
     letter-spacing: 1px;
-    padding: 0 4px;
+    padding: 0 12px;
     overflow-wrap: anywhere;
     display: flex;
     align-items: center;
@@ -78,7 +78,7 @@ const Wrapper = styled.div.attrs({})`
     flex: 1;
     font-size: 14px;
     color: #666666;
-    padding: 0 4px;
+    padding: 0 12px;
     font-weight: 600;
     overflow-wrap: anywhere;
     display: flex;
@@ -163,41 +163,6 @@ const Wrapper = styled.div.attrs({})`
     font-size: 13px;
     cursor: pointer;
   }
-
-  .table-td {
-    white-space: nowrap;
-    min-width: 150px;
-    font-size: 14px;
-    color: #666666;
-    padding: 0 4px;
-    font-weight: 600;
-  }
-
-  .table {
-  }
-
-  .table-tr {
-  }
-
-  .table-th {
-    font-size: 12px;
-    color: #999999;
-    font-weight: bold;
-    letter-spacing: 1px;
-    padding: 0 4px;
-  }
-
-  .table-thead {
-    border-bottom: 1px solid #999999;
-    padding: 13px 0px 13px 0px;
-  }
-
-  .table-tbody {
-    tr {
-      border-bottom: 1px solid #dadada;
-      height: 80px;
-    }
-  }
 `;
 
 export const ListView: FC<ListViewProps> = ({
@@ -229,6 +194,7 @@ export const ListView: FC<ListViewProps> = ({
         e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight &&
         !isLast
       ) {
+        console.log('currentPage', currentPage);
         fetchData(currentPage + 1, 10);
       }
     }
@@ -246,12 +212,14 @@ export const ListView: FC<ListViewProps> = ({
             <Search className="searchsubmit" />
           </div>
           <span className="resetOption">Reset</span>
-          <Button
-            style={{ marginLeft: `auto`, marginRight: 0 }}
-            onClick={onPrimaryClick}
-          >
-            {primaryButtonText}
-          </Button>
+          {primaryButtonText && (
+            <Button
+              style={{ marginLeft: `auto`, marginRight: 0 }}
+              onClick={onPrimaryClick}
+            >
+              {primaryButtonText}
+            </Button>
+          )}
         </div>
         <div className="list-header">
           {beforeColumns &&
@@ -307,40 +275,6 @@ export const ListView: FC<ListViewProps> = ({
           ))}
         </div>
       </div>
-      {/* <table className="table">
-        <thead className="table-thead">
-          <tr className="table-tr">
-            {properties.map((el, index) => (
-              <th key={index} className="table-th">
-                {el.name}
-              </th>
-            ))}
-            {properties.map((el, index) => (
-              <th key={index} className="table-th">
-                {el.name}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="table-tbody">
-          {(data as Array<Checklist | Job>).map((el, index) => (
-            <tr className="table-tr" key={`list_el_${el.id}`}>
-              {properties.map((property, propertyIndex) => (
-                <td key={propertyIndex} className="table-td">
-                  The following style rules collapse the table borders and align
-                  the table header text to left.
-                </td>
-              ))}
-              {properties.map((property, propertyIndex) => (
-                <td key={propertyIndex} className="table-td">
-                  The following style rules collapse the table borders and align
-                  the table header text to left.
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table> */}
     </Wrapper>
   );
 };

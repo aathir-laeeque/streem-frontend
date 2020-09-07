@@ -5,6 +5,7 @@ import {
   ChecklistView,
   DashboardView,
   JobsView,
+  InboxView,
   ReportsView,
   UserAccessView,
   ProfileView,
@@ -24,6 +25,7 @@ const HomeView: FC<RouteComponentProps> = () => {
           <ChecklistView path="checklists/*" />
           <ReportsView path="reports/*" />
           <JobsView path="jobs/*" />
+          <InboxView path="inbox/*" />
           <UserAccessView path="user-access/*" />
           <ProfileView path="profile" />
         </Router>
