@@ -116,7 +116,7 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
 
 function* loginSuccessSaga() {
   try {
-    yield delay(100);
+    yield delay(500);
     const id = yield select(getUserId);
     yield put(refreshTokenPoll());
     yield put(fetchProfile({ id }));

@@ -71,7 +71,7 @@ const Header: FC = () => {
               handleClose();
             }}
           >
-            User and Access
+            Users and Access
           </MenuItem>
         </NestedMenuItem>
         <MenuItem
