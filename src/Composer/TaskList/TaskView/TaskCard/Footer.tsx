@@ -214,12 +214,21 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
     );
   } else if (task.taskExecution.status === TaskExecutionStatus.INPROGRESS) {
     if (shouldAskForReason) {
+      let text;
+      if (
+        moment().diff(moment(task.taskExecution.startedAt)) > task.maxPeriod
+      ) {
+        text = 'State your reason for delay';
+      } else if (
+        task.timerOperator === 'NOT_LESS_THAN' &&
+        moment().diff(moment(task.taskExecution.startedAt)) < task.minPeriod
+      ) {
+        text = 'State your reason for early completion';
+      }
       return (
         <DelayWrapper>
           <div className="new-form-field">
-            <label className="new-form-field-label">
-              State your reason for delay
-            </label>
+            <label className="new-form-field-label">{text}</label>
             <textarea
               className="new-form-field-textarea"
               name="reason"
