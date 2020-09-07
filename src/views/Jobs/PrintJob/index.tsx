@@ -810,7 +810,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                 <View style={{ display: 'flex', flex: 42.8 }}>
                   <InputLabelGroup
                     label="Product Manufactured"
-                    value={checklist?.properties['PRODUCT MANUFACTURED'] || ''}
+                    value={jobExtras?.properties['PRODUCT MANUFACTURED'] || ''}
                     full={false}
                   />
                 </View>
