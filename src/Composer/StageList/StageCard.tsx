@@ -184,7 +184,9 @@ const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
         TaskExecutionStatus.COMPLETED_WITH_EXCEPTION ||
       task.taskExecution.status ===
         TaskExecutionStatus.ENABLED_FOR_ERROR_CORRECTION ||
-      task.taskExecution.status === TaskExecutionStatus.SKIPPED,
+      task.taskExecution.status === TaskExecutionStatus.SKIPPED ||
+      task.taskExecution.status ===
+        TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION,
   ).length;
 
   const precentageOfCompleteTasks = Math.round(

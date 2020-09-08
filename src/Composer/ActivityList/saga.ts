@@ -24,7 +24,9 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
       data: { jobId, activity },
     });
 
-    yield put(updateExecutedActivity(data));
+    if (data) {
+      yield put(updateExecutedActivity(data));
+    }
   } catch (error) {
     console.error(
       'error came in the executeActivitySaga in ActivityListSaga :: ',
@@ -47,7 +49,9 @@ function* fixActivitySaga({ payload }: ReturnType<typeof fixActivity>) {
       data: { jobId, activity },
     });
 
-    yield put(updateExecutedActivity(data));
+    if (data) {
+      yield put(updateExecutedActivity(data));
+    }
   } catch (error) {
     console.error(
       'error came in the executeActivitySaga in ActivityListSaga :: ',

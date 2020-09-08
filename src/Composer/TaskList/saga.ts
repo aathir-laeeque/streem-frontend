@@ -147,6 +147,10 @@ function* completeErrorCorrectionSaga({
 
     if (data) {
       yield put(updateTaskExecutionStatus(taskId, data));
+    } else {
+      const groupedErrors = groupJobErrors(errors);
+
+      yield taskCompleteErrorSaga({ ...groupedErrors, taskId });
     }
   } catch (error) {
     console.error('error came in enableErrorCorrectionSaga :: ', error);

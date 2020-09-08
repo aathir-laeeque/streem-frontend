@@ -70,7 +70,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
 
   const isTaskCompleted =
     taskStatus === TaskExecutionStatus.COMPLETED ||
-    taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION;
+    taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION ||
+    taskStatus === TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION;
 
   const isCompletedWithException =
     taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION;

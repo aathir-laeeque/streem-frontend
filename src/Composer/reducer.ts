@@ -148,6 +148,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       };
 
     case ActivityListAction.EXECUTE_ACTIVITY:
+    case ActivityListAction.FIX_ACTIVITY:
       return {
         ...state,
         activitiesById: {

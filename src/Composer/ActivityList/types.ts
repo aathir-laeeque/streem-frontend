@@ -1,4 +1,5 @@
 import { Activity } from '../checklist.types';
+import { fixActivity } from './actions';
 import {
   setActivityError,
   updateExecutedActivity,
@@ -30,6 +31,7 @@ export type ActivityListActionType = ReturnType<
   | typeof updateExecutedActivity
   | typeof setActivityError
   | typeof executeActivity
+  | typeof fixActivity
 >;
 
 export enum ActivityErrors {
