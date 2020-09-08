@@ -23,7 +23,7 @@ type Inputs = {
 const MyProfile: FC<MyProfileProps> = () => {
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
-  const { register, handleSubmit, errors, formState } = useForm<Inputs>({
+  const { register, handleSubmit, errors, formState, reset } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
     defaultValues: {
@@ -47,11 +47,12 @@ const MyProfile: FC<MyProfileProps> = () => {
       firstName: data?.firstName,
       lastName: data?.lastName,
     };
+    reset(payload);
     dispatch(updateProfile({ body: payload, id: profile?.id || 0 }));
   };
+
   let rolePlaceholder = 'N/A';
   if (profile?.roles && profile?.roles[0]) {
-    console.log('profile?.roles[0]', profile?.roles[0]);
     rolePlaceholder = capitalize(profile.roles[0].name.replace('_', ' '));
   }
 

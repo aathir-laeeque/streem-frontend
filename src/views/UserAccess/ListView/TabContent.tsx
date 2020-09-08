@@ -122,8 +122,10 @@ const TabContent: FC<TabViewProps> = ({
     );
   };
 
-  if (loading || users[selectedStatus].list.length === 0) {
+  if (loading) {
     return <div>Loading...</div>;
+  } else if (users[selectedStatus].list.length === 0) {
+    return <div />;
   }
 
   const parsedUsers = (users[selectedStatus].list as Array<User>).map(

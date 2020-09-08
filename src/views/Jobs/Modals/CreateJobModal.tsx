@@ -167,6 +167,7 @@ export const CreateJobModal: FC<CreateJobModalProps> = ({
               }
               onChange={(id, value) => setSearchQuery(value)}
               required
+              isSearch
             />
             {showChecklists && (
               <div className="checklists-wrapper">

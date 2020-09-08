@@ -269,6 +269,12 @@ function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
     );
 
     if (errors) {
+      yield put(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: 'Password Incorrect',
+        }),
+      );
       return false;
     }
 

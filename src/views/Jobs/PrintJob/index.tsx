@@ -27,7 +27,7 @@ import {
 import moment from 'moment';
 import { Entity, JobStatus } from '#Composer/types';
 
-const now = moment().format('Do MMM, YYYY, h a');
+const now = moment().format('Do MMM, YYYY, HH:MM a');
 
 const styles = StyleSheet.create({
   page: {

@@ -41,7 +41,7 @@ const AccountSecurity: FC<AccountSecurityProps> = () => {
   const [oldPasswordInputType, setOldPasswordInputType] = useState(true);
   const [newPasswordInputType, setNewPasswordInputType] = useState(true);
   const { profile } = useTypedSelector((state) => state.auth);
-  const { register, handleSubmit, errors, formState, trigger } = useForm<
+  const { register, handleSubmit, errors, formState, trigger, reset } = useForm<
     Inputs
   >({
     mode: 'onChange',
@@ -60,6 +60,7 @@ const AccountSecurity: FC<AccountSecurityProps> = () => {
       newPassword: data?.newPassword,
     };
     dispatch(updateProfile({ body: payload, id: profile?.id || 0 }));
+    reset();
   };
 
   return (
@@ -122,7 +123,7 @@ const AccountSecurity: FC<AccountSecurityProps> = () => {
                 }
                 onFocusInput={() => setPasswordFocused(true)}
               />
-              {passwordFocused && (
+              {passwordFocused && formState.isDirty && (
                 <div className="error-container">
                   {Object.keys(messages).map(
                     (item): JSX.Element => (

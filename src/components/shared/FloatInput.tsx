@@ -9,6 +9,7 @@ interface FloatInputProps {
   placeHolder: string;
   required?: boolean;
   disabled?: boolean;
+  isSearch?: boolean;
   onChange: (id: string, value: string) => void;
   executeOnFocus?: () => void;
   executeOnBlur?: () => void;
@@ -97,6 +98,7 @@ export const FloatInput: FC<FloatInputProps> = ({
   value,
   onChange,
   id,
+  isSearch,
   executeOnFocus,
   executeOnBlur,
 }) => {
@@ -126,7 +128,7 @@ export const FloatInput: FC<FloatInputProps> = ({
 
   const onBlur = (event: React.FocusEvent<HTMLInputElement>): void => {
     if (event.target.value === '') {
-      if (required) {
+      if (required && !isSearch) {
         setError(true);
       }
     }
