@@ -27,7 +27,7 @@ const Timer: FC = ({ task }) => {
   const [timeElapsed, setTimeElapsed] = useState(
     isTaskCompleted
       ? moment(endedAt).diff(moment(startedAt))
-      : moment().diff(moment(startedAt)),
+      : moment().diff(moment(startedAt ?? moment())),
   );
 
   const [isLimitCrossed, setLimitCrossed] = useState(false);

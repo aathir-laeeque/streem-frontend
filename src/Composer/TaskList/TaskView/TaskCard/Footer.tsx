@@ -173,14 +173,29 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   const isTaskDelayed =
     taskExecutionStatus === TaskExecutionStatus.COMPLETED && reason;
 
-  if (taskExecutionStatus === TaskExecutionStatus.COMPLETED) {
+  if (
+    taskExecutionStatus === TaskExecutionStatus.COMPLETED ||
+    taskExecutionStatus === TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION
+  ) {
     if (isTaskDelayed) {
+      let text;
+      if (
+        moment().diff(moment(task.taskExecution.startedAt)) > task.maxPeriod
+      ) {
+        text = 'before the set time';
+      } else if (
+        task.timerOperator === 'NOT_LESS_THAN' &&
+        moment().diff(moment(task.taskExecution.startedAt)) < task.minPeriod
+      ) {
+        text = 'after the set time';
+      }
+
       return (
         <DelayedWrapper>
           <CompletedWrapper completed isTaskDelayed={isTaskDelayed}>
             <Error className="icon" />
             <span>
-              Task Completed after set time by {generateName(modifiedBy)}, ID:{' '}
+              Task Completed {text} by {generateName(modifiedBy)}, ID:{' '}
               {modifiedBy.employeeId} on{' '}
               {moment(modifiedAt).format('MMM D, h:mm A')}
             </span>
