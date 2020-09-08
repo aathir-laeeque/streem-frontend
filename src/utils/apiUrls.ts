@@ -47,6 +47,8 @@ export const apiGetSelectedJob = (jobId: Job['id']) =>
 
 export const apiExecuteActivity = () => `${baseUrl}/activities/execute`;
 
+export const apiFixActivity = () => `${baseUrl}/activities/error-correction`;
+
 export const apiCompleteTask = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}`;
 

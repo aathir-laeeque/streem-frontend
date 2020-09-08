@@ -36,9 +36,10 @@ const ErrorCorrectionModal: FC<ErrorCorrectionModalProps> = ({
       <BaseModal
         closeAllModals={closeAllModals}
         closeModal={closeModal}
-        onPrimary={() =>
-          dispatch(enableErrorCorrection(taskId, correctionReason))
-        }
+        onPrimary={() => {
+          dispatch(enableErrorCorrection(taskId, correctionReason));
+          closeModal();
+        }}
         onSecondary={() => closeModal()}
         primaryText="Submit"
         secondaryText="Cancel"

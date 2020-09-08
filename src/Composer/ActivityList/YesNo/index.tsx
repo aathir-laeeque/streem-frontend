@@ -6,9 +6,9 @@ import { get } from 'lodash';
 import { ActivityProps, Selections } from '../types';
 import { Wrapper } from './styles';
 import { useDispatch } from 'react-redux';
-import { executeActivity } from '../actions';
+import { executeActivity, fixActivity } from '../actions';
 
-const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
+const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const { entity } = useTypedSelector((state) => state.composer);
   const dispatch = useDispatch();
 
@@ -29,20 +29,24 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
                   <div key={index} className="button-item">
                     <button
                       className={isSelected ? 'filled' : ''}
-                      onClick={() =>
-                        dispatch(
-                          executeActivity({
-                            ...activity,
-                            data: activity.data.map((e: any) => ({
-                              ...e,
-                              status:
-                                e.id === el.id
-                                  ? Selections.SELECTED
-                                  : Selections.NOT_SELECTED,
-                            })),
-                          }),
-                        )
-                      }
+                      onClick={() => {
+                        const newData = {
+                          ...activity,
+                          data: activity.data.map((e: any) => ({
+                            ...e,
+                            status:
+                              e.id === el.id
+                                ? Selections.SELECTED
+                                : Selections.NOT_SELECTED,
+                          })),
+                        };
+
+                        if (isCorrectingError) {
+                          dispatch(fixActivity(newData));
+                        } else {
+                          dispatch(executeActivity(newData));
+                        }
+                      }}
                     >
                       {el.name}
                     </button>

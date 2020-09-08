@@ -90,6 +90,7 @@ const ActivityList: FC<ActivityListProps> = ({
   isTaskStarted,
   isTaskCompleted,
   isCompletedWithException,
+  isCorrectingError,
 }) => {
   const { entity } = useTypedSelector((state) => state.composer);
 
@@ -122,31 +123,66 @@ const ActivityList: FC<ActivityListProps> = ({
             {(() => {
               switch (activity.type) {
                 case ActivityType.CHECKLIST:
-                  return <ChecklistActivity activity={activity} />;
+                  return (
+                    <ChecklistActivity
+                      activity={activity}
+                      isCorrectingError={isCorrectingError}
+                    />
+                  );
 
                 case ActivityType.INSTRUCTION:
-                  return <InstructionActivity activity={activity} />;
+                  return (
+                    <InstructionActivity
+                      activity={activity}
+                      isCorrectingError={isCorrectingError}
+                    />
+                  );
 
                 case ActivityType.MATERIAL:
-                  return <MaterialActivity activity={activity} />;
+                  return (
+                    <MaterialActivity
+                      activity={activity}
+                      isCorrectingError={isCorrectingError}
+                    />
+                  );
 
                 case ActivityType.MEDIA:
                   return null;
 
                 case ActivityType.MULTISELECT:
-                  return <MultiSelectActivity activity={activity} />;
+                  return (
+                    <MultiSelectActivity
+                      activity={activity}
+                      isCorrectingError={isCorrectingError}
+                    />
+                  );
 
                 case ActivityType.SHOULD_BE:
-                  return <ShouldBeActivity activity={activity} />;
+                  return (
+                    <ShouldBeActivity
+                      activity={activity}
+                      isCorrectingError={isCorrectingError}
+                    />
+                  );
 
                 case ActivityType.SIGNATURE:
                   return null;
 
                 case ActivityType.TEXTBOX:
-                  return <TextboxActivity activity={activity} />;
+                  return (
+                    <TextboxActivity
+                      activity={activity}
+                      isCorrectingError={isCorrectingError}
+                    />
+                  );
 
                 case ActivityType.YES_NO:
-                  return <YesNoActivity activity={activity} />;
+                  return (
+                    <YesNoActivity
+                      activity={activity}
+                      isCorrectingError={isCorrectingError}
+                    />
+                  );
 
                 default:
                   return null;

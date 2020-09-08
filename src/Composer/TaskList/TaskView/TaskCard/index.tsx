@@ -79,6 +79,9 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
     (jobStatus === JobStatus.ASSIGNED || jobStatus === JobStatus.INPROGRESS) &&
     !isTaskStarted;
 
+  const isCorrectingError =
+    taskStatus === TaskExecutionStatus.ENABLED_FOR_ERROR_CORRECTION;
+
   return (
     <Wrapper
       onClick={() => {
@@ -99,6 +102,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
         isTaskStarted={isTaskStarted}
         isTaskCompleted={isTaskCompleted}
         isCompletedWithException={isCompletedWithException}
+        isCorrectingError={isCorrectingError}
       />
 
       <Footer

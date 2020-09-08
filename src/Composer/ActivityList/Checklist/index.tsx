@@ -7,10 +7,13 @@ import { useDispatch } from 'react-redux';
 
 import { ActivityProps, Selections } from '../types';
 import { Wrapper } from './styles';
-import { executeActivity } from '../actions';
+import { executeActivity, fixActivity } from '../actions';
 import { CheckboxWithLabel } from '#components';
 
-const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
+const ChecklistActivity: FC<ActivityProps> = ({
+  activity,
+  isCorrectingError,
+}) => {
   const { entity } = useTypedSelector((state) => state.composer);
 
   const dispatch = useDispatch();
@@ -28,37 +31,30 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity }) => {
                 <div
                   className="item-content"
                   onClick={() => {
-                    dispatch(
-                      executeActivity({
-                        ...activity,
-                        data: activity.data.map((e) => ({
-                          ...e,
-                          ...(e.id === el.id
-                            ? {
-                                status: isItemSelected
-                                  ? Selections.NOT_SELECTED
-                                  : Selections.SELECTED,
-                              }
-                            : {
-                                status:
-                                  get(activity?.response?.choices, e.id) ||
-                                  Selections.NOT_SELECTED,
-                              }),
-                        })),
-                      }),
-                    );
+                    const newData = {
+                      ...activity,
+                      data: activity.data.map((e) => ({
+                        ...e,
+                        ...(e.id === el.id
+                          ? {
+                              status: isItemSelected
+                                ? Selections.NOT_SELECTED
+                                : Selections.SELECTED,
+                            }
+                          : {
+                              status:
+                                get(activity?.response?.choices, e.id) ||
+                                Selections.NOT_SELECTED,
+                            }),
+                      })),
+                    };
+                    if (isCorrectingError) {
+                      dispatch(fixActivity(newData));
+                    } else {
+                      dispatch(executeActivity(newData));
+                    }
                   }}
                 >
-                  {/* <div
-                    className={`dummy-checkbox${
-                      isItemSelected ? ' checked' : ''
-                    }`}
-                  />
-
-                  <div className={isItemSelected ? 'selected' : ''}>
-                    {el.name}
-                  </div> */}
-
                   <CheckboxWithLabel
                     isChecked={isItemSelected}
                     label={el.name}

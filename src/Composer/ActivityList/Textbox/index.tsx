@@ -4,10 +4,13 @@ import { customOnChange } from '#utils/formEvents';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { executeActivity } from '../actions';
+import { executeActivity, fixActivity } from '../actions';
 import { ActivityProps } from '../types';
 
-const TextboxActivity: FC<ActivityProps> = ({ activity }) => {
+const TextboxActivity: FC<ActivityProps> = ({
+  activity,
+  isCorrectingError,
+}) => {
   const dispatch = useDispatch();
 
   const { entity } = useTypedSelector((state) => state.composer);
@@ -17,12 +20,17 @@ const TextboxActivity: FC<ActivityProps> = ({ activity }) => {
     e.persist();
     customOnChange(e, (event) => {
       console.log('e.target.value :: ', event.target.value);
-      dispatch(
-        executeActivity({
-          ...activity,
-          data: { ...activity.data, input: e.target.value },
-        }),
-      );
+
+      const newData = {
+        ...activity,
+        data: { ...activity.data, input: e.target.value },
+      };
+
+      if (isCorrectingError) {
+        dispatch(fixActivity(newData));
+      } else {
+        dispatch(executeActivity(newData));
+      }
     });
     setValue(e.currentTarget.value);
   };

@@ -1,16 +1,16 @@
 // import { Entity } from '#Composer/types';
 // import { useTypedSelector } from '#store';
-import React, { FC } from 'react';
-import { debounce } from 'lodash';
 import { customOnChange } from '#utils/formEvents';
+import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
+
+import { executeActivity, fixActivity } from '../actions';
+import { ActivityProps } from '../types';
+import { Wrapper } from './styles';
+
 // import Select from 'react-select';
 
 // import { customSelectStyles } from '../MultiSelect/commonStyles';
-import { ActivityProps } from '../types';
-import { Wrapper } from './styles';
-import { useDispatch } from 'react-redux';
-import { executeActivity } from '../actions';
-
 // const RULES = [
 //   { label: 'Equal To', value: 'EQUAL_TO' },
 //   { label: 'Less Than', value: 'LESS_THAN' },
@@ -52,7 +52,10 @@ const generateText = (data) => {
   }
 };
 
-const ShouldBeActivity: FC<ActivityProps> = ({ activity }) => {
+const ShouldBeActivity: FC<ActivityProps> = ({
+  activity,
+  isCorrectingError,
+}) => {
   // const { entity } = useTypedSelector((state) => state.composer);
 
   // const isJobsView = entity === Entity.JOB;
@@ -63,12 +66,17 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity }) => {
     e.persist();
     customOnChange(e, (event) => {
       console.log('e.target.value :: ', event.target.value);
-      dispatch(
-        executeActivity({
-          ...activity,
-          data: { ...activity.data, input: e.target.value },
-        }),
-      );
+
+      const newData = {
+        ...activity,
+        data: { ...activity.data, input: e.target.value },
+      };
+
+      if (isCorrectingError) {
+        dispatch(fixActivity(newData));
+      } else {
+        dispatch(executeActivity(newData));
+      }
     });
     setValue(e.currentTarget.value);
   };

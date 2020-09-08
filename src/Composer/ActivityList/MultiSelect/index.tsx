@@ -10,9 +10,12 @@ import { get } from 'lodash';
 import { ActivityProps, Selections } from '../types';
 import { customSelectStyles } from './commonStyles';
 import { Wrapper } from './styles';
-import { executeActivity } from '../actions';
+import { executeActivity, fixActivity } from '../actions';
 
-const MultiSelectActivity: FC<ActivityProps> = ({ activity }) => {
+const MultiSelectActivity: FC<ActivityProps> = ({
+  activity,
+  isCorrectingError,
+}) => {
   const { entity } = useTypedSelector((state) => state.composer);
 
   const dispatch = useDispatch();
@@ -41,17 +44,21 @@ const MultiSelectActivity: FC<ActivityProps> = ({ activity }) => {
         }
         styles={customSelectStyles}
         onChange={(options) => {
-          dispatch(
-            executeActivity({
-              ...activity,
-              data: activity.data.map((el) => ({
-                ...el,
-                ...(options.findIndex((e) => e.value === el.id) > -1
-                  ? { status: Selections.SELECTED }
-                  : { status: Selections.NOT_SELECTED }),
-              })),
-            }),
-          );
+          const newData = {
+            ...activity,
+            data: activity.data.map((el) => ({
+              ...el,
+              ...(options.findIndex((e) => e.value === el.id) > -1
+                ? { status: Selections.SELECTED }
+                : { status: Selections.NOT_SELECTED }),
+            })),
+          };
+
+          if (isCorrectingError) {
+            dispatch(fixActivity(newData));
+          } else {
+            dispatch(executeActivity(newData));
+          }
         }}
       />
 

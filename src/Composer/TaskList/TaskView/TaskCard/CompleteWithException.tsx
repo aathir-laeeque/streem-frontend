@@ -36,7 +36,10 @@ const CompletetaskWithException: FC<CompletetaskWithExceptionProps> = ({
       <BaseModal
         closeAllModals={closeAllModals}
         closeModal={closeModal}
-        onPrimary={() => dispatch(completeTask(taskId, exceptionReason, true))}
+        onPrimary={() => {
+          dispatch(completeTask(taskId, exceptionReason, true));
+          closeModal();
+        }}
         onSecondary={() => closeModal()}
         primaryText="Submit"
         secondaryText="Cancel"
