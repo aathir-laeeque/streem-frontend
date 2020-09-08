@@ -47,7 +47,17 @@ const MyProfile: FC<MyProfileProps> = () => {
       firstName: data?.firstName,
       lastName: data?.lastName,
     };
-    reset(payload);
+    reset({
+      firstName: profile?.firstName,
+      lastName: profile?.lastName,
+      username: profile?.username,
+      employeeId: profile?.employeeId,
+      email: profile?.email,
+      department: profile?.department,
+      facilities: profile?.facilities?.map((f) => f.name).toString(),
+      roles: profile?.roles?.map((r) => r.name).toString(),
+      ...payload,
+    });
     dispatch(updateProfile({ body: payload, id: profile?.id || 0 }));
   };
 
