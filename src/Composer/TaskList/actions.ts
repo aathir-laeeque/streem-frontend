@@ -45,3 +45,18 @@ export const skipTask = (taskId: Task['id'], reason: string) =>
 
 export const setTaskError = (error: any, taskId: Task['id']) =>
   actionSpreader(TaskListAction.SET_TASK_ERROR, { error, taskId });
+
+export const enableErrorCorrection = (
+  taskId: Task['id'],
+  correctionReason: string,
+) =>
+  actionSpreader(TaskListAction.ENABLE_TASK_ERROR_CORRECTION, {
+    taskId,
+    correctionReason,
+  });
+
+export const completeErrorCorretcion = (taskId: Task['id']) =>
+  actionSpreader(TaskListAction.COMPLTE_ERROR_CORRECTION, { taskId });
+
+export const cancelErrorCorretcion = (taskId: Task['id']) =>
+  actionSpreader(TaskListAction.CANCEL_ERROR_CORRECTION, { taskId });

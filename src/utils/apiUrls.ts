@@ -50,6 +50,15 @@ export const apiExecuteActivity = () => `${baseUrl}/activities/execute`;
 export const apiCompleteTask = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}`;
 
+export const apiEnableTaskErrorCorrection = (taskId: Task['id']) =>
+  `${baseUrl}/tasks/${taskId}/enable-correction`;
+
+export const apiCompleteTaskErrorCorrection = (taskId: Task['id']) =>
+  `${baseUrl}/tasks/${taskId}/error-correction`;
+
+export const apiCancelTaskErrorCorrection = (taskId: Task['id']) =>
+  `${baseUrl}/tasks/${taskId}/cancel-correction`;
+
 // Signature / File
 export const apiUploadFile = () => `${baseUrl}/files/`;
 

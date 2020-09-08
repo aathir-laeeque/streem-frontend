@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import { closeAllModalAction, closeModalAction } from './actions';
 import { ConfirmationModal } from './ConfirmationModal';
 import { ModalNames } from './types';
+import TaskErrorCorrectionModal from '../../Composer/TaskList/TaskView/TaskCard/ErrorCorrectionModal';
 
 const Wrapper = styled.div``;
 
@@ -119,6 +120,18 @@ const getModal = (
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
             closeModal(ModalNames.COMPLETE_JOB_WITH_EXCEPTION, ...args)
+          }
+          key={i}
+        />
+      );
+
+    case ModalNames.TASK_ERROR_CORRECTION:
+      return (
+        <TaskErrorCorrectionModal
+          {...props}
+          closeAllModals={closeAllModals}
+          closeModal={(...args) =>
+            closeModal(ModalNames.TASK_ERROR_CORRECTION, ...args)
           }
           key={i}
         />

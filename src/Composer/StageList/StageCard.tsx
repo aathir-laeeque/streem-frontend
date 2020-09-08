@@ -182,6 +182,8 @@ const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
       task.taskExecution.status === TaskExecutionStatus.COMPLETED ||
       task.taskExecution.status ===
         TaskExecutionStatus.COMPLETED_WITH_EXCEPTION ||
+      task.taskExecution.status ===
+        TaskExecutionStatus.ENABLED_FOR_ERROR_CORRECTION ||
       task.taskExecution.status === TaskExecutionStatus.SKIPPED,
   ).length;
 

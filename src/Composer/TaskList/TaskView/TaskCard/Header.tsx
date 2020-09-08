@@ -1,8 +1,8 @@
 import { useTypedSelector } from '#store';
-import { PanTool, Assignment } from '@material-ui/icons';
-
+import { Assignment, MoreHoriz, PanTool, Error } from '@material-ui/icons';
+import { Menu, MenuItem } from '@material-ui/core';
 import moment from 'moment';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 
@@ -11,6 +11,8 @@ import { Entity } from '../../../types';
 import { startTask } from '../../actions';
 import { StartedTaskStates, TaskExecutionStatus } from '../../types';
 import Timer from './Timer';
+import { openModalAction } from '../../../../components/ModalContainer/actions';
+import { ModalNames } from '../../../../components/ModalContainer/types';
 
 type HeaderProps = {
   task: Omit<Task, 'activities'>;
@@ -103,6 +105,13 @@ const Wrapper = styled.div.attrs({
           outline: none;
           padding: 4px 8px;
         }
+
+        .complete-options {
+          display: ${({ taskExecutionStatus }) =>
+            taskExecutionStatus === TaskExecutionStatus.COMPLETED
+              ? 'flex'
+              : 'none'};
+        }
       }
 
       .task-timer {
@@ -187,6 +196,36 @@ const Wrapper = styled.div.attrs({
         border-radius: 4px;
       }
     }
+
+    .correction-reason {
+      background-color: #fafafa;
+      border-top: 1px solid #dadada;
+      padding: 16px 32px;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+
+      .badge {
+        background-color: #333333;
+        border-radius: 4px;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        color: #ffffff;
+        width: max-content;
+        margin-bottom: 16px;
+
+        .icon {
+          color: #ffffff;
+          margin-right: 4px;
+        }
+      }
+
+      textarea {
+        border: 1px solid #dadada;
+        border-radius: 4px;
+      }
+    }
   }
 `;
 
@@ -199,11 +238,20 @@ const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
 const JobHeader: FC<HeaderProps> = ({ task }) => {
   const dispatch = useDispatch();
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleClose = () => setAnchorEl(null);
+
+  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
   const {
     status,
     startedAt,
     audit: { modifiedBy },
     reason,
+    correctionReason,
   } = task.taskExecution;
 
   return (
@@ -233,6 +281,32 @@ const JobHeader: FC<HeaderProps> = ({ task }) => {
           >
             Start task
           </button>
+
+          <MoreHoriz className="icon complete-options" onClick={handleClick} />
+
+          <Menu
+            id="task-error-correction"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+            style={{ marginTop: 30 }}
+          >
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                dispatch(
+                  openModalAction({
+                    type: ModalNames.TASK_ERROR_CORRECTION,
+                    props: { taskId: task.id },
+                  }),
+                );
+              }}
+            >
+              <Error className="icon" />
+              Error correction
+            </MenuItem>
+          </Menu>
         </div>
 
         {task.timed ? <Timer task={task} /> : null}
@@ -250,6 +324,22 @@ const JobHeader: FC<HeaderProps> = ({ task }) => {
           <textarea
             className="new-form-field-textarea"
             value={reason}
+            disabled
+            rows={4}
+          />
+        </div>
+      ) : null}
+
+      {status === StartedTaskStates.ENABLED_FOR_ERROR_CORRECTION ||
+      (status === StartedTaskStates.COMPLETED && correctionReason) ? (
+        <div className="correction-reason">
+          <div className="badge">
+            <Assignment className="icon" />
+            Error Corretcion
+          </div>
+          <textarea
+            className="new-form-field-textarea"
+            value={correctionReason}
             disabled
             rows={4}
           />

@@ -5,10 +5,14 @@ import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 
-import { completeTask, skipTask } from '../../actions';
-import { TaskExecutionStatus } from '../../types';
 import { openModalAction } from '../../../../components/ModalContainer/actions';
 import { ModalNames } from '../../../../components/ModalContainer/types';
+import {
+  cancelErrorCorretcion,
+  completeErrorCorretcion,
+  completeTask,
+} from '../../actions';
+import { TaskExecutionStatus } from '../../types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-buttons',
@@ -310,6 +314,54 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         </Wrapper>
       );
     }
+  } else if (
+    task.taskExecution.status ===
+    TaskExecutionStatus.ENABLED_FOR_ERROR_CORRECTION
+  ) {
+    return (
+      <div
+        className="buttons-container"
+        style={{ display: 'flex', padding: '0 32px 32px' }}
+      >
+        <button
+          style={{
+            border: '1px solid #5ca6ff',
+            color: '#5ca6ff',
+            outline: 'none',
+            padding: '10px 0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+            background: 'transparent',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+          onClick={() => dispatch(completeErrorCorretcion(task.id))}
+        >
+          Confirm
+        </button>
+        <button
+          style={{
+            border: '1px solid #ff6b6b',
+            color: '#ff6b6b',
+            outline: 'none',
+            padding: '10px 0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+            marginLeft: '24px',
+            borderRadius: '4px',
+            background: 'transparent',
+            cursor: 'pointer',
+          }}
+          onClick={() => dispatch(cancelErrorCorretcion(task.id))}
+        >
+          Cancel
+        </button>
+      </div>
+    );
   }
 
   return null;

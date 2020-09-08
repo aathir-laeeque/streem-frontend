@@ -30,6 +30,9 @@ export enum TaskListAction {
   UPDATE_TASK_EXECUTION_STATUS = '@@composer/task-list/task/UPDATE_TASK_EXECUTION_STATUS',
 
   SET_TASK_ERROR = '@@composer/task-list/task/SET_TASK_ERROR',
+  ENABLE_TASK_ERROR_CORRECTION = '@@composer/task-list/task/ENABLE_TASK_ERROR_CORRECTION',
+  CANCEL_ERROR_CORRECTION = '@@composer/task-list/task/CANCEL_ERROR_CORRECTION',
+  COMPLTE_ERROR_CORRECTION = '@@composer/task-list/task/COMPLTE_ERROR_CORRECTION',
 }
 
 export type TaskListActionType = ReturnType<
@@ -65,6 +68,7 @@ export enum StartedTaskStates {
   INPROGRESS = 'INPROGRESS',
   SKIPPED = 'SKIPPED',
   COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
+  ENABLED_FOR_ERROR_CORRECTION = 'ENABLED_FOR_ERROR_CORRECTION',
 }
 
 export enum NotStartedTaskStates {
