@@ -13,6 +13,7 @@ export type ActivityListProps = {
 
 export type ActivityProps = {
   activity: Activity;
+  isCorrectingError: boolean;
 };
 
 export enum Selections {

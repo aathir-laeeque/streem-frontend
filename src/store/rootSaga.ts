@@ -13,6 +13,7 @@ import { FacilitiesSaga } from './facilities/saga';
 // import { NewComposerSaga } from '#views/Checklists/NewComposer/composer.saga';
 
 import { ComposerSaga } from '../Composer/saga';
+import { FileUploadSaga } from '../modules/file-upload/saga';
 
 export function* rootSaga() {
   yield all([
@@ -26,6 +27,7 @@ export function* rootSaga() {
     fork(UsersSaga),
     fork(FacilitiesSaga),
     fork(UserAccessSaga),
+    fork(FileUploadSaga),
 
     // fork(NewComposerSaga),
     fork(ComposerSaga),

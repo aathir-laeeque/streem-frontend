@@ -11,6 +11,7 @@ import InstructionActivity from './Instruction';
 import MaterialActivity from './Material';
 import MultiSelectActivity from './MultiSelect';
 import ShouldBeActivity from './ShouldBe';
+import SignatureActivity from './Signature';
 import TextboxActivity from './Textbox';
 import { ActivityListProps } from './types';
 import YesNoActivity from './YesNo';
@@ -166,7 +167,12 @@ const ActivityList: FC<ActivityListProps> = ({
                   );
 
                 case ActivityType.SIGNATURE:
-                  return null;
+                  return (
+                    <SignatureActivity
+                      activity={activity}
+                      isCorrectingError={isCorrectingError}
+                    />
+                  );
 
                 case ActivityType.TEXTBOX:
                   return (

@@ -64,7 +64,7 @@ const Wrapper = styled.div.attrs({})`
         font-weight: 300;
         position: relative;
         border-radius: 16px;
-        overflow: hidden;
+        overflow: scroll;
         min-width: 600px;
         max-height: calc(100vh - 40vh);
         max-width: calc(100vw - 40vw);

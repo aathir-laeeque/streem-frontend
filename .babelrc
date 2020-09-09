@@ -11,7 +11,8 @@
           "#store": "./src/store",
           "#utils": "./src/utils",
           "#views": "./src/views",
-          "#Composer": "./src/Composer"
+          "#Composer": "./src/Composer",
+          "#modules": "./src/modules"
         }
       }
     ]
