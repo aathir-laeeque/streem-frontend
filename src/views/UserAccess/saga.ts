@@ -103,7 +103,7 @@ function* unArchiveUserSaga({ payload }: ReturnType<typeof unArchiveUser>) {
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,
-        msg: 'User Un Archived!',
+        msg: 'User Unarchived !!',
       }),
     );
     yield call(fetchData);

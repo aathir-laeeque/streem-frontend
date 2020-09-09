@@ -5,7 +5,7 @@ function LeucineLogo(props: React.SVGProps<SVGSVGElement>) {
     <svg viewBox="0 0 1584.87 400" width="1em" height="1em" {...props}>
       <defs>
         <linearGradient
-          id="prefix__linear-gradient"
+          id="prefix__linear-gradient-bottom"
           x1={74.26}
           y1={74.26}
           x2={343.49}
@@ -30,7 +30,7 @@ function LeucineLogo(props: React.SVGProps<SVGSVGElement>) {
             cx={200}
             cy={200}
             r={200}
-            fill="url(#prefix__linear-gradient)"
+            fill="url(#prefix__linear-gradient-bottom)"
           />
           <path
             d="M226.3 238.24c22.84 0 45.69.06 68.32.09 5.23 0 6 .6 5 5.89-.57 3.13-2.49 5.66-4.66 7.94q-20.52 21.61-41 43.3c-3.14 3.35-6.95 4.52-11.29 4.52H114.31c-9.79 0-14.3-4.85-14.31-14.86v-63.53c0-20.86.07-41.72 0-62.57 0-5.33 1.52-9.61 5.51-13.34 14.3-13.32 28.41-26.85 42.61-40.29 1.52-1.44 3.15-3.61 5.15-4.35 6.72-2.5 8.58-.42 8.58 6.56 0 41.87.06 83.74-.09 125.61 0 4 .9 5.1 5 5.09 19.73-.05 39.63-.06 59.54 0M208 200h84a8 8 0 008-8v-84a8 8 0 00-8-8h-84a8 8 0 00-8 8v84a8 8 0 008 8z"

@@ -11,7 +11,6 @@ import ResetPassword from './ResetPassword';
 import MemoStreemLogoWhite from '#assets/svg/StreemLogoWhite';
 import MemoLeucineLogo from '#assets/svg/LeucineLogo';
 import AuthBg from '#assets/svg/auth-bg.svg';
-import mainBackground from '#assets/images/main-background.png';
 import loginBg from '#assets/svg/login-bg.svg';
 
 const Wrapper = styled.div`
@@ -78,12 +77,8 @@ const AuthView: FC<AuthViewProps> = () => (
         <Login path="/*" />
       </Router>
       <div className="credit-view">
-        <div>A Product By</div>
-        <MemoLeucineLogo
-          height="28px"
-          width="auto"
-          style={{ marginTop: '8px' }}
-        />
+        <div style={{ marginBottom: '8px' }}>A Product By</div>
+        <MemoLeucineLogo height="28px" width="auto" />
       </div>
     </div>
   </Wrapper>
