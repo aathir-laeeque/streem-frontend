@@ -31,22 +31,22 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
   }, []);
 
   const fetchData = () => {
-    const filters = JSON.stringify({
-      op: 'AND',
-      fields: [
-        {
-          field: 'triggeredAt',
-          op: 'GOE',
-          values: ['2020-09-01'],
-        },
-        {
-          field: 'triggeredAt',
-          op: 'LOE',
-          values: ['2020-09-10'],
-        },
-      ],
-    });
-    dispatch(fetchSessionActivitys({ filters }));
+    // const filters = JSON.stringify({
+    //   op: 'AND',
+    //   fields: [
+    //     {
+    //       field: 'triggeredAt',
+    //       op: 'GOE',
+    //       values: ['2020-09-01'],
+    //     },
+    //     {
+    //       field: 'triggeredAt',
+    //       op: 'LOE',
+    //       values: ['2020-09-10'],
+    //     },
+    //   ],
+    // });
+    dispatch(fetchSessionActivitys({ sort: 'triggeredAt,desc' }));
   };
 
   if (loading) {
@@ -112,7 +112,7 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
                           <div className="circle" />
                           <div className="content">
                             <div className="content-items">
-                              {moment(log.triggeredAt).format('HH:MM A')}
+                              {moment(log.triggeredAt).format('hh:mm A')}
                             </div>
                             {log.severity ===
                               SessionActivitySeverity.CRITICAL && (
@@ -120,11 +120,7 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
                                 <ReportProblemOutlinedIcon className="icon" />
                               </div>
                             )}
-                            <div className="content-items">{`${
-                              log.details
-                            } on ${moment(log.triggeredAt).format(
-                              'MMM Do, YYYY at HH:MM a',
-                            )}`}</div>
+                            <div className="content-items">{log.details}</div>
                           </div>
                         </div>
                       ))}

@@ -2,7 +2,7 @@ import { apiGetSessionActivitys } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { call, put, takeLatest } from 'redux-saga/effects';
-
+import moment from 'moment';
 import { SessionActivity } from './types';
 import {
   fetchSessionActivitysError,
@@ -22,18 +22,27 @@ function* fetchSessionActivitysSaga({
       yield put(fetchSessionActivitysOngoing());
     }
 
-    const { data, pageable, errors }: ResponseObj<SessionActivity> = yield call(
+    const {
+      data,
+      pageable,
+      errors,
+    }: ResponseObj<SessionActivity> = yield call(
       request,
       'GET',
       apiGetSessionActivitys(),
-      // { params },
+      { params },
     );
 
     if (errors) {
       throw new Error(errors[0].message);
     }
 
-    yield put(fetchSessionActivitysSuccess({ data, pageable }));
+    const newData = data.map((el) => ({
+      ...el,
+      triggeredOn: moment(el.triggeredAt).format('YYYY-MM-DD'),
+    }));
+
+    yield put(fetchSessionActivitysSuccess({ data: newData, pageable }));
   } catch (error) {
     console.error(
       'error from fetchSessionActivitysSaga function in SessionActivitySaga :: ',

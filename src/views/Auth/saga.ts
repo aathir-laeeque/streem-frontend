@@ -53,7 +53,8 @@ function* refreshTokenPollSaga() {
     while (userId) {
       const token = yield select(getRefreshToken);
       yield put(refreshToken({ token }));
-      yield delay(295000);
+      // yield delay(295000);
+      yield delay(10000);
     }
   } catch (error) {
     console.error(
@@ -65,7 +66,11 @@ function* refreshTokenPollSaga() {
 
 function* refreshTokenSaga({ payload }: ReturnType<typeof refreshToken>) {
   try {
-    const { data, errors }: ResponseObj<RefreshTokenResponse> = yield call(
+    const {
+      data,
+      errors,
+      error,
+    }: ResponseObj<RefreshTokenResponse> = yield call(
       request,
       'POST',
       apiRefreshToken(),
@@ -74,7 +79,7 @@ function* refreshTokenSaga({ payload }: ReturnType<typeof refreshToken>) {
       },
     );
 
-    if (errors) {
+    if (errors || error) {
       yield put(logOutSuccess());
       yield put(
         showNotification({
