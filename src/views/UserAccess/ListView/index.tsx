@@ -4,6 +4,7 @@ import { UserStatus } from '#store/users/types';
 
 import { Composer } from './styles';
 import TabContent from './TabContent';
+import SessionActivity from './SessionActivity/index';
 import { ListViewProps } from './types';
 
 const ListView: FC<ListViewProps> = () => {
@@ -23,6 +24,12 @@ const ListView: FC<ListViewProps> = () => {
       passThroughTabContentProps: {
         selectedStatus: UserStatus.ARCHIVED,
       },
+    },
+    {
+      label: 'Session Activity',
+      active: false,
+      TabContent: SessionActivity,
+      passThroughTabContentProps: {},
     },
   ]);
 

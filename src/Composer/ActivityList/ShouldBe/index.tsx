@@ -59,7 +59,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
   // const { entity } = useTypedSelector((state) => state.composer);
 
   // const isJobsView = entity === Entity.JOB;
-  const [value, setValue] = React.useState(activity?.response?.value || 0);
+  const [value, setValue] = React.useState(activity?.response?.value || '');
   const dispatch = useDispatch();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

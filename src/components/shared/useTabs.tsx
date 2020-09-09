@@ -9,13 +9,13 @@ const Wrapper = styled.div`
     color: #666666;
     cursor: pointer;
     padding: 14px 32px;
+    text-transform: capitalize;
   }
 
   .tab-active {
     border-bottom: 2px solid #1d84ff;
     color: #1d84ff;
     font-weight: 600;
-    text-transform: capitalize;
   }
 
   .tabs-row {

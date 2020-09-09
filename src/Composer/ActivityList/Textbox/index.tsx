@@ -14,7 +14,7 @@ const TextboxActivity: FC<ActivityProps> = ({
   const dispatch = useDispatch();
 
   const { entity } = useTypedSelector((state) => state.composer);
-  const [value, setValue] = React.useState(activity?.response?.value || 0);
+  const [value, setValue] = React.useState(activity?.response?.value || '');
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.persist();

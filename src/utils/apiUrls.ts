@@ -89,3 +89,6 @@ export const apiUnArchiveUser = (id: number | string) =>
 export const apiRegister = () => `${baseUrl}/auth/register`;
 
 export const apiResetPassword = () => `${baseUrl}/auth/update-password`;
+
+export const apiGetSessionActivitys = () =>
+  `https://api.dev.streem.leucinetech.com/api/v1/audits`;

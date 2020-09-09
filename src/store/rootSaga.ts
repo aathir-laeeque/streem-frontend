@@ -4,6 +4,7 @@ import { AuthSaga } from '#views/Auth/saga';
 import { UserAccessSaga } from '#views/UserAccess/saga';
 import { JobListViewSaga } from '#views/Jobs/ListView/saga';
 import { InboxListViewSaga } from '#views/Inbox/ListView/saga';
+import { SessionActivitySaga } from '#views/UserAccess/ListView/SessionActivity/saga';
 import { all, fork } from 'redux-saga/effects';
 
 import { PropertiesSaga } from './properties/saga';
@@ -28,6 +29,7 @@ export function* rootSaga() {
     fork(FacilitiesSaga),
     fork(UserAccessSaga),
     fork(FileUploadSaga),
+    fork(SessionActivitySaga),
 
     // fork(NewComposerSaga),
     fork(ComposerSaga),
