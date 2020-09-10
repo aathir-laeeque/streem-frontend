@@ -53,8 +53,7 @@ function* refreshTokenPollSaga() {
     while (userId) {
       const token = yield select(getRefreshToken);
       yield put(refreshToken({ token }));
-      // yield delay(295000);
-      yield delay(10000);
+      yield delay(295000);
     }
   } catch (error) {
     console.error(
