@@ -1,9 +1,9 @@
-import { Button, Card, LabeledInput, Terms } from '#components';
-import { ValidatorProps } from '#utils/globalTypes';
+import { Button, Card, LabeledInput } from '#components';
 import { useTypedSelector } from '#store';
+import { ValidatorProps } from '#utils/globalTypes';
 import { Visibility } from '@material-ui/icons';
 import { Link } from '@reach/router';
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
@@ -58,7 +58,7 @@ const Login: FC<LoginProps> = () => {
 
   return (
     <Card
-      heading="Welcome to STREEM!"
+      heading="Welcome to CLEEN!"
       subHeading="Enter your credentials to login."
     >
       <form onSubmit={handleSubmit(onSubmit)}>

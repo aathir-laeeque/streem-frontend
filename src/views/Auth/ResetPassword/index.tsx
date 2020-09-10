@@ -1,10 +1,11 @@
-import React, { FC, useEffect, useState } from 'react';
-import { LabeledInput, Button, Terms, Card } from '#components';
-import { ResetPasswordProps } from './types';
+import { Button, Card, LabeledInput } from '#components';
 import { Visibility } from '@material-ui/icons';
-import { useDispatch } from 'react-redux';
-import { resetPassword } from '../actions';
+import React, { FC, useEffect, useState } from 'react';
 import { useForm, ValidationRules } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+
+import { resetPassword } from '../actions';
+import { ResetPasswordProps } from './types';
 
 type Inputs = {
   newPassword: string;
@@ -62,7 +63,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
   return (
     <Card
       heading="Reset your Password"
-      subHeading="Create a new password to login to STREEM. Make sure your password complies with the passsword policy."
+      subHeading="Create a new password to login to CLEEN. Make sure your password complies with the passsword policy."
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="row">

@@ -1,17 +1,17 @@
-import React, { FC } from 'react';
+import AuthBg from '#assets/svg/auth-bg.svg';
+import CleenLogoWhite from '#assets/svg/CleenLogoWhite';
+import MemoLeucineLogo from '#assets/svg/LeucineLogo';
+import loginBg from '#assets/svg/login-bg.svg';
 import { Router } from '@reach/router';
-import { AuthViewProps } from './types';
+import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import Login from './Login';
-import Locked from './Locked';
 import Forgot from './Forgot';
+import Locked from './Locked';
+import Login from './Login';
 import Register from './Register';
 import ResetPassword from './ResetPassword';
-import MemoStreemLogoWhite from '#assets/svg/StreemLogoWhite';
-import MemoLeucineLogo from '#assets/svg/LeucineLogo';
-import AuthBg from '#assets/svg/auth-bg.svg';
-import loginBg from '#assets/svg/login-bg.svg';
+import { AuthViewProps } from './types';
 
 const Wrapper = styled.div`
   height: inherit;
@@ -65,8 +65,7 @@ const Wrapper = styled.div`
 const AuthView: FC<AuthViewProps> = () => (
   <Wrapper>
     <div className="sections left">
-      <MemoStreemLogoWhite width="60%" height="20%" />
-      {/* <span className="tagline">A tagline, if required</span> */}
+      <CleenLogoWhite width="60%" height="20%" />
     </div>
     <div className="sections right">
       <Router style={{ width: '100%' }}>

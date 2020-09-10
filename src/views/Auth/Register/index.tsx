@@ -1,14 +1,15 @@
-import React, { FC, useEffect, useState } from 'react';
-import { LabeledInput, Button, Terms, Card } from '#components';
+import { Button, Card, LabeledInput } from '#components';
 import { apiCheckUsername } from '#utils/apiUrls';
-import { RegisterProps } from './types';
-import { debounce } from 'lodash';
+import { request } from '#utils/request';
 import { Visibility } from '@material-ui/icons';
 import { Link } from '@reach/router';
-import { useDispatch } from 'react-redux';
-import { request } from '#utils/request';
-import { register as registerAction } from '../actions';
+import { debounce } from 'lodash';
+import React, { FC, useEffect, useState } from 'react';
 import { useForm, ValidationRules } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+
+import { register as registerAction } from '../actions';
+import { RegisterProps } from './types';
 
 type Inputs = {
   fullName: string;
@@ -84,7 +85,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
 
   return (
     <Card
-      heading="Welcome to STREEM!"
+      heading="Welcome to CLEEN!"
       subHeading="Set a new password for your account."
     >
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -154,7 +155,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
             })}
           />
           <span className="hint">
-            This your unique STREEM ID and is used to log in to the App.
+            This your unique CLEEN ID and is used to log in to the App.
             Alpha-numeric characters only.
           </span>
         </div>

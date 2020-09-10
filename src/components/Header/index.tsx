@@ -1,17 +1,17 @@
-import { AccountCircle, KeyboardArrowDown } from '@material-ui/icons';
-import Menu from '@material-ui/core/Menu';
-import { getInitials } from '#utils/stringUtils';
-import NestedMenuItem from '../shared/NestedMenuItem';
+import CleenLogo from '#assets/svg/CleenLogo';
 import { useTypedSelector } from '#store';
+import { getInitials } from '#utils/stringUtils';
+import { logOut } from '#views/Auth/actions';
+import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import { KeyboardArrowDown } from '@material-ui/icons';
+import { navigate } from '@reach/router';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import { navigate } from '@reach/router';
-import { logOut } from '#views/Auth/actions';
 
-import MemoStreemLogo from '#assets/svg/StreemLogo';
 import { ImageWrapper } from '../../styles/ImageWrapper';
-import { HeaderMenu, Wrapper, MenuText } from './styles';
+import NestedMenuItem from '../shared/NestedMenuItem';
+import { HeaderMenu, MenuText, Wrapper } from './styles';
 
 const Header: FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -30,7 +30,7 @@ const Header: FC = () => {
   return (
     <Wrapper>
       <ImageWrapper>
-        <MemoStreemLogo fontSize={100} />
+        <CleenLogo fontSize={100} />
       </ImageWrapper>
       <HeaderMenu
         aria-controls="top-menu"

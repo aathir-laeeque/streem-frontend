@@ -1,12 +1,13 @@
-import React, { FC, useState, useEffect } from 'react';
 import { Button, LabeledInput } from '#components';
+import { useTypedSelector } from '#store';
+import { updateProfile } from '#views/Auth/actions';
+import { Visibility } from '@material-ui/icons';
+import React, { FC, useEffect, useState } from 'react';
+import { useForm, ValidationRules } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+
 import { Composer } from './styles';
 import { AccountSecurityProps } from './types';
-import { Visibility } from '@material-ui/icons';
-import { useDispatch } from 'react-redux';
-import { useTypedSelector } from '#store';
-import { useForm, ValidationRules } from 'react-hook-form';
-import { updateProfile } from '#views/Auth/actions';
 
 type Inputs = {
   oldPassword: string;
@@ -69,7 +70,7 @@ const AccountSecurity: FC<AccountSecurityProps> = () => {
         <div className="content">
           <div className="heading">Managing Your Password</div>
           <div className="sub-heading" style={{ marginBottom: '16px' }}>
-            Update your password to access STREEM
+            Update your password to access CLEEN
           </div>
           <div className="sub-heading bold" style={{ marginTop: '32px' }}>
             Password
