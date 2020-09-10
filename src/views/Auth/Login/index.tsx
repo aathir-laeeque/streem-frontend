@@ -66,7 +66,7 @@ const Login: FC<LoginProps> = () => {
           <LabeledInput
             refFun={register({
               required: true,
-              validate: validators['username'].functions,
+              // validate: validators['username'].functions,
             })}
             error={
               errors.username?.type
@@ -101,7 +101,7 @@ const Login: FC<LoginProps> = () => {
             }
             refFun={register({
               required: true,
-              validate: validators['password'].functions,
+              // validate: validators['password'].functions,
             })}
           />
         </div>
