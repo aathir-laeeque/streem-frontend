@@ -54,6 +54,7 @@ const Wrapper = styled.div.attrs({})`
   .userName {
     font-size: 20px;
     color: #666666;
+    text-transform: capitalize;
   }
   .thumb {
     border: 1px solid #999999;
@@ -186,9 +187,7 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
       </div>
       <div className="middle">
         <span className="userId">{user.employeeId}</span>
-        <span className="userName">{`${capitalizeFirstLetter(
-          user.firstName,
-        )} ${capitalizeFirstLetter(user.lastName)}`}</span>
+        <span className="userName">{`${user.firstName} ${user.lastName}`}</span>
       </div>
       <div className="right">
         <Checkbox
