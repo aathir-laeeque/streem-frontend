@@ -1,6 +1,6 @@
 import CompleteJobWithExceptionModal from '#Composer/modals/CompleteJobWithException';
 import StartJobModal from '#Composer/StartJobModal';
-import CompletetaskWithException from '#Composer/TaskList/TaskView/TaskCard/CompleteWithException';
+import CompleteTaskWithExceptionModal from '#Composer/TaskList/TaskView/TaskCard/CompleteWithException';
 import SkipTaskModal from '#Composer/TaskList/TaskView/TaskCard/SkipTaskModal';
 import { useTypedSelector } from '#store';
 import { SignatureModal } from '#views/Checklists/ChecklistComposer/TaskList/TaskView/ActivityList/Activity/Signature/SignatureModal';
@@ -103,7 +103,7 @@ const getModal = (
 
     case ModalNames.COMPLETE_TASK_WITH_EXCEPTION:
       return (
-        <CompletetaskWithException
+        <CompleteTaskWithExceptionModal
           {...props}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>

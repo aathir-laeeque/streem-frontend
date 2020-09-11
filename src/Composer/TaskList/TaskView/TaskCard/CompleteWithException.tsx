@@ -16,13 +16,13 @@ const Wrapper = styled.div`
   }
 `;
 
-type CompletetaskWithExceptionProps = {
+type CompleteTaskWithExceptionModalProps = {
   closeAllModals: () => void;
   closeModal: () => void;
   taskId: Task['id'];
 };
 
-const CompletetaskWithException: FC<CompletetaskWithExceptionProps> = ({
+const CompleteTaskWithExceptionModal: FC<CompleteTaskWithExceptionModalProps> = ({
   closeAllModals,
   closeModal,
   taskId,
@@ -62,4 +62,4 @@ const CompletetaskWithException: FC<CompletetaskWithExceptionProps> = ({
   );
 };
 
-export default CompletetaskWithException;
+export default CompleteTaskWithExceptionModal;
