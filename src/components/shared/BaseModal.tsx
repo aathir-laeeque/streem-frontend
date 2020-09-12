@@ -59,12 +59,12 @@ const Wrapper = styled.div.attrs({})`
       text-align: center;
       vertical-align: middle;
       .modal {
+        overflow: hidden;
         background: white;
         display: inline-block;
         font-weight: 300;
         position: relative;
         border-radius: 16px;
-        overflow: scroll;
         min-width: 600px;
         max-height: calc(100vh - 40vh);
         max-width: calc(100vw - 40vw);
@@ -144,7 +144,7 @@ const Wrapper = styled.div.attrs({})`
       transform: scale(1) translateY(0px);
       opacity: 1;
     }
-    100% {
+    100% {sort
       transform: scale(0.8) translateY(1000px);
       opacity: 0;
     }

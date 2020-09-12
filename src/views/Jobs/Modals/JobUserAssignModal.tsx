@@ -2,7 +2,7 @@ import { BaseModal, Checkbox } from '#components';
 import { useTypedSelector } from '#store';
 import { fetchUsers } from '#store/users/actions';
 import { User, Users } from '#store/users/types';
-import { capitalizeFirstLetter, getInitials } from '#utils/stringUtils';
+import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Search } from '@material-ui/icons';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -213,7 +213,7 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
   if (list) {
     list.forEach((user, index) => {
       const checked = job.assignees.some((item) => item.id === user.id);
-      if (!checked) {
+      if (!checked && user.id !== 0) {
         bottomViews.push(userRow(user, index, checked));
       }
     });

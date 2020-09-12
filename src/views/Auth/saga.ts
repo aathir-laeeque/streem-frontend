@@ -49,8 +49,9 @@ const getUserId = (state: any) => state.auth.userId;
 
 function* refreshTokenPollSaga() {
   try {
-    const userId = yield select(getUserId);
+    let userId = yield select(getUserId);
     while (userId) {
+      userId = yield select(getUserId);
       const token = yield select(getRefreshToken);
       yield put(refreshToken({ token }));
       yield delay(295000);
@@ -80,12 +81,12 @@ function* refreshTokenSaga({ payload }: ReturnType<typeof refreshToken>) {
 
     if (errors || error) {
       yield put(logOutSuccess());
-      yield put(
-        showNotification({
-          type: NotificationType.ERROR,
-          msg: 'Token Expired',
-        }),
-      );
+      // yield put(
+      //   showNotification({
+      //     type: NotificationType.ERROR,
+      //     msg: 'Token Expired',
+      //   }),
+      // );
       throw 'Token Expired';
     }
 

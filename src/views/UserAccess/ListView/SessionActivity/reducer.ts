@@ -15,7 +15,7 @@ const initialState: SessionActivityState = {
     totalPages: 0,
     totalElements: 0,
     first: true,
-    last: true,
+    last: false,
     empty: true,
   },
 };
@@ -29,11 +29,17 @@ const reducer = (
       return { ...state, loading: true };
 
     case SessionActivityAction.FETCH_SESSION_ACTIVITY_SUCCESS:
+      const { data, pageable } = action.payload;
+      let { logs } = state;
+      if (data && pageable) {
+        const oldList = pageable.page !== 0 ? (logs ? logs : []) : [];
+        logs = [...oldList, ...data];
+      }
       return {
         ...state,
         loading: false,
-        logs: action.payload?.data,
-        pageable: action.payload?.pageable,
+        logs,
+        pageable,
       };
 
     case SessionActivityAction.FETCH_SESSION_ACTIVITY_ERROR:

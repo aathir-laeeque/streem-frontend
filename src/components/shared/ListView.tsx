@@ -1,20 +1,22 @@
 import { Properties } from '#store/properties/types';
 import { ArrowDropDown, Search } from '@material-ui/icons';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
+import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
 import { Checklist } from '#views/Checklists/types';
 import { Users } from '#store/users/types';
 import { Job } from '#views/Jobs/types';
 import styled from 'styled-components';
-
 import { Button, FlatButton } from './Button';
-
-// TODO Either make it horizontal scrollable or remove the commented section and table styles.
 
 interface ListViewProps {
   primaryButtonText?: string;
   onPrimaryClick?: () => void;
   properties: Properties;
-  data: Checklist[] | Job[] | Users;
+  data:
+    | Checklist[]
+    | Job[]
+    | Users
+    | Record<string, string | SessionActivity[]>[];
   fetchData: (page: number, size: number) => void;
   isLast: boolean;
   currentPage: number;
@@ -26,6 +28,8 @@ interface ListViewProps {
     header: string;
     template: (item: any, index: number) => JSX.Element;
   }[];
+  filterComponent?: JSX.Element;
+  filterOnClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -179,6 +183,8 @@ export const ListView: FC<ListViewProps> = ({
   currentPage,
   beforeColumns,
   afterColumns,
+  filterComponent,
+  filterOnClick = () => console.log('clicked'),
 }) => {
   const scroller = useRef<HTMLDivElement | null>(null);
 
@@ -207,9 +213,14 @@ export const ListView: FC<ListViewProps> = ({
     <Wrapper>
       <div style={{ height: '100%' }}>
         <div className="list-options">
-          <FlatButton>
+          <FlatButton
+            aria-controls="top-menu"
+            aria-haspopup="true"
+            onClick={filterOnClick}
+          >
             Filters <ArrowDropDown style={{ fontSize: 20, color: '#1d84ff' }} />
           </FlatButton>
+          {filterComponent && filterComponent}
           <div className="searchboxwrapper">
             <input className="searchbox" type="text" placeholder="Search" />
             <Search className="searchsubmit" />

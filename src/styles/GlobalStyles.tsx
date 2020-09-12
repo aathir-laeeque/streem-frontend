@@ -257,6 +257,145 @@ const GlobalStyles = createGlobalStyle`
 
     }
   }
+
+  .filter-container {
+    width: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    .MuiPickersStaticWrapper-root {
+      border-bottom: 1px solid #dadada;
+
+      .MuiPickersDesktopDateRangeCalendar-root {
+        justify-content: center;
+
+        .MuiPickersDesktopDateRangeCalendar-arrowSwitcher {
+          padding: 16px 8px 8px 8px;
+          
+          .MuiSvgIcon-root {
+            color: #333333;
+          }
+        }
+      }
+    }
+
+    .MuiTypography-subtitle1 {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+      color: #333333;
+    }
+
+    .MuiPickersDesktopDateRangeCalendar-calendar {
+      min-height: 230px;
+    }
+
+    .MuiInput-underline:before {
+      border-bottom: 1px solid #999999;
+    }
+
+    .MuiInput-underline:after {
+      border-bottom: 2px solid #1d84ff;
+    }
+
+    .MuiInput-underline:hover:not(.Mui-disabled):before {
+      border-bottom: 1px solid #999999;
+    }
+
+    .MuiFormLabel-root {
+      font-size: 10px;
+    }
+
+    .MuiIconButton-root {
+      color: #999999;
+    }
+
+    .MuiFormLabel-root.Mui-focused {
+      color: #1d84ff;
+    }
+
+    .MuiPickersCalendar-weekDayLabel {
+      font-size: 12px;
+      line-height: 0.83;
+      color: #7f8fa4;
+    }
+
+    .MuiPickersDay-root {
+      border-radius: 0px !important;
+    }
+
+    .MuiPickersDay-today {
+      border: none !important;
+    }
+
+    .MuiPickersDay-root.Mui-selected {
+      background-color: #1d84ff !important;
+      color: #000;
+    }
+
+    .MuiPickersDateRangeDay-dayInsideRangeInterval {
+      color: #000;
+    }
+
+    .MuiPickersDateRangeDay-rangeIntervalDayPreview {
+      border-radius: 0px !important;
+      border-top-left-radius: 0px !important;
+      border-bottom-left-radius: 0px !important;
+    }
+
+    .MuiPickersDateRangeDay-rangeIntervalDayHighlight {
+      background-color: rgba(29, 132, 255, 0.2);
+      border-radius: 0px !important;
+      border-top-left-radius: 0px !important;
+      border-bottom-left-radius: 0px !important;
+    }
+
+    .MuiInputBase-input {
+      font-family: 'Nunito', sans-serif;
+      color: #999999;
+    }
+
+    .timepicker-container {
+      display: flex;
+      justify-content: space-between;
+      flex: 1;
+      padding: 16px;
+
+      .MuiFormControl-root {
+        margin-left: 8px;
+
+        :first-child {
+          margin-right: 8px;
+          margin-left: 0px;
+        }
+
+        .MuiFormHelperText-root {
+          display: none;
+        }
+      }
+    }
+
+    .picker-actions {
+      width: 100%;
+      padding: 16px;
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  .MuiMenu-list {
+    > div:focus {
+      outline: none;
+    }
+
+    li {
+      .MuiSvgIcon-root {
+        font-size: 16px;
+      }
+    }
+  }
 `;
 
 export default GlobalStyles;

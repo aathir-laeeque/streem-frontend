@@ -127,25 +127,24 @@ const TabContent: FC<TabViewProps> = ({
   } else if (users[selectedStatus].list.length === 0) {
     return <div />;
   }
-
-  const parsedUsers = (users[selectedStatus].list as Array<User>).map(
-    (item) => {
+  const parsedUsers = [];
+  (users[selectedStatus].list as Array<User>).forEach((item) => {
+    if (item.id !== 0) {
       let role = { ROLE: '-N/A-' };
       if (item.roles && item.roles[0])
         role = {
-          ROLE:
-            capitalize(item.roles[0].name.replace('_', ' ')) || 'System Admin',
+          ROLE: capitalize(item.roles[0].name.replace('_', ' ')) || '-N/A-',
         };
-      return {
+      parsedUsers.push({
         ...item,
         properties: {
           'EMAIL ID': item.email,
           ...role,
           // 'LAST ACTIVE': '12 May 2020',
         },
-      };
-    },
-  );
+      });
+    }
+  });
 
   const properties: Properties = [];
 

@@ -17,9 +17,12 @@ function* fetchSessionActivitysSaga({
 }: ReturnType<typeof fetchSessionActivitys>) {
   try {
     const params = payload || {};
-
-    if (params.page === 0) {
+    let currentPage = parseInt(params.page.toString());
+    delete params.page;
+    if (currentPage === 0) {
       yield put(fetchSessionActivitysOngoing());
+    } else {
+      currentPage++;
     }
 
     const {
@@ -42,7 +45,16 @@ function* fetchSessionActivitysSaga({
       triggeredOn: moment(el.triggeredAt).format('YYYY-MM-DD'),
     }));
 
-    yield put(fetchSessionActivitysSuccess({ data: newData, pageable }));
+    yield put(
+      fetchSessionActivitysSuccess({
+        data: newData,
+        pageable: {
+          ...pageable,
+          page: currentPage,
+          last: newData.length > 0 ? false : true,
+        },
+      }),
+    );
   } catch (error) {
     console.error(
       'error from fetchSessionActivitysSaga function in SessionActivitySaga :: ',
