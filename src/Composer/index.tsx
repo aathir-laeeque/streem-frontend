@@ -30,7 +30,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
     <ComposerWrapper>
       <Header />
 
-      {/* <StageList /> */}
+      <StageList />
 
       {/* {activeStageId ? <TaskList /> : null} */}
     </ComposerWrapper>

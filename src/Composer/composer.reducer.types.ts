@@ -1,7 +1,6 @@
 import { Job } from '../views/Jobs/types';
 import {
   completeJob,
-  fetchData,
   fetchDataError,
   fetchDataOngoing,
   fetchDataSuccess,
@@ -11,7 +10,7 @@ import {
 import { ActivityListActionType } from './ActivityList/types';
 import { Activity, Checklist, Stage, Task } from './checklist.types';
 import { Entity, JobStatus } from './composer.types';
-import { StageListActionType } from './StageList/types';
+import { StageListActionType, StageListState } from './StageList/types';
 import { TaskListActionType } from './TaskList/types';
 
 export type ActivitiesById = Record<Activity['id'], Activity>;
@@ -21,8 +20,8 @@ export type ActivitiesOrderInTaskInStage = Record<
 >;
 
 // removes tasks from stages
-export type StagesById = Record<Stage['id'], Omit<Stage, 'tasks'>>;
-export type StagesOrder = Stage['id'][];
+// export type StagesById = Record<Stage['id'], Omit<Stage, 'tasks'>>;
+// export type StagesOrder = Stage['id'][];
 
 // removes activities from tasks
 export type TasksById = Record<
@@ -32,11 +31,11 @@ export type TasksById = Record<
 export type TasksOrderInStage = Record<Stage['id'], Task['id'][]>;
 
 export type ComposerState = {
-  activeStageId: Stage['id'];
-  activeTaskId: Task['id'];
+  // activeStageId: Stage['id'];
+  // activeTaskId: Task['id'];
 
-  activitiesById: ActivitiesById;
-  activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage;
+  // activitiesById: ActivitiesById;
+  // activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage;
 
   data?: Checklist | Job;
 
@@ -47,12 +46,12 @@ export type ComposerState = {
 
   jobStatus: JobStatus;
 
-  stagesById: StagesById;
-  stagesOrder: StagesOrder;
+  // stagesById: StagesById;
+  // stagesOrder: StagesOrder;
 
-  tasksById: TasksById;
-  tasksOrderInStage: TasksOrderInStage;
-};
+  // tasksById: TasksById;
+  // tasksOrderInStage: TasksOrderInStage;
+} & StageListState;
 
 export enum ComposerAction {
   COMPLETE_JOB = '@@composer/job-action/COMPLETE_JOB',
@@ -71,16 +70,17 @@ export enum ComposerAction {
   START_JOB_SUCCESS = '@@composer/job-action/START_JOB_SUCCESS',
 }
 
-type ComposerActionType1 =
+export type ComposerActionType = ReturnType<
   | typeof fetchDataError
   | typeof fetchDataOngoing
   | typeof fetchDataSuccess
   | typeof resetComposer
   | typeof startJobSuccess
-  | typeof completeJob;
+  | typeof completeJob
+>;
 
-export type ComposerActionType =
-  | ReturnType<ComposerActionType1>
-  | StageListActionType
-  | TaskListActionType
-  | ActivityListActionType;
+// export type ComposerActionType =
+//   | ReturnType<ComposerActionType1>
+//   // | StageListActionType
+//   | TaskListActionType
+//   | ActivityListActionType;

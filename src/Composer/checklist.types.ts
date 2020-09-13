@@ -33,16 +33,64 @@ export interface Media {
   filename: string;
 }
 
-export interface Task {
+export enum StartedTaskStates {
+  COMPLETED = 'COMPLETED',
+  COMPLETED_WITH_ERROR_CORRECTION = 'COMPLETED_WITH_ERROR_CORRECTION',
+  COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
+  ENABLED_FOR_ERROR_CORRECTION = 'ENABLED_FOR_ERROR_CORRECTION',
+  INPROGRESS = 'INPROGRESS',
+  SKIPPED = 'SKIPPED',
+}
+
+export enum CompletedTaskStates {
+  COMPLETED = 'COMPLETED',
+  COMPLETED_WITH_ERROR_CORRECTION = 'COMPLETED_WITH_ERROR_CORRECTION',
+  COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
+  ENABLED_FOR_ERROR_CORRECTION = 'ENABLED_FOR_ERROR_CORRECTION',
+  SKIPPED = 'SKIPPED',
+}
+
+export enum TaskExecutionStatus {
+  COMPLETED = 'COMPLETED',
+  COMPLETED_WITH_ERROR_CORRECTION = 'COMPLETED_WITH_ERROR_CORRECTION',
+  COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
+  ENABLED_FOR_ERROR_CORRECTION = 'ENABLED_FOR_ERROR_CORRECTION',
+  INPROGRESS = 'INPROGRESS',
+  NOT_STARTED = 'NOT_STARTED',
+  SKIPPED = 'SKIPPED',
+}
+
+export interface TaskAudit {
+  modifiedAt: string;
+  modifiedBy: {
+    employeeId: string;
+    firstName: string;
+    lastName: string;
+  };
+}
+
+export interface TaskExecution {
+  audit: TaskAudit;
+  correctionReason?: string | null;
   id: number;
-  name: string;
-  code: string;
-  orderTree: number;
-  hasStop: boolean;
+  period?: number | null;
+  reason?: string | null;
+  startedAt?: string | null;
+  startedBy?: string | null;
+  status: TaskExecutionStatus;
+}
+
+export interface Task {
   activities: Activity[];
+  code: string;
+  hasStop: boolean;
+  id: number;
   medias: Media[];
-  timed: boolean;
+  name: string;
+  orderTree: number;
   period?: number;
+  taskExecution: TaskExecution;
+  timed: boolean;
 }
 
 export interface Stage {

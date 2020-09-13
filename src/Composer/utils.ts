@@ -2,18 +2,16 @@ import { Error } from '#utils/globalTypes';
 import { omit } from 'lodash';
 
 import { ActivityErrors } from './ActivityList/types';
-import { Checklist } from './checklist.types';
-import { StageErrors } from './StageList/types';
-import { TaskErrors } from './TaskList/types';
+import { Checklist, Stage } from './checklist.types';
 import {
   ActivitiesById,
   ActivitiesOrderInTaskInStage,
-  StagesById,
-  StagesOrder,
   TasksById,
   TasksOrderInStage,
 } from './composer.reducer.types';
 import { ErrorGroups } from './composer.types';
+import { StageErrors, StagesById, StagesOrder } from './StageList/types';
+import { TaskErrors } from './TaskList/types';
 
 export const transformChecklist = (checklist: Checklist) => {
   const stagesOrder: StagesOrder = [];
@@ -70,3 +68,34 @@ export const groupJobErrors = (errors: Error[]) =>
     },
     { stagesErrors: [], tasksErrors: [], activitiesErrors: [] },
   );
+
+type GetStageArgs = {
+  checklist: Checklist;
+  setActiveStage?: boolean;
+};
+
+export const getStages = ({
+  checklist,
+  setActiveStage = false,
+}: GetStageArgs) => {
+  const stagesById: StagesById = {},
+    stagesOrder: StagesOrder = [];
+
+  let activeStageId: Stage['id'] | undefined = undefined;
+
+  checklist?.stages?.map((stage) => {
+    stagesById[stage.id] = stage;
+
+    stagesOrder.push(stage.id);
+  });
+
+  if (setActiveStage) {
+    activeStageId = stagesOrder[0];
+  }
+
+  return {
+    stagesById,
+    stagesOrder,
+    ...(setActiveStage ? { activeStageId } : {}),
+  };
+};

@@ -14,7 +14,8 @@ export const fetchDataError = (error: any) =>
 export const fetchDataOngoing = () =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_ONGOING);
 
-export const fetchDataSuccess = (data: Checklist | Job, entity: Entity) =>
+// TODO: look into this any data type
+export const fetchDataSuccess = (data: any, entity: Entity) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_SUCCESS, { data, entity });
 
 export const resetComposer = () =>
