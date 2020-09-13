@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 
 import { Task } from '../../../checklist.types';
-import { Entity } from '../../../types';
+import { Entity } from '../../../composer.types';
 import { startTask } from '../../actions';
 import { StartedTaskStates, TaskExecutionStatus } from '../../types';
 import Timer from './Timer';

@@ -3,7 +3,7 @@ import { ModalContainerAction } from './types';
 
 export const openModalAction = (params: {
   type: string;
-  props: Record<string, any>;
+  props?: Record<string, any>;
 }) =>
   actionSpreader(ModalContainerAction.OPEN_MODAL, {
     type: params.type,

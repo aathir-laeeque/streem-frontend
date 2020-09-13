@@ -144,7 +144,7 @@ const Wrapper = styled.div.attrs({})`
       transform: scale(1) translateY(0px);
       opacity: 1;
     }
-    100% {sort
+    100% {
       transform: scale(0.8) translateY(1000px);
       opacity: 0;
     }

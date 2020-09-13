@@ -63,7 +63,7 @@ const Wrapper = styled.div.attrs({})`
   }
 `;
 
-export const SignatureModal: FC<SignatureModalProps> = ({
+const SignatureModal: FC<SignatureModalProps> = ({
   closeAllModals,
   closeModal,
   user,
@@ -136,3 +136,5 @@ export const SignatureModal: FC<SignatureModalProps> = ({
     </Wrapper>
   );
 };
+
+export default SignatureModal;

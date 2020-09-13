@@ -1,5 +1,5 @@
 import { AddNewItem } from '#components';
-import { Entity } from '#Composer/types';
+import { Entity } from '#Composer/composer.types';
 import { useTypedSelector } from '#store';
 import { Close } from '@material-ui/icons';
 import React, { FC } from 'react';

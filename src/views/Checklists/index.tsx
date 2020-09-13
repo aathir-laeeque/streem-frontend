@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 import ListView from './ListView';
 import NewComposer from './NewComposer';
 import Composer from '../../Composer';
-import { Entity } from '../../Composer/types';
+import { Entity } from '../../Composer/composer.types';
 
 const ChecklistView: FC<RouteComponentProps> = () => (
   <Router>

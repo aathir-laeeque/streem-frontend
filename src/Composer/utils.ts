@@ -12,8 +12,8 @@ import {
   StagesOrder,
   TasksById,
   TasksOrderInStage,
-} from './reducer.types';
-import { ErrorGroups } from './types';
+} from './composer.reducer.types';
+import { ErrorGroups } from './composer.types';
 
 export const transformChecklist = (checklist: Checklist) => {
   const stagesOrder: StagesOrder = [];

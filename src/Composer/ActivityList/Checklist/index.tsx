@@ -1,4 +1,4 @@
-import { Entity } from '#Composer/types';
+import { Entity } from '#Composer/composer.types';
 import { useTypedSelector } from '#store';
 import { Close } from '@material-ui/icons';
 import { get } from 'lodash';

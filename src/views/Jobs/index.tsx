@@ -7,7 +7,7 @@ import ListView from './ListView';
 import { JobsViewProps } from './types';
 
 import Composer from '../../Composer';
-import { Entity } from '../../Composer/types';
+import { Entity } from '../../Composer/composer.types';
 
 const JobsView: FC<JobsViewProps> = () => (
   <Router>

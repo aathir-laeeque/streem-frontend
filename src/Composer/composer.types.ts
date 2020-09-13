@@ -9,21 +9,12 @@ export enum Entity {
   CHECKLIST = 'Checklist',
 }
 
-// Job assignemt status
 export enum JobStatus {
   ASSIGNED = 'ASSIGNED',
   COMPLETED = 'COMPLETED',
   COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
   INPROGRESS = 'INPROGRESS',
   UNASSIGNED = 'UNASSIGNED',
-}
-
-export enum ChecklistState {
-  CREATING = 'CREATING',
-  EDITING = 'EDITING',
-  PUBLISHED = 'PUBLISHED',
-  REVIEWING = 'REVIEWING',
-  VIEWING = 'VIEWING',
 }
 
 export type ComposerProps = RouteComponentProps<{

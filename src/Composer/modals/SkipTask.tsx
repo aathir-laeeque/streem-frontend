@@ -4,7 +4,7 @@ import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { completeTask } from '../../actions';
+import { skipTask } from '../TaskList/actions';
 
 const Wrapper = styled.div`
   .modal-body {
@@ -16,45 +16,42 @@ const Wrapper = styled.div`
   }
 `;
 
-type CompleteTaskWithExceptionModalProps = {
+type SkipTaskModalProps = {
   closeAllModals: () => void;
   closeModal: () => void;
   taskId: Task['id'];
 };
 
-const CompleteTaskWithExceptionModal: FC<CompleteTaskWithExceptionModalProps> = ({
+const SkipTaskModal: FC<SkipTaskModalProps> = ({
   closeAllModals,
   closeModal,
   taskId,
 }) => {
   const dispatch = useDispatch();
 
-  const [exceptionReason, setExceptionReason] = useState('');
+  const [skipReason, setSkipReason] = useState('');
 
   return (
     <Wrapper>
       <BaseModal
         closeAllModals={closeAllModals}
         closeModal={closeModal}
-        onPrimary={() => {
-          dispatch(completeTask(taskId, exceptionReason, true));
-          closeModal();
-        }}
+        onPrimary={() => dispatch(skipTask(taskId, skipReason))}
         onSecondary={() => closeModal()}
         primaryText="Submit"
         secondaryText="Cancel"
-        title="Complete with Exception"
+        title="Skip Task"
       >
         <div className="new-form-field">
           <label className="new-form-field-label">
-            Provide the detials for Exception
+            Provide the detials for skipping the task
           </label>
           <textarea
             className="new-form-field-textarea"
-            value={exceptionReason}
-            onChange={(e) => setExceptionReason(e.target.value)}
+            value={skipReason}
+            onChange={(e) => setSkipReason(e.target.value)}
             rows={4}
-            placeholder="Exception Reason"
+            placeholder="Skip reason"
           />
         </div>
       </BaseModal>
@@ -62,4 +59,4 @@ const CompleteTaskWithExceptionModal: FC<CompleteTaskWithExceptionModalProps> = 
   );
 };
 
-export default CompleteTaskWithExceptionModal;
+export default SkipTaskModal;

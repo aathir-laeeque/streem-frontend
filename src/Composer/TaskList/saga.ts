@@ -10,7 +10,7 @@ import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { setActivityError } from '../ActivityList/actions';
 import { Task } from '../checklist.types';
-import { ErrorGroups, JobStatus } from '../types';
+import { ErrorGroups, JobStatus } from '../composer.types';
 import { groupJobErrors } from '../utils';
 import {
   cancelErrorCorretcion,

@@ -5,15 +5,14 @@ import {
   fetchDataError,
   fetchDataOngoing,
   fetchDataSuccess,
-  publishChecklist,
   resetComposer,
   startJobSuccess,
 } from './actions';
 import { ActivityListActionType } from './ActivityList/types';
 import { Activity, Checklist, Stage, Task } from './checklist.types';
+import { Entity, JobStatus } from './composer.types';
 import { StageListActionType } from './StageList/types';
 import { TaskListActionType } from './TaskList/types';
-import { ChecklistState, Entity, JobStatus } from './types';
 
 export type ActivitiesById = Record<Activity['id'], Activity>;
 export type ActivitiesOrderInTaskInStage = Record<
@@ -38,8 +37,6 @@ export type ComposerState = {
 
   activitiesById: ActivitiesById;
   activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage;
-
-  checklistState: ChecklistState;
 
   data?: Checklist | Job;
 
@@ -68,8 +65,6 @@ export enum ComposerAction {
   FETCH_COMPOSER_DATA_ONGOING = '@@composer/composer-action/FETCH_COMPOSER_DATA_ONGOING',
   FETCH_COMPOSER_DATA_SUCCESS = '@@composer/composer-action/FETCH_COMPOSER_DATA_SUCCESS',
 
-  PUBLISH_CHECKLIST = '@@composer/checklist-action/PUBLISH_CHECKLIST',
-
   RESET_COMPOSER = '@@composer/composer-action/RESET_COMPOSER',
 
   START_JOB = '@@composer/job-action/START_JOB',
@@ -77,12 +72,10 @@ export enum ComposerAction {
 }
 
 type ComposerActionType1 =
-  | typeof fetchData
   | typeof fetchDataError
   | typeof fetchDataOngoing
   | typeof fetchDataSuccess
   | typeof resetComposer
-  | typeof publishChecklist
   | typeof startJobSuccess
   | typeof completeJob;
 

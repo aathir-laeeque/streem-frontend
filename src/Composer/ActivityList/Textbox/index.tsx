@@ -1,4 +1,4 @@
-import { Entity } from '#Composer/types';
+import { Entity } from '#Composer/composer.types';
 import { useTypedSelector } from '#store';
 import { customOnChange } from '#utils/formEvents';
 import React, { FC } from 'react';

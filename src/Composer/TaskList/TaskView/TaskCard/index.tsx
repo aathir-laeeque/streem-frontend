@@ -5,7 +5,7 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { JobStatus } from '../../../types';
+import { JobStatus } from '../../../composer.types';
 import { setActiveTask } from '../../actions';
 import {
   StartedTaskStates,

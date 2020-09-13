@@ -4,9 +4,8 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { Job } from '../views/Jobs/types';
-import { startTask } from './TaskList/actions';
-import { startJob } from './actions';
+import { Job } from '../../views/Jobs/types';
+import { startJob } from '../actions';
 
 const Wrapper = styled.div`
   .modal-body {
@@ -21,14 +20,12 @@ const Wrapper = styled.div`
 type StartJobModalProps = {
   closeAllModals: () => void;
   closeModal: () => void;
-  taskId: Task['id'];
   jobId: Job['id'];
 };
 
 const StartJobModal: FC<StartJobModalProps> = ({
   closeAllModals,
   closeModal,
-  taskId,
   jobId,
 }) => {
   const dispatch = useDispatch();

@@ -4,7 +4,7 @@ import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { skipTask } from '../../actions';
+import { enableErrorCorrection } from '../TaskList/actions';
 
 const Wrapper = styled.div`
   .modal-body {
@@ -16,42 +16,45 @@ const Wrapper = styled.div`
   }
 `;
 
-type SkipTaskModalProps = {
+type ErrorCorrectionModalProps = {
   closeAllModals: () => void;
   closeModal: () => void;
   taskId: Task['id'];
 };
 
-const SkipTaskModal: FC<SkipTaskModalProps> = ({
+const ErrorCorrectionModal: FC<ErrorCorrectionModalProps> = ({
   closeAllModals,
   closeModal,
   taskId,
 }) => {
   const dispatch = useDispatch();
 
-  const [skipReason, setSkipReason] = useState('');
+  const [correctionReason, setCorrectionReason] = useState('');
 
   return (
     <Wrapper>
       <BaseModal
         closeAllModals={closeAllModals}
         closeModal={closeModal}
-        onPrimary={() => dispatch(skipTask(taskId, skipReason))}
+        onPrimary={() => {
+          dispatch(enableErrorCorrection(taskId, correctionReason));
+          closeModal();
+        }}
         onSecondary={() => closeModal()}
         primaryText="Submit"
         secondaryText="Cancel"
-        title="Skip Task"
+        title="Error Correction"
       >
         <div className="new-form-field">
           <label className="new-form-field-label">
-            Provide the detials for skipping the task
+            You need to submit a reason to proceed to make changes
           </label>
           <textarea
             className="new-form-field-textarea"
-            value={skipReason}
-            onChange={(e) => setSkipReason(e.target.value)}
+            value={correctionReason}
+            onChange={(e) => setCorrectionReason(e.target.value)}
             rows={4}
-            placeholder="Skip reason"
+            placeholder="Error Correction Reason"
           />
         </div>
       </BaseModal>
@@ -59,4 +62,4 @@ const SkipTaskModal: FC<SkipTaskModalProps> = ({
   );
 };
 
-export default SkipTaskModal;
+export default ErrorCorrectionModal;

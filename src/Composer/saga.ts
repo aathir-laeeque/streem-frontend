@@ -18,29 +18,33 @@ import {
 } from './actions';
 import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
-import { ComposerAction } from './reducer.types';
+import { ComposerAction } from './composer.reducer.types';
 import { StageListSaga } from './StageList/saga';
 import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
-import { Entity } from './types';
+import { Entity } from './composer.types';
 import { groupJobErrors } from './utils';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
-  console.log('came to new composer data fetch saga with payload :: ', payload);
   try {
     const { id, entity } = payload;
 
     yield put(fetchDataOngoing());
 
-    const { data } = yield call(
+    const { data, errors } = yield call(
       request,
       'GET',
       entity === Entity.CHECKLIST ? apiGetChecklist(id) : apiGetSelectedJob(id),
     );
 
-    yield put(fetchDataSuccess(data, entity));
-  } catch (error) {
-    console.log('error from fetchDataSaga in ComposerSaga :: ', error);
+    if (data) {
+      yield put(fetchDataSuccess(data, entity));
+    } else {
+      // TODO: handle the api error when design comes
+      console.error('error from fetch checklist/job api ==>> ', errors);
+    }
+  } catch (error: unknown) {
+    console.error('error from fetchDataSaga in ComposerSaga :: ', error);
   }
 }
 
@@ -110,17 +114,11 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
   }
 }
 
-function* publishChecklistSaga() {
-  console.log('make api call to publish checklist here');
-}
-
 export function* ComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchDataSaga);
 
   yield takeLatest(ComposerAction.COMPLETE_JOB, completeJobSaga);
   yield takeLatest(ComposerAction.START_JOB, startJobSaga);
-
-  yield takeLatest(ComposerAction.PUBLISH_CHECKLIST, publishChecklistSaga);
 
   yield all([
     // fork other sagas here

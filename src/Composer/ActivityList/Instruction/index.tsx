@@ -7,7 +7,7 @@ import Electricity from '#assets/svg/Electricity';
 import Fire from '#assets/svg/Fire';
 import Lock from '#assets/svg/Lock';
 import Stop from '#assets/svg/Stop';
-import { Entity } from '#Composer/types';
+import { Entity } from '#Composer/composer.types';
 import { useTypedSelector } from '#store';
 import { ContentState, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';

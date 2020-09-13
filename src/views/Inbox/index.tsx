@@ -5,7 +5,7 @@ import ListView from './ListView';
 import { InboxViewProps } from './types';
 
 import Composer from '../../Composer';
-import { Entity } from '../../Composer/types';
+import { Entity } from '../../Composer/composer.types';
 
 const InboxView: FC<InboxViewProps> = () => (
   <Router>

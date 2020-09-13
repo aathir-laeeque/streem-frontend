@@ -1,9 +1,10 @@
-import CompleteJobWithExceptionModal from '#Composer/modals/CompleteJobWithException';
-import StartJobModal from '#Composer/StartJobModal';
-import CompleteTaskWithExceptionModal from '#Composer/TaskList/TaskView/TaskCard/CompleteWithException';
-import SkipTaskModal from '#Composer/TaskList/TaskView/TaskCard/SkipTaskModal';
+import CompleteJobWithException from '#Composer/modals/CompleteJobWithException';
+import CompleteTaskWithException from '#Composer/modals/CompleteTaskWithException';
+import Signature from '#Composer/modals/SignatureActivity';
+import StartJob from '#Composer/modals/StartJob';
+import TaskErrorCorrection from '#Composer/modals/TaskErrorCorrection';
+import SkipTask from '#Composer/modals/SkipTask';
 import { useTypedSelector } from '#store';
-import { SignatureModal } from '#views/Checklists/ChecklistComposer/TaskList/TaskView/ActivityList/Activity/Signature/SignatureModal';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
 import React, { FC } from 'react';
@@ -13,7 +14,6 @@ import styled from 'styled-components';
 import { closeAllModalAction, closeModalAction } from './actions';
 import { ConfirmationModal } from './ConfirmationModal';
 import { ModalNames } from './types';
-import TaskErrorCorrectionModal from '../../Composer/TaskList/TaskView/TaskCard/ErrorCorrectionModal';
 
 const Wrapper = styled.div``;
 
@@ -29,9 +29,6 @@ const getModal = (
       return (
         <CreateJobModal
           {...props}
-          properties={props.properties}
-          selectedChecklist={props.selectedChecklist}
-          onCreateJob={props.onCreateJob}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
             closeModal(ModalNames.CREATE_JOB_MODAL, ...args)
@@ -43,8 +40,6 @@ const getModal = (
       return (
         <JobUserAssignModal
           {...props}
-          selectedJobIndex={props.selectedJobIndex}
-          refreshData={props.refreshData}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
             closeModal(ModalNames.JOB_USER_ASSIGN, ...args)
@@ -54,10 +49,8 @@ const getModal = (
       );
     case ModalNames.SIGNATURE_MODAL:
       return (
-        <SignatureModal
+        <Signature
           {...props}
-          user={props.user}
-          onAcceptSignature={props.onAcceptSignature}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
             closeModal(ModalNames.SIGNATURE_MODAL, ...args)
@@ -79,7 +72,7 @@ const getModal = (
 
     case ModalNames.START_JOB_MODAL:
       return (
-        <StartJobModal
+        <StartJob
           {...props}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
@@ -91,7 +84,7 @@ const getModal = (
 
     case ModalNames.SKIP_TASK_MODAL:
       return (
-        <SkipTaskModal
+        <SkipTask
           {...props}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
@@ -103,7 +96,7 @@ const getModal = (
 
     case ModalNames.COMPLETE_TASK_WITH_EXCEPTION:
       return (
-        <CompleteTaskWithExceptionModal
+        <CompleteTaskWithException
           {...props}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
@@ -115,7 +108,7 @@ const getModal = (
 
     case ModalNames.COMPLETE_JOB_WITH_EXCEPTION:
       return (
-        <CompleteJobWithExceptionModal
+        <CompleteJobWithException
           {...props}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
@@ -127,7 +120,7 @@ const getModal = (
 
     case ModalNames.TASK_ERROR_CORRECTION:
       return (
-        <TaskErrorCorrectionModal
+        <TaskErrorCorrection
           {...props}
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
@@ -144,19 +137,21 @@ const getModal = (
 
 const ModalContainer: FC = () => {
   const dispatch = useDispatch();
+
   const { currentModals } = useTypedSelector((state) => state.modalContainer);
+
   const closeModal = (params: string) => {
     dispatch(closeModalAction(params));
   };
+
   const closeAllModals = () => {
     dispatch(closeAllModalAction());
   };
   return (
     <Wrapper>
-      {currentModals &&
-        currentModals.map((modal, i) =>
-          getModal(modal.type, modal.props, closeModal, i, closeAllModals),
-        )}
+      {currentModals.map((modal, i) =>
+        getModal(modal.type, modal.props, closeModal, i, closeAllModals),
+      )}
     </Wrapper>
   );
 };

@@ -7,7 +7,7 @@ import Header from './Header';
 import StageList from './StageList';
 import ComposerWrapper from './styles';
 import TaskList from './TaskList';
-import { ComposerProps } from './types';
+import { ComposerProps } from './composer.types';
 
 const Composer: FC<ComposerProps> = ({ id, entity }) => {
   const dispatch = useDispatch();
@@ -30,9 +30,9 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
     <ComposerWrapper>
       <Header />
 
-      <StageList />
+      {/* <StageList /> */}
 
-      {activeStageId ? <TaskList /> : null}
+      {/* {activeStageId ? <TaskList /> : null} */}
     </ComposerWrapper>
   );
 };

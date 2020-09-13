@@ -1,10 +1,10 @@
 import { BaseModal } from '#components';
-import { Task } from '#Composer/checklist.types';
+import { Task } from '#Composer/cehcklist.types';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { enableErrorCorrection } from '../../actions';
+import { completeTask } from '../TaskList/actions';
 
 const Wrapper = styled.div`
   .modal-body {
@@ -16,20 +16,20 @@ const Wrapper = styled.div`
   }
 `;
 
-type ErrorCorrectionModalProps = {
+type CompleteTaskWithExceptionModalProps = {
   closeAllModals: () => void;
   closeModal: () => void;
   taskId: Task['id'];
 };
 
-const ErrorCorrectionModal: FC<ErrorCorrectionModalProps> = ({
+const CompleteTaskWithExceptionModal: FC<CompleteTaskWithExceptionModalProps> = ({
   closeAllModals,
   closeModal,
   taskId,
 }) => {
   const dispatch = useDispatch();
 
-  const [correctionReason, setCorrectionReason] = useState('');
+  const [exceptionReason, setExceptionReason] = useState('');
 
   return (
     <Wrapper>
@@ -37,24 +37,24 @@ const ErrorCorrectionModal: FC<ErrorCorrectionModalProps> = ({
         closeAllModals={closeAllModals}
         closeModal={closeModal}
         onPrimary={() => {
-          dispatch(enableErrorCorrection(taskId, correctionReason));
+          dispatch(completeTask(taskId, exceptionReason, true));
           closeModal();
         }}
         onSecondary={() => closeModal()}
         primaryText="Submit"
         secondaryText="Cancel"
-        title="Error Correction"
+        title="Complete with Exception"
       >
         <div className="new-form-field">
           <label className="new-form-field-label">
-            You need to submit a reason to proceed to make changes
+            Provide the detials for Exception
           </label>
           <textarea
             className="new-form-field-textarea"
-            value={correctionReason}
-            onChange={(e) => setCorrectionReason(e.target.value)}
+            value={exceptionReason}
+            onChange={(e) => setExceptionReason(e.target.value)}
             rows={4}
-            placeholder="Error Correction Reason"
+            placeholder="Exception Reason"
           />
         </div>
       </BaseModal>
@@ -62,4 +62,4 @@ const ErrorCorrectionModal: FC<ErrorCorrectionModalProps> = ({
   );
 };
 
-export default ErrorCorrectionModal;
+export default CompleteTaskWithExceptionModal;

@@ -25,7 +25,7 @@ import {
   Image,
 } from '@react-pdf/renderer';
 import moment from 'moment';
-import { Entity, JobStatus } from '#Composer/types';
+import { Entity, JobStatus } from '#Composer/composer.types';
 
 const now = moment().format('Do MMM, YYYY, HH:MM a');
 

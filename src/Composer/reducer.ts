@@ -1,32 +1,31 @@
 import { Reducer } from 'redux';
 
 import { ActivityListAction } from './ActivityList/types';
+import { Entity, JobStatus } from './composer.types';
 import {
   ComposerAction,
   ComposerActionType,
   ComposerState,
-} from './reducer.types';
+} from './composer.reducer.types';
 import { StageListAction } from './StageList/types';
 import { TaskListAction } from './TaskList/types';
-import { ChecklistState, Entity, JobStatus } from './types';
 import { transformChecklist } from './utils';
 
 const initialState: ComposerState = {
-  checklistState: ChecklistState.CREATING,
   data: undefined,
   entity: undefined,
   entityId: undefined,
   loading: false,
   jobStatus: JobStatus.UNASSIGNED,
 
-  activeStageId: 0,
-  activeTaskId: 0,
-  activitiesById: {},
-  activitiesOrderInTaskInStage: {},
-  stagesById: {},
-  stagesOrder: [],
-  tasksById: {},
-  tasksOrderInStage: {},
+  // activeStageId: 0,
+  // activeTaskId: 0,
+  // activitiesById: {},
+  // activitiesOrderInTaskInStage: {},
+  // stagesById: {},
+  // stagesOrder: [],
+  // tasksById: {},
+  // tasksOrderInStage: {},
 };
 
 const reducer: Reducer<ComposerState, ComposerActionType> = (
@@ -34,9 +33,6 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
   action,
 ) => {
   switch (action.type) {
-    case ComposerAction.FETCH_COMPOSER_DATA:
-      return { ...state, entity: action.payload.entity };
-
     case ComposerAction.FETCH_COMPOSER_DATA_ONGOING:
       return { ...state, loading: true };
 
@@ -55,23 +51,22 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
 
       return {
         ...state,
+        entity,
         data: data,
         entityId: data.id,
         loading: false,
 
-        ...(action.payload.entity === Entity.JOB
-          ? { jobStatus: data.status }
-          : { checklistState: ChecklistState.CREATING }),
+        ...(entity === Entity.JOB ? { jobStatus: data.status } : {}),
 
         // new keys
-        activeStageId: stagesOrder[0],
-        activeTaskId: tasksOrderInStage[stagesOrder[0]][0],
-        activitiesById,
-        activitiesOrderInTaskInStage,
-        stagesById,
-        stagesOrder,
-        tasksById,
-        tasksOrderInStage,
+        // activeStageId: stagesOrder[0],
+        // activeTaskId: tasksOrderInStage[stagesOrder[0]][0],
+        // activitiesById,
+        // activitiesOrderInTaskInStage,
+        // stagesById,
+        // stagesOrder,
+        // tasksById,
+        // tasksOrderInStage,
       };
 
     case ComposerAction.RESET_COMPOSER:
