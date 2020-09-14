@@ -5,6 +5,7 @@ import { ComposerAction } from '../composer.reducer.types';
 import { getTasks } from '../utils';
 import { ActivityListAction } from '../ActivityList/reducer.types';
 import { StageListAction } from '../StageList/reducer.types';
+import { reEvaluateTaskWithStop } from './utils';
 import {
   TaskListActionType,
   TaskListState,
@@ -53,17 +54,24 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
       };
 
     case TaskListAction.UPDATE_TASK_EXECUTION_STATUS:
+      const { data: taskExecution, taskId } = action.payload;
+
       const taskToUpdate = state.tasksById[action.payload.taskId];
+
+      const tasksById = {
+        ...state.tasksById,
+        [taskId]: { ...taskToUpdate, taskExecution },
+      };
 
       return {
         ...state,
-        tasksById: {
-          ...state.tasksById,
-          [action.payload.taskId]: {
-            ...taskToUpdate,
-            taskExecution: action.payload.data,
-          },
-        },
+        tasksById,
+        ...(taskId === state.taskIdWithStop
+          ? reEvaluateTaskWithStop({
+              tasksById,
+              tasksOrderInStage: state.tasksOrderInStage,
+            })
+          : {}),
       };
 
     case TaskListAction.SET_TASK_ERROR:
