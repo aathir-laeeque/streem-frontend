@@ -5,8 +5,6 @@ import {
   Task,
   TaskExecutionStatus,
 } from '#Composer/checklist.types';
-import { Entity } from '#Composer/composer.types';
-import { useTypedSelector } from '#store';
 import { Menu, MenuItem } from '@material-ui/core';
 import { Assignment, Error, MoreHoriz, PanTool } from '@material-ui/icons';
 import moment from 'moment';
@@ -240,7 +238,7 @@ const Wrapper = styled.div.attrs({
 
 const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
 
-const JobHeader: FC<HeaderProps> = ({ task }) => {
+const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
   const dispatch = useDispatch();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -282,7 +280,15 @@ const JobHeader: FC<HeaderProps> = ({ task }) => {
 
           <button
             className="start-task"
-            onClick={() => dispatch(startTask(task.id))}
+            onClick={() => {
+              if (enableStopForTask) {
+                dispatch(
+                  openModalAction({ type: ModalNames.ADD_STOP, props: {} }),
+                );
+              } else {
+                dispatch(startTask(task.id));
+              }
+            }}
           >
             Start task
           </button>
@@ -361,6 +367,7 @@ const Header: FC<HeaderProps> = ({
   showStartButton,
   isTaskStarted,
   isTaskDelayed,
+  enableStopForTask,
 }) => {
   return (
     <Wrapper
@@ -370,7 +377,7 @@ const Header: FC<HeaderProps> = ({
       isTaskStarted={isTaskStarted}
       isTaskDelayed={isTaskDelayed}
     >
-      <JobHeader task={task} />
+      <JobHeader task={task} enableStopForTask={enableStopForTask} />
     </Wrapper>
   );
 };

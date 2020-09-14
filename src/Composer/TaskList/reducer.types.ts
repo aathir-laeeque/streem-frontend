@@ -1,5 +1,5 @@
 import { executeActivity, fixActivity } from '../ActivityList/actions';
-import { Task } from '../checklist.types';
+import { Task, Stage } from '../checklist.types';
 import { ComposerActionType } from '../composer.reducer.types';
 import {
   setActiveTask,
@@ -12,7 +12,10 @@ export type TaskListState = {
   activeTaskId?: Task['id'];
 
   tasksById: TasksById;
+  taskIdWithStop?: Task['id'];
   tasksOrderInStage: TasksOrderInStage;
+
+  stageIdWithTaskStop?: Stage['id'];
 };
 
 export enum TaskListAction {

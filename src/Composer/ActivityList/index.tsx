@@ -5,7 +5,11 @@ import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
 import moment from 'moment';
 
-import { ActivityType } from '../checklist.types';
+import {
+  ActivityType,
+  MandatoryActivity,
+  NonMandatoryActivity,
+} from '../checklist.types';
 import ChecklistActivity from './Checklist';
 import InstructionActivity from './Instruction';
 import MaterialActivity from './Material';
@@ -107,9 +111,7 @@ const ActivityList: FC<ActivityListProps> = ({
         return (
           <div key={activity.id} className="activity">
             {entity === Entity.JOB ? (
-              activity.type !== ActivityType.INSTRUCTION &&
-              activity.type !== ActivityType.MATERIAL &&
-              !activity.mandatory ? (
+              activity.type in MandatoryActivity && !activity.mandatory ? (
                 <div className="optional-badge">Optional</div>
               ) : null
             ) : null}
@@ -123,7 +125,7 @@ const ActivityList: FC<ActivityListProps> = ({
 
             {(() => {
               switch (activity.type) {
-                case ActivityType.CHECKLIST:
+                case MandatoryActivity.CHECKLIST:
                   return (
                     <ChecklistActivity
                       activity={activity}
@@ -131,7 +133,7 @@ const ActivityList: FC<ActivityListProps> = ({
                     />
                   );
 
-                case ActivityType.INSTRUCTION:
+                case NonMandatoryActivity.INSTRUCTION:
                   return (
                     <InstructionActivity
                       activity={activity}
@@ -139,7 +141,7 @@ const ActivityList: FC<ActivityListProps> = ({
                     />
                   );
 
-                case ActivityType.MATERIAL:
+                case NonMandatoryActivity.MATERIAL:
                   return (
                     <MaterialActivity
                       activity={activity}
@@ -147,10 +149,10 @@ const ActivityList: FC<ActivityListProps> = ({
                     />
                   );
 
-                case ActivityType.MEDIA:
+                case MandatoryActivity.MEDIA:
                   return null;
 
-                case ActivityType.MULTISELECT:
+                case MandatoryActivity.MULTISELECT:
                   return (
                     <MultiSelectActivity
                       activity={activity}
@@ -158,7 +160,7 @@ const ActivityList: FC<ActivityListProps> = ({
                     />
                   );
 
-                case ActivityType.SHOULD_BE:
+                case MandatoryActivity.SHOULD_BE:
                   return (
                     <ShouldBeActivity
                       activity={activity}
@@ -166,7 +168,7 @@ const ActivityList: FC<ActivityListProps> = ({
                     />
                   );
 
-                case ActivityType.SIGNATURE:
+                case MandatoryActivity.SIGNATURE:
                   return (
                     <SignatureActivity
                       activity={activity}
@@ -174,7 +176,7 @@ const ActivityList: FC<ActivityListProps> = ({
                     />
                   );
 
-                case ActivityType.TEXTBOX:
+                case MandatoryActivity.TEXTBOX:
                   return (
                     <TextboxActivity
                       activity={activity}
@@ -182,7 +184,7 @@ const ActivityList: FC<ActivityListProps> = ({
                     />
                   );
 
-                case ActivityType.YES_NO:
+                case MandatoryActivity.YES_NO:
                   return (
                     <YesNoActivity
                       activity={activity}

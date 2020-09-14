@@ -1,4 +1,9 @@
-import { Activity, Stage, Task } from '../checklist.types';
+import { Activity as ActivityType, Stage, Task } from '../checklist.types';
+
+type Activity = ActivityType & {
+  hasError: boolean;
+  errorMessage?: string;
+};
 
 export type ActivityListProps = {
   activities: Activity[];
@@ -15,7 +20,11 @@ export enum Selections {
   NOT_SELECTED = 'NOT_SELECTED',
 }
 
-export type ActivitiesById = Record<Activity['id'], Activity>;
+export type ActivitiesById = Record<
+  Activity['id'],
+  Activity & { hasError: boolean; errorMessage?: string }
+>;
+
 export type ActivitiesOrderInTaskInStage = Record<
   Stage['id'],
   Record<Task['id'], Activity['id'][]>

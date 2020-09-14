@@ -83,7 +83,7 @@ const Checkbox: FC<CheckboxProps> = ({ label, isChecked = false }) => (
   <Wrapper isChecked={isChecked}>
     <label className="container">
       {label}
-      <input type="checkbox" checked={isChecked} />
+      <input type="checkbox" checked={isChecked} readOnly />
       <span className="checkmark"></span>
     </label>
   </Wrapper>

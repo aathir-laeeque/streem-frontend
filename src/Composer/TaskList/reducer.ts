@@ -14,7 +14,10 @@ export const initialState: TaskListState = {
   activeTaskId: undefined,
 
   tasksById: {},
+  taskIdWithStop: undefined,
   tasksOrderInStage: [],
+
+  stageIdWithTaskStop: undefined,
 };
 
 const reducer: Reducer<TaskListState, TaskListActionType> = (

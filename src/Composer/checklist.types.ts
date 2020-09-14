@@ -2,17 +2,22 @@ interface Properties {
   [key: string]: string | null;
 }
 
-export enum ActivityType {
-  MATERIAL = 'MATERIAL',
-  INSTRUCTION = 'INSTRUCTION',
-  YES_NO = 'YES_NO',
+export enum MandatoryActivity {
   CHECKLIST = 'CHECKLIST',
-  SHOULD_BE = 'SHOULD_BE',
   MEDIA = 'MEDIA',
   MULTISELECT = 'MULTISELECT',
-  TEXTBOX = 'TEXTBOX',
+  SHOULD_BE = 'SHOULD_BE',
   SIGNATURE = 'SIGNATURE',
+  TEXTBOX = 'TEXTBOX',
+  YES_NO = 'YES_NO',
 }
+
+export enum NonMandatoryActivity {
+  INSTRUCTION = 'INSTRUCTION',
+  MATERIAL = 'MATERIAL',
+}
+
+export type ActivityType = MandatoryActivity | NonMandatoryActivity;
 
 export interface Activity {
   id: number;
@@ -60,7 +65,7 @@ export enum TaskExecutionStatus {
   SKIPPED = 'SKIPPED',
 }
 
-export interface TaskAudit {
+export interface Audit {
   modifiedAt: string;
   modifiedBy: {
     employeeId: string;
@@ -70,8 +75,9 @@ export interface TaskAudit {
 }
 
 export interface TaskExecution {
-  audit: TaskAudit;
+  audit: Audit;
   correctionReason?: string | null;
+  endedAt?: string;
   id: number;
   period?: number | null;
   reason?: string | null;
@@ -80,17 +86,26 @@ export interface TaskExecution {
   status: TaskExecutionStatus;
 }
 
+export enum TimeOperator {
+  LESS_THAN = 'LESS_THAN',
+  NOT_LESS_THAN = 'NOT_LESS_THAN',
+}
+
 export interface Task {
   activities: Activity[];
   code: string;
   hasStop: boolean;
   id: number;
+  mandatory: boolean;
+  maxPeriod?: number;
   medias: Media[];
+  minPeriod?: number;
   name: string;
   orderTree: number;
   period?: number;
   taskExecution: TaskExecution;
   timed: boolean;
+  timeOperator: TimeOperator;
 }
 
 export interface Stage {

@@ -5,7 +5,7 @@ import {
   ActivitiesOrderInTaskInStage,
   ActivityErrors,
 } from './ActivityList/types';
-import { Checklist, Stage, Task } from './checklist.types';
+import { Checklist, Stage, Task, TaskExecutionStatus } from './checklist.types';
 import { ErrorGroups } from './composer.types';
 import { StageErrors, StagesById, StagesOrder } from './StageList/types';
 import { TaskErrors, TasksById, TasksOrderInStage } from './TaskList/types';
@@ -69,7 +69,9 @@ export const getTasks = ({
   const tasksById: TasksById = {},
     tasksOrderInStage: TasksOrderInStage = {};
 
-  let activeTaskId: Task['id'] | undefined = undefined;
+  let activeTaskId: Task['id'] | undefined = undefined,
+    taskIdWithStop: Task['id'] | undefined = undefined,
+    stageIdWithTaskStop: Stage['id'] | undefined = undefined;
 
   checklist?.stages?.map((stage) => {
     tasksOrderInStage[stage.id] = [];
@@ -78,6 +80,16 @@ export const getTasks = ({
       tasksById[task.id] = task;
 
       tasksOrderInStage[stage.id].push(task.id);
+
+      if (
+        !taskIdWithStop &&
+        (task.taskExecution.status === TaskExecutionStatus.NOT_STARTED ||
+          task.taskExecution.status === TaskExecutionStatus.INPROGRESS) &&
+        task.hasStop
+      ) {
+        taskIdWithStop = task.id;
+        stageIdWithTaskStop = stage.id;
+      }
     });
   });
 
@@ -89,7 +101,9 @@ export const getTasks = ({
 
   return {
     tasksById,
+    taskIdWithStop,
     tasksOrderInStage,
+    stageIdWithTaskStop,
     ...(setActiveTask ? { activeTaskId } : {}),
   };
 };
@@ -111,7 +125,7 @@ export const getActivities = ({ checklist }: GetActivitiesArgs) => {
       task?.activities?.map((activity) => {
         activitiesOrderInTaskInStage[stage.id][task.id].push(activity.id);
 
-        activitiesById[activity.id] = activity;
+        activitiesById[activity.id] = { ...activity, hasError: false };
       });
     });
   });

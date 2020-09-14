@@ -6,6 +6,7 @@ export type TasksOrderInStage = Record<Stage['id'], Task['id'][]>;
 export type TaskViewProps = {
   isActive: boolean;
   task: Task;
+  enableStopForTask: boolean;
 };
 
 export type TaskCardProps = TaskViewProps;

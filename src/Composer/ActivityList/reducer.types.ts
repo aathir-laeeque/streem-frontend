@@ -21,9 +21,9 @@ export enum ActivityListAction {
 
 export type ActivityListActionType =
   | ReturnType<
-      | typeof updateExecutedActivity
-      | typeof setActivityError
       | typeof executeActivity
       | typeof fixActivity
+      | typeof setActivityError
+      | typeof updateExecutedActivity
     >
   | ComposerActionType;

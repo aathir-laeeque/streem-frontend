@@ -5,6 +5,7 @@ import Signature from '#Composer/modals/SignatureActivity';
 import SkipTask from '#Composer/modals/SkipTask';
 import StartJob from '#Composer/modals/StartJob';
 import TaskErrorCorrection from '#Composer/modals/TaskErrorCorrection';
+import AddStop from '#Composer/modals/AddStop';
 import { useTypedSelector } from '#store';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
@@ -137,6 +138,16 @@ const getModal = (
           {...props}
           closeAllModals={closeAllModals}
           closeModal={(...args) => closeModal(ModalNames.MEDIA_DETAIL, ...args)}
+          key={i}
+        />
+      );
+
+    case ModalNames.ADD_STOP:
+      return (
+        <AddStop
+          {...props}
+          closeAllModals={closeAllModals}
+          closeModal={(...args) => closeModal(ModalNames.ADD_STOP, ...args)}
           key={i}
         />
       );

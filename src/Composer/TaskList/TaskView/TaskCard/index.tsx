@@ -1,6 +1,5 @@
 import ActivityList from '#Composer/ActivityList';
 import {
-  ActivityType,
   TaskExecutionStatus,
   StartedTaskStates,
 } from '#Composer/checklist.types';
@@ -14,6 +13,7 @@ import { setActiveTask } from '../../actions';
 import { TaskCardProps } from '../../types';
 import Footer from './Footer';
 import Header from './Header';
+import { MandatoryActivity } from '../../../checklist.types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-card',
@@ -32,12 +32,9 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
+const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
   const {
     jobStatus,
-    // activeStageId,
-    // activitiesOrderInTaskInStage,
-    // activitiesById,
     activities: { activitiesById, activitiesOrderInTaskInStage },
     stages: { activeStageId },
   } = useTypedSelector((state) => state.composer);
@@ -51,21 +48,18 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
       (activityId) => activitiesById[activityId],
     );
 
-    const canSkipTask = !activities.reduce((acc, activity) => {
-      if (
-        activity.type === ActivityType.INSTRUCTION ||
-        activity.type === ActivityType.MATERIAL
-      ) {
-        return acc;
-      }
+    const { canSkipTask, activitiesHasError } = activities.reduce(
+      ({ canSkipTask, activitiesHasError }, activity) => {
+        activitiesHasError ||= activity.hasError;
 
-      acc = acc || activity.mandatory;
-      return acc;
-    }, false);
+        if (activity.type in MandatoryActivity) {
+          canSkipTask ||= activity.mandatory;
+        }
 
-    const activitiesHasError = activities.reduce((acc, activity) => {
-      return acc || !!activity.hasError;
-    }, false);
+        return { activitiesHasError, canSkipTask: !canSkipTask };
+      },
+      { canSkipTask: false, activitiesHasError: false },
+    );
 
     const isTaskStarted = taskStatus in StartedTaskStates;
 
@@ -101,6 +95,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
           showStartButton={showStartButton}
           isTaskStarted={isTaskStarted}
           isTaskDelayed={isTaskDelayed}
+          enableStopForTask={enableStopForTask}
         />
 
         <ActivityList
