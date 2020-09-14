@@ -22,8 +22,6 @@ const reducer: Reducer<StageListState, StageListActionType> = (
 ) => {
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
-      console.log('stage list reducer blah blah');
-
       const { data, entity } = action.payload;
 
       const checklist = entity === Entity.CHECKLIST ? data : data?.checklist;

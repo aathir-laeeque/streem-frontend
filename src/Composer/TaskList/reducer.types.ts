@@ -1,14 +1,12 @@
+import { executeActivity, fixActivity } from '../ActivityList/actions';
 import { Task } from '../checklist.types';
+import { ComposerActionType } from '../composer.reducer.types';
 import {
-  completeTask,
   setActiveTask,
   setTaskError,
-  skipTask,
-  startTask,
   updateTaskExecutionStatus,
 } from './actions';
 import { TasksById, TasksOrderInStage } from './types';
-import { ComposerActionType } from '../composer.reducer.types';
 
 export type TaskListState = {
   activeTaskId?: Task['id'];
@@ -35,11 +33,9 @@ export enum TaskListAction {
 
 export type TaskListActionType =
   | ReturnType<
-      | typeof completeTask
       | typeof setActiveTask
       | typeof setTaskError
-      | typeof skipTask
-      | typeof startTask
       | typeof updateTaskExecutionStatus
     >
+  | ReturnType<typeof executeActivity | typeof fixActivity>
   | ComposerActionType;

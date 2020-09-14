@@ -1,7 +1,7 @@
+import { TaskExecutionStatus } from '#Composer/checklist.types';
 import { Timer as TimerIcon } from '@material-ui/icons';
-import React, { FC, useState, useEffect } from 'react';
 import moment from 'moment';
-import { TaskExecutionStatus } from '../../types';
+import React, { FC, useEffect, useState } from 'react';
 
 const formatTime = (period: number) => {
   const time = moment.duration(period);

@@ -1,5 +1,9 @@
 import ActivityList from '#Composer/ActivityList';
-import { ActivityType } from '#Composer/checklist.types';
+import {
+  ActivityType,
+  TaskExecutionStatus,
+  StartedTaskStates,
+} from '#Composer/checklist.types';
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
@@ -7,11 +11,7 @@ import styled from 'styled-components';
 
 import { JobStatus } from '../../../composer.types';
 import { setActiveTask } from '../../actions';
-import {
-  StartedTaskStates,
-  TaskCardProps,
-  TaskExecutionStatus,
-} from '../../types';
+import { TaskCardProps } from '../../types';
 import Footer from './Footer';
 import Header from './Header';
 
@@ -35,84 +35,92 @@ const Wrapper = styled.div.attrs({
 const TaskCard: FC<TaskCardProps> = ({ task, isActive }) => {
   const {
     jobStatus,
-    activeStageId,
-    activitiesOrderInTaskInStage,
-    activitiesById,
+    // activeStageId,
+    // activitiesOrderInTaskInStage,
+    // activitiesById,
+    activities: { activitiesById, activitiesOrderInTaskInStage },
+    stages: { activeStageId },
   } = useTypedSelector((state) => state.composer);
 
   const { status: taskStatus, reason } = task.taskExecution;
 
   const dispatch = useDispatch();
 
-  const activities = activitiesOrderInTaskInStage[activeStageId][task.id].map(
-    (activityId) => activitiesById[activityId],
-  );
+  if (activeStageId) {
+    const activities = activitiesOrderInTaskInStage[activeStageId][task.id].map(
+      (activityId) => activitiesById[activityId],
+    );
 
-  const canSkipTask = !activities.reduce((acc, activity) => {
-    if (
-      activity.type === ActivityType.INSTRUCTION ||
-      activity.type === ActivityType.MATERIAL
-    ) {
+    const canSkipTask = !activities.reduce((acc, activity) => {
+      if (
+        activity.type === ActivityType.INSTRUCTION ||
+        activity.type === ActivityType.MATERIAL
+      ) {
+        return acc;
+      }
+
+      acc = acc || activity.mandatory;
       return acc;
-    }
+    }, false);
 
-    acc = acc || activity.mandatory;
-    return acc;
-  }, false);
+    const activitiesHasError = activities.reduce((acc, activity) => {
+      return acc || !!activity.hasError;
+    }, false);
 
-  const activitiesHasError = activities.reduce((acc, activity) => {
-    return acc || !!activity.hasError;
-  }, false);
+    const isTaskStarted = taskStatus in StartedTaskStates;
 
-  const isTaskStarted = taskStatus in StartedTaskStates;
+    const isTaskDelayed =
+      taskStatus === TaskExecutionStatus.COMPLETED && reason;
 
-  const isTaskDelayed = taskStatus === TaskExecutionStatus.COMPLETED && reason;
+    const isTaskCompleted =
+      taskStatus === TaskExecutionStatus.COMPLETED ||
+      taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION ||
+      taskStatus === TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION;
 
-  const isTaskCompleted =
-    taskStatus === TaskExecutionStatus.COMPLETED ||
-    taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION ||
-    taskStatus === TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION;
+    const isCompletedWithException =
+      taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION;
 
-  const isCompletedWithException =
-    taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION;
+    const showStartButton =
+      (jobStatus === JobStatus.ASSIGNED ||
+        jobStatus === JobStatus.INPROGRESS) &&
+      !isTaskStarted;
 
-  const showStartButton =
-    (jobStatus === JobStatus.ASSIGNED || jobStatus === JobStatus.INPROGRESS) &&
-    !isTaskStarted;
+    const isCorrectingError =
+      taskStatus === TaskExecutionStatus.ENABLED_FOR_ERROR_CORRECTION;
 
-  const isCorrectingError =
-    taskStatus === TaskExecutionStatus.ENABLED_FOR_ERROR_CORRECTION;
+    return (
+      <Wrapper
+        onClick={() => {
+          if (!isActive) {
+            dispatch(setActiveTask(task.id));
+          }
+        }}
+      >
+        <Header
+          task={task}
+          showStartButton={showStartButton}
+          isTaskStarted={isTaskStarted}
+          isTaskDelayed={isTaskDelayed}
+        />
 
-  return (
-    <Wrapper
-      onClick={() => {
-        if (!isActive) {
-          dispatch(setActiveTask(task.id));
-        }
-      }}
-    >
-      <Header
-        task={task}
-        showStartButton={showStartButton}
-        isTaskStarted={isTaskStarted}
-        isTaskDelayed={isTaskDelayed}
-      />
+        <ActivityList
+          activities={activities}
+          isTaskStarted={isTaskStarted}
+          isTaskCompleted={isTaskCompleted}
+          isCompletedWithException={isCompletedWithException}
+          isCorrectingError={isCorrectingError}
+        />
 
-      <ActivityList
-        activities={activities}
-        isTaskStarted={isTaskStarted}
-        isTaskCompleted={isTaskCompleted}
-        isCompletedWithException={isCompletedWithException}
-        isCorrectingError={isCorrectingError}
-      />
-
-      <Footer
-        canSkipTask={canSkipTask}
-        task={task}
-        activitiesHasError={activitiesHasError}
-      />
-    </Wrapper>
-  );
+        <Footer
+          canSkipTask={canSkipTask}
+          task={task}
+          activitiesHasError={activitiesHasError}
+        />
+      </Wrapper>
+    );
+  } else {
+    return null;
+  }
 };
 
 export default TaskCard;

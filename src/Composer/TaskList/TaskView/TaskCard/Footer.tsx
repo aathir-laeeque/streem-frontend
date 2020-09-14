@@ -1,18 +1,17 @@
-import { Task } from '#Composer/checklist.types';
+import { openModalAction } from '#components/ModalContainer/actions';
+import { ModalNames } from '#components/ModalContainer/types';
+import { Task, TaskExecutionStatus } from '#Composer/checklist.types';
 import { ArrowRightAlt, CheckCircle, Error } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 
-import { openModalAction } from '../../../../components/ModalContainer/actions';
-import { ModalNames } from '../../../../components/ModalContainer/types';
 import {
   cancelErrorCorretcion,
   completeErrorCorretcion,
   completeTask,
 } from '../../actions';
-import { TaskExecutionStatus } from '../../types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-buttons',
@@ -182,12 +181,12 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
       if (
         moment().diff(moment(task.taskExecution.startedAt)) > task.maxPeriod
       ) {
-        text = 'before the set time';
+        text = 'after the set time';
       } else if (
         task.timerOperator === 'NOT_LESS_THAN' &&
         moment().diff(moment(task.taskExecution.startedAt)) < task.minPeriod
       ) {
-        text = 'after the set time';
+        text = 'before the set time';
       }
 
       return (

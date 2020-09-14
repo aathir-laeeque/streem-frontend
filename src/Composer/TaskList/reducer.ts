@@ -3,10 +3,15 @@ import { Reducer } from 'redux';
 
 import { ComposerAction } from '../composer.reducer.types';
 import { getTasks } from '../utils';
-import { TaskListActionType, TaskListState } from './reducer.types';
+import { ActivityListAction } from '../ActivityList/reducer.types';
+import {
+  TaskListActionType,
+  TaskListState,
+  TaskListAction,
+} from './reducer.types';
 
 export const initialState: TaskListState = {
-  activeTaskId: 0,
+  activeTaskId: undefined,
 
   tasksById: {},
   tasksOrderInStage: [],
@@ -18,8 +23,6 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
 ) => {
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
-      console.log('task list reducer blah blah');
-
       const { data, entity } = action.payload;
 
       const checklist = entity === Entity.CHECKLIST ? data : data?.checklist;
@@ -27,6 +30,53 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
       return {
         ...state,
         ...getTasks({ checklist, setActiveTask: true }),
+      };
+
+    case TaskListAction.SET_ACTIVE_TASK:
+      return { ...state, activeTaskId: action.payload.id };
+
+    case TaskListAction.UPDATE_TASK_EXECUTION_STATUS:
+      const taskToUpdate = state.tasksById[action.payload.taskId];
+
+      return {
+        ...state,
+        tasksById: {
+          ...state.tasksById,
+          [action.payload.taskId]: {
+            ...taskToUpdate,
+            taskExecution: action.payload.data,
+          },
+        },
+      };
+
+    case TaskListAction.SET_TASK_ERROR:
+      return {
+        ...state,
+        tasksById: {
+          ...state.tasksById,
+          [action.payload.taskId]: {
+            ...state.tasksById[action.payload.taskId],
+            hasError: true,
+          },
+        },
+      };
+
+    case ActivityListAction.EXECUTE_ACTIVITY:
+    case ActivityListAction.FIX_ACTIVITY:
+      return {
+        ...state,
+        tasksById: {
+          ...state.tasksById,
+
+          ...(state.activeTaskId
+            ? {
+                [state.activeTaskId]: {
+                  ...state.tasksById[state.activeTaskId],
+                  hasError: false,
+                },
+              }
+            : {}),
+        },
       };
 
     default:

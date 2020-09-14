@@ -80,6 +80,9 @@ const Wrapper = styled.div.attrs({})`
         .close-icon {
           cursor: pointer;
           font-size: 20px;
+          position: absolute;
+          top: 16px;
+          right: 16px;
         }
         .modal-header {
           display: flex;
@@ -104,7 +107,7 @@ const Wrapper = styled.div.attrs({})`
           justify-content: flex-end;
         }
         .modal-body {
-          padding: 16px 16px 22px 16px;
+          padding: 16px;
         }
       }
     }
@@ -197,13 +200,13 @@ export const BaseModal: FC<BaseModalProps> = ({
             className="modal"
             style={{ borderRadius: isRound ? '16px' : '4px' }}
           >
+            <Close
+              className="close-icon"
+              onClick={() => onBaseModalContainerClick(closeModal)}
+            />
             {showHeader && (
               <div className="modal-header">
                 <h2>{title}</h2>
-                <Close
-                  className="close-icon"
-                  onClick={() => onBaseModalContainerClick(closeModal)}
-                />
               </div>
             )}
             <div className="modal-body">{children}</div>

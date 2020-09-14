@@ -1,7 +1,7 @@
 import { actionSpreader } from '#store';
 
 import { Activity } from '../checklist.types';
-import { ActivityListAction } from './types';
+import { ActivityListAction } from './reducer.types';
 
 export const executeActivity = (activity: Activity) =>
   actionSpreader(ActivityListAction.EXECUTE_ACTIVITY, { activity });

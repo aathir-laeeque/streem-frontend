@@ -7,11 +7,16 @@ import { CompletedTaskStates, StartedTaskStates } from '../checklist.types';
 import { setActiveStage } from './actions';
 import Wrapper from './styles';
 import { StageCardProps } from './types';
+import { useTypedSelector } from '#store';
 
 const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
   const dispatch = useDispatch();
 
-  const { tasks } = stage;
+  const { tasksById, tasksOrderInStage } = useTypedSelector(
+    (state) => state.composer.tasks,
+  );
+
+  const tasks = tasksOrderInStage[stage.id].map((taskId) => tasksById[taskId]);
 
   const { isAnyTaskStarted, anyTaskHasError, completedTasks } = tasks.reduce(
     ({ isAnyTaskStarted, anyTaskHasError, completedTasks }, task) => {

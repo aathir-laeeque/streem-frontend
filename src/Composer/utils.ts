@@ -1,55 +1,14 @@
 import { Error } from '#utils/globalTypes';
-import { omit } from 'lodash';
 
-import { ActivityErrors } from './ActivityList/types';
+import {
+  ActivitiesById,
+  ActivitiesOrderInTaskInStage,
+  ActivityErrors,
+} from './ActivityList/types';
 import { Checklist, Stage, Task } from './checklist.types';
-// import {
-//   ActivitiesById,
-//   ActivitiesOrderInTaskInStage,
-// } from './composer.reducer.types';
 import { ErrorGroups } from './composer.types';
 import { StageErrors, StagesById, StagesOrder } from './StageList/types';
 import { TaskErrors, TasksById, TasksOrderInStage } from './TaskList/types';
-
-// export const transformChecklist = (checklist: Checklist) => {
-//   const stagesOrder: StagesOrder = [];
-//   const tasksOrderInStage: TasksOrderInStage = {};
-//   const activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage = {};
-
-//   const stagesById: StagesById = {},
-//     tasksById: TasksById = {},
-//     activitiesById: ActivitiesById = {};
-
-//   checklist?.stages?.map((stage) => {
-//     stagesOrder.push(stage.id);
-//     tasksOrderInStage[stage.id] = [];
-//     activitiesOrderInTaskInStage[stage.id] = {};
-
-//     stagesById[stage.id] = omit(stage, 'tasks');
-
-//     stage.tasks.map((task) => {
-//       tasksOrderInStage[stage.id].push(task.id);
-//       activitiesOrderInTaskInStage[stage.id][task.id] = [];
-
-//       tasksById[task.id] = omit(task, 'activities');
-
-//       task.activities.map((activity) => {
-//         activitiesOrderInTaskInStage[stage.id][task.id].push(activity.id);
-
-//         activitiesById[activity.id] = activity;
-//       });
-//     });
-//   });
-
-//   return {
-//     stagesOrder,
-//     tasksOrderInStage,
-//     activitiesOrderInTaskInStage,
-//     stagesById,
-//     tasksById,
-//     activitiesById,
-//   };
-// };
 
 export const groupJobErrors = (errors: Error[]) =>
   errors.reduce<ErrorGroups>(
@@ -133,4 +92,29 @@ export const getTasks = ({
     tasksOrderInStage,
     ...(setActiveTask ? { activeTaskId } : {}),
   };
+};
+
+type GetActivitiesArgs = {
+  checklist: Checklist;
+};
+
+export const getActivities = ({ checklist }: GetActivitiesArgs) => {
+  const activitiesById: ActivitiesById = {},
+    activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage = {};
+
+  checklist?.stages?.map((stage) => {
+    activitiesOrderInTaskInStage[stage.id] = {};
+
+    stage?.tasks?.map((task) => {
+      activitiesOrderInTaskInStage[stage.id][task.id] = [];
+
+      task?.activities?.map((activity) => {
+        activitiesOrderInTaskInStage[stage.id][task.id].push(activity.id);
+
+        activitiesById[activity.id] = activity;
+      });
+    });
+  });
+
+  return { activitiesById, activitiesOrderInTaskInStage };
 };

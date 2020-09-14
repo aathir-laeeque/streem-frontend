@@ -7,18 +7,15 @@ import {
   resetComposer,
   startJobSuccess,
 } from './actions';
+import { ActivityListState } from './ActivityList/reducer.types';
 import { Checklist } from './checklist.types';
 import { Entity, JobStatus } from './composer.types';
 import { StageListState } from './StageList/reducer.types';
 import { TaskListState } from './TaskList/reducer.types';
 
-// export type ActivitiesById = Record<Activity['id'], Activity>;
-// export type ActivitiesOrderInTaskInStage = Record<
-//   Stage['id'],
-//   Record<Task['id'], Activity['id'][]>
-// >;
-
 export type ComposerState = {
+  activities: ActivityListState;
+
   data?: Checklist | Job;
 
   entity?: Entity;

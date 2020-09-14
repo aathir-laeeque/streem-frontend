@@ -8,7 +8,7 @@ import {
   fixActivity,
   updateExecutedActivity,
 } from './actions';
-import { ActivityListAction } from './types';
+import { ActivityListAction } from './reducer.types';
 
 function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
   try {

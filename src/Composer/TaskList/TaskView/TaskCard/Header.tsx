@@ -1,18 +1,21 @@
+import { openModalAction } from '#components/ModalContainer/actions';
+import { ModalNames } from '#components/ModalContainer/types';
+import {
+  StartedTaskStates,
+  Task,
+  TaskExecutionStatus,
+} from '#Composer/checklist.types';
+import { Entity } from '#Composer/composer.types';
 import { useTypedSelector } from '#store';
-import { Assignment, MoreHoriz, PanTool, Error } from '@material-ui/icons';
 import { Menu, MenuItem } from '@material-ui/core';
+import { Assignment, Error, MoreHoriz, PanTool } from '@material-ui/icons';
 import moment from 'moment';
-import React, { FC, useState } from 'react';
+import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 
-import { Task } from '../../../checklist.types';
-import { Entity } from '../../../composer.types';
 import { startTask } from '../../actions';
-import { StartedTaskStates, TaskExecutionStatus } from '../../types';
 import Timer from './Timer';
-import { openModalAction } from '../../../../components/ModalContainer/actions';
-import { ModalNames } from '../../../../components/ModalContainer/types';
 
 type HeaderProps = {
   task: Omit<Task, 'activities'>;
@@ -235,10 +238,6 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const ChecklistHeader: FC<HeaderProps> = ({ task }) => {
-  return <div>Checklist Header</div>;
-};
-
 const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
 
 const JobHeader: FC<HeaderProps> = ({ task }) => {
@@ -288,7 +287,9 @@ const JobHeader: FC<HeaderProps> = ({ task }) => {
             Start task
           </button>
 
-          <MoreHoriz className="icon complete-options" onClick={handleClick} />
+          <div onClick={handleClick}>
+            <MoreHoriz className="icon complete-options" />
+          </div>
 
           <Menu
             id="task-error-correction"
@@ -318,26 +319,26 @@ const JobHeader: FC<HeaderProps> = ({ task }) => {
         {task.timed ? <Timer task={task} /> : null}
       </div>
 
-      {status === StartedTaskStates.SKIPPED ||
-      status === StartedTaskStates.COMPLETED_WITH_EXCEPTION ? (
+      {status === TaskExecutionStatus.SKIPPED ||
+      status === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION ? (
         <div className="skip-reason">
           <div className="badge">
             <Assignment className="icon" />
-            {status === StartedTaskStates.COMPLETED_WITH_EXCEPTION
+            {status === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION
               ? 'Completed with exception'
               : 'Task Skipped'}
           </div>
           <textarea
             className="new-form-field-textarea"
-            value={reason}
+            value={reason ?? undefined}
             disabled
             rows={4}
           />
         </div>
       ) : null}
 
-      {status === StartedTaskStates.ENABLED_FOR_ERROR_CORRECTION ||
-      (status === StartedTaskStates.COMPLETED && correctionReason) ? (
+      {status === TaskExecutionStatus.ENABLED_FOR_ERROR_CORRECTION ||
+      status === TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION ? (
         <div className="correction-reason">
           <div className="badge">
             <Assignment className="icon" />
@@ -345,7 +346,7 @@ const JobHeader: FC<HeaderProps> = ({ task }) => {
           </div>
           <textarea
             className="new-form-field-textarea"
-            value={correctionReason}
+            value={correctionReason ?? undefined}
             disabled
             rows={4}
           />
@@ -361,8 +362,6 @@ const Header: FC<HeaderProps> = ({
   isTaskStarted,
   isTaskDelayed,
 }) => {
-  const { entity } = useTypedSelector((state) => state.composer);
-
   return (
     <Wrapper
       hasStop={task.hasStop}
@@ -371,11 +370,7 @@ const Header: FC<HeaderProps> = ({
       isTaskStarted={isTaskStarted}
       isTaskDelayed={isTaskDelayed}
     >
-      {entity === Entity.CHECKLIST ? (
-        <ChecklistHeader task={task} />
-      ) : (
-        <JobHeader task={task} />
-      )}
+      <JobHeader task={task} />
     </Wrapper>
   );
 };

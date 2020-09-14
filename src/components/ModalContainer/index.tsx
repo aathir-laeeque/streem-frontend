@@ -1,9 +1,10 @@
 import CompleteJobWithException from '#Composer/modals/CompleteJobWithException';
 import CompleteTaskWithException from '#Composer/modals/CompleteTaskWithException';
+import MediaDetail from '#Composer/modals/MediaDetail';
 import Signature from '#Composer/modals/SignatureActivity';
+import SkipTask from '#Composer/modals/SkipTask';
 import StartJob from '#Composer/modals/StartJob';
 import TaskErrorCorrection from '#Composer/modals/TaskErrorCorrection';
-import SkipTask from '#Composer/modals/SkipTask';
 import { useTypedSelector } from '#store';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
@@ -126,6 +127,16 @@ const getModal = (
           closeModal={(...args) =>
             closeModal(ModalNames.TASK_ERROR_CORRECTION, ...args)
           }
+          key={i}
+        />
+      );
+
+    case ModalNames.MEDIA_DETAIL:
+      return (
+        <MediaDetail
+          {...props}
+          closeAllModals={closeAllModals}
+          closeModal={(...args) => closeModal(ModalNames.MEDIA_DETAIL, ...args)}
           key={i}
         />
       );
