@@ -1,8 +1,9 @@
 import { useTypedSelector } from '#store/helpers';
-import React, { FC } from 'react';
+import React, { createRef, FC, RefObject, useEffect } from 'react';
 import styled from 'styled-components';
 
 import StageCard from './StageCard';
+import { Stage } from '../checklist.types';
 
 const Wrapper = styled.div.attrs({
   className: 'stage-list-container',
@@ -26,9 +27,31 @@ const Wrapper = styled.div.attrs({
 `;
 
 const StageListView: FC = () => {
-  const { activeStageId, stagesById, stagesOrder } = useTypedSelector(
-    (state) => state.composer.stages,
-  );
+  const {
+    activeStageId,
+    stagesById,
+    stagesOrder,
+    bringIntoView,
+  } = useTypedSelector((state) => state.composer.stages);
+
+  const refMap = stagesOrder.reduce<
+    Record<Stage['id'], RefObject<HTMLDivElement>>
+  >((acc, stageId) => {
+    acc[stageId] = createRef<HTMLDivElement>();
+
+    return acc;
+  }, {});
+
+  useEffect(() => {
+    if (activeStageId && bringIntoView) {
+      if (refMap[activeStageId].current) {
+        refMap[activeStageId].current.scrollIntoView({
+          behaviour: 'smooth',
+          block: 'start',
+        });
+      }
+    }
+  }, [activeStageId]);
 
   return (
     <Wrapper>
@@ -37,6 +60,7 @@ const StageListView: FC = () => {
           isActive={stageId === activeStageId}
           key={stageId}
           stage={stagesById[stageId]}
+          ref={refMap[stageId]}
         />
       ))}
     </Wrapper>

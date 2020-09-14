@@ -1,6 +1,7 @@
 import { executeActivity, fixActivity } from '../ActivityList/actions';
-import { Task, Stage } from '../checklist.types';
+import { Stage, Task } from '../checklist.types';
 import { ComposerActionType } from '../composer.reducer.types';
+import { setActiveStage } from '../StageList/actions';
 import {
   setActiveTask,
   setTaskError,
@@ -10,6 +11,8 @@ import { TasksById, TasksOrderInStage } from './types';
 
 export type TaskListState = {
   activeTaskId?: Task['id'];
+
+  bringIntoView: boolean;
 
   tasksById: TasksById;
   taskIdWithStop?: Task['id'];
@@ -41,4 +44,5 @@ export type TaskListActionType =
       | typeof updateTaskExecutionStatus
     >
   | ReturnType<typeof executeActivity | typeof fixActivity>
+  | ReturnType<typeof setActiveStage>
   | ComposerActionType;

@@ -6,6 +6,8 @@ import { StagesById, StagesOrder } from './types';
 export type StageListState = {
   activeStageId?: Stage['id'];
 
+  bringIntoView: boolean;
+
   stagesById: StagesById;
   stagesOrder: StagesOrder;
 };

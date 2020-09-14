@@ -4,8 +4,8 @@ import { Task } from '../checklist.types';
 import { TaskAction } from './types';
 import { TaskListAction } from './reducer.types';
 
-export const setActiveTask = (id: Task['id']) =>
-  actionSpreader(TaskListAction.SET_ACTIVE_TASK, { id });
+export const setActiveTask = (id: Task['id'], bringIntoView = false) =>
+  actionSpreader(TaskListAction.SET_ACTIVE_TASK, { id, bringIntoView });
 
 export const startTask = (taskId: Task['id']) =>
   actionSpreader(TaskListAction.START_TASK, {

@@ -4,6 +4,7 @@ import { Reducer } from 'redux';
 import { ComposerAction } from '../composer.reducer.types';
 import { getTasks } from '../utils';
 import { ActivityListAction } from '../ActivityList/reducer.types';
+import { StageListAction } from '../StageList/reducer.types';
 import {
   TaskListActionType,
   TaskListState,
@@ -12,6 +13,8 @@ import {
 
 export const initialState: TaskListState = {
   activeTaskId: undefined,
+
+  bringIntoView: false,
 
   tasksById: {},
   taskIdWithStop: undefined,
@@ -35,8 +38,19 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         ...getTasks({ checklist, setActiveTask: true }),
       };
 
+    case StageListAction.SET_ACTIVE_STAGE:
+      return {
+        ...state,
+        activeTaskId: state.tasksOrderInStage[action.payload.id][0],
+        bringIntoView: true,
+      };
+
     case TaskListAction.SET_ACTIVE_TASK:
-      return { ...state, activeTaskId: action.payload.id };
+      return {
+        ...state,
+        activeTaskId: action.payload.id,
+        bringIntoView: action.payload.bringIntoView,
+      };
 
     case TaskListAction.UPDATE_TASK_EXECUTION_STATUS:
       const taskToUpdate = state.tasksById[action.payload.taskId];

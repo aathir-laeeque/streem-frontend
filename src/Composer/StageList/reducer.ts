@@ -12,6 +12,8 @@ import {
 export const initialState: StageListState = {
   activeStageId: undefined,
 
+  bringIntoView: false,
+
   stagesById: {},
   stagesOrder: [],
 };
@@ -35,6 +37,7 @@ const reducer: Reducer<StageListState, StageListActionType> = (
       return {
         ...state,
         activeStageId: action.payload.id,
+        bringIntoView: action.payload.bringIntoView,
       };
 
     default:

@@ -1,3 +1,4 @@
+import { useTypedSelector } from '#store';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -10,6 +11,8 @@ import TaskList from './TaskList';
 
 const Composer: FC<ComposerProps> = ({ id, entity }) => {
   const dispatch = useDispatch();
+
+  const { activeStageId } = useTypedSelector((state) => state.composer.stages);
 
   useEffect(() => {
     if (id) {
@@ -29,7 +32,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
 
       <StageList />
 
-      <TaskList />
+      {activeStageId ? <TaskList /> : null}
     </ComposerWrapper>
   );
 };

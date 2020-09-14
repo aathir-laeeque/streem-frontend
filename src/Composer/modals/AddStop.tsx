@@ -5,6 +5,8 @@ import { PanTool } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { setActiveStage } from '../StageList/actions';
+import { setActiveTask } from '../TaskList/actions';
 
 const Wrapper = styled.div`
   .task-stop {
@@ -53,7 +55,7 @@ const TaskStopModal: FC<TaskStopModalProps> = ({
   closeAllModals,
   closeModal,
 }) => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const {
     stages: { stagesById },
@@ -85,7 +87,14 @@ const TaskStopModal: FC<TaskStopModalProps> = ({
             You need to complete task no {taskNumber} in stage no {stageNumber}{' '}
             before coming to this task
           </div>
-          <div className="footer" onClick={() => closeModal()}>
+          <div
+            className="footer"
+            onClick={() => {
+              dispatch(setActiveStage(stageIdWithTaskStop, true));
+              dispatch(setActiveTask(taskIdWithStop, true));
+              closeModal();
+            }}
+          >
             Go to the task
           </div>
         </div>

@@ -1,14 +1,16 @@
 import { useTypedSelector } from '#store';
-import React, { FC } from 'react';
+import React, { FC, RefObject, createRef, useEffect } from 'react';
 
 import Wrapper from './styles';
 import TaskView from './TaskView';
+import { Task } from '../checklist.types';
 
 const TaskListView: FC = () => {
   const {
     stages: { activeStageId, stagesById, stagesOrder },
     tasks: {
       activeTaskId,
+      bringIntoView,
       tasksById,
       taskIdWithStop,
       tasksOrderInStage,
@@ -16,46 +18,57 @@ const TaskListView: FC = () => {
     },
   } = useTypedSelector((state) => state.composer);
 
-  if (activeStageId) {
-    const activeStage = stagesById[activeStageId];
+  const activeStage = stagesById[activeStageId];
 
-    const tasksListIds = tasksOrderInStage[activeStageId];
+  const tasksListIds = tasksOrderInStage[activeStageId];
 
-    const shouldStageHaveStop =
-      stagesOrder.indexOf(activeStageId) >=
-      stagesOrder.indexOf(stageIdWithTaskStop);
+  const shouldStageHaveStop =
+    stagesOrder.indexOf(activeStageId) >=
+    stagesOrder.indexOf(stageIdWithTaskStop);
 
-    console.log('shouldStagehaveStop :: ', shouldStageHaveStop);
+  const refMap = tasksListIds.reduce<
+    Record<Task['id'], RefObject<HTMLDivElement>>
+  >((acc, taskId) => {
+    acc[taskId] = createRef<HTMLDivElement>();
 
-    return (
-      <Wrapper>
-        <div className="stage-number">Stage {activeStage.orderTree}</div>
+    return acc;
+  }, {});
 
-        <div className="stage-name">{activeStage.name}</div>
+  useEffect(() => {
+    if (activeTaskId && bringIntoView) {
+      if (refMap[activeTaskId].current) {
+        refMap[activeTaskId].current.scrollIntoView({
+          behaviour: 'smooth',
+          block: 'start',
+        });
+      }
+    }
+  }, [activeTaskId]);
 
-        <div className="tasks-list">
-          {tasksListIds.map((taskId, index) => {
-            const enableStopForTask =
-              shouldStageHaveStop &&
-              index > tasksListIds.indexOf(taskIdWithStop);
+  return (
+    <Wrapper>
+      <div className="stage-number">Stage {activeStage.orderTree}</div>
 
-            console.log(`enableStopForTask ${taskId} :: `, enableStopForTask);
+      <div className="stage-name">{activeStage.name}</div>
 
-            return (
-              <TaskView
-                isActive={taskId === activeTaskId}
-                key={taskId}
-                task={tasksById[taskId]}
-                enableStopForTask={enableStopForTask}
-              />
-            );
-          })}
-        </div>
-      </Wrapper>
-    );
-  } else {
-    return null;
-  }
+      <div className="tasks-list">
+        {tasksListIds.map((taskId, index) => {
+          const enableStopForTask =
+            shouldStageHaveStop && index > tasksListIds.indexOf(taskIdWithStop);
+
+          return (
+            <TaskView
+              isActive={taskId === activeTaskId}
+              key={taskId}
+              task={tasksById[taskId]}
+              enableStopForTask={enableStopForTask}
+              ref={refMap[taskId]}
+            />
+          );
+        })}
+      </div>
+    </Wrapper>
+  );
 };
 
 export default TaskListView;

@@ -1,6 +1,6 @@
 import { ProgressBar } from '#components';
 import { Assignment, CheckCircle, Error, PanTool } from '@material-ui/icons';
-import React, { FC } from 'react';
+import React, { FC, forwardRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { CompletedTaskStates, StartedTaskStates } from '../checklist.types';
@@ -9,98 +9,105 @@ import Wrapper from './styles';
 import { StageCardProps } from './types';
 import { useTypedSelector } from '#store';
 
-const StageCard: FC<StageCardProps> = ({ stage, isActive }) => {
-  const dispatch = useDispatch();
+type Ref = HTMLDivElement;
 
-  const { tasksById, tasksOrderInStage } = useTypedSelector(
-    (state) => state.composer.tasks,
-  );
+const StageCard = forwardRef<Ref, StageCardProps>(
+  ({ stage, isActive }, ref) => {
+    const dispatch = useDispatch();
 
-  const tasks = tasksOrderInStage[stage.id].map((taskId) => tasksById[taskId]);
+    const { tasksById, tasksOrderInStage } = useTypedSelector(
+      (state) => state.composer.tasks,
+    );
 
-  const { isAnyTaskStarted, anyTaskHasError, completedTasks } = tasks.reduce(
-    ({ isAnyTaskStarted, anyTaskHasError, completedTasks }, task) => {
-      const {
-        taskExecution: { status },
-      } = task;
+    const tasks = tasksOrderInStage[stage.id].map(
+      (taskId) => tasksById[taskId],
+    );
 
-      isAnyTaskStarted = isAnyTaskStarted || status in StartedTaskStates;
+    const { isAnyTaskStarted, anyTaskHasError, completedTasks } = tasks.reduce(
+      ({ isAnyTaskStarted, anyTaskHasError, completedTasks }, task) => {
+        const {
+          taskExecution: { status },
+        } = task;
 
-      status in CompletedTaskStates && ++completedTasks;
+        isAnyTaskStarted = isAnyTaskStarted || status in StartedTaskStates;
 
-      // anyTaskHasError ||= !!task.hasError;
+        status in CompletedTaskStates && ++completedTasks;
 
-      return { isAnyTaskStarted, anyTaskHasError, completedTasks };
-    },
-    { isAnyTaskStarted: false, anyTaskHasError: false, completedTasks: 0 },
-  );
+        // anyTaskHasError ||= !!task.hasError;
 
-  const precentageOfCompleteTasks = Math.round(
-    (completedTasks / tasks.length) * 100,
-  );
+        return { isAnyTaskStarted, anyTaskHasError, completedTasks };
+      },
+      { isAnyTaskStarted: false, anyTaskHasError: false, completedTasks: 0 },
+    );
 
-  const allTasksCompleted = completedTasks === tasks.length;
+    const precentageOfCompleteTasks = Math.round(
+      (completedTasks / tasks.length) * 100,
+    );
 
-  return (
-    <Wrapper
-      isActive={isActive}
-      isAnyTaskStarted={isAnyTaskStarted}
-      allTasksCompleted={allTasksCompleted}
-      anyTaskHasError={anyTaskHasError}
-      onClick={() => {
-        if (!isActive) {
-          dispatch(setActiveStage(stage.id));
-        }
-      }}
-    >
-      <div className="stage-header">
-        <span className="stage-order">Stage {stage.orderTree}</span>
+    const allTasksCompleted = completedTasks === tasks.length;
 
-        <PanTool className="icon stop-icon" />
+    return (
+      <Wrapper
+        isActive={isActive}
+        isAnyTaskStarted={isAnyTaskStarted}
+        allTasksCompleted={allTasksCompleted}
+        anyTaskHasError={anyTaskHasError}
+        onClick={() => {
+          if (!isActive) {
+            dispatch(setActiveStage(stage.id));
+          }
+        }}
+        ref={ref}
+      >
+        <div className="stage-header">
+          <span className="stage-order">Stage {stage.orderTree}</span>
 
-        <div className="stage-badge">
-          {(() => {
-            if (anyTaskHasError) {
-              return (
-                <>
-                  <Error className="icon" />
-                  <span>Task Incomplete</span>
-                </>
-              );
-            } else if (allTasksCompleted) {
-              return (
-                <>
-                  <CheckCircle className="icon" />
-                  <span>Completed</span>
-                </>
-              );
-            } else if (isAnyTaskStarted) {
-              return (
-                <>
-                  <Assignment className="icon" />
-                  <span>In Progress</span>
-                </>
-              );
-            } else {
-              return (
-                <>
-                  <Assignment className="icon" />
-                  <span>Not Started</span>
-                </>
-              );
-            }
-          })()}
+          <PanTool className="icon stop-icon" />
+
+          <div className="stage-badge">
+            {(() => {
+              if (anyTaskHasError) {
+                return (
+                  <>
+                    <Error className="icon" />
+                    <span>Task Incomplete</span>
+                  </>
+                );
+              } else if (allTasksCompleted) {
+                return (
+                  <>
+                    <CheckCircle className="icon" />
+                    <span>Completed</span>
+                  </>
+                );
+              } else if (isAnyTaskStarted) {
+                return (
+                  <>
+                    <Assignment className="icon" />
+                    <span>In Progress</span>
+                  </>
+                );
+              } else {
+                return (
+                  <>
+                    <Assignment className="icon" />
+                    <span>Not Started</span>
+                  </>
+                );
+              }
+            })()}
+          </div>
         </div>
-      </div>
 
-      <div className="stage-name">{stage.name}</div>
+        <div className="stage-name">{stage.name}</div>
 
-      <div className="stage-task-bar">
-        <span>{precentageOfCompleteTasks}% Task completed</span>
-        <ProgressBar percentage={precentageOfCompleteTasks} />
-      </div>
-    </Wrapper>
-  );
-};
+        <div className="stage-task-bar">
+          <span>{precentageOfCompleteTasks}% Task completed</span>
+          <ProgressBar percentage={precentageOfCompleteTasks} />
+        </div>
+      </Wrapper>
+    );
+  },
+);
 
 export default StageCard;
