@@ -22,7 +22,8 @@ import {
   startTask,
   updateTaskExecutionStatus,
 } from './actions';
-import { TaskAction, TaskListAction } from './types';
+import { TaskAction } from './types';
+import { TaskListAction } from './reducer.types';
 import {
   apiCompleteTaskErrorCorrection,
   apiCancelTaskErrorCorrection,

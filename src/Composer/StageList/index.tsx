@@ -27,7 +27,7 @@ const Wrapper = styled.div.attrs({
 
 const StageListView: FC = () => {
   const { activeStageId, stagesById, stagesOrder } = useTypedSelector(
-    (state) => state.composer,
+    (state) => state.composer.stages,
   );
 
   return (

@@ -7,36 +7,18 @@ import {
   resetComposer,
   startJobSuccess,
 } from './actions';
-import { ActivityListActionType } from './ActivityList/types';
-import { Activity, Checklist, Stage, Task } from './checklist.types';
+import { Checklist } from './checklist.types';
 import { Entity, JobStatus } from './composer.types';
-import { StageListActionType, StageListState } from './StageList/types';
-import { TaskListActionType } from './TaskList/types';
+import { StageListState } from './StageList/reducer.types';
+import { TaskListState } from './TaskList/reducer.types';
 
-export type ActivitiesById = Record<Activity['id'], Activity>;
-export type ActivitiesOrderInTaskInStage = Record<
-  Stage['id'],
-  Record<Task['id'], Activity['id'][]>
->;
-
-// removes tasks from stages
-// export type StagesById = Record<Stage['id'], Omit<Stage, 'tasks'>>;
-// export type StagesOrder = Stage['id'][];
-
-// removes activities from tasks
-export type TasksById = Record<
-  Task['id'],
-  Omit<Task, 'activities'> & { hasError?: boolean; errorMessage?: string }
->;
-export type TasksOrderInStage = Record<Stage['id'], Task['id'][]>;
+// export type ActivitiesById = Record<Activity['id'], Activity>;
+// export type ActivitiesOrderInTaskInStage = Record<
+//   Stage['id'],
+//   Record<Task['id'], Activity['id'][]>
+// >;
 
 export type ComposerState = {
-  // activeStageId: Stage['id'];
-  // activeTaskId: Task['id'];
-
-  // activitiesById: ActivitiesById;
-  // activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage;
-
   data?: Checklist | Job;
 
   entity?: Entity;
@@ -46,12 +28,10 @@ export type ComposerState = {
 
   jobStatus: JobStatus;
 
-  // stagesById: StagesById;
-  // stagesOrder: StagesOrder;
+  stages: StageListState;
 
-  // tasksById: TasksById;
-  // tasksOrderInStage: TasksOrderInStage;
-} & StageListState;
+  tasks: TaskListState;
+};
 
 export enum ComposerAction {
   COMPLETE_JOB = '@@composer/job-action/COMPLETE_JOB',
@@ -78,9 +58,3 @@ export type ComposerActionType = ReturnType<
   | typeof startJobSuccess
   | typeof completeJob
 >;
-
-// export type ComposerActionType =
-//   | ReturnType<ComposerActionType1>
-//   // | StageListActionType
-//   | TaskListActionType
-//   | ActivityListActionType;

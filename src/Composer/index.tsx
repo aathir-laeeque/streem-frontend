@@ -1,18 +1,15 @@
-import { useTypedSelector } from '#store';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { fetchData, resetComposer } from './actions';
+import { ComposerProps } from './composer.types';
 import Header from './Header';
 import StageList from './StageList';
 import ComposerWrapper from './styles';
 import TaskList from './TaskList';
-import { ComposerProps } from './composer.types';
 
 const Composer: FC<ComposerProps> = ({ id, entity }) => {
   const dispatch = useDispatch();
-
-  const { activeStageId } = useTypedSelector((state) => state.composer);
 
   useEffect(() => {
     if (id) {
@@ -32,7 +29,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
 
       <StageList />
 
-      {/* {activeStageId ? <TaskList /> : null} */}
+      <TaskList />
     </ComposerWrapper>
   );
 };

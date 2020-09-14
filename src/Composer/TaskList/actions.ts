@@ -1,7 +1,8 @@
 import { actionSpreader } from '#store';
 
 import { Task } from '../checklist.types';
-import { TaskListAction, TaskAction } from './types';
+import { TaskAction } from './types';
+import { TaskListAction } from './reducer.types';
 
 export const setActiveTask = (id: Task['id']) =>
   actionSpreader(TaskListAction.SET_ACTIVE_TASK, { id });

@@ -3,10 +3,14 @@ import { Entity } from '#Composer/composer.types';
 import { getStages } from '#Composer/utils';
 import { Reducer } from 'redux';
 
-import { StageListAction, StageListActionType, StageListState } from './types';
+import {
+  StageListAction,
+  StageListActionType,
+  StageListState,
+} from './reducer.types';
 
-const initialState: StageListState = {
-  activeStageId: 0,
+export const initialState: StageListState = {
+  activeStageId: undefined,
 
   stagesById: {},
   stagesOrder: [],
@@ -18,6 +22,8 @@ const reducer: Reducer<StageListState, StageListActionType> = (
 ) => {
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
+      console.log('stage list reducer blah blah');
+
       const { data, entity } = action.payload;
 
       const checklist = entity === Entity.CHECKLIST ? data : data?.checklist;

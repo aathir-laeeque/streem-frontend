@@ -1,20 +1,21 @@
 import { Reducer } from 'redux';
 
-import { ActivityListAction } from './ActivityList/types';
-import { Entity, JobStatus } from './composer.types';
 import {
   ComposerAction,
   ComposerActionType,
   ComposerState,
 } from './composer.reducer.types';
-import { StageListAction } from './StageList/types';
-import { TaskListAction } from './TaskList/types';
-import { transformChecklist } from './utils';
-
-import { stageListReducer } from './StageList/reducer';
+import { Entity, JobStatus } from './composer.types';
+import {
+  initialState as stageListState,
+  stageListReducer,
+} from './StageList/reducer';
+import {
+  initialState as taskListState,
+  taskListReducer,
+} from './TaskList/reducer';
 
 const initialState: ComposerState = {
-  activeStageId: 0,
   data: undefined,
 
   entity: undefined,
@@ -24,17 +25,8 @@ const initialState: ComposerState = {
 
   jobStatus: JobStatus.UNASSIGNED,
 
-  stagesById: {},
-  stagesOrder: [],
-
-  // activeStageId: 0,
-  // activeTaskId: 0,
-  // activitiesById: {},
-  // activitiesOrderInTaskInStage: {},
-  // stagesById: {},
-  // stagesOrder: [],
-  // tasksById: {},
-  // tasksOrderInStage: {},
+  stages: stageListState,
+  tasks: taskListState,
 };
 
 const reducer: Reducer<ComposerState, ComposerActionType> = (
@@ -47,16 +39,6 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
 
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
       const { entity, data } = action.payload;
-      // const {
-      //   activitiesById,
-      //   activitiesOrderInTaskInStage,
-      //   stagesById,
-      //   stagesOrder,
-      //   tasksById,
-      //   tasksOrderInStage,
-      // } = transformChecklist(
-      //   entity === Entity.CHECKLIST ? data : data?.checklist,
-      // );
 
       return {
         ...state,
@@ -66,18 +48,8 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         loading: false,
 
         ...(entity === Entity.JOB ? { jobStatus: data.status } : {}),
-
-        ...stageListReducer(state, action),
-
-        // new keys
-        // activeStageId: stagesOrder[0],
-        // activeTaskId: tasksOrderInStage[stagesOrder[0]][0],
-        // activitiesById,
-        // activitiesOrderInTaskInStage,
-        // stagesById,
-        // stagesOrder,
-        // tasksById,
-        // tasksOrderInStage,
+        stages: stageListReducer(state.stages, action),
+        tasks: taskListReducer(state.tasks, action),
       };
 
     case ComposerAction.RESET_COMPOSER:
@@ -173,7 +145,8 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
     default:
       return {
         ...state,
-        ...stageListReducer(state, action),
+        stages: stageListReducer(state.stages, action),
+        tasks: taskListReducer(state.tasks, action),
       };
   }
 };
