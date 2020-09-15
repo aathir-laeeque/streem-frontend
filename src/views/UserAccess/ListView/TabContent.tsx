@@ -37,7 +37,7 @@ const TabContent: FC<TabViewProps> = ({
 
   const selectUser = (item: User) => {
     dispatch(setSelectedUser(item));
-    navigate(`/user-access/view-user`);
+    navigate(`/user-access/edit-user`);
   };
 
   const fetchData = (page: number, size: number) => {
