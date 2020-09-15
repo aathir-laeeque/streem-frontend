@@ -1,6 +1,8 @@
 import { Properties } from '#store/properties/types';
 import { ArrowDropDown, Search } from '@material-ui/icons';
-import React, { FC, useEffect, useRef } from 'react';
+import NestedMenuItem from '#components/shared/NestedMenuItem';
+import Menu from '@material-ui/core/Menu';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
 import { Checklist } from '#views/Checklists/types';
 import { Users } from '#store/users/types';
@@ -8,10 +10,22 @@ import { Job } from '#views/Jobs/types';
 import styled from 'styled-components';
 import { Button, FlatButton } from './Button';
 
+export type Filter = {
+  label: string;
+  content: JSX.Element;
+  onApply: () => void;
+};
+
+export type FilterProp = {
+  filters: Filter[];
+  onReset: () => void;
+  activeCount: number;
+};
 interface ListViewProps {
   primaryButtonText?: string;
   onPrimaryClick?: () => void;
   properties: Properties;
+  filterProp?: FilterProp;
   data:
     | Checklist[]
     | Job[]
@@ -28,8 +42,6 @@ interface ListViewProps {
     header: string;
     template: (item: any, index: number) => JSX.Element;
   }[];
-  filterComponent?: JSX.Element;
-  filterOnClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -183,10 +195,10 @@ export const ListView: FC<ListViewProps> = ({
   currentPage,
   beforeColumns,
   afterColumns,
-  filterComponent,
-  filterOnClick = () => console.log('clicked'),
+  filterProp,
 }) => {
   const scroller = useRef<HTMLDivElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
     if (scroller && scroller.current) {
@@ -197,6 +209,16 @@ export const ListView: FC<ListViewProps> = ({
       };
     }
   }, [isLast, currentPage]);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleOpen = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleOnScroll = (e: Record<string, any>) => {
     if (scroller && scroller.current && e.target) {
@@ -209,23 +231,76 @@ export const ListView: FC<ListViewProps> = ({
     }
   };
 
+  const onApplyFilter = (e: React.MouseEvent, onApply: () => void) => {
+    e.stopPropagation();
+    onApply();
+    handleClose();
+  };
+
   return (
     <Wrapper>
       <div style={{ height: '100%' }}>
         <div className="list-options">
-          <FlatButton
-            aria-controls="top-menu"
-            aria-haspopup="true"
-            onClick={filterOnClick}
-          >
-            Filters <ArrowDropDown style={{ fontSize: 20, color: '#1d84ff' }} />
-          </FlatButton>
-          {filterComponent && filterComponent}
+          {filterProp && (
+            <>
+              <FlatButton
+                aria-controls="top-menu"
+                aria-haspopup="true"
+                onClick={handleOpen}
+              >
+                {filterProp?.activeCount !== 0
+                  ? `${filterProp?.activeCount} Filters`
+                  : 'Filters '}
+                <ArrowDropDown style={{ fontSize: 20, color: '#1d84ff' }} />
+              </FlatButton>
+              <Menu
+                id="filter-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                style={{ marginTop: 40 }}
+              >
+                {filterProp.filters.map((filter) => {
+                  return (
+                    <NestedMenuItem
+                      key={`filter_${filter.label}`}
+                      right
+                      disabled={true}
+                      label={filter.label}
+                      mainMenuOpen={anchorEl ? true : false}
+                    >
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        className="filter-container"
+                      >
+                        {filter.content}
+                        <div className="picker-actions">
+                          <Button
+                            style={{ marginRight: 0 }}
+                            onClick={(e) => onApplyFilter(e, filter.onApply)}
+                          >
+                            Apply Filter
+                          </Button>
+                        </div>
+                      </div>
+                    </NestedMenuItem>
+                  );
+                })}
+              </Menu>
+            </>
+          )}
           <div className="searchboxwrapper">
             <input className="searchbox" type="text" placeholder="Search" />
             <Search className="searchsubmit" />
           </div>
-          <span className="resetOption">Reset</span>
+          {filterProp?.activeCount && filterProp?.activeCount > 0 ? (
+            <span className="resetOption" onClick={filterProp?.onReset}>
+              Reset
+            </span>
+          ) : null}
           {primaryButtonText && (
             <Button
               style={{ marginLeft: `auto`, marginRight: 0 }}

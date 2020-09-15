@@ -36,7 +36,7 @@ function* fetchSessionActivitysSaga({
       { params },
     );
 
-    if (errors) {
+    if (errors || !pageable) {
       throw new Error(errors[0].message);
     }
 

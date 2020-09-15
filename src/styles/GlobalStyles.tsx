@@ -371,6 +371,14 @@ const GlobalStyles = createGlobalStyle`
           margin-left: 0px;
         }
 
+        .MuiInputBase-adornedStart {
+          svg {
+            padding-left: 4px;
+            padding-right: 4px;
+            color: #999999;
+          }
+        }
+
         .MuiFormHelperText-root {
           display: none;
         }

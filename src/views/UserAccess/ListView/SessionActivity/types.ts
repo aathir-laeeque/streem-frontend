@@ -8,9 +8,9 @@ import {
 } from './actions';
 
 export interface SessionActivity {
+  triggeredOn: string;
   id: number;
   triggeredAt: string;
-  triggeredOn: string;
   event: string;
   action: string;
   severity: string;

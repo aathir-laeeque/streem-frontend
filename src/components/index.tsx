@@ -19,6 +19,6 @@ export { HeaderWithBack } from './shared/HeaderWithBack';
 export { LabeledInput } from './shared/LabeledInput';
 export { Checkbox } from './shared/Checkbox';
 export { default as CheckboxWithLabel } from './shared/CheckboxWithLabel';
-export { ListView as ListViewComponent } from './shared/ListView';
+export { ListView as ListViewComponent, FilterProp } from './shared/ListView';
 export { default as AddNewItem } from './shared/AddNew';
 export { default as ProgressBar } from './shared/Progressbar';
