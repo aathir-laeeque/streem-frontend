@@ -2,6 +2,9 @@ import React, { FC, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { MediaCardProps } from '../types';
+import { useDispatch } from 'react-redux';
+import { openModalAction } from '../../../components/ModalContainer/actions';
+import { ModalNames } from '../../../components/ModalContainer/types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-media-card',
@@ -85,6 +88,8 @@ const Wrapper = styled.div.attrs({
 `;
 
 const MediaCard: FC<MediaCardProps> = ({ medias, isTaskActive }) => {
+  const dispatch = useDispatch();
+
   const [activeMedia, setActiveMedia] = useState(medias[0]);
 
   return (
@@ -92,7 +97,17 @@ const MediaCard: FC<MediaCardProps> = ({ medias, isTaskActive }) => {
       {medias.length ? (
         <div className="container">
           {activeMedia ? (
-            <div className="active-media">
+            <div
+              className="active-media"
+              onClick={() =>
+                dispatch(
+                  openModalAction({
+                    type: ModalNames.MEDIA_DETAIL,
+                    props: { mediaDetails: activeMedia },
+                  }),
+                )
+              }
+            >
               <img src={activeMedia.link} alt={activeMedia.filename} />
               <span className="media-name">{activeMedia.name}</span>
             </div>
