@@ -12,6 +12,8 @@ const Wrapper = styled.div`
   .task-stop {
     display: flex;
     flex-direction: column;
+    width: 400px;
+    padding: 16px 40px;
 
     .header {
       align-items: center;
@@ -31,6 +33,7 @@ const Wrapper = styled.div`
       color: #000000;
       font-size: 14px;
       letter-spacing: 0.16px;
+      line-height: normal;
       margin-top: 12px;
     }
 
@@ -84,8 +87,8 @@ const TaskStopModal: FC<TaskStopModalProps> = ({
             Stop
           </div>
           <div className="body">
-            You need to complete task no {taskNumber} in stage no {stageNumber}{' '}
-            before coming to this task
+            You need to complete Task No. {taskNumber} in Stage No.{' '}
+            {stageNumber} before coming to this task
           </div>
           <div
             className="footer"

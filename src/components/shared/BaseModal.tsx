@@ -65,7 +65,7 @@ const Wrapper = styled.div.attrs({})`
         font-weight: 300;
         position: relative;
         border-radius: 16px;
-        min-width: 600px;
+        /* min-width: 600px; */
         max-height: calc(100vh - 40vh);
         max-width: calc(100vw - 40vw);
         box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12),
@@ -83,6 +83,7 @@ const Wrapper = styled.div.attrs({})`
           position: absolute;
           top: 16px;
           right: 16px;
+          color: #bababa;
         }
         .modal-header {
           display: flex;
@@ -179,7 +180,7 @@ export const BaseModal: FC<BaseModalProps> = ({
   showSecondary = true,
   showHeader = true,
   showFooter = true,
-  isRound = true,
+  isRound = false,
 }) => {
   const modalContainer = useRef<HTMLDivElement | null>(null);
 
