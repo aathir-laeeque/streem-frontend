@@ -9,6 +9,10 @@ import { setActiveStage } from '../StageList/actions';
 import { setActiveTask } from '../TaskList/actions';
 
 const Wrapper = styled.div`
+  .modal {
+    min-width: 400px !important;
+  }
+
   .task-stop {
     display: flex;
     flex-direction: column;
