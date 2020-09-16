@@ -23,8 +23,9 @@ const TaskListView: FC = () => {
   const tasksListIds = tasksOrderInStage[activeStageId];
 
   const shouldStageHaveStop =
+    stagesOrder.indexOf(stageIdWithTaskStop) > 0 &&
     stagesOrder.indexOf(activeStageId) >=
-    stagesOrder.indexOf(stageIdWithTaskStop);
+      stagesOrder.indexOf(stageIdWithTaskStop);
 
   const refMap = tasksListIds.reduce<
     Record<Task['id'], RefObject<HTMLDivElement>>

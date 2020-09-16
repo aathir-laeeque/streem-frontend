@@ -77,7 +77,7 @@ export const getTasks = ({
     tasksOrderInStage[stage.id] = [];
 
     stage?.tasks?.map((task) => {
-      tasksById[task.id] = task;
+      tasksById[task.id] = { ...task, hasError: false };
 
       tasksOrderInStage[stage.id].push(task.id);
 

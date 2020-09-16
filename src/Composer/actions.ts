@@ -1,9 +1,8 @@
 import { actionSpreader } from '#store';
 
 import { Job } from '../views/Jobs/types';
-import { Checklist } from './checklist.types';
-import { Entity, FetchDataArgs } from './composer.types';
 import { ComposerAction } from './composer.reducer.types';
+import { Entity, FetchDataArgs } from './composer.types';
 
 export const fetchData = ({ id, entity }: FetchDataArgs) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA, { id, entity });

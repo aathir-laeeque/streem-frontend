@@ -1,4 +1,6 @@
-import { Media, Task, Stage } from '../checklist.types';
+import { Media, Task as TaskType, Stage } from '../checklist.types';
+
+type Task = TaskType & { hasError: boolean; errorMessage?: string };
 
 export type TasksById = Record<Task['id'], Task>;
 export type TasksOrderInStage = Record<Stage['id'], Task['id'][]>;

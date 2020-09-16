@@ -86,7 +86,7 @@ export interface TaskExecution {
   status: TaskExecutionStatus;
 }
 
-export enum TimeOperator {
+export enum TimerOperator {
   LESS_THAN = 'LESS_THAN',
   NOT_LESS_THAN = 'NOT_LESS_THAN',
 }
@@ -105,7 +105,7 @@ export interface Task {
   period?: number;
   taskExecution: TaskExecution;
   timed: boolean;
-  timeOperator: TimeOperator;
+  timerOperator: TimerOperator;
 }
 
 export interface Stage {

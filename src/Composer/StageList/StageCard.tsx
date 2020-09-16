@@ -31,9 +31,11 @@ const StageCard = forwardRef<Ref, StageCardProps>(
 
         isAnyTaskStarted = isAnyTaskStarted || status in StartedTaskStates;
 
-        status in CompletedTaskStates && ++completedTasks;
+        if (status in CompletedTaskStates) {
+          ++completedTasks;
+        }
 
-        // anyTaskHasError ||= !!task.hasError;
+        anyTaskHasError ||= task.hasError;
 
         return { isAnyTaskStarted, anyTaskHasError, completedTasks };
       },

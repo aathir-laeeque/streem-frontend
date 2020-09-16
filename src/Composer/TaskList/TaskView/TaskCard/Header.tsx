@@ -281,6 +281,7 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
           <button
             className="start-task"
             onClick={() => {
+              console.log('enableStopForTask :: ', enableStopForTask);
               if (enableStopForTask) {
                 dispatch(
                   openModalAction({ type: ModalNames.ADD_STOP, props: {} }),
