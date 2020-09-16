@@ -66,7 +66,7 @@ const Wrapper = styled.div.attrs({})`
         position: relative;
         border-radius: 16px;
         min-width: 600px;
-        max-height: calc(100vh - 40vh);
+        // max-height: calc(100vh - 40vh);
         max-width: calc(100vw - 40vw);
         box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12),
           0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 2px 4px -1px rgba(0, 0, 0, 0.2);

@@ -35,7 +35,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       op: 'AND',
       fields: [
         {
-          field: 'assignee',
+          field: 'assignees',
           op: 'EQ',
           values: [profile?.id],
         },

@@ -1,44 +1,101 @@
 import styled from 'styled-components';
-export const Composer = styled.div`
+import { StyleSheet, Font } from '@react-pdf/renderer';
+
+export const LoadingDiv = styled.div`
   display: flex;
-  flex: 1;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   height: 100%;
-
-  iframe {
-    width: 100%;
-    height: 100%;
-  }
+  z-index: -1;
 `;
 
-export const Header = styled.div`
-  background-color: #eeeeee;
-  display: flex;
-  align-items: center;
-  padding: 8px 40px;
-  justify-content: space-between;
-  width: 100%;
-`;
+Font.register({
+  family: 'Nunito',
+  src:
+    'http://fonts.gstatic.com/s/nunitosans/v2/iJ4p9wO0GDKJ-D5teKuZqp0EAVxt0G0biEntp43Qt6E.ttf',
+});
 
-export const Footer = styled.div`
-  background-color: #eeeeee;
-  display: flex;
-  align-items: center;
-  padding: 8px 40px;
-  justify-content: space-between;
-  width: 100%;
-
-  .footer-info {
-    font-size: 10px;
-    color: #000000;
-  }
-
-  .page-info {
-    width: 20px;
-    height: 20px;
-    border-radius: 100px;
-    background-color: #bababa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-`;
+export const styles = StyleSheet.create({
+  page: {
+    backgroundColor: '#FFF',
+    paddingBottom: 50,
+    paddingTop: 45,
+    textOverflow: 'hidden',
+  },
+  header: {
+    backgroundColor: '#eeeeee',
+    display: 'flex',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+    paddingVertical: 8,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    width: '100%',
+    position: 'absolute',
+    top: '0',
+  },
+  mainHeader: {
+    backgroundColor: '#FFF',
+    display: 'flex',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+    paddingVertical: 16,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    width: '100%',
+    marginTop: -45,
+    zIndex: 10,
+  },
+  footer: {
+    backgroundColor: '#eeeeee',
+    display: 'flex',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+    paddingVertical: 8,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    width: '100%',
+    position: 'absolute',
+    bottom: '0',
+    height: 32,
+  },
+  footerInfo: {
+    fontSize: 10,
+    color: '#000000',
+  },
+  flexRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    flex: 1,
+  },
+  container: {
+    paddingHorizontal: 40,
+    paddingVertical: 8,
+  },
+  pageInfo: {
+    width: 20,
+    height: 20,
+    borderRadius: 100,
+    backgroundColor: '#bababa',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stageHeader: {
+    paddingHorizontal: 40,
+    borderBottomWidth: 1,
+    borderColor: '#000',
+    paddingVertical: 16,
+  },
+  clientLogoWrapper: {
+    backgroundColor: '#999999',
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+  },
+  text12: {
+    fontSize: 12,
+    fontFamily: 'Nunito',
+  },
+});

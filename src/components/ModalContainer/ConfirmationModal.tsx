@@ -15,18 +15,12 @@ export interface ConfirmationModalProps {
 const Wrapper = styled.div.attrs({})`
   .modal {
     min-width: 360px !important;
-    border-radius: 8px !important;
+    // border-radius: 8px !important;
 
-    h2 {
-      font-size: 24px !important;
-    }
-    .close-icon {
-      font-size: 32px !important;
-      color: #999999 !important;
-    }
     .modal-header {
       border-bottom: 1px solid #dadada !important;
     }
+
     .modal-footer {
       border-bottom: 1px solid #dadada !important;
     }

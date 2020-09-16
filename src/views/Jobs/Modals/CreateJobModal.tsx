@@ -89,15 +89,17 @@ export const CreateJobModal: FC<CreateJobModalProps> = ({
   }
 
   useEffect(() => {
-    if (prevSearch !== searchQuery) {
-      fetchData(0, 10);
-    }
-    if (scroller && scroller.current) {
-      const div = scroller.current;
-      div.addEventListener('scroll', handleOnScroll);
-      return () => {
-        div.removeEventListener('scroll', handleOnScroll);
-      };
+    if (!selectedChecklist) {
+      if (prevSearch !== searchQuery) {
+        fetchData(0, 10);
+      }
+      if (scroller && scroller.current) {
+        const div = scroller.current;
+        div.addEventListener('scroll', handleOnScroll);
+        return () => {
+          div.removeEventListener('scroll', handleOnScroll);
+        };
+      }
     }
   }, [searchQuery, isLast, currentPage]);
 
@@ -119,7 +121,6 @@ export const CreateJobModal: FC<CreateJobModalProps> = ({
   };
 
   const rowSelected = (checklist: Checklist) => {
-    console.log('setting search query', searchQuery);
     setSearchQuery(checklist.name);
     setShowChecklists(false);
     onInputChange('checklistId', checklist.id.toString());
@@ -138,11 +139,11 @@ export const CreateJobModal: FC<CreateJobModalProps> = ({
           onCreateJob(jobDetails);
           closeModal();
         }}
-        modalFooterOptions={
-          <span style={{ color: `#1d84ff`, fontWeight: 600, fontSize: 12 }}>
-            Schedule Job
-          </span>
-        }
+        // modalFooterOptions={
+        //   <span style={{ color: `#1d84ff`, fontWeight: 600, fontSize: 12 }}>
+        //     Schedule Job
+        //   </span>
+        // }
       >
         {(selectedChecklist && (
           <FloatInput
