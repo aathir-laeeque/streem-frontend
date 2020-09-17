@@ -279,6 +279,27 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
             {task.orderTree}. {task.name}
           </div>
 
+          <People
+            className="icon"
+            style={{
+              color: '#1d84ff',
+              border: '1px solid #1d84ff',
+              borderRadius: '4px',
+              marginRight: '8px',
+              padding: '2px',
+            }}
+            onClick={() => {
+              dispatch(
+                openModalAction({
+                  type: ModalNames.TASK_USER_ASSIGNMENT,
+                  props: {
+                    taskId: task.id,
+                  },
+                }),
+              );
+            }}
+          />
+
           <button
             className="start-task"
             onClick={() => {

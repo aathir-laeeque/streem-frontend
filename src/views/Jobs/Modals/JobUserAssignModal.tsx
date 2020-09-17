@@ -241,7 +241,6 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
         onPrimary={() => {
           refreshData();
           closeModal();
-          refreshData;
         }}
         showPrimary={showButtons}
         showSecondary={showButtons}

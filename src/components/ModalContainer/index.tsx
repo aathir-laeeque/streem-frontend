@@ -3,6 +3,7 @@ import CompleteTaskWithException from '#Composer/modals/CompleteTaskWithExceptio
 import MediaDetail from '#Composer/modals/MediaDetail';
 import Signature from '#Composer/modals/SignatureActivity';
 import SkipTask from '#Composer/modals/SkipTask';
+import TaskUserAssignment from '#Composer/modals/TaskUserAssignment';
 import StartJob from '#Composer/modals/StartJob';
 import TaskErrorCorrection from '#Composer/modals/TaskErrorCorrection';
 import AddStop from '#Composer/modals/AddStop';
@@ -142,12 +143,14 @@ const getModal = (
         />
       );
 
-    case ModalNames.ADD_STOP:
+    case ModalNames.TASK_USER_ASSIGNMENT:
       return (
-        <AddStop
+        <TaskUserAssignment
           {...props}
           closeAllModals={closeAllModals}
-          closeModal={(...args) => closeModal(ModalNames.ADD_STOP, ...args)}
+          closeModal={(...args) =>
+            closeModal(ModalNames.TASK_USER_ASSIGNMENT, ...args)
+          }
           key={i}
         />
       );

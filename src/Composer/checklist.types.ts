@@ -1,3 +1,5 @@
+import { Users } from '#store/users/types';
+
 interface Properties {
   [key: string]: string | null;
 }
@@ -84,6 +86,7 @@ export interface TaskExecution {
   startedAt?: number | null;
   startedBy?: string | null;
   status: TaskExecutionStatus;
+  assignees: Users;
 }
 
 export enum TimerOperator {
