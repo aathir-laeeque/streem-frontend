@@ -78,10 +78,6 @@ const TaskStopModal: FC<TaskStopModalProps> = ({
       <BaseModal
         closeAllModals={closeAllModals}
         closeModal={closeModal}
-        onPrimary={() => {
-          closeModal();
-        }}
-        onSecondary={() => closeModal()}
         showHeader={false}
         showFooter={false}
       >

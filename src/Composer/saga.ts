@@ -24,6 +24,8 @@ import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
 import { Entity } from './composer.types';
 import { groupJobErrors } from './utils';
+import { closeModalAction } from '../components/ModalContainer/actions';
+import { ModalNames } from '../components/ModalContainer/types';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   try {
@@ -62,6 +64,7 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
 
     if (data) {
       yield put(startJobSuccess());
+      yield put(closeModalAction(ModalNames.START_JOB_MODAL));
     } else {
       console.error('handle errors on start job :: ', errors);
     }

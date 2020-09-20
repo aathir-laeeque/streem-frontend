@@ -92,7 +92,7 @@ function* performActionOnTaskSaga({
       yield put(
         openModalAction({
           type: ModalNames.START_JOB_MODAL,
-          props: { taskId, jobId },
+          props: {},
         }),
       );
     }

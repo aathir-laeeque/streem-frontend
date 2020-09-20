@@ -35,7 +35,18 @@ const JobHeaderButtons: FC = () => {
       </Button>
 
       {jobStatus === JobStatus.ASSIGNED ? (
-        <Button onClick={() => dispatch(startJob(jobId))}>Start Job</Button>
+        <Button
+          onClick={() =>
+            dispatch(
+              openModalAction({
+                type: ModalNames.START_JOB_MODAL,
+                props: { jobId },
+              }),
+            )
+          }
+        >
+          Start Job
+        </Button>
       ) : null}
 
       {jobStatus === JobStatus.INPROGRESS ? (
