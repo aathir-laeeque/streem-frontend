@@ -32,7 +32,7 @@ export const CustomRoute: FC<Props> = ({
     const { verified, archived } = profile;
     if (!isRefreshing && rest.path !== 'jobs/print/:jobId')
       dispatch(refreshTokenPoll());
-    if (verified && isLoggedIn) currentState = SessionStates.ACTIVE;
+    if (isLoggedIn) currentState = SessionStates.ACTIVE;
   }
 
   if (!isProtected) {

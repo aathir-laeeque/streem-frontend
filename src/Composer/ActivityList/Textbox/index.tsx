@@ -19,11 +19,9 @@ const TextboxActivity: FC<ActivityProps> = ({
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.persist();
     customOnChange(e, (event) => {
-      console.log('e.target.value :: ', event.target.value);
-
       const newData = {
         ...activity,
-        data: { ...activity.data, input: e.target.value },
+        data: { ...activity.data, input: event.target.value },
       };
 
       if (isCorrectingError) {
@@ -45,21 +43,7 @@ const TextboxActivity: FC<ActivityProps> = ({
             placeholder="User will write comments here"
             value={value}
             rows={4}
-            onChange={(e) => {
-              onChange(e);
-            }}
-            // onChange={(e) => {
-            //   e.persist();
-
-            //   customOnChange(e, (event) => {
-            //     dispatch(
-            //       executeActivity({
-            //         ...activity,
-            //         data: { input: event.target.value },
-            //       }),
-            //     );
-            //   });
-            // }}
+            onChange={(e) => onChange(e)}
           />
         </div>
       </div>

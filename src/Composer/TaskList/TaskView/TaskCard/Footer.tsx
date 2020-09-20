@@ -108,7 +108,7 @@ const CompletedWrapper = styled.div.attrs({
   color: #ffffff;
   display: flex;
   justify-content: center;
-  padding: 16px 0;
+  padding: 16px 32px;
 
   > .icon {
     color: #ffffff;

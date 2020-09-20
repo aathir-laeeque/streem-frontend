@@ -54,7 +54,6 @@ const TaskListView: FC = () => {
 
       <div className="tasks-list">
         {tasksListIds.map((taskId, index) => {
-          console.log('shouldStageHaveStop :: ', shouldStageHaveStop);
           const enableStopForTask =
             shouldStageHaveStop && index > tasksListIds.indexOf(taskIdWithStop);
 
