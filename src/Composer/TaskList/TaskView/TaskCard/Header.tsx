@@ -5,9 +5,9 @@ import {
   Task,
   TaskExecutionStatus,
 } from '#Composer/checklist.types';
+import { formatDateTime } from '#utils/timeUtils';
 import { Menu, MenuItem } from '@material-ui/core';
 import { Assignment, Error, MoreHoriz, PanTool } from '@material-ui/icons';
-import moment from 'moment';
 import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
@@ -262,7 +262,8 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
       {status in StartedTaskStates ? (
         <div className="start-audit">
           Task Started by {generateName(modifiedBy)}, ID:{' '}
-          {modifiedBy.employeeId} on {moment(startedAt).format('MMM D, h:mm A')}
+          {modifiedBy.employeeId} on{' '}
+          {formatDateTime(startedAt, 'MMM D, h:mm:ss A')}
         </div>
       ) : null}
 

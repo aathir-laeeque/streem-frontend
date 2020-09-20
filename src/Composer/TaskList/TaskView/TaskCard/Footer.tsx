@@ -1,6 +1,7 @@
 import { openModalAction } from '#components/ModalContainer/actions';
 import { ModalNames } from '#components/ModalContainer/types';
 import { Task, TaskExecutionStatus } from '#Composer/checklist.types';
+import { formatDateTime } from '#utils/timeUtils';
 import { ArrowRightAlt, CheckCircle, Error } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useState } from 'react';
@@ -196,7 +197,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
             <span>
               Task Completed {text} by {generateName(modifiedBy)}, ID:{' '}
               {modifiedBy.employeeId} on{' '}
-              {moment(modifiedAt).format('MMM D, h:mm A')}
+              {formatDateTime(modifiedAt, 'MMM D, h:mm:ss A')}
             </span>
           </CompletedWrapper>
           {reason ? (
@@ -213,7 +214,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
           <span>
             Task Completed by {generateName(modifiedBy)}, ID:{' '}
             {modifiedBy.employeeId} on{' '}
-            {moment(modifiedAt).format('MMM D, h:mm A')}
+            {formatDateTime(modifiedAt, 'MMM D, h:mm:ss A')}
           </span>
         </CompletedWrapper>
       );
@@ -225,8 +226,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         <span>
           Task skipped by {generateName(modifiedBy)}, ID:{' '}
           {modifiedBy.employeeId} on{' '}
-          {moment(modifiedAt).format('MMM D, h:mm A')}
-          {}
+          {formatDateTime(modifiedAt, 'MMM D, h:mm:ss A')}
         </span>
       </CompletedWrapper>
     );

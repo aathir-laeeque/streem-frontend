@@ -1,15 +1,12 @@
 import { Entity } from '#Composer/composer.types';
 import { useTypedSelector } from '#store';
+import { generateFullName } from '#utils/stringUtils';
+import { formatDateTime } from '#utils/timeUtils';
 import { Error } from '@material-ui/icons';
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
-import moment from 'moment';
 
-import {
-  ActivityType,
-  MandatoryActivity,
-  NonMandatoryActivity,
-} from '../checklist.types';
+import { MandatoryActivity, NonMandatoryActivity } from '../checklist.types';
 import ChecklistActivity from './Checklist';
 import InstructionActivity from './Instruction';
 import MaterialActivity from './Material';
@@ -19,7 +16,6 @@ import SignatureActivity from './Signature';
 import TextboxActivity from './Textbox';
 import { ActivityListProps } from './types';
 import YesNoActivity from './YesNo';
-import { generateFullName } from '../../utils/stringUtils';
 
 const Wrapper = styled.div.attrs({
   className: 'activity-list',
@@ -201,7 +197,7 @@ const ActivityList: FC<ActivityListProps> = ({
               <div className="activity-audit">
                 Last updated by {generateFullName(audit?.modifiedBy)}, ID:{' '}
                 {audit?.modifiedBy?.employeeId} on{' '}
-                {moment(audit?.modifiedAt).format('MMM D, h:mm A')}
+                {formatDateTime(audit?.modifiedAt, 'MMM D, h:mm A')}
               </div>
             ) : null}
           </div>

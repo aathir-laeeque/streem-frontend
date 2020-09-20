@@ -66,7 +66,7 @@ export enum TaskExecutionStatus {
 }
 
 export interface Audit {
-  modifiedAt: string;
+  modifiedAt: number;
   modifiedBy: {
     employeeId: string;
     firstName: string;
@@ -77,11 +77,11 @@ export interface Audit {
 export interface TaskExecution {
   audit: Audit;
   correctionReason?: string | null;
-  endedAt?: string;
+  endedAt?: number;
   id: number;
   period?: number | null;
   reason?: string | null;
-  startedAt?: string | null;
+  startedAt?: number | null;
   startedBy?: string | null;
   status: TaskExecutionStatus;
 }
@@ -102,7 +102,6 @@ export interface Task {
   minPeriod?: number;
   name: string;
   orderTree: number;
-  period?: number;
   taskExecution: TaskExecution;
   timed: boolean;
   timerOperator: TimerOperator;
