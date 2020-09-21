@@ -11,6 +11,7 @@ import {
   TaskListState,
   TaskListAction,
 } from './reducer.types';
+import { Task } from '../checklist.types';
 
 export const initialState: TaskListState = {
   activeTaskId: undefined,
@@ -28,6 +29,7 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
   state = initialState,
   action,
 ) => {
+  let oldTask: Task;
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
       const { data, entity } = action.payload;
@@ -86,6 +88,57 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         },
       };
 
+    case TaskListAction.ASSIGN_USER_TO_TASK:
+      oldTask = state.tasksById[action.payload.taskId];
+      return {
+        ...state,
+        tasksById: {
+          ...state.tasksById,
+          [action.payload.taskId]: {
+            ...oldTask,
+            taskExecution: {
+              ...oldTask.taskExecution,
+              assignees: [
+                ...oldTask.taskExecution.assignees,
+                action.payload.user,
+              ],
+            },
+          },
+        },
+      };
+    case TaskListAction.UNASSIGN_USER_FROM_TASK:
+      oldTask = state.tasksById[action.payload.taskId];
+      const newAssignees = oldTask.taskExecution.assignees.filter(
+        (item) => item.id !== action.payload.user.id,
+      );
+      return {
+        ...state,
+        tasksById: {
+          ...state.tasksById,
+          [action.payload.taskId]: {
+            ...oldTask,
+            taskExecution: {
+              ...oldTask.taskExecution,
+              assignees: newAssignees,
+            },
+          },
+        },
+      };
+    case TaskListAction.REVERT_USERS_FOR_TASK:
+      oldTask = state.tasksById[action.payload.taskId];
+      return {
+        ...state,
+        tasksById: {
+          ...state.tasksById,
+          [action.payload.taskId]: {
+            ...oldTask,
+            taskExecution: {
+              ...oldTask.taskExecution,
+              assignees: action.payload.users,
+            },
+          },
+        },
+      };
     case ActivityListAction.EXECUTE_ACTIVITY:
     case ActivityListAction.FIX_ACTIVITY:
       return {

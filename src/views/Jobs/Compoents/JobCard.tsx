@@ -35,7 +35,7 @@ const JobCard: FC<{
   item: Job;
   onClick: (item: Job) => void;
 }> = ({ item, onClick }) => (
-  <Wrapper key={`name_${item.code}`}>
+  <Wrapper>
     <div className="title-group">
       <span className="list-code">{item.code}</span>
       <span className="list-title" onClick={() => onClick(item)}>

@@ -29,7 +29,9 @@ export const CustomRoute: FC<Props> = ({
   let currentState = SessionStates.INACTIVE;
 
   if (profile) {
-    const { verified, archived } = profile;
+    // TODO Take Verified from Profile
+    let { verified, archived } = profile;
+    verified = true;
     if (!isRefreshing && rest.path !== 'jobs/print/:jobId')
       dispatch(refreshTokenPoll());
     if (isLoggedIn) currentState = SessionStates.ACTIVE;

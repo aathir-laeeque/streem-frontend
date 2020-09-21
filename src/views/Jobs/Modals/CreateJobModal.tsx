@@ -5,7 +5,7 @@ import { Properties } from '#store/properties/types';
 import { Checklist } from '#views/Checklists/types';
 import { useDispatch } from 'react-redux';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
-import React, { FC, useState, useEffect, useRef } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 export interface CreateJobModalProps {
@@ -49,8 +49,6 @@ const Wrapper = styled.div.attrs({})`
   }
 `;
 
-// TODO Change FloatInput to LabeledInput & Integrate React Form
-
 export const CreateJobModal: FC<CreateJobModalProps> = ({
   closeAllModals,
   closeModal,
@@ -60,11 +58,8 @@ export const CreateJobModal: FC<CreateJobModalProps> = ({
 }) => {
   const [jobDetails, setJobDetails] = useState<Record<string, string>>({});
 
-  const { checklists, pageable } = useTypedSelector(
-    (state) => state.checklistListView,
-  );
+  const { checklists } = useTypedSelector((state) => state.checklistListView);
   const dispatch = useDispatch();
-  const scroller = useRef<HTMLDivElement | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showChecklists, setShowChecklists] = useState(false);
 
@@ -81,38 +76,13 @@ export const CreateJobModal: FC<CreateJobModalProps> = ({
     dispatch(fetchChecklists({ page, size, filters, sort: 'id' }));
   };
 
-  let isLast = true;
-  let currentPage = 0;
-  if (pageable) {
-    isLast = pageable?.last;
-    currentPage = pageable?.page;
-  }
-
   useEffect(() => {
     if (!selectedChecklist) {
       if (prevSearch !== searchQuery) {
         fetchData(0, 10);
       }
-      if (scroller && scroller.current) {
-        const div = scroller.current;
-        div.addEventListener('scroll', handleOnScroll);
-        return () => {
-          div.removeEventListener('scroll', handleOnScroll);
-        };
-      }
     }
-  }, [searchQuery, isLast, currentPage]);
-
-  const handleOnScroll = (e: Record<string, any>) => {
-    if (scroller && scroller.current && e.target) {
-      if (
-        e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight &&
-        !isLast
-      ) {
-        fetchData(currentPage + 1, 10);
-      }
-    }
-  };
+  }, [searchQuery]);
 
   const onInputChange = (id: string, value: string) => {
     const temp = { ...jobDetails };
@@ -139,11 +109,9 @@ export const CreateJobModal: FC<CreateJobModalProps> = ({
           onCreateJob(jobDetails);
           closeModal();
         }}
-        // modalFooterOptions={
-        //   <span style={{ color: `#1d84ff`, fontWeight: 600, fontSize: 12 }}>
-        //     Schedule Job
-        //   </span>
-        // }
+        disabledPrimary={properties.some(
+          (property) => property.mandatory && !jobDetails[property.name],
+        )}
       >
         {(selectedChecklist && (
           <FloatInput

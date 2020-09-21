@@ -3,6 +3,7 @@ export { default as NavigationMenu } from './NavigationMenu';
 export { default as WorkArea } from './WorkArea';
 export { default as Notification } from './Notification';
 export { default as ModalContainer } from './ModalContainer';
+export { default as PopoverContainer } from './PopoverContainer';
 
 export { useTabs } from './shared/useTabs';
 export { BaseModal } from './shared/BaseModal';

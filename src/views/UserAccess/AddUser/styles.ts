@@ -85,6 +85,14 @@ export const Composer = styled.div`
         color: #333333;
         padding: 4px;
       }
+
+      input[name='email'] {
+        text-transform: lowercase;
+
+        ::-webkit-input-placeholder {
+          text-transform: capitalize !important;
+        }
+      }
     }
 
     .wrapper.active {

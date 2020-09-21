@@ -7,35 +7,12 @@ import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
-import { login } from '../actions';
+import { login, resetError } from '../actions';
 import { LoginProps } from './types';
 
 type Inputs = {
   username: string;
   password: string;
-};
-
-const validators: ValidatorProps = {
-  username: {
-    functions: {
-      smallLength: (value: string) => value.length > 2,
-    },
-    messages: {
-      smallLength: '2 characters minimum',
-    },
-  },
-  password: {
-    functions: {
-      checkStrongness: (value: string) =>
-        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(
-          value,
-        ),
-    },
-    messages: {
-      checkStrongness:
-        'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character',
-    },
-  },
 };
 
 const Login: FC<LoginProps> = () => {
@@ -47,6 +24,20 @@ const Login: FC<LoginProps> = () => {
     mode: 'onChange',
     criteriaMode: 'all',
   });
+
+  const validators: ValidatorProps = {
+    common: {
+      functions: {
+        resetError: (value: string) => {
+          error && dispatch(resetError());
+          return true;
+        },
+      },
+      messages: {
+        smallLength: '2 characters minimum',
+      },
+    },
+  };
 
   const onSubmit = (data: Inputs) => {
     dispatch(login(data));
@@ -66,7 +57,7 @@ const Login: FC<LoginProps> = () => {
           <LabeledInput
             refFun={register({
               required: true,
-              // validate: validators['username'].functions,
+              validate: validators['common'].functions,
             })}
             error={
               errors.username?.type
@@ -75,7 +66,7 @@ const Login: FC<LoginProps> = () => {
                 ? ''
                 : undefined
             }
-            placeHolder="Enter your username or Email ID"
+            placeHolder="Enter your Username or Email ID"
             label="Username/Email ID"
             id="username"
           />
@@ -101,7 +92,7 @@ const Login: FC<LoginProps> = () => {
             }
             refFun={register({
               required: true,
-              // validate: validators['password'].functions,
+              validate: validators['common'].functions,
             })}
           />
         </div>

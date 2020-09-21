@@ -9,11 +9,12 @@ interface CheckboxProps {
   disabled?: boolean;
   onClick: () => void;
   refFun?: any;
+  partial?: boolean;
 }
 
 const Wrapper = styled.div.attrs({
   className: 'checkbox-input',
-})`
+})<{ partial: boolean }>`
   .container {
     display: block;
     position: relative;
@@ -69,6 +70,19 @@ const Wrapper = styled.div.attrs({
   } */
 
   /* Style the checkmark/indicator */
+  ${({ partial }) =>
+    partial
+      ? `
+  .container .checkmark:after {
+    left: 4px;
+    top: 8px;
+    width: 10px;
+    height: 0px;
+    border: solid white;
+    border-width: 2px 0px 0px 0;
+}
+  `
+      : `
   .container .checkmark:after {
     left: 6px;
     top: 3px;
@@ -80,7 +94,12 @@ const Wrapper = styled.div.attrs({
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
   }
+  `}
 `;
+
+Wrapper.defaultProps = {
+  partial: false,
+};
 
 export const Checkbox: FC<CheckboxProps> = ({
   label,
@@ -90,8 +109,9 @@ export const Checkbox: FC<CheckboxProps> = ({
   name = '',
   disabled = false,
   refFun,
+  partial = false,
 }) => (
-  <Wrapper>
+  <Wrapper partial={partial}>
     <label className="container">
       {label}
       <input

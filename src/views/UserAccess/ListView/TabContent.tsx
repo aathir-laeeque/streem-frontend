@@ -51,7 +51,12 @@ const TabContent: FC<TabViewProps> = ({
         },
       ],
     });
-    dispatch(fetchUsers({ page, size, filters }, selectedStatus));
+    dispatch(
+      fetchUsers(
+        { page, size, filters, sort: 'createdAt,desc' },
+        selectedStatus,
+      ),
+    );
   };
 
   const onResendInvite = (id: string | number) => {

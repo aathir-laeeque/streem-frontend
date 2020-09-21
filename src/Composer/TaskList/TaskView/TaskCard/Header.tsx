@@ -1,5 +1,6 @@
 import { openModalAction } from '#components/ModalContainer/actions';
 import { ModalNames } from '#components/ModalContainer/types';
+import { getInitials } from '#utils/stringUtils';
 import {
   StartedTaskStates,
   Task,
@@ -14,6 +15,7 @@ import styled, { css } from 'styled-components';
 
 import { startTask } from '../../actions';
 import Timer from './Timer';
+import TaskAssignmentContent from './TaskAssignmentContent';
 
 type HeaderProps = {
   task: Omit<Task, 'activities'>;
@@ -86,7 +88,7 @@ const Wrapper = styled.div.attrs({
 
     .task-config {
       .wrapper {
-        align-items: flex-start;
+        align-items: center;
         display: flex;
 
         .task-name {
@@ -233,6 +235,37 @@ const Wrapper = styled.div.attrs({
         border-radius: 4px;
       }
     }
+
+    .task-assignees {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 32px;
+      align-items: center;
+
+      > span {
+        font-size: 14px;
+        color: #999999;
+      }
+
+      > div {
+        display: flex;
+
+        .user-thumb {
+          width: 32px;
+          height: 32px;
+          border-radius: 16px;
+          border: solid 1px #fff;
+          align-items: center;
+          background-color: #eeeeee;
+          justify-content: center;
+          display: flex;
+          color: #1d84ff;
+          margin-right: -5px;
+          font-size: 13px;
+          cursor: pointer;
+        }
+      }
+    }
   }
 `;
 
@@ -255,10 +288,27 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
     audit: { modifiedBy },
     reason,
     correctionReason,
+    assignees,
   } = task.taskExecution;
-
   return (
     <div className="job-header">
+      {assignees && assignees.length > 0 && (
+        <div className="task-assignees">
+          <span>This Task’s Assignees</span>
+          <div>
+            {assignees.slice(0, 4).map((user) => (
+              <div key={`assignee_${user.id}`} className="user-thumb">
+                {getInitials(`${user.firstName} ${user.lastName}`)}
+              </div>
+            ))}
+            {assignees.length > 4 && (
+              <div key={`assignee_length`} className="user-thumb">
+                +{assignees.length - 4}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       {status in StartedTaskStates ? (
         <div className="start-audit">
           Task Started by {generateName(modifiedBy)}, ID:{' '}
@@ -279,26 +329,7 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
             {task.orderTree}. {task.name}
           </div>
 
-          <People
-            className="icon"
-            style={{
-              color: '#1d84ff',
-              border: '1px solid #1d84ff',
-              borderRadius: '4px',
-              marginRight: '8px',
-              padding: '2px',
-            }}
-            onClick={() => {
-              dispatch(
-                openModalAction({
-                  type: ModalNames.TASK_USER_ASSIGNMENT,
-                  props: {
-                    taskId: task.id,
-                  },
-                }),
-              );
-            }}
-          />
+          <TaskAssignmentContent taskId={task.id} />
 
           <button
             className="start-task"

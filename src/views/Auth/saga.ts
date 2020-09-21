@@ -81,12 +81,6 @@ function* refreshTokenSaga({ payload }: ReturnType<typeof refreshToken>) {
 
     if (errors || error) {
       yield put(logOutSuccess());
-      // yield put(
-      //   showNotification({
-      //     type: NotificationType.ERROR,
-      //     msg: 'Token Expired',
-      //   }),
-      // );
       throw 'Token Expired';
     }
 
@@ -277,19 +271,29 @@ function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
       yield put(
         showNotification({
           type: NotificationType.ERROR,
-          msg: 'Password Incorrect',
+          msg: 'Provided Current Password is incorrect',
         }),
       );
       return false;
     }
 
     yield put(updateProfileSuccess(data));
-    yield put(
-      showNotification({
-        type: NotificationType.SUCCESS,
-        msg: 'Profile successfully',
-      }),
-    );
+
+    if (payload.body.oldPassword) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: 'Password updated successfully',
+        }),
+      );
+    } else {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: 'Profile updated successfully',
+        }),
+      );
+    }
   } catch (error) {
     console.error('error from updateProfileSaga function in Auth :: ', error);
     yield put(updateProfileError(error));

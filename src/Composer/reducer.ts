@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-
+import { reduce, unionBy } from 'lodash';
 import {
   activityListReducer,
   initialState as activityListState,
@@ -33,6 +33,8 @@ const initialState: ComposerState = {
 
   stages: stageListState,
   tasks: taskListState,
+
+  assignees: [],
 };
 
 const reducer: Reducer<ComposerState, ComposerActionType> = (
@@ -65,6 +67,56 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
     case ComposerAction.START_JOB_SUCCESS:
       return { ...state, jobStatus: JobStatus.INPROGRESS };
 
+    case ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS:
+      return { ...state, assignees: action.payload.data };
+
+    case ComposerAction.REVERT_USERS_FOR_JOB:
+      return { ...state, assignees: action.payload.users };
+
+    case ComposerAction.ASSIGN_USER_TO_JOB:
+      const merged = unionBy(
+        [{ ...action.payload.user, assigned: true, completelyAssigned: true }],
+        state.assignees,
+        'id',
+      );
+      return {
+        ...state,
+        assignees: merged,
+      };
+    case ComposerAction.UNASSIGN_USER_FROM_JOB:
+      const newAssignees = state.assignees.filter(
+        (item) => item.id !== action.payload.user.id,
+      );
+      return { ...state, assignees: newAssignees };
+    case ComposerAction.ASSIGN_USERS_TO_JOB_SUCCESS:
+      const jobAssigned = state.assignees.filter(
+        (item) => item.completelyAssigned,
+      );
+      const res = reduce(
+        state.tasks.tasksById,
+        function (result, value, key) {
+          const newAssignees = value.taskExecution.assignees.filter(
+            (item) => !action.payload.unassignIds.includes(item.id),
+          );
+          const merged = unionBy(jobAssigned, newAssignees, 'id');
+          return {
+            ...result,
+            [key]: {
+              ...value,
+              taskExecution: {
+                ...value.taskExecution,
+                assignees: merged,
+              },
+            },
+          };
+        },
+        {},
+      );
+      return {
+        ...state,
+        tasks: { ...state.tasks, tasksById: res },
+        assignees: [],
+      };
     default:
       return {
         ...state,

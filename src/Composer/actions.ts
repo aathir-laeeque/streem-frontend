@@ -1,4 +1,5 @@
 import { actionSpreader } from '#store';
+import { User, Users } from '#store/users/types';
 
 import { Job } from '../views/Jobs/types';
 import { ComposerAction } from './composer.reducer.types';
@@ -16,6 +17,45 @@ export const fetchDataOngoing = () =>
 // TODO: look into this any data type
 export const fetchDataSuccess = (data: any, entity: Entity) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_SUCCESS, { data, entity });
+
+// JOB ASSIGNMENT
+
+export const fetchAssignedUsersForJob = (jobId: number) =>
+  actionSpreader(ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB, { jobId });
+
+export const fetchAssignedUsersForJobError = (error: any) =>
+  actionSpreader(ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB_ERROR, { error });
+
+export const fetchAssignedUsersForJobSuccess = (data: Users) =>
+  actionSpreader(ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS, { data });
+
+export const assignUserToJob = (user: User) =>
+  actionSpreader(ComposerAction.ASSIGN_USER_TO_JOB, { user });
+
+export const unAssignUserFromJob = (user: User) =>
+  actionSpreader(ComposerAction.UNASSIGN_USER_FROM_JOB, { user });
+
+export const revertUsersForJob = (users: Users) =>
+  actionSpreader(ComposerAction.REVERT_USERS_FOR_JOB, { users });
+
+// export const revertUsersForJob = (users: Users, jobId: Job['id']) =>
+//   actionSpreader(ComposerAction.REVERT_USERS_FOR_JOB, { users, jobId });
+
+export const assignUsersToJob = (payload: {
+  jobId: Job['id'];
+  assignIds: User['id'][];
+  unassignIds: User['id'][];
+  notify: boolean;
+}) => actionSpreader(ComposerAction.ASSIGN_USERS_TO_JOB, payload);
+
+export const assignUsersToJobSuccess = (payload: {
+  unassignIds: User['id'][];
+}) => actionSpreader(ComposerAction.ASSIGN_USERS_TO_JOB_SUCCESS, payload);
+
+export const assignUsersToJobError = (error: any) =>
+  actionSpreader(ComposerAction.ASSIGN_USERS_TO_JOB_ERROR, { error });
+
+// END JOB ASSIGNMENT
 
 export const resetComposer = () =>
   actionSpreader(ComposerAction.RESET_COMPOSER);

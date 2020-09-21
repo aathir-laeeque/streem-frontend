@@ -57,7 +57,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
       email: email,
     },
   });
-  const { username } = watch();
+  const username = watch('username');
   const [passwordInputType, setPasswordInputType] = useState(true);
   const { functions, messages } = validators;
 
@@ -67,8 +67,6 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
     trigger('password');
     document.getElementById('username')?.focus();
   }, []);
-
-  console.log('errors', errors['username']?.message);
 
   const onSubmit = (data: Inputs) => {
     const { password, username } = data;
@@ -130,8 +128,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
                 message: 'Invalid Username',
               },
               validate: async (value) => {
-                console.log('username', username);
-                console.log('value', value);
+                if (!username) return true;
                 if (value === username) return true;
                 return new Promise((resolve) => {
                   debounce(async (username) => {
@@ -139,13 +136,11 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
                       'GET',
                       apiCheckUsername(username),
                     );
-                    let message = '';
+                    let message: string | boolean = true;
                     if (!data) {
                       message = 'Username Already Taken';
-                      console.log('setError', username);
                       setError('username', { message });
                     } else {
-                      console.log('clearErrors', username);
                       clearErrors('username');
                     }
                     resolve(message);

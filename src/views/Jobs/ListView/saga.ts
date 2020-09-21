@@ -4,7 +4,7 @@ import { RootState } from '#store';
 import { apiAssignUser, apiGetJobs, apiUnAssignUser } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 
 import { Job } from '#views/Jobs/types';
 import {
@@ -137,7 +137,7 @@ function* unAssignUserSaga({ payload }: ReturnType<typeof unAssignUser>) {
 }
 
 export function* JobListViewSaga() {
-  yield takeLatest(ListViewAction.FETCH_JOBS, fetchJobsSaga);
+  yield takeLeading(ListViewAction.FETCH_JOBS, fetchJobsSaga);
   yield takeLatest(ListViewAction.CREATE_JOB, createJobSaga);
   yield takeLatest(ListViewAction.ASSIGN_USER, assignUserSaga);
   yield takeLatest(ListViewAction.UNASSIGN_USER, unAssignUserSaga);

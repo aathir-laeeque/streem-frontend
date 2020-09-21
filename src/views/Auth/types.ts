@@ -3,6 +3,7 @@ import { User } from '#store/users/types';
 import {
   login,
   logOut,
+  resetError,
   logOutSuccess,
   logOutError,
   loginSuccess,
@@ -54,6 +55,7 @@ export interface AuthState {
 }
 
 export enum AuthAction {
+  RESET_ERROR = '@@auth/Login/RESET_ERROR',
   LOGOUT = '@@auth/Login/LOGOUT',
   LOGOUT_SUCCESS = '@@auth/Login/LOGOUT_SUCCESS',
   LOGOUT_ERROR = '@@auth/Login/LOGOUT_ERROR',
@@ -82,6 +84,7 @@ export enum AuthAction {
 }
 
 export type AuthActionType = ReturnType<
+  | typeof resetError
   | typeof logOut
   | typeof logOutSuccess
   | typeof logOutError

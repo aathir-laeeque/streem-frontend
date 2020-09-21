@@ -43,7 +43,23 @@ export const configureStore = (initialState: {
   const middlewares = [sagaMiddleware];
 
   const composeEnhancers =
-    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+      actionSanitizer: (action: any) =>
+        action.type === '@@popover/Container/OPEN_POPOVER'
+          ? {
+              ...action,
+              payload: { ...action.payload, popOverAnchorEl: '<<EVENT>>' },
+            }
+          : action,
+      stateSanitizer: (state: any) =>
+        state.popoverContainer
+          ? {
+              ...state,
+              popoverContainer:
+                state.popoverContainer.currentPopovers.length || 0,
+            }
+          : state,
+    }) || compose;
 
   const store = createStore(
     persistedReducer,

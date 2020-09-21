@@ -6,6 +6,9 @@ import {
   setActiveTask,
   setTaskError,
   updateTaskExecutionStatus,
+  unAssignUserFromTask,
+  revertUsersForTask,
+  assignUserToTask,
 } from './actions';
 import { TasksById, TasksOrderInStage } from './types';
 
@@ -35,6 +38,11 @@ export enum TaskListAction {
   ENABLE_TASK_ERROR_CORRECTION = '@@composer/task-list/task/ENABLE_TASK_ERROR_CORRECTION',
   CANCEL_ERROR_CORRECTION = '@@composer/task-list/task/CANCEL_ERROR_CORRECTION',
   COMPLTE_ERROR_CORRECTION = '@@composer/task-list/task/COMPLTE_ERROR_CORRECTION',
+  ASSIGN_USER_TO_TASK = '@@composer/task-list/task/ASSIGN_USER_TO_TASK',
+  UNASSIGN_USER_FROM_TASK = '@@composer/task-list/task/UNASSIGN_USER_FROM_TASK',
+  REVERT_USERS_FOR_TASK = '@@composer/task-list/task/REVERT_USERS_FOR_TASK',
+  ASSIGN_USERS_TO_TASK = '@@composer/task-list/task/ASSIGN_USERS_TO_TASK',
+  ASSIGN_USERS_TO_TASK_ERROR = '@@composer/task-list/task/ASSIGN_USERS_TO_TASK_ERROR',
 }
 
 export type TaskListActionType =
@@ -43,6 +51,9 @@ export type TaskListActionType =
       | typeof setTaskError
       | typeof updateTaskExecutionStatus
     >
+  | ReturnType<typeof revertUsersForTask>
+  | ReturnType<typeof unAssignUserFromTask>
+  | ReturnType<typeof assignUserToTask>
   | ReturnType<typeof executeActivity | typeof fixActivity>
   | ReturnType<typeof setActiveStage>
   | ComposerActionType;

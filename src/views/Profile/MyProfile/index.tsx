@@ -77,13 +77,13 @@ const MyProfile: FC<MyProfileProps> = () => {
           <div className="flex-row">
             <div className="sub-heading bold">Basic Information</div>
           </div>
-          <Thumbnail
+          {/* <Thumbnail
             source={{
               firstName: profile?.firstName || '',
               lastName: profile?.lastName || '',
             }}
             id="avatar"
-          />
+          /> */}
           <div className="flex-row">
             <div className="flex-col right-gutter">
               <LabeledInput

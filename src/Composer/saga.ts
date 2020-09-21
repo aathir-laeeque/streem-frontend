@@ -1,11 +1,17 @@
 import { RootState } from '#store';
+import { openModalAction } from '#components/ModalContainer/actions';
+import { ModalNames } from '#components/ModalContainer/types';
 import {
   apiCompleteJob,
   apiGetChecklist,
   apiGetSelectedJob,
   apiStartJob,
+  apiGetAssignedUsersForJob,
+  apiAssignUsersToJob,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { all, call, fork, put, select, takeLatest } from 'redux-saga/effects';
 
 import {
@@ -15,6 +21,12 @@ import {
   fetchDataSuccess,
   startJob,
   startJobSuccess,
+  fetchAssignedUsersForJob,
+  fetchAssignedUsersForJobSuccess,
+  fetchAssignedUsersForJobError,
+  assignUsersToJob,
+  assignUsersToJobSuccess,
+  assignUsersToJobError,
 } from './actions';
 import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
@@ -117,11 +129,90 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
   }
 }
 
+function* fetchAssignedUsersForJobSaga({
+  payload,
+}: ReturnType<typeof fetchAssignedUsersForJob>) {
+  try {
+    const { jobId } = payload;
+
+    yield put(fetchDataOngoing());
+
+    const { data, errors, error } = yield call(
+      request,
+      'GET',
+      apiGetAssignedUsersForJob(jobId),
+    );
+
+    if (errors || error) {
+      throw 'Could Not Assign Users To Job';
+    }
+
+    yield put(fetchAssignedUsersForJobSuccess(data));
+  } catch (error: unknown) {
+    console.error(
+      'error from fetchAssignedUsersForJobSaga in ComposerSaga :: ',
+      error,
+    );
+    yield put(fetchAssignedUsersForJobError(error));
+  }
+}
+
+function* assignUsersToJobSaga({
+  payload,
+}: ReturnType<typeof assignUsersToJob>) {
+  const { jobId, assignIds, unassignIds, notify } = payload;
+
+  try {
+    const { errors, error } = yield call(
+      request,
+      'PUT',
+      apiAssignUsersToJob(),
+      {
+        data: {
+          jobId,
+          assignIds,
+          unassignIds,
+        },
+      },
+    );
+
+    if (errors || error) {
+      throw 'Could Not Assign Users to Job';
+    }
+
+    yield put(assignUsersToJobSuccess({ unassignIds }));
+    yield put(
+      openModalAction({
+        type: ModalNames.ASSIGNMENT_SUCCESS,
+        props: { notify },
+      }),
+    );
+  } catch (error) {
+    console.error(
+      'error from assignUsersToJobSaga function in Composer :: ',
+      error,
+    );
+    yield put(assignUsersToJobError(error));
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: 'Could Not Assign Users',
+      }),
+    );
+  }
+}
+
 export function* ComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchDataSaga);
 
   yield takeLatest(ComposerAction.COMPLETE_JOB, completeJobSaga);
   yield takeLatest(ComposerAction.START_JOB, startJobSaga);
+
+  yield takeLatest(
+    ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB,
+    fetchAssignedUsersForJobSaga,
+  );
+  yield takeLatest(ComposerAction.ASSIGN_USERS_TO_JOB, assignUsersToJobSaga);
 
   yield all([
     // fork other sagas here

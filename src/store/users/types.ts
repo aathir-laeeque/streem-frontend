@@ -20,6 +20,8 @@ export interface User {
   archived: boolean;
   active: boolean;
   department?: string;
+  assigned?: boolean;
+  completelyAssigned?: boolean;
   roles?: {
     id: number;
     name: string;

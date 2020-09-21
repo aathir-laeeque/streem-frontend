@@ -6,6 +6,9 @@ import {
   Role,
   HeaderWithBack,
 } from '#components';
+import { apiGetUsers } from '#utils/apiUrls';
+import { request } from '#utils/request';
+import { debounce } from 'lodash';
 import { fetchFacilities } from '#store/facilities/actions';
 import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '#store';
@@ -36,12 +39,22 @@ const AddUser: FC<AddUserProps> = () => {
 
   useEffect(() => {
     document.getElementById('firstName')?.focus();
-  }, [loading]);
+  }, []);
 
-  const { register, handleSubmit, errors, formState } = useForm<Inputs>({
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+    watch,
+    clearErrors,
+    setError,
+  } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
   });
+
+  const { employeeId, email } = watch(['employeeId', 'email']);
 
   const onSubmit = (data: Inputs) => {
     const roles =
@@ -58,6 +71,7 @@ const AddUser: FC<AddUserProps> = () => {
           }));
     const payload = {
       ...data,
+      email: data.email.toLowerCase(),
       roles,
       facilities,
     };
@@ -113,11 +127,44 @@ const AddUser: FC<AddUserProps> = () => {
               <LabeledInput
                 refFun={register({
                   required: true,
+                  validate: async (value) => {
+                    if (!employeeId) return true;
+                    if (value === employeeId) return true;
+                    return new Promise((resolve) => {
+                      debounce(async (employeeId) => {
+                        const filters = JSON.stringify({
+                          op: 'AND',
+                          fields: [
+                            {
+                              field: 'employeeId',
+                              op: 'EQ',
+                              values: [employeeId],
+                            },
+                          ],
+                        });
+                        const { data } = await request('GET', apiGetUsers(), {
+                          params: { filters },
+                        });
+                        let message: string | boolean = true;
+                        if (data.length > 0) {
+                          message = 'Employee ID already exists';
+                          setError('employeeId', { message });
+                        } else {
+                          clearErrors('employeeId');
+                        }
+                        resolve(message);
+                      }, 500)(value);
+                    });
+                  },
                 })}
                 placeHolder="Employee ID"
                 label="Employee ID"
                 id="employeeId"
-                error={errors['employeeId']?.message}
+                error={
+                  errors['employeeId']?.message !== ''
+                    ? errors['employeeId']?.message
+                    : undefined
+                }
               />
             </div>
             <div className="flex-col left-gutter">
@@ -128,11 +175,44 @@ const AddUser: FC<AddUserProps> = () => {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     message: 'Invalid email address',
                   },
+                  validate: async (value) => {
+                    if (!email) return true;
+                    if (value === email) return true;
+                    return new Promise((resolve) => {
+                      debounce(async (email) => {
+                        const filters = JSON.stringify({
+                          op: 'AND',
+                          fields: [
+                            {
+                              field: 'email',
+                              op: 'EQ',
+                              values: [email],
+                            },
+                          ],
+                        });
+                        const { data } = await request('GET', apiGetUsers(), {
+                          params: { filters },
+                        });
+                        let message: string | boolean = true;
+                        if (data.length > 0) {
+                          message = 'Email ID already exists';
+                          setError('email', { message });
+                        } else {
+                          clearErrors('email');
+                        }
+                        resolve(message);
+                      }, 500)(value);
+                    });
+                  },
                 })}
                 placeHolder="Email ID"
                 label="Email ID"
                 id="email"
-                error={errors['email']?.message}
+                error={
+                  errors['email']?.message !== ''
+                    ? errors['email']?.message
+                    : undefined
+                }
               />
             </div>
           </div>

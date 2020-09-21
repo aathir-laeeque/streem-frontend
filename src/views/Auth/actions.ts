@@ -95,3 +95,5 @@ export const resetPasswordSuccess = () =>
 
 export const resetPasswordError = (error: any) =>
   actionSpreader(AuthAction.RESET_PASSWORD_ERROR, error);
+
+export const resetError = () => actionSpreader(AuthAction.RESET_ERROR);

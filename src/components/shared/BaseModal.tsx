@@ -18,9 +18,11 @@ interface BaseModalProps {
   showPrimary?: boolean;
   showSecondary?: boolean;
   isRound?: boolean;
+  animated?: boolean;
+  disabledPrimary?: boolean;
 }
 
-const Wrapper = styled.div.attrs({})`
+const Wrapper = styled.div<{ animated: boolean }>`
   #modal-container {
     position: fixed;
     display: table;
@@ -28,8 +30,12 @@ const Wrapper = styled.div.attrs({})`
     width: 100%;
     top: 0;
     left: 0;
-    transform: scale(0);
     z-index: 1;
+
+    ${({ animated }) =>
+      animated
+        ? `
+      transform: scale(0);
     &.openup {
       transform: scale(1);
       .modal-background {
@@ -52,6 +58,8 @@ const Wrapper = styled.div.attrs({})`
         }
       }
     }
+      `
+        : ``}
 
     .modal-background {
       display: table-cell;
@@ -181,6 +189,8 @@ export const BaseModal: FC<BaseModalProps> = ({
   showHeader = true,
   showFooter = true,
   isRound = false,
+  animated = true,
+  disabledPrimary = false,
 }) => {
   const modalContainer = useRef<HTMLDivElement | null>(null);
 
@@ -188,13 +198,15 @@ export const BaseModal: FC<BaseModalProps> = ({
     if (modalContainer && modalContainer.current) {
       modalContainer.current.classList.add('out');
     }
-    setTimeout(() => {
-      toExecute();
-    }, 500);
+    animated
+      ? setTimeout(() => {
+          toExecute();
+        }, 500)
+      : toExecute();
   };
 
   return (
-    <Wrapper>
+    <Wrapper animated={animated}>
       <div id="modal-container" ref={modalContainer} className="openup">
         <div className="modal-background">
           <div
@@ -231,6 +243,7 @@ export const BaseModal: FC<BaseModalProps> = ({
                     <Button
                       style={{ marginRight: 0, fontWeight: 600 }}
                       onClick={() => onBaseModalContainerClick(onPrimary)}
+                      disabled={disabledPrimary}
                     >
                       {primaryText}
                     </Button>

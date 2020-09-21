@@ -4,6 +4,7 @@ import MediaDetail from '#Composer/modals/MediaDetail';
 import Signature from '#Composer/modals/SignatureActivity';
 import SkipTask from '#Composer/modals/SkipTask';
 import TaskUserAssignment from '#Composer/modals/TaskUserAssignment';
+import AssignmentSuccessModal from '#Composer/modals/AssignmentSuccess';
 import StartJob from '#Composer/modals/StartJob';
 import TaskErrorCorrection from '#Composer/modals/TaskErrorCorrection';
 import AddStop from '#Composer/modals/AddStop';
@@ -23,7 +24,7 @@ const Wrapper = styled.div``;
 const getModal = (
   type: string,
   props: any,
-  closeModal: (name: string) => void,
+  closeModal: (name: ModalNames) => void,
   i: number,
   closeAllModals: () => void,
 ) => {
@@ -150,6 +151,18 @@ const getModal = (
           closeAllModals={closeAllModals}
           closeModal={(...args) =>
             closeModal(ModalNames.TASK_USER_ASSIGNMENT, ...args)
+          }
+          key={i}
+        />
+      );
+
+    case ModalNames.ASSIGNMENT_SUCCESS:
+      return (
+        <AssignmentSuccessModal
+          {...props}
+          closeAllModals={closeAllModals}
+          closeModal={(...args) =>
+            closeModal(ModalNames.ASSIGNMENT_SUCCESS, ...args)
           }
           key={i}
         />

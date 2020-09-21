@@ -1,3 +1,4 @@
+import { Users } from '#store/users/types';
 import { Job } from '../views/Jobs/types';
 import {
   completeJob,
@@ -6,6 +7,13 @@ import {
   fetchDataSuccess,
   resetComposer,
   startJobSuccess,
+  fetchAssignedUsersForJob,
+  fetchAssignedUsersForJobError,
+  fetchAssignedUsersForJobSuccess,
+  assignUserToJob,
+  unAssignUserFromJob,
+  assignUsersToJobSuccess,
+  revertUsersForJob,
 } from './actions';
 import { ActivityListState } from './ActivityList/reducer.types';
 import { Checklist } from './checklist.types';
@@ -28,6 +36,8 @@ export type ComposerState = {
   stages: StageListState;
 
   tasks: TaskListState;
+
+  assignees: Users;
 };
 
 export enum ComposerAction {
@@ -45,13 +55,30 @@ export enum ComposerAction {
 
   START_JOB = '@@composer/job-action/START_JOB',
   START_JOB_SUCCESS = '@@composer/job-action/START_JOB_SUCCESS',
+
+  FETCH_ASSIGNED_USERS_FOR_JOB = '@@composer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB',
+  FETCH_ASSIGNED_USERS_FOR_JOB_ERROR = '@@composer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB_ERROR',
+  FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS = '@@composer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS',
+  ASSIGN_USERS_TO_JOB = '@@composer/job-action/ASSIGN_USERS_TO_JOB',
+  UNASSIGN_USER_FROM_JOB = '@@composer/job-action/UNASSIGN_USER_FROM_JOB',
+  ASSIGN_USER_TO_JOB = '@@composer/job-action/ASSIGN_USER_TO_JOB',
+  ASSIGN_USERS_TO_JOB_SUCCESS = '@@composer/job-action/ASSIGN_USERS_TO_JOB_SUCCESS',
+  ASSIGN_USERS_TO_JOB_ERROR = '@@composer/job-action/ASSIGN_USERS_TO_JOB_ERROR',
+  REVERT_USERS_FOR_JOB = '@@composer/job-action/REVERT_USERS_FOR_JOB',
 }
 
 export type ComposerActionType = ReturnType<
+  | typeof fetchAssignedUsersForJob
+  | typeof fetchAssignedUsersForJobError
+  | typeof fetchAssignedUsersForJobSuccess
   | typeof fetchDataError
   | typeof fetchDataOngoing
   | typeof fetchDataSuccess
   | typeof resetComposer
   | typeof startJobSuccess
   | typeof completeJob
+  | typeof assignUserToJob
+  | typeof unAssignUserFromJob
+  | typeof assignUsersToJobSuccess
+  | typeof revertUsersForJob
 >;

@@ -62,7 +62,6 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   };
 
   const onCreateJob = (jobDetails: Record<string, string>) => {
-    console.log('jobDetails', jobDetails);
     const tempProperties: { id: number; value: string }[] = [];
     const selectedId = jobDetails.checklistId;
     let error = false;
@@ -85,8 +84,6 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     });
     if (!error && tempProperties && selectedId) {
       const parsedProperties: { id: number; value: string }[] = tempProperties;
-      console.log('selectedId', selectedId);
-      console.log('parsedProperties', parsedProperties);
       dispatch(
         createJob({
           properties: parsedProperties,
@@ -100,7 +97,9 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     {
       header: 'JOB',
       template: function renderComp(item: Job) {
-        return <JobCard item={item} onClick={selectJob} />;
+        return (
+          <JobCard item={item} onClick={selectJob} key={`job_${item.id}`} />
+        );
       },
     },
     {
@@ -110,7 +109,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           return (
             <div
               className="list-card-columns"
-              key={`assignee_${item.code}`}
+              key={`assignee_${item.id}`}
               style={{ justifyContent: 'flex-start' }}
             >
               <span
@@ -126,7 +125,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         if (item.assignees?.length)
           return (
             <div
-              key={`assignee_${item.code}`}
+              key={`assignee_${item.id}`}
               className="list-card-columns"
               style={{
                 flexDirection: 'row-reverse',
@@ -148,7 +147,9 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
               ))}
             </div>
           );
-        return <div className="list-card-columns" />;
+        return (
+          <div className="list-card-columns" key={`assignee_${item.id}`} />
+        );
       },
     },
   ];
@@ -162,7 +163,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           return (
             <div
               className="list-card-columns"
-              key={`task_completed_${item.code}`}
+              key={`task_completed_${item.id}`}
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',

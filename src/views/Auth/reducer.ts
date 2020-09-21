@@ -41,6 +41,8 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
       return { ...state, profile: { ...state.profile, ...action.payload } };
     case AuthAction.REFRESH_TOKEN_SUCCESS:
       return { ...state, isLoggedIn: true, token: action.payload?.token };
+    case AuthAction.RESET_ERROR:
+      return { ...state, error: undefined };
     default:
       return state;
   }

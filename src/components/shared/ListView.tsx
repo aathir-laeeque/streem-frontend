@@ -115,6 +115,7 @@ const Wrapper = styled.div.attrs({})`
     cursor: pointer;
     align-items: center;
     display: flex;
+    text-transform: capitalize;
   }
 
   .title-group {
@@ -197,18 +198,9 @@ export const ListView: FC<ListViewProps> = ({
   afterColumns,
   filterProp,
 }) => {
-  const scroller = useRef<HTMLDivElement | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  useEffect(() => {
-    if (scroller && scroller.current) {
-      const div = scroller.current;
-      div.addEventListener('scroll', handleOnScroll);
-      return () => {
-        div.removeEventListener('scroll', handleOnScroll);
-      };
-    }
-  }, [isLast, currentPage]);
+  // useEffect(() => {}, [isLast, currentPage]);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -220,15 +212,14 @@ export const ListView: FC<ListViewProps> = ({
     setAnchorEl(event.currentTarget);
   };
 
-  const handleOnScroll = (e: Record<string, any>) => {
-    if (scroller && scroller.current && e.target) {
-      if (
-        e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight &&
-        !isLast
-      ) {
-        fetchData(currentPage + 1, 10);
-      }
-    }
+  const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
+    e.stopPropagation();
+    const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
+    if (
+      scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 &&
+      !isLast
+    )
+      fetchData(currentPage + 1, 10);
   };
 
   const onApplyFilter = (e: React.MouseEvent, onApply: () => void) => {
@@ -321,8 +312,8 @@ export const ListView: FC<ListViewProps> = ({
                 {beforeColumn.header}
               </div>
             ))}
-          {properties.map((el, index) => (
-            <div key={index} className="list-header-columns">
+          {properties.map((el) => (
+            <div key={`property_${el.id}`} className="list-header-columns">
               {el.name}
             </div>
           ))}
@@ -330,14 +321,14 @@ export const ListView: FC<ListViewProps> = ({
             afterColumns.length &&
             afterColumns.map((afterColumn) => (
               <div
-                key={`beforeColumn_${afterColumn.header}`}
+                key={`afterColumn_${afterColumn.header}`}
                 className="list-header-columns"
               >
                 {afterColumn.header}
               </div>
             ))}
         </div>
-        <div className="list-body" ref={scroller}>
+        <div className="list-body" onScroll={handleOnScroll}>
           {(data as Array<Checklist | Job>).map((el, index) => (
             <div key={`list_el_${el.id}`} className="list-card">
               {beforeColumns &&
@@ -345,8 +336,11 @@ export const ListView: FC<ListViewProps> = ({
                 beforeColumns.map((beforeColumn) =>
                   beforeColumn.template(el, index),
                 )}
-              {properties.map((property, propertyIndex) => (
-                <div key={propertyIndex} className="list-card-columns">
+              {properties.map((property) => (
+                <div
+                  key={`${el.id}_property_${property.id}`}
+                  className="list-card-columns"
+                >
                   {el.properties &&
                   property &&
                   property.name &&

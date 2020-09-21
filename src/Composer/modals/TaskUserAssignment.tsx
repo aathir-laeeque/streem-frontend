@@ -1,178 +1,92 @@
 import { BaseModal, Checkbox } from '#components';
-import { useTypedSelector } from '#store';
 import { Task } from '#Composer/checklist.types';
+import { useTypedSelector } from '#store';
 import { fetchUsers } from '#store/users/actions';
 import { User, Users } from '#store/users/types';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
+import { Job } from '#views/Jobs/types';
 import { Search } from '@material-ui/icons';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
 
-const Wrapper = styled.div.attrs({})`
-  .modal {
-    h2 {
-      color: #000 !important;
-      font-weight: bold !important;
-    }
-
-    > svg {
-      top: 32px !important;
-      right: 32px !important
-      font-size: 24px !important;;
-    }
-
-    .modal-header {
-      padding: 32px !important;
-      border-bottom: none !important;
-    }
-
-    .modal-footer {
-      padding: 32px !important;
-    }
-
-    .modal-body {
-      padding: 0px 32px !important;
-
-      .top-content {
-        display: flex;
-        align-items: center;
-        flex: 1;
-        justify-content: space-between;
-        padding: 0px 0px 16px;
-    
-        span {
-          padding: 4px 16px;
-          color: #1d84ff;
-          font-size: 14px;
-          cursor; pointer;
-        }
-    
-        .searchboxwrapper {
-          position: relative;
-          flex: 1;
-          padding: 0px 16px;
-          background-color: #fafafa;
-          border-bottom: 1px solid #bababa;
-      
-          svg {
-            background: #fafafa;
-            border: 0;
-            height: 40px;
-            width: 16px;
-            right: unset;
-            color: #000;
-            position: absolute;
-            left: 16px;
-            top: 0;
-          }
-      
-          .searchbox {
-            border: none;
-            outline: none;
-            font-size: 13px;
-            font-family: 'Open Sans', sans-serif;
-            font-weight: lighter;
-            color: #999999;
-            background: #fafafa;
-            height: 40px;
-            width: calc(100% - 28px);
-            margin-left: 28px;
-          }
-        }
-      }
-
-      .scrollable-content {
-        height: calc(100vh - (40vh + 163px));
-        overflow: auto;
-    
-        .item {
-          display: flex;
-          flex: 1;
-          align-items: center;
-          border-bottom: 1px solid #999999;
-          padding: 9px 0px 9px 15px;
-      
-          :last-child {
-            border-bottom: none;
-          }
-    
-          .thumb {
-            border: 1px solid #999999;
-            width: 40px;
-            height: 40px;
-            color: #333;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #dadada;
-          }
-    
-          .middle {
-            display: flex;
-            flex: 1;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 0 15px;
-    
-            .userId {
-              font-size: 8px;
-              font-weight: 600;
-              color: #666666;
-              margin-bottom: 4px;
-            }
-            .userName {
-              font-size: 20px;
-              color: #666666;
-              text-transform: capitalize;
-            }
-          }
-    
-          .right {
-            margin-top: -15px;
-
-            .checkmark {
-              border-radius: 0px;
-              border: 2px solid #333;
-              background-color: #FFF;
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+import {
+  assignUsersToTask,
+  assignUserToTask,
+  revertUsersForTask,
+  unAssignUserFromTask,
+} from '../TaskList/actions';
+import {
+  fetchAssignedUsersForJob,
+  assignUsersToJob,
+  assignUserToJob,
+  unAssignUserFromJob,
+  revertUsersForJob,
+} from '../actions';
+import Wrapper from './TaskUserAssignment.styles';
 
 type TaskUserAssignmentProps = {
-  closeAllModals: () => void;
+  closeAllModals?: () => void;
   closeModal: () => void;
-  taskId: Task['id'];
+  taskId?: Task['id'];
+  jobId?: Job['id'];
+  forAll?: boolean;
+};
+
+type initialState = {
+  assignedUsers: number[];
+  unAssignedUsers: number[];
+  searchQuery: string;
+  preAssignedUsers: Users;
+};
+
+const initialState: initialState = {
+  assignedUsers: [],
+  unAssignedUsers: [],
+  searchQuery: '',
+  preAssignedUsers: [],
 };
 
 const TaskUserAssignment: FC<TaskUserAssignmentProps> = ({
-  closeAllModals,
+  closeAllModals = () => false,
   closeModal,
   taskId,
+  jobId,
+  forAll = false,
 }) => {
-  const { list, pageable } = useTypedSelector(
-    (state) => state.users.users.active,
-  );
+  const {
+    list,
+    pageable: { last, page },
+  } = useTypedSelector((state) => state.users.users.active);
   const {
     tasks: { tasksById },
+    entityId,
   } = useTypedSelector((state) => state.composer);
 
-  const task = tasksById[taskId];
+  const dispatch = useDispatch();
+  const [state, setstate] = useState(initialState);
   const {
-    taskExecution: { assignees },
-  } = task;
-
-  const scroller = useRef<HTMLDivElement | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [initialUsers, setInitialUsers] = useState<Users | null>(null);
+    assignedUsers,
+    unAssignedUsers,
+    searchQuery,
+    preAssignedUsers,
+  } = state;
   const prevSearch = usePrevious(searchQuery);
+
+  let assignees: Users = [];
+  if (taskId) {
+    const {
+      taskExecution: { assignees: taskAssignees },
+    } = tasksById[taskId];
+    assignees = taskAssignees;
+  } else {
+    const { assignees: jobAssignees } = useTypedSelector(
+      (state) => state.composer,
+    );
+    assignees = jobAssignees;
+  }
+
+  const prevAssignees = usePrevious(assignees);
 
   const fetchData = (page: number, size: number) => {
     const filters = JSON.stringify({
@@ -185,105 +99,219 @@ const TaskUserAssignment: FC<TaskUserAssignmentProps> = ({
     dispatch(fetchUsers({ page, size, filters, sort: 'id' }, 'active'));
   };
 
-  let isLast = true;
-  let currentPage = 0;
-  if (pageable) {
-    isLast = pageable?.last;
-    currentPage = pageable?.page;
+  if (jobId) {
+    useEffect(() => {
+      dispatch(fetchAssignedUsersForJob(jobId));
+    }, []);
   }
 
   useEffect(() => {
-    if (!initialUsers) {
-      setInitialUsers(assignees);
+    if (
+      (prevAssignees === undefined || prevAssignees.length === 0) &&
+      assignees.length > 0 &&
+      assignedUsers.length === 0 &&
+      unAssignedUsers.length === 0
+    ) {
+      setstate({ ...state, preAssignedUsers: assignees });
     }
+  }, [assignees]);
+
+  useEffect(() => {
     if (prevSearch !== searchQuery) {
       fetchData(0, 10);
     }
-    if (scroller && scroller.current) {
-      const div = scroller.current;
-      div.addEventListener('scroll', handleOnScroll);
-      return () => {
-        div.removeEventListener('scroll', handleOnScroll);
-      };
-    }
-  }, [searchQuery, isLast, currentPage]);
+  }, [searchQuery]);
 
-  const handleOnScroll = (e: Record<string, any>) => {
-    if (scroller && scroller.current && e.target) {
-      if (
-        e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight &&
-        !isLast
-      ) {
-        fetchData(currentPage + 1, 10);
+  const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
+    e.stopPropagation();
+    const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
+    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 && !last)
+      fetchData(page + 1, 10);
+  };
+
+  const onCheckChanged = (
+    user: User,
+    checked: boolean,
+    isPreAssigned: boolean,
+    partial: boolean,
+  ) => {
+    if (checked) {
+      if (jobId && isPreAssigned) {
+        if (!partial) {
+          setstate({
+            ...state,
+            unAssignedUsers: [...unAssignedUsers, user.id],
+            assignedUsers: assignedUsers.filter((i) => i !== user.id),
+          });
+          dispatch(unAssignUserFromJob(user));
+        } else {
+          setstate({
+            ...state,
+            assignedUsers: [...assignedUsers, user.id],
+          });
+          dispatch(assignUserToJob(user));
+        }
+      } else {
+        setstate({
+          ...state,
+          unAssignedUsers: [...unAssignedUsers, user.id],
+          assignedUsers: assignedUsers.filter((i) => i !== user.id),
+        });
+        if (taskId) dispatch(unAssignUserFromTask(user, taskId));
+        if (jobId) dispatch(unAssignUserFromJob(user));
       }
+    } else {
+      if (isPreAssigned) {
+        setstate({
+          ...state,
+          unAssignedUsers: unAssignedUsers.filter((i) => i !== user.id),
+        });
+      } else {
+        setstate({
+          ...state,
+          assignedUsers: [...assignedUsers, user.id],
+          unAssignedUsers: unAssignedUsers.filter((i) => i !== user.id),
+        });
+      }
+      if (taskId) dispatch(assignUserToTask(user, taskId));
+      if (jobId) dispatch(assignUserToJob(user));
     }
   };
 
-  const topViews: JSX.Element[] = [];
-  const bottomViews: JSX.Element[] = [];
+  const userRow = (
+    user: User,
+    checked: boolean,
+    isPreAssigned: boolean,
+    partial: boolean,
+  ) => {
+    return (
+      <div className="item" key={`user_${user.id}`}>
+        <div className="right">
+          {taskId && (
+            <Checkbox
+              checked={checked}
+              label=""
+              onClick={() =>
+                onCheckChanged(user, checked, isPreAssigned, partial)
+              }
+            />
+          )}
+          {jobId && (
+            <Checkbox
+              partial={partial}
+              checked={checked}
+              label=""
+              onClick={() =>
+                onCheckChanged(user, checked, isPreAssigned, partial)
+              }
+            />
+          )}
+        </div>
+        <div className="thumb">
+          {getInitials(`${user.firstName} ${user.lastName}`)}
+        </div>
+        <div className="middle">
+          <span className="userId">{user.employeeId}</span>
+          <span className="userName">{`${user.firstName} ${user.lastName}`}</span>
+        </div>
+      </div>
+    );
+  };
 
-  const dispatch = useDispatch();
-  const userRow = (user: User, index: number, checked: boolean) => (
-    <div className="item" key={`user_${index}`}>
-      <div className="right">
-        <Checkbox
-          checked={checked}
-          label=""
-          onClick={() => {
-            console.log('changed', checked);
-            if (checked) {
-              //   dispatch(unAssignUser({ user, selectedJobIndex }));
-            } else {
-              //   dispatch(assignUser({ user, selectedJobIndex }));
-            }
-          }}
-        />
-      </div>
-      <div className="thumb">
-        {getInitials(`${user.firstName} ${user.lastName}`)}
-      </div>
-      <div className="middle">
-        <span className="userId">{user.employeeId}</span>
-        <span className="userName">{`${user.firstName} ${user.lastName}`}</span>
-      </div>
-    </div>
-  );
+  const handleUnselectAll = () => {
+    setstate({
+      ...state,
+      unAssignedUsers: preAssignedUsers.map((i) => i.id),
+      assignedUsers: [],
+    });
+    if (taskId) dispatch(revertUsersForTask([], taskId));
+    if (jobId) dispatch(revertUsersForJob([]));
+  };
 
-  assignees.forEach((user, index) => {
-    topViews.push(userRow(user, index, true));
-  });
+  const bodyView: JSX.Element[] = [];
 
   if (list) {
-    list.forEach((user, index) => {
+    if (searchQuery === '') {
+      preAssignedUsers.forEach((user) => {
+        const checked = assignees.some((item) => item.id === user.id);
+        let isPartial = false;
+        if (jobId)
+          isPartial = assignees.some(
+            (item) =>
+              item.id === user.id && !item.completelyAssigned && item.assigned,
+          );
+
+        if (user.id !== 0) {
+          bodyView.push(userRow(user, checked, true, isPartial));
+        }
+      });
+    }
+
+    list.forEach((user) => {
+      const isPreAssigned = preAssignedUsers.some(
+        (item) => item.id === user.id,
+      );
       const checked = assignees.some((item) => item.id === user.id);
-      if (!checked && user.id !== 0) {
-        bottomViews.push(userRow(user, index, checked));
+
+      if (user.id !== 0) {
+        if (searchQuery !== '') {
+          bodyView.push(
+            userRow(
+              user,
+              checked,
+              isPreAssigned,
+              (!user.completelyAssigned && user.assigned) || false,
+            ),
+          );
+        } else if (!isPreAssigned) {
+          bodyView.push(userRow(user, checked, isPreAssigned, false));
+        }
       }
     });
   }
 
-  const jobUsersLength: number = assignees.length || 0;
-  let showButtons = false;
-  if (initialUsers && initialUsers !== assignees) showButtons = true;
+  const onPrimary = (notify: boolean) => {
+    if (entityId) {
+      if (taskId)
+        dispatch(
+          assignUsersToTask({
+            taskId,
+            jobId: entityId,
+            assignIds: assignedUsers,
+            unassignIds: unAssignedUsers,
+            preAssigned: preAssignedUsers,
+            notify,
+          }),
+        );
+      if (jobId)
+        dispatch(
+          assignUsersToJob({
+            jobId: jobId,
+            assignIds: assignedUsers,
+            unassignIds: unAssignedUsers,
+            notify,
+          }),
+        );
+    }
+    closeModal();
+  };
+
+  const onSecondary = () => {
+    if (taskId) dispatch(revertUsersForTask(preAssignedUsers, taskId));
+    closeModal();
+  };
 
   return (
-    <Wrapper>
+    <Wrapper forAll={forAll}>
       <BaseModal
+        animated={forAll}
         closeAllModals={closeAllModals}
-        closeModal={() => {
-          closeModal();
-        }}
-        title="Assign this Task"
+        closeModal={onSecondary}
+        title={forAll ? 'Bulk Assign All Tasks' : 'Assign this Task'}
         primaryText="Confirm"
         secondaryText="Cancel"
-        onSecondary={() => {
-          closeModal();
-        }}
-        onPrimary={() => {
-          closeModal();
-        }}
-        showPrimary={showButtons}
-        showSecondary={showButtons}
+        onSecondary={onSecondary}
+        onPrimary={() => onPrimary(true)}
         modalFooterOptions={
           <span
             style={{
@@ -292,9 +320,7 @@ const TaskUserAssignment: FC<TaskUserAssignmentProps> = ({
               fontWeight: 600,
               fontSize: 14,
             }}
-            onClick={() => {
-              closeModal();
-            }}
+            onClick={() => onPrimary(false)}
           >
             Confirm Without Notifying
           </span>
@@ -306,15 +332,16 @@ const TaskUserAssignment: FC<TaskUserAssignmentProps> = ({
             <input
               className="searchbox"
               type="text"
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search"
+              onChange={(e) =>
+                setstate({ ...state, searchQuery: e.target.value })
+              }
+              placeholder="Search Users"
             />
           </div>
-          <span>Unselect All</span>
+          <span onClick={handleUnselectAll}>Unselect All</span>
         </div>
-        <div className="scrollable-content" ref={scroller}>
-          {topViews}
-          {bottomViews}
+        <div className="scrollable-content" onScroll={handleOnScroll}>
+          {bodyView}
         </div>
       </BaseModal>
     </Wrapper>

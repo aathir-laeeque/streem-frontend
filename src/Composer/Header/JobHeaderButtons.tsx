@@ -34,6 +34,22 @@ const JobHeaderButtons: FC = () => {
         Print Job
       </Button>
 
+      <Button
+        onClick={() => {
+          dispatch(
+            openModalAction({
+              type: ModalNames.TASK_USER_ASSIGNMENT,
+              props: {
+                jobId,
+                forAll: true,
+              },
+            }),
+          );
+        }}
+      >
+        Bulk Assign All Tasks
+      </Button>
+
       {jobStatus === JobStatus.ASSIGNED ? (
         <Button
           onClick={() =>

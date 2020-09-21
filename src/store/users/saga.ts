@@ -1,7 +1,7 @@
 import { apiGetUsers } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { ResponseObj } from '#utils/globalTypes';
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeLeading } from 'redux-saga/effects';
 
 import {
   fetchUsers,
@@ -36,5 +36,5 @@ function* fetchUsersSaga({ payload }: ReturnType<typeof fetchUsers>) {
 }
 
 export function* UsersSaga() {
-  yield takeEvery(UsersAction.FETCH_USERS, fetchUsersSaga);
+  yield takeLeading(UsersAction.FETCH_USERS, fetchUsersSaga);
 }

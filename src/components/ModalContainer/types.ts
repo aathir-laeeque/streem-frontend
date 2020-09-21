@@ -17,6 +17,7 @@ export enum ModalNames {
   MEDIA_DETAIL = 'MEDIA_DETAIL',
   ADD_STOP = 'ADD_STOP',
   TASK_USER_ASSIGNMENT = 'TASK_USER_ASSIGNMENT',
+  ASSIGNMENT_SUCCESS = 'ASSIGNMENT_SUCCESS',
 }
 
 export interface Modal {

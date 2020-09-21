@@ -1,5 +1,10 @@
 // alias imports
-import { Notification, ModalContainer, CustomRoute } from '#components';
+import {
+  Notification,
+  ModalContainer,
+  PopoverContainer,
+  CustomRoute,
+} from '#components';
 import { configureStore } from '#store';
 import { AuthView } from '#views';
 // library imports
@@ -40,6 +45,7 @@ const App: FC = () => {
           pauseOnHover
         />
         <ModalContainer />
+        <PopoverContainer />
         <GlobalStyles />
       </PersistGate>
     </Provider>

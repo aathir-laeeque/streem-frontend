@@ -91,3 +91,11 @@ export const apiRegister = () => `${baseUrl}/auth/register`;
 export const apiResetPassword = () => `${baseUrl}/auth/update-password`;
 
 export const apiGetSessionActivitys = () => `${baseUrl}/audits`;
+
+// Task
+export const apiAssignUsersToTask = (taskId: Task['id']) =>
+  `${baseUrl}/tasks/${taskId}/assignments`;
+
+export const apiAssignUsersToJob = () => `${baseUrl}/tasks/assignments`;
+export const apiGetAssignedUsersForJob = (jobId: Job['id']) =>
+  `${baseUrl}/tasks/assignments?jobId=${jobId}`;
