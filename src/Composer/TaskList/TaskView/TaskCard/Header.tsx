@@ -1,5 +1,7 @@
 import { openModalAction } from '#components/ModalContainer/actions';
 import { ModalNames } from '#components/ModalContainer/types';
+import { openPopoverAction } from '#components/PopoverContainer/actions';
+import { PopoverNames } from '#components/PopoverContainer/types';
 import { getInitials } from '#utils/stringUtils';
 import {
   StartedTaskStates,
@@ -16,6 +18,7 @@ import styled, { css } from 'styled-components';
 import { startTask } from '../../actions';
 import Timer from './Timer';
 import TaskAssignmentContent from './TaskAssignmentContent';
+import { User, Users } from '#store/users/types';
 
 type HeaderProps = {
   task: Omit<Task, 'activities'>;
@@ -282,6 +285,18 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
     setAnchorEl(event.currentTarget);
   };
 
+  const handleAssigneeClick = (event: MouseEvent, users: Users) => {
+    dispatch(
+      openPopoverAction({
+        type: PopoverNames.ASSIGNED_USER_DETAIL,
+        popOverAnchorEl: event.currentTarget,
+        props: {
+          users,
+        },
+      }),
+    );
+  };
+
   const {
     status,
     startedAt,
@@ -297,12 +312,20 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
           <span>This Task’s Assignees</span>
           <div>
             {assignees.slice(0, 4).map((user) => (
-              <div key={`assignee_${user.id}`} className="user-thumb">
+              <div
+                key={`assignee_${user.id}`}
+                className="user-thumb"
+                onClick={(e) => handleAssigneeClick(e, [user])}
+              >
                 {getInitials(`${user.firstName} ${user.lastName}`)}
               </div>
             ))}
             {assignees.length > 4 && (
-              <div key={`assignee_length`} className="user-thumb">
+              <div
+                key={`assignee_length`}
+                className="user-thumb"
+                onClick={(e) => handleAssigneeClick(e, assignees.slice(4))}
+              >
                 +{assignees.length - 4}
               </div>
             )}

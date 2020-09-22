@@ -1,4 +1,5 @@
 import { TaskAssignmentPopover } from '#Composer/Popovers/TaskAssignmentPopover';
+import { AssignedUserDetailsPopover } from '#Composer/Popovers/AssignedUserDetailsPopover';
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
@@ -26,6 +27,19 @@ const getPopover = (
           closeAllPopovers={closeAllPopovers}
           closePopover={(...args) =>
             closePopover(PopoverNames.TASK_USER_ASSIGNMENT, ...args)
+          }
+          key={i}
+        />
+      );
+
+    case PopoverNames.ASSIGNED_USER_DETAIL:
+      return (
+        <AssignedUserDetailsPopover
+          {...props}
+          popOverAnchorEl={popOverAnchorEl}
+          closeAllPopovers={closeAllPopovers}
+          closePopover={(...args) =>
+            closePopover(PopoverNames.ASSIGNED_USER_DETAIL, ...args)
           }
           key={i}
         />

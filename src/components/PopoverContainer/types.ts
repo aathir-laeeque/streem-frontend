@@ -6,6 +6,7 @@ import {
 
 export enum PopoverNames {
   TASK_USER_ASSIGNMENT = 'TASK_USER_ASSIGNMENT',
+  ASSIGNED_USER_DETAIL = 'ASSIGNED_USER_DETAIL',
 }
 
 export interface Popover {
