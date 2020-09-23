@@ -1,7 +1,8 @@
-import { openModalAction } from '#components/ModalContainer/actions';
-import { ModalNames } from '#components/ModalContainer/types';
-import { openPopoverAction } from '#components/PopoverContainer/actions';
-import { PopoverNames } from '#components/PopoverContainer/types';
+import {
+  openOverlayAction,
+  closeOverlayAction,
+} from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { getInitials } from '#utils/stringUtils';
 import {
   StartedTaskStates,
@@ -18,16 +19,25 @@ import styled, { css } from 'styled-components';
 import { startTask } from '../../actions';
 import Timer from './Timer';
 import TaskAssignmentContent from './TaskAssignmentContent';
-import { User, Users } from '#store/users/types';
+import { Users } from '#store/users/types';
 
 type HeaderProps = {
   task: Omit<Task, 'activities'>;
   showStartButton: boolean;
+  isTaskStarted: boolean;
+  isTaskDelayed: boolean;
+  enableStopForTask: boolean;
 };
 
 const Wrapper = styled.div.attrs({
   className: 'task-header',
-})`
+})<{
+  hasStop: boolean;
+  showStartButton: boolean;
+  taskExecutionStatus: TaskExecutionStatus;
+  isTaskStarted: boolean;
+  isTaskDelayed: boolean;
+}>`
   .task-config {
     background-color: #fafafa;
     display: flex;
@@ -272,9 +282,18 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
+const generateName = ({
+  firstName,
+  lastName,
+}: {
+  firstName: string;
+  lastName: string;
+}) => `${firstName} ${lastName}`;
 
-const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
+const JobHeader: FC<Pick<HeaderProps, 'task' | 'enableStopForTask'>> = ({
+  task,
+  enableStopForTask,
+}) => {
   const dispatch = useDispatch();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -287,8 +306,8 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
 
   const handleAssigneeClick = (event: MouseEvent, users: Users) => {
     dispatch(
-      openPopoverAction({
-        type: PopoverNames.ASSIGNED_USER_DETAIL,
+      openOverlayAction({
+        type: OverlayNames.ASSIGNED_USER_DETAIL,
         popOverAnchorEl: event.currentTarget,
         props: {
           users,
@@ -315,7 +334,13 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
               <div
                 key={`assignee_${user.id}`}
                 className="user-thumb"
-                onClick={(e) => handleAssigneeClick(e, [user])}
+                aria-haspopup="true"
+                onMouseEnter={(e) => handleAssigneeClick(e, [user])}
+                onMouseLeave={() =>
+                  dispatch(
+                    closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL),
+                  )
+                }
               >
                 {getInitials(`${user.firstName} ${user.lastName}`)}
               </div>
@@ -324,7 +349,13 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
               <div
                 key={`assignee_length`}
                 className="user-thumb"
-                onClick={(e) => handleAssigneeClick(e, assignees.slice(4))}
+                aria-haspopup="true"
+                onMouseEnter={(e) => handleAssigneeClick(e, assignees.slice(4))}
+                onMouseLeave={() =>
+                  dispatch(
+                    closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL),
+                  )
+                }
               >
                 +{assignees.length - 4}
               </div>
@@ -332,7 +363,7 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
           </div>
         </div>
       )}
-      {status in StartedTaskStates ? (
+      {status in StartedTaskStates && startedAt ? (
         <div className="start-audit">
           Task Started by {generateName(modifiedBy)}, ID:{' '}
           {modifiedBy.employeeId} on{' '}
@@ -360,7 +391,7 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
               console.log('enableStopForTask :: ', enableStopForTask);
               if (enableStopForTask) {
                 dispatch(
-                  openModalAction({ type: ModalNames.ADD_STOP, props: {} }),
+                  openOverlayAction({ type: OverlayNames.ADD_STOP, props: {} }),
                 );
               } else {
                 dispatch(startTask(task.id));
@@ -386,8 +417,8 @@ const JobHeader: FC<HeaderProps> = ({ task, enableStopForTask }) => {
               onClick={() => {
                 handleClose();
                 dispatch(
-                  openModalAction({
-                    type: ModalNames.TASK_ERROR_CORRECTION,
+                  openOverlayAction({
+                    type: OverlayNames.TASK_ERROR_CORRECTION,
                     props: { taskId: task.id },
                   }),
                 );

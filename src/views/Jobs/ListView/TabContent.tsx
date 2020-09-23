@@ -1,6 +1,6 @@
 import { ListViewComponent, ProgressBar } from '#components';
-import { openModalAction } from '#components/ModalContainer/actions';
-import { ModalNames } from '#components/ModalContainer/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { createJob } from '#views/Jobs/ListView/actions';
 import { getInitials } from '#utils/stringUtils';
@@ -51,8 +51,8 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
 
   const onClickAssign = (item: Job, index: number) => {
     dispatch(
-      openModalAction({
-        type: ModalNames.JOB_USER_ASSIGN,
+      openOverlayAction({
+        type: OverlayNames.JOB_USER_ASSIGN,
         props: {
           selectedJobIndex: index,
           refreshData: () => fetchData(0, 10),
@@ -102,56 +102,56 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         );
       },
     },
-    {
-      header: 'ASSIGNEE',
-      template: function renderComp(item: Job, index: number) {
-        if (label === JobStatus.UNASSIGNED)
-          return (
-            <div
-              className="list-card-columns"
-              key={`assignee_${item.id}`}
-              style={{ justifyContent: 'flex-start' }}
-            >
-              <span
-                className="list-title"
-                onClick={() => {
-                  onClickAssign(item, index);
-                }}
-              >
-                <PersonAdd style={{ marginLeft: 15 }} />
-              </span>
-            </div>
-          );
-        if (item.assignees?.length)
-          return (
-            <div
-              key={`assignee_${item.id}`}
-              className="list-card-columns"
-              style={{
-                flexDirection: 'row-reverse',
-                justifyContent: 'flex-end',
-              }}
-              onClick={() => {
-                onClickAssign(item, index);
-              }}
-            >
-              {item.assignees.length > 4 && (
-                <span key={`assignee_length`} className="user-thumb">
-                  +{item.assignees.length - 4}
-                </span>
-              )}
-              {item.assignees.slice(0, 4).map((user) => (
-                <span key={`assignee_${user.id}`} className="user-thumb">
-                  {getInitials(`${user.firstName} ${user.lastName}`)}
-                </span>
-              ))}
-            </div>
-          );
-        return (
-          <div className="list-card-columns" key={`assignee_${item.id}`} />
-        );
-      },
-    },
+    // {
+    //   header: 'ASSIGNEE',
+    //   template: function renderComp(item: Job, index: number) {
+    //     if (label === JobStatus.UNASSIGNED)
+    //       return (
+    //         <div
+    //           className="list-card-columns"
+    //           key={`assignee_${item.id}`}
+    //           style={{ justifyContent: 'flex-start' }}
+    //         >
+    //           <span
+    //             className="list-title"
+    //             onClick={() => {
+    //               onClickAssign(item, index);
+    //             }}
+    //           >
+    //             <PersonAdd style={{ marginLeft: 15 }} />
+    //           </span>
+    //         </div>
+    //       );
+    //     if (item.assignees?.length)
+    //       return (
+    //         <div
+    //           key={`assignee_${item.id}`}
+    //           className="list-card-columns"
+    //           style={{
+    //             flexDirection: 'row-reverse',
+    //             justifyContent: 'flex-end',
+    //           }}
+    //           onClick={() => {
+    //             onClickAssign(item, index);
+    //           }}
+    //         >
+    //           {item.assignees.length > 4 && (
+    //             <span key={`assignee_length`} className="user-thumb">
+    //               +{item.assignees.length - 4}
+    //             </span>
+    //           )}
+    //           {item.assignees.slice(0, 4).map((user) => (
+    //             <span key={`assignee_${user.id}`} className="user-thumb">
+    //               {getInitials(`${user.firstName} ${user.lastName}`)}
+    //             </span>
+    //           ))}
+    //         </div>
+    //       );
+    //     return (
+    //       <div className="list-card-columns" key={`assignee_${item.id}`} />
+    //     );
+    //   },
+    // },
   ];
   if (label === JobStatus.ASSIGNED) {
     beforeColumns = [
@@ -208,8 +208,8 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         beforeColumns={beforeColumns}
         onPrimaryClick={() => {
           dispatch(
-            openModalAction({
-              type: ModalNames.CREATE_JOB_MODAL,
+            openOverlayAction({
+              type: OverlayNames.CREATE_JOB_MODAL,
               props: {
                 selectedChecklist: null,
                 properties: job,

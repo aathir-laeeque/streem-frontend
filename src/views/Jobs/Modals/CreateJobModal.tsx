@@ -1,4 +1,5 @@
 import { BaseModal, FloatInput } from '#components';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { usePrevious } from '#utils/usePrevious';
 import { useTypedSelector } from '#store';
 import { Properties } from '#store/properties/types';
@@ -9,8 +10,6 @@ import React, { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 export interface CreateJobModalProps {
-  closeAllModals: () => void;
-  closeModal: () => void;
   selectedChecklist: Checklist | null;
   properties: Properties;
   onCreateJob: (jobDetails: Record<string, string>) => void;
@@ -49,12 +48,10 @@ const Wrapper = styled.div.attrs({})`
   }
 `;
 
-export const CreateJobModal: FC<CreateJobModalProps> = ({
-  closeAllModals,
-  closeModal,
-  properties,
-  onCreateJob,
-  selectedChecklist,
+export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
+  closeAllOverlays,
+  closeOverlay,
+  props: { properties, onCreateJob, selectedChecklist },
 }) => {
   const [jobDetails, setJobDetails] = useState<Record<string, string>>({});
 
@@ -99,15 +96,15 @@ export const CreateJobModal: FC<CreateJobModalProps> = ({
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
-        closeModal={closeModal}
-        onSecondary={closeModal}
+        closeAllModals={closeAllOverlays}
+        closeModal={closeOverlay}
+        onSecondary={closeOverlay}
         title="Creating a Job"
         primaryText="Create Job"
         secondaryText="Cancel"
         onPrimary={() => {
           onCreateJob(jobDetails);
-          closeModal();
+          closeOverlay();
         }}
         disabledPrimary={properties.some(
           (property) => property.mandatory && !jobDetails[property.name],

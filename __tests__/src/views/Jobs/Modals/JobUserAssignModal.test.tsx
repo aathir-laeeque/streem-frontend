@@ -44,8 +44,8 @@ describe('<JobUserAssignModal />', () => {
     });
 
     const props: JobUserAssignModalProps = {
-      closeAllModals: jest.fn(),
-      closeModal: jest.fn(),
+      closeAllOverlays: jest.fn(),
+      closeOverlay: jest.fn(),
       selectedJobIndex: 0,
       refreshData: jest.fn(),
     };

@@ -1,4 +1,5 @@
 import { BaseModal } from '#components';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import MemoUserAssigned from '#assets/svg/UserAssigned';
 import React, { FC } from 'react';
 import styled from 'styled-components';
@@ -29,22 +30,16 @@ const Wrapper = styled.div`
   }
 `;
 
-type AssignmentSuccessModalProps = {
-  closeAllModals: () => void;
-  closeModal: () => void;
-  notify: boolean;
-};
-
-const AssignmentSuccessModal: FC<AssignmentSuccessModalProps> = ({
-  closeAllModals,
-  closeModal,
-  notify,
+const AssignmentSuccessModal: FC<CommonOverlayProps<{ notify: boolean }>> = ({
+  closeAllOverlays,
+  closeOverlay,
+  props: { notify },
 }) => {
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
-        closeModal={closeModal}
+        closeAllModals={closeAllOverlays}
+        closeModal={closeOverlay}
         showFooter={false}
         showHeader={false}
         title="Start a Job"

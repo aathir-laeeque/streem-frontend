@@ -1,4 +1,5 @@
 import { BaseModal, Checkbox } from '#components';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Task } from '#Composer/checklist.types';
 import { useTypedSelector } from '#store';
 import { fetchUsers } from '#store/users/actions';
@@ -25,14 +26,6 @@ import {
 } from '../actions';
 import Wrapper from './TaskUserAssignment.styles';
 
-type TaskUserAssignmentProps = {
-  closeAllModals?: () => void;
-  closeModal: () => void;
-  taskId?: Task['id'];
-  jobId?: Job['id'];
-  forAll?: boolean;
-};
-
 type initialState = {
   assignedUsers: number[];
   unAssignedUsers: number[];
@@ -47,12 +40,14 @@ const initialState: initialState = {
   preAssignedUsers: [],
 };
 
-const TaskUserAssignment: FC<TaskUserAssignmentProps> = ({
-  closeAllModals = () => false,
-  closeModal,
-  taskId,
-  jobId,
-  forAll = false,
+const TaskUserAssignment: FC<CommonOverlayProps<{
+  taskId?: Task['id'];
+  jobId?: Job['id'];
+  forAll?: boolean;
+}>> = ({
+  closeAllOverlays = () => false,
+  closeOverlay,
+  props: { taskId, jobId, forAll = false },
 }) => {
   const {
     list,
@@ -293,19 +288,19 @@ const TaskUserAssignment: FC<TaskUserAssignmentProps> = ({
           }),
         );
     }
-    closeModal();
+    closeOverlay();
   };
 
   const onSecondary = () => {
     if (taskId) dispatch(revertUsersForTask(preAssignedUsers, taskId));
-    closeModal();
+    closeOverlay();
   };
 
   return (
     <Wrapper forAll={forAll}>
       <BaseModal
         animated={forAll}
-        closeAllModals={closeAllModals}
+        closeAllModals={closeAllOverlays}
         closeModal={onSecondary}
         title={forAll ? 'Bulk Assign All Tasks' : 'Assign this Task'}
         primaryText="Confirm"

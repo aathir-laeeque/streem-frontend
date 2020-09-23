@@ -1,4 +1,5 @@
 import { BaseModal } from '#components';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -84,11 +85,6 @@ const Wrapper = styled.div`
   }
 `;
 
-type CompleteJobWithExceptionModalProps = {
-  closeAllModals: () => void;
-  closeModal: () => void;
-};
-
 const ExceptionReason = [
   { label: 'Job got cancelled', value: 'job_got_cancelled' },
   { label: 'Job created by mistake', value: 'job_created_by_mistake' },
@@ -96,9 +92,9 @@ const ExceptionReason = [
   { label: 'Other', value: 'other' },
 ];
 
-const CompleteJobWithExceptionModal: FC<CompleteJobWithExceptionModalProps> = ({
-  closeAllModals,
-  closeModal,
+const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
+  closeAllOverlays,
+  closeOverlay,
 }) => {
   const dispatch = useDispatch();
 
@@ -107,10 +103,10 @@ const CompleteJobWithExceptionModal: FC<CompleteJobWithExceptionModalProps> = ({
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
-        closeModal={closeModal}
-        onPrimary={() => closeModal()}
-        onSecondary={() => closeModal()}
+        closeAllModals={closeAllOverlays}
+        closeModal={closeOverlay}
+        onPrimary={() => closeOverlay()}
+        onSecondary={() => closeOverlay()}
         primaryText="Complete Job"
         secondaryText="Go Back"
         title="Completing a Job With Exceptions"

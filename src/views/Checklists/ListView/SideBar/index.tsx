@@ -1,6 +1,6 @@
 import { Button, FlatButton } from '#components';
-import { openModalAction } from '#components/ModalContainer/actions';
-import { ModalNames } from '#components/ModalContainer/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { createJob } from '#views/Jobs/ListView/actions';
 import { Check } from '@material-ui/icons';
 import React, { FC } from 'react';
@@ -19,8 +19,8 @@ const SideBar: FC<SideBarProps> = ({
   const toggleState = () => {
     closeNav();
     dispatch(
-      openModalAction({
-        type: ModalNames.CREATE_JOB_MODAL,
+      openOverlayAction({
+        type: OverlayNames.CREATE_JOB_MODAL,
         props: {
           selectedChecklist: selectedChecklist,
           properties: properties,

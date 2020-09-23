@@ -1,5 +1,5 @@
 import { BaseModal } from '#components';
-import { Task } from '#Composer/checklist.types';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { PanTool } from '@material-ui/icons';
 import React, { FC } from 'react';
@@ -52,15 +52,9 @@ const Wrapper = styled.div`
   }
 `;
 
-type TaskStopModalProps = {
-  closeAllModals: () => void;
-  closeModal: () => void;
-  taskId: Task['id'];
-};
-
-const TaskStopModal: FC<TaskStopModalProps> = ({
-  closeAllModals,
-  closeModal,
+const TaskStopModal: FC<CommonOverlayProps<any>> = ({
+  closeAllOverlays,
+  closeOverlay,
 }) => {
   const dispatch = useDispatch();
 
@@ -76,8 +70,8 @@ const TaskStopModal: FC<TaskStopModalProps> = ({
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
-        closeModal={closeModal}
+        closeAllModals={closeAllOverlays}
+        closeModal={closeOverlay}
         showHeader={false}
         showFooter={false}
       >
@@ -95,7 +89,7 @@ const TaskStopModal: FC<TaskStopModalProps> = ({
             onClick={() => {
               dispatch(setActiveStage(stageIdWithTaskStop, true));
               dispatch(setActiveTask(taskIdWithStop, true));
-              closeModal();
+              closeOverlay();
             }}
           >
             Go to the task

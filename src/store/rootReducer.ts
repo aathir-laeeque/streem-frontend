@@ -1,5 +1,4 @@
-import { ModalContainerReducer } from '#components/ModalContainer/reducer';
-import { PopoverContainerReducer } from '#components/PopoverContainer/reducer';
+import { OverlayContainerReducer } from '#components/OverlayContainer/reducer';
 import { ChecklistListViewReducer } from '#views/Checklists/ListView/reducer';
 import { AuthReducer } from '#views/Auth/reducer';
 import { JobListViewReducer } from '#views/Jobs/ListView/reducer';
@@ -17,8 +16,7 @@ export const rootReducer = combineReducers({
   checklistListView: ChecklistListViewReducer,
   jobListView: JobListViewReducer,
   inboxListView: InboxListViewReducer,
-  modalContainer: ModalContainerReducer,
-  popoverContainer: PopoverContainerReducer,
+  overlayContainer: OverlayContainerReducer,
   properties: PropertiesReducer,
   users: UsersReducer,
   facilities: FacilitiesReducer,

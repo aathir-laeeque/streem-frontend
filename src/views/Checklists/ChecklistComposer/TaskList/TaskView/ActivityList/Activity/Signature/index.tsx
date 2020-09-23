@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 
-import { openModalAction } from '#components/ModalContainer/actions';
-import { ModalNames } from '#components/ModalContainer/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { useDispatch } from 'react-redux';
 import MemoSignature from '#assets/svg/Signature';
 import { ActivityProps } from '../types';
@@ -35,8 +35,8 @@ const Signature: FC<ActivityProps> = ({ activity }) => {
   const openSignatureModal = () => {
     if (isChecklistEditable)
       dispatch(
-        openModalAction({
-          type: ModalNames.SIGNATURE_MODAL,
+        openOverlayAction({
+          type: OverlayNames.SIGNATURE_MODAL,
           props: {
             user: {
               id: '1235679849',

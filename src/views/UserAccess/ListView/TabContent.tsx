@@ -2,8 +2,8 @@ import React, { FC, useEffect } from 'react';
 import { ListViewComponent } from '#components';
 import WarningIcon from '@material-ui/icons/Warning';
 import { User, UserStatus, UsersState } from '#store/users/types';
-import { openModalAction } from '#components/ModalContainer/actions';
-import { ModalNames } from '#components/ModalContainer/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { capitalize } from 'lodash';
 import { Properties } from '#store/properties/types';
 import {
@@ -69,8 +69,8 @@ const TabContent: FC<TabViewProps> = ({
 
   const onArchiveUser = (user: User) => {
     dispatch(
-      openModalAction({
-        type: ModalNames.CONFIRMATION_MODAL,
+      openOverlayAction({
+        type: OverlayNames.CONFIRMATION_MODAL,
         props: {
           title: 'Archiving a User',
           primaryText: 'Archive User',
@@ -99,8 +99,8 @@ const TabContent: FC<TabViewProps> = ({
 
   const onUnArchiveUser = (user: User) => {
     dispatch(
-      openModalAction({
-        type: ModalNames.CONFIRMATION_MODAL,
+      openOverlayAction({
+        type: OverlayNames.CONFIRMATION_MODAL,
         props: {
           title: 'Unarchiving a User',
           primaryText: 'Unarchive User',

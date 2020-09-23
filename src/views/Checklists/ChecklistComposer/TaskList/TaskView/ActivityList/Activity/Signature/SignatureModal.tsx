@@ -5,8 +5,8 @@ import SignatureCanvas from 'react-signature-canvas';
 import styled from 'styled-components';
 
 interface SignatureModalProps {
-  closeAllModals: () => void;
-  closeModal: () => void;
+  closeAllOverlays: () => void;
+  closeOverlay: () => void;
   user: { id: string; name: string };
   onAcceptSignature: (imageData: string) => void;
 }
@@ -64,8 +64,8 @@ const Wrapper = styled.div.attrs({})`
 `;
 
 export const SignatureModal: FC<SignatureModalProps> = ({
-  closeAllModals,
-  closeModal,
+  closeAllOverlays,
+  closeOverlay,
   user,
   onAcceptSignature,
 }) => {
@@ -85,14 +85,14 @@ export const SignatureModal: FC<SignatureModalProps> = ({
   const onSuccess = () => {
     const canvas = canvasRef.current.getCanvas();
     onAcceptSignature(canvas.toDataURL());
-    closeModal();
+    closeOverlay();
   };
 
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
-        closeModal={closeModal}
+        closeAllModals={closeAllOverlays}
+        closeModal={closeOverlay}
         showHeader={false}
         showFooter={false}
         isRound={false}
@@ -107,7 +107,7 @@ export const SignatureModal: FC<SignatureModalProps> = ({
           </div>
           <Close
             style={{ cursor: `pointer`, fontSize: 20, alignSelf: 'flex-start' }}
-            onClick={closeModal}
+            onClick={closeOverlay}
           />
         </div>
         <div className="sign-modal-body">
@@ -121,7 +121,7 @@ export const SignatureModal: FC<SignatureModalProps> = ({
               border: '1px solid #eb5757',
               color: '#eb5757',
             }}
-            onClick={closeModal}
+            onClick={closeOverlay}
           >
             Cancel
           </FlatButton>

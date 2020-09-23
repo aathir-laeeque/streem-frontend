@@ -47,18 +47,22 @@ export const configureStore = (initialState: {
     (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
       ? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
           actionSanitizer: (action: any) =>
-            action.type === '@@popover/Container/OPEN_POPOVER'
+            action.type === '@@overlay/Container/OPEN_OVERLAY'
               ? {
                   ...action,
                   payload: { ...action.payload, popOverAnchorEl: '<<EVENT>>' },
                 }
               : action,
           stateSanitizer: (state: any) =>
-            state.popoverContainer
+            state.overlayContainer
               ? {
                   ...state,
-                  popoverContainer:
-                    state.popoverContainer.currentPopovers.length || 0,
+                  overlayContainer: state.overlayContainer.currentOverlays.map(
+                    (overlay: any) => ({
+                      ...overlay,
+                      popOverAnchorEl: '<<EVENT>>',
+                    }),
+                  ),
                 }
               : state,
         })

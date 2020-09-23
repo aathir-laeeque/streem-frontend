@@ -1,5 +1,6 @@
 import { BaseModal } from '#components';
-import { Task } from '#Composer/cehcklist.types';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
+import { Task } from '#Composer/checklist.types';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -16,17 +17,9 @@ const Wrapper = styled.div`
   }
 `;
 
-type CompleteTaskWithExceptionModalProps = {
-  closeAllModals: () => void;
-  closeModal: () => void;
+const CompleteTaskWithExceptionModal: FC<CommonOverlayProps<{
   taskId: Task['id'];
-};
-
-const CompleteTaskWithExceptionModal: FC<CompleteTaskWithExceptionModalProps> = ({
-  closeAllModals,
-  closeModal,
-  taskId,
-}) => {
+}>> = ({ closeAllOverlays, closeOverlay, props: { taskId } }) => {
   const dispatch = useDispatch();
 
   const [exceptionReason, setExceptionReason] = useState('');
@@ -34,13 +27,13 @@ const CompleteTaskWithExceptionModal: FC<CompleteTaskWithExceptionModalProps> = 
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
-        closeModal={closeModal}
+        closeAllModals={closeAllOverlays}
+        closeModal={closeOverlay}
         onPrimary={() => {
           dispatch(completeTask(taskId, exceptionReason, true));
-          closeModal();
+          closeOverlay();
         }}
-        onSecondary={() => closeModal()}
+        onSecondary={() => closeOverlay()}
         primaryText="Submit"
         secondaryText="Cancel"
         title="Complete with Exception"

@@ -1,4 +1,5 @@
 import { BaseModal } from '#components';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
@@ -25,23 +26,17 @@ const Wrapper = styled.div`
   }
 `;
 
-type MediaDetailModalProps = {
-  closeAllModals: () => void;
-  closeModal: () => void;
-  mediaDetails: any;
-};
-
-const MediaDetailModal: FC<MediaDetailModalProps> = ({
-  closeAllModals,
-  closeModal,
-  mediaDetails,
+const MediaDetailModal: FC<CommonOverlayProps<{ mediaDetails: any }>> = ({
+  closeAllOverlays,
+  closeOverlay,
+  props: { mediaDetails },
 }) => {
   console.log('mediaDetailss :: ', mediaDetails);
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
-        closeModal={closeModal}
+        closeAllModals={closeAllOverlays}
+        closeModal={closeOverlay}
         showHeader={false}
         showFooter={false}
       >

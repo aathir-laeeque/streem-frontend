@@ -2,8 +2,8 @@ import React, { MouseEvent } from 'react';
 
 import { People } from '@material-ui/icons';
 
-import { openPopoverAction } from '#components/PopoverContainer/actions';
-import { PopoverNames } from '#components/PopoverContainer/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { useDispatch } from 'react-redux';
 
 export default function TaskAssignmentContent({ taskId }: { taskId: number }) {
@@ -11,8 +11,8 @@ export default function TaskAssignmentContent({ taskId }: { taskId: number }) {
 
   const handlePopoverOpen = (event: MouseEvent) => {
     dispatch(
-      openPopoverAction({
-        type: PopoverNames.TASK_USER_ASSIGNMENT,
+      openOverlayAction({
+        type: OverlayNames.TASK_USER_ASSIGNMENT,
         popOverAnchorEl: event.currentTarget,
         props: {
           taskId: taskId,

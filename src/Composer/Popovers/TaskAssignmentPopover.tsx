@@ -1,18 +1,16 @@
 import React, { FC } from 'react';
 import { Popover, Zoom } from '@material-ui/core';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import TaskUserAssignment from '#Composer/modals/TaskUserAssignment';
 
-export interface TaskAssignmentPopoverProps {
-  closePopover: () => void;
-  popOverAnchorEl: Element | ((element: Element) => Element);
-  handlePopoverClose: () => void;
+export const TaskAssignmentPopover: FC<CommonOverlayProps<{
   taskId: number;
-}
-
-export const TaskAssignmentPopover: FC<TaskAssignmentPopoverProps> = ({
-  closePopover,
+}>> = ({
+  closeOverlay,
+  closeAllOverlays,
   popOverAnchorEl,
-  taskId,
+  type,
+  props: { taskId },
 }) => {
   return (
     <Popover
@@ -30,7 +28,13 @@ export const TaskAssignmentPopover: FC<TaskAssignmentPopoverProps> = ({
         horizontal: 'right',
       }}
     >
-      <TaskUserAssignment taskId={taskId} closeModal={closePopover} />
+      <TaskUserAssignment
+        props={{ taskId }}
+        closeAllOverlays={closeAllOverlays}
+        closeOverlay={closeOverlay}
+        type={type}
+        key="TaskUserAssginementPopOver"
+      />
     </Popover>
   );
 };

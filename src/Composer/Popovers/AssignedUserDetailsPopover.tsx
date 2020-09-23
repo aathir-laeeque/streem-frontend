@@ -1,9 +1,13 @@
 import React, { FC } from 'react';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Users } from '#store/users/types';
 import { Popover } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
+  popover: {
+    pointerEvents: 'none',
+  },
   paper: {
     marginTop: '5px',
     overflow: 'visible',
@@ -41,18 +45,9 @@ const useStyles = makeStyles({
   },
 });
 
-export interface AssignedUserDetailsPopoverProps {
-  closePopover: () => void;
-  popOverAnchorEl: Element | ((element: Element) => Element);
-  handlePopoverClose: () => void;
+export const AssignedUserDetailsPopover: FC<CommonOverlayProps<{
   users: Users;
-}
-
-export const AssignedUserDetailsPopover: FC<AssignedUserDetailsPopoverProps> = ({
-  closePopover,
-  popOverAnchorEl,
-  users,
-}) => {
+}>> = ({ closeOverlay, popOverAnchorEl, props: { users } }) => {
   const classes = useStyles();
 
   return (
@@ -60,7 +55,7 @@ export const AssignedUserDetailsPopover: FC<AssignedUserDetailsPopoverProps> = (
       id={`assignedUserDetailsPopOver`}
       open={!!popOverAnchorEl}
       anchorEl={popOverAnchorEl}
-      onClose={closePopover}
+      onClose={closeOverlay}
       anchorOrigin={{
         vertical: 'bottom',
         horizontal: 'center',
@@ -69,6 +64,7 @@ export const AssignedUserDetailsPopover: FC<AssignedUserDetailsPopoverProps> = (
         vertical: 'top',
         horizontal: 'center',
       }}
+      className={classes.popover}
       classes={{
         paper: classes.paper,
       }}

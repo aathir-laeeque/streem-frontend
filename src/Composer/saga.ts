@@ -1,6 +1,9 @@
 import { RootState } from '#store';
-import { openModalAction } from '#components/ModalContainer/actions';
-import { ModalNames } from '#components/ModalContainer/types';
+import {
+  openOverlayAction,
+  closeOverlayAction,
+} from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   apiCompleteJob,
   apiGetChecklist,
@@ -36,8 +39,6 @@ import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
 import { Entity } from './composer.types';
 import { groupJobErrors } from './utils';
-import { closeModalAction } from '../components/ModalContainer/actions';
-import { ModalNames } from '../components/ModalContainer/types';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   try {
@@ -76,7 +77,7 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
 
     if (data) {
       yield put(startJobSuccess());
-      yield put(closeModalAction(ModalNames.START_JOB_MODAL));
+      yield put(closeOverlayAction(OverlayNames.START_JOB_MODAL));
     } else {
       console.error('handle errors on start job :: ', errors);
     }
@@ -182,8 +183,8 @@ function* assignUsersToJobSaga({
 
     yield put(assignUsersToJobSuccess({ unassignIds }));
     yield put(
-      openModalAction({
-        type: ModalNames.ASSIGNMENT_SUCCESS,
+      openOverlayAction({
+        type: OverlayNames.ASSIGNMENT_SUCCESS,
         props: { notify },
       }),
     );

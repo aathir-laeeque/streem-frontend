@@ -1,5 +1,6 @@
 import { BaseModal } from '#components';
 import React, { FC } from 'react';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
@@ -89,24 +90,16 @@ const Wrapper = styled.div`
   }
 `;
 
-type StartJobModalProps = {
-  closeAllModals: () => void;
-  closeModal: () => void;
+const StartJobModal: FC<CommonOverlayProps<{
   jobId: Job['id'];
-};
-
-const StartJobModal: FC<StartJobModalProps> = ({
-  closeAllModals,
-  closeModal,
-  jobId,
-}) => {
+}>> = ({ closeAllOverlays, closeOverlay, props: { jobId } }) => {
   const dispatch = useDispatch();
 
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
-        closeModal={closeModal}
+        closeAllModals={closeAllOverlays}
+        closeModal={closeOverlay}
         showHeader={false}
         showFooter={false}
       >
@@ -118,7 +111,7 @@ const StartJobModal: FC<StartJobModalProps> = ({
               <span>Are you sure you want to Start Job?</span>
 
               <div className="buttons-container">
-                <button onClick={() => closeModal()}>Cancel</button>
+                <button onClick={() => closeOverlay()}>Cancel</button>
                 <button onClick={() => dispatch(startJob(jobId))}>
                   Confirm
                 </button>

@@ -1,6 +1,6 @@
 import { Button } from '#components';
-import { openModalAction } from '#components/ModalContainer/actions';
-import { ModalNames } from '#components/ModalContainer/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
 import { Menu, MenuItem } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
@@ -37,8 +37,8 @@ const JobHeaderButtons: FC = () => {
       <Button
         onClick={() => {
           dispatch(
-            openModalAction({
-              type: ModalNames.TASK_USER_ASSIGNMENT,
+            openOverlayAction({
+              type: OverlayNames.TASK_USERS_ASSIGNMENT,
               props: {
                 jobId,
                 forAll: true,
@@ -54,8 +54,8 @@ const JobHeaderButtons: FC = () => {
         <Button
           onClick={() =>
             dispatch(
-              openModalAction({
-                type: ModalNames.START_JOB_MODAL,
+              openOverlayAction({
+                type: OverlayNames.START_JOB_MODAL,
                 props: { jobId },
               }),
             )
@@ -84,8 +84,8 @@ const JobHeaderButtons: FC = () => {
             <MenuItem
               onClick={() => {
                 dispatch(
-                  openModalAction({
-                    type: ModalNames.COMPLETE_JOB_WITH_EXCEPTION,
+                  openOverlayAction({
+                    type: OverlayNames.COMPLETE_JOB_WITH_EXCEPTION,
                   }),
                 );
                 handleClose();

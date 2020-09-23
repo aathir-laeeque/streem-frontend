@@ -1,6 +1,6 @@
 import MemoSignature from '#assets/svg/Signature';
-import { openModalAction } from '#components/ModalContainer/actions';
-import { ModalNames } from '#components/ModalContainer/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { dataUriToBlob } from '#utils/dataUriToBlob';
 import { ComposerState } from '#views/Checklists/NewComposer/composer.types';
@@ -33,8 +33,8 @@ const Signature: FC<ActivityProps> = ({ activity }) => {
   const openSignatureModal = () => {
     if (isChecklistEditable)
       dispatch(
-        openModalAction({
-          type: ModalNames.SIGNATURE_MODAL,
+        openOverlayAction({
+          type: OverlayNames.SIGNATURE_MODAL,
           props: {
             user: {
               id: profile?.employeeId,

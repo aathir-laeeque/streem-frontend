@@ -1,4 +1,5 @@
 import { BaseModal } from '#components';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Task } from '#Composer/checklist.types';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -16,16 +17,10 @@ const Wrapper = styled.div`
   }
 `;
 
-type ErrorCorrectionModalProps = {
-  closeAllModals: () => void;
-  closeModal: () => void;
-  taskId: Task['id'];
-};
-
-const ErrorCorrectionModal: FC<ErrorCorrectionModalProps> = ({
-  closeAllModals,
-  closeModal,
-  taskId,
+const ErrorCorrectionModal: FC<CommonOverlayProps<{ taskId: Task['id'] }>> = ({
+  closeAllOverlays,
+  closeOverlay,
+  props: { taskId },
 }) => {
   const dispatch = useDispatch();
 
@@ -34,13 +29,13 @@ const ErrorCorrectionModal: FC<ErrorCorrectionModalProps> = ({
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
-        closeModal={closeModal}
+        closeAllModals={closeAllOverlays}
+        closeModal={closeOverlay}
         onPrimary={() => {
           dispatch(enableErrorCorrection(taskId, correctionReason));
-          closeModal();
+          closeOverlay();
         }}
-        onSecondary={() => closeModal()}
+        onSecondary={() => closeOverlay()}
         primaryText="Submit"
         secondaryText="Cancel"
         title="Error Correction"

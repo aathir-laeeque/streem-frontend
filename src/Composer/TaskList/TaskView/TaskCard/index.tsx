@@ -94,7 +94,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           task={task}
           showStartButton={showStartButton}
           isTaskStarted={isTaskStarted}
-          isTaskDelayed={isTaskDelayed}
+          isTaskDelayed={!!isTaskDelayed}
           enableStopForTask={enableStopForTask}
         />
 

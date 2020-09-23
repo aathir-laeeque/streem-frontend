@@ -3,8 +3,8 @@ import styled, { css } from 'styled-components';
 
 import { MediaCardProps } from '../types';
 import { useDispatch } from 'react-redux';
-import { openModalAction } from '../../../components/ModalContainer/actions';
-import { ModalNames } from '../../../components/ModalContainer/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-media-card',
@@ -101,8 +101,8 @@ const MediaCard: FC<MediaCardProps> = ({ medias, isTaskActive }) => {
               className="active-media"
               onClick={() =>
                 dispatch(
-                  openModalAction({
-                    type: ModalNames.MEDIA_DETAIL,
+                  openOverlayAction({
+                    type: OverlayNames.MEDIA_DETAIL,
                     props: { mediaDetails: activeMedia },
                   }),
                 )

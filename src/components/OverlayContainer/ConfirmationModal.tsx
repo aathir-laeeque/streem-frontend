@@ -1,10 +1,9 @@
 import { BaseModal } from '#components';
 import React, { FC } from 'react';
 import styled from 'styled-components';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 
 export interface ConfirmationModalProps {
-  closeAllModals: () => void;
-  closeModal: () => void;
   onPrimary: () => void;
   primaryText?: string;
   secondaryText?: string;
@@ -15,7 +14,6 @@ export interface ConfirmationModalProps {
 const Wrapper = styled.div.attrs({})`
   .modal {
     min-width: 360px !important;
-    // border-radius: 8px !important;
 
     .modal-header {
       border-bottom: 1px solid #dadada !important;
@@ -36,27 +34,31 @@ const Wrapper = styled.div.attrs({})`
   }
 `;
 
-export const ConfirmationModal: FC<ConfirmationModalProps> = ({
-  closeAllModals,
-  closeModal,
-  onPrimary,
-  primaryText = 'Ok',
-  secondaryText = 'Cancel',
-  title,
-  body,
+export const ConfirmationModal: FC<CommonOverlayProps<
+  ConfirmationModalProps
+>> = ({
+  closeAllOverlays,
+  closeOverlay,
+  props: {
+    onPrimary,
+    primaryText = 'Ok',
+    secondaryText = 'Cancel',
+    title,
+    body,
+  },
 }) => {
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
-        closeModal={closeModal}
-        onSecondary={closeModal}
+        closeAllModals={closeAllOverlays}
+        closeModal={closeOverlay}
+        onSecondary={closeOverlay}
         title={title}
         primaryText={primaryText}
         secondaryText={secondaryText}
         onPrimary={() => {
           onPrimary();
-          closeModal();
+          closeOverlay();
         }}
       >
         {body && body}

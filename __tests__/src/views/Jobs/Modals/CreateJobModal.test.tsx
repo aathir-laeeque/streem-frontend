@@ -9,8 +9,8 @@ import { create, ReactTestRenderer } from 'react-test-renderer';
 let snapshot: ReactTestRenderer;
 
 const props: CreateJobModalProps = {
-  closeAllModals: jest.fn(),
-  closeModal: jest.fn(),
+  closeAllOverlays: jest.fn(),
+  closeOverlay: jest.fn(),
   selectedChecklist: {
     code: '123',
     id: 1,

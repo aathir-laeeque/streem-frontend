@@ -1,5 +1,6 @@
 import { BaseModal } from '#components';
 import { Task } from '#Composer/checklist.types';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -16,17 +17,9 @@ const Wrapper = styled.div`
   }
 `;
 
-type SkipTaskModalProps = {
-  closeAllModals: () => void;
-  closeModal: () => void;
+const SkipTaskModal: FC<CommonOverlayProps<{
   taskId: Task['id'];
-};
-
-const SkipTaskModal: FC<SkipTaskModalProps> = ({
-  closeAllModals,
-  closeModal,
-  taskId,
-}) => {
+}>> = ({ closeAllOverlays, closeOverlay, props: { taskId } }) => {
   const dispatch = useDispatch();
 
   const [skipReason, setSkipReason] = useState('');
@@ -34,10 +27,10 @@ const SkipTaskModal: FC<SkipTaskModalProps> = ({
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
-        closeModal={closeModal}
+        closeAllModals={closeAllOverlays}
+        closeModal={closeOverlay}
         onPrimary={() => dispatch(skipTask(taskId, skipReason))}
-        onSecondary={() => closeModal()}
+        onSecondary={() => closeOverlay()}
         primaryText="Submit"
         secondaryText="Cancel"
         title="Skip Task"

@@ -4,8 +4,8 @@ import { ImageOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { openModalAction } from '../../../components/ModalContainer/actions';
-import { ModalNames } from '../../../components/ModalContainer/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { ActivityProps } from '../types';
 import { Wrapper } from './styles';
 
@@ -26,8 +26,8 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
                   className="list-item-image"
                   onClick={() =>
                     dispatch(
-                      openModalAction({
-                        type: ModalNames.MEDIA_DETAIL,
+                      openOverlayAction({
+                        type: OverlayNames.MEDIA_DETAIL,
                         props: { mediaDetails: el },
                       }),
                     )

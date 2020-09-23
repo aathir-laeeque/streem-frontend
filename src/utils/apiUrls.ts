@@ -53,13 +53,13 @@ export const apiCompleteTask = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}`;
 
 export const apiEnableTaskErrorCorrection = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/enable-correction`;
+  `${baseUrl}/tasks/${taskId}/correction/start`;
 
 export const apiCompleteTaskErrorCorrection = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/error-correction`;
+  `${baseUrl}/tasks/${taskId}/correction/complete`;
 
 export const apiCancelTaskErrorCorrection = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/cancel-correction`;
+  `${baseUrl}/tasks/${taskId}/correction/cancel`;
 
 // Signature / File
 export const apiUploadFile = () => `${baseUrl}/files/`;
@@ -84,7 +84,7 @@ export const apiArchiveUser = (id: number | string) =>
   `${baseUrl}/users/${id}/archive`;
 
 export const apiUnArchiveUser = (id: number | string) =>
-  `${baseUrl}/users/${id}/restore`;
+  `${baseUrl}/users/${id}/unarchive`;
 
 export const apiRegister = () => `${baseUrl}/auth/register`;
 

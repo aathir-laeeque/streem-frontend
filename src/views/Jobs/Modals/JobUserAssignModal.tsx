@@ -1,5 +1,6 @@
 import { BaseModal, Checkbox } from '#components';
 import { useTypedSelector } from '#store';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { fetchUsers } from '#store/users/actions';
 import { User, Users } from '#store/users/types';
 import { getInitials } from '#utils/stringUtils';
@@ -13,8 +14,6 @@ import { assignUser, unAssignUser } from '../ListView/actions';
 import { ListViewState } from '../ListView/types';
 
 export interface JobUserAssignModalProps {
-  closeAllModals: () => void;
-  closeModal: () => void;
   selectedJobIndex: number;
   refreshData: () => void;
 }
@@ -111,11 +110,12 @@ const Wrapper = styled.div.attrs({})`
   }
 `;
 
-export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
-  closeAllModals,
-  closeModal,
-  selectedJobIndex,
-  refreshData,
+export const JobUserAssignModal: FC<CommonOverlayProps<
+  JobUserAssignModalProps
+>> = ({
+  closeAllOverlays,
+  closeOverlay,
+  props: { selectedJobIndex, refreshData },
 }) => {
   const { list, pageable } = useTypedSelector(
     (state) => state.users.users.active,
@@ -226,21 +226,21 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
+        closeAllModals={closeAllOverlays}
         closeModal={() => {
           refreshData();
-          closeModal();
+          closeOverlay();
         }}
         title="Assigning a Job"
         primaryText="Notify"
         secondaryText="Continue Without Notifying"
         onSecondary={() => {
           refreshData();
-          closeModal();
+          closeOverlay();
         }}
         onPrimary={() => {
           refreshData();
-          closeModal();
+          closeOverlay();
         }}
         showPrimary={showButtons}
         showSecondary={showButtons}
@@ -254,7 +254,7 @@ export const JobUserAssignModal: FC<JobUserAssignModalProps> = ({
             }}
             onClick={() => {
               refreshData();
-              closeModal();
+              closeOverlay();
             }}
           >
             Go Back

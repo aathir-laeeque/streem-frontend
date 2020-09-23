@@ -1,12 +1,11 @@
 import { Button, FlatButton, BaseModal } from '#components';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import React, { FC, useRef, useEffect } from 'react';
 import { Close } from '@material-ui/icons';
 import SignatureCanvas from 'react-signature-canvas';
 import styled from 'styled-components';
 
 interface SignatureModalProps {
-  closeAllModals: () => void;
-  closeModal: () => void;
   user: { id: string; name: string };
   onAcceptSignature: (imageData: string) => void;
 }
@@ -63,11 +62,10 @@ const Wrapper = styled.div.attrs({})`
   }
 `;
 
-const SignatureModal: FC<SignatureModalProps> = ({
-  closeAllModals,
-  closeModal,
-  user,
-  onAcceptSignature,
+const SignatureModal: FC<CommonOverlayProps<SignatureModalProps>> = ({
+  closeAllOverlays,
+  closeOverlay,
+  props: { user, onAcceptSignature },
 }) => {
   const canvasRef = useRef<any | null>(null);
 
@@ -85,14 +83,14 @@ const SignatureModal: FC<SignatureModalProps> = ({
   const onSuccess = () => {
     const canvas = canvasRef.current.getCanvas();
     onAcceptSignature(canvas.toDataURL());
-    closeModal();
+    closeOverlay();
   };
 
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllModals}
-        closeModal={closeModal}
+        closeAllModals={closeAllOverlays}
+        closeModal={closeOverlay}
         showHeader={false}
         showFooter={false}
         isRound={false}
@@ -107,7 +105,7 @@ const SignatureModal: FC<SignatureModalProps> = ({
           </div>
           <Close
             style={{ cursor: `pointer`, fontSize: 20, alignSelf: 'flex-start' }}
-            onClick={closeModal}
+            onClick={closeOverlay}
           />
         </div>
         <div className="sign-modal-body">
@@ -121,7 +119,7 @@ const SignatureModal: FC<SignatureModalProps> = ({
               border: '1px solid #eb5757',
               color: '#eb5757',
             }}
-            onClick={closeModal}
+            onClick={closeOverlay}
           >
             Cancel
           </FlatButton>

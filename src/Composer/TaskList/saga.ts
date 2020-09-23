@@ -1,5 +1,7 @@
-import { openModalAction } from '#components/ModalContainer/actions';
-import { ModalNames } from '#components/ModalContainer/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
 import {
   apiAssignUsersToTask,
@@ -95,8 +97,8 @@ function* performActionOnTaskSaga({
     } else {
       console.log('open modal to start the job');
       yield put(
-        openModalAction({
-          type: ModalNames.START_JOB_MODAL,
+        openOverlayAction({
+          type: OverlayNames.START_JOB_MODAL,
           props: {},
         }),
       );
@@ -218,8 +220,8 @@ function* assignUsersToTaskSaga({
     }
 
     yield put(
-      openModalAction({
-        type: ModalNames.ASSIGNMENT_SUCCESS,
+      openOverlayAction({
+        type: OverlayNames.ASSIGNMENT_SUCCESS,
         props: { notify },
       }),
     );

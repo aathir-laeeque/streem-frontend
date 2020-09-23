@@ -1,5 +1,5 @@
-import { openModalAction } from '#components/ModalContainer/actions';
-import { ModalNames } from '#components/ModalContainer/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { Task, TaskExecutionStatus } from '#Composer/checklist.types';
 import { formatDateTime } from '#utils/timeUtils';
 import { ArrowRightAlt, CheckCircle, Error } from '@material-ui/icons';
@@ -302,15 +302,15 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
             onClick={() => {
               if (canSkipTask) {
                 dispatch(
-                  openModalAction({
-                    type: ModalNames.SKIP_TASK_MODAL,
+                  openOverlayAction({
+                    type: OverlayNames.SKIP_TASK_MODAL,
                     props: { taskId: task.id },
                   }),
                 );
               } else {
                 dispatch(
-                  openModalAction({
-                    type: ModalNames.COMPLETE_TASK_WITH_EXCEPTION,
+                  openOverlayAction({
+                    type: OverlayNames.COMPLETE_TASK_WITH_EXCEPTION,
                     props: { taskId: task.id },
                   }),
                 );
