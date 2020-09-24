@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import { ListViewComponent } from '#components';
 import WarningIcon from '@material-ui/icons/Warning';
-import { User, UserStatus, UsersState } from '#store/users/types';
+import { User, UserStatus, UsersState, ParsedUser } from '#store/users/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { capitalize } from 'lodash';
@@ -132,36 +132,33 @@ const TabContent: FC<TabViewProps> = ({
   } else if (users[selectedStatus].list.length === 0) {
     return <div />;
   }
-  const parsedUsers = [];
-  (users[selectedStatus].list as Array<User>).forEach((item) => {
+
+  const parsedUsers = (users[selectedStatus].list as Array<User>).reduce<
+    ParsedUser[]
+  >((result, item) => {
     if (item.id !== 0) {
-      let role = { ROLE: '-N/A-' };
-      if (item.roles && item.roles[0])
-        role = {
-          ROLE: capitalize(item.roles[0].name.replace('_', ' ')) || '-N/A-',
-        };
-      parsedUsers.push({
+      result.push({
         ...item,
         properties: {
           'EMAIL ID': item.email,
-          ...role,
-          // 'LAST ACTIVE': '12 May 2020',
+          ROLE: item.roles ? item.roles.join() : '-N/A-',
         },
       });
     }
-  });
+    return result;
+  }, []);
 
-  const properties: Properties = [];
-
-  Object.keys(parsedUsers[0].properties).forEach((pro, index) => {
-    properties.push({
-      id: index,
-      name: pro,
-      placeHolder: pro,
-      orderTree: index,
-      mandatory: true,
-    });
-  });
+  const properties: Properties = Object.keys(parsedUsers[0].properties).map(
+    (pro, index) => {
+      return {
+        id: index,
+        name: pro,
+        placeHolder: pro,
+        orderTree: index,
+        mandatory: true,
+      };
+    },
+  );
 
   return (
     <Composer>

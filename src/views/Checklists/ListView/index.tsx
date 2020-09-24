@@ -1,7 +1,7 @@
 import { ListViewComponent } from '#components';
 import { useTypedSelector } from '#store';
 import { fetchProperties } from '#store/properties/actions';
-import { Settings, FullscreenExitRounded } from '@material-ui/icons';
+import { Settings } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -63,70 +63,68 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
     }
   };
 
-  if (loading) {
+  if (loading || !checklist || !checklists || !job || !pageable) {
     return <div>Loading...</div>;
-  } else if (checklists && job && checklist && pageable) {
-    return (
-      <Composer>
-        <ListViewComponent
-          properties={checklist}
-          fetchData={fetchData}
-          isLast={pageable.last}
-          currentPage={pageable.page}
-          data={checklists}
-          primaryButtonText="Create Checklist"
-          beforeColumns={[
-            {
-              header: 'NAME',
-              template: function renderComp(item: Checklist) {
-                return (
-                  <div className="list-card-columns" key={`name_${item.code}`}>
-                    <div className="title-group">
-                      <span className="list-code">{item.code}</span>
-                      <div
+  }
+
+  return (
+    <Composer>
+      <ListViewComponent
+        properties={checklist}
+        fetchData={fetchData}
+        isLast={pageable.last}
+        currentPage={pageable.page}
+        data={checklists}
+        primaryButtonText="Create Checklist"
+        beforeColumns={[
+          {
+            header: 'NAME',
+            template: function renderComp(item: Checklist) {
+              return (
+                <div className="list-card-columns" key={`name_${item.code}`}>
+                  <div className="title-group">
+                    <span className="list-code">{item.code}</span>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Settings
                         style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          alignItems: 'center',
+                          fontSize: '20px',
+                          color: '#1d84ff',
+                          width: '36px',
+                          cursor: 'pointer',
                         }}
+                        onClick={() => {
+                          setSelectedChecklist(item);
+                          openNav();
+                        }}
+                      />
+                      <span
+                        className="list-title"
+                        onClick={() => selectChecklist(item.id)}
                       >
-                        <Settings
-                          style={{
-                            fontSize: '20px',
-                            color: '#1d84ff',
-                            width: '36px',
-                            cursor: 'pointer',
-                          }}
-                          onClick={() => {
-                            setSelectedChecklist(item);
-                            openNav();
-                          }}
-                        />
-                        <span
-                          className="list-title"
-                          onClick={() => selectChecklist(item.id)}
-                        >
-                          {item.name}
-                        </span>
-                      </div>
+                        {item.name}
+                      </span>
                     </div>
                   </div>
-                );
-              },
+                </div>
+              );
             },
-          ]}
-        />
-        <SideBar
-          sideBarOpen={sideBarOpen}
-          selectedChecklist={selectedChecklist}
-          closeNav={closeNav}
-          properties={job}
-        />
-      </Composer>
-    );
-  } else {
-    return null;
-  }
+          },
+        ]}
+      />
+      <SideBar
+        sideBarOpen={sideBarOpen}
+        selectedChecklist={selectedChecklist}
+        closeNav={closeNav}
+        properties={job}
+      />
+    </Composer>
+  );
 };
 
 export default ListView;

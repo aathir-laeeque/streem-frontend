@@ -36,6 +36,10 @@ export interface User {
   };
 }
 
+export interface ParsedUser extends User {
+  properties: Record<string, string>;
+}
+
 export type Users = User[];
 
 export type UsersGroup = Record<

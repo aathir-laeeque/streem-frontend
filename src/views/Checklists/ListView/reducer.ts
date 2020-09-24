@@ -2,7 +2,7 @@ import { ListViewAction, ListViewActionType, ListViewState } from './types';
 
 const initialState: ListViewState = {
   checklists: undefined,
-  loading: true,
+  loading: false,
   error: undefined,
   pageable: {
     page: 0,

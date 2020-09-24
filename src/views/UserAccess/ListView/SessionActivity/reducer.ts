@@ -6,7 +6,7 @@ import {
 
 const initialState: SessionActivityState = {
   logs: undefined,
-  loading: true,
+  loading: false,
   error: undefined,
   pageable: {
     page: 0,

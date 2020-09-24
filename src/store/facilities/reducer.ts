@@ -6,7 +6,7 @@ import {
 
 const initialState: FacilitiesState = {
   list: undefined,
-  loading: true,
+  loading: false,
   error: undefined,
 };
 
