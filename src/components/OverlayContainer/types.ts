@@ -24,7 +24,7 @@ export enum OverlayNames {
 
 export interface CommonOverlayProps<T> {
   type: string;
-  props: T;
+  props?: T;
   key: string;
   closeOverlay: () => void;
   closeAllOverlays: () => void;
@@ -32,8 +32,8 @@ export interface CommonOverlayProps<T> {
 }
 
 export interface Overlay {
-  type: string;
-  props: Record<string, any>;
+  type: OverlayNames;
+  props?: Record<string, any>;
   popOverAnchorEl?: Element | ((element: Element) => Element);
 }
 
@@ -50,7 +50,7 @@ export enum OverlayContainerAction {
 }
 
 export interface OverlayContainerState {
-  readonly currentOverlays: { type: string; props: Record<string, any> }[];
+  readonly currentOverlays: Overlay[];
 }
 
 export type OverlayContainerActionType = ReturnType<
