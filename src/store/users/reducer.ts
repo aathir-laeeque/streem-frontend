@@ -1,4 +1,5 @@
 import { UsersAction, UsersActionType, UsersState, UserStatus } from './types';
+import { initialTabState } from '#components/shared/useTabs';
 
 const initialState: UsersState = {
   users: {
