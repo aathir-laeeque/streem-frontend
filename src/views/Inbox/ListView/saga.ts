@@ -1,4 +1,4 @@
-import { apiGetJobs } from '#utils/apiUrls';
+import { apiGetInbox } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { Job } from '#views/Jobs/types';
@@ -23,7 +23,7 @@ function* fetchInboxSaga({ payload }: ReturnType<typeof fetchInbox>) {
     const { data, pageable, errors }: ResponseObj<Job> = yield call(
       request,
       'GET',
-      apiGetJobs(),
+      apiGetInbox(),
       { params },
     );
     if (errors) {
