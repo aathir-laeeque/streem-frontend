@@ -16,9 +16,9 @@ export interface Property {
 export type Properties = Property[];
 
 export interface PropertiesState {
-  readonly job: Properties | undefined;
-  readonly checklist: Properties | undefined;
-  readonly error: any;
+  readonly job: Properties;
+  readonly checklist: Properties;
+  readonly error?: any;
 }
 
 export enum PropertiesAction {

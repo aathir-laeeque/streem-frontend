@@ -2,10 +2,10 @@ import { Properties } from '#store/properties/types';
 import { ArrowDropDown, Search } from '@material-ui/icons';
 import NestedMenuItem from '#components/shared/NestedMenuItem';
 import Menu from '@material-ui/core/Menu';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
 import { Checklist } from '#views/Checklists/types';
-import { Users } from '#store/users/types';
+import { User } from '#store/users/types';
 import { Job } from '#views/Jobs/types';
 import styled from 'styled-components';
 import { Button, FlatButton } from './Button';
@@ -29,7 +29,7 @@ interface ListViewProps {
   data:
     | Checklist[]
     | Job[]
-    | Users
+    | User[]
     | Record<string, string | SessionActivity[]>[];
   fetchData: (page: number, size: number) => void;
   isLast: boolean;

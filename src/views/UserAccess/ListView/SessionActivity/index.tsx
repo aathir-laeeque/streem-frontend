@@ -44,11 +44,7 @@ const initialState: initialState = {
 };
 
 const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
-  const {
-    logs,
-    loading,
-    pageable,
-  }: Partial<SessionActivityState> = useTypedSelector(
+  const { logs, loading, pageable }: SessionActivityState = useTypedSelector(
     (state) => state.sessionActivity,
   );
 

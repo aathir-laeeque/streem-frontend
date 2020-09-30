@@ -5,9 +5,8 @@ import {
 } from './types';
 
 const initialState: PropertiesState = {
-  job: undefined,
-  checklist: undefined,
-  error: undefined,
+  job: [],
+  checklist: [],
 };
 
 const reducer = (

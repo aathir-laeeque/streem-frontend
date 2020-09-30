@@ -1,9 +1,10 @@
+import { Pageable } from '#utils/globalTypes';
+import { Checklist } from '../types';
 import { ListViewAction, ListViewActionType, ListViewState } from './types';
 
 const initialState: ListViewState = {
-  checklists: undefined,
-  loading: true,
-  error: undefined,
+  checklists: [],
+  loading: false,
   pageable: {
     page: 0,
     pageSize: 10,
@@ -25,11 +26,12 @@ const reducer = (
       return { ...state, loading: true };
 
     case ListViewAction.FETCH_CHECKLISTS_SUCCESS:
+      const { data, pageable } = action.payload;
       return {
         ...state,
         loading: false,
-        checklists: action.payload?.data,
-        pageable: action.payload?.pageable,
+        pageable: pageable as Pageable,
+        checklists: [...state.checklists, ...(data as Array<Checklist>)],
       };
 
     case ListViewAction.FETCH_CHECKLISTS_ERROR:

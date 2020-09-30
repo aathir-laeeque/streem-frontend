@@ -1,3 +1,5 @@
+import { Pageable } from '#utils/globalTypes';
+import { Job } from '../types';
 import {
   JobStatus,
   ListViewAction,
@@ -5,50 +7,28 @@ import {
   ListViewState,
 } from './types';
 
+const initialTabState = {
+  list: [],
+  pageable: {
+    page: 0,
+    pageSize: 10,
+    numberOfElements: 0,
+    totalPages: 0,
+    totalElements: 0,
+    first: true,
+    last: true,
+    empty: true,
+  },
+};
+
 const initialState: ListViewState = {
-  loading: true,
+  loading: false,
   error: undefined,
   selectedStatus: JobStatus.UNASSIGNED,
   jobs: {
-    assigned: {
-      list: [],
-      pageable: {
-        page: 0,
-        pageSize: 10,
-        numberOfElements: 0,
-        totalPages: 0,
-        totalElements: 0,
-        first: true,
-        last: true,
-        empty: true,
-      },
-    },
-    unassigned: {
-      list: [],
-      pageable: {
-        page: 0,
-        pageSize: 10,
-        numberOfElements: 0,
-        totalPages: 0,
-        totalElements: 0,
-        first: true,
-        last: true,
-        empty: true,
-      },
-    },
-    completed: {
-      list: [],
-      pageable: {
-        page: 0,
-        pageSize: 10,
-        numberOfElements: 0,
-        totalPages: 0,
-        totalElements: 0,
-        first: true,
-        last: true,
-        empty: true,
-      },
-    },
+    assigned: initialTabState,
+    unassigned: initialTabState,
+    completed: initialTabState,
   },
 };
 
@@ -56,62 +36,95 @@ const reducer = (
   state = initialState,
   action: ListViewActionType,
 ): ListViewState => {
-  const { jobs, selectedStatus } = state;
+  const { selectedStatus } = state;
   switch (action.type) {
     case ListViewAction.FETCH_JOBS_ONGOING:
       return { ...state, loading: true };
 
     case ListViewAction.FETCH_JOBS_SUCCESS:
       const { data, pageable, type } = action.payload;
-      if (data && type && pageable) {
-        const oldList = pageable?.page === 0 ? [] : jobs[type].list;
-        jobs[type].list = [...oldList, ...data];
-        jobs[type].pageable = pageable;
-      }
       return {
         ...state,
         loading: false,
-        jobs: jobs,
+        jobs: {
+          ...state.jobs,
+          [type]: {
+            list: [...state.jobs[type].list, ...(data as Job[])],
+            pageable: pageable as Pageable,
+          },
+        },
       };
+
     case ListViewAction.FETCH_JOBS_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
+
     case ListViewAction.SET_SELECTED_STATUS:
       return {
         ...state,
-        selectedStatus: action.payload?.status || state.selectedStatus,
+        selectedStatus: action.payload?.status || selectedStatus,
       };
+
     case ListViewAction.CREATE_JOB_SUCCESS:
-      if (action.payload?.data) {
-        const oldList = jobs[JobStatus.UNASSIGNED].list || [];
-        jobs[JobStatus.UNASSIGNED].list = [action.payload?.data, ...oldList];
-      }
       return {
         ...state,
-        jobs: jobs,
+        jobs: {
+          ...state.jobs,
+          [JobStatus.UNASSIGNED]: {
+            ...state.jobs[JobStatus.UNASSIGNED],
+            list: [
+              action.payload.data as Job,
+              ...state.jobs[JobStatus.UNASSIGNED].list,
+            ],
+          },
+        },
       };
+
     case ListViewAction.ASSIGN_USER:
-      const { selectedJobIndex, user } = action.payload;
-      const oldUsers = jobs[selectedStatus].list[selectedJobIndex].assignees;
-      jobs[selectedStatus].list[selectedJobIndex].assignees = [
-        ...oldUsers,
-        user,
-      ];
       return {
         ...state,
-        jobs,
+        jobs: {
+          ...state.jobs,
+          [selectedStatus]: {
+            ...state.jobs[selectedStatus],
+            list: (state.jobs[selectedStatus].list as Job[]).map(
+              (item, index) => {
+                if (index !== action.payload.selectedJobIndex) {
+                  return item;
+                }
+                return {
+                  ...item,
+                  assignees: [...item.assignees, action.payload.user],
+                };
+              },
+            ),
+          },
+        },
       };
+
     case ListViewAction.UNASSIGN_USER:
-      if (action.payload) {
-        const { selectedJobIndex, user } = action.payload;
-        const newUsers = jobs[selectedStatus].list[
-          selectedJobIndex
-        ].assignees.filter((u) => u.id !== user.id);
-        jobs[selectedStatus].list[selectedJobIndex].assignees = [...newUsers];
-        return {
-          ...state,
-          jobs,
-        };
-      }
+      return {
+        ...state,
+        jobs: {
+          ...state.jobs,
+          [selectedStatus]: {
+            ...state.jobs[selectedStatus],
+            list: (state.jobs[selectedStatus].list as Job[]).map(
+              (item, index) => {
+                if (index !== action.payload.selectedJobIndex) {
+                  return item;
+                }
+                return {
+                  ...item,
+                  assignees: item.assignees.filter(
+                    (u) => u.id !== action.payload.user.id,
+                  ),
+                };
+              },
+            ),
+          },
+        },
+      };
+
     default:
       return { ...state };
   }

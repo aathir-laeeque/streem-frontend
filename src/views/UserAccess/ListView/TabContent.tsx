@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import { ListViewComponent } from '#components';
 import WarningIcon from '@material-ui/icons/Warning';
-import { User, UserStatus, UsersState } from '#store/users/types';
+import { User, UserStatus, UsersState, ParsedUser } from '#store/users/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { capitalize } from 'lodash';
@@ -20,11 +20,23 @@ import { useDispatch } from 'react-redux';
 import { Composer } from './styles';
 import { TabViewProps } from './types';
 
+function modalBody(user: User, text: string): any {
+  return (
+    <div className="body-content">
+      {text}
+      <span
+        style={{ fontWeight: 'bold' }}
+      >{` ${user.firstName} ${user.lastName}`}</span>
+      .
+    </div>
+  );
+}
+
 const TabContent: FC<TabViewProps> = ({
   navigate = navigateTo,
   selectedStatus,
 }) => {
-  const { users, loading }: Partial<UsersState> = useTypedSelector(
+  const { loading, [selectedStatus]: users }: UsersState = useTypedSelector(
     (state) => state.users,
   );
 
@@ -83,15 +95,7 @@ const TabContent: FC<TabViewProps> = ({
                 },
               }),
             ),
-          body: (
-            <div className="body-content">
-              You’re about to archive
-              <span
-                style={{ fontWeight: 'bold' }}
-              >{` ${user.firstName} ${user.lastName}`}</span>
-              .
-            </div>
-          ),
+          body: modalBody(user, 'You’re about to archive'),
         },
       }),
     );
@@ -113,15 +117,7 @@ const TabContent: FC<TabViewProps> = ({
                 },
               }),
             ),
-          body: (
-            <div className="body-content">
-              You’re about to unarchive
-              <span
-                style={{ fontWeight: 'bold' }}
-              >{` ${user.firstName} ${user.lastName}`}</span>
-              .
-            </div>
-          ),
+          body: modalBody(user, 'You’re about to unarchive'),
         },
       }),
     );
@@ -129,47 +125,44 @@ const TabContent: FC<TabViewProps> = ({
 
   if (loading) {
     return <div>Loading...</div>;
-  } else if (users[selectedStatus].list.length === 0) {
-    return <div />;
   }
-  const parsedUsers = [];
-  (users[selectedStatus].list as Array<User>).forEach((item) => {
-    if (item.id !== 0) {
-      let role = { ROLE: '-N/A-' };
-      if (item.roles && item.roles[0])
-        role = {
-          ROLE: capitalize(item.roles[0].name.replace('_', ' ')) || '-N/A-',
-        };
-      parsedUsers.push({
-        ...item,
-        properties: {
-          'EMAIL ID': item.email,
-          ...role,
-          // 'LAST ACTIVE': '12 May 2020',
-        },
-      });
-    }
-  });
 
-  const properties: Properties = [];
+  const parsedUsers = (users.list as Array<User>).reduce<ParsedUser[]>(
+    (result, item) => {
+      if (item.id !== 0) {
+        result.push({
+          ...item,
+          properties: {
+            'EMAIL ID': item.email,
+            ROLE: item.roles ? item.roles.join() : '-N/A-',
+          },
+        });
+      }
+      return result;
+    },
+    [],
+  );
 
-  Object.keys(parsedUsers[0].properties).forEach((pro, index) => {
-    properties.push({
-      id: index,
-      name: pro,
-      placeHolder: pro,
-      orderTree: index,
-      mandatory: true,
-    });
-  });
+  const properties: Properties =
+    parsedUsers.length > 0
+      ? Object.keys(parsedUsers[0].properties).map((pro, index) => {
+          return {
+            id: index,
+            name: pro,
+            placeHolder: pro,
+            orderTree: index,
+            mandatory: true,
+          };
+        })
+      : [];
 
   return (
     <Composer>
       <ListViewComponent
         properties={properties}
         fetchData={fetchData}
-        isLast={users[selectedStatus].pageable.last}
-        currentPage={users[selectedStatus].pageable.page}
+        isLast={users.pageable.last}
+        currentPage={users.pageable.page}
         data={parsedUsers}
         onPrimaryClick={() => navigate('user-access/add-user')}
         primaryButtonText="Add a New User"

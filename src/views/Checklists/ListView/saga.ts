@@ -1,7 +1,7 @@
 import { apiGetChecklists } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLeading } from 'redux-saga/effects';
 
 import { Checklist } from '../types';
 import {
@@ -36,5 +36,5 @@ function* fetchChecklists(action: any) {
 }
 
 export function* ChecklistListViewSaga() {
-  yield takeLatest(ListViewAction.FETCH_CHECKLISTS, fetchChecklists);
+  yield takeLeading(ListViewAction.FETCH_CHECKLISTS, fetchChecklists);
 }

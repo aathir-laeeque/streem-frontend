@@ -3,10 +3,10 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { createJob } from '#views/Jobs/ListView/actions';
-import { getInitials } from '#utils/stringUtils';
+// import { getInitials } from '#utils/stringUtils';
 import JobCard from '#views/Jobs/Compoents/JobCard';
 import { Job } from '#views/Jobs/types';
-import { PersonAdd } from '@material-ui/icons';
+// import { PersonAdd } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -14,6 +14,8 @@ import { useDispatch } from 'react-redux';
 import { fetchJobs, setSelectedStatus } from './actions';
 import { Composer } from './styles';
 import { JobStatus, ListViewState, TabViewProps } from './types';
+
+// TODO :: CLean Comments if Assignee not required.
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { job } = useTypedSelector((state) => state.properties);
@@ -49,18 +51,6 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     dispatch(fetchJobs({ page, size, filters, sort: 'id,desc' }, label));
   };
 
-  const onClickAssign = (item: Job, index: number) => {
-    dispatch(
-      openOverlayAction({
-        type: OverlayNames.JOB_USER_ASSIGN,
-        props: {
-          selectedJobIndex: index,
-          refreshData: () => fetchData(0, 10),
-        },
-      }),
-    );
-  };
-
   const onCreateJob = (jobDetails: Record<string, string>) => {
     const tempProperties: { id: number; value: string }[] = [];
     const selectedId = jobDetails.checklistId;
@@ -92,6 +82,18 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       );
     }
   };
+
+  // const onClickAssign = (item: Job, index: number) => {
+  //   dispatch(
+  //     openOverlayAction({
+  //       type: OverlayNames.JOB_USER_ASSIGN,
+  //       props: {
+  //         selectedJobIndex: index,
+  //         refreshData: () => fetchData(0, 10),
+  //       },
+  //     }),
+  //   );
+  // };
 
   let beforeColumns = [
     {
@@ -192,7 +194,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     ];
   }
 
-  if (job === undefined || loading) {
+  if (!job || loading) {
     return <div>Loading...</div>;
   }
 

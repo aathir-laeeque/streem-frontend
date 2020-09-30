@@ -1,3 +1,5 @@
+import { Pageable } from '#utils/globalTypes';
+import { Job } from '#views/Jobs/types';
 import {
   InboxStatus,
   ListViewAction,
@@ -6,7 +8,7 @@ import {
 } from './types';
 
 const initialState: ListViewState = {
-  loading: true,
+  loading: false,
   error: undefined,
   selectedStatus: InboxStatus.MYINBOX,
   jobs: {
@@ -30,30 +32,33 @@ const reducer = (
   state = initialState,
   action: ListViewActionType,
 ): ListViewState => {
-  const { jobs } = state;
   switch (action.type) {
     case ListViewAction.FETCH_INBOX_ONGOING:
       return { ...state, loading: true };
 
     case ListViewAction.FETCH_INBOX_SUCCESS:
       const { data, pageable, type } = action.payload;
-      if (data && type && pageable) {
-        const oldList = pageable?.page === 0 ? [] : jobs[type].list;
-        jobs[type].list = [...oldList, ...data];
-        jobs[type].pageable = pageable;
-      }
       return {
         ...state,
         loading: false,
-        jobs: jobs,
+        jobs: {
+          ...state.jobs,
+          [type]: {
+            list: [...state.jobs[type].list, ...(data as Job[])],
+            pageable: pageable as Pageable,
+          },
+        },
       };
+
     case ListViewAction.FETCH_INBOX_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
+
     case ListViewAction.SET_SELECTED_STATUS:
       return {
         ...state,
         selectedStatus: action.payload?.status || state.selectedStatus,
       };
+
     default:
       return { ...state };
   }
