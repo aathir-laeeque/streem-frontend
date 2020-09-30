@@ -43,30 +43,23 @@ export const configureStore = (initialState: {
   const middlewares = [sagaMiddleware];
 
   const composeEnhancers =
-    typeof window === 'object' &&
-    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-      ? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-          actionSanitizer: (action: any) =>
-            action.type === '@@overlay/Container/OPEN_OVERLAY'
-              ? {
-                  ...action,
-                  payload: { ...action.payload, popOverAnchorEl: '<<EVENT>>' },
-                }
-              : action,
-          stateSanitizer: (state: any) =>
-            state.overlayContainer
-              ? {
-                  ...state,
-                  overlayContainer: state.overlayContainer.currentOverlays.map(
-                    (overlay: any) => ({
-                      ...overlay,
-                      popOverAnchorEl: '<<EVENT>>',
-                    }),
-                  ),
-                }
-              : state,
-        })
-      : compose;
+    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+      actionSanitizer: (action: any) =>
+        action.type === '@@popover/Container/OPEN_POPOVER'
+          ? {
+              ...action,
+              payload: { ...action.payload, popOverAnchorEl: '<<EVENT>>' },
+            }
+          : action,
+      stateSanitizer: (state: any) =>
+        state.popoverContainer
+          ? {
+              ...state,
+              popoverContainer:
+                state.popoverContainer.currentPopovers.length || 0,
+            }
+          : state,
+    }) ?? compose;
 
   const store = createStore(
     persistedReducer,

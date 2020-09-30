@@ -1,17 +1,18 @@
+import Composer from '#Composer-new';
+import { ComposerEntity } from '#Composer-new/types';
 import { RouteComponentProps, Router } from '@reach/router';
 import React, { FC } from 'react';
 
 import ListView from './ListView';
-import NewComposer from './NewComposer';
-import Composer from '../../Composer';
-import { Entity } from '../../Composer/composer.types';
+import NewPrototype from './NewPrototype';
 
 const ChecklistView: FC<RouteComponentProps> = () => (
   <Router>
     <ListView path="/" />
-    {/* <NewComposer path="/:checklistId" /> */}
 
-    <Composer path="/:id" entity={Entity.CHECKLIST} />
+    <Composer path="/:id" entity={ComposerEntity.CHECKLIST} />
+
+    <NewPrototype path="/prototype" />
   </Router>
 );
 

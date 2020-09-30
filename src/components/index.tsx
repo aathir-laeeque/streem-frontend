@@ -6,7 +6,7 @@ export { default as OverlayContainer } from './OverlayContainer';
 
 export { useTabs } from './shared/useTabs';
 export { BaseModal } from './shared/BaseModal';
-export { Button, FlatButton } from './shared/Button';
+export { Button, FlatButton, Button1 } from './shared/Button';
 // export { NestedMenuItem } from './shared/NestedMenuItem';
 export { CustomRoute } from './shared/CustomRoute';
 export { FloatInput } from './shared/FloatInput';
@@ -22,3 +22,7 @@ export { default as CheckboxWithLabel } from './shared/CheckboxWithLabel';
 export { ListView as ListViewComponent, FilterProp } from './shared/ListView';
 export { default as AddNewItem } from './shared/AddNew';
 export { default as ProgressBar } from './shared/Progressbar';
+export { Avatar } from './shared/Avatar';
+export { Dropdown } from './shared/Dropdown';
+export { TextInput, NumberInput } from './shared/Input';
+export { default as Select } from './shared/Select';

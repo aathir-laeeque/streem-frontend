@@ -1,5 +1,5 @@
 import { Add } from '@material-ui/icons';
-import React, { SFC } from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -22,7 +22,7 @@ type AddNewProps = {
   label?: string;
 };
 
-const AddNew: SFC<AddNewProps> = ({ onClick, label = 'Add New' }) => (
+const AddNew: FC<AddNewProps> = ({ onClick, label = 'Add New' }) => (
   <Wrapper className="add-new-item" onClick={onClick}>
     <Add className="icon" fontSize="small" />
     {label}

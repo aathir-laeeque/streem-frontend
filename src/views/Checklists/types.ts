@@ -1,4 +1,4 @@
-import { Stage } from './ChecklistComposer/StageList/types';
+import { Stage } from '#Composer-new/checklist.types';
 
 export interface Properties {
   [key: string]: string | null;

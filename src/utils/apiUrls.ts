@@ -1,10 +1,13 @@
+import { Checklist, Stage, Activity } from '#Composer-new/checklist.types';
+import { AddNewTaskArgs } from '#Composer-new/Tasks/types';
 import { Task } from '#Composer/checklist.types';
 
 import { Job } from '../views/Jobs/types';
 import { fetchBaseUrl } from './constants';
+import { AddNewActivityArgs } from '../Composer-new/Activity/types';
 
 const baseUrl = fetchBaseUrl();
-//Checklist
+
 export const apiGetChecklists = () => `${baseUrl}/checklists`;
 
 export const apiGetChecklist = (checklistId: number) =>
@@ -33,14 +36,10 @@ export const apiCompleteJob = (withException: boolean, jobId: Job['id']) =>
     withException ? 'complete-with-exception' : 'complete'
   }`;
 
-// Properties
 export const apiGetProperties = () => `${baseUrl}/properties`;
-
-// Facilities
 
 export const apiGetFacilities = () => `${baseUrl}/facilities`;
 
-//Users
 export const apiGetUsers = () => `${baseUrl}/users`;
 
 export const apiGetUser = (id: number | string) => `${baseUrl}/users/${id}`;
@@ -64,10 +63,7 @@ export const apiCompleteTaskErrorCorrection = (taskId: Task['id']) =>
 export const apiCancelTaskErrorCorrection = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}/correction/cancel`;
 
-// Signature / File
 export const apiUploadFile = () => `${baseUrl}/files/`;
-
-// Auth
 
 export const apiCheckUsername = (username: string) =>
   `${baseUrl}/users/check-username?username=${username}`;
@@ -100,5 +96,33 @@ export const apiAssignUsersToTask = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}/assignments`;
 
 export const apiAssignUsersToJob = () => `${baseUrl}/tasks/assignments`;
+
 export const apiGetAssignedUsersForJob = (jobId: Job['id']) =>
   `${baseUrl}/tasks/assignments?jobId=${jobId}`;
+
+export const apiCreateNewPrototype = () => `${baseUrl}/checklists`;
+
+export const apiCreateStage = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/stages`;
+
+export const apiDeleteStage = (stageId: Stage['id']) =>
+  `${baseUrl}/stages/${stageId}/archive`;
+
+export const apiUpdateStage = (stageId: Stage['id']) =>
+  `${baseUrl}/stages/${stageId}`;
+
+export const apiCreateTask = ({ checklistId, stageId }: AddNewTaskArgs) =>
+  `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks`;
+
+export const apiDeleteTask = (taskId: Task['id']) =>
+  `${baseUrl}/tasks/${taskId}/archive`;
+
+export const apiAddNewActivity = ({
+  checklistId,
+  stageId,
+  taskId,
+}: Omit<AddNewActivityArgs, 'activityType' | 'orderTree'>) =>
+  `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks/${taskId}/activities`;
+
+export const apiDeleteActivity = (activityId: Activity['id']) =>
+  `${baseUrl}/activities/${activityId}/archive`;

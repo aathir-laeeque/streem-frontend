@@ -1,5 +1,6 @@
 import { RouteComponentProps } from '@reach/router';
 import { User } from '#store/users/types';
+import { Checklist } from '#Composer-new/checklist.types';
 
 export type JobsViewProps = RouteComponentProps;
 
@@ -13,10 +14,7 @@ export interface Job {
   totalTasks: number;
   completedTasks: number;
   properties?: Properties;
-  checklist: {
-    id: number;
-    name: string;
-  };
+  checklist: Partial<Checklist>;
   status: string;
   assignees: User[];
 }

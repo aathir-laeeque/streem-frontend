@@ -196,6 +196,12 @@ const GlobalStyles = createGlobalStyle`
       letter-spacing: 0.16px;
       line-height: 1.29;
       margin-bottom: 8px;
+
+      .optional-badge {
+        color: #999999;
+        font-size: 12px;
+        margin-left: 4px;
+      }
     }
 
     &-input[type="text"],
@@ -209,6 +215,10 @@ const GlobalStyles = createGlobalStyle`
       :active,
       :focus {
         border-color: #1d84ff;
+      }
+
+      &.error {
+        border-color: #eb5757;
       }
     }
 
@@ -256,6 +266,11 @@ const GlobalStyles = createGlobalStyle`
       }
 
     }
+
+    .field-error {
+      color: #eb5757;
+      margin-top: 8px;
+    }
   }
 
   .filter-container {
@@ -273,7 +288,7 @@ const GlobalStyles = createGlobalStyle`
 
         .MuiPickersDesktopDateRangeCalendar-arrowSwitcher {
           padding: 16px 8px 8px 8px;
-          
+
           .MuiSvgIcon-root {
             color: #333333;
           }

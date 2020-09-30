@@ -1,6 +1,6 @@
 import { Entity } from '#Composer/composer.types';
 import { useTypedSelector } from '#store';
-import { generateFullName } from '#utils/stringUtils';
+import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
 import { Error } from '@material-ui/icons';
 import React, { FC } from 'react';
@@ -195,7 +195,7 @@ const ActivityList: FC<ActivityListProps> = ({
 
             {status !== 'NOT_STARTED' ? (
               <div className="activity-audit">
-                Last updated by {generateFullName(audit?.modifiedBy)}, ID:{' '}
+                Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
                 {audit?.modifiedBy?.employeeId} on{' '}
                 {formatDateTime(audit?.modifiedAt, 'MMM D, h:mm A')}
               </div>

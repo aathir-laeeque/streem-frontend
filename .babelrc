@@ -6,13 +6,14 @@
         "root": ["."],
         "alias": {
           "#assets": "./src/assets",
-          "#mocks": "./mocks",
           "#components": "./src/components",
+          "#Composer": "./src/Composer",
+          "#Composer-new": "./src/Composer-new",
+          "#mocks": "./mocks",
+          "#modules": "./src/modules",
           "#store": "./src/store",
           "#utils": "./src/utils",
-          "#views": "./src/views",
-          "#Composer": "./src/Composer",
-          "#modules": "./src/modules"
+          "#views": "./src/views"
         }
       }
     ]
