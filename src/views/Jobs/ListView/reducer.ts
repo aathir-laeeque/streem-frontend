@@ -1,3 +1,4 @@
+import { Pageable } from '#utils/globalTypes';
 import { Job } from '../types';
 import {
   JobStatus,
@@ -42,23 +43,17 @@ const reducer = (
 
     case ListViewAction.FETCH_JOBS_SUCCESS:
       const { data, pageable, type } = action.payload;
-      if (data && type && pageable) {
-        return {
-          ...state,
-          loading: false,
-          jobs: {
-            ...state.jobs,
-            [type]: {
-              list:
-                pageable?.page === 0
-                  ? data
-                  : [...state.jobs[type].list, ...data],
-              pageable,
-            },
+      return {
+        ...state,
+        loading: false,
+        jobs: {
+          ...state.jobs,
+          [type]: {
+            list: [...state.jobs[type].list, ...(data as Job[])],
+            pageable: pageable as Pageable,
           },
-        };
-      }
-      return { ...state };
+        },
+      };
 
     case ListViewAction.FETCH_JOBS_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
@@ -70,22 +65,19 @@ const reducer = (
       };
 
     case ListViewAction.CREATE_JOB_SUCCESS:
-      if (action.payload?.data) {
-        return {
-          ...state,
-          jobs: {
-            ...state.jobs,
-            [JobStatus.UNASSIGNED]: {
-              ...state.jobs[JobStatus.UNASSIGNED],
-              list: [
-                action.payload?.data,
-                ...state.jobs[JobStatus.UNASSIGNED].list,
-              ],
-            },
+      return {
+        ...state,
+        jobs: {
+          ...state.jobs,
+          [JobStatus.UNASSIGNED]: {
+            ...state.jobs[JobStatus.UNASSIGNED],
+            list: [
+              action.payload.data as Job,
+              ...state.jobs[JobStatus.UNASSIGNED].list,
+            ],
           },
-        };
-      }
-      return { ...state };
+        },
+      };
 
     case ListViewAction.ASSIGN_USER:
       return {

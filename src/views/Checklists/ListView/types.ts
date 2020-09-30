@@ -11,10 +11,10 @@ import {
 
 export type ListViewProps = RouteComponentProps;
 export interface ListViewState {
-  readonly checklists: Checklist[] | undefined;
-  readonly pageable: Pageable | undefined | null;
+  readonly checklists: Checklist[];
+  readonly pageable: Pageable;
   readonly loading: boolean;
-  readonly error: any;
+  readonly error?: any;
 }
 
 export enum ListViewAction {

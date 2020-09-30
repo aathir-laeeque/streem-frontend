@@ -1,13 +1,14 @@
+import { Pageable } from '#utils/globalTypes';
 import {
+  SessionActivity,
   SessionActivityAction,
   SessionActivityActionType,
   SessionActivityState,
 } from './types';
 
 const initialState: SessionActivityState = {
-  logs: undefined,
+  logs: [],
   loading: false,
-  error: undefined,
   pageable: {
     page: 0,
     pageSize: 10,
@@ -15,7 +16,7 @@ const initialState: SessionActivityState = {
     totalPages: 0,
     totalElements: 0,
     first: true,
-    last: false,
+    last: true,
     empty: true,
   },
 };
@@ -30,16 +31,11 @@ const reducer = (
 
     case SessionActivityAction.FETCH_SESSION_ACTIVITY_SUCCESS:
       const { data, pageable } = action.payload;
-      let { logs } = state;
-      if (data && pageable) {
-        const oldList = pageable.page !== 0 ? (logs ? logs : []) : [];
-        logs = [...oldList, ...data];
-      }
       return {
         ...state,
         loading: false,
-        logs,
-        pageable,
+        pageable: pageable as Pageable,
+        logs: [...state.logs, ...(data as Array<SessionActivity>)],
       };
 
     case SessionActivityAction.FETCH_SESSION_ACTIVITY_ERROR:

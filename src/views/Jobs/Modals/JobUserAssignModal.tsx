@@ -2,7 +2,7 @@ import { BaseModal, Checkbox } from '#components';
 import { useTypedSelector } from '#store';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { fetchUsers } from '#store/users/actions';
-import { User, Users } from '#store/users/types';
+import { User } from '#store/users/types';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Search } from '@material-ui/icons';
@@ -117,9 +117,7 @@ export const JobUserAssignModal: FC<CommonOverlayProps<
   closeOverlay,
   props: { selectedJobIndex, refreshData },
 }) => {
-  const { list, pageable } = useTypedSelector(
-    (state) => state.users.users.active,
-  );
+  const { list, pageable } = useTypedSelector((state) => state.users.active);
   const { jobs, selectedStatus }: Partial<ListViewState> = useTypedSelector(
     (state) => state.jobListView,
   );
@@ -128,7 +126,7 @@ export const JobUserAssignModal: FC<CommonOverlayProps<
 
   const scroller = useRef<HTMLDivElement | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [initialUsers, setInitialUsers] = useState<Users | null>(null);
+  const [initialUsers, setInitialUsers] = useState<User[] | null>(null);
   const prevSearch = usePrevious(searchQuery);
 
   const fetchData = (page: number, size: number) => {

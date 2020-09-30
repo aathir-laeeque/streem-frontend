@@ -13,11 +13,7 @@ import { Composer } from './styles';
 import { ListViewProps, ListViewState } from './types';
 
 const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
-  const {
-    checklists,
-    pageable,
-    loading,
-  }: Partial<ListViewState> = useTypedSelector(
+  const { checklists, pageable, loading }: ListViewState = useTypedSelector(
     (state) => state.checklistListView,
   );
   const { checklist, job } = useTypedSelector((state) => state.properties);
@@ -63,7 +59,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
     }
   };
 
-  if (loading || !checklist || !checklists || !job || !pageable) {
+  if (loading) {
     return <div>Loading...</div>;
   }
 

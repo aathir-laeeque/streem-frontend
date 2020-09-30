@@ -40,21 +40,18 @@ export interface ParsedUser extends User {
   properties: Record<string, string>;
 }
 
-export type Users = User[];
+export type UsersGroup = {
+  list: User[];
+  pageable: Pageable;
+};
 
-export type UsersGroup = Record<
-  string,
-  {
-    list: Users | [];
-    pageable: Pageable;
-  }
->;
 export interface UsersState {
-  readonly users: UsersGroup;
+  readonly [UserStatus.ACTIVE]: UsersGroup;
+  readonly [UserStatus.ARCHIVED]: UsersGroup;
   readonly loading: boolean;
   readonly error: any;
   readonly selectedStatus: string;
-  readonly selectedUser: undefined | User;
+  readonly selectedUser?: User;
 }
 
 export enum UserStatus {

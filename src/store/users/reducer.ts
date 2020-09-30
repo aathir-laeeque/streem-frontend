@@ -1,3 +1,4 @@
+import { User } from '#store/users/types';
 import { UsersAction, UsersActionType, UsersState, UserStatus } from './types';
 
 const initialTabState = {
@@ -15,10 +16,8 @@ const initialTabState = {
 };
 
 const initialState: UsersState = {
-  users: {
-    active: initialTabState,
-    archived: initialTabState,
-  },
+  active: initialTabState,
+  archived: initialTabState,
   loading: false,
   selectedStatus: UserStatus.ACTIVE,
   selectedUser: undefined,
@@ -32,23 +31,15 @@ const reducer = (state = initialState, action: UsersActionType): UsersState => {
 
     case UsersAction.FETCH_USERS_SUCCESS:
       const { data, pageable, type } = action.payload;
-      if (data && type && pageable) {
-        return {
-          ...state,
-          loading: false,
-          users: {
-            ...state.users,
-            [type]: {
-              list:
-                pageable?.page === 0
-                  ? data
-                  : [...state.users[type].list, ...data],
-              pageable,
-            },
-          },
-        };
-      }
-      return { ...state };
+
+      return {
+        ...state,
+        loading: false,
+        [type]: {
+          pageable,
+          list: [...state[type].list, ...(data as Array<User>)],
+        },
+      };
 
     case UsersAction.SET_SELECTED_STATUS:
       return {

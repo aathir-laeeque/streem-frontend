@@ -13,7 +13,7 @@ import { ListViewState, TabViewProps } from './types';
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { job } = useTypedSelector((state) => state.properties);
   const { profile } = useTypedSelector((state) => state.auth);
-  const { jobs, loading }: Partial<ListViewState> = useTypedSelector(
+  const { jobs, loading }: ListViewState = useTypedSelector(
     (state) => state.inboxListView,
   );
   const reduerLabel = label.toLowerCase().split(' ').join('');
@@ -86,7 +86,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     },
   ];
 
-  if (job === undefined || loading) {
+  if (loading) {
     return <div>Loading...</div>;
   }
 

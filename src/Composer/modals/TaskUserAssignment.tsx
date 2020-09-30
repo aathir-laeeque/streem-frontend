@@ -3,7 +3,7 @@ import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Task } from '#Composer/checklist.types';
 import { useTypedSelector } from '#store';
 import { fetchUsers } from '#store/users/actions';
-import { User, Users } from '#store/users/types';
+import { User } from '#store/users/types';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Job } from '#views/Jobs/types';
@@ -30,7 +30,7 @@ type initialState = {
   assignedUsers: number[];
   unAssignedUsers: number[];
   searchQuery: string;
-  preAssignedUsers: Users;
+  preAssignedUsers: User[];
 };
 
 const initialState: initialState = {
@@ -52,7 +52,7 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
   const {
     list,
     pageable: { last, page },
-  } = useTypedSelector((state) => state.users.users.active);
+  } = useTypedSelector((state) => state.users.active);
   const {
     tasks: { tasksById },
     entityId,
@@ -68,7 +68,7 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
   } = state;
   const prevSearch = usePrevious(searchQuery);
 
-  let assignees: Users = [];
+  let assignees: User[] = [];
   if (taskId) {
     const {
       taskExecution: { assignees: taskAssignees },

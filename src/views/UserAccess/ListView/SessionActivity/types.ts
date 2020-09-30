@@ -23,10 +23,10 @@ export interface SessionActivity {
 export type SessionActivityProps = RouteComponentProps;
 
 export interface SessionActivityState {
-  readonly logs: SessionActivity[] | undefined;
-  readonly pageable: Pageable | undefined | null;
+  readonly logs: SessionActivity[];
+  readonly pageable: Pageable;
   readonly loading: boolean;
-  readonly error: any;
+  readonly error?: any;
 }
 
 export enum SessionActivityAction {
