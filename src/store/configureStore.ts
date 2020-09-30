@@ -15,20 +15,20 @@ const persistConfig = {
   transforms: [
     createTransform(
       (inboundState: any, key: string) => {
-        return {
-          ...inboundState,
-          isRefreshing: false,
-          resetRequested: false,
-          error: undefined,
-        };
+        switch (key) {
+          case 'auth':
+            return {
+              ...inboundState,
+              isRefreshing: false,
+              resetRequested: false,
+              error: undefined,
+            };
+          default:
+            return inboundState;
+        }
       },
       (outboundState: any, key: string) => {
-        return {
-          ...outboundState,
-          isRefreshing: false,
-          resetRequested: false,
-          error: undefined,
-        };
+        return outboundState;
       },
     ),
   ],

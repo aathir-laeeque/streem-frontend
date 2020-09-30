@@ -6,10 +6,14 @@ import { useDispatch } from 'react-redux';
 
 import { Composer } from './styles';
 import TabContent from './TabContent';
-import { JobStatus, ListViewProps } from './types';
+import { JobStatus, ListViewProps, ListViewState } from './types';
 
 const ListView: FC<ListViewProps> = () => {
   const { job } = useTypedSelector((state) => state.properties);
+  const { selectedStatus }: ListViewState = useTypedSelector(
+    (state) => state.jobListView,
+  );
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -22,19 +26,19 @@ const ListView: FC<ListViewProps> = () => {
   const { renderTabsContent, renderTabsHeader } = useTabs([
     {
       label: JobStatus.UNASSIGNED,
-      active: true,
+      active: selectedStatus === JobStatus.UNASSIGNED,
       TabContent,
       passThroughTabContentProps,
     },
     {
       label: JobStatus.ASSIGNED,
-      active: false,
+      active: selectedStatus === JobStatus.ASSIGNED,
       TabContent,
       passThroughTabContentProps,
     },
     {
       label: JobStatus.COMPLETED,
-      active: false,
+      active: selectedStatus === JobStatus.COMPLETED,
       TabContent,
       passThroughTabContentProps,
     },

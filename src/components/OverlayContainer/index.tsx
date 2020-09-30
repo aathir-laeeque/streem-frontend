@@ -87,7 +87,7 @@ const OverlayContainer: FC = () => {
     (state) => state.overlayContainer,
   );
 
-  const closeOverlay = (params: string) => {
+  const closeOverlay = (params: OverlayNames) => {
     dispatch(closeOverlayAction(params));
   };
 

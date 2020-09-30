@@ -27,7 +27,7 @@ const reducer = (
       return {
         ...state,
         currentOverlays: state.currentOverlays.filter(
-          (x) => x.type !== action.payload,
+          (x) => x.type !== action.payload.type,
         ),
       };
     case OverlayContainerAction.CLOSE_ALL_OVERLAY:
