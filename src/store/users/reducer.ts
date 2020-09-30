@@ -37,7 +37,10 @@ const reducer = (state = initialState, action: UsersActionType): UsersState => {
         loading: false,
         [type]: {
           pageable,
-          list: [...state[type].list, ...(data as Array<User>)],
+          list:
+            pageable && pageable.page === 0
+              ? (data as Array<User>)
+              : [...state[type].list, ...(data as Array<User>)],
         },
       };
 

@@ -12,7 +12,6 @@ import { ListViewState, TabViewProps } from './types';
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { job } = useTypedSelector((state) => state.properties);
-  const { profile } = useTypedSelector((state) => state.auth);
   const { jobs, loading }: ListViewState = useTypedSelector(
     (state) => state.inboxListView,
   );
@@ -38,7 +37,13 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     {
       header: 'JOB',
       template: function renderComp(item: Job) {
-        return <JobCard item={item} onClick={selectJob} />;
+        return (
+          <JobCard
+            key={`job_card_${item.id}`}
+            item={item}
+            onClick={selectJob}
+          />
+        );
       },
     },
     {
@@ -48,7 +53,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         return (
           <div
             className="list-card-columns"
-            key={`task_completed_${item.code}`}
+            key={`task_completed_${item.id}`}
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
