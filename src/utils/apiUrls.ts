@@ -10,6 +10,9 @@ export const apiGetChecklists = () => `${baseUrl}/checklists`;
 export const apiGetChecklist = (checklistId: number) =>
   `${baseUrl}/checklists/${checklistId}`;
 
+// Inbox
+export const apiGetInbox = () => `${baseUrl}/jobs/assignee/me`;
+
 // Job
 export const apiGetJobs = () => `${baseUrl}/jobs`;
 

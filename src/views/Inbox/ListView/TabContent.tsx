@@ -12,7 +12,6 @@ import { ListViewState, TabViewProps } from './types';
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { job } = useTypedSelector((state) => state.properties);
-  const { profile } = useTypedSelector((state) => state.auth);
   const { jobs, loading }: Partial<ListViewState> = useTypedSelector(
     (state) => state.inboxListView,
   );
@@ -31,17 +30,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     });
 
   const fetchData = (page: number, size: number) => {
-    const filters = JSON.stringify({
-      op: 'AND',
-      fields: [
-        {
-          field: 'assignees',
-          op: 'EQ',
-          values: [profile?.id],
-        },
-      ],
-    });
-    dispatch(fetchInbox({ page, size, filters, sort: 'id,desc' }, reduerLabel));
+    dispatch(fetchInbox({ page, size, sort: 'id,desc' }, reduerLabel));
   };
 
   const beforeColumns = [
