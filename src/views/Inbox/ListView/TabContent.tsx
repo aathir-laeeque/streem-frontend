@@ -40,7 +40,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       template: function renderComp(item: Job) {
         return <JobCard item={item} onClick={selectJob} />;
       },
-    },<<<<<<< fix/reducer-mutability
+    },
     {
       header: 'TASKS COMPLETED',
       template: function renderComp(item: Job) {
