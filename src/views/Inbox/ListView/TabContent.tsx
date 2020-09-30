@@ -31,17 +31,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     });
 
   const fetchData = (page: number, size: number) => {
-    const filters = JSON.stringify({
-      op: 'AND',
-      fields: [
-        {
-          field: 'assignees',
-          op: 'EQ',
-          values: [profile?.id],
-        },
-      ],
-    });
-    dispatch(fetchInbox({ page, size, filters, sort: 'id,desc' }, reduerLabel));
+    dispatch(fetchInbox({ page, size, sort: 'id,desc' }, reduerLabel));
   };
 
   const beforeColumns = [
@@ -50,7 +40,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       template: function renderComp(item: Job) {
         return <JobCard item={item} onClick={selectJob} />;
       },
-    },
+    },<<<<<<< fix/reducer-mutability
     {
       header: 'TASKS COMPLETED',
       template: function renderComp(item: Job) {
