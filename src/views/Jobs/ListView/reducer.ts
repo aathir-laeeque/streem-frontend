@@ -1,5 +1,3 @@
-import { initialTabState } from '#components/shared/useTabs';
-import { Job } from '../types';
 import {
   JobStatus,
   ListViewAction,

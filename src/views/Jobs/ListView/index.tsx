@@ -10,7 +10,7 @@ import { JobStatus, ListViewProps, ListViewState } from './types';
 
 const ListView: FC<ListViewProps> = () => {
   const { job } = useTypedSelector((state) => state.properties);
-  const { selectedStatus }: Partial<ListViewState> = useTypedSelector(
+  const { selectedStatus }: ListViewState = useTypedSelector(
     (state) => state.jobListView,
   );
 

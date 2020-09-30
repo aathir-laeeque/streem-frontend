@@ -1,5 +1,5 @@
 import { actionSpreader } from '#store/helpers';
-import { OverlayContainerAction, Overlay } from './types';
+import { OverlayContainerAction, Overlay, OverlayNames } from './types';
 
 export const openOverlayAction = (params: Overlay) =>
   actionSpreader(OverlayContainerAction.OPEN_OVERLAY, {
@@ -8,8 +8,8 @@ export const openOverlayAction = (params: Overlay) =>
     popOverAnchorEl: params.popOverAnchorEl,
   });
 
-export const closeOverlayAction = (params: string) =>
-  actionSpreader(OverlayContainerAction.CLOSE_OVERLAY, { type: params });
+export const closeOverlayAction = (type: OverlayNames) =>
+  actionSpreader(OverlayContainerAction.CLOSE_OVERLAY, { type });
 
 export const closeAllOverlayAction = () =>
   actionSpreader(OverlayContainerAction.CLOSE_ALL_OVERLAY);
