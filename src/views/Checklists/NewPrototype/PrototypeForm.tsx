@@ -52,7 +52,7 @@ const PrototypeForm: FC<PrototypeFormProps> = ({
             .map((user) => ({
               ...pick(user, ['id', 'firstName', 'lastName', 'employeeId']),
             })),
-          properties: data.properties.map((property) => ({
+          properties: data.properties?.map((property) => ({
             ...property,
             id: parseInt(property.id.toString()),
           })),

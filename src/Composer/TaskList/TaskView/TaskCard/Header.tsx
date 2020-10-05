@@ -388,7 +388,6 @@ const JobHeader: FC<Pick<HeaderProps, 'task' | 'enableStopForTask'>> = ({
           <button
             className="start-task"
             onClick={() => {
-              console.log('enableStopForTask :: ', enableStopForTask);
               if (enableStopForTask) {
                 dispatch(
                   openOverlayAction({ type: OverlayNames.ADD_STOP, props: {} }),

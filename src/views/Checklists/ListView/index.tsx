@@ -72,6 +72,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
         currentPage={pageable.page}
         data={checklists}
         primaryButtonText="Create Checklist"
+        onPrimaryClick={() => navigate('prototype')}
         beforeColumns={[
           {
             header: 'NAME',

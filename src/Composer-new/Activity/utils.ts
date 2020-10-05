@@ -1,11 +1,13 @@
-import { NonMandatoryActivity } from '../../Composer/checklist.types';
 import {
   Activity,
   ActivityType,
   Checklist,
   MandatoryActivity,
+  NonMandatoryActivity,
 } from '../checklist.types';
+import { PARAMETER_OPERATORS } from '../constants';
 import { ActivitiesById, ActivityOrderInTaskInStage } from './reducer.types';
+import { v4 as uuidv4 } from 'uuid';
 
 const getActivities = (checklist: Checklist | Partial<Checklist>) => {
   const listById: ActivitiesById = {},
@@ -39,18 +41,52 @@ const generateNewActivity = ({
 }: Params): Partial<Activity> | null => {
   switch (type) {
     case MandatoryActivity.CHECKLIST:
-    case MandatoryActivity.YES_NO:
-    case MandatoryActivity.MULTISELECT:
       return {
         orderTree,
         type,
-        data: [],
+        data: [{ id: uuidv4(), name: '' }],
+        label: '',
+        mandatory: true,
+      };
+
+    case MandatoryActivity.YES_NO:
+      return {
+        orderTree,
+        type,
+        data: [
+          { id: uuidv4(), name: '', type: 'yes' },
+          { id: uuidv4(), name: '', type: 'no' },
+        ],
+        label: '',
+        mandatory: true,
+      };
+
+    case MandatoryActivity.MULTISELECT:
+    case MandatoryActivity.SINGLE_SELECT:
+      return {
+        orderTree,
+        type,
+        data: [{ id: uuidv4(), name: '' }],
+        label: '',
+        mandatory: true,
+      };
+
+    case MandatoryActivity.PARAMETER:
+      return {
+        orderTree,
+        type,
+        data: {
+          uom: 'Bar',
+          type: 'quantity',
+          value: '',
+          operator: PARAMETER_OPERATORS[0].value,
+          parameter: 'Pressure',
+        },
         label: '',
         mandatory: true,
       };
 
     case MandatoryActivity.MEDIA:
-    case MandatoryActivity.SHOULD_BE:
     case MandatoryActivity.SIGNATURE:
     case MandatoryActivity.TEXTBOX:
       return {
@@ -65,7 +101,7 @@ const generateNewActivity = ({
       return {
         orderTree,
         type,
-        data: {},
+        data: { text: '' },
         label: '',
         mandatory: false,
       };
@@ -74,7 +110,9 @@ const generateNewActivity = ({
       return {
         orderTree,
         type,
-        data: [],
+        data: [
+          { link: '', name: '', type: 'image', fileName: '', quantity: 0 },
+        ],
         label: '',
         mandatory: false,
       };

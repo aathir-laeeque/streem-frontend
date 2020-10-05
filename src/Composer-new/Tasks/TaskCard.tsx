@@ -1,4 +1,7 @@
 import { Select, TextInput } from '#components';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { ActivityType } from '#Composer-new/checklist.types';
 import { useTypedSelector } from '#store/helpers';
 import {
   ArrowDownward,
@@ -14,11 +17,11 @@ import { useDispatch } from 'react-redux';
 
 import Activity from '../Activity';
 import { addNewActivity } from '../Activity/actions';
+import { Checklist } from '../checklist.types';
 import { ActivityOptions } from '../constants';
-import { deleteTask, setActiveTask } from './actions';
+import { addStop, deleteTask, removeStop, setActiveTask } from './actions';
 import { TaskCardWrapper } from './styles';
 import { TaskCardProps } from './types';
-import { Checklist } from '../checklist.types';
 
 const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
   const {
@@ -29,6 +32,16 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
   } = useTypedSelector((state) => state.prototypeComposer);
 
   const dispatch = useDispatch();
+
+  const deleteTaskProps = {
+    header: 'Delete Task',
+    body: (
+      <>
+        <span>Are you sure you want to Delete this Task ? </span>
+      </>
+    ),
+    onPrimaryClick: () => dispatch(deleteTask(task.id)),
+  };
 
   if (activeStageId) {
     const taskActivities = activityOrderInTaskInStage[activeStageId][task.id];
@@ -69,7 +82,13 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
             id="task-delete"
             onClick={(event) => {
               event.stopPropagation();
-              dispatch(deleteTask(task.id));
+
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                  props: deleteTaskProps,
+                }),
+              );
             }}
           />
         </div>
@@ -85,7 +104,18 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
             />
 
             <div className="task-config-control">
-              <div className="task-config-control-item" id="timed">
+              <div
+                className="task-config-control-item"
+                id="timed"
+                onClick={() =>
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.TIMED_TASK_CONFIG,
+                      props: {},
+                    }),
+                  )
+                }
+              >
                 <Timer className="icon" />
                 Timed
               </div>
@@ -93,7 +123,17 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
                 <PermMedia className="icon" />
                 Attach Media
               </div>
-              <div className="task-config-control-item" id="add-stop">
+              <div
+                className="task-config-control-item"
+                id="add-stop"
+                onClick={() => {
+                  if (task.hasStop) {
+                    dispatch(removeStop(task.id));
+                  } else {
+                    dispatch(addStop(task.id));
+                  }
+                }}
+              >
                 <PanTool className="icon" />
                 Add Stop
               </div>
@@ -120,7 +160,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
             onChange={(option) => {
               dispatch(
                 addNewActivity({
-                  activityType: option.value,
+                  activityType: option.value as ActivityType,
                   checklistId: (data as Checklist).id,
                   taskId: task.id,
                   stageId: activeStageId,

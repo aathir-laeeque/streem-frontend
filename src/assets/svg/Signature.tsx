@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function Signature(props: React.SVGProps<SVGSVGElement>) {
   const color = props.color || '#BDBDBD';

@@ -2,7 +2,7 @@ import background from '#assets/images/new-prototype-background.png';
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
-  background-color: #ffffff;
+  background-color: #ffffff !important;
   height: inherit;
 
   background: url(${background});

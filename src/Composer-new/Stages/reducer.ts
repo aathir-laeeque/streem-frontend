@@ -35,7 +35,7 @@ const reducer: Reducer<StageListState, StageListActionType> = (
 
       return {
         ...state,
-        activeStageId: (checklist?.stages ?? [])[0].id,
+        activeStageId: ((checklist?.stages ?? [])[0] ?? {}).id,
         listOrder: checklist?.stages?.map(({ id }) => id) ?? [],
         listById:
           checklist?.stages?.reduce<StagesById>((acc, stage) => {
@@ -47,7 +47,7 @@ const reducer: Reducer<StageListState, StageListActionType> = (
     case StageListActions.SET_ACTIVE_STAGE:
       return {
         ...state,
-        activeStageId: action.payload.stageId,
+        activeStageId: action.payload.id,
       };
 
     case StageListActions.ADD_NEW_STAGE_SUCCESS:
@@ -64,16 +64,14 @@ const reducer: Reducer<StageListState, StageListActionType> = (
       };
 
     case StageListActions.DELETE_STAGE_SUCCESS:
-      const deletedStageIndex = state.listOrder.indexOf(action.payload.stageId);
+      const deletedStageIndex = state.listOrder.indexOf(action.payload.id);
 
       return {
         ...state,
         activeStageId: state.listOrder[deletedStageIndex - 1],
-        listOrder: state.listOrder.filter(
-          (el) => el !== action.payload.stageId,
-        ),
+        listOrder: state.listOrder.filter((el) => el !== action.payload.id),
         listById: {
-          ...omit(state.listById, [action.payload.stageId.toString()]),
+          ...omit(state.listById, [action.payload.id.toString()]),
         },
       };
 

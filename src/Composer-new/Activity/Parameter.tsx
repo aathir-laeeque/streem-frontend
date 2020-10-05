@@ -1,21 +1,15 @@
 import { Select, TextInput } from '#components';
 import { debounce } from 'lodash';
 import React, { FC } from 'react';
+import { PARAMETER_OPERATORS } from '#Composer-new/constants';
 
 import { ParameterWrapper } from './styles';
 import { ActivityProps } from './types';
+import { useDispatch } from 'react-redux';
+import { updateActivity } from './actions';
 
-const OPERATORS = [
-  { label: '( = ) Equal to', value: 'EQUAL_TO' },
-  { label: '( < ) Less than', value: 'LESS_THAN' },
-  { label: '( <= ) Less than equal to', value: 'LESS_THAN_EQUAL_TO' },
-  { label: '( > ) More than', value: 'MORE_THAN' },
-  { label: '( >= ) More than equal to', value: 'MORE_THAN_EQUAL_TO' },
-  { label: '( <-> ) Between', value: 'BETWEEN' },
-];
-
-const ParameterActivity: FC<ActivityProps> = ({ activity }) => {
-  console.log('parameter activity :: ', activity);
+const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
+  const dispatch = useDispatch();
 
   return (
     <ParameterWrapper>
@@ -24,8 +18,12 @@ const ParameterActivity: FC<ActivityProps> = ({ activity }) => {
         defaultValue={activity.data.parameter}
         name="parameter"
         onChange={debounce(({ name, value }) => {
-          console.log('field name :: ', name);
-          console.log('updated value :: ', value);
+          dispatch(
+            updateActivity({
+              ...activity,
+              data: { ...activity.data, [name]: value },
+            }),
+          );
         }, 500)}
       />
 
@@ -34,19 +32,28 @@ const ParameterActivity: FC<ActivityProps> = ({ activity }) => {
         defaultValue={activity.data.uom}
         name="uom"
         onChange={debounce(({ name, value }) => {
-          console.log('field name :: ', name);
-          console.log('updated value :: ', value);
+          dispatch(
+            updateActivity({
+              ...activity,
+              data: { ...activity.data, [name]: value },
+            }),
+          );
         }, 500)}
       />
 
       <Select
         label="Criteria"
         placeHolder="Select"
-        options={OPERATORS}
+        options={PARAMETER_OPERATORS}
         onChange={(option) => {
-          console.log('selected option  :: ', option);
+          dispatch(
+            updateActivity({
+              ...activity,
+              data: { ...activity.data, operator: option.value },
+            }),
+          );
         }}
-        selectedValue={OPERATORS.find(
+        selectedValue={PARAMETER_OPERATORS.find(
           (option) => option.value === activity.data.operator,
         )}
       />
@@ -55,11 +62,15 @@ const ParameterActivity: FC<ActivityProps> = ({ activity }) => {
         <div className="between-values">
           <TextInput
             label="Value"
-            defaultValue={activity.data.value}
-            name="value"
+            defaultValue={activity.data?.lowerValue}
+            name="lowerValue"
             onChange={debounce(({ name, value }) => {
-              console.log('field name :: ', name);
-              console.log('updated value :: ', value);
+              dispatch(
+                updateActivity({
+                  ...activity,
+                  data: { ...activity.data, [name]: value },
+                }),
+              );
             }, 500)}
           />
 
@@ -67,11 +78,15 @@ const ParameterActivity: FC<ActivityProps> = ({ activity }) => {
 
           <TextInput
             label="Value"
-            defaultValue={activity.data.value}
-            name="value"
+            defaultValue={activity.data?.upperValue}
+            name="uperValue"
             onChange={debounce(({ name, value }) => {
-              console.log('field name :: ', name);
-              console.log('updated value :: ', value);
+              dispatch(
+                updateActivity({
+                  ...activity,
+                  data: { ...activity.data, [name]: value },
+                }),
+              );
             }, 500)}
           />
         </div>
@@ -81,8 +96,12 @@ const ParameterActivity: FC<ActivityProps> = ({ activity }) => {
           defaultValue={activity.data.value}
           name="value"
           onChange={debounce(({ name, value }) => {
-            console.log('field name :: ', name);
-            console.log('updated value :: ', value);
+            dispatch(
+              updateActivity({
+                ...activity,
+                data: { ...activity.data, [name]: value },
+              }),
+            );
           }, 500)}
         />
       )}

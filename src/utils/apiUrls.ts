@@ -126,3 +126,12 @@ export const apiAddNewActivity = ({
 
 export const apiDeleteActivity = (activityId: Activity['id']) =>
   `${baseUrl}/activities/${activityId}/archive`;
+
+export const apiUpdateActivity = (activityId: Activity['id']) =>
+  `${baseUrl}/activities/${activityId}`;
+
+export const apiAddStop = (taskId: Task['id']) =>
+  `${baseUrl}/tasks/${taskId}/stop/add`;
+
+export const apiRemoveStop = (taskId: Task['id']) =>
+  `${baseUrl}/tasks/${taskId}/stop/remove`;

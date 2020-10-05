@@ -12,6 +12,8 @@ import {
   deleteTaskSuccess,
 } from './actions';
 import { TaskListActions } from './reducer.types';
+import { addStop, updateTask } from './actions';
+import { apiAddStop, apiRemoveStop } from '../../utils/apiUrls';
 
 function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
   try {
@@ -30,8 +32,7 @@ function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
       apiCreateTask({ checklistId, stageId }),
       {
         data: {
-          // TODO: ask backend to remove the name from task
-          name: 'new task',
+          name: '',
           orderTree: activeStagsTasksOrder.length + 1,
         },
       },
@@ -71,7 +72,41 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
   }
 }
 
+function* addStopSaga({ payload }: ReturnType<typeof addStop>) {
+  try {
+    const { taskId } = payload;
+
+    const { data, errors } = yield call(request, 'PATCH', apiAddStop(taskId));
+    if (data) {
+      yield put(updateTask(data));
+    } else {
+    }
+  } catch (error) {
+    console.error('error came add stop saga :: ', error);
+  }
+}
+
+function* removeStopSaga({ payload }: ReturnType<typeof addStop>) {
+  try {
+    const { taskId } = payload;
+
+    const { data, errors } = yield call(
+      request,
+      'PATCH',
+      apiRemoveStop(taskId),
+    );
+    if (data) {
+      yield put(updateTask(data));
+    } else {
+    }
+  } catch (error) {
+    console.error('error came add stop saga :: ', error);
+  }
+}
+
 export function* TaskListSaga() {
   yield takeLatest(TaskListActions.ADD_NEW_TASK, addNewTaskSaga);
   yield takeLatest(TaskListActions.DELETE_TASK, deleteTaskSaga);
+  yield takeLatest(TaskListActions.ADD_STOP, addStopSaga);
+  yield takeLatest(TaskListActions.REMOVE_STOP, removeStopSaga);
 }

@@ -18,6 +18,8 @@ import {
 import { StageCardWrapper } from './styles';
 import { StageCardProps } from './types';
 import { updateStageName } from './actions';
+import { openOverlayAction } from '../../components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 
 const StageCard = forwardRef<HTMLDivElement, StageCardProps>(
   ({ index, isActive, isFirstItem, isLastItem, stage }, ref) => {
@@ -27,7 +29,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>(
       <StageCardWrapper
         ref={ref}
         isActive={isActive}
-        onClick={() => dispatch(setActiveStage(stage.id))}
+        onClick={() => dispatch(setActiveStage({ id: stage.id }))}
       >
         <div className="stage-header">
           <div className="order-control">
@@ -64,7 +66,27 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>(
             id="stage-delete"
             onClick={(event) => {
               event.stopPropagation();
-              dispatch(deleteStage(stage?.id));
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                  props: {
+                    header: 'Delete Stage',
+                    primaryText: 'Confirm',
+                    secondaryText: 'Cancel',
+                    onPrimaryClick: () =>
+                      dispatch(deleteStage({ id: stage.id })),
+                    body: (
+                      <>
+                        <span>
+                          You cannot recover your tasks once you delete the
+                          stage.
+                        </span>
+                        <span>Are you sure you want to delete the stage?</span>
+                      </>
+                    ),
+                  },
+                }),
+              );
             }}
           />
         </div>
@@ -84,7 +106,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>(
           className="stage-footer"
           onClick={(event) => {
             event.stopPropagation();
-            dispatch(duplicateStage(stage?.id));
+            dispatch(duplicateStage({ id: stage.id }));
           }}
         >
           <FileCopy className="icon" fontSize="small" />

@@ -1,4 +1,3 @@
-import { ComponentPropsWithRef } from 'react';
 import { Stage } from '../checklist.types';
 
 export type StageCardProps = {

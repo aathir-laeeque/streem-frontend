@@ -1,10 +1,10 @@
+import AddStop from '#Composer/modals/AddStop';
 import AssignmentSuccessModal from '#Composer/modals/AssignmentSuccess';
 import CompleteJobWithException from '#Composer/modals/CompleteJobWithException';
 import CompleteTaskWithException from '#Composer/modals/CompleteTaskWithException';
 import MediaDetail from '#Composer/modals/MediaDetail';
 import Signature from '#Composer/modals/SignatureActivity';
 import SkipTask from '#Composer/modals/SkipTask';
-import AddStop from '#Composer/modals/AddStop';
 import StartJob from '#Composer/modals/StartJob';
 import TaskErrorCorrection from '#Composer/modals/TaskErrorCorrection';
 import TaskUserAssignment from '#Composer/modals/TaskUserAssignment';
@@ -19,7 +19,9 @@ import styled from 'styled-components';
 
 import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import { ConfirmationModal } from './ConfirmationModal';
+import SimpleConfirmationModal from './SimpleConfirmationModal';
 import { CommonOverlayProps, OverlayNames } from './types';
+import TimedTaskConfig from '../../Composer-new/modals/TimedTaskConfig';
 
 const Wrapper = styled.div``;
 
@@ -74,6 +76,12 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
       return params.popOverAnchorEl ? (
         <AssignedUserDetailsPopover {...params} />
       ) : null;
+
+    case OverlayNames.SIMPLE_CONFIRMATION_MODAL:
+      return <SimpleConfirmationModal {...params} />;
+
+    case OverlayNames.TIMED_TASK_CONFIG:
+      return <TimedTaskConfig {...params} />;
 
     default:
       return null;

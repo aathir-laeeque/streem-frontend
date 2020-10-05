@@ -7,7 +7,7 @@ import { debounce } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { updateActivity } from './actions';
 
-const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
+const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
 
   return (

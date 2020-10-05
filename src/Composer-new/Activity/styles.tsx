@@ -15,6 +15,7 @@ const ActivityWrapper = styled.div.attrs({
     position: absolute;
     right: 32px;
     top: 32px;
+    z-index: 99;
   }
 `;
 
@@ -44,11 +45,61 @@ const ChecklistWrapper = styled.div.attrs({
 
 const MediaWrapper = styled.div.attrs({
   className: 'activity-media',
-})``;
+})`
+  display: flex;
+  margin-top: 24px;
+
+  .card {
+    align-items: center;
+    background-color: #f4f4f4;
+    border: 1px dashed #dadada;
+    border-radius: 4px;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 24px;
+    padding: 24px;
+
+    :last-child {
+      margin-right: 0;
+    }
+
+    > .icon {
+      font-size: 36px;
+    }
+
+    span {
+      color: #999999;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+  }
+`;
 
 const MultiSelectWrapper = styled.div.attrs({
   className: 'activity-multiselect',
-})``;
+})`
+  .options-list {
+    list-style-type: none;
+    margin: 0;
+    margin-top: 8px;
+    padding: 0;
+
+    &-item {
+      align-items: center;
+      display: flex;
+
+      .input {
+        flex: 1;
+      }
+
+      #remove-item {
+        margin-left: 16px;
+      }
+    }
+  }
+`;
 
 const ParameterWrapper = styled.div.attrs({
   className: 'activity-parameter',
@@ -83,11 +134,43 @@ const ParameterWrapper = styled.div.attrs({
 
 const SignatureWrapper = styled.div.attrs({
   className: 'activity-signature',
-})``;
+})`
+  align-items: center;
+  background-color: #fafafa;
+  border: 1px dashed #bababa;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 24px;
+  padding: 80px;
+
+  > .icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+  }
+`;
 
 const TextboxWrapper = styled.div.attrs({
   className: 'activity-textbox',
-})``;
+})`
+  label {
+    color: #000000;
+    display: block;
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .textbox {
+    align-items: center;
+    background-color: #fafafa;
+    border-radius: 4px;
+    color: #999999;
+    display: flex;
+    justify-content: center;
+    padding: 90px;
+  }
+`;
 
 const YesNoWrapper = styled.div.attrs({
   className: 'activity-yes-no',

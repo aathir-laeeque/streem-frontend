@@ -50,6 +50,7 @@ const Wrapper = styled.div.attrs({
     &-item {
       border: 1px solid transparent;
       border-bottom-color: #bababa;
+      cursor: pointer;
       padding: 10px 0;
     }
   }
@@ -60,7 +61,7 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-type Option = { label: string; value: string };
+export type Option = { label: string; value: string };
 
 type SelectProps = {
   disabled?: boolean;

@@ -78,6 +78,15 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         },
       };
 
+    case TaskListActions.UPDATE_TASK:
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [action.payload.task.id]: action.payload.task,
+        },
+      };
+
     case StageListActions.ADD_NEW_STAGE_SUCCESS:
       const { stage } = action.payload;
 
@@ -93,7 +102,7 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
       return {
         ...state,
         tasksOrderInStage: {
-          ...omit(state.tasksOrderInStage, [action.payload.stageId.toString()]),
+          ...omit(state.tasksOrderInStage, [action.payload.id.toString()]),
         },
       };
 

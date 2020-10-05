@@ -3,7 +3,7 @@ import {
   apiGetSelectedJob as apiGetJob,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
+import { all, call, fork, put, takeLeading } from 'redux-saga/effects';
 
 import {
   fetchComposerData,
@@ -19,8 +19,6 @@ import { ComposerEntity } from './types';
 function* fetchComposerDataSaga({
   payload,
 }: ReturnType<typeof fetchComposerData>) {
-  console.log('came to fetchComposerDataSaga with payload :: ', payload);
-
   try {
     const { id, entity } = payload;
 
@@ -52,7 +50,7 @@ function* fetchComposerDataSaga({
 }
 
 export function* ComposerSaga() {
-  yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchComposerDataSaga);
+  yield takeLeading(ComposerAction.FETCH_COMPOSER_DATA, fetchComposerDataSaga);
 
   yield all([fork(StageListSaga), fork(TaskListSaga), fork(ActivitySaga)]);
 }

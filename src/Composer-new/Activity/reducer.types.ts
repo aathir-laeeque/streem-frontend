@@ -6,7 +6,8 @@ import {
   addNewActivitySuccess,
   deleteActivityError,
   deleteActivitySuccess,
-  updateActivity,
+  updateActivityError,
+  updateActivitySuccess,
 } from './actions';
 
 export type ActivitiesById = Record<string, Activity>;
@@ -41,7 +42,8 @@ export type ActivityListActionType =
       | typeof addNewActivitySuccess
       | typeof deleteActivityError
       | typeof deleteActivitySuccess
-      | typeof updateActivity
+      | typeof updateActivityError
+      | typeof updateActivitySuccess
     >
   | ReturnType<typeof addNewTaskSuccess | typeof deleteTaskSuccess>
   | ComposerActionType;

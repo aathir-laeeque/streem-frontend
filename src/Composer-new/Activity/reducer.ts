@@ -83,6 +83,15 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         },
       };
 
+    case ActivityListActions.UPDATE_ACTIVITY_SUCCESS:
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [action.payload.activity.id]: action.payload.activity,
+        },
+      };
+
     case TaskListActions.ADD_NEW_TASK_SUCCESS:
       const { newTask, stageId } = action.payload;
 
@@ -116,6 +125,7 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
       };
 
     case ActivityListActions.DELETE_ACTIVITY_ERROR:
+    case ActivityListActions.UPDATE_ACTIVITY_ERROR:
       return {
         ...state,
         error: action.payload.error,

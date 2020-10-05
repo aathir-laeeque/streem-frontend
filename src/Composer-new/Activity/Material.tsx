@@ -11,10 +11,11 @@ import { debounce } from 'lodash';
 import React, { createRef, FC, RefObject, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { updateActivity } from './actions';
 import { MaterialWrapper } from './styles';
 import { ActivityProps } from './types';
 
-const MaterialActivity: FC<ActivityProps> = ({ activity }) => {
+const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const { data: uploadedFile } = useTypedSelector((state) => state.fileUpload);
@@ -83,7 +84,16 @@ const MaterialActivity: FC<ActivityProps> = ({ activity }) => {
                 className="item-input"
                 defaultValue={item.name}
                 onChange={debounce(({ value }) => {
-                  console.log('updated value for item :: ', value);
+                  dispatch(
+                    updateActivity({
+                      ...activity,
+                      data: [
+                        ...activity.data.slice(0, index),
+                        { id: item.id, name: value },
+                        ...activity.data.slice(index + 1),
+                      ],
+                    }),
+                  );
                 }, 500)}
               />
 
@@ -91,7 +101,16 @@ const MaterialActivity: FC<ActivityProps> = ({ activity }) => {
                 <ArrowDropUp
                   className="icon"
                   onClick={() => {
-                    console.log('increase quantity by 1');
+                    dispatch(
+                      updateActivity({
+                        ...activity,
+                        data: [
+                          ...activity.data.slice(0, index),
+                          { ...item, quantity: item.quantity + 1 },
+                          ...activity.data.slice(index + 1),
+                        ],
+                      }),
+                    );
                   }}
                 />
                 <span>
@@ -103,9 +122,16 @@ const MaterialActivity: FC<ActivityProps> = ({ activity }) => {
                   className="icon"
                   onClick={() => {
                     if (item.quantity >= 0) {
-                      console.log('decrease quantity by 1');
-                    } else {
-                      console.log('no more decrease allowed');
+                      dispatch(
+                        updateActivity({
+                          ...activity,
+                          data: [
+                            ...activity.data.slice(0, index),
+                            { ...item, quantity: item.quantity - 1 },
+                            ...activity.data.slice(index + 1),
+                          ],
+                        }),
+                      );
                     }
                   }}
                 />
@@ -115,14 +141,39 @@ const MaterialActivity: FC<ActivityProps> = ({ activity }) => {
                 className="icon"
                 id="remove-item"
                 onClick={() => {
-                  console.log('remove item from the list');
+                  dispatch(
+                    updateActivity({
+                      ...activity,
+                      data: [
+                        ...activity.data.filter((el) => el.id !== item.id),
+                      ],
+                    }),
+                  );
                 }}
               />
             </li>
           );
         })}
 
-        <AddNewItem onClick={() => console.log('add new item to the list')} />
+        <AddNewItem
+          onClick={() =>
+            dispatch(
+              updateActivity({
+                ...activity,
+                data: [
+                  ...activity.data,
+                  {
+                    link: '',
+                    name: '',
+                    type: 'image',
+                    fileName: '',
+                    quantity: 0,
+                  },
+                ],
+              }),
+            )
+          }
+        />
       </ol>
     </MaterialWrapper>
   );

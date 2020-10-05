@@ -1,7 +1,12 @@
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { Delete } from '@material-ui/icons';
 import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
 
+import { useTypedSelector } from '../../store/helpers';
 import { MandatoryActivity, NonMandatoryActivity } from '../checklist.types';
+import { deleteActivity } from './actions';
 import ChecklistActivity from './Checklist';
 import InstructionActivity from './Instruction';
 import MaterialActivity from './Material';
@@ -13,9 +18,6 @@ import { ActivityWrapper } from './styles';
 import TextboxActivity from './Textbox';
 import { ActivityProps } from './types';
 import YesNoActivity from './YesNo';
-import { useTypedSelector } from '../../store/helpers';
-import { useDispatch } from 'react-redux';
-import { deleteActivity } from './actions';
 
 const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
   const { activeStageId: stageId } = useTypedSelector(
@@ -23,6 +25,21 @@ const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
   );
 
   const dispatch = useDispatch();
+
+  const deleteActivityProps = {
+    header: 'Delete Activity',
+    body: (
+      <>
+        <span>Are you sure you want to Delete this Activity ? </span>
+        <span>Your work in progress will be lost.</span>
+      </>
+    ),
+    onPrimaryClick: () => {
+      if (stageId) {
+        dispatch(deleteActivity({ activityId: activity.id, taskId, stageId }));
+      }
+    },
+  };
 
   return (
     <ActivityWrapper>
@@ -33,7 +50,10 @@ const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
         onClick={() => {
           if (stageId) {
             dispatch(
-              deleteActivity({ activityId: activity.id, taskId, stageId }),
+              openOverlayAction({
+                type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                props: deleteActivityProps,
+              }),
             );
           }
         }}
@@ -47,9 +67,11 @@ const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
             return <MediaActivity activity={activity} />;
 
           case MandatoryActivity.MULTISELECT:
+          case MandatoryActivity.SINGLE_SELECT:
             return <MultiSelectActivity activity={activity} />;
 
           case MandatoryActivity.SHOULD_BE:
+          case MandatoryActivity.PARAMETER:
             return <ParameterActivity activity={activity} />;
 
           case MandatoryActivity.SIGNATURE:
