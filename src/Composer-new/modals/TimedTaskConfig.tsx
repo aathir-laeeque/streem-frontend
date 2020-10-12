@@ -1,14 +1,29 @@
-import { BaseModal, NumberInput, Select } from '#components';
+import { BaseModal, Select } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { Option } from '#components/shared/Select';
-import { Delete, ArrowDropUp, ArrowDropDown } from '@material-ui/icons';
-import { noop } from 'lodash';
-import React, { FC, useState } from 'react';
+import { Task, TimerOperator } from '#Composer-new/checklist.types';
+import { ArrowDropDown, ArrowDropUp, Delete } from '@material-ui/icons';
+import { debounce } from 'lodash';
+import moment from 'moment';
+import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+
+import { removeTaskTimer, setTaskTimer } from '../Tasks/actions';
+
+const TIMER_OPERATORS = [
+  {
+    label: 'Complete the task under set time',
+    value: TimerOperator.LESS_THAN,
+  },
+  {
+    label: 'Perform the task Not Less than set time',
+    value: TimerOperator.NOT_LESS_THAN,
+  },
+];
 
 const Wrapper = styled.div`
   .modal {
-    min-width: 400px !important;
+    min-width: 450px !important;
     overflow: visible !important;
     padding: 0;
 
@@ -42,6 +57,7 @@ const Wrapper = styled.div`
       position: absolute;
       right: 24px;
       top: 24px;
+      z-index: 1;
     }
 
     .timer-option {
@@ -54,25 +70,182 @@ const Wrapper = styled.div`
       flex-direction: column;
       padding: 24px;
 
-      .input {
-        margin-bottom: 16px;
+      .timer-value {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
 
-        :last-of-type {
-          margin-bottom: 0;
+        label {
+          display: block;
+          margin-bottom: 8px;
+        }
+
+        .input-group {
+          display: flex;
+          margin-bottom: 16px;
+          width: 100%;
+
+          &-item {
+            align-items: center;
+            background-color: #f4f4f4;
+            display: flex;
+            flex: 1;
+            justify-content: space-between;
+            margin-right: 16px;
+
+            :last-child {
+              margin-right: 0;
+            }
+
+            span {
+              border: 1px solid transparent;
+              border-bottom-color: #bababa;
+              padding: 10px;
+              text-align: center;
+            }
+          }
         }
       }
     }
   }
 `;
 
-const TimedTaskConfig: FC<CommonOverlayProps<any>> = ({
+type InputGroupProps = {
+  value: number;
+  setValue: (value: number) => void;
+};
+
+type InputFieldProps = {
+  increase: () => void;
+  decrease: () => void;
+  unit: 'Hr' | 'Min' | 'Sec';
+  value: number;
+};
+
+const InputField: FC<InputFieldProps> = ({
+  decrease,
+  increase,
+  unit,
+  value,
+}) => (
+  <div className="input-group-item">
+    <ArrowDropUp className="icon" id="increase" onClick={() => increase()} />
+    <span>{`${value.toString().padStart(2, '0')} ${unit}`}</span>
+    <ArrowDropDown className="icon" id="decrease" onClick={() => decrease()} />
+  </div>
+);
+
+const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
+  const [duration, setDuration] = useState(moment.duration(value, 'seconds'));
+
+  useEffect(() => {
+    setValue(duration.asSeconds());
+  }, [duration]);
+
+  useEffect(() => {
+    setDuration(moment.duration(value, 'seconds'));
+  }, [value]);
+
+  return (
+    <div className="input-group">
+      <InputField
+        value={duration.hours()}
+        unit="Hr"
+        increase={() => {
+          setDuration(moment.duration(duration.add(1, 'hour'), 'seconds'));
+        }}
+        decrease={() => {
+          setDuration(moment.duration(duration.subtract(1, 'hour'), 'seconds'));
+        }}
+      />
+      <InputField
+        value={duration.minutes()}
+        unit="Min"
+        increase={() => {
+          setDuration(moment.duration(duration.add(1, 'minute'), 'seconds'));
+        }}
+        decrease={() => {
+          setDuration(
+            moment.duration(duration.subtract(1, 'minute'), 'seconds'),
+          );
+        }}
+      />
+      <InputField
+        value={duration.seconds()}
+        unit="Sec"
+        increase={() => {
+          setDuration(moment.duration(duration.add(1, 'second'), 'seconds'));
+        }}
+        decrease={() => {
+          setDuration(
+            moment.duration(duration.subtract(1, 'second'), 'seconds'),
+          );
+        }}
+      />
+    </div>
+  );
+};
+
+type TimedTaskConfigProps = {
+  maxPeriod: Task['maxPeriod'];
+  minPeriod: Task['minPeriod'];
+  taskId: Task['id'];
+  timerOperator: Task['timerOperator'];
+};
+
+const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: {},
+  props: {
+    maxPeriod: maxPeriodValue = 0,
+    minPeriod: minPeriodValue = 0,
+    taskId,
+    timerOperator: timerOperatorValue = TimerOperator.LESS_THAN,
+  },
 }) => {
-  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
-  const [minPeriod, setMinPeriod] = useState(null);
-  const [maxPeriod, setMaxPeriod] = useState(null);
+  const dispatch = useDispatch();
+
+  const [hasChanged, setHasChanged] = useState(false);
+  const [timerOperator, setTimerOperator] = useState(
+    TIMER_OPERATORS.find((el) => el.value === timerOperatorValue),
+  );
+  const [minPeriod, setMinPeriod] = useState<number>(minPeriodValue);
+  const [maxPeriod, setMaxPeriod] = useState<number>(maxPeriodValue);
+
+  useEffect(() => {
+    if (hasChanged) {
+      if (
+        timerOperator?.value === TimerOperator.NOT_LESS_THAN &&
+        maxPeriod &&
+        minPeriod
+      ) {
+        dispatch(
+          setTaskTimer({
+            maxPeriod,
+            minPeriod,
+            taskId,
+            timerOperator: timerOperator?.value as TimerOperator,
+          }),
+        );
+      }
+
+      if (timerOperator?.value === TimerOperator.LESS_THAN && maxPeriod) {
+        dispatch(
+          setTaskTimer({
+            maxPeriod,
+            taskId,
+            timerOperator: timerOperator?.value as TimerOperator,
+          }),
+        );
+      }
+    }
+  }, [maxPeriod, minPeriod]);
+
+  useEffect(() => {
+    return () => {
+      setHasChanged(false);
+    };
+  }, []);
 
   return (
     <Wrapper>
@@ -87,89 +260,57 @@ const TimedTaskConfig: FC<CommonOverlayProps<any>> = ({
           <Delete
             className="icon"
             fontSize="small"
-            onClick={() => console.log('delete timer')}
+            onClick={() => dispatch(removeTaskTimer(taskId))}
           />
           <div className="timer-option">
             <Select
               label="Select Condition"
-              options={[
-                {
-                  label: 'Complete the task under set time',
-                  value: 'LESS_THAN',
-                },
-                {
-                  label: 'Perform the task Not Less than set time',
-                  value: 'NOT_LESS_THAN',
-                },
-              ]}
-              onChange={(option) => setSelectedOption(option)}
+              options={TIMER_OPERATORS}
+              onChange={(option) => setTimerOperator(option)}
               placeHolder="Choose an option"
+              selectedValue={timerOperator}
             />
           </div>
 
-          {/* {selectedOption ? (
+          {timerOperator ? (
             <div className="timer-values">
-              {selectedOption.value === 'LESS_THAN' ? (
+              {timerOperator.value === TimerOperator.LESS_THAN ? (
                 <div className="timer-value">
-                  <label>{selectedOption.label}</label>
-                  <div>
-                    <ArrowDropUp
-                      className="icon"
-                      onClick={() => {
-                        console.log('increase quantity by 1');
-                      }}
-                    />
-                    <span>{minPeriod}</span>
-                    <ArrowDropDown
-                      className="icon"
-                      onClick={() => {
-                        console.log('decrease quantity by 1');
-                      }}
-                    />
-                  </div>
+                  <label>{timerOperator.label}</label>
+                  <InputGroup
+                    value={maxPeriod}
+                    setValue={debounce((val) => {
+                      setMaxPeriod(val);
+                      setHasChanged(true);
+                    }, 500)}
+                  />
                 </div>
               ) : (
-                <div>
+                <>
                   <div className="timer-value">
                     <label>Set Minimum time </label>
-                    <div>
-                      <ArrowDropUp
-                        className="icon"
-                        onClick={() => {
-                          console.log('increase quantity by 1');
-                        }}
-                      />
-                      <span>{minPeriod}</span>
-                      <ArrowDropDown
-                        className="icon"
-                        onClick={() => {
-                          console.log('decrease quantity by 1');
-                        }}
-                      />
-                    </div>
+                    <InputGroup
+                      value={minPeriod}
+                      setValue={debounce((val) => {
+                        setMinPeriod(val);
+                        setHasChanged(true);
+                      }, 500)}
+                    />
                   </div>
                   <div className="timer-value">
                     <label>Set Maximum time </label>
-                    <div>
-                      <ArrowDropUp
-                        className="icon"
-                        onClick={() => {
-                          console.log('increase quantity by 1');
-                        }}
-                      />
-                      <span>{maxPeriod}</span>
-                      <ArrowDropDown
-                        className="icon"
-                        onClick={() => {
-                          console.log('decrease quantity by 1');
-                        }}
-                      />
-                    </div>
+                    <InputGroup
+                      value={maxPeriod}
+                      setValue={debounce((val) => {
+                        setMaxPeriod(val);
+                        setHasChanged(true);
+                      }, 500)}
+                    />
                   </div>
-                </div>
+                </>
               )}
             </div>
-          ) : null} */}
+          ) : null}
         </div>
       </BaseModal>
     </Wrapper>

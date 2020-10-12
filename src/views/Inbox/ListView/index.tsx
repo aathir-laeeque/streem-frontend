@@ -1,4 +1,5 @@
 import { useTabs } from '#components';
+import { ComposerEntity } from '#Composer-new/types';
 import { useTypedSelector } from '#store';
 import { fetchProperties } from '#store/properties/actions';
 import React, { FC, useEffect } from 'react';
@@ -14,7 +15,7 @@ const ListView: FC<ListViewProps> = () => {
 
   useEffect(() => {
     if (!job?.length) {
-      dispatch(fetchProperties({ type: 'JOB' }));
+      dispatch(fetchProperties({ type: ComposerEntity.JOB }));
     }
   }, []);
 

@@ -1,23 +1,36 @@
+import { closeOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
-import { apiCreateTask, apiDeleteTask } from '#utils/apiUrls';
+import {
+  apiAddStop,
+  apiCreateTask,
+  apiDeleteTask,
+  apiRemoveStop,
+  apiRemoveTaskTimer,
+  apiSetTaskTimer,
+  apiUpdateTask,
+} from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import {
   addNewTask,
-  addNewTaskError,
   addNewTaskSuccess,
+  addStop,
+  addTaskMedia,
   deleteTask,
-  deleteTaskError,
   deleteTaskSuccess,
+  removeTaskTimer,
+  setTaskError,
+  setTaskTimer,
+  updateTask,
+  updateTaskName,
 } from './actions';
 import { TaskListActions } from './reducer.types';
-import { addStop, updateTask } from './actions';
-import { apiAddStop, apiRemoveStop } from '../../utils/apiUrls';
+import { apiAddMediaToTask } from '../../utils/apiUrls';
 
 function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
   try {
-    console.log('came to add new task saga with payload :: ', payload);
     const { checklistId, stageId } = payload;
 
     const taskOrderInStage = yield select(
@@ -41,7 +54,7 @@ function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
     if (data) {
       yield put(addNewTaskSuccess(data, stageId));
     } else {
-      yield put(addNewTaskError(errors));
+      yield put(setTaskError(errors));
     }
   } catch (error) {
     console.error('error came in addNewTaskSaga :: ', error);
@@ -50,8 +63,6 @@ function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
 
 function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
   try {
-    console.log('came to deleteTaskSaga with payload :: ', payload);
-
     const activeStageId = yield select(
       (state: RootState) => state.prototypeComposer.stages.activeStageId,
     );
@@ -65,7 +76,7 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
     if (data) {
       yield put(deleteTaskSuccess(payload.taskId, activeStageId));
     } else {
-      yield put(deleteTaskError(errors));
+      yield put(setTaskError(errors));
     }
   } catch (error) {
     console.error('error came in deleteTaskSaga :: ', error);
@@ -80,6 +91,7 @@ function* addStopSaga({ payload }: ReturnType<typeof addStop>) {
     if (data) {
       yield put(updateTask(data));
     } else {
+      yield put(setTaskError(errors));
     }
   } catch (error) {
     console.error('error came add stop saga :: ', error);
@@ -98,9 +110,97 @@ function* removeStopSaga({ payload }: ReturnType<typeof addStop>) {
     if (data) {
       yield put(updateTask(data));
     } else {
+      yield put(setTaskError(errors));
     }
   } catch (error) {
     console.error('error came add stop saga :: ', error);
+  }
+}
+
+function* updateTaskSaga({ payload }: ReturnType<typeof updateTaskName>) {
+  try {
+    const { task } = payload;
+
+    const { data, errors } = yield call(
+      request,
+      'PATCH',
+      apiUpdateTask(task.id),
+      { data: { ...task } },
+    );
+
+    if (data) {
+      yield put(updateTask(data));
+    } else {
+      yield put(setTaskError(errors));
+    }
+  } catch (error) {
+    console.error('error came in updateTaskSaga :: ', error);
+  }
+}
+
+function* setTaskTimerSaga({ payload }: ReturnType<typeof setTaskTimer>) {
+  try {
+    const { maxPeriod, minPeriod, taskId, timerOperator } = payload;
+
+    const { data, errors } = yield call(
+      request,
+      'PATCH',
+      apiSetTaskTimer(taskId),
+      { data: { maxPeriod, minPeriod, timerOperator } },
+    );
+
+    if (data) {
+      yield put(closeOverlayAction(OverlayNames.TIMED_TASK_CONFIG));
+      yield put(updateTask(data));
+    } else {
+      yield put(setTaskError(errors));
+    }
+  } catch (error) {
+    console.error('Error came in setTaskTimerSaga :: ', error);
+  }
+}
+
+function* removeTaskTimerSaga({ payload }: ReturnType<typeof removeTaskTimer>) {
+  try {
+    const { taskId } = payload;
+
+    const { data, errors } = yield call(
+      request,
+      'PATCH',
+      apiRemoveTaskTimer(taskId),
+    );
+
+    if (data) {
+      yield put(closeOverlayAction(OverlayNames.TIMED_TASK_CONFIG));
+      yield put(updateTask(data));
+    } else {
+      yield put(setTaskError(errors));
+    }
+  } catch (error) {
+    console.error('error came in removeTaskTimerSaga :: ', error);
+  }
+}
+
+function* addTaskMediaSaga({ payload }: ReturnType<typeof addTaskMedia>) {
+  try {
+    console.log('payload from addTaskMediaSaga :: ', payload);
+    const { mediaDetails, taskId } = payload;
+
+    const { data, errors } = yield call(
+      request,
+      'POST',
+      apiAddMediaToTask(taskId),
+      { data: { ...mediaDetails } },
+    );
+
+    if (data) {
+      console.log('data from add media to task api :: ', data);
+      yield put(updateTask(data));
+    } else {
+      console.error('error from add media to task api :: ', errors);
+    }
+  } catch (error) {
+    console.error('error came in addTaskMediaSaga :: ', error);
   }
 }
 
@@ -109,4 +209,8 @@ export function* TaskListSaga() {
   yield takeLatest(TaskListActions.DELETE_TASK, deleteTaskSaga);
   yield takeLatest(TaskListActions.ADD_STOP, addStopSaga);
   yield takeLatest(TaskListActions.REMOVE_STOP, removeStopSaga);
+  yield takeLatest(TaskListActions.UPDATE_TASK_NAME, updateTaskSaga);
+  yield takeLatest(TaskListActions.SET_TASK_TIMER, setTaskTimerSaga);
+  yield takeLatest(TaskListActions.REMOVE_TASK_TIMER, removeTaskTimerSaga);
+  yield takeLatest(TaskListActions.ADD_TASK_MEDIA, addTaskMediaSaga);
 }

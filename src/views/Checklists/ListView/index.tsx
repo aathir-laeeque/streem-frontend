@@ -1,4 +1,5 @@
 import { ListViewComponent } from '#components';
+import { ComposerEntity } from '#Composer-new/types';
 import { useTypedSelector } from '#store';
 import { fetchProperties } from '#store/properties/actions';
 import { Settings } from '@material-ui/icons';
@@ -29,17 +30,17 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   const [sideBarOpen, setSideBarOpen] = useState(false);
 
   const fetchData = (page: number, size: number) => {
-    dispatch(fetchChecklists({ page, size }));
+    dispatch(fetchChecklists({ page, size, sort: 'createdAt,desc' }));
   };
 
   useEffect(() => {
     fetchData(0, 10);
 
     if (!job?.length) {
-      dispatch(fetchProperties({ type: 'JOB' }));
+      dispatch(fetchProperties({ type: ComposerEntity.JOB }));
     }
     if (!checklist?.length) {
-      dispatch(fetchProperties({ type: 'CHECKLIST' }));
+      dispatch(fetchProperties({ type: ComposerEntity.CHECKLIST }));
     }
   }, []);
 

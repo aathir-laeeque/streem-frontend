@@ -26,3 +26,5 @@ export { Avatar } from './shared/Avatar';
 export { Dropdown } from './shared/Dropdown';
 export { TextInput, NumberInput } from './shared/Input';
 export { default as Select } from './shared/Select';
+export { default as Textarea } from './shared/Textarea';
+export { default as ImageUploadButton } from './shared/ImageUploadButton';

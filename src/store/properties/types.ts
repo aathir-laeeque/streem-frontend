@@ -1,5 +1,6 @@
+import { ComposerEntity } from '#Composer-new/types';
+
 import {
-  fetchProperties,
   fetchPropertiesError,
   fetchPropertiesOngoing,
   fetchPropertiesSuccess,
@@ -16,9 +17,10 @@ export interface Property {
 export type Properties = Property[];
 
 export interface PropertiesState {
-  readonly job: Properties;
   readonly checklist: Properties;
   readonly error?: any;
+  readonly job: Properties;
+  readonly loading: boolean;
 }
 
 export enum PropertiesAction {
@@ -29,8 +31,20 @@ export enum PropertiesAction {
 }
 
 export type PropertiesActionType = ReturnType<
-  | typeof fetchProperties
   | typeof fetchPropertiesError
   | typeof fetchPropertiesOngoing
   | typeof fetchPropertiesSuccess
 >;
+
+export type usePropertiesArgs = {
+  entity: ComposerEntity;
+};
+
+export type fetchPropertiesArgs = {
+  type: ComposerEntity;
+};
+
+export type fetchPropertiesSuccessArgs = {
+  data: Property[];
+  type: ComposerEntity;
+};

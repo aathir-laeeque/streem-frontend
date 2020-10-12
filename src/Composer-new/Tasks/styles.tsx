@@ -70,7 +70,7 @@ const TaskCardWrapper = styled.div.attrs({
             cursor: pointer;
             display: flex;
             flex: 1;
-            justify-content: center;
+            flex-direction: column;
             padding: 10px;
 
             :last-child {
@@ -78,12 +78,23 @@ const TaskCardWrapper = styled.div.attrs({
             }
 
             :hover {
-              > .icon {
+              .icon {
                 color: #1d84ff;
               }
             }
 
-            > .icon {
+            > div {
+              align-items: center;
+              display: flex;
+            }
+
+            .timer-config {
+              display: flex;
+              flex-direction: column;
+              margin-top: 8px;
+            }
+
+            .icon {
               margin-right: 8px;
             }
           }
@@ -92,7 +103,7 @@ const TaskCardWrapper = styled.div.attrs({
             if (isTimed) {
               return css`
                 #timed {
-                  > .icon {
+                  .icon {
                     color: #1d84ff;
                   }
                 }
@@ -102,7 +113,7 @@ const TaskCardWrapper = styled.div.attrs({
             if (hasStop) {
               return css`
                 #add-stop {
-                  > .icon {
+                  .icon {
                     color: #f7b500;
                   }
                 }
@@ -112,7 +123,7 @@ const TaskCardWrapper = styled.div.attrs({
             if (hasMedias) {
               return css`
                 #attach-media {
-                  > .icon {
+                  .icon {
                     color: #1d84ff;
                   }
                 }

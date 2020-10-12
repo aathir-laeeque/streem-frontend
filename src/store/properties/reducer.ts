@@ -1,3 +1,5 @@
+import { Reducer } from 'redux';
+
 import {
   PropertiesAction,
   PropertiesActionType,
@@ -5,29 +7,35 @@ import {
 } from './types';
 
 const initialState: PropertiesState = {
-  job: [],
   checklist: [],
+  job: [],
+  loading: false,
 };
 
-const reducer = (
+const reducer: Reducer<PropertiesState, PropertiesActionType> = (
   state = initialState,
-  action: PropertiesActionType,
-): PropertiesState => {
+  action,
+) => {
   switch (action.type) {
+    case PropertiesAction.FETCH_PROPERTIES_ONGOING:
+      return {
+        ...state,
+        loading: true,
+      };
+
     case PropertiesAction.FETCH_PROPERTIES_SUCCESS:
-      if (action.payload?.type === 'JOB') {
-        return {
-          ...state,
-          job: action.payload?.properties,
-        };
-      } else {
-        return {
-          ...state,
-          checklist: action.payload?.properties,
-        };
-      }
+      return {
+        ...state,
+        loading: false,
+        [action.payload.type]: action.payload.data,
+      };
+
     case PropertiesAction.FETCH_PROPERTIES_ERROR:
-      return { ...state, error: action.payload?.error };
+      return {
+        ...state,
+        error: action.payload.error,
+        loading: false,
+      };
 
     default:
       return { ...state };

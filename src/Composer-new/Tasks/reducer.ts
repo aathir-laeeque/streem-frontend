@@ -106,8 +106,7 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         },
       };
 
-    case TaskListActions.ADD_NEW_TASK_ERROR:
-    case TaskListActions.DELETE_TASK_ERROR:
+    case TaskListActions.SET_TASK_ERROR:
       return {
         ...state,
         error: action.payload.error,

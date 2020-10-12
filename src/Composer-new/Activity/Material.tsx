@@ -89,7 +89,7 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                       ...activity,
                       data: [
                         ...activity.data.slice(0, index),
-                        { id: item.id, name: value },
+                        { ...item, name: value },
                         ...activity.data.slice(index + 1),
                       ],
                     }),
@@ -145,7 +145,8 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                     updateActivity({
                       ...activity,
                       data: [
-                        ...activity.data.filter((el) => el.id !== item.id),
+                        ...activity.data.slice(0, index),
+                        ...activity.data.slice(index + 1),
                       ],
                     }),
                   );

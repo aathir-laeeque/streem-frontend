@@ -1,9 +1,10 @@
-import { Select, TextInput } from '#components';
+import { Select, Textarea, ImageUploadButton } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { ActivityType } from '#Composer-new/checklist.types';
+import { ActivityType, TimerOperator } from '#Composer-new/checklist.types';
 import { useTypedSelector } from '#store/helpers';
 import {
+  AddBox,
   ArrowDownward,
   ArrowUpward,
   Delete,
@@ -19,9 +20,16 @@ import Activity from '../Activity';
 import { addNewActivity } from '../Activity/actions';
 import { Checklist } from '../checklist.types';
 import { ActivityOptions } from '../constants';
-import { addStop, deleteTask, removeStop, setActiveTask } from './actions';
+import {
+  addStop,
+  deleteTask,
+  removeStop,
+  setActiveTask,
+  updateTaskName,
+} from './actions';
 import { TaskCardWrapper } from './styles';
 import { TaskCardProps } from './types';
+import { formatDuration } from '#utils/timeUtils';
 
 const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
   const {
@@ -33,27 +41,34 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
 
   const dispatch = useDispatch();
 
+  const {
+    id: taskId,
+    hasStop,
+    maxPeriod = 0,
+    medias,
+    minPeriod = 0,
+    name,
+    timed,
+    timerOperator,
+  } = task;
+
   const deleteTaskProps = {
     header: 'Delete Task',
-    body: (
-      <>
-        <span>Are you sure you want to Delete this Task ? </span>
-      </>
-    ),
-    onPrimaryClick: () => dispatch(deleteTask(task.id)),
+    body: <span>Are you sure you want to Delete this Task ? </span>,
+    onPrimaryClick: () => dispatch(deleteTask(taskId)),
   };
 
   if (activeStageId) {
-    const taskActivities = activityOrderInTaskInStage[activeStageId][task.id];
+    const taskActivities = activityOrderInTaskInStage[activeStageId][taskId];
 
     return (
       <TaskCardWrapper
-        isTimed={task.timed}
-        hasMedias={!!task.medias.length}
-        hasStop={task.hasStop}
+        isTimed={timed}
+        hasMedias={!!medias.length}
+        hasStop={hasStop}
         onClick={() => {
-          if (activeTaskId !== task.id) {
-            dispatch(setActiveTask(task.id));
+          if (activeTaskId !== taskId) {
+            dispatch(setActiveTask(taskId));
           }
         }}
       >
@@ -94,12 +109,11 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
         </div>
         <div className="task-body">
           <div className="task-config">
-            <TextInput
-              defaultValue={task.name}
+            <Textarea
+              defaultValue={name}
               label="Name the task"
-              name="taskName"
               onChange={debounce(({ value }) => {
-                console.log('value after change :: ', value);
+                dispatch(updateTaskName({ id: taskId, name: value }));
               }, 500)}
             />
 
@@ -111,31 +125,63 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
                   dispatch(
                     openOverlayAction({
                       type: OverlayNames.TIMED_TASK_CONFIG,
-                      props: {},
+                      props: { maxPeriod, minPeriod, taskId, timerOperator },
                     }),
                   )
                 }
               >
-                <Timer className="icon" />
-                Timed
+                <div>
+                  <Timer className="icon" />
+                  Timed
+                </div>
+                {timed ? (
+                  <div className="timer-config">
+                    {timerOperator === TimerOperator.LESS_THAN ? (
+                      <>
+                        <span>Complete Under</span>
+                        <span>{formatDuration(maxPeriod)}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>NLT {formatDuration(minPeriod)}</span>
+                        <span>Max: {formatDuration(maxPeriod)}</span>
+                      </>
+                    )}
+                  </div>
+                ) : null}
               </div>
               <div className="task-config-control-item" id="attach-media">
-                <PermMedia className="icon" />
-                Attach Media
+                <ImageUploadButton
+                  onUploadSuccess={(fileData) => {
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.TASK_MEDIA_UPLOAD,
+                        props: { fileData, taskId: taskId },
+                      }),
+                    );
+                  }}
+                  onUploadError={(error) => {
+                    console.error('error in fileUpload :: ', error);
+                  }}
+                  label="Attach Media"
+                  icon={PermMedia}
+                />
               </div>
               <div
                 className="task-config-control-item"
                 id="add-stop"
                 onClick={() => {
-                  if (task.hasStop) {
-                    dispatch(removeStop(task.id));
+                  if (hasStop) {
+                    dispatch(removeStop(taskId));
                   } else {
-                    dispatch(addStop(task.id));
+                    dispatch(addStop(taskId));
                   }
                 }}
               >
-                <PanTool className="icon" />
-                Add Stop
+                <div>
+                  <PanTool className="icon" />
+                  {hasStop ? 'Stop Added' : 'Add Stop'}
+                </div>
               </div>
             </div>
           </div>
@@ -148,7 +194,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
                 <Activity
                   activity={activity}
                   key={`${activityId}-${index}`}
-                  taskId={task.id}
+                  taskId={taskId}
                 />
               );
             })}
@@ -162,7 +208,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
                 addNewActivity({
                   activityType: option.value as ActivityType,
                   checklistId: (data as Checklist).id,
-                  taskId: task.id,
+                  taskId: taskId,
                   stageId: activeStageId,
                   orderTree: taskActivities.length + 1,
                 }),
@@ -170,6 +216,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
             }}
             placeHolder="Add Activity"
             persistValue={false}
+            SelectButtonIcon={AddBox}
           />
         </div>
       </TaskCardWrapper>

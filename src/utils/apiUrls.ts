@@ -135,3 +135,15 @@ export const apiAddStop = (taskId: Task['id']) =>
 
 export const apiRemoveStop = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}/stop/remove`;
+
+export const apiUpdateTask = (taskId: Task['id']) =>
+  `${baseUrl}/tasks/${taskId}`;
+
+export const apiSetTaskTimer = (taskId: Task['id']) =>
+  `${baseUrl}/tasks/${taskId}/timer/set`;
+
+export const apiRemoveTaskTimer = (taskId: Task['id']) =>
+  `${baseUrl}/tasks/${taskId}/timer/unset`;
+
+export const apiAddMediaToTask = (taskId: Task['id']) =>
+  `${baseUrl}/tasks/${taskId}/medias`;

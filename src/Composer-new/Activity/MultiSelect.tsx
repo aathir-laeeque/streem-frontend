@@ -1,6 +1,10 @@
 import { AddNewItem, Select, TextInput } from '#components';
 import { MandatoryActivity } from '#Composer-new/checklist.types';
-import { Close } from '@material-ui/icons';
+import {
+  CheckBoxOutlineBlankSharp,
+  Close,
+  RadioButtonUnchecked,
+} from '@material-ui/icons';
 import { debounce, noop } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
@@ -15,14 +19,14 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
 }) => {
   const dispatch = useDispatch();
 
+  const isMultiSelect = activity.type === MandatoryActivity.MULTISELECT;
+
   return (
     <MultiSelectWrapper>
       <Select
         disabled
         label={
-          activity.type === MandatoryActivity.MULTISELECT
-            ? 'Creating a Multi Choice'
-            : 'Creating a single choice'
+          isMultiSelect ? 'Creating a Multi Choice' : 'Creating a single choice'
         }
         options={[]}
         onChange={noop}
@@ -33,6 +37,9 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         {activity?.data?.map((item, index) => (
           <li className="options-list-item" key={index}>
             <TextInput
+              BeforeElement={
+                isMultiSelect ? CheckBoxOutlineBlankSharp : RadioButtonUnchecked
+              }
               defaultValue={item.name}
               onChange={debounce(({ value }) => {
                 dispatch(

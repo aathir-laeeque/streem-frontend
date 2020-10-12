@@ -53,6 +53,22 @@ const StageCardWrapper = styled.div.attrs({
       padding: 16px;
     }
 
+    &-task-properties {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+
+      > .icon {
+        color: #f7b500;
+        margin-left: 12px;
+
+        :only-child,
+        :first-child {
+          margin-left: 0;
+        }
+      }
+    }
+
     &-footer {
       align-items: center;
       background-color: #f4f4f4;

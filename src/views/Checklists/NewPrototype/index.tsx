@@ -13,7 +13,7 @@ import { Props } from './types';
 const NewPrototype: FC<Props> = () => {
   const dispatch = useDispatch();
 
-  const properties = useProperties(ComposerEntity.CHECKLIST);
+  const properties = useProperties({ entity: ComposerEntity.CHECKLIST });
 
   const { list } = useTypedSelector((state) => state.usersCopy.active);
 

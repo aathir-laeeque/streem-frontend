@@ -1,5 +1,6 @@
-import React, { ComponentPropsWithRef, forwardRef, FC } from 'react';
+import React, { ComponentPropsWithRef, forwardRef } from 'react';
 import styled, { css } from 'styled-components';
+import { SvgIconComponent, Error as ErrorIcon } from '@material-ui/icons';
 
 type OnChangeArgs = {
   name: string;
@@ -7,25 +8,33 @@ type OnChangeArgs = {
 };
 
 type InputProps = {
+  AfterElement?: SvgIconComponent;
+  afterElementClass?: string;
+  BeforeElement?: SvgIconComponent;
+  beforeElementClass?: string;
   error?: boolean | string;
   label?: string;
   optional?: boolean;
-  onChange: ({ name, value }: OnChangeArgs) => void;
+  onChange?: ({ name, value }: OnChangeArgs) => void;
 } & ComponentPropsWithRef<'input'>;
 
 type WrapperProps = {
   hasError: boolean;
 };
 
-const Wrapper = styled.div.attrs({
-  className: 'input',
-})<WrapperProps>`
+const Wrapper = styled.div.attrs(({ className }) => ({
+  className: `input ${className ? className : ''}`,
+}))<WrapperProps>`
   display: flex;
+  flex: 1;
   flex-direction: column;
 
   .input-label {
+    align-items: center;
     color: #161616;
+    display: flex;
     font-size: 14px;
+    justify-content: flex-start;
     letter-spacing: 0.16px;
     line-height: 1.29;
     margin-bottom: 8px;
@@ -37,17 +46,40 @@ const Wrapper = styled.div.attrs({
     }
   }
 
-  input[type='text'],
-  input[type='number'] {
+  .input-wrapper {
+    align-items: center;
     background-color: #f4f4f4;
     border: 1px solid transparent;
     border-bottom-color: #bababa;
-    outline: none;
+    display: flex;
+    flex: 1;
     padding: 10px 16px;
 
-    :active,
-    :focus {
+    :focus-within {
       border-color: #1d84ff;
+    }
+
+    > .icon {
+      &#before-icon {
+        margin-left: 0;
+        margin-right: 12px;
+      }
+
+      &#after-icon {
+        margin-left: 12px;
+        margin-right: 0;
+      }
+
+      &.error {
+        color: #eb5757;
+      }
+    }
+
+    input {
+      background: transparent;
+      border: none;
+      flex: 1;
+      outline: none;
     }
 
     ${({ hasError }) =>
@@ -66,18 +98,23 @@ const Wrapper = styled.div.attrs({
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const {
+    AfterElement = ErrorIcon,
+    afterElementClass = 'error',
+    BeforeElement,
+    beforeElementClass,
+    className,
     defaultValue = '',
     error = '',
     label,
     name,
     onChange,
     optional = false,
-    placeholder = 'Placeholder Text',
+    placeholder = 'Write here',
     type = 'text',
   } = props;
 
   return (
-    <Wrapper hasError={!!error}>
+    <Wrapper hasError={!!error} className={className}>
       {label ? (
         <label className="input-label">
           {label}
@@ -85,18 +122,34 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         </label>
       ) : null}
 
-      <input
-        defaultValue={defaultValue}
-        name={name}
-        onChange={({ target: { name, value } }) => {
-          if (typeof onChange === 'function') {
-            onChange({ name, value });
-          }
-        }}
-        placeholder={placeholder}
-        ref={ref}
-        type={type}
-      />
+      <div className="input-wrapper">
+        {BeforeElement ? (
+          <BeforeElement
+            className={`icon ${beforeElementClass ? beforeElementClass : ''}`}
+            id="before-icon"
+          />
+        ) : null}
+
+        <input
+          defaultValue={defaultValue}
+          name={name}
+          onChange={({ target: { name, value } }) => {
+            if (typeof onChange === 'function') {
+              onChange({ name, value });
+            }
+          }}
+          placeholder={placeholder}
+          ref={ref}
+          type={type}
+        />
+
+        {AfterElement && error ? (
+          <AfterElement
+            className={`icon ${afterElementClass ? afterElementClass : ''}`}
+            id="after-icon"
+          />
+        ) : null}
+      </div>
 
       {typeof error === 'string' && !!error ? (
         <span className="field-error">{error}</span>

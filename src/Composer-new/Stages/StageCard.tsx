@@ -1,9 +1,13 @@
-import { TextInput } from '#components';
+import { Textarea } from '#components';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { useTypedSelector } from '#store/helpers';
 import {
   ArrowDownward,
   ArrowUpward,
   Delete,
-  FileCopy,
+  PanTool,
+  AssignmentTurnedIn,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { forwardRef } from 'react';
@@ -11,98 +15,115 @@ import { useDispatch } from 'react-redux';
 
 import {
   deleteStage,
-  duplicateStage,
   reOrderStage,
   setActiveStage,
+  updateStageName,
 } from './actions';
 import { StageCardWrapper } from './styles';
 import { StageCardProps } from './types';
-import { updateStageName } from './actions';
-import { openOverlayAction } from '../../components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
 
-const StageCard = forwardRef<HTMLDivElement, StageCardProps>(
-  ({ index, isActive, isFirstItem, isLastItem, stage }, ref) => {
-    const dispatch = useDispatch();
+const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
+  const { index, isActive, isFirstItem, isLastItem, stage } = props;
 
-    return (
-      <StageCardWrapper
-        ref={ref}
-        isActive={isActive}
-        onClick={() => dispatch(setActiveStage({ id: stage.id }))}
-      >
-        <div className="stage-header">
-          <div className="order-control">
-            <ArrowUpward
-              className="icon"
-              fontSize="small"
-              onClick={(event) => {
-                event.stopPropagation();
-                if (!isFirstItem) {
-                  dispatch(
-                    reOrderStage({ from: index, to: index - 1, id: stage.id }),
-                  );
-                }
-              }}
-            />
-            <ArrowDownward
-              className="icon"
-              fontSize="small"
-              onClick={(event) => {
-                event.stopPropagation();
-                if (!isLastItem) {
-                  dispatch(
-                    reOrderStage({ from: index, to: index + 1, id: stage.id }),
-                  );
-                }
-              }}
-            />
-          </div>
+  const { tasksInStage } = useTypedSelector((state) => ({
+    tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[stage.id].map(
+      (taskId) => state.prototypeComposer.tasks.listById[taskId],
+    ),
+  }));
 
-          <div className="stage-name">Stage {index + 1}</div>
+  const approvalNeeded = false;
 
-          <Delete
+  const stageHasStop = tasksInStage.reduce((acc, task) => {
+    acc ||= task.hasStop;
+
+    return acc;
+  }, false);
+
+  const dispatch = useDispatch();
+
+  return (
+    <StageCardWrapper
+      ref={ref}
+      isActive={isActive}
+      onClick={() => dispatch(setActiveStage({ id: stage.id }))}
+    >
+      <div className="stage-header">
+        <div className="order-control">
+          <ArrowUpward
             className="icon"
-            id="stage-delete"
+            fontSize="small"
             onClick={(event) => {
               event.stopPropagation();
-              dispatch(
-                openOverlayAction({
-                  type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                  props: {
-                    header: 'Delete Stage',
-                    primaryText: 'Confirm',
-                    secondaryText: 'Cancel',
-                    onPrimaryClick: () =>
-                      dispatch(deleteStage({ id: stage.id })),
-                    body: (
-                      <>
-                        <span>
-                          You cannot recover your tasks once you delete the
-                          stage.
-                        </span>
-                        <span>Are you sure you want to delete the stage?</span>
-                      </>
-                    ),
-                  },
-                }),
-              );
+              if (!isFirstItem) {
+                dispatch(
+                  reOrderStage({ from: index, to: index - 1, id: stage.id }),
+                );
+              }
+            }}
+          />
+          <ArrowDownward
+            className="icon"
+            fontSize="small"
+            onClick={(event) => {
+              event.stopPropagation();
+              if (!isLastItem) {
+                dispatch(
+                  reOrderStage({ from: index, to: index + 1, id: stage.id }),
+                );
+              }
             }}
           />
         </div>
 
-        <div className="stage-body">
-          <TextInput
-            defaultValue={stage.name}
-            label="Name the Stage"
-            name="stageName"
-            onChange={debounce(({ value }) => {
-              dispatch(updateStageName({ id: stage.id, name: value }));
-            }, 500)}
-          />
+        <div className="stage-name">Stage {index + 1}</div>
+
+        <Delete
+          className="icon"
+          id="stage-delete"
+          onClick={(event) => {
+            event.stopPropagation();
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                props: {
+                  header: 'Delete Stage',
+                  primaryText: 'Confirm',
+                  secondaryText: 'Cancel',
+                  onPrimaryClick: () => dispatch(deleteStage({ id: stage.id })),
+                  body: (
+                    <>
+                      <span>
+                        You cannot recover your tasks once you delete the stage.
+                      </span>
+                      <span>Are you sure you want to delete the stage?</span>
+                    </>
+                  ),
+                },
+              }),
+            );
+          }}
+        />
+      </div>
+
+      <div className="stage-body">
+        <div className="stage-task-properties">
+          {approvalNeeded ? (
+            <AssignmentTurnedIn className="icon" id="approval-needed" />
+          ) : null}
+
+          {stageHasStop ? <PanTool className="icon" id="task-stop" /> : null}
         </div>
 
-        <div
+        <Textarea
+          defaultValue={stage.name}
+          label="Name the Stage"
+          onChange={debounce(({ value }) => {
+            dispatch(updateStageName({ id: stage.id, name: value }));
+          }, 500)}
+        />
+      </div>
+
+      {/* <div
           className="stage-footer"
           onClick={(event) => {
             event.stopPropagation();
@@ -111,11 +132,10 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>(
         >
           <FileCopy className="icon" fontSize="small" />
           Duplicate
-        </div>
-      </StageCardWrapper>
-    );
-  },
-);
+        </div> */}
+    </StageCardWrapper>
+  );
+});
 
 StageCard.displayName = 'Stage-Card';
 

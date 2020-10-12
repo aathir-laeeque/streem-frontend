@@ -10,6 +10,11 @@ const TaskMedias: FC<TaskMediasProps> = ({ medias, taskId }) => {
   );
 
   if (taskId === activeTaskId && medias.length) {
+    console.log(
+      'medias from TaskMedias component when taask is active :: ',
+      medias,
+    );
+
     return <TaskMediasWrapper>Task medias</TaskMediasWrapper>;
   } else {
     return <TaskMediasWrapper />;

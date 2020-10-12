@@ -1,16 +1,27 @@
 import { apiGetProperties } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { put, call, takeEvery } from 'redux-saga/effects';
-import { fetchPropertiesError, fetchPropertiesSuccess } from './actions';
+import {
+  fetchPropertiesError,
+  fetchPropertiesSuccess,
+  fetchProperties,
+} from './actions';
 import { PropertiesAction } from './types';
 
 // TODO Update like others
 
-function* fetchProperties(action: any) {
+function* fetchPropertiesSaga({ payload }: ReturnType<typeof fetchProperties>) {
   try {
-    const params = action.payload;
-    const response = yield call(request, 'GET', apiGetProperties(), { params });
-    yield put(fetchPropertiesSuccess(response.data, params.type));
+    const { type } = payload;
+    const { data, errors } = yield call(request, 'GET', apiGetProperties(), {
+      params: { type: type.toUpperCase() },
+    });
+
+    if (data) {
+      yield put(fetchPropertiesSuccess({ data, type }));
+    } else {
+      yield put(fetchPropertiesError(errors));
+    }
   } catch (error) {
     console.error(
       'error from fetchProperties function in PropertiesPropertiesSaga :: ',
@@ -21,5 +32,5 @@ function* fetchProperties(action: any) {
 }
 
 export function* PropertiesSaga() {
-  yield takeEvery(PropertiesAction.FETCH_PROPERTIES, fetchProperties);
+  yield takeEvery(PropertiesAction.FETCH_PROPERTIES, fetchPropertiesSaga);
 }

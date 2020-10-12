@@ -4,12 +4,12 @@ import { getFullName } from '#utils/stringUtils';
 import { Close } from '@material-ui/icons';
 import { isEmpty, pick } from 'lodash';
 import React, { FC, useEffect } from 'react';
-import { useFieldArray, useForm, Controller } from 'react-hook-form';
-import Select from 'react-select';
-
-import { FormInput, PrototypeFormProps, Author } from './types';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { navigate } from '@reach/router';
+
 import { createNewPrototype } from './actions';
+import { FormInput, PrototypeFormProps } from './types';
 
 const PrototypeForm: FC<PrototypeFormProps> = ({
   checklistProperties,
@@ -165,11 +165,7 @@ const PrototypeForm: FC<PrototypeFormProps> = ({
       </div>
 
       <div className="form-submit-buttons">
-        <Button1
-          color="red"
-          variant="secondary"
-          onClick={() => console.log('cancel action of form')}
-        >
+        <Button1 color="red" variant="secondary" onClick={() => navigate(-1)}>
           Cancel
         </Button1>
         <Button1 type="submit">Submit</Button1>

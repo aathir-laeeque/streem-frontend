@@ -95,3 +95,9 @@ export type Error = {
   message: string;
   type: string;
 };
+
+export type FileUploadData = {
+  filename: string;
+  link: string;
+  type: string;
+};

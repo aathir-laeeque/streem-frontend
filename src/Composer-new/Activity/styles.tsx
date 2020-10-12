@@ -33,7 +33,9 @@ const ChecklistWrapper = styled.div.attrs({
       display: flex;
 
       .input {
-        flex: 1;
+        #before-icon {
+          color: #000000;
+        }
       }
 
       #remove-item {
@@ -91,7 +93,9 @@ const MultiSelectWrapper = styled.div.attrs({
       display: flex;
 
       .input {
-        flex: 1;
+        #before-icon {
+          color: #000000;
+        }
       }
 
       #remove-item {
@@ -121,10 +125,6 @@ const ParameterWrapper = styled.div.attrs({
     align-items: center;
     display: flex;
     margin-top: 16px;
-
-    > .input {
-      flex: 1;
-    }
 
     span {
       margin: 24px 12px 0;
@@ -183,29 +183,25 @@ const YesNoWrapper = styled.div.attrs({
     margin-top: 12px;
 
     > .input {
-      flex: 1;
-
       :first-child {
         margin-right: 24px;
 
-        input {
+        .input-wrapper {
           border-bottom-color: #5aa700;
           background-color: #e1fec0;
 
-          :active,
-          :focus {
+          :focus-within {
             border-color: #5aa700;
           }
         }
       }
 
       :last-child {
-        input {
+        .input-wrapper {
           border-bottom-color: #ff6b6b;
           background-color: #ffebeb;
 
-          :active,
-          :focus {
+          :focus-within {
             border-color: #ff6b6b;
           }
         }
@@ -270,7 +266,6 @@ const MaterialWrapper = styled.div.attrs({
       }
 
       .input {
-        flex: 1;
         margin-right: 12px;
       }
 

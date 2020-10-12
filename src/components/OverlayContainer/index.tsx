@@ -1,3 +1,4 @@
+import { TaskMediaModal, TimedTaskConfigModal } from '#Composer-new/modals';
 import AddStop from '#Composer/modals/AddStop';
 import AssignmentSuccessModal from '#Composer/modals/AssignmentSuccess';
 import CompleteJobWithException from '#Composer/modals/CompleteJobWithException';
@@ -21,7 +22,6 @@ import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
 import { CommonOverlayProps, OverlayNames } from './types';
-import TimedTaskConfig from '../../Composer-new/modals/TimedTaskConfig';
 
 const Wrapper = styled.div``;
 
@@ -81,7 +81,10 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
       return <SimpleConfirmationModal {...params} />;
 
     case OverlayNames.TIMED_TASK_CONFIG:
-      return <TimedTaskConfig {...params} />;
+      return <TimedTaskConfigModal {...params} />;
+
+    case OverlayNames.TASK_MEDIA_UPLOAD:
+      return <TaskMediaModal {...params} />;
 
     default:
       return null;

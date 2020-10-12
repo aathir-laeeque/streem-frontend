@@ -4,7 +4,7 @@ export const formatDateTime = (time: number, format = 'DD-MM-YYYY HH:mm:ss') =>
   moment.unix(time).utcOffset('+05:30').format(format);
 
 export const formatDuration = (duration: number) => {
-  const time = moment.duration(duration);
+  const time = moment.duration(duration, 'seconds');
 
   const hours = time.hours();
   const minutes = time.minutes();
