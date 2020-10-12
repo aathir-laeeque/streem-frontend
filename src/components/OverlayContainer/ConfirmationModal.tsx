@@ -13,23 +13,50 @@ export interface ConfirmationModalProps {
 
 const Wrapper = styled.div.attrs({})`
   .modal {
-    min-width: 360px !important;
+    min-width: 400px !important;
+
+    h2 {
+      color: #000 !important;
+      font-weight: bold !important;
+    }
 
     .modal-header {
-      border-bottom: 1px solid #dadada !important;
+      padding: 24px !important;
+      border-bottom: none !important;
     }
 
     .modal-footer {
-      border-bottom: 1px solid #dadada !important;
+      padding: 24px 16px !important;
+      flex-direction: row-reverse !important;
+      border-top: none !important;
+
+      .modal-footer-options {
+        padding: 0px 16px !important;
+
+        span {
+          padding: 3px 8px;
+        }
+      }
+
+      .modal-footer-buttons {
+        padding: 0px 16px !important;
+        justify-content: flex-start !important;
+
+        button {
+          padding: 12px 24px !important;
+
+          :first-child {
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+          }
+        }
+      }
     }
 
     .modal-body {
-      text-align: left !important;
-    }
-
-    .body-content {
-      font-size: 16px;
-      color: #666666;
+      padding: 0px 24px !important;
+      font-size: 14px;
+      color: #000000;
     }
   }
 `;
@@ -62,9 +89,6 @@ export const ConfirmationModal: FC<CommonOverlayProps<
         }}
       >
         {body && body}
-        <div className="body-content" style={{ marginTop: '30px' }}>
-          Are you sure you want to continue?
-        </div>
       </BaseModal>
     </Wrapper>
   );

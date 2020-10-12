@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { fetchComposerData, resetComposer } from './actions';
 import Header from './Header';
+import { fetchAssignedReviewersForChecklist } from './reviewer.actions';
 import Stages from './Stages';
 import { ComposerWrapper, LoaderWrapper } from './styles';
 import Tasks from './Tasks';
@@ -17,6 +18,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
   useEffect(() => {
     if (id) {
       dispatch(fetchComposerData({ entity, id: parseInt(id) }));
+      dispatch(fetchAssignedReviewersForChecklist(parseInt(id)));
     }
 
     return () => {

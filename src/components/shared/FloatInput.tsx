@@ -108,7 +108,7 @@ export const FloatInput: FC<FloatInputProps> = ({
 
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
     if (event.target.value === '') {
-      if (required) {
+      if (required && !isSearch) {
         setError(true);
       }
     } else {

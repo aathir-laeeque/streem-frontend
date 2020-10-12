@@ -2,6 +2,7 @@ import {
   openOverlayAction,
   closeOverlayAction,
   closeAllOverlayAction,
+  updatePropsAction,
 } from './actions';
 
 export enum OverlayNames {
@@ -21,6 +22,14 @@ export enum OverlayNames {
   TASK_ERROR_CORRECTION = 'TASK_ERROR_CORRECTION',
   TASK_MEDIA_UPLOAD = 'TASK_MEDIA_UPLOAD',
   TASK_USER_ASSIGNMENT = 'TASK_USER_ASSIGNMENT',
+  ASSIGNED_USER_DETAIL = 'ASSIGNED_USER_DETAIL',
+  CHECKLIST_REVIEWER_ASSIGNMENT = 'CHECKLIST_REVIEWER_ASSIGNMENT',
+  CHECKLIST_REVIEWER_ASSIGNMENT_SUCCESS = 'CHECKLIST_REVIEWER_ASSIGNMENT_SUCCESS',
+  SUBMIT_REVIEW_MODAL = 'SUBMIT_REVIEW_MODAL',
+  CHECKLIST_REVIEWER_SUBMIT_SUCCESS = 'CHECKLIST_REVIEWER_SUBMIT_SUCCESS',
+  AUTHORS_DETAIL = 'AUTHORS_DETAIL',
+  REVIEWERS_DETAIL = 'REVIEWERS_DETAIL',
+  CHECKLIST_REVIEWER_ASSIGNMENT_POPOVER = 'CHECKLIST_REVIEWER_ASSIGNMENT_POPOVER',
   TASK_USERS_ASSIGNMENT = 'TASK_USERS_ASSIGNMENT',
   TIMED_TASK_CONFIG = 'TIMED_TASK_CONFIG',
 }
@@ -50,6 +59,7 @@ export enum OverlayContainerAction {
   OPEN_OVERLAY = '@@overlay/Container/OPEN_OVERLAY',
   CLOSE_OVERLAY = '@@overlay/Container/CLOSE_OVERLAY',
   CLOSE_ALL_OVERLAY = '@@overlay/Container/CLOSE_ALL_OVERLAY',
+  UPDATE_PROPS = '@@overlay/Container/UPDATE_PROPS',
 }
 
 export interface OverlayContainerState {
@@ -60,4 +70,5 @@ export type OverlayContainerActionType = ReturnType<
   | typeof openOverlayAction
   | typeof closeOverlayAction
   | typeof closeAllOverlayAction
+  | typeof updatePropsAction
 >;

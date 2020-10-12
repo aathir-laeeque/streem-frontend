@@ -129,7 +129,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               id="checklistId"
               executeOnFocus={() => setShowChecklists(true)}
               executeOnBlur={() =>
-                setTimeout(() => setShowChecklists(false), 500)
+                setTimeout(() => setShowChecklists(false), 10)
               }
               onChange={(id, value) => setSearchQuery(value)}
               required

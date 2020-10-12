@@ -20,7 +20,7 @@ const Login: FC<LoginProps> = () => {
   const [passwordInputType, setPasswordInputType] = useState(true);
   const { error } = useTypedSelector((state) => state.auth);
 
-  const { register, handleSubmit, errors } = useForm<Inputs>({
+  const { register, handleSubmit } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
   });
@@ -33,9 +33,7 @@ const Login: FC<LoginProps> = () => {
           return true;
         },
       },
-      messages: {
-        smallLength: '2 characters minimum',
-      },
+      messages: {},
     },
   };
 
@@ -59,13 +57,7 @@ const Login: FC<LoginProps> = () => {
               required: true,
               validate: validators['common'].functions,
             })}
-            error={
-              errors.username?.type
-                ? validators['username'].messages[errors.username?.type]
-                : error
-                ? ''
-                : undefined
-            }
+            error={error ? '' : undefined}
             placeHolder="Enter your Username or Email ID"
             label="Username/Email ID"
             id="username"
@@ -76,13 +68,7 @@ const Login: FC<LoginProps> = () => {
             placeHolder="Password"
             label="Password"
             id="password"
-            error={
-              errors.password?.type
-                ? validators['password'].messages[errors.password?.type]
-                : error
-                ? ''
-                : undefined
-            }
+            error={error ? '' : undefined}
             type={passwordInputType ? 'password' : 'text'}
             icon={
               <Visibility

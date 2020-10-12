@@ -11,6 +11,13 @@ import TaskErrorCorrection from '#Composer/modals/TaskErrorCorrection';
 import TaskUserAssignment from '#Composer/modals/TaskUserAssignment';
 import { AssignedUserDetailsPopover } from '#Composer/Popovers/AssignedUserDetailsPopover';
 import { TaskAssignmentPopover } from '#Composer/Popovers/TaskAssignmentPopover';
+import ReviewerAssignmentModal from '#Composer-new/Overlays/ReviewerAssignmentModal';
+import ReviewerAssignmentSuccessModal from '#Composer-new/Overlays/ReviewerAssignmentSuccess';
+import ReviewSubmitSuccessModal from '#Composer-new/Overlays/ReviewSubmitSuccess';
+import { ReviewerAssignmentPopover } from '#Composer-new/Overlays/ReviewerAssignmentPopover';
+import { SubmitReviewModal } from '#Composer-new/Overlays/SubmitReview';
+import { AuthorsDetailsPopover } from '#Composer-new/Overlays/AuthorsDetailsPopover';
+import { ReviewersDetailsPopover } from '#Composer-new/Overlays/ReviewersDetailsPopover';
 import { useTypedSelector } from '#store';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
@@ -67,6 +74,23 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
     case OverlayNames.ASSIGNMENT_SUCCESS:
       return <AssignmentSuccessModal {...params} />;
 
+    case OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT:
+      return <ReviewerAssignmentModal {...params} />;
+
+    case OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT_SUCCESS:
+      return <ReviewerAssignmentSuccessModal {...params} />;
+
+    case OverlayNames.CHECKLIST_REVIEWER_SUBMIT_SUCCESS:
+      return <ReviewSubmitSuccessModal {...params} />;
+
+    case OverlayNames.SUBMIT_REVIEW_MODAL:
+      return <SubmitReviewModal {...params} />;
+
+    case OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT_POPOVER:
+      return params.popOverAnchorEl ? (
+        <ReviewerAssignmentPopover {...params} />
+      ) : null;
+
     case OverlayNames.TASK_USER_ASSIGNMENT:
       return params.popOverAnchorEl ? (
         <TaskAssignmentPopover {...params} />
@@ -75,6 +99,16 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
     case OverlayNames.ASSIGNED_USER_DETAIL:
       return params.popOverAnchorEl ? (
         <AssignedUserDetailsPopover {...params} />
+      ) : null;
+
+    case OverlayNames.AUTHORS_DETAIL:
+      return params.popOverAnchorEl ? (
+        <AuthorsDetailsPopover {...params} />
+      ) : null;
+
+    case OverlayNames.REVIEWERS_DETAIL:
+      return params.popOverAnchorEl ? (
+        <ReviewersDetailsPopover {...params} />
       ) : null;
 
     case OverlayNames.SIMPLE_CONFIRMATION_MODAL:

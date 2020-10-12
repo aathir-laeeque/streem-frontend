@@ -1,12 +1,5 @@
 import { RouteComponentProps } from '@reach/router';
 
-export enum ChecklistStates {
-  BEING_APPROVED = 'BEING_APPROVED',
-  BEING_REVIEWED = 'BEING_REVIEWED',
-  DRAFT = 'DRAFT',
-  PUBLISHED = 'PUBLISHED',
-}
-
 // TODO: moves this to Jobs view types
 export enum JobStates {
   ASSIGNED = 'ASSIGNED',

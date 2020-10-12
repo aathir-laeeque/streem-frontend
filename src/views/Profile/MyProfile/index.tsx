@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { Button, LabeledInput, Role, Thumbnail } from '#components';
+import { Button, LabeledInput, Role } from '#components';
 import { Composer } from './styles';
 import { capitalize } from 'lodash';
 import { MyProfileProps } from './types';
@@ -77,13 +77,6 @@ const MyProfile: FC<MyProfileProps> = () => {
           <div className="flex-row">
             <div className="sub-heading bold">Basic Information</div>
           </div>
-          {/* <Thumbnail
-            source={{
-              firstName: profile?.firstName || '',
-              lastName: profile?.lastName || '',
-            }}
-            id="avatar"
-          /> */}
           <div className="flex-row">
             <div className="flex-col right-gutter">
               <LabeledInput

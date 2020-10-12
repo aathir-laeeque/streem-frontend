@@ -1,3 +1,5 @@
+import { Reviewer } from './reviewer.types';
+
 export type Properties = {
   [key: string]: string | null;
 };
@@ -111,6 +113,27 @@ export type Stage = {
   tasks: Task[];
 };
 
+export enum ChecklistStates {
+  PUBLISHED = 'PUBLISHED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  DRAFT = 'DRAFT',
+  BEING_APPROVED = 'BEING_APPROVED',
+  BEING_REVIEWED = 'BEING_REVIEWED',
+}
+
+export type Comment = {
+  id: number;
+  comments: string;
+  commentedAt: number;
+  commentedBy: {
+    id: number;
+    employeeId: string;
+    firstName: string;
+    lastName: string;
+  };
+  reviewCycle: number;
+};
+
 export type Checklist = {
   archived?: boolean;
   audit: Audit;
@@ -121,5 +144,9 @@ export type Checklist = {
   noOfTasks?: number;
   properties?: Properties;
   stages: Stage[];
+  status: ChecklistStates;
   version: number | null;
+  reviewers: Reviewer[];
+  comments: Comment[];
+  reviewCycle: number;
 };

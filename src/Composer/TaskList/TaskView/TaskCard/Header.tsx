@@ -19,7 +19,7 @@ import styled, { css } from 'styled-components';
 import { startTask } from '../../actions';
 import Timer from './Timer';
 import TaskAssignmentContent from './TaskAssignmentContent';
-import { Users } from '#store/users/types';
+import { User } from '#store/users/types';
 
 type HeaderProps = {
   task: Omit<Task, 'activities'>;
@@ -304,7 +304,7 @@ const JobHeader: FC<Pick<HeaderProps, 'task' | 'enableStopForTask'>> = ({
     setAnchorEl(event.currentTarget);
   };
 
-  const handleAssigneeClick = (event: MouseEvent, users: Users) => {
+  const handleAssigneeClick = (event: MouseEvent, users: User[]) => {
     dispatch(
       openOverlayAction({
         type: OverlayNames.ASSIGNED_USER_DETAIL,

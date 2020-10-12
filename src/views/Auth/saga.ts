@@ -111,6 +111,7 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
     yield put(fetchProfile({ id: data.id }));
   } catch (error) {
     console.error('error from loginSaga function in Auth :: ', error);
+    if (typeof error !== 'string') error = 'There seems to be an Issue. ';
     yield put(loginError(error));
   }
 }

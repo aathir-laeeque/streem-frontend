@@ -127,6 +127,28 @@ export const apiAddNewActivity = ({
 export const apiDeleteActivity = (activityId: Activity['id']) =>
   `${baseUrl}/activities/${activityId}/archive`;
 
+// REVIEWER
+export const apiGetReviewersForChecklist = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/reviewers`;
+
+export const apiAssignReviewersToChecklist = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/reviewers/assignments`;
+
+export const apiStartChecklistReview = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/review/start`;
+
+export const apiSubmitChecklistReview = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/review/complete`;
+
+export const apiSubmitChecklistReviewWithCR = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/review/complete-with-cr`;
+
+export const apiSubmitChecklistForReview = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/review/submit`;
+
+export const apiContinueChecklistReview = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/review/continue`;
+
 export const apiUpdateActivity = (activityId: Activity['id']) =>
   `${baseUrl}/activities/${activityId}`;
 
@@ -147,3 +169,4 @@ export const apiRemoveTaskTimer = (taskId: Task['id']) =>
 
 export const apiAddMediaToTask = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}/medias`;
+

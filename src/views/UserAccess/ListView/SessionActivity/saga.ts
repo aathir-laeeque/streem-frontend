@@ -3,7 +3,6 @@ import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import moment from 'moment';
-// import _ from 'lodash';
 import { SessionActivity } from './types';
 import {
   fetchSessionActivitysError,
@@ -40,18 +39,6 @@ function* fetchSessionActivitysSaga({
     if (errors || !pageable) {
       throw new Error(errors[0].message);
     }
-
-    // TODO :: After API starts working, Check if the code below works and put in store after parsing here and remove parsing from index.html.
-
-    // const temp = _(data)
-    //   .map((el) => ({
-    //     ...el,
-    //     triggeredOn: moment(el.triggeredAt).format('YYYY-MM-DD'),
-    //   }))
-    //   .groupBy('triggeredOn')
-    //   .forEach((value, key) => ({ [key]: value, id: key }));
-
-    // console.log('temp', temp);
 
     const newData = data.map((el) => ({
       ...el,

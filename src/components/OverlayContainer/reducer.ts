@@ -35,6 +35,16 @@ const reducer = (
         ...state,
         currentOverlays: [],
       };
+    case OverlayContainerAction.UPDATE_PROPS:
+      return {
+        ...state,
+        currentOverlays: state.currentOverlays.map((x) => {
+          if (x.type === action.payload.type) {
+            x.props = action.payload.props;
+          }
+          return x;
+        }),
+      };
 
     default:
       return { ...state };

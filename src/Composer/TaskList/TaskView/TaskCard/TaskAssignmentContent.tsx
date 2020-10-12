@@ -15,7 +15,7 @@ export default function TaskAssignmentContent({ taskId }: { taskId: number }) {
         type: OverlayNames.TASK_USER_ASSIGNMENT,
         popOverAnchorEl: event.currentTarget,
         props: {
-          taskId: taskId,
+          taskId,
         },
       }),
     );

@@ -1,5 +1,5 @@
 import { actionSpreader } from '#store';
-import { User, Users } from '#store/users/types';
+import { User } from '#store/users/types';
 
 import { Job } from '../views/Jobs/types';
 import { ComposerAction } from './composer.reducer.types';
@@ -26,7 +26,7 @@ export const fetchAssignedUsersForJob = (jobId: number) =>
 export const fetchAssignedUsersForJobError = (error: any) =>
   actionSpreader(ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB_ERROR, { error });
 
-export const fetchAssignedUsersForJobSuccess = (data: Users) =>
+export const fetchAssignedUsersForJobSuccess = (data: User[]) =>
   actionSpreader(ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS, { data });
 
 export const assignUserToJob = (user: User) =>
@@ -35,11 +35,8 @@ export const assignUserToJob = (user: User) =>
 export const unAssignUserFromJob = (user: User) =>
   actionSpreader(ComposerAction.UNASSIGN_USER_FROM_JOB, { user });
 
-export const revertUsersForJob = (users: Users) =>
+export const revertUsersForJob = (users: User[]) =>
   actionSpreader(ComposerAction.REVERT_USERS_FOR_JOB, { users });
-
-// export const revertUsersForJob = (users: Users, jobId: Job['id']) =>
-//   actionSpreader(ComposerAction.REVERT_USERS_FOR_JOB, { users, jobId });
 
 export const assignUsersToJob = (payload: {
   jobId: Job['id'];

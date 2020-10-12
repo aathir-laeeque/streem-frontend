@@ -18,6 +18,7 @@ import {
   initialState as taskListState,
   taskListReducer,
 } from './TaskList/reducer';
+import { User } from '#store/users/types';
 
 const initialState: ComposerState = {
   activities: activityListState,
@@ -74,20 +75,27 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       return { ...state, assignees: action.payload.users };
 
     case ComposerAction.ASSIGN_USER_TO_JOB:
-      const merged = unionBy(
-        [{ ...action.payload.user, assigned: true, completelyAssigned: true }],
-        state.assignees,
-        'id',
-      );
       return {
         ...state,
-        assignees: merged,
+        assignees: unionBy(
+          [
+            {
+              ...action.payload.user,
+              assigned: true,
+              completelyAssigned: true,
+            },
+          ],
+          state.assignees,
+          'id',
+        ),
       };
     case ComposerAction.UNASSIGN_USER_FROM_JOB:
-      const newAssignees = state.assignees.filter(
-        (item) => item.id !== action.payload.user.id,
-      );
-      return { ...state, assignees: newAssignees };
+      return {
+        ...state,
+        assignees: state.assignees.filter(
+          (item) => item.id !== action.payload.user.id,
+        ),
+      };
     case ComposerAction.ASSIGN_USERS_TO_JOB_SUCCESS:
       const jobAssigned = state.assignees.filter(
         (item) => item.completelyAssigned,
@@ -95,9 +103,9 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       const res = reduce(
         state.tasks.tasksById,
         function (result, value, key) {
-          const newAssignees = value.taskExecution.assignees.filter(
-            (item) => !action.payload.unassignIds.includes(item.id),
-          );
+          const newAssignees = (value.taskExecution.assignees as Array<
+            User
+          >).filter((item) => !action.payload.unassignIds.includes(item.id));
           const merged = unionBy(jobAssigned, newAssignees, 'id');
           return {
             ...result,

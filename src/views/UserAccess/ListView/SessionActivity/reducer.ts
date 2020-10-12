@@ -35,7 +35,8 @@ const reducer = (
         ...state,
         loading: false,
         pageable: pageable as Pageable,
-        logs: [...state.logs, ...(data as Array<SessionActivity>)],
+        // logs: [...state.logs, ...(data as Array<SessionActivity>)],
+        logs: data as Array<SessionActivity>,
       };
 
     case SessionActivityAction.FETCH_SESSION_ACTIVITY_ERROR:

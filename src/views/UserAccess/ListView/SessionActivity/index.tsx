@@ -26,11 +26,9 @@ import MomentUtils from '@material-ui/pickers/adapter/moment';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
-// TODO ADD ONRESET TO LISTVIEW COMPONENT AND REMOVE COMMENTED SECTION IF REQUIRED.
-
 type initialState = {
   dateRange: DateRange<Moment>;
-  filterCount: number;
+  appliedFilters: Record<string, boolean>;
   startTime: Moment | null;
   endTime: Moment | null;
 };
@@ -38,7 +36,7 @@ type initialState = {
 const currentDate = moment().startOf('day');
 const initialState: initialState = {
   dateRange: [null, null],
-  filterCount: 0,
+  appliedFilters: {},
   startTime: currentDate,
   endTime: currentDate,
 };
@@ -66,7 +64,13 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
         label: 'Date/Time Range',
         onApply: () => {
           applyDateTimeFilter();
-          setstate({ ...state, filterCount: state.filterCount + 1 });
+          setstate({
+            ...state,
+            appliedFilters: {
+              ...state.appliedFilters,
+              'Date/Time Range': true,
+            },
+          });
         },
         content: (
           <LocalizationProvider dateAdapter={MomentUtils}>
@@ -124,12 +128,12 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
       },
     ],
     onReset: () => resetFilter(),
-    activeCount: state.filterCount,
+    activeCount: Object.keys(state.appliedFilters).length,
   };
 
   useEffect(() => {
-    if (state.filterCount === 0) fetchData(0);
-  }, [state.filterCount]);
+    if (Object.keys(state.appliedFilters).length === 0) fetchData(0);
+  }, [state.appliedFilters]);
 
   const fetchLogs = (greaterThan: number, lowerThan: number, page: number) => {
     const filters = JSON.stringify({
@@ -154,7 +158,7 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
 
   const fetchData = (page: number, size?: number) => {
     let lowerThan, greaterThan;
-    if (state.filterCount > 0) {
+    if (Object.keys(state.appliedFilters).length > 0) {
       return false;
     }
     if (page === 0) {

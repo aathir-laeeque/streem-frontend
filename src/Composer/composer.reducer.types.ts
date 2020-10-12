@@ -1,4 +1,4 @@
-import { Users } from '#store/users/types';
+import { User } from '#store/users/types';
 import { Job } from '../views/Jobs/types';
 import {
   completeJob,
@@ -37,7 +37,7 @@ export type ComposerState = {
 
   tasks: TaskListState;
 
-  assignees: Users;
+  assignees: User[];
 };
 
 export enum ComposerAction {

@@ -8,6 +8,35 @@ const HeaderWrapper = styled.div`
   flex-direction: column;
   grid-area: header;
 
+  .before-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .alert {
+      padding: 4px 80px;
+      border-radius: 4px;
+      border: solid 1px #d6e9ff;
+      background-color: #e7f1fd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      span {
+        color: #1d84ff;
+        font-size: 12px;
+        line-height: 12px;
+      }
+
+      svg {
+        color: #1d84ff;
+        font-size: 13.3px;
+        line-height: 13.3px;
+        margin-right: 10px;
+      }
+    }
+  }
+
   .header-content {
     display: flex;
     flex: 1;
@@ -33,6 +62,7 @@ const HeaderWrapper = styled.div`
         &-status {
           align-items: center;
           display: flex;
+          text-transform: capitalize;
 
           .icon {
             color: #1d84ff;

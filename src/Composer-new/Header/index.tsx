@@ -1,12 +1,17 @@
 import { Button1 } from '#components';
 import { ComposerEntity } from '#Composer-new/types';
 import { useTypedSelector } from '#store';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   AddCircle,
   Edit,
   FiberManualRecord,
   Group,
+  Message,
   PlayCircleFilled,
+  Info,
+  DoneAll,
 } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
@@ -14,7 +19,13 @@ import { useDispatch } from 'react-redux';
 import { addNewStage } from '../Stages/actions';
 import HeaderWrapper from './styles';
 import { addNewTask } from '../Tasks/actions';
-import { Checklist } from '../checklist.types';
+import { Checklist, ChecklistStates } from '../checklist.types';
+import {
+  startChecklistReview,
+  continueChecklistReview,
+} from '#Composer-new/reviewer.actions';
+import { Reviewer, ReviewerState } from '#Composer-new/reviewer.types';
+import { removeUnderscore } from '#utils/stringUtils';
 
 const JobHeader: FC = () => {
   return <HeaderWrapper>Composer Header for Job Entity</HeaderWrapper>;
@@ -26,16 +37,183 @@ const ChecklistHeader: FC = () => {
     data,
     stages: { activeStageId },
   } = useTypedSelector((state) => state.prototypeComposer);
+  const { userId } = useTypedSelector((state) => state.auth);
+
+  const handleSubmit = () => {
+    if (data && data.id)
+      dispatch(
+        openOverlayAction({
+          type: OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT,
+          props: {
+            checklistId: (data as Checklist).id,
+          },
+        }),
+      );
+  };
+
+  const reviewer = (data as Checklist)?.reviewers.filter(
+    (reviewer) => reviewer.id === userId,
+  )[0];
+
+  const handleSubmitForReview = (isViewer = false) => {
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.SUBMIT_REVIEW_MODAL,
+        props: {
+          isViewer,
+          isAuthor: !reviewer,
+        },
+      }),
+    );
+  };
+
+  const handleSendToAuthor = () => {
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.SUBMIT_REVIEW_MODAL,
+        props: {
+          sendToAuthor: true,
+        },
+      }),
+    );
+  };
+
+  const onStartReview = () => {
+    if (data && data.id) dispatch(startChecklistReview(data?.id));
+  };
+
+  const handleStartReview = () => {
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.CONFIRMATION_MODAL,
+        props: {
+          onPrimary: () => onStartReview(),
+          primaryText: 'Confirm',
+          title: 'Start Reviewing',
+          body: (
+            <>Are you sure you want to start reviewing this checkcklist now ?</>
+          ),
+        },
+      }),
+    );
+  };
+
+  const onContinueReview = () => {
+    if (data && data.id) dispatch(continueChecklistReview(data?.id));
+  };
+
+  const handleContinueReview = () => {
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.CONFIRMATION_MODAL,
+        props: {
+          onPrimary: () => onContinueReview(),
+          primaryText: 'Confirm',
+          title: 'Continue Review',
+          body: (
+            <>
+              Are you sure you want to continue reviewing ? You will have to
+              once again submit to end your review.
+            </>
+          ),
+        },
+      }),
+    );
+  };
+
+  const renderButtonsForReviewer = (
+    state: ReviewerState,
+    reviewers: Reviewer[],
+  ) => {
+    switch (state) {
+      case ReviewerState.NOT_STARTED:
+        return (
+          <Button1 className="submit" onClick={handleStartReview}>
+            Start
+          </Button1>
+        );
+      case ReviewerState.IN_PROGRESS:
+        return (
+          <Button1
+            className="submit"
+            onClick={() => handleSubmitForReview(false)}
+          >
+            Submit
+          </Button1>
+        );
+      case ReviewerState.DONE:
+      case ReviewerState.DONE_WITH_CR:
+        const isReviewPending = reviewers.some(
+          (r) =>
+            r.state === ReviewerState.IN_PROGRESS ||
+            r.state === ReviewerState.NOT_STARTED,
+        );
+
+        return (
+          <>
+            <Button1
+              className="submit"
+              style={{ backgroundColor: '#333333' }}
+              onClick={handleContinueReview}
+            >
+              <Message style={{ fontSize: '16px', marginRight: '8px' }} />
+              Continue Review
+            </Button1>
+            {!isReviewPending && (
+              <Button1 className="submit" onClick={handleSendToAuthor}>
+                <DoneAll style={{ fontSize: '16px', marginRight: '8px' }} />
+                Send to Author
+              </Button1>
+            )}
+          </>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <HeaderWrapper>
+      <div className="before-header">
+        {!reviewer &&
+          (data as Checklist).status === ChecklistStates.BEING_REVIEWED && (
+            <div className="alert">
+              <Info />
+              <span>This Prototype has been sent to Reviewers</span>
+            </div>
+          )}
+        {reviewer && reviewer.state === ReviewerState.DONE && (
+          <div className="alert">
+            <Info />
+            <span>
+              You have already reviewed this checklist and submitted it without
+              comments
+            </span>
+          </div>
+        )}
+        {reviewer && reviewer.state === ReviewerState.DONE_WITH_CR && (
+          <div
+            className="alert"
+            style={{
+              backgroundColor: 'rgba(247, 181, 0, 0.16)',
+              border: 'solid 1px #f7b500',
+            }}
+          >
+            <Info style={{ color: '#000' }} />
+            <span style={{ color: '#000' }}>
+              You have already submitted this checklist with comments
+            </span>
+          </div>
+        )}
+      </div>
       <div className="header-content">
         <div className="header-content-left">
           <span className="checklist-name-label">Checklist Name</span>
           <div className="checklist-name">{data?.name}</div>
           <div className="checklist-status">
             Configuration Status :<FiberManualRecord className="icon" />
-            In Progress
+            {removeUnderscore(data?.status.toLowerCase())}
           </div>
         </div>
 
@@ -45,12 +223,26 @@ const ChecklistHeader: FC = () => {
             Edit
           </Button1>
 
-          <Button1 id="view-reviewers" variant="textOnly">
+          <Button1
+            id="view-reviewers"
+            variant="textOnly"
+            onClick={() => handleSubmitForReview(true)}
+          >
             <Group className="icon" fontSize="small" />
             View all Authors
           </Button1>
 
-          <Button1 className="submit">Submit</Button1>
+          {reviewer ? (
+            renderButtonsForReviewer(
+              reviewer.state,
+              (data as Checklist).reviewers,
+            )
+          ) : (data as Checklist).status === ChecklistStates.IN_PROGRESS ||
+            (data as Checklist).status === ChecklistStates.DRAFT ? (
+            <Button1 className="submit" onClick={handleSubmit}>
+              Submit
+            </Button1>
+          ) : null}
         </div>
       </div>
 
