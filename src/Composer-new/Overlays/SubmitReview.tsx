@@ -81,22 +81,23 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
 
   const sendToAuthor = props?.sendToAuthor || false;
   const dispatch = useDispatch();
-  const { userId } = useTypedSelector((state) => state.auth);
-  let { data } = useTypedSelector((state) => state.prototypeComposer);
-  data = data as Checklist;
+  const { data, userId } = useTypedSelector((state) => ({
+    userId: state.auth.userId,
+    data: state.prototypeComposer.data as Checklist,
+  }));
 
   const [state, setState] = useState(initialState);
 
   useEffect(() => {
     let editorState = EditorState.createEmpty();
     if (state.contentBlock) {
-      const commentExist = (data as Checklist).comments.filter(
-        (c) =>
-          c.commentedBy.id === userId &&
-          c.reviewCycle === (data as Checklist).reviewCycle,
-      );
+      const commentExist =
+        data?.comments?.filter(
+          (c) =>
+            c.commentedBy.id === userId && c.reviewCycle === data?.reviewCycle,
+        ) ?? [];
 
-      if (commentExist.length > 0) {
+      if (commentExist.length) {
         const content = htmlToDraft(commentExist[0].comments);
         const contentState = ContentState.createFromBlockArray(
           content.contentBlocks,
@@ -106,15 +107,15 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
       }
     }
 
-    const reviewerOptions = (data as Checklist).reviewers.map((r) => ({
+    const reviewerOptions = data?.reviewers.map((r) => ({
       label: `${r.firstName} ${r.lastName} - ${r.employeeId}`,
       value: r.id,
     }));
 
-    const cycleOptions = [];
-    for (let i = 1; i <= (data as Checklist).reviewCycle; i++) {
-      cycleOptions.push({ label: getOrdinal(i), value: i });
-    }
+    const cycleOptions = Array(data?.reviewCycle).map((_, i) => ({
+      label: getOrdinal(i + 1),
+      value: i + 1,
+    }));
 
     setState({
       ...state,
@@ -125,14 +126,14 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
   }, []);
 
   const handleOnAllOK = () => {
-    if (data && data.id) dispatch(submitChecklistReview(data?.id));
+    if (data && data?.id) dispatch(submitChecklistReview(data?.id));
   };
 
   const handleOnCompleteWithCR = () => {
     const comments = draftToHtml(
       convertToRaw(state.editorState.getCurrentContent()),
     );
-    if (data && data.id)
+    if (data && data?.id)
       dispatch(submitChecklistReviewWithCR(data?.id, comments));
   };
 
@@ -234,7 +235,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
         type: OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT_POPOVER,
         popOverAnchorEl: event.currentTarget,
         props: {
-          checklistId: (data as Checklist).id,
+          checklistId: data?.id,
         },
       }),
     );
@@ -365,9 +366,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                 <div
                   className="icon-wrapper"
                   aria-haspopup="true"
-                  onMouseEnter={(e) =>
-                    handleAuthorMouseOver(e, (data as Checklist).authors)
-                  }
+                  onMouseEnter={(e) => handleAuthorMouseOver(e, data?.authors)}
                   onMouseLeave={() =>
                     dispatch(closeOverlayAction(OverlayNames.AUTHORS_DETAIL))
                   }
@@ -386,7 +385,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                   className="icon-wrapper"
                   aria-haspopup="true"
                   onMouseEnter={(e) =>
-                    handleReviewersMouseOver(e, (data as Checklist).reviewers)
+                    handleReviewersMouseOver(e, data?.reviewers)
                   }
                   onMouseLeave={() =>
                     dispatch(closeOverlayAction(OverlayNames.REVIEWERS_DETAIL))
