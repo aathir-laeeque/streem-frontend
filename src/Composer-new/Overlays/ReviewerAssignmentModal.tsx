@@ -1,7 +1,7 @@
 import { BaseModal, Checkbox } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Checklist } from '#Composer-new/checklist.types';
-import { Reviewer } from '#Composer-new/reviewer.types';
+import { Reviewer, ReviewerState } from '#Composer-new/reviewer.types';
 import { useTypedSelector } from '#store';
 import { fetchUsers } from '#store/users/actions';
 import { getInitials } from '#utils/stringUtils';
@@ -43,12 +43,17 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   props: { checklistId, isModal = true },
 }) => {
   const {
-    list,
-    pageable: { last, page },
-  } = useTypedSelector((state) => state.users.active);
-  const { reviewers: assignees } = useTypedSelector(
-    (state) => state.prototypeComposer,
-  );
+    data: { authors },
+    assignees,
+    activeUsers: {
+      list,
+      pageable: { last, page },
+    },
+  } = useTypedSelector((state) => ({
+    activeUsers: state.users.active,
+    assignees: state.prototypeComposer.reviewers,
+    data: state.prototypeComposer.data as Checklist,
+  }));
 
   const dispatch = useDispatch();
   const [state, setstate] = useState(initialState);
@@ -107,6 +112,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
     checked: boolean,
     isPreAssigned: boolean,
   ) => {
+    console.log('checked', checked);
     if (checked) {
       if (isPreAssigned) {
         setstate({
@@ -153,6 +159,9 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
               checked={checked}
               label=""
               onClick={() => onCheckChanged(user, checked, isPreAssigned)}
+              disabled={
+                user.state ? user.state !== ReviewerState.NOT_STARTED : false
+              }
             />
           )}
         </div>
@@ -181,9 +190,10 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   if (list) {
     if (searchQuery === '') {
       preAssignedUsers.forEach((user) => {
-        const checked = assignees.some((item) => item.id === user.id);
         if (user.id !== 0) {
-          bodyView.push(userRow(user, checked, true));
+          const checked = assignees.some((item) => item.id === user.id);
+          const isAuthor = authors.some((item) => item.id === user.id);
+          if (!isAuthor) bodyView.push(userRow(user, checked, true));
         }
       });
     }
@@ -193,8 +203,9 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
         (item) => item.id === user.id,
       );
       const checked = assignees.some((item) => item.id === user.id);
+      const isAuthor = authors.some((item) => item.id === user.id);
 
-      if (user.id !== 0) {
+      if (user.id !== 0 && !isAuthor) {
         if (searchQuery !== '') {
           bodyView.push(userRow(user, checked, isPreAssigned));
         } else if (!isPreAssigned) {

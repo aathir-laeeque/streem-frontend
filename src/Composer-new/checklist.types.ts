@@ -1,4 +1,4 @@
-import { Reviewer } from './reviewer.types';
+import { Reviewer, ReviewerState } from './reviewer.types';
 
 export type Properties = {
   [key: string]: string | null;
@@ -114,11 +114,21 @@ export type Stage = {
 };
 
 export enum ChecklistStates {
-  PUBLISHED = 'PUBLISHED',
-  IN_PROGRESS = 'IN_PROGRESS',
   DRAFT = 'DRAFT',
-  BEING_APPROVED = 'BEING_APPROVED',
   BEING_REVIEWED = 'BEING_REVIEWED',
+  CR_IN_PROGRESS = 'CR_IN_PROGRESS',
+  SIGN_OFF_FOR_RELEASING = 'SIGN_OFF_FOR_RELEASING',
+  READY_FOR_RELEASE = 'READY_FOR_RELEASE',
+  PUBLISHED = 'PUBLISHED',
+}
+
+export enum ChecklistStatesContent {
+  DRAFT = 'Being Built',
+  BEING_REVIEWED = 'Being Reviewed',
+  CR_IN_PROGRESS = 'CR_IN_PROGRESS',
+  SIGN_OFF_FOR_RELEASING = 'SIGN_OFF_FOR_RELEASING',
+  READY_FOR_RELEASE = 'READY_FOR_RELEASE',
+  PUBLISHED = 'PUBLISHED',
 }
 
 export type Comment = {
@@ -132,6 +142,7 @@ export type Comment = {
     lastName: string;
   };
   reviewCycle: number;
+  reviewState: ReviewerState;
 };
 
 export type Checklist = {
@@ -147,6 +158,7 @@ export type Checklist = {
   status: ChecklistStates;
   version: number | null;
   reviewers: Reviewer[];
+  authors: Reviewer[];
   comments: Comment[];
   reviewCycle: number;
 };

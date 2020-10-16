@@ -13,7 +13,7 @@ import { FormMode } from '#views/Checklists/NewPrototype/types';
 import {
   AddCircle,
   DoneAll,
-  Edit,
+  Settings,
   FiberManualRecord,
   Group,
   Info,
@@ -25,7 +25,11 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { validatePrototype } from '../actions';
-import { Checklist, ChecklistStates } from '../checklist.types';
+import {
+  Checklist,
+  ChecklistStates,
+  ChecklistStatesContent,
+} from '../checklist.types';
 import { addNewStage } from '../Stages/actions';
 import { addNewTask } from '../Tasks/actions';
 import HeaderWrapper from './styles';
@@ -55,6 +59,8 @@ const ChecklistHeader: FC = () => {
   const reviewer = data?.reviewers.filter(
     (reviewer) => reviewer.id === userId,
   )[0];
+
+  const author = data?.authors.filter((a) => a.id === userId)[0];
 
   const handleSubmitForReview = (isViewer = false) => {
     dispatch(
@@ -152,20 +158,23 @@ const ChecklistHeader: FC = () => {
 
         return (
           <>
-            <Button1
-              className="submit"
-              style={{ backgroundColor: '#333333' }}
-              onClick={handleContinueReview}
-            >
-              <Message style={{ fontSize: '16px', marginRight: '8px' }} />
-              Continue Review
-            </Button1>
-            {!isReviewPending && (
-              <Button1 className="submit" onClick={handleSendToAuthor}>
-                <DoneAll style={{ fontSize: '16px', marginRight: '8px' }} />
-                Send to Author
+            {data.status !== ChecklistStates.SIGN_OFF_FOR_RELEASING && (
+              <Button1
+                className="submit"
+                style={{ backgroundColor: '#333333' }}
+                onClick={handleContinueReview}
+              >
+                <Message style={{ fontSize: '16px', marginRight: '8px' }} />
+                Continue Review
               </Button1>
             )}
+            {data.status !== ChecklistStates.SIGN_OFF_FOR_RELEASING &&
+              !isReviewPending && (
+                <Button1 className="submit" onClick={handleSendToAuthor}>
+                  <DoneAll style={{ fontSize: '16px', marginRight: '8px' }} />
+                  Send to Author
+                </Button1>
+              )}
           </>
         );
 
@@ -174,22 +183,130 @@ const ChecklistHeader: FC = () => {
     }
   };
 
+  const renderButtonsForAuthor = () => {
+    switch (data.status) {
+      case ChecklistStates.DRAFT:
+        return (
+          <>
+            <Button1
+              id="edit"
+              variant="secondary"
+              onClick={() =>
+                navigate('prototype', {
+                  state: {
+                    mode: FormMode.EDIT,
+                    formData: {
+                      name: data.name,
+                      properties: data.properties,
+                      authors: data.authors,
+                      prototypeId: data.id,
+                    },
+                  },
+                })
+              }
+            >
+              <Settings className="icon" fontSize="small" />
+            </Button1>
+            <Button1
+              className="submit"
+              onClick={() => dispatch(validatePrototype(data.id))}
+            >
+              Submit
+            </Button1>
+          </>
+        );
+
+      case ChecklistStates.CR_IN_PROGRESS:
+        return (
+          <>
+            <Button1
+              id="edit"
+              variant="secondary"
+              onClick={() =>
+                navigate('prototype', {
+                  state: {
+                    mode: FormMode.EDIT,
+                    formData: {
+                      name: data.name,
+                      properties: data.properties,
+                      authors: data.authors,
+                      prototypeId: data.id,
+                    },
+                  },
+                })
+              }
+            >
+              <Settings className="icon" fontSize="small" />
+            </Button1>
+            <Button1
+              id="view-reviewers"
+              variant="secondary"
+              onClick={() => handleSubmitForReview(true)}
+            >
+              <Group className="icon" fontSize="small" />
+            </Button1>
+            <Button1
+              className="submit"
+              onClick={() => dispatch(validatePrototype(data.id))}
+            >
+              Submit
+            </Button1>
+          </>
+        );
+
+      default:
+        return (
+          <>
+            <Button1
+              id="edit"
+              variant="secondary"
+              onClick={() =>
+                navigate('prototype', {
+                  state: {
+                    mode: FormMode.EDIT,
+                    formData: {
+                      name: data.name,
+                      properties: data.properties,
+                      authors: data.authors,
+                      prototypeId: data.id,
+                    },
+                  },
+                })
+              }
+            >
+              <Settings className="icon" fontSize="small" />
+            </Button1>
+            <Button1
+              id="view-reviewers"
+              variant="secondary"
+              onClick={() => handleSubmitForReview(true)}
+            >
+              <Group className="icon" fontSize="small" />
+            </Button1>
+          </>
+        );
+    }
+  };
+
   return (
     <HeaderWrapper checklistState={status}>
       <div className="before-header">
-        {!reviewer && data.status === ChecklistStates.BEING_REVIEWED && (
+        {author && data.status === ChecklistStates.BEING_REVIEWED && (
           <div className="alert">
             <Info />
             <span>This Prototype has been sent to Reviewers</span>
           </div>
         )}
-        {reviewer && reviewer.state === ReviewerState.DONE && (
-          <div className="alert">
-            <Info />
-            <span>
-              You have already reviewed this checklist and submitted it without
-              comments
-            </span>
+        {reviewer && reviewer.state === ReviewerState.NOT_STARTED && (
+          <div
+            className="alert"
+            style={{
+              backgroundColor: '#eeeeee',
+              border: 'solid 1px #bababa',
+            }}
+          >
+            <Info style={{ color: '#000' }} />
+            <span style={{ color: '#000' }}>Start the Reivew</span>
           </div>
         )}
         {reviewer && reviewer.state === ReviewerState.DONE_WITH_CR && (
@@ -207,91 +324,71 @@ const ChecklistHeader: FC = () => {
           </div>
         )}
       </div>
-      <div className="header-content">
-        <div className="header-content-left">
-          <span className="checklist-name-label">Checklist Name</span>
-          <div className="checklist-name">{data?.name}</div>
-          <div className="checklist-status">
-            <FiberManualRecord className="icon" />
-            {removeUnderscore(data?.status.toLowerCase())}
+      <div className="main-header">
+        <div className="header-content">
+          <div className="header-content-left">
+            <span className="checklist-name-label">Checklist Name</span>
+            <div className="checklist-name">{data?.name}</div>
+            <div className="checklist-status">
+              <FiberManualRecord className="icon" />
+              <span>{ChecklistStatesContent[data?.status]}</span>
+            </div>
+          </div>
+
+          <div className="header-content-right">
+            {author && renderButtonsForAuthor()}
+
+            {reviewer && (
+              <>
+                <Button1
+                  id="view-reviewers"
+                  variant="secondary"
+                  onClick={() => handleSubmitForReview(true)}
+                >
+                  <Group className="icon" fontSize="small" />
+                </Button1>
+                {data.status !== ChecklistStates.CR_IN_PROGRESS &&
+                data.status !== ChecklistStates.DRAFT
+                  ? renderButtonsForReviewer(reviewer.state, data.reviewers)
+                  : null}
+              </>
+            )}
           </div>
         </div>
 
-        <div className="header-content-right">
+        <div className="prototype-add-buttons">
           <Button1
-            id="edit"
-            variant="secondary"
-            onClick={() =>
-              navigate('prototype', {
-                state: {
-                  mode: FormMode.EDIT,
-                  formData: {
-                    name: data.name,
-                    properties: data.properties,
-                    authors: data.authors,
-                    prototypeId: data.id,
-                  },
-                },
-              })
-            }
+            variant="textOnly"
+            id="new-stage"
+            onClick={() => dispatch(addNewStage())}
           >
-            <Edit className="icon" fontSize="small" />
+            <AddCircle className="icon" fontSize="small" />
+            Add a new Stage
           </Button1>
 
           <Button1
-            id="view-reviewers"
-            variant="secondary"
-            onClick={() => handleSubmitForReview(true)}
+            variant="textOnly"
+            id="new-task"
+            onClick={() => {
+              if (activeStageId) {
+                dispatch(
+                  addNewTask({
+                    checklistId: data.id,
+                    stageId: activeStageId,
+                  }),
+                );
+              }
+            }}
           >
-            <Group className="icon" fontSize="small" />
+            <AddCircle className="icon" fontSize="small" />
+            Add a new Task
           </Button1>
 
-          {reviewer ? (
-            renderButtonsForReviewer(reviewer.state, data.reviewers)
-          ) : data.status === ChecklistStates.IN_PROGRESS ||
-            data.status === ChecklistStates.DRAFT ? (
-            <Button1
-              className="submit"
-              onClick={() => dispatch(validatePrototype(data.id))}
-            >
-              Submit
-            </Button1>
-          ) : null}
+          <Button1 variant="textOnly" id="preview">
+            <PlayCircleFilled className="icon" fontSize="small" />
+            Preview
+          </Button1>
         </div>
-      </div>
-
-      <div className="prototype-add-buttons">
-        <Button1
-          variant="textOnly"
-          id="new-stage"
-          onClick={() => dispatch(addNewStage())}
-        >
-          <AddCircle className="icon" fontSize="small" />
-          Add a new Stage
-        </Button1>
-
-        <Button1
-          variant="textOnly"
-          id="new-task"
-          onClick={() => {
-            if (activeStageId) {
-              dispatch(
-                addNewTask({
-                  checklistId: data.id,
-                  stageId: activeStageId,
-                }),
-              );
-            }
-          }}
-        >
-          <AddCircle className="icon" fontSize="small" />
-          Add a new Task
-        </Button1>
-
-        <Button1 variant="textOnly" id="preview">
-          <PlayCircleFilled className="icon" fontSize="small" />
-          Preview
-        </Button1>
       </div>
     </HeaderWrapper>
   );

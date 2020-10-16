@@ -57,6 +57,12 @@ const Wrapper = styled.div.attrs({
     border: none;
   }
 
+  /* When the checkbox is disabled, add a grey background */
+  .container input:disabled ~ .checkmark {
+    background-color: #eeeeee;
+    border: none;
+  }
+
   /* Create the checkmark/indicator (hidden when not checked) */
   .checkmark:after {
     content: '';

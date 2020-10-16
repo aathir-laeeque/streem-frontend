@@ -375,6 +375,7 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
                     padding: 16px 16px 32px 16px;
                     text-align: left;
                     margin-left: 40px;
+                    border-radius: 4px;
                   }
                 }
               }

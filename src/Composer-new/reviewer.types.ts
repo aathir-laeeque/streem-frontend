@@ -3,6 +3,7 @@ export enum ReviewerState {
   IN_PROGRESS = 'IN_PROGRESS',
   DONE = 'DONE',
   DONE_WITH_CR = 'DONE_WITH_CR',
+  SUBMITTED_FOR_CR = 'SUBMITTED_FOR_CR',
 }
 
 export type Reviewer = {

@@ -10,6 +10,7 @@ import {
   Assignment,
   Create,
   PersonAdd,
+  ThumbUp,
 } from '@material-ui/icons';
 import { Editor } from 'react-draft-wysiwyg';
 import { ContentState, convertToRaw, EditorState } from 'draft-js';
@@ -21,8 +22,9 @@ import {
 } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { Checklist } from '#Composer-new/checklist.types';
-import { Reviewer } from '#Composer-new/reviewer.types';
+import { Reviewer, ReviewerState } from '#Composer-new/reviewer.types';
 import {
+  sendReviewToCr,
   submitChecklistReview,
   submitChecklistReviewWithCR,
 } from '#Composer-new/reviewer.actions';
@@ -112,10 +114,13 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
       value: r.id,
     }));
 
-    const cycleOptions = Array(data?.reviewCycle).map((_, i) => ({
-      label: getOrdinal(i + 1),
-      value: i + 1,
-    }));
+    const cycleOptions = [];
+    for (let i = 1; i <= data?.reviewCycle; i++) {
+      cycleOptions.push({
+        label: getOrdinal(i),
+        value: i,
+      });
+    }
 
     setState({
       ...state,
@@ -127,6 +132,10 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
 
   const handleOnAllOK = () => {
     if (data && data?.id) dispatch(submitChecklistReview(data?.id));
+  };
+
+  const handleSendToAuthor = () => {
+    if (data && data?.id) dispatch(sendReviewToCr(data?.id));
   };
 
   const handleOnCompleteWithCR = () => {
@@ -176,10 +185,33 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                       </span>
                     </div>
                   </div>
-                  <div
-                    className="comment"
-                    dangerouslySetInnerHTML={{ __html: comment.comments }}
-                  />
+                  {comment.reviewState === ReviewerState.DONE ? (
+                    <div
+                      className="comment"
+                      style={{
+                        backgroundColor: '#e1fec0',
+                        border: 'solid 1px #5aa700',
+                        color: '#427a00',
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '16px',
+                      }}
+                    >
+                      All OK, No Comments
+                      <ThumbUp
+                        style={{
+                          color: '#427a00',
+                          marginLeft: '6px',
+                          fontSize: '20px',
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className="comment"
+                      dangerouslySetInnerHTML={{ __html: comment.comments }}
+                    />
+                  )}
                 </div>
               );
             })}
@@ -242,7 +274,11 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
   };
 
   return (
-    <Wrapper comments={isViewer || state.selected === Options.COMMENTS}>
+    <Wrapper
+      comments={
+        !sendToAuthor && (isViewer || state.selected === Options.COMMENTS)
+      }
+    >
       <BaseModal
         showFooter={false}
         showHeader={false}
@@ -264,7 +300,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                 <span>Requesting for some Modification</span>
               </div>
             </div>
-            <Button1 className="submit" onClick={handleOnAllOK}>
+            <Button1 className="submit" onClick={handleSendToAuthor}>
               Confirm
             </Button1>
             <Button1 variant="textOnly" onClick={toggleSendToAuthor}>
@@ -335,7 +371,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
           </>
         )}
 
-        {(!sendToAuthor && isViewer) || state.selected === Options.COMMENTS ? (
+        {!sendToAuthor && (isViewer || state.selected === Options.COMMENTS) ? (
           <>
             <div className="header">
               <div className="header-left">

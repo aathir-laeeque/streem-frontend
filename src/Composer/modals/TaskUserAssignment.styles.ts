@@ -189,8 +189,6 @@ const Wrapper = styled.div<{ forAll: boolean }>`
                 border-color: #333;
                 background-color: #fff;
                 border-width: 2px;
-                border-left-width: 1.5px;
-                border-bottom-width: 1.5px;
               }
 
               .container input:checked ~ .checkmark {

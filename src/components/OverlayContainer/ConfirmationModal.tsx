@@ -40,16 +40,6 @@ const Wrapper = styled.div.attrs({})`
 
       .modal-footer-buttons {
         padding: 0px 16px !important;
-        justify-content: flex-start !important;
-
-        button {
-          padding: 12px 24px !important;
-
-          :first-child {
-            color: #ff6b6b;
-            border-color: #ff6b6b;
-          }
-        }
       }
     }
 

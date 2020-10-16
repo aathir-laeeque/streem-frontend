@@ -1,7 +1,7 @@
 import { BaseModal } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import MemoUserAssigned from '#assets/svg/UserAssigned';
-import React, { FC, useEffect } from 'react';
+import MemoSentForReview from '#assets/svg/SentForReview';
+import React, { FC } from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -9,7 +9,7 @@ const Wrapper = styled.div`
     min-width: 400px !important;
 
     .modal-body {
-      padding: 54px 50px !important;
+      padding: 100px 90px !important;
       justify-content: center;
       align-items: center;
       display: flex;
@@ -34,13 +34,6 @@ const ReviewerAssignmentSuccessModal: FC<CommonOverlayProps<any>> = ({
   closeAllOverlays,
   closeOverlay,
 }) => {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      closeOverlay();
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <Wrapper>
       <BaseModal
@@ -49,7 +42,7 @@ const ReviewerAssignmentSuccessModal: FC<CommonOverlayProps<any>> = ({
         showFooter={false}
         showHeader={false}
       >
-        <MemoUserAssigned fontSize={300} style={{ height: '205px' }} />
+        <MemoSentForReview fontSize={280} style={{ height: '200px' }} />
         <h3>Great Job!</h3>
         <span>Your Prototype has been sent to the Reviewers</span>
       </BaseModal>

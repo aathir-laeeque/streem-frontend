@@ -44,7 +44,7 @@ export interface CommonOverlayProps<T> {
 
 export interface Overlay {
   type: OverlayNames;
-  props: Record<string, any>;
+  props?: Record<string, any>;
   popOverAnchorEl?: Element | ((element: Element) => Element);
 }
 
