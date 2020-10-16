@@ -26,6 +26,7 @@ const TaskCardWrapper = styled.div.attrs({
   display: flex;
   flex-direction: column;
   grid-area: task-card;
+  height: max-content;
 
   .task {
     &-header {

@@ -3,7 +3,7 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
 import { ArrowLeft, ArrowRight, PermMedia } from '@material-ui/icons';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { TaskMediasWrapper } from './styles';
@@ -19,6 +19,12 @@ const TaskMedias: FC<TaskMediasProps> = ({ medias, taskId }) => {
   const [activeMedia, setActiveMedia] = useState(medias[0]);
 
   const [sliderIndex, setSliderIndex] = useState({ start: 0, end: 3 });
+
+  useEffect(() => {
+    if (medias.length) {
+      setActiveMedia(medias[0]);
+    }
+  }, [medias]);
 
   if (taskId === activeTaskId && medias.length) {
     return (
@@ -38,8 +44,8 @@ const TaskMedias: FC<TaskMediasProps> = ({ medias, taskId }) => {
               );
             }}
           >
-            <img src={activeMedia.link} />
-            <div className="active-media-name">{activeMedia.name}</div>
+            <img src={activeMedia?.link} />
+            <div className="active-media-name">{activeMedia?.name}</div>
           </div>
 
           <div className="media-list">
@@ -60,7 +66,7 @@ const TaskMedias: FC<TaskMediasProps> = ({ medias, taskId }) => {
               .map((media, index) => (
                 <div
                   className={`media-list-item ${
-                    media.filename === activeMedia.filename ? 'active' : ''
+                    media.filename === activeMedia?.filename ? 'active' : ''
                   }`}
                   key={index}
                   onClick={() => setActiveMedia(media)}

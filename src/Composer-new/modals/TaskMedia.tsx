@@ -30,6 +30,11 @@ const Wrapper = styled.div`
           justify-content: center;
           max-width: 600px;
           max-height: 400px;
+
+          img {
+            height: 100%;
+            width: 100%;
+          }
         }
 
         .right-side {
