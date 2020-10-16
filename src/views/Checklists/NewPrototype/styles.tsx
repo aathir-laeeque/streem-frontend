@@ -78,6 +78,10 @@ export const Wrapper = styled.div`
           }
         }
       }
+
+      .input {
+        margin-top: 16px;
+      }
     }
 
     .right-side {
@@ -85,44 +89,18 @@ export const Wrapper = styled.div`
       padding: 24px;
       padding-left: 16px;
 
-      .author-list {
-        counter-reset: item;
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
+      .author {
+        align-items: center;
+        display: flex;
+        margin-top: 8px;
 
-        &-item {
-          align-items: center;
-          display: flex;
-          list-style-position: inside;
-          margin-bottom: 8px;
-
-          > div {
-            width: 100%;
-          }
-
-          &::before {
-            content: counter(item) '.';
-            counter-increment: item;
-            margin: 0 16px 0 0;
-          }
-
-          > input {
-            width: 100%;
-          }
-
-          > .icon {
-            margin-left: 12px;
-          }
+        .select {
+          flex: 1;
         }
-      }
-    }
 
-    .new-form-field {
-      margin-bottom: 16px;
-
-      :last-of-type {
-        margin-bottom: 0;
+        #remove {
+          margin-left: 8px;
+        }
       }
     }
 

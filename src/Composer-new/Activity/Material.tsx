@@ -1,12 +1,8 @@
+import ImageUploadIcon from '#assets/svg/ImageUpload';
 import { AddNewItem, TextInput } from '#components';
 import { resetFileUpload, uploadFile } from '#store/file-upload/actions';
 import { useTypedSelector } from '#store/helpers';
-import {
-  AddAPhoto,
-  ArrowDropDown,
-  ArrowDropUp,
-  Close,
-} from '@material-ui/icons';
+import { ArrowDropDown, ArrowDropUp, Close } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { createRef, FC, RefObject, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -69,12 +65,12 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                         setSelectedFile((event.target?.files ?? [])[0]);
                       }}
                     />
-                    <AddAPhoto
+                    <ImageUploadIcon
                       className="icon"
-                      fontSize="large"
-                      onClick={() => {
-                        fileRefMap[index.toString()].current?.click();
-                      }}
+                      fontSize="32px"
+                      onClick={() =>
+                        fileRefMap[index.toString()].current?.click()
+                      }
                     />
                   </>
                 )}

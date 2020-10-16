@@ -9,6 +9,7 @@ import { Reviewer, ReviewerState } from '#Composer-new/reviewer.types';
 import { ComposerEntity } from '#Composer-new/types';
 import { useTypedSelector } from '#store';
 import { removeUnderscore } from '#utils/stringUtils';
+import { FormMode } from '#views/Checklists/NewPrototype/types';
 import {
   AddCircle,
   DoneAll,
@@ -19,38 +20,37 @@ import {
   Message,
   PlayCircleFilled,
 } from '@material-ui/icons';
+import { navigate } from '@reach/router';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { validatePrototype } from '../actions';
 import { Checklist, ChecklistStates } from '../checklist.types';
 import { addNewStage } from '../Stages/actions';
 import { addNewTask } from '../Tasks/actions';
 import HeaderWrapper from './styles';
 
 const JobHeader: FC = () => {
-  return <HeaderWrapper>Composer Header for Job Entity</HeaderWrapper>;
+  const status = useTypedSelector(
+    (state) => (state.prototypeComposer.data as Checklist)?.status,
+  );
+
+  return (
+    <HeaderWrapper checklistState={status}>
+      Composer Header for Job Entity
+    </HeaderWrapper>
+  );
 };
 
 const ChecklistHeader: FC = () => {
   const dispatch = useDispatch();
 
-  const { activeStageId, data, userId } = useTypedSelector((state) => ({
+  const { activeStageId, data, status, userId } = useTypedSelector((state) => ({
     userId: state.auth.userId,
     data: state.prototypeComposer.data as Checklist,
     activeStageId: state.prototypeComposer.stages.activeStageId,
+    status: (state.prototypeComposer.data as Checklist).status,
   }));
-
-  const handleSubmit = () => {
-    if (data && data.id)
-      dispatch(
-        openOverlayAction({
-          type: OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT,
-          props: {
-            checklistId: data.id,
-          },
-        }),
-      );
-  };
 
   const reviewer = data?.reviewers.filter(
     (reviewer) => reviewer.id === userId,
@@ -175,7 +175,7 @@ const ChecklistHeader: FC = () => {
   };
 
   return (
-    <HeaderWrapper>
+    <HeaderWrapper checklistState={status}>
       <div className="before-header">
         {!reviewer && data.status === ChecklistStates.BEING_REVIEWED && (
           <div className="alert">
@@ -212,13 +212,29 @@ const ChecklistHeader: FC = () => {
           <span className="checklist-name-label">Checklist Name</span>
           <div className="checklist-name">{data?.name}</div>
           <div className="checklist-status">
-            Configuration Status :<FiberManualRecord className="icon" />
+            <FiberManualRecord className="icon" />
             {removeUnderscore(data?.status.toLowerCase())}
           </div>
         </div>
 
         <div className="header-content-right">
-          <Button1 id="edit" variant="secondary">
+          <Button1
+            id="edit"
+            variant="secondary"
+            onClick={() =>
+              navigate('prototype', {
+                state: {
+                  mode: FormMode.EDIT,
+                  formData: {
+                    name: data.name,
+                    properties: data.properties,
+                    authors: data.authors,
+                    prototypeId: data.id,
+                  },
+                },
+              })
+            }
+          >
             <Edit className="icon" fontSize="small" />
           </Button1>
 
@@ -234,7 +250,10 @@ const ChecklistHeader: FC = () => {
             renderButtonsForReviewer(reviewer.state, data.reviewers)
           ) : data.status === ChecklistStates.IN_PROGRESS ||
             data.status === ChecklistStates.DRAFT ? (
-            <Button1 className="submit" onClick={handleSubmit}>
+            <Button1
+              className="submit"
+              onClick={() => dispatch(validatePrototype(data.id))}
+            >
               Submit
             </Button1>
           ) : null}

@@ -38,3 +38,8 @@ export type AddMediaArgs = {
   mediaDetails: MediaDetails;
   taskId: Task['id'];
 };
+
+export enum TaskErrors {
+  E210 = 'TASK_NAME_CANNOT_BE_EMPTY',
+  E211 = 'TASK_SHOULD_HAVE_ATLEAST_ONE_EXECUTABLE_ACTIVITY',
+}

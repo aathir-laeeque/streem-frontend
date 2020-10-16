@@ -117,7 +117,7 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
     case OverlayNames.TIMED_TASK_CONFIG:
       return <TimedTaskConfigModal {...params} />;
 
-    case OverlayNames.TASK_MEDIA_UPLOAD:
+    case OverlayNames.TASK_MEDIA:
       return <TaskMediaModal {...params} />;
 
     default:

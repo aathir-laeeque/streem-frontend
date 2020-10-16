@@ -8,14 +8,24 @@ import {
   apiSubmitChecklistReview,
   apiContinueChecklistReview,
   apiSubmitChecklistReviewWithCR,
+  apiValidatePrototype,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { all, call, fork, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  fork,
+  put,
+  select,
+  takeLatest,
+  takeLeading,
+} from 'redux-saga/effects';
 
 import {
   fetchComposerData,
   fetchComposerDataOngoing,
   fetchComposerDataSuccess,
+  validatePrototype,
 } from './actions';
 import {
   fetchAssignedReviewersForChecklistError,
@@ -55,6 +65,7 @@ import { NotificationType } from '#components/Notification/types';
 import { Checklist, ChecklistStates } from './checklist.types';
 import { RootState } from '#store';
 import { ReviewerState } from './reviewer.types';
+import { groupErrors } from './utils';
 
 const getStatus = (state: RootState) => state.prototypeComposer.data?.status;
 const getUserId = (state: RootState) => state.auth.userId;
@@ -414,8 +425,35 @@ function* continueChecklistReviewSaga({
   }
 }
 
+function* validatePrototypeSaga({
+  payload,
+}: ReturnType<typeof validatePrototype>) {
+  try {
+    const { id } = payload;
+
+    const { errors } = yield call(request, 'GET', apiValidatePrototype(id));
+
+    const { stagesErrors, tasksErrors, activitiesErrors } = groupErrors(errors);
+    if (stagesErrors.length || tasksErrors.length || activitiesErrors.length) {
+      console.log('handle errors :: ');
+    } else {
+      yield put(
+        openOverlayAction({
+          type: OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT,
+          props: {
+            checklistId: id,
+          },
+        }),
+      );
+    }
+  } catch (error) {
+    console.error('error came in apiValidatePrototype :: ', error);
+  }
+}
+
 export function* ComposerSaga() {
   yield takeLeading(ComposerAction.FETCH_COMPOSER_DATA, fetchComposerDataSaga);
+  yield takeLeading(ComposerAction.VALIDATE_PROTOTYPE, validatePrototypeSaga);
 
   yield takeLatest(
     ComposerAction.FETCH_REVIEWERS_FOR_CHECKLIST,

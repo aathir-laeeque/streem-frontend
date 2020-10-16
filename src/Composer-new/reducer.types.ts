@@ -41,6 +41,7 @@ export enum ComposerAction {
   FETCH_COMPOSER_DATA_SUCCESS = '@@composer/prototype/FETCH_COMPOSER_DATA_SUCCESS',
 
   RESET_COMPOSER = '@@composer/prototype/RESET_COMPOSER',
+  VALIDATE_PROTOTYPE = '@@composer/prototype/validate',
 
   FETCH_REVIEWERS_FOR_CHECKLIST = '@@composer/prototype/FETCH_REVIEWERS_FOR_CHECKLIST',
   FETCH_REVIEWERS_FOR_CHECKLIST_ERROR = '@@composer/prototype/FETCH_REVIEWERS_FOR_CHECKLIST_ERROR',

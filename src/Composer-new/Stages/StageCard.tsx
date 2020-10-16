@@ -5,14 +5,15 @@ import { useTypedSelector } from '#store/helpers';
 import {
   ArrowDownward,
   ArrowUpward,
+  AssignmentTurnedIn,
   Delete,
   PanTool,
-  AssignmentTurnedIn,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { forwardRef } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { Checklist } from '../checklist.types';
 import {
   deleteStage,
   reOrderStage,
@@ -25,7 +26,8 @@ import { StageCardProps } from './types';
 const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
   const { index, isActive, isFirstItem, isLastItem, stage } = props;
 
-  const { tasksInStage } = useTypedSelector((state) => ({
+  const { status, tasksInStage } = useTypedSelector((state) => ({
+    status: (state.prototypeComposer.data as Checklist)?.status,
     tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[stage.id].map(
       (taskId) => state.prototypeComposer.tasks.listById[taskId],
     ),
@@ -46,6 +48,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
       ref={ref}
       isActive={isActive}
       onClick={() => dispatch(setActiveStage({ id: stage.id }))}
+      // checklistState={status}
     >
       <div className="stage-header">
         <div className="order-control">
@@ -121,6 +124,8 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
             dispatch(updateStageName({ id: stage.id, name: value }));
           }, 500)}
         />
+
+        <span className="stage-task-count">{tasksInStage.length} Tasks</span>
       </div>
 
       {/* <div

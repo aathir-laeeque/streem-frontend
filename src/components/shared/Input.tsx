@@ -92,6 +92,8 @@ const Wrapper = styled.div.attrs(({ className }) => ({
 
   .field-error {
     color: #eb5757;
+    display: flex;
+    justify-content: flex-start;
     margin-top: 8px;
   }
 `;

@@ -183,7 +183,6 @@ function* removeTaskTimerSaga({ payload }: ReturnType<typeof removeTaskTimer>) {
 
 function* addTaskMediaSaga({ payload }: ReturnType<typeof addTaskMedia>) {
   try {
-    console.log('payload from addTaskMediaSaga :: ', payload);
     const { mediaDetails, taskId } = payload;
 
     const { data, errors } = yield call(
@@ -194,8 +193,8 @@ function* addTaskMediaSaga({ payload }: ReturnType<typeof addTaskMedia>) {
     );
 
     if (data) {
-      console.log('data from add media to task api :: ', data);
       yield put(updateTask(data));
+      yield put(closeOverlayAction(OverlayNames.TASK_MEDIA));
     } else {
       console.error('error from add media to task api :: ', errors);
     }

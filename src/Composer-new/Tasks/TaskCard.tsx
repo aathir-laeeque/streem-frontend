@@ -155,8 +155,15 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
                   onUploadSuccess={(fileData) => {
                     dispatch(
                       openOverlayAction({
-                        type: OverlayNames.TASK_MEDIA_UPLOAD,
-                        props: { fileData, taskId: taskId },
+                        type: OverlayNames.TASK_MEDIA,
+                        props: {
+                          mediaDetails: {
+                            ...fileData,
+                            name: '',
+                            description: '',
+                          },
+                          taskId: taskId,
+                        },
                       }),
                     );
                   }}

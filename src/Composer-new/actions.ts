@@ -38,4 +38,7 @@ export const fetchComposerDataSuccess = ({
 export const resetComposer = () =>
   actionSpreader(ComposerAction.RESET_COMPOSER);
 
+export const validatePrototype = (id: Checklist['id']) =>
+  actionSpreader(ComposerAction.VALIDATE_PROTOTYPE, { id });
+
 // BLOCK ENDS

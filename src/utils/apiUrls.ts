@@ -170,3 +170,8 @@ export const apiRemoveTaskTimer = (taskId: Task['id']) =>
 export const apiAddMediaToTask = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}/medias`;
 
+export const apiValidatePrototype = (id: Checklist['id']) =>
+  `${baseUrl}/checklists/${id}/validate`;
+
+export const apiUpdatePrototype = (id: Checklist['id']) =>
+  `${baseUrl}/checklists/${id}`;

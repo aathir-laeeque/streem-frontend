@@ -102,6 +102,10 @@ const ButtonWrapper = styled.button.attrs(
           background-color: ${colors.backgroundColor};
           color: #ffffff;
 
+          > .icon {
+            color: #ffffff;
+          }
+
           :hover {
             background-color: ${colors.hoverBackgroundColor};
           }
@@ -120,6 +124,10 @@ const ButtonWrapper = styled.button.attrs(
           :hover {
             background-color: ${colors.hoverBackgroundColor};
             color: #ffffff;
+
+            > .icon {
+              color: #ffffff !important;
+            }
           }
 
           :active {

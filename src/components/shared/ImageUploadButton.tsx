@@ -13,9 +13,12 @@ type ImageUploadButtonProps = {
   onUploadError: (error: any) => void;
 };
 
-const Wrapper = styled.div`
+const Wrapper = styled.div.attrs({
+  className: 'upload-image',
+})`
   > div {
     align-items: center;
+    cursor: pointer;
     display: flex;
 
     .icon:only-child {

@@ -1,44 +1,17 @@
-import { ComposerEntity } from '#Composer-new/types';
-import { useTypedSelector } from '#store/helpers';
-import { useProperties } from '#store/properties';
-import { fetchUsers } from '#store/users copy/actions';
-import { UserStatus } from '#store/users copy/types';
-import React, { FC, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { RouteComponentProps } from '@reach/router';
+import React, { FC } from 'react';
 
 import PrototypeForm from './PrototypeForm';
 import { Wrapper } from './styles';
-import { Props } from './types';
+import { FormMode, Props } from './types';
 
-const NewPrototype: FC<Props> = () => {
-  const dispatch = useDispatch();
-
-  const properties = useProperties({ entity: ComposerEntity.CHECKLIST });
-
-  const { list } = useTypedSelector((state) => state.usersCopy.active);
-
-  useEffect(() => {
-    if (list.length === 0) {
-      dispatch(
-        fetchUsers(
-          {
-            page: 0,
-            size: 50,
-            sort: 'createdAt,desc',
-            filters: JSON.stringify({
-              op: 'AND',
-              fields: [{ field: 'isArchived', op: 'EQ', values: [false] }],
-            }),
-          },
-          UserStatus.ACTIVE,
-        ),
-      );
-    }
-  }, [list]);
-
+const NewPrototype: FC<RouteComponentProps<Props>> = (props) => {
   return (
     <Wrapper>
-      <PrototypeForm checklistProperties={properties} users={list} />
+      <PrototypeForm
+        formData={props.location?.state?.formData ?? {}}
+        formMode={props.location?.state?.mode ?? FormMode.ADD}
+      />
     </Wrapper>
   );
 };

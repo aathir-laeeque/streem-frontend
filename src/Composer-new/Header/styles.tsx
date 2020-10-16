@@ -1,6 +1,11 @@
-import styled from 'styled-components';
+import { ChecklistStates } from '#Composer-new/checklist.types';
+import styled, { css } from 'styled-components';
 
-const HeaderWrapper = styled.div`
+type HeaderWrapperProps = {
+  checklistState: ChecklistStates;
+};
+
+const HeaderWrapper = styled.div<HeaderWrapperProps>`
   background-color: #ffffff;
   border-radius: 4px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
@@ -66,7 +71,7 @@ const HeaderWrapper = styled.div`
 
           .icon {
             color: #1d84ff;
-            margin: 0 4px;
+            margin: 0 4px 0 0;
           }
         }
       }
@@ -80,7 +85,6 @@ const HeaderWrapper = styled.div`
       #edit,
       #view-reviewers {
         > .icon {
-          margin-right: 4px;
           color: #1d84ff;
         }
       }
@@ -116,6 +120,20 @@ const HeaderWrapper = styled.div`
       grid-area: preview;
     }
   }
+
+  ${({ checklistState }) => {
+    switch (checklistState) {
+      case ChecklistStates.BEING_REVIEWED:
+        return css`
+          .prototype-add-buttons {
+            display: none;
+          }
+        `;
+
+      default:
+        return null;
+    }
+  }}
 `;
 
 export default HeaderWrapper;

@@ -7,6 +7,7 @@ import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { FormMode } from '../NewPrototype/types';
 import { Checklist } from '../types';
 import { fetchChecklists } from './actions';
 import SideBar from './SideBar';
@@ -73,7 +74,9 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
         currentPage={pageable.page}
         data={checklists}
         primaryButtonText="Create Checklist"
-        onPrimaryClick={() => navigate('prototype')}
+        onPrimaryClick={() =>
+          navigate('prototype', { state: { mode: FormMode.ADD } })
+        }
         beforeColumns={[
           {
             header: 'NAME',

@@ -11,8 +11,10 @@ import { combineReducers } from 'redux';
 import { FacilitiesReducer } from './facilities/reducer';
 import { PropertiesReducer } from './properties/reducer';
 import { UsersReducer } from './users/reducer';
-import { UsersReducer as UsersReducerCopy } from './users copy/reducer';
 import { FileUploadReducer } from './file-upload/reducer';
+
+import { PropertiesServiceReducer } from '../services/properties/reducer';
+import { UsersServiceReducer } from '../services/users/reducer';
 
 export const rootReducer = combineReducers({
   auth: AuthReducer,
@@ -27,5 +29,8 @@ export const rootReducer = combineReducers({
   prototypeComposer,
   sessionActivity: SessionActivityReducer,
   users: UsersReducer,
-  usersCopy: UsersReducerCopy,
+
+  // services reducer
+  propertiesService: PropertiesServiceReducer,
+  usersService: UsersServiceReducer,
 });

@@ -1,10 +1,10 @@
 import { BaseModal, Button1, Textarea, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { FileUploadData } from '#utils/globalTypes';
 import { debounce } from 'lodash';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { Delete } from '@material-ui/icons';
 
 import { Task } from '../checklist.types';
 import { addTaskMedia } from '../Tasks/actions';
@@ -12,32 +12,34 @@ import { MediaDetails } from '../Tasks/types';
 
 const Wrapper = styled.div`
   .modal {
-    max-width: 900px !important;
-    height: 400px !important;
+    width: 920px !important;
+    height: max-content;
 
     &-body {
       height: inherit;
       padding: 0 !important;
 
-      .media {
-        &-wrapper {
+      .wrapper {
+        display: flex;
+        height: inherit;
+
+        .left-side {
+          align-items: center;
           display: flex;
-          height: inherit;
+          flex: 2;
+          justify-content: center;
+          max-width: 600px;
+          max-height: 400px;
         }
 
-        &-image {
-          &-container {
-            flex: 2;
-            height: inherit;
+        .right-side {
+          border-left: 1px solid #eeeeee;
+          display: flex;
+          flex: 1;
+          flex-direction: column;
+          max-width: 320px;
 
-            img {
-              height: inherit;
-              width: 100%;
-            }
-          }
-
-          &-details {
-            flex: 1;
+          .media-details {
             padding: 24px;
 
             .input {
@@ -48,9 +50,18 @@ const Wrapper = styled.div`
               margin-bottom: 40px;
             }
 
-            button {
+            button#save-details {
               margin-left: auto;
             }
+          }
+
+          .delete-media {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            margin-top: auto;
+            border-top: 1px solid #eeeeee;
+            cursor: pointer;
           }
         }
       }
@@ -59,19 +70,18 @@ const Wrapper = styled.div`
 `;
 
 type Props = {
-  fileData: Omit<MediaDetails, 'name' | 'description'>;
+  mediaDetails: MediaDetails;
   taskId: Task['id'];
 };
 
 const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: { fileData, taskId },
+  props: { mediaDetails, taskId },
 }) => {
-  const [state, setState] = useState<MediaDetails>({
-    ...fileData,
-    name: '',
-  });
+  const [stateMediaDetails, setStateMediaDetails] = useState<MediaDetails>(
+    mediaDetails,
+  );
 
   const [errors, setErrors] = useState({ name: '' });
 
@@ -85,54 +95,61 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
         showHeader={false}
         showFooter={false}
       >
-        <div className="media-wrapper">
-          <div className="media-image-container">
-            <img src={fileData.link} />
+        <div className="wrapper">
+          <div className="left-side">
+            <img src={stateMediaDetails.link} />
           </div>
 
-          <div className="media-image-details">
-            <TextInput
-              defaultValue=""
-              error={errors.name}
-              label="Photo name"
-              name="name"
-              onChange={debounce(({ name, value }) => {
-                setState({ ...state, [name]: value });
+          <div className="right-side">
+            <div className="media-details">
+              <TextInput
+                defaultValue={stateMediaDetails.name}
+                error={errors.name}
+                label="Photo name"
+                name="name"
+                onChange={debounce(({ name, value }) => {
+                  setStateMediaDetails({ ...stateMediaDetails, [name]: value });
 
-                if (!!errors.name) {
-                  console.log('remove name error');
-                  setErrors({ ...errors, name: '' });
-                }
-              }, 500)}
-            />
+                  if (!!errors.name) {
+                    setErrors({ ...errors, name: '' });
+                  }
+                }, 500)}
+              />
 
-            <Textarea
-              optional
-              defaultValue=""
-              label="Description"
-              name="description"
-              onChange={debounce(({ name, value }) => {
-                setState({ ...state, [name]: value });
-              }, 500)}
-              rows={4}
-            />
+              <Textarea
+                optional
+                defaultValue={stateMediaDetails.description}
+                label="Description"
+                name="description"
+                onChange={debounce(({ name, value }) => {
+                  setStateMediaDetails({ ...stateMediaDetails, [name]: value });
+                }, 500)}
+                rows={4}
+              />
 
-            <Button1
-              onClick={() => {
-                if (!!state.name) {
-                  dispatch(
-                    addTaskMedia({
-                      taskId,
-                      mediaDetails: { ...state },
-                    }),
-                  );
-                } else {
-                  setErrors({ name: 'Name is required' });
-                }
-              }}
-            >
-              Save
-            </Button1>
+              <Button1
+                id="save-details"
+                onClick={() => {
+                  if (!!stateMediaDetails.name) {
+                    dispatch(
+                      addTaskMedia({
+                        taskId,
+                        mediaDetails: { ...stateMediaDetails },
+                      }),
+                    );
+                  } else {
+                    setErrors({ name: 'Name is required' });
+                  }
+                }}
+              >
+                Save
+              </Button1>
+            </div>
+
+            <div className="delete-media">
+              {/* <Delete className="icon" />
+              Delete */}
+            </div>
           </div>
         </div>
       </BaseModal>

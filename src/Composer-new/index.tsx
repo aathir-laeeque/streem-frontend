@@ -22,7 +22,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
     }
 
     return () => {
-      // dispatch(resetComposer());
+      dispatch(resetComposer());
     };
   }, []);
 

@@ -46,10 +46,6 @@ const Wrapper = styled.div<Pick<Props, 'size'>>`
   }}
 `;
 
-export const Avatar: FC<Props> = ({ size, user }) => (
+export const Avatar: FC<Props> = ({ size = 'medium', user }) => (
   <Wrapper size={size}>{getInitials(getFullName(user))}</Wrapper>
 );
-
-Avatar.defaultProps = {
-  size: 'medium',
-};

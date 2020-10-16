@@ -13,3 +13,7 @@ export type ReOrderArgs = {
   id: Stage['id'];
   to: number;
 };
+
+export enum StageErrors {
+  E303 = 'STAGE_NAME_CANNOT_BE_EMPTY',
+}

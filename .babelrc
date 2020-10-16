@@ -13,7 +13,8 @@
           "#modules": "./src/modules",
           "#store": "./src/store",
           "#utils": "./src/utils",
-          "#views": "./src/views"
+          "#views": "./src/views",
+          "#services": "./src/services"
         }
       }
     ]

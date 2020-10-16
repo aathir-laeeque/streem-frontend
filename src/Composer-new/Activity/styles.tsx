@@ -15,7 +15,7 @@ const ActivityWrapper = styled.div.attrs({
     position: absolute;
     right: 32px;
     top: 32px;
-    z-index: 99;
+    z-index: 1;
   }
 `;
 
