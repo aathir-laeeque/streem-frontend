@@ -29,8 +29,11 @@ export const fetchAssignedUsersForJobError = (error: any) =>
 export const fetchAssignedUsersForJobSuccess = (data: User[]) =>
   actionSpreader(ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS, { data });
 
-export const assignUserToJob = (user: User) =>
-  actionSpreader(ComposerAction.ASSIGN_USER_TO_JOB, { user });
+export const assignUserToJob = (user: User, completeltAssigned: boolean) =>
+  actionSpreader(ComposerAction.ASSIGN_USER_TO_JOB, {
+    user,
+    completeltAssigned,
+  });
 
 export const unAssignUserFromJob = (user: User) =>
   actionSpreader(ComposerAction.UNASSIGN_USER_FROM_JOB, { user });

@@ -31,11 +31,14 @@ export enum OverlayNames {
   CHECKLIST_REVIEWER_ASSIGNMENT_POPOVER = 'CHECKLIST_REVIEWER_ASSIGNMENT_POPOVER',
   TASK_USERS_ASSIGNMENT = 'TASK_USERS_ASSIGNMENT',
   TIMED_TASK_CONFIG = 'TIMED_TASK_CONFIG',
+  INITIATE_SIGNOFF = 'INITIATE_SIGNOFF',
+  SIGN_OFF_PROGRESS = 'SIGN_OFF_PROGRESS',
+  PASSWORD_INPUT = 'PASSWORD_INPUT',
 }
 
 export interface CommonOverlayProps<T> {
-  type: string;
-  props: T;
+  type: OverlayNames;
+  props?: T;
   key: string;
   closeOverlay: () => void;
   closeAllOverlays: () => void;

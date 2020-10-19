@@ -71,11 +71,11 @@ const TabContent: FC<TabViewProps> = ({
     );
   };
 
-  const onResendInvite = (id: string | number) => {
+  const onResendInvite = (id: User['id']) => {
     dispatch(resendInvite({ id }));
   };
 
-  const onCancelInvite = (id: string | number) => {
+  const onCancelInvite = (id: User['id']) => {
     console.log('onCancelInvite :', id);
   };
 
@@ -129,7 +129,7 @@ const TabContent: FC<TabViewProps> = ({
 
   const parsedUsers = (users.list as Array<User>).reduce<ParsedUser[]>(
     (result, item) => {
-      if (item.id !== 0) {
+      if (item.id !== '0') {
         result.push({
           ...item,
           properties: {

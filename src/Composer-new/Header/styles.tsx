@@ -6,9 +6,6 @@ type HeaderWrapperProps = {
 };
 
 const HeaderWrapper = styled.div<HeaderWrapperProps>`
-  background-color: #ffffff;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   grid-area: header;
@@ -98,7 +95,7 @@ const HeaderWrapper = styled.div<HeaderWrapperProps>`
         #view-reviewers {
           > .icon {
             color: #1d84ff;
-            margin: 0 4px 0 0;
+            margin: 0px;
           }
         }
 

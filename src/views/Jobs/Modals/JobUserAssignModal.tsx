@@ -211,7 +211,7 @@ export const JobUserAssignModal: FC<CommonOverlayProps<
   if (list) {
     list.forEach((user, index) => {
       const checked = job.assignees.some((item) => item.id === user.id);
-      if (!checked && user.id !== 0) {
+      if (!checked && user.id !== '0') {
         bottomViews.push(userRow(user, index, checked));
       }
     });

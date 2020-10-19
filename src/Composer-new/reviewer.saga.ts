@@ -271,8 +271,7 @@ function* submitChecklistReviewSaga({
     });
 
     if (allDone && allDoneOk) {
-      console.log('SET CHECKLIST :: READY TO RELEASE');
-      yield put(updateChecklistState(ChecklistStates.SIGN_OFF_FOR_RELEASING));
+      yield put(updateChecklistState(ChecklistStates.SIGNING_IN_PROGRESS));
       yield put(closeOverlayAction(OverlayNames.SUBMIT_REVIEW_MODAL));
     } else if (allDone && !allDoneOk) {
       yield put(
@@ -359,8 +358,7 @@ function* submitChecklistReviewWithCRSaga({
     });
 
     if (allDone && allDoneOk) {
-      console.log('SET CHECKLIST :: READY TO RELEASE');
-      yield put(updateChecklistState(ChecklistStates.SIGN_OFF_FOR_RELEASING));
+      yield put(updateChecklistState(ChecklistStates.SIGNING_IN_PROGRESS));
       yield put(closeOverlayAction(OverlayNames.SUBMIT_REVIEW_MODAL));
     } else if (allDone && !allDoneOk) {
       yield put(

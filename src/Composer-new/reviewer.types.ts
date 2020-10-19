@@ -1,3 +1,5 @@
+import { User } from '#store/users/types';
+
 export enum ReviewerState {
   NOT_STARTED = 'NOT_STARTED',
   IN_PROGRESS = 'IN_PROGRESS',
@@ -6,10 +8,9 @@ export enum ReviewerState {
   SUBMITTED_FOR_CR = 'SUBMITTED_FOR_CR',
 }
 
-export type Reviewer = {
-  employeeId: string;
-  firstName: string;
-  id: number;
-  lastName: string;
+export type Reviewer = Pick<
+  User,
+  'id' | 'employeeId' | 'firstName' | 'lastName'
+> & {
   state: ReviewerState;
 };

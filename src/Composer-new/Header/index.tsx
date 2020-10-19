@@ -8,7 +8,6 @@ import {
 import { Reviewer, ReviewerState } from '#Composer-new/reviewer.types';
 import { ComposerEntity } from '#Composer-new/types';
 import { useTypedSelector } from '#store';
-import { removeUnderscore } from '#utils/stringUtils';
 import { FormMode } from '#views/Checklists/NewPrototype/types';
 import {
   AddCircle,
@@ -98,7 +97,7 @@ const ChecklistHeader: FC = () => {
           primaryText: 'Confirm',
           title: 'Start Reviewing',
           body: (
-            <>Are you sure you want to start reviewing this checkcklist now ?</>
+            <>Are you sure you want to start reviewing this Prototype now ?</>
           ),
         },
       }),
@@ -145,7 +144,7 @@ const ChecklistHeader: FC = () => {
             className="submit"
             onClick={() => handleSubmitForReview(false)}
           >
-            Submit
+            Provide Review
           </Button1>
         );
       case ReviewerState.DONE:
@@ -158,7 +157,7 @@ const ChecklistHeader: FC = () => {
 
         return (
           <>
-            {data.status !== ChecklistStates.SIGN_OFF_FOR_RELEASING && (
+            {data.status !== ChecklistStates.SIGNING_IN_PROGRESS && (
               <Button1
                 className="submit"
                 style={{ backgroundColor: '#333333' }}
@@ -168,7 +167,7 @@ const ChecklistHeader: FC = () => {
                 Continue Review
               </Button1>
             )}
-            {data.status !== ChecklistStates.SIGN_OFF_FOR_RELEASING &&
+            {data.status !== ChecklistStates.SIGNING_IN_PROGRESS &&
               !isReviewPending && (
                 <Button1 className="submit" onClick={handleSendToAuthor}>
                   <DoneAll style={{ fontSize: '16px', marginRight: '8px' }} />
@@ -306,7 +305,9 @@ const ChecklistHeader: FC = () => {
             }}
           >
             <Info style={{ color: '#000' }} />
-            <span style={{ color: '#000' }}>Start the Reivew</span>
+            <span style={{ color: '#000' }}>
+              Prototype Submitted for your Review
+            </span>
           </div>
         )}
         {reviewer && reviewer.state === ReviewerState.DONE_WITH_CR && (

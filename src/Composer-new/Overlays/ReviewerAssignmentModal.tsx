@@ -21,8 +21,8 @@ import {
 import Wrapper from './ReviewerAssignment.styles';
 
 type initialState = {
-  assignedUsers: number[];
-  unAssignedUsers: number[];
+  assignedUsers: Reviewer['id'][];
+  unAssignedUsers: Reviewer['id'][];
   searchQuery: string;
   preAssignedUsers: Reviewer[];
 };
@@ -79,6 +79,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
 
   if (checklistId) {
     useEffect(() => {
+      dispatch(revertReviewersForChecklist([]));
       dispatch(fetchAssignedReviewersForChecklist(checklistId));
     }, []);
   }
@@ -112,7 +113,6 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
     checked: boolean,
     isPreAssigned: boolean,
   ) => {
-    console.log('checked', checked);
     if (checked) {
       if (isPreAssigned) {
         setstate({
@@ -124,7 +124,6 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
       } else {
         setstate({
           ...state,
-          unAssignedUsers: [...unAssignedUsers, user.id],
           assignedUsers: assignedUsers.filter((i) => i !== user.id),
         });
         dispatch(unAssignReviewerFromChecklist(user));
@@ -190,7 +189,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   if (list) {
     if (searchQuery === '') {
       preAssignedUsers.forEach((user) => {
-        if (user.id !== 0) {
+        if (user.id !== '0') {
           const checked = assignees.some((item) => item.id === user.id);
           const isAuthor = authors.some((item) => item.id === user.id);
           if (!isAuthor) bodyView.push(userRow(user, checked, true));
@@ -205,7 +204,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
       const checked = assignees.some((item) => item.id === user.id);
       const isAuthor = authors.some((item) => item.id === user.id);
 
-      if (user.id !== 0 && !isAuthor) {
+      if (user.id !== '0' && !isAuthor) {
         if (searchQuery !== '') {
           bodyView.push(userRow(user, checked, isPreAssigned));
         } else if (!isPreAssigned) {
@@ -242,6 +241,9 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
         secondaryText="Cancel"
         onSecondary={onSecondary}
         onPrimary={onPrimary}
+        disabledPrimary={
+          state.assignedUsers.length === 0 && state.unAssignedUsers.length === 0
+        }
       >
         <div className="top-content">
           <div className="searchboxwrapper">

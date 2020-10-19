@@ -69,7 +69,7 @@ export const AssignedUserDetailsPopover: FC<CommonOverlayProps<{
         paper: classes.paper,
       }}
     >
-      {users.map((user) => (
+      {(users as Users).map((user) => (
         <div
           className={classes.wrapper}
           key={`assignedUserDetailsPopOver_${user.id}`}

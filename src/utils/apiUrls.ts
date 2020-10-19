@@ -5,6 +5,7 @@ import { Task } from '#Composer/checklist.types';
 import { Job } from '../views/Jobs/types';
 import { fetchBaseUrl } from './constants';
 import { AddNewActivityArgs } from '../Composer-new/Activity/types';
+import { User } from '#store/users/types';
 
 const baseUrl = fetchBaseUrl();
 
@@ -42,7 +43,7 @@ export const apiGetFacilities = () => `${baseUrl}/facilities`;
 
 export const apiGetUsers = () => `${baseUrl}/users`;
 
-export const apiGetUser = (id: number | string) => `${baseUrl}/users/${id}`;
+export const apiGetUser = (id: User['id']) => `${baseUrl}/users/${id}`;
 
 export const apiGetSelectedJob = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}`;
@@ -76,13 +77,13 @@ export const apiForgotPassword = () => `${baseUrl}/auth/reset-password`;
 
 export const apiRefreshToken = () => `${baseUrl}/auth/refresh-token`;
 
-export const apiResendInvite = (id: number | string) =>
+export const apiResendInvite = (id: User['id']) =>
   `${baseUrl}/users/${id}/resend-invite`;
 
-export const apiArchiveUser = (id: number | string) =>
+export const apiArchiveUser = (id: User['id']) =>
   `${baseUrl}/users/${id}/archive`;
 
-export const apiUnArchiveUser = (id: number | string) =>
+export const apiUnArchiveUser = (id: User['id']) =>
   `${baseUrl}/users/${id}/unarchive`;
 
 export const apiRegister = () => `${baseUrl}/auth/register`;

@@ -1,6 +1,6 @@
 import { BaseModal } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import MemoUserAssigned from '#assets/svg/UserAssigned';
+import MemoSentConfirmation from '#assets/svg/SentConfirmation';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
@@ -42,9 +42,9 @@ const ReviewSubmitSuccessModal: FC<CommonOverlayProps<any>> = ({
         showFooter={false}
         showHeader={false}
       >
-        <MemoUserAssigned fontSize={300} style={{ height: '205px' }} />
-        <h3>Great Job</h3>
-        <span>Your other team members are still reviewing the checklist. </span>
+        <MemoSentConfirmation fontSize={280} style={{ height: '200px' }} />
+        <h3>Review Submited</h3>
+        <span>Your other team members are still reviewing the checklist.</span>
       </BaseModal>
     </Wrapper>
   );

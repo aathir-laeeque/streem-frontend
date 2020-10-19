@@ -26,7 +26,7 @@ const Wrapper = styled.div`
   }
 `;
 
-export type TabContent = Record<string | number, any>;
+export type TabContent = any;
 
 export const initialTabState = {
   list: [],
