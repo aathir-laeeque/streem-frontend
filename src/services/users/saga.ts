@@ -3,13 +3,13 @@ import { request } from '#utils/request';
 import { call, put, takeLeading } from 'redux-saga/effects';
 
 import {
-  fetchMoreOngoing,
   fetch,
   fetchError,
+  fetchMoreOngoing,
   fetchOngoing,
   fetchSuccess,
 } from './actions';
-import { UsersAction } from './types';
+import { User, UsersAction } from './types';
 
 function* fetchSaga({ payload }: ReturnType<typeof fetch>) {
   try {
@@ -31,7 +31,10 @@ function* fetchSaga({ payload }: ReturnType<typeof fetch>) {
     if (data) {
       yield put(
         fetchSuccess({
-          data: { list: data, pageable },
+          data: {
+            list: (data as Array<User>).filter((el) => !!parseInt(el.id)),
+            pageable,
+          },
           type,
         }),
       );
