@@ -13,15 +13,6 @@ import { useDispatch } from 'react-redux';
 import { addNewPrototype, updatePrototype } from './actions';
 import { FormErrors, FormMode, FormValues, Props } from './types';
 
-const generateNewAuthor = () => ({
-  email: '',
-  employeeId: '',
-  firstName: '',
-  id: 0,
-  lastName: '',
-  primary: false,
-});
-
 const validateForm = (values: FormValues) => {
   const formErrors: FormErrors = { name: '', properties: {} };
   let isValid = true;
@@ -47,14 +38,18 @@ const PrototypeForm: FC<Props> = (props) => {
 
   const { listById } = useProperties(ComposerEntity.CHECKLIST);
 
-  const { users } = useUsers({
+  const { users, usersById } = useUsers({
     params: { ...defaultParams, size: 100 },
   });
 
   const { profile } = useTypedSelector((state) => state.auth);
 
   const [formValues, setFormValues] = useState<FormValues>({
-    authors: [...(formData?.authors ?? [generateNewAuthor()])],
+    authors: [
+      ...(formData?.authors
+        ?.filter((author) => !author.primary)
+        .map((author) => author.id) ?? ['0']),
+    ],
     name: formData?.name ?? '',
     properties: [],
   });
@@ -91,12 +86,24 @@ const PrototypeForm: FC<Props> = (props) => {
       if (formMode === FormMode.ADD) {
         dispatch(addNewPrototype(formValues));
       } else if (formMode === FormMode.EDIT) {
-        dispatch(updatePrototype(formValues, formData?.prototypeId));
+        dispatch(
+          updatePrototype(
+            formValues,
+            formData?.prototypeId,
+            formData?.authors
+              ?.filter((author) => !author.primary)
+              .map((author) => author.id),
+          ),
+        );
       }
     } else {
       setFormErrors(formErrors);
     }
   };
+
+  if (!users.length || !Object.values(listById).length) {
+    return null;
+  }
 
   return (
     <form className="prototype-form" onSubmit={handleSubmit}>
@@ -153,60 +160,62 @@ const PrototypeForm: FC<Props> = (props) => {
           Select Authors <span className="optional-badge">Optional</span>
         </label>
 
-        {formValues.authors.map((author, index) => (
-          <div key={index} className="author">
-            <Select
-              selectedValue={
-                !!author.id
-                  ? {
-                      label: `${getFullName(author)}, ID : ${
-                        author.employeeId
-                      }`,
-                      value: author.id,
-                    }
-                  : undefined
-              }
-              placeHolder="Choose Users"
-              options={users.map((user) => ({
-                label: `${getFullName(user)}, ID : ${user.employeeId}`,
-                value: user.id,
-                id: user.id,
-                employeeId: user.employeeId,
-                firstName: user.firstName,
-                lastName: user.lastName,
-              }))}
-              onChange={(selectedOption: any) => {
-                setFormValues((values) => ({
-                  ...values,
-                  authors: [
-                    ...values.authors.slice(0, index),
-                    { ...selectedOption },
-                    ...values.authors.slice(index + 1),
-                  ],
-                }));
-              }}
-            />
-            <Close
-              id="remove"
-              className="icon"
-              onClick={() =>
-                setFormValues((values) => ({
-                  ...values,
-                  authors: [
-                    ...values.authors.slice(0, index),
-                    ...values.authors.slice(index + 1),
-                  ],
-                }))
-              }
-            />
-          </div>
-        ))}
+        {formValues.authors.map((authorId, index) => {
+          const author = usersById[authorId];
+
+          return (
+            <div key={`${index}-${authorId}`} className="author">
+              <Select
+                selectedValue={
+                  !!parseInt(authorId)
+                    ? {
+                        label: `${getFullName(author)}, ID : ${
+                          author.employeeId
+                        }`,
+                        value: authorId,
+                      }
+                    : undefined
+                }
+                placeHolder="Choose Users"
+                options={users.map((user) => ({
+                  label: `${getFullName(user)}, ID : ${user.employeeId}`,
+                  value: user.id,
+                }))}
+                onChange={(selectedOption: any) => {
+                  const selectedUser = usersById[selectedOption.value];
+
+                  setFormValues((values) => ({
+                    ...values,
+                    authors: [
+                      ...values.authors.slice(0, index),
+                      selectedUser.id,
+                      ...values.authors.slice(index + 1),
+                    ],
+                  }));
+                }}
+              />
+              <Close
+                id="remove"
+                className="icon"
+                onClick={() => {
+                  setFormValues((values) => ({
+                    ...values,
+                    authors: [
+                      ...values.authors.slice(0, index),
+                      ...values.authors.slice(index + 1),
+                    ],
+                  }));
+                }}
+              />
+            </div>
+          );
+        })}
 
         <AddNewItem
           onClick={() => {
             setFormValues((values) => ({
               ...values,
-              authors: [...values.authors, generateNewAuthor()],
+              authors: [...values.authors, '0'],
             }));
           }}
         />

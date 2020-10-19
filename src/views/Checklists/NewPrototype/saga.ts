@@ -1,11 +1,52 @@
-import { apiCreateNewPrototype } from '#utils/apiUrls';
+import { apiCreateNewPrototype, apiUpdatePrototype } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { navigate } from '@reach/router';
+import { pick } from 'lodash';
 import { call, takeLeading } from 'redux-saga/effects';
 
-import { apiUpdatePrototype } from '../../../utils/apiUrls';
 import { addNewPrototype, updatePrototype } from './actions';
-import { NewPrototypeActions } from './types';
+import { Author, FormMode, FormValues, NewPrototypeActions } from './types';
+
+type transformFormDataArgs = {
+  data: FormValues;
+  mode: FormMode;
+  originalAuthors?: Author['id'][];
+};
+
+const transformFormData = ({
+  data,
+  mode,
+  originalAuthors,
+}: transformFormDataArgs) => {
+  const addAuthors: Author['id'][] = [],
+    removeAuthors: Author['id'][] = [];
+
+  data.authors.forEach((authorId) => {
+    if (!originalAuthors?.includes(authorId)) {
+      addAuthors.push(authorId);
+    }
+  });
+
+  originalAuthors?.forEach((authorId) => {
+    if (!data.authors.includes(authorId)) {
+      removeAuthors.push(authorId);
+    }
+  });
+
+  return {
+    name: data.name,
+    properties: data.properties.map((property) => ({
+      ...pick(property, ['id', 'name', 'value']),
+    })),
+
+    ...(mode === FormMode.ADD
+      ? { authors: data.authors }
+      : {
+          addAuthorIds: addAuthors,
+          removeAuthorIds: removeAuthors,
+        }),
+  };
+};
 
 function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
   try {
@@ -15,7 +56,12 @@ function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
       request,
       'POST',
       apiCreateNewPrototype(),
-      { data: { ...data, facilityId: 1 } },
+      {
+        data: {
+          ...transformFormData({ data, mode: FormMode.ADD }),
+          facilityId: 1,
+        },
+      },
     );
 
     if (response) {
@@ -33,18 +79,22 @@ function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
 
 function* updatePrototypeSaga({ payload }: ReturnType<typeof updatePrototype>) {
   try {
-    const { data, id } = payload;
-    console.log('id :: ', id);
+    const { data, id, originalAuthors } = payload;
 
     const { data: response, errors } = yield call(
       request,
       'PUT',
       apiUpdatePrototype(id),
-      { data: { ...data, facilityId: 1 } },
+      {
+        data: {
+          ...transformFormData({ data, originalAuthors, mode: FormMode.EDIT }),
+          facilityId: 1,
+        },
+      },
     );
 
     if (response) {
-      navigate(`/checklists/${response.id}`);
+      navigate(`/checklists/${id}`);
     } else {
       console.error('error from the create checklist api  :: ', errors);
     }

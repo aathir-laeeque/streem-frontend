@@ -1,6 +1,6 @@
 import { Checklist } from '#Composer-new/checklist.types';
-import { Property } from '#store/properties/types';
-import { User } from '#store/users/types';
+import { Property } from '#services/properties';
+import { User } from '#services/users';
 
 import { addNewPrototype, updatePrototype } from './actions';
 
@@ -33,7 +33,7 @@ export enum FormMode {
 }
 
 export type FormValues = {
-  authors: Author[];
+  authors: Author['id'][];
   name: string;
   properties: PrototypeProperties[];
 };
