@@ -21,7 +21,7 @@ export enum UserStatus {
 }
 
 export interface User {
-  id: number;
+  id: string;
   employeeId: string;
   firstName: string;
   lastName: string;
@@ -38,7 +38,7 @@ export interface User {
   organisation?: Organisation;
 }
 
-export type UsersById = Record<string, User>;
+export type UsersById = Record<User['id'], User>;
 
 export type UserGroup = {
   readonly pageable: Pageable;

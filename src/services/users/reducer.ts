@@ -55,7 +55,7 @@ const reducer: Reducer<UsersState, UsersActionType> = (
           usersById: {
             ...state[action.payload.type].usersById,
             ...action.payload.list.reduce<UsersById>((acc, user) => {
-              acc[user.id.toString()] = user;
+              acc[user.id] = user;
               return acc;
             }, {}),
           },
