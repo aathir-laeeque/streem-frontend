@@ -78,10 +78,16 @@ export type UsersActionType = ReturnType<
 
 export type useUsersArgs = {
   status?: UserStatus;
-  params?: fetchParams;
+  params?: fetchUsersParams;
 };
 
-export type fetchParams = {
+export type useUsersReturnType = {
+  loadMore: () => void;
+  users: User[];
+  usersById: UsersById;
+};
+
+export type fetchUsersParams = {
   filters: string;
   page: number;
   size: number;
@@ -90,7 +96,7 @@ export type fetchParams = {
 
 export type fetchArgs = {
   initialCall: boolean;
-  params: fetchParams;
+  params: fetchUsersParams;
   type: UserStatus;
 };
 

@@ -3,9 +3,14 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { fetch } from './actions';
-import { fetchParams, UserStatus, useUsersArgs } from './types';
+import {
+  fetchUsersParams,
+  UserStatus,
+  useUsersArgs,
+  useUsersReturnType,
+} from './types';
 
-const defaultParams: fetchParams = {
+const defaultParams: fetchUsersParams = {
   filters: JSON.stringify({
     op: 'AND',
     fields: [{ field: 'isArchived', op: 'EQ', values: [false] }],
@@ -18,7 +23,7 @@ const defaultParams: fetchParams = {
 const useUsers = ({
   status = UserStatus.ACTIVE,
   params = defaultParams,
-}: useUsersArgs) => {
+}: useUsersArgs): useUsersReturnType => {
   const { pageable, users, usersById } = useTypedSelector(
     (state) => state.usersService[status],
   );
