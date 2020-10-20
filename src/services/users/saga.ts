@@ -32,7 +32,7 @@ function* fetchSaga({ payload }: ReturnType<typeof fetch>) {
       yield put(
         fetchSuccess({
           data: {
-            list: (data as Array<User>).filter((el) => !!parseInt(el.id)),
+            list: (data as Array<User>).filter((el) => el.id !== '0'),
             pageable,
           },
           type,

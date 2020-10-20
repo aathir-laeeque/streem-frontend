@@ -17,8 +17,8 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchComposerData({ entity, id: parseInt(id) }));
-      dispatch(fetchAssignedReviewersForChecklist(parseInt(id)));
+      dispatch(fetchComposerData({ entity, id }));
+      dispatch(fetchAssignedReviewersForChecklist(id));
     }
 
     return () => {

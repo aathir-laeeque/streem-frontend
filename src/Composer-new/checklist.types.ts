@@ -47,7 +47,7 @@ export type Activity = {
   code: string;
   // TODO: look into this any type for activity data
   data: any;
-  id: number;
+  id: string;
   label: string;
   mandatory: boolean;
   orderTree: number;
@@ -56,7 +56,7 @@ export type Activity = {
 };
 
 export type Media = {
-  id: number;
+  id: string;
   name: string;
   link: string;
   type: string;
@@ -76,7 +76,7 @@ export enum TaskExecutionStatus {
 export type TaskExecution = {
   audit: Audit;
   correctionReason: string;
-  id: number;
+  id: string;
   period: number;
   reason: string;
   startedBy: Employee;
@@ -93,7 +93,7 @@ export type Task = {
   activities: Activity[];
   code: string;
   hasStop: boolean;
-  id: number;
+  id: string;
   mandatory: boolean;
   maxPeriod?: number;
   medias: Media[];
@@ -107,7 +107,7 @@ export type Task = {
 
 export type Stage = {
   code: string;
-  id: number;
+  id: string;
   name: string;
   orderTree: number;
   tasks: Task[];
@@ -122,11 +122,11 @@ export enum ChecklistStates {
 }
 
 export type Comment = {
-  id: number;
+  id: string;
   comments: string;
   commentedAt: number;
   commentedBy: {
-    id: number;
+    id: string;
     employeeId: string;
     firstName: string;
     lastName: string;
@@ -138,7 +138,7 @@ export type Checklist = {
   archived?: boolean;
   audit: Audit;
   code: string;
-  id: number;
+  id: string;
   name: string;
   noOfJobs?: number;
   noOfTasks?: number;

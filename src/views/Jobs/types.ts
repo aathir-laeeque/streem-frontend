@@ -8,7 +8,7 @@ export interface Properties {
   [key: string]: string | undefined;
 }
 export interface Job {
-  id: number;
+  id: string;
   name?: string;
   code: string;
   totalTasks: number;
