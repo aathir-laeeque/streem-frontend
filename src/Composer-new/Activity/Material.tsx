@@ -1,10 +1,8 @@
 import ImageUploadIcon from '#assets/svg/ImageUpload';
-import { AddNewItem, TextInput } from '#components';
-import { resetFileUpload, uploadFile } from '#store/file-upload/actions';
-import { useTypedSelector } from '#store/helpers';
+import { AddNewItem, ImageUploadButton, TextInput } from '#components';
 import { ArrowDropDown, ArrowDropUp, Close } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { createRef, FC, RefObject, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { updateActivity } from './actions';
@@ -12,30 +10,7 @@ import { MaterialWrapper } from './styles';
 import { ActivityProps } from './types';
 
 const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-  const { data: uploadedFile } = useTypedSelector((state) => state.fileUpload);
-
   const dispatch = useDispatch();
-
-  const fileRefMap: Record<string, RefObject<HTMLInputElement>> = {};
-
-  useEffect(() => {
-    if (selectedFile) {
-      dispatch(resetFileUpload());
-
-      const formData = new FormData();
-      formData.append('file', selectedFile, selectedFile.name);
-
-      dispatch(uploadFile({ formData }));
-    }
-  }, [selectedFile]);
-
-  useEffect(() => {
-    if (uploadedFile) {
-      console.log('do what you want with uploaded file');
-    }
-  }, [uploadedFile]);
 
   return (
     <MaterialWrapper>
@@ -43,36 +18,34 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
 
       <ol className="material-list">
         {activity.data?.map((item, index: number) => {
-          if (!item.link) {
-            fileRefMap[index.toString()] = createRef();
-          }
-
           return (
             <li className="material-list-item" key={index}>
               <div className={`image-wrapper ${item.link ? '' : 'default'}`}>
                 {item.link ? (
                   <img src={item.link} className="image" />
                 ) : (
-                  <>
-                    <input
-                      type="file"
-                      id="file"
-                      ref={fileRefMap[index.toString()]}
-                      style={{ display: 'none' }}
-                      onChange={(event) => {
-                        event.stopPropagation();
-                        event.preventDefault();
-                        setSelectedFile((event.target?.files ?? [])[0]);
-                      }}
-                    />
-                    <ImageUploadIcon
-                      className="icon"
-                      fontSize="32px"
-                      onClick={() =>
-                        fileRefMap[index.toString()].current?.click()
-                      }
-                    />
-                  </>
+                  <ImageUploadButton
+                    icon={ImageUploadIcon}
+                    onUploadSuccess={(fileData) => {
+                      console.log('fileData on uploadSuccess :: ', fileData);
+                      dispatch(
+                        updateActivity({
+                          ...activity,
+                          data: [
+                            ...activity.data.slice(0, index),
+                            { ...item, ...fileData },
+                            ...activity.data.slice(index + 1),
+                          ],
+                        }),
+                      );
+                    }}
+                    onUploadError={(error) =>
+                      console.error(
+                        'error came in fileupload for material item :: ',
+                        error,
+                      )
+                    }
+                  />
                 )}
               </div>
 

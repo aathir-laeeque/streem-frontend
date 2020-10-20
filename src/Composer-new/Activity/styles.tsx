@@ -56,6 +56,7 @@ const MediaWrapper = styled.div.attrs({
     background-color: #f4f4f4;
     border: 1px dashed #dadada;
     border-radius: 4px;
+    cursor: not-allowed;
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -68,7 +69,8 @@ const MediaWrapper = styled.div.attrs({
     }
 
     > .icon {
-      font-size: 36px;
+      font-size: 48px;
+      cursor: not-allowed;
     }
 
     span {
@@ -139,6 +141,7 @@ const SignatureWrapper = styled.div.attrs({
   background-color: #fafafa;
   border: 1px dashed #bababa;
   border-radius: 4px;
+  cursor: not-allowed;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -148,6 +151,7 @@ const SignatureWrapper = styled.div.attrs({
   > .icon {
     font-size: 48px;
     margin-bottom: 8px;
+    cursor: not-allowed;
   }
 `;
 
@@ -166,6 +170,7 @@ const TextboxWrapper = styled.div.attrs({
     background-color: #fafafa;
     border-radius: 4px;
     color: #999999;
+    cursor: not-allowed;
     display: flex;
     justify-content: center;
     padding: 90px;
