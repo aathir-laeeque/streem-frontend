@@ -11,8 +11,8 @@ const Timer: FC<{ task: Task }> = ({ task }) => {
 
   const [timeElapsed, setTimeElapsed] = useState(
     isTaskCompleted
-      ? moment.unix(endedAt).diff(moment.unix(startedAt))
-      : moment().diff(moment.unix(startedAt)),
+      ? moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds')
+      : moment().diff(moment.unix(startedAt), 'seconds'),
   );
 
   const [isLimitCrossed, setLimitCrossed] = useState(false);
@@ -22,7 +22,7 @@ const Timer: FC<{ task: Task }> = ({ task }) => {
 
     if (status === TaskExecutionStatus.INPROGRESS) {
       interval = setInterval(() => {
-        setTimeElapsed(moment().diff(moment.unix(startedAt)));
+        setTimeElapsed(moment().diff(moment.unix(startedAt), 'seconds'));
       }, 1000);
     }
 

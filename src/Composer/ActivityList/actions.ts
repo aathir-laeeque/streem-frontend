@@ -3,8 +3,8 @@ import { actionSpreader } from '#store';
 import { Activity } from '../checklist.types';
 import { ActivityListAction } from './reducer.types';
 
-export const executeActivity = (activity: Activity) =>
-  actionSpreader(ActivityListAction.EXECUTE_ACTIVITY, { activity });
+export const executeActivity = (activity: Activity, reason?: string) =>
+  actionSpreader(ActivityListAction.EXECUTE_ACTIVITY, { activity, reason });
 
 export const fixActivity = (activity: Activity) =>
   actionSpreader(ActivityListAction.FIX_ACTIVITY, { activity });

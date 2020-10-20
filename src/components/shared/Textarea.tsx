@@ -14,6 +14,7 @@ type OnChangeArgs = {
 };
 
 type TextareaProps = {
+  allowResize?: boolean;
   error?: boolean | string;
   label?: string;
   onChange?: ({ name, value }: OnChangeArgs) => void;
@@ -21,6 +22,7 @@ type TextareaProps = {
 } & ComponentPropsWithRef<'textarea'>;
 
 type WrapperProps = {
+  allowResize: boolean;
   hasError: boolean;
   parentHeight: string;
   textAreaHeight: string;
@@ -72,6 +74,7 @@ const Wrapper = styled.div.attrs(({ className }) => ({
         background-color: #fafafa;
         border-color: transparent;
         color: #999999;
+        resize: none;
       }
 
       :active,
@@ -116,6 +119,13 @@ const Wrapper = styled.div.attrs(({ className }) => ({
               border-color: #eb5757;
             `
           : null}
+
+        ${({ allowResize }) =>
+        !allowResize
+          ? css`
+              resize: none;
+            `
+          : null}
     }
   }
 
@@ -128,7 +138,9 @@ const Wrapper = styled.div.attrs(({ className }) => ({
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (props, ref) => {
     const {
+      allowResize = true,
       defaultValue,
+      disabled = false,
       error,
       label,
       name,
@@ -163,6 +175,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     return (
       <Wrapper
+        allowResize={allowResize}
         hasError={!!error}
         parentHeight={parentHeight}
         textAreaHeight={textAreaHeight}
@@ -177,6 +190,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <div className="textarea-wrapper">
           <textarea
             defaultValue={defaultValue}
+            disabled={disabled}
             name={name}
             onChange={onChangeHandler}
             placeholder={placeholder}

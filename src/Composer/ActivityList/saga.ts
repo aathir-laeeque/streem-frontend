@@ -14,14 +14,14 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
   try {
     console.log('payload from executeActivitySaga :: ', payload);
 
-    const { activity } = payload;
+    const { activity, reason } = payload;
 
     const { entityId: jobId } = yield select(
       (state: RootState) => state.composer,
     );
 
     const { data } = yield call(request, 'PUT', apiExecuteActivity(), {
-      data: { jobId, activity },
+      data: { jobId, activity, ...(!!reason ? { reason } : {}) },
     });
 
     if (data) {
