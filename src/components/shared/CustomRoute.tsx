@@ -40,7 +40,7 @@ export const CustomRoute: FC<Props> = ({
   if (!isProtected) {
     switch (currentState) {
       case SessionStates.ACTIVE:
-        return <Redirect from="" to="/" noThrow />;
+        return <Redirect from="" to="/inbox" noThrow />;
       default:
         return <Component {...rest} />;
     }

@@ -4,6 +4,7 @@ import { User } from '#store/users/types';
 import { Job } from '../views/Jobs/types';
 import { ComposerAction } from './composer.reducer.types';
 import { Entity, FetchDataArgs } from './composer.types';
+import { ExceptionValues } from './modals/CompleteJobWithException';
 
 export const fetchData = ({ id, entity }: FetchDataArgs) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA, { id, entity });
@@ -20,7 +21,7 @@ export const fetchDataSuccess = (data: any, entity: Entity) =>
 
 // JOB ASSIGNMENT
 
-export const fetchAssignedUsersForJob = (jobId: number) =>
+export const fetchAssignedUsersForJob = (jobId: string) =>
   actionSpreader(ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB, { jobId });
 
 export const fetchAssignedUsersForJobError = (error: any) =>
@@ -66,8 +67,28 @@ export const startJob = (jobId: Job['id']) =>
 export const startJobSuccess = () =>
   actionSpreader(ComposerAction.START_JOB_SUCCESS);
 
-export const completeJob = (withException = false) =>
-  actionSpreader(ComposerAction.COMPLETE_JOB, { withException });
+type CompleteJobArgs = {
+  jobId: Job['id'];
+  withException?: boolean;
+  values?: ExceptionValues;
+  details?: {
+    code: Job['code'];
+    name: Job['checklist']['name'];
+  };
+};
+
+export const completeJob = ({
+  jobId,
+  withException = false,
+  values,
+  details,
+}: CompleteJobArgs) =>
+  actionSpreader(ComposerAction.COMPLETE_JOB, {
+    jobId,
+    withException,
+    values,
+    details,
+  });
 
 export const completeJobSuccess = (withException = false) =>
   actionSpreader(

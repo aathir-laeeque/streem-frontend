@@ -1,7 +1,7 @@
 import { Button1 } from '#components';
 import { Close } from '@material-ui/icons';
 import React, { FC, ReactNode, useRef } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface BaseModalProps {
   closeAllModals: () => void;
@@ -34,31 +34,34 @@ const Wrapper = styled.div<{ animated: boolean }>`
 
     ${({ animated }) =>
       animated
-        ? `
-      transform: scale(0);
-    &.openup {
-      transform: scale(1);
-      .modal-background {
-        background: rgba(0, 0, 0, 0);
-        animation: fadeIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-        .modal {
-          opacity: 0;
-          animation: scaleUp 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-        }
-      }
+        ? css`
+            transform: scale(0);
+            &.openup {
+              transform: scale(1);
+              .modal-background {
+                background: rgba(0, 0, 0, 0);
+                animation: fadeIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
+                  forwards;
+                .modal {
+                  opacity: 0;
+                  animation: scaleUp 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
+                    forwards;
+                }
+              }
 
-      &.out {
-        animation: quickScaleDown 0s 0.5s linear forwards;
-        .modal-background {
-          animation: fadeOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-          .modal {
-            animation: scaleDown 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
-              forwards;
-          }
-        }
-      }
-    }
-      `
+              &.out {
+                animation: quickScaleDown 0s 0.5s linear forwards;
+                .modal-background {
+                  animation: fadeOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
+                    forwards;
+                  .modal {
+                    animation: scaleDown 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
+                      forwards;
+                  }
+                }
+              }
+            }
+          `
         : ``}
 
     .modal-background {
@@ -195,14 +198,21 @@ export const BaseModal: FC<BaseModalProps> = ({
   const modalContainer = useRef<HTMLDivElement | null>(null);
 
   const onBaseModalContainerClick = (toExecute: () => void) => {
-    if (modalContainer && modalContainer.current) {
-      modalContainer.current.classList.add('out');
-    }
     animated
       ? setTimeout(() => {
-          toExecute();
+          (() => {
+            if (modalContainer && modalContainer.current) {
+              modalContainer.current.classList.add('out');
+            }
+            toExecute();
+          })();
         }, 500)
-      : toExecute();
+      : (() => {
+          if (modalContainer && modalContainer.current) {
+            modalContainer.current.classList.add('out');
+          }
+          toExecute();
+        })();
   };
 
   return (

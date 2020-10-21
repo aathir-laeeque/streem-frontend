@@ -1,9 +1,9 @@
 import {
-  Assessment,
-  Dashboard,
+  // Assessment,
+  // Dashboard,
   FeaturedPlayList,
   LibraryAddCheck,
-  MenuBook,
+  // MenuBook,
   Inbox,
 } from '@material-ui/icons';
 import { Link } from '@reach/router';
@@ -13,12 +13,12 @@ import { Menu, Wrapper, NavItem } from './styles';
 import { MenuItem } from './types';
 
 const menuItems: MenuItem[] = [
-  { name: 'Dashboard', icon: Dashboard, path: '/' },
+  // { name: 'Dashboard', icon: Dashboard, path: '/' },
   { name: 'Inbox', icon: Inbox, path: '/inbox' },
   { name: 'Jobs', icon: FeaturedPlayList, path: '/jobs' },
   { name: 'Checklists', icon: LibraryAddCheck, path: '/checklists' },
-  { name: 'Reports', icon: Assessment, path: '/reports' },
-  { name: 'Audit Logs', icon: MenuBook, path: '/audit' },
+  // { name: 'Reports', icon: Assessment, path: '/reports' },
+  // { name: 'Audit Logs', icon: MenuBook, path: '/audit' },
 ];
 
 const NavigationMenu: FC = () => (

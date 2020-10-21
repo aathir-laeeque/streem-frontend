@@ -122,7 +122,7 @@ export interface Stage {
 export interface Checklist {
   archived?: boolean;
   code: string;
-  id: number;
+  id: string;
   name: string;
   version: number | null;
   stages?: Stage[];

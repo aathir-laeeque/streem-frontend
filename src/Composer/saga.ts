@@ -16,6 +16,7 @@ import { request } from '#utils/request';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { all, call, fork, put, select, takeLatest } from 'redux-saga/effects';
+import { navigate } from '@reach/router';
 
 import {
   completeJob,
@@ -88,43 +89,57 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
 
 function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
   try {
-    const { entityId: jobId } = yield select(
-      (state: RootState) => state.composer,
-    );
+    const { jobId, withException, values, details } = payload;
 
     const { data, errors } = yield call(
       request,
       'PUT',
-      apiCompleteJob(payload.withException, jobId),
+      apiCompleteJob(withException, jobId),
+      { ...(withException ? { data: { ...values } } : {}) },
     );
 
     if (data) {
-      console.log('complete job success');
-    } else {
-      console.error('handle complete job errors here:: ', errors);
-
-      const { tasksErrors, activitiesErrors } = groupJobErrors(errors);
-
-      if (tasksErrors.length) {
-        console.log('handle task level error here');
-
-        yield all(
-          tasksErrors.map((error) =>
-            put(setTaskError('Activity Incomplete', error.id)),
-          ),
+      if (withException) {
+        yield put(closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION));
+        navigate('/jobs');
+        yield put(
+          showNotification({
+            type: NotificationType.SUCCESS,
+            msg: `JobId ${details?.code} was successfully completed with exception`,
+          }),
+        );
+      } else {
+        navigate('/jobs');
+        yield put(
+          showNotification({
+            type: NotificationType.SUCCESS,
+            msg: `JobId ${details?.code} was successfully completed`,
+          }),
         );
       }
-      if (activitiesErrors.length) {
-        console.log('handle activities level error here');
-        yield all(
-          activitiesErrors.map((error) =>
-            put(setActivityError(error, error.id)),
-          ),
-        );
+    } else {
+      if (!withException) {
+        const { tasksErrors, activitiesErrors } = groupJobErrors(errors);
+
+        if (tasksErrors.length) {
+          console.log('handle task level error here');
+
+          yield all(
+            tasksErrors.map((error) =>
+              put(setTaskError('Activity Incomplete', error.id)),
+            ),
+          );
+        }
+        if (activitiesErrors.length) {
+          console.log('handle activities level error here');
+          yield all(
+            activitiesErrors.map((error) =>
+              put(setActivityError(error, error.id)),
+            ),
+          );
+        }
       }
     }
-
-    console.log('data on complete job :: ', data);
   } catch (error) {
     console.error('error came in completeJobSaga in ComposerSaga :: ', error);
   }

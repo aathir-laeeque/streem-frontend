@@ -1,12 +1,12 @@
 import { Header, NavigationMenu, WorkArea } from '#components';
 import { DashboardLayout } from '#components/Layouts';
 import {
-  AuditLogsView,
+  // AuditLogsView,
   ChecklistView,
-  DashboardView,
+  // DashboardView,
   JobsView,
   InboxView,
-  ReportsView,
+  // ReportsView,
   UserAccessView,
   ProfileView,
 } from '#views';
@@ -20,10 +20,10 @@ const HomeView: FC<RouteComponentProps> = () => {
       <NavigationMenu />
       <WorkArea>
         <Router>
-          <DashboardView path="/" />
-          <AuditLogsView path="audit/*" />
+          {/* <DashboardView path="/" /> */}
+          {/* <AuditLogsView path="audit/*" /> */}
           <ChecklistView path="checklists/*" />
-          <ReportsView path="reports/*" />
+          {/* <ReportsView path="reports/*" /> */}
           <JobsView path="jobs/*" />
           <InboxView path="inbox/*" />
           <UserAccessView path="user-access/*" />

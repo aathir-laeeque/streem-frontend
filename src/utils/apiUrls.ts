@@ -11,7 +11,7 @@ const baseUrl = fetchBaseUrl();
 
 export const apiGetChecklists = () => `${baseUrl}/checklists`;
 
-export const apiGetChecklist = (checklistId: number) =>
+export const apiGetChecklist = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}`;
 
 // Inbox

@@ -7,13 +7,14 @@ import { ArrowDropDown } from '@material-ui/icons';
 import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { completeJob, startJob } from '../actions';
+import { completeJob } from '../actions';
 import { JobStatus } from '../composer.types';
+import { Job } from '#views/Jobs/types';
 
 const JobHeaderButtons: FC = () => {
-  const { entityId: jobId, jobStatus } = useTypedSelector(
-    (state) => state.composer,
-  );
+  const { jobStatus, data } = useTypedSelector((state) => state.composer);
+
+  const { id: jobId, code, checklist: { name } = {} } = (data as Job) ?? {};
 
   const dispatch = useDispatch();
 
@@ -67,7 +68,9 @@ const JobHeaderButtons: FC = () => {
 
       {jobStatus === JobStatus.INPROGRESS ? (
         <div className="dropdown-button">
-          <Button onClick={() => dispatch(completeJob())}>Complete Job</Button>
+          <Button onClick={() => dispatch(completeJob({ jobId }))}>
+            Complete Job
+          </Button>
 
           <div onClick={handleClick} className="drop-menu">
             <ArrowDropDown className="icon" />
@@ -86,6 +89,7 @@ const JobHeaderButtons: FC = () => {
                 dispatch(
                   openOverlayAction({
                     type: OverlayNames.COMPLETE_JOB_WITH_EXCEPTION,
+                    props: { jobId, code, name },
                   }),
                 );
                 handleClose();
@@ -94,6 +98,23 @@ const JobHeaderButtons: FC = () => {
               Complet Job with exception
             </MenuItem>
           </Menu>
+        </div>
+      ) : null}
+
+      {jobStatus === JobStatus.UNASSIGNED ? (
+        <div className="dropdown-button">
+          <Button
+            onClick={() =>
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.COMPLETE_JOB_WITH_EXCEPTION,
+                  props: { jobId, code, name },
+                }),
+              )
+            }
+          >
+            Complete Job With Exception
+          </Button>
         </div>
       ) : null}
     </div>
