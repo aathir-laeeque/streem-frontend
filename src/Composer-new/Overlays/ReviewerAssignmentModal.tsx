@@ -1,7 +1,7 @@
 import { BaseModal, Checkbox } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Checklist } from '#Composer-new/checklist.types';
-import { Reviewer } from '#Composer-new/reviewer.types';
+import { Reviewer, ReviewerState } from '#Composer-new/reviewer.types';
 import { useTypedSelector } from '#store';
 import { fetchUsers } from '#store/users/actions';
 import { getInitials } from '#utils/stringUtils';
@@ -21,8 +21,8 @@ import {
 import Wrapper from './ReviewerAssignment.styles';
 
 type initialState = {
-  assignedUsers: number[];
-  unAssignedUsers: number[];
+  assignedUsers: Reviewer['id'][];
+  unAssignedUsers: Reviewer['id'][];
   searchQuery: string;
   preAssignedUsers: Reviewer[];
 };
@@ -43,12 +43,17 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   props: { checklistId, isModal = true },
 }) => {
   const {
-    list,
-    pageable: { last, page },
-  } = useTypedSelector((state) => state.users.active);
-  const { reviewers: assignees } = useTypedSelector(
-    (state) => state.prototypeComposer,
-  );
+    data: { authors },
+    assignees,
+    activeUsers: {
+      list,
+      pageable: { last, page },
+    },
+  } = useTypedSelector((state) => ({
+    activeUsers: state.users.active,
+    assignees: state.prototypeComposer.reviewers,
+    data: state.prototypeComposer.data as Checklist,
+  }));
 
   const dispatch = useDispatch();
   const [state, setstate] = useState(initialState);
@@ -74,6 +79,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
 
   if (checklistId) {
     useEffect(() => {
+      dispatch(revertReviewersForChecklist([]));
       dispatch(fetchAssignedReviewersForChecklist(checklistId));
     }, []);
   }
@@ -118,7 +124,6 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
       } else {
         setstate({
           ...state,
-          unAssignedUsers: [...unAssignedUsers, user.id],
           assignedUsers: assignedUsers.filter((i) => i !== user.id),
         });
         dispatch(unAssignReviewerFromChecklist(user));
@@ -153,6 +158,9 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
               checked={checked}
               label=""
               onClick={() => onCheckChanged(user, checked, isPreAssigned)}
+              disabled={
+                user.state ? user.state !== ReviewerState.NOT_STARTED : false
+              }
             />
           )}
         </div>
@@ -181,9 +189,10 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   if (list) {
     if (searchQuery === '') {
       preAssignedUsers.forEach((user) => {
-        const checked = assignees.some((item) => item.id === user.id);
-        if (user.id !== 0) {
-          bodyView.push(userRow(user, checked, true));
+        if (user.id !== '0') {
+          const checked = assignees.some((item) => item.id === user.id);
+          const isAuthor = authors.some((item) => item.id === user.id);
+          if (!isAuthor) bodyView.push(userRow(user, checked, true));
         }
       });
     }
@@ -193,8 +202,9 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
         (item) => item.id === user.id,
       );
       const checked = assignees.some((item) => item.id === user.id);
+      const isAuthor = authors.some((item) => item.id === user.id);
 
-      if (user.id !== 0) {
+      if (user.id !== '0' && !isAuthor) {
         if (searchQuery !== '') {
           bodyView.push(userRow(user, checked, isPreAssigned));
         } else if (!isPreAssigned) {
@@ -231,6 +241,9 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
         secondaryText="Cancel"
         onSecondary={onSecondary}
         onPrimary={onPrimary}
+        disabledPrimary={
+          state.assignedUsers.length === 0 && state.unAssignedUsers.length === 0
+        }
       >
         <div className="top-content">
           <div className="searchboxwrapper">

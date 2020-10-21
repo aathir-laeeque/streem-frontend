@@ -1,4 +1,5 @@
-import { Reviewer } from './reviewer.types';
+import { User } from '#store/users/types';
+import { Reviewer, ReviewerState } from './reviewer.types';
 
 export type Properties = {
   [key: string]: string | null;
@@ -114,24 +115,34 @@ export type Stage = {
 };
 
 export enum ChecklistStates {
-  PUBLISHED = 'PUBLISHED',
-  IN_PROGRESS = 'IN_PROGRESS',
   DRAFT = 'DRAFT',
-  BEING_APPROVED = 'BEING_APPROVED',
   BEING_REVIEWED = 'BEING_REVIEWED',
+  CR_IN_PROGRESS = 'CR_IN_PROGRESS',
+  READY_FOR_SIGNING = 'READY_FOR_SIGNING',
+  SIGN_OFF_INITIATED = 'SIGN_OFF_INITIATED',
+  SIGNING_IN_PROGRESS = 'SIGNING_IN_PROGRESS',
+  READY_FOR_RELEASE = 'READY_FOR_RELEASE',
+  PUBLISHED = 'PUBLISHED',
+}
+
+export enum ChecklistStatesContent {
+  DRAFT = 'Being Built',
+  BEING_REVIEWED = 'Being Reviewed',
+  CR_IN_PROGRESS = 'Being Built',
+  READY_FOR_SIGNING = 'READY_FOR_SIGNING',
+  SIGN_OFF_INITIATED = 'SIGN_OFF_INITIATED',
+  SIGNING_IN_PROGRESS = 'SIGNING_IN_PROGRESS',
+  READY_FOR_RELEASE = 'READY_FOR_RELEASE',
+  PUBLISHED = 'PUBLISHED',
 }
 
 export type Comment = {
   id: string;
   comments: string;
   commentedAt: number;
-  commentedBy: {
-    id: string;
-    employeeId: string;
-    firstName: string;
-    lastName: string;
-  };
+  commentedBy: Pick<User, 'id' | 'firstName' | 'lastName' | 'employeeId'>;
   reviewCycle: number;
+  reviewState: ReviewerState;
 };
 
 export type Checklist = {
@@ -147,6 +158,7 @@ export type Checklist = {
   status: ChecklistStates;
   version: number | null;
   reviewers: Reviewer[];
+  authors: Reviewer[];
   comments: Comment[];
   reviewCycle: number;
 };

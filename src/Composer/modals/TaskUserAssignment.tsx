@@ -27,8 +27,8 @@ import {
 import Wrapper from './TaskUserAssignment.styles';
 
 type initialState = {
-  assignedUsers: number[];
-  unAssignedUsers: number[];
+  assignedUsers: User['id'][];
+  unAssignedUsers: User['id'][];
   searchQuery: string;
   preAssignedUsers: User[];
 };
@@ -96,6 +96,7 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
 
   if (jobId) {
     useEffect(() => {
+      dispatch(revertUsersForJob([]));
       dispatch(fetchAssignedUsersForJob(jobId));
     }, []);
   }
@@ -144,12 +145,14 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
             ...state,
             assignedUsers: [...assignedUsers, user.id],
           });
-          dispatch(assignUserToJob(user));
+          dispatch(assignUserToJob(user, true));
         }
       } else {
         setstate({
           ...state,
-          unAssignedUsers: [...unAssignedUsers, user.id],
+          unAssignedUsers: !isPreAssigned
+            ? unAssignedUsers
+            : [...unAssignedUsers, user.id],
           assignedUsers: assignedUsers.filter((i) => i !== user.id),
         });
         if (taskId) dispatch(unAssignUserFromTask(user, taskId));
@@ -169,7 +172,7 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
         });
       }
       if (taskId) dispatch(assignUserToTask(user, taskId));
-      if (jobId) dispatch(assignUserToJob(user));
+      if (jobId) dispatch(assignUserToJob(user, true));
     }
   };
 
@@ -236,7 +239,7 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
               item.id === user.id && !item.completelyAssigned && item.assigned,
           );
 
-        if (user.id !== 0) {
+        if (user.id !== '0') {
           bodyView.push(userRow(user, checked, true, isPartial));
         }
       });
@@ -246,9 +249,10 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
       const isPreAssigned = preAssignedUsers.some(
         (item) => item.id === user.id,
       );
+
       const checked = assignees.some((item) => item.id === user.id);
 
-      if (user.id !== 0) {
+      if (user.id !== '0') {
         if (searchQuery !== '') {
           bodyView.push(
             userRow(
@@ -307,18 +311,24 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
         secondaryText="Cancel"
         onSecondary={onSecondary}
         onPrimary={() => onPrimary(true)}
+        disabledPrimary={
+          state.assignedUsers.length === 0 && state.unAssignedUsers.length === 0
+        }
         modalFooterOptions={
-          <span
-            style={{
-              color: `#1d84ff`,
-              cursor: 'pointer',
-              fontWeight: 600,
-              fontSize: 14,
-            }}
-            onClick={() => onPrimary(false)}
-          >
-            Confirm Without Notifying
-          </span>
+          state.assignedUsers.length === 0 &&
+          state.unAssignedUsers.length === 0 ? null : (
+            <span
+              style={{
+                color: `#1d84ff`,
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: 14,
+              }}
+              onClick={() => onPrimary(false)}
+            >
+              Confirm Without Notifying
+            </span>
+          )
         }
       >
         <div className="top-content">

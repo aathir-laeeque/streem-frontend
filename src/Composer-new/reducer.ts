@@ -1,3 +1,4 @@
+import Composer from '#Composer-new';
 import { unionBy } from 'lodash';
 import { Reducer } from 'redux';
 
@@ -90,6 +91,8 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         ),
       };
 
+    case ComposerAction.CONTINUE_CHECKLIST_REVIEW_SUCCESS:
+    case ComposerAction.SEND_REVIEW_TO_CR_SUCCESS:
     case ComposerAction.START_CHECKLIST_REVIEW_SUCCESS:
       return {
         ...state,
@@ -110,12 +113,12 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         } as Checklist,
       };
 
-    case ComposerAction.CONTINUE_CHECKLIST_REVIEW_SUCCESS:
+    case ComposerAction.UPDATE_CHECKLIST_STATE:
       return {
         ...state,
         data: {
           ...state.data,
-          reviewers: action.payload?.reviewers,
+          status: action.payload.state,
         } as Checklist,
       };
 

@@ -82,7 +82,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
             {
               ...action.payload.user,
               assigned: true,
-              completelyAssigned: true,
+              completelyAssigned: action.payload.completeltAssigned,
             },
           ],
           state.assignees,

@@ -49,7 +49,7 @@ export const forgotPasswordError = (error: any) =>
 
 // PROFILE ACTIONS
 
-export const fetchProfile = (payload: { id: string | number }) =>
+export const fetchProfile = (payload: { id: User['id'] }) =>
   actionSpreader(AuthAction.FETCH_PROFILE, payload);
 
 export const fetchProfileSuccess = (data: User) =>
@@ -60,7 +60,7 @@ export const fetchProfileError = (error: any) =>
 
 export const updateProfile = (payload: {
   body: Record<string, any>;
-  id: number;
+  id: User['id'];
 }) => actionSpreader(AuthAction.UPDATE_PROFILE, payload);
 
 export const updateProfileSuccess = (data: User) =>

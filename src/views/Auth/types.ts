@@ -32,7 +32,7 @@ import {
 export type AuthViewProps = RouteComponentProps;
 
 export interface LoginResponse {
-  id: number;
+  id: User['id'];
   firstName: string;
   message: string;
   token: string;
@@ -43,7 +43,7 @@ export interface RefreshTokenResponse {
   token: string;
 }
 export interface AuthState {
-  readonly userId: number | null;
+  readonly userId: User['id'] | null;
   readonly isLoggedIn: boolean;
   readonly token: string;
   readonly refreshToken: string;

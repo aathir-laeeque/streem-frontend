@@ -37,9 +37,7 @@ const EditUser: FC<ViewUserProps> = () => {
     return <div>Loading...</div>;
   }
 
-  const { register, handleSubmit, errors, formState, reset, watch } = useForm<
-    Inputs
-  >({
+  const { register, handleSubmit, errors, formState, reset } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
     defaultValues: {
@@ -66,7 +64,7 @@ const EditUser: FC<ViewUserProps> = () => {
     reset({
       ...payload,
     });
-    dispatch(updateProfile({ body: payload, id: selectedUser?.id || -1 }));
+    dispatch(updateProfile({ body: payload, id: selectedUser.id }));
   };
 
   let rolePlaceholder = 'N/A';

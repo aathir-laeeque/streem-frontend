@@ -15,6 +15,8 @@ import {
   submitChecklistReviewSuccess,
   continueChecklistReviewSuccess,
   submitChecklistReviewWithCRSuccess,
+  updateChecklistState,
+  sendReviewToCrSuccess,
 } from './reviewer.actions';
 import { ActivityListState } from './Activity/reducer.types';
 import { Checklist } from './checklist.types';
@@ -67,6 +69,10 @@ export enum ComposerAction {
   CONTINUE_CHECKLIST_REVIEW = '@@composer/prototype/CONTINUE_CHECKLIST_REVIEW',
   CONTINUE_CHECKLIST_REVIEW_SUCCESS = '@@composer/prototype/CONTINUE_CHECKLIST_REVIEW_SUCCESS',
   CONTINUE_CHECKLIST_REVIEW_ERROR = '@@composer/prototype/CONTINUE_CHECKLIST_REVIEW_ERROR',
+  UPDATE_CHECKLIST_STATE = '@@composer/prototype/UPDATE_CHECKLIST_STATE',
+  SEND_REVIEW_TO_CR = '@@composer/prototype/SEND_REVIEW_TO_CR',
+  SEND_REVIEW_TO_CR_SUCCESS = '@@composer/prototype/SEND_REVIEW_TO_CR_SUCCESS',
+  SEND_REVIEW_TO_CR_ERROR = '@@composer/prototype/SEND_REVIEW_TO_CR_ERROR',
 }
 
 export type ComposerActionType = ReturnType<
@@ -82,4 +88,6 @@ export type ComposerActionType = ReturnType<
   | typeof submitChecklistReviewSuccess
   | typeof submitChecklistReviewWithCRSuccess
   | typeof continueChecklistReviewSuccess
+  | typeof updateChecklistState
+  | typeof sendReviewToCrSuccess
 >;

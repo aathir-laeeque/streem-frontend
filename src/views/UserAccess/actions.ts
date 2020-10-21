@@ -1,7 +1,8 @@
 import { actionSpreader } from '#store';
+import { User } from '#store/users/types';
 import { UserAccessAction } from './types';
 
-export const resendInvite = (payload: { id: string | number }) =>
+export const resendInvite = (payload: { id: User['id'] }) =>
   actionSpreader(UserAccessAction.RESEND_INVITE, payload);
 
 export const resendInviteSuccess = () =>
@@ -11,7 +12,7 @@ export const resendInviteError = (error: any) =>
   actionSpreader(UserAccessAction.RESEND_INVITE_ERROR, error);
 
 export const archiveUser = (payload: {
-  id: string | number;
+  id: User['id'];
   fetchData: () => void;
 }) => actionSpreader(UserAccessAction.ARCHIVE_USER, payload);
 
@@ -22,7 +23,7 @@ export const archiveUserError = (error: any) =>
   actionSpreader(UserAccessAction.ARCHIVE_USER_ERROR, error);
 
 export const unArchiveUser = (payload: {
-  id: string | number;
+  id: User['id'];
   fetchData: () => void;
 }) => actionSpreader(UserAccessAction.UNARCHIVE_USER, payload);
 

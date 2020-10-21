@@ -3,11 +3,14 @@ import styled from 'styled-components';
 
 export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
   .modal {
+    min-width: unset !important;
+
     ${({ comments }) =>
       comments
         ? `
         .close-icon {
       top: 38px !important;
+      right: 16px !important;
       font-size: 24px !important;
     }
     min-height: 700px !important;
@@ -15,9 +18,11 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
     `
         : `
         .close-icon {
+      top: 22px !important;
+      right: 16px !important;
       font-size: 24px !important;
     }
-    width: 800px !important;
+    width: unset !important;
     `}
 
     h2 {
@@ -26,8 +31,8 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
     }
 
     .modal-header {
-      padding: 24px !important;
-      border-bottom: none !important;
+      padding: 24px 32px !important;
+      border-bottom: 1px solid #eeeeee !important;
     }
 
     .modal-footer {
@@ -65,7 +70,7 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
       padding: 0px !important;
       `
           : `
-      padding: 80px 80px !important;
+      padding: 48px !important;
       align-items: center;
       `}
       font-size: 14px;
@@ -77,7 +82,6 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
         display: flex;
         justify-content: center;
         align-items: center;
-        padding-top: 60px;
 
         .box {
           width: 240px;
@@ -88,23 +92,31 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
           border-radius: 4px;
           border: solid 1px #eeeeee;
           flex-direction: column;
-          margin: 0px 40px;
           cursor: pointer;
+          margin-left: 80px;
+
+          :first-child {
+            margin-left: 0px;
+          }
 
           .icon-wrapper {
-            width: 80px;
-            height: 80px;
             border-radius: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
+
+            svg {
+              width: 150px;
+              height: 150px;
+            }
           }
 
           h3 {
             font-size: 20px;
+            line-height: 27px;
             font-weight: bold;
             color: #000000;
-            margin-top: 32px;
+            margin: 0px;
           }
 
           span {
@@ -218,6 +230,7 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
               flex: 1;
               flex-direction: column;
               margin-left: 6px;
+              max-width: 240px;
 
               :first-child {
                 margin-left: 0px;
@@ -375,6 +388,7 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
                     padding: 16px 16px 32px 16px;
                     text-align: left;
                     margin-left: 40px;
+                    border-radius: 4px;
                   }
                 }
               }

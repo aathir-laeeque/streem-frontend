@@ -10,7 +10,7 @@ import {
 } from './actions';
 
 export interface User {
-  id: number;
+  id: string;
   employeeId: string;
   firstName: string;
   lastName: string;

@@ -60,8 +60,8 @@ export const revertUsersForTask = (users: Users, taskId: Task['id']) =>
 export const assignUsersToTask = (payload: {
   jobId: number;
   taskId: Task['id'];
-  assignIds: number[];
-  unassignIds: number[];
+  assignIds: User['id'][];
+  unassignIds: User['id'][];
   preAssigned: Users;
   notify: boolean;
 }) => actionSpreader(TaskListAction.ASSIGN_USERS_TO_TASK, payload);

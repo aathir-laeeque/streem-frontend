@@ -30,7 +30,7 @@ const Wrapper = styled.div<{ forAll: boolean }>`
     }`}
 
     .modal {
-      min-width: 487px !important;
+      min-width: 498px !important;
       ${({ forAll }) =>
         !forAll &&
         `box-shadow: unset !important;
@@ -68,15 +68,6 @@ const Wrapper = styled.div<{ forAll: boolean }>`
         .modal-footer-buttons {
           padding: 0px 16px !important;
           justify-content: flex-start !important;
-
-          button {
-            padding: 12px 24px !important;
-
-            :first-child {
-              color: #ff6b6b;
-              border-color: #ff6b6b;
-            }
-          }
         }
       }
 
@@ -189,8 +180,6 @@ const Wrapper = styled.div<{ forAll: boolean }>`
                 border-color: #333;
                 background-color: #fff;
                 border-width: 2px;
-                border-left-width: 1.5px;
-                border-bottom-width: 1.5px;
               }
 
               .container input:checked ~ .checkmark {

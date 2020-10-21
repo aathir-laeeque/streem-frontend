@@ -1,4 +1,4 @@
-import { Button, FlatButton } from '#components';
+import { Button1 } from '#components';
 import { Close } from '@material-ui/icons';
 import React, { FC, ReactNode, useRef } from 'react';
 import styled from 'styled-components';
@@ -113,7 +113,7 @@ const Wrapper = styled.div<{ animated: boolean }>`
         .modal-footer-buttons {
           display: flex;
           flex: 1;
-          justify-content: flex-end;
+          margin-left: auto;
         }
         .modal-body {
           padding: 16px;
@@ -232,21 +232,21 @@ export const BaseModal: FC<BaseModalProps> = ({
                 )}
                 <div className="modal-footer-buttons">
                   {showSecondary && (
-                    <FlatButton
-                      style={{ padding: `5px 16px`, fontWeight: 600 }}
+                    <Button1
+                      color="red"
+                      variant="secondary"
                       onClick={() => onBaseModalContainerClick(onSecondary)}
                     >
                       {secondaryText}
-                    </FlatButton>
+                    </Button1>
                   )}
                   {showPrimary && (
-                    <Button
-                      style={{ marginRight: 0, fontWeight: 600 }}
+                    <Button1
                       onClick={() => onBaseModalContainerClick(onPrimary)}
                       disabled={disabledPrimary}
                     >
                       {primaryText}
-                    </Button>
+                    </Button1>
                   )}
                 </div>
               </div>
