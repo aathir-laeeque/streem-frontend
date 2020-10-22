@@ -39,7 +39,7 @@ const generateText = (data) => {
       case 'MORE_THAN':
         operatorString = '(>) more than';
         break;
-      case 'LESS_THAN':
+      case 'MORE_THAN_EQUAL_TO':
         operatorString = '(≥) more than equal to';
         break;
       default:
@@ -92,21 +92,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
           name="observed-value"
           placeholder="Enter Observed Value"
           value={value}
-          onChange={(e) => {
-            onChange(e);
-          }}
-          // onChange={(e) => {
-          //   e.persist();
-          //   customOnChange(e, (event) => {
-          //     console.log('e.target.value :: ', event.target.value);
-          //     dispatch(
-          //       executeActivity({
-          //         ...activity,
-          //         data: { ...activity.data, input: event.target.value },
-          //       }),
-          //     );
-          //   });
-          // }}
+          onChange={(e) => onChange(e)}
         />
       </div>
     </Wrapper>

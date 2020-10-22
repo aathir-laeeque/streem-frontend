@@ -76,7 +76,7 @@ const JobCard: FC<{
               {item.status.toLowerCase()}
             </span>
           )}
-          {item.status === JobStatus.COMPLETED_WITH_EXCEPTION.toUpperCase() && (
+          {item.status === 'COMPLETED_WITH_EXCEPTION' && (
             <span
               className="list-status-span"
               style={{
