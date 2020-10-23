@@ -10,7 +10,7 @@ export const ActivityOptions = [
   { label: 'Signature', value: MandatoryActivity.SIGNATURE },
   { label: 'Single-select', value: MandatoryActivity.SINGLE_SELECT },
   { label: 'Textbox', value: MandatoryActivity.TEXTBOX },
-  { label: 'Yes No', value: MandatoryActivity.YES_NO },
+  { label: 'Yes/No', value: MandatoryActivity.YES_NO },
 ];
 
 export const PARAMETER_OPERATORS = [
