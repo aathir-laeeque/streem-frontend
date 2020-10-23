@@ -36,7 +36,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
   const {
     data,
     activities: { activityOrderInTaskInStage, listById },
-    stages: { activeStageId },
+    stages: { activeStageId, listOrder },
     tasks: { activeTaskId },
   } = useTypedSelector((state) => state.prototypeComposer);
 
@@ -52,6 +52,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
     timed,
     timerOperator,
   } = task;
+
+  const stageIndex = listOrder.indexOf(activeStageId);
 
   const deleteTaskProps = {
     header: 'Delete Task',
@@ -94,7 +96,9 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
             />
           </div>
 
-          <div className="task-name">Task {index + 1}</div>
+          <div className="task-name">
+            Task {stageIndex + 1}.{index + 1}
+          </div>
 
           <Delete
             className="icon"

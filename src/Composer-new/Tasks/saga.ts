@@ -150,7 +150,6 @@ function* setTaskTimerSaga({ payload }: ReturnType<typeof setTaskTimer>) {
     );
 
     if (data) {
-      yield put(closeOverlayAction(OverlayNames.TIMED_TASK_CONFIG));
       yield put(updateTask(data));
     } else {
       yield put(setTaskError(errors));

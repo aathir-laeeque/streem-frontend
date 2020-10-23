@@ -155,7 +155,11 @@ const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
           setDuration(moment.duration(duration.add(1, 'hour'), 'seconds'));
         }}
         decrease={() => {
-          setDuration(moment.duration(duration.subtract(1, 'hour'), 'seconds'));
+          if (duration.hours() > 0) {
+            setDuration(
+              moment.duration(duration.subtract(1, 'hour'), 'seconds'),
+            );
+          }
         }}
       />
       <InputField
@@ -165,9 +169,11 @@ const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
           setDuration(moment.duration(duration.add(1, 'minute'), 'seconds'));
         }}
         decrease={() => {
-          setDuration(
-            moment.duration(duration.subtract(1, 'minute'), 'seconds'),
-          );
+          if (duration.minutes() > 0) {
+            setDuration(
+              moment.duration(duration.subtract(1, 'minute'), 'seconds'),
+            );
+          }
         }}
       />
       <InputField
@@ -177,9 +183,11 @@ const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
           setDuration(moment.duration(duration.add(1, 'second'), 'seconds'));
         }}
         decrease={() => {
-          setDuration(
-            moment.duration(duration.subtract(1, 'second'), 'seconds'),
-          );
+          if (duration.seconds() > 0) {
+            setDuration(
+              moment.duration(duration.subtract(1, 'second'), 'seconds'),
+            );
+          }
         }}
       />
     </div>
