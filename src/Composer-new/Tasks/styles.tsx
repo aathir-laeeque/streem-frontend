@@ -140,6 +140,11 @@ const TaskCardWrapper = styled.div.attrs({
       }
     }
 
+    &-error {
+      color: #eb5757;
+      padding: 24px 32px;
+    }
+
     &-footer {
       border-top: 1px solid #dadada;
       padding: 32px;

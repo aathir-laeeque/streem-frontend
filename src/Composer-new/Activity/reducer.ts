@@ -42,21 +42,22 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         ...state,
         activityOrderInTaskInStage: {
           ...state.activityOrderInTaskInStage,
-          [action.payload.stageId.toString()]: {
-            ...state.activityOrderInTaskInStage[
-              action.payload.stageId.toString()
-            ],
-            [action.payload.taskId.toString()]: [
-              ...state.activityOrderInTaskInStage[
-                action.payload.stageId.toString()
-              ][action.payload.taskId.toString()],
+          [action.payload.stageId]: {
+            ...state.activityOrderInTaskInStage[action.payload.stageId],
+            [action.payload.taskId]: [
+              ...state.activityOrderInTaskInStage[action.payload.stageId][
+                action.payload.taskId
+              ],
               action.payload.activity.id,
             ],
           },
         },
         listById: {
           ...state.listById,
-          [action.payload.activity.id]: action.payload.activity,
+          [action.payload.activity.id]: {
+            ...action.payload.activity,
+            errors: [],
+          },
         },
       };
 
@@ -65,30 +66,31 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         ...state,
         activityOrderInTaskInStage: {
           ...state.activityOrderInTaskInStage,
-          [action.payload.stageId.toString()]: {
-            ...state.activityOrderInTaskInStage[
-              action.payload.stageId.toString()
-            ],
-            [action.payload.taskId.toString()]: [
-              ...state.activityOrderInTaskInStage[
-                action.payload.stageId.toString()
-              ][action.payload.taskId.toString()].filter(
-                (el) => el !== action.payload.activityId,
-              ),
+          [action.payload.stageId]: {
+            ...state.activityOrderInTaskInStage[action.payload.stageId],
+            [action.payload.taskId]: [
+              ...state.activityOrderInTaskInStage[action.payload.stageId][
+                action.payload.taskId
+              ].filter((el) => el !== action.payload.activityId),
             ],
           },
         },
         listById: {
-          ...omit(state.listById, [action.payload.activityId.toString()]),
+          ...omit(state.listById, [action.payload.activityId]),
         },
       };
 
     case ActivityListActions.UPDATE_ACTIVITY_SUCCESS:
+      const updatedActivity = action.payload.activity;
+
       return {
         ...state,
         listById: {
           ...state.listById,
-          [action.payload.activity.id]: action.payload.activity,
+          [updatedActivity.id]: {
+            ...updatedActivity,
+            errors: [...state.listById[updatedActivity.id].errors],
+          },
         },
       };
 
@@ -99,11 +101,9 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         ...state,
         activityOrderInTaskInStage: {
           ...state.activityOrderInTaskInStage,
-          [stageId.toString()]: {
-            ...state.activityOrderInTaskInStage[stageId.toString()],
-            [newTask.id.toString()]: newTask.activities.map(
-              (activity) => activity.id,
-            ),
+          [stageId]: {
+            ...state.activityOrderInTaskInStage[stageId],
+            [newTask.id]: newTask.activities.map((activity) => activity.id),
           },
         },
       };
@@ -113,13 +113,10 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         ...state,
         activityOrderInTaskInStage: {
           ...state.activityOrderInTaskInStage,
-          [action.payload.stageId.toString()]: {
-            ...omit(
-              state.activityOrderInTaskInStage[
-                action.payload.stageId.toString()
-              ],
-              [action.payload.taskId.toString()],
-            ),
+          [action.payload.stageId]: {
+            ...omit(state.activityOrderInTaskInStage[action.payload.stageId], [
+              action.payload.taskId,
+            ]),
           },
         },
       };
@@ -129,6 +126,33 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
       return {
         ...state,
         error: action.payload.error,
+      };
+
+    case ActivityListActions.SET_VALIDATION_ERROR:
+      const { error } = action.payload;
+      const activityIdWithError = action.payload.error.id;
+      const activityWithError = state.listById[activityIdWithError];
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [activityIdWithError]: {
+            ...activityWithError,
+            errors: [...activityWithError.errors, error],
+          },
+        },
+      };
+
+    case ActivityListActions.RESET_VALIDATION_ERROR:
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [action.payload.activityId]: {
+            ...state.listById[action.payload.activityId],
+            errors: [],
+          },
+        },
       };
 
     default:

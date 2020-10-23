@@ -1,5 +1,9 @@
-import { FileUploadData } from '#utils/globalTypes';
-import { Checklist, Stage, Task } from '../checklist.types';
+import { FileUploadData, Error } from '#utils/globalTypes';
+import { Checklist, Stage, Task as TaskType } from '../checklist.types';
+
+export type Task = TaskType & {
+  errors: Error[];
+};
 
 export type TaskCardProps = {
   index: number;

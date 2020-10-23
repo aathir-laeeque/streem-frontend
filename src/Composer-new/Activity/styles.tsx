@@ -17,6 +17,11 @@ const ActivityWrapper = styled.div.attrs({
     top: 32px;
     z-index: 1;
   }
+
+  .activity-error {
+    color: #eb5757;
+    margin-top: 8px;
+  }
 `;
 
 const ChecklistWrapper = styled.div.attrs({

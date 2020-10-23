@@ -80,10 +80,10 @@ function* deleteStageSaga({ payload }: ReturnType<typeof deleteStage>) {
 
 function* updateStageNameSaga({ payload }: ReturnType<typeof updateStageName>) {
   try {
-    const { id, name } = payload.stage;
+    const { id, name, orderTree } = payload.stage;
 
     const { data, errors } = yield call(request, 'PATCH', apiUpdateStage(id), {
-      data: { name },
+      data: { name, orderTree },
     });
 
     if (data) {

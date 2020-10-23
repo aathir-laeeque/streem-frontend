@@ -13,7 +13,6 @@ import { debounce } from 'lodash';
 import React, { forwardRef } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Checklist } from '../checklist.types';
 import {
   deleteStage,
   reOrderStage,
@@ -26,8 +25,7 @@ import { StageCardProps } from './types';
 const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
   const { index, isActive, isFirstItem, isLastItem, stage } = props;
 
-  const { status, tasksInStage } = useTypedSelector((state) => ({
-    status: (state.prototypeComposer.data as Checklist)?.status,
+  const { tasksInStage } = useTypedSelector((state) => ({
     tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[stage.id].map(
       (taskId) => state.prototypeComposer.tasks.listById[taskId],
     ),
@@ -48,7 +46,6 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
       ref={ref}
       isActive={isActive}
       onClick={() => dispatch(setActiveStage({ id: stage.id }))}
-      // checklistState={status}
     >
       <div className="stage-header">
         <div className="order-control">
@@ -119,25 +116,24 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
 
         <Textarea
           defaultValue={stage.name}
+          error={
+            !stage.name &&
+            stage.errors.find((error) => error.code === 'E303')?.message
+          }
           label="Name the Stage"
           onChange={debounce(({ value }) => {
-            dispatch(updateStageName({ id: stage.id, name: value }));
+            dispatch(
+              updateStageName({
+                id: stage.id,
+                name: value,
+                orderTree: stage.orderTree,
+              }),
+            );
           }, 500)}
         />
 
         <span className="stage-task-count">{tasksInStage.length} Tasks</span>
       </div>
-
-      {/* <div
-          className="stage-footer"
-          onClick={(event) => {
-            event.stopPropagation();
-            dispatch(duplicateStage({ id: stage.id }));
-          }}
-        >
-          <FileCopy className="icon" fontSize="small" />
-          Duplicate
-        </div> */}
     </StageCardWrapper>
   );
 });

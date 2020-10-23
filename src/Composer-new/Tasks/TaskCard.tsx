@@ -12,7 +12,7 @@ import {
   PermMedia,
   Timer,
 } from '@material-ui/icons';
-import { debounce } from 'lodash';
+import { debounce, isEmpty } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -30,6 +30,7 @@ import {
 import { TaskCardWrapper } from './styles';
 import { TaskCardProps } from './types';
 import { formatDuration } from '#utils/timeUtils';
+import { resetTaskActivityError } from './actions';
 
 const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
   const {
@@ -57,6 +58,9 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
     body: <span>Are you sure you want to Delete this Task ? </span>,
     onPrimaryClick: () => dispatch(deleteTask(taskId)),
   };
+
+  const noActivityError =
+    task.errors.find((error) => error.code === 'E211') ?? undefined;
 
   if (activeStageId) {
     const taskActivities = activityOrderInTaskInStage[activeStageId][taskId];
@@ -111,6 +115,10 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
           <div className="task-config">
             <Textarea
               defaultValue={name}
+              error={
+                !task.name &&
+                task.errors.find((error) => error.code === 'E210')?.message
+              }
               label="Name the task"
               onChange={debounce(({ value }) => {
                 dispatch(updateTaskName({ id: taskId, name: value }));
@@ -207,10 +215,16 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
             })}
           </div>
         </div>
+
+        {noActivityError ? (
+          <div className="task-error">{noActivityError?.message}</div>
+        ) : null}
+
         <div className="task-footer">
           <Select
             options={ActivityOptions}
-            onChange={(option) => {
+            onChange={(option: any) => {
+              dispatch(resetTaskActivityError(taskId));
               dispatch(
                 addNewActivity({
                   activityType: option.value as ActivityType,

@@ -1,6 +1,4 @@
-import { Stage } from '../checklist.types';
 import { ComposerActionType } from '../reducer.types';
-import { updateStageNameError, updateStageNameSuccess } from './actions';
 import {
   addNewStageError,
   addNewStageSuccess,
@@ -11,7 +9,11 @@ import {
   reOrderStageError,
   reOrderStageSuccess,
   setActiveStage,
+  setValidationError,
+  updateStageNameError,
+  updateStageNameSuccess,
 } from './actions';
+import { Stage } from './types';
 
 export type StagesById = Record<string, Stage>;
 
@@ -40,6 +42,7 @@ export enum StageListActions {
   REORDER_STAGE_SUCCESS = '@@composer/prototype/stage-list/REORDER_STAGE_SUCCESS',
 
   SET_ACTIVE_STAGE = '@@composer/prototype/stage-list/SET_ACTIVE_STAGE',
+  SET_VALIDATION_ERROR = '@@composer/protottype/stage-list/SET_VALIDATION_ERROR',
 
   UPDATE_STAGE_NAME = '@@composer/prototype/stage-list/UPDATE_STAGE_NAME',
   UPDATE_STAGE_NAME_ERROR = '@@composer/prototype/stage-list/UPDATE_STAGE_NAME_ERROR',
@@ -57,6 +60,7 @@ export type StageListActionType =
       | typeof reOrderStageError
       | typeof reOrderStageSuccess
       | typeof setActiveStage
+      | typeof setValidationError
       | typeof updateStageNameError
       | typeof updateStageNameSuccess
     >

@@ -53,14 +53,11 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         ...state,
         listById: {
           ...state.listById,
-          [newTask.id]: newTask,
+          [newTask.id]: { ...newTask, errors: [] },
         },
         tasksOrderInStage: {
           ...state.tasksOrderInStage,
-          [stageId.toString()]: [
-            ...state.tasksOrderInStage[stageId.toString()],
-            newTask.id,
-          ],
+          [stageId]: [...state.tasksOrderInStage[stageId], newTask.id],
         },
       };
 
@@ -68,22 +65,58 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
       return {
         ...state,
         listById: {
-          ...omit(state.listById, [action.payload.taskId.toString()]),
+          ...omit(state.listById, [action.payload.taskId]),
         },
         tasksOrderInStage: {
           ...state.tasksOrderInStage,
-          [action.payload.stageId.toString()]: state.tasksOrderInStage[
-            action.payload.stageId.toString()
+          [action.payload.stageId]: state.tasksOrderInStage[
+            action.payload.stageId
           ].filter((el) => el !== action.payload.taskId),
         },
       };
 
     case TaskListActions.UPDATE_TASK:
+      const updatedTask = action.payload.task;
+      const updatedTaskId = updatedTask.id;
+
       return {
         ...state,
         listById: {
           ...state.listById,
-          [action.payload.task.id]: action.payload.task,
+          [updatedTaskId]: {
+            ...action.payload.task,
+            errors: state.listById[updatedTaskId].errors,
+          },
+        },
+      };
+
+    case TaskListActions.SET_VALIDATION_ERROR:
+      const { error } = action.payload;
+      const taskIdWithError = error.id;
+      const taskWithError = state.listById[taskIdWithError];
+
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [taskIdWithError]: {
+            ...taskWithError,
+            errors: [...taskWithError.errors, error],
+          },
+        },
+      };
+
+    case TaskListActions.RESET_TASK_ACTIVITY_ERROR:
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [action.payload.taskId]: {
+            ...state.listById[action.payload.taskId],
+            errors: state.listById[action.payload.taskId]?.errors.filter(
+              (error) => error.code !== 'E211',
+            ),
+          },
         },
       };
 
@@ -102,7 +135,7 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
       return {
         ...state,
         tasksOrderInStage: {
-          ...omit(state.tasksOrderInStage, [action.payload.id.toString()]),
+          ...omit(state.tasksOrderInStage, [action.payload.id]),
         },
       };
 

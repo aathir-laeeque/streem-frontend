@@ -1,4 +1,5 @@
 import { actionSpreader } from '#store/helpers';
+import { Error } from '#utils/globalTypes';
 
 import { Activity } from '../checklist.types';
 import { ActivityListActions } from './reducer.types';
@@ -34,3 +35,9 @@ export const updateActivityError = (error: any) =>
 
 export const updateActivitySuccess = (activity: Activity) =>
   actionSpreader(ActivityListActions.UPDATE_ACTIVITY_SUCCESS, { activity });
+
+export const setValidationError = (error: Error) =>
+  actionSpreader(ActivityListActions.SET_VALIDATION_ERROR, { error });
+
+export const resetValidationError = (activityId: Activity['id']) =>
+  actionSpreader(ActivityListActions.RESET_VALIDATION_ERROR, { activityId });

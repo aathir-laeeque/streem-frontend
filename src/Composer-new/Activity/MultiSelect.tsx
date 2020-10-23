@@ -21,6 +21,8 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
 
   const isMultiSelect = activity.type === MandatoryActivity.MULTISELECT;
 
+  const activityError = activity.errors.find((error) => error.code === 'E410');
+
   return (
     <MultiSelectWrapper>
       <Select
@@ -69,6 +71,10 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
             />
           </li>
         ))}
+
+        {activityError ? (
+          <div className="activity-error">{activityError?.message}</div>
+        ) : null}
 
         <AddNewItem
           onClick={() => {

@@ -38,6 +38,8 @@ const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
     htmlToDraft(activity.data.text),
   );
 
+  const activityError = activity.errors.find((error) => error.code === 'E422');
+
   useEffect(() => {
     if (contentBlock) {
       const contentState = ContentState.createFromBlockArray(
@@ -71,6 +73,10 @@ const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         }}
         onEditorStateChange={(newEditorState) => setEditorState(newEditorState)}
       />
+
+      {activityError ? (
+        <div className="activity-error">{activityError?.message}</div>
+      ) : null}
     </Wrapper>
   );
 };

@@ -13,6 +13,7 @@ import {
   deleteActivity,
   deleteActivityError,
   deleteActivitySuccess,
+  resetValidationError,
   updateActivity,
   updateActivityError,
   updateActivitySuccess,
@@ -33,6 +34,7 @@ function* updateActivitySaga({ payload }: ReturnType<typeof updateActivity>) {
 
     if (data) {
       yield put(updateActivitySuccess(data));
+      yield put(resetValidationError(activity.id));
     } else {
       yield put(updateActivityError(errors));
     }

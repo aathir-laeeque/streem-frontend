@@ -12,6 +12,8 @@ import { ActivityProps } from './types';
 const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
 
+  const activityError = activity.errors.find((error) => error.code === 'E414');
+
   return (
     <ChecklistWrapper>
       <label>Creating a checklist</label>
@@ -50,6 +52,10 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             />
           </li>
         ))}
+
+        {activityError ? (
+          <div className="activity-error">{activityError?.message}</div>
+        ) : null}
 
         <AddNewItem
           onClick={() => {

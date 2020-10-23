@@ -1,4 +1,5 @@
 import { actionSpreader } from '#store/helpers';
+import { Error } from '#utils/globalTypes';
 
 import { Stage, Task } from '../checklist.types';
 import { TaskListActions } from './reducer.types';
@@ -42,3 +43,9 @@ export const updateTask = (task: Task) =>
 
 export const updateTaskName = (task: Pick<Task, 'name' | 'id'>) =>
   actionSpreader(TaskListActions.UPDATE_TASK_NAME, { task });
+
+export const setValidationError = (error: Error) =>
+  actionSpreader(TaskListActions.SET_VALIDATION_ERROR, { error });
+
+export const resetTaskActivityError = (taskId: Task['id']) =>
+  actionSpreader(TaskListActions.RESET_TASK_ACTIVITY_ERROR, { taskId });

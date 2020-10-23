@@ -1,7 +1,9 @@
-import { ReOrderArgs } from './types';
+import { Error } from '#utils/globalTypes';
+
 import { actionSpreader } from '../../store/helpers';
-import { StageListActions } from './reducer.types';
 import { Stage } from '../checklist.types';
+import { StageListActions } from './reducer.types';
+import { ReOrderArgs } from './types';
 
 // add new stage actions
 export const addNewStage = () => actionSpreader(StageListActions.ADD_NEW_STAGE);
@@ -47,11 +49,15 @@ export const setActiveStage = ({ id }: Pick<Stage, 'id'>) =>
   actionSpreader(StageListActions.SET_ACTIVE_STAGE, { id });
 
 // upodate stage/stage name actions
-export const updateStageName = (stage: Pick<Stage, 'name' | 'id'>) =>
-  actionSpreader(StageListActions.UPDATE_STAGE_NAME, { stage });
+export const updateStageName = (
+  stage: Pick<Stage, 'name' | 'id' | 'orderTree'>,
+) => actionSpreader(StageListActions.UPDATE_STAGE_NAME, { stage });
 
 export const updateStageNameError = (error: any) =>
   actionSpreader(StageListActions.UPDATE_STAGE_NAME_ERROR, { error });
 
 export const updateStageNameSuccess = (updatedStage: Stage) =>
   actionSpreader(StageListActions.UPDATE_STAGE_NAME_SUCCESS, { updatedStage });
+
+export const setValidationError = (error: Error) =>
+  actionSpreader(StageListActions.SET_VALIDATION_ERROR, { error });

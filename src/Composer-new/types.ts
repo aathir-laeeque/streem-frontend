@@ -1,3 +1,4 @@
+import { Error } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
 
 // TODO: moves this to Jobs view types

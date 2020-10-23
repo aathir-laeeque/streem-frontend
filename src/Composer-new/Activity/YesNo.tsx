@@ -14,6 +14,10 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
     <YesNoWrapper>
       <TextInput
         defaultValue={activity.label}
+        error={
+          !activity.label &&
+          activity.errors.find((error) => error.code === 'E409')?.message
+        }
         label="Ask a question"
         name="label"
         onChange={debounce(({ value }) => {
@@ -27,6 +31,10 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           .map((item, index) => (
             <TextInput
               defaultValue={item.name}
+              error={
+                !item.name &&
+                activity.errors.find((error) => error.code === 'E407')?.message
+              }
               key={index}
               label={
                 item.type === 'yes' ? 'Positive Response' : 'Negative Response'

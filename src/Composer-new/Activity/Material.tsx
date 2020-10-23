@@ -12,6 +12,8 @@ import { ActivityProps } from './types';
 const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
 
+  const activityError = activity.errors.find((error) => error.code === 'E419');
+
   return (
     <MaterialWrapper>
       <label>Add Materials</label>
@@ -90,7 +92,7 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                 <ArrowDropDown
                   className="icon"
                   onClick={() => {
-                    if (item.quantity >= 0) {
+                    if (item.quantity > 0) {
                       dispatch(
                         updateActivity({
                           ...activity,
@@ -124,6 +126,10 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             </li>
           );
         })}
+
+        {activityError ? (
+          <div className="activity-error">{activityError?.message}</div>
+        ) : null}
 
         <AddNewItem
           onClick={() =>

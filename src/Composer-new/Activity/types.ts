@@ -1,10 +1,16 @@
+import { Error } from '#utils/globalTypes';
+
 import {
-  Activity,
+  Activity as ActivityTypeType,
   ActivityType,
   Checklist,
   Stage,
   Task,
 } from '../checklist.types';
+
+export type Activity = ActivityTypeType & {
+  errors: Error[];
+};
 
 export type ActivityProps = {
   activity: Activity;

@@ -2,6 +2,7 @@ import { closeOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
 import {
+  apiAddMediaToTask,
   apiAddStop,
   apiCreateTask,
   apiDeleteTask,
@@ -27,7 +28,6 @@ import {
   updateTaskName,
 } from './actions';
 import { TaskListActions } from './reducer.types';
-import { apiAddMediaToTask } from '../../utils/apiUrls';
 
 function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
   try {

@@ -39,7 +39,7 @@ const reducer: Reducer<StageListState, StageListActionType> = (
         listOrder: checklist?.stages?.map(({ id }) => id) ?? [],
         listById:
           checklist?.stages?.reduce<StagesById>((acc, stage) => {
-            acc[stage.id.toString()] = stage;
+            acc[stage.id.toString()] = { ...stage, errors: [] };
             return acc;
           }, {}) ?? {},
       };
@@ -59,7 +59,7 @@ const reducer: Reducer<StageListState, StageListActionType> = (
         listOrder: [...state.listOrder, action.payload.stage.id],
         listById: {
           ...state.listById,
-          [stage.id]: stage,
+          [stage.id]: { ...stage, errors: [] },
         },
       };
 
@@ -83,6 +83,23 @@ const reducer: Reducer<StageListState, StageListActionType> = (
           [action.payload.updatedStage.id]: {
             ...state.listById[action.payload.updatedStage.id],
             ...action.payload.updatedStage,
+            errors: [],
+          },
+        },
+      };
+
+    case StageListActions.SET_VALIDATION_ERROR:
+      const { error } = action.payload;
+      const stageIdWithError = error.id;
+      const stageWithError = state.listById[stageIdWithError];
+
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [stageIdWithError]: {
+            ...stageWithError,
+            errors: [...stageWithError.errors, error],
           },
         },
       };

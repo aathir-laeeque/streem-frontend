@@ -1,8 +1,11 @@
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   apiGetChecklist,
   apiGetSelectedJob as apiGetJob,
   apiValidatePrototype,
 } from '#utils/apiUrls';
+import { Error } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { all, call, fork, put, takeLeading } from 'redux-saga/effects';
 
@@ -12,14 +15,15 @@ import {
   fetchComposerDataSuccess,
   validatePrototype,
 } from './actions';
+import { setValidationError as setActivityValidationError } from './Activity/actions';
 import { ActivitySaga } from './Activity/saga';
 import { ComposerAction } from './reducer.types';
-import { StageListSaga } from './Stages/saga';
-import { TaskListSaga } from './Tasks/saga';
 import { ReviewerSaga } from './reviewer.saga';
+import { setValidationError as setStageValidationError } from './Stages/actions';
+import { StageListSaga } from './Stages/saga';
+import { setValidationError as setTaskValidationError } from './Tasks/actions';
+import { TaskListSaga } from './Tasks/saga';
 import { ComposerEntity } from './types';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
 import { groupErrors } from './utils';
 
 function* fetchComposerDataSaga({
@@ -63,9 +67,29 @@ function* validatePrototypeSaga({
 
     const { errors } = yield call(request, 'GET', apiValidatePrototype(id));
 
-    const { stagesErrors, tasksErrors, activitiesErrors } = groupErrors(errors);
-    if (stagesErrors.length || tasksErrors.length || activitiesErrors.length) {
-      console.log('handle errors :: ');
+    if ((errors as Array<Error>)?.length) {
+      const { stagesErrors, tasksErrors, activitiesErrors } = groupErrors(
+        errors,
+      );
+      if (stagesErrors.length) {
+        yield all(
+          stagesErrors.map((error) => put(setStageValidationError(error))),
+        );
+      }
+
+      if (tasksErrors.length) {
+        yield all(
+          tasksErrors.map((error) => put(setTaskValidationError(error))),
+        );
+      }
+
+      if (activitiesErrors.length) {
+        yield all(
+          activitiesErrors.map((error) =>
+            put(setActivityValidationError(error)),
+          ),
+        );
+      }
     } else {
       yield put(
         openOverlayAction({

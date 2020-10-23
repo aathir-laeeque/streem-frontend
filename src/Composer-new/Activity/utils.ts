@@ -22,7 +22,7 @@ const getActivities = (checklist: Checklist | Partial<Checklist>) => {
       task?.activities?.map((activity) => {
         activityOrderInTaskInStage[stage.id][task.id].push(activity.id);
 
-        listById[activity.id] = { ...activity };
+        listById[activity.id] = { ...activity, errors: [] };
       });
     });
   });

@@ -1,4 +1,9 @@
-import { Stage } from '../checklist.types';
+import { Error } from '#utils/globalTypes';
+import { Stage as StageType } from '../checklist.types';
+
+export type Stage = StageType & {
+  errors: Error[];
+};
 
 export type StageCardProps = {
   index: number;

@@ -61,8 +61,12 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
       {activity.data.operator === 'BETWEEN' ? (
         <div className="between-values">
           <TextInput
-            label="Value"
             defaultValue={activity.data?.lowerValue}
+            error={
+              !activity.data?.lowerValue &&
+              activity.errors.find((error) => error.code === 'E416')?.message
+            }
+            label="Value"
             name="lowerValue"
             onChange={debounce(({ name, value }) => {
               dispatch(
@@ -77,8 +81,12 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           <span>And</span>
 
           <TextInput
-            label="Value"
             defaultValue={activity.data?.upperValue}
+            error={
+              !activity.data?.upperValue &&
+              activity.errors.find((error) => error.code === 'E416')?.message
+            }
+            label="Value"
             name="uperValue"
             onChange={debounce(({ name, value }) => {
               dispatch(
@@ -92,8 +100,12 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         </div>
       ) : (
         <TextInput
-          label="Value"
           defaultValue={activity.data.value}
+          error={
+            !activity.data?.value &&
+            activity.errors.find((error) => error.code === 'E416')?.message
+          }
+          label="Value"
           name="value"
           onChange={debounce(({ name, value }) => {
             dispatch(
