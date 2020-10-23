@@ -28,13 +28,18 @@ const persistConfig = {
         }
       },
       (outboundState: any, key: string) => {
-        return outboundState;
+        return {
+          ...outboundState,
+          // accessToken: 'asdaiudgias',
+          // refreshToken: 'adadasdas',
+        };
+        // return { ...outboundState, isIdle: false };
       },
     ),
   ],
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+export const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const configureStore = (initialState: {
   [x: string]: any;

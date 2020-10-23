@@ -15,8 +15,13 @@ import { navigate } from '@reach/router';
 import { Composer } from './styles';
 import { ViewUserProps } from './types';
 import { permissions, roles } from '../AddUser/temp';
-import { resendInvite } from '../actions';
+import { archiveUser, resendInvite, unArchiveUser } from '../actions';
 import { updateProfile } from '#views/Auth/actions';
+import { fetchSelectedUser } from '#store/users/actions';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { User } from '#store/users/types';
+import { modalBody } from '../ListView/TabContent';
 
 type Inputs = {
   firstName: string;
@@ -24,47 +29,140 @@ type Inputs = {
   employeeId: string;
   email: string;
   department: string;
-  facilities: string;
-  roles: string[];
+  roles: any[];
+  facilities: any[];
 };
+
+// TODO Make Facilities Multi Checkable and Showable like Roles
 
 const EditUser: FC<ViewUserProps> = () => {
   const dispatch = useDispatch();
-  const { selectedUser } = useTypedSelector((state) => state.users);
+  const { selectedUser, selectedUserId } = useTypedSelector(
+    (state) => state.users,
+  );
   const { list, loading } = useTypedSelector((state) => state.facilities);
 
-  if (!selectedUser) {
-    return <div>Loading...</div>;
-  }
-
-  const { register, handleSubmit, errors, formState, reset } = useForm<Inputs>({
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+    reset,
+    getValues,
+    watch,
+  } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
-    defaultValues: {
-      firstName: selectedUser?.firstName,
-      lastName: selectedUser?.lastName,
-      employeeId: selectedUser?.employeeId,
-      email: selectedUser?.email,
-      department: selectedUser?.department,
-      facilities: selectedUser?.facilities?.map((f) => f.name).toString(),
-      roles: [selectedUser?.roles?.map((r) => r.id).toString() || ''],
-    },
   });
 
   useEffect(() => {
-    dispatch(fetchFacilities());
+    getValues;
+    if (selectedUserId) {
+      dispatch(fetchFacilities());
+      dispatch(fetchSelectedUser(selectedUserId));
+    }
   }, []);
 
   useEffect(() => {
-    document.getElementById('firstName')?.focus();
-  }, [loading]);
+    if (selectedUser) {
+      console.log(
+        'selectedUser?.roles?.map((r, i) => [`roles[${i}]`, r.id])',
+        Object.fromEntries(
+          roles?.map((r, i) => [
+            `roles[${i}]`,
+            selectedUser?.roles?.some((sr) => sr.id == r.id) ? r.id : false,
+          ]) || [],
+        ),
+      );
+      reset({
+        firstName: selectedUser?.firstName,
+        lastName: selectedUser?.lastName,
+        employeeId: selectedUser?.employeeId,
+        email: selectedUser?.email,
+        department: selectedUser?.department,
+        ...Object.fromEntries(
+          selectedUser?.facilities?.map((f, i) => [`facilities[${i}]`, f.id]) ||
+            [],
+        ),
+        ...Object.fromEntries(
+          roles?.map((r, i) => [
+            `roles[${i}]`,
+            selectedUser?.roles?.some((sr) => sr.id == r.id) ? r.id : false,
+          ]) || [],
+        ),
+      });
+      document.getElementById('firstName')?.focus();
+    }
+  }, [selectedUser]);
 
   const onSubmit = (data: Inputs) => {
     const payload = data;
     reset({
       ...payload,
     });
-    dispatch(updateProfile({ body: payload, id: selectedUser.id }));
+    const parsedRoles: { id: string }[] = [];
+    payload.roles.forEach((r) => {
+      if (r !== false) parsedRoles.push({ id: r });
+    });
+    const parsedFacilities: { id: string }[] = [];
+    payload.facilities.forEach((r) => {
+      if (r !== false) parsedFacilities.push({ id: r });
+    });
+    if (selectedUser?.id)
+      dispatch(
+        updateProfile({
+          body: {
+            ...payload,
+            roles: parsedRoles,
+            facilities: parsedFacilities,
+          },
+          id: selectedUser.id,
+        }),
+      );
+  };
+
+  const onArchiveUser = (user: User) => {
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.CONFIRMATION_MODAL,
+        props: {
+          title: 'Archiving a User',
+          primaryText: 'Archive User',
+          onPrimary: () =>
+            dispatch(
+              archiveUser({
+                id: user.id,
+                fetchData: () => {
+                  console.log();
+                },
+              }),
+            ),
+          body: modalBody(user, 'You’re about to archive'),
+        },
+      }),
+    );
+  };
+
+  const onUnArchiveUser = (user: User) => {
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.CONFIRMATION_MODAL,
+        props: {
+          title: 'Unarchiving a User',
+          primaryText: 'Unarchive User',
+          onPrimary: () =>
+            dispatch(
+              unArchiveUser({
+                id: user.id,
+                fetchData: () => {
+                  console.log();
+                },
+              }),
+            ),
+          body: modalBody(user, 'You’re about to unarchive'),
+        },
+      }),
+    );
   };
 
   let rolePlaceholder = 'N/A';
@@ -72,9 +170,11 @@ const EditUser: FC<ViewUserProps> = () => {
     rolePlaceholder = capitalize(selectedUser.roles[0].name.replace('_', ' '));
   }
 
-  if (list?.length === 0 || loading) {
+  if (!selectedUser || list?.length === 0 || loading) {
     return <div>Loading...</div>;
   }
+
+  const rolesValues = watch('roles');
 
   return (
     <Composer>
@@ -163,9 +263,7 @@ const EditUser: FC<ViewUserProps> = () => {
           </div>
           <div className="flex-row" style={{ paddingBottom: 0 }}>
             <Role
-              refFun={register({
-                required: true,
-              })}
+              refFun={register}
               permissions={permissions}
               roles={roles}
               placeHolder={rolePlaceholder}
@@ -184,13 +282,14 @@ const EditUser: FC<ViewUserProps> = () => {
             Please select at least one (1) Facility for this user
           </div>
           <div className="flex-row">
-            {list?.map((facility) => (
+            {list?.map((facility, i) => (
               <div className="facilities" key={`${facility.id}`}>
                 <Checkbox
+                  key={`${facility.id}`}
                   refFun={register({
                     required: true,
                   })}
-                  name="facilities"
+                  name={`facilities[${i}]`}
                   value={`${facility.id}`}
                   label={facility.name}
                   onClick={() => console.log('cheked')}
@@ -203,7 +302,14 @@ const EditUser: FC<ViewUserProps> = () => {
           <Button
             className="primary-button"
             type="submit"
-            disabled={formState.isValid && formState.isDirty ? false : true}
+            disabled={
+              rolesValues &&
+              rolesValues.some((r) => r !== false) &&
+              formState.isValid &&
+              formState.isDirty
+                ? false
+                : true
+            }
           >
             Save Changes
           </Button>
@@ -218,9 +324,19 @@ const EditUser: FC<ViewUserProps> = () => {
               <Button className="button cancel">Cancel Invite</Button>
             </>
           ) : selectedUser.verified && !selectedUser.archived ? (
-            <Button className="button">Archive</Button>
+            <Button
+              className="button"
+              onClick={() => onArchiveUser(selectedUser)}
+            >
+              Archive
+            </Button>
           ) : (
-            <Button className="button">Unarchive</Button>
+            <Button
+              className="button"
+              onClick={() => onUnArchiveUser(selectedUser)}
+            >
+              Unarchive
+            </Button>
           )}
         </div>
       </form>

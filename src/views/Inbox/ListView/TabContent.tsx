@@ -15,14 +15,17 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { jobs, loading }: ListViewState = useTypedSelector(
     (state) => state.inboxListView,
   );
+  const { isIdle } = useTypedSelector((state) => state.auth);
   const reduerLabel = label.toLowerCase().split(' ').join('');
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchData(0, 10);
-    dispatch(setSelectedStatus(reduerLabel));
-  }, []);
+    if (!isIdle) {
+      fetchData(0, 10);
+      dispatch(setSelectedStatus(reduerLabel));
+    }
+  }, [isIdle]);
 
   const selectJob = (item: Job) =>
     navigate(`/jobs/${item.id}`, {

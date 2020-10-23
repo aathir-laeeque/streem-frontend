@@ -14,15 +14,21 @@ import {
 import { useTypedSelector } from '#store';
 import { navigate as navigateTo } from '@reach/router';
 
-import { resendInvite, archiveUser, unArchiveUser } from '../actions';
+import {
+  resendInvite,
+  archiveUser,
+  unArchiveUser,
+  unLockUser,
+  cancelInvite,
+} from '../actions';
 
 import { useDispatch } from 'react-redux';
 import { Composer } from './styles';
 import { TabViewProps } from './types';
 
-function modalBody(user: User, text: string): any {
+export function modalBody(user: User, text: string): any {
   return (
-    <div className="body-content">
+    <div className="body-content" style={{ textAlign: 'left' }}>
       {text}
       <span
         style={{ fontWeight: 'bold' }}
@@ -39,13 +45,15 @@ const TabContent: FC<TabViewProps> = ({
   const { loading, [selectedStatus]: users }: UsersState = useTypedSelector(
     (state) => state.users,
   );
-
+  const { isIdle } = useTypedSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchData(0, 10);
-    dispatch(setSelectedStatus(selectedStatus));
-  }, []);
+    if (!isIdle) {
+      fetchData(0, 10);
+      dispatch(setSelectedStatus(selectedStatus));
+    }
+  }, [isIdle]);
 
   const selectUser = (item: User) => {
     dispatch(setSelectedUser(item));
@@ -57,7 +65,7 @@ const TabContent: FC<TabViewProps> = ({
       op: 'AND',
       fields: [
         {
-          field: 'isArchived',
+          field: 'archived',
           op: 'EQ',
           values: [selectedStatus === UserStatus.ARCHIVED],
         },
@@ -76,7 +84,14 @@ const TabContent: FC<TabViewProps> = ({
   };
 
   const onCancelInvite = (id: User['id']) => {
-    console.log('onCancelInvite :', id);
+    dispatch(
+      cancelInvite({
+        id,
+        fetchData: () => {
+          fetchData(0, 10);
+        },
+      }),
+    );
   };
 
   const onArchiveUser = (user: User) => {
@@ -118,6 +133,28 @@ const TabContent: FC<TabViewProps> = ({
               }),
             ),
           body: modalBody(user, 'You’re about to unarchive'),
+        },
+      }),
+    );
+  };
+
+  const onUnlockUser = (user: User) => {
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.CONFIRMATION_MODAL,
+        props: {
+          title: 'Unlocking a User',
+          primaryText: 'Unlock User',
+          onPrimary: () =>
+            dispatch(
+              unLockUser({
+                id: user.id,
+                fetchData: () => {
+                  fetchData(0, 10);
+                },
+              }),
+            ),
+          body: modalBody(user, 'You’re about to unlock the account of'),
         },
       }),
     );
@@ -203,6 +240,22 @@ const TabContent: FC<TabViewProps> = ({
             template: function renderComp(item: User) {
               return (
                 <div className="list-card-columns" key={`actions_${item.id}`}>
+                  {item.blocked && (
+                    <>
+                      <span
+                        className="user-actions"
+                        onClick={() => onUnlockUser(item)}
+                      >
+                        Unlock
+                      </span>
+                      <span
+                        className="user-actions"
+                        style={{ color: '#666666', padding: '0 8px' }}
+                      >
+                        •
+                      </span>
+                    </>
+                  )}
                   {selectedStatus === UserStatus.ACTIVE ? (
                     (item.verified && (
                       <span

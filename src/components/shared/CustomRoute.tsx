@@ -1,7 +1,7 @@
 import { Redirect, RouteComponentProps } from '@reach/router';
 import { useTypedSelector } from '#store';
 import { useDispatch } from 'react-redux';
-import { refreshTokenPoll } from '#views/Auth/actions';
+import { logOut, logOutSuccess, refreshTokenPoll } from '#views/Auth/actions';
 import React, { FC } from 'react';
 
 type Props = RouteComponentProps & {
@@ -29,9 +29,6 @@ export const CustomRoute: FC<Props> = ({
   let currentState = SessionStates.INACTIVE;
 
   if (profile) {
-    // TODO Take Verified from Profile
-    let { verified, archived } = profile;
-    verified = true;
     if (!isRefreshing && rest.path !== 'jobs/print/:jobId')
       dispatch(refreshTokenPoll());
     if (isLoggedIn) currentState = SessionStates.ACTIVE;

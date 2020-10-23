@@ -1,3 +1,4 @@
+import { useTypedSelector } from '#store';
 import {
   // Assessment,
   // Dashboard,
@@ -12,42 +13,49 @@ import React, { FC } from 'react';
 import { Menu, Wrapper, NavItem } from './styles';
 import { MenuItem } from './types';
 
-const menuItems: MenuItem[] = [
-  // { name: 'Dashboard', icon: Dashboard, path: '/' },
-  { name: 'Inbox', icon: Inbox, path: '/inbox' },
-  { name: 'Jobs', icon: FeaturedPlayList, path: '/jobs' },
-  { name: 'Checklists', icon: LibraryAddCheck, path: '/checklists' },
-  // { name: 'Reports', icon: Assessment, path: '/reports' },
-  // { name: 'Audit Logs', icon: MenuBook, path: '/audit' },
-];
+const NavigationMenu: FC = () => {
+  let menuItems: MenuItem[] = [
+    // { name: 'Dashboard', icon: Dashboard, path: '/' },
+    { name: 'Inbox', icon: Inbox, path: '/inbox' },
+    { name: 'Jobs', icon: FeaturedPlayList, path: '/jobs' },
+    { name: 'Checklists', icon: LibraryAddCheck, path: '/checklists' },
+    // { name: 'Reports', icon: Assessment, path: '/reports' },
+    // { name: 'Audit Logs', icon: MenuBook, path: '/audit' },
+  ];
 
-const NavigationMenu: FC = () => (
-  <Wrapper>
-    <Menu>
-      {menuItems.map(({ path, name, icon: Icon }, index) => (
-        <Link
-          to={path}
-          key={`${name}-${index}`}
-          getProps={({ location: { pathname } }) => {
-            const isActive = pathname.split('/')[1] === path.split('/')[1];
+  const { roles } = useTypedSelector((state) => state.auth);
+  if (roles && roles.length > 0 && roles.includes('OPERATOR')) {
+    menuItems = [{ name: 'Inbox', icon: Inbox, path: '/inbox' }];
+  }
 
-            return {
-              style: {
-                color: isActive ? '#ffffff' : '#808080',
-                backgroundColor: isActive ? '#1d84ff' : 'transparent',
-                textDecoration: 'none',
-              },
-            };
-          }}
-        >
-          <NavItem>
-            <Icon size="24" />
-            <span>{name}</span>
-          </NavItem>
-        </Link>
-      ))}
-    </Menu>
-  </Wrapper>
-);
+  return (
+    <Wrapper>
+      <Menu>
+        {menuItems.map(({ path, name, icon: Icon }, index) => (
+          <Link
+            to={path}
+            key={`${name}-${index}`}
+            getProps={({ location: { pathname } }) => {
+              const isActive = pathname.split('/')[1] === path.split('/')[1];
+
+              return {
+                style: {
+                  color: isActive ? '#ffffff' : '#808080',
+                  backgroundColor: isActive ? '#1d84ff' : 'transparent',
+                  textDecoration: 'none',
+                },
+              };
+            }}
+          >
+            <NavItem>
+              <Icon size="24" />
+              <span>{name}</span>
+            </NavItem>
+          </Link>
+        ))}
+      </Menu>
+    </Wrapper>
+  );
+};
 
 export default NavigationMenu;

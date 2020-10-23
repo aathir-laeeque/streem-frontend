@@ -4,6 +4,7 @@ import { useTypedSelector } from '#store';
 import { fetchProperties } from '#store/properties/actions';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { resetInbox } from './actions';
 
 import { Composer } from './styles';
 import TabContent from './TabContent';
@@ -11,13 +12,20 @@ import { InboxStatus, ListViewProps } from './types';
 
 const ListView: FC<ListViewProps> = () => {
   const { job } = useTypedSelector((state) => state.properties);
+  const { isIdle } = useTypedSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!job?.length) {
-      dispatch(fetchProperties({ type: ComposerEntity.JOB }));
+    if (!isIdle) {
+      if (!job?.length) {
+        dispatch(fetchProperties({ type: ComposerEntity.JOB }));
+      }
+
+      return () => {
+        dispatch(resetInbox());
+      };
     }
-  }, []);
+  }, [isIdle]);
 
   const passThroughTabContentProps = {};
   const { renderTabsContent, renderTabsHeader } = useTabs([

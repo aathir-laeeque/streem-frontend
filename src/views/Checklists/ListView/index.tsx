@@ -18,6 +18,7 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   const { checklists, pageable, loading }: ListViewState = useTypedSelector(
     (state) => state.checklistListView,
   );
+  const { isIdle } = useTypedSelector((state) => state.auth);
   const { checklist, job } = useTypedSelector((state) => state.properties);
 
   const dispatch = useDispatch();
@@ -35,15 +36,17 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   };
 
   useEffect(() => {
-    fetchData(0, 10);
+    if (!isIdle) {
+      fetchData(0, 10);
 
-    if (!job?.length) {
-      dispatch(fetchProperties({ type: ComposerEntity.JOB }));
+      if (!job?.length) {
+        dispatch(fetchProperties({ type: ComposerEntity.JOB }));
+      }
+      if (!checklist?.length) {
+        dispatch(fetchProperties({ type: ComposerEntity.CHECKLIST }));
+      }
     }
-    if (!checklist?.length) {
-      dispatch(fetchProperties({ type: ComposerEntity.CHECKLIST }));
-    }
-  }, []);
+  }, [isIdle]);
 
   const openNav = () => {
     const sideNav = document.getElementById('sideNav');

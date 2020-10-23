@@ -14,7 +14,7 @@ export const LoadingDiv = styled.div`
 Font.register({
   family: 'Nunito',
   src:
-    'http://fonts.gstatic.com/s/nunitosans/v2/iJ4p9wO0GDKJ-D5teKuZqp0EAVxt0G0biEntp43Qt6E.ttf',
+    'https://fonts.gstatic.com/s/nunitosans/v2/iJ4p9wO0GDKJ-D5teKuZqp0EAVxt0G0biEntp43Qt6E.ttf',
 });
 
 export const styles = StyleSheet.create({

@@ -8,6 +8,7 @@ import {
   fetchInboxOngoing,
   fetchInboxSuccess,
   setSelectedStatus,
+  resetInbox,
 } from './actions';
 
 type TabContentProps = Record<string, any>;
@@ -38,6 +39,7 @@ export enum ListViewAction {
   FETCH_INBOX_ONGOING = '@@inbox/ListView/FETCH_INBOX_ONGOING',
   FETCH_INBOX_SUCCESS = '@@inbox/ListView/FETCH_INBOX_SUCCESS',
   SET_SELECTED_STATUS = '@@inbox/ListView/SET_SELECTED_STATUS',
+  RESET_INBOX = '@@inbox/ListView/RESET_INBOX',
 }
 
 export type ListViewActionType = ReturnType<
@@ -46,4 +48,5 @@ export type ListViewActionType = ReturnType<
   | typeof fetchInboxOngoing
   | typeof fetchInboxSuccess
   | typeof setSelectedStatus
+  | typeof resetInbox
 >;

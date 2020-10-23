@@ -7,6 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { KeyboardArrowDown } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC } from 'react';
+import { capitalize } from 'lodash';
 import { useDispatch } from 'react-redux';
 
 import { ImageWrapper } from '../../styles/ImageWrapper';
@@ -17,7 +18,7 @@ const Header: FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const dispatch = useDispatch();
 
-  const { profile } = useTypedSelector((state) => state.auth);
+  const { profile, roles } = useTypedSelector((state) => state.auth);
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
@@ -37,11 +38,12 @@ const Header: FC = () => {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        {/* <AccountCircle style={{ color: '#999999' }} /> */}
         <div className="thumb">
           {getInitials(`${profile?.firstName} ${profile?.lastName}`)}
         </div>
-        <MenuText>{`${profile?.firstName} ${profile?.lastName}`}</MenuText>
+        <MenuText>{`${capitalize(profile?.firstName)} ${capitalize(
+          profile?.lastName,
+        )}`}</MenuText>
         <KeyboardArrowDown style={{ color: '#1d84ff' }} />
       </HeaderMenu>
       <Menu
@@ -60,20 +62,25 @@ const Header: FC = () => {
         >
           My Account
         </MenuItem>
-        <NestedMenuItem
-          left
-          label="System Settings"
-          mainMenuOpen={anchorEl ? true : false}
-        >
-          <MenuItem
-            onClick={() => {
-              navigate('/user-access');
-              handleClose();
-            }}
-          >
-            Users and Access
-          </MenuItem>
-        </NestedMenuItem>
+        {roles &&
+          roles.length > 0 &&
+          !roles.includes('OPERATOR') &&
+          !roles.includes('SUPERVISOR') && (
+            <NestedMenuItem
+              left
+              label="System Settings"
+              mainMenuOpen={anchorEl ? true : false}
+            >
+              <MenuItem
+                onClick={() => {
+                  navigate('/user-access');
+                  handleClose();
+                }}
+              >
+                Users and Access
+              </MenuItem>
+            </NestedMenuItem>
+          )}
         <MenuItem
           onClick={() => {
             dispatch(logOut());

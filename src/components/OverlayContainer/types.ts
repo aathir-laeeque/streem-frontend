@@ -34,6 +34,7 @@ export enum OverlayNames {
   INITIATE_SIGNOFF = 'INITIATE_SIGNOFF',
   SIGN_OFF_PROGRESS = 'SIGN_OFF_PROGRESS',
   PASSWORD_INPUT = 'PASSWORD_INPUT',
+  SESSION_EXPIRE = 'SESSION_EXPIRE',
 }
 
 export interface CommonOverlayProps<T> {

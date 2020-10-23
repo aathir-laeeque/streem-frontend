@@ -23,3 +23,5 @@ export const fetchInboxError = (error: any) =>
 
 export const setSelectedStatus = (status: string) =>
   actionSpreader(ListViewAction.SET_SELECTED_STATUS, { status });
+
+export const resetInbox = () => actionSpreader(ListViewAction.RESET_INBOX);

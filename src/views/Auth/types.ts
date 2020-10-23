@@ -27,6 +27,7 @@ import {
   forgotPassword,
   forgotPasswordSuccess,
   forgotPasswordError,
+  setIdle,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
@@ -35,23 +36,33 @@ export interface LoginResponse {
   id: User['id'];
   firstName: string;
   message: string;
-  token: string;
+  accessToken: string;
   refreshToken: string;
+  accessTokenExpirationInMinutes: number;
+  refreshTokenExpirationInMinutes: number;
+  sessionIdleTimeoutInMinutes: number;
+  roles: string[];
 }
 
 export interface RefreshTokenResponse {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }
 export interface AuthState {
   readonly userId: User['id'] | null;
+  readonly isIdle: boolean;
   readonly isLoggedIn: boolean;
-  readonly token: string;
+  readonly accessToken: string;
   readonly refreshToken: string;
+  readonly accessTokenExpirationInMinutes?: number;
+  readonly refreshTokenExpirationInMinutes?: number;
+  readonly sessionIdleTimeoutInMinutes?: number;
   readonly profile: User | null;
   readonly isRefreshing: boolean;
   readonly loading: boolean;
   readonly resetRequested: boolean;
   readonly error: any;
+  readonly roles?: string[];
 }
 
 export enum AuthAction {
@@ -81,6 +92,7 @@ export enum AuthAction {
   UPDATE_PROFILE = '@@auth/MyProfile/UPDATE_PROFILE',
   UPDATE_PROFILE_ERROR = '@@auth/MyProfile/UPDATE_PROFILE_ERROR',
   UPDATE_PROFILE_SUCCESS = '@@auth/MyProfile/UPDATE_PROFILE_SUCCESS',
+  SET_IDLE = '@@auth/MyProfile/SET_IDLE',
 }
 
 export type AuthActionType = ReturnType<
@@ -110,4 +122,5 @@ export type AuthActionType = ReturnType<
   | typeof resetPassword
   | typeof resetPasswordSuccess
   | typeof resetPasswordError
+  | typeof setIdle
 >;

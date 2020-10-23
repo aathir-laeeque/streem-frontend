@@ -58,7 +58,14 @@ const reducer = (state = initialState, action: UsersActionType): UsersState => {
     case UsersAction.SET_SELECTED_USER:
       return {
         ...state,
-        selectedUser: action.payload,
+        selectedUserId: action.payload.id,
+        selectedUser: undefined,
+      };
+
+    case UsersAction.FETCH_SELECTED_USER_SUCCESS:
+      return {
+        ...state,
+        selectedUser: action.payload.data,
       };
 
     case UsersAction.FETCH_USERS_ERROR:

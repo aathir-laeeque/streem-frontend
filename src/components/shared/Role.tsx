@@ -241,7 +241,7 @@ export const Role: FC<RoleProps> = ({
   selected,
   permissions,
   roles,
-  disabled,
+  disabled = false,
   refFun,
   id,
   error,
@@ -264,7 +264,7 @@ export const Role: FC<RoleProps> = ({
 
   let selectedRole: RoleType[] | null = null;
   if (selected) {
-    selectedRole = roles.filter((role) => role.id === selected);
+    selectedRole = roles.filter((role) => role.id === Number(selected));
   }
 
   return (
@@ -296,7 +296,7 @@ export const Role: FC<RoleProps> = ({
                     data-testid={id}
                     onBlur={onBlur}
                     autoComplete="off"
-                    disabled={disabled || false}
+                    disabled={disabled}
                   />
                   <div className="actions">
                     {isExpanded ? 'Hide Permissions' : 'View Permissions'}
@@ -332,11 +332,11 @@ export const Role: FC<RoleProps> = ({
                     )}
                   </div>
                   <div className="check-group">
-                    {roles.map((role) => (
+                    {roles.map((role, i) => (
                       <div key={`${role.id}`} className="check-group">
                         <Checkbox
                           key={`${role.id}`}
-                          name="roles"
+                          name={`roles[${i}]`}
                           value={role.id}
                           refFun={refFun}
                           label={role.name}

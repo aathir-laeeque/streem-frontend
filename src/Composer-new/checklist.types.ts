@@ -83,6 +83,17 @@ export type TaskExecution = {
   startedBy: Employee;
   startedAt: string;
   status: TaskExecutionStatus;
+  assignees: Pick<
+    User,
+    | 'id'
+    | 'employeeId'
+    | 'firstName'
+    | 'lastName'
+    | 'email'
+    | 'username'
+    | 'archived'
+    | 'verified'
+  >[];
 };
 
 export enum TimerOperator {

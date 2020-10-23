@@ -23,8 +23,9 @@ import {
 } from './Components';
 import { styles, LoadingDiv } from './styles';
 import { Entity } from '#Composer/composer.types';
+import { Checklist, TaskExecution } from '#Composer-new/checklist.types';
 
-const now = moment().format('Do MMM, YYYY, HH:MM a');
+const now = moment().format('Do MMM, YYYY, hh:mm a');
 
 const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   const { data } = useTypedSelector((state) => state.composer);
@@ -33,13 +34,27 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
 
   useEffect(() => {
     if (jobId) {
-      dispatch(fetchData({ id: parseInt(jobId, 10), entity: Entity.JOB }));
+      dispatch(fetchData({ id: jobId, entity: Entity.JOB }));
     }
   }, []);
 
   if (!data || !profile) return null;
 
-  const { checklist, ...jobExtras } = data;
+  const { checklist, ...jobExtras } = (data as unknown) as Checklist;
+  let assigneesObj: Record<string, any> = {};
+  (checklist as Checklist).stages.forEach((stage) =>
+    stage.tasks.forEach((task) =>
+      task.taskExecution.assignees.forEach(
+        (assignee) =>
+          (assigneesObj = { ...assigneesObj, [assignee.id]: assignee }),
+      ),
+    ),
+  );
+
+  const assignees: TaskExecution['assignees'][] = [];
+  Object.keys(assigneesObj).forEach((key) => {
+    assignees.push(assigneesObj[key]);
+  });
 
   return (
     <PDFViewer style={{ width: '100%', height: '100%' }}>
@@ -106,21 +121,22 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                 <View style={styles.flexRow}>
                   <InputLabelGroup
                     label="Product Manufactured :"
-                    value={jobExtras?.properties['PRODUCT MANUFACTURED'] || ''}
+                    value={
+                      jobExtras?.properties
+                        ? jobExtras?.properties['PRODUCT MANUFACTURED']
+                        : ''
+                    }
                     minWidth={50}
                   />
                 </View>
                 <View style={styles.flexRow}>
                   <InputLabelGroup
                     label="Batch No :"
-                    value={jobExtras.properties['BATCH NO']}
+                    value={jobExtras?.properties['BATCH NO']}
                   />
                 </View>
               </View>
-              <Assigness
-                assignees={jobExtras.assignees}
-                jobStatus={jobExtras.status}
-              />
+              <Assigness assignees={assignees} jobStatus={jobExtras.status} />
             </TabLookLike>
 
             <TabLookLike title="Stage and Task Details">

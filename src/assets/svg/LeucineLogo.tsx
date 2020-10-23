@@ -2,7 +2,7 @@ import * as React from 'react';
 
 function LeucineLogo(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 1584.87 400" width="1em" height="1em" {...props}>
+    <svg viewBox="0 0 1584.87 400" width="auto" height="1em" {...props}>
       <defs>
         <linearGradient
           id="prefix__linear-gradient-bottom"

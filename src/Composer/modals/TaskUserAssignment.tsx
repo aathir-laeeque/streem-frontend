@@ -252,7 +252,7 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
 
       const checked = assignees.some((item) => item.id === user.id);
 
-      if (user.id !== '0') {
+      if (user.id !== '0' && !user.archived) {
         if (searchQuery !== '') {
           bodyView.push(
             userRow(

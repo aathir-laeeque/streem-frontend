@@ -10,7 +10,7 @@ import {
 export interface SessionActivity {
   triggeredOn: string;
   id: number;
-  triggeredAt: string;
+  triggeredAt: number;
   event: string;
   action: string;
   severity: string;

@@ -1,4 +1,5 @@
 import { store } from '../App';
+import { apiForgotPassword, apiLogin } from './apiUrls';
 
 interface RequestOptions {
   data?: Record<string | number, any>;
@@ -19,7 +20,7 @@ export const request = async (
   options?: RequestOptions,
 ) => {
   const {
-    auth: { token },
+    auth: { accessToken },
   } = store.getState();
 
   let apiUrl = url;
@@ -32,15 +33,21 @@ export const request = async (
     method,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      ...(token && { Authorization: `Bearer ${token}` }),
+      ...(apiUrl !== apiForgotPassword() &&
+        apiUrl !== apiLogin() &&
+        accessToken && { Authorization: `Bearer ${accessToken}` }),
       ...(!options?.formData && { 'Content-Type': 'application/json' }),
       ...options?.headers,
     },
     // TODO: check this when using POST request
     ...(options?.data && { body: JSON.stringify(options?.data) }),
     ...(options?.formData && { body: options?.formData }),
-  }).then(async (res) => {
-    const resu = await res.json();
-    return resu;
-  });
+  })
+    .then(async (res) => {
+      const resu = await res.json();
+      return resu;
+    })
+    .catch((e) => {
+      console.error('Error in Request :', e);
+    });
 };

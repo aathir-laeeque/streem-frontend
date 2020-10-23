@@ -42,7 +42,7 @@ function* fetchSessionActivitysSaga({
 
     const newData = data.map((el) => ({
       ...el,
-      triggeredOn: moment(el.triggeredAt).format('YYYY-MM-DD'),
+      triggeredOn: moment.unix(el.triggeredAt).format('YYYY-MM-DD'),
     }));
 
     yield put(

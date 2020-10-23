@@ -29,3 +29,16 @@ export const setSelectedStatus = (status: UserStatus) =>
 
 export const setSelectedUser = (user: User) =>
   actionSpreader(UsersAction.SET_SELECTED_USER, user);
+
+export const fetchSelectedUser = (id: User['id']) =>
+  actionSpreader(UsersAction.FETCH_SELECTED_USER, { id });
+
+export const fetchSelectedUserSuccess = ({
+  data,
+}: Partial<ResponseObj<User>>) =>
+  actionSpreader(UsersAction.FETCH_SELECTED_USER_SUCCESS, {
+    data,
+  });
+
+export const fetchSelectedUserError = (error: any) =>
+  actionSpreader(UsersAction.FETCH_SELECTED_USER_ERROR, { error });

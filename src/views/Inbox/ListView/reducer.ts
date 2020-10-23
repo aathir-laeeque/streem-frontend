@@ -44,7 +44,10 @@ const reducer = (
         jobs: {
           ...state.jobs,
           [type]: {
-            list: [...state.jobs[type].list, ...(data as Job[])],
+            list:
+              pageable && pageable.page === 0
+                ? (data as Array<Job>)
+                : [...state.jobs[type].list, ...(data as Job[])],
             pageable: pageable as Pageable,
           },
         },
@@ -58,6 +61,9 @@ const reducer = (
         ...state,
         selectedStatus: action.payload?.status || state.selectedStatus,
       };
+
+    case ListViewAction.RESET_INBOX:
+      return { ...initialState };
 
     default:
       return { ...state };

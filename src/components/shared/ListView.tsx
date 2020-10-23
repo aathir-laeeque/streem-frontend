@@ -26,6 +26,7 @@ interface ListViewProps {
   onPrimaryClick?: () => void;
   properties: Properties;
   filterProp?: FilterProp;
+  callOnScroll?: boolean;
   data:
     | Checklist[]
     | Job[]
@@ -197,6 +198,7 @@ export const ListView: FC<ListViewProps> = ({
   beforeColumns,
   afterColumns,
   filterProp,
+  callOnScroll = true,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -214,12 +216,14 @@ export const ListView: FC<ListViewProps> = ({
 
   const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
     e.stopPropagation();
-    const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-    if (
-      scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 &&
-      !isLast
-    )
-      fetchData(currentPage + 1, 10);
+    if (callOnScroll) {
+      const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
+      if (
+        scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 &&
+        !isLast
+      )
+        fetchData(currentPage + 1, 10);
+    }
   };
 
   const onApplyFilter = (e: React.MouseEvent, onApply: () => void) => {

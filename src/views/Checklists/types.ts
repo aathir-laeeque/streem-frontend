@@ -1,8 +1,10 @@
 import { Stage } from '#Composer-new/checklist.types';
 
-export interface Properties {
-  [key: string]: string | null;
-}
+type ChecklistProperty = {
+  id: string;
+  name: string;
+  value: string;
+};
 
 export interface Checklist {
   archived?: boolean;
@@ -12,7 +14,7 @@ export interface Checklist {
   version: number | null;
   stages?: Stage[];
   noOfJobs?: number;
-  properties?: Properties;
+  properties?: ChecklistProperty[];
   noOfTasks?: number;
 }
 

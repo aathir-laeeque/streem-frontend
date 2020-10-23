@@ -13,6 +13,9 @@ export const loginSuccess = (data: LoginResponse) =>
 export const loginError = (error: string) =>
   actionSpreader(AuthAction.LOGIN_ERROR, error);
 
+export const setIdle = (data: boolean) =>
+  actionSpreader(AuthAction.SET_IDLE, data);
+
 // LOGOUT ACTIONS
 
 export const logOut = () => actionSpreader(AuthAction.LOGOUT);
@@ -74,7 +77,7 @@ export const updateProfileError = (error: any) =>
 export const refreshTokenPoll = () =>
   actionSpreader(AuthAction.REFRESH_TOKEN_POLL);
 
-export const refreshToken = (payload: { token: string }) =>
+export const refreshToken = (payload: { refreshToken: string }) =>
   actionSpreader(AuthAction.REFRESH_TOKEN, payload);
 
 export const refreshTokenSuccess = (data: RefreshTokenResponse) =>

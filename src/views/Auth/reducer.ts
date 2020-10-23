@@ -3,8 +3,9 @@ import { AuthAction, AuthActionType, AuthState } from './types';
 const initialState: AuthState = {
   userId: null,
   isLoggedIn: false,
+  isIdle: false,
   profile: null,
-  token: '',
+  accessToken: '',
   refreshToken: '',
   loading: false,
   isRefreshing: false,
@@ -21,10 +22,23 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
     case AuthAction.LOGIN_SUCCESS:
       return {
         ...state,
+        isIdle: false,
         loading: false,
+        roles: action.payload.roles,
         userId: action.payload?.id,
-        token: action.payload?.token,
+        accessToken: action.payload?.accessToken,
         refreshToken: action.payload?.refreshToken,
+        accessTokenExpirationInMinutes:
+          action.payload?.accessTokenExpirationInMinutes,
+        refreshTokenExpirationInMinutes:
+          action.payload?.refreshTokenExpirationInMinutes,
+        sessionIdleTimeoutInMinutes:
+          action.payload?.sessionIdleTimeoutInMinutes,
+      };
+    case AuthAction.SET_IDLE:
+      return {
+        ...state,
+        isIdle: action.payload,
       };
     case AuthAction.LOGOUT_SUCCESS:
       return {
@@ -40,7 +54,12 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
     case AuthAction.UPDATE_PROFILE_SUCCESS:
       return { ...state, profile: { ...state.profile, ...action.payload } };
     case AuthAction.REFRESH_TOKEN_SUCCESS:
-      return { ...state, isLoggedIn: true, token: action.payload?.token };
+      return {
+        ...state,
+        isLoggedIn: true,
+        accessToken: action.payload?.accessToken,
+        refreshToken: action.payload?.refreshToken,
+      };
     case AuthAction.RESET_ERROR:
       return { ...state, error: undefined };
     default:

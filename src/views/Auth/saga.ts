@@ -46,15 +46,21 @@ import { AuthAction, LoginResponse, RefreshTokenResponse } from './types';
 
 const getRefreshToken = (state: any) => state.auth.refreshToken;
 const getUserId = (state: any) => state.auth.userId;
+const getIsIdle = (state: any) => state.auth.isIdle;
+const getRefreshTimeOut = (state: any) =>
+  state.auth.refreshTokenExpirationInMinutes;
 
+// TODO CHANGE POLLING PROCESS :: PUT THE DELAY AT LAST ON LOOP, SHOULD CALL REFRESH TOKEN ONE TIME ON POLLING START
 function* refreshTokenPollSaga() {
   try {
     let userId = yield select(getUserId);
     while (userId) {
+      const refreshTimeOut = yield select(getRefreshTimeOut);
+      yield delay((refreshTimeOut || 15) * 1000 * 60 - 5000);
       userId = yield select(getUserId);
+      const isIdle = yield select(getIsIdle);
       const token = yield select(getRefreshToken);
-      yield put(refreshToken({ token }));
-      yield delay(295000);
+      if (!isIdle) yield put(refreshToken({ refreshToken: token }));
     }
   } catch (error) {
     console.error(
@@ -80,13 +86,13 @@ function* refreshTokenSaga({ payload }: ReturnType<typeof refreshToken>) {
     );
 
     if (errors || error) {
-      yield put(logOutSuccess());
       throw 'Token Expired';
     }
 
     yield put(refreshTokenSuccess(data));
   } catch (error) {
     console.error('error from refreshTokenSaga function in Auth :: ', error);
+    yield put(logOutSuccess());
     yield put(refreshTokenError(error));
   }
 }
@@ -107,8 +113,11 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
     }
 
     yield put(loginSuccess(data));
+    yield delay(200);
     yield put(refreshTokenPoll());
     yield put(fetchProfile({ id: data.id }));
+    yield delay(500);
+    yield put(refreshToken({ refreshToken: data.refreshToken }));
   } catch (error) {
     console.error('error from loginSaga function in Auth :: ', error);
     if (typeof error !== 'string') error = 'There seems to be an Issue. ';
@@ -137,6 +146,7 @@ function* logOutSaga() {
     yield put(logOutSuccess());
   } catch (error) {
     console.error('error from logOutSaga function in Auth :: ', error);
+    yield put(logOutSuccess());
     yield put(logOutError(error));
   }
 }
@@ -277,8 +287,8 @@ function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
       );
       return false;
     }
-
-    yield put(updateProfileSuccess(data));
+    const userId = yield select(getUserId);
+    if (userId === id) yield put(updateProfileSuccess(data));
 
     if (payload.body.oldPassword) {
       yield put(

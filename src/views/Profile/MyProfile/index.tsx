@@ -48,17 +48,17 @@ const MyProfile: FC<MyProfileProps> = () => {
       lastName: data?.lastName,
     };
     reset({
-      firstName: profile?.firstName,
-      lastName: profile?.lastName,
+      firstName: data?.firstName,
+      lastName: data?.lastName,
       username: profile?.username,
       employeeId: profile?.employeeId,
       email: profile?.email,
       department: profile?.department,
       facilities: profile?.facilities?.map((f) => f.name).toString(),
       roles: profile?.roles?.map((r) => r.name).toString(),
-      ...payload,
     });
-    dispatch(updateProfile({ body: payload, id: profile?.id || 0 }));
+    if (profile?.id)
+      dispatch(updateProfile({ body: payload, id: profile?.id }));
   };
 
   let rolePlaceholder = 'N/A';
@@ -173,7 +173,7 @@ const MyProfile: FC<MyProfileProps> = () => {
                 id="roles-input"
                 disabled
                 selected={
-                  profile?.roles && profile?.roles[0] ? profile?.roles[0].id : 3
+                  profile?.roles && profile?.roles[0] && profile?.roles[0].id
                 }
               />
             </div>

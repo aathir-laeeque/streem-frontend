@@ -17,6 +17,7 @@ import ReviewSubmitSuccessModal from '#Composer-new/Overlays/ReviewSubmitSuccess
 import InitiateSignOffModal from '#Composer-new/Overlays/InitiateSignOff';
 import SignOffProgressModal from '#Composer-new/Overlays/SignOffProgress';
 import PasswordInputModal from '#Composer-new/Overlays/PasswordInput';
+import SessionExpireModal from '#views/Auth/Overlays/SessionExpire';
 import { ReviewerAssignmentPopover } from '#Composer-new/Overlays/ReviewerAssignmentPopover';
 import { SubmitReviewModal } from '#Composer-new/Overlays/SubmitReview';
 import { AuthorsDetailsPopover } from '#Composer-new/Overlays/AuthorsDetailsPopover';
@@ -97,6 +98,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.PASSWORD_INPUT:
       return <PasswordInputModal {...params} />;
+
+    case OverlayNames.SESSION_EXPIRE:
+      return <SessionExpireModal {...params} />;
 
     case OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT_POPOVER:
       return params.popOverAnchorEl ? (

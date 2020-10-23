@@ -80,17 +80,23 @@ export const apiRefreshToken = () => `${baseUrl}/auth/refresh-token`;
 export const apiResendInvite = (id: User['id']) =>
   `${baseUrl}/users/${id}/resend-invite`;
 
+export const apiCancelInvite = (id: User['id']) =>
+  `${baseUrl}/users/${id}/cancel-invite`;
+
 export const apiArchiveUser = (id: User['id']) =>
   `${baseUrl}/users/${id}/archive`;
 
 export const apiUnArchiveUser = (id: User['id']) =>
   `${baseUrl}/users/${id}/unarchive`;
 
+export const apiUnLockUser = (id: User['id']) =>
+  `${baseUrl}/users/${id}/unblock`;
+
 export const apiRegister = () => `${baseUrl}/auth/register`;
 
 export const apiResetPassword = () => `${baseUrl}/auth/update-password`;
 
-export const apiGetSessionActivitys = () => `${baseUrl}/audits`;
+export const apiGetSessionActivitys = () => `${baseUrl}/users/audits`;
 
 // Task
 export const apiAssignUsersToTask = (taskId: Task['id']) =>

@@ -1,8 +1,9 @@
 import { apiGetInbox } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
+import { logOutSuccess } from '#views/Auth/actions';
 import { Job } from '#views/Jobs/types';
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLeading } from 'redux-saga/effects';
 
 import {
   fetchInbox,
@@ -35,10 +36,11 @@ function* fetchInboxSaga({ payload }: ReturnType<typeof fetchInbox>) {
       'error from fetchInboxSaga function in InboxListView Saga :: ',
       error,
     );
+    yield put(logOutSuccess());
     yield put(fetchInboxError(error));
   }
 }
 
 export function* InboxListViewSaga() {
-  yield takeLatest(ListViewAction.FETCH_INBOX, fetchInboxSaga);
+  yield takeLeading(ListViewAction.FETCH_INBOX, fetchInboxSaga);
 }

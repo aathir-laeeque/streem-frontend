@@ -11,6 +11,17 @@ export const resendInviteSuccess = () =>
 export const resendInviteError = (error: any) =>
   actionSpreader(UserAccessAction.RESEND_INVITE_ERROR, error);
 
+export const cancelInvite = (payload: {
+  id: User['id'];
+  fetchData: () => void;
+}) => actionSpreader(UserAccessAction.CANCEL_INVITE, payload);
+
+export const cancelInviteSuccess = () =>
+  actionSpreader(UserAccessAction.CANCEL_INVITE_SUCCESS);
+
+export const cancelInviteError = (error: any) =>
+  actionSpreader(UserAccessAction.CANCEL_INVITE_ERROR, error);
+
 export const archiveUser = (payload: {
   id: User['id'];
   fetchData: () => void;
@@ -32,6 +43,17 @@ export const unArchiveUserSuccess = () =>
 
 export const unArchiveUserError = (error: any) =>
   actionSpreader(UserAccessAction.UNARCHIVE_USER_ERROR, error);
+
+export const unLockUser = (payload: {
+  id: User['id'];
+  fetchData: () => void;
+}) => actionSpreader(UserAccessAction.UNLOCK_USER, payload);
+
+export const unLockUserSuccess = () =>
+  actionSpreader(UserAccessAction.UNLOCK_USER_SUCCESS);
+
+export const unLockUserError = (error: any) =>
+  actionSpreader(UserAccessAction.UNLOCK_USER_ERROR, error);
 
 export const addUser = (payload: {
   firstName: string;

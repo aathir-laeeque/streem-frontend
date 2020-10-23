@@ -30,6 +30,8 @@ const Wrapper = styled.div.attrs({})`
       border-radius: 4px;
       box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.12),
         0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      overflow-y: auto;
+      max-height: 250px;
 
       .checklist-row {
         padding: 8px 12px;
@@ -129,7 +131,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               id="checklistId"
               executeOnFocus={() => setShowChecklists(true)}
               executeOnBlur={() =>
-                setTimeout(() => setShowChecklists(false), 10)
+                setTimeout(() => setShowChecklists(false), 200)
               }
               onChange={(id, value) => setSearchQuery(value)}
               required

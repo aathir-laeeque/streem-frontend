@@ -38,10 +38,11 @@ const initialState: initialState = {
   dateRange: [null, null],
   appliedFilters: {},
   startTime: currentDate,
-  endTime: currentDate,
+  endTime: moment().endOf('day'),
 };
 
 const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
+  const { isIdle } = useTypedSelector((state) => state.auth);
   const { logs, loading, pageable }: SessionActivityState = useTypedSelector(
     (state) => state.sessionActivity,
   );
@@ -55,11 +56,11 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
 
   const filterProp: FilterProp = {
     filters: [
-      {
-        label: 'Type',
-        onApply: () => console.log('Applied'),
-        content: <div />,
-      },
+      // {
+      //   label: 'Type',
+      //   onApply: () => console.log('Applied'),
+      //   content: <div />,
+      // },
       {
         label: 'Date/Time Range',
         onApply: () => {
@@ -121,21 +122,26 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
           </LocalizationProvider>
         ),
       },
-      {
-        label: 'Users',
-        onApply: () => console.log('Applied'),
-        content: <div />,
-      },
+      // {
+      //   label: 'Users',
+      //   onApply: () => console.log('Applied'),
+      //   content: <div />,
+      // },
     ],
     onReset: () => resetFilter(),
     activeCount: Object.keys(state.appliedFilters).length,
   };
 
   useEffect(() => {
-    if (Object.keys(state.appliedFilters).length === 0) fetchData(0);
-  }, [state.appliedFilters]);
+    if (!isIdle && Object.keys(state.appliedFilters).length === 0) fetchData(0);
+  }, [state.appliedFilters, isIdle]);
 
-  const fetchLogs = (greaterThan: number, lowerThan: number, page: number) => {
+  const fetchLogs = (
+    greaterThan: number,
+    lowerThan: number,
+    page = 0,
+    size = 250000,
+  ) => {
     const filters = JSON.stringify({
       op: 'AND',
       fields: [
@@ -152,7 +158,7 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
       ],
     });
     dispatch(
-      fetchSessionActivitys({ filters, sort: 'triggeredAt,desc', page }),
+      fetchSessionActivitys({ size, filters, sort: 'triggeredAt,desc', page }),
     );
   };
 
@@ -162,15 +168,13 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
       return false;
     }
     if (page === 0) {
-      lowerThan = moment.utc().endOf('day');
-      greaterThan = moment.utc().startOf('day').subtract(7, 'days');
+      lowerThan = moment().endOf('day');
+      greaterThan = moment().startOf('day').subtract(7, 'days');
     } else {
-      lowerThan = moment
-        .utc()
+      lowerThan = moment()
         .startOf('day')
         .subtract(4 + page * 3, 'days');
-      greaterThan = moment
-        .utc()
+      greaterThan = moment()
         .startOf('day')
         .subtract(7 + page * 3, 'days');
     }
@@ -194,16 +198,14 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
   const applyDateTimeFilter = () => {
     const { dateRange, startTime, endTime } = state;
     if (dateRange[0] && dateRange[1] && startTime && endTime) {
-      const startTimeParsed =
-        typeof startTime === 'number' ? moment(startTime) : startTime;
-      const endTimeParsed =
-        typeof endTime === 'number' ? moment(endTime) : endTime;
-      const greaterThan = moment.utc(
+      const startTimeParsed = startTime;
+      const endTimeParsed = endTime;
+      const greaterThan = moment(
         `${dateRange[0].format('YYYY-MM-DD')} ${startTimeParsed.format(
           'HH:mm',
         )}`,
       );
-      const lowerThan = moment.utc(
+      const lowerThan = moment(
         `${dateRange[1].format('YYYY-MM-DD')} ${endTimeParsed.format('HH:mm')}`,
       );
       fetchLogs(greaterThan.unix(), lowerThan.unix(), 0);
@@ -213,6 +215,7 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
   return (
     <Composer>
       <ListViewComponent
+        callOnScroll={false}
         properties={[]}
         fetchData={fetchData}
         isLast={pageable.last}
@@ -256,7 +259,11 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
                           <div className="circle" />
                           <div className="content">
                             <div className="content-items">
-                              {moment(log.triggeredAt).format('hh:mm A')}
+                              {/* {formatDateTime(
+                                Number(log.triggeredAt),
+                                'hh:mm A',
+                              )} */}
+                              {moment.unix(log.triggeredAt).format('hh:mm A')}
                             </div>
                             {log.severity ===
                               SessionActivitySeverity.CRITICAL && (

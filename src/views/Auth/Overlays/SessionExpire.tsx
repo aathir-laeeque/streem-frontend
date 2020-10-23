@@ -1,19 +1,20 @@
 import { BaseModal, Button1, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
+import { useTypedSelector } from '#store';
 import { Visibility } from '@material-ui/icons';
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { login } from '../actions';
 
 const Wrapper = styled.div`
   .modal {
-    max-width: 368px !important;
+    max-width: 468px !important;
     min-width: 300px !important;
 
     .close-icon {
-      top: 22px !important;
-      right: 16px !important;
-      font-size: 24px !important;
+      display: none !important;
     }
 
     h2 {
@@ -68,19 +69,23 @@ type Inputs = {
   password: string;
 };
 
-const PasswordInputModal: FC<CommonOverlayProps<any>> = ({
+const SessionExpireModal: FC<CommonOverlayProps<any>> = ({
   closeAllOverlays,
   closeOverlay,
 }) => {
+  const dispatch = useDispatch();
+  const { profile } = useTypedSelector((state) => state.auth);
   const [passwordInputType, setPasswordInputType] = useState(true);
-  const { register, handleSubmit, formState, errors } = useForm<Inputs>({
+  const { register, handleSubmit, formState } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
   });
 
   const onSubmit = (data: Inputs) => {
-    // dispatch(login(data));
-    console.log('data', data);
+    if (profile && profile.username) {
+      dispatch(login({ ...data, username: profile.username }));
+      closeOverlay();
+    }
   };
 
   const AfterIcon = () => (
@@ -96,11 +101,11 @@ const PasswordInputModal: FC<CommonOverlayProps<any>> = ({
         closeAllModals={closeAllOverlays}
         closeModal={closeOverlay}
         showFooter={false}
-        title="Ready for Release"
+        title="Session Expired!"
       >
         <span>
-          By Entering you Account Password and Approving it, you will Release
-          the Checklist from your end.
+          Your current session has expired. You may continue by entering your
+          account password.
         </span>
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextInput
@@ -118,7 +123,7 @@ const PasswordInputModal: FC<CommonOverlayProps<any>> = ({
             type="submit"
             disabled={formState.isValid && formState.isDirty ? false : true}
           >
-            Approve
+            Proceed to Login
           </Button1>
         </form>
       </BaseModal>
@@ -126,4 +131,4 @@ const PasswordInputModal: FC<CommonOverlayProps<any>> = ({
   );
 };
 
-export default PasswordInputModal;
+export default SessionExpireModal;

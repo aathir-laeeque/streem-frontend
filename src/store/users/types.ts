@@ -7,6 +7,8 @@ import {
   fetchUsersSuccess,
   setSelectedStatus,
   setSelectedUser,
+  fetchSelectedUser,
+  fetchSelectedUserSuccess,
 } from './actions';
 
 export interface User {
@@ -17,6 +19,7 @@ export interface User {
   email: string;
   username: string;
   verified: boolean;
+  blocked: boolean;
   archived: boolean;
   active: boolean;
   department?: string;
@@ -54,6 +57,7 @@ export interface UsersState {
   readonly error: any;
   readonly selectedStatus: string;
   readonly selectedUser?: User;
+  readonly selectedUserId?: User['id'];
 }
 
 export enum UserStatus {
@@ -68,6 +72,9 @@ export enum UsersAction {
   FETCH_USERS_SUCCESS = '@@users/FETCH_USERS_SUCCESS',
   SET_SELECTED_STATUS = '@@users/SET_SELECTED_STATUS',
   SET_SELECTED_USER = '@@users/SET_SELECTED_USER',
+  FETCH_SELECTED_USER = '@@users/FETCH_SELECTED_USER',
+  FETCH_SELECTED_USER_SUCCESS = '@@users/FETCH_SELECTED_USER_SUCCESS',
+  FETCH_SELECTED_USER_ERROR = '@@users/FETCH_SELECTED_USER_ERROR',
 }
 
 export type UsersActionType = ReturnType<
@@ -77,4 +84,6 @@ export type UsersActionType = ReturnType<
   | typeof fetchUsersOngoing
   | typeof fetchUsers
   | typeof setSelectedUser
+  | typeof fetchSelectedUser
+  | typeof fetchSelectedUserSuccess
 >;

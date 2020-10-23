@@ -13,7 +13,7 @@ import {
 const defaultParams: fetchUsersParams = {
   filters: JSON.stringify({
     op: 'AND',
-    fields: [{ field: 'isArchived', op: 'EQ', values: [false] }],
+    fields: [{ field: 'archived', op: 'EQ', values: [false] }],
   }),
   page: 0,
   size: 10,
