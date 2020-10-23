@@ -185,10 +185,12 @@ const PrototypeForm: FC<Props> = (props) => {
                     : undefined
                 }
                 placeHolder="Choose Users"
-                options={users.map((user) => ({
-                  label: `${getFullName(user)}, ID : ${user.employeeId}`,
-                  value: user.id,
-                }))}
+                options={users
+                  .filter((user) => user.id !== formValues.primaryAuthor.id)
+                  .map((user) => ({
+                    label: `${getFullName(user)}, ID : ${user.employeeId}`,
+                    value: user.id,
+                  }))}
                 onChange={(selectedOption: any) => {
                   const selectedUser = usersById[selectedOption.value];
 
