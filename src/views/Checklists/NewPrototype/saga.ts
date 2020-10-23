@@ -18,18 +18,18 @@ const transformFormData = ({
   mode,
   originalAuthors,
 }: transformFormDataArgs) => {
-  const addAuthors: Author['id'][] = [],
-    removeAuthors: Author['id'][] = [];
+  const addAuthorIds: Author['id'][] = [],
+    removeAuthorIds: Author['id'][] = [];
 
   data.authors.forEach((authorId) => {
     if (!originalAuthors?.includes(authorId)) {
-      addAuthors.push(authorId);
+      addAuthorIds.push(authorId);
     }
   });
 
   originalAuthors?.forEach((authorId) => {
     if (!data.authors.includes(authorId)) {
-      removeAuthors.push(authorId);
+      removeAuthorIds.push(authorId);
     }
   });
 
@@ -40,10 +40,10 @@ const transformFormData = ({
     })),
 
     ...(mode === FormMode.ADD
-      ? { authors: data.authors }
+      ? { authors: data.authors.filter((authorId) => authorId !== '0') }
       : {
-          addAuthorIds: addAuthors,
-          removeAuthorIds: removeAuthors,
+          addAuthorIds: addAuthorIds.filter((authorId) => authorId !== '0'),
+          removeAuthorIds: removeAuthorIds,
         }),
   };
 };

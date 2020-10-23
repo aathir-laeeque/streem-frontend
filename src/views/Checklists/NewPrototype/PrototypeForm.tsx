@@ -6,7 +6,7 @@ import { useTypedSelector } from '#store/helpers';
 import { getFullName } from '#utils/stringUtils';
 import { Close } from '@material-ui/icons';
 import { navigate } from '@reach/router';
-import { debounce, isEmpty } from 'lodash';
+import { debounce, isEmpty, pick } from 'lodash';
 import React, { FC, FormEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -51,6 +51,12 @@ const PrototypeForm: FC<Props> = (props) => {
         .map((author) => author.id) ?? ['0']),
     ],
     name: formData?.name ?? '',
+    primaryAuthor: formData?.authors?.filter(
+      (author) => author?.primary,
+    )[0] ?? {
+      ...pick(profile, ['id', 'employeeId', 'firstName', 'lastName', 'email']),
+      primary: true,
+    },
     properties: [],
   });
 
@@ -113,15 +119,17 @@ const PrototypeForm: FC<Props> = (props) => {
         <div className="owner">
           <h5 className="label">Checklist Owner</h5>
 
-          {profile ? (
-            <div className="container">
-              <Avatar user={profile} />
-              <div className="owner-details">
-                <div className="owner-id">{profile.employeeId}</div>
-                <div className="owner-name">{getFullName(profile)}</div>
+          <div className="container">
+            <Avatar user={formValues.primaryAuthor} />
+            <div className="owner-details">
+              <div className="owner-id">
+                {formValues.primaryAuthor.employeeId}
+              </div>
+              <div className="owner-name">
+                {getFullName(formValues.primaryAuthor)}
               </div>
             </div>
-          ) : null}
+          </div>
         </div>
 
         <TextInput
