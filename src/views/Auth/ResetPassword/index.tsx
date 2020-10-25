@@ -1,10 +1,11 @@
 import { Button, Card, LabeledInput } from '#components';
+import { useTypedSelector } from '#store';
 import { Visibility } from '@material-ui/icons';
 import React, { FC, useEffect, useState } from 'react';
 import { useForm, ValidationRules } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
-import { resetPassword } from '../actions';
+import { resetError, resetPassword } from '../actions';
 import { ResetPasswordProps } from './types';
 
 type Inputs = {
@@ -16,29 +17,34 @@ interface ValidatorProps {
   messages: Record<string, string>;
 }
 
-const validators: ValidatorProps = {
-  functions: {
-    smallLength: (value: string) => value.length > 7,
-    smallCaseLetter: (value: string) => /[a-z]/.test(value),
-    capitalCaseLetter: (value: string) => /[A-Z]/.test(value),
-    specialChar: (value: string) => /.*[!@#$%^&*() =+_-]/.test(value),
-    digitLetter: (value: string) => /[0-9]/.test(value),
-  },
-  messages: {
-    smallLength: '8 characters minimum',
-    smallCaseLetter: 'One lowercase character',
-    capitalCaseLetter: 'One uppercase character',
-    specialChar: 'One special character',
-    digitLetter: 'One number',
-  },
-};
-
 const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
   const { register, handleSubmit, trigger, errors } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
   });
   const [passwordInputType, setPasswordInputType] = useState(true);
+  const { error } = useTypedSelector((state) => state.auth);
+
+  const validators: ValidatorProps = {
+    functions: {
+      resetError: (value: string) => {
+        error && dispatch(resetError());
+        return true;
+      },
+      smallLength: (value: string) => value.length > 7,
+      smallCaseLetter: (value: string) => /[a-z]/.test(value),
+      capitalCaseLetter: (value: string) => /[A-Z]/.test(value),
+      specialChar: (value: string) => /.*[!@#$%^&*() =+_-]/.test(value),
+      digitLetter: (value: string) => /[0-9]/.test(value),
+    },
+    messages: {
+      smallLength: '8 characters minimum',
+      smallCaseLetter: 'One lowercase character',
+      capitalCaseLetter: 'One uppercase character',
+      specialChar: 'One special character',
+      digitLetter: 'One number',
+    },
+  };
 
   const { functions, messages } = validators;
 
@@ -100,7 +106,15 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
             ),
           )}
         </div>
-        <div className="row">
+        <div
+          className="row"
+          style={{
+            paddingTop: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {error && <span className="error-span">{error}</span>}
           <Button className="primary-button" type="submit">
             ResetPassword
           </Button>

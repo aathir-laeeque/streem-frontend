@@ -72,6 +72,28 @@ export const updateProfileSuccess = (data: User) =>
 export const updateProfileError = (error: any) =>
   actionSpreader(AuthAction.UPDATE_PROFILE_ERROR, error);
 
+export const updateUserProfile = (payload: {
+  body: Record<string, any>;
+  id: User['id'];
+}) => actionSpreader(AuthAction.UPDATE_USER_PROFILE, payload);
+
+export const updateUserProfileSuccess = (data: User) =>
+  actionSpreader(AuthAction.UPDATE_USER_PROFILE_SUCCESS, data);
+
+export const updateUserProfileError = (error: any) =>
+  actionSpreader(AuthAction.UPDATE_USER_PROFILE_ERROR, error);
+
+export const updatePassword = (payload: {
+  body: Record<string, any>;
+  id: User['id'];
+}) => actionSpreader(AuthAction.UPDATE_PASSWORD, payload);
+
+export const updatePasswordSuccess = (data: User) =>
+  actionSpreader(AuthAction.UPDATE_PASSWORD_SUCCESS, data);
+
+export const updatePasswordError = (error: any) =>
+  actionSpreader(AuthAction.UPDATE_PASSWORD_ERROR, error);
+
 // REFRESH TOKEN ACTIONS
 
 export const refreshTokenPoll = () =>

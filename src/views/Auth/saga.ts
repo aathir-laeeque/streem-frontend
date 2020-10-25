@@ -6,13 +6,15 @@ import {
   apiLogOut,
   apiForgotPassword,
   apiResetPassword,
+  apiUpdateUserBasic,
+  apiUpdatePassword,
 } from '#utils/apiUrls';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { navigate } from '@reach/router';
-import { User } from '#store/users/types';
+import { User, UserStatus } from '#store/users/types';
 import {
   login,
   logOutSuccess,
@@ -38,11 +40,17 @@ import {
   resetPassword,
   resetPasswordError,
   resetPasswordSuccess,
+  updatePassword,
+  updatePasswordError,
+  updateUserProfile,
+  updateUserProfileError,
+  updateUserProfileSuccess,
 } from './actions';
 import { persistor } from '../../App';
 
 import { call, put, takeLatest, delay, select } from 'redux-saga/effects';
 import { AuthAction, LoginResponse, RefreshTokenResponse } from './types';
+import { setSelectedStatus } from '#store/users/actions';
 
 const getRefreshToken = (state: any) => state.auth.refreshToken;
 const getUserId = (state: any) => state.auth.userId;
@@ -109,7 +117,17 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
     );
 
     if (errors) {
-      throw 'Provided credentials are incorrect. Please check and try again.';
+      switch (errors[0].code) {
+        case 1004:
+          throw 'User has been blocked.';
+          break;
+        case 1005:
+          throw 'Provided credentials are incorrect. Please check and try again.';
+          break;
+        default:
+          throw 'Provided credentials are incorrect. Please check and try again.';
+          break;
+      }
     }
 
     yield put(loginSuccess(data));
@@ -144,6 +162,7 @@ function* logOutSaga() {
       }),
     );
     yield put(logOutSuccess());
+    yield put(setSelectedStatus(UserStatus.ACTIVE));
   } catch (error) {
     console.error('error from logOutSaga function in Auth :: ', error);
     yield put(logOutSuccess());
@@ -249,7 +268,7 @@ function* resetPasswordSaga({ payload }: ReturnType<typeof resetPassword>) {
     );
 
     if (errors) {
-      return false;
+      throw errors[0].message;
     }
 
     yield put(
@@ -266,7 +285,9 @@ function* resetPasswordSaga({ payload }: ReturnType<typeof resetPassword>) {
   }
 }
 
-function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
+function* updateUserProfileSaga({
+  payload,
+}: ReturnType<typeof updateUserProfile>) {
   try {
     const { body, id } = payload;
     const { data, errors }: ResponseObj<User> = yield call(
@@ -282,32 +303,96 @@ function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
       yield put(
         showNotification({
           type: NotificationType.ERROR,
-          msg: 'Provided Current Password is incorrect',
+          msg: 'There Seems to be an Issue',
         }),
       );
       return false;
     }
-    const userId = yield select(getUserId);
-    if (userId === id) yield put(updateProfileSuccess(data));
 
-    if (payload.body.oldPassword) {
+    yield put(updateUserProfileSuccess(data));
+
+    yield put(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'User updated successfully',
+      }),
+    );
+  } catch (error) {
+    console.error(
+      'error from updateUserProfileSaga function in Auth :: ',
+      error,
+    );
+    yield put(updateUserProfileError(error));
+  }
+}
+
+function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
+  try {
+    const { body, id } = payload;
+    const { data, errors }: ResponseObj<User> = yield call(
+      request,
+      'PUT',
+      apiUpdateUserBasic(id),
+      {
+        data: body,
+      },
+    );
+
+    if (errors) {
       yield put(
         showNotification({
-          type: NotificationType.SUCCESS,
-          msg: 'Password updated successfully',
+          type: NotificationType.ERROR,
+          msg: 'There Seems to be an Issue',
         }),
       );
-    } else {
-      yield put(
-        showNotification({
-          type: NotificationType.SUCCESS,
-          msg: 'Profile updated successfully',
-        }),
-      );
+      return false;
     }
+
+    yield put(updateProfileSuccess(data));
+
+    yield put(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'Profile updated successfully',
+      }),
+    );
   } catch (error) {
     console.error('error from updateProfileSaga function in Auth :: ', error);
     yield put(updateProfileError(error));
+  }
+}
+
+function* updatePasswordSaga({ payload }: ReturnType<typeof updatePassword>) {
+  try {
+    const { body, id } = payload;
+    const { data, errors }: ResponseObj<User> = yield call(
+      request,
+      'PUT',
+      apiUpdatePassword(id),
+      {
+        data: body,
+      },
+    );
+
+    if (errors) {
+      yield put(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: errors[0].message,
+        }),
+      );
+      return false;
+    }
+
+    yield put(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'Password updated successfully',
+      }),
+    );
+  } catch (error) {
+    console.error('error from updatePasswordSaga function in Auth :: ', error);
+    yield put(updatePasswordError(error));
   }
 }
 
@@ -322,4 +407,6 @@ export function* AuthSaga() {
   yield takeLatest(AuthAction.FORGOT_PASSWORD, forgotPasswordSaga);
   yield takeLatest(AuthAction.RESET_PASSWORD, resetPasswordSaga);
   yield takeLatest(AuthAction.UPDATE_PROFILE, updateProfileSaga);
+  yield takeLatest(AuthAction.UPDATE_USER_PROFILE, updateUserProfileSaga);
+  yield takeLatest(AuthAction.UPDATE_PASSWORD, updatePasswordSaga);
 }

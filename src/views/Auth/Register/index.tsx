@@ -49,6 +49,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
     setError,
     clearErrors,
     watch,
+    formState,
   } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -189,7 +190,11 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
           )}
         </div>
         <div className="row">
-          <Button className="primary-button" type="submit">
+          <Button
+            className="primary-button"
+            type="submit"
+            disabled={formState.isValid && formState.isDirty ? false : true}
+          >
             Register
           </Button>
         </div>

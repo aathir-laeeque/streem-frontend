@@ -45,6 +45,12 @@ export const apiGetUsers = () => `${baseUrl}/users`;
 
 export const apiGetUser = (id: User['id']) => `${baseUrl}/users/${id}`;
 
+export const apiUpdateUserBasic = (id: User['id']) =>
+  `${baseUrl}/users/${id}/basic`;
+
+export const apiUpdatePassword = (id: User['id']) =>
+  `${baseUrl}/users/${id}/password`;
+
 export const apiGetSelectedJob = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}`;
 
@@ -68,6 +74,12 @@ export const apiUploadFile = () => `${baseUrl}/files/`;
 
 export const apiCheckUsername = (username: string) =>
   `${baseUrl}/users/check-username?username=${username}`;
+
+export const apiCheckEmail = (email: string) =>
+  `${baseUrl}/users/check-email?email=${email}`;
+
+export const apiCheckEmployeeId = (employeeId: string) =>
+  `${baseUrl}/users/check-employee-id?employeeId=${employeeId}`;
 
 export const apiLogin = () => `${baseUrl}/auth/login`;
 
@@ -94,7 +106,7 @@ export const apiUnLockUser = (id: User['id']) =>
 
 export const apiRegister = () => `${baseUrl}/auth/register`;
 
-export const apiResetPassword = () => `${baseUrl}/auth/update-password`;
+export const apiResetPassword = () => `${baseUrl}/auth/password`;
 
 export const apiGetSessionActivitys = () => `${baseUrl}/users/audits`;
 

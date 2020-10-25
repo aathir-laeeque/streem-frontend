@@ -61,8 +61,8 @@ export const addUser = (payload: {
   employeeId: string;
   email: string;
   department: string;
-  facilities: { id: number }[];
-  roles: { id: number }[];
+  facilities: { id: string }[];
+  roles: { id: string }[];
 }) => actionSpreader(UserAccessAction.ADD_USER, payload);
 
 export const addUserSuccess = () =>

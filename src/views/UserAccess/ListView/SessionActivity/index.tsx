@@ -215,6 +215,7 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
   return (
     <Composer>
       <ListViewComponent
+        isSearchable={false}
         callOnScroll={false}
         properties={[]}
         fetchData={fetchData}

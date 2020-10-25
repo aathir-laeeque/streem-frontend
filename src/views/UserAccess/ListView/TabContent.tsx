@@ -25,6 +25,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { Composer } from './styles';
 import { TabViewProps } from './types';
+import { removeUnderscore } from '#utils/stringUtils';
 
 export function modalBody(user: User, text: string): any {
   return (
@@ -171,7 +172,11 @@ const TabContent: FC<TabViewProps> = ({
           ...item,
           properties: {
             'EMAIL ID': item.email,
-            ROLE: item.roles ? item.roles.join() : '-N/A-',
+            ROLE: item.roles
+              ? removeUnderscore(
+                  item.roles.map((r) => ' ' + capitalize(r.name)).join(),
+                )
+              : '-N/A-',
           },
         });
       }
@@ -202,7 +207,9 @@ const TabContent: FC<TabViewProps> = ({
         currentPage={users.pageable.page}
         data={parsedUsers}
         onPrimaryClick={() => navigate('user-access/add-user')}
-        primaryButtonText="Add a New User"
+        primaryButtonText={
+          selectedStatus === UserStatus.ARCHIVED ? undefined : 'Add a New User'
+        }
         beforeColumns={[
           {
             header: 'EMPLOYEE',

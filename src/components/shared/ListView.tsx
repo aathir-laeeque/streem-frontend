@@ -35,6 +35,7 @@ interface ListViewProps {
   fetchData: (page: number, size: number) => void;
   isLast: boolean;
   currentPage: number;
+  isSearchable?: boolean;
   beforeColumns?: {
     header: string;
     template: (item: any, index: number) => JSX.Element;
@@ -199,6 +200,7 @@ export const ListView: FC<ListViewProps> = ({
   afterColumns,
   filterProp,
   callOnScroll = true,
+  isSearchable = true,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -287,10 +289,12 @@ export const ListView: FC<ListViewProps> = ({
               </Menu>
             </>
           )}
-          <div className="searchboxwrapper">
-            <input className="searchbox" type="text" placeholder="Search" />
-            <Search className="searchsubmit" />
-          </div>
+          {isSearchable && (
+            <div className="searchboxwrapper">
+              <input className="searchbox" type="text" placeholder="Search" />
+              <Search className="searchsubmit" />
+            </div>
+          )}
           {filterProp?.activeCount && filterProp?.activeCount > 0 ? (
             <span className="resetOption" onClick={filterProp?.onReset}>
               Reset

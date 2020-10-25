@@ -12,6 +12,7 @@ interface LabeledInputProps {
   error?: string;
   required?: boolean;
   onFocusInput?: () => void;
+  isOn?: boolean;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -123,11 +124,12 @@ export const LabeledInput: FC<LabeledInputProps> = ({
   error,
   required = true,
   onFocusInput,
+  isOn = false,
 }) => {
   const [state, setState] = useState({
     isActive: false,
     placeHolderText: label,
-    className: disabled ? 'on' : '',
+    className: isOn || disabled ? 'on' : '',
   });
 
   const onFocus = (): void => {

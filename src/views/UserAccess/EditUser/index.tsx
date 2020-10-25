@@ -8,7 +8,7 @@ import {
 } from '#components';
 import { fetchFacilities } from '#store/facilities/actions';
 import { useForm } from 'react-hook-form';
-import { capitalize } from 'lodash';
+import { capitalize, debounce } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '#store';
 import { navigate } from '@reach/router';
@@ -16,16 +16,19 @@ import { Composer } from './styles';
 import { ViewUserProps } from './types';
 import { permissions, roles } from '../AddUser/temp';
 import { archiveUser, resendInvite, unArchiveUser } from '../actions';
-import { updateProfile } from '#views/Auth/actions';
+import { updateUserProfile } from '#views/Auth/actions';
 import { fetchSelectedUser } from '#store/users/actions';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { User } from '#store/users/types';
 import { modalBody } from '../ListView/TabContent';
+import { apiCheckEmail } from '#utils/apiUrls';
+import { request } from '#utils/request';
 
 type Inputs = {
   firstName: string;
   lastName: string;
+  username: string;
   employeeId: string;
   email: string;
   department: string;
@@ -50,6 +53,8 @@ const EditUser: FC<ViewUserProps> = () => {
     reset,
     getValues,
     watch,
+    clearErrors,
+    setError,
   } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -78,6 +83,7 @@ const EditUser: FC<ViewUserProps> = () => {
         firstName: selectedUser?.firstName,
         lastName: selectedUser?.lastName,
         employeeId: selectedUser?.employeeId,
+        username: selectedUser?.username,
         email: selectedUser?.email,
         department: selectedUser?.department,
         ...Object.fromEntries(
@@ -110,7 +116,7 @@ const EditUser: FC<ViewUserProps> = () => {
     });
     if (selectedUser?.id)
       dispatch(
-        updateProfile({
+        updateUserProfile({
           body: {
             ...payload,
             roles: parsedRoles,
@@ -174,7 +180,9 @@ const EditUser: FC<ViewUserProps> = () => {
     return <div>Loading...</div>;
   }
 
-  const rolesValues = watch('roles');
+  const { email, roles: rolesValues } = watch(['email', 'roles']);
+
+  console.log('isValid', formState.isValid);
 
   return (
     <Composer>
@@ -187,7 +195,7 @@ const EditUser: FC<ViewUserProps> = () => {
         <div className="content">
           <div className="heading">Viewing a User</div>
           <div className="sub-heading" style={{ marginBottom: '16px' }}>
-            A brief description of what the user can do here
+            View a User&apos;s Info, Permissions and Facility Access
           </div>
           <div className="flex-row">
             <div className="sub-heading bold">Basic Information</div>
@@ -195,6 +203,7 @@ const EditUser: FC<ViewUserProps> = () => {
           <div className="flex-row">
             <div className="flex-col right-gutter">
               <LabeledInput
+                isOn
                 refFun={register({
                   required: true,
                 })}
@@ -206,6 +215,7 @@ const EditUser: FC<ViewUserProps> = () => {
             </div>
             <div className="flex-col left-gutter">
               <LabeledInput
+                isOn
                 refFun={register({
                   required: true,
                 })}
@@ -220,21 +230,56 @@ const EditUser: FC<ViewUserProps> = () => {
             <div className="flex-col right-gutter">
               <LabeledInput
                 refFun={register({
-                  required: true,
+                  // required: true,
                 })}
-                placeHolder="Employee ID"
-                label="Employee ID"
-                id="employeeId"
-                error={errors['employeeId']?.message}
+                placeHolder="Username"
+                label="Username"
+                id="username"
+                disabled
               />
             </div>
             <div className="flex-col left-gutter">
               <LabeledInput
                 refFun={register({
+                  // required: true,
+                })}
+                placeHolder="Employee ID"
+                label="Employee ID"
+                id="employeeId"
+                error={errors['employeeId']?.message}
+                disabled
+              />
+            </div>
+          </div>
+          <div className="flex-row">
+            <div className="flex-col right-gutter">
+              <LabeledInput
+                isOn
+                refFun={register({
                   required: true,
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     message: 'Invalid email address',
+                  },
+                  validate: async (value) => {
+                    if (!email) return true;
+                    if (value === email) return true;
+                    return new Promise((resolve) => {
+                      debounce(async (email) => {
+                        const { errors } = await request(
+                          'GET',
+                          apiCheckEmail(email),
+                        );
+                        let message: string | boolean = true;
+                        if (errors && errors.length > 0) {
+                          message = 'Email ID already exists';
+                          setError('email', { message });
+                        } else {
+                          clearErrors('email');
+                        }
+                        resolve(message);
+                      }, 500)(value);
+                    });
                   },
                 })}
                 placeHolder="Email ID"
@@ -243,10 +288,9 @@ const EditUser: FC<ViewUserProps> = () => {
                 error={errors['email']?.message}
               />
             </div>
-          </div>
-          <div className="flex-row">
-            <div className="flex-col right-gutter">
+            <div className="flex-col left-gutter">
               <LabeledInput
+                isOn
                 refFun={register}
                 placeHolder="Department"
                 label="Department"
@@ -254,7 +298,6 @@ const EditUser: FC<ViewUserProps> = () => {
                 required={false}
               />
             </div>
-            <div className="flex-col left-gutter" />
           </div>
           <div className="partition" style={{ marginTop: '16px' }} />
           <div className="sub-heading bold">Roles</div>

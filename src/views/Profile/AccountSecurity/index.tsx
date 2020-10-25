@@ -1,6 +1,6 @@
 import { Button, LabeledInput } from '#components';
 import { useTypedSelector } from '#store';
-import { updateProfile } from '#views/Auth/actions';
+import { updatePassword, updateProfile } from '#views/Auth/actions';
 import { Visibility } from '@material-ui/icons';
 import React, { FC, useEffect, useState } from 'react';
 import { useForm, ValidationRules } from 'react-hook-form';
@@ -59,8 +59,9 @@ const AccountSecurity: FC<AccountSecurityProps> = () => {
     const payload = {
       oldPassword: data?.oldPassword,
       newPassword: data?.newPassword,
+      token: null,
     };
-    dispatch(updateProfile({ body: payload, id: profile?.id || 0 }));
+    dispatch(updatePassword({ body: payload, id: profile?.id || 0 }));
     reset();
   };
 

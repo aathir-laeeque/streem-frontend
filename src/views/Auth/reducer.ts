@@ -48,6 +48,7 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
       return { ...state, loading: false, resetRequested: true };
     case AuthAction.LOGIN_ERROR:
     case AuthAction.FORGOT_PASSWORD_ERROR:
+    case AuthAction.RESET_PASSWORD_ERROR:
       return { ...state, loading: false, error: action.payload };
     case AuthAction.FETCH_PROFILE_SUCCESS:
       return { ...state, profile: action.payload };

@@ -47,6 +47,10 @@ const Wrapper = styled.div.attrs({})`
       .input {
         color: #333333;
       }
+
+      #username {
+        text-transform: lowercase;
+      }
     }
 
     .wrapper.disabled {

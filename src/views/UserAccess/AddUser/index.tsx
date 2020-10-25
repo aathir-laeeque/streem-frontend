@@ -6,7 +6,7 @@ import {
   Role,
   HeaderWithBack,
 } from '#components';
-import { apiGetUsers } from '#utils/apiUrls';
+import { apiCheckEmail, apiCheckEmployeeId } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { debounce } from 'lodash';
 import { fetchFacilities } from '#store/facilities/actions';
@@ -25,9 +25,11 @@ type Inputs = {
   employeeId: string;
   email: string;
   department: string;
-  facilities: any;
-  roles: any;
+  roles: any[];
+  facilities: any[];
 };
+
+// TODO Make Facilities Multi Checkable and Showable like Roles
 
 const AddUser: FC<AddUserProps> = () => {
   const dispatch = useDispatch();
@@ -54,26 +56,26 @@ const AddUser: FC<AddUserProps> = () => {
     criteriaMode: 'all',
   });
 
-  const { employeeId, email } = watch(['employeeId', 'email']);
+  const { employeeId, email, roles: rolesValues } = watch([
+    'employeeId',
+    'email',
+    'roles',
+  ]);
 
   const onSubmit = (data: Inputs) => {
-    const roles =
-      typeof data.roles === 'string'
-        ? [{ id: parseInt(data.roles) }]
-        : data.roles.map((role: string) => ({
-            id: parseInt(role),
-          }));
-    const facilities =
-      typeof data.facilities === 'string'
-        ? [{ id: parseInt(data.facilities) }]
-        : data.facilities.map((facility: string) => ({
-            id: parseInt(facility),
-          }));
+    const parsedRoles: { id: string }[] = [];
+    data.roles.forEach((r) => {
+      if (r !== false) parsedRoles.push({ id: r });
+    });
+    const parsedFacilities: { id: string }[] = [];
+    data.facilities.forEach((r) => {
+      if (r !== false) parsedFacilities.push({ id: r });
+    });
     const payload = {
       ...data,
       email: data.email.toLowerCase(),
-      roles,
-      facilities,
+      roles: parsedRoles,
+      facilities: parsedFacilities,
     };
     dispatch(addUser(payload));
   };
@@ -81,6 +83,8 @@ const AddUser: FC<AddUserProps> = () => {
   if (list?.length === 0 || loading) {
     return <div>Loading...</div>;
   }
+
+  console.log('isValid', formState.isValid);
 
   return (
     <Composer>
@@ -132,21 +136,12 @@ const AddUser: FC<AddUserProps> = () => {
                     if (value === employeeId) return true;
                     return new Promise((resolve) => {
                       debounce(async (employeeId) => {
-                        const filters = JSON.stringify({
-                          op: 'AND',
-                          fields: [
-                            {
-                              field: 'employeeId',
-                              op: 'EQ',
-                              values: [employeeId],
-                            },
-                          ],
-                        });
-                        const { data } = await request('GET', apiGetUsers(), {
-                          params: { filters },
-                        });
+                        const { errors } = await request(
+                          'GET',
+                          apiCheckEmployeeId(employeeId),
+                        );
                         let message: string | boolean = true;
-                        if (data.length > 0) {
+                        if (errors && errors.length > 0) {
                           message = 'Employee ID already exists';
                           setError('employeeId', { message });
                         } else {
@@ -180,21 +175,12 @@ const AddUser: FC<AddUserProps> = () => {
                     if (value === email) return true;
                     return new Promise((resolve) => {
                       debounce(async (email) => {
-                        const filters = JSON.stringify({
-                          op: 'AND',
-                          fields: [
-                            {
-                              field: 'email',
-                              op: 'EQ',
-                              values: [email],
-                            },
-                          ],
-                        });
-                        const { data } = await request('GET', apiGetUsers(), {
-                          params: { filters },
-                        });
+                        const { errors } = await request(
+                          'GET',
+                          apiCheckEmail(email),
+                        );
                         let message: string | boolean = true;
-                        if (data.length > 0) {
+                        if (errors && errors.length > 0) {
                           message = 'Email ID already exists';
                           setError('email', { message });
                         } else {
@@ -235,14 +221,12 @@ const AddUser: FC<AddUserProps> = () => {
           </div>
           <div className="flex-row" style={{ paddingBottom: 0 }}>
             <Role
-              refFun={register({
-                required: true,
-              })}
+              refFun={register}
               permissions={permissions}
               roles={roles}
               placeHolder="Select Role"
               label="Role"
-              id="role"
+              id="roles"
             />
           </div>
           <div className="partition" />
@@ -251,13 +235,14 @@ const AddUser: FC<AddUserProps> = () => {
             Please select at least one (1) Facility for this user
           </div>
           <div className="flex-row">
-            {list?.map((facility) => (
+            {list?.map((facility, i) => (
               <div className="facilities" key={`${facility.id}`}>
                 <Checkbox
+                  key={`${facility.id}`}
                   refFun={register({
                     required: true,
                   })}
-                  name="facilities"
+                  name={`facilities[${i}]`}
                   value={`${facility.id}`}
                   label={facility.name}
                   onClick={() => console.log('cheked')}
@@ -270,7 +255,14 @@ const AddUser: FC<AddUserProps> = () => {
           <Button
             className="primary-button"
             type="submit"
-            disabled={!formState.isValid}
+            disabled={
+              rolesValues &&
+              rolesValues.some((r) => r !== false) &&
+              formState.isValid &&
+              formState.isDirty
+                ? false
+                : true
+            }
           >
             Save Changes
           </Button>
