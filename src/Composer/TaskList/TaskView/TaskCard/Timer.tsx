@@ -7,12 +7,17 @@ import React, { FC, useEffect, useState } from 'react';
 const Timer: FC<{ task: Task }> = ({ task }) => {
   const { status, startedAt, endedAt } = task.taskExecution;
 
-  const isTaskCompleted = status === TaskExecutionStatus.COMPLETED;
+  const isTaskCompleted =
+    status === TaskExecutionStatus.COMPLETED ||
+    status === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION;
+  const isTaskStarted = status === TaskExecutionStatus.INPROGRESS;
 
   const [timeElapsed, setTimeElapsed] = useState(
     isTaskCompleted
       ? moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds')
-      : moment().diff(moment.unix(startedAt), 'seconds'),
+      : isTaskStarted
+      ? moment().diff(moment.unix(startedAt), 'seconds')
+      : 0,
   );
 
   const [isLimitCrossed, setLimitCrossed] = useState(false);

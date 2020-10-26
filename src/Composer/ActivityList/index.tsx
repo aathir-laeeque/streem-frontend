@@ -198,7 +198,7 @@ const ActivityList: FC<ActivityListProps> = ({
               <div className="activity-audit">
                 Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
                 {audit?.modifiedBy?.employeeId} on{' '}
-                {formatDateTime(audit?.modifiedAt, 'MMM D, h:mm A')}
+                {formatDateTime(audit?.modifiedAt, 'MMM D, YYYY h:mm A')}
               </div>
             ) : null}
           </div>

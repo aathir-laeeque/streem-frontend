@@ -197,7 +197,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
             <span>
               Task Completed {text} by {generateName(modifiedBy)}, ID:{' '}
               {modifiedBy.employeeId} on{' '}
-              {formatDateTime(modifiedAt, 'MMM D, h:mm:ss A')}
+              {formatDateTime(modifiedAt, 'MMM D, YYYY h:mm A')}
             </span>
           </CompletedWrapper>
           {reason ? (
@@ -214,7 +214,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
           <span>
             Task Completed by {generateName(modifiedBy)}, ID:{' '}
             {modifiedBy.employeeId} on{' '}
-            {formatDateTime(modifiedAt, 'MMM D, h:mm:ss A')}
+            {formatDateTime(modifiedAt, 'MMM D, YYYY h:mm A')}
           </span>
         </CompletedWrapper>
       );
@@ -226,7 +226,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         <span>
           Task skipped by {generateName(modifiedBy)}, ID:{' '}
           {modifiedBy.employeeId} on{' '}
-          {formatDateTime(modifiedAt, 'MMM D, h:mm:ss A')}
+          {formatDateTime(modifiedAt, 'MMM D, YYYY h:mm A')}
         </span>
       </CompletedWrapper>
     );

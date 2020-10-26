@@ -367,7 +367,7 @@ const JobHeader: FC<Pick<HeaderProps, 'task' | 'enableStopForTask'>> = ({
         <div className="start-audit">
           Task Started by {generateName(modifiedBy)}, ID:{' '}
           {modifiedBy.employeeId} on{' '}
-          {formatDateTime(startedAt, 'MMM D, h:mm:ss A')}
+          {formatDateTime(startedAt, 'MMM D, YYYY h:mm A')}
         </div>
       ) : null}
 
