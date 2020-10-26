@@ -85,22 +85,22 @@ const Forgot: FC<ForgotProps> = () => {
                 validate: async (value) => {
                   if (!email) return true;
                   if (value === email) return true;
-                  return new Promise((resolve) => {
-                    debounce(async (email) => {
-                      const { errors } = await request(
-                        'GET',
-                        apiCheckEmail(email),
-                      );
-                      let message: string | boolean = true;
-                      if (errors && errors.length > 0) {
-                        message = 'Email ID already exists';
-                        setError('email', { message });
-                      } else {
-                        clearErrors('email');
-                      }
-                      resolve(message);
-                    }, 500)(value);
-                  });
+                  // return new Promise((resolve) => {
+                  //   debounce(async (email) => {
+                  //     const { errors } = await request(
+                  //       'GET',
+                  //       apiCheckEmail(email),
+                  //     );
+                  //     let message: string | boolean = true;
+                  //     if (errors && errors.length > 0) {
+                  //       message = 'Email ID already exists';
+                  //       setError('email', { message });
+                  //     } else {
+                  //       clearErrors('email');
+                  //     }
+                  //     resolve(message);
+                  //   }, 500)(value);
+                  // });
                 },
               })}
               placeHolder="Enter your Email ID"
