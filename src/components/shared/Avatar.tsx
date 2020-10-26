@@ -5,17 +5,21 @@ import styled, { css } from 'styled-components';
 
 type User = Pick<UserType, 'id' | 'firstName' | 'lastName' | 'employeeId'>;
 
+type Color = 'blue' | 'default';
+
 type Props = {
+  color?: Color;
   size?: 'small' | 'medium' | 'large';
   user: User;
 };
 
-const Wrapper = styled.div<Pick<Props, 'size'>>`
+const Wrapper = styled.div<Pick<Props, 'size' | 'color'>>`
   align-items: center;
   background-color: #dadada;
   border: 1px solid #999999;
   border-radius: 50%;
-  color: #333333;
+  color: ${({ color = 'default' }) =>
+    color === 'default' ? '#333333' : '#1d84ff'};
   display: flex;
   justify-content: center;
 
@@ -46,6 +50,12 @@ const Wrapper = styled.div<Pick<Props, 'size'>>`
   }}
 `;
 
-export const Avatar: FC<Props> = ({ size = 'medium', user }) => (
-  <Wrapper size={size}>{getInitials(getFullName(user))}</Wrapper>
+export const Avatar: FC<Props> = ({
+  color = 'default',
+  size = 'medium',
+  user,
+}) => (
+  <Wrapper color={color} size={size}>
+    {getInitials(getFullName(user))}
+  </Wrapper>
 );

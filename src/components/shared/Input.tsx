@@ -1,6 +1,7 @@
+import { Error as ErrorIcon, SvgIconComponent } from '@material-ui/icons';
+import { noop } from 'lodash';
 import React, { ComponentPropsWithRef, forwardRef } from 'react';
 import styled, { css } from 'styled-components';
-import { SvgIconComponent, Error as ErrorIcon } from '@material-ui/icons';
 
 type OnChangeArgs = {
   name: string;
@@ -10,8 +11,11 @@ type OnChangeArgs = {
 type InputProps = {
   AfterElement?: SvgIconComponent;
   afterElementClass?: string;
+  afterElementClick?: () => void;
+  afterElementWithoutError?: boolean;
   BeforeElement?: SvgIconComponent;
   beforeElementClass?: string;
+  beforeElementClick?: () => void;
   error?: boolean | string;
   label?: string;
   optional?: boolean;
@@ -102,8 +106,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const {
     AfterElement = ErrorIcon,
     afterElementClass = 'error',
+    afterElementClick = noop,
+    afterElementWithoutError = false,
     BeforeElement,
     beforeElementClass,
+    beforeElementClick = noop,
     className,
     defaultValue = '',
     error = '',
@@ -129,6 +136,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           <BeforeElement
             className={`icon ${beforeElementClass ? beforeElementClass : ''}`}
             id="before-icon"
+            onClick={beforeElementClick}
           />
         ) : null}
 
@@ -145,10 +153,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           type={type}
         />
 
+        {afterElementWithoutError ? (
+          <AfterElement
+            className={`icon ${afterElementClass ? afterElementClass : ''}`}
+            id="after-icon"
+            onClick={afterElementClick}
+          />
+        ) : null}
+
         {AfterElement && error ? (
           <AfterElement
             className={`icon ${afterElementClass ? afterElementClass : ''}`}
             id="after-icon"
+            onClick={afterElementClick}
           />
         ) : null}
       </div>

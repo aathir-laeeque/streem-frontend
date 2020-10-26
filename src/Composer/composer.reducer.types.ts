@@ -65,6 +65,9 @@ export enum ComposerAction {
   ASSIGN_USERS_TO_JOB_SUCCESS = '@@composer/job-action/ASSIGN_USERS_TO_JOB_SUCCESS',
   ASSIGN_USERS_TO_JOB_ERROR = '@@composer/job-action/ASSIGN_USERS_TO_JOB_ERROR',
   REVERT_USERS_FOR_JOB = '@@composer/job-action/REVERT_USERS_FOR_JOB',
+
+  GET_SIGN_OFF_STATUS = '@@composer/job-action/GET_SIGN_OFF_STATUS',
+  SIGN_OFF_TASKS = '@@composer/job-aaction/SIGN_OFF_TASKS',
 }
 
 export type ComposerActionType = ReturnType<

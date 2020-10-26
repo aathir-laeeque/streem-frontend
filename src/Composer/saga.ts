@@ -1,44 +1,47 @@
-import { RootState } from '#store';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import {
-  openOverlayAction,
   closeOverlayAction,
+  openOverlayAction,
 } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
+  apiAssignUsersToJob,
   apiCompleteJob,
+  apiGetAssignedUsersForJob,
   apiGetChecklist,
   apiGetSelectedJob,
   apiStartJob,
-  apiGetAssignedUsersForJob,
-  apiAssignUsersToJob,
+  apiTaskSignOff,
+  apiValidatePassword,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
-import { all, call, fork, put, select, takeLatest } from 'redux-saga/effects';
 import { navigate } from '@reach/router';
+import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 
 import {
+  assignUsersToJob,
+  assignUsersToJobError,
+  assignUsersToJobSuccess,
   completeJob,
+  fetchAssignedUsersForJob,
+  fetchAssignedUsersForJobError,
+  fetchAssignedUsersForJobSuccess,
   fetchData,
   fetchDataOngoing,
   fetchDataSuccess,
+  getSignOffStatus,
+  signOffTasks,
   startJob,
   startJobSuccess,
-  fetchAssignedUsersForJob,
-  fetchAssignedUsersForJobSuccess,
-  fetchAssignedUsersForJobError,
-  assignUsersToJob,
-  assignUsersToJobSuccess,
-  assignUsersToJobError,
 } from './actions';
 import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
 import { ComposerAction } from './composer.reducer.types';
+import { Entity } from './composer.types';
 import { StageListSaga } from './StageList/saga';
 import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
-import { Entity } from './composer.types';
 import { groupJobErrors } from './utils';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
@@ -218,11 +221,79 @@ function* assignUsersToJobSaga({
   }
 }
 
+function* getSignOffStatusSaga({
+  payload,
+}: ReturnType<typeof getSignOffStatus>) {
+  try {
+    const { jobId, allowSignOff } = payload;
+
+    const { data, errors } = yield call(
+      request,
+      'GET',
+      apiGetAssignedUsersForJob(jobId),
+    );
+
+    if (data) {
+      if (allowSignOff) {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.SIGN_COMPLETED_TASKS,
+            props: { data, jobId },
+          }),
+        );
+      } else {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.SIGN_OFF_STATUS,
+            props: { data },
+          }),
+        );
+      }
+    } else {
+      console.error('error from api :: ', errors);
+    }
+  } catch (error) {
+    console.error('error came in getSignOffStatusSaga :: ', error);
+  }
+}
+
+function* signOffTaskSaga({ payload }: ReturnType<typeof signOffTasks>) {
+  try {
+    const { jobId, password } = payload;
+
+    const { data: validateData, errors: validateErrors } = yield call(
+      request,
+      'POST',
+      apiValidatePassword(),
+      { data: { password } },
+    );
+
+    if (validateData) {
+      const { data, errors } = yield call(request, 'PATCH', apiTaskSignOff(), {
+        data: { jobId, token: validateData.token },
+      });
+
+      if (data) {
+        console.log('data from api :: ', data);
+        yield put(closeOverlayAction(OverlayNames.SIGN_COMPLETED_TASKS));
+      } else {
+        console.error('error from api :: ', errors);
+      }
+    } else {
+      console.error('error came in validte api :: ', validateErrors);
+    }
+  } catch (error) {
+    console.error('error from signOffTasksSaga :', error);
+  }
+}
+
 export function* ComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchDataSaga);
 
   yield takeLatest(ComposerAction.COMPLETE_JOB, completeJobSaga);
   yield takeLatest(ComposerAction.START_JOB, startJobSaga);
+  yield takeLatest(ComposerAction.GET_SIGN_OFF_STATUS, getSignOffStatusSaga);
+  yield takeLatest(ComposerAction.SIGN_OFF_TASKS, signOffTaskSaga);
 
   yield takeLatest(
     ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB,

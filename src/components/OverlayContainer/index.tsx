@@ -1,28 +1,30 @@
 import { TaskMediaModal, TimedTaskConfigModal } from '#Composer-new/modals';
+import { AuthorsDetailsPopover } from '#Composer-new/Overlays/AuthorsDetailsPopover';
+import InitiateSignOffModal from '#Composer-new/Overlays/InitiateSignOff';
+import PasswordInputModal from '#Composer-new/Overlays/PasswordInput';
+import ReviewerAssignmentModal from '#Composer-new/Overlays/ReviewerAssignmentModal';
+import { ReviewerAssignmentPopover } from '#Composer-new/Overlays/ReviewerAssignmentPopover';
+import ReviewerAssignmentSuccessModal from '#Composer-new/Overlays/ReviewerAssignmentSuccess';
+import { ReviewersDetailsPopover } from '#Composer-new/Overlays/ReviewersDetailsPopover';
+import ReviewSubmitSuccessModal from '#Composer-new/Overlays/ReviewSubmitSuccess';
+import SignOffProgressModal from '#Composer-new/Overlays/SignOffProgress';
+import { SubmitReviewModal } from '#Composer-new/Overlays/SubmitReview';
 import AddStop from '#Composer/modals/AddStop';
 import AssignmentSuccessModal from '#Composer/modals/AssignmentSuccess';
 import CompleteJobWithException from '#Composer/modals/CompleteJobWithException';
 import CompleteTaskWithException from '#Composer/modals/CompleteTaskWithException';
 import MediaDetail from '#Composer/modals/MediaDetail';
 import Signature from '#Composer/modals/SignatureActivity';
+import SignCompletedTasksModal from '#Composer/modals/SignCompletedTasks';
+import SignOffStatus from '#Composer/modals/SignOffStatus';
 import SkipTask from '#Composer/modals/SkipTask';
 import StartJob from '#Composer/modals/StartJob';
 import TaskErrorCorrection from '#Composer/modals/TaskErrorCorrection';
 import TaskUserAssignment from '#Composer/modals/TaskUserAssignment';
 import { AssignedUserDetailsPopover } from '#Composer/Popovers/AssignedUserDetailsPopover';
 import { TaskAssignmentPopover } from '#Composer/Popovers/TaskAssignmentPopover';
-import ReviewerAssignmentModal from '#Composer-new/Overlays/ReviewerAssignmentModal';
-import ReviewerAssignmentSuccessModal from '#Composer-new/Overlays/ReviewerAssignmentSuccess';
-import ReviewSubmitSuccessModal from '#Composer-new/Overlays/ReviewSubmitSuccess';
-import InitiateSignOffModal from '#Composer-new/Overlays/InitiateSignOff';
-import SignOffProgressModal from '#Composer-new/Overlays/SignOffProgress';
-import PasswordInputModal from '#Composer-new/Overlays/PasswordInput';
-import SessionExpireModal from '#views/Auth/Overlays/SessionExpire';
-import { ReviewerAssignmentPopover } from '#Composer-new/Overlays/ReviewerAssignmentPopover';
-import { SubmitReviewModal } from '#Composer-new/Overlays/SubmitReview';
-import { AuthorsDetailsPopover } from '#Composer-new/Overlays/AuthorsDetailsPopover';
-import { ReviewersDetailsPopover } from '#Composer-new/Overlays/ReviewersDetailsPopover';
 import { useTypedSelector } from '#store';
+import SessionExpireModal from '#views/Auth/Overlays/SessionExpire';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
 import React, { FC } from 'react';
@@ -135,6 +137,12 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.TASK_MEDIA:
       return <TaskMediaModal {...params} />;
+
+    case OverlayNames.SIGN_OFF_STATUS:
+      return <SignOffStatus {...params} />;
+
+    case OverlayNames.SIGN_COMPLETED_TASKS:
+      return <SignCompletedTasksModal {...params} />;
 
     default:
       return null;

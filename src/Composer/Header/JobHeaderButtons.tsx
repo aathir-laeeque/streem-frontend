@@ -1,4 +1,4 @@
-import { Button } from '#components';
+import { Button, Button1 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
@@ -7,7 +7,7 @@ import { ArrowDropDown } from '@material-ui/icons';
 import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { completeJob } from '../actions';
+import { completeJob, getSignOffStatus } from '../actions';
 import { JobStatus } from '../composer.types';
 import { Job } from '#views/Jobs/types';
 
@@ -27,6 +27,29 @@ const JobHeaderButtons: FC = () => {
 
   return (
     <div className="buttons-container">
+      {jobStatus === JobStatus.INPROGRESS ? (
+        <>
+          <Button1
+            className="sign-off-status"
+            color="blue"
+            variant="secondary"
+            onClick={() => dispatch(getSignOffStatus({ jobId }))}
+          >
+            Sign Off Status
+          </Button1>
+          <Button1
+            className="sign-off"
+            color="blue"
+            variant="secondary"
+            onClick={() =>
+              dispatch(getSignOffStatus({ jobId, allowSignOff: true }))
+            }
+          >
+            Sign Completed Task
+          </Button1>
+        </>
+      ) : null}
+
       <Button
         onClick={() => {
           window.open(`print/${jobId}`, '_blank');

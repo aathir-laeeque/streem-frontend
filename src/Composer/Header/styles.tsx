@@ -30,6 +30,11 @@ const Wrapper = styled.div`
   .buttons-container {
     display: flex;
 
+    button {
+      line-height: 0.75;
+      padding: 10px 16px;
+    }
+
     .dropdown-button {
       align-items: center;
       background-color: #1d84ff;

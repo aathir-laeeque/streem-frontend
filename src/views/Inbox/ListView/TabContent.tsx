@@ -63,11 +63,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
             }}
           >
             <div style={{ display: 'flex', flex: 0.8 }}>
-              <ProgressBar
-                bgColor="#dadada"
-                percentage={percentage || 0}
-                height={4}
-              />
+              <ProgressBar percentage={percentage || 0} height={4} />
             </div>
             <span
               style={{

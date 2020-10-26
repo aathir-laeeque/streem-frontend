@@ -96,3 +96,22 @@ export const completeJobSuccess = (withException = false) =>
       ? ComposerAction.COMPLETE_JOB_WITH_EXCEPTION_SUCCESS
       : ComposerAction.COMPLETE_JOB_SUCCESS,
   );
+
+type GetSignOffStatusArgs = {
+  jobId: Job['id'];
+  allowSignOff?: boolean;
+};
+
+export const getSignOffStatus = ({
+  jobId,
+  allowSignOff = false,
+}: GetSignOffStatusArgs) =>
+  actionSpreader(ComposerAction.GET_SIGN_OFF_STATUS, { jobId, allowSignOff });
+
+type signOffTasksArgs = {
+  jobId: Job['id'];
+  password: string;
+};
+
+export const signOffTasks = ({ jobId, password }: signOffTasksArgs) =>
+  actionSpreader(ComposerAction.SIGN_OFF_TASKS, { jobId, password });
