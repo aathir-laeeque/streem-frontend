@@ -11,10 +11,13 @@ import { pick, debounce } from 'lodash';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useTypedSelector } from '#store/helpers';
-import { getFullName } from '../../utils/stringUtils';
+import { getFullName } from '#utils/stringUtils';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
 import { signOffTasks } from '../actions';
+import NoTaskToSign from '#assets/svg/NoTaskToSign';
+import SignningNotCompleted from '#assets/svg/SignningNotCompleted';
+import TaskSignOfComplete from '#assets/svg/TaskSignOfComplete';
 
 const Wrapper = styled.div`
   .modal-body {
@@ -73,6 +76,10 @@ const Wrapper = styled.div`
             margin-top: 40px;
           }
         }
+
+        .sign-off-icon {
+          font-size: 120px;
+        }
       }
     }
 
@@ -89,18 +96,16 @@ const Wrapper = styled.div`
         }
 
         .progress-details {
-          align-items: center;
+          align-items: flex-start;
           display: flex;
           flex: 1;
           flex-direction: column;
           justify-content: center;
           margin-left: 8px;
 
-          > div.details {
-            color: #666666;
-            margin-top: 4px;
-            text-align: left;
-            width: 100%;
+          > .text {
+            font-size: 12px;
+            margin-top: 8px;
           }
         }
       }
@@ -121,6 +126,7 @@ type Assignee = {
 };
 
 type Props = {
+  allowSignOff: boolean;
   data: Assignee[];
   jobId: Job['id'];
 };
@@ -128,7 +134,7 @@ type Props = {
 const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: { data: assignees = [], jobId } = {},
+  props: { allowSignOff, data: assignees = [], jobId } = {},
 }) => {
   const { profile } = useTypedSelector((state) => state.auth);
 
@@ -153,7 +159,9 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
         showHeader={false}
         showFooter={false}
       >
-        <div className="header">Signing Completed Tasks</div>
+        <div className="header">
+          {allowSignOff ? 'Signing Completed Tasks' : 'Signing Off Status'}
+        </div>
 
         <div className="body">
           {isLoggedInUserAssigned ? (
@@ -186,10 +194,12 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
                 );
 
                 let displayText = 'No New Tasks Ready to be Signed Off';
+                let Icon = NoTaskToSign;
 
                 if (isSignOffComplete) {
                   displayText =
                     'All Good Here! You have already signed all of your completed Tasks';
+                  Icon = TaskSignOfComplete;
                 }
 
                 if (anyTaskNeedsSignOff) {
@@ -198,6 +208,7 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
 
                 if (!isSignOffStarted && !anyTaskNeedsSignOff) {
                   displayText = 'Complete Tasks to start Signing them Off';
+                  Icon = NoTaskToSign;
                 }
 
                 return (
@@ -244,14 +255,18 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
                           Sign Off
                         </Button1>
                       </div>
-                    ) : null}
+                    ) : (
+                      <Icon className="sign-off-icon" />
+                    )}
                   </div>
                 );
               })()}
             </div>
           ) : null}
           <div className="right-side">
-            <div className="text">Other Assignees Sign Off Status</div>
+            {allowSignOff ? (
+              <div className="text">Other Assignees Sign Off Status</div>
+            ) : null}
 
             {otherUsersTasksSignOff?.map((assignee, index) => {
               const { assignedTasks, id, signedOffTasks } = assignee;
@@ -274,7 +289,7 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
 
                   <div className="progress-details">
                     <ProgressBar percentage={percentage} />
-                    <div className="details">
+                    <div className="text">
                       Signed : {signedOffTasks} of {assignedTasks} tasks
                     </div>
                   </div>

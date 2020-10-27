@@ -1,7 +1,14 @@
 import { User as UserType } from '#store/users/types';
 import { getFullName, getInitials } from '#utils/stringUtils';
-import React, { FC } from 'react';
+import React, { FC, MouseEvent } from 'react';
+import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
+
+import {
+  closeOverlayAction,
+  openOverlayAction,
+} from '../OverlayContainer/actions';
+import { OverlayNames } from '../OverlayContainer/types';
 
 type User = Pick<UserType, 'id' | 'firstName' | 'lastName' | 'employeeId'>;
 
@@ -54,8 +61,27 @@ export const Avatar: FC<Props> = ({
   color = 'default',
   size = 'medium',
   user,
-}) => (
-  <Wrapper color={color} size={size}>
-    {getInitials(getFullName(user))}
-  </Wrapper>
-);
+}) => {
+  const dispatch = useDispatch();
+
+  return (
+    <Wrapper
+      color={color}
+      size={size}
+      onMouseEnter={(event: MouseEvent) => {
+        dispatch(
+          openOverlayAction({
+            type: OverlayNames.ASSIGNED_USER_DETAIL,
+            popOverAnchorEl: event.currentTarget,
+            props: { users: [user] },
+          }),
+        );
+      }}
+      onMouseLeave={() => {
+        dispatch(closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL));
+      }}
+    >
+      {getInitials(getFullName(user))}
+    </Wrapper>
+  );
+};

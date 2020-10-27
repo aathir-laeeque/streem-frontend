@@ -2,17 +2,26 @@ import { Button, Button1 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
+import { apiGetAssignedUsersForJob } from '#utils/apiUrls';
+import { request } from '#utils/request';
+import { Job } from '#views/Jobs/types';
 import { Menu, MenuItem } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
-import React, { FC, MouseEvent, useState } from 'react';
+import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useLocation } from '@reach/router';
 
 import { completeJob, getSignOffStatus } from '../actions';
 import { JobStatus } from '../composer.types';
-import { Job } from '#views/Jobs/types';
 
 const JobHeaderButtons: FC = () => {
   const { jobStatus, data } = useTypedSelector((state) => state.composer);
+
+  const { profile } = useTypedSelector((state) => state.auth);
+
+  const location = useLocation();
+
+  const [isLoggedInUserAssigned, setIsLoggedInUserAssigned] = useState(false);
 
   const { id: jobId, code, checklist: { name } = {} } = (data as Job) ?? {};
 
@@ -25,27 +34,51 @@ const JobHeaderButtons: FC = () => {
   const handleClick = (event: MouseEvent<HTMLDivElement>) =>
     setAnchorEl(event.currentTarget);
 
+  const showBulkAssignButton =
+    jobStatus !== JobStatus.COMPLETED &&
+    jobStatus !== JobStatus.COMPLETED_WITH_EXCEPTION &&
+    location.pathname.split('/')[1] !== 'inbox';
+
+  useEffect(() => {
+    (async () => {
+      if (jobId) {
+        const { data, errors } = await request(
+          'GET',
+          apiGetAssignedUsersForJob(jobId),
+        );
+
+        if (data) {
+          setIsLoggedInUserAssigned(
+            data.some((user) => user.id === profile?.id),
+          );
+        } else {
+          console.error(
+            'error came in fetch assigned users from component :: ',
+            errors,
+          );
+        }
+      }
+    })();
+  }, [jobId]);
+
   return (
     <div className="buttons-container">
       {jobStatus === JobStatus.INPROGRESS ? (
         <>
           <Button1
-            className="sign-off-status"
-            color="blue"
-            variant="secondary"
-            onClick={() => dispatch(getSignOffStatus({ jobId }))}
-          >
-            Sign Off Status
-          </Button1>
-          <Button1
             className="sign-off"
             color="blue"
             variant="secondary"
             onClick={() =>
-              dispatch(getSignOffStatus({ jobId, allowSignOff: true }))
+              dispatch(
+                getSignOffStatus({
+                  jobId,
+                  allowSignOff: isLoggedInUserAssigned,
+                }),
+              )
             }
           >
-            Sign Completed Task
+            {isLoggedInUserAssigned ? 'Sign Completed Task' : 'Sign Off Status'}
           </Button1>
         </>
       ) : null}
@@ -58,21 +91,23 @@ const JobHeaderButtons: FC = () => {
         Print Job
       </Button>
 
-      <Button
-        onClick={() => {
-          dispatch(
-            openOverlayAction({
-              type: OverlayNames.TASK_USERS_ASSIGNMENT,
-              props: {
-                jobId,
-                forAll: true,
-              },
-            }),
-          );
-        }}
-      >
-        Bulk Assign All Tasks
-      </Button>
+      {showBulkAssignButton ? (
+        <Button
+          onClick={() => {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.TASK_USERS_ASSIGNMENT,
+                props: {
+                  jobId,
+                  forAll: true,
+                },
+              }),
+            );
+          }}
+        >
+          Bulk Assign All Tasks
+        </Button>
+      ) : null}
 
       {jobStatus === JobStatus.ASSIGNED ? (
         <Button
