@@ -61,6 +61,11 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
         accessToken: action.payload?.accessToken,
         refreshToken: action.payload?.refreshToken,
       };
+    case AuthAction.CHECK_TOKEN_EXPIRY_SUCCESS:
+      return {
+        ...state,
+        isTokenExpired: action.payload.isTokenExpired,
+      };
     case AuthAction.RESET_ERROR:
       return { ...state, error: undefined };
     default:

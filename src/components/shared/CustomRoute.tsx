@@ -1,7 +1,7 @@
 import { Redirect, RouteComponentProps } from '@reach/router';
 import { useTypedSelector } from '#store';
 import { useDispatch } from 'react-redux';
-import { logOut, logOutSuccess, refreshTokenPoll } from '#views/Auth/actions';
+import { refreshTokenPoll } from '#views/Auth/actions';
 import React, { FC } from 'react';
 
 type Props = RouteComponentProps & {

@@ -72,6 +72,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
       fields: [
         { field: 'firstName', op: 'LIKE', values: [searchQuery] },
         { field: 'lastName', op: 'LIKE', values: [searchQuery] },
+        { field: 'employeeId', op: 'LIKE', values: [searchQuery] },
       ],
     });
     dispatch(fetchUsers({ page, size, filters, sort: 'id' }, 'active'));

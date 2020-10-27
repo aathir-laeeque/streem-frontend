@@ -198,6 +198,6 @@ export const apiValidatePrototype = (id: Checklist['id']) =>
 export const apiUpdatePrototype = (id: Checklist['id']) =>
   `${baseUrl}/checklists/${id}`;
 
-export const apiValidatePassword = () => `${baseUrl}/auth/validate`;
+export const apiValidatePassword = () => `${baseUrl}/auth/validate/credentials`;
 
 export const apiTaskSignOff = () => `${baseUrl}/tasks/sign-off`;

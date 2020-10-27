@@ -28,6 +28,7 @@ import {
   forgotPasswordSuccess,
   forgotPasswordError,
   setIdle,
+  checkTokenExpirySuccess,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
@@ -63,6 +64,7 @@ export interface AuthState {
   readonly resetRequested: boolean;
   readonly error: any;
   readonly roles?: string[];
+  readonly isTokenExpired?: boolean;
 }
 
 export enum AuthAction {
@@ -98,6 +100,9 @@ export enum AuthAction {
   UPDATE_PASSWORD = '@@auth/MyProfile/UPDATE_PASSWORD',
   UPDATE_PASSWORD_ERROR = '@@auth/MyProfile/UPDATE_PASSWORD_ERROR',
   UPDATE_PASSWORD_SUCCESS = '@@auth/MyProfile/UPDATE_PASSWORD_SUCCESS',
+  CHECK_TOKEN_EXPIRY = '@@auth/CHECK_TOKEN_EXPIRY',
+  CHECK_TOKEN_EXPIRY_ERROR = '@@auth/CHECK_TOKEN_EXPIRY_ERROR',
+  CHECK_TOKEN_EXPIRY_SUCCESS = '@@auth/CHECK_TOKEN_EXPIRY_SUCCESS',
   SET_IDLE = '@@auth/MyProfile/SET_IDLE',
 }
 
@@ -129,4 +134,5 @@ export type AuthActionType = ReturnType<
   | typeof resetPasswordSuccess
   | typeof resetPasswordError
   | typeof setIdle
+  | typeof checkTokenExpirySuccess
 >;

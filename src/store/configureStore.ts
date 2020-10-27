@@ -22,6 +22,7 @@ const persistConfig = {
               isRefreshing: false,
               resetRequested: false,
               error: undefined,
+              isTokenExpired: undefined,
             };
           default:
             return inboundState;

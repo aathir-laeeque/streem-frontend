@@ -85,10 +85,12 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
 
   const fetchData = (page: number, size: number) => {
     const filters = JSON.stringify({
-      op: 'OR',
+      op: 'AND',
       fields: [
         { field: 'firstName', op: 'LIKE', values: [searchQuery] },
-        { field: 'lastName', op: 'LIKE', values: [searchQuery] },
+        { field: 'archived', op: 'EQ', values: [false] },
+        // { field: 'lastName', op: 'LIKE', values: [searchQuery] },
+        // { field: 'employeeId', op: 'LIKE', values: [searchQuery] },
       ],
     });
     dispatch(fetchUsers({ page, size, filters, sort: 'id' }, 'active'));
@@ -275,7 +277,7 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
         dispatch(
           assignUsersToTask({
             taskId,
-            jobId: entityId,
+            jobId: Number(entityId),
             assignIds: assignedUsers,
             unassignIds: unAssignedUsers,
             preAssigned: preAssignedUsers,

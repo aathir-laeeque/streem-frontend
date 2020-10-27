@@ -45,10 +45,19 @@ import {
   updateUserProfile,
   updateUserProfileError,
   updateUserProfileSuccess,
+  checkTokenExpiry,
+  checkTokenExpirySuccess,
 } from './actions';
 import { persistor } from '../../App';
 
-import { call, put, takeLatest, delay, select } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  delay,
+  select,
+  takeLeading,
+  takeLatest,
+} from 'redux-saga/effects';
 import { AuthAction, LoginResponse, RefreshTokenResponse } from './types';
 import { setSelectedStatus } from '#store/users/actions';
 
@@ -61,13 +70,17 @@ const getRefreshTimeOut = (state: any) =>
 // TODO CHANGE POLLING PROCESS :: PUT THE DELAY AT LAST ON LOOP, SHOULD CALL REFRESH TOKEN ONE TIME ON POLLING START
 function* refreshTokenPollSaga() {
   try {
+    yield delay(500);
     let userId = yield select(getUserId);
+    let token = yield select(getRefreshToken);
+    let isIdle = yield select(getIsIdle);
+    if (!isIdle) yield put(refreshToken({ refreshToken: token }));
     while (userId) {
       const refreshTimeOut = yield select(getRefreshTimeOut);
-      yield delay((refreshTimeOut || 15) * 1000 * 60 - 5000);
+      yield delay((refreshTimeOut - 6 || 9) * 1000 * 60);
       userId = yield select(getUserId);
-      const isIdle = yield select(getIsIdle);
-      const token = yield select(getRefreshToken);
+      isIdle = yield select(getIsIdle);
+      token = yield select(getRefreshToken);
       if (!isIdle) yield put(refreshToken({ refreshToken: token }));
     }
   } catch (error) {
@@ -132,10 +145,8 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
 
     yield put(loginSuccess(data));
     yield delay(200);
-    yield put(refreshTokenPoll());
     yield put(fetchProfile({ id: data.id }));
-    yield delay(500);
-    yield put(refreshToken({ refreshToken: data.refreshToken }));
+    yield put(refreshTokenPoll());
   } catch (error) {
     console.error('error from loginSaga function in Auth :: ', error);
     if (typeof error !== 'string') error = 'There seems to be an Issue. ';
@@ -396,17 +407,48 @@ function* updatePasswordSaga({ payload }: ReturnType<typeof updatePassword>) {
   }
 }
 
+function* checkTokenExpirySaga({
+  payload,
+}: ReturnType<typeof checkTokenExpiry>) {
+  try {
+    console.log('PAYLOAD TO CHECK TOKEN EXPIRY :: ', payload);
+    // const { data, errors } = yield call(
+    //   request,
+    //   'PUT',
+    //   apiCheckTokenExpiry(id),
+    //   {
+    //     data: payload,
+    //   },
+    // );
+
+    // if (errors) {
+    //   throw 'Some Issue';
+    // }
+
+    // yield delay(2000);
+
+    yield put(checkTokenExpirySuccess({ isTokenExpired: false }));
+  } catch (error) {
+    console.error(
+      'error from checkTokenExpirySaga function in Auth :: ',
+      error,
+    );
+    yield put(checkTokenExpirySuccess({ isTokenExpired: true }));
+  }
+}
+
 export function* AuthSaga() {
-  yield takeLatest(AuthAction.LOGIN, loginSaga);
-  yield takeLatest(AuthAction.LOGOUT, logOutSaga);
-  yield takeLatest(AuthAction.LOGOUT_SUCCESS, logOutSuccessSaga);
+  yield takeLeading(AuthAction.LOGIN, loginSaga);
+  yield takeLeading(AuthAction.LOGOUT, logOutSaga);
+  yield takeLeading(AuthAction.LOGOUT_SUCCESS, logOutSuccessSaga);
   yield takeLatest(AuthAction.REFRESH_TOKEN_POLL, refreshTokenPollSaga);
-  yield takeLatest(AuthAction.REFRESH_TOKEN, refreshTokenSaga);
-  yield takeLatest(AuthAction.FETCH_PROFILE, fetchProfileSaga);
-  yield takeLatest(AuthAction.REGISTER, registerSaga);
-  yield takeLatest(AuthAction.FORGOT_PASSWORD, forgotPasswordSaga);
-  yield takeLatest(AuthAction.RESET_PASSWORD, resetPasswordSaga);
-  yield takeLatest(AuthAction.UPDATE_PROFILE, updateProfileSaga);
-  yield takeLatest(AuthAction.UPDATE_USER_PROFILE, updateUserProfileSaga);
-  yield takeLatest(AuthAction.UPDATE_PASSWORD, updatePasswordSaga);
+  yield takeLeading(AuthAction.REFRESH_TOKEN, refreshTokenSaga);
+  yield takeLeading(AuthAction.FETCH_PROFILE, fetchProfileSaga);
+  yield takeLeading(AuthAction.REGISTER, registerSaga);
+  yield takeLeading(AuthAction.FORGOT_PASSWORD, forgotPasswordSaga);
+  yield takeLeading(AuthAction.RESET_PASSWORD, resetPasswordSaga);
+  yield takeLeading(AuthAction.UPDATE_PROFILE, updateProfileSaga);
+  yield takeLeading(AuthAction.UPDATE_USER_PROFILE, updateUserProfileSaga);
+  yield takeLeading(AuthAction.UPDATE_PASSWORD, updatePasswordSaga);
+  yield takeLeading(AuthAction.CHECK_TOKEN_EXPIRY, checkTokenExpirySaga);
 }

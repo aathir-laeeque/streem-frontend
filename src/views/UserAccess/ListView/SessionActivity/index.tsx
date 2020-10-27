@@ -35,7 +35,10 @@ type initialState = {
 
 const currentDate = moment().startOf('day');
 const initialState: initialState = {
-  dateRange: [null, null],
+  dateRange: [
+    moment().startOf('day').subtract(7, 'days'),
+    moment().endOf('day'),
+  ],
   appliedFilters: {},
   startTime: currentDate,
   endTime: moment().endOf('day'),
@@ -135,6 +138,8 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
   useEffect(() => {
     if (!isIdle && Object.keys(state.appliedFilters).length === 0) fetchData(0);
   }, [state.appliedFilters, isIdle]);
+
+  console.log('dateRange', state.dateRange);
 
   const fetchLogs = (
     greaterThan: number,

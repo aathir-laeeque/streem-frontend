@@ -15,7 +15,12 @@ import { navigate } from '@reach/router';
 import { Composer } from './styles';
 import { ViewUserProps } from './types';
 import { permissions, roles } from '../AddUser/temp';
-import { archiveUser, resendInvite, unArchiveUser } from '../actions';
+import {
+  archiveUser,
+  cancelInvite,
+  resendInvite,
+  unArchiveUser,
+} from '../actions';
 import { updateUserProfile } from '#views/Auth/actions';
 import { fetchSelectedUser } from '#store/users/actions';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
@@ -171,6 +176,17 @@ const EditUser: FC<ViewUserProps> = () => {
     );
   };
 
+  const onCancelInvite = (id: User['id']) => {
+    dispatch(
+      cancelInvite({
+        id,
+        fetchData: () => {
+          console.log();
+        },
+      }),
+    );
+  };
+
   let rolePlaceholder = 'N/A';
   if (selectedUser?.roles && selectedUser?.roles[0]) {
     rolePlaceholder = capitalize(selectedUser.roles[0].name.replace('_', ' '));
@@ -229,31 +245,6 @@ const EditUser: FC<ViewUserProps> = () => {
           <div className="flex-row">
             <div className="flex-col right-gutter">
               <LabeledInput
-                refFun={register({
-                  // required: true,
-                })}
-                placeHolder="Username"
-                label="Username"
-                id="username"
-                disabled
-              />
-            </div>
-            <div className="flex-col left-gutter">
-              <LabeledInput
-                refFun={register({
-                  // required: true,
-                })}
-                placeHolder="Employee ID"
-                label="Employee ID"
-                id="employeeId"
-                error={errors['employeeId']?.message}
-                disabled
-              />
-            </div>
-          </div>
-          <div className="flex-row">
-            <div className="flex-col right-gutter">
-              <LabeledInput
                 isOn
                 refFun={register({
                   required: true,
@@ -297,6 +288,33 @@ const EditUser: FC<ViewUserProps> = () => {
                 id="department"
                 required={false}
               />
+            </div>
+          </div>
+          <div className="flex-row">
+            <div className="flex-col right-gutter">
+              <LabeledInput
+                refFun={register({
+                  // required: true,
+                })}
+                placeHolder="Employee ID"
+                label="Employee ID"
+                id="employeeId"
+                error={errors['employeeId']?.message}
+                disabled
+              />
+            </div>
+            <div className="flex-col left-gutter">
+              {selectedUser.verified && (
+                <LabeledInput
+                  refFun={register({
+                    // required: true,
+                  })}
+                  placeHolder="Username"
+                  label="Username"
+                  id="username"
+                  disabled
+                />
+              )}
             </div>
           </div>
           <div className="partition" style={{ marginTop: '16px' }} />
@@ -364,7 +382,12 @@ const EditUser: FC<ViewUserProps> = () => {
               >
                 Resend Invite
               </Button>
-              <Button className="button cancel">Cancel Invite</Button>
+              <Button
+                className="button cancel"
+                onClick={() => onCancelInvite(selectedUser.id)}
+              >
+                Cancel Invite
+              </Button>
             </>
           ) : selectedUser.verified && !selectedUser.archived ? (
             <Button

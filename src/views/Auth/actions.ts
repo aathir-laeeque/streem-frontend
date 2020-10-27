@@ -108,6 +108,15 @@ export const refreshTokenSuccess = (data: RefreshTokenResponse) =>
 export const refreshTokenError = (error: any) =>
   actionSpreader(AuthAction.REFRESH_TOKEN_ERROR, error);
 
+export const checkTokenExpiry = (payload: { type: string; token: string }) =>
+  actionSpreader(AuthAction.CHECK_TOKEN_EXPIRY, payload);
+
+export const checkTokenExpirySuccess = (payload: { isTokenExpired: boolean }) =>
+  actionSpreader(AuthAction.CHECK_TOKEN_EXPIRY_SUCCESS, payload);
+
+export const checkTokenExpiryError = (error: any) =>
+  actionSpreader(AuthAction.CHECK_TOKEN_EXPIRY_ERROR, error);
+
 // RESET PASSWORD
 
 export const resetPassword = (payload: {
