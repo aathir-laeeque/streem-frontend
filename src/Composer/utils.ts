@@ -8,7 +8,12 @@ import {
 import { Checklist, Stage, Task, TaskExecutionStatus } from './checklist.types';
 import { ErrorGroups } from './composer.types';
 import { StageErrors, StagesById, StagesOrder } from './StageList/types';
-import { TaskErrors, TasksById, TasksOrderInStage } from './TaskList/types';
+import {
+  TaskErrors,
+  TasksById,
+  TasksOrderInStage,
+  TaskSignOffError,
+} from './TaskList/types';
 
 export const groupJobErrors = (errors: Error[]) =>
   errors.reduce<ErrorGroups>(
@@ -19,11 +24,18 @@ export const groupJobErrors = (errors: Error[]) =>
         acc.tasksErrors.push(error);
       } else if (error.code in StageErrors) {
         acc.stagesErrors.push(error);
+      } else if (error.code in TaskSignOffError) {
+        acc.signOffErrors.push(error);
       }
 
       return acc;
     },
-    { stagesErrors: [], tasksErrors: [], activitiesErrors: [] },
+    {
+      stagesErrors: [],
+      tasksErrors: [],
+      activitiesErrors: [],
+      signOffErrors: [],
+    },
   );
 
 type GetStageArgs = {

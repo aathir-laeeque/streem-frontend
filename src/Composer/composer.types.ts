@@ -42,4 +42,5 @@ export type ErrorGroups = {
   stagesErrors: Error[];
   tasksErrors: Error[];
   activitiesErrors: Error[];
+  signOffErrors: Error[];
 };

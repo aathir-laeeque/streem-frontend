@@ -122,7 +122,9 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
       }
     } else {
       if (!withException) {
-        const { tasksErrors, activitiesErrors } = groupJobErrors(errors);
+        const { tasksErrors, activitiesErrors, signOffErrors } = groupJobErrors(
+          errors,
+        );
 
         if (tasksErrors.length) {
           console.log('handle task level error here');
@@ -139,6 +141,15 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
             activitiesErrors.map((error) =>
               put(setActivityError(error, error.id)),
             ),
+          );
+        }
+
+        if (signOffErrors.length) {
+          yield put(
+            openOverlayAction({
+              type: OverlayNames.SIGNNING_NOT_COMPLETE,
+              props: {},
+            }),
           );
         }
       }

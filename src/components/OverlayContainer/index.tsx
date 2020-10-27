@@ -20,6 +20,7 @@ import SignOffStatus from '#Composer/modals/SignOffStatus';
 import SkipTask from '#Composer/modals/SkipTask';
 import StartJob from '#Composer/modals/StartJob';
 import TaskErrorCorrection from '#Composer/modals/TaskErrorCorrection';
+import SignningNotCompleteModal from '#Composer/modals/SignningNotComplete';
 import TaskUserAssignment from '#Composer/modals/TaskUserAssignment';
 import { AssignedUserDetailsPopover } from '#Composer/Popovers/AssignedUserDetailsPopover';
 import { TaskAssignmentPopover } from '#Composer/Popovers/TaskAssignmentPopover';
@@ -143,6 +144,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.SIGN_COMPLETED_TASKS:
       return <SignCompletedTasksModal {...params} />;
+
+    case OverlayNames.SIGNNING_NOT_COMPLETE:
+      return <SignningNotCompleteModal {...params} />;
 
     default:
       return null;

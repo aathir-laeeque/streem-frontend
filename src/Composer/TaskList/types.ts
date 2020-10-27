@@ -29,3 +29,7 @@ export enum TaskErrors {
   E201 = 'TASK_INCOMPLETE',
   E202 = 'TASK_NOT_FOUND',
 }
+
+export enum TaskSignOffError {
+  E215 = 'TASK_NOT_SIGNNED',
+}
