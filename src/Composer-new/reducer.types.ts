@@ -17,6 +17,7 @@ import {
   submitChecklistReviewWithCRSuccess,
   updateChecklistState,
   sendReviewToCrSuccess,
+  assignReviewersToChecklistSuccess,
 } from './reviewer.actions';
 import { ActivityListState } from './Activity/reducer.types';
 import { Checklist } from './checklist.types';
@@ -90,4 +91,5 @@ export type ComposerActionType = ReturnType<
   | typeof continueChecklistReviewSuccess
   | typeof updateChecklistState
   | typeof sendReviewToCrSuccess
+  | typeof assignReviewersToChecklistSuccess
 >;

@@ -108,7 +108,10 @@ export const apiRegister = () => `${baseUrl}/auth/register`;
 
 export const apiResetPassword = () => `${baseUrl}/auth/password`;
 
-export const apiGetSessionActivitys = () => `${baseUrl}/users/audits`;
+export const apiGetSessionActivities = () => `${baseUrl}/users/audits`;
+
+export const apiGetJobActivity = (jobId: Job['id']) =>
+  `${baseUrl}/audits/jobs/${jobId}`;
 
 // Task
 export const apiAssignUsersToTask = (taskId: Task['id']) =>

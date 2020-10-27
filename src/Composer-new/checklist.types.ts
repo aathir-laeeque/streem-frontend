@@ -1,4 +1,5 @@
 import { User } from '#store/users/types';
+import { Author } from '#views/Checklists/NewPrototype/types';
 import { Reviewer, ReviewerState } from './reviewer.types';
 
 export type Properties = {
@@ -134,6 +135,16 @@ export enum ChecklistStates {
   SIGNING_IN_PROGRESS = 'SIGNING_IN_PROGRESS',
   READY_FOR_RELEASE = 'READY_FOR_RELEASE',
   PUBLISHED = 'PUBLISHED',
+
+  // BEING_BUILT,
+  // SUBMITTED_FOR_REVIEW,
+  // BEING_REVIEWED,
+  // REQUESTED_CHANGES,
+  // READY_FOR_SIGNING,
+  // SIGN_OFF_INITIATED,
+  // SIGNING_IN_PROGRESS,
+  // READY_FOR_RELEASE,
+  // PUBLISHED,
 }
 
 export enum ChecklistStatesContent {
@@ -169,7 +180,7 @@ export type Checklist = {
   status: ChecklistStates;
   version: number | null;
   reviewers: Reviewer[];
-  authors: Reviewer[];
+  authors: Author[];
   comments: Comment[];
   reviewCycle: number;
 };

@@ -15,10 +15,15 @@ import {
   stageListReducer,
 } from './StageList/reducer';
 import {
+  initialState as activityState,
+  jobActivityReducer,
+} from './JobActivity/reducer';
+import {
   initialState as taskListState,
   taskListReducer,
 } from './TaskList/reducer';
 import { User } from '#store/users/types';
+import { TaskExecutionStatus } from './checklist.types';
 
 const initialState: ComposerState = {
   activities: activityListState,
@@ -36,6 +41,8 @@ const initialState: ComposerState = {
   tasks: taskListState,
 
   assignees: [],
+
+  activity: activityState,
 };
 
 const reducer: Reducer<ComposerState, ComposerActionType> = (
@@ -103,10 +110,27 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       const res = reduce(
         state.tasks.tasksById,
         function (result, value, key) {
-          const newAssignees = (value.taskExecution.assignees as Array<
-            User
-          >).filter((item) => !action.payload.unassignIds.includes(item.id));
-          const merged = unionBy(jobAssigned, newAssignees, 'id');
+          let merged: User[];
+          if (
+            value.taskExecution.status === TaskExecutionStatus.COMPLETED ||
+            value.taskExecution.status ===
+              TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION ||
+            value.taskExecution.status ===
+              TaskExecutionStatus.COMPLETED_WITH_EXCEPTION ||
+            value.taskExecution.status === TaskExecutionStatus.SKIPPED
+          ) {
+            merged = value.taskExecution.assignees;
+          } else {
+            const newAssignees = (value.taskExecution.assignees as Array<
+              User
+            >).filter(
+              (item) =>
+                item.actionPerformed === false &&
+                item.state !== 'SIGNED_OFF' &&
+                !action.payload.unassignIds.includes(item.id),
+            );
+            merged = unionBy(jobAssigned, newAssignees, 'id');
+          }
           return {
             ...result,
             [key]: {
@@ -131,6 +155,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         activities: activityListReducer(state.activities, action),
         stages: stageListReducer(state.stages, action),
         tasks: taskListReducer(state.tasks, action),
+        activity: jobActivityReducer(state.activity, action),
       };
   }
 };

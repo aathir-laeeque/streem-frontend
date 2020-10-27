@@ -1,11 +1,12 @@
 import { useTypedSelector } from '#store';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { fetchData, resetComposer } from './actions';
-import { ComposerProps } from './composer.types';
+import { ComposerProps, Tabs } from './composer.types';
 import Header from './Header';
 import StageList from './StageList';
+import ActivityView from './JobActivity';
 import ComposerWrapper from './styles';
 import TaskList from './TaskList';
 
@@ -13,6 +14,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
   const dispatch = useDispatch();
   const { isIdle } = useTypedSelector((state) => state.auth);
   const { activeStageId } = useTypedSelector((state) => state.composer.stages);
+  const [activeTab, setActiveTab] = useState(Tabs.STAGES);
 
   useEffect(() => {
     if (!isIdle) {
@@ -29,12 +31,18 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
   }, [isIdle]);
 
   return (
-    <ComposerWrapper>
-      <Header />
+    <ComposerWrapper activeTab={activeTab}>
+      <Header activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <StageList />
+      {activeTab === Tabs.ACTIVITY ? (
+        <ActivityView jobId={id} />
+      ) : (
+        <>
+          <StageList />
 
-      {activeStageId ? <TaskList /> : null}
+          {activeStageId ? <TaskList /> : null}
+        </>
+      )}
     </ComposerWrapper>
   );
 };

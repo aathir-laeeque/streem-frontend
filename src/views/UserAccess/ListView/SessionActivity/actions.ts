@@ -2,14 +2,14 @@ import { actionSpreader } from '#store/helpers';
 import { ResponseObj } from '#utils/globalTypes';
 import { SessionActivityAction, SessionActivity } from './types';
 
-export const fetchSessionActivitys = (
+export const fetchSessionActivities = (
   payload?: Record<string, string | number>,
 ) => actionSpreader(SessionActivityAction.FETCH_SESSION_ACTIVITY, payload);
 
-export const fetchSessionActivitysOngoing = () =>
+export const fetchSessionActivitiesOngoing = () =>
   actionSpreader(SessionActivityAction.FETCH_SESSION_ACTIVITY_ONGOING);
 
-export const fetchSessionActivitysSuccess = ({
+export const fetchSessionActivitiesSuccess = ({
   data,
   pageable,
 }: Partial<ResponseObj<SessionActivity>>) =>
@@ -18,5 +18,5 @@ export const fetchSessionActivitysSuccess = ({
     pageable,
   });
 
-export const fetchSessionActivitysError = (error: any) =>
+export const fetchSessionActivitiesError = (error: any) =>
   actionSpreader(SessionActivityAction.FETCH_SESSION_ACTIVITY_ERROR, { error });

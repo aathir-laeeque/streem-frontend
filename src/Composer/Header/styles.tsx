@@ -9,11 +9,15 @@ const Wrapper = styled.div`
   z-index: 1;
 
   .header-item {
+    &.active {
+      border-bottom: 2px solid #1d84ff;
+    }
+
+    cursor: pointer;
     font-size: 16px;
     font-weight: 600;
     line-height: 0.75;
     color: #1d84ff;
-    border-bottom: 2px solid #1d84ff;
     padding: 18px 32px;
   }
 

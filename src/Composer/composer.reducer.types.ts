@@ -18,6 +18,7 @@ import {
 import { ActivityListState } from './ActivityList/reducer.types';
 import { Checklist } from './checklist.types';
 import { Entity, JobStatus } from './composer.types';
+import { JobActivityState } from './JobActivity/types';
 import { StageListState } from './StageList/reducer.types';
 import { TaskListState } from './TaskList/reducer.types';
 
@@ -38,6 +39,8 @@ export type ComposerState = {
   tasks: TaskListState;
 
   assignees: User[];
+
+  activity: JobActivityState;
 };
 
 export enum ComposerAction {

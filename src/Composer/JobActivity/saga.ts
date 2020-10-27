@@ -1,26 +1,26 @@
-import { apiGetSessionActivities } from '#utils/apiUrls';
+import { apiGetJobActivity } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import moment from 'moment';
-import { SessionActivity } from './types';
+import { JobActivity } from './types';
 import {
-  fetchSessionActivitiesError,
-  fetchSessionActivitiesOngoing,
-  fetchSessionActivitiesSuccess,
-  fetchSessionActivities,
+  fetchJobActivitiesError,
+  fetchJobActivitiesOngoing,
+  fetchJobActivitiesSuccess,
+  fetchJobActivities,
 } from './actions';
-import { SessionActivityAction } from './types';
+import { JobActivityAction } from './types';
 
-function* fetchSessionActivitiesSaga({
+function* fetchJobActivitiesSaga({
   payload,
-}: ReturnType<typeof fetchSessionActivities>) {
+}: ReturnType<typeof fetchJobActivities>) {
   try {
-    const params = payload || {};
+    const { jobId, params } = payload || {};
     let currentPage = parseInt(params.page.toString());
     delete params.page;
     if (currentPage === 0) {
-      yield put(fetchSessionActivitiesOngoing());
+      yield put(fetchJobActivitiesOngoing());
     } else {
       currentPage++;
     }
@@ -29,10 +29,10 @@ function* fetchSessionActivitiesSaga({
       data,
       pageable,
       errors,
-    }: ResponseObj<SessionActivity> = yield call(
+    }: ResponseObj<JobActivity> = yield call(
       request,
       'GET',
-      apiGetSessionActivities(),
+      apiGetJobActivity(jobId),
       { params },
     );
 
@@ -46,7 +46,7 @@ function* fetchSessionActivitiesSaga({
     }));
 
     yield put(
-      fetchSessionActivitiesSuccess({
+      fetchJobActivitiesSuccess({
         data: newData,
         pageable: {
           ...pageable,
@@ -57,16 +57,16 @@ function* fetchSessionActivitiesSaga({
     );
   } catch (error) {
     console.error(
-      'error from fetchSessionActivitiesSaga function in SessionActivitySaga :: ',
+      'error from fetchJobActivitiesSaga function in JobActivitySaga :: ',
       error,
     );
-    yield put(fetchSessionActivitiesError(error));
+    yield put(fetchJobActivitiesError(error));
   }
 }
 
-export function* SessionActivitySaga() {
+export function* JobActivitySaga() {
   yield takeLatest(
-    SessionActivityAction.FETCH_SESSION_ACTIVITY,
-    fetchSessionActivitiesSaga,
+    JobActivityAction.FETCH_JOB_ACTIVITY,
+    fetchJobActivitiesSaga,
   );
 }

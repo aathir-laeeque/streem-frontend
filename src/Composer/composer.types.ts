@@ -4,6 +4,11 @@ import { Job } from '../views/Jobs/types';
 import { Checklist } from './checklist.types';
 import { Error } from '#utils/globalTypes';
 
+export enum Tabs {
+  STAGES = 'STAGES',
+  ACTIVITY = 'ACTIVITY',
+}
+
 export enum Entity {
   JOB = 'Job',
   CHECKLIST = 'Checklist',

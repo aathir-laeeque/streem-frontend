@@ -6,7 +6,7 @@ import {
   activityReducer,
   initialState as ActivityListState,
 } from './Activity/reducer';
-import { Checklist } from './checklist.types';
+import { Checklist, ChecklistStates } from './checklist.types';
 import {
   ComposerAction,
   ComposerActionType,
@@ -89,6 +89,15 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         reviewers: state.reviewers.filter(
           (item) => item.id !== action.payload.user.id,
         ),
+      };
+
+    case ComposerAction.ASSIGN_REVIEWERS_TO_CHECKLIST_SUCCESS:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          status: ChecklistStates.BEING_REVIEWED,
+        } as Checklist,
       };
 
     case ComposerAction.CONTINUE_CHECKLIST_REVIEW_SUCCESS:

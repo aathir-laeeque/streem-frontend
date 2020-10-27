@@ -91,10 +91,20 @@ const HeaderWrapper = styled.div<HeaderWrapperProps>`
         display: flex;
         margin-left: auto;
 
+        #more {
+          padding: 12px 6px;
+          border: none;
+          > .icon {
+            color: #000;
+            margin: 0px;
+          }
+        }
+
         #edit,
         #view-reviewers {
+          padding: 12px;
           > .icon {
-            color: #1d84ff;
+            color: #000;
             margin: 0px;
           }
         }

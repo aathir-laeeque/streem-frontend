@@ -325,6 +325,14 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
             padding-right: 24px;
             overflow-y: auto;
 
+            .no-comments {
+              display: flex;
+              flex: 1;
+              align-items: center;
+              color: #999999;
+              justify-content: center;
+            }
+
             .reviews-group {
               display: flex;
               flex: 1;

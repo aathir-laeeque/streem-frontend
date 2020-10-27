@@ -1,16 +1,35 @@
-import React, { FC } from 'react';
+import { Tabs } from '#Composer/composer.types';
+import React, { Dispatch, FC, SetStateAction } from 'react';
 
 import JobHeaderButtons from './JobHeaderButtons';
 import Wrapper from './styles';
 
-const Header: FC = () => {
+const Header: FC<{
+  activeTab: Tabs;
+  onTabChange: Dispatch<SetStateAction<Tabs>>;
+}> = ({ activeTab, onTabChange }) => {
   return (
     <Wrapper>
-      <div className="header-item">Stages</div>
+      <div
+        className={`header-item ${activeTab === Tabs.STAGES ? 'active' : ''}`}
+        onClick={() => onTabChange(Tabs.STAGES)}
+      >
+        Stages
+      </div>
+      <div
+        className={`header-item ${activeTab === Tabs.ACTIVITY ? 'active' : ''}`}
+        onClick={() => onTabChange(Tabs.ACTIVITY)}
+      >
+        Activity
+      </div>
 
-      <span className="auto-save-text">All changes saved</span>
+      {activeTab === Tabs.STAGES && (
+        <>
+          <span className="auto-save-text">All changes saved</span>
 
-      <JobHeaderButtons />
+          <JobHeaderButtons />
+        </>
+      )}
     </Wrapper>
   );
 };

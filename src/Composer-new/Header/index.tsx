@@ -18,6 +18,7 @@ import {
   Info,
   Message,
   PlayCircleFilled,
+  MoreHoriz,
 } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC } from 'react';
@@ -97,7 +98,7 @@ const ChecklistHeader: FC = () => {
           primaryText: 'Confirm',
           title: 'Start Reviewing',
           body: (
-            <>Are you sure you want to start reviewing this Prototype now ?</>
+            <>Are you sure you want to start reviewing this Prototype now?</>
           ),
         },
       }),
@@ -135,7 +136,7 @@ const ChecklistHeader: FC = () => {
       case ReviewerState.NOT_STARTED:
         return (
           <Button1 className="submit" onClick={handleStartReview}>
-            Start
+            Start Review
           </Button1>
         );
       case ReviewerState.IN_PROGRESS:
@@ -182,106 +183,90 @@ const ChecklistHeader: FC = () => {
     }
   };
 
+  const PrototypeEditButton = () => (
+    <Button1
+      id="edit"
+      variant="secondary"
+      onClick={() =>
+        navigate('prototype', {
+          state: {
+            mode: FormMode.EDIT,
+            formData: {
+              name: data.name,
+              properties: data.properties,
+              authors: data.authors,
+              prototypeId: data.id,
+            },
+          },
+        })
+      }
+    >
+      <Settings className="icon" fontSize="small" />
+    </Button1>
+  );
+
+  const MoreButton = () => (
+    <Button1
+      id="more"
+      variant="secondary"
+      onClick={() => console.log('MORE CLICKED')}
+    >
+      <MoreHoriz className="icon" fontSize="small" />
+    </Button1>
+  );
+
+  const AuthorSubmitButton = ({ title }: { title: string }) => (
+    <Button1
+      className="submit"
+      onClick={() => dispatch(validatePrototype(data.id))}
+    >
+      {title}
+    </Button1>
+  );
+
+  const ViewReviewersButton = () => (
+    <Button1
+      id="view-reviewers"
+      variant="secondary"
+      onClick={() => handleSubmitForReview(true)}
+    >
+      <Group className="icon" fontSize="small" />
+    </Button1>
+  );
+
   const renderButtonsForAuthor = () => {
     switch (data.status) {
       case ChecklistStates.DRAFT:
         return (
           <>
-            <Button1
-              id="edit"
-              variant="secondary"
-              onClick={() =>
-                navigate('prototype', {
-                  state: {
-                    mode: FormMode.EDIT,
-                    formData: {
-                      name: data.name,
-                      properties: data.properties,
-                      authors: data.authors,
-                      prototypeId: data.id,
-                    },
-                  },
-                })
-              }
-            >
-              <Settings className="icon" fontSize="small" />
-            </Button1>
-            <Button1
-              className="submit"
-              onClick={() => dispatch(validatePrototype(data.id))}
-            >
-              Submit
-            </Button1>
+            <PrototypeEditButton />
+            {author.primary && <AuthorSubmitButton title="Submit For Review" />}
+            <MoreButton />
+          </>
+        );
+
+      case ChecklistStates.BEING_REVIEWED:
+        return (
+          <>
+            <ViewReviewersButton />
+            <MoreButton />
           </>
         );
 
       case ChecklistStates.CR_IN_PROGRESS:
         return (
           <>
-            <Button1
-              id="edit"
-              variant="secondary"
-              onClick={() =>
-                navigate('prototype', {
-                  state: {
-                    mode: FormMode.EDIT,
-                    formData: {
-                      name: data.name,
-                      properties: data.properties,
-                      authors: data.authors,
-                      prototypeId: data.id,
-                    },
-                  },
-                })
-              }
-            >
-              <Settings className="icon" fontSize="small" />
-            </Button1>
-            <Button1
-              id="view-reviewers"
-              variant="secondary"
-              onClick={() => handleSubmitForReview(true)}
-            >
-              <Group className="icon" fontSize="small" />
-            </Button1>
-            <Button1
-              className="submit"
-              onClick={() => dispatch(validatePrototype(data.id))}
-            >
-              Submit
-            </Button1>
+            <PrototypeEditButton />
+            <ViewReviewersButton />
+            <AuthorSubmitButton title="Submit" />
           </>
         );
 
       default:
         return (
           <>
-            <Button1
-              id="edit"
-              variant="secondary"
-              onClick={() =>
-                navigate('prototype', {
-                  state: {
-                    mode: FormMode.EDIT,
-                    formData: {
-                      name: data.name,
-                      properties: data.properties,
-                      authors: data.authors,
-                      prototypeId: data.id,
-                    },
-                  },
-                })
-              }
-            >
-              <Settings className="icon" fontSize="small" />
-            </Button1>
-            <Button1
-              id="view-reviewers"
-              variant="secondary"
-              onClick={() => handleSubmitForReview(true)}
-            >
-              <Group className="icon" fontSize="small" />
-            </Button1>
+            <PrototypeEditButton />
+            <ViewReviewersButton />
           </>
         );
     }
@@ -341,13 +326,7 @@ const ChecklistHeader: FC = () => {
 
             {reviewer && (
               <>
-                <Button1
-                  id="view-reviewers"
-                  variant="secondary"
-                  onClick={() => handleSubmitForReview(true)}
-                >
-                  <Group className="icon" fontSize="small" />
-                </Button1>
+                <ViewReviewersButton />
                 {data.status !== ChecklistStates.CR_IN_PROGRESS &&
                 data.status !== ChecklistStates.DRAFT
                   ? renderButtonsForReviewer(reviewer.state, data.reviewers)

@@ -37,6 +37,7 @@ import {
 } from './actions';
 import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
+import { JobActivitySaga } from './JobActivity/saga';
 import { ComposerAction } from './composer.reducer.types';
 import { Entity } from './composer.types';
 import { StageListSaga } from './StageList/saga';
@@ -317,5 +318,6 @@ export function* ComposerSaga() {
     fork(StageListSaga),
     fork(TaskListSaga),
     fork(ActivityListSaga),
+    fork(JobActivitySaga),
   ]);
 }

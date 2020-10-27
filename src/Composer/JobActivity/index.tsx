@@ -1,19 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
 import { ListViewComponent, FilterProp } from '#components';
 import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined';
-import {
-  SessionActivity as SessionActivityType,
-  SessionActivityState,
-  SessionActivitySeverity,
-} from './types';
 import { groupBy } from 'lodash';
 import moment, { Moment } from 'moment';
 import { useTypedSelector } from '#store';
-import { navigate as navigateTo } from '@reach/router';
-import { fetchSessionActivities } from './actions';
 import { useDispatch } from 'react-redux';
 import { Composer } from './styles';
-import { TabViewProps } from '../types';
 import TextField from '@material-ui/core/TextField';
 import {
   StaticDateRangePicker,
@@ -25,6 +17,9 @@ import {
 import MomentUtils from '@material-ui/pickers/adapter/moment';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { JobActivity, JobActivitySeverity, JobActivityState } from './types';
+import { fetchJobActivities } from './actions';
+import { Job } from '#views/Jobs/types';
 
 type initialState = {
   dateRange: DateRange<Moment>;
@@ -44,10 +39,10 @@ const initialState: initialState = {
   endTime: moment().endOf('day'),
 };
 
-const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
+const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
   const { isIdle } = useTypedSelector((state) => state.auth);
-  const { logs, loading, pageable }: SessionActivityState = useTypedSelector(
-    (state) => state.sessionActivity,
+  const { logs, loading, pageable }: JobActivityState = useTypedSelector(
+    (state) => state.composer.activity,
   );
 
   const dispatch = useDispatch();
@@ -59,11 +54,6 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
 
   const filterProp: FilterProp = {
     filters: [
-      // {
-      //   label: 'Type',
-      //   onApply: () => console.log('Applied'),
-      //   content: <div />,
-      // },
       {
         label: 'Date/Time Range',
         onApply: () => {
@@ -125,11 +115,6 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
           </LocalizationProvider>
         ),
       },
-      // {
-      //   label: 'Users',
-      //   onApply: () => console.log('Applied'),
-      //   content: <div />,
-      // },
     ],
     onReset: () => resetFilter(),
     activeCount: Object.keys(state.appliedFilters).length,
@@ -138,8 +123,6 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
   useEffect(() => {
     if (!isIdle && Object.keys(state.appliedFilters).length === 0) fetchData(0);
   }, [state.appliedFilters, isIdle]);
-
-  console.log('dateRange', state.dateRange);
 
   const fetchLogs = (
     greaterThan: number,
@@ -163,7 +146,10 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
       ],
     });
     dispatch(
-      fetchSessionActivities({ size, filters, sort: 'triggeredAt,desc', page }),
+      fetchJobActivities({
+        jobId,
+        params: { filters, sort: 'triggeredAt,desc', page },
+      }),
     );
   };
 
@@ -191,7 +177,7 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
   }
 
   const grouped = groupBy(logs, 'triggeredOn');
-  const data = [] as Record<string, string | SessionActivityType[]>[];
+  const data = [] as Record<string, string | JobActivity[]>[];
 
   Object.keys(grouped).forEach((item) => {
     data.push({
@@ -236,8 +222,8 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
             template: function renderComp(item) {
               const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
               let criticalCount = 0;
-              item[item.id].forEach((element: SessionActivityType) => {
-                if (element.severity === SessionActivitySeverity.CRITICAL)
+              item[item.id].forEach((element: JobActivity) => {
+                if (element.severity === JobActivitySeverity.CRITICAL)
                   criticalCount++;
               });
               return (
@@ -260,7 +246,7 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
                       )}
                     </div>
                     <div className="log-row">
-                      {item[item.id].map((log: SessionActivityType) => (
+                      {item[item.id].map((log: JobActivity) => (
                         <div className="log-item" key={`${log.id}`}>
                           <div className="circle" />
                           <div className="content">
@@ -271,8 +257,7 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
                               )} */}
                               {moment.unix(log.triggeredAt).format('hh:mm A')}
                             </div>
-                            {log.severity ===
-                              SessionActivitySeverity.CRITICAL && (
+                            {log.severity === JobActivitySeverity.CRITICAL && (
                               <div className="content-items">
                                 <ReportProblemOutlinedIcon className="icon" />
                               </div>
@@ -293,4 +278,4 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
   );
 };
 
-export default SessionActivity;
+export default ActivityView;

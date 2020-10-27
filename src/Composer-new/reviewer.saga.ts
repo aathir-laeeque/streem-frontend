@@ -124,6 +124,7 @@ function* submitChecklistForReviewSaga({
   }
 }
 
+// USED
 function* assignReviewersToChecklistSaga({
   payload,
 }: ReturnType<typeof assignReviewersToChecklist>) {
@@ -149,7 +150,6 @@ function* assignReviewersToChecklistSaga({
       apiAssignReviewersToChecklist(checklistId),
       {
         data: {
-          checklistId,
           assignedUserIds,
           unassignedUserIds,
         },

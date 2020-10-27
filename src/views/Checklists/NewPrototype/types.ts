@@ -9,6 +9,10 @@ export enum NewPrototypeActions {
   UPDATE_PROTOTYPE = '@@prototype/UPDATE_PROTOTYPE',
 }
 
+export enum AuthorState {
+  IN_PROGRESS = 'IN_PROGRESS',
+}
+
 export type NewPrototypeActionsType = ReturnType<
   typeof addNewPrototype | typeof updatePrototype
 >;
@@ -25,6 +29,7 @@ export type Author = Pick<
   'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'
 > & {
   primary: boolean;
+  state: AuthorState;
 };
 
 export enum FormMode {

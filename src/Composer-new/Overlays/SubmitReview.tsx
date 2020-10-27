@@ -39,6 +39,7 @@ import {
   updatePropsAction,
 } from '#components/OverlayContainer/actions';
 import { User } from '#store/users/types';
+import { Author } from '#views/Checklists/NewPrototype/types';
 
 enum Options {
   OK = 'OK',
@@ -222,7 +223,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
 
   const handleAuthorMouseOver = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    users: Reviewer[],
+    users: Author[],
   ) => {
     dispatch(
       openOverlayAction({
@@ -476,7 +477,14 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                     >
                       Cancel
                     </Button1>
-                    <Button1 onClick={handleOnCompleteWithCR}>Confirm</Button1>
+                    <Button1
+                      onClick={handleOnCompleteWithCR}
+                      disabled={
+                        !state.editorState.getCurrentContent().hasText()
+                      }
+                    >
+                      Submit
+                    </Button1>
                   </div>
                 </div>
               )}
@@ -507,7 +515,15 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                     </div>
                   )}
                 </div>
-                <div className="comments-section">{comments}</div>
+                <div className="comments-section">
+                  {comments.length > 0 ? (
+                    comments
+                  ) : (
+                    <div className="no-comments">
+                      No Comments by other Reviewers
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </>

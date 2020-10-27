@@ -1,10 +1,10 @@
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
 import {
-  fetchSessionActivitys,
-  fetchSessionActivitysError,
-  fetchSessionActivitysOngoing,
-  fetchSessionActivitysSuccess,
+  fetchSessionActivities,
+  fetchSessionActivitiesError,
+  fetchSessionActivitiesOngoing,
+  fetchSessionActivitiesSuccess,
 } from './actions';
 
 export interface SessionActivity {
@@ -45,8 +45,8 @@ export enum SessionActivitySeverity {
 }
 
 export type SessionActivityActionType = ReturnType<
-  | typeof fetchSessionActivitys
-  | typeof fetchSessionActivitysError
-  | typeof fetchSessionActivitysOngoing
-  | typeof fetchSessionActivitysSuccess
+  | typeof fetchSessionActivities
+  | typeof fetchSessionActivitiesError
+  | typeof fetchSessionActivitiesOngoing
+  | typeof fetchSessionActivitiesSuccess
 >;
