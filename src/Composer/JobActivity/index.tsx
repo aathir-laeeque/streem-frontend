@@ -148,7 +148,7 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
     dispatch(
       fetchJobActivities({
         jobId,
-        params: { filters, sort: 'triggeredAt,desc', page },
+        params: { size, filters, sort: 'triggeredAt,desc', page },
       }),
     );
   };

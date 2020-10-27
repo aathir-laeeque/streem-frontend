@@ -5,7 +5,7 @@ import { JobActivityAction, JobActivity } from './types';
 export const fetchJobActivities = (payload: {
   jobId: string;
   params: {
-    // size: number;
+    size: number;
     filters: string;
     sort: string;
     page?: number;
