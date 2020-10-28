@@ -240,12 +240,14 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
     if (shouldAskForReason) {
       let text;
       if (
-        moment().diff(moment(task.taskExecution.startedAt)) > task.maxPeriod
+        moment().diff(moment.unix(task.taskExecution.startedAt), 'seconds') >
+        task.maxPeriod
       ) {
         text = 'State your reason for delay';
       } else if (
         task.timerOperator === 'NOT_LESS_THAN' &&
-        moment().diff(moment(task.taskExecution.startedAt)) < task.minPeriod
+        moment().diff(moment.unix(task.taskExecution.startedAt), 'seconds') <
+          task.minPeriod
       ) {
         text = 'State your reason for early completion';
       }
