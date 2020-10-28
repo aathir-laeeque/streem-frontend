@@ -29,6 +29,7 @@ import { AssignedUserDetailsPopover } from '#Composer/Popovers/AssignedUserDetai
 import { TaskAssignmentPopover } from '#Composer/Popovers/TaskAssignmentPopover';
 import { useTypedSelector } from '#store';
 import SessionExpireModal from '#views/Auth/Overlays/SessionExpire';
+import ChecklistInfoModal from '#views/Checklists/ListView/ChecklistInfoModal';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
 import React, { FC } from 'react';
@@ -159,6 +160,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.EDITING_DISABLED:
       return <EditingDisabledModal {...params} />;
+
+    case OverlayNames.CHECKLIST_INFO:
+      return <ChecklistInfoModal {...params} />;
 
     default:
       return null;
