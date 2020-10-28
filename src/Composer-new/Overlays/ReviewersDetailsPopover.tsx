@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Popover } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Reviewer, ReviewerState } from '#Composer-new/reviewer.types';
+import { Collaborator, CollaboratorState } from '#Composer-new/reviewer.types';
 import { removeUnderscore } from '#utils/stringUtils';
 
 const useStyles = makeStyles({
@@ -54,7 +54,7 @@ const useStyles = makeStyles({
 });
 
 export const ReviewersDetailsPopover: FC<CommonOverlayProps<{
-  users: Reviewer[];
+  users: Collaborator[];
 }>> = ({ closeOverlay, popOverAnchorEl, props: { users } }) => {
   const classes = useStyles();
 
@@ -81,7 +81,7 @@ export const ReviewersDetailsPopover: FC<CommonOverlayProps<{
         <span className={classes.heading}>Reviewers</span>
         <span className={classes.heading}>Status</span>
       </div>
-      {users.map((user: Reviewer, index: number) => (
+      {users.map((user: Collaborator, index: number) => (
         <div
           className={classes.wrapper}
           key={`reviewersDetailsPopOver_${user.id}`}
@@ -93,7 +93,7 @@ export const ReviewersDetailsPopover: FC<CommonOverlayProps<{
             className={classes.status}
             style={{
               color:
-                user.state === ReviewerState.IN_PROGRESS
+                user.state === CollaboratorState.BEING_REVIEWED
                   ? '#1d84ff'
                   : '#5aa700',
             }}

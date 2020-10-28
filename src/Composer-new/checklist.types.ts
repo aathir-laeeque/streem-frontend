@@ -1,20 +1,21 @@
 import { User } from '#store/users/types';
 import { Author } from '#views/Checklists/NewPrototype/types';
-import { Reviewer, ReviewerState } from './reviewer.types';
+import { CollaboratorState, Collaborator } from './reviewer.types';
 
 export type Properties = {
   [key: string]: string | null;
 };
 
-export type Employee = {
-  employeeId: string;
-  firstName: string;
-  lastName: string;
-};
+export type Employee = Pick<
+  User,
+  'id' | 'employeeId' | 'firstName' | 'lastName'
+>;
 
 export type Audit = {
+  createdAt: string;
   modifiedAt: string;
   modifiedBy: Employee;
+  createdBy: Employee;
 };
 
 export enum MandatoryActivity {
@@ -127,60 +128,55 @@ export type Stage = {
 };
 
 export enum ChecklistStates {
-  DRAFT = 'DRAFT',
+  BEING_BUILT = 'BEING_BUILT',
+  SUBMITTED_FOR_REVIEW = 'SUBMITTED_FOR_REVIEW',
   BEING_REVIEWED = 'BEING_REVIEWED',
-  CR_IN_PROGRESS = 'CR_IN_PROGRESS',
+  REQUESTED_CHANGES = 'REQUESTED_CHANGES',
   READY_FOR_SIGNING = 'READY_FOR_SIGNING',
   SIGN_OFF_INITIATED = 'SIGN_OFF_INITIATED',
   SIGNING_IN_PROGRESS = 'SIGNING_IN_PROGRESS',
   READY_FOR_RELEASE = 'READY_FOR_RELEASE',
   PUBLISHED = 'PUBLISHED',
-
-  // BEING_BUILT,
-  // SUBMITTED_FOR_REVIEW,
-  // BEING_REVIEWED,
-  // REQUESTED_CHANGES,
-  // READY_FOR_SIGNING,
-  // SIGN_OFF_INITIATED,
-  // SIGNING_IN_PROGRESS,
-  // READY_FOR_RELEASE,
-  // PUBLISHED,
 }
 
 export enum ChecklistStatesContent {
-  DRAFT = 'Being Built',
+  BEING_BUILT = 'Being Built',
+  SUBMITTED_FOR_REVIEW = 'Being Reviewed',
   BEING_REVIEWED = 'Being Reviewed',
-  CR_IN_PROGRESS = 'Being Built',
-  READY_FOR_SIGNING = 'READY_FOR_SIGNING',
-  SIGN_OFF_INITIATED = 'SIGN_OFF_INITIATED',
-  SIGNING_IN_PROGRESS = 'SIGNING_IN_PROGRESS',
-  READY_FOR_RELEASE = 'READY_FOR_RELEASE',
-  PUBLISHED = 'PUBLISHED',
+  REQUESTED_CHANGES = 'Being Built',
+  READY_FOR_SIGNING = 'Ready for Signing',
+  SIGN_OFF_INITIATED = 'Sign Off Initiated',
+  SIGNING_IN_PROGRESS = 'Signing in Progress',
+  READY_FOR_RELEASE = 'Ready For Realease',
+  PUBLISHED = 'Published',
 }
 
 export type Comment = {
   id: string;
   comments: string;
   commentedAt: number;
+  modifiedAt: number;
   commentedBy: Pick<User, 'id' | 'firstName' | 'lastName' | 'employeeId'>;
   reviewCycle: number;
-  reviewState: ReviewerState;
+  reviewState: CollaboratorState;
 };
 
 export type Checklist = {
-  archived?: boolean;
-  audit: Audit;
-  code: string;
   id: string;
   name: string;
+  code: string;
+  status: ChecklistStates;
+  versionNumber: number;
+  archived?: boolean;
+  stages: Stage[];
+  properties?: Properties;
+  audit: Audit;
+  authors: Author[];
+  reviewCycle: number;
+  comments: Comment[];
+  collaborators: Collaborator[];
+
   noOfJobs?: number;
   noOfTasks?: number;
-  properties?: Properties;
-  stages: Stage[];
-  status: ChecklistStates;
   version: number | null;
-  reviewers: Reviewer[];
-  authors: Author[];
-  comments: Comment[];
-  reviewCycle: number;
 };

@@ -5,7 +5,11 @@ import {
   continueChecklistReview,
   startChecklistReview,
 } from '#Composer-new/reviewer.actions';
-import { Reviewer, ReviewerState } from '#Composer-new/reviewer.types';
+import {
+  Collaborator,
+  CollaboratorState,
+  CollaboratorType,
+} from '#Composer-new/reviewer.types';
 import { ComposerEntity } from '#Composer-new/types';
 import { useTypedSelector } from '#store';
 import { FormMode } from '#views/Checklists/NewPrototype/types';
@@ -56,8 +60,9 @@ const ChecklistHeader: FC = () => {
     status: (state.prototypeComposer.data as Checklist).status,
   }));
 
-  const reviewer = data?.reviewers.filter(
-    (reviewer) => reviewer.id === userId,
+  const reviewer = data?.collaborators.filter(
+    (reviewer) =>
+      reviewer.type === CollaboratorType.REVIEWER && reviewer.id === userId,
   )[0];
 
   const author = data?.authors.filter((a) => a.id === userId)[0];
@@ -129,17 +134,17 @@ const ChecklistHeader: FC = () => {
   };
 
   const renderButtonsForReviewer = (
-    state: ReviewerState,
-    reviewers: Reviewer[],
+    state: CollaboratorState,
+    collaborators: Collaborator[],
   ) => {
     switch (state) {
-      case ReviewerState.NOT_STARTED:
+      case CollaboratorState.NOT_STARTED:
         return (
           <Button1 className="submit" onClick={handleStartReview}>
             Start Review
           </Button1>
         );
-      case ReviewerState.IN_PROGRESS:
+      case CollaboratorState.BEING_REVIEWED:
         return (
           <Button1
             className="submit"
@@ -148,12 +153,12 @@ const ChecklistHeader: FC = () => {
             Provide Review
           </Button1>
         );
-      case ReviewerState.DONE:
-      case ReviewerState.DONE_WITH_CR:
-        const isReviewPending = reviewers.some(
+      case CollaboratorState.COMMENTED_OK:
+      case CollaboratorState.COMMENTED_CHANGES:
+        const isReviewPending = collaborators.some(
           (r) =>
-            r.state === ReviewerState.IN_PROGRESS ||
-            r.state === ReviewerState.NOT_STARTED,
+            r.state === CollaboratorState.BEING_REVIEWED ||
+            r.state === CollaboratorState.NOT_STARTED,
         );
 
         return (
@@ -226,7 +231,7 @@ const ChecklistHeader: FC = () => {
 
   const ViewReviewersButton = () => (
     <Button1
-      id="view-reviewers"
+      id="view-collaborators"
       variant="secondary"
       onClick={() => handleSubmitForReview(true)}
     >
@@ -236,7 +241,7 @@ const ChecklistHeader: FC = () => {
 
   const renderButtonsForAuthor = () => {
     switch (data.status) {
-      case ChecklistStates.DRAFT:
+      case ChecklistStates.BEING_BUILT:
         return (
           <>
             <PrototypeEditButton />
@@ -245,6 +250,7 @@ const ChecklistHeader: FC = () => {
           </>
         );
 
+      case ChecklistStates.SUBMITTED_FOR_REVIEW:
       case ChecklistStates.BEING_REVIEWED:
         return (
           <>
@@ -253,7 +259,7 @@ const ChecklistHeader: FC = () => {
           </>
         );
 
-      case ChecklistStates.CR_IN_PROGRESS:
+      case ChecklistStates.REQUESTED_CHANGES:
         return (
           <>
             <PrototypeEditButton />
@@ -275,13 +281,13 @@ const ChecklistHeader: FC = () => {
   return (
     <HeaderWrapper checklistState={status}>
       <div className="before-header">
-        {author && data.status === ChecklistStates.BEING_REVIEWED && (
+        {author && data.status === ChecklistStates.SUBMITTED_FOR_REVIEW && (
           <div className="alert">
             <Info />
             <span>This Prototype has been sent to Reviewers</span>
           </div>
         )}
-        {reviewer && reviewer.state === ReviewerState.NOT_STARTED && (
+        {reviewer && reviewer.state === CollaboratorState.NOT_STARTED && (
           <div
             className="alert"
             style={{
@@ -295,7 +301,7 @@ const ChecklistHeader: FC = () => {
             </span>
           </div>
         )}
-        {reviewer && reviewer.state === ReviewerState.DONE_WITH_CR && (
+        {reviewer && reviewer.state === CollaboratorState.COMMENTED_CHANGES && (
           <div
             className="alert"
             style={{
@@ -306,6 +312,15 @@ const ChecklistHeader: FC = () => {
             <Info style={{ color: '#000' }} />
             <span style={{ color: '#000' }}>
               You have already submitted this checklist with comments
+            </span>
+          </div>
+        )}
+        {reviewer && reviewer.state === CollaboratorState.COMMENTED_OK && (
+          <div className="alert">
+            <Info />
+            <span>
+              You have already reviewed this prototype and submitted it without
+              comments
             </span>
           </div>
         )}
@@ -327,9 +342,9 @@ const ChecklistHeader: FC = () => {
             {reviewer && (
               <>
                 <ViewReviewersButton />
-                {data.status !== ChecklistStates.CR_IN_PROGRESS &&
-                data.status !== ChecklistStates.DRAFT
-                  ? renderButtonsForReviewer(reviewer.state, data.reviewers)
+                {data.status !== ChecklistStates.REQUESTED_CHANGES &&
+                data.status !== ChecklistStates.BEING_BUILT
+                  ? renderButtonsForReviewer(reviewer.state, data.collaborators)
                   : null}
               </>
             )}
@@ -340,6 +355,10 @@ const ChecklistHeader: FC = () => {
           <Button1
             variant="textOnly"
             id="new-stage"
+            disabled={
+              data.status === ChecklistStates.SUBMITTED_FOR_REVIEW ||
+              data.status === ChecklistStates.BEING_REVIEWED
+            }
             onClick={() => dispatch(addNewStage())}
           >
             <AddCircle className="icon" fontSize="small" />
@@ -349,6 +368,10 @@ const ChecklistHeader: FC = () => {
           <Button1
             variant="textOnly"
             id="new-task"
+            disabled={
+              data.status === ChecklistStates.SUBMITTED_FOR_REVIEW ||
+              data.status === ChecklistStates.BEING_REVIEWED
+            }
             onClick={() => {
               if (activeStageId) {
                 dispatch(

@@ -101,7 +101,7 @@ const HeaderWrapper = styled.div<HeaderWrapperProps>`
         }
 
         #edit,
-        #view-reviewers {
+        #view-collaborators {
           padding: 12px;
           > .icon {
             color: #000;
@@ -151,6 +151,7 @@ const HeaderWrapper = styled.div<HeaderWrapperProps>`
   ${({ checklistState }) => {
     switch (checklistState) {
       case ChecklistStates.BEING_REVIEWED:
+      case ChecklistStates.SUBMITTED_FOR_REVIEW:
         return css`
           .prototype-add-buttons {
             display: none;

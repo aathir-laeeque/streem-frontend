@@ -1,7 +1,7 @@
 import { BaseModal, Checkbox } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Checklist } from '#Composer-new/checklist.types';
-import { Reviewer, ReviewerState } from '#Composer-new/reviewer.types';
+import { Collaborator, CollaboratorState } from '#Composer-new/reviewer.types';
 import { useTypedSelector } from '#store';
 import { fetchUsers } from '#store/users/actions';
 import { getInitials } from '#utils/stringUtils';
@@ -21,10 +21,10 @@ import {
 import Wrapper from './ReviewerAssignment.styles';
 
 type initialState = {
-  assignedUsers: Reviewer['id'][];
-  unAssignedUsers: Reviewer['id'][];
+  assignedUsers: Collaborator['id'][];
+  unAssignedUsers: Collaborator['id'][];
   searchQuery: string;
-  preAssignedUsers: Reviewer[];
+  preAssignedUsers: Collaborator[];
 };
 
 const initialState: initialState = {
@@ -51,7 +51,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
     },
   } = useTypedSelector((state) => ({
     activeUsers: state.users.active,
-    assignees: state.prototypeComposer.reviewers,
+    assignees: state.prototypeComposer.collaborators,
     data: state.prototypeComposer.data as Checklist,
   }));
 
@@ -111,7 +111,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   };
 
   const onCheckChanged = (
-    user: Reviewer,
+    user: Collaborator,
     checked: boolean,
     isPreAssigned: boolean,
   ) => {
@@ -148,7 +148,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   };
 
   const userRow = (
-    user: Reviewer,
+    user: Collaborator,
     checked: boolean,
     isPreAssigned: boolean,
   ) => {
@@ -161,7 +161,9 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
               label=""
               onClick={() => onCheckChanged(user, checked, isPreAssigned)}
               disabled={
-                user.state ? user.state !== ReviewerState.NOT_STARTED : false
+                user.state
+                  ? user.state !== CollaboratorState.NOT_STARTED
+                  : false
               }
             />
           )}
@@ -199,7 +201,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
       });
     }
 
-    ((list as unknown) as Array<Reviewer>).forEach((user) => {
+    ((list as unknown) as Array<Collaborator>).forEach((user) => {
       const isPreAssigned = preAssignedUsers.some(
         (item) => item.id === user.id,
       );

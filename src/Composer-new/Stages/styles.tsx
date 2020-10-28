@@ -104,6 +104,7 @@ const StageCardWrapper = styled.div.attrs({
   ${({ checklistState }) => {
     switch (checklistState) {
       case ChecklistStates.BEING_REVIEWED:
+      case ChecklistStates.SUBMITTED_FOR_REVIEW:
         return css`
           .stage {
             &-header {

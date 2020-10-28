@@ -1,16 +1,28 @@
 import { User } from '#store/users/types';
+import { Comment } from './checklist.types';
 
-export enum ReviewerState {
+export enum CollaboratorState {
+  ILLEGAL = 'ILLEGAL',
   NOT_STARTED = 'NOT_STARTED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  DONE = 'DONE',
-  DONE_WITH_CR = 'DONE_WITH_CR',
-  SUBMITTED_FOR_CR = 'SUBMITTED_FOR_CR',
+  BEING_REVIEWED = 'BEING_REVIEWED',
+  COMMENTED_OK = 'COMMENTED_OK',
+  COMMENTED_CHANGES = 'COMMENTED_CHANGES',
+  REQUESTED_CHANGES = 'REQUESTED_CHANGES',
+  REQUESTED_NO_CHANGES = 'REQUESTED_NO_CHANGES',
+  SIGNED = 'SIGNED',
 }
 
-export type Reviewer = Pick<
+export enum CollaboratorType {
+  REVIEWER = 'REVIEWER',
+  APPROVER = 'APPROVER',
+}
+
+export type Collaborator = Pick<
   User,
-  'id' | 'employeeId' | 'firstName' | 'lastName'
-> & {
-  state: ReviewerState;
-};
+  'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'
+> &
+  Pick<Comment, 'id' | 'comments' | 'commentedAt' | 'modifiedAt'> & {
+    state: CollaboratorState;
+    reviewCycle: number;
+    type: CollaboratorType;
+  };

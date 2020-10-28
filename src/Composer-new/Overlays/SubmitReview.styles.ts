@@ -288,7 +288,7 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
               background-color: #f4f4f4;
             }
 
-            .reviewers-wrapper {
+            .collaborators-wrapper {
               position: absolute;
               top: 60px;
               left: 0px;
@@ -323,7 +323,7 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
             max-height: 500px;
             margin-right: -24px;
             padding-right: 24px;
-            overflow-y: auto;
+            /* overflow-y: auto; */
 
             .no-comments {
               display: flex;

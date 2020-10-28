@@ -2,7 +2,7 @@ import { actionSpreader } from '#store';
 import { User } from '#store/users/types';
 import { Checklist, ChecklistStates, Comment } from './checklist.types';
 import { ComposerAction } from './reducer.types';
-import { Reviewer } from './reviewer.types';
+import { Collaborator } from './reviewer.types';
 
 // REVIEWER ASSIGNMENT
 
@@ -14,7 +14,9 @@ export const fetchAssignedReviewersForChecklist = (
 export const fetchAssignedReviewersForChecklistError = (error: any) =>
   actionSpreader(ComposerAction.FETCH_REVIEWERS_FOR_CHECKLIST_ERROR, { error });
 
-export const fetchAssignedReviewersForChecklistSuccess = (data: Reviewer[]) =>
+export const fetchAssignedReviewersForChecklistSuccess = (
+  data: Collaborator[],
+) =>
   actionSpreader(ComposerAction.FETCH_REVIEWERS_FOR_CHECKLIST_SUCCESS, {
     data,
   });
@@ -28,13 +30,13 @@ export const submitChecklistForReviewError = (error: any) =>
 export const submitChecklistForReviewSuccess = () =>
   actionSpreader(ComposerAction.SUBMIT_CHECKLIST_FOR_REVIEW_SUCCESS);
 
-export const assignReviewerToChecklist = (user: Reviewer) =>
+export const assignReviewerToChecklist = (user: Collaborator) =>
   actionSpreader(ComposerAction.ASSIGN_REVIEWER_TO_CHECKLIST, { user });
 
-export const unAssignReviewerFromChecklist = (user: Reviewer) =>
+export const unAssignReviewerFromChecklist = (user: Collaborator) =>
   actionSpreader(ComposerAction.UNASSIGN_REVIEWER_FROM_CHECKLIST, { user });
 
-export const revertReviewersForChecklist = (users: Reviewer[]) =>
+export const revertReviewersForChecklist = (users: Collaborator[]) =>
   actionSpreader(ComposerAction.REVERT_REVIEWERS_FOR_CHECKLIST, { users });
 
 export const assignReviewersToChecklist = (payload: {
@@ -52,8 +54,10 @@ export const assignReviewersToChecklistError = (error: any) =>
 export const startChecklistReview = (checklistId: Checklist['id']) =>
   actionSpreader(ComposerAction.START_CHECKLIST_REVIEW, { checklistId });
 
-export const startChecklistReviewSuccess = (reviewers: Reviewer[]) =>
-  actionSpreader(ComposerAction.START_CHECKLIST_REVIEW_SUCCESS, { reviewers });
+export const startChecklistReviewSuccess = (collaborators: Collaborator[]) =>
+  actionSpreader(ComposerAction.START_CHECKLIST_REVIEW_SUCCESS, {
+    collaborators,
+  });
 
 export const startChecklistReviewError = (error: any) =>
   actionSpreader(ComposerAction.START_CHECKLIST_REVIEW_ERROR, { error });
@@ -62,11 +66,11 @@ export const submitChecklistReview = (checklistId: Checklist['id']) =>
   actionSpreader(ComposerAction.SUBMIT_CHECKLIST_REVIEW, { checklistId });
 
 export const submitChecklistReviewSuccess = (
-  reviewers: Reviewer[],
+  collaborators: Collaborator[],
   comments: Comment[],
 ) =>
   actionSpreader(ComposerAction.SUBMIT_CHECKLIST_REVIEW_SUCCESS, {
-    reviewers,
+    collaborators,
     comments,
   });
 
@@ -76,9 +80,9 @@ export const submitChecklistReviewError = (error: any) =>
 export const continueChecklistReview = (checklistId: Checklist['id']) =>
   actionSpreader(ComposerAction.CONTINUE_CHECKLIST_REVIEW, { checklistId });
 
-export const continueChecklistReviewSuccess = (reviewers: Reviewer[]) =>
+export const continueChecklistReviewSuccess = (collaborators: Collaborator[]) =>
   actionSpreader(ComposerAction.CONTINUE_CHECKLIST_REVIEW_SUCCESS, {
-    reviewers,
+    collaborators,
   });
 
 export const continueChecklistReviewError = (error: any) =>
@@ -94,11 +98,11 @@ export const submitChecklistReviewWithCR = (
   });
 
 export const submitChecklistReviewWithCRSuccess = (
-  reviewers: Reviewer[],
+  collaborators: Collaborator[],
   comments: Comment[],
 ) =>
   actionSpreader(ComposerAction.SUBMIT_CHECKLIST_REVIEW_WITH_CR_SUCCESS, {
-    reviewers,
+    collaborators,
     comments,
   });
 
@@ -115,9 +119,9 @@ export const updateChecklistState = (state: ChecklistStates) =>
 export const sendReviewToCr = (checklistId: Checklist['id']) =>
   actionSpreader(ComposerAction.SEND_REVIEW_TO_CR, { checklistId });
 
-export const sendReviewToCrSuccess = (reviewers: Reviewer[]) =>
+export const sendReviewToCrSuccess = (collaborators: Collaborator[]) =>
   actionSpreader(ComposerAction.SEND_REVIEW_TO_CR_SUCCESS, {
-    reviewers,
+    collaborators,
   });
 
 export const sendReviewToCrError = (error: any) =>

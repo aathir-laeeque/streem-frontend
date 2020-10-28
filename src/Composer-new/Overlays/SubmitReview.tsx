@@ -22,8 +22,9 @@ import {
 } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { Checklist } from '#Composer-new/checklist.types';
-import { Reviewer, ReviewerState } from '#Composer-new/reviewer.types';
+import { Collaborator, CollaboratorState } from '#Composer-new/reviewer.types';
 import {
+  fetchAssignedReviewersForChecklist,
   sendReviewToCr,
   submitChecklistReview,
   submitChecklistReviewWithCR,
@@ -84,52 +85,60 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
 
   const sendToAuthor = props?.sendToAuthor || false;
   const dispatch = useDispatch();
-  const { data, userId } = useTypedSelector((state) => ({
+  const { data, userId, collaborators } = useTypedSelector((state) => ({
     userId: state.auth.userId,
+    collaborators: state.prototypeComposer.collaborators,
     data: state.prototypeComposer.data as Checklist,
   }));
 
   const [state, setState] = useState(initialState);
 
   useEffect(() => {
-    let editorState = EditorState.createEmpty();
-    if (state.contentBlock) {
-      const commentExist =
-        data?.comments?.filter(
-          (c) =>
-            c.commentedBy.id === userId && c.reviewCycle === data?.reviewCycle,
-        ) ?? [];
+    dispatch(fetchAssignedReviewersForChecklist(data.id));
+  }, []);
 
-      if (commentExist.length) {
-        const content = htmlToDraft(commentExist[0].comments);
-        const contentState = ContentState.createFromBlockArray(
-          content.contentBlocks,
-        );
+  useEffect(() => {
+    if (collaborators.length > 0) {
+      let editorState = EditorState.createEmpty();
+      if (state.contentBlock) {
+        const commentExist =
+          data?.comments?.filter(
+            (c) =>
+              c.commentedBy.id === userId &&
+              c.reviewCycle === data?.reviewCycle,
+          ) ?? [];
 
-        editorState = EditorState.createWithContent(contentState);
+        if (commentExist.length) {
+          const content = htmlToDraft(commentExist[0].comments);
+          const contentState = ContentState.createFromBlockArray(
+            content.contentBlocks,
+          );
+
+          editorState = EditorState.createWithContent(contentState);
+        }
       }
-    }
 
-    const reviewerOptions = data?.reviewers.map((r) => ({
-      label: `${r.firstName} ${r.lastName} - ${r.employeeId}`,
-      value: r.id,
-    }));
+      const reviewerOptions = collaborators.map((r) => ({
+        label: `${r.firstName} ${r.lastName} - ${r.employeeId}`,
+        value: r.id,
+      }));
 
-    const cycleOptions = [];
-    for (let i = 1; i <= data?.reviewCycle; i++) {
-      cycleOptions.push({
-        label: getOrdinal(i),
-        value: i,
+      const cycleOptions = [];
+      for (let i = 1; i <= data?.reviewCycle; i++) {
+        cycleOptions.push({
+          label: getOrdinal(i),
+          value: i,
+        });
+      }
+
+      setState({
+        ...state,
+        editorState,
+        reviewersOptions: [...state.reviewersOptions, ...reviewerOptions],
+        reviewCycleOptions: [...state.reviewCycleOptions, ...cycleOptions],
       });
     }
-
-    setState({
-      ...state,
-      editorState,
-      reviewersOptions: [...state.reviewersOptions, ...reviewerOptions],
-      reviewCycleOptions: [...state.reviewCycleOptions, ...cycleOptions],
-    });
-  }, []);
+  }, [collaborators]);
 
   const handleOnAllOK = () => {
     if (data && data?.id) dispatch(submitChecklistReview(data?.id));
@@ -186,7 +195,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                       </span>
                     </div>
                   </div>
-                  {comment.reviewState === ReviewerState.DONE ? (
+                  {comment.reviewState === CollaboratorState.COMMENTED_OK ? (
                     <div
                       className="comment"
                       style={{
@@ -247,7 +256,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
 
   const handleReviewersMouseOver = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    users: Reviewer[],
+    users: Collaborator[],
   ) => {
     dispatch(
       openOverlayAction({
@@ -425,7 +434,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                   className="icon-wrapper"
                   aria-haspopup="true"
                   onMouseEnter={(e) =>
-                    handleReviewersMouseOver(e, data?.reviewers)
+                    handleReviewersMouseOver(e, collaborators)
                   }
                   onMouseLeave={() =>
                     dispatch(closeOverlayAction(OverlayNames.REVIEWERS_DETAIL))
@@ -518,10 +527,12 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                 <div className="comments-section">
                   {comments.length > 0 ? (
                     comments
-                  ) : (
+                  ) : !isViewer ? (
                     <div className="no-comments">
                       No Comments by other Reviewers
                     </div>
+                  ) : (
+                    <div />
                   )}
                 </div>
               </div>

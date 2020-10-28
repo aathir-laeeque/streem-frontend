@@ -49,12 +49,12 @@ import {
   submitChecklistReviewWithCRSuccess,
   updateChecklistState,
 } from './reviewer.actions';
-import { ReviewerState } from './reviewer.types';
+import { CollaboratorState } from './reviewer.types';
 
 const getStatus = (state: RootState) => state.prototypeComposer.data?.status;
 const getUserProfile = (state: RootState) => state.auth.profile;
 const getCurrentReviewers = (state: RootState) =>
-  (state.prototypeComposer.data as Checklist)?.reviewers || [];
+  (state.prototypeComposer.data as Checklist)?.collaborators || [];
 const getCurrentComments = (state: RootState) =>
   (state.prototypeComposer.data as Checklist)?.comments || [];
 
@@ -71,7 +71,7 @@ function* fetchReviewersForChecklistSaga({
     );
 
     if (errors || error) {
-      throw 'Could Not Assign Reviewer To Checklist';
+      throw 'Could Not Assign Collaborator To Checklist';
     }
 
     yield put(fetchAssignedReviewersForChecklistSuccess(data));
@@ -136,7 +136,7 @@ function* assignReviewersToChecklistSaga({
 
   try {
     const status = getStatus(yield select());
-    if (status === ChecklistStates.DRAFT) {
+    if (status === ChecklistStates.BEING_BUILT) {
       const res = yield* submitChecklistForReviewCall(checklistId);
       if (res.errors && res.errors.length > 0) {
         let error = '';
@@ -199,11 +199,13 @@ function* startChecklistReviewSaga({
     const userProfile = getUserProfile(yield select());
     const currentReviewers = getCurrentReviewers(yield select());
 
-    const reviewers = currentReviewers.map((r) =>
-      r.id === userProfile?.id ? { ...r, state: ReviewerState.IN_PROGRESS } : r,
+    const collaborators = currentReviewers.map((r) =>
+      r.id === userProfile?.id
+        ? { ...r, state: CollaboratorState.BEING_REVIEWED }
+        : r,
     );
 
-    yield put(startChecklistReviewSuccess(reviewers));
+    yield put(startChecklistReviewSuccess(collaborators));
   } catch (error) {
     console.error(
       'error from startChecklistReviewSaga function in Composer-New :: ',
@@ -238,8 +240,10 @@ function* submitChecklistReviewSaga({
     const currentReviewers = getCurrentReviewers(yield select());
     const currentComments = getCurrentComments(yield select());
 
-    const reviewers = currentReviewers.map((r) =>
-      r.id === userProfile?.id ? { ...r, state: ReviewerState.DONE } : r,
+    const collaborators = currentReviewers.map((r) =>
+      r.id === userProfile?.id
+        ? { ...r, state: CollaboratorState.COMMENTED_OK }
+        : r,
     );
 
     data.commentedBy = {
@@ -254,24 +258,24 @@ function* submitChecklistReviewSaga({
     );
     newComments.push(data);
 
-    yield put(submitChecklistReviewSuccess(reviewers, newComments));
+    yield put(submitChecklistReviewSuccess(collaborators, newComments));
 
     let allDone = true;
     let allDoneOk = true;
-    reviewers.forEach((r) => {
+    collaborators.forEach((r) => {
       if (
-        r.state !== ReviewerState.DONE &&
-        r.state !== ReviewerState.DONE_WITH_CR
+        r.state !== CollaboratorState.COMMENTED_OK &&
+        r.state !== CollaboratorState.COMMENTED_CHANGES
       ) {
         allDone = false;
       }
-      if (r.state !== ReviewerState.DONE) {
+      if (r.state !== CollaboratorState.COMMENTED_OK) {
         allDoneOk = false;
       }
     });
 
     if (allDone && allDoneOk) {
-      yield put(updateChecklistState(ChecklistStates.SIGNING_IN_PROGRESS));
+      yield put(updateChecklistState(ChecklistStates.READY_FOR_SIGNING));
       yield put(closeOverlayAction(OverlayNames.SUBMIT_REVIEW_MODAL));
     } else if (allDone && !allDoneOk) {
       yield put(
@@ -323,9 +327,9 @@ function* submitChecklistReviewWithCRSaga({
     const currentReviewers = getCurrentReviewers(yield select());
     const currentComments = getCurrentComments(yield select());
 
-    const reviewers = currentReviewers.map((r) =>
+    const collaborators = currentReviewers.map((r) =>
       r.id === userProfile?.id
-        ? { ...r, state: ReviewerState.DONE_WITH_CR }
+        ? { ...r, state: CollaboratorState.COMMENTED_CHANGES }
         : r,
     );
 
@@ -341,24 +345,24 @@ function* submitChecklistReviewWithCRSaga({
     );
     newComments.push(data);
 
-    yield put(submitChecklistReviewWithCRSuccess(reviewers, newComments));
+    yield put(submitChecklistReviewWithCRSuccess(collaborators, newComments));
 
     let allDone = true;
     let allDoneOk = true;
-    reviewers.forEach((r) => {
+    collaborators.forEach((r) => {
       if (
-        r.state !== ReviewerState.DONE &&
-        r.state !== ReviewerState.DONE_WITH_CR
+        r.state !== CollaboratorState.COMMENTED_OK &&
+        r.state !== CollaboratorState.COMMENTED_CHANGES
       ) {
         allDone = false;
       }
-      if (r.state !== ReviewerState.DONE) {
+      if (r.state !== CollaboratorState.COMMENTED_OK) {
         allDoneOk = false;
       }
     });
 
     if (allDone && allDoneOk) {
-      yield put(updateChecklistState(ChecklistStates.SIGNING_IN_PROGRESS));
+      yield put(updateChecklistState(ChecklistStates.READY_FOR_SIGNING));
       yield put(closeOverlayAction(OverlayNames.SUBMIT_REVIEW_MODAL));
     } else if (allDone && !allDoneOk) {
       yield put(
@@ -408,11 +412,13 @@ function* continueChecklistReviewSaga({
     const userProfile = getUserProfile(yield select());
     const currentReviewers = getCurrentReviewers(yield select());
 
-    const reviewers = currentReviewers.map((r) =>
-      r.id === userProfile?.id ? { ...r, state: ReviewerState.IN_PROGRESS } : r,
+    const collaborators = currentReviewers.map((r) =>
+      r.id === userProfile?.id
+        ? { ...r, state: CollaboratorState.BEING_REVIEWED }
+        : r,
     );
 
-    yield put(continueChecklistReviewSuccess(reviewers));
+    yield put(continueChecklistReviewSuccess(collaborators));
   } catch (error) {
     console.error(
       'error from continueChecklistReviewSaga function in Composer-New :: ',
@@ -445,13 +451,13 @@ function* sendReviewToCrSaga({ payload }: ReturnType<typeof sendReviewToCr>) {
     const userProfile = getUserProfile(yield select());
     const currentReviewers = getCurrentReviewers(yield select());
 
-    const reviewers = currentReviewers.map((r) =>
+    const collaborators = currentReviewers.map((r) =>
       r.id === userProfile?.id
-        ? { ...r, state: ReviewerState.SUBMITTED_FOR_CR }
+        ? { ...r, state: CollaboratorState.REQUESTED_CHANGES }
         : r,
     );
 
-    yield put(sendReviewToCrSuccess(reviewers));
+    yield put(sendReviewToCrSuccess(collaborators));
     yield put(closeOverlayAction(OverlayNames.SUBMIT_REVIEW_MODAL));
     // TODO CHANGE THE MODAL BELOW
     yield put(

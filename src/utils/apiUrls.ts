@@ -160,10 +160,10 @@ export const apiStartChecklistReview = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/review/start`;
 
 export const apiSubmitChecklistReview = (checklistId: Checklist['id']) =>
-  `${baseUrl}/checklists/${checklistId}/review/complete`;
+  `${baseUrl}/checklists/${checklistId}/review/ok`;
 
 export const apiSubmitChecklistReviewWithCR = (checklistId: Checklist['id']) =>
-  `${baseUrl}/checklists/${checklistId}/review/complete-with-cr`;
+  `${baseUrl}/checklists/${checklistId}/review/changes`;
 
 export const apiSubmitChecklistForReview = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/review/submit`;
@@ -172,7 +172,7 @@ export const apiContinueChecklistReview = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/review/continue`;
 
 export const apiSendReviewToCr = (checklistId: Checklist['id']) =>
-  `${baseUrl}/checklists/${checklistId}/review/send-for-cr`;
+  `${baseUrl}/checklists/${checklistId}/review/submit-back`;
 
 export const apiUpdateActivity = (activityId: Activity['id']) =>
   `${baseUrl}/activities/${activityId}`;

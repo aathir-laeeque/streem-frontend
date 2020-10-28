@@ -24,7 +24,7 @@ import { Checklist } from './checklist.types';
 import { StageListState } from './Stages/reducer.types';
 import { TaskListState } from './Tasks/reducer.types';
 import { ComposerEntity } from './types';
-import { Reviewer } from './reviewer.types';
+import { Collaborator } from './reviewer.types';
 
 export type ComposerState = {
   readonly activities: ActivityListState;
@@ -34,7 +34,7 @@ export type ComposerState = {
   readonly loading: boolean;
   readonly stages: StageListState;
   readonly tasks: TaskListState;
-  readonly reviewers: Reviewer[];
+  readonly collaborators: Collaborator[];
 };
 
 export enum ComposerAction {

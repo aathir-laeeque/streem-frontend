@@ -12,7 +12,7 @@ import {
   ComposerActionType,
   ComposerState,
 } from './reducer.types';
-import { ReviewerState } from './reviewer.types';
+import { CollaboratorState } from './reviewer.types';
 import {
   initialState as StageListInitialState,
   stageReducer,
@@ -30,7 +30,7 @@ const initialState: ComposerState = {
   loading: false,
   stages: StageListInitialState,
   tasks: TaskListInitialState,
-  reviewers: [],
+  collaborators: [],
 };
 
 const reducer: Reducer<ComposerState, ComposerActionType> = (
@@ -68,17 +68,17 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       };
 
     case ComposerAction.FETCH_REVIEWERS_FOR_CHECKLIST_SUCCESS:
-      return { ...state, reviewers: action.payload.data };
+      return { ...state, collaborators: action.payload.data };
 
     case ComposerAction.REVERT_REVIEWERS_FOR_CHECKLIST:
-      return { ...state, reviewers: action.payload.users };
+      return { ...state, collaborators: action.payload.users };
 
     case ComposerAction.ASSIGN_REVIEWER_TO_CHECKLIST:
       return {
         ...state,
-        reviewers: unionBy(
-          [{ ...action.payload.user, state: ReviewerState.NOT_STARTED }],
-          state.reviewers,
+        collaborators: unionBy(
+          [{ ...action.payload.user, state: CollaboratorState.NOT_STARTED }],
+          state.collaborators,
           'id',
         ),
       };
@@ -86,7 +86,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
     case ComposerAction.UNASSIGN_REVIEWER_FROM_CHECKLIST:
       return {
         ...state,
-        reviewers: state.reviewers.filter(
+        collaborators: state.collaborators.filter(
           (item) => item.id !== action.payload.user.id,
         ),
       };
@@ -96,7 +96,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         ...state,
         data: {
           ...state.data,
-          status: ChecklistStates.BEING_REVIEWED,
+          status: ChecklistStates.SUBMITTED_FOR_REVIEW,
         } as Checklist,
       };
 
@@ -107,7 +107,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         ...state,
         data: {
           ...state.data,
-          reviewers: action.payload?.reviewers,
+          collaborators: action.payload?.collaborators,
         } as Checklist,
       };
 
@@ -117,7 +117,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         ...state,
         data: {
           ...state.data,
-          reviewers: action.payload?.reviewers,
+          collaborators: action.payload?.collaborators,
           comments: action.payload?.comments,
         } as Checklist,
       };
