@@ -1,12 +1,14 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { Task, TaskExecutionStatus } from '#Composer/checklist.types';
+import { JobStatus } from '#Composer/composer.types';
 import { formatDateTime } from '#utils/timeUtils';
 import { ArrowRightAlt, CheckCircle, Error } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
+import { useTypedSelector } from '../../../../store/helpers';
 
 import {
   cancelErrorCorretcion,
@@ -161,6 +163,10 @@ const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
 const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   const dispatch = useDispatch();
 
+  const { jobStatus } = useTypedSelector((state) => state.composer);
+
+  const isJobBlocked = jobStatus === JobStatus.BLOCKED;
+
   const [shouldAskForReason, setAskForReason] = useState(false);
   const [delayReason, setDelayReason] = useState('');
 
@@ -278,19 +284,21 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
           <button
             className="complete-task"
             onClick={() => {
-              const timeElapsed = moment().diff(
-                moment(task.taskExecution.startedAt),
-              );
+              if (!isJobBlocked) {
+                const timeElapsed = moment().diff(
+                  moment(task.taskExecution.startedAt),
+                );
 
-              if (
-                task.timed &&
-                (timeElapsed > task.maxPeriod ||
-                  (task.timerOperator === 'NOT_LESS_THAN' &&
-                    timeElapsed < task.minPeriod))
-              ) {
-                setAskForReason(true);
-              } else {
-                dispatch(completeTask(task.id));
+                if (
+                  task.timed &&
+                  (timeElapsed > task.maxPeriod ||
+                    (task.timerOperator === 'NOT_LESS_THAN' &&
+                      timeElapsed < task.minPeriod))
+                ) {
+                  setAskForReason(true);
+                } else {
+                  dispatch(completeTask(task.id));
+                }
               }
             }}
           >
@@ -300,20 +308,22 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
           <button
             className="skip-task"
             onClick={() => {
-              if (canSkipTask) {
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.SKIP_TASK_MODAL,
-                    props: { taskId: task.id },
-                  }),
-                );
-              } else {
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.COMPLETE_TASK_WITH_EXCEPTION,
-                    props: { taskId: task.id },
-                  }),
-                );
+              if (!isJobBlocked) {
+                if (canSkipTask) {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.SKIP_TASK_MODAL,
+                      props: { taskId: task.id },
+                    }),
+                  );
+                } else {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.COMPLETE_TASK_WITH_EXCEPTION,
+                      props: { taskId: task.id },
+                    }),
+                  );
+                }
               }
             }}
           >
