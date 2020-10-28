@@ -127,17 +127,37 @@ export type Stage = {
   tasks: Task[];
 };
 
-export enum ChecklistStates {
-  BEING_BUILT = 'BEING_BUILT',
+export enum EnabledStates {
+  BEING_BUILT = 'BEING_BUILT', // ENABLE EDITING
+  REQUESTED_CHANGES = 'REQUESTED_CHANGES', // ENABLE EDITING
+}
+
+export enum DisabledStates {
   SUBMITTED_FOR_REVIEW = 'SUBMITTED_FOR_REVIEW',
   BEING_REVIEWED = 'BEING_REVIEWED',
-  REQUESTED_CHANGES = 'REQUESTED_CHANGES',
   READY_FOR_SIGNING = 'READY_FOR_SIGNING',
   SIGN_OFF_INITIATED = 'SIGN_OFF_INITIATED',
   SIGNING_IN_PROGRESS = 'SIGNING_IN_PROGRESS',
   READY_FOR_RELEASE = 'READY_FOR_RELEASE',
   PUBLISHED = 'PUBLISHED',
 }
+
+// export enum ChecklistStates {
+//   BEING_BUILT = 'BEING_BUILT', // ENABLE EDITING
+//   SUBMITTED_FOR_REVIEW = 'SUBMITTED_FOR_REVIEW',
+//   BEING_REVIEWED = 'BEING_REVIEWED',
+//   REQUESTED_CHANGES = 'REQUESTED_CHANGES', // ENABLE EDITING
+//   READY_FOR_SIGNING = 'READY_FOR_SIGNING',
+//   SIGN_OFF_INITIATED = 'SIGN_OFF_INITIATED',
+//   SIGNING_IN_PROGRESS = 'SIGNING_IN_PROGRESS',
+//   READY_FOR_RELEASE = 'READY_FOR_RELEASE',
+//   PUBLISHED = 'PUBLISHED',
+// }
+
+export const ChecklistStates = {
+  ...EnabledStates,
+  ...DisabledStates,
+};
 
 export enum ChecklistStatesContent {
   BEING_BUILT = 'Being Built',
@@ -149,6 +169,18 @@ export enum ChecklistStatesContent {
   SIGNING_IN_PROGRESS = 'Signing in Progress',
   READY_FOR_RELEASE = 'Ready For Realease',
   PUBLISHED = 'Published',
+}
+
+export enum ChecklistStatesColors {
+  BEING_BUILT = 'blue',
+  SUBMITTED_FOR_REVIEW = 'yellow',
+  BEING_REVIEWED = 'yellow',
+  REQUESTED_CHANGES = 'yellow',
+  READY_FOR_SIGNING = 'green',
+  SIGN_OFF_INITIATED = 'green',
+  SIGNING_IN_PROGRESS = 'green',
+  READY_FOR_RELEASE = 'green',
+  PUBLISHED = 'green',
 }
 
 export type Comment = {
@@ -165,7 +197,7 @@ export type Checklist = {
   id: string;
   name: string;
   code: string;
-  status: ChecklistStates;
+  status: EnabledStates | DisabledStates;
   versionNumber: number;
   archived?: boolean;
   stages: Stage[];

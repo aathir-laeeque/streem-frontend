@@ -1,11 +1,6 @@
-import { ChecklistStates } from '#Composer-new/checklist.types';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
-type HeaderWrapperProps = {
-  checklistState: ChecklistStates;
-};
-
-const HeaderWrapper = styled.div<HeaderWrapperProps>`
+const HeaderWrapper = styled.div`
   display: flex;
   flex-direction: column;
   grid-area: header;
@@ -147,21 +142,6 @@ const HeaderWrapper = styled.div<HeaderWrapperProps>`
       }
     }
   }
-
-  ${({ checklistState }) => {
-    switch (checklistState) {
-      case ChecklistStates.BEING_REVIEWED:
-      case ChecklistStates.SUBMITTED_FOR_REVIEW:
-        return css`
-          .prototype-add-buttons {
-            display: none;
-          }
-        `;
-
-      default:
-        return null;
-    }
-  }}
 `;
 
 export default HeaderWrapper;

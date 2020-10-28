@@ -10,7 +10,6 @@ import {
   CollaboratorState,
   CollaboratorType,
 } from '#Composer-new/reviewer.types';
-import { ComposerEntity } from '#Composer-new/types';
 import { useTypedSelector } from '#store';
 import { FormMode } from '#views/Checklists/NewPrototype/types';
 import {
@@ -38,26 +37,13 @@ import { addNewStage } from '../Stages/actions';
 import { addNewTask } from '../Tasks/actions';
 import HeaderWrapper from './styles';
 
-const JobHeader: FC = () => {
-  const status = useTypedSelector(
-    (state) => (state.prototypeComposer.data as Checklist)?.status,
-  );
-
-  return (
-    <HeaderWrapper checklistState={status}>
-      Composer Header for Job Entity
-    </HeaderWrapper>
-  );
-};
-
 const ChecklistHeader: FC = () => {
   const dispatch = useDispatch();
 
-  const { activeStageId, data, status, userId } = useTypedSelector((state) => ({
+  const { activeStageId, data, userId } = useTypedSelector((state) => ({
     userId: state.auth.userId,
     data: state.prototypeComposer.data as Checklist,
     activeStageId: state.prototypeComposer.stages.activeStageId,
-    status: (state.prototypeComposer.data as Checklist).status,
   }));
 
   const reviewer = data?.collaborators.filter(
@@ -163,7 +149,7 @@ const ChecklistHeader: FC = () => {
 
         return (
           <>
-            {data.status !== ChecklistStates.SIGNING_IN_PROGRESS && (
+            {data?.status !== ChecklistStates.SIGNING_IN_PROGRESS && (
               <Button1
                 className="submit"
                 style={{ backgroundColor: '#333333' }}
@@ -173,7 +159,7 @@ const ChecklistHeader: FC = () => {
                 Continue Review
               </Button1>
             )}
-            {data.status !== ChecklistStates.SIGNING_IN_PROGRESS &&
+            {data?.status !== ChecklistStates.SIGNING_IN_PROGRESS &&
               !isReviewPending && (
                 <Button1 className="submit" onClick={handleSendToAuthor}>
                   <DoneAll style={{ fontSize: '16px', marginRight: '8px' }} />
@@ -240,7 +226,7 @@ const ChecklistHeader: FC = () => {
   );
 
   const renderButtonsForAuthor = () => {
-    switch (data.status) {
+    switch (data?.status) {
       case ChecklistStates.BEING_BUILT:
         return (
           <>
@@ -279,9 +265,9 @@ const ChecklistHeader: FC = () => {
   };
 
   return (
-    <HeaderWrapper checklistState={status}>
+    <HeaderWrapper>
       <div className="before-header">
-        {author && data.status === ChecklistStates.SUBMITTED_FOR_REVIEW && (
+        {author && data?.status === ChecklistStates.SUBMITTED_FOR_REVIEW && (
           <div className="alert">
             <Info />
             <span>This Prototype has been sent to Reviewers</span>
@@ -342,8 +328,8 @@ const ChecklistHeader: FC = () => {
             {reviewer && (
               <>
                 <ViewReviewersButton />
-                {data.status !== ChecklistStates.REQUESTED_CHANGES &&
-                data.status !== ChecklistStates.BEING_BUILT
+                {data?.status !== ChecklistStates.REQUESTED_CHANGES &&
+                data?.status !== ChecklistStates.BEING_BUILT
                   ? renderButtonsForReviewer(reviewer.state, data.collaborators)
                   : null}
               </>
@@ -356,8 +342,8 @@ const ChecklistHeader: FC = () => {
             variant="textOnly"
             id="new-stage"
             disabled={
-              data.status === ChecklistStates.SUBMITTED_FOR_REVIEW ||
-              data.status === ChecklistStates.BEING_REVIEWED
+              data?.status === ChecklistStates.SUBMITTED_FOR_REVIEW ||
+              data?.status === ChecklistStates.BEING_REVIEWED
             }
             onClick={() => dispatch(addNewStage())}
           >
@@ -369,8 +355,8 @@ const ChecklistHeader: FC = () => {
             variant="textOnly"
             id="new-task"
             disabled={
-              data.status === ChecklistStates.SUBMITTED_FOR_REVIEW ||
-              data.status === ChecklistStates.BEING_REVIEWED
+              data?.status === ChecklistStates.SUBMITTED_FOR_REVIEW ||
+              data?.status === ChecklistStates.BEING_REVIEWED
             }
             onClick={() => {
               if (activeStageId) {
@@ -397,14 +383,4 @@ const ChecklistHeader: FC = () => {
   );
 };
 
-const Header: FC = () => {
-  const { entity } = useTypedSelector((state) => state.prototypeComposer);
-
-  if (entity === ComposerEntity.CHECKLIST) {
-    return <ChecklistHeader />;
-  } else {
-    return <JobHeader />;
-  }
-};
-
-export default Header;
+export default ChecklistHeader;
