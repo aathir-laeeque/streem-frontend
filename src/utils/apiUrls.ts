@@ -204,3 +204,7 @@ export const apiUpdatePrototype = (id: Checklist['id']) =>
 export const apiValidatePassword = () => `${baseUrl}/auth/validate/credentials`;
 
 export const apiTaskSignOff = () => `${baseUrl}/tasks/sign-off`;
+
+export const apiApproveActivity = () => `${baseUrl}/activities/approve`;
+
+export const apiRejectActivity = () => `${baseUrl}/activities/reject`;

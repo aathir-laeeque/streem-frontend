@@ -31,6 +31,7 @@ export type ComposerProps = RouteComponentProps<{
 export type FetchDataArgs = {
   id: Checklist['id'] | Job['id'];
   entity: Entity;
+  setActive?: boolean;
 };
 
 export enum ChecklistErros {

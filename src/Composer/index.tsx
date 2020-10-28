@@ -19,7 +19,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
   useEffect(() => {
     if (!isIdle) {
       if (id) {
-        dispatch(fetchData({ id, entity }));
+        dispatch(fetchData({ id, entity, setActive: true }));
       } else {
         console.log('no id got to fetch data');
       }

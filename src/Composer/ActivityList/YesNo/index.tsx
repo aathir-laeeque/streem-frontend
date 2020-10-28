@@ -1,6 +1,6 @@
 import { Button1, Textarea } from '#components';
-import { get, debounce } from 'lodash';
-import React, { FC, useState } from 'react';
+import { debounce, get } from 'lodash';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { executeActivity, fixActivity } from '../actions';
@@ -14,7 +14,17 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
     newData: {},
     reason: activity?.response?.reason ?? '',
     shouldAskForReason: !!activity?.response?.reason,
+    showButtons: activity?.response?.status !== 'EXECUTED',
   });
+
+  useEffect(() => {
+    setState({
+      newData: {},
+      reason: activity?.response?.reason ?? '',
+      shouldAskForReason: !!activity?.response?.reason,
+      showButtons: activity?.response?.status !== 'EXECUTED',
+    });
+  }, [activity]);
 
   return (
     <Wrapper>
@@ -42,16 +52,19 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
                       })),
                     };
 
-                    console.log('type :: ', el.type);
-
                     if (el.type === 'no') {
-                      console.log('handle no part :: ', newData);
                       setState((values) => ({
                         ...values,
                         newData,
+                        showButtons: true,
                         shouldAskForReason: true,
                       }));
                     } else {
+                      setState((val) => ({
+                        ...val,
+                        reason: '',
+                        shouldAskForReason: false,
+                      }));
                       if (isCorrectingError) {
                         dispatch(fixActivity(newData));
                       } else {
@@ -80,35 +93,38 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
               }));
             }, 500)}
             rows={4}
-            disabled={activity?.response?.status === 'EXECUTED'}
           />
 
-          <div
-            className={`buttons-container ${
-              activity?.response?.status === 'EXECUTED' ? 'hide' : ''
-            }`}
-          >
-            <Button1
-              variant="secondary"
-              color="blue"
-              onClick={() => {
-                if (isCorrectingError) {
-                  dispatch(fixActivity(state.newData));
-                } else {
-                  dispatch(executeActivity(state.newData, state.reason));
+          {state.showButtons ? (
+            <div className="buttons-container">
+              <Button1
+                variant="secondary"
+                color="blue"
+                onClick={() => {
+                  if (isCorrectingError) {
+                    dispatch(fixActivity(state.newData));
+                  } else {
+                    dispatch(executeActivity(state.newData, state.reason));
+                  }
+                }}
+              >
+                Submit
+              </Button1>
+              <Button1
+                variant="secondary"
+                color="red"
+                onClick={() =>
+                  setState((val) => ({
+                    ...val,
+                    reason: '',
+                    shouldAskForReason: false,
+                  }))
                 }
-              }}
-            >
-              Submit
-            </Button1>
-            <Button1
-              variant="secondary"
-              color="red"
-              onClick={() => console.log('cancel')}
-            >
-              Cancel
-            </Button1>
-          </div>
+              >
+                Cancel
+              </Button1>
+            </div>
+          ) : null}
         </div>
       ) : null}
     </Wrapper>

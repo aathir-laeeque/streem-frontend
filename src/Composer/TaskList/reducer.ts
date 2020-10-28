@@ -32,13 +32,13 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
   let oldTask: Task;
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
-      const { data, entity } = action.payload;
+      const { data, entity, setActive } = action.payload;
 
       const checklist = entity === Entity.CHECKLIST ? data : data?.checklist;
 
       return {
         ...state,
-        ...getTasks({ checklist, setActiveTask: true }),
+        ...getTasks({ checklist, setActiveTask: setActive }),
       };
 
     case StageListAction.SET_ACTIVE_STAGE:

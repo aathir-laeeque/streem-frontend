@@ -24,13 +24,13 @@ const reducer: Reducer<StageListState, StageListActionType> = (
 ) => {
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
-      const { data, entity } = action.payload;
+      const { data, entity, setActive } = action.payload;
 
       const checklist = entity === Entity.CHECKLIST ? data : data?.checklist;
 
       return {
         ...state,
-        ...getStages({ checklist, setActiveStage: true }),
+        ...getStages({ checklist, setActiveStage: setActive }),
       };
 
     case StageListAction.SET_ACTIVE_STAGE:

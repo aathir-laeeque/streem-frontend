@@ -17,6 +17,8 @@ export enum ActivityListAction {
   UPDATE_EXECUTED_ACTIVITY = '@@composer/activity-list/activity/UPDATE_EXECUTED_ACTIVITY',
   SET_ACTIVITY_ERROR = '@@composer/activity-list/activity/SET_ACTIVITY_ERROR',
   FIX_ACTIVITY = '@@composer/activity-list/activity/FIX_ACTIVITY',
+  APPROVE_ACTIVITY = '@@composer/activity-list/activity/APPROVE_ACTIVITY',
+  REJECT_ACTIVITY = '@@composer/activity-list/activity/REJECT_ACTIVITY',
 }
 
 export type ActivityListActionType =

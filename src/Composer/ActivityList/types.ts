@@ -1,4 +1,5 @@
 import { Activity as ActivityType, Stage, Task } from '../checklist.types';
+import { Job } from '../../views/Jobs/types';
 
 type Activity = ActivityType & {
   hasError: boolean;
@@ -33,3 +34,14 @@ export type ActivitiesOrderInTaskInStage = Record<
 export enum ActivityErrors {
   E401 = 'ACTIVITY_INCOMPLETE',
 }
+
+export enum SupervisorResponse {
+  APPROVE = 'APPROVE',
+  REJECT = 'REJECT',
+}
+
+export type approveRejectActivityArgs = {
+  jobId: Job['id'];
+  activityId: Activity['id'];
+  type: SupervisorResponse;
+};

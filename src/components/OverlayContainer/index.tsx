@@ -14,13 +14,14 @@ import AssignmentSuccessModal from '#Composer/modals/AssignmentSuccess';
 import CompleteJobWithException from '#Composer/modals/CompleteJobWithException';
 import CompleteTaskWithException from '#Composer/modals/CompleteTaskWithException';
 import MediaDetail from '#Composer/modals/MediaDetail';
+import ParameterApprovalModal from '#Composer/modals/ParameterApproval';
 import Signature from '#Composer/modals/SignatureActivity';
 import SignCompletedTasksModal from '#Composer/modals/SignCompletedTasks';
+import SignningNotCompleteModal from '#Composer/modals/SignningNotComplete';
 import SignOffStatus from '#Composer/modals/SignOffStatus';
 import SkipTask from '#Composer/modals/SkipTask';
 import StartJob from '#Composer/modals/StartJob';
 import TaskErrorCorrection from '#Composer/modals/TaskErrorCorrection';
-import SignningNotCompleteModal from '#Composer/modals/SignningNotComplete';
 import TaskUserAssignment from '#Composer/modals/TaskUserAssignment';
 import { AssignedUserDetailsPopover } from '#Composer/Popovers/AssignedUserDetailsPopover';
 import { TaskAssignmentPopover } from '#Composer/Popovers/TaskAssignmentPopover';
@@ -147,6 +148,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.SIGNNING_NOT_COMPLETE:
       return <SignningNotCompleteModal {...params} />;
+
+    case OverlayNames.PARAMETER_APPROVAL:
+      return <ParameterApprovalModal {...params} />;
 
     default:
       return null;

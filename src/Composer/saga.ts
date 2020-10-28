@@ -47,7 +47,7 @@ import { groupJobErrors } from './utils';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   try {
-    const { id, entity } = payload;
+    const { id, entity, setActive } = payload;
 
     yield put(fetchDataOngoing());
 
@@ -58,7 +58,7 @@ function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
     );
 
     if (data) {
-      yield put(fetchDataSuccess(data, entity));
+      yield put(fetchDataSuccess(data, entity, setActive));
     } else {
       // TODO: handle the api error when design comes
       console.error('error from fetch checklist/job api ==>> ', errors);

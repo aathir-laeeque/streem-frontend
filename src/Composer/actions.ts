@@ -6,8 +6,8 @@ import { ComposerAction } from './composer.reducer.types';
 import { Entity, FetchDataArgs } from './composer.types';
 import { ExceptionValues } from './modals/CompleteJobWithException';
 
-export const fetchData = ({ id, entity }: FetchDataArgs) =>
-  actionSpreader(ComposerAction.FETCH_COMPOSER_DATA, { id, entity });
+export const fetchData = ({ id, entity, setActive = false }: FetchDataArgs) =>
+  actionSpreader(ComposerAction.FETCH_COMPOSER_DATA, { id, entity, setActive });
 
 export const fetchDataError = (error: any) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_ERROR, { error });
@@ -16,8 +16,16 @@ export const fetchDataOngoing = () =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_ONGOING);
 
 // TODO: look into this any data type
-export const fetchDataSuccess = (data: any, entity: Entity) =>
-  actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_SUCCESS, { data, entity });
+export const fetchDataSuccess = (
+  data: any,
+  entity: Entity,
+  setActive = false,
+) =>
+  actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_SUCCESS, {
+    data,
+    entity,
+    setActive,
+  });
 
 // JOB ASSIGNMENT
 
