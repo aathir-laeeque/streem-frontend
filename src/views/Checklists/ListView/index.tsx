@@ -4,6 +4,7 @@ import { useTypedSelector } from '#store';
 import { fetchProperties } from '#store/properties/actions';
 import { Settings } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
+import { template } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -26,10 +27,10 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
   const selectChecklist = (id: string | number) =>
     navigate(`/checklists/${id}`);
 
-  const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(
-    null,
-  );
-  const [sideBarOpen, setSideBarOpen] = useState(false);
+  // const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(
+  //   null,
+  // );
+  // const [sideBarOpen, setSideBarOpen] = useState(false);
 
   const fetchData = (page: number, size: number) => {
     dispatch(fetchChecklists({ page, size, sort: 'createdAt,desc' }));
@@ -48,21 +49,21 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
     }
   }, [isIdle]);
 
-  const openNav = () => {
-    const sideNav = document.getElementById('sideNav');
-    if (sideNav && !sideBarOpen) {
-      setSideBarOpen(true);
-      sideNav.style.cssText = 'right: 0px;';
-    }
-  };
+  // const openNav = () => {
+  //   const sideNav = document.getElementById('sideNav');
+  //   if (sideNav && !sideBarOpen) {
+  //     setSideBarOpen(true);
+  //     sideNav.style.cssText = 'right: 0px;';
+  //   }
+  // };
 
-  const closeNav = () => {
-    const sideNav = document.getElementById('sideNav');
-    if (sideNav && sideBarOpen) {
-      setSideBarOpen(false);
-      sideNav.style.cssText = 'right: -300px;';
-    }
-  };
+  // const closeNav = () => {
+  //   const sideNav = document.getElementById('sideNav');
+  //   if (sideNav && sideBarOpen) {
+  //     setSideBarOpen(false);
+  //     sideNav.style.cssText = 'right: -300px;';
+  //   }
+  // };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -102,10 +103,6 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
                           width: '36px',
                           cursor: 'pointer',
                         }}
-                        onClick={() => {
-                          setSelectedChecklist(item);
-                          openNav();
-                        }}
                       />
                       <span
                         className="list-title"
@@ -120,13 +117,22 @@ const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
             },
           },
         ]}
+        afterColumns={[
+          {
+            header: '',
+            template: function renderComp(item: Checklist) {
+              console.log('checklist from more tab :: ', item);
+              return <div className="list-card-columns">More</div>;
+            },
+          },
+        ]}
       />
-      <SideBar
+      {/* <SideBar
         sideBarOpen={sideBarOpen}
         selectedChecklist={selectedChecklist}
         closeNav={closeNav}
         properties={job}
-      />
+      /> */}
     </Composer>
   );
 };
