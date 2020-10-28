@@ -137,6 +137,9 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
         case 1005:
           throw 'Provided credentials are incorrect. Please check and try again.';
           break;
+        case 1007:
+          throw 'Password Expired. Use Forgot Password to set a new one.';
+          break;
         default:
           throw 'Provided credentials are incorrect. Please check and try again.';
           break;
