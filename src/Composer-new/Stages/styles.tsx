@@ -1,4 +1,3 @@
-import { ChecklistStates } from '#Composer-new/checklist.types';
 import { StageCardProps } from '#Composer/StageList/types';
 import styled, { css } from 'styled-components';
 
@@ -11,7 +10,7 @@ const StageListWrapper = styled.div.attrs({
 
 const StageCardWrapper = styled.div.attrs({
   className: 'stage',
-})<Pick<StageCardProps, 'isActive'> & { checklistState?: ChecklistStates }>`
+})<Pick<StageCardProps, 'isActive'>>`
   background-color: #ffffff;
   border: solid 1px #eeeeee;
   border-radius: 4px;
@@ -20,6 +19,14 @@ const StageCardWrapper = styled.div.attrs({
   flex-direction: column;
   margin-right: 12px;
   margin-bottom: 16px;
+  position: relative;
+
+  .overlap {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    z-index: 99;
+  }
 
   .stage {
     &-header {
@@ -100,75 +107,6 @@ const StageCardWrapper = styled.div.attrs({
           border-color: #1d84ff;
         `
       : null}
-
-  ${({ checklistState }) => {
-    switch (checklistState) {
-      case ChecklistStates.BEING_REVIEWED:
-      case ChecklistStates.SUBMITTED_FOR_REVIEW:
-        return css`
-          .stage {
-            &-header {
-              background-color: transparent;
-              padding: 16px 16px 0;
-
-              .order-control {
-                display: none;
-                margin: 0;
-                padding: 0;
-              }
-
-              #stage-delete {
-                display: none;
-              }
-            }
-
-            &-name {
-              color: #666666;
-              font-size: 14px;
-              font-weight: normal;
-            }
-
-            &-body {
-              padding-top: 0;
-
-              .textarea {
-                .input-label {
-                  display: none;
-                }
-
-                .textarea-wrapper {
-                  height: max-content;
-
-                  textarea {
-                    background: transparent;
-                    border: none;
-                    color: #000000;
-                    font-size: 16px;
-                    height: auto;
-                    padding: 0;
-                    pointer-events: none;
-                    resize: none;
-                  }
-                }
-              }
-            }
-
-            &-task {
-              &-properties {
-                margin-bottom: 0;
-              }
-
-              &-count {
-                display: block;
-              }
-            }
-          }
-        `;
-
-      default:
-        return null;
-    }
-  }}
 `;
 
 export { StageListWrapper, StageCardWrapper };

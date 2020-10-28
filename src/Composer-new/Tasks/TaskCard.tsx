@@ -1,8 +1,13 @@
-import { Select, Textarea, ImageUploadButton } from '#components';
+import { ImageUploadButton, Select, Textarea } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { ActivityType, TimerOperator } from '#Composer-new/checklist.types';
+import {
+  ActivityType,
+  EnabledStates,
+  TimerOperator,
+} from '#Composer-new/checklist.types';
 import { useTypedSelector } from '#store/helpers';
+import { formatDuration } from '#utils/timeUtils';
 import {
   AddBox,
   ArrowDownward,
@@ -12,7 +17,7 @@ import {
   PermMedia,
   Timer,
 } from '@material-ui/icons';
-import { debounce, isEmpty } from 'lodash';
+import { debounce } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -24,13 +29,12 @@ import {
   addStop,
   deleteTask,
   removeStop,
+  resetTaskActivityError,
   setActiveTask,
   updateTaskName,
 } from './actions';
 import { TaskCardWrapper } from './styles';
 import { TaskCardProps } from './types';
-import { formatDuration } from '#utils/timeUtils';
-import { resetTaskActivityError } from './actions';
 
 const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
   const {
@@ -78,6 +82,17 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
           }
         }}
       >
+        <div
+          className={`overlap ${data?.status in EnabledStates ? 'hide' : ''}`}
+          onClick={() => {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.EDITING_DISABLED,
+                props: { state: data?.status },
+              }),
+            );
+          }}
+        />
         <div className="task-header">
           <div className="order-control">
             <ArrowUpward

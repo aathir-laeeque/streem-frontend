@@ -1,4 +1,5 @@
 import { TaskMediaModal, TimedTaskConfigModal } from '#Composer-new/modals';
+import EditingDisabledModal from '#Composer-new/modals/EditingDisabled';
 import { AuthorsDetailsPopover } from '#Composer-new/Overlays/AuthorsDetailsPopover';
 import InitiateSignOffModal from '#Composer-new/Overlays/InitiateSignOff';
 import PasswordInputModal from '#Composer-new/Overlays/PasswordInput';
@@ -155,6 +156,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.PARAMETER_APPROVAL:
       return <ParameterApprovalModal {...params} />;
+
+    case OverlayNames.EDITING_DISABLED:
+      return <EditingDisabledModal {...params} />;
 
     default:
       return null;

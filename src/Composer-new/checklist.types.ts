@@ -142,6 +142,8 @@ export enum DisabledStates {
   PUBLISHED = 'PUBLISHED',
 }
 
+export type AllChecklistStates = EnabledStates | DisabledStates;
+
 // export enum ChecklistStates {
 //   BEING_BUILT = 'BEING_BUILT', // ENABLE EDITING
 //   SUBMITTED_FOR_REVIEW = 'SUBMITTED_FOR_REVIEW',

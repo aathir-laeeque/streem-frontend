@@ -27,6 +27,14 @@ const TaskCardWrapper = styled.div.attrs({
   flex-direction: column;
   grid-area: task-card;
   height: max-content;
+  position: relative;
+
+  .overlap {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    z-index: 99;
+  }
 
   .task {
     &-header {

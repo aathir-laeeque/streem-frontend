@@ -13,6 +13,7 @@ import { debounce } from 'lodash';
 import React, { forwardRef } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { EnabledStates } from '../checklist.types';
 import {
   deleteStage,
   reOrderStage,
@@ -25,10 +26,11 @@ import { StageCardProps } from './types';
 const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
   const { index, isActive, isFirstItem, isLastItem, stage } = props;
 
-  const { tasksInStage } = useTypedSelector((state) => ({
+  const { tasksInStage, data } = useTypedSelector((state) => ({
     tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[stage.id].map(
       (taskId) => state.prototypeComposer.tasks.listById[taskId],
     ),
+    data: state.prototypeComposer.data,
   }));
 
   const approvalNeeded = false;
@@ -47,6 +49,17 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
       isActive={isActive}
       onClick={() => dispatch(setActiveStage({ id: stage.id }))}
     >
+      <div
+        className={`overlap ${data?.status in EnabledStates ? 'hide' : ''}`}
+        onClick={() => {
+          dispatch(
+            openOverlayAction({
+              type: OverlayNames.EDITING_DISABLED,
+              props: { state: data?.status },
+            }),
+          );
+        }}
+      />
       <div className="stage-header">
         <div className="order-control">
           <ArrowUpward
