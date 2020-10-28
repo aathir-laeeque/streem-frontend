@@ -108,9 +108,15 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
           onCreateJob(jobDetails);
           closeOverlay();
         }}
-        disabledPrimary={properties.some(
-          (property) => property.mandatory && !jobDetails[property.name],
-        )}
+        disabledPrimary={
+          selectedChecklist
+            ? properties.some(
+                (property) => property.mandatory && !jobDetails[property.name],
+              )
+            : properties.some(
+                (property) => property.mandatory && !jobDetails[property.name],
+              ) || !searchQuery
+        }
       >
         {(selectedChecklist && (
           <FloatInput
