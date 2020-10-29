@@ -43,7 +43,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   props: { checklistId, isModal = true },
 }) => {
   const {
-    data: { authors },
+    data: { authors, reviewCycle },
     assignees,
     activeUsers: {
       list,
@@ -162,7 +162,11 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
               onClick={() => onCheckChanged(user, checked, isPreAssigned)}
               disabled={
                 user.state
-                  ? user.state !== CollaboratorState.NOT_STARTED
+                  ? user.reviewCycle === reviewCycle
+                    ? user.state !== CollaboratorState.NOT_STARTED
+                      ? false
+                      : true
+                    : true
                   : false
               }
             />
@@ -180,9 +184,14 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   };
 
   const handleUnselectAll = () => {
+    const filteredAssignees = preAssignedUsers.filter(
+      (user) =>
+        user.reviewCycle === reviewCycle &&
+        user.state !== CollaboratorState.NOT_STARTED,
+    );
     setstate({
       ...state,
-      unAssignedUsers: preAssignedUsers.map((i) => i.id),
+      unAssignedUsers: filteredAssignees.map((i) => i.id),
       assignedUsers: [],
     });
     if (checklistId) dispatch(revertReviewersForChecklist([]));

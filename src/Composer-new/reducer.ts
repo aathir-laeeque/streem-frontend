@@ -91,6 +91,16 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         ),
       };
 
+    case ComposerAction.SUBMIT_CHECKLIST_FOR_REVIEW_SUCCESS:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          status: ChecklistStates.SUBMITTED_FOR_REVIEW,
+          reviewCycle: (state.data as Checklist).reviewCycle + 1,
+        } as Checklist,
+      };
+
     case ComposerAction.ASSIGN_REVIEWERS_TO_CHECKLIST_SUCCESS:
       return {
         ...state,
@@ -100,7 +110,6 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         } as Checklist,
       };
 
-    case ComposerAction.CONTINUE_CHECKLIST_REVIEW_SUCCESS:
     case ComposerAction.SEND_REVIEW_TO_CR_SUCCESS:
     case ComposerAction.START_CHECKLIST_REVIEW_SUCCESS:
       return {

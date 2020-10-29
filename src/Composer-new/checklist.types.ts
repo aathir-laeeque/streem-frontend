@@ -161,9 +161,9 @@ export const ChecklistStates = {
 
 export enum ChecklistStatesContent {
   BEING_BUILT = 'Being Built',
-  SUBMITTED_FOR_REVIEW = 'Being Reviewed',
+  SUBMITTED_FOR_REVIEW = 'Submitted For Review',
   BEING_REVIEWED = 'Being Reviewed',
-  REQUESTED_CHANGES = 'Being Built',
+  REQUESTED_CHANGES = 'Requested Changes',
   READY_FOR_SIGNING = 'Ready for Signing',
   SIGN_OFF_INITIATED = 'Sign Off Initiated',
   SIGNING_IN_PROGRESS = 'Signing in Progress',
@@ -172,15 +172,15 @@ export enum ChecklistStatesContent {
 }
 
 export enum ChecklistStatesColors {
-  BEING_BUILT = 'blue',
-  SUBMITTED_FOR_REVIEW = 'yellow',
-  BEING_REVIEWED = 'yellow',
-  REQUESTED_CHANGES = 'yellow',
-  READY_FOR_SIGNING = 'green',
-  SIGN_OFF_INITIATED = 'green',
-  SIGNING_IN_PROGRESS = 'green',
-  READY_FOR_RELEASE = 'green',
-  PUBLISHED = 'green',
+  BEING_BUILT = '#1d84ff',
+  SUBMITTED_FOR_REVIEW = '#f7b500',
+  BEING_REVIEWED = '#f7b500',
+  REQUESTED_CHANGES = '#f7b500',
+  READY_FOR_SIGNING = '#5aa700',
+  SIGN_OFF_INITIATED = '#5aa700',
+  SIGNING_IN_PROGRESS = '#5aa700',
+  READY_FOR_RELEASE = '#5aa700',
+  PUBLISHED = '#5aa700',
 }
 
 export type Comment = {

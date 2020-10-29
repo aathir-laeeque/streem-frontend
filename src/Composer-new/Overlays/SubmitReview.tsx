@@ -2,6 +2,8 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import MemoAllOk from '#assets/svg/AllOk';
 import MemoNeedsCommenting from '#assets/svg/NeedsCommenting';
 import MemoSentToAuthor from '#assets/svg/SentToAuthor';
+import MemoRemoveComments from '#assets/svg/RemoveComments';
+import MemoMoreComments from '#assets/svg/MoreComments';
 import { Avatar, BaseModal, Button1, Select } from '#components';
 import React, { FC, useEffect, useState } from 'react';
 import {
@@ -21,7 +23,11 @@ import {
   OverlayNames,
 } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
-import { Checklist } from '#Composer-new/checklist.types';
+import {
+  Checklist,
+  ChecklistStatesColors,
+  ChecklistStatesContent,
+} from '#Composer-new/checklist.types';
 import { Collaborator, CollaboratorState } from '#Composer-new/reviewer.types';
 import {
   fetchAssignedReviewersForChecklist,
@@ -30,8 +36,8 @@ import {
   submitChecklistReviewWithCR,
 } from '#Composer-new/reviewer.actions';
 import { useDispatch } from 'react-redux';
-import { groupBy } from 'lodash';
-import { getOrdinal, removeUnderscore } from '#utils/stringUtils';
+import { groupBy, orderBy, sortBy } from 'lodash';
+import { getOrdinal } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
 import { Wrapper, AntSwitch } from './SubmitReview.styles';
 import {
@@ -71,19 +77,28 @@ const initialState: InitialState = {
   contentBlock: htmlToDraft(''),
   selectedReviewer: null,
   selectedCycle: null,
-  reviewCycleOptions: [{ label: 'All', value: null }],
-  reviewersOptions: [{ label: 'All', value: null }],
+  reviewCycleOptions: [],
+  reviewersOptions: [],
 };
 
 export const SubmitReviewModal: FC<CommonOverlayProps<{
   isViewer: boolean;
   sendToAuthor: boolean;
   isAuthor: boolean;
+  isPrimaryAuthor: boolean;
+  continueReview: boolean;
+  reviewState:
+    | CollaboratorState.COMMENTED_CHANGES
+    | CollaboratorState.COMMENTED_OK
+    | null;
 }>> = ({ closeAllOverlays, closeOverlay, props }) => {
   const isViewer = props?.isViewer || false;
   const isAuthor = props?.isAuthor || false;
-
+  const isPrimaryAuthor = props?.isPrimaryAuthor || false;
+  const continueReview = props?.continueReview || false;
+  const reviewState = props?.reviewState || null;
   const sendToAuthor = props?.sendToAuthor || false;
+
   const dispatch = useDispatch();
   const { data, userId, collaborators } = useTypedSelector((state) => ({
     userId: state.auth.userId,
@@ -104,6 +119,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
         const commentExist =
           data?.comments?.filter(
             (c) =>
+              c.reviewState !== CollaboratorState.COMMENTED_OK &&
               c.commentedBy.id === userId &&
               c.reviewCycle === data?.reviewCycle,
           ) ?? [];
@@ -134,8 +150,8 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
       setState({
         ...state,
         editorState,
-        reviewersOptions: [...state.reviewersOptions, ...reviewerOptions],
-        reviewCycleOptions: [...state.reviewCycleOptions, ...cycleOptions],
+        reviewersOptions: [{ label: 'All', value: null }, ...reviewerOptions],
+        reviewCycleOptions: [{ label: 'All', value: null }, ...cycleOptions],
       });
     }
   }, [collaborators]);
@@ -158,77 +174,89 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
 
   const groupedComments = groupBy(data?.comments, 'reviewCycle');
   const comments: any = [];
-  Object.keys(groupedComments).forEach((item) => {
-    let shouldInculde = true;
-    let shouldInculdeUser = true;
-    if (state.selectedCycle) {
-      shouldInculde = state.selectedCycle === Number(item);
-    }
-    if (state.selectedReviewer) {
-      shouldInculdeUser = false;
-    }
-    if (shouldInculde)
-      comments.push(
-        <div className="reviews-group" key={`reviewerGroup_${item}`}>
-          <span>{`${getOrdinal(Number(item))} Review`}</span>
-          <div className="comments-group">
-            {groupedComments[item].map((comment) => {
-              if (
-                !shouldInculdeUser &&
-                state.selectedReviewer !== comment.commentedBy.id
-              )
-                return null;
-              return (
-                <div className="comment-section" key={`comment_${comment.id}`}>
-                  <div className="user-detail">
-                    <div>
-                      <Avatar user={comment.commentedBy} />
-                      <h4>{`${comment.commentedBy.firstName} ${comment.commentedBy.lastName},`}</h4>
-                      <h5>{`ID : ${comment.commentedBy.employeeId}`}</h5>
+  Object.keys(groupedComments)
+    .sort()
+    .reverse()
+    .forEach((item) => {
+      let shouldInculde = true;
+      let shouldInculdeUser = true;
+      if (state.selectedCycle) {
+        shouldInculde = state.selectedCycle === Number(item);
+      }
+      if (state.selectedReviewer) {
+        shouldInculdeUser = false;
+      }
+      if (shouldInculde) {
+        groupedComments[item] = orderBy(
+          groupedComments[item],
+          ['commentedAt'],
+          ['desc'],
+        );
+        comments.push(
+          <div className="reviews-group" key={`reviewerGroup_${item}`}>
+            <span>{`${getOrdinal(Number(item))} Review`}</span>
+            <div className="comments-group">
+              {groupedComments[item].map((comment) => {
+                if (
+                  !shouldInculdeUser &&
+                  state.selectedReviewer !== comment.commentedBy.id
+                )
+                  return null;
+                return (
+                  <div
+                    className="comment-section"
+                    key={`comment_${comment.id}`}
+                  >
+                    <div className="user-detail">
+                      <div>
+                        <Avatar user={comment.commentedBy} />
+                        <h4>{`${comment.commentedBy.firstName} ${comment.commentedBy.lastName},`}</h4>
+                        <h5>{`ID : ${comment.commentedBy.employeeId}`}</h5>
+                      </div>
+                      <div>
+                        <span>
+                          {formatDateTime(
+                            comment.commentedAt,
+                            'Do MMM, YYYY, HH:MM a',
+                          )}
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      <span>
-                        {formatDateTime(
-                          comment.commentedAt,
-                          'Do MMM, YYYY, HH:MM a',
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                  {comment.reviewState === CollaboratorState.COMMENTED_OK ? (
-                    <div
-                      className="comment"
-                      style={{
-                        backgroundColor: '#e1fec0',
-                        border: 'solid 1px #5aa700',
-                        color: '#427a00',
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: '16px',
-                      }}
-                    >
-                      All OK, No Comments
-                      <ThumbUp
+                    {comment.reviewState === CollaboratorState.COMMENTED_OK ? (
+                      <div
+                        className="comment"
                         style={{
+                          backgroundColor: '#e1fec0',
+                          border: 'solid 1px #5aa700',
                           color: '#427a00',
-                          marginLeft: '6px',
-                          fontSize: '20px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '16px',
                         }}
+                      >
+                        All OK, No Comments
+                        <ThumbUp
+                          style={{
+                            color: '#427a00',
+                            marginLeft: '6px',
+                            fontSize: '20px',
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        className="comment"
+                        dangerouslySetInnerHTML={{ __html: comment.comments }}
                       />
-                    </div>
-                  ) : (
-                    <div
-                      className="comment"
-                      dangerouslySetInnerHTML={{ __html: comment.comments }}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>,
-      );
-  });
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>,
+        );
+      }
+    });
 
   const handleAuthorMouseOver = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -284,16 +312,23 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
   };
 
   const getTitle = () => {
+    if (state.selected === Options.OK) return 'Confirm your choice';
+    if (continueReview && reviewState === CollaboratorState.COMMENTED_OK)
+      return 'Add Comments';
+    if (continueReview && reviewState === CollaboratorState.COMMENTED_CHANGES)
+      return 'How do you want to Continue?';
+    // if (continueReview && state.selected === Options.OK)
+    //   return 'Confirm your choice';
     if (!sendToAuthor && !isViewer && state.selected === null)
       return 'How is the Prototype ?';
-    if (!sendToAuthor && !isViewer && state.selected === Options.OK)
-      return 'Confirm your choice';
+    // if (!sendToAuthor && !isViewer && state.selected === Options.OK)
+    //   return 'Confirm your choice';
 
     return '';
   };
 
   const getShowHeader = () => {
-    if (!sendToAuthor && (isViewer || state.selected === Options.COMMENTS))
+    if (sendToAuthor || isViewer || state.selected === Options.COMMENTS)
       return false;
 
     return true;
@@ -312,9 +347,73 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
         closeModal={closeOverlay}
         title={getTitle()}
       >
-        {sendToAuthor && (
+        {continueReview && reviewState && state.selected === null && (
           <>
-            <div className="box-wrapper">
+            {reviewState === CollaboratorState.COMMENTED_OK ? (
+              <div
+                style={{
+                  padding: '0px 0px 88px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <div className="box-wrapper" style={{ padding: '0px 208px' }}>
+                  <div
+                    className="box"
+                    onClick={() =>
+                      setState({ ...state, selected: Options.COMMENTS })
+                    }
+                  >
+                    <div className="icon-wrapper">
+                      <MemoNeedsCommenting />
+                    </div>
+                    <h3>Needs Commenting</h3>
+                    <span>Some Changes Are Needed</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div
+                className="box-wrapper"
+                style={{ padding: '0px 48px 100px' }}
+              >
+                <div
+                  className="box"
+                  onClick={() => setState({ ...state, selected: Options.OK })}
+                >
+                  <div className="icon-wrapper">
+                    <MemoRemoveComments />
+                  </div>
+                  <h3>Remove Comments</h3>
+                  <span>Cancel your existing Comment</span>
+                </div>
+                <div
+                  className="box"
+                  onClick={() =>
+                    setState({ ...state, selected: Options.COMMENTS })
+                  }
+                >
+                  <div className="icon-wrapper">
+                    <MemoMoreComments />
+                  </div>
+                  <h3>More Comments</h3>
+                  <span>Continue from where you left</span>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+        {sendToAuthor && (
+          <div
+            style={{
+              padding: '88px 0px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <div className="box-wrapper" style={{ padding: '0px 208px' }}>
               <div className="box">
                 <div className="icon-wrapper">
                   <MemoSentToAuthor />
@@ -329,60 +428,95 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
             <Button1 variant="textOnly" onClick={toggleSendToAuthor}>
               View Requested Changes
             </Button1>
-          </>
+          </div>
         )}
 
-        {!sendToAuthor && !isViewer && state.selected === null && (
-          <>
-            <div className="box-wrapper" style={{ padding: '0px 48px 100px' }}>
+        {!sendToAuthor &&
+          !continueReview &&
+          !isViewer &&
+          state.selected === null && (
+            <>
               <div
-                className="box"
-                onClick={() => setState({ ...state, selected: Options.OK })}
+                className="box-wrapper"
+                style={{ padding: '0px 48px 100px' }}
               >
-                <div className="icon-wrapper">
-                  <MemoAllOk />
+                <div
+                  className="box"
+                  onClick={() => setState({ ...state, selected: Options.OK })}
+                >
+                  <div className="icon-wrapper">
+                    <MemoAllOk />
+                  </div>
+                  <h3>All OK</h3>
+                  <span>No Comments Needed</span>
                 </div>
-                <h3>All OK</h3>
-                <span>No Comments Needed</span>
-              </div>
-              <div
-                className="box"
-                onClick={() =>
-                  setState({ ...state, selected: Options.COMMENTS })
-                }
-              >
-                <div className="icon-wrapper">
-                  <MemoNeedsCommenting />
+                <div
+                  className="box"
+                  onClick={() =>
+                    setState({ ...state, selected: Options.COMMENTS })
+                  }
+                >
+                  <div className="icon-wrapper">
+                    <MemoNeedsCommenting />
+                  </div>
+                  <h3>Needs Commenting</h3>
+                  <span>Some Changes Are Needed</span>
                 </div>
-                <h3>Needs Commenting</h3>
-                <span>Some Changes Are Needed</span>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
 
-        {!sendToAuthor && !isViewer && state.selected === Options.OK && (
-          <>
-            <div className="box-wrapper" style={{ padding: '0px 208px' }}>
-              <div className="box">
-                <div className="icon-wrapper">
-                  <MemoAllOk />
+        {!sendToAuthor &&
+          continueReview &&
+          !isViewer &&
+          state.selected === Options.OK && (
+            <>
+              <div className="box-wrapper" style={{ padding: '0px 208px' }}>
+                <div className="box">
+                  <div className="icon-wrapper">
+                    <MemoRemoveComments />
+                  </div>
+                  <h3>Remove Comments</h3>
+                  <span>No Changes are Necessary</span>
                 </div>
-                <h3>All OK</h3>
-                <span>No Comments Needed</span>
               </div>
-            </div>
-            <Button1 className="submit" onClick={handleOnAllOK}>
-              Confirm
-            </Button1>
-            <Button1
-              variant="textOnly"
-              onClick={() => setState({ ...state, selected: null })}
-            >
-              Go Back
-            </Button1>
-          </>
-        )}
+              <Button1 className="submit" onClick={handleOnAllOK}>
+                Confirm
+              </Button1>
+              <Button1
+                variant="textOnly"
+                onClick={() => setState({ ...state, selected: null })}
+              >
+                Go Back
+              </Button1>
+            </>
+          )}
+
+        {!sendToAuthor &&
+          !continueReview &&
+          !isViewer &&
+          state.selected === Options.OK && (
+            <>
+              <div className="box-wrapper" style={{ padding: '0px 208px' }}>
+                <div className="box">
+                  <div className="icon-wrapper">
+                    <MemoAllOk />
+                  </div>
+                  <h3>All OK</h3>
+                  <span>No Comments Needed</span>
+                </div>
+              </div>
+              <Button1 className="submit" onClick={handleOnAllOK}>
+                Confirm
+              </Button1>
+              <Button1
+                variant="textOnly"
+                onClick={() => setState({ ...state, selected: null })}
+              >
+                Go Back
+              </Button1>
+            </>
+          )}
 
         {!sendToAuthor && (isViewer || state.selected === Options.COMMENTS) ? (
           <>
@@ -391,8 +525,11 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                 <h5>Checklist Name</h5>
                 <h4>{data?.name}</h4>
                 <h6>
-                  <FiberManualRecord className="icon" />
-                  {removeUnderscore(data?.status.toLowerCase())}
+                  <FiberManualRecord
+                    className="icon"
+                    style={{ color: ChecklistStatesColors[data?.status] }}
+                  />
+                  {ChecklistStatesContent[data?.status]}
                 </h6>
               </div>
               <div className="header-right">
@@ -450,7 +587,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                   />
                   <Person style={{ fontSize: '18px' }} />
                 </div>
-                {isAuthor && (
+                {isPrimaryAuthor && (
                   <div
                     className="icon-wrapper"
                     style={{

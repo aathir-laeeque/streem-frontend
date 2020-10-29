@@ -12,6 +12,28 @@ export enum CollaboratorState {
   SIGNED = 'SIGNED',
 }
 
+export enum CollaboratorStateContent {
+  ILLEGAL = 'ILLEGAL',
+  NOT_STARTED = 'Not Started',
+  BEING_REVIEWED = 'In Progress',
+  COMMENTED_OK = 'In Progress',
+  COMMENTED_CHANGES = 'In Progress',
+  REQUESTED_CHANGES = 'Completed',
+  REQUESTED_NO_CHANGES = 'Completed',
+  SIGNED = 'Signed',
+}
+
+export enum CollaboratorStateColors {
+  ILLEGAL = '#1d84ff',
+  NOT_STARTED = '#5aa700',
+  BEING_REVIEWED = '#f7b500',
+  COMMENTED_OK = '#f7b500',
+  COMMENTED_CHANGES = '#f7b500',
+  REQUESTED_CHANGES = '#5aa700',
+  REQUESTED_NO_CHANGES = '#5aa700',
+  SIGNED = '#5aa700',
+}
+
 export enum CollaboratorType {
   REVIEWER = 'REVIEWER',
   APPROVER = 'APPROVER',

@@ -5,8 +5,9 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
   .modal {
     min-width: unset !important;
 
-    ${({ comments }) =>
-      comments
+    ${({ comments }) => {
+      console.log('comments in style', comments);
+      return comments
         ? `
         .close-icon {
       top: 38px !important;
@@ -23,11 +24,13 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
       font-size: 24px !important;
     }
     width: unset !important;
-    `}
+    `;
+    }}
 
     h2 {
       color: #000 !important;
       font-weight: bold !important;
+      height: 20px;
     }
 
     .modal-header {
@@ -323,7 +326,7 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
             max-height: 500px;
             margin-right: -24px;
             padding-right: 24px;
-            /* overflow-y: auto; */
+            overflow: auto;
 
             .no-comments {
               display: flex;

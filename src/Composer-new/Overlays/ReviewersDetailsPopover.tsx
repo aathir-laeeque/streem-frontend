@@ -2,7 +2,11 @@ import React, { FC } from 'react';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Popover } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Collaborator, CollaboratorState } from '#Composer-new/reviewer.types';
+import {
+  Collaborator,
+  CollaboratorStateColors,
+  CollaboratorStateContent,
+} from '#Composer-new/reviewer.types';
 import { removeUnderscore } from '#utils/stringUtils';
 
 const useStyles = makeStyles({
@@ -92,13 +96,10 @@ export const ReviewersDetailsPopover: FC<CommonOverlayProps<{
           <span
             className={classes.status}
             style={{
-              color:
-                user.state === CollaboratorState.BEING_REVIEWED
-                  ? '#1d84ff'
-                  : '#5aa700',
+              color: CollaboratorStateColors[user.state],
             }}
           >
-            {removeUnderscore(user.state.toLowerCase())}
+            {CollaboratorStateContent[user.state]}
           </span>
         </div>
       ))}

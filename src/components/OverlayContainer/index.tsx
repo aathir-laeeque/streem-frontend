@@ -7,6 +7,7 @@ import { ReviewerAssignmentPopover } from '#Composer-new/Overlays/ReviewerAssign
 import ReviewerAssignmentSuccessModal from '#Composer-new/Overlays/ReviewerAssignmentSuccess';
 import { ReviewersDetailsPopover } from '#Composer-new/Overlays/ReviewersDetailsPopover';
 import ReviewSubmitSuccessModal from '#Composer-new/Overlays/ReviewSubmitSuccess';
+import SentToAuthorSuccessModal from '#Composer-new/Overlays/SentToAuthorSuccess';
 import SignOffProgressModal from '#Composer-new/Overlays/SignOffProgress';
 import { SubmitReviewModal } from '#Composer-new/Overlays/SubmitReview';
 import AddStop from '#Composer/modals/AddStop';
@@ -90,6 +91,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.CHECKLIST_REVIEWER_SUBMIT_SUCCESS:
       return <ReviewSubmitSuccessModal {...params} />;
+
+    case OverlayNames.CHECKLIST_SENT_TO_AUTHOR_SUCCESS:
+      return <SentToAuthorSuccessModal {...params} />;
 
     case OverlayNames.SUBMIT_REVIEW_MODAL:
       return <SubmitReviewModal {...params} />;

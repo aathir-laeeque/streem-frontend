@@ -1,6 +1,11 @@
 import { actionSpreader } from '#store';
 import { User } from '#store/users/types';
-import { Checklist, ChecklistStates, Comment } from './checklist.types';
+import {
+  Checklist,
+  Comment,
+  DisabledStates,
+  EnabledStates,
+} from './checklist.types';
 import { ComposerAction } from './reducer.types';
 import { Collaborator } from './reviewer.types';
 
@@ -77,17 +82,6 @@ export const submitChecklistReviewSuccess = (
 export const submitChecklistReviewError = (error: any) =>
   actionSpreader(ComposerAction.SUBMIT_CHECKLIST_REVIEW_ERROR, { error });
 
-export const continueChecklistReview = (checklistId: Checklist['id']) =>
-  actionSpreader(ComposerAction.CONTINUE_CHECKLIST_REVIEW, { checklistId });
-
-export const continueChecklistReviewSuccess = (collaborators: Collaborator[]) =>
-  actionSpreader(ComposerAction.CONTINUE_CHECKLIST_REVIEW_SUCCESS, {
-    collaborators,
-  });
-
-export const continueChecklistReviewError = (error: any) =>
-  actionSpreader(ComposerAction.CONTINUE_CHECKLIST_REVIEW_ERROR, { error });
-
 export const submitChecklistReviewWithCR = (
   checklistId: Checklist['id'],
   comments: string,
@@ -111,7 +105,7 @@ export const submitChecklistReviewWithCRError = (error: any) =>
     error,
   });
 
-export const updateChecklistState = (state: ChecklistStates) =>
+export const updateChecklistState = (state: EnabledStates | DisabledStates) =>
   actionSpreader(ComposerAction.UPDATE_CHECKLIST_STATE, {
     state,
   });

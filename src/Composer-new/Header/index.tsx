@@ -2,8 +2,8 @@ import { Button1 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
-  continueChecklistReview,
   startChecklistReview,
+  submitChecklistForReview,
 } from '#Composer-new/reviewer.actions';
 import {
   Collaborator,
@@ -31,6 +31,7 @@ import { validatePrototype } from '../actions';
 import {
   Checklist,
   ChecklistStates,
+  ChecklistStatesColors,
   ChecklistStatesContent,
 } from '../checklist.types';
 import { addNewStage } from '../Stages/actions';
@@ -48,21 +49,28 @@ const ChecklistHeader: FC = () => {
 
   const reviewer = data?.collaborators.filter(
     (reviewer) =>
-      reviewer.type === CollaboratorType.REVIEWER && reviewer.id === userId,
+      reviewer.reviewCycle === data.reviewCycle &&
+      reviewer.type === CollaboratorType.REVIEWER &&
+      reviewer.id === userId,
   )[0];
 
   const author = data?.authors.filter((a) => a.id === userId)[0];
 
-  const handleSubmitForReview = (isViewer = false) => {
-    dispatch(
-      openOverlayAction({
-        type: OverlayNames.SUBMIT_REVIEW_MODAL,
-        props: {
-          isViewer,
-          isAuthor: !reviewer,
-        },
-      }),
-    );
+  const handleSubmitForReview = (isViewer = false, showAssignment = true) => {
+    if (showAssignment) {
+      dispatch(
+        openOverlayAction({
+          type: OverlayNames.SUBMIT_REVIEW_MODAL,
+          props: {
+            isViewer,
+            isAuthor: !!author,
+            isPrimaryAuthor: author && author.primary,
+          },
+        }),
+      );
+    } else {
+      dispatch(submitChecklistForReview(data.id));
+    }
   };
 
   const handleSendToAuthor = () => {
@@ -96,24 +104,13 @@ const ChecklistHeader: FC = () => {
     );
   };
 
-  const onContinueReview = () => {
-    if (data && data.id) dispatch(continueChecklistReview(data?.id));
-  };
-
   const handleContinueReview = () => {
     dispatch(
       openOverlayAction({
-        type: OverlayNames.CONFIRMATION_MODAL,
+        type: OverlayNames.SUBMIT_REVIEW_MODAL,
         props: {
-          onPrimary: () => onContinueReview(),
-          primaryText: 'Confirm',
-          title: 'Continue Review',
-          body: (
-            <>
-              Are you sure you want to continue reviewing ? You will have to
-              once again submit to end your review.
-            </>
-          ),
+          continueReview: true,
+          reviewState: reviewer.state,
         },
       }),
     );
@@ -209,7 +206,11 @@ const ChecklistHeader: FC = () => {
   const AuthorSubmitButton = ({ title }: { title: string }) => (
     <Button1
       className="submit"
-      onClick={() => dispatch(validatePrototype(data.id))}
+      onClick={() =>
+        data.status === ChecklistStates.BEING_BUILT
+          ? dispatch(validatePrototype(data.id))
+          : dispatch(submitChecklistForReview(data.id))
+      }
     >
       {title}
     </Button1>
@@ -230,9 +231,13 @@ const ChecklistHeader: FC = () => {
       case ChecklistStates.BEING_BUILT:
         return (
           <>
-            <PrototypeEditButton />
-            {author.primary && <AuthorSubmitButton title="Submit For Review" />}
-            <MoreButton />
+            {author.primary && (
+              <>
+                <PrototypeEditButton />
+                <AuthorSubmitButton title="Submit For Review" />
+                <MoreButton />
+              </>
+            )}
           </>
         );
 
@@ -248,9 +253,9 @@ const ChecklistHeader: FC = () => {
       case ChecklistStates.REQUESTED_CHANGES:
         return (
           <>
-            <PrototypeEditButton />
+            {author.primary && <PrototypeEditButton />}
             <ViewReviewersButton />
-            <AuthorSubmitButton title="Submit" />
+            {author.primary && <AuthorSubmitButton title="Submit For Review" />}
           </>
         );
 
@@ -263,6 +268,10 @@ const ChecklistHeader: FC = () => {
         );
     }
   };
+
+  const disableAddingButtons = () =>
+    data?.status === ChecklistStates.SUBMITTED_FOR_REVIEW ||
+    data?.status === ChecklistStates.BEING_REVIEWED;
 
   return (
     <HeaderWrapper>
@@ -310,6 +319,14 @@ const ChecklistHeader: FC = () => {
             </span>
           </div>
         )}
+        {reviewer &&
+          (reviewer.state === CollaboratorState.REQUESTED_CHANGES ||
+            reviewer.state === CollaboratorState.REQUESTED_NO_CHANGES) && (
+            <div className="alert">
+              <Info />
+              <span>You have already submited your review to author.</span>
+            </div>
+          )}
       </div>
       <div className="main-header">
         <div className="header-content">
@@ -317,7 +334,10 @@ const ChecklistHeader: FC = () => {
             <span className="checklist-name-label">Checklist Name</span>
             <div className="checklist-name">{data?.name}</div>
             <div className="checklist-status">
-              <FiberManualRecord className="icon" />
+              <FiberManualRecord
+                className="icon"
+                style={{ color: ChecklistStatesColors[data?.status] }}
+              />
               <span>{ChecklistStatesContent[data?.status]}</span>
             </div>
           </div>
@@ -336,48 +356,47 @@ const ChecklistHeader: FC = () => {
             )}
           </div>
         </div>
+        {author && (
+          <div className="prototype-add-buttons">
+            <Button1
+              variant="textOnly"
+              id="new-stage"
+              disabled={disableAddingButtons()}
+              onClick={() => dispatch(addNewStage())}
+            >
+              <AddCircle className="icon" fontSize="small" />
+              Add a new Stage
+            </Button1>
 
-        <div className="prototype-add-buttons">
-          <Button1
-            variant="textOnly"
-            id="new-stage"
-            disabled={
-              data?.status === ChecklistStates.SUBMITTED_FOR_REVIEW ||
-              data?.status === ChecklistStates.BEING_REVIEWED
-            }
-            onClick={() => dispatch(addNewStage())}
-          >
-            <AddCircle className="icon" fontSize="small" />
-            Add a new Stage
-          </Button1>
+            <Button1
+              variant="textOnly"
+              id="new-task"
+              disabled={disableAddingButtons()}
+              onClick={() => {
+                if (activeStageId) {
+                  dispatch(
+                    addNewTask({
+                      checklistId: data.id,
+                      stageId: activeStageId,
+                    }),
+                  );
+                }
+              }}
+            >
+              <AddCircle className="icon" fontSize="small" />
+              Add a new Task
+            </Button1>
 
-          <Button1
-            variant="textOnly"
-            id="new-task"
-            disabled={
-              data?.status === ChecklistStates.SUBMITTED_FOR_REVIEW ||
-              data?.status === ChecklistStates.BEING_REVIEWED
-            }
-            onClick={() => {
-              if (activeStageId) {
-                dispatch(
-                  addNewTask({
-                    checklistId: data.id,
-                    stageId: activeStageId,
-                  }),
-                );
-              }
-            }}
-          >
-            <AddCircle className="icon" fontSize="small" />
-            Add a new Task
-          </Button1>
-
-          <Button1 variant="textOnly" id="preview">
-            <PlayCircleFilled className="icon" fontSize="small" />
-            Preview
-          </Button1>
-        </div>
+            <Button1
+              variant="textOnly"
+              id="preview"
+              disabled={disableAddingButtons()}
+            >
+              <PlayCircleFilled className="icon" fontSize="small" />
+              Preview
+            </Button1>
+          </div>
+        )}
       </div>
     </HeaderWrapper>
   );

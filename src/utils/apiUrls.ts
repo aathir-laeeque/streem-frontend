@@ -168,9 +168,6 @@ export const apiSubmitChecklistReviewWithCR = (checklistId: Checklist['id']) =>
 export const apiSubmitChecklistForReview = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/review/submit`;
 
-export const apiContinueChecklistReview = (checklistId: Checklist['id']) =>
-  `${baseUrl}/checklists/${checklistId}/review/continue`;
-
 export const apiSendReviewToCr = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/review/submit-back`;
 

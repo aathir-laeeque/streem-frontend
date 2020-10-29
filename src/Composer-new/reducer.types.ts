@@ -12,8 +12,8 @@ import {
   unAssignReviewerFromChecklist,
   revertReviewersForChecklist,
   startChecklistReviewSuccess,
+  submitChecklistForReviewSuccess,
   submitChecklistReviewSuccess,
-  continueChecklistReviewSuccess,
   submitChecklistReviewWithCRSuccess,
   updateChecklistState,
   sendReviewToCrSuccess,
@@ -67,9 +67,6 @@ export enum ComposerAction {
   SUBMIT_CHECKLIST_REVIEW_WITH_CR = '@@composer/prototype/SUBMIT_CHECKLIST_REVIEW_WITH_CR',
   SUBMIT_CHECKLIST_REVIEW_WITH_CR_SUCCESS = '@@composer/prototype/SUBMIT_CHECKLIST_REVIEW_WITH_CR_SUCCESS',
   SUBMIT_CHECKLIST_REVIEW_WITH_CR_ERROR = '@@composer/prototype/SUBMIT_CHECKLIST_REVIEW_WITH_CR_ERROR',
-  CONTINUE_CHECKLIST_REVIEW = '@@composer/prototype/CONTINUE_CHECKLIST_REVIEW',
-  CONTINUE_CHECKLIST_REVIEW_SUCCESS = '@@composer/prototype/CONTINUE_CHECKLIST_REVIEW_SUCCESS',
-  CONTINUE_CHECKLIST_REVIEW_ERROR = '@@composer/prototype/CONTINUE_CHECKLIST_REVIEW_ERROR',
   UPDATE_CHECKLIST_STATE = '@@composer/prototype/UPDATE_CHECKLIST_STATE',
   SEND_REVIEW_TO_CR = '@@composer/prototype/SEND_REVIEW_TO_CR',
   SEND_REVIEW_TO_CR_SUCCESS = '@@composer/prototype/SEND_REVIEW_TO_CR_SUCCESS',
@@ -88,7 +85,7 @@ export type ComposerActionType = ReturnType<
   | typeof startChecklistReviewSuccess
   | typeof submitChecklistReviewSuccess
   | typeof submitChecklistReviewWithCRSuccess
-  | typeof continueChecklistReviewSuccess
+  | typeof submitChecklistForReviewSuccess
   | typeof updateChecklistState
   | typeof sendReviewToCrSuccess
   | typeof assignReviewersToChecklistSuccess
