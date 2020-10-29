@@ -23,6 +23,20 @@ export const Composer = styled.div`
     }
   }
 
+  .item-status {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    padding-left: 36px;
+    margin-top: 4px;
+
+    .icon {
+      font-size: 12px;
+      margin: 0px 4px 0px 0px;
+      color: inherit;
+    }
+  }
+
   #archive-unarchive {
     cursor: pointer;
   }

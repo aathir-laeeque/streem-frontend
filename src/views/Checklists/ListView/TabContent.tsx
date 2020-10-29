@@ -7,16 +7,24 @@ import { useProperties } from '#services/properties';
 import { useTypedSelector } from '#store';
 import { createJob } from '#views/Jobs/ListView/actions';
 import { Menu, MenuItem } from '@material-ui/core';
-import { ArrowDropDown, Settings } from '@material-ui/icons';
+import { ArrowDropDown, Settings, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { FormMode } from '../NewPrototype/types';
 import { Checklist } from '../types';
-import { fetchChecklists } from './actions';
+import {
+  archiveChecklist,
+  fetchChecklists,
+  unarchiveChecklist,
+} from './actions';
 import { Composer } from './styles';
 import { ListViewProps } from './types';
+import {
+  ChecklistStatesContent,
+  ChecklistStatesColors,
+} from '#Composer-new/checklist.types';
 
 const ListView: FC<ListViewProps & { label: string }> = ({
   navigate = navigateTo,
@@ -143,6 +151,13 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                         {item.name}
                       </span>
                     </div>
+                    <span
+                      className="item-status"
+                      style={{ color: ChecklistStatesColors[item?.status] }}
+                    >
+                      <FiberManualRecord className="icon" />
+                      {ChecklistStatesContent[item?.status]}
+                    </span>
                   </div>
                 </div>
               );
@@ -205,14 +220,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                       >
                         Create Job
                       </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          handleClose();
-                          console.log('archive published prototype');
-                        }}
-                      >
-                        Archive
-                      </MenuItem>
                     </Menu>
                   </>
                 );
@@ -223,9 +230,39 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     className="list-card-columns"
                     onClick={() => {
                       if (item.archived) {
-                        console.log('Unarchive');
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                            props: {
+                              header: 'Unarchive Prototype',
+                              body: (
+                                <span>
+                                  Are you sure you want to Unarchive this
+                                  Prototype ?
+                                </span>
+                              ),
+                              onPrimaryClick: () =>
+                                dispatch(unarchiveChecklist(item.id)),
+                            },
+                          }),
+                        );
                       } else {
-                        console.log('archive');
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                            props: {
+                              header: 'Archive Prototype',
+                              body: (
+                                <span>
+                                  Are you sure you want to Archive this
+                                  Prototype ?
+                                </span>
+                              ),
+                              onPrimaryClick: () =>
+                                dispatch(archiveChecklist(item.id)),
+                            },
+                          }),
+                        );
                       }
                     }}
                   >

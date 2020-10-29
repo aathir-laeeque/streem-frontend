@@ -205,3 +205,9 @@ export const apiTaskSignOff = () => `${baseUrl}/tasks/sign-off`;
 export const apiApproveActivity = () => `${baseUrl}/activities/approve`;
 
 export const apiRejectActivity = () => `${baseUrl}/activities/reject`;
+
+export const apiArchiveChecklist = (id: Checklist['id']) =>
+  `${baseUrl}/checklists/${id}/archive`;
+
+export const apiUnarchiveChecklist = (id: Checklist['id']) =>
+  `${baseUrl}/checklists/${id}/unarchive`;

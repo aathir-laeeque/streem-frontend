@@ -1,4 +1,5 @@
 import { Stage } from '#Composer-new/checklist.types';
+import { AllChecklistStates } from '../../Composer-new/checklist.types';
 
 type ChecklistProperty = {
   id: string;
@@ -16,6 +17,7 @@ export interface Checklist {
   noOfJobs?: number;
   properties?: ChecklistProperty[];
   noOfTasks?: number;
+  status: AllChecklistStates;
 }
 
 export enum ChecklistState {

@@ -66,7 +66,7 @@ const Wrapper = styled.div.attrs({})`
   .list-body {
     overflow-x: auto;
     overflow-y: auto;
-    height: calc(100% - 88px);
+    height: calc(100vh - 88px);
   }
 
   .list-card {

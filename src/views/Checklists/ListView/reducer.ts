@@ -40,6 +40,14 @@ const reducer = (
     case ListViewAction.FETCH_CHECKLISTS_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
 
+    case ListViewAction.UPDATE_LIST:
+      return {
+        ...state,
+        checklists: state.checklists.filter(
+          (checklist) => checklist.id !== action.payload.id,
+        ),
+      };
+
     default:
       return { ...state };
   }

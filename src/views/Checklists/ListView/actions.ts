@@ -21,3 +21,12 @@ export const fetchChecklistsSuccess = ({
 
 export const fetchChecklistsError = (error: any) =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS_ERROR, { error });
+
+export const archiveChecklist = (id: Checklist['id']) =>
+  actionSpreader(ListViewAction.ARCHIVE, { id });
+
+export const unarchiveChecklist = (id: Checklist['id']) =>
+  actionSpreader(ListViewAction.UNARCHIVE, { id });
+
+export const updateList = (id: Checklist['id']) =>
+  actionSpreader(ListViewAction.UPDATE_LIST, { id });
