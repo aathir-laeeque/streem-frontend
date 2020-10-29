@@ -17,7 +17,7 @@ export interface Checklist {
   noOfJobs?: number;
   properties?: ChecklistProperty[];
   noOfTasks?: number;
-  status: AllChecklistStates;
+  state: AllChecklistStates;
 }
 
 export enum ChecklistState {

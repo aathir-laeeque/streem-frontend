@@ -119,7 +119,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
         data={checklists}
         primaryButtonText="Create Checklist"
         onPrimaryClick={() =>
-          navigate('prototype', { state: { mode: FormMode.ADD } })
+          navigate('/checklists/prototype', { state: { mode: FormMode.ADD } })
         }
         beforeColumns={[
           {
@@ -153,10 +153,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     </div>
                     <span
                       className="item-status"
-                      style={{ color: ChecklistStatesColors[item?.status] }}
+                      style={{ color: ChecklistStatesColors[item?.state] }}
                     >
                       <FiberManualRecord className="icon" />
-                      {ChecklistStatesContent[item?.status]}
+                      {ChecklistStatesContent[item?.state]}
                     </span>
                   </div>
                 </div>
