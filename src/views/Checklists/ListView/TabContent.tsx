@@ -155,23 +155,15 @@ const ListView: FC<ListViewProps & { label: string }> = ({
               operator: 'EQ',
             })),
           ]}
-          updateFilterFields={(fields) =>
-            setFilterFields([
-              ...getBaseFilter(label).map((field) => ({
-                ...field,
-                ...(field.field === 'archived'
-                  ? {
-                      values: [
-                        !!filterFields.find(
-                          (field) => field.field === 'archived',
-                        )?.values[0],
-                      ],
-                    }
-                  : { values: field.values }),
-              })),
+          updateFilterFields={(fields) => {
+            setFilterFields((currentFields) => [
+              ...currentFields.filter(
+                (field) =>
+                  !fields.some((newField) => newField.field === field.field),
+              ),
               ...fields,
-            ])
-          }
+            ]);
+          }}
         />
 
         {label === 'Prototype' ? (
