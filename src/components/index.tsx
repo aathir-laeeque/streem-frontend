@@ -30,3 +30,4 @@ export { default as Textarea } from './shared/Textarea';
 export { default as ImageUploadButton } from './shared/ImageUploadButton';
 export { default as SearchFilter } from './shared/SearchFilter';
 export { default as ArchiveToggleFilter } from './shared/ArchiveToggleFilter';
+export { default as DropdownFilter } from './shared/DropdownFilter';

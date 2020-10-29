@@ -1,11 +1,12 @@
-import React, { FC, useState, MouseEvent, useEffect } from 'react';
-import styled from 'styled-components';
-import { ArrowDropDown, Search } from '@material-ui/icons';
+import { FilterField } from '#utils/globalTypes';
 import { Menu, MenuItem } from '@material-ui/core';
+import { ArrowDropDown, Search } from '@material-ui/icons';
+import { debounce } from 'lodash';
+import React, { FC, MouseEvent, useEffect, useState } from 'react';
+import styled from 'styled-components';
+
 import { Button1 } from './Button';
 import { TextInput } from './Input';
-import { debounce } from 'lodash';
-import { FilterField } from '#utils/globalTypes';
 
 const Wrapper = styled.div`
   display: flex;
@@ -58,30 +59,21 @@ type DropdownOption = {
   operator: string;
 };
 
-// type SearchFilterField = {
-//   field: 'name';
-//   op: 'LIKE';
-//   values: [string];
-// };
-
 type SearchFilterProps = {
   showdropdown?: boolean;
   dropdownOptions?: DropdownOption[];
-  // selectedFilter: FilterField[];
   updateFilterFields: (fields: FilterField[]) => void;
 };
 
 const SearchFilter: FC<SearchFilterProps> = ({
   dropdownOptions,
   showdropdown = false,
-  // selectedFilter,
   updateFilterFields,
 }) => {
   const [selectedOption, setSelectedOption] = useState<DropdownOption>(
     (dropdownOptions ?? [])[0],
   );
 
-  // console.log('selectedFilter :: ', selectedFilter);
   const [searchValue, setSearchValue] = useState('');
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

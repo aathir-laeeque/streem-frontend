@@ -3,6 +3,7 @@ import {
   SearchFilter,
   Button1,
   ArchiveToggleFilter,
+  DropdownFilter,
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
@@ -31,6 +32,7 @@ import {
 } from './actions';
 import { Composer } from './styles';
 import { ListViewProps } from './types';
+import { AllChecklistStates } from '#Composer-new/checklist.types';
 
 const getBaseFilter = (label: string) => [
   {
@@ -171,6 +173,27 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             ])
           }
         />
+
+        {label === 'Prototype' ? (
+          <DropdownFilter
+            options={Object.keys(ChecklistStatesContent)
+              .filter((key) => key !== 'PUBLISHED')
+              .map((key) => ({
+                label: ChecklistStatesContent[key],
+                value: key,
+              }))}
+            updateFilter={(option) =>
+              setFilterFields((currentFields) =>
+                currentFields.map((field) => ({
+                  ...field,
+                  ...(field.field === 'status'
+                    ? { op: 'EQ', values: [option.value] }
+                    : { values: field.values }),
+                })),
+              )
+            }
+          />
+        ) : null}
 
         <ArchiveToggleFilter
           value={
