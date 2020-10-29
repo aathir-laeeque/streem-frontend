@@ -1,0 +1,169 @@
+import React, { FC, useState, MouseEvent, useEffect } from 'react';
+import styled from 'styled-components';
+import { ArrowDropDown, Search } from '@material-ui/icons';
+import { Menu, MenuItem } from '@material-ui/core';
+import { Button1 } from './Button';
+import { TextInput } from './Input';
+import { debounce } from 'lodash';
+import { FilterField } from '#utils/globalTypes';
+
+const Wrapper = styled.div`
+  display: flex;
+  max-width: 500px;
+  width: 500px;
+
+  .dropdown-button {
+    max-width: 200px;
+    width: 200px;
+
+    button {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+      padding: 10px 16px;
+      width: 100%;
+
+      > .icon {
+        font-size: 18px;
+        margin-left: auto;
+      }
+    }
+  }
+
+  .search-filter-dropdown {
+    .MuiMenu-list {
+      background-color: #f4f4f4;
+      padding: 0 10px;
+    }
+
+    &-item {
+      border-bottom: 1px solid #dadada;
+
+      :last-child {
+        border: none;
+      }
+    }
+  }
+
+  .input-wrapper {
+    .icon {
+      font-size: 18px;
+    }
+  }
+`;
+
+type DropdownOption = {
+  label: string;
+  value: string;
+  field: string;
+  operator: string;
+};
+
+// type SearchFilterField = {
+//   field: 'name';
+//   op: 'LIKE';
+//   values: [string];
+// };
+
+type SearchFilterProps = {
+  showdropdown?: boolean;
+  dropdownOptions?: DropdownOption[];
+  // selectedFilter: FilterField[];
+  updateFilterFields: (fields: FilterField[]) => void;
+};
+
+const SearchFilter: FC<SearchFilterProps> = ({
+  dropdownOptions,
+  showdropdown = false,
+  // selectedFilter,
+  updateFilterFields,
+}) => {
+  const [selectedOption, setSelectedOption] = useState<DropdownOption>(
+    (dropdownOptions ?? [])[0],
+  );
+
+  // console.log('selectedFilter :: ', selectedFilter);
+  const [searchValue, setSearchValue] = useState('');
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) =>
+    setAnchorEl(event.currentTarget);
+
+  const handleClose = () => setAnchorEl(null);
+
+  useEffect(() => {
+    if (!!searchValue) {
+      const searchFilterFields: FilterField[] = [
+        ...(selectedOption.field === 'name'
+          ? [
+              {
+                field: selectedOption.field,
+                op: selectedOption.operator,
+                values: [searchValue],
+              },
+            ]
+          : [
+              {
+                field: selectedOption.field,
+                op: selectedOption.operator,
+                values: [selectedOption.value],
+              },
+              {
+                field: `${selectedOption.field.split('.')[0]}.value`,
+                op: 'LIKE',
+                values: [searchValue],
+              },
+            ]),
+      ];
+
+      console.log('searchFilterFields :: ', searchFilterFields);
+      updateFilterFields(searchFilterFields);
+    } else {
+      updateFilterFields([]);
+    }
+  }, [selectedOption, searchValue]);
+
+  return (
+    <Wrapper>
+      {showdropdown ? (
+        <div className="dropdown-button">
+          <Button1 onClick={handleClick}>
+            {selectedOption.label} <ArrowDropDown className="icon" />
+          </Button1>
+
+          <Menu
+            keepMounted
+            anchorEl={anchorEl}
+            id="search-filter-dropdown"
+            onClose={handleClose}
+            open={Boolean(anchorEl)}
+            style={{ marginTop: 40 }}
+          >
+            {dropdownOptions?.map((option, index) => (
+              <MenuItem
+                className="search-filter-dropdown-item"
+                key={index}
+                onClick={() => {
+                  setSelectedOption(option);
+                  handleClose();
+                }}
+              >
+                {option.label}
+              </MenuItem>
+            ))}
+          </Menu>
+        </div>
+      ) : null}
+      <TextInput
+        afterElementWithoutError
+        AfterElement={Search}
+        afterElementClass=""
+        placeholder={`Search with ${selectedOption.label}`}
+        defaultValue={searchValue}
+        onChange={debounce(({ value }) => setSearchValue(value), 500)}
+      />
+    </Wrapper>
+  );
+};
+
+export default SearchFilter;

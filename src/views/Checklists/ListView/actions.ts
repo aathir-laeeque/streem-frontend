@@ -4,8 +4,11 @@ import { ResponseObj } from '#utils/globalTypes';
 import { Checklist } from '../types';
 import { ListViewAction } from './types';
 
-export const fetchChecklists = (params: Record<string, string | number>) =>
-  actionSpreader(ListViewAction.FETCH_CHECKLISTS, params);
+export const fetchChecklists = (
+  params: Record<string, string | number>,
+  dispatchOngoing: boolean,
+) =>
+  actionSpreader(ListViewAction.FETCH_CHECKLISTS, { params, dispatchOngoing });
 
 export const fetchChecklistsOngoing = () =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS_ONGOING);

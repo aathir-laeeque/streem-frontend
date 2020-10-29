@@ -1,13 +1,23 @@
-import { ListViewComponent } from '#components';
+import {
+  ListViewComponent,
+  SearchFilter,
+  Button1,
+  ArchiveToggleFilter,
+} from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { DisabledStates } from '#Composer-new/checklist.types';
+import {
+  ChecklistStatesColors,
+  ChecklistStatesContent,
+  DisabledStates,
+} from '#Composer-new/checklist.types';
 import { ComposerEntity } from '#Composer-new/types';
 import { useProperties } from '#services/properties';
 import { useTypedSelector } from '#store';
+import { FilterField } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/ListView/actions';
 import { Menu, MenuItem } from '@material-ui/core';
-import { ArrowDropDown, Settings, FiberManualRecord } from '@material-ui/icons';
+import { ArrowDropDown, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -21,10 +31,15 @@ import {
 } from './actions';
 import { Composer } from './styles';
 import { ListViewProps } from './types';
-import {
-  ChecklistStatesContent,
-  ChecklistStatesColors,
-} from '#Composer-new/checklist.types';
+
+const getBaseFilter = (label: string) => [
+  {
+    field: 'status',
+    op: label === 'Published' ? 'EQ' : 'NE',
+    values: [DisabledStates.PUBLISHED],
+  },
+  { field: 'archived', op: 'EQ', values: [false] },
+];
 
 const ListView: FC<ListViewProps & { label: string }> = ({
   navigate = navigateTo,
@@ -54,20 +69,30 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     null,
   );
 
+  const [filterFields, setFilterFields] = useState<FilterField[]>(
+    getBaseFilter(label),
+  );
+
   const fetchData = (page: number, size: number) => {
-    const filters = JSON.stringify({
-      op: 'AND',
-      fields: [
-        {
-          field: 'status',
-          op: label === 'Published' ? 'EQ' : 'NE',
-          values: [DisabledStates.PUBLISHED],
-        },
-        { field: 'archived', op: 'EQ', values: [false] },
-      ],
-    });
-    dispatch(fetchChecklists({ page, size, filters, sort: 'createdAt,desc' }));
+    const filters = JSON.stringify({ op: 'AND', fields: filterFields });
+    dispatch(
+      fetchChecklists({ page, size, filters, sort: 'createdAt,desc' }, true),
+    );
   };
+
+  useEffect(() => {
+    dispatch(
+      fetchChecklists(
+        {
+          filters: JSON.stringify({ op: 'AND', fields: filterFields }),
+          page: 0,
+          size: 0,
+          sort: 'createdAt,desc',
+        },
+        false,
+      ),
+    );
+  }, [filterFields]);
 
   useEffect(() => {
     if (!isIdle) {
@@ -111,16 +136,79 @@ const ListView: FC<ListViewProps & { label: string }> = ({
 
   return (
     <Composer>
+      <div style={{ padding: '10px', display: 'flex', alignItems: 'center' }}>
+        <SearchFilter
+          showdropdown
+          dropdownOptions={[
+            {
+              label: 'Checklist Name',
+              value: 'name',
+              field: 'name',
+              operator: 'LIKE',
+            },
+            ...checklistProperties.map(({ placeHolder, name }) => ({
+              label: placeHolder,
+              value: name,
+              field: 'checklistPropertyValues.property.name',
+              operator: 'EQ',
+            })),
+          ]}
+          updateFilterFields={(fields) =>
+            setFilterFields([
+              ...getBaseFilter(label).map((field) => ({
+                ...field,
+                ...(field.field === 'archived'
+                  ? {
+                      values: [
+                        !!filterFields.find(
+                          (field) => field.field === 'archived',
+                        )?.values[0],
+                      ],
+                    }
+                  : { values: field.values }),
+              })),
+              ...fields,
+            ])
+          }
+        />
+
+        <ArchiveToggleFilter
+          value={
+            !!filterFields.find((field) => field.field === 'archived')
+              ?.values[0]
+          }
+          updateFilter={(isChecked) =>
+            setFilterFields((currentFields) =>
+              currentFields.map((field) => ({
+                ...field,
+                ...(field.field === 'archived'
+                  ? { values: [isChecked] }
+                  : { values: field.values }),
+              })),
+            )
+          }
+        />
+
+        <Button1
+          id="create-prototype"
+          onClick={() =>
+            navigate('/checklists/prototype', { state: { mode: FormMode.ADD } })
+          }
+        >
+          Create Checklist
+        </Button1>
+      </div>
       <ListViewComponent
+        isSearchable={false}
         properties={checklistProperties}
         fetchData={fetchData}
         isLast={pageable.last}
         currentPage={pageable.page}
         data={checklists}
-        primaryButtonText="Create Checklist"
-        onPrimaryClick={() =>
-          navigate('/checklists/prototype', { state: { mode: FormMode.ADD } })
-        }
+        // primaryButtonText="Create Checklist"
+        // onPrimaryClick={() =>
+        //   navigate('/checklists/prototype', { state: { mode: FormMode.ADD } })
+        // }
         beforeColumns={[
           {
             header: 'NAME',
@@ -136,14 +224,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                         alignItems: 'center',
                       }}
                     >
-                      <Settings
-                        style={{
-                          fontSize: '20px',
-                          color: '#1d84ff',
-                          width: '36px',
-                          cursor: 'pointer',
-                        }}
-                      />
                       <span
                         className="list-title"
                         onClick={() => selectChecklist(item.id)}

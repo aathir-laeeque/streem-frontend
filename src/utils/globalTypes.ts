@@ -101,3 +101,10 @@ export type FileUploadData = {
   link: string;
   type: string;
 };
+
+export type FilterField = {
+  field: string;
+  // op: 'EQ' | 'LIKE';
+  op: string;
+  values: string[] | boolean[];
+};

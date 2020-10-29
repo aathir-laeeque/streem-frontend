@@ -6,13 +6,17 @@ export const Composer = styled.div`
   height: inherit;
 
   .list-code {
-    padding-left: 36px;
+    padding-left: 28px;
   }
 
   .list-header-columns {
     :first-child {
       padding-left: 40px;
     }
+  }
+
+  .list-options {
+    padding: 0;
   }
 
   #more-actions {
@@ -23,11 +27,19 @@ export const Composer = styled.div`
     }
   }
 
+  #create-prototype {
+    margin-left: auto;
+  }
+
+  .list-title {
+    padding-left: 28px;
+  }
+
   .item-status {
     font-size: 12px;
     display: flex;
     align-items: center;
-    padding-left: 36px;
+    padding-left: 28px;
     margin-top: 4px;
 
     .icon {

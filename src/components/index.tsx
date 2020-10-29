@@ -28,3 +28,5 @@ export { TextInput, NumberInput } from './shared/Input';
 export { default as Select } from './shared/Select';
 export { default as Textarea } from './shared/Textarea';
 export { default as ImageUploadButton } from './shared/ImageUploadButton';
+export { default as SearchFilter } from './shared/SearchFilter';
+export { default as ArchiveToggleFilter } from './shared/ArchiveToggleFilter';

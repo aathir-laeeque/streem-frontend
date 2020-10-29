@@ -16,12 +16,12 @@ import {
   unarchiveChecklist,
 } from './actions';
 import { ListViewAction } from './types';
-import { updateList } from './actions';
+import { updateList, fetchChecklists } from './actions';
 
-function* fetchChecklists(action: any) {
+function* fetchChecklistsSaga({ payload }: ReturnType<typeof fetchChecklists>) {
   try {
-    const params = action.payload;
-    if (params.page === 0) {
+    const { params, dispatchOngoing } = payload;
+    if (params.page === 0 && dispatchOngoing) {
       yield put(fetchChecklistsOngoing());
     }
 
@@ -87,7 +87,7 @@ function* unarchiveChecklistSaga({
 }
 
 export function* ChecklistListViewSaga() {
-  yield takeLeading(ListViewAction.FETCH_CHECKLISTS, fetchChecklists);
+  yield takeLeading(ListViewAction.FETCH_CHECKLISTS, fetchChecklistsSaga);
   yield takeLatest(ListViewAction.ARCHIVE, archiveChecklistSaga);
   yield takeLatest(ListViewAction.UNARCHIVE, unarchiveChecklistSaga);
 }
