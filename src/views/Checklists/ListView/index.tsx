@@ -1,138 +1,31 @@
-import { ListViewComponent } from '#components';
-import { ComposerEntity } from '#Composer-new/types';
-import { useTypedSelector } from '#store';
-import { fetchProperties } from '#store/properties/actions';
-import { Settings } from '@material-ui/icons';
-import { navigate as navigateTo } from '@reach/router';
-import { template } from 'lodash';
-import React, { FC, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useTabs } from '#components';
+import React, { FC } from 'react';
 
-import { FormMode } from '../NewPrototype/types';
-import { Checklist } from '../types';
-import { fetchChecklists } from './actions';
-import SideBar from './SideBar';
 import { Composer } from './styles';
-import { ListViewProps, ListViewState } from './types';
+import TabContent from './TabContent';
+import { ListViewProps } from './types';
 
-const ListView: FC<ListViewProps> = ({ navigate = navigateTo }) => {
-  const { checklists, pageable, loading }: ListViewState = useTypedSelector(
-    (state) => state.checklistListView,
-  );
-  const { isIdle } = useTypedSelector((state) => state.auth);
-  const { checklist, job } = useTypedSelector((state) => state.properties);
-
-  const dispatch = useDispatch();
-
-  const selectChecklist = (id: string | number) =>
-    navigate(`/checklists/${id}`);
-
-  // const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(
-  //   null,
-  // );
-  // const [sideBarOpen, setSideBarOpen] = useState(false);
-
-  const fetchData = (page: number, size: number) => {
-    dispatch(fetchChecklists({ page, size, sort: 'createdAt,desc' }));
-  };
-
-  useEffect(() => {
-    if (!isIdle) {
-      fetchData(0, 10);
-
-      if (!job?.length) {
-        dispatch(fetchProperties({ type: ComposerEntity.JOB }));
-      }
-      if (!checklist?.length) {
-        dispatch(fetchProperties({ type: ComposerEntity.CHECKLIST }));
-      }
-    }
-  }, [isIdle]);
-
-  // const openNav = () => {
-  //   const sideNav = document.getElementById('sideNav');
-  //   if (sideNav && !sideBarOpen) {
-  //     setSideBarOpen(true);
-  //     sideNav.style.cssText = 'right: 0px;';
-  //   }
-  // };
-
-  // const closeNav = () => {
-  //   const sideNav = document.getElementById('sideNav');
-  //   if (sideNav && sideBarOpen) {
-  //     setSideBarOpen(false);
-  //     sideNav.style.cssText = 'right: -300px;';
-  //   }
-  // };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+const ListView: FC<ListViewProps> = () => {
+  const passThroughTabContentProps = {};
+  const { renderTabsContent, renderTabsHeader } = useTabs([
+    {
+      label: 'Published',
+      active: true,
+      TabContent,
+      passThroughTabContentProps,
+    },
+    {
+      label: 'Prototype',
+      active: false,
+      TabContent,
+      passThroughTabContentProps,
+    },
+  ]);
 
   return (
     <Composer>
-      <ListViewComponent
-        properties={checklist}
-        fetchData={fetchData}
-        isLast={pageable.last}
-        currentPage={pageable.page}
-        data={checklists}
-        primaryButtonText="Create Checklist"
-        onPrimaryClick={() =>
-          navigate('prototype', { state: { mode: FormMode.ADD } })
-        }
-        beforeColumns={[
-          {
-            header: 'NAME',
-            template: function renderComp(item: Checklist) {
-              return (
-                <div className="list-card-columns" key={`name_${item.code}`}>
-                  <div className="title-group">
-                    <span className="list-code">{item.code}</span>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Settings
-                        style={{
-                          fontSize: '20px',
-                          color: '#1d84ff',
-                          width: '36px',
-                          cursor: 'pointer',
-                        }}
-                      />
-                      <span
-                        className="list-title"
-                        onClick={() => selectChecklist(item.id)}
-                      >
-                        {item.name}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            },
-          },
-        ]}
-        afterColumns={[
-          {
-            header: '',
-            template: function renderComp(item: Checklist) {
-              console.log('checklist from more tab :: ', item);
-              return <div className="list-card-columns">More</div>;
-            },
-          },
-        ]}
-      />
-      {/* <SideBar
-        sideBarOpen={sideBarOpen}
-        selectedChecklist={selectedChecklist}
-        closeNav={closeNav}
-        properties={job}
-      /> */}
+      {renderTabsHeader()}
+      {renderTabsContent()}
     </Composer>
   );
 };

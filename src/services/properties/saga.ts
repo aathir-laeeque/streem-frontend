@@ -1,6 +1,6 @@
 import { apiGetProperties } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { call, put, takeLeading } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
 
 import { fetch, fetchError, fetchOngoing, fetchSuccess } from './actions';
 import { PropertiesAction } from './types';
@@ -26,5 +26,5 @@ function* fetchSaga({ payload }: ReturnType<typeof fetch>) {
 }
 
 export function* PropertiesServiceSaga() {
-  yield takeLeading(PropertiesAction.FETCH_PROPERTIES, fetchSaga);
+  yield takeEvery(PropertiesAction.FETCH_PROPERTIES, fetchSaga);
 }
