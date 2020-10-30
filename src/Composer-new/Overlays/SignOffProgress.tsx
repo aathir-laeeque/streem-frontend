@@ -180,7 +180,7 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
   Object.keys(groupedApprovers).forEach((key) => {
     groupedViews.push(
       <>
-        <tr>
+        <tr key={key}>
           <td rowSpan={groupedApprovers[key].length}>
             <div
               className="heading"

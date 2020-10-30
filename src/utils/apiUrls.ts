@@ -154,7 +154,7 @@ export const apiGetReviewersForChecklist = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/reviewers`;
 
 export const apiGetApproversForChecklist = (checklistId: Checklist['id']) =>
-  `${baseUrl}/checklists/${checklistId}/approvers`;
+  `${baseUrl}/checklists/${checklistId}/signOffUsers`;
 
 export const apiAssignReviewersToChecklist = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/reviewers/assignments`;

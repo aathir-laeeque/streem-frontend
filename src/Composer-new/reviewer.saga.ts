@@ -551,7 +551,7 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
         comments: null,
         reviewCycle: currentCycle,
         state: CollaboratorState.NOT_STARTED,
-        type: CollaboratorType.APPROVER,
+        type: CollaboratorType.SIGN_OFF_USER,
       });
     });
 
@@ -602,7 +602,7 @@ function* signOffPrototypeSaga({
         if (r.reviewCycle === currentCycle) {
           if (
             r.id !== userProfile?.id &&
-            r.type === CollaboratorType.APPROVER &&
+            r.type === CollaboratorType.SIGN_OFF_USER &&
             r.state === CollaboratorState.NOT_STARTED
           ) {
             isLast = false;

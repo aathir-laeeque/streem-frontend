@@ -60,7 +60,7 @@ const ChecklistHeader: FC = () => {
   const approver = data?.collaborators.filter(
     (reviewer) =>
       reviewer.reviewCycle === data.reviewCycle &&
-      reviewer.type === CollaboratorType.APPROVER &&
+      reviewer.type === CollaboratorType.SIGN_OFF_USER &&
       reviewer.id === userId,
   )[0];
 
