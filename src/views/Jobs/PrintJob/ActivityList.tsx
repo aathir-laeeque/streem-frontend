@@ -370,9 +370,9 @@ const MemoActivityList: FC<{ activities: Activity[] }> = ({ activities }) => {
                     This Activity was last updated digitally via CLEEN {'\n'}
                     by {activity.response.audit.modifiedBy.firstName}, ID:{' '}
                     {activity.response.audit.modifiedBy.employeeId} on{' '}
-                    {moment(activity.response.audit.modifiedAt).format(
-                      'MMM DD, HH:MM A',
-                    )}
+                    {moment
+                      .unix(activity.response.audit.modifiedAt)
+                      .format('MMM DD, HH:mm A')}
                   </Text>
                 </View>
               )}

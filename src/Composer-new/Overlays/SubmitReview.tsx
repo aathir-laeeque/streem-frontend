@@ -235,7 +235,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                         <span>
                           {formatDateTime(
                             comment.commentedAt,
-                            'Do MMM, YYYY, HH:MM a',
+                            'Do MMM, YYYY, HH:mm a',
                           )}
                         </span>
                       </div>
