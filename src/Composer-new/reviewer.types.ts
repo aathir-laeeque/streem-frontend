@@ -16,10 +16,10 @@ export enum CollaboratorStateContent {
   ILLEGAL = 'ILLEGAL',
   NOT_STARTED = 'Not Started',
   BEING_REVIEWED = 'In Progress',
-  COMMENTED_OK = 'In Progress',
-  COMMENTED_CHANGES = 'In Progress',
-  REQUESTED_CHANGES = 'Completed',
-  REQUESTED_NO_CHANGES = 'Completed',
+  COMMENTED_OK = 'All OK',
+  COMMENTED_CHANGES = 'Comments',
+  REQUESTED_CHANGES = 'Done, All OK',
+  REQUESTED_NO_CHANGES = 'Done, Comments',
   SIGNED = 'Signed',
 }
 

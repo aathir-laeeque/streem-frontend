@@ -1,6 +1,9 @@
 import { BaseModal, Button1, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { signOffPrototype } from '#Composer-new/reviewer.actions';
+import {
+  releasePrototype,
+  signOffPrototype,
+} from '#Composer-new/reviewer.actions';
 import { Checklist } from '#Composer-new/checklist.types';
 import { useTypedSelector } from '#store';
 import { Visibility } from '@material-ui/icons';
@@ -72,10 +75,10 @@ type Inputs = {
   password: string;
 };
 
-const PasswordInputModal: FC<CommonOverlayProps<any>> = ({
-  closeAllOverlays,
-  closeOverlay,
-}) => {
+const PasswordInputModal: FC<CommonOverlayProps<{
+  isReleasing: boolean;
+}>> = ({ closeAllOverlays, closeOverlay, props }) => {
+  const isReleasing = props?.isReleasing || false;
   const dispatch = useDispatch();
   const { data: checklist, approvers } = useTypedSelector((state) => ({
     approvers: state.prototypeComposer.approvers,
@@ -88,9 +91,11 @@ const PasswordInputModal: FC<CommonOverlayProps<any>> = ({
   });
 
   const onSubmit = (data: Inputs) => {
-    // dispatch(login(data));
-    console.log('data', data);
-    dispatch(signOffPrototype(checklist.id, data.password));
+    if (isReleasing) {
+      dispatch(releasePrototype(checklist.id, data.password));
+    } else {
+      dispatch(signOffPrototype(checklist.id, data.password));
+    }
   };
 
   const AfterIcon = () => (

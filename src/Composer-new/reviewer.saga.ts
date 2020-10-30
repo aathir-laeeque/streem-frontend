@@ -1,6 +1,7 @@
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import {
+  closeAllOverlayAction,
   closeOverlayAction,
   openOverlayAction,
   updatePropsAction,
@@ -12,6 +13,7 @@ import {
   apiGetApproversForChecklist,
   apiGetReviewersForChecklist,
   apiInitiateSignOff,
+  apiPrototypeRelease,
   apiPrototypeSignOff,
   apiSendReviewToCr,
   apiSignOffOrder,
@@ -58,6 +60,9 @@ import {
   fetchApproversSuccess,
   signOffPrototype,
   signOffPrototypeSuccess,
+  initiateSignOffSuccess,
+  releasePrototype,
+  releasePrototypeSuccess,
 } from './reviewer.actions';
 import {
   Collaborator,
@@ -347,7 +352,6 @@ function* afterSubmitChecklistReview(data: any, allOk: boolean) {
     });
 
     if (allDone && allDoneOk) {
-      // yield put(updateChecklistState(ChecklistStates.READY_FOR_SIGNING));
       yield put(closeOverlayAction(OverlayNames.SUBMIT_REVIEW_MODAL));
     } else if (allDone && !allDoneOk) {
       yield put(
@@ -472,6 +476,9 @@ function* sendReviewToCrSaga({ payload }: ReturnType<typeof sendReviewToCr>) {
         }
         if (r.id === userProfile?.id) {
           if (r.state === CollaboratorState.COMMENTED_CHANGES) {
+            allDoneOk = false;
+          }
+          if (r.state === CollaboratorState.COMMENTED_CHANGES) {
             collaborators.push({
               ...r,
               state: CollaboratorState.REQUESTED_CHANGES,
@@ -555,6 +562,7 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
       });
     });
 
+    yield put(initiateSignOffSuccess(collaborators));
     yield put(updateChecklistState(ChecklistStates.SIGN_OFF_INITIATED));
     yield put(
       openOverlayAction({
@@ -590,7 +598,7 @@ function* signOffPrototypeSaga({
       );
 
       if (errors || error) {
-        throw 'Could Not Sign Off the Prototype';
+        throw 'User cannot signoff the checklist as previous users did not signed off the checklist.';
       }
 
       const userProfile = getUserProfile(yield select());
@@ -622,7 +630,9 @@ function* signOffPrototypeSaga({
         yield put(updateChecklistState(ChecklistStates.READY_FOR_RELEASE));
       }
 
+      yield put(closeAllOverlayAction());
       yield put(signOffPrototypeSuccess(collaborators));
+
       yield put(
         openOverlayAction({
           type: OverlayNames.SIGN_OFF_SUCCESS,
@@ -632,7 +642,60 @@ function* signOffPrototypeSaga({
       throw 'Could Not Sign Off the Prototype';
     }
   } catch (error) {
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: error,
+      }),
+    );
     console.error('error from signOffPrototypeSaga :', error);
+  }
+}
+
+function* releasePrototypeSaga({
+  payload,
+}: ReturnType<typeof releasePrototype>) {
+  try {
+    const { checklistId, password } = payload;
+
+    const { data: validateData } = yield call(
+      request,
+      'POST',
+      apiValidatePassword(),
+      { data: { password } },
+    );
+
+    if (validateData) {
+      const { errors, error } = yield call(
+        request,
+        'PUT',
+        apiPrototypeRelease(checklistId),
+      );
+
+      if (errors || error) {
+        throw 'Unable to Relase the Prototype';
+      }
+
+      yield put(updateChecklistState(ChecklistStates.PUBLISHED));
+
+      yield put(closeAllOverlayAction());
+
+      yield put(
+        openOverlayAction({
+          type: OverlayNames.RELEASE_SUCCESS,
+        }),
+      );
+    } else {
+      throw 'Unable to Relase the Prototype';
+    }
+  } catch (error) {
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: error,
+      }),
+    );
+    console.error('error from releasePrototypeSaga :', error);
   }
 }
 
@@ -665,4 +728,5 @@ export function* ReviewerSaga() {
   yield takeLatest(ComposerAction.INITIATE_SIGNOFF, initiateSignOffSaga);
   yield takeLatest(ComposerAction.SEND_REVIEW_TO_CR, sendReviewToCrSaga);
   yield takeLatest(ComposerAction.SIGN_OFF_PROTOTYPE, signOffPrototypeSaga);
+  yield takeLatest(ComposerAction.RELEASE_PROTOTYPE, releasePrototypeSaga);
 }

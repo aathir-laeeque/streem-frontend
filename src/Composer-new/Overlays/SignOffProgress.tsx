@@ -177,6 +177,8 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
   const groupedApprovers = groupBy(approvers, 'orderTree');
   const groupedViews: any = [];
 
+  console.log('groupedApprovers', groupedApprovers);
+
   Object.keys(groupedApprovers).forEach((key) => {
     groupedViews.push(
       <>
@@ -224,7 +226,7 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
               CollaboratorState.NOT_STARTED ? (
                 <div className="right">Pending</div>
               ) : (
-                <div className="right success">` Signed`</div>
+                <div className="right success">Signed</div>
               )}
             </div>
           </td>
@@ -240,11 +242,10 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
                     {a.firstName} {a.lastName}
                   </span>
                 </div>
-                {groupedApprovers[key][0].state ===
-                CollaboratorState.NOT_STARTED ? (
+                {a.state === CollaboratorState.NOT_STARTED ? (
                   <div className="right">Pending</div>
                 ) : (
-                  <div className="right success">` Signed`</div>
+                  <div className="right success">Signed</div>
                 )}
               </div>
             </td>

@@ -153,3 +153,17 @@ export const signOffPrototypeSuccess = (collaborators: Collaborator[]) =>
   actionSpreader(ComposerAction.SIGN_OFF_PROTOTYPE_SUCCESS, {
     collaborators,
   });
+
+export const releasePrototype = (
+  checklistId: Checklist['id'],
+  password: string,
+) =>
+  actionSpreader(ComposerAction.RELEASE_PROTOTYPE, { checklistId, password });
+
+export const releasePrototypeError = (error: any) =>
+  actionSpreader(ComposerAction.RELEASE_PROTOTYPE_ERROR, { error });
+
+export const releasePrototypeSuccess = (collaborators: Collaborator[]) =>
+  actionSpreader(ComposerAction.RELEASE_PROTOTYPE_SUCCESS, {
+    collaborators,
+  });

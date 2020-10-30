@@ -353,15 +353,6 @@ const ChecklistHeader: FC = () => {
           </>
         );
 
-      case ChecklistStates.SIGN_OFF_INITIATED:
-        return (
-          <>
-            <ViewReviewersButton />
-            {author.primary && <ViewSigningStatusButton />}
-            {approver && <SignOffButton />}
-          </>
-        );
-
       default:
         return (
           <>
@@ -399,61 +390,68 @@ const ChecklistHeader: FC = () => {
             </span>
           </div>
         )}
-        {reviewer && reviewer.state === CollaboratorState.NOT_STARTED && (
-          <div
-            className="alert"
-            style={{
-              backgroundColor: '#eeeeee',
-              border: 'solid 1px #bababa',
-            }}
-          >
-            <Info style={{ color: '#000' }} />
-            <span style={{ color: '#000' }}>
-              Prototype Submitted for your Review
-            </span>
-          </div>
-        )}
-        {reviewer && reviewer.state === CollaboratorState.COMMENTED_CHANGES && (
-          <div
-            className="alert"
-            style={{
-              backgroundColor: 'rgba(247, 181, 0, 0.16)',
-              border: 'solid 1px #f7b500',
-            }}
-          >
-            <Info style={{ color: '#000' }} />
-            <span style={{ color: '#000' }}>
-              You have already submitted this checklist with comments
-            </span>
-          </div>
-        )}
-        {reviewer && reviewer.state === CollaboratorState.COMMENTED_OK && (
-          <>
-            {allDoneOk ? (
-              <div
-                className="alert"
-                style={{
-                  backgroundColor: '#e1fec0',
-                  border: 'solid 1px #b2ef6c',
-                }}
-              >
-                <Info style={{ color: '#427a00' }} />
-                <span style={{ color: '#427a00' }}>
-                  You and your team members have No Comments for changes
-                </span>
-              </div>
-            ) : (
-              <div className="alert">
-                <Info />
-                <span>
-                  You have already reviewed this prototype and submitted it
-                  without comments
-                </span>
-              </div>
-            )}
-          </>
-        )}
         {reviewer &&
+          data?.status !== ChecklistStates.READY_FOR_RELEASE &&
+          reviewer.state === CollaboratorState.NOT_STARTED && (
+            <div
+              className="alert"
+              style={{
+                backgroundColor: '#eeeeee',
+                border: 'solid 1px #bababa',
+              }}
+            >
+              <Info style={{ color: '#000' }} />
+              <span style={{ color: '#000' }}>
+                Prototype Submitted for your Review
+              </span>
+            </div>
+          )}
+        {reviewer &&
+          data?.status !== ChecklistStates.READY_FOR_RELEASE &&
+          reviewer.state === CollaboratorState.COMMENTED_CHANGES && (
+            <div
+              className="alert"
+              style={{
+                backgroundColor: 'rgba(247, 181, 0, 0.16)',
+                border: 'solid 1px #f7b500',
+              }}
+            >
+              <Info style={{ color: '#000' }} />
+              <span style={{ color: '#000' }}>
+                You have already submitted this checklist with comments
+              </span>
+            </div>
+          )}
+        {reviewer &&
+          data?.status !== ChecklistStates.READY_FOR_RELEASE &&
+          reviewer.state === CollaboratorState.COMMENTED_OK && (
+            <>
+              {allDoneOk ? (
+                <div
+                  className="alert"
+                  style={{
+                    backgroundColor: '#e1fec0',
+                    border: 'solid 1px #b2ef6c',
+                  }}
+                >
+                  <Info style={{ color: '#427a00' }} />
+                  <span style={{ color: '#427a00' }}>
+                    You and your team members have No Comments for changes
+                  </span>
+                </div>
+              ) : (
+                <div className="alert">
+                  <Info />
+                  <span>
+                    You have already reviewed this prototype and submitted it
+                    without comments
+                  </span>
+                </div>
+              )}
+            </>
+          )}
+        {reviewer &&
+          data?.status !== ChecklistStates.READY_FOR_RELEASE &&
           (reviewer.state === CollaboratorState.REQUESTED_CHANGES ||
             reviewer.state === CollaboratorState.REQUESTED_NO_CHANGES) && (
             <div className="alert">
@@ -461,6 +459,20 @@ const ChecklistHeader: FC = () => {
               <span>You have already submited your review to author.</span>
             </div>
           )}
+        {data?.status === ChecklistStates.READY_FOR_RELEASE && (
+          <div
+            className="alert"
+            style={{
+              backgroundColor: '#e1fec0',
+              border: 'solid 1px #b2ef6c',
+            }}
+          >
+            <Info style={{ color: '#427a00' }} />
+            <span style={{ color: '#427a00' }}>
+              Checklist is Ready for Release
+            </span>
+          </div>
+        )}
       </div>
       <div className="main-header">
         <div className="header-content">
@@ -477,7 +489,7 @@ const ChecklistHeader: FC = () => {
           </div>
 
           <div className="header-content-right">
-            {author && renderButtonsForAuthor()}
+            {author && !approver && renderButtonsForAuthor()}
 
             {reviewer && (
               <>
@@ -488,49 +500,85 @@ const ChecklistHeader: FC = () => {
                   : null}
               </>
             )}
+
+            {approver && data?.status !== ChecklistStates.PUBLISHED && (
+              <>
+                <ViewReviewersButton />
+                <ViewSigningStatusButton />
+                {approver &&
+                  approver.state === CollaboratorState.NOT_STARTED && (
+                    <SignOffButton />
+                  )}
+              </>
+            )}
+            {data?.status === ChecklistStates.PUBLISHED && (
+              <>
+                <ViewReviewersButton />
+                <ViewSigningStatusButton />
+              </>
+            )}
+            {data?.status === ChecklistStates.READY_FOR_RELEASE && (
+              <Button1
+                className="submit"
+                onClick={() =>
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.PASSWORD_INPUT,
+                      props: {
+                        isReleasing: true,
+                      },
+                    }),
+                  )
+                }
+              >
+                Release checklist
+              </Button1>
+            )}
           </div>
         </div>
-        {author && (
-          <div className="prototype-add-buttons">
-            <Button1
-              variant="textOnly"
-              id="new-stage"
-              disabled={disableAddingButtons()}
-              onClick={() => dispatch(addNewStage())}
-            >
-              <AddCircle className="icon" fontSize="small" />
-              Add a new Stage
-            </Button1>
+        {author &&
+          (data?.status === ChecklistStates.BEING_BUILT ||
+            data?.status === ChecklistStates.REQUESTED_CHANGES) && (
+            <div className="prototype-add-buttons">
+              <Button1
+                variant="textOnly"
+                id="new-stage"
+                disabled={disableAddingButtons()}
+                onClick={() => dispatch(addNewStage())}
+              >
+                <AddCircle className="icon" fontSize="small" />
+                Add a new Stage
+              </Button1>
 
-            <Button1
-              variant="textOnly"
-              id="new-task"
-              disabled={disableAddingButtons()}
-              onClick={() => {
-                if (activeStageId) {
-                  dispatch(
-                    addNewTask({
-                      checklistId: data.id,
-                      stageId: activeStageId,
-                    }),
-                  );
-                }
-              }}
-            >
-              <AddCircle className="icon" fontSize="small" />
-              Add a new Task
-            </Button1>
+              <Button1
+                variant="textOnly"
+                id="new-task"
+                disabled={disableAddingButtons()}
+                onClick={() => {
+                  if (activeStageId) {
+                    dispatch(
+                      addNewTask({
+                        checklistId: data.id,
+                        stageId: activeStageId,
+                      }),
+                    );
+                  }
+                }}
+              >
+                <AddCircle className="icon" fontSize="small" />
+                Add a new Task
+              </Button1>
 
-            <Button1
-              variant="textOnly"
-              id="preview"
-              disabled={disableAddingButtons()}
-            >
-              <PlayCircleFilled className="icon" fontSize="small" />
-              Preview
-            </Button1>
-          </div>
-        )}
+              <Button1
+                variant="textOnly"
+                id="preview"
+                disabled={disableAddingButtons()}
+              >
+                <PlayCircleFilled className="icon" fontSize="small" />
+                Preview
+              </Button1>
+            </div>
+          )}
       </div>
     </HeaderWrapper>
   );

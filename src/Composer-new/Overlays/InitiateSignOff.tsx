@@ -278,7 +278,7 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
               </td>
               <td>
                 <div className="heading">
-                  <div className="ellipse">2</div>Collaborator
+                  <div className="ellipse">2</div>Reviewer
                 </div>
               </td>
               <td>

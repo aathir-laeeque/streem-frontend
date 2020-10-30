@@ -167,8 +167,8 @@ export enum ChecklistStatesContent {
   BEING_REVIEWED = 'Being Reviewed',
   REQUESTED_CHANGES = 'Requested Changes',
   READY_FOR_SIGNING = 'Ready for Signing',
-  SIGN_OFF_INITIATED = 'Sign Off Initiated',
-  SIGNING_IN_PROGRESS = 'Signing in Progress',
+  SIGN_OFF_INITIATED = 'Under Signing',
+  SIGNING_IN_PROGRESS = 'Under Signing',
   READY_FOR_RELEASE = 'Ready For Realease',
   PUBLISHED = 'Published',
 }

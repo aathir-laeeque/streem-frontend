@@ -183,6 +183,9 @@ export const apiSignOffOrder = (checklistId: Checklist['id']) =>
 export const apiPrototypeSignOff = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/review/sign-off`;
 
+export const apiPrototypeRelease = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/publish`;
+
 export const apiUpdateActivity = (activityId: Activity['id']) =>
   `${baseUrl}/activities/${activityId}`;
 
