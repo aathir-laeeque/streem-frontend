@@ -1,15 +1,22 @@
-import { BaseModal } from '#components';
+import { Avatar, BaseModal, Textarea } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import React, { FC } from 'react';
+import { apiGetChecklistInfo } from '#utils/apiUrls';
+import { request } from '#utils/request';
+import { getFullName } from '#utils/stringUtils';
+import { formatDateTime } from '#utils/timeUtils';
+import { isEmpty, noop } from 'lodash';
+import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Checklist } from '../types';
-import { checklists } from '../../../../mocks/index';
 
 const Wrapper = styled.div`
   .modal {
-    min-width: 420px !important;
-    width: 420px !important;
+    min-width: 800px !important;
+    width: 800px !important;
+    max-height: 600px;
+    height: 600px;
+    overflow: auto !important;
   }
 
   .modal-body {
@@ -22,17 +29,131 @@ const Wrapper = styled.div`
   }
 
   .body {
-    padding: 80px;
+    padding: 24px;
 
-    .editing-disabled-icon {
-      font-size: 120px;
+    section {
+      align-items: flex-start;
+      border-bottom: 1px solid #eeeeee;
+      display: flex;
+      flex-direction: column;
+      margin-top: 24px;
+
+      :first-child {
+        margin-top: 0;
+      }
+
+      label {
+        color: #333333;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 16px;
+      }
+
+      > div {
+        display: flex;
+        width: 100%;
+      }
+
+      .column {
+        border-right: 1px solid #eeeeee;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        margin-bottom: 24px;
+        padding-left: 18px;
+
+        :last-child {
+          border-right: 0;
+        }
+
+        :first-child {
+          padding-left: 0;
+        }
+
+        &-label {
+          color: #999999;
+          font-size: 14px;
+          font-weight: normal;
+          margin-bottom: 16px;
+          text-align: left;
+        }
+      }
     }
 
-    .text {
-      color: #000000;
-      font-size: 20px;
-      font-weight: bold;
-      margin-top: 24px;
+    .owner {
+      display: flex;
+      margin-bottom: 16px;
+
+      &-details {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+        margin-left: 16px;
+
+        .owner-id {
+          color: #666666;
+          font-size: 10px;
+          font-weight: 600;
+        }
+
+        .owner-name {
+          color: #666666;
+          font-size: 18px;
+        }
+      }
+    }
+
+    .authors {
+      .secondary-authors {
+        display: flex;
+      }
+
+      .creation-date {
+        text-align: left;
+      }
+    }
+
+    .signing {
+      .signed-as {
+        font-size: 14px;
+        color: #000000;
+        margin: 13px 0;
+        padding: 2px 4px;
+        text-align: left;
+      }
+
+      .status {
+        font-size: 12px;
+        color: #5aa700;
+        padding: 2px 4px;
+        background-color: #e1fec0;
+        margin: 13px 0;
+        width: max-content;
+      }
+
+      .date {
+        font-size: 14px;
+        color: #000000;
+        margin: 13px 0;
+        padding: 2px 4px;
+        text-align: left;
+      }
+    }
+
+    .release {
+      .column {
+        :first-child {
+          flex: 3;
+        }
+      }
+      .status {
+        font-size: 12px;
+        color: #5aa700;
+        padding: 2px 4px;
+        background-color: #e1fec0;
+        margin: 13px 0;
+        width: max-content;
+      }
     }
   }
 `;
@@ -45,17 +166,226 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
   closeAllOverlays,
   closeOverlay,
   props: { checklist } = {},
-}) => (
-  <Wrapper>
-    <BaseModal
-      closeAllModals={closeAllOverlays}
-      closeModal={closeOverlay}
-      showHeader={false}
-      showFooter={false}
-    >
-      <div className="body">Chceklist Info Modal</div>
-    </BaseModal>
-  </Wrapper>
-);
+}) => {
+  const [state, setState] = useState({});
+
+  useEffect(() => {
+    if (checklist) {
+      (async () => {
+        const { data, errors } = await request(
+          'GET',
+          apiGetChecklistInfo(checklist.id),
+        );
+
+        console.log('data :: ', data);
+
+        if (data) {
+          setState(data);
+        } else {
+          console.error('error :: ', errors);
+        }
+      })();
+    }
+  }, []);
+
+  if (!isEmpty(state)) {
+    const primaryAuthor = state?.authors?.filter((author) => author.primary)[0];
+    const secondaryAuthors = state?.authors?.filter(
+      (author) => !author.primary,
+    );
+
+    return (
+      <Wrapper>
+        <BaseModal
+          closeAllModals={closeAllOverlays}
+          closeModal={closeOverlay}
+          showHeader={false}
+          showFooter={false}
+        >
+          <div className="body">
+            <section className="authors">
+              <label>Authoring Information</label>
+              <div>
+                <div className="column">
+                  <label className="column-label">Checklist Owner</label>
+                  <div className="owner">
+                    <Avatar user={primaryAuthor ?? {}} />
+                    <div className="owner-details">
+                      <div className="owner-id">
+                        {primaryAuthor?.employeeId}
+                      </div>
+                      <div className="owner-name">
+                        {getFullName(primaryAuthor ?? {})}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="column">
+                  <label className="column-label">Secondary Authors</label>
+                  <div className="secondary-authors">
+                    {secondaryAuthors?.map((author) => (
+                      <Avatar user={author ?? {}} key={author?.employeeId} />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="column">
+                  <label className="column-label">Creation Date</label>
+                  <div className="creation-date">
+                    {formatDateTime(state?.audit?.createdAt, 'Do MMMM, YYYY')}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="signing">
+              <label>Signing Information</label>
+
+              <div>
+                <div className="column">
+                  <label className="column-label">Collaborators</label>
+
+                  {state?.signIn?.map((user) => (
+                    <div className="owner" key={user.employeeId}>
+                      <Avatar user={user ?? {}} />
+                      <div className="owner-details">
+                        <div className="owner-id">{user.employeeId}</div>
+                        <div className="owner-name">
+                          {getFullName(user ?? {})}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="column">
+                  <label className="column-label">Signed As</label>
+
+                  {state?.signIn?.map((user) => (
+                    <div className="signed-as" key={user.employeeId}>
+                      {(() => {
+                        if (user.orderTree === 1) {
+                          return 'Author';
+                        } else if (user.orderTree === 2) {
+                          return 'Reviewer';
+                        } else if (user.orderTree === 3) {
+                          return 'Approver';
+                        }
+                      })()}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="column">
+                  <label className="column-label">Status</label>
+
+                  {state?.signIn?.map((user) => (
+                    <div className="status" key={user.employeeId}>
+                      Complete
+                    </div>
+                  ))}
+                </div>
+
+                <div className="column">
+                  <label className="column-label">Date</label>
+
+                  {state?.signIn?.map((user) => (
+                    <div className="date" key={user.employeeId}>
+                      {formatDateTime(user?.signedAt, 'Do MMMM, YYYY')}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section className="release">
+              <label>Released By</label>
+
+              <div>
+                <div className="column">
+                  <label className="column-label">User</label>
+
+                  <div className="owner">
+                    <Avatar user={state?.release?.releaseBy ?? {}} />
+                    <div className="owner-details">
+                      <div className="owner-id">
+                        {state?.release?.releaseBy?.employeeId}
+                      </div>
+                      <div className="owner-name">
+                        {getFullName(state?.release?.releaseBy ?? {})}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="column">
+                  <label className="column-label">Status</label>
+                  <div className="status">Complete</div>
+                </div>
+
+                <div className="column">
+                  <label className="column-label">Date</label>
+
+                  <div className="date">
+                    {formatDateTime(state?.release?.releaseAt, 'Do MMMM, YYYY')}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="revision">
+              <label>Revision History</label>
+
+              <div>
+                <div className="column">
+                  <label className="column-label">#</label>
+
+                  {state?.versions?.map((_, index) => (
+                    <div key={index}>{state?.versions?.length - index}</div>
+                  ))}
+                </div>
+
+                <div className="column">
+                  <label className="column-label">Checklist ID</label>
+
+                  {state?.versions?.map((version, index) => (
+                    <div key={index}>{version.id}</div>
+                  ))}
+                </div>
+
+                <div className="column">
+                  <label className="column-label">Depracated on</label>
+
+                  {state?.versions?.map((version, index) => (
+                    <div key={index}>
+                      {version?.deprecatedAt
+                        ? formatDateTime(version?.deprecatedAt, 'Do MMMM, YYYY')
+                        : 'Current'}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <label>Checklist Description</label>
+
+              <Textarea
+                defaultValue={state?.description}
+                disabled
+                rows={4}
+                onChange={noop}
+                placeholder=""
+              />
+            </section>
+          </div>
+        </BaseModal>
+      </Wrapper>
+    );
+  } else {
+    return null;
+  }
+};
 
 export default ChecklistInfoModal;

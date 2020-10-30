@@ -30,7 +30,7 @@ type Props = {
 
 const ArchiveToggle: FC<Props> = ({
   value = false,
-  label = 'Show Archive',
+  label = 'Show Archived',
   offColor = '#dadada',
   offHandleColor = '#ffffff',
   onColor = '#dadada',

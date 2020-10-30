@@ -229,3 +229,6 @@ export const apiArchiveChecklist = (id: Checklist['id']) =>
 
 export const apiUnarchiveChecklist = (id: Checklist['id']) =>
   `${baseUrl}/checklists/${id}/unarchive`;
+
+export const apiGetChecklistInfo = (id: Checklist['id']) =>
+  `${baseUrl}/checklists/${id}/info`;

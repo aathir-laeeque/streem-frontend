@@ -1,4 +1,3 @@
-import { FilterField } from '#utils/globalTypes';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
@@ -26,7 +25,7 @@ const DropdownFilter: FC<DropdownFilterProps> = ({ options, updateFilter }) => {
         persistValue
         options={options}
         onChange={(option) => updateFilter(option)}
-        placeholder="All"
+        placeholder="Status"
       />
     </Wrapper>
   );
