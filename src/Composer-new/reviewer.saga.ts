@@ -24,6 +24,7 @@ import {
   apiValidatePassword,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
+import { uniqBy } from 'lodash';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { Checklist, ChecklistStates } from './checklist.types';
@@ -548,10 +549,24 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
       throw 'Could Not Initiate Sign Off';
     }
 
+    const filterdUsers: Collaborator[] = [];
     const currentReviewers = getCurrentReviewers(yield select());
+    const filterdReviewers: Collaborator[] = uniqBy(currentReviewers, 'id');
+    users.forEach((u) => {
+      const filteredUser = filterdReviewers.filter((r) => u.userId === r.id)[0];
+      if (filteredUser)
+        filterdUsers.push({
+          ...filteredUser,
+          state: CollaboratorState.NOT_STARTED,
+          type: CollaboratorType.SIGN_OFF_USER,
+          orderTree: u.orderTree,
+          comments: null,
+        });
+    });
+
     const currentAuthors = getCurrentAuthors(yield select());
     const currentCycle = getCurrentCycle(yield select());
-    const collaborators: Collaborator[] = [...currentReviewers];
+    const collaborators: Collaborator[] = [...filterdUsers];
     currentAuthors.forEach((r) => {
       collaborators.push({
         ...r,

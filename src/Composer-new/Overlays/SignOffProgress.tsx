@@ -177,8 +177,6 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
   const groupedApprovers = groupBy(approvers, 'orderTree');
   const groupedViews: any = [];
 
-  console.log('groupedApprovers', groupedApprovers);
-
   Object.keys(groupedApprovers).forEach((key) => {
     groupedViews.push(
       <>
