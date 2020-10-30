@@ -1,6 +1,12 @@
 import { Avatar, BaseModal, Checkbox } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import React, { FC } from 'react';
+import { Checklist } from '#Composer-new/checklist.types';
+import { initiateSignOff } from '#Composer-new/reviewer.actions';
+import { CollaboratorType } from '#Composer-new/reviewer.types';
+import { useTypedSelector } from '#store';
+import { uniqBy } from 'lodash';
+import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -130,6 +136,16 @@ const Wrapper = styled.div`
                   background-color: #fff;
                   border-width: 2px;
                 }
+
+                .container input:checked ~ .checkmark {
+                  background-color: #1d84ff;
+                  border: none;
+                }
+
+                .container input:disabled ~ .checkmark {
+                  background-color: #dadada;
+                  border: none;
+                }
               }
             }
           }
@@ -139,10 +155,100 @@ const Wrapper = styled.div`
   }
 `;
 
+type ParsedUser = {
+  email: string;
+  firstName: string;
+  lastName: string;
+  employeeId: string;
+  id: string;
+  type: CollaboratorType;
+  checkedAuthor: boolean;
+  checkedReviewer: boolean;
+  checkedApprover: boolean;
+};
+
 const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
   closeAllOverlays,
   closeOverlay,
 }) => {
+  const dispatch = useDispatch();
+  const [users, setUsers] = useState<ParsedUser[]>([]);
+  const [selection, setSelection] = useState<
+    { userId: string; orderTree: number }[]
+  >([]);
+
+  const { data, userId, collaborators } = useTypedSelector((state) => ({
+    userId: state.auth.userId,
+    data: (state.prototypeComposer.data as unknown) as Checklist,
+    collaborators: uniqBy(
+      ((state.prototypeComposer.data as unknown) as Checklist).collaborators,
+      'id',
+    ),
+  }));
+
+  useEffect(() => {
+    const newUsers = data.authors.map((a) => ({
+      id: a.id,
+      email: a.email,
+      firstName: a.firstName,
+      lastName: a.lastName,
+      employeeId: a.employeeId,
+      type: CollaboratorType.AUTHOR,
+      checkedAuthor: true,
+      checkedReviewer: false,
+      checkedApprover: false,
+    }));
+
+    collaborators.forEach((a) => {
+      newUsers.push({
+        id: a.id,
+        email: a.email,
+        firstName: a.firstName,
+        lastName: a.lastName,
+        employeeId: a.employeeId,
+        type: CollaboratorType.REVIEWER,
+        checkedAuthor: false,
+        checkedReviewer: false,
+        checkedApprover: false,
+      });
+    });
+
+    setUsers(newUsers);
+    setSelection(data.authors.map((a) => ({ userId: a.id, orderTree: 1 })));
+  }, []);
+
+  const onCheckChange = (id: string, orderTree: number) => {
+    let checking = true;
+
+    const newUsers = users.map((u) => {
+      if (u.id !== id) {
+        return u;
+      } else {
+        switch (orderTree) {
+          case 1:
+            if (u.checkedAuthor) checking = false;
+            return { ...u, checkedAuthor: !u.checkedAuthor };
+          case 2:
+            if (u.checkedReviewer) checking = false;
+            return { ...u, checkedReviewer: !u.checkedReviewer };
+          case 3:
+            if (u.checkedApprover) checking = false;
+            return { ...u, checkedApprover: !u.checkedApprover };
+          default:
+            return u;
+        }
+      }
+    });
+
+    setUsers(newUsers);
+
+    if (checking) {
+      setSelection([...selection, { userId: id, orderTree }]);
+    } else {
+      setSelection(selection.filter((s) => s.userId !== id));
+    }
+  };
+
   return (
     <Wrapper>
       <BaseModal
@@ -152,7 +258,7 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
         primaryText="Initiate"
         secondaryText="Cancel"
         onSecondary={() => console.log('On Secondary')}
-        onPrimary={() => console.log('On Primary')}
+        onPrimary={() => dispatch(initiateSignOff(data.id, selection))}
       >
         <table cellSpacing={0} cellPadding={0}>
           <tbody>
@@ -181,98 +287,53 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
                 </div>
               </td>
             </tr>
-            <tr>
-              <td>
-                <div className="item">
-                  <Avatar
-                    size="large"
-                    user={{
-                      firstName: 'Some',
-                      lastName: 'User',
-                      employeeId: 'EMP12312',
-                      id: 25665,
-                    }}
-                  />
-                  <div className="middle">
-                    <span className="userId">EMP12312</span>
-                    <span className="userName">Some User</span>
+            {users.map((u) => (
+              <tr key={u.employeeId}>
+                <td>
+                  <div className="item">
+                    <Avatar size="large" user={u} />
+                    <div className="middle">
+                      <span className="userId">{u.employeeId}</span>
+                      <span className="userName">
+                        {u.firstName} {u.lastName}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </td>
-              <td>
-                <div className="checkmark-wrapper">
-                  <Checkbox
-                    checked={false}
-                    label=""
-                    onClick={() => console.log('checked')}
-                  />
-                </div>
-              </td>
-              <td>
-                <div className="checkmark-wrapper">
-                  <Checkbox
-                    checked={false}
-                    label=""
-                    onClick={() => console.log('checked')}
-                  />
-                </div>
-              </td>
-              <td>
-                <div className="checkmark-wrapper">
-                  <Checkbox
-                    checked={false}
-                    label=""
-                    onClick={() => console.log('checked')}
-                  />
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div className="item">
-                  <Avatar
-                    size="large"
-                    user={{
-                      firstName: 'Some',
-                      lastName: 'User',
-                      employeeId: 'EMP12312',
-                      id: 25665,
-                    }}
-                  />
-                  <div className="middle">
-                    <span className="userId">EMP12312</span>
-                    <span className="userName">Some User</span>
+                </td>
+                <td>
+                  <div className="checkmark-wrapper">
+                    {u.type === CollaboratorType.AUTHOR && (
+                      <Checkbox
+                        checked
+                        disabled
+                        label=""
+                        onClick={() => console.log('checked')}
+                      />
+                    )}
                   </div>
-                </div>
-              </td>
-              <td>
-                <div className="checkmark-wrapper">
-                  <Checkbox
-                    checked={false}
-                    label=""
-                    onClick={() => console.log('checked')}
-                  />
-                </div>
-              </td>
-              <td>
-                <div className="checkmark-wrapper">
-                  <Checkbox
-                    checked={false}
-                    label=""
-                    onClick={() => console.log('checked')}
-                  />
-                </div>
-              </td>
-              <td>
-                <div className="checkmark-wrapper">
-                  <Checkbox
-                    checked={false}
-                    label=""
-                    onClick={() => console.log('checked')}
-                  />
-                </div>
-              </td>
-            </tr>
+                </td>
+                <td>
+                  <div className="checkmark-wrapper">
+                    {u.type === CollaboratorType.REVIEWER && (
+                      <Checkbox
+                        checked={u.checkedReviewer}
+                        label=""
+                        onClick={() => onCheckChange(u.id, 2)}
+                      />
+                    )}
+                  </div>
+                </td>
+                <td>
+                  <div className="checkmark-wrapper">
+                    <Checkbox
+                      checked={u.checkedApprover}
+                      label=""
+                      onClick={() => onCheckChange(u.id, 3)}
+                    />
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </BaseModal>

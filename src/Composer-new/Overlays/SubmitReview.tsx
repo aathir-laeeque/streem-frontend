@@ -36,7 +36,7 @@ import {
   submitChecklistReviewWithCR,
 } from '#Composer-new/reviewer.actions';
 import { useDispatch } from 'react-redux';
-import { groupBy, orderBy, sortBy } from 'lodash';
+import { groupBy, orderBy } from 'lodash';
 import { getOrdinal } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
 import { Wrapper, AntSwitch } from './SubmitReview.styles';
@@ -63,6 +63,7 @@ type InitialState = {
   selectedCycle: null | number;
   reviewCycleOptions: Option[];
   reviewersOptions: Option[];
+  allDoneOk: boolean;
 };
 
 const toolbarOptions = {
@@ -79,6 +80,7 @@ const initialState: InitialState = {
   selectedCycle: null,
   reviewCycleOptions: [],
   reviewersOptions: [],
+  allDoneOk: false,
 };
 
 export const SubmitReviewModal: FC<CommonOverlayProps<{
@@ -134,6 +136,19 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
         }
       }
 
+      let allDoneOk = true;
+      collaborators.forEach((r) => {
+        if (
+          r.state === CollaboratorState.ILLEGAL ||
+          r.state === CollaboratorState.NOT_STARTED ||
+          r.state === CollaboratorState.BEING_REVIEWED ||
+          r.state === CollaboratorState.COMMENTED_CHANGES ||
+          r.state === CollaboratorState.REQUESTED_CHANGES
+        ) {
+          allDoneOk = false;
+        }
+      });
+
       const reviewerOptions = collaborators.map((r) => ({
         label: `${r.firstName} ${r.lastName} - ${r.employeeId}`,
         value: r.id,
@@ -152,6 +167,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
         editorState,
         reviewersOptions: [{ label: 'All', value: null }, ...reviewerOptions],
         reviewCycleOptions: [{ label: 'All', value: null }, ...cycleOptions],
+        allDoneOk,
       });
     }
   }, [collaborators]);
@@ -171,6 +187,8 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
     if (data && data?.id)
       dispatch(submitChecklistReviewWithCR(data?.id, comments));
   };
+
+  console.log('state.allDoneOK', state.allDoneOk);
 
   const groupedComments = groupBy(data?.comments, 'reviewCycle');
   const comments: any = [];
@@ -317,12 +335,8 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
       return 'Add Comments';
     if (continueReview && reviewState === CollaboratorState.COMMENTED_CHANGES)
       return 'How do you want to Continue?';
-    // if (continueReview && state.selected === Options.OK)
-    //   return 'Confirm your choice';
     if (!sendToAuthor && !isViewer && state.selected === null)
       return 'How is the Prototype ?';
-    // if (!sendToAuthor && !isViewer && state.selected === Options.OK)
-    //   return 'Confirm your choice';
 
     return '';
   };
@@ -414,20 +428,32 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
             }}
           >
             <div className="box-wrapper" style={{ padding: '0px 208px' }}>
-              <div className="box">
-                <div className="icon-wrapper">
-                  <MemoSentToAuthor />
+              {state.allDoneOk ? (
+                <div className="box">
+                  <div className="icon-wrapper">
+                    <MemoAllOk />
+                  </div>
+                  <h3>All Ok</h3>
+                  <span>No Changes required</span>
                 </div>
-                <h3>Send to Author</h3>
-                <span>Requesting for some Modification</span>
-              </div>
+              ) : (
+                <div className="box">
+                  <div className="icon-wrapper">
+                    <MemoSentToAuthor />
+                  </div>
+                  <h3>Send to Author</h3>
+                  <span>Requesting for some Modification</span>
+                </div>
+              )}
             </div>
             <Button1 className="submit" onClick={handleSendToAuthor}>
               Confirm
             </Button1>
-            <Button1 variant="textOnly" onClick={toggleSendToAuthor}>
-              View Requested Changes
-            </Button1>
+            {!state.allDoneOk && (
+              <Button1 variant="textOnly" onClick={toggleSendToAuthor}>
+                View Requested Changes
+              </Button1>
+            )}
           </div>
         )}
 

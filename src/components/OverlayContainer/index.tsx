@@ -6,8 +6,10 @@ import PasswordInputModal from '#Composer-new/Overlays/PasswordInput';
 import ReviewerAssignmentModal from '#Composer-new/Overlays/ReviewerAssignmentModal';
 import { ReviewerAssignmentPopover } from '#Composer-new/Overlays/ReviewerAssignmentPopover';
 import ReviewerAssignmentSuccessModal from '#Composer-new/Overlays/ReviewerAssignmentSuccess';
+import SignOffInitiatedSuccessModal from '#Composer-new/Overlays/SignOffInitiatedSuccess';
 import { ReviewersDetailsPopover } from '#Composer-new/Overlays/ReviewersDetailsPopover';
 import ReviewSubmitSuccessModal from '#Composer-new/Overlays/ReviewSubmitSuccess';
+import SignOffSuccessModal from '#Composer-new/Overlays/SignOffSuccess';
 import SentToAuthorSuccessModal from '#Composer-new/Overlays/SentToAuthorSuccess';
 import SignOffProgressModal from '#Composer-new/Overlays/SignOffProgress';
 import { SubmitReviewModal } from '#Composer-new/Overlays/SubmitReview';
@@ -105,6 +107,12 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.SIGN_OFF_PROGRESS:
       return <SignOffProgressModal {...params} />;
+
+    case OverlayNames.SIGN_OFF_INITIATED_SUCCESS:
+      return <SignOffInitiatedSuccessModal {...params} />;
+
+    case OverlayNames.SIGN_OFF_SUCCESS:
+      return <SignOffSuccessModal {...params} />;
 
     case OverlayNames.PASSWORD_INPUT:
       return <PasswordInputModal {...params} />;

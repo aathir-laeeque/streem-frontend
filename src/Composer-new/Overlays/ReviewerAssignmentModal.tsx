@@ -161,7 +161,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
               label=""
               onClick={() => onCheckChanged(user, checked, isPreAssigned)}
               disabled={
-                user.state
+                user.state && user.reviewCycle
                   ? user.reviewCycle === reviewCycle
                     ? user.state !== CollaboratorState.NOT_STARTED
                       ? false

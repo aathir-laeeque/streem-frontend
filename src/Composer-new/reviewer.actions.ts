@@ -120,3 +120,36 @@ export const sendReviewToCrSuccess = (collaborators: Collaborator[]) =>
 
 export const sendReviewToCrError = (error: any) =>
   actionSpreader(ComposerAction.SEND_REVIEW_TO_CR_ERROR, { error });
+
+export const initiateSignOff = (
+  checklistId: Checklist['id'],
+  users: { userId: string; orderTree: number }[],
+) => actionSpreader(ComposerAction.INITIATE_SIGNOFF, { checklistId, users });
+
+export const initiateSignOffSuccess = (collaborators: Collaborator[]) =>
+  actionSpreader(ComposerAction.INITIATE_SIGNOFF_SUCCESS, { collaborators });
+
+export const fetchApprovers = (checklistId: Checklist['id']) =>
+  actionSpreader(ComposerAction.FETCH_APPROVERS, { checklistId });
+
+export const fetchApproversError = (error: any) =>
+  actionSpreader(ComposerAction.FETCH_APPROVERS_ERROR, { error });
+
+export const fetchApproversSuccess = (data: Collaborator[]) =>
+  actionSpreader(ComposerAction.FETCH_APPROVERS_SUCCESS, {
+    data,
+  });
+
+export const signOffPrototype = (
+  checklistId: Checklist['id'],
+  password: string,
+) =>
+  actionSpreader(ComposerAction.SIGN_OFF_PROTOTYPE, { checklistId, password });
+
+export const signOffPrototypeError = (error: any) =>
+  actionSpreader(ComposerAction.SIGN_OFF_PROTOTYPE_ERROR, { error });
+
+export const signOffPrototypeSuccess = (collaborators: Collaborator[]) =>
+  actionSpreader(ComposerAction.SIGN_OFF_PROTOTYPE_SUCCESS, {
+    collaborators,
+  });

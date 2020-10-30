@@ -1,4 +1,3 @@
-import Composer from '#Composer-new';
 import { unionBy } from 'lodash';
 import { Reducer } from 'redux';
 
@@ -31,6 +30,7 @@ const initialState: ComposerState = {
   stages: StageListInitialState,
   tasks: TaskListInitialState,
   collaborators: [],
+  approvers: [],
 };
 
 const reducer: Reducer<ComposerState, ComposerActionType> = (
@@ -66,6 +66,9 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       return {
         ...initialState,
       };
+
+    case ComposerAction.FETCH_APPROVERS_SUCCESS:
+      return { ...state, approvers: action.payload.data };
 
     case ComposerAction.FETCH_REVIEWERS_FOR_CHECKLIST_SUCCESS:
       return { ...state, collaborators: action.payload.data };
@@ -110,6 +113,8 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         } as Checklist,
       };
 
+    case ComposerAction.INITIATE_SIGNOFF_SUCCESS:
+    case ComposerAction.SIGN_OFF_PROTOTYPE_SUCCESS:
     case ComposerAction.SEND_REVIEW_TO_CR_SUCCESS:
     case ComposerAction.START_CHECKLIST_REVIEW_SUCCESS:
       return {

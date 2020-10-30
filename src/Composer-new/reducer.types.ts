@@ -18,6 +18,9 @@ import {
   updateChecklistState,
   sendReviewToCrSuccess,
   assignReviewersToChecklistSuccess,
+  fetchApproversSuccess,
+  signOffPrototypeSuccess,
+  initiateSignOffSuccess,
 } from './reviewer.actions';
 import { ActivityListState } from './Activity/reducer.types';
 import { Checklist } from './checklist.types';
@@ -35,6 +38,7 @@ export type ComposerState = {
   readonly stages: StageListState;
   readonly tasks: TaskListState;
   readonly collaborators: Collaborator[];
+  readonly approvers: Collaborator[];
 };
 
 export enum ComposerAction {
@@ -49,6 +53,12 @@ export enum ComposerAction {
   FETCH_REVIEWERS_FOR_CHECKLIST = '@@composer/prototype/FETCH_REVIEWERS_FOR_CHECKLIST',
   FETCH_REVIEWERS_FOR_CHECKLIST_ERROR = '@@composer/prototype/FETCH_REVIEWERS_FOR_CHECKLIST_ERROR',
   FETCH_REVIEWERS_FOR_CHECKLIST_SUCCESS = '@@composer/prototype/FETCH_REVIEWERS_FOR_CHECKLIST_SUCCESS',
+  FETCH_APPROVERS = '@@composer/prototype/FETCH_APPROVERS',
+  FETCH_APPROVERS_ERROR = '@@composer/prototype/FETCH_APPROVERS_ERROR',
+  FETCH_APPROVERS_SUCCESS = '@@composer/prototype/FETCH_APPROVERS_SUCCESS',
+  SIGN_OFF_PROTOTYPE = '@@composer/prototype/SIGN_OFF_PROTOTYPE',
+  SIGN_OFF_PROTOTYPE_ERROR = '@@composer/prototype/SIGN_OFF_PROTOTYPE_ERROR',
+  SIGN_OFF_PROTOTYPE_SUCCESS = '@@composer/prototype/SIGN_OFF_PROTOTYPE_SUCCESS',
   ASSIGN_REVIEWERS_TO_CHECKLIST = '@@composer/prototype/ASSIGN_REVIEWERS_TO_CHECKLIST',
   UNASSIGN_REVIEWER_FROM_CHECKLIST = '@@composer/prototype/UNASSIGN_REVIEWER_FROM_CHECKLIST',
   ASSIGN_REVIEWER_TO_CHECKLIST = '@@composer/prototype/ASSIGN_REVIEWER_TO_CHECKLIST',
@@ -71,6 +81,9 @@ export enum ComposerAction {
   SEND_REVIEW_TO_CR = '@@composer/prototype/SEND_REVIEW_TO_CR',
   SEND_REVIEW_TO_CR_SUCCESS = '@@composer/prototype/SEND_REVIEW_TO_CR_SUCCESS',
   SEND_REVIEW_TO_CR_ERROR = '@@composer/prototype/SEND_REVIEW_TO_CR_ERROR',
+  INITIATE_SIGNOFF = '@@composer/prototype/INITIATE_SIGNOFF',
+  INITIATE_SIGNOFF_SUCCESS = '@@composer/prototype/INITIATE_SIGNOFF_SUCCESS',
+  INITIATE_SIGNOFF_ERROR = '@@composer/prototype/INITIATE_SIGNOFF_ERROR',
 }
 
 export type ComposerActionType = ReturnType<
@@ -79,6 +92,7 @@ export type ComposerActionType = ReturnType<
   | typeof fetchComposerDataSuccess
   | typeof resetComposer
   | typeof fetchAssignedReviewersForChecklistSuccess
+  | typeof fetchApproversSuccess
   | typeof assignReviewerToChecklist
   | typeof unAssignReviewerFromChecklist
   | typeof revertReviewersForChecklist
@@ -89,4 +103,6 @@ export type ComposerActionType = ReturnType<
   | typeof updateChecklistState
   | typeof sendReviewToCrSuccess
   | typeof assignReviewersToChecklistSuccess
+  | typeof signOffPrototypeSuccess
+  | typeof initiateSignOffSuccess
 >;
