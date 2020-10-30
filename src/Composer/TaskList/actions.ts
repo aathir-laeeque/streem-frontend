@@ -4,6 +4,7 @@ import { User, Users } from '#store/users/types';
 import { Task } from '../checklist.types';
 import { TaskAction } from './types';
 import { TaskListAction } from './reducer.types';
+import { Job } from '#views/Jobs/types';
 
 export const setActiveTask = (id: Task['id'], bringIntoView = false) =>
   actionSpreader(TaskListAction.SET_ACTIVE_TASK, { id, bringIntoView });
@@ -58,7 +59,7 @@ export const revertUsersForTask = (users: Users, taskId: Task['id']) =>
   actionSpreader(TaskListAction.REVERT_USERS_FOR_TASK, { users, taskId });
 
 export const assignUsersToTask = (payload: {
-  jobId: number;
+  jobId: Job['id'];
   taskId: Task['id'];
   assignIds: User['id'][];
   unassignIds: User['id'][];

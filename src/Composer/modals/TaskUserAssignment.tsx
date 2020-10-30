@@ -277,7 +277,7 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
         dispatch(
           assignUsersToTask({
             taskId,
-            jobId: Number(entityId),
+            jobId: entityId,
             assignIds: assignedUsers,
             unassignIds: unAssignedUsers,
             preAssigned: preAssignedUsers,
