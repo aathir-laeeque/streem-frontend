@@ -1,10 +1,18 @@
-import { apiCreateNewPrototype, apiUpdatePrototype } from '#utils/apiUrls';
+import {
+  apiCreateNewPrototype,
+  apiCreateRevisionPrototype,
+  apiUpdatePrototype,
+} from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { navigate } from '@reach/router';
 import { pick } from 'lodash';
 import { call, takeLeading } from 'redux-saga/effects';
 
-import { addNewPrototype, updatePrototype } from './actions';
+import {
+  addNewPrototype,
+  addRevisionPrototype,
+  updatePrototype,
+} from './actions';
 import { Author, FormMode, FormValues, NewPrototypeActions } from './types';
 
 type transformFormDataArgs = {
@@ -77,6 +85,36 @@ function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
   }
 }
 
+function* addRevisonPrototypeSaga({
+  payload,
+}: ReturnType<typeof addRevisionPrototype>) {
+  try {
+    const { checklistId } = payload;
+
+    const { data: response, errors } = yield call(
+      request,
+      'POST',
+      apiCreateRevisionPrototype(checklistId),
+      {
+        data: {
+          id: checklistId,
+        },
+      },
+    );
+
+    if (response) {
+      navigate(`/checklists/${response.id}`);
+    } else {
+      console.error('error from the create checklist api  :: ', errors);
+    }
+  } catch (error) {
+    console.error(
+      'error came in addRevisonPrototypeSaga in NewPrototypeSaga :: ',
+      error,
+    );
+  }
+}
+
 function* updatePrototypeSaga({ payload }: ReturnType<typeof updatePrototype>) {
   try {
     const { data, id, originalAuthors } = payload;
@@ -109,4 +147,8 @@ function* updatePrototypeSaga({ payload }: ReturnType<typeof updatePrototype>) {
 export function* NewPrototypeSaga() {
   yield takeLeading(NewPrototypeActions.ADD_NEW_PROTOTYPE, addPrototypeSaga);
   yield takeLeading(NewPrototypeActions.UPDATE_PROTOTYPE, updatePrototypeSaga);
+  yield takeLeading(
+    NewPrototypeActions.ADD_REVISION_PROTOTYPE,
+    addRevisonPrototypeSaga,
+  );
 }

@@ -33,6 +33,7 @@ import {
 import { Composer } from './styles';
 import { ListViewProps } from './types';
 import { AllChecklistStates } from '#Composer-new/checklist.types';
+import { addRevisionPrototype } from '../NewPrototype/actions';
 
 const getBaseFilter = (label: string) => [
   {
@@ -314,6 +315,19 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                         }}
                       >
                         Create Job
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          if (selectedChecklist?.id)
+                            dispatch(
+                              addRevisionPrototype(
+                                selectedChecklist?.id.toString(),
+                              ),
+                            );
+                        }}
+                      >
+                        Start a Revision
                       </MenuItem>
                     </Menu>
                   </>

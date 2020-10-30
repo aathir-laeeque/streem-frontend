@@ -124,6 +124,9 @@ export const apiGetAssignedUsersForJob = (jobId: Job['id']) =>
 
 export const apiCreateNewPrototype = () => `${baseUrl}/checklists`;
 
+export const apiCreateRevisionPrototype = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/revision`;
+
 export const apiCreateStage = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/stages`;
 

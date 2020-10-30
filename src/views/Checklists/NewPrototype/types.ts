@@ -6,6 +6,7 @@ import { addNewPrototype, updatePrototype } from './actions';
 
 export enum NewPrototypeActions {
   ADD_NEW_PROTOTYPE = '@@prototype/ADD_NEW_PROTOTYPE',
+  ADD_REVISION_PROTOTYPE = '@@prototype/ADD_REVISION_PROTOTYPE',
   UPDATE_PROTOTYPE = '@@prototype/UPDATE_PROTOTYPE',
 }
 
