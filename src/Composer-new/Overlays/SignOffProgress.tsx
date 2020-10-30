@@ -5,6 +5,7 @@ import { fetchApprovers } from '#Composer-new/reviewer.actions';
 import { CollaboratorState } from '#Composer-new/reviewer.types';
 import { useTypedSelector } from '#store';
 import { groupBy } from 'lodash';
+import moment from 'moment';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -135,17 +136,27 @@ const Wrapper = styled.div`
                   }
                 }
 
-                .right {
-                  padding: 2px 4px;
-                  border-radius: 4px;
-                  font-size: 12px;
-                  background-color: #eeeeee;
+                .right-container {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-end;
+                  font-size: 10px;
                   color: #999999;
-                }
 
-                .right.success {
-                  background-color: #e1fec0;
-                  color: #427a00;
+                  .right {
+                    padding: 2px 4px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    background-color: #eeeeee;
+                    color: #999999;
+                    float: right;
+                    margin-bottom: 4px;
+                  }
+
+                  .right.success {
+                    background-color: #e1fec0;
+                    color: #427a00;
+                  }
                 }
               }
 
@@ -224,7 +235,13 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
               CollaboratorState.NOT_STARTED ? (
                 <div className="right">Pending</div>
               ) : (
-                <div className="right success">Signed</div>
+                <div className="right-container">
+                  <div className="right success">Signed</div>
+                  {groupedApprovers[key][0].modifiedAt &&
+                    moment
+                      .unix(groupedApprovers[key][0].modifiedAt)
+                      .format('Do MMM, YYYY, HH:mm a')}
+                </div>
               )}
             </div>
           </td>
@@ -243,7 +260,11 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
                 {a.state === CollaboratorState.NOT_STARTED ? (
                   <div className="right">Pending</div>
                 ) : (
-                  <div className="right success">Signed</div>
+                  <div className="right-container">
+                    <div className="right success">Signed</div>
+                    {a.modifiedAt &&
+                      moment.unix(a.modifiedAt).format('Do MMM, YYYY, HH:mm a')}
+                  </div>
                 )}
               </div>
             </td>
