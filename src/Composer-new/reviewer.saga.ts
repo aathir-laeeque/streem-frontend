@@ -9,12 +9,17 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
 import {
   apiAssignReviewersToChecklist,
+  apiGetApproversForChecklist,
   apiGetReviewersForChecklist,
+  apiInitiateSignOff,
+  apiPrototypeSignOff,
   apiSendReviewToCr,
+  apiSignOffOrder,
   apiStartChecklistReview,
   apiSubmitChecklistForReview,
   apiSubmitChecklistReview,
   apiSubmitChecklistReviewWithCR,
+  apiValidatePassword,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
@@ -47,8 +52,19 @@ import {
   submitChecklistReviewWithCRError,
   submitChecklistReviewWithCRSuccess,
   updateChecklistState,
+  initiateSignOff,
+  fetchApprovers,
+  fetchApproversError,
+  fetchApproversSuccess,
+  signOffPrototype,
+  signOffPrototypeSuccess,
 } from './reviewer.actions';
-import { Collaborator, CollaboratorState } from './reviewer.types';
+import {
+  Collaborator,
+  CollaboratorState,
+  CollaboratorStateContent,
+  CollaboratorType,
+} from './reviewer.types';
 
 const getStatus = (state: RootState) => state.prototypeComposer.data?.status;
 const getCurrentCycle = (state: RootState) =>
@@ -56,6 +72,8 @@ const getCurrentCycle = (state: RootState) =>
 const getUserProfile = (state: RootState) => state.auth.profile;
 const getCurrentReviewers = (state: RootState) =>
   (state.prototypeComposer.data as Checklist)?.collaborators || [];
+const getCurrentAuthors = (state: RootState) =>
+  (state.prototypeComposer.data as Checklist)?.authors || [];
 const getCurrentComments = (state: RootState) =>
   (state.prototypeComposer.data as Checklist)?.comments || [];
 
@@ -72,7 +90,7 @@ function* fetchReviewersForChecklistSaga({
     );
 
     if (errors || error) {
-      throw 'Could Not Assign Collaborator To Checklist';
+      throw 'Could Not Fetch Reviewers for Checklist';
     }
 
     yield put(fetchAssignedReviewersForChecklistSuccess(data));
@@ -82,6 +100,30 @@ function* fetchReviewersForChecklistSaga({
       error,
     );
     yield put(fetchAssignedReviewersForChecklistError(error));
+  }
+}
+
+function* fetchApproversSaga({ payload }: ReturnType<typeof fetchApprovers>) {
+  try {
+    const { checklistId } = payload;
+
+    const { data, errors, error } = yield call(
+      request,
+      'GET',
+      apiGetApproversForChecklist(checklistId),
+    );
+
+    if (errors || error) {
+      throw 'Could Not Fetch Approvers for Checklist';
+    }
+
+    yield put(fetchApproversSuccess(data));
+  } catch (error) {
+    console.error(
+      'error from fetchApproversSaga in Prototype ComposerSaga :: ',
+      error,
+    );
+    yield put(fetchApproversError(error));
   }
 }
 
@@ -125,7 +167,6 @@ function* submitChecklistForReviewSaga({
   }
 }
 
-// USED
 function* assignReviewersToChecklistSaga({
   payload,
 }: ReturnType<typeof assignReviewersToChecklist>) {
@@ -290,15 +331,8 @@ function* afterSubmitChecklistReview(data: any, allOk: boolean) {
 
     let allDone = true;
     let allDoneOk = true;
-    let isFirst = true;
     collaborators.forEach((r) => {
       if (r.reviewCycle === currentCycle) {
-        if (
-          r.state !== CollaboratorState.ILLEGAL &&
-          r.state !== CollaboratorState.NOT_STARTED
-        ) {
-          isFirst = false;
-        }
         if (
           r.state === CollaboratorState.ILLEGAL ||
           r.state === CollaboratorState.NOT_STARTED ||
@@ -312,12 +346,8 @@ function* afterSubmitChecklistReview(data: any, allOk: boolean) {
       }
     });
 
-    if (isFirst) {
-      yield put(updateChecklistState(ChecklistStates.BEING_REVIEWED));
-    }
-
     if (allDone && allDoneOk) {
-      yield put(updateChecklistState(ChecklistStates.READY_FOR_SIGNING));
+      // yield put(updateChecklistState(ChecklistStates.READY_FOR_SIGNING));
       yield put(closeOverlayAction(OverlayNames.SUBMIT_REVIEW_MODAL));
     } else if (allDone && !allDoneOk) {
       yield put(
@@ -427,7 +457,7 @@ function* sendReviewToCrSaga({ payload }: ReturnType<typeof sendReviewToCr>) {
     const currentCycle = getCurrentCycle(yield select());
     const collaborators: Collaborator[] = [];
     let isLast = true;
-
+    let allDoneOk = true;
     currentReviewers.forEach((r) => {
       if (r.reviewCycle === currentCycle) {
         if (
@@ -441,21 +471,34 @@ function* sendReviewToCrSaga({ payload }: ReturnType<typeof sendReviewToCr>) {
           isLast = false;
         }
         if (r.id === userProfile?.id) {
-          collaborators.push({
-            ...r,
-            state: CollaboratorState.REQUESTED_CHANGES,
-          });
+          if (r.state === CollaboratorState.COMMENTED_CHANGES) {
+            collaborators.push({
+              ...r,
+              state: CollaboratorState.REQUESTED_CHANGES,
+            });
+          } else {
+            collaborators.push({
+              ...r,
+              state: CollaboratorState.REQUESTED_NO_CHANGES,
+            });
+          }
         } else {
+          if (r.state !== CollaboratorState.REQUESTED_NO_CHANGES) {
+            allDoneOk = false;
+          }
           collaborators.push(r);
         }
       }
     });
 
-    if (isLast) {
+    yield put(sendReviewToCrSuccess(collaborators));
+
+    if (allDoneOk && isLast) {
+      yield put(updateChecklistState(ChecklistStates.READY_FOR_SIGNING));
+    } else if (isLast && !allDoneOk) {
       yield put(updateChecklistState(ChecklistStates.REQUESTED_CHANGES));
     }
 
-    yield put(sendReviewToCrSuccess(collaborators));
     yield put(closeOverlayAction(OverlayNames.SUBMIT_REVIEW_MODAL));
     yield put(
       openOverlayAction({
@@ -477,11 +520,128 @@ function* sendReviewToCrSaga({ payload }: ReturnType<typeof sendReviewToCr>) {
   }
 }
 
+function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
+  const { checklistId, users } = payload;
+
+  try {
+    const res = yield call(request, 'PUT', apiInitiateSignOff(checklistId));
+
+    if (res.errors || res.error) {
+      throw 'Could Not Initiate Sign Off';
+    }
+
+    const { errors, error } = yield call(
+      request,
+      'POST',
+      apiSignOffOrder(checklistId),
+      { data: { users } },
+    );
+
+    if (errors || error) {
+      throw 'Could Not Initiate Sign Off';
+    }
+
+    const currentReviewers = getCurrentReviewers(yield select());
+    const currentAuthors = getCurrentAuthors(yield select());
+    const currentCycle = getCurrentCycle(yield select());
+    const collaborators: Collaborator[] = [...currentReviewers];
+    currentAuthors.forEach((r) => {
+      collaborators.push({
+        ...r,
+        comments: null,
+        reviewCycle: currentCycle,
+        state: CollaboratorState.NOT_STARTED,
+        type: CollaboratorType.SIGN_OFF_USER,
+      });
+    });
+
+    yield put(updateChecklistState(ChecklistStates.SIGN_OFF_INITIATED));
+    yield put(
+      openOverlayAction({
+        type: OverlayNames.SIGN_OFF_INITIATED_SUCCESS,
+      }),
+    );
+  } catch (error) {
+    console.error(
+      'error from initiateSignOffSaga function in Composer-New :: ',
+      error,
+    );
+  }
+}
+
+function* signOffPrototypeSaga({
+  payload,
+}: ReturnType<typeof signOffPrototype>) {
+  try {
+    const { checklistId, password } = payload;
+
+    const { data: validateData } = yield call(
+      request,
+      'POST',
+      apiValidatePassword(),
+      { data: { password } },
+    );
+
+    if (validateData) {
+      const { errors, error } = yield call(
+        request,
+        'PUT',
+        apiPrototypeSignOff(checklistId),
+      );
+
+      if (errors || error) {
+        throw 'Could Not Sign Off the Prototype';
+      }
+
+      const userProfile = getUserProfile(yield select());
+      const currentReviewers = getCurrentReviewers(yield select());
+      const currentCycle = getCurrentCycle(yield select());
+      const collaborators: Collaborator[] = [];
+      let isLast = true;
+      currentReviewers.forEach((r) => {
+        if (r.reviewCycle === currentCycle) {
+          if (
+            r.id !== userProfile?.id &&
+            r.type === CollaboratorType.SIGN_OFF_USER &&
+            r.state === CollaboratorState.NOT_STARTED
+          ) {
+            isLast = false;
+          }
+          if (r.id === userProfile?.id) {
+            collaborators.push({
+              ...r,
+              state: CollaboratorState.SIGNED,
+            });
+          } else {
+            collaborators.push(r);
+          }
+        }
+      });
+
+      if (isLast) {
+        yield put(updateChecklistState(ChecklistStates.READY_FOR_RELEASE));
+      }
+
+      yield put(signOffPrototypeSuccess(collaborators));
+      yield put(
+        openOverlayAction({
+          type: OverlayNames.SIGN_OFF_SUCCESS,
+        }),
+      );
+    } else {
+      throw 'Could Not Sign Off the Prototype';
+    }
+  } catch (error) {
+    console.error('error from signOffPrototypeSaga :', error);
+  }
+}
+
 export function* ReviewerSaga() {
   yield takeLatest(
     ComposerAction.FETCH_REVIEWERS_FOR_CHECKLIST,
     fetchReviewersForChecklistSaga,
   );
+  yield takeLatest(ComposerAction.FETCH_APPROVERS, fetchApproversSaga);
   yield takeLatest(
     ComposerAction.ASSIGN_REVIEWERS_TO_CHECKLIST,
     assignReviewersToChecklistSaga,
@@ -502,9 +662,7 @@ export function* ReviewerSaga() {
     ComposerAction.SUBMIT_CHECKLIST_REVIEW_WITH_CR,
     submitChecklistReviewWithCRSaga,
   );
-  // yield takeLatest(
-  //   ComposerAction.CONTINUE_CHECKLIST_REVIEW,
-  //   continueChecklistReviewSaga,
-  // );
+  yield takeLatest(ComposerAction.INITIATE_SIGNOFF, initiateSignOffSaga);
   yield takeLatest(ComposerAction.SEND_REVIEW_TO_CR, sendReviewToCrSaga);
+  yield takeLatest(ComposerAction.SIGN_OFF_PROTOTYPE, signOffPrototypeSaga);
 }

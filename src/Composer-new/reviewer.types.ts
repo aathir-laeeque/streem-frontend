@@ -35,8 +35,9 @@ export enum CollaboratorStateColors {
 }
 
 export enum CollaboratorType {
+  AUTHOR = 'AUTHOR',
   REVIEWER = 'REVIEWER',
-  APPROVER = 'APPROVER',
+  SIGN_OFF_USER = 'SIGN_OFF_USER',
 }
 
 export type Collaborator = Pick<

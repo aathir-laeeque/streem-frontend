@@ -1,5 +1,8 @@
 import { Button1 } from '#components';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
+import {
+  closeAllOverlayAction,
+  openOverlayAction,
+} from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   startChecklistReview,
@@ -54,7 +57,28 @@ const ChecklistHeader: FC = () => {
       reviewer.id === userId,
   )[0];
 
+  const approver = data?.collaborators.filter(
+    (reviewer) =>
+      reviewer.reviewCycle === data.reviewCycle &&
+      reviewer.type === CollaboratorType.SIGN_OFF_USER &&
+      reviewer.id === userId,
+  )[0];
+
   const author = data?.authors.filter((a) => a.id === userId)[0];
+
+  let allDoneOk = true;
+  data?.collaborators.forEach((r) => {
+    if (
+      r.reviewCycle === data.reviewCycle &&
+      (r.state === CollaboratorState.ILLEGAL ||
+        r.state === CollaboratorState.NOT_STARTED ||
+        r.state === CollaboratorState.BEING_REVIEWED ||
+        r.state === CollaboratorState.COMMENTED_CHANGES ||
+        r.state === CollaboratorState.REQUESTED_CHANGES)
+    ) {
+      allDoneOk = false;
+    }
+  });
 
   const handleSubmitForReview = (isViewer = false, showAssignment = true) => {
     if (showAssignment) {
@@ -158,7 +182,11 @@ const ChecklistHeader: FC = () => {
             )}
             {data?.status !== ChecklistStates.SIGNING_IN_PROGRESS &&
               !isReviewPending && (
-                <Button1 className="submit" onClick={handleSendToAuthor}>
+                <Button1
+                  color={allDoneOk ? 'green' : 'blue'}
+                  className="submit"
+                  onClick={handleSendToAuthor}
+                >
                   <DoneAll style={{ fontSize: '16px', marginRight: '8px' }} />
                   Send to Author
                 </Button1>
@@ -169,6 +197,33 @@ const ChecklistHeader: FC = () => {
       default:
         return null;
     }
+  };
+
+  const onInitiateSignOff = () => {
+    dispatch(closeAllOverlayAction());
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.INITIATE_SIGNOFF,
+      }),
+    );
+  };
+
+  const handleInitiateSignOff = () => {
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.CONFIRMATION_MODAL,
+        props: {
+          onPrimary: () => onInitiateSignOff(),
+          primaryText: 'Confirm',
+          title: 'Initiate Sign Off',
+          body: (
+            <p style={{ margin: 0, textAlign: 'left' }}>
+              Are you sure you want to Initiate the Sing Off?
+            </p>
+          ),
+        },
+      }),
+    );
   };
 
   const PrototypeEditButton = () => (
@@ -216,6 +271,12 @@ const ChecklistHeader: FC = () => {
     </Button1>
   );
 
+  const InitiateSignOffButton = ({ title }: { title: string }) => (
+    <Button1 className="submit" onClick={() => handleInitiateSignOff()}>
+      {title}
+    </Button1>
+  );
+
   const ViewReviewersButton = () => (
     <Button1
       id="view-collaborators"
@@ -223,6 +284,28 @@ const ChecklistHeader: FC = () => {
       onClick={() => handleSubmitForReview(true)}
     >
       <Group className="icon" fontSize="small" />
+    </Button1>
+  );
+
+  const ViewSigningStatusButton = () => (
+    <Button1
+      variant="secondary"
+      onClick={() =>
+        dispatch(openOverlayAction({ type: OverlayNames.SIGN_OFF_PROGRESS }))
+      }
+    >
+      View Signing Status
+    </Button1>
+  );
+
+  const SignOffButton = () => (
+    <Button1
+      className="submit"
+      onClick={() =>
+        dispatch(openOverlayAction({ type: OverlayNames.PASSWORD_INPUT }))
+      }
+    >
+      Sign
     </Button1>
   );
 
@@ -259,10 +342,30 @@ const ChecklistHeader: FC = () => {
           </>
         );
 
+      case ChecklistStates.READY_FOR_SIGNING:
+        return (
+          <>
+            {author.primary && <PrototypeEditButton />}
+            <ViewReviewersButton />
+            {author.primary && (
+              <InitiateSignOffButton title="Initiate Sign Off " />
+            )}
+          </>
+        );
+
+      case ChecklistStates.SIGN_OFF_INITIATED:
+        return (
+          <>
+            <ViewReviewersButton />
+            {author.primary && <ViewSigningStatusButton />}
+            {approver && <SignOffButton />}
+          </>
+        );
+
       default:
         return (
           <>
-            <PrototypeEditButton />
+            {author.primary && <PrototypeEditButton />}
             <ViewReviewersButton />
           </>
         );
@@ -280,6 +383,20 @@ const ChecklistHeader: FC = () => {
           <div className="alert">
             <Info />
             <span>This Prototype has been sent to Reviewers</span>
+          </div>
+        )}
+        {author && data?.status === ChecklistStates.READY_FOR_SIGNING && (
+          <div
+            className="alert"
+            style={{
+              backgroundColor: '#e1fec0',
+              border: 'solid 1px #b2ef6c',
+            }}
+          >
+            <Info style={{ color: '#427a00' }} />
+            <span style={{ color: '#427a00' }}>
+              All OK! No changes submitted by Reviewers
+            </span>
           </div>
         )}
         {reviewer && reviewer.state === CollaboratorState.NOT_STARTED && (
@@ -311,13 +428,30 @@ const ChecklistHeader: FC = () => {
           </div>
         )}
         {reviewer && reviewer.state === CollaboratorState.COMMENTED_OK && (
-          <div className="alert">
-            <Info />
-            <span>
-              You have already reviewed this prototype and submitted it without
-              comments
-            </span>
-          </div>
+          <>
+            {allDoneOk ? (
+              <div
+                className="alert"
+                style={{
+                  backgroundColor: '#e1fec0',
+                  border: 'solid 1px #b2ef6c',
+                }}
+              >
+                <Info style={{ color: '#427a00' }} />
+                <span style={{ color: '#427a00' }}>
+                  You and your team members have No Comments for changes
+                </span>
+              </div>
+            ) : (
+              <div className="alert">
+                <Info />
+                <span>
+                  You have already reviewed this prototype and submitted it
+                  without comments
+                </span>
+              </div>
+            )}
+          </>
         )}
         {reviewer &&
           (reviewer.state === CollaboratorState.REQUESTED_CHANGES ||

@@ -153,6 +153,9 @@ export const apiDeleteActivity = (activityId: Activity['id']) =>
 export const apiGetReviewersForChecklist = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/reviewers`;
 
+export const apiGetApproversForChecklist = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/signOffUsers`;
+
 export const apiAssignReviewersToChecklist = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/reviewers/assignments`;
 
@@ -170,6 +173,15 @@ export const apiSubmitChecklistForReview = (checklistId: Checklist['id']) =>
 
 export const apiSendReviewToCr = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/review/submit-back`;
+
+export const apiInitiateSignOff = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/review/initiate-sign-off`;
+
+export const apiSignOffOrder = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/review/sign-off-order`;
+
+export const apiPrototypeSignOff = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/review/sign-off`;
 
 export const apiUpdateActivity = (activityId: Activity['id']) =>
   `${baseUrl}/activities/${activityId}`;

@@ -1,8 +1,12 @@
 import { BaseModal, Button1, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
+import { signOffPrototype } from '#Composer-new/reviewer.actions';
+import { Checklist } from '#Composer-new/checklist.types';
+import { useTypedSelector } from '#store';
 import { Visibility } from '@material-ui/icons';
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -72,8 +76,13 @@ const PasswordInputModal: FC<CommonOverlayProps<any>> = ({
   closeAllOverlays,
   closeOverlay,
 }) => {
+  const dispatch = useDispatch();
+  const { data: checklist, approvers } = useTypedSelector((state) => ({
+    approvers: state.prototypeComposer.approvers,
+    data: state.prototypeComposer.data as Checklist,
+  }));
   const [passwordInputType, setPasswordInputType] = useState(true);
-  const { register, handleSubmit, formState, errors } = useForm<Inputs>({
+  const { register, handleSubmit, formState } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
   });
@@ -81,6 +90,7 @@ const PasswordInputModal: FC<CommonOverlayProps<any>> = ({
   const onSubmit = (data: Inputs) => {
     // dispatch(login(data));
     console.log('data', data);
+    dispatch(signOffPrototype(checklist.id, data.password));
   };
 
   const AfterIcon = () => (

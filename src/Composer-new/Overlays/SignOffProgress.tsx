@@ -1,6 +1,12 @@
 import { Avatar, BaseModal } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import React, { FC } from 'react';
+import { Checklist } from '#Composer-new/checklist.types';
+import { fetchApprovers } from '#Composer-new/reviewer.actions';
+import { CollaboratorState } from '#Composer-new/reviewer.types';
+import { useTypedSelector } from '#store';
+import { groupBy } from 'lodash';
+import React, { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -158,6 +164,96 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
   closeAllOverlays,
   closeOverlay,
 }) => {
+  const dispatch = useDispatch();
+  const { data, approvers } = useTypedSelector((state) => ({
+    approvers: state.prototypeComposer.approvers,
+    data: state.prototypeComposer.data as Checklist,
+  }));
+
+  useEffect(() => {
+    dispatch(fetchApprovers(data.id));
+  }, []);
+
+  const groupedApprovers = groupBy(approvers, 'orderTree');
+  const groupedViews: any = [];
+
+  Object.keys(groupedApprovers).forEach((key) => {
+    groupedViews.push(
+      <>
+        <tr key={key}>
+          <td rowSpan={groupedApprovers[key].length}>
+            <div
+              className="heading"
+              style={{ marginTop: key !== '1' ? '40px' : '0px' }}
+            >
+              <div className="top">
+                <span>
+                  {key === '1'
+                    ? 'Author'
+                    : key === '2'
+                    ? 'Reviewer'
+                    : 'Approver'}
+                </span>
+                <div className="ellipse">{key}</div>
+              </div>
+              <span className="light">
+                {groupedApprovers[key].some(
+                  (a) => a.state === CollaboratorState.NOT_STARTED,
+                )
+                  ? 'In Progress'
+                  : 'Complete'}
+              </span>
+            </div>
+          </td>
+          <td>
+            <div
+              className="item"
+              style={{ marginTop: key !== '1' ? '40px' : '0px' }}
+            >
+              <Avatar size="large" user={groupedApprovers[key][0]} />
+              <div className="middle">
+                <span className="userId">
+                  {groupedApprovers[key][0].employeeId}
+                </span>
+                <span className="userName">
+                  {groupedApprovers[key][0].firstName}{' '}
+                  {groupedApprovers[key][0].lastName}
+                </span>
+              </div>
+              {groupedApprovers[key][0].state ===
+              CollaboratorState.NOT_STARTED ? (
+                <div className="right">Pending</div>
+              ) : (
+                <div className="right success">` Signed`</div>
+              )}
+            </div>
+          </td>
+        </tr>
+        {groupedApprovers[key].slice(1).map((a) => (
+          <tr key={a.employeeId}>
+            <td>
+              <div className="item">
+                <Avatar size="large" user={a} />
+                <div className="middle">
+                  <span className="userId">{a.employeeId}</span>
+                  <span className="userName">
+                    {a.firstName} {a.lastName}
+                  </span>
+                </div>
+                {groupedApprovers[key][0].state ===
+                CollaboratorState.NOT_STARTED ? (
+                  <div className="right">Pending</div>
+                ) : (
+                  <div className="right success">` Signed`</div>
+                )}
+              </div>
+            </td>
+          </tr>
+        ))}
+      </>,
+    );
+  });
+
   return (
     <Wrapper>
       <BaseModal
@@ -173,75 +269,7 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
                 <div className="heading">Signing Order</div>
               </td>
             </tr>
-            <tr>
-              <td rowSpan={3}>
-                <div className="heading">
-                  <div className="top">
-                    <span>Author</span>
-                    <div className="ellipse">1</div>
-                  </div>
-                  <span className="light">In Progress</span>
-                </div>
-              </td>
-              <td>
-                <div className="item">
-                  <Avatar
-                    size="large"
-                    user={{
-                      firstName: 'Some',
-                      lastName: 'User',
-                      employeeId: 'EMP12312',
-                      id: 25665,
-                    }}
-                  />
-                  <div className="middle">
-                    <span className="userId">EMP12312</span>
-                    <span className="userName">Some User</span>
-                  </div>
-                  <div className="right success">Signed</div>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div className="item">
-                  <Avatar
-                    size="large"
-                    user={{
-                      firstName: 'Some',
-                      lastName: 'User',
-                      employeeId: 'EMP12312',
-                      id: 25665,
-                    }}
-                  />
-                  <div className="middle">
-                    <span className="userId">EMP12312</span>
-                    <span className="userName">Some User</span>
-                  </div>
-                  <div className="right success">Signed</div>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div className="item no-border">
-                  <Avatar
-                    size="large"
-                    user={{
-                      firstName: 'Some',
-                      lastName: 'User',
-                      employeeId: 'EMP12312',
-                      id: 25665,
-                    }}
-                  />
-                  <div className="middle">
-                    <span className="userId">EMP12312</span>
-                    <span className="userName">Some User</span>
-                  </div>
-                  <div className="right">Pending</div>
-                </div>
-              </td>
-            </tr>
+            {groupedViews}
           </tbody>
         </table>
       </BaseModal>
