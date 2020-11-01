@@ -11,7 +11,7 @@ const sagaMiddleware = createSagaMiddleware();
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth'],
+  whitelist: ['auth', 'activityFilters'],
   transforms: [
     createTransform(
       (inboundState: any, key: string) => {
@@ -31,10 +31,7 @@ const persistConfig = {
       (outboundState: any, key: string) => {
         return {
           ...outboundState,
-          // accessToken: 'asdaiudgias',
-          // refreshToken: 'adadasdas',
         };
-        // return { ...outboundState, isIdle: false };
       },
     ),
   ],

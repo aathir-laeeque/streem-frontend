@@ -116,7 +116,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
         >
           {error && <span className="error-span">{error}</span>}
           <Button className="primary-button" type="submit">
-            ResetPassword
+            Reset Password
           </Button>
         </div>
       </form>

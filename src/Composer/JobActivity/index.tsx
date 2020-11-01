@@ -20,6 +20,10 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { JobActivity, JobActivitySeverity, JobActivityState } from './types';
 import { fetchJobActivities } from './actions';
 import { Job } from '#views/Jobs/types';
+import {
+  setActivityFilters,
+  clearActivityFilters,
+} from '#store/activity-filters/action';
 
 type initialState = {
   dateRange: DateRange<Moment>;
@@ -50,6 +54,7 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
 
   const resetFilter = () => {
     setstate(initialState);
+    dispatch(clearActivityFilters());
   };
 
   const filterProp: FilterProp = {
@@ -121,6 +126,12 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
   };
 
   useEffect(() => {
+    return () => {
+      dispatch(clearActivityFilters());
+    };
+  }, []);
+
+  useEffect(() => {
     if (!isIdle && Object.keys(state.appliedFilters).length === 0) fetchData(0);
   }, [state.appliedFilters, isIdle]);
 
@@ -172,7 +183,7 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
     fetchLogs(greaterThan.unix(), lowerThan.unix(), page);
   };
 
-  if (!logs || !pageable) {
+  if (!logs || logs.length === 0 || !pageable) {
     return <div>{loading && 'Loading...'}</div>;
   }
 
@@ -189,6 +200,16 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
   const applyDateTimeFilter = () => {
     const { dateRange, startTime, endTime } = state;
     if (dateRange[0] && dateRange[1] && startTime && endTime) {
+      dispatch(
+        setActivityFilters({
+          type: 'date',
+          filter: {
+            dateRange: [dateRange[0].unix(), dateRange[1].unix()],
+            startTime: startTime.unix(),
+            endTime: endTime.unix(),
+          },
+        }),
+      );
       const startTimeParsed = startTime;
       const endTimeParsed = endTime;
       const greaterThan = moment(
@@ -213,7 +234,9 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
         isLast={pageable.last}
         currentPage={pageable.page}
         data={data}
-        onPrimaryClick={() => console.log('Primary Clicked')}
+        onPrimaryClick={() =>
+          window.open(`/job-activity/print/${jobId}`, '_blank')
+        }
         primaryButtonText="Export"
         filterProp={filterProp}
         beforeColumns={[
@@ -251,10 +274,6 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
                           <div className="circle" />
                           <div className="content">
                             <div className="content-items">
-                              {/* {formatDateTime(
-                                Number(log.triggeredAt),
-                                'hh:mm A',
-                              )} */}
                               {moment.unix(log.triggeredAt).format('hh:mm A')}
                             </div>
                             {log.severity === JobActivitySeverity.CRITICAL && (

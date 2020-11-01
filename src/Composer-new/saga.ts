@@ -1,5 +1,6 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { RootState } from '#store';
 import {
   apiGetChecklist,
   apiGetSelectedJob as apiGetJob,
@@ -7,7 +8,7 @@ import {
 } from '#utils/apiUrls';
 import { Error } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { all, call, fork, put, takeLeading } from 'redux-saga/effects';
+import { all, call, fork, put, takeLeading, select } from 'redux-saga/effects';
 
 import {
   fetchComposerData,
@@ -17,7 +18,9 @@ import {
 } from './actions';
 import { setValidationError as setActivityValidationError } from './Activity/actions';
 import { ActivitySaga } from './Activity/saga';
+import { ChecklistStates } from './checklist.types';
 import { ComposerAction } from './reducer.types';
+import { submitChecklistForReview } from './reviewer.actions';
 import { ReviewerSaga } from './reviewer.saga';
 import { setValidationError as setStageValidationError } from './Stages/actions';
 import { StageListSaga } from './Stages/saga';
@@ -25,6 +28,8 @@ import { setValidationError as setTaskValidationError } from './Tasks/actions';
 import { TaskListSaga } from './Tasks/saga';
 import { ComposerEntity } from './types';
 import { groupErrors } from './utils';
+
+const getStatus = (state: RootState) => state.prototypeComposer.data?.status;
 
 function* fetchComposerDataSaga({
   payload,
@@ -64,6 +69,7 @@ function* validatePrototypeSaga({
 }: ReturnType<typeof validatePrototype>) {
   try {
     const { id } = payload;
+    const status = getStatus(yield select());
 
     const { errors } = yield call(request, 'GET', apiValidatePrototype(id));
 
@@ -91,14 +97,18 @@ function* validatePrototypeSaga({
         );
       }
     } else {
-      yield put(
-        openOverlayAction({
-          type: OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT,
-          props: {
-            checklistId: id,
-          },
-        }),
-      );
+      if (status === ChecklistStates.BEING_BUILT) {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT,
+            props: {
+              checklistId: id,
+            },
+          }),
+        );
+      } else {
+        yield put(submitChecklistForReview(id));
+      }
     }
   } catch (error) {
     console.error('error came in apiValidatePrototype :: ', error);

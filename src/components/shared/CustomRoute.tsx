@@ -29,7 +29,12 @@ export const CustomRoute: FC<Props> = ({
   let currentState = SessionStates.INACTIVE;
 
   if (profile) {
-    if (!isRefreshing && rest.path !== 'jobs/print/:jobId')
+    if (
+      !isRefreshing &&
+      rest.path !== 'jobs/print/:jobId' &&
+      rest.path !== 'users-activity/print' &&
+      rest.path !== 'job-activity/print/:jobId'
+    )
       dispatch(refreshTokenPoll());
     if (isLoggedIn) currentState = SessionStates.ACTIVE;
   }

@@ -218,7 +218,7 @@ const ChecklistHeader: FC = () => {
           title: 'Initiate Sign Off',
           body: (
             <p style={{ margin: 0, textAlign: 'left' }}>
-              Are you sure you want to Initiate the Sing Off?
+              Are you sure you want to Initiate the Sign Off?
             </p>
           ),
         },
@@ -258,13 +258,31 @@ const ChecklistHeader: FC = () => {
     </Button1>
   );
 
+  const handleSubmitForReviewOnChange = () => {
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.CONFIRMATION_MODAL,
+        props: {
+          onPrimary: () => dispatch(validatePrototype(data.id)),
+          primaryText: 'Confirm',
+          title: 'Submit For Review',
+          body: (
+            <p style={{ margin: 0, textAlign: 'left' }}>
+              Are you sure you want to Submit for Review?
+            </p>
+          ),
+        },
+      }),
+    );
+  };
+
   const AuthorSubmitButton = ({ title }: { title: string }) => (
     <Button1
       className="submit"
       onClick={() =>
         data.status === ChecklistStates.BEING_BUILT
           ? dispatch(validatePrototype(data.id))
-          : dispatch(submitChecklistForReview(data.id))
+          : handleSubmitForReviewOnChange()
       }
     >
       {title}
@@ -387,6 +405,20 @@ const ChecklistHeader: FC = () => {
             <Info style={{ color: '#427a00' }} />
             <span style={{ color: '#427a00' }}>
               All OK! No changes submitted by Reviewers
+            </span>
+          </div>
+        )}
+        {reviewer && data?.status === ChecklistStates.READY_FOR_SIGNING && (
+          <div
+            className="alert"
+            style={{
+              backgroundColor: '#e1fec0',
+              border: 'solid 1px #b2ef6c',
+            }}
+          >
+            <Info style={{ color: '#427a00' }} />
+            <span style={{ color: '#427a00' }}>
+              Author has to start the signing process
             </span>
           </div>
         )}

@@ -25,6 +25,10 @@ import {
 import MomentUtils from '@material-ui/pickers/adapter/moment';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import {
+  setActivityFilters,
+  clearActivityFilters,
+} from '#store/activity-filters/action';
 
 type initialState = {
   dateRange: DateRange<Moment>;
@@ -55,6 +59,7 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
 
   const resetFilter = () => {
     setstate(initialState);
+    dispatch(clearActivityFilters());
   };
 
   const filterProp: FilterProp = {
@@ -136,10 +141,14 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
   };
 
   useEffect(() => {
+    return () => {
+      dispatch(clearActivityFilters());
+    };
+  }, []);
+
+  useEffect(() => {
     if (!isIdle && Object.keys(state.appliedFilters).length === 0) fetchData(0);
   }, [state.appliedFilters, isIdle]);
-
-  console.log('dateRange', state.dateRange);
 
   const fetchLogs = (
     greaterThan: number,
@@ -186,7 +195,7 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
     fetchLogs(greaterThan.unix(), lowerThan.unix(), page);
   };
 
-  if (!logs || !pageable) {
+  if (!logs || logs.length === 0 || !pageable) {
     return <div>{loading && 'Loading...'}</div>;
   }
 
@@ -203,6 +212,16 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
   const applyDateTimeFilter = () => {
     const { dateRange, startTime, endTime } = state;
     if (dateRange[0] && dateRange[1] && startTime && endTime) {
+      dispatch(
+        setActivityFilters({
+          type: 'date',
+          filter: {
+            dateRange: [dateRange[0].unix(), dateRange[1].unix()],
+            startTime: startTime.unix(),
+            endTime: endTime.unix(),
+          },
+        }),
+      );
       const startTimeParsed = startTime;
       const endTimeParsed = endTime;
       const greaterThan = moment(
@@ -227,7 +246,7 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
         isLast={pageable.last}
         currentPage={pageable.page}
         data={data}
-        onPrimaryClick={() => console.log('Primary Clicked')}
+        onPrimaryClick={() => window.open(`users-activity/print`, '_blank')}
         primaryButtonText="Export"
         filterProp={filterProp}
         beforeColumns={[
@@ -265,10 +284,6 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
                           <div className="circle" />
                           <div className="content">
                             <div className="content-items">
-                              {/* {formatDateTime(
-                                Number(log.triggeredAt),
-                                'hh:mm A',
-                              )} */}
                               {moment.unix(log.triggeredAt).format('hh:mm A')}
                             </div>
                             {log.severity ===

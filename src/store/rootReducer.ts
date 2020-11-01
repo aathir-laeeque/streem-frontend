@@ -15,6 +15,7 @@ import { FileUploadReducer } from './file-upload/reducer';
 
 import { PropertiesServiceReducer } from '../services/properties/reducer';
 import { UsersServiceReducer } from '../services/users/reducer';
+import { ActivityFiltersReducer } from './activity-filters/reducer';
 
 export const rootReducer = combineReducers({
   auth: AuthReducer,
@@ -33,4 +34,5 @@ export const rootReducer = combineReducers({
   // services reducer
   propertiesService: PropertiesServiceReducer,
   usersService: UsersServiceReducer,
+  activityFilters: ActivityFiltersReducer,
 });

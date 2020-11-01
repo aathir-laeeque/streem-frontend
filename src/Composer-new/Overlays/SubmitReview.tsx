@@ -38,7 +38,6 @@ import {
 import { useDispatch } from 'react-redux';
 import { groupBy, orderBy } from 'lodash';
 import { getOrdinal } from '#utils/stringUtils';
-import { formatDateTime } from '#utils/timeUtils';
 import { Wrapper, AntSwitch } from './SubmitReview.styles';
 import {
   openOverlayAction,
@@ -47,6 +46,7 @@ import {
 } from '#components/OverlayContainer/actions';
 import { User } from '#store/users/types';
 import { Author } from '#views/Checklists/NewPrototype/types';
+import moment from 'moment';
 
 enum Options {
   OK = 'OK',
@@ -233,10 +233,9 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                       </div>
                       <div>
                         <span>
-                          {formatDateTime(
-                            comment.commentedAt,
-                            'Do MMM, YYYY, HH:mm a',
-                          )}
+                          {moment
+                            .unix(comment.commentedAt)
+                            .format('Do MMM, YYYY, HH:mm a')}
                         </span>
                       </div>
                     </div>

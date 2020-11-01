@@ -63,12 +63,10 @@ import {
   signOffPrototypeSuccess,
   initiateSignOffSuccess,
   releasePrototype,
-  releasePrototypeSuccess,
 } from './reviewer.actions';
 import {
   Collaborator,
   CollaboratorState,
-  CollaboratorStateContent,
   CollaboratorType,
 } from './reviewer.types';
 
