@@ -23,7 +23,7 @@ import ParameterApprovalModal from '#Composer/modals/ParameterApproval';
 import Signature from '#Composer/modals/SignatureActivity';
 import SignCompletedTasksModal from '#Composer/modals/SignCompletedTasks';
 import SignningNotCompleteModal from '#Composer/modals/SignningNotComplete';
-import SignOffState from '#Composer/modals/SignOffState';
+import SignOffState from '#Composer/modals/SignOffStatus';
 import SkipTask from '#Composer/modals/SkipTask';
 import StartJob from '#Composer/modals/StartJob';
 import TaskErrorCorrection from '#Composer/modals/TaskErrorCorrection';
