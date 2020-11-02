@@ -77,7 +77,7 @@ export type UsersActionType = ReturnType<
 >;
 
 export type useUsersArgs = {
-  state?: UserState;
+  userState?: UserState;
   params?: fetchUsersParams;
 };
 

@@ -21,18 +21,18 @@ const defaultParams: fetchUsersParams = {
 };
 
 const useUsers = ({
-  state = UserState.ACTIVE,
+  userState = UserState.ACTIVE,
   params = defaultParams,
 }: useUsersArgs): useUsersReturnType => {
   const { pageable, users, usersById } = useTypedSelector(
-    (state) => state.usersService[state],
+    (state) => state.usersService[userState],
   );
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (!users.length) {
-      dispatch(fetch({ initialCall: true, params, type: state }));
+      dispatch(fetch({ initialCall: true, params, type: userState }));
     }
   }, []);
 
@@ -41,7 +41,7 @@ const useUsers = ({
       dispatch(
         fetch({
           initialCall: false,
-          type: state,
+          type: userState,
           params: {
             filters: params.filters,
             page: pageable.page + 1,
