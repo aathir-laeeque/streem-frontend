@@ -292,7 +292,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                           dispatch(
                             openOverlayAction({
                               type: OverlayNames.CHECKLIST_INFO,
-                              props: { checklist: item },
+                              props: { checklist: selectChecklist },
                             }),
                           );
                         }}
