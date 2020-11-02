@@ -372,7 +372,7 @@ const MemoActivityList: FC<{ activities: Activity[] }> = ({ activities }) => {
                     {activity.response.audit.modifiedBy.employeeId} on{' '}
                     {moment
                       .unix(activity.response.audit.modifiedAt)
-                      .format('MMM DD, HH:mm A')}
+                      .format('MMM DD, h:mm A')}
                   </Text>
                 </View>
               )}

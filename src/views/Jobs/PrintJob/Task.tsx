@@ -154,7 +154,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
             >
               {taskExecutionState !== TaskExecutionState.NOT_STARTED &&
               startedAt
-                ? moment.unix(startedAt).format('HH:mm a')
+                ? moment.unix(startedAt).format('h:mm a')
                 : '__:__ am / pm'}
             </Text>
             <Text style={styles.taskStartDateInput}>HH&nbsp;&nbsp;MM</Text>
@@ -235,7 +235,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
           <Text style={styles.text12}>
             This Task was digitally completed via CLEEN {'\n'}
             by {modifiedBy.firstName}, ID: {modifiedBy.employeeId} on{' '}
-            {moment.unix(modifiedAt).format('MMM DD, HH:mm A')}
+            {moment.unix(modifiedAt).format('MMM DD, h:mm A')}
           </Text>
         </View>
       ) : (
