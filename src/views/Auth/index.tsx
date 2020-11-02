@@ -66,7 +66,7 @@ const AuthView: FC<AuthViewProps> = () => (
   <Wrapper>
     <div className="sections left">
       <CleenLogoWhite width="60%" height="20%" />
-      <div className="tagline">Digitalize Cleaning</div>
+      <div className="tagline">Digitalise Cleaning</div>
     </div>
     <div className="sections right">
       <Router style={{ width: '100%' }}>
