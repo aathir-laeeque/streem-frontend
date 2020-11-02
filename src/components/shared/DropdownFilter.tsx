@@ -25,7 +25,7 @@ const DropdownFilter: FC<DropdownFilterProps> = ({ options, updateFilter }) => {
         persistValue
         options={options}
         onChange={(option) => updateFilter(option)}
-        placeholder="Status"
+        placeholder="State"
       />
     </Wrapper>
   );

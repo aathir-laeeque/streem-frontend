@@ -14,7 +14,7 @@ import { NotificationType } from '#components/Notification/types';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { navigate } from '@reach/router';
-import { User, UserStatus } from '#store/users/types';
+import { User, UserState } from '#store/users/types';
 import {
   login,
   logOutSuccess,
@@ -59,7 +59,7 @@ import {
   takeLatest,
 } from 'redux-saga/effects';
 import { AuthAction, LoginResponse, RefreshTokenResponse } from './types';
-import { setSelectedStatus } from '#store/users/actions';
+import { setSelectedState } from '#store/users/actions';
 
 const getRefreshToken = (state: any) => state.auth.refreshToken;
 const getUserId = (state: any) => state.auth.userId;
@@ -176,7 +176,7 @@ function* logOutSaga() {
       }),
     );
     yield put(logOutSuccess());
-    yield put(setSelectedStatus(UserStatus.ACTIVE));
+    yield put(setSelectedState(UserState.ACTIVE));
   } catch (error) {
     console.error('error from logOutSaga function in Auth :: ', error);
     yield put(logOutSuccess());

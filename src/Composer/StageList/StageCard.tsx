@@ -26,12 +26,12 @@ const StageCard = forwardRef<Ref, StageCardProps>(
     const { isAnyTaskStarted, anyTaskHasError, completedTasks } = tasks.reduce(
       ({ isAnyTaskStarted, anyTaskHasError, completedTasks }, task) => {
         const {
-          taskExecution: { status },
+          taskExecution: { state },
         } = task;
 
-        isAnyTaskStarted = isAnyTaskStarted || status in StartedTaskStates;
+        isAnyTaskStarted = isAnyTaskStarted || state in StartedTaskStates;
 
-        if (status in CompletedTaskStates) {
+        if (state in CompletedTaskStates) {
           ++completedTasks;
         }
 

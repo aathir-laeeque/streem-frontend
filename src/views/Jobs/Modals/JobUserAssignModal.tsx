@@ -118,11 +118,11 @@ export const JobUserAssignModal: FC<CommonOverlayProps<
   props: { selectedJobIndex, refreshData },
 }) => {
   const { list, pageable } = useTypedSelector((state) => state.users.active);
-  const { jobs, selectedStatus }: Partial<ListViewState> = useTypedSelector(
+  const { jobs, selectedState }: Partial<ListViewState> = useTypedSelector(
     (state) => state.jobListView,
   );
 
-  const job = jobs[selectedStatus.toLowerCase()].list[selectedJobIndex];
+  const job = jobs[selectedState.toLowerCase()].list[selectedJobIndex];
 
   const scroller = useRef<HTMLDivElement | null>(null);
   const [searchQuery, setSearchQuery] = useState('');

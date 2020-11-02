@@ -1,14 +1,14 @@
 import React, { FC, useEffect } from 'react';
 import { ListViewComponent } from '#components';
 import WarningIcon from '@material-ui/icons/Warning';
-import { User, UserStatus, UsersState, ParsedUser } from '#store/users/types';
+import { User, UserState, UsersState, ParsedUser } from '#store/users/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { capitalize } from 'lodash';
 import { Properties } from '#store/properties/types';
 import {
   fetchUsers,
-  setSelectedStatus,
+  setSelectedState,
   setSelectedUser,
 } from '#store/users/actions';
 import { useTypedSelector } from '#store';
@@ -41,9 +41,9 @@ export function modalBody(user: User, text: string): any {
 
 const TabContent: FC<TabViewProps> = ({
   navigate = navigateTo,
-  selectedStatus,
+  selectedState,
 }) => {
-  const { loading, [selectedStatus]: users }: UsersState = useTypedSelector(
+  const { loading, [selectedState]: users }: UsersState = useTypedSelector(
     (state) => state.users,
   );
   const { isIdle } = useTypedSelector((state) => state.auth);
@@ -52,7 +52,7 @@ const TabContent: FC<TabViewProps> = ({
   useEffect(() => {
     if (!isIdle) {
       fetchData(0, 10);
-      dispatch(setSelectedStatus(selectedStatus));
+      dispatch(setSelectedState(selectedState));
     }
   }, [isIdle]);
 
@@ -68,14 +68,14 @@ const TabContent: FC<TabViewProps> = ({
         {
           field: 'archived',
           op: 'EQ',
-          values: [selectedStatus === UserStatus.ARCHIVED],
+          values: [selectedState === UserState.ARCHIVED],
         },
       ],
     });
     dispatch(
       fetchUsers(
         { page, size, filters, sort: 'createdAt,desc' },
-        selectedStatus,
+        selectedState,
       ),
     );
   };
@@ -208,7 +208,7 @@ const TabContent: FC<TabViewProps> = ({
         data={parsedUsers}
         onPrimaryClick={() => navigate('user-access/add-user')}
         primaryButtonText={
-          selectedStatus === UserStatus.ARCHIVED ? undefined : 'Add a New User'
+          selectedState === UserState.ARCHIVED ? undefined : 'Add a New User'
         }
         beforeColumns={[
           {
@@ -228,8 +228,8 @@ const TabContent: FC<TabViewProps> = ({
                       {capitalize(item.firstName)} {capitalize(item.lastName)}
                     </span>
                     {!item.verified && !item.archived && (
-                      <span className="list-status">
-                        <span className="list-status-span">
+                      <span className="list-state">
+                        <span className="list-state-span">
                           <WarningIcon className="icon" />
                           Unregistered
                         </span>
@@ -263,7 +263,7 @@ const TabContent: FC<TabViewProps> = ({
                       </span>
                     </>
                   )}
-                  {selectedStatus === UserStatus.ACTIVE ? (
+                  {selectedState === UserState.ACTIVE ? (
                     (item.verified && (
                       <span
                         className="user-actions"

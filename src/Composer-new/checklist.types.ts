@@ -37,13 +37,13 @@ export enum NonMandatoryActivity {
 
 export type ActivityType = MandatoryActivity | NonMandatoryActivity;
 
-export enum ActivityStatus {
+export enum ActivityState {
   EXECUTED = 'EXECUTED',
 }
 
 export type ActivityResponse = {
   audit: Audit;
-  status: ActivityStatus;
+  state: ActivityState;
 };
 
 export type Activity = {
@@ -66,12 +66,12 @@ export type Media = {
   filename: string;
 };
 
-export enum TaskExecutionStatus {
+export enum TaskExecutionState {
   COMPLETED = 'COMPLETED',
-  COMPLETED_WITH_ERROR_CORRECTION = 'COMPLETED_WITH_CORRECTION',
+  COMPLETED_WITH_CORRECTION = 'COMPLETED_WITH_CORRECTION',
   COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
-  ENABLED_FOR_ERROR_CORRECTION = 'ENABLED_FOR_CORRECTION',
-  INPROGRESS = 'IN_PROGRESS',
+  ENABLED_FOR_CORRECTION = 'ENABLED_FOR_CORRECTION',
+  IN_PROGRESS = 'IN_PROGRESS',
   NOT_STARTED = 'NOT_STARTED',
   SKIPPED = 'SKIPPED',
 }
@@ -84,7 +84,7 @@ export type TaskExecution = {
   reason: string;
   startedBy: Employee;
   startedAt: string;
-  status: TaskExecutionStatus;
+  state: TaskExecutionState;
   assignees: Pick<
     User,
     | 'id'
@@ -199,7 +199,7 @@ export type Checklist = {
   id: string;
   name: string;
   code: string;
-  status: EnabledStates | DisabledStates;
+  state: EnabledStates | DisabledStates;
   versionNumber: number;
   archived?: boolean;
   stages: Stage[];

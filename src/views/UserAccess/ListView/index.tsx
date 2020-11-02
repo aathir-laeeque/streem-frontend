@@ -1,6 +1,6 @@
 import { useTabs } from '#components';
 import React, { FC } from 'react';
-import { UsersState, UserStatus } from '#store/users/types';
+import { UsersState, UserState } from '#store/users/types';
 
 import { Composer } from './styles';
 import TabContent from './TabContent';
@@ -9,24 +9,24 @@ import { ListViewProps } from './types';
 import { useTypedSelector } from '#store';
 
 const ListView: FC<ListViewProps> = () => {
-  const { selectedStatus }: Partial<UsersState> = useTypedSelector(
+  const { selectedState }: Partial<UsersState> = useTypedSelector(
     (state) => state.users,
   );
   const { renderTabsContent, renderTabsHeader } = useTabs([
     {
-      label: `${UserStatus.ACTIVE} Users`,
-      active: selectedStatus === UserStatus.ACTIVE,
+      label: `${UserState.ACTIVE} Users`,
+      active: selectedState === UserState.ACTIVE,
       TabContent,
       passThroughTabContentProps: {
-        selectedStatus: UserStatus.ACTIVE,
+        selectedState: UserState.ACTIVE,
       },
     },
     {
-      label: `${UserStatus.ARCHIVED} Users`,
-      active: selectedStatus === UserStatus.ARCHIVED,
+      label: `${UserState.ARCHIVED} Users`,
+      active: selectedState === UserState.ARCHIVED,
       TabContent,
       passThroughTabContentProps: {
-        selectedStatus: UserStatus.ARCHIVED,
+        selectedState: UserState.ARCHIVED,
       },
     },
     {

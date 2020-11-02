@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { User } from '#store/users/types';
 import { Text, View, StyleSheet } from '@react-pdf/renderer';
-import { JobStatus } from '#Composer/composer.types';
+import { JobState } from '#Composer/composer.types';
 import { styles as commonStyles } from '../styles';
 
 const styles = StyleSheet.create({
@@ -136,13 +136,13 @@ export const TabLookLike = ({
 
 export const Assigness = ({
   assignees,
-  jobStatus,
+  jobState,
 }: {
   assignees: User[];
-  jobStatus: string;
+  jobState: string;
 }) => {
   let rows = [];
-  if (jobStatus === JobStatus.UNASSIGNED) {
+  if (jobState === JobState.UNASSIGNED) {
     for (let i = 0; i < 8; i++) {
       rows.push(
         <View style={styles.assigneRow} key={`assignes_${i}`}>

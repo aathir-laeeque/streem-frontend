@@ -40,7 +40,7 @@ const useStyles = makeStyles({
     color: '#00000',
     textTransform: 'capitalize',
   },
-  status: {
+  state: {
     fontSize: '14px',
     marginLeft: '24px',
     textTransform: 'capitalize',
@@ -83,7 +83,7 @@ export const ReviewersDetailsPopover: FC<CommonOverlayProps<{
     >
       <div className={classes.headingWrapper}>
         <span className={classes.heading}>Reviewers</span>
-        <span className={classes.heading}>Status</span>
+        <span className={classes.heading}>State</span>
       </div>
       {users.map((user: Collaborator, index: number) => (
         <div

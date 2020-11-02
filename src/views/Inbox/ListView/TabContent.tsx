@@ -6,7 +6,7 @@ import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { fetchInbox, setSelectedStatus } from './actions';
+import { fetchInbox, setSelectedState } from './actions';
 import { Composer } from './styles';
 import { ListViewState, TabViewProps } from './types';
 
@@ -23,7 +23,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   useEffect(() => {
     if (!isIdle) {
       fetchData(0, 10);
-      dispatch(setSelectedStatus(reduerLabel));
+      dispatch(setSelectedState(reduerLabel));
     }
   }, [isIdle]);
 

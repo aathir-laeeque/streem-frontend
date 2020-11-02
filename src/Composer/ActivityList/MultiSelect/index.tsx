@@ -49,8 +49,8 @@ const MultiSelectActivity: FC<ActivityProps> = ({
             data: activity.data.map((el) => ({
               ...el,
               ...(options.findIndex((e) => e.value === el.id) > -1
-                ? { status: Selections.SELECTED }
-                : { status: Selections.NOT_SELECTED }),
+                ? { state: Selections.SELECTED }
+                : { state: Selections.NOT_SELECTED }),
             })),
           };
 

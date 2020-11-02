@@ -5,7 +5,7 @@ import {
   ActivitiesOrderInTaskInStage,
   ActivityErrors,
 } from './ActivityList/types';
-import { Checklist, Stage, Task, TaskExecutionStatus } from './checklist.types';
+import { Checklist, Stage, Task, TaskExecutionState } from './checklist.types';
 import { ErrorGroups } from './composer.types';
 import { StageErrors, StagesById, StagesOrder } from './StageList/types';
 import {
@@ -95,8 +95,8 @@ export const getTasks = ({
 
       if (
         !taskIdWithStop &&
-        (task.taskExecution.state === TaskExecutionStatus.NOT_STARTED ||
-          task.taskExecution.state === TaskExecutionStatus.INPROGRESS) &&
+        (task.taskExecution.state === TaskExecutionState.NOT_STARTED ||
+          task.taskExecution.state === TaskExecutionState.IN_PROGRESS) &&
         task.hasStop
       ) {
         taskIdWithStop = task.id;

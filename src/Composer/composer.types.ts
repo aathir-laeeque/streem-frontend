@@ -14,12 +14,12 @@ export enum Entity {
   CHECKLIST = 'Checklist',
 }
 
-export enum JobStatus {
+export enum JobState {
   ASSIGNED = 'ASSIGNED',
   BLOCKED = 'BLOCKED',
   COMPLETED = 'COMPLETED',
   COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
-  INPROGRESS = 'IN_PROGRESS',
+  IN_PROGRESS = 'IN_PROGRESS',
   UNASSIGNED = 'UNASSIGNED',
 }
 

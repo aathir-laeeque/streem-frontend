@@ -8,7 +8,7 @@ import { resetInbox } from './actions';
 
 import { Composer } from './styles';
 import TabContent from './TabContent';
-import { InboxStatus, ListViewProps } from './types';
+import { InboxState, ListViewProps } from './types';
 
 const ListView: FC<ListViewProps> = () => {
   const { job } = useTypedSelector((state) => state.properties);
@@ -30,7 +30,7 @@ const ListView: FC<ListViewProps> = () => {
   const passThroughTabContentProps = {};
   const { renderTabsContent, renderTabsHeader } = useTabs([
     {
-      label: InboxStatus.MYINBOX,
+      label: InboxState.MYINBOX,
       active: true,
       TabContent,
       passThroughTabContentProps,

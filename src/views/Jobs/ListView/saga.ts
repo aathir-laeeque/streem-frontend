@@ -84,13 +84,13 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
 
 function* assignUserSaga({ payload }: ReturnType<typeof assignUser>) {
   try {
-    const { selectedStatus } = yield select(
+    const { selectedState } = yield select(
       (state: RootState) => state?.jobListView,
     );
 
     const { id } = yield select(
       (state: RootState) =>
-        state?.jobListView.jobs[selectedStatus].list[payload.selectedJobIndex],
+        state?.jobListView.jobs[selectedState].list[payload.selectedJobIndex],
     );
     const user = payload.user;
     const { data, errors }: ResponseObj<Job> = yield call(
@@ -111,13 +111,13 @@ function* assignUserSaga({ payload }: ReturnType<typeof assignUser>) {
 
 function* unAssignUserSaga({ payload }: ReturnType<typeof unAssignUser>) {
   try {
-    const { selectedStatus } = yield select(
+    const { selectedState } = yield select(
       (state: RootState) => state?.jobListView,
     );
 
     const { id } = yield select(
       (state: RootState) =>
-        state?.jobListView.jobs[selectedStatus].list[payload.selectedJobIndex],
+        state?.jobListView.jobs[selectedState].list[payload.selectedJobIndex],
     );
     const user = payload.user;
     const { data, errors }: ResponseObj<Job> = yield call(

@@ -17,7 +17,7 @@ import {
 } from './actions';
 import { ActivityListState } from './ActivityList/reducer.types';
 import { Checklist } from './checklist.types';
-import { Entity, JobStatus } from './composer.types';
+import { Entity, JobState } from './composer.types';
 import { JobActivityState } from './JobActivity/types';
 import { StageListState } from './StageList/reducer.types';
 import { TaskListState } from './TaskList/reducer.types';
@@ -32,7 +32,7 @@ export type ComposerState = {
 
   loading: boolean;
 
-  jobStatus: JobStatus;
+  jobState: JobState;
 
   stages: StageListState;
 
@@ -69,7 +69,7 @@ export enum ComposerAction {
   ASSIGN_USERS_TO_JOB_ERROR = '@@composer/job-action/ASSIGN_USERS_TO_JOB_ERROR',
   REVERT_USERS_FOR_JOB = '@@composer/job-action/REVERT_USERS_FOR_JOB',
 
-  GET_SIGN_OFF_STATUS = '@@composer/job-action/GET_SIGN_OFF_STATUS',
+  GET_SIGN_OFF_STATE = '@@composer/job-action/GET_SIGN_OFF_STATE',
   SIGN_OFF_TASKS = '@@composer/job-aaction/SIGN_OFF_TASKS',
 }
 

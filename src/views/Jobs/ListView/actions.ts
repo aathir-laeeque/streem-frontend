@@ -36,8 +36,8 @@ export const createJobSuccess = ({ data }: Partial<ResponseObj<Job>>) =>
 export const createJobError = (error: any) =>
   actionSpreader(ListViewAction.CREATE_JOB_ERROR, { error });
 
-export const setSelectedStatus = (status: string) =>
-  actionSpreader(ListViewAction.SET_SELECTED_STATUS, { status });
+export const setSelectedState = (state: string) =>
+  actionSpreader(ListViewAction.SET_SELECTED_STATE, { state });
 
 export const assignUser = (params: {
   selectedJobIndex: number;

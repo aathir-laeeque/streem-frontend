@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { fetch } from './actions';
 import {
   fetchUsersParams,
-  UserStatus,
+  UserState,
   useUsersArgs,
   useUsersReturnType,
 } from './types';
@@ -21,18 +21,18 @@ const defaultParams: fetchUsersParams = {
 };
 
 const useUsers = ({
-  status = UserStatus.ACTIVE,
+  state = UserState.ACTIVE,
   params = defaultParams,
 }: useUsersArgs): useUsersReturnType => {
   const { pageable, users, usersById } = useTypedSelector(
-    (state) => state.usersService[status],
+    (state) => state.usersService[state],
   );
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (!users.length) {
-      dispatch(fetch({ initialCall: true, params, type: status }));
+      dispatch(fetch({ initialCall: true, params, type: state }));
     }
   }, []);
 
@@ -41,7 +41,7 @@ const useUsers = ({
       dispatch(
         fetch({
           initialCall: false,
-          type: status,
+          type: state,
           params: {
             filters: params.filters,
             page: pageable.page + 1,

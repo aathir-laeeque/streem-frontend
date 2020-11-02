@@ -70,7 +70,7 @@ import {
   CollaboratorType,
 } from './reviewer.types';
 
-const getStatus = (state: RootState) => state.prototypeComposer.data?.state;
+const getState = (state: RootState) => state.prototypeComposer.data?.state;
 const getCurrentCycle = (state: RootState) =>
   (state.prototypeComposer.data as Checklist)?.reviewCycle;
 const getUserProfile = (state: RootState) => state.auth.profile;
@@ -181,8 +181,8 @@ function* assignReviewersToChecklistSaga({
   } = payload;
 
   try {
-    const status = getStatus(yield select());
-    if (status === ChecklistStates.BEING_BUILT) {
+    const state = getState(yield select());
+    if (state === ChecklistStates.BEING_BUILT) {
       const res = yield* submitChecklistForReviewCall(checklistId);
       if (res.errors && res.errors.length > 0) {
         let error = '';
@@ -206,7 +206,7 @@ function* assignReviewersToChecklistSaga({
       throw 'Could Not Assign Reviewers to Checklist';
     }
 
-    if (status === ChecklistStates.BEING_BUILT) {
+    if (state === ChecklistStates.BEING_BUILT) {
       yield put(assignReviewersToChecklistSuccess());
       yield put(
         openOverlayAction({

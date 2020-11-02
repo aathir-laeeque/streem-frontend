@@ -5,7 +5,7 @@ import {
   fetchUsersError,
   fetchUsersOngoing,
   fetchUsersSuccess,
-  setSelectedStatus,
+  setSelectedState,
   setSelectedUser,
   fetchSelectedUser,
   fetchSelectedUserSuccess,
@@ -51,16 +51,16 @@ export type UsersGroup = {
 };
 
 export interface UsersState {
-  readonly [UserStatus.ACTIVE]: UsersGroup;
-  readonly [UserStatus.ARCHIVED]: UsersGroup;
+  readonly [UserState.ACTIVE]: UsersGroup;
+  readonly [UserState.ARCHIVED]: UsersGroup;
   readonly loading: boolean;
   readonly error: any;
-  readonly selectedStatus: string;
+  readonly selectedState: string;
   readonly selectedUser?: User;
   readonly selectedUserId?: User['id'];
 }
 
-export enum UserStatus {
+export enum UserState {
   ACTIVE = 'active',
   ARCHIVED = 'archived',
 }
@@ -70,7 +70,7 @@ export enum UsersAction {
   FETCH_USERS_ERROR = '@@users/FETCH_USERS_ERROR',
   FETCH_USERS_ONGOING = '@@users/FETCH_USERS_ONGOING',
   FETCH_USERS_SUCCESS = '@@users/FETCH_USERS_SUCCESS',
-  SET_SELECTED_STATUS = '@@users/SET_SELECTED_STATUS',
+  SET_SELECTED_STATE = '@@users/SET_SELECTED_STATE',
   SET_SELECTED_USER = '@@users/SET_SELECTED_USER',
   FETCH_SELECTED_USER = '@@users/FETCH_SELECTED_USER',
   FETCH_SELECTED_USER_SUCCESS = '@@users/FETCH_SELECTED_USER_SUCCESS',
@@ -80,7 +80,7 @@ export enum UsersAction {
 export type UsersActionType = ReturnType<
   | typeof fetchUsersError
   | typeof fetchUsersSuccess
-  | typeof setSelectedStatus
+  | typeof setSelectedState
   | typeof fetchUsersOngoing
   | typeof fetchUsers
   | typeof setSelectedUser

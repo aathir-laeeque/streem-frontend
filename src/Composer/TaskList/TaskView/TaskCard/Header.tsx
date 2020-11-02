@@ -7,7 +7,7 @@ import { getInitials } from '#utils/stringUtils';
 import {
   StartedTaskStates,
   Task,
-  TaskExecutionStatus,
+  TaskExecutionState,
 } from '#Composer/checklist.types';
 import { formatDateTime } from '#utils/timeUtils';
 import { Menu, MenuItem } from '@material-ui/core';
@@ -34,7 +34,7 @@ const Wrapper = styled.div.attrs({
 })<{
   hasStop: boolean;
   showStartButton: boolean;
-  taskExecutionStatus: TaskExecutionStatus;
+  taskExecutionState: TaskExecutionState;
   isTaskStarted: boolean;
   isTaskDelayed: boolean;
 }>`
@@ -49,24 +49,23 @@ const Wrapper = styled.div.attrs({
     display: flex;
     flex-direction: column;
 
-    ${({ taskExecutionStatus, isTaskDelayed }) => {
+    ${({ taskExecutionState, isTaskDelayed }) => {
       if (isTaskDelayed) {
         return css`
           border-top: 4px solid #f7b500;
           border-radius: 4px;
         `;
       } else if (
-        taskExecutionStatus === TaskExecutionStatus.COMPLETED ||
-        taskExecutionStatus ===
-          TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION
+        taskExecutionState === TaskExecutionState.COMPLETED ||
+        taskExecutionState === TaskExecutionState.COMPLETED_WITH_CORRECTION
       ) {
         return css`
           border-top: 4px solid #5aa700;
           border-radius: 4px;
         `;
       } else if (
-        taskExecutionStatus === TaskExecutionStatus.SKIPPED ||
-        taskExecutionStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION
+        taskExecutionState === TaskExecutionState.SKIPPED ||
+        taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION
       ) {
         return css`
           border-top: 4px solid #f7b500;
@@ -127,10 +126,9 @@ const Wrapper = styled.div.attrs({
         }
 
         .complete-options {
-          display: ${({ taskExecutionStatus }) =>
-            taskExecutionStatus === TaskExecutionStatus.COMPLETED ||
-            taskExecutionStatus ===
-              TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION
+          display: ${({ taskExecutionState }) =>
+            taskExecutionState === TaskExecutionState.COMPLETED ||
+            taskExecutionState === TaskExecutionState.COMPLETED_WITH_CORRECTION
               ? 'flex'
               : 'none'};
         }
@@ -317,7 +315,7 @@ const JobHeader: FC<Pick<HeaderProps, 'task' | 'enableStopForTask'>> = ({
   };
 
   const {
-    status,
+    state,
     startedAt,
     audit: { modifiedBy },
     reason,
@@ -363,7 +361,7 @@ const JobHeader: FC<Pick<HeaderProps, 'task' | 'enableStopForTask'>> = ({
           </div>
         </div>
       )}
-      {status in StartedTaskStates && startedAt ? (
+      {state in StartedTaskStates && startedAt ? (
         <div className="start-audit">
           Task Started by {generateName(modifiedBy)}, ID:{' '}
           {modifiedBy.employeeId} on{' '}
@@ -432,12 +430,12 @@ const JobHeader: FC<Pick<HeaderProps, 'task' | 'enableStopForTask'>> = ({
         {task.timed ? <Timer task={task} /> : null}
       </div>
 
-      {status === TaskExecutionStatus.SKIPPED ||
-      status === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION ? (
+      {state === TaskExecutionState.SKIPPED ||
+      state === TaskExecutionState.COMPLETED_WITH_EXCEPTION ? (
         <div className="skip-reason">
           <div className="badge">
             <Assignment className="icon" />
-            {status === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION
+            {state === TaskExecutionState.COMPLETED_WITH_EXCEPTION
               ? 'Completed with exception'
               : 'Task Skipped'}
           </div>
@@ -450,8 +448,8 @@ const JobHeader: FC<Pick<HeaderProps, 'task' | 'enableStopForTask'>> = ({
         </div>
       ) : null}
 
-      {status === TaskExecutionStatus.ENABLED_FOR_ERROR_CORRECTION ||
-      status === TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION ? (
+      {state === TaskExecutionState.ENABLED_FOR_CORRECTION ||
+      state === TaskExecutionState.COMPLETED_WITH_CORRECTION ? (
         <div className="correction-reason">
           <div className="badge">
             <Assignment className="icon" />
@@ -480,7 +478,7 @@ const Header: FC<HeaderProps> = ({
     <Wrapper
       hasStop={task.hasStop}
       showStartButton={showStartButton}
-      taskExecutionStatus={task.taskExecution.state}
+      taskExecutionState={task.taskExecution.state}
       isTaskStarted={isTaskStarted}
       isTaskDelayed={isTaskDelayed}
     >

@@ -37,7 +37,7 @@ import { addRevisionPrototype } from '../NewPrototype/actions';
 
 const getBaseFilter = (label: string) => [
   {
-    field: 'status',
+    field: 'state',
     op: label === 'Published' ? 'EQ' : 'NE',
     values: [DisabledStates.PUBLISHED],
   },
@@ -179,7 +179,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
               setFilterFields((currentFields) =>
                 currentFields.map((field) => ({
                   ...field,
-                  ...(field.field === 'status'
+                  ...(field.field === 'state'
                     ? { op: 'EQ', values: [option.value] }
                     : { values: field.values }),
                 })),
@@ -248,7 +248,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                       </span>
                     </div>
                     <span
-                      className="item-status"
+                      className="item-state"
                       style={{ color: ChecklistStatesColors[item?.state] }}
                     >
                       <FiberManualRecord className="icon" />

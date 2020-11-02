@@ -5,7 +5,7 @@ import { setActiveStage } from '../StageList/actions';
 import {
   setActiveTask,
   setTaskError,
-  updateTaskExecutionStatus,
+  updateTaskExecutionState,
   unAssignUserFromTask,
   revertUsersForTask,
   assignUserToTask,
@@ -32,7 +32,7 @@ export enum TaskListAction {
   COMPLETE_TASK_WITH_EXCEPTION = '@@composer/task-list/task/COMPLETE_TASK_WITH_EXCEPTION',
   SKIP_TASK = '@@composer/task-list/task/SKIP_TASK',
 
-  UPDATE_TASK_EXECUTION_STATUS = '@@composer/task-list/task/UPDATE_TASK_EXECUTION_STATUS',
+  UPDATE_TASK_EXECUTION_STATE = '@@composer/task-list/task/UPDATE_TASK_EXECUTION_STATE',
 
   SET_TASK_ERROR = '@@composer/task-list/task/SET_TASK_ERROR',
   ENABLE_TASK_ERROR_CORRECTION = '@@composer/task-list/task/ENABLE_TASK_ERROR_CORRECTION',
@@ -49,7 +49,7 @@ export type TaskListActionType =
   | ReturnType<
       | typeof setActiveTask
       | typeof setTaskError
-      | typeof updateTaskExecutionStatus
+      | typeof updateTaskExecutionState
     >
   | ReturnType<typeof revertUsersForTask>
   | ReturnType<typeof unAssignUserFromTask>

@@ -35,7 +35,7 @@ export const Composer = styled.div`
     padding-left: 28px;
   }
 
-  .item-status {
+  .item-state {
     font-size: 12px;
     display: flex;
     align-items: center;

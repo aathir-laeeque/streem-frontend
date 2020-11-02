@@ -1,4 +1,4 @@
-import { Stage, Task, TaskExecutionStatus } from '../checklist.types';
+import { Stage, Task, TaskExecutionState } from '../checklist.types';
 import { TasksById, TasksOrderInStage } from './types';
 
 type ReEvaluateTaskWithStopArgs = {
@@ -24,8 +24,8 @@ export const reEvaluateTaskWithStop = ({
 
       if (
         !taskIdWithStop &&
-        (task.taskExecution.state === TaskExecutionStatus.NOT_STARTED ||
-          task.taskExecution.state === TaskExecutionStatus.INPROGRESS) &&
+        (task.taskExecution.state === TaskExecutionState.NOT_STARTED ||
+          task.taskExecution.state === TaskExecutionState.IN_PROGRESS) &&
         task.hasStop
       ) {
         console.log('came here to set value in  reevaluation');

@@ -160,7 +160,7 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
         showFooter={false}
       >
         <div className="header">
-          {allowSignOff ? 'Signing Completed Tasks' : 'Signing Off Status'}
+          {allowSignOff ? 'Signing Completed Tasks' : 'Signing Off State'}
         </div>
 
         <div className="body">
@@ -265,7 +265,7 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
           ) : null}
           <div className="right-side">
             {allowSignOff ? (
-              <div className="text">Other Assignees Sign Off Status</div>
+              <div className="text">Other Assignees Sign Off State</div>
             ) : null}
 
             {otherUsersTasksSignOff?.map((assignee, index) => {

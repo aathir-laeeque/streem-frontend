@@ -1,6 +1,6 @@
 import ActivityList from '#Composer/ActivityList';
 import {
-  TaskExecutionStatus,
+  TaskExecutionState,
   StartedTaskStates,
 } from '#Composer/checklist.types';
 import { useTypedSelector } from '#store';
@@ -8,7 +8,7 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { JobStatus } from '../../../composer.types';
+import { JobState } from '../../../composer.types';
 import { setActiveTask } from '../../actions';
 import { TaskCardProps } from '../../types';
 import Footer from './Footer';
@@ -34,12 +34,12 @@ const Wrapper = styled.div.attrs({
 
 const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
   const {
-    jobStatus,
+    jobState,
     activities: { activitiesById, activitiesOrderInTaskInStage },
     stages: { activeStageId },
   } = useTypedSelector((state) => state.composer);
 
-  const { status: taskStatus, reason } = task.taskExecution;
+  const { state: taskState, reason } = task.taskExecution;
 
   const dispatch = useDispatch();
 
@@ -61,26 +61,24 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
       { canSkipTask: false, activitiesHasError: false },
     );
 
-    const isTaskStarted = taskStatus in StartedTaskStates;
+    const isTaskStarted = taskState in StartedTaskStates;
 
-    const isTaskDelayed =
-      taskStatus === TaskExecutionStatus.COMPLETED && reason;
+    const isTaskDelayed = taskState === TaskExecutionState.COMPLETED && reason;
 
     const isTaskCompleted =
-      taskStatus === TaskExecutionStatus.COMPLETED ||
-      taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION ||
-      taskStatus === TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION;
+      taskState === TaskExecutionState.COMPLETED ||
+      taskState === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
+      taskState === TaskExecutionState.COMPLETED_WITH_CORRECTION;
 
     const isCompletedWithException =
-      taskStatus === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION;
+      taskState === TaskExecutionState.COMPLETED_WITH_EXCEPTION;
 
     const showStartButton =
-      (jobStatus === JobStatus.ASSIGNED ||
-        jobStatus === JobStatus.INPROGRESS) &&
+      (jobState === JobState.ASSIGNED || jobState === JobState.IN_PROGRESS) &&
       !isTaskStarted;
 
     const isCorrectingError =
-      taskStatus === TaskExecutionStatus.ENABLED_FOR_ERROR_CORRECTION;
+      taskState === TaskExecutionState.ENABLED_FOR_CORRECTION;
 
     return (
       <Wrapper

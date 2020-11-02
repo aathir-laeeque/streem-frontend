@@ -7,7 +7,7 @@ import {
   fetchInboxError,
   fetchInboxOngoing,
   fetchInboxSuccess,
-  setSelectedStatus,
+  setSelectedState,
   resetInbox,
 } from './actions';
 
@@ -26,10 +26,10 @@ export interface ListViewState {
   readonly jobs: Inbox;
   readonly loading: boolean;
   readonly error: any;
-  readonly selectedStatus: string;
+  readonly selectedState: string;
 }
 
-export enum InboxStatus {
+export enum InboxState {
   MYINBOX = 'My Inbox',
 }
 
@@ -38,7 +38,7 @@ export enum ListViewAction {
   FETCH_INBOX_ERROR = '@@inbox/ListView/FETCH_INBOX_ERROR',
   FETCH_INBOX_ONGOING = '@@inbox/ListView/FETCH_INBOX_ONGOING',
   FETCH_INBOX_SUCCESS = '@@inbox/ListView/FETCH_INBOX_SUCCESS',
-  SET_SELECTED_STATUS = '@@inbox/ListView/SET_SELECTED_STATUS',
+  SET_SELECTED_STATE = '@@inbox/ListView/SET_SELECTED_STATE',
   RESET_INBOX = '@@inbox/ListView/RESET_INBOX',
 }
 
@@ -47,6 +47,6 @@ export type ListViewActionType = ReturnType<
   | typeof fetchInboxError
   | typeof fetchInboxOngoing
   | typeof fetchInboxSuccess
-  | typeof setSelectedStatus
+  | typeof setSelectedState
   | typeof resetInbox
 >;

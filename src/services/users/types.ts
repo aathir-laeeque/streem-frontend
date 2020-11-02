@@ -6,7 +6,7 @@ import {
   fetchError,
   fetchOngoing,
   fetchSuccess,
-  setSelectedStatus,
+  setSelectedState,
   setSelectedUser,
 } from './actions';
 
@@ -15,7 +15,7 @@ export type UserRole = {
   name: string;
 };
 
-export enum UserStatus {
+export enum UserState {
   ACTIVE = 'active',
   ARCHIVED = 'archived',
 }
@@ -50,10 +50,10 @@ export type UsersState = {
   readonly error?: unknown;
   readonly loading: boolean;
   readonly loadingMore: boolean;
-  readonly selectedStatus: UserStatus;
+  readonly selectedState: UserState;
   readonly selectedUserId?: User['id'];
-  readonly [UserStatus.ACTIVE]: UserGroup;
-  readonly [UserStatus.ARCHIVED]: UserGroup;
+  readonly [UserState.ACTIVE]: UserGroup;
+  readonly [UserState.ARCHIVED]: UserGroup;
 };
 
 export enum UsersAction {
@@ -63,7 +63,7 @@ export enum UsersAction {
   FETCH_USERS_ONGOING = '@@users-service/FETCH_USERS_ONGOING',
   FETCH_USERS_SUCCESS = '@@users-service/FETCH_USERS_SUCCESS',
 
-  SET_SELECTED_STATUS = '@@users-service/SET_SELECTED_STATUS',
+  SET_SELECTED_STATE = '@@users-service/SET_SELECTED_STATE',
   SET_SELECTED_USER = '@@users-service/SET_SELECTED_USER',
 }
 
@@ -72,12 +72,12 @@ export type UsersActionType = ReturnType<
   | typeof fetchOngoing
   | typeof fetchMoreOngoing
   | typeof fetchSuccess
-  | typeof setSelectedStatus
+  | typeof setSelectedState
   | typeof setSelectedUser
 >;
 
 export type useUsersArgs = {
-  status?: UserStatus;
+  state?: UserState;
   params?: fetchUsersParams;
 };
 
@@ -97,7 +97,7 @@ export type fetchUsersParams = {
 export type fetchArgs = {
   initialCall: boolean;
   params: fetchUsersParams;
-  type: UserStatus;
+  type: UserState;
 };
 
 export type fetchSuccessArgs = {
@@ -105,5 +105,5 @@ export type fetchSuccessArgs = {
     list: User[];
     pageable: Pageable;
   };
-  type: UserStatus;
+  type: UserState;
 };

@@ -14,7 +14,7 @@ export const Composer = styled.div`
     flex: 1;
   }
 
-  .list-status {
+  .list-state {
     font-size: 12px;
     padding-top: 4px;
     line-height: 0.83;
@@ -22,7 +22,7 @@ export const Composer = styled.div`
     align-items: center;
     color: #f7b500;
 
-    .list-status-span {
+    .list-state-span {
       font-size: 12px;
       display: flex;
       align-items: center;

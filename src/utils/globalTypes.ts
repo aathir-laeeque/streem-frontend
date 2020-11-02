@@ -12,7 +12,7 @@ export interface Pageable {
 
 export interface ResponseObj<T> {
   object: string;
-  status: string;
+  state: string;
   message: string;
   data: T & T[];
   pageable: Pageable | null;

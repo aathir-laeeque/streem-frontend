@@ -9,7 +9,7 @@ import {
   ComposerActionType,
   ComposerState,
 } from './composer.reducer.types';
-import { Entity, JobStatus } from './composer.types';
+import { Entity, JobState } from './composer.types';
 import {
   initialState as stageListState,
   stageListReducer,
@@ -23,7 +23,7 @@ import {
   taskListReducer,
 } from './TaskList/reducer';
 import { User } from '#store/users/types';
-import { TaskExecutionStatus } from './checklist.types';
+import { TaskExecutionState } from './checklist.types';
 
 const initialState: ComposerState = {
   activities: activityListState,
@@ -35,7 +35,7 @@ const initialState: ComposerState = {
 
   loading: false,
 
-  jobStatus: JobStatus.UNASSIGNED,
+  jobState: JobState.UNASSIGNED,
 
   stages: stageListState,
   tasks: taskListState,
@@ -63,7 +63,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         entityId: data.id,
         loading: false,
 
-        ...(entity === Entity.JOB ? { jobStatus: data.state } : {}),
+        ...(entity === Entity.JOB ? { jobState: data.state } : {}),
         activities: activityListReducer(state.activities, action),
         stages: stageListReducer(state.stages, action),
         tasks: taskListReducer(state.tasks, action),
@@ -73,7 +73,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       return { ...initialState };
 
     case ComposerAction.START_JOB_SUCCESS:
-      return { ...state, jobStatus: JobStatus.INPROGRESS };
+      return { ...state, jobState: JobState.IN_PROGRESS };
 
     case ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS:
       return { ...state, assignees: action.payload.data };
@@ -112,12 +112,12 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         function (result, value, key) {
           let merged: User[];
           if (
-            value.taskExecution.state === TaskExecutionStatus.COMPLETED ||
+            value.taskExecution.state === TaskExecutionState.COMPLETED ||
             value.taskExecution.state ===
-              TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION ||
+              TaskExecutionState.COMPLETED_WITH_CORRECTION ||
             value.taskExecution.state ===
-              TaskExecutionStatus.COMPLETED_WITH_EXCEPTION ||
-            value.taskExecution.state === TaskExecutionStatus.SKIPPED
+              TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
+            value.taskExecution.state === TaskExecutionState.SKIPPED
           ) {
             merged = value.taskExecution.assignees;
           } else {

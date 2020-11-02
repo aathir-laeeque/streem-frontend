@@ -11,7 +11,7 @@ import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { setActivityError } from '../ActivityList/actions';
 import { Task } from '../checklist.types';
-import { ErrorGroups, JobStatus } from '../composer.types';
+import { ErrorGroups, JobState } from '../composer.types';
 import { groupJobErrors } from '../utils';
 import {
   cancelErrorCorretcion,
@@ -21,7 +21,7 @@ import {
   setTaskError,
   skipTask,
   startTask,
-  updateTaskExecutionStatus,
+  updateTaskExecutionState,
   assignUsersToTask,
   revertUsersForTask,
 } from './actions';
@@ -57,11 +57,11 @@ function* performActionOnTaskSaga({
   try {
     console.log('came to performActionOnTaskSaga with payload :: ', payload);
 
-    const { jobStatus, entityId: jobId } = yield select(
+    const { jobState, entityId: jobId } = yield select(
       (state: RootState) => state.composer,
     );
 
-    const isJobStarted = jobStatus === JobStatus.INPROGRESS;
+    const isJobStarted = jobState === JobState.IN_PROGRESS;
 
     const { taskId, action, reason } = payload;
 
@@ -81,7 +81,7 @@ function* performActionOnTaskSaga({
       if (data) {
         console.log('data from api call in performActionOnTaskSaga :: ', data);
 
-        yield put(updateTaskExecutionStatus(taskId, data));
+        yield put(updateTaskExecutionState(taskId, data));
       } else {
         const groupedErrors = groupJobErrors(errors);
 
@@ -128,7 +128,7 @@ function* enableErrorCorrectionSaga({
     if (data) {
       console.log('data :: ', data);
 
-      yield put(updateTaskExecutionStatus(taskId, data));
+      yield put(updateTaskExecutionState(taskId, data));
     }
   } catch (error) {
     console.error('error came in enableErrorCorrectionSaga :: ', error);
@@ -152,7 +152,7 @@ function* completeErrorCorrectionSaga({
     );
 
     if (data) {
-      yield put(updateTaskExecutionStatus(taskId, data));
+      yield put(updateTaskExecutionState(taskId, data));
     } else {
       const groupedErrors = groupJobErrors(errors);
 
@@ -180,7 +180,7 @@ function* cancelErrorCorrectionSaga({
     );
 
     if (data) {
-      yield put(updateTaskExecutionStatus(taskId, data));
+      yield put(updateTaskExecutionState(taskId, data));
     }
   } catch (error) {
     console.error('error came in enableErrorCorrectionSaga :: ', error);

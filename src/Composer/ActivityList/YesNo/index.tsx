@@ -45,7 +45,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
                       ...activity,
                       data: activity.data.map((e: any) => ({
                         ...e,
-                        status:
+                        state:
                           e.id === el.id
                             ? Selections.SELECTED
                             : Selections.NOT_SELECTED,

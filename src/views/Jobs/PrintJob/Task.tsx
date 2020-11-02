@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import {
-  TaskExecutionStatus,
+  TaskExecutionState,
   Task,
   NonMandatoryActivity,
 } from '../../../Composer/checklist.types';
@@ -103,7 +103,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
   const {
     startedAt,
     audit: { modifiedBy, modifiedAt },
-    status: taskExecutionStatus,
+    state: taskExecutionState,
   } = task.taskExecution;
 
   const canSkipTask = !task.activities.reduce((acc, activity) => {
@@ -132,7 +132,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
                 },
               ]}
             >
-              {taskExecutionStatus !== TaskExecutionStatus.NOT_STARTED &&
+              {taskExecutionState !== TaskExecutionState.NOT_STARTED &&
               startedAt
                 ? moment.unix(startedAt).format('MMM DD YYYY')
                 : '___/__/____'}
@@ -152,7 +152,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
                 },
               ]}
             >
-              {taskExecutionStatus !== TaskExecutionStatus.NOT_STARTED &&
+              {taskExecutionState !== TaskExecutionState.NOT_STARTED &&
               startedAt
                 ? moment.unix(startedAt).format('HH:mm a')
                 : '__:__ am / pm'}
@@ -230,7 +230,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
       </View>
       <ActivityList activities={task.activities} />
 
-      {taskExecutionStatus !== TaskExecutionStatus.NOT_STARTED ? (
+      {taskExecutionState !== TaskExecutionState.NOT_STARTED ? (
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
             This Task was digitally completed via CLEEN {'\n'}

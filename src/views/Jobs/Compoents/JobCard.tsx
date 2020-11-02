@@ -4,19 +4,19 @@ import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { Job } from '#views/Jobs/types';
-import { JobStatus } from '#views/Jobs/ListView/types';
+import { JobState } from '#views/Jobs/ListView/types';
 
 const Wrapper = styled.div.attrs({
   className: 'list-card-columns',
 })`
-  .list-status {
+  .list-state {
     font-size: 12px;
     padding-top: 4px;
     line-height: 0.83;
     display: flex;
     align-items: center;
 
-    .list-status-span {
+    .list-state-span {
       font-size: 12px;
       display: flex;
       align-items: center;
@@ -41,11 +41,11 @@ const JobCard: FC<{
       <span className="list-title" onClick={() => onClick(item)}>
         {item.checklist.name}
       </span>
-      {item.state !== JobStatus.UNASSIGNED.toUpperCase() && (
-        <span className="list-status">
-          {item.state === JobStatus.ASSIGNED.toUpperCase() && (
+      {item.state !== JobState.UNASSIGNED.toUpperCase() && (
+        <span className="list-state">
+          {item.state === JobState.ASSIGNED.toUpperCase() && (
             <span
-              className="list-status-span"
+              className="list-state-span"
               style={{
                 color: '#ff6b6b',
               }}
@@ -54,9 +54,9 @@ const JobCard: FC<{
               {item.state.toLowerCase()}
             </span>
           )}
-          {item.state === JobStatus.INPROGRESS.toUpperCase() && (
+          {item.state === JobState.IN_PROGRESS.toUpperCase() && (
             <span
-              className="list-status-span"
+              className="list-state-span"
               style={{
                 color: '#f7b500',
               }}
@@ -65,9 +65,9 @@ const JobCard: FC<{
               {item.state.toLowerCase()}
             </span>
           )}
-          {item.state === JobStatus.COMPLETED.toUpperCase() && (
+          {item.state === JobState.COMPLETED.toUpperCase() && (
             <span
-              className="list-status-span"
+              className="list-state-span"
               style={{
                 color: '#5aa700',
               }}
@@ -78,7 +78,7 @@ const JobCard: FC<{
           )}
           {item.state === 'COMPLETED_WITH_EXCEPTION' && (
             <span
-              className="list-status-span"
+              className="list-state-span"
               style={{
                 color: '#5aa700',
               }}

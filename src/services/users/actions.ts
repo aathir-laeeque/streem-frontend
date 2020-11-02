@@ -5,7 +5,7 @@ import {
   fetchSuccessArgs,
   User,
   UsersAction,
-  UserStatus,
+  UserState,
 } from './types';
 
 export const fetch = ({ initialCall, params, type }: fetchArgs) =>
@@ -26,8 +26,8 @@ export const fetchSuccess = ({
 export const fetchError = (error: unknown) =>
   actionSpreader(UsersAction.FETCH_USERS_ERROR, { error });
 
-export const setSelectedStatus = (status: UserStatus) =>
-  actionSpreader(UsersAction.SET_SELECTED_STATUS, { status });
+export const setSelectedState = (state: UserState) =>
+  actionSpreader(UsersAction.SET_SELECTED_STATE, { state });
 
 export const setSelectedUser = (userId: User['id']) =>
   actionSpreader(UsersAction.SET_SELECTED_USER, { userId });

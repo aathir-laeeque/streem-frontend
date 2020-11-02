@@ -102,7 +102,7 @@ const ActivityList: FC<ActivityListProps> = ({
       isCompletedWithException={isCompletedWithException}
     >
       {activities.map((activity) => {
-        const { status, audit } = activity?.response;
+        const { state, audit } = activity?.response;
 
         return (
           <div key={activity.id} className="activity">
@@ -194,7 +194,7 @@ const ActivityList: FC<ActivityListProps> = ({
               }
             })()}
 
-            {status !== 'NOT_STARTED' ? (
+            {state !== 'NOT_STARTED' ? (
               <div className="activity-audit">
                 Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
                 {audit?.modifiedBy?.employeeId} on{' '}

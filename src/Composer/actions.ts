@@ -105,16 +105,16 @@ export const completeJobSuccess = (withException = false) =>
       : ComposerAction.COMPLETE_JOB_SUCCESS,
   );
 
-type GetSignOffStatusArgs = {
+type GetSignOffStateArgs = {
   jobId: Job['id'];
   allowSignOff?: boolean;
 };
 
-export const getSignOffStatus = ({
+export const getSignOffState = ({
   jobId,
   allowSignOff = false,
-}: GetSignOffStatusArgs) =>
-  actionSpreader(ComposerAction.GET_SIGN_OFF_STATUS, { jobId, allowSignOff });
+}: GetSignOffStateArgs) =>
+  actionSpreader(ComposerAction.GET_SIGN_OFF_STATE, { jobId, allowSignOff });
 
 type signOffTasksArgs = {
   jobId: Job['id'];

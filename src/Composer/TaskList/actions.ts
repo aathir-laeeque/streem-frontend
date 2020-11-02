@@ -15,8 +15,8 @@ export const startTask = (taskId: Task['id']) =>
     action: TaskAction.START,
   });
 
-export const updateTaskExecutionStatus = (taskId: Task['id'], data: any) =>
-  actionSpreader(TaskListAction.UPDATE_TASK_EXECUTION_STATUS, {
+export const updateTaskExecutionState = (taskId: Task['id'], data: any) =>
+  actionSpreader(TaskListAction.UPDATE_TASK_EXECUTION_STATE, {
     taskId,
     data,
   });

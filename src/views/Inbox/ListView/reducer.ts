@@ -1,7 +1,7 @@
 import { Pageable } from '#utils/globalTypes';
 import { Job } from '#views/Jobs/types';
 import {
-  InboxStatus,
+  InboxState,
   ListViewAction,
   ListViewActionType,
   ListViewState,
@@ -10,7 +10,7 @@ import {
 const initialState: ListViewState = {
   loading: false,
   error: undefined,
-  selectedStatus: InboxStatus.MYINBOX,
+  selectedState: InboxState.MYINBOX,
   jobs: {
     myinbox: {
       list: [],
@@ -56,10 +56,10 @@ const reducer = (
     case ListViewAction.FETCH_INBOX_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
 
-    case ListViewAction.SET_SELECTED_STATUS:
+    case ListViewAction.SET_SELECTED_STATE:
       return {
         ...state,
-        selectedStatus: action.payload?.state || state.selectedStatus,
+        selectedState: action.payload?.state || state.selectedState,
       };
 
     case ListViewAction.RESET_INBOX:

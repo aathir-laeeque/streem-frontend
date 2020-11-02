@@ -4,7 +4,7 @@ import { getInitials } from '#utils/stringUtils';
 
 interface ThumbnailProps {
   id: string;
-  status?: string;
+  state?: string;
   title?: string;
   subTitle?: string;
   refFun?: any;
@@ -116,7 +116,7 @@ export const Thumbnail: FC<ThumbnailProps> = ({
   refFun,
   id,
   error,
-  status,
+  state,
   title,
   subTitle,
   source,
@@ -141,7 +141,7 @@ export const Thumbnail: FC<ThumbnailProps> = ({
           <>
             <span className="title">{title}</span>
             <span className="subTitle">#{subTitle}</span>
-            <span className="status">{status}</span>
+            <span className="state">{state}</span>
           </>
         )}
       </div>

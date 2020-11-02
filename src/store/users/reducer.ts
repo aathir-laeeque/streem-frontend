@@ -3,7 +3,7 @@ import {
   UsersAction,
   UsersActionType,
   UsersState,
-  UserStatus,
+  UserState,
 } from '#store/users/types';
 
 const initialTabState = {
@@ -24,7 +24,7 @@ const initialState: UsersState = {
   active: initialTabState,
   archived: initialTabState,
   loading: false,
-  selectedStatus: UserStatus.ACTIVE,
+  selectedState: UserState.ACTIVE,
   selectedUser: undefined,
   error: undefined,
 };
@@ -49,10 +49,10 @@ const reducer = (state = initialState, action: UsersActionType): UsersState => {
         },
       };
 
-    case UsersAction.SET_SELECTED_STATUS:
+    case UsersAction.SET_SELECTED_STATE:
       return {
         ...state,
-        selectedStatus: action.payload?.state || state.selectedStatus,
+        selectedState: action.payload?.state || state.selectedState,
       };
 
     case UsersAction.SET_SELECTED_USER:

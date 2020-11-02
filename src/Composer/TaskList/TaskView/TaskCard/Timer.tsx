@@ -1,16 +1,16 @@
-import { Task, TaskExecutionStatus } from '#Composer/checklist.types';
+import { Task, TaskExecutionState } from '#Composer/checklist.types';
 import { formatDuration } from '#utils/timeUtils';
 import { Timer as TimerIcon } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 
 const Timer: FC<{ task: Task }> = ({ task }) => {
-  const { status, startedAt, endedAt } = task.taskExecution;
+  const { state, startedAt, endedAt } = task.taskExecution;
 
   const isTaskCompleted =
-    status === TaskExecutionStatus.COMPLETED ||
-    status === TaskExecutionStatus.COMPLETED_WITH_EXCEPTION;
-  const isTaskStarted = status === TaskExecutionStatus.INPROGRESS;
+    state === TaskExecutionState.COMPLETED ||
+    state === TaskExecutionState.COMPLETED_WITH_EXCEPTION;
+  const isTaskStarted = state === TaskExecutionState.IN_PROGRESS;
 
   const [timeElapsed, setTimeElapsed] = useState(
     isTaskCompleted
@@ -25,7 +25,7 @@ const Timer: FC<{ task: Task }> = ({ task }) => {
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined = undefined;
 
-    if (status === TaskExecutionStatus.INPROGRESS) {
+    if (state === TaskExecutionState.IN_PROGRESS) {
       interval = setInterval(() => {
         setTimeElapsed(moment().diff(moment.unix(startedAt), 'seconds'));
       }, 1000);

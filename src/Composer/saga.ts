@@ -30,7 +30,7 @@ import {
   fetchData,
   fetchDataOngoing,
   fetchDataSuccess,
-  getSignOffStatus,
+  getSignOffState,
   signOffTasks,
   startJob,
   startJobSuccess,
@@ -233,9 +233,7 @@ function* assignUsersToJobSaga({
   }
 }
 
-function* getSignOffStatusSaga({
-  payload,
-}: ReturnType<typeof getSignOffStatus>) {
+function* getSignOffStateSaga({ payload }: ReturnType<typeof getSignOffState>) {
   try {
     const { jobId, allowSignOff } = payload;
 
@@ -256,7 +254,7 @@ function* getSignOffStatusSaga({
       // } else {
       //   yield put(
       //     openOverlayAction({
-      //       type: OverlayNames.SIGN_OFF_STATUS,
+      //       type: OverlayNames.SIGN_OFF_STATE,
       //       props: { data },
       //     }),
       //   );
@@ -265,7 +263,7 @@ function* getSignOffStatusSaga({
       console.error('error from api :: ', errors);
     }
   } catch (error) {
-    console.error('error came in getSignOffStatusSaga :: ', error);
+    console.error('error came in getSignOffStateSaga :: ', error);
   }
 }
 
@@ -304,7 +302,7 @@ export function* ComposerSaga() {
 
   yield takeLatest(ComposerAction.COMPLETE_JOB, completeJobSaga);
   yield takeLatest(ComposerAction.START_JOB, startJobSaga);
-  yield takeLatest(ComposerAction.GET_SIGN_OFF_STATUS, getSignOffStatusSaga);
+  yield takeLatest(ComposerAction.GET_SIGN_OFF_STATE, getSignOffStateSaga);
   yield takeLatest(ComposerAction.SIGN_OFF_TASKS, signOffTaskSaga);
 
   yield takeLatest(

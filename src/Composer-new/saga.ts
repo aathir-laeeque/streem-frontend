@@ -29,7 +29,7 @@ import { TaskListSaga } from './Tasks/saga';
 import { ComposerEntity } from './types';
 import { groupErrors } from './utils';
 
-const getStatus = (state: RootState) => state.prototypeComposer.data?.state;
+const getState = (state: RootState) => state.prototypeComposer.data?.state;
 
 function* fetchComposerDataSaga({
   payload,
@@ -69,7 +69,7 @@ function* validatePrototypeSaga({
 }: ReturnType<typeof validatePrototype>) {
   try {
     const { id } = payload;
-    const status = getStatus(yield select());
+    const state = getState(yield select());
 
     const { errors } = yield call(request, 'GET', apiValidatePrototype(id));
 
@@ -97,7 +97,7 @@ function* validatePrototypeSaga({
         );
       }
     } else {
-      if (status === ChecklistStates.BEING_BUILT) {
+      if (state === ChecklistStates.BEING_BUILT) {
         yield put(
           openOverlayAction({
             type: OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT,

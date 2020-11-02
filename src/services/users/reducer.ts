@@ -6,7 +6,7 @@ import {
   UsersActionType,
   UsersById,
   UsersState,
-  UserStatus,
+  UserState,
 } from './types';
 
 const initialUserGroup: UserGroup = {
@@ -27,9 +27,9 @@ const initialUserGroup: UserGroup = {
 const initalState: UsersState = {
   loading: false,
   loadingMore: false,
-  selectedStatus: UserStatus.ACTIVE,
-  [UserStatus.ACTIVE]: initialUserGroup,
-  [UserStatus.ARCHIVED]: initialUserGroup,
+  selectedState: UserState.ACTIVE,
+  [UserState.ACTIVE]: initialUserGroup,
+  [UserState.ARCHIVED]: initialUserGroup,
 };
 
 const reducer: Reducer<UsersState, UsersActionType> = (
@@ -65,8 +65,8 @@ const reducer: Reducer<UsersState, UsersActionType> = (
     case UsersAction.FETCH_MORE_USERS_ONGOING:
       return { ...state, loadingMore: true };
 
-    case UsersAction.SET_SELECTED_STATUS:
-      return { ...state, selectedStatus: action.payload.state };
+    case UsersAction.SET_SELECTED_STATE:
+      return { ...state, selectedState: action.payload.state };
 
     case UsersAction.SET_SELECTED_USER:
       return { ...state, selectedUserId: action.payload.userId };

@@ -55,7 +55,7 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         bringIntoView: action.payload.bringIntoView,
       };
 
-    case TaskListAction.UPDATE_TASK_EXECUTION_STATUS:
+    case TaskListAction.UPDATE_TASK_EXECUTION_STATE:
       const { data: taskExecution, taskId } = action.payload;
 
       const taskToUpdate = state.tasksById[action.payload.taskId];

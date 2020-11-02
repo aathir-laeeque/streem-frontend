@@ -278,10 +278,10 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                 </div>
 
                 <div className="column">
-                  <label className="column-label">Status</label>
+                  <label className="column-label">State</label>
 
                   {state?.signIn?.map((user) => (
-                    <div className="status" key={user.employeeId}>
+                    <div className="state" key={user.employeeId}>
                       Complete
                     </div>
                   ))}
@@ -320,8 +320,8 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                 </div>
 
                 <div className="column">
-                  <label className="column-label">Status</label>
-                  <div className="status">Complete</div>
+                  <label className="column-label">State</label>
+                  <div className="state">Complete</div>
                 </div>
 
                 <div className="column">

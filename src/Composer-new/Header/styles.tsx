@@ -63,7 +63,7 @@ const HeaderWrapper = styled.div`
             }
           }
 
-          &-status {
+          &-state {
             align-items: center;
             display: flex;
             text-transform: capitalize;

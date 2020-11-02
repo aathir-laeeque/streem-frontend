@@ -23,7 +23,7 @@ import ParameterApprovalModal from '#Composer/modals/ParameterApproval';
 import Signature from '#Composer/modals/SignatureActivity';
 import SignCompletedTasksModal from '#Composer/modals/SignCompletedTasks';
 import SignningNotCompleteModal from '#Composer/modals/SignningNotComplete';
-import SignOffStatus from '#Composer/modals/SignOffStatus';
+import SignOffState from '#Composer/modals/SignOffState';
 import SkipTask from '#Composer/modals/SkipTask';
 import StartJob from '#Composer/modals/StartJob';
 import TaskErrorCorrection from '#Composer/modals/TaskErrorCorrection';
@@ -158,8 +158,8 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
     case OverlayNames.TASK_MEDIA:
       return <TaskMediaModal {...params} />;
 
-    case OverlayNames.SIGN_OFF_STATUS:
-      return <SignOffStatus {...params} />;
+    case OverlayNames.SIGN_OFF_STATE:
+      return <SignOffState {...params} />;
 
     case OverlayNames.SIGN_COMPLETED_TASKS:
       return <SignCompletedTasksModal {...params} />;

@@ -305,14 +305,14 @@ const ChecklistHeader: FC = () => {
     </Button1>
   );
 
-  const ViewSigningStatusButton = () => (
+  const ViewSigningStateButton = () => (
     <Button1
       variant="secondary"
       onClick={() =>
         dispatch(openOverlayAction({ type: OverlayNames.SIGN_OFF_PROGRESS }))
       }
     >
-      View Signing Status
+      View Signing State
     </Button1>
   );
 
@@ -511,7 +511,7 @@ const ChecklistHeader: FC = () => {
           <div className="header-content-left">
             <span className="checklist-name-label">Checklist Name</span>
             <div className="checklist-name">{data?.name}</div>
-            <div className="checklist-status">
+            <div className="checklist-state">
               <FiberManualRecord
                 className="icon"
                 style={{ color: ChecklistStatesColors[data?.state] }}
@@ -536,7 +536,7 @@ const ChecklistHeader: FC = () => {
             {approver && data?.state !== ChecklistStates.PUBLISHED && (
               <>
                 <ViewReviewersButton />
-                <ViewSigningStatusButton />
+                <ViewSigningStateButton />
                 {approver &&
                   approver.state === CollaboratorState.NOT_STARTED && (
                     <SignOffButton />
@@ -546,7 +546,7 @@ const ChecklistHeader: FC = () => {
             {data?.state === ChecklistStates.PUBLISHED && (
               <>
                 <ViewReviewersButton />
-                <ViewSigningStatusButton />
+                <ViewSigningStateButton />
               </>
             )}
             {data?.state === ChecklistStates.READY_FOR_RELEASE && (

@@ -13,7 +13,7 @@ import {
   fetchJobsError,
   fetchJobsOngoing,
   fetchJobsSuccess,
-  setSelectedStatus,
+  setSelectedState,
   unAssignUser,
   unAssignUserError,
 } from './actions';
@@ -33,15 +33,15 @@ export interface ListViewState {
   readonly jobs: Jobs;
   readonly loading: boolean;
   readonly error: any;
-  readonly selectedStatus: string;
+  readonly selectedState: string;
 }
 
-export enum JobStatus {
+export enum JobState {
   ASSIGNED = 'assigned',
   UNASSIGNED = 'unassigned',
   COMPLETED = 'completed',
   COMPLETED_WITH_EXCEPTION = 'completedWithException',
-  INPROGRESS = 'in_progress',
+  IN_PROGRESS = 'in_progress',
 }
 
 export enum ListViewAction {
@@ -53,7 +53,7 @@ export enum ListViewAction {
   CREATE_JOB_ERROR = '@@job/ListView/CREATE_JOB_ERROR',
   CREATE_JOB_ONGOING = '@@job/ListView/CREATE_JOB_ONGOING',
   CREATE_JOB_SUCCESS = '@@job/ListView/CREATE_JOB_SUCCESS',
-  SET_SELECTED_STATUS = '@@job/ListView/SET_SELECTED_STATUS',
+  SET_SELECTED_STATE = '@@job/ListView/SET_SELECTED_STATE',
   ASSIGN_USER = '@@job/ListView/ASSIGN_USER',
   ASSIGN_USER_ERROR = '@@job/ListView/ASSIGN_USER_ERROR',
   UNASSIGN_USER = '@@job/ListView/UNASSIGN_USER',
@@ -69,7 +69,7 @@ export type ListViewActionType = ReturnType<
   | typeof createJobOngoing
   | typeof createJobSuccess
   | typeof createJobError
-  | typeof setSelectedStatus
+  | typeof setSelectedState
   | typeof assignUser
   | typeof assignUserError
   | typeof unAssignUser

@@ -11,11 +11,11 @@ import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation } from '@reach/router';
 
-import { completeJob, getSignOffStatus } from '../actions';
-import { JobStatus } from '../composer.types';
+import { completeJob, getSignOffState } from '../actions';
+import { JobState } from '../composer.types';
 
 const JobHeaderButtons: FC = () => {
-  const { jobStatus, data } = useTypedSelector((state) => state.composer);
+  const { jobState, data } = useTypedSelector((state) => state.composer);
 
   const { profile } = useTypedSelector((state) => state.auth);
 
@@ -35,8 +35,8 @@ const JobHeaderButtons: FC = () => {
     setAnchorEl(event.currentTarget);
 
   const showBulkAssignButton =
-    jobStatus !== JobStatus.COMPLETED &&
-    jobStatus !== JobStatus.COMPLETED_WITH_EXCEPTION &&
+    jobState !== JobState.COMPLETED &&
+    jobState !== JobState.COMPLETED_WITH_EXCEPTION &&
     location.pathname.split('/')[1] !== 'inbox';
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const JobHeaderButtons: FC = () => {
 
   return (
     <div className="buttons-container">
-      {jobStatus === JobStatus.INPROGRESS ? (
+      {jobState === JobState.IN_PROGRESS ? (
         <>
           <Button1
             className="sign-off"
@@ -71,14 +71,14 @@ const JobHeaderButtons: FC = () => {
             variant="secondary"
             onClick={() =>
               dispatch(
-                getSignOffStatus({
+                getSignOffState({
                   jobId,
                   allowSignOff: isLoggedInUserAssigned,
                 }),
               )
             }
           >
-            {isLoggedInUserAssigned ? 'Sign Completed Task' : 'Sign Off Status'}
+            {isLoggedInUserAssigned ? 'Sign Completed Task' : 'Sign Off State'}
           </Button1>
         </>
       ) : null}
@@ -109,7 +109,7 @@ const JobHeaderButtons: FC = () => {
         </Button>
       ) : null}
 
-      {jobStatus === JobStatus.ASSIGNED ? (
+      {jobState === JobState.ASSIGNED ? (
         <Button
           onClick={() =>
             dispatch(
@@ -124,7 +124,7 @@ const JobHeaderButtons: FC = () => {
         </Button>
       ) : null}
 
-      {jobStatus === JobStatus.INPROGRESS ? (
+      {jobState === JobState.IN_PROGRESS ? (
         <div className="dropdown-button">
           <Button onClick={() => dispatch(completeJob({ jobId }))}>
             Complete Job
@@ -159,7 +159,7 @@ const JobHeaderButtons: FC = () => {
         </div>
       ) : null}
 
-      {jobStatus === JobStatus.UNASSIGNED ? (
+      {jobState === JobState.UNASSIGNED ? (
         <div className="dropdown-button">
           <Button
             onClick={() =>

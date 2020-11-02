@@ -1,7 +1,7 @@
 import { Pageable } from '#utils/globalTypes';
 import { Job } from '../types';
 import {
-  JobStatus,
+  JobState,
   ListViewAction,
   ListViewActionType,
   ListViewState,
@@ -24,7 +24,7 @@ const initialTabState = {
 const initialState: ListViewState = {
   loading: false,
   error: undefined,
-  selectedStatus: JobStatus.UNASSIGNED,
+  selectedState: JobState.UNASSIGNED,
   jobs: {
     assigned: initialTabState,
     unassigned: initialTabState,
@@ -36,7 +36,7 @@ const reducer = (
   state = initialState,
   action: ListViewActionType,
 ): ListViewState => {
-  const { selectedStatus } = state;
+  const { selectedState } = state;
   switch (action.type) {
     case ListViewAction.FETCH_JOBS_ONGOING:
       return { ...state, loading: true };
@@ -61,10 +61,10 @@ const reducer = (
     case ListViewAction.FETCH_JOBS_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
 
-    case ListViewAction.SET_SELECTED_STATUS:
+    case ListViewAction.SET_SELECTED_STATE:
       return {
         ...state,
-        selectedStatus: action.payload?.state || selectedStatus,
+        selectedState: action.payload?.state || selectedState,
       };
 
     case ListViewAction.CREATE_JOB_SUCCESS:
@@ -72,11 +72,11 @@ const reducer = (
         ...state,
         jobs: {
           ...state.jobs,
-          [JobStatus.UNASSIGNED]: {
-            ...state.jobs[JobStatus.UNASSIGNED],
+          [JobState.UNASSIGNED]: {
+            ...state.jobs[JobState.UNASSIGNED],
             list: [
               action.payload.data as Job,
-              ...state.jobs[JobStatus.UNASSIGNED].list,
+              ...state.jobs[JobState.UNASSIGNED].list,
             ],
           },
         },
@@ -87,9 +87,9 @@ const reducer = (
         ...state,
         jobs: {
           ...state.jobs,
-          [selectedStatus]: {
-            ...state.jobs[selectedStatus],
-            list: (state.jobs[selectedStatus].list as Job[]).map(
+          [selectedState]: {
+            ...state.jobs[selectedState],
+            list: (state.jobs[selectedState].list as Job[]).map(
               (item, index) => {
                 if (index !== action.payload.selectedJobIndex) {
                   return item;
@@ -109,9 +109,9 @@ const reducer = (
         ...state,
         jobs: {
           ...state.jobs,
-          [selectedStatus]: {
-            ...state.jobs[selectedStatus],
-            list: (state.jobs[selectedStatus].list as Job[]).map(
+          [selectedState]: {
+            ...state.jobs[selectedState],
+            list: (state.jobs[selectedState].list as Job[]).map(
               (item, index) => {
                 if (index !== action.payload.selectedJobIndex) {
                   return item;

@@ -21,7 +21,7 @@ export interface Job {
     id: number;
     name: string;
   };
-  status: string;
+  state: string;
   users: User[];
 }
 

@@ -1,7 +1,7 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { Task, TaskExecutionStatus } from '#Composer/checklist.types';
-import { JobStatus } from '#Composer/composer.types';
+import { Task, TaskExecutionState } from '#Composer/checklist.types';
+import { JobState } from '#Composer/composer.types';
 import { formatDateTime } from '#utils/timeUtils';
 import { ArrowRightAlt, CheckCircle, Error } from '@material-ui/icons';
 import moment from 'moment';
@@ -163,25 +163,25 @@ const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
 const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   const dispatch = useDispatch();
 
-  const { jobStatus } = useTypedSelector((state) => state.composer);
+  const { jobState } = useTypedSelector((state) => state.composer);
 
-  const isJobBlocked = jobStatus === JobStatus.BLOCKED;
+  const isJobBlocked = jobState === JobState.BLOCKED;
 
   const [shouldAskForReason, setAskForReason] = useState(false);
   const [delayReason, setDelayReason] = useState('');
 
   const {
     audit: { modifiedBy, modifiedAt },
-    status: taskExecutionStatus,
+    state: taskExecutionState,
     reason,
   } = task.taskExecution;
 
   const isTaskDelayed =
-    taskExecutionStatus === TaskExecutionStatus.COMPLETED && reason;
+    taskExecutionState === TaskExecutionState.COMPLETED && reason;
 
   if (
-    taskExecutionStatus === TaskExecutionStatus.COMPLETED ||
-    taskExecutionStatus === TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION
+    taskExecutionState === TaskExecutionState.COMPLETED ||
+    taskExecutionState === TaskExecutionState.COMPLETED_WITH_CORRECTION
   ) {
     if (isTaskDelayed) {
       let text;
@@ -225,7 +225,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         </CompletedWrapper>
       );
     }
-  } else if (taskExecutionStatus === TaskExecutionStatus.SKIPPED) {
+  } else if (taskExecutionState === TaskExecutionState.SKIPPED) {
     return (
       <CompletedWrapper skipped>
         <CheckCircle className="icon" />
@@ -236,7 +236,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         </span>
       </CompletedWrapper>
     );
-  } else if (task.taskExecution.state === TaskExecutionStatus.INPROGRESS) {
+  } else if (task.taskExecution.state === TaskExecutionState.IN_PROGRESS) {
     if (shouldAskForReason) {
       let text;
       if (
@@ -341,8 +341,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
       );
     }
   } else if (
-    task.taskExecution.state ===
-    TaskExecutionStatus.ENABLED_FOR_ERROR_CORRECTION
+    task.taskExecution.state === TaskExecutionState.ENABLED_FOR_CORRECTION
   ) {
     return (
       <div

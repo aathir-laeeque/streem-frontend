@@ -15,6 +15,6 @@ export interface Job {
   completedTasks: number;
   properties?: Properties;
   checklist: Partial<Checklist>;
-  status: string;
+  state: string;
   assignees: User[];
 }

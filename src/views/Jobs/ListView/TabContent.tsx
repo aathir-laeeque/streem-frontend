@@ -11,9 +11,9 @@ import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { fetchJobs, setSelectedStatus } from './actions';
+import { fetchJobs, setSelectedState } from './actions';
 import { Composer } from './styles';
-import { JobStatus, ListViewState, TabViewProps } from './types';
+import { JobState, ListViewState, TabViewProps } from './types';
 
 // TODO :: CLean Comments if Assignee not required.
 
@@ -28,7 +28,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   useEffect(() => {
     if (!isIdle) {
       fetchData(0, 10);
-      dispatch(setSelectedStatus(label));
+      dispatch(setSelectedState(label));
     }
   }, [isIdle]);
 
@@ -42,7 +42,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       op: 'AND',
       fields: [
         {
-          field: 'status',
+          field: 'state',
           op: label === 'assigned' || 'completed' ? 'ANY' : 'EQ',
           values: [
             label.toUpperCase(),
@@ -111,7 +111,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     // {
     //   header: 'ASSIGNEE',
     //   template: function renderComp(item: Job, index: number) {
-    //     if (label === JobStatus.UNASSIGNED)
+    //     if (label === JobState.UNASSIGNED)
     //       return (
     //         <div
     //           className="list-card-columns"
@@ -159,7 +159,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     //   },
     // },
   ];
-  if (label === JobStatus.ASSIGNED) {
+  if (label === JobState.ASSIGNED) {
     beforeColumns = [
       ...beforeColumns,
       {

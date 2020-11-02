@@ -99,7 +99,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         ...state,
         data: {
           ...state.data,
-          status: ChecklistStates.SUBMITTED_FOR_REVIEW,
+          state: ChecklistStates.SUBMITTED_FOR_REVIEW,
           reviewCycle: (state.data as Checklist).reviewCycle + 1,
         } as Checklist,
       };
@@ -109,7 +109,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         ...state,
         data: {
           ...state.data,
-          status: ChecklistStates.SUBMITTED_FOR_REVIEW,
+          state: ChecklistStates.SUBMITTED_FOR_REVIEW,
         } as Checklist,
       };
 
@@ -141,7 +141,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         ...state,
         data: {
           ...state.data,
-          status: action.payload.state,
+          state: action.payload.state,
         } as Checklist,
       };
 

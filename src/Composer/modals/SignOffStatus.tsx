@@ -70,7 +70,7 @@ type Props = {
   data: Assignee[];
 };
 
-const SignOffStatusModal: FC<CommonOverlayProps<Props>> = ({
+const SignOffStateModal: FC<CommonOverlayProps<Props>> = ({
   closeAllOverlays,
   closeOverlay,
   props: { data: assignees = [] } = {},
@@ -83,7 +83,7 @@ const SignOffStatusModal: FC<CommonOverlayProps<Props>> = ({
         showHeader={false}
         showFooter={false}
       >
-        <div className="header">Signing Off Status</div>
+        <div className="header">Signing Off State</div>
 
         <div className="body">
           {assignees?.map((assignee, index) => {
@@ -120,4 +120,4 @@ const SignOffStatusModal: FC<CommonOverlayProps<Props>> = ({
   );
 };
 
-export default SignOffStatusModal;
+export default SignOffStateModal;
