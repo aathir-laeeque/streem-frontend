@@ -64,7 +64,7 @@ const reducer = (
     case ListViewAction.SET_SELECTED_STATUS:
       return {
         ...state,
-        selectedStatus: action.payload?.status || selectedStatus,
+        selectedStatus: action.payload?.state || selectedStatus,
       };
 
     case ListViewAction.CREATE_JOB_SUCCESS:

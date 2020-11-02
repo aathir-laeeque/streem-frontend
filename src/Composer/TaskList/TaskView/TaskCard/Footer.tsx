@@ -236,7 +236,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         </span>
       </CompletedWrapper>
     );
-  } else if (task.taskExecution.status === TaskExecutionStatus.INPROGRESS) {
+  } else if (task.taskExecution.state === TaskExecutionStatus.INPROGRESS) {
     if (shouldAskForReason) {
       let text;
       if (
@@ -341,7 +341,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
       );
     }
   } else if (
-    task.taskExecution.status ===
+    task.taskExecution.state ===
     TaskExecutionStatus.ENABLED_FOR_ERROR_CORRECTION
   ) {
     return (

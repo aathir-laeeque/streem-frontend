@@ -106,7 +106,7 @@ const Wrapper = styled.div.attrs({})`
     color: #666666;
   }
 
-  .status {
+  .state {
     font-size: 12px;
   }
 `;

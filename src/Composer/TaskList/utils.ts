@@ -24,8 +24,8 @@ export const reEvaluateTaskWithStop = ({
 
       if (
         !taskIdWithStop &&
-        (task.taskExecution.status === TaskExecutionStatus.NOT_STARTED ||
-          task.taskExecution.status === TaskExecutionStatus.INPROGRESS) &&
+        (task.taskExecution.state === TaskExecutionStatus.NOT_STARTED ||
+          task.taskExecution.state === TaskExecutionStatus.INPROGRESS) &&
         task.hasStop
       ) {
         console.log('came here to set value in  reevaluation');

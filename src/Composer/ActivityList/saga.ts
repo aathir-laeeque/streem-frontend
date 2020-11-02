@@ -39,7 +39,7 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
     if (data) {
       if (
         data?.type === MandatoryActivity.PARAMETER &&
-        data?.response?.status === 'PENDING_FOR_APPROVAL'
+        data?.response?.state === 'PENDING_FOR_APPROVAL'
       ) {
         yield put(
           openOverlayAction({

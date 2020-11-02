@@ -50,12 +50,12 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
       onClick={() => dispatch(setActiveStage({ id: stage.id }))}
     >
       <div
-        className={`overlap ${data?.status in EnabledStates ? 'hide' : ''}`}
+        className={`overlap ${data?.state in EnabledStates ? 'hide' : ''}`}
         onClick={() => {
           dispatch(
             openOverlayAction({
               type: OverlayNames.EDITING_DISABLED,
-              props: { state: data?.status },
+              props: { state: data?.state },
             }),
           );
         }}

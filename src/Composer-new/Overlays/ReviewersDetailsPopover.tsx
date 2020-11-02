@@ -94,7 +94,7 @@ export const ReviewersDetailsPopover: FC<CommonOverlayProps<{
             user.lastName
           } ID: ${user.employeeId}`}</span>
           <span
-            className={classes.status}
+            className={classes.state}
             style={{
               color: CollaboratorStateColors[user.state],
             }}

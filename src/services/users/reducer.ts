@@ -66,7 +66,7 @@ const reducer: Reducer<UsersState, UsersActionType> = (
       return { ...state, loadingMore: true };
 
     case UsersAction.SET_SELECTED_STATUS:
-      return { ...state, selectedStatus: action.payload.status };
+      return { ...state, selectedStatus: action.payload.state };
 
     case UsersAction.SET_SELECTED_USER:
       return { ...state, selectedUserId: action.payload.userId };

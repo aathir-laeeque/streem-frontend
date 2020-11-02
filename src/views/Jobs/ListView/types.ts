@@ -41,7 +41,7 @@ export enum JobStatus {
   UNASSIGNED = 'unassigned',
   COMPLETED = 'completed',
   COMPLETED_WITH_EXCEPTION = 'completedWithException',
-  INPROGRESS = 'inprogress',
+  INPROGRESS = 'in_progress',
 }
 
 export enum ListViewAction {

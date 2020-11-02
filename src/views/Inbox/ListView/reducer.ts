@@ -59,7 +59,7 @@ const reducer = (
     case ListViewAction.SET_SELECTED_STATUS:
       return {
         ...state,
-        selectedStatus: action.payload?.status || state.selectedStatus,
+        selectedStatus: action.payload?.state || state.selectedStatus,
       };
 
     case ListViewAction.RESET_INBOX:

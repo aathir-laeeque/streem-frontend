@@ -364,7 +364,7 @@ const MemoActivityList: FC<{ activities: Activity[] }> = ({ activities }) => {
             <View key={`${activity.id}`}>
               {activityTemplateFormatter(activity, activityIndex)}
               <View style={styles.activitySeprator} />
-              {activity.response.status !== TaskExecutionStatus.NOT_STARTED && (
+              {activity.response.state !== TaskExecutionStatus.NOT_STARTED && (
                 <View style={styles.taskFooter} wrap={false}>
                   <Text style={styles.text12}>
                     This Activity was last updated digitally via CLEEN {'\n'}

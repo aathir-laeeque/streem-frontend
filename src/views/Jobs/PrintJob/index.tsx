@@ -101,7 +101,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
 
             <TabLookLike title="Job Details">
               <InputLabelGroup label="Job ID :" value={jobExtras.code} />
-              <InputLabelGroup label="Status :" value={jobExtras.status} />
+              <InputLabelGroup label="Status :" value={jobExtras.state} />
               <View style={styles.flexRow}>
                 <View style={styles.flexRow}>
                   <InputLabelGroup
@@ -136,7 +136,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                   />
                 </View>
               </View>
-              <Assigness assignees={assignees} jobStatus={jobExtras.status} />
+              <Assigness assignees={assignees} jobStatus={jobExtras.state} />
             </TabLookLike>
 
             <TabLookLike title="Stage and Task Details">

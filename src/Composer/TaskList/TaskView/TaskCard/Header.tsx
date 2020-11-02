@@ -480,7 +480,7 @@ const Header: FC<HeaderProps> = ({
     <Wrapper
       hasStop={task.hasStop}
       showStartButton={showStartButton}
-      taskExecutionStatus={task.taskExecution.status}
+      taskExecutionStatus={task.taskExecution.state}
       isTaskStarted={isTaskStarted}
       isTaskDelayed={isTaskDelayed}
     >

@@ -122,7 +122,7 @@ const Wrapper = styled.div`
         text-align: left;
       }
 
-      .status {
+      .state {
         font-size: 12px;
         color: #5aa700;
         padding: 2px 4px;
@@ -146,7 +146,7 @@ const Wrapper = styled.div`
           flex: 3;
         }
       }
-      .status {
+      .state {
         font-size: 12px;
         color: #5aa700;
         padding: 2px 4px;

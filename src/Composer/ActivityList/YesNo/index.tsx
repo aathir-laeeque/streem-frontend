@@ -14,7 +14,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
     newData: {},
     reason: activity?.response?.reason ?? '',
     shouldAskForReason: !!activity?.response?.reason,
-    showButtons: activity?.response?.status !== 'EXECUTED',
+    showButtons: activity?.response?.state !== 'EXECUTED',
   });
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
       newData: {},
       reason: activity?.response?.reason ?? '',
       shouldAskForReason: !!activity?.response?.reason,
-      showButtons: activity?.response?.status !== 'EXECUTED',
+      showButtons: activity?.response?.state !== 'EXECUTED',
     });
   }, [activity]);
 

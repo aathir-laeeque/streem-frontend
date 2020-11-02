@@ -29,7 +29,7 @@ import { TaskListSaga } from './Tasks/saga';
 import { ComposerEntity } from './types';
 import { groupErrors } from './utils';
 
-const getStatus = (state: RootState) => state.prototypeComposer.data?.status;
+const getStatus = (state: RootState) => state.prototypeComposer.data?.state;
 
 function* fetchComposerDataSaga({
   payload,

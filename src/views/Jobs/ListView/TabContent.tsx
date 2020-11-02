@@ -46,7 +46,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           op: label === 'assigned' || 'completed' ? 'ANY' : 'EQ',
           values: [
             label.toUpperCase(),
-            label === 'assigned' ? 'INPROGRESS' : '',
+            label === 'assigned' ? 'IN_PROGRESS' : '',
             label === 'completed' ? 'COMPLETED_WITH_EXCEPTION' : '',
           ],
         },

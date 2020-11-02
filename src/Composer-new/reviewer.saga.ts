@@ -70,7 +70,7 @@ import {
   CollaboratorType,
 } from './reviewer.types';
 
-const getStatus = (state: RootState) => state.prototypeComposer.data?.status;
+const getStatus = (state: RootState) => state.prototypeComposer.data?.state;
 const getCurrentCycle = (state: RootState) =>
   (state.prototypeComposer.data as Checklist)?.reviewCycle;
 const getUserProfile = (state: RootState) => state.auth.profile;

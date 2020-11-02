@@ -37,12 +37,12 @@ const ChecklistActivity: FC<ActivityProps> = ({
                         ...e,
                         ...(e.id === el.id
                           ? {
-                              status: isItemSelected
+                              state: isItemSelected
                                 ? Selections.NOT_SELECTED
                                 : Selections.SELECTED,
                             }
                           : {
-                              status:
+                              state:
                                 get(activity?.response?.choices, e.id) ||
                                 Selections.NOT_SELECTED,
                             }),

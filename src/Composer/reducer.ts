@@ -63,7 +63,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         entityId: data.id,
         loading: false,
 
-        ...(entity === Entity.JOB ? { jobStatus: data.status } : {}),
+        ...(entity === Entity.JOB ? { jobStatus: data.state } : {}),
         activities: activityListReducer(state.activities, action),
         stages: stageListReducer(state.stages, action),
         tasks: taskListReducer(state.tasks, action),
@@ -112,12 +112,12 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         function (result, value, key) {
           let merged: User[];
           if (
-            value.taskExecution.status === TaskExecutionStatus.COMPLETED ||
-            value.taskExecution.status ===
+            value.taskExecution.state === TaskExecutionStatus.COMPLETED ||
+            value.taskExecution.state ===
               TaskExecutionStatus.COMPLETED_WITH_ERROR_CORRECTION ||
-            value.taskExecution.status ===
+            value.taskExecution.state ===
               TaskExecutionStatus.COMPLETED_WITH_EXCEPTION ||
-            value.taskExecution.status === TaskExecutionStatus.SKIPPED
+            value.taskExecution.state === TaskExecutionStatus.SKIPPED
           ) {
             merged = value.taskExecution.assignees;
           } else {

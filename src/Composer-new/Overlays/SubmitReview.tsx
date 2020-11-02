@@ -552,9 +552,9 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                 <h6>
                   <FiberManualRecord
                     className="icon"
-                    style={{ color: ChecklistStatesColors[data?.status] }}
+                    style={{ color: ChecklistStatesColors[data?.state] }}
                   />
-                  {ChecklistStatesContent[data?.status]}
+                  {ChecklistStatesContent[data?.state]}
                 </h6>
               </div>
               <div className="header-right">

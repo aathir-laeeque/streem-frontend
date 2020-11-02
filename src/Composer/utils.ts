@@ -95,8 +95,8 @@ export const getTasks = ({
 
       if (
         !taskIdWithStop &&
-        (task.taskExecution.status === TaskExecutionStatus.NOT_STARTED ||
-          task.taskExecution.status === TaskExecutionStatus.INPROGRESS) &&
+        (task.taskExecution.state === TaskExecutionStatus.NOT_STARTED ||
+          task.taskExecution.state === TaskExecutionStatus.INPROGRESS) &&
         task.hasStop
       ) {
         taskIdWithStop = task.id;

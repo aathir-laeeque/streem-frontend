@@ -170,7 +170,7 @@ const ChecklistHeader: FC = () => {
 
         return (
           <>
-            {data?.status !== ChecklistStates.SIGNING_IN_PROGRESS && (
+            {data?.state !== ChecklistStates.SIGNING_IN_PROGRESS && (
               <Button1
                 className="submit"
                 style={{ backgroundColor: '#333333' }}
@@ -180,7 +180,7 @@ const ChecklistHeader: FC = () => {
                 Continue Review
               </Button1>
             )}
-            {data?.status !== ChecklistStates.SIGNING_IN_PROGRESS &&
+            {data?.state !== ChecklistStates.SIGNING_IN_PROGRESS &&
               !isReviewPending && (
                 <Button1
                   color={allDoneOk ? 'green' : 'blue'}
@@ -280,7 +280,7 @@ const ChecklistHeader: FC = () => {
     <Button1
       className="submit"
       onClick={() =>
-        data.status === ChecklistStates.BEING_BUILT
+        data.state === ChecklistStates.BEING_BUILT
           ? dispatch(validatePrototype(data.id))
           : handleSubmitForReviewOnChange()
       }
@@ -328,7 +328,7 @@ const ChecklistHeader: FC = () => {
   );
 
   const renderButtonsForAuthor = () => {
-    switch (data?.status) {
+    switch (data?.state) {
       case ChecklistStates.BEING_BUILT:
         return (
           <>
@@ -382,19 +382,19 @@ const ChecklistHeader: FC = () => {
   };
 
   const disableAddingButtons = () =>
-    data?.status === ChecklistStates.SUBMITTED_FOR_REVIEW ||
-    data?.status === ChecklistStates.BEING_REVIEWED;
+    data?.state === ChecklistStates.SUBMITTED_FOR_REVIEW ||
+    data?.state === ChecklistStates.BEING_REVIEWED;
 
   return (
     <HeaderWrapper>
       <div className="before-header">
-        {author && data?.status === ChecklistStates.SUBMITTED_FOR_REVIEW && (
+        {author && data?.state === ChecklistStates.SUBMITTED_FOR_REVIEW && (
           <div className="alert">
             <Info />
             <span>This Prototype has been sent to Reviewers</span>
           </div>
         )}
-        {author && data?.status === ChecklistStates.READY_FOR_SIGNING && (
+        {author && data?.state === ChecklistStates.READY_FOR_SIGNING && (
           <div
             className="alert"
             style={{
@@ -408,7 +408,7 @@ const ChecklistHeader: FC = () => {
             </span>
           </div>
         )}
-        {reviewer && data?.status === ChecklistStates.READY_FOR_SIGNING && (
+        {reviewer && data?.state === ChecklistStates.READY_FOR_SIGNING && (
           <div
             className="alert"
             style={{
@@ -423,7 +423,7 @@ const ChecklistHeader: FC = () => {
           </div>
         )}
         {reviewer &&
-          data?.status !== ChecklistStates.READY_FOR_RELEASE &&
+          data?.state !== ChecklistStates.READY_FOR_RELEASE &&
           reviewer.state === CollaboratorState.NOT_STARTED && (
             <div
               className="alert"
@@ -439,7 +439,7 @@ const ChecklistHeader: FC = () => {
             </div>
           )}
         {reviewer &&
-          data?.status !== ChecklistStates.READY_FOR_RELEASE &&
+          data?.state !== ChecklistStates.READY_FOR_RELEASE &&
           reviewer.state === CollaboratorState.COMMENTED_CHANGES && (
             <div
               className="alert"
@@ -455,7 +455,7 @@ const ChecklistHeader: FC = () => {
             </div>
           )}
         {reviewer &&
-          data?.status !== ChecklistStates.READY_FOR_RELEASE &&
+          data?.state !== ChecklistStates.READY_FOR_RELEASE &&
           reviewer.state === CollaboratorState.COMMENTED_OK && (
             <>
               {allDoneOk ? (
@@ -483,7 +483,7 @@ const ChecklistHeader: FC = () => {
             </>
           )}
         {reviewer &&
-          data?.status !== ChecklistStates.READY_FOR_RELEASE &&
+          data?.state !== ChecklistStates.READY_FOR_RELEASE &&
           (reviewer.state === CollaboratorState.REQUESTED_CHANGES ||
             reviewer.state === CollaboratorState.REQUESTED_NO_CHANGES) && (
             <div className="alert">
@@ -491,7 +491,7 @@ const ChecklistHeader: FC = () => {
               <span>You have already submited your review to author.</span>
             </div>
           )}
-        {data?.status === ChecklistStates.READY_FOR_RELEASE && (
+        {data?.state === ChecklistStates.READY_FOR_RELEASE && (
           <div
             className="alert"
             style={{
@@ -514,9 +514,9 @@ const ChecklistHeader: FC = () => {
             <div className="checklist-status">
               <FiberManualRecord
                 className="icon"
-                style={{ color: ChecklistStatesColors[data?.status] }}
+                style={{ color: ChecklistStatesColors[data?.state] }}
               />
-              <span>{ChecklistStatesContent[data?.status]}</span>
+              <span>{ChecklistStatesContent[data?.state]}</span>
             </div>
           </div>
 
@@ -526,14 +526,14 @@ const ChecklistHeader: FC = () => {
             {reviewer && (
               <>
                 <ViewReviewersButton />
-                {data?.status !== ChecklistStates.REQUESTED_CHANGES &&
-                data?.status !== ChecklistStates.BEING_BUILT
+                {data?.state !== ChecklistStates.REQUESTED_CHANGES &&
+                data?.state !== ChecklistStates.BEING_BUILT
                   ? renderButtonsForReviewer(reviewer.state, data.collaborators)
                   : null}
               </>
             )}
 
-            {approver && data?.status !== ChecklistStates.PUBLISHED && (
+            {approver && data?.state !== ChecklistStates.PUBLISHED && (
               <>
                 <ViewReviewersButton />
                 <ViewSigningStatusButton />
@@ -543,13 +543,13 @@ const ChecklistHeader: FC = () => {
                   )}
               </>
             )}
-            {data?.status === ChecklistStates.PUBLISHED && (
+            {data?.state === ChecklistStates.PUBLISHED && (
               <>
                 <ViewReviewersButton />
                 <ViewSigningStatusButton />
               </>
             )}
-            {data?.status === ChecklistStates.READY_FOR_RELEASE && (
+            {data?.state === ChecklistStates.READY_FOR_RELEASE && (
               <Button1
                 className="submit"
                 onClick={() =>
@@ -569,8 +569,8 @@ const ChecklistHeader: FC = () => {
           </div>
         </div>
         {author &&
-          (data?.status === ChecklistStates.BEING_BUILT ||
-            data?.status === ChecklistStates.REQUESTED_CHANGES) && (
+          (data?.state === ChecklistStates.BEING_BUILT ||
+            data?.state === ChecklistStates.REQUESTED_CHANGES) && (
             <div className="prototype-add-buttons">
               <Button1
                 variant="textOnly"

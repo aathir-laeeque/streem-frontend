@@ -70,10 +70,10 @@ const ShouldBeActivity: FC<ActivityProps> = ({
   const dispatch = useDispatch();
 
   const isActivityPendingApproval =
-    activity?.response?.status === 'PENDING_FOR_APPROVAL';
+    activity?.response?.state === 'PENDING_FOR_APPROVAL';
 
   const isActivityApproved = activity?.response?.activityValueApprovalDto
-    ? activity?.response?.activityValueApprovalDto?.status === 'APPROVED'
+    ? activity?.response?.activityValueApprovalDto?.state === 'APPROVED'
     : undefined;
 
   const approver = activity?.response?.activityValueApprovalDto?.approver;

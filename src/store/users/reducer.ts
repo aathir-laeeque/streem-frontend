@@ -52,7 +52,7 @@ const reducer = (state = initialState, action: UsersActionType): UsersState => {
     case UsersAction.SET_SELECTED_STATUS:
       return {
         ...state,
-        selectedStatus: action.payload?.status || state.selectedStatus,
+        selectedStatus: action.payload?.state || state.selectedStatus,
       };
 
     case UsersAction.SET_SELECTED_USER:

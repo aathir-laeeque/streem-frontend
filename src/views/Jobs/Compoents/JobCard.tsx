@@ -41,9 +41,9 @@ const JobCard: FC<{
       <span className="list-title" onClick={() => onClick(item)}>
         {item.checklist.name}
       </span>
-      {item.status !== JobStatus.UNASSIGNED.toUpperCase() && (
+      {item.state !== JobStatus.UNASSIGNED.toUpperCase() && (
         <span className="list-status">
-          {item.status === JobStatus.ASSIGNED.toUpperCase() && (
+          {item.state === JobStatus.ASSIGNED.toUpperCase() && (
             <span
               className="list-status-span"
               style={{
@@ -51,10 +51,10 @@ const JobCard: FC<{
               }}
             >
               <ErrorOutlineIcon className="icon" />
-              {item.status.toLowerCase()}
+              {item.state.toLowerCase()}
             </span>
           )}
-          {item.status === JobStatus.INPROGRESS.toUpperCase() && (
+          {item.state === JobStatus.INPROGRESS.toUpperCase() && (
             <span
               className="list-status-span"
               style={{
@@ -62,10 +62,10 @@ const JobCard: FC<{
               }}
             >
               <PlayCircleOutlineIcon className="icon" />
-              {item.status.toLowerCase()}
+              {item.state.toLowerCase()}
             </span>
           )}
-          {item.status === JobStatus.COMPLETED.toUpperCase() && (
+          {item.state === JobStatus.COMPLETED.toUpperCase() && (
             <span
               className="list-status-span"
               style={{
@@ -73,10 +73,10 @@ const JobCard: FC<{
               }}
             >
               <CheckCircleOutlineIcon className="icon" />
-              {item.status.toLowerCase()}
+              {item.state.toLowerCase()}
             </span>
           )}
-          {item.status === 'COMPLETED_WITH_EXCEPTION' && (
+          {item.state === 'COMPLETED_WITH_EXCEPTION' && (
             <span
               className="list-status-span"
               style={{
