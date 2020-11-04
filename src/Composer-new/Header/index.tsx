@@ -484,6 +484,7 @@ const ChecklistHeader: FC = () => {
           )}
         {reviewer &&
           data?.state !== ChecklistStates.READY_FOR_RELEASE &&
+          data?.state !== ChecklistStates.READY_FOR_SIGNING &&
           (reviewer.state === CollaboratorState.REQUESTED_CHANGES ||
             reviewer.state === CollaboratorState.REQUESTED_NO_CHANGES) && (
             <div className="alert">

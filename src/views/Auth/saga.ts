@@ -67,7 +67,6 @@ const getIsIdle = (state: any) => state.auth.isIdle;
 const getRefreshTimeOut = (state: any) =>
   state.auth.refreshTokenExpirationInMinutes;
 
-// TODO CHANGE POLLING PROCESS :: PUT THE DELAY AT LAST ON LOOP, SHOULD CALL REFRESH TOKEN ONE TIME ON POLLING START
 function* refreshTokenPollSaga() {
   try {
     yield delay(500);
@@ -152,7 +151,7 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
     yield put(refreshTokenPoll());
   } catch (error) {
     console.error('error from loginSaga function in Auth :: ', error);
-    if (typeof error !== 'string') error = 'There seems to be an Issue. ';
+    if (typeof error !== 'string') error = 'There seems to be an Issue.';
     yield put(loginError(error));
   }
 }

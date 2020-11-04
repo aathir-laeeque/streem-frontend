@@ -235,7 +235,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                         <span>
                           {moment
                             .unix(comment.commentedAt)
-                            .format('Do MMM, YYYY, HH:mm a')}
+                            .format('Do MMM, YYYY, h:mm a')}
                         </span>
                       </div>
                     </div>
