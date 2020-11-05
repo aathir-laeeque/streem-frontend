@@ -4,7 +4,7 @@ import { ReportProblemOutlined, ErrorOutline } from '@material-ui/icons';
 import { User, UserState, UsersState, ParsedUser } from '#store/users/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { capitalize } from 'lodash';
+import { capitalize, startCase, toLower } from 'lodash';
 import { Properties } from '#store/properties/types';
 import {
   fetchUsers,
@@ -174,7 +174,9 @@ const TabContent: FC<TabViewProps> = ({
             'EMAIL ID': item.email,
             ROLE: item.roles
               ? removeUnderscore(
-                  item.roles.map((r) => ' ' + capitalize(r.name)).join(),
+                  item.roles
+                    .map((r) => ' ' + startCase(toLower(r.name)))
+                    .join(),
                 )
               : '-N/A-',
           },

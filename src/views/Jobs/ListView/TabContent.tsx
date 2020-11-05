@@ -81,7 +81,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       dispatch(
         createJob({
           properties: parsedProperties,
-          checklistId: parseInt(selectedId),
+          checklistId: selectedId,
         }),
       );
     }

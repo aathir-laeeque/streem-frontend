@@ -560,7 +560,7 @@ const ChecklistHeader: FC = () => {
                   )
                 }
               >
-                Release checklist
+                Release Prototype
               </Button1>
             )}
           </div>

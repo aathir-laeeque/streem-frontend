@@ -57,7 +57,9 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
 }) => {
   const [jobDetails, setJobDetails] = useState<Record<string, string>>({});
 
-  const { checklists } = useTypedSelector((state) => state.checklistListView);
+  const { checklists, pageable } = useTypedSelector(
+    (state) => state.checklistListView,
+  );
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
   const [showChecklists, setShowChecklists] = useState(false);
@@ -93,7 +95,17 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   const rowSelected = (checklist: Checklist) => {
     setSearchQuery(checklist.name);
     setShowChecklists(false);
-    onInputChange('checklistId', checklist.id.toString());
+    onInputChange('checklistId', checklist.id);
+  };
+
+  const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
+    e.stopPropagation();
+    const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
+    if (
+      scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 &&
+      !pageable.last
+    )
+      fetchData(pageable.page + 1, 10);
   };
 
   return (
@@ -145,7 +157,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               isSearch
             />
             {showChecklists && (
-              <div className="checklists-wrapper">
+              <div className="checklists-wrapper" onScroll={handleOnScroll}>
                 {checklists &&
                   checklists.map((checklist) => (
                     <div

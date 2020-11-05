@@ -80,7 +80,7 @@ const PasswordInputModal: FC<CommonOverlayProps<{
 }>> = ({ closeAllOverlays, closeOverlay, props }) => {
   const isReleasing = props?.isReleasing || false;
   const dispatch = useDispatch();
-  const { data: checklist, approvers } = useTypedSelector((state) => ({
+  const { data: checklist } = useTypedSelector((state) => ({
     approvers: state.prototypeComposer.approvers,
     data: state.prototypeComposer.data as Checklist,
   }));
@@ -114,8 +114,9 @@ const PasswordInputModal: FC<CommonOverlayProps<{
         title="Ready for Release"
       >
         <span>
-          By Entering you Account Password you will sign the Prototype and make
-          it ready for release.
+          {isReleasing
+            ? 'By Entering you Account Password, you will Release the Checklist for creating Jobs'
+            : 'By Entering you Account Password you will sign the Prototype and make it ready for release.'}
         </span>
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextInput

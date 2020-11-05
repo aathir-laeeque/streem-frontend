@@ -4,6 +4,7 @@ import { User } from '#store/users/types';
 
 import { Job } from '#views/Jobs/types';
 import { ListViewAction } from './types';
+import { Checklist } from '#Composer-new/checklist.types';
 
 export const fetchJobs = (
   params: Record<string, string | number>,
@@ -24,7 +25,7 @@ export const fetchJobsError = (error: any) =>
 
 export const createJob = (params: {
   properties: { id: number; value: string }[];
-  checklistId: number;
+  checklistId: Checklist['id'];
 }) => actionSpreader(ListViewAction.CREATE_JOB, params);
 
 export const createJobOngoing = () =>

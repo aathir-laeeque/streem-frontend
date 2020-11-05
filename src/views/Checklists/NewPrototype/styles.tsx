@@ -40,6 +40,8 @@ export const Wrapper = styled.div`
     .left-side {
       border-right: 1px solid #eeeeee;
       grid-area: left-side;
+      max-height: 450px;
+      overflow: auto;
       padding: 24px;
       padding-right: 16px;
 
@@ -119,7 +121,7 @@ export const Wrapper = styled.div`
 
     .right-side {
       grid-area: right-side;
-      /* max-height: 450px; */
+      max-height: 450px;
       overflow: auto;
       padding: 24px;
       padding-left: 16px;
