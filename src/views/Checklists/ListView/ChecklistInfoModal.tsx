@@ -16,11 +16,15 @@ const Wrapper = styled.div`
     width: 800px !important;
     max-height: 600px;
     height: 600px;
-    overflow: auto !important;
+    /* overflow: auto !important; */
   }
 
   .modal-body {
     padding: 0 !important;
+    height: inherit;
+    display: grid;
+    grid-template-areas: 'header' 'body';
+    grid-template-rows: 92px 1fr;
   }
 
   .close-icon {
@@ -28,8 +32,33 @@ const Wrapper = styled.div`
     right: 32px !important;
   }
 
-  .body {
+  .header {
+    grid-area: header;
+    align-items: flex-start;
+    border-bottom: 1px solid #eeeeee;
+    display: flex;
+    flex-direction: column;
     padding: 24px;
+    justify-content: space-between;
+
+    label {
+      font-size: 12px;
+      font-weight: normal;
+      color: #000000;
+    }
+
+    span {
+      font-size: 20px;
+      font-weight: bold;
+      color: #000000;
+    }
+  }
+
+  .body {
+    grid-area: body;
+    padding: 24px;
+    /* height: inherit; */
+    overflow: auto;
 
     section {
       align-items: flex-start;
@@ -114,6 +143,9 @@ const Wrapper = styled.div`
     }
 
     .signing {
+      .column:first-child {
+        flex: 2;
+      }
       .signed-as {
         font-size: 14px;
         color: #000000;
@@ -143,7 +175,7 @@ const Wrapper = styled.div`
     .release {
       .column {
         :first-child {
-          flex: 3;
+          flex: 2;
         }
       }
       .state {
@@ -153,6 +185,28 @@ const Wrapper = styled.div`
         background-color: #e1fec0;
         margin: 13px 0;
         width: max-content;
+      }
+
+      .date {
+        text-align: left;
+      }
+    }
+
+    .revision {
+      .column {
+        flex: 4;
+
+        :first-child {
+          flex: 1;
+        }
+
+        :last-child {
+          flex: 8;
+        }
+
+        div {
+          text-align: left;
+        }
       }
     }
   }
@@ -202,6 +256,10 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
           showHeader={false}
           showFooter={false}
         >
+          <div className="header">
+            <label>Checklist Name</label>
+            <span>{state?.name}</span>
+          </div>
           <div className="body">
             <section className="authors">
               <label>Authoring Information</label>
@@ -246,7 +304,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                 <div className="column">
                   <label className="column-label">Collaborators</label>
 
-                  {state?.signIn?.map((user) => (
+                  {state?.signOff?.map((user) => (
                     <div className="owner" key={user.employeeId}>
                       <Avatar user={user ?? {}} />
                       <div className="owner-details">
@@ -262,7 +320,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                 <div className="column">
                   <label className="column-label">Signed As</label>
 
-                  {state?.signIn?.map((user) => (
+                  {state?.signOff?.map((user) => (
                     <div className="signed-as" key={user.employeeId}>
                       {(() => {
                         if (user.orderTree === 1) {
@@ -280,7 +338,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                 <div className="column">
                   <label className="column-label">State</label>
 
-                  {state?.signIn?.map((user) => (
+                  {state?.signOff?.map((user) => (
                     <div className="state" key={user.employeeId}>
                       Complete
                     </div>
@@ -290,7 +348,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                 <div className="column">
                   <label className="column-label">Date</label>
 
-                  {state?.signIn?.map((user) => (
+                  {state?.signoff?.map((user) => (
                     <div className="date" key={user.employeeId}>
                       {formatDateTime(user?.signedAt, 'Do MMMM, YYYY')}
                     </div>
