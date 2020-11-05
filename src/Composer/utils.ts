@@ -106,7 +106,7 @@ export const getTasks = ({
   });
 
   if (setActiveTask) {
-    const firstStageId = parseInt(Object.keys(tasksOrderInStage)[0]);
+    const firstStageId = Object.keys(tasksOrderInStage)[0];
 
     activeTaskId = tasksOrderInStage[firstStageId][0];
   }

@@ -17,7 +17,7 @@ export const reEvaluateTaskWithStop = ({
     taskIdWithStop: Task['id'] | undefined = undefined;
 
   stageIds.map((stageId) => {
-    const taskIdsInStage = tasksOrderInStage[parseInt(stageId)];
+    const taskIdsInStage = tasksOrderInStage[stageId];
 
     taskIdsInStage.map((taskId) => {
       const task = tasksById[taskId];
@@ -31,7 +31,7 @@ export const reEvaluateTaskWithStop = ({
         console.log('came here to set value in  reevaluation');
 
         taskIdWithStop = taskId;
-        stageIdWithTaskStop = parseInt(stageId);
+        stageIdWithTaskStop = stageId;
       }
     });
   });

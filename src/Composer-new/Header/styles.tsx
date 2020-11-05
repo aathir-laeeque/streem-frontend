@@ -90,6 +90,7 @@ const HeaderWrapper = styled.div`
           padding: 12px 6px;
           border: none;
           > .icon {
+            font-size: 14px;
             color: #000;
             margin: 0px;
           }
@@ -99,6 +100,7 @@ const HeaderWrapper = styled.div`
         #view-collaborators {
           padding: 12px;
           > .icon {
+            font-size: 14px;
             color: #000;
             margin: 0px;
           }
@@ -106,6 +108,7 @@ const HeaderWrapper = styled.div`
 
         #edit:hover {
           > .icon {
+            font-size: 14px;
             color: #fff;
           }
         }

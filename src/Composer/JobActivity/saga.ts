@@ -17,7 +17,7 @@ function* fetchJobActivitiesSaga({
 }: ReturnType<typeof fetchJobActivities>) {
   try {
     const { jobId, params } = payload || {};
-    let currentPage = parseInt(params.page.toString());
+    let currentPage = params.page;
     if (currentPage === 0) {
       yield put(fetchJobActivitiesOngoing());
     } else {
