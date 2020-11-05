@@ -196,6 +196,7 @@ export type Comment = {
 };
 
 export type Checklist = {
+  description: string;
   id: string;
   name: string;
   code: string;

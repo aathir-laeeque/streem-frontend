@@ -53,6 +53,7 @@ export type FormErrors = {
 
 export type FormData = {
   authors: Author[];
+  description: string;
   name: string;
   properties: PrototypeProperties[];
   prototypeId: Checklist['id'];

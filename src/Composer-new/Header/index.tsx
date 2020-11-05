@@ -235,6 +235,7 @@ const ChecklistHeader: FC = () => {
           state: {
             mode: FormMode.EDIT,
             formData: {
+              description: data?.description,
               name: data.name,
               properties: data.properties,
               authors: data.authors,

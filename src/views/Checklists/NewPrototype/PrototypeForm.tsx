@@ -58,7 +58,7 @@ const PrototypeForm: FC<Props> = (props) => {
         ?.filter((author) => !author.primary)
         .map((author) => author.id) ?? ['0']),
     ],
-    description: '',
+    description: formData.description ?? '',
     name: formData?.name ?? '',
     primaryAuthor: formData?.authors?.filter(
       (author) => author?.primary,
