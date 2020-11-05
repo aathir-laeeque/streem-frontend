@@ -71,6 +71,10 @@ const Wrapper = styled.div`
         margin-top: 0;
       }
 
+      :last-child {
+        border: none;
+      }
+
       label {
         color: #333333;
         font-size: 14px;
@@ -206,6 +210,20 @@ const Wrapper = styled.div`
 
         div {
           text-align: left;
+        }
+      }
+    }
+
+    .description {
+      textarea {
+        :disabled {
+          background-color: transparent;
+          padding: 0;
+        }
+
+        :active,
+        :focus {
+          border: none;
         }
       }
     }
@@ -426,7 +444,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
               </div>
             </section>
 
-            <section>
+            <section className="description">
               <label>Checklist Description</label>
 
               <Textarea
