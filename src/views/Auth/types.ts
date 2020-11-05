@@ -43,6 +43,7 @@ export interface LoginResponse {
   refreshTokenExpirationInMinutes: number;
   sessionIdleTimeoutInMinutes: number;
   roles: string[];
+  settings: Record<string, string>;
 }
 
 export interface RefreshTokenResponse {
@@ -65,6 +66,7 @@ export interface AuthState {
   readonly error: any;
   readonly roles?: string[];
   readonly isTokenExpired?: boolean;
+  readonly settings?: Record<string, string>;
 }
 
 export enum AuthAction {

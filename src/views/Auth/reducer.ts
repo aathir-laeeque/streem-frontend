@@ -28,6 +28,7 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
         userId: action.payload?.id,
         accessToken: action.payload?.accessToken,
         refreshToken: action.payload?.refreshToken,
+        settings: action.payload?.settings,
         accessTokenExpirationInMinutes:
           action.payload?.accessTokenExpirationInMinutes,
         refreshTokenExpirationInMinutes:

@@ -23,7 +23,7 @@ const now = moment().format('Do MMM, YYYY, hh:mm a');
 
 const MyPrintSessionActivity: FC = () => {
   const { logs } = useTypedSelector((state) => state.sessionActivity);
-  const { profile } = useTypedSelector((state) => state.auth);
+  const { profile, settings } = useTypedSelector((state) => state.auth);
   const { filters } = useTypedSelector((state) => state.activityFilters);
 
   const dispatch = useDispatch();
@@ -67,13 +67,7 @@ const MyPrintSessionActivity: FC = () => {
           </View>
 
           <View style={styles.mainHeader}>
-            <View style={styles.clientLogoWrapper}>
-              <Text
-                style={[styles.text12, { color: '#FFF', fontWeight: 'bold' }]}
-              >
-                Client Logo
-              </Text>
-            </View>
+            <Image src={settings?.logoUrl || ''} style={{ height: '24px' }} />
             <Image src={cleenLogo} style={{ height: '24px' }} />
           </View>
 
