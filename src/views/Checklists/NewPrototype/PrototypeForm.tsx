@@ -24,6 +24,7 @@ const validateForm = (values: FormValues) => {
 
   values.properties.map((property) => {
     if (property.mandatory && !property.value) {
+      isValid = false;
       formErrors.properties[property.id.toString()] = 'Property is required';
     }
   });
@@ -150,6 +151,13 @@ const PrototypeForm: FC<Props> = (props) => {
             error={formErrors.properties[property.id.toString()]}
             label={property.placeHolder}
             onChange={debounce(({ value }) => {
+              setFormErrors((errors) => ({
+                ...errors,
+                properties: {
+                  ...errors.properties,
+                  [property.id.toString()]: '',
+                },
+              }));
               setFormValues((values) => ({
                 ...values,
                 properties: [
