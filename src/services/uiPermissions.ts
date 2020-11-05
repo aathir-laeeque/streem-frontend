@@ -57,18 +57,18 @@ const uiPermissions: Record<string, any> = {
       roles.SYSTEM_ADMIN,
       roles.FACILITY_ADMIN,
     ],
-    checklists: {
-      create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
-      revision: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
-      archive: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
-    },
-    inbox: {
-      completeWithException: [
-        roles.ACCOUNT_OWNER,
-        roles.FACILITY_ADMIN,
-        roles.SUPERVISOR,
-      ],
-    },
+  },
+  checklists: {
+    create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
+    revision: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
+    archive: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
+  },
+  inbox: {
+    completeWithException: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.SUPERVISOR,
+    ],
   },
 };
 
