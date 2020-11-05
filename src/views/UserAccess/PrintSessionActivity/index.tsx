@@ -18,7 +18,6 @@ import {
   SessionActivitySeverity,
 } from '../ListView/SessionActivity/types';
 import { fetchSessionActivities } from '../ListView/SessionActivity/actions';
-import { formatDateTime } from '#utils/timeUtils';
 
 const now = moment().format('Do MMM, YYYY, hh:mm a');
 
@@ -30,47 +29,10 @@ const MyPrintSessionActivity: FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    let lowerThan = moment().endOf('day');
-    let greaterThan = moment().startOf('day').subtract(7, 'days');
-    if (filters && filters.date) {
-      const { dateRange, startTime, endTime } = filters.date;
-      greaterThan = moment(
-        `${formatDateTime(dateRange[0], 'YYYY-MM-DD')} ${formatDateTime(
-          startTime,
-          'HH:mm',
-        )}`,
-      );
-      lowerThan = moment(
-        `${formatDateTime(dateRange[1], 'YYYY-MM-DD')} ${formatDateTime(
-          endTime,
-          'HH:mm',
-        )}`,
-      );
-    }
-    fetchLogs(greaterThan.unix(), lowerThan.unix(), 0);
+    fetchLogs();
   }, []);
 
-  const fetchLogs = (
-    greaterThan: number,
-    lowerThan: number,
-    page = 0,
-    size = 250000,
-  ) => {
-    const filters = JSON.stringify({
-      op: 'AND',
-      fields: [
-        {
-          field: 'triggeredAt',
-          op: 'GOE',
-          values: [greaterThan],
-        },
-        {
-          field: 'triggeredAt',
-          op: 'LOE',
-          values: [lowerThan],
-        },
-      ],
-    });
+  const fetchLogs = (page = 0, size = 250) => {
     dispatch(
       fetchSessionActivities({ size, filters, sort: 'triggeredAt,desc', page }),
     );

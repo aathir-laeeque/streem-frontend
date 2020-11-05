@@ -12,7 +12,7 @@ import { Button, FlatButton } from './Button';
 
 export type Filter = {
   label: string;
-  content: JSX.Element;
+  content: JSX.Element | (() => JSX.Element);
   onApply: () => void;
 };
 
@@ -273,7 +273,9 @@ export const ListView: FC<ListViewProps> = ({
                         }}
                         className="filter-container"
                       >
-                        {filter.content}
+                        {typeof filter.content === 'function'
+                          ? filter.content()
+                          : filter.content}
                         <div className="picker-actions">
                           <Button
                             style={{ marginRight: 0 }}

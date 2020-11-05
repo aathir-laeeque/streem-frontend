@@ -8,7 +8,7 @@ export const fetchJobActivities = (payload: {
     size: number;
     filters: string;
     sort: string;
-    page?: number;
+    page: number;
   };
 }) => actionSpreader(JobActivityAction.FETCH_JOB_ACTIVITY, payload);
 

@@ -312,7 +312,7 @@ const ChecklistHeader: FC = () => {
         dispatch(openOverlayAction({ type: OverlayNames.SIGN_OFF_PROGRESS }))
       }
     >
-      View Signing State
+      View Signing Status
     </Button1>
   );
 
@@ -602,14 +602,15 @@ const ChecklistHeader: FC = () => {
                 Add a new Task
               </Button1>
 
-              <Button1
+              <div id="preview" />
+              {/* <Button1
                 variant="textOnly"
                 id="preview"
                 disabled={disableAddingButtons()}
               >
                 <PlayCircleFilled className="icon" fontSize="small" />
                 Preview
-              </Button1>
+              </Button1> */}
             </div>
           )}
       </div>

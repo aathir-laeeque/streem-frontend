@@ -35,8 +35,10 @@ const reducer = (
         ...state,
         loading: false,
         pageable: pageable as Pageable,
-        // logs: [...state.logs, ...(data as Array<JobActivity>)],
-        logs: data as Array<JobActivity>,
+        logs:
+          pageable && pageable.page === 0
+            ? (data as Array<JobActivity>)
+            : [...state.logs, ...(data as JobActivity[])],
       };
 
     case JobActivityAction.FETCH_JOB_ACTIVITY_ERROR:

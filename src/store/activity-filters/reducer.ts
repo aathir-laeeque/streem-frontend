@@ -5,7 +5,7 @@ import {
 } from './types';
 
 const initialState: ActivityFiltersState = {
-  filters: {},
+  filters: '',
 };
 
 const reducer = (
@@ -14,8 +14,7 @@ const reducer = (
 ): ActivityFiltersState => {
   switch (action.type) {
     case ActivityFiltersAction.SET_FILTERS:
-      const { type, filter } = action.payload;
-      return { ...state, filters: { ...state.filters, [type]: filter } };
+      return { ...state, filters: action.payload };
 
     case ActivityFiltersAction.CLEAR_FILTRES:
       return initialState;

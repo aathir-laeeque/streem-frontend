@@ -70,6 +70,10 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
   },
+  firstContainer: {
+    paddingHorizontal: 40,
+    paddingVertical: 8,
+  },
   container: {
     paddingHorizontal: 40,
     marginVertical: 20,

@@ -1,7 +1,7 @@
 import { apiGetSessionActivities } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLeading } from 'redux-saga/effects';
 import moment from 'moment';
 import { SessionActivity } from './types';
 import {
@@ -18,7 +18,6 @@ function* fetchSessionActivitiesSaga({
   try {
     const params = payload || {};
     let currentPage = parseInt(params.page.toString());
-    delete params.page;
     if (currentPage === 0) {
       yield put(fetchSessionActivitiesOngoing());
     } else {
@@ -48,11 +47,7 @@ function* fetchSessionActivitiesSaga({
     yield put(
       fetchSessionActivitiesSuccess({
         data: newData,
-        pageable: {
-          ...pageable,
-          page: currentPage,
-          last: newData.length > 0 ? false : true,
-        },
+        pageable,
       }),
     );
   } catch (error) {
@@ -65,7 +60,7 @@ function* fetchSessionActivitiesSaga({
 }
 
 export function* SessionActivitySaga() {
-  yield takeLatest(
+  yield takeLeading(
     SessionActivityAction.FETCH_SESSION_ACTIVITY,
     fetchSessionActivitiesSaga,
   );

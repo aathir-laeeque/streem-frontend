@@ -18,8 +18,8 @@ export enum CollaboratorStateContent {
   BEING_REVIEWED = 'In Progress',
   COMMENTED_OK = 'All OK',
   COMMENTED_CHANGES = 'Comments',
-  REQUESTED_CHANGES = 'Done, All OK',
-  REQUESTED_NO_CHANGES = 'Done, Comments',
+  REQUESTED_CHANGES = 'Done, Comments',
+  REQUESTED_NO_CHANGES = 'Done, All OK',
   SIGNED = 'Signed',
 }
 

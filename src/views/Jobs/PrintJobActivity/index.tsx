@@ -3,6 +3,8 @@ import { groupBy } from 'lodash';
 import moment from 'moment';
 import cleenLogo from '#assets/images/cleen.png';
 import { useTypedSelector } from '#store';
+import { fetchData } from '#Composer/actions';
+import { Entity } from '#Composer/composer.types';
 import { useDispatch } from 'react-redux';
 import { LoadingDiv, styles } from './styles';
 import {
@@ -17,13 +19,20 @@ import {
   JobActivity as JobActivityType,
   JobActivitySeverity,
 } from '#Composer/JobActivity/types';
+import { Checklist, TaskExecution } from '#Composer-new/checklist.types';
 import { fetchJobActivities } from '#Composer/JobActivity/actions';
 import { PrintJobActivityProps } from './types';
-import { formatDateTime } from '#utils/timeUtils';
+import {
+  TabLookLike,
+  InputLabelGroup,
+  Assigness,
+} from '../PrintJob/Components';
+import { removeUnderscore } from '#utils/stringUtils';
 
 const now = moment().format('Do MMM, YYYY, hh:mm a');
 
 const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
+  const { data: composerData } = useTypedSelector((state) => state.composer);
   const { logs } = useTypedSelector((state) => state.composer.activity);
   const { profile } = useTypedSelector((state) => state.auth);
   const { filters } = useTypedSelector((state) => state.activityFilters);
@@ -32,48 +41,12 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
 
   useEffect(() => {
     if (jobId) {
-      let lowerThan = moment().endOf('day');
-      let greaterThan = moment().startOf('day').subtract(7, 'days');
-      if (filters && filters.date) {
-        const { dateRange, startTime, endTime } = filters.date;
-        greaterThan = moment(
-          `${formatDateTime(dateRange[0], 'YYYY-MM-DD')} ${formatDateTime(
-            startTime,
-            'HH:mm',
-          )}`,
-        );
-        lowerThan = moment(
-          `${formatDateTime(dateRange[1], 'YYYY-MM-DD')} ${formatDateTime(
-            endTime,
-            'HH:mm',
-          )}`,
-        );
-      }
-      fetchLogs(greaterThan.unix(), lowerThan.unix(), 0);
+      dispatch(fetchData({ id: jobId, entity: Entity.JOB }));
+      fetchLogs();
     }
   }, []);
 
-  const fetchLogs = (
-    greaterThan: number,
-    lowerThan: number,
-    page = 0,
-    size = 250000,
-  ) => {
-    const filters = JSON.stringify({
-      op: 'AND',
-      fields: [
-        {
-          field: 'triggeredAt',
-          op: 'GOE',
-          values: [greaterThan],
-        },
-        {
-          field: 'triggeredAt',
-          op: 'LOE',
-          values: [lowerThan],
-        },
-      ],
-    });
+  const fetchLogs = (page = 0, size = 250) => {
     dispatch(
       fetchJobActivities({
         jobId,
@@ -82,7 +55,23 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
     );
   };
 
-  if (!logs || logs.length === 0 || !profile) return null;
+  if (!logs || logs.length === 0 || !profile || !composerData) return null;
+
+  const { checklist, ...jobExtras } = (composerData as unknown) as Checklist;
+  let assigneesObj: Record<string, any> = {};
+  (checklist as Checklist).stages.forEach((stage) =>
+    stage.tasks.forEach((task) =>
+      task.taskExecution.assignees.forEach(
+        (assignee) =>
+          (assigneesObj = { ...assigneesObj, [assignee.id]: assignee }),
+      ),
+    ),
+  );
+
+  const assignees: TaskExecution['assignees'][] = [];
+  Object.keys(assigneesObj).forEach((key) => {
+    assignees.push(assigneesObj[key]);
+  });
 
   const grouped = groupBy(logs, 'triggeredOn');
   const data = [] as Record<string, string | JobActivityType[]>[];
@@ -122,6 +111,73 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
           </View>
 
           <View style={styles.container}>
+            <TabLookLike title="Checklist Details">
+              <InputLabelGroup
+                label="Checklist ID :"
+                value={checklist?.code || ''}
+              />
+              <InputLabelGroup
+                label="Checklist Name :"
+                value={checklist?.name || ''}
+              />
+            </TabLookLike>
+
+            <TabLookLike title="Job Details">
+              <InputLabelGroup label="Job ID :" value={jobExtras.code} />
+              <InputLabelGroup
+                label="State :"
+                value={removeUnderscore(jobExtras.state)}
+              />
+              <View style={styles.flexRow}>
+                <View style={styles.flexRow}>
+                  <InputLabelGroup
+                    label="Equipment ID :"
+                    value={checklist?.properties['EQUIPMENT ID'] || ''}
+                    minWidth={50}
+                  />
+                </View>
+                <View style={styles.flexRow}>
+                  <InputLabelGroup
+                    label="Room ID :"
+                    value={jobExtras?.properties['ROOM ID'] || ''}
+                  />
+                </View>
+              </View>
+              <View style={styles.flexRow}>
+                <View style={styles.flexRow}>
+                  <InputLabelGroup
+                    label="Product Manufactured :"
+                    value={
+                      jobExtras?.properties
+                        ? jobExtras?.properties['PRODUCT MANUFACTURED']
+                        : ''
+                    }
+                    minWidth={50}
+                  />
+                </View>
+                <View style={styles.flexRow}>
+                  <InputLabelGroup
+                    label="Batch No :"
+                    value={jobExtras?.properties['BATCH NO']}
+                  />
+                </View>
+              </View>
+              <Assigness assignees={assignees} jobState={jobExtras.state} />
+            </TabLookLike>
+
+            <TabLookLike title="Stage and Task Details">
+              <InputLabelGroup
+                label="Total Stages :"
+                value={checklist?.stages?.length.toString()}
+              />
+              <InputLabelGroup
+                label="Total Tasks :"
+                value={jobExtras.totalTasks}
+              />
+            </TabLookLike>
+          </View>
+
+          <View style={styles.container} break>
             {data.map((item) => {
               const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
               let criticalCount = 0;

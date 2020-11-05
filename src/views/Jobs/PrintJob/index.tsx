@@ -24,6 +24,7 @@ import {
 import { styles, LoadingDiv } from './styles';
 import { Entity } from '#Composer/composer.types';
 import { Checklist, TaskExecution } from '#Composer-new/checklist.types';
+import { removeUnderscore } from '#utils/stringUtils';
 
 const now = moment().format('Do MMM, YYYY, hh:mm a');
 
@@ -101,7 +102,10 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
 
             <TabLookLike title="Job Details">
               <InputLabelGroup label="Job ID :" value={jobExtras.code} />
-              <InputLabelGroup label="State :" value={jobExtras.state} />
+              <InputLabelGroup
+                label="State :"
+                value={removeUnderscore(jobExtras.state)}
+              />
               <View style={styles.flexRow}>
                 <View style={styles.flexRow}>
                   <InputLabelGroup

@@ -1,7 +1,7 @@
 import { setActivityFilters, clearActivityFilters } from './action';
 
 export interface ActivityFiltersState {
-  readonly filters: Record<string, any>;
+  readonly filters: string;
 }
 
 export enum ActivityFiltersAction {

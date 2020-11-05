@@ -66,10 +66,11 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
 
   const fetchData = (page: number, size: number) => {
     const filters = JSON.stringify({
-      op: 'OR',
+      op: 'AND',
       fields: [
-        { field: 'name', op: 'LIKE', values: [searchQuery] },
         { field: 'code', op: 'LIKE', values: [searchQuery] },
+        { field: 'state', op: 'EQ', values: ['PUBLISHED'] },
+        { field: 'archived', op: 'EQ', values: [false] },
       ],
     });
     dispatch(fetchChecklists({ page, size, filters, sort: 'id' }));
@@ -131,7 +132,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
         )) || (
           <div className="checklists-wrapper-input">
             <FloatInput
-              placeHolder="Select a Checklist"
+              placeHolder="Search Checklist By Code"
               label="Select a Checklist"
               value={searchQuery}
               id="checklistId"

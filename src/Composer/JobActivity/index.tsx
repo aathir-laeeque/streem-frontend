@@ -1,11 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
-import { ListViewComponent, FilterProp } from '#components';
+import { ListViewComponent, FilterProp, Checkbox } from '#components';
 import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined';
 import { groupBy } from 'lodash';
 import moment, { Moment } from 'moment';
 import { useTypedSelector } from '#store';
 import { useDispatch } from 'react-redux';
-import { Composer } from './styles';
+import { Composer, UserFilterWrapper } from './styles';
 import TextField from '@material-ui/core/TextField';
 import {
   StaticDateRangePicker,
@@ -24,23 +24,31 @@ import {
   setActivityFilters,
   clearActivityFilters,
 } from '#store/activity-filters/action';
+import { User } from '#store/users/types';
+import { getInitials } from '#utils/stringUtils';
+import { Search } from '@material-ui/icons';
+import { fetchUsers } from '#store/users/actions';
+import { usePrevious } from '#utils/usePrevious';
 
 type initialState = {
   dateRange: DateRange<Moment>;
   appliedFilters: Record<string, boolean>;
   startTime: Moment | null;
   endTime: Moment | null;
+  searchQuery: string;
+  selectedUsers: User[];
+  appliedUsers: User[];
 };
 
 const currentDate = moment().startOf('day');
 const initialState: initialState = {
-  dateRange: [
-    moment().startOf('day').subtract(7, 'days'),
-    moment().endOf('day'),
-  ],
+  dateRange: [null, null],
   appliedFilters: {},
   startTime: currentDate,
   endTime: moment().endOf('day'),
+  searchQuery: '',
+  selectedUsers: [],
+  appliedUsers: [],
 };
 
 const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
@@ -48,13 +56,61 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
   const { logs, loading, pageable }: JobActivityState = useTypedSelector(
     (state) => state.composer.activity,
   );
+  const {
+    list,
+    pageable: { last, page },
+  } = useTypedSelector((state) => state.users.active);
 
   const dispatch = useDispatch();
   const [state, setstate] = useState(initialState);
+  const { searchQuery, selectedUsers, appliedUsers } = state;
+
+  const prevSearch = usePrevious(searchQuery);
 
   const resetFilter = () => {
     setstate(initialState);
     dispatch(clearActivityFilters());
+  };
+
+  const onCheckChanged = (user: User, checked: boolean) => {
+    if (checked) {
+      const newSelected = selectedUsers.filter((u) => user.id !== u.id);
+      setstate({ ...state, selectedUsers: newSelected });
+    } else {
+      setstate({ ...state, selectedUsers: [...selectedUsers, user] });
+    }
+  };
+
+  const userRow = (user: User, checked: boolean) => {
+    return (
+      <div className="item" key={`user_${user.id}`}>
+        <div className="right">
+          <Checkbox
+            checked={checked}
+            label=""
+            onClick={() => onCheckChanged(user, checked)}
+          />
+        </div>
+        <div className="thumb">
+          {getInitials(`${user.firstName} ${user.lastName}`)}
+        </div>
+        <div className="middle">
+          <span className="userId">{user.employeeId}</span>
+          <span className="userName">{`${user.firstName} ${user.lastName}`}</span>
+        </div>
+      </div>
+    );
+  };
+
+  const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
+    e.stopPropagation();
+    const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
+    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 && !last)
+      fetchUsersData(page + 1, 10);
+  };
+
+  const handleUnselectAll = () => {
+    setstate({ ...state, selectedUsers: [], appliedUsers: [] });
   };
 
   const filterProp: FilterProp = {
@@ -62,7 +118,6 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
       {
         label: 'Date/Time Range',
         onApply: () => {
-          applyDateTimeFilter();
           setstate({
             ...state,
             appliedFilters: {
@@ -120,6 +175,70 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
           </LocalizationProvider>
         ),
       },
+      {
+        label: 'Users',
+        onApply: () => {
+          if (selectedUsers.length > 0 || appliedUsers.length > 0) {
+            setstate({
+              ...state,
+              appliedFilters: {
+                ...state.appliedFilters,
+                Users: true,
+              },
+              appliedUsers: selectedUsers,
+            });
+          } else {
+            resetFilter();
+          }
+        },
+        content: function template() {
+          const bodyView: JSX.Element[] = [];
+
+          if (list) {
+            if (searchQuery === '') {
+              appliedUsers.forEach((user) => {
+                bodyView.push(userRow(user, true));
+              });
+            }
+
+            ((list as unknown) as Array<User>).forEach((user) => {
+              const isSelected = selectedUsers.some(
+                (item) => item.id === user.id,
+              );
+              const inApplied = appliedUsers.some(
+                (item) => item.id === user.id,
+              );
+              if (user.id !== '0') {
+                if (!inApplied) {
+                  bodyView.push(userRow(user, isSelected));
+                }
+              }
+            });
+          }
+          return (
+            <UserFilterWrapper>
+              <div className="top-content">
+                <div className="searchboxwrapper">
+                  <Search className="searchsubmit" />
+                  <input
+                    className="searchbox"
+                    type="text"
+                    onChange={(e) =>
+                      setstate({ ...state, searchQuery: e.target.value })
+                    }
+                    defaultValue={searchQuery}
+                    placeholder="Search Users"
+                  />
+                </div>
+                <span onClick={handleUnselectAll}>Unselect All</span>
+              </div>
+              <div className="scrollable-content" onScroll={handleOnScroll}>
+                {bodyView}
+              </div>
+            </UserFilterWrapper>
+          );
+        },
+      },
     ],
     onReset: () => resetFilter(),
     activeCount: Object.keys(state.appliedFilters).length,
@@ -132,58 +251,79 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
   }, []);
 
   useEffect(() => {
-    if (!isIdle && Object.keys(state.appliedFilters).length === 0) fetchData(0);
+    if (!isIdle) fetchLogs();
   }, [state.appliedFilters, isIdle]);
 
-  const fetchLogs = (
-    greaterThan: number,
-    lowerThan: number,
-    page = 0,
-    size = 250000,
-  ) => {
+  useEffect(() => {
+    if (prevSearch !== searchQuery) {
+      fetchUsersData(0, 10);
+    }
+  }, [searchQuery]);
+
+  const fetchUsersData = (page: number, size: number) => {
     const filters = JSON.stringify({
       op: 'AND',
-      fields: [
-        {
-          field: 'triggeredAt',
-          op: 'GOE',
-          values: [greaterThan],
-        },
+      fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
+    });
+    dispatch(fetchUsers({ page, size, filters, sort: 'id' }, 'active'));
+  };
+
+  const fetchLogs = (page = 0, size = 250) => {
+    size = 250;
+    const { dateRange, startTime, endTime } = state;
+    let greaterDate = moment().startOf('day').subtract(7, 'days');
+    let lowerDate = moment().endOf('day');
+    if (dateRange[0] && dateRange[1]) {
+      greaterDate = dateRange[0];
+      lowerDate = dateRange[1];
+    }
+    if (greaterDate && lowerDate && startTime && endTime) {
+      const greaterThan = moment(
+        `${greaterDate.format('YYYY-MM-DD')} ${startTime.format('HH:mm')}`,
+      ).unix();
+      const lowerThan = moment(
+        `${lowerDate.format('YYYY-MM-DD')} ${endTime.format('HH:mm')}`,
+      ).unix();
+
+      const userFilter = appliedUsers.map((u) => u.id);
+      const fields = [
         {
           field: 'triggeredAt',
           op: 'LOE',
           values: [lowerThan],
         },
-      ],
-    });
-    dispatch(
-      fetchJobActivities({
-        jobId,
-        params: { size, filters, sort: 'triggeredAt,desc', page },
-      }),
-    );
+        {
+          field: 'triggeredBy',
+          op: 'ANY',
+          values: userFilter,
+        },
+      ];
+
+      if (state.appliedFilters['Date/Time Range']) {
+        fields.push({
+          field: 'triggeredAt',
+          op: 'GOE',
+          values: [greaterThan],
+        });
+      }
+
+      const filters = JSON.stringify({
+        op: 'AND',
+        fields,
+      });
+
+      dispatch(setActivityFilters(filters));
+
+      dispatch(
+        fetchJobActivities({
+          jobId,
+          params: { size, filters, sort: 'triggeredAt,desc', page },
+        }),
+      );
+    }
   };
 
-  const fetchData = (page: number, size?: number) => {
-    let lowerThan, greaterThan;
-    if (Object.keys(state.appliedFilters).length > 0) {
-      return false;
-    }
-    if (page === 0) {
-      lowerThan = moment().endOf('day');
-      greaterThan = moment().startOf('day').subtract(7, 'days');
-    } else {
-      lowerThan = moment()
-        .startOf('day')
-        .subtract(4 + page * 3, 'days');
-      greaterThan = moment()
-        .startOf('day')
-        .subtract(7 + page * 3, 'days');
-    }
-    fetchLogs(greaterThan.unix(), lowerThan.unix(), page);
-  };
-
-  if (!logs || logs.length === 0 || !pageable) {
+  if (!logs || !pageable) {
     return <div>{loading && 'Loading...'}</div>;
   }
 
@@ -197,40 +337,12 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
     });
   });
 
-  const applyDateTimeFilter = () => {
-    const { dateRange, startTime, endTime } = state;
-    if (dateRange[0] && dateRange[1] && startTime && endTime) {
-      dispatch(
-        setActivityFilters({
-          type: 'date',
-          filter: {
-            dateRange: [dateRange[0].unix(), dateRange[1].unix()],
-            startTime: startTime.unix(),
-            endTime: endTime.unix(),
-          },
-        }),
-      );
-      const startTimeParsed = startTime;
-      const endTimeParsed = endTime;
-      const greaterThan = moment(
-        `${dateRange[0].format('YYYY-MM-DD')} ${startTimeParsed.format(
-          'HH:mm',
-        )}`,
-      );
-      const lowerThan = moment(
-        `${dateRange[1].format('YYYY-MM-DD')} ${endTimeParsed.format('HH:mm')}`,
-      );
-      fetchLogs(greaterThan.unix(), lowerThan.unix(), 0);
-    }
-  };
-
   return (
     <Composer>
       <ListViewComponent
         isSearchable={false}
-        callOnScroll={false}
         properties={[]}
-        fetchData={fetchData}
+        fetchData={fetchLogs}
         isLast={pageable.last}
         currentPage={pageable.page}
         data={data}

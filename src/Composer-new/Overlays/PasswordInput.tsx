@@ -133,7 +133,7 @@ const PasswordInputModal: FC<CommonOverlayProps<{
             type="submit"
             disabled={formState.isValid && formState.isDirty ? false : true}
           >
-            Approve
+            Sign
           </Button1>
         </form>
       </BaseModal>

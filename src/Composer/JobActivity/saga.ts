@@ -1,7 +1,7 @@
 import { apiGetJobActivity } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLeading } from 'redux-saga/effects';
 import moment from 'moment';
 import { JobActivity } from './types';
 import {
@@ -18,7 +18,6 @@ function* fetchJobActivitiesSaga({
   try {
     const { jobId, params } = payload || {};
     let currentPage = parseInt(params.page.toString());
-    delete params.page;
     if (currentPage === 0) {
       yield put(fetchJobActivitiesOngoing());
     } else {
@@ -65,7 +64,7 @@ function* fetchJobActivitiesSaga({
 }
 
 export function* JobActivitySaga() {
-  yield takeLatest(
+  yield takeLeading(
     JobActivityAction.FETCH_JOB_ACTIVITY,
     fetchJobActivitiesSaga,
   );
