@@ -40,6 +40,7 @@ export enum FormMode {
 
 export type FormValues = {
   authors: Author['id'][];
+  description: string;
   name: string;
   primaryAuthor: Author;
   properties: PrototypeProperties[];

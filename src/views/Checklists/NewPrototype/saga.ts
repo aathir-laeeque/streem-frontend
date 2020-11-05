@@ -42,6 +42,7 @@ const transformFormData = ({
   });
 
   return {
+    description: data.description,
     name: data.name,
     properties: data.properties.map((property) => ({
       ...pick(property, ['id', 'name', 'value']),
@@ -95,11 +96,7 @@ function* addRevisonPrototypeSaga({
       request,
       'POST',
       apiCreateRevisionPrototype(checklistId),
-      {
-        data: {
-          id: checklistId,
-        },
-      },
+      { data: { id: checklistId } },
     );
 
     if (response) {

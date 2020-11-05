@@ -1,4 +1,11 @@
-import { AddNewItem, Avatar, Button1, Select, TextInput } from '#components';
+import {
+  AddNewItem,
+  Avatar,
+  Button1,
+  Select,
+  Textarea,
+  TextInput,
+} from '#components';
 import { ComposerEntity } from '#Composer-new/types';
 import { useProperties } from '#services/properties';
 import { defaultParams, useUsers } from '#services/users';
@@ -51,6 +58,7 @@ const PrototypeForm: FC<Props> = (props) => {
         ?.filter((author) => !author.primary)
         .map((author) => author.id) ?? ['0']),
     ],
+    description: '',
     name: formData?.name ?? '',
     primaryAuthor: formData?.authors?.filter(
       (author) => author?.primary,
@@ -172,6 +180,17 @@ const PrototypeForm: FC<Props> = (props) => {
       </div>
 
       <div className="right-side">
+        <Textarea
+          optional
+          defaultValue={formValues.description}
+          label="Add Description"
+          name="description"
+          onChange={debounce(({ name, value }) => {
+            setFormValues((val) => ({ ...val, [name]: value }));
+          }, 500)}
+          rows={3}
+        />
+
         <label className="new-form-field-label">
           Select Authors <span className="optional-badge">Optional</span>
         </label>

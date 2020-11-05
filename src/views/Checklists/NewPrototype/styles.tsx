@@ -86,8 +86,14 @@ export const Wrapper = styled.div`
 
     .right-side {
       grid-area: right-side;
+      max-height: 450px;
+      overflow: scroll;
       padding: 24px;
       padding-left: 16px;
+
+      .textarea {
+        margin-bottom: 24px;
+      }
 
       .author {
         align-items: center;
