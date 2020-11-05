@@ -265,7 +265,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
               onChange={(e) =>
                 setstate({ ...state, searchQuery: e.target.value })
               }
-              placeholder="Search Users"
+              placeholder="Search with First Name"
             />
           </div>
           <span onClick={handleUnselectAll}>Unselect All</span>

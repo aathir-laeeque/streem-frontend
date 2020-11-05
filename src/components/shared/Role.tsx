@@ -349,7 +349,7 @@ export const Role: FC<RoleProps> = ({
               )}
             </AccordionSummary>
             <AccordionDetails>
-              {selected
+              {disabled
                 ? permissions.map((permissionGroup) => {
                     let permissionGroupName = '';
                     return (

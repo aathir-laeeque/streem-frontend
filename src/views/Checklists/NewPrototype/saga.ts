@@ -90,7 +90,7 @@ function* addRevisonPrototypeSaga({
   payload,
 }: ReturnType<typeof addRevisionPrototype>) {
   try {
-    const { checklistId } = payload;
+    const { checklistId, code, name } = payload;
 
     const { data: response, errors } = yield call(
       request,
@@ -100,7 +100,20 @@ function* addRevisonPrototypeSaga({
     );
 
     if (response) {
-      navigate(`/checklists/${response.id}`);
+      navigate('/checklists/prototype', {
+        state: {
+          mode: FormMode.EDIT,
+          formData: {
+            description: response.description,
+            name: response.name,
+            properties: response.properties,
+            authors: response.authors,
+            prototypeId: response.id,
+            revisedCode: code,
+            revisedName: name,
+          },
+        },
+      });
     } else {
       console.error('error from the create checklist api  :: ', errors);
     }

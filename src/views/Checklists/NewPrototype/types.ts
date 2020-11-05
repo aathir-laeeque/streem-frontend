@@ -57,6 +57,8 @@ export type FormData = {
   name: string;
   properties: PrototypeProperties[];
   prototypeId: Checklist['id'];
+  revisedCode?: Checklist['code'];
+  revisedName?: Checklist['name'];
 };
 
 export type Props = {

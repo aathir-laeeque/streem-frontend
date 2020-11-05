@@ -43,6 +43,25 @@ export const Wrapper = styled.div`
       padding: 24px;
       padding-right: 16px;
 
+      .input-field {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 24px;
+
+        .label {
+          color: #666666;
+          font-size: 12px;
+          margin: 0;
+          margin-bottom: 8px;
+        }
+
+        .value {
+          color: #000;
+          font-size: 14px;
+          margin: 0;
+        }
+      }
+
       .owner {
         display: flex;
         flex-direction: column;
@@ -54,6 +73,14 @@ export const Wrapper = styled.div`
           font-weight: bold;
           margin: 0;
           margin-bottom: 8px;
+
+          &-light {
+            font-weight: normal;
+            color: #666666;
+            font-size: 12px;
+            margin: 0;
+            margin-bottom: 8px;
+          }
         }
 
         .container {
@@ -79,6 +106,12 @@ export const Wrapper = styled.div`
         }
       }
 
+      .revised {
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid #eeeeee;
+      }
+
       .input {
         margin-top: 16px;
       }
@@ -86,8 +119,8 @@ export const Wrapper = styled.div`
 
     .right-side {
       grid-area: right-side;
-      max-height: 450px;
-      overflow: scroll;
+      /* max-height: 450px; */
+      overflow: auto;
       padding: 24px;
       padding-left: 16px;
 

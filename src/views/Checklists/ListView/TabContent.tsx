@@ -323,6 +323,8 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                             dispatch(
                               addRevisionPrototype(
                                 selectedChecklist?.id.toString(),
+                                selectedChecklist?.code.toString(),
+                                selectedChecklist?.name.toString(),
                               ),
                             );
                         }}

@@ -4,9 +4,9 @@ import styled from 'styled-components';
 export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
   .modal {
     min-width: unset !important;
+    max-width: unset !important;
 
     ${({ comments }) => {
-      console.log('comments in style', comments);
       return comments
         ? `
         .close-icon {

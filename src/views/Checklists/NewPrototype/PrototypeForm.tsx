@@ -125,9 +125,22 @@ const PrototypeForm: FC<Props> = (props) => {
       <h3 className="heading">New Checklist Prototype</h3>
 
       <div className="left-side">
-        <div className="owner">
-          <h5 className="label">Checklist Owner</h5>
-
+        {formData.revisedCode && (
+          <>
+            <div className="input-field">
+              <h5 className="label">Checklist Being Revised</h5>
+              <h4 className="value">{formData.revisedName}</h4>
+            </div>
+            <div className="input-field">
+              <h5 className="label">Checklist ID</h5>
+              <h4 className="value">{formData.revisedCode}</h4>
+            </div>
+          </>
+        )}
+        <div className={formData.revisedCode ? 'owner revised' : 'owner'}>
+          <h5 className={formData.revisedCode ? 'label-light' : 'label'}>
+            {formData.revisedCode ? 'Being Revised by' : 'Checklist Owner'}
+          </h5>
           <div className="container">
             <Avatar user={formValues.primaryAuthor} />
             <div className="owner-details">

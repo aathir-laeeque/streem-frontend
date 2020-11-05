@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { ListViewComponent } from '#components';
-import WarningIcon from '@material-ui/icons/Warning';
+import { ReportProblemOutlined, ErrorOutline } from '@material-ui/icons';
 import { User, UserState, UsersState, ParsedUser } from '#store/users/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
@@ -304,8 +304,16 @@ const TabContent: FC<TabViewProps> = ({
                     {!item.verified && !item.archived && (
                       <span className="list-state">
                         <span className="list-state-span">
-                          <WarningIcon className="icon" />
+                          <ReportProblemOutlined className="icon" />
                           Unregistered
+                        </span>
+                      </span>
+                    )}
+                    {item.blocked && (
+                      <span className="list-state" style={{ color: '#ff6b6b' }}>
+                        <span className="list-state-span">
+                          <ErrorOutline className="icon" />
+                          Account Locked
                         </span>
                       </span>
                     )}

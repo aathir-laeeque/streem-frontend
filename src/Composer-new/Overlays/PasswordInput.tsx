@@ -114,8 +114,8 @@ const PasswordInputModal: FC<CommonOverlayProps<{
         title="Ready for Release"
       >
         <span>
-          By Entering you Account Password and Approving it, you will Release
-          the Checklist from your end.
+          By Entering you Account Password you will sign the Prototype and make
+          it ready for release.
         </span>
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextInput

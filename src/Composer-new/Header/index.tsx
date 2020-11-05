@@ -545,12 +545,7 @@ const ChecklistHeader: FC = () => {
                   )}
               </>
             )}
-            {data?.state === ChecklistStates.PUBLISHED && (
-              <>
-                <ViewReviewersButton />
-                <ViewSigningStateButton />
-              </>
-            )}
+            {data?.state === ChecklistStates.PUBLISHED && null}
             {data?.state === ChecklistStates.READY_FOR_RELEASE && (
               <Button1
                 className="submit"

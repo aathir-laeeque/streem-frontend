@@ -190,7 +190,7 @@ const activityTemplateFormatter = (
               style={{ height: '16px', marginHorizontal: 5 }}
             />
             <Text style={styles.activityHintText}>
-              1.0% v/v Hempton Solution
+              Remove the jacket from the assembly
             </Text>
           </View>
           {activity.data.map((item) => (
@@ -238,7 +238,7 @@ const activityTemplateFormatter = (
               style={{ height: '16px', marginHorizontal: 5 }}
             />
             <Text style={styles.activityHintText}>
-              1.0% v/v Hempton Solution
+              Remove the jacket from the assembly
             </Text>
           </View>
           {activity.data.map((item) => (
