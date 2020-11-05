@@ -1,4 +1,3 @@
-import { useTypedSelector } from '#store';
 import {
   // Assessment,
   // Dashboard,
@@ -9,24 +8,32 @@ import {
 } from '@material-ui/icons';
 import { Link } from '@reach/router';
 import React, { FC } from 'react';
+import checkPermission from '#services/uiPermissions';
 
 import { Menu, Wrapper, NavItem } from './styles';
 import { MenuItem } from './types';
 
 const NavigationMenu: FC = () => {
-  let menuItems: MenuItem[] = [
-    // { name: 'Dashboard', icon: Dashboard, path: '/' },
-    { name: 'Inbox', icon: Inbox, path: '/inbox' },
-    { name: 'Jobs', icon: FeaturedPlayList, path: '/jobs' },
-    { name: 'Checklists', icon: LibraryAddCheck, path: '/checklists' },
-    // { name: 'Reports', icon: Assessment, path: '/reports' },
-    // { name: 'Audit Logs', icon: MenuBook, path: '/audit' },
-  ];
+  // let menuItems: MenuItem[] = [
+  //   { name: 'Dashboard', icon: Dashboard, path: '/' },
+  //   { name: 'Inbox', icon: Inbox, path: '/inbox' },
+  //   { name: 'Jobs', icon: FeaturedPlayList, path: '/jobs' },
+  //   { name: 'Checklists', icon: LibraryAddCheck, path: '/checklists' },
+  //   { name: 'Reports', icon: Assessment, path: '/reports' },
+  //   { name: 'Audit Logs', icon: MenuBook, path: '/audit' },
+  // ];
 
-  const { roles } = useTypedSelector((state) => state.auth);
-  if (roles && roles.length > 0 && roles.includes('OPERATOR')) {
-    menuItems = [{ name: 'Inbox', icon: Inbox, path: '/inbox' }];
-  }
+  const menuItems: MenuItem[] = [];
+  if (checkPermission(['sidebar', 'inbox']))
+    menuItems.push({ name: 'Inbox', icon: Inbox, path: '/inbox' });
+  if (checkPermission(['sidebar', 'jobs']))
+    menuItems.push({ name: 'Jobs', icon: FeaturedPlayList, path: '/jobs' });
+  if (checkPermission(['sidebar', 'checklists']))
+    menuItems.push({
+      name: 'Checklists',
+      icon: LibraryAddCheck,
+      path: '/checklists',
+    });
 
   return (
     <Wrapper>

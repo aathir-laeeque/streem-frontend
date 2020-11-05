@@ -9,7 +9,7 @@ import { navigate } from '@reach/router';
 import React, { FC } from 'react';
 import { capitalize } from 'lodash';
 import { useDispatch } from 'react-redux';
-
+import checkPermission from '#services/uiPermissions';
 import { ImageWrapper } from '../../styles/ImageWrapper';
 import NestedMenuItem from '../shared/NestedMenuItem';
 import { HeaderMenu, MenuText, Wrapper } from './styles';
@@ -18,7 +18,7 @@ const Header: FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const dispatch = useDispatch();
 
-  const { profile, roles } = useTypedSelector((state) => state.auth);
+  const { profile } = useTypedSelector((state) => state.auth);
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
@@ -62,25 +62,22 @@ const Header: FC = () => {
         >
           My Account
         </MenuItem>
-        {roles &&
-          roles.length > 0 &&
-          !roles.includes('OPERATOR') &&
-          !roles.includes('SUPERVISOR') && (
-            <NestedMenuItem
-              left
-              label="System Settings"
-              mainMenuOpen={anchorEl ? true : false}
+        {checkPermission(['header', 'usersAndAccess']) && (
+          <NestedMenuItem
+            left
+            label="System Settings"
+            mainMenuOpen={anchorEl ? true : false}
+          >
+            <MenuItem
+              onClick={() => {
+                navigate('/user-access');
+                handleClose();
+              }}
             >
-              <MenuItem
-                onClick={() => {
-                  navigate('/user-access');
-                  handleClose();
-                }}
-              >
-                Users and Access
-              </MenuItem>
-            </NestedMenuItem>
-          )}
+              Users and Access
+            </MenuItem>
+          </NestedMenuItem>
+        )}
         <MenuItem
           onClick={() => {
             dispatch(logOut());

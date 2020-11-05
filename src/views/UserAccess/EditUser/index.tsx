@@ -15,6 +15,7 @@ import { navigate } from '@reach/router';
 import { Composer } from './styles';
 import { ViewUserProps } from './types';
 import { permissions, roles } from '../AddUser/temp';
+import checkPermission from '#services/uiPermissions';
 import {
   archiveUser,
   cancelInvite,
@@ -200,6 +201,13 @@ const EditUser: FC<ViewUserProps> = () => {
 
   console.log('isValid', formState.isValid);
 
+  const isEditable = checkPermission([
+    'usersAndAccess',
+    'selectedUser',
+    'form',
+    'editable',
+  ]);
+
   return (
     <Composer>
       <HeaderWithBack
@@ -227,6 +235,7 @@ const EditUser: FC<ViewUserProps> = () => {
                 label="First Name"
                 id="firstName"
                 error={errors['firstName']?.message}
+                disabled={!isEditable}
               />
             </div>
             <div className="flex-col left-gutter">
@@ -239,6 +248,7 @@ const EditUser: FC<ViewUserProps> = () => {
                 label="Last Name"
                 id="lastName"
                 error={errors['lastName']?.message}
+                disabled={!isEditable}
               />
             </div>
           </div>
@@ -277,6 +287,7 @@ const EditUser: FC<ViewUserProps> = () => {
                 label="Email ID"
                 id="email"
                 error={errors['email']?.message}
+                disabled={!isEditable}
               />
             </div>
             <div className="flex-col left-gutter">
@@ -287,6 +298,7 @@ const EditUser: FC<ViewUserProps> = () => {
                 label="Department"
                 id="department"
                 required={false}
+                disabled={!isEditable}
               />
             </div>
           </div>
@@ -324,6 +336,7 @@ const EditUser: FC<ViewUserProps> = () => {
           </div>
           <div className="flex-row" style={{ paddingBottom: 0 }}>
             <Role
+              disabled={!isEditable}
               refFun={register}
               permissions={permissions}
               roles={roles}
@@ -354,55 +367,62 @@ const EditUser: FC<ViewUserProps> = () => {
                   value={`${facility.id}`}
                   label={facility.name}
                   onClick={() => console.log('cheked')}
+                  disabled={!isEditable}
                 />
               </div>
             ))}
           </div>
         </div>
         <div className="actions">
-          <Button
-            className="primary-button"
-            type="submit"
-            disabled={
-              rolesValues &&
-              rolesValues.some((r) => r !== false) &&
-              formState.isValid &&
-              formState.isDirty
-                ? false
-                : true
-            }
-          >
-            Save Changes
-          </Button>
-          {!selectedUser.verified && !selectedUser.archived ? (
+          {isEditable && (
             <>
               <Button
-                className="button"
-                onClick={() => dispatch(resendInvite({ id: selectedUser.id }))}
+                className="primary-button"
+                type="submit"
+                disabled={
+                  rolesValues &&
+                  rolesValues.some((r) => r !== false) &&
+                  formState.isValid &&
+                  formState.isDirty
+                    ? false
+                    : true
+                }
               >
-                Resend Invite
+                Save Changes
               </Button>
-              <Button
-                className="button cancel"
-                onClick={() => onCancelInvite(selectedUser.id)}
-              >
-                Cancel Invite
-              </Button>
+              {!selectedUser.verified && !selectedUser.archived ? (
+                <>
+                  <Button
+                    className="button"
+                    onClick={() =>
+                      dispatch(resendInvite({ id: selectedUser.id }))
+                    }
+                  >
+                    Resend Invite
+                  </Button>
+                  <Button
+                    className="button cancel"
+                    onClick={() => onCancelInvite(selectedUser.id)}
+                  >
+                    Cancel Invite
+                  </Button>
+                </>
+              ) : selectedUser.verified && !selectedUser.archived ? (
+                <Button
+                  className="button"
+                  onClick={() => onArchiveUser(selectedUser)}
+                >
+                  Archive
+                </Button>
+              ) : (
+                <Button
+                  className="button"
+                  onClick={() => onUnArchiveUser(selectedUser)}
+                >
+                  Unarchive
+                </Button>
+              )}
             </>
-          ) : selectedUser.verified && !selectedUser.archived ? (
-            <Button
-              className="button"
-              onClick={() => onArchiveUser(selectedUser)}
-            >
-              Archive
-            </Button>
-          ) : (
-            <Button
-              className="button"
-              onClick={() => onUnArchiveUser(selectedUser)}
-            >
-              Unarchive
-            </Button>
           )}
         </div>
       </form>

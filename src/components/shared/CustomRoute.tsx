@@ -1,6 +1,7 @@
 import { Redirect, RouteComponentProps } from '@reach/router';
 import { useTypedSelector } from '#store';
 import { useDispatch } from 'react-redux';
+import checkPermission from '#services/uiPermissions';
 import { refreshTokenPoll } from '#views/Auth/actions';
 import React, { FC } from 'react';
 
@@ -41,8 +42,11 @@ export const CustomRoute: FC<Props> = ({
 
   if (!isProtected) {
     switch (currentState) {
-      case SessionStates.ACTIVE:
-        return <Redirect from="" to="/inbox" noThrow />;
+      case SessionStates.ACTIVE: {
+        if (checkPermission(['sidebar', 'inbox']))
+          return <Redirect from="" to="/inbox" noThrow />;
+        return <Redirect from="" to="/user-access" noThrow />;
+      }
       default:
         return <Component {...rest} />;
     }

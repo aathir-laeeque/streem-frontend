@@ -7,6 +7,7 @@ import { request } from '#utils/request';
 import { Job } from '#views/Jobs/types';
 import { Menu, MenuItem } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
+import checkPermission from '#services/uiPermissions';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation } from '@reach/router';
@@ -130,32 +131,36 @@ const JobHeaderButtons: FC = () => {
             Complete Job
           </Button>
 
-          <div onClick={handleClick} className="drop-menu">
-            <ArrowDropDown className="icon" />
-          </div>
+          {checkPermission(['inbox', 'completeWithException']) && (
+            <>
+              <div onClick={handleClick} className="drop-menu">
+                <ArrowDropDown className="icon" />
+              </div>
 
-          <Menu
-            id="complete-job"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-            style={{ marginTop: 40 }}
-          >
-            <MenuItem
-              onClick={() => {
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.COMPLETE_JOB_WITH_EXCEPTION,
-                    props: { jobId, code, name },
-                  }),
-                );
-                handleClose();
-              }}
-            >
-              Complet Job with exception
-            </MenuItem>
-          </Menu>
+              <Menu
+                id="complete-job"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                style={{ marginTop: 40 }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.COMPLETE_JOB_WITH_EXCEPTION,
+                        props: { jobId, code, name },
+                      }),
+                    );
+                    handleClose();
+                  }}
+                >
+                  Complet Job with exception
+                </MenuItem>
+              </Menu>
+            </>
+          )}
         </div>
       ) : null}
 

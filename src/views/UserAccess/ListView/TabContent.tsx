@@ -13,7 +13,7 @@ import {
 } from '#store/users/actions';
 import { useTypedSelector } from '#store';
 import { navigate as navigateTo } from '@reach/router';
-
+import checkPermission from '#services/uiPermissions';
 import {
   resendInvite,
   archiveUser,
@@ -198,6 +198,76 @@ const TabContent: FC<TabViewProps> = ({
         })
       : [];
 
+  const afterColumns = checkPermission(['usersAndAccess', 'listViewActions'])
+    ? [
+        {
+          header: 'ACTIONS',
+          template: function renderComp(item: User) {
+            return (
+              <div className="list-card-columns" key={`actions_${item.id}`}>
+                {item.blocked && (
+                  <>
+                    <span
+                      className="user-actions"
+                      onClick={() => onUnlockUser(item)}
+                    >
+                      Unlock
+                    </span>
+                    <span
+                      className="user-actions"
+                      style={{ color: '#666666', padding: '0 8px' }}
+                    >
+                      •
+                    </span>
+                  </>
+                )}
+                {selectedState === UserState.ACTIVE ? (
+                  (item.verified && (
+                    <span
+                      className="user-actions"
+                      onClick={() => onArchiveUser(item)}
+                    >
+                      Archive
+                    </span>
+                  )) || (
+                    <>
+                      <span
+                        className="user-actions"
+                        style={{ color: '#1d84ff' }}
+                        onClick={() => onResendInvite(item.id)}
+                      >
+                        Resend Invite
+                      </span>
+                      <span
+                        className="user-actions"
+                        style={{ color: '#666666', padding: '0 8px' }}
+                      >
+                        •
+                      </span>
+                      <span
+                        className="user-actions"
+                        style={{ color: '#ff6b6b' }}
+                        onClick={() => onCancelInvite(item.id)}
+                      >
+                        Cancel Invite
+                      </span>
+                    </>
+                  )
+                ) : (
+                  <span
+                    className="user-actions"
+                    onClick={() => onUnArchiveUser(item)}
+                  >
+                    Unarchive
+                  </span>
+                )}
+              </div>
+            );
+          },
+        },
+      ]
+    : undefined;
+
   return (
     <Composer>
       <ListViewComponent
@@ -208,7 +278,11 @@ const TabContent: FC<TabViewProps> = ({
         data={parsedUsers}
         onPrimaryClick={() => navigate('user-access/add-user')}
         primaryButtonText={
-          selectedState === UserState.ARCHIVED ? undefined : 'Add a New User'
+          checkPermission(['usersAndAccess', 'addNewUser'])
+            ? selectedState === UserState.ARCHIVED
+              ? undefined
+              : 'Add a New User'
+            : undefined
         }
         beforeColumns={[
           {
@@ -241,73 +315,7 @@ const TabContent: FC<TabViewProps> = ({
             },
           },
         ]}
-        afterColumns={[
-          {
-            header: 'ACTIONS',
-            template: function renderComp(item: User) {
-              return (
-                <div className="list-card-columns" key={`actions_${item.id}`}>
-                  {item.blocked && (
-                    <>
-                      <span
-                        className="user-actions"
-                        onClick={() => onUnlockUser(item)}
-                      >
-                        Unlock
-                      </span>
-                      <span
-                        className="user-actions"
-                        style={{ color: '#666666', padding: '0 8px' }}
-                      >
-                        •
-                      </span>
-                    </>
-                  )}
-                  {selectedState === UserState.ACTIVE ? (
-                    (item.verified && (
-                      <span
-                        className="user-actions"
-                        onClick={() => onArchiveUser(item)}
-                      >
-                        Archive
-                      </span>
-                    )) || (
-                      <>
-                        <span
-                          className="user-actions"
-                          style={{ color: '#1d84ff' }}
-                          onClick={() => onResendInvite(item.id)}
-                        >
-                          Resend Invite
-                        </span>
-                        <span
-                          className="user-actions"
-                          style={{ color: '#666666', padding: '0 8px' }}
-                        >
-                          •
-                        </span>
-                        <span
-                          className="user-actions"
-                          style={{ color: '#ff6b6b' }}
-                          onClick={() => onCancelInvite(item.id)}
-                        >
-                          Cancel Invite
-                        </span>
-                      </>
-                    )
-                  ) : (
-                    <span
-                      className="user-actions"
-                      onClick={() => onUnArchiveUser(item)}
-                    >
-                      Unarchive
-                    </span>
-                  )}
-                </div>
-              );
-            },
-          },
-        ]}
+        afterColumns={afterColumns}
       />
     </Composer>
   );
