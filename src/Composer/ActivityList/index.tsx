@@ -149,10 +149,12 @@ const ActivityList: FC<ActivityListProps> = ({
                   return null;
 
                 case MandatoryActivity.MULTISELECT:
+                case MandatoryActivity.SINGLE_SELECT:
                   return (
                     <MultiSelectActivity
                       activity={activity}
                       isCorrectingError={isCorrectingError}
+                      isMulti={activity.type === MandatoryActivity.MULTISELECT}
                     />
                   );
 

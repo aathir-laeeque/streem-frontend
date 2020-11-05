@@ -11,7 +11,7 @@ import {
   TaskListState,
   TaskListAction,
 } from './reducer.types';
-import { Task } from '../checklist.types';
+import { Task, TaskExecutionState } from '../checklist.types';
 
 export const initialState: TaskListState = {
   activeTaskId: undefined,
@@ -68,7 +68,9 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
       return {
         ...state,
         tasksById,
-        ...(taskId === state.taskIdWithStop
+        ...(taskId === state.taskIdWithStop &&
+        (taskExecution.state === TaskExecutionState.COMPLETED ||
+          taskExecution.state === TaskExecutionState.COMPLETED_WITH_EXCEPTION)
           ? reEvaluateTaskWithStop({
               tasksById,
               tasksOrderInStage: state.tasksOrderInStage,

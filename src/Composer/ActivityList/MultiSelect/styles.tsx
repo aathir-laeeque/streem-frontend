@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   .activity-header {
@@ -58,17 +58,4 @@ export const Wrapper = styled.div`
       }
     }
   }
-
-  ${({ isJobsView }) =>
-    isJobsView
-      ? css`
-          .activity-header {
-            display: none;
-          }
-
-          .list-container {
-            display: none;
-          }
-        `
-      : null}
 `;

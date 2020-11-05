@@ -46,7 +46,7 @@ const generateNewActivity = ({
         type,
         data: [{ id: uuidv4(), name: '' }],
         label: '',
-        mandatory: true,
+        mandatory: false,
       };
 
     case MandatoryActivity.YES_NO:
@@ -58,7 +58,7 @@ const generateNewActivity = ({
           { id: uuidv4(), name: '', type: 'no' },
         ],
         label: '',
-        mandatory: true,
+        mandatory: false,
       };
 
     case MandatoryActivity.MULTISELECT:
@@ -68,7 +68,7 @@ const generateNewActivity = ({
         type,
         data: [{ id: uuidv4(), name: '' }],
         label: '',
-        mandatory: true,
+        mandatory: false,
       };
 
     case MandatoryActivity.PARAMETER:
@@ -76,14 +76,14 @@ const generateNewActivity = ({
         orderTree,
         type,
         data: {
-          uom: 'Bar',
-          type: 'quantity',
+          uom: '',
+          type: '',
           value: '',
-          operator: PARAMETER_OPERATORS[0].value,
-          parameter: 'Pressure',
+          operator: '',
+          parameter: '',
         },
         label: '',
-        mandatory: true,
+        mandatory: false,
       };
 
     case MandatoryActivity.MEDIA:
@@ -94,7 +94,7 @@ const generateNewActivity = ({
         type,
         data: {},
         label: '',
-        mandatory: true,
+        mandatory: false,
       };
 
     case NonMandatoryActivity.INSTRUCTION:

@@ -32,7 +32,11 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         }
         options={[]}
         onChange={noop}
-        placeHolder="User can select one or more options"
+        placeHolder={
+          isMultiSelect
+            ? 'User can select one or more options'
+            : 'User can select one option here'
+        }
       />
 
       <ul className="options-list">

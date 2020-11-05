@@ -127,7 +127,9 @@ const JobHeaderButtons: FC = () => {
 
       {jobState === JobState.IN_PROGRESS ? (
         <div className="dropdown-button">
-          <Button onClick={() => dispatch(completeJob({ jobId }))}>
+          <Button
+            onClick={() => dispatch(completeJob({ jobId, details: { code } }))}
+          >
             Complete Job
           </Button>
 

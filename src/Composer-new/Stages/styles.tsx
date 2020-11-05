@@ -25,7 +25,7 @@ const StageCardWrapper = styled.div.attrs({
     height: 100%;
     position: absolute;
     width: 100%;
-    /* z-index: 99; */
+    z-index: 99;
   }
 
   .stage {

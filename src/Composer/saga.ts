@@ -105,22 +105,16 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
     if (data) {
       if (withException) {
         yield put(closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION));
-        navigate('/jobs');
-        yield put(
-          showNotification({
-            type: NotificationType.SUCCESS,
-            msg: `JobId ${details?.code} was successfully completed with exception`,
-          }),
-        );
-      } else {
-        navigate('/jobs');
-        yield put(
-          showNotification({
-            type: NotificationType.SUCCESS,
-            msg: `JobId ${details?.code} was successfully completed`,
-          }),
-        );
       }
+      navigate('/jobs');
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `JobId ${details?.code} was successfully completed ${
+            withException ? 'with exception' : ''
+          }`,
+        }),
+      );
     } else {
       if (!withException) {
         const { tasksErrors, activitiesErrors, signOffErrors } = groupJobErrors(

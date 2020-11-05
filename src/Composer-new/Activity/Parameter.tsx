@@ -87,7 +87,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
               activity.errors.find((error) => error.code === 'E416')?.message
             }
             label="Value"
-            name="uperValue"
+            name="upperValue"
             onChange={debounce(({ name, value }) => {
               dispatch(
                 updateActivity({

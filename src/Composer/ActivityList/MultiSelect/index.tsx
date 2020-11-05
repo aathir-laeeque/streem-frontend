@@ -1,58 +1,64 @@
-import { AddNewItem } from '#components';
-import { Entity } from '#Composer/composer.types';
-import { useTypedSelector } from '#store';
-import { Close } from '@material-ui/icons';
+import { get, isArray } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import Select from 'react-select';
-import { get } from 'lodash';
 
+import { executeActivity, fixActivity } from '../actions';
 import { ActivityProps, Selections } from '../types';
 import { customSelectStyles } from './commonStyles';
 import { Wrapper } from './styles';
-import { executeActivity, fixActivity } from '../actions';
 
-const MultiSelectActivity: FC<ActivityProps> = ({
+const MultiSelectActivity: FC<ActivityProps & { isMulti: boolean }> = ({
   activity,
   isCorrectingError,
+  isMulti,
 }) => {
-  const { entity } = useTypedSelector((state) => state.composer);
-
   const dispatch = useDispatch();
-
-  const isJobsView = entity === Entity.JOB;
 
   const options = activity.data.map((el) => ({ label: el.name, value: el.id }));
 
   return (
-    <Wrapper isJobsView={isJobsView}>
+    <Wrapper>
       <div className="activity-header">Creating a Multi Choice</div>
 
       <Select
-        isMulti
+        isMulti={isMulti}
         className="multi-select"
-        isDisabled={!isJobsView}
         options={options}
         value={options.filter(
           (el) =>
             get(activity?.response?.choices, el.value) === Selections.SELECTED,
         )}
         placeholder={
-          isJobsView
-            ? 'Select one more options'
-            : 'User can select one or more options'
+          isMulti
+            ? 'Select one or more options'
+            : 'You can select one option here'
         }
         styles={customSelectStyles}
         onChange={(options) => {
-          const newData = {
-            ...activity,
-            data: activity.data.map((el) => ({
-              ...el,
-              ...(options.findIndex((e) => e.value === el.id) > -1
-                ? { state: Selections.SELECTED }
-                : { state: Selections.NOT_SELECTED }),
-            })),
-          };
+          let newData;
+
+          if (isArray(options)) {
+            newData = {
+              ...activity,
+              data: activity.data.map((el) => ({
+                ...el,
+                ...(options.findIndex((e) => e.value === el.id) > -1
+                  ? { state: Selections.SELECTED }
+                  : { state: Selections.NOT_SELECTED }),
+              })),
+            };
+          } else {
+            newData = {
+              ...activity,
+              data: activity.data.map((el) => ({
+                ...el,
+                ...(options.value === el.id
+                  ? { state: Selections.SELECTED }
+                  : { state: Selections.NOT_SELECTED }),
+              })),
+            };
+          }
 
           if (isCorrectingError) {
             dispatch(fixActivity(newData));
@@ -61,40 +67,6 @@ const MultiSelectActivity: FC<ActivityProps> = ({
           }
         }}
       />
-
-      <ul className="list-container">
-        {activity.data.map((el, index) => (
-          <li key={index} className="list-item">
-            <div
-              className="item-content"
-              // onClick={() => {
-              //   if (!isJobsView) {
-              //     console.log('dispatch execute activity action');
-              //   }
-              // }}
-            >
-              <div className="dummy-checkbox" />
-              <input
-                type="text"
-                value={el.name}
-                onChange={(e) =>
-                  console.log(
-                    'e.target.value from multiselect list item :: ',
-                    e.target.value,
-                  )
-                }
-                disabled={!isJobsView}
-              />
-            </div>
-
-            <Close className="icon" />
-          </li>
-        ))}
-
-        {isJobsView ? (
-          <AddNewItem onClick={() => console.log('add new item')} />
-        ) : null}
-      </ul>
     </Wrapper>
   );
 };

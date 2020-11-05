@@ -7,10 +7,6 @@ import styled from 'styled-components';
 import { DisabledStates, AllChecklistStates } from '../checklist.types';
 
 const Wrapper = styled.div`
-  #modal-container {
-    z-index: 999999999 !important;
-  }
-
   .modal {
     min-width: 420px !important;
     width: 420px !important;

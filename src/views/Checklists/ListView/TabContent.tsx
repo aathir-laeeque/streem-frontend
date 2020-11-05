@@ -211,7 +211,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             navigate('/checklists/prototype', { state: { mode: FormMode.ADD } })
           }
         >
-          Create Checklist
+          Start a Prototype
         </Button1>
       </div>
       <ListViewComponent

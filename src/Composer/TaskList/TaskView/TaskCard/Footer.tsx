@@ -186,12 +186,14 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
     if (isTaskDelayed) {
       let text;
       if (
-        moment().diff(moment(task.taskExecution.startedAt)) > task.maxPeriod
+        moment().diff(moment.unix(task.taskExecution.startedAt), 'seconds') >
+        task.maxPeriod
       ) {
         text = 'after the set time';
       } else if (
         task.timerOperator === 'NOT_LESS_THAN' &&
-        moment().diff(moment(task.taskExecution.startedAt)) < task.minPeriod
+        moment().diff(moment.unix(task.taskExecution.startedAt), 'seconds') <
+          task.minPeriod
       ) {
         text = 'before the set time';
       }
@@ -288,7 +290,8 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
             onClick={() => {
               if (!isJobBlocked) {
                 const timeElapsed = moment().diff(
-                  moment(task.taskExecution.startedAt),
+                  moment.unix(task.taskExecution.startedAt),
+                  'seconds',
                 );
 
                 if (

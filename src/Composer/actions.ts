@@ -81,7 +81,7 @@ type CompleteJobArgs = {
   values?: ExceptionValues;
   details?: {
     code: Job['code'];
-    name: Job['checklist']['name'];
+    name?: Job['checklist']['name'];
   };
 };
 
