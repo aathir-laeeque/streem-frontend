@@ -20,8 +20,14 @@ export const fetchMoreOngoing = () =>
 export const fetchSuccess = ({
   data: { list, pageable },
   type,
+  initialCall,
 }: fetchSuccessArgs) =>
-  actionSpreader(UsersAction.FETCH_USERS_SUCCESS, { list, pageable, type });
+  actionSpreader(UsersAction.FETCH_USERS_SUCCESS, {
+    list,
+    pageable,
+    type,
+    initialCall,
+  });
 
 export const fetchError = (error: unknown) =>
   actionSpreader(UsersAction.FETCH_USERS_ERROR, { error });

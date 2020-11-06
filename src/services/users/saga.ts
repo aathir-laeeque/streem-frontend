@@ -9,7 +9,7 @@ import {
   fetchOngoing,
   fetchSuccess,
 } from './actions';
-import { User, UsersAction } from './types';
+import { OtherUserState, User, UsersAction } from './types';
 
 function* fetchSaga({ payload }: ReturnType<typeof fetch>) {
   try {
@@ -24,7 +24,7 @@ function* fetchSaga({ payload }: ReturnType<typeof fetch>) {
     const { data, pageable, errors } = yield call(
       request,
       'GET',
-      apiGetUsers(),
+      apiGetUsers(type.toUpperCase() in OtherUserState ? type : ''),
       { params },
     );
 
@@ -36,6 +36,7 @@ function* fetchSaga({ payload }: ReturnType<typeof fetch>) {
             pageable,
           },
           type,
+          initialCall,
         }),
       );
     } else {

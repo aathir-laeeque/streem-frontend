@@ -53,7 +53,22 @@ const useUsers = ({
     }
   };
 
-  return { loadMore, users, usersById };
+  const loadAgain = ({ newParams = params }) => {
+    dispatch(
+      fetch({
+        initialCall: true,
+        type: userState,
+        params: {
+          filters: newParams.filters,
+          page: 0,
+          size: newParams.size,
+          sort: newParams.sort,
+        },
+      }),
+    );
+  };
+
+  return { loadMore, users, usersById, loadAgain };
 };
 
 export { defaultParams, useUsers };

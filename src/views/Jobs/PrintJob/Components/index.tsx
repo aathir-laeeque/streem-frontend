@@ -178,7 +178,7 @@ export const Assigness = ({
       ]}
     >
       <View style={styles.inputLabelView}>
-        <Text style={styles.inputLabel}>Asignees : </Text>
+        <Text style={styles.inputLabel}>Assignees : </Text>
       </View>
       <View style={styles.assignView}>
         <View style={[styles.assigneRow, { marginTop: 0 }]}>

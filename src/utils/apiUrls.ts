@@ -41,7 +41,8 @@ export const apiGetProperties = () => `${baseUrl}/properties`;
 
 export const apiGetFacilities = () => `${baseUrl}/facilities`;
 
-export const apiGetUsers = () => `${baseUrl}/users`;
+export const apiGetUsers = (type = '') =>
+  `${baseUrl}/users${type ? `/${type}` : ''}`;
 
 export const apiGetUser = (id: User['id']) => `${baseUrl}/users/${id}`;
 

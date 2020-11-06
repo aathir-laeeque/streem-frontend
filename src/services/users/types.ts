@@ -20,6 +20,12 @@ export enum UserState {
   ARCHIVED = 'archived',
 }
 
+export enum OtherUserState {
+  TASKS = 'tasks',
+  REVIEWERS = 'reviewers',
+  AUTHORS = 'authors',
+}
+
 export interface User {
   id: string;
   employeeId: string;
@@ -28,6 +34,7 @@ export interface User {
   email: string;
   username: string;
   verified: boolean;
+  blocked: boolean;
   archived: boolean;
   active: boolean;
   department?: string;
@@ -54,6 +61,9 @@ export type UsersState = {
   readonly selectedUserId?: User['id'];
   readonly [UserState.ACTIVE]: UserGroup;
   readonly [UserState.ARCHIVED]: UserGroup;
+  readonly [OtherUserState.TASKS]: UserGroup;
+  readonly [OtherUserState.REVIEWERS]: UserGroup;
+  readonly [OtherUserState.AUTHORS]: UserGroup;
 };
 
 export enum UsersAction {
@@ -77,12 +87,13 @@ export type UsersActionType = ReturnType<
 >;
 
 export type useUsersArgs = {
-  userState?: UserState;
+  userState?: UserState | OtherUserState;
   params?: fetchUsersParams;
 };
 
 export type useUsersReturnType = {
   loadMore: () => void;
+  loadAgain: ({ newParams }: { newParams: fetchUsersParams }) => void;
   users: User[];
   usersById: UsersById;
 };
@@ -97,7 +108,7 @@ export type fetchUsersParams = {
 export type fetchArgs = {
   initialCall: boolean;
   params: fetchUsersParams;
-  type: UserState;
+  type: UserState | OtherUserState;
 };
 
 export type fetchSuccessArgs = {
@@ -105,5 +116,6 @@ export type fetchSuccessArgs = {
     list: User[];
     pageable: Pageable;
   };
-  type: UserState;
+  type: UserState | OtherUserState;
+  initialCall: boolean;
 };

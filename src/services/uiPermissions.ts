@@ -46,6 +46,7 @@ const uiPermissions: Record<string, any> = {
     ],
     addNewUser: [roles.ACCOUNT_OWNER, roles.SYSTEM_ADMIN],
     listViewActions: [roles.ACCOUNT_OWNER, roles.SYSTEM_ADMIN],
+    editAccountOwner: [roles.ACCOUNT_OWNER],
     selectedUser: {
       form: {
         editable: [roles.ACCOUNT_OWNER, roles.SYSTEM_ADMIN],
@@ -76,8 +77,6 @@ const checkPermission = (keys: string[]) => {
   const {
     auth: { roles: authRoles },
   } = store.getState();
-  // const authRoles = [];
-  // authRoles[0] = roles.FACILITY_ADMIN;
   const check = get(uiPermissions, keys, false);
   if (check && authRoles && authRoles[0]) {
     return check.includes(authRoles[0]);

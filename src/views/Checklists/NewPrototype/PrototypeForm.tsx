@@ -8,7 +8,7 @@ import {
 } from '#components';
 import { ComposerEntity } from '#Composer-new/types';
 import { useProperties } from '#services/properties';
-import { defaultParams, useUsers } from '#services/users';
+import { defaultParams, useUsers, OtherUserState } from '#services/users';
 import { useTypedSelector } from '#store/helpers';
 import { getFullName } from '#utils/stringUtils';
 import { Close } from '@material-ui/icons';
@@ -47,6 +47,7 @@ const PrototypeForm: FC<Props> = (props) => {
   const { listById } = useProperties(ComposerEntity.CHECKLIST);
 
   const { users, usersById } = useUsers({
+    userState: OtherUserState.AUTHORS,
     params: { ...defaultParams, size: 100 },
   });
 

@@ -8,7 +8,7 @@ import {
 } from '#components';
 import { fetchFacilities } from '#store/facilities/actions';
 import { useForm } from 'react-hook-form';
-import { capitalize, debounce } from 'lodash';
+import { capitalize, debounce, isArray } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '#store';
 import { navigate } from '@reach/router';
@@ -76,15 +76,6 @@ const EditUser: FC<ViewUserProps> = () => {
 
   useEffect(() => {
     if (selectedUser) {
-      console.log(
-        'selectedUser?.roles?.map((r, i) => [`roles[${i}]`, r.id])',
-        Object.fromEntries(
-          roles?.map((r, i) => [
-            `roles[${i}]`,
-            selectedUser?.roles?.some((sr) => sr.id == r.id) ? r.id : false,
-          ]) || [],
-        ),
-      );
       reset({
         firstName: selectedUser?.firstName,
         lastName: selectedUser?.lastName,
@@ -201,12 +192,21 @@ const EditUser: FC<ViewUserProps> = () => {
 
   console.log('isValid', formState.isValid);
 
+  const isAccountOwner =
+    selectedUser.roles &&
+    selectedUser.roles[0] &&
+    selectedUser.roles[0]['name'] === 'ACCOUNT_OWNER';
+
   const isEditable = checkPermission([
     'usersAndAccess',
     'selectedUser',
     'form',
     'editable',
-  ]);
+  ])
+    ? isAccountOwner
+      ? checkPermission(['usersAndAccess', 'editAccountOwner'])
+      : true
+    : false;
 
   return (
     <Composer>
@@ -336,7 +336,7 @@ const EditUser: FC<ViewUserProps> = () => {
           </div>
           <div className="flex-row" style={{ paddingBottom: 0 }}>
             <Role
-              disabled={!isEditable}
+              disabled={!isEditable || isAccountOwner}
               refFun={register}
               permissions={permissions}
               roles={roles}
@@ -380,10 +380,13 @@ const EditUser: FC<ViewUserProps> = () => {
                 className="primary-button"
                 type="submit"
                 disabled={
-                  rolesValues &&
-                  rolesValues.some((r) => r !== false) &&
-                  formState.isValid &&
-                  formState.isDirty
+                  isAccountOwner
+                    ? !formState.isValid && !formState.isDirty
+                    : rolesValues &&
+                      isArray(rolesValues) &&
+                      rolesValues.some((r) => r !== false) &&
+                      formState.isValid &&
+                      formState.isDirty
                     ? false
                     : true
                 }

@@ -234,7 +234,8 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
             This Task was digitally completed via CLEEN {'\n'}
-            by {modifiedBy.firstName}, ID: {modifiedBy.employeeId} on{' '}
+            by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
+            {modifiedBy.employeeId} on{' '}
             {moment.unix(modifiedAt).format('MMM DD, h:mm A')}
           </Text>
         </View>

@@ -1,6 +1,7 @@
 import { Reducer } from 'redux';
 
 import {
+  OtherUserState,
   UserGroup,
   UsersAction,
   UsersActionType,
@@ -30,6 +31,9 @@ const initalState: UsersState = {
   selectedState: UserState.ACTIVE,
   [UserState.ACTIVE]: initialUserGroup,
   [UserState.ARCHIVED]: initialUserGroup,
+  [OtherUserState.TASKS]: initialUserGroup,
+  [OtherUserState.REVIEWERS]: initialUserGroup,
+  [OtherUserState.AUTHORS]: initialUserGroup,
 };
 
 const reducer: Reducer<UsersState, UsersActionType> = (
@@ -51,14 +55,23 @@ const reducer: Reducer<UsersState, UsersActionType> = (
         [action.payload.type]: {
           ...state[action.payload.type],
           pageable: action.payload.pageable,
-          users: [...state[action.payload.type].users, ...action.payload.list],
-          usersById: {
-            ...state[action.payload.type].usersById,
-            ...action.payload.list.reduce<UsersById>((acc, user) => {
-              acc[user.id] = user;
-              return acc;
-            }, {}),
-          },
+          users: !action.payload.initialCall
+            ? [...state[action.payload.type].users, ...action.payload.list]
+            : action.payload.list,
+          usersById: !action.payload.initialCall
+            ? {
+                ...state[action.payload.type].usersById,
+                ...action.payload.list.reduce<UsersById>((acc, user) => {
+                  acc[user.id] = user;
+                  return acc;
+                }, {}),
+              }
+            : {
+                ...action.payload.list.reduce<UsersById>((acc, user) => {
+                  acc[user.id] = user;
+                  return acc;
+                }, {}),
+              },
         },
       };
 

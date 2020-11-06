@@ -183,7 +183,7 @@ const activityTemplateFormatter = (
             wrap={false}
           >
             <Text style={styles.activityHintText}>
-              Check all the iteams. E.g. -
+              Check all the items. E.g. -
             </Text>
             <Image
               src={checkmark}
@@ -231,7 +231,7 @@ const activityTemplateFormatter = (
             wrap={false}
           >
             <Text style={styles.activityHintText}>
-              You can select multiple iteams . E.g. -
+              You can select multiple items . E.g. -
             </Text>
             <Image
               src={checkmark}
@@ -309,7 +309,7 @@ const activityTemplateFormatter = (
             ) : (
               <View style={styles.checkBox} />
             )}
-            <Text style={styles.text12}>Yes</Text>
+            <Text style={styles.text12}>Positive</Text>
             <Text style={[styles.text12, { marginHorizontal: 20 }]}>or</Text>
             {activity.response?.choices &&
             activity.response?.choices[activity.data[1].id] === 'SELECTED' ? (
@@ -320,7 +320,7 @@ const activityTemplateFormatter = (
             ) : (
               <View style={styles.checkBox} />
             )}
-            <Text style={styles.text12}>No</Text>
+            <Text style={styles.text12}>Negative</Text>
           </View>
         </View>
       );
@@ -368,7 +368,8 @@ const MemoActivityList: FC<{ activities: Activity[] }> = ({ activities }) => {
                 <View style={styles.taskFooter} wrap={false}>
                   <Text style={styles.text12}>
                     This Activity was last updated digitally via CLEEN {'\n'}
-                    by {activity.response.audit.modifiedBy.firstName}, ID:{' '}
+                    by {activity.response.audit.modifiedBy.firstName}{' '}
+                    {activity.response.audit.modifiedBy.lastName}, ID:{' '}
                     {activity.response.audit.modifiedBy.employeeId} on{' '}
                     {moment
                       .unix(activity.response.audit.modifiedAt)

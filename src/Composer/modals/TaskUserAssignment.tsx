@@ -1,29 +1,27 @@
 import { BaseModal, Checkbox } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Task } from '#Composer/checklist.types';
+import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
 import { useTypedSelector } from '#store';
-import { fetchUsers } from '#store/users/actions';
-import { User } from '#store/users/types';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Job } from '#views/Jobs/types';
 import { Search } from '@material-ui/icons';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
+import {
+  assignUsersToJob,
+  assignUserToJob,
+  fetchAssignedUsersForJob,
+  revertUsersForJob,
+  unAssignUserFromJob,
+} from '../actions';
 import {
   assignUsersToTask,
   assignUserToTask,
   revertUsersForTask,
   unAssignUserFromTask,
 } from '../TaskList/actions';
-import {
-  fetchAssignedUsersForJob,
-  assignUsersToJob,
-  assignUserToJob,
-  unAssignUserFromJob,
-  revertUsersForJob,
-} from '../actions';
 import Wrapper from './TaskUserAssignment.styles';
 
 type initialState = {
@@ -50,10 +48,6 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
   props: { taskId, jobId, forAll = false },
 }) => {
   const {
-    list,
-    pageable: { last, page },
-  } = useTypedSelector((state) => state.users.active);
-  const {
     tasks: { tasksById },
     entityId,
   } = useTypedSelector((state) => state.composer);
@@ -67,6 +61,11 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
     preAssignedUsers,
   } = state;
   const prevSearch = usePrevious(searchQuery);
+
+  const { users: list, loadMore, loadAgain } = useUsers({
+    userState: OtherUserState.TASKS,
+    params: { ...defaultParams },
+  });
 
   let assignees: User[] = [];
   if (taskId) {
@@ -82,19 +81,6 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
   }
 
   const prevAssignees = usePrevious(assignees);
-
-  const fetchData = (page: number, size: number) => {
-    const filters = JSON.stringify({
-      op: 'AND',
-      fields: [
-        { field: 'firstName', op: 'LIKE', values: [searchQuery] },
-        { field: 'archived', op: 'EQ', values: [false] },
-        // { field: 'lastName', op: 'LIKE', values: [searchQuery] },
-        // { field: 'employeeId', op: 'LIKE', values: [searchQuery] },
-      ],
-    });
-    dispatch(fetchUsers({ page, size, filters, sort: 'id' }, 'active'));
-  };
 
   if (jobId) {
     useEffect(() => {
@@ -116,15 +102,23 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
 
   useEffect(() => {
     if (prevSearch !== searchQuery) {
-      fetchData(0, 10);
+      loadAgain({
+        newParams: {
+          ...defaultParams,
+          filters: JSON.stringify({
+            op: 'AND',
+            fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
+          }),
+        },
+      });
     }
   }, [searchQuery]);
 
   const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
     e.stopPropagation();
     const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 && !last)
-      fetchData(page + 1, 10);
+    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7)
+      loadMore();
   };
 
   const onCheckChanged = (

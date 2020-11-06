@@ -332,18 +332,21 @@ export const Role: FC<RoleProps> = ({
                     )}
                   </div>
                   <div className="check-group">
-                    {roles.map((role, i) => (
-                      <div key={`${role.id}`} className="check-group">
-                        <Checkbox
-                          key={`${role.id}`}
-                          name={`roles[${i}]`}
-                          value={role.id}
-                          refFun={refFun}
-                          label={role.name}
-                          onClick={() => console.log('cheked')}
-                        />
-                      </div>
-                    ))}
+                    {roles.map((role, i) => {
+                      if (role.id === 1) return null;
+                      return (
+                        <div key={`${role.id}`} className="check-group">
+                          <Checkbox
+                            key={`${role.id}`}
+                            name={`roles[${i}]`}
+                            value={role.id}
+                            refFun={refFun}
+                            label={role.name}
+                            onClick={() => console.log('cheked')}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -404,18 +407,21 @@ export const Role: FC<RoleProps> = ({
                                   {permission}
                                 </div>
                                 <div className="check-group bordered">
-                                  {roles.map((role) => (
-                                    <div
-                                      key={`${permission}_${role.id}`}
-                                      className="check-group"
-                                    >
-                                      {role.permissions[permission] ? (
-                                        <CheckIcon className="icon success" />
-                                      ) : (
-                                        <ClearIcon className="icon" />
-                                      )}
-                                    </div>
-                                  ))}
+                                  {roles.map((role) => {
+                                    if (role.id === 1) return null;
+                                    return (
+                                      <div
+                                        key={`${permission}_${role.id}`}
+                                        className="check-group"
+                                      >
+                                        {role.permissions[permission] ? (
+                                          <CheckIcon className="icon success" />
+                                        ) : (
+                                          <ClearIcon className="icon" />
+                                        )}
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               </div>
                             );

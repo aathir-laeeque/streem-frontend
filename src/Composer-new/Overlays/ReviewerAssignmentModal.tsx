@@ -2,8 +2,9 @@ import { BaseModal, Checkbox } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Checklist } from '#Composer-new/checklist.types';
 import { Collaborator, CollaboratorState } from '#Composer-new/reviewer.types';
+import { useUsers, OtherUserState, defaultParams } from '#services/users';
 import { useTypedSelector } from '#store';
-import { fetchUsers } from '#store/users/actions';
+// import { fetchUsers } from '#store/users/actions';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Search } from '@material-ui/icons';
@@ -45,12 +46,12 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   const {
     data: { authors, reviewCycle },
     assignees,
-    activeUsers: {
-      list,
-      pageable: { last, page },
-    },
+    // activeUsers: {
+    //   list,
+    //   pageable: { last, page },
+    // },
   } = useTypedSelector((state) => ({
-    activeUsers: state.users.active,
+    // activeUsers: state.users.active,
     assignees: state.prototypeComposer.collaborators,
     data: state.prototypeComposer.data as Checklist,
   }));
@@ -66,18 +67,23 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   const prevSearch = usePrevious(searchQuery);
   const prevAssignees = usePrevious(assignees);
 
-  const fetchData = (page: number, size: number) => {
-    const filters = JSON.stringify({
-      op: 'AND',
-      fields: [
-        { field: 'firstName', op: 'LIKE', values: [searchQuery] },
-        { field: 'archived', op: 'EQ', values: [false] },
-        // { field: 'lastName', op: 'LIKE', values: [searchQuery] },
-        // { field: 'employeeId', op: 'LIKE', values: [searchQuery] },
-      ],
-    });
-    dispatch(fetchUsers({ page, size, filters, sort: 'id' }, 'active'));
-  };
+  const { users: list, loadMore, loadAgain } = useUsers({
+    userState: OtherUserState.REVIEWERS,
+    params: { ...defaultParams },
+  });
+
+  // const fetchData = (page: number, size: number) => {
+  //   const filters = JSON.stringify({
+  //     op: 'AND',
+  //     fields: [
+  //       { field: 'firstName', op: 'LIKE', values: [searchQuery] },
+  //       { field: 'archived', op: 'EQ', values: [false] },
+  //       // { field: 'lastName', op: 'LIKE', values: [searchQuery] },
+  //       // { field: 'employeeId', op: 'LIKE', values: [searchQuery] },
+  //     ],
+  //   });
+  //   dispatch(fetchUsers({ page, size, filters, sort: 'id' }, 'active'));
+  // };
 
   if (checklistId) {
     useEffect(() => {
@@ -99,15 +105,23 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
 
   useEffect(() => {
     if (prevSearch !== searchQuery) {
-      fetchData(0, 10);
+      loadAgain({
+        newParams: {
+          ...defaultParams,
+          filters: JSON.stringify({
+            op: 'AND',
+            fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
+          }),
+        },
+      });
     }
   }, [searchQuery]);
 
   const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
     e.stopPropagation();
     const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 && !last)
-      fetchData(page + 1, 10);
+    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7)
+      loadMore();
   };
 
   const onCheckChanged = (

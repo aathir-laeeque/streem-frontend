@@ -205,63 +205,80 @@ const TabContent: FC<TabViewProps> = ({
         {
           header: 'ACTIONS',
           template: function renderComp(item: User) {
+            const isItemAccountOwner =
+              item.roles &&
+              item.roles[0] &&
+              item.roles[0]['name'] === 'ACCOUNT_OWNER';
+            let editAccountOwner = true;
+            if (isItemAccountOwner)
+              editAccountOwner = checkPermission([
+                'usersAndAccess',
+                'editAccountOwner',
+              ]);
             return (
               <div className="list-card-columns" key={`actions_${item.id}`}>
-                {item.blocked && (
-                  <>
-                    <span
-                      className="user-actions"
-                      onClick={() => onUnlockUser(item)}
-                    >
-                      Unlock
-                    </span>
-                    <span
-                      className="user-actions"
-                      style={{ color: '#666666', padding: '0 8px' }}
-                    >
-                      •
-                    </span>
-                  </>
-                )}
-                {selectedState === UserState.ACTIVE ? (
-                  (item.verified && (
-                    <span
-                      className="user-actions"
-                      onClick={() => onArchiveUser(item)}
-                    >
-                      Archive
-                    </span>
-                  )) || (
-                    <>
-                      <span
-                        className="user-actions"
-                        style={{ color: '#1d84ff' }}
-                        onClick={() => onResendInvite(item.id)}
-                      >
-                        Resend Invite
-                      </span>
-                      <span
-                        className="user-actions"
-                        style={{ color: '#666666', padding: '0 8px' }}
-                      >
-                        •
-                      </span>
-                      <span
-                        className="user-actions"
-                        style={{ color: '#ff6b6b' }}
-                        onClick={() => onCancelInvite(item.id)}
-                      >
-                        Cancel Invite
-                      </span>
-                    </>
-                  )
-                ) : (
+                {editAccountOwner && item.blocked && (
                   <span
                     className="user-actions"
-                    onClick={() => onUnArchiveUser(item)}
+                    onClick={() => onUnlockUser(item)}
                   >
-                    Unarchive
+                    Unlock
                   </span>
+                )}
+
+                {!isItemAccountOwner && (
+                  <>
+                    {selectedState === UserState.ACTIVE ? (
+                      (item.verified && (
+                        <>
+                          {item.blocked && (
+                            <span
+                              className="user-actions"
+                              style={{ color: '#666666', padding: '0 8px' }}
+                            >
+                              •
+                            </span>
+                          )}
+                          <span
+                            className="user-actions"
+                            onClick={() => onArchiveUser(item)}
+                          >
+                            Archive
+                          </span>
+                        </>
+                      )) || (
+                        <>
+                          <span
+                            className="user-actions"
+                            style={{ color: '#1d84ff' }}
+                            onClick={() => onResendInvite(item.id)}
+                          >
+                            Resend Invite
+                          </span>
+                          <span
+                            className="user-actions"
+                            style={{ color: '#666666', padding: '0 8px' }}
+                          >
+                            •
+                          </span>
+                          <span
+                            className="user-actions"
+                            style={{ color: '#ff6b6b' }}
+                            onClick={() => onCancelInvite(item.id)}
+                          >
+                            Cancel Invite
+                          </span>
+                        </>
+                      )
+                    ) : (
+                      <span
+                        className="user-actions"
+                        onClick={() => onUnArchiveUser(item)}
+                      >
+                        Unarchive
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
             );
