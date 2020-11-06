@@ -225,7 +225,7 @@ const PrototypeForm: FC<Props> = (props) => {
                       }
                     : undefined
                 }
-                placeHolder="Choose Users"
+                placeholder="Choose Users"
                 options={users
                   .filter((user) => user.id !== formValues.primaryAuthor.id)
                   .map((user) => ({

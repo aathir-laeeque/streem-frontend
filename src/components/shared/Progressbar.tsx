@@ -4,16 +4,19 @@ import styled, { css } from 'styled-components';
 type Props = {
   height?: number;
   percentage: number;
+  whiteBackground?: boolean;
 };
 
 const Wrapper = styled.div.attrs({
   className: 'progress-bar',
 })<Props>`
-  background-color: #f4f4f4;
   border-radius: 4px;
-  height: ${({ height }) => `${height}px`};
   position: relative;
   width: 100%;
+
+  background-color: ${({ whiteBackground }) =>
+    whiteBackground ? '#ffffff' : '#f4f4f4'};
+  height: ${({ height }) => `${height}px`};
 
   .filler {
     border-radius: inherit;
@@ -26,6 +29,11 @@ const Wrapper = styled.div.attrs({
         return css`
           background-color: #5aa700;
         `;
+      } else if (percentage === 0) {
+        return css`
+          background-color: #666666;
+          width: 3.25%;
+        `;
       } else {
         return css`
           background-color: #1d84ff;
@@ -35,8 +43,16 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const ProgressBar: FC<Props> = ({ percentage = 0, height = 8 }) => (
-  <Wrapper percentage={percentage} height={height}>
+const ProgressBar: FC<Props> = ({
+  percentage = 0,
+  height = 8,
+  whiteBackground = false,
+}) => (
+  <Wrapper
+    percentage={percentage}
+    height={height}
+    whiteBackground={whiteBackground}
+  >
     <div className="filler"></div>
   </Wrapper>
 );

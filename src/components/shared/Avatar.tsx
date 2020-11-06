@@ -20,7 +20,9 @@ type Props = {
   user: User;
 };
 
-const Wrapper = styled.div<Pick<Props, 'size' | 'color'>>`
+const Wrapper = styled.div.attrs({
+  className: 'avatar',
+})<Pick<Props, 'size' | 'color'>>`
   align-items: center;
   background-color: #dadada;
   border: 1px solid #999999;

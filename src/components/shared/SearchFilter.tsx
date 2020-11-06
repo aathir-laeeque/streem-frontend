@@ -117,7 +117,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
       {showdropdown ? (
         <div className="dropdown-button">
           <Button1 onClick={handleClick}>
-            {selectedOption.label} <ArrowDropDown className="icon" />
+            {selectedOption?.label} <ArrowDropDown className="icon" />
           </Button1>
 
           <Menu

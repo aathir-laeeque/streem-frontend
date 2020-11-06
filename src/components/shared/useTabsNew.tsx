@@ -35,12 +35,14 @@ const BodyWrapper = styled.div.attrs({
 
 export type Tab = {
   label: string;
+  values?: any;
   tabContent: FC | FC<TabContentProps>;
   passThroughProps?: TabContentProps;
 };
 
 export type TabContentProps = {
   label: Tab['label'];
+  values?: Tab['value'];
 };
 
 type Args = {
@@ -70,7 +72,7 @@ const useTabsNew = ({ tabs }: Args) => {
 
   const renderTabContent = () => (
     <BodyWrapper>
-      <TabContent label={activeTab.label} />
+      <TabContent label={activeTab.label} values={activeTab?.values} />
     </BodyWrapper>
   );
 

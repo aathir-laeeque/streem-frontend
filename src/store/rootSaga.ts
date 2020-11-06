@@ -18,6 +18,8 @@ import { FileUploadSagaNew } from './file-upload/saga';
 import { PropertiesSaga } from './properties/saga';
 import { UsersSaga } from './users/saga';
 
+import { NewJobListViewSaga } from '../views/Jobs/NewListView/saga';
+
 export function* rootSaga() {
   yield all([
     // fork all sagas here
@@ -41,5 +43,7 @@ export function* rootSaga() {
 
     fork(PropertiesServiceSaga),
     fork(UsersServiceSaga),
+
+    fork(NewJobListViewSaga),
   ]);
 }

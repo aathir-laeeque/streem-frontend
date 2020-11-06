@@ -6,7 +6,7 @@ import React, { FC, useState } from 'react';
 import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
 import { Checklist } from '#views/Checklists/types';
 import { User } from '#store/users/types';
-import { Job } from '#views/Jobs/types';
+import { Job } from '#views/Jobs/NewListView/types';
 import styled from 'styled-components';
 import { Button, FlatButton } from './Button';
 

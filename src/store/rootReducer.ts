@@ -8,14 +8,14 @@ import { JobListViewReducer } from '#views/Jobs/ListView/reducer';
 import { SessionActivityReducer } from '#views/UserAccess/ListView/SessionActivity/reducer';
 import { combineReducers } from 'redux';
 
-import { FacilitiesReducer } from './facilities/reducer';
-import { PropertiesReducer } from './properties/reducer';
-import { UsersReducer } from './users/reducer';
-import { FileUploadReducer } from './file-upload/reducer';
-
 import { PropertiesServiceReducer } from '../services/properties/reducer';
 import { UsersServiceReducer } from '../services/users/reducer';
+import { NewJobListViewReducer } from '../views/Jobs/NewListView/reducer';
 import { ActivityFiltersReducer } from './activity-filters/reducer';
+import { FacilitiesReducer } from './facilities/reducer';
+import { FileUploadReducer } from './file-upload/reducer';
+import { PropertiesReducer } from './properties/reducer';
+import { UsersReducer } from './users/reducer';
 
 export const rootReducer = combineReducers({
   auth: AuthReducer,
@@ -35,4 +35,6 @@ export const rootReducer = combineReducers({
   propertiesService: PropertiesServiceReducer,
   usersService: UsersServiceReducer,
   activityFilters: ActivityFiltersReducer,
+
+  jobList: NewJobListViewReducer,
 });
