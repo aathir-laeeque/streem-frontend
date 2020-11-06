@@ -1,16 +1,16 @@
 import {
-  ListViewComponent,
-  SearchFilter,
-  Button1,
   ArchiveToggleFilter,
+  Button1,
   DropdownFilter,
+  NewListView,
+  SearchFilter,
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
-  ChecklistStatesColors,
   ChecklistStatesContent,
   DisabledStates,
+  ChecklistStatesColors,
 } from '#Composer-new/checklist.types';
 import { ComposerEntity } from '#Composer-new/types';
 import { useProperties } from '#services/properties';
@@ -18,11 +18,17 @@ import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/ListView/actions';
 import { Menu, MenuItem } from '@material-ui/core';
-import { ArrowDropDown, FiberManualRecord } from '@material-ui/icons';
+import {
+  ArrowDropDown,
+  ArrowLeft,
+  ArrowRight,
+  FiberManualRecord,
+} from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { addRevisionPrototype } from '../NewPrototype/actions';
 import { FormMode } from '../NewPrototype/types';
 import { Checklist } from '../types';
 import {
@@ -32,25 +38,36 @@ import {
 } from './actions';
 import { Composer } from './styles';
 import { ListViewProps } from './types';
-import { AllChecklistStates } from '#Composer-new/checklist.types';
-import { addRevisionPrototype } from '../NewPrototype/actions';
 
-const getBaseFilter = (label: string) => [
+const getBaseFilter = (label: string): FilterField[] => [
   {
     field: 'state',
-    op: label === 'Published' ? 'EQ' : 'NE',
+    op: label === 'published' ? 'EQ' : 'NE',
     values: [DisabledStates.PUBLISHED],
   },
   { field: 'archived', op: 'EQ', values: [false] },
+  ...(label === 'prototype'
+    ? [
+        {
+          field: 'state',
+          op: 'NE',
+          values: [DisabledStates.STALE],
+        },
+      ]
+    : []),
 ];
+
+const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE_NUMBER = 0;
 
 const ListView: FC<ListViewProps & { label: string }> = ({
   navigate = navigateTo,
   label,
 }) => {
-  const { checklists, pageable, loading } = useTypedSelector(
-    (state) => state.checklistListView,
-  );
+  const {
+    checklistListView: { checklists, pageable, loading },
+    auth: { userId },
+  } = useTypedSelector((state) => state);
   const { isIdle } = useTypedSelector((state) => state.auth);
 
   const { list: jobProperties } = useProperties(ComposerEntity.JOB);
@@ -84,6 +101,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   };
 
   useEffect(() => {
+    setFilterFields(getBaseFilter(label));
+  }, [label]);
+
+  useEffect(() => {
     dispatch(
       fetchChecklists(
         {
@@ -99,7 +120,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
 
   useEffect(() => {
     if (!isIdle) {
-      fetchData(0, 10);
+      fetchData(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE);
     }
   }, [isIdle]);
 
@@ -137,9 +158,17 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     return <div>Loading...</div>;
   }
 
+  const showPaginationArrows = pageable.totalPages > 10;
+
   return (
     <Composer>
-      <div style={{ padding: '10px', display: 'flex', alignItems: 'center' }}>
+      <div
+        style={{
+          padding: '0 0 16px',
+          display: 'flex',
+          alignItems: 'flex-end',
+        }}
+      >
         <SearchFilter
           showdropdown
           dropdownOptions={[
@@ -167,20 +196,29 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           }}
         />
 
-        {label === 'Prototype' ? (
+        {label === 'prototype' ? (
           <DropdownFilter
-            options={Object.keys(ChecklistStatesContent)
-              .filter((key) => key !== 'PUBLISHED')
-              .map((key) => ({
-                label: ChecklistStatesContent[key],
-                value: key,
-              }))}
+            label="Prototype State is"
+            options={[
+              { label: 'All', value: 'all' },
+              ...Object.keys(ChecklistStatesContent)
+                .filter((key) => key !== 'PUBLISHED')
+                .map((key) => ({
+                  label: ChecklistStatesContent[key],
+                  value: key,
+                })),
+            ]}
             updateFilter={(option) =>
               setFilterFields((currentFields) =>
                 currentFields.map((field) => ({
                   ...field,
                   ...(field.field === 'state'
-                    ? { op: 'EQ', values: [option.value] }
+                    ? {
+                        op: option.value === 'all' ? 'NE' : 'EQ',
+                        values: [
+                          option.value === 'all' ? 'PUBLISHED' : option.value,
+                        ],
+                      }
                     : { values: field.values }),
                 })),
               )
@@ -188,22 +226,70 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           />
         ) : null}
 
-        <ArchiveToggleFilter
-          value={
-            !!filterFields.find((field) => field.field === 'archived')
-              ?.values[0]
-          }
-          updateFilter={(isChecked) =>
-            setFilterFields((currentFields) =>
-              currentFields.map((field) => ({
-                ...field,
-                ...(field.field === 'archived'
-                  ? { values: [isChecked] }
-                  : { values: field.values }),
-              })),
-            )
-          }
-        />
+        {label === 'prototype' ? (
+          <DropdownFilter
+            label="I am involved as"
+            options={[
+              { label: 'Any', value: 'any' },
+              { label: 'As Author', value: 'authors.user.id' },
+              { label: 'As Collaborator', value: 'collaborators.user.id' },
+              { label: 'Not Involved', value: 'not_involved' },
+            ]}
+            updateFilter={(option) => {
+              if (option.value === 'any') {
+                setFilterFields((currentFields) =>
+                  currentFields.filter(
+                    (field) =>
+                      field.field !== 'authors.user.id' &&
+                      field.field !== 'collaborators.user.id',
+                  ),
+                );
+              } else if (option.value === 'not_involved') {
+                setFilterFields((currentFields) => [
+                  ...currentFields.filter(
+                    (field) =>
+                      field.field !== 'authors.user.id' &&
+                      field.field !== 'collaborators.user.id',
+                  ),
+                  { field: 'authors.user.id', op: 'NE', values: [userId] },
+                  {
+                    field: 'collaborators.user.id',
+                    op: 'NE',
+                    values: [userId],
+                  },
+                ]);
+              } else {
+                setFilterFields((currentFields) => [
+                  ...currentFields.filter(
+                    (field) =>
+                      field.field !== 'authors.user.id' &&
+                      field.field !== 'collaborators.user.id',
+                  ),
+                  { field: option.value, op: 'EQ', values: [userId] },
+                ]);
+              }
+            }}
+          />
+        ) : null}
+
+        {label === 'prototype' ? (
+          <ArchiveToggleFilter
+            value={
+              !!filterFields.find((field) => field.field === 'archived')
+                ?.values[0]
+            }
+            updateFilter={(isChecked) =>
+              setFilterFields((currentFields) =>
+                currentFields.map((field) => ({
+                  ...field,
+                  ...(field.field === 'archived'
+                    ? { values: [isChecked] }
+                    : { values: field.values }),
+                })),
+              )
+            }
+          />
+        ) : null}
 
         <Button1
           id="create-prototype"
@@ -214,47 +300,39 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           Start a Prototype
         </Button1>
       </div>
-      <ListViewComponent
-        isSearchable={false}
-        properties={checklistProperties}
-        fetchData={fetchData}
-        isLast={pageable.last}
-        currentPage={pageable.page}
+      <NewListView
+        properties={checklistProperties.filter((el) => el.name !== 'TYPE')}
         data={checklists}
-        // primaryButtonText="Create Checklist"
-        // onPrimaryClick={() =>
-        //   navigate('/checklists/prototype', { state: { mode: FormMode.ADD } })
-        // }
         beforeColumns={[
+          ...(label === 'prototype'
+            ? [
+                {
+                  header: 'State',
+                  template: function renderComp(item: Checklist) {
+                    return (
+                      <div className="list-card-columns">
+                        <FiberManualRecord
+                          className="icon"
+                          style={{ color: ChecklistStatesColors[item.state] }}
+                        />
+                        {ChecklistStatesContent[item.state]}
+                      </div>
+                    );
+                  },
+                },
+              ]
+            : []),
           {
-            header: 'NAME',
+            header: 'Name',
             template: function renderComp(item: Checklist) {
               return (
                 <div className="list-card-columns" key={`name_${item.code}`}>
-                  <div className="title-group">
-                    <span className="list-code">{item.code}</span>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <span
-                        className="list-title"
-                        onClick={() => selectChecklist(item.id)}
-                      >
-                        {item.name}
-                      </span>
-                    </div>
-                    <span
-                      className="item-state"
-                      style={{ color: ChecklistStatesColors[item?.state] }}
-                    >
-                      <FiberManualRecord className="icon" />
-                      {ChecklistStatesContent[item?.state]}
-                    </span>
-                  </div>
+                  <span
+                    className="list-title"
+                    onClick={() => selectChecklist(item.id)}
+                  >
+                    {item.name}
+                  </span>
                 </div>
               );
             },
@@ -262,9 +340,15 @@ const ListView: FC<ListViewProps & { label: string }> = ({
         ]}
         afterColumns={[
           {
+            header: 'Checklist ID',
+            template: function renderComp(item: Checklist) {
+              return <div className="list-card-columns">{item.code}</div>;
+            },
+          },
+          {
             header: '',
             template: function renderComp(item: Checklist) {
-              if (label === 'Published') {
+              if (label === 'published') {
                 return (
                   <>
                     <div
@@ -377,7 +461,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                       }
                     }}
                   >
-                    {item.archived ? 'UnArchive' : 'Archive'}
+                    {item.archived ? 'Unarchive' : 'Archive'}
                   </div>
                 );
               }
@@ -385,6 +469,37 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           },
         ]}
       />
+
+      <div className="pagination">
+        <ArrowLeft
+          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+          onClick={() => {
+            if (pageable.page > 0) {
+              fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
+            }
+          }}
+        />
+        {Array.from(
+          { length: Math.min(pageable.totalPages, 10) },
+          (_, i) => i,
+        ).map((el) => (
+          <span
+            key={el}
+            className={pageable.page === el ? 'active' : ''}
+            onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
+          >
+            {el + 1}
+          </span>
+        ))}
+        <ArrowRight
+          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+          onClick={() => {
+            if (pageable.page < pageable.totalPages - 1) {
+              fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
+            }
+          }}
+        />
+      </div>
     </Composer>
   );
 };

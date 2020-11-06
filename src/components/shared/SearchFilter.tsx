@@ -46,6 +46,8 @@ const Wrapper = styled.div`
   }
 
   .input-wrapper {
+    padding: 9px 16px;
+
     .icon {
       font-size: 18px;
     }
@@ -84,35 +86,30 @@ const SearchFilter: FC<SearchFilterProps> = ({
   const handleClose = () => setAnchorEl(null);
 
   useEffect(() => {
-    if (!!searchValue) {
-      const searchFilterFields: FilterField[] = [
-        ...(selectedOption.field === 'name'
-          ? [
-              {
-                field: selectedOption.field,
-                op: selectedOption.operator,
-                values: [searchValue],
-              },
-            ]
-          : [
-              {
-                field: selectedOption.field,
-                op: selectedOption.operator,
-                values: [selectedOption.value],
-              },
-              {
-                field: `${selectedOption.field.split('.')[0]}.value`,
-                op: 'LIKE',
-                values: [searchValue],
-              },
-            ]),
-      ];
+    const searchFilterFields: FilterField[] = [
+      ...(selectedOption.field === 'name'
+        ? [
+            {
+              field: selectedOption.field,
+              op: selectedOption.operator,
+              values: [searchValue],
+            },
+          ]
+        : [
+            {
+              field: selectedOption.field,
+              op: selectedOption.operator,
+              values: [selectedOption.value],
+            },
+            {
+              field: `${selectedOption.field.split('.')[0]}.value`,
+              op: 'LIKE',
+              values: [searchValue],
+            },
+          ]),
+    ];
 
-      console.log('searchFilterFields :: ', searchFilterFields);
-      updateFilterFields(searchFilterFields);
-    } else {
-      updateFilterFields([]);
-    }
+    updateFilterFields(searchFilterFields);
   }, [selectedOption, searchValue]);
 
   return (

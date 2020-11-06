@@ -140,6 +140,7 @@ export enum DisabledStates {
   SIGNING_IN_PROGRESS = 'SIGNING_IN_PROGRESS',
   READY_FOR_RELEASE = 'READY_FOR_RELEASE',
   PUBLISHED = 'PUBLISHED',
+  STALE = 'STALE',
 }
 
 export type AllChecklistStates = EnabledStates | DisabledStates;
@@ -168,7 +169,7 @@ export enum ChecklistStatesContent {
   REQUESTED_CHANGES = 'Requested Changes',
   READY_FOR_SIGNING = 'Ready for Signing',
   SIGN_OFF_INITIATED = 'Under Signing',
-  SIGNING_IN_PROGRESS = 'Under Signing',
+  SIGNING_IN_PROGRESS = 'Signing in progress',
   READY_FOR_RELEASE = 'Ready For Realease',
   PUBLISHED = 'Published',
 }

@@ -97,7 +97,6 @@ type SelectProps = {
   optionsItemAfterIconClass?: string;
   OptionsItemBeforeIcon?: SvgIconComponent;
   optionsItemBeforeIconClass?: string;
-  placeHolder?: string;
   persistValue?: boolean;
   SelectButtonIcon?: SvgIconComponent;
   selectButtonIconClass?: string;
@@ -116,7 +115,7 @@ const Select: FC<SelectProps> = (props) => {
     optionsItemAfterIconClass,
     OptionsItemBeforeIcon,
     optionsItemBeforeIconClass,
-    placeHolder = 'Placeholder Text',
+    placeholder = 'Placeholder Text',
     persistValue = true,
     SelectButtonIcon,
     selectButtonIconClass,
@@ -157,7 +156,7 @@ const Select: FC<SelectProps> = (props) => {
         <span
           className={selectedOption ? 'selected-label' : 'placeholder-text'}
         >
-          {selectedOption ? selectedOption.label : placeHolder}
+          {selectedOption ? selectedOption.label : placeholder}
         </span>
 
         {isOpen ? (

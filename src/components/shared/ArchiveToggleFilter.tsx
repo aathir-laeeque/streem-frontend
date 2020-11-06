@@ -8,6 +8,7 @@ const Wrapper = styled.div.attrs({
   align-items: center;
   display: flex;
   margin-left: 24px;
+  margin-bottom: 12px;
 
   .label {
     color: #000000;
@@ -18,7 +19,6 @@ const Wrapper = styled.div.attrs({
 
 type Props = {
   value?: boolean;
-  label?: string;
   offColor?: string;
   offHandleColor?: string;
   onColor?: string;
@@ -30,10 +30,9 @@ type Props = {
 
 const ArchiveToggle: FC<Props> = ({
   value = false,
-  label = 'Show Archived',
   offColor = '#dadada',
   offHandleColor = '#ffffff',
-  onColor = '#dadada',
+  onColor = '#1d84ff',
   onHandleColor = '#ffffff',
   showCheckedIcon = false,
   showUncheckedIcon = false,
@@ -59,7 +58,9 @@ const ArchiveToggle: FC<Props> = ({
         uncheckedIcon={showUncheckedIcon}
         width={32}
       />
-      <label className="label">{label}</label>
+      <label className="label">
+        {value ? 'Showing Archived' : 'Show Archived'}
+      </label>
     </Wrapper>
   );
 };

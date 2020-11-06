@@ -1,17 +1,38 @@
 import styled from 'styled-components';
 
 export const Composer = styled.div`
-  background: #fff;
-  box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);
-  height: inherit;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 
-  .list-code {
-    padding-left: 28px;
+  .pagination {
+    margin-top: auto;
+    border-top: 1px solid #dadada;
+    padding: 8px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    > .icon {
+      color: #000000;
+    }
+
+    > span {
+      cursor: pointer;
+      padding: 10px 0;
+      margin: 0 10px;
+      border-bottom: 4px solid transparent;
+
+      &.active {
+        border-bottom-color: #1d84ff;
+      }
+    }
   }
 
-  .list-header-columns {
-    :first-child {
-      padding-left: 40px;
+  #archive-unarchive {
+    flex: 1;
+    :hover {
+      color: #1d84ff;
     }
   }
 
@@ -20,7 +41,9 @@ export const Composer = styled.div`
   }
 
   #more-actions {
+    flex: 1;
     color: #1d84ff;
+    cursor: pointer;
 
     > .icon {
       color: #1d84ff;
@@ -31,15 +54,10 @@ export const Composer = styled.div`
     margin-left: auto;
   }
 
-  .list-title {
-    padding-left: 28px;
-  }
-
   .item-state {
     font-size: 12px;
     display: flex;
     align-items: center;
-    padding-left: 28px;
     margin-top: 4px;
 
     .icon {
@@ -53,3 +71,61 @@ export const Composer = styled.div`
     cursor: pointer;
   }
 `;
+
+// import styled from 'styled-components';
+
+const ViewWrapper = styled.div`
+  display: grid;
+  grid-row-gap: 16px;
+  grid-template-areas: 'header' 'list-table';
+  grid-template-rows: 50px 1fr;
+  height: inherit;
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    grid-area: header;
+    justify-content: space-between;
+
+    .heading {
+      color: #000000;
+      font-size: 20px;
+      font-weight: bold;
+      line-height: normal;
+      text-align: left;
+    }
+
+    .sub-heading {
+      color: #666666;
+      font-size: 12px;
+      line-height: normal;
+      text-align: left;
+    }
+  }
+
+  .list-table {
+    display: grid;
+    grid-area: list-table;
+    grid-template-areas: 'tab-header' 'tab-body';
+    grid-template-rows: 48px 1fr;
+  }
+`;
+
+const TabContentWrapper = styled.div`
+  display: grid;
+  grid-template-areas: 'filters' 'table';
+  grid-template-rows: 40px 1fr;
+  grid-row-gap: 16px;
+  height: inherit;
+
+  .filters {
+    display: flex;
+    grid-area: filters;
+
+    #new-prototype {
+      margin-left: auto;
+    }
+  }
+`;
+
+export { TabContentWrapper, ViewWrapper };

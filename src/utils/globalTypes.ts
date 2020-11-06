@@ -104,7 +104,11 @@ export type FileUploadData = {
 
 export type FilterField = {
   field: string;
-  // op: 'EQ' | 'LIKE';
-  op: string;
-  values: string[] | boolean[];
+  op: 'EQ' | 'ANY' | 'LIKE' | 'GT' | 'LT' | 'NE' | 'GOE' | 'LOE';
+  values: [string | boolean];
+};
+
+export type ApiFilter = {
+  op: 'AND' | 'OR';
+  fields: FilterField[];
 };
