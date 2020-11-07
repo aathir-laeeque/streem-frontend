@@ -1,7 +1,5 @@
 import { apiGetJobs } from '#utils/apiUrls';
-import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { Job } from '#views/Jobs/types';
 import { call, put, takeLeading } from 'redux-saga/effects';
 
 import {
@@ -18,7 +16,7 @@ function* fetchJobsSaga({ payload }: ReturnType<typeof fetchJobs>) {
 
     yield put(fetchJobsOngoing());
 
-    const { data, pageable, errors }: ResponseObj<Job> = yield call(
+    const { data, pageable, errors } = yield call(
       request,
       'GET',
       apiGetJobs(),

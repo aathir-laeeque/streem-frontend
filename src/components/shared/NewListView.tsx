@@ -198,7 +198,7 @@ export const NewListView: FC<ListViewProps> = ({
           ))}
         {properties.map((el) => (
           <div key={`property_${el.id}`} className="list-header-columns">
-            {el.placeHolder}
+            {el.name}
           </div>
         ))}
         {afterColumns &&

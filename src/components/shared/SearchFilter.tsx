@@ -86,30 +86,35 @@ const SearchFilter: FC<SearchFilterProps> = ({
   const handleClose = () => setAnchorEl(null);
 
   useEffect(() => {
-    const searchFilterFields: FilterField[] = [
-      ...(selectedOption.field === 'name'
-        ? [
-            {
-              field: selectedOption.field,
-              op: selectedOption.operator,
-              values: [searchValue],
-            },
-          ]
-        : [
-            {
-              field: selectedOption.field,
-              op: selectedOption.operator,
-              values: [selectedOption.value],
-            },
-            {
-              field: `${selectedOption.field.split('.')[0]}.value`,
-              op: 'LIKE',
-              values: [searchValue],
-            },
-          ]),
-    ];
+    if (!!searchValue) {
+      const searchFilterFields: FilterField[] = [
+        ...(selectedOption.field === 'name' ||
+        selectedOption.field === 'checklist.name'
+          ? [
+              {
+                field: selectedOption.field,
+                op: selectedOption.operator,
+                values: [searchValue],
+              },
+            ]
+          : [
+              {
+                field: selectedOption.field,
+                op: selectedOption.operator,
+                values: [selectedOption.value],
+              },
+              {
+                field: `${selectedOption.field.split('.')[0]}.value`,
+                op: 'LIKE',
+                values: [searchValue],
+              },
+            ]),
+      ];
 
-    updateFilterFields(searchFilterFields);
+      updateFilterFields(searchFilterFields);
+    } else {
+      updateFilterFields([]);
+    }
   }, [selectedOption, searchValue]);
 
   return (

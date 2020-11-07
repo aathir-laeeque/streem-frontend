@@ -2,6 +2,7 @@ import {
   Button1,
   NewListView,
   ProgressBar,
+  SearchFilter,
   TabContentProps,
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
@@ -41,6 +42,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     (state) => state.jobList,
   );
 
+  const { isIdle } = useTypedSelector((state) => state.auth);
+
   const { list: jobProperties } = useProperties(ComposerEntity.JOB);
 
   const [filterFields, setFilterFields] = useState<FilterField[]>(
@@ -63,11 +66,24 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
   useEffect(() => {
     setFilterFields(getBaseFilter(values));
-  }, [label, values]);
+  }, [values]);
 
   useEffect(() => {
-    fetchData();
+    dispatch(
+      fetchJobs({
+        page: 0,
+        size: 10,
+        sort: 'createdAt,desc',
+        filters: JSON.stringify({ op: 'AND', fields: filterFields }),
+      }),
+    );
   }, [filterFields]);
+
+  useEffect(() => {
+    if (!isIdle) {
+      fetchData();
+    }
+  }, [isIdle]);
 
   const showPaginationArrows = pageable.totalPages > 10;
 
@@ -110,6 +126,33 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   return (
     <TabContentWrapper>
       <div className="filters">
+        <SearchFilter
+          showdropdown
+          dropdownOptions={[
+            {
+              label: 'Name',
+              value: 'checklist.name',
+              field: 'checklist.name',
+              operator: 'LIKE',
+            },
+            ...jobProperties.map(({ placeHolder, name }) => ({
+              label: placeHolder,
+              value: name,
+              field: 'jobPropertyValues.property.name',
+              operator: 'EQ',
+            })),
+          ]}
+          updateFilterFields={(_fields) => {
+            // setFilterFields((_currentFields) => [
+            //   ..._currentFields.filter(
+            //     (field) =>
+            //       !_fields.some((newField) => newField.field === field.field),
+            //   ),
+            //   ..._fields,
+            // ]);
+            console.log('fields :: ', _fields);
+          }}
+        />
         {values[0] in UnassignedJobStates ? (
           <Button1
             id="create-job"

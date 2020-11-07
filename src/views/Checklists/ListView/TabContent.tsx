@@ -186,6 +186,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             })),
           ]}
           updateFilterFields={(fields) => {
+            console.log('fields :: ', fields);
             setFilterFields((currentFields) => [
               ...currentFields.filter(
                 (field) =>
