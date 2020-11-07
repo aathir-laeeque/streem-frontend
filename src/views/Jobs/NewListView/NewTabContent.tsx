@@ -87,10 +87,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
   const showPaginationArrows = pageable.totalPages > 10;
 
-  if (loading || !jobProperties.length) {
-    return null;
-  }
-
   const onCreateJob = (jobDetails: Record<string, string>) => {
     const tempProperties: { id: number; value: string }[] = [];
     const selectedId = jobDetails.checklistId;
@@ -143,13 +139,13 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             })),
           ]}
           updateFilterFields={(_fields) => {
-            // setFilterFields((_currentFields) => [
-            //   ..._currentFields.filter(
-            //     (field) =>
-            //       !_fields.some((newField) => newField.field === field.field),
-            //   ),
-            //   ..._fields,
-            // ]);
+            setFilterFields((_currentFields) => [
+              ..._currentFields.filter(
+                (field) =>
+                  !_fields.some((newField) => newField.field === field.field),
+              ),
+              ..._fields,
+            ]);
             console.log('fields :: ', _fields);
           }}
         />
