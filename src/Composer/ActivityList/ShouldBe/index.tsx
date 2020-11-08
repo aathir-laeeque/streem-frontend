@@ -64,7 +64,10 @@ const ShouldBeActivity: FC<ActivityProps> = ({
   });
 
   const isLoggedInUserSpervisor = profile?.roles?.some(
-    (role) => role.name === 'SUPERVISOR',
+    (role) =>
+      role.name === 'SUPERVISOR' ||
+      role.name === 'ACCOUNT_OWNER' ||
+      role.name === 'FACILITY_ADMIN',
   );
 
   const dispatch = useDispatch();

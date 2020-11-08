@@ -35,10 +35,16 @@ const JobHeaderButtons: FC = () => {
   const handleClick = (event: MouseEvent<HTMLDivElement>) =>
     setAnchorEl(event.currentTarget);
 
+  const isInboxView = location.pathname.split('/')[1] === 'inbox';
+
   const showBulkAssignButton =
     jobState !== JobState.COMPLETED &&
     jobState !== JobState.COMPLETED_WITH_EXCEPTION &&
-    location.pathname.split('/')[1] !== 'inbox';
+    !isInboxView;
+
+  const isLoggedInUserOperator = profile?.roles?.some(
+    (role) => role.name === 'OPERATOR',
+  );
 
   useEffect(() => {
     (async () => {
@@ -62,54 +68,48 @@ const JobHeaderButtons: FC = () => {
     })();
   }, [jobId]);
 
+  let hidePrintJob = false;
+  hidePrintJob =
+    ((jobState === JobState.COMPLETED ||
+      jobState === JobState.COMPLETED_WITH_EXCEPTION) &&
+      isLoggedInUserOperator) ||
+    false;
+
+  console.log('isLoggedInUserAssigned', isLoggedInUserAssigned);
+
   return (
     <div className="buttons-container">
-      {jobState === JobState.IN_PROGRESS ? (
-        <Button1
-          className="sign-off"
-          color="blue"
-          variant="secondary"
-          onClick={() =>
-            dispatch(
-              getSignOffState({
-                jobId,
-                allowSignOff: isLoggedInUserAssigned,
-              }),
-            )
-          }
-        >
-          {isLoggedInUserAssigned ? 'Sign Completed Task' : 'Sign Off State'}
-        </Button1>
+      {jobState === JobState.IN_PROGRESS &&
+      (isLoggedInUserAssigned ||
+        checkPermission(['inbox', 'completeWithException'])) ? (
+        <>
+          <Button1
+            className="sign-off"
+            color="blue"
+            variant="secondary"
+            onClick={() =>
+              dispatch(
+                getSignOffState({
+                  jobId,
+                  allowSignOff: isLoggedInUserAssigned,
+                }),
+              )
+            }
+          >
+            {isLoggedInUserAssigned ? 'Sign Completed Task' : 'Sign Off State'}
+          </Button1>
+        </>
       ) : null}
 
-      {jobState === JobState.COMPLETED_WITH_EXCEPTION ? (
-        <Button1
-          color="blue"
-          variant="secondary"
-          onClick={() =>
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.SHOW_COMPLETED_JOB_WITH_EXCEPTION_INFO,
-                props: {
-                  jobCweDetail: data?.jobCweDetail,
-                  name: data?.checklist?.name,
-                  code: data?.code,
-                },
-              }),
-            )
-          }
+      {!hidePrintJob && (
+        <Button
+          onClick={() => {
+            window.open(`/jobs/print/${jobId}`, '_blank');
+          }}
         >
-          View Info
-        </Button1>
-      ) : null}
-
-      <Button
-        onClick={() => {
-          window.open(`/jobs/print/${jobId}`, '_blank');
-        }}
-      >
-        Print Job
-      </Button>
+          Print Job
+        </Button>
+      )}
 
       {showBulkAssignButton ? (
         <Button
@@ -129,7 +129,7 @@ const JobHeaderButtons: FC = () => {
         </Button>
       ) : null}
 
-      {jobState === JobState.ASSIGNED ? (
+      {jobState === JobState.ASSIGNED && isLoggedInUserAssigned ? (
         <Button
           onClick={() =>
             dispatch(
@@ -144,7 +144,7 @@ const JobHeaderButtons: FC = () => {
         </Button>
       ) : null}
 
-      {jobState === JobState.IN_PROGRESS ? (
+      {jobState === JobState.IN_PROGRESS && isLoggedInUserAssigned ? (
         <div className="dropdown-button">
           <Button
             onClick={() => dispatch(completeJob({ jobId, details: { code } }))}
@@ -185,7 +185,10 @@ const JobHeaderButtons: FC = () => {
         </div>
       ) : null}
 
-      {jobState === JobState.UNASSIGNED ? (
+      {jobState !== JobState.IN_PROGRESS &&
+      jobState !== JobState.COMPLETED &&
+      jobState !== JobState.COMPLETED_WITH_EXCEPTION &&
+      checkPermission(['inbox', 'completeWithException']) ? (
         <div className="dropdown-button">
           <Button
             onClick={() =>

@@ -18,12 +18,7 @@ const uiPermissions: Record<string, any> = {
       roles.SUPERVISOR,
       roles.OPERATOR,
     ],
-    jobs: [
-      roles.ACCOUNT_OWNER,
-      roles.FACILITY_ADMIN,
-      roles.SUPERVISOR,
-      roles.OPERATOR,
-    ],
+    jobs: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.SUPERVISOR],
     checklists: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
   },
   header: {

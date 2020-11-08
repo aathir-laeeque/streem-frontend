@@ -20,6 +20,7 @@ import { startTask } from '../../actions';
 import Timer from './Timer';
 import TaskAssignmentContent from './TaskAssignmentContent';
 import { User } from '#store/users/types';
+import { useTypedSelector } from '#store';
 
 type HeaderProps = {
   task: Omit<Task, 'activities'>;
@@ -27,6 +28,7 @@ type HeaderProps = {
   isTaskStarted: boolean;
   isTaskDelayed: boolean;
   enableStopForTask: boolean;
+  showAssignmentButton: boolean;
 };
 
 const Wrapper = styled.div.attrs({
@@ -288,12 +290,12 @@ const generateName = ({
   lastName: string;
 }) => `${firstName} ${lastName}`;
 
-const JobHeader: FC<Pick<HeaderProps, 'task' | 'enableStopForTask'>> = ({
-  task,
-  enableStopForTask,
-}) => {
+const JobHeader: FC<Pick<
+  HeaderProps,
+  'task' | 'enableStopForTask' | 'showAssignmentButton'
+>> = ({ task, enableStopForTask, showAssignmentButton }) => {
   const dispatch = useDispatch();
-
+  const { profile } = useTypedSelector((state) => state.auth);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClose = () => setAnchorEl(null);
@@ -322,6 +324,11 @@ const JobHeader: FC<Pick<HeaderProps, 'task' | 'enableStopForTask'>> = ({
     correctionReason,
     assignees,
   } = task.taskExecution;
+
+  const isUserAssignedToTask = assignees.some(
+    (user) => user.id === profile?.id,
+  );
+
   return (
     <div className="job-header">
       {assignees && assignees.length > 0 && (
@@ -380,51 +387,56 @@ const JobHeader: FC<Pick<HeaderProps, 'task' | 'enableStopForTask'>> = ({
           <div className="task-name">
             {task.orderTree}. {task.name}
           </div>
+          {showAssignmentButton && <TaskAssignmentContent taskId={task.id} />}
 
-          <TaskAssignmentContent taskId={task.id} />
+          {isUserAssignedToTask && (
+            <>
+              <button
+                className="start-task"
+                onClick={() => {
+                  if (enableStopForTask) {
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.ADD_STOP,
+                        props: {},
+                      }),
+                    );
+                  } else {
+                    dispatch(startTask(task.id));
+                  }
+                }}
+              >
+                Start task
+              </button>
+              <div onClick={handleClick}>
+                <MoreHoriz className="icon complete-options" />
+              </div>
 
-          <button
-            className="start-task"
-            onClick={() => {
-              if (enableStopForTask) {
-                dispatch(
-                  openOverlayAction({ type: OverlayNames.ADD_STOP, props: {} }),
-                );
-              } else {
-                dispatch(startTask(task.id));
-              }
-            }}
-          >
-            Start task
-          </button>
-
-          <div onClick={handleClick}>
-            <MoreHoriz className="icon complete-options" />
-          </div>
-
-          <Menu
-            id="task-error-correction"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-            style={{ marginTop: 30 }}
-          >
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.TASK_ERROR_CORRECTION,
-                    props: { taskId: task.id },
-                  }),
-                );
-              }}
-            >
-              <Error className="icon" />
-              Error correction
-            </MenuItem>
-          </Menu>
+              <Menu
+                id="task-error-correction"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                style={{ marginTop: 30 }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    handleClose();
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.TASK_ERROR_CORRECTION,
+                        props: { taskId: task.id },
+                      }),
+                    );
+                  }}
+                >
+                  <Error className="icon" />
+                  Error correction
+                </MenuItem>
+              </Menu>
+            </>
+          )}
         </div>
 
         {task.timed ? <Timer task={task} /> : null}
@@ -473,6 +485,7 @@ const Header: FC<HeaderProps> = ({
   isTaskStarted,
   isTaskDelayed,
   enableStopForTask,
+  showAssignmentButton,
 }) => {
   return (
     <Wrapper
@@ -482,7 +495,11 @@ const Header: FC<HeaderProps> = ({
       isTaskStarted={isTaskStarted}
       isTaskDelayed={isTaskDelayed}
     >
-      <JobHeader task={task} enableStopForTask={enableStopForTask} />
+      <JobHeader
+        task={task}
+        enableStopForTask={enableStopForTask}
+        showAssignmentButton={showAssignmentButton}
+      />
     </Wrapper>
   );
 };

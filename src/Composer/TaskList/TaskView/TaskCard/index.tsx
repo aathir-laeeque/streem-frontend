@@ -38,10 +38,15 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
     activities: { activitiesById, activitiesOrderInTaskInStage },
     stages: { activeStageId },
   } = useTypedSelector((state) => state.composer);
+  const { profile } = useTypedSelector((state) => state.auth);
 
-  const { state: taskState, reason } = task.taskExecution;
+  const { state: taskState, reason, assignees } = task.taskExecution;
 
   const dispatch = useDispatch();
+
+  const isUserAssignedToTask = assignees.some(
+    (user) => user.id === profile?.id,
+  );
 
   if (activeStageId) {
     const activities = activitiesOrderInTaskInStage[activeStageId][task.id].map(
@@ -77,6 +82,11 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
       (jobState === JobState.ASSIGNED || jobState === JobState.IN_PROGRESS) &&
       !isTaskStarted;
 
+    const showAssignmentButton =
+      jobState !== JobState.COMPLETED &&
+      jobState !== JobState.COMPLETED_WITH_EXCEPTION &&
+      location.pathname.split('/')[1] !== 'inbox';
+
     const isCorrectingError =
       taskState === TaskExecutionState.ENABLED_FOR_CORRECTION;
 
@@ -94,11 +104,12 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           isTaskStarted={isTaskStarted}
           isTaskDelayed={!!isTaskDelayed}
           enableStopForTask={enableStopForTask}
+          showAssignmentButton={showAssignmentButton}
         />
 
         <ActivityList
           activities={activities}
-          isTaskStarted={isTaskStarted}
+          isTaskStarted={isTaskStarted && isUserAssignedToTask}
           isTaskCompleted={isTaskCompleted}
           isCompletedWithException={isCompletedWithException}
           isCorrectingError={isCorrectingError}

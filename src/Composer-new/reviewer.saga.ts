@@ -321,10 +321,14 @@ function* afterSubmitChecklistReview(data: any, allOk: boolean) {
       lastName: userProfile?.lastName,
       employeeId: userProfile?.employeeId,
     };
-
-    const newComments = currentComments.filter(
-      (c) => c.commentedBy.id !== userProfile?.id,
-    );
+    const newComments = [];
+    currentComments.forEach((c) => {
+      if (c.reviewCycle !== currentCycle) {
+        newComments.push(c);
+      } else if (c.commentedBy.id !== userProfile?.id) {
+        newComments.push(c);
+      }
+    });
     newComments.push(data);
 
     allOk

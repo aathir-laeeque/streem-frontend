@@ -162,7 +162,7 @@ const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
 
 const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   const dispatch = useDispatch();
-
+  const { profile } = useTypedSelector((state) => state.auth);
   const { jobState } = useTypedSelector((state) => state.composer);
 
   const isJobBlocked = jobState === JobState.BLOCKED;
@@ -174,10 +174,15 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
     audit: { modifiedBy, modifiedAt },
     state: taskExecutionState,
     reason,
+    assignees,
   } = task.taskExecution;
 
   const isTaskDelayed =
     taskExecutionState === TaskExecutionState.COMPLETED && reason;
+
+  const isUserAssignedToTask = assignees.some(
+    (user) => user.id === profile?.id,
+  );
 
   if (
     taskExecutionState === TaskExecutionState.COMPLETED ||
@@ -285,30 +290,32 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
     } else {
       return (
         <Wrapper>
-          <button
-            className="complete-task"
-            onClick={() => {
-              if (!isJobBlocked) {
-                const timeElapsed = moment().diff(
-                  moment.unix(task.taskExecution.startedAt),
-                  'seconds',
-                );
+          {isUserAssignedToTask && (
+            <button
+              className="complete-task"
+              onClick={() => {
+                if (!isJobBlocked) {
+                  const timeElapsed = moment().diff(
+                    moment.unix(task.taskExecution.startedAt),
+                    'seconds',
+                  );
 
-                if (
-                  task.timed &&
-                  (timeElapsed > task.maxPeriod ||
-                    (task.timerOperator === 'NOT_LESS_THAN' &&
-                      timeElapsed < task.minPeriod))
-                ) {
-                  setAskForReason(true);
-                } else {
-                  dispatch(completeTask(task.id));
+                  if (
+                    task.timed &&
+                    (timeElapsed > task.maxPeriod ||
+                      (task.timerOperator === 'NOT_LESS_THAN' &&
+                        timeElapsed < task.minPeriod))
+                  ) {
+                    setAskForReason(true);
+                  } else {
+                    dispatch(completeTask(task.id));
+                  }
                 }
-              }
-            }}
-          >
-            Complete Task <ArrowRightAlt className="icon" />
-          </button>
+              }}
+            >
+              Complete Task <ArrowRightAlt className="icon" />
+            </button>
+          )}
 
           <button
             className="skip-task"

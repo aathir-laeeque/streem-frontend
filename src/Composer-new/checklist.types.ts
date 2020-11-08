@@ -172,6 +172,7 @@ export enum ChecklistStatesContent {
   SIGNING_IN_PROGRESS = 'Signing in progress',
   READY_FOR_RELEASE = 'Ready For Realease',
   PUBLISHED = 'Published',
+  STALE = 'Deprecated',
 }
 
 export enum ChecklistStatesColors {
@@ -184,6 +185,7 @@ export enum ChecklistStatesColors {
   SIGNING_IN_PROGRESS = '#5aa700',
   READY_FOR_RELEASE = '#5aa700',
   PUBLISHED = '#5aa700',
+  STALE = '#1d84ff',
 }
 
 export type Comment = {
