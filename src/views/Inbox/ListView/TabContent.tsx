@@ -1,14 +1,20 @@
-import { ListViewComponent, ProgressBar } from '#components';
+import { ListViewComponent, ProgressBar, NewListView } from '#components';
 import { useTypedSelector } from '#store';
 import JobCard from '#views/Jobs/Compoents/JobCard';
 import { Job } from '#views/Jobs/types';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { FiberManualRecord } from '@material-ui/icons';
 
 import { fetchInbox, setSelectedState } from './actions';
 import { Composer } from './styles';
 import { ListViewState, TabViewProps } from './types';
+import {
+  AssignedJobStates,
+  CompletedJobStates,
+} from '../../Jobs/NewListView/types';
+import AssigneesColumn from '../../Jobs/NewListView/AssignessColumn';
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { job } = useTypedSelector((state) => state.properties);
@@ -27,53 +33,107 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     }
   }, [isIdle]);
 
-  const selectJob = (item: Job) =>
-    navigate(`/inbox/${item.id}`, {
-      state: { checklistId: item.checklist.id },
-    });
-
   const fetchData = (page: number, size: number) => {
-    dispatch(fetchInbox({ page, size, sort: 'id,desc' }, reduerLabel));
+    dispatch(fetchInbox({ page, size, sort: 'createdAt,desc' }, reduerLabel));
   };
 
   const beforeColumns = [
     {
-      header: 'JOB',
-      template: function renderComp(item: Job) {
+      header: 'Name',
+      template: function renderComp({
+        id,
+        checklist: { id: checklistId, name: checklistName },
+      }: Job) {
         return (
-          <JobCard
-            key={`job_card_${item.id}`}
-            item={item}
-            onClick={selectJob}
-          />
+          <div className="list-card-columns">
+            <span
+              className="list-title"
+              onClick={() => {
+                navigate(`/inbox/${id}`, { state: { checklistId } });
+              }}
+              style={{
+                width: '120px',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: 'block',
+              }}
+            >
+              {checklistName}
+            </span>
+          </div>
         );
       },
     },
     {
-      header: 'TASKS COMPLETED',
-      template: function renderComp(item: Job) {
-        const percentage = (item.completedTasks * 100) / item.totalTasks;
+      header: 'Job Status',
+      template: function renderComp({ state }: Job) {
+        const isJobStarted = state === AssignedJobStates.IN_PROGRESS;
+
+        const isJobCompleted = state === CompletedJobStates.COMPLETED;
+
+        const isCompletedWithException =
+          state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
+
         return (
-          <div
-            className="list-card-columns"
-            key={`task_completed_${item.id}`}
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div style={{ display: 'flex', flex: 0.8 }}>
-              <ProgressBar percentage={percentage || 0} height={4} />
-            </div>
+          <div className="list-card-columns">
+            <FiberManualRecord
+              className="icon"
+              style={{
+                color: isJobCompleted
+                  ? '#5aa700'
+                  : isJobStarted
+                  ? '#1d84ff'
+                  : '#f7b500',
+              }}
+            />
             <span
               style={{
-                marginLeft: 8,
-                color: '#666666',
-                fontSize: 14,
+                width: '100px',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: 'block',
               }}
             >
-              {item.completedTasks}/{item.totalTasks}
+              {isJobCompleted
+                ? 'Completed'
+                : isCompletedWithException
+                ? 'Completed with Exception'
+                : isJobStarted
+                ? 'Started'
+                : 'Not Started'}
             </span>
+          </div>
+        );
+      },
+    },
+    {
+      header: 'Assignees',
+      template: function renderComp(item: Job) {
+        return <AssigneesColumn jobId={item.id} />;
+      },
+    },
+    {
+      header: 'Task Completed',
+      template: function renderComp({ completedTasks, totalTasks }: Job) {
+        const percentage = (completedTasks / totalTasks) * 100;
+        return (
+          <div className="list-card-columns task-progress">
+            <ProgressBar whiteBackground percentage={percentage} />
+            <span>
+              {completedTasks} of {totalTasks} Tasks
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      header: 'Job ID',
+      template: function renderComp(item: Job) {
+        return (
+          <div className="list-card-columns" key={item.id}>
+            {item.code}
           </div>
         );
       },
@@ -86,7 +146,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
 
   return (
     <Composer>
-      <ListViewComponent
+      <NewListView
         properties={job}
         fetchData={fetchData}
         isLast={jobs[reduerLabel].pageable.last}

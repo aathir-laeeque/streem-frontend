@@ -39,8 +39,9 @@ const ListView: FC<ListViewProps> = () => {
 
   return (
     <Composer>
-      {renderTabsHeader()}
-      {renderTabsContent()}
+      {/* {renderTabsHeader()}
+      {renderTabsContent()} */}
+      <TabContent label="My Inbox" />
     </Composer>
   );
 };
