@@ -65,23 +65,42 @@ const JobHeaderButtons: FC = () => {
   return (
     <div className="buttons-container">
       {jobState === JobState.IN_PROGRESS ? (
-        <>
-          <Button1
-            className="sign-off"
-            color="blue"
-            variant="secondary"
-            onClick={() =>
-              dispatch(
-                getSignOffState({
-                  jobId,
-                  allowSignOff: isLoggedInUserAssigned,
-                }),
-              )
-            }
-          >
-            {isLoggedInUserAssigned ? 'Sign Completed Task' : 'Sign Off State'}
-          </Button1>
-        </>
+        <Button1
+          className="sign-off"
+          color="blue"
+          variant="secondary"
+          onClick={() =>
+            dispatch(
+              getSignOffState({
+                jobId,
+                allowSignOff: isLoggedInUserAssigned,
+              }),
+            )
+          }
+        >
+          {isLoggedInUserAssigned ? 'Sign Completed Task' : 'Sign Off State'}
+        </Button1>
+      ) : null}
+
+      {jobState === JobState.COMPLETED_WITH_EXCEPTION ? (
+        <Button1
+          color="blue"
+          variant="secondary"
+          onClick={() =>
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.SHOW_COMPLETED_JOB_WITH_EXCEPTION_INFO,
+                props: {
+                  jobCweDetail: data?.jobCweDetail,
+                  name: data?.checklist?.name,
+                  code: data?.code,
+                },
+              }),
+            )
+          }
+        >
+          View Info
+        </Button1>
       ) : null}
 
       <Button

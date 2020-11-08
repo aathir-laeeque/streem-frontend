@@ -17,6 +17,7 @@ import { SubmitReviewModal } from '#Composer-new/Overlays/SubmitReview';
 import AddStop from '#Composer/modals/AddStop';
 import AssignmentSuccessModal from '#Composer/modals/AssignmentSuccess';
 import CompleteJobWithException from '#Composer/modals/CompleteJobWithException';
+import CompletedWithExceptionInfo from '#Composer/modals/CompletedWithExceptionInfo';
 import CompleteTaskWithException from '#Composer/modals/CompleteTaskWithException';
 import MediaDetail from '#Composer/modals/MediaDetail';
 import ParameterApprovalModal from '#Composer/modals/ParameterApproval';
@@ -175,6 +176,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.CHECKLIST_INFO:
       return <ChecklistInfoModal {...params} />;
+
+    case OverlayNames.SHOW_COMPLETED_JOB_WITH_EXCEPTION_INFO:
+      return <CompletedWithExceptionInfo {...params} />;
 
     default:
       return null;
