@@ -21,7 +21,13 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
 
   const isMultiSelect = activity.type === MandatoryActivity.MULTISELECT;
 
-  const activityError = activity.errors.find((error) => error.code === 'E410');
+  const activityError = activity.errors.find(
+    (error) =>
+      error.code === 'E410' ||
+      error.code === 'E411' ||
+      error.code === 'E412' ||
+      error.code === 'E413',
+  );
 
   return (
     <MultiSelectWrapper>
@@ -32,7 +38,7 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         }
         options={[]}
         onChange={noop}
-        placeHolder={
+        placeholder={
           isMultiSelect
             ? 'User can select one or more options'
             : 'User can select one option here'

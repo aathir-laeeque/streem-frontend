@@ -43,7 +43,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
 
       <Select
         label="Criteria"
-        placeHolder="Select"
+        placeholder="Select"
         options={PARAMETER_OPERATORS}
         onChange={(option) => {
           dispatch(

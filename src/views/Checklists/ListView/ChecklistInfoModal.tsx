@@ -7,6 +7,7 @@ import { formatDateTime } from '#utils/timeUtils';
 import { isEmpty, noop } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { navigate } from '@reach/router';
 
 import { Checklist } from '../types';
 
@@ -210,6 +211,14 @@ const Wrapper = styled.div`
 
         div {
           text-align: left;
+        }
+
+        .version-code {
+          cursor: pointer;
+
+          :hover {
+            color: #1d84ff;
+          }
         }
       }
     }
@@ -426,7 +435,16 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                   <label className="column-label">Checklist ID</label>
 
                   {state?.versions?.map((version, index) => (
-                    <div key={index}>{version.id}</div>
+                    <div
+                      key={index}
+                      className="version-code"
+                      onClick={() => {
+                        closeOverlay();
+                        navigate(`checklists/${version.id}`);
+                      }}
+                    >
+                      {version.code}
+                    </div>
                   ))}
                 </div>
 

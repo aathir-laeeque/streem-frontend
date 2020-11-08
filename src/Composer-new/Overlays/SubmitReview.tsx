@@ -668,7 +668,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                       onChange={(option) => {
                         setState({ ...state, selectedReviewer: option.value });
                       }}
-                      placeHolder="All"
+                      placeholder="All"
                       persistValue={true}
                     />
                   </div>
@@ -680,7 +680,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                         onChange={(option) => {
                           setState({ ...state, selectedCycle: option.value });
                         }}
-                        placeHolder="All"
+                        placeholder="All"
                         persistValue={true}
                       />
                     </div>

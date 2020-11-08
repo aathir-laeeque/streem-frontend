@@ -275,7 +275,7 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
               label="Select Condition"
               options={TIMER_OPERATORS}
               onChange={(option) => setTimerOperator(option)}
-              placeHolder="Choose an option"
+              placeholder="Choose an option"
               selectedValue={timerOperator}
             />
           </div>

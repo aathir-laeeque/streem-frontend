@@ -254,7 +254,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
                 }),
               );
             }}
-            placeHolder="Add Activity"
+            placeholder="Add Activity"
             persistValue={false}
             SelectButtonIcon={AddBox}
           />
