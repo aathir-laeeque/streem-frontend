@@ -4,7 +4,7 @@ import { ResponseObj } from '#utils/globalTypes';
 import { User, UsersAction, UserState } from './types';
 
 export const fetchUsers = (
-  params: Record<string, string | number>,
+  params: Record<string, string | number | boolean>,
   type: string,
 ) => actionSpreader(UsersAction.FETCH_USERS, { params, type });
 

@@ -1,56 +1,54 @@
-import { useTabs } from '#components';
-import React, { FC } from 'react';
-import { UsersState, UserState } from '#store/users/types';
-
-import { Composer } from './styles';
-import TabContent from './TabContent';
-import SessionActivity from './SessionActivity/index';
-import { ListViewProps } from './types';
-import { useTypedSelector } from '#store';
+// import { useTabs } from '#components';
+import useTabsNew, { Tab } from '#components/shared/useTabsNew';
 import checkPermission from '#services/uiPermissions';
-import { Tab } from '#components/shared/useTabs';
+import { UserState } from '#store/users/types';
+import { ViewWrapper } from '#views/Checklists/ListView/styles';
+import React, { FC } from 'react';
+
+import NewTabContent from './NewTabContent';
+import SessionActivity from './SessionActivity';
+import { ListViewProps } from './types';
 
 const ListView: FC<ListViewProps> = () => {
-  const { selectedState }: Partial<UsersState> = useTypedSelector(
-    (state) => state.users,
-  );
-
   const shownTabs: Tab[] = [];
   if (checkPermission(['usersAndAccess', 'activeUsers']))
     shownTabs.push({
       label: `${UserState.ACTIVE} Users`,
-      active: selectedState === UserState.ACTIVE,
-      TabContent,
-      passThroughTabContentProps: {
-        selectedState: UserState.ACTIVE,
-      },
+      tabContent: NewTabContent,
+      values: [UserState.ACTIVE],
     });
 
   if (checkPermission(['usersAndAccess', 'archivedUsers']))
     shownTabs.push({
       label: `${UserState.ARCHIVED} Users`,
-      active: selectedState === UserState.ARCHIVED,
-      TabContent,
-      passThroughTabContentProps: {
-        selectedState: UserState.ARCHIVED,
-      },
+      tabContent: NewTabContent,
+      values: [UserState.ARCHIVED],
     });
 
   if (checkPermission(['usersAndAccess', 'sessionActivity']))
     shownTabs.push({
       label: 'Session Activity',
-      active: false,
-      TabContent: SessionActivity,
-      passThroughTabContentProps: {},
+      tabContent: SessionActivity,
     });
 
-  const { renderTabsContent, renderTabsHeader } = useTabs(shownTabs);
+  const { renderTabContent, renderTabHeader } = useTabsNew({
+    tabs: shownTabs,
+  });
 
   return (
-    <Composer>
-      {renderTabsHeader()}
-      {renderTabsContent()}
-    </Composer>
+    <ViewWrapper>
+      <div className="header">
+        <div className="heading">Users</div>
+        <div className="sub-heading">Add, Remove or Edit Users</div>
+      </div>
+
+      <div className="list-table">
+        {renderTabHeader()}
+        {renderTabContent()}
+        {/* {renderTabsHeader()} */}
+        {/* {renderTabsContent()} */}
+      </div>
+    </ViewWrapper>
   );
 };
 
