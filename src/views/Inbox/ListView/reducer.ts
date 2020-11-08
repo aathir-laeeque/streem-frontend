@@ -12,7 +12,7 @@ const initialState: ListViewState = {
   error: undefined,
   selectedState: InboxState.MYINBOX,
   jobs: {
-    myinbox: {
+    myjobs: {
       list: [],
       pageable: {
         page: 0,

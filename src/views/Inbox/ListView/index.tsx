@@ -1,12 +1,12 @@
-import { useTabs } from '#components';
+import useTabsNew from '#components/shared/useTabsNew';
 import { ComposerEntity } from '#Composer-new/types';
 import { useTypedSelector } from '#store';
 import { fetchProperties } from '#store/properties/actions';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { resetInbox } from './actions';
 
-import { Composer } from './styles';
+import { resetInbox } from './actions';
+import { ViewWrapper } from './styles';
 import TabContent from './TabContent';
 import { InboxState, ListViewProps } from './types';
 
@@ -27,22 +27,27 @@ const ListView: FC<ListViewProps> = () => {
     }
   }, [isIdle]);
 
-  const passThroughTabContentProps = {};
-  const { renderTabsContent, renderTabsHeader } = useTabs([
-    {
-      label: InboxState.MYINBOX,
-      active: true,
-      TabContent,
-      passThroughTabContentProps,
-    },
-  ]);
+  const { renderTabHeader, renderTabContent } = useTabsNew({
+    tabs: [
+      {
+        label: InboxState.MYINBOX,
+        tabContent: TabContent,
+      },
+    ],
+  });
 
   return (
-    <Composer>
-      {/* {renderTabsHeader()}
-      {renderTabsContent()} */}
-      <TabContent label="My Inbox" />
-    </Composer>
+    <ViewWrapper>
+      <div className="header">
+        <div className="heading">Inbox</div>
+        <div className="sub-heading">View and execute Jobs assigned to you</div>
+      </div>
+
+      <div className="list-table">
+        {renderTabHeader()}
+        {renderTabContent()}
+      </div>
+    </ViewWrapper>
   );
 };
 

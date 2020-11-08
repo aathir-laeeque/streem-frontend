@@ -30,7 +30,7 @@ export interface ListViewState {
 }
 
 export enum InboxState {
-  MYINBOX = 'My Inbox',
+  MYINBOX = 'My Jobs',
 }
 
 export enum ListViewAction {

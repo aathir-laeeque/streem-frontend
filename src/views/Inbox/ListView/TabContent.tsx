@@ -1,28 +1,42 @@
-import { ListViewComponent, ProgressBar, NewListView } from '#components';
+import {
+  ListViewComponent,
+  ProgressBar,
+  NewListView,
+  SearchFilter,
+} from '#components';
 import { useTypedSelector } from '#store';
 import JobCard from '#views/Jobs/Compoents/JobCard';
 import { Job } from '#views/Jobs/types';
 import { navigate as navigateTo } from '@reach/router';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { FiberManualRecord } from '@material-ui/icons';
+import { FiberManualRecord, ArrowLeft, ArrowRight } from '@material-ui/icons';
 
 import { fetchInbox, setSelectedState } from './actions';
-import { Composer } from './styles';
+import { TabContentWrapper } from './styles';
 import { ListViewState, TabViewProps } from './types';
 import {
   AssignedJobStates,
   CompletedJobStates,
 } from '../../Jobs/NewListView/types';
 import AssigneesColumn from '../../Jobs/NewListView/AssignessColumn';
+import { FilterField } from '#utils/globalTypes';
+
+const DEFAULT_PAGE_NUMBER = 0;
+const DEFAULT_PAGE_SIZE = 10;
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { job } = useTypedSelector((state) => state.properties);
   const { jobs, loading }: ListViewState = useTypedSelector(
     (state) => state.inboxListView,
   );
+
   const { isIdle } = useTypedSelector((state) => state.auth);
   const reduerLabel = label.toLowerCase().split(' ').join('');
+
+  const [filterFields, setFilterFields] = useState<FilterField[]>([]);
+
+  const { pageable, list } = jobs[reduerLabel];
 
   const dispatch = useDispatch();
 
@@ -34,8 +48,32 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   }, [isIdle]);
 
   const fetchData = (page: number, size: number) => {
-    dispatch(fetchInbox({ page, size, sort: 'createdAt,desc' }, reduerLabel));
+    dispatch(
+      fetchInbox(
+        {
+          page,
+          size,
+          sort: 'createdAt,desc',
+          fields: JSON.stringify({ op: 'AND', fields: filterFields }),
+        },
+        reduerLabel,
+      ),
+    );
   };
+
+  useEffect(() => {
+    dispatch(
+      fetchInbox(
+        {
+          page: 0,
+          size: 10,
+          sort: 'createdAt,desc',
+          filters: JSON.stringify({ op: 'AND', fields: filterFields }),
+        },
+        reduerLabel,
+      ),
+    );
+  }, [filterFields]);
 
   const beforeColumns = [
     {
@@ -140,21 +178,78 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     },
   ];
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const showPaginationArrows = pageable.totalPages > 10;
 
   return (
-    <Composer>
+    <TabContentWrapper>
+      <div className="filters">
+        <SearchFilter
+          showdropdown
+          dropdownOptions={[
+            {
+              label: 'Name',
+              value: 'checklist.name',
+              field: 'checklist.name',
+              operator: 'LIKE',
+            },
+            ...job.map(({ placeHolder, name }) => ({
+              label: placeHolder,
+              value: name,
+              field: 'jobPropertyValues.property.name',
+              operator: 'EQ',
+            })),
+          ]}
+          updateFilterFields={(_fields) => {
+            setFilterFields((_currentFields) => [
+              ..._currentFields.filter(
+                (field) =>
+                  !_fields.some((newField) => newField.field === field.field),
+              ),
+              ..._fields,
+            ]);
+          }}
+        />
+      </div>
       <NewListView
         properties={job}
         fetchData={fetchData}
-        isLast={jobs[reduerLabel].pageable.last}
-        currentPage={jobs[reduerLabel].pageable.page}
-        data={jobs[reduerLabel].list}
+        isLast={pageable.last}
+        currentPage={pageable.page}
+        data={list}
         beforeColumns={beforeColumns}
       />
-    </Composer>
+
+      <div className="pagination">
+        <ArrowLeft
+          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+          onClick={() => {
+            if (pageable.page > 0) {
+              fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
+            }
+          }}
+        />
+        {Array.from(
+          { length: Math.min(pageable.totalPages, 10) },
+          (_, i) => i,
+        ).map((el) => (
+          <span
+            key={el}
+            className={pageable.page === el ? 'active' : ''}
+            onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
+          >
+            {el + 1}
+          </span>
+        ))}
+        <ArrowRight
+          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+          onClick={() => {
+            if (pageable.page < pageable.totalPages - 1) {
+              fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
+            }
+          }}
+        />
+      </div>
+    </TabContentWrapper>
   );
 };
 
