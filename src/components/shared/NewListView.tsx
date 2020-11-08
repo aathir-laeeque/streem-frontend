@@ -62,7 +62,7 @@ const Wrapper = styled.div.attrs({})`
   .list-body {
     overflow-x: auto;
     overflow-y: auto;
-    height: 330px;
+    height: 420px;
     max-height: 500px;
   }
 

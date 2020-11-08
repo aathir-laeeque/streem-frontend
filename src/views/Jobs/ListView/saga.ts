@@ -20,6 +20,7 @@ import {
   unAssignUser,
 } from './actions';
 import { ListViewAction } from './types';
+import { fetchJobs as fetchJobsNew } from '../NewListView/actions';
 
 function* fetchJobsSaga({ payload }: ReturnType<typeof fetchJobs>) {
   try {
@@ -67,6 +68,23 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
       }),
     );
     yield put(createJobSuccess({ data }));
+    yield put(
+      fetchJobsNew({
+        page: 0,
+        size: 10,
+        sort: 'createdAt,desc',
+        filters: JSON.stringify({
+          op: 'AND',
+          fields: [
+            {
+              field: 'state',
+              op: 'EQ',
+              values: ['UNASSIGNED'],
+            },
+          ],
+        }),
+      }),
+    );
   } catch (error) {
     console.error(
       'error from createJobSaga function in JobListView Saga :: ',

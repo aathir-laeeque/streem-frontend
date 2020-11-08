@@ -52,7 +52,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         },
       ],
     });
-    dispatch(fetchJobs({ page, size, filters, sort: 'id,desc' }, label));
+    dispatch(fetchJobs({ page, size, filters, sort: 'createdAt,desc' }, label));
   };
 
   const onCreateJob = (jobDetails: Record<string, string>) => {

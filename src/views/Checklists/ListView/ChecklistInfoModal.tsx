@@ -375,7 +375,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                 <div className="column">
                   <label className="column-label">Date</label>
 
-                  {state?.signoff?.map((user) => (
+                  {state?.signOff?.map((user) => (
                     <div className="date" key={user.employeeId}>
                       {formatDateTime(user?.signedAt, 'Do MMMM, YYYY')}
                     </div>
