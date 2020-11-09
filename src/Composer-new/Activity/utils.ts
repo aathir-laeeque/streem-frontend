@@ -103,7 +103,7 @@ const generateNewActivity = ({
         type,
         data: { text: '' },
         label: '',
-        mandatory: true,
+        mandatory: false,
       };
 
     case NonMandatoryActivity.MATERIAL:
@@ -114,7 +114,7 @@ const generateNewActivity = ({
           { link: '', name: '', type: 'image', fileName: '', quantity: 0 },
         ],
         label: '',
-        mandatory: true,
+        mandatory: false,
       };
 
     default:

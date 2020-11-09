@@ -307,7 +307,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
         )}
       </div>
       <NewListView
-        properties={checklistProperties.filter((el) => el.name !== 'TYPE')}
+        properties={checklistProperties}
         data={checklists}
         beforeColumns={[
           ...(label === 'prototype'

@@ -291,52 +291,58 @@ const NewTabContent = (props) => {
               return (
                 <div className="list-card-columns">
                   {(() => {
-                    if (item.archived) {
-                      return (
-                        <span
-                          className="list-title"
-                          onClick={() => onUnArchiveUser(item)}
-                        >
-                          Unarchive
-                        </span>
-                      );
-                    } else if (!item.verified) {
-                      return (
-                        <>
+                    if (
+                      checkPermission(['usersAndAccess', 'listViewActions'])
+                    ) {
+                      if (item.archived) {
+                        return (
                           <span
                             className="list-title"
-                            onClick={() => onResendInvite(item.id)}
-                            style={{ color: '#1d84ff' }}
+                            onClick={() => onUnArchiveUser(item)}
                           >
-                            Resend Invite
+                            Unarchive
                           </span>
+                        );
+                      } else if (!item.verified) {
+                        return (
+                          <>
+                            <span
+                              className="list-title"
+                              onClick={() => onResendInvite(item.id)}
+                              style={{ color: '#1d84ff' }}
+                            >
+                              Resend Invite
+                            </span>
+                            <span
+                              className="list-title"
+                              onClick={() => onCancelInvite(item.id)}
+                              style={{ color: '#ff6b6b', marginLeft: '12px' }}
+                            >
+                              Cancel Invite
+                            </span>
+                          </>
+                        );
+                      } else if (item.blocked) {
+                        return (
                           <span
                             className="list-title"
-                            onClick={() => onCancelInvite(item.id)}
-                            style={{ color: '#ff6b6b', marginLeft: '12px' }}
+                            onClick={() => onUnlockUser(item)}
                           >
-                            Cancel Invite
+                            Unblock
                           </span>
-                        </>
-                      );
-                    } else if (item.blocked) {
-                      return (
-                        <span
-                          className="list-title"
-                          onClick={() => onUnlockUser(item)}
-                        >
-                          Unblock
-                        </span>
-                      );
+                        );
+                      } else {
+                        return (
+                          <span
+                            className="list-title"
+                            onClick={() => onArchiveUser(item)}
+                          >
+                            Archive
+                          </span>
+                        );
+                      }
                     } else {
-                      return (
-                        <span
-                          className="list-title"
-                          onClick={() => onArchiveUser(item)}
-                        >
-                          Archive
-                        </span>
-                      );
+                      return null;
                     }
                   })()}
                 </div>
