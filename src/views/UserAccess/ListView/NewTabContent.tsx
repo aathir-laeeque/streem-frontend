@@ -22,6 +22,7 @@ import {
 import { TabContentWrapper } from './styles';
 import { removeUnderscore } from '../../../utils/stringUtils';
 import { startCase, toLower } from 'lodash';
+import checkPermission from '#services/uiPermissions';
 
 export function modalBody(user: User, text: string): any {
   return (
@@ -38,8 +39,6 @@ export function modalBody(user: User, text: string): any {
 const DEFAULT_PAGE_SIZE = 10;
 
 const NewTabContent = (props) => {
-  console.log('props :: ', props);
-
   const {
     users: {
       loading,
@@ -51,8 +50,6 @@ const NewTabContent = (props) => {
   const dispatch = useDispatch();
 
   const [filterFields, setFilterFields] = useState([]);
-
-  console.log('users :: ', list);
 
   const fetchData = (page: number, size: number) => {
     dispatch(
@@ -194,9 +191,15 @@ const NewTabContent = (props) => {
           updateFilterFields={(fields) => setFilterFields([...fields])}
         />
 
-        <Button1 id="add-user" onClick={() => navigate('user-access/add-user')}>
-          Add a new User
-        </Button1>
+        {checkPermission(['usersAndAccess', 'addNewUser']) &&
+        props.values[0] === UserState.ACTIVE ? (
+          <Button1
+            id="add-user"
+            onClick={() => navigate('user-access/add-user')}
+          >
+            Add a new User
+          </Button1>
+        ) : null}
       </div>
       <NewListView
         properties={[]}
@@ -288,7 +291,16 @@ const NewTabContent = (props) => {
               return (
                 <div className="list-card-columns">
                   {(() => {
-                    if (!item.verified) {
+                    if (item.archived) {
+                      return (
+                        <span
+                          className="list-title"
+                          onClick={() => onUnArchiveUser(item)}
+                        >
+                          Unarchive
+                        </span>
+                      );
+                    } else if (!item.verified) {
                       return (
                         <>
                           <span
@@ -316,22 +328,13 @@ const NewTabContent = (props) => {
                           Unblock
                         </span>
                       );
-                    } else if (!item.archived) {
+                    } else {
                       return (
                         <span
                           className="list-title"
                           onClick={() => onArchiveUser(item)}
                         >
                           Archive
-                        </span>
-                      );
-                    } else if (item.archived) {
-                      return (
-                        <span
-                          className="list-title"
-                          onClick={() => onUnArchiveUser(item)}
-                        >
-                          Unarchive
                         </span>
                       );
                     }

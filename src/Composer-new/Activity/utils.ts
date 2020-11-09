@@ -46,7 +46,7 @@ const generateNewActivity = ({
         type,
         data: [{ id: uuidv4(), name: '' }],
         label: '',
-        mandatory: false,
+        mandatory: true,
       };
 
     case MandatoryActivity.YES_NO:
@@ -58,7 +58,7 @@ const generateNewActivity = ({
           { id: uuidv4(), name: '', type: 'no' },
         ],
         label: '',
-        mandatory: false,
+        mandatory: true,
       };
 
     case MandatoryActivity.MULTISELECT:
@@ -68,7 +68,7 @@ const generateNewActivity = ({
         type,
         data: [{ id: uuidv4(), name: '' }],
         label: '',
-        mandatory: false,
+        mandatory: true,
       };
 
     case MandatoryActivity.PARAMETER:
@@ -83,7 +83,7 @@ const generateNewActivity = ({
           parameter: '',
         },
         label: '',
-        mandatory: false,
+        mandatory: true,
       };
 
     case MandatoryActivity.MEDIA:
@@ -94,7 +94,7 @@ const generateNewActivity = ({
         type,
         data: {},
         label: '',
-        mandatory: false,
+        mandatory: true,
       };
 
     case NonMandatoryActivity.INSTRUCTION:
@@ -103,7 +103,7 @@ const generateNewActivity = ({
         type,
         data: { text: '' },
         label: '',
-        mandatory: false,
+        mandatory: true,
       };
 
     case NonMandatoryActivity.MATERIAL:
@@ -114,7 +114,7 @@ const generateNewActivity = ({
           { link: '', name: '', type: 'image', fileName: '', quantity: 0 },
         ],
         label: '',
-        mandatory: false,
+        mandatory: true,
       };
 
     default:

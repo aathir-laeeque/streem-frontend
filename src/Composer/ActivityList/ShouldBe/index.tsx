@@ -51,7 +51,6 @@ const ShouldBeActivity: FC<ActivityProps> = ({
   activity,
   isCorrectingError,
 }) => {
-  console.log('activity :: ', activity);
   const { entityId: jobId } = useTypedSelector((state) => state.composer);
 
   const { profile } = useTypedSelector((state) => state.auth);
@@ -92,7 +91,6 @@ const ShouldBeActivity: FC<ActivityProps> = ({
             : 'Pending Approval from Supervisor'}
         </span>
       ) : null}
-
       {isActivityApproved === true ? (
         <span className="approved">
           <CheckCircle className="icon" />
@@ -106,9 +104,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
           {formatDateTime(approvalTime, 'MMM D, YYYY h:mm A')}
         </span>
       ) : null}
-
       <span className="parameter-text">{generateText(activity.data)}</span>
-
       <TextInput
         type="number"
         placeholder="Enter Observed Value"
@@ -116,7 +112,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
         onChange={debounce(({ value: newValue }) => {
           switch (activity?.data?.operator) {
             case 'EQUAL_TO':
-              if (newValue === activity?.data?.value) {
+              if (newValue === parseInt(activity?.data?.value)) {
                 setState({
                   showOperatorSubmitButtons: false,
                   reason: '',
@@ -149,7 +145,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
               }
               break;
             case 'LESS_THAN':
-              if (newValue < activity?.data?.value) {
+              if (newValue < parseInt(activity?.data?.value)) {
                 setState({
                   showOperatorSubmitButtons: false,
                   reason: '',
@@ -182,7 +178,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
               }
               break;
             case 'LESS_THAN_EQUAL_TO':
-              if (newValue <= activity?.data?.value) {
+              if (newValue <= parseInt(activity?.data?.value)) {
                 setState({
                   showOperatorSubmitButtons: false,
                   reason: '',
@@ -215,7 +211,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
               }
               break;
             case 'MORE_THAN':
-              if (newValue > activity?.data?.value) {
+              if (newValue > parseInt(activity?.data?.value)) {
                 setState({
                   reason: '',
                   showOperatorSubmitButtons: false,
@@ -248,7 +244,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
               }
               break;
             case 'MORE_THAN_EQUAL_TO':
-              if (newValue >= activity?.data?.value) {
+              if (newValue >= parseInt(activity?.data?.value)) {
                 setState({
                   reason: '',
                   showOperatorSubmitButtons: false,
@@ -339,7 +335,9 @@ const ShouldBeActivity: FC<ActivityProps> = ({
             </div>
           ) : null}
 
-          {!isActivityApproved && !isLoggedInUserSpervisor ? (
+          {!isActivityApproved &&
+          !isLoggedInUserSpervisor &&
+          !isActivityPendingApproval ? (
             <div className="buttons-container">
               <Button1
                 variant="secondary"

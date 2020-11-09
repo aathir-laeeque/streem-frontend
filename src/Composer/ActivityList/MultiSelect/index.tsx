@@ -19,7 +19,9 @@ const MultiSelectActivity: FC<ActivityProps & { isMulti: boolean }> = ({
 
   return (
     <Wrapper>
-      <div className="activity-header">Creating a Multi Choice</div>
+      <div className="activity-header">
+        {isMulti ? 'Multi Select' : 'Single Select'}
+      </div>
 
       <Select
         isMulti={isMulti}
