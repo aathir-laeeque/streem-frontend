@@ -13,6 +13,7 @@ import {
   CollaboratorState,
   CollaboratorType,
 } from '#Composer-new/reviewer.types';
+import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { FormMode } from '#views/Checklists/NewPrototype/types';
 import {
@@ -546,23 +547,24 @@ const ChecklistHeader: FC = () => {
               </>
             )}
             {data?.state === ChecklistStates.PUBLISHED && null}
-            {data?.state === ChecklistStates.READY_FOR_RELEASE && (
-              <Button1
-                className="submit"
-                onClick={() =>
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.PASSWORD_INPUT,
-                      props: {
-                        isReleasing: true,
-                      },
-                    }),
-                  )
-                }
-              >
-                Release Prototype
-              </Button1>
-            )}
+            {data?.state === ChecklistStates.READY_FOR_RELEASE &&
+              checkPermission(['checklists', 'release']) && (
+                <Button1
+                  className="submit"
+                  onClick={() =>
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.PASSWORD_INPUT,
+                        props: {
+                          isReleasing: true,
+                        },
+                      }),
+                    )
+                  }
+                >
+                  Release Prototype
+                </Button1>
+              )}
           </div>
         </div>
         {author &&

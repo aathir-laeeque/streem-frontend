@@ -58,6 +58,7 @@ const uiPermissions: Record<string, any> = {
     create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
     revision: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
     archive: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
+    release: [roles.FACILITY_ADMIN],
   },
   inbox: {
     completeWithException: [
