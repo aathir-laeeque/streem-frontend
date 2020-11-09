@@ -9,7 +9,11 @@ import { useDispatch } from 'react-redux';
 import { TaskMediasWrapper } from './styles';
 import { TaskMediasProps } from './types';
 
-const TaskMedias: FC<TaskMediasProps> = ({ medias, taskId }) => {
+const TaskMedias: FC<TaskMediasProps> = ({
+  medias,
+  taskId,
+  isActivity = false,
+}) => {
   const dispatch = useDispatch();
 
   const { activeTaskId } = useTypedSelector(
@@ -26,7 +30,7 @@ const TaskMedias: FC<TaskMediasProps> = ({ medias, taskId }) => {
     }
   }, [medias]);
 
-  if (taskId === activeTaskId && medias.length) {
+  if ((taskId === activeTaskId || isActivity) && medias.length) {
     return (
       <TaskMediasWrapper>
         <div className="container">
@@ -38,6 +42,7 @@ const TaskMedias: FC<TaskMediasProps> = ({ medias, taskId }) => {
                   type: OverlayNames.TASK_MEDIA,
                   props: {
                     taskId,
+                    isActivity,
                     mediaDetails: { ...activeMedia },
                   },
                 }),
@@ -89,28 +94,30 @@ const TaskMedias: FC<TaskMediasProps> = ({ medias, taskId }) => {
             />
           </div>
 
-          <ImageUploadButton
-            onUploadSuccess={(fileData) => {
-              dispatch(
-                openOverlayAction({
-                  type: OverlayNames.TASK_MEDIA,
-                  props: {
-                    mediaDetails: {
-                      ...fileData,
-                      name: '',
-                      description: '',
+          {!isActivity ? (
+            <ImageUploadButton
+              onUploadSuccess={(fileData) => {
+                dispatch(
+                  openOverlayAction({
+                    type: OverlayNames.TASK_MEDIA,
+                    props: {
+                      mediaDetails: {
+                        ...fileData,
+                        name: '',
+                        description: '',
+                      },
+                      taskId: taskId,
                     },
-                    taskId: taskId,
-                  },
-                }),
-              );
-            }}
-            onUploadError={(error) => {
-              console.log('handle image upload error :: ', error);
-            }}
-            label="Upload Media"
-            icon={PermMedia}
-          />
+                  }),
+                );
+              }}
+              onUploadError={(error) => {
+                console.log('handle image upload error :: ', error);
+              }}
+              label="Upload Media"
+              icon={PermMedia}
+            />
+          ) : null}
         </div>
       </TaskMediasWrapper>
     );

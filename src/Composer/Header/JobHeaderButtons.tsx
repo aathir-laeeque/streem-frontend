@@ -75,8 +75,6 @@ const JobHeaderButtons: FC = () => {
       isLoggedInUserOperator) ||
     false;
 
-  console.log('isLoggedInUserAssigned', isLoggedInUserAssigned);
-
   return (
     <div className="buttons-container">
       {jobState === JobState.IN_PROGRESS &&

@@ -16,6 +16,7 @@ import SignatureActivity from './Signature';
 import TextboxActivity from './Textbox';
 import { ActivityListProps } from './types';
 import YesNoActivity from './YesNo';
+import MediaActivity from './Media';
 
 const Wrapper = styled.div.attrs({
   className: 'activity-list',
@@ -146,7 +147,12 @@ const ActivityList: FC<ActivityListProps> = ({
                   );
 
                 case MandatoryActivity.MEDIA:
-                  return null;
+                  return (
+                    <MediaActivity
+                      activity={activity}
+                      isCorrectingError={isCorrectingError}
+                    />
+                  );
 
                 case MandatoryActivity.MULTISELECT:
                 case MandatoryActivity.SINGLE_SELECT:

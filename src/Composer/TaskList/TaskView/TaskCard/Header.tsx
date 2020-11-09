@@ -296,6 +296,12 @@ const JobHeader: FC<Pick<
 >> = ({ task, enableStopForTask, showAssignmentButton }) => {
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
+
+  const { activeStageId, stagesOrder } = useTypedSelector(
+    (state) => state.composer.stages,
+  );
+
+  const stageIndex = stagesOrder.indexOf(activeStageId);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClose = () => setAnchorEl(null);
@@ -385,7 +391,7 @@ const JobHeader: FC<Pick<
       <div className="task-config">
         <div className="wrapper">
           <div className="task-name">
-            {task.orderTree}. {task.name}
+            {stageIndex + 1}.{task.orderTree}. {task.name}
           </div>
           {showAssignmentButton && <TaskAssignmentContent taskId={task.id} />}
 

@@ -18,7 +18,8 @@ export type TaskCardWrapperProps = {
 
 export type TaskMediasProps = {
   medias: Task['medias'];
-  taskId: Task['id'];
+  taskId?: Task['id'];
+  isActivity?: boolean;
 };
 
 export type AddNewTaskArgs = {

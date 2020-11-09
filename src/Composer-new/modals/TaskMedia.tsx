@@ -76,13 +76,15 @@ const Wrapper = styled.div`
 
 type Props = {
   mediaDetails: MediaDetails;
-  taskId: Task['id'];
+  taskId?: Task['id'];
+  isActivity?: boolean;
+  execute: (data: any) => void;
 };
 
 const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: { mediaDetails, taskId },
+  props: { mediaDetails, taskId, isActivity = false, execute } = {},
 }) => {
   const [stateMediaDetails, setStateMediaDetails] = useState<MediaDetails>(
     mediaDetails,
@@ -132,23 +134,29 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                 rows={4}
               />
 
-              <Button1
-                id="save-details"
-                onClick={() => {
-                  if (!!stateMediaDetails.name) {
-                    dispatch(
-                      addTaskMedia({
-                        taskId,
-                        mediaDetails: { ...stateMediaDetails },
-                      }),
-                    );
-                  } else {
-                    setErrors({ name: 'Name is required' });
-                  }
-                }}
-              >
-                Save
-              </Button1>
+              {!isActivity ? (
+                <Button1
+                  id="save-details"
+                  onClick={() => {
+                    if (!!stateMediaDetails.name) {
+                      if (isActivity) {
+                        execute(stateMediaDetails);
+                      } else {
+                        dispatch(
+                          addTaskMedia({
+                            taskId,
+                            mediaDetails: { ...stateMediaDetails },
+                          }),
+                        );
+                      }
+                    } else {
+                      setErrors({ name: 'Name is required' });
+                    }
+                  }}
+                >
+                  Save
+                </Button1>
+              ) : null}
             </div>
 
             <div className="delete-media">
