@@ -113,6 +113,7 @@ const activityTemplateFormatter = (
           </View>
         </View>
       );
+    case MandatoryActivity.PARAMETER:
     case MandatoryActivity.SHOULD_BE:
       let content = '';
       switch (activity.data.operator) {

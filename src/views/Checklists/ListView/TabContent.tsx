@@ -18,6 +18,7 @@ import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/ListView/actions';
 import { Menu, MenuItem } from '@material-ui/core';
+import checkPermission from '#services/uiPermissions';
 import {
   ArrowDropDown,
   ArrowLeft,
@@ -292,14 +293,18 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           />
         ) : null}
 
-        <Button1
-          id="create-prototype"
-          onClick={() =>
-            navigate('/checklists/prototype', { state: { mode: FormMode.ADD } })
-          }
-        >
-          Start a Prototype
-        </Button1>
+        {checkPermission(['checklists', 'create']) && (
+          <Button1
+            id="create-prototype"
+            onClick={() =>
+              navigate('/checklists/prototype', {
+                state: { mode: FormMode.ADD },
+              })
+            }
+          >
+            Start a Prototype
+          </Button1>
+        )}
       </div>
       <NewListView
         properties={checklistProperties.filter((el) => el.name !== 'TYPE')}
@@ -401,25 +406,31 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                       >
                         Create Job
                       </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          handleClose();
-                          if (selectedChecklist?.id)
-                            dispatch(
-                              addRevisionPrototype(
-                                selectedChecklist?.id.toString(),
-                                selectedChecklist?.code.toString(),
-                                selectedChecklist?.name.toString(),
-                              ),
-                            );
-                        }}
-                      >
-                        Start a Revision
-                      </MenuItem>
+                      {checkPermission(['checklists', 'revision']) && (
+                        <MenuItem
+                          onClick={() => {
+                            handleClose();
+                            if (selectedChecklist?.id)
+                              dispatch(
+                                addRevisionPrototype(
+                                  selectedChecklist?.id.toString(),
+                                  selectedChecklist?.code.toString(),
+                                  selectedChecklist?.name.toString(),
+                                ),
+                              );
+                          }}
+                        >
+                          Start a Revision
+                        </MenuItem>
+                      )}
                     </Menu>
                   </>
                 );
               } else {
+                if (!checkPermission(['checklists', 'archive']))
+                  return (
+                    <div className="list-card-columns" id="archive-unarchive" />
+                  );
                 return (
                   <div
                     id="archive-unarchive"

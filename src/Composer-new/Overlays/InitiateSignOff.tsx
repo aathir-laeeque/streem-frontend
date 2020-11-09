@@ -179,9 +179,10 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
 
   const { data, userId, collaborators } = useTypedSelector((state) => ({
     userId: state.auth.userId,
-    data: (state.prototypeComposer.data as unknown) as Checklist,
+    data: (state.prototypeComposer?.data as unknown) as Checklist,
     collaborators: uniqBy(
-      ((state.prototypeComposer.data as unknown) as Checklist).collaborators,
+      ((state.prototypeComposer?.data as unknown) as Checklist).collaborators ||
+        [],
       'id',
     ),
   }));

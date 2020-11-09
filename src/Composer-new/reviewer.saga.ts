@@ -578,7 +578,7 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
         type: CollaboratorType.SIGN_OFF_USER,
       });
     });
-
+    yield put(closeAllOverlayAction());
     yield put(initiateSignOffSuccess(collaborators));
     yield put(updateChecklistState(ChecklistStates.SIGN_OFF_INITIATED));
     yield put(
