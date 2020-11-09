@@ -34,17 +34,6 @@ const MediaWrapper = styled.div.attrs({
       cursor: not-allowed;
     }
 
-    .upload-image {
-      > div {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .icon {
-        cursor: pointer;
-      }
-    }
-
     .icon {
       font-size: 48px;
       cursor: not-allowed;
@@ -54,6 +43,18 @@ const MediaWrapper = styled.div.attrs({
       color: #1d84ff;
       font-size: 14px;
       margin-top: 8px;
+    }
+
+    .upload-image {
+      > div {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .icon {
+        color: #1d84ff;
+        cursor: pointer;
+      }
     }
   }
 `;

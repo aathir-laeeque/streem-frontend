@@ -134,29 +134,28 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                 rows={4}
               />
 
-              {!isActivity ? (
-                <Button1
-                  id="save-details"
-                  onClick={() => {
-                    if (!!stateMediaDetails.name) {
-                      if (isActivity) {
-                        execute(stateMediaDetails);
-                      } else {
-                        dispatch(
-                          addTaskMedia({
-                            taskId,
-                            mediaDetails: { ...stateMediaDetails },
-                          }),
-                        );
-                      }
+              <Button1
+                id="save-details"
+                onClick={() => {
+                  if (!!stateMediaDetails.name) {
+                    if (isActivity) {
+                      execute(stateMediaDetails);
+                      closeOverlay();
                     } else {
-                      setErrors({ name: 'Name is required' });
+                      dispatch(
+                        addTaskMedia({
+                          taskId,
+                          mediaDetails: { ...stateMediaDetails },
+                        }),
+                      );
                     }
-                  }}
-                >
-                  Save
-                </Button1>
-              ) : null}
+                  } else {
+                    setErrors({ name: 'Name is required' });
+                  }
+                }}
+              >
+                Save
+              </Button1>
             </div>
 
             <div className="delete-media">
