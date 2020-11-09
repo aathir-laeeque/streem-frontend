@@ -39,6 +39,10 @@ const MediaWrapper = styled.div.attrs({
         display: flex;
         flex-direction: column;
       }
+
+      .icon {
+        cursor: pointer;
+      }
     }
 
     .icon {
