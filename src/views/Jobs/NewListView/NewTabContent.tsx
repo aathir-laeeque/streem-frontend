@@ -4,6 +4,7 @@ import {
   ProgressBar,
   SearchFilter,
   TabContentProps,
+  UsersFilter,
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
@@ -149,6 +150,15 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             console.log('fields :: ', _fields);
           }}
         />
+
+        {label !== 'Unassigned' && (
+          <UsersFilter
+            options={[]}
+            label="Assigned to"
+            updateFilter={(fields) => console.log('Updated Filter', fields)}
+          />
+        )}
+
         {values[0] in UnassignedJobStates ? (
           <Button1
             id="create-job"

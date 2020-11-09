@@ -7,6 +7,10 @@ import {
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import MemoViewInfo from '#assets/svg/ViewInfo';
+import MemoArchive from '#assets/svg/Archive';
+import MemoCreateJob from '#assets/svg/CreateJob';
+import MemoStartRevision from '#assets/svg/StartRevision';
 import {
   ChecklistStatesContent,
   DisabledStates,
@@ -387,7 +391,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                           );
                         }}
                       >
-                        View Info
+                        <div className="list-item">
+                          <MemoViewInfo />
+                          <span>View Info</span>
+                        </div>
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
@@ -404,7 +411,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                           );
                         }}
                       >
-                        Create Job
+                        <div className="list-item">
+                          <MemoCreateJob />
+                          <span>Create Job</span>
+                        </div>
                       </MenuItem>
                       {checkPermission(['checklists', 'revision']) && (
                         <MenuItem
@@ -420,7 +430,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                               );
                           }}
                         >
-                          Start a Revision
+                          <div className="list-item">
+                            <MemoStartRevision />
+                            <span>Start a Revision</span>
+                          </div>
                         </MenuItem>
                       )}
                     </Menu>
@@ -473,6 +486,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                       }
                     }}
                   >
+                    <MemoArchive style={{ marginRight: '8px' }} />
                     {item.archived ? 'Unarchive' : 'Archive'}
                   </div>
                 );

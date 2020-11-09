@@ -179,6 +179,46 @@ const GlobalStyles = createGlobalStyle`
     background-color: rgba(29, 132, 255, 0.2) !important;
   }
 
+  #user-filter-popover {
+    .MuiPopover-paper {
+      border: 1px solid #1d84ff;
+      background: #f4f4f4 !important;
+      border-radius: 0px !important;
+      box-shadow: none !important;
+    }
+  }
+
+  #row-more-actions {
+    .MuiPaper-root {
+      border: 1px solid #1d84ff;
+      background: #f4f4f4 !important;
+      border-radius: 0px !important;
+      box-shadow: none !important;
+    }
+    .MuiMenuItem-root {
+      padding: 0px !important;
+
+      .list-item {
+        margin: 0px 16px;
+        border-bottom: 1px solid #dadada;
+        display: flex;
+        flex: 1;
+        padding: 11px 0px;
+
+        svg {
+          font-size: 16px;
+        }
+
+        span {
+          padding-left: 16px;
+          font-size: 14px;
+          line-height: 1.29;
+          color: #000;
+        }
+      }
+    }
+  }
+
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
