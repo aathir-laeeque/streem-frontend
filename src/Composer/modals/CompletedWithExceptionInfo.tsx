@@ -85,10 +85,10 @@ const Wrapper = styled.div`
 `;
 
 const ExceptionReason = [
-  { label: 'Job got cancelled', value: 'job_got_cancelled' },
-  { label: 'Job created by mistake', value: 'job_created_by_mistake' },
-  { label: 'Job completed offline', value: 'job_completed_offline' },
-  { label: 'Other', value: 'other' },
+  { label: 'Job got cancelled', value: 'JOB_GOT_CANCELLED' },
+  { label: 'Job created by mistake', value: 'JOB_CREATED_BY_MISTAKE' },
+  { label: 'Job completed offline', value: 'JOB_COMPLETED_OFFLINE' },
+  { label: 'Other', value: 'OTHER' },
 ];
 
 const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({

@@ -465,7 +465,7 @@ const JobHeader: FC<Pick<
         <div className="correction-reason">
           <div className="badge">
             <Assignment className="icon" />
-            Error Corretcion
+            Error Correction
           </div>
           <textarea
             className="new-form-field-textarea"

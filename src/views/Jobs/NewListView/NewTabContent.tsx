@@ -215,6 +215,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                 {
                   header: 'Job Status',
                   template: function renderComp({ state }: Job) {
+                    const isJobBlocked = state === AssignedJobStates.BLOCKED;
+
                     const isJobStarted =
                       state === AssignedJobStates.IN_PROGRESS;
 
@@ -257,6 +259,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                             ? 'Completed'
                             : isCompletedWithException
                             ? 'Completed with Exception'
+                            : isJobBlocked
+                            ? 'Approval Pending'
                             : isJobStarted
                             ? 'Started'
                             : 'Not Started'}

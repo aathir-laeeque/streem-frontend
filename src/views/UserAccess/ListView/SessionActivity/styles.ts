@@ -4,10 +4,6 @@ export const Composer = styled.div`
   box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);
   height: inherit;
 
-  .list-body {
-    height: calc(100% - 150px);
-  }
-
   .list-card-columns:first-child {
     width: unset;
     flex: 1;

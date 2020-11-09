@@ -92,7 +92,7 @@ const TabContentWrapper = styled.div`
     display: flex;
     padding: 0 0 16px;
 
-    #create-job {
+    #add-user {
       margin-left: auto;
     }
   }

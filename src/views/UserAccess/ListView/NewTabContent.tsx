@@ -1,24 +1,27 @@
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { NewListView } from '#components/shared/NewListView';
+import { SearchFilter, Button1 } from '#components';
 import { UserState } from '#services/users';
 import { User } from '#services/users/types';
 import { useTypedSelector } from '#store/helpers';
 import { fetchUsers, setSelectedUser } from '#store/users/actions';
 import { getFullName } from '#utils/stringUtils';
+import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { FiberManualRecord, ArrowLeft, ArrowRight } from '@material-ui/icons';
 
-import { TabContentWrapper } from './styles';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
 import {
   archiveUser,
-  unArchiveUser,
-  resendInvite,
   cancelInvite,
+  resendInvite,
+  unArchiveUser,
+  unLockUser,
 } from '../actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
-import { unLockUser } from '../actions';
+import { TabContentWrapper } from './styles';
+import { removeUnderscore } from '../../../utils/stringUtils';
+import { startCase, toLower } from 'lodash';
 
 export function modalBody(user: User, text: string): any {
   return (
@@ -65,6 +68,10 @@ const NewTabContent = (props) => {
       ),
     );
   };
+
+  useEffect(() => {
+    fetchData(0, 10);
+  }, [filterFields]);
 
   useEffect(() => {
     fetchData(0, 10);
@@ -155,6 +162,42 @@ const NewTabContent = (props) => {
 
   return (
     <TabContentWrapper>
+      <div className="filters">
+        <SearchFilter
+          showdropdown
+          dropdownOptions={[
+            {
+              label: 'First Name',
+              value: 'firstName',
+              field: 'firstName',
+              operator: 'LIKE',
+            },
+            {
+              label: 'Last Name',
+              value: 'lastName',
+              field: 'lastName',
+              operator: 'LIKE',
+            },
+            {
+              label: 'Employee ID',
+              value: 'employeeId',
+              field: 'employeeId',
+              operator: 'LIKE',
+            },
+            {
+              label: 'Email',
+              value: 'email',
+              field: 'email',
+              operator: 'LIKE',
+            },
+          ]}
+          updateFilterFields={(fields) => setFilterFields([...fields])}
+        />
+
+        <Button1 id="add-user" onClick={() => navigate('user-access/add-user')}>
+          Add a new User
+        </Button1>
+      </div>
       <NewListView
         properties={[]}
         data={list}
@@ -187,6 +230,20 @@ const NewTabContent = (props) => {
             header: 'Email ID',
             template: function renderComp(item: User) {
               return <div className="list-card-columns">{item.email}</div>;
+            },
+          },
+          {
+            header: 'Roles',
+            template: function renderComp(item: User) {
+              return (
+                <div className="list-card-columns">
+                  {removeUnderscore(
+                    item.roles
+                      ?.map((role) => startCase(toLower(role.name)))
+                      .join(' ,'),
+                  )}
+                </div>
+              );
             },
           },
           {

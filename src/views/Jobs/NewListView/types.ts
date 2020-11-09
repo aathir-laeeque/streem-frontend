@@ -34,6 +34,7 @@ export type ListViewProps = RouteComponentProps;
 
 export enum AssignedJobStates {
   ASSIGNED = 'ASSIGNED',
+  BLOCKED = 'BLOCKED',
   IN_PROGRESS = 'IN_PROGRESS',
 }
 

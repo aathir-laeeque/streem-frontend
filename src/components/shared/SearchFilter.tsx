@@ -88,7 +88,11 @@ const SearchFilter: FC<SearchFilterProps> = ({
   useEffect(() => {
     const searchFilterFields: FilterField[] = [
       ...(selectedOption.field === 'name' ||
-      selectedOption.field === 'checklist.name'
+      selectedOption.field === 'checklist.name' ||
+      selectedOption.field === 'firstName' ||
+      selectedOption.field === 'lastName' ||
+      selectedOption.field === 'email' ||
+      selectedOption.field === 'employeeId'
         ? [
             {
               field: selectedOption.field,

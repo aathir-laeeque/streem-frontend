@@ -17,6 +17,7 @@ const HeaderWrapper = styled.div.attrs({
     display: flex;
     min-width: 160px;
     padding: 12px 16px;
+    text-transform: capitalize;
 
     &.active {
       background-color: #ffffff;
