@@ -4,6 +4,7 @@ import {
   ProgressBar,
   SearchFilter,
   TabContentProps,
+  ToggleFilter,
   UsersFilter,
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
@@ -174,6 +175,29 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             }}
           />
         )}
+
+        {values[0] in CompletedJobStates ? (
+          <ToggleFilter
+            value={false}
+            onLabel="Jobs With Exception"
+            offLabel="Jobs With Exception"
+            updateFilter={(isChecked) => {
+              setFilterFields((currentFields) => [
+                ...currentFields.filter((el) => el.field !== 'state'),
+                ...(isChecked
+                  ? [
+                      {
+                        field: 'state',
+                        op: 'EQ',
+                        values: [CompletedJobStates.COMPLETED_WITH_EXCEPTION],
+                      },
+                    ]
+                  : [...getBaseFilter(values)]),
+              ]);
+              console.log('isCHecked :: ', isChecked);
+            }}
+          />
+        ) : null}
 
         {values[0] in UnassignedJobStates ? (
           <Button1

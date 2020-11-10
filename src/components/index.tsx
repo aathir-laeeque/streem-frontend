@@ -29,7 +29,7 @@ export { default as Select } from './shared/Select';
 export { default as Textarea } from './shared/Textarea';
 export { default as ImageUploadButton } from './shared/ImageUploadButton';
 export { default as SearchFilter } from './shared/SearchFilter';
-export { default as ArchiveToggleFilter } from './shared/ArchiveToggleFilter';
+export { default as ToggleFilter } from './shared/ToggleFilter';
 export { default as DropdownFilter } from './shared/DropdownFilter';
 export { default as UsersFilter } from './shared/UsersFilter';
 export * from './shared/useTabsNew';

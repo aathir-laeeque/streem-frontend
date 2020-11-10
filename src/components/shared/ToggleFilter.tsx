@@ -18,25 +18,29 @@ const Wrapper = styled.div.attrs({
 `;
 
 type Props = {
-  value?: boolean;
   offColor?: string;
   offHandleColor?: string;
+  offLabel: string;
   onColor?: string;
   onHandleColor?: string;
+  onLabel: string;
   showCheckedIcon?: boolean;
   showUncheckedIcon?: boolean;
   updateFilter: (isChecked: boolean) => void;
+  value?: boolean;
 };
 
-const ArchiveToggle: FC<Props> = ({
-  value = false,
+const ToggleSwitch: FC<Props> = ({
   offColor = '#dadada',
   offHandleColor = '#ffffff',
+  offLabel,
   onColor = '#1d84ff',
   onHandleColor = '#ffffff',
+  onLabel,
   showCheckedIcon = false,
   showUncheckedIcon = false,
   updateFilter,
+  value = false,
 }) => {
   const [isChecked, toggleIsChecked] = useState(value);
 
@@ -58,11 +62,9 @@ const ArchiveToggle: FC<Props> = ({
         uncheckedIcon={showUncheckedIcon}
         width={32}
       />
-      <label className="label">
-        {value ? 'Showing Archived' : 'Show Archived'}
-      </label>
+      <label className="label">{value ? onLabel : offLabel}</label>
     </Wrapper>
   );
 };
 
-export default ArchiveToggle;
+export default ToggleSwitch;

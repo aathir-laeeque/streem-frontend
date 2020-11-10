@@ -1,5 +1,5 @@
 import {
-  ArchiveToggleFilter,
+  ToggleFilter,
   Button1,
   DropdownFilter,
   NewListView,
@@ -279,7 +279,9 @@ const ListView: FC<ListViewProps & { label: string }> = ({
         ) : null}
 
         {label === 'prototype' ? (
-          <ArchiveToggleFilter
+          <ToggleFilter
+            offLabel="Show Archived"
+            onLabel="Showing Archived"
             value={
               !!filterFields.find((field) => field.field === 'archived')
                 ?.values[0]

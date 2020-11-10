@@ -99,6 +99,27 @@ const JobHeaderButtons: FC = () => {
         </>
       ) : null}
 
+      {jobState === JobState.COMPLETED_WITH_EXCEPTION ? (
+        <Button1
+          color="blue"
+          variant="secondary"
+          onClick={() =>
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.SHOW_COMPLETED_JOB_WITH_EXCEPTION_INFO,
+                props: {
+                  jobCweDetail: data?.jobCweDetail,
+                  name: data?.checklist?.name,
+                  code: data?.code,
+                },
+              }),
+            )
+          }
+        >
+          View Info
+        </Button1>
+      ) : null}
+
       {!hidePrintJob && (
         <Button
           onClick={() => {
