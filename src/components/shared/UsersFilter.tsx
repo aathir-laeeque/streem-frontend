@@ -258,7 +258,7 @@ const UsersFilter: FC<UsersFilterProps> = ({
   const prevSearch = usePrevious(searchQuery);
 
   useEffect(() => {
-    setstate((prev) => ({ ...prev, appliedUsers: options }));
+    setstate((prev) => ({ ...prev, appliedUsers: options, selectedUsers: [] }));
   }, [options]);
 
   useEffect(() => {
