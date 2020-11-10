@@ -24,7 +24,6 @@ import {
   Group,
   Info,
   Message,
-  PlayCircleFilled,
   MoreHoriz,
 } from '@material-ui/icons';
 import { navigate } from '@reach/router';
@@ -58,12 +57,17 @@ const ChecklistHeader: FC = () => {
       reviewer.id === userId,
   )[0];
 
-  const approver = data?.collaborators.filter(
+  const approvers = data?.collaborators.filter(
     (reviewer) =>
       reviewer.reviewCycle === data.reviewCycle &&
       reviewer.type === CollaboratorType.SIGN_OFF_USER &&
       reviewer.id === userId,
-  )[0];
+  );
+
+  const approver = approvers ? approvers[0] : null;
+  const notSignedYet: boolean = approvers
+    ? approvers.some((r) => r.state === CollaboratorState.NOT_STARTED)
+    : false;
 
   const author = data?.authors.filter((a) => a.id === userId)[0];
 
@@ -386,7 +390,7 @@ const ChecklistHeader: FC = () => {
   const disableAddingButtons = () =>
     data?.state === ChecklistStates.SUBMITTED_FOR_REVIEW ||
     data?.state === ChecklistStates.BEING_REVIEWED;
-
+  console.log('approver', approver);
   return (
     <HeaderWrapper>
       <div className="before-header">
@@ -540,10 +544,7 @@ const ChecklistHeader: FC = () => {
               <>
                 <ViewReviewersButton />
                 <ViewSigningStateButton />
-                {approver &&
-                  approver.state === CollaboratorState.NOT_STARTED && (
-                    <SignOffButton />
-                  )}
+                {approver && notSignedYet && <SignOffButton />}
               </>
             )}
             {data?.state === ChecklistStates.PUBLISHED && null}

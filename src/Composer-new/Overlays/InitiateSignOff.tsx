@@ -226,14 +226,15 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
         return u;
       } else {
         switch (orderTree) {
-          case 1:
-            if (u.checkedAuthor) checking = false;
-            return { ...u, checkedAuthor: !u.checkedAuthor };
           case 2:
-            if (u.checkedReviewer) checking = false;
+            if (u.checkedReviewer) {
+              checking = false;
+            }
             return { ...u, checkedReviewer: !u.checkedReviewer };
           case 3:
-            if (u.checkedApprover) checking = false;
+            if (u.checkedApprover) {
+              checking = false;
+            }
             return { ...u, checkedApprover: !u.checkedApprover };
           default:
             return u;
@@ -241,12 +242,24 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
       }
     });
 
+    console.log('newUsers', newUsers);
+
     setUsers(newUsers);
 
     if (checking) {
       setSelection([...selection, { userId: id, orderTree }]);
     } else {
-      setSelection(selection.filter((s) => s.userId !== id));
+      const newSelection: { userId: string; orderTree: number }[] = [];
+      selection.forEach((s) => {
+        if (s.userId !== id) {
+          newSelection.push(s);
+        } else {
+          if (s.orderTree !== orderTree) {
+            newSelection.push(s);
+          }
+        }
+      });
+      setSelection(newSelection);
     }
   };
 

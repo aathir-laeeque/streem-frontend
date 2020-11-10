@@ -623,6 +623,7 @@ function* signOffPrototypeSaga({
       const currentCycle = getCurrentCycle(yield select());
       const collaborators: Collaborator[] = [];
       let isLast = true;
+      let sameUserCount = 0;
       currentReviewers.forEach((r) => {
         if (r.reviewCycle === currentCycle) {
           if (
@@ -632,11 +633,23 @@ function* signOffPrototypeSaga({
           ) {
             isLast = false;
           }
-          if (r.id === userProfile?.id) {
+          if (
+            r.id === userProfile?.id &&
+            r.state === CollaboratorState.NOT_STARTED &&
+            sameUserCount === 0
+          ) {
+            sameUserCount++;
             collaborators.push({
               ...r,
               state: CollaboratorState.SIGNED,
             });
+          } else if (
+            r.id === userProfile?.id &&
+            r.state === CollaboratorState.NOT_STARTED &&
+            sameUserCount !== 0
+          ) {
+            isLast = false;
+            collaborators.push(r);
           } else {
             collaborators.push(r);
           }
