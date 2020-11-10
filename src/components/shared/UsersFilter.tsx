@@ -258,6 +258,10 @@ const UsersFilter: FC<UsersFilterProps> = ({
   const prevSearch = usePrevious(searchQuery);
 
   useEffect(() => {
+    setstate((prev) => ({ ...prev, appliedUsers: options }));
+  }, [options]);
+
+  useEffect(() => {
     if (prevSearch !== searchQuery) {
       loadAgain({
         newParams: {
@@ -275,10 +279,11 @@ const UsersFilter: FC<UsersFilterProps> = ({
     if (checked) {
       const newSelected = selectedUsers.filter((u) => user.id !== u.id);
       setstate({ ...state, selectedUsers: newSelected });
+      updateFilter([...appliedUsers, ...newSelected]);
     } else {
       setstate({ ...state, selectedUsers: [...selectedUsers, user] });
+      updateFilter([...appliedUsers, ...[...selectedUsers, user]]);
     }
-    updateFilter(uniqBy([...appliedUsers, ...selectedUsers], 'id'));
   };
 
   const userRow = (user: User, checked: boolean) => {
@@ -311,6 +316,7 @@ const UsersFilter: FC<UsersFilterProps> = ({
 
   const handleUnselectAll = () => {
     setstate({ ...state, selectedUsers: [], appliedUsers: [] });
+    updateFilter([]);
   };
 
   const bodyView: JSX.Element[] = [];

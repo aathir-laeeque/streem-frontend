@@ -51,6 +51,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     getBaseFilter(values),
   );
 
+  const [assignedUsers, setAssignedUsers] = useState([]);
+
   const fetchData = ({
     page = DEFAULT_PAGE_NUMBER,
     size = DEFAULT_PAGE_SIZE,
@@ -68,6 +70,17 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   useEffect(() => {
     setFilterFields(getBaseFilter(values));
   }, [values]);
+
+  useEffect(() => {
+    setFilterFields([
+      ...getBaseFilter(values),
+      {
+        field: 'taskExecutions.assignees.user.id',
+        op: 'ANY',
+        values: assignedUsers.map((user) => user.id),
+      },
+    ]);
+  }, [assignedUsers]);
 
   useEffect(() => {
     dispatch(
@@ -153,9 +166,12 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
         {label !== 'Unassigned' && (
           <UsersFilter
-            options={[]}
+            options={assignedUsers}
             label="Assigned to"
-            updateFilter={(fields) => console.log('Updated Filter', fields)}
+            updateFilter={(fields) => {
+              console.log('Updated Filter', fields);
+              setAssignedUsers(fields);
+            }}
           />
         )}
 
