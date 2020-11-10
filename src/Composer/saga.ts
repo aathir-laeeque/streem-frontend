@@ -93,7 +93,7 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
 
 function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
   try {
-    const { jobId, withException, values, details } = payload;
+    const { jobId, withException, values, details, isInboxView } = payload;
 
     const { data, errors } = yield call(
       request,
@@ -106,7 +106,12 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
       if (withException) {
         yield put(closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION));
       }
-      navigate('/jobs');
+
+      if (isInboxView) {
+        navigate('/inbox');
+      } else {
+        navigate('/jobs');
+      }
       yield put(
         showNotification({
           type: NotificationType.SUCCESS,

@@ -83,6 +83,7 @@ type CompleteJobArgs = {
     code: Job['code'];
     name?: Job['checklist']['name'];
   };
+  isInboxView: boolean;
 };
 
 export const completeJob = ({
@@ -90,12 +91,14 @@ export const completeJob = ({
   withException = false,
   values,
   details,
+  isInboxView,
 }: CompleteJobArgs) =>
   actionSpreader(ComposerAction.COMPLETE_JOB, {
     jobId,
     withException,
     values,
     details,
+    isInboxView,
   });
 
 export const completeJobSuccess = (withException = false) =>

@@ -156,7 +156,7 @@ export type ExceptionValues = {
 const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: { jobId, name, code },
+  props: { jobId, name, code, isInboxView },
 }) => {
   const dispatch = useDispatch();
 
@@ -179,6 +179,7 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
               withException: true,
               values,
               details: { name, code },
+              isInboxView,
             }),
           );
         }}

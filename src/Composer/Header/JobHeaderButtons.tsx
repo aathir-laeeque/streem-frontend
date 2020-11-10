@@ -145,7 +145,9 @@ const JobHeaderButtons: FC = () => {
       {jobState === JobState.IN_PROGRESS && isLoggedInUserAssigned ? (
         <div className="dropdown-button">
           <Button
-            onClick={() => dispatch(completeJob({ jobId, details: { code } }))}
+            onClick={() =>
+              dispatch(completeJob({ jobId, details: { code }, isInboxView }))
+            }
           >
             Complete Job
           </Button>
@@ -169,7 +171,7 @@ const JobHeaderButtons: FC = () => {
                     dispatch(
                       openOverlayAction({
                         type: OverlayNames.COMPLETE_JOB_WITH_EXCEPTION,
-                        props: { jobId, code, name },
+                        props: { jobId, code, name, isInboxView },
                       }),
                     );
                     handleClose();
