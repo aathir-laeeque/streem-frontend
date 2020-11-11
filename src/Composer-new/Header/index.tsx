@@ -1,3 +1,4 @@
+import MemoArchive from '#assets/svg/Archive';
 import { Button1 } from '#components';
 import {
   closeAllOverlayAction,
@@ -15,6 +16,7 @@ import {
 } from '#Composer-new/reviewer.types';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
+import { archiveChecklist } from '#views/Checklists/ListView/actions';
 import { FormMode } from '#views/Checklists/NewPrototype/types';
 import {
   AddCircle,
@@ -26,8 +28,9 @@ import {
   Message,
   MoreHoriz,
 } from '@material-ui/icons';
+import { Menu, MenuItem } from '@material-ui/core';
 import { navigate } from '@reach/router';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { validatePrototype } from '../actions';
@@ -43,6 +46,8 @@ import HeaderWrapper from './styles';
 
 const ChecklistHeader: FC = () => {
   const dispatch = useDispatch();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const { activeStageId, data, userId } = useTypedSelector((state) => ({
     userId: state.auth.userId,
@@ -152,18 +157,22 @@ const ChecklistHeader: FC = () => {
     switch (state) {
       case CollaboratorState.NOT_STARTED:
         return (
-          <Button1 className="submit" onClick={handleStartReview}>
-            Start Review
-          </Button1>
+          <>
+            <Button1 className="submit" onClick={handleStartReview}>
+              Start Review
+            </Button1>
+          </>
         );
       case CollaboratorState.BEING_REVIEWED:
         return (
-          <Button1
-            className="submit"
-            onClick={() => handleSubmitForReview(false)}
-          >
-            Provide Review
-          </Button1>
+          <>
+            <Button1
+              className="submit"
+              onClick={() => handleSubmitForReview(false)}
+            >
+              Provide Review
+            </Button1>
+          </>
         );
       case CollaboratorState.COMMENTED_OK:
       case CollaboratorState.COMMENTED_CHANGES:
@@ -254,14 +263,59 @@ const ChecklistHeader: FC = () => {
     </Button1>
   );
 
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const MoreButton = () => (
-    <Button1
-      id="more"
-      variant="secondary"
-      onClick={() => console.log('MORE CLICKED')}
-    >
-      <MoreHoriz className="icon" fontSize="small" />
-    </Button1>
+    <>
+      {checkPermission(['checklists', 'archive']) && (
+        <>
+          <Button1
+            id="more"
+            variant="secondary"
+            onClick={(event: MouseEvent) => {
+              setAnchorEl(event.currentTarget);
+            }}
+          >
+            <MoreHoriz className="icon" fontSize="small" />
+          </Button1>
+          <Menu
+            id="row-more-actions"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+            style={{ marginTop: 40 }}
+          >
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                dispatch(
+                  openOverlayAction({
+                    type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                    props: {
+                      header: 'Archive Prototype',
+                      body: (
+                        <span>
+                          Are you sure you want to Archive this Prototype ?
+                        </span>
+                      ),
+                      onPrimaryClick: () => dispatch(archiveChecklist(data.id)),
+                    },
+                  }),
+                );
+              }}
+            >
+              <div className="list-item">
+                <MemoArchive />
+                <span>Archive</span>
+              </div>
+            </MenuItem>
+          </Menu>
+        </>
+      )}
+    </>
   );
 
   const handleSubmitForReviewOnChange = () => {
@@ -342,7 +396,6 @@ const ChecklistHeader: FC = () => {
               <>
                 <PrototypeEditButton />
                 <AuthorSubmitButton title="Submit For Review" />
-                <MoreButton />
               </>
             )}
           </>
@@ -353,7 +406,6 @@ const ChecklistHeader: FC = () => {
         return (
           <>
             <ViewReviewersButton />
-            <MoreButton />
           </>
         );
 
@@ -390,7 +442,7 @@ const ChecklistHeader: FC = () => {
   const disableAddingButtons = () =>
     data?.state === ChecklistStates.SUBMITTED_FOR_REVIEW ||
     data?.state === ChecklistStates.BEING_REVIEWED;
-  console.log('approver', approver);
+
   return (
     <HeaderWrapper>
       <div className="before-header">
@@ -566,6 +618,7 @@ const ChecklistHeader: FC = () => {
                   Release Prototype
                 </Button1>
               )}
+            <MoreButton />
           </div>
         </div>
         {author &&
