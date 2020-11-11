@@ -281,12 +281,13 @@ const ChecklistHeader: FC = () => {
             <MoreHoriz className="icon" fontSize="small" />
           </Button1>
           <Menu
+            style={{ right: 10 }}
             id="row-more-actions"
+            className="header-more-actions"
             anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
             onClose={handleClose}
-            style={{ marginTop: 40 }}
           >
             <MenuItem
               onClick={() => {

@@ -188,6 +188,14 @@ const GlobalStyles = createGlobalStyle`
     }
   }
 
+  .header-more-actions {
+    .MuiPaper-root {
+      right: 10px !important;
+      left: 90% !important; 
+      top: 120px !important;
+    }
+  }
+
   #row-more-actions {
     .MuiPaper-root {
       border: 1px solid #1d84ff;
