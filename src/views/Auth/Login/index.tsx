@@ -1,4 +1,6 @@
 import { Button, Card, LabeledInput } from '#components';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { useTypedSelector } from '#store';
 import { ValidatorProps } from '#utils/globalTypes';
 import { Visibility } from '@material-ui/icons';
@@ -15,7 +17,7 @@ type Inputs = {
   password: string;
 };
 
-const Login: FC<LoginProps> = () => {
+const Login: FC<LoginProps> = (props) => {
   const dispatch = useDispatch();
   const [passwordInputType, setPasswordInputType] = useState(true);
   const { error } = useTypedSelector((state) => state.auth);
@@ -42,7 +44,15 @@ const Login: FC<LoginProps> = () => {
   };
 
   useEffect(() => {
+    console.log('tokenRevoked', props['*']);
     document.getElementById('username')?.focus();
+    if (props['*'] && props['*'] === 'login/tokenRevoked')
+      dispatch(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: 'Your Token has been Revoked.',
+        }),
+      );
   }, []);
 
   return (

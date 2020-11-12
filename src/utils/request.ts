@@ -1,5 +1,7 @@
 import { store } from '../App';
 import { apiForgotPassword, apiLogin } from './apiUrls';
+import { persistor } from '../App';
+import { closeAllOverlayAction } from '#components/OverlayContainer/actions';
 
 interface RequestOptions {
   data?: Record<string | number, any>;
@@ -45,6 +47,12 @@ export const request = async (
   })
     .then(async (res) => {
       const resu = await res.json();
+      if (resu && resu.errors && resu.errors[0].code === '1101') {
+        store.dispatch(closeAllOverlayAction());
+        persistor.purge();
+        window.location.href = '/auth/login/tokenRevoked';
+        throw 'Token Revoked';
+      }
       return resu;
     })
     .catch((e) => {

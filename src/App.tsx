@@ -13,6 +13,7 @@ import { HomeView } from './views';
 import PrintJob from '#views/Jobs/PrintJob';
 import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
 import PrintJobActivity from '#views/Jobs/PrintJobActivity';
+// import { parseMarkUp } from '#utils/stringUtils';
 
 export const { store, persistor } = configureStore({});
 // persistor.purge();
@@ -21,6 +22,27 @@ const App: FC = () => {
   // useEffect(() => {
   //   navigate('/checklist');
   // }, []);
+
+  // const node = document.createElement('div');
+
+  // node.innerHTML = `<p>This is a linelajsbdkjasljdhkajshdkjablskjdbaksbdkajsdjahkjdhajsdhkajsdkjaskjdbkajsbdkaskjd</p>
+  // <p>aljsdkjah<strong>sjdkhasd</strong></p>
+  // <p><strong>I am her</strong></p>
+  // <p></p>
+  // <p><strong><ins>I am a line</ins></strong></p>
+  // <p></p>
+  // <ul>
+  // <li><strong><ins>item 1</ins></strong></li>
+  // <li><strong><ins>item 2</ins></strong></li>
+  // </ul>
+  // <p></p>
+  // <ol>
+  // <li><strong><ins>item 1</ins></strong></li>
+  // <li><strong><ins>ietm 1</ins></strong></li>
+  // <li>Item 123</li>
+  // </ol>`;
+
+  // console.log(parseMarkUp(node));
 
   return (
     <Provider store={store}>

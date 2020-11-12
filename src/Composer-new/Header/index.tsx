@@ -619,7 +619,7 @@ const ChecklistHeader: FC = () => {
                   Release Prototype
                 </Button1>
               )}
-            <MoreButton />
+            {data?.state !== ChecklistStates.PUBLISHED && <MoreButton />}
           </div>
         </div>
         {author &&

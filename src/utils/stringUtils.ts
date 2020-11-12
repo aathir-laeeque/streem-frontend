@@ -26,3 +26,29 @@ export const getOrdinal = (n: number) => {
 export const removeUnderscore = (str: string) => {
   return str.replace(/_/g, ' ');
 };
+
+type Response = { tag: string; text: string; childs: Response[] };
+
+export const parseMarkUp = (n: HTMLElement) => {
+  const res: Response[] = [];
+  const parser = (node: HTMLElement, arr: Response[]) => {
+    node.childNodes.forEach((cNode) => {
+      const nValue = cNode.textContent as string;
+      if (
+        !(nValue.length === 3 && nValue?.substring(nValue.length - 2) === '  ')
+      ) {
+        if (cNode.nodeType === 3 || cNode.hasChildNodes()) {
+          arr.push({
+            tag: cNode.nodeName,
+            text: cNode.nodeType === 3 ? nValue : '',
+            childs: [],
+          });
+          parser(cNode, arr[arr.length - 1].childs);
+        }
+      }
+    });
+  };
+
+  parser(n, res);
+  return res;
+};
