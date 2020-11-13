@@ -35,16 +35,15 @@ export const parseMarkUp = (n: HTMLElement) => {
     node.childNodes.forEach((cNode) => {
       const nValue = cNode.textContent as string;
       if (
-        !(nValue.length === 3 && nValue?.substring(nValue.length - 2) === '  ')
+        (cNode.nodeType === 3 && nValue.replace(/[^a-zA-Z]/g, '') !== '') ||
+        cNode.hasChildNodes()
       ) {
-        if (cNode.nodeType === 3 || cNode.hasChildNodes()) {
-          arr.push({
-            tag: cNode.nodeName,
-            text: cNode.nodeType === 3 ? nValue : '',
-            childs: [],
-          });
-          parser(cNode, arr[arr.length - 1].childs);
-        }
+        arr.push({
+          tag: cNode.nodeName,
+          text: cNode.nodeType === 3 ? nValue : '',
+          childs: [],
+        });
+        parser(cNode, arr[arr.length - 1].childs);
       }
     });
   };

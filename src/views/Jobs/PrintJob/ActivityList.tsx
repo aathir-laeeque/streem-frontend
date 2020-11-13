@@ -8,6 +8,8 @@ import {
 import checkmark from '#assets/images/checkmark.png';
 import { Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import moment from 'moment';
+import { parseMarkUp } from '#utils/stringUtils';
+import { InstructionTags } from './types';
 
 const styles = StyleSheet.create({
   text12: {
@@ -85,15 +87,93 @@ const styles = StyleSheet.create({
   },
 });
 
+type Response = { tag: string; text: string; childs: Response[] };
+const getTagBasedDesign = (
+  element: Response,
+  childIndex: number,
+  parentTag: string | null = null,
+) => {
+  switch (element.tag) {
+    case InstructionTags.P:
+      return (
+        <View
+          style={{ display: 'flex', flexDirection: 'row', marginVertical: 10 }}
+        >
+          {element.childs.map((child, i) => getTagBasedDesign(child, i))}
+        </View>
+      );
+    case InstructionTags.SPAN:
+      return (
+        <View style={{ display: 'flex', flexDirection: 'row' }}>
+          {element.childs.map((child, i) => getTagBasedDesign(child, i))}
+        </View>
+      );
+    case InstructionTags.UL:
+      return (
+        <View>
+          {element.childs.map((child, i) =>
+            getTagBasedDesign(child, i, element.tag),
+          )}
+        </View>
+      );
+    case InstructionTags.OL:
+      return (
+        <View>
+          {element.childs.map((child, i) =>
+            getTagBasedDesign(child, i, element.tag),
+          )}
+        </View>
+      );
+    case InstructionTags.LI:
+      return (
+        <View style={{ display: 'flex', flexDirection: 'row' }}>
+          {parentTag === InstructionTags.OL ? (
+            <Text style={[styles.text12, { marginHorizontal: 5 }]}>•</Text>
+          ) : (
+            <Text style={[styles.text12, { marginHorizontal: 5 }]}>
+              {childIndex + 1}.
+            </Text>
+          )}
+          {element.childs.map((child, i) => getTagBasedDesign(child, i))}
+        </View>
+      );
+    case InstructionTags.STRONG:
+      return (
+        <View style={{ fontFamily: 'Nunito' }}>
+          {element.childs.map((child, i) => getTagBasedDesign(child, i))}
+        </View>
+      );
+    case InstructionTags.INS:
+      return (
+        <View style={{ textDecoration: 'underline' }}>
+          {element.childs.map((child, i) => getTagBasedDesign(child, i))}
+        </View>
+      );
+    case InstructionTags.TEXT:
+      return (
+        <View>
+          <Text style={styles.text12}> {element.text}</Text>
+        </View>
+      );
+    default:
+      break;
+  }
+};
+
 const activityTemplateFormatter = (
   activity: Activity,
   activityIndex: number,
 ) => {
   switch (activity.type) {
     case NonMandatoryActivity.INSTRUCTION:
+      const node = document.createElement('div');
+      node.innerHTML = activity.data.text;
+      const res = parseMarkUp(node);
+      console.log('RESPONSE', res);
       return (
         <View style={styles.activityView}>
-          <Text style={styles.text12}>{activity.data.text}</Text>
+          {res.map((parent, i) => getTagBasedDesign(parent, i))}
+          {/* <Text style={styles.text12}>{activity.data.text}</Text> */}
         </View>
       );
     case MandatoryActivity.TEXTBOX:
@@ -217,6 +297,7 @@ const activityTemplateFormatter = (
           ))}
         </View>
       );
+    case MandatoryActivity.SINGLE_SELECT:
     case MandatoryActivity.MULTISELECT:
       return (
         <View style={styles.activityView}>
@@ -255,7 +336,11 @@ const activityTemplateFormatter = (
               activity.response?.choices[item.id] === 'SELECTED' ? (
                 <Image
                   src={checkmark}
-                  style={{ height: '16px', marginHorizontal: 5 }}
+                  style={{
+                    height: '16px',
+                    marginLeft: 2,
+                    marginRight: 8,
+                  }}
                 />
               ) : (
                 <View style={styles.checkBox} />

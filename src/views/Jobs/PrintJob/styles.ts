@@ -17,6 +17,11 @@ Font.register({
     'https://fonts.gstatic.com/s/nunitosans/v2/iJ4p9wO0GDKJ-D5teKuZqp0EAVxt0G0biEntp43Qt6E.ttf',
 });
 
+// Font.register({
+//   family: 'Nunito-Bold',
+//   src: 'http://dev.streem.leucinetech.com/Nunito-Bold.ttf',
+// });
+
 export const styles = StyleSheet.create({
   page: {
     backgroundColor: '#FFF',

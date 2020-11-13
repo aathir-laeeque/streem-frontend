@@ -24,7 +24,11 @@ import {
 import { styles, LoadingDiv } from './styles';
 import { Entity } from '#Composer/composer.types';
 import { Checklist, TaskExecution } from '#Composer-new/checklist.types';
-import { removeUnderscore } from '#utils/stringUtils';
+import {
+  AssignedJobStates,
+  CompletedJobStates,
+  Job,
+} from '../NewListView/types';
 
 const now = moment().format('Do MMM, YYYY, hh:mm a');
 
@@ -56,6 +60,28 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   Object.keys(assigneesObj).forEach((key) => {
     assignees.push(assigneesObj[key]);
   });
+
+  const getJobStatus = (state: Job['state']) => {
+    const isJobBlocked = state === AssignedJobStates.BLOCKED;
+    const isJobStarted = state === AssignedJobStates.IN_PROGRESS;
+    const isJobCompleted = state === CompletedJobStates.COMPLETED;
+    const isCompletedWithException =
+      state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
+
+    let status = '';
+
+    isJobCompleted
+      ? (status = 'Completed')
+      : isCompletedWithException
+      ? (status = 'Completed with Exception')
+      : isJobBlocked
+      ? (status = 'Approval Pending')
+      : isJobStarted
+      ? (status = 'Started')
+      : (status = 'Not Started');
+
+    return status;
+  };
 
   return (
     <PDFViewer style={{ width: '100%', height: '100%' }}>
@@ -98,7 +124,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
               <InputLabelGroup label="Job ID :" value={jobExtras.code} />
               <InputLabelGroup
                 label="State :"
-                value={removeUnderscore(jobExtras.state)}
+                value={getJobStatus(jobExtras.state)}
               />
               <View style={styles.flexRow}>
                 <View style={styles.flexRow}>

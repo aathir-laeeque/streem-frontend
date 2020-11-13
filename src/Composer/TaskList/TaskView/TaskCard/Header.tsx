@@ -21,6 +21,7 @@ import Timer from './Timer';
 import TaskAssignmentContent from './TaskAssignmentContent';
 import { User } from '#store/users/types';
 import { useTypedSelector } from '#store';
+import { capitalize } from 'lodash';
 
 type HeaderProps = {
   task: Omit<Task, 'activities'>;
@@ -353,7 +354,8 @@ const JobHeader: FC<Pick<
                   )
                 }
               >
-                {getInitials(`${user.firstName} ${user.lastName}`)}
+                {capitalize(user.firstName).substring(0, 1)}
+                {capitalize(user.lastName).substring(0, 1)}
               </div>
             ))}
             {assignees.length > 4 && (
