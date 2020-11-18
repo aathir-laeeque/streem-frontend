@@ -7,7 +7,6 @@ import { usePrevious } from '#utils/usePrevious';
 import styled from 'styled-components';
 import { defaultParams, useUsers } from '#services/users';
 import { Popover } from '@material-ui/core';
-import { uniqBy } from 'lodash';
 import {
   openOverlayAction,
   closeOverlayAction,
@@ -277,9 +276,11 @@ const UsersFilter: FC<UsersFilterProps> = ({
 
   const onCheckChanged = (user: User, checked: boolean) => {
     if (checked) {
-      const newSelected = selectedUsers.filter((u) => user.id !== u.id);
+      const newSelected = [...appliedUsers, ...selectedUsers].filter(
+        (u) => user.id !== u.id,
+      );
       setstate({ ...state, selectedUsers: newSelected });
-      updateFilter([...appliedUsers, ...newSelected]);
+      updateFilter([...newSelected]);
     } else {
       setstate({ ...state, selectedUsers: [...selectedUsers, user] });
       updateFilter([...appliedUsers, ...[...selectedUsers, user]]);

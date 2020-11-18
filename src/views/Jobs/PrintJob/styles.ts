@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import { StyleSheet, Font } from '@react-pdf/renderer';
+import NunitoRegular from '../../../assets/fonts/nunito/nunito-v14-latin-300.ttf';
+import NunitoBold from '../../../assets/fonts/nunito/nunito-v14-latin-700.ttf';
 
 export const LoadingDiv = styled.div`
   display: flex;
@@ -11,16 +13,21 @@ export const LoadingDiv = styled.div`
   z-index: -1;
 `;
 
+// Font.register({
+//   family: 'Nunito',
+//   src:
+//     'https://fonts.gstatic.com/s/nunitosans/v2/iJ4p9wO0GDKJ-D5teKuZqp0EAVxt0G0biEntp43Qt6E.ttf',
+// });
+
 Font.register({
   family: 'Nunito',
-  src:
-    'https://fonts.gstatic.com/s/nunitosans/v2/iJ4p9wO0GDKJ-D5teKuZqp0EAVxt0G0biEntp43Qt6E.ttf',
+  src: NunitoRegular,
 });
 
-// Font.register({
-//   family: 'Nunito-Bold',
-//   src: 'http://dev.streem.leucinetech.com/Nunito-Bold.ttf',
-// });
+Font.register({
+  family: 'NunitoBold',
+  src: NunitoBold,
+});
 
 export const styles = StyleSheet.create({
   page: {

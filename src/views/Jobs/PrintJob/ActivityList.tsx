@@ -16,6 +16,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Nunito',
   },
+  textS12: {
+    fontSize: 12,
+    // fontFamily: 'inherit',
+  },
   activityHintText: {
     color: '#666666',
     fontSize: 12,
@@ -139,7 +143,7 @@ const getTagBasedDesign = (
       );
     case InstructionTags.STRONG:
       return (
-        <View style={{ fontFamily: 'Nunito' }}>
+        <View style={{ fontFamily: 'NunitoBold' }}>
           {element.childs.map((child, i) => getTagBasedDesign(child, i))}
         </View>
       );
@@ -152,7 +156,7 @@ const getTagBasedDesign = (
     case InstructionTags.TEXT:
       return (
         <View>
-          <Text style={styles.text12}> {element.text}</Text>
+          <Text style={styles.textS12}> {element.text}</Text>
         </View>
       );
     default:
