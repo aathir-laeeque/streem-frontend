@@ -1,5 +1,5 @@
 import {
-  ToggleFilter,
+  ToggleSwitch,
   Button1,
   DropdownFilter,
   NewListView,
@@ -191,7 +191,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             })),
           ]}
           updateFilterFields={(fields) => {
-            console.log('fields :: ', fields);
             setFilterFields((currentFields) => [
               ...currentFields.filter(
                 (field) =>
@@ -279,14 +278,15 @@ const ListView: FC<ListViewProps & { label: string }> = ({
         ) : null}
 
         {label === 'prototype' ? (
-          <ToggleFilter
+          <ToggleSwitch
+            checkedIcon={false}
             offLabel="Show Archived"
             onLabel="Showing Archived"
             value={
               !!filterFields.find((field) => field.field === 'archived')
                 ?.values[0]
             }
-            updateFilter={(isChecked) =>
+            onChange={(isChecked) =>
               setFilterFields((currentFields) =>
                 currentFields.map((field) => ({
                   ...field,
@@ -296,6 +296,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                 })),
               )
             }
+            uncheckedIcon={false}
           />
         ) : null}
 

@@ -18,6 +18,12 @@ const ActivityWrapper = styled.div.attrs({
     z-index: 1;
   }
 
+  .toggle-switch {
+    margin: 0;
+    margin-top: 16px;
+    justify-content: flex-end;
+  }
+
   .activity-error {
     color: #eb5757;
     margin-top: 8px;

@@ -1,12 +1,13 @@
+import { ToggleSwitch } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { useTypedSelector } from '#store/helpers';
 import { Delete } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { useTypedSelector } from '../../store/helpers';
 import { MandatoryActivity, NonMandatoryActivity } from '../checklist.types';
-import { deleteActivity } from './actions';
+import { deleteActivity, updateActivity } from './actions';
 import ChecklistActivity from './Checklist';
 import InstructionActivity from './Instruction';
 import MaterialActivity from './Material';
@@ -91,6 +92,38 @@ const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
 
           default:
             return null;
+        }
+      })()}
+
+      {(() => {
+        let offLabel = 'Optional',
+          onLabel = 'Requried';
+
+        if (activity.type === MandatoryActivity.CHECKLIST) {
+          offLabel = 'All Optional';
+          onLabel = 'All Required';
+        }
+
+        if (
+          activity.type === MandatoryActivity.MULTISELECT ||
+          activity.type === MandatoryActivity.SINGLE_SELECT
+        ) {
+          onLabel = 'One Required';
+        }
+
+        if (activity.type in MandatoryActivity) {
+          return (
+            <ToggleSwitch
+              offLabel={offLabel}
+              onChange={(isChecked) => {
+                dispatch(updateActivity({ ...activity, mandatory: isChecked }));
+              }}
+              onColor="#5aa700"
+              onLabel={onLabel}
+              uncheckedIcon={false}
+              value={activity.mandatory}
+            />
+          );
         }
       })()}
     </ActivityWrapper>

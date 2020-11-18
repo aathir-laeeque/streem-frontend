@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import Switch from 'react-switch';
 import styled from 'styled-components';
 
@@ -18,29 +18,33 @@ const Wrapper = styled.div.attrs({
 `;
 
 type Props = {
+  checkedIcon?: false | JSX.Element;
+  height?: number;
   offColor?: string;
   offHandleColor?: string;
   offLabel: string;
   onColor?: string;
   onHandleColor?: string;
   onLabel: string;
-  showCheckedIcon?: boolean;
-  showUncheckedIcon?: boolean;
-  updateFilter: (isChecked: boolean) => void;
+  onChange: (isChecked: boolean) => void;
+  uncheckedIcon?: false | JSX.Element;
   value?: boolean;
+  width?: number;
 };
 
 const ToggleSwitch: FC<Props> = ({
+  checkedIcon = undefined,
+  height = 16,
   offColor = '#dadada',
   offHandleColor = '#ffffff',
   offLabel,
   onColor = '#1d84ff',
   onHandleColor = '#ffffff',
   onLabel,
-  showCheckedIcon = false,
-  showUncheckedIcon = false,
-  updateFilter,
+  onChange,
+  uncheckedIcon = undefined,
   value = false,
+  width = 32,
 }) => {
   const [isChecked, toggleIsChecked] = useState(value);
 
@@ -49,18 +53,23 @@ const ToggleSwitch: FC<Props> = ({
       <Switch
         activeBoxShadow=""
         checked={isChecked}
-        checkedIcon={showCheckedIcon}
-        height={16}
+        checkedIcon={
+          typeof checkedIcon === 'undefined' ? undefined : checkedIcon
+        }
+        handleDiameter={height - 6}
+        height={height}
         offColor={offColor}
         offHandleColor={offHandleColor}
         onColor={onColor}
         onHandleColor={onHandleColor}
         onChange={() => {
           toggleIsChecked((val) => !val);
-          updateFilter(!isChecked);
+          onChange(!isChecked);
         }}
-        uncheckedIcon={showUncheckedIcon}
-        width={32}
+        uncheckedIcon={
+          typeof uncheckedIcon === 'undefined' ? undefined : uncheckedIcon
+        }
+        width={width}
       />
       <label className="label">{value ? onLabel : offLabel}</label>
     </Wrapper>

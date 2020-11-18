@@ -4,7 +4,7 @@ import {
   ProgressBar,
   SearchFilter,
   TabContentProps,
-  ToggleFilter,
+  ToggleSwitch,
   UsersFilter,
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
@@ -177,11 +177,12 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         )}
 
         {values[0] in CompletedJobStates ? (
-          <ToggleFilter
+          <ToggleSwitch
+            checkedIcon={false}
             value={false}
             onLabel="Jobs With Exception"
             offLabel="Jobs With Exception"
-            updateFilter={(isChecked) => {
+            onChange={(isChecked) => {
               setFilterFields((currentFields) => [
                 ...currentFields.filter((el) => el.field !== 'state'),
                 ...(isChecked
@@ -196,6 +197,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
               ]);
               console.log('isCHecked :: ', isChecked);
             }}
+            uncheckedIcon={false}
           />
         ) : null}
 
