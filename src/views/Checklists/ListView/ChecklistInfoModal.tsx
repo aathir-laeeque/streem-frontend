@@ -13,8 +13,8 @@ import { Checklist } from '../types';
 
 const Wrapper = styled.div`
   .modal {
-    min-width: 800px !important;
-    width: 800px !important;
+    min-width: 850px !important;
+    width: 850px !important;
     max-height: 600px;
     height: 600px;
     /* overflow: auto !important; */
@@ -210,14 +210,17 @@ const Wrapper = styled.div`
         }
 
         div {
+          margin-bottom: 16px;
           text-align: left;
         }
 
         .version-code {
-          cursor: pointer;
+          :not(:first-of-type) {
+            cursor: pointer;
 
-          :hover {
-            color: #1d84ff;
+            :hover {
+              color: #1d84ff;
+            }
           }
         }
       }
@@ -439,8 +442,10 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                       key={index}
                       className="version-code"
                       onClick={() => {
-                        closeOverlay();
-                        navigate(`checklists/${version.id}`);
+                        if (index > 0) {
+                          closeOverlay();
+                          navigate(`checklists/${version.id}`);
+                        }
                       }}
                     >
                       {version.code}

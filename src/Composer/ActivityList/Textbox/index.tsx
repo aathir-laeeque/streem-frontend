@@ -40,7 +40,7 @@ const TextboxActivity: FC<ActivityProps> = ({
           <label className="new-form-field-label">User Comments Box</label>
           <textarea
             className="new-form-field-textarea"
-            placeholder="User will write comments here"
+            placeholder="Users will write their comments here"
             value={value}
             rows={4}
             onChange={(e) => onChange(e)}

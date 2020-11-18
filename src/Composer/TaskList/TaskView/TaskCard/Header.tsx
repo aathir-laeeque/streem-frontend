@@ -22,6 +22,7 @@ import TaskAssignmentContent from './TaskAssignmentContent';
 import { User } from '#store/users/types';
 import { useTypedSelector } from '#store';
 import { capitalize } from 'lodash';
+import { JobState } from '#Composer/composer.types';
 
 type HeaderProps = {
   task: Omit<Task, 'activities'>;
@@ -298,9 +299,13 @@ const JobHeader: FC<Pick<
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
 
-  const { activeStageId, stagesOrder } = useTypedSelector(
-    (state) => state.composer.stages,
-  );
+  const {
+    stages: { activeStageId, stagesOrder },
+    jobState,
+  } = useTypedSelector((state) => state.composer);
+
+  const isJobStarted =
+    jobState === JobState.IN_PROGRESS || jobState === JobState.BLOCKED;
 
   const stageIndex = stagesOrder.indexOf(activeStageId);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -402,7 +407,7 @@ const JobHeader: FC<Pick<
               <button
                 className="start-task"
                 onClick={() => {
-                  if (enableStopForTask) {
+                  if (enableStopForTask && isJobStarted) {
                     dispatch(
                       openOverlayAction({
                         type: OverlayNames.ADD_STOP,
