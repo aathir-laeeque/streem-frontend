@@ -600,6 +600,21 @@ const ChecklistHeader: FC = () => {
                 {approver && notSignedYet && <SignOffButton />}
               </>
             )}
+            {data?.state === ChecklistStates.STALE && (
+              <Button1
+                variant="secondary"
+                onClick={() =>
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.CHECKLIST_INFO,
+                      props: { checklist: { id: data.id } },
+                    }),
+                  )
+                }
+              >
+                View Info
+              </Button1>
+            )}
             {data?.state === ChecklistStates.PUBLISHED && null}
             {data?.state === ChecklistStates.READY_FOR_RELEASE &&
               checkPermission(['checklists', 'release']) && (

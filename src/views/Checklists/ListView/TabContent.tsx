@@ -425,11 +425,33 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                             handleClose();
                             if (selectedChecklist?.id)
                               dispatch(
-                                addRevisionPrototype(
-                                  selectedChecklist?.id.toString(),
-                                  selectedChecklist?.code.toString(),
-                                  selectedChecklist?.name.toString(),
-                                ),
+                                openOverlayAction({
+                                  type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                                  props: {
+                                    header: 'Start Revision',
+                                    body: (
+                                      <>
+                                        <span>
+                                          Are you sure you want to start a
+                                          Revision on this Checklist ?
+                                        </span>
+                                        <span style={{ color: '#999999' }}>
+                                          This will Deprecate the current
+                                          Checklist and create a new Prototype
+                                          as a revision.
+                                        </span>
+                                      </>
+                                    ),
+                                    onPrimaryClick: () =>
+                                      dispatch(
+                                        addRevisionPrototype(
+                                          selectedChecklist?.id.toString(),
+                                          selectedChecklist?.code.toString(),
+                                          selectedChecklist?.name.toString(),
+                                        ),
+                                      ),
+                                  },
+                                }),
                               );
                           }}
                         >

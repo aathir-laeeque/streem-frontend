@@ -74,7 +74,6 @@ const styles = StyleSheet.create({
   },
   taskFooter: {
     display: 'flex',
-    flexDirection: 'row',
     paddingVertical: 8,
     paddingTop: 16,
   },
@@ -87,12 +86,19 @@ const styles = StyleSheet.create({
   },
   taskFooterLabel: {
     fontSize: 12,
-    marginBottom: 4,
+    marginBottom: 0,
     fontFamily: 'Nunito',
   },
   text12: {
     fontSize: 12,
     fontFamily: 'Nunito',
+  },
+  comments: {
+    marginTop: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderWidth: 1,
+    borderColor: '#000',
   },
 });
 
@@ -230,7 +236,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
       </View>
       <ActivityList activities={task.activities} />
 
-      {taskExecutionState !== TaskExecutionState.NOT_STARTED ? (
+      {taskExecutionState === TaskExecutionState.COMPLETED && (
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
             This Task was digitally completed via CLEEN {'\n'}
@@ -239,18 +245,97 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
             {moment.unix(modifiedAt).format('MMM DD, h:mm A')}
           </Text>
         </View>
-      ) : (
+      )}
+      {(taskExecutionState === TaskExecutionState.COMPLETED_WITH_CORRECTION ||
+        taskExecutionState === TaskExecutionState.ENABLED_FOR_CORRECTION) && (
         <View style={styles.taskFooter} wrap={false}>
+          <Text style={styles.text12}>
+            This Task was Completed with Correction via CLEEN {'\n'}
+            by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
+            {modifiedBy.employeeId} on{' '}
+            {moment.unix(modifiedAt).format('MMM DD, h:mm A')}
+          </Text>
+          <View style={styles.comments}>
+            <Text style={styles.text12}>
+              {task.taskExecution.correctionReason}
+            </Text>
+          </View>
+        </View>
+      )}
+      {(taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
+        taskExecutionState === TaskExecutionState.SKIPPED) && (
+        <View style={styles.taskFooter} wrap={false}>
+          <Text style={styles.text12}>
+            This Task was
+            {taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION
+              ? ' Completed with Exception '
+              : ' skipped '}
+            via CLEEN {'\n'}
+            by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
+            {modifiedBy.employeeId} on{' '}
+            {moment.unix(modifiedAt).format('MMM DD, h:mm A')}
+          </Text>
+          <View style={styles.comments}>
+            <Text style={styles.text12}>{task.taskExecution.reason}</Text>
+          </View>
+        </View>
+      )}
+      {(taskExecutionState === TaskExecutionState.NOT_STARTED ||
+        taskExecutionState === TaskExecutionState.IN_PROGRESS) && (
+        <View
+          style={[styles.taskFooter, { flexDirection: 'row' }]}
+          wrap={false}
+        >
           <View style={styles.flexView}>
             <Text style={styles.taskFooterLabel}>First Name</Text>
             <View style={styles.taskFooterInputs}>
               <Text style={styles.text12} />
             </View>
-          </View>
-          <View style={[styles.flexView, { margin: '0px 4px 0px 8px' }]}>
-            <Text style={styles.taskFooterLabel}>Last Name</Text>
+            <Text style={[styles.taskFooterLabel, { marginTop: 5 }]}>
+              Last Name
+            </Text>
             <View style={styles.taskFooterInputs}>
               <Text style={styles.text12} />
+            </View>
+          </View>
+          <View style={[styles.flexView, { margin: '0px 4px' }]}>
+            <View
+              style={{
+                paddingLeft: 40,
+              }}
+            >
+              <Text style={styles.taskTopHeaderTitle}>End Date</Text>
+              <Text
+                style={[
+                  styles.taskStartDateInput,
+                  {
+                    letterSpacing: 2.8,
+                    margin: '8px 0px 2px 0px',
+                  },
+                ]}
+              >
+                ___/__/____
+              </Text>
+              <Text style={styles.taskStartDateInput}>
+                MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;YYYY
+              </Text>
+            </View>
+          </View>
+          <View style={[styles.flexView, { margin: '0px 4px' }]}>
+            <View style={{ paddingLeft: 20 }}>
+              <Text style={styles.taskTopHeaderTitle}>End Time</Text>
+              <Text
+                style={[
+                  styles.taskStartDateInput,
+                  {
+                    letterSpacing: 2.6,
+                    margin: '8px 0px 2px 0px',
+                  },
+                ]}
+              >
+                __:__ am / pm
+              </Text>
+              <Text style={styles.taskStartDateInput}>HH&nbsp;&nbsp;MM</Text>
             </View>
           </View>
           <View style={[styles.flexView, { margin: '0px 4px' }]}>
@@ -258,20 +343,6 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
             <View style={[styles.taskFooterInputs, { minHeight: 50 }]}>
               <Text style={styles.text12} />
             </View>
-          </View>
-          <View style={[styles.flexView, { margin: '0px 4px' }]}>
-            <Text style={styles.taskFooterLabel}>Date</Text>
-            <Text
-              style={[
-                styles.taskStartDateInput,
-                {
-                  letterSpacing: 2.6,
-                  margin: '8px 0px 2px 0px',
-                },
-              ]}
-            >
-              ___/__/____
-            </Text>
           </View>
         </View>
       )}

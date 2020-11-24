@@ -4,6 +4,7 @@ import { Checklist } from '#Composer-new/checklist.types';
 import { initiateSignOff } from '#Composer-new/reviewer.actions';
 import { CollaboratorType } from '#Composer-new/reviewer.types';
 import { useTypedSelector } from '#store';
+import { Info } from '@material-ui/icons';
 import { uniqBy } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -151,6 +152,37 @@ const Wrapper = styled.div`
           }
         }
       }
+
+      .before-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: -25px 0px 4px 0px;
+
+        .alert {
+          padding: 4px 80px;
+          border-radius: 4px;
+          border: solid 1px #ff6b6b;
+          background-color: rgba(255, 107, 107, 0.16);
+          min-width: 600px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          span {
+            color: #333333;
+            font-size: 12px;
+            line-height: 16px;
+          }
+
+          svg {
+            color: #cc5656;
+            font-size: 16px;
+            line-height: 16px;
+            margin-right: 8px;
+          }
+        }
+      }
     }
   }
 `;
@@ -173,6 +205,9 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
 }) => {
   const dispatch = useDispatch();
   const [users, setUsers] = useState<ParsedUser[]>([]);
+  const [error, setError] = useState(
+    'You need to select at least one Reviewer and one Approver to Initiate the Sign Off process',
+  );
   const [selection, setSelection] = useState<
     { userId: string; orderTree: number }[]
   >([]);
@@ -242,14 +277,12 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
       }
     });
 
-    console.log('newUsers', newUsers);
-
     setUsers(newUsers);
 
+    let newSelection: { userId: string; orderTree: number }[] = [];
     if (checking) {
-      setSelection([...selection, { userId: id, orderTree }]);
+      newSelection = [...selection, { userId: id, orderTree }];
     } else {
-      const newSelection: { userId: string; orderTree: number }[] = [];
       selection.forEach((s) => {
         if (s.userId !== id) {
           newSelection.push(s);
@@ -259,7 +292,31 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
           }
         }
       });
-      setSelection(newSelection);
+    }
+    setSelection(newSelection);
+
+    let consistReviewer = false;
+    let consistApprover = false;
+
+    newSelection.forEach((c) => {
+      if (c.orderTree === 2) consistReviewer = true;
+      if (c.orderTree === 3) consistApprover = true;
+    });
+
+    if (consistReviewer === false && consistApprover === false) {
+      setError(
+        'You need to select at least one Reviewer and one Approver to Initiate the Sign Off process',
+      );
+    } else if (consistReviewer === false) {
+      setError(
+        'You need to select at least one Reviewer to Initiate the Sign Off process',
+      );
+    } else if (consistApprover === false) {
+      setError(
+        'You need to select at least one Approver to Initiate the Sign Off process',
+      );
+    } else {
+      setError('');
     }
   };
 
@@ -273,7 +330,16 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
         secondaryText="Cancel"
         onSecondary={() => console.log('On Secondary')}
         onPrimary={() => dispatch(initiateSignOff(data.id, selection))}
+        disabledPrimary={!!error}
       >
+        {error && (
+          <div className="before-header">
+            <div className="alert">
+              <Info />
+              <span>{error}</span>
+            </div>
+          </div>
+        )}
         <table cellSpacing={0} cellPadding={0}>
           <tbody>
             <tr>

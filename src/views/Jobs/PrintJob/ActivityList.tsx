@@ -66,6 +66,8 @@ const styles = StyleSheet.create({
   },
   comments: {
     marginTop: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
     borderWidth: 1,
     borderColor: '#000',
   },
@@ -173,11 +175,9 @@ const activityTemplateFormatter = (
       const node = document.createElement('div');
       node.innerHTML = activity.data.text;
       const res = parseMarkUp(node);
-      console.log('RESPONSE', res);
       return (
         <View style={styles.activityView}>
           {res.map((parent, i) => getTagBasedDesign(parent, i))}
-          {/* <Text style={styles.text12}>{activity.data.text}</Text> */}
         </View>
       );
     case MandatoryActivity.TEXTBOX:
@@ -186,7 +186,7 @@ const activityTemplateFormatter = (
         items.push(<View style={styles.commentsRow} />);
       }
       return (
-        <View style={styles.activityView}>
+        <View style={styles.activityView} wrap={false}>
           <Text style={styles.text12}>Write Your Comments</Text>
           <View style={styles.comments}>
             {activity.response?.value ? (
@@ -195,6 +195,28 @@ const activityTemplateFormatter = (
               items
             )}
           </View>
+        </View>
+      );
+    case MandatoryActivity.SIGNATURE:
+      const signatureItems = [];
+      for (let i = 0; i < 8; i++) {
+        signatureItems.push(
+          <View style={[styles.commentsRow, { borderBottomWidth: 0 }]} />,
+        );
+      }
+      return (
+        <View style={styles.activityView} wrap={false}>
+          <Text style={styles.text12}>Sign Below</Text>
+          {activity.response?.medias ? (
+            <Image
+              src={activity.response?.medias[0].link}
+              style={{ width: '300px' }}
+            />
+          ) : (
+            <View style={[styles.comments, { width: 300 }]}>
+              {signatureItems}
+            </View>
+          )}
         </View>
       );
     case MandatoryActivity.PARAMETER:
@@ -355,6 +377,10 @@ const activityTemplateFormatter = (
         </View>
       );
     case MandatoryActivity.YES_NO:
+      const yesNoItems = [];
+      for (let i = 0; i < 4; i++) {
+        yesNoItems.push(<View style={styles.commentsRow} />);
+      }
       return (
         <View style={styles.activityView}>
           <View
@@ -411,6 +437,18 @@ const activityTemplateFormatter = (
               <View style={styles.checkBox} />
             )}
             <Text style={styles.text12}>Negative</Text>
+          </View>
+          <View style={{ paddingVertical: 8 }} wrap={false}>
+            <Text style={styles.text12}>
+              If ‘NO’ is ticked, a reason has to be written below
+            </Text>
+            <View style={styles.comments}>
+              {activity.response?.reason ? (
+                <Text style={styles.text12}>{activity.response?.reason}</Text>
+              ) : (
+                yesNoItems
+              )}
+            </View>
           </View>
         </View>
       );
