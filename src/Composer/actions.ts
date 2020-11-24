@@ -126,3 +126,9 @@ type signOffTasksArgs = {
 
 export const signOffTasks = ({ jobId, password }: signOffTasksArgs) =>
   actionSpreader(ComposerAction.SIGN_OFF_TASKS, { jobId, password });
+
+export const setSignOffError = (error: string) =>
+  actionSpreader(ComposerAction.SIGN_OFF_TASKS_ERROR, { error });
+
+export const resetSignOffTaskError = () =>
+  actionSpreader(ComposerAction.SIGN_OFF_TASKS_ERROR_RESET);

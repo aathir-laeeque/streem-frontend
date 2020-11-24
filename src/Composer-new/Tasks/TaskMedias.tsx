@@ -1,6 +1,7 @@
 import { ImageUploadButton } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { EnabledStates } from '#Composer-new/checklist.types';
 import { useTypedSelector } from '#store/helpers';
 import { ArrowLeft, ArrowRight, PermMedia } from '@material-ui/icons';
 import React, { FC, useEffect, useState } from 'react';
@@ -16,9 +17,12 @@ const TaskMedias: FC<TaskMediasProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const { activeTaskId } = useTypedSelector(
-    (state) => state.prototypeComposer.tasks,
-  );
+  const {
+    data,
+    tasks: { activeTaskId },
+  } = useTypedSelector((state) => state.prototypeComposer);
+
+  console.log('data.state :: ', data?.state);
 
   const [activeMedia, setActiveMedia] = useState(medias[0]);
 
@@ -116,6 +120,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
               }}
               label="Upload Media"
               icon={PermMedia}
+              disabled={!(data?.state in EnabledStates) && !data?.archived}
             />
           ) : null}
         </div>

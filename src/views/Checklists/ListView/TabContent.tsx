@@ -98,6 +98,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     getBaseFilter(label),
   );
 
+  const [pageData, setPageData] = useState({
+    start: pageable.page * pageable.pageSize,
+    end: pageable.page * pageable.pageSize + pageable.pageSize,
+  });
+
   const fetchData = (page: number, size: number) => {
     const filters = JSON.stringify({ op: 'AND', fields: filterFields });
     dispatch(
@@ -129,6 +134,13 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     }
   }, [isIdle]);
 
+  useEffect(() => {
+    setPageData({
+      start: pageable.page * pageable.pageSize,
+      end: pageable.page * pageable.pageSize + pageable.pageSize,
+    });
+  }, [pageable]);
+
   const onCreateJob = (jobDetails: Record<string, string>) => {
     const tempProperties: { id: number; value: string }[] = [];
     let error = false;
@@ -158,10 +170,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({
       );
     }
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   const showPaginationArrows = pageable.totalPages > 10;
 
@@ -315,7 +323,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
       </div>
       <NewListView
         properties={checklistProperties}
-        data={checklists}
+        data={checklists.slice(pageData.start, pageData.end)}
         beforeColumns={[
           ...(label === 'prototype'
             ? [

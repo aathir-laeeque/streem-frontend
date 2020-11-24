@@ -67,14 +67,14 @@ function* fixActivitySaga({ payload }: ReturnType<typeof fixActivity>) {
   try {
     console.log('payload from fixActivitySaga :: ', payload);
 
-    const { activity } = payload;
+    const { activity, reason } = payload;
 
     const { entityId: jobId } = yield select(
       (state: RootState) => state.composer,
     );
 
     const { data } = yield call(request, 'PUT', apiFixActivity(), {
-      data: { jobId, activity },
+      data: { jobId, activity, ...(!!reason ? { reason } : {}) },
     });
 
     if (data) {

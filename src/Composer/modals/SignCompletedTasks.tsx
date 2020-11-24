@@ -1,23 +1,23 @@
+import NoTaskToSign from '#assets/svg/NoTaskToSign';
+import TaskSignOfComplete from '#assets/svg/TaskSignOfComplete';
 import {
   Avatar,
   BaseModal,
+  Button1,
   ProgressBar,
   TextInput,
-  Button1,
 } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { Job } from '#views/Jobs/types';
-import { pick, debounce } from 'lodash';
-import React, { FC, useState } from 'react';
-import styled from 'styled-components';
 import { useTypedSelector } from '#store/helpers';
 import { getFullName } from '#utils/stringUtils';
+import { Job } from '#views/Jobs/types';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
+import { debounce, pick } from 'lodash';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { signOffTasks } from '../actions';
-import NoTaskToSign from '#assets/svg/NoTaskToSign';
-import SignningNotCompleted from '#assets/svg/SignningNotCompleted';
-import TaskSignOfComplete from '#assets/svg/TaskSignOfComplete';
+import styled from 'styled-components';
+
+import { resetSignOffTaskError, signOffTasks } from '../actions';
 
 const Wrapper = styled.div`
   .modal-body {
@@ -137,6 +137,7 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
   props: { allowSignOff, data: assignees = [], jobId } = {},
 }) => {
   const { profile } = useTypedSelector((state) => state.auth);
+  const { signOffError } = useTypedSelector((state) => state.composer);
 
   const dispatch = useDispatch();
 
@@ -237,10 +238,13 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
                             setShowPassword((val) => !val)
                           }
                           defaultValue={password}
-                          onChange={debounce(
-                            ({ value }) => setPassword(value),
-                            500,
-                          )}
+                          error={signOffError}
+                          onChange={debounce(({ value }) => {
+                            if (!!signOffError) {
+                              dispatch(resetSignOffTaskError());
+                            }
+                            setPassword(value);
+                          }, 500)}
                           placeholder="Password"
                           type={showPassword ? 'text' : 'password'}
                         />

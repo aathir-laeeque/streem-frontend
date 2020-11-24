@@ -44,6 +44,7 @@ import { StageListSaga } from './StageList/saga';
 import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
 import { groupJobErrors } from './utils';
+import { setSignOffError } from './actions';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   try {
@@ -290,6 +291,9 @@ function* signOffTaskSaga({ payload }: ReturnType<typeof signOffTasks>) {
       }
     } else {
       console.error('error came in validte api :: ', validateErrors);
+      if (validateErrors[0].code === 2002) {
+        yield put(setSignOffError('Incorrect Password'));
+      }
     }
   } catch (error) {
     console.error('error from signOffTasksSaga :', error);

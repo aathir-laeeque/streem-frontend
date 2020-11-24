@@ -78,7 +78,9 @@ const AuthView: FC<AuthViewProps> = () => (
       </Router>
       <div className="credit-view">
         <div style={{ marginBottom: '8px' }}>A Product By</div>
-        <MemoLeucineLogo height="28px" width="auto" />
+        <a href="https://www.leucinetech.com">
+          <MemoLeucineLogo height="28px" width="auto" />
+        </a>
       </div>
     </div>
   </Wrapper>

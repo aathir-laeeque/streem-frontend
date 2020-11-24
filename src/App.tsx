@@ -15,6 +15,7 @@ import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
 import PrintJobActivity from '#views/Jobs/PrintJobActivity';
 
 export const { store, persistor } = configureStore({});
+
 // persistor.purge();
 
 const App: FC = () => {

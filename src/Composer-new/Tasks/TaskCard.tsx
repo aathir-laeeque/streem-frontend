@@ -83,14 +83,18 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
         }}
       >
         <div
-          className={`overlap ${data?.state in EnabledStates ? 'hide' : ''}`}
+          className={`overlap ${
+            data?.state in EnabledStates && !data?.archived ? 'hide' : ''
+          }`}
           onClick={() => {
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.EDITING_DISABLED,
-                props: { state: data?.state },
-              }),
-            );
+            if (activeTaskId === taskId) {
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.EDITING_DISABLED,
+                  props: { state: data?.state, archived: data?.archived },
+                }),
+              );
+            }
           }}
         />
         <div className="task-header">

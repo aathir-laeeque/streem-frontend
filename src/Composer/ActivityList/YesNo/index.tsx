@@ -102,7 +102,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
                 color="blue"
                 onClick={() => {
                   if (isCorrectingError) {
-                    dispatch(fixActivity(state.newData));
+                    dispatch(fixActivity(state.newData, state.reason));
                   } else {
                     dispatch(executeActivity(state.newData, state.reason));
                   }

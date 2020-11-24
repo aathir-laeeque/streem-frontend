@@ -7,8 +7,8 @@ import { SupervisorResponse, approveRejectActivityArgs } from './types';
 export const executeActivity = (activity: Activity, reason?: string) =>
   actionSpreader(ActivityListAction.EXECUTE_ACTIVITY, { activity, reason });
 
-export const fixActivity = (activity: Activity) =>
-  actionSpreader(ActivityListAction.FIX_ACTIVITY, { activity });
+export const fixActivity = (activity: Activity, reason?: string) =>
+  actionSpreader(ActivityListAction.FIX_ACTIVITY, { activity, reason });
 
 export const updateExecutedActivity = (activity: Activity) =>
   actionSpreader(ActivityListAction.UPDATE_EXECUTED_ACTIVITY, { activity });

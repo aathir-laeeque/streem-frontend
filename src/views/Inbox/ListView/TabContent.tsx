@@ -157,8 +157,12 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     },
     {
       header: 'Task Completed',
-      template: function renderComp({ completedTasks, totalTasks }: Job) {
-        const percentage = (completedTasks / totalTasks) * 100;
+      template: function renderComp({
+        completedTasks = 0,
+        totalTasks = 0,
+      }: Job) {
+        const percentage = totalTasks ? (completedTasks / totalTasks) * 100 : 0;
+
         return (
           <div className="list-card-columns task-progress">
             <ProgressBar whiteBackground percentage={percentage} />

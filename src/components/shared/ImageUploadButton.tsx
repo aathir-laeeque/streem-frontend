@@ -11,23 +11,26 @@ type ImageUploadButtonProps = {
   label?: string;
   onUploadSuccess: (data: FileUploadData) => void;
   onUploadError: (error: any) => void;
+  disabled?: boolean;
 };
 
 const Wrapper = styled.div.attrs({
   className: 'upload-image',
-})`
+})<Pick<ImageUploadButtonProps, 'disabled'>>`
   > div {
     align-items: center;
-    cursor: pointer;
+    cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
     display: flex;
 
-    .icon:only-child {
-      margin: 0 !important;
+    .icon:only-of-type {
+      cursor: ${({ disabled }) =>
+        disabled ? 'default' : 'pointer'} !important;
     }
   }
 `;
 
 const ImageUploadButton: FC<ImageUploadButtonProps> = ({
+  disabled = false,
   icon: Icon = ImageUploadIcon,
   label,
   onUploadError,
@@ -57,7 +60,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
   }, [file]);
 
   return (
-    <Wrapper>
+    <Wrapper disabled={disabled}>
       <input
         type="file"
         id="file"
@@ -70,7 +73,14 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
         }}
       />
 
-      <div onClick={() => fileRef?.current?.click()}>
+      <div
+        onClick={() => {
+          console.log('disabled == ', disabled);
+          if (!disabled) {
+            fileRef?.current?.click();
+          }
+        }}
+      >
         <Icon className="icon" />
         {label ? <span>{label}</span> : null}
       </div>

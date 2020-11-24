@@ -21,6 +21,7 @@ import { Entity, JobState } from './composer.types';
 import { JobActivityState } from './JobActivity/types';
 import { StageListState } from './StageList/reducer.types';
 import { TaskListState } from './TaskList/reducer.types';
+import { setSignOffError, resetSignOffTaskError } from './actions';
 
 export type ComposerState = {
   activities: ActivityListState;
@@ -41,6 +42,8 @@ export type ComposerState = {
   assignees: User[];
 
   activity: JobActivityState;
+
+  signOffError?: string;
 };
 
 export enum ComposerAction {
@@ -71,6 +74,8 @@ export enum ComposerAction {
 
   GET_SIGN_OFF_STATE = '@@composer/job-action/GET_SIGN_OFF_STATE',
   SIGN_OFF_TASKS = '@@composer/job-aaction/SIGN_OFF_TASKS',
+  SIGN_OFF_TASKS_ERROR = '@@composer/job-aaction/SIGN_OFF_TASKS_ERROR',
+  SIGN_OFF_TASKS_ERROR_RESET = '@@composer/job-aaction/SIGN_OFF_TASKS_ERROR_RESET',
 }
 
 export type ComposerActionType = ReturnType<
@@ -87,4 +92,6 @@ export type ComposerActionType = ReturnType<
   | typeof unAssignUserFromJob
   | typeof assignUsersToJobSuccess
   | typeof revertUsersForJob
+  | typeof setSignOffError
+  | typeof resetSignOffTaskError
 >;

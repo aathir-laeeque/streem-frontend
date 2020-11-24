@@ -31,7 +31,10 @@ const reducer = (
         ...state,
         loading: false,
         pageable: pageable as Pageable,
-        checklists: data as Array<Checklist>,
+        checklists:
+          pageable && pageable.page === 0
+            ? (data as Array<Checklist>)
+            : [...state.checklists, ...(data as Array<Checklist>)],
       };
 
     case ListViewAction.FETCH_CHECKLISTS_ERROR:

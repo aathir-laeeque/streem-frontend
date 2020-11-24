@@ -149,6 +149,13 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         tasks: { ...state.tasks, tasksById: res },
         assignees: [],
       };
+
+    case ComposerAction.SIGN_OFF_TASKS_ERROR:
+      return { ...state, signOffError: action.payload.error };
+
+    case ComposerAction.SIGN_OFF_TASKS_ERROR_RESET:
+      return { ...state, signOffError: undefined };
+
     default:
       return {
         ...state,
