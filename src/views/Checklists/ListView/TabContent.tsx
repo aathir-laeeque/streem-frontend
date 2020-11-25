@@ -56,7 +56,7 @@ const getBaseFilter = (label: string): FilterField[] => [
         {
           field: 'state',
           op: 'NE',
-          values: [DisabledStates.STALE],
+          values: [DisabledStates.DEPRECATED],
         },
       ]
     : []),

@@ -600,7 +600,7 @@ const ChecklistHeader: FC = () => {
                 {approver && notSignedYet && <SignOffButton />}
               </>
             )}
-            {data?.state === ChecklistStates.STALE && (
+            {data?.state === ChecklistStates.DEPRECATED && (
               <Button1
                 variant="secondary"
                 onClick={() =>

@@ -140,7 +140,7 @@ export enum DisabledStates {
   SIGNING_IN_PROGRESS = 'SIGNING_IN_PROGRESS',
   READY_FOR_RELEASE = 'READY_FOR_RELEASE',
   PUBLISHED = 'PUBLISHED',
-  STALE = 'STALE',
+  DEPRECATED = 'DEPRECATED',
 }
 
 export type AllChecklistStates = EnabledStates | DisabledStates;
@@ -172,7 +172,7 @@ export enum ChecklistStatesContent {
   SIGNING_IN_PROGRESS = 'Signing in progress',
   READY_FOR_RELEASE = 'Ready For Release',
   PUBLISHED = 'Published',
-  STALE = 'Deprecate',
+  DEPRECATED = 'Deprecate',
 }
 
 export enum ChecklistStatesColors {
@@ -185,7 +185,7 @@ export enum ChecklistStatesColors {
   SIGNING_IN_PROGRESS = '#5aa700',
   READY_FOR_RELEASE = '#5aa700',
   PUBLISHED = '#5aa700',
-  STALE = '#FF6B6B',
+  DEPRECATED = '#FF6B6B',
 }
 
 export type Comment = {
