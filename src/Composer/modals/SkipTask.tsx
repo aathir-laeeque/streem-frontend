@@ -37,7 +37,7 @@ const SkipTaskModal: FC<CommonOverlayProps<{
       >
         <div className="new-form-field">
           <label className="new-form-field-label">
-            Provide the detials for skipping the task
+            Provide the details for skipping the task
           </label>
           <textarea
             className="new-form-field-textarea"

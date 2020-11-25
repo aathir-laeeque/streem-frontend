@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { ActivityProps } from '../types';
 import { Wrapper } from './styles';
 
-const Signature: FC<ActivityProps> = ({ activity }) => {
+const Signature: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const {
     // composer: { entity },
     auth: { profile },
@@ -35,7 +35,7 @@ const Signature: FC<ActivityProps> = ({ activity }) => {
 
       formData.append('file', file, 'image.jpg');
 
-      dispatch(uploadFile({ formData, activity }));
+      dispatch(uploadFile({ formData, activity, isCorrectingError }));
 
       setImageData(imageData);
     }

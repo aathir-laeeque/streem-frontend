@@ -1,17 +1,14 @@
-import { takeLatest, call, put } from 'redux-saga/effects';
+import { executeActivity, fixActivity } from '#Composer/ActivityList/actions';
 import { apiUploadFile } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { FileUploadAction } from './types';
-import { uploadFile } from './action';
+import { call, put, takeLatest } from 'redux-saga/effects';
 
-import { executeActivity } from '#Composer/ActivityList/actions';
+import { uploadFile } from './action';
+import { FileUploadAction } from './types';
 
 function* uploadFileSaga({ payload }: ReturnType<typeof uploadFile>) {
   try {
-    const { formData, activity } = payload;
-
-    console.log('formData from fileUpload saga :: ', formData);
-    console.log('actiovity from fileUpload :: ', activity);
+    const { formData, activity, isCorrectingError } = payload;
 
     const { data } = yield call(request, 'POST', apiUploadFile(), {
       formData: formData,
@@ -22,7 +19,11 @@ function* uploadFileSaga({ payload }: ReturnType<typeof uploadFile>) {
         // execute activtiy if in upload file action activity is passed
         const medias = [data];
 
-        yield put(executeActivity({ ...activity, data: { medias } }));
+        if (isCorrectingError) {
+          yield put(fixActivity({ ...activity, data: { medias } }));
+        } else {
+          yield put(executeActivity({ ...activity, data: { medias } }));
+        }
       }
     } else {
       console.error(

@@ -8,4 +8,5 @@ export enum FileUploadAction {
 export type UploadFileArgs = {
   formData: FormData;
   activity?: Activity;
+  isCorrectingError: boolean;
 };

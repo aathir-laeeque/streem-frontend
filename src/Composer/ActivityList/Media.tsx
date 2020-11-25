@@ -1,15 +1,14 @@
-import ImageUploadIcon from '#assets/svg/ImageUpload';
-import { PhotoCamera } from '@material-ui/icons';
-import React, { FC } from 'react';
-import styled from 'styled-components';
 import { ImageUploadButton } from '#components';
-
-import { ActivityProps } from './types';
-import { useDispatch } from 'react-redux';
-import { openOverlayAction } from '../../components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import TaskMedias from '#Composer-new/Tasks/TaskMedias';
-import { executeActivity } from './actions';
+import { PhotoCamera } from '@material-ui/icons';
+import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
+
+import { openOverlayAction } from '../../components/OverlayContainer/actions';
+import { executeActivity, fixActivity } from './actions';
+import { ActivityProps } from './types';
 
 const MediaWrapper = styled.div.attrs({
   className: 'activity-media',
@@ -59,7 +58,7 @@ const MediaWrapper = styled.div.attrs({
   }
 `;
 
-const MediaActivity: FC<ActivityProps> = ({ activity }) => {
+const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   console.log('activity :: ', activity);
   const dispatch = useDispatch();
   return (
@@ -82,18 +81,31 @@ const MediaActivity: FC<ActivityProps> = ({ activity }) => {
                     },
                     isActivity: true,
                     execute: (data) => {
-                      console.log('data from execute function :: ', data);
-                      dispatch(
-                        executeActivity({
-                          ...activity,
-                          data: {
-                            medias: [
-                              ...(activity.data?.medias ?? []),
-                              { ...data },
-                            ],
-                          },
-                        }),
-                      );
+                      if (isCorrectingError) {
+                        dispatch(
+                          fixActivity({
+                            ...activity,
+                            data: {
+                              medias: [
+                                ...(activity.data?.medias ?? []),
+                                { ...data },
+                              ],
+                            },
+                          }),
+                        );
+                      } else {
+                        dispatch(
+                          executeActivity({
+                            ...activity,
+                            data: {
+                              medias: [
+                                ...(activity.data?.medias ?? []),
+                                { ...data },
+                              ],
+                            },
+                          }),
+                        );
+                      }
                     },
                   },
                 }),

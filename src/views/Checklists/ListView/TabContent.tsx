@@ -538,18 +538,20 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             }
           }}
         />
-        {Array.from(
-          { length: Math.min(pageable.totalPages, 10) },
-          (_, i) => i,
-        ).map((el) => (
-          <span
-            key={el}
-            className={pageable.page === el ? 'active' : ''}
-            onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
-          >
-            {el + 1}
-          </span>
-        ))}
+        {Array.from({ length: pageable.totalPages }, (_, i) => i)
+          .slice(
+            Math.floor(pageable.page / 10) * 10,
+            Math.floor(pageable.page / 10) * 10 + 10,
+          )
+          .map((el) => (
+            <span
+              key={el}
+              className={pageable.page === el ? 'active' : ''}
+              onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
+            >
+              {el + 1}
+            </span>
+          ))}
         <ArrowRight
           className={`icon ${showPaginationArrows ? '' : 'hide'}`}
           onClick={() => {

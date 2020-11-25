@@ -40,7 +40,7 @@ const CompleteTaskWithExceptionModal: FC<CommonOverlayProps<{
       >
         <div className="new-form-field">
           <label className="new-form-field-label">
-            Provide the detials for Exception
+            Provide the details for Exception
           </label>
           <textarea
             className="new-form-field-textarea"
