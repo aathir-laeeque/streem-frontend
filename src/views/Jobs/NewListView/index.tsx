@@ -20,7 +20,11 @@ const ChecklistListView: FC<ListViewProps> = () => {
       },
       {
         label: 'Assigned',
-        values: [AssignedJobStates.ASSIGNED, AssignedJobStates.IN_PROGRESS],
+        values: [
+          AssignedJobStates.ASSIGNED,
+          AssignedJobStates.IN_PROGRESS,
+          AssignedJobStates.BLOCKED,
+        ],
         tabContent: TabContent,
       },
       {

@@ -1,10 +1,10 @@
-import { Button1, Textarea, TextInput } from '#components';
+import { Button1, NumberInput, Textarea, TextInput } from '#components';
 import { useTypedSelector } from '#store';
 import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
 import { CheckCircle, Error, Warning } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import {
@@ -51,229 +51,137 @@ const ShouldBeActivity: FC<ActivityProps> = ({
   activity,
   isCorrectingError,
 }) => {
-  const { entityId: jobId } = useTypedSelector((state) => state.composer);
-
-  const { profile } = useTypedSelector((state) => state.auth);
-
-  const [state, setState] = useState({
-    showOperatorSubmitButtons: false,
-    shouldShowReason: !!activity?.response?.reason,
-    reason: activity?.response?.reason ?? '',
-    value: activity?.response?.value,
-  });
-
-  const isLoggedInUserSpervisor = profile?.roles?.some(
-    (role) =>
-      role.name === 'SUPERVISOR' ||
-      role.name === 'ACCOUNT_OWNER' ||
-      role.name === 'FACILITY_ADMIN',
-  );
-
   const dispatch = useDispatch();
 
-  const isActivityPendingApproval =
-    activity?.response?.state === 'PENDING_FOR_APPROVAL';
+  const {
+    auth: { profile },
+    composer: { entityId: jobId },
+  } = useTypedSelector((state) => state);
 
-  const isActivityApproved = activity?.response?.activityValueApprovalDto
-    ? activity?.response?.activityValueApprovalDto?.state === 'APPROVED'
-    : undefined;
+  const [state, setState] = useState({
+    isApprovalPending: activity?.response?.state === 'PENDING_FOR_APPROVAL',
+    isApproved: activity?.response?.activityValueApprovalDto
+      ? activity?.response?.activityValueApprovalDto?.state === 'APPROVED'
+      : undefined,
+    isUserSupervisor: profile?.roles?.some(
+      (role) => role.name === 'SUPERVISOR',
+    ),
+    reason: activity?.response?.reason ?? '',
+    shouldAskForReason: !!activity?.response?.reason,
+    value: activity?.response?.value,
 
-  const approver = activity?.response?.activityValueApprovalDto?.approver;
-  const approvalTime = activity?.response?.activityValueApprovalDto?.createdAt;
+    approver: activity?.response?.activityValueApprovalDto?.approver,
+    approvalTime: activity?.response?.activityValueApprovalDto?.createdAt,
+  });
+
+  useEffect(() => {
+    setState((prevState) => ({
+      ...prevState,
+      isApprovalPending: activity?.response?.state === 'PENDING_FOR_APPROVAL',
+      isApproved: activity?.response?.activityValueApprovalDto
+        ? activity?.response?.activityValueApprovalDto?.state === 'APPROVED'
+        : undefined,
+      reason: activity?.response?.reason ?? '',
+      shouldAskForReason: !!activity?.response?.reason,
+      value: activity?.response?.value,
+      approver: activity?.response?.activityValueApprovalDto?.approver,
+      approvalTime: activity?.response?.activityValueApprovalDto?.createdAt,
+    }));
+  }, [activity]);
+
+  const execute = (value: number, withReason = false) => {
+    if (!isCorrectingError) {
+      dispatch(
+        executeActivity(
+          {
+            ...activity,
+            data: { ...activity.data, input: value },
+          },
+          withReason ? state.reason : undefined,
+        ),
+      );
+    } else {
+      dispatch(
+        fixActivity(
+          {
+            ...activity,
+            data: { ...activity.data, input: value },
+          },
+          withReason ? state.reason : undefined,
+        ),
+      );
+    }
+  };
+
+  const handleOffLimit = () => {
+    setState((prevState) => ({ ...prevState, shouldAskForReason: true }));
+  };
 
   return (
     <Wrapper>
-      {isActivityPendingApproval ? (
+      {state.isApprovalPending ? (
         <span className="pending-approval">
           <Warning className="icon" />
-          {isLoggedInUserSpervisor
+          {state.isUserSupervisor
             ? 'This Activity Needs Approval'
             : 'Pending Approval from Supervisor'}
         </span>
       ) : null}
-      {isActivityApproved === true ? (
+
+      {state.isApproved === true ? (
         <span className="approved">
           <CheckCircle className="icon" />
-          Observation Approved by {getFullName(approver)} on{' '}
-          {formatDateTime(approvalTime, 'MMM D, YYYY h:mm A')}
+          Observation Approved by {getFullName(state.approver)} on{' '}
+          {formatDateTime(state.approvalTime, 'MMM D, YYYY h:mm A')}
         </span>
-      ) : isActivityApproved === false ? (
+      ) : state.isApproved === false ? (
         <span className="rejected">
           <Error className="icon" />
-          Observation rejected by {getFullName(approver)} on{' '}
-          {formatDateTime(approvalTime, 'MMM D, YYYY h:mm A')}
+          Observation rejected by {getFullName(state.approver)} on{' '}
+          {formatDateTime(state.approvalTime, 'MMM D, YYYY h:mm A')}
         </span>
       ) : null}
       <span className="parameter-text">{generateText(activity.data)}</span>
-      <TextInput
-        type="number"
+
+      <NumberInput
         placeholder="Enter Observed Value"
         defaultValue={state.value}
-        onChange={debounce(({ value: newValue }) => {
+        onChange={debounce(({ value }) => {
+          setState((prevState) => ({ ...prevState, value }));
           switch (activity?.data?.operator) {
             case 'EQUAL_TO':
-              if (newValue === parseInt(activity?.data?.value)) {
-                setState({
-                  showOperatorSubmitButtons: false,
-                  reason: '',
-                  shouldShowReason: false,
-                  value: newValue,
-                });
-
-                if (isCorrectingError) {
-                  dispatch(
-                    fixActivity({
-                      ...activity,
-                      data: { ...activity.data, input: newValue },
-                    }),
-                  );
-                } else {
-                  dispatch(
-                    executeActivity({
-                      ...activity,
-                      data: { ...activity.data, input: newValue },
-                    }),
-                  );
-                }
+              if (value === parseInt(activity?.data?.value)) {
+                execute(value);
               } else {
-                setState((val) => ({
-                  ...val,
-                  showOperatorSubmitButtons: true,
-                  shouldShowReason: true,
-                  value: newValue,
-                }));
+                handleOffLimit();
               }
               break;
             case 'LESS_THAN':
-              if (newValue < parseInt(activity?.data?.value)) {
-                setState({
-                  showOperatorSubmitButtons: false,
-                  reason: '',
-                  shouldShowReason: false,
-                  value: newValue,
-                });
-
-                if (isCorrectingError) {
-                  dispatch(
-                    fixActivity({
-                      ...activity,
-                      data: { ...activity.data, input: newValue },
-                    }),
-                  );
-                } else {
-                  dispatch(
-                    executeActivity({
-                      ...activity,
-                      data: { ...activity.data, input: newValue },
-                    }),
-                  );
-                }
+              if (value < parseInt(activity?.data?.value)) {
+                execute(value);
               } else {
-                setState((val) => ({
-                  ...val,
-                  showOperatorSubmitButtons: true,
-                  shouldShowReason: true,
-                  value: newValue,
-                }));
+                handleOffLimit();
               }
               break;
             case 'LESS_THAN_EQUAL_TO':
-              if (newValue <= parseInt(activity?.data?.value)) {
-                setState({
-                  showOperatorSubmitButtons: false,
-                  reason: '',
-                  shouldShowReason: false,
-                  value: newValue,
-                });
-
-                if (isCorrectingError) {
-                  dispatch(
-                    fixActivity({
-                      ...activity,
-                      data: { ...activity.data, input: newValue },
-                    }),
-                  );
-                } else {
-                  dispatch(
-                    executeActivity({
-                      ...activity,
-                      data: { ...activity.data, input: newValue },
-                    }),
-                  );
-                }
+              if (value <= parseInt(activity?.data?.value)) {
+                execute(value);
               } else {
-                setState((val) => ({
-                  ...val,
-                  showOperatorSubmitButtons: true,
-                  shouldShowReason: true,
-                  value: newValue,
-                }));
+                handleOffLimit();
               }
               break;
             case 'MORE_THAN':
-              if (newValue > parseInt(activity?.data?.value)) {
-                setState({
-                  reason: '',
-                  showOperatorSubmitButtons: false,
-                  shouldShowReason: false,
-                  value: newValue,
-                });
-
-                if (isCorrectingError) {
-                  dispatch(
-                    fixActivity({
-                      ...activity,
-                      data: { ...activity.data, input: newValue },
-                    }),
-                  );
-                } else {
-                  dispatch(
-                    executeActivity({
-                      ...activity,
-                      data: { ...activity.data, input: newValue },
-                    }),
-                  );
-                }
+              if (value > parseInt(activity?.data?.value)) {
+                execute(value);
               } else {
-                setState((val) => ({
-                  ...val,
-                  showOperatorSubmitButtons: true,
-                  shouldShowReason: true,
-                  value: newValue,
-                }));
+                handleOffLimit();
               }
               break;
             case 'MORE_THAN_EQUAL_TO':
-              if (newValue >= parseInt(activity?.data?.value)) {
-                setState({
-                  reason: '',
-                  showOperatorSubmitButtons: false,
-                  shouldShowReason: false,
-                  value: newValue,
-                });
-
-                if (isCorrectingError) {
-                  dispatch(
-                    fixActivity({
-                      ...activity,
-                      data: { ...activity.data, input: newValue },
-                    }),
-                  );
-                } else {
-                  dispatch(
-                    executeActivity({
-                      ...activity,
-                      data: { ...activity.data, input: newValue },
-                    }),
-                  );
-                }
+              if (value >= parseInt(activity?.data?.value)) {
+                execute(value);
               } else {
-                setState((val) => ({
-                  ...val,
-                  showOperatorSubmitButtons: true,
-                  shouldShowReason: true,
-                  value: newValue,
-                }));
+                handleOffLimit();
               }
               break;
             default:
@@ -282,104 +190,97 @@ const ShouldBeActivity: FC<ActivityProps> = ({
         }, 500)}
       />
 
-      {state.shouldShowReason ? (
+      {state.shouldAskForReason ? (
         <div className="off-limit-reason">
           <div className="warning">Warning! {generateText(activity?.data)}</div>
 
           <Textarea
-            label="State your reason"
             defaultValue={state.reason}
-            disabled={isActivityApproved || isLoggedInUserSpervisor}
+            disabled={state.isApprovalPending}
+            label="State your Reason"
             onChange={debounce(({ value }) => {
-              setState((val) => ({
-                ...val,
-                reason: value,
-              }));
+              setState((prevState) => ({ ...prevState, reason: value }));
             }, 500)}
             placeholder="Reason for change"
             rows={4}
           />
 
-          {isActivityPendingApproval && isLoggedInUserSpervisor ? (
-            <div className="buttons-container">
-              <Button1
-                variant="secondary"
-                color="blue"
-                onClick={() => {
-                  dispatch(
-                    approveRejectActivity({
-                      jobId,
-                      activityId: activity.id,
-                      type: SupervisorResponse.APPROVE,
-                    }),
-                  );
-                }}
-              >
-                Approve
-              </Button1>
-              <Button1
-                variant="secondary"
-                color="red"
-                onClick={() => {
-                  dispatch(
-                    approveRejectActivity({
-                      jobId,
-                      activityId: activity.id,
-                      type: SupervisorResponse.REJECT,
-                    }),
-                  );
-                }}
-              >
-                Reject
-              </Button1>
-            </div>
-          ) : null}
-
-          {!isActivityApproved &&
-          !isLoggedInUserSpervisor &&
-          !isActivityPendingApproval ? (
-            <div className="buttons-container">
-              <Button1
-                variant="secondary"
-                color="blue"
-                onClick={() => {
-                  if (isCorrectingError) {
-                    dispatch(
-                      fixActivity({
-                        ...activity,
-                        data: { ...activity.data, input: state.value },
-                      }),
-                    );
-                  } else {
-                    dispatch(
-                      executeActivity(
-                        {
-                          ...activity,
-                          data: { ...activity.data, input: state.value },
-                        },
-                        state.reason,
-                      ),
-                    );
-                  }
-                }}
-              >
-                Submit
-              </Button1>
-              <Button1
-                variant="secondary"
-                color="red"
-                onClick={() => {
-                  setState((val) => ({
-                    ...val,
-                    reason: '',
-                    shouldShowReason: false,
-                  }));
-                }}
-              >
-                Cancel
-              </Button1>
-            </div>
-          ) : null}
+          {(() => {
+            if (state.isUserSupervisor) {
+              if (state.isApprovalPending) {
+                // render approve reject buttons
+                return (
+                  <div className="buttons-container">
+                    <Button1
+                      variant="secondary"
+                      color="blue"
+                      onClick={() => {
+                        dispatch(
+                          approveRejectActivity({
+                            jobId,
+                            activityId: activity.id,
+                            type: SupervisorResponse.APPROVE,
+                          }),
+                        );
+                      }}
+                    >
+                      Approve
+                    </Button1>
+                    <Button1
+                      variant="secondary"
+                      color="red"
+                      onClick={() => {
+                        dispatch(
+                          approveRejectActivity({
+                            jobId,
+                            activityId: activity.id,
+                            type: SupervisorResponse.REJECT,
+                          }),
+                        );
+                      }}
+                    >
+                      Reject
+                    </Button1>
+                  </div>
+                );
+              } else {
+                return null;
+              }
+            } else {
+              if (
+                !state.isApprovalPending &&
+                activity?.response?.value !== state.value
+              ) {
+                return (
+                  <div className="buttons-container">
+                    <Button1
+                      variant="secondary"
+                      color="blue"
+                      onClick={() => execute(true)}
+                    >
+                      Submit
+                    </Button1>
+                    <Button1
+                      variant="secondary"
+                      color="red"
+                      onClick={() =>
+                        setState((prevState) => ({
+                          ...prevState,
+                          reason: '',
+                          shouldAskForReason: false,
+                          value: undefined,
+                        }))
+                      }
+                    >
+                      Cancel
+                    </Button1>
+                  </div>
+                );
+              } else {
+                return null;
+              }
+            }
+          })()}
         </div>
       ) : null}
     </Wrapper>
