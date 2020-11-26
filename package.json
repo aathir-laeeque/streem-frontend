@@ -1,7 +1,7 @@
 {
   "name": "streem-frontend",
   "version": "1.0.0",
-  "author": "Snehal Seth <sethsnehal95@gmail.com>",
+  "author": "Snehal Seth <snehal.seth@leucinetech.com>",
   "scripts": {
     "watch": "rm -rf .cache/ dist/ && parcel -p 5000 src/index.html",
     "serve": "parcel -p 5000 src/index.html",
