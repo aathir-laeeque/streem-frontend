@@ -1,3 +1,5 @@
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   apiCreateNewPrototype,
   apiCreateRevisionPrototype,
@@ -5,8 +7,8 @@ import {
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { navigate } from '@reach/router';
-import { pick } from 'lodash';
-import { call, takeLeading } from 'redux-saga/effects';
+import { isArray, pick } from 'lodash';
+import { call, put, takeLeading } from 'redux-saga/effects';
 
 import {
   addNewPrototype,
@@ -86,7 +88,7 @@ function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
   }
 }
 
-function* addRevisonPrototypeSaga({
+function* addRevisionPrototypeSaga({
   payload,
 }: ReturnType<typeof addRevisionPrototype>) {
   try {
@@ -115,11 +117,21 @@ function* addRevisonPrototypeSaga({
         },
       });
     } else {
-      console.error('error from the create checklist api  :: ', errors);
+      console.error('error from the revision checklist api  :: ', errors);
+      if (isArray(errors) && errors[0].code === 'E122' && errors[0].id) {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.REVISION_ERROR,
+            props: {
+              id: errors[0].id,
+            },
+          }),
+        );
+      }
     }
   } catch (error) {
     console.error(
-      'error came in addRevisonPrototypeSaga in NewPrototypeSaga :: ',
+      'error came in addRevisionPrototypeSaga in NewPrototypeSaga :: ',
       error,
     );
   }
@@ -159,6 +171,6 @@ export function* NewPrototypeSaga() {
   yield takeLeading(NewPrototypeActions.UPDATE_PROTOTYPE, updatePrototypeSaga);
   yield takeLeading(
     NewPrototypeActions.ADD_REVISION_PROTOTYPE,
-    addRevisonPrototypeSaga,
+    addRevisionPrototypeSaga,
   );
 }

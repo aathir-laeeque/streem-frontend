@@ -1,6 +1,7 @@
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import {
+  closeAllOverlayAction,
   closeOverlayAction,
   openOverlayAction,
 } from '#components/OverlayContainer/actions';
@@ -45,6 +46,8 @@ import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
 import { groupJobErrors } from './utils';
 import { setSignOffError } from './actions';
+import { logOutSuccess } from '#views/Auth/actions';
+import { LoginErrorCodes } from '#utils/constants';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   try {
@@ -291,8 +294,17 @@ function* signOffTaskSaga({ payload }: ReturnType<typeof signOffTasks>) {
       }
     } else {
       console.error('error came in validte api :: ', validateErrors);
-      if (validateErrors[0].code === 2002) {
+      if (validateErrors[0].code === LoginErrorCodes.INCORRECT) {
         yield put(setSignOffError('Incorrect Password'));
+      } else if (validateErrors[0].code === LoginErrorCodes.BLOCKED) {
+        yield put(closeAllOverlayAction());
+        yield put(logOutSuccess());
+        yield put(
+          showNotification({
+            type: NotificationType.ERROR,
+            msg: 'User has been blocked.',
+          }),
+        );
       }
     }
   } catch (error) {

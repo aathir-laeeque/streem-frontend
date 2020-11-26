@@ -36,6 +36,7 @@ import SessionExpireModal from '#views/Auth/Overlays/SessionExpire';
 import ChecklistInfoModal from '#views/Checklists/ListView/ChecklistInfoModal';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
+import RevisionErrorModal from '#views/Checklists/Overlays/RevisionErrorModal';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -179,6 +180,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.SHOW_COMPLETED_JOB_WITH_EXCEPTION_INFO:
       return <CompletedWithExceptionInfo {...params} />;
+
+    case OverlayNames.REVISION_ERROR:
+      return <RevisionErrorModal {...params} />;
 
     default:
       return null;

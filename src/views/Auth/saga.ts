@@ -60,12 +60,13 @@ import {
 } from 'redux-saga/effects';
 import { AuthAction, LoginResponse, RefreshTokenResponse } from './types';
 import { setSelectedState } from '#store/users/actions';
+import { LoginErrorCodes } from '#utils/constants';
 
 const getRefreshToken = (state: any) => state.auth.refreshToken;
 const getUserId = (state: any) => state.auth.userId;
 const getIsIdle = (state: any) => state.auth.isIdle;
 const getRefreshTimeOut = (state: any) =>
-  state.auth.refreshTokenExpirationInMinutes;
+  state.auth.accessTokenExpirationInMinutes;
 
 function* refreshTokenPollSaga() {
   try {
@@ -76,7 +77,7 @@ function* refreshTokenPollSaga() {
     if (!isIdle) yield put(refreshToken({ refreshToken: token }));
     while (userId) {
       const refreshTimeOut = yield select(getRefreshTimeOut);
-      yield delay((refreshTimeOut - 6 || 9) * 1000 * 60);
+      yield delay((refreshTimeOut - 1 || 9) * 1000 * 60);
       userId = yield select(getUserId);
       isIdle = yield select(getIsIdle);
       token = yield select(getRefreshToken);
@@ -130,13 +131,13 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
 
     if (errors) {
       switch (errors[0].code) {
-        case 1004:
+        case LoginErrorCodes.BLOCKED:
           throw 'User has been blocked.';
           break;
-        case 1005:
+        case LoginErrorCodes.INCORRECT:
           throw 'Provided credentials are incorrect. Please check and try again.';
           break;
-        case 1007:
+        case LoginErrorCodes.EXPIRED:
           throw 'Password Expired. Use Forgot Password to set a new one.';
           break;
         default:

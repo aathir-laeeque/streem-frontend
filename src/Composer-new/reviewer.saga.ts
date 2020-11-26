@@ -23,7 +23,9 @@ import {
   apiSubmitChecklistReviewWithCR,
   apiValidatePassword,
 } from '#utils/apiUrls';
+import { LoginErrorCodes } from '#utils/constants';
 import { request } from '#utils/request';
+import { logOutSuccess } from '#views/Auth/actions';
 import { uniqBy } from 'lodash';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
@@ -600,7 +602,7 @@ function* signOffPrototypeSaga({
   try {
     const { checklistId, password } = payload;
 
-    const { data: validateData } = yield call(
+    const { data: validateData, errors: validateErrors } = yield call(
       request,
       'POST',
       apiValidatePassword(),
@@ -669,6 +671,13 @@ function* signOffPrototypeSaga({
         }),
       );
     } else {
+      if (validateErrors[0].code === LoginErrorCodes.INCORRECT) {
+        throw 'Incorrect Password';
+      } else if (validateErrors[0].code === LoginErrorCodes.BLOCKED) {
+        yield put(closeAllOverlayAction());
+        yield put(logOutSuccess());
+        throw 'User has been blocked.';
+      }
       throw 'Could Not Sign Off the Prototype';
     }
   } catch (error) {
@@ -688,7 +697,7 @@ function* releasePrototypeSaga({
   try {
     const { checklistId, password } = payload;
 
-    const { data: validateData } = yield call(
+    const { data: validateData, errors: validateErrors } = yield call(
       request,
       'POST',
       apiValidatePassword(),
@@ -716,7 +725,14 @@ function* releasePrototypeSaga({
         }),
       );
     } else {
-      throw 'Unable to Relase the Prototype';
+      if (validateErrors[0].code === LoginErrorCodes.INCORRECT) {
+        throw 'Incorrect Password';
+      } else if (validateErrors[0].code === LoginErrorCodes.BLOCKED) {
+        yield put(closeAllOverlayAction());
+        yield put(logOutSuccess());
+        throw 'User has been blocked.';
+      }
+      throw 'Unable to Release the Prototype';
     }
   } catch (error) {
     yield put(
