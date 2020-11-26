@@ -1,8 +1,10 @@
 import { BaseModal } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import React, { FC } from 'react';
-import styled from 'styled-components';
+import { apiGetJobCweDetails } from '#utils/apiUrls';
+import { request } from '#utils/request';
 import { GetAppOutlined } from '@material-ui/icons';
+import React, { FC, useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 const Wrapper = styled.div`
   .modal-body {
@@ -94,10 +96,25 @@ const ExceptionReason = [
 const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: { jobCweDetail, name, code },
+  props: { jobId, name, code },
 }) => {
+  console.log('jobId :: ', jobId);
+  const [state, setState] = useState({ loading: false, data: null });
+  useEffect(() => {
+    setState((prevState) => ({ ...prevState, loading: true }));
+    (async () => {
+      const { data, errors } = await request('GET', apiGetJobCweDetails(jobId));
+
+      if (data) {
+        setState({ loading: false, data });
+      } else {
+        console.log('errors :: ', errors);
+      }
+    })();
+  }, []);
+
   const reason = ExceptionReason.find(
-    (reason) => reason.value === jobCweDetail?.reason,
+    (reason) => reason.value === state.data?.reason,
   );
 
   return (
@@ -123,16 +140,16 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
           <div>
             <span>
               {reason?.label}
-              {jobCweDetail?.comment ? ` - ${jobCweDetail?.comment}` : ''}
+              {state.data?.comment ? ` - ${state.data?.comment}` : ''}
             </span>
           </div>
         </div>
 
-        {jobCweDetail?.medias?.length ? (
+        {state.data?.medias?.length ? (
           <div className="media">
             <label>Documents :</label>
             <ol className="body">
-              {jobCweDetail?.medias?.map((media, index) => (
+              {state.data?.medias?.map((media, index) => (
                 <li key={index} className="item">
                   <div>{media.filename}</div>
                   <div

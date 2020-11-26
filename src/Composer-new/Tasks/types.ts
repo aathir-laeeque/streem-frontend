@@ -37,6 +37,7 @@ export type SetTaskTimerArgs = {
 export type MediaDetails = FileUploadData & {
   name: string;
   description?: string;
+  id: string;
 };
 
 export type AddMediaArgs = {

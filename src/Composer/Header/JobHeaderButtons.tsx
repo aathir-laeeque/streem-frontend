@@ -108,7 +108,7 @@ const JobHeaderButtons: FC = () => {
               openOverlayAction({
                 type: OverlayNames.SHOW_COMPLETED_JOB_WITH_EXCEPTION_INFO,
                 props: {
-                  jobCweDetail: data?.jobCweDetail,
+                  jobId: data?.id,
                   name: data?.checklist?.name,
                   code: data?.code,
                 },

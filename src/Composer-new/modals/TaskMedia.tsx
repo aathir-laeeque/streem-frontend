@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { Delete } from '@material-ui/icons';
 
 import { Task } from '../checklist.types';
-import { addTaskMedia } from '../Tasks/actions';
+import { addTaskMedia, removeTaskMedia } from '../Tasks/actions';
 import { MediaDetails } from '../Tasks/types';
 
 const Wrapper = styled.div`
@@ -52,7 +52,7 @@ const Wrapper = styled.div`
             }
 
             .textarea {
-              margin-bottom: 40px;
+              margin-bottom: 15px;
             }
 
             button#save-details {
@@ -89,6 +89,8 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
   const [stateMediaDetails, setStateMediaDetails] = useState<MediaDetails>(
     mediaDetails,
   );
+
+  console.log('stateMediaDetails L:: ', stateMediaDetails);
 
   const [errors, setErrors] = useState({ name: '' });
 
@@ -158,9 +160,14 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
               </Button1>
             </div>
 
-            <div className="delete-media">
-              {/* <Delete className="icon" />
-              Delete */}
+            <div
+              className="delete-media"
+              onClick={() => {
+                dispatch(removeTaskMedia(taskId, mediaDetails?.id));
+              }}
+            >
+              <Delete className="icon" />
+              Delete
             </div>
           </div>
         </div>

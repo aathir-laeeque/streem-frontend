@@ -233,3 +233,14 @@ export const apiUnarchiveChecklist = (id: Checklist['id']) =>
 
 export const apiGetChecklistInfo = (id: Checklist['id']) =>
   `${baseUrl}/checklists/${id}/info`;
+
+export const apiGetJobCweDetails = (id: Job['id']) =>
+  `${baseUrl}/jobs/${id}/cwe-detail`;
+
+export const apiRemoveTaskMedia = ({
+  taskId,
+  mediaId,
+}: {
+  taskId: string;
+  mediaId: string;
+}) => `${baseUrl}/tasks/${taskId}/medias/media/${mediaId}`;

@@ -28,6 +28,8 @@ import {
   updateTaskName,
 } from './actions';
 import { TaskListActions } from './reducer.types';
+import { removeTaskMedia } from './actions';
+import { apiRemoveTaskMedia } from '../../utils/apiUrls';
 
 function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
   try {
@@ -202,6 +204,27 @@ function* addTaskMediaSaga({ payload }: ReturnType<typeof addTaskMedia>) {
   }
 }
 
+function* removeTaskMediaSaga({ payload }: ReturnType<typeof removeTaskMedia>) {
+  try {
+    const { taskId, mediaId } = payload;
+
+    const { data, errors } = yield call(
+      request,
+      'DELETE',
+      apiRemoveTaskMedia({ taskId, mediaId }),
+    );
+
+    if (data) {
+      yield put(updateTask(data));
+      yield put(closeOverlayAction(OverlayNames.TASK_MEDIA));
+    } else {
+      console.error('error from remove media to task api :: ', errors);
+    }
+  } catch (error) {
+    console.error('error came in removeTaskMediaSaga :: ', error);
+  }
+}
+
 export function* TaskListSaga() {
   yield takeLatest(TaskListActions.ADD_NEW_TASK, addNewTaskSaga);
   yield takeLatest(TaskListActions.DELETE_TASK, deleteTaskSaga);
@@ -211,4 +234,5 @@ export function* TaskListSaga() {
   yield takeLatest(TaskListActions.SET_TASK_TIMER, setTaskTimerSaga);
   yield takeLatest(TaskListActions.REMOVE_TASK_TIMER, removeTaskTimerSaga);
   yield takeLatest(TaskListActions.ADD_TASK_MEDIA, addTaskMediaSaga);
+  yield takeLatest(TaskListActions.REMOVE_TASK_MEDIA, removeTaskMediaSaga);
 }

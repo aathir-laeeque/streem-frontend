@@ -31,6 +31,7 @@ export enum TaskListActions {
   DELETE_TASK_SUCCESS = '@@composer/prototype/task-list/DELETE_TASK_SUCCESS',
 
   REMOVE_STOP = '@@composer/prototype/task-list/REMOVE_STOP',
+  REMOVE_TASK_MEDIA = '@@composer/prototype/task-list/REMOVE_TASK_MEDIA',
   REMOVE_TASK_TIMER = '@@composer/prototype/task-list/REMOVE_TASK_TIMER',
   RESET_TASK_ACTIVITY_ERROR = '@@composer/prototype/task-list/RESET_TASK_ACTIVITY_ERROR',
 

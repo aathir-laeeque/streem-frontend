@@ -49,3 +49,6 @@ export const setValidationError = (error: Error) =>
 
 export const resetTaskActivityError = (taskId: Task['id']) =>
   actionSpreader(TaskListActions.RESET_TASK_ACTIVITY_ERROR, { taskId });
+
+export const removeTaskMedia = (taskId: Task['id'], mediaId: string) =>
+  actionSpreader(TaskListActions.REMOVE_TASK_MEDIA, { taskId, mediaId });
