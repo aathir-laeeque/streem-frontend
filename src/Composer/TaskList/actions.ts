@@ -49,6 +49,9 @@ export const skipTask = (taskId: Task['id'], reason: string) =>
 export const setTaskError = (error: any, taskId: Task['id']) =>
   actionSpreader(TaskListAction.SET_TASK_ERROR, { error, taskId });
 
+export const removeTaskError = (taskId: Task['id']) =>
+  actionSpreader(TaskListAction.REMOVE_TASK_ERROR, { taskId });
+
 export const assignUserToTask = (user: User, taskId: Task['id']) =>
   actionSpreader(TaskListAction.ASSIGN_USER_TO_TASK, { user, taskId });
 

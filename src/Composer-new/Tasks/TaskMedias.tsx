@@ -22,8 +22,6 @@ const TaskMedias: FC<TaskMediasProps> = ({
     tasks: { activeTaskId },
   } = useTypedSelector((state) => state.prototypeComposer);
 
-  console.log('data.state :: ', data?.state);
-
   const [activeMedia, setActiveMedia] = useState(medias[0]);
 
   const [sliderIndex, setSliderIndex] = useState({ start: 0, end: 3 });

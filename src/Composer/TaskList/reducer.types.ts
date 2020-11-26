@@ -3,12 +3,13 @@ import { Stage, Task } from '../checklist.types';
 import { ComposerActionType } from '../composer.reducer.types';
 import { setActiveStage } from '../StageList/actions';
 import {
+  assignUserToTask,
+  removeTaskError,
+  revertUsersForTask,
   setActiveTask,
   setTaskError,
-  updateTaskExecutionState,
   unAssignUserFromTask,
-  revertUsersForTask,
-  assignUserToTask,
+  updateTaskExecutionState,
 } from './actions';
 import { TasksById, TasksOrderInStage } from './types';
 
@@ -35,6 +36,8 @@ export enum TaskListAction {
   UPDATE_TASK_EXECUTION_STATE = '@@composer/task-list/task/UPDATE_TASK_EXECUTION_STATE',
 
   SET_TASK_ERROR = '@@composer/task-list/task/SET_TASK_ERROR',
+  REMOVE_TASK_ERROR = '@@composer/task-list/task/REMOVE_TASK_ERROR',
+
   ENABLE_TASK_ERROR_CORRECTION = '@@composer/task-list/task/ENABLE_TASK_ERROR_CORRECTION',
   CANCEL_ERROR_CORRECTION = '@@composer/task-list/task/CANCEL_ERROR_CORRECTION',
   COMPLTE_ERROR_CORRECTION = '@@composer/task-list/task/COMPLTE_ERROR_CORRECTION',
@@ -50,6 +53,7 @@ export type TaskListActionType =
       | typeof setActiveTask
       | typeof setTaskError
       | typeof updateTaskExecutionState
+      | typeof removeTaskError
     >
   | ReturnType<typeof revertUsersForTask>
   | ReturnType<typeof unAssignUserFromTask>

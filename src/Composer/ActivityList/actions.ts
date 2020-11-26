@@ -16,6 +16,9 @@ export const updateExecutedActivity = (activity: Activity) =>
 export const setActivityError = (error: any, activityId: Activity['id']) =>
   actionSpreader(ActivityListAction.SET_ACTIVITY_ERROR, { error, activityId });
 
+export const removeActivityError = (activityId: Activity['id']) =>
+  actionSpreader(ActivityListAction.REMOVE_ACTIVITY_ERROR, { activityId });
+
 export const approveRejectActivity = ({
   activityId,
   jobId,

@@ -53,6 +53,19 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         },
       };
 
+    case ActivityListAction.REMOVE_ACTIVITY_ERROR:
+      return {
+        ...state,
+        activitiesById: {
+          ...state.activitiesById,
+          [action.payload.activityId]: {
+            ...state.activitiesById[action.payload.activityId],
+            hasError: false,
+            errorMessage: '',
+          },
+        },
+      };
+
     case ActivityListAction.EXECUTE_ACTIVITY:
     case ActivityListAction.FIX_ACTIVITY:
       return {

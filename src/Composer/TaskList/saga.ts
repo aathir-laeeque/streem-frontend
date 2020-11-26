@@ -1,3 +1,4 @@
+import { removeActivityError } from './../ActivityList/actions';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
@@ -24,6 +25,7 @@ import {
   updateTaskExecutionState,
   assignUsersToTask,
   revertUsersForTask,
+  removeTaskError,
 } from './actions';
 import { TaskAction } from './types';
 import { TaskListAction } from './reducer.types';
@@ -79,6 +81,29 @@ function* performActionOnTaskSaga({
       );
 
       if (data) {
+        if (action === TaskAction.COMPLETE_WITH_EXCEPTION) {
+          const {
+            stages: { activeStageId },
+          } = yield select((state: RootState) => state.composer);
+
+          const activitiesId = yield select(
+            (state: RootState) =>
+              state.composer.activities.activitiesOrderInTaskInStage[
+                activeStageId
+              ][taskId],
+          );
+
+          console.log('activities ids :: ', activitiesId);
+
+          yield put(removeTaskError(taskId));
+
+          yield all(
+            activitiesId.map((activityId) =>
+              put(removeActivityError(activityId)),
+            ),
+          );
+        }
+
         console.log('data from api call in performActionOnTaskSaga :: ', data);
 
         yield put(updateTaskExecutionState(taskId, data));

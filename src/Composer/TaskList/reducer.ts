@@ -90,6 +90,18 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         },
       };
 
+    case TaskListAction.REMOVE_TASK_ERROR:
+      return {
+        ...state,
+        tasksById: {
+          ...state.tasksById,
+          [action.payload.taskId]: {
+            ...state.tasksById[action.payload.taskId],
+            hasError: false,
+          },
+        },
+      };
+
     case TaskListAction.ASSIGN_USER_TO_TASK:
       oldTask = state.tasksById[action.payload.taskId];
       return {

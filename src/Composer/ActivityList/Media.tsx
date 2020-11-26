@@ -59,7 +59,6 @@ const MediaWrapper = styled.div.attrs({
 `;
 
 const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
-  console.log('activity :: ', activity);
   const dispatch = useDispatch();
   return (
     <MediaWrapper>
