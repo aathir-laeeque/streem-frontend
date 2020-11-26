@@ -2,19 +2,21 @@ import { Pageable } from '#utils/globalTypes';
 import { Checklist } from '../types';
 import { ListViewAction, ListViewActionType, ListViewState } from './types';
 
+const initalPageable = {
+  page: 0,
+  pageSize: 10,
+  numberOfElements: 0,
+  totalPages: 0,
+  totalElements: 0,
+  first: true,
+  last: true,
+  empty: true,
+};
+
 const initialState: ListViewState = {
   checklists: [],
   loading: false,
-  pageable: {
-    page: 0,
-    pageSize: 10,
-    numberOfElements: 0,
-    totalPages: 0,
-    totalElements: 0,
-    first: true,
-    last: true,
-    empty: true,
-  },
+  pageable: initalPageable,
 };
 
 const reducer = (
@@ -24,6 +26,9 @@ const reducer = (
   switch (action.type) {
     case ListViewAction.FETCH_CHECKLISTS_ONGOING:
       return { ...state, loading: true };
+
+    case ListViewAction.CLEAR_DATA:
+      return { ...state, checklists: [], pageable: initalPageable };
 
     case ListViewAction.FETCH_CHECKLISTS_SUCCESS:
       const { data, pageable } = action.payload;

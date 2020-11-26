@@ -1,28 +1,28 @@
+import MemoArchive from '#assets/svg/Archive';
+import MemoCreateJob from '#assets/svg/CreateJob';
+import MemoStartRevision from '#assets/svg/StartRevision';
+import MemoViewInfo from '#assets/svg/ViewInfo';
 import {
-  ToggleSwitch,
   Button1,
   DropdownFilter,
   NewListView,
   SearchFilter,
+  ToggleSwitch,
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import MemoViewInfo from '#assets/svg/ViewInfo';
-import MemoArchive from '#assets/svg/Archive';
-import MemoCreateJob from '#assets/svg/CreateJob';
-import MemoStartRevision from '#assets/svg/StartRevision';
 import {
+  ChecklistStatesColors,
   ChecklistStatesContent,
   DisabledStates,
-  ChecklistStatesColors,
 } from '#Composer-new/checklist.types';
 import { ComposerEntity } from '#Composer-new/types';
 import { useProperties } from '#services/properties';
+import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/ListView/actions';
 import { Menu, MenuItem } from '@material-ui/core';
-import checkPermission from '#services/uiPermissions';
 import {
   ArrowDropDown,
   ArrowLeft,
@@ -38,6 +38,7 @@ import { FormMode } from '../NewPrototype/types';
 import { Checklist } from '../types';
 import {
   archiveChecklist,
+  clearData,
   fetchChecklists,
   unarchiveChecklist,
 } from './actions';
@@ -112,6 +113,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
 
   useEffect(() => {
     setFilterFields(getBaseFilter(label));
+    dispatch(clearData());
   }, [label]);
 
   useEffect(() => {

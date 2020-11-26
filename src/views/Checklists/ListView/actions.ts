@@ -10,6 +10,8 @@ export const fetchChecklists = (
 ) =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS, { params, dispatchOngoing });
 
+export const clearData = () => actionSpreader(ListViewAction.CLEAR_DATA);
+
 export const fetchChecklistsOngoing = () =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS_ONGOING);
 

@@ -2,12 +2,13 @@ import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
 
 import { Checklist } from '../types';
-import { updateList } from './actions';
 import {
+  clearData,
   fetchChecklists,
   fetchChecklistsError,
   fetchChecklistsOngoing,
   fetchChecklistsSuccess,
+  updateList,
 } from './actions';
 
 export type ListViewProps = RouteComponentProps;
@@ -19,6 +20,8 @@ export interface ListViewState {
 }
 
 export enum ListViewAction {
+  CLEAR_DATA = '@@checklis/ListView/CLEAR_DATA',
+
   FETCH_CHECKLISTS = '@@checklist/ListView/FETCH_CHECKLISTS',
   FETCH_CHECKLISTS_ERROR = '@@checklist/ListView/FETCH_CHECKLISTS_ERROR',
   FETCH_CHECKLISTS_ONGOING = '@@checklist/ListView/FETCH_CHECKLISTS_ONGOING',
@@ -35,4 +38,5 @@ export type ListViewActionType = ReturnType<
   | typeof fetchChecklistsOngoing
   | typeof fetchChecklistsSuccess
   | typeof updateList
+  | typeof clearData
 >;
