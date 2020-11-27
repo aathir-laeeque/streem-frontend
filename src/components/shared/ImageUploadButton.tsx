@@ -12,6 +12,7 @@ type ImageUploadButtonProps = {
   onUploadSuccess: (data: FileUploadData) => void;
   onUploadError: (error: any) => void;
   disabled?: boolean;
+  allowCapture?: boolean;
 };
 
 const Wrapper = styled.div.attrs({
@@ -19,12 +20,12 @@ const Wrapper = styled.div.attrs({
 })<Pick<ImageUploadButtonProps, 'disabled'>>`
   > div {
     align-items: center;
-    cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
     display: flex;
 
     .icon:only-of-type {
       cursor: ${({ disabled }) =>
-        disabled ? 'default' : 'pointer'} !important;
+        disabled ? 'not-allowed' : 'pointer'} !important;
     }
   }
 `;
@@ -35,6 +36,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
   label,
   onUploadError,
   onUploadSuccess,
+  allowCapture = false,
 }) => {
   const [file, setFile] = useState<File | null>(null);
 
@@ -59,12 +61,16 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
     }
   }, [file]);
 
+  const extraProps = allowCapture ? { capture: 'environment' } : {};
+
   return (
     <Wrapper disabled={disabled}>
       <input
         type="file"
         id="file"
+        accept="image/*"
         ref={fileRef}
+        {...extraProps}
         style={{ display: 'none' }}
         onChange={(event) => {
           event.stopPropagation();

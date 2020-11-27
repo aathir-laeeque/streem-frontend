@@ -1,5 +1,7 @@
 import { ImageUploadButton } from '#components';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { FileUploadData } from '#utils/globalTypes';
+import { captureSupported } from '#utils/inputUtils';
 import TaskMedias from '#Composer-new/Tasks/TaskMedias';
 import { PhotoCamera } from '@material-ui/icons';
 import React, { FC } from 'react';
@@ -30,7 +32,6 @@ const MediaWrapper = styled.div.attrs({
 
     :last-child {
       margin-right: 0;
-      cursor: not-allowed;
     }
 
     .icon {
@@ -51,7 +52,7 @@ const MediaWrapper = styled.div.attrs({
       }
 
       .icon {
-        color: #1d84ff;
+        /* color: #1d84ff; */
         cursor: pointer;
       }
     }
@@ -60,6 +61,43 @@ const MediaWrapper = styled.div.attrs({
 
 const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const dispatch = useDispatch();
+
+  const onUploaded = (fileData: FileUploadData) => {
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.TASK_MEDIA,
+        props: {
+          mediaDetails: {
+            ...fileData,
+            name: '',
+            description: '',
+          },
+          isActivity: true,
+          execute: (data) => {
+            if (isCorrectingError) {
+              dispatch(
+                fixActivity({
+                  ...activity,
+                  data: {
+                    medias: [...(activity.data?.medias ?? []), { ...data }],
+                  },
+                }),
+              );
+            } else {
+              dispatch(
+                executeActivity({
+                  ...activity,
+                  data: {
+                    medias: [...(activity.data?.medias ?? []), { ...data }],
+                  },
+                }),
+              );
+            }
+          },
+        },
+      }),
+    );
+  };
   return (
     <MediaWrapper>
       <TaskMedias medias={activity.response?.medias ?? []} isActivity />
@@ -69,53 +107,26 @@ const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
             label="Upload images"
             onUploadSuccess={(fileData) => {
               console.log('fileData :: ', fileData);
-              dispatch(
-                openOverlayAction({
-                  type: OverlayNames.TASK_MEDIA,
-                  props: {
-                    mediaDetails: {
-                      ...fileData,
-                      name: '',
-                      description: '',
-                    },
-                    isActivity: true,
-                    execute: (data) => {
-                      if (isCorrectingError) {
-                        dispatch(
-                          fixActivity({
-                            ...activity,
-                            data: {
-                              medias: [
-                                ...(activity.data?.medias ?? []),
-                                { ...data },
-                              ],
-                            },
-                          }),
-                        );
-                      } else {
-                        dispatch(
-                          executeActivity({
-                            ...activity,
-                            data: {
-                              medias: [
-                                ...(activity.data?.medias ?? []),
-                                { ...data },
-                              ],
-                            },
-                          }),
-                        );
-                      }
-                    },
-                  },
-                }),
-              );
+              onUploaded(fileData);
             }}
             onUploadError={(error) => console.log('error :: ', error)}
           />
         </div>
-        <div className="card">
-          <PhotoCamera className="icon" />
-          <span>User can capture photos</span>
+        <div
+          className="card"
+          style={!captureSupported() ? { cursor: 'not-allowed' } : {}}
+        >
+          <ImageUploadButton
+            label="User can capture photos"
+            onUploadSuccess={(fileData) => {
+              console.log('fileData :: ', fileData);
+              onUploaded(fileData);
+            }}
+            icon={PhotoCamera}
+            allowCapture
+            disabled={!captureSupported()}
+            onUploadError={(error) => console.log('error :: ', error)}
+          />
         </div>
       </div>
     </MediaWrapper>
