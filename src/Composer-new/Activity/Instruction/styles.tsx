@@ -9,6 +9,15 @@ export const Wrapper = styled.div`
     margin-bottom: 12px;
   }
 
+  .editor-class {
+    word-break: break-all;
+    overflow-wrap: break-word;
+
+    * {
+      font-weight: unset;
+    }
+  }
+
   .toolbar-class {
     align-items: center;
     background-color: #f4f4f4;
@@ -28,7 +37,15 @@ export const Wrapper = styled.div`
       .rdw-emoji-modal {
         background: #ffffff;
         height: auto;
-        width: 210px;
+        width: 294px;
+        padding: 10px;
+
+        .rdw-emoji-icon {
+          padding: 4px;
+          margin: unset;
+          height: 34px;
+          width: 34px;
+        }
       }
 
       :last-child {
