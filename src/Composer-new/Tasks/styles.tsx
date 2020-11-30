@@ -108,17 +108,19 @@ const TaskCardWrapper = styled.div.attrs({
             }
           }
 
-          ${({ hasMedias, hasStop, isTimed }) => {
-            if (isTimed) {
+          ${({ hasMedias }) => {
+            if (hasMedias) {
               return css`
-                #timed {
+                #attach-media {
                   .icon {
                     color: #1d84ff;
                   }
                 }
               `;
             }
+          }}
 
+          ${({ hasStop }) => {
             if (hasStop) {
               return css`
                 #add-stop {
@@ -128,10 +130,12 @@ const TaskCardWrapper = styled.div.attrs({
                 }
               `;
             }
+          }}
 
-            if (hasMedias) {
+          ${({ isTimed }) => {
+            if (isTimed) {
               return css`
-                #attach-media {
+                #timed {
                   .icon {
                     color: #1d84ff;
                   }

@@ -243,4 +243,4 @@ export const apiRemoveTaskMedia = ({
 }: {
   taskId: string;
   mediaId: string;
-}) => `${baseUrl}/tasks/${taskId}/medias/media/${mediaId}`;
+}) => `${baseUrl}/tasks/${taskId}/medias/${mediaId}`;

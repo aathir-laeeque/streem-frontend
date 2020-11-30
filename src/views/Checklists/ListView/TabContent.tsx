@@ -39,7 +39,7 @@ import { Checklist } from '../types';
 import {
   archiveChecklist,
   clearData,
-  fetchChecklists,
+  fetchChecklistsForListView,
   unarchiveChecklist,
 } from './actions';
 import { Composer } from './styles';
@@ -107,18 +107,21 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   const fetchData = (page: number, size: number) => {
     const filters = JSON.stringify({ op: 'AND', fields: filterFields });
     dispatch(
-      fetchChecklists({ page, size, filters, sort: 'createdAt,desc' }, true),
+      fetchChecklistsForListView(
+        { page, size, filters, sort: 'createdAt,desc' },
+        true,
+      ),
     );
   };
 
   useEffect(() => {
-    setFilterFields(getBaseFilter(label));
     dispatch(clearData());
+    setFilterFields(getBaseFilter(label));
   }, [label]);
 
   useEffect(() => {
     dispatch(
-      fetchChecklists(
+      fetchChecklistsForListView(
         {
           filters: JSON.stringify({ op: 'AND', fields: filterFields }),
           page: 0,

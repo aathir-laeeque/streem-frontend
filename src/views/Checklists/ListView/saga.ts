@@ -88,6 +88,10 @@ function* unarchiveChecklistSaga({
 
 export function* ChecklistListViewSaga() {
   yield takeLeading(ListViewAction.FETCH_CHECKLISTS, fetchChecklistsSaga);
+  yield takeLatest(
+    ListViewAction.FETCH_CHECKLISTS_FOR_LISTVIEW,
+    fetchChecklistsSaga,
+  );
   yield takeLatest(ListViewAction.ARCHIVE, archiveChecklistSaga);
   yield takeLatest(ListViewAction.UNARCHIVE, unarchiveChecklistSaga);
 }

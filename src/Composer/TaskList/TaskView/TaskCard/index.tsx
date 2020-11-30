@@ -61,7 +61,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           canSkipTask ||= activity.mandatory;
         }
 
-        return { activitiesHasError, canSkipTask: !canSkipTask };
+        return { activitiesHasError, canSkipTask: canSkipTask };
       },
       { canSkipTask: false, activitiesHasError: false },
     );
@@ -90,6 +90,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
     const isCorrectingError =
       taskState === TaskExecutionState.ENABLED_FOR_CORRECTION;
 
+    console.log(`task :: ${task.name} :: canSkipTask :: ${canSkipTask}`);
+
     return (
       <Wrapper
         onClick={() => {
@@ -116,7 +118,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
         />
 
         <Footer
-          canSkipTask={canSkipTask}
+          canSkipTask={!canSkipTask}
           task={task}
           activitiesHasError={activitiesHasError}
         />

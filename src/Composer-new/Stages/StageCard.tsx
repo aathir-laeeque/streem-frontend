@@ -7,6 +7,7 @@ import {
   ArrowUpward,
   AssignmentTurnedIn,
   Delete,
+  Error,
   PanTool,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
@@ -26,28 +27,61 @@ import { StageCardProps } from './types';
 const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
   const { index, isActive, isFirstItem, isLastItem, stage } = props;
 
-  const { tasksInStage, data } = useTypedSelector((state) => ({
-    tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[stage.id].map(
-      (taskId) => state.prototypeComposer.tasks.listById[taskId],
-    ),
-    data: state.prototypeComposer.data,
-  }));
+  const { tasksInStage, data, activitisInStage } = useTypedSelector(
+    (state) => ({
+      tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[
+        stage.id
+      ].map((taskId) => state.prototypeComposer.tasks.listById[taskId]),
+      data: state.prototypeComposer.data,
+      activitisInStage: Object.keys(
+        state.prototypeComposer.activities.activityOrderInTaskInStage[
+          stage.id
+        ] ?? {},
+      )
+        .map(
+          (taskId) =>
+            state.prototypeComposer.activities.activityOrderInTaskInStage[
+              stage.id
+            ][taskId],
+        )
+        .flat()
+        .map(
+          (activityId) =>
+            state.prototypeComposer.activities.listById[activityId],
+        ),
+    }),
+  );
 
   const approvalNeeded = false;
 
-  const stageHasStop = tasksInStage.reduce((acc, task) => {
-    acc ||= task.hasStop;
+  const anyActivityHasError = activitisInStage.some(
+    (activity) => !!activity.errors?.length,
+  );
 
-    return acc;
-  }, false);
+  const { stageHasStop, anyTaskHasError } = tasksInStage.reduce(
+    ({ stageHasStop, anyTaskHasError }, task) => {
+      stageHasStop ||= task.hasStop;
+
+      anyTaskHasError ||= !!task.errors.length;
+
+      return { stageHasStop, anyTaskHasError };
+    },
+    { stageHasStop: false, anyTaskHasError: false },
+  );
+
+  console.log('anyActivityHasError :: ', anyActivityHasError);
 
   const dispatch = useDispatch();
+
+  const stageHasError =
+    !!stage.errors.length || anyActivityHasError || anyTaskHasError;
 
   return (
     <StageCardWrapper
       ref={ref}
       isActive={isActive}
       onClick={() => dispatch(setActiveStage({ id: stage.id }))}
+      hasError={stageHasError}
     >
       <div
         className={`overlap ${
@@ -129,6 +163,13 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
           ) : null}
 
           {stageHasStop ? <PanTool className="icon" id="task-stop" /> : null}
+
+          {anyActivityHasError || anyTaskHasError ? (
+            <div className="stage-badge">
+              <Error className="icon" />
+              <span>Error Found</span>
+            </div>
+          ) : null}
         </div>
 
         <Textarea
@@ -148,8 +189,6 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
             );
           }, 500)}
         />
-
-        <span className="stage-task-count">{tasksInStage.length} Tasks</span>
       </div>
     </StageCardWrapper>
   );

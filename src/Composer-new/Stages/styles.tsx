@@ -10,7 +10,7 @@ const StageListWrapper = styled.div.attrs({
 
 const StageCardWrapper = styled.div.attrs({
   className: 'stage',
-})<Pick<StageCardProps, 'isActive'>>`
+})<Pick<StageCardProps, 'isActive'> & { hasError: boolean }>`
   background-color: #ffffff;
   border: solid 1px #eeeeee;
   border-radius: 4px;
@@ -69,6 +69,7 @@ const StageCardWrapper = styled.div.attrs({
     }
 
     &-task-properties {
+      align-items: center;
       display: flex;
       justify-content: flex-end;
       margin-bottom: 8px;
@@ -80,6 +81,27 @@ const StageCardWrapper = styled.div.attrs({
         :only-child,
         :first-child {
           margin-left: 0;
+        }
+      }
+
+      .stage-badge {
+        align-items: center;
+        background-color: #ffebeb;
+        border-radius: 4px;
+        display: flex;
+        margin-left: 12px;
+        padding: 4px;
+        width: max-content;
+
+        > .icon {
+          margin-right: 4px;
+          color: #ff6b6b;
+        }
+
+        span {
+          font-size: 12px;
+          line-height: 0.83;
+          color: #ff6b6b;
         }
       }
     }
@@ -105,6 +127,13 @@ const StageCardWrapper = styled.div.attrs({
     isActive
       ? css`
           border-color: #1d84ff;
+        `
+      : null}
+
+  ${({ hasError }) =>
+    hasError
+      ? css`
+          border-color: #eb5757;
         `
       : null}
 `;

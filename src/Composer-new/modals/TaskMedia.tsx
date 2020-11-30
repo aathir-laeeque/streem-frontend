@@ -90,8 +90,6 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
     mediaDetails,
   );
 
-  console.log('stateMediaDetails L:: ', stateMediaDetails);
-
   const [errors, setErrors] = useState({ name: '' });
 
   const dispatch = useDispatch();
