@@ -339,7 +339,9 @@ const activityTemplateFormatter = (
             wrap={false}
           >
             <Text style={styles.activityHintText}>
-              You can select multiple items . E.g. -
+              {activity.type === MandatoryActivity.MULTISELECT
+                ? 'You can select multiple items . E.g. -'
+                : 'You can select only one item. E.g. - '}
             </Text>
             <Image
               src={checkmark}

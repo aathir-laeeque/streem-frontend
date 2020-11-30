@@ -589,6 +589,7 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
       }),
     );
   } catch (error) {
+    yield put(closeAllOverlayAction());
     console.error(
       'error from initiateSignOffSaga function in Composer-New :: ',
       error,

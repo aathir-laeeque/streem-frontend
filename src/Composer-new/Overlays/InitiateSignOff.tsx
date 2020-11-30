@@ -328,7 +328,7 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
         title="Initiate Sequential Sign Off"
         primaryText="Initiate"
         secondaryText="Cancel"
-        onSecondary={() => console.log('On Secondary')}
+        onSecondary={closeOverlay}
         onPrimary={() => dispatch(initiateSignOff(data.id, selection))}
         disabledPrimary={!!error}
       >
