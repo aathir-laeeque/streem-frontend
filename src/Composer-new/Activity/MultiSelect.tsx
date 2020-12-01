@@ -47,7 +47,7 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
 
       <ul className="options-list">
         {activity?.data?.map((item, index) => (
-          <li className="options-list-item" key={index}>
+          <li className="options-list-item" key={item.id}>
             <TextInput
               BeforeElement={
                 isMultiSelect ? CheckBoxOutlineBlankSharp : RadioButtonUnchecked

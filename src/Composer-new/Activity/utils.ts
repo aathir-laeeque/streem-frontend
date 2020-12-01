@@ -111,7 +111,14 @@ const generateNewActivity = ({
         orderTree,
         type,
         data: [
-          { link: '', name: '', type: 'image', fileName: '', quantity: 0 },
+          {
+            link: '',
+            name: '',
+            type: 'image',
+            fileName: '',
+            quantity: 0,
+            id: uuidv4(),
+          },
         ],
         label: '',
         mandatory: false,

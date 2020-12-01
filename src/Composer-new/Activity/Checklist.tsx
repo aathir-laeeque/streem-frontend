@@ -20,7 +20,7 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
 
       <ul className="checklist-list">
         {activity?.data?.map((item, index) => (
-          <li className="checklist-list-item" key={index}>
+          <li className="checklist-list-item" key={item.id}>
             <TextInput
               BeforeElement={CheckBoxOutlineBlankSharp}
               defaultValue={item.name}

@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { updateActivity } from './actions';
 import { MaterialWrapper } from './styles';
 import { ActivityProps } from './types';
+import { v4 as uuidv4 } from 'uuid';
 
 const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
@@ -21,7 +22,7 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
       <ol className="material-list">
         {activity.data?.map((item, index: number) => {
           return (
-            <li className="material-list-item" key={index}>
+            <li className="material-list-item" key={item.id}>
               <div className={`image-wrapper ${item.link ? '' : 'default'}`}>
                 {item.link ? (
                   <img src={item.link} className="image" />
@@ -144,6 +145,7 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                     type: 'image',
                     fileName: '',
                     quantity: 0,
+                    id: uuidv4(),
                   },
                 ],
               }),

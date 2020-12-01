@@ -1,10 +1,10 @@
-import { Button1, NumberInput, Textarea, TextInput } from '#components';
+import { Button1, NumberInput, Textarea } from '#components';
 import { useTypedSelector } from '#store';
 import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
 import { CheckCircle, Error, Warning } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import {
@@ -47,89 +47,116 @@ const generateText = (data) => {
   }
 };
 
+const checkIsOffLimit = ({
+  observedValue,
+  desiredValue,
+  operator,
+}: {
+  observedValue: number | null;
+  desiredValue: number;
+  operator: string;
+}) => {
+  if (!observedValue) {
+    return false;
+  } else {
+    switch (operator) {
+      case 'EQUAL_TO':
+        if (!(observedValue === desiredValue)) {
+          return true;
+        }
+        break;
+      case 'LESS_THAN':
+        if (!(observedValue < desiredValue)) {
+          return true;
+        }
+        break;
+      case 'LESS_THAN_EQUAL_TO':
+        if (!(observedValue <= desiredValue)) {
+          return true;
+        }
+        break;
+      case 'MORE_THAN':
+        if (!(observedValue > desiredValue)) {
+          return true;
+        }
+        break;
+      case 'MORE_THAN_EQUAL_TO':
+        if (!(observedValue >= desiredValue)) {
+          return true;
+        }
+        break;
+      default:
+        return false;
+    }
+  }
+};
+
 const ShouldBeActivity: FC<ActivityProps> = ({
   activity,
   isCorrectingError,
 }) => {
-  const dispatch = useDispatch();
-
   const {
     auth: { profile },
     composer: { entityId: jobId },
   } = useTypedSelector((state) => state);
 
+  const numberInputRef = useRef<HTMLInputElement>(null);
+  const reasonRef = useRef<HTMLTextAreaElement>(null);
+
+  const dispatch = useDispatch();
+
   const [state, setState] = useState({
+    approvalTime: activity?.response?.activityValueApprovalDto?.createdAt,
+    approver: activity?.response?.activityValueApprovalDto?.approver,
     isApprovalPending: activity?.response?.state === 'PENDING_FOR_APPROVAL',
     isApproved: activity?.response?.activityValueApprovalDto
       ? activity?.response?.activityValueApprovalDto?.state === 'APPROVED'
       : undefined,
     isExecuted: activity?.response?.state === 'EXECUTED',
-    isOffLimit: false,
+    isOffLimit: checkIsOffLimit({
+      observedValue: parseFloat(activity?.response?.value) ?? null,
+      desiredValue: parseFloat(activity?.data?.value),
+      operator: activity?.data?.operator,
+    }),
     isUserSupervisor: profile?.roles?.some(
       (role) => role.name === 'SUPERVISOR',
     ),
+    isValueChanged: false,
     reason: activity?.response?.reason ?? '',
-    shouldAskForReason: !!activity?.response?.reason,
-    value: activity?.response?.value,
-
-    approver: activity?.response?.activityValueApprovalDto?.approver,
-    approvalTime: activity?.response?.activityValueApprovalDto?.createdAt,
+    value: activity?.response?.value ?? null,
   });
 
   useEffect(() => {
     setState((prevState) => ({
       ...prevState,
+      approvalTime: activity?.response?.activityValueApprovalDto?.createdAt,
+      approver: activity?.response?.activityValueApprovalDto?.approver,
       isApprovalPending: activity?.response?.state === 'PENDING_FOR_APPROVAL',
       isApproved: activity?.response?.activityValueApprovalDto
         ? activity?.response?.activityValueApprovalDto?.state === 'APPROVED'
         : undefined,
       isExecuted: activity?.response?.state === 'EXECUTED',
+      isOffLimit: checkIsOffLimit({
+        observedValue: parseFloat(activity?.response?.value) ?? null,
+        desiredValue: parseFloat(activity?.data?.value),
+        operator: activity?.data?.operator,
+      }),
+      isValueChanged: false,
       reason: activity?.response?.reason ?? '',
-      shouldAskForReason: !!activity?.response?.reason,
-      value: activity?.response?.value,
-      approver: activity?.response?.activityValueApprovalDto?.approver,
-      approvalTime: activity?.response?.activityValueApprovalDto?.createdAt,
+      value: activity?.response?.value ?? null,
     }));
   }, [activity]);
 
-  const execute = (value: number, withReason = false) => {
-    if (!isCorrectingError) {
-      dispatch(
-        executeActivity(
-          {
-            ...activity,
-            data: { ...activity.data, input: value },
-          },
-          withReason ? state.reason : undefined,
-        ),
-      );
-    } else {
-      dispatch(
-        fixActivity(
-          {
-            ...activity,
-            data: { ...activity.data, input: value },
-          },
-          withReason ? state.reason : undefined,
-        ),
-      );
-    }
-  };
-
-  const handleOffLimit = () => {
-    setState((prevState) => ({
-      ...prevState,
-      shouldAskForReason: true,
-      isOffLimit: true,
-    }));
-  };
+  useEffect(() => {
+    console.log('updated state :: ', state);
+  }, [state]);
 
   const renderSubmitButtons = () => (
     <div className="buttons-container">
       <Button1
         variant="secondary"
         color="blue"
-        onClick={() => execute(state.value, true)}
+        onClick={() => handleExecution(state.value, true)}
         disabled={state.isApprovalPending}
       >
         Submit
@@ -137,14 +164,23 @@ const ShouldBeActivity: FC<ActivityProps> = ({
       <Button1
         variant="secondary"
         color="red"
-        onClick={() =>
+        onClick={() => {
           setState((prevState) => ({
             ...prevState,
-            reason: '',
-            shouldAskForReason: false,
-            value: null,
-          }))
-        }
+            isOffLimit: checkIsOffLimit({
+              observedValue: parseFloat(activity?.response?.value) ?? null,
+              desiredValue: parseFloat(activity?.data?.value),
+              operator: activity?.data?.operator,
+            }),
+            isValueChanged: false,
+          }));
+          if (numberInputRef && numberInputRef.current) {
+            numberInputRef.current.value = activity?.response?.value;
+          }
+          if (reasonRef && reasonRef.current) {
+            reasonRef.current.value = activity?.response?.reason;
+          }
+        }}
         disabled={state.isApprovalPending}
       >
         Cancel
@@ -187,6 +223,30 @@ const ShouldBeActivity: FC<ActivityProps> = ({
     </div>
   );
 
+  const handleExecution = (value: number, withReason = false) => {
+    if (!isCorrectingError) {
+      dispatch(
+        executeActivity(
+          {
+            ...activity,
+            data: { ...activity.data, input: value },
+          },
+          withReason ? state.reason : undefined,
+        ),
+      );
+    } else {
+      dispatch(
+        fixActivity(
+          {
+            ...activity,
+            data: { ...activity.data, input: value },
+          },
+          withReason ? state.reason : undefined,
+        ),
+      );
+    }
+  };
+
   return (
     <Wrapper>
       {state.isApprovalPending ? (
@@ -211,82 +271,94 @@ const ShouldBeActivity: FC<ActivityProps> = ({
           {formatDateTime(state.approvalTime, 'MMM D, YYYY h:mm A')}
         </span>
       ) : null}
-      <span className="parameter-text">{generateText(activity.data)}</span>
+
+      <span className="parameter-text">{generateText(activity?.data)}</span>
 
       <NumberInput
-        placeholder="Enter Observed Value"
         defaultValue={state.value}
         onChange={debounce(({ value }) => {
-          setState((prevState) => ({ ...prevState, value }));
+          setState((prevState) => ({
+            ...prevState,
+            value,
+            isValueChanged: prevState.value !== value,
+          }));
           switch (activity?.data?.operator) {
             case 'EQUAL_TO':
-              if (parseFloat(value) === parseFloat(activity?.data?.value)) {
-                execute(value);
+              if (!(parseFloat(value) === parseFloat(activity?.data?.value))) {
+                setState((prevState) => ({ ...prevState, isOffLimit: true }));
               } else {
-                handleOffLimit();
+                handleExecution(value);
               }
               break;
             case 'LESS_THAN':
-              if (parseFloat(value) < parseFloat(activity?.data?.value)) {
-                execute(value);
+              if (!(parseFloat(value) < parseFloat(activity?.data?.value))) {
+                setState((prevState) => ({ ...prevState, isOffLimit: true }));
               } else {
-                handleOffLimit();
+                handleExecution(value);
               }
               break;
             case 'LESS_THAN_EQUAL_TO':
-              if (parseFloat(value) <= parseFloat(activity?.data?.value)) {
-                execute(value);
+              if (!(parseFloat(value) <= parseFloat(activity?.data?.value))) {
+                setState((prevState) => ({ ...prevState, isOffLimit: true }));
               } else {
-                handleOffLimit();
+                handleExecution(value);
               }
               break;
             case 'MORE_THAN':
-              if (parseFloat(value) > parseFloat(activity?.data?.value)) {
-                execute(value);
+              if (!(parseFloat(value) > parseFloat(activity?.data?.value))) {
+                setState((prevState) => ({ ...prevState, isOffLimit: true }));
               } else {
-                handleOffLimit();
+                handleExecution(value);
               }
               break;
             case 'MORE_THAN_EQUAL_TO':
-              if (parseFloat(value) >= parseFloat(activity?.data?.value)) {
-                execute(value);
+              if (!(parseFloat(value) >= parseFloat(activity?.data?.value))) {
+                setState((prevState) => ({ ...prevState, isOffLimit: true }));
               } else {
-                handleOffLimit();
+                handleExecution(value);
               }
               break;
             default:
-              break;
+              setState((prevState) => ({ ...prevState, isOffLimit: false }));
           }
-        }, 1000)}
+        }, 500)}
+        placeholder="Enter Observed Value"
+        ref={numberInputRef}
       />
 
-      {state.shouldAskForReason ? (
+      {state.isOffLimit ? (
         <div className="off-limit-reason">
           <div className="warning">Warning! {generateText(activity?.data)}</div>
 
           <Textarea
             defaultValue={state.reason}
+            disabled={!state.isValueChanged}
             label="State your Reason"
             onChange={debounce(({ value }) => {
               setState((prevState) => ({ ...prevState, reason: value }));
             }, 500)}
             placeholder="Reason for change"
+            ref={reasonRef}
             rows={4}
           />
 
           {(() => {
             if (state.isUserSupervisor) {
-              if (state.isOffLimit) {
-                return renderSubmitButtons();
-              } else if (state.isApprovalPending) {
+              if (state.isApprovalPending) {
                 return renderApprovalButtons();
-              } else {
+              } else if (state.isOffLimit && state.isValueChanged) {
+                return renderSubmitButtons();
+              } else if (
+                activity?.response?.state === 'BEING_EXECUTED_AFTER_REJECTED' ||
+                activity?.response?.state === 'BEING_EXECUTED_AFTER_APPROVAL' ||
+                state.isExecuted
+              ) {
                 return null;
               }
             } else {
-              if (state.isOffLimit) {
+              if (state.isValueChanged) {
                 return renderSubmitButtons();
-              } else if (state.isApproved || state.isExecuted) {
+              } else {
                 return null;
               }
             }
