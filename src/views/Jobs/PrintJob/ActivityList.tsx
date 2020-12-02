@@ -207,9 +207,9 @@ const activityTemplateFormatter = (
       return (
         <View style={styles.activityView} wrap={false}>
           <Text style={styles.text12}>Sign Below</Text>
-          {activity.response?.medias ? (
+          {activity.response?.medias?.[0] ? (
             <Image
-              src={activity.response?.medias[0].link}
+              src={activity.response?.medias[0]?.link}
               style={{ width: '300px' }}
             />
           ) : (
