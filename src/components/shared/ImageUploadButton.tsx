@@ -13,6 +13,7 @@ type ImageUploadButtonProps = {
   onUploadError: (error: any) => void;
   disabled?: boolean;
   allowCapture?: boolean;
+  additionalTypes?: string[];
 };
 
 const Wrapper = styled.div.attrs({
@@ -37,6 +38,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
   onUploadError,
   onUploadSuccess,
   allowCapture = false,
+  additionalTypes = [],
 }) => {
   const [file, setFile] = useState<File | null>(null);
 
@@ -68,7 +70,11 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
       <input
         type="file"
         id="file"
-        accept="image/*"
+        accept={
+          additionalTypes.length
+            ? 'image/*'.concat(`,${additionalTypes.join()}`)
+            : 'image/*'
+        }
         ref={fileRef}
         {...extraProps}
         style={{ display: 'none' }}

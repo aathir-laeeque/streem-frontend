@@ -242,6 +242,7 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
                 console.log('file on upload :: ', file);
                 setValues((val) => ({ ...val, medias: [...val.medias, file] }));
               }}
+              additionalTypes={['.pdf']}
             />
           </div>
 
