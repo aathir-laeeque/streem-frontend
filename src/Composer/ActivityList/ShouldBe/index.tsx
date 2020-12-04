@@ -16,7 +16,7 @@ import { ActivityProps, SupervisorResponse } from '../types';
 import { Wrapper } from './styles';
 
 const generateText = (data) => {
-  if (data.operator === 'IS_BETWEEN') {
+  if (data.operator === 'BETWEEN') {
     return `${data.parameter} should be between ${data.lowerValue} ${data.uom} and ${data.upperValue} ${data.uom}`;
   } else {
     let operatorString: string;
@@ -49,11 +49,13 @@ const generateText = (data) => {
 
 const checkIsOffLimit = ({
   observedValue,
-  desiredValue,
+  desiredValue1,
+  desiredValue2,
   operator,
 }: {
   observedValue: number | null;
-  desiredValue: number;
+  desiredValue1: number;
+  desiredValue2?: number;
   operator: string;
 }) => {
   if (!observedValue) {
@@ -61,30 +63,36 @@ const checkIsOffLimit = ({
   } else {
     switch (operator) {
       case 'EQUAL_TO':
-        if (!(observedValue === desiredValue)) {
+        if (!(observedValue === desiredValue1)) {
           return true;
         }
         break;
       case 'LESS_THAN':
-        if (!(observedValue < desiredValue)) {
+        if (!(observedValue < desiredValue1)) {
           return true;
         }
         break;
       case 'LESS_THAN_EQUAL_TO':
-        if (!(observedValue <= desiredValue)) {
+        if (!(observedValue <= desiredValue1)) {
           return true;
         }
         break;
       case 'MORE_THAN':
-        if (!(observedValue > desiredValue)) {
+        if (!(observedValue > desiredValue1)) {
           return true;
         }
         break;
       case 'MORE_THAN_EQUAL_TO':
-        if (!(observedValue >= desiredValue)) {
+        if (!(observedValue >= desiredValue1)) {
           return true;
         }
         break;
+      case 'BETWEEN':
+        if (
+          !(observedValue >= desiredValue1 && observedValue <= desiredValue2)
+        ) {
+          return true;
+        }
       default:
         return false;
     }
@@ -115,8 +123,13 @@ const ShouldBeActivity: FC<ActivityProps> = ({
     isExecuted: activity?.response?.state === 'EXECUTED',
     isOffLimit: checkIsOffLimit({
       observedValue: parseFloat(activity?.response?.value) ?? null,
-      desiredValue: parseFloat(activity?.data?.value),
       operator: activity?.data?.operator,
+      ...(activity?.data?.operator === 'BETWEEN'
+        ? {
+            desiredValue1: parseFloat(activity?.data?.lowerValue),
+            desiredValue2: parseFloat(activity?.data?.upperValue),
+          }
+        : { desiredValue1: parseFloat(activity?.data?.value) }),
     }),
     isUserSupervisor: profile?.roles?.some(
       (role) => role.name === 'SUPERVISOR',
@@ -138,8 +151,13 @@ const ShouldBeActivity: FC<ActivityProps> = ({
       isExecuted: activity?.response?.state === 'EXECUTED',
       isOffLimit: checkIsOffLimit({
         observedValue: parseFloat(activity?.response?.value) ?? null,
-        desiredValue: parseFloat(activity?.data?.value),
         operator: activity?.data?.operator,
+        ...(activity?.data?.operator === 'BETWEEN'
+          ? {
+              desiredValue1: parseFloat(activity?.data?.lowerValue),
+              desiredValue2: parseFloat(activity?.data?.upperValue),
+            }
+          : { desiredValue1: parseFloat(activity?.data?.value) }),
       }),
       isValueChanged: false,
       reason: activity?.response?.reason ?? '',
@@ -169,8 +187,13 @@ const ShouldBeActivity: FC<ActivityProps> = ({
             ...prevState,
             isOffLimit: checkIsOffLimit({
               observedValue: parseFloat(activity?.response?.value) ?? null,
-              desiredValue: parseFloat(activity?.data?.value),
               operator: activity?.data?.operator,
+              ...(activity?.data?.operator === 'BETWEEN'
+                ? {
+                    desiredValue1: parseFloat(activity?.data?.lowerValue),
+                    desiredValue2: parseFloat(activity?.data?.upperValue),
+                  }
+                : { desiredValue1: parseFloat(activity?.data?.value) }),
             }),
             isValueChanged: false,
           }));
@@ -313,6 +336,18 @@ const ShouldBeActivity: FC<ActivityProps> = ({
               break;
             case 'MORE_THAN_EQUAL_TO':
               if (!(parseFloat(value) >= parseFloat(activity?.data?.value))) {
+                setState((prevState) => ({ ...prevState, isOffLimit: true }));
+              } else {
+                handleExecution(value);
+              }
+              break;
+            case 'BETWEEN':
+              if (
+                !(
+                  parseFloat(value) >= parseFloat(activity?.data?.loverValue) &&
+                  parseFloat(value) <= parseFloat(activity?.data?.upperValue)
+                )
+              ) {
                 setState((prevState) => ({ ...prevState, isOffLimit: true }));
               } else {
                 handleExecution(value);
