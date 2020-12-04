@@ -56,6 +56,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
 
         if (data) {
           onUploadSuccess(data);
+          setFile(null);
         } else {
           onUploadError(errors);
         }
@@ -87,7 +88,6 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
 
       <div
         onClick={() => {
-          console.log('disabled == ', disabled);
           if (!disabled) {
             fileRef?.current?.click();
           }

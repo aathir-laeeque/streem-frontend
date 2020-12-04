@@ -344,7 +344,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
             case 'BETWEEN':
               if (
                 !(
-                  parseFloat(value) >= parseFloat(activity?.data?.loverValue) &&
+                  parseFloat(value) >= parseFloat(activity?.data?.lowerValue) &&
                   parseFloat(value) <= parseFloat(activity?.data?.upperValue)
                 )
               ) {

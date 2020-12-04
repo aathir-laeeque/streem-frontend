@@ -69,8 +69,6 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
     { stageHasStop: false, anyTaskHasError: false },
   );
 
-  console.log('anyActivityHasError :: ', anyActivityHasError);
-
   const dispatch = useDispatch();
 
   const stageHasError =
