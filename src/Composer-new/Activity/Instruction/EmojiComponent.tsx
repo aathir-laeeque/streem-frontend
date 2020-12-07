@@ -20,9 +20,10 @@ class LayoutComponent extends Component {
             key={index}
             className="rdw-emoji-icon"
             alt=""
+            title={Emoji.name}
             onClick={this.onChange}
           >
-            <Emoji />
+            {Emoji.value}
           </span>
         ))}
       </div>

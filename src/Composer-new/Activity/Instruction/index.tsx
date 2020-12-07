@@ -8,6 +8,7 @@ import { Editor } from 'react-draft-wysiwyg';
 
 import { ActivityProps } from '../types';
 import { Wrapper } from './styles';
+import EmojiComponent from './EmojiComponent';
 import { useDispatch } from 'react-redux';
 import { updateActivity } from '../actions';
 import { emojis } from '#utils/constants';
@@ -18,6 +19,7 @@ const toolbarOptions = {
   list: { options: ['unordered', 'ordered'] },
   emoji: {
     emojis,
+    component: EmojiComponent,
   },
 };
 

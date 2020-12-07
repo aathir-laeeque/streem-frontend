@@ -9,7 +9,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 
 import { ActivityProps } from '../types';
-// import Temp from './EmojiComponent';
+import EmojiComponent from './EmojiComponent';
 import { Wrapper } from './styles';
 import { emojis } from '#utils/constants';
 
@@ -19,6 +19,7 @@ const toolbarOptions = {
   list: { options: ['unordered', 'ordered'] },
   emoji: {
     emojis,
+    component: EmojiComponent,
   },
 };
 

@@ -18,31 +18,6 @@ export enum LoginErrorCodes {
   EXPIRED = 1007,
 }
 
-export const emojis = [
-  '✅',
-  '👁',
-  '⭐',
-  '🔦',
-  '🧰',
-  '⛑',
-  '🥽',
-  '🧤',
-  '🦺',
-  '🚫',
-  '⛔',
-  '🚯',
-  '♻',
-  '🆘',
-  '🚩',
-  '⚡',
-  '🔥',
-  '⚠',
-  '✋',
-  '🗑',
-  '❎',
-  '🔒',
-];
-
 export enum EmojisUniCodes {
   CHECK = '2705',
   EYE = 'DC41',
@@ -67,3 +42,94 @@ export enum EmojisUniCodes {
   CROSS = '274E',
   LOCK = 'DD12',
 }
+
+export const emojis = [
+  {
+    value: '✅',
+    name: 'Tick Mark',
+  },
+  {
+    value: '👁',
+    name: 'Inspect',
+  },
+  {
+    value: '⭐',
+    name: 'Star',
+  },
+  {
+    value: '🔦',
+    name: 'Torch',
+  },
+  {
+    value: '🧰',
+    name: 'Toolkit',
+  },
+  {
+    value: '⛑',
+    name: 'Safety Helmet',
+  },
+  {
+    value: '🥽',
+    name: 'Eye Glasses',
+  },
+  {
+    value: '🧤',
+    name: 'Hand Gloves',
+  },
+  {
+    value: '🦺',
+    name: 'Safety Vest',
+  },
+  {
+    value: '🚫',
+    name: 'Stop',
+  },
+  {
+    value: '⛔',
+    name: 'Not Allowed',
+  },
+  {
+    value: '🚯',
+    name: 'Keep Clean',
+  },
+  {
+    value: '♻',
+    name: 'Recycle',
+  },
+  {
+    value: '🆘',
+    name: 'SOS',
+  },
+  {
+    value: '🚩',
+    name: 'Important',
+  },
+  {
+    value: '⚡',
+    name: 'Electricity',
+  },
+  {
+    value: '🔥',
+    name: 'Fire',
+  },
+  {
+    value: '⚠',
+    name: 'Alert',
+  },
+  {
+    value: '✋',
+    name: 'Stop',
+  },
+  {
+    value: '🗑',
+    name: 'Waste Bin',
+  },
+  {
+    value: '❎',
+    name: 'Cross',
+  },
+  {
+    value: '🔒',
+    name: 'Protected',
+  },
+];
