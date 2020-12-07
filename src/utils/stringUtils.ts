@@ -35,7 +35,8 @@ export const parseMarkUp = (n: HTMLElement) => {
     node.childNodes.forEach((cNode) => {
       const nValue = cNode.textContent as string;
       if (
-        (cNode.nodeType === 3 && nValue.replace(/[^a-zA-Z]/g, '') !== '') ||
+        (cNode.nodeType === 3 &&
+          nValue?.codePointAt(0)?.toString(16) !== 'a') ||
         cNode.hasChildNodes()
       ) {
         arr.push({

@@ -6,9 +6,32 @@ import {
   NonMandatoryActivity,
 } from '#Composer/checklist.types';
 import checkmark from '#assets/images/checkmark.png';
+import checkEmoji from '#assets/images/emojis/check.png';
+import binEmoji from '#assets/images/emojis/bin.png';
+import cancelEmoji from '#assets/images/emojis/cancel.png';
+import cautionEmoji from '#assets/images/emojis/caution.png';
+import cleanEmoji from '#assets/images/emojis/clean.png';
+import crossEmoji from '#assets/images/emojis/cross.png';
+import electricEmoji from '#assets/images/emojis/electric.png';
+import eyeEmoji from '#assets/images/emojis/eye.png';
+import fireEmoji from '#assets/images/emojis/fire.png';
+import flagEmoji from '#assets/images/emojis/flag.png';
+import glassesEmoji from '#assets/images/emojis/glasses.png';
+import glovesEmoji from '#assets/images/emojis/gloves.png';
+import handEmoji from '#assets/images/emojis/hand.png';
+import helmetEmoji from '#assets/images/emojis/helmet.png';
+import lockEmoji from '#assets/images/emojis/lock.png';
+import recycleEmoji from '#assets/images/emojis/recycle.png';
+import sosEmoji from '#assets/images/emojis/sos.png';
+import starEmoji from '#assets/images/emojis/star.png';
+import stopEmoji from '#assets/images/emojis/stop.png';
+import toolboxEmoji from '#assets/images/emojis/toolbox.png';
+import torchEmoji from '#assets/images/emojis/torch.png';
+import vestEmoji from '#assets/images/emojis/vest.png';
 import { Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import moment from 'moment';
 import { parseMarkUp } from '#utils/stringUtils';
+import { EmojisUniCodes } from '#utils/constants';
 import { InstructionTags } from './types';
 
 const styles = StyleSheet.create({
@@ -156,9 +179,112 @@ const getTagBasedDesign = (
         </View>
       );
     case InstructionTags.TEXT:
+      const items = [];
+      for (let i = 0; i < element.text.length; i++) {
+        const unicode = element.text[i]
+          .codePointAt(0)
+          .toString(16)
+          .toUpperCase();
+        if (unicode.length !== 4) {
+          items.push(<Text style={[styles.textS12]}>{element.text[i]}</Text>);
+        } else {
+          switch (unicode) {
+            case EmojisUniCodes.CHECK:
+              items.push(<Image src={checkEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.EYE:
+              items.push(<Image src={eyeEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.STAR:
+              items.push(<Image src={starEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.TORCH:
+              items.push(<Image src={torchEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.TOOLBOX:
+              items.push(
+                <Image src={toolboxEmoji} style={{ height: '12px' }} />,
+              );
+              break;
+            case EmojisUniCodes.HELMET:
+              items.push(
+                <Image src={helmetEmoji} style={{ height: '12px' }} />,
+              );
+              break;
+            case EmojisUniCodes.GLASSES:
+              items.push(
+                <Image src={glassesEmoji} style={{ height: '12px' }} />,
+              );
+              break;
+            case EmojisUniCodes.GLOVES:
+              items.push(
+                <Image src={glovesEmoji} style={{ height: '12px' }} />,
+              );
+              break;
+            case EmojisUniCodes.CANCEL:
+              items.push(
+                <Image src={cancelEmoji} style={{ height: '12px' }} />,
+              );
+              break;
+            case EmojisUniCodes.STOP:
+              items.push(<Image src={stopEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.VEST:
+              items.push(<Image src={vestEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.CLEAN:
+              items.push(<Image src={cleanEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.RECYCLE:
+              items.push(
+                <Image src={recycleEmoji} style={{ height: '12px' }} />,
+              );
+              break;
+            case EmojisUniCodes.SOS:
+              items.push(<Image src={sosEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.FLAG:
+              items.push(<Image src={flagEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.ELECTRIC:
+              items.push(
+                <Image src={electricEmoji} style={{ height: '12px' }} />,
+              );
+              break;
+            case EmojisUniCodes.FIRE:
+              items.push(<Image src={fireEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.CAUTION:
+              items.push(
+                <Image src={cautionEmoji} style={{ height: '12px' }} />,
+              );
+              break;
+            case EmojisUniCodes.HAND:
+              items.push(<Image src={handEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.BIN:
+              items.push(<Image src={binEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.CROSS:
+              items.push(<Image src={crossEmoji} style={{ height: '12px' }} />);
+              break;
+            case EmojisUniCodes.LOCK:
+              items.push(<Image src={lockEmoji} style={{ height: '12px' }} />);
+              break;
+            default:
+              break;
+          }
+        }
+      }
       return (
-        <View>
-          <Text style={styles.textS12}> {element.text}</Text>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            flex: 1,
+          }}
+        >
+          {items}
         </View>
       );
     default:
