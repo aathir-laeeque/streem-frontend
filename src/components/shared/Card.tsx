@@ -14,14 +14,12 @@ const Wrapper = styled.div.attrs({})`
   justify-content: center;
 
   .card {
-    width: 75%;
+    width: 528px;
     display: flex;
     flex-direction: column;
-    border-radius: 10px;
+    border-radius: 4px;
     background-color: #fff;
-    padding: 28px 28px 20px 28px;
-    box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2),
-      0 3px 3px -2px rgba(0, 0, 0, 0.12), 0 3px 4px 0 rgba(0, 0, 0, 0.14);
+    padding: 12px 12px 12px 12px;
 
     .error-span {
       color: #ff6b6b;
@@ -91,13 +89,14 @@ const Wrapper = styled.div.attrs({})`
     }
 
     .title {
-      font-size: 24px;
-      font-weight: bold;
+      font-size: 28px;
+      line-height: 1.14;
     }
 
     .heading {
-      font-size: 16px;
-      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.16px;
+      line-height: 1.14;
       color: #666666;
     }
 
@@ -135,7 +134,7 @@ const Wrapper = styled.div.attrs({})`
         flex: 0 50%;
         width: 100%;
         font-size: 14px;
-        line-height: 19px;
+        line-height: normal;
         color: #666666;
         align-items: center;
 
@@ -156,8 +155,12 @@ export const Card: FC<CardProps> = ({ heading, subHeading, children }) => {
   return (
     <Wrapper>
       <div className="card">
-        <span className="row title">{heading}</span>
-        <span className="row heading">{subHeading}</span>
+        <span className="title" style={{ padding: '12px 12px 0px' }}>
+          {heading}
+        </span>
+        <span className="heading" style={{ padding: '5px 12px 12px' }}>
+          {subHeading}
+        </span>
         {children}
       </div>
     </Wrapper>

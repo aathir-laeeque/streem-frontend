@@ -28,28 +28,28 @@ const Wrapper = styled.div`
   }
 
   .left {
-    flex: 6;
+    flex: 4;
     background-image: url(${AuthBg});
 
     .tagline {
       margin-top: 16px;
-      font-size: 64px;
-      font-weight: 200;
+      font-size: 32px;
+      line-height: 40px;
+      font-weight: 400;
+      letter-spacing: 0px;
       text-align: center;
       color: #fff;
     }
   }
 
   .right {
-    flex: 4;
+    flex: 6;
     background-image: url(${loginBg});
 
     .credit-view {
-      bottom: 24px;
-      position: absolute;
+      margin-top: 8px;
       display: flex;
       align-items: center;
-      flex-direction: column;
 
       div {
         font-size: 16px;
@@ -65,7 +65,7 @@ const Wrapper = styled.div`
 const AuthView: FC<AuthViewProps> = () => (
   <Wrapper>
     <div className="sections left">
-      <CleenLogoWhite width="60%" height="20%" />
+      <CleenLogoWhite width="60%" height="88px" />
       <div className="tagline">Digitalise Cleaning</div>
     </div>
     <div className="sections right">
@@ -77,9 +77,9 @@ const AuthView: FC<AuthViewProps> = () => (
         <Login path="/*" />
       </Router>
       <div className="credit-view">
-        <div style={{ marginBottom: '8px' }}>A Product By</div>
+        <div>A Product By</div>
         <a href="https://www.leucinetech.com">
-          <MemoLeucineLogo height="28px" width="auto" />
+          <MemoLeucineLogo height="28px" width="122px" />
         </a>
       </div>
     </div>

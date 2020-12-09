@@ -152,7 +152,7 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
               Not you?
             </Link>
           </div>
-          <div className="row">
+          <div className="row" style={{ paddingTop: '4px' }}>
             <LabeledInput
               placeHolder="Enter your username"
               label="Username"
@@ -192,11 +192,11 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
               })}
             />
             <span className="hint">
-              This your unique CLEEN ID and is used to log in to the App.
+              This is your unique CLEEN ID and is used to log in to the App.
               Alpha-numeric characters only.
             </span>
           </div>
-          <div className="row">
+          <div className="row" style={{ paddingTop: '4px' }}>
             <LabeledInput
               placeHolder="Enter your password"
               label="Password"
