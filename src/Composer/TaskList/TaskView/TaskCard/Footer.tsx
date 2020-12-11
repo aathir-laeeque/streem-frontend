@@ -21,7 +21,7 @@ const Wrapper = styled.div.attrs({
 })`
   display: flex;
   flex-direction: column;
-  padding: 0 32px 32px;
+  padding: 0 16px 16px;
 
   button {
     align-items: center;
@@ -361,7 +361,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
     return (
       <div
         className="buttons-container"
-        style={{ display: 'flex', padding: '0 32px 32px' }}
+        style={{ display: 'flex', padding: '0 16px 16px' }}
       >
         <button
           style={{

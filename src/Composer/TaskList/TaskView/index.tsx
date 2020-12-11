@@ -12,7 +12,7 @@ const Wrapper = styled.div.attrs({
   grid-column-gap: 16px;
   grid-template-areas: 'task-card task-media-card';
   grid-template-columns: 1.5fr 1fr;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 `;
 
 type Ref = HTMLDivElement;

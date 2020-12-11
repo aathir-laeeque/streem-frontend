@@ -43,7 +43,7 @@ const Wrapper = styled.div.attrs({
       }
 
       img {
-        height: inherit;
+        height: 100%;
         width: 100%;
       }
     }
@@ -62,7 +62,7 @@ const Wrapper = styled.div.attrs({
         position: relative;
 
         img {
-          height: inherit;
+          height: 100%;
           width: 100%;
           border-radius: 5px;
         }

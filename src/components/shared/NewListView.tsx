@@ -46,6 +46,7 @@ const Wrapper = styled.div.attrs({})`
   .list-header {
     background-color: #dadada;
     display: flex;
+    min-height: 48px;
   }
 
   .list-body {
@@ -57,6 +58,10 @@ const Wrapper = styled.div.attrs({})`
     display: flex;
     flex: 1;
     background-color: #f4f4f4;
+
+    :hover {
+      background-color: #eeeeee;
+    }
   }
 
   .list-header-columns {
@@ -69,6 +74,7 @@ const Wrapper = styled.div.attrs({})`
     line-height: 1.14;
     display: flex;
     overflow: hidden;
+    align-items: center;
 
     :first-child {
       flex: 1.25;
@@ -84,6 +90,7 @@ const Wrapper = styled.div.attrs({})`
     margin: 16px 8px;
     display: flex;
     overflow: hidden;
+    align-items: center;
 
     :first-child {
       flex: 1.25;

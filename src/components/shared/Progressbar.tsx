@@ -32,7 +32,7 @@ const Wrapper = styled.div.attrs({
       } else if (percentage === 0) {
         return css`
           background-color: #666666;
-          width: 3.25%;
+          width: 6%;
         `;
       } else {
         return css`

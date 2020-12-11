@@ -207,7 +207,7 @@ const Wrapper = styled.div.attrs({
     .skip-reason {
       background-color: #fafafa;
       border-top: 1px solid #dadada;
-      padding: 16px 32px;
+      padding: 16px;
       display: flex;
       flex: 1;
       flex-direction: column;
