@@ -6,6 +6,11 @@ import Select from './Select';
 const Wrapper = styled.div`
   margin-left: 16px;
   min-width: 200px;
+  display: none;
+
+  @media (min-width: 1366px) {
+    display: block;
+  }
 
   .button {
     padding: 7px 16px;
