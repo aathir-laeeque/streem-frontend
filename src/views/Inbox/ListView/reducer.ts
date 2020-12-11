@@ -44,10 +44,7 @@ const reducer = (
         jobs: {
           ...state.jobs,
           [type]: {
-            list:
-              pageable && pageable.page === 0
-                ? (data as Array<Job>)
-                : [...state.jobs[type].list, ...(data as Job[])],
+            list: data as Array<Job>,
             pageable: pageable as Pageable,
           },
         },
