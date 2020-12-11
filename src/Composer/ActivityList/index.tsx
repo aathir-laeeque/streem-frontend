@@ -49,11 +49,10 @@ const Wrapper = styled.div.attrs({
 
   .activity {
     border-bottom: 1px dashed #dadada;
-    padding: 32px;
+    padding: 16px;
 
     :last-child {
       border-bottom: none;
-      /* padding-bottom: 0; */
     }
 
     .optional-badge {

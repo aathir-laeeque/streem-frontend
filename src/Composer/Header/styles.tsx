@@ -18,7 +18,7 @@ const Wrapper = styled.div`
     font-weight: 600;
     line-height: 0.75;
     color: #1d84ff;
-    padding: 18px 32px;
+    padding: 16px;
   }
 
   .auto-save-text {
@@ -35,8 +35,12 @@ const Wrapper = styled.div`
     display: flex;
 
     button {
-      line-height: 0.75;
-      padding: 10px 16px;
+      line-height: 1.14;
+      padding: 8px 16px;
+    }
+
+    .sign-off {
+      margin-right: 8px;
     }
 
     .dropdown-button {

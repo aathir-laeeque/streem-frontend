@@ -46,7 +46,7 @@ const Wrapper = styled.div.attrs({
     background-color: #fafafa;
     display: flex;
     flex-direction: column;
-    padding: 32px;
+    padding: 16px;
   }
 
   .job-header {
@@ -82,19 +82,23 @@ const Wrapper = styled.div.attrs({
       align-items: center;
       background-color: #eeeeee;
       justify-content: center;
-      padding: 16px 0;
+      padding: 8px 16px;
+      font-size: 12px;
+      line-height: 1.33;
+      font-weight: normal;
 
       display: ${({ hasStop }) => (hasStop ? 'flex' : 'none')};
 
       > .icon {
         margin-right: 12px;
+        font-size: 16px;
         color: #f2c94c;
       }
     }
 
     .start-audit {
       background-color: #f4f4f4;
-      padding: 12px 0;
+      padding: 8px 16px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -110,7 +114,9 @@ const Wrapper = styled.div.attrs({
         .task-name {
           color: #000000;
           flex: 1;
-          font-size: 20px;
+          font-size: 16px;
+          font-weight: bold;
+          line-height: 1.25;
         }
 
         .start-task {
@@ -154,16 +160,21 @@ const Wrapper = styled.div.attrs({
             span {
               color: #000000;
               font-size: 14px;
+              line-height: 1.14;
+              letter-spacing: 0.16px;
 
               :nth-child(2n) {
                 margin-top: 8px;
                 color: #999999;
+                letter-spacing: 0.32px;
+                font-size: 12px;
               }
             }
           }
 
           > .icon {
             margin-right: 8px;
+            font-size: 16px;
           }
         }
 
@@ -171,6 +182,8 @@ const Wrapper = styled.div.attrs({
           display: ${({ isTaskStarted }) => (isTaskStarted ? 'flex' : 'none')};
           flex-direction: column;
           align-items: center;
+          font-size: 14px;
+          line-height: 1.14;
 
           span {
             :first-child {
@@ -254,8 +267,12 @@ const Wrapper = styled.div.attrs({
     .task-assignees {
       display: flex;
       justify-content: space-between;
-      padding: 4px 32px;
+      padding: 4px 16px;
       align-items: center;
+
+      @media (min-width: 1201px) {
+        padding: 4px 32px;
+      }
 
       > span {
         font-size: 14px;

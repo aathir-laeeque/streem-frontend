@@ -13,6 +13,11 @@ const Wrapper = styled.div.attrs({
   flex-direction: column;
   margin-bottom: 16px;
   padding: 16px;
+  line-height: 1.33;
+
+  @media (max-width: 1200px) {
+    padding: 12px;
+  }
 
   .stage {
     &-header {
@@ -22,6 +27,7 @@ const Wrapper = styled.div.attrs({
       .stage-order {
         color: #666666;
         font-size: 12px;
+        line-height: 1.33;
       }
 
       .stop-icon {
@@ -37,8 +43,9 @@ const Wrapper = styled.div.attrs({
         padding: 4px;
 
         > .icon {
-          margin-right: 4px;
           color: #999999;
+          font-size: 16px;
+          margin-right: 4px;
         }
 
         span {
@@ -53,6 +60,7 @@ const Wrapper = styled.div.attrs({
       color: #000000;
       font-size: 14px;
       margin-top: 8px;
+      line-height: 1.14;
     }
 
     &-task-bar {
@@ -62,6 +70,7 @@ const Wrapper = styled.div.attrs({
         color: #000000;
         display: block;
         font-size: 12px;
+        line-height: 1.33;
         margin-bottom: 8px;
       }
     }

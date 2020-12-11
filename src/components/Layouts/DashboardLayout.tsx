@@ -11,6 +11,10 @@ const Layout = styled.div`
   height: inherit;
   width: inherit;
   background-color: #fafafa;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 100px 1fr;
+  }
 `;
 
 const DashboardLayout: FC = ({ children }) => {

@@ -17,4 +17,9 @@ export const NavItem = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: 12px 0;
+
+  > span {
+    font-size: 14px;
+    line-height: 1.29;
+  }
 `;

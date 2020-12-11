@@ -37,7 +37,7 @@ const Wrapper = styled.div.attrs({
     border: 1px solid #1d84ff;
     border-radius: 4px;
     color: #1d84ff;
-    padding: 10px 0;
+    padding: 8px 16px;
 
     > .icon {
       color: #1d84ff;
@@ -47,7 +47,7 @@ const Wrapper = styled.div.attrs({
 
   .skip-task {
     color: #1d84ff;
-    margin-top: 24px;
+    margin-top: 16px;
   }
 
   .error-badge {
@@ -111,12 +111,17 @@ const CompletedWrapper = styled.div.attrs({
   color: #ffffff;
   display: flex;
   justify-content: center;
-  padding: 16px 32px;
+  padding: 16px;
 
   > .icon {
     color: #ffffff;
     margin-right: 8px;
     opacity: 0.5;
+    font-size: 16px;
+  }
+
+  > span {
+    font-size: 14px;
   }
 
   .task-off-limit-reason {

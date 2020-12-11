@@ -11,7 +11,7 @@ const Wrapper = styled.div.attrs({
   display: grid;
   grid-column-gap: 16px;
   grid-template-areas: 'task-card task-media-card';
-  grid-template-columns: 1.75fr 1fr;
+  grid-template-columns: 1.5fr 1fr;
   margin-bottom: 32px;
 `;
 
@@ -26,5 +26,7 @@ const TaskView = forwardRef<Ref, TaskViewProps>((props, ref) => {
     </Wrapper>
   );
 });
+
+TaskView.displayName = 'TaskView';
 
 export default TaskView;
