@@ -32,18 +32,18 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   );
 
   const { isIdle } = useTypedSelector((state) => state.auth);
-  const reduerLabel = label.toLowerCase().split(' ').join('');
+  const reducerLabel = label.toLowerCase().split(' ').join('');
 
   const [filterFields, setFilterFields] = useState<FilterField[]>([]);
 
-  const { pageable, list } = jobs[reduerLabel];
+  const { pageable, list } = jobs[reducerLabel];
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (!isIdle) {
       fetchData(0, 10);
-      dispatch(setSelectedState(reduerLabel));
+      dispatch(setSelectedState(reducerLabel));
     }
   }, [isIdle]);
 
@@ -56,7 +56,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           sort: 'createdAt,desc',
           fields: JSON.stringify({ op: 'AND', fields: filterFields }),
         },
-        reduerLabel,
+        reducerLabel,
       ),
     );
   };
@@ -70,7 +70,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           sort: 'createdAt,desc',
           filters: JSON.stringify({ op: 'AND', fields: filterFields }),
         },
-        reduerLabel,
+        reducerLabel,
       ),
     );
   }, [filterFields]);
@@ -90,11 +90,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
                 navigate(`/inbox/${id}`, { state: { checklistId } });
               }}
               style={{
-                width: '120px',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                display: 'block',
               }}
             >
               {checklistName}
@@ -114,11 +110,28 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         const isCompletedWithException =
           state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
 
+        const title = isJobCompleted
+          ? 'Completed'
+          : isCompletedWithException
+          ? 'Completed with Exception'
+          : isJobBlocked
+          ? 'Approval Pending'
+          : isJobStarted
+          ? 'Started'
+          : 'Not Started';
+
         return (
-          <div className="list-card-columns">
+          <div
+            className="list-card-columns"
+            style={{
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+            }}
+          >
             <FiberManualRecord
               className="icon"
               style={{
+                fontSize: '20px',
                 color: isJobCompleted
                   ? '#5aa700'
                   : isJobStarted
@@ -128,22 +141,14 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
             />
             <span
               style={{
-                width: '100px',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                display: 'block',
+                overflow: 'hidden',
+                fontSize: '12px',
+                lineHeight: '20px',
               }}
+              title={title}
             >
-              {isJobCompleted
-                ? 'Completed'
-                : isCompletedWithException
-                ? 'Completed with Exception'
-                : isJobBlocked
-                ? 'Approval Pending'
-                : isJobStarted
-                ? 'Started'
-                : 'Not Started'}
+              {title}
             </span>
           </div>
         );

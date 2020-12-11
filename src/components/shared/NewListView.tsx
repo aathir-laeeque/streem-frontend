@@ -1,14 +1,10 @@
 import { Properties } from '#store/properties/types';
-import { ArrowDropDown, Search } from '@material-ui/icons';
-import NestedMenuItem from '#components/shared/NestedMenuItem';
-import Menu from '@material-ui/core/Menu';
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
 import { Checklist } from '#views/Checklists/types';
 import { User } from '#store/users/types';
 import { Job } from '#views/Jobs/NewListView/types';
 import styled from 'styled-components';
-import { Button, FlatButton } from './Button';
 
 export type NewFilter = {
   label: string;
@@ -40,7 +36,8 @@ interface ListViewProps {
 }
 
 const Wrapper = styled.div.attrs({})`
-  height: inherit;
+  overflow: hidden;
+  height: 100%;
 
   .flex-1 {
     flex: 1 !important;
@@ -51,55 +48,49 @@ const Wrapper = styled.div.attrs({})`
     display: flex;
   }
 
-  .list-options {
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-    display: flex;
-    padding: 8px 16px;
-    align-items: center;
-    border-top: 1px solid #dadada;
-  }
-
   .list-body {
-    overflow-x: auto;
-    overflow-y: auto;
-    height: 330px;
-    max-height: 500px;
+    overflow: auto;
+    max-height: calc(100% - 48px);
   }
 
   .list-card {
-    border-bottom: 1px solid #dadada;
     display: flex;
+    flex: 1;
     background-color: #f4f4f4;
   }
 
   .list-header-columns {
-    flex: 2;
+    flex: 1;
+    margin: 8px;
     font-size: 14px;
     color: #000000;
-    flex-wrap: wrap;
     font-weight: bold;
     letter-spacing: 0.16px;
-    line-height: 1.29;
-    padding: 24px 16px;
-    overflow-wrap: anywhere;
+    line-height: 1.14;
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
+    overflow: hidden;
+
+    :first-child {
+      flex: 1.25;
+    }
   }
 
   .list-card-columns {
-    flex: 2;
-    flex-wrap: wrap;
+    flex: 1;
     font-size: 14px;
+    letter-spacing: 0.16px;
+    line-height: 1.14;
     color: #000000;
-    padding: 24px 16px;
-    overflow-wrap: anywhere;
+    margin: 16px 8px;
     display: flex;
-    align-items: center;
+    overflow: hidden;
+
+    :first-child {
+      flex: 1.25;
+    }
   }
 
   .list-title {
-    align-items: center;
     display: flex;
     text-transform: capitalize;
 
@@ -119,38 +110,6 @@ const Wrapper = styled.div.attrs({})`
     font-size: 14px;
     line-height: 14px;
     color: #333333;
-  }
-
-  .searchboxwrapper {
-    position: relative;
-    margin-right: 16px;
-  }
-
-  .searchbox {
-    border: none;
-    border-bottom: 1px solid #999999;
-    outline: none;
-    font-size: 13px;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: lighter;
-    color: #999999;
-    width: 180px;
-    height: 29px;
-    background: #fff;
-    padding-left: 10px;
-  }
-
-  .searchsubmit {
-    width: 14px;
-    height: 29px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: #fff;
-    border: none;
-    border-bottom: 1px solid #999999;
-    color: #999999;
-    cursor: pointer;
   }
 
   .resetOption {
@@ -197,7 +156,11 @@ export const NewListView: FC<ListViewProps> = ({
             </div>
           ))}
         {properties.map((el) => (
-          <div key={`property_${el.id}`} className="list-header-columns">
+          <div
+            key={`property_${el.id}`}
+            className="list-header-columns"
+            // style={{ flex: 0.7 }}
+          >
             {el.placeHolder}
           </div>
         ))}
@@ -226,6 +189,7 @@ export const NewListView: FC<ListViewProps> = ({
               <div
                 key={`${el.id}_property_${property.id}`}
                 className="list-card-columns"
+                // style={{ flex: 0.7 }}
               >
                 {el.properties &&
                 property &&

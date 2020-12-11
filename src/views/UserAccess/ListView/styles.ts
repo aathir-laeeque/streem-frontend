@@ -49,8 +49,8 @@ const ViewWrapper = styled.div`
   display: grid;
   grid-row-gap: 16px;
   grid-template-areas: 'header' 'list-table';
-  grid-template-rows: 50px 1fr;
-  height: inherit;
+  grid-template-rows: 50px minmax(0, 1fr);
+  max-height: 100%;
 
   .header {
     display: flex;
@@ -78,7 +78,7 @@ const ViewWrapper = styled.div`
     display: grid;
     grid-area: list-table;
     grid-template-areas: 'tab-header' 'tab-body';
-    grid-template-rows: 48px 1fr;
+    grid-template-rows: 48px minmax(0, 1fr);
   }
 `;
 
@@ -90,7 +90,7 @@ const TabContentWrapper = styled.div`
   .filters {
     align-items: flex-end;
     display: flex;
-    padding: 0 0 16px;
+    padding: 0 0 8px;
 
     #add-user {
       margin-left: auto;
@@ -107,8 +107,7 @@ const TabContentWrapper = styled.div`
 
   .pagination {
     margin-top: auto;
-    border-top: 1px solid #dadada;
-    padding: 8px 0;
+    padding: 4px 0 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -119,8 +118,9 @@ const TabContentWrapper = styled.div`
 
     > span {
       cursor: pointer;
-      padding: 10px 0;
+      padding: 8px 0;
       margin: 0 10px;
+      font-size: 14px;
       border-bottom: 4px solid transparent;
 
       &.active {

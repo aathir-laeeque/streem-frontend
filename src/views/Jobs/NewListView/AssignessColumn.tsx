@@ -1,4 +1,4 @@
-import { Avatar } from '#components/shared/Avatar';
+import { Avatar, AvatarExtras } from '#components/shared/Avatar';
 import { apiGetAssignedUsersForJob } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import React, { FC, useEffect, useState } from 'react';
@@ -35,9 +35,24 @@ const AssigneesColumn: FC<Props> = ({ jobId }) => {
 
   return (
     <Wrapper>
-      {assignees.slice(0, 4).map((assignee) => (
-        <Avatar user={assignee} key={assignee.id} />
+      {assignees.slice(0, 3).map((assignee) => (
+        <Avatar
+          user={assignee}
+          key={assignee.id}
+          color="blue"
+          borderColor="#fff"
+          backgroundColor="#eee"
+        />
       ))}
+      {assignees.length > 3 && (
+        <AvatarExtras
+          users={assignees.slice(3)}
+          key={`assignee_length`}
+          color="blue"
+          borderColor="#fff"
+          backgroundColor="#eee"
+        />
+      )}
     </Wrapper>
   );
 };

@@ -18,6 +18,10 @@ const HeaderWrapper = styled.div.attrs({
     min-width: 160px;
     padding: 12px 16px;
     text-transform: capitalize;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.29;
+    letter-spacing: 0.16px;
 
     &.active {
       background-color: #ffffff;
@@ -31,7 +35,7 @@ const BodyWrapper = styled.div.attrs({
 })`
   background-color: #ffffff;
   grid-area: tab-body;
-  padding: 40px 16px 16px;
+  padding: 24px 8px 0px;
 `;
 
 export type Tab = {
