@@ -98,6 +98,9 @@ const TabContentWrapper = styled.div`
   }
 
   .task-progress {
+    flex-direction: column;
+    align-items: flex-start;
+
     > span {
       color: #666666;
       font-size: 12px;

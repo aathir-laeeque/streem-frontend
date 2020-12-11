@@ -182,7 +182,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     <Composer>
       <div
         style={{
-          padding: '0 0 16px',
+          padding: '0 0 8px',
           display: 'flex',
           alignItems: 'flex-end',
         }}

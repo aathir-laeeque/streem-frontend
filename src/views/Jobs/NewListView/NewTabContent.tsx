@@ -278,11 +278,28 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                     const isCompletedWithException =
                       state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
 
+                    const title = isJobCompleted
+                      ? 'Completed'
+                      : isCompletedWithException
+                      ? 'Completed with Exception'
+                      : isJobBlocked
+                      ? 'Approval Pending'
+                      : isJobStarted
+                      ? 'Started'
+                      : 'Not Started';
+
                     return (
-                      <div className="list-card-columns">
+                      <div
+                        className="list-card-columns"
+                        style={{
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
                         <FiberManualRecord
                           className="icon"
                           style={{
+                            fontSize: '20px',
                             color: isJobCompleted
                               ? '#5aa700'
                               : isJobStarted
@@ -298,24 +315,16 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                                 val in CompletedJobStates,
                             )
                               ? {
-                                  width: '100px',
-                                  whiteSpace: 'nowrap',
-                                  overflow: 'hidden',
                                   textOverflow: 'ellipsis',
-                                  display: 'block',
+                                  overflow: 'hidden',
+                                  fontSize: '12px',
+                                  lineHeight: '20px',
                                 }
                               : {}),
                           }}
+                          title={title}
                         >
-                          {isJobCompleted
-                            ? 'Completed'
-                            : isCompletedWithException
-                            ? 'Completed with Exception'
-                            : isJobBlocked
-                            ? 'Approval Pending'
-                            : isJobStarted
-                            ? 'Started'
-                            : 'Not Started'}
+                          {title}
                         </span>
                       </div>
                     );
