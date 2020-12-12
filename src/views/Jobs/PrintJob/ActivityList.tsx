@@ -180,13 +180,18 @@ const getTagBasedDesign = (
       );
     case InstructionTags.TEXT:
       const items = [];
+      console.log('element.text', element.text);
       for (let i = 0; i < element.text.length; i++) {
         const unicode = element.text[i]
           .codePointAt(0)
           .toString(16)
           .toUpperCase();
         if (unicode.length !== 4) {
-          items.push(<Text style={[styles.textS12]}>{element.text[i]}</Text>);
+          items.push(
+            <Text style={[styles.textS12, { minWidth: 6 }]}>
+              {element.text[i]}
+            </Text>,
+          );
         } else {
           switch (unicode) {
             case EmojisUniCodes.CHECK:
@@ -272,6 +277,7 @@ const getTagBasedDesign = (
               items.push(<Image src={lockEmoji} style={{ height: '12px' }} />);
               break;
             default:
+              console.log('IN DEFAULT');
               break;
           }
         }
