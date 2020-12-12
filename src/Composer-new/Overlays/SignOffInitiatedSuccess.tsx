@@ -43,7 +43,7 @@ const SignOffInitiatedSuccessModal: FC<CommonOverlayProps<any>> = ({
         showFooter={false}
         showHeader={false}
       >
-        <MemoSignOff fontSize={280} style={{ height: '150px' }} />
+        <MemoSignOff />
         <h3>Sign Off Initiated</h3>
         <span>Users will receive notification as per sequence</span>
       </BaseModal>

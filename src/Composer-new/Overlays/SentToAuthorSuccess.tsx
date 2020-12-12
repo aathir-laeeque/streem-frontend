@@ -43,7 +43,7 @@ const SentToAuthorSuccessModal: FC<CommonOverlayProps<any>> = ({
         showFooter={false}
         showHeader={false}
       >
-        <MemoSentToAuthorSuccess fontSize={280} style={{ height: '150px' }} />
+        <MemoSentToAuthorSuccess />
         <h3>Comments Sent to Author</h3>
         <span>
           You and your Team Members Comments have been sent to Authors for

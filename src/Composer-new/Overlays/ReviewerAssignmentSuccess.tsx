@@ -42,7 +42,7 @@ const ReviewerAssignmentSuccessModal: FC<CommonOverlayProps<any>> = ({
         showFooter={false}
         showHeader={false}
       >
-        <MemoSentForReview fontSize={280} style={{ height: '200px' }} />
+        <MemoSentForReview />
         <h3>Great Job!</h3>
         <span>Prototype has been submitted for review</span>
       </BaseModal>
