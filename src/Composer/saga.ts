@@ -5,6 +5,7 @@ import {
   closeOverlayAction,
   openOverlayAction,
 } from '#components/OverlayContainer/actions';
+import { RootState } from '#store';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   apiAssignUsersToJob,
@@ -15,10 +16,21 @@ import {
   apiStartJob,
   apiTaskSignOff,
   apiValidatePassword,
+  apiGetJobStatus,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { navigate } from '@reach/router';
-import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  fork,
+  put,
+  takeLatest,
+  take,
+  race,
+  delay,
+  select,
+} from 'redux-saga/effects';
 
 import {
   assignUsersToJob,
@@ -35,12 +47,14 @@ import {
   signOffTasks,
   startJob,
   startJobSuccess,
+  startStatusPolling,
+  stopStatusPolling,
 } from './actions';
 import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
 import { JobActivitySaga } from './JobActivity/saga';
 import { ComposerAction } from './composer.reducer.types';
-import { Entity } from './composer.types';
+import { Entity, JobState } from './composer.types';
 import { StageListSaga } from './StageList/saga';
 import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
@@ -312,6 +326,54 @@ function* signOffTaskSaga({ payload }: ReturnType<typeof signOffTasks>) {
   }
 }
 
+const getCurrentStatus = (state: RootState) => state.composer.jobState;
+
+function* statusPollingSaga({
+  payload,
+}: ReturnType<typeof startStatusPolling>) {
+  while (true) {
+    try {
+      const currentStatus = getCurrentStatus(yield select());
+      if (
+        [JobState.COMPLETED, JobState.COMPLETED_WITH_EXCEPTION].includes(
+          currentStatus,
+        )
+      ) {
+        yield put(stopStatusPolling());
+      }
+      yield delay(60000);
+      const { jobId } = payload;
+      const { data, errors } = yield call(
+        request,
+        'GET',
+        apiGetJobStatus(jobId),
+      );
+
+      if (errors) {
+        throw 'Could Not Fetch Job Status';
+      }
+
+      if (currentStatus !== data.state) {
+        if (
+          [JobState.COMPLETED, JobState.COMPLETED_WITH_EXCEPTION].includes(
+            data.state,
+          )
+        ) {
+          yield put(stopStatusPolling());
+        } else {
+          console.log('NOT MATCHED', currentStatus, data.state);
+          yield put(
+            fetchData({ id: jobId, entity: Entity.JOB, setActive: true }),
+          );
+        }
+      }
+    } catch (err) {
+      console.error('error from statusPollingSaga in Composer Saga :: ', err);
+      yield put(stopStatusPolling());
+    }
+  }
+}
+
 export function* ComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchDataSaga);
 
@@ -333,4 +395,12 @@ export function* ComposerSaga() {
     fork(ActivityListSaga),
     fork(JobActivitySaga),
   ]);
+
+  while (true) {
+    const action = yield take(ComposerAction.START_STATUS_POLLING);
+    yield race([
+      call(statusPollingSaga, action),
+      take(ComposerAction.STOP_STATUS_POLLING),
+    ]);
+  }
 }

@@ -76,6 +76,9 @@ export enum ComposerAction {
   SIGN_OFF_TASKS = '@@composer/job-aaction/SIGN_OFF_TASKS',
   SIGN_OFF_TASKS_ERROR = '@@composer/job-aaction/SIGN_OFF_TASKS_ERROR',
   SIGN_OFF_TASKS_ERROR_RESET = '@@composer/job-aaction/SIGN_OFF_TASKS_ERROR_RESET',
+
+  START_STATUS_POLLING = '@@composer/composer-aaction/START_STATUS_POLLING',
+  STOP_STATUS_POLLING = '@@composer/composer-aaction/STOP_STATUS_POLLING',
 }
 
 export type ComposerActionType = ReturnType<

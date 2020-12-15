@@ -2,7 +2,12 @@ import { useTypedSelector } from '#store';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { fetchData, resetComposer } from './actions';
+import {
+  fetchData,
+  resetComposer,
+  startStatusPolling,
+  stopStatusPolling,
+} from './actions';
 import { ComposerProps, Tabs } from './composer.types';
 import Header from './Header';
 import StageList from './StageList';
@@ -20,11 +25,13 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
     if (!isIdle) {
       if (id) {
         dispatch(fetchData({ id, entity, setActive: true }));
+        dispatch(startStatusPolling({ jobId: id }));
       } else {
         console.log('no id got to fetch data');
       }
 
       return () => {
+        dispatch(stopStatusPolling());
         dispatch(resetComposer());
       };
     }
