@@ -17,6 +17,12 @@ const Wrapper = styled.div`
       font-size: 24px;
       font-weight: bold;
       grid-area: stage-name;
+
+      @media (min-width: 1920px) {
+        max-width: 1200px;
+        width: 1200px;
+        margin: 0 auto;
+      }
     }
 
     &-number {
@@ -26,6 +32,12 @@ const Wrapper = styled.div`
       display: flex;
       font-size: 12px;
       grid-area: stage-number;
+
+      @media (min-width: 1920px) {
+        max-width: 1200px;
+        width: 1200px;
+        margin: 0 auto;
+      }
     }
   }
 

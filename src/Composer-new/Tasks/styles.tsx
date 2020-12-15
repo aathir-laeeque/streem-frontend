@@ -13,6 +13,16 @@ const TaskListWrapper = styled.div.attrs({
     grid-template-columns: 2fr 1fr;
     grid-gap: 16px;
     margin-bottom: 16px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: 1.5fr 1fr;
+      grid-gap: 8px;
+    }
+
+    @media (min-width: 1920px) {
+      max-width: 1200px;
+      margin: 0 auto 32px;
+    }
   }
 `;
 
@@ -62,6 +72,10 @@ const TaskCardWrapper = styled.div.attrs({
         color: #000000;
         font-size: 20px;
         font-weight: bold;
+
+        @media (max-width: 1200px) {
+          font-size: 14px;
+        }
       }
     }
 
@@ -69,6 +83,10 @@ const TaskCardWrapper = styled.div.attrs({
       .task-config {
         border-bottom: 1px solid #dadada;
         padding: 32px;
+
+        @media (max-width: 1200px) {
+          padding: 12px;
+        }
 
         &-control {
           display: flex;
@@ -81,6 +99,11 @@ const TaskCardWrapper = styled.div.attrs({
             flex: 1;
             flex-direction: column;
             padding: 10px;
+
+            @media (max-width: 1200px) {
+              padding: 8px;
+              font-size: 12px;
+            }
 
             :last-child {
               border-right: none;
@@ -105,6 +128,10 @@ const TaskCardWrapper = styled.div.attrs({
 
             .icon {
               margin-right: 8px;
+
+              @media (max-width: 1200px) {
+                font-size: 14px;
+              }
             }
           }
 
@@ -160,6 +187,10 @@ const TaskCardWrapper = styled.div.attrs({
     &-footer {
       border-top: 1px solid #dadada;
       padding: 32px;
+
+      @media (max-width: 1200px) {
+        padding: 16px;
+      }
     }
   }
 `;
@@ -174,12 +205,20 @@ const TaskMediasWrapper = styled.div`
     box-shadow: 0 1px 4px 0 rgba(102, 102, 102, 0.08);
     padding: 24px;
 
+    @media (max-width: 1200px) {
+      padding: 12px;
+    }
+
     .active-media {
       border: solid 2px #1d84ff;
       border-radius: 5px;
       cursor: pointer;
       height: 300px;
       position: relative;
+
+      @media (max-width: 1200px) {
+        height: 250px;
+      }
 
       &-name {
         color: #ffffff;

@@ -13,6 +13,11 @@ const Wrapper = styled.div.attrs({
   grid-template-areas: 'task-card task-media-card';
   grid-template-columns: 1.5fr 1fr;
   margin-bottom: 16px;
+
+  @media (min-width: 1920px) {
+    max-width: 1200px;
+    margin: 0 auto 32px;
+  }
 `;
 
 type Ref = HTMLDivElement;

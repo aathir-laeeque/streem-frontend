@@ -7,6 +7,14 @@ const ActivityWrapper = styled.div.attrs({
   padding: 32px;
   position: relative;
 
+  @media (max-width: 1200px) {
+    padding: 16px;
+
+    label {
+      font-size: 14px;
+    }
+  }
+
   :last-child {
     border-bottom: none;
   }
@@ -16,6 +24,11 @@ const ActivityWrapper = styled.div.attrs({
     right: 32px;
     top: 32px;
     z-index: 1;
+
+    @media (max-width: 1200px) {
+      right: 16px;
+      top: 16px;
+    }
   }
 
   .toggle-switch {

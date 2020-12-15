@@ -48,6 +48,10 @@ const StageCardWrapper = styled.div.attrs({
       #stage-delete {
         margin-left: auto;
         margin-right: 16px;
+
+        @media (max-width: 1200px) {
+          margin-right: 8px;
+        }
       }
     }
 
@@ -55,10 +59,18 @@ const StageCardWrapper = styled.div.attrs({
       color: #000000;
       font-size: 20px;
       font-weight: bold;
+
+      @media (max-width: 1200px) {
+        font-size: 16px;
+      }
     }
 
     &-body {
       padding: 16px;
+
+      @media (max-width: 1200px) {
+        padding: 8px;
+      }
     }
 
     &-task-count {

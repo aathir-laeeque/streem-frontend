@@ -1,4 +1,4 @@
-import { Select, TextInput } from '#components';
+import { Select, TextInput, NumberInput } from '#components';
 import { debounce } from 'lodash';
 import React, { FC } from 'react';
 import { PARAMETER_OPERATORS } from '#Composer-new/constants';
@@ -60,7 +60,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
 
       {activity.data.operator === 'BETWEEN' ? (
         <div className="between-values">
-          <TextInput
+          <NumberInput
             defaultValue={activity.data?.lowerValue}
             error={
               !activity.data?.lowerValue &&
@@ -80,7 +80,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
 
           <span>And</span>
 
-          <TextInput
+          <NumberInput
             defaultValue={activity.data?.upperValue}
             error={
               !activity.data?.upperValue &&
@@ -99,7 +99,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           />
         </div>
       ) : (
-        <TextInput
+        <NumberInput
           defaultValue={activity.data.value}
           error={
             !activity.data?.value &&

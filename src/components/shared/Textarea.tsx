@@ -70,6 +70,11 @@ const Wrapper = styled.div.attrs(({ className }) => ({
       padding: 16px;
       width: 100%;
 
+      @media (max-width: 1200px) {
+        padding: 8px;
+        font-size: 14px;
+      }
+
       :disabled {
         background-color: #fafafa;
         border-color: transparent;

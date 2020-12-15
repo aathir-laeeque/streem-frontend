@@ -35,6 +35,11 @@ const Wrapper = styled.div.attrs({
     display: flex;
     padding: 10px 16px;
 
+    @media (max-width: 1200px) {
+      padding: 8px;
+      font-size: 14px;
+    }
+
     span {
       &.placeholder-text {
         color: #999999;
@@ -69,12 +74,21 @@ const Wrapper = styled.div.attrs({
     width: 100%;
     z-index: 99;
 
+    @media (max-width: 1200px) {
+      padding: 0 8px;
+    }
+
     &-item {
       border: 1px solid transparent;
       border-bottom-color: #bababa;
       cursor: pointer;
       padding: 10px 0;
       text-align: start;
+
+      @media (max-width: 1200px) {
+        padding: 8px 0;
+        font-size: 14px;
+      }
     }
   }
 

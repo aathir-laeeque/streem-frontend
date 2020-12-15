@@ -59,6 +59,11 @@ const Wrapper = styled.div.attrs(({ className }) => ({
     flex: 1;
     padding: 10px 16px;
 
+    @media (max-width: 1200px) {
+      padding: 8px;
+      font-size: 14px;
+    }
+
     :focus-within {
       border-color: #1d84ff;
     }
