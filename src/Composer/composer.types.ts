@@ -23,6 +23,13 @@ export enum JobState {
   UNASSIGNED = 'UNASSIGNED',
 }
 
+export const JOB_STATE_POLLING_TIMEOUT = 60000;
+
+export enum CompletedJobState {
+  COMPLETED = 'COMPLETED',
+  COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
+}
+
 export type ComposerProps = RouteComponentProps<{
   id: Checklist['id'] | Job['id'];
 }> & {

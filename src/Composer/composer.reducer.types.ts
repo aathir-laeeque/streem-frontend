@@ -73,12 +73,12 @@ export enum ComposerAction {
   REVERT_USERS_FOR_JOB = '@@composer/job-action/REVERT_USERS_FOR_JOB',
 
   GET_SIGN_OFF_STATE = '@@composer/job-action/GET_SIGN_OFF_STATE',
-  SIGN_OFF_TASKS = '@@composer/job-aaction/SIGN_OFF_TASKS',
-  SIGN_OFF_TASKS_ERROR = '@@composer/job-aaction/SIGN_OFF_TASKS_ERROR',
-  SIGN_OFF_TASKS_ERROR_RESET = '@@composer/job-aaction/SIGN_OFF_TASKS_ERROR_RESET',
+  SIGN_OFF_TASKS = '@@composer/job-action/SIGN_OFF_TASKS',
+  SIGN_OFF_TASKS_ERROR = '@@composer/job-action/SIGN_OFF_TASKS_ERROR',
+  SIGN_OFF_TASKS_ERROR_RESET = '@@composer/job-action/SIGN_OFF_TASKS_ERROR_RESET',
 
-  START_STATUS_POLLING = '@@composer/composer-aaction/START_STATUS_POLLING',
-  STOP_STATUS_POLLING = '@@composer/composer-aaction/STOP_STATUS_POLLING',
+  START_JOB_STATE_POLLING = '@@composer/job-action/START_JOB_STATE_POLLING',
+  STOP_JOB_STATE_POLLING = '@@composer/job-action/STOP_JOB_STATE_POLLING',
 }
 
 export type ComposerActionType = ReturnType<

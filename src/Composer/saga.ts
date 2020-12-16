@@ -16,7 +16,7 @@ import {
   apiStartJob,
   apiTaskSignOff,
   apiValidatePassword,
-  apiGetJobStatus,
+  apiGetJobState,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { navigate } from '@reach/router';
@@ -47,14 +47,18 @@ import {
   signOffTasks,
   startJob,
   startJobSuccess,
-  startStatusPolling,
-  stopStatusPolling,
+  startJobStatePolling,
+  stopJobStatePolling,
 } from './actions';
 import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
 import { JobActivitySaga } from './JobActivity/saga';
 import { ComposerAction } from './composer.reducer.types';
-import { Entity, JobState } from './composer.types';
+import {
+  Entity,
+  CompletedJobState,
+  JOB_STATE_POLLING_TIMEOUT,
+} from './composer.types';
 import { StageListSaga } from './StageList/saga';
 import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
@@ -328,25 +332,21 @@ function* signOffTaskSaga({ payload }: ReturnType<typeof signOffTasks>) {
 
 const getCurrentStatus = (state: RootState) => state.composer.jobState;
 
-function* statusPollingSaga({
+function* jobStatePollingSaga({
   payload,
-}: ReturnType<typeof startStatusPolling>) {
+}: ReturnType<typeof startJobStatePolling>) {
   while (true) {
     try {
       const currentStatus = getCurrentStatus(yield select());
-      if (
-        [JobState.COMPLETED, JobState.COMPLETED_WITH_EXCEPTION].includes(
-          currentStatus,
-        )
-      ) {
-        yield put(stopStatusPolling());
+      if (currentStatus in CompletedJobState) {
+        yield put(stopJobStatePolling());
       }
-      yield delay(60000);
+      yield delay(JOB_STATE_POLLING_TIMEOUT);
       const { jobId } = payload;
       const { data, errors } = yield call(
         request,
         'GET',
-        apiGetJobStatus(jobId),
+        apiGetJobState(jobId),
       );
 
       if (errors) {
@@ -354,14 +354,9 @@ function* statusPollingSaga({
       }
 
       if (currentStatus !== data.state) {
-        if (
-          [JobState.COMPLETED, JobState.COMPLETED_WITH_EXCEPTION].includes(
-            data.state,
-          )
-        ) {
-          yield put(stopStatusPolling());
+        if (data.state in CompletedJobState) {
+          yield put(stopJobStatePolling());
         } else {
-          console.log('NOT MATCHED', currentStatus, data.state);
           yield put(
             fetchData({ id: jobId, entity: Entity.JOB, setActive: true }),
           );
@@ -369,7 +364,7 @@ function* statusPollingSaga({
       }
     } catch (err) {
       console.error('error from statusPollingSaga in Composer Saga :: ', err);
-      yield put(stopStatusPolling());
+      yield put(stopJobStatePolling());
     }
   }
 }
@@ -397,10 +392,10 @@ export function* ComposerSaga() {
   ]);
 
   while (true) {
-    const action = yield take(ComposerAction.START_STATUS_POLLING);
+    const action = yield take(ComposerAction.START_JOB_STATE_POLLING);
     yield race([
-      call(statusPollingSaga, action),
-      take(ComposerAction.STOP_STATUS_POLLING),
+      call(jobStatePollingSaga, action),
+      take(ComposerAction.STOP_JOB_STATE_POLLING),
     ]);
   }
 }

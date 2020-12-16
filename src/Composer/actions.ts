@@ -133,8 +133,8 @@ export const setSignOffError = (error: string) =>
 export const resetSignOffTaskError = () =>
   actionSpreader(ComposerAction.SIGN_OFF_TASKS_ERROR_RESET);
 
-export const startStatusPolling = ({ jobId }: { jobId: Job['id'] }) =>
-  actionSpreader(ComposerAction.START_STATUS_POLLING, { jobId });
+export const startJobStatePolling = ({ jobId }: { jobId: Job['id'] }) =>
+  actionSpreader(ComposerAction.START_JOB_STATE_POLLING, { jobId });
 
-export const stopStatusPolling = () =>
-  actionSpreader(ComposerAction.STOP_STATUS_POLLING);
+export const stopJobStatePolling = () =>
+  actionSpreader(ComposerAction.STOP_JOB_STATE_POLLING);

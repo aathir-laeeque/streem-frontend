@@ -29,7 +29,7 @@ export const apiUnAssignUser = (jobId: string, userId: string | number) =>
 export const apiStartJob = (jobId: Job['id'], action: string) =>
   `${baseUrl}/jobs/${jobId}/${action}`;
 
-export const apiGetJobStatus = (jobId: Job['id']) =>
+export const apiGetJobState = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}/state`;
 
 export const apiPerformActionOnTask = (taskId: Task['id'], action: string) =>
