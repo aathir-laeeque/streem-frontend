@@ -123,7 +123,14 @@ function* fetchApproversSaga({ payload }: ReturnType<typeof fetchApprovers>) {
       throw 'Could Not Fetch Approvers for Checklist';
     }
 
-    yield put(fetchApproversSuccess(data));
+    yield put(
+      fetchApproversSuccess(
+        data.filter(
+          (collaborator: Collaborator) =>
+            collaborator.type === CollaboratorType.SIGN_OFF_USER,
+        ),
+      ),
+    );
   } catch (error) {
     console.error(
       'error from fetchApproversSaga in Prototype ComposerSaga :: ',
