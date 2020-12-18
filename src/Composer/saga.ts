@@ -356,11 +356,10 @@ function* jobStatePollingSaga({
       if (currentStatus !== data.state) {
         if (data.state in CompletedJobState) {
           yield put(stopJobStatePolling());
-        } else {
-          yield put(
-            fetchData({ id: jobId, entity: Entity.JOB, setActive: true }),
-          );
         }
+        yield put(
+          fetchData({ id: jobId, entity: Entity.JOB, setActive: true }),
+        );
       }
     } catch (err) {
       console.error('error from statusPollingSaga in Composer Saga :: ', err);

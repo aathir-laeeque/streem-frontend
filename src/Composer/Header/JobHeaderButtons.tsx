@@ -11,6 +11,7 @@ import checkPermission from '#services/uiPermissions';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation } from '@reach/router';
+import { usePrevious } from '#utils/usePrevious';
 
 import { completeJob, getSignOffState } from '../actions';
 import { JobState } from '../composer.types';
@@ -26,6 +27,7 @@ const JobHeaderButtons: FC = () => {
 
   const { id: jobId, code, checklist: { name } = {} } = (data as Job) ?? {};
 
+  const prevJobState = usePrevious(jobState);
   const dispatch = useDispatch();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -46,27 +48,32 @@ const JobHeaderButtons: FC = () => {
     (role) => role.name === 'OPERATOR',
   );
 
-  useEffect(() => {
-    (async () => {
-      if (jobId) {
-        const { data, errors } = await request(
-          'GET',
-          apiGetAssignedUsersForJob(jobId),
-        );
+  const getAssignments = async () => {
+    if (jobId) {
+      const { data, errors } = await request(
+        'GET',
+        apiGetAssignedUsersForJob(jobId),
+      );
 
-        if (data) {
-          setIsLoggedInUserAssigned(
-            data.some((user) => user.id === profile?.id),
-          );
-        } else {
-          console.error(
-            'error came in fetch assigned users from component :: ',
-            errors,
-          );
-        }
+      if (data) {
+        setIsLoggedInUserAssigned(data.some((user) => user.id === profile?.id));
+      } else {
+        console.error(
+          'error came in fetch assigned users from component :: ',
+          errors,
+        );
       }
-    })();
+    }
+  };
+
+  useEffect(() => {
+    getAssignments();
   }, [jobId]);
+
+  useEffect(() => {
+    if (prevJobState === JobState.UNASSIGNED && jobState === JobState.ASSIGNED)
+      getAssignments();
+  }, [jobState]);
 
   let hidePrintJob = false;
   hidePrintJob =
