@@ -15,18 +15,14 @@ TODO: Guide users through getting your code up and running on their own system. 
 
 TODO: Describe and show how to build your code and run the tests.
 
-# Contribute
+# Building Docker image
+`./docker/script.sh -a 'http://localhost:8080/v1'`
 
-TODO: Explain how other users and developers can contribute to make your code better.
+# Running Docker image
+`docker run -p 80:80 -e BACKEND_URL='http://localhost:8080/v1' --name cleen-dwi-frontend leucine.azurecr.io/cleen-dwi/frontend:latest`
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
+## TODO
+- Use Local Fonts Rather Than Google Fonts
 
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
-
-TODO :: Use Local Fonts Rather Than Google Fonts
-
-# Fonts To be used (.ttf as Pdf only Supports Those)
-
-https://github.com/googlefonts/nunito/tree/master/fonts/TTF
+## Fonts To be used (.ttf as Pdf only Supports Those)
+- https://github.com/googlefonts/nunito/tree/master/fonts/TTF

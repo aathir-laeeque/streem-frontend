@@ -6,6 +6,8 @@ FROM node:${NODE_VERSION}-alpine as builder
 
 ARG VERSION
 
+ARG BACKEND_URL
+
 MAINTAINER infra@leucintech.com
 
 RUN echo Using image: node:${NODE_VERSION}-alpine
@@ -30,6 +32,9 @@ RUN echo "CLEEN DWI: $VERSION" > /app/dist/version.txt
 
 # Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
 FROM nginx:stable-alpine
+
+# set environmental variable
+ENV BACKEND_URL=$BACKEND_URL
 
 # copy the dist folder to the nginx html
 COPY --from=builder /app/dist/ /usr/share/nginx/html

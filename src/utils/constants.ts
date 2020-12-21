@@ -4,7 +4,7 @@ export const fetchBaseUrl = () => {
   let apiUrl = '';
 
   if (hostname === 'localhost') {
-    apiUrl = `https://api.dev.streem.leucinetech.com/v1`;
+    apiUrl = `http://localhost:8080/v1`;
   } else {
     apiUrl = `${protocol}//api.${hostname}/v1`;
   }

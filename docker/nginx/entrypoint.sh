@@ -23,5 +23,15 @@
 echo "Using config:"
 cat /etc/nginx/nginx.conf
 
+if [ -n "$BACKEND_URL" ]; then
+  echo "Backend Url set to $BACKEND_URL"
+else
+  BACKEND_URL='http://localhost:8080/v1'
+  echo "Backend Url NOT SET. Using the default, $BACKEND_URL"
+fi
+
+# replace the backend url to url passed in environmental variable (BACKEND_URL)
+sed -i 's|http://localhost:8080/v1|'"$BACKEND_URL"'|g' /usr/share/nginx/html/index.html
+
 echo "Starting nginx..."
 nginx -c '/etc/nginx/nginx.conf' -g 'daemon off;'
