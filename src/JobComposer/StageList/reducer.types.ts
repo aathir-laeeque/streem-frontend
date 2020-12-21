@@ -13,7 +13,7 @@ export type StageListState = {
 };
 
 export enum StageListAction {
-  SET_ACTIVE_STAGE = '@@composer/stage-list/SET_ACTIVE_STAGE',
+  SET_ACTIVE_STAGE = '@@jobComposer/stage-list/SET_ACTIVE_STAGE',
 }
 
 export type StageListActionType =

@@ -47,38 +47,38 @@ export type ComposerState = {
 };
 
 export enum ComposerAction {
-  COMPLETE_JOB = '@@composer/job-action/COMPLETE_JOB',
-  COMPLETE_JOB_SUCCESS = '@@composer/job-action/COMPLETE_JOB_SUCCESS',
-  COMPLETE_JOB_WITH_EXCEPTION = '@@composer/job-action/COMPLETE_JOB_WITH_EXCEPTION',
-  COMPLETE_JOB_WITH_EXCEPTION_SUCCESS = '@@composer/job-action/COMPLETE_JOB_WITH_EXCEPTION_SUCCESS',
+  COMPLETE_JOB = '@@jobComposer/job-action/COMPLETE_JOB',
+  COMPLETE_JOB_SUCCESS = '@@jobComposer/job-action/COMPLETE_JOB_SUCCESS',
+  COMPLETE_JOB_WITH_EXCEPTION = '@@jobComposer/job-action/COMPLETE_JOB_WITH_EXCEPTION',
+  COMPLETE_JOB_WITH_EXCEPTION_SUCCESS = '@@jobComposer/job-action/COMPLETE_JOB_WITH_EXCEPTION_SUCCESS',
 
-  FETCH_COMPOSER_DATA = '@@composer/composer-action/FETCH_COMPOSER_DATA',
-  FETCH_COMPOSER_DATA_ERROR = '@@composer/composer-action/FETCH_COMPOSER_DATA_ERROR',
-  FETCH_COMPOSER_DATA_ONGOING = '@@composer/composer-action/FETCH_COMPOSER_DATA_ONGOING',
-  FETCH_COMPOSER_DATA_SUCCESS = '@@composer/composer-action/FETCH_COMPOSER_DATA_SUCCESS',
+  FETCH_COMPOSER_DATA = '@@jobComposer/composer-action/FETCH_COMPOSER_DATA',
+  FETCH_COMPOSER_DATA_ERROR = '@@jobComposer/composer-action/FETCH_COMPOSER_DATA_ERROR',
+  FETCH_COMPOSER_DATA_ONGOING = '@@jobComposer/composer-action/FETCH_COMPOSER_DATA_ONGOING',
+  FETCH_COMPOSER_DATA_SUCCESS = '@@jobComposer/composer-action/FETCH_COMPOSER_DATA_SUCCESS',
 
-  RESET_COMPOSER = '@@composer/composer-action/RESET_COMPOSER',
+  RESET_COMPOSER = '@@jobComposer/composer-action/RESET_COMPOSER',
 
-  START_JOB = '@@composer/job-action/START_JOB',
-  START_JOB_SUCCESS = '@@composer/job-action/START_JOB_SUCCESS',
+  START_JOB = '@@jobComposer/job-action/START_JOB',
+  START_JOB_SUCCESS = '@@jobComposer/job-action/START_JOB_SUCCESS',
 
-  FETCH_ASSIGNED_USERS_FOR_JOB = '@@composer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB',
-  FETCH_ASSIGNED_USERS_FOR_JOB_ERROR = '@@composer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB_ERROR',
-  FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS = '@@composer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS',
-  ASSIGN_USERS_TO_JOB = '@@composer/job-action/ASSIGN_USERS_TO_JOB',
-  UNASSIGN_USER_FROM_JOB = '@@composer/job-action/UNASSIGN_USER_FROM_JOB',
-  ASSIGN_USER_TO_JOB = '@@composer/job-action/ASSIGN_USER_TO_JOB',
-  ASSIGN_USERS_TO_JOB_SUCCESS = '@@composer/job-action/ASSIGN_USERS_TO_JOB_SUCCESS',
-  ASSIGN_USERS_TO_JOB_ERROR = '@@composer/job-action/ASSIGN_USERS_TO_JOB_ERROR',
-  REVERT_USERS_FOR_JOB = '@@composer/job-action/REVERT_USERS_FOR_JOB',
+  FETCH_ASSIGNED_USERS_FOR_JOB = '@@jobComposer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB',
+  FETCH_ASSIGNED_USERS_FOR_JOB_ERROR = '@@jobComposer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB_ERROR',
+  FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS = '@@jobComposer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS',
+  ASSIGN_USERS_TO_JOB = '@@jobComposer/job-action/ASSIGN_USERS_TO_JOB',
+  UNASSIGN_USER_FROM_JOB = '@@jobComposer/job-action/UNASSIGN_USER_FROM_JOB',
+  ASSIGN_USER_TO_JOB = '@@jobComposer/job-action/ASSIGN_USER_TO_JOB',
+  ASSIGN_USERS_TO_JOB_SUCCESS = '@@jobComposer/job-action/ASSIGN_USERS_TO_JOB_SUCCESS',
+  ASSIGN_USERS_TO_JOB_ERROR = '@@jobComposer/job-action/ASSIGN_USERS_TO_JOB_ERROR',
+  REVERT_USERS_FOR_JOB = '@@jobComposer/job-action/REVERT_USERS_FOR_JOB',
 
-  GET_SIGN_OFF_STATE = '@@composer/job-action/GET_SIGN_OFF_STATE',
-  SIGN_OFF_TASKS = '@@composer/job-action/SIGN_OFF_TASKS',
-  SIGN_OFF_TASKS_ERROR = '@@composer/job-action/SIGN_OFF_TASKS_ERROR',
-  SIGN_OFF_TASKS_ERROR_RESET = '@@composer/job-action/SIGN_OFF_TASKS_ERROR_RESET',
+  GET_SIGN_OFF_STATE = '@@jobComposer/job-action/GET_SIGN_OFF_STATE',
+  SIGN_OFF_TASKS = '@@jobComposer/job-action/SIGN_OFF_TASKS',
+  SIGN_OFF_TASKS_ERROR = '@@jobComposer/job-action/SIGN_OFF_TASKS_ERROR',
+  SIGN_OFF_TASKS_ERROR_RESET = '@@jobComposer/job-action/SIGN_OFF_TASKS_ERROR_RESET',
 
-  START_JOB_STATE_POLLING = '@@composer/job-action/START_JOB_STATE_POLLING',
-  STOP_JOB_STATE_POLLING = '@@composer/job-action/STOP_JOB_STATE_POLLING',
+  START_JOB_STATE_POLLING = '@@jobComposer/job-action/START_JOB_STATE_POLLING',
+  STOP_JOB_STATE_POLLING = '@@jobComposer/job-action/STOP_JOB_STATE_POLLING',
 }
 
 export type ComposerActionType = ReturnType<

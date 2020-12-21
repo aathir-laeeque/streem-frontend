@@ -25,20 +25,20 @@ export type ActivityListState = {
 };
 
 export enum ActivityListActions {
-  ADD_NEW_ACTIVITY = '@@composer/prototype/activity-list/ADD_NEW_ACTIVITY',
-  ADD_NEW_ACTIVITY_ERROR = '@@composer/prototype/activity-list/ADD_NEW_ACTIVITY_ERROR',
-  ADD_NEW_ACTIVITY_SUCCESS = '@@composer/prototype/activity-list/ADD_NEW_ACTIVITY_SUCCESS',
+  ADD_NEW_ACTIVITY = '@@prototypeComposer/prototype/activity-list/ADD_NEW_ACTIVITY',
+  ADD_NEW_ACTIVITY_ERROR = '@@prototypeComposer/prototype/activity-list/ADD_NEW_ACTIVITY_ERROR',
+  ADD_NEW_ACTIVITY_SUCCESS = '@@prototypeComposer/prototype/activity-list/ADD_NEW_ACTIVITY_SUCCESS',
 
-  DELETE_ACTIVITY = '@@composer/prototype/activity-list/DELETE_ACTIVITY',
-  DELETE_ACTIVITY_ERROR = '@@composer/prototype/activity-list/DELETE_ACTIVITY_ERROR',
-  DELETE_ACTIVITY_SUCCESS = '@@composer/prototype/activity-list/DELETE_ACTIVITY_SUCCESS',
+  DELETE_ACTIVITY = '@@prototypeComposer/prototype/activity-list/DELETE_ACTIVITY',
+  DELETE_ACTIVITY_ERROR = '@@prototypeComposer/prototype/activity-list/DELETE_ACTIVITY_ERROR',
+  DELETE_ACTIVITY_SUCCESS = '@@prototypeComposer/prototype/activity-list/DELETE_ACTIVITY_SUCCESS',
 
-  RESET_VALIDATION_ERROR = '@@composer/prototype/activity-list/RESET_VALIDATION_ERROR',
-  SET_VALIDATION_ERROR = '@@composer/prototype/activity-list/SET_VALIDATION_ERROR',
+  RESET_VALIDATION_ERROR = '@@prototypeComposer/prototype/activity-list/RESET_VALIDATION_ERROR',
+  SET_VALIDATION_ERROR = '@@prototypeComposer/prototype/activity-list/SET_VALIDATION_ERROR',
 
-  UPDATE_ACTIVITY = '@@composer/prototype/activity-list/UPDATE_ACTIVITY',
-  UPDATE_ACTIVITY_ERROR = '@@composer/prototype/activity-list/UPDATE_ACTIVITY_ERROR',
-  UPDATE_ACTIVITY_SUCCESS = '@@composer/prototype/activity-list/UPDATE_ACTIVITY_SUCCESS',
+  UPDATE_ACTIVITY = '@@prototypeComposer/prototype/activity-list/UPDATE_ACTIVITY',
+  UPDATE_ACTIVITY_ERROR = '@@prototypeComposer/prototype/activity-list/UPDATE_ACTIVITY_ERROR',
+  UPDATE_ACTIVITY_SUCCESS = '@@prototypeComposer/prototype/activity-list/UPDATE_ACTIVITY_SUCCESS',
 }
 
 export type ActivityListActionType =

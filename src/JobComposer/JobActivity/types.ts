@@ -30,10 +30,10 @@ export interface JobActivityState {
 }
 
 export enum JobActivityAction {
-  FETCH_JOB_ACTIVITY = '@@composer/JobActivity/FETCH_JOB_ACTIVITY',
-  FETCH_JOB_ACTIVITY_ERROR = '@@composer/JobActivity/FETCH_JOB_ACTIVITY_ERROR',
-  FETCH_JOB_ACTIVITY_ONGOING = '@@composer/JobActivity/FETCH_JOB_ACTIVITY_ONGOING',
-  FETCH_JOB_ACTIVITY_SUCCESS = '@@composer/JobActivity/FETCH_JOB_ACTIVITY_SUCCESS',
+  FETCH_JOB_ACTIVITY = '@@jobComposer/JobActivity/FETCH_JOB_ACTIVITY',
+  FETCH_JOB_ACTIVITY_ERROR = '@@jobComposer/JobActivity/FETCH_JOB_ACTIVITY_ERROR',
+  FETCH_JOB_ACTIVITY_ONGOING = '@@jobComposer/JobActivity/FETCH_JOB_ACTIVITY_ONGOING',
+  FETCH_JOB_ACTIVITY_SUCCESS = '@@jobComposer/JobActivity/FETCH_JOB_ACTIVITY_SUCCESS',
 }
 
 export enum JobActivitySeverity {

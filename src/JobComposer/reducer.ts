@@ -45,6 +45,11 @@ const initialState: ComposerState = {
   activity: activityState,
 };
 
+/**
+ * TODO: optimize the reducer for rendering process and easy access of the tasks in the stages and activities in tasks. Look into easy access of the taska and stages for error handling and also keep in mind for polling of data
+ * ? mabe look into splitting the reducer to smaller parts
+ */
+
 const reducer: Reducer<ComposerState, ComposerActionType> = (
   state = initialState,
   action,

@@ -33,6 +33,10 @@ const initialState: ComposerState = {
   approvers: [],
 };
 
+/**
+ * TODO: optimize the reducer for rendering process and eassy access of the tasks in the stages and activities in tasks
+ * ? mabe look into splitting the reducer to smaller parts
+ */
 const reducer: Reducer<ComposerState, ComposerActionType> = (
   state = initialState,
   action,
