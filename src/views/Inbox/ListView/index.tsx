@@ -1,5 +1,5 @@
 import useTabsNew from '#components/shared/useTabsNew';
-import { ComposerEntity } from '#Composer-new/types';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
 import { fetchProperties } from '#store/properties/actions';
 import React, { FC, useEffect } from 'react';

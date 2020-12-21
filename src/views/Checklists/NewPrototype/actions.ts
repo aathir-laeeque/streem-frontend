@@ -1,4 +1,4 @@
-import { Checklist } from '#Composer-new/checklist.types';
+import { Checklist } from '#PrototypeComposer/checklist.types';
 import { actionSpreader } from '#store/helpers';
 
 import { Author, FormValues, NewPrototypeActions } from './types';

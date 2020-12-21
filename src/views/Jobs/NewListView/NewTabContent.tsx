@@ -9,7 +9,7 @@ import {
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { ComposerEntity } from '#Composer-new/types';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import { useProperties } from '#services/properties';
 import { useTypedSelector } from '#store/helpers';
 import { FilterField } from '#utils/globalTypes';

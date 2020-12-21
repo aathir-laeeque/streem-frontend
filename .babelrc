@@ -7,8 +7,8 @@
         "alias": {
           "#assets": "./src/assets",
           "#components": "./src/components",
-          "#Composer": "./src/Composer",
-          "#Composer-new": "./src/Composer-new",
+          "#JobComposer": "./src/JobComposer",
+          "#PrototypeComposer": "./src/PrototypeComposer",
           "#mocks": "./mocks",
           "#modules": "./src/modules",
           "#store": "./src/store",

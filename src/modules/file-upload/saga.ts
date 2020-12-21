@@ -1,4 +1,7 @@
-import { executeActivity, fixActivity } from '#Composer/ActivityList/actions';
+import {
+  executeActivity,
+  fixActivity,
+} from '#JobComposer/ActivityList/actions';
 import { apiUploadFile } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { call, put, takeLatest } from 'redux-saga/effects';

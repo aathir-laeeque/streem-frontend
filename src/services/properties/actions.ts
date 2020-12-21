@@ -1,4 +1,4 @@
-import { ComposerEntity } from '#Composer-new/types';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import { actionSpreader } from '#store';
 
 import { fetchSuccessArgs, PropertiesAction } from './types';

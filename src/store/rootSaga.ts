@@ -1,5 +1,5 @@
 import { showNotificationSaga } from '#components/Notification/saga';
-import { ComposerSaga as prototypeComposerSaga } from '#Composer-new/saga';
+import { ComposerSaga as prototypeComposerSaga } from '#PrototypeComposer/saga';
 import { AuthSaga } from '#views/Auth/saga';
 import { ChecklistListViewSaga } from '#views/Checklists/ListView/saga';
 import { NewPrototypeSaga } from '#views/Checklists/NewPrototype/saga';
@@ -9,7 +9,7 @@ import { SessionActivitySaga } from '#views/UserAccess/ListView/SessionActivity/
 import { UserAccessSaga } from '#views/UserAccess/saga';
 import { all, fork } from 'redux-saga/effects';
 
-import { ComposerSaga } from '../Composer/saga';
+import { ComposerSaga } from '#JobComposer/saga';
 import { FileUploadSaga } from '../modules/file-upload/saga';
 import { PropertiesServiceSaga } from '../services/properties/saga';
 import { UsersServiceSaga } from '../services/users/saga';

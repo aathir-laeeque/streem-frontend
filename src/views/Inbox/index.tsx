@@ -4,8 +4,8 @@ import React, { FC } from 'react';
 import ListView from './ListView';
 import { InboxViewProps } from './types';
 
-import Composer from '../../Composer';
-import { Entity } from '../../Composer/composer.types';
+import Composer from '#JobComposer';
+import { Entity } from '#JobComposer/composer.types';
 
 const InboxView: FC<InboxViewProps> = () => (
   <Router>

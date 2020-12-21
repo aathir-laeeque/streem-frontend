@@ -1,4 +1,4 @@
-import { AllChecklistStates } from '#Composer-new/checklist.types';
+import { AllChecklistStates } from '#PrototypeComposer/checklist.types';
 
 type ChecklistProperty = {
   id: string;

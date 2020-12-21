@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { User } from '#store/users/types';
 import { Text, View, StyleSheet } from '@react-pdf/renderer';
-import { JobState } from '#Composer/composer.types';
+import { JobState } from '#JobComposer/composer.types';
 import { styles as commonStyles } from '../styles';
 
 const styles = StyleSheet.create({

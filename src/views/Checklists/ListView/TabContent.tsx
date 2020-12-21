@@ -15,8 +15,8 @@ import {
   ChecklistStatesColors,
   ChecklistStatesContent,
   DisabledStates,
-} from '#Composer-new/checklist.types';
-import { ComposerEntity } from '#Composer-new/types';
+} from '#PrototypeComposer/checklist.types';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import { useProperties } from '#services/properties';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';

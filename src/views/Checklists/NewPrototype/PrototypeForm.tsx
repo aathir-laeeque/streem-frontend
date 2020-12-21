@@ -6,7 +6,7 @@ import {
   Textarea,
   TextInput,
 } from '#components';
-import { ComposerEntity } from '#Composer-new/types';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import { useProperties } from '#services/properties';
 import { defaultParams, useUsers, OtherUserState } from '#services/users';
 import { useTypedSelector } from '#store/helpers';

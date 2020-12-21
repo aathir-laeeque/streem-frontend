@@ -1,4 +1,4 @@
-import { Checklist } from '#Composer-new/checklist.types';
+import { Checklist } from '#PrototypeComposer/checklist.types';
 import { Property } from '#services/properties';
 import { User } from '#services/users';
 

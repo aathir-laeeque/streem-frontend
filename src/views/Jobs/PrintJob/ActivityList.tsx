@@ -4,7 +4,7 @@ import {
   Activity,
   MandatoryActivity,
   NonMandatoryActivity,
-} from '#Composer/checklist.types';
+} from '#JobComposer/checklist.types';
 import checkmark from '#assets/images/checkmark.png';
 import checkEmoji from '#assets/images/emojis/check.png';
 import binEmoji from '#assets/images/emojis/bin.png';

@@ -3,8 +3,8 @@ import { groupBy } from 'lodash';
 import moment from 'moment';
 import cleenLogo from '#assets/images/cleen.png';
 import { useTypedSelector } from '#store';
-import { fetchData } from '#Composer/actions';
-import { Entity } from '#Composer/composer.types';
+import { fetchData } from '#JobComposer/actions';
+import { Entity } from '#JobComposer/composer.types';
 import { useDispatch } from 'react-redux';
 import { LoadingDiv, styles } from './styles';
 import {
@@ -18,9 +18,9 @@ import {
 import {
   JobActivity as JobActivityType,
   JobActivitySeverity,
-} from '#Composer/JobActivity/types';
-import { Checklist, TaskExecution } from '#Composer-new/checklist.types';
-import { fetchJobActivities } from '#Composer/JobActivity/actions';
+} from '#JobComposer/JobActivity/types';
+import { Checklist, TaskExecution } from '#PrototypeComposer/checklist.types';
+import { fetchJobActivities } from '#JobComposer/JobActivity/actions';
 import { PrintJobActivityProps } from './types';
 import {
   TabLookLike,

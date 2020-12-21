@@ -4,7 +4,7 @@ import { User } from '#store/users/types';
 
 import { Job } from '#views/Jobs/types';
 import { ListViewAction } from './types';
-import { Checklist } from '#Composer-new/checklist.types';
+import { Checklist } from '#PrototypeComposer/checklist.types';
 
 export const fetchJobs = (
   params: Record<string, string | number>,

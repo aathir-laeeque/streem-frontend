@@ -1,6 +1,6 @@
 import { OverlayContainerReducer } from '#components/OverlayContainer/reducer';
-import { ComposerReducer as prototypeComposer } from '#Composer-new/reducer';
-import { ComposerReducer } from '#Composer/reducer';
+import { ComposerReducer as prototypeComposer } from '#PrototypeComposer/reducer';
+import { ComposerReducer } from '#JobComposer/reducer';
 import { AuthReducer } from '#views/Auth/reducer';
 import { ChecklistListViewReducer } from '#views/Checklists/ListView/reducer';
 import { InboxListViewReducer } from '#views/Inbox/ListView/reducer';

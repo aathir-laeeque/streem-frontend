@@ -1,6 +1,6 @@
 import { RouteComponentProps } from '@reach/router';
 import { User } from '#store/users/types';
-import { Checklist } from '#Composer-new/checklist.types';
+import { Checklist } from '#PrototypeComposer/checklist.types';
 
 export type JobsViewProps = RouteComponentProps;
 

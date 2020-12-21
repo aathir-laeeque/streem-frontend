@@ -1,10 +1,10 @@
 import { useTypedSelector } from '#store';
-import { Task } from '#Composer/checklist.types';
+import { Task } from '#JobComposer/checklist.types';
 import TaskView from './Task';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { PrintJobProps } from './types';
-import { fetchData } from '#Composer/actions';
+import { fetchData } from '#JobComposer/actions';
 import cleenLogo from '#assets/images/cleen.png';
 import {
   Page,
@@ -22,8 +22,8 @@ import {
   InputLabelGroup,
 } from './Components';
 import { styles, LoadingDiv } from './styles';
-import { Entity } from '#Composer/composer.types';
-import { Checklist, TaskExecution } from '#Composer-new/checklist.types';
+import { Entity } from '#JobComposer/composer.types';
+import { Checklist, TaskExecution } from '#PrototypeComposer/checklist.types';
 import {
   AssignedJobStates,
   CompletedJobStates,

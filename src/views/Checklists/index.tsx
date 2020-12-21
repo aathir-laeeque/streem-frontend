@@ -1,5 +1,5 @@
-import Composer from '#Composer-new';
-import { ComposerEntity } from '#Composer-new/types';
+import Composer from '#PrototypeComposer';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import { RouteComponentProps, Router } from '@reach/router';
 import React, { FC } from 'react';
 

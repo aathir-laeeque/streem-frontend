@@ -4,7 +4,7 @@ import MemoRevisionError from '#assets/svg/RevisionError';
 import React, { FC } from 'react';
 import { navigate } from '@reach/router';
 import styled from 'styled-components';
-import { Checklist } from '#Composer-new/checklist.types';
+import { Checklist } from '#PrototypeComposer/checklist.types';
 
 const Wrapper = styled.div`
   .modal {

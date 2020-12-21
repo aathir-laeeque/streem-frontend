@@ -1,4 +1,4 @@
-import { ComposerEntity } from '#Composer-new/types';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';

@@ -31,7 +31,7 @@ import { useTypedSelector } from '#store';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import { ListViewState } from '#views/Checklists/ListView/types';
 import { useDispatch } from 'react-redux';
-import { ComposerEntity } from '#Composer-new/types';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import { fetchProperties } from '#store/properties/actions';
 import { useEffect } from 'react';
 import { Properties } from '#store/properties/types';

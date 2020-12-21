@@ -3,7 +3,7 @@ import {
   TaskExecutionState,
   Task,
   NonMandatoryActivity,
-} from '../../../Composer/checklist.types';
+} from '#JobComposer/checklist.types';
 import handIcon from '#assets/images/hand.png';
 import clockIcon from '#assets/images/clock.png';
 import { Text, View, StyleSheet, Image } from '@react-pdf/renderer';
