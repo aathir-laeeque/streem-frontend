@@ -15,7 +15,7 @@ import { navigate } from '@reach/router';
 import { Composer } from './styles';
 import { ViewUserProps } from './types';
 import { permissions, roles } from '../AddUser/temp';
-import checkPermission from '#services/uiPermissions';
+import checkPermission, { roles as roleTypes } from '#services/uiPermissions';
 import {
   archiveUser,
   cancelInvite,
@@ -192,10 +192,9 @@ const EditUser: FC<ViewUserProps> = () => {
 
   console.log('isValid', formState.isValid);
 
-  const isAccountOwner =
-    selectedUser.roles &&
-    selectedUser.roles[0] &&
-    selectedUser.roles[0]['name'] === 'ACCOUNT_OWNER';
+  const isAccountOwner = selectedUser?.roles?.some(
+    (i) => i?.name === roleTypes.ACCOUNT_OWNER,
+  );
 
   const isEditable = checkPermission([
     'usersAndAccess',
@@ -393,38 +392,39 @@ const EditUser: FC<ViewUserProps> = () => {
               >
                 Save Changes
               </Button>
-              {!selectedUser.verified && !selectedUser.archived ? (
-                <>
+              {!isAccountOwner &&
+                (!selectedUser.verified && !selectedUser.archived ? (
+                  <>
+                    <Button
+                      className="button"
+                      onClick={() =>
+                        dispatch(resendInvite({ id: selectedUser.id }))
+                      }
+                    >
+                      Resend Invite
+                    </Button>
+                    <Button
+                      className="button cancel"
+                      onClick={() => onCancelInvite(selectedUser.id)}
+                    >
+                      Cancel Invite
+                    </Button>
+                  </>
+                ) : selectedUser.verified && !selectedUser.archived ? (
                   <Button
                     className="button"
-                    onClick={() =>
-                      dispatch(resendInvite({ id: selectedUser.id }))
-                    }
+                    onClick={() => onArchiveUser(selectedUser)}
                   >
-                    Resend Invite
+                    Archive
                   </Button>
+                ) : (
                   <Button
-                    className="button cancel"
-                    onClick={() => onCancelInvite(selectedUser.id)}
+                    className="button"
+                    onClick={() => onUnArchiveUser(selectedUser)}
                   >
-                    Cancel Invite
+                    Unarchive
                   </Button>
-                </>
-              ) : selectedUser.verified && !selectedUser.archived ? (
-                <Button
-                  className="button"
-                  onClick={() => onArchiveUser(selectedUser)}
-                >
-                  Archive
-                </Button>
-              ) : (
-                <Button
-                  className="button"
-                  onClick={() => onUnArchiveUser(selectedUser)}
-                >
-                  Unarchive
-                </Button>
-              )}
+                ))}
             </>
           )}
         </div>

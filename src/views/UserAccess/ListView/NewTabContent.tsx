@@ -22,7 +22,7 @@ import {
 import { TabContentWrapper } from './styles';
 import { removeUnderscore } from '../../../utils/stringUtils';
 import { startCase, toLower } from 'lodash';
-import checkPermission from '#services/uiPermissions';
+import checkPermission, { roles } from '#services/uiPermissions';
 
 export function modalBody(user: User, text: string): any {
   return (
@@ -294,7 +294,17 @@ const NewTabContent = (props) => {
                     if (
                       checkPermission(['usersAndAccess', 'listViewActions'])
                     ) {
-                      if (item.archived) {
+                      const isItemAccountOwner = item?.roles?.some(
+                        (i) => i?.name === roles.ACCOUNT_OWNER,
+                      );
+
+                      let editAccountOwner = true;
+                      if (isItemAccountOwner)
+                        editAccountOwner = checkPermission([
+                          'usersAndAccess',
+                          'editAccountOwner',
+                        ]);
+                      if (item.archived && !isItemAccountOwner) {
                         return (
                           <span
                             className="list-title"
@@ -303,7 +313,7 @@ const NewTabContent = (props) => {
                             Unarchive
                           </span>
                         );
-                      } else if (!item.verified) {
+                      } else if (!isItemAccountOwner && !item.verified) {
                         return (
                           <>
                             <span
@@ -322,7 +332,7 @@ const NewTabContent = (props) => {
                             </span>
                           </>
                         );
-                      } else if (item.blocked) {
+                      } else if (editAccountOwner && item.blocked) {
                         return (
                           <span
                             className="list-title"
@@ -331,7 +341,7 @@ const NewTabContent = (props) => {
                             Unblock
                           </span>
                         );
-                      } else {
+                      } else if (!isItemAccountOwner) {
                         return (
                           <span
                             className="list-title"

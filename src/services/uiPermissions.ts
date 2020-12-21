@@ -2,7 +2,7 @@
 import { store } from '../App';
 import { get } from 'lodash';
 
-enum roles {
+export enum roles {
   ACCOUNT_OWNER = 'ACCOUNT_OWNER',
   SYSTEM_ADMIN = 'SYSTEM_ADMIN',
   FACILITY_ADMIN = 'FACILITY_ADMIN',
