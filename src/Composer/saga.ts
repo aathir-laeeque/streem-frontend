@@ -64,7 +64,7 @@ import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
 import { groupJobErrors } from './utils';
 import { setSignOffError } from './actions';
-import { logOutSuccess } from '#views/Auth/actions';
+import { cleanUp } from '#views/Auth/actions';
 import { LoginErrorCodes } from '#utils/constants';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
@@ -316,7 +316,7 @@ function* signOffTaskSaga({ payload }: ReturnType<typeof signOffTasks>) {
         yield put(setSignOffError('Incorrect Password'));
       } else if (validateErrors[0].code === LoginErrorCodes.BLOCKED) {
         yield put(closeAllOverlayAction());
-        yield put(logOutSuccess());
+        yield put(cleanUp());
         yield put(
           showNotification({
             type: NotificationType.ERROR,

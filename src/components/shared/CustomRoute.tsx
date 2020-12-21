@@ -1,63 +1,61 @@
+import React, { FC, useEffect, useState } from 'react';
 import { Redirect, RouteComponentProps } from '@reach/router';
 import { useTypedSelector } from '#store';
 import { useDispatch } from 'react-redux';
 import checkPermission from '#services/uiPermissions';
 import { refreshTokenPoll } from '#views/Auth/actions';
-import React, { FC } from 'react';
 
 type Props = RouteComponentProps & {
   as: FC | FC<RouteComponentProps<{ id: string }>>;
   isProtected?: boolean;
 };
 
-const SessionStates = {
-  ACTIVE: 'ACTIVE',
-  INACTIVE: 'INACTIVE',
-  LOCKED: 'LOCKED',
-};
+enum SessionStates {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+}
+
+const OtherTabs = [
+  'jobs/print/:jobId',
+  'users-activity/print',
+  'job-activity/print/:jobId',
+];
 
 export const CustomRoute: FC<Props> = ({
   as: Component,
   isProtected = true,
   ...props
 }) => {
-  const { ...rest } = props;
-  const { profile, isRefreshing, isLoggedIn } = useTypedSelector(
-    (state) => state.auth,
-  );
+  const { isRefreshing, isLoggedIn } = useTypedSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const [currentState, setCurrentState] = useState<SessionStates | null>(null);
 
-  let currentState = SessionStates.INACTIVE;
-
-  if (profile) {
-    if (
-      !isRefreshing &&
-      rest.path !== 'jobs/print/:jobId' &&
-      rest.path !== 'users-activity/print' &&
-      rest.path !== 'job-activity/print/:jobId'
-    )
-      dispatch(refreshTokenPoll());
-    if (isLoggedIn) currentState = SessionStates.ACTIVE;
-  }
-
-  if (!isProtected) {
-    switch (currentState) {
-      case SessionStates.ACTIVE: {
-        if (checkPermission(['sidebar', 'inbox']))
-          return <Redirect from="" to="/inbox" noThrow />;
-        return <Redirect from="" to="/user-access" noThrow />;
-      }
-      default:
-        return <Component {...rest} />;
+  useEffect(() => {
+    if (isLoggedIn) {
+      if (!isRefreshing && !OtherTabs.includes(props.path || OtherTabs[0]))
+        dispatch(refreshTokenPoll());
+      setCurrentState(SessionStates.ACTIVE);
+    } else {
+      setCurrentState(SessionStates.INACTIVE);
     }
-  }
+  }, [isLoggedIn]);
 
   switch (currentState) {
+    case null:
+      return <div>Loading</div>;
     case SessionStates.ACTIVE:
-      return <Component {...rest} />;
-    case SessionStates.LOCKED:
-      return <Redirect from="" to="/auth/locked" noThrow />;
+      return isProtected ? (
+        <Component {...props} />
+      ) : checkPermission(['sidebar', 'inbox']) ? (
+        <Redirect from="" to="/inbox" noThrow />
+      ) : (
+        <Redirect from="" to="/user-access" noThrow />
+      );
     default:
-      return <Redirect from="" to="/auth/login" noThrow />;
+      return !isProtected ? (
+        <Component {...props} />
+      ) : (
+        <Redirect from="" to="/auth/login" noThrow />
+      );
   }
 };

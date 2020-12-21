@@ -29,6 +29,7 @@ import {
   forgotPasswordError,
   setIdle,
   checkTokenExpirySuccess,
+  cleanUp,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
@@ -71,9 +72,10 @@ export interface AuthState {
 
 export enum AuthAction {
   RESET_ERROR = '@@auth/Login/RESET_ERROR',
-  LOGOUT = '@@auth/Login/LOGOUT',
-  LOGOUT_SUCCESS = '@@auth/Login/LOGOUT_SUCCESS',
-  LOGOUT_ERROR = '@@auth/Login/LOGOUT_ERROR',
+  LOGOUT = '@@auth/Logout/LOGOUT',
+  LOGOUT_SUCCESS = '@@auth/Logout/LOGOUT_SUCCESS',
+  CLEANUP = '@@auth/Logout/CLEANUP',
+  LOGOUT_ERROR = '@@auth/Logout/LOGOUT_ERROR',
   LOGIN = '@@auth/Login/LOGIN',
   LOGIN_ERROR = '@@auth/Login/LOGIN_ERROR',
   LOGIN_SUCCESS = '@@auth/Login/LOGIN_SUCCESS',
@@ -137,4 +139,5 @@ export type AuthActionType = ReturnType<
   | typeof resetPasswordError
   | typeof setIdle
   | typeof checkTokenExpirySuccess
+  | typeof cleanUp
 >;

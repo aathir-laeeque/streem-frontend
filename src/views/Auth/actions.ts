@@ -20,7 +20,10 @@ export const setIdle = (data: boolean) =>
 
 export const logOut = () => actionSpreader(AuthAction.LOGOUT);
 
-export const logOutSuccess = () => actionSpreader(AuthAction.LOGOUT_SUCCESS);
+export const logOutSuccess = (payload?: { type?: string; msg?: string }) =>
+  actionSpreader(AuthAction.LOGOUT_SUCCESS, payload);
+
+export const cleanUp = () => actionSpreader(AuthAction.CLEANUP);
 
 export const logOutError = (error: any) =>
   actionSpreader(AuthAction.LOGOUT_ERROR, error);

@@ -1,7 +1,9 @@
 import { store } from '../App';
 import { apiForgotPassword, apiLogin } from './apiUrls';
-import { persistor } from '../App';
 import { closeAllOverlayAction } from '#components/OverlayContainer/actions';
+import { logOutSuccess } from '#views/Auth/actions';
+import { NotificationType } from '#components/Notification/types';
+import { LoginErrorCodes } from './constants';
 
 interface RequestOptions {
   data?: Record<string | number, any>;
@@ -46,14 +48,20 @@ export const request = async (
     ...(options?.formData && { body: options?.formData }),
   })
     .then(async (res) => {
-      const resu = await res.json();
-      if (resu && resu.errors && resu.errors[0].code === '1101') {
+      const result = await res.json();
+      if (
+        result?.errors?.[0]?.code === LoginErrorCodes.TOKEN_REVOKED.toString()
+      ) {
+        const msg = 'Token Revoked';
         store.dispatch(closeAllOverlayAction());
-        persistor.purge();
-        window.location.href = '/auth/login/tokenRevoked';
-        throw 'Token Revoked';
+        store.dispatch(
+          logOutSuccess({
+            msg,
+            type: NotificationType.ERROR,
+          }),
+        );
       }
-      return resu;
+      return result;
     })
     .catch((e) => {
       console.error('Error in Request :', e);

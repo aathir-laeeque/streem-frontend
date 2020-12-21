@@ -25,7 +25,7 @@ import {
 } from '#utils/apiUrls';
 import { LoginErrorCodes } from '#utils/constants';
 import { request } from '#utils/request';
-import { logOutSuccess } from '#views/Auth/actions';
+import { cleanUp } from '#views/Auth/actions';
 import { uniqBy } from 'lodash';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
@@ -683,7 +683,7 @@ function* signOffPrototypeSaga({
         throw 'Incorrect Password';
       } else if (validateErrors[0].code === LoginErrorCodes.BLOCKED) {
         yield put(closeAllOverlayAction());
-        yield put(logOutSuccess());
+        yield put(cleanUp());
         throw 'User has been blocked.';
       }
       throw 'Could Not Sign Off the Prototype';
@@ -737,7 +737,7 @@ function* releasePrototypeSaga({
         throw 'Incorrect Password';
       } else if (validateErrors[0].code === LoginErrorCodes.BLOCKED) {
         yield put(closeAllOverlayAction());
-        yield put(logOutSuccess());
+        yield put(cleanUp());
         throw 'User has been blocked.';
       }
       throw 'Unable to Release the Prototype';

@@ -18,7 +18,6 @@ import { User, UserState } from '#store/users/types';
 import {
   login,
   logOutSuccess,
-  logOutError,
   loginSuccess,
   loginError,
   refreshToken,
@@ -47,6 +46,7 @@ import {
   updateUserProfileSuccess,
   checkTokenExpiry,
   checkTokenExpirySuccess,
+  cleanUp,
 } from './actions';
 import { persistor } from '../../App';
 
@@ -113,7 +113,7 @@ function* refreshTokenSaga({ payload }: ReturnType<typeof refreshToken>) {
     yield put(refreshTokenSuccess(data));
   } catch (error) {
     console.error('error from refreshTokenSaga function in Auth :: ', error);
-    yield put(logOutSuccess());
+    yield put(cleanUp());
     yield put(refreshTokenError(error));
   }
 }
@@ -168,26 +168,34 @@ function* logOutSaga() {
     if (errors) {
       throw 'Logout Error';
     }
-
-    yield put(
-      showNotification({
-        type: NotificationType.SUCCESS,
-        msg: 'Logged Out successfully',
-      }),
-    );
-    yield put(logOutSuccess());
     yield put(setSelectedState(UserState.ACTIVE));
+    yield put(logOutSuccess());
   } catch (error) {
     console.error('error from logOutSaga function in Auth :: ', error);
-    yield put(logOutSuccess());
-    yield put(logOutError(error));
+    yield put(cleanUp());
   }
 }
 
-function* logOutSuccessSaga() {
+function* cleanUpSaga() {
   try {
     yield call(persistor.purge);
-    navigate('/auth/login');
+  } catch (error) {
+    console.error('error from cleanUpSaga function in Auth :: ', error);
+  }
+}
+
+function* logOutSuccessSaga({ payload }: ReturnType<typeof logOutSuccess>) {
+  try {
+    const userId = yield select(getUserId);
+    if (userId) {
+      yield put(cleanUp());
+      yield put(
+        showNotification({
+          type: payload?.type || NotificationType.SUCCESS,
+          msg: payload?.msg || 'Logged Out successfully',
+        }),
+      );
+    }
   } catch (error) {
     console.error('error from logOutSuccessSaga function in Auth :: ', error);
   }
@@ -444,6 +452,7 @@ export function* AuthSaga() {
   yield takeLeading(AuthAction.LOGIN, loginSaga);
   yield takeLeading(AuthAction.LOGOUT, logOutSaga);
   yield takeLeading(AuthAction.LOGOUT_SUCCESS, logOutSuccessSaga);
+  yield takeLeading(AuthAction.CLEANUP, cleanUpSaga);
   yield takeLatest(AuthAction.REFRESH_TOKEN_POLL, refreshTokenPollSaga);
   yield takeLeading(AuthAction.REFRESH_TOKEN, refreshTokenSaga);
   yield takeLeading(AuthAction.FETCH_PROFILE, fetchProfileSaga);

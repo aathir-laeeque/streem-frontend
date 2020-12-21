@@ -16,6 +16,7 @@ export enum LoginErrorCodes {
   BLOCKED = 1004,
   INCORRECT = 1005,
   EXPIRED = 1007,
+  TOKEN_REVOKED = 1101,
 }
 
 export enum EmojisUniCodes {

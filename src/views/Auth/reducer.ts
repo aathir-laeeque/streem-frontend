@@ -41,7 +41,7 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
         ...state,
         isIdle: action.payload,
       };
-    case AuthAction.LOGOUT_SUCCESS:
+    case AuthAction.CLEANUP:
       return {
         ...initialState,
       };
