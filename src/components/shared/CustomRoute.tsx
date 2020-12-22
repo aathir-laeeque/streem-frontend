@@ -15,7 +15,7 @@ enum SessionStates {
   INACTIVE = 'INACTIVE',
 }
 
-const OtherTabs = [
+const PollingExclusionList = [
   'jobs/print/:jobId',
   'users-activity/print',
   'job-activity/print/:jobId',
@@ -32,7 +32,11 @@ export const CustomRoute: FC<Props> = ({
 
   useEffect(() => {
     if (isLoggedIn) {
-      if (!isRefreshing && !OtherTabs.includes(props.path || OtherTabs[0]))
+      if (
+        !isRefreshing &&
+        props?.path &&
+        !PollingExclusionList.includes(props.path)
+      )
         dispatch(refreshTokenPoll());
       setCurrentState(SessionStates.ACTIVE);
     } else {
