@@ -8,6 +8,8 @@ ARG VERSION
 
 ARG BACKEND_URL
 
+ARG COMMIT
+
 MAINTAINER infra@leucintech.com
 
 RUN echo Using image: node:${NODE_VERSION}-alpine
@@ -29,6 +31,9 @@ RUN npm run build
 
 # create a version.txt file
 RUN echo "CLEEN DWI: $VERSION" > /app/dist/version.txt
+
+# create a internal-version.txt file
+RUN echo "CLEEN DWI (Internal): $COMMIT" > /app/dist/internal-version.txt
 
 # Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
 FROM nginx:stable-alpine

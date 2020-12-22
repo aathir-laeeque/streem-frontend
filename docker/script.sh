@@ -15,9 +15,8 @@ echo "Configured Backend Url: $BACKEND_URL, for configuring a custom Backend Url
 VERSION=$(sed -nE 's/^\s*"version": "(.*?)",$/\1/p' package.json)
 
 # run docker to build image with VERSION and latest tag
-docker build --no-cache --build-arg BACKEND_URL=$BACKEND_URL --build-arg NODE_VERSION=$(cat .nvmrc | tr -cd [:digit:].) --build-arg VERSION=$VERSION -f docker/Dockerfile --tag leucine.azurecr.io/cleen-dwi/frontend:latest --tag leucine.azurecr.io/cleen-dwi/frontend:$VERSION .
+docker build --no-cache --build-arg BACKEND_URL=$BACKEND_URL --build-arg NODE_VERSION=$(cat .nvmrc | tr -cd [:digit:].) --build-arg VERSION=$VERSION --build-arg=COMMIT=$(git rev-parse HEAD) -f docker/Dockerfile --tag leucine.azurecr.io/cleen-dwi/frontend:latest --tag leucine.azurecr.io/cleen-dwi/frontend:$VERSION .
 
-echo "PUSH_TO_ACR: ${PUSH_TO_ACR}"
 if $PUSH_TO_ACR ; then
   echo "Pushing the image to ACR..."
   # push the images to leucine.azurecr.io
