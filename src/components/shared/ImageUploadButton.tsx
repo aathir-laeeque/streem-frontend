@@ -83,6 +83,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
           event.stopPropagation();
           event.preventDefault();
           setFile((event?.target?.files ?? [])[0]);
+          event.currentTarget.value = '';
         }}
       />
 
