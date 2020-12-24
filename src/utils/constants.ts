@@ -1,10 +1,14 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 export const fetchBaseUrl = () => {
   const { hostname, protocol } = window.location;
 
   let apiUrl = '';
 
   if (hostname === 'localhost') {
-    apiUrl = `http://localhost:8080/v1`;
+    apiUrl = process.env.API_URL || 'http://localhost:8080/v1';
   } else {
     apiUrl = `${protocol}//api.${hostname}/v1`;
   }

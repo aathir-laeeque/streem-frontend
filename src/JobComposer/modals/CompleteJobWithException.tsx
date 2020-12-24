@@ -4,19 +4,39 @@ import { FileUploadData } from '#utils/globalTypes';
 import {
   Add,
   Delete,
+  Error as ErrorIcon,
   RadioButtonChecked,
   RadioButtonUnchecked,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+
 import { completeJob } from '../actions';
 
 const Wrapper = styled.div`
   .modal-body {
     max-height: 500px;
     overflow: auto;
+  }
+
+  .reason-error {
+    align-items: center;
+    background-color: rgba(255, 107, 107, 0.16);
+    border: solid 1px #ff6b6b;
+    border-radius: 4px;
+    color: #ff6b6b;
+    display: flex;
+    font-size: 12px;
+    justify-content: center;
+    padding: 4px 0;
+
+    .icon {
+      color: #ff6b6b;
+      font-size: 16px;
+      margin-right: 5px;
+    }
   }
 
   .details {
@@ -166,28 +186,49 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
     reason: '',
   });
 
+  const [errors, setErrors] = useState<{ reason: boolean; comment: boolean }>({
+    reason: false,
+    comment: false,
+  });
+
+  const validateAndSubmit = () => {
+    if (!values.comment || !values.reason) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        reason: !values.reason,
+        comment: !values.comment,
+      }));
+    } else {
+      dispatch(
+        completeJob({
+          jobId,
+          withException: true,
+          values,
+          details: { name, code },
+          isInboxView,
+        }),
+      );
+    }
+  };
+
   return (
     <Wrapper>
       <BaseModal
+        animated={false}
         closeAllModals={closeAllOverlays}
         closeModal={closeOverlay}
-        onPrimary={() => {
-          console.log('values :: ', values);
-          dispatch(
-            completeJob({
-              jobId,
-              withException: true,
-              values,
-              details: { name, code },
-              isInboxView,
-            }),
-          );
-        }}
+        onPrimary={() => validateAndSubmit()}
         onSecondary={() => closeOverlay()}
         primaryText="Complete Job"
         secondaryText="Go Back"
         title="Completing a Job With Exceptions"
       >
+        {errors.reason ? (
+          <div className="reason-error">
+            <ErrorIcon className="icon" />
+            Reason not selected for Completeing the Job with Exception
+          </div>
+        ) : null}
         <div className="details">
           <span>
             You’re about to complete the following job with exceptions:
@@ -205,9 +246,13 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
               <div
                 className="reason-item"
                 key={idx}
-                onClick={() =>
-                  setValues((val) => ({ ...val, reason: reason.value }))
-                }
+                onClick={() => {
+                  setValues((val) => ({ ...val, reason: reason.value }));
+                  setErrors((prrevErrors) => ({
+                    ...prrevErrors,
+                    reason: false,
+                  }));
+                }}
               >
                 {values.reason === reason.value ? (
                   <RadioButtonChecked className="icon selected" />
@@ -222,9 +267,18 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
 
         <Textarea
           defaultValue={values.comment}
+          error={
+            errors.comment
+              ? 'You Need to provide additional Remarks before submitting'
+              : false
+          }
           label="Additional Remarks"
           onChange={debounce(({ value }) => {
             setValues((val) => ({ ...val, comment: value }));
+            setErrors((prrevErrors) => ({
+              ...prrevErrors,
+              comment: false,
+            }));
           }, 500)}
           rows={3}
         />

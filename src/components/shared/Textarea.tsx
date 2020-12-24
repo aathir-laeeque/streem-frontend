@@ -6,6 +6,7 @@ import React, {
   useEffect,
   ChangeEvent,
 } from 'react';
+import { Error as ErrorIcon } from '@material-ui/icons';
 import styled, { css } from 'styled-components';
 
 type OnChangeArgs = {
@@ -135,8 +136,18 @@ const Wrapper = styled.div.attrs(({ className }) => ({
   }
 
   .field-error {
+    align-items: center;
     color: #eb5757;
+    display: flex;
+    font-size: 12px;
+    justify-content: flex-start;
     margin-top: 8px;
+
+    .icon {
+      font-size: 16px;
+      color: #eb5757;
+      margin-right: 5px;
+    }
   }
 `;
 
@@ -205,7 +216,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         </div>
 
         {typeof error === 'string' && !!error ? (
-          <span className="field-error">{error}</span>
+          <span className="field-error">
+            <ErrorIcon className="icon" />
+            {error}
+          </span>
         ) : null}
       </Wrapper>
     );
