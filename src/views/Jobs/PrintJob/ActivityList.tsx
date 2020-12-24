@@ -141,7 +141,7 @@ const getTagBasedDesign = (
       );
     case InstructionTags.UL:
       return (
-        <View style={styles.wrappedView}>
+        <View>
           {element.childs.map((child, i) =>
             getTagBasedDesign(child, i, element.tag),
           )}
@@ -149,7 +149,7 @@ const getTagBasedDesign = (
       );
     case InstructionTags.OL:
       return (
-        <View style={styles.wrappedView}>
+        <View>
           {element.childs.map((child, i) =>
             getTagBasedDesign(child, i, element.tag),
           )}
@@ -158,7 +158,7 @@ const getTagBasedDesign = (
     case InstructionTags.LI:
       return (
         <View style={styles.wrappedView}>
-          {parentTag === InstructionTags.OL ? (
+          {parentTag === InstructionTags.UL ? (
             <Text style={[styles.text12, { marginHorizontal: 5 }]}>•</Text>
           ) : (
             <Text style={[styles.text12, { marginHorizontal: 5 }]}>
