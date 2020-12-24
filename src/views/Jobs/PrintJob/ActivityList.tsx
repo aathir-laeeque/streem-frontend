@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
   },
   textS12: {
     fontSize: 12,
-    // fontFamily: 'inherit',
   },
   activityHintText: {
     color: '#666666',
@@ -114,6 +113,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingTop: 16,
   },
+  wrappedView: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
 });
 
 type Response = { tag: string; text: string; childs: Response[] };
@@ -125,21 +129,19 @@ const getTagBasedDesign = (
   switch (element.tag) {
     case InstructionTags.P:
       return (
-        <View
-          style={{ display: 'flex', flexDirection: 'row', marginVertical: 10 }}
-        >
+        <View style={[styles.wrappedView, { marginVertical: 10 }]}>
           {element.childs.map((child, i) => getTagBasedDesign(child, i))}
         </View>
       );
     case InstructionTags.SPAN:
       return (
-        <View style={{ display: 'flex', flexDirection: 'row' }}>
+        <View style={styles.wrappedView}>
           {element.childs.map((child, i) => getTagBasedDesign(child, i))}
         </View>
       );
     case InstructionTags.UL:
       return (
-        <View>
+        <View style={styles.wrappedView}>
           {element.childs.map((child, i) =>
             getTagBasedDesign(child, i, element.tag),
           )}
@@ -147,7 +149,7 @@ const getTagBasedDesign = (
       );
     case InstructionTags.OL:
       return (
-        <View>
+        <View style={styles.wrappedView}>
           {element.childs.map((child, i) =>
             getTagBasedDesign(child, i, element.tag),
           )}
@@ -155,7 +157,7 @@ const getTagBasedDesign = (
       );
     case InstructionTags.LI:
       return (
-        <View style={{ display: 'flex', flexDirection: 'row' }}>
+        <View style={styles.wrappedView}>
           {parentTag === InstructionTags.OL ? (
             <Text style={[styles.text12, { marginHorizontal: 5 }]}>•</Text>
           ) : (
@@ -168,19 +170,18 @@ const getTagBasedDesign = (
       );
     case InstructionTags.STRONG:
       return (
-        <View style={{ fontFamily: 'NunitoBold' }}>
+        <View style={[styles.wrappedView, { fontFamily: 'NunitoBold' }]}>
           {element.childs.map((child, i) => getTagBasedDesign(child, i))}
         </View>
       );
     case InstructionTags.INS:
       return (
-        <View style={{ textDecoration: 'underline' }}>
+        <View style={[styles.wrappedView, { textDecoration: 'underline' }]}>
           {element.childs.map((child, i) => getTagBasedDesign(child, i))}
         </View>
       );
     case InstructionTags.TEXT:
       const items = [];
-      console.log('element.text', element.text);
       for (let i = 0; i < element.text.length; i++) {
         const unicode = element.text[i]
           .codePointAt(0)
@@ -188,7 +189,14 @@ const getTagBasedDesign = (
           .toUpperCase();
         if (unicode.length !== 4) {
           items.push(
-            <Text style={[styles.textS12, { minWidth: 6 }]}>
+            <Text
+              style={[
+                styles.textS12,
+                element.tag === InstructionTags.STRONG
+                  ? { fontFamily: 'NunitoBold' }
+                  : {},
+              ]}
+            >
               {element.text[i]}
             </Text>,
           );
@@ -277,22 +285,11 @@ const getTagBasedDesign = (
               items.push(<Image src={lockEmoji} style={{ height: '12px' }} />);
               break;
             default:
-              console.log('IN DEFAULT');
               break;
           }
         }
       }
-      return (
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            flex: 1,
-          }}
-        >
-          {items}
-        </View>
-      );
+      return <View style={styles.wrappedView}>{items}</View>;
     default:
       break;
   }
@@ -308,7 +305,7 @@ const activityTemplateFormatter = (
       node.innerHTML = activity.data.text;
       const res = parseMarkUp(node);
       return (
-        <View style={styles.activityView}>
+        <View style={[styles.activityView, styles.wrappedView]}>
           {res.map((parent, i) => getTagBasedDesign(parent, i))}
         </View>
       );
