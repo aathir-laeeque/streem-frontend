@@ -392,39 +392,50 @@ const EditUser: FC<ViewUserProps> = () => {
               >
                 Save Changes
               </Button>
-              {!isAccountOwner &&
-                (!selectedUser.verified && !selectedUser.archived ? (
-                  <>
-                    <Button
-                      className="button"
-                      onClick={() =>
-                        dispatch(resendInvite({ id: selectedUser.id }))
-                      }
-                    >
-                      Resend Invite
-                    </Button>
-                    <Button
-                      className="button cancel"
-                      onClick={() => onCancelInvite(selectedUser.id)}
-                    >
-                      Cancel Invite
-                    </Button>
-                  </>
-                ) : selectedUser.verified && !selectedUser.archived ? (
-                  <Button
-                    className="button"
-                    onClick={() => onArchiveUser(selectedUser)}
-                  >
-                    Archive
-                  </Button>
-                ) : (
-                  <Button
-                    className="button"
-                    onClick={() => onUnArchiveUser(selectedUser)}
-                  >
-                    Unarchive
-                  </Button>
-                ))}
+              {(() => {
+                if (isAccountOwner) return null;
+                else {
+                  if (selectedUser.archived) {
+                    return (
+                      <Button
+                        className="button"
+                        onClick={() => onUnArchiveUser(selectedUser)}
+                      >
+                        Unarchive
+                      </Button>
+                    );
+                  } else {
+                    if (selectedUser.verified)
+                      return (
+                        <Button
+                          className="button"
+                          onClick={() => onArchiveUser(selectedUser)}
+                        >
+                          Archive
+                        </Button>
+                      );
+
+                    return (
+                      <>
+                        <Button
+                          className="button"
+                          onClick={() =>
+                            dispatch(resendInvite({ id: selectedUser.id }))
+                          }
+                        >
+                          Resend Invite
+                        </Button>
+                        <Button
+                          className="button cancel"
+                          onClick={() => onCancelInvite(selectedUser.id)}
+                        >
+                          Cancel Invite
+                        </Button>
+                      </>
+                    );
+                  }
+                }
+              })()}
             </>
           )}
         </div>

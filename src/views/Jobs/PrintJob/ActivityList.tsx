@@ -305,7 +305,7 @@ const activityTemplateFormatter = (
       node.innerHTML = activity.data.text;
       const res = parseMarkUp(node);
       return (
-        <View style={[styles.activityView, styles.wrappedView]}>
+        <View style={[styles.activityView, styles.wrappedView]} wrap={false}>
           {res.map((parent, i) => getTagBasedDesign(parent, i))}
         </View>
       );
