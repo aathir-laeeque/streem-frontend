@@ -7,7 +7,7 @@ import { CommonOverlayProps } from './types';
 const Wrapper = styled.div`
   .modal {
     min-width: 400px !important;
-    padding: 24px;
+    padding: 16px;
 
     &-body {
       padding: 0 !important;
@@ -65,7 +65,7 @@ const SimpleConfirmationModal: FC<CommonOverlayProps<Props>> = ({
       >
         <div className="header">{header}</div>
         <div className="body">
-          {body}
+          {typeof body === 'object' ? body : <span>{body}</span>}
 
           <div className="buttons-container">
             <Button1 variant="secondary" color="red" onClick={closeOverlay}>

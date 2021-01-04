@@ -27,11 +27,11 @@ interface ListViewProps {
     | Record<string, string | SessionActivity[]>[];
   beforeColumns?: {
     header: string;
-    template: (item: any, index: number) => JSX.Element;
+    template: (item: any, index: number) => JSX.Element | null;
   }[];
   afterColumns?: {
     header: string;
-    template: (item: any, index: number) => JSX.Element;
+    template: (item: any, index: number) => JSX.Element | null;
   }[];
 }
 
@@ -154,17 +154,17 @@ export const NewListView: FC<ListViewProps> = ({
       <div className="list-header">
         {beforeColumns &&
           beforeColumns.length &&
-          beforeColumns.map((beforeColumn) => (
+          beforeColumns.map((beforeColumn, idx) => (
             <div
-              key={`beforeColumn_${beforeColumn.header}`}
+              key={`beforeColumn_${beforeColumn.header}-${idx}`}
               className="list-header-columns"
             >
               {beforeColumn.header}
             </div>
           ))}
-        {properties.map((el) => (
+        {properties.map((el, idx) => (
           <div
-            key={`property_${el.id}`}
+            key={`property_${el.id}-${idx}`}
             className="list-header-columns"
             // style={{ flex: 0.7 }}
           >
@@ -173,9 +173,9 @@ export const NewListView: FC<ListViewProps> = ({
         ))}
         {afterColumns &&
           afterColumns.length &&
-          afterColumns.map((afterColumn) => (
+          afterColumns.map((afterColumn, idx) => (
             <div
-              key={`afterColumn_${afterColumn.header}`}
+              key={`afterColumn_${afterColumn.header}-${idx}`}
               className={`list-header-columns ${
                 !afterColumn.header ? 'flex-1' : ''
               }`}
@@ -186,7 +186,7 @@ export const NewListView: FC<ListViewProps> = ({
       </div>
       <div className="list-body">
         {(data as Array<Checklist | Job>).map((el, index) => (
-          <div key={`list_el_${el.id}`} className="list-card">
+          <div key={`list_el_${el.id}-${index}`} className="list-card">
             {beforeColumns &&
               beforeColumns.length &&
               beforeColumns.map((beforeColumn) =>

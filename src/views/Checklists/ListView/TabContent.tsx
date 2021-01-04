@@ -44,6 +44,7 @@ import {
 } from './actions';
 import { Composer } from './styles';
 import { ListViewProps } from './types';
+import { handlePublishedArchive } from './actions';
 
 const getBaseFilter = (label: string): FilterField[] => [
   {
@@ -290,28 +291,28 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           />
         ) : null}
 
-        {label === 'prototype' ? (
-          <ToggleSwitch
-            checkedIcon={false}
-            offLabel="Show Archived"
-            onLabel="Showing Archived"
-            value={
-              !!filterFields.find((field) => field.field === 'archived')
-                ?.values[0]
-            }
-            onChange={(isChecked) =>
-              setFilterFields((currentFields) =>
-                currentFields.map((field) => ({
-                  ...field,
-                  ...(field.field === 'archived'
-                    ? { values: [isChecked] }
-                    : { values: field.values }),
-                })),
-              )
-            }
-            uncheckedIcon={false}
-          />
-        ) : null}
+        {/* {label === 'prototype' ? ( */}
+        <ToggleSwitch
+          checkedIcon={false}
+          offLabel="Show Archived"
+          onLabel="Showing Archived"
+          value={
+            !!filterFields.find((field) => field.field === 'archived')
+              ?.values[0]
+          }
+          onChange={(isChecked) =>
+            setFilterFields((currentFields) =>
+              currentFields.map((field) => ({
+                ...field,
+                ...(field.field === 'archived'
+                  ? { values: [isChecked] }
+                  : { values: field.values }),
+              })),
+            )
+          }
+          uncheckedIcon={false}
+        />
+        {/* ) : null} */}
 
         {checkPermission(['checklists', 'create']) && (
           <Button1
@@ -336,7 +337,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                   header: 'State',
                   template: function renderComp(item: Checklist) {
                     return (
-                      <div className="list-card-columns">
+                      <div className="list-card-columns" key={item.id}>
                         <FiberManualRecord
                           className="icon"
                           style={{ color: ChecklistStatesColors[item.state] }}
@@ -368,7 +369,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           {
             header: 'Checklist ID',
             template: function renderComp(item: Checklist) {
-              return <div className="list-card-columns">{item.code}</div>;
+              return (
+                <div className="list-card-columns" key={item.id}>
+                  {item.code}
+                </div>
+              );
             },
           },
           {
@@ -474,6 +479,47 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                           </div>
                         </MenuItem>
                       )}
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          if (item.archived) {
+                            dispatch(
+                              openOverlayAction({
+                                type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                                props: {
+                                  header: 'Unarchive Checklist',
+                                  body: (
+                                    <span>
+                                      Are you sure you want to Unarchive this
+                                      Checklist ?
+                                    </span>
+                                  ),
+                                  onPrimaryClick: () =>
+                                    dispatch(
+                                      unarchiveChecklist(
+                                        selectedChecklist?.id.toString(),
+                                        true,
+                                      ),
+                                    ),
+                                },
+                              }),
+                            );
+                          } else {
+                            dispatch(
+                              handlePublishedArchive(
+                                selectedChecklist?.id.toString(),
+                              ),
+                            );
+                          }
+                        }}
+                      >
+                        <div className="list-item">
+                          <MemoArchive style={{ marginRight: '8px' }} />
+                          <span>{`${
+                            item.archived ? 'Unarchive' : 'Archive'
+                          }`}</span>
+                        </div>
+                      </MenuItem>
                     </Menu>
                   </>
                 );
@@ -531,6 +577,28 @@ const ListView: FC<ListViewProps & { label: string }> = ({
               }
             },
           },
+          ...(label === 'published'
+            ? [
+                {
+                  header: '',
+                  template: function renderComp(item: Checklist) {
+                    if (item.state === 'BEING_REVISED') {
+                      return (
+                        <div className="list-card-columns">
+                          <FiberManualRecord
+                            className="icon"
+                            style={{ color: ChecklistStatesColors[item.state] }}
+                          />
+                          {ChecklistStatesContent[item.state]}
+                        </div>
+                      );
+                    } else {
+                      return <div className="list-card-columns"></div>;
+                    }
+                  },
+                },
+              ]
+            : []),
         ]}
       />
 

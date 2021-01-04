@@ -129,6 +129,7 @@ export type Stage = {
 
 export enum EnabledStates {
   BEING_BUILT = 'BEING_BUILT', // ENABLE EDITING
+  BEING_REVISED = 'BEING_REVISED',
   REQUESTED_CHANGES = 'REQUESTED_CHANGES', // ENABLE EDITING
 }
 
@@ -166,6 +167,7 @@ export enum ChecklistStatesContent {
   BEING_BUILT = 'Being Built',
   SUBMITTED_FOR_REVIEW = 'Submitted For Review',
   BEING_REVIEWED = 'Being Reviewed',
+  BEING_REVISED = 'Being Revised',
   REQUESTED_CHANGES = 'Requested Changes',
   READY_FOR_SIGNING = 'Ready for Signing',
   SIGN_OFF_INITIATED = 'Under Signing',
@@ -179,6 +181,7 @@ export enum ChecklistStatesColors {
   BEING_BUILT = '#1d84ff',
   SUBMITTED_FOR_REVIEW = '#f7b500',
   BEING_REVIEWED = '#f7b500',
+  BEING_REVISED = '#f7b500',
   REQUESTED_CHANGES = '#f7b500',
   READY_FOR_SIGNING = '#5aa700',
   SIGN_OFF_INITIATED = '#5aa700',

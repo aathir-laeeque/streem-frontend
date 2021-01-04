@@ -30,6 +30,7 @@ export enum ListViewAction {
   FETCH_CHECKLISTS_SUCCESS = '@@checklist/ListView/FETCH_CHECKLISTS_SUCCESS',
 
   ARCHIVE = '@@checklist/ListView/ARCHIVE',
+  HANDLE_PUBLISHED_ARCHIVE = '@@checklist/ListView/HANDLE_PUBLISHED_ARCHIVE',
   UNARCHIVE = '@@checklist/ListView/UNARCHIVE',
   UPDATE_LIST = '@@checklist/ListView/UPDATE_LIST',
 }

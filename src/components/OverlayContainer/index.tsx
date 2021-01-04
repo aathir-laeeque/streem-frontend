@@ -1,26 +1,7 @@
-import {
-  TaskMediaModal,
-  TimedTaskConfigModal,
-} from '#PrototypeComposer/modals';
-import EditingDisabledModal from '#PrototypeComposer/modals/EditingDisabled';
-import { AuthorsDetailsPopover } from '#PrototypeComposer/Overlays/AuthorsDetailsPopover';
-import InitiateSignOffModal from '#PrototypeComposer/Overlays/InitiateSignOff';
-import PasswordInputModal from '#PrototypeComposer/Overlays/PasswordInput';
-import ReviewerAssignmentModal from '#PrototypeComposer/Overlays/ReviewerAssignmentModal';
-import { ReviewerAssignmentPopover } from '#PrototypeComposer/Overlays/ReviewerAssignmentPopover';
-import ReviewerAssignmentSuccessModal from '#PrototypeComposer/Overlays/ReviewerAssignmentSuccess';
-import SignOffInitiatedSuccessModal from '#PrototypeComposer/Overlays/SignOffInitiatedSuccess';
-import { ReviewersDetailsPopover } from '#PrototypeComposer/Overlays/ReviewersDetailsPopover';
-import ReviewSubmitSuccessModal from '#PrototypeComposer/Overlays/ReviewSubmitSuccess';
-import SignOffSuccessModal from '#PrototypeComposer/Overlays/SignOffSuccess';
-import ReleaseSuccessModal from '#PrototypeComposer/Overlays/ReleaseSuccess';
-import SentToAuthorSuccessModal from '#PrototypeComposer/Overlays/SentToAuthorSuccess';
-import SignOffProgressModal from '#PrototypeComposer/Overlays/SignOffProgress';
-import { SubmitReviewModal } from '#PrototypeComposer/Overlays/SubmitReview';
 import AddStop from '#JobComposer/modals/AddStop';
 import AssignmentSuccessModal from '#JobComposer/modals/AssignmentSuccess';
-import CompleteJobWithException from '#JobComposer/modals/CompleteJobWithException';
 import CompletedWithExceptionInfo from '#JobComposer/modals/CompletedWithExceptionInfo';
+import CompleteJobWithException from '#JobComposer/modals/CompleteJobWithException';
 import CompleteTaskWithException from '#JobComposer/modals/CompleteTaskWithException';
 import MediaDetail from '#JobComposer/modals/MediaDetail';
 import ParameterApprovalModal from '#JobComposer/modals/ParameterApproval';
@@ -34,12 +15,32 @@ import TaskErrorCorrection from '#JobComposer/modals/TaskErrorCorrection';
 import TaskUserAssignment from '#JobComposer/modals/TaskUserAssignment';
 import { AssignedUserDetailsPopover } from '#JobComposer/Popovers/AssignedUserDetailsPopover';
 import { TaskAssignmentPopover } from '#JobComposer/Popovers/TaskAssignmentPopover';
+import {
+  TaskMediaModal,
+  TimedTaskConfigModal,
+} from '#PrototypeComposer/modals';
+import EditingDisabledModal from '#PrototypeComposer/modals/EditingDisabled';
+import { AuthorsDetailsPopover } from '#PrototypeComposer/Overlays/AuthorsDetailsPopover';
+import InitiateSignOffModal from '#PrototypeComposer/Overlays/InitiateSignOff';
+import PasswordInputModal from '#PrototypeComposer/Overlays/PasswordInput';
+import ReleaseSuccessModal from '#PrototypeComposer/Overlays/ReleaseSuccess';
+import ReviewerAssignmentModal from '#PrototypeComposer/Overlays/ReviewerAssignmentModal';
+import { ReviewerAssignmentPopover } from '#PrototypeComposer/Overlays/ReviewerAssignmentPopover';
+import ReviewerAssignmentSuccessModal from '#PrototypeComposer/Overlays/ReviewerAssignmentSuccess';
+import { ReviewersDetailsPopover } from '#PrototypeComposer/Overlays/ReviewersDetailsPopover';
+import ReviewSubmitSuccessModal from '#PrototypeComposer/Overlays/ReviewSubmitSuccess';
+import SentToAuthorSuccessModal from '#PrototypeComposer/Overlays/SentToAuthorSuccess';
+import SignOffInitiatedSuccessModal from '#PrototypeComposer/Overlays/SignOffInitiatedSuccess';
+import SignOffProgressModal from '#PrototypeComposer/Overlays/SignOffProgress';
+import SignOffSuccessModal from '#PrototypeComposer/Overlays/SignOffSuccess';
+import { SubmitReviewModal } from '#PrototypeComposer/Overlays/SubmitReview';
 import { useTypedSelector } from '#store';
 import SessionExpireModal from '#views/Auth/Overlays/SessionExpire';
+import ArchiveModal from '#views/Checklists/ListView/ArchiveModal';
 import ChecklistInfoModal from '#views/Checklists/ListView/ChecklistInfoModal';
+import RevisionErrorModal from '#views/Checklists/Overlays/RevisionErrorModal';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
-import RevisionErrorModal from '#views/Checklists/Overlays/RevisionErrorModal';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -186,6 +187,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.REVISION_ERROR:
       return <RevisionErrorModal {...params} />;
+
+    case OverlayNames.ARCHIVE_MODAL:
+      return <ArchiveModal {...params} />;
 
     default:
       return null;

@@ -1,0 +1,98 @@
+import EditingDisabledIcon from '#assets/svg/EditingDisabledIcon';
+import ArchiveSuccessful from '#assets/svg/ArchiveSuccessful';
+import CannotArchive from '#assets/svg/CannotArchive';
+import { BaseModal } from '#components';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
+import React, { FC } from 'react';
+import styled from 'styled-components';
+
+const Wrapper = styled.div`
+  .modal {
+    min-width: 420px !important;
+    width: 420px !important;
+  }
+
+  .modal-body {
+    padding: 0 !important;
+  }
+
+  .close-icon {
+    top: 24px !important;
+    right: 32px !important;
+  }
+
+  .body {
+    padding: 80px;
+
+    .editing-disabled-icon {
+      font-size: 120px;
+    }
+
+    .text1 {
+      color: #000000;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 16px;
+    }
+
+    .text2 {
+      color: #666666;
+      font-size: 14px;
+      font-weight: normal;
+      margin-top: 8px;
+    }
+  }
+`;
+
+const ArchiveModal: FC<CommonOverlayProps<{
+  mode: 'archive' | 'unarchive' | 'cannotArchive';
+}>> = ({ closeAllOverlays, closeOverlay, props: { mode } = {} }) => (
+  <Wrapper>
+    <BaseModal
+      closeAllModals={closeAllOverlays}
+      closeModal={closeOverlay}
+      showHeader={false}
+      showFooter={false}
+    >
+      <div className="body">
+        {(() => {
+          console.log('modffe ::: ', mode);
+          if (mode === 'archive') {
+            return (
+              <>
+                <ArchiveSuccessful fontSize="140px" />
+                <div className="text1">Archive Successful</div>
+                <div className="text2">
+                  Great Job! Checklist Archived Successfully
+                </div>
+              </>
+            );
+          }
+
+          if (mode === 'unarchive') {
+            return (
+              <>
+                <ArchiveSuccessful fontSize="140px" />
+                <div className="text1">Unarchive Successful</div>
+              </>
+            );
+          }
+
+          if (mode === 'cannotArchive') {
+            return (
+              <>
+                <CannotArchive fontSize="140px" />
+                <div className="text1">Cannot Archive</div>
+                <div className="text2">
+                  {`Oops! You can't archive a Checklist that has running Jobs.`}
+                </div>
+              </>
+            );
+          }
+        })()}
+      </div>
+    </BaseModal>
+  </Wrapper>
+);
+
+export default ArchiveModal;

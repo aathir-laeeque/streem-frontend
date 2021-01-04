@@ -36,11 +36,14 @@ export const fetchChecklistsSuccess = ({
 export const fetchChecklistsError = (error: any) =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS_ERROR, { error });
 
-export const archiveChecklist = (id: Checklist['id']) =>
-  actionSpreader(ListViewAction.ARCHIVE, { id });
+export const archiveChecklist = (id: Checklist['id'], showPopup?: boolean) =>
+  actionSpreader(ListViewAction.ARCHIVE, { id, showPopup });
 
-export const unarchiveChecklist = (id: Checklist['id']) =>
-  actionSpreader(ListViewAction.UNARCHIVE, { id });
+export const unarchiveChecklist = (id: Checklist['id'], showPopup?: boolean) =>
+  actionSpreader(ListViewAction.UNARCHIVE, { id, showPopup });
+
+export const handlePublishedArchive = (id: Checklist['id']) =>
+  actionSpreader(ListViewAction.HANDLE_PUBLISHED_ARCHIVE, { id });
 
 export const updateList = (id: Checklist['id']) =>
   actionSpreader(ListViewAction.UPDATE_LIST, { id });
