@@ -1,7 +1,7 @@
 import { Entity } from '#JobComposer/composer.types';
 import { useTypedSelector } from '#store';
 import { customOnChange } from '#utils/formEvents';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { executeActivity, fixActivity } from '../actions';
@@ -14,7 +14,13 @@ const TextboxActivity: FC<ActivityProps> = ({
   const dispatch = useDispatch();
 
   const { entity } = useTypedSelector((state) => state.composer);
-  const [value, setValue] = React.useState(activity?.response?.value || '');
+  const [value, setValue] = React.useState('');
+
+  useEffect(() => {
+    if (activity?.response?.value) {
+      setValue(activity?.response?.value);
+    }
+  }, [activity?.response?.value]);
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.persist();

@@ -23,7 +23,7 @@ export enum JobState {
   UNASSIGNED = 'UNASSIGNED',
 }
 
-export const JOB_STATE_POLLING_TIMEOUT = 60000;
+export const JOB_STAGE_POLLING_TIMEOUT = 10000;
 
 export enum CompletedJobState {
   COMPLETED = 'COMPLETED',

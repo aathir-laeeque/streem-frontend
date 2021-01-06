@@ -1,10 +1,14 @@
 import { ProgressBar } from '#components';
 import { Assignment, CheckCircle, Error, PanTool } from '@material-ui/icons';
-import React, { FC, forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { CompletedTaskStates, StartedTaskStates } from '../checklist.types';
-import { setActiveStage } from './actions';
+import {
+  setActiveStage,
+  startPollActiveStageData,
+  stopPollActiveStageData,
+} from './actions';
 import Wrapper from './styles';
 import { StageCardProps } from './types';
 import { useTypedSelector } from '#store';
@@ -15,9 +19,13 @@ const StageCard = forwardRef<Ref, StageCardProps>(
   ({ stage, isActive }, ref) => {
     const dispatch = useDispatch();
 
-    const { tasksById, tasksOrderInStage } = useTypedSelector(
-      (state) => state.composer.tasks,
-    );
+    const {
+      tasks: { tasksById, tasksOrderInStage },
+      jobId,
+    } = useTypedSelector((state) => ({
+      tasks: state.composer.tasks,
+      jobId: state.composer.entityId,
+    }));
 
     const tasks = tasksOrderInStage[stage.id].map(
       (taskId) => tasksById[taskId],
@@ -57,6 +65,10 @@ const StageCard = forwardRef<Ref, StageCardProps>(
         onClick={() => {
           if (!isActive) {
             dispatch(setActiveStage(stage.id));
+          }
+          if (jobId) {
+            dispatch(stopPollActiveStageData());
+            dispatch(startPollActiveStageData({ jobId }));
           }
         }}
         ref={ref}

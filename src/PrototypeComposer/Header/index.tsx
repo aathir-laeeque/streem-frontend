@@ -74,7 +74,9 @@ const ChecklistHeader: FC = () => {
     ? approvers.some((r) => r.state === CollaboratorState.NOT_STARTED)
     : false;
 
-  const author = data?.authors.filter((a) => a.id === userId)[0];
+  const author = data?.authors.filter((a) => a.id.toString() === userId)[0];
+
+  console.log('author', author);
 
   let allDoneOk = true;
   data?.collaborators.forEach((r) => {
@@ -178,8 +180,9 @@ const ChecklistHeader: FC = () => {
       case CollaboratorState.COMMENTED_CHANGES:
         const isReviewPending = collaborators.some(
           (r) =>
-            r.state === CollaboratorState.BEING_REVIEWED ||
-            r.state === CollaboratorState.NOT_STARTED,
+            r.type === CollaboratorType.REVIEWER &&
+            (r.state === CollaboratorState.BEING_REVIEWED ||
+              r.state === CollaboratorState.NOT_STARTED),
         );
 
         return (

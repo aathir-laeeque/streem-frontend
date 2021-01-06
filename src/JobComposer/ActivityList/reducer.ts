@@ -8,6 +8,7 @@ import {
   ActivityListAction,
 } from './reducer.types';
 import { Entity } from '../composer.types';
+import { StageListAction } from '#JobComposer/StageList/reducer.types';
 
 export const initialState: ActivityListState = {
   activitiesById: {},
@@ -27,6 +28,19 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
       return {
         ...state,
         ...getActivities({ checklist }),
+      };
+
+    case StageListAction.FETCH_ACTIVE_STAGE_DATA_SUCCESS:
+      const {
+        data: { activitiesById: updatedActivitiesById },
+      } = action.payload;
+
+      return {
+        ...state,
+        activitiesById: {
+          ...state.activitiesById,
+          ...updatedActivitiesById,
+        },
       };
 
     case ActivityListAction.UPDATE_EXECUTED_ACTIVITY:

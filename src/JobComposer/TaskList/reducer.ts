@@ -48,6 +48,20 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         bringIntoView: true,
       };
 
+    case StageListAction.FETCH_ACTIVE_STAGE_DATA_SUCCESS:
+      const { data: payloadData } = action.payload;
+
+      const updatedTasksById = { ...state.tasksById, ...payloadData.tasksById };
+
+      return {
+        ...state,
+        tasksById: updatedTasksById,
+        ...reEvaluateTaskWithStop({
+          tasksById: updatedTasksById,
+          tasksOrderInStage: state.tasksOrderInStage,
+        }),
+      };
+
     case TaskListAction.SET_ACTIVE_TASK:
       return {
         ...state,

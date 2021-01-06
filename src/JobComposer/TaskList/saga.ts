@@ -184,7 +184,7 @@ function* completeErrorCorrectionSaga({
       yield taskCompleteErrorSaga({ ...groupedErrors, taskId });
     }
   } catch (error) {
-    console.error('error came in enableErrorCorrectionSaga :: ', error);
+    console.error('error came in completeErrorCorrectionSaga :: ', error);
   }
 }
 
@@ -208,7 +208,7 @@ function* cancelErrorCorrectionSaga({
       yield put(updateTaskExecutionState(taskId, data));
     }
   } catch (error) {
-    console.error('error came in enableErrorCorrectionSaga :: ', error);
+    console.error('error came in cancelErrorCorrectionSaga :: ', error);
   }
 }
 

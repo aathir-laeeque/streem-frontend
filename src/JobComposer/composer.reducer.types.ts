@@ -22,6 +22,7 @@ import { JobActivityState } from './JobActivity/types';
 import { StageListState } from './StageList/reducer.types';
 import { TaskListState } from './TaskList/reducer.types';
 import { setSignOffError, resetSignOffTaskError } from './actions';
+import { fetchActiveStageDataSuccess } from './StageList/actions';
 
 export type ComposerState = {
   activities: ActivityListState;
@@ -76,9 +77,6 @@ export enum ComposerAction {
   SIGN_OFF_TASKS = '@@jobComposer/job-action/SIGN_OFF_TASKS',
   SIGN_OFF_TASKS_ERROR = '@@jobComposer/job-action/SIGN_OFF_TASKS_ERROR',
   SIGN_OFF_TASKS_ERROR_RESET = '@@jobComposer/job-action/SIGN_OFF_TASKS_ERROR_RESET',
-
-  START_JOB_STATE_POLLING = '@@jobComposer/job-action/START_JOB_STATE_POLLING',
-  STOP_JOB_STATE_POLLING = '@@jobComposer/job-action/STOP_JOB_STATE_POLLING',
 }
 
 export type ComposerActionType = ReturnType<
@@ -97,4 +95,5 @@ export type ComposerActionType = ReturnType<
   | typeof revertUsersForJob
   | typeof setSignOffError
   | typeof resetSignOffTaskError
+  | typeof fetchActiveStageDataSuccess
 >;

@@ -1,7 +1,7 @@
 import { actionSpreader } from '#store';
 import { User } from '#store/users/types';
 
-import { Job } from '../views/Jobs/types';
+import { Job } from '#views/Jobs/types';
 import { ComposerAction } from './composer.reducer.types';
 import { Entity, FetchDataArgs } from './composer.types';
 import { ExceptionValues } from './modals/CompleteJobWithException';
@@ -132,9 +132,3 @@ export const setSignOffError = (error: string) =>
 
 export const resetSignOffTaskError = () =>
   actionSpreader(ComposerAction.SIGN_OFF_TASKS_ERROR_RESET);
-
-export const startJobStatePolling = ({ jobId }: { jobId: Job['id'] }) =>
-  actionSpreader(ComposerAction.START_JOB_STATE_POLLING, { jobId });
-
-export const stopJobStatePolling = () =>
-  actionSpreader(ComposerAction.STOP_JOB_STATE_POLLING);

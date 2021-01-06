@@ -2,18 +2,17 @@ import { useTypedSelector } from '#store';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import {
-  fetchData,
-  resetComposer,
-  startJobStatePolling,
-  stopJobStatePolling,
-} from './actions';
+import { fetchData, resetComposer } from './actions';
 import { ComposerProps, Tabs } from './composer.types';
 import Header from './Header';
 import StageList from './StageList';
 import ActivityView from './JobActivity';
 import ComposerWrapper from './styles';
 import TaskList from './TaskList';
+import {
+  startPollActiveStageData,
+  stopPollActiveStageData,
+} from './StageList/actions';
 
 const Composer: FC<ComposerProps> = ({ id, entity }) => {
   const dispatch = useDispatch();
@@ -25,13 +24,13 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
     if (!isIdle) {
       if (id) {
         dispatch(fetchData({ id, entity, setActive: true }));
-        dispatch(startJobStatePolling({ jobId: id }));
+        dispatch(startPollActiveStageData({ jobId: id }));
       } else {
         console.log('no id got to fetch data');
       }
 
       return () => {
-        dispatch(stopJobStatePolling());
+        dispatch(stopPollActiveStageData());
         dispatch(resetComposer());
       };
     }

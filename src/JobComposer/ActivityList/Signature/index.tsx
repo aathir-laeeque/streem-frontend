@@ -5,7 +5,7 @@ import { useTypedSelector } from '#store';
 import { dataUriToBlob } from '#utils/dataUriToBlob';
 import { uploadFile } from '#modules/file-upload/action';
 
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ActivityProps } from '../types';
@@ -17,13 +17,13 @@ const Signature: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
     auth: { profile },
   } = useTypedSelector((state) => state);
 
-  let image: string | null = null;
+  const [imageData, setImageData] = useState<string | null>(null);
 
-  if (activity.response?.medias) {
-    image = activity.response?.medias[0]?.link;
-  }
-
-  const [imageData, setImageData] = useState<string | null>(image);
+  useEffect(() => {
+    if (activity.response?.medias) {
+      setImageData(activity.response?.medias[0]?.link);
+    }
+  }, [activity.response?.medias]);
 
   const dispatch = useDispatch();
 

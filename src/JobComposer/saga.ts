@@ -5,7 +5,6 @@ import {
   closeOverlayAction,
   openOverlayAction,
 } from '#components/OverlayContainer/actions';
-import { RootState } from '#store';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   apiAssignUsersToJob,
@@ -16,21 +15,10 @@ import {
   apiStartJob,
   apiTaskSignOff,
   apiValidatePassword,
-  apiGetJobState,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { navigate } from '@reach/router';
-import {
-  all,
-  call,
-  fork,
-  put,
-  takeLatest,
-  take,
-  race,
-  delay,
-  select,
-} from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 
 import {
   assignUsersToJob,
@@ -47,18 +35,12 @@ import {
   signOffTasks,
   startJob,
   startJobSuccess,
-  startJobStatePolling,
-  stopJobStatePolling,
 } from './actions';
 import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
 import { JobActivitySaga } from './JobActivity/saga';
 import { ComposerAction } from './composer.reducer.types';
-import {
-  Entity,
-  CompletedJobState,
-  JOB_STATE_POLLING_TIMEOUT,
-} from './composer.types';
+import { Entity } from './composer.types';
 import { StageListSaga } from './StageList/saga';
 import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
@@ -330,44 +312,6 @@ function* signOffTaskSaga({ payload }: ReturnType<typeof signOffTasks>) {
   }
 }
 
-const getCurrentStatus = (state: RootState) => state.composer.jobState;
-
-function* jobStatePollingSaga({
-  payload,
-}: ReturnType<typeof startJobStatePolling>) {
-  while (true) {
-    try {
-      const currentStatus = getCurrentStatus(yield select());
-      if (currentStatus in CompletedJobState) {
-        yield put(stopJobStatePolling());
-      }
-      yield delay(JOB_STATE_POLLING_TIMEOUT);
-      const { jobId } = payload;
-      const { data, errors } = yield call(
-        request,
-        'GET',
-        apiGetJobState(jobId),
-      );
-
-      if (errors) {
-        throw 'Could Not Fetch Job Status';
-      }
-
-      if (currentStatus !== data.state) {
-        if (data.state in CompletedJobState) {
-          yield put(stopJobStatePolling());
-        }
-        yield put(
-          fetchData({ id: jobId, entity: Entity.JOB, setActive: true }),
-        );
-      }
-    } catch (err) {
-      console.error('error from statusPollingSaga in Composer Saga :: ', err);
-      yield put(stopJobStatePolling());
-    }
-  }
-}
-
 export function* ComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchDataSaga);
 
@@ -389,12 +333,4 @@ export function* ComposerSaga() {
     fork(ActivityListSaga),
     fork(JobActivitySaga),
   ]);
-
-  while (true) {
-    const action = yield take(ComposerAction.START_JOB_STATE_POLLING);
-    yield race([
-      call(jobStatePollingSaga, action),
-      take(ComposerAction.STOP_JOB_STATE_POLLING),
-    ]);
-  }
 }

@@ -33,6 +33,18 @@ const reducer: Reducer<StageListState, StageListActionType> = (
         ...getStages({ checklist, setActiveStage: setActive }),
       };
 
+    case StageListAction.FETCH_ACTIVE_STAGE_DATA_SUCCESS:
+      const {
+        data: { stage },
+      } = action.payload;
+      return {
+        ...state,
+        stagesById: {
+          ...state.stagesById,
+          [stage.id]: stage,
+        },
+      };
+
     case StageListAction.SET_ACTIVE_STAGE:
       return {
         ...state,

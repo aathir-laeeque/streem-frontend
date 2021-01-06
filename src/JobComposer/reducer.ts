@@ -24,6 +24,7 @@ import {
 } from './TaskList/reducer';
 import { User } from '#store/users/types';
 import { TaskExecutionState } from './checklist.types';
+import { StageListAction } from './StageList/reducer.types';
 
 const initialState: ComposerState = {
   activities: activityListState,
@@ -76,6 +77,18 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
 
     case ComposerAction.RESET_COMPOSER:
       return { ...initialState };
+
+    case StageListAction.FETCH_ACTIVE_STAGE_DATA_SUCCESS:
+      const {
+        data: { jobState },
+      } = action.payload;
+      return {
+        ...state,
+        jobState,
+        activities: activityListReducer(state.activities, action),
+        stages: stageListReducer(state.stages, action),
+        tasks: taskListReducer(state.tasks, action),
+      };
 
     case ComposerAction.START_JOB_SUCCESS:
       return { ...state, jobState: JobState.IN_PROGRESS };
