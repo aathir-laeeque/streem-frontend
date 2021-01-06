@@ -1,5 +1,6 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { RootState } from '#store';
 import {
   apiCreateNewPrototype,
   apiCreateRevisionPrototype,
@@ -8,7 +9,7 @@ import {
 import { request } from '#utils/request';
 import { navigate } from '@reach/router';
 import { isArray, pick } from 'lodash';
-import { call, put, takeLeading } from 'redux-saga/effects';
+import { call, put, select, takeLeading } from 'redux-saga/effects';
 
 import {
   addNewPrototype,
@@ -63,6 +64,10 @@ function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
   try {
     const { data } = payload;
 
+    const selectedFacility = yield select(
+      (state: RootState) => state.auth.selectedFacility,
+    );
+
     const { data: response, errors } = yield call(
       request,
       'POST',
@@ -70,7 +75,7 @@ function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
       {
         data: {
           ...transformFormData({ data, mode: FormMode.ADD }),
-          facilityId: 1,
+          facilityId: selectedFacility?.id || 1,
         },
       },
     );
@@ -141,6 +146,10 @@ function* updatePrototypeSaga({ payload }: ReturnType<typeof updatePrototype>) {
   try {
     const { data, id, originalAuthors } = payload;
 
+    const selectedFacility = yield select(
+      (state: RootState) => state.auth.selectedFacility,
+    );
+
     const { data: response, errors } = yield call(
       request,
       'PUT',
@@ -148,7 +157,7 @@ function* updatePrototypeSaga({ payload }: ReturnType<typeof updatePrototype>) {
       {
         data: {
           ...transformFormData({ data, originalAuthors, mode: FormMode.EDIT }),
-          facilityId: 1,
+          facilityId: selectedFacility?.id || 1,
         },
       },
     );

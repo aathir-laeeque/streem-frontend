@@ -1,26 +1,20 @@
-import {
-  ListViewComponent,
-  ProgressBar,
-  NewListView,
-  SearchFilter,
-} from '#components';
+import { NewListView, ProgressBar, SearchFilter } from '#components';
 import { useTypedSelector } from '#store';
-import JobCard from '#views/Jobs/Compoents/JobCard';
+import { FilterField } from '#utils/globalTypes';
 import { Job } from '#views/Jobs/types';
+import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { FiberManualRecord, ArrowLeft, ArrowRight } from '@material-ui/icons';
 
-import { fetchInbox, setSelectedState } from './actions';
-import { TabContentWrapper } from './styles';
-import { ListViewState, TabViewProps } from './types';
+import AssigneesColumn from '../../Jobs/NewListView/AssignessColumn';
 import {
   AssignedJobStates,
   CompletedJobStates,
 } from '../../Jobs/NewListView/types';
-import AssigneesColumn from '../../Jobs/NewListView/AssignessColumn';
-import { FilterField } from '#utils/globalTypes';
+import { fetchInbox, setSelectedState } from './actions';
+import { TabContentWrapper } from './styles';
+import { ListViewState, TabViewProps } from './types';
 
 const DEFAULT_PAGE_NUMBER = 0;
 const DEFAULT_PAGE_SIZE = 10;
@@ -31,7 +25,10 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     (state) => state.inboxListView,
   );
 
-  const { isIdle } = useTypedSelector((state) => state.auth);
+  const {
+    isIdle,
+    selectedFacility: { id: facilityId } = {},
+  } = useTypedSelector((state) => state.auth);
   const reducerLabel = label.toLowerCase().split(' ').join('');
 
   const [filterFields, setFilterFields] = useState<FilterField[]>([]);
@@ -51,6 +48,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     dispatch(
       fetchInbox(
         {
+          facilityId,
           page,
           size,
           sort: 'createdAt,desc',
@@ -65,6 +63,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     dispatch(
       fetchInbox(
         {
+          facilityId,
           page: 0,
           size: 10,
           sort: 'createdAt,desc',

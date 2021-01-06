@@ -1,35 +1,36 @@
-import { RouteComponentProps } from '@reach/router';
 import { User } from '#store/users/types';
+import { RouteComponentProps } from '@reach/router';
+
 import {
-  login,
-  logOut,
-  resetError,
-  logOutSuccess,
-  logOutError,
-  loginSuccess,
-  loginError,
-  refreshToken,
-  refreshTokenPoll,
-  refreshTokenSuccess,
-  refreshTokenError,
-  fetchProfile,
-  fetchProfileSuccess,
-  fetchProfileError,
-  register,
-  registerSuccess,
-  registerError,
-  resetPassword,
-  resetPasswordSuccess,
-  resetPasswordError,
-  updateProfile,
-  updateProfileSuccess,
-  updateProfileError,
-  forgotPassword,
-  forgotPasswordSuccess,
-  forgotPasswordError,
-  setIdle,
   checkTokenExpirySuccess,
   cleanUp,
+  fetchProfile,
+  fetchProfileError,
+  fetchProfileSuccess,
+  forgotPassword,
+  forgotPasswordError,
+  forgotPasswordSuccess,
+  login,
+  loginError,
+  loginSuccess,
+  logOut,
+  logOutError,
+  logOutSuccess,
+  refreshToken,
+  refreshTokenError,
+  refreshTokenPoll,
+  refreshTokenSuccess,
+  register,
+  registerError,
+  registerSuccess,
+  resetError,
+  resetPassword,
+  resetPasswordError,
+  resetPasswordSuccess,
+  setIdle,
+  updateProfile,
+  updateProfileError,
+  updateProfileSuccess,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
@@ -45,12 +46,18 @@ export interface LoginResponse {
   sessionIdleTimeoutInMinutes: number;
   roles: string[];
   settings: Record<string, string>;
+  facilities: Facility[];
 }
 
 export interface RefreshTokenResponse {
   accessToken: string;
   refreshToken: string;
 }
+
+type Facility = {
+  id: string;
+  name: string;
+};
 export interface AuthState {
   readonly userId: User['id'] | null;
   readonly isIdle: boolean;
@@ -68,6 +75,8 @@ export interface AuthState {
   readonly roles?: string[];
   readonly isTokenExpired?: boolean;
   readonly settings?: Record<string, string>;
+  readonly facilities: Facility[];
+  readonly selectedFacility?: Facility;
 }
 
 export enum AuthAction {

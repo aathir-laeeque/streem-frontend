@@ -1,4 +1,5 @@
 import CleenLogo from '#assets/svg/CleenLogo';
+import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { getInitials } from '#utils/stringUtils';
 import { logOut } from '#views/Auth/actions';
@@ -6,10 +7,10 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { KeyboardArrowDown } from '@material-ui/icons';
 import { navigate } from '@reach/router';
-import React, { FC } from 'react';
 import { capitalize } from 'lodash';
+import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import checkPermission from '#services/uiPermissions';
+
 import { ImageWrapper } from '../../styles/ImageWrapper';
 import NestedMenuItem from '../shared/NestedMenuItem';
 import { HeaderMenu, MenuText, Wrapper } from './styles';

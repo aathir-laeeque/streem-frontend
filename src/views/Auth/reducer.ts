@@ -11,6 +11,7 @@ const initialState: AuthState = {
   isRefreshing: false,
   error: undefined,
   resetRequested: false,
+  facilities: [],
 };
 
 const reducer = (state = initialState, action: AuthActionType): AuthState => {
@@ -35,6 +36,8 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
           action.payload?.refreshTokenExpirationInMinutes,
         sessionIdleTimeoutInMinutes:
           action.payload?.sessionIdleTimeoutInMinutes,
+        facilities: action.payload?.facilities,
+        selectedFacility: action.payload?.facilities[0],
       };
     case AuthAction.SET_IDLE:
       return {

@@ -22,9 +22,9 @@ import { createJob } from '../ListView/actions';
 import { fetchJobs } from './actions';
 import AssigneesColumn from './AssignessColumn';
 import { TabContentWrapper } from './styles';
-import { CompletedJobStates } from './types';
 import {
   AssignedJobStates,
+  CompletedJobStates,
   fetchDataArgs,
   Job,
   UnassignedJobStates,
@@ -44,7 +44,10 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     (state) => state.jobList,
   );
 
-  const { isIdle } = useTypedSelector((state) => state.auth);
+  const {
+    isIdle,
+    selectedFacility: { id: facilityId } = {},
+  } = useTypedSelector((state) => state.auth);
 
   const { list: jobProperties } = useProperties(ComposerEntity.JOB);
 
@@ -60,6 +63,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   }: fetchDataArgs = {}) => {
     dispatch(
       fetchJobs({
+        facilityId,
         page,
         size,
         sort: 'createdAt,desc',
@@ -86,6 +90,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   useEffect(() => {
     dispatch(
       fetchJobs({
+        facilityId,
         page: 0,
         size: 10,
         sort: 'createdAt,desc',

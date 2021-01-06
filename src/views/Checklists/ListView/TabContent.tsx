@@ -40,11 +40,11 @@ import {
   archiveChecklist,
   clearData,
   fetchChecklistsForListView,
+  handlePublishedArchive,
   unarchiveChecklist,
 } from './actions';
 import { Composer } from './styles';
 import { ListViewProps } from './types';
-import { handlePublishedArchive } from './actions';
 
 const getBaseFilter = (label: string): FilterField[] => [
   {
@@ -75,7 +75,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     checklistListView: { checklists, pageable, loading },
     auth: { userId },
   } = useTypedSelector((state) => state);
-  const { isIdle } = useTypedSelector((state) => state.auth);
+  const {
+    isIdle,
+    selectedFacility: { id: facilityId } = {},
+  } = useTypedSelector((state) => state.auth);
 
   const { list: jobProperties } = useProperties(ComposerEntity.JOB);
   const { list: checklistProperties } = useProperties(ComposerEntity.CHECKLIST);
@@ -109,7 +112,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     const filters = JSON.stringify({ op: 'AND', fields: filterFields });
     dispatch(
       fetchChecklistsForListView(
-        { page, size, filters, sort: 'createdAt,desc' },
+        { facilityId, page, size, filters, sort: 'createdAt,desc' },
         true,
       ),
     );
@@ -128,6 +131,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           page: 0,
           size: 0,
           sort: 'createdAt,desc',
+          facilityId,
         },
         false,
       ),
