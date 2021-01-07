@@ -64,9 +64,7 @@ function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
   try {
     const { data } = payload;
 
-    const selectedFacility = yield select(
-      (state: RootState) => state.auth.selectedFacility,
-    );
+    const { selectedFacility } = yield select((state: RootState) => state.auth);
 
     const { data: response, errors } = yield call(
       request,
@@ -75,7 +73,7 @@ function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
       {
         data: {
           ...transformFormData({ data, mode: FormMode.ADD }),
-          facilityId: selectedFacility?.id || 1,
+          facilityId: selectedFacility?.id,
         },
       },
     );
@@ -146,9 +144,7 @@ function* updatePrototypeSaga({ payload }: ReturnType<typeof updatePrototype>) {
   try {
     const { data, id, originalAuthors } = payload;
 
-    const selectedFacility = yield select(
-      (state: RootState) => state.auth.selectedFacility,
-    );
+    const { selectedFacility } = yield select((state: RootState) => state.auth);
 
     const { data: response, errors } = yield call(
       request,
@@ -157,7 +153,7 @@ function* updatePrototypeSaga({ payload }: ReturnType<typeof updatePrototype>) {
       {
         data: {
           ...transformFormData({ data, originalAuthors, mode: FormMode.EDIT }),
-          facilityId: selectedFacility?.id || 1,
+          facilityId: selectedFacility?.id,
         },
       },
     );
