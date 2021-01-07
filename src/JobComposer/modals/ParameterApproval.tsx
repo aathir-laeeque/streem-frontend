@@ -100,7 +100,8 @@ const ParameterApprovalModal: FC<CommonOverlayProps<Props>> = ({
                     Observation Rejected
                   </div>
                   <div className="rejected-details">
-                    Activity has been reset. It needs to be executed again{' '}
+                    The requester will be intimated to change the provided value
+                    of the Parameter
                   </div>
                 </>
               );
