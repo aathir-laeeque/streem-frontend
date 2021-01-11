@@ -28,7 +28,7 @@ import stopEmoji from '#assets/images/emojis/stop.png';
 import toolboxEmoji from '#assets/images/emojis/toolbox.png';
 import torchEmoji from '#assets/images/emojis/torch.png';
 import vestEmoji from '#assets/images/emojis/vest.png';
-import { Text, View, StyleSheet, Image } from '@react-pdf/renderer';
+import ReactPDF, { Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import moment from 'moment';
 import { parseMarkUp } from '#utils/stringUtils';
 import { EmojisUniCodes } from '#utils/constants';
@@ -117,182 +117,242 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
+    marginVertical: 5,
+  },
+  emojiImage: {
+    height: '12px',
+    marginTop: 4,
   },
 });
 
 type Response = { tag: string; text: string; childs: Response[] };
-const getTagBasedDesign = (
-  element: Response,
-  childIndex: number,
-  parentTag: string | null = null,
-) => {
-  switch (element.tag) {
-    case InstructionTags.P:
-      return (
-        <View style={[styles.wrappedView, { marginVertical: 10 }]}>
-          {element.childs.map((child, i) => getTagBasedDesign(child, i))}
-        </View>
-      );
-    case InstructionTags.SPAN:
-      return (
-        <View style={styles.wrappedView}>
-          {element.childs.map((child, i) => getTagBasedDesign(child, i))}
-        </View>
-      );
-    case InstructionTags.UL:
-      return (
-        <View>
-          {element.childs.map((child, i) =>
-            getTagBasedDesign(child, i, element.tag),
-          )}
-        </View>
-      );
-    case InstructionTags.OL:
-      return (
-        <View>
-          {element.childs.map((child, i) =>
-            getTagBasedDesign(child, i, element.tag),
-          )}
-        </View>
-      );
-    case InstructionTags.LI:
-      return (
-        <View style={styles.wrappedView}>
-          {parentTag === InstructionTags.UL ? (
-            <Text style={[styles.text12, { marginHorizontal: 5 }]}>•</Text>
-          ) : (
-            <Text style={[styles.text12, { marginHorizontal: 5 }]}>
-              {childIndex + 1}.
-            </Text>
-          )}
-          {element.childs.map((child, i) => getTagBasedDesign(child, i))}
-        </View>
-      );
-    case InstructionTags.STRONG:
-      return (
-        <View style={[styles.wrappedView, { fontFamily: 'NunitoBold' }]}>
-          {element.childs.map((child, i) => getTagBasedDesign(child, i))}
-        </View>
-      );
-    case InstructionTags.INS:
-      return (
-        <View style={[styles.wrappedView, { textDecoration: 'underline' }]}>
-          {element.childs.map((child, i) => getTagBasedDesign(child, i))}
-        </View>
-      );
-    case InstructionTags.TEXT:
-      const items = [];
-      for (let i = 0; i < element.text.length; i++) {
-        const unicode = element.text[i]
-          .codePointAt(0)
-          .toString(16)
-          .toUpperCase();
-        if (unicode.length !== 4) {
-          items.push(
-            <Text
-              style={[
-                styles.textS12,
-                element.tag === InstructionTags.STRONG
-                  ? { fontFamily: 'NunitoBold' }
-                  : {},
-              ]}
-            >
-              {element.text[i]}
-            </Text>,
-          );
-        } else {
-          switch (unicode) {
-            case EmojisUniCodes.CHECK:
-              items.push(<Image src={checkEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.EYE:
-              items.push(<Image src={eyeEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.STAR:
-              items.push(<Image src={starEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.TORCH:
-              items.push(<Image src={torchEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.TOOLBOX:
-              items.push(
-                <Image src={toolboxEmoji} style={{ height: '12px' }} />,
-              );
-              break;
-            case EmojisUniCodes.HELMET:
-              items.push(
-                <Image src={helmetEmoji} style={{ height: '12px' }} />,
-              );
-              break;
-            case EmojisUniCodes.GLASSES:
-              items.push(
-                <Image src={glassesEmoji} style={{ height: '12px' }} />,
-              );
-              break;
-            case EmojisUniCodes.GLOVES:
-              items.push(
-                <Image src={glovesEmoji} style={{ height: '12px' }} />,
-              );
-              break;
-            case EmojisUniCodes.CANCEL:
-              items.push(
-                <Image src={cancelEmoji} style={{ height: '12px' }} />,
-              );
-              break;
-            case EmojisUniCodes.STOP:
-              items.push(<Image src={stopEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.VEST:
-              items.push(<Image src={vestEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.CLEAN:
-              items.push(<Image src={cleanEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.RECYCLE:
-              items.push(
-                <Image src={recycleEmoji} style={{ height: '12px' }} />,
-              );
-              break;
-            case EmojisUniCodes.SOS:
-              items.push(<Image src={sosEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.FLAG:
-              items.push(<Image src={flagEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.ELECTRIC:
-              items.push(
-                <Image src={electricEmoji} style={{ height: '12px' }} />,
-              );
-              break;
-            case EmojisUniCodes.FIRE:
-              items.push(<Image src={fireEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.CAUTION:
-              items.push(
-                <Image src={cautionEmoji} style={{ height: '12px' }} />,
-              );
-              break;
-            case EmojisUniCodes.HAND:
-              items.push(<Image src={handEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.BIN:
-              items.push(<Image src={binEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.CROSS:
-              items.push(<Image src={crossEmoji} style={{ height: '12px' }} />);
-              break;
-            case EmojisUniCodes.LOCK:
-              items.push(<Image src={lockEmoji} style={{ height: '12px' }} />);
-              break;
-            default:
-              break;
+
+const getInstructionTemplate = (res: Response[]): JSX.Element[] => {
+  const items: JSX.Element[][] = [];
+  let newLine = -1;
+  const getTagBasedDesign = (
+    element: Response,
+    childIndex: number,
+    parent: Response | null = null,
+    extraStyles: ReactPDF.Style = {},
+    listValue: string | null = null,
+  ) => {
+    switch (element.tag) {
+      case InstructionTags.UL:
+      case InstructionTags.OL:
+      case InstructionTags.P:
+        newLine++;
+        return element.childs.map((child, i) =>
+          getTagBasedDesign(
+            child,
+            i,
+            element,
+            extraStyles,
+            i === 0 ? listValue : null,
+          ),
+        );
+      case InstructionTags.LI:
+        newLine++;
+        return element.childs.map((child, i) =>
+          getTagBasedDesign(
+            child,
+            i,
+            element,
+            extraStyles,
+            i === 0
+              ? parent?.tag === InstructionTags.UL
+                ? '•'
+                : childIndex + 1 + '.'
+              : null,
+          ),
+        );
+      case InstructionTags.SPAN:
+        return element.childs.map((child, i) =>
+          getTagBasedDesign(
+            child,
+            i,
+            element,
+            extraStyles,
+            i === 0 ? listValue : null,
+          ),
+        );
+      case InstructionTags.STRONG:
+        return element.childs.map((child, i) =>
+          getTagBasedDesign(
+            child,
+            i,
+            element,
+            {
+              ...extraStyles,
+              fontFamily: 'NunitoBold',
+            },
+            listValue,
+          ),
+        );
+      case InstructionTags.INS:
+        return element.childs.map((child, i) =>
+          getTagBasedDesign(
+            child,
+            i,
+            element,
+            {
+              ...extraStyles,
+              textDecoration: 'underline',
+            },
+            listValue,
+          ),
+        );
+      case InstructionTags.TEXT:
+        if (!items[newLine]) items[newLine] = [];
+        for (let i = 0; i < element.text.length; i++) {
+          if (i === 0 && listValue) {
+            items[newLine].push(
+              <Text style={[styles.text12, { marginRight: 5 }]}>
+                {listValue}
+              </Text>,
+            );
+          }
+
+          const unicode = element.text[i]
+            .codePointAt(0)
+            .toString(16)
+            .toUpperCase();
+          if (unicode.length !== 4) {
+            items[newLine].push(
+              <Text style={[styles.text12, extraStyles]}>
+                {element.text[i]}
+              </Text>,
+            );
+          } else {
+            switch (unicode) {
+              case EmojisUniCodes.CHECK:
+                items[newLine].push(
+                  <Image src={checkEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.EYE:
+                items[newLine].push(
+                  <Image src={eyeEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.STAR:
+                items[newLine].push(
+                  <Image src={starEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.TORCH:
+                items[newLine].push(
+                  <Image src={torchEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.TOOLBOX:
+                items[newLine].push(
+                  <Image src={toolboxEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.HELMET:
+                items[newLine].push(
+                  <Image src={helmetEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.GLASSES:
+                items[newLine].push(
+                  <Image src={glassesEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.GLOVES:
+                items[newLine].push(
+                  <Image src={glovesEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.CANCEL:
+                items[newLine].push(
+                  <Image src={cancelEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.STOP:
+                items[newLine].push(
+                  <Image src={stopEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.VEST:
+                items[newLine].push(
+                  <Image src={vestEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.CLEAN:
+                items[newLine].push(
+                  <Image src={cleanEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.RECYCLE:
+                items[newLine].push(
+                  <Image src={recycleEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.SOS:
+                items[newLine].push(
+                  <Image src={sosEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.FLAG:
+                items[newLine].push(
+                  <Image src={flagEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.ELECTRIC:
+                items[newLine].push(
+                  <Image src={electricEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.FIRE:
+                items[newLine].push(
+                  <Image src={fireEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.CAUTION:
+                items[newLine].push(
+                  <Image src={cautionEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.HAND:
+                items[newLine].push(
+                  <Image src={handEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.BIN:
+                items[newLine].push(
+                  <Image src={binEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.CROSS:
+                items[newLine].push(
+                  <Image src={crossEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              case EmojisUniCodes.LOCK:
+                items[newLine].push(
+                  <Image src={lockEmoji} style={styles.emojiImage} />,
+                );
+                break;
+              default:
+                break;
+            }
           }
         }
-      }
-      return <View style={styles.wrappedView}>{items}</View>;
-    default:
-      break;
-  }
+        break;
+      default:
+        break;
+    }
+  };
+
+  res.forEach((parent, i) => getTagBasedDesign(parent, i));
+
+  return items.map((item, i) => (
+    <View style={styles.wrappedView} wrap={false} key={'instructionItem_' + i}>
+      {item}
+    </View>
+  ));
 };
 
 const activityTemplateFormatter = (
@@ -305,9 +365,7 @@ const activityTemplateFormatter = (
       node.innerHTML = activity.data.text;
       const res = parseMarkUp(node);
       return (
-        <View style={[styles.activityView, styles.wrappedView]} wrap={false}>
-          {res.map((parent, i) => getTagBasedDesign(parent, i))}
-        </View>
+        <View style={styles.activityView}>{getInstructionTemplate(res)}</View>
       );
     case MandatoryActivity.TEXTBOX:
       const items = [];
