@@ -72,13 +72,12 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   label,
 }) => {
   const {
-    checklistListView: { checklists, pageable, loading },
+    checklistListView: { checklists, pageable },
     auth: { userId },
   } = useTypedSelector((state) => state);
-  const {
-    isIdle,
-    selectedFacility: { id: facilityId } = {},
-  } = useTypedSelector((state) => state.auth);
+  const { selectedFacility: { id: facilityId } = {} } = useTypedSelector(
+    (state) => state.auth,
+  );
 
   const { list: jobProperties } = useProperties(ComposerEntity.JOB);
   const { list: checklistProperties } = useProperties(ComposerEntity.CHECKLIST);
@@ -139,10 +138,8 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   }, [filterFields]);
 
   useEffect(() => {
-    if (!isIdle) {
-      fetchData(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE);
-    }
-  }, [isIdle]);
+    fetchData(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE);
+  }, []);
 
   useEffect(() => {
     setPageData({

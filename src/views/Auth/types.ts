@@ -4,36 +4,30 @@ import { RouteComponentProps } from '@reach/router';
 import {
   checkTokenExpirySuccess,
   cleanUp,
-  fetchProfile,
-  fetchProfileError,
   fetchProfileSuccess,
-  forgotPassword,
   forgotPasswordError,
   forgotPasswordSuccess,
   login,
-  loginError,
-  loginSuccess,
-  logOut,
-  logOutError,
-  logOutSuccess,
-  refreshToken,
-  refreshTokenError,
-  refreshTokenPoll,
-  refreshTokenSuccess,
-  register,
-  registerError,
-  registerSuccess,
   resetError,
-  resetPassword,
+  loginSuccess,
+  loginError,
+  refreshTokenSuccess,
+  registerError,
   resetPasswordError,
-  resetPasswordSuccess,
-  setIdle,
-  updateProfile,
-  updateProfileError,
   updateProfileSuccess,
+  setIdle,
+  logOutSuccess,
+  logOut,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
+
+interface Settings {
+  logoUrl: string;
+  accessTokenExpirationInMinutes: number;
+  refreshTokenExpirationInMinutes: number;
+  sessionIdleTimeoutInMinutes: number;
+}
 
 export interface LoginResponse {
   id: User['id'];
@@ -41,12 +35,9 @@ export interface LoginResponse {
   message: string;
   accessToken: string;
   refreshToken: string;
-  accessTokenExpirationInMinutes: number;
-  refreshTokenExpirationInMinutes: number;
-  sessionIdleTimeoutInMinutes: number;
   roles: string[];
-  settings: Record<string, string>;
   facilities: Facility[];
+  settings: Settings;
 }
 
 export interface RefreshTokenResponse {
@@ -68,15 +59,14 @@ export interface AuthState {
   readonly refreshTokenExpirationInMinutes?: number;
   readonly sessionIdleTimeoutInMinutes?: number;
   readonly profile: User | null;
-  readonly isRefreshing: boolean;
   readonly loading: boolean;
   readonly resetRequested: boolean;
   readonly error: any;
   readonly roles?: string[];
   readonly isTokenExpired?: boolean;
-  readonly settings?: Record<string, string>;
   readonly facilities: Facility[];
   readonly selectedFacility?: Facility;
+  readonly settings?: Settings;
 }
 
 export enum AuthAction {
@@ -88,8 +78,6 @@ export enum AuthAction {
   LOGIN = '@@auth/Login/LOGIN',
   LOGIN_ERROR = '@@auth/Login/LOGIN_ERROR',
   LOGIN_SUCCESS = '@@auth/Login/LOGIN_SUCCESS',
-  REFRESH_TOKEN_POLL = '@@auth/Login/REFRESH_TOKEN_POLL',
-  REFRESH_TOKEN = '@@auth/Login/REFRESH_TOKEN',
   REFRESH_TOKEN_ERROR = '@@auth/Login/REFRESH_TOKEN_ERROR',
   REFRESH_TOKEN_SUCCESS = '@@auth/Login/REFRESH_TOKEN_SUCCESS',
   FETCH_PROFILE = '@@auth/Login/FETCH_PROFILE',
@@ -121,30 +109,17 @@ export enum AuthAction {
 
 export type AuthActionType = ReturnType<
   | typeof resetError
-  | typeof logOut
-  | typeof logOutSuccess
-  | typeof logOutError
   | typeof login
   | typeof loginSuccess
+  | typeof logOut
+  | typeof logOutSuccess
   | typeof loginError
-  | typeof register
-  | typeof registerSuccess
   | typeof registerError
-  | typeof refreshToken
-  | typeof refreshTokenPoll
   | typeof refreshTokenSuccess
-  | typeof refreshTokenError
-  | typeof fetchProfile
   | typeof fetchProfileSuccess
-  | typeof fetchProfileError
-  | typeof updateProfile
   | typeof updateProfileSuccess
-  | typeof updateProfileError
-  | typeof forgotPassword
   | typeof forgotPasswordSuccess
   | typeof forgotPasswordError
-  | typeof resetPassword
-  | typeof resetPasswordSuccess
   | typeof resetPasswordError
   | typeof setIdle
   | typeof checkTokenExpirySuccess

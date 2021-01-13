@@ -52,7 +52,6 @@ const initialState: initialState = {
 };
 
 const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
-  const { isIdle } = useTypedSelector((state) => state.auth);
   const { logs, loading, pageable }: JobActivityState = useTypedSelector(
     (state) => state.composer.activity,
   );
@@ -251,8 +250,8 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
   }, []);
 
   useEffect(() => {
-    if (!isIdle) fetchLogs();
-  }, [state.appliedFilters, isIdle]);
+    fetchLogs();
+  }, [state.appliedFilters]);
 
   useEffect(() => {
     if (prevSearch !== searchQuery) {

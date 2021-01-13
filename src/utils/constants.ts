@@ -21,7 +21,11 @@ export enum LoginErrorCodes {
   INCORRECT = 1005,
   EXPIRED = 1007,
   TOKEN_REVOKED = 1101,
+  REFRESH_TOKEN_EXPIRED = 1002,
+  TOKEN_EXPIRED = 1104,
 }
+
+export const DEFAULT_SESSION_TIMEOUT_IN_MIN = 10;
 
 export enum EmojisUniCodes {
   CHECK = '2705',

@@ -99,17 +99,8 @@ export const updatePasswordError = (error: any) =>
 
 // REFRESH TOKEN ACTIONS
 
-export const refreshTokenPoll = () =>
-  actionSpreader(AuthAction.REFRESH_TOKEN_POLL);
-
-export const refreshToken = (payload: { refreshToken: string }) =>
-  actionSpreader(AuthAction.REFRESH_TOKEN, payload);
-
 export const refreshTokenSuccess = (data: RefreshTokenResponse) =>
   actionSpreader(AuthAction.REFRESH_TOKEN_SUCCESS, data);
-
-export const refreshTokenError = (error: any) =>
-  actionSpreader(AuthAction.REFRESH_TOKEN_ERROR, error);
 
 export const checkTokenExpiry = (payload: { type: string; token: string }) =>
   actionSpreader(AuthAction.CHECK_TOKEN_EXPIRY, payload);

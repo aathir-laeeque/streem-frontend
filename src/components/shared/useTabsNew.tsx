@@ -47,7 +47,7 @@ export type Tab = {
 
 export type TabContentProps = {
   label: Tab['label'];
-  values?: Tab['value'];
+  values?: Tab['values'];
 };
 
 type Args = {

@@ -20,14 +20,14 @@ function* fetchInboxSaga({ payload }: ReturnType<typeof fetchInbox>) {
       yield put(fetchInboxOngoing());
     }
 
-    const { data, pageable, errors }: ResponseObj<Job> = yield call(
-      request,
-      'GET',
-      apiGetInbox(),
-      { params },
-    );
-    if (errors) {
-      throw new Error(errors[0].message);
+    const {
+      data,
+      pageable,
+      errors,
+      error,
+    }: ResponseObj<Job> = yield call(request, 'GET', apiGetInbox(), { params });
+    if (errors || error) {
+      throw new Error(errors?.[0]?.message || error);
     }
     yield put(fetchInboxSuccess({ data, pageable }, type));
   } catch (error) {

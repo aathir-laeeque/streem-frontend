@@ -41,10 +41,8 @@ const DEFAULT_PAGE_SIZE = 10;
 const NewTabContent = (props) => {
   const {
     users: {
-      loading,
       [props.values[0]]: { list, pageable },
     },
-    auth: { isIdle },
   } = useTypedSelector((state) => state);
 
   const dispatch = useDispatch();

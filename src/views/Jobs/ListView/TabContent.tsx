@@ -19,18 +19,15 @@ import { JobState, ListViewState, TabViewProps } from './types';
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { job } = useTypedSelector((state) => state.properties);
-  const { isIdle } = useTypedSelector((state) => state.auth);
   const { jobs, loading }: Partial<ListViewState> = useTypedSelector(
     (state) => state.jobListView,
   );
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isIdle) {
-      fetchData(0, 10);
-      dispatch(setSelectedState(label));
-    }
-  }, [isIdle]);
+    fetchData(0, 10);
+    dispatch(setSelectedState(label));
+  }, []);
 
   const selectJob = (item: Job) =>
     navigate(`/jobs/${item.id}`, {

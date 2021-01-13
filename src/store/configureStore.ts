@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { applyMiddleware, compose, createStore } from 'redux';
+import { applyMiddleware, compose, createStore, Middleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { persistStore, persistReducer, createTransform } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import { rootReducer } from './rootReducer';
 import { rootSaga } from './rootSaga';
+import { AuthAction } from '#views/Auth/types';
+import { OverlayContainerAction } from '#components/OverlayContainer/types';
 
 const sagaMiddleware = createSagaMiddleware();
 const persistConfig = {
@@ -28,7 +29,7 @@ const persistConfig = {
             return inboundState;
         }
       },
-      (outboundState: any, key: string) => {
+      (outboundState: any) => {
         return {
           ...outboundState,
         };
@@ -39,11 +40,41 @@ const persistConfig = {
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);
 
+let onIdleRequests: any[] = [];
+let previousIdle = true;
+
+const handleOnIdle: Middleware = (store) => (next) => (action) => {
+  const {
+    auth: { isIdle },
+  } = store.getState();
+
+  if (isIdle) {
+    if (
+      action.type !== AuthAction.LOGIN &&
+      action.type !== OverlayContainerAction.OPEN_OVERLAY &&
+      !action['@@redux-saga/SAGA_ACTION']
+    ) {
+      previousIdle = isIdle;
+      onIdleRequests.push(action);
+      return false;
+    }
+  } else {
+    if (previousIdle) {
+      previousIdle = false;
+      onIdleRequests.forEach((action) => store.dispatch(action));
+      onIdleRequests = [];
+    }
+  }
+
+  previousIdle = isIdle;
+  next(action);
+};
+
 export const configureStore = (initialState: {
   [x: string]: any;
   _persist: { version: number; rehydrated: boolean };
 }) => {
-  const middlewares = [sagaMiddleware];
+  const middlewares = [handleOnIdle, sagaMiddleware];
 
   const composeEnhancers =
     typeof window === 'object' &&

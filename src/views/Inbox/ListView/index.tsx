@@ -12,20 +12,17 @@ import { InboxState, ListViewProps } from './types';
 
 const ListView: FC<ListViewProps> = () => {
   const { job } = useTypedSelector((state) => state.properties);
-  const { isIdle } = useTypedSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isIdle) {
-      if (!job?.length) {
-        dispatch(fetchProperties({ type: ComposerEntity.JOB }));
-      }
-
-      return () => {
-        dispatch(resetInbox());
-      };
+    if (!job?.length) {
+      dispatch(fetchProperties({ type: ComposerEntity.JOB }));
     }
-  }, [isIdle]);
+
+    return () => {
+      dispatch(resetInbox());
+    };
+  }, []);
 
   const { renderTabHeader, renderTabContent } = useTabsNew({
     tabs: [

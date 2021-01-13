@@ -13,6 +13,7 @@ import { HomeView } from './views';
 import PrintJob from '#views/Jobs/PrintJob';
 import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
 import PrintJobActivity from '#views/Jobs/PrintJobActivity';
+import { setAuthHeader } from '#utils/axiosClient';
 
 export const { store, persistor } = configureStore({});
 
@@ -23,9 +24,22 @@ const App: FC = () => {
   //   navigate('/checklist');
   // }, []);
 
+  const onBeforeLift = () => {
+    const {
+      auth: { accessToken },
+    } = store.getState();
+    if (accessToken) {
+      setAuthHeader(accessToken);
+    }
+  };
+
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate
+        loading={null}
+        persistor={persistor}
+        onBeforeLift={onBeforeLift}
+      >
         <Router style={{ height: 'inherit', width: 'inherit' }} basepath="/">
           <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
           <CustomRoute as={PrintJob} path="jobs/print/:jobId" />

@@ -56,8 +56,7 @@ const initialState: initialState = {
   appliedUsers: [],
 };
 
-const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
-  const { isIdle } = useTypedSelector((state) => state.auth);
+const SessionActivity: FC<TabViewProps> = () => {
   const { logs, loading, pageable }: SessionActivityState = useTypedSelector(
     (state) => state.sessionActivity,
   );
@@ -256,8 +255,8 @@ const SessionActivity: FC<TabViewProps> = ({ navigate = navigateTo }) => {
   }, []);
 
   useEffect(() => {
-    if (!isIdle) fetchLogs();
-  }, [state.appliedFilters, isIdle]);
+    fetchLogs();
+  }, [state.appliedFilters]);
 
   useEffect(() => {
     if (prevSearch !== searchQuery) {

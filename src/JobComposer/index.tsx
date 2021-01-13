@@ -16,25 +16,22 @@ import {
 
 const Composer: FC<ComposerProps> = ({ id, entity }) => {
   const dispatch = useDispatch();
-  const { isIdle } = useTypedSelector((state) => state.auth);
   const { activeStageId } = useTypedSelector((state) => state.composer.stages);
   const [activeTab, setActiveTab] = useState(Tabs.STAGES);
 
   useEffect(() => {
-    if (!isIdle) {
-      if (id) {
-        dispatch(fetchData({ id, entity, setActive: true }));
-        dispatch(startPollActiveStageData({ jobId: id }));
-      } else {
-        console.log('no id got to fetch data');
-      }
-
-      return () => {
-        dispatch(stopPollActiveStageData());
-        dispatch(resetComposer());
-      };
+    if (id) {
+      dispatch(fetchData({ id, entity, setActive: true }));
+      dispatch(startPollActiveStageData({ jobId: id }));
+    } else {
+      console.log('no id got to fetch data');
     }
-  }, [isIdle]);
+
+    return () => {
+      dispatch(stopPollActiveStageData());
+      dispatch(resetComposer());
+    };
+  }, []);
 
   return (
     <ComposerWrapper activeTab={activeTab}>

@@ -40,14 +40,11 @@ const getBaseFilter = (values: string[]): FilterField[] => [
 const TabContent: FC<TabContentProps> = ({ label, values }) => {
   const dispatch = useDispatch();
 
-  const { loading, jobs, pageable } = useTypedSelector(
-    (state) => state.jobList,
-  );
+  const { jobs, pageable } = useTypedSelector((state) => state.jobList);
 
-  const {
-    isIdle,
-    selectedFacility: { id: facilityId } = {},
-  } = useTypedSelector((state) => state.auth);
+  const { selectedFacility: { id: facilityId } = {} } = useTypedSelector(
+    (state) => state.auth,
+  );
 
   const { list: jobProperties } = useProperties(ComposerEntity.JOB);
 
@@ -100,10 +97,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   }, [filterFields]);
 
   useEffect(() => {
-    if (!isIdle) {
-      fetchData();
-    }
-  }, [isIdle]);
+    fetchData();
+  }, []);
 
   const showPaginationArrows = pageable.totalPages > 10;
 

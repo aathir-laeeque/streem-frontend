@@ -16,19 +16,18 @@ import { fetchInbox, setSelectedState } from './actions';
 import { TabContentWrapper } from './styles';
 import { ListViewState, TabViewProps } from './types';
 
-const DEFAULT_PAGE_NUMBER = 0;
+// const DEFAULT_PAGE_NUMBER = 0;
 const DEFAULT_PAGE_SIZE = 10;
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { job } = useTypedSelector((state) => state.properties);
-  const { jobs, loading }: ListViewState = useTypedSelector(
+  const { jobs }: ListViewState = useTypedSelector(
     (state) => state.inboxListView,
   );
 
-  const {
-    isIdle,
-    selectedFacility: { id: facilityId } = {},
-  } = useTypedSelector((state) => state.auth);
+  const { selectedFacility: { id: facilityId } = {} } = useTypedSelector(
+    (state) => state.auth,
+  );
   const reducerLabel = label.toLowerCase().split(' ').join('');
 
   const [filterFields, setFilterFields] = useState<FilterField[]>([]);
@@ -38,11 +37,9 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isIdle) {
-      fetchData(0, 10);
-      dispatch(setSelectedState(reducerLabel));
-    }
-  }, [isIdle]);
+    fetchData(0, 10);
+    dispatch(setSelectedState(reducerLabel));
+  }, []);
 
   const fetchData = (page: number, size: number) => {
     dispatch(

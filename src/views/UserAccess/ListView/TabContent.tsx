@@ -46,15 +46,12 @@ const TabContent: FC<TabViewProps> = ({
   const { loading, [selectedState]: users }: UsersState = useTypedSelector(
     (state) => state.users,
   );
-  const { isIdle } = useTypedSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isIdle) {
-      fetchData(0, 10);
-      dispatch(setSelectedState(selectedState));
-    }
-  }, [isIdle]);
+    fetchData(0, 10);
+    dispatch(setSelectedState(selectedState));
+  }, []);
 
   const selectUser = (item: User) => {
     dispatch(setSelectedUser(item));

@@ -11,20 +11,17 @@ import { ComposerProps } from './types';
 
 const Composer: FC<ComposerProps> = ({ id, entity }) => {
   const dispatch = useDispatch();
-  const { isIdle } = useTypedSelector((state) => state.auth);
   const { loading } = useTypedSelector((state) => state.prototypeComposer);
 
   useEffect(() => {
-    if (!isIdle) {
-      if (id) {
-        dispatch(fetchComposerData({ entity, id }));
-      }
-
-      return () => {
-        dispatch(resetComposer());
-      };
+    if (id) {
+      dispatch(fetchComposerData({ entity, id }));
     }
-  }, [isIdle]);
+
+    return () => {
+      dispatch(resetComposer());
+    };
+  }, []);
 
   if (loading) {
     return <LoaderWrapper>Loading...</LoaderWrapper>;

@@ -8,7 +8,6 @@ const initialState: AuthState = {
   accessToken: '',
   refreshToken: '',
   loading: false,
-  isRefreshing: false,
   error: undefined,
   resetRequested: false,
   facilities: [],
@@ -16,8 +15,6 @@ const initialState: AuthState = {
 
 const reducer = (state = initialState, action: AuthActionType): AuthState => {
   switch (action.type) {
-    case AuthAction.REFRESH_TOKEN_POLL:
-      return { ...state, isRefreshing: true };
     case AuthAction.LOGIN:
       return { ...state, loading: true };
     case AuthAction.LOGIN_SUCCESS:
@@ -25,19 +22,9 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
         ...state,
         isIdle: false,
         loading: false,
-        roles: action.payload.roles,
-        userId: action.payload?.id,
-        accessToken: action.payload?.accessToken,
-        refreshToken: action.payload?.refreshToken,
-        settings: action.payload?.settings,
-        accessTokenExpirationInMinutes:
-          action.payload?.accessTokenExpirationInMinutes,
-        refreshTokenExpirationInMinutes:
-          action.payload?.refreshTokenExpirationInMinutes,
-        sessionIdleTimeoutInMinutes:
-          action.payload?.sessionIdleTimeoutInMinutes,
-        facilities: action.payload?.facilities,
-        selectedFacility: action.payload?.facilities[0],
+        isLoggedIn: true,
+        userId: action.payload.id,
+        ...action.payload,
       };
     case AuthAction.SET_IDLE:
       return {
@@ -62,8 +49,7 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
       return {
         ...state,
         isLoggedIn: true,
-        accessToken: action.payload?.accessToken,
-        refreshToken: action.payload?.refreshToken,
+        ...action.payload,
       };
     case AuthAction.CHECK_TOKEN_EXPIRY_SUCCESS:
       return {

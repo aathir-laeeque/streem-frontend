@@ -5,4 +5,4 @@ type TabContentProps = {
   selectedState: UserState;
 };
 export type ListViewProps = RouteComponentProps;
-export type TabViewProps = RouteComponentProps & TabContentProps;
+export type TabViewProps = RouteComponentProps;

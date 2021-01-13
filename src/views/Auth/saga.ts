@@ -1,6 +1,5 @@
 import {
   apiLogin,
-  apiRefreshToken,
   apiGetUser,
   apiRegister,
   apiLogOut,
@@ -13,17 +12,12 @@ import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { navigate } from '@reach/router';
-import { User, UserState } from '#store/users/types';
+import { User } from '#store/users/types';
 import {
   login,
   logOutSuccess,
   loginSuccess,
   loginError,
-  refreshToken,
-  refreshTokenPoll,
-  refreshTokenSuccess,
-  refreshTokenError,
   fetchProfile,
   fetchProfileSuccess,
   fetchProfileError,
@@ -50,73 +44,13 @@ import {
 } from './actions';
 import { persistor } from '../../App';
 
-import {
-  call,
-  put,
-  delay,
-  select,
-  takeLeading,
-  takeLatest,
-} from 'redux-saga/effects';
-import { AuthAction, LoginResponse, RefreshTokenResponse } from './types';
-import { setSelectedState } from '#store/users/actions';
+import { call, put, select, takeLeading } from 'redux-saga/effects';
+import { AuthAction, LoginResponse } from './types';
 import { LoginErrorCodes } from '#utils/constants';
+import { setAuthHeader, removeAuthHeader } from '#utils/axiosClient';
+import { navigate } from '@reach/router';
 
-const getRefreshToken = (state: any) => state.auth.refreshToken;
 const getUserId = (state: any) => state.auth.userId;
-const getIsIdle = (state: any) => state.auth.isIdle;
-const getRefreshTimeOut = (state: any) =>
-  state.auth.accessTokenExpirationInMinutes;
-
-function* refreshTokenPollSaga() {
-  try {
-    yield delay(500);
-    let userId = yield select(getUserId);
-    let token = yield select(getRefreshToken);
-    let isIdle = yield select(getIsIdle);
-    if (!isIdle) yield put(refreshToken({ refreshToken: token }));
-    while (userId) {
-      const refreshTimeOut = yield select(getRefreshTimeOut);
-      yield delay((refreshTimeOut - 1 || 9) * 1000 * 60);
-      userId = yield select(getUserId);
-      isIdle = yield select(getIsIdle);
-      token = yield select(getRefreshToken);
-      if (!isIdle) yield put(refreshToken({ refreshToken: token }));
-    }
-  } catch (error) {
-    console.error(
-      'error from refreshTokenPollSaga function in Auth :: ',
-      error,
-    );
-  }
-}
-
-function* refreshTokenSaga({ payload }: ReturnType<typeof refreshToken>) {
-  try {
-    const {
-      data,
-      errors,
-      error,
-    }: ResponseObj<RefreshTokenResponse> = yield call(
-      request,
-      'POST',
-      apiRefreshToken(),
-      {
-        data: payload,
-      },
-    );
-
-    if (errors || error) {
-      throw 'Token Expired';
-    }
-
-    yield put(refreshTokenSuccess(data));
-  } catch (error) {
-    console.error('error from refreshTokenSaga function in Auth :: ', error);
-    yield put(cleanUp());
-    yield put(refreshTokenError(error));
-  }
-}
 
 function* loginSaga({ payload }: ReturnType<typeof login>) {
   try {
@@ -146,10 +80,10 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
       }
     }
 
+    setAuthHeader(data.accessToken);
+
     yield put(loginSuccess(data));
-    yield delay(200);
     yield put(fetchProfile({ id: data.id }));
-    yield put(refreshTokenPoll());
   } catch (error) {
     console.error('error from loginSaga function in Auth :: ', error);
     if (typeof error !== 'string') error = 'There seems to be an Issue.';
@@ -159,7 +93,7 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
 
 function* logOutSaga() {
   try {
-    const { data, errors }: ResponseObj<LoginResponse> = yield call(
+    const { errors }: ResponseObj<LoginResponse> = yield call(
       request,
       'POST',
       apiLogOut(),
@@ -168,7 +102,7 @@ function* logOutSaga() {
     if (errors) {
       throw 'Logout Error';
     }
-    yield put(setSelectedState(UserState.ACTIVE));
+
     yield put(logOutSuccess());
   } catch (error) {
     console.error('error from logOutSaga function in Auth :: ', error);
@@ -178,6 +112,7 @@ function* logOutSaga() {
 
 function* cleanUpSaga() {
   try {
+    removeAuthHeader();
     yield call(persistor.purge);
   } catch (error) {
     console.error('error from cleanUpSaga function in Auth :: ', error);
@@ -223,7 +158,7 @@ function* fetchProfileSaga({ payload }: ReturnType<typeof fetchProfile>) {
 
 function* registerSaga({ payload }: ReturnType<typeof register>) {
   try {
-    const { data, errors }: ResponseObj<User> = yield call(
+    const { errors }: ResponseObj<User> = yield call(
       request,
       'PUT',
       apiRegister(),
@@ -258,7 +193,7 @@ function* registerSaga({ payload }: ReturnType<typeof register>) {
 
 function* forgotPasswordSaga({ payload }: ReturnType<typeof forgotPassword>) {
   try {
-    const { data, errors }: ResponseObj<any> = yield call(
+    const { errors }: ResponseObj<any> = yield call(
       request,
       'POST',
       apiForgotPassword(),
@@ -280,7 +215,7 @@ function* forgotPasswordSaga({ payload }: ReturnType<typeof forgotPassword>) {
 
 function* resetPasswordSaga({ payload }: ReturnType<typeof resetPassword>) {
   try {
-    const { data, errors }: ResponseObj<User> = yield call(
+    const { errors }: ResponseObj<User> = yield call(
       request,
       'PUT',
       apiResetPassword(),
@@ -387,7 +322,7 @@ function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
 function* updatePasswordSaga({ payload }: ReturnType<typeof updatePassword>) {
   try {
     const { body, id } = payload;
-    const { data, errors }: ResponseObj<User> = yield call(
+    const { errors }: ResponseObj<User> = yield call(
       request,
       'PUT',
       apiUpdatePassword(id),
@@ -453,8 +388,6 @@ export function* AuthSaga() {
   yield takeLeading(AuthAction.LOGOUT, logOutSaga);
   yield takeLeading(AuthAction.LOGOUT_SUCCESS, logOutSuccessSaga);
   yield takeLeading(AuthAction.CLEANUP, cleanUpSaga);
-  yield takeLatest(AuthAction.REFRESH_TOKEN_POLL, refreshTokenPollSaga);
-  yield takeLeading(AuthAction.REFRESH_TOKEN, refreshTokenSaga);
   yield takeLeading(AuthAction.FETCH_PROFILE, fetchProfileSaga);
   yield takeLeading(AuthAction.REGISTER, registerSaga);
   yield takeLeading(AuthAction.FORGOT_PASSWORD, forgotPasswordSaga);
