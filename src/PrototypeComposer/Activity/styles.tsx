@@ -53,17 +53,11 @@ const ChecklistWrapper = styled.div.attrs({
     padding: 0;
 
     &-item {
-      align-items: center;
       display: flex;
-
-      .input {
-        #before-icon {
-          color: #000000;
-        }
-      }
 
       #remove-item {
         margin-left: 16px;
+        margin-top: 16px;
       }
     }
   }
@@ -115,14 +109,7 @@ const MultiSelectWrapper = styled.div.attrs({
     padding: 0;
 
     &-item {
-      align-items: center;
       display: flex;
-
-      .input {
-        #before-icon {
-          color: #000000;
-        }
-      }
 
       #remove-item {
         margin-left: 16px;
@@ -257,7 +244,6 @@ const MaterialWrapper = styled.div.attrs({
     padding: 0;
 
     &-item {
-      align-items: center;
       display: flex;
       list-style-position: inside;
       margin-bottom: 8px;

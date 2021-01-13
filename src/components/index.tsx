@@ -34,3 +34,4 @@ export { default as DropdownFilter } from './shared/DropdownFilter';
 export { default as UsersFilter } from './shared/UsersFilter';
 export * from './shared/useTabsNew';
 export * from './shared/NewListView';
+export { default as ActivityItemInput } from './shared/ActivityItemInput';

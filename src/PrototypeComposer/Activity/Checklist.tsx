@@ -1,6 +1,5 @@
-import { AddNewItem, TextInput } from '#components';
+import { ActivityItemInput, AddNewItem } from '#components';
 import { CheckBoxOutlineBlankSharp, Close } from '@material-ui/icons';
-import { debounce } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,10 +20,10 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
       <ul className="checklist-list">
         {activity?.data?.map((item, index) => (
           <li className="checklist-list-item" key={item.id}>
-            <TextInput
-              BeforeElement={CheckBoxOutlineBlankSharp}
+            <ActivityItemInput
+              Icon={CheckBoxOutlineBlankSharp}
               defaultValue={item.name}
-              onChange={debounce(({ value }) => {
+              customOnChange={(value) => {
                 dispatch(
                   updateActivity({
                     ...activity,
@@ -35,7 +34,7 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                     ],
                   }),
                 );
-              }, 500)}
+              }}
             />
 
             <Close

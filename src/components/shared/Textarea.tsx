@@ -15,6 +15,7 @@ type OnChangeArgs = {
 };
 
 type TextareaProps = {
+  activityItemInput?: boolean;
   allowResize?: boolean;
   error?: boolean | string;
   label?: string;
@@ -23,6 +24,7 @@ type TextareaProps = {
 } & ComponentPropsWithRef<'textarea'>;
 
 type WrapperProps = {
+  activityItemInput: boolean;
   allowResize: boolean;
   hasError: boolean;
   parentHeight: string;
@@ -83,10 +85,18 @@ const Wrapper = styled.div.attrs(({ className }) => ({
         resize: none;
       }
 
-      :active,
-      :focus {
-        border-color: #1d84ff;
-      }
+      ${({ activityItemInput }) =>
+        !activityItemInput
+          ? css`
+              :active,
+              :focus {
+                border-color: #1d84ff;
+              }
+            `
+          : css`
+              /* padding: 0; */
+              border-bottom-color: transparent;
+            `}
 
       :-webkit-input-placeholder {
         text-align: center;
@@ -154,6 +164,7 @@ const Wrapper = styled.div.attrs(({ className }) => ({
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (props, ref) => {
     const {
+      activityItemInput = false,
       allowResize = true,
       defaultValue,
       disabled = false,
@@ -191,6 +202,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     return (
       <Wrapper
+        activityItemInput={activityItemInput}
         allowResize={allowResize}
         hasError={!!error}
         parentHeight={parentHeight}

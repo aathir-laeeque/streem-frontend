@@ -1,4 +1,4 @@
-import { TextInput } from '#components';
+import { TextInput, ActivityItemInput } from '#components';
 import React, { FC } from 'react';
 
 import { YesNoWrapper } from './styles';
@@ -12,7 +12,7 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
 
   return (
     <YesNoWrapper>
-      <TextInput
+      <ActivityItemInput
         defaultValue={activity.label}
         error={
           !activity.label &&
@@ -20,9 +20,9 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         }
         label="Ask a question"
         name="label"
-        onChange={debounce(({ value }) => {
+        customOnChange={(value) => {
           dispatch(updateActivity({ ...activity, label: value }));
-        }, 500)}
+        }}
       />
 
       <div className="options-container">

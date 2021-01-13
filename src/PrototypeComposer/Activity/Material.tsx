@@ -1,14 +1,13 @@
 import ImageUploadIcon from '#assets/svg/ImageUpload';
-import { AddNewItem, ImageUploadButton, TextInput } from '#components';
+import { ActivityItemInput, AddNewItem, ImageUploadButton } from '#components';
 import { ArrowDropDown, ArrowDropUp, Close } from '@material-ui/icons';
-import { debounce } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
 
 import { updateActivity } from './actions';
 import { MaterialWrapper } from './styles';
 import { ActivityProps } from './types';
-import { v4 as uuidv4 } from 'uuid';
 
 const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
@@ -52,10 +51,9 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                 )}
               </div>
 
-              <TextInput
-                className="item-input"
+              <ActivityItemInput
                 defaultValue={item.name}
-                onChange={debounce(({ value }) => {
+                customOnChange={(value) => {
                   dispatch(
                     updateActivity({
                       ...activity,
@@ -66,7 +64,7 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                       ],
                     }),
                   );
-                }, 500)}
+                }}
               />
 
               <div className="quantity-control">
