@@ -42,7 +42,6 @@ export interface LoginResponse {
 
 export interface RefreshTokenResponse {
   accessToken: string;
-  refreshToken: string;
 }
 
 type Facility = {
