@@ -24,6 +24,7 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
         loading: false,
         isLoggedIn: true,
         userId: action.payload.id,
+        selectedFacility: action.payload?.facilities[0],
         ...action.payload,
       };
     case AuthAction.SET_IDLE:
