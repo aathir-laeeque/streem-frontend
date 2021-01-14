@@ -2,11 +2,7 @@ import { store } from '../App';
 import { apiRefreshToken } from './apiUrls';
 import axios, { AxiosResponse } from 'axios';
 import { closeAllOverlayAction } from '#components/OverlayContainer/actions';
-import {
-  logOutSuccess,
-  logOut,
-  refreshTokenSuccess,
-} from '#views/Auth/actions';
+import { logOutSuccess, refreshTokenSuccess } from '#views/Auth/actions';
 import { NotificationType } from '#components/Notification/types';
 import { LoginErrorCodes } from './constants';
 import { RefreshTokenResponse } from '#views/Auth/types';
@@ -49,16 +45,17 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     try {
       const { config: originalReq, response } = error;
-      const errorCode = response?.data?.errors?.[0]?.code;
+      const { code } = response?.data?.errors?.[0];
 
-      if (errorCode && errorCode !== LoginErrorCodes.TOKEN_EXPIRED.toString()) {
-        throw errorCode.toString();
-      }
-
-      if (
+      if (code !== LoginErrorCodes.TOKEN_EXPIRED.toString()) {
+        if (code in LoginErrorCodes) {
+          throw code.toString();
+        } else {
+          return response?.data;
+        }
+      } else if (
         originalReq.url !== REFRESH_TOKEN_URL &&
-        !originalReq?.isRetryAttempt &&
-        errorCode === LoginErrorCodes.TOKEN_EXPIRED.toString()
+        !originalReq?.isRetryAttempt
       ) {
         const {
           auth: { refreshToken },
@@ -77,20 +74,16 @@ axiosInstance.interceptors.response.use(
         return response.data;
       }
     } catch (e) {
-      if (e in LoginErrorCodes) {
-        store.dispatch(closeAllOverlayAction());
-        store.dispatch(
-          logOutSuccess({
-            msg:
-              LoginErrorCodes.TOKEN_REVOKED.toString() === e
-                ? 'Token Revoked'
-                : 'Token Expired',
-            type: NotificationType.ERROR,
-          }),
-        );
-      } else {
-        store.dispatch(logOut());
-      }
+      store.dispatch(closeAllOverlayAction());
+      store.dispatch(
+        logOutSuccess({
+          msg:
+            LoginErrorCodes.TOKEN_REVOKED.toString() === e
+              ? 'Token Revoked'
+              : 'Token Expired',
+          type: NotificationType.ERROR,
+        }),
+      );
       throw e;
     }
   },
