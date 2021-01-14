@@ -265,6 +265,7 @@ const MaterialWrapper = styled.div.attrs({
         background-color: #f4f4f4;
         cursor: pointer;
         display: flex;
+        height: max-content;
         justify-content: center;
         margin-right: 12px;
         padding: 8px;
@@ -288,6 +289,8 @@ const MaterialWrapper = styled.div.attrs({
         align-items: center;
         background-color: #f4f4f4;
         display: flex;
+        height: max-content;
+        margin-left: 12px;
 
         span {
           border: 1px solid transparent;
