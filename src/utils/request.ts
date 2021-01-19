@@ -31,6 +31,6 @@ export const request = async (
       return response;
     })
     .catch((error) => {
-      console.error('Error in Request :', error);
+      console.error('Error in axios Request :', error);
     });
 };
