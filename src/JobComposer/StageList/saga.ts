@@ -13,6 +13,7 @@ import {
   CompletedJobState,
   JOB_STAGE_POLLING_TIMEOUT,
 } from '#JobComposer/composer.types';
+import { keyBy } from 'lodash';
 
 const getCurrentStatus = (state: RootState) => state.composer.jobState;
 const getActiveStageId = (state: RootState) =>
@@ -44,6 +45,7 @@ function* activeStagePollingSaga({
 
         const {
           stage: { tasks },
+          stageReports: reports,
         } = data;
         let activitiesById: any = {};
 
@@ -57,14 +59,14 @@ function* activeStagePollingSaga({
           return { ...acc, [task.id]: task };
         }, {});
 
-        console.log('tasksById', tasksById);
-        console.log('activitiesById', activitiesById);
+        const stageReports = keyBy(reports, 'stageId');
 
         yield put(
           fetchActiveStageDataSuccess({
             ...data,
             tasksById,
             activitiesById,
+            stageReports,
           } as fetchActiveStageDataRes),
         );
 

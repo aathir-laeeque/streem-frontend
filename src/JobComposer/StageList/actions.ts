@@ -6,6 +6,7 @@ import { Job } from '#views/Jobs/types';
 
 import { Stage } from '../checklist.types';
 import { StageListAction } from './reducer.types';
+import { StageReports } from './types';
 
 type startPollActiveStageDataArgs = {
   jobId: Job['id'];
@@ -17,6 +18,7 @@ export interface fetchActiveStageDataRes {
   stage: Stage;
   tasksById: TasksById;
   activitiesById: ActivitiesById;
+  stageReports: StageReports;
 }
 
 export const setActiveStage = (id: Stage['id'], bringIntoView = false) =>

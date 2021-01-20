@@ -1,13 +1,13 @@
 import { Stage } from '../checklist.types';
 import { ComposerActionType } from '../composer.reducer.types';
 import { setActiveStage } from './actions';
-import { StagesById, StagesOrder } from './types';
+import { StagesById, StagesOrder, StageReports } from './types';
 
 export type StageListState = {
   activeStageId?: Stage['id'];
 
   bringIntoView: boolean;
-
+  stageReports?: StageReports;
   stagesById: StagesById;
   stagesOrder: StagesOrder;
 };

@@ -35,10 +35,11 @@ const reducer: Reducer<StageListState, StageListActionType> = (
 
     case StageListAction.FETCH_ACTIVE_STAGE_DATA_SUCCESS:
       const {
-        data: { stage },
+        data: { stage, stageReports },
       } = action.payload;
       return {
         ...state,
+        stageReports,
         stagesById: {
           ...state.stagesById,
           [stage.id]: stage,

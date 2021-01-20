@@ -30,7 +30,7 @@ export const apiStartJob = (jobId: Job['id'], action: string) =>
   `${baseUrl}/jobs/${jobId}/${action}`;
 
 export const apiGetStageData = (jobId: Job['id'], stageId: Stage['id']) =>
-  `${baseUrl}/jobs/${jobId}/stage/${stageId}/data`;
+  `${baseUrl}/jobs/${jobId}/stages/state?stageId=${stageId}`;
 
 export const apiPerformActionOnTask = (taskId: Task['id'], action: string) =>
   `${baseUrl}/tasks/${taskId}/${action}`;
