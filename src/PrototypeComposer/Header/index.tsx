@@ -57,14 +57,11 @@ const ChecklistHeader: FC = () => {
 
   const reviewer = data?.collaborators.filter(
     (reviewer) =>
-      reviewer.reviewCycle === data.reviewCycle &&
-      reviewer.type === CollaboratorType.REVIEWER &&
-      reviewer.id === userId,
+      reviewer.type === CollaboratorType.REVIEWER && reviewer.id === userId,
   )[0];
 
   const approvers = data?.collaborators.filter(
     (reviewer) =>
-      // reviewer.reviewCycle === data.reviewCycle &&
       reviewer.type === CollaboratorType.SIGN_OFF_USER &&
       reviewer.id === userId,
   );
@@ -75,8 +72,6 @@ const ChecklistHeader: FC = () => {
     : false;
 
   const author = data?.authors.filter((a) => a.id.toString() === userId)[0];
-
-  console.log('author', author);
 
   let allDoneOk = true;
   data?.collaborators.forEach((r) => {
@@ -547,6 +542,8 @@ const ChecklistHeader: FC = () => {
         {reviewer &&
           data?.state !== ChecklistStates.READY_FOR_RELEASE &&
           data?.state !== ChecklistStates.READY_FOR_SIGNING &&
+          data?.state !== ChecklistStates.SIGN_OFF_INITIATED &&
+          data?.state !== ChecklistStates.PUBLISHED &&
           (reviewer.state === CollaboratorState.REQUESTED_CHANGES ||
             reviewer.state === CollaboratorState.REQUESTED_NO_CHANGES) && (
             <div className="alert">
@@ -586,7 +583,7 @@ const ChecklistHeader: FC = () => {
           <div className="header-content-right">
             {author && !approver && renderButtonsForAuthor()}
 
-            {reviewer && (
+            {reviewer && !approver && (
               <>
                 <ViewReviewersButton />
                 {data?.state !== ChecklistStates.REQUESTED_CHANGES &&

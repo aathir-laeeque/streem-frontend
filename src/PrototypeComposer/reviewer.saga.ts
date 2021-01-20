@@ -35,9 +35,6 @@ import {
   assignReviewersToChecklist,
   assignReviewersToChecklistError,
   assignReviewersToChecklistSuccess,
-  // continueChecklistReview,
-  // continueChecklistReviewError,
-  // continueChecklistReviewSuccess,
   fetchAssignedReviewersForChecklist,
   fetchAssignedReviewersForChecklistError,
   fetchAssignedReviewersForChecklistSuccess,
@@ -630,15 +627,13 @@ function* signOffPrototypeSaga({
 
       const userProfile = getUserProfile(yield select());
       const currentReviewers = getCurrentReviewers(yield select());
-      const currentCycle = getCurrentCycle(yield select());
       const collaborators: Collaborator[] = [];
       let isLast = true;
       let sameUserCount = 0;
       currentReviewers.forEach((r) => {
-        if (r.reviewCycle === currentCycle) {
+        if (r.type === CollaboratorType.SIGN_OFF_USER) {
           if (
             r.id !== userProfile?.id &&
-            r.type === CollaboratorType.SIGN_OFF_USER &&
             r.state === CollaboratorState.NOT_STARTED
           ) {
             isLast = false;
