@@ -50,7 +50,7 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
       return {
         ...state,
         isLoggedIn: true,
-        ...action.payload,
+        accessToken: action.payload.accessToken,
       };
     case AuthAction.CHECK_TOKEN_EXPIRY_SUCCESS:
       return {
