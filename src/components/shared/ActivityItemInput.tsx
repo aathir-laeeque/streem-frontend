@@ -13,7 +13,9 @@ type Props = ComponentPropsWithRef<'textarea'> & {
   customOnChange: (value: string) => void;
 };
 
-const Wrapper = styled.div`
+const Wrapper = styled.div.attrs(({ className }) => ({
+  className: `input ${className ? className : ''}`,
+}))<Props>`
   flex: 1;
   flex-direction: column;
 

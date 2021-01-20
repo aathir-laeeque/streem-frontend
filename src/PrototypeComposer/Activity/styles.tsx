@@ -206,6 +206,10 @@ const YesNoWrapper = styled.div.attrs({
           border-bottom-color: #5aa700;
           background-color: #e1fec0;
 
+          textarea {
+            background-color: transparent;
+          }
+
           :focus-within {
             border-color: #5aa700;
           }
@@ -216,6 +220,10 @@ const YesNoWrapper = styled.div.attrs({
         .input-wrapper {
           border-bottom-color: #ff6b6b;
           background-color: #ffebeb;
+
+          textarea {
+            background-color: transparent;
+          }
 
           :focus-within {
             border-color: #ff6b6b;

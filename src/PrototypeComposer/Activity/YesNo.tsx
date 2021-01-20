@@ -1,11 +1,10 @@
-import { TextInput, ActivityItemInput } from '#components';
+import { ActivityItemInput } from '#components';
 import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
 
+import { updateActivity } from './actions';
 import { YesNoWrapper } from './styles';
 import { ActivityProps } from './types';
-import { debounce } from 'lodash';
-import { useDispatch } from 'react-redux';
-import { updateActivity } from './actions';
 
 const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
@@ -29,7 +28,7 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         {activity.data
           .sort((a, b) => (a.type > b.type ? -1 : 1))
           .map((item, index) => (
-            <TextInput
+            <ActivityItemInput
               defaultValue={item.name}
               error={
                 !item.name &&
@@ -40,7 +39,7 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                 item.type === 'yes' ? 'Positive Response' : 'Negative Response'
               }
               name={item.type}
-              onChange={debounce(({ value }) => {
+              customOnChange={(value) => {
                 dispatch(
                   updateActivity({
                     ...activity,
@@ -51,7 +50,7 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                     ],
                   }),
                 );
-              }, 500)}
+              }}
             />
           ))}
       </div>
