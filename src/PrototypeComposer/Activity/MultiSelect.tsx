@@ -1,5 +1,5 @@
 import { ActivityItemInput, AddNewItem, Select } from '#components';
-import { MandatoryActivity } from '#Composer-new/checklist.types';
+import { MandatoryActivity } from '#PrototypeComposer/checklist.types';
 import {
   CheckBoxOutlineBlankSharp,
   Close,
