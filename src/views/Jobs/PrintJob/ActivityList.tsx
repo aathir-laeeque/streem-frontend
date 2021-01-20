@@ -600,6 +600,7 @@ const activityTemplateFormatter = (
               {
                 justifyContent: 'flex-start',
                 borderBottomWidth: 0,
+                flexWrap: 'wrap',
               },
             ]}
             wrap={false}
@@ -614,7 +615,10 @@ const activityTemplateFormatter = (
             ) : (
               <View style={styles.checkBox} />
             )}
-            <Text style={styles.text12}>Positive</Text>
+            <Text style={styles.text12}>
+              {activity.data?.filter((d) => d.type === 'yes')[0].name ||
+                'Positive'}
+            </Text>
             <Text style={[styles.text12, { marginHorizontal: 20 }]}>or</Text>
             {activity.response?.choices &&
             activity.response?.choices[activity.data[1].id] === 'SELECTED' ? (
@@ -625,11 +629,17 @@ const activityTemplateFormatter = (
             ) : (
               <View style={styles.checkBox} />
             )}
-            <Text style={styles.text12}>Negative</Text>
+            <Text style={styles.text12}>
+              {activity.data?.filter((d) => d.type === 'no')[0].name ||
+                'Negative'}
+            </Text>
           </View>
           <View style={{ paddingVertical: 8 }} wrap={false}>
             <Text style={styles.text12}>
-              If ‘NO’ is ticked, a reason has to be written below
+              If ‘
+              {activity.data?.filter((d) => d.type === 'no')[0].name ||
+                'Negative'}
+              ’ is ticked, a reason has to be written below
             </Text>
             <View style={styles.comments}>
               {activity.response?.reason ? (
