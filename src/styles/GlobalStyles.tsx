@@ -229,6 +229,10 @@ const GlobalStyles = createGlobalStyle`
     }
   }
 
+  .MuiAutocomplete-option[data-focus="true"] {
+    background-color: rgba(29, 132, 255, 0.2) !important;
+  }
+
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,

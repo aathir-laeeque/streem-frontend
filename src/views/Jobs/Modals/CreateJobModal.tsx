@@ -1,13 +1,20 @@
-import { BaseModal, FloatInput } from '#components';
+import {
+  BaseModal,
+  AutoComplete,
+  TextInput,
+  Button1,
+  fetchDataParams,
+} from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { usePrevious } from '#utils/usePrevious';
 import { useTypedSelector } from '#store';
 import { Property } from '#store/properties/types';
 import { Checklist } from '#views/Checklists/types';
 import { useDispatch } from 'react-redux';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
+import { useForm } from 'react-hook-form';
+import { capitalize } from 'lodash';
 
 export interface CreateJobModalProps {
   selectedChecklist: Checklist | null;
@@ -16,36 +23,48 @@ export interface CreateJobModalProps {
 }
 
 const Wrapper = styled.div.attrs({})`
-  .checklists-wrapper-input {
-    display: flex;
-    flex: 1;
-    flex-direction: column-reverse;
-    .checklists-wrapper {
-      position: absolute;
-      top: 120px;
-      left: 16px;
-      right: 16px;
-      background: #fff;
-      z-index: 1;
-      border-radius: 4px;
-      box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.12),
-        0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-      overflow-y: auto;
-      max-height: 250px;
+  .modal {
+    min-width: 500px !important;
 
-      .checklist-row {
-        padding: 8px 12px;
+    .modal-header {
+      padding: 24px !important;
+      border-bottom: 1px solid #eeeeee;
+
+      h2 {
+        color: #000 !important;
+        font-weight: bold !important;
+      }
+    }
+
+    .modal-body {
+      padding: 24px !important;
+
+      .row {
+        margin-top: 24px;
+      }
+
+      .input-label {
+        font-size: 12px;
+        text-transform: capitalize;
+
+        .optional-badge {
+          margin-left: auto;
+        }
+      }
+
+      .field-error {
+        margin-top: 4px;
+        font-size: 12px;
+      }
+
+      .buttons-container {
         display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #fff;
-        cursor: pointer;
+        margin-top: 40px;
       }
+    }
 
-      .checklist-row:hover {
-        background-color: rgba(29, 132, 255, 0.2);
-      }
+    .modal-footer {
+      padding: 24px !important;
     }
   }
 `;
@@ -55,59 +74,36 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   closeOverlay,
   props: { properties, onCreateJob, selectedChecklist },
 }) => {
-  const [jobDetails, setJobDetails] = useState<Record<string, string>>({});
-  const [isSelected, setIsSelected] = useState(false);
-
-  const { checklists, pageable } = useTypedSelector(
+  const { checklists, pageable, loading } = useTypedSelector(
     (state) => state.checklistListView,
   );
   const dispatch = useDispatch();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showChecklists, setShowChecklists] = useState(false);
 
-  const prevSearch = usePrevious(searchQuery);
-
-  const fetchData = (page: number, size: number) => {
+  const fetchData = ({
+    page,
+    isReseting = true,
+    size = 10,
+    query = '',
+  }: fetchDataParams) => {
     const filters = JSON.stringify({
       op: 'AND',
       fields: [
-        { field: 'code', op: 'LIKE', values: [searchQuery] },
+        { field: 'code', op: 'LIKE', values: [query] },
         { field: 'state', op: 'EQ', values: ['PUBLISHED'] },
         { field: 'archived', op: 'EQ', values: [false] },
       ],
     });
-    dispatch(fetchChecklists({ page, size, filters, sort: 'id' }));
+    dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, isReseting));
   };
 
-  useEffect(() => {
-    if (!selectedChecklist) {
-      if (prevSearch !== searchQuery) {
-        fetchData(0, 10);
-      }
-    }
-  }, [searchQuery]);
+  const { control, handleSubmit, register, errors, formState } = useForm({
+    mode: 'onChange',
+    criteriaMode: 'all',
+  });
 
-  const onInputChange = (id: string, value: string) => {
-    const temp = { ...jobDetails };
-    temp[id] = value;
-    setJobDetails(temp);
-  };
-
-  const rowSelected = (checklist: Checklist) => {
-    setSearchQuery(checklist.name);
-    setShowChecklists(false);
-    setIsSelected(true);
-    onInputChange('checklistId', checklist.id);
-  };
-
-  const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
-    e.stopPropagation();
-    const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-    if (
-      scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 &&
-      !pageable.last
-    )
-      fetchData(pageable.page + 1, 10);
+  const onSubmit = (data: Record<string, string>) => {
+    onCreateJob(data);
+    closeOverlay();
   };
 
   return (
@@ -115,81 +111,92 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
       <BaseModal
         closeAllModals={closeAllOverlays}
         closeModal={closeOverlay}
-        onSecondary={closeOverlay}
         title="Creating a Job"
-        primaryText="Create Job"
-        secondaryText="Cancel"
-        onPrimary={() => {
-          onCreateJob(jobDetails);
-          closeOverlay();
-        }}
-        disabledPrimary={
-          selectedChecklist
-            ? properties.some(
-                (property) => property.mandatory && !jobDetails[property.name],
-              )
-            : properties.some(
-                (property) => property.mandatory && !jobDetails[property.name],
-              ) || !isSelected
-        }
+        showFooter={false}
       >
-        {(selectedChecklist && (
-          <FloatInput
-            placeHolder="Choose a Checklist"
-            label="Checklist"
-            value={`${selectedChecklist.code} ${selectedChecklist.name}`}
-            id="checklistId"
-            onChange={onInputChange}
-            required
-            disabled
-          />
-        )) || (
-          <div className="checklists-wrapper-input">
-            <FloatInput
-              placeHolder="Search Checklist By Code"
-              label="Select a Checklist"
-              value={searchQuery}
-              id="checklistId"
-              executeOnFocus={() => setShowChecklists(true)}
-              executeOnBlur={() =>
-                setTimeout(() => setShowChecklists(false), 200)
-              }
-              onChange={(id, value) => {
-                setIsSelected(false);
-                setSearchQuery(value);
-              }}
-              required
-              isSearch
+        <form onSubmit={handleSubmit((data) => onSubmit(data))}>
+          {selectedChecklist ? (
+            <>
+              <TextInput
+                label="Checklist"
+                defaultValue={selectedChecklist.name}
+                inputProps={{
+                  disabled: true,
+                }}
+              />
+              <input
+                ref={register({ required: true })}
+                value={selectedChecklist.id}
+                name="checklistId"
+                type="hidden"
+              />
+            </>
+          ) : (
+            <AutoComplete
+              control={control}
+              label="Checklist"
+              name="checklistId"
+              choices={checklists}
+              fetchData={fetchData}
+              currentPage={pageable.page}
+              lastPage={pageable.last}
+              rules={{ required: true }}
+              loading={loading}
+              getOptionLabel={(option) => `${option.name} - ${option.code}`}
+              getOptionSelected={(option, value) => option.id === value.id}
+              renderOption={(option) => (
+                <div
+                  style={{
+                    display: 'flex',
+                    flex: 1,
+                    justifyContent: 'space-between',
+                    fontSize: '14px',
+                  }}
+                >
+                  <span style={{ color: '#666' }}>{option.name}</span>
+                  <span style={{ color: '#999' }}>{option.code}</span>
+                </div>
+              )}
             />
-            {showChecklists && (
-              <div className="checklists-wrapper" onScroll={handleOnScroll}>
-                {checklists &&
-                  checklists.map((checklist) => (
-                    <div
-                      className="checklist-row"
-                      key={`${checklist.id}`}
-                      onClick={() => rowSelected(checklist)}
-                    >
-                      <span style={{ color: '#666' }}>{checklist.name}</span>
-                      <span style={{ color: '#999' }}>{checklist.code}</span>
-                    </div>
-                  ))}
-              </div>
-            )}
+          )}
+          {properties.map((property, index) => (
+            <TextInput
+              key={`property_${index}`}
+              label={property.name.toLowerCase()}
+              name={property.name}
+              optional={!property.mandatory}
+              ref={register({
+                required: property.mandatory
+                  ? `${capitalize(property.name)} is required.`
+                  : false,
+              })}
+              className="row"
+              error={
+                errors[property.name]?.message !== ''
+                  ? errors[property.name]?.message
+                  : ''
+              }
+            />
+          ))}
+          <div className="buttons-container">
+            <Button1 variant="secondary" color="red" onClick={closeOverlay}>
+              Cancel
+            </Button1>
+            <Button1
+              disabled={!formState.isValid || !formState.isDirty}
+              type="submit"
+            >
+              Create Job
+            </Button1>
+            <Button1
+              disabled={!formState.isValid || !formState.isDirty}
+              variant="textOnly"
+              style={{ marginLeft: 'auto' }}
+            >
+              Schedule Job
+            </Button1>
           </div>
-        )}
-
-        {properties.map((property, index) => (
-          <FloatInput
-            key={`property_${index}`}
-            placeHolder={property.placeHolder}
-            label={property.name}
-            id={property.name}
-            value={jobDetails[property.name] || ''}
-            onChange={onInputChange}
-            required={property.mandatory}
-          />
-        ))}
+        </form>
       </BaseModal>
     </Wrapper>
   );

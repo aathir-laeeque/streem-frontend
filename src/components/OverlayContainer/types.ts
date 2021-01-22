@@ -52,7 +52,7 @@ export enum OverlayNames {
 
 export interface CommonOverlayProps<T> {
   type: OverlayNames;
-  props?: T;
+  props: T;
   key: string;
   closeOverlay: () => void;
   closeAllOverlays: () => void;

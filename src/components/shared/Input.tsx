@@ -19,7 +19,8 @@ type InputProps = {
   error?: boolean | string;
   label?: string;
   optional?: boolean;
-  onChange?: ({ name, value }: OnChangeType) => void;
+  onChange?: ({ name, value }: OnChangeArgs) => void;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
 } & ComponentPropsWithRef<'input'>;
 
 type WrapperProps = {
@@ -125,6 +126,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     optional = false,
     placeholder = 'Write here',
     type = 'text',
+    inputProps = {},
   } = props;
 
   return (
@@ -146,6 +148,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         ) : null}
 
         <input
+          {...inputProps}
           defaultValue={defaultValue}
           name={name}
           onChange={({ target: { name, value } }) => {

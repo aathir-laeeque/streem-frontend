@@ -31,6 +31,7 @@ export { default as SearchFilter } from './shared/SearchFilter';
 export { default as ToggleSwitch } from './shared/ToggleSwitch';
 export { default as DropdownFilter } from './shared/DropdownFilter';
 export { default as UsersFilter } from './shared/UsersFilter';
+export * from './shared/AutoComplete';
 export * from './shared/useTabsNew';
 export * from './shared/NewListView';
 export { default as ActivityItemInput } from './shared/ActivityItemInput';

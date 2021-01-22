@@ -152,10 +152,12 @@ const ButtonWrapper = styled.button.attrs(
     }
   }}
 
-  ${({ disabled }) =>
+  ${({ disabled, variant }) =>
     disabled
       ? css`
-          background-color: #eeeeee;
+          background-color: ${variant === 'textOnly'
+            ? 'transparent'
+            : '#eeeeee'};
           border-color: transparent;
           color: #dadada;
           pointer-events: none;
