@@ -3,6 +3,7 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
+import { User } from '#store/users/types';
 import { apiGetAssignedUsersForJob } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { usePrevious } from '#utils/usePrevious';
@@ -55,7 +56,9 @@ const JobHeaderButtons: FC = () => {
       );
 
       if (data) {
-        setIsLoggedInUserAssigned(data.some((user) => user.id === profile?.id));
+        setIsLoggedInUserAssigned(
+          (data as User[]).some((user) => user.id === profile?.id),
+        );
       } else {
         console.error(
           'error came in fetch assigned users from component :: ',
@@ -157,7 +160,9 @@ const JobHeaderButtons: FC = () => {
         </Button>
       ) : null}
 
-      {jobState === JobStateEnum.ASSIGNED && isLoggedInUserAssigned ? (
+      {isInboxView &&
+      jobState === JobStateEnum.ASSIGNED &&
+      isLoggedInUserAssigned ? (
         <Button
           onClick={() =>
             dispatch(
