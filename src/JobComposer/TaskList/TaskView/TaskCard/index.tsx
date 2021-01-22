@@ -2,16 +2,20 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import ActivityList from '#JobComposer/ActivityList';
 import {
+  CompletedTaskStates,
+  MandatoryActivity,
   StartedTaskStates,
   TaskExecutionState,
 } from '#JobComposer/checklist.types';
 import { useTypedSelector } from '#store';
-import { JobStateEnum } from '#views/Jobs/NewListView/types';
+import {
+  CompletedJobStates,
+  JobStateEnum,
+} from '#views/Jobs/NewListView/types';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { MandatoryActivity } from '../../../checklist.types';
 import { setActiveTask } from '../../actions';
 import { TaskCardProps } from '../../types';
 import Footer from './Footer';
@@ -81,8 +85,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
       !isTaskStarted;
 
     const showAssignmentButton =
-      jobState !== JobStateEnum.COMPLETED &&
-      jobState !== JobStateEnum.COMPLETED_WITH_EXCEPTION &&
+      !(taskState in CompletedTaskStates) &&
+      !(jobState in CompletedJobStates) &&
       location.pathname.split('/')[1] !== 'inbox';
 
     const isCorrectingError =
