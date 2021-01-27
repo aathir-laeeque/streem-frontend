@@ -37,17 +37,21 @@ const Wrapper = styled.div`
       display: flex;
       flex-direction: column;
 
+      .title {
+        font-size: 14px;
+        padding-left: 80px;
+        align-self: flex-start;
+      }
+
       > table {
+        border-collapse: separate;
+        border-spacing: 0px 40px;
+        margin-top: -25px;
+
         tbody {
           tr {
             td {
-              border-right: 1px solid #eeeeee;
-            }
-
-            :last-child {
-              td {
-                border: none;
-              }
+              border-right: 2px solid #eeeeee;
             }
 
             td[rowspan] {
@@ -55,7 +59,7 @@ const Wrapper = styled.div`
             }
 
             td[colspan] {
-              padding: 0px 0px 15px 80px;
+              padding-left: 80px;
 
               .heading {
                 align-items: flex-start;
@@ -109,11 +113,12 @@ const Wrapper = styled.div`
               }
 
               .item {
-                padding: 12px;
+                padding: 8px 0px;
                 margin-left: 20px;
                 display: flex;
                 align-items: center;
                 border-bottom: 1px solid #eeeeee;
+                margin-top: 26px;
 
                 .middle {
                   display: flex;
@@ -160,7 +165,7 @@ const Wrapper = styled.div`
                 }
               }
 
-              .item.no-border {
+              .item:last-child {
                 border: none;
               }
             }
@@ -170,6 +175,27 @@ const Wrapper = styled.div`
     }
   }
 `;
+
+const getOptions = (
+  key: string,
+  isStateComplete: boolean,
+  inProgressKey: string,
+) => {
+  const options: { status: string; heading: string; accentColor: string } = {
+    status: inProgressKey === key ? 'In Progress' : 'Not Started',
+    accentColor: inProgressKey === key ? '#1d84ff' : '#eeeeee',
+    heading: key === '1' ? 'Author' : 'Approver',
+  };
+
+  if (key === '2') options.heading = 'Reviewer';
+
+  if (isStateComplete) {
+    options.status = 'Complete';
+    options.accentColor = '#5aa700';
+  }
+
+  return options;
+};
 
 const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
   closeAllOverlays,
@@ -187,40 +213,37 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
 
   const groupedApprovers = groupBy(approvers, 'orderTree');
   const groupedViews: any = [];
+  let inProgressKey = 1;
 
   Object.keys(groupedApprovers).forEach((key) => {
+    const isStateComplete = !groupedApprovers[key].some(
+      (a) => a.state === CollaboratorState.NOT_STARTED,
+    );
+    if (isStateComplete) inProgressKey++;
+    const options = getOptions(key, isStateComplete, inProgressKey.toString());
+
     groupedViews.push(
       <>
         <tr key={key}>
-          <td rowSpan={groupedApprovers[key].length}>
-            <div
-              className="heading"
-              style={{ marginTop: key !== '1' ? '40px' : '0px' }}
-            >
+          <td
+            rowSpan={groupedApprovers[key].length}
+            style={{ borderColor: options.accentColor }}
+          >
+            <div className="heading">
               <div className="top">
-                <span>
-                  {key === '1'
-                    ? 'Author'
-                    : key === '2'
-                    ? 'Reviewer'
-                    : 'Approver'}
-                </span>
-                <div className="ellipse">{key}</div>
+                <span>{options.heading}</span>
+                <div
+                  className="ellipse"
+                  style={{ backgroundColor: options.accentColor }}
+                >
+                  {key}
+                </div>
               </div>
-              <span className="light">
-                {groupedApprovers[key].some(
-                  (a) => a.state === CollaboratorState.NOT_STARTED,
-                )
-                  ? 'In Progress'
-                  : 'Complete'}
-              </span>
+              <span className="light">{options.status}</span>
             </div>
           </td>
           <td>
-            <div
-              className="item"
-              style={{ marginTop: key !== '1' ? '40px' : '0px' }}
-            >
+            <div className="item">
               <Avatar size="large" user={groupedApprovers[key][0]} />
               <div className="middle">
                 <span className="userId">
@@ -231,18 +254,20 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
                   {groupedApprovers[key][0].lastName}
                 </span>
               </div>
-              {groupedApprovers[key][0].state ===
-              CollaboratorState.NOT_STARTED ? (
-                <div className="right">Pending</div>
-              ) : (
-                <div className="right-container">
-                  <div className="right success">Signed</div>
-                  {groupedApprovers[key][0].modifiedAt &&
-                    moment
-                      .unix(groupedApprovers[key][0].modifiedAt)
-                      .format('Do MMM, YYYY, HH:mm a')}
-                </div>
-              )}
+              <div className="right-container">
+                {groupedApprovers[key][0].state ===
+                CollaboratorState.NOT_STARTED ? (
+                  <div className="right">Pending</div>
+                ) : (
+                  <>
+                    <div className="right success">Signed</div>
+                    {groupedApprovers[key][0].modifiedAt &&
+                      moment
+                        .unix(groupedApprovers[key][0].modifiedAt)
+                        .format('Do MMM, YYYY, HH:mm a')}
+                  </>
+                )}
+              </div>
             </div>
           </td>
         </tr>
@@ -257,15 +282,19 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
                     {a.firstName} {a.lastName}
                   </span>
                 </div>
-                {a.state === CollaboratorState.NOT_STARTED ? (
-                  <div className="right">Pending</div>
-                ) : (
-                  <div className="right-container">
-                    <div className="right success">Signed</div>
-                    {a.modifiedAt &&
-                      moment.unix(a.modifiedAt).format('Do MMM, YYYY, HH:mm a')}
-                  </div>
-                )}
+                <div className="right-container">
+                  {a.state === CollaboratorState.NOT_STARTED ? (
+                    <div className="right">Pending</div>
+                  ) : (
+                    <>
+                      <div className="right success">Signed</div>
+                      {a.modifiedAt &&
+                        moment
+                          .unix(a.modifiedAt)
+                          .format('Do MMM, YYYY, HH:mm a')}
+                    </>
+                  )}
+                </div>
               </div>
             </td>
           </tr>
@@ -282,15 +311,9 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
         title="Sequential Sign Off In Process"
         showFooter={false}
       >
+        <span className="title">Signing Order</span>
         <table cellSpacing={0} cellPadding={0}>
-          <tbody>
-            <tr>
-              <td colSpan={2}>
-                <div className="heading">Signing Order</div>
-              </td>
-            </tr>
-            {groupedViews}
-          </tbody>
+          <tbody>{groupedViews}</tbody>
         </table>
       </BaseModal>
     </Wrapper>
