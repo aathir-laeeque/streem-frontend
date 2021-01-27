@@ -264,7 +264,7 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
                     {groupedApprovers[key][0].modifiedAt &&
                       moment
                         .unix(groupedApprovers[key][0].modifiedAt)
-                        .format('Do MMM, YYYY, HH:mm a')}
+                        .format('Do MMM, YYYY, hh:mm a')}
                   </>
                 )}
               </div>
@@ -291,7 +291,7 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
                       {a.modifiedAt &&
                         moment
                           .unix(a.modifiedAt)
-                          .format('Do MMM, YYYY, HH:mm a')}
+                          .format('Do MMM, YYYY, hh:mm a')}
                     </>
                   )}
                 </div>
