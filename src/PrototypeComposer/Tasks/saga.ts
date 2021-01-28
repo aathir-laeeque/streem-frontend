@@ -29,7 +29,7 @@ import {
 } from './actions';
 import { TaskListActions } from './reducer.types';
 import { removeTaskMedia } from './actions';
-import { apiRemoveTaskMedia } from '../../utils/apiUrls';
+import { apiRemoveTaskMedia, apiReorderTasks } from '../../utils/apiUrls';
 
 function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
   try {
@@ -76,7 +76,45 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
     );
 
     if (data) {
-      yield put(deleteTaskSuccess(payload.taskId, activeStageId));
+      const {
+        listById,
+        tasksOrderInStage,
+      }: RootState['prototypeComposer']['tasks'] = yield select(
+        (state: RootState) => state.prototypeComposer.tasks,
+      );
+
+      const deletedTaskIndex = tasksOrderInStage[activeStageId].indexOf(
+        payload.taskId,
+      );
+      const tasksToReorder = tasksOrderInStage[activeStageId].slice(
+        deletedTaskIndex + 1,
+      );
+
+      if (tasksToReorder.length) {
+        const reOrderMap = tasksToReorder.reduce<Record<string, number>>(
+          (acc, taskId) => {
+            acc[taskId] = listById[taskId].orderTree - 1;
+            return acc;
+          },
+          {},
+        );
+
+        console.log('reorder map for tasks is :: ', reOrderMap);
+
+        const { data: reorderData, errors: reorderErrors } = yield call(
+          request,
+          'PATCH',
+          apiReorderTasks(),
+          { data: { tasksOrder: reOrderMap } },
+        );
+
+        console.log('reorderData from api :: ', reorderData);
+        console.log('reorderErrors froom api :: ', reorderErrors);
+
+        yield put(deleteTaskSuccess(payload.taskId, activeStageId, reOrderMap));
+      } else {
+        yield put(deleteTaskSuccess(payload.taskId, activeStageId));
+      }
     } else {
       yield put(setTaskError(errors));
     }

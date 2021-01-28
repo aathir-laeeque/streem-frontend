@@ -124,7 +124,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
           />
         </div>
 
-        <div className="stage-name">Stage {index + 1}</div>
+        <div className="stage-name">Stage {stage.orderTree}</div>
 
         <Delete
           className="icon"

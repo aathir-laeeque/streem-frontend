@@ -143,7 +143,7 @@ export const apiUpdateStage = (stageId: Stage['id']) =>
 export const apiCreateTask = ({ checklistId, stageId }: AddNewTaskArgs) =>
   `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks`;
 
-export const apiDeleteTask = (taskId: Task['id']) =>
+export const apiDeleteTask = (taskId: string) =>
   `${baseUrl}/tasks/${taskId}/archive`;
 
 export const apiAddNewActivity = ({
@@ -250,3 +250,7 @@ export const apiRemoveTaskMedia = ({
   taskId: string;
   mediaId: string;
 }) => `${baseUrl}/tasks/${taskId}/medias/${mediaId}`;
+
+export const apiReorderStages = () => `${baseUrl}/stages/reorder`;
+
+export const apiReorderTasks = () => `${baseUrl}/tasks/reorder`;

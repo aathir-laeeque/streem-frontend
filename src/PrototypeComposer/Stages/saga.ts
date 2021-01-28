@@ -3,7 +3,7 @@ import { apiCreateStage, apiDeleteStage } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { call, put, select, takeLeading } from 'redux-saga/effects';
 
-import { apiUpdateStage } from '../../utils/apiUrls';
+import { apiUpdateStage, apiReorderStages } from '../../utils/apiUrls';
 import { Stage } from '../checklist.types';
 import {
   addNewStageError,
@@ -53,7 +53,41 @@ function* deleteStageSaga({ payload }: ReturnType<typeof deleteStage>) {
     const { data, errors } = yield call(request, 'PATCH', apiDeleteStage(id));
 
     if (data) {
-      yield put(deleteStageSuccess({ id }));
+      // make reoroder call here
+
+      const {
+        listById,
+        listOrder,
+      }: RootState['prototypeComposer']['stages'] = yield select(
+        (state: RootState) => state.prototypeComposer.stages,
+      );
+
+      const deletedStageIndex = listOrder.indexOf(id);
+      const stagesToReorder = listOrder.slice(deletedStageIndex + 1);
+
+      if (stagesToReorder.length) {
+        const reOrderMap = stagesToReorder.reduce<Record<string, number>>(
+          (acc, stageId) => {
+            acc[stageId] = listById[stageId].orderTree - 1;
+            return acc;
+          },
+          {},
+        );
+
+        const { data: reorderData, errors: reorderErrors } = yield call(
+          request,
+          'PATCH',
+          apiReorderStages(),
+          { data: { stagesOrder: reOrderMap } },
+        );
+
+        console.log('reorderData from api :: ', reorderData);
+        console.log('reorderErrors froom api :: ', reorderErrors);
+
+        yield put(deleteStageSuccess({ id, newOrderMap: reOrderMap }));
+      } else {
+        yield put(deleteStageSuccess({ id }));
+      }
     } else {
       yield put(deleteStageError(errors));
     }

@@ -20,8 +20,16 @@ export const addStop = (taskId: Task['id']) =>
 export const deleteTask = (taskId: Task['id']) =>
   actionSpreader(TaskListActions.DELETE_TASK, { taskId });
 
-export const deleteTaskSuccess = (taskId: Task['id'], stageId: Stage['id']) =>
-  actionSpreader(TaskListActions.DELETE_TASK_SUCCESS, { taskId, stageId });
+export const deleteTaskSuccess = (
+  taskId: Task['id'],
+  stageId: Stage['id'],
+  newOrderMap?: Record<string, number>,
+) =>
+  actionSpreader(TaskListActions.DELETE_TASK_SUCCESS, {
+    taskId,
+    stageId,
+    newOrderMap,
+  });
 
 export const removeStop = (taskId: Task['id']) =>
   actionSpreader(TaskListActions.REMOVE_STOP, { taskId });

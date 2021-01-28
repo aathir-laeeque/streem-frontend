@@ -10,6 +10,7 @@ import {
   TaskListActions,
   TaskListActionType,
   TaskListState,
+  TasksById,
 } from './reducer.types';
 import { getTasks } from './utils';
 
@@ -66,6 +67,15 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         ...state,
         listById: {
           ...omit(state.listById, [action.payload.taskId]),
+          ...Object.entries(action.payload.newOrderMap || {})
+            .map(([taskId, orderTree]) => ({
+              ...state.listById[taskId],
+              orderTree,
+            }))
+            .reduce<TasksById>((acc, task) => {
+              acc[task.id] = task;
+              return acc;
+            }, {}),
         },
         tasksOrderInStage: {
           ...state.tasksOrderInStage,

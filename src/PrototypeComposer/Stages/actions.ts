@@ -21,8 +21,16 @@ export const deleteStage = ({ id }: Pick<Stage, 'id'>) =>
 export const deleteStageError = (error: any) =>
   actionSpreader(StageListActions.DELETE_STAGE_ERROR, { error });
 
-export const deleteStageSuccess = ({ id }: Pick<Stage, 'id'>) =>
-  actionSpreader(StageListActions.DELETE_STAGE_SUCCESS, { id });
+type deleteStageSuccessArgs = {
+  id: Stage['id'];
+  newOrderMap?: Record<string, number>;
+};
+
+export const deleteStageSuccess = ({
+  id,
+  newOrderMap,
+}: deleteStageSuccessArgs) =>
+  actionSpreader(StageListActions.DELETE_STAGE_SUCCESS, { id, newOrderMap });
 
 // duplicate stage actions
 export const duplicateStage = ({ id }: Pick<Stage, 'id'>) =>
