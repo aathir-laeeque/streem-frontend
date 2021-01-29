@@ -72,15 +72,12 @@ const reducer: Reducer<StageListState, StageListActionType> = (
         listOrder: state.listOrder.filter((el) => el !== action.payload.id),
         listById: {
           ...omit(state.listById, [action.payload.id]),
-          ...Object.entries(action.payload.newOrderMap || {})
-            .map(([stageId, orderTree]) => ({
-              ...state.listById[stageId],
-              orderTree,
-            }))
-            .reduce<StagesById>((acc, stage) => {
-              acc[stage.id] = stage;
-              return acc;
-            }, {}),
+          ...Object.entries(action.payload.newOrderMap || {}).reduce<
+            StagesById
+          >((acc, [stageId, orderTree]) => {
+            acc[stageId] = { ...state.listById[stageId], orderTree };
+            return acc;
+          }, {}),
         },
       };
 

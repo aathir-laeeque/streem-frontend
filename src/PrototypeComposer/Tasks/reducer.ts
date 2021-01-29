@@ -67,15 +67,13 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         ...state,
         listById: {
           ...omit(state.listById, [action.payload.taskId]),
-          ...Object.entries(action.payload.newOrderMap || {})
-            .map(([taskId, orderTree]) => ({
-              ...state.listById[taskId],
-              orderTree,
-            }))
-            .reduce<TasksById>((acc, task) => {
-              acc[task.id] = task;
+          ...Object.entries(action.payload.newOrderMap || {}).reduce<TasksById>(
+            (acc, [taskId, orderTree]) => {
+              acc[taskId] = { ...state.listById[taskId], orderTree };
               return acc;
-            }, {}),
+            },
+            {},
+          ),
         },
         tasksOrderInStage: {
           ...state.tasksOrderInStage,
