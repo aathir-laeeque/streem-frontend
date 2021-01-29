@@ -24,8 +24,8 @@ import {
   startTask,
   updateTaskExecutionState,
   assignUsersToTask,
-  revertUsersForTask,
   removeTaskError,
+  assignUsersToTaskSuccess,
 } from './actions';
 import { TaskAction } from './types';
 import { TaskListAction } from './reducer.types';
@@ -220,7 +220,7 @@ function* assignUsersToTaskSaga({
     jobId,
     assignIds,
     unassignIds,
-    preAssigned,
+    assignedUsers,
     notify,
   } = payload;
 
@@ -242,6 +242,8 @@ function* assignUsersToTaskSaga({
       throw 'Could Not Assign Users';
     }
 
+    yield put(assignUsersToTaskSuccess({ assignedUsers, taskId }));
+
     yield put(
       openOverlayAction({
         type: OverlayNames.ASSIGNMENT_SUCCESS,
@@ -253,7 +255,6 @@ function* assignUsersToTaskSaga({
       'error from assignUsersToTaskSaga function in Task :: ',
       error,
     );
-    yield put(revertUsersForTask(preAssigned, taskId));
     yield put(
       showNotification({
         type: NotificationType.ERROR,

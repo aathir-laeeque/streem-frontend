@@ -23,7 +23,7 @@ import {
   taskListReducer,
 } from './TaskList/reducer';
 import { User } from '#store/users/types';
-import { TaskExecutionState } from './checklist.types';
+import { CompletedTaskStates } from './checklist.types';
 import { StageListAction } from './StageList/reducer.types';
 
 const initialState: ComposerState = {
@@ -96,47 +96,15 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
     case ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS:
       return { ...state, assignees: action.payload.data };
 
-    case ComposerAction.REVERT_USERS_FOR_JOB:
-      return { ...state, assignees: action.payload.users };
-
-    case ComposerAction.ASSIGN_USER_TO_JOB:
-      return {
-        ...state,
-        assignees: unionBy(
-          [
-            {
-              ...action.payload.user,
-              assigned: true,
-              completelyAssigned: action.payload.completeltAssigned,
-            },
-          ],
-          state.assignees,
-          'id',
-        ),
-      };
-    case ComposerAction.UNASSIGN_USER_FROM_JOB:
-      return {
-        ...state,
-        assignees: state.assignees.filter(
-          (item) => item.id !== action.payload.user.id,
-        ),
-      };
     case ComposerAction.ASSIGN_USERS_TO_JOB_SUCCESS:
-      const jobAssigned = state.assignees.filter(
+      const jobAssigned = action.payload.assignedUsers.filter(
         (item) => item.completelyAssigned,
       );
       const res = reduce(
         state.tasks.tasksById,
         function (result, value, key) {
           let merged: User[];
-          if (
-            value.taskExecution.state === TaskExecutionState.COMPLETED ||
-            value.taskExecution.state ===
-              TaskExecutionState.COMPLETED_WITH_CORRECTION ||
-            value.taskExecution.state ===
-              TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
-            value.taskExecution.state === TaskExecutionState.SKIPPED
-          ) {
+          if (value.taskExecution.state in CompletedTaskStates) {
             merged = value.taskExecution.assignees;
           } else {
             const newAssignees = (value.taskExecution.assignees as Array<

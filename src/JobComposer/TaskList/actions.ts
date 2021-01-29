@@ -1,6 +1,6 @@
 import { actionSpreader } from '#store';
 
-import { User, Users } from '#store/users/types';
+import { User } from '#store/users/types';
 import { Task } from '../checklist.types';
 import { TaskAction } from './types';
 import { TaskListAction } from './reducer.types';
@@ -52,23 +52,19 @@ export const setTaskError = (error: any, taskId: Task['id']) =>
 export const removeTaskError = (taskId: Task['id']) =>
   actionSpreader(TaskListAction.REMOVE_TASK_ERROR, { taskId });
 
-export const assignUserToTask = (user: User, taskId: Task['id']) =>
-  actionSpreader(TaskListAction.ASSIGN_USER_TO_TASK, { user, taskId });
-
-export const unAssignUserFromTask = (user: User, taskId: Task['id']) =>
-  actionSpreader(TaskListAction.UNASSIGN_USER_FROM_TASK, { user, taskId });
-
-export const revertUsersForTask = (users: Users, taskId: Task['id']) =>
-  actionSpreader(TaskListAction.REVERT_USERS_FOR_TASK, { users, taskId });
-
 export const assignUsersToTask = (payload: {
   jobId: Job['id'];
   taskId: Task['id'];
   assignIds: User['id'][];
   unassignIds: User['id'][];
-  preAssigned: Users;
+  assignedUsers: User[];
   notify: boolean;
 }) => actionSpreader(TaskListAction.ASSIGN_USERS_TO_TASK, payload);
+
+export const assignUsersToTaskSuccess = (payload: {
+  taskId: Task['id'];
+  assignedUsers: User[];
+}) => actionSpreader(TaskListAction.ASSIGN_USERS_TO_TASK_SUCCESS, payload);
 
 export const enableErrorCorrection = (
   taskId: Task['id'],

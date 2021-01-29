@@ -194,7 +194,7 @@ function* fetchAssignedUsersForJobSaga({
 function* assignUsersToJobSaga({
   payload,
 }: ReturnType<typeof assignUsersToJob>) {
-  const { jobId, assignIds, unassignIds, notify } = payload;
+  const { jobId, assignIds, unassignIds, notify, assignedUsers } = payload;
 
   try {
     const { errors, error } = yield call(
@@ -214,7 +214,7 @@ function* assignUsersToJobSaga({
       throw 'Could Not Assign Users to Job';
     }
 
-    yield put(assignUsersToJobSuccess({ unassignIds }));
+    yield put(assignUsersToJobSuccess({ unassignIds, assignedUsers }));
     yield put(
       openOverlayAction({
         type: OverlayNames.ASSIGNMENT_SUCCESS,

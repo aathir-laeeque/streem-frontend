@@ -3,13 +3,11 @@ import { Stage, Task } from '../checklist.types';
 import { ComposerActionType } from '../composer.reducer.types';
 import { setActiveStage } from '../StageList/actions';
 import {
-  assignUserToTask,
   removeTaskError,
-  revertUsersForTask,
   setActiveTask,
   setTaskError,
-  unAssignUserFromTask,
   updateTaskExecutionState,
+  assignUsersToTaskSuccess,
 } from './actions';
 import { TasksById, TasksOrderInStage } from './types';
 
@@ -41,11 +39,8 @@ export enum TaskListAction {
   ENABLE_TASK_ERROR_CORRECTION = '@@jobComposer/task-list/task/ENABLE_TASK_ERROR_CORRECTION',
   CANCEL_ERROR_CORRECTION = '@@jobComposer/task-list/task/CANCEL_ERROR_CORRECTION',
   COMPLTE_ERROR_CORRECTION = '@@jobComposer/task-list/task/COMPLTE_ERROR_CORRECTION',
-  ASSIGN_USER_TO_TASK = '@@jobComposer/task-list/task/ASSIGN_USER_TO_TASK',
-  UNASSIGN_USER_FROM_TASK = '@@jobComposer/task-list/task/UNASSIGN_USER_FROM_TASK',
-  REVERT_USERS_FOR_TASK = '@@jobComposer/task-list/task/REVERT_USERS_FOR_TASK',
   ASSIGN_USERS_TO_TASK = '@@jobComposer/task-list/task/ASSIGN_USERS_TO_TASK',
-  ASSIGN_USERS_TO_TASK_ERROR = '@@jobComposer/task-list/task/ASSIGN_USERS_TO_TASK_ERROR',
+  ASSIGN_USERS_TO_TASK_SUCCESS = '@@jobComposer/task-list/task/ASSIGN_USERS_TO_TASK_SUCCESS',
 }
 
 export type TaskListActionType =
@@ -55,9 +50,7 @@ export type TaskListActionType =
       | typeof updateTaskExecutionState
       | typeof removeTaskError
     >
-  | ReturnType<typeof revertUsersForTask>
-  | ReturnType<typeof unAssignUserFromTask>
-  | ReturnType<typeof assignUserToTask>
+  | ReturnType<typeof assignUsersToTaskSuccess>
   | ReturnType<typeof executeActivity | typeof fixActivity>
   | ReturnType<typeof setActiveStage>
   | ComposerActionType;

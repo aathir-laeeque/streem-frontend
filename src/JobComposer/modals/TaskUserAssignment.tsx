@@ -9,31 +9,18 @@ import { Job } from '#views/Jobs/types';
 import { Search } from '@material-ui/icons';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  assignUsersToJob,
-  assignUserToJob,
-  fetchAssignedUsersForJob,
-  revertUsersForJob,
-  unAssignUserFromJob,
-} from '../actions';
-import {
-  assignUsersToTask,
-  assignUserToTask,
-  revertUsersForTask,
-  unAssignUserFromTask,
-} from '../TaskList/actions';
+import { assignUsersToJob, fetchAssignedUsersForJob } from '../actions';
+import { assignUsersToTask } from '../TaskList/actions';
 import Wrapper from './TaskUserAssignment.styles';
 
 type initialState = {
-  assignedUsers: User['id'][];
-  unAssignedUsers: User['id'][];
+  assignedUsers: User[];
   searchQuery: string;
   preAssignedUsers: User[];
 };
 
 const initialState: initialState = {
   assignedUsers: [],
-  unAssignedUsers: [],
   searchQuery: '',
   preAssignedUsers: [],
 };
@@ -54,12 +41,7 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
 
   const dispatch = useDispatch();
   const [state, setstate] = useState(initialState);
-  const {
-    assignedUsers,
-    unAssignedUsers,
-    searchQuery,
-    preAssignedUsers,
-  } = state;
+  const { assignedUsers, searchQuery, preAssignedUsers } = state;
   const prevSearch = usePrevious(searchQuery);
 
   const { users: list, loadMore, loadAgain } = useUsers({
@@ -82,21 +64,23 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
 
   const prevAssignees = usePrevious(assignees);
 
-  if (jobId) {
-    useEffect(() => {
-      dispatch(revertUsersForJob([]));
+  useEffect(() => {
+    if (jobId) {
       dispatch(fetchAssignedUsersForJob(jobId));
-    }, []);
-  }
+    }
+  }, []);
 
   useEffect(() => {
     if (
       (prevAssignees === undefined || prevAssignees.length === 0) &&
       assignees.length > 0 &&
-      assignedUsers.length === 0 &&
-      unAssignedUsers.length === 0
+      assignedUsers.length === 0
     ) {
-      setstate({ ...state, preAssignedUsers: assignees });
+      setstate({
+        ...state,
+        preAssignedUsers: assignees,
+        assignedUsers: assignees,
+      });
     }
   }, [assignees]);
 
@@ -121,63 +105,51 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
       loadMore();
   };
 
-  const onCheckChanged = (
-    user: User,
-    checked: boolean,
-    isPreAssigned: boolean,
-    partial: boolean,
-  ) => {
+  const onCheckChanged = (user: User, checked: boolean, partial: boolean) => {
     if (checked) {
-      if (jobId && isPreAssigned) {
+      if (jobId) {
         if (!partial) {
           setstate({
             ...state,
-            unAssignedUsers: [...unAssignedUsers, user.id],
-            assignedUsers: assignedUsers.filter((i) => i !== user.id),
+            assignedUsers: assignedUsers.filter((i) => i.id !== user.id),
           });
-          dispatch(unAssignUserFromJob(user));
         } else {
           setstate({
             ...state,
-            assignedUsers: [...assignedUsers, user.id],
+            assignedUsers: [
+              ...assignedUsers.filter((i) => i.id !== user.id),
+              { ...user, completelyAssigned: true },
+            ],
           });
-          dispatch(assignUserToJob(user, true));
         }
       } else {
         setstate({
           ...state,
-          unAssignedUsers: !isPreAssigned
-            ? unAssignedUsers
-            : [...unAssignedUsers, user.id],
-          assignedUsers: assignedUsers.filter((i) => i !== user.id),
+          assignedUsers: assignedUsers.filter((i) => i.id !== user.id),
         });
-        if (taskId) dispatch(unAssignUserFromTask(user, taskId));
-        if (jobId) dispatch(unAssignUserFromJob(user));
       }
     } else {
-      if (isPreAssigned) {
+      if (jobId) {
         setstate({
           ...state,
-          unAssignedUsers: unAssignedUsers.filter((i) => i !== user.id),
+          assignedUsers: [
+            ...assignedUsers,
+            { ...user, completelyAssigned: true },
+          ],
         });
       } else {
         setstate({
           ...state,
-          assignedUsers: [...assignedUsers, user.id],
-          unAssignedUsers: unAssignedUsers.filter((i) => i !== user.id),
+          assignedUsers: [
+            ...assignedUsers,
+            { ...user, completelyAssigned: true },
+          ],
         });
       }
-      if (taskId) dispatch(assignUserToTask(user, taskId));
-      if (jobId) dispatch(assignUserToJob(user, true));
     }
   };
 
-  const userRow = (
-    user: User,
-    checked: boolean,
-    isPreAssigned: boolean,
-    partial: boolean,
-  ) => {
+  const userRow = (user: User, checked: boolean, partial: boolean) => {
     return (
       <div className="item" key={`user_${user.id}`}>
         <div className="right">
@@ -185,9 +157,7 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
             <Checkbox
               checked={checked}
               label=""
-              onClick={() =>
-                onCheckChanged(user, checked, isPreAssigned, partial)
-              }
+              onClick={() => onCheckChanged(user, checked, partial)}
             />
           )}
           {jobId && (
@@ -195,9 +165,7 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
               partial={partial}
               checked={checked}
               label=""
-              onClick={() =>
-                onCheckChanged(user, checked, isPreAssigned, partial)
-              }
+              onClick={() => onCheckChanged(user, checked, partial)}
             />
           )}
         </div>
@@ -215,11 +183,8 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
   const handleUnselectAll = () => {
     setstate({
       ...state,
-      unAssignedUsers: preAssignedUsers.map((i) => i.id),
       assignedUsers: [],
     });
-    if (taskId) dispatch(revertUsersForTask([], taskId));
-    if (jobId) dispatch(revertUsersForJob([]));
   };
 
   const bodyView: JSX.Element[] = [];
@@ -227,17 +192,19 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
   if (list) {
     if (searchQuery === '') {
       preAssignedUsers.forEach((user) => {
-        const checked = assignees.some((item) => item.id === user.id);
+        let checked = false;
         let isPartial = false;
-        if (jobId)
-          isPartial = assignees.some(
-            (item) =>
-              item.id === user.id && !item.completelyAssigned && item.assigned,
-          );
 
-        if (user.id !== '0') {
-          bodyView.push(userRow(user, checked, true, isPartial));
-        }
+        assignedUsers.every((item) => {
+          if (user.id === item.id) {
+            checked = true;
+            if (jobId) isPartial = !item.completelyAssigned;
+            return false;
+          }
+          return true;
+        });
+
+        bodyView.push(userRow(user, checked, isPartial));
       });
     }
 
@@ -246,53 +213,78 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
         (item) => item.id === user.id,
       );
 
-      const checked = assignees.some((item) => item.id === user.id);
+      if (searchQuery !== '' || !isPreAssigned) {
+        const checked = assignedUsers.some((i) => i.id === user.id);
 
-      if (user.id !== '0' && !user.archived) {
-        if (searchQuery !== '') {
-          bodyView.push(
-            userRow(
-              user,
-              checked,
-              isPreAssigned,
-              (!user.completelyAssigned && user.assigned) || false,
-            ),
-          );
-        } else if (!isPreAssigned) {
-          bodyView.push(userRow(user, checked, isPreAssigned, false));
-        }
+        bodyView.push(
+          userRow(
+            user,
+            checked,
+            (!user.completelyAssigned && user.assigned) || false,
+          ),
+        );
       }
     });
   }
 
   const onPrimary = (notify: boolean) => {
     if (entityId) {
-      if (taskId)
+      const unassignIds = preAssignedUsers.reduce<string[]>((acc, item) => {
+        if (!assignedUsers.some((i) => i.id === item.id)) {
+          acc.push(item.id);
+        }
+        return acc;
+      }, []);
+
+      if (taskId) {
+        const assignIds = assignedUsers.reduce<string[]>((acc, item) => {
+          if (!preAssignedUsers.some((i) => i.id === item.id)) {
+            acc.push(item.id);
+          }
+          return acc;
+        }, []);
         dispatch(
           assignUsersToTask({
             taskId,
             jobId: entityId,
-            assignIds: assignedUsers,
-            unassignIds: unAssignedUsers,
-            preAssigned: preAssignedUsers,
+            assignIds,
+            unassignIds,
+            assignedUsers,
             notify,
           }),
         );
-      if (jobId)
+      }
+      if (jobId) {
+        const assignIds = assignedUsers.reduce<string[]>((acc, item) => {
+          const inPreAssigned = preAssignedUsers.filter(
+            (i) => i.id === item.id,
+          );
+          if (inPreAssigned.length === 0) {
+            acc.push(item.id);
+          } else if (inPreAssigned.length > 0) {
+            if (
+              inPreAssigned[0]?.completelyAssigned !== item?.completelyAssigned
+            )
+              acc.push(item.id);
+          }
+          return acc;
+        }, []);
         dispatch(
           assignUsersToJob({
             jobId: jobId,
-            assignIds: assignedUsers,
-            unassignIds: unAssignedUsers,
+            assignIds,
+            unassignIds,
+            assignedUsers,
             notify,
           }),
         );
+      }
     }
+
     closeOverlay();
   };
 
   const onSecondary = () => {
-    if (taskId) dispatch(revertUsersForTask(preAssignedUsers, taskId));
     closeOverlay();
   };
 
@@ -307,12 +299,9 @@ const TaskUserAssignment: FC<CommonOverlayProps<{
         secondaryText="Cancel"
         onSecondary={onSecondary}
         onPrimary={() => onPrimary(true)}
-        disabledPrimary={
-          state.assignedUsers.length === 0 && state.unAssignedUsers.length === 0
-        }
+        disabledPrimary={assignedUsers === preAssignedUsers}
         modalFooterOptions={
-          state.assignedUsers.length === 0 &&
-          state.unAssignedUsers.length === 0 ? null : (
+          assignedUsers.length === 0 ? null : (
             <span
               style={{
                 color: `#1d84ff`,

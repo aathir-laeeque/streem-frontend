@@ -10,10 +10,7 @@ import {
   fetchAssignedUsersForJob,
   fetchAssignedUsersForJobError,
   fetchAssignedUsersForJobSuccess,
-  assignUserToJob,
-  unAssignUserFromJob,
   assignUsersToJobSuccess,
-  revertUsersForJob,
 } from './actions';
 import { ActivityListState } from './ActivityList/reducer.types';
 import { Checklist } from './checklist.types';
@@ -67,11 +64,8 @@ export enum ComposerAction {
   FETCH_ASSIGNED_USERS_FOR_JOB_ERROR = '@@jobComposer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB_ERROR',
   FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS = '@@jobComposer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS',
   ASSIGN_USERS_TO_JOB = '@@jobComposer/job-action/ASSIGN_USERS_TO_JOB',
-  UNASSIGN_USER_FROM_JOB = '@@jobComposer/job-action/UNASSIGN_USER_FROM_JOB',
-  ASSIGN_USER_TO_JOB = '@@jobComposer/job-action/ASSIGN_USER_TO_JOB',
   ASSIGN_USERS_TO_JOB_SUCCESS = '@@jobComposer/job-action/ASSIGN_USERS_TO_JOB_SUCCESS',
   ASSIGN_USERS_TO_JOB_ERROR = '@@jobComposer/job-action/ASSIGN_USERS_TO_JOB_ERROR',
-  REVERT_USERS_FOR_JOB = '@@jobComposer/job-action/REVERT_USERS_FOR_JOB',
 
   GET_SIGN_OFF_STATE = '@@jobComposer/job-action/GET_SIGN_OFF_STATE',
   SIGN_OFF_TASKS = '@@jobComposer/job-action/SIGN_OFF_TASKS',
@@ -89,10 +83,7 @@ export type ComposerActionType = ReturnType<
   | typeof resetComposer
   | typeof startJobSuccess
   | typeof completeJob
-  | typeof assignUserToJob
-  | typeof unAssignUserFromJob
   | typeof assignUsersToJobSuccess
-  | typeof revertUsersForJob
   | typeof setSignOffError
   | typeof resetSignOffTaskError
   | typeof fetchActiveStageDataSuccess
