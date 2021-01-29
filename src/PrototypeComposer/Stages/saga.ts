@@ -81,10 +81,12 @@ function* deleteStageSaga({ payload }: ReturnType<typeof deleteStage>) {
           { data: { stagesOrder: reOrderMap } },
         );
 
-        console.log('reorderData from api :: ', reorderData);
-        console.log('reorderErrors froom api :: ', reorderErrors);
-
-        yield put(deleteStageSuccess({ id, newOrderMap: reOrderMap }));
+        if (reorderData) {
+          yield put(deleteStageSuccess({ id, newOrderMap: reOrderMap }));
+        } else {
+          console.log('error came in reorder api :: ', reorderErrors);
+          throw new Error(reorderErrors);
+        }
       } else {
         yield put(deleteStageSuccess({ id }));
       }

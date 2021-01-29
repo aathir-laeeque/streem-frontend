@@ -99,8 +99,6 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
           {},
         );
 
-        console.log('reorder map for tasks is :: ', reOrderMap);
-
         const { data: reorderData, errors: reorderErrors } = yield call(
           request,
           'PATCH',
@@ -108,10 +106,14 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
           { data: { tasksOrder: reOrderMap } },
         );
 
-        console.log('reorderData from api :: ', reorderData);
-        console.log('reorderErrors froom api :: ', reorderErrors);
-
-        yield put(deleteTaskSuccess(payload.taskId, activeStageId, reOrderMap));
+        if (reorderData) {
+          yield put(
+            deleteTaskSuccess(payload.taskId, activeStageId, reOrderMap),
+          );
+        } else {
+          console.log('error came in reorder api  :: ', reorderErrors);
+          throw new Error(reorderErrors);
+        }
       } else {
         yield put(deleteTaskSuccess(payload.taskId, activeStageId));
       }
