@@ -120,9 +120,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               <TextInput
                 label="Checklist"
                 defaultValue={selectedChecklist.name}
-                inputProps={{
-                  disabled: true,
-                }}
+                disabled
               />
               <input
                 ref={register({ required: true })}
