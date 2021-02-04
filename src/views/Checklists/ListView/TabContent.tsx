@@ -266,7 +266,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                       field.field !== 'not.a.collaborator',
                   ),
                 );
-              } else if (option.value === 'not_involved') {
+              } else if (option.value === 'not.a.collaborator') {
                 setFilterFields(
                   (currentFields) =>
                     [
