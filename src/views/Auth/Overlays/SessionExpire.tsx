@@ -103,6 +103,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
         closeModal={closeOverlay}
         showFooter={false}
         title="Session Expired!"
+        allowCloseOnOutsideClick={false}
       >
         <span>
           Your current session has expired. You may continue by entering your

@@ -1,6 +1,6 @@
 import { Button1 } from '#components';
 import { Close } from '@material-ui/icons';
-import React, { FC, ReactNode, useRef } from 'react';
+import React, { FC, ReactNode, useEffect, useRef } from 'react';
 import styled, { css } from 'styled-components';
 
 interface BaseModalProps {
@@ -20,9 +20,12 @@ interface BaseModalProps {
   isRound?: boolean;
   animated?: boolean;
   disabledPrimary?: boolean;
+  allowCloseOnOutsideClick?: boolean;
 }
 
-const Wrapper = styled.div<{ animated: boolean }>`
+const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
+  animated: boolean;
+}>`
   #modal-container {
     position: fixed;
     display: table;
@@ -125,6 +128,15 @@ const Wrapper = styled.div<{ animated: boolean }>`
     }
   }
 
+  .escape-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 99999;
+  }
+
   @keyframes fadeIn {
     0% {
       background: rgba(0, 0, 0, 0);
@@ -194,6 +206,7 @@ export const BaseModal: FC<BaseModalProps> = ({
   isRound = false,
   animated = true,
   disabledPrimary = false,
+  allowCloseOnOutsideClick = true,
 }) => {
   const modalContainer = useRef<HTMLDivElement | null>(null);
 
@@ -214,6 +227,22 @@ export const BaseModal: FC<BaseModalProps> = ({
           toExecute();
         })();
   };
+
+  useEffect(() => {
+    if (allowCloseOnOutsideClick) {
+      document.addEventListener('keydown', (evt) =>
+        evt.key === 'Escape' ? closeModal() : null,
+      );
+    }
+
+    return () => {
+      if (allowCloseOnOutsideClick) {
+        document.removeEventListener('keydown', (evt) =>
+          evt.key === 'Escape' ? closeModal() : null,
+        );
+      }
+    };
+  }, []);
 
   return (
     <Wrapper animated={animated}>
@@ -264,6 +293,14 @@ export const BaseModal: FC<BaseModalProps> = ({
           </div>
         </div>
       </div>
+      {allowCloseOnOutsideClick ? (
+        <div
+          className="escape-overlay"
+          key="escape-overlay"
+          role="presentation"
+          onClick={() => closeModal()}
+        />
+      ) : null}
     </Wrapper>
   );
 };
