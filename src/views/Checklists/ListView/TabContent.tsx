@@ -16,6 +16,7 @@ import {
   ChecklistStatesContent,
   DisabledStates,
 } from '#PrototypeComposer/checklist.types';
+import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useProperties } from '#services/properties';
 import checkPermission from '#services/uiPermissions';
@@ -251,48 +252,76 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             label="I am involved as"
             options={[
               { label: 'Any', value: 'any' },
-              { label: 'As Author', value: 'authors.user.id' },
+              { label: 'As Author', value: 'collaborators.type' },
               { label: 'As Collaborator', value: 'collaborators.user.id' },
-              { label: 'Not Involved', value: 'not_involved' },
+              { label: 'Not Involved', value: 'not.a.collaborator' },
             ]}
             updateFilter={(option) => {
               if (option.value === 'any') {
                 setFilterFields((currentFields) =>
                   currentFields.filter(
                     (field) =>
-                      field.field !== 'authors.user.id' &&
-                      field.field !== 'collaborators.user.id',
+                      field.field !== 'collaborators.type' &&
+                      field.field !== 'collaborators.user.id' &&
+                      field.field !== 'not.a.collaborator',
                   ),
                 );
               } else if (option.value === 'not_involved') {
-                setFilterFields((currentFields) => [
-                  ...currentFields.filter(
-                    (field) =>
-                      field.field !== 'authors.user.id' &&
-                      field.field !== 'collaborators.user.id',
-                  ),
-                  { field: 'authors.user.id', op: 'NE', values: [userId] },
-                  {
-                    field: 'collaborators.user.id',
-                    op: 'NE',
-                    values: [userId],
-                  },
-                ]);
+                setFilterFields(
+                  (currentFields) =>
+                    [
+                      ...currentFields.filter(
+                        (field) =>
+                          field.field !== 'collaborators.type' &&
+                          field.field !== 'collaborators.user.id',
+                      ),
+                      {
+                        field: 'not.a.collaborator',
+                        op: 'NE',
+                        values: [userId],
+                      },
+                    ] as FilterField[],
+                );
+              } else if (option.value === 'collaborators.type') {
+                setFilterFields(
+                  (currentFields) =>
+                    [
+                      ...currentFields.filter(
+                        (field) => field.field !== 'not.a.collaborator',
+                      ),
+                      {
+                        field: 'collaborators.user.id',
+                        op: 'EQ',
+                        values: [userId],
+                      },
+                      {
+                        field: 'collaborators.type',
+                        op: 'ANY',
+                        values: [
+                          CollaboratorType.AUTHOR,
+                          CollaboratorType.PRIMARY_AUTHOR,
+                        ],
+                      },
+                    ] as FilterField[],
+                );
               } else {
-                setFilterFields((currentFields) => [
-                  ...currentFields.filter(
-                    (field) =>
-                      field.field !== 'authors.user.id' &&
-                      field.field !== 'collaborators.user.id',
-                  ),
-                  { field: option.value, op: 'EQ', values: [userId] },
-                ]);
+                setFilterFields(
+                  (currentFields) =>
+                    [
+                      ...currentFields.filter(
+                        (field) =>
+                          field.field !== 'collaborators.type' &&
+                          field.field !== 'collaborators.user.id' &&
+                          field.field !== 'not.a.collaborator',
+                      ),
+                      { field: option.value, op: 'EQ', values: [userId] },
+                    ] as FilterField[],
+                );
               }
             }}
           />
         ) : null}
 
-        {/* {label === 'prototype' ? ( */}
         <ToggleSwitch
           checkedIcon={false}
           offLabel="Show Archived"
@@ -313,7 +342,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           }
           uncheckedIcon={false}
         />
-        {/* ) : null} */}
 
         {checkPermission(['checklists', 'create']) && (
           <Button1
