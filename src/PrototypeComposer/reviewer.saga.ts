@@ -24,59 +24,40 @@ import {
   apiValidatePassword,
 } from '#utils/apiUrls';
 import { LoginErrorCodes } from '#utils/constants';
+import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { cleanUp } from '#views/Auth/actions';
-import { uniqBy } from 'lodash';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
-import { Checklist, ChecklistStates } from './checklist.types';
+import { Checklist, ChecklistStates, Comment } from './checklist.types';
 import { ComposerAction } from './reducer.types';
 import {
   assignReviewersToChecklist,
-  assignReviewersToChecklistError,
-  assignReviewersToChecklistSuccess,
   fetchAssignedReviewersForChecklist,
-  fetchAssignedReviewersForChecklistError,
   fetchAssignedReviewersForChecklistSuccess,
   sendReviewToCr,
-  sendReviewToCrSuccess,
-  sendReviewToCrError,
   startChecklistReview,
-  startChecklistReviewError,
-  startChecklistReviewSuccess,
+  updateChecklistForReview,
   submitChecklistForReview,
-  submitChecklistForReviewError,
-  submitChecklistForReviewSuccess,
   submitChecklistReview,
-  submitChecklistReviewError,
-  submitChecklistReviewSuccess,
   submitChecklistReviewWithCR,
-  submitChecklistReviewWithCRError,
-  submitChecklistReviewWithCRSuccess,
-  updateChecklistState,
   initiateSignOff,
   fetchApprovers,
-  fetchApproversError,
   fetchApproversSuccess,
   signOffPrototype,
-  signOffPrototypeSuccess,
-  initiateSignOffSuccess,
   releasePrototype,
 } from './reviewer.actions';
 import {
   Collaborator,
   CollaboratorState,
   CollaboratorType,
+  CommonReviewPayload,
+  CommonReviewResponse,
 } from './reviewer.types';
 
 const getState = (state: RootState) => state.prototypeComposer.data?.state;
-const getCurrentCycle = (state: RootState) =>
-  (state.prototypeComposer.data as Checklist)?.reviewCycle;
-const getUserProfile = (state: RootState) => state.auth.profile;
 const getCurrentReviewers = (state: RootState) =>
   (state.prototypeComposer.data as Checklist)?.collaborators || [];
-const getCurrentAuthors = (state: RootState) =>
-  (state.prototypeComposer.data as Checklist)?.authors || [];
 const getCurrentComments = (state: RootState) =>
   (state.prototypeComposer.data as Checklist)?.comments || [];
 
@@ -102,7 +83,6 @@ function* fetchReviewersForChecklistSaga({
       'error from fetchReviewersForChecklistSaga in Prototype ComposerSaga :: ',
       error,
     );
-    yield put(fetchAssignedReviewersForChecklistError(error));
   }
 }
 
@@ -133,17 +113,19 @@ function* fetchApproversSaga({ payload }: ReturnType<typeof fetchApprovers>) {
       'error from fetchApproversSaga in Prototype ComposerSaga :: ',
       error,
     );
-    yield put(fetchApproversError(error));
   }
 }
 
 function* submitChecklistForReviewCall(checklistId: Checklist['id']) {
   try {
-    const res = yield call(
+    const res: ResponseObj<CommonReviewResponse> = yield call(
       request,
       'PUT',
       apiSubmitChecklistForReview(checklistId),
     );
+
+    yield* onSuccess({ checklist: res.data });
+
     return res;
   } catch (error) {
     throw 'Could Not Submit Checklist For Review';
@@ -160,14 +142,11 @@ function* submitChecklistForReviewSaga({
     if (errors || error) {
       throw 'Could Not Submit Checklist For Review';
     }
-
-    yield put(submitChecklistForReviewSuccess());
   } catch (error) {
     console.error(
       'error from submitChecklistForReviewSaga function in Composer-New :: ',
       error,
     );
-    yield put(submitChecklistForReviewError(error));
     yield put(
       showNotification({
         type: NotificationType.ERROR,
@@ -213,7 +192,6 @@ function* assignReviewersToChecklistSaga({
     }
 
     if (state === ChecklistStates.BEING_BUILT) {
-      yield put(assignReviewersToChecklistSuccess());
       yield put(
         openOverlayAction({
           type: OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT_SUCCESS,
@@ -232,7 +210,6 @@ function* assignReviewersToChecklistSaga({
       'error from assignReviewersToChecklistSaga function in Composer-New :: ',
       error,
     );
-    yield put(assignReviewersToChecklistError(error));
     yield put(
       showNotification({
         type: NotificationType.ERROR,
@@ -248,52 +225,22 @@ function* startChecklistReviewSaga({
   const { checklistId } = payload;
 
   try {
-    const { errors, error } = yield call(
+    const { errors, data }: ResponseObj<CommonReviewResponse> = yield call(
       request,
       'PUT',
       apiStartChecklistReview(checklistId),
     );
 
-    if (errors || error) {
+    if (errors) {
       throw 'Could Not Start Review';
     }
-    const userProfile = getUserProfile(yield select());
-    const currentReviewers = getCurrentReviewers(yield select());
-    const currentCycle = getCurrentCycle(yield select());
 
-    const collaborators: Collaborator[] = [];
-    let isFirst = true;
-
-    currentReviewers.forEach((r) => {
-      if (r.reviewCycle === currentCycle) {
-        if (
-          r.state !== CollaboratorState.ILLEGAL &&
-          r.state !== CollaboratorState.NOT_STARTED
-        ) {
-          isFirst = false;
-        }
-        if (r.id === userProfile?.id) {
-          collaborators.push({
-            ...r,
-            state: CollaboratorState.BEING_REVIEWED,
-          });
-        } else {
-          collaborators.push(r);
-        }
-      }
-    });
-
-    if (isFirst) {
-      yield put(updateChecklistState(ChecklistStates.BEING_REVIEWED));
-    }
-
-    yield put(startChecklistReviewSuccess(collaborators));
+    yield* onSuccess(data);
   } catch (error) {
     console.error(
       'error from startChecklistReviewSaga function in Composer-New :: ',
       error,
     );
-    yield put(startChecklistReviewError(error));
     yield put(
       showNotification({
         type: NotificationType.ERROR,
@@ -303,73 +250,114 @@ function* startChecklistReviewSaga({
   }
 }
 
-function* afterSubmitChecklistReview(data: any, allOk: boolean) {
+function* onSuccess(data: CommonReviewResponse) {
   try {
-    const userProfile = getUserProfile(yield select());
-    const currentReviewers = getCurrentReviewers(yield select());
-    const currentComments = getCurrentComments(yield select());
-    const currentCycle = getCurrentCycle(yield select());
-
-    const collaborators = currentReviewers.map((r) =>
-      r.reviewCycle === currentCycle && r.id === userProfile?.id
-        ? {
-            ...r,
-            state: allOk
-              ? CollaboratorState.COMMENTED_OK
-              : CollaboratorState.COMMENTED_CHANGES,
-          }
-        : r,
-    );
-
-    data.commentedBy = {
-      id: userProfile?.id,
-      firstName: userProfile?.firstName,
-      lastName: userProfile?.lastName,
-      employeeId: userProfile?.employeeId,
+    const payloadToSend: CommonReviewPayload = {
+      collaborators: [],
+      checklist: {},
+      comments: [],
     };
-    const newComments = [];
-    currentComments.forEach((c) => {
-      if (c.reviewCycle !== currentCycle) {
-        newComments.push(c);
-      } else if (c.commentedBy.id !== userProfile?.id) {
-        newComments.push(c);
-      }
-    });
-    newComments.push(data);
 
-    allOk
-      ? yield put(submitChecklistReviewSuccess(collaborators, newComments))
-      : yield put(
-          submitChecklistReviewWithCRSuccess(collaborators, newComments),
+    let isLast = true;
+    let allDoneOk = true;
+
+    if (data.collaborators && data.collaborators.length) {
+      const currentReviewers = getCurrentReviewers(yield select());
+
+      const addedIndexes: number[] = [];
+      const collaborators: Collaborator[] = [];
+
+      data.collaborators.forEach((collab) => {
+        let isUpdated = false;
+        const { id, phase, phaseType } = collab;
+        collaborators.push(
+          ...currentReviewers.reduce((acc, r, index) => {
+            if (r.phase === phase && r.phaseType === phaseType) {
+              if (r.id === id) {
+                if (!isUpdated && r.state !== CollaboratorState.SIGNED) {
+                  acc.push(collab || r);
+                  isUpdated = true;
+                } else if (!addedIndexes.includes(index)) {
+                  acc.push(r);
+                  addedIndexes.push(index);
+                }
+
+                if (collab.state !== CollaboratorState.COMMENTED_OK) {
+                  allDoneOk = false;
+                }
+              } else {
+                if (!addedIndexes.includes(index)) {
+                  acc.push(r);
+                  addedIndexes.push(index);
+                }
+
+                if (r.state !== CollaboratorState.COMMENTED_OK) {
+                  allDoneOk = false;
+                  if (r.state !== CollaboratorState.COMMENTED_CHANGES) {
+                    isLast = false;
+                  }
+                }
+              }
+            } else {
+              if (!addedIndexes.includes(index)) {
+                acc.push(r);
+                addedIndexes.push(index);
+              }
+            }
+            return acc;
+          }, [] as Collaborator[]),
         );
 
-    let allDone = true;
-    let allDoneOk = true;
-    collaborators.forEach((r) => {
-      if (r.reviewCycle === currentCycle) {
-        if (
-          r.state === CollaboratorState.ILLEGAL ||
-          r.state === CollaboratorState.NOT_STARTED ||
-          r.state === CollaboratorState.BEING_REVIEWED
-        ) {
-          allDone = false;
-        }
-        if (r.state !== CollaboratorState.COMMENTED_OK) {
-          allDoneOk = false;
-        }
-      }
-    });
+        if (!isUpdated) collaborators.push(collab);
+      });
 
-    if (allDone && allDoneOk) {
-      yield put(closeOverlayAction(OverlayNames.SUBMIT_REVIEW_MODAL));
-    } else if (allDone && !allDoneOk) {
+      payloadToSend.collaborators = collaborators;
+    }
+
+    if (data.comment) {
+      const currentComments = getCurrentComments(yield select());
+
+      let isUpdated = false;
+      const { id } = data.comment;
+
+      const comments = currentComments.reduce((acc, c) => {
+        if (c.id === id) {
+          acc.push(data.comment as Comment);
+          isUpdated = true;
+        } else {
+          acc.push(c);
+        }
+        return acc;
+      }, [] as Comment[]);
+
+      if (!isUpdated) comments.push(data.comment);
+
+      payloadToSend.comments = comments;
+    }
+
+    if (data.checklist) {
+      payloadToSend.checklist = data.checklist;
+    }
+
+    yield put(updateChecklistForReview(payloadToSend));
+
+    return { payloadToSend, allDoneOk, isLast };
+  } catch (error) {
+    throw "Could Not Run onSuccess For Review API's";
+  }
+}
+
+function* afterSubmitChecklistReview(isLast: boolean, allDoneOk: boolean) {
+  try {
+    if (isLast) {
       yield put(
         updatePropsAction(OverlayNames.SUBMIT_REVIEW_MODAL, {
           sendToAuthor: true,
           isViewer: false,
+          allDoneOk,
         }),
       );
-    } else if (!allDone && !allDoneOk) {
+    } else {
       yield put(closeOverlayAction(OverlayNames.SUBMIT_REVIEW_MODAL));
       yield put(
         openOverlayAction({
@@ -388,23 +376,23 @@ function* submitChecklistReviewSaga({
   const { checklistId } = payload;
 
   try {
-    const { data, errors, error } = yield call(
+    const { data, errors }: ResponseObj<CommonReviewResponse> = yield call(
       request,
       'PUT',
       apiSubmitChecklistReview(checklistId),
     );
 
-    if (errors || error) {
+    if (errors) {
       throw 'Could Not Submit Review';
     }
 
-    yield* afterSubmitChecklistReview(data, true);
+    const { isLast, allDoneOk } = yield* onSuccess(data);
+    yield* afterSubmitChecklistReview(isLast, allDoneOk);
   } catch (error) {
     console.error(
       'error from submitChecklistReviewSaga function in Composer-New :: ',
       error,
     );
-    yield put(submitChecklistReviewError(error));
     yield put(
       showNotification({
         type: NotificationType.ERROR,
@@ -420,7 +408,7 @@ function* submitChecklistReviewWithCRSaga({
   const { checklistId, comments } = payload;
 
   try {
-    const { data, error, errors } = yield call(
+    const { data, errors }: ResponseObj<CommonReviewResponse> = yield call(
       request,
       'PUT',
       apiSubmitChecklistReviewWithCR(checklistId),
@@ -431,17 +419,17 @@ function* submitChecklistReviewWithCRSaga({
       },
     );
 
-    if (errors || error) {
+    if (errors) {
       throw 'Could Not Submit Review With CR';
     }
 
-    yield* afterSubmitChecklistReview(data, false);
+    const { isLast, allDoneOk } = yield* onSuccess(data);
+    yield* afterSubmitChecklistReview(isLast, allDoneOk);
   } catch (error) {
     console.error(
       'error from submitChecklistReviewWithCRSaga function in Composer-New :: ',
       error,
     );
-    yield put(submitChecklistReviewWithCRError(error));
     yield put(
       showNotification({
         type: NotificationType.ERROR,
@@ -455,70 +443,28 @@ function* sendReviewToCrSaga({ payload }: ReturnType<typeof sendReviewToCr>) {
   const { checklistId } = payload;
 
   try {
-    const { errors, error } = yield call(
+    const { data, errors }: ResponseObj<CommonReviewResponse> = yield call(
       request,
       'PUT',
       apiSendReviewToCr(checklistId),
     );
 
-    if (errors || error) {
+    if (errors) {
       throw 'Could Not Send Review To CR';
     }
 
-    const userProfile = getUserProfile(yield select());
-    const currentReviewers = getCurrentReviewers(yield select());
-    const currentCycle = getCurrentCycle(yield select());
-    const collaborators: Collaborator[] = [];
-    let isLast = true;
-    let allDoneOk = true;
-    currentReviewers.forEach((r) => {
-      if (r.reviewCycle === currentCycle) {
-        if (
-          r.id !== userProfile?.id &&
-          (r.state === CollaboratorState.ILLEGAL ||
-            r.state === CollaboratorState.NOT_STARTED ||
-            r.state === CollaboratorState.BEING_REVIEWED ||
-            r.state === CollaboratorState.COMMENTED_CHANGES ||
-            r.state === CollaboratorState.COMMENTED_OK)
-        ) {
-          isLast = false;
-        }
-        if (r.id === userProfile?.id) {
-          if (r.state === CollaboratorState.COMMENTED_CHANGES) {
-            allDoneOk = false;
-          }
-          if (r.state === CollaboratorState.COMMENTED_CHANGES) {
-            collaborators.push({
-              ...r,
-              state: CollaboratorState.REQUESTED_CHANGES,
-            });
-          } else {
-            collaborators.push({
-              ...r,
-              state: CollaboratorState.REQUESTED_NO_CHANGES,
-            });
-          }
-        } else {
-          if (r.state !== CollaboratorState.REQUESTED_NO_CHANGES) {
-            allDoneOk = false;
-          }
-          collaborators.push(r);
-        }
-      }
-    });
-
-    yield put(sendReviewToCrSuccess(collaborators));
-
-    if (allDoneOk && isLast) {
-      yield put(updateChecklistState(ChecklistStates.READY_FOR_SIGNING));
-    } else if (isLast && !allDoneOk) {
-      yield put(updateChecklistState(ChecklistStates.REQUESTED_CHANGES));
-    }
-
+    yield* onSuccess(data);
     yield put(closeOverlayAction(OverlayNames.SUBMIT_REVIEW_MODAL));
     yield put(
       openOverlayAction({
         type: OverlayNames.CHECKLIST_SENT_TO_AUTHOR_SUCCESS,
+        props: {
+          heading:
+            data?.collaborators?.[0].state ===
+            CollaboratorState.REQUESTED_CHANGES
+              ? 'Comments Sent to Author'
+              : 'Great Job !',
+        },
       }),
     );
   } catch (error) {
@@ -526,7 +472,6 @@ function* sendReviewToCrSaga({ payload }: ReturnType<typeof sendReviewToCr>) {
       'error from sendReviewToCrSaga function in Composer-New :: ',
       error,
     );
-    yield put(sendReviewToCrError(error));
     yield put(
       showNotification({
         type: NotificationType.ERROR,
@@ -546,47 +491,22 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
       throw 'Could Not Initiate Sign Off';
     }
 
-    const { errors, error } = yield call(
+    const {
+      errors,
+      data,
+    }: ResponseObj<CommonReviewResponse> = yield call(
       request,
       'POST',
       apiSignOffOrder(checklistId),
       { data: { users } },
     );
 
-    if (errors || error) {
+    if (errors) {
       throw 'Could Not Initiate Sign Off';
     }
 
-    const filterdUsers: Collaborator[] = [];
-    const currentReviewers = getCurrentReviewers(yield select());
-    const filterdReviewers: Collaborator[] = uniqBy(currentReviewers, 'id');
-    users.forEach((u) => {
-      const filteredUser = filterdReviewers.filter((r) => u.userId === r.id)[0];
-      if (filteredUser)
-        filterdUsers.push({
-          ...filteredUser,
-          state: CollaboratorState.NOT_STARTED,
-          type: CollaboratorType.SIGN_OFF_USER,
-          orderTree: u.orderTree,
-          comments: null,
-        });
-    });
-
-    const currentAuthors = getCurrentAuthors(yield select());
-    const currentCycle = getCurrentCycle(yield select());
-    const collaborators: Collaborator[] = [...filterdUsers];
-    currentAuthors.forEach((r) => {
-      collaborators.push({
-        ...r,
-        comments: null,
-        reviewCycle: currentCycle,
-        state: CollaboratorState.NOT_STARTED,
-        type: CollaboratorType.SIGN_OFF_USER,
-      });
-    });
+    yield* onSuccess(data);
     yield put(closeAllOverlayAction());
-    yield put(initiateSignOffSuccess(collaborators));
-    yield put(updateChecklistState(ChecklistStates.SIGN_OFF_INITIATED));
     yield put(
       openOverlayAction({
         type: OverlayNames.SIGN_OFF_INITIATED_SUCCESS,
@@ -615,59 +535,18 @@ function* signOffPrototypeSaga({
     );
 
     if (validateData) {
-      const { errors, error } = yield call(
+      const { errors, data }: ResponseObj<CommonReviewResponse> = yield call(
         request,
         'PUT',
         apiPrototypeSignOff(checklistId),
       );
 
-      if (errors || error) {
+      if (errors) {
         throw 'User cannot signoff the checklist as previous users did not signed off the checklist.';
       }
 
-      const userProfile = getUserProfile(yield select());
-      const currentReviewers = getCurrentReviewers(yield select());
-      const collaborators: Collaborator[] = [];
-      let isLast = true;
-      let sameUserCount = 0;
-      currentReviewers.forEach((r) => {
-        if (r.type === CollaboratorType.SIGN_OFF_USER) {
-          if (
-            r.id !== userProfile?.id &&
-            r.state === CollaboratorState.NOT_STARTED
-          ) {
-            isLast = false;
-          }
-          if (
-            r.id === userProfile?.id &&
-            r.state === CollaboratorState.NOT_STARTED &&
-            sameUserCount === 0
-          ) {
-            sameUserCount++;
-            collaborators.push({
-              ...r,
-              state: CollaboratorState.SIGNED,
-            });
-          } else if (
-            r.id === userProfile?.id &&
-            r.state === CollaboratorState.NOT_STARTED &&
-            sameUserCount !== 0
-          ) {
-            isLast = false;
-            collaborators.push(r);
-          } else {
-            collaborators.push(r);
-          }
-        }
-      });
-
-      if (isLast) {
-        yield put(updateChecklistState(ChecklistStates.READY_FOR_RELEASE));
-      }
-
+      yield* onSuccess(data);
       yield put(closeAllOverlayAction());
-      yield put(signOffPrototypeSuccess(collaborators));
-
       yield put(
         openOverlayAction({
           type: OverlayNames.SIGN_OFF_SUCCESS,
@@ -708,20 +587,18 @@ function* releasePrototypeSaga({
     );
 
     if (validateData) {
-      const { errors, error } = yield call(
+      const { errors, data }: ResponseObj<CommonReviewResponse> = yield call(
         request,
         'PUT',
         apiPrototypeRelease(checklistId),
       );
 
-      if (errors || error) {
+      if (errors) {
         throw 'Unable to Relase the Prototype';
       }
 
-      yield put(updateChecklistState(ChecklistStates.PUBLISHED));
-
+      yield* onSuccess({ checklist: data });
       yield put(closeAllOverlayAction());
-
       yield put(
         openOverlayAction({
           type: OverlayNames.RELEASE_SUCCESS,

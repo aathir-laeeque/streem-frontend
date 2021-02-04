@@ -30,7 +30,7 @@ import {
 } from '@material-ui/icons';
 import { Menu, MenuItem } from '@material-ui/core';
 import { navigate } from '@reach/router';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { validatePrototype } from '../actions';
@@ -44,10 +44,34 @@ import { addNewStage } from '../Stages/actions';
 import { addNewTask } from '../Tasks/actions';
 import HeaderWrapper from './styles';
 
+type InitialState = {
+  isPrimaryAuthor: boolean;
+  allDoneOk: boolean;
+  areReviewsPending: boolean;
+  reviewer: null | Collaborator;
+  author: null | Collaborator;
+  approver: null | Collaborator;
+  headerNotification: {
+    content?: string;
+    class?: string;
+  };
+};
+
+const initialState: InitialState = {
+  isPrimaryAuthor: false,
+  allDoneOk: true,
+  areReviewsPending: false,
+  reviewer: null,
+  author: null,
+  approver: null,
+  headerNotification: {},
+};
+
 const ChecklistHeader: FC = () => {
   const dispatch = useDispatch();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [state, setState] = useState(initialState);
 
   const { activeStageId, data, userId } = useTypedSelector((state) => ({
     userId: state.auth.userId,
@@ -55,37 +79,139 @@ const ChecklistHeader: FC = () => {
     activeStageId: state.prototypeComposer.stages.activeStageId,
   }));
 
-  const reviewer = data?.collaborators.filter(
-    (reviewer) =>
-      reviewer.type === CollaboratorType.REVIEWER && reviewer.id === userId,
-  )[0];
+  useEffect(() => {
+    const newState = (data?.collaborators || []).reduce(
+      (acc, collaborator) => {
+        if (
+          collaborator.type === CollaboratorType.REVIEWER &&
+          collaborator.phase === data.phase
+        ) {
+          if (
+            collaborator.state in CollaboratorState &&
+            collaborator.state !== CollaboratorState.COMMENTED_OK &&
+            collaborator.state !== CollaboratorState.REQUESTED_NO_CHANGES &&
+            collaborator.state !== CollaboratorState.SIGNED
+          ) {
+            acc.allDoneOk = false;
+          }
 
-  const approvers = data?.collaborators.filter(
-    (reviewer) =>
-      reviewer.type === CollaboratorType.SIGN_OFF_USER &&
-      reviewer.id === userId,
-  );
+          if (
+            collaborator.state === CollaboratorState.NOT_STARTED ||
+            collaborator.state === CollaboratorState.BEING_REVIEWED
+          ) {
+            acc.areReviewsPending = true;
+          }
+        }
+        if (collaborator.id === userId) {
+          switch (collaborator.type) {
+            case CollaboratorType.PRIMARY_AUTHOR:
+            case CollaboratorType.AUTHOR:
+              acc.author = collaborator;
 
-  const approver = approvers ? approvers[0] : null;
-  const notSignedYet: boolean = approvers
-    ? approvers.some((r) => r.state === CollaboratorState.NOT_STARTED)
-    : false;
+              if (collaborator.type === CollaboratorType.PRIMARY_AUTHOR)
+                acc.isPrimaryAuthor = true;
 
-  const author = data?.authors.filter((a) => a.id.toString() === userId)[0];
+              switch (data.state) {
+                case ChecklistStates.SUBMITTED_FOR_REVIEW:
+                  acc.headerNotification = {
+                    content: 'This Prototype has been sent to Reviewers',
+                  };
+                  break;
+                case ChecklistStates.READY_FOR_SIGNING:
+                  acc.headerNotification = {
+                    content: 'All OK! No changes submitted by Reviewers',
+                    class: 'success',
+                  };
+                  break;
+              }
 
-  let allDoneOk = true;
-  data?.collaborators.forEach((r) => {
-    if (
-      r.reviewCycle === data.reviewCycle &&
-      (r.state === CollaboratorState.ILLEGAL ||
-        r.state === CollaboratorState.NOT_STARTED ||
-        r.state === CollaboratorState.BEING_REVIEWED ||
-        r.state === CollaboratorState.COMMENTED_CHANGES ||
-        r.state === CollaboratorState.REQUESTED_CHANGES)
-    ) {
-      allDoneOk = false;
-    }
-  });
+              break;
+            case CollaboratorType.REVIEWER:
+              if (collaborator.phase === data.phase) {
+                acc.reviewer = collaborator;
+
+                if (data.state === ChecklistStates.READY_FOR_SIGNING) {
+                  acc.headerNotification = {
+                    content: 'Author has to start the signing process',
+                    class: 'success',
+                  };
+                } else if (data.state !== ChecklistStates.READY_FOR_RELEASE) {
+                  if (collaborator.state === CollaboratorState.NOT_STARTED) {
+                    acc.headerNotification = {
+                      content: 'Prototype Submitted for your Review',
+                      class: 'secondary',
+                    };
+                  } else if (
+                    collaborator.state === CollaboratorState.COMMENTED_CHANGES
+                  ) {
+                    acc.headerNotification = {
+                      content:
+                        'You have already submitted this checklist with comments',
+                      class: 'secondary',
+                    };
+                  } else if (
+                    collaborator.state === CollaboratorState.COMMENTED_OK
+                  ) {
+                    if (acc.allDoneOk) {
+                      acc.headerNotification = {
+                        content:
+                          'You and your team members have No Comments for changes',
+                        class: 'success',
+                      };
+                    } else {
+                      acc.headerNotification = {
+                        content:
+                          'You have already reviewed this prototype and submitted it without comments',
+                      };
+                    }
+                  } else if (
+                    data.state !== ChecklistStates.SIGN_OFF_INITIATED &&
+                    data.state !== ChecklistStates.BEING_REVIEWED &&
+                    data.state !== ChecklistStates.PUBLISHED
+                  ) {
+                    acc.headerNotification = {
+                      content:
+                        'You have already submited your review to author.',
+                    };
+                  }
+                }
+              }
+              break;
+            case CollaboratorType.SIGN_OFF_USER:
+              if (
+                !acc.approver ||
+                collaborator.state === CollaboratorState.NOT_STARTED
+              ) {
+                acc.approver = collaborator;
+              }
+              break;
+          }
+        }
+
+        if (data.state === ChecklistStates.READY_FOR_RELEASE) {
+          acc.headerNotification = {
+            content: 'Checklist is Ready for Release',
+            class: 'success',
+          };
+        }
+
+        return acc;
+      },
+      { ...initialState },
+    );
+
+    setState(newState);
+  }, [data?.collaborators, data?.state]);
+
+  const {
+    isPrimaryAuthor,
+    allDoneOk,
+    areReviewsPending,
+    reviewer,
+    author,
+    approver,
+    headerNotification,
+  } = state;
 
   const handleSubmitForReview = (isViewer = false, showAssignment = true) => {
     if (showAssignment) {
@@ -95,7 +221,7 @@ const ChecklistHeader: FC = () => {
           props: {
             isViewer,
             isAuthor: !!author,
-            isPrimaryAuthor: author && author.primary,
+            isPrimaryAuthor,
           },
         }),
       );
@@ -110,6 +236,7 @@ const ChecklistHeader: FC = () => {
         type: OverlayNames.SUBMIT_REVIEW_MODAL,
         props: {
           sendToAuthor: true,
+          allDoneOk,
         },
       }),
     );
@@ -141,16 +268,13 @@ const ChecklistHeader: FC = () => {
         type: OverlayNames.SUBMIT_REVIEW_MODAL,
         props: {
           continueReview: true,
-          reviewState: reviewer.state,
+          reviewState: reviewer?.state,
         },
       }),
     );
   };
 
-  const renderButtonsForReviewer = (
-    state: CollaboratorState,
-    collaborators: Collaborator[],
-  ) => {
+  const renderButtonsForReviewer = (state: CollaboratorState) => {
     switch (state) {
       case CollaboratorState.NOT_STARTED:
         return (
@@ -173,13 +297,6 @@ const ChecklistHeader: FC = () => {
         );
       case CollaboratorState.COMMENTED_OK:
       case CollaboratorState.COMMENTED_CHANGES:
-        const isReviewPending = collaborators.some(
-          (r) =>
-            r.type === CollaboratorType.REVIEWER &&
-            (r.state === CollaboratorState.BEING_REVIEWED ||
-              r.state === CollaboratorState.NOT_STARTED),
-        );
-
         return (
           <>
             {data?.state !== ChecklistStates.SIGNING_IN_PROGRESS && (
@@ -193,7 +310,7 @@ const ChecklistHeader: FC = () => {
               </Button1>
             )}
             {data?.state !== ChecklistStates.SIGNING_IN_PROGRESS &&
-              !isReviewPending && (
+              !areReviewsPending && (
                 <Button1
                   color={allDoneOk ? 'green' : 'blue'}
                   className="submit"
@@ -250,7 +367,11 @@ const ChecklistHeader: FC = () => {
               description: data?.description,
               name: data.name,
               properties: data.properties,
-              authors: data.authors,
+              authors: data.collaborators.filter(
+                (u) =>
+                  u.type === CollaboratorType.AUTHOR ||
+                  u.type === CollaboratorType.PRIMARY_AUTHOR,
+              ),
               prototypeId: data.id,
             },
           },
@@ -272,7 +393,9 @@ const ChecklistHeader: FC = () => {
           <Button1
             id="more"
             variant="secondary"
-            onClick={(event: MouseEvent) => {
+            onClick={(
+              event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+            ) => {
               setAnchorEl(event.currentTarget);
             }}
           >
@@ -391,7 +514,7 @@ const ChecklistHeader: FC = () => {
       case ChecklistStates.BEING_BUILT:
         return (
           <>
-            {author.primary && (
+            {isPrimaryAuthor && (
               <>
                 <PrototypeEditButton />
                 <AuthorSubmitButton title="Submit For Review" />
@@ -411,18 +534,20 @@ const ChecklistHeader: FC = () => {
       case ChecklistStates.REQUESTED_CHANGES:
         return (
           <>
-            {author.primary && <PrototypeEditButton />}
+            {isPrimaryAuthor && <PrototypeEditButton />}
             <ViewReviewersButton />
-            {author.primary && <AuthorSubmitButton title="Submit For Review" />}
+            {isPrimaryAuthor && (
+              <AuthorSubmitButton title="Submit For Review" />
+            )}
           </>
         );
 
       case ChecklistStates.READY_FOR_SIGNING:
         return (
           <>
-            {author.primary && <PrototypeEditButton />}
+            {isPrimaryAuthor && <PrototypeEditButton />}
             <ViewReviewersButton />
-            {author.primary && (
+            {isPrimaryAuthor && (
               <InitiateSignOffButton title="Initiate Sign Off " />
             )}
           </>
@@ -431,7 +556,7 @@ const ChecklistHeader: FC = () => {
       default:
         return (
           <>
-            {author.primary && <PrototypeEditButton />}
+            {isPrimaryAuthor && <PrototypeEditButton />}
             <ViewReviewersButton />
           </>
         );
@@ -445,124 +570,10 @@ const ChecklistHeader: FC = () => {
   return (
     <HeaderWrapper>
       <div className="before-header">
-        {author && data?.state === ChecklistStates.SUBMITTED_FOR_REVIEW && (
-          <div className="alert">
+        {headerNotification?.content && (
+          <div className={`alert ${headerNotification.class || ''}`}>
             <Info />
-            <span>This Prototype has been sent to Reviewers</span>
-          </div>
-        )}
-        {author && data?.state === ChecklistStates.READY_FOR_SIGNING && (
-          <div
-            className="alert"
-            style={{
-              backgroundColor: '#e1fec0',
-              border: 'solid 1px #b2ef6c',
-            }}
-          >
-            <Info style={{ color: '#427a00' }} />
-            <span style={{ color: '#427a00' }}>
-              All OK! No changes submitted by Reviewers
-            </span>
-          </div>
-        )}
-        {reviewer && data?.state === ChecklistStates.READY_FOR_SIGNING && (
-          <div
-            className="alert"
-            style={{
-              backgroundColor: '#e1fec0',
-              border: 'solid 1px #b2ef6c',
-            }}
-          >
-            <Info style={{ color: '#427a00' }} />
-            <span style={{ color: '#427a00' }}>
-              Author has to start the signing process
-            </span>
-          </div>
-        )}
-        {reviewer &&
-          data?.state !== ChecklistStates.READY_FOR_RELEASE &&
-          reviewer.state === CollaboratorState.NOT_STARTED && (
-            <div
-              className="alert"
-              style={{
-                backgroundColor: '#eeeeee',
-                border: 'solid 1px #bababa',
-              }}
-            >
-              <Info style={{ color: '#000' }} />
-              <span style={{ color: '#000' }}>
-                Prototype Submitted for your Review
-              </span>
-            </div>
-          )}
-        {reviewer &&
-          data?.state !== ChecklistStates.READY_FOR_RELEASE &&
-          reviewer.state === CollaboratorState.COMMENTED_CHANGES && (
-            <div
-              className="alert"
-              style={{
-                backgroundColor: 'rgba(247, 181, 0, 0.16)',
-                border: 'solid 1px #f7b500',
-              }}
-            >
-              <Info style={{ color: '#000' }} />
-              <span style={{ color: '#000' }}>
-                You have already submitted this checklist with comments
-              </span>
-            </div>
-          )}
-        {reviewer &&
-          data?.state !== ChecklistStates.READY_FOR_RELEASE &&
-          reviewer.state === CollaboratorState.COMMENTED_OK && (
-            <>
-              {allDoneOk ? (
-                <div
-                  className="alert"
-                  style={{
-                    backgroundColor: '#e1fec0',
-                    border: 'solid 1px #b2ef6c',
-                  }}
-                >
-                  <Info style={{ color: '#427a00' }} />
-                  <span style={{ color: '#427a00' }}>
-                    You and your team members have No Comments for changes
-                  </span>
-                </div>
-              ) : (
-                <div className="alert">
-                  <Info />
-                  <span>
-                    You have already reviewed this prototype and submitted it
-                    without comments
-                  </span>
-                </div>
-              )}
-            </>
-          )}
-        {reviewer &&
-          data?.state !== ChecklistStates.READY_FOR_RELEASE &&
-          data?.state !== ChecklistStates.READY_FOR_SIGNING &&
-          data?.state !== ChecklistStates.SIGN_OFF_INITIATED &&
-          data?.state !== ChecklistStates.PUBLISHED &&
-          (reviewer.state === CollaboratorState.REQUESTED_CHANGES ||
-            reviewer.state === CollaboratorState.REQUESTED_NO_CHANGES) && (
-            <div className="alert">
-              <Info />
-              <span>You have already submited your review to author.</span>
-            </div>
-          )}
-        {data?.state === ChecklistStates.READY_FOR_RELEASE && (
-          <div
-            className="alert"
-            style={{
-              backgroundColor: '#e1fec0',
-              border: 'solid 1px #b2ef6c',
-            }}
-          >
-            <Info style={{ color: '#427a00' }} />
-            <span style={{ color: '#427a00' }}>
-              Checklist is Ready for Release
-            </span>
+            <span>{headerNotification.content}</span>
           </div>
         )}
       </div>
@@ -588,7 +599,7 @@ const ChecklistHeader: FC = () => {
                 <ViewReviewersButton />
                 {data?.state !== ChecklistStates.REQUESTED_CHANGES &&
                 data?.state !== ChecklistStates.BEING_BUILT
-                  ? renderButtonsForReviewer(reviewer.state, data.collaborators)
+                  ? renderButtonsForReviewer(reviewer.state)
                   : null}
               </>
             )}
@@ -597,7 +608,9 @@ const ChecklistHeader: FC = () => {
               <>
                 <ViewReviewersButton />
                 <ViewSigningStateButton />
-                {approver && notSignedYet && <SignOffButton />}
+                {approver && approver.state !== CollaboratorState.SIGNED && (
+                  <SignOffButton />
+                )}
               </>
             )}
             {data?.state === ChecklistStates.DEPRECATED && (

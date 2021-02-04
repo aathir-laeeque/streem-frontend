@@ -1,5 +1,4 @@
 import { User } from '#store/users/types';
-import { Author } from '#views/Checklists/NewPrototype/types';
 import { CollaboratorState, Collaborator } from './reviewer.types';
 
 export type Properties = {
@@ -146,18 +145,6 @@ export enum DisabledStates {
 
 export type AllChecklistStates = EnabledStates | DisabledStates;
 
-// export enum ChecklistStates {
-//   BEING_BUILT = 'BEING_BUILT', // ENABLE EDITING
-//   SUBMITTED_FOR_REVIEW = 'SUBMITTED_FOR_REVIEW',
-//   BEING_REVIEWED = 'BEING_REVIEWED',
-//   REQUESTED_CHANGES = 'REQUESTED_CHANGES', // ENABLE EDITING
-//   READY_FOR_SIGNING = 'READY_FOR_SIGNING',
-//   SIGN_OFF_INITIATED = 'SIGN_OFF_INITIATED',
-//   SIGNING_IN_PROGRESS = 'SIGNING_IN_PROGRESS',
-//   READY_FOR_RELEASE = 'READY_FOR_RELEASE',
-//   PUBLISHED = 'PUBLISHED',
-// }
-
 export const ChecklistStates = {
   ...EnabledStates,
   ...DisabledStates,
@@ -197,8 +184,9 @@ export type Comment = {
   commentedAt: number;
   modifiedAt: number;
   commentedBy: Pick<User, 'id' | 'firstName' | 'lastName' | 'employeeId'>;
-  reviewCycle: number;
-  reviewState: CollaboratorState;
+  phase: number;
+  // reviewState: CollaboratorState;
+  state: CollaboratorState;
 };
 
 export type Checklist = {
@@ -212,8 +200,7 @@ export type Checklist = {
   stages: Stage[];
   properties?: Properties;
   audit: Audit;
-  authors: Author[];
-  reviewCycle: number;
+  phase?: number;
   comments: Comment[];
   collaborators: Collaborator[];
 

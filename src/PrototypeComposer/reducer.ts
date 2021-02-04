@@ -5,7 +5,7 @@ import {
   activityReducer,
   initialState as ActivityListState,
 } from './Activity/reducer';
-import { Checklist, ChecklistStates } from './checklist.types';
+import { Checklist } from './checklist.types';
 import {
   ComposerAction,
   ComposerActionType,
@@ -98,54 +98,18 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         ),
       };
 
-    case ComposerAction.SUBMIT_CHECKLIST_FOR_REVIEW_SUCCESS:
+    case ComposerAction.UPDATE_FOR_REVIEW_PROCESS:
       return {
         ...state,
         data: {
           ...state.data,
-          state: ChecklistStates.SUBMITTED_FOR_REVIEW,
-          reviewCycle: (state.data as Checklist).reviewCycle + 1,
-        } as Checklist,
-      };
-
-    case ComposerAction.ASSIGN_REVIEWERS_TO_CHECKLIST_SUCCESS:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          state: ChecklistStates.SUBMITTED_FOR_REVIEW,
-        } as Checklist,
-      };
-
-    case ComposerAction.INITIATE_SIGNOFF_SUCCESS:
-    case ComposerAction.SIGN_OFF_PROTOTYPE_SUCCESS:
-    case ComposerAction.SEND_REVIEW_TO_CR_SUCCESS:
-    case ComposerAction.START_CHECKLIST_REVIEW_SUCCESS:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          collaborators: action.payload?.collaborators,
-        } as Checklist,
-      };
-
-    case ComposerAction.SUBMIT_CHECKLIST_REVIEW_WITH_CR_SUCCESS:
-    case ComposerAction.SUBMIT_CHECKLIST_REVIEW_SUCCESS:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          collaborators: action.payload?.collaborators,
-          comments: action.payload?.comments,
-        } as Checklist,
-      };
-
-    case ComposerAction.UPDATE_CHECKLIST_STATE:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          state: action.payload.state,
+          ...action.payload.checklist,
+          collaborators: action.payload.collaborators.length
+            ? action.payload.collaborators
+            : (state.data as Checklist).collaborators,
+          comments: action.payload.comments.length
+            ? action.payload.comments
+            : (state.data as Checklist).comments,
         } as Checklist,
       };
 

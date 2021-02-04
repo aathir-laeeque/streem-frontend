@@ -25,12 +25,14 @@ import {
 import { useTypedSelector } from '#store';
 import {
   Checklist,
+  ChecklistStates,
   ChecklistStatesColors,
   ChecklistStatesContent,
 } from '#PrototypeComposer/checklist.types';
 import {
   Collaborator,
   CollaboratorState,
+  CollaboratorType,
 } from '#PrototypeComposer/reviewer.types';
 import {
   fetchAssignedReviewersForChecklist,
@@ -48,7 +50,6 @@ import {
   updatePropsAction,
 } from '#components/OverlayContainer/actions';
 import { User } from '#store/users/types';
-import { Author } from '#views/Checklists/NewPrototype/types';
 import moment from 'moment';
 
 enum Options {
@@ -66,7 +67,6 @@ type InitialState = {
   selectedCycle: null | number;
   reviewCycleOptions: Option[];
   reviewersOptions: Option[];
-  allDoneOk: boolean;
 };
 
 const toolbarOptions = {
@@ -83,7 +83,6 @@ const initialState: InitialState = {
   selectedCycle: null,
   reviewCycleOptions: [],
   reviewersOptions: [],
-  allDoneOk: false,
 };
 
 export const SubmitReviewModal: FC<CommonOverlayProps<{
@@ -92,6 +91,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
   isAuthor: boolean;
   isPrimaryAuthor: boolean;
   continueReview: boolean;
+  allDoneOk: boolean;
   reviewState:
     | CollaboratorState.COMMENTED_CHANGES
     | CollaboratorState.COMMENTED_OK
@@ -103,6 +103,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
   const continueReview = props?.continueReview || false;
   const reviewState = props?.reviewState || null;
   const sendToAuthor = props?.sendToAuthor || false;
+  const allDoneOk = props?.allDoneOk || false;
 
   const dispatch = useDispatch();
   const { data, userId, collaborators } = useTypedSelector((state) => ({
@@ -124,9 +125,9 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
         const commentExist =
           data?.comments?.filter(
             (c) =>
-              c.reviewState !== CollaboratorState.COMMENTED_OK &&
+              c.state !== CollaboratorState.COMMENTED_OK &&
               c.commentedBy.id === userId &&
-              c.reviewCycle === data?.reviewCycle,
+              c.phase === data?.phase,
           ) ?? [];
 
         if (commentExist.length) {
@@ -139,26 +140,13 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
         }
       }
 
-      let allDoneOk = true;
-      collaborators.forEach((r) => {
-        if (
-          r.state === CollaboratorState.ILLEGAL ||
-          r.state === CollaboratorState.NOT_STARTED ||
-          r.state === CollaboratorState.BEING_REVIEWED ||
-          r.state === CollaboratorState.COMMENTED_CHANGES ||
-          r.state === CollaboratorState.REQUESTED_CHANGES
-        ) {
-          allDoneOk = false;
-        }
-      });
-
       const reviewerOptions = collaborators.map((r) => ({
         label: `${r.firstName} ${r.lastName} - ${r.employeeId}`,
         value: r.id,
       }));
 
       const cycleOptions = [];
-      for (let i = 1; i <= data?.reviewCycle; i++) {
+      for (let i = 1; i <= (data.phase || 1); i++) {
         cycleOptions.push({
           label: getOrdinal(i),
           value: i,
@@ -170,7 +158,6 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
         editorState,
         reviewersOptions: [{ label: 'All', value: null }, ...reviewerOptions],
         reviewCycleOptions: [{ label: 'All', value: null }, ...cycleOptions],
-        allDoneOk,
       });
     }
   }, [collaborators]);
@@ -191,9 +178,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
       dispatch(submitChecklistReviewWithCR(data?.id, comments));
   };
 
-  console.log('state.allDoneOK', state.allDoneOk);
-
-  const groupedComments = groupBy(data?.comments, 'reviewCycle');
+  const groupedComments = groupBy(data?.comments, 'phase');
   const comments: any = [];
   Object.keys(groupedComments)
     .sort()
@@ -242,7 +227,8 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                         </span>
                       </div>
                     </div>
-                    {comment.reviewState === CollaboratorState.COMMENTED_OK ? (
+                    {comment.state === CollaboratorState.COMMENTED_OK ||
+                    comment.state === CollaboratorState.REQUESTED_NO_CHANGES ? (
                       <div
                         className="comment"
                         style={{
@@ -280,14 +266,18 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
 
   const handleAuthorMouseOver = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    users: Author[],
+    users: Collaborator[],
   ) => {
     dispatch(
       openOverlayAction({
         type: OverlayNames.AUTHORS_DETAIL,
         popOverAnchorEl: event.currentTarget,
         props: {
-          users,
+          users: users.filter(
+            (u) =>
+              u.type === CollaboratorType.AUTHOR ||
+              u.type === CollaboratorType.PRIMARY_AUTHOR,
+          ),
         },
       }),
     );
@@ -332,6 +322,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
   };
 
   const getTitle = () => {
+    if (sendToAuthor && !isViewer) return 'Send to Author';
     if (state.selected === Options.OK) return 'Confirm your choice';
     if (continueReview && reviewState === CollaboratorState.COMMENTED_OK)
       return 'Add Comments';
@@ -344,7 +335,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
   };
 
   const getShowHeader = () => {
-    if (sendToAuthor || isViewer || state.selected === Options.COMMENTS)
+    if (!sendToAuthor && (isViewer || state.selected === Options.COMMENTS))
       return false;
 
     return true;
@@ -423,14 +414,14 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
         {sendToAuthor && (
           <div
             style={{
-              padding: '88px 0px',
+              padding: '0px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
             }}
           >
             <div className="box-wrapper" style={{ padding: '0px 208px' }}>
-              {state.allDoneOk ? (
+              {allDoneOk ? (
                 <div className="box">
                   <div className="icon-wrapper">
                     <MemoAllOk />
@@ -451,7 +442,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
             <Button1 className="submit" onClick={handleSendToAuthor}>
               Confirm
             </Button1>
-            {!state.allDoneOk && (
+            {!allDoneOk && (
               <Button1 variant="textOnly" onClick={toggleSendToAuthor}>
                 View Requested Changes
               </Button1>
@@ -580,7 +571,9 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                 <div
                   className="icon-wrapper"
                   aria-haspopup="true"
-                  onMouseEnter={(e) => handleAuthorMouseOver(e, data?.authors)}
+                  onMouseEnter={(e) =>
+                    handleAuthorMouseOver(e, data?.collaborators)
+                  }
                   onMouseLeave={() =>
                     dispatch(closeOverlayAction(OverlayNames.AUTHORS_DETAIL))
                   }
@@ -615,7 +608,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                   />
                   <Person style={{ fontSize: '18px' }} />
                 </div>
-                {isPrimaryAuthor && (
+                {isPrimaryAuthor && data.state !== ChecklistStates.DEPRECATED && (
                   <div
                     className="icon-wrapper"
                     style={{

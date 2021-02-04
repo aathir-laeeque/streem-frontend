@@ -212,45 +212,42 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
     { userId: string; orderTree: number }[]
   >([]);
 
-  const { data, userId, collaborators } = useTypedSelector((state) => ({
-    userId: state.auth.userId,
+  const { data } = useTypedSelector((state) => ({
     data: (state.prototypeComposer?.data as unknown) as Checklist,
-    collaborators: uniqBy(
-      ((state.prototypeComposer?.data as unknown) as Checklist).collaborators ||
-        [],
-      'id',
-    ),
   }));
 
   useEffect(() => {
-    const newUsers = data.authors.map((a) => ({
-      id: a.id,
-      email: a.email,
-      firstName: a.firstName,
-      lastName: a.lastName,
-      employeeId: a.employeeId,
-      type: CollaboratorType.AUTHOR,
-      checkedAuthor: true,
-      checkedReviewer: false,
-      checkedApprover: false,
-    }));
+    const { newUsers, selectedUsers } = uniqBy(data.collaborators, 'id').reduce(
+      (acc, collaborator) => {
+        const isAuthor =
+          collaborator.type === CollaboratorType.AUTHOR ||
+          collaborator.type === CollaboratorType.PRIMARY_AUTHOR;
 
-    collaborators.forEach((a) => {
-      newUsers.push({
-        id: a.id,
-        email: a.email,
-        firstName: a.firstName,
-        lastName: a.lastName,
-        employeeId: a.employeeId,
-        type: CollaboratorType.REVIEWER,
-        checkedAuthor: false,
-        checkedReviewer: false,
-        checkedApprover: false,
-      });
-    });
+        acc.newUsers.push({
+          id: collaborator.id,
+          email: collaborator.email,
+          firstName: collaborator.firstName,
+          lastName: collaborator.lastName,
+          employeeId: collaborator.employeeId,
+          type: collaborator.type,
+          checkedAuthor: isAuthor,
+          checkedReviewer: false,
+          checkedApprover: false,
+        });
+
+        if (isAuthor)
+          acc.selectedUsers.push({ userId: collaborator.id, orderTree: 1 });
+
+        return acc;
+      },
+      { newUsers: [], selectedUsers: [] } as {
+        newUsers: ParsedUser[];
+        selectedUsers: { userId: string; orderTree: number }[];
+      },
+    );
 
     setUsers(newUsers);
-    setSelection(data.authors.map((a) => ({ userId: a.id, orderTree: 1 })));
+    setSelection(selectedUsers);
   }, []);
 
   const onCheckChange = (id: string, orderTree: number) => {
@@ -382,7 +379,8 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
                 </td>
                 <td>
                   <div className="checkmark-wrapper">
-                    {u.type === CollaboratorType.AUTHOR && (
+                    {(u.type === CollaboratorType.AUTHOR ||
+                      u.type === CollaboratorType.PRIMARY_AUTHOR) && (
                       <Checkbox
                         checked
                         disabled

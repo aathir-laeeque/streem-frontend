@@ -4,10 +4,10 @@ import { Checklist } from '#PrototypeComposer/checklist.types';
 import {
   Collaborator,
   CollaboratorState,
+  CollaboratorType,
 } from '#PrototypeComposer/reviewer.types';
 import { useUsers, OtherUserState, defaultParams } from '#services/users';
 import { useTypedSelector } from '#store';
-// import { fetchUsers } from '#store/users/actions';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Search } from '@material-ui/icons';
@@ -47,14 +47,9 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   props: { checklistId, isModal = true },
 }) => {
   const {
-    data: { authors, reviewCycle },
+    data: { collaborators, phase },
     assignees,
-    // activeUsers: {
-    //   list,
-    //   pageable: { last, page },
-    // },
   } = useTypedSelector((state) => ({
-    // activeUsers: state.users.active,
     assignees: state.prototypeComposer.collaborators,
     data: state.prototypeComposer.data as Checklist,
   }));
@@ -74,19 +69,6 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
     userState: OtherUserState.REVIEWERS,
     params: { ...defaultParams },
   });
-
-  // const fetchData = (page: number, size: number) => {
-  //   const filters = JSON.stringify({
-  //     op: 'AND',
-  //     fields: [
-  //       { field: 'firstName', op: 'LIKE', values: [searchQuery] },
-  //       { field: 'archived', op: 'EQ', values: [false] },
-  //       // { field: 'lastName', op: 'LIKE', values: [searchQuery] },
-  //       // { field: 'employeeId', op: 'LIKE', values: [searchQuery] },
-  //     ],
-  //   });
-  //   dispatch(fetchUsers({ page, size, filters, sort: 'id' }, 'active'));
-  // };
 
   if (checklistId) {
     useEffect(() => {
@@ -201,8 +183,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   const handleUnselectAll = () => {
     const filteredAssignees = preAssignedUsers.filter(
       (user) =>
-        user.reviewCycle === reviewCycle &&
-        user.state !== CollaboratorState.NOT_STARTED,
+        user.phase === phase && user.state !== CollaboratorState.NOT_STARTED,
     );
     setstate({
       ...state,
@@ -219,7 +200,12 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
       preAssignedUsers.forEach((user) => {
         if (user.id !== '0') {
           const checked = assignees.some((item) => item.id === user.id);
-          const isAuthor = authors.some((item) => item.id === user.id);
+          const isAuthor = collaborators.some(
+            (item) =>
+              item.id === user.id &&
+              (item.type === CollaboratorType.AUTHOR ||
+                item.type === CollaboratorType.PRIMARY_AUTHOR),
+          );
           if (!isAuthor) bodyView.push(userRow(user, checked, true));
         }
       });
@@ -230,7 +216,12 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
         (item) => item.id === user.id,
       );
       const checked = assignees.some((item) => item.id === user.id);
-      const isAuthor = authors.some((item) => item.id === user.id);
+      const isAuthor = collaborators.some(
+        (item) =>
+          item.id === user.id &&
+          (item.type === CollaboratorType.AUTHOR ||
+            item.type === CollaboratorType.PRIMARY_AUTHOR),
+      );
 
       if (user.id !== '0' && !isAuthor) {
         if (searchQuery !== '') {

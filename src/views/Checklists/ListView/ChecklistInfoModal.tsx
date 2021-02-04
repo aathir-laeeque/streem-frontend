@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import { navigate } from '@reach/router';
 
 import { Checklist } from '../types';
+import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 
 const Wrapper = styled.div`
   .modal {
@@ -273,9 +274,11 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
   }, []);
 
   if (!isEmpty(state)) {
-    const primaryAuthor = state?.authors?.filter((author) => author.primary)[0];
+    const primaryAuthor = state?.authors?.filter(
+      (author) => author.type === CollaboratorType.PRIMARY_AUTHOR,
+    )[0];
     const secondaryAuthors = state?.authors?.filter(
-      (author) => !author.primary,
+      (author) => author.type === CollaboratorType.AUTHOR,
     );
 
     return (

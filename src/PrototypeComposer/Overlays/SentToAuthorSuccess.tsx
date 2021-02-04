@@ -31,10 +31,9 @@ const Wrapper = styled.div`
   }
 `;
 
-const SentToAuthorSuccessModal: FC<CommonOverlayProps<any>> = ({
-  closeAllOverlays,
-  closeOverlay,
-}) => {
+const SentToAuthorSuccessModal: FC<CommonOverlayProps<{
+  heading: string;
+}>> = ({ closeAllOverlays, closeOverlay, props: { heading } }) => {
   return (
     <Wrapper>
       <BaseModal
@@ -44,7 +43,7 @@ const SentToAuthorSuccessModal: FC<CommonOverlayProps<any>> = ({
         showHeader={false}
       >
         <MemoSentToAuthorSuccess />
-        <h3>Comments Sent to Author</h3>
+        <h3>{heading}</h3>
         <span>
           You and your Team Members Comments have been sent to Authors for
           Changes.

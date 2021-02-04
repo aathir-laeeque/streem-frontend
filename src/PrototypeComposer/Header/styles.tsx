@@ -34,6 +34,26 @@ const HeaderWrapper = styled.div`
         margin-right: 10px;
       }
     }
+
+    .success {
+      border: solid 1px #b2ef6c;
+      background-color: #e1fec0;
+
+      span,
+      svg {
+        color: #427a00;
+      }
+    }
+
+    .secondary {
+      border: solid 1px #f7b500;
+      background-color: rgba(247, 181, 0, 0.16);
+
+      span,
+      svg {
+        color: #000;
+      }
+    }
   }
 
   .main-header {

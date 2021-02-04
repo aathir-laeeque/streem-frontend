@@ -1,5 +1,5 @@
 import { User } from '#store/users/types';
-import { Comment } from './checklist.types';
+import { Checklist, Comment } from './checklist.types';
 
 export enum CollaboratorState {
   ILLEGAL = 'ILLEGAL',
@@ -35,9 +35,16 @@ export enum CollaboratorStateColors {
 }
 
 export enum CollaboratorType {
+  PRIMARY_AUTHOR = 'PRIMARY_AUTHOR',
   AUTHOR = 'AUTHOR',
   REVIEWER = 'REVIEWER',
   SIGN_OFF_USER = 'SIGN_OFF_USER',
+}
+
+export enum PhaseType {
+  BUILD = 'BUILD',
+  REVIEW = 'REVIEW',
+  SIGN_OFF = 'SIGN_OFF',
 }
 
 export type Collaborator = Pick<
@@ -46,6 +53,21 @@ export type Collaborator = Pick<
 > &
   Pick<Comment, 'id' | 'comments' | 'commentedAt' | 'modifiedAt'> & {
     state: CollaboratorState;
-    reviewCycle: number;
+    phase: number;
+    phaseType: PhaseType;
     type: CollaboratorType;
   };
+
+export type CommonReviewPayload = {
+  collaborators: Collaborator[] | [];
+  checklist:
+    | Pick<Checklist, 'id' | 'state' | 'phase'>
+    | Record<string, unknown>;
+  comments: Comment[] | [];
+};
+
+export type CommonReviewResponse = {
+  collaborators?: Collaborator[];
+  checklist?: Pick<Checklist, 'id' | 'state' | 'phase'>;
+  comment?: Comment;
+};
