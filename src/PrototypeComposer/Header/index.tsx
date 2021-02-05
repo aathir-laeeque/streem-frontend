@@ -86,6 +86,7 @@ const ChecklistHeader: FC = () => {
           collaborator.type === CollaboratorType.REVIEWER &&
           collaborator.phase === data.phase
         ) {
+          // Rather Than Comparing with all Invalid States, Its better to neglect the valid as invalid states are more.
           if (
             collaborator.state in CollaboratorState &&
             collaborator.state !== CollaboratorState.COMMENTED_OK &&

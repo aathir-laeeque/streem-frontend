@@ -261,7 +261,7 @@ function* onSuccess(data: CommonReviewResponse) {
     let isLast = true;
     let allDoneOk = true;
 
-    if (data.collaborators && data.collaborators.length) {
+    if (data?.collaborators?.length) {
       const currentReviewers = getCurrentReviewers(yield select());
 
       const addedIndexes: number[] = [];
