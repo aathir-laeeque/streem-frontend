@@ -134,7 +134,7 @@ const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
     left: 0;
     height: 100%;
     width: 100%;
-    z-index: 99999;
+    z-index: -1;
   }
 
   @keyframes fadeIn {
@@ -291,16 +291,17 @@ export const BaseModal: FC<BaseModalProps> = ({
               </div>
             )}
           </div>
+
+          {allowCloseOnOutsideClick ? (
+            <div
+              className="escape-overlay"
+              key="escape-overlay"
+              role="presentation"
+              onClick={() => closeModal()}
+            />
+          ) : null}
         </div>
       </div>
-      {allowCloseOnOutsideClick ? (
-        <div
-          className="escape-overlay"
-          key="escape-overlay"
-          role="presentation"
-          onClick={() => closeModal()}
-        />
-      ) : null}
     </Wrapper>
   );
 };
