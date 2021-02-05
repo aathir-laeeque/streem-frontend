@@ -271,14 +271,14 @@ function* onSuccess(data: CommonReviewResponse) {
         let isUpdated = false;
         const { id, phase, phaseType } = collab;
         collaborators.push(
-          ...currentReviewers.reduce((acc, r, index) => {
-            if (r.phase === phase && r.phaseType === phaseType) {
-              if (r.id === id) {
-                if (!isUpdated && r.state !== CollaboratorState.SIGNED) {
-                  acc.push(collab || r);
+          ...currentReviewers.reduce((accumulator, reviewer, index) => {
+            if (reviewer.phase === phase && reviewer.phaseType === phaseType) {
+              if (reviewer.id === id) {
+                if (!isUpdated && reviewer.state !== CollaboratorState.SIGNED) {
+                  accumulator.push(collab || reviewer);
                   isUpdated = true;
                 } else if (!addedIndexes.includes(index)) {
-                  acc.push(r);
+                  accumulator.push(reviewer);
                   addedIndexes.push(index);
                 }
 
@@ -287,24 +287,24 @@ function* onSuccess(data: CommonReviewResponse) {
                 }
               } else {
                 if (!addedIndexes.includes(index)) {
-                  acc.push(r);
+                  accumulator.push(reviewer);
                   addedIndexes.push(index);
                 }
 
-                if (r.state !== CollaboratorState.COMMENTED_OK) {
+                if (reviewer.state !== CollaboratorState.COMMENTED_OK) {
                   allDoneOk = false;
-                  if (r.state !== CollaboratorState.COMMENTED_CHANGES) {
+                  if (reviewer.state !== CollaboratorState.COMMENTED_CHANGES) {
                     isLast = false;
                   }
                 }
               }
             } else {
               if (!addedIndexes.includes(index)) {
-                acc.push(r);
+                accumulator.push(reviewer);
                 addedIndexes.push(index);
               }
             }
-            return acc;
+            return accumulator;
           }, [] as Collaborator[]),
         );
 
