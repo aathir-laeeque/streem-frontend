@@ -609,7 +609,7 @@ const ChecklistHeader: FC = () => {
               <>
                 <ViewReviewersButton />
                 <ViewSigningStateButton />
-                {approver && approver.state !== CollaboratorState.SIGNED && (
+                {approver?.state !== CollaboratorState.SIGNED && (
                   <SignOffButton />
                 )}
               </>
