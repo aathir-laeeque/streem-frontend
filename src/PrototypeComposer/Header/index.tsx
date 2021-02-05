@@ -171,7 +171,7 @@ const ChecklistHeader: FC = () => {
                   ) {
                     acc.headerNotification = {
                       content:
-                        'You have already submited your review to author.',
+                        'You have already submitted your review to author.',
                     };
                   }
                 }
