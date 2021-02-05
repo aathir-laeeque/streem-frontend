@@ -508,7 +508,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                           </div>
                         </MenuItem>
                       )}
-                      <MenuItem
+                      {/* <MenuItem
                         onClick={() => {
                           handleClose();
                           if (item.archived) {
@@ -526,7 +526,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                                   onPrimaryClick: () =>
                                     dispatch(
                                       unarchiveChecklist(
-                                        selectedChecklist?.id.toString(),
+                                        selectedChecklist?.id as string,
                                         true,
                                       ),
                                     ),
@@ -536,7 +536,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                           } else {
                             dispatch(
                               handlePublishedArchive(
-                                selectedChecklist?.id.toString(),
+                                selectedChecklist?.id as string,
                               ),
                             );
                           }
@@ -548,7 +548,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                             item.archived ? 'Unarchive' : 'Archive'
                           }`}</span>
                         </div>
-                      </MenuItem>
+                      </MenuItem> */}
                     </Menu>
                   </>
                 );
