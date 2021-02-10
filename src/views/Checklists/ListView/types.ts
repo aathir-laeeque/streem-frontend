@@ -14,6 +14,7 @@ import {
 export type ListViewProps = RouteComponentProps;
 export interface ListViewState {
   readonly checklists: Checklist[];
+  readonly currentPageData: Checklist[];
   readonly pageable: Pageable;
   readonly loading: boolean;
   readonly error?: any;

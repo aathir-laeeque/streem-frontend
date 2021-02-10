@@ -15,6 +15,7 @@ const initalPageable = {
 
 const initialState: ListViewState = {
   checklists: [],
+  currentPageData: [],
   loading: false,
   pageable: initalPageable,
 };
@@ -44,6 +45,7 @@ const reducer = (
           pageable && pageable.page === 0
             ? (data as Array<Checklist>)
             : [...state.checklists, ...(data as Array<Checklist>)],
+        currentPageData: data as Checklist[],
       };
 
     case ListViewAction.FETCH_CHECKLISTS_ERROR:

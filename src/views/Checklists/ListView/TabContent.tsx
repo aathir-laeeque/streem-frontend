@@ -73,7 +73,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   label,
 }) => {
   const {
-    checklistListView: { checklists, pageable },
+    checklistListView: { checklists, pageable, currentPageData },
     auth: { userId },
   } = useTypedSelector((state) => state);
   const { selectedFacility: { id: facilityId } = {} } = useTypedSelector(
@@ -358,7 +358,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
       </div>
       <NewListView
         properties={checklistProperties}
-        data={checklists.slice(pageData.start, pageData.end)}
+        data={currentPageData}
         beforeColumns={[
           ...(label === 'prototype'
             ? [
