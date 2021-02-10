@@ -8,7 +8,6 @@ import {
 } from '#components';
 import { apiCheckEmail, apiCheckEmployeeId } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { debounce } from 'lodash';
 import { fetchFacilities } from '#store/facilities/actions';
 import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '#store';
@@ -33,34 +32,19 @@ type Inputs = {
 
 const AddUser: FC<AddUserProps> = () => {
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchFacilities());
-  }, []);
-
   const { list, loading } = useTypedSelector((state) => state.facilities);
 
-  useEffect(() => {
-    document.getElementById('firstName')?.focus();
-  }, []);
-
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-    watch,
-    clearErrors,
-    setError,
-  } = useForm<Inputs>({
+  const { register, handleSubmit, errors, formState, watch } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
   });
 
-  const { employeeId, email, roles: rolesValues } = watch([
-    'employeeId',
-    'email',
-    'roles',
-  ]);
+  const { roles: rolesValues } = watch(['roles']);
+
+  useEffect(() => {
+    dispatch(fetchFacilities());
+    document.getElementById('firstName')?.focus();
+  }, []);
 
   const onSubmit = (data: Inputs) => {
     const parsedRoles: { id: string }[] = [];
@@ -80,11 +64,9 @@ const AddUser: FC<AddUserProps> = () => {
     dispatch(addUser(payload));
   };
 
-  if (list?.length === 0 || loading) {
+  if (!list?.length || loading) {
     return <div>Loading...</div>;
   }
-
-  console.log('isValid', formState.isValid);
 
   return (
     <Composer>
@@ -131,35 +113,23 @@ const AddUser: FC<AddUserProps> = () => {
               <LabeledInput
                 refFun={register({
                   required: true,
+                  maxLength: {
+                    value: 45,
+                    message: "Shouldn't be greater than 45 characters.",
+                  },
                   validate: async (value) => {
-                    if (!employeeId) return true;
-                    if (value === employeeId) return true;
-                    return new Promise((resolve) => {
-                      debounce(async (employeeId) => {
-                        const { errors } = await request(
-                          'GET',
-                          apiCheckEmployeeId(employeeId),
-                        );
-                        let message: string | boolean = true;
-                        if (errors && errors.length > 0) {
-                          message = 'Employee ID already exists';
-                          setError('employeeId', { message });
-                        } else {
-                          clearErrors('employeeId');
-                        }
-                        resolve(message);
-                      }, 500)(value);
-                    });
+                    const { errors } = await request(
+                      'GET',
+                      apiCheckEmployeeId(value),
+                    );
+                    if (errors?.length) return 'Employee ID already exists';
+                    return true;
                   },
                 })}
                 placeHolder="Employee ID"
                 label="Employee ID"
                 id="employeeId"
-                error={
-                  errors['employeeId']?.message !== ''
-                    ? errors['employeeId']?.message
-                    : undefined
-                }
+                error={errors['employeeId']?.message}
               />
             </div>
             <div className="flex-col left-gutter">
@@ -171,34 +141,18 @@ const AddUser: FC<AddUserProps> = () => {
                     message: 'Invalid email address',
                   },
                   validate: async (value) => {
-                    if (!email) return true;
-                    if (value === email) return true;
-                    return new Promise((resolve) => {
-                      debounce(async (email) => {
-                        const { errors } = await request(
-                          'GET',
-                          apiCheckEmail(email),
-                        );
-                        let message: string | boolean = true;
-                        if (errors && errors.length > 0) {
-                          message = 'Email ID already exists';
-                          setError('email', { message });
-                        } else {
-                          clearErrors('email');
-                        }
-                        resolve(message);
-                      }, 500)(value);
-                    });
+                    const { errors } = await request(
+                      'GET',
+                      apiCheckEmail(value),
+                    );
+                    if (errors?.length) return 'Email ID already exists';
+                    return true;
                   },
                 })}
                 placeHolder="Email ID"
                 label="Email ID"
                 id="email"
-                error={
-                  errors['email']?.message !== ''
-                    ? errors['email']?.message
-                    : undefined
-                }
+                error={errors['email']?.message}
               />
             </div>
           </div>
@@ -256,12 +210,9 @@ const AddUser: FC<AddUserProps> = () => {
             className="primary-button"
             type="submit"
             disabled={
-              rolesValues &&
-              rolesValues.some((r) => r !== false) &&
-              formState.isValid &&
-              formState.isDirty
-                ? false
-                : true
+              !rolesValues?.some((r) => r !== false) ||
+              !formState.isValid ||
+              !formState.isDirty
             }
           >
             Save Changes
