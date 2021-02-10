@@ -102,6 +102,7 @@ const Wrapper = styled.div.attrs({})`
     overflow-wrap: anywhere;
     display: flex;
     align-items: center;
+    word-break: break-all;
 
     :first-child {
       width: 30%;

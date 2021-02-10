@@ -91,6 +91,7 @@ const Wrapper = styled.div.attrs({})`
     display: flex;
     overflow: hidden;
     align-items: center;
+    word-break: break-all;
 
     :first-child {
       flex: 1.25;
