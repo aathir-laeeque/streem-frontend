@@ -442,7 +442,7 @@ const EditUserContainer: FC<ViewUserProps> = () => {
             accumulator.rolePlaceholder.push(
               capitalize(role.name.replace('_', ' ')),
             );
-            if (role.id === '1') accumulator.isAccountOwner = true;
+            if (role.id === roles[0].id) accumulator.isAccountOwner = true;
           }
           return accumulator;
         },

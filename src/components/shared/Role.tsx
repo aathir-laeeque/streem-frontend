@@ -322,7 +322,7 @@ export const Role: FC<RoleProps> = ({
                   </div>
                   <div className="check-group">
                     {roles.map((role, i) => {
-                      if (role.id === '1') return null;
+                      if (role.id === roles[0].id) return null;
                       return (
                         <div key={`${role.id}`} className="check-group">
                           <Checkbox
@@ -395,7 +395,7 @@ export const Role: FC<RoleProps> = ({
                                 </div>
                                 <div className="check-group bordered">
                                   {roles.map((role) => {
-                                    if (role.id === '1') return null;
+                                    if (role.id === roles[0].id) return null;
                                     return (
                                       <div
                                         key={`${permission}_${role.id}`}
