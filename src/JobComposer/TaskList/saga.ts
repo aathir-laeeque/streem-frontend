@@ -70,7 +70,7 @@ function* performActionOnTaskSaga({
     if (isJobStarted) {
       const { data, errors } = yield call(
         request,
-        'PUT',
+        'PATCH',
         apiPerformActionOnTask(taskId, action),
         {
           data: {
@@ -145,7 +145,7 @@ function* enableErrorCorrectionSaga({
 
     const { data, errors } = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiEnableTaskErrorCorrection(taskId),
       { data: { correctionReason, jobId } },
     );
@@ -171,7 +171,7 @@ function* completeErrorCorrectionSaga({
 
     const { data, errors } = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiCompleteTaskErrorCorrection(taskId),
       { data: { jobId } },
     );
@@ -199,7 +199,7 @@ function* cancelErrorCorrectionSaga({
 
     const { data, errors } = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiCancelTaskErrorCorrection(taskId),
       { data: { jobId } },
     );
@@ -227,7 +227,7 @@ function* assignUsersToTaskSaga({
   try {
     const { errors, error } = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiAssignUsersToTask(taskId),
       {
         data: {

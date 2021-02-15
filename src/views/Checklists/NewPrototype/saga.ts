@@ -148,7 +148,7 @@ function* updatePrototypeSaga({ payload }: ReturnType<typeof updatePrototype>) {
 
     const { data: response, errors } = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiUpdatePrototype(id),
       {
         data: {

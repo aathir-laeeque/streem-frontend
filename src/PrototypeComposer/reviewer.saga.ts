@@ -119,7 +119,7 @@ function* submitChecklistForReviewCall(checklistId: Checklist['id']) {
   try {
     const res: ResponseObj<CommonReviewResponse['checklist']> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiSubmitChecklistForReview(checklistId),
     );
 
@@ -176,7 +176,7 @@ function* assignReviewersToChecklistSaga({
     }
     const { errors, error } = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiAssignReviewersToChecklist(checklistId),
       {
         data: {
@@ -226,7 +226,7 @@ function* startChecklistReviewSaga({
   try {
     const { errors, data }: ResponseObj<CommonReviewResponse> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiStartChecklistReview(checklistId),
     );
 
@@ -377,7 +377,7 @@ function* submitChecklistReviewSaga({
   try {
     const { data, errors }: ResponseObj<CommonReviewResponse> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiSubmitChecklistReview(checklistId),
     );
 
@@ -409,7 +409,7 @@ function* submitChecklistReviewWithCRSaga({
   try {
     const { data, errors }: ResponseObj<CommonReviewResponse> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiSubmitChecklistReviewWithCR(checklistId),
       {
         data: {
@@ -444,7 +444,7 @@ function* sendReviewToCrSaga({ payload }: ReturnType<typeof sendReviewToCr>) {
   try {
     const { data, errors }: ResponseObj<CommonReviewResponse> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiSendReviewToCr(checklistId),
     );
 
@@ -484,7 +484,7 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
   const { checklistId, users } = payload;
 
   try {
-    const res = yield call(request, 'PUT', apiInitiateSignOff(checklistId));
+    const res = yield call(request, 'PATCH', apiInitiateSignOff(checklistId));
 
     if (res.errors || res.error) {
       throw 'Could Not Initiate Sign Off';
@@ -536,7 +536,7 @@ function* signOffPrototypeSaga({
     if (validateData) {
       const { errors, data }: ResponseObj<CommonReviewResponse> = yield call(
         request,
-        'PUT',
+        'PATCH',
         apiPrototypeSignOff(checklistId),
       );
 
@@ -587,7 +587,7 @@ function* releasePrototypeSaga({
         data,
       }: ResponseObj<CommonReviewResponse['checklist']> = yield call(
         request,
-        'PUT',
+        'PATCH',
         apiPrototypeRelease(checklistId),
       );
 

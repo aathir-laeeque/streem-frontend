@@ -80,7 +80,7 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
 
     const { data, errors } = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiStartJob(jobId, 'start'),
     );
 
@@ -101,7 +101,7 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
 
     const { data, errors } = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiCompleteJob(withException, jobId),
       { ...(withException ? { data: { ...values } } : {}) },
     );
@@ -199,7 +199,7 @@ function* assignUsersToJobSaga({
   try {
     const { errors, error } = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiAssignUsersToJob(),
       {
         data: {

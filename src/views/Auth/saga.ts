@@ -155,7 +155,7 @@ function* registerSaga({ payload }: ReturnType<typeof register>) {
   try {
     const { errors }: ResponseObj<User> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiRegister(),
       {
         data: payload,
@@ -201,7 +201,7 @@ function* resetPasswordSaga({ payload }: ReturnType<typeof resetPassword>) {
   try {
     const { errors }: ResponseObj<User> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiResetPassword(),
       {
         data: payload,
@@ -233,7 +233,7 @@ function* updateUserProfileSaga({
     const { body, id } = payload;
     const { data, errors }: ResponseObj<User> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiGetUser(id),
       {
         data: body,
@@ -262,7 +262,7 @@ function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
     const { body, id } = payload;
     const { data, errors }: ResponseObj<User> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiUpdateUserBasic(id),
       {
         data: body,
@@ -291,7 +291,7 @@ function* updatePasswordSaga({ payload }: ReturnType<typeof updatePassword>) {
     const { body, id } = payload;
     const { errors }: ResponseObj<User> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiUpdatePassword(id),
       {
         data: body,
@@ -327,7 +327,7 @@ function* checkTokenExpirySaga({
 
     yield put(checkTokenExpirySuccess({ isTokenExpired: false }));
   } catch (error) {
-    yield put(checkTokenExpirySuccess({ isTokenExpired: false }));
+    yield put(checkTokenExpirySuccess({ isTokenExpired: true }));
     yield* handleCatch('Auth', 'checkTokenExpirySaga', error, true);
   }
 }

@@ -32,7 +32,7 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
       (state: RootState) => state.composer,
     );
 
-    const { data } = yield call(request, 'PUT', apiExecuteActivity(), {
+    const { data } = yield call(request, 'PATCH', apiExecuteActivity(), {
       data: { jobId, activity, ...(!!reason ? { reason } : {}) },
     });
 
@@ -73,7 +73,7 @@ function* fixActivitySaga({ payload }: ReturnType<typeof fixActivity>) {
       (state: RootState) => state.composer,
     );
 
-    const { data } = yield call(request, 'PUT', apiFixActivity(), {
+    const { data } = yield call(request, 'PATCH', apiFixActivity(), {
       data: { jobId, activity, ...(!!reason ? { reason } : {}) },
     });
 

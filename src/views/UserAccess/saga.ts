@@ -29,7 +29,7 @@ function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
     const { id } = payload;
     const { errors }: ResponseObj<Partial<User>> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiResendInvite(id),
     );
 
@@ -53,7 +53,7 @@ function* cancelInviteSaga({ payload }: ReturnType<typeof cancelInvite>) {
     const { id, fetchData } = payload;
     const { data, errors }: ResponseObj<User> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiCancelInvite(id),
     );
 
@@ -82,7 +82,7 @@ function* archiveUserSaga({ payload }: ReturnType<typeof archiveUser>) {
     const { id, fetchData } = payload;
     const { data, errors }: ResponseObj<User> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiArchiveUser(id),
     );
 
@@ -111,7 +111,7 @@ function* unArchiveUserSaga({ payload }: ReturnType<typeof unArchiveUser>) {
     const { id, fetchData } = payload;
     const { data, errors }: ResponseObj<User> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiUnArchiveUser(id),
     );
 
@@ -140,7 +140,7 @@ function* unLockUserSaga({ payload }: ReturnType<typeof unLockUser>) {
     const { id, fetchData } = payload;
     const { data, errors }: ResponseObj<User> = yield call(
       request,
-      'PUT',
+      'PATCH',
       apiUnLockUser(id),
     );
 

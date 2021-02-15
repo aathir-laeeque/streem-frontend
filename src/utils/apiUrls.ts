@@ -80,10 +80,12 @@ export const apiCheckUsername = (username: string) =>
   `${baseUrl}/users/username/check?username=${username}`;
 
 export const apiCheckEmail = (email: string) =>
-  `${baseUrl}/users/check-email?email=${email}`;
+  `${baseUrl}/users/email/check?email=${email}`;
 
 export const apiCheckEmployeeId = (employeeId: string) =>
-  `${baseUrl}/users/check-employee-id?employeeId=${employeeId}`;
+  `${baseUrl}/users/employee-id/check?employeeId=${employeeId}`;
+
+export const apiCheckTokenExpiry = () => `${baseUrl}/auth/token/validate`;
 
 export const apiCheckTokenExpiry = () => `${baseUrl}/auth/validate/token`;
 
@@ -91,15 +93,15 @@ export const apiLogin = () => `${baseUrl}/auth/login`;
 
 export const apiLogOut = () => `${baseUrl}/auth/logout`;
 
-export const apiForgotPassword = () => `${baseUrl}/auth/reset-password`;
+export const apiForgotPassword = () => `${baseUrl}/auth/password/reset`;
 
-export const apiRefreshToken = () => `${baseUrl}/auth/refresh-token`;
+export const apiRefreshToken = () => `${baseUrl}/auth/token/refresh`;
 
 export const apiResendInvite = (id: User['id']) =>
-  `${baseUrl}/users/${id}/resend-invite`;
+  `${baseUrl}/users/${id}/invite/resend`;
 
 export const apiCancelInvite = (id: User['id']) =>
-  `${baseUrl}/users/${id}/cancel-invite`;
+  `${baseUrl}/users/${id}/invite/cancel`;
 
 export const apiArchiveUser = (id: User['id']) =>
   `${baseUrl}/users/${id}/archive`;
@@ -184,10 +186,10 @@ export const apiSendReviewToCr = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/review/submit-back`;
 
 export const apiInitiateSignOff = (checklistId: Checklist['id']) =>
-  `${baseUrl}/checklists/${checklistId}/review/initiate-sign-off`;
+  `${baseUrl}/checklists/${checklistId}/review/sign-off/initiate`;
 
 export const apiSignOffOrder = (checklistId: Checklist['id']) =>
-  `${baseUrl}/checklists/${checklistId}/review/sign-off-order`;
+  `${baseUrl}/checklists/${checklistId}/review/sign-off/order`;
 
 export const apiPrototypeSignOff = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/review/sign-off`;
@@ -222,7 +224,7 @@ export const apiValidatePrototype = (id: Checklist['id']) =>
 export const apiUpdatePrototype = (id: Checklist['id']) =>
   `${baseUrl}/checklists/${id}`;
 
-export const apiValidatePassword = () => `${baseUrl}/auth/validate/credentials`;
+export const apiValidatePassword = () => `${baseUrl}/auth/credentials/validate`;
 
 export const apiTaskSignOff = () => `${baseUrl}/tasks/sign-off`;
 
@@ -243,7 +245,7 @@ export const apiGetChecklistInfo = (id: Checklist['id']) =>
   `${baseUrl}/checklists/${id}/info`;
 
 export const apiGetJobCweDetails = (id: Job['id']) =>
-  `${baseUrl}/jobs/${id}/cwe-detail`;
+  `${baseUrl}/jobs/${id}/cwe-details`;
 
 export const apiRemoveTaskMedia = ({
   taskId,
