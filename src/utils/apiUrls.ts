@@ -85,6 +85,8 @@ export const apiCheckEmail = (email: string) =>
 export const apiCheckEmployeeId = (employeeId: string) =>
   `${baseUrl}/users/check-employee-id?employeeId=${employeeId}`;
 
+export const apiCheckTokenExpiry = () => `${baseUrl}/auth/validate/token`;
+
 export const apiLogin = () => `${baseUrl}/auth/login`;
 
 export const apiLogOut = () => `${baseUrl}/auth/logout`;

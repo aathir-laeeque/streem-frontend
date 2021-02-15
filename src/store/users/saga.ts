@@ -22,7 +22,7 @@ function* fetchUsersSaga({ payload }: ReturnType<typeof fetchUsers>) {
       yield put(fetchUsersOngoing());
     }
 
-    const { data, pageable }: ResponseObj<User> = yield call(
+    const { data, pageable }: ResponseObj<User[]> = yield call(
       request,
       'GET',
       apiGetUsers(),

@@ -9,12 +9,13 @@ const initialState: AuthState = {
   refreshToken: '',
   loading: false,
   error: undefined,
-  resetRequested: false,
   facilities: [],
 };
 
 const reducer = (state = initialState, action: AuthActionType): AuthState => {
   switch (action.type) {
+    case AuthAction.RESET_PASSWORD:
+    case AuthAction.FORGOT_PASSWORD:
     case AuthAction.LOGIN:
       return { ...state, loading: true };
     case AuthAction.LOGIN_SUCCESS:
@@ -36,10 +37,10 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
       return {
         ...initialState,
       };
+    case AuthAction.RESET_PASSWORD_SUCCESS:
     case AuthAction.FORGOT_PASSWORD_SUCCESS:
-      return { ...state, loading: false, resetRequested: true };
+      return { ...state, loading: false };
     case AuthAction.LOGIN_ERROR:
-    case AuthAction.FORGOT_PASSWORD_ERROR:
     case AuthAction.RESET_PASSWORD_ERROR:
       return { ...state, loading: false, error: action.payload };
     case AuthAction.FETCH_PROFILE_SUCCESS:

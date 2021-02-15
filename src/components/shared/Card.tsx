@@ -24,7 +24,7 @@ const Wrapper = styled.div.attrs({})`
     .error-span {
       color: #ff6b6b;
       align-self: center;
-      padding-bottom: 8px;
+      padding-bottom: 16px;
       font-size: 14px;
       font-weight: bold;
     }

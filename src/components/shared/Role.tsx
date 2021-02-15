@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState } from 'react';
 import { Checkbox } from '#components';
 import styled from 'styled-components';
 import Accordion from '@material-ui/core/Accordion';
@@ -8,12 +8,13 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import CheckIcon from '@material-ui/icons/Check';
 import ClearIcon from '@material-ui/icons/Clear';
+import { PermissionType, RoleType } from '#views/UserAccess/types';
 
 interface RoleProps {
   id: string;
   permissions: PermissionType[];
   roles: RoleType[];
-  selected?: number;
+  selected?: RoleType[];
   label: string;
   placeHolder: string;
   disabled?: boolean;
@@ -21,18 +22,6 @@ interface RoleProps {
   refFun?: any;
   viewing?: boolean;
 }
-
-type PermissionType = {
-  id: number;
-  name: string;
-  permissions: string[];
-};
-
-type RoleType = {
-  id: number;
-  name: string;
-  permissions: Record<string, boolean>;
-};
 
 const Wrapper = styled.div.attrs({})`
   flex: 1;
@@ -262,11 +251,6 @@ export const Role: FC<RoleProps> = ({
     setIsExpanded(expanded);
   };
 
-  let selectedRole: RoleType[] | null = null;
-  if (selected) {
-    selectedRole = roles.filter((role) => role.id === Number(selected));
-  }
-
   return (
     <Wrapper>
       <div
@@ -285,19 +269,24 @@ export const Role: FC<RoleProps> = ({
               {disabled && (
                 <>
                   <input
-                    name={id}
-                    ref={refFun}
-                    className={`input ${disabled ? 'disabled' : ''} ${
-                      viewing ? 'viewing' : ''
-                    }`}
+                    className={`input disabled ${viewing ? 'viewing' : ''}`}
                     style={{ width: `${placeHolder.length * 12}px` }}
                     value={placeHolder}
                     onFocus={onFocus}
-                    data-testid={id}
                     onBlur={onBlur}
-                    autoComplete="off"
                     disabled={disabled}
                   />
+                  {selected?.map((role, i) => {
+                    return (
+                      <input
+                        key={`${role.id}`}
+                        type="hidden"
+                        name={`roles[${i}]`}
+                        value={role.id}
+                        ref={refFun}
+                      />
+                    );
+                  })}
                   <div className="actions">
                     {isExpanded ? 'Hide Permissions' : 'View Permissions'}
                   </div>
@@ -333,7 +322,7 @@ export const Role: FC<RoleProps> = ({
                   </div>
                   <div className="check-group">
                     {roles.map((role, i) => {
-                      if (role.id === 1) return null;
+                      if (role.id === '1') return null;
                       return (
                         <div key={`${role.id}`} className="check-group">
                           <Checkbox
@@ -363,10 +352,8 @@ export const Role: FC<RoleProps> = ({
                       >
                         <div className="permission">
                           {permissionGroup.permissions.map((permission) => {
-                            if (
-                              selectedRole &&
-                              selectedRole[0].permissions[permission]
-                            ) {
+                            // TODO Show Permissions for all assigned roles.
+                            if (selected?.[0]?.permissions?.[permission]) {
                               permissionGroupName = permissionGroup.name;
                               return (
                                 <span
@@ -408,7 +395,7 @@ export const Role: FC<RoleProps> = ({
                                 </div>
                                 <div className="check-group bordered">
                                   {roles.map((role) => {
-                                    if (role.id === 1) return null;
+                                    if (role.id === '1') return null;
                                     return (
                                       <div
                                         key={`${permission}_${role.id}`}

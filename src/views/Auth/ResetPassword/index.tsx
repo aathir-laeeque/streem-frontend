@@ -5,7 +5,9 @@ import React, { FC, useEffect, useState } from 'react';
 import { useForm, ValidationRules } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
-import { resetError, resetPassword } from '../actions';
+import { checkTokenExpiry, resetError, resetPassword } from '../actions';
+import InvalidToken from '../InvalidToken';
+import { TokenTypes } from '../types';
 import { ResetPasswordProps } from './types';
 
 type Inputs = {
@@ -18,12 +20,16 @@ interface ValidatorProps {
 }
 
 const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
-  const { register, handleSubmit, trigger, errors } = useForm<Inputs>({
+  const { register, handleSubmit, trigger, errors, formState } = useForm<
+    Inputs
+  >({
     mode: 'onChange',
     criteriaMode: 'all',
   });
   const [passwordInputType, setPasswordInputType] = useState(true);
-  const { error } = useTypedSelector((state) => state.auth);
+  const { error, isTokenExpired, loading } = useTypedSelector(
+    (state) => state.auth,
+  );
 
   const validators: ValidatorProps = {
     functions: {
@@ -51,8 +57,18 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    trigger('newPassword');
-  }, []);
+    if (token && isTokenExpired === undefined) {
+      dispatch(
+        checkTokenExpiry({
+          token: token.toString(),
+          type: TokenTypes.PASSWORD_RESET,
+        }),
+      );
+    } else if (token && isTokenExpired === false) {
+      trigger('newPassword');
+      document.getElementById('newPassword')?.focus();
+    }
+  }, [isTokenExpired]);
 
   const onSubmit = (data: Inputs) => {
     const { newPassword } = data;
@@ -65,6 +81,17 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
       );
     }
   };
+
+  if (isTokenExpired === undefined)
+    return <div style={{ textAlign: 'center', padding: 10 }}>Loading...</div>;
+
+  if (isTokenExpired)
+    return (
+      <InvalidToken
+        heading="Request Expired"
+        subHeading="Request has expired. Use the Forgot Password option again."
+      />
+    );
 
   return (
     <Card
@@ -96,7 +123,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
                 <div
                   className="indicator"
                   style={
-                    errors.newPassword?.types && errors.newPassword?.types[item]
+                    errors?.newPassword?.types?.[item]
                       ? { backgroundColor: '#bababa' }
                       : {}
                   }
@@ -115,12 +142,15 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
           }}
         >
           {error && <span className="error-span">{error}</span>}
-          <Button className="primary-button" type="submit">
+          <Button
+            className="primary-button"
+            type="submit"
+            disabled={!formState.isValid || !formState.isDirty || loading}
+          >
             Reset Password
           </Button>
         </div>
       </form>
-      {/* <Terms /> */}
     </Card>
   );
 };

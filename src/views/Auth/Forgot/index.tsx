@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
 import { useTypedSelector } from '#store';
-import { LabeledInput, Button, Terms, Card } from '#components';
+import { LabeledInput, Button, Card } from '#components';
 import { CheckCircleOutline } from '@material-ui/icons';
 import { ForgotProps } from './types';
 import { useDispatch } from 'react-redux';
@@ -12,14 +12,24 @@ type Inputs = {
   email: string;
 };
 
+type StateType = {
+  emailSentTo: string;
+  resetRequested: boolean;
+};
+
 const Forgot: FC<ForgotProps> = () => {
-  const { resetRequested, error } = useTypedSelector((state) => state.auth);
   const { register, handleSubmit, errors, formState } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
   });
+  const { loading } = useTypedSelector((state) => state.auth);
 
-  const [emailSentTo, setEmailSentTo] = useState('');
+  const [state, setState] = useState<StateType>({
+    emailSentTo: '',
+    resetRequested: false,
+  });
+  const { emailSentTo, resetRequested } = state;
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -28,7 +38,7 @@ const Forgot: FC<ForgotProps> = () => {
 
   const onSubmit = (data: Inputs) => {
     const { email } = data;
-    setEmailSentTo(email);
+    setState({ emailSentTo: email, resetRequested: true });
     dispatch(
       forgotPassword({
         email: email.toString(),
@@ -37,14 +47,8 @@ const Forgot: FC<ForgotProps> = () => {
   };
 
   const goBack = () => {
-    if (resetRequested) {
-      navigate(-2);
-    } else {
-      navigate(-1);
-    }
+    navigate('/auth/login');
   };
-
-  // const email = watch('email');
 
   return (
     <Card
@@ -53,7 +57,7 @@ const Forgot: FC<ForgotProps> = () => {
       }
       subHeading={
         resetRequested
-          ? `We’ve sent an email to ${emailSentTo} to reset your password.`
+          ? `You will receive password reset instructions if ${emailSentTo} is registered with us.`
           : 'Enter your Email ID registered with us below and we’ll send you a link to reset your password.'
       }
     >
@@ -80,20 +84,14 @@ const Forgot: FC<ForgotProps> = () => {
               placeHolder="Enter your Email ID"
               label="Email ID"
               id="email"
-              error={
-                errors.email?.type
-                  ? errors['email']?.message
-                  : error
-                  ? error
-                  : undefined
-              }
+              error={errors?.['email']?.message}
             />
           </div>
           <div className="row" style={{ paddingTop: '20px' }}>
             <Button
               className="primary-button"
               type="submit"
-              disabled={formState.isValid && formState.isDirty ? false : true}
+              disabled={!formState.isValid || !formState.isDirty || loading}
             >
               Reset Password
             </Button>
@@ -105,7 +103,6 @@ const Forgot: FC<ForgotProps> = () => {
           Go Back
         </a>
       </div>
-      {/* <Terms /> */}
     </Card>
   );
 };

@@ -121,7 +121,7 @@ const SessionExpireModal: FC<CommonOverlayProps<any>> = ({
           />
           <Button1
             type="submit"
-            disabled={formState.isValid && formState.isDirty ? false : true}
+            disabled={!formState.isValid || !formState.isDirty}
           >
             Proceed to Login
           </Button1>

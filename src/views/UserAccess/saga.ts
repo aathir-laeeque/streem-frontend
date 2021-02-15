@@ -14,41 +14,29 @@ import { request } from '#utils/request';
 import { User } from '#store/users/types';
 import {
   resendInvite,
-  resendInviteSuccess,
-  resendInviteError,
   archiveUser,
-  archiveUserSuccess,
-  archiveUserError,
   unArchiveUser,
-  unArchiveUserSuccess,
-  unArchiveUserError,
   addUser,
-  addUserSuccess,
-  addUserError,
   unLockUser,
-  unLockUserError,
-  unLockUserSuccess,
   cancelInvite,
-  cancelInviteError,
-  cancelInviteSuccess,
 } from './actions';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { UserAccessAction } from './types';
+import { fetchSelectedUserSuccess } from '#store/users/actions';
 
 function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
   try {
     const { id } = payload;
-    const { data, errors }: ResponseObj<Partial<User>> = yield call(
+    const { errors }: ResponseObj<Partial<User>> = yield call(
       request,
       'PUT',
       apiResendInvite(id),
     );
 
     if (errors) {
-      return false;
+      throw errors?.[0]?.message || '';
     }
 
-    yield put(resendInviteSuccess());
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,
@@ -60,133 +48,170 @@ function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
       'error from resendInviteSaga function in UserAccessSaga :: ',
       error,
     );
-    yield put(resendInviteError(error));
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: error || 'Please try again later.',
+      }),
+    );
   }
 }
 
 function* cancelInviteSaga({ payload }: ReturnType<typeof cancelInvite>) {
   try {
     const { id, fetchData } = payload;
-    const { data, errors }: ResponseObj<Partial<User>> = yield call(
+    const { data, errors }: ResponseObj<User> = yield call(
       request,
       'PUT',
       apiCancelInvite(id),
     );
 
     if (errors) {
-      return false;
+      throw errors?.[0]?.message || '';
     }
 
-    yield put(cancelInviteSuccess());
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,
         msg: 'Invite Canceled Successfully.',
       }),
     );
-    yield call(fetchData);
+    if (fetchData) {
+      yield call(fetchData);
+    } else {
+      yield put(fetchSelectedUserSuccess({ data }));
+    }
   } catch (error) {
     console.error(
       'error from cancelInviteSaga function in UserAccessSaga :: ',
       error,
     );
-    yield put(cancelInviteError(error));
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: error || 'Please try again later.',
+      }),
+    );
   }
 }
 
 function* archiveUserSaga({ payload }: ReturnType<typeof archiveUser>) {
   try {
     const { id, fetchData } = payload;
-    const { data, errors }: ResponseObj<Partial<User>> = yield call(
+    const { data, errors }: ResponseObj<User> = yield call(
       request,
       'PUT',
       apiArchiveUser(id),
     );
 
     if (errors) {
-      return false;
+      throw errors?.[0]?.message || '';
     }
 
-    yield put(archiveUserSuccess());
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,
         msg: 'User Archived!',
       }),
     );
-    yield call(fetchData);
+    if (fetchData) {
+      yield call(fetchData);
+    } else {
+      yield put(fetchSelectedUserSuccess({ data }));
+    }
   } catch (error) {
     console.error(
-      'error from resendInviteSaga function in UserAccessSaga :: ',
+      'error from archiveUserSaga function in UserAccessSaga :: ',
       error,
     );
-    yield put(archiveUserError(error));
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: error || 'Please try again later.',
+      }),
+    );
   }
 }
 
 function* unArchiveUserSaga({ payload }: ReturnType<typeof unArchiveUser>) {
   try {
     const { id, fetchData } = payload;
-    const { data, errors }: ResponseObj<Partial<User>> = yield call(
+    const { data, errors }: ResponseObj<User> = yield call(
       request,
       'PUT',
       apiUnArchiveUser(id),
     );
 
     if (errors) {
-      return false;
+      throw errors?.[0]?.message || '';
     }
 
-    yield put(unArchiveUserSuccess());
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,
         msg: 'User Unarchived !!',
       }),
     );
-    yield call(fetchData);
+    if (fetchData) {
+      yield call(fetchData);
+    } else {
+      yield put(fetchSelectedUserSuccess({ data }));
+    }
   } catch (error) {
     console.error(
       'error from unArchiveUserSaga function in UserAccessSaga :: ',
       error,
     );
-    yield put(unArchiveUserError(error));
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: error || 'Please try again later.',
+      }),
+    );
   }
 }
 
 function* unLockUserSaga({ payload }: ReturnType<typeof unLockUser>) {
   try {
     const { id, fetchData } = payload;
-    const { data, errors }: ResponseObj<Partial<User>> = yield call(
+    const { data, errors }: ResponseObj<User> = yield call(
       request,
       'PUT',
       apiUnLockUser(id),
     );
 
     if (errors) {
-      return false;
+      throw errors?.[0]?.message || '';
     }
 
-    yield put(unLockUserSuccess());
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,
         msg: 'User Unblocked !!',
       }),
     );
-    yield call(fetchData);
+    if (fetchData) {
+      yield call(fetchData);
+    } else {
+      yield put(fetchSelectedUserSuccess({ data }));
+    }
   } catch (error) {
     console.error(
       'error from unLockUserSaga function in UserAccessSaga :: ',
       error,
     );
-    yield put(unLockUserError(error));
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: error || 'Please try again later.',
+      }),
+    );
   }
 }
 
 function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
   try {
-    const { data, errors }: ResponseObj<Partial<User>> = yield call(
+    const { errors }: ResponseObj<Partial<User>> = yield call(
       request,
       'POST',
       apiGetUsers(),
@@ -196,10 +221,9 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
     );
 
     if (errors) {
-      return false;
+      throw errors?.[0]?.message || '';
     }
 
-    yield put(addUserSuccess());
     navigate(-1);
     yield put(
       showNotification({
@@ -209,10 +233,15 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
     );
   } catch (error) {
     console.error(
-      'error from addUserError function in UserAccessSaga :: ',
+      'error from addUserSaga function in UserAccessSaga :: ',
       error,
     );
-    yield put(addUserError(error));
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: error || 'Please try again later.',
+      }),
+    );
   }
 }
 

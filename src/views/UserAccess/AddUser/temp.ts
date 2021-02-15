@@ -1,8 +1,8 @@
-import { PermissionType, RoleType } from './types';
+import { RoleType, PermissionType } from '../types';
 
 export const roles: RoleType[] = [
   {
-    id: 1,
+    id: '1',
     name: 'Account Owner',
     permissions: {
       'Create and manage Checklists': true,
@@ -23,7 +23,7 @@ export const roles: RoleType[] = [
     },
   },
   {
-    id: 2,
+    id: '2',
     name: 'Facility Admin',
     permissions: {
       'Create and manage Checklists': true,
@@ -42,7 +42,7 @@ export const roles: RoleType[] = [
     },
   },
   {
-    id: 3,
+    id: '3',
     name: 'System Admin',
     permissions: {
       'Manage Users and Permissions': true,
@@ -52,7 +52,7 @@ export const roles: RoleType[] = [
     },
   },
   {
-    id: 4,
+    id: '4',
     name: 'Supervisor',
     permissions: {
       'Create and Assign Jobs': true,
@@ -65,7 +65,7 @@ export const roles: RoleType[] = [
     },
   },
   {
-    id: 5,
+    id: '5',
     name: 'Operator',
     permissions: {
       'Execute and Complete Jobs': true,

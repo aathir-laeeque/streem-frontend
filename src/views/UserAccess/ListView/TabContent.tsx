@@ -1,31 +1,29 @@
-import React, { FC, useEffect } from 'react';
-import { ListViewComponent } from '#components';
-import { ReportProblemOutlined, ErrorOutline } from '@material-ui/icons';
-import { User, UserState, UsersState, ParsedUser } from '#store/users/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { capitalize, startCase, toLower } from 'lodash';
-import { Properties } from '#store/properties/types';
+import { NewListView } from '#components/shared/NewListView';
+import { SearchFilter, Button1, TabContentProps } from '#components';
+import { UserState } from '#services/users';
+import { User } from '#store/users/types';
+import { useTypedSelector } from '#store/helpers';
+import { fetchUsers, setSelectedUser } from '#store/users/actions';
+import { getFullName } from '#utils/stringUtils';
+import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
+import { navigate } from '@reach/router';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
 import {
-  fetchUsers,
-  setSelectedState,
-  setSelectedUser,
-} from '#store/users/actions';
-import { useTypedSelector } from '#store';
-import { navigate as navigateTo } from '@reach/router';
-import checkPermission from '#services/uiPermissions';
-import {
-  resendInvite,
   archiveUser,
+  cancelInvite,
+  resendInvite,
   unArchiveUser,
   unLockUser,
-  cancelInvite,
 } from '../actions';
-
-import { useDispatch } from 'react-redux';
-import { Composer } from './styles';
-import { TabViewProps } from './types';
-import { removeUnderscore } from '#utils/stringUtils';
+import { TabContentWrapper } from './styles';
+import { removeUnderscore } from '../../../utils/stringUtils';
+import { startCase, toLower } from 'lodash';
+import checkPermission, { roles } from '#services/uiPermissions';
+import { FilterField } from '#utils/globalTypes';
 
 export function modalBody(user: User, text: string): any {
   return (
@@ -39,58 +37,38 @@ export function modalBody(user: User, text: string): any {
   );
 }
 
-const TabContent: FC<TabViewProps> = ({
-  navigate = navigateTo,
-  selectedState,
-}) => {
-  const { loading, [selectedState]: users }: UsersState = useTypedSelector(
-    (state) => state.users,
-  );
+const DEFAULT_PAGE_SIZE = 10;
+
+const TabContent: React.FC<TabContentProps> = (props) => {
+  const {
+    users: {
+      [props.values[0] as UserState]: { pageable },
+      currentPageData,
+    },
+  } = useTypedSelector((state) => state);
+
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    fetchData(0, 10);
-    dispatch(setSelectedState(selectedState));
-  }, []);
-
-  const selectUser = (item: User) => {
-    dispatch(setSelectedUser(item));
-    navigate(`/user-access/edit-user`);
-  };
+  const [filterFields, setFilterFields] = useState<FilterField[]>([]);
 
   const fetchData = (page: number, size: number) => {
-    const filters = JSON.stringify({
-      op: 'AND',
-      fields: [
-        {
-          field: 'archived',
-          op: 'EQ',
-          values: [selectedState === UserState.ARCHIVED],
-        },
-      ],
-    });
     dispatch(
       fetchUsers(
-        { page, size, filters, sort: 'createdAt,desc' },
-        selectedState,
+        {
+          page,
+          size,
+          archived: props.values[0] === UserState.ACTIVE ? false : true,
+          sort: 'createdAt,desc',
+          filters: JSON.stringify({ op: 'AND', fields: filterFields }),
+        },
+        props.values[0],
       ),
     );
   };
 
-  const onResendInvite = (id: User['id']) => {
-    dispatch(resendInvite({ id }));
-  };
-
-  const onCancelInvite = (id: User['id']) => {
-    dispatch(
-      cancelInvite({
-        id,
-        fetchData: () => {
-          fetchData(0, 10);
-        },
-      }),
-    );
-  };
+  useEffect(() => {
+    fetchData(0, 10);
+  }, [props.values, filterFields]);
 
   const onArchiveUser = (user: User) => {
     dispatch(
@@ -136,6 +114,32 @@ const TabContent: FC<TabViewProps> = ({
     );
   };
 
+  const onResendInvite = (id: User['id']) => {
+    dispatch(resendInvite({ id }));
+  };
+
+  const onCancelInvite = (user: User) => {
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.CONFIRMATION_MODAL,
+        props: {
+          title: 'Cancel Pending Invite',
+          primaryText: 'Cancel Invite',
+          onPrimary: () =>
+            dispatch(
+              cancelInvite({
+                id: user.id,
+                fetchData: () => {
+                  fetchData(0, 10);
+                },
+              }),
+            ),
+          body: modalBody(user, 'You are about to cancel the invite sent to'),
+        },
+      }),
+    );
+  };
+
   const onUnlockUser = (user: User) => {
     dispatch(
       openOverlayAction({
@@ -158,190 +162,246 @@ const TabContent: FC<TabViewProps> = ({
     );
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const showPaginationArrows = pageable.totalPages > 10;
 
-  const parsedUsers = (users.list as Array<User>).reduce<ParsedUser[]>(
-    (result, item) => {
-      if (item.id !== '0') {
-        result.push({
-          ...item,
-          properties: {
-            'EMAIL ID': item.email,
-            ROLE: item.roles
-              ? removeUnderscore(
-                  item.roles
-                    .map((r) => ' ' + startCase(toLower(r.name)))
-                    .join(),
-                )
-              : '-N/A-',
-          },
-        });
-      }
-      return result;
-    },
-    [],
-  );
+  return (
+    <TabContentWrapper>
+      <div className="filters">
+        <SearchFilter
+          showdropdown
+          dropdownOptions={[
+            {
+              label: 'First Name',
+              value: 'firstName',
+              field: 'firstName',
+              operator: 'LIKE',
+            },
+            {
+              label: 'Last Name',
+              value: 'lastName',
+              field: 'lastName',
+              operator: 'LIKE',
+            },
+            {
+              label: 'Employee ID',
+              value: 'employeeId',
+              field: 'employeeId',
+              operator: 'LIKE',
+            },
+            {
+              label: 'Email',
+              value: 'email',
+              field: 'email',
+              operator: 'LIKE',
+            },
+          ]}
+          updateFilterFields={(fields) => setFilterFields([...fields])}
+        />
 
-  const properties: Properties =
-    parsedUsers.length > 0
-      ? Object.keys(parsedUsers[0].properties).map((pro, index) => {
-          return {
-            id: index,
-            name: pro,
-            placeHolder: pro,
-            orderTree: index,
-            mandatory: true,
-          };
-        })
-      : [];
-
-  const afterColumns = checkPermission(['usersAndAccess', 'listViewActions'])
-    ? [
-        {
-          header: 'ACTIONS',
-          template: function renderComp(item: User) {
-            const isItemAccountOwner =
-              item.roles &&
-              item.roles[0] &&
-              item.roles[0]['name'] === 'ACCOUNT_OWNER';
-            let editAccountOwner = true;
-            if (isItemAccountOwner)
-              editAccountOwner = checkPermission([
-                'usersAndAccess',
-                'editAccountOwner',
-              ]);
-            return (
-              <div className="list-card-columns" key={`actions_${item.id}`}>
-                {editAccountOwner && item.blocked && (
+        {checkPermission(['usersAndAccess', 'addNewUser']) &&
+        props.values[0] === UserState.ACTIVE ? (
+          <Button1
+            id="add-user"
+            onClick={() => navigate('user-access/add-user')}
+          >
+            Add a new User
+          </Button1>
+        ) : null}
+      </div>
+      <NewListView
+        properties={[]}
+        data={currentPageData}
+        beforeColumns={[
+          {
+            header: 'Name',
+            template: function renderComp(item: User) {
+              return (
+                <div className="list-card-columns">
                   <span
-                    className="user-actions"
-                    onClick={() => onUnlockUser(item)}
+                    className="list-title"
+                    onClick={() => {
+                      dispatch(setSelectedUser(item));
+                      navigate(`/user-access/edit-user`);
+                    }}
                   >
-                    Unlock
+                    {getFullName(item)}
                   </span>
-                )}
+                </div>
+              );
+            },
+          },
+          {
+            header: 'Employee ID',
+            template: function renderComp(item: User) {
+              return <div className="list-card-columns">{item.employeeId}</div>;
+            },
+          },
+          {
+            header: 'Email ID',
+            template: function renderComp(item: User) {
+              return <div className="list-card-columns">{item.email}</div>;
+            },
+          },
+          {
+            header: 'Roles',
+            template: function renderComp(item: User) {
+              return (
+                <div className="list-card-columns">
+                  {removeUnderscore(
+                    item?.roles
+                      ?.map((role) => startCase(toLower(role.name)))
+                      .join(' ,') || '',
+                  )}
+                </div>
+              );
+            },
+          },
+          {
+            header: 'Status',
+            template: function renderComp(item: User) {
+              return (
+                <div className="list-card-columns">
+                  {(() => {
+                    if (!item.verified) {
+                      return (
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <FiberManualRecord
+                            className="icon"
+                            style={{ color: '#f7b500' }}
+                          />
+                          Unregistered
+                        </div>
+                      );
+                    } else if (item.blocked) {
+                      return (
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <FiberManualRecord
+                            className="icon"
+                            style={{ color: '#ff6b6b' }}
+                          />
+                          Locked
+                        </div>
+                      );
+                    } else if (!item.archived) {
+                      return <span>Active</span>;
+                    } else if (item.archived) {
+                      return null;
+                    }
+                  })()}
+                </div>
+              );
+            },
+          },
+          {
+            header: '',
+            template: function renderComp(item: User) {
+              return (
+                <div className="list-card-columns">
+                  {(() => {
+                    if (
+                      checkPermission(['usersAndAccess', 'listViewActions'])
+                    ) {
+                      const isItemAccountOwner = item?.roles?.some(
+                        (i) => i?.name === roles.ACCOUNT_OWNER,
+                      );
 
-                {!isItemAccountOwner && (
-                  <>
-                    {selectedState === UserState.ACTIVE ? (
-                      (item.verified && (
-                        <>
-                          {item.blocked && (
-                            <span
-                              className="user-actions"
-                              style={{ color: '#666666', padding: '0 8px' }}
-                            >
-                              •
-                            </span>
-                          )}
+                      let editAccountOwner = true;
+                      if (isItemAccountOwner)
+                        editAccountOwner = checkPermission([
+                          'usersAndAccess',
+                          'editAccountOwner',
+                        ]);
+                      if (item.archived && !isItemAccountOwner) {
+                        return (
                           <span
-                            className="user-actions"
+                            className="list-title"
+                            onClick={() => onUnArchiveUser(item)}
+                          >
+                            Unarchive
+                          </span>
+                        );
+                      } else if (!isItemAccountOwner && !item.verified) {
+                        return (
+                          <>
+                            <span
+                              className="list-title"
+                              onClick={() => onResendInvite(item.id)}
+                              style={{ color: '#1d84ff' }}
+                            >
+                              Resend Invite
+                            </span>
+                            <span
+                              className="list-title"
+                              onClick={() => onCancelInvite(item)}
+                              style={{ color: '#ff6b6b', marginLeft: '12px' }}
+                            >
+                              Cancel Invite
+                            </span>
+                          </>
+                        );
+                      } else if (editAccountOwner && item.blocked) {
+                        return (
+                          <span
+                            className="list-title"
+                            onClick={() => onUnlockUser(item)}
+                          >
+                            Unblock
+                          </span>
+                        );
+                      } else if (!isItemAccountOwner) {
+                        return (
+                          <span
+                            className="list-title"
                             onClick={() => onArchiveUser(item)}
                           >
                             Archive
                           </span>
-                        </>
-                      )) || (
-                        <>
-                          <span
-                            className="user-actions"
-                            style={{ color: '#1d84ff' }}
-                            onClick={() => onResendInvite(item.id)}
-                          >
-                            Resend Invite
-                          </span>
-                          <span
-                            className="user-actions"
-                            style={{ color: '#666666', padding: '0 8px' }}
-                          >
-                            •
-                          </span>
-                          <span
-                            className="user-actions"
-                            style={{ color: '#ff6b6b' }}
-                            onClick={() => onCancelInvite(item.id)}
-                          >
-                            Cancel Invite
-                          </span>
-                        </>
-                      )
-                    ) : (
-                      <span
-                        className="user-actions"
-                        onClick={() => onUnArchiveUser(item)}
-                      >
-                        Unarchive
-                      </span>
-                    )}
-                  </>
-                )}
-              </div>
-            );
-          },
-        },
-      ]
-    : undefined;
-
-  return (
-    <Composer>
-      <ListViewComponent
-        properties={properties}
-        fetchData={fetchData}
-        isLast={users.pageable.last}
-        currentPage={users.pageable.page}
-        data={parsedUsers}
-        onPrimaryClick={() => navigate('user-access/add-user')}
-        primaryButtonText={
-          checkPermission(['usersAndAccess', 'addNewUser'])
-            ? selectedState === UserState.ARCHIVED
-              ? undefined
-              : 'Add a New User'
-            : undefined
-        }
-        beforeColumns={[
-          {
-            header: 'EMPLOYEE',
-            template: function renderComp(item: User) {
-              return (
-                <div className="list-card-columns" key={`name_${item.id}`}>
-                  <div
-                    className="title-group"
-                    style={{ paddingLeft: `16px`, marginTop: 0 }}
-                  >
-                    <span className="list-code">{item.employeeId}</span>
-                    <span
-                      className="list-title"
-                      onClick={() => selectUser(item)}
-                    >
-                      {capitalize(item.firstName)} {capitalize(item.lastName)}
-                    </span>
-                    {!item.verified && !item.archived && (
-                      <span className="list-state">
-                        <span className="list-state-span">
-                          <ReportProblemOutlined className="icon" />
-                          Unregistered
-                        </span>
-                      </span>
-                    )}
-                    {item.blocked && (
-                      <span className="list-state" style={{ color: '#ff6b6b' }}>
-                        <span className="list-state-span">
-                          <ErrorOutline className="icon" />
-                          Account Locked
-                        </span>
-                      </span>
-                    )}
-                  </div>
+                        );
+                      }
+                    } else {
+                      return null;
+                    }
+                  })()}
                 </div>
               );
             },
           },
         ]}
-        afterColumns={afterColumns}
       />
-    </Composer>
+
+      <div className="pagination">
+        <ArrowLeft
+          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+          onClick={() => {
+            if (pageable.page > 0) {
+              fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
+            }
+          }}
+        />
+        {Array.from({ length: pageable.totalPages }, (_, i) => i)
+          .slice(
+            Math.floor(pageable.page / 10) * 10,
+            Math.floor(pageable.page / 10) * 10 + 10,
+          )
+          .map((el) => (
+            <span
+              key={el}
+              className={pageable.page === el ? 'active' : ''}
+              onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
+            >
+              {el + 1}
+            </span>
+          ))}
+        <ArrowRight
+          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+          onClick={() => {
+            if (pageable.page < pageable.totalPages - 1) {
+              fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
+            }
+          }}
+        />
+      </div>
+    </TabContentWrapper>
   );
 };
 

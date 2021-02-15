@@ -27,6 +27,7 @@ const initialState: UsersState = {
   selectedState: UserState.ACTIVE,
   selectedUser: undefined,
   error: undefined,
+  currentPageData: [],
 };
 
 const reducer = (state = initialState, action: UsersActionType): UsersState => {
@@ -42,8 +43,12 @@ const reducer = (state = initialState, action: UsersActionType): UsersState => {
         loading: false,
         [type]: {
           pageable,
-          list: data as Array<User>,
+          list:
+            pageable && pageable.page === 0
+              ? (data as User[])
+              : [...state[type].list, ...(data as User[])],
         },
+        currentPageData: data as User[],
       };
 
     case UsersAction.SET_SELECTED_STATE:

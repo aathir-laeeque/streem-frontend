@@ -32,7 +32,7 @@ const Locked: FC<LockedProps> = () => {
               required: true,
             })}
             placeHolder="Enter your username or Email ID"
-            label="Username/Email ID"
+            label="Email ID"
             id="username"
             disabled
           />

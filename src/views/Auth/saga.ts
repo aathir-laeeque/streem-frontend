@@ -7,6 +7,7 @@ import {
   apiResetPassword,
   apiUpdateUserBasic,
   apiUpdatePassword,
+  apiCheckTokenExpiry,
 } from '#utils/apiUrls';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
@@ -20,24 +21,16 @@ import {
   loginError,
   fetchProfile,
   fetchProfileSuccess,
-  fetchProfileError,
   register,
-  registerSuccess,
-  registerError,
   updateProfile,
-  updateProfileError,
   updateProfileSuccess,
   forgotPassword,
-  forgotPasswordError,
   forgotPasswordSuccess,
   resetPassword,
   resetPasswordError,
   resetPasswordSuccess,
   updatePassword,
-  updatePasswordError,
   updateUserProfile,
-  updateUserProfileError,
-  updateUserProfileSuccess,
   checkTokenExpiry,
   checkTokenExpirySuccess,
   cleanUp,
@@ -49,8 +42,27 @@ import { AuthAction, LoginResponse } from './types';
 import { LoginErrorCodes } from '#utils/constants';
 import { setAuthHeader, removeAuthHeader } from '#utils/axiosClient';
 import { navigate } from '@reach/router';
+import { fetchSelectedUserSuccess } from '#store/users/actions';
+import { closeAllOverlayAction } from '#components/OverlayContainer/actions';
 
 const getUserId = (state: any) => state.auth.userId;
+const getIsLoggedIn = (state: any) => state.auth.isLoggedIn;
+
+const getErrorMsg = (errors: any) =>
+  errors?.[0]?.message || 'Oops... Please try again.';
+
+function* handleCatch(origin: string, error: any, notify = false) {
+  console.error(`error from ${origin} function in Auth :: `, error);
+  if (typeof error !== 'string') error = 'Oops! Please Try Again.';
+  if (notify)
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: error,
+      }),
+    );
+  return error;
+}
 
 function* loginSaga({ payload }: ReturnType<typeof login>) {
   try {
@@ -64,19 +76,21 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
     );
 
     if (errors) {
-      switch (errors[0].code) {
-        case LoginErrorCodes.BLOCKED:
-          throw 'User has been blocked.';
-          break;
-        case LoginErrorCodes.INCORRECT:
-          throw 'Provided credentials are incorrect. Please check and try again.';
-          break;
-        case LoginErrorCodes.EXPIRED:
-          throw 'Password Expired. Use Forgot Password to set a new one.';
-          break;
-        default:
-          throw 'Provided credentials are incorrect. Please check and try again.';
-          break;
+      const isLoggedIn = yield select(getIsLoggedIn);
+      if (isLoggedIn) {
+        if (errors?.[0]?.code !== LoginErrorCodes.INCORRECT) {
+          yield put(closeAllOverlayAction());
+          yield put(cleanUp());
+        }
+        yield put(
+          showNotification({
+            type: NotificationType.ERROR,
+            msg: errors[0]?.message || 'Oops! Please Try Again.',
+          }),
+        );
+        return false;
+      } else {
+        throw getErrorMsg(errors);
       }
     }
 
@@ -85,8 +99,7 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
     yield put(loginSuccess(data));
     yield put(fetchProfile({ id: data.id }));
   } catch (error) {
-    console.error('error from loginSaga function in Auth :: ', error);
-    if (typeof error !== 'string') error = 'There seems to be an Issue.';
+    error = yield* handleCatch('loginSaga', error);
     yield put(loginError(error));
   }
 }
@@ -100,12 +113,12 @@ function* logOutSaga() {
     );
 
     if (errors) {
-      throw 'Logout Error';
+      throw getErrorMsg(errors);
     }
 
     yield put(logOutSuccess());
   } catch (error) {
-    console.error('error from logOutSaga function in Auth :: ', error);
+    yield* handleCatch('logOutSaga', error);
     yield put(cleanUp());
   }
 }
@@ -115,7 +128,7 @@ function* cleanUpSaga() {
     removeAuthHeader();
     yield call(persistor.purge);
   } catch (error) {
-    console.error('error from cleanUpSaga function in Auth :: ', error);
+    yield* handleCatch('cleanUpSaga', error);
   }
 }
 
@@ -132,7 +145,7 @@ function* logOutSuccessSaga({ payload }: ReturnType<typeof logOutSuccess>) {
       );
     }
   } catch (error) {
-    console.error('error from logOutSuccessSaga function in Auth :: ', error);
+    yield* handleCatch('logOutSuccessSaga', error);
   }
 }
 
@@ -146,13 +159,12 @@ function* fetchProfileSaga({ payload }: ReturnType<typeof fetchProfile>) {
     );
 
     if (errors) {
-      return false;
+      throw getErrorMsg(errors);
     }
 
     yield put(fetchProfileSuccess(data));
   } catch (error) {
-    console.error('error from fetchProfileSaga function in Auth :: ', error);
-    yield put(fetchProfileError(error));
+    yield* handleCatch('fetchProfileSaga', error);
   }
 }
 
@@ -168,13 +180,7 @@ function* registerSaga({ payload }: ReturnType<typeof register>) {
     );
 
     if (errors) {
-      yield put(
-        showNotification({
-          type: NotificationType.ERROR,
-          msg: 'Token Expired',
-        }),
-      );
-      return false;
+      throw getErrorMsg(errors);
     }
 
     yield put(
@@ -183,11 +189,9 @@ function* registerSaga({ payload }: ReturnType<typeof register>) {
         msg: 'Registration Successful',
       }),
     );
-    yield put(registerSuccess());
     navigate('/auth/login');
   } catch (error) {
-    console.error('error from registerSaga function in Auth :: ', error);
-    yield put(registerError(error));
+    yield* handleCatch('registerSaga', error, true);
   }
 }
 
@@ -201,15 +205,12 @@ function* forgotPasswordSaga({ payload }: ReturnType<typeof forgotPassword>) {
         data: payload,
       },
     );
-
-    if (errors) {
-      throw 'This email ID doesn’t exist in our system. Please make sure it is entered correctly.';
-    }
-
     yield put(forgotPasswordSuccess());
+    if (errors) {
+      throw getErrorMsg(errors);
+    }
   } catch (error) {
-    console.error('error from forgotPasswordSaga function in Auth :: ', error);
-    yield put(forgotPasswordError(error));
+    yield* handleCatch('forgotPasswordSaga', error);
   }
 }
 
@@ -225,7 +226,7 @@ function* resetPasswordSaga({ payload }: ReturnType<typeof resetPassword>) {
     );
 
     if (errors) {
-      throw errors[0].message;
+      throw getErrorMsg(errors);
     }
 
     yield put(
@@ -237,7 +238,7 @@ function* resetPasswordSaga({ payload }: ReturnType<typeof resetPassword>) {
     yield put(resetPasswordSuccess());
     navigate('/auth/login');
   } catch (error) {
-    console.error('error from resetPasswordSaga function in Auth :: ', error);
+    error = yield* handleCatch('resetPasswordSaga', error);
     yield put(resetPasswordError(error));
   }
 }
@@ -257,16 +258,10 @@ function* updateUserProfileSaga({
     );
 
     if (errors) {
-      yield put(
-        showNotification({
-          type: NotificationType.ERROR,
-          msg: 'There Seems to be an Issue',
-        }),
-      );
-      return false;
+      throw getErrorMsg(errors);
     }
 
-    yield put(updateUserProfileSuccess(data));
+    yield put(fetchSelectedUserSuccess({ data }));
 
     yield put(
       showNotification({
@@ -275,11 +270,7 @@ function* updateUserProfileSaga({
       }),
     );
   } catch (error) {
-    console.error(
-      'error from updateUserProfileSaga function in Auth :: ',
-      error,
-    );
-    yield put(updateUserProfileError(error));
+    yield* handleCatch('updateUserProfileSaga', error, true);
   }
 }
 
@@ -296,13 +287,7 @@ function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
     );
 
     if (errors) {
-      yield put(
-        showNotification({
-          type: NotificationType.ERROR,
-          msg: 'There Seems to be an Issue',
-        }),
-      );
-      return false;
+      throw getErrorMsg(errors);
     }
 
     yield put(updateProfileSuccess(data));
@@ -314,8 +299,7 @@ function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
       }),
     );
   } catch (error) {
-    console.error('error from updateProfileSaga function in Auth :: ', error);
-    yield put(updateProfileError(error));
+    yield* handleCatch('updateProfileSaga', error, true);
   }
 }
 
@@ -332,13 +316,7 @@ function* updatePasswordSaga({ payload }: ReturnType<typeof updatePassword>) {
     );
 
     if (errors) {
-      yield put(
-        showNotification({
-          type: NotificationType.ERROR,
-          msg: errors[0].message,
-        }),
-      );
-      return false;
+      throw getErrorMsg(errors);
     }
 
     yield put(
@@ -348,8 +326,7 @@ function* updatePasswordSaga({ payload }: ReturnType<typeof updatePassword>) {
       }),
     );
   } catch (error) {
-    console.error('error from updatePasswordSaga function in Auth :: ', error);
-    yield put(updatePasswordError(error));
+    yield* handleCatch('updatePasswordSaga', error, true);
   }
 }
 
@@ -357,29 +334,18 @@ function* checkTokenExpirySaga({
   payload,
 }: ReturnType<typeof checkTokenExpiry>) {
   try {
-    console.log('PAYLOAD TO CHECK TOKEN EXPIRY :: ', payload);
-    // const { data, errors } = yield call(
-    //   request,
-    //   'PUT',
-    //   apiCheckTokenExpiry(id),
-    //   {
-    //     data: payload,
-    //   },
-    // );
+    const { errors } = yield call(request, 'POST', apiCheckTokenExpiry(), {
+      data: payload,
+    });
 
-    // if (errors) {
-    //   throw 'Some Issue';
-    // }
-
-    // yield delay(2000);
+    if (errors) {
+      yield put(checkTokenExpirySuccess({ isTokenExpired: true }));
+      throw getErrorMsg(errors);
+    }
 
     yield put(checkTokenExpirySuccess({ isTokenExpired: false }));
   } catch (error) {
-    console.error(
-      'error from checkTokenExpirySaga function in Auth :: ',
-      error,
-    );
-    yield put(checkTokenExpirySuccess({ isTokenExpired: true }));
+    yield* handleCatch('checkTokenExpirySaga', error, true);
   }
 }
 

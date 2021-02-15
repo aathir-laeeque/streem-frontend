@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
   Button,
   Role,
@@ -8,14 +8,14 @@ import {
 } from '#components';
 import { fetchFacilities } from '#store/facilities/actions';
 import { useForm } from 'react-hook-form';
-import { capitalize, debounce, isArray } from 'lodash';
+import { capitalize, size, noop, pickBy, identity } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '#store';
 import { navigate } from '@reach/router';
 import { Composer } from './styles';
 import { ViewUserProps } from './types';
 import { permissions, roles } from '../AddUser/temp';
-import checkPermission, { roles as roleTypes } from '#services/uiPermissions';
+import checkPermission from '#services/uiPermissions';
 import {
   archiveUser,
   cancelInvite,
@@ -30,6 +30,8 @@ import { User } from '#store/users/types';
 import { modalBody } from '../ListView/TabContent';
 import { apiCheckEmail } from '#utils/apiUrls';
 import { request } from '#utils/request';
+import { Facilities } from '#store/facilities/types';
+import { RoleType } from '../types';
 
 type Inputs = {
   firstName: string;
@@ -44,65 +46,54 @@ type Inputs = {
 
 // TODO Make Facilities Multi Checkable and Showable like Roles
 
-const EditUser: FC<ViewUserProps> = () => {
+const EditUser: FC<{
+  user: User;
+  facilities: Facilities;
+  rolePlaceholder: string;
+  isAccountOwner: boolean;
+  isEditable: boolean;
+  selectedRoles: RoleType[];
+}> = ({
+  user: selectedUser,
+  facilities: list,
+  rolePlaceholder,
+  isAccountOwner,
+  isEditable,
+  selectedRoles,
+}) => {
   const dispatch = useDispatch();
-  const { selectedUser, selectedUserId } = useTypedSelector(
-    (state) => state.users,
-  );
-  const { list, loading } = useTypedSelector((state) => state.facilities);
-
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-    reset,
-    getValues,
-    watch,
-    clearErrors,
-    setError,
-  } = useForm<Inputs>({
+  const { register, handleSubmit, errors, formState, reset, watch } = useForm<
+    Inputs
+  >({
     mode: 'onChange',
     criteriaMode: 'all',
+    defaultValues: {
+      firstName: selectedUser?.firstName,
+      lastName: selectedUser?.lastName,
+      employeeId: selectedUser?.employeeId,
+      username: selectedUser?.username,
+      email: selectedUser?.email,
+      department: selectedUser?.department,
+      ...Object.fromEntries(
+        selectedUser?.facilities?.map((f, i) => [`facilities[${i}]`, f.id]) ||
+          [],
+      ),
+      ...Object.fromEntries(
+        roles?.map((r, i) => [
+          `roles[${i}]`,
+          selectedUser?.roles?.some((sr) => sr.id == r.id) ? r.id : false,
+        ]) || [],
+      ),
+    },
   });
 
+  const { roles: rolesValues, email } = watch(['roles', 'email']);
+
   useEffect(() => {
-    getValues;
-    if (selectedUserId) {
-      dispatch(fetchFacilities());
-      dispatch(fetchSelectedUser(selectedUserId));
-    }
+    document.getElementById('firstName')?.focus();
   }, []);
 
-  useEffect(() => {
-    if (selectedUser) {
-      reset({
-        firstName: selectedUser?.firstName,
-        lastName: selectedUser?.lastName,
-        employeeId: selectedUser?.employeeId,
-        username: selectedUser?.username,
-        email: selectedUser?.email,
-        department: selectedUser?.department,
-        ...Object.fromEntries(
-          selectedUser?.facilities?.map((f, i) => [`facilities[${i}]`, f.id]) ||
-            [],
-        ),
-        ...Object.fromEntries(
-          roles?.map((r, i) => [
-            `roles[${i}]`,
-            selectedUser?.roles?.some((sr) => sr.id == r.id) ? r.id : false,
-          ]) || [],
-        ),
-      });
-      document.getElementById('firstName')?.focus();
-    }
-  }, [selectedUser]);
-
-  const onSubmit = (data: Inputs) => {
-    const payload = data;
-    reset({
-      ...payload,
-    });
+  const onSubmit = (payload: Inputs) => {
     const parsedRoles: { id: string }[] = [];
     payload.roles.forEach((r) => {
       if (r !== false) parsedRoles.push({ id: r });
@@ -111,7 +102,11 @@ const EditUser: FC<ViewUserProps> = () => {
     payload.facilities.forEach((r) => {
       if (r !== false) parsedFacilities.push({ id: r });
     });
-    if (selectedUser?.id)
+    if (selectedUser?.id) {
+      reset({
+        ...selectedUser,
+        ...pickBy(payload, identity),
+      });
       dispatch(
         updateUserProfile({
           body: {
@@ -122,6 +117,7 @@ const EditUser: FC<ViewUserProps> = () => {
           id: selectedUser.id,
         }),
       );
+    }
   };
 
   const onArchiveUser = (user: User) => {
@@ -135,9 +131,6 @@ const EditUser: FC<ViewUserProps> = () => {
             dispatch(
               archiveUser({
                 id: user.id,
-                fetchData: () => {
-                  console.log();
-                },
               }),
             ),
           body: modalBody(user, 'You’re about to archive'),
@@ -157,9 +150,6 @@ const EditUser: FC<ViewUserProps> = () => {
             dispatch(
               unArchiveUser({
                 id: user.id,
-                fetchData: () => {
-                  console.log();
-                },
               }),
             ),
           body: modalBody(user, 'You’re about to unarchive'),
@@ -168,44 +158,27 @@ const EditUser: FC<ViewUserProps> = () => {
     );
   };
 
-  const onCancelInvite = (id: User['id']) => {
+  const onCancelInvite = (user: User) => {
     dispatch(
-      cancelInvite({
-        id,
-        fetchData: () => {
-          console.log();
+      openOverlayAction({
+        type: OverlayNames.CONFIRMATION_MODAL,
+        props: {
+          title: 'Cancel Pending Invite',
+          primaryText: 'Cancel Invite',
+          onPrimary: () =>
+            dispatch(
+              cancelInvite({
+                id: user.id,
+              }),
+            ),
+          body: modalBody(user, 'You are about to cancel the invite sent to'),
         },
       }),
     );
   };
 
-  let rolePlaceholder = 'N/A';
-  if (selectedUser?.roles && selectedUser?.roles[0]) {
-    rolePlaceholder = capitalize(selectedUser.roles[0].name.replace('_', ' '));
-  }
-
-  if (!selectedUser || list?.length === 0 || loading) {
-    return <div>Loading...</div>;
-  }
-
-  const { email, roles: rolesValues } = watch(['email', 'roles']);
-
-  console.log('isValid', formState.isValid);
-
-  const isAccountOwner = selectedUser?.roles?.some(
-    (i) => i?.name === roleTypes.ACCOUNT_OWNER,
-  );
-
-  const isEditable = checkPermission([
-    'usersAndAccess',
-    'selectedUser',
-    'form',
-    'editable',
-  ])
-    ? isAccountOwner
-      ? checkPermission(['usersAndAccess', 'editAccountOwner'])
-      : true
-    : false;
+  console.log('formState.dirtyFields', formState.dirtyFields);
+  console.log('formState.isValid', formState.isValid);
 
   return (
     <Composer>
@@ -262,24 +235,14 @@ const EditUser: FC<ViewUserProps> = () => {
                     message: 'Invalid email address',
                   },
                   validate: async (value) => {
-                    if (!email) return true;
-                    if (value === email) return true;
-                    return new Promise((resolve) => {
-                      debounce(async (email) => {
-                        const { errors } = await request(
-                          'GET',
-                          apiCheckEmail(email),
-                        );
-                        let message: string | boolean = true;
-                        if (errors && errors.length > 0) {
-                          message = 'Email ID already exists';
-                          setError('email', { message });
-                        } else {
-                          clearErrors('email');
-                        }
-                        resolve(message);
-                      }, 500)(value);
-                    });
+                    console.log('value', value);
+                    if (selectedUser.email === value) return true;
+                    const { errors } = await request(
+                      'GET',
+                      apiCheckEmail(value.toLowerCase()),
+                    );
+                    if (errors?.length) return 'Email ID already exists';
+                    return true;
                   },
                 })}
                 placeHolder="Email ID"
@@ -304,9 +267,7 @@ const EditUser: FC<ViewUserProps> = () => {
           <div className="flex-row">
             <div className="flex-col right-gutter">
               <LabeledInput
-                refFun={register({
-                  // required: true,
-                })}
+                refFun={register}
                 placeHolder="Employee ID"
                 label="Employee ID"
                 id="employeeId"
@@ -317,9 +278,7 @@ const EditUser: FC<ViewUserProps> = () => {
             <div className="flex-col left-gutter">
               {selectedUser.verified && (
                 <LabeledInput
-                  refFun={register({
-                    // required: true,
-                  })}
+                  refFun={register}
                   placeHolder="Username"
                   label="Username"
                   id="username"
@@ -342,11 +301,7 @@ const EditUser: FC<ViewUserProps> = () => {
               placeHolder={rolePlaceholder}
               label="Role"
               id="roles"
-              selected={
-                selectedUser?.roles && selectedUser?.roles[0]
-                  ? selectedUser?.roles[0].id
-                  : 3
-              }
+              selected={selectedRoles}
             />
           </div>
           <div className="partition" />
@@ -365,7 +320,7 @@ const EditUser: FC<ViewUserProps> = () => {
                   name={`facilities[${i}]`}
                   value={`${facility.id}`}
                   label={facility.name}
-                  onClick={() => console.log('cheked')}
+                  onClick={() => noop}
                   disabled={!isEditable}
                 />
               </div>
@@ -379,15 +334,9 @@ const EditUser: FC<ViewUserProps> = () => {
                 className="primary-button"
                 type="submit"
                 disabled={
-                  isAccountOwner
-                    ? !formState.isValid && !formState.isDirty
-                    : rolesValues &&
-                      isArray(rolesValues) &&
-                      rolesValues.some((r) => r !== false) &&
-                      formState.isValid &&
-                      formState.isDirty
-                    ? false
-                    : true
+                  !rolesValues?.some((r) => r !== false) ||
+                  !formState.isValid ||
+                  !size(formState.dirtyFields)
                 }
               >
                 Save Changes
@@ -427,7 +376,7 @@ const EditUser: FC<ViewUserProps> = () => {
                         </Button>
                         <Button
                           className="button cancel"
-                          onClick={() => onCancelInvite(selectedUser.id)}
+                          onClick={() => onCancelInvite(selectedUser)}
                         >
                           Cancel Invite
                         </Button>
@@ -444,4 +393,109 @@ const EditUser: FC<ViewUserProps> = () => {
   );
 };
 
-export default EditUser;
+type InitialState = {
+  isLoaded: boolean;
+  isEditable: boolean;
+  isAccountOwner: boolean;
+  rolePlaceholder: string;
+  selectedRoles: RoleType[];
+};
+
+type AccumulatorType = Pick<
+  InitialState,
+  'selectedRoles' | 'isAccountOwner'
+> & { rolePlaceholder: string[] };
+
+const EditUserContainer: FC<ViewUserProps> = () => {
+  const dispatch = useDispatch();
+  const { selectedUser, selectedUserId } = useTypedSelector(
+    (state) => state.users,
+  );
+  const { list } = useTypedSelector((state) => state.facilities);
+
+  const [state, setState] = useState<InitialState>({
+    isLoaded: false,
+    isEditable: false,
+    isAccountOwner: false,
+    rolePlaceholder: '',
+    selectedRoles: [],
+  });
+
+  useEffect(() => {
+    if (selectedUserId) {
+      dispatch(fetchFacilities());
+      dispatch(fetchSelectedUser(selectedUserId));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedUser && list?.length) {
+      const { selectedRoles, isAccountOwner, rolePlaceholder } = roles.reduce<
+        AccumulatorType
+      >(
+        (accumulator, role) => {
+          const isUserRole = selectedUser?.roles?.some(
+            (userRole) => userRole.id === role.id,
+          );
+          if (isUserRole) {
+            accumulator.selectedRoles.push(role);
+            accumulator.rolePlaceholder.push(
+              capitalize(role.name.replace('_', ' ')),
+            );
+            if (role.id === '1') accumulator.isAccountOwner = true;
+          }
+          return accumulator;
+        },
+        {
+          selectedRoles: [],
+          isAccountOwner: false,
+          rolePlaceholder: [],
+        },
+      );
+
+      const isEditable = checkPermission([
+        'usersAndAccess',
+        'selectedUser',
+        'form',
+        'editable',
+      ])
+        ? isAccountOwner
+          ? checkPermission(['usersAndAccess', 'editAccountOwner'])
+          : true
+        : false;
+
+      setState({
+        isLoaded: true,
+        rolePlaceholder: rolePlaceholder.toString(),
+        isAccountOwner,
+        isEditable,
+        selectedRoles,
+      });
+    }
+  }, [selectedUser, list?.length]);
+
+  const {
+    isLoaded,
+    isEditable,
+    isAccountOwner,
+    rolePlaceholder,
+    selectedRoles,
+  } = state;
+
+  if (!isLoaded || !selectedUser || !list?.length) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <EditUser
+      user={selectedUser}
+      facilities={list}
+      isEditable={isEditable}
+      isAccountOwner={isAccountOwner}
+      rolePlaceholder={rolePlaceholder}
+      selectedRoles={selectedRoles}
+    />
+  );
+};
+
+export default EditUserContainer;

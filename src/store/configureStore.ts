@@ -21,7 +21,6 @@ const persistConfig = {
             return {
               ...inboundState,
               isRefreshing: false,
-              resetRequested: false,
               error: undefined,
               isTokenExpired: undefined,
             };
@@ -45,7 +44,7 @@ let previousIdle = true;
 
 const handleOnIdle: Middleware = (store) => (next) => (action) => {
   const {
-    auth: { isIdle },
+    auth: { isIdle, isLoggedIn },
   } = store.getState();
 
   if (isIdle) {
@@ -59,7 +58,7 @@ const handleOnIdle: Middleware = (store) => (next) => (action) => {
       return false;
     }
   } else {
-    if (previousIdle) {
+    if (previousIdle && isLoggedIn) {
       previousIdle = false;
       onIdleRequests.forEach((action) => store.dispatch(action));
       onIdleRequests = [];

@@ -5,7 +5,7 @@ import { User, UsersAction, UserState } from './types';
 
 export const fetchUsers = (
   params: Record<string, string | number | boolean>,
-  type: string,
+  type: UserState,
 ) => actionSpreader(UsersAction.FETCH_USERS, { params, type });
 
 export const fetchUsersOngoing = () =>

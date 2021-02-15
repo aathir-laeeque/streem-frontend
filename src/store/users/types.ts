@@ -26,7 +26,7 @@ export interface User {
   assigned?: boolean;
   completelyAssigned?: boolean;
   roles?: {
-    id: number;
+    id: string;
     name: string;
   }[];
   facilities?: {
@@ -58,6 +58,7 @@ export interface UsersState {
   readonly selectedState: string;
   readonly selectedUser?: User;
   readonly selectedUserId?: User['id'];
+  readonly currentPageData: User[];
 }
 
 export enum UserState {

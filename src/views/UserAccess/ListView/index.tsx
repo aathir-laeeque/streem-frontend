@@ -5,7 +5,7 @@ import { UserState } from '#store/users/types';
 import { ViewWrapper } from '#views/Checklists/ListView/styles';
 import React, { FC } from 'react';
 
-import NewTabContent from './NewTabContent';
+import TabContent from './TabContent';
 import SessionActivity from './SessionActivity';
 import { ListViewProps } from './types';
 
@@ -14,14 +14,14 @@ const ListView: FC<ListViewProps> = () => {
   if (checkPermission(['usersAndAccess', 'activeUsers']))
     shownTabs.push({
       label: `${UserState.ACTIVE} Users`,
-      tabContent: NewTabContent,
+      tabContent: TabContent,
       values: [UserState.ACTIVE],
     });
 
   if (checkPermission(['usersAndAccess', 'archivedUsers']))
     shownTabs.push({
       label: `${UserState.ARCHIVED} Users`,
-      tabContent: NewTabContent,
+      tabContent: TabContent,
       values: [UserState.ARCHIVED],
     });
 

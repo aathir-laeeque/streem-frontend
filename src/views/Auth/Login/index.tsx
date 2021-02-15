@@ -18,7 +18,7 @@ type Inputs = {
 const Login: FC<LoginProps> = () => {
   const dispatch = useDispatch();
   const [passwordInputType, setPasswordInputType] = useState(true);
-  const { error } = useTypedSelector((state) => state.auth);
+  const { error, loading } = useTypedSelector((state) => state.auth);
 
   const { register, handleSubmit } = useForm<Inputs>({
     mode: 'onChange',
@@ -59,7 +59,7 @@ const Login: FC<LoginProps> = () => {
             })}
             error={error ? '' : undefined}
             placeHolder="Enter your Username or Email ID"
-            label="Username/Email ID"
+            label="Email ID"
             id="username"
           />
         </div>
@@ -96,12 +96,11 @@ const Login: FC<LoginProps> = () => {
           }}
         >
           {error && <span className="error-span">{error}</span>}
-          <Button className="primary-button" type="submit">
+          <Button className="primary-button" type="submit" disabled={loading}>
             Login
           </Button>
         </div>
       </form>
-      {/* <Terms /> */}
     </Card>
   );
 };

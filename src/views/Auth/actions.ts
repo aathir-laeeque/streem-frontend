@@ -1,6 +1,11 @@
 import { actionSpreader } from '#store';
 import { User } from '#store/users/types';
-import { AuthAction, LoginResponse, RefreshTokenResponse } from './types';
+import {
+  AuthAction,
+  LoginResponse,
+  RefreshTokenResponse,
+  TokenTypes,
+} from './types';
 
 // LOGIN ACTIONS
 
@@ -25,9 +30,6 @@ export const logOutSuccess = (payload?: { type?: string; msg?: string }) =>
 
 export const cleanUp = () => actionSpreader(AuthAction.CLEANUP);
 
-export const logOutError = (error: any) =>
-  actionSpreader(AuthAction.LOGOUT_ERROR, error);
-
 // REGISTER ACTIONS
 
 export const register = (payload: {
@@ -35,12 +37,6 @@ export const register = (payload: {
   password: string;
   token: string;
 }) => actionSpreader(AuthAction.REGISTER, payload);
-
-export const registerSuccess = () =>
-  actionSpreader(AuthAction.REGISTER_SUCCESS);
-
-export const registerError = (error: any) =>
-  actionSpreader(AuthAction.REGISTER_ERROR, error);
 
 // FORGOT PASSWORD
 
@@ -50,9 +46,6 @@ export const forgotPassword = (payload: { email: string }) =>
 export const forgotPasswordSuccess = () =>
   actionSpreader(AuthAction.FORGOT_PASSWORD_SUCCESS);
 
-export const forgotPasswordError = (error: any) =>
-  actionSpreader(AuthAction.FORGOT_PASSWORD_ERROR, error);
-
 // PROFILE ACTIONS
 
 export const fetchProfile = (payload: { id: User['id'] }) =>
@@ -60,9 +53,6 @@ export const fetchProfile = (payload: { id: User['id'] }) =>
 
 export const fetchProfileSuccess = (data: User) =>
   actionSpreader(AuthAction.FETCH_PROFILE_SUCCESS, data);
-
-export const fetchProfileError = (error: any) =>
-  actionSpreader(AuthAction.FETCH_PROFILE_ERROR, error);
 
 export const updateProfile = (payload: {
   body: Record<string, any>;
@@ -72,44 +62,28 @@ export const updateProfile = (payload: {
 export const updateProfileSuccess = (data: User) =>
   actionSpreader(AuthAction.UPDATE_PROFILE_SUCCESS, data);
 
-export const updateProfileError = (error: any) =>
-  actionSpreader(AuthAction.UPDATE_PROFILE_ERROR, error);
-
 export const updateUserProfile = (payload: {
   body: Record<string, any>;
   id: User['id'];
 }) => actionSpreader(AuthAction.UPDATE_USER_PROFILE, payload);
-
-export const updateUserProfileSuccess = (data: User) =>
-  actionSpreader(AuthAction.UPDATE_USER_PROFILE_SUCCESS, data);
-
-export const updateUserProfileError = (error: any) =>
-  actionSpreader(AuthAction.UPDATE_USER_PROFILE_ERROR, error);
 
 export const updatePassword = (payload: {
   body: Record<string, any>;
   id: User['id'];
 }) => actionSpreader(AuthAction.UPDATE_PASSWORD, payload);
 
-export const updatePasswordSuccess = (data: User) =>
-  actionSpreader(AuthAction.UPDATE_PASSWORD_SUCCESS, data);
-
-export const updatePasswordError = (error: any) =>
-  actionSpreader(AuthAction.UPDATE_PASSWORD_ERROR, error);
-
 // REFRESH TOKEN ACTIONS
 
 export const refreshTokenSuccess = (data: RefreshTokenResponse) =>
   actionSpreader(AuthAction.REFRESH_TOKEN_SUCCESS, data);
 
-export const checkTokenExpiry = (payload: { type: string; token: string }) =>
-  actionSpreader(AuthAction.CHECK_TOKEN_EXPIRY, payload);
+export const checkTokenExpiry = (payload: {
+  type: TokenTypes;
+  token: string;
+}) => actionSpreader(AuthAction.CHECK_TOKEN_EXPIRY, payload);
 
 export const checkTokenExpirySuccess = (payload: { isTokenExpired: boolean }) =>
   actionSpreader(AuthAction.CHECK_TOKEN_EXPIRY_SUCCESS, payload);
-
-export const checkTokenExpiryError = (error: any) =>
-  actionSpreader(AuthAction.CHECK_TOKEN_EXPIRY_ERROR, error);
 
 // RESET PASSWORD
 

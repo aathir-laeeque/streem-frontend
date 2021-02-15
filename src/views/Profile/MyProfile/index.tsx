@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Button, LabeledInput, Role } from '#components';
 import { Composer } from './styles';
 import { capitalize } from 'lodash';
@@ -8,6 +8,7 @@ import { useTypedSelector } from '#store';
 import { useForm } from 'react-hook-form';
 import { updateProfile } from '#views/Auth/actions';
 import { permissions, roles } from '#views/UserAccess/AddUser/temp';
+import { RoleType } from '#views/UserAccess/types';
 
 type Inputs = {
   firstName: string;
@@ -20,9 +21,22 @@ type Inputs = {
   roles: string;
 };
 
+type InitialState = {
+  rolePlaceholder: string;
+  selectedRoles: RoleType[];
+};
+type AccumulatorType = Pick<InitialState, 'selectedRoles'> & {
+  rolePlaceholder: string[];
+};
+
 const MyProfile: FC<MyProfileProps> = () => {
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
+  const [state, setState] = useState<InitialState>({
+    rolePlaceholder: '',
+    selectedRoles: [],
+  });
+
   const { register, handleSubmit, errors, formState, reset } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -38,33 +52,45 @@ const MyProfile: FC<MyProfileProps> = () => {
     },
   });
 
+  const { selectedRoles, rolePlaceholder } = state;
+
   useEffect(() => {
-    document.getElementById('firstName')?.focus();
+    const { selectedRoles, rolePlaceholder } = roles.reduce<AccumulatorType>(
+      (accumulator, role) => {
+        const isUserRole = profile?.roles?.some(
+          (userRole) => userRole.id === role.id,
+        );
+        if (isUserRole) {
+          accumulator.selectedRoles.push(role);
+          accumulator.rolePlaceholder.push(
+            capitalize(role.name.replace('_', ' ')),
+          );
+        }
+        return accumulator;
+      },
+      {
+        selectedRoles: [],
+        rolePlaceholder: [],
+      },
+    );
+    setState({ rolePlaceholder: rolePlaceholder.toString(), selectedRoles });
   }, []);
+
+  useEffect(() => {
+    if (rolePlaceholder) {
+      document.getElementById('firstName')?.focus();
+    }
+  }, [rolePlaceholder]);
 
   const onSubmit = (data: Inputs) => {
     const payload = {
       firstName: data?.firstName,
       lastName: data?.lastName,
     };
-    reset({
-      firstName: data?.firstName,
-      lastName: data?.lastName,
-      username: profile?.username,
-      employeeId: profile?.employeeId,
-      email: profile?.email,
-      department: profile?.department,
-      facilities: profile?.facilities?.map((f) => f.name).toString(),
-      roles: profile?.roles?.map((r) => r.name).toString(),
-    });
+    reset();
     if (profile?.id)
       dispatch(updateProfile({ body: payload, id: profile?.id }));
   };
-
-  let rolePlaceholder = 'N/A';
-  if (profile?.roles && profile?.roles[0]) {
-    rolePlaceholder = capitalize(profile.roles[0].name.replace('_', ' '));
-  }
 
   return (
     <Composer>
@@ -104,9 +130,7 @@ const MyProfile: FC<MyProfileProps> = () => {
           <div className="flex-row">
             <div className="flex-col right-gutter">
               <LabeledInput
-                refFun={register({
-                  // required: true,
-                })}
+                refFun={register}
                 placeHolder="Username"
                 label="Username"
                 id="username"
@@ -172,9 +196,7 @@ const MyProfile: FC<MyProfileProps> = () => {
                 label="Role"
                 id="roles-input"
                 disabled
-                selected={
-                  profile?.roles && profile?.roles[0] && profile?.roles[0].id
-                }
+                selected={selectedRoles}
               />
             </div>
           </div>
@@ -183,7 +205,7 @@ const MyProfile: FC<MyProfileProps> = () => {
           <Button
             className="primary-button"
             type="submit"
-            disabled={formState.isValid && formState.isDirty ? false : true}
+            disabled={!formState.isValid || !formState.isDirty}
           >
             Save Changes
           </Button>

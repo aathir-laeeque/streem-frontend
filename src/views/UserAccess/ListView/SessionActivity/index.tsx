@@ -231,7 +231,7 @@ const SessionActivity: FC<TabViewProps> = () => {
                       setstate({ ...state, searchQuery: e.target.value })
                     }
                     defaultValue={searchQuery}
-                    placeholder="Search Users"
+                    placeholder="First Name"
                   />
                 </div>
                 <span onClick={handleUnselectAll}>Unselect All</span>
