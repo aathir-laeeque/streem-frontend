@@ -122,7 +122,10 @@ const AddUser: FC<AddUserProps> = () => {
                       'GET',
                       apiCheckEmployeeId(value),
                     );
-                    if (errors?.length) return 'Employee ID already exists';
+                    if (errors?.length)
+                      return (
+                        errors?.[0]?.message || 'Employee ID already exists'
+                      );
                     return true;
                   },
                 })}
@@ -145,7 +148,8 @@ const AddUser: FC<AddUserProps> = () => {
                       'GET',
                       apiCheckEmail(value),
                     );
-                    if (errors?.length) return 'Email ID already exists';
+                    if (errors?.length)
+                      return errors?.[0]?.message || 'Email ID already exists';
                     return true;
                   },
                 })}

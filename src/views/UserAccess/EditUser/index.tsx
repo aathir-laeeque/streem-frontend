@@ -235,13 +235,13 @@ const EditUser: FC<{
                     message: 'Invalid email address',
                   },
                   validate: async (value) => {
-                    console.log('value', value);
                     if (selectedUser.email === value) return true;
                     const { errors } = await request(
                       'GET',
                       apiCheckEmail(value.toLowerCase()),
                     );
-                    if (errors?.length) return 'Email ID already exists';
+                    if (errors?.length)
+                      return errors?.[0]?.message || 'Email ID already exists';
                     return true;
                   },
                 })}

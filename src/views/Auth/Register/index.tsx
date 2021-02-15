@@ -144,7 +144,8 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
                   'GET',
                   apiCheckUsername(value.toLowerCase()),
                 );
-                if (errors?.length) return 'Username Already Taken';
+                if (errors?.length)
+                  return errors?.[0]?.message || 'Username Already Taken';
                 return true;
               },
             })}
