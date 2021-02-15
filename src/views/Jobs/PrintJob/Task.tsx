@@ -3,12 +3,14 @@ import {
   TaskExecutionState,
   Task,
   NonMandatoryActivity,
+  TimerOperator,
 } from '#JobComposer/checklist.types';
 import handIcon from '#assets/images/hand.png';
 import clockIcon from '#assets/images/clock.png';
 import { Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import ActivityList from './ActivityList';
 import moment from 'moment';
+import { formatDuration } from '#utils/timeUtils';
 
 const styles = StyleSheet.create({
   flexView: {
@@ -100,6 +102,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#000',
   },
+  lightInput: {
+    marginHorizontal: 1,
+    width: 20,
+    height: 20,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f5f5f5',
+  },
 });
 
 const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
@@ -182,7 +193,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
             {!canSkipTask ? `Mandatory` : `Optional`}
           </Text>
         </View>
-        {task.timed && task.period && (
+        {task.timed && (
           <View>
             <View style={styles.taskHasTimed}>
               <View
@@ -196,11 +207,16 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
                   src={clockIcon}
                   style={{ height: '18px', marginRight: 8 }}
                 />
-                <Text style={styles.text12}>
-                  Perform Task NLT{' '}
-                  {`${Math.floor(
-                    (task.period / (1000 * 60)) % 60,
-                  )} min : ${Math.floor((task.period / 1000) % 60)} sec `}
+                <Text style={[styles.text12, { display: 'flex' }]}>
+                  {task.timerOperator === TimerOperator.NOT_LESS_THAN
+                    ? `Perform task in Not Less Than ${formatDuration(
+                        task.minPeriod as number,
+                      )} :: Max Time limit - ${formatDuration(
+                        task?.maxPeriod as number,
+                      )}`
+                    : `Complete under ${formatDuration(
+                        task.maxPeriod as number,
+                      )}`}
                 </Text>
               </View>
             </View>
@@ -213,7 +229,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
               }}
             >
               <Text style={[styles.text12, { color: '#666666' }]}>
-                Write values in box E.g. -{' '}
+                Write values in box -
               </Text>
               <View style={styles.lightInput} />
               <View style={styles.lightInput} />
