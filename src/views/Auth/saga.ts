@@ -12,7 +12,7 @@ import {
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { ResponseObj } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { User } from '#store/users/types';
 import {
   login,
@@ -47,22 +47,6 @@ import { closeAllOverlayAction } from '#components/OverlayContainer/actions';
 
 const getUserId = (state: any) => state.auth.userId;
 const getIsLoggedIn = (state: any) => state.auth.isLoggedIn;
-
-const getErrorMsg = (errors: any) =>
-  errors?.[0]?.message || 'Oops... Please try again.';
-
-function* handleCatch(origin: string, error: any, notify = false) {
-  console.error(`error from ${origin} function in Auth :: `, error);
-  if (typeof error !== 'string') error = 'Oops! Please Try Again.';
-  if (notify)
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: error,
-      }),
-    );
-  return error;
-}
 
 function* loginSaga({ payload }: ReturnType<typeof login>) {
   try {
@@ -99,7 +83,7 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
     yield put(loginSuccess(data));
     yield put(fetchProfile({ id: data.id }));
   } catch (error) {
-    error = yield* handleCatch('loginSaga', error);
+    error = yield* handleCatch('Auth', 'loginSaga', error);
     yield put(loginError(error));
   }
 }
@@ -118,7 +102,7 @@ function* logOutSaga() {
 
     yield put(logOutSuccess());
   } catch (error) {
-    yield* handleCatch('logOutSaga', error);
+    yield* handleCatch('Auth', 'logOutSaga', error);
     yield put(cleanUp());
   }
 }
@@ -128,7 +112,7 @@ function* cleanUpSaga() {
     removeAuthHeader();
     yield call(persistor.purge);
   } catch (error) {
-    yield* handleCatch('cleanUpSaga', error);
+    yield* handleCatch('Auth', 'cleanUpSaga', error);
   }
 }
 
@@ -145,7 +129,7 @@ function* logOutSuccessSaga({ payload }: ReturnType<typeof logOutSuccess>) {
       );
     }
   } catch (error) {
-    yield* handleCatch('logOutSuccessSaga', error);
+    yield* handleCatch('Auth', 'logOutSuccessSaga', error);
   }
 }
 
@@ -164,7 +148,7 @@ function* fetchProfileSaga({ payload }: ReturnType<typeof fetchProfile>) {
 
     yield put(fetchProfileSuccess(data));
   } catch (error) {
-    yield* handleCatch('fetchProfileSaga', error);
+    yield* handleCatch('Auth', 'fetchProfileSaga', error);
   }
 }
 
@@ -191,7 +175,7 @@ function* registerSaga({ payload }: ReturnType<typeof register>) {
     );
     navigate('/auth/login');
   } catch (error) {
-    yield* handleCatch('registerSaga', error, true);
+    yield* handleCatch('Auth', 'registerSaga', error, true);
   }
 }
 
@@ -210,7 +194,7 @@ function* forgotPasswordSaga({ payload }: ReturnType<typeof forgotPassword>) {
       throw getErrorMsg(errors);
     }
   } catch (error) {
-    yield* handleCatch('forgotPasswordSaga', error);
+    yield* handleCatch('Auth', 'forgotPasswordSaga', error);
   }
 }
 
@@ -238,7 +222,7 @@ function* resetPasswordSaga({ payload }: ReturnType<typeof resetPassword>) {
     yield put(resetPasswordSuccess());
     navigate('/auth/login');
   } catch (error) {
-    error = yield* handleCatch('resetPasswordSaga', error);
+    error = yield* handleCatch('Auth', 'resetPasswordSaga', error);
     yield put(resetPasswordError(error));
   }
 }
@@ -270,7 +254,7 @@ function* updateUserProfileSaga({
       }),
     );
   } catch (error) {
-    yield* handleCatch('updateUserProfileSaga', error, true);
+    yield* handleCatch('Auth', 'updateUserProfileSaga', error, true);
   }
 }
 
@@ -299,7 +283,7 @@ function* updateProfileSaga({ payload }: ReturnType<typeof updateProfile>) {
       }),
     );
   } catch (error) {
-    yield* handleCatch('updateProfileSaga', error, true);
+    yield* handleCatch('Auth', 'updateProfileSaga', error, true);
   }
 }
 
@@ -326,7 +310,7 @@ function* updatePasswordSaga({ payload }: ReturnType<typeof updatePassword>) {
       }),
     );
   } catch (error) {
-    yield* handleCatch('updatePasswordSaga', error, true);
+    yield* handleCatch('Auth', 'updatePasswordSaga', error, true);
   }
 }
 
@@ -345,7 +329,7 @@ function* checkTokenExpirySaga({
 
     yield put(checkTokenExpirySuccess({ isTokenExpired: false }));
   } catch (error) {
-    yield* handleCatch('checkTokenExpirySaga', error, true);
+    yield* handleCatch('Auth', 'checkTokenExpirySaga', error, true);
   }
 }
 

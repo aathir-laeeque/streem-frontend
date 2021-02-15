@@ -19,7 +19,7 @@ export const fetchBaseUrl = () => {
 export enum LoginErrorCodes {
   BLOCKED = 1004,
   INCORRECT = 1005,
-  EXPIRED = 1007,
+  // EXPIRED = 1007,
   TOKEN_REVOKED = 1101,
   REFRESH_TOKEN_EXPIRED = 1002,
   TOKEN_EXPIRED = 1104,

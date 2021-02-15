@@ -1,6 +1,9 @@
 import { apiForgotPassword, apiLogin, apiRefreshToken } from './apiUrls';
 import { AxiosRequestConfig } from 'axios';
 import axiosInstance, { removeAuthHeader } from './axiosClient';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
+import { put } from 'redux-saga/effects';
 
 interface RequestOptions {
   data?: Record<string | number, any>;
@@ -34,3 +37,24 @@ export const request = async (
       console.error('Error in axios Request :', error);
     });
 };
+
+export const getErrorMsg = (errors: any) =>
+  errors?.[0]?.message || 'Oops... Please try again.';
+
+export function* handleCatch(
+  origin: string,
+  sagaName: string,
+  error: any,
+  notify = false,
+) {
+  console.error(`error from ${origin} function in ${sagaName} :: `, error);
+  if (typeof error !== 'string') error = 'Oops! Please Try Again.';
+  if (notify)
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: error,
+      }),
+    );
+  return error;
+}

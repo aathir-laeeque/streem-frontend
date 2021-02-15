@@ -10,7 +10,7 @@ import { ResponseObj } from '#utils/globalTypes';
 import { navigate } from '@reach/router';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
-import { request } from '#utils/request';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { User } from '#store/users/types';
 import {
   resendInvite,
@@ -34,7 +34,7 @@ function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
     );
 
     if (errors) {
-      throw errors?.[0]?.message || '';
+      throw getErrorMsg(errors);
     }
 
     yield put(
@@ -44,16 +44,7 @@ function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
       }),
     );
   } catch (error) {
-    console.error(
-      'error from resendInviteSaga function in UserAccessSaga :: ',
-      error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: error || 'Please try again later.',
-      }),
-    );
+    yield* handleCatch('UserAccess', 'resendInviteSaga', error, true);
   }
 }
 
@@ -67,7 +58,7 @@ function* cancelInviteSaga({ payload }: ReturnType<typeof cancelInvite>) {
     );
 
     if (errors) {
-      throw errors?.[0]?.message || '';
+      throw getErrorMsg(errors);
     }
 
     yield put(
@@ -82,16 +73,7 @@ function* cancelInviteSaga({ payload }: ReturnType<typeof cancelInvite>) {
       yield put(fetchSelectedUserSuccess({ data }));
     }
   } catch (error) {
-    console.error(
-      'error from cancelInviteSaga function in UserAccessSaga :: ',
-      error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: error || 'Please try again later.',
-      }),
-    );
+    yield* handleCatch('UserAccess', 'cancelInviteSaga', error, true);
   }
 }
 
@@ -105,7 +87,7 @@ function* archiveUserSaga({ payload }: ReturnType<typeof archiveUser>) {
     );
 
     if (errors) {
-      throw errors?.[0]?.message || '';
+      throw getErrorMsg(errors);
     }
 
     yield put(
@@ -120,16 +102,7 @@ function* archiveUserSaga({ payload }: ReturnType<typeof archiveUser>) {
       yield put(fetchSelectedUserSuccess({ data }));
     }
   } catch (error) {
-    console.error(
-      'error from archiveUserSaga function in UserAccessSaga :: ',
-      error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: error || 'Please try again later.',
-      }),
-    );
+    yield* handleCatch('UserAccess', 'archiveUserSaga', error, true);
   }
 }
 
@@ -143,7 +116,7 @@ function* unArchiveUserSaga({ payload }: ReturnType<typeof unArchiveUser>) {
     );
 
     if (errors) {
-      throw errors?.[0]?.message || '';
+      throw getErrorMsg(errors);
     }
 
     yield put(
@@ -158,16 +131,7 @@ function* unArchiveUserSaga({ payload }: ReturnType<typeof unArchiveUser>) {
       yield put(fetchSelectedUserSuccess({ data }));
     }
   } catch (error) {
-    console.error(
-      'error from unArchiveUserSaga function in UserAccessSaga :: ',
-      error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: error || 'Please try again later.',
-      }),
-    );
+    yield* handleCatch('UserAccess', 'unArchiveUserSaga', error, true);
   }
 }
 
@@ -181,7 +145,7 @@ function* unLockUserSaga({ payload }: ReturnType<typeof unLockUser>) {
     );
 
     if (errors) {
-      throw errors?.[0]?.message || '';
+      throw getErrorMsg(errors);
     }
 
     yield put(
@@ -196,16 +160,7 @@ function* unLockUserSaga({ payload }: ReturnType<typeof unLockUser>) {
       yield put(fetchSelectedUserSuccess({ data }));
     }
   } catch (error) {
-    console.error(
-      'error from unLockUserSaga function in UserAccessSaga :: ',
-      error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: error || 'Please try again later.',
-      }),
-    );
+    yield* handleCatch('UserAccess', 'unLockUserSaga', error, true);
   }
 }
 
@@ -221,7 +176,7 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
     );
 
     if (errors) {
-      throw errors?.[0]?.message || '';
+      throw getErrorMsg(errors);
     }
 
     navigate(-1);
@@ -232,16 +187,7 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
       }),
     );
   } catch (error) {
-    console.error(
-      'error from addUserSaga function in UserAccessSaga :: ',
-      error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: error || 'Please try again later.',
-      }),
-    );
+    yield* handleCatch('UserAccess', 'addUserSaga', error, true);
   }
 }
 

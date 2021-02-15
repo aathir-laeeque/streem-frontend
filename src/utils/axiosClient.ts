@@ -45,7 +45,7 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     try {
       const { config: originalReq, response } = error;
-      const { code } = response?.data?.errors?.[0];
+      const { code, message } = response?.data?.errors?.[0];
 
       if (code !== LoginErrorCodes.TOKEN_EXPIRED.toString()) {
         const {
@@ -56,9 +56,10 @@ axiosInstance.interceptors.response.use(
           [
             LoginErrorCodes.REFRESH_TOKEN_EXPIRED.toString(),
             LoginErrorCodes.TOKEN_REVOKED.toString(),
+            LoginErrorCodes.BLOCKED.toString(),
           ].includes(code)
         ) {
-          throw code.toString();
+          throw message || 'Oops! Please Try Again.';
         } else {
           return response?.data;
         }
@@ -86,10 +87,7 @@ axiosInstance.interceptors.response.use(
       store.dispatch(closeAllOverlayAction());
       store.dispatch(
         logOutSuccess({
-          msg:
-            LoginErrorCodes.TOKEN_REVOKED.toString() === e
-              ? 'Token Revoked'
-              : 'Token Expired',
+          msg: typeof e !== 'string' ? 'Oops! Please Try Again.' : e,
           type: NotificationType.ERROR,
         }),
       );

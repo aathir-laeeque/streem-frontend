@@ -296,15 +296,6 @@ function* signOffTaskSaga({ payload }: ReturnType<typeof signOffTasks>) {
       console.error('error came in validte api :: ', validateErrors);
       if (validateErrors[0].code === LoginErrorCodes.INCORRECT) {
         yield put(setSignOffError('Incorrect Password'));
-      } else if (validateErrors[0].code === LoginErrorCodes.BLOCKED) {
-        yield put(closeAllOverlayAction());
-        yield put(cleanUp());
-        yield put(
-          showNotification({
-            type: NotificationType.ERROR,
-            msg: 'User has been blocked.',
-          }),
-        );
       }
     }
   } catch (error) {

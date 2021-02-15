@@ -26,7 +26,6 @@ import {
 import { LoginErrorCodes } from '#utils/constants';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { cleanUp } from '#views/Auth/actions';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { Checklist, ChecklistStates, Comment } from './checklist.types';
@@ -555,10 +554,6 @@ function* signOffPrototypeSaga({
     } else {
       if (validateErrors[0].code === LoginErrorCodes.INCORRECT) {
         throw 'Incorrect Password';
-      } else if (validateErrors[0].code === LoginErrorCodes.BLOCKED) {
-        yield put(closeAllOverlayAction());
-        yield put(cleanUp());
-        throw 'User has been blocked.';
       }
       throw 'Could Not Sign Off the Prototype';
     }
@@ -594,7 +589,7 @@ function* releasePrototypeSaga({
       );
 
       if (errors) {
-        throw 'Unable to Relase the Prototype';
+        throw errors?.[0]?.message || 'Unable to Relase the Prototype';
       }
 
       yield* onSuccess({ checklist: data });
@@ -605,14 +600,7 @@ function* releasePrototypeSaga({
         }),
       );
     } else {
-      if (validateErrors[0].code === LoginErrorCodes.INCORRECT) {
-        throw 'Incorrect Password';
-      } else if (validateErrors[0].code === LoginErrorCodes.BLOCKED) {
-        yield put(closeAllOverlayAction());
-        yield put(cleanUp());
-        throw 'User has been blocked.';
-      }
-      throw 'Unable to Release the Prototype';
+      throw validateErrors?.[0]?.message || 'Unable to Release the Prototype';
     }
   } catch (error) {
     yield put(
