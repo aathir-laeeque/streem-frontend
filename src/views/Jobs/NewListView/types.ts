@@ -1,5 +1,6 @@
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
+import { User } from '../../../services/users/types';
 
 import {
   fetchJobs,
@@ -8,7 +9,16 @@ import {
   fetchJobsSuccess,
 } from './actions';
 
+export type Assignee = Pick<
+  User,
+  'employeeId' | 'firstName' | 'id' | 'lastName'
+> & {
+  jobId: string;
+  userId: string;
+};
+
 export type Job = {
+  assignees: Assignee[];
   checklist: {
     id: string;
     name: string;

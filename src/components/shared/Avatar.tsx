@@ -10,7 +10,9 @@ import {
 } from '../OverlayContainer/actions';
 import { OverlayNames } from '../OverlayContainer/types';
 
-type User = Pick<UserType, 'id' | 'firstName' | 'lastName' | 'employeeId'>;
+type User = Pick<UserType, 'id' | 'firstName' | 'lastName' | 'employeeId'> & {
+  userId?: UserType['id'];
+};
 
 type Color = 'blue' | 'default';
 

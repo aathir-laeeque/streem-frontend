@@ -333,7 +333,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                 {
                   header: 'Assignees',
                   template: function renderComp(item: Job) {
-                    return <AssigneesColumn jobId={item.id} />;
+                    return <AssigneesColumn assignees={item.assignees} />;
                   },
                 },
                 {

@@ -1,10 +1,9 @@
 import { Avatar, AvatarExtras } from '#components/shared/Avatar';
-import { apiGetAssignedUsersForJob } from '#utils/apiUrls';
-import { request } from '#utils/request';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import { Job } from './types';
+import { User } from '../../../services/users/types';
+import { Assignee } from './types';
 
 const Wrapper = styled.div.attrs({
   className: 'list-card-columns',
@@ -17,22 +16,10 @@ const Wrapper = styled.div.attrs({
 `;
 
 type Props = {
-  jobId: Job['id'];
+  assignees: Assignee[] | User[];
 };
 
-const AssigneesColumn: FC<Props> = ({ jobId }) => {
-  const [assignees, setAssignees] = useState([]);
-
-  useEffect(() => {
-    (async () => {
-      const { data } = await request('GET', apiGetAssignedUsersForJob(jobId));
-
-      if (data) {
-        setAssignees(data);
-      }
-    })();
-  }, []);
-
+const AssigneesColumn: FC<Props> = ({ assignees = [] }) => {
   return (
     <Wrapper>
       {assignees.slice(0, 3).map((assignee) => (

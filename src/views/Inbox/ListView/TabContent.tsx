@@ -153,7 +153,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     {
       header: 'Assignees',
       template: function renderComp(item: Job) {
-        return <AssigneesColumn jobId={item.id} />;
+        return <AssigneesColumn assignees={item.assignees} />;
       },
     },
     {
