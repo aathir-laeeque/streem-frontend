@@ -25,7 +25,7 @@ import {
 } from '#utils/apiUrls';
 import { LoginErrorCodes } from '#utils/constants';
 import { ResponseObj } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { handleCatch, request } from '#utils/request';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { Checklist, ChecklistStates, Comment } from './checklist.types';
@@ -66,20 +66,21 @@ function* fetchReviewersForChecklistSaga({
   try {
     const { checklistId } = payload;
 
-    const { data, errors, error } = yield call(
+    const { data, errors } = yield call(
       request,
       'GET',
       apiGetReviewersForChecklist(checklistId),
     );
 
-    if (errors || error) {
+    if (errors) {
       throw 'Could Not Fetch Reviewers for Checklist';
     }
 
     yield put(fetchAssignedReviewersForChecklistSuccess(data));
   } catch (error) {
-    console.error(
-      'error from fetchReviewersForChecklistSaga in Prototype ComposerSaga :: ',
+    yield* handleCatch(
+      'Prototype Composer',
+      'fetchReviewersForChecklistSaga',
       error,
     );
   }
@@ -89,13 +90,13 @@ function* fetchApproversSaga({ payload }: ReturnType<typeof fetchApprovers>) {
   try {
     const { checklistId } = payload;
 
-    const { data, errors, error } = yield call(
+    const { data, errors } = yield call(
       request,
       'GET',
       apiGetApproversForChecklist(checklistId),
     );
 
-    if (errors || error) {
+    if (errors) {
       throw 'Could Not Fetch Approvers for Checklist';
     }
 
@@ -108,10 +109,7 @@ function* fetchApproversSaga({ payload }: ReturnType<typeof fetchApprovers>) {
       ),
     );
   } catch (error) {
-    console.error(
-      'error from fetchApproversSaga in Prototype ComposerSaga :: ',
-      error,
-    );
+    yield* handleCatch('Prototype Composer', 'fetchApproversSaga', error);
   }
 }
 
@@ -142,15 +140,11 @@ function* submitChecklistForReviewSaga({
       throw 'Could Not Submit Checklist For Review';
     }
   } catch (error) {
-    console.error(
-      'error from submitChecklistForReviewSaga function in Composer-New :: ',
+    yield* handleCatch(
+      'Prototype Composer',
+      'submitChecklistForReviewSaga',
       error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: 'Could Not Submit Checklist For Review',
-      }),
+      true,
     );
   }
 }
@@ -174,7 +168,7 @@ function* assignReviewersToChecklistSaga({
         throw error;
       }
     }
-    const { errors, error } = yield call(
+    const { errors } = yield call(
       request,
       'PATCH',
       apiAssignReviewersToChecklist(checklistId),
@@ -186,7 +180,7 @@ function* assignReviewersToChecklistSaga({
       },
     );
 
-    if (errors || error) {
+    if (errors) {
       throw 'Could Not Assign Reviewers to Checklist';
     }
 
@@ -205,15 +199,11 @@ function* assignReviewersToChecklistSaga({
       );
     }
   } catch (error) {
-    console.error(
-      'error from assignReviewersToChecklistSaga function in Composer-New :: ',
+    yield* handleCatch(
+      'Prototype Composer',
+      'assignReviewersToChecklistSaga',
       error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: error,
-      }),
+      true,
     );
   }
 }
@@ -236,15 +226,11 @@ function* startChecklistReviewSaga({
 
     yield* onSuccess(data);
   } catch (error) {
-    console.error(
-      'error from startChecklistReviewSaga function in Composer-New :: ',
+    yield* handleCatch(
+      'Prototype Composer',
+      'startChecklistReviewSaga',
       error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: 'Could Not Start Review',
-      }),
+      true,
     );
   }
 }
@@ -388,15 +374,11 @@ function* submitChecklistReviewSaga({
     const { isLast, allDoneOk } = yield* onSuccess(data);
     yield* afterSubmitChecklistReview(isLast, allDoneOk);
   } catch (error) {
-    console.error(
-      'error from submitChecklistReviewSaga function in Composer-New :: ',
+    yield* handleCatch(
+      'Prototype Composer',
+      'submitChecklistReviewSaga',
       error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: 'Could Not Submit Review',
-      }),
+      true,
     );
   }
 }
@@ -425,15 +407,11 @@ function* submitChecklistReviewWithCRSaga({
     const { isLast, allDoneOk } = yield* onSuccess(data);
     yield* afterSubmitChecklistReview(isLast, allDoneOk);
   } catch (error) {
-    console.error(
-      'error from submitChecklistReviewWithCRSaga function in Composer-New :: ',
+    yield* handleCatch(
+      'Prototype Composer',
+      'submitChecklistReviewWithCRSaga',
       error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: 'Could Not Submit Review With CR',
-      }),
+      true,
     );
   }
 }
@@ -467,16 +445,7 @@ function* sendReviewToCrSaga({ payload }: ReturnType<typeof sendReviewToCr>) {
       }),
     );
   } catch (error) {
-    console.error(
-      'error from sendReviewToCrSaga function in Composer-New :: ',
-      error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: 'Could Not Send Review To CR',
-      }),
-    );
+    yield* handleCatch('Prototype Composer', 'sendReviewToCrSaga', error, true);
   }
 }
 
@@ -513,10 +482,7 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
     );
   } catch (error) {
     yield put(closeAllOverlayAction());
-    console.error(
-      'error from initiateSignOffSaga function in Composer-New :: ',
-      error,
-    );
+    yield* handleCatch('Prototype Composer', 'initiateSignOffSaga', error);
   }
 }
 
@@ -558,13 +524,12 @@ function* signOffPrototypeSaga({
       throw 'Could Not Sign Off the Prototype';
     }
   } catch (error) {
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: error,
-      }),
+    yield* handleCatch(
+      'Prototype Composer',
+      'signOffPrototypeSaga',
+      error,
+      true,
     );
-    console.error('error from signOffPrototypeSaga :', error);
   }
 }
 
@@ -606,13 +571,12 @@ function* releasePrototypeSaga({
       throw validateErrors?.[0]?.message || 'Unable to Release the Prototype';
     }
   } catch (error) {
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: error,
-      }),
+    yield* handleCatch(
+      'Prototype Composer',
+      'releasePrototypeSaga',
+      error,
+      true,
     );
-    console.error('error from releasePrototypeSaga :', error);
   }
 }
 
