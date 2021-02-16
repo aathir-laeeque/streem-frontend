@@ -59,7 +59,7 @@ const Login: FC<LoginProps> = () => {
             })}
             error={error ? '' : undefined}
             placeHolder="Enter your Username or Email ID"
-            label="Email ID"
+            label="Username/Email ID"
             id="username"
           />
         </div>

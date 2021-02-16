@@ -15,7 +15,7 @@ export const fetchJobsOngoing = () =>
   actionSpreader(ListViewAction.FETCH_JOBS_ONGOING);
 
 export const fetchJobsSuccess = (
-  { data, pageable }: Partial<ResponseObj<Job>>,
+  { data, pageable }: Partial<ResponseObj<Job[]>>,
   type: string,
 ) =>
   actionSpreader(ListViewAction.FETCH_JOBS_SUCCESS, { data, pageable, type });

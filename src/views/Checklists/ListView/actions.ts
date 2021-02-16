@@ -27,7 +27,7 @@ export const fetchChecklistsOngoing = () =>
 export const fetchChecklistsSuccess = ({
   data,
   pageable,
-}: Partial<ResponseObj<Checklist>>) =>
+}: Partial<ResponseObj<Checklist[]>>) =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS_SUCCESS, {
     data,
     pageable,

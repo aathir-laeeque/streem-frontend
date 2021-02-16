@@ -77,7 +77,7 @@ export const apiCancelTaskErrorCorrection = (taskId: Task['id']) =>
 export const apiUploadFile = () => `${baseUrl}/files/`;
 
 export const apiCheckUsername = (username: string) =>
-  `${baseUrl}/users/check-username?username=${username}`;
+  `${baseUrl}/users/username/check?username=${username}`;
 
 export const apiCheckEmail = (email: string) =>
   `${baseUrl}/users/check-email?email=${email}`;

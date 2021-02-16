@@ -14,7 +14,7 @@ export interface ResponseObj<T> {
   object: string;
   state: string;
   message: string;
-  data: T & T[];
+  data: T;
   pageable: Pageable | null;
   errors?: any;
 }

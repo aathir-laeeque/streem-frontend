@@ -3,7 +3,7 @@ import { NotificationType } from '#components/Notification/types';
 import { RootState } from '#store';
 import { apiAssignUser, apiGetJobs, apiUnAssignUser } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 
 import { Job } from '#views/Jobs/types';
@@ -30,21 +30,18 @@ function* fetchJobsSaga({ payload }: ReturnType<typeof fetchJobs>) {
       yield put(fetchJobsOngoing());
     }
 
-    const { data, pageable, errors }: ResponseObj<Job> = yield call(
+    const { data, pageable, errors }: ResponseObj<Job[]> = yield call(
       request,
       'GET',
       apiGetJobs(),
       { params },
     );
     if (errors) {
-      throw new Error(errors[0].message);
+      throw getErrorMsg(errors);
     }
     yield put(fetchJobsSuccess({ data, pageable }, type));
-  } catch (error) {
-    console.error(
-      'error from fetchJobsSaga function in JobListView Saga :: ',
-      error,
-    );
+  } catch (e) {
+    const error = yield* handleCatch('JobListView', 'fetchJobsSaga', e);
     yield put(fetchJobsError(error));
   }
 }
@@ -59,8 +56,9 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
       { data: payload },
     );
     if (errors) {
-      throw new Error(errors[0].message);
+      throw getErrorMsg(errors);
     }
+
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,
@@ -85,17 +83,8 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
         }),
       }),
     );
-  } catch (error) {
-    console.error(
-      'error from createJobSaga function in JobListView Saga :: ',
-      error.message,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: error.message,
-      }),
-    );
+  } catch (e) {
+    const error = yield* handleCatch('JobListView', 'createJobSaga', e, true);
     yield put(createJobError(error));
   }
 }
@@ -111,19 +100,16 @@ function* assignUserSaga({ payload }: ReturnType<typeof assignUser>) {
         state?.jobListView.jobs[selectedState].list[payload.selectedJobIndex],
     );
     const user = payload.user;
-    const { data, errors }: ResponseObj<Job> = yield call(
+    const { errors }: ResponseObj<Job> = yield call(
       request,
       'POST',
       apiAssignUser(id, user.id),
     );
     if (errors) {
-      throw new Error(errors[0].message);
+      throw getErrorMsg(errors);
     }
   } catch (error) {
-    console.error(
-      'error from assignUserSaga function in JobListView Saga :: ',
-      error.message,
-    );
+    yield* handleCatch('JobListView', 'assignUserSaga', error);
   }
 }
 
@@ -144,13 +130,10 @@ function* unAssignUserSaga({ payload }: ReturnType<typeof unAssignUser>) {
       apiUnAssignUser(id, user.id),
     );
     if (errors) {
-      throw new Error(errors[0].message);
+      throw getErrorMsg(errors);
     }
   } catch (error) {
-    console.error(
-      'error from assignUserSaga function in JobListView Saga :: ',
-      error.message,
-    );
+    yield* handleCatch('JobListView', 'unAssignUserSaga', error);
   }
 }
 

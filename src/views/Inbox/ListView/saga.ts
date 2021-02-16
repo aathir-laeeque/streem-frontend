@@ -1,6 +1,6 @@
 import { apiGetInbox } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { Job } from '#views/Jobs/types';
 import { call, put, takeLeading } from 'redux-saga/effects';
 
@@ -20,21 +20,21 @@ function* fetchInboxSaga({ payload }: ReturnType<typeof fetchInbox>) {
       yield put(fetchInboxOngoing());
     }
 
-    const {
-      data,
-      pageable,
-      errors,
-      error,
-    }: ResponseObj<Job> = yield call(request, 'GET', apiGetInbox(), { params });
-    if (errors || error) {
-      throw new Error(errors?.[0]?.message || error);
-    }
-    yield put(fetchInboxSuccess({ data, pageable }, type));
-  } catch (error) {
-    console.error(
-      'error from fetchInboxSaga function in InboxListView Saga :: ',
-      error,
+    const { data, pageable, errors }: ResponseObj<Job[]> = yield call(
+      request,
+      'GET',
+      apiGetInbox(),
+      {
+        params,
+      },
     );
+    if (errors) {
+      throw getErrorMsg(errors);
+    }
+
+    yield put(fetchInboxSuccess({ data, pageable }, type));
+  } catch (e) {
+    const error = yield* handleCatch('InboxListView', 'fetchInboxSaga', e);
     yield put(fetchInboxError(error));
   }
 }

@@ -12,7 +12,7 @@ export const fetchSessionActivitiesOngoing = () =>
 export const fetchSessionActivitiesSuccess = ({
   data,
   pageable,
-}: Partial<ResponseObj<SessionActivity>>) =>
+}: Partial<ResponseObj<SessionActivity[]>>) =>
   actionSpreader(SessionActivityAction.FETCH_SESSION_ACTIVITY_SUCCESS, {
     data,
     pageable,

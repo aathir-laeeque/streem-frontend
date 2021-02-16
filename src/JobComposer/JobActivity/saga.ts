@@ -28,7 +28,7 @@ function* fetchJobActivitiesSaga({
       data,
       pageable,
       errors,
-    }: ResponseObj<JobActivity> = yield call(
+    }: ResponseObj<JobActivity[]> = yield call(
       request,
       'GET',
       apiGetJobActivity(jobId),

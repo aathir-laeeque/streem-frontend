@@ -1,6 +1,6 @@
 import { apiGetSessionActivities } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, takeLeading } from 'redux-saga/effects';
 import moment from 'moment';
 import { SessionActivity } from './types';
@@ -28,15 +28,15 @@ function* fetchSessionActivitiesSaga({
       data,
       pageable,
       errors,
-    }: ResponseObj<SessionActivity> = yield call(
+    }: ResponseObj<SessionActivity[]> = yield call(
       request,
       'GET',
       apiGetSessionActivities(),
       { params },
     );
 
-    if (errors || !pageable) {
-      throw new Error(errors[0].message);
+    if (errors) {
+      throw getErrorMsg(errors);
     }
 
     const newData = data.map((el) => ({
@@ -50,10 +50,11 @@ function* fetchSessionActivitiesSaga({
         pageable,
       }),
     );
-  } catch (error) {
-    console.error(
-      'error from fetchSessionActivitiesSaga function in SessionActivitySaga :: ',
-      error,
+  } catch (e) {
+    const error = yield* handleCatch(
+      'SessionActivity',
+      'fetchSessionActivitiesSaga',
+      e,
     );
     yield put(fetchSessionActivitiesError(error));
   }

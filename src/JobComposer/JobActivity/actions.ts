@@ -18,7 +18,7 @@ export const fetchJobActivitiesOngoing = () =>
 export const fetchJobActivitiesSuccess = ({
   data,
   pageable,
-}: Partial<ResponseObj<JobActivity>>) =>
+}: Partial<ResponseObj<JobActivity[]>>) =>
   actionSpreader(JobActivityAction.FETCH_JOB_ACTIVITY_SUCCESS, {
     data,
     pageable,

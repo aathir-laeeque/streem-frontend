@@ -31,7 +31,7 @@ function* fetchChecklistsSaga({ payload }: ReturnType<typeof fetchChecklists>) {
       yield put(fetchChecklistsOngoing());
     }
 
-    const { data, pageable }: ResponseObj<Checklist> = yield call(
+    const { data, pageable }: ResponseObj<Checklist[]> = yield call(
       request,
       'GET',
       apiGetChecklists(),

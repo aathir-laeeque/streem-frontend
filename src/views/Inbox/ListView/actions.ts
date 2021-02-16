@@ -13,7 +13,7 @@ export const fetchInboxOngoing = () =>
   actionSpreader(ListViewAction.FETCH_INBOX_ONGOING);
 
 export const fetchInboxSuccess = (
-  { data, pageable }: Partial<ResponseObj<Job>>,
+  { data, pageable }: Partial<ResponseObj<Job[]>>,
   type: string,
 ) =>
   actionSpreader(ListViewAction.FETCH_INBOX_SUCCESS, { data, pageable, type });

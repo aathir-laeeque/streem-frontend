@@ -135,8 +135,12 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
             error={errors['username']?.message}
             refFun={register({
               required: true,
+              maxLength: {
+                value: 45,
+                message: "Shouldn't be greater than 45 characters.",
+              },
               pattern: {
-                value: /^[a-z0-9]+$/i,
+                value: /^[a-z0-9][a-z0-9._]+$/i,
                 message: 'Invalid Username',
               },
               validate: async (value) => {

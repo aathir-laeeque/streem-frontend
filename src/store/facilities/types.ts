@@ -1,14 +1,10 @@
+import { Facility } from '#services/commonTypes';
 import {
   fetchFacilities,
   fetchFacilitiesError,
   fetchFacilitiesOngoing,
   fetchFacilitiesSuccess,
 } from './actions';
-
-export interface Facility {
-  id: number;
-  name: string;
-}
 
 export type Facilities = Facility[];
 

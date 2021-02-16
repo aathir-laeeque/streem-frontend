@@ -72,16 +72,15 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
             msg: errors[0]?.message || 'Oops! Please Try Again.',
           }),
         );
-        return false;
       } else {
         throw getErrorMsg(errors);
       }
+    } else {
+      setAuthHeader(data.accessToken);
+
+      yield put(loginSuccess(data));
+      yield put(fetchProfile({ id: data.id }));
     }
-
-    setAuthHeader(data.accessToken);
-
-    yield put(loginSuccess(data));
-    yield put(fetchProfile({ id: data.id }));
   } catch (error) {
     error = yield* handleCatch('Auth', 'loginSaga', error);
     yield put(loginError(error));
@@ -181,7 +180,7 @@ function* registerSaga({ payload }: ReturnType<typeof register>) {
 
 function* forgotPasswordSaga({ payload }: ReturnType<typeof forgotPassword>) {
   try {
-    const { errors }: ResponseObj<any> = yield call(
+    const { errors }: ResponseObj<unknown> = yield call(
       request,
       'POST',
       apiForgotPassword(),
@@ -323,12 +322,12 @@ function* checkTokenExpirySaga({
     });
 
     if (errors) {
-      yield put(checkTokenExpirySuccess({ isTokenExpired: true }));
       throw getErrorMsg(errors);
     }
 
     yield put(checkTokenExpirySuccess({ isTokenExpired: false }));
   } catch (error) {
+    yield put(checkTokenExpirySuccess({ isTokenExpired: false }));
     yield* handleCatch('Auth', 'checkTokenExpirySaga', error, true);
   }
 }

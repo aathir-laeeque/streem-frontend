@@ -1,4 +1,6 @@
+import { Facility, Organisation } from '#services/commonTypes';
 import { Pageable } from '#utils/globalTypes';
+import { RoleType } from '#views/UserAccess/types';
 
 import {
   fetchUsers,
@@ -25,18 +27,9 @@ export interface User {
   department?: string;
   assigned?: boolean;
   completelyAssigned?: boolean;
-  roles?: {
-    id: string;
-    name: string;
-  }[];
-  facilities?: {
-    id: number;
-    name: string;
-  }[];
-  organisation?: {
-    id: number;
-    name: string;
-  };
+  roles?: Pick<RoleType, 'id' | 'name'>[];
+  facilities?: Facility[];
+  organisation?: Organisation;
 }
 
 export type Users = User[];

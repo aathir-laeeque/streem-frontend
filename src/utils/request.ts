@@ -38,6 +38,8 @@ export const request = async (
     });
 };
 
+// TODO Migrate All Sgag's to Use this and Handle Multiple Errors.
+
 export const getErrorMsg = (errors: any) =>
   errors?.[0]?.message || 'Oops... Please try again.';
 

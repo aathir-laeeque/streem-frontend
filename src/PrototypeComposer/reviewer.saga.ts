@@ -117,7 +117,7 @@ function* fetchApproversSaga({ payload }: ReturnType<typeof fetchApprovers>) {
 
 function* submitChecklistForReviewCall(checklistId: Checklist['id']) {
   try {
-    const res: ResponseObj<CommonReviewResponse> = yield call(
+    const res: ResponseObj<CommonReviewResponse['checklist']> = yield call(
       request,
       'PUT',
       apiSubmitChecklistForReview(checklistId),
@@ -137,8 +137,8 @@ function* submitChecklistForReviewSaga({
   const { checklistId } = payload;
 
   try {
-    const { errors, error } = yield* submitChecklistForReviewCall(checklistId);
-    if (errors || error) {
+    const { errors } = yield* submitChecklistForReviewCall(checklistId);
+    if (errors) {
       throw 'Could Not Submit Checklist For Review';
     }
   } catch (error) {
@@ -582,7 +582,10 @@ function* releasePrototypeSaga({
     );
 
     if (validateData) {
-      const { errors, data }: ResponseObj<CommonReviewResponse> = yield call(
+      const {
+        errors,
+        data,
+      }: ResponseObj<CommonReviewResponse['checklist']> = yield call(
         request,
         'PUT',
         apiPrototypeRelease(checklistId),
