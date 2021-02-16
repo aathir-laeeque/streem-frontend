@@ -5,6 +5,8 @@ import { StageErrors } from './Stages/types';
 import { TaskErrors } from './Tasks/types';
 import { ErrorGroups } from './types';
 
+// TODO CHECK ERROR CODES
+
 export const groupErrors = (errors: Error[]) =>
   errors.reduce<ErrorGroups>(
     (acc, error) => {

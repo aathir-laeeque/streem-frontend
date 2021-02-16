@@ -47,16 +47,19 @@ axiosInstance.interceptors.response.use(
       const { config: originalReq, response } = error;
       const { code, message } = response?.data?.errors?.[0];
 
-      if (code !== LoginErrorCodes.TOKEN_EXPIRED.toString()) {
+      if (
+        code !== LoginErrorCodes.ACCESS_TOKEN_EXPIRED &&
+        code !== LoginErrorCodes.JWT_TOKEN_REVOKED
+      ) {
         const {
           auth: { isLoggedIn },
         } = store.getState();
         if (
           isLoggedIn &&
           [
-            LoginErrorCodes.REFRESH_TOKEN_EXPIRED.toString(),
-            LoginErrorCodes.TOKEN_REVOKED.toString(),
-            LoginErrorCodes.BLOCKED.toString(),
+            LoginErrorCodes.REFRESH_TOKEN_EXPIRED,
+            LoginErrorCodes.BLOCKED,
+            LoginErrorCodes.JWT_TOKEN_INVALID,
           ].includes(code)
         ) {
           throw message || 'Oops! Please Try Again.';
