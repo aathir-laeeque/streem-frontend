@@ -54,14 +54,7 @@ axiosInstance.interceptors.response.use(
         const {
           auth: { isLoggedIn },
         } = store.getState();
-        if (
-          isLoggedIn &&
-          [
-            LoginErrorCodes.REFRESH_TOKEN_EXPIRED,
-            LoginErrorCodes.BLOCKED,
-            LoginErrorCodes.JWT_TOKEN_INVALID,
-          ].includes(code)
-        ) {
+        if (isLoggedIn && code !== LoginErrorCodes.INCORRECT) {
           throw message || 'Oops! Please Try Again.';
         } else {
           return response?.data;
