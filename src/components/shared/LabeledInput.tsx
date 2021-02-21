@@ -5,7 +5,7 @@ interface LabeledInputProps {
   id: string;
   type?: string;
   label: string;
-  refFun?: any;
+  refFun?: (el: HTMLInputElement) => void;
   placeHolder: string;
   disabled?: boolean;
   icon?: JSX.Element;

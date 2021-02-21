@@ -18,7 +18,7 @@ export type Properties = Property[];
 
 export interface PropertiesState {
   readonly checklist: Properties;
-  readonly error?: any;
+  readonly error?: string;
   readonly job: Properties;
   readonly loading: boolean;
 }

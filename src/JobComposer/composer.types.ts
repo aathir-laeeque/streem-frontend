@@ -1,8 +1,8 @@
+import { Error } from '#utils/globalTypes';
+import { Job } from '#views/Jobs/NewListView/types';
 import { RouteComponentProps } from '@reach/router';
 
-import { Job } from '../views/Jobs/types';
 import { Checklist } from './checklist.types';
-import { Error } from '#utils/globalTypes';
 
 export enum Tabs {
   STAGES = 'STAGES',
@@ -14,21 +14,7 @@ export enum Entity {
   CHECKLIST = 'Checklist',
 }
 
-export enum JobState {
-  ASSIGNED = 'ASSIGNED',
-  BLOCKED = 'BLOCKED',
-  COMPLETED = 'COMPLETED',
-  COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
-  IN_PROGRESS = 'IN_PROGRESS',
-  UNASSIGNED = 'UNASSIGNED',
-}
-
 export const JOB_STAGE_POLLING_TIMEOUT = 60000;
-
-export enum CompletedJobState {
-  COMPLETED = 'COMPLETED',
-  COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
-}
 
 export type ComposerProps = RouteComponentProps<{
   id: Checklist['id'] | Job['id'];

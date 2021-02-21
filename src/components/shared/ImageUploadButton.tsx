@@ -10,7 +10,7 @@ type ImageUploadButtonProps = {
   icon?: SvgIconComponent;
   label?: string;
   onUploadSuccess: (data: FileUploadData) => void;
-  onUploadError: (error: any) => void;
+  onUploadError: (error: string) => void;
   disabled?: boolean;
   allowCapture?: boolean;
   additionalTypes?: string[];
@@ -50,15 +50,15 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
         const formData = new FormData();
         formData.append('file', file);
 
-        const { data, errors } = await request('POST', apiUploadFile(), {
+        const res = await request('POST', apiUploadFile(), {
           formData,
         });
 
-        if (data) {
-          onUploadSuccess(data);
+        if (res?.data) {
+          onUploadSuccess(res?.data);
           setFile(null);
         } else {
-          onUploadError(errors);
+          onUploadError(res?.errors);
         }
       })();
     }

@@ -11,8 +11,10 @@ export const openOverlayAction = (params: Overlay) =>
 export const closeOverlayAction = (type: OverlayNames) =>
   actionSpreader(OverlayContainerAction.CLOSE_OVERLAY, { type });
 
-export const updatePropsAction = (type: OverlayNames, props: any) =>
-  actionSpreader(OverlayContainerAction.UPDATE_PROPS, { type, props });
+export const updatePropsAction = (
+  type: OverlayNames,
+  props: Overlay['props'],
+) => actionSpreader(OverlayContainerAction.UPDATE_PROPS, { type, props });
 
 export const closeAllOverlayAction = () =>
   actionSpreader(OverlayContainerAction.CLOSE_ALL_OVERLAY);

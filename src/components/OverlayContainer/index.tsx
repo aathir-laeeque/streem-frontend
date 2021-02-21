@@ -40,11 +40,9 @@ import ArchiveModal from '#views/Checklists/ListView/ArchiveModal';
 import ChecklistInfoModal from '#views/Checklists/ListView/ChecklistInfoModal';
 import RevisionErrorModal from '#views/Checklists/Overlays/RevisionErrorModal';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
-import { JobUserAssignModal } from '#views/Jobs/Modals/JobUserAssignModal';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-
 import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
@@ -57,9 +55,6 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
   switch (type) {
     case OverlayNames.CREATE_JOB_MODAL:
       return <CreateJobModal {...params} />;
-
-    case OverlayNames.JOB_USER_ASSIGN:
-      return <JobUserAssignModal {...params} />;
 
     case OverlayNames.SIGNATURE_MODAL:
       return <Signature {...params} />;

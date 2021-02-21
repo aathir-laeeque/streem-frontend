@@ -1,10 +1,6 @@
-import { Activity as ActivityType, Stage, Task } from '../checklist.types';
-import { Job } from '../../views/Jobs/types';
+import { Job } from '#views/Jobs/NewListView/types';
 
-type Activity = ActivityType & {
-  hasError: boolean;
-  errorMessage?: string;
-};
+import { Activity, Stage, Task } from '../checklist.types';
 
 export type ActivityListProps = {
   activities: Activity[];

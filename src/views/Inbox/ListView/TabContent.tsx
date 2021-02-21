@@ -1,7 +1,12 @@
-import { NewListView, ProgressBar, SearchFilter } from '#components';
+import {
+  ExtraColumn,
+  NewListView,
+  ProgressBar,
+  SearchFilter,
+} from '#components';
 import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
-import { Job } from '#views/Jobs/types';
+import { Job } from '#views/Jobs/NewListView/types';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -25,7 +30,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     (state) => state.inboxListView,
   );
 
-  const { selectedFacility: { id: facilityId } = {} } = useTypedSelector(
+  const { selectedFacility: { id: facilityId = '' } = {} } = useTypedSelector(
     (state) => state.auth,
   );
   const reducerLabel = label.toLowerCase().split(' ').join('');
@@ -224,7 +229,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         isLast={pageable.last}
         currentPage={pageable.page}
         data={list}
-        beforeColumns={beforeColumns}
+        beforeColumns={beforeColumns as ExtraColumn[]}
       />
 
       <div className="pagination">

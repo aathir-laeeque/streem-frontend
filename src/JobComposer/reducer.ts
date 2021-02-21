@@ -1,5 +1,8 @@
 import { Reducer } from 'redux';
 import { reduce, unionBy } from 'lodash';
+import { User } from '#store/users/types';
+import { JobStateEnum } from '#views/Jobs/NewListView/types';
+
 import {
   activityListReducer,
   initialState as activityListState,
@@ -9,7 +12,7 @@ import {
   ComposerActionType,
   ComposerState,
 } from './composer.reducer.types';
-import { Entity, JobState } from './composer.types';
+import { Entity } from './composer.types';
 import {
   initialState as stageListState,
   stageListReducer,
@@ -22,7 +25,6 @@ import {
   initialState as taskListState,
   taskListReducer,
 } from './TaskList/reducer';
-import { User } from '#store/users/types';
 import { CompletedTaskStates } from './checklist.types';
 import { StageListAction } from './StageList/reducer.types';
 
@@ -36,7 +38,7 @@ const initialState: ComposerState = {
 
   loading: false,
 
-  jobState: JobState.UNASSIGNED,
+  jobState: JobStateEnum.UNASSIGNED,
 
   stages: stageListState,
   tasks: taskListState,
@@ -91,7 +93,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
       };
 
     case ComposerAction.START_JOB_SUCCESS:
-      return { ...state, jobState: JobState.IN_PROGRESS };
+      return { ...state, jobState: JobStateEnum.IN_PROGRESS };
 
     case ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS:
       return { ...state, assignees: action.payload.data };
@@ -108,7 +110,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
             merged = value.taskExecution.assignees;
           } else {
             const newAssignees = (value.taskExecution.assignees as Array<
-              User
+              User & { actionPerformed: boolean; state: string }
             >).filter(
               (item) =>
                 item.actionPerformed === false &&

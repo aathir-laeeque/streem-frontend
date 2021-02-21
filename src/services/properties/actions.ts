@@ -12,5 +12,5 @@ export const fetchOngoing = () =>
 export const fetchSuccess = (args: fetchSuccessArgs) =>
   actionSpreader(PropertiesAction.FETCH_PROPERTIES_SUCCESS, { ...args });
 
-export const fetchError = (error: any) =>
+export const fetchError = (error: string) =>
   actionSpreader(PropertiesAction.FETCH_PROPERTIES_ERROR, { error });

@@ -1,10 +1,10 @@
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import { Job } from '#views/Jobs/types';
-import { JobState } from '#views/Jobs/ListView/types';
+
+import { Job, JobStateEnum } from '../NewListView/types';
 
 const Wrapper = styled.div.attrs({
   className: 'list-card-columns',
@@ -41,9 +41,9 @@ const JobCard: FC<{
       <span className="list-title" onClick={() => onClick(item)}>
         {item.checklist.name}
       </span>
-      {item.state !== JobState.UNASSIGNED.toUpperCase() && (
+      {item.state !== JobStateEnum.UNASSIGNED && (
         <span className="list-state">
-          {item.state === JobState.ASSIGNED.toUpperCase() && (
+          {item.state === JobStateEnum.ASSIGNED && (
             <span
               className="list-state-span"
               style={{
@@ -54,7 +54,7 @@ const JobCard: FC<{
               {item.state.toLowerCase()}
             </span>
           )}
-          {item.state === JobState.IN_PROGRESS.toUpperCase() && (
+          {item.state === JobStateEnum.IN_PROGRESS && (
             <span
               className="list-state-span"
               style={{
@@ -65,7 +65,7 @@ const JobCard: FC<{
               {item.state.toLowerCase()}
             </span>
           )}
-          {item.state === JobState.COMPLETED.toUpperCase() && (
+          {item.state === JobStateEnum.COMPLETED && (
             <span
               className="list-state-span"
               style={{
@@ -76,7 +76,7 @@ const JobCard: FC<{
               {item.state.toLowerCase()}
             </span>
           )}
-          {item.state === 'COMPLETED_WITH_EXCEPTION' && (
+          {item.state === JobStateEnum.COMPLETED_WITH_EXCEPTION && (
             <span
               className="list-state-span"
               style={{

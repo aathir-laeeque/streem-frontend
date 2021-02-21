@@ -7,7 +7,6 @@ import {
 const initialState: FacilitiesState = {
   list: undefined,
   loading: false,
-  error: undefined,
 };
 
 const reducer = (

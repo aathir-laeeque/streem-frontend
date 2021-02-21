@@ -1,4 +1,4 @@
-import { uploadFileError, uploadFileSuccess, resetFileUpload } from './actions';
+import { resetFileUpload, uploadFileError, uploadFileSuccess } from './actions';
 
 export enum FileUploadAction {
   UPLOAD_FILE = '@@file-upload-new/UPLOAD_FILE',
@@ -11,8 +11,8 @@ export type UploadFileArgs = {
   formData: FormData;
 };
 export type FileUploadState = {
-  data: any;
-  error: any;
+  data?: FileUploadSucessArgs;
+  error?: string;
 };
 
 export type FileUploadSucessArgs = {

@@ -11,13 +11,21 @@ export interface Pageable {
   empty: boolean;
 }
 
+export type ResponseError = {
+  code: string;
+  field: any;
+  ignore: string;
+  message: string;
+  timestamp: number;
+};
+
 export interface ResponseObj<T> {
   object: string;
   state: string;
   message: string;
   data: T;
   pageable: Pageable | null;
-  errors?: any;
+  errors?: ResponseError[];
 }
 
 export enum ACTIVITY_SELECTIONS {

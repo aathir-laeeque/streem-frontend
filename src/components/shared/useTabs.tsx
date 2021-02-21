@@ -26,8 +26,6 @@ const Wrapper = styled.div`
   }
 `;
 
-export type TabContent = any;
-
 export const initialTabState = {
   list: [],
   pageable: {
@@ -45,8 +43,8 @@ export const initialTabState = {
 export interface Tab {
   label: string;
   active: boolean;
-  TabContent: FC<TabContent>;
-  passThroughTabContentProps?: TabContent;
+  TabContent: FC;
+  passThroughTabContentProps?: any;
 }
 
 export const useTabs = (tabs: Tab[]) => {

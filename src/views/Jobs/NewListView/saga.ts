@@ -1,14 +1,19 @@
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
+import { RootState } from '#store';
 import { apiGetJobs } from '#utils/apiUrls';
-import { request } from '#utils/request';
-import { call, put, takeLeading } from 'redux-saga/effects';
+import { ResponseObj } from '#utils/globalTypes';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
+import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 
 import {
+  createJob,
   fetchJobs,
   fetchJobsError,
   fetchJobsOngoing,
   fetchJobsSuccess,
 } from './actions';
-import { ListViewAction } from './types';
+import { Job, ListViewAction } from './types';
 
 function* fetchJobsSaga({ payload }: ReturnType<typeof fetchJobs>) {
   try {
@@ -16,12 +21,9 @@ function* fetchJobsSaga({ payload }: ReturnType<typeof fetchJobs>) {
 
     yield put(fetchJobsOngoing());
 
-    const { data, pageable, errors } = yield call(
-      request,
-      'GET',
-      apiGetJobs(),
-      { params },
-    );
+    const { data, pageable } = yield call(request, 'GET', apiGetJobs(), {
+      params,
+    });
 
     if (data) {
       yield put(fetchJobsSuccess({ data, pageable }));
@@ -35,6 +37,53 @@ function* fetchJobsSaga({ payload }: ReturnType<typeof fetchJobs>) {
   }
 }
 
+function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
+  try {
+    const facilityId: string = yield select(
+      (state: RootState) => state.auth.selectedFacility?.id,
+    );
+
+    const { errors }: ResponseObj<Job> = yield call(
+      request,
+      'POST',
+      apiGetJobs(),
+      { data: payload },
+    );
+    if (errors) {
+      throw getErrorMsg(errors);
+    }
+
+    yield put(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'Job created successfully',
+      }),
+    );
+
+    yield put(
+      fetchJobs({
+        facilityId,
+        page: 0,
+        size: 10,
+        sort: 'createdAt,desc',
+        filters: JSON.stringify({
+          op: 'AND',
+          fields: [
+            {
+              field: 'state',
+              op: 'EQ',
+              values: ['UNASSIGNED'],
+            },
+          ],
+        }),
+      }),
+    );
+  } catch (e) {
+    yield* handleCatch('JobListView', 'createJobSaga', e, true);
+  }
+}
+
 export function* NewJobListViewSaga() {
+  yield takeLatest(ListViewAction.CREATE_JOB, createJobSaga);
   yield takeLeading(ListViewAction.FETCH_JOBS, fetchJobsSaga);
 }

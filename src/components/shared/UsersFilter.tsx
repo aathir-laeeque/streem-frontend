@@ -1,18 +1,18 @@
-import React, { FC, useEffect, useState } from 'react';
 import { Checkbox } from '#components';
-import { User } from '#store/users/types';
-import { getInitials } from '#utils/stringUtils';
-import { ArrowDropDown, ArrowDropUp, Search } from '@material-ui/icons';
-import { usePrevious } from '#utils/usePrevious';
-import styled from 'styled-components';
-import { defaultParams, useUsers } from '#services/users';
-import { Popover } from '@material-ui/core';
 import {
-  openOverlayAction,
   closeOverlayAction,
+  openOverlayAction,
 } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { defaultParams, useUsers } from '#services/users';
+import { User } from '#store/users/types';
+import { getInitials } from '#utils/stringUtils';
+import { usePrevious } from '#utils/usePrevious';
+import { Popover } from '@material-ui/core';
+import { ArrowDropDown, ArrowDropUp, Search } from '@material-ui/icons';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 
 const Wrapper = styled.div`
   margin-left: 16px;
@@ -227,7 +227,7 @@ const PopoverWrapper = styled.div`
 
 type UsersFilterProps = {
   options: User[];
-  updateFilter: (option: any) => void;
+  updateFilter: (option: User[]) => void;
   label?: string;
 };
 

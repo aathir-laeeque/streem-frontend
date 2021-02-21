@@ -1,4 +1,5 @@
 import { Facility } from '#services/commonTypes';
+
 import {
   fetchFacilities,
   fetchFacilitiesError,
@@ -11,7 +12,7 @@ export type Facilities = Facility[];
 export interface FacilitiesState {
   readonly list: Facilities | undefined;
   readonly loading: boolean;
-  readonly error: any;
+  readonly error?: string;
 }
 
 export enum FacilitiesAction {

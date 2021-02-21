@@ -1,28 +1,27 @@
 import {
-  openOverlayAction,
   closeOverlayAction,
+  openOverlayAction,
 } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { getInitials } from '#utils/stringUtils';
 import {
   StartedTaskStates,
   Task,
   TaskExecutionState,
 } from '#JobComposer/checklist.types';
+import { useTypedSelector } from '#store';
+import { User } from '#store/users/types';
 import { formatDateTime } from '#utils/timeUtils';
+import { JobStateEnum } from '#views/Jobs/NewListView/types';
 import { Menu, MenuItem } from '@material-ui/core';
 import { Assignment, Error, MoreHoriz, PanTool } from '@material-ui/icons';
+import { capitalize } from 'lodash';
 import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 
 import { startTask } from '../../actions';
-import Timer from './Timer';
 import TaskAssignmentContent from './TaskAssignmentContent';
-import { User } from '#store/users/types';
-import { useTypedSelector } from '#store';
-import { capitalize } from 'lodash';
-import { JobState } from '#JobComposer/composer.types';
+import Timer from './Timer';
 
 type HeaderProps = {
   task: Omit<Task, 'activities'>;
@@ -322,7 +321,7 @@ const JobHeader: FC<Pick<
   } = useTypedSelector((state) => state.composer);
 
   const isJobStarted =
-    jobState === JobState.IN_PROGRESS || jobState === JobState.BLOCKED;
+    jobState === JobStateEnum.IN_PROGRESS || jobState === JobStateEnum.BLOCKED;
 
   const stageIndex = stagesOrder.indexOf(activeStageId);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

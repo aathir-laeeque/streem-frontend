@@ -1,5 +1,5 @@
-import { FacilitiesAction, Facilities } from './types';
 import { actionSpreader } from '../helpers';
+import { Facilities, FacilitiesAction } from './types';
 
 export const fetchFacilities = () =>
   actionSpreader(FacilitiesAction.FETCH_FACILITIES);
@@ -12,5 +12,5 @@ export const fetchFacilitiesSuccess = (facilities: Facilities) =>
     facilities,
   });
 
-export const fetchFacilitiesError = (error: any) =>
+export const fetchFacilitiesError = (error: string) =>
   actionSpreader(FacilitiesAction.FETCH_FACILITIES_ERROR, { error });

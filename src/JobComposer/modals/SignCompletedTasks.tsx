@@ -10,7 +10,7 @@ import {
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
 import { getFullName } from '#utils/stringUtils';
-import { Job } from '#views/Jobs/types';
+import { Job } from '#views/Jobs/NewListView/types';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { debounce, pick } from 'lodash';
 import React, { FC, useState } from 'react';

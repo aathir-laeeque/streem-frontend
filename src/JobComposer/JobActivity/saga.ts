@@ -1,16 +1,16 @@
 import { apiGetJobActivity } from '#utils/apiUrls';
-import { ResponseObj } from '#utils/globalTypes';
-import { request } from '#utils/request';
-import { call, put, takeLeading } from 'redux-saga/effects';
+import { ResponseError, ResponseObj } from '#utils/globalTypes';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
 import moment from 'moment';
-import { JobActivity } from './types';
+import { call, put, takeLeading } from 'redux-saga/effects';
+
 import {
+  fetchJobActivities,
   fetchJobActivitiesError,
   fetchJobActivitiesOngoing,
   fetchJobActivitiesSuccess,
-  fetchJobActivities,
 } from './actions';
-import { JobActivityAction } from './types';
+import { JobActivity, JobActivityAction } from './types';
 
 function* fetchJobActivitiesSaga({
   payload,
@@ -35,8 +35,8 @@ function* fetchJobActivitiesSaga({
       { params },
     );
 
-    if (errors || !pageable) {
-      throw new Error(errors[0].message);
+    if (!pageable || errors) {
+      throw getErrorMsg(errors as ResponseError[]);
     }
 
     const newData = data.map((el) => ({
@@ -55,11 +55,8 @@ function* fetchJobActivitiesSaga({
       }),
     );
   } catch (error) {
-    console.error(
-      'error from fetchJobActivitiesSaga function in JobActivitySaga :: ',
-      error,
-    );
-    yield put(fetchJobActivitiesError(error));
+    error = yield* handleCatch('JobActivity', 'fetchJobActivitiesSaga', error);
+    yield put(fetchJobActivitiesError(error as string));
   }
 }
 

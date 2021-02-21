@@ -1,19 +1,19 @@
 import ActivityList from '#JobComposer/ActivityList';
 import {
-  TaskExecutionState,
   StartedTaskStates,
+  TaskExecutionState,
 } from '#JobComposer/checklist.types';
 import { useTypedSelector } from '#store';
+import { JobStateEnum } from '#views/Jobs/NewListView/types';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { JobState } from '../../../composer.types';
+import { MandatoryActivity } from '../../../checklist.types';
 import { setActiveTask } from '../../actions';
 import { TaskCardProps } from '../../types';
 import Footer from './Footer';
 import Header from './Header';
-import { MandatoryActivity } from '../../../checklist.types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-card',
@@ -79,12 +79,13 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
       taskState === TaskExecutionState.COMPLETED_WITH_EXCEPTION;
 
     const showStartButton =
-      (jobState === JobState.ASSIGNED || jobState === JobState.IN_PROGRESS) &&
+      (jobState === JobStateEnum.ASSIGNED ||
+        jobState === JobStateEnum.IN_PROGRESS) &&
       !isTaskStarted;
 
     const showAssignmentButton =
-      jobState !== JobState.COMPLETED &&
-      jobState !== JobState.COMPLETED_WITH_EXCEPTION &&
+      jobState !== JobStateEnum.COMPLETED &&
+      jobState !== JobStateEnum.COMPLETED_WITH_EXCEPTION &&
       location.pathname.split('/')[1] !== 'inbox';
 
     const isCorrectingError =

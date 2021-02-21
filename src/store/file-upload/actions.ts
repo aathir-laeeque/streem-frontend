@@ -2,8 +2,8 @@ import { actionSpreader } from '#store';
 
 import {
   FileUploadAction,
-  UploadFileArgs,
   FileUploadSucessArgs,
+  UploadFileArgs,
 } from './types';
 
 export const uploadFile = ({ formData }: UploadFileArgs) =>
@@ -12,7 +12,7 @@ export const uploadFile = ({ formData }: UploadFileArgs) =>
 export const uploadFileSuccess = (fileData: FileUploadSucessArgs) =>
   actionSpreader(FileUploadAction.UPLOAD_FILE_SUCCESS, { fileData });
 
-export const uploadFileError = (error: any) =>
+export const uploadFileError = (error: string) =>
   actionSpreader(FileUploadAction.UPLOAD_FILE_ERROR, { error });
 
 export const resetFileUpload = () =>

@@ -1,5 +1,6 @@
 import {
   Button1,
+  ExtraColumn,
   NewListView,
   ProgressBar,
   SearchFilter,
@@ -12,14 +13,14 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useProperties } from '#services/properties';
 import { useTypedSelector } from '#store/helpers';
+import { User } from '#store/users/types';
 import { FilterField } from '#utils/globalTypes';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { createJob } from '../ListView/actions';
-import { fetchJobs } from './actions';
+import { createJob, fetchJobs } from './actions';
 import AssigneesColumn from './AssignessColumn';
 import { TabContentWrapper } from './styles';
 import {
@@ -27,6 +28,7 @@ import {
   CompletedJobStates,
   fetchDataArgs,
   Job,
+  JobStateType,
   UnassignedJobStates,
 } from './types';
 
@@ -40,7 +42,7 @@ const getBaseFilter = (values: string[]): FilterField[] => [
 const TabContent: FC<TabContentProps> = ({ label, values }) => {
   const dispatch = useDispatch();
 
-  const { jobs, pageable } = useTypedSelector((state) => state.jobList);
+  const { jobs, pageable } = useTypedSelector((state) => state.jobListView);
 
   const { selectedFacility: { id: facilityId } = {} } = useTypedSelector(
     (state) => state.auth,
@@ -52,7 +54,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     getBaseFilter(values),
   );
 
-  const [assignedUsers, setAssignedUsers] = useState([]);
+  const [assignedUsers, setAssignedUsers] = useState<User[]>([]);
 
   const fetchData = ({
     page = DEFAULT_PAGE_NUMBER,
@@ -225,147 +227,153 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
       <NewListView
         properties={jobProperties}
         data={jobs}
-        beforeColumns={[
-          {
-            header: 'Name',
-            template: function renderComp({
-              id,
-              checklist: { id: checklistId, name: checklistName },
-            }: Job) {
-              return (
-                <div className="list-card-columns">
-                  <span
-                    className="list-title"
-                    onClick={() => {
-                      navigate(`/jobs/${id}`, { state: { checklistId } });
-                    }}
-                    // style={{
-                    //   ...(values.some(
-                    //     (val) =>
-                    //       val in AssignedJobStates || val in CompletedJobStates,
-                    //   )
-                    //     ? {
-                    //         width: '120px',
-                    //         whiteSpace: 'nowrap',
-                    //         overflow: 'hidden',
-                    //         textOverflow: 'ellipsis',
-                    //         display: 'block',
-                    //       }
-                    //     : {}),
-                    // }}
-                  >
-                    {checklistName}
-                  </span>
-                </div>
-              );
+        beforeColumns={
+          [
+            {
+              header: 'Name',
+              template: function renderComp({
+                id,
+                checklist: { id: checklistId, name: checklistName },
+              }: Job) {
+                return (
+                  <div className="list-card-columns">
+                    <span
+                      className="list-title"
+                      onClick={() => {
+                        navigate(`/jobs/${id}`, { state: { checklistId } });
+                      }}
+                      // style={{
+                      //   ...(values.some(
+                      //     (val) =>
+                      //       val in AssignedJobStates || val in CompletedJobStates,
+                      //   )
+                      //     ? {
+                      //         width: '120px',
+                      //         whiteSpace: 'nowrap',
+                      //         overflow: 'hidden',
+                      //         textOverflow: 'ellipsis',
+                      //         display: 'block',
+                      //       }
+                      //     : {}),
+                      // }}
+                    >
+                      {checklistName}
+                    </span>
+                  </div>
+                );
+              },
             },
-          },
-          ...(values.some(
-            (val) => val in AssignedJobStates || val in CompletedJobStates,
-          )
-            ? [
-                {
-                  header: 'Job Status',
-                  template: function renderComp({ state }: Job) {
-                    const isJobBlocked = state === AssignedJobStates.BLOCKED;
+            ...(values.some(
+              (val: JobStateType) =>
+                val in AssignedJobStates || val in CompletedJobStates,
+            )
+              ? [
+                  {
+                    header: 'Job Status',
+                    template: function renderComp({ state }: Job) {
+                      const isJobBlocked = state === AssignedJobStates.BLOCKED;
 
-                    const isJobStarted =
-                      state === AssignedJobStates.IN_PROGRESS;
+                      const isJobStarted =
+                        state === AssignedJobStates.IN_PROGRESS;
 
-                    const isJobCompleted =
-                      state === CompletedJobStates.COMPLETED;
+                      const isJobCompleted =
+                        state === CompletedJobStates.COMPLETED;
 
-                    const isCompletedWithException =
-                      state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
+                      const isCompletedWithException =
+                        state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
 
-                    const title = isJobCompleted
-                      ? 'Completed'
-                      : isCompletedWithException
-                      ? 'Completed with Exception'
-                      : isJobBlocked
-                      ? 'Approval Pending'
-                      : isJobStarted
-                      ? 'Started'
-                      : 'Not Started';
+                      const title = isJobCompleted
+                        ? 'Completed'
+                        : isCompletedWithException
+                        ? 'Completed with Exception'
+                        : isJobBlocked
+                        ? 'Approval Pending'
+                        : isJobStarted
+                        ? 'Started'
+                        : 'Not Started';
 
-                    return (
-                      <div
-                        className="list-card-columns"
-                        style={{
-                          overflow: 'hidden',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        <FiberManualRecord
-                          className="icon"
+                      return (
+                        <div
+                          className="list-card-columns"
                           style={{
-                            fontSize: '20px',
-                            color: isJobCompleted
-                              ? '#5aa700'
-                              : isJobStarted
-                              ? '#1d84ff'
-                              : '#f7b500',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
                           }}
-                        />
-                        <span
-                          style={{
-                            ...(values.some(
-                              (val) =>
-                                val in AssignedJobStates ||
-                                val in CompletedJobStates,
-                            )
-                              ? {
-                                  textOverflow: 'ellipsis',
-                                  overflow: 'hidden',
-                                  fontSize: '12px',
-                                  lineHeight: '20px',
-                                }
-                              : {}),
-                          }}
-                          title={title}
                         >
-                          {title}
-                        </span>
-                      </div>
-                    );
+                          <FiberManualRecord
+                            className="icon"
+                            style={{
+                              fontSize: '20px',
+                              color: isJobCompleted
+                                ? '#5aa700'
+                                : isJobStarted
+                                ? '#1d84ff'
+                                : '#f7b500',
+                            }}
+                          />
+                          <span
+                            style={{
+                              ...(values.some(
+                                (val: JobStateType) =>
+                                  val in AssignedJobStates ||
+                                  val in CompletedJobStates,
+                              )
+                                ? {
+                                    textOverflow: 'ellipsis',
+                                    overflow: 'hidden',
+                                    fontSize: '12px',
+                                    lineHeight: '20px',
+                                  }
+                                : {}),
+                            }}
+                            title={title}
+                          >
+                            {title}
+                          </span>
+                        </div>
+                      );
+                    },
                   },
-                },
-                {
-                  header: 'Assignees',
-                  template: function renderComp(item: Job) {
-                    return <AssigneesColumn assignees={item.assignees} />;
+                  {
+                    header: 'Assignees',
+                    template: function renderComp(item: Job) {
+                      return <AssigneesColumn jobId={item.id} />;
+                    },
                   },
-                },
-                {
-                  header: 'Task Completed',
-                  template: function renderComp({
-                    completedTasks,
-                    totalTasks,
-                  }: Job) {
-                    const percentage = (completedTasks / totalTasks) * 100;
-                    return (
-                      <div className="list-card-columns task-progress">
-                        <ProgressBar whiteBackground percentage={percentage} />
-                        <span>
-                          {completedTasks} of {totalTasks} Tasks
-                        </span>
-                      </div>
-                    );
+                  {
+                    header: 'Task Completed',
+                    template: function renderComp({
+                      completedTasks,
+                      totalTasks,
+                    }: Job) {
+                      const percentage = (completedTasks / totalTasks) * 100;
+                      return (
+                        <div className="list-card-columns task-progress">
+                          <ProgressBar
+                            whiteBackground
+                            percentage={percentage}
+                          />
+                          <span>
+                            {completedTasks} of {totalTasks} Tasks
+                          </span>
+                        </div>
+                      );
+                    },
                   },
-                },
-              ]
-            : []),
-          {
-            header: 'Job ID',
-            template: function renderComp(item: Job) {
-              return (
-                <div className="list-card-columns" key={item.id}>
-                  {item.code}
-                </div>
-              );
+                ]
+              : []),
+            {
+              header: 'Job ID',
+              template: function renderComp(item: Job) {
+                return (
+                  <div className="list-card-columns" key={item.id}>
+                    {item.code}
+                  </div>
+                );
+              },
             },
-          },
-        ]}
+          ] as ExtraColumn[]
+        }
       />
       <div className="pagination">
         <ArrowLeft

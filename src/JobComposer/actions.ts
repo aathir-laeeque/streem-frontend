@@ -1,7 +1,7 @@
 import { actionSpreader } from '#store';
 import { User } from '#store/users/types';
+import { Job } from '#views/Jobs/NewListView/types';
 
-import { Job } from '#views/Jobs/types';
 import { ComposerAction } from './composer.reducer.types';
 import { Entity, FetchDataArgs } from './composer.types';
 import { ExceptionValues } from './modals/CompleteJobWithException';

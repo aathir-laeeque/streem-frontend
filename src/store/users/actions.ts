@@ -21,7 +21,7 @@ export const fetchUsersSuccess = (
     type,
   });
 
-export const fetchUsersError = (error: any) =>
+export const fetchUsersError = (error: string) =>
   actionSpreader(UsersAction.FETCH_USERS_ERROR, { error });
 
 export const setSelectedState = (state: UserState) =>
@@ -40,5 +40,5 @@ export const fetchSelectedUserSuccess = ({
     data,
   });
 
-export const fetchSelectedUserError = (error: any) =>
+export const fetchSelectedUserError = (error: string) =>
   actionSpreader(UsersAction.FETCH_SELECTED_USER_ERROR, { error });

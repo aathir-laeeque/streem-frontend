@@ -1,4 +1,5 @@
-import { removeActivityError } from './../ActivityList/actions';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
@@ -8,33 +9,33 @@ import {
   apiPerformActionOnTask,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
+import { JobStateEnum } from '#views/Jobs/NewListView/types';
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
+import {
+  apiCancelTaskErrorCorrection,
+  apiCompleteTaskErrorCorrection,
+} from '../../utils/apiUrls';
 import { setActivityError } from '../ActivityList/actions';
 import { Task } from '../checklist.types';
-import { ErrorGroups, JobState } from '../composer.types';
+import { ErrorGroups } from '../composer.types';
 import { groupJobErrors } from '../utils';
+import { removeActivityError } from './../ActivityList/actions';
 import {
+  assignUsersToTask,
+  assignUsersToTaskSuccess,
   cancelErrorCorretcion,
   completeErrorCorretcion,
   completeTask,
   enableErrorCorrection,
+  removeTaskError,
   setTaskError,
   skipTask,
   startTask,
   updateTaskExecutionState,
-  assignUsersToTask,
-  removeTaskError,
-  assignUsersToTaskSuccess,
 } from './actions';
-import { TaskAction } from './types';
 import { TaskListAction } from './reducer.types';
-import {
-  apiCompleteTaskErrorCorrection,
-  apiCancelTaskErrorCorrection,
-} from '../../utils/apiUrls';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
+import { TaskAction } from './types';
 
 type TaskErrorSagaPayload = ErrorGroups & {
   taskId: Task['id'];
@@ -63,7 +64,7 @@ function* performActionOnTaskSaga({
       (state: RootState) => state.composer,
     );
 
-    const isJobStarted = jobState === JobState.IN_PROGRESS;
+    const isJobStarted = jobState === JobStateEnum.IN_PROGRESS;
 
     const { taskId, action, reason } = payload;
 

@@ -1,14 +1,14 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { Task, TaskExecutionState } from '#JobComposer/checklist.types';
-import { JobState } from '#JobComposer/composer.types';
+import { useTypedSelector } from '#store/helpers';
 import { formatDateTime } from '#utils/timeUtils';
+import { JobStateEnum } from '#views/Jobs/NewListView/types';
 import { ArrowRightAlt, CheckCircle, Error } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
-import { useTypedSelector } from '../../../../store/helpers';
 
 import {
   cancelErrorCorretcion,
@@ -170,7 +170,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   const { profile } = useTypedSelector((state) => state.auth);
   const { jobState } = useTypedSelector((state) => state.composer);
 
-  const isJobBlocked = jobState === JobState.BLOCKED;
+  const isJobBlocked = jobState === JobStateEnum.BLOCKED;
 
   const [shouldAskForReason, setAskForReason] = useState(false);
   const [delayReason, setDelayReason] = useState('');

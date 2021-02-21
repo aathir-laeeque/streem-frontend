@@ -1,5 +1,6 @@
 import { Pageable } from '#utils/globalTypes';
-import { Job } from '#views/Jobs/types';
+import { Job } from '#views/Jobs/NewListView/types';
+
 import {
   InboxState,
   ListViewAction,

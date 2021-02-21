@@ -7,7 +7,7 @@ interface ThumbnailProps {
   state?: string;
   title?: string;
   subTitle?: string;
-  refFun?: any;
+  refFun?: () => void;
   disabled?: boolean;
   error?: string;
   source: string | { firstName: string; lastName: string };

@@ -19,7 +19,7 @@ interface RoleProps {
   placeHolder: string;
   disabled?: boolean;
   error?: string;
-  refFun?: any;
+  refFun?: (el: HTMLInputElement) => void;
   viewing?: boolean;
 }
 
@@ -247,7 +247,7 @@ export const Role: FC<RoleProps> = ({
     setIsActive(false);
   };
 
-  const onToggle = (event: React.ChangeEvent<any>, expanded: boolean): void => {
+  const onToggle = (event: unknown, expanded: boolean): void => {
     setIsExpanded(expanded);
   };
 

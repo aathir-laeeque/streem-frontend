@@ -5,10 +5,11 @@ import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
 import { useTypedSelector } from '#store';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
-import { Job } from '#views/Jobs/types';
+import { Job } from '#views/Jobs/NewListView/types';
 import { Search } from '@material-ui/icons';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+
 import { assignUsersToJob, fetchAssignedUsersForJob } from '../actions';
 import { assignUsersToTask } from '../TaskList/actions';
 import Wrapper from './TaskUserAssignment.styles';

@@ -1,7 +1,7 @@
 import { apiGetInbox } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
-import { Job } from '#views/Jobs/types';
+import { Job } from '#views/Jobs/NewListView/types';
 import { call, put, takeLeading } from 'redux-saga/effects';
 
 import {

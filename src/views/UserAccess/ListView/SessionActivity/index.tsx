@@ -1,39 +1,39 @@
-import React, { FC, useEffect, useState } from 'react';
-import { ListViewComponent, FilterProp, Checkbox } from '#components';
+import { Checkbox, FilterProp, ListViewComponent } from '#components';
+import { useTypedSelector } from '#store';
+import {
+  clearActivityFilters,
+  setActivityFilters,
+} from '#store/activity-filters/action';
+import { fetchUsers } from '#store/users/actions';
+import { User, UserState } from '#store/users/types';
+import { getInitials } from '#utils/stringUtils';
+import { usePrevious } from '#utils/usePrevious';
+import TextField from '@material-ui/core/TextField';
+import { Search } from '@material-ui/icons';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined';
 import {
-  SessionActivity as SessionActivityType,
-  SessionActivityState,
-  SessionActivitySeverity,
-} from './types';
-import { groupBy } from 'lodash';
-import moment, { Moment } from 'moment';
-import { useTypedSelector } from '#store';
-import { navigate as navigateTo } from '@reach/router';
-import { fetchSessionActivities } from './actions';
-import { useDispatch } from 'react-redux';
-import { Composer, UserFilterWrapper } from './styles';
-import { TabViewProps } from '../types';
-import TextField from '@material-ui/core/TextField';
-import {
-  StaticDateRangePicker,
-  DateRangeDelimiter,
   DateRange,
+  DateRangeDelimiter,
   LocalizationProvider,
+  StaticDateRangePicker,
   TimePicker,
 } from '@material-ui/pickers';
 import MomentUtils from '@material-ui/pickers/adapter/moment';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { groupBy } from 'lodash';
+import moment, { Moment } from 'moment';
+import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
+import { TabViewProps } from '../types';
+import { fetchSessionActivities } from './actions';
+import { Composer, UserFilterWrapper } from './styles';
 import {
-  setActivityFilters,
-  clearActivityFilters,
-} from '#store/activity-filters/action';
-import { User } from '#store/users/types';
-import { getInitials } from '#utils/stringUtils';
-import { Search } from '@material-ui/icons';
-import { fetchUsers } from '#store/users/actions';
-import { usePrevious } from '#utils/usePrevious';
+  SessionActivity as SessionActivityType,
+  SessionActivitySeverity,
+  SessionActivityState,
+} from './types';
 
 type initialState = {
   dateRange: DateRange<Moment>;
@@ -269,7 +269,7 @@ const SessionActivity: FC<TabViewProps> = () => {
       op: 'AND',
       fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
     });
-    dispatch(fetchUsers({ page, size, filters, sort: 'id' }, 'active'));
+    dispatch(fetchUsers({ page, size, filters, sort: 'id' }, UserState.ACTIVE));
   };
 
   const fetchLogs = (page = 0, size = 250) => {
@@ -347,7 +347,6 @@ const SessionActivity: FC<TabViewProps> = () => {
     <Composer>
       <ListViewComponent
         isSearchable={false}
-        properties={[]}
         fetchData={fetchLogs}
         isLast={pageable.last}
         currentPage={pageable.page}
@@ -361,17 +360,18 @@ const SessionActivity: FC<TabViewProps> = () => {
             template: function renderComp(item) {
               const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
               let criticalCount = 0;
-              item[item.id].forEach((element: SessionActivityType) => {
+              const itemId = item.id as string;
+              (item[itemId] as SessionActivityType[]).forEach((element) => {
                 if (element.severity === SessionActivitySeverity.CRITICAL)
                   criticalCount++;
               });
               return (
-                <div className="list-card-columns" key={`name_${item.id}`}>
+                <div className="list-card-columns" key={`name_${itemId}`}>
                   <div style={{ padding: '0px 8px', flex: 1 }}>
                     <div className="log-header">
                       <div className="header-item">{day}</div>
                       <div className="header-item">
-                        {item[item.id].length} activities
+                        {item[itemId].length} activities
                       </div>
                       {criticalCount !== 0 && (
                         <>
@@ -385,7 +385,7 @@ const SessionActivity: FC<TabViewProps> = () => {
                       )}
                     </div>
                     <div className="log-row">
-                      {item[item.id].map((log: SessionActivityType) => (
+                      {(item[itemId] as SessionActivityType[]).map((log) => (
                         <div className="log-item" key={`${log.id}`}>
                           <div className="circle" />
                           <div className="content">

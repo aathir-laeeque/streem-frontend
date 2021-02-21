@@ -1,34 +1,35 @@
-import React, { FC, useEffect, useState } from 'react';
-import { ListViewComponent, FilterProp, Checkbox } from '#components';
-import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined';
-import { groupBy } from 'lodash';
-import moment, { Moment } from 'moment';
+import { Checkbox, FilterProp, ListViewComponent } from '#components';
 import { useTypedSelector } from '#store';
-import { useDispatch } from 'react-redux';
-import { Composer, UserFilterWrapper } from './styles';
-import TextField from '@material-ui/core/TextField';
 import {
-  StaticDateRangePicker,
-  DateRangeDelimiter,
+  clearActivityFilters,
+  setActivityFilters,
+} from '#store/activity-filters/action';
+import { fetchUsers } from '#store/users/actions';
+import { User } from '#store/users/types';
+import { getInitials } from '#utils/stringUtils';
+import { usePrevious } from '#utils/usePrevious';
+import { Job } from '#views/Jobs/NewListView/types';
+import TextField from '@material-ui/core/TextField';
+import { Search } from '@material-ui/icons';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined';
+import {
   DateRange,
+  DateRangeDelimiter,
   LocalizationProvider,
+  StaticDateRangePicker,
   TimePicker,
 } from '@material-ui/pickers';
 import MomentUtils from '@material-ui/pickers/adapter/moment';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import { JobActivity, JobActivitySeverity, JobActivityState } from './types';
+import { groupBy } from 'lodash';
+import moment, { Moment } from 'moment';
+import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
 import { fetchJobActivities } from './actions';
-import { Job } from '#views/Jobs/types';
-import {
-  setActivityFilters,
-  clearActivityFilters,
-} from '#store/activity-filters/action';
-import { User } from '#store/users/types';
-import { getInitials } from '#utils/stringUtils';
-import { Search } from '@material-ui/icons';
-import { fetchUsers } from '#store/users/actions';
-import { usePrevious } from '#utils/usePrevious';
+import { Composer, UserFilterWrapper } from './styles';
+import { JobActivity, JobActivitySeverity, JobActivityState } from './types';
 
 type initialState = {
   dateRange: DateRange<Moment>;
@@ -340,7 +341,6 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
     <Composer>
       <ListViewComponent
         isSearchable={false}
-        properties={[]}
         fetchData={fetchLogs}
         isLast={pageable.last}
         currentPage={pageable.page}
@@ -356,17 +356,18 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
             template: function renderComp(item) {
               const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
               let criticalCount = 0;
-              item[item.id].forEach((element: JobActivity) => {
+              const itemId = item.id as string;
+              (item[itemId] as JobActivity[]).forEach((element) => {
                 if (element.severity === JobActivitySeverity.CRITICAL)
                   criticalCount++;
               });
               return (
-                <div className="list-card-columns" key={`name_${item.id}`}>
+                <div className="list-card-columns" key={`name_${itemId}`}>
                   <div style={{ padding: '0px 8px', flex: 1 }}>
                     <div className="log-header">
                       <div className="header-item">{day}</div>
                       <div className="header-item">
-                        {item[item.id].length} activities
+                        {item[itemId].length} activities
                       </div>
                       {criticalCount !== 0 && (
                         <>
@@ -380,22 +381,25 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
                       )}
                     </div>
                     <div className="log-row">
-                      {item[item.id].map((log: JobActivity) => (
-                        <div className="log-item" key={`${log.id}`}>
-                          <div className="circle" />
-                          <div className="content">
-                            <div className="content-items">
-                              {moment.unix(log.triggeredAt).format('hh:mm A')}
-                            </div>
-                            {log.severity === JobActivitySeverity.CRITICAL && (
+                      {(item[itemId] as JobActivity[]).map(
+                        (log: JobActivity) => (
+                          <div className="log-item" key={`${log.id}`}>
+                            <div className="circle" />
+                            <div className="content">
                               <div className="content-items">
-                                <ReportProblemOutlinedIcon className="icon" />
+                                {moment.unix(log.triggeredAt).format('hh:mm A')}
                               </div>
-                            )}
-                            <div className="content-items">{log.details}</div>
+                              {log.severity ===
+                                JobActivitySeverity.CRITICAL && (
+                                <div className="content-items">
+                                  <ReportProblemOutlinedIcon className="icon" />
+                                </div>
+                              )}
+                              <div className="content-items">{log.details}</div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ),
+                      )}
                     </div>
                   </div>
                 </div>

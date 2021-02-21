@@ -1,9 +1,8 @@
 import { Properties } from '#store/properties/types';
-import React, { FC } from 'react';
-import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
-import { Checklist } from '#views/Checklists/types';
 import { User } from '#store/users/types';
+import { Checklist } from '#views/Checklists/types';
 import { Job } from '#views/Jobs/NewListView/types';
+import React, { FC } from 'react';
 import styled from 'styled-components';
 
 export type NewFilter = {
@@ -18,21 +17,16 @@ export type NewFilterProp = {
   activeCount: number;
 };
 
+export type ExtraColumn = {
+  header: string;
+  template: (item: Checklist | Job | User, index: number) => JSX.Element;
+};
+
 interface ListViewProps {
   properties: Properties;
-  data:
-    | Checklist[]
-    | Job[]
-    | User[]
-    | Record<string, string | SessionActivity[]>[];
-  beforeColumns?: {
-    header: string;
-    template: (item: any, index: number) => JSX.Element | null;
-  }[];
-  afterColumns?: {
-    header: string;
-    template: (item: any, index: number) => JSX.Element | null;
-  }[];
+  data: Checklist[] | Job[] | User[];
+  beforeColumns?: ExtraColumn[];
+  afterColumns?: ExtraColumn[];
 }
 
 const Wrapper = styled.div.attrs({})`

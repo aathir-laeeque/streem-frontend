@@ -156,8 +156,8 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
       setState({
         ...state,
         editorState,
-        reviewersOptions: [{ label: 'All', value: null }, ...reviewerOptions],
-        reviewCycleOptions: [{ label: 'All', value: null }, ...cycleOptions],
+        reviewersOptions: [{ label: 'All', value: '' }, ...reviewerOptions],
+        reviewCycleOptions: [{ label: 'All', value: '' }, ...cycleOptions],
       });
     }
   }, [collaborators]);

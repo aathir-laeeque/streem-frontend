@@ -1,10 +1,10 @@
 import { BaseModal } from '#components';
-import React, { FC } from 'react';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
+import { Job } from '#views/Jobs/NewListView/types';
+import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { Job } from '../../views/Jobs/types';
 import { startJob } from '../actions';
 
 const Wrapper = styled.div`

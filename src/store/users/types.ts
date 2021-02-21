@@ -47,7 +47,7 @@ export interface UsersState {
   readonly [UserState.ACTIVE]: UsersGroup;
   readonly [UserState.ARCHIVED]: UsersGroup;
   readonly loading: boolean;
-  readonly error: any;
+  readonly error?: string;
   readonly selectedState: string;
   readonly selectedUser?: User;
   readonly selectedUserId?: User['id'];

@@ -1,7 +1,7 @@
 import React, { ComponentPropsWithRef, FC, forwardRef } from 'react';
 import styled from 'styled-components';
 
-type OptionType = { label: string; value: any };
+type OptionType = { label: string; value: string | number | readonly string[] };
 
 type Props = {
   label?: string;

@@ -17,5 +17,5 @@ export const fetchPropertiesSuccess = ({
 }: fetchPropertiesSuccessArgs) =>
   actionSpreader(PropertiesAction.FETCH_PROPERTIES_SUCCESS, { data, type });
 
-export const fetchPropertiesError = (error: any) =>
+export const fetchPropertiesError = (error: string) =>
   actionSpreader(PropertiesAction.FETCH_PROPERTIES_ERROR, { error });

@@ -1,19 +1,18 @@
-import { call, put, take, race, delay, select } from 'redux-saga/effects';
-import { apiGetStageData } from '#utils/apiUrls';
+import { JOB_STAGE_POLLING_TIMEOUT } from '#JobComposer/composer.types';
 import { RootState } from '#store';
+import { apiGetStageData } from '#utils/apiUrls';
 import { request } from '#utils/request';
+import { CompletedJobStates } from '#views/Jobs/NewListView/types';
+import { keyBy } from 'lodash';
+import { call, delay, put, race, select, take } from 'redux-saga/effects';
+
 import {
+  fetchActiveStageDataRes,
+  fetchActiveStageDataSuccess,
   startPollActiveStageData,
   stopPollActiveStageData,
-  fetchActiveStageDataSuccess,
-  fetchActiveStageDataRes,
 } from './actions';
 import { StageListAction } from './reducer.types';
-import {
-  CompletedJobState,
-  JOB_STAGE_POLLING_TIMEOUT,
-} from '#JobComposer/composer.types';
-import { keyBy } from 'lodash';
 
 const getCurrentStatus = (state: RootState) => state.composer.jobState;
 const getActiveStageId = (state: RootState) =>
@@ -28,7 +27,7 @@ function* activeStagePollingSaga({
       const currentStatus = getCurrentStatus(yield select());
       const activeStageId = getActiveStageId(yield select());
 
-      if (currentStatus in CompletedJobState) {
+      if (currentStatus in CompletedJobStates) {
         yield put(stopPollActiveStageData());
       }
 
@@ -70,7 +69,7 @@ function* activeStagePollingSaga({
           } as fetchActiveStageDataRes),
         );
 
-        if (data.jobState in CompletedJobState) {
+        if (data.jobState in CompletedJobStates) {
           yield put(stopPollActiveStageData());
         }
       }

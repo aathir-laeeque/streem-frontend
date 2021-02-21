@@ -26,7 +26,6 @@ const initialState: UsersState = {
   loading: false,
   selectedState: UserState.ACTIVE,
   selectedUser: undefined,
-  error: undefined,
   currentPageData: [],
 };
 

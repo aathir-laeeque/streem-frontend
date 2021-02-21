@@ -1,7 +1,8 @@
-import React, { ReactNode } from 'react';
 import { User } from '#store/users/types';
-import { Text, View, StyleSheet } from '@react-pdf/renderer';
-import { JobState } from '#JobComposer/composer.types';
+import { JobStateEnum } from '#views/Jobs/NewListView/types';
+import { StyleSheet, Text, View } from '@react-pdf/renderer';
+import React, { ReactNode } from 'react';
+
 import { styles as commonStyles } from '../styles';
 
 const styles = StyleSheet.create({
@@ -142,7 +143,7 @@ export const Assigness = ({
   jobState: string;
 }) => {
   let rows = [];
-  if (jobState === JobState.UNASSIGNED) {
+  if (jobState === JobStateEnum.UNASSIGNED) {
     for (let i = 0; i < 8; i++) {
       rows.push(
         <View style={styles.assigneRow} key={`assignes_${i}`}>

@@ -1,13 +1,11 @@
-import { Properties } from '#store/properties/types';
+import Menu from '@material-ui/core/Menu';
 import { ArrowDropDown, Search } from '@material-ui/icons';
 import NestedMenuItem from '#components/shared/NestedMenuItem';
-import Menu from '@material-ui/core/Menu';
+import { JobActivity } from '#JobComposer/JobActivity/types';
 import React, { FC, useState } from 'react';
-import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
-import { Checklist } from '#views/Checklists/types';
-import { User } from '#store/users/types';
-import { Job } from '#views/Jobs/types';
 import styled from 'styled-components';
+import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
+
 import { Button, FlatButton } from './Button';
 
 export type Filter = {
@@ -21,29 +19,28 @@ export type FilterProp = {
   onReset: () => void;
   activeCount: number;
 };
+
+type DataType =
+  | Record<string, string | SessionActivity[]>
+  | Record<string, string | JobActivity[]>;
+
+type ExtraColumn = {
+  header: string;
+  template: (item: DataType, index: number) => JSX.Element;
+};
+
 interface ListViewProps {
   primaryButtonText?: string;
   onPrimaryClick?: () => void;
-  properties: Properties;
   filterProp?: FilterProp;
   callOnScroll?: boolean;
-  data:
-    | Checklist[]
-    | Job[]
-    | User[]
-    | Record<string, string | SessionActivity[]>[];
+  data: DataType[];
   fetchData: (page: number, size: number) => void;
   isLast: boolean;
   currentPage: number;
   isSearchable?: boolean;
-  beforeColumns?: {
-    header: string;
-    template: (item: any, index: number) => JSX.Element;
-  }[];
-  afterColumns?: {
-    header: string;
-    template: (item: any, index: number) => JSX.Element;
-  }[];
+  beforeColumns?: ExtraColumn[];
+  afterColumns?: ExtraColumn[];
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -192,7 +189,6 @@ const Wrapper = styled.div.attrs({})`
 export const ListView: FC<ListViewProps> = ({
   primaryButtonText,
   onPrimaryClick = () => console.log('clicked'),
-  properties,
   data,
   fetchData,
   isLast,
@@ -204,8 +200,6 @@ export const ListView: FC<ListViewProps> = ({
   isSearchable = true,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  // useEffect(() => {}, [isLast, currentPage]);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -313,58 +307,32 @@ export const ListView: FC<ListViewProps> = ({
           )}
         </div>
         <div className="list-header">
-          {beforeColumns &&
-            beforeColumns.length &&
-            beforeColumns.map((beforeColumn) => (
-              <div
-                key={`beforeColumn_${beforeColumn.header}`}
-                className="list-header-columns"
-              >
-                {beforeColumn.header}
-              </div>
-            ))}
-          {properties.map((el) => (
-            <div key={`property_${el.id}`} className="list-header-columns">
-              {el.name}
+          {beforeColumns?.map((beforeColumn) => (
+            <div
+              key={`beforeColumn_${beforeColumn.header}`}
+              className="list-header-columns"
+            >
+              {beforeColumn.header}
             </div>
           ))}
-          {afterColumns &&
-            afterColumns.length &&
-            afterColumns.map((afterColumn) => (
-              <div
-                key={`afterColumn_${afterColumn.header}`}
-                className="list-header-columns"
-              >
-                {afterColumn.header}
-              </div>
-            ))}
+          {afterColumns?.map((afterColumn) => (
+            <div
+              key={`afterColumn_${afterColumn.header}`}
+              className="list-header-columns"
+            >
+              {afterColumn.header}
+            </div>
+          ))}
         </div>
         <div className="list-body" onScroll={handleOnScroll}>
-          {(data as Array<Checklist | Job>).map((el, index) => (
+          {data.map((el, index) => (
             <div key={`list_el_${el.id}`} className="list-card">
-              {beforeColumns &&
-                beforeColumns.length &&
-                beforeColumns.map((beforeColumn) =>
-                  beforeColumn.template(el, index),
-                )}
-              {properties.map((property) => (
-                <div
-                  key={`${el.id}_property_${property.id}`}
-                  className="list-card-columns"
-                >
-                  {el.properties &&
-                  property &&
-                  property.name &&
-                  el.properties[property.name]
-                    ? el.properties[property.name]
-                    : '-N/A-'}
-                </div>
-              ))}
-              {afterColumns &&
-                afterColumns.length &&
-                afterColumns.map((afterColumn) =>
-                  afterColumn.template(el, index),
-                )}
+              {beforeColumns?.map((beforeColumn) =>
+                beforeColumn.template(el, index),
+              )}
+              {afterColumns?.map((afterColumn) =>
+                afterColumn.template(el, index),
+              )}
             </div>
           ))}
         </div>

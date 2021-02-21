@@ -1,5 +1,4 @@
 import { actionSpreader } from '#store';
-import { Job } from '#views/Jobs/types';
 
 import { Checklist } from './checklist.types';
 import { ComposerAction } from './reducer.types';
@@ -7,7 +6,7 @@ import { ComposerEntity } from './types';
 
 // BLOCK START : Actions related to composer data fetching
 type fetchDataArgs = {
-  id: Checklist['id'] | Job['id'];
+  id: Checklist['id'];
   entity: ComposerEntity;
 };
 export const fetchComposerData = ({ id, entity }: fetchDataArgs) =>
@@ -26,7 +25,7 @@ export const fetchComposerDataOngoing = ({ entity }: fetchDataOngoingArgs) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_ONGOING, { entity });
 
 type fetchDataSuccessArgs = {
-  data: Checklist | Job;
+  data: Checklist;
   entity: ComposerEntity;
 };
 export const fetchComposerDataSuccess = ({

@@ -1,10 +1,10 @@
 import { actionSpreader } from '#store';
-
 import { User } from '#store/users/types';
+import { Job } from '#views/Jobs/NewListView/types';
+
 import { Task } from '../checklist.types';
-import { TaskAction } from './types';
 import { TaskListAction } from './reducer.types';
-import { Job } from '#views/Jobs/types';
+import { TaskAction } from './types';
 
 export const setActiveTask = (id: Task['id'], bringIntoView = false) =>
   actionSpreader(TaskListAction.SET_ACTIVE_TASK, { id, bringIntoView });

@@ -56,7 +56,7 @@ function* fetchSessionActivitiesSaga({
       'fetchSessionActivitiesSaga',
       e,
     );
-    yield put(fetchSessionActivitiesError(error));
+    yield put(fetchSessionActivitiesError(error as string));
   }
 }
 

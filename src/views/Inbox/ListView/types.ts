@@ -1,5 +1,5 @@
 import { Pageable } from '#utils/globalTypes';
-import { Job } from '#views/Jobs/types';
+import { Job } from '#views/Jobs/NewListView/types';
 import { RouteComponentProps } from '@reach/router';
 
 import {
@@ -7,8 +7,8 @@ import {
   fetchInboxError,
   fetchInboxOngoing,
   fetchInboxSuccess,
-  setSelectedState,
   resetInbox,
+  setSelectedState,
 } from './actions';
 
 type TabContentProps = Record<string, any>;
@@ -18,7 +18,7 @@ export type TabViewProps = RouteComponentProps<TabContentProps>;
 export type Inbox = Record<
   string,
   {
-    list: Job[] | [];
+    list: Job[];
     pageable: Pageable;
   }
 >;

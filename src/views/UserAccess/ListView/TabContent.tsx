@@ -1,17 +1,21 @@
+import { Button1, SearchFilter, TabContentProps } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { NewListView } from '#components/shared/NewListView';
-import { SearchFilter, Button1, TabContentProps } from '#components';
+import { ExtraColumn, NewListView } from '#components/shared/NewListView';
+import checkPermission, { roles } from '#services/uiPermissions';
 import { UserState } from '#services/users';
-import { User } from '#store/users/types';
 import { useTypedSelector } from '#store/helpers';
 import { fetchUsers, setSelectedUser } from '#store/users/actions';
+import { User } from '#store/users/types';
+import { FilterField } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
+import { startCase, toLower } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { removeUnderscore } from '../../../utils/stringUtils';
 import {
   archiveUser,
   cancelInvite,
@@ -20,10 +24,6 @@ import {
   unLockUser,
 } from '../actions';
 import { TabContentWrapper } from './styles';
-import { removeUnderscore } from '../../../utils/stringUtils';
-import { startCase, toLower } from 'lodash';
-import checkPermission, { roles } from '#services/uiPermissions';
-import { FilterField } from '#utils/globalTypes';
 
 export function modalBody(user: User, text: string) {
   return (
@@ -211,162 +211,170 @@ const TabContent: React.FC<TabContentProps> = (props) => {
       <NewListView
         properties={[]}
         data={currentPageData}
-        beforeColumns={[
-          {
-            header: 'Name',
-            template: function renderComp(item: User) {
-              return (
-                <div className="list-card-columns">
-                  <span
-                    className="list-title"
-                    onClick={() => {
-                      dispatch(setSelectedUser(item));
-                      navigate(`/user-access/edit-user`);
-                    }}
-                  >
-                    {getFullName(item)}
-                  </span>
-                </div>
-              );
+        beforeColumns={
+          [
+            {
+              header: 'Name',
+              template: function renderComp(item: User) {
+                return (
+                  <div className="list-card-columns">
+                    <span
+                      className="list-title"
+                      onClick={() => {
+                        dispatch(setSelectedUser(item));
+                        navigate(`/user-access/edit-user`);
+                      }}
+                    >
+                      {getFullName(item)}
+                    </span>
+                  </div>
+                );
+              },
             },
-          },
-          {
-            header: 'Employee ID',
-            template: function renderComp(item: User) {
-              return <div className="list-card-columns">{item.employeeId}</div>;
+            {
+              header: 'Employee ID',
+              template: function renderComp(item: User) {
+                return (
+                  <div className="list-card-columns">{item.employeeId}</div>
+                );
+              },
             },
-          },
-          {
-            header: 'Email ID',
-            template: function renderComp(item: User) {
-              return <div className="list-card-columns">{item.email}</div>;
+            {
+              header: 'Email ID',
+              template: function renderComp(item: User) {
+                return <div className="list-card-columns">{item.email}</div>;
+              },
             },
-          },
-          {
-            header: 'Roles',
-            template: function renderComp(item: User) {
-              return (
-                <div className="list-card-columns">
-                  {removeUnderscore(
-                    item?.roles
-                      ?.map((role) => startCase(toLower(role.name)))
-                      .join(' ,') || '',
-                  )}
-                </div>
-              );
+            {
+              header: 'Roles',
+              template: function renderComp(item: User) {
+                return (
+                  <div className="list-card-columns">
+                    {removeUnderscore(
+                      item?.roles
+                        ?.map((role) => startCase(toLower(role.name)))
+                        .join(' ,') || '',
+                    )}
+                  </div>
+                );
+              },
             },
-          },
-          {
-            header: 'Status',
-            template: function renderComp(item: User) {
-              return (
-                <div className="list-card-columns">
-                  {(() => {
-                    if (!item.verified) {
-                      return (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <FiberManualRecord
-                            className="icon"
-                            style={{ color: '#f7b500' }}
-                          />
-                          Unregistered
-                        </div>
-                      );
-                    } else if (item.blocked) {
-                      return (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <FiberManualRecord
-                            className="icon"
-                            style={{ color: '#ff6b6b' }}
-                          />
-                          Locked
-                        </div>
-                      );
-                    } else if (!item.archived) {
-                      return <span>Active</span>;
-                    } else if (item.archived) {
-                      return null;
-                    }
-                  })()}
-                </div>
-              );
-            },
-          },
-          {
-            header: '',
-            template: function renderComp(item: User) {
-              return (
-                <div className="list-card-columns">
-                  {(() => {
-                    if (
-                      checkPermission(['usersAndAccess', 'listViewActions'])
-                    ) {
-                      const isItemAccountOwner = item?.roles?.some(
-                        (i) => i?.name === roles.ACCOUNT_OWNER,
-                      );
-
-                      let editAccountOwner = true;
-                      if (isItemAccountOwner)
-                        editAccountOwner = checkPermission([
-                          'usersAndAccess',
-                          'editAccountOwner',
-                        ]);
-                      if (item.archived && !isItemAccountOwner) {
+            {
+              header: 'Status',
+              template: function renderComp(item: User) {
+                return (
+                  <div className="list-card-columns">
+                    {(() => {
+                      if (!item.verified) {
                         return (
-                          <span
-                            className="list-title"
-                            onClick={() => onUnArchiveUser(item)}
+                          <div
+                            style={{ display: 'flex', alignItems: 'center' }}
                           >
-                            Unarchive
-                          </span>
+                            <FiberManualRecord
+                              className="icon"
+                              style={{ color: '#f7b500' }}
+                            />
+                            Unregistered
+                          </div>
                         );
-                      } else if (!isItemAccountOwner && !item.verified) {
+                      } else if (item.blocked) {
                         return (
-                          <>
-                            <span
-                              className="list-title"
-                              onClick={() => onResendInvite(item.id)}
-                              style={{ color: '#1d84ff' }}
-                            >
-                              Resend Invite
-                            </span>
-                            <span
-                              className="list-title"
-                              onClick={() => onCancelInvite(item)}
-                              style={{ color: '#ff6b6b', marginLeft: '12px' }}
-                            >
-                              Cancel Invite
-                            </span>
-                          </>
-                        );
-                      } else if (editAccountOwner && item.blocked) {
-                        return (
-                          <span
-                            className="list-title"
-                            onClick={() => onUnlockUser(item)}
+                          <div
+                            style={{ display: 'flex', alignItems: 'center' }}
                           >
-                            Unblock
-                          </span>
+                            <FiberManualRecord
+                              className="icon"
+                              style={{ color: '#ff6b6b' }}
+                            />
+                            Locked
+                          </div>
                         );
-                      } else if (!isItemAccountOwner) {
-                        return (
-                          <span
-                            className="list-title"
-                            onClick={() => onArchiveUser(item)}
-                          >
-                            Archive
-                          </span>
-                        );
+                      } else if (!item.archived) {
+                        return <span>Active</span>;
+                      } else if (item.archived) {
+                        return null;
                       }
-                    } else {
-                      return null;
-                    }
-                  })()}
-                </div>
-              );
+                    })()}
+                  </div>
+                );
+              },
             },
-          },
-        ]}
+            {
+              header: '',
+              template: function renderComp(item: User) {
+                return (
+                  <div className="list-card-columns">
+                    {(() => {
+                      if (
+                        checkPermission(['usersAndAccess', 'listViewActions'])
+                      ) {
+                        const isItemAccountOwner = item?.roles?.some(
+                          (i) => i?.name === roles.ACCOUNT_OWNER,
+                        );
+
+                        let editAccountOwner = true;
+                        if (isItemAccountOwner)
+                          editAccountOwner = checkPermission([
+                            'usersAndAccess',
+                            'editAccountOwner',
+                          ]);
+                        if (item.archived && !isItemAccountOwner) {
+                          return (
+                            <span
+                              className="list-title"
+                              onClick={() => onUnArchiveUser(item)}
+                            >
+                              Unarchive
+                            </span>
+                          );
+                        } else if (!isItemAccountOwner && !item.verified) {
+                          return (
+                            <>
+                              <span
+                                className="list-title"
+                                onClick={() => onResendInvite(item.id)}
+                                style={{ color: '#1d84ff' }}
+                              >
+                                Resend Invite
+                              </span>
+                              <span
+                                className="list-title"
+                                onClick={() => onCancelInvite(item)}
+                                style={{ color: '#ff6b6b', marginLeft: '12px' }}
+                              >
+                                Cancel Invite
+                              </span>
+                            </>
+                          );
+                        } else if (editAccountOwner && item.blocked) {
+                          return (
+                            <span
+                              className="list-title"
+                              onClick={() => onUnlockUser(item)}
+                            >
+                              Unblock
+                            </span>
+                          );
+                        } else if (!isItemAccountOwner) {
+                          return (
+                            <span
+                              className="list-title"
+                              onClick={() => onArchiveUser(item)}
+                            >
+                              Archive
+                            </span>
+                          );
+                        }
+                      } else {
+                        return null;
+                      }
+                    })()}
+                  </div>
+                );
+              },
+            },
+          ] as ExtraColumn[]
+        }
       />
 
       <div className="pagination">

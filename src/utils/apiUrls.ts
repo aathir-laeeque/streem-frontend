@@ -1,11 +1,11 @@
-import { Checklist, Stage, Activity } from '#PrototypeComposer/checklist.types';
-import { AddNewTaskArgs } from '#PrototypeComposer/Tasks/types';
 import { Task } from '#JobComposer/checklist.types';
-
-import { Job } from '../views/Jobs/types';
-import { fetchBaseUrl } from './constants';
 import { AddNewActivityArgs } from '#PrototypeComposer/Activity/types';
+import { Activity, Checklist, Stage } from '#PrototypeComposer/checklist.types';
+import { AddNewTaskArgs } from '#PrototypeComposer/Tasks/types';
 import { User } from '#store/users/types';
+import { Job } from '#views/Jobs/NewListView/types';
+
+import { fetchBaseUrl } from './constants';
 
 const baseUrl = fetchBaseUrl();
 

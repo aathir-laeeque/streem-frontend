@@ -1,12 +1,22 @@
-import { applyMiddleware, compose, createStore, Middleware } from 'redux';
-import createSagaMiddleware from 'redux-saga';
-import { persistStore, persistReducer, createTransform } from 'redux-persist';
+import {
+  Overlay,
+  OverlayContainerAction,
+} from '#components/OverlayContainer/types';
+import { AuthAction } from '#views/Auth/types';
+import {
+  AnyAction,
+  applyMiddleware,
+  compose,
+  createStore,
+  Middleware,
+} from 'redux';
+import { createTransform, persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import createSagaMiddleware from 'redux-saga';
 
 import { rootReducer } from './rootReducer';
 import { rootSaga } from './rootSaga';
-import { AuthAction } from '#views/Auth/types';
-import { OverlayContainerAction } from '#components/OverlayContainer/types';
+import { RootState } from './types';
 
 const sagaMiddleware = createSagaMiddleware();
 const persistConfig = {
@@ -15,7 +25,7 @@ const persistConfig = {
   whitelist: ['auth', 'activityFilters'],
   transforms: [
     createTransform(
-      (inboundState: any, key: string) => {
+      (inboundState: RootState, key) => {
         switch (key) {
           case 'auth':
             return {
@@ -28,7 +38,7 @@ const persistConfig = {
             return inboundState;
         }
       },
-      (outboundState: any) => {
+      (outboundState: RootState) => {
         return {
           ...outboundState,
         };
@@ -39,10 +49,10 @@ const persistConfig = {
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-let onIdleRequests: any[] = [];
+let onIdleRequests: AnyAction[] = [];
 let previousIdle = true;
 
-const handleOnIdle: Middleware = (store) => (next) => (action) => {
+const handleOnIdle: Middleware = (store) => (next) => (action: AnyAction) => {
   const {
     auth: { isIdle, isLoggedIn },
   } = store.getState();
@@ -79,19 +89,19 @@ export const configureStore = (initialState: {
     typeof window === 'object' &&
     (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
       ? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-          actionSanitizer: (action: any) =>
+          actionSanitizer: (action: AnyAction) =>
             action.type === '@@overlay/Container/OPEN_OVERLAY'
               ? {
                   ...action,
                   payload: { ...action.payload, popOverAnchorEl: '<<EVENT>>' },
                 }
               : action,
-          stateSanitizer: (state: any) =>
+          stateSanitizer: (state: RootState) =>
             state.overlayContainer
               ? {
                   ...state,
                   overlayContainer: state.overlayContainer.currentOverlays.map(
-                    (overlay: any) => ({
+                    (overlay: Overlay) => ({
                       ...overlay,
                       popOverAnchorEl: '<<EVENT>>',
                     }),

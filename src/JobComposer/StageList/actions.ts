@@ -1,10 +1,8 @@
-import { ActivitiesById } from '#JobComposer/ActivityList/types';
-import { JobState } from '#JobComposer/composer.types';
-import { TasksById } from '#JobComposer/TaskList/types';
 import { actionSpreader } from '#store';
-import { Job } from '#views/Jobs/types';
+import { Job, JobStateType } from '#views/Jobs/NewListView/types';
 
 import { Stage } from '../checklist.types';
+import { TasksById } from '../TaskList/types';
 import { StageListAction } from './reducer.types';
 import { StageReports } from './types';
 
@@ -14,7 +12,7 @@ type startPollActiveStageDataArgs = {
 
 export interface fetchActiveStageDataRes {
   jobId: Job['id'];
-  jobState: JobState;
+  jobState: JobStateType;
   stage: Stage;
   tasksById: TasksById;
   activitiesById: ActivitiesById;

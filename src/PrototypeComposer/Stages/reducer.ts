@@ -1,10 +1,8 @@
-import { Job } from '#views/Jobs/types';
 import { omit } from 'lodash';
 import { Reducer } from 'redux';
 
 import { Checklist } from '../checklist.types';
 import { ComposerAction } from '../reducer.types';
-import { ComposerEntity } from '../types';
 import {
   StageListActions,
   StageListActionType,
@@ -25,13 +23,9 @@ const reducer: Reducer<StageListState, StageListActionType> = (
 ) => {
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
-      const { data, entity } = action.payload;
+      const { data } = action.payload;
 
-      const isChecklist = entity === ComposerEntity.CHECKLIST;
-
-      const checklist = isChecklist
-        ? (data as Checklist)
-        : (data as Job).checklist;
+      const checklist = data as Checklist;
 
       return {
         ...state,

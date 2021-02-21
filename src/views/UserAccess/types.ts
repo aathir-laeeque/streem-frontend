@@ -1,33 +1,15 @@
 import { RouteComponentProps } from '@reach/router';
-import { User } from '#store/users/types';
 import { resendInvite } from './actions';
 
 export type UserAccessViewProps = RouteComponentProps;
 
-export interface Properties {
-  [key: string]: string | undefined;
-}
-
-export interface Job {
-  id: number;
-  name?: string;
-  code: string;
-  properties?: Properties;
-  checklist: {
-    id: number;
-    name: string;
-  };
-  state: string;
-  users: User[];
-}
-
 export enum UserAccessAction {
-  RESEND_INVITE = '@@userAccess/ListView/RESEND_INVITE',
-  CANCEL_INVITE = '@@userAccess/ListView/CANCEL_INVITE',
+  ADD_USER = '@@userAccess/ListView/ADD_USER',
   ARCHIVE_USER = '@@userAccess/ListView/ARCHIVE_USER',
+  CANCEL_INVITE = '@@userAccess/ListView/CANCEL_INVITE',
+  RESEND_INVITE = '@@userAccess/ListView/RESEND_INVITE',
   UNARCHIVE_USER = '@@userAccess/ListView/UNARCHIVE_USER',
   UNLOCK_USER = '@@userAccess/ListView/UNLOCK_USER',
-  ADD_USER = '@@userAccess/ListView/ADD_USER',
 }
 
 export type UserAccessActionType = ReturnType<typeof resendInvite>;

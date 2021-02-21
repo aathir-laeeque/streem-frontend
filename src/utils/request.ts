@@ -1,9 +1,11 @@
-import { apiForgotPassword, apiLogin, apiRefreshToken } from './apiUrls';
-import { AxiosRequestConfig } from 'axios';
-import axiosInstance, { removeAuthHeader } from './axiosClient';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
+import { AxiosRequestConfig } from 'axios';
 import { put } from 'redux-saga/effects';
+
+import { apiForgotPassword, apiLogin, apiRefreshToken } from './apiUrls';
+import axiosInstance, { removeAuthHeader } from './axiosClient';
+import { ResponseError } from './globalTypes';
 
 interface RequestOptions {
   data?: Record<string | number, any>;
@@ -41,13 +43,13 @@ export const request = async (
 
 // TODO Migrate All Sgag's to Use this and Handle Multiple Errors.
 
-export const getErrorMsg = (errors: any) =>
+export const getErrorMsg = (errors: ResponseError[]) =>
   errors?.[0]?.message || 'Oops... Please try again.';
 
 export function* handleCatch(
   origin: string,
   sagaName: string,
-  error: any,
+  error: unknown,
   notify = false,
 ) {
   console.error(`error from ${origin} function in ${sagaName} :: `, error);
@@ -56,7 +58,7 @@ export function* handleCatch(
     yield put(
       showNotification({
         type: NotificationType.ERROR,
-        msg: error,
+        msg: error as string,
       }),
     );
   return error;

@@ -1,6 +1,3 @@
-import { Pageable } from '#utils/globalTypes';
-
-import { Job } from '../types';
 import { ListViewAction, ListViewActionType, ListViewState } from './types';
 
 const initialState: ListViewState = {
@@ -37,8 +34,8 @@ const reducer = (
       return {
         ...state,
         loading: false,
-        jobs: data as Array<Job>,
-        pageable: pageable as Pageable,
+        jobs: data,
+        pageable: pageable,
       };
 
     case ListViewAction.FETCH_JOBS_ERROR:

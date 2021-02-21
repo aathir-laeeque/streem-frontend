@@ -8,7 +8,7 @@ interface CheckboxProps {
   checked?: boolean;
   disabled?: boolean;
   onClick: () => void;
-  refFun?: any;
+  refFun?: (el: HTMLInputElement) => void;
   partial?: boolean;
 }
 

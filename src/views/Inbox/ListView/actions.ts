@@ -1,7 +1,7 @@
 import { actionSpreader } from '#store/helpers';
 import { ResponseObj } from '#utils/globalTypes';
+import { Job } from '#views/Jobs/NewListView/types';
 
-import { Job } from '#views/Jobs/types';
 import { ListViewAction } from './types';
 
 export const fetchInbox = (

@@ -1,20 +1,19 @@
 import { Button, Button1 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
 import { apiGetAssignedUsersForJob } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { Job } from '#views/Jobs/types';
+import { usePrevious } from '#utils/usePrevious';
+import { Job, JobStateEnum } from '#views/Jobs/NewListView/types';
 import { Menu, MenuItem } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
-import checkPermission from '#services/uiPermissions';
+import { useLocation } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useLocation } from '@reach/router';
-import { usePrevious } from '#utils/usePrevious';
 
 import { completeJob, getSignOffState } from '../actions';
-import { JobState } from '../composer.types';
 
 const JobHeaderButtons: FC = () => {
   const { jobState, data } = useTypedSelector((state) => state.composer);
@@ -40,8 +39,8 @@ const JobHeaderButtons: FC = () => {
   const isInboxView = location.pathname.split('/')[1] === 'inbox';
 
   const showBulkAssignButton =
-    jobState !== JobState.COMPLETED &&
-    jobState !== JobState.COMPLETED_WITH_EXCEPTION &&
+    jobState !== JobStateEnum.COMPLETED &&
+    jobState !== JobStateEnum.COMPLETED_WITH_EXCEPTION &&
     !isInboxView;
 
   const isLoggedInUserOperator = profile?.roles?.some(
@@ -71,20 +70,23 @@ const JobHeaderButtons: FC = () => {
   }, [jobId]);
 
   useEffect(() => {
-    if (prevJobState === JobState.UNASSIGNED && jobState === JobState.ASSIGNED)
+    if (
+      prevJobState === JobStateEnum.UNASSIGNED &&
+      jobState === JobStateEnum.ASSIGNED
+    )
       getAssignments();
   }, [jobState]);
 
   let hidePrintJob = false;
   hidePrintJob =
-    ((jobState === JobState.COMPLETED ||
-      jobState === JobState.COMPLETED_WITH_EXCEPTION) &&
+    ((jobState === JobStateEnum.COMPLETED ||
+      jobState === JobStateEnum.COMPLETED_WITH_EXCEPTION) &&
       isLoggedInUserOperator) ||
     false;
 
   return (
     <div className="buttons-container">
-      {jobState === JobState.IN_PROGRESS &&
+      {jobState === JobStateEnum.IN_PROGRESS &&
       (isLoggedInUserAssigned ||
         checkPermission(['inbox', 'completeWithException'])) ? (
         <>
@@ -106,7 +108,7 @@ const JobHeaderButtons: FC = () => {
         </>
       ) : null}
 
-      {jobState === JobState.COMPLETED_WITH_EXCEPTION ? (
+      {jobState === JobStateEnum.COMPLETED_WITH_EXCEPTION ? (
         <Button1
           color="blue"
           variant="secondary"
@@ -155,7 +157,7 @@ const JobHeaderButtons: FC = () => {
         </Button>
       ) : null}
 
-      {jobState === JobState.ASSIGNED && isLoggedInUserAssigned ? (
+      {jobState === JobStateEnum.ASSIGNED && isLoggedInUserAssigned ? (
         <Button
           onClick={() =>
             dispatch(
@@ -170,7 +172,7 @@ const JobHeaderButtons: FC = () => {
         </Button>
       ) : null}
 
-      {jobState === JobState.IN_PROGRESS && isLoggedInUserAssigned ? (
+      {jobState === JobStateEnum.IN_PROGRESS && isLoggedInUserAssigned ? (
         <div className="dropdown-button">
           <Button
             onClick={() =>
@@ -213,9 +215,9 @@ const JobHeaderButtons: FC = () => {
         </div>
       ) : null}
 
-      {jobState !== JobState.IN_PROGRESS &&
-      jobState !== JobState.COMPLETED &&
-      jobState !== JobState.COMPLETED_WITH_EXCEPTION &&
+      {jobState !== JobStateEnum.IN_PROGRESS &&
+      jobState !== JobStateEnum.COMPLETED &&
+      jobState !== JobStateEnum.COMPLETED_WITH_EXCEPTION &&
       checkPermission(['inbox', 'completeWithException']) ? (
         <div className="dropdown-button">
           <Button

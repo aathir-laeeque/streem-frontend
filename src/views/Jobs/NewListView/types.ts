@@ -1,6 +1,7 @@
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
-import { User } from '../../../services/users/types';
+import { User } from '#store/users/types';
+import { Checklist } from '#PrototypeComposer/checklist.types';
 
 import {
   fetchJobs,
@@ -9,35 +10,25 @@ import {
   fetchJobsSuccess,
 } from './actions';
 
-export type Assignee = Pick<
-  User,
-  'employeeId' | 'firstName' | 'id' | 'lastName'
-> & {
-  jobId: string;
-  userId: string;
+type JobProperties = {
+  [key: string]: string | null;
 };
 
 export type Job = {
-  assignees: Assignee[];
-  checklist: {
-    id: string;
-    name: string;
-    properties: {
-      'EQUIPMENT ID': string;
-      'SOP NO': string;
-      TYPE: string;
-    };
-  };
+  checklist: Checklist;
   code: string;
   completedTasks: number;
   id: string;
-  properties: {
-    'BATCH NO': string;
-    'PRODUCT MANUFACTURED': string;
-    'ROOM ID': string;
-  };
-  state: JobState;
+  // properties: {
+  //   'BATCH NO': string;
+  //   'PRODUCT MANUFACTURED': string;
+  //   'ROOM ID': string;
+  // }[];
+  properties: JobProperties[] | JobProperties | any;
+  state: JobStateType;
   totalTasks: number;
+  name?: string;
+  assignees: User[];
 };
 
 export type ListViewProps = RouteComponentProps;
@@ -57,10 +48,16 @@ export enum CompletedJobStates {
   COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
 }
 
-export type JobState =
+export type JobStateType =
   | AssignedJobStates
   | UnassignedJobStates
   | CompletedJobStates;
+
+export const JobStateEnum = {
+  ...AssignedJobStates,
+  ...UnassignedJobStates,
+  ...CompletedJobStates,
+};
 
 export interface ListViewState {
   readonly jobs: Job[];
@@ -74,6 +71,7 @@ export enum ListViewAction {
   FETCH_JOBS_ERROR = '@@job/New-ListView/FETCH_JOBS_ERROR',
   FETCH_JOBS_ONGOING = '@@job/New-ListView/FETCH_JOBS_ONGOING',
   FETCH_JOBS_SUCCESS = '@@job/New-ListView/FETCH_JOBS_SUCCESS',
+  CREATE_JOB = '@@job/ListView/CREATE_JOB',
 }
 
 export type ListViewActionType = ReturnType<
