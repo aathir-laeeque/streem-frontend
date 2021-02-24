@@ -6,6 +6,7 @@ import {
   Textarea,
   TextInput,
 } from '#components';
+import { Option } from '#components/shared/Select';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useProperties } from '#services/properties';
 import { defaultParams, useUsers, OtherUserState } from '#services/users';
@@ -121,6 +122,19 @@ const PrototypeForm: FC<Props> = (props) => {
     return null;
   }
 
+  const filteredUsers = users.reduce((acc, user) => {
+    if (
+      user.id !== formValues.primaryAuthor.id &&
+      !formValues.authors.some((_authorId) => _authorId === user.id)
+    ) {
+      acc.push({
+        label: `${getFullName(user)}, ID : ${user.employeeId}`,
+        value: user.id,
+      });
+    }
+    return acc;
+  }, [] as Option[]);
+
   return (
     <form className="prototype-form" onSubmit={handleSubmit}>
       <h3 className="heading">New Checklist Prototype</h3>
@@ -226,12 +240,7 @@ const PrototypeForm: FC<Props> = (props) => {
                     : undefined
                 }
                 placeholder="Choose Users"
-                options={users
-                  .filter((user) => user.id !== formValues.primaryAuthor.id)
-                  .map((user) => ({
-                    label: `${getFullName(user)}, ID : ${user.employeeId}`,
-                    value: user.id,
-                  }))}
+                options={filteredUsers}
                 onChange={(selectedOption: any) => {
                   const selectedUser = usersById[selectedOption.value];
 
