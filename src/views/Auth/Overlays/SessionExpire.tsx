@@ -6,6 +6,7 @@ import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+
 import { login } from '../actions';
 
 const Wrapper = styled.div`
@@ -69,7 +70,7 @@ type Inputs = {
   password: string;
 };
 
-const SessionExpireModal: FC<CommonOverlayProps<any>> = ({
+const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
   closeAllOverlays,
   closeOverlay,
 }) => {

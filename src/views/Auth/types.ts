@@ -5,20 +5,20 @@ import {
   checkTokenExpirySuccess,
   cleanUp,
   fetchProfileSuccess,
+  forgotPassword,
   forgotPasswordSuccess,
   login,
-  forgotPassword,
-  resetPassword,
-  resetError,
-  resetPasswordSuccess,
-  loginSuccess,
   loginError,
-  refreshTokenSuccess,
-  resetPasswordError,
-  updateProfileSuccess,
-  setIdle,
-  logOutSuccess,
+  loginSuccess,
   logOut,
+  logOutSuccess,
+  refreshTokenSuccess,
+  resetError,
+  resetPassword,
+  resetPasswordError,
+  resetPasswordSuccess,
+  setIdle,
+  updateProfileSuccess,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
@@ -60,7 +60,7 @@ export interface AuthState {
   readonly sessionIdleTimeoutInMinutes?: number;
   readonly profile: User | null;
   readonly loading: boolean;
-  readonly error: any;
+  readonly error?: string;
   readonly roles?: string[];
   readonly isTokenExpired?: boolean;
   readonly facilities: Facility[];

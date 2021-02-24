@@ -1,5 +1,6 @@
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
+
 import {
   fetchSessionActivities,
   fetchSessionActivitiesError,
@@ -26,7 +27,7 @@ export interface SessionActivityState {
   readonly logs: SessionActivity[];
   readonly pageable: Pageable;
   readonly loading: boolean;
-  readonly error?: any;
+  readonly error?: string;
 }
 
 export enum SessionActivityAction {

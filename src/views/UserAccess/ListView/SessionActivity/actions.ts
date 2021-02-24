@@ -1,6 +1,7 @@
 import { actionSpreader } from '#store/helpers';
 import { ResponseObj } from '#utils/globalTypes';
-import { SessionActivityAction, SessionActivity } from './types';
+
+import { SessionActivity, SessionActivityAction } from './types';
 
 export const fetchSessionActivities = (
   payload?: Record<string, string | number>,
@@ -18,5 +19,5 @@ export const fetchSessionActivitiesSuccess = ({
     pageable,
   });
 
-export const fetchSessionActivitiesError = (error: any) =>
+export const fetchSessionActivitiesError = (error: string) =>
   actionSpreader(SessionActivityAction.FETCH_SESSION_ACTIVITY_ERROR, { error });

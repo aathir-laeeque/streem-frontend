@@ -1,23 +1,24 @@
-import React, { FC, useEffect } from 'react';
-import { groupBy } from 'lodash';
-import moment from 'moment';
 import cleenLogo from '#assets/images/cleen.png';
 import { useTypedSelector } from '#store';
-import { useDispatch } from 'react-redux';
-import { LoadingDiv, styles } from './styles';
 import {
+  Document,
+  Image,
   Page,
+  PDFViewer,
   Text,
   View,
-  Document,
-  PDFViewer,
-  Image,
 } from '@react-pdf/renderer';
+import { groupBy } from 'lodash';
+import moment from 'moment';
+import React, { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+
+import { fetchSessionActivities } from '../ListView/SessionActivity/actions';
 import {
   SessionActivity as SessionActivityType,
   SessionActivitySeverity,
 } from '../ListView/SessionActivity/types';
-import { fetchSessionActivities } from '../ListView/SessionActivity/actions';
+import { LoadingDiv, styles } from './styles';
 
 const now = moment().format('Do MMM, YYYY, hh:mm a');
 
@@ -41,7 +42,7 @@ const MyPrintSessionActivity: FC = () => {
   if (!logs || logs.length === 0 || !profile) return null;
 
   const grouped = groupBy(logs, 'triggeredOn');
-  const data = [] as Record<string, string | SessionActivityType[]>[];
+  const data: { [x: string]: SessionActivityType[] | string }[] = [];
 
   Object.keys(grouped).forEach((item) => {
     data.push({
@@ -75,7 +76,8 @@ const MyPrintSessionActivity: FC = () => {
             {data.map((item) => {
               const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
               let criticalCount = 0;
-              item[item.id].forEach((element: SessionActivityType) => {
+              const itemId = item.id as string;
+              (item[itemId] as SessionActivityType[]).forEach((element) => {
                 if (element.severity === SessionActivitySeverity.CRITICAL)
                   criticalCount++;
               });
@@ -85,7 +87,7 @@ const MyPrintSessionActivity: FC = () => {
                   <View style={styles.logHeader}>
                     <Text style={styles.headerItemText}>{day}</Text>
                     <Text style={styles.headerItemText}>
-                      {item[item.id].length} activities
+                      {item[itemId].length} activities
                     </Text>
                     {criticalCount !== 0 && (
                       <>
@@ -97,7 +99,7 @@ const MyPrintSessionActivity: FC = () => {
                     )}
                   </View>
                   <View style={styles.logRow}>
-                    {item[item.id].map((log: SessionActivityType) => (
+                    {(item[itemId] as SessionActivityType[]).map((log) => (
                       <View style={styles.logItem} key={`${log.id}`}>
                         <View style={styles.circle} />
                         <View style={styles.content} wrap={false}>

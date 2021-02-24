@@ -35,7 +35,8 @@ export const request = async (
     })
     .catch((error) => {
       console.error('Error in axios Request :', error);
-    });
+      // TODO Make request return given type and remove this any.
+    }) as any;
 };
 
 // TODO Migrate All Sgag's to Use this and Handle Multiple Errors.

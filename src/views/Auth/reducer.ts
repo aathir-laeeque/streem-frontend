@@ -8,7 +8,6 @@ const initialState: AuthState = {
   accessToken: '',
   refreshToken: '',
   loading: false,
-  error: undefined,
   facilities: [],
 };
 

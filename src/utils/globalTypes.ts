@@ -1,4 +1,5 @@
-import { ValidationRules } from 'react-hook-form';
+import { Validate } from 'react-hook-form';
+
 export interface Pageable {
   page: number;
   pageSize: number;
@@ -24,13 +25,10 @@ export enum ACTIVITY_SELECTIONS {
   NOT_SELECTED = 'NOT_SELECTED',
 }
 
-export type ValidatorProps = Record<
-  string,
-  {
-    functions: ValidationRules['validate'];
-    messages: Record<string, string>;
-  }
->;
+export type ValidatorProps = {
+  functions: Record<string, Validate>;
+  messages: Record<string, string>;
+};
 
 // CHECKLIST_NOT_FOUND("E101", "Checklist Not Found"),
 

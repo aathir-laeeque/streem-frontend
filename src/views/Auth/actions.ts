@@ -1,5 +1,8 @@
 import { actionSpreader } from '#store';
 import { User } from '#store/users/types';
+import { PasswordRequestInputs } from '#views/Profile/AccountSecurity';
+import { EditUserRequestInputs } from '#views/UserAccess/EditUser';
+
 import {
   AuthAction,
   LoginResponse,
@@ -55,7 +58,10 @@ export const fetchProfileSuccess = (data: User) =>
   actionSpreader(AuthAction.FETCH_PROFILE_SUCCESS, data);
 
 export const updateProfile = (payload: {
-  body: Record<string, any>;
+  body: {
+    firstName: string;
+    lastName: string;
+  };
   id: User['id'];
 }) => actionSpreader(AuthAction.UPDATE_PROFILE, payload);
 
@@ -63,12 +69,15 @@ export const updateProfileSuccess = (data: User) =>
   actionSpreader(AuthAction.UPDATE_PROFILE_SUCCESS, data);
 
 export const updateUserProfile = (payload: {
-  body: Record<string, any>;
+  body: Omit<EditUserRequestInputs, 'roles' | 'facilities'> & {
+    roles: { id: string }[];
+    facilities: { id: string }[];
+  };
   id: User['id'];
 }) => actionSpreader(AuthAction.UPDATE_USER_PROFILE, payload);
 
 export const updatePassword = (payload: {
-  body: Record<string, any>;
+  body: PasswordRequestInputs;
   id: User['id'];
 }) => actionSpreader(AuthAction.UPDATE_PASSWORD, payload);
 
@@ -95,7 +104,7 @@ export const resetPassword = (payload: {
 export const resetPasswordSuccess = () =>
   actionSpreader(AuthAction.RESET_PASSWORD_SUCCESS);
 
-export const resetPasswordError = (error: any) =>
+export const resetPasswordError = (error: string) =>
   actionSpreader(AuthAction.RESET_PASSWORD_ERROR, error);
 
 export const resetError = () => actionSpreader(AuthAction.RESET_ERROR);

@@ -25,7 +25,7 @@ const Login: FC<LoginProps> = () => {
     criteriaMode: 'all',
   });
 
-  const validators: ValidatorProps = {
+  const validators: Record<string, ValidatorProps> = {
     common: {
       functions: {
         resetError: (value: string) => {

@@ -25,7 +25,7 @@ import { startCase, toLower } from 'lodash';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { FilterField } from '#utils/globalTypes';
 
-export function modalBody(user: User, text: string): any {
+export function modalBody(user: User, text: string) {
   return (
     <div className="body-content" style={{ textAlign: 'left' }}>
       {text}

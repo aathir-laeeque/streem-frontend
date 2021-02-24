@@ -1,8 +1,9 @@
 import { Button, Card, LabeledInput } from '#components';
 import { useTypedSelector } from '#store';
+import { ValidatorProps } from '#utils/globalTypes';
 import { Visibility } from '@material-ui/icons';
 import React, { FC, useEffect, useState } from 'react';
-import { useForm, ValidationRules } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
 import { checkTokenExpiry, resetError, resetPassword } from '../actions';
@@ -13,11 +14,6 @@ import { ResetPasswordProps } from './types';
 type Inputs = {
   newPassword: string;
 };
-
-interface ValidatorProps {
-  functions: ValidationRules['validate'];
-  messages: Record<string, string>;
-}
 
 const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
   const { register, handleSubmit, trigger, errors, formState } = useForm<

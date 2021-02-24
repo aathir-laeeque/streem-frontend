@@ -1,17 +1,18 @@
 import { Button, Card, LabeledInput } from '#components';
+import { useTypedSelector } from '#store';
 import { apiCheckUsername } from '#utils/apiUrls';
+import { ValidatorProps } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { Visibility } from '@material-ui/icons';
 import { Link } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
-import { useForm, ValidationRules } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
 import { checkTokenExpiry, register as registerAction } from '../actions';
 import InvalidToken from '../InvalidToken';
-import { RegisterProps } from './types';
-import { useTypedSelector } from '#store';
 import { TokenTypes } from '../types';
+import { RegisterProps } from './types';
 
 type Inputs = {
   fullName: string;
@@ -19,11 +20,6 @@ type Inputs = {
   password: string;
   username: string;
 };
-
-interface ValidatorProps {
-  functions: ValidationRules['validate'];
-  messages: Record<string, string>;
-}
 
 const validators: ValidatorProps = {
   functions: {
@@ -144,12 +140,12 @@ const Register: FC<RegisterProps> = ({ name, email, token }) => {
                 message: 'Invalid Username',
               },
               validate: async (value) => {
-                const { errors } = await request(
+                const res = await request(
                   'GET',
                   apiCheckUsername(value.toLowerCase()),
                 );
-                if (errors?.length)
-                  return errors?.[0]?.message || 'Username Already Taken';
+                if (res?.errors?.length)
+                  return res?.errors?.[0]?.message || 'Username Already Taken';
                 return true;
               },
             })}

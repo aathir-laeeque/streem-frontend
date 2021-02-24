@@ -1,47 +1,48 @@
-import React, { FC, useEffect, useState } from 'react';
 import {
   Button,
-  Role,
-  HeaderWithBack,
   Checkbox,
+  HeaderWithBack,
   LabeledInput,
+  Role,
 } from '#components';
-import { fetchFacilities } from '#store/facilities/actions';
-import { useForm } from 'react-hook-form';
-import { capitalize, size, noop, pickBy, identity } from 'lodash';
-import { useDispatch } from 'react-redux';
-import { useTypedSelector } from '#store';
-import { navigate } from '@reach/router';
-import { Composer } from './styles';
-import { ViewUserProps } from './types';
-import { permissions, roles } from '../AddUser/temp';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission from '#services/uiPermissions';
+import { useTypedSelector } from '#store';
+import { fetchFacilities } from '#store/facilities/actions';
+import { Facilities } from '#store/facilities/types';
+import { fetchSelectedUser } from '#store/users/actions';
+import { User } from '#store/users/types';
+import { apiCheckEmail } from '#utils/apiUrls';
+import { request } from '#utils/request';
+import { updateUserProfile } from '#views/Auth/actions';
+import { navigate } from '@reach/router';
+import { capitalize, identity, noop, pickBy, size } from 'lodash';
+import React, { FC, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+
 import {
   archiveUser,
   cancelInvite,
   resendInvite,
   unArchiveUser,
 } from '../actions';
-import { updateUserProfile } from '#views/Auth/actions';
-import { fetchSelectedUser } from '#store/users/actions';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
-import { User } from '#store/users/types';
+import { permissions, roles } from '../AddUser/temp';
 import { modalBody } from '../ListView/TabContent';
-import { apiCheckEmail } from '#utils/apiUrls';
-import { request } from '#utils/request';
-import { Facilities } from '#store/facilities/types';
 import { RoleType } from '../types';
+import { Composer } from './styles';
+import { ViewUserProps } from './types';
 
-type Inputs = {
+export type EditUserRequestInputs = {
   firstName: string;
   lastName: string;
   username: string;
   employeeId: string;
   email: string;
   department: string;
-  roles: any[];
-  facilities: any[];
+  roles: Array<boolean | string>;
+  facilities: Array<boolean | string>;
 };
 
 // TODO Make Facilities Multi Checkable and Showable like Roles
@@ -63,7 +64,7 @@ const EditUser: FC<{
 }) => {
   const dispatch = useDispatch();
   const { register, handleSubmit, errors, formState, reset, watch } = useForm<
-    Inputs
+    EditUserRequestInputs
   >({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -87,24 +88,24 @@ const EditUser: FC<{
     },
   });
 
-  const { roles: rolesValues, email } = watch(['roles', 'email']);
+  const { roles: rolesValues } = watch(['roles']);
 
   useEffect(() => {
     document.getElementById('firstName')?.focus();
   }, []);
 
-  const onSubmit = (payload: Inputs) => {
+  const onSubmit = (payload: EditUserRequestInputs) => {
     const parsedRoles: { id: string }[] = [];
-    payload.roles.forEach((r) => {
-      if (r !== false) parsedRoles.push({ id: r });
+    payload.roles.forEach((role) => {
+      if (typeof role === 'string') parsedRoles.push({ id: role });
     });
     const parsedFacilities: { id: string }[] = [];
-    payload.facilities.forEach((r) => {
-      if (r !== false) parsedFacilities.push({ id: r });
+    payload.facilities.forEach((facility) => {
+      if (typeof facility === 'string') parsedFacilities.push({ id: facility });
     });
     if (selectedUser?.id) {
       reset({
-        ...selectedUser,
+        ...((selectedUser as unknown) as EditUserRequestInputs),
         ...pickBy(payload, identity),
       });
       dispatch(
@@ -236,12 +237,14 @@ const EditUser: FC<{
                   },
                   validate: async (value) => {
                     if (selectedUser.email === value) return true;
-                    const { errors } = await request(
+                    const res = await request(
                       'GET',
                       apiCheckEmail(value.toLowerCase()),
                     );
-                    if (errors?.length)
-                      return errors?.[0]?.message || 'Email ID already exists';
+                    if (res?.errors?.length)
+                      return (
+                        res?.errors?.[0]?.message || 'Email ID already exists'
+                      );
                     return true;
                   },
                 })}

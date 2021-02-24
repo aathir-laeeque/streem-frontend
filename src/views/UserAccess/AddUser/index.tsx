@@ -1,31 +1,32 @@
-import React, { FC, useEffect } from 'react';
 import {
   Button,
-  LabeledInput,
   Checkbox,
-  Role,
   HeaderWithBack,
+  LabeledInput,
+  Role,
 } from '#components';
+import { useTypedSelector } from '#store';
+import { fetchFacilities } from '#store/facilities/actions';
 import { apiCheckEmail, apiCheckEmployeeId } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { fetchFacilities } from '#store/facilities/actions';
-import { useDispatch } from 'react-redux';
-import { useTypedSelector } from '#store';
 import { navigate } from '@reach/router';
-import { Composer } from './styles';
-import { AddUserProps } from './types';
-import { permissions, roles } from './temp';
+import React, { FC, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { addUser } from '../actions';
+import { useDispatch } from 'react-redux';
 
-type Inputs = {
+import { addUser } from '../actions';
+import { Composer } from './styles';
+import { permissions, roles } from './temp';
+import { AddUserProps } from './types';
+
+type AddUserRequest = {
   firstName: string;
   lastName: string;
   employeeId: string;
   email: string;
   department: string;
-  roles: any[];
-  facilities: any[];
+  roles: Array<boolean | string>;
+  facilities: Array<boolean | string>;
 };
 
 // TODO Make Facilities Multi Checkable and Showable like Roles
@@ -34,7 +35,9 @@ const AddUser: FC<AddUserProps> = () => {
   const dispatch = useDispatch();
   const { list, loading } = useTypedSelector((state) => state.facilities);
 
-  const { register, handleSubmit, errors, formState, watch } = useForm<Inputs>({
+  const { register, handleSubmit, errors, formState, watch } = useForm<
+    AddUserRequest
+  >({
     mode: 'onChange',
     criteriaMode: 'all',
   });
@@ -46,14 +49,14 @@ const AddUser: FC<AddUserProps> = () => {
     document.getElementById('firstName')?.focus();
   }, []);
 
-  const onSubmit = (data: Inputs) => {
+  const onSubmit = (data: AddUserRequest) => {
     const parsedRoles: { id: string }[] = [];
-    data.roles.forEach((r) => {
-      if (r !== false) parsedRoles.push({ id: r });
+    data.roles.forEach((role) => {
+      if (typeof role === 'string') parsedRoles.push({ id: role });
     });
     const parsedFacilities: { id: string }[] = [];
-    data.facilities.forEach((r) => {
-      if (r !== false) parsedFacilities.push({ id: r });
+    data.facilities.forEach((facility) => {
+      if (typeof facility === 'string') parsedFacilities.push({ id: facility });
     });
     const payload = {
       ...data,
@@ -118,13 +121,11 @@ const AddUser: FC<AddUserProps> = () => {
                     message: "Shouldn't be greater than 45 characters.",
                   },
                   validate: async (value) => {
-                    const { errors } = await request(
-                      'GET',
-                      apiCheckEmployeeId(value),
-                    );
-                    if (errors?.length)
+                    const res = await request('GET', apiCheckEmployeeId(value));
+                    if (res?.errors?.length)
                       return (
-                        errors?.[0]?.message || 'Employee ID already exists'
+                        res?.errors?.[0]?.message ||
+                        'Employee ID already exists'
                       );
                     return true;
                   },
@@ -144,12 +145,11 @@ const AddUser: FC<AddUserProps> = () => {
                     message: 'Invalid email address',
                   },
                   validate: async (value) => {
-                    const { errors } = await request(
-                      'GET',
-                      apiCheckEmail(value),
-                    );
-                    if (errors?.length)
-                      return errors?.[0]?.message || 'Email ID already exists';
+                    const res = await request('GET', apiCheckEmail(value));
+                    if (res?.errors?.length)
+                      return (
+                        res?.errors?.[0]?.message || 'Email ID already exists'
+                      );
                     return true;
                   },
                 })}

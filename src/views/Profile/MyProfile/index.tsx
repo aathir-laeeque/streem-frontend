@@ -25,6 +25,7 @@ type InitialState = {
   rolePlaceholder: string;
   selectedRoles: RoleType[];
 };
+
 type AccumulatorType = Pick<InitialState, 'selectedRoles'> & {
   rolePlaceholder: string[];
 };

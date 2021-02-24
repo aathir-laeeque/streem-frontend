@@ -1,52 +1,53 @@
-import {
-  apiLogin,
-  apiGetUser,
-  apiRegister,
-  apiLogOut,
-  apiForgotPassword,
-  apiResetPassword,
-  apiUpdateUserBasic,
-  apiUpdatePassword,
-  apiCheckTokenExpiry,
-} from '#utils/apiUrls';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
-import { ResponseObj } from '#utils/globalTypes';
-import { getErrorMsg, handleCatch, request } from '#utils/request';
+import { closeAllOverlayAction } from '#components/OverlayContainer/actions';
+import { RootState } from '#store';
+import { fetchSelectedUserSuccess } from '#store/users/actions';
 import { User } from '#store/users/types';
 import {
-  login,
-  logOutSuccess,
-  loginSuccess,
-  loginError,
+  apiCheckTokenExpiry,
+  apiForgotPassword,
+  apiGetUser,
+  apiLogin,
+  apiLogOut,
+  apiRegister,
+  apiResetPassword,
+  apiUpdatePassword,
+  apiUpdateUserBasic,
+} from '#utils/apiUrls';
+import { removeAuthHeader, setAuthHeader } from '#utils/axiosClient';
+import { LoginErrorCodes } from '#utils/constants';
+import { ResponseObj } from '#utils/globalTypes';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
+import { navigate } from '@reach/router';
+import { call, put, select, takeLeading } from 'redux-saga/effects';
+
+import { persistor } from '../../App';
+import {
+  checkTokenExpiry,
+  checkTokenExpirySuccess,
+  cleanUp,
   fetchProfile,
   fetchProfileSuccess,
-  register,
-  updateProfile,
-  updateProfileSuccess,
   forgotPassword,
   forgotPasswordSuccess,
+  login,
+  loginError,
+  loginSuccess,
+  logOutSuccess,
+  register,
   resetPassword,
   resetPasswordError,
   resetPasswordSuccess,
   updatePassword,
+  updateProfile,
+  updateProfileSuccess,
   updateUserProfile,
-  checkTokenExpiry,
-  checkTokenExpirySuccess,
-  cleanUp,
 } from './actions';
-import { persistor } from '../../App';
-
-import { call, put, select, takeLeading } from 'redux-saga/effects';
 import { AuthAction, LoginResponse } from './types';
-import { LoginErrorCodes } from '#utils/constants';
-import { setAuthHeader, removeAuthHeader } from '#utils/axiosClient';
-import { navigate } from '@reach/router';
-import { fetchSelectedUserSuccess } from '#store/users/actions';
-import { closeAllOverlayAction } from '#components/OverlayContainer/actions';
 
-const getUserId = (state: any) => state.auth.userId;
-const getIsLoggedIn = (state: any) => state.auth.isLoggedIn;
+const getUserId = (state: RootState) => state.auth.userId;
+const getIsLoggedIn = (state: RootState) => state.auth.isLoggedIn;
 
 function* loginSaga({ payload }: ReturnType<typeof login>) {
   try {

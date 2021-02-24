@@ -1,23 +1,19 @@
-import { Button, LabeledInput } from '#components';
-import { useTypedSelector } from '#store';
-import { updatePassword, updateProfile } from '#views/Auth/actions';
 import { Visibility } from '@material-ui/icons';
+import { Button, LabeledInput } from '#components';
 import React, { FC, useEffect, useState } from 'react';
-import { useForm, ValidationRules } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { useTypedSelector } from '#store';
+import { ValidatorProps } from '#utils/globalTypes';
+import { updatePassword } from '#views/Auth/actions';
 
 import { Composer } from './styles';
 import { AccountSecurityProps } from './types';
 
-type Inputs = {
+export type PasswordRequestInputs = {
   oldPassword: string;
   newPassword: string;
 };
-
-interface ValidatorProps {
-  functions: ValidationRules['validate'];
-  messages: Record<string, string>;
-}
 
 const validators: ValidatorProps = {
   functions: {
@@ -43,7 +39,7 @@ const AccountSecurity: FC<AccountSecurityProps> = () => {
   const [newPasswordInputType, setNewPasswordInputType] = useState(true);
   const { profile } = useTypedSelector((state) => state.auth);
   const { register, handleSubmit, errors, formState, trigger, reset } = useForm<
-    Inputs
+    PasswordRequestInputs
   >({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -55,13 +51,14 @@ const AccountSecurity: FC<AccountSecurityProps> = () => {
     trigger('newPassword');
   }, []);
 
-  const onSubmit = (data: Inputs) => {
+  const onSubmit = (data: PasswordRequestInputs) => {
     const payload = {
       oldPassword: data?.oldPassword,
       newPassword: data?.newPassword,
-      token: null,
+      // token: null,
     };
-    dispatch(updatePassword({ body: payload, id: profile?.id || 0 }));
+    if (profile?.id)
+      dispatch(updatePassword({ body: payload, id: profile.id.toString() }));
     reset();
   };
 
