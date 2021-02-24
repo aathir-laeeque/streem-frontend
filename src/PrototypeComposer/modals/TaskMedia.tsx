@@ -29,7 +29,7 @@ const Wrapper = styled.div`
           flex: 2;
           justify-content: center;
           max-width: 600px;
-          max-height: 400px;
+          max-height: 90%;
 
           img {
             height: 100%;
@@ -158,15 +158,17 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
               </Button1>
             </div>
 
-            <div
-              className="delete-media"
-              onClick={() => {
-                dispatch(removeTaskMedia(taskId, mediaDetails?.id));
-              }}
-            >
-              <Delete className="icon" />
-              Delete
-            </div>
+            {mediaDetails?.id && (
+              <div
+                className="delete-media"
+                onClick={() => {
+                  dispatch(removeTaskMedia(taskId, mediaDetails.id));
+                }}
+              >
+                <Delete className="icon" />
+                Delete
+              </div>
+            )}
           </div>
         </div>
       </BaseModal>
