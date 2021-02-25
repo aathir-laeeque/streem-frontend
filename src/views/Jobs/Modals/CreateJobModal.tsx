@@ -56,6 +56,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   props: { properties, onCreateJob, selectedChecklist },
 }) => {
   const [jobDetails, setJobDetails] = useState<Record<string, string>>({});
+  const [isSelected, setIsSelected] = useState(false);
 
   const { checklists, pageable } = useTypedSelector(
     (state) => state.checklistListView,
@@ -95,6 +96,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   const rowSelected = (checklist: Checklist) => {
     setSearchQuery(checklist.name);
     setShowChecklists(false);
+    setIsSelected(true);
     onInputChange('checklistId', checklist.id);
   };
 
@@ -128,7 +130,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               )
             : properties.some(
                 (property) => property.mandatory && !jobDetails[property.name],
-              ) || !searchQuery
+              ) || !isSelected
         }
       >
         {(selectedChecklist && (
@@ -152,7 +154,10 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               executeOnBlur={() =>
                 setTimeout(() => setShowChecklists(false), 200)
               }
-              onChange={(id, value) => setSearchQuery(value)}
+              onChange={(id, value) => {
+                setIsSelected(false);
+                setSearchQuery(value);
+              }}
               required
               isSearch
             />
