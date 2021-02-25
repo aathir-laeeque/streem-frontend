@@ -13,7 +13,7 @@ export interface Pageable {
 
 export type ResponseError = {
   code: string;
-  field: any;
+  field: string;
   ignore: string;
   message: string;
   timestamp: number;
