@@ -15,7 +15,6 @@ export type Assignee = Pick<
   'employeeId' | 'firstName' | 'id' | 'lastName'
 > & {
   jobId: string;
-  userId: string;
 };
 
 type JobProperties = {
