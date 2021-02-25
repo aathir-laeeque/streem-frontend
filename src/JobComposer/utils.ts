@@ -38,7 +38,7 @@ export const groupJobErrors = (errors: Error[]) =>
     },
   );
 
-type GetStageArgs = {
+type GetStageType = {
   checklist: Checklist;
   setActiveStage?: boolean;
 };
@@ -46,7 +46,7 @@ type GetStageArgs = {
 export const getStages = ({
   checklist,
   setActiveStage = false,
-}: GetStageArgs) => {
+}: GetStageType) => {
   const stagesById: StagesById = {},
     stagesOrder: StagesOrder = [];
 
@@ -69,7 +69,7 @@ export const getStages = ({
   };
 };
 
-type GetTasksArgs = {
+type GetTasksType = {
   checklist: Checklist;
   setActiveTask?: boolean;
 };
@@ -77,7 +77,7 @@ type GetTasksArgs = {
 export const getTasks = ({
   checklist,
   setActiveTask = false,
-}: GetTasksArgs) => {
+}: GetTasksType) => {
   const tasksById: TasksById = {},
     tasksOrderInStage: TasksOrderInStage = {};
 
@@ -120,11 +120,11 @@ export const getTasks = ({
   };
 };
 
-type GetActivitiesArgs = {
+type GetActivitiesType = {
   checklist: Checklist;
 };
 
-export const getActivities = ({ checklist }: GetActivitiesArgs) => {
+export const getActivities = ({ checklist }: GetActivitiesType) => {
   const activitiesById: ActivitiesById = {},
     activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage = {};
 

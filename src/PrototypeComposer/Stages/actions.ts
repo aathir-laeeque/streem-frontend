@@ -3,7 +3,7 @@ import { Error } from '#utils/globalTypes';
 import { actionSpreader } from '../../store/helpers';
 import { Stage } from '../checklist.types';
 import { StageListActions } from './reducer.types';
-import { ReOrderArgs } from './types';
+import { ReOrderType } from './types';
 
 // add new stage actions
 export const addNewStage = () => actionSpreader(StageListActions.ADD_NEW_STAGE);
@@ -21,7 +21,7 @@ export const deleteStage = ({ id }: Pick<Stage, 'id'>) =>
 export const deleteStageError = (error: any) =>
   actionSpreader(StageListActions.DELETE_STAGE_ERROR, { error });
 
-type deleteStageSuccessArgs = {
+type deleteStageSuccessType = {
   id: Stage['id'];
   newOrderMap?: Record<string, number>;
 };
@@ -29,7 +29,7 @@ type deleteStageSuccessArgs = {
 export const deleteStageSuccess = ({
   id,
   newOrderMap,
-}: deleteStageSuccessArgs) =>
+}: deleteStageSuccessType) =>
   actionSpreader(StageListActions.DELETE_STAGE_SUCCESS, { id, newOrderMap });
 
 // duplicate stage actions
@@ -43,13 +43,13 @@ export const duplicateStageSuccess = ({ id }: Pick<Stage, 'id'>) =>
   actionSpreader(StageListActions.DUPLICATE_STAGE_SUCCESS, { id });
 
 // reorder stage actions
-export const reOrderStage = ({ from, id, to }: ReOrderArgs) =>
+export const reOrderStage = ({ from, id, to }: ReOrderType) =>
   actionSpreader(StageListActions.REORDER_STAGE, { from, id, to });
 
 export const reOrderStageError = (error: any) =>
   actionSpreader(StageListActions.REORDER_STAGE_ERROR, { error });
 
-export const reOrderStageSuccess = ({ from, id, to }: ReOrderArgs) =>
+export const reOrderStageSuccess = ({ from, id, to }: ReOrderType) =>
   actionSpreader(StageListActions.REORDER_STAGE_SUCCESS, { from, id, to });
 
 // set active stage action

@@ -4,9 +4,9 @@ import { useDispatch } from 'react-redux';
 
 import { useTypedSelector } from '../helpers';
 import { fetchProperties } from './actions';
-import { usePropertiesArgs } from './types';
+import { usePropertiesType } from './types';
 
-export const useProperties = ({ entity }: usePropertiesArgs) => {
+export const useProperties = ({ entity }: usePropertiesType) => {
   const properties = useTypedSelector((state) => state.properties[entity]);
 
   const dispatch = useDispatch();

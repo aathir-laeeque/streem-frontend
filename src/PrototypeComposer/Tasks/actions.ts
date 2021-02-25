@@ -3,15 +3,15 @@ import { Error } from '#utils/globalTypes';
 
 import { Stage, Task } from '../checklist.types';
 import { TaskListActions } from './reducer.types';
-import { AddMediaArgs, AddNewTaskArgs, SetTaskTimerArgs } from './types';
+import { AddMediaType, AddNewTaskType, SetTaskTimerType } from './types';
 
-export const addNewTask = ({ checklistId, stageId }: AddNewTaskArgs) =>
+export const addNewTask = ({ checklistId, stageId }: AddNewTaskType) =>
   actionSpreader(TaskListActions.ADD_NEW_TASK, { checklistId, stageId });
 
 export const addNewTaskSuccess = (newTask: Task, stageId: Stage['id']) =>
   actionSpreader(TaskListActions.ADD_NEW_TASK_SUCCESS, { newTask, stageId });
 
-export const addTaskMedia = ({ mediaDetails, taskId }: AddMediaArgs) =>
+export const addTaskMedia = ({ mediaDetails, taskId }: AddMediaType) =>
   actionSpreader(TaskListActions.ADD_TASK_MEDIA, { mediaDetails, taskId });
 
 export const addStop = (taskId: Task['id']) =>
@@ -40,8 +40,8 @@ export const setActiveTask = (taskId: Task['id']) =>
 export const setTaskError = (error: any) =>
   actionSpreader(TaskListActions.SET_TASK_ERROR, { error });
 
-export const setTaskTimer = (setTimerArgs: SetTaskTimerArgs) =>
-  actionSpreader(TaskListActions.SET_TASK_TIMER, { ...setTimerArgs });
+export const setTaskTimer = (setTimerType: SetTaskTimerType) =>
+  actionSpreader(TaskListActions.SET_TASK_TIMER, { ...setTimerType });
 
 export const removeTaskTimer = (taskId: Task['id']) =>
   actionSpreader(TaskListActions.REMOVE_TASK_TIMER, { taskId });

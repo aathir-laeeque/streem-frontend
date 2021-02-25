@@ -1,14 +1,14 @@
 import { actionSpreader } from '#store/helpers';
 
 import {
-  fetchArgs,
-  fetchSuccessArgs,
+  fetchType,
+  fetchSuccessType,
   User,
   UsersAction,
   UserState,
 } from './types';
 
-export const fetch = ({ initialCall, params, type }: fetchArgs) =>
+export const fetch = ({ initialCall, params, type }: fetchType) =>
   actionSpreader(UsersAction.FETCH_USERS, { params, type, initialCall });
 
 export const fetchOngoing = () =>
@@ -21,7 +21,7 @@ export const fetchSuccess = ({
   data: { list, pageable },
   type,
   initialCall,
-}: fetchSuccessArgs) =>
+}: fetchSuccessType) =>
   actionSpreader(UsersAction.FETCH_USERS_SUCCESS, {
     list,
     pageable,

@@ -3,28 +3,28 @@ import { Error } from '#utils/globalTypes';
 
 import { Activity } from '../checklist.types';
 import { ActivityListActions } from './reducer.types';
-import { AddNewActivityArgs, DeleteActivityArgs } from './types';
+import { AddNewActivityType, DeleteActivityType } from './types';
 
-export const addNewActivity = (params: AddNewActivityArgs) =>
+export const addNewActivity = (params: AddNewActivityType) =>
   actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY, { ...params });
 
 export const addNewActivityError = (error: any) =>
   actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY_ERROR, { error });
 
 export const addNewActivitySuccess = (
-  params: Pick<AddNewActivityArgs, 'stageId' | 'taskId'> & {
+  params: Pick<AddNewActivityType, 'stageId' | 'taskId'> & {
     activity: Activity;
   },
 ) =>
   actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY_SUCCESS, { ...params });
 
-export const deleteActivity = (params: DeleteActivityArgs) =>
+export const deleteActivity = (params: DeleteActivityType) =>
   actionSpreader(ActivityListActions.DELETE_ACTIVITY, { ...params });
 
 export const deleteActivityError = (error: any) =>
   actionSpreader(ActivityListActions.DELETE_ACTIVITY_ERROR, { error });
 
-export const deleteActivitySuccess = (params: DeleteActivityArgs) =>
+export const deleteActivitySuccess = (params: DeleteActivityType) =>
   actionSpreader(ActivityListActions.DELETE_ACTIVITY_SUCCESS, { ...params });
 
 export const updateActivity = (activity: Activity) =>

@@ -1,11 +1,11 @@
 import { actionSpreader } from '../helpers';
 import {
-  fetchPropertiesArgs,
-  fetchPropertiesSuccessArgs,
+  fetchPropertiesType,
+  fetchPropertiesSuccessType,
   PropertiesAction,
 } from './types';
 
-export const fetchProperties = ({ type }: fetchPropertiesArgs) =>
+export const fetchProperties = ({ type }: fetchPropertiesType) =>
   actionSpreader(PropertiesAction.FETCH_PROPERTIES, { type });
 
 export const fetchPropertiesOngoing = () =>
@@ -14,7 +14,7 @@ export const fetchPropertiesOngoing = () =>
 export const fetchPropertiesSuccess = ({
   data,
   type,
-}: fetchPropertiesSuccessArgs) =>
+}: fetchPropertiesSuccessType) =>
   actionSpreader(PropertiesAction.FETCH_PROPERTIES_SUCCESS, { data, type });
 
 export const fetchPropertiesError = (error: string) =>

@@ -6,7 +6,7 @@ import { fetch } from './actions';
 import {
   fetchUsersParams,
   UserState,
-  useUsersArgs,
+  useUsersType,
   useUsersReturnType,
 } from './types';
 
@@ -23,7 +23,7 @@ const defaultParams: fetchUsersParams = {
 const useUsers = ({
   userState = UserState.ACTIVE,
   params = defaultParams,
-}: useUsersArgs): useUsersReturnType => {
+}: useUsersType): useUsersReturnType => {
   const { pageable, users, usersById } = useTypedSelector(
     (state) => state.usersService[userState],
   );

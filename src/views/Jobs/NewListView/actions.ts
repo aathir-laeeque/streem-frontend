@@ -1,15 +1,15 @@
 import { Checklist } from '#PrototypeComposer/checklist.types';
 import { actionSpreader } from '#store/helpers';
 
-import { fetchJobsArgs, fetchJobsSuccessArgs, ListViewAction } from './types';
+import { fetchJobsType, fetchJobsSuccessType, ListViewAction } from './types';
 
-export const fetchJobs = (params: fetchJobsArgs) =>
+export const fetchJobs = (params: fetchJobsType) =>
   actionSpreader(ListViewAction.FETCH_JOBS, { params });
 
 export const fetchJobsOngoing = () =>
   actionSpreader(ListViewAction.FETCH_JOBS_ONGOING);
 
-export const fetchJobsSuccess = ({ data, pageable }: fetchJobsSuccessArgs) =>
+export const fetchJobsSuccess = ({ data, pageable }: fetchJobsSuccessType) =>
   actionSpreader(ListViewAction.FETCH_JOBS_SUCCESS, { data, pageable });
 
 export const fetchJobsError = (error: any) =>

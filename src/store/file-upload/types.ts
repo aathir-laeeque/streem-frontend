@@ -7,15 +7,15 @@ export enum FileUploadAction {
   RESET_FILE_UPLOAD = '@@file-upload-new/RESET_FILE_UPLOAD',
 }
 
-export type UploadFileArgs = {
+export type UploadFileType = {
   formData: FormData;
 };
 export type FileUploadState = {
-  data?: FileUploadSucessArgs;
+  data?: FileUploadSucessType;
   error?: string;
 };
 
-export type FileUploadSucessArgs = {
+export type FileUploadSucessType = {
   fileName: string;
   type: string;
   link: string;

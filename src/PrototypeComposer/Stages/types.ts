@@ -13,7 +13,7 @@ export type StageCardProps = {
   stage: Stage;
 };
 
-export type ReOrderArgs = {
+export type ReOrderType = {
   from: number;
   id: Stage['id'];
   to: number;

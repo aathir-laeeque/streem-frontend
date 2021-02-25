@@ -18,7 +18,7 @@ import {
 } from './actions';
 import { Author, FormMode, FormValues, NewPrototypeActions } from './types';
 
-type transformFormDataArgs = {
+type transformFormDataType = {
   data: FormValues;
   mode: FormMode;
   originalAuthors?: Author['id'][];
@@ -28,7 +28,7 @@ const transformFormData = ({
   data,
   mode,
   originalAuthors,
-}: transformFormDataArgs) => {
+}: transformFormDataType) => {
   const addAuthorIds: Author['id'][] = [],
     removeAuthorIds: Author['id'][] = [];
 

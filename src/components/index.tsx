@@ -11,7 +11,6 @@ export { Button, FlatButton, Button1 } from './shared/Button';
 export { CustomRoute } from './shared/CustomRoute';
 export { FloatInput } from './shared/FloatInput';
 export { Role } from './shared/Role';
-export { Thumbnail } from './shared/Thumbnail';
 export { LabeledInfo } from './shared/LabeledInfo';
 export { Terms } from './shared/Terms';
 export { Card } from './shared/Card';

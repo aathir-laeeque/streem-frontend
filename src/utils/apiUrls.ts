@@ -1,7 +1,7 @@
 import { Task } from '#JobComposer/checklist.types';
-import { AddNewActivityArgs } from '#PrototypeComposer/Activity/types';
+import { AddNewActivityType } from '#PrototypeComposer/Activity/types';
 import { Activity, Checklist, Stage } from '#PrototypeComposer/checklist.types';
-import { AddNewTaskArgs } from '#PrototypeComposer/Tasks/types';
+import { AddNewTaskType } from '#PrototypeComposer/Tasks/types';
 import { User } from '#store/users/types';
 import { Job } from '#views/Jobs/NewListView/types';
 
@@ -142,7 +142,7 @@ export const apiDeleteStage = (stageId: Stage['id']) =>
 export const apiUpdateStage = (stageId: Stage['id']) =>
   `${baseUrl}/stages/${stageId}`;
 
-export const apiCreateTask = ({ checklistId, stageId }: AddNewTaskArgs) =>
+export const apiCreateTask = ({ checklistId, stageId }: AddNewTaskType) =>
   `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks`;
 
 export const apiDeleteTask = (taskId: string) =>
@@ -152,7 +152,7 @@ export const apiAddNewActivity = ({
   checklistId,
   stageId,
   taskId,
-}: Omit<AddNewActivityArgs, 'activityType' | 'orderTree'>) =>
+}: Omit<AddNewActivityType, 'activityType' | 'orderTree'>) =>
   `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks/${taskId}/activities`;
 
 export const apiDeleteActivity = (activityId: Activity['id']) =>

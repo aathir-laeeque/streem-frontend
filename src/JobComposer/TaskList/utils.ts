@@ -1,7 +1,7 @@
 import { Stage, Task, TaskExecutionState } from '../checklist.types';
 import { TasksById, TasksOrderInStage } from './types';
 
-type ReEvaluateTaskWithStopArgs = {
+type ReEvaluateTaskWithStopType = {
   tasksById: TasksById;
   tasksOrderInStage: TasksOrderInStage;
 };
@@ -9,7 +9,7 @@ type ReEvaluateTaskWithStopArgs = {
 export const reEvaluateTaskWithStop = ({
   tasksById,
   tasksOrderInStage,
-}: ReEvaluateTaskWithStopArgs) => {
+}: ReEvaluateTaskWithStopType) => {
   const stageIds = Object.keys(tasksOrderInStage);
   console.log('came TO reevaluation');
 

@@ -3,7 +3,7 @@ import { noop } from 'lodash';
 import React, { ComponentPropsWithRef, forwardRef } from 'react';
 import styled, { css } from 'styled-components';
 
-type OnChangeArgs = {
+type OnChangeType = {
   name: string;
   value: string | number;
 };
@@ -19,7 +19,7 @@ type InputProps = {
   error?: boolean | string;
   label?: string;
   optional?: boolean;
-  onChange?: ({ name, value }: OnChangeArgs) => void;
+  onChange?: ({ name, value }: OnChangeType) => void;
 } & ComponentPropsWithRef<'input'>;
 
 type WrapperProps = {

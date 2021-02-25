@@ -5,7 +5,7 @@ export enum FileUploadAction {
   UPLOAD_FILE_SUCCESS = '@@file-upload/UPLOAD_FILE_SUCCESS',
 }
 
-export type UploadFileArgs = {
+export type UploadFileType = {
   formData: FormData;
   activity?: Activity;
   isCorrectingError: boolean;

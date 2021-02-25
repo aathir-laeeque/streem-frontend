@@ -35,7 +35,7 @@ export type PropertiesActionType = ReturnType<
   typeof fetchError | typeof fetchOngoing | typeof fetchSuccess
 >;
 
-export type fetchSuccessArgs = {
+export type fetchSuccessType = {
   data: Property[];
   entity: ComposerEntity;
 };

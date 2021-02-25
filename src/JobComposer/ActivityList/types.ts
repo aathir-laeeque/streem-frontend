@@ -36,7 +36,7 @@ export enum SupervisorResponse {
   REJECT = 'REJECT',
 }
 
-export type approveRejectActivityArgs = {
+export type approveRejectActivityType = {
   jobId: Job['id'];
   activityId: Activity['id'];
   type: SupervisorResponse;

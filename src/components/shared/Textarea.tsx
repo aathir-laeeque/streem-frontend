@@ -9,7 +9,7 @@ import React, {
 import { Error as ErrorIcon } from '@material-ui/icons';
 import styled, { css } from 'styled-components';
 
-type OnChangeArgs = {
+type OnChangeType = {
   name: string;
   value: string | number;
 };
@@ -19,7 +19,7 @@ type TextareaProps = {
   allowResize?: boolean;
   error?: boolean | string;
   label?: string;
-  onChange?: ({ name, value }: OnChangeArgs) => void;
+  onChange?: ({ name, value }: OnChangeType) => void;
   optional?: boolean;
 } & ComponentPropsWithRef<'textarea'>;
 

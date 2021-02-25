@@ -26,7 +26,7 @@ import { TabContentWrapper } from './styles';
 import {
   AssignedJobStates,
   CompletedJobStates,
-  fetchDataArgs,
+  fetchDataType,
   Job,
   JobStateType,
   UnassignedJobStates,
@@ -59,7 +59,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   const fetchData = ({
     page = DEFAULT_PAGE_NUMBER,
     size = DEFAULT_PAGE_SIZE,
-  }: fetchDataArgs = {}) => {
+  }: fetchDataType = {}) => {
     dispatch(
       fetchJobs({
         facilityId,
@@ -337,7 +337,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                   {
                     header: 'Assignees',
                     template: function renderComp(item: Job) {
-                      return <AssigneesColumn jobId={item.id} />;
+                      return <AssigneesColumn assignees={item.assignees} />;
                     },
                   },
                   {

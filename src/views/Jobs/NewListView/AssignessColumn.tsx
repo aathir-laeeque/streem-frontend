@@ -22,7 +22,7 @@ type Props = {
 const AssigneesColumn: FC<Props> = ({ assignees = [] }) => {
   return (
     <Wrapper>
-      {assignees.slice(0, 3).map((assignee) => (
+      {assignees.slice(0, 3).map((assignee: Assignee | User) => (
         <Avatar
           user={assignee}
           key={assignee.id}

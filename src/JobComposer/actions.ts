@@ -3,10 +3,10 @@ import { User } from '#store/users/types';
 import { Job } from '#views/Jobs/NewListView/types';
 
 import { ComposerAction } from './composer.reducer.types';
-import { Entity, FetchDataArgs } from './composer.types';
+import { Entity, FetchDataType } from './composer.types';
 import { ExceptionValues } from './modals/CompleteJobWithException';
 
-export const fetchData = ({ id, entity, setActive = false }: FetchDataArgs) =>
+export const fetchData = ({ id, entity, setActive = false }: FetchDataType) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA, { id, entity, setActive });
 
 export const fetchDataError = (error: any) =>
@@ -65,7 +65,7 @@ export const startJob = (jobId: Job['id']) =>
 export const startJobSuccess = () =>
   actionSpreader(ComposerAction.START_JOB_SUCCESS);
 
-type CompleteJobArgs = {
+type CompleteJobType = {
   jobId: Job['id'];
   withException?: boolean;
   values?: ExceptionValues;
@@ -82,7 +82,7 @@ export const completeJob = ({
   values,
   details,
   isInboxView,
-}: CompleteJobArgs) =>
+}: CompleteJobType) =>
   actionSpreader(ComposerAction.COMPLETE_JOB, {
     jobId,
     withException,
@@ -98,7 +98,7 @@ export const completeJobSuccess = (withException = false) =>
       : ComposerAction.COMPLETE_JOB_SUCCESS,
   );
 
-type GetSignOffStateArgs = {
+type GetSignOffStateType = {
   jobId: Job['id'];
   allowSignOff?: boolean;
 };
@@ -106,15 +106,15 @@ type GetSignOffStateArgs = {
 export const getSignOffState = ({
   jobId,
   allowSignOff = false,
-}: GetSignOffStateArgs) =>
+}: GetSignOffStateType) =>
   actionSpreader(ComposerAction.GET_SIGN_OFF_STATE, { jobId, allowSignOff });
 
-type signOffTasksArgs = {
+type signOffTasksType = {
   jobId: Job['id'];
   password: string;
 };
 
-export const signOffTasks = ({ jobId, password }: signOffTasksArgs) =>
+export const signOffTasks = ({ jobId, password }: signOffTasksType) =>
   actionSpreader(ComposerAction.SIGN_OFF_TASKS, { jobId, password });
 
 export const setSignOffError = (error: string) =>

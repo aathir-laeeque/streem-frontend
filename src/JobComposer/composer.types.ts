@@ -22,7 +22,7 @@ export type ComposerProps = RouteComponentProps<{
   entity: Entity;
 };
 
-export type FetchDataArgs = {
+export type FetchDataType = {
   id: Checklist['id'] | Job['id'];
   entity: Entity;
   setActive?: boolean;

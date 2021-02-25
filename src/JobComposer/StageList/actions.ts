@@ -6,7 +6,7 @@ import { TasksById } from '../TaskList/types';
 import { StageListAction } from './reducer.types';
 import { StageReports } from './types';
 
-type startPollActiveStageDataArgs = {
+type startPollActiveStageDataType = {
   jobId: Job['id'];
 };
 
@@ -24,7 +24,7 @@ export const setActiveStage = (id: Stage['id'], bringIntoView = false) =>
 
 export const startPollActiveStageData = ({
   jobId,
-}: startPollActiveStageDataArgs) =>
+}: startPollActiveStageDataType) =>
   actionSpreader(StageListAction.START_POLL_ACTIVE_STAGE_DATA, { jobId });
 
 export const stopPollActiveStageData = () =>

@@ -2,7 +2,7 @@ import { actionSpreader } from '#store';
 
 import { Activity } from '../checklist.types';
 import { ActivityListAction } from './reducer.types';
-import { SupervisorResponse, approveRejectActivityArgs } from './types';
+import { SupervisorResponse, approveRejectActivityType } from './types';
 
 export const executeActivity = (activity: Activity, reason?: string) =>
   actionSpreader(ActivityListAction.EXECUTE_ACTIVITY, { activity, reason });
@@ -23,7 +23,7 @@ export const approveRejectActivity = ({
   activityId,
   jobId,
   type,
-}: approveRejectActivityArgs) =>
+}: approveRejectActivityType) =>
   actionSpreader(
     type === SupervisorResponse.APPROVE
       ? ActivityListAction.APPROVE_ACTIVITY

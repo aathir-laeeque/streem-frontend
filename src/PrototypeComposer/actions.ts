@@ -5,33 +5,33 @@ import { ComposerAction } from './reducer.types';
 import { ComposerEntity } from './types';
 
 // BLOCK START : Actions related to composer data fetching
-type fetchDataArgs = {
+type fetchDataType = {
   id: Checklist['id'];
   entity: ComposerEntity;
 };
-export const fetchComposerData = ({ id, entity }: fetchDataArgs) =>
+export const fetchComposerData = ({ id, entity }: fetchDataType) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA, { id, entity });
 
-type fetchDataErrorArgs = {
+type fetchDataErrorType = {
   error: any;
 };
-export const fetchComposerDataError = ({ error }: fetchDataErrorArgs) =>
+export const fetchComposerDataError = ({ error }: fetchDataErrorType) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_ERROR, { error });
 
-type fetchDataOngoingArgs = {
+type fetchDataOngoingType = {
   entity: ComposerEntity;
 };
-export const fetchComposerDataOngoing = ({ entity }: fetchDataOngoingArgs) =>
+export const fetchComposerDataOngoing = ({ entity }: fetchDataOngoingType) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_ONGOING, { entity });
 
-type fetchDataSuccessArgs = {
+type fetchDataSuccessType = {
   data: Checklist;
   entity: ComposerEntity;
 };
 export const fetchComposerDataSuccess = ({
   data,
   entity,
-}: fetchDataSuccessArgs) =>
+}: fetchDataSuccessType) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_SUCCESS, { data, entity });
 
 export const resetComposer = () =>

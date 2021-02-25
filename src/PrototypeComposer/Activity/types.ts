@@ -17,7 +17,7 @@ export type ActivityProps = {
   taskId: Task['id'];
 };
 
-export type AddNewActivityArgs = {
+export type AddNewActivityType = {
   activityType: ActivityType;
   checklistId: Checklist['id'];
   orderTree: Activity['orderTree'];
@@ -25,7 +25,7 @@ export type AddNewActivityArgs = {
   taskId: Task['id'];
 };
 
-export type DeleteActivityArgs = {
+export type DeleteActivityType = {
   activityId: Activity['id'];
   taskId: Task['id'];
   stageId: Stage['id'];

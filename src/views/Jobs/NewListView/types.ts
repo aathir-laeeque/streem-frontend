@@ -10,6 +10,14 @@ import {
   fetchJobsSuccess,
 } from './actions';
 
+export type Assignee = Pick<
+  User,
+  'employeeId' | 'firstName' | 'id' | 'lastName'
+> & {
+  jobId: string;
+  userId: string;
+};
+
 type JobProperties = {
   [key: string]: string | null;
 };
@@ -28,7 +36,7 @@ export type Job = {
   state: JobStateType;
   totalTasks: number;
   name?: string;
-  assignees: User[];
+  assignees: Assignee[];
 };
 
 export type ListViewProps = RouteComponentProps;
@@ -81,19 +89,19 @@ export type ListViewActionType = ReturnType<
   | typeof fetchJobsSuccess
 >;
 
-export type fetchDataArgs = {
+export type fetchDataType = {
   page?: number;
   size?: number;
 };
 
-export type fetchJobsArgs = {
+export type fetchJobsType = {
   page: number;
   size: number;
   filters: string;
   sort: string;
 };
 
-export type fetchJobsSuccessArgs = {
+export type fetchJobsSuccessType = {
   data: Job[];
   pageable: Pageable;
 };

@@ -22,12 +22,12 @@ export type TaskMediasProps = {
   isActivity?: boolean;
 };
 
-export type AddNewTaskArgs = {
+export type AddNewTaskType = {
   checklistId: Checklist['id'];
   stageId: Stage['id'];
 };
 
-export type SetTaskTimerArgs = {
+export type SetTaskTimerType = {
   maxPeriod: number;
   minPeriod?: number;
   taskId: Task['id'];
@@ -40,7 +40,7 @@ export type MediaDetails = FileUploadData & {
   id: string;
 };
 
-export type AddMediaArgs = {
+export type AddMediaType = {
   mediaDetails: MediaDetails;
   taskId: Task['id'];
 };

@@ -86,7 +86,7 @@ export type UsersActionType = ReturnType<
   | typeof setSelectedUser
 >;
 
-export type useUsersArgs = {
+export type useUsersType = {
   userState?: UserState | OtherUserState;
   params?: fetchUsersParams;
 };
@@ -105,13 +105,13 @@ export type fetchUsersParams = {
   sort: string;
 };
 
-export type fetchArgs = {
+export type fetchType = {
   initialCall: boolean;
   params: fetchUsersParams;
   type: UserState | OtherUserState;
 };
 
-export type fetchSuccessArgs = {
+export type fetchSuccessType = {
   data: {
     list: User[];
     pageable: Pageable;

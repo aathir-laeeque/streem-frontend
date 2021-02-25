@@ -36,15 +36,15 @@ export type PropertiesActionType = ReturnType<
   | typeof fetchPropertiesSuccess
 >;
 
-export type usePropertiesArgs = {
+export type usePropertiesType = {
   entity: ComposerEntity;
 };
 
-export type fetchPropertiesArgs = {
+export type fetchPropertiesType = {
   type: ComposerEntity;
 };
 
-export type fetchPropertiesSuccessArgs = {
+export type fetchPropertiesSuccessType = {
   data: Property[];
   type: ComposerEntity;
 };
