@@ -8,7 +8,7 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-media-card',
-})`
+})<{ isTaskActive: boolean }>`
   grid-area: task-media-card;
 
   ${({ isTaskActive }) =>
@@ -32,6 +32,7 @@ const Wrapper = styled.div.attrs({
       border: solid 2px #1d84ff;
       position: relative;
       height: 230px;
+      cursor: pointer;
 
       .media-name {
         position: absolute;
@@ -59,6 +60,7 @@ const Wrapper = styled.div.attrs({
         margin: 10px 10px 0 0;
         width: calc(1 / 3 * 100% - (1 - 1 / 3) * 10px);
         border-radius: 5px;
+        cursor: pointer;
         position: relative;
 
         img {
@@ -102,13 +104,15 @@ const MediaCard: FC<MediaCardProps> = ({ medias, isTaskActive }) => {
               onClick={() =>
                 dispatch(
                   openOverlayAction({
-                    type: OverlayNames.MEDIA_DETAIL,
-                    props: { mediaDetails: activeMedia },
+                    type: OverlayNames.TASK_MEDIA,
+                    props: { mediaDetails: activeMedia, disabled: true },
                   }),
                 )
               }
+              style={{
+                background: `url(${activeMedia.link}) center/cover no-repeat`,
+              }}
             >
-              <img src={activeMedia.link} alt={activeMedia.filename} />
               <span className="media-name">{activeMedia.name}</span>
             </div>
           ) : null}
@@ -121,8 +125,10 @@ const MediaCard: FC<MediaCardProps> = ({ medias, isTaskActive }) => {
                 }`}
                 key={index}
                 onClick={() => setActiveMedia(media)}
+                style={{
+                  background: `url(${media.link}) center/cover no-repeat`,
+                }}
               >
-                <img src={media.link} alt={media.filename} />
                 <span className="media-name">{media.name}</span>
               </div>
             ))}

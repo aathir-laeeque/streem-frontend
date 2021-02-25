@@ -3,7 +3,6 @@ import AssignmentSuccessModal from '#JobComposer/modals/AssignmentSuccess';
 import CompletedWithExceptionInfo from '#JobComposer/modals/CompletedWithExceptionInfo';
 import CompleteJobWithException from '#JobComposer/modals/CompleteJobWithException';
 import CompleteTaskWithException from '#JobComposer/modals/CompleteTaskWithException';
-import MediaDetail from '#JobComposer/modals/MediaDetail';
 import ParameterApprovalModal from '#JobComposer/modals/ParameterApproval';
 import Signature from '#JobComposer/modals/SignatureActivity';
 import SignCompletedTasksModal from '#JobComposer/modals/SignCompletedTasks';
@@ -76,9 +75,6 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.TASK_ERROR_CORRECTION:
       return <TaskErrorCorrection {...params} />;
-
-    case OverlayNames.MEDIA_DETAIL:
-      return <MediaDetail {...params} />;
 
     case OverlayNames.TASK_USERS_ASSIGNMENT:
       return <TaskUserAssignment {...params} />;

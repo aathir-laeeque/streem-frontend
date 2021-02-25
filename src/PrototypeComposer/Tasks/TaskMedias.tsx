@@ -50,8 +50,10 @@ const TaskMedias: FC<TaskMediasProps> = ({
                 }),
               );
             }}
+            style={{
+              background: `url(${activeMedia.link}) center/cover no-repeat`,
+            }}
           >
-            <img src={activeMedia?.link} />
             <div className="active-media-name">{activeMedia?.name}</div>
           </div>
 
@@ -78,10 +80,9 @@ const TaskMedias: FC<TaskMediasProps> = ({
                   key={index}
                   onClick={() => setActiveMedia(media)}
                   style={{
-                    background: `url(${media.link}) left top/cover no-repeat`,
+                    background: `url(${media.link}) center/cover no-repeat`,
                   }}
                 >
-                  {/* <img src={media.link} className="media-list-item-img" /> */}
                   <div className="media-list-item-name">{media.name}</div>
                 </div>
               ))}

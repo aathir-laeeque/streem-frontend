@@ -255,6 +255,7 @@ const MaterialWrapper = styled.div.attrs({
       display: flex;
       list-style-position: inside;
       margin-bottom: 8px;
+      align-items: center;
 
       :last-child {
         margin-bottom: 0;
