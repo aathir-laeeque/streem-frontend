@@ -1,5 +1,5 @@
 import { apiGetJobActivity } from '#utils/apiUrls';
-import { ResponseError, ResponseObj } from '#utils/globalTypes';
+import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import moment from 'moment';
 import { call, put, takeLeading } from 'redux-saga/effects';
@@ -16,12 +16,10 @@ function* fetchJobActivitiesSaga({
   payload,
 }: ReturnType<typeof fetchJobActivities>) {
   try {
-    const { jobId, params } = payload || {};
-    let currentPage = params.page;
-    if (currentPage === 0) {
+    const { jobId, params } = payload;
+
+    if (params.page === 0) {
       yield put(fetchJobActivitiesOngoing());
-    } else {
-      currentPage++;
     }
 
     const {
@@ -35,8 +33,8 @@ function* fetchJobActivitiesSaga({
       { params },
     );
 
-    if (!pageable || errors) {
-      throw getErrorMsg(errors as ResponseError[]);
+    if (errors) {
+      throw getErrorMsg(errors);
     }
 
     const newData = data.map((el) => ({
@@ -47,16 +45,16 @@ function* fetchJobActivitiesSaga({
     yield put(
       fetchJobActivitiesSuccess({
         data: newData,
-        pageable: {
-          ...pageable,
-          page: currentPage,
-          last: newData.length > 0 ? false : true,
-        },
+        pageable,
       }),
     );
-  } catch (error) {
-    error = yield* handleCatch('JobActivity', 'fetchJobActivitiesSaga', error);
-    yield put(fetchJobActivitiesError(error as string));
+  } catch (e) {
+    const error = yield* handleCatch(
+      'JobActivity',
+      'fetchJobActivitiesSaga',
+      e,
+    );
+    yield put(fetchJobActivitiesError(error));
   }
 }
 

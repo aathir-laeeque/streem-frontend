@@ -17,11 +17,8 @@ function* fetchSessionActivitiesSaga({
 }: ReturnType<typeof fetchSessionActivities>) {
   try {
     const params = payload || {};
-    let currentPage = parseInt(params.page.toString());
-    if (currentPage === 0) {
+    if (params.page === 0) {
       yield put(fetchSessionActivitiesOngoing());
-    } else {
-      currentPage++;
     }
 
     const {
