@@ -3,8 +3,9 @@ import {
   ArrowDropUp,
   SvgIconComponent,
 } from '@material-ui/icons';
-import React, { ComponentPropsWithRef, FC, useState } from 'react';
+import React, { ComponentPropsWithRef, FC, useRef, useState } from 'react';
 import styled from 'styled-components';
+import useOutsideAlerter from '#utils/useOutsideAlerter';
 
 const Wrapper = styled.div.attrs({
   className: 'select',
@@ -140,92 +141,103 @@ const Select: FC<SelectProps> = (props) => {
   const [selectedOption, setSelectedOption] = useState<Option | undefined>(
     selectedValue,
   );
+  const wrapperRef = useRef(null);
+
+  const onOutSideClick = () => {
+    toggleOpen(false);
+  };
+
+  useOutsideAlerter(wrapperRef, onOutSideClick);
 
   return (
-    <Wrapper>
-      {label ? (
-        <label className="select-label">
-          {label}
-          {optional ? <span className="optional-badge">Optional</span> : null}
-        </label>
-      ) : null}
-
-      <div
-        className="button"
-        onClick={() => {
-          if (!disabled) {
-            toggleOpen(!isOpen);
-          }
-        }}
-      >
-        {SelectButtonIcon ? (
-          <SelectButtonIcon
-            className={`icon ${
-              selectButtonIconClass ? selectButtonIconClass : ''
-            }`}
-            id="select-button-icon"
-          />
+    <div ref={wrapperRef}>
+      <Wrapper>
+        {label ? (
+          <label className="select-label">
+            {label}
+            {optional ? <span className="optional-badge">Optional</span> : null}
+          </label>
         ) : null}
 
-        <span
-          className={selectedOption ? 'selected-label' : 'placeholder-text'}
+        <div
+          className="button"
+          onClick={() => {
+            if (!disabled) {
+              toggleOpen(!isOpen);
+            }
+          }}
         >
-          {selectedOption ? selectedOption.label : placeholder}
-        </span>
+          {SelectButtonIcon ? (
+            <SelectButtonIcon
+              className={`icon ${
+                selectButtonIconClass ? selectButtonIconClass : ''
+              }`}
+              id="select-button-icon"
+            />
+          ) : null}
+
+          <span
+            className={selectedOption ? 'selected-label' : 'placeholder-text'}
+          >
+            {selectedOption ? selectedOption.label : placeholder}
+          </span>
+
+          {isOpen ? (
+            <ArrowDropUp className="icon" />
+          ) : (
+            <ArrowDropDown className="icon" />
+          )}
+        </div>
+
+        {typeof error === 'string' && !!error ? (
+          <span className="field-error">{error}</span>
+        ) : null}
 
         {isOpen ? (
-          <ArrowDropUp className="icon" />
-        ) : (
-          <ArrowDropDown className="icon" />
-        )}
-      </div>
+          <div className="option-list">
+            {options.map((option, index) => (
+              <div
+                className="option-list-item"
+                key={index}
+                onClick={() => {
+                  if (typeof onChange === 'function') {
+                    onChange(option);
+                  }
 
-      {typeof error === 'string' && !!error ? (
-        <span className="field-error">{error}</span>
-      ) : null}
+                  if (persistValue) {
+                    setSelectedOption(option);
+                  }
 
-      {isOpen ? (
-        <div className="option-list">
-          {options.map((option, index) => (
-            <div
-              className="option-list-item"
-              key={index}
-              onClick={() => {
-                if (typeof onChange === 'function') {
-                  onChange(option);
-                }
+                  toggleOpen(!isOpen);
+                }}
+              >
+                {OptionsItemBeforeIcon ? (
+                  <OptionsItemBeforeIcon
+                    className={`icon ${
+                      optionsItemBeforeIconClass
+                        ? optionsItemBeforeIconClass
+                        : ''
+                    }`}
+                    id="option-list-item-before-icon"
+                  />
+                ) : null}
 
-                if (persistValue) {
-                  setSelectedOption(option);
-                }
+                <span>{option.label}</span>
 
-                toggleOpen(!isOpen);
-              }}
-            >
-              {OptionsItemBeforeIcon ? (
-                <OptionsItemBeforeIcon
-                  className={`icon ${
-                    optionsItemBeforeIconClass ? optionsItemBeforeIconClass : ''
-                  }`}
-                  id="option-list-item-before-icon"
-                />
-              ) : null}
-
-              <span>{option.label}</span>
-
-              {OptionsItemAfterIcon ? (
-                <OptionsItemAfterIcon
-                  className={`icon ${
-                    optionsItemAfterIconClass ? optionsItemAfterIconClass : ''
-                  }`}
-                  id="option-list-item-after-icon"
-                />
-              ) : null}
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </Wrapper>
+                {OptionsItemAfterIcon ? (
+                  <OptionsItemAfterIcon
+                    className={`icon ${
+                      optionsItemAfterIconClass ? optionsItemAfterIconClass : ''
+                    }`}
+                    id="option-list-item-after-icon"
+                  />
+                ) : null}
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </Wrapper>
+    </div>
   );
 };
 
