@@ -1,4 +1,5 @@
 import { ActivityItemInput } from '#components';
+import { Error } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -9,8 +10,16 @@ import { ActivityProps } from './types';
 const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
 
+  const activityError = activity.errors.find((error) => error.code === 'E407');
+
   return (
     <YesNoWrapper>
+      {activityError ? (
+        <div className="activity-error top">
+          <Error />
+          Activity Incomplete
+        </div>
+      ) : null}
       <ActivityItemInput
         defaultValue={activity.label}
         error={
@@ -30,10 +39,7 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           .map((item, index) => (
             <ActivityItemInput
               defaultValue={item.name}
-              error={
-                !item.name &&
-                activity.errors.find((error) => error.code === 'E407')?.message
-              }
+              error={!item.name && activityError?.message}
               key={index}
               label={
                 item.type === 'yes' ? 'Positive Response' : 'Negative Response'

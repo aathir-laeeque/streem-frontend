@@ -12,9 +12,23 @@ export const Wrapper = styled.div`
   .editor-class {
     word-break: break-all;
     overflow-wrap: break-word;
+    border: 1px solid #bababa;
+    padding: 0 16px;
+
+    &.error {
+      border: solid 1px #ff6b6b;
+    }
 
     * {
       font-weight: unset;
+    }
+
+    :active {
+      border-color: #1d84ff;
+    }
+
+    .public-* {
+      margin: 0;
     }
   }
 
@@ -52,19 +66,6 @@ export const Wrapper = styled.div`
         border-right: none;
         padding-right: 0;
       }
-    }
-  }
-
-  .editor-class {
-    border: 1px solid #bababa;
-    padding: 0 16px;
-
-    :active {
-      border-color: #1d84ff;
-    }
-
-    .public-* {
-      margin: 0;
     }
   }
 `;

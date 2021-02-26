@@ -1,17 +1,18 @@
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
+import { emojis } from '#utils/constants';
+import { Error } from '@material-ui/icons';
 import { ContentState, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import React, { FC, useEffect, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
-
-import { ActivityProps } from '../types';
-import { Wrapper } from './styles';
-import EmojiComponent from './EmojiComponent';
 import { useDispatch } from 'react-redux';
+
 import { updateActivity } from '../actions';
-import { emojis } from '#utils/constants';
+import { ActivityProps } from '../types';
+import EmojiComponent from './EmojiComponent';
+import { Wrapper } from './styles';
 
 const toolbarOptions = {
   options: ['inline', 'list', 'emoji'],
@@ -50,12 +51,18 @@ const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
 
   return (
     <Wrapper>
+      {activityError ? (
+        <div className="activity-error top">
+          <Error />
+          Activity Incomplete
+        </div>
+      ) : null}
       <div className="activity-header">Write your instruction/notes</div>
 
       <Editor
         editorState={editorState}
         wrapperClassName="wrapper-class"
-        editorClassName="editor-class"
+        editorClassName={`editor-class ${activityError && 'error'}`}
         toolbarClassName="toolbar-class"
         toolbar={toolbarOptions}
         onBlur={() => {

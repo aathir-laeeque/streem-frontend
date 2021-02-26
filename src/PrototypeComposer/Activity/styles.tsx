@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const ActivityWrapper = styled.div.attrs({
   className: 'activity',
@@ -38,8 +38,19 @@ const ActivityWrapper = styled.div.attrs({
   }
 
   .activity-error {
+    font-size: 12px;
     color: #eb5757;
     margin-top: 8px;
+    align-items: center;
+    display: flex;
+
+    svg {
+      margin-right: 8px;
+    }
+
+    &.top {
+      margin: 0px 0px 16px;
+    }
   }
 `;
 
@@ -120,29 +131,40 @@ const MultiSelectWrapper = styled.div.attrs({
 
 const ParameterWrapper = styled.div.attrs({
   className: 'activity-parameter',
-})`
-  display: flex;
-  flex-direction: column;
+})<{ errorInSelect: boolean }>`
+  ${({ errorInSelect }) => {
+    return css`
+      display: flex;
+      flex-direction: column;
 
-  > .input {
-    :not(:first-child) {
-      margin-top: 16px;
-    }
-  }
+      > .input {
+        :not(:first-child) {
+          margin-top: 16px;
+        }
+      }
 
-  .select {
-    margin-top: 16px;
-  }
+      .select {
+        margin-top: 16px;
 
-  .between-values {
-    align-items: center;
-    display: flex;
-    margin-top: 16px;
+        ${errorInSelect &&
+        css`
+          .button {
+            border: solid 1px #ff6b6b;
+          }
+        `}
+      }
 
-    span {
-      margin: 24px 12px 0;
-    }
-  }
+      .between-values {
+        align-items: center;
+        display: flex;
+        margin-top: 16px;
+
+        span {
+          margin: 24px 12px 0;
+        }
+      }
+    `;
+  }}
 `;
 
 const SignatureWrapper = styled.div.attrs({
@@ -240,81 +262,91 @@ const InstructionWrapper = styled.div.attrs({
 
 const MaterialWrapper = styled.div.attrs({
   className: 'activity-material',
-})`
-  display: flex;
-  flex-direction: column;
-
-  .material-list {
-    counter-reset: item;
-    list-style-type: none;
-    margin: 0;
-    margin-top: 16px;
-    padding: 0;
-
-    &-item {
+})<{ hasError: boolean }>`
+  ${({ hasError }) => {
+    return css`
       display: flex;
-      list-style-position: inside;
-      margin-bottom: 8px;
-      align-items: center;
+      flex-direction: column;
 
-      :last-child {
-        margin-bottom: 0;
-      }
+      .material-list {
+        counter-reset: item;
+        list-style-type: none;
+        margin: 0;
+        margin-top: 16px;
+        padding: 0;
 
-      &::before {
-        color: #000000;
-        content: counter(item) ' ';
-        counter-increment: item;
-        font-size: 14px;
-        margin-right: 12px;
-      }
+        &-item {
+          display: flex;
+          list-style-position: inside;
+          margin-bottom: 8px;
 
-      .image-wrapper {
-        align-items: center;
-        background-color: #f4f4f4;
-        cursor: pointer;
-        display: flex;
-        height: max-content;
-        justify-content: center;
-        margin-right: 12px;
-        padding: 8px;
+          :last-child {
+            margin-bottom: 0;
+          }
 
-        &.default {
-          height: 56px;
-          width: 56px;
+          &::before {
+            color: #000000;
+            content: counter(item) ' ';
+            counter-increment: item;
+            font-size: 14px;
+            margin-right: 12px;
+          }
+
+          .image-wrapper {
+            align-items: center;
+            background-color: #f4f4f4;
+            cursor: pointer;
+            display: flex;
+            height: max-content;
+            justify-content: center;
+            margin-right: 12px;
+            padding: 8px;
+
+            &.default {
+              height: 56px;
+              width: 56px;
+              border: ${hasError ? 'solid 1px #ff6b6b' : 'none'};
+
+              .upload-image {
+                .icon {
+                  font-size: 40px;
+                }
+              }
+            }
+
+            .image {
+              height: 40px;
+              width: 40px;
+            }
+          }
+
+          .input {
+            margin-right: 12px;
+          }
+
+          .quantity-control {
+            align-items: center;
+            background-color: #f4f4f4;
+            display: flex;
+            height: max-content;
+            margin-left: 12px;
+
+            span {
+              border: 1px solid transparent;
+              border-bottom-color: #bababa;
+              padding: 10px;
+              text-align: center;
+              width: 50px;
+            }
+          }
+
+          #remove-item {
+            margin-left: 12px;
+          }
         }
-
-        .image {
-          height: 40px;
-          width: 40px;
-        }
       }
-
-      .input {
-        margin-right: 12px;
-      }
-
-      .quantity-control {
-        align-items: center;
-        background-color: #f4f4f4;
-        display: flex;
-        height: max-content;
-        margin-left: 12px;
-
-        span {
-          border: 1px solid transparent;
-          border-bottom-color: #bababa;
-          padding: 10px;
-          text-align: center;
-          width: 50px;
-        }
-      }
-
-      #remove-item {
-        margin-left: 12px;
-      }
-    }
-  }
+    `;
+  }}
 `;
 
 export {

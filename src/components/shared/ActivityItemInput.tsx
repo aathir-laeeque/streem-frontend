@@ -1,11 +1,13 @@
 import { SvgIconComponent, Error } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { ComponentPropsWithRef, forwardRef } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import Textarea from './Textarea';
 
 type Props = ComponentPropsWithRef<'textarea'> & {
+  AfterElement?: SvgIconComponent;
+  afterElementClass?: string;
   Icon?: SvgIconComponent;
   error?: string | boolean;
   label?: string;
@@ -15,7 +17,7 @@ type Props = ComponentPropsWithRef<'textarea'> & {
 
 const Wrapper = styled.div.attrs(({ className }) => ({
   className: `input ${className ? className : ''}`,
-}))<Props>`
+}))<{ hasError: boolean }>`
   flex: 1;
   flex-direction: column;
 
@@ -49,12 +51,33 @@ const Wrapper = styled.div.attrs(({ className }) => ({
       border-color: #1d84ff;
     }
 
+    ${({ hasError }) =>
+      hasError
+        ? css`
+            textarea {
+              resize: none;
+            }
+          `
+        : null}
+
     .icon {
       color: #000000;
 
       margin-top: 14px;
       margin-left: 14px;
+
+      &.error {
+        color: #eb5757;
+        margin: 14px 14px 0px;
+      }
     }
+
+    ${({ hasError }) =>
+      hasError
+        ? css`
+            border-color: #eb5757;
+          `
+        : null}
   }
 
   .field-error {
@@ -87,10 +110,12 @@ const ActivityItemInput = forwardRef<HTMLTextAreaElement, Props>(
       optional = false,
       placeholder = 'Write here',
       rows = 1,
+      AfterElement = Error,
+      afterElementClass = 'error',
     } = props;
 
     return (
-      <Wrapper>
+      <Wrapper hasError={!!error}>
         {label ? (
           <label className="input-label">
             {label}
@@ -113,6 +138,13 @@ const ActivityItemInput = forwardRef<HTMLTextAreaElement, Props>(
             ref={ref}
             rows={rows}
           />
+
+          {AfterElement && error ? (
+            <AfterElement
+              className={`icon ${afterElementClass ? afterElementClass : ''}`}
+              id="after-icon"
+            />
+          ) : null}
         </div>
 
         {typeof error === 'string' && !!error ? (

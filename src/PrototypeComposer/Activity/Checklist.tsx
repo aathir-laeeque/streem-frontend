@@ -1,5 +1,5 @@
 import { ActivityItemInput, AddNewItem } from '#components';
-import { CheckBoxOutlineBlankSharp, Close } from '@material-ui/icons';
+import { CheckBoxOutlineBlankSharp, Close, Error } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,6 +15,12 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
 
   return (
     <ChecklistWrapper>
+      {activityError ? (
+        <div className="activity-error top">
+          <Error />
+          Activity Incomplete
+        </div>
+      ) : null}
       <label>Creating a checklist</label>
 
       <ul className="checklist-list">
@@ -35,6 +41,7 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                   }),
                 );
               }}
+              error={activityError && !item.name}
             />
 
             <Close

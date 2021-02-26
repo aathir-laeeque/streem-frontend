@@ -3,6 +3,7 @@ import { MandatoryActivity } from '#PrototypeComposer/checklist.types';
 import {
   CheckBoxOutlineBlankSharp,
   Close,
+  Error,
   RadioButtonUnchecked,
 } from '@material-ui/icons';
 import { noop } from 'lodash';
@@ -31,6 +32,12 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
 
   return (
     <MultiSelectWrapper>
+      {activityError ? (
+        <div className="activity-error top">
+          <Error />
+          Activity Incomplete
+        </div>
+      ) : null}
       <Select
         disabled
         label={
@@ -65,6 +72,7 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
                   }),
                 );
               }}
+              error={activityError && !item.name}
             />
 
             <Close

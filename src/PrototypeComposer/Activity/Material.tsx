@@ -3,7 +3,7 @@ import { ActivityItemInput, AddNewItem, ImageUploadButton } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { MediaDetails } from '#PrototypeComposer/Tasks/types';
-import { ArrowDropDown, ArrowDropUp, Close } from '@material-ui/icons';
+import { ArrowDropDown, ArrowDropUp, Close, Error } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
@@ -43,7 +43,13 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   };
 
   return (
-    <MaterialWrapper>
+    <MaterialWrapper hasError={!!activityError}>
+      {activityError ? (
+        <div className="activity-error top">
+          <Error />
+          Activity Incomplete
+        </div>
+      ) : null}
       <label>Add Materials</label>
 
       <ol className="material-list">
@@ -108,6 +114,7 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                     }),
                   );
                 }}
+                error={activityError && !item.name}
               />
 
               <div className="quantity-control">
