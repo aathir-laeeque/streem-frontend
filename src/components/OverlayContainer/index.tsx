@@ -10,6 +10,7 @@ import SignningNotCompleteModal from '#JobComposer/modals/SignningNotComplete';
 import SignOffState from '#JobComposer/modals/SignOffStatus';
 import SkipTask from '#JobComposer/modals/SkipTask';
 import StartJob from '#JobComposer/modals/StartJob';
+import StartTaskError from '#JobComposer/modals/StartTaskError';
 import TaskErrorCorrection from '#JobComposer/modals/TaskErrorCorrection';
 import TaskUserAssignment from '#JobComposer/modals/TaskUserAssignment';
 import { AssignedUserDetailsPopover } from '#JobComposer/Popovers/AssignedUserDetailsPopover';
@@ -63,6 +64,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.START_JOB_MODAL:
       return <StartJob {...params} />;
+
+    case OverlayNames.START_TASK_ERROR_MODAL:
+      return <StartTaskError {...params} />;
 
     case OverlayNames.SKIP_TASK_MODAL:
       return <SkipTask {...params} />;

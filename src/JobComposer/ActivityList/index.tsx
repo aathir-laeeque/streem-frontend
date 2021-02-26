@@ -20,7 +20,7 @@ import MediaActivity from './Media';
 
 const Wrapper = styled.div.attrs({
   className: 'activity-list',
-})`
+})<Omit<ActivityListProps, 'activities' | 'isCorrectingError'>>`
   display: flex;
   flex-direction: column;
 

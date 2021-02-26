@@ -5,6 +5,9 @@ import { Activity, Stage, Task } from '../checklist.types';
 export type ActivityListProps = {
   activities: Activity[];
   isTaskStarted: boolean;
+  isTaskCompleted: boolean;
+  isCompletedWithException: boolean;
+  isCorrectingError: boolean;
 };
 
 export type ActivityProps = {

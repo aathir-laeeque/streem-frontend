@@ -160,6 +160,7 @@ const DelayedWrapper = styled.div`
 
 type FooterProps = {
   canSkipTask: boolean;
+  activitiesHasError: boolean;
   task: Omit<Task, 'activities'>;
 };
 

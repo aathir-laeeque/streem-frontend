@@ -418,12 +418,12 @@ const JobHeader: FC<Pick<
           </div>
           {showAssignmentButton && <TaskAssignmentContent taskId={task.id} />}
 
-          {isUserAssignedToTask && (
+          {isJobStarted && isUserAssignedToTask && (
             <>
               <button
                 className="start-task"
                 onClick={() => {
-                  if (enableStopForTask && isJobStarted) {
+                  if (enableStopForTask) {
                     dispatch(
                       openOverlayAction({
                         type: OverlayNames.ADD_STOP,

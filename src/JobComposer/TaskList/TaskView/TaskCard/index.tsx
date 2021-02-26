@@ -1,3 +1,5 @@
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import ActivityList from '#JobComposer/ActivityList';
 import {
   StartedTaskStates,
@@ -91,11 +93,30 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
     const isCorrectingError =
       taskState === TaskExecutionState.ENABLED_FOR_CORRECTION;
 
+    const isJobStarted =
+      jobState === JobState.IN_PROGRESS || jobState === JobState.BLOCKED;
+
     return (
       <Wrapper
         onClick={() => {
           if (!isActive) {
             dispatch(setActiveTask(task.id));
+          }
+          if (isJobStarted) {
+            if (!isTaskStarted) {
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.START_TASK_ERROR_MODAL,
+                }),
+              );
+            }
+          } else {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.START_JOB_MODAL,
+                props: {},
+              }),
+            );
           }
         }}
       >
