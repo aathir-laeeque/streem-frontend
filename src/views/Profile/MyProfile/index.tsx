@@ -1,14 +1,14 @@
-import React, { FC, useEffect, useState } from 'react';
-import { Button, LabeledInput, Role } from '#components';
-import { Composer } from './styles';
-import { capitalize } from 'lodash';
-import { MyProfileProps } from './types';
-import { useDispatch } from 'react-redux';
+import { Button, LabeledInput, Role, TabContentProps } from '#components';
 import { useTypedSelector } from '#store';
-import { useForm } from 'react-hook-form';
 import { updateProfile } from '#views/Auth/actions';
 import { permissions, roles } from '#views/UserAccess/AddUser/temp';
 import { RoleType } from '#views/UserAccess/types';
+import { capitalize } from 'lodash';
+import React, { FC, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+
+import { Composer } from './styles';
 
 type Inputs = {
   firstName: string;
@@ -30,7 +30,7 @@ type AccumulatorType = Pick<InitialState, 'selectedRoles'> & {
   rolePlaceholder: string[];
 };
 
-const MyProfile: FC<MyProfileProps> = () => {
+const MyProfile: FC<TabContentProps> = () => {
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
   const [state, setState] = useState<InitialState>({

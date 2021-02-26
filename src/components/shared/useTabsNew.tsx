@@ -50,11 +50,11 @@ export type TabContentProps = {
   values?: Tab['values'];
 };
 
-type Type = {
+type useTabType = {
   tabs: Tab[];
 };
 
-const useTabsNew = ({ tabs }: Type) => {
+const useTabsNew = ({ tabs }: useTabType) => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
   const TabContent = activeTab.tabContent;

@@ -2,6 +2,8 @@ import { capitalize } from 'lodash';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 
+import { TabContentProps } from './useTabsNew';
+
 const Wrapper = styled.div`
   .tab-title {
     font-size: 16px;
@@ -40,19 +42,19 @@ export const initialTabState = {
   },
 };
 
-export interface Tab {
+export interface Tab<T> {
   label: string;
   active: boolean;
-  TabContent: FC;
-  passThroughTabContentProps?: any;
+  TabContent: FC | FC<TabContentProps>;
+  passThroughProps?: T;
 }
 
-export const useTabs = (tabs: Tab[]) => {
-  const [stateTabs, updateTabs] = useState<Tab[]>(tabs);
+export function useTabs<T>(tabs: Tab<T>[]) {
+  const [stateTabs, updateTabs] = useState<Tab<T>[]>(tabs);
   const activeTab = stateTabs.find((el) => el.active);
   const renderTabsHeader = (): JSX.Element => (
     <Wrapper>
-      <div className="tabs-row">
+      <div className="tabs-rTabContentPropsow">
         {stateTabs.map((tab, index) => (
           <span
             className={`tab-title ${tab.active && 'tab-active'}`}
@@ -89,4 +91,4 @@ export const useTabs = (tabs: Tab[]) => {
     </div>
   );
   return { renderTabsHeader, renderTabsContent };
-};
+}

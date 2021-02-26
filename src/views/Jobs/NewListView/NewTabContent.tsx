@@ -242,20 +242,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                       onClick={() => {
                         navigate(`/jobs/${id}`, { state: { checklistId } });
                       }}
-                      // style={{
-                      //   ...(values.some(
-                      //     (val) =>
-                      //       val in AssignedJobStates || val in CompletedJobStates,
-                      //   )
-                      //     ? {
-                      //         width: '120px',
-                      //         whiteSpace: 'nowrap',
-                      //         overflow: 'hidden',
-                      //         textOverflow: 'ellipsis',
-                      //         display: 'block',
-                      //       }
-                      //     : {}),
-                      // }}
                     >
                       {checklistName}
                     </span>

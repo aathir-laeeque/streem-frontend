@@ -1,7 +1,7 @@
+import { Checklist } from '#PrototypeComposer/checklist.types';
+import { User } from '#store/users/types';
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
-import { User } from '#store/users/types';
-import { Checklist } from '#PrototypeComposer/checklist.types';
 
 import {
   fetchJobs,
@@ -26,12 +26,7 @@ export type Job = {
   code: string;
   completedTasks: number;
   id: string;
-  // properties: {
-  //   'BATCH NO': string;
-  //   'PRODUCT MANUFACTURED': string;
-  //   'ROOM ID': string;
-  // }[];
-  properties: JobProperties[] | JobProperties | any;
+  properties: JobProperties[] | null;
   state: JobStateType;
   totalTasks: number;
   name?: string;

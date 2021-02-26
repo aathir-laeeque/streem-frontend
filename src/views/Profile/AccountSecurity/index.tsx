@@ -1,14 +1,13 @@
-import { Visibility } from '@material-ui/icons';
-import { Button, LabeledInput } from '#components';
-import React, { FC, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { Button, LabeledInput, TabContentProps } from '#components';
 import { useTypedSelector } from '#store';
 import { ValidatorProps } from '#utils/globalTypes';
 import { updatePassword } from '#views/Auth/actions';
+import { Visibility } from '@material-ui/icons';
+import React, { FC, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 
 import { Composer } from './styles';
-import { AccountSecurityProps } from './types';
 
 export type PasswordRequestInputs = {
   oldPassword: string;
@@ -32,7 +31,7 @@ const validators: ValidatorProps = {
   },
 };
 
-const AccountSecurity: FC<AccountSecurityProps> = () => {
+const AccountSecurity: FC<TabContentProps> = () => {
   const dispatch = useDispatch();
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [oldPasswordInputType, setOldPasswordInputType] = useState(true);

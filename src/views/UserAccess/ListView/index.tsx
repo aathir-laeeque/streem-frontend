@@ -1,12 +1,11 @@
-// import { useTabs } from '#components';
 import useTabsNew, { Tab } from '#components/shared/useTabsNew';
 import checkPermission from '#services/uiPermissions';
 import { UserState } from '#store/users/types';
 import { ViewWrapper } from '#views/Checklists/ListView/styles';
 import React, { FC } from 'react';
 
-import TabContent from './TabContent';
 import SessionActivity from './SessionActivity';
+import TabContent from './TabContent';
 import { ListViewProps } from './types';
 
 const ListView: FC<ListViewProps> = () => {
@@ -45,8 +44,6 @@ const ListView: FC<ListViewProps> = () => {
       <div className="list-table">
         {renderTabHeader()}
         {renderTabContent()}
-        {/* {renderTabsHeader()} */}
-        {/* {renderTabsContent()} */}
       </div>
     </ViewWrapper>
   );
