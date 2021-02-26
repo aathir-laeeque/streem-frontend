@@ -23,7 +23,7 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         type: OverlayNames.TASK_MEDIA,
         props: {
           mediaDetails,
-          showNameInput: false,
+          disableNameInput: true,
           isActivity: true,
           execute: (data: MediaDetails) => {
             dispatch(

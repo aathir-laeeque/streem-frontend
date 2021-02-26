@@ -105,7 +105,10 @@ const MediaCard: FC<MediaCardProps> = ({ medias, isTaskActive }) => {
                 dispatch(
                   openOverlayAction({
                     type: OverlayNames.TASK_MEDIA,
-                    props: { mediaDetails: activeMedia, disabled: true },
+                    props: {
+                      mediaDetails: activeMedia,
+                      disableDescInput: true,
+                    },
                   }),
                 )
               }

@@ -28,7 +28,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
                     dispatch(
                       openOverlayAction({
                         type: OverlayNames.TASK_MEDIA,
-                        props: { mediaDetails: el, disabled: true },
+                        props: { mediaDetails: el, disableDescInput: true },
                       }),
                     )
                   }

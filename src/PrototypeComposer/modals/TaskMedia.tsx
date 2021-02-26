@@ -11,8 +11,12 @@ import { Task } from '../checklist.types';
 import { addTaskMedia, removeTaskMedia } from '../Tasks/actions';
 import { MediaDetails } from '../Tasks/types';
 
-const Wrapper = styled.div<{ fullScreeen: boolean; disabled: boolean }>`
-  ${({ fullScreeen, disabled }) => {
+const Wrapper = styled.div<{
+  fullScreeen: boolean;
+  disableDescInput: boolean;
+  disableNameInput: boolean;
+}>`
+  ${({ fullScreeen, disableDescInput, disableNameInput }) => {
     return css`
       .modal {
         /* width: 920px !important; */
@@ -78,7 +82,7 @@ const Wrapper = styled.div<{ fullScreeen: boolean; disabled: boolean }>`
               .media-details {
                 padding: 24px;
 
-                ${disabled
+                ${disableDescInput
                   ? css`
                       .input-label {
                         color: #999999;
@@ -95,7 +99,7 @@ const Wrapper = styled.div<{ fullScreeen: boolean; disabled: boolean }>`
                   margin-bottom: 40px;
 
                   .input-wrapper {
-                    ${disabled
+                    ${disableDescInput || disableNameInput
                       ? css`
                           background: none;
                           border: none;
@@ -105,6 +109,9 @@ const Wrapper = styled.div<{ fullScreeen: boolean; disabled: boolean }>`
                           input {
                             font-size: 14px;
                             font-weight: bold;
+                            ::placeholder {
+                              visibility: hidden;
+                            }
                           }
                         `
                       : null}
@@ -153,9 +160,9 @@ type Props = {
   mediaDetails: MediaDetails;
   taskId?: Task['id'];
   isActivity?: boolean;
-  showNameInput?: boolean;
+  disableNameInput?: boolean;
   execute: (data: MediaDetails) => void;
-  disabled?: boolean;
+  disableDescInput?: boolean;
 };
 
 const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
@@ -166,8 +173,8 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
     taskId,
     isActivity = false,
     execute,
-    showNameInput = true,
-    disabled = false,
+    disableNameInput = false,
+    disableDescInput = false,
   } = {},
 }) => {
   const [stateMediaDetails, setStateMediaDetails] = useState<MediaDetails>(
@@ -181,7 +188,11 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
   const dispatch = useDispatch();
 
   return (
-    <Wrapper fullScreeen={fullScreeen} disabled={disabled}>
+    <Wrapper
+      fullScreeen={fullScreeen}
+      disableDescInput={disableDescInput}
+      disableNameInput={disableNameInput}
+    >
       <BaseModal
         closeAllModals={closeAllOverlays}
         closeModal={closeOverlay}
@@ -201,7 +212,8 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
 
           <div className="right-side">
             <div className="media-details">
-              {showNameInput && (
+              {(!disableNameInput ||
+                (disableNameInput && stateMediaDetails.name)) && (
                 <TextInput
                   defaultValue={stateMediaDetails.name}
                   error={errors.name}
@@ -220,13 +232,14 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                 />
               )}
 
-              {(!disabled || (disabled && stateMediaDetails.description)) && (
+              {(!disableDescInput ||
+                (disableDescInput && stateMediaDetails.description)) && (
                 <Textarea
                   optional
                   defaultValue={stateMediaDetails.description}
                   label="Description"
                   name="description"
-                  disabled={disabled}
+                  disabled={disableDescInput}
                   onChange={debounce(({ name, value }) => {
                     setStateMediaDetails({
                       ...stateMediaDetails,
@@ -237,7 +250,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                 />
               )}
 
-              {!disabled && (
+              {!disableDescInput && (
                 <Button1
                   id="save-details"
                   onClick={() => {
@@ -263,7 +276,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
               )}
             </div>
 
-            {!disabled && mediaDetails?.id && (
+            {!disableDescInput && mediaDetails?.id && (
               <div
                 className="delete-media"
                 onClick={() => {
