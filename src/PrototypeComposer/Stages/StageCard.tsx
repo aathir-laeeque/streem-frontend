@@ -1,6 +1,7 @@
 import { Textarea } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { useTypedSelector } from '#store/helpers';
 import {
   ArrowDownward,
@@ -11,10 +12,10 @@ import {
   PanTool,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { EnabledStates } from '../checklist.types';
+import { Checklist, EnabledStates } from '../checklist.types';
 import {
   deleteStage,
   reOrderStage,
@@ -27,12 +28,13 @@ import { StageCardProps } from './types';
 const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
   const { index, isActive, isFirstItem, isLastItem, stage } = props;
 
-  const { tasksInStage, data, activitisInStage } = useTypedSelector(
+  const { tasksInStage, data, activitisInStage, userId } = useTypedSelector(
     (state) => ({
       tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[
         stage.id
       ].map((taskId) => state.prototypeComposer.tasks.listById[taskId]),
       data: state.prototypeComposer.data,
+      userId: state.auth.userId,
       activitisInStage: Object.keys(
         state.prototypeComposer.activities.activityOrderInTaskInStage[
           stage.id
@@ -51,6 +53,18 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
         ),
     }),
   );
+
+  const [isPrimaryAuthor, setIsPrimaryAuthor] = useState(false);
+
+  useEffect(() => {
+    setIsPrimaryAuthor(
+      (data as Checklist)?.collaborators?.some(
+        (collaborator) =>
+          collaborator.type === CollaboratorType.PRIMARY_AUTHOR &&
+          collaborator.id === userId,
+      ),
+    );
+  }, []);
 
   const approvalNeeded = false;
 
@@ -83,7 +97,9 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
     >
       <div
         className={`overlap ${
-          data?.state in EnabledStates && !data?.archived ? 'hide' : ''
+          isPrimaryAuthor && data?.state in EnabledStates && !data?.archived
+            ? 'hide'
+            : ''
         }`}
         onClick={() => {
           if (isActive) {

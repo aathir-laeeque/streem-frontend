@@ -6,6 +6,7 @@ import {
   EnabledStates,
   TimerOperator,
 } from '#PrototypeComposer/checklist.types';
+import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { useTypedSelector } from '#store/helpers';
 import { formatDuration } from '#utils/timeUtils';
 import {
@@ -18,7 +19,7 @@ import {
   Timer,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import Activity from '../Activity';
@@ -44,7 +45,23 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
     tasks: { activeTaskId },
   } = useTypedSelector((state) => state.prototypeComposer);
 
+  const { userId } = useTypedSelector((state) => ({
+    userId: state.auth.userId,
+  }));
+
   const dispatch = useDispatch();
+
+  const [isPrimaryAuthor, setIsPrimaryAuthor] = useState(false);
+
+  useEffect(() => {
+    setIsPrimaryAuthor(
+      (data as Checklist)?.collaborators?.some(
+        (collaborator) =>
+          collaborator.type === CollaboratorType.PRIMARY_AUTHOR &&
+          collaborator.id === userId,
+      ),
+    );
+  }, []);
 
   const {
     id: taskId,
@@ -84,7 +101,9 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
       >
         <div
           className={`overlap ${
-            data?.state in EnabledStates && !data?.archived ? 'hide' : ''
+            isPrimaryAuthor && data?.state in EnabledStates && !data?.archived
+              ? 'hide'
+              : ''
           }`}
           onClick={() => {
             if (activeTaskId === taskId) {

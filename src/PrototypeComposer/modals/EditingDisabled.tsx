@@ -4,7 +4,11 @@ import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import { DisabledStates, AllChecklistStates } from '../checklist.types';
+import {
+  DisabledStates,
+  AllChecklistStates,
+  EnabledStates,
+} from '../checklist.types';
 
 const Wrapper = styled.div`
   .modal {
@@ -68,6 +72,8 @@ const EditingDisabledModal: FC<CommonOverlayProps<{
                   return 'No edits can be done as the prototype is under signing now';
                 case DisabledStates.READY_FOR_RELEASE:
                   return 'No edits can be done as the prototype is now ready for release';
+                case EnabledStates.REQUESTED_CHANGES:
+                  return 'No edits can be done as the prototype is being Modified.';
                 case DisabledStates.PUBLISHED:
                   return 'You can start a revision of this Checklist to make changes';
                 default:
