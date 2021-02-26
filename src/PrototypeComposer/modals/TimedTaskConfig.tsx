@@ -2,9 +2,8 @@ import { BaseModal, Select } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Task, TimerOperator } from '#PrototypeComposer/checklist.types';
 import { ArrowDropDown, ArrowDropUp, Delete } from '@material-ui/icons';
-import { debounce } from 'lodash';
 import moment from 'moment';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
@@ -136,15 +135,7 @@ const InputField: FC<InputFieldProps> = ({
 );
 
 const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
-  const [duration, setDuration] = useState(moment.duration(value, 'seconds'));
-
-  useEffect(() => {
-    setValue(duration.asSeconds());
-  }, [duration]);
-
-  useEffect(() => {
-    setDuration(moment.duration(value, 'seconds'));
-  }, [value]);
+  const duration = moment.duration(value, 'seconds');
 
   return (
     <div className="input-group">
@@ -152,12 +143,16 @@ const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
         value={duration.hours()}
         unit="Hr"
         increase={() => {
-          setDuration(moment.duration(duration.add(1, 'hour'), 'seconds'));
+          setValue(
+            moment.duration(duration.add(1, 'hour'), 'seconds').asSeconds(),
+          );
         }}
         decrease={() => {
           if (duration.hours() > 0) {
-            setDuration(
-              moment.duration(duration.subtract(1, 'hour'), 'seconds'),
+            setValue(
+              moment
+                .duration(duration.subtract(1, 'hour'), 'seconds')
+                .asSeconds(),
             );
           }
         }}
@@ -166,12 +161,16 @@ const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
         value={duration.minutes()}
         unit="Min"
         increase={() => {
-          setDuration(moment.duration(duration.add(1, 'minute'), 'seconds'));
+          setValue(
+            moment.duration(duration.add(1, 'minute'), 'seconds').asSeconds(),
+          );
         }}
         decrease={() => {
           if (duration.minutes() > 0) {
-            setDuration(
-              moment.duration(duration.subtract(1, 'minute'), 'seconds'),
+            setValue(
+              moment
+                .duration(duration.subtract(1, 'minute'), 'seconds')
+                .asSeconds(),
             );
           }
         }}
@@ -180,12 +179,16 @@ const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
         value={duration.seconds()}
         unit="Sec"
         increase={() => {
-          setDuration(moment.duration(duration.add(1, 'second'), 'seconds'));
+          setValue(
+            moment.duration(duration.add(1, 'second'), 'seconds').asSeconds(),
+          );
         }}
         decrease={() => {
           if (duration.seconds() > 0) {
-            setDuration(
-              moment.duration(duration.subtract(1, 'second'), 'seconds'),
+            setValue(
+              moment
+                .duration(duration.subtract(1, 'second'), 'seconds')
+                .asSeconds(),
             );
           }
         }}
@@ -212,16 +215,17 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
   },
 }) => {
   const dispatch = useDispatch();
-
-  const [hasChanged, setHasChanged] = useState(false);
   const [timerOperator, setTimerOperator] = useState(
     TIMER_OPERATORS.find((el) => el.value === timerOperatorValue),
   );
+  const timeout = useRef<null | number>(null);
   const [minPeriod, setMinPeriod] = useState<number>(minPeriodValue);
   const [maxPeriod, setMaxPeriod] = useState<number>(maxPeriodValue);
 
   useEffect(() => {
-    if (hasChanged) {
+    if (timeout.current) clearTimeout(timeout.current);
+
+    timeout.current = setTimeout(() => {
       if (
         timerOperator?.value === TimerOperator.NOT_LESS_THAN &&
         maxPeriod &&
@@ -246,14 +250,12 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
           }),
         );
       }
-    }
-  }, [maxPeriod, minPeriod]);
+    }, 500);
 
-  useEffect(() => {
     return () => {
-      setHasChanged(false);
+      if (timeout.current) clearTimeout(timeout.current);
     };
-  }, []);
+  }, [minPeriod, maxPeriod]);
 
   return (
     <Wrapper>
@@ -287,10 +289,9 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
                   <label>{timerOperator.label}</label>
                   <InputGroup
                     value={maxPeriod}
-                    setValue={debounce((val) => {
+                    setValue={(val) => {
                       setMaxPeriod(val);
-                      setHasChanged(true);
-                    }, 500)}
+                    }}
                   />
                 </div>
               ) : (
@@ -299,20 +300,18 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
                     <label>Set Minimum time </label>
                     <InputGroup
                       value={minPeriod}
-                      setValue={debounce((val) => {
+                      setValue={(val) => {
                         setMinPeriod(val);
-                        setHasChanged(true);
-                      }, 500)}
+                      }}
                     />
                   </div>
                   <div className="timer-value">
                     <label>Set Maximum time </label>
                     <InputGroup
                       value={maxPeriod}
-                      setValue={debounce((val) => {
+                      setValue={(val) => {
                         setMaxPeriod(val);
-                        setHasChanged(true);
-                      }, 500)}
+                      }}
                     />
                   </div>
                 </>
