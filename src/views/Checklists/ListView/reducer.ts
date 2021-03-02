@@ -54,7 +54,7 @@ const reducer = (
     case ListViewAction.UPDATE_LIST:
       return {
         ...state,
-        checklists: state.checklists.filter(
+        currentPageData: state.currentPageData.filter(
           (checklist) => checklist.id !== action.payload.id,
         ),
       };

@@ -5,6 +5,7 @@ import { Error } from '@material-ui/icons';
 import { ContentState, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
+import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import { useDispatch } from 'react-redux';
@@ -28,26 +29,24 @@ const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
   activity,
 }) => {
   const dispatch = useDispatch();
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [contentBlock, setContentBlock] = useState(
-    htmlToDraft(activity.data.text),
-  );
+  const [editorState, setEditorState] = useState<EditorState | null>(null);
 
   const activityError = activity.errors.find((error) => error.code === 'E422');
 
   useEffect(() => {
+    const contentBlock = htmlToDraft(activity.data.text);
     if (contentBlock) {
       const contentState = ContentState.createFromBlockArray(
         contentBlock.contentBlocks,
       );
 
       setEditorState(EditorState.createWithContent(contentState));
+    } else {
+      setEditorState(EditorState.createEmpty());
     }
-  }, [contentBlock]);
+  }, [activity.data.text]);
 
-  useEffect(() => {
-    setContentBlock(htmlToDraft(activity.data.text));
-  }, [activity]);
+  if (!editorState) return null;
 
   return (
     <Wrapper>
@@ -60,18 +59,24 @@ const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
       <div className="activity-header">Write your instruction/notes</div>
 
       <Editor
-        editorState={editorState}
+        defaultEditorState={editorState}
         wrapperClassName="wrapper-class"
         editorClassName={`editor-class ${activityError && 'error'}`}
         toolbarClassName="toolbar-class"
         toolbar={toolbarOptions}
-        onBlur={() => {
-          const value = draftToHtml(
-            convertToRaw(editorState.getCurrentContent()),
+        onChange={debounce((value) => {
+          value = draftToHtml(convertToRaw(editorState.getCurrentContent()));
+          dispatch(
+            updateActivity({
+              ...activity,
+              data: {
+                text: editorState.getCurrentContent().getPlainText()
+                  ? value
+                  : '',
+              },
+            }),
           );
-
-          dispatch(updateActivity({ ...activity, data: { text: value } }));
-        }}
+        }, 500)}
         onEditorStateChange={(newEditorState) => setEditorState(newEditorState)}
       />
 

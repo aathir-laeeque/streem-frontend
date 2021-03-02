@@ -496,9 +496,9 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                                       onPrimaryClick: () =>
                                         dispatch(
                                           addRevisionPrototype(
-                                            selectedChecklist?.id.toString(),
-                                            selectedChecklist?.code.toString(),
-                                            selectedChecklist?.name.toString(),
+                                            selectedChecklist?.id,
+                                            selectedChecklist?.code,
+                                            selectedChecklist?.name,
                                           ),
                                         ),
                                     },
@@ -512,47 +512,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                             </div>
                           </MenuItem>
                         )}
-                        {/* <MenuItem
-                        onClick={() => {
-                          handleClose();
-                          if (item.archived) {
-                            dispatch(
-                              openOverlayAction({
-                                type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                                props: {
-                                  header: 'Unarchive Checklist',
-                                  body: (
-                                    <span>
-                                      Are you sure you want to Unarchive this
-                                      Checklist ?
-                                    </span>
-                                  ),
-                                  onPrimaryClick: () =>
-                                    dispatch(
-                                      unarchiveChecklist(
-                                        selectedChecklist?.id as string,
-                                        true,
-                                      ),
-                                    ),
-                                },
-                              }),
-                            );
-                          } else {
-                            dispatch(
-                              handlePublishedArchive(
-                                selectedChecklist?.id as string,
-                              ),
-                            );
-                          }
-                        }}
-                      >
-                        <div className="list-item">
-                          <MemoArchive style={{ marginRight: '8px' }} />
-                          <span>{`${
-                            item.archived ? 'Unarchive' : 'Archive'
-                          }`}</span>
-                        </div>
-                      </MenuItem> */}
                       </Menu>
                     </>
                   );
