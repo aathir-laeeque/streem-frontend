@@ -217,7 +217,10 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
   }));
 
   useEffect(() => {
-    const { newUsers, selectedUsers } = uniqBy(data.collaborators, 'id').reduce(
+    const { newUsers, selectedUsers } = uniqBy(
+      data.collaborators || [],
+      'id',
+    ).reduce(
       (acc, collaborator) => {
         const isAuthor =
           collaborator.type === CollaboratorType.AUTHOR ||
