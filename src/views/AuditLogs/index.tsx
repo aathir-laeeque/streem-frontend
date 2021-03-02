@@ -34,7 +34,7 @@ import { useDispatch } from 'react-redux';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { fetchProperties } from '#store/properties/actions';
 import { useEffect } from 'react';
-import { Properties } from '#store/properties/types';
+import { Property } from '#store/properties/types';
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -64,7 +64,7 @@ const useStyles = makeStyles({
   },
 });
 
-const generateColumns = (properties: Properties) => {
+const generateColumns = (properties: Property[]) => {
   const columns = properties.map((pro) => pro.placeHolder);
   return ['Name', 'Checklist ID', ...columns];
 };

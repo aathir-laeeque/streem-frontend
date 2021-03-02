@@ -105,7 +105,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   const showPaginationArrows = pageable.totalPages > 10;
 
   const onCreateJob = (jobDetails: Record<string, string>) => {
-    const tempProperties: { id: number; value: string }[] = [];
+    const tempProperties: { id: string; value: string }[] = [];
     const selectedId = jobDetails.checklistId;
     let error = false;
     if (!jobProperties) return false;
@@ -126,7 +126,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
       }
     });
     if (!error && tempProperties && selectedId) {
-      const parsedProperties: { id: number; value: string }[] = tempProperties;
+      const parsedProperties: { id: string; value: string }[] = tempProperties;
       dispatch(
         createJob({
           properties: parsedProperties,

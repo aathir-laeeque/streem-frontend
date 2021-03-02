@@ -16,6 +16,6 @@ export const fetchJobsError = (error: any) =>
   actionSpreader(ListViewAction.FETCH_JOBS_ERROR, { error });
 
 export const createJob = (params: {
-  properties: { id: number; value: string }[];
+  properties: { id: string; value: string }[];
   checklistId: Checklist['id'];
 }) => actionSpreader(ListViewAction.CREATE_JOB, params);

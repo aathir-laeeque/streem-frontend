@@ -150,7 +150,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   }, [pageable]);
 
   const onCreateJob = (jobDetails: Record<string, string>) => {
-    const tempProperties: { id: number; value: string }[] = [];
+    const tempProperties: { id: string; value: string }[] = [];
     let error = false;
     jobProperties.every((property) => {
       if (property.name) {
@@ -169,7 +169,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
       }
     });
     if (!error && tempProperties && selectedChecklist) {
-      const parsedProperties: { id: number; value: string }[] = tempProperties;
+      const parsedProperties: { id: string; value: string }[] = tempProperties;
       dispatch(
         createJob({
           properties: parsedProperties,

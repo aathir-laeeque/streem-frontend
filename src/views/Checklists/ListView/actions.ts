@@ -6,7 +6,7 @@ import { ListViewAction } from './types';
 
 export const fetchChecklists = (
   params: Record<string, string | number>,
-  dispatchOngoing: boolean,
+  dispatchOngoing = false,
 ) =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS, { params, dispatchOngoing });
 

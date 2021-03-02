@@ -24,7 +24,7 @@ export enum NonMandatoryActivity {
 export type ActivityType = MandatoryActivity | NonMandatoryActivity;
 
 export interface Activity {
-  id: number;
+  id: string;
   type: ActivityType;
   // TODO: look into type for data in activity
   data: any;
@@ -35,7 +35,7 @@ export interface Activity {
 }
 
 export interface Media {
-  id: number;
+  id: string;
   name: string;
   link: string;
   type: string;
@@ -82,7 +82,7 @@ export interface TaskExecution {
   audit: Audit;
   correctionReason?: string | null;
   endedAt?: number;
-  id: number;
+  id: string;
   period?: number | null;
   reason?: string | null;
   startedAt?: number | null;
@@ -100,7 +100,7 @@ export interface Task {
   activities: Activity[];
   code: string;
   hasStop: boolean;
-  id: number;
+  id: string;
   mandatory: boolean;
   maxPeriod?: number;
   medias: Media[];
@@ -113,7 +113,7 @@ export interface Task {
 }
 
 export interface Stage {
-  id: number;
+  id: string;
   name: string;
   code: string;
   orderTree: number;

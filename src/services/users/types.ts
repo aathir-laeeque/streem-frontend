@@ -11,7 +11,7 @@ import {
 } from './actions';
 
 export type UserRole = {
-  id: number;
+  id: string;
   name: string;
 };
 

@@ -1,14 +1,7 @@
 import { ComposerEntity } from '#PrototypeComposer/types';
+import { Property } from '#store/properties/types';
 
 import { fetchError, fetchOngoing, fetchSuccess } from './actions';
-
-export interface Property {
-  id: number;
-  name: string;
-  placeHolder: string;
-  orderTree: number;
-  mandatory: boolean;
-}
 
 export type PropertyById = Record<string, Property>;
 

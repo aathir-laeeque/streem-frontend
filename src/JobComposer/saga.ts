@@ -1,7 +1,6 @@
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import {
-  closeAllOverlayAction,
   closeOverlayAction,
   openOverlayAction,
 } from '#components/OverlayContainer/actions';
@@ -46,7 +45,6 @@ import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
 import { groupJobErrors } from './utils';
 import { setSignOffError } from './actions';
-import { cleanUp } from '#views/Auth/actions';
 import { LoginErrorCodes } from '#utils/constants';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {

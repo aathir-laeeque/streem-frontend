@@ -1,4 +1,4 @@
-import { Properties } from '#store/properties/types';
+import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { Checklist } from '#views/Checklists/types';
 import { Job } from '#views/Jobs/NewListView/types';
@@ -23,7 +23,7 @@ export type ExtraColumn = {
 };
 
 interface ListViewProps {
-  properties: Properties;
+  properties: Property[];
   data: Checklist[] | Job[] | User[];
   beforeColumns?: ExtraColumn[];
   afterColumns?: ExtraColumn[];

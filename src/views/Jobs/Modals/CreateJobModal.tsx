@@ -2,7 +2,7 @@ import { BaseModal, FloatInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { usePrevious } from '#utils/usePrevious';
 import { useTypedSelector } from '#store';
-import { Properties } from '#store/properties/types';
+import { Property } from '#store/properties/types';
 import { Checklist } from '#views/Checklists/types';
 import { useDispatch } from 'react-redux';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
@@ -11,7 +11,7 @@ import styled from 'styled-components';
 
 export interface CreateJobModalProps {
   selectedChecklist: Checklist | null;
-  properties: Properties;
+  properties: Property[];
   onCreateJob: (jobDetails: Record<string, string>) => void;
 }
 

@@ -1,6 +1,6 @@
 import { Checklist } from '#PrototypeComposer/checklist.types';
-import { Property } from '#services/properties';
 import { User } from '#services/users';
+import { Property } from '#store/properties/types';
 
 import { addNewPrototype, updatePrototype } from './actions';
 

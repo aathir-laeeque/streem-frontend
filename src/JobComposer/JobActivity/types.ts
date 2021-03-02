@@ -9,7 +9,7 @@ import {
 
 export interface JobActivity {
   triggeredOn: string;
-  id: number;
+  id: string;
   triggeredAt: number;
   event: string;
   action: string;

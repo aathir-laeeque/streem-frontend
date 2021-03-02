@@ -1,9 +1,9 @@
 export type Facility = {
-  id: number;
+  id: string;
   name: string;
 };
 
 export type Organisation = {
-  id: number;
+  id: string;
   name: string;
 };

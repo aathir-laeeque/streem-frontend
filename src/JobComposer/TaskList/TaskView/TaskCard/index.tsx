@@ -94,7 +94,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
       taskState === TaskExecutionState.ENABLED_FOR_CORRECTION;
 
     const isJobStarted =
-      jobState === JobState.IN_PROGRESS || jobState === JobState.BLOCKED;
+      jobState === JobStateEnum.IN_PROGRESS ||
+      jobState === JobStateEnum.BLOCKED;
 
     return (
       <Wrapper

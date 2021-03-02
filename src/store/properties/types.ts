@@ -7,19 +7,17 @@ import {
 } from './actions';
 
 export interface Property {
-  id: number;
+  id: string;
   name: string;
   placeHolder: string;
   orderTree: number;
   mandatory: boolean;
 }
 
-export type Properties = Property[];
-
 export interface PropertiesState {
-  readonly checklist: Properties;
+  readonly checklist: Property[];
   readonly error?: string;
-  readonly job: Properties;
+  readonly job: Property[];
   readonly loading: boolean;
 }
 

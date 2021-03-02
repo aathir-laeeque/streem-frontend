@@ -1,4 +1,4 @@
-import { Job } from '#views/Jobs/types';
+import { Job } from '#views/Jobs/NewListView/types';
 import { omit } from 'lodash';
 import { Reducer } from 'redux';
 
@@ -33,7 +33,7 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
 
       const checklist = isChecklist
         ? (data as Checklist)
-        : (data as Job).checklist;
+        : ((data as unknown) as Job).checklist;
 
       return {
         ...state,

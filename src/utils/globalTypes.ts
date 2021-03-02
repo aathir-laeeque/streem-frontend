@@ -96,7 +96,7 @@ export type ValidatorProps = {
 // }
 
 export type Error = {
-  id: number;
+  id: string;
   code: string;
   message: string;
   type: string;
