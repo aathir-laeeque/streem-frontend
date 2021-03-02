@@ -8,12 +8,31 @@ import styled from 'styled-components';
 import { completeTask } from '../TaskList/actions';
 
 const Wrapper = styled.div`
-  .modal-body {
-    color: #666666;
-    display: flex;
-    flex-direction: column;
-    font-size: 16px;
-    padding: 16px;
+  .modal {
+    min-width: 460px !important;
+
+    &-header {
+      padding: 24px !important;
+      border-bottom: none !important;
+
+      h2 {
+        color: #000000 !important;
+        font-weight: bold !important;
+      }
+    }
+
+    &-body {
+      padding: 0px 24px !important;
+
+      label {
+        align-self: flex-start;
+      }
+    }
+
+    &-footer {
+      padding: 24px !important;
+      border-top: none !important;
+    }
   }
 `;
 
@@ -48,6 +67,7 @@ const CompleteTaskWithExceptionModal: FC<CommonOverlayProps<{
             onChange={(e) => setExceptionReason(e.target.value)}
             rows={4}
             placeholder="Exception Reason"
+            autoFocus={true}
           />
         </div>
       </BaseModal>
