@@ -29,6 +29,8 @@ const TaskMedias: FC<TaskMediasProps> = ({
   useEffect(() => {
     if (medias.length) {
       setActiveMedia(medias[0]);
+    } else {
+      setActiveMedia(null);
     }
   }, [medias]);
 
