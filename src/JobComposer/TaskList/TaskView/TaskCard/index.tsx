@@ -103,6 +103,14 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           if (!isActive) {
             dispatch(setActiveTask(task.id));
           }
+          if (!isJobStarted) {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.START_JOB_MODAL,
+                props: {},
+              }),
+            );
+          }
         }}
       >
         <Header
@@ -115,19 +123,10 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
         />
         <div
           onClick={() => {
-            if (isJobStarted) {
-              if (!isTaskStarted) {
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.START_TASK_ERROR_MODAL,
-                  }),
-                );
-              }
-            } else {
+            if (isJobStarted && !isTaskStarted) {
               dispatch(
                 openOverlayAction({
-                  type: OverlayNames.START_JOB_MODAL,
-                  props: {},
+                  type: OverlayNames.START_TASK_ERROR_MODAL,
                 }),
               );
             }
