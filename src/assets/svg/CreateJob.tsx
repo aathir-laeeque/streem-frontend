@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function CreateJob(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -11,5 +11,4 @@ function CreateJob(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoCreateJob = React.memo(CreateJob);
-export default MemoCreateJob;
+export default CreateJob;

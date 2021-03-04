@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function ViewInfo(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -15,5 +15,4 @@ function ViewInfo(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoViewInfo = React.memo(ViewInfo);
-export default MemoViewInfo;
+export default ViewInfo;

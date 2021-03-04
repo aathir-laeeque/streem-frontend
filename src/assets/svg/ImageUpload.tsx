@@ -19,5 +19,4 @@ function ImageUpload(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoImageUpload = React.memo(ImageUpload);
-export default MemoImageUpload;
+export default ImageUpload;

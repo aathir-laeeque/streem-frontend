@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function UnderConstruction(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -1415,5 +1415,4 @@ function UnderConstruction(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoUnderConstruction = React.memo(UnderConstruction);
-export default MemoUnderConstruction;
+export default UnderConstruction;

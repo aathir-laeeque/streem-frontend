@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function StartRevision(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -11,5 +11,4 @@ function StartRevision(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoStartRevision = React.memo(StartRevision);
-export default MemoStartRevision;
+export default StartRevision;

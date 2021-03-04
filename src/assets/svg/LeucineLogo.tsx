@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function LeucineLogo(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -42,5 +42,4 @@ function LeucineLogo(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoLeucineLogo = React.memo(LeucineLogo);
-export default MemoLeucineLogo;
+export default LeucineLogo;

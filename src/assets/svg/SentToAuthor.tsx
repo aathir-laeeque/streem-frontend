@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function SentToAuthor(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -83,5 +83,4 @@ function SentToAuthor(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoSentToAuthor = React.memo(SentToAuthor);
-export default MemoSentToAuthor;
+export default SentToAuthor;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function SentConfirmation(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -35,5 +35,4 @@ function SentConfirmation(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoSentConfirmation = React.memo(SentConfirmation);
-export default MemoSentConfirmation;
+export default SentConfirmation;

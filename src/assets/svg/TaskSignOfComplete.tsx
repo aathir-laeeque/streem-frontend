@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function TaskSignOfComplete(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -70,5 +70,4 @@ function TaskSignOfComplete(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoTaskSignOfComplete = React.memo(TaskSignOfComplete);
-export default MemoTaskSignOfComplete;
+export default TaskSignOfComplete;

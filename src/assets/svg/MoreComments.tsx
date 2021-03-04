@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function MoreComments(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -27,5 +27,4 @@ function MoreComments(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoMoreComments = React.memo(MoreComments);
-export default MemoMoreComments;
+export default MoreComments;

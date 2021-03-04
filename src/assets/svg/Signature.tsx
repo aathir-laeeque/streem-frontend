@@ -19,5 +19,4 @@ function Signature(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoSignature = React.memo(Signature);
-export default MemoSignature;
+export default Signature;

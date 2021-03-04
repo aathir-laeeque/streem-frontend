@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function RevisionError(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -138,5 +138,4 @@ function RevisionError(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoRevisionError = React.memo(RevisionError);
-export default MemoRevisionError;
+export default RevisionError;

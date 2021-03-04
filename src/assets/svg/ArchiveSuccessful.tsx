@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function ArchiveSuccessful(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -234,5 +234,4 @@ function ArchiveSuccessful(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoArchiveSuccessful = React.memo(ArchiveSuccessful);
-export default MemoArchiveSuccessful;
+export default ArchiveSuccessful;

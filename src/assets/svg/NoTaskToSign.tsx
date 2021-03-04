@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function NoTaskToSign(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -54,5 +54,4 @@ function NoTaskToSign(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoNoTaskToSign = React.memo(NoTaskToSign);
-export default MemoNoTaskToSign;
+export default NoTaskToSign;

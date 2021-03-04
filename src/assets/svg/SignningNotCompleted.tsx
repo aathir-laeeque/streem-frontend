@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function SignningNotCompleted(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -24,5 +24,4 @@ function SignningNotCompleted(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoSignningNotCompleted = React.memo(SignningNotCompleted);
-export default MemoSignningNotCompleted;
+export default SignningNotCompleted;

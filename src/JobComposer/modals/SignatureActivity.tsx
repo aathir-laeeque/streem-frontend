@@ -1,7 +1,6 @@
 import { Button, FlatButton, BaseModal } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import React, { FC, useRef, useEffect } from 'react';
-import { Close } from '@material-ui/icons';
 import SignatureCanvas from 'react-signature-canvas';
 import styled from 'styled-components';
 
@@ -103,10 +102,6 @@ const SignatureModal: FC<CommonOverlayProps<SignatureModalProps>> = ({
               <span>ID: {user.id}</span>
             </div>
           </div>
-          <Close
-            style={{ cursor: `pointer`, fontSize: 20, alignSelf: 'flex-start' }}
-            onClick={closeOverlay}
-          />
         </div>
         <div className="sign-modal-body">
           <SignatureCanvas ref={canvasRef} backgroundColor="#fafafa" />

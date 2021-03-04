@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function NeedsCommenting(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -46,5 +46,4 @@ function NeedsCommenting(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoNeedsCommenting = React.memo(NeedsCommenting);
-export default MemoNeedsCommenting;
+export default NeedsCommenting;

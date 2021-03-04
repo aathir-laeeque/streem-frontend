@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 const Wrapper = styled.div`
   .modal {
-    max-width: 400px !important;
+    max-width: 425px !important;
     min-width: 100px !important;
 
     .modal-body {

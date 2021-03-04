@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function CleenLogo(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -53,5 +53,4 @@ function CleenLogo(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoCleenLogo = React.memo(CleenLogo);
-export default MemoCleenLogo;
+export default CleenLogo;

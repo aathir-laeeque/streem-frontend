@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function ObservationAccepted(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -35,5 +35,4 @@ function ObservationAccepted(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoObservationAccepted = React.memo(ObservationAccepted);
-export default MemoObservationAccepted;
+export default ObservationAccepted;

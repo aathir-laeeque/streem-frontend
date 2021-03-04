@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function ReleaseSuccess(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -187,5 +187,4 @@ function ReleaseSuccess(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoReleaseSuccess = React.memo(ReleaseSuccess);
-export default MemoReleaseSuccess;
+export default ReleaseSuccess;

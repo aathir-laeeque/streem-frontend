@@ -150,94 +150,90 @@ const Select: FC<SelectProps> = (props) => {
   useOutsideAlerter(wrapperRef, onOutSideClick);
 
   return (
-    <div ref={wrapperRef}>
-      <Wrapper>
-        {label ? (
-          <label className="select-label">
-            {label}
-            {optional ? <span className="optional-badge">Optional</span> : null}
-          </label>
+    <Wrapper ref={wrapperRef}>
+      {label ? (
+        <label className="select-label">
+          {label}
+          {optional ? <span className="optional-badge">Optional</span> : null}
+        </label>
+      ) : null}
+
+      <div
+        className="button"
+        onClick={() => {
+          if (!disabled) {
+            toggleOpen(!isOpen);
+          }
+        }}
+      >
+        {SelectButtonIcon ? (
+          <SelectButtonIcon
+            className={`icon ${
+              selectButtonIconClass ? selectButtonIconClass : ''
+            }`}
+            id="select-button-icon"
+          />
         ) : null}
 
-        <div
-          className="button"
-          onClick={() => {
-            if (!disabled) {
-              toggleOpen(!isOpen);
-            }
-          }}
+        <span
+          className={selectedOption ? 'selected-label' : 'placeholder-text'}
         >
-          {SelectButtonIcon ? (
-            <SelectButtonIcon
-              className={`icon ${
-                selectButtonIconClass ? selectButtonIconClass : ''
-              }`}
-              id="select-button-icon"
-            />
-          ) : null}
-
-          <span
-            className={selectedOption ? 'selected-label' : 'placeholder-text'}
-          >
-            {selectedOption ? selectedOption.label : placeholder}
-          </span>
-
-          {isOpen ? (
-            <ArrowDropUp className="icon" />
-          ) : (
-            <ArrowDropDown className="icon" />
-          )}
-        </div>
-
-        {typeof error === 'string' && !!error ? (
-          <span className="field-error">{error}</span>
-        ) : null}
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
 
         {isOpen ? (
-          <div className="option-list">
-            {options.map((option, index) => (
-              <div
-                className="option-list-item"
-                key={index}
-                onClick={() => {
-                  if (typeof onChange === 'function') {
-                    onChange(option);
-                  }
+          <ArrowDropUp className="icon" />
+        ) : (
+          <ArrowDropDown className="icon" />
+        )}
+      </div>
 
-                  if (persistValue) {
-                    setSelectedOption(option);
-                  }
+      {typeof error === 'string' && !!error ? (
+        <span className="field-error">{error}</span>
+      ) : null}
 
-                  toggleOpen(!isOpen);
-                }}
-              >
-                {OptionsItemBeforeIcon ? (
-                  <OptionsItemBeforeIcon
-                    className={`icon ${
-                      optionsItemBeforeIconClass
-                        ? optionsItemBeforeIconClass
-                        : ''
-                    }`}
-                    id="option-list-item-before-icon"
-                  />
-                ) : null}
+      {isOpen ? (
+        <div className="option-list">
+          {options.map((option, index) => (
+            <div
+              className="option-list-item"
+              key={index}
+              onClick={() => {
+                if (typeof onChange === 'function') {
+                  onChange(option);
+                }
 
-                <span>{option.label}</span>
+                if (persistValue) {
+                  setSelectedOption(option);
+                }
 
-                {OptionsItemAfterIcon ? (
-                  <OptionsItemAfterIcon
-                    className={`icon ${
-                      optionsItemAfterIconClass ? optionsItemAfterIconClass : ''
-                    }`}
-                    id="option-list-item-after-icon"
-                  />
-                ) : null}
-              </div>
-            ))}
-          </div>
-        ) : null}
-      </Wrapper>
-    </div>
+                toggleOpen(!isOpen);
+              }}
+            >
+              {OptionsItemBeforeIcon ? (
+                <OptionsItemBeforeIcon
+                  className={`icon ${
+                    optionsItemBeforeIconClass ? optionsItemBeforeIconClass : ''
+                  }`}
+                  id="option-list-item-before-icon"
+                />
+              ) : null}
+
+              <span>{option.label}</span>
+
+              {OptionsItemAfterIcon ? (
+                <OptionsItemAfterIcon
+                  className={`icon ${
+                    optionsItemAfterIconClass ? optionsItemAfterIconClass : ''
+                  }`}
+                  id="option-list-item-after-icon"
+                />
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </Wrapper>
   );
 };
 

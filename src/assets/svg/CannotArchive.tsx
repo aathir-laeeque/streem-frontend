@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function CannotArchive(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -134,5 +134,4 @@ function CannotArchive(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoCannotArchive = React.memo(CannotArchive);
-export default MemoCannotArchive;
+export default CannotArchive;

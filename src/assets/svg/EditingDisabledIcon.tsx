@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function EditingDisabledIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -171,5 +171,4 @@ function EditingDisabledIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoEditingDisabledIcon = React.memo(EditingDisabledIcon);
-export default MemoEditingDisabledIcon;
+export default EditingDisabledIcon;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function RemoveComments(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -27,5 +27,4 @@ function RemoveComments(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoRemoveComments = React.memo(RemoveComments);
-export default MemoRemoveComments;
+export default RemoveComments;

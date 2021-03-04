@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function AllOk(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -59,5 +59,4 @@ function AllOk(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoAllOk = React.memo(AllOk);
-export default MemoAllOk;
+export default AllOk;

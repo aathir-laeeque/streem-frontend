@@ -161,7 +161,7 @@ export enum ChecklistStatesContent {
   SIGNING_IN_PROGRESS = 'Signing in progress',
   READY_FOR_RELEASE = 'Ready For Release',
   PUBLISHED = 'Published',
-  DEPRECATED = 'Deprecate',
+  DEPRECATED = 'Deprecated',
 }
 
 export enum ChecklistStatesColors {

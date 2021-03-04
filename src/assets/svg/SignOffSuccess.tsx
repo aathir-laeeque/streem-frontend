@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 function SignOffSuccess(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -58,5 +58,4 @@ function SignOffSuccess(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const MemoSignOffSuccess = React.memo(SignOffSuccess);
-export default MemoSignOffSuccess;
+export default SignOffSuccess;
