@@ -1,7 +1,7 @@
 import { ImageUploadButton } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { EnabledStates } from '#PrototypeComposer/checklist.types';
+import { EnabledStates, Media } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store/helpers';
 import { ArrowLeft, ArrowRight, PermMedia } from '@material-ui/icons';
 import React, { FC, useEffect, useState } from 'react';
@@ -22,7 +22,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
     tasks: { activeTaskId },
   } = useTypedSelector((state) => state.prototypeComposer);
 
-  const [activeMedia, setActiveMedia] = useState(medias[0]);
+  const [activeMedia, setActiveMedia] = useState<Media | null>(null);
 
   const [sliderIndex, setSliderIndex] = useState({ start: 0, end: 3 });
 
@@ -32,7 +32,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
     }
   }, [medias]);
 
-  if ((taskId === activeTaskId || isActivity) && medias.length) {
+  if ((taskId === activeTaskId || isActivity) && activeMedia) {
     return (
       <TaskMediasWrapper>
         <div className="container">

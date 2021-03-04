@@ -148,10 +148,10 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
               field: 'checklist.name',
               operator: 'LIKE',
             },
-            ...jobProperties.map(({ placeHolder, name }) => ({
+            ...jobProperties.map(({ placeHolder, id }) => ({
               label: placeHolder,
-              value: name,
-              field: 'jobPropertyValues.property.name',
+              value: id,
+              field: 'jobPropertyValues.propertiesId',
               operator: 'EQ',
             })),
           ]}

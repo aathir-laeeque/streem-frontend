@@ -103,22 +103,6 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           if (!isActive) {
             dispatch(setActiveTask(task.id));
           }
-          if (isJobStarted) {
-            if (!isTaskStarted) {
-              dispatch(
-                openOverlayAction({
-                  type: OverlayNames.START_TASK_ERROR_MODAL,
-                }),
-              );
-            }
-          } else {
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.START_JOB_MODAL,
-                props: {},
-              }),
-            );
-          }
         }}
       >
         <Header
@@ -129,14 +113,34 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           enableStopForTask={enableStopForTask}
           showAssignmentButton={showAssignmentButton}
         />
-
-        <ActivityList
-          activities={activities}
-          isTaskStarted={isTaskStarted && isUserAssignedToTask}
-          isTaskCompleted={isTaskCompleted}
-          isCompletedWithException={isCompletedWithException}
-          isCorrectingError={isCorrectingError}
-        />
+        <div
+          onClick={() => {
+            if (isJobStarted) {
+              if (!isTaskStarted) {
+                dispatch(
+                  openOverlayAction({
+                    type: OverlayNames.START_TASK_ERROR_MODAL,
+                  }),
+                );
+              }
+            } else {
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.START_JOB_MODAL,
+                  props: {},
+                }),
+              );
+            }
+          }}
+        >
+          <ActivityList
+            activities={activities}
+            isTaskStarted={isTaskStarted && isUserAssignedToTask}
+            isTaskCompleted={isTaskCompleted}
+            isCompletedWithException={isCompletedWithException}
+            isCorrectingError={isCorrectingError}
+          />
+        </div>
 
         <Footer
           canSkipTask={!canSkipTask}

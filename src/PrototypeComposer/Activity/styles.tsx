@@ -57,6 +57,9 @@ const ActivityWrapper = styled.div.attrs({
 const ChecklistWrapper = styled.div.attrs({
   className: 'activity-checklist',
 })`
+  > label {
+    font-size: 14px;
+  }
   .checklist-list {
     list-style-type: none;
     margin: 0;
@@ -334,7 +337,7 @@ const MaterialWrapper = styled.div.attrs({
             span {
               border: 1px solid transparent;
               border-bottom-color: #bababa;
-              padding: 10px;
+              padding: 15px 10px;
               text-align: center;
               width: 50px;
             }
