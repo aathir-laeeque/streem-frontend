@@ -98,6 +98,24 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         },
       };
 
+    case TaskListActions.UPDATE_TASK_MEDIA_SUCCESS:
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [action.payload.taskId]: {
+            ...state.listById[action.payload.taskId],
+            medias: [
+              ...state.listById[action.payload.taskId].medias.filter(
+                (media) => media.id !== action.payload.media.id,
+              ),
+              action.payload.media,
+            ],
+            errors: [],
+          },
+        },
+      };
+
     case TaskListActions.SET_VALIDATION_ERROR:
       const { error } = action.payload;
       const taskIdWithError = error.id;

@@ -1,9 +1,14 @@
 import { actionSpreader } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
 
-import { Stage, Task } from '../checklist.types';
+import { Media, Stage, Task } from '../checklist.types';
 import { TaskListActions } from './reducer.types';
-import { AddMediaType, AddNewTaskType, SetTaskTimerType } from './types';
+import {
+  AddMediaType,
+  AddNewTaskType,
+  SetTaskTimerType,
+  UpdateMediaType,
+} from './types';
 
 export const addNewTask = ({ checklistId, stageId }: AddNewTaskType) =>
   actionSpreader(TaskListActions.ADD_NEW_TASK, { checklistId, stageId });
@@ -13,6 +18,14 @@ export const addNewTaskSuccess = (newTask: Task, stageId: Stage['id']) =>
 
 export const addTaskMedia = ({ mediaDetails, taskId }: AddMediaType) =>
   actionSpreader(TaskListActions.ADD_TASK_MEDIA, { mediaDetails, taskId });
+
+export const updateTaskMedia = (payload: UpdateMediaType) =>
+  actionSpreader(TaskListActions.UPDATE_TASK_MEDIA, payload);
+
+export const updateTaskMediaSuccess = (payload: {
+  media: Media;
+  taskId: Task['id'];
+}) => actionSpreader(TaskListActions.UPDATE_TASK_MEDIA_SUCCESS, payload);
 
 export const addStop = (taskId: Task['id']) =>
   actionSpreader(TaskListActions.ADD_STOP, { taskId });

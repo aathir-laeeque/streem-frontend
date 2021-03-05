@@ -10,9 +10,10 @@ import {
   apiRemoveTaskTimer,
   apiSetTaskTimer,
   apiUpdateTask,
+  apiUpdateTaskMedia,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 
 import {
   addNewTask,
@@ -25,6 +26,8 @@ import {
   setTaskError,
   setTaskTimer,
   updateTask,
+  updateTaskMedia,
+  updateTaskMediaSuccess,
   updateTaskName,
 } from './actions';
 import { TaskListActions } from './reducer.types';
@@ -244,6 +247,28 @@ function* addTaskMediaSaga({ payload }: ReturnType<typeof addTaskMedia>) {
   }
 }
 
+function* updateTaskMediaSaga({ payload }: ReturnType<typeof updateTaskMedia>) {
+  try {
+    const { mediaDetails, taskId, mediaId } = payload;
+
+    const { data, errors } = yield call(
+      request,
+      'PATCH',
+      apiUpdateTaskMedia(taskId, mediaId),
+      { data: { ...mediaDetails } },
+    );
+
+    if (data) {
+      yield put(updateTaskMediaSuccess({ media: data, taskId }));
+      yield put(closeOverlayAction(OverlayNames.TASK_MEDIA));
+    } else {
+      console.error('error from update media to task api :: ', errors);
+    }
+  } catch (error) {
+    console.error('error came in updateTaskMediaSaga :: ', error);
+  }
+}
+
 function* removeTaskMediaSaga({ payload }: ReturnType<typeof removeTaskMedia>) {
   try {
     const { taskId, mediaId } = payload;
@@ -274,5 +299,6 @@ export function* TaskListSaga() {
   yield takeLatest(TaskListActions.SET_TASK_TIMER, setTaskTimerSaga);
   yield takeLatest(TaskListActions.REMOVE_TASK_TIMER, removeTaskTimerSaga);
   yield takeLatest(TaskListActions.ADD_TASK_MEDIA, addTaskMediaSaga);
+  yield takeLeading(TaskListActions.UPDATE_TASK_MEDIA, updateTaskMediaSaga);
   yield takeLatest(TaskListActions.REMOVE_TASK_MEDIA, removeTaskMediaSaga);
 }

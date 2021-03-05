@@ -63,6 +63,7 @@ export type Media = {
   link: string;
   type: string;
   filename: string;
+  description: string;
 };
 
 export enum TaskExecutionState {

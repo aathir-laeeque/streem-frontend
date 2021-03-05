@@ -1,7 +1,7 @@
 import { Task } from '#JobComposer/checklist.types';
 import { AddNewActivityType } from '#PrototypeComposer/Activity/types';
 import { Activity, Checklist, Stage } from '#PrototypeComposer/checklist.types';
-import { AddNewTaskType } from '#PrototypeComposer/Tasks/types';
+import { AddNewTaskType, MediaDetails } from '#PrototypeComposer/Tasks/types';
 import { User } from '#store/users/types';
 import { Job } from '#views/Jobs/NewListView/types';
 
@@ -215,6 +215,11 @@ export const apiRemoveTaskTimer = (taskId: Task['id']) =>
 
 export const apiAddMediaToTask = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}/medias`;
+
+export const apiUpdateTaskMedia = (
+  taskId: Task['id'],
+  mediaId: MediaDetails['id'],
+) => `${baseUrl}/tasks/${taskId}/medias/${mediaId}`;
 
 export const apiValidatePrototype = (id: Checklist['id']) =>
   `${baseUrl}/checklists/${id}/validate`;

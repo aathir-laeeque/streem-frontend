@@ -8,7 +8,11 @@ import styled, { css } from 'styled-components';
 import { Delete } from '@material-ui/icons';
 
 import { Task } from '../checklist.types';
-import { addTaskMedia, removeTaskMedia } from '../Tasks/actions';
+import {
+  addTaskMedia,
+  removeTaskMedia,
+  updateTaskMedia,
+} from '../Tasks/actions';
 import { MediaDetails } from '../Tasks/types';
 
 const Wrapper = styled.div<{
@@ -258,12 +262,25 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                       execute(stateMediaDetails);
                       closeOverlay();
                     } else if (!!stateMediaDetails.name) {
-                      dispatch(
-                        addTaskMedia({
-                          taskId,
-                          mediaDetails: { ...stateMediaDetails },
-                        }),
-                      );
+                      if (mediaDetails?.id) {
+                        dispatch(
+                          updateTaskMedia({
+                            taskId,
+                            mediaId: mediaDetails?.id,
+                            mediaDetails: {
+                              name: stateMediaDetails.name,
+                              description: stateMediaDetails.description,
+                            },
+                          }),
+                        );
+                      } else {
+                        dispatch(
+                          addTaskMedia({
+                            taskId,
+                            mediaDetails: { ...stateMediaDetails },
+                          }),
+                        );
+                      }
                     } else {
                       setErrors({ name: 'Name is required' });
                     }
