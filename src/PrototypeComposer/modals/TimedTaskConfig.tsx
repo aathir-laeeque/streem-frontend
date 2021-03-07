@@ -1,7 +1,12 @@
 import { BaseModal, Select } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Task, TimerOperator } from '#PrototypeComposer/checklist.types';
-import { ArrowDropDown, ArrowDropUp, Delete } from '@material-ui/icons';
+import {
+  ArrowDropDown,
+  ArrowDropUp,
+  Delete,
+  Error as ErrorIcon,
+} from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -68,6 +73,23 @@ const Wrapper = styled.div`
       display: flex;
       flex-direction: column;
       padding: 24px;
+
+      .config-error {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+
+        .icon {
+          color: #ff6b6b;
+          font-size: 18px;
+          margin-right: 8px;
+        }
+
+        .error-msg {
+          color: #ff6b6b;
+          font-size: 12px;
+        }
+      }
 
       .timer-value {
         align-items: flex-start;
@@ -222,23 +244,26 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
   const [minPeriod, setMinPeriod] = useState<number>(minPeriodValue);
   const [maxPeriod, setMaxPeriod] = useState<number>(maxPeriodValue);
 
+  const [hasError, setHasError] = useState<boolean>(false);
+
   useEffect(() => {
     if (timeout.current) clearTimeout(timeout.current);
 
     timeout.current = setTimeout(() => {
-      if (
-        timerOperator?.value === TimerOperator.NOT_LESS_THAN &&
-        maxPeriod &&
-        minPeriod
-      ) {
-        dispatch(
-          setTaskTimer({
-            maxPeriod,
-            minPeriod,
-            taskId,
-            timerOperator: timerOperator?.value as TimerOperator,
-          }),
-        );
+      if (timerOperator?.value === TimerOperator.NOT_LESS_THAN) {
+        if (minPeriod <= maxPeriod) {
+          setHasError(false);
+          dispatch(
+            setTaskTimer({
+              maxPeriod,
+              minPeriod,
+              taskId,
+              timerOperator: timerOperator?.value as TimerOperator,
+            }),
+          );
+        } else {
+          setHasError(true);
+        }
       }
 
       if (timerOperator?.value === TimerOperator.LESS_THAN && maxPeriod) {
@@ -256,6 +281,12 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
       if (timeout.current) clearTimeout(timeout.current);
     };
   }, [minPeriod, maxPeriod]);
+
+  useEffect(() => {
+    setMaxPeriod(0);
+    setMinPeriod(0);
+    setHasError(false);
+  }, [timerOperator]);
 
   return (
     <Wrapper>
@@ -284,14 +315,21 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
 
           {timerOperator ? (
             <div className="timer-values">
+              {hasError ? (
+                <div className="config-error">
+                  <ErrorIcon className="icon" />
+                  <span className="error-msg">
+                    Error: Maximum time cannot be less than Miimum time
+                  </span>
+                </div>
+              ) : null}
+
               {timerOperator.value === TimerOperator.LESS_THAN ? (
                 <div className="timer-value">
                   <label>{timerOperator.label}</label>
                   <InputGroup
                     value={maxPeriod}
-                    setValue={(val) => {
-                      setMaxPeriod(val);
-                    }}
+                    setValue={(val) => setMaxPeriod(val)}
                   />
                 </div>
               ) : (
@@ -300,18 +338,14 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
                     <label>Set Minimum time </label>
                     <InputGroup
                       value={minPeriod}
-                      setValue={(val) => {
-                        setMinPeriod(val);
-                      }}
+                      setValue={(val) => setMinPeriod(val)}
                     />
                   </div>
                   <div className="timer-value">
                     <label>Set Maximum time </label>
                     <InputGroup
                       value={maxPeriod}
-                      setValue={(val) => {
-                        setMaxPeriod(val);
-                      }}
+                      setValue={(val) => setMaxPeriod(val)}
                     />
                   </div>
                 </>
