@@ -1,6 +1,8 @@
 import { BaseModal, Select } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Task, TimerOperator } from '#PrototypeComposer/checklist.types';
+import { useTypedSelector } from '#store/helpers';
+import { Error } from '#utils/globalTypes';
 import {
   ArrowDropDown,
   ArrowDropUp,
@@ -8,11 +10,15 @@ import {
   Error as ErrorIcon,
 } from '@material-ui/icons';
 import moment from 'moment';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useReducer, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { removeTaskTimer, setTaskTimer } from '../Tasks/actions';
+import {
+  removeTaskTimer,
+  resetTaskError,
+  setTaskTimer,
+} from '../Tasks/actions';
 
 const TIMER_OPERATORS = [
   {
@@ -226,73 +232,107 @@ type TimedTaskConfigProps = {
   timerOperator: Task['timerOperator'];
 };
 
+type TimerState = {
+  maxPeriod: number;
+  minPeriod: number;
+  timerOperator: TimerOperator;
+  hasChanged: boolean;
+  error: Error | string | null | undefined;
+};
+
+const reducer = (state: TimerState, action: any): TimerState => {
+  switch (action.type) {
+    case 'UPDATE_MIN_PERIOD':
+    case 'UPDATE_MAX_PERIOD':
+    case 'UPDATE_TIMER_OPERATOR':
+    case 'TIMER_CONFIG_ERROR':
+    case 'RESET':
+      return { ...state, ...action.payload };
+
+    default:
+      return { ...state };
+  }
+};
+
 const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
   closeAllOverlays,
   closeOverlay,
   props: {
-    maxPeriod: maxPeriodValue = 0,
-    minPeriod: minPeriodValue = 0,
+    maxPeriod = 0,
+    minPeriod = 0,
     taskId,
-    timerOperator: timerOperatorValue = TimerOperator.LESS_THAN,
+    timerOperator = TimerOperator.LESS_THAN,
   },
 }) => {
   const dispatch = useDispatch();
-  const [timerOperator, setTimerOperator] = useState(
-    TIMER_OPERATORS.find((el) => el.value === timerOperatorValue),
+  const taskErrors = useTypedSelector(
+    (state) => state.prototypeComposer.tasks.listById[taskId].errors,
   );
-  const timeout = useRef<null | number>(null);
-  const [minPeriod, setMinPeriod] = useState<number>(minPeriodValue);
-  const [maxPeriod, setMaxPeriod] = useState<number>(maxPeriodValue);
 
-  const [hasError, setHasError] = useState<boolean>(false);
+  const [state, localDispatch] = useReducer(reducer, {
+    minPeriod,
+    maxPeriod,
+    timerOperator,
+    hasChanged: false,
+    error: null,
+  });
+
+  const timeout = useRef<null | number>(null);
 
   useEffect(() => {
-    if (timeout.current) clearTimeout(timeout.current);
+    localDispatch({
+      type: 'TIMER_CONFIG_ERROR',
+      payload: { error: taskErrors.find((el) => el.code === 'E209')?.message },
+    });
+  }, [taskErrors]);
 
-    timeout.current = setTimeout(() => {
-      if (timerOperator?.value === TimerOperator.NOT_LESS_THAN) {
-        if (minPeriod <= maxPeriod) {
-          setHasError(false);
+  useEffect(() => {
+    if (state.hasChanged && !state.error) {
+      if (timeout.current) clearTimeout(timeout.current);
+
+      timeout.current = setTimeout(() => {
+        console.log('make api call with the new state  :: ', state);
+
+        if (state.timerOperator === TimerOperator.NOT_LESS_THAN) {
           dispatch(
             setTaskTimer({
-              maxPeriod,
-              minPeriod,
               taskId,
-              timerOperator: timerOperator?.value as TimerOperator,
+              minPeriod: state.minPeriod,
+              maxPeriod: state.maxPeriod,
+              timerOperator: state.timerOperator,
             }),
           );
-        } else {
-          setHasError(true);
+          localDispatch({ type: 'RESET', payload: { hasChanged: false } });
         }
-      }
-
-      if (timerOperator?.value === TimerOperator.LESS_THAN && maxPeriod) {
-        dispatch(
-          setTaskTimer({
-            maxPeriod,
-            taskId,
-            timerOperator: timerOperator?.value as TimerOperator,
-          }),
-        );
-      }
-    }, 500);
+        if (state.timerOperator === TimerOperator.LESS_THAN) {
+          dispatch(
+            setTaskTimer({
+              taskId,
+              maxPeriod: state.maxPeriod,
+              timerOperator: state.timerOperator,
+            }),
+          );
+          localDispatch({ type: 'RESET', payload: { hasChanged: false } });
+        }
+      }, 500);
+    }
 
     return () => {
       if (timeout.current) clearTimeout(timeout.current);
     };
-  }, [minPeriod, maxPeriod]);
-
-  useEffect(() => {
-    setMaxPeriod(0);
-    setMinPeriod(0);
-    setHasError(false);
-  }, [timerOperator]);
+  }, [state]);
 
   return (
     <Wrapper>
       <BaseModal
-        closeAllModals={closeAllOverlays}
-        closeModal={closeOverlay}
+        closeAllModals={() => {
+          dispatch(resetTaskError(taskId));
+          closeAllOverlays();
+        }}
+        closeModal={() => {
+          dispatch(resetTaskError(taskId));
+          closeOverlay();
+        }}
         showHeader={false}
         showFooter={false}
       >
@@ -307,29 +347,49 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
             <Select
               label="Select Condition"
               options={TIMER_OPERATORS}
-              onChange={(option) => setTimerOperator(option)}
+              onChange={(option) => {
+                localDispatch({
+                  type: 'UPDATE_TIMER_OPERATOR',
+                  payload: {
+                    timerOperator: option.value,
+                    minPeriod: 0,
+                    maxPeriod: 0,
+                    error: null,
+                    hasChanged: false,
+                  },
+                });
+              }}
               placeholder="Choose an option"
-              selectedValue={timerOperator}
+              selectedValue={TIMER_OPERATORS.find(
+                (el) => el.value === state.timerOperator,
+              )}
             />
           </div>
 
           {timerOperator ? (
             <div className="timer-values">
-              {hasError ? (
+              {state.error ? (
                 <div className="config-error">
                   <ErrorIcon className="icon" />
-                  <span className="error-msg">
-                    Error: Maximum time cannot be less than Miimum time
-                  </span>
+                  <span className="error-msg">{state.error}</span>
                 </div>
               ) : null}
 
-              {timerOperator.value === TimerOperator.LESS_THAN ? (
+              {state.timerOperator === TimerOperator.LESS_THAN ? (
                 <div className="timer-value">
-                  <label>{timerOperator.label}</label>
+                  <label>Complete the task under set time</label>
                   <InputGroup
-                    value={maxPeriod}
-                    setValue={(val) => setMaxPeriod(val)}
+                    value={state.maxPeriod}
+                    setValue={(val) => {
+                      localDispatch({
+                        type: 'UPDATE_MAX_PERIOD',
+                        payload: {
+                          maxPeriod: val,
+                          hasChanged: true,
+                          error: null,
+                        },
+                      });
+                    }}
                   />
                 </div>
               ) : (
@@ -337,15 +397,43 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
                   <div className="timer-value">
                     <label>Set Minimum time </label>
                     <InputGroup
-                      value={minPeriod}
-                      setValue={(val) => setMinPeriod(val)}
+                      value={state.minPeriod}
+                      setValue={(val) => {
+                        localDispatch({
+                          type: 'UPDATE_MIN_PERIOD',
+                          payload: {
+                            minPeriod: val,
+                            hasChanged: true,
+                            ...(state.maxPeriod < val
+                              ? {
+                                  error:
+                                    'Error: Maximum time cannot be less than Miimum time',
+                                }
+                              : { error: null }),
+                          },
+                        });
+                      }}
                     />
                   </div>
                   <div className="timer-value">
                     <label>Set Maximum time </label>
                     <InputGroup
-                      value={maxPeriod}
-                      setValue={(val) => setMaxPeriod(val)}
+                      value={state.maxPeriod}
+                      setValue={(val) => {
+                        localDispatch({
+                          type: 'UPDATE_MAX_PERIOD',
+                          payload: {
+                            maxPeriod: val,
+                            hasChanged: true,
+                            ...(state.minPeriod > val
+                              ? {
+                                  error:
+                                    'Error: Maximum time cannot be less than Miimum time',
+                                }
+                              : { error: null }),
+                          },
+                        });
+                      }}
                     />
                   </div>
                 </>

@@ -7,7 +7,9 @@ import {
   apiCreateTask,
   apiDeleteTask,
   apiRemoveStop,
+  apiRemoveTaskMedia,
   apiRemoveTaskTimer,
+  apiReorderTasks,
   apiSetTaskTimer,
   apiUpdateTask,
   apiUpdateTaskMedia,
@@ -22,17 +24,17 @@ import {
   addTaskMedia,
   deleteTask,
   deleteTaskSuccess,
+  removeTaskMedia,
   removeTaskTimer,
   setTaskError,
   setTaskTimer,
+  setValidationError,
   updateTask,
   updateTaskMedia,
   updateTaskMediaSuccess,
   updateTaskName,
 } from './actions';
 import { TaskListActions } from './reducer.types';
-import { removeTaskMedia } from './actions';
-import { apiRemoveTaskMedia, apiReorderTasks } from '../../utils/apiUrls';
 
 function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
   try {
@@ -197,7 +199,7 @@ function* setTaskTimerSaga({ payload }: ReturnType<typeof setTaskTimer>) {
     if (data) {
       yield put(updateTask(data));
     } else {
-      yield put(setTaskError(errors));
+      yield put(setValidationError(errors[0]));
     }
   } catch (error) {
     console.error('Error came in setTaskTimerSaga :: ', error);

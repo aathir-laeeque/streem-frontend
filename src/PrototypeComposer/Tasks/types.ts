@@ -52,6 +52,7 @@ export type UpdateMediaType = {
 };
 
 export enum TaskErrors {
+  E209 = 'INVALID_TIMED_TASK_CONFIG',
   E210 = 'TASK_NAME_CANNOT_BE_EMPTY',
   E211 = 'TASK_SHOULD_HAVE_ATLEAST_ONE_EXECUTABLE_ACTIVITY',
 }

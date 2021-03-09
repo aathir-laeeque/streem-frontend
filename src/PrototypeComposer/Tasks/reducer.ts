@@ -165,6 +165,18 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         },
       };
 
+    case TaskListActions.RESET_TASK_ERROR:
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [action.payload.taskId]: {
+            ...state.listById[action.payload.taskId],
+            errors: [],
+          },
+        },
+      };
+
     case TaskListActions.SET_TASK_ERROR:
       return {
         ...state,

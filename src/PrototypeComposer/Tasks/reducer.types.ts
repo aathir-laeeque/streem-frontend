@@ -4,6 +4,7 @@ import {
   addNewTaskSuccess,
   deleteTaskSuccess,
   resetTaskActivityError,
+  resetTaskError,
   setActiveTask,
   setTaskError,
   setValidationError,
@@ -37,6 +38,7 @@ export enum TaskListActions {
   REMOVE_TASK_MEDIA = '@@prototypeComposer/prototype/task-list/REMOVE_TASK_MEDIA',
   REMOVE_TASK_TIMER = '@@prototypeComposer/prototype/task-list/REMOVE_TASK_TIMER',
   RESET_TASK_ACTIVITY_ERROR = '@@prototypeComposer/prototype/task-list/RESET_TASK_ACTIVITY_ERROR',
+  RESET_TASK_ERROR = '@@prototypeComposer/prototype/task-list/RESET_TASK_ERROR',
 
   SET_ACTIVE_TASK = '@@prototypeComposer/prototype/task-list/SET_ACTIVE_TASK',
   SET_TASK_ERROR = '@@prototypeComposer/prototype/task-list/SET_TASK_ERROR',
@@ -59,6 +61,7 @@ export type TaskListActionType =
       | typeof setValidationError
       | typeof updateTask
       | typeof updateTaskMediaSuccess
+      | typeof resetTaskError
     >
   | ReturnType<typeof addNewStageSuccess | typeof deleteStageSuccess>
   | ComposerActionType;
