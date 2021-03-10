@@ -2,16 +2,18 @@ import { NotificationType } from '#components/Notification/types';
 import { closeAllOverlayAction } from '#components/OverlayContainer/actions';
 import { logOutSuccess, refreshTokenSuccess } from '#views/Auth/actions';
 import { RefreshTokenResponse } from '#views/Auth/types';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 
 import { store } from '../App';
 import { apiRefreshToken } from './apiUrls';
 import { LoginErrorCodes } from './constants';
+import { ResponseObj } from './globalTypes';
+import { getErrorMsg } from './request';
 
 // REFRESH TOKEN LOGIC
 
 const REFRESH_TOKEN_URL = apiRefreshToken();
-let refreshPromise: Promise<AxiosResponse<RefreshTokenResponse>> | null = null;
+let refreshPromise: Promise<ResponseObj<RefreshTokenResponse>> | null = null;
 async function refreshTokenRequest(refreshToken: string) {
   refreshPromise =
     refreshPromise ||
@@ -74,16 +76,19 @@ axiosInstance.interceptors.response.use(
 
         removeAuthHeader();
 
-        const res = (await refreshTokenRequest(refreshToken)) as AxiosResponse<
-          RefreshTokenResponse
-        >;
-        store.dispatch(refreshTokenSuccess(res?.data));
+        const { data, errors } = (await refreshTokenRequest(
+          refreshToken,
+        )) as ResponseObj<RefreshTokenResponse>;
+
+        if (errors) {
+          throw getErrorMsg(errors);
+        }
+
+        store.dispatch(refreshTokenSuccess(data));
 
         originalReq.isRetryAttempt = true;
-        setAuthHeader(res?.data.accessToken);
-        originalReq.headers[
-          'Authorization'
-        ] = `Bearer ${res?.data.accessToken}`;
+        setAuthHeader(data.accessToken);
+        originalReq.headers['Authorization'] = `Bearer ${data.accessToken}`;
         return await axiosInstance.request(originalReq);
       } else {
         return response.data;
