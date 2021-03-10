@@ -84,6 +84,7 @@ export const Composer = styled.div`
         font-size: 12px;
         color: #666666;
         margin-right: 8px;
+        word-break: keep-all;
       }
     }
   }
