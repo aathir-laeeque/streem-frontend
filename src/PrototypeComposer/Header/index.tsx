@@ -1,4 +1,6 @@
 import MemoArchive from '#assets/svg/Archive';
+import MemoViewInfo from '#assets/svg/ViewInfo';
+
 import { Button1 } from '#components';
 import {
   closeAllOverlayAction,
@@ -414,6 +416,22 @@ const ChecklistHeader: FC = () => {
                 handleClose();
                 dispatch(
                   openOverlayAction({
+                    type: OverlayNames.CHECKLIST_INFO,
+                    props: { checklistId: data.id },
+                  }),
+                );
+              }}
+            >
+              <div className="list-item">
+                <MemoViewInfo />
+                <span>View Info</span>
+              </div>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                dispatch(
+                  openOverlayAction({
                     type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
                     props: {
                       header: 'Archive Prototype',
@@ -591,7 +609,7 @@ const ChecklistHeader: FC = () => {
                   dispatch(
                     openOverlayAction({
                       type: OverlayNames.CHECKLIST_INFO,
-                      props: { checklist: { id: data.id } },
+                      props: { checklistId: data.id },
                     }),
                   )
                 }
