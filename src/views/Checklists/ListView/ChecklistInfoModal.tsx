@@ -9,8 +9,11 @@ import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { navigate } from '@reach/router';
 
-import { Checklist } from '../types';
-import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
+import { Checklist } from '../../../PrototypeComposer/checklist.types';
+import {
+  CollaboratorType,
+  Collaborator,
+} from '#PrototypeComposer/reviewer.types';
 
 const Wrapper = styled.div`
   .modal {
@@ -243,26 +246,72 @@ const Wrapper = styled.div`
   }
 `;
 
+type Author = Pick<
+  Collaborator,
+  | 'modifiedAt'
+  | 'email'
+  | 'employeeId'
+  | 'firstName'
+  | 'lastName'
+  | 'id'
+  | 'state'
+  | 'type'
+> & { orderTree: number };
+
+type SignOffUser = Pick<
+  Author,
+  'id' | 'employeeId' | 'email' | 'firstName' | 'lastName' | 'orderTree'
+> & { signedAt: number };
+
+type Version = Pick<Checklist, 'id' | 'code' | 'name' | 'versionNumber'> & {
+  deprecatedAt: number;
+};
+
+type Audit = {
+  createdAt: number;
+  modifiedAt: number;
+  modifiedBy: Pick<
+    Collaborator,
+    'id' | 'employeeId' | 'firstName' | 'lastName'
+  >;
+  createdBy: Pick<Collaborator, 'id' | 'employeeId' | 'firstName' | 'lastName'>;
+};
+
+type ChecklistInfo = Pick<
+  Checklist,
+  'id' | 'name' | 'code' | 'description' | 'state' | 'versionNumber' | 'phase'
+> & {
+  authors: Author[];
+  signOff: SignOffUser[];
+  release: {
+    releaseAt: number;
+    releaseBy: Pick<
+      Collaborator,
+      'id' | 'firstName' | 'lastName' | 'employeeId'
+    >;
+  };
+  versions: Version[];
+  audit: Audit;
+};
+
 type ChecklistInfoModalProps = {
-  checklist: Checklist;
+  checklistId: Checklist['id'];
 };
 
 const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: { checklist } = {},
+  props: { checklistId } = {},
 }) => {
-  const [state, setState] = useState({});
+  const [state, setState] = useState<ChecklistInfo | null>(null);
 
   useEffect(() => {
-    if (checklist) {
+    if (checklistId) {
       (async () => {
         const { data, errors } = await request(
           'GET',
-          apiGetChecklistInfo(checklist.id),
+          apiGetChecklistInfo(checklistId),
         );
-
-        console.log('data :: ', data);
 
         if (data) {
           setState(data);
@@ -273,11 +322,11 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
     }
   }, []);
 
-  if (!isEmpty(state)) {
-    const primaryAuthor = state?.authors?.filter(
+  if (!!state) {
+    const primaryAuthor = state.authors.filter(
       (author) => author.type === CollaboratorType.PRIMARY_AUTHOR,
     )[0];
-    const secondaryAuthors = state?.authors?.filter(
+    const secondaryAuthors = state.authors.filter(
       (author) => author.type === CollaboratorType.AUTHOR,
     );
 
@@ -294,193 +343,204 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
             <span>{state?.name}</span>
           </div>
           <div className="body">
-            <section className="authors">
-              <label>Authoring Information</label>
-              <div>
-                <div className="column">
-                  <label className="column-label">Checklist Owner</label>
-                  <div className="owner">
-                    <Avatar user={primaryAuthor ?? {}} />
-                    <div className="owner-details">
-                      <div className="owner-id">
-                        {primaryAuthor?.employeeId}
-                      </div>
-                      <div className="owner-name">
-                        {getFullName(primaryAuthor ?? {})}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="column">
-                  <label className="column-label">Secondary Authors</label>
-                  <div className="secondary-authors">
-                    {secondaryAuthors?.map((author) => (
-                      <Avatar user={author ?? {}} key={author?.employeeId} />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="column">
-                  <label className="column-label">Creation Date</label>
-                  <div className="creation-date">
-                    {formatDateTime(state?.audit?.createdAt, 'Do MMMM, YYYY')}
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section className="signing">
-              <label>Signing Information</label>
-
-              <div>
-                <div className="column">
-                  <label className="column-label">Collaborators</label>
-
-                  {state?.signOff?.map((user) => (
-                    <div className="owner" key={user.employeeId}>
-                      <Avatar user={user ?? {}} />
+            {!isEmpty(state.authors) ? (
+              <section className="authors">
+                <label>Authoring Information</label>
+                <div>
+                  <div className="column">
+                    <label className="column-label">Checklist Owner</label>
+                    <div className="owner">
+                      <Avatar user={primaryAuthor as Author} />
                       <div className="owner-details">
-                        <div className="owner-id">{user.employeeId}</div>
+                        <div className="owner-id">
+                          {primaryAuthor?.employeeId}
+                        </div>
                         <div className="owner-name">
-                          {getFullName(user ?? {})}
+                          {getFullName(primaryAuthor)}
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
 
-                <div className="column">
-                  <label className="column-label">Signed As</label>
-
-                  {state?.signOff?.map((user) => (
-                    <div className="signed-as" key={user.employeeId}>
-                      {(() => {
-                        if (user.orderTree === 1) {
-                          return 'Author';
-                        } else if (user.orderTree === 2) {
-                          return 'Reviewer';
-                        } else if (user.orderTree === 3) {
-                          return 'Approver';
-                        }
-                      })()}
+                  <div className="column">
+                    <label className="column-label">Secondary Authors</label>
+                    <div className="secondary-authors">
+                      {secondaryAuthors?.map((author) => (
+                        <Avatar user={author} key={author?.employeeId} />
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
 
-                <div className="column">
-                  <label className="column-label">State</label>
-
-                  {state?.signOff?.map((user) => (
-                    <div className="state" key={user.employeeId}>
-                      Complete
-                    </div>
-                  ))}
-                </div>
-
-                <div className="column">
-                  <label className="column-label">Date</label>
-
-                  {state?.signOff?.map((user) => (
-                    <div className="date" key={user.employeeId}>
-                      {formatDateTime(user?.signedAt, 'Do MMMM, YYYY')}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            <section className="release">
-              <label>Released By</label>
-
-              <div>
-                <div className="column">
-                  <label className="column-label">User</label>
-
-                  <div className="owner">
-                    <Avatar user={state?.release?.releaseBy ?? {}} />
-                    <div className="owner-details">
-                      <div className="owner-id">
-                        {state?.release?.releaseBy?.employeeId}
-                      </div>
-                      <div className="owner-name">
-                        {getFullName(state?.release?.releaseBy ?? {})}
-                      </div>
+                  <div className="column">
+                    <label className="column-label">Creation Date</label>
+                    <div className="creation-date">
+                      {formatDateTime(state?.audit?.createdAt, 'Do MMMM, YYYY')}
                     </div>
                   </div>
                 </div>
+              </section>
+            ) : null}
 
-                <div className="column">
-                  <label className="column-label">State</label>
-                  <div className="state">Complete</div>
-                </div>
+            {!isEmpty(state.signOff) ? (
+              <section className="signing">
+                <label>Signing Information</label>
 
-                <div className="column">
-                  <label className="column-label">Date</label>
+                <div>
+                  <div className="column">
+                    <label className="column-label">Collaborators</label>
 
-                  <div className="date">
-                    {formatDateTime(state?.release?.releaseAt, 'Do MMMM, YYYY')}
+                    {state.signOff.map((user) => (
+                      <div className="owner" key={user.employeeId}>
+                        <Avatar user={user} />
+                        <div className="owner-details">
+                          <div className="owner-id">{user.employeeId}</div>
+                          <div className="owner-name">{getFullName(user)}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="column">
+                    <label className="column-label">Signed As</label>
+
+                    {state.signOff.map((user) => (
+                      <div className="signed-as" key={user.employeeId}>
+                        {(() => {
+                          if (user.orderTree === 1) {
+                            return 'Author';
+                          } else if (user.orderTree === 2) {
+                            return 'Reviewer';
+                          } else if (user.orderTree === 3) {
+                            return 'Approver';
+                          }
+                        })()}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="column">
+                    <label className="column-label">State</label>
+
+                    {state.signOff.map((user) => (
+                      <div className="state" key={user.employeeId}>
+                        Complete
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="column">
+                    <label className="column-label">Date</label>
+
+                    {state.signOff.map((user) => (
+                      <div className="date" key={user.employeeId}>
+                        {formatDateTime(user.signedAt, 'Do MMMM, YYYY')}
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            ) : null}
 
-            <section className="revision">
-              <label>Revision History</label>
+            {!isEmpty(state.release) ? (
+              <section className="release">
+                <label>Released By</label>
 
-              <div>
-                <div className="column">
-                  <label className="column-label">#</label>
+                <div>
+                  <div className="column">
+                    <label className="column-label">User</label>
 
-                  {state?.versions?.map((_, index) => (
-                    <div key={index}>{state?.versions?.length - index}</div>
-                  ))}
-                </div>
-
-                <div className="column">
-                  <label className="column-label">Checklist ID</label>
-
-                  {state?.versions?.map((version, index) => (
-                    <div
-                      key={index}
-                      className="version-code"
-                      onClick={() => {
-                        if (index > 0) {
-                          closeOverlay();
-                          navigate(`checklists/${version.id}`);
-                        }
-                      }}
-                    >
-                      {version.code}
+                    <div className="owner">
+                      <Avatar user={state.release.releaseBy} />
+                      <div className="owner-details">
+                        <div className="owner-id">
+                          {state.release.releaseBy.employeeId}
+                        </div>
+                        <div className="owner-name">
+                          {getFullName(state.release.releaseBy)}
+                        </div>
+                      </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
 
-                <div className="column">
-                  <label className="column-label">Depracated on</label>
+                  <div className="column">
+                    <label className="column-label">State</label>
+                    <div className="state">Complete</div>
+                  </div>
 
-                  {state?.versions?.map((version, index) => (
-                    <div key={index}>
-                      {version?.deprecatedAt
-                        ? formatDateTime(version?.deprecatedAt, 'Do MMMM, YYYY')
-                        : 'Current'}
+                  <div className="column">
+                    <label className="column-label">Date</label>
+
+                    <div className="date">
+                      {formatDateTime(state.release.releaseAt, 'Do MMMM, YYYY')}
                     </div>
-                  ))}
+                  </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            ) : null}
 
-            <section className="description">
-              <label>Checklist Description</label>
+            {!isEmpty(state.versions) ? (
+              <section className="revision">
+                <label>Revision History</label>
 
-              <Textarea
-                defaultValue={state?.description}
-                disabled
-                rows={4}
-                onChange={noop}
-                placeholder=""
-              />
-            </section>
+                <div>
+                  <div className="column">
+                    <label className="column-label">#</label>
+
+                    {state.versions.map((_, index) => (
+                      <div key={index}>{state.versions.length - index}</div>
+                    ))}
+                  </div>
+
+                  <div className="column">
+                    <label className="column-label">Checklist ID</label>
+
+                    {state.versions.map((version, index) => (
+                      <div
+                        key={index}
+                        className="version-code"
+                        onClick={() => {
+                          if (index > 0) {
+                            closeOverlay();
+                            navigate(`checklists/${version.id}`);
+                          }
+                        }}
+                      >
+                        {version.code}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="column">
+                    <label className="column-label">Depracated on</label>
+
+                    {state.versions.map((version, index) => (
+                      <div key={index}>
+                        {version.deprecatedAt
+                          ? formatDateTime(
+                              version.deprecatedAt,
+                              'Do MMMM, YYYY',
+                            )
+                          : 'Current'}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            ) : null}
+
+            {!!state.description ? (
+              <section className="description">
+                <label>Checklist Description</label>
+
+                <Textarea
+                  defaultValue={state.description}
+                  disabled
+                  rows={4}
+                  onChange={noop}
+                  placeholder=""
+                />
+              </section>
+            ) : null}
           </div>
         </BaseModal>
       </Wrapper>
