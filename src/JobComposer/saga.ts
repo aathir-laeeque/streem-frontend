@@ -205,6 +205,9 @@ function* assignUsersToJobSaga({
           assignIds,
           unassignIds,
         },
+        params: {
+          notify,
+        },
       },
     );
 

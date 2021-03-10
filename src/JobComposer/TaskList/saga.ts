@@ -236,6 +236,9 @@ function* assignUsersToTaskSaga({
           assignIds,
           unassignIds,
         },
+        params: {
+          notify,
+        },
       },
     );
 

@@ -103,7 +103,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           if (!isActive) {
             dispatch(setActiveTask(task.id));
           }
-          if (!isJobStarted) {
+          if (!isJobStarted && !showAssignmentButton) {
             dispatch(
               openOverlayAction({
                 type: OverlayNames.START_JOB_MODAL,
