@@ -410,7 +410,7 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
                             ...(state.maxPeriod < val
                               ? {
                                   error:
-                                    'Error: Maximum time cannot be less than Minimum time',
+                                    'Maximum time should be more than Minimum time',
                                 }
                               : { error: null }),
                           },
