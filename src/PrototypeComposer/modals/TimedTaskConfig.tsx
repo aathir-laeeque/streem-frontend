@@ -13,6 +13,7 @@ import moment from 'moment';
 import React, { FC, useEffect, useReducer, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { TaskTimerErrorCodes } from '../Tasks/types';
 
 import {
   removeTaskTimer,
@@ -282,7 +283,9 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
   useEffect(() => {
     localDispatch({
       type: 'TIMER_CONFIG_ERROR',
-      payload: { error: taskErrors.find((el) => el.code === 'E209')?.message },
+      payload: {
+        error: taskErrors.find((el) => el.code in TaskTimerErrorCodes)?.message,
+      },
     });
   }, [taskErrors]);
 
