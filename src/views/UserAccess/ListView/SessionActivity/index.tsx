@@ -389,7 +389,10 @@ const SessionActivity: FC<TabViewProps> = () => {
                         <div className="log-item" key={`${log.id}`}>
                           <div className="circle" />
                           <div className="content">
-                            <div className="content-items">
+                            <div
+                              className="content-items"
+                              style={{ whiteSpace: 'nowrap' }}
+                            >
                               {moment.unix(log.triggeredAt).format('hh:mm A')}
                             </div>
                             {log.severity ===
