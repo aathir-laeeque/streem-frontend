@@ -8,7 +8,6 @@ import { store } from '../App';
 import { apiRefreshToken } from './apiUrls';
 import { LoginErrorCodes } from './constants';
 import { ResponseObj } from './globalTypes';
-import { getErrorMsg } from './request';
 
 // REFRESH TOKEN LOGIC
 
@@ -59,7 +58,7 @@ axiosInstance.interceptors.response.use(
         } = store.getState();
         if (
           isLoggedIn &&
-          code in LoginErrorCodes &&
+          Object.values(LoginErrorCodes).some((val) => val === code) &&
           code !== LoginErrorCodes.INCORRECT
         ) {
           throw message || 'Oops! Please Try Again.';
@@ -76,14 +75,9 @@ axiosInstance.interceptors.response.use(
 
         removeAuthHeader();
 
-        const { data, errors } = (await refreshTokenRequest(
+        const { data } = (await refreshTokenRequest(
           refreshToken,
         )) as ResponseObj<RefreshTokenResponse>;
-
-        if (errors) {
-          throw getErrorMsg(errors);
-        }
-
         store.dispatch(refreshTokenSuccess(data));
 
         originalReq.isRetryAttempt = true;
