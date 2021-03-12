@@ -16,6 +16,8 @@ export const fetchBaseUrl = () => {
   return apiUrl;
 };
 
+// TODO [FOR FE & BE Both] :: Change All Error Codes to Number even the Hexadecimal ones ie. `E210` etc.
+
 export enum LoginErrorCodes {
   ACCESS_TOKEN_EXPIRED = '101104',
   ARCHIVED = '104007',
