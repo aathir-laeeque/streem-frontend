@@ -190,9 +190,9 @@ const GlobalStyles = createGlobalStyle`
 
   .header-more-actions {
     .MuiPaper-root {
-      right: 10px !important;
-      left: 90% !important; 
-      top: 120px !important;
+      right: 16px !important;
+      left: auto !important; 
+      top: 155px !important;
     }
   }
 

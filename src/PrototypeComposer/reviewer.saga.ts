@@ -168,7 +168,10 @@ function* assignReviewersToChecklistSaga({
         throw error;
       }
     }
-    const { errors } = yield call(
+    const {
+      data,
+      errors,
+    }: ResponseObj<CommonReviewResponse['checklist']> = yield call(
       request,
       'PATCH',
       apiAssignReviewersToChecklist(checklistId),
@@ -183,6 +186,8 @@ function* assignReviewersToChecklistSaga({
     if (errors) {
       throw 'Could Not Assign Reviewers to Checklist';
     }
+
+    yield* onSuccess({ checklist: data });
 
     if (state === ChecklistStates.BEING_BUILT) {
       yield put(
@@ -453,9 +458,13 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
   const { checklistId, users } = payload;
 
   try {
-    const res = yield call(request, 'PATCH', apiInitiateSignOff(checklistId));
+    const res: ResponseObj<CommonReviewResponse['checklist']> = yield call(
+      request,
+      'PATCH',
+      apiInitiateSignOff(checklistId),
+    );
 
-    if (res.errors || res.error) {
+    if (res.errors) {
       throw 'Could Not Initiate Sign Off';
     }
 

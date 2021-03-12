@@ -28,6 +28,7 @@ import {
   ChecklistStates,
   ChecklistStatesColors,
   ChecklistStatesContent,
+  EnabledStates,
 } from '#PrototypeComposer/checklist.types';
 import {
   Collaborator,
@@ -41,7 +42,7 @@ import {
   submitChecklistReviewWithCR,
 } from '#PrototypeComposer/reviewer.actions';
 import { useDispatch } from 'react-redux';
-import { groupBy, orderBy } from 'lodash';
+import { groupBy, orderBy, pick } from 'lodash';
 import { getOrdinal } from '#utils/stringUtils';
 import { Wrapper, AntSwitch } from './SubmitReview.styles';
 import {
@@ -608,19 +609,27 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                   />
                   <Person style={{ fontSize: '18px' }} />
                 </div>
-                {isPrimaryAuthor && data.state !== ChecklistStates.DEPRECATED && (
-                  <div
-                    className="icon-wrapper"
-                    style={{
-                      borderRadius: '4px',
-                      borderColor: '#1d84ff',
-                    }}
-                    aria-haspopup="true"
-                    onClick={(e) => handleAssignReviewers(e)}
-                  >
-                    <PersonAdd style={{ fontSize: '18px' }} />
-                  </div>
-                )}
+                {isPrimaryAuthor &&
+                  data.state in
+                    {
+                      ...EnabledStates,
+                      ...pick(ChecklistStates, [
+                        ChecklistStates.SUBMITTED_FOR_REVIEW,
+                        ChecklistStates.BEING_REVIEWED,
+                      ]),
+                    } && (
+                    <div
+                      className="icon-wrapper"
+                      style={{
+                        borderRadius: '4px',
+                        borderColor: '#1d84ff',
+                      }}
+                      aria-haspopup="true"
+                      onClick={(e) => handleAssignReviewers(e)}
+                    >
+                      <PersonAdd style={{ fontSize: '18px' }} />
+                    </div>
+                  )}
               </div>
             </div>
             <div className="body">
