@@ -612,7 +612,6 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                 {isPrimaryAuthor &&
                   data.state in
                     {
-                      ...EnabledStates,
                       ...pick(ChecklistStates, [
                         ChecklistStates.SUBMITTED_FOR_REVIEW,
                         ChecklistStates.BEING_REVIEWED,

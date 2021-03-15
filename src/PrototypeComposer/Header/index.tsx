@@ -18,17 +18,17 @@ import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { archiveChecklist } from '#views/Checklists/ListView/actions';
 import { FormMode } from '#views/Checklists/NewPrototype/types';
+import { Menu, MenuItem } from '@material-ui/core';
 import {
   AddCircle,
   DoneAll,
-  Settings,
   FiberManualRecord,
   Group,
   Info,
   Message,
   MoreHoriz,
+  Settings,
 } from '@material-ui/icons';
-import { Menu, MenuItem } from '@material-ui/core';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -441,32 +441,10 @@ const ChecklistHeader: FC = () => {
     </>
   );
 
-  const handleSubmitForReviewOnChange = () => {
-    dispatch(
-      openOverlayAction({
-        type: OverlayNames.CONFIRMATION_MODAL,
-        props: {
-          onPrimary: () => dispatch(validatePrototype(data.id)),
-          primaryText: 'Confirm',
-          title: 'Submit For Review',
-          body: (
-            <p style={{ margin: 0, textAlign: 'left' }}>
-              Are you sure you want to Submit for Review?
-            </p>
-          ),
-        },
-      }),
-    );
-  };
-
   const AuthorSubmitButton = ({ title }: { title: string }) => (
     <Button1
       className="submit"
-      onClick={() =>
-        data.state === ChecklistStates.BEING_BUILT
-          ? dispatch(validatePrototype(data.id))
-          : handleSubmitForReviewOnChange()
-      }
+      onClick={() => dispatch(validatePrototype(data.id))}
     >
       {title}
     </Button1>
@@ -546,7 +524,6 @@ const ChecklistHeader: FC = () => {
       case ChecklistStates.READY_FOR_SIGNING:
         return (
           <>
-            {isPrimaryAuthor && <PrototypeEditButton />}
             <ViewReviewersButton />
             {isPrimaryAuthor && (
               <InitiateSignOffButton title="Initiate Sign Off " />
@@ -557,16 +534,11 @@ const ChecklistHeader: FC = () => {
       default:
         return (
           <>
-            {isPrimaryAuthor && <PrototypeEditButton />}
             <ViewReviewersButton />
           </>
         );
     }
   };
-
-  const disableAddingButtons = () =>
-    data?.state === ChecklistStates.SUBMITTED_FOR_REVIEW ||
-    data?.state === ChecklistStates.BEING_REVIEWED;
 
   return (
     <HeaderWrapper>
@@ -658,7 +630,6 @@ const ChecklistHeader: FC = () => {
               <Button1
                 variant="textOnly"
                 id="new-stage"
-                disabled={disableAddingButtons()}
                 onClick={() => dispatch(addNewStage())}
               >
                 <AddCircle className="icon" fontSize="small" />
@@ -668,7 +639,6 @@ const ChecklistHeader: FC = () => {
               <Button1
                 variant="textOnly"
                 id="new-task"
-                disabled={disableAddingButtons()}
                 onClick={() => {
                   if (activeStageId) {
                     dispatch(
@@ -688,7 +658,6 @@ const ChecklistHeader: FC = () => {
               {/* <Button1
                 variant="textOnly"
                 id="preview"
-                disabled={disableAddingButtons()}
               >
                 <PlayCircleFilled className="icon" fontSize="small" />
                 Preview

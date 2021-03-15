@@ -1,6 +1,6 @@
 import { BaseModal, Checkbox } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { Checklist } from '#PrototypeComposer/checklist.types';
+import { Checklist, ChecklistStates } from '#PrototypeComposer/checklist.types';
 import {
   Collaborator,
   CollaboratorState,
@@ -47,7 +47,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   props: { checklistId, isModal = true },
 }) => {
   const {
-    data: { collaborators, phase },
+    data: { collaborators, phase, state: checklistState },
     assignees,
   } = useTypedSelector((state) => ({
     assignees: state.prototypeComposer.collaborators,
@@ -261,7 +261,10 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
         onSecondary={onSecondary}
         onPrimary={onPrimary}
         disabledPrimary={
-          state.assignedUsers.length === 0 && state.unAssignedUsers.length === 0
+          !state.assignedUsers.length &&
+          !state.unAssignedUsers.length &&
+          checklistState === ChecklistStates.BEING_BUILT &&
+          phase === 1
         }
       >
         <div className="top-content">

@@ -55,6 +55,8 @@ import {
 } from './reviewer.types';
 
 const getState = (state: RootState) => state.prototypeComposer.data?.state;
+const getCurrentPhase = (state: RootState) =>
+  state.prototypeComposer.data?.phase;
 const getCurrentReviewers = (state: RootState) =>
   (state.prototypeComposer.data as Checklist)?.collaborators || [];
 const getCurrentComments = (state: RootState) =>
@@ -160,36 +162,44 @@ function* assignReviewersToChecklistSaga({
 
   try {
     const state = getState(yield select());
-    if (state === ChecklistStates.BEING_BUILT) {
-      const res = yield* submitChecklistForReviewCall(checklistId);
-      if (res.errors && res.errors.length > 0) {
-        let error = '';
-        res.errors.forEach((err: any) => (error = error + err.message + '\n'));
-        throw error;
-      }
-    }
-    const {
-      data,
-      errors,
-    }: ResponseObj<CommonReviewResponse['checklist']> = yield call(
-      request,
-      'PATCH',
-      apiAssignReviewersToChecklist(checklistId),
-      {
-        data: {
-          assignedUserIds,
-          unassignedUserIds,
-        },
-      },
-    );
+    const phase = getCurrentPhase(yield select());
 
-    if (errors) {
-      throw 'Could Not Assign Reviewers to Checklist';
+    const res = yield* submitChecklistForReviewCall(checklistId);
+    if (res.errors && res.errors.length > 0) {
+      let error = '';
+      res.errors.forEach((err: any) => (error = error + err.message + '\n'));
+      throw error;
+    }
+
+    let data = res.data;
+    const shouldCallAssignment =
+      assignedUserIds.length || unassignedUserIds.length;
+    if (shouldCallAssignment) {
+      const {
+        data: assignmentData,
+        errors,
+      }: ResponseObj<CommonReviewResponse['checklist']> = yield call(
+        request,
+        'PATCH',
+        apiAssignReviewersToChecklist(checklistId),
+        {
+          data: {
+            assignedUserIds,
+            unassignedUserIds,
+          },
+        },
+      );
+
+      if (errors) {
+        throw 'Could Not Assign Reviewers to Checklist';
+      }
+
+      data = assignmentData;
     }
 
     yield* onSuccess({ checklist: data });
 
-    if (state === ChecklistStates.BEING_BUILT) {
+    if (state === ChecklistStates.BEING_BUILT && phase === 1) {
       yield put(
         openOverlayAction({
           type: OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT_SUCCESS,
@@ -199,7 +209,7 @@ function* assignReviewersToChecklistSaga({
       yield put(
         showNotification({
           type: NotificationType.SUCCESS,
-          msg: 'Assignments Modified',
+          msg: shouldCallAssignment ? 'Assignments Modified' : 'Submitted',
         }),
       );
     }
