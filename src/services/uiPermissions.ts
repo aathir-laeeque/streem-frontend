@@ -74,8 +74,8 @@ const checkPermission = (keys: string[]) => {
     auth: { roles: authRoles },
   } = store.getState();
   const check = get(uiPermissions, keys, false);
-  if (check && authRoles && authRoles[0]) {
-    return check.includes(authRoles[0]);
+  if (check && authRoles && authRoles.length) {
+    return authRoles.some((role: string) => check.includes(role));
   }
 
   return false;
