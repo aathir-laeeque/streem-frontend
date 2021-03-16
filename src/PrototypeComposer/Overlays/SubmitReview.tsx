@@ -610,13 +610,8 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                   <Person style={{ fontSize: '18px' }} />
                 </div>
                 {isPrimaryAuthor &&
-                  data.state in
-                    {
-                      ...pick(ChecklistStates, [
-                        ChecklistStates.SUBMITTED_FOR_REVIEW,
-                        ChecklistStates.BEING_REVIEWED,
-                      ]),
-                    } && (
+                  (data.state === ChecklistStates.SUBMITTED_FOR_REVIEW ||
+                    data.state === ChecklistStates.BEING_REVIEWED) && (
                     <div
                       className="icon-wrapper"
                       style={{

@@ -25,26 +25,26 @@ import {
 } from '#utils/apiUrls';
 import { LoginErrorCodes } from '#utils/constants';
 import { ResponseObj } from '#utils/globalTypes';
-import { handleCatch, request } from '#utils/request';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { Checklist, ChecklistStates, Comment } from './checklist.types';
 import { ComposerAction } from './reducer.types';
 import {
   assignReviewersToChecklist,
+  fetchApprovers,
+  fetchApproversSuccess,
   fetchAssignedReviewersForChecklist,
   fetchAssignedReviewersForChecklistSuccess,
+  initiateSignOff,
+  releasePrototype,
   sendReviewToCr,
+  signOffPrototype,
   startChecklistReview,
-  updateChecklistForReview,
   submitChecklistForReview,
   submitChecklistReview,
   submitChecklistReviewWithCR,
-  initiateSignOff,
-  fetchApprovers,
-  fetchApproversSuccess,
-  signOffPrototype,
-  releasePrototype,
+  updateChecklistForReview,
 } from './reviewer.actions';
 import {
   Collaborator,
@@ -75,7 +75,7 @@ function* fetchReviewersForChecklistSaga({
     );
 
     if (errors) {
-      throw 'Could Not Fetch Reviewers for Checklist';
+      throw getErrorMsg(errors);
     }
 
     yield put(fetchAssignedReviewersForChecklistSuccess(data));
@@ -99,7 +99,7 @@ function* fetchApproversSaga({ payload }: ReturnType<typeof fetchApprovers>) {
     );
 
     if (errors) {
-      throw 'Could Not Fetch Approvers for Checklist';
+      throw getErrorMsg(errors);
     }
 
     yield put(
@@ -117,17 +117,28 @@ function* fetchApproversSaga({ payload }: ReturnType<typeof fetchApprovers>) {
 
 function* submitChecklistForReviewCall(checklistId: Checklist['id']) {
   try {
-    const res: ResponseObj<CommonReviewResponse['checklist']> = yield call(
+    const {
+      data,
+      errors,
+    }: ResponseObj<CommonReviewResponse['checklist']> = yield call(
       request,
       'PATCH',
       apiSubmitChecklistForReview(checklistId),
     );
 
-    yield* onSuccess({ checklist: res.data });
+    if (errors) {
+      throw getErrorMsg(errors);
+    }
 
-    return res;
+    yield* onSuccess({ checklist: data });
+
+    return data;
   } catch (error) {
-    throw 'Could Not Submit Checklist For Review';
+    yield* handleCatch(
+      'Prototype Composer',
+      'submitChecklistForReviewCall',
+      error,
+    );
   }
 }
 
@@ -137,10 +148,7 @@ function* submitChecklistForReviewSaga({
   const { checklistId } = payload;
 
   try {
-    const { errors } = yield* submitChecklistForReviewCall(checklistId);
-    if (errors) {
-      throw 'Could Not Submit Checklist For Review';
-    }
+    yield* submitChecklistForReviewCall(checklistId);
   } catch (error) {
     yield* handleCatch(
       'Prototype Composer',
@@ -165,13 +173,9 @@ function* assignReviewersToChecklistSaga({
     const phase = getCurrentPhase(yield select());
 
     const res = yield* submitChecklistForReviewCall(checklistId);
-    if (res.errors && res.errors.length > 0) {
-      let error = '';
-      res.errors.forEach((err: any) => (error = error + err.message + '\n'));
-      throw error;
-    }
 
-    let data = res.data;
+    let data = res;
+
     const shouldCallAssignment =
       assignedUserIds.length || unassignedUserIds.length;
     if (shouldCallAssignment) {
@@ -191,7 +195,7 @@ function* assignReviewersToChecklistSaga({
       );
 
       if (errors) {
-        throw 'Could Not Assign Reviewers to Checklist';
+        throw getErrorMsg(errors);
       }
 
       data = assignmentData;
@@ -236,7 +240,7 @@ function* startChecklistReviewSaga({
     );
 
     if (errors) {
-      throw 'Could Not Start Review';
+      throw getErrorMsg(errors);
     }
 
     yield* onSuccess(data);
@@ -343,7 +347,7 @@ function* onSuccess(data: CommonReviewResponse) {
 
     return { payloadToSend, allDoneOk, isLast };
   } catch (error) {
-    throw "Could Not Run onSuccess For Review API's";
+    yield* handleCatch('Prototype Composer', 'onSuccessSaga', error);
   }
 }
 
@@ -366,7 +370,11 @@ function* afterSubmitChecklistReview(isLast: boolean, allDoneOk: boolean) {
       );
     }
   } catch (error) {
-    throw 'Could Not Submit afterSubmitChecklistReview For Review';
+    yield* handleCatch(
+      'Prototype Composer',
+      'afterSubmitChecklistReview',
+      error,
+    );
   }
 }
 
@@ -383,7 +391,7 @@ function* submitChecklistReviewSaga({
     );
 
     if (errors) {
-      throw 'Could Not Submit Review';
+      throw getErrorMsg(errors);
     }
 
     const { isLast, allDoneOk } = yield* onSuccess(data);
@@ -416,7 +424,7 @@ function* submitChecklistReviewWithCRSaga({
     );
 
     if (errors) {
-      throw 'Could Not Submit Review With CR';
+      throw getErrorMsg(errors);
     }
 
     const { isLast, allDoneOk } = yield* onSuccess(data);
@@ -442,7 +450,7 @@ function* sendReviewToCrSaga({ payload }: ReturnType<typeof sendReviewToCr>) {
     );
 
     if (errors) {
-      throw 'Could Not Send Review To CR';
+      throw getErrorMsg(errors);
     }
 
     yield* onSuccess(data);
@@ -475,7 +483,7 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
     );
 
     if (res.errors) {
-      throw 'Could Not Initiate Sign Off';
+      throw getErrorMsg(res.errors);
     }
 
     const {
@@ -489,7 +497,7 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
     );
 
     if (errors) {
-      throw 'Could Not Initiate Sign Off';
+      throw getErrorMsg(errors);
     }
 
     yield* onSuccess(data);
@@ -526,7 +534,7 @@ function* signOffPrototypeSaga({
       );
 
       if (errors) {
-        throw 'User cannot signoff the checklist as previous users did not signed off the checklist.';
+        throw getErrorMsg(errors);
       }
 
       yield* onSuccess(data);
@@ -576,7 +584,7 @@ function* releasePrototypeSaga({
       );
 
       if (errors) {
-        throw errors?.[0]?.message || 'Unable to Relase the Prototype';
+        throw getErrorMsg(errors);
       }
 
       yield* onSuccess({ checklist: data });
