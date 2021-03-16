@@ -26,14 +26,14 @@ import Wrapper from './ReviewerAssignment.styles';
 
 type initialState = {
   assignedUsers: Collaborator['id'][];
-  unAssignedUsers: Collaborator['id'][];
+  unassignedUsers: Collaborator['id'][];
   searchQuery: string;
   preAssignedUsers: Collaborator[];
 };
 
 const initialState: initialState = {
   assignedUsers: [],
-  unAssignedUsers: [],
+  unassignedUsers: [],
   searchQuery: '',
   preAssignedUsers: [],
 };
@@ -58,7 +58,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   const [state, setstate] = useState(initialState);
   const {
     assignedUsers,
-    unAssignedUsers,
+    unassignedUsers,
     searchQuery,
     preAssignedUsers,
   } = state;
@@ -82,7 +82,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
       (prevAssignees === undefined || prevAssignees.length === 0) &&
       assignees.length > 0 &&
       assignedUsers.length === 0 &&
-      unAssignedUsers.length === 0
+      unassignedUsers.length === 0
     ) {
       setstate({ ...state, preAssignedUsers: assignees });
     }
@@ -118,7 +118,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
       if (isPreAssigned) {
         setstate({
           ...state,
-          unAssignedUsers: [...unAssignedUsers, user.id],
+          unassignedUsers: [...unassignedUsers, user.id],
           assignedUsers: assignedUsers.filter((i) => i !== user.id),
         });
         dispatch(unAssignReviewerFromChecklist(user));
@@ -133,13 +133,13 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
       if (isPreAssigned) {
         setstate({
           ...state,
-          unAssignedUsers: unAssignedUsers.filter((i) => i !== user.id),
+          unassignedUsers: unassignedUsers.filter((i) => i !== user.id),
         });
       } else {
         setstate({
           ...state,
           assignedUsers: [...assignedUsers, user.id],
-          unAssignedUsers: unAssignedUsers.filter((i) => i !== user.id),
+          unassignedUsers: unassignedUsers.filter((i) => i !== user.id),
         });
       }
       dispatch(assignReviewerToChecklist(user));
@@ -187,7 +187,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
     );
     setstate({
       ...state,
-      unAssignedUsers: filteredAssignees.map((i) => i.id),
+      unassignedUsers: filteredAssignees.map((i) => i.id),
       assignedUsers: [],
     });
     if (checklistId) dispatch(revertReviewersForChecklist([]));
@@ -239,7 +239,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
         assignReviewersToChecklist({
           checklistId: checklistId,
           assignIds: assignedUsers,
-          unassignIds: unAssignedUsers,
+          unassignIds: unassignedUsers,
         }),
       );
     closeOverlay();
@@ -262,7 +262,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
         onPrimary={onPrimary}
         disabledPrimary={
           !state.assignedUsers.length &&
-          !state.unAssignedUsers.length &&
+          !state.unassignedUsers.length &&
           checklistState === ChecklistStates.BEING_BUILT &&
           phase === 1
         }
