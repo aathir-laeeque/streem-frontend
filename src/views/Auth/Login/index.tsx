@@ -6,6 +6,7 @@ import { Link } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 import { login, resetError } from '../actions';
 import { LoginProps } from './types';
@@ -19,6 +20,7 @@ const Login: FC<LoginProps> = () => {
   const dispatch = useDispatch();
   const [passwordInputType, setPasswordInputType] = useState(true);
   const { error, loading } = useTypedSelector((state) => state.auth);
+  const { t } = useTranslation(['userManagement']);
 
   const { register, handleSubmit } = useForm<Inputs>({
     mode: 'onChange',
@@ -47,7 +49,7 @@ const Login: FC<LoginProps> = () => {
 
   return (
     <Card
-      heading="Welcome to CLEEN!"
+      heading={t('userManagement:login.heading')}
       subHeading="Enter your credentials to login."
     >
       <form onSubmit={handleSubmit(onSubmit)}>

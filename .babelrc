@@ -5,6 +5,7 @@
       {
         "root": ["."],
         "alias": {
+          "#i18n": "./src/i18n",
           "#assets": "./src/assets",
           "#components": "./src/components",
           "#JobComposer": "./src/JobComposer",

@@ -1,4 +1,5 @@
 // alias imports
+import '#i18n';
 import { Notification, OverlayContainer, CustomRoute } from '#components';
 import { configureStore } from '#store';
 import { AuthView } from '#views';

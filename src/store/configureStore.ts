@@ -79,10 +79,7 @@ const handleOnIdle: Middleware = (store) => (next) => (action: AnyAction) => {
   next(action);
 };
 
-export const configureStore = (initialState: {
-  [x: string]: any;
-  _persist: { version: number; rehydrated: boolean };
-}) => {
+export const configureStore = (initialState: Partial<RootState>) => {
   const middlewares = [handleOnIdle, sagaMiddleware];
 
   const composeEnhancers =
