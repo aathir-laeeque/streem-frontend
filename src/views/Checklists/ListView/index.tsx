@@ -1,7 +1,7 @@
 import useTabsNew from '#components/shared/useTabsNew';
+import { ViewWrapper } from '#views/Jobs/NewListView/styles';
 import React, { FC } from 'react';
 
-import { ViewWrapper } from './styles';
 import TabContent from './TabContent';
 import { ListViewProps } from './types';
 

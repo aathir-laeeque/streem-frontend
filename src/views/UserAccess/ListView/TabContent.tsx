@@ -9,6 +9,7 @@ import { fetchUsers, setSelectedUser } from '#store/users/actions';
 import { User } from '#store/users/types';
 import { FilterField } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
+import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import { startCase, toLower } from 'lodash';
@@ -23,7 +24,6 @@ import {
   unArchiveUser,
   unLockUser,
 } from '../actions';
-import { TabContentWrapper } from './styles';
 
 export function modalBody(user: User, text: string) {
   return (
@@ -201,7 +201,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
         {checkPermission(['usersAndAccess', 'addNewUser']) &&
         props.values[0] === UserState.ACTIVE ? (
           <Button1
-            id="add-user"
+            id="create-new"
             onClick={() => navigate('user-access/add-user')}
           >
             Add a new User

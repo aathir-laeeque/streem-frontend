@@ -205,7 +205,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
         {values[0] in UnassignedJobStates ? (
           <Button1
-            id="create-job"
+            id="create-new"
             onClick={() =>
               dispatch(
                 openOverlayAction({

@@ -2,11 +2,11 @@ import useTabsNew from '#components/shared/useTabsNew';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
 import { fetchProperties } from '#store/properties/actions';
+import { ViewWrapper } from '#views/Jobs/NewListView/styles';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { resetInbox } from './actions';
-import { ViewWrapper } from './styles';
 import TabContent from './TabContent';
 import { InboxState, ListViewProps } from './types';
 

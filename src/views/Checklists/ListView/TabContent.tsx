@@ -24,6 +24,7 @@ import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/NewListView/actions';
+import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
 import { Menu, MenuItem } from '@material-ui/core';
 import {
   ArrowDropDown,
@@ -44,7 +45,6 @@ import {
   fetchChecklistsForListView,
   unarchiveChecklist,
 } from './actions';
-import { Composer } from './styles';
 import { ListViewProps } from './types';
 
 const getBaseFilter = (label: string): FilterField[] => [
@@ -182,7 +182,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   const showPaginationArrows = pageable.totalPages > 10;
 
   return (
-    <Composer>
+    <TabContentWrapper>
       <div
         style={{
           padding: '0 0 8px',
@@ -345,7 +345,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
 
         {checkPermission(['checklists', 'create']) && (
           <Button1
-            id="create-prototype"
+            id="create-new"
             onClick={() =>
               navigate('/checklists/prototype', {
                 state: { mode: FormMode.ADD },
@@ -632,7 +632,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           }}
         />
       </div>
-    </Composer>
+    </TabContentWrapper>
   );
 };
 

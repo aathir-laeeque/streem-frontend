@@ -14,9 +14,8 @@ import ResetPassword from './ResetPassword';
 import { AuthViewProps } from './types';
 
 const Wrapper = styled.div`
-  height: inherit;
-  width: inherit;
   display: flex;
+  flex: 1;
 
   .sections {
     display: flex;

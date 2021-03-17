@@ -4,6 +4,8 @@ const GlobalStyles = createGlobalStyle`
   body {
     height: 100vh;
     width: 100vw;
+    display: flex;
+    flex: 1;
   }
 
   * {
@@ -36,8 +38,8 @@ const GlobalStyles = createGlobalStyle`
   }
 
   #root {
-    height: inherit;
-    width: inherit;
+    display: flex;
+    flex: 1;
   }
 
   .icon {

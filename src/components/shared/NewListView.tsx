@@ -31,7 +31,9 @@ interface ListViewProps {
 
 const Wrapper = styled.div.attrs({})`
   overflow: hidden;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 
   .flex-1 {
     flex: 1 !important;
@@ -45,13 +47,16 @@ const Wrapper = styled.div.attrs({})`
 
   .list-body {
     overflow: auto;
-    max-height: calc(100% - 48px);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border-bottom: 1px solid #dadada;
   }
 
   .list-card {
     display: flex;
-    flex: 1;
     background-color: #f4f4f4;
+    border-bottom: 1px solid #dadada;
 
     :hover {
       background-color: #eeeeee;

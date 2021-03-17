@@ -40,7 +40,7 @@ const App: FC = () => {
         persistor={persistor}
         onBeforeLift={onBeforeLift}
       >
-        <Router style={{ height: 'inherit', width: 'inherit' }} basepath="/">
+        <Router style={{ display: 'flex', flex: 1 }} basepath="/">
           <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
           <CustomRoute as={PrintJob} path="jobs/print/:jobId" />
           <CustomRoute as={PrintSessionActivity} path="users-activity/print" />

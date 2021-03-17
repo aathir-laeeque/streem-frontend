@@ -6,6 +6,7 @@ import {
 } from '#components';
 import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
+import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
 import { Job } from '#views/Jobs/NewListView/types';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
@@ -18,7 +19,6 @@ import {
   CompletedJobStates,
 } from '../../Jobs/NewListView/types';
 import { fetchInbox, setSelectedState } from './actions';
-import { TabContentWrapper } from './styles';
 import { ListViewState, TabViewProps } from './types';
 
 // const DEFAULT_PAGE_NUMBER = 0;

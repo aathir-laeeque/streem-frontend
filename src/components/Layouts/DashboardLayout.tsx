@@ -8,8 +8,7 @@ const Layout = styled.div`
     'nav-menu workarea';
   grid-template-rows: 50px 1fr;
   grid-template-columns: 120px 1fr;
-  height: inherit;
-  width: inherit;
+  flex: 1;
   background-color: #fafafa;
 
   @media (max-width: 1200px) {
