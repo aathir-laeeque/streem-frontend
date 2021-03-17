@@ -15,6 +15,7 @@ import { FacilitiesReducer } from './facilities/reducer';
 import { FileUploadReducer } from './file-upload/reducer';
 import { PropertiesReducer } from './properties/reducer';
 import { UsersReducer } from './users/reducer';
+import { ExtrasReducer } from './extras/reducer';
 
 // import { JobListViewReducer } from 'views/Jobs/ListView/reducer';
 export const rootReducer = combineReducers({
@@ -29,6 +30,7 @@ export const rootReducer = combineReducers({
   prototypeComposer,
   sessionActivity: SessionActivityReducer,
   users: UsersReducer,
+  extras: ExtrasReducer,
 
   // services reducer
   propertiesService: PropertiesServiceReducer,

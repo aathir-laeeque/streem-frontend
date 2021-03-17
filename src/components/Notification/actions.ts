@@ -1,5 +1,12 @@
+import { SvgIconComponent } from '@material-ui/icons';
 import { actionSpreader } from './../../store/helpers';
-import { NotificationActions } from './types';
+import { NotificationActions, NotificationType } from './types';
 
-export const showNotification = (params: { type: string; msg: string }) =>
-  actionSpreader(NotificationActions.SHOW_NOTIFICATION, params);
+export const showNotification = (payload: {
+  type: NotificationType;
+  msg: string;
+  delayTime?: number;
+  detail?: string;
+  icon?: SvgIconComponent;
+  iconProps?: Record<string, any>;
+}) => actionSpreader(NotificationActions.SHOW_NOTIFICATION, payload);

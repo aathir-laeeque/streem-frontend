@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
-import { takeLatest, call } from 'redux-saga/effects';
-import { Check, Close } from '@material-ui/icons';
+import { takeLatest, call, delay } from 'redux-saga/effects';
+import { Check, Close, SvgIconComponent } from '@material-ui/icons';
 import { toast } from 'react-toastify';
 import {
   NotificationActions,
@@ -8,22 +8,27 @@ import {
   NotificationType,
 } from './types';
 
-function* showNotificationGenerator(action: NotificationActionType) {
-  const params = action.payload;
-  if (params) {
-    const Layout = (): ReactNode => (
-      <div className={`notification-layout notification--${params.type}`}>
-        {params.type === NotificationType.SUCCESS && (
-          <Check className={`toast_icon toast_icon--success`} />
-        )}
-        {params.type === NotificationType.ERROR && (
-          <Close className={`toast_icon toast_icon--error`} />
-        )}
-        {params.msg}
+function* showNotificationGenerator({ payload }: NotificationActionType) {
+  const { type, msg, delayTime, detail, icon, iconProps } = payload;
+  if (delayTime) yield delay(delayTime);
+
+  const showIcon = (IconComponent: SvgIconComponent, classes = '') => (
+    <IconComponent className={`toast_icon ${classes}`} {...iconProps} />
+  );
+
+  const Layout = (): ReactNode => (
+    <div className={`notification-layout notification--${type}`}>
+      {type === NotificationType.SUCCESS &&
+        showIcon(icon || Check, 'toast_icon--success')}
+      {type === NotificationType.ERROR &&
+        showIcon(icon || Close, 'toast_icon--error')}
+      <div className="content">
+        {msg}
+        {detail && <span>{detail}</span>}
       </div>
-    );
-    yield call(toast, Layout);
-  }
+    </div>
+  );
+  yield call(toast, Layout);
 }
 
 export function* showNotificationSaga() {

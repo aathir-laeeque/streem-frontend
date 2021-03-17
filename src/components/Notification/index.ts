@@ -26,6 +26,19 @@ const Notification = styled(ToastContainer).attrs({
       align-items: center;
       display: flex;
       padding: 8px 0 8px 8px;
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        color: #000;
+        font-size: 16px;
+
+        span {
+          margin-top: 4px;
+          font-size: 12px;
+          color: #333333;
+        }
+      }
     }
     .notification--success {
       border-left: 4px solid #5aa700;
@@ -49,7 +62,7 @@ const Notification = styled(ToastContainer).attrs({
   }
   .Toastify__close-button {
     color: #999999;
-    align-self: center;
+    margin-top: 10px;
   }
 `;
 

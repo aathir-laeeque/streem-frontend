@@ -1,3 +1,4 @@
+import { NotificationType } from '#components/Notification/types';
 import { actionSpreader } from '#store';
 import { User } from '#store/users/types';
 import { PasswordRequestInputs } from '#views/Profile/AccountSecurity';
@@ -28,8 +29,11 @@ export const setIdle = (data: boolean) =>
 
 export const logOut = () => actionSpreader(AuthAction.LOGOUT);
 
-export const logOutSuccess = (payload?: { type?: string; msg?: string }) =>
-  actionSpreader(AuthAction.LOGOUT_SUCCESS, payload);
+export const logOutSuccess = (payload?: {
+  type?: NotificationType;
+  msg?: string;
+  delayTime?: number;
+}) => actionSpreader(AuthAction.LOGOUT_SUCCESS, payload);
 
 export const cleanUp = () => actionSpreader(AuthAction.CLEANUP);
 

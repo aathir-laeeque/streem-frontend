@@ -1,9 +1,13 @@
 // alias imports
 import '#i18n';
-import { Notification, OverlayContainer, CustomRoute } from '#components';
+
+import { CustomRoute, Notification, OverlayContainer } from '#components';
 import { configureStore } from '#store';
+import { setAuthHeader } from '#utils/axiosClient';
 import { AuthView } from '#views';
-// library imports
+import PrintJob from '#views/Jobs/PrintJob';
+import PrintJobActivity from '#views/Jobs/PrintJobActivity';
+import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
 import { Router } from '@reach/router';
 import React, { FC } from 'react';
 import { Provider } from 'react-redux';
@@ -11,11 +15,8 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import GlobalStyles from './styles/GlobalStyles';
 import { HomeView } from './views';
-import PrintJob from '#views/Jobs/PrintJob';
-import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
-import PrintJobActivity from '#views/Jobs/PrintJobActivity';
-import { setAuthHeader } from '#utils/axiosClient';
 
+// library imports
 export const { store, persistor } = configureStore({});
 
 // persistor.purge();

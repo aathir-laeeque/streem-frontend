@@ -1,8 +1,11 @@
+import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
+import NoConnection from '#assets/svg/NoConnection';
 import { closeAllOverlayAction } from '#components/OverlayContainer/actions';
 import { logOutSuccess, refreshTokenSuccess } from '#views/Auth/actions';
 import { RefreshTokenResponse } from '#views/Auth/types';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 import { store } from '../App';
 import { apiRefreshToken } from './apiUrls';
@@ -88,13 +91,36 @@ axiosInstance.interceptors.response.use(
         return response.data;
       }
     } catch (e) {
-      store.dispatch(closeAllOverlayAction());
-      store.dispatch(
-        logOutSuccess({
-          msg: typeof e !== 'string' ? 'Oops! Please Try Again.' : e,
-          type: NotificationType.ERROR,
-        }),
-      );
+      toast.dismiss();
+
+      const {
+        extras: { connected },
+      } = store.getState();
+
+      if (connected) {
+        store.dispatch(closeAllOverlayAction());
+        store.dispatch(
+          logOutSuccess({
+            msg: typeof e !== 'string' ? 'Oops! Please Try Again.' : e,
+            type: NotificationType.ERROR,
+            delayTime: 10,
+          }),
+        );
+      } else {
+        store.dispatch(
+          showNotification({
+            type: NotificationType.ERROR,
+            msg: 'No Internet Connection.',
+            detail: 'Please check your internet and try again.',
+            delayTime: 10,
+            icon: NoConnection,
+            iconProps: {
+              height: '69px',
+              width: '101px',
+            },
+          }),
+        );
+      }
       throw e;
     }
   },

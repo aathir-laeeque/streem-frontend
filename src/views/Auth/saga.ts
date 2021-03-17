@@ -125,6 +125,7 @@ function* logOutSuccessSaga({ payload }: ReturnType<typeof logOutSuccess>) {
         showNotification({
           type: payload?.type || NotificationType.SUCCESS,
           msg: payload?.msg || 'Logged Out successfully',
+          delayTime: payload?.delayTime,
         }),
       );
     }
