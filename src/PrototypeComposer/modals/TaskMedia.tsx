@@ -2,18 +2,24 @@ import { BaseModal, Button1, Textarea, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import FullScreenIcon from '#assets/svg/FullScreen';
 import { debounce } from 'lodash';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 import { Delete } from '@material-ui/icons';
+import {
+  Checklist,
+  EnabledStates,
+  Task,
+} from '#PrototypeComposer/checklist.types';
 
-import { Task } from '../checklist.types';
 import {
   addTaskMedia,
   removeTaskMedia,
   updateTaskMedia,
 } from '../Tasks/actions';
 import { MediaDetails } from '../Tasks/types';
+import { useTypedSelector } from '#store';
+import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 
 const Wrapper = styled.div<{
   fullScreeen: boolean;
@@ -181,15 +187,39 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
     disableDescInput = false,
   } = {},
 }) => {
+  const dispatch = useDispatch();
+  const { state, collaborators, userId } = useTypedSelector((state) => ({
+    userId: state.auth.userId,
+    state: state.prototypeComposer?.data?.state as Checklist['state'],
+    collaborators: state.prototypeComposer?.data
+      ?.collaborators as Checklist['collaborators'],
+  }));
+
   const [stateMediaDetails, setStateMediaDetails] = useState<MediaDetails>(
     mediaDetails,
   );
-
   const [fullScreeen, setFullScreeen] = useState(false);
-
+  const [isEnabled, setIsEnabled] = useState(false);
   const [errors, setErrors] = useState({ name: '' });
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    if (
+      state &&
+      collaborators &&
+      state in EnabledStates &&
+      collaborators.filter(
+        (collaborator) =>
+          collaborator.id === userId &&
+          collaborator.type === CollaboratorType.PRIMARY_AUTHOR,
+      )
+    )
+      setIsEnabled(true);
+  }, []);
+
+  if (!isEnabled) {
+    disableNameInput = true;
+    disableDescInput = true;
+  }
 
   return (
     <Wrapper
