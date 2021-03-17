@@ -54,7 +54,7 @@ export function useTabs<T>(tabs: Tab<T>[]) {
   const activeTab = stateTabs.find((el) => el.active);
   const renderTabsHeader = (): JSX.Element => (
     <Wrapper>
-      <div className="tabs-rTabContentPropsow">
+      <div className="tabs-row">
         {stateTabs.map((tab, index) => (
           <span
             className={`tab-title ${tab.active && 'tab-active'}`}
