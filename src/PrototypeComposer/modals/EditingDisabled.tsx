@@ -71,6 +71,8 @@ const EditingDisabledModal: FC<CommonOverlayProps<{
                   return 'No edits can be done as the prototype is now ready for release';
                 case EnabledStates.REQUESTED_CHANGES:
                   return 'No edits can be done as the Prototype is with the Author for changes.';
+                case EnabledStates.BEING_BUILT:
+                  return 'You are not authorised to edit this Checklist.';
                 case DisabledStates.PUBLISHED:
                   return 'You can start a revision of this Checklist to make changes';
                 default:
