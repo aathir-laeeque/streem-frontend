@@ -8,7 +8,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
-import { Composer } from './styles';
+import { CommonWrapper } from '../styles';
 
 type Inputs = {
   firstName: string;
@@ -94,7 +94,7 @@ const MyProfile: FC<TabContentProps> = () => {
   };
 
   return (
-    <Composer>
+    <CommonWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="content">
           <div className="heading">Managing Your Profile</div>
@@ -212,7 +212,7 @@ const MyProfile: FC<TabContentProps> = () => {
           </Button>
         </div>
       </form>
-    </Composer>
+    </CommonWrapper>
   );
 };
 

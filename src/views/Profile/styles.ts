@@ -1,4 +1,153 @@
 import styled from 'styled-components';
+
 export const Composer = styled.div`
-  height: inherit;
+  padding: 8px 8px 0px;
+`;
+
+export const CommonWrapper = styled.div`
+  display: flex;
+  flex: 1;
+
+  .bold {
+    font-weight: 600;
+  }
+
+  .error-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 12px 0px;
+
+    > div {
+      display: flex;
+      flex: 0 50%;
+      width: 100%;
+      font-size: 14px;
+      line-height: 19px;
+      color: #666666;
+      align-items: center;
+
+      .indicator {
+        width: 7px;
+        height: 7px;
+        margin-right: 6px;
+        border-radius: 4px;
+        background-color: #5aa700;
+        display: inline-block;
+      }
+    }
+  }
+
+  .content {
+    flex: 0.75;
+    padding: 16px;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    overflow: auto;
+
+    .heading {
+      line-height: 32px;
+      font-size: 24px;
+      color: #333333;
+      margin-bottom: 8px;
+    }
+
+    .sub-heading {
+      line-height: 22px;
+      font-size: 16px;
+      color: #333333;
+    }
+
+    .sub-title {
+      font-size: 12px;
+      color: #666666;
+      margin-top: 8px;
+    }
+
+    .left-gutter {
+      padding-left: 10px;
+    }
+
+    .right-gutter {
+      padding-right: 10px;
+    }
+
+    .outerwrapper {
+      flex: 1;
+    }
+
+    .flex-row {
+      display: flex;
+      flex: 1;
+      padding: 16px 0px;
+    }
+
+    .partition {
+      display: flex;
+      flex: 1;
+      margin: 0px 0px 32px 0px;
+      height: 1px;
+      background-color: #bababa;
+    }
+
+    .flex-col {
+      flex: 0.5;
+    }
+
+    .wrapper {
+      background-color: #fff;
+      border-bottom: 1px solid #999999;
+      border-radius: 0px;
+      margin-top: 13px;
+
+      > label {
+        color: #666666;
+      }
+
+      .icon {
+        top: unset;
+      }
+
+      .input {
+        color: #333333;
+        padding: 4px;
+      }
+    }
+
+    .wrapper.active {
+      border-bottom: 2px solid #1d84ff;
+    }
+
+    .wrapper.disabled {
+      border: none;
+      border-bottom: 1px dashed #999999;
+      opacity: 0.5;
+    }
+  }
+
+  > form {
+    display: flex;
+    flex: 1;
+
+    > .actions {
+      flex: 0.25;
+      padding: 0px 0px 8px 8px;
+
+      .primary-button {
+        margin-right: 0px;
+        flex: 1;
+        display: flex;
+        font-size: 20px;
+        width: 100%;
+        justify-content: center;
+        line-height: 22px;
+        background-color: #1d84ff;
+      }
+
+      .primary-button.flat {
+        background-color: transparent;
+        color: #1d84ff;
+        font-size: 16px;
+      }
+    }
+  }
 `;

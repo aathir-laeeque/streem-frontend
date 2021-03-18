@@ -15,7 +15,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
 import { addUser } from '../actions';
-import { Composer } from './styles';
+import { Composer } from '../styles';
 import { permissions, roles } from './temp';
 import { AddUserProps } from './types';
 
@@ -223,7 +223,7 @@ const AddUser: FC<AddUserProps> = () => {
           </Button>
           <div className="flex-row">
             <Button
-              className="primary-button flat"
+              className="button primary-button flat"
               onClick={() => navigate(-1)}
             >
               Go Back

@@ -7,7 +7,8 @@ const ComposerWrapper = styled.div`
   grid-template-areas: 'header header' 'stage-list task-list';
   grid-template-columns: 320px 1fr;
   grid-template-rows: auto 1fr;
-  height: inherit;
+  padding: 8px;
+  overflow: hidden;
 
   @media (max-width: 1200px) {
     grid-template-columns: 240px 1fr;

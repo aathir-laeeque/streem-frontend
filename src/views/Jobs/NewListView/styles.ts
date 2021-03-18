@@ -5,6 +5,7 @@ const ViewWrapper = styled.div`
   grid-row-gap: 16px;
   grid-template-areas: 'header' 'list-table';
   grid-template-rows: 50px minmax(0, 1fr);
+  padding: 8px 8px 0px;
   overflow: hidden;
   flex: 1;
 

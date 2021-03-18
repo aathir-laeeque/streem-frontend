@@ -3,37 +3,14 @@ export const Composer = styled.div`
   grid-area: activity;
   background: #fff;
   box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);
-  height: inherit;
-
-  .list-body {
-    height: calc(100vh - 220px);
-  }
+  padding-top: 8px;
+  overflow: hidden;
+  display: flex;
+  flex: 1;
 
   .list-card-columns:first-child {
     width: unset;
     flex: 1;
-  }
-
-  .list-state {
-    font-size: 12px;
-    padding-top: 4px;
-    line-height: 0.83;
-    display: flex;
-    align-items: center;
-    color: #f7b500;
-
-    .list-state-span {
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      text-transform: capitalize;
-
-      .icon {
-        font-size: 12px;
-        margin: 0px 4px 0px 0px;
-        color: inherit;
-      }
-    }
   }
 
   .icon {

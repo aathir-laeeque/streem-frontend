@@ -44,7 +44,10 @@ interface ListViewProps {
 }
 
 const Wrapper = styled.div.attrs({})`
-  height: inherit;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 
   .list-header {
     display: flex;
@@ -53,17 +56,16 @@ const Wrapper = styled.div.attrs({})`
   }
 
   .list-options {
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
     display: flex;
     padding: 8px 16px;
     align-items: center;
-    border-top: 1px solid #dadada;
   }
 
   .list-body {
-    overflow-x: auto;
-    overflow-y: auto;
-    height: calc(100vh - 320px);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
   }
 
   .list-card {
@@ -231,111 +233,109 @@ export const ListView: FC<ListViewProps> = ({
 
   return (
     <Wrapper>
-      <div style={{ height: '100%' }}>
-        <div className="list-options">
-          {filterProp && (
-            <>
-              <FlatButton
-                aria-controls="top-menu"
-                aria-haspopup="true"
-                onClick={handleOpen}
-              >
-                {filterProp?.activeCount !== 0
-                  ? `${filterProp?.activeCount} Filters`
-                  : 'Filters '}
-                <ArrowDropDown style={{ fontSize: 20, color: '#1d84ff' }} />
-              </FlatButton>
-              <Menu
-                id="filter-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                style={{ marginTop: 40 }}
-              >
-                {filterProp.filters.map((filter) => {
-                  return (
-                    <NestedMenuItem
-                      key={`filter_${filter.label}`}
-                      right
-                      disabled={true}
-                      label={filter.label}
-                      mainMenuOpen={anchorEl ? true : false}
+      <div className="list-options">
+        {filterProp && (
+          <>
+            <FlatButton
+              aria-controls="top-menu"
+              aria-haspopup="true"
+              onClick={handleOpen}
+            >
+              {filterProp?.activeCount !== 0
+                ? `${filterProp?.activeCount} Filters`
+                : 'Filters '}
+              <ArrowDropDown style={{ fontSize: 20, color: '#1d84ff' }} />
+            </FlatButton>
+            <Menu
+              id="filter-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              style={{ marginTop: 40 }}
+            >
+              {filterProp.filters.map((filter) => {
+                return (
+                  <NestedMenuItem
+                    key={`filter_${filter.label}`}
+                    right
+                    disabled={true}
+                    label={filter.label}
+                    mainMenuOpen={anchorEl ? true : false}
+                  >
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                      className="filter-container"
                     >
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                        className="filter-container"
-                      >
-                        {typeof filter.content === 'function'
-                          ? filter.content()
-                          : filter.content}
-                        <div className="picker-actions">
-                          <Button
-                            style={{ marginRight: 0 }}
-                            onClick={(e) => onApplyFilter(e, filter.onApply)}
-                          >
-                            Apply Filter
-                          </Button>
-                        </div>
+                      {typeof filter.content === 'function'
+                        ? filter.content()
+                        : filter.content}
+                      <div className="picker-actions">
+                        <Button
+                          style={{ marginRight: 0 }}
+                          onClick={(e) => onApplyFilter(e, filter.onApply)}
+                        >
+                          Apply Filter
+                        </Button>
                       </div>
-                    </NestedMenuItem>
-                  );
-                })}
-              </Menu>
-            </>
-          )}
-          {isSearchable && (
-            <div className="searchboxwrapper">
-              <input className="searchbox" type="text" placeholder="Search" />
-              <Search className="searchsubmit" />
-            </div>
-          )}
-          {filterProp?.activeCount && filterProp?.activeCount > 0 ? (
-            <span className="resetOption" onClick={filterProp?.onReset}>
-              Reset
-            </span>
-          ) : null}
-          {primaryButtonText && (
-            <Button
-              style={{ marginLeft: `auto`, marginRight: 0 }}
-              onClick={onPrimaryClick}
-            >
-              {primaryButtonText}
-            </Button>
-          )}
-        </div>
-        <div className="list-header">
-          {beforeColumns?.map((beforeColumn) => (
-            <div
-              key={`beforeColumn_${beforeColumn.header}`}
-              className="list-header-columns"
-            >
-              {beforeColumn.header}
-            </div>
-          ))}
-          {afterColumns?.map((afterColumn) => (
-            <div
-              key={`afterColumn_${afterColumn.header}`}
-              className="list-header-columns"
-            >
-              {afterColumn.header}
-            </div>
-          ))}
-        </div>
-        <div className="list-body" onScroll={handleOnScroll}>
-          {data.map((el, index) => (
-            <div key={`list_el_${el.id}`} className="list-card">
-              {beforeColumns?.map((beforeColumn) =>
-                beforeColumn.template(el, index),
-              )}
-              {afterColumns?.map((afterColumn) =>
-                afterColumn.template(el, index),
-              )}
-            </div>
-          ))}
-        </div>
+                    </div>
+                  </NestedMenuItem>
+                );
+              })}
+            </Menu>
+          </>
+        )}
+        {isSearchable && (
+          <div className="searchboxwrapper">
+            <input className="searchbox" type="text" placeholder="Search" />
+            <Search className="searchsubmit" />
+          </div>
+        )}
+        {filterProp?.activeCount && filterProp?.activeCount > 0 ? (
+          <span className="resetOption" onClick={filterProp?.onReset}>
+            Reset
+          </span>
+        ) : null}
+        {primaryButtonText && (
+          <Button
+            style={{ marginLeft: `auto`, marginRight: 0 }}
+            onClick={onPrimaryClick}
+          >
+            {primaryButtonText}
+          </Button>
+        )}
+      </div>
+      <div className="list-header">
+        {beforeColumns?.map((beforeColumn) => (
+          <div
+            key={`beforeColumn_${beforeColumn.header}`}
+            className="list-header-columns"
+          >
+            {beforeColumn.header}
+          </div>
+        ))}
+        {afterColumns?.map((afterColumn) => (
+          <div
+            key={`afterColumn_${afterColumn.header}`}
+            className="list-header-columns"
+          >
+            {afterColumn.header}
+          </div>
+        ))}
+      </div>
+      <div className="list-body" onScroll={handleOnScroll}>
+        {data.map((el, index) => (
+          <div key={`list_el_${el.id}`} className="list-card">
+            {beforeColumns?.map((beforeColumn) =>
+              beforeColumn.template(el, index),
+            )}
+            {afterColumns?.map((afterColumn) =>
+              afterColumn.template(el, index),
+            )}
+          </div>
+        ))}
       </div>
     </Wrapper>
   );

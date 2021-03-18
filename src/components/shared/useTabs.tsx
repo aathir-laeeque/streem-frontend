@@ -72,7 +72,7 @@ export function useTabs<T>(tabs: Tab<T>[]) {
     </Wrapper>
   );
   const renderTabsContent = (): JSX.Element => (
-    <div style={{ height: 'inherit' }}>
+    <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
       {stateTabs.map(
         ({ TabContent, label, passThroughTabContentProps }, index) => {
           if (label === activeTab?.label) {

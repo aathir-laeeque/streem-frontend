@@ -1,43 +1,19 @@
 import styled from 'styled-components';
+
 export const Composer = styled.div`
-  height: calc(100% - 60px);
   display: flex;
   flex: 1;
+  flex-direction: column;
+  padding: 8px 8px 0px;
+  overflow: hidden;
 
   .bold {
     font-weight: 600;
   }
 
-  .error-container {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 12px 0px;
-
-    > div {
-      display: flex;
-      flex: 0 50%;
-      width: 100%;
-      font-size: 14px;
-      line-height: 19px;
-      color: #666666;
-      align-items: center;
-
-      .indicator {
-        width: 7px;
-        height: 7px;
-        margin-right: 6px;
-        border-radius: 4px;
-        background-color: #5aa700;
-        display: inline-block;
-      }
-    }
-  }
-
   .content {
     flex: 0.75;
     padding: 16px;
-    height: 100%;
-    border-radius: 4px;
     box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);
     background-color: #fff;
     overflow: auto;
@@ -73,6 +49,12 @@ export const Composer = styled.div`
       flex: 1;
     }
 
+    .facilities {
+      padding: 8px 0px;
+      width: 50%;
+      display: block;
+    }
+
     .flex-row {
       display: flex;
       flex: 1;
@@ -95,22 +77,28 @@ export const Composer = styled.div`
       background-color: #fff;
       border-bottom: 1px solid #999999;
       border-radius: 0px;
-      padding-top: 15px;
-
-      > label {
-        top: 4px;
-        left: 4px;
-        color: #666666;
-      }
+      margin-top: 13px;
 
       .input {
         color: #333333;
         padding: 4px;
       }
+
+      input[name='email'] {
+        text-transform: lowercase;
+
+        ::-webkit-input-placeholder {
+          text-transform: capitalize !important;
+        }
+      }
     }
 
     .wrapper.active {
       border-bottom: 2px solid #1d84ff;
+    }
+
+    .wrapper.error {
+      border-bottom: 2px solid #ff6b6b;
     }
 
     .wrapper.disabled {
@@ -123,10 +111,33 @@ export const Composer = styled.div`
   > form {
     display: flex;
     flex: 1;
+    overflow: hidden;
 
     > .actions {
       flex: 0.25;
       padding: 0px 0px 8px 8px;
+
+      .button {
+        margin-right: 0px;
+        flex: 1;
+        display: flex;
+        font-size: 20px;
+        width: 100%;
+        justify-content: center;
+        line-height: 22px;
+        border: none;
+        background-color: transparent;
+        color: #1d84ff;
+        font-size: 16px;
+        margin-top: 8px;
+      }
+
+      .button.cancel {
+        border: none;
+        background-color: transparent;
+        color: #ff6b6b;
+        font-size: 16px;
+      }
 
       .primary-button {
         margin-right: 0px;

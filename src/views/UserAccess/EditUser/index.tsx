@@ -31,7 +31,7 @@ import {
 import { permissions, roles } from '../AddUser/temp';
 import { modalBody } from '../ListView/TabContent';
 import { RoleType } from '../types';
-import { Composer } from './styles';
+import { Composer } from '../styles';
 import { ViewUserProps } from './types';
 
 export type EditUserRequestInputs = {
