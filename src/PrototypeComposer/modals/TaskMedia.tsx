@@ -199,24 +199,21 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
     mediaDetails,
   );
   const [fullScreeen, setFullScreeen] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [isAuthor, setIsAuthor] = useState(false);
   const [errors, setErrors] = useState({ name: '' });
 
   useEffect(() => {
-    if (
-      state &&
-      collaborators &&
-      state in EnabledStates &&
-      collaborators.filter(
+    setIsAuthor(
+      collaborators?.some(
         (collaborator) =>
-          collaborator.id === userId &&
-          collaborator.type === CollaboratorType.PRIMARY_AUTHOR,
-      )
-    )
-      setIsEnabled(true);
+          (collaborator.type === CollaboratorType.PRIMARY_AUTHOR ||
+            collaborator.type === CollaboratorType.AUTHOR) &&
+          collaborator.id === userId,
+      ),
+    );
   }, []);
 
-  if (!isEnabled) {
+  if (!isAuthor || !(state in EnabledStates)) {
     disableNameInput = true;
     disableDescInput = true;
   }

@@ -51,13 +51,14 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
 
   const dispatch = useDispatch();
 
-  const [isPrimaryAuthor, setIsPrimaryAuthor] = useState(false);
+  const [isAuthor, setIsAuthor] = useState(false);
 
   useEffect(() => {
-    setIsPrimaryAuthor(
+    setIsAuthor(
       (data as Checklist)?.collaborators?.some(
         (collaborator) =>
-          collaborator.type === CollaboratorType.PRIMARY_AUTHOR &&
+          (collaborator.type === CollaboratorType.PRIMARY_AUTHOR ||
+            collaborator.type === CollaboratorType.AUTHOR) &&
           collaborator.id === userId,
       ),
     );
@@ -101,7 +102,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
       >
         <div
           className={`overlap ${
-            isPrimaryAuthor && data?.state in EnabledStates && !data?.archived
+            isAuthor && data?.state in EnabledStates && !data?.archived
               ? 'hide'
               : ''
           }`}

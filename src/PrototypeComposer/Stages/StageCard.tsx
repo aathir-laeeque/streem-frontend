@@ -54,13 +54,14 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
     }),
   );
 
-  const [isPrimaryAuthor, setIsPrimaryAuthor] = useState(false);
+  const [isAuthor, setIsAuthor] = useState(false);
 
   useEffect(() => {
-    setIsPrimaryAuthor(
+    setIsAuthor(
       (data as Checklist)?.collaborators?.some(
         (collaborator) =>
-          collaborator.type === CollaboratorType.PRIMARY_AUTHOR &&
+          (collaborator.type === CollaboratorType.PRIMARY_AUTHOR ||
+            collaborator.type === CollaboratorType.AUTHOR) &&
           collaborator.id === userId,
       ),
     );
@@ -97,7 +98,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
     >
       <div
         className={`overlap ${
-          isPrimaryAuthor && data?.state in EnabledStates && !data?.archived
+          isAuthor && data?.state in EnabledStates && !data?.archived
             ? 'hide'
             : ''
         }`}
