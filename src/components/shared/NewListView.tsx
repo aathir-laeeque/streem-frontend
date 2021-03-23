@@ -57,6 +57,7 @@ const Wrapper = styled.div.attrs({})`
     display: flex;
     background-color: #f4f4f4;
     border-bottom: 1px solid #dadada;
+    min-height: 65px;
 
     :hover {
       background-color: #eeeeee;
