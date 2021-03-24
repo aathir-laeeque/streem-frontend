@@ -20,7 +20,7 @@ const Login: FC<LoginProps> = () => {
   const dispatch = useDispatch();
   const [passwordInputType, setPasswordInputType] = useState(true);
   const { error, loading } = useTypedSelector((state) => state.auth);
-  const { t } = useTranslation(['userManagement']);
+  const { t: translate } = useTranslation(['userManagement']);
 
   const { register, handleSubmit } = useForm<Inputs>({
     mode: 'onChange',
@@ -49,7 +49,7 @@ const Login: FC<LoginProps> = () => {
 
   return (
     <Card
-      heading={t('userManagement:login.heading')}
+      heading={translate('userManagement:login.heading')}
       subHeading="Enter your credentials to login."
     >
       <form onSubmit={handleSubmit(onSubmit)}>
