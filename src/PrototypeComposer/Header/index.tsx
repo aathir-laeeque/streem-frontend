@@ -369,9 +369,7 @@ const ChecklistHeader: FC = () => {
               name: data.name,
               properties: data.properties,
               authors: data.collaborators.filter(
-                (u) =>
-                  u.type === CollaboratorType.AUTHOR ||
-                  u.type === CollaboratorType.PRIMARY_AUTHOR,
+                (u) => u.type === CollaboratorType.AUTHOR,
               ),
               prototypeId: data.id,
             },
@@ -620,7 +618,7 @@ const ChecklistHeader: FC = () => {
                   Release Prototype
                 </Button1>
               )}
-            {data?.state !== ChecklistStates.PUBLISHED && <MoreButton />}
+            <MoreButton />
           </div>
         </div>
         {author &&

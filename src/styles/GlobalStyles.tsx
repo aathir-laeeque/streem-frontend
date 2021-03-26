@@ -194,7 +194,7 @@ const GlobalStyles = createGlobalStyle`
     .MuiPaper-root {
       right: 16px !important;
       left: auto !important; 
-      top: 155px !important;
+      top: 130px !important;
     }
   }
 

@@ -512,6 +512,40 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                             </div>
                           </MenuItem>
                         )}
+                        {checkPermission(['checklists', 'archive']) && (
+                          <MenuItem
+                            onClick={() => {
+                              handleClose();
+                              if (selectedChecklist?.id)
+                                dispatch(
+                                  openOverlayAction({
+                                    type:
+                                      OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                                    props: {
+                                      header: 'Archive Prototype',
+                                      body: (
+                                        <span>
+                                          Are you sure you want to Archive this
+                                          Prototype ?
+                                        </span>
+                                      ),
+                                      onPrimaryClick: () =>
+                                        dispatch(
+                                          archiveChecklist(
+                                            selectedChecklist.id,
+                                          ),
+                                        ),
+                                    },
+                                  }),
+                                );
+                            }}
+                          >
+                            <div className="list-item">
+                              <MemoArchive />
+                              <span>Archive Checklist</span>
+                            </div>
+                          </MenuItem>
+                        )}
                       </Menu>
                     </>
                   );
