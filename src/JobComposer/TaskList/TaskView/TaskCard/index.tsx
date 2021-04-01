@@ -134,7 +134,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
         >
           <ActivityList
             activities={activities}
-            isTaskStarted={isTaskStarted && isUserAssignedToTask}
+            isTaskStarted={isTaskStarted}
             isTaskCompleted={isTaskCompleted}
             isCompletedWithException={isCompletedWithException}
             isCorrectingError={isCorrectingError}
