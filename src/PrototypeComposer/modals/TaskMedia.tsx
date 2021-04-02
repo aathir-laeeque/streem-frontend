@@ -213,7 +213,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
     );
   }, []);
 
-  if (!isAuthor || !(state in EnabledStates)) {
+  if (collaborators && (!isAuthor || !(state in EnabledStates))) {
     disableNameInput = true;
     disableDescInput = true;
   }
@@ -318,7 +318,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
               )}
             </div>
 
-            {!disableDescInput && mediaDetails?.id && (
+            {!disableDescInput && mediaDetails?.id && taskId && (
               <div
                 className="delete-media"
                 onClick={() => {
