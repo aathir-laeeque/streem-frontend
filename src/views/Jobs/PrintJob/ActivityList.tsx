@@ -409,18 +409,25 @@ const activityTemplateFormatter = (
     case MandatoryActivity.PARAMETER:
     case MandatoryActivity.SHOULD_BE:
       let content = '';
-      switch (activity.data.operator) {
+      const { data } = activity;
+      switch (data.operator) {
         case 'EQUAL_TO':
-          content = ` (=) Equal to ${activity.data.value} ${activity.data.uom}`;
+          content = ` (=) Equal to ${data.value} ${data.uom}`;
           break;
         case 'LESS_THAN':
-          content = ` (<) Less than ${activity.data.value} ${activity.data.uom}`;
+          content = ` (<) Less than ${data.value} ${data.uom}`;
+          break;
+        case 'LESS_THAN_EQUAL_TO':
+          content = `(≤) Less than equal to ${data.value} ${data.uom}`;
           break;
         case 'IS_BETWEEN':
-          content = ` (<>) In between ${activity.data.lowerValue} - ${activity.data.upperValue} ${activity.data.uom}`;
+          content = ` (<>) In between ${data.lowerValue} - ${data.upperValue} ${data.uom}`;
           break;
         case 'MORE_THAN':
-          content = ` (>) More than ${activity.data.value} ${activity.data.uom}`;
+          content = ` (>) More than ${data.value} ${data.uom}`;
+          break;
+        case 'MORE_THAN_EQUAL_TO':
+          content = `(≥) More than equal to ${data.value} ${data.uom}`;
           break;
         default:
           break;
