@@ -40,15 +40,10 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
     activities: { activitiesById, activitiesOrderInTaskInStage },
     stages: { activeStageId },
   } = useTypedSelector((state) => state.composer);
-  const { profile } = useTypedSelector((state) => state.auth);
 
-  const { state: taskState, reason, assignees } = task.taskExecution;
+  const { state: taskState, reason } = task.taskExecution;
 
   const dispatch = useDispatch();
-
-  const isUserAssignedToTask = assignees.some(
-    (user) => user.id === profile?.id,
-  );
 
   if (activeStageId) {
     const activities = activitiesOrderInTaskInStage[activeStageId][task.id].map(
