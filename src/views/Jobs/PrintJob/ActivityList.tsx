@@ -418,16 +418,16 @@ const activityTemplateFormatter = (
           content = ` (<) Less than ${data.value} ${data.uom}`;
           break;
         case 'LESS_THAN_EQUAL_TO':
-          content = `(≤) Less than equal to ${data.value} ${data.uom}`;
+          content = `(<=) Less than equal to ${data.value} ${data.uom}`;
           break;
-        case 'IS_BETWEEN':
-          content = ` (<>) In between ${data.lowerValue} - ${data.upperValue} ${data.uom}`;
+        case 'BETWEEN':
+          content = ` In between ${data.lowerValue} - ${data.upperValue} ${data.uom}`;
           break;
         case 'MORE_THAN':
           content = ` (>) More than ${data.value} ${data.uom}`;
           break;
         case 'MORE_THAN_EQUAL_TO':
-          content = `(≥) More than equal to ${data.value} ${data.uom}`;
+          content = `(>=) More than equal to ${data.value} ${data.uom}`;
           break;
         default:
           break;
