@@ -25,6 +25,7 @@ export interface CreateJobModalProps {
 const Wrapper = styled.div.attrs({})`
   .modal {
     min-width: 500px !important;
+    max-width: 720px !important;
 
     .modal-header {
       padding: 24px !important;
@@ -39,8 +40,17 @@ const Wrapper = styled.div.attrs({})`
     .modal-body {
       padding: 24px !important;
 
-      .row {
-        margin-top: 24px;
+      .properties-container {
+        display: flex;
+        flex-wrap: wrap;
+
+        .row {
+          margin-top: 24px;
+
+          :nth-child(2n) {
+            margin-left: 24px;
+          }
+        }
       }
 
       .input-label {
@@ -157,25 +167,27 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               )}
             />
           )}
-          {properties.map((property, index) => (
-            <TextInput
-              key={`property_${index}`}
-              label={property.name.toLowerCase()}
-              name={property.name}
-              optional={!property.mandatory}
-              ref={register({
-                required: property.mandatory
-                  ? `${capitalize(property.name)} is required.`
-                  : false,
-              })}
-              className="row"
-              error={
-                errors[property.name]?.message !== ''
-                  ? errors[property.name]?.message
-                  : ''
-              }
-            />
-          ))}
+          <div className="properties-container">
+            {properties.map((property, index) => (
+              <TextInput
+                key={`property_${index}`}
+                label={property.name.toLowerCase()}
+                name={property.name}
+                optional={!property.mandatory}
+                ref={register({
+                  required: property.mandatory
+                    ? `${capitalize(property.name)} is required.`
+                    : false,
+                })}
+                className="row"
+                error={
+                  errors[property.name]?.message !== ''
+                    ? errors[property.name]?.message
+                    : ''
+                }
+              />
+            ))}
+          </div>
           <div className="buttons-container">
             <Button1 variant="secondary" color="red" onClick={closeOverlay}>
               Cancel
