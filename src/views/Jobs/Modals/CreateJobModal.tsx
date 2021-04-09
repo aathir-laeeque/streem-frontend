@@ -51,6 +51,16 @@ const Wrapper = styled.div.attrs({})`
             margin-left: 24px;
           }
         }
+
+        &.vertical {
+          flex-direction: column;
+
+          .row {
+            :nth-child(2n) {
+              margin-left: 0;
+            }
+          }
+        }
       }
 
       .input-label {
@@ -167,7 +177,11 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               )}
             />
           )}
-          <div className="properties-container">
+          <div
+            className={`properties-container ${
+              properties.length <= 4 ? 'vertical' : ''
+            }`}
+          >
             {properties.map((property, index) => (
               <TextInput
                 key={`property_${index}`}
