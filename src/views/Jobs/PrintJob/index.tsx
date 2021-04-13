@@ -128,9 +128,8 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
               />
               {Object.entries(jobExtras?.properties).map(([key, value]) => (
                 <InputLabelGroup
-                  label={`${key} :`}
+                  label={`${key.toLowerCase()} :`}
                   value={value}
-                  minWidth={35}
                   key={key}
                 />
               ))}

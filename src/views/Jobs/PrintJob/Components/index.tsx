@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666666',
     fontFamily: 'Nunito',
+    textTransform: 'capitalize',
   },
   flexView: {
     display: 'flex',
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
 export const InputLabelGroup = ({
   label,
   value,
-  minWidth = 25,
+  minWidth = 30,
 }: {
   label: string;
   value: string;
