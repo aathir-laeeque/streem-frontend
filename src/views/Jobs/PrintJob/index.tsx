@@ -126,40 +126,14 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                 label="State :"
                 value={getJobStatus(jobExtras.state)}
               />
-              <View style={styles.flexRow}>
-                <View style={styles.flexRow}>
-                  <InputLabelGroup
-                    label="Equipment ID :"
-                    value={checklist?.properties['EQUIPMENT ID'] || ''}
-                    minWidth={50}
-                  />
-                </View>
-                <View style={styles.flexRow}>
-                  <InputLabelGroup
-                    label="Room ID :"
-                    value={jobExtras?.properties['ROOM ID'] || ''}
-                  />
-                </View>
-              </View>
-              <View style={styles.flexRow}>
-                <View style={styles.flexRow}>
-                  <InputLabelGroup
-                    label="Product Manufactured :"
-                    value={
-                      jobExtras?.properties
-                        ? jobExtras?.properties['PRODUCT MANUFACTURED']
-                        : ''
-                    }
-                    minWidth={50}
-                  />
-                </View>
-                <View style={styles.flexRow}>
-                  <InputLabelGroup
-                    label="Batch No :"
-                    value={jobExtras?.properties['BATCH NO']}
-                  />
-                </View>
-              </View>
+              {Object.entries(jobExtras?.properties).map(([key, value]) => (
+                <InputLabelGroup
+                  label={`${key} :`}
+                  value={value}
+                  minWidth={35}
+                  key={key}
+                />
+              ))}
               <Assigness assignees={assignees} jobState={jobExtras.state} />
             </TabLookLike>
 
