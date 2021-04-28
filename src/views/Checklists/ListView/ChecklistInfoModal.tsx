@@ -11,8 +11,9 @@ import { navigate } from '@reach/router';
 
 import { Checklist } from '../../../PrototypeComposer/checklist.types';
 import {
-  CollaboratorType,
   Collaborator,
+  CollaboratorState,
+  CollaboratorType,
 } from '#PrototypeComposer/reviewer.types';
 
 const Wrapper = styled.div`
@@ -165,11 +166,16 @@ const Wrapper = styled.div`
 
       .state {
         font-size: 12px;
-        color: #5aa700;
         padding: 2px 4px;
-        background-color: #e1fec0;
+        background-color: #eeeeee;
+        color: #999999;
         margin: 13px 0;
         width: max-content;
+      }
+
+      .state.success {
+        background-color: #e1fec0;
+        color: #5aa700;
       }
 
       .date {
@@ -260,7 +266,13 @@ type Author = Pick<
 
 type SignOffUser = Pick<
   Author,
-  'id' | 'employeeId' | 'email' | 'firstName' | 'lastName' | 'orderTree'
+  | 'id'
+  | 'employeeId'
+  | 'email'
+  | 'firstName'
+  | 'lastName'
+  | 'orderTree'
+  | 'state'
 > & { signedAt: number };
 
 type Version = Pick<Checklist, 'id' | 'code' | 'name' | 'versionNumber'> & {
@@ -420,12 +432,17 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
 
                   <div className="column">
                     <label className="column-label">State</label>
-
-                    {state.signOff.map((user) => (
-                      <div className="state" key={user.employeeId}>
-                        Complete
-                      </div>
-                    ))}
+                    {state.signOff.map((user) =>
+                      user.state === CollaboratorState.NOT_STARTED ? (
+                        <div className="state" key={user.employeeId}>
+                          Pending
+                        </div>
+                      ) : (
+                        <div className="state success" key={user.employeeId}>
+                          Complete
+                        </div>
+                      ),
+                    )}
                   </div>
 
                   <div className="column">
@@ -433,7 +450,8 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
 
                     {state.signOff.map((user) => (
                       <div className="date" key={user.employeeId}>
-                        {formatDateTime(user.signedAt, 'Do MMMM, YYYY')}
+                        {user.signedAt &&
+                          formatDateTime(user.signedAt, 'Do MMMM, YYYY')}
                       </div>
                     ))}
                   </div>
