@@ -1,6 +1,5 @@
 import MemoArchive from '#assets/svg/Archive';
 import MemoViewInfo from '#assets/svg/ViewInfo';
-
 import { Button1 } from '#components';
 import {
   closeAllOverlayAction,
@@ -389,71 +388,67 @@ const ChecklistHeader: FC = () => {
 
   const MoreButton = () => (
     <>
-      {checkPermission(['checklists', 'archive']) && (
-        <>
-          <Button1
-            id="more"
-            variant="secondary"
-            onClick={(
-              event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-            ) => {
-              setAnchorEl(event.currentTarget);
+      <Button1
+        id="more"
+        variant="secondary"
+        onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+          setAnchorEl(event.currentTarget);
+        }}
+      >
+        <MoreHoriz className="icon" fontSize="small" />
+      </Button1>
+      <Menu
+        style={{ right: 10 }}
+        id="row-more-actions"
+        className="header-more-actions"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.CHECKLIST_INFO,
+                props: { checklistId: data.id },
+              }),
+            );
+          }}
+        >
+          <div className="list-item">
+            <MemoViewInfo />
+            <span>View Info</span>
+          </div>
+        </MenuItem>
+        {checkPermission(['checklists', 'archive']) ? (
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                  props: {
+                    header: 'Archive Prototype',
+                    body: (
+                      <span>
+                        Are you sure you want to Archive this Prototype ?
+                      </span>
+                    ),
+                    onPrimaryClick: () => dispatch(archiveChecklist(data.id)),
+                  },
+                }),
+              );
             }}
           >
-            <MoreHoriz className="icon" fontSize="small" />
-          </Button1>
-          <Menu
-            style={{ right: 10 }}
-            id="row-more-actions"
-            className="header-more-actions"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.CHECKLIST_INFO,
-                    props: { checklistId: data.id },
-                  }),
-                );
-              }}
-            >
-              <div className="list-item">
-                <MemoViewInfo />
-                <span>View Info</span>
-              </div>
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                    props: {
-                      header: 'Archive Prototype',
-                      body: (
-                        <span>
-                          Are you sure you want to Archive this Prototype ?
-                        </span>
-                      ),
-                      onPrimaryClick: () => dispatch(archiveChecklist(data.id)),
-                    },
-                  }),
-                );
-              }}
-            >
-              <div className="list-item">
-                <MemoArchive />
-                <span>Archive</span>
-              </div>
-            </MenuItem>
-          </Menu>
-        </>
-      )}
+            <div className="list-item">
+              <MemoArchive />
+              <span>Archive</span>
+            </div>
+          </MenuItem>
+        ) : null}
+      </Menu>
     </>
   );
 
