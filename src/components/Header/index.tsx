@@ -2,7 +2,7 @@ import CleenLogo from '#assets/svg/CleenLogo';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { getInitials } from '#utils/stringUtils';
-import { logOut } from '#views/Auth/actions';
+import { logout } from '#views/Auth/actions';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { KeyboardArrowDown } from '@material-ui/icons';
@@ -81,7 +81,7 @@ const Header: FC = () => {
         )}
         <MenuItem
           onClick={() => {
-            dispatch(logOut());
+            dispatch(logout());
             handleClose();
           }}
         >

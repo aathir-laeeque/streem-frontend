@@ -2,7 +2,7 @@ import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import NoConnection from '#assets/svg/NoConnection';
 import { closeAllOverlayAction } from '#components/OverlayContainer/actions';
-import { logOutSuccess, refreshTokenSuccess } from '#views/Auth/actions';
+import { logoutSuccess, refreshTokenSuccess } from '#views/Auth/actions';
 import { RefreshTokenResponse } from '#views/Auth/types';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -100,7 +100,7 @@ axiosInstance.interceptors.response.use(
       if (connected) {
         store.dispatch(closeAllOverlayAction());
         store.dispatch(
-          logOutSuccess({
+          logoutSuccess({
             msg: typeof e !== 'string' ? 'Oops! Please Try Again.' : e,
             type: NotificationType.ERROR,
             delayTime: 10,

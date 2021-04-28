@@ -10,8 +10,8 @@ import {
   login,
   loginError,
   loginSuccess,
-  logOut,
-  logOutSuccess,
+  logout,
+  logoutSuccess,
   refreshTokenSuccess,
   resetError,
   resetPassword,
@@ -103,8 +103,8 @@ export type AuthActionType = ReturnType<
   | typeof resetError
   | typeof login
   | typeof loginSuccess
-  | typeof logOut
-  | typeof logOutSuccess
+  | typeof logout
+  | typeof logoutSuccess
   | typeof loginError
   | typeof refreshTokenSuccess
   | typeof fetchProfileSuccess

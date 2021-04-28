@@ -27,9 +27,9 @@ export const setIdle = (data: boolean) =>
 
 // LOGOUT ACTIONS
 
-export const logOut = () => actionSpreader(AuthAction.LOGOUT);
+export const logout = () => actionSpreader(AuthAction.LOGOUT);
 
-export const logOutSuccess = (payload?: {
+export const logoutSuccess = (payload?: {
   type?: NotificationType;
   msg?: string;
   delayTime?: number;

@@ -34,7 +34,7 @@ import {
   login,
   loginError,
   loginSuccess,
-  logOutSuccess,
+  logoutSuccess,
   register,
   resetPassword,
   resetPasswordError,
@@ -88,7 +88,7 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
   }
 }
 
-function* logOutSaga() {
+function* logoutSaga() {
   try {
     const { errors }: ResponseObj<LoginResponse> = yield call(
       request,
@@ -100,9 +100,9 @@ function* logOutSaga() {
       throw getErrorMsg(errors);
     }
 
-    yield put(logOutSuccess());
+    yield put(logoutSuccess());
   } catch (error) {
-    yield* handleCatch('Auth', 'logOutSaga', error);
+    yield* handleCatch('Auth', 'logoutSaga', error);
     yield put(cleanUp());
   }
 }
@@ -116,7 +116,7 @@ function* cleanUpSaga() {
   }
 }
 
-function* logOutSuccessSaga({ payload }: ReturnType<typeof logOutSuccess>) {
+function* logoutSuccessSaga({ payload }: ReturnType<typeof logoutSuccess>) {
   try {
     const userId = yield select(getUserId);
     if (userId) {
@@ -130,7 +130,7 @@ function* logOutSuccessSaga({ payload }: ReturnType<typeof logOutSuccess>) {
       );
     }
   } catch (error) {
-    yield* handleCatch('Auth', 'logOutSuccessSaga', error);
+    yield* handleCatch('Auth', 'logoutSuccessSaga', error);
   }
 }
 
@@ -336,8 +336,8 @@ function* checkTokenExpirySaga({
 
 export function* AuthSaga() {
   yield takeLeading(AuthAction.LOGIN, loginSaga);
-  yield takeLeading(AuthAction.LOGOUT, logOutSaga);
-  yield takeLeading(AuthAction.LOGOUT_SUCCESS, logOutSuccessSaga);
+  yield takeLeading(AuthAction.LOGOUT, logoutSaga);
+  yield takeLeading(AuthAction.LOGOUT_SUCCESS, logoutSuccessSaga);
   yield takeLeading(AuthAction.CLEANUP, cleanUpSaga);
   yield takeLeading(AuthAction.FETCH_PROFILE, fetchProfileSaga);
   yield takeLeading(AuthAction.REGISTER, registerSaga);
