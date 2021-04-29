@@ -29,6 +29,7 @@ const HeaderWrapper = styled.div`
   justify-content: center;
   overflow: unset !important;
   flex: unset !important;
+  padding-top: 8px;
 
   .alert {
     padding: 4px;

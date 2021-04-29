@@ -13,6 +13,7 @@ import {
 import { createTransform, persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import createSagaMiddleware from 'redux-saga';
+import { ExtrasAction } from './extras/types';
 
 import { rootReducer } from './rootReducer';
 import { rootSaga } from './rootSaga';
@@ -61,6 +62,7 @@ const handleOnIdle: Middleware = (store) => (next) => (action: AnyAction) => {
     if (
       action.type !== AuthAction.LOGIN &&
       action.type !== OverlayContainerAction.OPEN_OVERLAY &&
+      action.type !== ExtrasAction.SET_INTERNET_CONNECTIVITY &&
       !action['@@redux-saga/SAGA_ACTION']
     ) {
       previousIdle = isIdle;
