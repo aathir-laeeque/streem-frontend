@@ -597,21 +597,6 @@ const ChecklistHeader: FC = () => {
                 )}
               </>
             )}
-            {data?.state === ChecklistStates.DEPRECATED && (
-              <Button1
-                variant="secondary"
-                onClick={() =>
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.CHECKLIST_INFO,
-                      props: { checklistId: data.id },
-                    }),
-                  )
-                }
-              >
-                View Info
-              </Button1>
-            )}
             {data?.state === ChecklistStates.PUBLISHED && null}
             {data?.state === ChecklistStates.READY_FOR_RELEASE &&
               checkPermission(['checklists', 'release']) && (
