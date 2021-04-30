@@ -1,4 +1,3 @@
-// alias imports
 import '#i18n';
 
 import { CustomRoute, Notification, OverlayContainer } from '#components';
@@ -16,16 +15,9 @@ import { PersistGate } from 'redux-persist/integration/react';
 import GlobalStyles from './styles/GlobalStyles';
 import { HomeView } from './views';
 
-// library imports
 export const { store, persistor } = configureStore({});
 
-// persistor.purge();
-
 const App: FC = () => {
-  // useEffect(() => {
-  //   navigate('/checklist');
-  // }, []);
-
   const onBeforeLift = () => {
     const {
       auth: { accessToken },

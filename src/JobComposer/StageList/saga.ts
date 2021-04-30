@@ -80,7 +80,7 @@ function* activeStagePollingSaga({
         'error from startPollActiveStageData in Stage Saga :: ',
         err,
       );
-      yield put(stopPollActiveStageData());
+      yield delay(JOB_STAGE_POLLING_TIMEOUT);
     }
   }
 }

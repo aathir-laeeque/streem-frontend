@@ -15,6 +15,20 @@ import { ResponseObj } from './globalTypes';
 // REFRESH TOKEN LOGIC
 
 const REFRESH_TOKEN_URL = apiRefreshToken();
+const EXCULDE_BY_REGEX = [
+  '([/]jobs[/][0-9]+[/]stages[/]state[?]stageId=[0-9]+)',
+];
+
+const checkRegexMatch = (url: string) => {
+  let isMatched: RegExpMatchArray | null = null;
+
+  EXCULDE_BY_REGEX.forEach((pattern) => {
+    isMatched = url.match(pattern);
+  });
+
+  return isMatched;
+};
+
 let refreshPromise: Promise<ResponseObj<RefreshTokenResponse>> | null = null;
 async function refreshTokenRequest(refreshToken: string) {
   refreshPromise =
@@ -96,28 +110,31 @@ axiosInstance.interceptors.response.use(
       const {
         extras: { connected },
       } = store.getState();
+      const { config: originalReq } = error;
 
-      if (connected) {
+      if (!connected) {
+        if (!checkRegexMatch(originalReq.url)) {
+          store.dispatch(
+            showNotification({
+              type: NotificationType.ERROR,
+              msg: 'No Internet Connection.',
+              detail: 'Please check your internet and try again.',
+              delayTime: 10,
+              icon: NoConnection,
+              iconProps: {
+                height: '69px',
+                width: '101px',
+              },
+            }),
+          );
+        }
+      } else {
         store.dispatch(closeAllOverlayAction());
         store.dispatch(
           logoutSuccess({
             msg: typeof e !== 'string' ? 'Oops! Please Try Again.' : e,
             type: NotificationType.ERROR,
             delayTime: 10,
-          }),
-        );
-      } else {
-        store.dispatch(
-          showNotification({
-            type: NotificationType.ERROR,
-            msg: 'No Internet Connection.',
-            detail: 'Please check your internet and try again.',
-            delayTime: 10,
-            icon: NoConnection,
-            iconProps: {
-              height: '69px',
-              width: '101px',
-            },
           }),
         );
       }
