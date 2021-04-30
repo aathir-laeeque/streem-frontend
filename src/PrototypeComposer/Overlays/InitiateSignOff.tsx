@@ -298,12 +298,23 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
     let consistReviewer = false;
     let consistApprover = false;
 
+    /* 
+      all collaborator must be a part of signing process
+      fetch unique user ids from selection to verify the same
+    */
+    const uniqueSelections = new Set<string>();
+
     newSelection.forEach((c) => {
       if (c.orderTree === 2) consistReviewer = true;
       if (c.orderTree === 3) consistApprover = true;
+      uniqueSelections.add(c.userId);
     });
 
-    if (consistReviewer === false && consistApprover === false) {
+    if (uniqueSelections.size !== newUsers.length) {
+      setError(
+        'You need to select at least one role for each collaborator to Initiate the Sign Off process',
+      );
+    } else if (consistReviewer === false && consistApprover === false) {
       setError(
         'You need to select at least one Reviewer and one Approver to Initiate the Sign Off process',
       );
