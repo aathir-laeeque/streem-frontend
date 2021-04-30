@@ -9,25 +9,16 @@ import { toast } from 'react-toastify';
 
 import { store } from '../App';
 import { apiRefreshToken } from './apiUrls';
-import { LoginErrorCodes } from './constants';
+import {
+  EXCULDE_BY_REGEX_FOR_NO_INTERNET_TOAST,
+  LoginErrorCodes,
+} from './constants';
 import { ResponseObj } from './globalTypes';
+import { isMatchAny } from './stringUtils';
 
 // REFRESH TOKEN LOGIC
 
 const REFRESH_TOKEN_URL = apiRefreshToken();
-const EXCULDE_BY_REGEX = [
-  '([/]jobs[/][0-9]+[/]stages[/]state[?]stageId=[0-9]+)',
-];
-
-const checkRegexMatch = (url: string) => {
-  let isMatched: RegExpMatchArray | null = null;
-
-  EXCULDE_BY_REGEX.forEach((pattern) => {
-    isMatched = url.match(pattern);
-  });
-
-  return isMatched;
-};
 
 let refreshPromise: Promise<ResponseObj<RefreshTokenResponse>> | null = null;
 async function refreshTokenRequest(refreshToken: string) {
@@ -113,7 +104,9 @@ axiosInstance.interceptors.response.use(
       const { config: originalReq } = error;
 
       if (!connected) {
-        if (!checkRegexMatch(originalReq.url)) {
+        if (
+          !isMatchAny(originalReq.url, EXCULDE_BY_REGEX_FOR_NO_INTERNET_TOAST)
+        ) {
           store.dispatch(
             showNotification({
               type: NotificationType.ERROR,

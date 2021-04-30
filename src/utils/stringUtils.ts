@@ -52,3 +52,6 @@ export const parseMarkUp = (n: HTMLElement) => {
   parser(n, res);
   return res;
 };
+
+export const isMatchAny = (url: string, patterns: string[]) =>
+  !patterns.every((pattern) => url.match(pattern) === null);

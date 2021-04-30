@@ -29,6 +29,11 @@ export enum LoginErrorCodes {
   REFRESH_TOKEN_EXPIRED = '101103',
 }
 
+export const EXCULDE_BY_REGEX_FOR_NO_INTERNET_TOAST = [
+  // This helps in Not calling the toaster for Stage Polling in Job Execution ie. `apiGetStageData` in api urls.
+  '([/]jobs[/][0-9]+[/]stages[/]state[?]stageId=[0-9]+)',
+];
+
 export const DEFAULT_SESSION_TIMEOUT_IN_MIN = 10;
 
 export enum EmojisUniCodes {
