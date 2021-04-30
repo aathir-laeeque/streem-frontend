@@ -199,6 +199,15 @@ type ParsedUser = {
   checkedApprover: boolean;
 };
 
+/*
+  The signatories will be sorted in this order
+*/
+const collaboratorTypeOrder = {
+  [CollaboratorType.PRIMARY_AUTHOR]: 1,
+  [CollaboratorType.AUTHOR]: 2,
+  [CollaboratorType.REVIEWER]: 3,
+} as const;
+
 const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
   closeAllOverlays,
   closeOverlay,
@@ -215,6 +224,17 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
   const { data } = useTypedSelector((state) => ({
     data: (state.prototypeComposer?.data as unknown) as Checklist,
   }));
+
+  const sortSignatories = (users: ParsedUser[]) => {
+    return users.sort((a, b) => {
+      if (collaboratorTypeOrder[a.type] !== collaboratorTypeOrder[b.type]) {
+        return collaboratorTypeOrder[a.type] - collaboratorTypeOrder[b.type];
+      }
+      const aFullName = a.firstName + (a.lastName ?? '');
+      const bFullName = b.firstName + (b.lastName ?? '');
+      return aFullName > bFullName ? 1 : aFullName < bFullName ? -1 : 0;
+    });
+  };
 
   useEffect(() => {
     const { newUsers, selectedUsers } = uniqBy(
@@ -249,7 +269,7 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
       },
     );
 
-    setUsers(newUsers);
+    setUsers(sortSignatories(newUsers));
     setSelection(selectedUsers);
   }, []);
 
@@ -277,7 +297,8 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
       }
     });
 
-    setUsers(newUsers);
+    //TODO: sorting done on every check change is this needed ?
+    setUsers(sortSignatories(newUsers));
 
     let newSelection: { userId: string; orderTree: number }[] = [];
     if (checking) {
