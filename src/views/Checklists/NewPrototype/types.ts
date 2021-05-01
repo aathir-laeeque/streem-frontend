@@ -29,7 +29,6 @@ export type Author = Pick<
   User,
   'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'
 > & {
-  primary: boolean;
   state: AuthorState;
 };
 
@@ -43,7 +42,10 @@ export type FormValues = {
   authors: Author['id'][];
   description: string;
   name: string;
-  primaryAuthor: Author;
+  createdBy: Pick<
+    User,
+    'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'
+  >;
   properties: PrototypeProperties[];
 };
 
@@ -60,6 +62,10 @@ export type FormData = {
   prototypeId: Checklist['id'];
   revisedCode?: Checklist['code'];
   revisedName?: Checklist['name'];
+  createdBy: Pick<
+    User,
+    'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'
+  >;
 };
 
 export type Props = {

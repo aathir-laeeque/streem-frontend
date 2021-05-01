@@ -54,20 +54,21 @@ const PrototypeForm: FC<Props> = (props) => {
 
   const { profile } = useTypedSelector((state) => state.auth);
 
+  /*
+    The UI receives createdBy only after making the API call hence when the user clicks on the "Start a Prototype" the owner details are blank. 
+    The user creating the Prototype is the owner.
+  */
   const [formValues, setFormValues] = useState<FormValues>({
-    authors: [
-      ...(formData?.authors
-        ?.filter((author) => !author.primary)
-        .map((author) => author.id) ?? ['0']),
-    ],
+    authors: [...(formData?.authors?.map((author) => author.id) ?? ['0'])],
     description: formData.description ?? '',
     name: formData?.name ?? '',
-    primaryAuthor: formData?.authors?.filter(
-      (author) => author?.primary,
-    )[0] ?? {
-      ...pick(profile, ['id', 'employeeId', 'firstName', 'lastName', 'email']),
-      primary: true,
-    },
+    createdBy: pick(formData.createdBy ?? profile, [
+      'id',
+      'employeeId',
+      'firstName',
+      'lastName',
+      'email',
+    ]),
     properties: [],
   });
 
@@ -107,9 +108,7 @@ const PrototypeForm: FC<Props> = (props) => {
           updatePrototype(
             formValues,
             formData?.prototypeId,
-            formData?.authors
-              ?.filter((author) => !author.primary)
-              .map((author) => author.id),
+            formData?.authors?.map((author) => author.id),
           ),
         );
       }
@@ -124,7 +123,7 @@ const PrototypeForm: FC<Props> = (props) => {
 
   const filteredUsers = users.reduce((acc, user) => {
     if (
-      user.id !== formValues.primaryAuthor.id &&
+      user.id !== formValues.createdBy.id &&
       !formValues.authors.some((_authorId) => _authorId === user.id)
     ) {
       acc.push({
@@ -157,13 +156,11 @@ const PrototypeForm: FC<Props> = (props) => {
             {formData.revisedCode ? 'Being Revised by' : 'Checklist Owner'}
           </h5>
           <div className="container">
-            <Avatar user={formValues.primaryAuthor} />
+            <Avatar user={formValues.createdBy} />
             <div className="owner-details">
-              <div className="owner-id">
-                {formValues.primaryAuthor.employeeId}
-              </div>
+              <div className="owner-id">{formValues.createdBy.employeeId}</div>
               <div className="owner-name">
-                {getFullName(formValues.primaryAuthor)}
+                {getFullName(formValues.createdBy)}
               </div>
             </div>
           </div>

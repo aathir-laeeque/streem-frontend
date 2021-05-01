@@ -378,6 +378,7 @@ const ChecklistHeader: FC = () => {
                 (u) => u.type === CollaboratorType.AUTHOR,
               ),
               prototypeId: data.id,
+              createdBy: data.audit?.createdBy,
             },
           },
         })

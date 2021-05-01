@@ -112,7 +112,7 @@ function* addRevisionPrototypeSaga({
             description: response.description,
             name: response.name,
             properties: response.properties,
-            authors: response.authors,
+            createdBy: response.audit?.createdBy,
             prototypeId: response.id,
             revisedCode: code,
             revisedName: name,
