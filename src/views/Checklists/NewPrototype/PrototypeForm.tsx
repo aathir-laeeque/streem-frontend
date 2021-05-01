@@ -173,6 +173,7 @@ const PrototypeForm: FC<Props> = (props) => {
           defaultValue={formValues.name}
           error={formErrors.name}
           label="Checklist Name"
+          disabled={formMode === FormMode.VIEW}
           name="name"
           onChange={debounce(({ name, value }) => {
             setFormErrors((errors) => ({ ...errors, name: '' }));
@@ -184,6 +185,7 @@ const PrototypeForm: FC<Props> = (props) => {
           <TextInput
             key={index}
             defaultValue={property.value}
+            disabled={formMode === FormMode.VIEW}
             error={formErrors.properties[property.id.toString()]}
             label={property.placeHolder}
             onChange={debounce(({ value }) => {
@@ -212,6 +214,7 @@ const PrototypeForm: FC<Props> = (props) => {
           optional
           defaultValue={formValues.description}
           label="Add Description"
+          disabled={formMode === FormMode.VIEW}
           name="description"
           onChange={debounce(({ name, value }) => {
             setFormValues((val) => ({ ...val, [name]: value }));
@@ -241,6 +244,7 @@ const PrototypeForm: FC<Props> = (props) => {
                 }
                 placeholder="Choose Users"
                 options={filteredUsers}
+                disabled={formMode === FormMode.VIEW}
                 onChange={(selectedOption: any) => {
                   const selectedUser = usersById[selectedOption.value];
 
@@ -254,39 +258,45 @@ const PrototypeForm: FC<Props> = (props) => {
                   }));
                 }}
               />
-              <Close
-                id="remove"
-                className="icon"
-                onClick={() => {
-                  setFormValues((values) => ({
-                    ...values,
-                    authors: [
-                      ...values.authors.slice(0, index),
-                      ...values.authors.slice(index + 1),
-                    ],
-                  }));
-                }}
-              />
+              {formMode !== FormMode.VIEW && (
+                <Close
+                  id="remove"
+                  className="icon"
+                  onClick={() => {
+                    setFormValues((values) => ({
+                      ...values,
+                      authors: [
+                        ...values.authors.slice(0, index),
+                        ...values.authors.slice(index + 1),
+                      ],
+                    }));
+                  }}
+                />
+              )}
             </div>
           );
         })}
 
-        <AddNewItem
-          onClick={() => {
-            setFormValues((values) => ({
-              ...values,
-              authors: [...values.authors, '0'],
-            }));
-          }}
-        />
+        {formMode !== FormMode.VIEW && (
+          <AddNewItem
+            onClick={() => {
+              setFormValues((values) => ({
+                ...values,
+                authors: [...values.authors, '0'],
+              }));
+            }}
+          />
+        )}
       </div>
 
-      <div className="form-submit-buttons">
-        <Button1 color="red" variant="secondary" onClick={() => navigate(-1)}>
-          Cancel
-        </Button1>
-        <Button1 type="submit">Submit</Button1>
-      </div>
+      {formMode !== FormMode.VIEW && (
+        <div className="form-submit-buttons">
+          <Button1 color="red" variant="secondary" onClick={() => navigate(-1)}>
+            Cancel
+          </Button1>
+          <Button1 type="submit">Submit</Button1>
+        </div>
+      )}
     </form>
   );
 };

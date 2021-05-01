@@ -19,6 +19,7 @@ type InputProps = {
   error?: boolean | string;
   label?: string;
   optional?: boolean;
+  disabled?: boolean;
   onChange?: ({ name, value }: OnChangeArgs) => void;
 } & ComponentPropsWithRef<'input'>;
 
@@ -123,6 +124,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     name,
     onChange,
     optional = false,
+    disabled = false,
     placeholder = 'Write here',
     type = 'text',
     ...rest
@@ -157,6 +159,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           }}
           placeholder={placeholder}
           ref={ref}
+          disabled={disabled}
           type={type}
         />
 

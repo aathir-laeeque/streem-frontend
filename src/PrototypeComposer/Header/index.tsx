@@ -364,7 +364,12 @@ const ChecklistHeader: FC = () => {
       onClick={() =>
         navigate('prototype', {
           state: {
-            mode: FormMode.EDIT,
+            mode:
+              isPrimaryAuthor &&
+              (data?.state === ChecklistStates.BEING_BUILT ||
+                data?.state === ChecklistStates.REQUESTED_CHANGES)
+                ? FormMode.EDIT
+                : FormMode.VIEW,
             formData: {
               description: data?.description,
               name: data.name,
@@ -505,10 +510,7 @@ const ChecklistHeader: FC = () => {
         return (
           <>
             {isPrimaryAuthor && (
-              <>
-                <PrototypeEditButton />
-                <AuthorSubmitButton title="Submit For Review" />
-              </>
+              <AuthorSubmitButton title="Submit For Review" />
             )}
           </>
         );
@@ -524,7 +526,6 @@ const ChecklistHeader: FC = () => {
       case ChecklistStates.REQUESTED_CHANGES:
         return (
           <>
-            {isPrimaryAuthor && <PrototypeEditButton />}
             <ViewReviewersButton />
             {isPrimaryAuthor && (
               <AuthorSubmitButton title="Submit For Review" />
@@ -576,6 +577,7 @@ const ChecklistHeader: FC = () => {
           </div>
 
           <div className="header-content-right">
+            {<PrototypeEditButton />}
             {author && !approver && renderButtonsForAuthor()}
 
             {reviewer && !approver && (

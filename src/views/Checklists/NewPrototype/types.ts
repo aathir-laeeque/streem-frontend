@@ -36,6 +36,7 @@ export type Author = Pick<
 export enum FormMode {
   ADD = 'ADD',
   EDIT = 'EDIT',
+  VIEW = 'VIEW',
 }
 
 export type FormValues = {
