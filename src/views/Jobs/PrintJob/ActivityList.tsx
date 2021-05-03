@@ -442,30 +442,42 @@ const activityTemplateFormatter = (
           </Text>
           <View style={{ display: 'flex', flexDirection: 'row' }}>
             {activity.response?.value ? (
-              [...activity.response?.value].map((char) => (
-                <View style={styles.lightInput} key={`${char}`}>
-                  <Text style={styles.text12}>{char}</Text>
-                </View>
-              ))
+              [...activity.response?.value].map((char) =>
+                char === '.' ? (
+                  <View
+                    style={{
+                      width: 2,
+                      height: 18,
+                      marginHorizontal: 1,
+                      borderBottomWidth: 1,
+                      borderBottomColor: '#000',
+                    }}
+                  />
+                ) : (
+                  <View style={styles.lightInput} key={`${char}`}>
+                    <Text style={styles.text12}>{char}</Text>
+                  </View>
+                ),
+              )
             ) : (
               <>
                 <View style={styles.lightInput} />
                 <View style={styles.lightInput} />
                 <View style={styles.lightInput} />
                 <View style={styles.lightInput} />
+                <View
+                  style={{
+                    width: 2,
+                    height: 18,
+                    marginHorizontal: 1,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#000',
+                  }}
+                />
+                <View style={styles.lightInput} />
+                <View style={styles.lightInput} />
               </>
             )}
-            <View
-              style={{
-                width: 2,
-                height: 18,
-                marginHorizontal: 1,
-                borderBottomWidth: 1,
-                borderBottomColor: '#000',
-              }}
-            />
-            <View style={styles.lightInput} />
-            <View style={styles.lightInput} />
           </View>
         </View>
       );
