@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface CheckboxProps {
-  label?: string;
+  label?: string | JSX.Element;
   value?: string | number;
   name?: string;
   checked?: boolean;
@@ -14,7 +14,7 @@ interface CheckboxProps {
 
 const Wrapper = styled.div.attrs({
   className: 'checkbox-input',
-})<{ partial: boolean }>`
+})<Pick<CheckboxProps, 'partial' | 'disabled'>>`
   .container {
     display: block;
     position: relative;
@@ -23,6 +23,14 @@ const Wrapper = styled.div.attrs({
     font-size: 16px;
     color: #666666;
     user-select: none;
+
+    ${({ disabled }) =>
+      disabled
+        ? css`
+            opacity: 0.5;
+            pointer-events: none;
+          `
+        : css``}
   }
 
   /* Hide the browser's default checkbox */
@@ -78,29 +86,36 @@ const Wrapper = styled.div.attrs({
   /* Style the checkmark/indicator */
   ${({ partial }) =>
     partial
-      ? `
-  .container .checkmark:after {
-    left: 4px;
-    top: 8px;
-    width: 10px;
-    height: 0px;
-    border: solid white;
-    border-width: 2px 0px 0px 0;
-}
-  `
-      : `
-  .container .checkmark:after {
-    left: 6px;
-    top: 3px;
-    width: 3px;
-    height: 7px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    -webkit-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    transform: rotate(45deg);
-  }
-  `}
+      ? css`
+          .container {
+            input ~ .checkmark {
+              background-color: #1d84ff !important;
+              border: none;
+            }
+
+            .checkmark:after {
+              left: 4px;
+              top: 8px;
+              width: 10px;
+              height: 0px;
+              border: solid white;
+              border-width: 2px 0px 0px 0;
+            }
+          }
+        `
+      : css`
+          .container .checkmark:after {
+            left: 6px;
+            top: 3px;
+            width: 3px;
+            height: 7px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+          }
+        `}
 `;
 
 Wrapper.defaultProps = {
@@ -117,7 +132,7 @@ export const Checkbox: FC<CheckboxProps> = ({
   refFun,
   partial = false,
 }) => (
-  <Wrapper partial={partial}>
+  <Wrapper partial={partial} disabled={disabled}>
     <label className="container">
       {label}
       <input
@@ -126,7 +141,6 @@ export const Checkbox: FC<CheckboxProps> = ({
         name={name}
         checked={checked}
         onChange={onClick}
-        disabled={disabled}
         ref={refFun}
       />
       <span className="checkmark"></span>

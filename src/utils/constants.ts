@@ -8,7 +8,7 @@ export const fetchBaseUrl = () => {
   let apiUrl = '';
 
   if (hostname === 'localhost') {
-    apiUrl = process.env.API_URL || 'http://localhost:8080/v1';
+    apiUrl = process.env.API_URL ?? 'http://localhost:8080/v1';
   } else {
     apiUrl = `${protocol}//api.${hostname}/v1`;
   }

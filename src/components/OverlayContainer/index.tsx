@@ -39,14 +39,18 @@ import SessionExpireModal from '#views/Auth/Overlays/SessionExpire';
 import ArchiveModal from '#views/Checklists/ListView/ArchiveModal';
 import ChecklistInfoModal from '#views/Checklists/ListView/ChecklistInfoModal';
 import RevisionErrorModal from '#views/Checklists/Overlays/RevisionErrorModal';
+import AssingnmentInfo from '#views/Jobs/Assignment/AssignmentInfo';
+import UserAssignment from '#views/Jobs/Assignment/UserAssignmentModal';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+
 import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
 import { CommonOverlayProps, OverlayNames } from './types';
+import ViewTaskModal from '../../views/Jobs/Assignment/ViewTaskModal';
 
 const Wrapper = styled.div``;
 
@@ -185,6 +189,15 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.ARCHIVE_MODAL:
       return <ArchiveModal {...params} />;
+
+    case OverlayNames.USER_ASSIGNMENT:
+      return <UserAssignment {...params} />;
+
+    case OverlayNames.ASSIGNMENT_INFO:
+      return <AssingnmentInfo {...params} />;
+
+    case OverlayNames.VIEW_TASK:
+      return <ViewTaskModal {...params} />;
 
     default:
       return null;

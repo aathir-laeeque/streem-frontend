@@ -20,6 +20,7 @@ type Props = {
   borderColor?: string;
   backgroundColor?: string;
   user: User;
+  allowMouseEvents?: boolean;
 };
 
 const Wrapper = styled.div.attrs({
@@ -70,6 +71,7 @@ export const Avatar: FC<Props> = ({
   borderColor = '#999999',
   backgroundColor = '#dadada',
   user,
+  allowMouseEvents = true,
 }) => {
   const dispatch = useDispatch();
 
@@ -79,18 +81,22 @@ export const Avatar: FC<Props> = ({
       size={size}
       borderColor={borderColor}
       backgroundColor={backgroundColor}
-      onMouseEnter={(event: MouseEvent) => {
-        dispatch(
-          openOverlayAction({
-            type: OverlayNames.ASSIGNED_USER_DETAIL,
-            popOverAnchorEl: event.currentTarget,
-            props: { users: [user] },
-          }),
-        );
-      }}
-      onMouseLeave={() => {
-        dispatch(closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL));
-      }}
+      {...(allowMouseEvents
+        ? {
+            onMouseEnter: (event: MouseEvent) => {
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.ASSIGNED_USER_DETAIL,
+                  popOverAnchorEl: event.currentTarget,
+                  props: { users: [user] },
+                }),
+              );
+            },
+            onMouseLeave: () => {
+              dispatch(closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL));
+            },
+          }
+        : {})}
     >
       {getInitials(getFullName(user))}
     </Wrapper>

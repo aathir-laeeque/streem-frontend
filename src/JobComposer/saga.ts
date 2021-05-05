@@ -8,13 +8,14 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   apiAssignUsersToJob,
   apiCompleteJob,
-  apiGetAssignedUsersForJob,
+  apiGetAllUsersAssignedToJob,
   apiGetChecklist,
   apiGetSelectedJob,
   apiStartJob,
   apiTaskSignOff,
   apiValidatePassword,
 } from '#utils/apiUrls';
+import { LoginErrorCodes } from '#utils/constants';
 import { request } from '#utils/request';
 import { navigate } from '@reach/router';
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
@@ -31,21 +32,20 @@ import {
   fetchDataOngoing,
   fetchDataSuccess,
   getSignOffState,
+  setSignOffError,
   signOffTasks,
   startJob,
   startJobSuccess,
 } from './actions';
 import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
-import { JobActivitySaga } from './JobActivity/saga';
 import { ComposerAction } from './composer.reducer.types';
 import { Entity } from './composer.types';
+import { JobActivitySaga } from './JobActivity/saga';
 import { StageListSaga } from './StageList/saga';
 import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
 import { groupJobErrors } from './utils';
-import { setSignOffError } from './actions';
-import { LoginErrorCodes } from '#utils/constants';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   try {
@@ -172,7 +172,7 @@ function* fetchAssignedUsersForJobSaga({
     const { data, errors, error } = yield call(
       request,
       'GET',
-      apiGetAssignedUsersForJob(jobId),
+      apiGetAllUsersAssignedToJob(jobId),
     );
 
     if (errors || error) {
@@ -244,7 +244,7 @@ function* getSignOffStateSaga({ payload }: ReturnType<typeof getSignOffState>) {
     const { data, errors } = yield call(
       request,
       'GET',
-      apiGetAssignedUsersForJob(jobId),
+      apiGetAllUsersAssignedToJob(jobId),
     );
 
     if (data) {

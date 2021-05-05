@@ -3,14 +3,13 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
-import { User } from '#store/users/types';
-import { apiGetAssignedUsersForJob } from '#utils/apiUrls';
+import { apiGetAllUsersAssignedToJob } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { usePrevious } from '#utils/usePrevious';
 import { Job, JobStateEnum } from '#views/Jobs/NewListView/types';
 import { Menu, MenuItem } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
-import { useLocation } from '@reach/router';
+import { navigate, useLocation } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -52,7 +51,7 @@ const JobHeaderButtons: FC = () => {
     if (jobId) {
       const { data, errors } = await request(
         'GET',
-        apiGetAssignedUsersForJob(jobId),
+        apiGetAllUsersAssignedToJob(jobId),
       );
 
       if (data) {
@@ -143,20 +142,8 @@ const JobHeaderButtons: FC = () => {
       )}
 
       {showBulkAssignButton ? (
-        <Button
-          onClick={() => {
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.TASK_USERS_ASSIGNMENT,
-                props: {
-                  jobId,
-                  forAll: true,
-                },
-              }),
-            );
-          }}
-        >
-          Bulk Assign All Tasks
+        <Button onClick={() => navigate(`/jobs/${jobId}/assignments`)}>
+          Bulk Assign Tasks
         </Button>
       ) : null}
 

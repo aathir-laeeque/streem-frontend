@@ -165,10 +165,6 @@ const ShouldBeActivity: FC<ActivityProps> = ({
     }));
   }, [activity]);
 
-  useEffect(() => {
-    console.log('updated state :: ', state);
-  }, [state]);
-
   const renderSubmitButtons = () => (
     <div className="buttons-container">
       <Button1

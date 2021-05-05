@@ -261,3 +261,12 @@ export const apiRemoveTaskMedia = ({
 export const apiReorderStages = () => `${baseUrl}/stages/reorder`;
 
 export const apiReorderTasks = () => `${baseUrl}/tasks/reorder`;
+
+export const apiGetAllUsersAssignedToJob = (jobId: Job['id']) =>
+  `${baseUrl}/jobs/${jobId}/assignments`;
+
+export const apiGetAllUsersAssignedToTask = () =>
+  `${baseUrl}/tasks/assignments`;
+
+export const apiBulkAssignUsers = (jobId: Job['id']) =>
+  `${baseUrl}/jobs/${jobId}/assignments`;

@@ -5,14 +5,14 @@ import { useDispatch } from 'react-redux';
 import { fetchData, resetComposer } from './actions';
 import { ComposerProps, Tabs } from './composer.types';
 import Header from './Header';
-import StageList from './StageList';
 import ActivityView from './JobActivity';
-import ComposerWrapper from './styles';
-import TaskList from './TaskList';
+import StageList from './StageList';
 import {
   startPollActiveStageData,
   stopPollActiveStageData,
 } from './StageList/actions';
+import ComposerWrapper from './styles';
+import TaskList from './TaskList';
 
 const Composer: FC<ComposerProps> = ({ id, entity }) => {
   const dispatch = useDispatch();
