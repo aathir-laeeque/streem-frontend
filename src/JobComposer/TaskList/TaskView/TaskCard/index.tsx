@@ -92,17 +92,13 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
     const isCorrectingError =
       taskState === TaskExecutionState.ENABLED_FOR_CORRECTION;
 
-    const isJobStarted =
-      jobState === JobStateEnum.IN_PROGRESS ||
-      jobState === JobStateEnum.BLOCKED;
-
     return (
       <Wrapper
         onClick={() => {
           if (!isActive) {
             dispatch(setActiveTask(task.id));
           }
-          if (!isJobStarted && !showAssignmentButton) {
+          if (jobState === JobStateEnum.ASSIGNED && !showAssignmentButton) {
             dispatch(
               openOverlayAction({
                 type: OverlayNames.START_JOB_MODAL,
@@ -122,7 +118,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
         />
         <div
           onClick={() => {
-            if (isJobStarted && !isTaskStarted) {
+            if (jobState === JobStateEnum.IN_PROGRESS && !isTaskStarted) {
               dispatch(
                 openOverlayAction({
                   type: OverlayNames.START_TASK_ERROR_MODAL,
