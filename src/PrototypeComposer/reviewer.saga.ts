@@ -322,10 +322,10 @@ function* onSuccess(data: CommonReviewResponse) {
       const currentComments = getCurrentComments(yield select());
 
       let isUpdated = false;
-      const { id } = data.comment;
+      const { phase, commentedBy } = data.comment;
 
       const comments = currentComments.reduce((acc, c) => {
-        if (c.id === id) {
+        if (c.phase === phase && c.commentedBy.id === commentedBy.id) {
           acc.push(data.comment as Comment);
           isUpdated = true;
         } else {
