@@ -21,7 +21,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
     return () => {
       dispatch(resetComposer());
     };
-  }, []);
+  }, [id]);
 
   if (loading) {
     return <LoaderWrapper>Loading...</LoaderWrapper>;

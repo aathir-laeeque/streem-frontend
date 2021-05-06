@@ -519,7 +519,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                         onClick={() => {
                           if (index > 0) {
                             closeOverlay();
-                            navigate(`checklists/${version.id}`);
+                            navigate(`/checklists/${version.id}`);
                           }
                         }}
                       >
