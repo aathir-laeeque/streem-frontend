@@ -103,7 +103,9 @@ export type Error = {
 };
 
 export type FileUploadData = {
+  mediaId: string;
   filename: string;
+  originalFilename: string;
   link: string;
   type: string;
 };

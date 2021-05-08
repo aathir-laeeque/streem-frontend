@@ -71,7 +71,7 @@ export const apiCompleteTaskErrorCorrection = (taskId: Task['id']) =>
 export const apiCancelTaskErrorCorrection = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}/correction/cancel`;
 
-export const apiUploadFile = () => `${baseUrl}/files/`;
+export const apiUploadFile = () => `${baseUrl}/medias/upload`;
 
 export const apiCheckUsername = () => `${baseUrl}/users/username/check`;
 
@@ -210,7 +210,7 @@ export const apiAddMediaToTask = (taskId: Task['id']) =>
 
 export const apiUpdateTaskMedia = (
   taskId: Task['id'],
-  mediaId: MediaDetails['id'],
+  mediaId: MediaDetails['mediaId'],
 ) => `${baseUrl}/tasks/${taskId}/medias/${mediaId}`;
 
 export const apiValidatePrototype = (id: Checklist['id']) =>

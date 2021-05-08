@@ -118,6 +118,7 @@ const generateNewActivity = ({
             fileName: '',
             quantity: 0,
             id: uuidv4(),
+            mediaId: '',
           },
         ],
         label: '',

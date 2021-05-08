@@ -188,10 +188,7 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                 data: [
                   ...activity.data,
                   {
-                    link: '',
                     name: '',
-                    type: 'image',
-                    fileName: '',
                     quantity: 0,
                     id: uuidv4(),
                   },

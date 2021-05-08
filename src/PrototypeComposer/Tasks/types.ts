@@ -47,7 +47,7 @@ export type AddMediaType = {
 
 export type UpdateMediaType = {
   taskId: Task['id'];
-  mediaId: MediaDetails['id'];
+  mediaId: MediaDetails['mediaId'];
   mediaDetails: Pick<MediaDetails, 'name' | 'description'>;
 };
 
