@@ -297,56 +297,58 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
       return (
         <Wrapper>
           {isUserAssignedToTask && (
-            <button
-              className="complete-task"
-              onClick={() => {
-                if (!isJobBlocked) {
-                  const timeElapsed = moment().diff(
-                    moment.unix(task.taskExecution.startedAt),
-                    'seconds',
-                  );
+            <>
+              <button
+                className="complete-task"
+                onClick={() => {
+                  if (!isJobBlocked) {
+                    const timeElapsed = moment().diff(
+                      moment.unix(task.taskExecution.startedAt),
+                      'seconds',
+                    );
 
-                  if (
-                    task.timed &&
-                    (timeElapsed > task.maxPeriod ||
-                      (task.timerOperator === 'NOT_LESS_THAN' &&
-                        timeElapsed < task.minPeriod))
-                  ) {
-                    setAskForReason(true);
-                  } else {
-                    dispatch(completeTask(task.id));
+                    if (
+                      task.timed &&
+                      (timeElapsed > task.maxPeriod ||
+                        (task.timerOperator === 'NOT_LESS_THAN' &&
+                          timeElapsed < task.minPeriod))
+                    ) {
+                      setAskForReason(true);
+                    } else {
+                      dispatch(completeTask(task.id));
+                    }
                   }
-                }
-              }}
-            >
-              Complete Task <ArrowRightAlt className="icon" />
-            </button>
-          )}
+                }}
+              >
+                Complete Task <ArrowRightAlt className="icon" />
+              </button>
 
-          <button
-            className="skip-task"
-            onClick={() => {
-              if (!isJobBlocked) {
-                if (canSkipTask) {
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.SKIP_TASK_MODAL,
-                      props: { taskId: task.id },
-                    }),
-                  );
-                } else {
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.COMPLETE_TASK_WITH_EXCEPTION,
-                      props: { taskId: task.id },
-                    }),
-                  );
-                }
-              }
-            }}
-          >
-            {canSkipTask ? 'Skip the task' : 'Complete with Exception'}
-          </button>
+              <button
+                className="skip-task"
+                onClick={() => {
+                  if (!isJobBlocked) {
+                    if (canSkipTask) {
+                      dispatch(
+                        openOverlayAction({
+                          type: OverlayNames.SKIP_TASK_MODAL,
+                          props: { taskId: task.id },
+                        }),
+                      );
+                    } else {
+                      dispatch(
+                        openOverlayAction({
+                          type: OverlayNames.COMPLETE_TASK_WITH_EXCEPTION,
+                          props: { taskId: task.id },
+                        }),
+                      );
+                    }
+                  }
+                }}
+              >
+                {canSkipTask ? 'Skip the task' : 'Complete with Exception'}
+              </button>
+            </>
+          )}
 
           {activitiesHasError ? (
             <div className="error-badge">

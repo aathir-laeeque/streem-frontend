@@ -103,12 +103,19 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
   useEffect(() => {
     setState((prevState) => ({ ...prevState, loading: true }));
     (async () => {
-      const { data, errors } = await request('GET', apiGetJobCweDetails(jobId));
+      try {
+        const { data, errors } = await request(
+          'GET',
+          apiGetJobCweDetails(jobId),
+        );
 
-      if (data) {
-        setState({ loading: false, data });
-      } else {
-        console.log('errors :: ', errors);
+        if (data) {
+          setState({ loading: false, data });
+        } else {
+          console.error('errors in the api response :: ', errors);
+        }
+      } catch (error) {
+        console.error('error in fetching cwe info :: ', error);
       }
     })();
   }, []);

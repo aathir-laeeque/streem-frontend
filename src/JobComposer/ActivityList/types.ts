@@ -8,6 +8,7 @@ export type ActivityListProps = {
   isTaskCompleted: boolean;
   isCompletedWithException: boolean;
   isCorrectingError: boolean;
+  isLoggedInUserAssigned: boolean;
 };
 
 export type ActivityProps = {

@@ -45,9 +45,15 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
     stages: { activeStageId },
   } = useTypedSelector((state) => state.composer);
 
-  const { state: taskState, reason } = task.taskExecution;
+  const { profile } = useTypedSelector((state) => state.auth);
+
+  const { state: taskState, reason, assignees } = task.taskExecution;
 
   const dispatch = useDispatch();
+
+  const isLoggedInUserAssigned = assignees.some(
+    (user) => user.id === profile?.id,
+  );
 
   if (activeStageId) {
     const activities = activitiesOrderInTaskInStage[activeStageId][task.id].map(
@@ -118,7 +124,11 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
         />
         <div
           onClick={() => {
-            if (jobState === JobStateEnum.IN_PROGRESS && !isTaskStarted) {
+            if (
+              jobState === JobStateEnum.IN_PROGRESS &&
+              !isTaskStarted &&
+              isLoggedInUserAssigned
+            ) {
               dispatch(
                 openOverlayAction({
                   type: OverlayNames.START_TASK_ERROR_MODAL,
@@ -133,6 +143,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
             isTaskCompleted={isTaskCompleted}
             isCompletedWithException={isCompletedWithException}
             isCorrectingError={isCorrectingError}
+            isLoggedInUserAssigned={isLoggedInUserAssigned}
           />
         </div>
 

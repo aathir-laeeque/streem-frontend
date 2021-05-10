@@ -1,20 +1,20 @@
 import {
-  BaseModal,
   AutoComplete,
-  TextInput,
+  BaseModal,
   Button1,
   fetchDataParams,
+  TextInput,
 } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { Property } from '#store/properties/types';
-import { Checklist } from '#views/Checklists/types';
-import { useDispatch } from 'react-redux';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
-import React, { FC } from 'react';
-import styled from 'styled-components';
-import { useForm } from 'react-hook-form';
+import { Checklist } from '#views/Checklists/types';
 import { capitalize } from 'lodash';
+import React, { FC } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 
 export interface CreateJobModalProps {
   selectedChecklist: Checklist | null;
@@ -45,10 +45,12 @@ const Wrapper = styled.div.attrs({})`
         flex-wrap: wrap;
 
         .row {
+          flex: unset;
           margin-top: 24px;
+          width: 48%;
 
           :nth-child(2n) {
-            margin-left: 24px;
+            margin-left: 4%;
           }
         }
 
@@ -56,6 +58,8 @@ const Wrapper = styled.div.attrs({})`
           flex-direction: column;
 
           .row {
+            width: 100%;
+
             :nth-child(2n) {
               margin-left: 0;
             }

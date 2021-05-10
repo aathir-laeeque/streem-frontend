@@ -24,16 +24,8 @@ const Wrapper = styled.div.attrs({
   display: flex;
   flex-direction: column;
 
-  ${({ isTaskStarted }) =>
-    !isTaskStarted
-      ? css`
-          opacity: 0.5;
-          pointer-events: none;
-        `
-      : null}
-
-  ${({ isCompletedWithException }) =>
-    isCompletedWithException
+  ${({ isTaskStarted, isCompletedWithException, isLoggedInUserAssigned }) =>
+    !isTaskStarted || isCompletedWithException || !isLoggedInUserAssigned
       ? css`
           opacity: 0.5;
           pointer-events: none;
