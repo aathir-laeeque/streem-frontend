@@ -5,16 +5,19 @@ import {
   PropertiesActionType,
   PropertiesState,
   PropertyById,
+  PropertyByName,
 } from './types';
 
 const initialState: PropertiesState = {
   checklist: {
     list: [],
     listById: {},
+    listByName: {},
   },
   job: {
     list: [],
     listById: {},
+    listByName: {},
   },
   loading: false,
 };
@@ -36,11 +39,14 @@ const reducer: Reducer<PropertiesState, PropertiesActionType> = (
         loading: false,
         [action.payload.entity]: {
           list: action.payload.data,
-          listById: action.payload.data.reduce<PropertyById>((acc, el) => {
-            acc[el.id.toString()] = el;
-
-            return acc;
-          }, {}),
+          listById: action.payload.data.reduce<PropertyById>(
+            (acc, el) => ({ ...acc, [el.id.toString()]: el }),
+            {},
+          ),
+          listByName: action.payload.data.reduce<PropertyByName>(
+            (acc, el) => ({ ...acc, [el.name]: el }),
+            {},
+          ),
         },
       };
 

@@ -39,7 +39,11 @@ const Wrapper = styled.div`
       padding: 8px 16px;
     }
 
-    .sign-off {
+    .bulk-assign,
+    .job-summary,
+    .print-job,
+    .sign-off,
+    .view-info {
       margin-right: 8px;
     }
 

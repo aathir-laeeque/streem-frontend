@@ -4,6 +4,7 @@ import { CustomRoute, Notification, OverlayContainer } from '#components';
 import { configureStore } from '#store';
 import { setAuthHeader } from '#utils/axiosClient';
 import { AuthView } from '#views';
+import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
 import PrintJob from '#views/Jobs/PrintJob';
 import PrintJobActivity from '#views/Jobs/PrintJobActivity';
 import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
@@ -37,6 +38,7 @@ const App: FC = () => {
         <Router style={{ display: 'flex', flex: 1 }} basepath="/">
           <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
           <CustomRoute as={PrintJob} path="jobs/print/:jobId" />
+          <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
           <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
           <CustomRoute as={PrintJobActivity} path="job-activity/print/:jobId" />
           <CustomRoute as={HomeView} path="/*" />

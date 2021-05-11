@@ -163,7 +163,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
               ),
               ..._fields,
             ]);
-            console.log('fields :: ', _fields);
           }}
         />
 

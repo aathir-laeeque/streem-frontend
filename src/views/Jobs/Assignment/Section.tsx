@@ -1,10 +1,7 @@
 import { Checkbox } from '#components';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
 import { CompletedTaskStates, Stage } from '#JobComposer/checklist.types';
 import { ArrowDropDown, ArrowRight } from '@material-ui/icons';
 import React, { Dispatch, FC, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import AssigneeList from './AssigneeList';
@@ -132,16 +129,6 @@ const Wrapper = styled.div.attrs({
           }
         }
 
-        .view-task {
-          color: #1d84ff;
-          cursor: pointer;
-          font-size: 14px;
-          line-height: 1.14;
-          letter-spacing: 0.16px;
-          margin-left: auto;
-          text-align: left;
-        }
-
         .icon {
           color: #1d84ff;
           font-size: 20px;
@@ -158,8 +145,6 @@ const Section: FC<Props> = ({
   localDispatch,
   isFirst,
 }) => {
-  const dispatch = useDispatch();
-
   const [isOpen, toggleIsOpen] = useState(isFirst);
 
   const isAllTaskAssigned = stage.tasks
@@ -271,21 +256,6 @@ const Section: FC<Props> = ({
                     });
                   }}
                 />
-
-                {/* Commenting this as we are not doing this feature right now */}
-                {/* <div
-                  className="view-task"
-                  onClick={() =>
-                    dispatch(
-                      openOverlayAction({
-                        type: OverlayNames.VIEW_TASK,
-                        props: { task, stageOrder: stage.orderTree },
-                      }),
-                    )
-                  }
-                >
-                  View Task
-                </div> */}
 
                 {task.taskExecution.assignees.length ? (
                   <AssigneeList users={task.taskExecution.assignees} />

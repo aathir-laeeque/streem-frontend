@@ -270,3 +270,8 @@ export const apiGetAllUsersAssignedToTask = () =>
 
 export const apiBulkAssignUsers = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}/assignments`;
+
+export const apiGetJobSummary = (jobId: Job['id']) =>
+  `${baseUrl}/jobs/${jobId}/reports`;
+
+export const apiGetTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}`;

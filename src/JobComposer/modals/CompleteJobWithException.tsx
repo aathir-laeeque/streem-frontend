@@ -160,7 +160,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const ExceptionReason = [
+export const ExceptionReason = [
   { label: 'Job got cancelled', value: 'JOB_GOT_CANCELLED' },
   { label: 'Job created by mistake', value: 'JOB_CREATED_BY_MISTAKE' },
   { label: 'Job completed offline', value: 'JOB_COMPLETED_OFFLINE' },

@@ -122,6 +122,10 @@ const ButtonWrapper = styled.button.attrs(
           border-color: ${colors.borderColor};
           color: ${colors.textColor};
 
+          > .icon {
+            color: ${colors.textColor} !important;
+          }
+
           :hover {
             background-color: ${colors.hoverBackgroundColor};
             color: #ffffff;

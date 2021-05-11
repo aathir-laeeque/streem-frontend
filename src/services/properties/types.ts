@@ -5,9 +5,12 @@ import { fetchError, fetchOngoing, fetchSuccess } from './actions';
 
 export type PropertyById = Record<string, Property>;
 
+export type PropertyByName = Record<string, Property>;
+
 export type EntityProperties = {
   list: Property[];
   listById: PropertyById;
+  listByName: PropertyByName;
 };
 
 export interface PropertiesState {

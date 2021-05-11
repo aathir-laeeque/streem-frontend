@@ -196,9 +196,6 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
     case OverlayNames.ASSIGNMENT_INFO:
       return <AssingnmentInfo {...params} />;
 
-    case OverlayNames.VIEW_TASK:
-      return <ViewTaskModal {...params} />;
-
     default:
       return null;
   }

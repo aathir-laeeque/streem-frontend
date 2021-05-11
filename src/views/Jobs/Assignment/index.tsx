@@ -159,7 +159,7 @@ const Assignments: FC<Props> = (props) => {
     return <div>Loading..</div>;
   } else {
     return (
-      <div style={{ padding: '8px' }}>
+      <div style={{ padding: '8px', height: '100%' }}>
         <GoBack label="Return to process" className="go-back" />
         <Wrapper>
           <div className="header">

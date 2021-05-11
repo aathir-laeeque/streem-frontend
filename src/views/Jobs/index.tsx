@@ -5,6 +5,7 @@ import React, { FC } from 'react';
 
 import Assignments from './Assignment';
 import NewListView from './NewListView';
+import JobSummary from './Summary';
 import { JobsViewProps } from './types';
 
 const JobsView: FC<JobsViewProps> = () => (
@@ -14,6 +15,8 @@ const JobsView: FC<JobsViewProps> = () => (
     <Composer path="/:id" entity={Entity.JOB} />
 
     <Assignments path="/:jobId/assignments" />
+
+    <JobSummary path="/:jobId/summary" />
   </Router>
 );
 

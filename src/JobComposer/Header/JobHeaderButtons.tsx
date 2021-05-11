@@ -8,12 +8,13 @@ import { request } from '#utils/request';
 import { usePrevious } from '#utils/usePrevious';
 import { Job, JobStateEnum } from '#views/Jobs/NewListView/types';
 import { Menu, MenuItem } from '@material-ui/core';
-import { ArrowDropDown } from '@material-ui/icons';
+import { ArrowDropDown, Print } from '@material-ui/icons';
 import { navigate, useLocation } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { completeJob, getSignOffState } from '../actions';
+import { CompletedJobStates } from '../../views/Jobs/NewListView/types';
 
 const JobHeaderButtons: FC = () => {
   const { jobState, data } = useTypedSelector((state) => state.composer);
@@ -110,8 +111,20 @@ const JobHeaderButtons: FC = () => {
         </>
       ) : null}
 
+      {!isInboxView && jobState in CompletedJobStates ? (
+        <Button1
+          className="job-summary"
+          color="blue"
+          variant="secondary"
+          onClick={() => navigate(`/jobs/${jobId}/summary`)}
+        >
+          Job Summary
+        </Button1>
+      ) : null}
+
       {jobState === JobStateEnum.COMPLETED_WITH_EXCEPTION ? (
         <Button1
+          className="view-info"
           color="blue"
           variant="secondary"
           onClick={() =>
@@ -132,19 +145,24 @@ const JobHeaderButtons: FC = () => {
       ) : null}
 
       {!hidePrintJob && (
-        <Button
+        <Button1
+          className="print-job"
           onClick={() => {
             window.open(`/jobs/print/${jobId}`, '_blank');
           }}
+          variant="secondary"
         >
-          Print Job
-        </Button>
+          <Print className="icon print" />
+        </Button1>
       )}
 
       {showBulkAssignButton ? (
-        <Button onClick={() => navigate(`/jobs/${jobId}/assignments`)}>
+        <Button1
+          className="bulk-assign"
+          onClick={() => navigate(`/jobs/${jobId}/assignments`)}
+        >
           Bulk Assign Tasks
-        </Button>
+        </Button1>
       ) : null}
 
       {isInboxView &&
@@ -199,7 +217,7 @@ const JobHeaderButtons: FC = () => {
                     handleClose();
                   }}
                 >
-                  Complet Job with exception
+                  Complete Job with exception
                 </MenuItem>
               </Menu>
             </>

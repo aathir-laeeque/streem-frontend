@@ -1,7 +1,3 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
-
 export const fetchBaseUrl = () => {
   const { hostname, protocol } = window.location;
 

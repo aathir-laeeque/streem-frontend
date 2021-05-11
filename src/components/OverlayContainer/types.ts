@@ -50,7 +50,6 @@ export enum OverlayNames {
   TIMED_TASK_CONFIG = 'TIMED_TASK_CONFIG',
   USER_ASSIGNMENT = 'USER_ASSIGNMENT',
   ASSIGNMENT_INFO = 'ASSIGNMENT_INFO',
-  VIEW_TASK = 'VIEW_TASK',
 }
 
 export interface CommonOverlayProps<T> {
