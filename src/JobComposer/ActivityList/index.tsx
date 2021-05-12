@@ -84,6 +84,7 @@ const ActivityList: FC<ActivityListProps> = ({
   isTaskCompleted,
   isCompletedWithException,
   isCorrectingError,
+  isLoggedInUserAssigned,
 }) => {
   const { entity } = useTypedSelector((state) => state.composer);
 
@@ -92,6 +93,7 @@ const ActivityList: FC<ActivityListProps> = ({
       isTaskStarted={isTaskStarted}
       isTaskCompleted={isTaskCompleted}
       isCompletedWithException={isCompletedWithException}
+      isLoggedInUserAssigned={isLoggedInUserAssigned}
     >
       {activities.map((activity) => {
         const { state, audit } = activity?.response;
