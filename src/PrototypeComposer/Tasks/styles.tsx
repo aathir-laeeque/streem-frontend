@@ -248,11 +248,11 @@ const TaskMediasWrapper = styled.div`
         border-radius: 50%;
 
         :first-of-type {
-          margin-right: 16px;
+          margin-right: 8px;
         }
 
         :last-of-type {
-          margin-left: 16px;
+          margin-left: 8px;
         }
       }
 
