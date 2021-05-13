@@ -52,6 +52,28 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         },
       };
 
+    case ActivityListAction.UPDATE_MEDIA_ACTIVITY_SUCCESS:
+      return {
+        ...state,
+        activitiesById: {
+          ...state.activitiesById,
+          [action.payload.activityId]: {
+            ...state.activitiesById[action.payload.activityId],
+            response: {
+              ...state.activitiesById[action.payload.activityId].response,
+              medias: [
+                ...state.activitiesById[
+                  action.payload.activityId
+                ].response?.medias.filter(
+                  (media) => media.id !== action.payload.media.id,
+                ),
+                action.payload.media,
+              ],
+            },
+          },
+        },
+      };
+
     case ActivityListAction.SET_ACTIVITY_ERROR:
       const { activityId, error } = action.payload;
 

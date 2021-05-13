@@ -1,5 +1,10 @@
 import { FileUploadData, Error } from '#utils/globalTypes';
-import { Checklist, Stage, Task as TaskType } from '../checklist.types';
+import {
+  Activity,
+  Checklist,
+  Stage,
+  Task as TaskType,
+} from '../checklist.types';
 
 export type Task = TaskType & {
   errors: Error[];
@@ -19,6 +24,7 @@ export type TaskCardWrapperProps = {
 export type TaskMediasProps = {
   medias: Task['medias'];
   taskId?: Task['id'];
+  activityId: Activity['id'];
   isActivity?: boolean;
 };
 
@@ -47,6 +53,7 @@ export type AddMediaType = {
 
 export type UpdateMediaType = {
   taskId: Task['id'];
+  activityId: Activity['id'];
   mediaId: MediaDetails['mediaId'];
   mediaDetails: Pick<MediaDetails, 'name' | 'description'>;
 };

@@ -211,7 +211,7 @@ export const apiAddMediaToTask = (taskId: Task['id']) =>
 export const apiUpdateTaskMedia = (
   taskId: Task['id'],
   mediaId: MediaDetails['mediaId'],
-) => `${baseUrl}/tasks/${taskId}/medias/${mediaId}`;
+) => `${baseUrl}/medias/${mediaId}`;
 
 export const apiValidatePrototype = (id: Checklist['id']) =>
   `${baseUrl}/checklists/${id}/validate`;

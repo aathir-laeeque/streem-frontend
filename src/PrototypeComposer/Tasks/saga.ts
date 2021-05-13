@@ -16,6 +16,7 @@ import {
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
+import { updateMediaActivitySuccess } from '../../JobComposer/ActivityList/actions';
 
 import {
   addNewTask,
@@ -251,7 +252,7 @@ function* addTaskMediaSaga({ payload }: ReturnType<typeof addTaskMedia>) {
 
 function* updateTaskMediaSaga({ payload }: ReturnType<typeof updateTaskMedia>) {
   try {
-    const { mediaDetails, taskId, mediaId } = payload;
+    const { mediaDetails, taskId, activityId, mediaId } = payload;
 
     const { data, errors } = yield call(
       request,
@@ -260,9 +261,13 @@ function* updateTaskMediaSaga({ payload }: ReturnType<typeof updateTaskMedia>) {
       { data: { ...mediaDetails } },
     );
 
-    if (data) {
-      yield put(updateTaskMediaSuccess({ media: data, taskId }));
+    //TODO carve out media related logi separately and remove dependency from task media
+    if (data && taskId) {
       yield put(closeOverlayAction(OverlayNames.TASK_MEDIA));
+      yield put(updateTaskMediaSuccess({ media: data, taskId }));
+    } else if (data && activityId) {
+      yield put(closeOverlayAction(OverlayNames.TASK_MEDIA));
+      yield put(updateMediaActivitySuccess(data, activityId));
     } else {
       console.error('error from update media to task api :: ', errors);
     }

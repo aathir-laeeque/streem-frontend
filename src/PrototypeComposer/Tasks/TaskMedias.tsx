@@ -13,6 +13,7 @@ import { TaskMediasProps } from './types';
 const TaskMedias: FC<TaskMediasProps> = ({
   medias,
   taskId,
+  activityId,
   isActivity = false,
 }) => {
   const dispatch = useDispatch();
@@ -47,6 +48,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
                   props: {
                     taskId,
                     isActivity,
+                    activityId,
                     mediaDetails: { ...activeMedia },
                   },
                 }),

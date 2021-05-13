@@ -20,6 +20,7 @@ import {
 import { MediaDetails } from '../Tasks/types';
 import { useTypedSelector } from '#store';
 import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
+import { Activity } from '../Activity/types';
 
 const Wrapper = styled.div<{
   fullScreeen: boolean;
@@ -169,6 +170,7 @@ const Wrapper = styled.div<{
 type Props = {
   mediaDetails: MediaDetails;
   taskId?: Task['id'];
+  activityId?: Activity['id'];
   isActivity?: boolean;
   disableNameInput?: boolean;
   execute: (data: MediaDetails) => void;
@@ -181,6 +183,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
   props: {
     mediaDetails,
     taskId,
+    activityId,
     isActivity = false,
     execute,
     disableNameInput = false,
@@ -294,6 +297,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                           updateTaskMedia({
                             taskId,
                             mediaId: mediaDetails?.id,
+                            activityId: activityId,
                             mediaDetails: {
                               name: stateMediaDetails.name,
                               description: stateMediaDetails.description,

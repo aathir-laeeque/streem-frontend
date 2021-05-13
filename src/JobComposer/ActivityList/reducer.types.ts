@@ -5,6 +5,7 @@ import {
   removeActivityError,
   setActivityError,
   updateExecutedActivity,
+  updateMediaActivitySuccess,
 } from './actions';
 import { ActivitiesById, ActivitiesOrderInTaskInStage } from './types';
 
@@ -22,6 +23,8 @@ export enum ActivityListAction {
   FIX_ACTIVITY = '@@jobComposer/activity-list/activity/FIX_ACTIVITY',
   APPROVE_ACTIVITY = '@@jobComposer/activity-list/activity/APPROVE_ACTIVITY',
   REJECT_ACTIVITY = '@@jobComposer/activity-list/activity/REJECT_ACTIVITY',
+
+  UPDATE_MEDIA_ACTIVITY_SUCCESS = '@@jobComposer/activity-list/activity/UPDATE_MEDIA_ACTIVITY_SUCCESS',
 }
 
 export type ActivityListActionType =
@@ -31,5 +34,6 @@ export type ActivityListActionType =
       | typeof setActivityError
       | typeof updateExecutedActivity
       | typeof removeActivityError
+      | typeof updateMediaActivitySuccess
     >
   | ComposerActionType;

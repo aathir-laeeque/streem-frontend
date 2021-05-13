@@ -100,7 +100,11 @@ const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   };
   return (
     <MediaWrapper>
-      <TaskMedias medias={activity.response?.medias ?? []} isActivity />
+      <TaskMedias
+        medias={activity.response?.medias ?? []}
+        activityId={activity.id}
+        isActivity
+      />
       <div style={{ display: 'flex', marginTop: '24px' }}>
         <div className="card">
           <ImageUploadButton

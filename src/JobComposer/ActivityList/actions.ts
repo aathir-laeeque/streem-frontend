@@ -1,6 +1,6 @@
 import { actionSpreader } from '#store';
 
-import { Activity } from '../checklist.types';
+import { Activity, Media } from '../checklist.types';
 import { ActivityListAction } from './reducer.types';
 import { SupervisorResponse, approveRejectActivityType } from './types';
 
@@ -12,6 +12,15 @@ export const fixActivity = (activity: Activity, reason?: string) =>
 
 export const updateExecutedActivity = (activity: Activity) =>
   actionSpreader(ActivityListAction.UPDATE_EXECUTED_ACTIVITY, { activity });
+
+export const updateMediaActivitySuccess = (
+  media: Media,
+  activityId: Activity['id'],
+) =>
+  actionSpreader(ActivityListAction.UPDATE_MEDIA_ACTIVITY_SUCCESS, {
+    media,
+    activityId,
+  });
 
 export const setActivityError = (error: any, activityId: Activity['id']) =>
   actionSpreader(ActivityListAction.SET_ACTIVITY_ERROR, { error, activityId });
