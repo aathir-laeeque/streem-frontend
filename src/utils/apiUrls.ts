@@ -49,9 +49,6 @@ export const apiGetUsers = (type = '') =>
 
 export const apiGetUser = (id: User['id']) => `${baseUrl}/users/${id}`;
 
-export const apiUpdateUserBasic = (id: User['id']) =>
-  `${baseUrl}/users/${id}/basic`;
-
 export const apiUpdatePassword = (id: User['id']) =>
   `${baseUrl}/users/${id}/password`;
 
@@ -76,14 +73,11 @@ export const apiCancelTaskErrorCorrection = (taskId: Task['id']) =>
 
 export const apiUploadFile = () => `${baseUrl}/files/`;
 
-export const apiCheckUsername = (username: string) =>
-  `${baseUrl}/users/username/check?username=${username}`;
+export const apiCheckUsername = () => `${baseUrl}/users/username/check`;
 
-export const apiCheckEmail = (email: string) =>
-  `${baseUrl}/users/email/check?email=${email}`;
+export const apiCheckEmail = () => `${baseUrl}/users/email/check`;
 
-export const apiCheckEmployeeId = (employeeId: string) =>
-  `${baseUrl}/users/employee-id/check?employeeId=${employeeId}`;
+export const apiCheckEmployeeId = () => `${baseUrl}/users/employee-id/check`;
 
 export const apiCheckTokenExpiry = () => `${baseUrl}/auth/token/validate`;
 
@@ -91,15 +85,13 @@ export const apiLogin = () => `${baseUrl}/auth/login`;
 
 export const apiLogOut = () => `${baseUrl}/auth/logout`;
 
-export const apiForgotPassword = () => `${baseUrl}/auth/password/reset`;
-
 export const apiRefreshToken = () => `${baseUrl}/auth/token/refresh`;
 
 export const apiResendInvite = (id: User['id']) =>
-  `${baseUrl}/users/${id}/invite/resend`;
+  `${baseUrl}/users/${id}/token/reset`;
 
 export const apiCancelInvite = (id: User['id']) =>
-  `${baseUrl}/users/${id}/invite/cancel`;
+  `${baseUrl}/users/${id}/token/cancel`;
 
 export const apiArchiveUser = (id: User['id']) =>
   `${baseUrl}/users/${id}/archive`;
@@ -108,7 +100,7 @@ export const apiUnArchiveUser = (id: User['id']) =>
   `${baseUrl}/users/${id}/unarchive`;
 
 export const apiUnLockUser = (id: User['id']) =>
-  `${baseUrl}/users/${id}/unblock`;
+  `${baseUrl}/users/${id}/unlock`;
 
 export const apiRegister = () => `${baseUrl}/auth/register`;
 
@@ -262,6 +254,26 @@ export const apiReorderStages = () => `${baseUrl}/stages/reorder`;
 
 export const apiReorderTasks = () => `${baseUrl}/tasks/reorder`;
 
+export const apiGetAllChallengeQuestions = () =>
+  `${baseUrl}/challenge-questions`;
+
+export const apiUpdateChallengeQuestions = (id: string) =>
+  `${baseUrl}/users/${id}/challenge-questions`;
+
+export const apiAdditionalVerification = () =>
+  `${baseUrl}/auth/additional/verification`;
+
+export const apiValidateIdentity = () => `${baseUrl}/auth/identity/validate`;
+
+export const apiValidateChallengeQuestion = () =>
+  `${baseUrl}/auth/challenge-questions/validate`;
+
+export const apiNotifyAdmin = () => `${baseUrl}/auth/admin/notify`;
+
+export const apiResetToken = () => `${baseUrl}/auth/token/reset`;
+
+export const apiSwitchFacility = (userId: string, facilityId: string) =>
+  `${baseUrl}/users/${userId}/facility/${facilityId}/switch`;
 export const apiGetAllUsersAssignedToJob = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}/assignments`;
 

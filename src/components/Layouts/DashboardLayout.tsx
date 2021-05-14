@@ -1,7 +1,9 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-const Layout = styled.div`
+const Layout = styled.div.attrs({
+  className: 'main-layout-view',
+})`
   display: grid;
   grid-template-areas:
     'header header'

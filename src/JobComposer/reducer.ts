@@ -1,6 +1,4 @@
 import { Reducer } from 'redux';
-import { reduce, unionBy } from 'lodash';
-import { User } from '#store/users/types';
 import { JobStateEnum } from '#views/Jobs/NewListView/types';
 
 import {
@@ -25,7 +23,6 @@ import {
   initialState as taskListState,
   taskListReducer,
 } from './TaskList/reducer';
-import { CompletedTaskStates } from './checklist.types';
 import { StageListAction } from './StageList/reducer.types';
 
 const initialState: ComposerState = {
@@ -94,49 +91,6 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
 
     case ComposerAction.START_JOB_SUCCESS:
       return { ...state, jobState: JobStateEnum.IN_PROGRESS };
-
-    case ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS:
-      return { ...state, assignees: action.payload.data };
-
-    case ComposerAction.ASSIGN_USERS_TO_JOB_SUCCESS:
-      const jobAssigned = action.payload.assignedUsers.filter(
-        (item) => item.completelyAssigned,
-      );
-      const res = reduce(
-        state.tasks.tasksById,
-        function (result, value, key) {
-          let merged: User[];
-          if (value.taskExecution.state in CompletedTaskStates) {
-            merged = value.taskExecution.assignees;
-          } else {
-            const newAssignees = (value.taskExecution.assignees as Array<
-              User & { actionPerformed: boolean; state: string }
-            >).filter(
-              (item) =>
-                item.actionPerformed === false &&
-                item.state !== 'SIGNED_OFF' &&
-                !action.payload.unassignIds.includes(item.id),
-            );
-            merged = unionBy(jobAssigned, newAssignees, 'id');
-          }
-          return {
-            ...result,
-            [key]: {
-              ...value,
-              taskExecution: {
-                ...value.taskExecution,
-                assignees: merged,
-              },
-            },
-          };
-        },
-        {},
-      );
-      return {
-        ...state,
-        tasks: { ...state.tasks, tasksById: res },
-        assignees: [],
-      };
 
     case ComposerAction.SIGN_OFF_TASKS_ERROR:
       return { ...state, signOffError: action.payload.error };

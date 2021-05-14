@@ -1,13 +1,18 @@
-import { apiGetFacilities } from '#utils/apiUrls';
+import { apiGetFacilities, apiSwitchFacility } from '#utils/apiUrls';
+import { setAuthHeader } from '#utils/axiosClient';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { put, call, takeEvery } from 'redux-saga/effects';
+import { navigate } from '@reach/router';
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+
 import {
   fetchFacilitiesError,
-  fetchFacilitiesSuccess,
   fetchFacilitiesOngoing,
+  fetchFacilitiesSuccess,
+  switchFacility,
+  switchFacilitySuccess,
 } from './actions';
-import { FacilitiesAction, Facilities } from './types';
+import { Facilities, FacilitiesAction } from './types';
 
 function* fetchFacilitiesSaga() {
   try {
@@ -27,6 +32,29 @@ function* fetchFacilitiesSaga() {
   }
 }
 
+function* switchFacilitySaga({
+  payload: { facilityId, loggedInUserId: userId },
+}: ReturnType<typeof switchFacility>) {
+  try {
+    const { data } = yield call(
+      request,
+      'PATCH',
+      apiSwitchFacility(userId, facilityId),
+    );
+
+    if (data) {
+      setAuthHeader(data.accessToken);
+      yield put(switchFacilitySuccess(data.accessToken, facilityId));
+      navigate('/');
+    } else {
+      console.log('some error :: ');
+    }
+  } catch (error) {
+    console.error('error from switch facility saga :: ', error);
+  }
+}
+
 export function* FacilitiesSaga() {
   yield takeEvery(FacilitiesAction.FETCH_FACILITIES, fetchFacilitiesSaga);
+  yield takeLatest(FacilitiesAction.SWITCH_FACILITY, switchFacilitySaga);
 }

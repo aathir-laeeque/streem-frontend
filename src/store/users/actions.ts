@@ -1,11 +1,11 @@
 import { actionSpreader } from '#store/helpers';
 import { ResponseObj } from '#utils/globalTypes';
 
-import { User, UsersAction, UserState } from './types';
+import { User, UsersAction, UsersListType } from './types';
 
 export const fetchUsers = (
   params: Record<string, string | number | boolean>,
-  type: UserState,
+  type: UsersListType,
 ) => actionSpreader(UsersAction.FETCH_USERS, { params, type });
 
 export const fetchUsersOngoing = () =>
@@ -13,7 +13,7 @@ export const fetchUsersOngoing = () =>
 
 export const fetchUsersSuccess = (
   { data, pageable }: Partial<ResponseObj<User[]>>,
-  type: UserState,
+  type: UsersListType,
 ) =>
   actionSpreader(UsersAction.FETCH_USERS_SUCCESS, {
     data,
@@ -24,11 +24,8 @@ export const fetchUsersSuccess = (
 export const fetchUsersError = (error: string) =>
   actionSpreader(UsersAction.FETCH_USERS_ERROR, { error });
 
-export const setSelectedState = (state: UserState) =>
+export const setSelectedState = (state: UsersListType) =>
   actionSpreader(UsersAction.SET_SELECTED_STATE, { state });
-
-export const setSelectedUser = (user: User) =>
-  actionSpreader(UsersAction.SET_SELECTED_USER, user);
 
 export const fetchSelectedUser = (id: User['id']) =>
   actionSpreader(UsersAction.FETCH_SELECTED_USER, { id });

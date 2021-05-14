@@ -81,9 +81,6 @@ const reducer: Reducer<UsersState, UsersActionType> = (
     case UsersAction.SET_SELECTED_STATE:
       return { ...state, selectedState: action.payload.state };
 
-    case UsersAction.SET_SELECTED_USER:
-      return { ...state, selectedUserId: action.payload.userId };
-
     default:
       return { ...state };
   }

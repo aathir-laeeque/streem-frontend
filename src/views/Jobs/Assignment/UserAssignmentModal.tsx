@@ -108,7 +108,7 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
     if (prevQuery !== searchQuery) {
       loadAgain({
         newParams: {
-          ...defaultParams,
+          ...defaultParams(false),
           filters: JSON.stringify({
             op: 'AND',
             fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],

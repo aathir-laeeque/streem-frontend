@@ -1,6 +1,8 @@
-import CleenLogo from '#assets/svg/CleenLogo';
+import Logo from '#assets/svg/Logo';
+import Select from '#components/shared/Select';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
+import { switchFacility } from '#store/facilities/actions';
 import { getInitials } from '#utils/stringUtils';
 import { logout } from '#views/Auth/actions';
 import Menu from '@material-ui/core/Menu';
@@ -19,7 +21,9 @@ const Header: FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const dispatch = useDispatch();
 
-  const { profile } = useTypedSelector((state) => state.auth);
+  const { profile, facilities, selectedFacility, userId } = useTypedSelector(
+    (state) => state.auth,
+  );
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
@@ -29,11 +33,34 @@ const Header: FC = () => {
     setAnchorEl(null);
   };
 
+  const facilitiesOptions = facilities.map((facility) => ({
+    label: facility.name,
+    value: facility.id,
+  }));
+
   return (
     <Wrapper>
       <ImageWrapper>
-        <CleenLogo fontSize={100} />
+        <Logo style={{ width: '100px' }} />
       </ImageWrapper>
+
+      {selectedFacility ? (
+        <Select
+          options={facilitiesOptions}
+          selectedValue={facilitiesOptions.find(
+            (option) => option.value === selectedFacility?.id,
+          )}
+          onChange={(option: any) =>
+            dispatch(
+              switchFacility({
+                facilityId: option.value as string,
+                loggedInUserId: userId as string,
+              }),
+            )
+          }
+        />
+      ) : null}
+
       <HeaderMenu
         aria-controls="top-menu"
         aria-haspopup="true"
@@ -55,29 +82,33 @@ const Header: FC = () => {
         onClose={handleClose}
         style={{ marginTop: 30 }}
       >
-        <MenuItem
-          onClick={() => {
-            navigate('/profile');
-            handleClose();
-          }}
-        >
-          My Account
-        </MenuItem>
-        {checkPermission(['header', 'usersAndAccess']) && (
-          <NestedMenuItem
-            left
-            label="System Settings"
-            mainMenuOpen={anchorEl ? true : false}
-          >
+        {selectedFacility && (
+          <>
             <MenuItem
               onClick={() => {
-                navigate('/user-access');
+                navigate(`/users/profile/${profile?.id}`);
                 handleClose();
               }}
             >
-              Users and Access
+              My Account
             </MenuItem>
-          </NestedMenuItem>
+            {checkPermission(['header', 'usersAndAccess']) && (
+              <NestedMenuItem
+                left
+                label="System Settings"
+                mainMenuOpen={anchorEl ? true : false}
+              >
+                <MenuItem
+                  onClick={() => {
+                    navigate('/users');
+                    handleClose();
+                  }}
+                >
+                  Users and Access
+                </MenuItem>
+              </NestedMenuItem>
+            )}
+          </>
         )}
         <MenuItem
           onClick={() => {

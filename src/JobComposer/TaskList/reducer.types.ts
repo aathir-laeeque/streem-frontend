@@ -7,7 +7,6 @@ import {
   setActiveTask,
   setTaskError,
   updateTaskExecutionState,
-  assignUsersToTaskSuccess,
 } from './actions';
 import { TasksById, TasksOrderInStage } from './types';
 
@@ -39,8 +38,6 @@ export enum TaskListAction {
   ENABLE_TASK_ERROR_CORRECTION = '@@jobComposer/task-list/task/ENABLE_TASK_ERROR_CORRECTION',
   CANCEL_ERROR_CORRECTION = '@@jobComposer/task-list/task/CANCEL_ERROR_CORRECTION',
   COMPLTE_ERROR_CORRECTION = '@@jobComposer/task-list/task/COMPLTE_ERROR_CORRECTION',
-  ASSIGN_USERS_TO_TASK = '@@jobComposer/task-list/task/ASSIGN_USERS_TO_TASK',
-  ASSIGN_USERS_TO_TASK_SUCCESS = '@@jobComposer/task-list/task/ASSIGN_USERS_TO_TASK_SUCCESS',
 }
 
 export type TaskListActionType =
@@ -50,7 +47,6 @@ export type TaskListActionType =
       | typeof updateTaskExecutionState
       | typeof removeTaskError
     >
-  | ReturnType<typeof assignUsersToTaskSuccess>
   | ReturnType<typeof executeActivity | typeof fixActivity>
   | ReturnType<typeof setActiveStage>
   | ComposerActionType;

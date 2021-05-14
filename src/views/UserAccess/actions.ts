@@ -1,6 +1,7 @@
 import { actionSpreader } from '#store';
 import { User } from '#store/users/types';
-import { UserAccessAction } from './types';
+import { UserAccessAction, ValidateCredentialsPurpose } from './types';
+import { EditUserRequestInputs } from '#views/UserAccess/ManageUser/types';
 
 export const resendInvite = (payload: { id: User['id'] }) =>
   actionSpreader(UserAccessAction.RESEND_INVITE, payload);
@@ -25,12 +26,14 @@ export const unLockUser = (payload: {
   fetchData?: () => void;
 }) => actionSpreader(UserAccessAction.UNLOCK_USER, payload);
 
-export const addUser = (payload: {
-  firstName: string;
-  lastName: string;
-  employeeId: string;
-  email: string;
-  department: string;
-  facilities: { id: string }[];
-  roles: { id: string }[];
-}) => actionSpreader(UserAccessAction.ADD_USER, payload);
+export const addUser = (
+  payload: Omit<EditUserRequestInputs, 'roles'> & {
+    roles: { id: string }[];
+  },
+) => actionSpreader(UserAccessAction.ADD_USER, payload);
+
+export const validateCredentials = (payload: {
+  password: string;
+  purpose: ValidateCredentialsPurpose;
+  onSuccess?: (token: string) => void;
+}) => actionSpreader(UserAccessAction.VALIDATE_CREDENTIALS, payload);

@@ -1,10 +1,11 @@
-import Menu from '@material-ui/core/Menu';
-import { ArrowDropDown, Search } from '@material-ui/icons';
 import NestedMenuItem from '#components/shared/NestedMenuItem';
 import { JobActivity } from '#JobComposer/JobActivity/types';
+import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
+import Menu from '@material-ui/core/Menu';
+import { ArrowDropDown, Search } from '@material-ui/icons';
+import { noop } from 'lodash';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
-import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
 
 import { Button, FlatButton } from './Button';
 
@@ -190,7 +191,7 @@ const Wrapper = styled.div.attrs({})`
 
 export const ListView: FC<ListViewProps> = ({
   primaryButtonText,
-  onPrimaryClick = () => console.log('clicked'),
+  onPrimaryClick = () => noop,
   data,
   fetchData,
   isLast,

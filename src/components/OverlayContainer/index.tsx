@@ -12,9 +12,7 @@ import SkipTask from '#JobComposer/modals/SkipTask';
 import StartJob from '#JobComposer/modals/StartJob';
 import StartTaskError from '#JobComposer/modals/StartTaskError';
 import TaskErrorCorrection from '#JobComposer/modals/TaskErrorCorrection';
-import TaskUserAssignment from '#JobComposer/modals/TaskUserAssignment';
 import { AssignedUserDetailsPopover } from '#JobComposer/Popovers/AssignedUserDetailsPopover';
-import { TaskAssignmentPopover } from '#JobComposer/Popovers/TaskAssignmentPopover';
 import {
   TaskMediaModal,
   TimedTaskConfigModal,
@@ -42,6 +40,8 @@ import RevisionErrorModal from '#views/Checklists/Overlays/RevisionErrorModal';
 import AssingnmentInfo from '#views/Jobs/Assignment/AssignmentInfo';
 import UserAssignment from '#views/Jobs/Assignment/UserAssignmentModal';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
+import SecretKeyModal from '#views/UserAccess/Overlays/SecretKeyModal';
+import ValidateCredentialsModal from '#views/UserAccess/Overlays/ValidateCredentialsModal';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -83,9 +83,6 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.TASK_ERROR_CORRECTION:
       return <TaskErrorCorrection {...params} />;
-
-    case OverlayNames.TASK_USERS_ASSIGNMENT:
-      return <TaskUserAssignment {...params} />;
 
     case OverlayNames.ADD_STOP:
       return <AddStop {...params} />;
@@ -132,11 +129,6 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
     case OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT_POPOVER:
       return params.popOverAnchorEl ? (
         <ReviewerAssignmentPopover {...params} />
-      ) : null;
-
-    case OverlayNames.TASK_USER_ASSIGNMENT:
-      return params.popOverAnchorEl ? (
-        <TaskAssignmentPopover {...params} />
       ) : null;
 
     case OverlayNames.ASSIGNED_USER_DETAIL:
@@ -189,6 +181,12 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.ARCHIVE_MODAL:
       return <ArchiveModal {...params} />;
+
+    case OverlayNames.SECRET_KEY_MODAL:
+      return <SecretKeyModal {...params} />;
+
+    case OverlayNames.VALIDATE_CREDENTIALS_MODAL:
+      return <ValidateCredentialsModal {...params} />;
 
     case OverlayNames.USER_ASSIGNMENT:
       return <UserAssignment {...params} />;

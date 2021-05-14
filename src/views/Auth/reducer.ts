@@ -1,3 +1,6 @@
+import { roles } from '#services/uiPermissions';
+import { FacilitiesAction } from '#store/facilities/types';
+
 import { AuthAction, AuthActionType, AuthState } from './types';
 
 const initialState: AuthState = {
@@ -14,9 +17,9 @@ const initialState: AuthState = {
 const reducer = (state = initialState, action: AuthActionType): AuthState => {
   switch (action.type) {
     case AuthAction.RESET_PASSWORD:
-    case AuthAction.FORGOT_PASSWORD:
     case AuthAction.LOGIN:
       return { ...state, loading: true };
+
     case AuthAction.LOGIN_SUCCESS:
       return {
         ...state,
@@ -24,41 +27,55 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
         loading: false,
         isLoggedIn: true,
         userId: action.payload.id,
-        selectedFacility: action.payload?.facilities[0],
         ...action.payload,
+        selectedFacility:
+          action.payload?.facilities?.length < 2 ||
+          action.payload.roles.some((r) => r === roles.SYSTEM_ADMIN)
+            ? action.payload?.facilities[0]
+            : state.selectedFacility,
+        facilities: action.payload.facilities,
       };
+
     case AuthAction.SET_IDLE:
       return {
         ...state,
         isIdle: action.payload,
       };
+
     case AuthAction.CLEANUP:
       return {
         ...initialState,
       };
-    case AuthAction.RESET_PASSWORD_SUCCESS:
-    case AuthAction.FORGOT_PASSWORD_SUCCESS:
-      return { ...state, loading: false };
-    case AuthAction.LOGIN_ERROR:
-    case AuthAction.RESET_PASSWORD_ERROR:
+    case AuthAction.AUTH_ERROR:
       return { ...state, loading: false, error: action.payload };
+
     case AuthAction.FETCH_PROFILE_SUCCESS:
       return { ...state, profile: action.payload };
-    case AuthAction.UPDATE_PROFILE_SUCCESS:
-      return { ...state, profile: { ...state.profile, ...action.payload } };
     case AuthAction.REFRESH_TOKEN_SUCCESS:
       return {
         ...state,
         isLoggedIn: true,
         accessToken: action.payload.accessToken,
       };
-    case AuthAction.CHECK_TOKEN_EXPIRY_SUCCESS:
+    case AuthAction.SET_IDENTITY_TOKEN:
       return {
         ...state,
-        isTokenExpired: action.payload.isTokenExpired,
+        ...action.payload,
+        error: undefined,
       };
+
     case AuthAction.RESET_ERROR:
       return { ...state, error: undefined };
+
+    case FacilitiesAction.SWITCH_FACILITY_SUCCESS:
+      return {
+        ...state,
+        accessToken: action.payload.accessToken,
+        selectedFacility: state.facilities.find(
+          (facility) => facility.id === action.payload.facilityId,
+        ),
+      };
+
     default:
       return state;
   }

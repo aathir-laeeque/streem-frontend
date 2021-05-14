@@ -67,7 +67,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
 
   const { users: list, loadMore, loadAgain } = useUsers({
     userState: OtherUserState.REVIEWERS,
-    params: { ...defaultParams },
+    params: { ...defaultParams(false) },
   });
 
   if (checklistId) {
@@ -92,7 +92,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
     if (prevSearch !== searchQuery) {
       loadAgain({
         newParams: {
-          ...defaultParams,
+          ...defaultParams(false),
           filters: JSON.stringify({
             op: 'AND',
             fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],

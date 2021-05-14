@@ -1,10 +1,7 @@
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
 import {
-  apiAssignUsersToTask,
   apiEnableTaskErrorCorrection,
   apiPerformActionOnTask,
 } from '#utils/apiUrls';
@@ -22,8 +19,6 @@ import { ErrorGroups } from '../composer.types';
 import { groupJobErrors } from '../utils';
 import { removeActivityError } from './../ActivityList/actions';
 import {
-  assignUsersToTask,
-  assignUsersToTaskSuccess,
   cancelErrorCorretcion,
   completeErrorCorretcion,
   completeTask,
@@ -213,61 +208,6 @@ function* cancelErrorCorrectionSaga({
   }
 }
 
-function* assignUsersToTaskSaga({
-  payload,
-}: ReturnType<typeof assignUsersToTask>) {
-  const {
-    taskId,
-    jobId,
-    assignIds,
-    unassignIds,
-    assignedUsers,
-    notify,
-  } = payload;
-
-  try {
-    const { errors, error } = yield call(
-      request,
-      'PATCH',
-      apiAssignUsersToTask(taskId),
-      {
-        data: {
-          jobId,
-          assignIds,
-          unassignIds,
-        },
-        params: {
-          notify,
-        },
-      },
-    );
-
-    if (errors || error) {
-      throw 'Could Not Assign Users';
-    }
-
-    yield put(assignUsersToTaskSuccess({ assignedUsers, taskId }));
-
-    yield put(
-      openOverlayAction({
-        type: OverlayNames.ASSIGNMENT_SUCCESS,
-        props: { notify },
-      }),
-    );
-  } catch (error) {
-    console.error(
-      'error from assignUsersToTaskSaga function in Task :: ',
-      error,
-    );
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: 'Could Not Assign Users',
-      }),
-    );
-  }
-}
-
 export function* TaskListSaga() {
   yield takeLatest(TaskListAction.START_TASK, performActionOnTaskSaga);
   yield takeLatest(TaskListAction.COMPLETE_TASK, performActionOnTaskSaga);
@@ -288,5 +228,4 @@ export function* TaskListSaga() {
     TaskListAction.CANCEL_ERROR_CORRECTION,
     cancelErrorCorrectionSaga,
   );
-  yield takeLatest(TaskListAction.ASSIGN_USERS_TO_TASK, assignUsersToTaskSaga);
 }

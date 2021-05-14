@@ -16,12 +16,14 @@ const reducer = (
   switch (action.type) {
     case FacilitiesAction.FETCH_FACILITIES_ONGOING:
       return { ...state, loading: true };
+
     case FacilitiesAction.FETCH_FACILITIES_SUCCESS:
       return {
         ...state,
         loading: false,
         list: action.payload?.facilities,
       };
+
     case FacilitiesAction.FETCH_FACILITIES_ERROR:
       return { ...state, error: action.payload?.error };
 

@@ -1,16 +1,16 @@
-import React, { FC, useState } from 'react';
-import { Checkbox } from '#components';
-import styled from 'styled-components';
+import { StyledRadio } from '#components';
+import { PermissionType, RoleType } from '#views/UserAccess/types';
+import { FormControlLabel, RadioGroup } from '@material-ui/core';
 import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import CheckIcon from '@material-ui/icons/Check';
-import ClearIcon from '@material-ui/icons/Clear';
-import { PermissionType, RoleType } from '#views/UserAccess/types';
+import React, { FC, useState } from 'react';
+import styled from 'styled-components';
 
-interface RoleProps {
+export interface RoleProps {
   id: string;
   permissions: PermissionType[];
   roles: RoleType[];
@@ -19,8 +19,7 @@ interface RoleProps {
   placeHolder: string;
   disabled?: boolean;
   error?: string;
-  refFun?: (el: HTMLInputElement) => void;
-  viewing?: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Wrapper = styled.div.attrs({})`
@@ -33,8 +32,6 @@ const Wrapper = styled.div.attrs({})`
     flex: 1;
     background-color: #fff;
     opacity: 1;
-    margin-bottom: 32px;
-    padding-top: 16px;
 
     > label {
       font-size: 8px;
@@ -47,7 +44,7 @@ const Wrapper = styled.div.attrs({})`
       box-shadow: unset;
 
       .MuiAccordionSummary-root {
-        padding: 0px 0px 16px;
+        padding: 16px 0px;
         min-height: unset;
       }
 
@@ -70,8 +67,9 @@ const Wrapper = styled.div.attrs({})`
         }
 
         .permission-group-text {
-          color: #666666;
-          font-size: 18px;
+          color: #333;
+          font-size: 14px;
+          font-weight: bold;
           padding: 10px 0px;
         }
 
@@ -91,6 +89,7 @@ const Wrapper = styled.div.attrs({})`
         .permission-details {
           .permission-title {
             font-size: 12px;
+            line-height: 0;
             font-weight: 300;
             color: #666;
             flex: 0.3;
@@ -100,7 +99,7 @@ const Wrapper = styled.div.attrs({})`
 
           display: flex;
           flex: 1;
-          height: 24px;
+          padding: 4px 0px;
         }
 
         .permission-text::before {
@@ -126,6 +125,38 @@ const Wrapper = styled.div.attrs({})`
       flex: 1;
       justify-content: center;
       align-items: center;
+
+      .checkmark {
+        border-radius: 0px;
+        border-color: #333;
+        background-color: #fff;
+        border-width: 2px;
+
+        :after {
+          left: 4px;
+          top: 1px;
+          width: 4px;
+          height: 7px;
+        }
+      }
+
+      .container {
+        color: #333;
+        input:checked ~ .checkmark {
+          background-color: #1d84ff;
+          border: 2px solid #1d84ff;
+        }
+      }
+
+      .MuiFormGroup-root {
+        flex-direction: row;
+        flex: 1;
+        justify-content: space-around;
+
+        .MuiFormControlLabel-label {
+          font-weight: normal;
+        }
+      }
     }
 
     .input {
@@ -151,16 +182,7 @@ const Wrapper = styled.div.attrs({})`
     }
 
     .input.disabled {
-      border-bottom: 1px dashed #999999;
-      opacity: 0.6;
-    }
-
-    input.viewing {
-      border-bottom: none !important;
-      opacity: 1 !important;
-      color: #333333;
-      flex: unset;
-      padding: 4px 0px;
+      color: #333;
     }
 
     .actions {
@@ -168,6 +190,8 @@ const Wrapper = styled.div.attrs({})`
       font-size: 16px;
       white-space: nowrap;
       padding: 0px 20px 0px 0px;
+      display: flex;
+      align-items: center;
     }
   }
 
@@ -181,10 +205,6 @@ const Wrapper = styled.div.attrs({})`
     > label {
       color: #1d84ff;
     }
-
-    .actions {
-      padding: 4px 0px 0px 8px;
-    }
   }
 
   .role-wrapper.error {
@@ -197,20 +217,12 @@ const Wrapper = styled.div.attrs({})`
     > label {
       color: #ff6b6b;
     }
-
-    .actions {
-      padding: 4px 0px 0px 8px;
-    }
   }
 
   .role-wrapper.disabled {
     border: none !important;
     opacity: 1 !important;
     padding-top: 0px;
-
-    .actions {
-      padding: 4px 0px 0px 8px;
-    }
   }
 
   .icon {
@@ -231,10 +243,9 @@ export const Role: FC<RoleProps> = ({
   permissions,
   roles,
   disabled = false,
-  refFun,
   id,
   error,
-  viewing,
+  onChange,
 }) => {
   const [isActive, setIsActive] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -247,9 +258,20 @@ export const Role: FC<RoleProps> = ({
     setIsActive(false);
   };
 
-  const onToggle = (event: unknown, expanded: boolean): void => {
+  const onToggle = (_: unknown, expanded: boolean): void => {
     setIsExpanded(expanded);
   };
+
+  const getArrowIcon = (isOpen: boolean) => (
+    <>
+      <div className="actions">Permissions</div>
+      {isOpen ? (
+        <ArrowDropUpIcon style={{ color: '#1d84ff' }} />
+      ) : (
+        <ArrowDropDownIcon style={{ color: '#1d84ff' }} />
+      )}
+    </>
+  );
 
   return (
     <Wrapper>
@@ -258,48 +280,25 @@ export const Role: FC<RoleProps> = ({
           ${error ? 'error' : ''}
           ${disabled ? 'disabled' : ''}`}
       >
-        {disabled && !viewing && <label>{label}</label>}
+        {label && <label>{label}</label>}
         <div>
           <Accordion onChange={onToggle}>
             <AccordionSummary
               aria-controls="panel1a-content"
               id="panel1a-header"
-              expandIcon={disabled && !viewing ? <ArrowDropDownIcon /> : false}
+              expandIcon={false}
             >
               {disabled && (
                 <>
                   <input
-                    className={`input disabled ${viewing ? 'viewing' : ''}`}
-                    style={{ width: `${placeHolder.length * 12}px` }}
+                    className={`input disabled`}
+                    style={{ textTransform: 'capitalize' }}
                     value={placeHolder}
                     onFocus={onFocus}
                     onBlur={onBlur}
                     disabled={disabled}
                   />
-                  {selected?.map((role, i) => {
-                    return (
-                      <input
-                        key={`${role.id}`}
-                        type="hidden"
-                        name={`roles[${i}]`}
-                        value={role.id}
-                        ref={refFun}
-                      />
-                    );
-                  })}
-                  <div className="actions">
-                    {isExpanded ? 'Hide Permissions' : 'View Permissions'}
-                  </div>
-                  {viewing &&
-                    (isExpanded ? (
-                      <ArrowDropUpIcon
-                        style={{ color: 'rgba(0, 0, 0, 0.54)' }}
-                      />
-                    ) : (
-                      <ArrowDropDownIcon
-                        style={{ color: 'rgba(0, 0, 0, 0.54)' }}
-                      />
-                    ))}
+                  {getArrowIcon(isExpanded)}
                 </>
               )}
               {!disabled && (
@@ -307,35 +306,31 @@ export const Role: FC<RoleProps> = ({
                   <div
                     style={{ display: 'flex', flex: 0.3, alignItems: 'center' }}
                   >
-                    <div className="actions">
-                      {isExpanded ? 'Hide Permissions' : 'View Permissions'}
-                    </div>
-                    {isExpanded ? (
-                      <ArrowDropUpIcon
-                        style={{ color: 'rgba(0, 0, 0, 0.54)' }}
-                      />
-                    ) : (
-                      <ArrowDropDownIcon
-                        style={{ color: 'rgba(0, 0, 0, 0.54)' }}
-                      />
-                    )}
+                    {getArrowIcon(isExpanded)}
                   </div>
-                  <div className="check-group">
-                    {roles.map((role, i) => {
-                      if (role.id === roles[0].id) return null;
-                      return (
-                        <div key={`${role.id}`} className="check-group">
-                          <Checkbox
-                            key={`${role.id}`}
-                            name={`roles[${i}]`}
-                            value={role.id}
-                            refFun={refFun}
+                  <div
+                    className="check-group"
+                    onClick={(e) => e.stopPropagation()}
+                    style={{ cursor: 'auto' }}
+                  >
+                    <RadioGroup
+                      id={id}
+                      name={id}
+                      onChange={onChange}
+                      defaultValue={selected?.[0]?.id}
+                    >
+                      {roles.map((role) => {
+                        if (role.id === roles[0].id) return null;
+                        return (
+                          <FormControlLabel
+                            control={<StyledRadio />}
+                            key={role.id.toString()}
                             label={role.name}
-                            onClick={() => console.log('cheked')}
+                            value={role.id}
                           />
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </RadioGroup>
                   </div>
                 </div>
               )}
@@ -348,11 +343,9 @@ export const Role: FC<RoleProps> = ({
                       <div
                         key={`${permissionGroup.id}`}
                         className="permission-group"
-                        style={viewing ? { paddingLeft: 12 } : {}}
                       >
                         <div className="permission">
                           {permissionGroup.permissions.map((permission) => {
-                            // TODO Show Permissions for all assigned roles.
                             if (selected?.[0]?.permissions?.[permission]) {
                               permissionGroupName = permissionGroup.name;
                               return (
@@ -404,7 +397,7 @@ export const Role: FC<RoleProps> = ({
                                         {role.permissions[permission] ? (
                                           <CheckIcon className="icon success" />
                                         ) : (
-                                          <ClearIcon className="icon" />
+                                          '-'
                                         )}
                                       </div>
                                     );

@@ -39,7 +39,7 @@ const Wrapper = styled.div.attrs({})`
       }
 
       .modal-footer-buttons {
-        padding: 0px 16px !important;
+        padding: 0px 8px !important;
       }
     }
 

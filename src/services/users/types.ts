@@ -2,12 +2,11 @@ import { Pageable } from '#utils/globalTypes';
 
 import { Facility, Organisation } from '../commonTypes';
 import {
-  fetchMoreOngoing,
   fetchError,
+  fetchMoreOngoing,
   fetchOngoing,
   fetchSuccess,
   setSelectedState,
-  setSelectedUser,
 } from './actions';
 
 export type UserRole = {
@@ -72,9 +71,7 @@ export enum UsersAction {
   FETCH_USERS_ERROR = '@@users-service/FETCH_USERS_ERROR',
   FETCH_USERS_ONGOING = '@@users-service/FETCH_USERS_ONGOING',
   FETCH_USERS_SUCCESS = '@@users-service/FETCH_USERS_SUCCESS',
-
   SET_SELECTED_STATE = '@@users-service/SET_SELECTED_STATE',
-  SET_SELECTED_USER = '@@users-service/SET_SELECTED_USER',
 }
 
 export type UsersActionType = ReturnType<
@@ -83,7 +80,6 @@ export type UsersActionType = ReturnType<
   | typeof fetchMoreOngoing
   | typeof fetchSuccess
   | typeof setSelectedState
-  | typeof setSelectedUser
 >;
 
 export type useUsersType = {
@@ -102,7 +98,7 @@ export type fetchUsersParams = {
   filters: string;
   page: number;
   size: number;
-  sort: string;
+  sort?: string;
 };
 
 export type fetchType = {

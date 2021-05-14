@@ -54,5 +54,7 @@ export const parseMarkUp = (n: HTMLElement) => {
   return res;
 };
 
+export const encrypt = (data: string) => btoa(data);
+
 export const isMatchAny = (url: string, patterns: string[]) =>
   !patterns.every((pattern) => url.match(pattern) === null);

@@ -53,7 +53,7 @@ const TabContentWrapper = styled.div`
     padding: 0 0 8px;
   }
 
-  #create-new {
+  #create {
     margin-left: auto;
   }
 

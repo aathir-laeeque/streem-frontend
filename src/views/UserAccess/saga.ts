@@ -5,6 +5,7 @@ import {
   apiUnArchiveUser,
   apiUnLockUser,
   apiCancelInvite,
+  apiValidatePassword,
 } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { navigate } from '@reach/router';
@@ -19,15 +20,22 @@ import {
   addUser,
   unLockUser,
   cancelInvite,
+  validateCredentials,
 } from './actions';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { UserAccessAction } from './types';
 import { fetchSelectedUserSuccess } from '#store/users/actions';
+import {
+  closeOverlayAction,
+  openOverlayAction,
+} from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { encrypt } from '#utils/stringUtils';
 
 function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
   try {
     const { id } = payload;
-    const { errors }: ResponseObj<Partial<User>> = yield call(
+    const { data, errors }: ResponseObj<User> = yield call(
       request,
       'PATCH',
       apiResendInvite(id),
@@ -37,10 +45,16 @@ function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
       throw getErrorMsg(errors);
     }
 
+    yield put(fetchSelectedUserSuccess({ data }));
+
     yield put(
-      showNotification({
-        type: NotificationType.SUCCESS,
-        msg: 'Invite Resent Successfully.',
+      openOverlayAction({
+        type: OverlayNames.SECRET_KEY_MODAL,
+        props: {
+          heading: 'New Secret Key Created',
+          subHeading: 'The user can now register using the new Secret Key',
+          key: data?.token,
+        },
       }),
     );
   } catch (error) {
@@ -60,6 +74,8 @@ function* cancelInviteSaga({ payload }: ReturnType<typeof cancelInvite>) {
     if (errors) {
       throw getErrorMsg(errors);
     }
+
+    yield put(fetchSelectedUserSuccess({ data }));
 
     yield put(
       showNotification({
@@ -166,7 +182,7 @@ function* unLockUserSaga({ payload }: ReturnType<typeof unLockUser>) {
 
 function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
   try {
-    const { errors }: ResponseObj<Partial<User>> = yield call(
+    const { data, errors }: ResponseObj<Partial<User>> = yield call(
       request,
       'POST',
       apiGetUsers(),
@@ -180,14 +196,51 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
     }
 
     navigate(-1);
+    let heading = 'Invitation Sent';
+    let subHeading =
+      'Invitation with Secrete Key to register has been sent to the Employee’s Email ID.';
+    if (!data.email) {
+      heading = 'User Added';
+      subHeading =
+        'User will need to register themselves using the Secret Key shown below.';
+    }
     yield put(
-      showNotification({
-        type: NotificationType.SUCCESS,
-        msg: 'User Added Successfully.',
+      openOverlayAction({
+        type: OverlayNames.SECRET_KEY_MODAL,
+        props: {
+          heading,
+          subHeading,
+          key: data.token,
+        },
       }),
     );
   } catch (error) {
     yield* handleCatch('UserAccess', 'addUserSaga', error, true);
+  }
+}
+
+function* validateCredentialsSaga({
+  payload,
+}: ReturnType<typeof validateCredentials>) {
+  try {
+    const { onSuccess, password, purpose } = payload;
+    const { data, errors }: ResponseObj<{ token: string }> = yield call(
+      request,
+      'PATCH',
+      apiValidatePassword(),
+      { data: { password, purpose } },
+    );
+
+    if (errors) {
+      throw getErrorMsg(errors);
+    }
+
+    if (onSuccess) {
+      yield put(closeOverlayAction(OverlayNames.VALIDATE_CREDENTIALS_MODAL));
+      onSuccess(data.token);
+    }
+  } catch (error) {
+    yield* handleCatch('UserAccess', 'validateCredentialsSaga', error, true);
   }
 }
 
@@ -198,4 +251,8 @@ export function* UserAccessSaga() {
   yield takeLatest(UserAccessAction.UNARCHIVE_USER, unArchiveUserSaga);
   yield takeLatest(UserAccessAction.UNLOCK_USER, unLockUserSaga);
   yield takeLatest(UserAccessAction.ADD_USER, addUserSaga);
+  yield takeLatest(
+    UserAccessAction.VALIDATE_CREDENTIALS,
+    validateCredentialsSaga,
+  );
 }

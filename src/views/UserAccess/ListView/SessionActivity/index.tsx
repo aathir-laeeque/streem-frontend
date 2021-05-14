@@ -5,7 +5,7 @@ import {
   setActivityFilters,
 } from '#store/activity-filters/action';
 import { fetchUsers } from '#store/users/actions';
-import { User, UserState } from '#store/users/types';
+import { User, UsersListType } from '#store/users/types';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import TextField from '@material-ui/core/TextField';
@@ -269,7 +269,9 @@ const SessionActivity: FC<TabViewProps> = () => {
       op: 'AND',
       fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
     });
-    dispatch(fetchUsers({ page, size, filters, sort: 'id' }, UserState.ACTIVE));
+    dispatch(
+      fetchUsers({ page, size, filters, sort: 'id' }, UsersListType.ACTIVE),
+    );
   };
 
   const fetchLogs = (page = 0, size = 250) => {

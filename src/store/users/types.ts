@@ -3,15 +3,19 @@ import { Pageable } from '#utils/globalTypes';
 import { RoleType } from '#views/UserAccess/types';
 
 import {
+  fetchSelectedUser,
+  fetchSelectedUserSuccess,
   fetchUsers,
   fetchUsersError,
   fetchUsersOngoing,
   fetchUsersSuccess,
   setSelectedState,
-  setSelectedUser,
-  fetchSelectedUser,
-  fetchSelectedUserSuccess,
 } from './actions';
+
+export type ChallengeQuestion = {
+  id: string;
+  question: string;
+};
 
 export interface User {
   id: string;
@@ -20,16 +24,16 @@ export interface User {
   lastName: string;
   email: string;
   username: string;
-  verified: boolean;
-  blocked: boolean;
   archived: boolean;
-  active: boolean;
+  state: UserStates;
+  token?: string;
   department?: string;
   assigned?: boolean;
   completelyAssigned?: boolean;
   roles?: Pick<RoleType, 'id' | 'name'>[];
   facilities?: Facility[];
   organisation?: Organisation;
+  challengeQuestion?: ChallengeQuestion;
 }
 
 export type Users = User[];
@@ -44,8 +48,8 @@ export type UsersGroup = {
 };
 
 export interface UsersState {
-  readonly [UserState.ACTIVE]: UsersGroup;
-  readonly [UserState.ARCHIVED]: UsersGroup;
+  readonly [UsersListType.ACTIVE]: UsersGroup;
+  readonly [UsersListType.ARCHIVED]: UsersGroup;
   readonly loading: boolean;
   readonly error?: string;
   readonly selectedState: string;
@@ -54,21 +58,31 @@ export interface UsersState {
   readonly currentPageData: User[];
 }
 
-export enum UserState {
+export enum UserStates {
+  ACCOUNT_LOCKED = 'ACCOUNT_LOCKED',
+  INVITE_CANCELLED = 'INVITE_CANCELLED',
+  INVITE_EXPIRED = 'INVITE_EXPIRED',
+  PASSWORD_EXPIRED = 'PASSWORD_EXPIRED',
+  REGISTERED = 'REGISTERED',
+  REGISTERED_LOCKED = 'REGISTERED_LOCKED',
+  UNREGISTERED = 'UNREGISTERED',
+  UNREGISTERED_LOCKED = 'UNREGISTERED_LOCKED',
+}
+
+export enum UsersListType {
   ACTIVE = 'active',
   ARCHIVED = 'archived',
 }
 
 export enum UsersAction {
+  FETCH_SELECTED_USER = '@@users/FETCH_SELECTED_USER',
+  FETCH_SELECTED_USER_ERROR = '@@users/FETCH_SELECTED_USER_ERROR',
+  FETCH_SELECTED_USER_SUCCESS = '@@users/FETCH_SELECTED_USER_SUCCESS',
   FETCH_USERS = '@@users/FETCH_USERS',
   FETCH_USERS_ERROR = '@@users/FETCH_USERS_ERROR',
   FETCH_USERS_ONGOING = '@@users/FETCH_USERS_ONGOING',
   FETCH_USERS_SUCCESS = '@@users/FETCH_USERS_SUCCESS',
   SET_SELECTED_STATE = '@@users/SET_SELECTED_STATE',
-  SET_SELECTED_USER = '@@users/SET_SELECTED_USER',
-  FETCH_SELECTED_USER = '@@users/FETCH_SELECTED_USER',
-  FETCH_SELECTED_USER_SUCCESS = '@@users/FETCH_SELECTED_USER_SUCCESS',
-  FETCH_SELECTED_USER_ERROR = '@@users/FETCH_SELECTED_USER_ERROR',
 }
 
 export type UsersActionType = ReturnType<
@@ -77,7 +91,6 @@ export type UsersActionType = ReturnType<
   | typeof setSelectedState
   | typeof fetchUsersOngoing
   | typeof fetchUsers
-  | typeof setSelectedUser
   | typeof fetchSelectedUser
   | typeof fetchSelectedUserSuccess
 >;

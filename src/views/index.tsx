@@ -7,4 +7,4 @@ export { default as JobsView } from './Jobs';
 export { default as InboxView } from './Inbox';
 export { default as HomeView } from './Home';
 export { default as AuthView } from './Auth';
-export { default as ProfileView } from './Profile';
+export { default as FacilitySelectionView } from './Auth/FacilitySelection';

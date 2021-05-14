@@ -49,7 +49,7 @@ const PrototypeForm: FC<Props> = (props) => {
 
   const { users, usersById } = useUsers({
     userState: OtherUserState.AUTHORS,
-    params: { ...defaultParams, size: 100 },
+    params: { ...defaultParams(false), size: 100 },
   });
 
   const { profile } = useTypedSelector((state) => state.auth);

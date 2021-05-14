@@ -1,6 +1,6 @@
 import useTabsNew, { Tab } from '#components/shared/useTabsNew';
 import checkPermission from '#services/uiPermissions';
-import { UserState } from '#store/users/types';
+import { UsersListType } from '#store/users/types';
 import { ViewWrapper } from '#views/Jobs/NewListView/styles';
 import React, { FC } from 'react';
 
@@ -12,16 +12,16 @@ const ListView: FC<ListViewProps> = () => {
   const shownTabs: Tab[] = [];
   if (checkPermission(['usersAndAccess', 'activeUsers']))
     shownTabs.push({
-      label: `${UserState.ACTIVE} Users`,
+      label: `${UsersListType.ACTIVE} Users`,
       tabContent: TabContent,
-      values: [UserState.ACTIVE],
+      values: [UsersListType.ACTIVE],
     });
 
   if (checkPermission(['usersAndAccess', 'archivedUsers']))
     shownTabs.push({
-      label: `${UserState.ARCHIVED} Users`,
+      label: `${UsersListType.ARCHIVED} Users`,
       tabContent: TabContent,
-      values: [UserState.ARCHIVED],
+      values: [UsersListType.ARCHIVED],
     });
 
   if (checkPermission(['usersAndAccess', 'sessionActivity']))

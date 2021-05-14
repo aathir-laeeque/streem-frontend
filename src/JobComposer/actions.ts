@@ -1,5 +1,4 @@
 import { actionSpreader } from '#store';
-import { User } from '#store/users/types';
 import { Job } from '#views/Jobs/NewListView/types';
 
 import { ComposerAction } from './composer.reducer.types';
@@ -26,35 +25,6 @@ export const fetchDataSuccess = (
     entity,
     setActive,
   });
-
-// JOB ASSIGNMENT
-
-export const fetchAssignedUsersForJob = (jobId: string) =>
-  actionSpreader(ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB, { jobId });
-
-export const fetchAssignedUsersForJobError = (error: any) =>
-  actionSpreader(ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB_ERROR, { error });
-
-export const fetchAssignedUsersForJobSuccess = (data: User[]) =>
-  actionSpreader(ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS, { data });
-
-export const assignUsersToJob = (payload: {
-  jobId: Job['id'];
-  assignIds: User['id'][];
-  unassignIds: User['id'][];
-  assignedUsers: User[];
-  notify: boolean;
-}) => actionSpreader(ComposerAction.ASSIGN_USERS_TO_JOB, payload);
-
-export const assignUsersToJobSuccess = (payload: {
-  assignedUsers: User[];
-  unassignIds: User['id'][];
-}) => actionSpreader(ComposerAction.ASSIGN_USERS_TO_JOB_SUCCESS, payload);
-
-export const assignUsersToJobError = (error: any) =>
-  actionSpreader(ComposerAction.ASSIGN_USERS_TO_JOB_ERROR, { error });
-
-// END JOB ASSIGNMENT
 
 export const resetComposer = () =>
   actionSpreader(ComposerAction.RESET_COMPOSER);

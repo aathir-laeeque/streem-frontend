@@ -45,7 +45,7 @@ export const FlatButton = styled.button.attrs({
 `;
 
 export type ButtonVariant = 'primary' | 'secondary' | 'textOnly';
-export type ButtonColor = 'blue' | 'green' | 'red';
+export type ButtonColor = 'blue' | 'green' | 'red' | 'dark';
 
 type Button1Props = {
   color?: ButtonColor;
@@ -74,6 +74,13 @@ const ColorMap = {
     hoverBackgroundColor: '#ff6b6b',
     textColor: '#ff6b6b',
   },
+  dark: {
+    activeBackgroundColor: '#999999',
+    backgroundColor: '#333333',
+    borderColor: '#333333',
+    hoverBackgroundColor: '#666666',
+    textColor: '#ffffff',
+  },
 };
 
 const ButtonWrapper = styled.button.attrs(
@@ -92,6 +99,10 @@ const ButtonWrapper = styled.button.attrs(
 
   :last-of-type {
     margin-right: 0;
+  }
+
+  :disabled {
+    cursor: not-allowed;
   }
 
   ${({ variant = 'primary', color = 'blue' }) => {
@@ -156,16 +167,25 @@ const ButtonWrapper = styled.button.attrs(
     }
   }}
 
-  ${({ disabled, variant }) =>
+  ${({ disabled, variant = 'primary' }) =>
     disabled
-      ? css`
-          background-color: ${variant === 'textOnly'
-            ? 'transparent'
-            : '#eeeeee'};
-          border-color: transparent;
-          color: #dadada;
-          pointer-events: none;
-        `
+      ? variant === 'secondary'
+        ? css`
+            border-color: #bbbbbb;
+            color: #bbbbbb;
+            background-color: #fff;
+
+            :hover {
+              background-color: #fff;
+              color: #bbbbbb;
+            }
+          `
+        : css`
+            background-color: #eeeeee;
+            border-color: transparent;
+            color: #dadada;
+            pointer-events: none;
+          `
       : null}
 `;
 

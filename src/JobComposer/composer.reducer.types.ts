@@ -2,11 +2,7 @@ import { User } from '#store/users/types';
 import { Job, JobStateType } from '#views/Jobs/NewListView/types';
 
 import {
-  assignUsersToJobSuccess,
   completeJob,
-  fetchAssignedUsersForJob,
-  fetchAssignedUsersForJobError,
-  fetchAssignedUsersForJobSuccess,
   fetchDataError,
   fetchDataOngoing,
   fetchDataSuccess,
@@ -46,16 +42,10 @@ export type ComposerState = {
 };
 
 export enum ComposerAction {
-  ASSIGN_USERS_TO_JOB = '@@jobComposer/job-action/ASSIGN_USERS_TO_JOB',
-  ASSIGN_USERS_TO_JOB_ERROR = '@@jobComposer/job-action/ASSIGN_USERS_TO_JOB_ERROR',
-  ASSIGN_USERS_TO_JOB_SUCCESS = '@@jobComposer/job-action/ASSIGN_USERS_TO_JOB_SUCCESS',
   COMPLETE_JOB = '@@jobComposer/job-action/COMPLETE_JOB',
   COMPLETE_JOB_SUCCESS = '@@jobComposer/job-action/COMPLETE_JOB_SUCCESS',
   COMPLETE_JOB_WITH_EXCEPTION = '@@jobComposer/job-action/COMPLETE_JOB_WITH_EXCEPTION',
   COMPLETE_JOB_WITH_EXCEPTION_SUCCESS = '@@jobComposer/job-action/COMPLETE_JOB_WITH_EXCEPTION_SUCCESS',
-  FETCH_ASSIGNED_USERS_FOR_JOB = '@@jobComposer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB',
-  FETCH_ASSIGNED_USERS_FOR_JOB_ERROR = '@@jobComposer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB_ERROR',
-  FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS = '@@jobComposer/job-action/FETCH_ASSIGNED_USERS_FOR_JOB_SUCCESS',
   FETCH_COMPOSER_DATA = '@@jobComposer/composer-action/FETCH_COMPOSER_DATA',
   FETCH_COMPOSER_DATA_ERROR = '@@jobComposer/composer-action/FETCH_COMPOSER_DATA_ERROR',
   FETCH_COMPOSER_DATA_ONGOING = '@@jobComposer/composer-action/FETCH_COMPOSER_DATA_ONGOING',
@@ -70,12 +60,8 @@ export enum ComposerAction {
 }
 
 export type ComposerActionType = ReturnType<
-  | typeof assignUsersToJobSuccess
   | typeof completeJob
   | typeof fetchActiveStageDataSuccess
-  | typeof fetchAssignedUsersForJob
-  | typeof fetchAssignedUsersForJobError
-  | typeof fetchAssignedUsersForJobSuccess
   | typeof fetchDataError
   | typeof fetchDataOngoing
   | typeof fetchDataSuccess

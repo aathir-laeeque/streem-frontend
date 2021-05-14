@@ -26,6 +26,7 @@ import {
 import { LoginErrorCodes } from '#utils/constants';
 import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
+import { encrypt } from '#utils/stringUtils';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { Checklist, ChecklistStates, Comment } from './checklist.types';
@@ -521,9 +522,9 @@ function* signOffPrototypeSaga({
 
     const { data: validateData, errors: validateErrors } = yield call(
       request,
-      'POST',
+      'PATCH',
       apiValidatePassword(),
-      { data: { password } },
+      { data: { password: encrypt(password) } },
     );
 
     if (validateData) {
@@ -568,9 +569,9 @@ function* releasePrototypeSaga({
 
     const { data: validateData, errors: validateErrors } = yield call(
       request,
-      'POST',
+      'PATCH',
       apiValidatePassword(),
-      { data: { password } },
+      { data: { password: encrypt(password) } },
     );
 
     if (validateData) {

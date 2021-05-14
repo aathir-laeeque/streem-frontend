@@ -6,7 +6,6 @@ import {
 } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
-  apiAssignUsersToJob,
   apiCompleteJob,
   apiGetAllUsersAssignedToJob,
   apiGetChecklist,
@@ -17,17 +16,12 @@ import {
 } from '#utils/apiUrls';
 import { LoginErrorCodes } from '#utils/constants';
 import { request } from '#utils/request';
+import { encrypt } from '#utils/stringUtils';
 import { navigate } from '@reach/router';
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 
 import {
-  assignUsersToJob,
-  assignUsersToJobError,
-  assignUsersToJobSuccess,
   completeJob,
-  fetchAssignedUsersForJob,
-  fetchAssignedUsersForJobError,
-  fetchAssignedUsersForJobSuccess,
   fetchData,
   fetchDataOngoing,
   fetchDataSuccess,
@@ -161,82 +155,6 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
   }
 }
 
-function* fetchAssignedUsersForJobSaga({
-  payload,
-}: ReturnType<typeof fetchAssignedUsersForJob>) {
-  try {
-    const { jobId } = payload;
-
-    yield put(fetchDataOngoing());
-
-    const { data, errors, error } = yield call(
-      request,
-      'GET',
-      apiGetAllUsersAssignedToJob(jobId),
-    );
-
-    if (errors || error) {
-      throw 'Could Not Assign Users To Job';
-    }
-
-    yield put(fetchAssignedUsersForJobSuccess(data));
-  } catch (error: unknown) {
-    console.error(
-      'error from fetchAssignedUsersForJobSaga in ComposerSaga :: ',
-      error,
-    );
-    yield put(fetchAssignedUsersForJobError(error));
-  }
-}
-
-function* assignUsersToJobSaga({
-  payload,
-}: ReturnType<typeof assignUsersToJob>) {
-  const { jobId, assignIds, unassignIds, notify, assignedUsers } = payload;
-
-  try {
-    const { errors, error } = yield call(
-      request,
-      'PATCH',
-      apiAssignUsersToJob(),
-      {
-        data: {
-          jobId,
-          assignIds,
-          unassignIds,
-        },
-        params: {
-          notify,
-        },
-      },
-    );
-
-    if (errors || error) {
-      throw 'Could Not Assign Users to Job';
-    }
-
-    yield put(assignUsersToJobSuccess({ unassignIds, assignedUsers }));
-    yield put(
-      openOverlayAction({
-        type: OverlayNames.ASSIGNMENT_SUCCESS,
-        props: { notify },
-      }),
-    );
-  } catch (error) {
-    console.error(
-      'error from assignUsersToJobSaga function in Composer :: ',
-      error,
-    );
-    yield put(assignUsersToJobError(error));
-    yield put(
-      showNotification({
-        type: NotificationType.ERROR,
-        msg: 'Could Not Assign Users',
-      }),
-    );
-  }
-}
-
 function* getSignOffStateSaga({ payload }: ReturnType<typeof getSignOffState>) {
   try {
     const { jobId, allowSignOff } = payload;
@@ -277,9 +195,9 @@ function* signOffTaskSaga({ payload }: ReturnType<typeof signOffTasks>) {
 
     const { data: validateData, errors: validateErrors } = yield call(
       request,
-      'POST',
+      'PATCH',
       apiValidatePassword(),
-      { data: { password } },
+      { data: { password: encrypt(password) } },
     );
 
     if (validateData) {
@@ -311,12 +229,6 @@ export function* ComposerSaga() {
   yield takeLatest(ComposerAction.START_JOB, startJobSaga);
   yield takeLatest(ComposerAction.GET_SIGN_OFF_STATE, getSignOffStateSaga);
   yield takeLatest(ComposerAction.SIGN_OFF_TASKS, signOffTaskSaga);
-
-  yield takeLatest(
-    ComposerAction.FETCH_ASSIGNED_USERS_FOR_JOB,
-    fetchAssignedUsersForJobSaga,
-  );
-  yield takeLatest(ComposerAction.ASSIGN_USERS_TO_JOB, assignUsersToJobSaga);
 
   yield all([
     // fork other sagas here

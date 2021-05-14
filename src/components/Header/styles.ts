@@ -7,6 +7,11 @@ export const Wrapper = styled.div.attrs({})`
   grid-area: header;
   justify-content: space-between;
   padding: 0 12px;
+
+  .select {
+    margin-left: auto;
+    margin-right: 12px;
+  }
 `;
 
 export const HeaderMenu = styled.div`
@@ -15,8 +20,8 @@ export const HeaderMenu = styled.div`
   cursor: pointer;
 
   .thumb {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;

@@ -116,21 +116,6 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         },
       };
 
-    case TaskListAction.ASSIGN_USERS_TO_TASK_SUCCESS:
-      return {
-        ...state,
-        tasksById: {
-          ...state.tasksById,
-          [action.payload.taskId]: {
-            ...state.tasksById[action.payload.taskId],
-            taskExecution: {
-              ...state.tasksById[action.payload.taskId].taskExecution,
-              assignees: action.payload.assignedUsers,
-            },
-          },
-        },
-      };
-
     case ActivityListAction.EXECUTE_ACTIVITY:
     case ActivityListAction.FIX_ACTIVITY:
       return {

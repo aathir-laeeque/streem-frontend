@@ -264,7 +264,7 @@ const UsersFilter: FC<UsersFilterProps> = ({
     if (prevSearch !== searchQuery) {
       loadAgain({
         newParams: {
-          ...defaultParams,
+          ...defaultParams(),
           filters: JSON.stringify({
             op: 'AND',
             fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],

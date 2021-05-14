@@ -1,13 +1,13 @@
 import { BaseModal, Button1, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
-import { Visibility } from '@material-ui/icons';
+import { VisibilityOutlined } from '@material-ui/icons';
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { login } from '../actions';
+import { login, logout } from '../actions';
 
 const Wrapper = styled.div`
   .modal {
@@ -38,8 +38,10 @@ const Wrapper = styled.div`
 
       > span {
         font-size: 14px;
-        color: #000;
-        line-height: 19px;
+        line-height: 1.33;
+        letter-spacing: 0.32px;
+        text-align: left;
+        color: #999999;
       }
 
       form {
@@ -90,7 +92,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
   };
 
   const AfterIcon = () => (
-    <Visibility
+    <VisibilityOutlined
       onClick={() => setPasswordInputType(!passwordInputType)}
       style={{ color: passwordInputType ? '#000' : '#1d84ff' }}
     />
@@ -121,12 +123,24 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
             error={true}
             type={passwordInputType ? 'password' : 'text'}
           />
-          <Button1
-            type="submit"
-            disabled={!formState.isValid || !formState.isDirty}
-          >
-            Proceed to Login
-          </Button1>
+          <div style={{ display: 'flex' }}>
+            <Button1
+              style={{ width: 'auto' }}
+              variant="secondary"
+              onClick={() => {
+                dispatch(logout());
+              }}
+            >
+              Logout
+            </Button1>
+            <Button1
+              type="submit"
+              style={{ marginLeft: 'auto', width: 'auto' }}
+              disabled={!formState.isValid || !formState.isDirty}
+            >
+              Proceed to Login
+            </Button1>
+          </div>
         </form>
       </BaseModal>
     </Wrapper>

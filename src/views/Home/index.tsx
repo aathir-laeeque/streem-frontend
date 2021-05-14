@@ -5,16 +5,7 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { setInternetConnectivity } from '#store/extras/action';
 import { DEFAULT_SESSION_TIMEOUT_IN_MIN } from '#utils/constants';
-import {
-  // AuditLogsView,
-  ChecklistView,
-  // DashboardView,
-  JobsView,
-  InboxView,
-  // ReportsView,
-  UserAccessView,
-  ProfileView,
-} from '#views';
+import { ChecklistView, InboxView, JobsView, UserAccessView } from '#views';
 import { setIdle } from '#views/Auth/actions';
 import { Info } from '@material-ui/icons';
 import { Router, RouteComponentProps } from '@reach/router';
@@ -128,14 +119,10 @@ const HomeView: FC<RouteComponentProps> = () => {
           </HeaderWrapper>
         )}
         <Router>
-          {/* <DashboardView path="/" /> */}
-          {/* <AuditLogsView path="audit/*" /> */}
           <ChecklistView path="checklists/*" />
-          {/* <ReportsView path="reports/*" /> */}
-          <JobsView path="jobs/*" />
           <InboxView path="inbox/*" />
-          <UserAccessView path="user-access/*" />
-          <ProfileView path="profile" />
+          <JobsView path="jobs/*" />
+          <UserAccessView path="users/*" />
         </Router>
       </WorkArea>
     </DashboardLayout>

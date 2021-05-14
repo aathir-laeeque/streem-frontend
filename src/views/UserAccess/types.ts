@@ -1,5 +1,4 @@
 import { RouteComponentProps } from '@reach/router';
-import { resendInvite } from './actions';
 
 export type UserAccessViewProps = RouteComponentProps;
 
@@ -10,9 +9,8 @@ export enum UserAccessAction {
   RESEND_INVITE = '@@userAccess/ListView/RESEND_INVITE',
   UNARCHIVE_USER = '@@userAccess/ListView/UNARCHIVE_USER',
   UNLOCK_USER = '@@userAccess/ListView/UNLOCK_USER',
+  VALIDATE_CREDENTIALS = '@@userAccess/MyProfile/VALIDATE_CREDENTIALS',
 }
-
-export type UserAccessActionType = ReturnType<typeof resendInvite>;
 
 export type PermissionType = {
   id: number;
@@ -25,3 +23,11 @@ export type RoleType = {
   name: string;
   permissions: Record<string, boolean>;
 };
+
+export enum ValidateCredentialsPurpose {
+  ADDITIONAL_VERIFICATION = 'ADDITIONAL_VERIFICATION',
+  CHALLENGE_QUESTION_UPDATE = 'CHALLENGE_QUESTION_UPDATE',
+  PASSWORD_UPDATE = 'PASSWORD_UPDATE',
+  REGISTRATION = 'REGISTRATION',
+  SIGN_OFF = 'SIGN_OFF',
+}

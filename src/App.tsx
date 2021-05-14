@@ -3,7 +3,9 @@ import '#i18n';
 import { CustomRoute, Notification, OverlayContainer } from '#components';
 import { configureStore } from '#store';
 import { setAuthHeader } from '#utils/axiosClient';
-import { AuthView } from '#views';
+import { AuthView, FacilitySelectionView, HomeView } from '#views';
+import BaseView from '#views/Auth/BaseView';
+import { PAGE_NAMES, RecoveryInputs } from '#views/Auth/types';
 import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
 import PrintJob from '#views/Jobs/PrintJob';
 import PrintJobActivity from '#views/Jobs/PrintJobActivity';
@@ -14,8 +16,8 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import GlobalStyles from './styles/GlobalStyles';
-import { HomeView } from './views';
 
+// library imports
 export const { store, persistor } = configureStore({});
 
 const App: FC = () => {
@@ -36,7 +38,12 @@ const App: FC = () => {
         onBeforeLift={onBeforeLift}
       >
         <Router style={{ display: 'flex', flex: 1 }} basepath="/">
+          <BaseView<RecoveryInputs>
+            path="auth/register/recovery"
+            pageName={PAGE_NAMES.REGISTER_RECOVERY}
+          />
           <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
+          <CustomRoute as={FacilitySelectionView} path="facility/selection" />
           <CustomRoute as={PrintJob} path="jobs/print/:jobId" />
           <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
           <CustomRoute as={PrintSessionActivity} path="users-activity/print" />

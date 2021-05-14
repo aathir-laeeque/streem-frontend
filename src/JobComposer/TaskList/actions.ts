@@ -1,7 +1,4 @@
 import { actionSpreader } from '#store';
-import { User } from '#store/users/types';
-import { Job } from '#views/Jobs/NewListView/types';
-
 import { Task } from '../checklist.types';
 import { TaskListAction } from './reducer.types';
 import { TaskAction } from './types';
@@ -51,20 +48,6 @@ export const setTaskError = (error: any, taskId: Task['id']) =>
 
 export const removeTaskError = (taskId: Task['id']) =>
   actionSpreader(TaskListAction.REMOVE_TASK_ERROR, { taskId });
-
-export const assignUsersToTask = (payload: {
-  jobId: Job['id'];
-  taskId: Task['id'];
-  assignIds: User['id'][];
-  unassignIds: User['id'][];
-  assignedUsers: User[];
-  notify: boolean;
-}) => actionSpreader(TaskListAction.ASSIGN_USERS_TO_TASK, payload);
-
-export const assignUsersToTaskSuccess = (payload: {
-  taskId: Task['id'];
-  assignedUsers: User[];
-}) => actionSpreader(TaskListAction.ASSIGN_USERS_TO_TASK_SUCCESS, payload);
 
 export const enableErrorCorrection = (
   taskId: Task['id'],

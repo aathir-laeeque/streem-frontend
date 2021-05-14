@@ -101,7 +101,7 @@ const Wrapper = styled.div.attrs({
 
 export type Option = { label: string; value: string | number };
 
-type SelectProps = {
+type SelectProps = ComponentPropsWithRef<'select'> & {
   disabled?: boolean;
   error?: boolean | string;
   label?: string;
@@ -116,7 +116,7 @@ type SelectProps = {
   SelectButtonIcon?: SvgIconComponent;
   selectButtonIconClass?: string;
   selectedValue?: Option;
-} & ComponentPropsWithRef<'select'>;
+};
 
 const Select: FC<SelectProps> = (props) => {
   const {

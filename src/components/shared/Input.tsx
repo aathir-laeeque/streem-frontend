@@ -19,8 +19,12 @@ type InputProps = {
   error?: boolean | string;
   label?: string;
   optional?: boolean;
+  onChange?: ({ name, value }: OnChangeType) => void;
+  secondaryAction?: {
+    text: string;
+    action: () => void;
+  };
   disabled?: boolean;
-  onChange?: ({ name, value }: OnChangeArgs) => void;
 } & ComponentPropsWithRef<'input'>;
 
 type WrapperProps = {
@@ -48,6 +52,12 @@ const Wrapper = styled.div.attrs(({ className }) => ({
       color: #999999;
       font-size: 12px;
       margin-left: 4px;
+    }
+
+    .secondary-action {
+      color: #1d84ff;
+      cursor: pointer;
+      margin-left: auto;
     }
   }
 
@@ -117,16 +127,18 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     BeforeElement,
     beforeElementClass,
     beforeElementClick = noop,
-    className,
-    defaultValue = '',
     error = '',
     label,
-    name,
-    onChange,
+    // NATIVE HTML INPUT PROPS
     optional = false,
+    defaultValue = '',
     disabled = false,
     placeholder = 'Write here',
     type = 'text',
+    name,
+    onChange,
+    className,
+    secondaryAction,
     ...rest
   } = props;
 
@@ -136,6 +148,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         <label className="input-label">
           {label}
           {optional ? <span className="optional-badge">Optional</span> : null}
+          {secondaryAction && (
+            <span className="secondary-action" onClick={secondaryAction.action}>
+              {secondaryAction.text}
+            </span>
+          )}
         </label>
       ) : null}
 
@@ -171,7 +188,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           />
         ) : null}
 
-        {AfterElement && error ? (
+        {error ? (
           <AfterElement
             className={`icon ${afterElementClass ? afterElementClass : ''}`}
             id="after-icon"

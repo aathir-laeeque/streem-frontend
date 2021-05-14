@@ -10,19 +10,21 @@ import {
   useUsersReturnType,
 } from './types';
 
-const defaultParams: fetchUsersParams = {
-  filters: JSON.stringify({
-    op: 'AND',
-    fields: [{ field: 'archived', op: 'EQ', values: [false] }],
-  }),
-  page: 0,
-  size: 10,
-  sort: 'createdAt,desc',
+const defaultParams = (includeSorting = true): fetchUsersParams => {
+  return {
+    filters: JSON.stringify({
+      op: 'AND',
+      fields: [{ field: 'archived', op: 'EQ', values: [false] }],
+    }),
+    page: 0,
+    size: 10,
+    ...(includeSorting ? { sort: 'createdAt,desc' } : {}),
+  };
 };
 
 const useUsers = ({
   userState = UserState.ACTIVE,
-  params = defaultParams,
+  params = defaultParams(),
 }: useUsersType): useUsersReturnType => {
   const { pageable, users, usersById } = useTypedSelector(
     (state) => state.usersService[userState],

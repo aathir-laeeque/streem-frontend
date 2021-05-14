@@ -1,12 +1,6 @@
 import { actionSpreader } from '#store/helpers';
 
-import {
-  fetchType,
-  fetchSuccessType,
-  User,
-  UsersAction,
-  UserState,
-} from './types';
+import { fetchSuccessType, fetchType, UsersAction, UserState } from './types';
 
 export const fetch = ({ initialCall, params, type }: fetchType) =>
   actionSpreader(UsersAction.FETCH_USERS, { params, type, initialCall });
@@ -34,6 +28,3 @@ export const fetchError = (error: unknown) =>
 
 export const setSelectedState = (state: UserState) =>
   actionSpreader(UsersAction.SET_SELECTED_STATE, { state });
-
-export const setSelectedUser = (userId: User['id']) =>
-  actionSpreader(UsersAction.SET_SELECTED_USER, { userId });

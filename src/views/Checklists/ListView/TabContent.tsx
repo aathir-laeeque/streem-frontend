@@ -345,7 +345,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
 
         {checkPermission(['checklists', 'create']) && (
           <Button1
-            id="create-new"
+            id="create"
             onClick={() =>
               navigate('/checklists/prototype', {
                 state: { mode: FormMode.ADD },

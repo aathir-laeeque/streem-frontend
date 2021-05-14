@@ -1,88 +1,125 @@
-import AuthBg from '#assets/svg/auth-bg.svg';
-import CleenLogoWhite from '#assets/svg/CleenLogoWhite';
-import MemoLeucineLogo from '#assets/svg/LeucineLogo';
-import loginBg from '#assets/svg/login-bg.svg';
-import { Router } from '@reach/router';
+import { RouteComponentProps, Router } from '@reach/router';
 import React, { FC } from 'react';
 import styled from 'styled-components';
+import LeucineLogo from '#assets/svg/LeucineLogo';
 
-import Forgot from './Forgot';
-import Locked from './Locked';
-import Login from './Login';
-import Register from './Register';
-import ResetPassword from './ResetPassword';
-import { AuthViewProps } from './types';
+import BaseView from './BaseView';
+import {
+  LoginInputs,
+  SecretKeyInputs,
+  EmployeeIdInputs,
+  PAGE_NAMES,
+  CredentialsInputs,
+  ForgotPasswordInputs,
+  RecoveryInputs,
+  NewPasswordInputs,
+} from './types';
 
-const Wrapper = styled.div`
+const Wrapper = styled.div.attrs({
+  className: 'auth-view',
+})`
+  overflow: hidden;
   display: flex;
+  flex-direction: column;
   flex: 1;
 
-  .sections {
+  .brand-footer {
     display: flex;
-    flex-direction: column;
-    background-size: cover;
-    align-items: center;
-    justify-content: center;
-    background-position: 0% 100%;
-  }
+    background-color: #fafafa;
+    padding: 1vh 30px;
 
-  .left {
-    flex: 4;
-    background-image: url(${AuthBg});
-
-    .tagline {
-      margin-top: 16px;
-      font-size: 32px;
-      line-height: 40px;
-      font-weight: 400;
-      letter-spacing: 0px;
-      text-align: center;
-      color: #fff;
-    }
-  }
-
-  .right {
-    flex: 6;
-    background-image: url(${loginBg});
-
-    .credit-view {
-      margin-top: 8px;
+    > div {
       display: flex;
       align-items: center;
+      margin-left: auto;
+      font-size: 12px;
+      line-height: 1.33;
+      letter-spacing: 0.32px;
+      color: #999999;
 
-      div {
-        font-size: 16px;
-        font-weight: 600;
-        line-height: 1.5;
-        letter-spacing: 0.15px;
-        color: #999999;
+      > a {
+        line-height: 0;
+        margin-left: 8px;
+
+        svg {
+          width: 7vw;
+          height: 5vh;
+        }
       }
     }
   }
 `;
 
-const AuthView: FC<AuthViewProps> = () => (
-  <Wrapper>
-    <div className="sections left">
-      <CleenLogoWhite width="60%" height="88px" />
-      <div className="tagline">Digitalise Cleaning</div>
-    </div>
-    <div className="sections right">
-      <Router style={{ width: '100%' }}>
-        <Register path="register/:name/:email/:token" />
-        <ResetPassword path="change-password/:token" />
-        <Locked path="locked" />
-        <Forgot path="forgot" />
-        <Login path="/*" />
+const AuthView: FC<RouteComponentProps> = () => {
+  return (
+    <Wrapper>
+      <Router style={{ display: 'flex', flex: 1, overflow: 'auto' }}>
+        <BaseView<EmployeeIdInputs>
+          path="register/employee-id"
+          pageName={PAGE_NAMES.REGISTER_EMPLOYEE_ID}
+        />
+        <BaseView<CredentialsInputs>
+          path="register/credentials"
+          pageName={PAGE_NAMES.REGISTER_CREDENTIALS}
+        />
+        <BaseView
+          path="register/invite-expired"
+          pageName={PAGE_NAMES.INVITATION_EXPIRED}
+        />
+        <BaseView<SecretKeyInputs>
+          path="register"
+          pageName={PAGE_NAMES.REGISTER_SECRET_KEY}
+        />
+        <BaseView
+          path="forgot-password/key-expired"
+          pageName={PAGE_NAMES.KEY_EXPIRED}
+        />
+        <BaseView path="account-locked" pageName={PAGE_NAMES.ACCOUNT_LOCKED} />
+        <BaseView
+          path="password-expired"
+          pageName={PAGE_NAMES.PASSWORD_EXPIRED}
+        />
+        <BaseView path="notified" pageName={PAGE_NAMES.ADMIN_NOTIFIED} />
+        <BaseView
+          path="forgot-password/email-sent"
+          pageName={PAGE_NAMES.FORGOT_EMAIL_SENT}
+        />
+        <BaseView
+          path="forgot-password/updated"
+          pageName={PAGE_NAMES.PASSWORD_UPDATED}
+        />
+        <BaseView<ForgotPasswordInputs>
+          path="forgot-password/recovery"
+          pageName={PAGE_NAMES.FORGOT_RECOVERY}
+        />
+        <BaseView<RecoveryInputs>
+          path="forgot-password/challenge"
+          pageName={PAGE_NAMES.FORGOT_QUESTIONS}
+        />
+        <BaseView<SecretKeyInputs>
+          path="forgot-password/secret-key"
+          pageName={PAGE_NAMES.FORGOT_SECRET_KEY}
+        />
+        <BaseView<NewPasswordInputs>
+          path="forgot-password/new-password"
+          pageName={PAGE_NAMES.FORGOT_NEW_PASSWORD}
+        />
+        <BaseView<ForgotPasswordInputs>
+          path="forgot-password"
+          pageName={PAGE_NAMES.FORGOT_IDENTITY}
+        />
+        <BaseView<LoginInputs> path="/*" pageName={PAGE_NAMES.LOGIN} />
       </Router>
-      <div className="credit-view">
-        <div>A Product By</div>
-        <a href="https://www.leucinetech.com">
-          <MemoLeucineLogo height="28px" width="122px" />
-        </a>
+      <div className="brand-footer">
+        <div>
+          A Product By
+          <a href="https://www.leucinetech.com">
+            <LeucineLogo width="110px" height="100%" />
+          </a>
+        </div>
       </div>
-    </div>
-  </Wrapper>
-);
+    </Wrapper>
+  );
+};
 
 export default AuthView;

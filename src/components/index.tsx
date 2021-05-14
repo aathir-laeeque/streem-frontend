@@ -5,7 +5,9 @@ export { default as Notification } from './Notification';
 export { default as OverlayContainer } from './OverlayContainer';
 
 export { useTabs } from './shared/useTabs';
+export * from './shared/useScrollableSections';
 export { BaseModal } from './shared/BaseModal';
+export * from './shared/FormGroup';
 export { Button, FlatButton, Button1 } from './shared/Button';
 // export { NestedMenuItem } from './shared/NestedMenuItem';
 export { CustomRoute } from './shared/CustomRoute';

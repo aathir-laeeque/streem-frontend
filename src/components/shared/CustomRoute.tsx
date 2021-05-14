@@ -13,16 +13,23 @@ export const CustomRoute: FC<Props> = ({
   isProtected = true,
   ...props
 }) => {
-  const { isLoggedIn } = useTypedSelector((state) => state.auth);
+  const { isLoggedIn, selectedFacility } = useTypedSelector(
+    (state) => state.auth,
+  );
 
-  if (isLoggedIn)
-    return isProtected ? (
-      <Component {...props} />
-    ) : checkPermission(['sidebar', 'inbox']) ? (
-      <Redirect from="" to="/inbox" noThrow />
-    ) : (
-      <Redirect from="" to="/user-access" noThrow />
-    );
+  if (isLoggedIn) {
+    if (selectedFacility || props.path === 'facility/selection') {
+      return isProtected && props.location?.pathname !== '/' ? (
+        <Component {...props} />
+      ) : checkPermission(['sidebar', 'inbox']) ? (
+        <Redirect from="" to="/inbox" noThrow />
+      ) : (
+        <Redirect from="" to="/users" noThrow />
+      );
+    }
+
+    return <Redirect from="" to="/facility/selection" noThrow />;
+  }
 
   return !isProtected ? (
     <Component {...props} />

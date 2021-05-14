@@ -3,7 +3,7 @@ import { NotificationType } from '#components/Notification/types';
 import { AxiosRequestConfig } from 'axios';
 import { put } from 'redux-saga/effects';
 
-import { apiForgotPassword, apiLogin, apiRefreshToken } from './apiUrls';
+import { apiCheckTokenExpiry, apiLogin, apiRefreshToken } from './apiUrls';
 import axiosInstance, { removeAuthHeader } from './axiosClient';
 import { ResponseError } from './globalTypes';
 
@@ -19,7 +19,7 @@ export const request = async (
   url: string,
   options?: RequestOptions,
 ) => {
-  if ([apiForgotPassword(), apiLogin(), apiRefreshToken()].includes(url))
+  if ([apiLogin(), apiRefreshToken(), apiCheckTokenExpiry()].includes(url))
     removeAuthHeader();
 
   return axiosInstance({

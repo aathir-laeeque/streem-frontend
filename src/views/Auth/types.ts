@@ -1,32 +1,30 @@
+import { FormGroupProps } from '#components';
+import {
+  switchFacilityError,
+  switchFacilitySuccess,
+} from '#store/facilities/actions';
 import { User } from '#store/users/types';
 import { RouteComponentProps } from '@reach/router';
 
 import {
-  checkTokenExpirySuccess,
+  authError,
   cleanUp,
   fetchProfileSuccess,
-  forgotPassword,
-  forgotPasswordSuccess,
   login,
-  loginError,
   loginSuccess,
   logout,
   logoutSuccess,
   refreshTokenSuccess,
   resetError,
   resetPassword,
-  resetPasswordError,
-  resetPasswordSuccess,
+  setIdentityToken,
   setIdle,
-  updateProfileSuccess,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
 
 interface Settings {
   logoUrl: string;
-  accessTokenExpirationInMinutes: number;
-  refreshTokenExpirationInMinutes: number;
   sessionIdleTimeoutInMinutes: number;
 }
 
@@ -50,71 +48,180 @@ type Facility = {
   name: string;
 };
 export interface AuthState {
-  readonly userId: User['id'] | null;
+  readonly accessToken: string;
+  readonly email?: string;
+  readonly employeeId?: string;
+  readonly error?: string;
+  readonly facilities: Facility[];
+  readonly firstName?: string;
+  readonly hasSetChallengeQuestion?: boolean;
   readonly isIdle: boolean;
   readonly isLoggedIn: boolean;
-  readonly accessToken: string;
-  readonly refreshToken: string;
-  readonly accessTokenExpirationInMinutes?: number;
-  readonly refreshTokenExpirationInMinutes?: number;
-  readonly sessionIdleTimeoutInMinutes?: number;
-  readonly profile: User | null;
+  readonly lastName?: string;
   readonly loading: boolean;
-  readonly error?: string;
+  readonly profile: User | null;
+  readonly refreshToken: string;
   readonly roles?: string[];
-  readonly isTokenExpired?: boolean;
-  readonly facilities: Facility[];
   readonly selectedFacility?: Facility;
   readonly settings?: Settings;
+  readonly token?: string;
+  readonly userId: User['id'] | null;
 }
 
 export enum TokenTypes {
-  REGISTRATION = 'REGISTRATION',
   PASSWORD_RESET = 'PASSWORD_RESET',
+  REGISTRATION = 'REGISTRATION',
 }
 
+export enum AdditionalVerificationTypes {
+  EMAIL = 'EMAIL',
+  EMPLOYEE_ID = 'EMPLOYEE_ID',
+}
+
+export enum PAGE_NAMES {
+  ACCOUNT_LOCKED = 'ACCOUNT_LOCKED',
+  ADMIN_NOTIFIED = 'ADMIN_NOTIFIED',
+  CHANGE_PASSWORD = 'CHANGE_PASSWORD',
+  FACILITY_SELECTION = 'FACILITY_SELECTION',
+  FORGOT_EMAIL_SENT = 'FORGOT_EMAIL_SENT',
+  FORGOT_IDENTITY = 'FORGOT_IDENTITY',
+  FORGOT_NEW_PASSWORD = 'FORGOT_NEW_PASSWORD',
+  FORGOT_QUESTIONS = 'FORGOT_QUESTIONS',
+  FORGOT_RECOVERY = 'FORGOT_RECOVERY',
+  FORGOT_SECRET_KEY = 'FORGOT_SECRET_KEY',
+  INVITATION_EXPIRED = 'INVITATION_EXPIRED',
+  KEY_EXPIRED = 'KEY_EXPIRED',
+  LOCKED = 'LOCKED',
+  LOGIN = 'LOGIN',
+  PASSWORD_EXPIRED = 'PASSWORD_EXPIRED',
+  PASSWORD_UPDATED = 'PASSWORD_UPDATED',
+  REGISTER_CREDENTIALS = 'REGISTER_CREDENTIALS',
+  REGISTER_EMPLOYEE_ID = 'REGISTER_EMPLOYEE_ID',
+  REGISTER_RECOVERY = 'REGISTER_RECOVERY',
+  REGISTER_SECRET_KEY = 'REGISTER_SECRET_KEY',
+}
+
+export enum RecoveryOptions {
+  CHALLENGE_QUESTION = 'CHALLENGE_QUESTION',
+  EMAIL = 'EMAIL',
+  CONTACT_ADMIN = 'CONTACT_ADMIN',
+}
+
+export enum ChallengeQuestionPurpose {
+  PASSWORD_RECOVERY_CHALLENGE_QUESTION_NOT_SET = 'PASSWORD_RECOVERY_CHALLENGE_QUESTION_NOT_SET',
+  INVITE_EXPIRED = 'INVITE_EXPIRED',
+  PASSWORD_RECOVERY_ACCOUNT_LOCKED = 'PASSWORD_RECOVERY_ACCOUNT_LOCKED',
+  PASSWORD_RECOVERY_KEY_EXPIRED = 'PASSWORD_RECOVERY_KEY_EXPIRED',
+}
+
+export enum CARD_POSITIONS {
+  LEFT = 'flex-start',
+  CENTER = 'center',
+}
+
+export type BaseViewConfigType = {
+  wrapperStyle: React.CSSProperties;
+  cardPosition: CARD_POSITIONS;
+  cardStyle: React.CSSProperties;
+  heading?: string;
+  headingIcon?: JSX.Element;
+  subHeading?: string;
+  footerAction?: JSX.Element;
+  formData?: {
+    formInputs: FormGroupProps['inputs'];
+    onSubmit: (data: any) => void;
+    buttons: JSX.Element[];
+  };
+};
+
+export type BaseViewProps = RouteComponentProps & {
+  pageName: PAGE_NAMES;
+};
+
+export type RegisterProps = {
+  name: string;
+  email: string;
+  token: string;
+};
+
+export type LoginInputs = {
+  username: string;
+  password: string;
+};
+
+export type SecretKeyInputs = {
+  token: string;
+};
+
+export type EmployeeIdInputs = {
+  identifier: string;
+};
+
+export type CredentialsInputs = {
+  username: string;
+  password: string;
+  confirmPassword: string;
+  token: string;
+};
+
+export type RecoveryInputs = {
+  id: string;
+  answer: string;
+  token: string;
+};
+
+export type ForgotPasswordInputs = {
+  identity: string;
+};
+
+export type ForgotPasswordRecoveryInputs = {
+  recoveryOption: RecoveryOptions;
+};
+
+export type NewPasswordInputs = {
+  password: string;
+  confirmPassword: string;
+  token: string;
+};
+
 export enum AuthAction {
-  RESET_ERROR = '@@auth/Login/RESET_ERROR',
-  LOGOUT = '@@auth/Logout/LOGOUT',
-  LOGOUT_SUCCESS = '@@auth/Logout/LOGOUT_SUCCESS',
+  ADDITIONAL_VERIFICATION = '@@auth/Register/ADDITIONAL_VERIFICATION',
+  AUTH_ERROR = '@@auth/AUTH_ERROR',
+  CHECK_TOKEN_EXPIRY = '@@auth/CHECK_TOKEN_EXPIRY',
   CLEANUP = '@@auth/Logout/CLEANUP',
-  LOGIN = '@@auth/Login/LOGIN',
-  LOGIN_ERROR = '@@auth/Login/LOGIN_ERROR',
-  LOGIN_SUCCESS = '@@auth/Login/LOGIN_SUCCESS',
-  REFRESH_TOKEN_SUCCESS = '@@auth/Login/REFRESH_TOKEN_SUCCESS',
   FETCH_PROFILE = '@@auth/Login/FETCH_PROFILE',
   FETCH_PROFILE_SUCCESS = '@@auth/Login/FETCH_PROFILE_SUCCESS',
+  LOGIN = '@@auth/Login/LOGIN',
+  LOGIN_SUCCESS = '@@auth/Login/LOGIN_SUCCESS',
+  LOGOUT = '@@auth/Logout/LOGOUT',
+  LOGOUT_SUCCESS = '@@auth/Logout/LOGOUT_SUCCESS',
+  NOTIFY_ADMIN = '@@auth/Forgot/NOTIFY_ADMIN',
+  REFRESH_TOKEN_SUCCESS = '@@auth/Login/REFRESH_TOKEN_SUCCESS',
   REGISTER = '@@auth/Register/REGISTER',
-  FORGOT_PASSWORD = '@@auth/Register/FORGOT_PASSWORD',
-  FORGOT_PASSWORD_SUCCESS = '@@auth/Register/FORGOT_PASSWORD_SUCCESS',
+  RESET_ERROR = '@@auth/Login/RESET_ERROR',
   RESET_PASSWORD = '@@auth/Register/RESET_PASSWORD',
-  RESET_PASSWORD_ERROR = '@@auth/Register/RESET_PASSWORD_ERROR',
-  RESET_PASSWORD_SUCCESS = '@@auth/Register/RESET_PASSWORD_SUCCESS',
-  UPDATE_PROFILE = '@@auth/MyProfile/UPDATE_PROFILE',
-  UPDATE_PROFILE_SUCCESS = '@@auth/MyProfile/UPDATE_PROFILE_SUCCESS',
-  UPDATE_USER_PROFILE = '@@auth/MyProfile/UPDATE_USER_PROFILE',
-  UPDATE_PASSWORD = '@@auth/MyProfile/UPDATE_PASSWORD',
-  CHECK_TOKEN_EXPIRY = '@@auth/CHECK_TOKEN_EXPIRY',
-  CHECK_TOKEN_EXPIRY_SUCCESS = '@@auth/CHECK_TOKEN_EXPIRY_SUCCESS',
+  RESET_TOKEN = '@@auth/Forgot/RESET_TOKEN',
+  SET_CHALLENGE_QUESTION = '@@auth/Register/SET_CHALLENGE_QUESTION',
+  SET_IDENTITY_TOKEN = '@@auth/Register/SET_IDENTITY_TOKEN',
   SET_IDLE = '@@auth/MyProfile/SET_IDLE',
+  UPDATE_USER_PROFILE = '@@auth/MyProfile/UPDATE_USER_PROFILE',
+  VALIDATE_IDENTITY = '@@auth/Forgot/VALIDATE_IDENTITY',
+  VALIDATE_QUESTION = '@@auth/Forgot/VALIDATE_QUESTION',
 }
 
 export type AuthActionType = ReturnType<
-  | typeof resetError
+  | typeof authError
+  | typeof cleanUp
+  | typeof fetchProfileSuccess
+  | typeof logoutSuccess
   | typeof login
   | typeof loginSuccess
   | typeof logout
-  | typeof logoutSuccess
-  | typeof loginError
   | typeof refreshTokenSuccess
-  | typeof fetchProfileSuccess
-  | typeof updateProfileSuccess
-  | typeof forgotPassword
-  | typeof forgotPasswordSuccess
+  | typeof resetError
   | typeof resetPassword
-  | typeof resetPasswordSuccess
-  | typeof resetPasswordError
+  | typeof setIdentityToken
   | typeof setIdle
-  | typeof checkTokenExpirySuccess
-  | typeof cleanUp
+  | typeof switchFacilityError
+  | typeof switchFacilitySuccess
 >;

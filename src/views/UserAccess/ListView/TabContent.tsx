@@ -3,17 +3,22 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { ExtraColumn, NewListView } from '#components/shared/NewListView';
 import checkPermission, { roles } from '#services/uiPermissions';
-import { UserState } from '#services/users';
 import { useTypedSelector } from '#store/helpers';
-import { fetchUsers, setSelectedUser } from '#store/users/actions';
-import { User } from '#store/users/types';
+import { fetchUsers } from '#store/users/actions';
+import { User, UsersListType, UserStates } from '#store/users/types';
 import { FilterField } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
-import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
+import { Menu, MenuItem } from '@material-ui/core';
+import {
+  ArrowDropDown,
+  ArrowLeft,
+  ArrowRight,
+  FiberManualRecord,
+} from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import { startCase, toLower } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { removeUnderscore } from '../../../utils/stringUtils';
@@ -25,14 +30,15 @@ import {
   unLockUser,
 } from '../actions';
 
-export function modalBody(user: User, text: string) {
+export function modalBody(text: string, user?: User) {
   return (
     <div className="body-content" style={{ textAlign: 'left' }}>
       {text}
-      <span
-        style={{ fontWeight: 'bold' }}
-      >{` ${user.firstName} ${user.lastName}`}</span>
-      .
+      {user && (
+        <span
+          style={{ fontWeight: 'bold' }}
+        >{` ${user.firstName} ${user.lastName}.`}</span>
+      )}
     </div>
   );
 }
@@ -42,7 +48,7 @@ const DEFAULT_PAGE_SIZE = 10;
 const TabContent: React.FC<TabContentProps> = (props) => {
   const {
     users: {
-      [props.values[0] as UserState]: { pageable },
+      [props.values[0] as UsersListType]: { pageable },
       currentPageData,
     },
   } = useTypedSelector((state) => state);
@@ -50,6 +56,8 @@ const TabContent: React.FC<TabContentProps> = (props) => {
   const dispatch = useDispatch();
 
   const [filterFields, setFilterFields] = useState<FilterField[]>([]);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const fetchData = (page: number, size: number) => {
     dispatch(
@@ -57,7 +65,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
         {
           page,
           size,
-          archived: props.values[0] === UserState.ACTIVE ? false : true,
+          archived: props.values[0] === UsersListType.ACTIVE ? false : true,
           sort: 'createdAt,desc',
           filters: JSON.stringify({ op: 'AND', fields: filterFields }),
         },
@@ -86,7 +94,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
                 },
               }),
             ),
-          body: modalBody(user, 'You’re about to archive'),
+          body: modalBody('You’re about to archive', user),
         },
       }),
     );
@@ -108,14 +116,10 @@ const TabContent: React.FC<TabContentProps> = (props) => {
                 },
               }),
             ),
-          body: modalBody(user, 'You’re about to unarchive'),
+          body: modalBody('You’re about to unarchive', user),
         },
       }),
     );
-  };
-
-  const onResendInvite = (id: User['id']) => {
-    dispatch(resendInvite({ id }));
   };
 
   const onCancelInvite = (user: User) => {
@@ -134,7 +138,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
                 },
               }),
             ),
-          body: modalBody(user, 'You are about to cancel the invite sent to'),
+          body: modalBody('You are about to cancel the invite sent to', user),
         },
       }),
     );
@@ -156,13 +160,194 @@ const TabContent: React.FC<TabContentProps> = (props) => {
                 },
               }),
             ),
-          body: modalBody(user, 'You’re about to unlock the account of'),
+          body: modalBody('You’re about to unlock the account of', user),
         },
       }),
     );
   };
 
   const showPaginationArrows = pageable.totalPages > 10;
+
+  const isUserLocked = (state: UserStates) =>
+    [
+      UserStates.UNREGISTERED_LOCKED,
+      UserStates.REGISTERED_LOCKED,
+      UserStates.ACCOUNT_LOCKED,
+    ].includes(state);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setSelectedUser(null);
+  };
+
+  const ArchiveButton = () => (
+    <MenuItem
+      onClick={() => {
+        setAnchorEl(null);
+        onArchiveUser(selectedUser as User);
+      }}
+    >
+      <div className="list-item">
+        <span>Archive</span>
+      </div>
+    </MenuItem>
+  );
+
+  const UnArchiveButton = () => (
+    <MenuItem
+      onClick={() => {
+        setAnchorEl(null);
+        onUnArchiveUser(selectedUser as User);
+      }}
+    >
+      <div className="list-item">
+        <span>Unarchive</span>
+      </div>
+    </MenuItem>
+  );
+
+  const UnlockButton = () => (
+    <MenuItem
+      onClick={() => {
+        setAnchorEl(null);
+        onUnlockUser(selectedUser as User);
+      }}
+    >
+      <div className="list-item">
+        <span>Unlock</span>
+      </div>
+    </MenuItem>
+  );
+
+  const ResendInviteButton = () => (
+    <MenuItem
+      onClick={() => {
+        setAnchorEl(null);
+        dispatch(resendInvite({ id: (selectedUser as User).id }));
+      }}
+    >
+      <div className="list-item">
+        <span>Resend Invite</span>
+      </div>
+    </MenuItem>
+  );
+
+  const CancelInviteButton = () => (
+    <MenuItem
+      onClick={() => {
+        setAnchorEl(null);
+        onCancelInvite(selectedUser as User);
+      }}
+    >
+      <div className="list-item">
+        <span>Cancel Invite</span>
+      </div>
+    </MenuItem>
+  );
+
+  const GenerateNewSecretButton = () => (
+    <MenuItem
+      onClick={() => {
+        setAnchorEl(null);
+        dispatch(resendInvite({ id: (selectedUser as User).id }));
+      }}
+    >
+      <div className="list-item">
+        <span>Generate New Secrete Key</span>
+      </div>
+    </MenuItem>
+  );
+
+  const showButtons = (item: User) => {
+    const isItemAccountOwner = item?.roles?.some(
+      (i) => i?.name === roles.ACCOUNT_OWNER,
+    );
+
+    return (
+      <>
+        <div
+          className="list-card-columns"
+          id="more-actions"
+          onClick={(event: MouseEvent<HTMLDivElement>) => {
+            setAnchorEl(event.currentTarget);
+            setSelectedUser(item);
+          }}
+        >
+          More <ArrowDropDown className="icon" />
+        </div>
+        <Menu
+          id="row-more-actions"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+          style={{ marginTop: 30 }}
+        >
+          {(() => {
+            if (
+              isItemAccountOwner &&
+              isUserLocked(item.state) &&
+              checkPermission(['usersAndAccess', 'editAccountOwner'])
+            ) {
+              return <UnlockButton />;
+            } else {
+              if (selectedUser?.archived) {
+                return <UnArchiveButton />;
+              } else {
+                return (
+                  <div>
+                    {(() => {
+                      switch (selectedUser?.state) {
+                        case UserStates.ACCOUNT_LOCKED:
+                          return <UnlockButton />;
+                        case UserStates.INVITE_CANCELLED:
+                          return (
+                            <>
+                              <ArchiveButton />
+                              <ResendInviteButton />
+                            </>
+                          );
+                        case UserStates.INVITE_EXPIRED:
+                          return (
+                            <>
+                              <ArchiveButton />
+                              <ResendInviteButton />
+                            </>
+                          );
+                        case UserStates.REGISTERED_LOCKED:
+                          return (
+                            <>
+                              <ArchiveButton />
+                              <UnlockButton />
+                            </>
+                          );
+                        case UserStates.UNREGISTERED:
+                          return (
+                            <>
+                              <GenerateNewSecretButton />
+                              <CancelInviteButton />
+                            </>
+                          );
+                        case UserStates.UNREGISTERED_LOCKED:
+                          return (
+                            <>
+                              <ArchiveButton />
+                              <UnlockButton />
+                            </>
+                          );
+                        default:
+                          return <ArchiveButton />;
+                      }
+                    })()}
+                  </div>
+                );
+              }
+            }
+          })()}
+        </Menu>
+      </>
+    );
+  };
 
   return (
     <TabContentWrapper>
@@ -199,11 +384,8 @@ const TabContent: React.FC<TabContentProps> = (props) => {
         />
 
         {checkPermission(['usersAndAccess', 'addNewUser']) &&
-        props.values[0] === UserState.ACTIVE ? (
-          <Button1
-            id="create-new"
-            onClick={() => navigate('user-access/add-user')}
-          >
+        props.values[0] === UsersListType.ACTIVE ? (
+          <Button1 id="create" onClick={() => navigate('users/add')}>
             Add a new User
           </Button1>
         ) : null}
@@ -221,8 +403,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
                     <span
                       className="list-title"
                       onClick={() => {
-                        dispatch(setSelectedUser(item));
-                        navigate(`/user-access/edit-user`);
+                        navigate(`/users/edit/${item.id}`);
                       }}
                     >
                       {getFullName(item)}
@@ -265,7 +446,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
                 return (
                   <div className="list-card-columns">
                     {(() => {
-                      if (!item.verified) {
+                      if (item?.state === UserStates.UNREGISTERED) {
                         return (
                           <div
                             style={{ display: 'flex', alignItems: 'center' }}
@@ -277,7 +458,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
                             Unregistered
                           </div>
                         );
-                      } else if (item.blocked) {
+                      } else if (isUserLocked(item.state)) {
                         return (
                           <div
                             style={{ display: 'flex', alignItems: 'center' }}
@@ -299,80 +480,16 @@ const TabContent: React.FC<TabContentProps> = (props) => {
                 );
               },
             },
-            {
-              header: '',
-              template: function renderComp(item: User) {
-                return (
-                  <div className="list-card-columns">
-                    {(() => {
-                      if (
-                        checkPermission(['usersAndAccess', 'listViewActions'])
-                      ) {
-                        const isItemAccountOwner = item?.roles?.some(
-                          (i) => i?.name === roles.ACCOUNT_OWNER,
-                        );
-
-                        let editAccountOwner = true;
-                        if (isItemAccountOwner)
-                          editAccountOwner = checkPermission([
-                            'usersAndAccess',
-                            'editAccountOwner',
-                          ]);
-                        if (item.archived && !isItemAccountOwner) {
-                          return (
-                            <span
-                              className="list-title"
-                              onClick={() => onUnArchiveUser(item)}
-                            >
-                              Unarchive
-                            </span>
-                          );
-                        } else if (!isItemAccountOwner && !item.verified) {
-                          return (
-                            <>
-                              <span
-                                className="list-title"
-                                onClick={() => onResendInvite(item.id)}
-                                style={{ color: '#1d84ff' }}
-                              >
-                                Resend Invite
-                              </span>
-                              <span
-                                className="list-title"
-                                onClick={() => onCancelInvite(item)}
-                                style={{ color: '#ff6b6b', marginLeft: '12px' }}
-                              >
-                                Cancel Invite
-                              </span>
-                            </>
-                          );
-                        } else if (editAccountOwner && item.blocked) {
-                          return (
-                            <span
-                              className="list-title"
-                              onClick={() => onUnlockUser(item)}
-                            >
-                              Unblock
-                            </span>
-                          );
-                        } else if (!isItemAccountOwner) {
-                          return (
-                            <span
-                              className="list-title"
-                              onClick={() => onArchiveUser(item)}
-                            >
-                              Archive
-                            </span>
-                          );
-                        }
-                      } else {
-                        return null;
-                      }
-                    })()}
-                  </div>
-                );
-              },
-            },
+            ...(checkPermission(['usersAndAccess', 'listViewActions'])
+              ? [
+                  {
+                    header: 'Actions',
+                    template: function renderComp(item: User) {
+                      return showButtons(item);
+                    },
+                  },
+                ]
+              : []),
           ] as ExtraColumn[]
         }
       />
