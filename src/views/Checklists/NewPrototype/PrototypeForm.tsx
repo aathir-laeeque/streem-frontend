@@ -286,14 +286,12 @@ const PrototypeForm: FC<Props> = (props) => {
         )}
       </div>
 
-      {formMode !== FormMode.VIEW && (
-        <div className="form-submit-buttons">
-          <Button1 color="red" variant="secondary" onClick={() => navigate(-1)}>
-            Cancel
-          </Button1>
-          <Button1 type="submit">Submit</Button1>
-        </div>
-      )}
+      <div className="form-submit-buttons">
+        <Button1 color="red" variant="secondary" onClick={() => navigate(-1)}>
+          Cancel
+        </Button1>
+        {formMode !== FormMode.VIEW && <Button1 type="submit">Submit</Button1>}
+      </div>
     </form>
   );
 };
