@@ -976,13 +976,6 @@ export const createBaseViewConfig = ({
             </Button1>,
           ],
         },
-        footerAction: (
-          <div>
-            <Link to="/facility/selection" style={{ color: '#1c1c1c' }}>
-              Skip for now
-            </Link>
-          </div>
-        ),
       };
     }
     case PAGE_NAMES.KEY_EXPIRED:

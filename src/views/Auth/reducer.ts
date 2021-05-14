@@ -67,6 +67,9 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
     case AuthAction.RESET_ERROR:
       return { ...state, error: undefined };
 
+    case AuthAction.SET_CHALLENGE_QUESTION_SUCCESS:
+      return { ...state, hasSetChallengeQuestion: true, token: undefined };
+
     case FacilitiesAction.SWITCH_FACILITY_SUCCESS:
       return {
         ...state,

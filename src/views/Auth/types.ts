@@ -19,6 +19,7 @@ import {
   resetPassword,
   setIdentityToken,
   setIdle,
+  setChallengeQuestionSuccess,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
@@ -202,6 +203,7 @@ export enum AuthAction {
   RESET_PASSWORD = '@@auth/Register/RESET_PASSWORD',
   RESET_TOKEN = '@@auth/Forgot/RESET_TOKEN',
   SET_CHALLENGE_QUESTION = '@@auth/Register/SET_CHALLENGE_QUESTION',
+  SET_CHALLENGE_QUESTION_SUCCESS = '@@auth/Register/SET_CHALLENGE_QUESTION_SUCCESS',
   SET_IDENTITY_TOKEN = '@@auth/Register/SET_IDENTITY_TOKEN',
   SET_IDLE = '@@auth/MyProfile/SET_IDLE',
   UPDATE_USER_PROFILE = '@@auth/MyProfile/UPDATE_USER_PROFILE',
@@ -224,4 +226,5 @@ export type AuthActionType = ReturnType<
   | typeof setIdle
   | typeof switchFacilityError
   | typeof switchFacilitySuccess
+  | typeof setChallengeQuestionSuccess
 >;

@@ -112,7 +112,7 @@ const ValidateCredentialsModal: FC<CommonOverlayProps<{
         showFooter={false}
         title="Current Password"
       >
-        <span>Confirm your current password to set a New Password.</span>
+        <span>Confirm your current password.</span>
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextInput
             ref={register({

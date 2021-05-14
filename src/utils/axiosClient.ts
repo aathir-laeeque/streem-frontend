@@ -67,7 +67,8 @@ axiosInstance.interceptors.response.use(
         if (
           isLoggedIn &&
           Object.values(LoginErrorCodes).some((val) => val === code) &&
-          code !== LoginErrorCodes.INCORRECT
+          code !== LoginErrorCodes.INCORRECT &&
+          code !== LoginErrorCodes.JWT_EXPIRED
         ) {
           throw message || 'Oops! Please Try Again.';
         } else {

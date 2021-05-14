@@ -13,22 +13,31 @@ export const CustomRoute: FC<Props> = ({
   isProtected = true,
   ...props
 }) => {
-  const { isLoggedIn, selectedFacility } = useTypedSelector(
-    (state) => state.auth,
-  );
+  const {
+    isLoggedIn,
+    selectedFacility,
+    hasSetChallengeQuestion,
+  } = useTypedSelector((state) => state.auth);
+  const { location } = props;
 
   if (isLoggedIn) {
-    if (selectedFacility || props.path === 'facility/selection') {
-      return isProtected && props.location?.pathname !== '/' ? (
-        <Component {...props} />
-      ) : checkPermission(['sidebar', 'inbox']) ? (
-        <Redirect from="" to="/inbox" noThrow />
-      ) : (
-        <Redirect from="" to="/users" noThrow />
-      );
-    }
+    if (!hasSetChallengeQuestion) {
+      if (location?.pathname !== '/auth/register/recovery') {
+        return <Redirect from="" to="/auth/register/recovery" noThrow />;
+      }
+    } else {
+      if (selectedFacility || props.path === 'facility/selection') {
+        return isProtected && location?.pathname !== '/' ? (
+          <Component {...props} />
+        ) : checkPermission(['sidebar', 'inbox']) ? (
+          <Redirect from="" to="/inbox" noThrow />
+        ) : (
+          <Redirect from="" to="/users" noThrow />
+        );
+      }
 
-    return <Redirect from="" to="/facility/selection" noThrow />;
+      return <Redirect from="" to="/facility/selection" noThrow />;
+    }
   }
 
   return !isProtected ? (

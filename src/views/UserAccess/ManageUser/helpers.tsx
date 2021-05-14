@@ -100,6 +100,7 @@ export const createSectionConfig = ({
                   label: 'Last Name',
                   id: 'lastName',
                   name: 'lastName',
+                  optional: true,
                   error: errors['lastName']?.message,
                   disabled:
                     pageType === PAGE_TYPE.PROFILE ? false : !isEditable,

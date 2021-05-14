@@ -84,6 +84,9 @@ export const setChallengeQuestion = (payload: {
   token: string;
 }) => actionSpreader(AuthAction.SET_CHALLENGE_QUESTION, payload);
 
+export const setChallengeQuestionSuccess = () =>
+  actionSpreader(AuthAction.SET_CHALLENGE_QUESTION_SUCCESS);
+
 export const validateIdentity = (payload: { identity: string }) =>
   actionSpreader(AuthAction.VALIDATE_IDENTITY, payload);
 

@@ -4,8 +4,6 @@ import { CustomRoute, Notification, OverlayContainer } from '#components';
 import { configureStore } from '#store';
 import { setAuthHeader } from '#utils/axiosClient';
 import { AuthView, FacilitySelectionView, HomeView } from '#views';
-import BaseView from '#views/Auth/BaseView';
-import { PAGE_NAMES, RecoveryInputs } from '#views/Auth/types';
 import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
 import PrintJob from '#views/Jobs/PrintJob';
 import PrintJobActivity from '#views/Jobs/PrintJobActivity';
@@ -38,10 +36,6 @@ const App: FC = () => {
         onBeforeLift={onBeforeLift}
       >
         <Router style={{ display: 'flex', flex: 1 }} basepath="/">
-          <BaseView<RecoveryInputs>
-            path="auth/register/recovery"
-            pageName={PAGE_NAMES.REGISTER_RECOVERY}
-          />
           <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
           <CustomRoute as={FacilitySelectionView} path="facility/selection" />
           <CustomRoute as={PrintJob} path="jobs/print/:jobId" />

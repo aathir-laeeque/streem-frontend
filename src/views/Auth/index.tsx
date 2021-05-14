@@ -66,6 +66,10 @@ const AuthView: FC<RouteComponentProps> = () => {
           path="register/invite-expired"
           pageName={PAGE_NAMES.INVITATION_EXPIRED}
         />
+        <BaseView<RecoveryInputs>
+          path="register/recovery"
+          pageName={PAGE_NAMES.REGISTER_RECOVERY}
+        />
         <BaseView<SecretKeyInputs>
           path="register"
           pageName={PAGE_NAMES.REGISTER_SECRET_KEY}

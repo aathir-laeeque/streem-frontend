@@ -1,6 +1,10 @@
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
-import { closeAllOverlayAction } from '#components/OverlayContainer/actions';
+import {
+  closeAllOverlayAction,
+  openOverlayAction,
+} from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
 import { fetchSelectedUserSuccess } from '#store/users/actions';
 import { User } from '#store/users/types';
@@ -23,8 +27,10 @@ import { LoginErrorCodes } from '#utils/constants';
 import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
+import { ValidateCredentialsPurpose } from '#views/UserAccess/types';
 import { navigate } from '@reach/router';
-import { call, delay, put, select, takeLeading } from 'redux-saga/effects';
+import { call, put, select, takeLeading } from 'redux-saga/effects';
+import { store } from '../../App';
 
 import { persistor } from '../../App';
 import {
@@ -42,6 +48,7 @@ import {
   resetPassword,
   resetToken,
   setChallengeQuestion,
+  setChallengeQuestionSuccess,
   setIdentityToken,
   updateUserProfile,
   validateIdentity,
@@ -180,8 +187,6 @@ function* registerSaga({ payload }: ReturnType<typeof register>) {
     }
 
     setAuthHeader(data.accessToken);
-    navigate('/auth/register/recovery');
-    yield delay(100);
     yield put(loginSuccess(data));
     yield put(fetchProfile({ id: data.id }));
   } catch (error) {
@@ -323,10 +328,24 @@ function* setChallengeQuestionSaga({
     );
 
     if (errors) {
-      throw getErrorMsg(errors);
+      if (errors[0].code === LoginErrorCodes.JWT_EXPIRED) {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.VALIDATE_CREDENTIALS_MODAL,
+            props: {
+              purpose: ValidateCredentialsPurpose.CHALLENGE_QUESTION_UPDATE,
+              onSuccess: (token: string) => {
+                store.dispatch(setIdentityToken({ token }));
+              },
+            },
+          }),
+        );
+      } else {
+        throw getErrorMsg(errors);
+      }
+    } else {
+      yield put(setChallengeQuestionSuccess());
     }
-
-    navigate('/facility/selection');
   } catch (error) {
     error = yield* handleCatch('Auth', 'setChallengeQuestionSaga', error);
     yield put(authError(error));
