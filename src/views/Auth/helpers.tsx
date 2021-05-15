@@ -6,7 +6,6 @@ import { Option } from '#components/shared/Select';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
 import { apiCheckUsername } from '#utils/apiUrls';
-import { ValidatorProps } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import {
@@ -152,6 +151,7 @@ export const createBaseViewConfig = ({
       PAGE_NAMES.FORGOT_NEW_PASSWORD,
       PAGE_NAMES.INVITATION_EXPIRED,
       PAGE_NAMES.KEY_EXPIRED,
+      PAGE_NAMES.ACCOUNT_LOCKED,
     ].includes(pageName) &&
     !token
   ) {

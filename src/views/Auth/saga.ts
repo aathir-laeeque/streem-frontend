@@ -383,7 +383,7 @@ function* validateQuestionSaga({
   payload,
 }: ReturnType<typeof validateQuestion>) {
   try {
-    const { data, errors } = yield call(
+    const { data, errors, token } = yield call(
       request,
       'PATCH',
       apiValidateChallengeQuestion(),
@@ -393,11 +393,16 @@ function* validateQuestionSaga({
     );
 
     if (errors) {
-      throw getErrorMsg(errors);
+      if (errors?.[0].code === LoginErrorCodes.USER_ACCOUNT_LOCKED) {
+        yield put(setIdentityToken({ token }));
+        navigate('/auth/account-locked');
+      } else {
+        throw getErrorMsg(errors);
+      }
+    } else {
+      yield put(setIdentityToken(data));
+      navigate('/auth/forgot-password/new-password');
     }
-
-    yield put(setIdentityToken(data));
-    navigate('/auth/forgot-password/new-password');
   } catch (error) {
     error = yield* handleCatch('Auth', 'validateQuestionSaga', error);
     yield put(authError(error));
