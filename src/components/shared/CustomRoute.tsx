@@ -2,6 +2,8 @@ import React, { FC } from 'react';
 import { Redirect, RouteComponentProps } from '@reach/router';
 import { useTypedSelector } from '#store';
 import checkPermission from '#services/uiPermissions';
+import { logout } from '#views/Auth/actions';
+import { useDispatch } from 'react-redux';
 
 type Props = RouteComponentProps & {
   as: FC | FC<RouteComponentProps<{ id: string }>>;
@@ -17,13 +19,17 @@ export const CustomRoute: FC<Props> = ({
     isLoggedIn,
     selectedFacility,
     hasSetChallengeQuestion,
+    token,
   } = useTypedSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const { location } = props;
 
   if (isLoggedIn) {
     if (!hasSetChallengeQuestion) {
       if (location?.pathname !== '/auth/register/recovery') {
-        return <Redirect from="" to="/auth/register/recovery" noThrow />;
+        if (token)
+          return <Redirect from="" to="/auth/register/recovery" noThrow />;
+        dispatch(logout());
       }
     } else {
       if (selectedFacility || props.path === 'facility/selection') {
