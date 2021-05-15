@@ -24,14 +24,14 @@ export enum CollaboratorStateContent {
 }
 
 export enum CollaboratorStateColors {
-  ILLEGAL = '#1d84ff',
-  NOT_STARTED = '#5aa700',
-  BEING_REVIEWED = '#f7b500',
-  COMMENTED_OK = '#f7b500',
-  COMMENTED_CHANGES = '#f7b500',
-  REQUESTED_CHANGES = '#5aa700',
-  REQUESTED_NO_CHANGES = '#5aa700',
-  SIGNED = '#5aa700',
+  ILLEGAL = '#FF6B6B',
+  NOT_STARTED = '#333333',
+  BEING_REVIEWED = '#1D84FF',
+  COMMENTED_OK = '#5AA700',
+  COMMENTED_CHANGES = '#C29004',
+  REQUESTED_CHANGES = '#C29004',
+  REQUESTED_NO_CHANGES = '#5AA700',
+  SIGNED = '#5AA700',
 }
 
 export enum CollaboratorType {
