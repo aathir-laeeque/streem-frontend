@@ -530,7 +530,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                                           Are you sure you want to{' '}
                                           {selectedChecklist?.archived
                                             ? 'Unarchive'
-                                            : 'Archive'}
+                                            : 'Archive'}{' '}
                                           this Prototype ?
                                         </span>
                                       ),
