@@ -18,4 +18,9 @@ export const customSelectStyles = {
     cursor: 'pointer',
     padding: '10px 16px',
   }),
+
+  menu: (provided) => ({
+    ...provided,
+    zIndex: 2,
+  }),
 };
