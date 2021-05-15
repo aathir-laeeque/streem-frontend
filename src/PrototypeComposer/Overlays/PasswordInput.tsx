@@ -115,8 +115,8 @@ const PasswordInputModal: FC<CommonOverlayProps<{
       >
         <span>
           {isReleasing
-            ? 'By Entering you Account Password, you will Release the Checklist for creating Jobs'
-            : 'By Entering you Account Password you will sign the Prototype and make it ready for release.'}
+            ? 'By Entering your Account Password you will Release the Checklist for creating Jobs'
+            : 'By Entering your Account Password you will sign the Prototype and make it ready for release.'}
         </span>
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextInput
