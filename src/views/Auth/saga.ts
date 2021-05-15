@@ -74,7 +74,7 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
 
     if (errors) {
       if (isLoggedIn) {
-        if (errors?.[0]?.code !== LoginErrorCodes.INCORRECT) {
+        if (errors?.[0]?.code !== LoginErrorCodes.INVALID_CREDENTIALS) {
           yield put(closeAllOverlayAction());
           yield put(cleanUp());
         }
@@ -328,7 +328,7 @@ function* setChallengeQuestionSaga({
     );
 
     if (errors) {
-      if (errors[0].code === LoginErrorCodes.JWT_EXPIRED) {
+      if (errors[0].code === LoginErrorCodes.JWT_TOKEN_EXPIRED) {
         yield put(
           openOverlayAction({
             type: OverlayNames.VALIDATE_CREDENTIALS_MODAL,

@@ -1012,7 +1012,7 @@ export const createBaseViewConfig = ({
         heading: 'Account Locked',
         headingIcon: <LockIcon />,
         subHeading:
-          'Access to to your account has been locked  due to 3 failed attempts.',
+          'Access to to your account has been locked due to 3 failed attempts.',
         footerAction: (
           <div>
             <ContactAdminButton

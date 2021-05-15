@@ -58,8 +58,8 @@ axiosInstance.interceptors.response.use(
       const { code, message } = response?.data?.errors?.[0];
 
       if (
-        code !== LoginErrorCodes.ACCESS_TOKEN_EXPIRED &&
-        code !== LoginErrorCodes.JWT_TOKEN_REVOKED
+        code !== LoginErrorCodes.JWT_ACCESS_TOKEN_EXPIRED &&
+        code !== LoginErrorCodes.JTI_TOKEN_REVOKED
       ) {
         const {
           auth: { isLoggedIn },
@@ -67,8 +67,8 @@ axiosInstance.interceptors.response.use(
         if (
           isLoggedIn &&
           Object.values(LoginErrorCodes).some((val) => val === code) &&
-          code !== LoginErrorCodes.INCORRECT &&
-          code !== LoginErrorCodes.JWT_EXPIRED
+          code !== LoginErrorCodes.INVALID_CREDENTIALS &&
+          code !== LoginErrorCodes.JWT_TOKEN_EXPIRED
         ) {
           throw message || 'Oops! Please Try Again.';
         } else {

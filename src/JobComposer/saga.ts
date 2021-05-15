@@ -213,7 +213,7 @@ function* signOffTaskSaga({ payload }: ReturnType<typeof signOffTasks>) {
       }
     } else {
       console.error('error came in validte api :: ', validateErrors);
-      if (validateErrors[0].code === LoginErrorCodes.INCORRECT) {
+      if (validateErrors[0].code === LoginErrorCodes.INVALID_CREDENTIALS) {
         yield put(setSignOffError('Incorrect Password'));
       }
     }

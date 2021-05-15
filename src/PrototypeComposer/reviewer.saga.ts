@@ -546,7 +546,7 @@ function* signOffPrototypeSaga({
         }),
       );
     } else {
-      if (validateErrors[0].code === LoginErrorCodes.INCORRECT) {
+      if (validateErrors[0].code === LoginErrorCodes.INVALID_CREDENTIALS) {
         throw 'Incorrect Password';
       }
       throw 'Could Not Sign Off the Prototype';
