@@ -71,7 +71,16 @@ function* archiveChecklistSaga({
         );
       }
     } else {
-      console.error('error from apiArchiveChecklist :: ', errors);
+      if (showPopup && errors[0]?.code === 'E120') {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.ARCHIVE_MODAL,
+            props: { mode: 'cannotArchive' },
+          }),
+        );
+      } else {
+        console.error('error from apiArchiveChecklist :: ', errors);
+      }
     }
   } catch (error) {
     console.error('error in archiveChecklist saga :: ', error);
@@ -101,10 +110,10 @@ function* unarchiveChecklistSaga({
         );
       }
     } else {
-      console.error('error from apiArchiveChecklist :: ', errors);
+      console.error('error from apiUnarchiveChecklist :: ', errors);
     }
   } catch (error) {
-    console.error('error in archiveChecklist saga :: ', error);
+    console.error('error in UnarchiveChecklist saga :: ', error);
   }
 }
 

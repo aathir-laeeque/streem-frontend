@@ -81,7 +81,7 @@ const ArchiveModal: FC<CommonOverlayProps<{
           if (mode === 'cannotArchive') {
             return (
               <>
-                <CannotArchive fontSize="140px" />
+                <CannotArchive fontSize="160px" />
                 <div className="text1">Cannot Archive</div>
                 <div className="text2">
                   {`Oops! You can't archive a Checklist that has running Jobs.`}
