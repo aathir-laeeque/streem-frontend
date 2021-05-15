@@ -158,6 +158,50 @@ export const createBaseViewConfig = ({
     navigate('/auth/login');
   }
 
+  const passwordValidators = (password: string) => ({
+    password: {
+      functions: {
+        smallLength: (value: string) => value.length > 7,
+        caseCheck: (value: string) => /^(?=.*[a-z])(?=.*[A-Z])/.test(value),
+        digitLetter: (value: string) => /[0-9]/.test(value),
+        specialChar: (value: string) => /.*[!@#$%^&*() =+_-]/.test(value),
+      },
+      messages: {
+        smallLength: '8 characters minimum',
+        caseCheck: 'Upper and lowercase letters',
+        digitLetter: 'At lest one number',
+        specialChar: 'At lest one special character',
+      },
+    },
+    confirmPassword: {
+      functions: {
+        passwordMatch: (value: string) =>
+          formState?.errors?.password?.length || value !== password
+            ? false
+            : true,
+      },
+      messages: {
+        passwordMatch: 'Password Match',
+      },
+    },
+  });
+
+  const reverseValidationCheckOnPasswords = (confirmPassword: string) => ({
+    passwordMatch: (value: string) => {
+      if (confirmPassword) {
+        if (value !== confirmPassword) {
+          setError('confirmPassword', {
+            type: 'passwordMatch',
+            message: '',
+          });
+        } else {
+          clearErrors('confirmPassword');
+        }
+      }
+      return true;
+    },
+  });
+
   switch (pageName) {
     case PAGE_NAMES.LOGIN:
       return {
@@ -614,36 +658,7 @@ export const createBaseViewConfig = ({
         'password',
         'confirmPassword',
       ]);
-      const validators: {
-        password: ValidatorProps;
-        confirmPassword: ValidatorProps;
-      } = {
-        password: {
-          functions: {
-            smallLength: (value: string) => value.length > 7,
-            caseCheck: (value: string) => /^(?=.*[a-z])(?=.*[A-Z])/.test(value),
-            digitLetter: (value: string) => /[0-9]/.test(value),
-            specialChar: (value: string) => /.*[!@#$%^&*() =+_-]/.test(value),
-          },
-          messages: {
-            smallLength: '8 characters minimum',
-            caseCheck: 'Upper and lowercase letters',
-            digitLetter: 'At lest one number',
-            specialChar: 'At lest one special character',
-          },
-        },
-        confirmPassword: {
-          functions: {
-            passwordMatch: (value: string) =>
-              formState?.errors?.password?.length || value !== password
-                ? false
-                : true,
-          },
-          messages: {
-            passwordMatch: 'Password Match',
-          },
-        },
-      };
+      const validators = passwordValidators(password);
 
       return {
         ...centerCardConfig,
@@ -661,20 +676,7 @@ export const createBaseViewConfig = ({
                   required: true,
                   validate: {
                     ...validators.password.functions,
-                    passwordMatch: (value: string) => {
-                      if (confirmPassword) {
-                        if (value !== confirmPassword) {
-                          setError('confirmPassword', {
-                            type: 'passwordMatch',
-                            message:
-                              validators.confirmPassword.messages.passwordMatch,
-                          });
-                        } else {
-                          clearErrors('confirmPassword');
-                        }
-                      }
-                      return true;
-                    },
+                    ...reverseValidationCheckOnPasswords(confirmPassword),
                   },
                 }),
               },
@@ -788,36 +790,7 @@ export const createBaseViewConfig = ({
         'password',
         'confirmPassword',
       ]);
-      const validators: {
-        password: ValidatorProps;
-        confirmPassword: ValidatorProps;
-      } = {
-        password: {
-          functions: {
-            smallLength: (value: string) => value.length > 7,
-            caseCheck: (value: string) => /^(?=.*[a-z])(?=.*[A-Z])/.test(value),
-            digitLetter: (value: string) => /[0-9]/.test(value),
-            specialChar: (value: string) => /.*[!@#$%^&*() =+_-]/.test(value),
-          },
-          messages: {
-            smallLength: '8 characters minimum',
-            caseCheck: 'Upper and lowercase letters',
-            digitLetter: 'At lest one number',
-            specialChar: 'At lest one special character',
-          },
-        },
-        confirmPassword: {
-          functions: {
-            passwordMatch: (value: string) =>
-              formState?.errors?.password?.length || value !== password
-                ? false
-                : true,
-          },
-          messages: {
-            passwordMatch: 'Password Match',
-          },
-        },
-      };
+      const validators = passwordValidators(password);
 
       return {
         ...centerCardConfig,
@@ -891,20 +864,7 @@ export const createBaseViewConfig = ({
                   required: true,
                   validate: {
                     ...validators.password.functions,
-                    passwordMatch: (value: string) => {
-                      if (confirmPassword) {
-                        if (value !== confirmPassword) {
-                          setError('confirmPassword', {
-                            type: 'passwordMatch',
-                            message:
-                              validators.confirmPassword.messages.passwordMatch,
-                          });
-                        } else {
-                          clearErrors('confirmPassword');
-                        }
-                      }
-                      return true;
-                    },
+                    ...reverseValidationCheckOnPasswords(confirmPassword),
                   },
                 }),
               },
