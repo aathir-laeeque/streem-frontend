@@ -63,7 +63,7 @@ const SessionActivity: FC<TabViewProps> = () => {
   const {
     list,
     pageable: { last, page },
-  } = useTypedSelector((state) => state.users.active);
+  } = useTypedSelector((state) => state.users.all);
 
   const dispatch = useDispatch();
   const [state, setstate] = useState(initialState);
@@ -270,7 +270,7 @@ const SessionActivity: FC<TabViewProps> = () => {
       fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
     });
     dispatch(
-      fetchUsers({ page, size, filters, sort: 'id' }, UsersListType.ACTIVE),
+      fetchUsers({ page, size, filters, sort: 'id' }, UsersListType.ALL),
     );
   };
 
@@ -279,9 +279,12 @@ const SessionActivity: FC<TabViewProps> = () => {
     const { dateRange, startTime, endTime } = state;
     let greaterDate = moment().startOf('day').subtract(7, 'days');
     let lowerDate = moment().endOf('day');
-    if (dateRange[0] && dateRange[1]) {
+    if (dateRange[0]) {
       greaterDate = dateRange[0];
-      lowerDate = dateRange[1];
+      lowerDate = dateRange[0];
+      if (dateRange[1]) {
+        lowerDate = dateRange[1];
+      }
     }
     if (greaterDate && lowerDate && startTime && endTime) {
       const greaterThan = moment(

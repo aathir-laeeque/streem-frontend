@@ -5,7 +5,7 @@ import {
   setActivityFilters,
 } from '#store/activity-filters/action';
 import { fetchUsers } from '#store/users/actions';
-import { User } from '#store/users/types';
+import { User, UsersListType } from '#store/users/types';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Job } from '#views/Jobs/NewListView/types';
@@ -59,7 +59,7 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
   const {
     list,
     pageable: { last, page },
-  } = useTypedSelector((state) => state.users.active);
+  } = useTypedSelector((state) => state.users.all);
 
   const dispatch = useDispatch();
   const [state, setstate] = useState(initialState);
@@ -265,7 +265,9 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
       op: 'AND',
       fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
     });
-    dispatch(fetchUsers({ page, size, filters, sort: 'id' }, 'active'));
+    dispatch(
+      fetchUsers({ page, size, filters, sort: 'id' }, UsersListType.ALL),
+    );
   };
 
   const fetchLogs = (page = 0, size = 250) => {
@@ -273,9 +275,12 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
     const { dateRange, startTime, endTime } = state;
     let greaterDate = moment().startOf('day').subtract(7, 'days');
     let lowerDate = moment().endOf('day');
-    if (dateRange[0] && dateRange[1]) {
+    if (dateRange[0]) {
       greaterDate = dateRange[0];
-      lowerDate = dateRange[1];
+      lowerDate = dateRange[0];
+      if (dateRange[1]) {
+        lowerDate = dateRange[1];
+      }
     }
     if (greaterDate && lowerDate && startTime && endTime) {
       const greaterThan = moment(

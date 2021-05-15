@@ -23,6 +23,7 @@ const initialTabState = {
 const initialState: UsersState = {
   active: initialTabState,
   archived: initialTabState,
+  all: initialTabState,
   loading: false,
   selectedState: UsersListType.ACTIVE,
   selectedUser: undefined,

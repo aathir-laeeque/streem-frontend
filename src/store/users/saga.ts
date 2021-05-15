@@ -12,7 +12,7 @@ import {
   fetchSelectedUserSuccess,
   fetchSelectedUserError,
 } from './actions';
-import { UsersAction, User } from './types';
+import { UsersAction, User, UsersListType } from './types';
 
 function* fetchUsersSaga({ payload }: ReturnType<typeof fetchUsers>) {
   try {
@@ -25,7 +25,7 @@ function* fetchUsersSaga({ payload }: ReturnType<typeof fetchUsers>) {
     const { data, pageable }: ResponseObj<User[]> = yield call(
       request,
       'GET',
-      apiGetUsers(),
+      apiGetUsers(type === UsersListType.ALL ? type : ''),
       { params },
     );
     yield put(fetchUsersSuccess({ data, pageable }, type));

@@ -50,6 +50,7 @@ export type UsersGroup = {
 export interface UsersState {
   readonly [UsersListType.ACTIVE]: UsersGroup;
   readonly [UsersListType.ARCHIVED]: UsersGroup;
+  readonly [UsersListType.ALL]: UsersGroup;
   readonly loading: boolean;
   readonly error?: string;
   readonly selectedState: string;
@@ -72,6 +73,7 @@ export enum UserStates {
 export enum UsersListType {
   ACTIVE = 'active',
   ARCHIVED = 'archived',
+  ALL = 'all',
 }
 
 export enum UsersAction {
