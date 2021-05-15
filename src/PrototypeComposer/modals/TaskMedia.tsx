@@ -286,12 +286,13 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
 
               {!disableDescInput && (
                 <Button1
-                  id="save-details"
-                  onClick={() => {
+                id="save-details"
+                onClick={() => {
+                  if (disableNameInput || !!stateMediaDetails.name) {
                     if (isActivity && execute) {
                       execute(stateMediaDetails);
                       closeOverlay();
-                    } else if (!!stateMediaDetails.name) {
+                    } else {
                       if (mediaDetails?.id) {
                         dispatch(
                           updateTaskMedia({
@@ -312,13 +313,14 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                           }),
                         );
                       }
-                    } else {
-                      setErrors({ name: 'Name is required' });
                     }
-                  }}
-                >
-                  Save
-                </Button1>
+                  } else {
+                    setErrors({ name: 'Name is required' });
+                  }
+                }}
+              >
+                Save
+              </Button1>
               )}
             </div>
 
