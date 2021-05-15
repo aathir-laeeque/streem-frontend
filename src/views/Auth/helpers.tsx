@@ -146,6 +146,8 @@ export const createBaseViewConfig = ({
       PAGE_NAMES.FORGOT_RECOVERY,
       PAGE_NAMES.FORGOT_QUESTIONS,
       PAGE_NAMES.FORGOT_NEW_PASSWORD,
+      PAGE_NAMES.INVITATION_EXPIRED,
+      PAGE_NAMES.KEY_EXPIRED,
     ].includes(pageName) &&
     !token
   ) {

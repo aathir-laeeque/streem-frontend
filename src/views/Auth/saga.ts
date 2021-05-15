@@ -254,7 +254,7 @@ function* checkTokenExpirySaga({
   payload,
 }: ReturnType<typeof checkTokenExpiry>) {
   try {
-    const { data, errors } = yield call(
+    const { data, errors, token } = yield call(
       request,
       'PATCH',
       apiCheckTokenExpiry(),
@@ -265,10 +265,12 @@ function* checkTokenExpirySaga({
 
     if (errors) {
       if (errors?.[0].code === LoginErrorCodes.FORGOT_PASSWORD_TOKEN_EXPIRED) {
+        yield put(setIdentityToken({ token }));
         navigate('/auth/forgot-password/key-expired');
       } else if (
         errors?.[0].code === LoginErrorCodes.REGISTRATION_TOKEN_EXPIRED
       ) {
+        yield put(setIdentityToken({ token }));
         navigate('/auth/register/invite-expired');
       } else {
         throw getErrorMsg(errors);
