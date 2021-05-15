@@ -17,7 +17,10 @@ import {
 } from '#PrototypeComposer/reviewer.types';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
-import { archiveChecklist } from '#views/Checklists/ListView/actions';
+import {
+  archiveChecklist,
+  unarchiveChecklist,
+} from '#views/Checklists/ListView/actions';
 import { FormMode } from '#views/Checklists/NewPrototype/types';
 import { Menu, MenuItem } from '@material-ui/core';
 import {
@@ -436,13 +439,23 @@ const ChecklistHeader: FC = () => {
                 openOverlayAction({
                   type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
                   props: {
-                    header: 'Archive Prototype',
+                    header: data?.archived
+                      ? 'Unarchive Checklist'
+                      : 'Archive Checklist',
                     body: (
                       <span>
-                        Are you sure you want to Archive this Prototype ?
+                        Are you sure you want to{' '}
+                        {data?.archived ? 'Unarchive' : 'Archive'}
+                        this Prototype ?
                       </span>
                     ),
-                    onPrimaryClick: () => dispatch(archiveChecklist(data.id)),
+                    onPrimaryClick: () => {
+                      if (data?.archived) {
+                        dispatch(unarchiveChecklist(data?.id, true));
+                      } else {
+                        dispatch(archiveChecklist(data?.id, true));
+                      }
+                    },
                   },
                 }),
               );
@@ -450,7 +463,9 @@ const ChecklistHeader: FC = () => {
           >
             <div className="list-item">
               <MemoArchive />
-              <span>Archive</span>
+              <span>
+                {data?.archived ? 'Unarchive Checklist' : 'Archive Checklist'}
+              </span>
             </div>
           </MenuItem>
         ) : null}
