@@ -60,6 +60,8 @@ type CreateBaseViewConfigProps = {
   formState: UseFormMethods['formState'];
   getValues: UseFormMethods['getValues'];
   setValue: UseFormMethods['setValue'];
+  setError: UseFormMethods['setError'];
+  clearErrors: UseFormMethods['clearErrors'];
   questions: Option[] | undefined;
 };
 
@@ -116,6 +118,8 @@ export const createBaseViewConfig = ({
   formState,
   getValues,
   setValue,
+  setError,
+  clearErrors,
   questions,
 }: CreateBaseViewConfigProps) => {
   const dispatch = useDispatch();
@@ -606,7 +610,10 @@ export const createBaseViewConfig = ({
         ),
       };
     case PAGE_NAMES.FORGOT_NEW_PASSWORD: {
-      const { password } = getValues(['password']);
+      const { password, confirmPassword } = getValues([
+        'password',
+        'confirmPassword',
+      ]);
       const validators: {
         password: ValidatorProps;
         confirmPassword: ValidatorProps;
@@ -652,7 +659,23 @@ export const createBaseViewConfig = ({
                 name: 'password',
                 ref: register({
                   required: true,
-                  validate: validators.password.functions,
+                  validate: {
+                    ...validators.password.functions,
+                    passwordMatch: (value: string) => {
+                      if (confirmPassword) {
+                        if (value !== confirmPassword) {
+                          setError('confirmPassword', {
+                            type: 'passwordMatch',
+                            message:
+                              validators.confirmPassword.messages.passwordMatch,
+                          });
+                        } else {
+                          clearErrors('confirmPassword');
+                        }
+                      }
+                      return true;
+                    },
+                  },
                 }),
               },
             },
@@ -681,7 +704,10 @@ export const createBaseViewConfig = ({
               props: {
                 messages: validators.confirmPassword.messages,
                 errorsTypes:
-                  keys(formState?.errors?.confirmPassword?.types) || [],
+                  keys({
+                    [formState?.errors?.confirmPassword?.type]: true,
+                    ...formState?.errors?.confirmPassword?.types,
+                  }) || [],
               },
             },
           ],
@@ -700,7 +726,12 @@ export const createBaseViewConfig = ({
             <Button1
               key="forgot"
               type="submit"
-              disabled={loading || !formState.isDirty || !formState.isValid}
+              disabled={
+                loading ||
+                !formState.isDirty ||
+                !formState.isValid ||
+                password !== confirmPassword
+              }
               style={{ marginLeft: 'auto' }}
             >
               Set Password
@@ -753,7 +784,10 @@ export const createBaseViewConfig = ({
         },
       };
     case PAGE_NAMES.REGISTER_CREDENTIALS: {
-      const { password } = getValues(['password']);
+      const { password, confirmPassword } = getValues([
+        'password',
+        'confirmPassword',
+      ]);
       const validators: {
         password: ValidatorProps;
         confirmPassword: ValidatorProps;
@@ -855,7 +889,23 @@ export const createBaseViewConfig = ({
                 name: 'password',
                 ref: register({
                   required: true,
-                  validate: validators.password.functions,
+                  validate: {
+                    ...validators.password.functions,
+                    passwordMatch: (value: string) => {
+                      if (confirmPassword) {
+                        if (value !== confirmPassword) {
+                          setError('confirmPassword', {
+                            type: 'passwordMatch',
+                            message:
+                              validators.confirmPassword.messages.passwordMatch,
+                          });
+                        } else {
+                          clearErrors('confirmPassword');
+                        }
+                      }
+                      return true;
+                    },
+                  },
                 }),
               },
             },
@@ -884,7 +934,10 @@ export const createBaseViewConfig = ({
               props: {
                 messages: validators.confirmPassword.messages,
                 errorsTypes:
-                  keys(formState?.errors?.confirmPassword?.types) || [],
+                  keys({
+                    [formState?.errors?.confirmPassword?.type]: true,
+                    ...formState?.errors?.confirmPassword?.types,
+                  }) || [],
               },
             },
           ],

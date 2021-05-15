@@ -167,6 +167,8 @@ function BaseView<T = Record<string, unknown>>({ pageName }: BaseViewProps) {
     getValues,
     trigger,
     setValue,
+    setError,
+    clearErrors,
   } = useForm<T>({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -179,6 +181,8 @@ function BaseView<T = Record<string, unknown>>({ pageName }: BaseViewProps) {
     formState,
     getValues,
     setValue,
+    setError,
+    clearErrors,
     questions: state?.questions,
   });
 

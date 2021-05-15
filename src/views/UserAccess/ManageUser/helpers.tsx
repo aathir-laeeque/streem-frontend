@@ -608,11 +608,23 @@ const UpdatePassword = ({
       if (!validators[name].functions[key](value)) errors.push(key);
     });
 
+    let passwordMatchError = {};
+    if (name === 'password' && value !== state.confirmPassword) {
+      passwordMatchError = {
+        confirmPassword: ['passwordMatch'],
+      };
+    } else {
+      passwordMatchError = {
+        confirmPassword: [],
+      };
+    }
+
     setState({
       ...state,
       [name]: value,
       errors: {
         ...state.errors,
+        ...passwordMatchError,
         [name]: errors,
       },
     });
