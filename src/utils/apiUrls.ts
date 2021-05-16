@@ -273,7 +273,7 @@ export const apiNotifyAdmin = () => `${baseUrl}/auth/admin/notify`;
 export const apiResetToken = () => `${baseUrl}/auth/token/reset`;
 
 export const apiSwitchFacility = (userId: string, facilityId: string) =>
-  `${baseUrl}/users/${userId}/facility/${facilityId}/switch`;
+  `${baseUrl}/users/${userId}/facilities/${facilityId}/switch`;
 export const apiGetAllUsersAssignedToJob = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}/assignments`;
 

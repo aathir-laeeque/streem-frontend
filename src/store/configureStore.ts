@@ -35,7 +35,6 @@ const persistConfig = {
               isTokenExpired: undefined,
               email: undefined,
               token: undefined,
-              hasSetChallengeQuestion: undefined,
             };
           default:
             return inboundState;

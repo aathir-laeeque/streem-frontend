@@ -159,6 +159,11 @@ export const selectStyles: StylesConfig = {
     cursor: 'pointer',
     padding: '10px 16px',
   }),
+
+  clearIndicator: (styles) => ({
+    ...styles,
+    display: 'none',
+  }),
 };
 
 const useStyles = makeStyles({

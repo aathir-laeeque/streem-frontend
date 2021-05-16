@@ -666,12 +666,14 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: 'password',
+              type: passwordInputType ? 'password' : 'text',
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'New Password',
                 id: 'password',
                 name: 'password',
+                AfterElement: AfterIcon,
+                afterElementWithoutError: true,
                 ref: register({
                   required: true,
                   validate: {
@@ -689,12 +691,14 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: 'password',
+              type: passwordInputType ? 'password' : 'text',
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'Confirm Password',
                 id: 'confirmPassword',
                 name: 'confirmPassword',
+                AfterElement: AfterIcon,
+                afterElementWithoutError: true,
                 ref: register({
                   required: true,
                   validate: validators.confirmPassword.functions,
@@ -729,10 +733,7 @@ export const createBaseViewConfig = ({
               key="forgot"
               type="submit"
               disabled={
-                loading ||
-                !formState.isDirty ||
-                !formState.isValid ||
-                password !== confirmPassword
+                loading || !formState.isDirty || password !== confirmPassword
               }
               style={{ marginLeft: 'auto' }}
             >
@@ -833,10 +834,6 @@ export const createBaseViewConfig = ({
                     value: 45,
                     message: "Shouldn't be greater than 45 characters.",
                   },
-                  pattern: {
-                    value: /^[a-z0-9][a-z0-9._]+$/i,
-                    message: 'Invalid Username',
-                  },
                   validate: async (value) => {
                     if (!value) return 'Invalid Username';
                     const res = await request('POST', apiCheckUsername(), {
@@ -854,12 +851,14 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: 'password',
+              type: passwordInputType ? 'password' : 'text',
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'Create Password',
                 id: 'password',
                 name: 'password',
+                AfterElement: AfterIcon,
+                afterElementWithoutError: true,
                 ref: register({
                   required: true,
                   validate: {
@@ -877,12 +876,14 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: 'password',
+              type: passwordInputType ? 'password' : 'text',
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'Confirm Password',
                 id: 'confirmPassword',
                 name: 'confirmPassword',
+                AfterElement: AfterIcon,
+                afterElementWithoutError: true,
                 ref: register({
                   required: true,
                   validate: validators.confirmPassword.functions,
@@ -1027,7 +1028,7 @@ export const createBaseViewConfig = ({
         heading: 'Account Locked',
         headingIcon: <LockIcon />,
         subHeading:
-          'Access to to your account has been locked due to 3 failed attempts.',
+          'Access to to your account has been locked due to multiple failed attempts.',
         footerAction: (
           <div>
             <ContactAdminButton

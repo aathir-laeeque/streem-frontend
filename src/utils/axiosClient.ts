@@ -57,10 +57,7 @@ axiosInstance.interceptors.response.use(
       const { config: originalReq, response } = error;
       const { code, message } = response?.data?.errors?.[0];
 
-      if (
-        code !== LoginErrorCodes.JWT_ACCESS_TOKEN_EXPIRED &&
-        code !== LoginErrorCodes.JTI_TOKEN_REVOKED
-      ) {
+      if (code !== LoginErrorCodes.JWT_ACCESS_TOKEN_EXPIRED) {
         const {
           auth: { isLoggedIn },
         } = store.getState();
