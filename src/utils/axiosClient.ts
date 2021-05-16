@@ -28,7 +28,7 @@ async function refreshTokenRequest(refreshToken: string) {
       method: 'POST',
       url: apiRefreshToken(),
       data: {
-        refreshToken,
+        token: refreshToken,
       },
     });
 
