@@ -132,12 +132,12 @@ export const createBaseViewConfig = ({
     facilities,
     userId,
   } = useTypedSelector((state) => state.auth);
-  const [passwordInputType, setPasswordInputType] = useState(true);
+  const [isPasswordInputType, setIsPasswordInputType] = useState(true);
 
   const AfterIcon = () => (
     <VisibilityOutlined
-      onClick={() => setPasswordInputType(!passwordInputType)}
-      style={{ color: passwordInputType ? '#999' : '#1d84ff' }}
+      onClick={() => setIsPasswordInputType(!isPasswordInputType)}
+      style={{ color: isPasswordInputType ? '#999' : '#1d84ff' }}
     />
   );
 
@@ -169,8 +169,8 @@ export const createBaseViewConfig = ({
       messages: {
         smallLength: '8 characters minimum',
         caseCheck: 'Upper and lowercase letters',
-        digitLetter: 'At lest one number',
-        specialChar: 'At lest one special character',
+        digitLetter: 'At least one number',
+        specialChar: 'At least one special character',
       },
     },
     confirmPassword: {
@@ -223,7 +223,7 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: passwordInputType ? 'password' : 'text',
+              type: isPasswordInputType ? 'password' : 'text',
               props: {
                 placeholder: 'Enter your Password',
                 label: 'Password',
@@ -666,7 +666,7 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: passwordInputType ? 'password' : 'text',
+              type: isPasswordInputType ? 'password' : 'text',
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'New Password',
@@ -691,7 +691,7 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: passwordInputType ? 'password' : 'text',
+              type: isPasswordInputType ? 'password' : 'text',
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'Confirm Password',
@@ -851,7 +851,7 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: passwordInputType ? 'password' : 'text',
+              type: isPasswordInputType ? 'password' : 'text',
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'Create Password',
@@ -876,7 +876,7 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: passwordInputType ? 'password' : 'text',
+              type: isPasswordInputType ? 'password' : 'text',
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'Confirm Password',

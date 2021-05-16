@@ -582,8 +582,8 @@ const UpdatePassword = ({
       messages: {
         smallLength: '8 characters minimum',
         caseCheck: 'Upper and lowercase letters',
-        digitLetter: 'At lest one number',
-        specialChar: 'At lest one special character',
+        digitLetter: 'At least one number',
+        specialChar: 'At least one special character',
       },
     },
     confirmPassword: {
