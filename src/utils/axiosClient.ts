@@ -15,6 +15,7 @@ import {
 } from './constants';
 import { ResponseObj } from './globalTypes';
 import { isMatchAny } from './stringUtils';
+import { setGlobalError } from '#store/extras/action';
 
 // REFRESH TOKEN LOGIC
 
@@ -121,13 +122,14 @@ axiosInstance.interceptors.response.use(
         }
       } else {
         store.dispatch(closeAllOverlayAction());
-        store.dispatch(
-          logoutSuccess({
-            msg: typeof e !== 'string' ? 'Oops! Please Try Again.' : e,
-            type: NotificationType.ERROR,
-            delayTime: 10,
-          }),
-        );
+        // store.dispatch(
+        //   logoutSuccess({
+        //     msg: typeof e !== 'string' ? 'Oops! Please Try Again.' : e,
+        //     type: NotificationType.ERROR,
+        //     delayTime: 10,
+        //   }),
+        // );
+        store.dispatch(setGlobalError(true));
       }
       throw e;
     }

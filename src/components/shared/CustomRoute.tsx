@@ -1,8 +1,9 @@
-import React, { FC } from 'react';
-import { Redirect, RouteComponentProps } from '@reach/router';
-import { useTypedSelector } from '#store';
 import checkPermission from '#services/uiPermissions';
 import { logout } from '#views/Auth/actions';
+import { useTypedSelector } from '#store';
+import { setGlobalError } from '#store/extras/action';
+import { Redirect, RouteComponentProps, useLocation } from '@reach/router';
+import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 type Props = RouteComponentProps & {
@@ -21,8 +22,18 @@ export const CustomRoute: FC<Props> = ({
     hasSetChallengeQuestion,
     token,
   } = useTypedSelector((state) => state.auth);
+
   const dispatch = useDispatch();
+
   const { location } = props;
+
+  const { hasGlobalError } = useTypedSelector((state) => state.extras);
+
+  useEffect(() => {
+    if (hasGlobalError) {
+      dispatch(setGlobalError(false));
+    }
+  }, [location?.pathname]);
 
   if (isLoggedIn) {
     if (!hasSetChallengeQuestion) {

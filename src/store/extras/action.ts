@@ -6,3 +6,6 @@ export const setInternetConnectivity = ({
 }: {
   connected: boolean;
 }) => actionSpreader(ExtrasAction.SET_INTERNET_CONNECTIVITY, { connected });
+
+export const setGlobalError = (hasError: boolean) =>
+  actionSpreader(ExtrasAction.SET_GLOBAL_ERROR, { hasError });

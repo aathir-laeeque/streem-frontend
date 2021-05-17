@@ -1,4 +1,5 @@
 import { Header, NavigationMenu, WorkArea } from '#components';
+import { ErrorBoundary } from '../../components/ErrorBoundary';
 import { DashboardLayout } from '#components/Layouts';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
@@ -108,22 +109,24 @@ const HomeView: FC<RouteComponentProps> = () => {
       <Header />
       <NavigationMenu />
       <WorkArea>
-        {!connected && (
-          <HeaderWrapper>
-            <div className="alert">
-              <Info />
-              <span>NO INTERNET. </span>
-              Please make sure your are connected to internet to use the CLEEN
-              App.
-            </div>
-          </HeaderWrapper>
-        )}
-        <Router>
-          <ChecklistView path="checklists/*" />
-          <InboxView path="inbox/*" />
-          <JobsView path="jobs/*" />
-          <UserAccessView path="users/*" />
-        </Router>
+        <ErrorBoundary>
+          {!connected && (
+            <HeaderWrapper>
+              <div className="alert">
+                <Info />
+                <span>NO INTERNET. </span>
+                Please make sure your are connected to internet to use the CLEEN
+                App.
+              </div>
+            </HeaderWrapper>
+          )}
+          <Router>
+            <ChecklistView path="checklists/*" />
+            <InboxView path="inbox/*" />
+            <JobsView path="jobs/*" />
+            <UserAccessView path="users/*" />
+          </Router>
+        </ErrorBoundary>
       </WorkArea>
     </DashboardLayout>
   );
