@@ -65,7 +65,10 @@ export const createSectionConfig = ({
   const { t: translate } = useTranslation(['userManagement']);
   const [validatedToken, setValidatedToken] = useState<string | undefined>();
   const { register, errors, getValues, setValue } = formData;
-  const { roles: rolesValues } = getValues(['roles']);
+  const { roles: rolesValues, facilities: facilitiesValues } = getValues([
+    'roles',
+    'facilities',
+  ]);
 
   const shouldShowAllFacilities =
     rolesValues === roles[0].id || rolesValues === roles[2].id;
@@ -246,7 +249,15 @@ export const createSectionConfig = ({
                       e.target.value === roles[0].id ||
                       e.target.value === roles[2].id
                     ) {
-                      setValue('facilities', [{ id: '-1' }]);
+                      setValue('facilities', [{ id: '-1' }], {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                    } else {
+                      setValue('facilities', undefined, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
                     }
                     setValue('roles', e.target.value, {
                       shouldDirty: true,
@@ -293,6 +304,8 @@ export const createSectionConfig = ({
                     isDisabled: !isEditable || shouldShowAllFacilities,
                     ...(shouldShowAllFacilities
                       ? { value: { label: 'All Facilities', value: '-1' } }
+                      : facilitiesValues === undefined
+                      ? { value: [] }
                       : {}),
                   },
                 },
