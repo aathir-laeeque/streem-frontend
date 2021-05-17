@@ -167,7 +167,7 @@ function* unLockUserSaga({ payload }: ReturnType<typeof unLockUser>) {
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,
-        msg: 'User Unblocked !!',
+        msg: 'User Unlocked !!',
       }),
     );
     if (fetchData) {
