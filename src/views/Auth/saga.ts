@@ -294,7 +294,7 @@ function* additionalVerificationSaga({
   payload,
 }: ReturnType<typeof additionalVerification>) {
   try {
-    const { data, errors } = yield call(
+    const { data, errors, token } = yield call(
       request,
       'PATCH',
       apiAdditionalVerification(),
@@ -304,11 +304,16 @@ function* additionalVerificationSaga({
     );
 
     if (errors) {
-      throw getErrorMsg(errors);
+      if (errors?.[0].code === LoginErrorCodes.USER_INVITE_EXPIRED) {
+        yield put(setIdentityToken({ token }));
+        navigate('/auth/register/invite-expired');
+      } else {
+        throw getErrorMsg(errors);
+      }
+    } else {
+      yield put(setIdentityToken(data));
+      navigate('/auth/register/credentials');
     }
-
-    yield put(setIdentityToken(data));
-    navigate('/auth/register/credentials');
   } catch (error) {
     error = yield* handleCatch('Auth', 'additionalVerificationSaga', error);
     yield put(authError(error));
