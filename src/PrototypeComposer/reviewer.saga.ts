@@ -135,11 +135,7 @@ function* submitChecklistForReviewCall(checklistId: Checklist['id']) {
 
     return data;
   } catch (error) {
-    yield* handleCatch(
-      'Prototype Composer',
-      'submitChecklistForReviewCall',
-      error,
-    );
+    throw error;
   }
 }
 
@@ -173,9 +169,10 @@ function* assignReviewersToChecklistSaga({
     const state = getState(yield select());
     const phase = getCurrentPhase(yield select());
 
-    const res = yield* submitChecklistForReviewCall(checklistId);
-
-    let data = res;
+    let data;
+    if (state === ChecklistStates.BEING_BUILT) {
+      data = yield* submitChecklistForReviewCall(checklistId);
+    }
 
     const shouldCallAssignment =
       assignedUserIds.length || unassignedUserIds.length;

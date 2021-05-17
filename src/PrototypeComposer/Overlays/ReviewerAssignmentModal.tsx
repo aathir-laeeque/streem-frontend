@@ -261,10 +261,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
         onSecondary={onSecondary}
         onPrimary={onPrimary}
         disabledPrimary={
-          !state.assignedUsers.length &&
-          !state.unassignedUsers.length &&
-          checklistState === ChecklistStates.BEING_BUILT &&
-          phase === 1
+          !state.assignedUsers.length && !state.unassignedUsers.length
         }
       >
         <div className="top-content">
