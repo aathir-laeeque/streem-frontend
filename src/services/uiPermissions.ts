@@ -10,6 +10,14 @@ export enum roles {
   OPERATOR = 'OPERATOR',
 }
 
+export enum RoleIdByName {
+  ACCOUNT_OWNER = '1',
+  SYSTEM_ADMIN = '3',
+  FACILITY_ADMIN = '2',
+  SUPERVISOR = '4',
+  OPERATOR = '5',
+}
+
 const uiPermissions: Record<string, any> = {
   sidebar: {
     inbox: [

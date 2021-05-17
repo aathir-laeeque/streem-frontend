@@ -3,6 +3,7 @@ import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { RoleIdByName } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { Facilities } from '#store/facilities/types';
 import { fetchSelectedUserSuccess } from '#store/users/actions';
@@ -70,8 +71,10 @@ export const createSectionConfig = ({
     'facilities',
   ]);
 
-  const shouldShowAllFacilities =
-    rolesValues === roles[0].id || rolesValues === roles[2].id;
+  const shouldShowAllFacilities = [
+    RoleIdByName.ACCOUNT_OWNER,
+    RoleIdByName.SYSTEM_ADMIN,
+  ].includes(rolesValues as RoleIdByName);
 
   const config: useScrollableSectionsProps = {
     title: translate('userManagement:edit-title'),
@@ -246,8 +249,10 @@ export const createSectionConfig = ({
                   error: errors['roles']?.message,
                   onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
                     if (
-                      e.target.value === roles[0].id ||
-                      e.target.value === roles[2].id
+                      [
+                        RoleIdByName.ACCOUNT_OWNER,
+                        RoleIdByName.SYSTEM_ADMIN,
+                      ].includes(e.target.value as RoleIdByName)
                     ) {
                       setValue('facilities', [{ id: '-1' }], {
                         shouldDirty: true,

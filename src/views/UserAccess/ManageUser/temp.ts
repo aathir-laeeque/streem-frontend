@@ -1,8 +1,9 @@
+import { RoleIdByName } from '#services/uiPermissions';
 import { RoleType, PermissionType } from '../types';
 
 export const roles: RoleType[] = [
   {
-    id: '1',
+    id: RoleIdByName.ACCOUNT_OWNER,
     name: 'Account Owner',
     permissions: {
       'Create and manage Checklists': true,
@@ -23,7 +24,7 @@ export const roles: RoleType[] = [
     },
   },
   {
-    id: '2',
+    id: RoleIdByName.FACILITY_ADMIN,
     name: 'Facility Admin',
     permissions: {
       'Create and manage Checklists': true,
@@ -42,7 +43,7 @@ export const roles: RoleType[] = [
     },
   },
   {
-    id: '3',
+    id: RoleIdByName.SYSTEM_ADMIN,
     name: 'System Admin',
     permissions: {
       'Manage Users and Permissions': true,
@@ -52,7 +53,7 @@ export const roles: RoleType[] = [
     },
   },
   {
-    id: '4',
+    id: RoleIdByName.SUPERVISOR,
     name: 'Supervisor',
     permissions: {
       'Create and Assign Jobs': true,
@@ -65,7 +66,7 @@ export const roles: RoleType[] = [
     },
   },
   {
-    id: '5',
+    id: RoleIdByName.OPERATOR,
     name: 'Operator',
     permissions: {
       'Execute and Complete Jobs': true,
