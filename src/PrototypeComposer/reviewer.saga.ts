@@ -170,7 +170,10 @@ function* assignReviewersToChecklistSaga({
     const phase = getCurrentPhase(yield select());
 
     let data;
-    if (state === ChecklistStates.BEING_BUILT) {
+    if (
+      state !== ChecklistStates.SUBMITTED_FOR_REVIEW &&
+      state !== ChecklistStates.BEING_REVIEWED
+    ) {
       data = yield* submitChecklistForReviewCall(checklistId);
     }
 

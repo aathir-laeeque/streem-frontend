@@ -1,12 +1,12 @@
 import { BaseModal, Checkbox } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { Checklist, ChecklistStates } from '#PrototypeComposer/checklist.types';
+import { Checklist } from '#PrototypeComposer/checklist.types';
 import {
   Collaborator,
   CollaboratorState,
   CollaboratorType,
 } from '#PrototypeComposer/reviewer.types';
-import { useUsers, OtherUserState, defaultParams } from '#services/users';
+import { defaultParams, OtherUserState, useUsers } from '#services/users';
 import { useTypedSelector } from '#store';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
@@ -17,11 +17,10 @@ import { useDispatch } from 'react-redux';
 import {
   assignReviewersToChecklist,
   assignReviewerToChecklist,
+  fetchAssignedReviewersForChecklist,
   revertReviewersForChecklist,
   unAssignReviewerFromChecklist,
-  fetchAssignedReviewersForChecklist,
 } from '../reviewer.actions';
-
 import Wrapper from './ReviewerAssignment.styles';
 
 type initialState = {
@@ -159,13 +158,11 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
               checked={checked}
               label=""
               onClick={() => onCheckChanged(user, checked, isPreAssigned)}
-              disabled={
-                user.state
-                  ? user.state === CollaboratorState.NOT_STARTED
-                    ? false
-                    : true
-                  : false
-              }
+              disabled={collaborators.some(
+                (collaborator) =>
+                  collaborator.id === user.id &&
+                  collaborator.state !== CollaboratorState.NOT_STARTED,
+              )}
             />
           )}
         </div>

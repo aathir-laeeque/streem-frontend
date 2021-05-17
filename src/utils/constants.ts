@@ -12,8 +12,13 @@ export const fetchBaseUrl = () => {
   return apiUrl;
 };
 
+// DO Not Delete Any Error Code Even If it looks redundent.
+
 export enum LoginErrorCodes {
   JWT_ACCESS_TOKEN_EXPIRED = '101104',
+  JTI_TOKEN_REVOKED = '101102',
+  USER_ARCHIVED = '104007',
+  USER_LOCKED = '104012',
   INVALID_CREDENTIALS = '101003',
   JWT_TOKEN_EXPIRED = '101105',
   JWT_TOKEN_INVALID = '101101',
