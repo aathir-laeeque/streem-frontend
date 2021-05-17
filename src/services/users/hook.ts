@@ -12,10 +12,6 @@ import {
 
 const defaultParams = (includeSorting = true): fetchUsersParams => {
   return {
-    filters: JSON.stringify({
-      op: 'AND',
-      fields: [{ field: 'archived', op: 'EQ', values: [false] }],
-    }),
     page: 0,
     size: 10,
     ...(includeSorting ? { sort: 'createdAt,desc' } : {}),

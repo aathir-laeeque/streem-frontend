@@ -1,33 +1,25 @@
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
+import AssignmentSuccess from '#assets/svg/AssignmentSuccess';
 import { BaseModal } from '#components/shared/BaseModal';
 import { Task } from '#JobComposer/checklist.types';
 import { getUserName, User } from '#services/users';
 import { useTypedSelector } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
-import { ArrowDropDown } from '@material-ui/icons';
-import { pick } from 'lodash';
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
-
-import AssigneeList from './AssigneeList';
 
 type AssignmentError = Error & {
   userId: User['id'];
 };
 
-type AssingnmentInfoProps = {
+type AssignmentInfoProps = {
   assignedUsers: User[];
   unassignedUsers: User[];
   selectedTasks: [Task['taskExecution']['id'], Task['id']][];
-  allUsers: User[];
   errors: AssignmentError[];
 };
 
-type TaskListProps = {
-  tasks: Pick<Task, 'name' | 'id'>[];
-};
-
-const ASSIGNMENT_ERROR_CODE_MESSAGE_MAPPING = {
+const ASSIGNMENT_ERROR_CODE_MESSAGE_MAPPING: Record<string, string> = {
   E220: 'task is already completed',
   E221: 'user performed some action on task',
   E222: 'user signed off the task',
@@ -38,31 +30,29 @@ const Wrapper = styled.div`
     max-width: 600px !important;
   }
 
-  .section {
-    margin-bottom: 16px;
-
-    .header {
-      margin-bottom: 16px;
-      margin-left: 16px;
-      text-align: left;
+  .success {
+    &-info {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 50px;
     }
-  }
 
-  .more-info {
-    align-items: center;
-    color: #1d84ff;
-    display: flex;
-    margin-bottom: 16px;
-    margin-left: 16px;
+    &-icon {
+      font-size: 200px;
+    }
 
-    .icon {
+    &-text {
       color: #000000;
       font-size: 20px;
-      margin-left: 8px;
+      font-weight: bold;
+      margin-top: 16px;
+      text-align: center;
     }
   }
 
-  .errors {
+  .errors-info {
     display: flex;
     flex-direction: column;
     margin-left: 16px;
@@ -84,38 +74,16 @@ const Wrapper = styled.div`
   }
 `;
 
-const TaskListWrapper = styled.div`
-  max-height: 100px;
-  overflow-y: scroll;
-
-  li {
-    text-align: left;
-  }
-`;
-
-const TaskList = ({ tasks }: TaskListProps) => (
-  <TaskListWrapper>
-    <ul>
-      {tasks.map((task) => (
-        <li key={task.id}>{task.name}</li>
-      ))}
-    </ul>
-  </TaskListWrapper>
-);
-
-const AssingnmentInfo: FC<CommonOverlayProps<AssingnmentInfoProps>> = ({
+const AssignmentInfo: FC<CommonOverlayProps<AssignmentInfoProps>> = ({
   closeAllOverlays,
   closeOverlay,
   props: {
     assignedUsers = [],
+    errors = [],
     selectedTasks = [],
     unassignedUsers = [],
-    errors = [],
-    allUsers = [],
   } = {},
 }) => {
-  const [showMoreInfo, toggleMoreInfo] = useState(false);
-
   const { tasksById } = useTypedSelector((state) => state.composer.tasks);
 
   return (
@@ -123,46 +91,17 @@ const AssingnmentInfo: FC<CommonOverlayProps<AssingnmentInfoProps>> = ({
       <BaseModal
         closeAllModals={closeAllOverlays}
         closeModal={closeOverlay}
-        title="Assignment Information"
+        title={
+          errors?.length
+            ? 'Action could not be taken for the following users'
+            : ''
+        }
         showFooter={false}
+        showHeader={!!errors.length}
       >
-        {assignedUsers.length ? (
-          <div className="users-assigned section">
-            <div className="header">Users assigned to selected Tasks</div>
-            <AssigneeList users={assignedUsers} />
-            <TaskList
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              tasks={selectedTasks.map(([_, taskId]) =>
-                pick(tasksById[taskId], ['name', 'id']),
-              )}
-            />
-          </div>
-        ) : null}
-
-        {unassignedUsers.length ? (
-          <div className="users-unassigned section">
-            <div className="header">Users unssigned from selected Tasks</div>
-            <AssigneeList users={unassignedUsers} />
-            <TaskList
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              tasks={selectedTasks.map(([_, taskId]) =>
-                pick(tasksById[taskId], ['name', 'id']),
-              )}
-            />
-          </div>
-        ) : null}
-
+        // TODO : Optimize the loops where in users & tasks can be created as a hashmap outside errors.map and use those inside.
         {errors.length ? (
-          <div
-            className="more-info"
-            onClick={() => toggleMoreInfo((val) => !val)}
-          >
-            More Info <ArrowDropDown className="icon" />{' '}
-          </div>
-        ) : null}
-
-        {showMoreInfo ? (
-          <div className="errors">
+          <div className="errors-info">
             {errors.map((error) => {
               const taskId = (selectedTasks.find(
                 ([taskExecutionId]) => taskExecutionId === error.id,
@@ -170,7 +109,7 @@ const AssingnmentInfo: FC<CommonOverlayProps<AssingnmentInfoProps>> = ({
 
               const taskName = tasksById[taskId as string].name;
 
-              const user = allUsers.find(
+              const user = [...assignedUsers, ...unassignedUsers].find(
                 (user) => user.id === error.userId,
               ) as User;
 
@@ -178,31 +117,27 @@ const AssingnmentInfo: FC<CommonOverlayProps<AssingnmentInfoProps>> = ({
                 (user) => user.id === error.userId,
               );
 
-              const isUserGettingUnassigned = unassignedUsers.some(
-                (user) => user.id === error.userId,
-              );
-
               const userName = getUserName({ user, withEmployeeId: true });
-
-              const message = `${userName} could not be ${
-                isUserGettingAssigned ? 'assigned' : ''
-              }${
-                isUserGettingUnassigned ? 'unassigned' : ''
-              } to ${taskName}, since ${
-                ASSIGNMENT_ERROR_CODE_MESSAGE_MAPPING[error.code]
-              }`;
 
               return (
                 <div className="error-item" key={error.userId}>
-                  {message}
+                  <span>{userName}</span> could not be{' '}
+                  {isUserGettingAssigned ? 'assigned to' : 'unassigned from'}{' '}
+                  <span>{taskName}</span>, since{' '}
+                  {ASSIGNMENT_ERROR_CODE_MESSAGE_MAPPING[error.code]}
                 </div>
               );
             })}
           </div>
-        ) : null}
+        ) : (
+          <div className="success-info">
+            <AssignmentSuccess className="icon success-icon" />
+            <span className="success-text">Action Completed Successfully</span>
+          </div>
+        )}
       </BaseModal>
     </Wrapper>
   );
 };
 
-export default AssingnmentInfo;
+export default AssignmentInfo;

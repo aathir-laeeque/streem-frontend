@@ -95,7 +95,7 @@ export type useUsersReturnType = {
 };
 
 export type fetchUsersParams = {
-  filters: string;
+  filters?: string;
   page: number;
   size: number;
   sort?: string;

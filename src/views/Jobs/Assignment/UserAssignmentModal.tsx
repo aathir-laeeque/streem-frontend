@@ -68,13 +68,14 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
   // users that are newly selected or selected after unselecting
   const [assignedUserList, setAssignedUserList] = useState<User[]>([]);
   // users that are unselected
-  const [unAssignedUserList, setUnAsssignedUserList] = useState<User[]>([]);
+  const [unAssignedUserList, setUnAssignedUserList] = useState<User[]>([]);
 
   const [searchQuery, setSearchQuery] = useState('');
   const prevQuery = usePrevious(searchQuery);
 
   const { users, loadMore, loadAgain } = useUsers({
     userState: OtherUserState.TASKS,
+    params: defaultParams(false),
   });
 
   useEffect(() => {
@@ -149,20 +150,9 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
         type: OverlayNames.ASSIGNMENT_INFO,
         props: {
           selectedTasks,
-          assignedUsers: data?.errors?.length
-            ? assignedUsers.filter(
-                (user) =>
-                  !data.errors.some((error: any) => user.id === error.userId),
-              )
-            : assignedUsers,
-          unassignedUsers: data?.errors?.length
-            ? unassignedUsers.filter(
-                (user) =>
-                  !data.errors.some((error: any) => user.id === error.userId),
-              )
-            : unassignedUsers,
+          assignedUsers,
+          unassignedUsers,
           errors: data?.errors,
-          allUsers: [...assignedUsers, ...unassignedUsers],
         },
       }),
     );
@@ -214,7 +204,7 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
           <span
             className="deselect"
             onClick={() => {
-              setUnAsssignedUserList([
+              setUnAssignedUserList([
                 ...unAssignedUserList,
                 ...assignedUserList,
               ]);
@@ -238,7 +228,7 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
                       _users.filter((_user) => _user.id !== user.id),
                     );
 
-                    setUnAsssignedUserList((_users) => [..._users, user]);
+                    setUnAssignedUserList((_users) => [..._users, user]);
                   } else {
                     // user partial selected make him complete selected
                     setAssignedUserList((_users) =>
@@ -268,6 +258,9 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
               selected={false}
               partialSelected={false}
               onClick={() => {
+                setUnAssignedUserList((_users) =>
+                  _users.filter((_user) => _user.id !== user.id),
+                );
                 setAssignedUserList((_users) => [
                   ..._users,
                   { ...user, completelyAssigned: true },
