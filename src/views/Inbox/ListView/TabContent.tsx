@@ -1,9 +1,4 @@
-import {
-  ExtraColumn,
-  NewListView,
-  ProgressBar,
-  SearchFilter,
-} from '#components';
+import { DataTable, ProgressBar, SearchFilter } from '#components';
 import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
@@ -21,7 +16,6 @@ import {
 import { fetchInbox, setSelectedState } from './actions';
 import { ListViewState, TabViewProps } from './types';
 
-// const DEFAULT_PAGE_NUMBER = 0;
 const DEFAULT_PAGE_SIZE = 10;
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
@@ -76,33 +70,14 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     );
   }, [filterFields]);
 
-  const beforeColumns = [
+  const showPaginationArrows = pageable.totalPages > 10;
+
+  const columns = [
     {
-      header: 'Name',
-      template: function renderComp({
-        id,
-        checklist: { id: checklistId, name: checklistName },
-      }: Job) {
-        return (
-          <div className="list-card-columns">
-            <span
-              className="list-title"
-              onClick={() => {
-                navigate(`/inbox/${id}`, { state: { checklistId } });
-              }}
-              style={{
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {checklistName}
-            </span>
-          </div>
-        );
-      },
-    },
-    {
-      header: 'Job Status',
-      template: function renderComp({ state }: Job) {
+      id: 'state',
+      label: 'State',
+      minWidth: 166,
+      format: function renderComp({ state }: Job) {
         const isJobBlocked = state === AssignedJobStates.BLOCKED;
         const isJobStarted = state === AssignedJobStates.IN_PROGRESS;
 
@@ -122,13 +97,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           : 'Not Started';
 
         return (
-          <div
-            className="list-card-columns"
-            style={{
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-          >
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <FiberManualRecord
               className="icon"
               style={{
@@ -140,37 +109,49 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
                   : '#f7b500',
               }}
             />
-            <span
-              style={{
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                fontSize: '12px',
-                lineHeight: '20px',
-              }}
-              title={title}
-            >
-              {title}
-            </span>
+            <span title={title}>{title}</span>
           </div>
         );
       },
     },
     {
-      header: 'Assignees',
-      template: function renderComp(item: Job) {
+      id: 'name',
+      label: 'Name',
+      minWidth: 240,
+      format: function renderComp({
+        id,
+        checklist: { id: checklistId, name: checklistName },
+      }: Job) {
+        return (
+          <span
+            className="primary"
+            onClick={() => {
+              navigate(`/inbox/${id}`, { state: { checklistId } });
+            }}
+            title={checklistName}
+          >
+            {checklistName}
+          </span>
+        );
+      },
+    },
+    {
+      id: 'assignees',
+      label: 'Assignees',
+      minWidth: 152,
+      format: function renderComp(item: Job) {
         return <AssigneesColumn assignees={item.assignees} />;
       },
     },
     {
-      header: 'Task Completed',
-      template: function renderComp({
-        completedTasks = 0,
-        totalTasks = 0,
-      }: Job) {
+      id: 'task-completed',
+      label: 'Task Completed',
+      minWidth: 152,
+      format: function renderComp({ completedTasks = 0, totalTasks = 0 }: Job) {
         const percentage = totalTasks ? (completedTasks / totalTasks) * 100 : 0;
 
         return (
-          <div className="list-card-columns task-progress">
+          <div className="task-progress">
             <ProgressBar whiteBackground percentage={percentage} />
             <span>
               {completedTasks} of {totalTasks} Tasks
@@ -180,18 +161,19 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       },
     },
     {
-      header: 'Job ID',
-      template: function renderComp(item: Job) {
-        return (
-          <div className="list-card-columns" key={item.id}>
-            {item.code}
-          </div>
-        );
-      },
+      id: 'code',
+      label: 'Job ID',
+      minWidth: 152,
     },
+    ...job.map((jobProperty) => {
+      return {
+        id: jobProperty.id,
+        label: jobProperty.placeHolder,
+        minWidth: 100,
+        maxWidth: 180,
+      };
+    }),
   ];
-
-  const showPaginationArrows = pageable.totalPages > 10;
 
   return (
     <TabContentWrapper>
@@ -223,15 +205,18 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           }}
         />
       </div>
-      <NewListView
-        properties={job}
-        fetchData={fetchData}
-        isLast={pageable.last}
-        currentPage={pageable.page}
-        data={list}
-        beforeColumns={beforeColumns as ExtraColumn[]}
+      <DataTable
+        columns={columns}
+        rows={list.map((item) => {
+          return {
+            ...item,
+            ...job.reduce<Record<string, string>>((acc, jobProperty) => {
+              acc[jobProperty.id] = item.properties?.[jobProperty.name];
+              return acc;
+            }, {}),
+          };
+        })}
       />
-
       <div className="pagination">
         <ArrowLeft
           className={`icon ${showPaginationArrows ? '' : 'hide'}`}

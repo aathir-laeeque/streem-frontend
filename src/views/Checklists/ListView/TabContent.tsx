@@ -4,9 +4,8 @@ import MemoStartRevision from '#assets/svg/StartRevision';
 import MemoViewInfo from '#assets/svg/ViewInfo';
 import {
   Button1,
+  DataTable,
   DropdownFilter,
-  ExtraColumn,
-  NewListView,
   SearchFilter,
   ToggleSwitch,
 } from '#components';
@@ -55,13 +54,13 @@ const getBaseFilter = (label: string): FilterField[] => [
   },
   { field: 'archived', op: 'EQ', values: [false] },
   ...(label === 'prototype'
-    ? [
+    ? ([
         {
           field: 'state',
           op: 'NE',
           values: [DisabledStates.DEPRECATED],
         },
-      ]
+      ] as FilterField[])
     : []),
 ];
 
@@ -73,10 +72,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   label,
 }) => {
   const {
-    checklistListView: { checklists, pageable, currentPageData },
+    checklistListView: { pageable, currentPageData },
     auth: { userId },
   } = useTypedSelector((state) => state);
-  const { selectedFacility: { id: facilityId } = {} } = useTypedSelector(
+  const { selectedFacility: { id: facilityId = '' } = {} } = useTypedSelector(
     (state) => state.auth,
   );
 
@@ -102,11 +101,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   const [filterFields, setFilterFields] = useState<FilterField[]>(
     getBaseFilter(label),
   );
-
-  const [pageData, setPageData] = useState({
-    start: pageable.page * pageable.pageSize,
-    end: pageable.page * pageable.pageSize + pageable.pageSize,
-  });
 
   const fetchData = (page: number, size: number) => {
     const filters = JSON.stringify({ op: 'AND', fields: filterFields });
@@ -142,13 +136,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     fetchData(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE);
   }, []);
 
-  useEffect(() => {
-    setPageData({
-      start: pageable.page * pageable.pageSize,
-      end: pageable.page * pageable.pageSize + pageable.pageSize,
-    });
-  }, [pageable]);
-
   const onCreateJob = (jobDetails: Record<string, string>) => {
     const tempProperties: { id: string; value: string }[] = [];
     let error = false;
@@ -181,15 +168,278 @@ const ListView: FC<ListViewProps & { label: string }> = ({
 
   const showPaginationArrows = pageable.totalPages > 10;
 
+  const columns = [
+    ...(label === 'prototype'
+      ? [
+          {
+            id: 'state',
+            label: 'State',
+            minWidth: 166,
+            format: function renderComp(item: Checklist) {
+              return (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <FiberManualRecord
+                    className="icon"
+                    style={{ color: ChecklistStatesColors[item.state] }}
+                  />
+                  <span title={ChecklistStatesContent[item.state]}>
+                    {ChecklistStatesContent[item.state]}
+                  </span>
+                </div>
+              );
+            },
+          },
+        ]
+      : []),
+    {
+      id: 'name',
+      label: 'Name',
+      minWidth: 240,
+      format: function renderComp(item: Checklist) {
+        return (
+          <span
+            className="primary"
+            onClick={() => selectChecklist(item.id)}
+            title={item.name}
+          >
+            {item.name}
+          </span>
+        );
+      },
+    },
+    {
+      id: 'checklist-id',
+      label: 'Checklist ID',
+      minWidth: 152,
+      format: function renderComp(item: Checklist) {
+        return <div key={item.id}>{item.code}</div>;
+      },
+    },
+    ...checklistProperties.map((checklistProperty) => {
+      return {
+        id: checklistProperty.id,
+        label: checklistProperty.placeHolder,
+        minWidth: 100,
+        maxWidth: 180,
+      };
+    }),
+    {
+      id: 'actions',
+      label: 'Actions',
+      minWidth: 100,
+      format: function renderComp(item: Checklist) {
+        if (label === 'published') {
+          return (
+            <>
+              <div
+                id="more-actions"
+                onClick={(event: MouseEvent<HTMLDivElement>) => {
+                  setAnchorEl(event.currentTarget);
+                  setSelectedChecklist(item);
+                }}
+              >
+                More <ArrowDropDown className="icon" />
+              </div>
+
+              <Menu
+                id="row-more-actions"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                style={{ marginTop: 40 }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    handleClose();
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.CHECKLIST_INFO,
+                        props: { checklistId: selectedChecklist?.id },
+                      }),
+                    );
+                  }}
+                >
+                  <div className="list-item">
+                    <MemoViewInfo />
+                    <span>View Info</span>
+                  </div>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleClose();
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.CREATE_JOB_MODAL,
+                        props: {
+                          selectedChecklist: selectedChecklist,
+                          properties: jobProperties,
+                          onCreateJob: onCreateJob,
+                        },
+                      }),
+                    );
+                  }}
+                >
+                  <div className="list-item">
+                    <MemoCreateJob />
+                    <span>Create Job</span>
+                  </div>
+                </MenuItem>
+                {checkPermission(['checklists', 'revision']) && (
+                  <MenuItem
+                    onClick={() => {
+                      handleClose();
+                      if (selectedChecklist?.id)
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                            props: {
+                              header: 'Start Revision',
+                              body: (
+                                <>
+                                  <span>
+                                    Are you sure you want to start a Revision on
+                                    this Checklist ?
+                                  </span>
+                                  <span style={{ color: '#999999' }}>
+                                    This will Deprecate the current Checklist
+                                    and create a new Prototype as a revision.
+                                  </span>
+                                </>
+                              ),
+                              onPrimaryClick: () =>
+                                dispatch(
+                                  addRevisionPrototype(
+                                    selectedChecklist?.id,
+                                    selectedChecklist?.code,
+                                    selectedChecklist?.name,
+                                  ),
+                                ),
+                            },
+                          }),
+                        );
+                    }}
+                  >
+                    <div className="list-item">
+                      <MemoStartRevision />
+                      <span>Start a Revision</span>
+                    </div>
+                  </MenuItem>
+                )}
+                {checkPermission(['checklists', 'archive']) && (
+                  <MenuItem
+                    onClick={() => {
+                      handleClose();
+                      if (selectedChecklist?.id)
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                            props: {
+                              header: 'Archive Prototype',
+                              body: (
+                                <span>
+                                  Are you sure you want to Archive this
+                                  Prototype ?
+                                </span>
+                              ),
+                              onPrimaryClick: () =>
+                                dispatch(
+                                  archiveChecklist(selectedChecklist.id),
+                                ),
+                            },
+                          }),
+                        );
+                    }}
+                  >
+                    <div className="list-item">
+                      <MemoArchive />
+                      <span>Archive Checklist</span>
+                    </div>
+                  </MenuItem>
+                )}
+              </Menu>
+            </>
+          );
+        } else {
+          if (!checkPermission(['checklists', 'archive'])) return <div />;
+          return (
+            <div
+              id="archive-unarchive"
+              onClick={() => {
+                if (item.archived) {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                      props: {
+                        header: 'Unarchive Prototype',
+                        body: (
+                          <span>
+                            Are you sure you want to Unarchive this Prototype ?
+                          </span>
+                        ),
+                        onPrimaryClick: () =>
+                          dispatch(unarchiveChecklist(item.id)),
+                      },
+                    }),
+                  );
+                } else {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                      props: {
+                        header: 'Archive Prototype',
+                        body: (
+                          <span>
+                            Are you sure you want to Archive this Prototype ?
+                          </span>
+                        ),
+                        onPrimaryClick: () =>
+                          dispatch(archiveChecklist(item.id)),
+                      },
+                    }),
+                  );
+                }
+              }}
+            >
+              <MemoArchive style={{ marginRight: '8px' }} />
+              {item.archived ? 'Unarchive' : 'Archive'}
+            </div>
+          );
+        }
+      },
+    },
+    ...(label === 'published' &&
+    currentPageData.some((item) => item.state === 'BEING_REVISED')
+      ? [
+          {
+            id: 'revised',
+            label: '',
+            minWidth: 240,
+            format: function renderComp(item: Checklist) {
+              if (item.state === 'BEING_REVISED') {
+                return (
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <FiberManualRecord
+                      className="icon"
+                      style={{
+                        color: ChecklistStatesColors[item.state],
+                      }}
+                    />
+                    {ChecklistStatesContent[item.state]}
+                  </div>
+                );
+              } else {
+                return <div />;
+              }
+            },
+          },
+        ]
+      : []),
+  ];
+
   return (
     <TabContentWrapper>
-      <div
-        style={{
-          padding: '0 0 8px',
-          display: 'flex',
-          alignItems: 'flex-end',
-        }}
-      >
+      <div className="filters">
         <SearchFilter
           showdropdown
           dropdownOptions={[
@@ -217,7 +467,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           }}
         />
 
-        {label === 'prototype' ? (
+        {label === 'prototype' && (
           <DropdownFilter
             label="Prototype State is"
             options={[
@@ -230,24 +480,25 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                 })),
             ]}
             updateFilter={(option) =>
-              setFilterFields((currentFields) =>
-                currentFields.map((field) => ({
-                  ...field,
-                  ...(field.field === 'state'
-                    ? {
-                        op: option.value === 'all' ? 'NE' : 'EQ',
-                        values: [
-                          option.value === 'all' ? 'PUBLISHED' : option.value,
-                        ],
-                      }
-                    : { values: field.values }),
-                })),
+              setFilterFields(
+                (currentFields) =>
+                  currentFields.map((field) => ({
+                    ...field,
+                    ...(field.field === 'state'
+                      ? {
+                          op: option.value === 'all' ? 'NE' : 'EQ',
+                          values: [
+                            option.value === 'all' ? 'PUBLISHED' : option.value,
+                          ],
+                        }
+                      : { values: field.values }),
+                  })) as FilterField[],
               )
             }
           />
-        ) : null}
+        )}
 
-        {label === 'prototype' ? (
+        {label === 'prototype' && (
           <DropdownFilter
             label="I am involved as"
             options={[
@@ -320,7 +571,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
               }
             }}
           />
-        ) : null}
+        )}
 
         <ToggleSwitch
           checkedIcon={false}
@@ -356,302 +607,22 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           </Button1>
         )}
       </div>
-      <NewListView
-        properties={checklistProperties}
-        data={currentPageData}
-        beforeColumns={
-          [
-            ...(label === 'prototype'
-              ? [
-                  {
-                    header: 'State',
-                    template: function renderComp(item: Checklist) {
-                      return (
-                        <div className="list-card-columns" key={item.id}>
-                          <FiberManualRecord
-                            className="icon"
-                            style={{ color: ChecklistStatesColors[item.state] }}
-                          />
-                          {ChecklistStatesContent[item.state]}
-                        </div>
-                      );
-                    },
-                  },
-                ]
-              : []),
-            {
-              header: 'Name',
-              template: function renderComp(item: Checklist) {
-                return (
-                  <div className="list-card-columns" key={`name_${item.code}`}>
-                    <span
-                      className="list-title"
-                      onClick={() => selectChecklist(item.id)}
-                    >
-                      {item.name}
-                    </span>
-                  </div>
-                );
-              },
-            },
-          ] as ExtraColumn[]
-        }
-        afterColumns={
-          [
-            {
-              header: 'Checklist ID',
-              template: function renderComp(item: Checklist) {
-                return (
-                  <div className="list-card-columns" key={item.id}>
-                    {item.code}
-                  </div>
-                );
-              },
-            },
-            {
-              header: '',
-              template: function renderComp(item: Checklist) {
-                if (label === 'published') {
-                  return (
-                    <>
-                      <div
-                        className="list-card-columns"
-                        id="more-actions"
-                        onClick={(event: MouseEvent<HTMLDivElement>) => {
-                          setAnchorEl(event.currentTarget);
-                          setSelectedChecklist(item);
-                        }}
-                      >
-                        More <ArrowDropDown className="icon" />
-                      </div>
 
-                      <Menu
-                        id="row-more-actions"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                        style={{ marginTop: 40 }}
-                      >
-                        <MenuItem
-                          onClick={() => {
-                            handleClose();
-                            dispatch(
-                              openOverlayAction({
-                                type: OverlayNames.CHECKLIST_INFO,
-                                props: { checklistId: selectedChecklist?.id },
-                              }),
-                            );
-                          }}
-                        >
-                          <div className="list-item">
-                            <MemoViewInfo />
-                            <span>View Info</span>
-                          </div>
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            handleClose();
-                            dispatch(
-                              openOverlayAction({
-                                type: OverlayNames.CREATE_JOB_MODAL,
-                                props: {
-                                  selectedChecklist: selectedChecklist,
-                                  properties: jobProperties,
-                                  onCreateJob: onCreateJob,
-                                },
-                              }),
-                            );
-                          }}
-                        >
-                          <div className="list-item">
-                            <MemoCreateJob />
-                            <span>Create Job</span>
-                          </div>
-                        </MenuItem>
-                        {checkPermission(['checklists', 'revision']) && (
-                          <MenuItem
-                            onClick={() => {
-                              handleClose();
-                              if (selectedChecklist?.id)
-                                dispatch(
-                                  openOverlayAction({
-                                    type:
-                                      OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                                    props: {
-                                      header: 'Start Revision',
-                                      body: (
-                                        <>
-                                          <span>
-                                            Are you sure you want to start a
-                                            Revision on this Checklist ?
-                                          </span>
-                                          <span style={{ color: '#999999' }}>
-                                            This will Deprecate the current
-                                            Checklist and create a new Prototype
-                                            as a revision.
-                                          </span>
-                                        </>
-                                      ),
-                                      onPrimaryClick: () =>
-                                        dispatch(
-                                          addRevisionPrototype(
-                                            selectedChecklist?.id,
-                                            selectedChecklist?.code,
-                                            selectedChecklist?.name,
-                                          ),
-                                        ),
-                                    },
-                                  }),
-                                );
-                            }}
-                          >
-                            <div className="list-item">
-                              <MemoStartRevision />
-                              <span>Start a Revision</span>
-                            </div>
-                          </MenuItem>
-                        )}
-                        {checkPermission(['checklists', 'archive']) && (
-                          <MenuItem
-                            onClick={() => {
-                              handleClose();
-                              if (selectedChecklist?.id)
-                                dispatch(
-                                  openOverlayAction({
-                                    type:
-                                      OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                                    props: {
-                                      header: selectedChecklist?.archived
-                                        ? 'Unarchive Checklist'
-                                        : 'Archive Checklist',
-                                      body: (
-                                        <span>
-                                          Are you sure you want to{' '}
-                                          {selectedChecklist?.archived
-                                            ? 'Unarchive'
-                                            : 'Archive'}{' '}
-                                          this Prototype ?
-                                        </span>
-                                      ),
-                                      onPrimaryClick: () => {
-                                        if (selectedChecklist?.archived) {
-                                          dispatch(
-                                            unarchiveChecklist(
-                                              selectedChecklist?.id,
-                                              true,
-                                            ),
-                                          );
-                                        } else {
-                                          dispatch(
-                                            archiveChecklist(
-                                              selectedChecklist.id,
-                                              true,
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    },
-                                  }),
-                                );
-                            }}
-                          >
-                            <div className="list-item">
-                              <MemoArchive />
-                              <span>
-                                {selectedChecklist?.archived
-                                  ? 'Unarchive Checklist'
-                                  : 'Archive Checklist'}
-                              </span>
-                            </div>
-                          </MenuItem>
-                        )}
-                      </Menu>
-                    </>
-                  );
-                } else {
-                  if (!checkPermission(['checklists', 'archive']))
-                    return (
-                      <div
-                        className="list-card-columns"
-                        id="archive-unarchive"
-                      />
-                    );
-                  return (
-                    <div
-                      id="archive-unarchive"
-                      className="list-card-columns"
-                      onClick={() => {
-                        if (item.archived) {
-                          dispatch(
-                            openOverlayAction({
-                              type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                              props: {
-                                header: 'Unarchive Prototype',
-                                body: (
-                                  <span>
-                                    Are you sure you want to Unarchive this
-                                    Prototype ?
-                                  </span>
-                                ),
-                                onPrimaryClick: () =>
-                                  dispatch(unarchiveChecklist(item.id)),
-                              },
-                            }),
-                          );
-                        } else {
-                          dispatch(
-                            openOverlayAction({
-                              type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                              props: {
-                                header: 'Archive Prototype',
-                                body: (
-                                  <span>
-                                    Are you sure you want to Archive this
-                                    Prototype ?
-                                  </span>
-                                ),
-                                onPrimaryClick: () =>
-                                  dispatch(archiveChecklist(item.id)),
-                              },
-                            }),
-                          );
-                        }
-                      }}
-                    >
-                      <MemoArchive style={{ marginRight: '8px' }} />
-                      {item.archived ? 'Unarchive' : 'Archive'}
-                    </div>
-                  );
-                }
+      <DataTable
+        columns={columns}
+        rows={currentPageData.map((item) => {
+          return {
+            ...item,
+            ...checklistProperties.reduce<Record<string, string>>(
+              (acc, checklistProperty) => {
+                acc[checklistProperty.id] =
+                  item.properties?.[checklistProperty.name];
+                return acc;
               },
-            },
-            ...(label === 'published'
-              ? [
-                  {
-                    header: '',
-                    template: function renderComp(item: Checklist) {
-                      if (item.state === 'BEING_REVISED') {
-                        return (
-                          <div className="list-card-columns">
-                            <FiberManualRecord
-                              className="icon"
-                              style={{
-                                color: ChecklistStatesColors[item.state],
-                              }}
-                            />
-                            {ChecklistStatesContent[item.state]}
-                          </div>
-                        );
-                      } else {
-                        return <div className="list-card-columns"></div>;
-                      }
-                    },
-                  },
-                ]
-              : []),
-          ] as ExtraColumn[]
-        }
+              {},
+            ),
+          };
+        })}
       />
 
       <div className="pagination">

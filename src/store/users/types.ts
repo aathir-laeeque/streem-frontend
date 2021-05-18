@@ -70,6 +70,28 @@ export enum UserStates {
   UNREGISTERED_LOCKED = 'UNREGISTERED_LOCKED',
 }
 
+export enum UserStatesContent {
+  ACCOUNT_LOCKED = 'Locked',
+  INVITE_CANCELLED = 'Invitation Canceled',
+  INVITE_EXPIRED = 'Invitation Expired',
+  PASSWORD_EXPIRED = 'Active',
+  REGISTERED = 'Active',
+  REGISTERED_LOCKED = 'Locked',
+  UNREGISTERED = 'Unregistered',
+  UNREGISTERED_LOCKED = 'Locked',
+}
+
+export enum UserStatesColors {
+  ACCOUNT_LOCKED = '#ff6b6b',
+  INVITE_CANCELLED = '#f7b500',
+  INVITE_EXPIRED = '#f7b500',
+  PASSWORD_EXPIRED = '#5aa700',
+  REGISTERED = '#5aa700',
+  REGISTERED_LOCKED = '#ff6b6b',
+  UNREGISTERED = '#f7b500',
+  UNREGISTERED_LOCKED = '#ff6b6b',
+}
+
 export enum UsersListType {
   ACTIVE = 'active',
   ARCHIVED = 'archived',

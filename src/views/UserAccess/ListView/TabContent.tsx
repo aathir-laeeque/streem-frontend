@@ -1,11 +1,16 @@
-import { Button1, SearchFilter, TabContentProps } from '#components';
+import { Button1, DataTable, SearchFilter, TabContentProps } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { ExtraColumn, NewListView } from '#components/shared/NewListView';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
 import { fetchUsers } from '#store/users/actions';
-import { User, UsersListType, UserStates } from '#store/users/types';
+import {
+  User,
+  UsersListType,
+  UserStates,
+  UserStatesColors,
+  UserStatesContent,
+} from '#store/users/types';
 import { FilterField } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
@@ -168,6 +173,88 @@ const TabContent: React.FC<TabContentProps> = (props) => {
 
   const showPaginationArrows = pageable.totalPages > 10;
 
+  const columns = [
+    {
+      id: 'name',
+      label: 'Name',
+      minWidth: 240,
+      format: function renderComp(item: User) {
+        const fullName = getFullName(item);
+        return (
+          <span
+            className="primary"
+            onClick={() => navigate(`/users/edit/${item.id}`)}
+            title={fullName}
+          >
+            {fullName}
+          </span>
+        );
+      },
+    },
+    {
+      id: 'employeeId',
+      label: 'Employee ID',
+      minWidth: 152,
+    },
+    {
+      id: 'email',
+      label: 'Email',
+      minWidth: 152,
+      format: function renderComp({ email }: User) {
+        return (
+          <div title={email} style={{ textTransform: 'lowercase' }}>
+            {email}
+          </div>
+        );
+      },
+    },
+    {
+      id: 'role',
+      label: 'Role',
+      minWidth: 152,
+      format: function renderComp(item: User) {
+        const userRolesString = removeUnderscore(
+          item?.roles
+            ?.map((role) => startCase(toLower(role.name)))
+            .join(', ') || '',
+        );
+        return <span title={userRolesString}>{userRolesString}</span>;
+      },
+    },
+    {
+      id: 'status',
+      label: 'Status',
+      minWidth: 152,
+      format: function renderComp(item: User) {
+        return (() => {
+          if (item.archived) {
+            return <span title="Archived">Archived</span>;
+          } else {
+            return (
+              <div
+                title={UserStatesContent[item.state]}
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
+                <FiberManualRecord
+                  className="icon"
+                  style={{ color: UserStatesColors[item.state] }}
+                />
+                {UserStatesContent[item.state]}
+              </div>
+            );
+          }
+        })();
+      },
+    },
+    {
+      id: 'actions',
+      label: 'Actions',
+      minWidth: 152,
+      format: function renderComp(item: User) {
+        return showButtons(item);
+      },
+    },
+  ];
   const isUserLocked = (state: UserStates) =>
     [
       UserStates.UNREGISTERED_LOCKED,
@@ -177,7 +264,6 @@ const TabContent: React.FC<TabContentProps> = (props) => {
 
   const handleClose = () => {
     setAnchorEl(null);
-    setSelectedUser(null);
   };
 
   const ArchiveButton = () => (
@@ -390,109 +476,8 @@ const TabContent: React.FC<TabContentProps> = (props) => {
           </Button1>
         ) : null}
       </div>
-      <NewListView
-        properties={[]}
-        data={currentPageData}
-        beforeColumns={
-          [
-            {
-              header: 'Name',
-              template: function renderComp(item: User) {
-                return (
-                  <div className="list-card-columns">
-                    <span
-                      className="list-title"
-                      onClick={() => {
-                        navigate(`/users/edit/${item.id}`);
-                      }}
-                    >
-                      {getFullName(item)}
-                    </span>
-                  </div>
-                );
-              },
-            },
-            {
-              header: 'Employee ID',
-              template: function renderComp(item: User) {
-                return (
-                  <div className="list-card-columns">{item.employeeId}</div>
-                );
-              },
-            },
-            {
-              header: 'Email ID',
-              template: function renderComp(item: User) {
-                return <div className="list-card-columns">{item.email}</div>;
-              },
-            },
-            {
-              header: 'Roles',
-              template: function renderComp(item: User) {
-                return (
-                  <div className="list-card-columns">
-                    {removeUnderscore(
-                      item?.roles
-                        ?.map((role) => startCase(toLower(role.name)))
-                        .join(' ,') || '',
-                    )}
-                  </div>
-                );
-              },
-            },
-            {
-              header: 'Status',
-              template: function renderComp(item: User) {
-                return (
-                  <div className="list-card-columns">
-                    {(() => {
-                      if (item?.state === UserStates.UNREGISTERED) {
-                        return (
-                          <div
-                            style={{ display: 'flex', alignItems: 'center' }}
-                          >
-                            <FiberManualRecord
-                              className="icon"
-                              style={{ color: '#f7b500' }}
-                            />
-                            Unregistered
-                          </div>
-                        );
-                      } else if (isUserLocked(item.state)) {
-                        return (
-                          <div
-                            style={{ display: 'flex', alignItems: 'center' }}
-                          >
-                            <FiberManualRecord
-                              className="icon"
-                              style={{ color: '#ff6b6b' }}
-                            />
-                            Locked
-                          </div>
-                        );
-                      } else if (!item.archived) {
-                        return <span>Active</span>;
-                      } else if (item.archived) {
-                        return null;
-                      }
-                    })()}
-                  </div>
-                );
-              },
-            },
-            ...(checkPermission(['usersAndAccess', 'listViewActions'])
-              ? [
-                  {
-                    header: 'Actions',
-                    template: function renderComp(item: User) {
-                      return showButtons(item);
-                    },
-                  },
-                ]
-              : []),
-          ] as ExtraColumn[]
-        }
-      />
+
+      <DataTable columns={columns} rows={currentPageData} />
 
       <div className="pagination">
         <ArrowLeft

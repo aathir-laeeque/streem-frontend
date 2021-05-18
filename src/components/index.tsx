@@ -37,4 +37,5 @@ export * from './shared/AutoComplete';
 export * from './shared/useTabsNew';
 export * from './shared/NewListView';
 export { default as ActivityItemInput } from './shared/ActivityItemInput';
+export { default as DataTable } from './shared/DataTable';
 export { Link } from './shared/Link';

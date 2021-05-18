@@ -39,6 +39,7 @@ const BodyWrapper = styled.div.attrs({
   display: flex;
   flex-direction: column;
   flex: 1;
+  overflow: hidden;
 `;
 
 export type Tab = {

@@ -1,7 +1,6 @@
 import {
   Button1,
-  ExtraColumn,
-  NewListView,
+  DataTable,
   ProgressBar,
   SearchFilter,
   TabContentProps,
@@ -136,6 +135,130 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     }
   };
 
+  const columns = [
+    ...(values.some(
+      (val: JobStateType) =>
+        val in AssignedJobStates || val in CompletedJobStates,
+    )
+      ? [
+          {
+            id: 'state',
+            label: 'State',
+            minWidth: 166,
+            format: function renderComp({ state }: Job) {
+              const isJobBlocked = state === AssignedJobStates.BLOCKED;
+              const isJobStarted = state === AssignedJobStates.IN_PROGRESS;
+              const isJobCompleted = state === CompletedJobStates.COMPLETED;
+              const isCompletedWithException =
+                state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
+
+              const title = isJobCompleted
+                ? 'Completed'
+                : isCompletedWithException
+                ? 'Completed with Exception'
+                : isJobBlocked
+                ? 'Approval Pending'
+                : isJobStarted
+                ? 'Started'
+                : 'Not Started';
+
+              return (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <FiberManualRecord
+                    className="icon"
+                    style={{
+                      fontSize: '20px',
+                      color: isJobCompleted
+                        ? '#5aa700'
+                        : isJobStarted
+                        ? '#1d84ff'
+                        : '#f7b500',
+                    }}
+                  />
+                  <span title={title}>{title}</span>
+                </div>
+              );
+            },
+          },
+        ]
+      : []),
+    {
+      id: 'name',
+      label: 'Name',
+      minWidth: 240,
+      format: function renderComp({
+        id,
+        checklist: { id: checklistId, name: checklistName },
+      }: Job) {
+        return (
+          <span
+            className="primary"
+            onClick={() => {
+              navigate(`/inbox/${id}`, { state: { checklistId } });
+            }}
+            title={checklistName}
+          >
+            {checklistName}
+          </span>
+        );
+      },
+    },
+    ...(values.some(
+      (val: JobStateType) =>
+        val in AssignedJobStates || val in CompletedJobStates,
+    )
+      ? [
+          {
+            id: 'assignees',
+            label: 'Assignees',
+            minWidth: 152,
+            format: function renderComp(item: Job) {
+              return <AssigneesColumn assignees={item.assignees} />;
+            },
+          },
+        ]
+      : []),
+    ...(values.some((val: JobStateType) => val in AssignedJobStates)
+      ? [
+          {
+            id: 'task-completed',
+            label: 'Task Completed',
+            minWidth: 152,
+            format: function renderComp({
+              completedTasks = 0,
+              totalTasks = 0,
+            }: Job) {
+              const percentage = totalTasks
+                ? (completedTasks / totalTasks) * 100
+                : 0;
+
+              return (
+                <div className="task-progress">
+                  <ProgressBar whiteBackground percentage={percentage} />
+                  <span>
+                    {completedTasks} of {totalTasks} Tasks
+                  </span>
+                </div>
+              );
+            },
+          },
+        ]
+      : []),
+    {
+      id: 'code',
+      label: 'Job ID',
+      minWidth: 152,
+    },
+    ...jobProperties.map((jobProperty) => {
+      return {
+        id: jobProperty.id,
+        label: jobProperty.placeHolder,
+        minWidth: 125,
+        maxWidth: 180,
+      };
+    }),
+  ];
+
   return (
     <TabContentWrapper>
       <div className="filters">
@@ -177,7 +300,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
           />
         )}
 
-        {values[0] in CompletedJobStates ? (
+        {values[0] in CompletedJobStates && (
           <ToggleSwitch
             checkedIcon={false}
             value={false}
@@ -196,13 +319,12 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                     ]
                   : [...getBaseFilter(values)]),
               ]);
-              console.log('isCHecked :: ', isChecked);
             }}
             uncheckedIcon={false}
           />
-        ) : null}
+        )}
 
-        {values[0] in UnassignedJobStates ? (
+        {values[0] in UnassignedJobStates && (
           <Button1
             id="create"
             onClick={() =>
@@ -220,145 +342,23 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
           >
             Create a Job
           </Button1>
-        ) : null}
+        )}
       </div>
 
-      <NewListView
-        properties={jobProperties}
-        data={jobs}
-        beforeColumns={
-          [
-            {
-              header: 'Name',
-              template: function renderComp({
-                id,
-                checklist: { id: checklistId, name: checklistName },
-              }: Job) {
-                return (
-                  <div className="list-card-columns">
-                    <span
-                      className="list-title"
-                      onClick={() => {
-                        navigate(`/jobs/${id}`, { state: { checklistId } });
-                      }}
-                    >
-                      {checklistName}
-                    </span>
-                  </div>
-                );
+      <DataTable
+        columns={columns}
+        rows={jobs.map((item) => {
+          return {
+            ...item,
+            ...jobProperties.reduce<Record<string, string>>(
+              (acc, jobProperty) => {
+                acc[jobProperty.id] = item.properties?.[jobProperty.name];
+                return acc;
               },
-            },
-            ...(values.some(
-              (val: JobStateType) =>
-                val in AssignedJobStates || val in CompletedJobStates,
-            )
-              ? [
-                  {
-                    header: 'Job Status',
-                    template: function renderComp({ state }: Job) {
-                      const isJobBlocked = state === AssignedJobStates.BLOCKED;
-
-                      const isJobStarted =
-                        state === AssignedJobStates.IN_PROGRESS;
-
-                      const isJobCompleted =
-                        state === CompletedJobStates.COMPLETED;
-
-                      const isCompletedWithException =
-                        state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
-
-                      const title = isJobCompleted
-                        ? 'Completed'
-                        : isCompletedWithException
-                        ? 'Completed with Exception'
-                        : isJobBlocked
-                        ? 'Approval Pending'
-                        : isJobStarted
-                        ? 'Started'
-                        : 'Not Started';
-
-                      return (
-                        <div
-                          className="list-card-columns"
-                          style={{
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          <FiberManualRecord
-                            className="icon"
-                            style={{
-                              fontSize: '20px',
-                              color: isJobCompleted
-                                ? '#5aa700'
-                                : isJobStarted
-                                ? '#1d84ff'
-                                : '#f7b500',
-                            }}
-                          />
-                          <span
-                            style={{
-                              ...(values.some(
-                                (val: JobStateType) =>
-                                  val in AssignedJobStates ||
-                                  val in CompletedJobStates,
-                              )
-                                ? {
-                                    textOverflow: 'ellipsis',
-                                    overflow: 'hidden',
-                                    fontSize: '12px',
-                                    lineHeight: '20px',
-                                  }
-                                : {}),
-                            }}
-                            title={title}
-                          >
-                            {title}
-                          </span>
-                        </div>
-                      );
-                    },
-                  },
-                  {
-                    header: 'Assignees',
-                    template: function renderComp(item: Job) {
-                      return <AssigneesColumn assignees={item.assignees} />;
-                    },
-                  },
-                  {
-                    header: 'Task Completed',
-                    template: function renderComp({
-                      completedTasks,
-                      totalTasks,
-                    }: Job) {
-                      const percentage = (completedTasks / totalTasks) * 100;
-                      return (
-                        <div className="list-card-columns task-progress">
-                          <ProgressBar
-                            whiteBackground
-                            percentage={percentage}
-                          />
-                          <span>
-                            {completedTasks} of {totalTasks} Tasks
-                          </span>
-                        </div>
-                      );
-                    },
-                  },
-                ]
-              : []),
-            {
-              header: 'Job ID',
-              template: function renderComp(item: Job) {
-                return (
-                  <div className="list-card-columns" key={item.id}>
-                    {item.code}
-                  </div>
-                );
-              },
-            },
-          ] as ExtraColumn[]
-        }
+              {},
+            ),
+          };
+        })}
       />
       <div className="pagination">
         <ArrowLeft

@@ -94,18 +94,13 @@ const TabContentWrapper = styled.div`
 
   // Only For Checklist Listview
 
-  #archive-unarchive {
-    flex: 1;
-    :hover {
-      color: #1d84ff;
-    }
-  }
-
   .list-options {
     padding: 0;
   }
 
   #more-actions {
+    display: flex;
+    align-items: center;
     flex: 1;
     color: #1d84ff;
     cursor: pointer;
@@ -129,7 +124,14 @@ const TabContentWrapper = styled.div`
   }
 
   #archive-unarchive {
+    flex: 1;
+    display: flex;
+    align-items: center;
     cursor: pointer;
+
+    :hover {
+      color: #1d84ff;
+    }
   }
 `;
 
