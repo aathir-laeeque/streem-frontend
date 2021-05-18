@@ -12,7 +12,7 @@ export const fetchBaseUrl = () => {
   return apiUrl;
 };
 
-// DO Not Delete Any Error Code Even If it looks redundent.
+// DO Not Delete Any Error Code Even If it looks unused or redundent.
 
 export enum LoginErrorCodes {
   JWT_ACCESS_TOKEN_EXPIRED = '101104',
@@ -28,6 +28,13 @@ export enum LoginErrorCodes {
   REGISTRATION_TOKEN_EXPIRED = '101005',
   USER_ACCOUNT_LOCKED = '104014',
   USER_INVITE_EXPIRED = '104010',
+}
+
+export enum ErrorCodesToLogout {
+  JTI_TOKEN_REVOKED = '101102',
+  USER_ARCHIVED = '104007',
+  USER_LOCKED = '104012',
+  USER_SELF_LOCKED = '104006',
 }
 
 export const EXCULDE_BY_REGEX_FOR_NO_INTERNET_TOAST = [

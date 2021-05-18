@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { store } from '../App';
 import { apiRefreshToken } from './apiUrls';
 import {
+  ErrorCodesToLogout,
   EXCULDE_BY_REGEX_FOR_NO_INTERNET_TOAST,
   LoginErrorCodes,
 } from './constants';
@@ -64,11 +65,19 @@ axiosInstance.interceptors.response.use(
         } = store.getState();
         if (
           isLoggedIn &&
-          Object.values(LoginErrorCodes).some((val) => val === code) &&
-          code !== LoginErrorCodes.INVALID_CREDENTIALS &&
-          code !== LoginErrorCodes.JWT_TOKEN_EXPIRED
+          Object.values(ErrorCodesToLogout).some((val) => val === code)
         ) {
-          throw message || 'Oops! Please Try Again.';
+          store.dispatch(closeAllOverlayAction());
+          store.dispatch(
+            logoutSuccess({
+              msg:
+                typeof message !== 'string'
+                  ? 'Oops! Please Try Again.'
+                  : message,
+              type: NotificationType.ERROR,
+              delayTime: 10,
+            }),
+          );
         } else {
           return response?.data;
         }
@@ -122,13 +131,6 @@ axiosInstance.interceptors.response.use(
         }
       } else {
         store.dispatch(closeAllOverlayAction());
-        // store.dispatch(
-        //   logoutSuccess({
-        //     msg: typeof e !== 'string' ? 'Oops! Please Try Again.' : e,
-        //     type: NotificationType.ERROR,
-        //     delayTime: 10,
-        //   }),
-        // );
         store.dispatch(setGlobalError(true));
       }
       throw e;

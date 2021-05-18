@@ -64,7 +64,9 @@ const handleOnIdle: Middleware = (store) => (next) => (action: AnyAction) => {
       ![
         AuthAction.LOGIN,
         AuthAction.LOGOUT,
+        AuthAction.LOGOUT_SUCCESS,
         OverlayContainerAction.OPEN_OVERLAY,
+        OverlayContainerAction.CLOSE_ALL_OVERLAY,
       ].includes(action.type) &&
       !action['@@redux-saga/SAGA_ACTION']
     ) {
