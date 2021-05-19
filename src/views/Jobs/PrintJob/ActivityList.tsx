@@ -432,6 +432,8 @@ const activityTemplateFormatter = (
         default:
           break;
       }
+
+      const approvalState = activity?.response?.activityValueApprovalDto?.state;
       return (
         <View style={styles.activityView}>
           <Text
@@ -479,6 +481,26 @@ const activityTemplateFormatter = (
               </>
             )}
           </View>
+          {approvalState && (
+            <View style={styles.taskFooter} wrap={false}>
+              <Text style={styles.text12}>
+                This Activity was{' '}
+                {approvalState === 'APPROVED' ? 'approved' : 'rejected'}{' '}
+                digitally via CLEEN {'\n'}
+                by{' '}
+                {
+                  activity.response.activityValueApprovalDto.approver.firstName
+                }{' '}
+                {activity.response.activityValueApprovalDto.approver.lastName},
+                ID:{' '}
+                {activity.response.activityValueApprovalDto.approver.employeeId}{' '}
+                on{' '}
+                {moment
+                  .unix(activity.response.activityValueApprovalDto.createdAt)
+                  .format('MMM DD, h:mm A')}
+              </Text>
+            </View>
+          )}
         </View>
       );
     case MandatoryActivity.CHECKLIST:
