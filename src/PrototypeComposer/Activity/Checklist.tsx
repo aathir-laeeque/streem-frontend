@@ -46,13 +46,6 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                   }),
                 );
               }}
-              // error={
-              //   isErrorPresent
-              //     ? activityErrors.find(
-              //         (error) => error.id === item.id && error.code === 'E414',
-              //       )?.message
-              //     : null
-              // }
               error={isErrorPresent && !item.name}
             />
 
