@@ -16,7 +16,7 @@ type InputProps = {
   BeforeElement?: SvgIconComponent;
   beforeElementClass?: string;
   beforeElementClick?: () => void;
-  error?: boolean | string;
+  error?: boolean | string | null;
   label?: string;
   optional?: boolean;
   onChange?: ({ name, value }: OnChangeType) => void;

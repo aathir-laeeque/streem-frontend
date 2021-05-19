@@ -6,21 +6,26 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { updateActivity } from './actions';
 import { ChecklistWrapper } from './styles';
-import { ActivityProps } from './types';
+import { ActivityProps, ChecklistActivityErrors } from './types';
 
 const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  const activityError = activity.errors.find((error) => error.code === 'E414');
+  const activityErrors = activity.errors.filter(
+    (error) => error.code in ChecklistActivityErrors,
+  );
+
+  const isErrorPresent = !!activityErrors.length;
 
   return (
     <ChecklistWrapper>
-      {activityError ? (
+      {isErrorPresent ? (
         <div className="activity-error top">
           <Error />
           Activity Incomplete
         </div>
       ) : null}
+
       <label>Creating a checklist</label>
 
       <ul className="checklist-list">
@@ -41,7 +46,14 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                   }),
                 );
               }}
-              error={activityError && !item.name}
+              // error={
+              //   isErrorPresent
+              //     ? activityErrors.find(
+              //         (error) => error.id === item.id && error.code === 'E414',
+              //       )?.message
+              //     : null
+              // }
+              error={isErrorPresent && !item.name}
             />
 
             <Close
@@ -59,8 +71,10 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           </li>
         ))}
 
-        {activityError ? (
-          <div className="activity-error">{activityError?.message}</div>
+        {isErrorPresent ? (
+          <div className="activity-error">
+            {activityErrors.find((error) => error.code === 'E415')?.message}
+          </div>
         ) : null}
 
         <AddNewItem

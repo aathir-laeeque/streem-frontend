@@ -9,7 +9,7 @@ type Props = ComponentPropsWithRef<'textarea'> & {
   AfterElement?: SvgIconComponent;
   afterElementClass?: string;
   Icon?: SvgIconComponent;
-  error?: string | boolean;
+  error?: string | boolean | null;
   label?: string;
   optional?: boolean;
   customOnChange: (value: string) => void;

@@ -10,12 +10,16 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { updateActivity } from './actions';
 import { MaterialWrapper } from './styles';
-import { ActivityProps } from './types';
+import { ActivityProps, MaterialActivityErrors } from './types';
 
 const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  const activityError = activity.errors.find((error) => error.code === 'E419');
+  const activityErrors = activity.errors.filter(
+    (error) => error.code in MaterialActivityErrors,
+  );
+
+  const isErrorPresent = !!activityErrors.length;
 
   const openMediaModal = (mediaDetails, item, index: number) => {
     dispatch(
@@ -43,8 +47,8 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   };
 
   return (
-    <MaterialWrapper hasError={!!activityError}>
-      {activityError ? (
+    <MaterialWrapper hasError={isErrorPresent}>
+      {isErrorPresent ? (
         <div className="activity-error top">
           <Error />
           Activity Incomplete
@@ -53,131 +57,130 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
       <label>Add Materials</label>
 
       <ol className="material-list">
-        {activity.data?.map((item, index: number) => {
-          console.log('item', item.name);
-          return (
-            <li className="material-list-item" key={item.id}>
-              <div className={`image-wrapper ${item.link ? '' : 'default'}`}>
-                {item.link ? (
-                  <img
-                    src={item.link}
-                    className="image"
-                    onClick={() => {
-                      openMediaModal(
-                        {
-                          filename: item.filename,
-                          link: item.link,
-                          type: item.type,
-                          name: item.name,
-                          description: item.description,
-                        },
-                        item,
-                        index,
-                      );
-                    }}
-                  />
-                ) : (
-                  <ImageUploadButton
-                    icon={ImageUploadIcon}
-                    onUploadSuccess={(fileData) => {
-                      openMediaModal(
-                        {
-                          ...fileData,
-                          name: item.name || '',
-                          description: item.description || '',
-                        },
-                        item,
-                        index,
-                      );
-                    }}
-                    onUploadError={(error) =>
-                      console.error(
-                        'error came in fileupload for material item :: ',
-                        error,
-                      )
-                    }
-                  />
-                )}
-              </div>
-
-              <ActivityItemInput
-                defaultValue={item.name}
-                customOnChange={(value) => {
-                  dispatch(
-                    updateActivity({
-                      ...activity,
-                      data: [
-                        ...activity.data.slice(0, index),
-                        { ...item, name: value },
-                        ...activity.data.slice(index + 1),
-                      ],
-                    }),
-                  );
-                }}
-                error={activityError && !item.name}
-              />
-
-              <div className="quantity-control">
-                <ArrowDropUp
-                  className="icon"
+        {activity.data?.map((item, index: number) => (
+          <li className="material-list-item" key={item.id}>
+            <div className={`image-wrapper ${item.link ? '' : 'default'}`}>
+              {item.link ? (
+                <img
+                  src={item.link}
+                  className="image"
                   onClick={() => {
-                    dispatch(
-                      updateActivity({
-                        ...activity,
-                        data: [
-                          ...activity.data.slice(0, index),
-                          { ...item, quantity: item.quantity + 1 },
-                          ...activity.data.slice(index + 1),
-                        ],
-                      }),
+                    openMediaModal(
+                      {
+                        filename: item.filename,
+                        link: item.link,
+                        type: item.type,
+                        name: item.name,
+                        description: item.description,
+                      },
+                      item,
+                      index,
                     );
                   }}
                 />
-                <span>
-                  {item.quantity === 0
-                    ? 'Any'
-                    : item.quantity.toString().padStart(2, '0')}
-                </span>
-                <ArrowDropDown
-                  className="icon"
-                  onClick={() => {
-                    if (item.quantity > 0) {
-                      dispatch(
-                        updateActivity({
-                          ...activity,
-                          data: [
-                            ...activity.data.slice(0, index),
-                            { ...item, quantity: item.quantity - 1 },
-                            ...activity.data.slice(index + 1),
-                          ],
-                        }),
-                      );
-                    }
+              ) : (
+                <ImageUploadButton
+                  icon={ImageUploadIcon}
+                  onUploadSuccess={(fileData) => {
+                    openMediaModal(
+                      {
+                        ...fileData,
+                        name: item.name || '',
+                        description: item.description || '',
+                      },
+                      item,
+                      index,
+                    );
                   }}
+                  onUploadError={(error) =>
+                    console.error(
+                      'error came in fileupload for material item :: ',
+                      error,
+                    )
+                  }
                 />
-              </div>
+              )}
+            </div>
 
-              <Close
+            <ActivityItemInput
+              defaultValue={item.name}
+              customOnChange={(value) => {
+                dispatch(
+                  updateActivity({
+                    ...activity,
+                    data: [
+                      ...activity.data.slice(0, index),
+                      { ...item, name: value },
+                      ...activity.data.slice(index + 1),
+                    ],
+                  }),
+                );
+              }}
+              error={isErrorPresent && !item.name}
+            />
+
+            <div className="quantity-control">
+              <ArrowDropUp
                 className="icon"
-                id="remove-item"
                 onClick={() => {
                   dispatch(
                     updateActivity({
                       ...activity,
                       data: [
                         ...activity.data.slice(0, index),
+                        { ...item, quantity: item.quantity + 1 },
                         ...activity.data.slice(index + 1),
                       ],
                     }),
                   );
                 }}
               />
-            </li>
-          );
-        })}
+              <span>
+                {item.quantity === 0
+                  ? 'Any'
+                  : item.quantity.toString().padStart(2, '0')}
+              </span>
+              <ArrowDropDown
+                className="icon"
+                onClick={() => {
+                  if (item.quantity > 0) {
+                    dispatch(
+                      updateActivity({
+                        ...activity,
+                        data: [
+                          ...activity.data.slice(0, index),
+                          { ...item, quantity: item.quantity - 1 },
+                          ...activity.data.slice(index + 1),
+                        ],
+                      }),
+                    );
+                  }
+                }}
+              />
+            </div>
 
-        {activityError ? (
-          <div className="activity-error">{activityError?.message}</div>
+            <Close
+              className="icon"
+              id="remove-item"
+              onClick={() => {
+                dispatch(
+                  updateActivity({
+                    ...activity,
+                    data: [
+                      ...activity.data.slice(0, index),
+                      ...activity.data.slice(index + 1),
+                    ],
+                  }),
+                );
+              }}
+            />
+          </li>
+        ))}
+
+        {isErrorPresent ? (
+          <div className="activity-error">
+            {activityErrors.find((error) => error.code === 'E420')?.message}
+          </div>
         ) : null}
 
         <AddNewItem

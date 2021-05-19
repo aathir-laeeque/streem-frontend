@@ -5,25 +5,30 @@ import React, { FC } from 'react';
 import { PARAMETER_OPERATORS } from '#PrototypeComposer/constants';
 
 import { ParameterWrapper } from './styles';
-import { ActivityProps } from './types';
+import { ActivityProps, ParameterActivityErrors } from './types';
 import { useDispatch } from 'react-redux';
 import { updateActivity } from './actions';
 
 const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  const activityError = activity.errors.find((error) => error.code === 'E418');
+  const activityErrors = activity.errors.filter(
+    (error) => error.code in ParameterActivityErrors,
+  );
+
+  const isErrorPresent = !!activityErrors.length;
 
   return (
     <ParameterWrapper
-      errorInSelect={(activityError && !activity.data.operator) || false}
+      errorInSelect={(isErrorPresent && !activity.data.operator) || false}
     >
-      {activityError ? (
+      {isErrorPresent ? (
         <div className="activity-error top">
           <Error />
           Activity Incomplete
         </div>
       ) : null}
+
       <TextInput
         label="Parameter"
         defaultValue={activity.data.parameter}
@@ -36,7 +41,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             }),
           );
         }, 500)}
-        error={activityError && !activity.data.parameter}
+        error={isErrorPresent && !activity.data.parameter}
       />
 
       <TextInput
@@ -51,7 +56,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             }),
           );
         }, 500)}
-        error={activityError && !activity.data.uom}
+        error={isErrorPresent && !activity.data.uom}
       />
 
       <Select
@@ -69,7 +74,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         selectedValue={PARAMETER_OPERATORS.find(
           (option) => option.value === activity.data.operator,
         )}
-        error={activityError && !activity.data.operator}
+        error={isErrorPresent && !activity.data.operator}
       />
 
       {activity.data.operator === 'BETWEEN' ? (
@@ -77,8 +82,11 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           <NumberInput
             defaultValue={activity.data?.lowerValue}
             error={
-              !activity.data?.lowerValue &&
-              activity.errors.find((error) => error.code === 'E416')?.message
+              isErrorPresent
+                ? activityErrors.find(
+                    (error) => error.code === 'E416' || error.code === 'E417',
+                  )?.message
+                : null
             }
             label="Value"
             name="lowerValue"
@@ -97,8 +105,11 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           <NumberInput
             defaultValue={activity.data?.upperValue}
             error={
-              !activity.data?.upperValue &&
-              activity.errors.find((error) => error.code === 'E416')?.message
+              isErrorPresent
+                ? activityErrors.find(
+                    (error) => error.code === 'E416' || error.code === 'E417',
+                  )?.message
+                : null
             }
             label="Value"
             name="upperValue"
@@ -116,8 +127,11 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         <NumberInput
           defaultValue={activity.data.value}
           error={
-            !activity.data?.value &&
-            activity.errors.find((error) => error.code === 'E416')?.message
+            isErrorPresent
+              ? activityErrors.find(
+                  (error) => error.code === 'E416' || error.code === 'E417',
+                )?.message
+              : null
           }
           label="Value"
           name="value"

@@ -5,26 +5,32 @@ import { useDispatch } from 'react-redux';
 
 import { updateActivity } from './actions';
 import { YesNoWrapper } from './styles';
-import { ActivityProps } from './types';
+import { ActivityProps, YesNoActivityErrors } from './types';
 
 const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
 
-  const activityError = activity.errors.find((error) => error.code === 'E407');
+  const activityErrors = activity.errors.filter(
+    (error) => error.code in YesNoActivityErrors,
+  );
+
+  const isErrorPresent = !!activityErrors.length;
 
   return (
     <YesNoWrapper>
-      {activityError ? (
+      {isErrorPresent ? (
         <div className="activity-error top">
           <Error />
           Activity Incomplete
         </div>
       ) : null}
+
       <ActivityItemInput
         defaultValue={activity.label}
         error={
-          !activity.label &&
-          activity.errors.find((error) => error.code === 'E409')?.message
+          isErrorPresent
+            ? activityErrors.find((error) => error.code === 'E409')?.message
+            : null
         }
         label="Ask a question"
         name="label"
@@ -39,7 +45,12 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           .map((item, index) => (
             <ActivityItemInput
               defaultValue={item.name}
-              error={!item.name && activityError?.message}
+              error={
+                isErrorPresent
+                  ? activityErrors.find((error) => error.code === 'E407')
+                      ?.message
+                  : null
+              }
               key={index}
               label={
                 item.type === 'yes' ? 'Positive Response' : 'Negative Response'

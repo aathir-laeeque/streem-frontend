@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { updateActivity } from './actions';
 import { MultiSelectWrapper } from './styles';
-import { ActivityProps } from './types';
+import { ActivityProps, SelectActivityErrors } from './types';
 
 const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
   activity,
@@ -22,22 +22,21 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
 
   const isMultiSelect = activity.type === MandatoryActivity.MULTISELECT;
 
-  const activityError = activity.errors.find(
-    (error) =>
-      error.code === 'E410' ||
-      error.code === 'E411' ||
-      error.code === 'E412' ||
-      error.code === 'E413',
+  const activityErrors = activity.errors.filter(
+    (error) => SelectActivityErrors,
   );
+
+  const isErrorPresent = !!activityErrors.length;
 
   return (
     <MultiSelectWrapper>
-      {activityError ? (
+      {isErrorPresent ? (
         <div className="activity-error top">
           <Error />
           Activity Incomplete
         </div>
       ) : null}
+
       <Select
         disabled
         label={
@@ -72,7 +71,7 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
                   }),
                 );
               }}
-              error={activityError && !item.name}
+              error={isErrorPresent && !item.name}
             />
 
             <Close
@@ -90,8 +89,14 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
           </li>
         ))}
 
-        {activityError ? (
-          <div className="activity-error">{activityError?.message}</div>
+        {isErrorPresent ? (
+          <div className="activity-error">
+            {
+              activityErrors.find((error) =>
+                error.code === isMultiSelect ? 'E411' : 'E413',
+              )?.message
+            }
+          </div>
         ) : null}
 
         <AddNewItem
