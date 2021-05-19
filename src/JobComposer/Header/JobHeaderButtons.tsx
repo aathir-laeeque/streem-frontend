@@ -148,7 +148,7 @@ const JobHeaderButtons: FC = () => {
         <Button1
           className="print-job"
           onClick={() => {
-            window.open(`/jobs/print/${jobId}`, '_blank');
+            window.open(`/jobs/${jobId}/print`, '_blank');
           }}
           variant="secondary"
         >

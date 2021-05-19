@@ -38,7 +38,7 @@ const App: FC = () => {
         <Router style={{ display: 'flex', flex: 1 }} basepath="/">
           <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
           <CustomRoute as={FacilitySelectionView} path="facility/selection" />
-          <CustomRoute as={PrintJob} path="jobs/print/:jobId" />
+          <CustomRoute as={PrintJob} path="jobs/:jobId/print" />
           <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
           <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
           <CustomRoute as={PrintJobActivity} path="job-activity/print/:jobId" />
