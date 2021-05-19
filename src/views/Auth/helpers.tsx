@@ -133,11 +133,24 @@ export const createBaseViewConfig = ({
     userId,
   } = useTypedSelector((state) => state.auth);
   const [isPasswordInputType, setIsPasswordInputType] = useState(true);
+  const [
+    isConfirmPasswordTextHidden,
+    setIsConfirmPasswordTextHidden,
+  ] = useState(true);
 
-  const AfterIcon = () => (
+  const PasswordAfterIcon = () => (
     <VisibilityOutlined
       onClick={() => setIsPasswordInputType(!isPasswordInputType)}
       style={{ color: isPasswordInputType ? '#999' : '#1d84ff' }}
+    />
+  );
+
+  const ConfirmPasswordAfterIcon = () => (
+    <VisibilityOutlined
+      onClick={() =>
+        setIsConfirmPasswordTextHidden(!isConfirmPasswordTextHidden)
+      }
+      style={{ color: isConfirmPasswordTextHidden ? '#999' : '#1d84ff' }}
     />
   );
 
@@ -232,7 +245,7 @@ export const createBaseViewConfig = ({
                 ref: register({
                   required: true,
                 }),
-                AfterElement: AfterIcon,
+                AfterElement: PasswordAfterIcon,
                 afterElementWithoutError: true,
                 secondaryAction: {
                   text: 'Forgot Password?',
@@ -672,7 +685,7 @@ export const createBaseViewConfig = ({
                 label: 'New Password',
                 id: 'password',
                 name: 'password',
-                AfterElement: AfterIcon,
+                AfterElement: PasswordAfterIcon,
                 afterElementWithoutError: true,
                 ref: register({
                   required: true,
@@ -691,13 +704,13 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: isPasswordInputType ? 'password' : 'text',
+              type: isConfirmPasswordTextHidden ? 'password' : 'text',
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'Confirm Password',
                 id: 'confirmPassword',
                 name: 'confirmPassword',
-                AfterElement: AfterIcon,
+                AfterElement: ConfirmPasswordAfterIcon,
                 afterElementWithoutError: true,
                 ref: register({
                   required: true,
@@ -857,7 +870,7 @@ export const createBaseViewConfig = ({
                 label: 'Create Password',
                 id: 'password',
                 name: 'password',
-                AfterElement: AfterIcon,
+                AfterElement: PasswordAfterIcon,
                 afterElementWithoutError: true,
                 ref: register({
                   required: true,
@@ -876,13 +889,13 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: isPasswordInputType ? 'password' : 'text',
+              type: isConfirmPasswordTextHidden ? 'password' : 'text',
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'Confirm Password',
                 id: 'confirmPassword',
                 name: 'confirmPassword',
-                AfterElement: AfterIcon,
+                AfterElement: ConfirmPasswordAfterIcon,
                 afterElementWithoutError: true,
                 ref: register({
                   required: true,
