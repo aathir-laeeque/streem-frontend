@@ -571,6 +571,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                           field.field !== 'not.a.collaborator',
                       ),
                       { field: option.value, op: 'EQ', values: [userId] },
+                      {
+                        field: 'collaborators.type',
+                        op: 'ANY',
+                        values: [CollaboratorType.REVIEWER],
+                      },
                     ] as FilterField[],
                 );
               }
