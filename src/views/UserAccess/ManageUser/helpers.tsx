@@ -450,10 +450,18 @@ const UpdateChallengeQuestion = ({
   }>();
 
   useEffect(() => {
-    const fetchQuestions = async () => {
+    const fetchQuestionsAndCurrentAnswer = async () => {
       const { data }: ResponseObj<ChallengeQuestion[]> = await request(
         'GET',
         apiGetAllChallengeQuestions(),
+      );
+
+      const {
+        data: { answer },
+      }: ResponseObj<{ answer: string }> = await request(
+        'GET',
+        apiUpdateChallengeQuestions(userId),
+        { params: { token } },
       );
 
       const questions = data.map(({ question, id }) => ({
@@ -463,6 +471,7 @@ const UpdateChallengeQuestion = ({
 
       setState({
         ...state,
+        answer,
         questions,
         selected: selectedUser?.challengeQuestion
           ? {
@@ -473,7 +482,7 @@ const UpdateChallengeQuestion = ({
       });
     };
 
-    fetchQuestions();
+    fetchQuestionsAndCurrentAnswer();
   }, []);
 
   const onUpdate = async () => {
@@ -536,6 +545,7 @@ const UpdateChallengeQuestion = ({
               label: 'Your Answer',
               id: 'challengeAnswer',
               name: 'challengeAnswer',
+              defaultValue: state?.answer,
               onChange: ({ value }: { value: string }) => {
                 setState({
                   ...state,
