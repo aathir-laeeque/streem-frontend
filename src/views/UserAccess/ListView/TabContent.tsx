@@ -339,7 +339,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
       }}
     >
       <div className="list-item">
-        <span>Generate New Secrete Key</span>
+        <span>Generate New Secret Key</span>
       </div>
     </MenuItem>
   );

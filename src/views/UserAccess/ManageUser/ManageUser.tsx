@@ -264,7 +264,7 @@ const ManageUser: FC<EditUserProps> = ({
       className="primary-button"
       onClick={() => dispatch(resendInvite({ id: selectedUser.id }))}
     >
-      Generate New Secrete Key
+      Generate New Secret Key
     </Button1>
   );
 

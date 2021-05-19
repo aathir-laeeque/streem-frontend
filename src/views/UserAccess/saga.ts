@@ -198,7 +198,7 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
     navigate(-1);
     let heading = 'Invitation Sent';
     let subHeading =
-      'Invitation with Secrete Key to register has been sent to the Employee’s Email ID.';
+      'Invitation with Secret Key to register has been sent to the Employee’s Email ID.';
     if (!data.email) {
       heading = 'User Added';
       subHeading =

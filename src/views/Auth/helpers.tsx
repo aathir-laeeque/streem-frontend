@@ -268,7 +268,7 @@ export const createBaseViewConfig = ({
         ...centerCardConfig,
         heading: 'Forgot Password',
         subHeading:
-          'Use your Credentials to see your Recovery Options or click the option below if you already have a Secrete Key.',
+          'Use your Credentials to see your Recovery Options or click the option below if you already have a Secret Key.',
         formData: {
           formInputs: [
             {
@@ -516,8 +516,8 @@ export const createBaseViewConfig = ({
             {
               type: 'text',
               props: {
-                placeholder: 'Enter your Secrete Key here',
-                label: 'Secrete Key',
+                placeholder: 'Enter your Secret Key here',
+                label: 'Secret Key',
                 id: 'token',
                 name: 'token',
                 ref: register({
@@ -1000,7 +1000,7 @@ export const createBaseViewConfig = ({
         heading: 'Key Expired',
         headingIcon: <LockIcon />,
         subHeading:
-          'Your secrete key has expired as you failed to use it under 24 hours.',
+          'Your secret key has expired as you failed to use it under 24 hours.',
         footerAction: (
           <div>
             <ContactAdminButton
@@ -1017,7 +1017,7 @@ export const createBaseViewConfig = ({
             >
               Contact
             </ContactAdminButton>
-            your Administrator to generate a new Secrete Key for your
+            your Administrator to generate a new Secret Key for your
             registration.
           </div>
         ),
