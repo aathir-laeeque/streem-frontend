@@ -257,7 +257,7 @@ export const apiReorderTasks = () => `${baseUrl}/tasks/reorder`;
 export const apiGetAllChallengeQuestions = () =>
   `${baseUrl}/challenge-questions`;
 
-export const apiUpdateChallengeQuestions = (id: string) =>
+export const apiChallengeQuestions = (id: string) =>
   `${baseUrl}/users/${id}/challenge-questions`;
 
 export const apiAdditionalVerification = () =>

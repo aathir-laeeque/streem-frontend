@@ -18,7 +18,7 @@ import {
   apiRegister,
   apiResetPassword,
   apiResetToken,
-  apiUpdateChallengeQuestions,
+  apiChallengeQuestions,
   apiValidateChallengeQuestion,
   apiValidateIdentity,
 } from '#utils/apiUrls';
@@ -329,7 +329,7 @@ function* setChallengeQuestionSaga({
     const { errors } = yield call(
       request,
       'PATCH',
-      apiUpdateChallengeQuestions(userId),
+      apiChallengeQuestions(userId),
       {
         data: payload,
       },

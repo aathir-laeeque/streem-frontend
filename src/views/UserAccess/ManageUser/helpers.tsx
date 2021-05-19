@@ -12,7 +12,7 @@ import {
   apiCheckEmail,
   apiCheckEmployeeId,
   apiGetAllChallengeQuestions,
-  apiUpdateChallengeQuestions,
+  apiChallengeQuestions,
   apiUpdatePassword,
 } from '#utils/apiUrls';
 import { ResponseObj, ValidatorProps } from '#utils/globalTypes';
@@ -460,7 +460,7 @@ const UpdateChallengeQuestion = ({
         data: { answer },
       }: ResponseObj<{ answer: string }> = await request(
         'GET',
-        apiUpdateChallengeQuestions(userId),
+        apiChallengeQuestions(userId),
         { params: { token } },
       );
 
@@ -487,7 +487,7 @@ const UpdateChallengeQuestion = ({
 
   const onUpdate = async () => {
     if (userId && selectedUser && state?.selected) {
-      await request('PATCH', apiUpdateChallengeQuestions(userId), {
+      await request('PATCH', apiChallengeQuestions(userId), {
         data: {
           id: state?.selected?.value,
           answer: state?.answer,
