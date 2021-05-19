@@ -194,7 +194,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
           <span
             className="primary"
             onClick={() => {
-              navigate(`/inbox/${id}`, { state: { checklistId } });
+              navigate(`/jobs/${id}`, { state: { checklistId } });
             }}
             title={checklistName}
           >
