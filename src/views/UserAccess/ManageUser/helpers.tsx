@@ -18,7 +18,7 @@ import {
 import { ResponseObj, ValidatorProps } from '#utils/globalTypes';
 import { getErrorMsg, request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
-import { Create } from '@material-ui/icons';
+import { Create, VisibilityOutlined } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -586,6 +586,28 @@ const UpdatePassword = ({
     },
   });
 
+  const [isPasswordInputType, setIsPasswordInputType] = useState(true);
+  const [
+    isConfirmPasswordTextHidden,
+    setIsConfirmPasswordTextHidden,
+  ] = useState(true);
+
+  const PasswordAfterIcon = () => (
+    <VisibilityOutlined
+      onClick={() => setIsPasswordInputType(!isPasswordInputType)}
+      style={{ color: isPasswordInputType ? '#999' : '#1d84ff' }}
+    />
+  );
+
+  const ConfirmPasswordAfterIcon = () => (
+    <VisibilityOutlined
+      onClick={() =>
+        setIsConfirmPasswordTextHidden(!isConfirmPasswordTextHidden)
+      }
+      style={{ color: isConfirmPasswordTextHidden ? '#999' : '#1d84ff' }}
+    />
+  );
+
   const validators: {
     password: ValidatorProps;
     confirmPassword: ValidatorProps;
@@ -689,12 +711,14 @@ const UpdatePassword = ({
       <FormGroup
         inputs={[
           {
-            type: 'password',
+            type: isPasswordInputType ? 'password' : 'text',
             props: {
               placeholder: 'Create Password',
               label: 'Create Password',
               id: 'password',
               name: 'password',
+              AfterElement: PasswordAfterIcon,
+              afterElementWithoutError: true,
               onChange: ({ value }: { value: string }) => {
                 onInputChange(value, 'password');
               },
@@ -708,12 +732,14 @@ const UpdatePassword = ({
             },
           },
           {
-            type: 'password',
+            type: isConfirmPasswordTextHidden ? 'password' : 'text',
             props: {
               placeholder: 'Confirm New Password',
               label: 'Confirm New Password',
               id: 'confirmPassword',
               name: 'confirmPassword',
+              AfterElement: ConfirmPasswordAfterIcon,
+              afterElementWithoutError: true,
               onChange: ({ value }: { value: string }) => {
                 onInputChange(value, 'confirmPassword');
               },
