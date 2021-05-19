@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
   tableColumn: {
     alignItems: 'center',
     display: 'flex',
-    flex: 1,
     fontSize: 10,
     fontWeight: 'normal',
     paddingHorizontal: 4,

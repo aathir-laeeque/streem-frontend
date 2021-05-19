@@ -148,7 +148,7 @@ const ExceptionSummary = ({ stages, totalTaskExceptions }: Props) => (
               text: 'Stage/Task Name',
               customStyle: {
                 color: '#fff',
-                flex: 2,
+                width: '33.33%',
                 paddingVertical: 4,
                 textAlign: 'left',
               },
@@ -157,6 +157,7 @@ const ExceptionSummary = ({ stages, totalTaskExceptions }: Props) => (
               text: 'Type of Exception',
               customStyle: {
                 color: '#fff',
+                width: '16.66%',
                 paddingVertical: 4,
                 textAlign: 'left',
               },
@@ -165,6 +166,7 @@ const ExceptionSummary = ({ stages, totalTaskExceptions }: Props) => (
               text: 'Description',
               customStyle: {
                 color: '#fff',
+                width: '16.66%',
                 paddingVertical: 4,
                 textAlign: 'left',
               },
@@ -173,6 +175,7 @@ const ExceptionSummary = ({ stages, totalTaskExceptions }: Props) => (
               text: 'Initiator',
               customStyle: {
                 color: '#fff',
+                width: '16.66%',
                 paddingVertical: 4,
                 textAlign: 'left',
               },
@@ -181,6 +184,7 @@ const ExceptionSummary = ({ stages, totalTaskExceptions }: Props) => (
               text: 'User Remarks',
               customStyle: {
                 color: '#fff',
+                width: '16.66%',
                 paddingVertical: 4,
                 textAlign: 'left',
               },
@@ -229,7 +233,7 @@ const ExceptionSummary = ({ stages, totalTaskExceptions }: Props) => (
                                 style={{
                                   display: 'flex',
                                   flexDirection: 'column',
-                                  flex: 2,
+                                  width: '33.33%',
                                   fontSize: 10,
                                   paddingHorizontal: 4,
                                   paddingVertical: 8,
@@ -244,22 +248,34 @@ const ExceptionSummary = ({ stages, totalTaskExceptions }: Props) => (
                           },
                           {
                             text: Exceptions[exception.type],
-                            customStyle: { textAlign: 'left' },
+                            customStyle: {
+                              textAlign: 'left',
+                              width: '16.66%',
+                            },
                           },
                           {
                             text: generateDescription(exception),
-                            customStyle: { textAlign: 'left' },
+                            customStyle: {
+                              textAlign: 'left',
+                              width: '16.66%',
+                            },
                           },
                           {
                             text: getUserName({
                               user: exception.initiator,
                               withEmployeeId: true,
                             }),
-                            customStyle: { textAlign: 'left' },
+                            customStyle: {
+                              textAlign: 'left',
+                              width: '16.66%',
+                            },
                           },
                           {
                             text: exception.remark,
-                            customStyle: { textAlign: 'left' },
+                            customStyle: {
+                              textAlign: 'left',
+                              width: '16.66%',
+                            },
                           },
                         ]}
                         customStyle={
