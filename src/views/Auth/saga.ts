@@ -86,6 +86,7 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
         );
       } else {
         if (errors?.[0]?.code === LoginErrorCodes.PASSWORD_EXPIRED) {
+          yield put(authError(undefined));
           navigate('/auth/password-expired');
         } else {
           throw getErrorMsg(errors);
@@ -209,7 +210,7 @@ function* resetPasswordSaga({ payload }: ReturnType<typeof resetPassword>) {
     if (errors) {
       throw getErrorMsg(errors);
     }
-
+    yield put(authError(undefined));
     navigate('/auth/forgot-password/updated');
   } catch (error) {
     error = yield* handleCatch('Auth', 'resetPasswordSaga', error);
@@ -423,7 +424,7 @@ function* resetTokenSaga({ payload }: ReturnType<typeof resetToken>) {
     if (errors) {
       throw getErrorMsg(errors);
     }
-
+    yield put(authError(undefined));
     navigate('/auth/forgot-password/email-sent');
   } catch (error) {
     error = yield* handleCatch('Auth', 'resetTokenSaga', error);
@@ -440,7 +441,7 @@ function* notifyAdminSaga({ payload }: ReturnType<typeof notifyAdmin>) {
     if (errors) {
       throw getErrorMsg(errors);
     }
-
+    yield put(authError(undefined));
     navigate('/auth/notified');
   } catch (error) {
     error = yield* handleCatch('Auth', 'notifyAdminSaga', error);

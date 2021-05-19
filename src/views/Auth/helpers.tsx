@@ -335,10 +335,10 @@ export const createBaseViewConfig = ({
       } else {
         items.push({
           key: RecoveryOptions.CHALLENGE_QUESTION,
-          label: 'Challange Question not set',
+          label: 'Challenge Question not set',
           value: RecoveryOptions.CHALLENGE_QUESTION,
           disabled: true,
-          desc: 'You have not set challange question',
+          desc: 'You have not set challenge question',
         });
       }
 
@@ -437,8 +437,8 @@ export const createBaseViewConfig = ({
                 id: 'question',
                 name: 'question',
                 options: questions,
-                placeholder: 'Select your challange question',
-                label: 'Challange Question',
+                placeholder: 'Select your challenge question',
+                label: 'Challenge Question',
                 onChange: (option: Option | null) => {
                   if (!option) {
                     setValue('id', undefined as any, {
@@ -942,7 +942,7 @@ export const createBaseViewConfig = ({
                 name: 'question',
                 options: questions,
                 placeholder: 'Select a Question',
-                label: 'Select a Challange Question',
+                label: 'Select a Challenge Question',
                 onChange: (option: Option | null) => {
                   if (!option) {
                     setValue('id', undefined as any, {
