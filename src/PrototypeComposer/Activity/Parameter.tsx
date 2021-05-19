@@ -92,6 +92,8 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             error={
               isErrorPresent && !activity.data?.lowerValue
                 ? activityErrors.find((error) => error.code === 'E417')?.message
+                : isErrorPresent
+                ? activityErrors.find((error) => error.code === 'E432')?.message
                 : null
             }
             label="Value"
