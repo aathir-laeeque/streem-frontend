@@ -351,7 +351,7 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
         currentPage={pageable.page}
         data={data}
         onPrimaryClick={() =>
-          window.open(`/job-activity/print/${jobId}`, '_blank')
+          window.open(`/job-activity/${jobId}/print`, '_blank')
         }
         primaryButtonText="Export"
         filterProp={filterProp}

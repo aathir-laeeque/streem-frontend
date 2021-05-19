@@ -41,7 +41,7 @@ const App: FC = () => {
           <CustomRoute as={PrintJob} path="jobs/:jobId/print" />
           <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
           <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
-          <CustomRoute as={PrintJobActivity} path="job-activity/print/:jobId" />
+          <CustomRoute as={PrintJobActivity} path="job-activity/:jobId/print" />
           <CustomRoute as={HomeView} path="/*" />
         </Router>
         <Notification
