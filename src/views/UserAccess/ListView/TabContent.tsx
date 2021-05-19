@@ -349,6 +349,38 @@ const TabContent: React.FC<TabContentProps> = (props) => {
       (i) => i?.name === roles.ACCOUNT_OWNER,
     );
 
+    if (isItemAccountOwner) {
+      if (
+        isUserLocked(item.state) &&
+        checkPermission(['usersAndAccess', 'editAccountOwner'])
+      )
+        return (
+          <>
+            <div
+              className="list-card-columns"
+              id="more-actions"
+              onClick={(event: MouseEvent<HTMLDivElement>) => {
+                setAnchorEl(event.currentTarget);
+                setSelectedUser(item);
+              }}
+            >
+              More <ArrowDropDown className="icon" />
+            </div>
+            <Menu
+              id="row-more-actions"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              style={{ marginTop: 30 }}
+            >
+              <UnlockButton />
+            </Menu>
+          </>
+        );
+      return null;
+    }
+
     return (
       <>
         <div
@@ -370,64 +402,56 @@ const TabContent: React.FC<TabContentProps> = (props) => {
           style={{ marginTop: 30 }}
         >
           {(() => {
-            if (
-              isItemAccountOwner &&
-              isUserLocked(item.state) &&
-              checkPermission(['usersAndAccess', 'editAccountOwner'])
-            ) {
-              return <UnlockButton />;
+            if (selectedUser?.archived) {
+              return <UnArchiveButton />;
             } else {
-              if (selectedUser?.archived) {
-                return <UnArchiveButton />;
-              } else {
-                return (
-                  <div>
-                    {(() => {
-                      switch (selectedUser?.state) {
-                        case UserStates.ACCOUNT_LOCKED:
-                          return <UnlockButton />;
-                        case UserStates.INVITE_CANCELLED:
-                          return (
-                            <>
-                              <ArchiveButton />
-                              <ResendInviteButton />
-                            </>
-                          );
-                        case UserStates.INVITE_EXPIRED:
-                          return (
-                            <>
-                              <ArchiveButton />
-                              <ResendInviteButton />
-                            </>
-                          );
-                        case UserStates.REGISTERED_LOCKED:
-                          return (
-                            <>
-                              <ArchiveButton />
-                              <UnlockButton />
-                            </>
-                          );
-                        case UserStates.UNREGISTERED:
-                          return (
-                            <>
-                              <GenerateNewSecretButton />
-                              <CancelInviteButton />
-                            </>
-                          );
-                        case UserStates.UNREGISTERED_LOCKED:
-                          return (
-                            <>
-                              <ArchiveButton />
-                              <UnlockButton />
-                            </>
-                          );
-                        default:
-                          return <ArchiveButton />;
-                      }
-                    })()}
-                  </div>
-                );
-              }
+              return (
+                <div>
+                  {(() => {
+                    switch (selectedUser?.state) {
+                      case UserStates.ACCOUNT_LOCKED:
+                        return <UnlockButton />;
+                      case UserStates.INVITE_CANCELLED:
+                        return (
+                          <>
+                            <ArchiveButton />
+                            <ResendInviteButton />
+                          </>
+                        );
+                      case UserStates.INVITE_EXPIRED:
+                        return (
+                          <>
+                            <ArchiveButton />
+                            <ResendInviteButton />
+                          </>
+                        );
+                      case UserStates.REGISTERED_LOCKED:
+                        return (
+                          <>
+                            <ArchiveButton />
+                            <UnlockButton />
+                          </>
+                        );
+                      case UserStates.UNREGISTERED:
+                        return (
+                          <>
+                            <GenerateNewSecretButton />
+                            <CancelInviteButton />
+                          </>
+                        );
+                      case UserStates.UNREGISTERED_LOCKED:
+                        return (
+                          <>
+                            <ArchiveButton />
+                            <UnlockButton />
+                          </>
+                        );
+                      default:
+                        return <ArchiveButton />;
+                    }
+                  })()}
+                </div>
+              );
             }
           })()}
         </Menu>

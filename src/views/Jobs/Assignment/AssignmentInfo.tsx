@@ -99,42 +99,46 @@ const AssignmentInfo: FC<CommonOverlayProps<AssignmentInfoProps>> = ({
         showFooter={false}
         showHeader={!!errors.length}
       >
-        // TODO : Optimize the loops where in users & tasks can be created as a hashmap outside errors.map and use those inside.
-        {errors.length ? (
-          <div className="errors-info">
-            {errors.map((error) => {
-              const taskId = (selectedTasks.find(
-                ([taskExecutionId]) => taskExecutionId === error.id,
-              ) ?? [])[1];
+        {
+          // TODO : Optimize the loops where in users & tasks can be created as a hashmap outside errors.map and use those inside.
+          errors.length ? (
+            <div className="errors-info">
+              {errors.map((error) => {
+                const taskId = (selectedTasks.find(
+                  ([taskExecutionId]) => taskExecutionId === error.id,
+                ) ?? [])[1];
 
-              const taskName = tasksById[taskId as string].name;
+                const taskName = tasksById[taskId as string].name;
 
-              const user = [...assignedUsers, ...unassignedUsers].find(
-                (user) => user.id === error.userId,
-              ) as User;
+                const user = [...assignedUsers, ...unassignedUsers].find(
+                  (user) => user.id === error.userId,
+                ) as User;
 
-              const isUserGettingAssigned = assignedUsers.some(
-                (user) => user.id === error.userId,
-              );
+                const isUserGettingAssigned = assignedUsers.some(
+                  (user) => user.id === error.userId,
+                );
 
-              const userName = getUserName({ user, withEmployeeId: true });
+                const userName = getUserName({ user, withEmployeeId: true });
 
-              return (
-                <div className="error-item" key={error.userId}>
-                  <span>{userName}</span> could not be{' '}
-                  {isUserGettingAssigned ? 'assigned to' : 'unassigned from'}{' '}
-                  <span>{taskName}</span>, since{' '}
-                  {ASSIGNMENT_ERROR_CODE_MESSAGE_MAPPING[error.code]}
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="success-info">
-            <AssignmentSuccess className="icon success-icon" />
-            <span className="success-text">Action Completed Successfully</span>
-          </div>
-        )}
+                return (
+                  <div className="error-item" key={error.userId}>
+                    <span>{userName}</span> could not be{' '}
+                    {isUserGettingAssigned ? 'assigned to' : 'unassigned from'}{' '}
+                    <span>{taskName}</span>, since{' '}
+                    {ASSIGNMENT_ERROR_CODE_MESSAGE_MAPPING[error.code]}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="success-info">
+              <AssignmentSuccess className="icon success-icon" />
+              <span className="success-text">
+                Action Completed Successfully
+              </span>
+            </div>
+          )
+        }
       </BaseModal>
     </Wrapper>
   );
