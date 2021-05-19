@@ -45,12 +45,7 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           .map((item, index) => (
             <ActivityItemInput
               defaultValue={item.name}
-              error={
-                isErrorPresent
-                  ? activityErrors.find((error) => error.code === 'E407')
-                      ?.message
-                  : null
-              }
+              error={isErrorPresent && !item.name}
               key={index}
               label={
                 item.type === 'yes' ? 'Positive Response' : 'Negative Response'
