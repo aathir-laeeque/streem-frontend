@@ -37,6 +37,7 @@ import SessionExpireModal from '#views/Auth/Overlays/SessionExpire';
 import ArchiveModal from '#views/Checklists/ListView/ArchiveModal';
 import ChecklistInfoModal from '#views/Checklists/ListView/ChecklistInfoModal';
 import RevisionErrorModal from '#views/Checklists/Overlays/RevisionErrorModal';
+import PrototypeStartError from '#views/Checklists/Overlays/PrototypeStartError';
 import AssingnmentInfo from '#views/Jobs/Assignment/AssignmentInfo';
 import UserAssignment from '#views/Jobs/Assignment/UserAssignmentModal';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
@@ -193,6 +194,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.ASSIGNMENT_INFO:
       return <AssingnmentInfo {...params} />;
+
+    case OverlayNames.PROTOTYPE_START_ERROR:
+      return <PrototypeStartError {...params} />;
 
     default:
       return null;

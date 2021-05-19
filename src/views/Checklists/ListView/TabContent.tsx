@@ -19,7 +19,7 @@ import {
 import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useProperties } from '#services/properties';
-import checkPermission from '#services/uiPermissions';
+import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/NewListView/actions';
@@ -75,9 +75,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     checklistListView: { pageable, currentPageData },
     auth: { userId },
   } = useTypedSelector((state) => state);
-  const { selectedFacility: { id: facilityId = '' } = {} } = useTypedSelector(
-    (state) => state.auth,
-  );
+  const {
+    roles: userRoles,
+    selectedFacility: { id: facilityId = '' } = {},
+  } = useTypedSelector((state) => state.auth);
 
   const { list: jobProperties } = useProperties(ComposerEntity.JOB);
   const { list: checklistProperties } = useProperties(ComposerEntity.CHECKLIST);
@@ -597,11 +598,22 @@ const ListView: FC<ListViewProps & { label: string }> = ({
         {checkPermission(['checklists', 'create']) && (
           <Button1
             id="create"
-            onClick={() =>
-              navigate('/checklists/prototype', {
-                state: { mode: FormMode.ADD },
-              })
-            }
+            onClick={() => {
+              if (
+                userRoles?.some((role) => role === roles.ACCOUNT_OWNER) &&
+                facilityId === '-1'
+              ) {
+                dispatch(
+                  openOverlayAction({
+                    type: OverlayNames.PROTOTYPE_START_ERROR,
+                  }),
+                );
+              } else {
+                navigate('/checklists/prototype', {
+                  state: { mode: FormMode.ADD },
+                });
+              }
+            }}
           >
             Start a Prototype
           </Button1>
