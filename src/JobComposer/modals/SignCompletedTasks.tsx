@@ -15,11 +15,11 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { debounce, pick } from 'lodash';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { resetSignOffTaskError, signOffTasks } from '../actions';
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ isErrorPresent: boolean }>`
   .modal-body {
     padding: 0 !important;
     width: 650px;
@@ -72,8 +72,24 @@ const Wrapper = styled.div`
           display: flex;
           flex-direction: column;
 
+          .input-wrapper {
+            ${({ isErrorPresent }) =>
+              isErrorPresent
+                ? css`
+                    border-color: #eb5757;
+                  `
+                : null};
+          }
+
           button {
             margin-top: 40px;
+          }
+
+          .input-error {
+            color: #eb5757;
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 8px;
           }
         }
 
@@ -153,7 +169,7 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
   );
 
   return (
-    <Wrapper>
+    <Wrapper isErrorPresent={!!signOffError}>
       <BaseModal
         closeAllModals={closeAllOverlays}
         closeModal={closeOverlay}
@@ -238,7 +254,6 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
                             setShowPassword((val) => !val)
                           }
                           defaultValue={password}
-                          error={signOffError}
                           onChange={debounce(({ value }) => {
                             if (!!signOffError) {
                               dispatch(resetSignOffTaskError());
@@ -248,6 +263,10 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
                           placeholder="Password"
                           type={showPassword ? 'text' : 'password'}
                         />
+
+                        {signOffError ? (
+                          <div className="input-error">{signOffError}</div>
+                        ) : null}
 
                         <Button1
                           onClick={() => {
