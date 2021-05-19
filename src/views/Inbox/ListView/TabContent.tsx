@@ -179,6 +179,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     <TabContentWrapper>
       <div className="filters">
         <SearchFilter
+          key={label}
           showdropdown
           dropdownOptions={[
             {
@@ -194,15 +195,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
               operator: 'EQ',
             })),
           ]}
-          updateFilterFields={(_fields) => {
-            setFilterFields((_currentFields) => [
-              ..._currentFields.filter(
-                (field) =>
-                  !_fields.some((newField) => newField.field === field.field),
-              ),
-              ..._fields,
-            ]);
-          }}
+          updateFilterFields={(fields) => setFilterFields([...fields])}
         />
       </div>
       <DataTable

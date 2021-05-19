@@ -16,7 +16,7 @@ import { User } from '#store/users/types';
 import { FilterField } from '#utils/globalTypes';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { createJob, fetchJobs } from './actions';
@@ -49,6 +49,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
   const { list: jobProperties } = useProperties(ComposerEntity.JOB);
 
+  const defaultFilters = useRef<FilterField[]>(getBaseFilter(values));
+
   const [filterFields, setFilterFields] = useState<FilterField[]>(
     getBaseFilter(values),
   );
@@ -75,13 +77,20 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   }, [values]);
 
   useEffect(() => {
+    const filteredFields = filterFields.filter(
+      (field) => field.field !== 'taskExecutions.assignees.user.id',
+    );
     setFilterFields([
-      ...getBaseFilter(values),
-      {
-        field: 'taskExecutions.assignees.user.id',
-        op: 'ANY',
-        values: assignedUsers.map((user) => user.id),
-      },
+      ...filteredFields,
+      ...(assignedUsers.length > 0
+        ? [
+            {
+              field: 'taskExecutions.assignees.user.id',
+              op: 'ANY',
+              values: assignedUsers.map((user) => user.id),
+            },
+          ]
+        : []),
     ]);
   }, [assignedUsers]);
 
@@ -263,6 +272,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     <TabContentWrapper>
       <div className="filters">
         <SearchFilter
+          key={label}
           showdropdown
           dropdownOptions={[
             {
@@ -278,13 +288,16 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
               operator: 'EQ',
             })),
           ]}
-          updateFilterFields={(_fields) => {
-            setFilterFields((_currentFields) => [
-              ..._currentFields.filter(
-                (field) =>
-                  !_fields.some((newField) => newField.field === field.field),
+          updateFilterFields={(fields) => {
+            setFilterFields((currentFields) => [
+              ...currentFields.filter((field) =>
+                field.field === 'taskExecutions.assignees.user.id'
+                  ? true
+                  : defaultFilters.current.some(
+                      (newField) => newField.field === field.field,
+                    ),
               ),
-              ..._fields,
+              ...fields,
             ]);
           }}
         />
@@ -294,7 +307,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             options={assignedUsers}
             label="Assigned to"
             updateFilter={(fields) => {
-              console.log('Updated Filter', fields);
               setAssignedUsers(fields);
             }}
           />

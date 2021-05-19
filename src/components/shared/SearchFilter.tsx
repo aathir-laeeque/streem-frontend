@@ -65,12 +65,14 @@ type SearchFilterProps = {
   showdropdown?: boolean;
   dropdownOptions?: DropdownOption[];
   updateFilterFields: (fields: FilterField[]) => void;
+  key: string;
 };
 
 const SearchFilter: FC<SearchFilterProps> = ({
   dropdownOptions,
   showdropdown = false,
   updateFilterFields,
+  key,
 }) => {
   const [selectedOption, setSelectedOption] = useState<DropdownOption>(
     (dropdownOptions ?? [])[0],
@@ -84,6 +86,10 @@ const SearchFilter: FC<SearchFilterProps> = ({
     setAnchorEl(event.currentTarget);
 
   const handleClose = () => setAnchorEl(null);
+
+  useEffect(() => {
+    setSearchValue('');
+  }, [key]);
 
   useEffect(() => {
     const searchFilterFields: FilterField[] = [
@@ -153,7 +159,6 @@ const SearchFilter: FC<SearchFilterProps> = ({
         AfterElement={Search}
         afterElementClass=""
         placeholder={`Search with ${selectedOption.label}`}
-        defaultValue={searchValue}
         onChange={debounce(({ value }) => setSearchValue(value), 500)}
       />
     </Wrapper>

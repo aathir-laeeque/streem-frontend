@@ -32,7 +32,7 @@ import {
   FiberManualRecord,
 } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
-import React, { FC, MouseEvent, useEffect, useState } from 'react';
+import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { addRevisionPrototype } from '../NewPrototype/actions';
@@ -98,6 +98,8 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(
     null,
   );
+
+  const defaultFilters = useRef<FilterField[]>(getBaseFilter(label));
 
   const [filterFields, setFilterFields] = useState<FilterField[]>(
     getBaseFilter(label),
@@ -345,7 +347,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                               ),
                               onPrimaryClick: () =>
                                 dispatch(
-                                  archiveChecklist(selectedChecklist.id),
+                                  archiveChecklist(selectedChecklist.id, true),
                                 ),
                             },
                           }),
@@ -442,6 +444,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     <TabContentWrapper>
       <div className="filters">
         <SearchFilter
+          key={label}
           showdropdown
           dropdownOptions={[
             {
@@ -459,9 +462,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           ]}
           updateFilterFields={(fields) => {
             setFilterFields((currentFields) => [
-              ...currentFields.filter(
-                (field) =>
-                  !fields.some((newField) => newField.field === field.field),
+              ...currentFields.filter((field) =>
+                defaultFilters.current.some(
+                  (newField) => newField.field === field.field,
+                ),
               ),
               ...fields,
             ]);
