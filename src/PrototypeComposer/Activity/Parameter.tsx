@@ -41,7 +41,11 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             }),
           );
         }, 500)}
-        error={isErrorPresent && !activity.data.parameter}
+        error={
+          isErrorPresent && !activity.data.parameter
+            ? activityErrors.find((error) => error.code === 'E431')?.message
+            : null
+        }
       />
 
       <TextInput
@@ -56,7 +60,11 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             }),
           );
         }, 500)}
-        error={isErrorPresent && !activity.data.uom}
+        error={
+          isErrorPresent && !activity.data.uom
+            ? activityErrors.find((error) => error.code === 'E430')?.message
+            : null
+        }
       />
 
       <Select
@@ -82,10 +90,8 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           <NumberInput
             defaultValue={activity.data?.lowerValue}
             error={
-              isErrorPresent
-                ? activityErrors.find(
-                    (error) => error.code === 'E416' || error.code === 'E417',
-                  )?.message
+              isErrorPresent && !activity.data?.lowerValue
+                ? activityErrors.find((error) => error.code === 'E417')?.message
                 : null
             }
             label="Value"
@@ -105,10 +111,8 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           <NumberInput
             defaultValue={activity.data?.upperValue}
             error={
-              isErrorPresent
-                ? activityErrors.find(
-                    (error) => error.code === 'E416' || error.code === 'E417',
-                  )?.message
+              isErrorPresent && !activity.data?.upperValue
+                ? activityErrors.find((error) => error.code === 'E417')?.message
                 : null
             }
             label="Value"
@@ -127,10 +131,8 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         <NumberInput
           defaultValue={activity.data.value}
           error={
-            isErrorPresent
-              ? activityErrors.find(
-                  (error) => error.code === 'E416' || error.code === 'E417',
-                )?.message
+            isErrorPresent && !activity.data?.value
+              ? activityErrors.find((error) => error.code === 'E417')?.message
               : null
           }
           label="Value"

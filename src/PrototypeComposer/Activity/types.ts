@@ -52,9 +52,10 @@ export enum SelectActivityErrors {
 }
 
 export enum ParameterActivityErrors {
-  E416 = 'PARAMETER_ACTIVITY_VALUE_CANNOT_BE_EMPTY',
   E417 = 'PARAMETER_ACTIVITY_VALUE_INVALID',
   E418 = 'PARAMETER_ACTIVITY_OPERATOR_CANNOT_BE_EMPTY',
+  E430 = 'PARAMETER_ACTIVITY_UOM_CANNOT_BE_EMPTY',
+  E431 = 'PARAMETER_ACTIVITY_NAME_CANNOT_BE_EMPTY',
 }
 
 export enum YesNoActivityErrors {
@@ -63,6 +64,7 @@ export enum YesNoActivityErrors {
   E409 = 'YES_NO_ACTIVITY_TITLE_CANNOT_BE_EMPTY',
 }
 
+// Add any new activity error codes to this enum as well as the respective activity error code enum mappings too.
 export enum ActivityErrors {
   E405 = 'PROVIDE_REASON_FOR_YES_NO_ACTIVITY',
   E406 = 'PROVIDE_REASON_FOR_PARAMETER_ACTIVITY_OFF_LIMITS',
@@ -83,4 +85,6 @@ export enum ActivityErrors {
   E421 = 'MATERIAL_ACTIVITY_CANNOT_BE_MANDATORY',
   E422 = 'INSTRUCTION_ACTIVITY_TEXT_CANNOT_BE_EMPTY',
   E423 = 'INSTRUCTION_ACTIVITY_CANNOT_BE_MANDATORY',
+  E430 = 'PARAMETER_ACTIVITY_UOM_CANNOT_BE_EMPTY',
+  E431 = 'PARAMETER_ACTIVITY_NAME_CANNOT_BE_EMPTY',
 }
