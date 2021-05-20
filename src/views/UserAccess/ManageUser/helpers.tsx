@@ -65,11 +65,18 @@ export const createSectionConfig = ({
   const dispatch = useDispatch();
   const { t: translate } = useTranslation(['userManagement']);
   const [validatedToken, setValidatedToken] = useState<string | undefined>();
+  const [
+    currentlySelectedFacilities,
+    setCurrentlySelectedFacilities,
+  ] = useState<Option[]>();
   const { register, errors, getValues, setValue } = formData;
   const { roles: rolesValues, facilities: facilitiesValues } = getValues([
     'roles',
     'facilities',
   ]);
+
+  console.log('currentlySelectedFacilities', currentlySelectedFacilities);
+  console.log('facilitiesValues', facilitiesValues);
 
   const shouldShowAllFacilities = [
     RoleIdByName.ACCOUNT_OWNER,
@@ -259,10 +266,16 @@ export const createSectionConfig = ({
                         shouldValidate: true,
                       });
                     } else {
-                      setValue('facilities', undefined, {
-                        shouldDirty: true,
-                        shouldValidate: true,
-                      });
+                      setValue(
+                        'facilities',
+                        currentlySelectedFacilities?.map((o) => ({
+                          id: o.value as string,
+                        })),
+                        {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                        },
+                      );
                     }
                     setValue('roles', e.target.value, {
                       shouldDirty: true,
@@ -305,12 +318,13 @@ export const createSectionConfig = ({
                       label: f.name,
                       value: f.id,
                     })),
-                    onChange: onFacilityChange,
+                    onChange: (options: Option[]) => {
+                      setCurrentlySelectedFacilities(options);
+                      onFacilityChange(options);
+                    },
                     isDisabled: !isEditable || shouldShowAllFacilities,
                     ...(shouldShowAllFacilities
                       ? { value: { label: 'All Facilities', value: '-1' } }
-                      : facilitiesValues === undefined
-                      ? { value: [] }
                       : {}),
                   },
                 },
