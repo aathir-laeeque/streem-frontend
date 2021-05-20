@@ -77,7 +77,9 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
 
     const isTaskDelayed = taskState === TaskExecutionState.COMPLETED && reason;
 
+    // as the task is skipped and user should not be able to do anything, treating it same as the completed task.
     const isTaskCompleted =
+      taskState === TaskExecutionState.SKIPPED ||
       taskState === TaskExecutionState.COMPLETED ||
       taskState === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
       taskState === TaskExecutionState.COMPLETED_WITH_CORRECTION;
