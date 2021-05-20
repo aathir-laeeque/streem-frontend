@@ -395,6 +395,45 @@ const ChecklistHeader: FC = () => {
     setAnchorEl(null);
   };
 
+  const ArchiveMenuItem = () => (
+    <MenuItem
+      onClick={() => {
+        handleClose();
+        dispatch(
+          openOverlayAction({
+            type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+            props: {
+              header: data?.archived
+                ? 'Unarchive Checklist'
+                : 'Archive Checklist',
+              body: (
+                <span>
+                  Are you sure you want to{' '}
+                  {data?.archived ? 'Unarchive' : 'Archive'}
+                  this Prototype ?
+                </span>
+              ),
+              onPrimaryClick: () => {
+                if (data?.archived) {
+                  dispatch(unarchiveChecklist(data?.id, true));
+                } else {
+                  dispatch(archiveChecklist(data?.id, true));
+                }
+              },
+            },
+          }),
+        );
+      }}
+    >
+      <div className="list-item">
+        <MemoArchive />
+        <span>
+          {data?.archived ? 'Unarchive Checklist' : 'Archive Checklist'}
+        </span>
+      </div>
+    </MenuItem>
+  );
+
   const MoreButton = () => (
     <>
       <Button1
@@ -431,43 +470,12 @@ const ChecklistHeader: FC = () => {
             <span>View Info</span>
           </div>
         </MenuItem>
-        {checkPermission(['checklists', 'archive']) ? (
-          <MenuItem
-            onClick={() => {
-              handleClose();
-              dispatch(
-                openOverlayAction({
-                  type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                  props: {
-                    header: data?.archived
-                      ? 'Unarchive Checklist'
-                      : 'Archive Checklist',
-                    body: (
-                      <span>
-                        Are you sure you want to{' '}
-                        {data?.archived ? 'Unarchive' : 'Archive'}
-                        this Prototype ?
-                      </span>
-                    ),
-                    onPrimaryClick: () => {
-                      if (data?.archived) {
-                        dispatch(unarchiveChecklist(data?.id, true));
-                      } else {
-                        dispatch(archiveChecklist(data?.id, true));
-                      }
-                    },
-                  },
-                }),
-              );
-            }}
-          >
-            <div className="list-item">
-              <MemoArchive />
-              <span>
-                {data?.archived ? 'Unarchive Checklist' : 'Archive Checklist'}
-              </span>
-            </div>
-          </MenuItem>
+        {data?.state === ChecklistStates.PUBLISHED ? (
+          checkPermission(['checklists', 'archive']) ? (
+            <ArchiveMenuItem />
+          ) : null
+        ) : data?.audit?.createdBy?.id === userId ? (
+          <ArchiveMenuItem />
         ) : null}
       </Menu>
     </>

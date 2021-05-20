@@ -12,6 +12,7 @@ import {
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
+  Checklist,
   ChecklistStatesColors,
   ChecklistStatesContent,
   DisabledStates,
@@ -37,7 +38,6 @@ import { useDispatch } from 'react-redux';
 
 import { addRevisionPrototype } from '../NewPrototype/actions';
 import { FormMode } from '../NewPrototype/types';
-import { Checklist } from '../types';
 import {
   archiveChecklist,
   clearData,
@@ -386,7 +386,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             </>
           );
         } else {
-          if (!checkPermission(['checklists', 'archive'])) return <div />;
+          if (item?.audit?.createdBy?.id !== userId) return <div />;
           return (
             <div
               id="archive-unarchive"

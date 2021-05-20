@@ -6,6 +6,7 @@ type ChecklistProperty = {
   value: string;
 };
 
+// TODO REMOVE THESE TYPES AND USE FROM PROTOTYPE COMPOSER TYPES FILES.
 export interface Checklist {
   archived: boolean;
   code: string;
