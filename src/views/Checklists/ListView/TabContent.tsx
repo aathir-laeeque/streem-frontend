@@ -338,17 +338,35 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                           openOverlayAction({
                             type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
                             props: {
-                              header: 'Archive Prototype',
+                              header: selectedChecklist?.archived
+                                ? 'Unarchive Checklist'
+                                : 'Archive Checklist',
                               body: (
                                 <span>
-                                  Are you sure you want to Archive this
-                                  Prototype ?
+                                  Are you sure you want to{' '}
+                                  {selectedChecklist?.archived
+                                    ? 'Unarchive'
+                                    : 'Archive'}{' '}
+                                  this Prototype ?
                                 </span>
                               ),
-                              onPrimaryClick: () =>
-                                dispatch(
-                                  archiveChecklist(selectedChecklist.id, true),
-                                ),
+                              onPrimaryClick: () => {
+                                if (selectedChecklist?.archived) {
+                                  dispatch(
+                                    unarchiveChecklist(
+                                      selectedChecklist?.id,
+                                      true,
+                                    ),
+                                  );
+                                } else {
+                                  dispatch(
+                                    archiveChecklist(
+                                      selectedChecklist.id,
+                                      true,
+                                    ),
+                                  );
+                                }
+                              },
                             },
                           }),
                         );
@@ -356,7 +374,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                   >
                     <div className="list-item">
                       <MemoArchive />
-                      <span>Archive Checklist</span>
+                      <span>
+                        {selectedChecklist?.archived
+                          ? 'Unarchive Checklist'
+                          : 'Archive Checklist'}
+                      </span>
                     </div>
                   </MenuItem>
                 )}
