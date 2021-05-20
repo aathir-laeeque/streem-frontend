@@ -246,14 +246,18 @@ const TabContent: React.FC<TabContentProps> = (props) => {
         })();
       },
     },
-    {
-      id: 'actions',
-      label: 'Actions',
-      minWidth: 152,
-      format: function renderComp(item: User) {
-        return showButtons(item);
-      },
-    },
+    ...(checkPermission(['usersAndAccess', 'listViewActions'])
+      ? [
+          {
+            id: 'actions',
+            label: 'Actions',
+            minWidth: 152,
+            format: function renderComp(item: User) {
+              return showButtons(item);
+            },
+          },
+        ]
+      : []),
   ];
   const isUserLocked = (state: UserStates) =>
     [
