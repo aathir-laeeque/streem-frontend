@@ -70,13 +70,7 @@ export const createSectionConfig = ({
     setCurrentlySelectedFacilities,
   ] = useState<Option[]>();
   const { register, errors, getValues, setValue } = formData;
-  const { roles: rolesValues, facilities: facilitiesValues } = getValues([
-    'roles',
-    'facilities',
-  ]);
-
-  console.log('currentlySelectedFacilities', currentlySelectedFacilities);
-  console.log('facilitiesValues', facilitiesValues);
+  const { roles: rolesValues } = getValues(['roles']);
 
   const shouldShowAllFacilities = [
     RoleIdByName.ACCOUNT_OWNER,
