@@ -38,8 +38,11 @@ type initialState = {
   endTime: Moment | null;
   searchQuery: string;
   selectedUsers: User[];
+  unSelectedUsers: User[];
   appliedUsers: User[];
 };
+
+// TODO Change appliedUsers, selectedUsers, unSelectedUsers to HashMap as we only need the id's of the users SO we can keep it like { userId : boolean }.
 
 const currentDate = moment().startOf('day');
 const initialState: initialState = {
@@ -49,6 +52,7 @@ const initialState: initialState = {
   endTime: moment().endOf('day'),
   searchQuery: '',
   selectedUsers: [],
+  unSelectedUsers: [],
   appliedUsers: [],
 };
 
@@ -63,7 +67,7 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
 
   const dispatch = useDispatch();
   const [state, setstate] = useState(initialState);
-  const { searchQuery, selectedUsers, appliedUsers } = state;
+  const { searchQuery, selectedUsers, unSelectedUsers, appliedUsers } = state;
 
   const prevSearch = usePrevious(searchQuery);
 
@@ -75,9 +79,18 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
   const onCheckChanged = (user: User, checked: boolean) => {
     if (checked) {
       const newSelected = selectedUsers.filter((u) => user.id !== u.id);
-      setstate({ ...state, selectedUsers: newSelected });
+      setstate({
+        ...state,
+        selectedUsers: newSelected,
+        unSelectedUsers: [...unSelectedUsers, user],
+      });
     } else {
-      setstate({ ...state, selectedUsers: [...selectedUsers, user] });
+      const newUnSelected = unSelectedUsers.filter((u) => user.id !== u.id);
+      setstate({
+        ...state,
+        unSelectedUsers: newUnSelected,
+        selectedUsers: [...selectedUsers, user],
+      });
     }
   };
 
@@ -110,7 +123,12 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
   };
 
   const handleUnselectAll = () => {
-    setstate({ ...state, selectedUsers: [], appliedUsers: [] });
+    setstate({
+      ...state,
+      unSelectedUsers: [],
+      selectedUsers: [],
+      appliedUsers: [],
+    });
   };
 
   const filterProp: FilterProp = {
@@ -178,14 +196,22 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
       {
         label: 'Users',
         onApply: () => {
-          if (selectedUsers.length > 0 || appliedUsers.length > 0) {
+          const applicapleUsers = [
+            ...selectedUsers,
+            ...appliedUsers.filter(
+              (user) => !unSelectedUsers.some((item) => item.id === user.id),
+            ),
+          ];
+          if (!!applicapleUsers.length) {
             setstate({
               ...state,
               appliedFilters: {
                 ...state.appliedFilters,
                 Users: true,
               },
-              appliedUsers: selectedUsers,
+              appliedUsers: applicapleUsers,
+              selectedUsers: [],
+              unSelectedUsers: [],
             });
           } else {
             setstate({
@@ -195,6 +221,8 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
                 Users: false,
               },
               appliedUsers: [],
+              selectedUsers: [],
+              unSelectedUsers: [],
             });
           }
         },
@@ -204,7 +232,10 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
           if (list) {
             if (searchQuery === '') {
               appliedUsers.forEach((user) => {
-                bodyView.push(userRow(user, true));
+                const isUnSelected = !unSelectedUsers.some(
+                  (item) => item.id === user.id,
+                );
+                bodyView.push(userRow(user, isUnSelected));
               });
             }
 
@@ -215,10 +246,8 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
               const inApplied = appliedUsers.some(
                 (item) => item.id === user.id,
               );
-              if (user.id !== '0') {
-                if (!inApplied) {
-                  bodyView.push(userRow(user, isSelected));
-                }
+              if (!inApplied) {
+                bodyView.push(userRow(user, isSelected));
               }
             });
           }
@@ -274,9 +303,7 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
       op: 'AND',
       fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
     });
-    dispatch(
-      fetchUsers({ page, size, filters, sort: 'id' }, UsersListType.ALL),
-    );
+    dispatch(fetchUsers({ page, size, filters }, UsersListType.ALL));
   };
 
   const fetchLogs = (page = 0, size = 250) => {

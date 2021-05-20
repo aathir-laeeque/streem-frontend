@@ -42,8 +42,11 @@ type initialState = {
   endTime: Moment | null;
   searchQuery: string;
   selectedUsers: User[];
+  unSelectedUsers: User[];
   appliedUsers: User[];
 };
+
+// TODO Change appliedUsers, selectedUsers, unSelectedUsers to HashMap as we only need the id's of the users SO we can keep it like { userId : boolean }.
 
 const currentDate = moment().startOf('day');
 const initialState: initialState = {
@@ -53,6 +56,7 @@ const initialState: initialState = {
   endTime: moment().endOf('day'),
   searchQuery: '',
   selectedUsers: [],
+  unSelectedUsers: [],
   appliedUsers: [],
 };
 
@@ -67,7 +71,7 @@ const SessionActivity: FC<TabViewProps> = () => {
 
   const dispatch = useDispatch();
   const [state, setstate] = useState(initialState);
-  const { searchQuery, selectedUsers, appliedUsers } = state;
+  const { searchQuery, selectedUsers, unSelectedUsers, appliedUsers } = state;
 
   const prevSearch = usePrevious(searchQuery);
 
@@ -79,9 +83,18 @@ const SessionActivity: FC<TabViewProps> = () => {
   const onCheckChanged = (user: User, checked: boolean) => {
     if (checked) {
       const newSelected = selectedUsers.filter((u) => user.id !== u.id);
-      setstate({ ...state, selectedUsers: newSelected });
+      setstate({
+        ...state,
+        selectedUsers: newSelected,
+        unSelectedUsers: [...unSelectedUsers, user],
+      });
     } else {
-      setstate({ ...state, selectedUsers: [...selectedUsers, user] });
+      const newUnSelected = unSelectedUsers.filter((u) => user.id !== u.id);
+      setstate({
+        ...state,
+        unSelectedUsers: newUnSelected,
+        selectedUsers: [...selectedUsers, user],
+      });
     }
   };
 
@@ -114,7 +127,12 @@ const SessionActivity: FC<TabViewProps> = () => {
   };
 
   const handleUnselectAll = () => {
-    setstate({ ...state, selectedUsers: [], appliedUsers: [] });
+    setstate({
+      ...state,
+      unSelectedUsers: [],
+      selectedUsers: [],
+      appliedUsers: [],
+    });
   };
 
   const filterProp: FilterProp = {
@@ -182,14 +200,22 @@ const SessionActivity: FC<TabViewProps> = () => {
       {
         label: 'Users',
         onApply: () => {
-          if (selectedUsers.length > 0 || appliedUsers.length > 0) {
+          const applicapleUsers = [
+            ...selectedUsers,
+            ...appliedUsers.filter(
+              (user) => !unSelectedUsers.some((item) => item.id === user.id),
+            ),
+          ];
+          if (!!applicapleUsers.length) {
             setstate({
               ...state,
               appliedFilters: {
                 ...state.appliedFilters,
                 Users: true,
               },
-              appliedUsers: selectedUsers,
+              appliedUsers: applicapleUsers,
+              selectedUsers: [],
+              unSelectedUsers: [],
             });
           } else {
             setstate({
@@ -199,6 +225,8 @@ const SessionActivity: FC<TabViewProps> = () => {
                 Users: false,
               },
               appliedUsers: [],
+              selectedUsers: [],
+              unSelectedUsers: [],
             });
           }
         },
@@ -208,7 +236,10 @@ const SessionActivity: FC<TabViewProps> = () => {
           if (list) {
             if (searchQuery === '') {
               appliedUsers.forEach((user) => {
-                bodyView.push(userRow(user, true));
+                const isUnSelected = !unSelectedUsers.some(
+                  (item) => item.id === user.id,
+                );
+                bodyView.push(userRow(user, isUnSelected));
               });
             }
 
@@ -219,10 +250,8 @@ const SessionActivity: FC<TabViewProps> = () => {
               const inApplied = appliedUsers.some(
                 (item) => item.id === user.id,
               );
-              if (user.id !== '0') {
-                if (!inApplied) {
-                  bodyView.push(userRow(user, isSelected));
-                }
+              if (!inApplied) {
+                bodyView.push(userRow(user, isSelected));
               }
             });
           }
@@ -278,13 +307,10 @@ const SessionActivity: FC<TabViewProps> = () => {
       op: 'AND',
       fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
     });
-    dispatch(
-      fetchUsers({ page, size, filters, sort: 'id' }, UsersListType.ALL),
-    );
+    dispatch(fetchUsers({ page, size, filters }, UsersListType.ALL));
   };
 
   const fetchLogs = (page = 0, size = 250) => {
-    size = 250;
     const { dateRange, startTime, endTime } = state;
     let greaterDate = moment().startOf('day').subtract(7, 'days');
     let lowerDate = moment().endOf('day');

@@ -268,6 +268,7 @@ export const ListView: FC<ListViewProps> = ({
                       onClick={(e) => {
                         e.stopPropagation();
                       }}
+                      onKeyDown={(e) => e.stopPropagation()}
                       className="filter-container"
                     >
                       {typeof filter.content === 'function'
