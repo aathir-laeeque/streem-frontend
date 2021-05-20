@@ -386,7 +386,12 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             </>
           );
         } else {
-          if (item?.audit?.createdBy?.id !== userId) return <div />;
+          if (item?.audit?.createdBy?.id !== userId)
+            return (
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                -N/A-
+              </div>
+            );
           return (
             <div
               id="archive-unarchive"

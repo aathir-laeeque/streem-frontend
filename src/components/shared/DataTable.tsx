@@ -125,7 +125,9 @@ export default function DataTable({
                           {column.format ? (
                             column.format(row)
                           ) : (
-                            <span title={row[column.id]}>{row[column.id]}</span>
+                            <span title={row[column.id]}>
+                              {row[column.id] ?? '-N/A-'}
+                            </span>
                           )}
                         </TableCell>
                       );
