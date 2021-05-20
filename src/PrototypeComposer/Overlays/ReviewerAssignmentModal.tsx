@@ -1,6 +1,6 @@
 import { BaseModal, Checkbox } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { Checklist } from '#PrototypeComposer/checklist.types';
+import { Checklist, ChecklistStates } from '#PrototypeComposer/checklist.types';
 import {
   Collaborator,
   CollaboratorState,
@@ -46,7 +46,7 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
   props: { checklistId, isModal = true },
 }) => {
   const {
-    data: { collaborators, phase, state: checklistState },
+    data: { collaborators, state: checklistState },
     assignees,
   } = useTypedSelector((state) => ({
     assignees: state.prototypeComposer.collaborators,
@@ -69,12 +69,12 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
     params: { ...defaultParams(false) },
   });
 
-  if (checklistId) {
-    useEffect(() => {
+  useEffect(() => {
+    dispatch(fetchAssignedReviewersForChecklist(checklistId));
+    return () => {
       dispatch(revertReviewersForChecklist([]));
-      dispatch(fetchAssignedReviewersForChecklist(checklistId));
-    }, []);
-  }
+    };
+  }, []);
 
   useEffect(() => {
     if (
@@ -177,19 +177,6 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
     );
   };
 
-  const handleUnselectAll = () => {
-    const filteredAssignees = preAssignedUsers.filter(
-      (user) =>
-        user.phase === phase && user.state !== CollaboratorState.NOT_STARTED,
-    );
-    setstate({
-      ...state,
-      unassignedUsers: filteredAssignees.map((i) => i.id),
-      assignedUsers: [],
-    });
-    if (checklistId) dispatch(revertReviewersForChecklist([]));
-  };
-
   const bodyView: JSX.Element[] = [];
 
   if (list) {
@@ -258,7 +245,11 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
         onSecondary={onSecondary}
         onPrimary={onPrimary}
         disabledPrimary={
-          !state.assignedUsers.length && !state.unassignedUsers.length
+          isModal
+            ? checklistState === ChecklistStates.BEING_BUILT &&
+              !state.assignedUsers.length &&
+              !state.unassignedUsers.length
+            : !state.assignedUsers.length && !state.unassignedUsers.length
         }
       >
         <div className="top-content">
@@ -273,7 +264,6 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
               placeholder="Search with First Name"
             />
           </div>
-          <span onClick={handleUnselectAll}>Unselect All</span>
         </div>
         <div className="scrollable-content" onScroll={handleOnScroll}>
           {bodyView}
