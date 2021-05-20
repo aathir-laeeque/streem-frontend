@@ -41,13 +41,6 @@ export const parseMarkUp = (n: HTMLElement) => {
           text: '',
           childs: [],
         });
-        // cNode.childNodes = [
-        //   { nodeType: 3, nodeName: '#text', textContent: '' },
-        // ];
-        // parser(
-        //   { childNodes: [{ nodeType: 3, nodeName: '#text', textContent: '' }] },
-        //   arr[arr.length - 1].childs,
-        // );
       } else if (
         (cNode.nodeType === 3 &&
           nValue?.codePointAt(0)?.toString(16) !== 'a') ||
