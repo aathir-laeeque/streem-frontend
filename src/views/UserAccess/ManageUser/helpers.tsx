@@ -350,6 +350,11 @@ export const createSectionConfig = ({
         view: (
           <Credentials>
             <div className="row">
+              <span className="custom-span">Username</span>
+              <span className="custom-span">{selectedUser?.username}</span>
+              <span className="custom-span" />
+            </div>
+            <div className="row">
               <span className="custom-span">Password</span>
               {!toggles?.[Toggleables.EDIT_PASSWORD] ? (
                 <>
