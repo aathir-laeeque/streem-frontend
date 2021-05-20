@@ -188,7 +188,14 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
               appliedUsers: selectedUsers,
             });
           } else {
-            resetFilter();
+            setstate({
+              ...state,
+              appliedFilters: {
+                ...state.appliedFilters,
+                Users: false,
+              },
+              appliedUsers: [],
+            });
           }
         },
         content: function template() {
@@ -241,7 +248,9 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
       },
     ],
     onReset: () => resetFilter(),
-    activeCount: Object.keys(state.appliedFilters).length,
+    activeCount: Object.keys(state.appliedFilters).filter(
+      (key) => !!state.appliedFilters[key],
+    ).length,
   };
 
   useEffect(() => {

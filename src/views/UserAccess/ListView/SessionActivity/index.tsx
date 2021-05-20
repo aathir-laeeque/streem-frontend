@@ -192,7 +192,14 @@ const SessionActivity: FC<TabViewProps> = () => {
               appliedUsers: selectedUsers,
             });
           } else {
-            resetFilter();
+            setstate({
+              ...state,
+              appliedFilters: {
+                ...state.appliedFilters,
+                Users: false,
+              },
+              appliedUsers: [],
+            });
           }
         },
         content: function template() {
@@ -245,7 +252,9 @@ const SessionActivity: FC<TabViewProps> = () => {
       },
     ],
     onReset: () => resetFilter(),
-    activeCount: Object.keys(state.appliedFilters).length,
+    activeCount: Object.keys(state.appliedFilters).filter(
+      (key) => !!state.appliedFilters[key],
+    ).length,
   };
 
   useEffect(() => {
