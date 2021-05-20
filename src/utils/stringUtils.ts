@@ -35,7 +35,20 @@ export const parseMarkUp = (n: HTMLElement) => {
   const parser = (node: HTMLElement, arr: Response[]) => {
     node.childNodes.forEach((cNode) => {
       const nValue = cNode.textContent as string;
-      if (
+      if (cNode.nodeName === 'BR') {
+        arr.push({
+          tag: 'P',
+          text: '',
+          childs: [],
+        });
+        // cNode.childNodes = [
+        //   { nodeType: 3, nodeName: '#text', textContent: '' },
+        // ];
+        // parser(
+        //   { childNodes: [{ nodeType: 3, nodeName: '#text', textContent: '' }] },
+        //   arr[arr.length - 1].childs,
+        // );
+      } else if (
         (cNode.nodeType === 3 &&
           nValue?.codePointAt(0)?.toString(16) !== 'a') ||
         cNode.hasChildNodes()
