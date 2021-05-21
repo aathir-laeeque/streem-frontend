@@ -169,7 +169,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       return {
         id: jobProperty.id,
         label: jobProperty.placeHolder,
-        minWidth: 100,
+        minWidth: 125,
         maxWidth: 180,
       };
     }),

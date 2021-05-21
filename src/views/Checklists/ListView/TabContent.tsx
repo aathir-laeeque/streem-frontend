@@ -271,7 +271,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
       return {
         id: checklistProperty.id,
         label: checklistProperty.placeHolder,
-        minWidth: 100,
+        minWidth: 125,
         maxWidth: 180,
       };
     }),
