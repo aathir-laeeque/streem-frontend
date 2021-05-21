@@ -183,6 +183,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
         return (
           <span
             className="primary"
+            style={{ textTransform: 'capitalize' }}
             onClick={() => navigate(`/users/edit/${item.id}`)}
             title={fullName}
           >
