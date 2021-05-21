@@ -65,7 +65,7 @@ const Wrapper = styled.div.attrs({
           line-height: 1.29;
           color: #333333;
           font-family: inherit;
-          text-transform: capitalize;
+          /* text-transform: capitalize; */
 
           .primary {
             cursor: pointer;
