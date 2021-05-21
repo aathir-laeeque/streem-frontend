@@ -470,7 +470,8 @@ const ChecklistHeader: FC = () => {
             <span>View Info</span>
           </div>
         </MenuItem>
-        {data?.state === ChecklistStates.PUBLISHED ? (
+        {data?.state === ChecklistStates.PUBLISHED ||
+        data?.audit?.createdBy?.archived ? (
           checkPermission(['checklists', 'archive']) ? (
             <ArchiveMenuItem />
           ) : null

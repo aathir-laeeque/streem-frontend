@@ -7,7 +7,7 @@ export type Properties = {
 
 export type Employee = Pick<
   User,
-  'id' | 'employeeId' | 'firstName' | 'lastName'
+  'id' | 'employeeId' | 'firstName' | 'lastName' | 'archived'
 >;
 
 export type Audit = {

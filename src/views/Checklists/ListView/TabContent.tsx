@@ -171,6 +171,55 @@ const ListView: FC<ListViewProps & { label: string }> = ({
 
   const showPaginationArrows = pageable.totalPages > 10;
 
+  const prototypeActionsTemplate = (item: Checklist | null = null) => {
+    if (!item)
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>-N/A-</div>
+      );
+
+    return (
+      <div
+        id="archive-unarchive"
+        onClick={() => {
+          if (item.archived) {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                props: {
+                  header: 'Unarchive Prototype',
+                  body: (
+                    <span>
+                      Are you sure you want to Unarchive this Prototype ?
+                    </span>
+                  ),
+                  onPrimaryClick: () => dispatch(unarchiveChecklist(item.id)),
+                },
+              }),
+            );
+          } else {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                props: {
+                  header: 'Archive Prototype',
+                  body: (
+                    <span>
+                      Are you sure you want to Archive this Prototype ?
+                    </span>
+                  ),
+                  onPrimaryClick: () => dispatch(archiveChecklist(item.id)),
+                },
+              }),
+            );
+          }
+        }}
+      >
+        <MemoArchive style={{ marginRight: '8px' }} />
+        {item.archived ? 'Unarchive' : 'Archive'}
+      </div>
+    );
+  };
+
   const columns = [
     ...(label === 'prototype'
       ? [
@@ -386,55 +435,15 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             </>
           );
         } else {
-          if (item?.audit?.createdBy?.id !== userId)
-            return (
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                -N/A-
-              </div>
-            );
-          return (
-            <div
-              id="archive-unarchive"
-              onClick={() => {
-                if (item.archived) {
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                      props: {
-                        header: 'Unarchive Prototype',
-                        body: (
-                          <span>
-                            Are you sure you want to Unarchive this Prototype ?
-                          </span>
-                        ),
-                        onPrimaryClick: () =>
-                          dispatch(unarchiveChecklist(item.id)),
-                      },
-                    }),
-                  );
-                } else {
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                      props: {
-                        header: 'Archive Prototype',
-                        body: (
-                          <span>
-                            Are you sure you want to Archive this Prototype ?
-                          </span>
-                        ),
-                        onPrimaryClick: () =>
-                          dispatch(archiveChecklist(item.id)),
-                      },
-                    }),
-                  );
-                }
-              }}
-            >
-              <MemoArchive style={{ marginRight: '8px' }} />
-              {item.archived ? 'Unarchive' : 'Archive'}
-            </div>
-          );
+          if (item?.audit?.createdBy?.archived) {
+            if (checkPermission(['checklists', 'archive'])) {
+              return prototypeActionsTemplate(item);
+            }
+            return prototypeActionsTemplate();
+          } else if (item?.audit?.createdBy?.id === userId) {
+            return prototypeActionsTemplate(item);
+          }
+          return prototypeActionsTemplate();
         }
       },
     },
