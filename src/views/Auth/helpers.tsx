@@ -194,7 +194,7 @@ export const createBaseViewConfig = ({
             : true,
       },
       messages: {
-        passwordMatch: 'Password Match',
+        passwordMatch: 'Passwords Match',
       },
     },
   });
@@ -706,7 +706,7 @@ export const createBaseViewConfig = ({
             {
               type: isConfirmPasswordTextHidden ? 'password' : 'text',
               props: {
-                placeholder: 'Enter your new Password',
+                placeholder: 'Enter your new Password again',
                 label: 'Confirm Password',
                 id: 'confirmPassword',
                 name: 'confirmPassword',
@@ -891,7 +891,7 @@ export const createBaseViewConfig = ({
             {
               type: isConfirmPasswordTextHidden ? 'password' : 'text',
               props: {
-                placeholder: 'Enter your new Password',
+                placeholder: 'Enter your new Password again',
                 label: 'Confirm Password',
                 id: 'confirmPassword',
                 name: 'confirmPassword',

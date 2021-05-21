@@ -657,7 +657,7 @@ const UpdatePassword = ({
             : true,
       },
       messages: {
-        passwordMatch: 'Password Match',
+        passwordMatch: 'Passwords Match',
       },
     },
   };
