@@ -23,14 +23,15 @@ import { setGlobalError } from '#store/extras/action';
 const REFRESH_TOKEN_URL = apiRefreshToken();
 
 let refreshPromise: Promise<ResponseObj<RefreshTokenResponse>> | null = null;
-async function refreshTokenRequest(refreshToken: string) {
+async function refreshTokenRequest(accessToken: string, refreshToken: string) {
   refreshPromise =
     refreshPromise ||
     axiosInstance.request({
       method: 'POST',
       url: apiRefreshToken(),
       data: {
-        token: refreshToken,
+        accessToken,
+        refreshToken,
       },
     });
 
@@ -86,12 +87,13 @@ axiosInstance.interceptors.response.use(
         !originalReq?.isRetryAttempt
       ) {
         const {
-          auth: { refreshToken },
+          auth: { refreshToken, accessToken },
         } = store.getState();
 
         removeAuthHeader();
 
         const { data } = (await refreshTokenRequest(
+          accessToken,
           refreshToken,
         )) as ResponseObj<RefreshTokenResponse>;
         store.dispatch(refreshTokenSuccess(data));
