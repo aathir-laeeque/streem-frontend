@@ -12,7 +12,6 @@ import {
   apiAssignReviewersToChecklist,
   apiGetApproversForChecklist,
   apiGetReviewersForChecklist,
-  apiInitiateSignOff,
   apiPrototypeRelease,
   apiPrototypeSignOff,
   apiSendReviewToCr,
@@ -477,16 +476,6 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
   const { checklistId, users } = payload;
 
   try {
-    const res: ResponseObj<CommonReviewResponse['checklist']> = yield call(
-      request,
-      'PATCH',
-      apiInitiateSignOff(checklistId),
-    );
-
-    if (res.errors) {
-      throw getErrorMsg(res.errors);
-    }
-
     const {
       errors,
       data,

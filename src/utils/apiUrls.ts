@@ -175,9 +175,6 @@ export const apiSubmitChecklistForReview = (checklistId: Checklist['id']) =>
 export const apiSendReviewToCr = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/review/submit-back`;
 
-export const apiInitiateSignOff = (checklistId: Checklist['id']) =>
-  `${baseUrl}/checklists/${checklistId}/review/sign-off/initiate`;
-
 export const apiSignOffOrder = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/review/sign-off/order`;
 
