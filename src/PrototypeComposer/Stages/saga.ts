@@ -20,13 +20,13 @@ import { StageListActions } from './reducer.types';
 function* addNewStageSaga() {
   try {
     const {
-      stages: { listOrder },
+      stages: { listOrder, listById },
       data: { id: checklistId },
     } = yield select((state: RootState) => state.prototypeComposer);
 
     const newStage: Pick<Stage, 'name' | 'orderTree'> = {
       name: '',
-      orderTree: listOrder.length + 1,
+      orderTree: listById[listOrder[listOrder.length - 1]].orderTree + 1,
     };
 
     const { data, errors } = yield call(
@@ -136,6 +136,7 @@ export function* StageListSaga() {
   yield takeLeading(StageListActions.ADD_NEW_STAGE, addNewStageSaga);
   yield takeLeading(StageListActions.DELETE_STAGE, deleteStageSaga);
   // yield takeLeading(StageListActions.DUPLICATE_STAGE, duplicateStageSaga);
+  // TODO: when enabling this reorder saga, connect with BE to make sure the API works as per the need
   // yield takeLeading(StageListActions.REORDER_STAGE, reOrderStageSaga);
   yield takeLeading(StageListActions.UPDATE_STAGE_NAME, updateStageNameSaga);
 }

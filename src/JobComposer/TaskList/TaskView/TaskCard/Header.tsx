@@ -31,12 +31,13 @@ type HeaderProps = {
   isTaskDelayed: boolean;
   enableStopForTask: boolean;
   showAssignmentButton: boolean;
+  index: number;
 };
 
 const JobHeader: FC<Pick<
   HeaderProps,
-  'task' | 'enableStopForTask' | 'showAssignmentButton'
->> = ({ task, enableStopForTask, showAssignmentButton }) => {
+  'task' | 'enableStopForTask' | 'showAssignmentButton' | 'index'
+>> = ({ task, enableStopForTask, showAssignmentButton, index }) => {
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
 
@@ -140,7 +141,7 @@ const JobHeader: FC<Pick<
       <div className="task-config">
         <div className="wrapper">
           <div className="task-name">
-            {stageIndex + 1}.{task.orderTree}. {task.name}
+            {stageIndex + 1}.{index + 1}. {task.name}
           </div>
           {showAssignmentButton && (
             <TaskAssignmentContent
@@ -247,6 +248,7 @@ const Header: FC<HeaderProps> = ({
   isTaskDelayed,
   enableStopForTask,
   showAssignmentButton,
+  index,
 }) => {
   return (
     <Wrapper
@@ -257,6 +259,7 @@ const Header: FC<HeaderProps> = ({
       isTaskDelayed={isTaskDelayed}
     >
       <JobHeader
+        index={index}
         task={task}
         enableStopForTask={enableStopForTask}
         showAssignmentButton={showAssignmentButton}

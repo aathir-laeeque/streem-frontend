@@ -16,7 +16,7 @@ import { useTypedSelector } from '#store';
 type Ref = HTMLDivElement;
 
 const StageCard = forwardRef<Ref, StageCardProps>(
-  ({ stage, isActive }, ref) => {
+  ({ stage, isActive, index }, ref) => {
     const dispatch = useDispatch();
 
     const {
@@ -91,7 +91,7 @@ const StageCard = forwardRef<Ref, StageCardProps>(
         ref={ref}
       >
         <div className="stage-header">
-          <span className="stage-order">Stage {stage.orderTree}</span>
+          <span className="stage-order">Stage {index + 1}</span>
 
           <PanTool className="icon stop-icon" />
 

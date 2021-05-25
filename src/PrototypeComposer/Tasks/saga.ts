@@ -41,11 +41,15 @@ function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
   try {
     const { checklistId, stageId } = payload;
 
-    const taskOrderInStage = yield select(
-      (state: RootState) => state.prototypeComposer.tasks.tasksOrderInStage,
-    );
+    const {
+      tasks: { taskOrderInStage, listById },
+    } = yield select((state: RootState) => state.prototypeComposer);
 
-    const activeStagsTasksOrder = taskOrderInStage[stageId];
+    const activeStageTasksOrder = taskOrderInStage[stageId];
+
+    const newTaskOrderTree =
+      listById[activeStageTasksOrder[activeStageTasksOrder.length - 1]]
+        .orderTree + 1;
 
     const { data, errors } = yield call(
       request,
@@ -54,7 +58,7 @@ function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
       {
         data: {
           name: '',
-          orderTree: activeStagsTasksOrder.length + 1,
+          orderTree: newTaskOrderTree,
         },
       },
     );

@@ -9,6 +9,7 @@ export type TaskViewProps = {
   isActive: boolean;
   task: Task;
   enableStopForTask: boolean;
+  index: number;
 };
 
 export type TaskCardProps = TaskViewProps;

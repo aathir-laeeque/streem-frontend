@@ -64,6 +64,7 @@ const TaskListView: FC = () => {
               task={tasksById[taskId]}
               enableStopForTask={enableStopForTask}
               ref={refMap[taskId]}
+              index={index}
             />
           );
         })}

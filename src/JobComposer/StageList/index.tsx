@@ -55,12 +55,13 @@ const StageListView: FC = () => {
 
   return (
     <Wrapper>
-      {stagesOrder.map((stageId) => (
+      {stagesOrder.map((stageId, index) => (
         <StageCard
           isActive={stageId === activeStageId}
           key={stageId}
           stage={stagesById[stageId]}
           ref={refMap[stageId]}
+          index={index}
         />
       ))}
     </Wrapper>

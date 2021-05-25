@@ -16,6 +16,7 @@ export type StagesOrder = Stage['id'][];
 export type StageCardProps = {
   isActive: boolean;
   stage: Stage;
+  index: number;
 };
 
 export enum StageErrors {
