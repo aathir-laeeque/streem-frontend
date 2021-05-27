@@ -47,9 +47,10 @@ function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
 
     const activeStageTasksOrder = tasksOrderInStage[stageId];
 
-    const newTaskOrderTree =
-      listById[activeStageTasksOrder[activeStageTasksOrder.length - 1]]
-        .orderTree + 1;
+    const newTaskOrderTree = activeStageTasksOrder.length
+      ? listById[activeStageTasksOrder[activeStageTasksOrder.length - 1]]
+          .orderTree + 1
+      : 1;
 
     const { data, errors } = yield call(
       request,

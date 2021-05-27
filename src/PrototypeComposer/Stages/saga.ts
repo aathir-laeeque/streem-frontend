@@ -26,7 +26,9 @@ function* addNewStageSaga() {
 
     const newStage: Pick<Stage, 'name' | 'orderTree'> = {
       name: '',
-      orderTree: listById[listOrder[listOrder.length - 1]].orderTree + 1,
+      orderTree: listOrder.length
+        ? listById[listOrder[listOrder.length - 1]].orderTree + 1
+        : 1,
     };
 
     const { data, errors } = yield call(

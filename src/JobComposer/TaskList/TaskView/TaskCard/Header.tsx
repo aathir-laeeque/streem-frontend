@@ -31,18 +31,17 @@ type HeaderProps = {
   isTaskDelayed: boolean;
   enableStopForTask: boolean;
   showAssignmentButton: boolean;
-  index: number;
 };
 
 const JobHeader: FC<Pick<
   HeaderProps,
-  'task' | 'enableStopForTask' | 'showAssignmentButton' | 'index'
->> = ({ task, enableStopForTask, showAssignmentButton, index }) => {
+  'task' | 'enableStopForTask' | 'showAssignmentButton'
+>> = ({ task, enableStopForTask, showAssignmentButton }) => {
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
 
   const {
-    stages: { activeStageId, stagesOrder },
+    stages: { activeStageId, stagesById },
     jobState,
     data: { id: jobId } = {},
   } = useTypedSelector((state) => state.composer);
@@ -50,7 +49,7 @@ const JobHeader: FC<Pick<
   const isJobStarted =
     jobState === JobStateEnum.IN_PROGRESS || jobState === JobStateEnum.BLOCKED;
 
-  const stageIndex = stagesOrder.indexOf(activeStageId);
+  const stageOrderTree = stagesById[activeStageId as string].orderTree;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClose = () => setAnchorEl(null);
@@ -141,7 +140,7 @@ const JobHeader: FC<Pick<
       <div className="task-config">
         <div className="wrapper">
           <div className="task-name">
-            {stageIndex + 1}.{index + 1}. {task.name}
+            {stageOrderTree}.{task.orderTree}. {task.name}
           </div>
           {showAssignmentButton && (
             <TaskAssignmentContent
@@ -248,7 +247,6 @@ const Header: FC<HeaderProps> = ({
   isTaskDelayed,
   enableStopForTask,
   showAssignmentButton,
-  index,
 }) => {
   return (
     <Wrapper
@@ -259,7 +257,6 @@ const Header: FC<HeaderProps> = ({
       isTaskDelayed={isTaskDelayed}
     >
       <JobHeader
-        index={index}
         task={task}
         enableStopForTask={enableStopForTask}
         showAssignmentButton={showAssignmentButton}

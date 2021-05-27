@@ -38,12 +38,7 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const TaskCard: FC<TaskCardProps> = ({
-  task,
-  isActive,
-  enableStopForTask,
-  index,
-}) => {
+const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
   const {
     jobState,
     activities: { activitiesById, activitiesOrderInTaskInStage },
@@ -122,7 +117,6 @@ const TaskCard: FC<TaskCardProps> = ({
         }}
       >
         <Header
-          index={index}
           task={task}
           showStartButton={showStartButton}
           isTaskStarted={isTaskStarted}

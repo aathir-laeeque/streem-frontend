@@ -61,7 +61,6 @@ const StageListView: FC = () => {
           key={stageId}
           stage={stagesById[stageId]}
           ref={refMap[stageId]}
-          index={index}
         />
       ))}
     </Wrapper>
