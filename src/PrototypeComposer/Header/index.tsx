@@ -409,7 +409,7 @@ const ChecklistHeader: FC = () => {
               body: (
                 <span>
                   Are you sure you want to{' '}
-                  {data?.archived ? 'Unarchive' : 'Archive'}
+                  {data?.archived ? 'Unarchive ' : 'Archive '}
                   this Prototype ?
                 </span>
               ),
