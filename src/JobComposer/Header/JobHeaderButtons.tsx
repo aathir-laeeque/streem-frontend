@@ -217,7 +217,7 @@ const JobHeaderButtons: FC = () => {
                     handleClose();
                   }}
                 >
-                  Complete Job with exception
+                  Complete Job with Exception
                 </MenuItem>
               </Menu>
             </>
@@ -240,7 +240,7 @@ const JobHeaderButtons: FC = () => {
               )
             }
           >
-            Complete Job With Exception
+            Complete Job with Exception
           </Button>
         </div>
       ) : null}
