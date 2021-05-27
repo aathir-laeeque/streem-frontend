@@ -189,12 +189,12 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
             {properties.map((property, index) => (
               <TextInput
                 key={`property_${index}`}
-                label={property.name.toLowerCase()}
+                label={property.placeHolder}
                 name={property.name}
                 optional={!property.mandatory}
                 ref={register({
                   required: property.mandatory
-                    ? `${capitalize(property.name)} is required.`
+                    ? `${property.placeHolder} is required.`
                     : false,
                 })}
                 className="row"
