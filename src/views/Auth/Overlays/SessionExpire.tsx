@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { login, logout } from '../actions';
+import { logout, reLogin } from '../actions';
 
 const Wrapper = styled.div`
   .modal {
@@ -86,7 +86,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
 
   const onSubmit = (data: Inputs) => {
     if (profile && profile.username) {
-      dispatch(login({ ...data, username: profile.username }));
+      dispatch(reLogin({ ...data, username: profile.username }));
       closeOverlay();
     }
   };

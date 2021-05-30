@@ -18,6 +18,9 @@ export const login = (payload: { username: string; password: string }) =>
 export const loginSuccess = (data: LoginResponse) =>
   actionSpreader(AuthAction.LOGIN_SUCCESS, data);
 
+export const reLogin = (payload: { username: string; password: string }) =>
+  actionSpreader(AuthAction.RE_LOGIN, payload);
+
 export const authError = (error: string) =>
   actionSpreader(AuthAction.AUTH_ERROR, error);
 

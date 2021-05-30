@@ -83,6 +83,8 @@ export const apiCheckTokenExpiry = () => `${baseUrl}/auth/token/validate`;
 
 export const apiLogin = () => `${baseUrl}/auth/login`;
 
+export const apiReLogin = () => `${baseUrl}/auth/re-login`;
+
 export const apiLogOut = () => `${baseUrl}/auth/logout`;
 
 export const apiRefreshToken = () => `${baseUrl}/auth/token/refresh`;

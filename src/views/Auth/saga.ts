@@ -21,6 +21,7 @@ import {
   apiChallengeQuestions,
   apiValidateChallengeQuestion,
   apiValidateIdentity,
+  apiReLogin,
 } from '#utils/apiUrls';
 import { removeAuthHeader, setAuthHeader } from '#utils/axiosClient';
 import { LoginErrorCodes } from '#utils/constants';
@@ -45,6 +46,7 @@ import {
   logoutSuccess,
   notifyAdmin,
   register,
+  reLogin,
   resetPassword,
   resetToken,
   setChallengeQuestion,
@@ -58,6 +60,7 @@ import { AuthAction, LoginResponse, TokenTypes } from './types';
 
 const getUserId = (state: RootState) => state.auth.userId;
 const getIsLoggedIn = (state: RootState) => state.auth.isLoggedIn;
+const getAccessToken = (state: RootState) => state.auth.accessToken;
 
 function* loginSaga({ payload }: ReturnType<typeof login>) {
   try {
@@ -99,6 +102,41 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
     }
   } catch (error) {
     error = yield* handleCatch('Auth', 'loginSaga', error);
+    yield put(authError(error));
+  }
+}
+
+function* reLoginSaga({ payload }: ReturnType<typeof reLogin>) {
+  try {
+    const { username, password } = payload;
+    const accessToken = (yield select(getAccessToken)) as string;
+    const { data, errors }: ResponseObj<LoginResponse> = yield call(
+      request,
+      'POST',
+      apiReLogin(),
+      {
+        data: { username, password: encrypt(password), accessToken },
+      },
+    );
+
+    if (errors) {
+      if (errors?.[0]?.code !== LoginErrorCodes.INVALID_CREDENTIALS) {
+        yield put(closeAllOverlayAction());
+        yield put(cleanUp());
+      }
+      yield put(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: errors[0]?.message || 'Oops! Please Try Again.',
+        }),
+      );
+    } else {
+      setAuthHeader(data.accessToken);
+      yield put(loginSuccess(data));
+      yield put(fetchProfile({ id: data.id }));
+    }
+  } catch (error) {
+    error = yield* handleCatch('Auth', 'reLoginSaga', error);
     yield put(authError(error));
   }
 }
@@ -451,6 +489,7 @@ function* notifyAdminSaga({ payload }: ReturnType<typeof notifyAdmin>) {
 
 export function* AuthSaga() {
   yield takeLeading(AuthAction.LOGIN, loginSaga);
+  yield takeLeading(AuthAction.RE_LOGIN, reLoginSaga);
   yield takeLeading(AuthAction.LOGOUT, logoutSaga);
   yield takeLeading(AuthAction.LOGOUT_SUCCESS, logoutSuccessSaga);
   yield takeLeading(AuthAction.CLEANUP, cleanUpSaga);

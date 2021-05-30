@@ -192,6 +192,7 @@ export enum AuthAction {
   CLEANUP = '@@auth/Logout/CLEANUP',
   FETCH_PROFILE = '@@auth/Login/FETCH_PROFILE',
   FETCH_PROFILE_SUCCESS = '@@auth/Login/FETCH_PROFILE_SUCCESS',
+  RE_LOGIN = '@@auth/Login/RE_LOGIN',
   LOGIN = '@@auth/Login/LOGIN',
   LOGIN_SUCCESS = '@@auth/Login/LOGIN_SUCCESS',
   LOGOUT = '@@auth/Logout/LOGOUT',

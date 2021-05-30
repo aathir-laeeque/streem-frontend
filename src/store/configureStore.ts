@@ -62,7 +62,7 @@ const handleOnIdle: Middleware = (store) => (next) => (action: AnyAction) => {
   if (isIdle) {
     if (
       ![
-        AuthAction.LOGIN,
+        AuthAction.RE_LOGIN,
         AuthAction.LOGOUT,
         AuthAction.LOGOUT_SUCCESS,
         OverlayContainerAction.OPEN_OVERLAY,
