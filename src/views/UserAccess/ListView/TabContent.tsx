@@ -318,7 +318,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
       }}
     >
       <div className="list-item">
-        <span>Resend Invite</span>
+        <span>Reset Invite</span>
       </div>
     </MenuItem>
   );

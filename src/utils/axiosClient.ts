@@ -68,15 +68,13 @@ axiosInstance.interceptors.response.use(
           isLoggedIn &&
           Object.values(ErrorCodesToLogout).some((val) => val === code)
         ) {
+          const msg =
+            typeof message === 'string' ? message : 'Oops! Please Try Again.';
           store.dispatch(closeAllOverlayAction());
           store.dispatch(
             logoutSuccess({
-              msg:
-                typeof message !== 'string'
-                  ? 'Oops! Please Try Again.'
-                  : message,
+              msg,
               type: NotificationType.ERROR,
-              delayTime: 10,
             }),
           );
         } else {
