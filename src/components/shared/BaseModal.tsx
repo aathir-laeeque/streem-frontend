@@ -134,7 +134,7 @@ const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
     left: 0;
     height: 100%;
     width: 100%;
-    z-index: -1;
+    z-index: 0;
   }
 
   @keyframes fadeIn {
@@ -250,7 +250,7 @@ export const BaseModal: FC<BaseModalProps> = ({
         <div className="modal-background">
           <div
             className="modal"
-            style={{ borderRadius: isRound ? '16px' : '4px' }}
+            style={{ borderRadius: isRound ? '16px' : '4px', zIndex: 10 }}
           >
             <Close
               className="close-icon"
