@@ -12,7 +12,7 @@ const Wrapper = styled.div.attrs({
   className: 'data-table',
 })`
   display: flex;
-  flex: 1;
+  /* flex: 1; */
   overflow: hidden;
 
   .MuiPaper-root {
