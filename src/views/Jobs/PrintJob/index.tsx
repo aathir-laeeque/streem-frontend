@@ -154,7 +154,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                 <View style={styles.stageHeader}>
                   <ValueLabelGroup
                     label="Stage :"
-                    value={`${stageIndex + 1}`}
+                    value={`${stage.orderTree}`}
                   />
                   <Text style={{ marginVertical: 8 }}>{stage.name}</Text>
                   <ValueLabelGroup

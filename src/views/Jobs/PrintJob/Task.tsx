@@ -187,7 +187,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
         )}
         <View style={styles.taskBottomHeader}>
           <Text style={[styles.taskTitle, { maxWidth: '80%' }]}>
-            Task {`${taskIndex + 1}. ${task.name}`}
+            Task {`${task.orderTree}. ${task.name}`}
           </Text>
           <Text style={styles.taskTitle}>
             {!canSkipTask ? `Mandatory` : `Optional`}
