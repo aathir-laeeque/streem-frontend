@@ -9,6 +9,8 @@ import styled from 'styled-components';
 
 import { logout, reLogin } from '../actions';
 
+// TODO Handle closing of this modal if relogin api fails for some reason.
+
 const Wrapper = styled.div`
   .modal {
     max-width: 468px !important;
