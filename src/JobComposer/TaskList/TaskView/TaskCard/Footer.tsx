@@ -197,13 +197,13 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
     if (isTaskDelayed) {
       let text;
       if (
-        moment().diff(moment.unix(task.taskExecution.startedAt), 'seconds') >
+        moment.unix(task.taskExecution.endedAt).diff(moment.unix(task.taskExecution.startedAt), 'seconds') >
         task.maxPeriod
       ) {
         text = 'after the set time';
       } else if (
         task.timerOperator === 'NOT_LESS_THAN' &&
-        moment().diff(moment.unix(task.taskExecution.startedAt), 'seconds') <
+        moment.unix(task.taskExecution.endedAt).diff(moment.unix(task.taskExecution.startedAt), 'seconds') <
           task.minPeriod
       ) {
         text = 'before the set time';
