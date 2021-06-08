@@ -10,7 +10,7 @@ import { CompletedJobStates, Job } from '../NewListView/types';
 
 export enum Exceptions {
   'DURATION_EXCEPTION' = 'Duration Exception',
-  'PARAMETER_DEVIATION' = 'Paramter Deviation',
+  'PARAMETER_DEVIATION' = 'Parameter Deviation',
   'COMPLETED_WITH_EXCEPTION' = 'Completed with Exception',
   'SKIPPED' = 'Skipped',
   'ERROR_CORRECTION' = 'Error Correction',
