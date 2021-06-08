@@ -9,7 +9,6 @@ import { fetchSelectedUserSuccess } from '#store/users/actions';
 import { User, UserStates } from '#store/users/types';
 import { updateUserProfile } from '#views/Auth/actions';
 import { navigate } from '@reach/router';
-import { identity, pickBy } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -88,9 +87,12 @@ const ManageUser: FC<EditUserProps> = ({
       roles: [{ id: data.roles }],
     };
     if (selectedUser?.id && data.facilities) {
+      Object.keys(data).forEach(
+        (key) => data[key] === undefined && delete data[key],
+      );
       reset({
         ...((selectedUser as unknown) as EditUserRequestInputs),
-        ...pickBy(data, identity),
+        ...data,
       });
       dispatch(
         updateUserProfile({
