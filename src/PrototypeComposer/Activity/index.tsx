@@ -97,7 +97,7 @@ const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
 
       {(() => {
         let offLabel = 'Optional',
-          onLabel = 'Requried';
+          onLabel = 'Required';
 
         if (activity.type === MandatoryActivity.CHECKLIST) {
           offLabel = 'All Optional';
