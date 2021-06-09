@@ -16,10 +16,10 @@
     }
   ],
   "scripts": {
-    "watch": "rm -rf .cache/ dist/ && parcel -p 5000 src/index.html && cp version.txt dist/.",
-    "serve": "parcel -p 5000 src/index.html && cp version.txt dist/.",
+    "watch": "rm -rf .cache/ dist/ && parcel -p 5000 src/index.html && bash scripts/post-build.sh",
+    "serve": "parcel -p 5000 src/index.html && bash scripts/post-build.sh",
     "build:exp": "parcel build src/index.html --experimental-scope-hoisting",
-    "build": "parcel build src/index.html --no-source-maps && cp version.txt dist/.",
+    "build": "parcel build src/index.html --no-source-maps && bash scripts/post-build.sh",
     "lint:check": "eslint -c .eslintrc 'src/**/*{.ts,.tsx}'",
     "lint:fix": "eslint --fix .eslintrc 'src/**/*{.ts,.tsx}'",
     "test": "jest"
