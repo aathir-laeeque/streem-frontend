@@ -4,6 +4,7 @@ import {
   Task,
   NonMandatoryActivity,
   TimerOperator,
+  CompletedTaskStates,
 } from '#JobComposer/checklist.types';
 import handIcon from '#assets/images/hand.png';
 import clockIcon from '#assets/images/clock.png';
@@ -220,33 +221,35 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
                 </Text>
               </View>
             </View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginTop: 8,
-                alignItems: 'center',
-              }}
-            >
-              <Text style={[styles.text12, { color: '#666666' }]}>
-                Write values in box -
-              </Text>
-              <View style={styles.lightInput} />
-              <View style={styles.lightInput} />
-              <View style={styles.lightInput} />
-              <View style={styles.lightInput} />
+            {!(taskExecutionState in CompletedTaskStates) && (
               <View
                 style={{
-                  width: 2,
-                  height: 18,
-                  marginHorizontal: 1,
-                  borderBottomWidth: 1,
-                  borderBottomColor: '#000',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  marginTop: 8,
+                  alignItems: 'center',
                 }}
-              />
-              <View style={styles.lightInput} />
-              <View style={styles.lightInput} />
-            </View>
+              >
+                <Text style={[styles.text12, { color: '#666666' }]}>
+                  Write values in box -
+                </Text>
+                <View style={styles.lightInput} />
+                <View style={styles.lightInput} />
+                <View style={styles.lightInput} />
+                <View style={styles.lightInput} />
+                <View
+                  style={{
+                    width: 2,
+                    height: 18,
+                    marginHorizontal: 1,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#000',
+                  }}
+                />
+                <View style={styles.lightInput} />
+                <View style={styles.lightInput} />
+              </View>
+            )}
           </View>
         )}
       </View>
