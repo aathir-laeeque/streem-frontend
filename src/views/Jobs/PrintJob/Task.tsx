@@ -221,35 +221,6 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
                 </Text>
               </View>
             </View>
-            {!(taskExecutionState in CompletedTaskStates) && (
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  marginTop: 8,
-                  alignItems: 'center',
-                }}
-              >
-                <Text style={[styles.text12, { color: '#666666' }]}>
-                  Write values in box -
-                </Text>
-                <View style={styles.lightInput} />
-                <View style={styles.lightInput} />
-                <View style={styles.lightInput} />
-                <View style={styles.lightInput} />
-                <View
-                  style={{
-                    width: 2,
-                    height: 18,
-                    marginHorizontal: 1,
-                    borderBottomWidth: 1,
-                    borderBottomColor: '#000',
-                  }}
-                />
-                <View style={styles.lightInput} />
-                <View style={styles.lightInput} />
-              </View>
-            )}
           </View>
         )}
       </View>
