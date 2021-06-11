@@ -228,12 +228,26 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
 
       {taskExecutionState === TaskExecutionState.COMPLETED && (
         <View style={styles.taskFooter} wrap={false}>
-          <Text style={styles.text12}>
-            This Task was digitally completed via CLEEN {'\n'}
-            by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
-            {modifiedBy.employeeId} on{' '}
-            {moment.unix(modifiedAt).format('MMM DD, h:mm A')}
-          </Text>
+          {task.timed && task.taskExecution.reason ? (
+            <Text style={styles.text12}>
+              This Task was digitally completed via CLEEN after the {'\n'}
+              set time by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
+              {modifiedBy.employeeId} on{' '}
+              {moment.unix(modifiedAt).format('MMM DD, h:mm A')}
+            </Text>
+          ) : (
+            <Text style={styles.text12}>
+              This Task was digitally completed via CLEEN {'\n'}
+              by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
+              {modifiedBy.employeeId} on{' '}
+              {moment.unix(modifiedAt).format('MMM DD, h:mm A')}
+            </Text>
+          )}
+          {task.timed && task.taskExecution.reason && (
+            <View style={styles.comments}>
+              <Text style={styles.text12}>{task.taskExecution.reason}</Text>
+            </View>
+          )}
         </View>
       )}
       {(taskExecutionState === TaskExecutionState.COMPLETED_WITH_CORRECTION ||

@@ -501,6 +501,11 @@ const activityTemplateFormatter = (
               </Text>
             </View>
           )}
+          {!!activity?.response?.reason && (
+            <View style={styles.comments}>
+              <Text style={styles.text12}>{activity.response.reason}</Text>
+            </View>
+          )}
         </View>
       );
     case MandatoryActivity.CHECKLIST:
