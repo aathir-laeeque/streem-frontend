@@ -230,7 +230,11 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
         <View style={styles.taskFooter} wrap={false}>
           {task.timed && task.taskExecution.reason ? (
             <Text style={styles.text12}>
-              This Task was digitally completed via CLEEN after the {'\n'}
+              This Task was digitally completed via CLEEN{' '}
+              {task.timerOperator === TimerOperator.LESS_THAN
+                ? 'after'
+                : 'before'}{' '}
+              the {'\n'}
               set time by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
               {modifiedBy.employeeId} on{' '}
               {moment.unix(modifiedAt).format('MMM DD, h:mm A')}
