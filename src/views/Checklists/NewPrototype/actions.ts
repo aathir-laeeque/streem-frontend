@@ -1,9 +1,13 @@
 import { Checklist } from '#PrototypeComposer/checklist.types';
 import { actionSpreader } from '#store/helpers';
 
-import { Author, FormValues, NewPrototypeActions } from './types';
+import {
+  Author,
+  FormValuesOnlyWithAuthorIds,
+  NewPrototypeActions,
+} from './types';
 
-export const addNewPrototype = (data: FormValues) =>
+export const addNewPrototype = (data: FormValuesOnlyWithAuthorIds) =>
   actionSpreader(NewPrototypeActions.ADD_NEW_PROTOTYPE, { data });
 
 export const addRevisionPrototype = (
@@ -18,7 +22,7 @@ export const addRevisionPrototype = (
   });
 
 export const updatePrototype = (
-  data: FormValues,
+  data: FormValuesOnlyWithAuthorIds,
   id: Checklist['id'],
   originalAuthors: Author['id'][],
 ) =>

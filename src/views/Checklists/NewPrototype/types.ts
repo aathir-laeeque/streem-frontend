@@ -39,7 +39,7 @@ export enum FormMode {
 }
 
 export type FormValues = {
-  authors: Author['id'][];
+  authors: Author[];
   description: string;
   name: string;
   createdBy: Pick<
@@ -48,6 +48,11 @@ export type FormValues = {
   >;
   properties: PrototypeProperties[];
 };
+
+export type FormValuesOnlyWithAuthorIds = Pick<
+  FormValues,
+  'description' | 'name' | 'createdBy' | 'properties'
+> & { authors: Author['id'][] };
 
 export type FormErrors = {
   name: string;

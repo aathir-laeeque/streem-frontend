@@ -9,7 +9,7 @@ import {
 import { Option } from '#components/shared/Select';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useProperties } from '#services/properties';
-import { defaultParams, useUsers, OtherUserState } from '#services/users';
+import { OtherUserState, User, useUsers, defaultParams } from '#services/users';
 import { useTypedSelector } from '#store/helpers';
 import { getFullName } from '#utils/stringUtils';
 import { Close } from '@material-ui/icons';
@@ -19,7 +19,7 @@ import React, { FC, FormEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { addNewPrototype, updatePrototype } from './actions';
-import { FormErrors, FormMode, FormValues, Props } from './types';
+import { Author, FormErrors, FormMode, FormValues, Props } from './types';
 
 const validateForm = (values: FormValues) => {
   const formErrors: FormErrors = { name: '', properties: {} };
@@ -47,9 +47,9 @@ const PrototypeForm: FC<Props> = (props) => {
 
   const { listById } = useProperties(ComposerEntity.CHECKLIST);
 
-  const { users, usersById } = useUsers({
+  const { users, usersById, loadMore } = useUsers({
     userState: OtherUserState.AUTHORS,
-    params: { ...defaultParams(false), size: 100 },
+    params: { ...defaultParams(false) },
   });
 
   const { profile } = useTypedSelector((state) => state.auth);
@@ -59,7 +59,7 @@ const PrototypeForm: FC<Props> = (props) => {
     The user creating the Prototype is the owner.
   */
   const [formValues, setFormValues] = useState<FormValues>({
-    authors: [...(formData?.authors?.map((author) => author.id) ?? ['0'])],
+    authors: formData?.authors ?? [],
     description: formData.description ?? '',
     name: formData?.name ?? '',
     createdBy: pick(formData.createdBy ?? profile, [
@@ -102,11 +102,19 @@ const PrototypeForm: FC<Props> = (props) => {
 
     if (isValid) {
       if (formMode === FormMode.ADD) {
-        dispatch(addNewPrototype(formValues));
+        dispatch(
+          addNewPrototype({
+            ...formValues,
+            authors: formValues.authors.map((author) => author.id),
+          }),
+        );
       } else if (formMode === FormMode.EDIT) {
         dispatch(
           updatePrototype(
-            formValues,
+            {
+              ...formValues,
+              authors: formValues.authors.map((author) => author.id),
+            },
             formData?.prototypeId,
             formData?.authors?.map((author) => author.id),
           ),
@@ -117,22 +125,36 @@ const PrototypeForm: FC<Props> = (props) => {
     }
   };
 
+  const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
+    e.stopPropagation();
+    const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
+    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7)
+      loadMore();
+  };
+
+  const filterUsers = (users: User[]) => {
+    const filteredUsers = users.reduce<Option[]>((acc, user) => {
+      if (
+        user.id !== formValues.createdBy.id &&
+        !formValues.authors.some((author) => author.id === user.id)
+      ) {
+        acc.push({
+          label: `${getFullName(user)}, ID : ${user.employeeId}`,
+          value: user.id,
+        });
+      }
+      return acc;
+    }, []);
+
+    // This has to be more than 8 as the select component shows 7 items without scroll option & because of that loadMore doesn't gets called. See Method : handleOnScroll
+    if (filteredUsers.length < 9) loadMore();
+
+    return filteredUsers;
+  };
+
   if (!users.length || !Object.values(listById).length) {
     return null;
   }
-
-  const filteredUsers = users.reduce((acc, user) => {
-    if (
-      user.id !== formValues.createdBy.id &&
-      !formValues.authors.some((_authorId) => _authorId === user.id)
-    ) {
-      acc.push({
-        label: `${getFullName(user)}, ID : ${user.employeeId}`,
-        value: user.id,
-      });
-    }
-    return acc;
-  }, [] as Option[]);
 
   return (
     <form className="prototype-form" onSubmit={handleSubmit}>
@@ -223,33 +245,32 @@ const PrototypeForm: FC<Props> = (props) => {
           Select Authors <span className="optional-badge">Optional</span>
         </label>
 
-        {formValues.authors.map((authorId, index) => {
-          const author = usersById[authorId];
-
+        {formValues.authors.map((author, index) => {
           return (
-            <div key={`${index}-${authorId}`} className="author">
+            <div key={`${index}-${author.id}`} className="author">
               <Select
                 selectedValue={
-                  !!parseInt(authorId)
+                  // This check is required to create a unselected select component on click of Add New ie line no : 303.
+                  author.id !== '0'
                     ? {
                         label: `${getFullName(author)}, ID : ${
                           author.employeeId
                         }`,
-                        value: authorId,
+                        value: author.id,
                       }
                     : undefined
                 }
                 placeholder="Choose Users"
-                options={filteredUsers}
                 disabled={formMode === FormMode.VIEW}
+                handleOnScroll={handleOnScroll}
+                options={filterUsers(users)}
                 onChange={(selectedOption: any) => {
-                  const selectedUser = usersById[selectedOption.value];
-
+                  const selectedUser = usersById?.[selectedOption.value];
                   setFormValues((values) => ({
                     ...values,
                     authors: [
                       ...values.authors.slice(0, index),
-                      selectedUser.id,
+                      (selectedUser as unknown) as Author,
                       ...values.authors.slice(index + 1),
                     ],
                   }));
@@ -279,7 +300,7 @@ const PrototypeForm: FC<Props> = (props) => {
             onClick={() => {
               setFormValues((values) => ({
                 ...values,
-                authors: [...values.authors, '0'],
+                authors: [...values.authors, { id: '0' } as Author],
               }));
             }}
           />

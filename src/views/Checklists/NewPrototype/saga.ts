@@ -16,10 +16,15 @@ import {
   addRevisionPrototype,
   updatePrototype,
 } from './actions';
-import { Author, FormMode, FormValues, NewPrototypeActions } from './types';
+import {
+  Author,
+  FormMode,
+  FormValuesOnlyWithAuthorIds,
+  NewPrototypeActions,
+} from './types';
 
 type transformFormDataType = {
-  data: FormValues;
+  data: FormValuesOnlyWithAuthorIds;
   mode: FormMode;
   originalAuthors?: Author['id'][];
 };

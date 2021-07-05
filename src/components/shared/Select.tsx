@@ -3,7 +3,8 @@ import {
   ArrowDropUp,
   SvgIconComponent,
 } from '@material-ui/icons';
-import React, { ComponentPropsWithRef, FC, useRef, useState } from 'react';
+import { noop } from 'lodash';
+import React, { ComponentPropsWithRef, FC, useState, useRef } from 'react';
 import styled from 'styled-components';
 import useOutsideAlerter from '#utils/useOutsideAlerter';
 
@@ -116,7 +117,8 @@ type SelectProps = ComponentPropsWithRef<'select'> & {
   SelectButtonIcon?: SvgIconComponent;
   selectButtonIconClass?: string;
   selectedValue?: Option;
-};
+  handleOnScroll?: (e: React.UIEvent<HTMLElement>) => void;
+} & ComponentPropsWithRef<'select'>;
 
 const Select: FC<SelectProps> = (props) => {
   const {
@@ -135,6 +137,7 @@ const Select: FC<SelectProps> = (props) => {
     SelectButtonIcon,
     selectButtonIconClass,
     selectedValue,
+    handleOnScroll = noop,
   } = props;
 
   const [isOpen, toggleOpen] = useState<boolean>(false);
@@ -193,7 +196,7 @@ const Select: FC<SelectProps> = (props) => {
       ) : null}
 
       {isOpen ? (
-        <div className="option-list">
+        <div className="option-list" onScroll={handleOnScroll}>
           {options.map((option, index) => (
             <div
               className="option-list-item"

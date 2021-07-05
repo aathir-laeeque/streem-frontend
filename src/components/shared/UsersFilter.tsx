@@ -250,7 +250,9 @@ const UsersFilter: FC<UsersFilterProps> = ({
     anchorEl: null,
   };
 
-  const { users: list, loadMore, loadAgain } = useUsers({});
+  const { users: list, loadMore, loadAgain } = useUsers({
+    params: defaultParams(false),
+  });
   const [state, setstate] = useState(initialState);
   const { searchQuery, selectedUsers, appliedUsers, anchorEl } = state;
   const dispatch = useDispatch();
