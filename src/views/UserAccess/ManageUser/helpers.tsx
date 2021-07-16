@@ -68,7 +68,12 @@ export const createSectionConfig = ({
   const [
     currentlySelectedFacilities,
     setCurrentlySelectedFacilities,
-  ] = useState<Option[]>();
+  ] = useState<Option[] | undefined>(
+    selectedUser?.facilities?.map((facility) => ({
+      value: facility.id,
+      label: facility.name,
+    })) || undefined,
+  );
   const { register, errors, getValues, setValue } = formData;
   const { roles: rolesValues } = getValues(['roles']);
 
