@@ -22,7 +22,7 @@ const StageCard = forwardRef<Ref, StageCardProps>(
     const {
       tasks: { tasksById, tasksOrderInStage },
       jobId,
-      stageReports,
+      // stageReports,
     } = useTypedSelector((state) => ({
       tasks: state.composer.tasks,
       jobId: state.composer.entityId,
@@ -52,20 +52,20 @@ const StageCard = forwardRef<Ref, StageCardProps>(
       { isAnyTaskStarted: false, anyTaskHasError: false, completedTasks: 0 },
     );
 
-    let { isAnyTaskStarted, completedTasks } = tasksStatus;
+    const { isAnyTaskStarted, completedTasks } = tasksStatus;
     const { anyTaskHasError } = tasksStatus;
-    const stageReport = stageReports?.[stage.id];
+    // const stageReport = stageReports?.[stage.id];
 
-    if (stageReport) {
-      completedTasks =
-        stageReport.completedTasks > completedTasks
-          ? stageReport.completedTasks
-          : completedTasks;
-      isAnyTaskStarted =
-        stageReport?.tasksInProgress === true
-          ? stageReport?.tasksInProgress
-          : isAnyTaskStarted;
-    }
+    // if (stageReport) {
+    //   completedTasks =
+    //     stageReport.completedTasks > completedTasks
+    //       ? stageReport.completedTasks
+    //       : completedTasks;
+    //   isAnyTaskStarted =
+    //     stageReport?.tasksInProgress === true
+    //       ? stageReport?.tasksInProgress
+    //       : isAnyTaskStarted;
+    // }
 
     const precentageOfCompleteTasks = Math.round(
       (completedTasks / tasks.length) * 100,

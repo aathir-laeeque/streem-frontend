@@ -18,7 +18,14 @@ import { LoginErrorCodes } from '#utils/constants';
 import { request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import { navigate } from '@reach/router';
-import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  fork,
+  put,
+  takeLatest,
+  takeLeading,
+} from 'redux-saga/effects';
 
 import {
   completeJob,
@@ -225,10 +232,10 @@ function* signOffTaskSaga({ payload }: ReturnType<typeof signOffTasks>) {
 export function* ComposerSaga() {
   yield takeLatest(ComposerAction.FETCH_COMPOSER_DATA, fetchDataSaga);
 
-  yield takeLatest(ComposerAction.COMPLETE_JOB, completeJobSaga);
-  yield takeLatest(ComposerAction.START_JOB, startJobSaga);
+  yield takeLeading(ComposerAction.COMPLETE_JOB, completeJobSaga);
+  yield takeLeading(ComposerAction.START_JOB, startJobSaga);
   yield takeLatest(ComposerAction.GET_SIGN_OFF_STATE, getSignOffStateSaga);
-  yield takeLatest(ComposerAction.SIGN_OFF_TASKS, signOffTaskSaga);
+  yield takeLeading(ComposerAction.SIGN_OFF_TASKS, signOffTaskSaga);
 
   yield all([
     // fork other sagas here

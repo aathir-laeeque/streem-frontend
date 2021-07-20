@@ -7,7 +7,7 @@ import {
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { JobStateEnum } from '#views/Jobs/NewListView/types';
-import { all, call, put, select, takeLatest } from 'redux-saga/effects';
+import { all, call, put, select, takeLeading } from 'redux-saga/effects';
 
 import {
   apiCancelTaskErrorCorrection,
@@ -133,7 +133,7 @@ function* performActionOnTaskSaga({
 function* enableErrorCorrectionSaga({
   payload,
 }: ReturnType<typeof enableErrorCorrection>) {
-  console.log('came to error correction saga ::', payload);
+  console.log('came in correction saga ::', payload);
   try {
     const { taskId, correctionReason } = payload;
 
@@ -159,7 +159,7 @@ function* enableErrorCorrectionSaga({
 function* completeErrorCorrectionSaga({
   payload,
 }: ReturnType<typeof completeErrorCorretcion>) {
-  console.log('came to error correction saga ::', payload);
+  console.log('came in correction saga ::', payload);
   try {
     const { taskId } = payload;
 
@@ -209,22 +209,22 @@ function* cancelErrorCorrectionSaga({
 }
 
 export function* TaskListSaga() {
-  yield takeLatest(TaskListAction.START_TASK, performActionOnTaskSaga);
-  yield takeLatest(TaskListAction.COMPLETE_TASK, performActionOnTaskSaga);
-  yield takeLatest(TaskListAction.SKIP_TASK, performActionOnTaskSaga);
-  yield takeLatest(
+  yield takeLeading(TaskListAction.START_TASK, performActionOnTaskSaga);
+  yield takeLeading(TaskListAction.COMPLETE_TASK, performActionOnTaskSaga);
+  yield takeLeading(TaskListAction.SKIP_TASK, performActionOnTaskSaga);
+  yield takeLeading(
     TaskListAction.COMPLETE_TASK_WITH_EXCEPTION,
     performActionOnTaskSaga,
   );
-  yield takeLatest(
+  yield takeLeading(
     TaskListAction.ENABLE_TASK_ERROR_CORRECTION,
     enableErrorCorrectionSaga,
   );
-  yield takeLatest(
+  yield takeLeading(
     TaskListAction.COMPLTE_ERROR_CORRECTION,
     completeErrorCorrectionSaga,
   );
-  yield takeLatest(
+  yield takeLeading(
     TaskListAction.CANCEL_ERROR_CORRECTION,
     cancelErrorCorrectionSaga,
   );

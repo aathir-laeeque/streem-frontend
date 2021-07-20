@@ -9,7 +9,7 @@ import {
   apiRejectActivity,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
+import { call, put, select, takeLeading } from 'redux-saga/effects';
 
 import {
   approveRejectActivity,
@@ -151,11 +151,11 @@ export function* approveRejectActivitySaga({
 export function* ActivityListSaga() {
   yield takeLeading(ActivityListAction.EXECUTE_ACTIVITY, executeActivitySaga);
   yield takeLeading(ActivityListAction.FIX_ACTIVITY, fixActivitySaga);
-  yield takeLatest(
+  yield takeLeading(
     ActivityListAction.APPROVE_ACTIVITY,
     approveRejectActivitySaga,
   );
-  yield takeLatest(
+  yield takeLeading(
     ActivityListAction.REJECT_ACTIVITY,
     approveRejectActivitySaga,
   );
