@@ -207,7 +207,9 @@ export const createSectionConfig = ({
           />
         ),
       },
-      ...(selectedUser?.state === UserStates.REGISTERED
+      ...(selectedUser?.state === UserStates.REGISTERED ||
+      selectedUser?.state === UserStates.PASSWORD_EXPIRED ||
+      selectedUser?.state === UserStates.REGISTERED_LOCKED
         ? [
             {
               label: 'Login Credentials',
