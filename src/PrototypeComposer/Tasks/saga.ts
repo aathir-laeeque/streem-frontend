@@ -303,7 +303,7 @@ function* removeTaskMediaSaga({ payload }: ReturnType<typeof removeTaskMedia>) {
 }
 
 export function* TaskListSaga() {
-  yield takeLatest(TaskListActions.ADD_NEW_TASK, addNewTaskSaga);
+  yield takeLeading(TaskListActions.ADD_NEW_TASK, addNewTaskSaga);
   yield takeLatest(TaskListActions.DELETE_TASK, deleteTaskSaga);
   yield takeLatest(TaskListActions.ADD_STOP, addStopSaga);
   yield takeLatest(TaskListActions.REMOVE_STOP, removeStopSaga);
