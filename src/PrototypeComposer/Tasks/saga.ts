@@ -15,7 +15,14 @@ import {
   apiUpdateTaskMedia,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  select,
+  takeEvery,
+  takeLatest,
+  takeLeading,
+} from 'redux-saga/effects';
 import { updateMediaActivitySuccess } from '../../JobComposer/ActivityList/actions';
 
 import {
@@ -304,10 +311,10 @@ function* removeTaskMediaSaga({ payload }: ReturnType<typeof removeTaskMedia>) {
 
 export function* TaskListSaga() {
   yield takeLeading(TaskListActions.ADD_NEW_TASK, addNewTaskSaga);
-  yield takeLatest(TaskListActions.DELETE_TASK, deleteTaskSaga);
+  yield takeEvery(TaskListActions.DELETE_TASK, deleteTaskSaga);
   yield takeLatest(TaskListActions.ADD_STOP, addStopSaga);
   yield takeLatest(TaskListActions.REMOVE_STOP, removeStopSaga);
-  yield takeLatest(TaskListActions.UPDATE_TASK_NAME, updateTaskSaga);
+  yield takeEvery(TaskListActions.UPDATE_TASK_NAME, updateTaskSaga);
   yield takeLatest(TaskListActions.SET_TASK_TIMER, setTaskTimerSaga);
   yield takeLatest(TaskListActions.REMOVE_TASK_TIMER, removeTaskTimerSaga);
   yield takeLatest(TaskListActions.ADD_TASK_MEDIA, addTaskMediaSaga);

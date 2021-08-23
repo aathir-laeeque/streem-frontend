@@ -1,7 +1,7 @@
 import { RootState } from '#store/types';
 import { apiCreateStage, apiDeleteStage } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { call, put, select, takeLeading } from 'redux-saga/effects';
+import { call, put, select, takeEvery, takeLeading } from 'redux-saga/effects';
 
 import { apiUpdateStage, apiReorderStages } from '../../utils/apiUrls';
 import { Stage } from '../checklist.types';
@@ -140,5 +140,5 @@ export function* StageListSaga() {
   // yield takeLeading(StageListActions.DUPLICATE_STAGE, duplicateStageSaga);
   // TODO: when enabling this reorder saga, connect with BE to make sure the API works as per the need
   // yield takeLeading(StageListActions.REORDER_STAGE, reOrderStageSaga);
-  yield takeLeading(StageListActions.UPDATE_STAGE_NAME, updateStageNameSaga);
+  yield takeEvery(StageListActions.UPDATE_STAGE_NAME, updateStageNameSaga);
 }
