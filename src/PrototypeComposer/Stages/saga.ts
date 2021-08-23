@@ -136,7 +136,7 @@ function* updateStageNameSaga({ payload }: ReturnType<typeof updateStageName>) {
 
 export function* StageListSaga() {
   yield takeLeading(StageListActions.ADD_NEW_STAGE, addNewStageSaga);
-  yield takeLeading(StageListActions.DELETE_STAGE, deleteStageSaga);
+  yield takeEvery(StageListActions.DELETE_STAGE, deleteStageSaga);
   // yield takeLeading(StageListActions.DUPLICATE_STAGE, duplicateStageSaga);
   // TODO: when enabling this reorder saga, connect with BE to make sure the API works as per the need
   // yield takeLeading(StageListActions.REORDER_STAGE, reOrderStageSaga);
