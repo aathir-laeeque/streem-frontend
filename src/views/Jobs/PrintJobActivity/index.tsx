@@ -189,7 +189,6 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
                     </Text>
                     {criticalCount !== 0 && (
                       <>
-                        {/* <Image src={reportProblem} style={{ height: 12 }} /> */}
                         <Text style={styles.headerItemText}>
                           {criticalCount} Critical
                         </Text>
@@ -205,7 +204,6 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
                             {moment.unix(log.triggeredAt).format('hh:mm A')}
                           </Text>
                           {log.severity === JobActivitySeverity.CRITICAL && (
-                            // <Image src={reportProblem} style={{ height: 12 }} />
                             <View />
                           )}
                           <Text

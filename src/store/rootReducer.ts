@@ -17,7 +17,6 @@ import { PropertiesReducer } from './properties/reducer';
 import { UsersReducer } from './users/reducer';
 import { ExtrasReducer } from './extras/reducer';
 
-// import { JobListViewReducer } from 'views/Jobs/ListView/reducer';
 export const rootReducer = combineReducers({
   auth: AuthReducer,
   checklistListView: ChecklistListViewReducer,
@@ -31,11 +30,8 @@ export const rootReducer = combineReducers({
   sessionActivity: SessionActivityReducer,
   users: UsersReducer,
   extras: ExtrasReducer,
-
-  // services reducer
   propertiesService: PropertiesServiceReducer,
   usersService: UsersServiceReducer,
   activityFilters: ActivityFiltersReducer,
-
   jobListView: NewJobListViewReducer,
 });

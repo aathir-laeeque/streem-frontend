@@ -52,7 +52,6 @@ const MediaWrapper = styled.div.attrs({
       }
 
       .icon {
-        /* color: #1d84ff; */
         cursor: pointer;
       }
     }

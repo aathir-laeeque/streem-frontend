@@ -9,12 +9,6 @@ export const Wrapper = styled.div`
     margin-top: 12px;
 
     .button-item {
-      /* flex: 1;
-
-      &.editing {
-        flex: 0;
-      } */
-
       button {
         background-color: transparent;
         cursor: pointer;

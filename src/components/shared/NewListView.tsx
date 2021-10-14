@@ -167,7 +167,6 @@ export const NewListView: FC<ListViewProps> = ({
           <div
             key={`property_${el.id}-${idx}`}
             className="list-header-columns"
-            // style={{ flex: 0.7 }}
           >
             {el.placeHolder}
           </div>
@@ -197,7 +196,6 @@ export const NewListView: FC<ListViewProps> = ({
               <div
                 key={`${el.id}_property_${property.id}`}
                 className="list-card-columns"
-                // style={{ flex: 0.7 }}
               >
                 {el.properties &&
                 property &&

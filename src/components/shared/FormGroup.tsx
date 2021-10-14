@@ -266,7 +266,6 @@ export const FormGroup = ({ inputs }: FormGroupProps) => {
                 key={props.id}
                 type={type}
                 {...props}
-                // autoComplete="new-password"
               />
             );
           case 'checkbox':

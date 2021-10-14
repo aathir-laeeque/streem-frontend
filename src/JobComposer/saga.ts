@@ -173,21 +173,12 @@ function* getSignOffStateSaga({ payload }: ReturnType<typeof getSignOffState>) {
     );
 
     if (data) {
-      // if (allowSignOff) {
       yield put(
         openOverlayAction({
           type: OverlayNames.SIGN_COMPLETED_TASKS,
           props: { data, jobId, allowSignOff },
         }),
       );
-      // } else {
-      //   yield put(
-      //     openOverlayAction({
-      //       type: OverlayNames.SIGN_OFF_STATE,
-      //       props: { data },
-      //     }),
-      //   );
-      // }
     } else {
       console.error('error from api :: ', errors);
     }

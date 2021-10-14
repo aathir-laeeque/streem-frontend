@@ -152,7 +152,7 @@ export const apiAddNewActivity = ({
 export const apiDeleteActivity = (activityId: Activity['id']) =>
   `${baseUrl}/activities/${activityId}/archive`;
 
-// REVIEWER
+// Reviewer
 export const apiGetReviewersForChecklist = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/reviewers`;
 

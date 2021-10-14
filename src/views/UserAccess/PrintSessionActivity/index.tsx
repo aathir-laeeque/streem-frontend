@@ -91,7 +91,6 @@ const MyPrintSessionActivity: FC = () => {
                     </Text>
                     {criticalCount !== 0 && (
                       <>
-                        {/* <Image src={reportProblem} style={{ height: 12 }} /> */}
                         <Text style={styles.headerItemText}>
                           {criticalCount} Critical
                         </Text>
@@ -108,7 +107,6 @@ const MyPrintSessionActivity: FC = () => {
                           </Text>
                           {log.severity ===
                             SessionActivitySeverity.CRITICAL && (
-                            // <Image src={reportProblem} style={{ height: 12 }} />
                             <View />
                           )}
                           <Text

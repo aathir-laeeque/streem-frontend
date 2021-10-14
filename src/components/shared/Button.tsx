@@ -7,7 +7,6 @@ interface ButtonProps {
 
 export const Button = styled.button.attrs<ButtonProps>(
   ({ type, disabled = false }) => ({
-    // style: (props) => props.customStyle || {},
     disabled,
     type: type ? type : 'button',
   }),
@@ -27,9 +26,7 @@ export const Button = styled.button.attrs<ButtonProps>(
   }
 `;
 
-export const FlatButton = styled.button.attrs({
-  // style: (props) => props.customStyle || {},
-})`
+export const FlatButton = styled.button`
   border-radius: 3px;
   background-color: #fff;
   border: 1px solid #1d84ff;

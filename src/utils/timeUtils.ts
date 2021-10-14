@@ -5,9 +5,7 @@ import moment from 'moment';
 export const formatDateTime = (time: number, format = 'DD-MM-YYYY HH:mm:ss') =>
   moment.unix(time).utcOffset('+05:30').format(format);
 
-/**
- * TODO:Deprecate this function and use the one below this one.
- */
+// TODO:Deprecate this function and use the one below this one.
 export const formatDuration = (duration: number) => {
   const time = moment.duration(duration, 'seconds');
 

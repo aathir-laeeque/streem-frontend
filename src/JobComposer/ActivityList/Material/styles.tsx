@@ -45,7 +45,6 @@ export const Wrapper = styled.div`
 
       &-quantity {
         align-items: center;
-        /* background-color: #f4f4f4; */
         display: flex;
         margin-left: 12px;
 
@@ -54,7 +53,6 @@ export const Wrapper = styled.div`
         }
 
         .quantity {
-          /* border-bottom: 1px solid #bababa; */
           line-height: 1.15;
           padding: 13px 4px;
         }

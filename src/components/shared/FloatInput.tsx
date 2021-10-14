@@ -118,7 +118,6 @@ export const FloatInput: FC<FloatInputProps> = ({
   };
 
   const onFocus = (event: React.FocusEvent<HTMLInputElement>): void => {
-    // setError(false);
     if (event.target.value === '') {
       setClassName('on');
     }

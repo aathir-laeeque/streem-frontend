@@ -22,7 +22,6 @@ const Wrapper = styled.div`
     width: 850px !important;
     max-height: 600px;
     height: 600px;
-    /* overflow: auto !important; */
   }
 
   .modal-body {
@@ -63,7 +62,6 @@ const Wrapper = styled.div`
   .body {
     grid-area: body;
     padding: 24px;
-    /* height: inherit; */
     overflow: auto;
 
     section {

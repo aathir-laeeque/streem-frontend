@@ -13,12 +13,6 @@ export const LoadingDiv = styled.div`
   z-index: -1;
 `;
 
-// Font.register({
-//   family: 'Nunito',
-//   src:
-//     'https://fonts.gstatic.com/s/nunitosans/v2/iJ4p9wO0GDKJ-D5teKuZqp0EAVxt0G0biEntp43Qt6E.ttf',
-// });
-
 Font.register({
   family: 'Nunito',
   src: NunitoRegular,

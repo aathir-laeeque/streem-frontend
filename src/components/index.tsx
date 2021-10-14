@@ -9,7 +9,6 @@ export * from './shared/useScrollableSections';
 export { BaseModal } from './shared/BaseModal';
 export * from './shared/FormGroup';
 export { Button, FlatButton, Button1 } from './shared/Button';
-// export { NestedMenuItem } from './shared/NestedMenuItem';
 export { CustomRoute } from './shared/CustomRoute';
 export { FloatInput } from './shared/FloatInput';
 export { Role } from './shared/Role';

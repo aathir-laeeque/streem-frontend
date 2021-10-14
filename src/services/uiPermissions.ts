@@ -1,4 +1,3 @@
-// import { useTypedSelector } from '#store';
 import { store } from '../App';
 import { get } from 'lodash';
 

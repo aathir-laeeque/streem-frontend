@@ -116,7 +116,6 @@ export const styles = StyleSheet.create({
   headerItemText: {
     fontSize: 12,
     marginRight: 8,
-    // alignItems: 'center',
     fontFamily: 'Nunito',
     color: '#666666',
   },

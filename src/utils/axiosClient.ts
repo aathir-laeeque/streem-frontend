@@ -19,7 +19,6 @@ import { isMatchAny } from './stringUtils';
 import { setGlobalError } from '#store/extras/action';
 
 // REFRESH TOKEN LOGIC
-
 const REFRESH_TOKEN_URL = apiRefreshToken();
 
 let refreshPromise: Promise<ResponseObj<RefreshTokenResponse>> | null = null;
@@ -46,7 +45,6 @@ async function refreshTokenRequest(accessToken: string, refreshToken: string) {
 }
 
 // AXIOS SETUP
-
 const axiosInstance = axios.create();
 
 axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';

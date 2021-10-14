@@ -344,8 +344,6 @@ export const Wrapper = styled.div`
           &.stage-detail {
             td {
               &.name {
-                /* width: 35%; */
-
                 .container {
                   display: flex;
 

@@ -56,11 +56,8 @@ const Wrapper = styled.div`
       }
 
       .alert {
-        /* width: 340px; */
         display: flex;
         flex-direction: row;
-        /* justify-content: flex-start;
-        align-items: flex-start; */
         padding: 4px;
         border-radius: 4px;
         border: solid 1px #f7b500;

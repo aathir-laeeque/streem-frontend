@@ -55,8 +55,6 @@ function* deleteStageSaga({ payload }: ReturnType<typeof deleteStage>) {
     const { data, errors } = yield call(request, 'PATCH', apiDeleteStage(id));
 
     if (data) {
-      // make reoroder call here
-
       const {
         listById,
         listOrder,
@@ -100,22 +98,6 @@ function* deleteStageSaga({ payload }: ReturnType<typeof deleteStage>) {
   }
 }
 
-// function* duplicateStageSaga({ payload }: ReturnType<typeof duplicateStage>) {
-//   try {
-//     console.log('payload from duplicateStageSaga :: ', payload);
-//   } catch (error) {
-//     console.error('error came in duplicateStageSaga :: ', error);
-//   }
-// }
-
-// function* reOrderStageSaga({ payload }: ReturnType<typeof reOrder>) {
-//   try {
-//     console.log('payload from reOrderStageSaga :: ', payload);
-//   } catch (error) {
-//     console.error('error came in reOrderStageSaga :: ', error);
-//   }
-// }
-
 function* updateStageNameSaga({ payload }: ReturnType<typeof updateStageName>) {
   try {
     const { id, name, orderTree } = payload.stage;
@@ -137,8 +119,5 @@ function* updateStageNameSaga({ payload }: ReturnType<typeof updateStageName>) {
 export function* StageListSaga() {
   yield takeLeading(StageListActions.ADD_NEW_STAGE, addNewStageSaga);
   yield takeEvery(StageListActions.DELETE_STAGE, deleteStageSaga);
-  // yield takeLeading(StageListActions.DUPLICATE_STAGE, duplicateStageSaga);
-  // TODO: when enabling this reorder saga, connect with BE to make sure the API works as per the need
-  // yield takeLeading(StageListActions.REORDER_STAGE, reOrderStageSaga);
   yield takeEvery(StageListActions.UPDATE_STAGE_NAME, updateStageNameSaga);
 }

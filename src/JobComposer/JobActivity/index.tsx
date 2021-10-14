@@ -42,8 +42,7 @@ type initialState = {
   appliedUsers: User[];
 };
 
-// TODO Change appliedUsers, selectedUsers, unSelectedUsers to HashMap as we only need the id's of the users SO we can keep it like { userId : boolean }.
-
+// TODO Change appliedUsers, selectedUsers, unSelectedUsers to HashMap as we only need the id's of the users So we can keep it like { userId : boolean }.
 const currentDate = moment().startOf('day');
 const initialState: initialState = {
   dateRange: [null, null],

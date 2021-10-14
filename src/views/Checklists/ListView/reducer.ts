@@ -20,10 +20,7 @@ const initialState: ListViewState = {
   pageable: initalPageable,
 };
 
-/**
- * TODO: optimize the reducer for Published and prototype tabs
- */
-
+// TODO: optimize the reducer for Published and prototype tabs
 const reducer = (
   state = initialState,
   action: ListViewActionType,

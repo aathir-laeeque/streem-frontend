@@ -216,13 +216,6 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
             >
               Create Job
             </Button1>
-            {/* <Button1
-              disabled={!formState.isValid || !formState.isDirty}
-              variant="textOnly"
-              style={{ marginLeft: 'auto' }}
-            >
-              Schedule Job
-            </Button1> */}
           </div>
         </form>
       </BaseModal>

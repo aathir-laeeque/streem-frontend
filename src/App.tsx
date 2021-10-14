@@ -12,10 +12,8 @@ import { Router } from '@reach/router';
 import React, { FC } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-
 import GlobalStyles from './styles/GlobalStyles';
 
-// library imports
 export const { store, persistor } = configureStore({});
 
 const App: FC = () => {

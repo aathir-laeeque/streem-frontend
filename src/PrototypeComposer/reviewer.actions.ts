@@ -5,7 +5,6 @@ import { ComposerAction } from './reducer.types';
 import { Collaborator, CommonReviewPayload } from './reviewer.types';
 
 // REVIEWER ASSIGNMENT
-
 export const fetchAssignedReviewersForChecklist = (
   checklistId: Checklist['id'],
 ) =>

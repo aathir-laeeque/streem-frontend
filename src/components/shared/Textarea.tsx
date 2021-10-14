@@ -94,7 +94,6 @@ const Wrapper = styled.div.attrs(({ className }) => ({
               }
             `
           : css`
-              /* padding: 0; */
               border-bottom-color: transparent;
             `}
 

@@ -3,10 +3,8 @@ import { Popover, Zoom } from '@material-ui/core';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import ReviewerAssignmentModal from '#PrototypeComposer/Overlays/ReviewerAssignmentModal';
 import { Checklist } from '#PrototypeComposer/checklist.types';
-
-/**
- * TODO: make this common with the task user assignment
- */
+ 
+//TODO: make this common with the task user assignment
 export const ReviewerAssignmentPopover: FC<CommonOverlayProps<{
   checklistId: Checklist['id'];
 }>> = ({

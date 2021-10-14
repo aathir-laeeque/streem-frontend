@@ -16,10 +16,7 @@ const initialState: ListViewState = {
   },
 };
 
-/**
- * TODO: optimize the reducer for Unassigned, Assigned and completed tabs
- */
-
+// TODO: optimize the reducer for Unassigned, Assigned and completed tabs
 const reducer = (
   state = initialState,
   action: ListViewActionType,

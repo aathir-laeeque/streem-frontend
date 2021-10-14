@@ -24,7 +24,6 @@ import {
 import { modalBody } from '../ListView/TabContent';
 import { createSectionConfig, Toggleables } from './helpers';
 import { Composer } from './styles';
-// import { roles } from './temp';
 import {
   EditUserProps,
   EditUserRequestInputs,

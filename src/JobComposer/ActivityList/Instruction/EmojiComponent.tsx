@@ -47,7 +47,6 @@ class LayoutComponent extends Component {
       >
         <div
           className="rdw-option-wrapper"
-          // value="unordered-list-item"
           onClick={onExpandEvent}
         >
           <img src={icon} alt="" />

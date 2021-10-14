@@ -128,9 +128,9 @@ export type Stage = {
 };
 
 export enum EnabledStates {
-  BEING_BUILT = 'BEING_BUILT', // ENABLE EDITING
+  BEING_BUILT = 'BEING_BUILT',
   BEING_REVISED = 'BEING_REVISED',
-  REQUESTED_CHANGES = 'REQUESTED_CHANGES', // ENABLE EDITING
+  REQUESTED_CHANGES = 'REQUESTED_CHANGES',
 }
 
 export enum DisabledStates {
@@ -186,7 +186,6 @@ export type Comment = {
   modifiedAt: number;
   commentedBy: Pick<User, 'id' | 'firstName' | 'lastName' | 'employeeId'>;
   phase: number;
-  // reviewState: CollaboratorState;
   state: CollaboratorState;
 };
 

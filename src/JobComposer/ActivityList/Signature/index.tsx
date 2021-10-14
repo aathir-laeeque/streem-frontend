@@ -13,7 +13,6 @@ import { Wrapper } from './styles';
 
 const Signature: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const {
-    // composer: { entity },
     auth: { profile },
   } = useTypedSelector((state) => state);
 

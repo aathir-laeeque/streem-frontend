@@ -12,7 +12,6 @@ const Wrapper = styled.div.attrs({
   className: 'data-table',
 })`
   display: flex;
-  /* flex: 1; */
   overflow: hidden;
 
   .MuiPaper-root {
@@ -65,7 +64,6 @@ const Wrapper = styled.div.attrs({
           line-height: 1.29;
           color: #333333;
           font-family: inherit;
-          /* text-transform: capitalize; */
 
           .primary {
             cursor: pointer;

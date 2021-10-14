@@ -1,11 +1,4 @@
-import {
-  // Assessment,
-  // Dashboard,
-  FeaturedPlayList,
-  LibraryAddCheck,
-  // MenuBook,
-  Inbox,
-} from '@material-ui/icons';
+import { FeaturedPlayList, LibraryAddCheck, Inbox } from '@material-ui/icons';
 import { Link } from '@reach/router';
 import React, { FC } from 'react';
 import checkPermission from '#services/uiPermissions';
@@ -14,15 +7,6 @@ import { Menu, Wrapper, NavItem } from './styles';
 import { MenuItem } from './types';
 
 const NavigationMenu: FC = () => {
-  // let menuItems: MenuItem[] = [
-  //   { name: 'Dashboard', icon: Dashboard, path: '/' },
-  //   { name: 'Inbox', icon: Inbox, path: '/inbox' },
-  //   { name: 'Jobs', icon: FeaturedPlayList, path: '/jobs' },
-  //   { name: 'Checklists', icon: LibraryAddCheck, path: '/checklists' },
-  //   { name: 'Reports', icon: Assessment, path: '/reports' },
-  //   { name: 'Audit Logs', icon: MenuBook, path: '/audit' },
-  // ];
-
   const menuItems: MenuItem[] = [];
   if (checkPermission(['sidebar', 'inbox']))
     menuItems.push({ name: 'Inbox', icon: Inbox, path: '/inbox' });

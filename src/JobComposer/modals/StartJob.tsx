@@ -37,8 +37,6 @@ const Wrapper = styled.div`
   }
 
   .start-job-actions {
-    /* padding: 24px; */
-
     .header {
       color: #000000;
       display: flex;

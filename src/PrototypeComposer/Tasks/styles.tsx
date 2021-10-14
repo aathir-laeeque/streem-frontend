@@ -293,7 +293,6 @@ const TaskMediasWrapper = styled.div`
       align-items: center;
       border: 1px solid #1d84ff;
       border-radius: 4px;
-      /* cursor: pointer; */
       display: flex;
       justify-content: center;
       margin-top: 16px;
@@ -306,7 +305,6 @@ const TaskMediasWrapper = styled.div`
 
       span {
         color: #1d84ff;
-        /* cursor: pointer; */
       }
     }
   }

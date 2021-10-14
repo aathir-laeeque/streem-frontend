@@ -81,7 +81,6 @@ const GlobalStyles = createGlobalStyle`
         :active,
         :focus {
           border-color: #1d84ff;
-          // border-bottom-color: #1d84ff;
           border-width: 2px;
         }
 

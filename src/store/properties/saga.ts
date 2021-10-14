@@ -8,8 +8,6 @@ import {
 } from './actions';
 import { PropertiesAction } from './types';
 
-// TODO Update like others
-
 function* fetchPropertiesSaga({ payload }: ReturnType<typeof fetchProperties>) {
   try {
     const { type } = payload;

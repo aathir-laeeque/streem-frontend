@@ -678,13 +678,6 @@ const ChecklistHeader: FC = () => {
               </Button1>
 
               <div id="preview" />
-              {/* <Button1
-                variant="textOnly"
-                id="preview"
-              >
-                <PlayCircleFilled className="icon" fontSize="small" />
-                Preview
-              </Button1> */}
             </div>
           )}
       </div>

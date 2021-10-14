@@ -3,7 +3,6 @@ import * as en from './en';
 import { initReactI18next } from 'react-i18next';
 
 // Sort All Translation keys Alphabetically.
-
 export const resources = {
   en,
 };

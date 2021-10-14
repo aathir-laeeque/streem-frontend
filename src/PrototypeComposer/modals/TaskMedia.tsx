@@ -30,7 +30,6 @@ const Wrapper = styled.div<{
   ${({ fullScreeen, disableDescInput, disableNameInput }) => {
     return css`
       .modal {
-        /* width: 920px !important; */
         min-width: ${fullScreeen ? '100% !important' : 'calc(100vw - 40vw)'};
         height: ${fullScreeen ? '100%' : 'max-content'};
         background: ${fullScreeen ? 'transparent !important' : 'white'};
@@ -62,10 +61,6 @@ const Wrapper = styled.div<{
               img {
                 max-width: 100%;
                 max-height: 100%;
-                /* max-width: ${fullScreeen ? '100%' : 'unset'};
-                max-height: ${fullScreeen ? '100%' : 'unset'};
-                width: ${fullScreeen ? 'unset' : '100%'};
-                height: ${fullScreeen ? 'unset' : '100%'}; */
               }
 
               .full-screen-action {

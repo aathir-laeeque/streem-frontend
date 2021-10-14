@@ -2,9 +2,7 @@ import { ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Notification = styled(ToastContainer).attrs({
-  // custom props
-})`
+const Notification = styled(ToastContainer)`
   .Toastify__toast-container {
   }
   .Toastify__toast {
