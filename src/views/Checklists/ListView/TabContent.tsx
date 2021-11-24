@@ -317,27 +317,29 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     <span>View Info</span>
                   </div>
                 </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleClose();
-                    dispatch(
-                      openOverlayAction({
-                        type: OverlayNames.CREATE_JOB_MODAL,
-                        props: {
-                          selectedChecklist: selectedChecklist,
-                          properties: jobProperties,
-                          onCreateJob: onCreateJob,
-                        },
-                      }),
-                    );
-                  }}
-                >
-                  <div className="list-item">
-                    <MemoCreateJob />
-                    <span>Create Job</span>
-                  </div>
-                </MenuItem>
-                {checkPermission(['checklists', 'revision']) && (
+                {!item.archived && (
+                  <MenuItem
+                    onClick={() => {
+                      handleClose();
+                      dispatch(
+                        openOverlayAction({
+                          type: OverlayNames.CREATE_JOB_MODAL,
+                          props: {
+                            selectedChecklist: selectedChecklist,
+                            properties: jobProperties,
+                            onCreateJob: onCreateJob,
+                          },
+                        }),
+                      );
+                    }}
+                  >
+                    <div className="list-item">
+                      <MemoCreateJob />
+                      <span>Create Job</span>
+                    </div>
+                  </MenuItem>
+                )}
+                {!item.archived && checkPermission(['checklists', 'revision']) && (               
                   <MenuItem
                     onClick={() => {
                       handleClose();
