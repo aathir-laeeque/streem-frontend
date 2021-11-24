@@ -27,11 +27,11 @@ const styles = StyleSheet.create({
     padding: '4px 40px 4px 10px',
   },
   labelInputGroupView: {
-    display: 'flex',
-    flex: 1,
     flexDirection: 'row',
     paddingVertical: 4,
     alignItems: 'center',
+    width: '100%',
+    margin: 'auto',
   },
   inputView: {
     borderWidth: 1,
@@ -124,11 +124,13 @@ export const ValueLabelGroup = ({
 export const TabLookLike = ({
   children,
   title,
+  wrap = true,
 }: {
   children: ReactNode;
   title: string;
+  wrap?: boolean;
 }) => (
-  <View style={styles.tabLook}>
+  <View style={styles.tabLook} wrap={wrap}>
     <View style={commonStyles.flexRow}>
       <Text style={styles.tabLookHeaderText}>{title}</Text>
     </View>
@@ -139,9 +141,11 @@ export const TabLookLike = ({
 export const Assigness = ({
   assignees,
   jobState,
+  minWidth = 30,
 }: {
   assignees: User[];
   jobState: string;
+  minWidth?: number;
 }) => {
   let rows = [];
   if (jobState === JobStateEnum.UNASSIGNED) {
@@ -149,9 +153,7 @@ export const Assigness = ({
       rows.push(
         <View style={styles.assigneRow} key={`assignes_${i}`}>
           <View style={styles.assigneInput} />
-
           <View style={[styles.assigneInput, { margin: '0px 8px' }]} />
-
           <View style={styles.assigneInput} />
         </View>,
       );
@@ -178,8 +180,9 @@ export const Assigness = ({
         styles.labelInputGroupView,
         { alignItems: 'flex-start', marginTop: 8 },
       ]}
+      wrap={false}
     >
-      <View style={styles.inputLabelView}>
+      <View style={[styles.inputLabelView, { width: `${minWidth}%` }]}>
         <Text style={styles.inputLabel}>Assignees : </Text>
       </View>
       <View style={styles.assignView}>

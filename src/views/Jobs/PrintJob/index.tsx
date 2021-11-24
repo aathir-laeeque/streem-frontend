@@ -23,11 +23,12 @@ import {
 } from './Components';
 import { styles, LoadingDiv } from './styles';
 import { Entity } from '#JobComposer/composer.types';
-import { Checklist, TaskExecution } from '#PrototypeComposer/checklist.types';
+import { Checklist, Properties, TaskExecution } from '#PrototypeComposer/checklist.types';
 import {
   AssignedJobStates,
   CompletedJobStates,
   Job,
+  JobStateType,
 } from '../NewListView/types';
 
 const now = moment().format('Do MMM, YYYY, hh:mm a');
@@ -45,9 +46,15 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
 
   if (!data || !profile) return null;
 
-  const { checklist, ...jobExtras } = (data as unknown) as Checklist;
+  const { checklist, ...jobExtras } = (data as unknown) as {
+    checklist: Checklist,
+    code: string,
+    properties: Properties,
+    state: JobStateType,
+    totalTasks: number
+  };
   let assigneesObj: Record<string, any> = {};
-  (checklist as Checklist).stages.forEach((stage) =>
+  checklist.stages.forEach((stage) =>
     stage.tasks.forEach((task) =>
       task.taskExecution.assignees.forEach(
         (assignee) =>
@@ -110,41 +117,48 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
 
           <View style={styles.container}>
             <TabLookLike title="Checklist Details">
-              <InputLabelGroup
-                label="Checklist ID :"
-                value={checklist?.code || ''}
-              />
-              <InputLabelGroup
-                label="Checklist Name :"
-                value={checklist?.name || ''}
-              />
+              <View>
+                <InputLabelGroup
+                  label="Checklist ID :"
+                  value={checklist?.code || ''}
+                />
+                <InputLabelGroup
+                  label="Checklist Name :"
+                  value={checklist?.name || ''}
+                />
+              </View>
             </TabLookLike>
 
             <TabLookLike title="Job Details">
-              <InputLabelGroup label="Job ID :" value={jobExtras.code} />
-              <InputLabelGroup
-                label="State :"
-                value={getJobStatus(jobExtras.state)}
-              />
-              {Object.entries(jobExtras?.properties).map(([key, value]) => (
+              <View>
+                <InputLabelGroup label="Job ID :" value={jobExtras.code} />
                 <InputLabelGroup
-                  label={`${key.toLowerCase()} :`}
-                  value={value}
-                  key={key}
+                  label="State :"
+                  value={getJobStatus(jobExtras.state)}
                 />
-              ))}
+                {Object.entries(jobExtras?.properties).map(([key, value]) => (
+                  <InputLabelGroup
+                    label={`${key.toLowerCase()} :`}
+                    value={value as string}
+                    key={key}
+                  />
+                ))}
+              </View>
+
               <Assigness assignees={assignees} jobState={jobExtras.state} />
             </TabLookLike>
 
-            <TabLookLike title="Stage and Task Details">
-              <InputLabelGroup
-                label="Total Stages :"
-                value={checklist?.stages?.length.toString()}
-              />
-              <InputLabelGroup
-                label="Total Tasks :"
-                value={jobExtras.totalTasks}
-              />
+            <TabLookLike title="Stage and Task Details" wrap={false}>
+              <View>
+                <InputLabelGroup
+                  label="Total Stages :"
+                  value={checklist?.stages?.length.toString()}
+                />
+                <InputLabelGroup
+                  label="Total Tasks :"
+                  value={jobExtras.totalTasks}
+                />
+              </View>
             </TabLookLike>
           </View>
 
@@ -162,7 +176,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                     value={`${stage.tasks.length}`}
                   />
                 </View>
-                {(stage.tasks as Array<Task>).map((task, taskIndex: number) => (
+                {(stage.tasks as unknown as Array<Task>).map((task, taskIndex: number) => (
                   <TaskView taskIndex={taskIndex} task={task} key={task.id} />
                 ))}
               </View>
