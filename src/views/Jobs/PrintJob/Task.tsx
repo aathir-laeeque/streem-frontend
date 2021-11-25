@@ -1,17 +1,16 @@
-import React, { FC } from 'react';
-import {
-  TaskExecutionState,
-  Task,
-  NonMandatoryActivity,
-  TimerOperator,
-  CompletedTaskStates,
-} from '#JobComposer/checklist.types';
-import handIcon from '#assets/images/hand.png';
 import clockIcon from '#assets/images/clock.png';
-import { Text, View, StyleSheet, Image } from '@react-pdf/renderer';
-import ActivityList from './ActivityList';
-import moment from 'moment';
+import handIcon from '#assets/images/hand.png';
+import {
+  NonMandatoryActivity,
+  Task,
+  TaskExecutionState,
+  TimerOperator,
+} from '#JobComposer/checklist.types';
 import { formatDuration } from '#utils/timeUtils';
+import { Image, StyleSheet, Text, View } from '@react-pdf/renderer';
+import moment from 'moment';
+import React, { FC } from 'react';
+import ActivityList from './ActivityList';
 
 const styles = StyleSheet.create({
   flexView: {

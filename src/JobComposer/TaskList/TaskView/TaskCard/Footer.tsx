@@ -92,7 +92,7 @@ const CompletedWrapper = styled.div.attrs({
   className: '',
 })`
   align-items: center;
-  ${({ completed, skipped, isTaskDelayed }) => {
+  ${({ completed, skipped, isTaskDelayed, completedWithException }) => {
     if (completed) {
       if (isTaskDelayed) {
         return css`
@@ -102,7 +102,7 @@ const CompletedWrapper = styled.div.attrs({
       return css`
         background-color: #5aa700;
       `;
-    } else if (skipped) {
+    } else if (skipped || completedWithException) {
       return css`
         background-color: #f7b500;
       `;
@@ -197,13 +197,17 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
     if (isTaskDelayed) {
       let text;
       if (
-        moment.unix(task.taskExecution.endedAt).diff(moment.unix(task.taskExecution.startedAt), 'seconds') >
+        moment
+          .unix(task.taskExecution.endedAt)
+          .diff(moment.unix(task.taskExecution.startedAt), 'seconds') >
         task.maxPeriod
       ) {
         text = 'after the set time';
       } else if (
         task.timerOperator === 'NOT_LESS_THAN' &&
-        moment.unix(task.taskExecution.endedAt).diff(moment.unix(task.taskExecution.startedAt), 'seconds') <
+        moment
+          .unix(task.taskExecution.endedAt)
+          .diff(moment.unix(task.taskExecution.startedAt), 'seconds') <
           task.minPeriod
       ) {
         text = 'before the set time';
@@ -238,6 +242,19 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         </CompletedWrapper>
       );
     }
+  } else if (
+    taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION
+  ) {
+    return (
+      <CompletedWrapper completedWithException>
+        <CheckCircle className="icon" />
+        <span>
+          Task completed with exception by {generateName(modifiedBy)}, ID:{' '}
+          {modifiedBy.employeeId} on{' '}
+          {formatDateTime(modifiedAt, 'MMM D, YYYY h:mm A')}
+        </span>
+      </CompletedWrapper>
+    );
   } else if (taskExecutionState === TaskExecutionState.SKIPPED) {
     return (
       <CompletedWrapper skipped>
