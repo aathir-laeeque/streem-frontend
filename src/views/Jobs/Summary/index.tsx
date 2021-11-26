@@ -42,9 +42,16 @@ const generateDescription = (exception: Exception): ReactNode => {
 
       const taskDuration = taskCompleteTime.diff(taskStartTime, 's');
 
-      const deviation =
-        taskDuration -
-        (timerOperator === 'NOT_LESS_THAN' ? minPeriod : maxPeriod);
+      const deviation = (() => {
+        if(timerOperator === 'NOT_LESS_THAN'){
+          if(taskDuration > maxPeriod) {
+            return taskDuration - maxPeriod;
+          } else {
+            return  taskDuration - minPeriod;
+          }
+        }
+        return taskDuration - maxPeriod;
+      })();
 
       const expectedString =
         timerOperator === 'NOT_LESS_THAN'
