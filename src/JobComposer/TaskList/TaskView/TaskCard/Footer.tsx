@@ -218,7 +218,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
           <CompletedWrapper completed isTaskDelayed={isTaskDelayed}>
             <Error className="icon" />
             <span>
-              Task Completed {text} by {generateName(modifiedBy)}, ID:{' '}
+              Task completed {text} by {generateName(modifiedBy)}, ID:{' '}
               {modifiedBy.employeeId} on{' '}
               {formatDateTime(modifiedAt, 'MMM D, YYYY h:mm A')}
             </span>
@@ -235,7 +235,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         <CompletedWrapper completed>
           <CheckCircle className="icon" />
           <span>
-            Task Completed by {generateName(modifiedBy)}, ID:{' '}
+            Task completed by {generateName(modifiedBy)}, ID:{' '}
             {modifiedBy.employeeId} on{' '}
             {formatDateTime(modifiedAt, 'MMM D, YYYY h:mm A')}
           </span>
