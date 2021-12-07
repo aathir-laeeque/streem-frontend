@@ -9,7 +9,9 @@ const Timer: FC<{ task: Task }> = ({ task }) => {
 
   const isTaskCompleted =
     state === TaskExecutionState.COMPLETED ||
-    state === TaskExecutionState.COMPLETED_WITH_EXCEPTION;
+    state === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
+    state === TaskExecutionState.COMPLETED_WITH_CORRECTION ||
+    state === TaskExecutionState.ENABLED_FOR_CORRECTION;
   const isTaskStarted = state === TaskExecutionState.IN_PROGRESS;
 
   const [timeElapsed, setTimeElapsed] = useState(
