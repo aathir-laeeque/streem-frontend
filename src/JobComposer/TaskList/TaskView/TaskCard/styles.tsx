@@ -108,7 +108,9 @@ const Wrapper = styled.div.attrs({
         .complete-options {
           display: ${({ taskExecutionState }) =>
             taskExecutionState === TaskExecutionState.COMPLETED ||
-            taskExecutionState === TaskExecutionState.COMPLETED_WITH_CORRECTION
+            taskExecutionState === TaskExecutionState.COMPLETED_WITH_CORRECTION ||
+            taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
+            taskExecutionState === TaskExecutionState.SKIPPED
               ? 'flex'
               : 'none'};
         }
