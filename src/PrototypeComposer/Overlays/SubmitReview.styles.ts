@@ -407,7 +407,9 @@ export const Wrapper = styled.div.attrs({})<{ comments: boolean }>`
           }
 
           .editor-wrapper {
+            overflow-y: auto;
             min-height: 500px;
+            max-height: calc(100vh - 300px);
             border-radius: 4px;
             border: solid 1px #bababa;
             margin-bottom: 16px;
