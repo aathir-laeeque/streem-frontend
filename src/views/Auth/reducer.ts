@@ -1,7 +1,14 @@
 import { roles } from '#services/uiPermissions';
 import { FacilitiesAction } from '#store/facilities/types';
 
-import { AuthAction, AuthActionType, AuthState } from './types';
+import {
+  AuthAction,
+  AuthActionType,
+  AuthState,
+  LicenseState,
+  LicenseType,
+  LicenseWorkflowType,
+} from './types';
 
 const initialState: AuthState = {
   userId: null,
@@ -12,6 +19,7 @@ const initialState: AuthState = {
   refreshToken: '',
   loading: false,
   facilities: [],
+  NonGenuineLicenseMap: {},
 };
 
 const reducer = (state = initialState, action: AuthActionType): AuthState => {
@@ -21,6 +29,20 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
       return { ...state, loading: true };
 
     case AuthAction.LOGIN_SUCCESS:
+      const getNonGenuineLicenseHashMap = (
+        licesneArr: LicenseType[],
+      ): { [facilityId: string]: LicenseType } => {
+        return licesneArr.reduce((acc, { facilityId, ...rest }) => {
+          if (
+            rest.state === LicenseState.GENUINE ||
+            rest.workflow === LicenseWorkflowType.NONE
+          ) {
+            return acc;
+          }
+          return { ...acc, [facilityId]: { ...rest } };
+        }, {});
+      };
+
       return {
         ...state,
         isIdle: false,
@@ -34,6 +56,11 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
             ? action.payload?.facilities[0]
             : state.selectedFacility,
         facilities: action.payload.facilities,
+        ...(!!action.payload.licenses && {
+          NonGenuineLicenseMap: getNonGenuineLicenseHashMap(
+            action.payload.licenses,
+          ),
+        }),
       };
 
     case AuthAction.SET_IDLE:

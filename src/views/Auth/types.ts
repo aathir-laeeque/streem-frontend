@@ -5,7 +5,6 @@ import {
 } from '#store/facilities/actions';
 import { User } from '#store/users/types';
 import { RouteComponentProps } from '@reach/router';
-
 import {
   authError,
   cleanUp,
@@ -17,9 +16,9 @@ import {
   refreshTokenSuccess,
   resetError,
   resetPassword,
+  setChallengeQuestionSuccess,
   setIdentityToken,
   setIdle,
-  setChallengeQuestionSuccess,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
@@ -38,6 +37,7 @@ export interface LoginResponse {
   roles: string[];
   facilities: Facility[];
   settings: Settings;
+  licenses: LicenseType[];
 }
 
 export interface RefreshTokenResponse {
@@ -48,6 +48,7 @@ type Facility = {
   id: string;
   name: string;
 };
+
 export interface AuthState {
   readonly accessToken: string;
   readonly email?: string;
@@ -67,6 +68,7 @@ export interface AuthState {
   readonly settings?: Settings;
   readonly token?: string;
   readonly userId: User['id'] | null;
+  readonly NonGenuineLicenseMap: { [facilityId: string]: LicenseType };
 }
 
 export enum TokenTypes {
@@ -77,6 +79,19 @@ export enum TokenTypes {
 export enum AdditionalVerificationTypes {
   EMAIL = 'EMAIL',
   EMPLOYEE_ID = 'EMPLOYEE_ID',
+}
+
+export enum LicenseState {
+  INTIMATE = 'INTIMATE',
+  GRACE = 'GRACE',
+  GRACE_EXCEEDED = 'GRACE_EXCEEDED',
+  GENUINE = 'GENUINE',
+}
+
+export enum LicenseWorkflowType {
+  NONE = 'NONE',
+  NOTIFICATION_UNBLOCKED = 'NOTIFICATION_UNBLOCKED',
+  NOTIFICATION_BLOCKED = 'NOTIFICATION_BLOCKED',
 }
 
 export enum PAGE_NAMES {
@@ -119,6 +134,16 @@ export enum CARD_POSITIONS {
   LEFT = 'flex-start',
   CENTER = 'center',
 }
+
+export type LicenseType = {
+  days: number;
+  expired: boolean;
+  facilityId: string;
+  graceEndsOn: string;
+  renewalDate: string;
+  state: LicenseState;
+  workflow: LicenseWorkflowType;
+};
 
 export type BaseViewConfigType = {
   wrapperStyle: React.CSSProperties;
