@@ -8,19 +8,17 @@ import {
   ArrowUpward,
   AssignmentTurnedIn,
   Delete,
-  Error,
-  PanTool,
+  Error, Error as ErrorIcon, PanTool
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { Checklist, EnabledStates } from '../checklist.types';
 import {
   deleteStage,
   reOrderStage,
   setActiveStage,
-  updateStageName,
+  updateStageName
 } from './actions';
 import { StageCardWrapper } from './styles';
 import { StageCardProps } from './types';
@@ -86,8 +84,11 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
 
   const dispatch = useDispatch();
 
-  const stageHasError =
-    !!stage.errors.length || anyActivityHasError || anyTaskHasError;
+  const stageWiseError = 
+  !!stage.errors.length && (stage.errors.find((error) => error.code === 'E128'));
+
+  const stageHasError = 
+  !!stage.errors.length || anyActivityHasError || anyTaskHasError;  
 
   return (
     <StageCardWrapper
@@ -179,14 +180,20 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
 
           {stageHasStop ? <PanTool className="icon" id="task-stop" /> : null}
 
-          {anyActivityHasError || anyTaskHasError ? (
+          {( anyActivityHasError || anyTaskHasError || stageWiseError ) && (
             <div className="stage-badge">
               <Error className="icon" />
               <span>Error Found</span>
             </div>
-          ) : null}
+          )}
         </div>
-
+        {
+          stageWiseError && (
+          <div className="stage-error-wrapper"> 
+            <ErrorIcon className="stage-error-icon" />
+            {stageWiseError.message}
+          </div>)
+        }
         <Textarea
           defaultValue={stage.name}
           error={

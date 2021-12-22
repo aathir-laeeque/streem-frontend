@@ -77,10 +77,11 @@ const ChecklistHeader: FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [state, setState] = useState(initialState);
 
-  const { activeStageId, data, userId } = useTypedSelector((state) => ({
+  const { activeStageId, data, userId, listOrder } = useTypedSelector((state) => ({
     userId: state.auth.userId,
     data: state.prototypeComposer.data as Checklist,
     activeStageId: state.prototypeComposer.stages.activeStageId,
+    listOrder: state.prototypeComposer.stages.listOrder
   }));
 
   useEffect(() => {
@@ -482,8 +483,9 @@ const ChecklistHeader: FC = () => {
     </>
   );
 
-  const AuthorSubmitButton = ({ title }: { title: string }) => (
+  const AuthorSubmitButton = ({ title, disabled = false }: { title: string, disabled?: boolean }) => (
     <Button1
+      disabled={disabled}
       className="submit"
       onClick={() => dispatch(validatePrototype(data.id))}
     >
@@ -535,7 +537,7 @@ const ChecklistHeader: FC = () => {
         return (
           <>
             {isPrimaryAuthor && (
-              <AuthorSubmitButton title="Submit For Review" />
+              <AuthorSubmitButton disabled={!listOrder.length} title="Submit For Review" />
             )}
           </>
         );
@@ -553,7 +555,7 @@ const ChecklistHeader: FC = () => {
           <>
             <ViewReviewersButton />
             {isPrimaryAuthor && (
-              <AuthorSubmitButton title="Submit For Review" />
+              <AuthorSubmitButton disabled={!listOrder.length} title="Submit For Review" />
             )}
           </>
         );

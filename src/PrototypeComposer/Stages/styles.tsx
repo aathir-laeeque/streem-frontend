@@ -118,6 +118,23 @@ const StageCardWrapper = styled.div.attrs({
       }
     }
 
+    &-error-wrapper {
+      align-items: center;
+      color: #eb5757;
+      display: flex;
+      font-size: 12px;
+      justify-content: flex-start;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    
+      .stage-error-icon {
+        font-size: 16px;
+        color: #eb5757;
+        margin-right: 5px;
+      }
+    
+    }
+
     &-footer {
       align-items: center;
       background-color: #f4f4f4;
