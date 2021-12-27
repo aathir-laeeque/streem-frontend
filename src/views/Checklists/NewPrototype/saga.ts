@@ -147,7 +147,7 @@ function* addRevisionPrototypeSaga({
 
 function* updatePrototypeSaga({ payload }: ReturnType<typeof updatePrototype>) {
   try {
-    const { data, id, originalAuthors } = payload;
+    const { data, id, originalAuthors, setApiFormErrors } = payload;
 
     const { selectedFacility } = yield select((state: RootState) => state.auth);
 
@@ -166,6 +166,7 @@ function* updatePrototypeSaga({ payload }: ReturnType<typeof updatePrototype>) {
     if (response) {
       navigate(`/checklists/${id}`);
     } else {
+      setApiFormErrors(errors);
       console.error('error from the create checklist api  :: ', errors);
     }
   } catch (error) {

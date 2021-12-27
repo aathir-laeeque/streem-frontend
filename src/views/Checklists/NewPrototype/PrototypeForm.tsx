@@ -4,22 +4,40 @@ import {
   Button1,
   Select,
   Textarea,
-  TextInput,
+  TextInput
 } from '#components';
 import { Option } from '#components/shared/Select';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useProperties } from '#services/properties';
-import { OtherUserState, User, useUsers, defaultParams } from '#services/users';
+import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
 import { useTypedSelector } from '#store/helpers';
+import { Error } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
-import { Close } from '@material-ui/icons';
+import { Close, Error as ErrorIcon } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import { debounce, isEmpty, pick } from 'lodash';
 import React, { FC, FormEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
+import styled from 'styled-components';
 import { addNewPrototype, updatePrototype } from './actions';
 import { Author, FormErrors, FormMode, FormValues, Props } from './types';
+
+const FormError = styled.div`
+  align-items: center;
+  color: #eb5757;
+  display: flex;
+  font-size: 12px;
+  justify-content: flex-start;
+  margin-top: 5px;
+  margin-bottom: 10px;
+
+  form-error-icon {
+        font-size: 16px;
+        color: #eb5757;
+        margin-right: 5px;
+  }
+`;
+
 
 const validateForm = (values: FormValues) => {
   const formErrors: FormErrors = { name: '', properties: {} };
@@ -96,6 +114,19 @@ const PrototypeForm: FC<Props> = (props) => {
     }
   }, [listById]);
 
+  // TODO Create a single global error handler for apis  
+  const getApiFormErrors = (apiFormErrors: Error[]) => {
+    const updatedFormErrors = { ...formErrors };
+    if(apiFormErrors && apiFormErrors.length) {
+      apiFormErrors.forEach((formError)=> {
+        if(formError.code === "E124") {
+          updatedFormErrors.authors = formError;
+        }
+      })
+      setFormErrors(updatedFormErrors);
+    }
+  }
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { isValid, formErrors } = validateForm(formValues);
@@ -117,6 +148,7 @@ const PrototypeForm: FC<Props> = (props) => {
             },
             formData?.prototypeId,
             formData?.authors?.map((author) => author.id),
+            getApiFormErrors
           ),
         );
       }
@@ -245,6 +277,15 @@ const PrototypeForm: FC<Props> = (props) => {
           Select Authors <span className="optional-badge">Optional</span>
         </label>
 
+        {
+          formErrors.authors && (
+          <FormError> 
+            <ErrorIcon className="form-error-icon" />
+            {formErrors.authors.message}
+          </FormError>
+          )
+        }
+
         {formValues.authors.map((author, index) => {
           return (
             <div key={`${index}-${author.id}`} className="author">
@@ -274,6 +315,10 @@ const PrototypeForm: FC<Props> = (props) => {
                       ...values.authors.slice(index + 1),
                     ],
                   }));
+                  // reset authors related form errors
+                  if(formErrors.authors){
+                    setFormErrors({...formErrors, authors: undefined});
+                  }
                 }}
               />
               {formMode !== FormMode.VIEW && (
@@ -288,6 +333,10 @@ const PrototypeForm: FC<Props> = (props) => {
                         ...values.authors.slice(index + 1),
                       ],
                     }));
+                    // reset authors related form errors
+                    if(formErrors.authors){
+                      setFormErrors({...formErrors, authors: undefined});
+                    }
                   }}
                 />
               )}

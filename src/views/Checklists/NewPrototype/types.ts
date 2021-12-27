@@ -1,8 +1,9 @@
 import { Checklist } from '#PrototypeComposer/checklist.types';
 import { User } from '#services/users';
 import { Property } from '#store/properties/types';
-
+import { Error } from '#utils/globalTypes';
 import { addNewPrototype, updatePrototype } from './actions';
+
 
 export enum NewPrototypeActions {
   ADD_NEW_PROTOTYPE = '@@prototype/ADD_NEW_PROTOTYPE',
@@ -57,6 +58,7 @@ export type FormValuesOnlyWithAuthorIds = Pick<
 export type FormErrors = {
   name: string;
   properties: Record<string, string>;
+  authors?: Error;
 };
 
 export type FormData = {
