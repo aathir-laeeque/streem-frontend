@@ -216,20 +216,25 @@ export const createSectionConfig = ({
               view: (
                 <KeyGenerator>
                   <h3>Username : {selectedUser?.username}</h3>
-                  <Button1
-                    className="primary-button"
-                    variant="secondary"
-                    onClick={() =>
-                      dispatch(resendInvite({ id: selectedUser.id }))
-                    }
-                  >
-                    Generate Secret Key
-                  </Button1>
-                  <p>
-                    If the user has no access to their account, they can go to
-                    the login page and choose Forgot Password option. Here the
-                    user uses the Sceret Key to change their password.
-                  </p>
+                  {!isAccountOwner && isEditable && (
+                    <>
+                      <Button1
+                        className="primary-button"
+                        variant="secondary"
+                        onClick={() =>
+                          dispatch(resendInvite({ id: selectedUser.id }))
+                        }
+                      >
+                        Generate Secret Key
+                      </Button1>
+                      <p>
+                        If the user has no access to their account, they can go
+                        to the login page and choose Forgot Password option.
+                        Here the user uses the Sceret Key to change their
+                        password.
+                      </p>
+                    </>
+                  )}
                 </KeyGenerator>
               ),
             },
