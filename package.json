@@ -1,18 +1,19 @@
 {
   "name": "streem-frontend",
-  "version": "2.0.0",
+  "customer_version": "2.0.0",
+  "version": "2.0.1",
   "contributors": [
     {
-      "name" : "Snehal Seth",
-      "email" : "snehal.seth@leucinetech.com"
+      "name": "Snehal Seth",
+      "email": "snehal.seth@leucinetech.com"
     },
     {
-      "name" : "Ashish Choudhary",
-      "email" : "ashish.c@leucinetech.com"
+      "name": "Ashish Choudhary",
+      "email": "ashish.c@leucinetech.com"
     },
     {
-      "name" : "Sathyam Lokare",
-      "email" : "sathyam.lokare@leucinetech.com"
+      "name": "Sathyam Lokare",
+      "email": "sathyam.lokare@leucinetech.com"
     }
   ],
   "scripts": {
