@@ -1,9 +1,9 @@
+import { ReOrderType } from '#PrototypeComposer/types';
 import { Error } from '#utils/globalTypes';
 
 import { actionSpreader } from '../../store/helpers';
 import { Stage } from '../checklist.types';
 import { StageListActions } from './reducer.types';
-import { ReOrderType } from './types';
 
 // add new stage actions
 export const addNewStage = () => actionSpreader(StageListActions.ADD_NEW_STAGE);

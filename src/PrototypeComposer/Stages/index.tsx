@@ -18,7 +18,7 @@ const Stages: FC = () => {
           index={index}
           isActive={stageId === activeStageId}
           isFirstItem={index === 0}
-          isLastItem={index === listOrder.length}
+          isLastItem={index === (listOrder.length - 1)}
           key={`${stageId}-${index}`}
           ref={refMap[index]}
           stage={listById[stageId]}

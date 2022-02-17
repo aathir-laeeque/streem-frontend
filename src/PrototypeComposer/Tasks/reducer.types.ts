@@ -3,6 +3,8 @@ import { addNewStageSuccess, deleteStageSuccess } from '../Stages/actions';
 import {
   addNewTaskSuccess,
   deleteTaskSuccess,
+  reOrderTaskError,
+  reOrderTaskSuccess,
   resetTaskActivityError,
   resetTaskError,
   setActiveTask,
@@ -49,6 +51,9 @@ export enum TaskListActions {
 
   UPDATE_TASK_NAME = '@@prototypeComposer/prototype/task-list/UPDATE_TASK_NAME',
   UPDATE_TASK_NAME_SUCCESS = '@@prototypeComposer/prototype/task-list/UPDATE_TASK_NAME_SUCCESS',
+  REORDER_TASK = '@@prototypeComposer/prototype/task-list/REORDER_TASK',
+  REORDER_TASK_SUCCESS = '@@prototypeComposer/prototype/task-list/REORDER_TASK_SUCCESS',
+  REORDER_TASK_ERROR = '@@prototypeComposer/prototype/task-list/REORDER_TASK_ERROR',
 }
 
 export type TaskListActionType =
@@ -62,6 +67,8 @@ export type TaskListActionType =
       | typeof updateTask
       | typeof updateTaskMediaSuccess
       | typeof resetTaskError
+      | typeof reOrderTaskSuccess
+      | typeof reOrderTaskError
     >
   | ReturnType<typeof addNewStageSuccess | typeof deleteStageSuccess>
   | ComposerActionType;

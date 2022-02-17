@@ -1,3 +1,4 @@
+import { ReOrderType } from '#PrototypeComposer/types';
 import { actionSpreader } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
 
@@ -76,3 +77,28 @@ export const resetTaskError = (taskId: Task['id']) =>
 
 export const removeTaskMedia = (taskId: Task['id'], mediaId: string) =>
   actionSpreader(TaskListActions.REMOVE_TASK_MEDIA, { taskId, mediaId });
+
+// reorder stage actions
+export const reOrderTask = ({
+  from,
+  id,
+  to,
+  activeStageId,
+}: ReOrderType & { activeStageId: string }) =>
+  actionSpreader(TaskListActions.REORDER_TASK, { from, id, to, activeStageId });
+
+export const reOrderTaskError = (error: any) =>
+  actionSpreader(TaskListActions.REORDER_TASK_ERROR, { error });
+
+export const reOrderTaskSuccess = ({
+  from,
+  id,
+  to,
+  activeStageId,
+}: ReOrderType & { activeStageId: string }) =>
+  actionSpreader(TaskListActions.REORDER_TASK_SUCCESS, {
+    from,
+    id,
+    to,
+    activeStageId,
+  });

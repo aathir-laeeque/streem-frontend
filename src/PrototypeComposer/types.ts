@@ -10,6 +10,12 @@ export enum JobStates {
   UNASSIGNED = 'UNASSIGNED',
 }
 
+export type ReOrderType = {
+  from: number;
+  id: string;
+  to: number;
+};
+
 export enum ComposerEntity {
   CHECKLIST = 'checklist',
   JOB = 'job',

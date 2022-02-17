@@ -27,7 +27,12 @@ const Tasks: FC = () => {
               key={`${task.id}-${index}`}
               ref={refMap[index]}
             >
-              <TaskCard task={task} index={index} />
+              <TaskCard
+                task={task}
+                index={index}
+                isFirstTask={index === 0}
+                isLastTask={index === (taskListOrder.length - 1)}
+              />
               <TaskMedias medias={task.medias} taskId={task.id} />
             </div>
           );

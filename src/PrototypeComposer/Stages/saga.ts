@@ -11,6 +11,9 @@ import {
   deleteStage,
   deleteStageError,
   deleteStageSuccess,
+  reOrderStage,
+  reOrderStageError,
+  reOrderStageSuccess,
   updateStageName,
   updateStageNameError,
   updateStageNameSuccess,
@@ -55,12 +58,8 @@ function* deleteStageSaga({ payload }: ReturnType<typeof deleteStage>) {
     const { data, errors } = yield call(request, 'PATCH', apiDeleteStage(id));
 
     if (data) {
-      const {
-        listById,
-        listOrder,
-      }: RootState['prototypeComposer']['stages'] = yield select(
-        (state: RootState) => state.prototypeComposer.stages,
-      );
+      const { listById, listOrder }: RootState['prototypeComposer']['stages'] =
+        yield select((state: RootState) => state.prototypeComposer.stages);
 
       const deletedStageIndex = listOrder.indexOf(id);
       const stagesToReorder = listOrder.slice(deletedStageIndex + 1);
@@ -98,6 +97,33 @@ function* deleteStageSaga({ payload }: ReturnType<typeof deleteStage>) {
   }
 }
 
+function* reOrderStageSaga({ payload }: ReturnType<typeof reOrderStage>) {
+  try {
+    const listOrder: Stage['id'][] = yield select(
+      (state: RootState) => state.prototypeComposer.stages.listOrder,
+    );
+    const toStageId = listOrder[payload.to];
+    const { data: reorderData, errors: reorderErrors } = yield call(
+      request,
+      'PATCH',
+      apiReorderStages(),
+      {
+        data: {
+          tasksOrder: { [toStageId]: payload.from, [payload.id]: payload.to },
+        },
+      },
+    );
+    if (reorderData) {
+      yield put(reOrderStageSuccess({ ...payload }));
+    } else {
+      console.error('error came in reorder api :: ', reorderErrors);
+      yield put(reOrderStageError(reorderErrors));
+    }
+  } catch (error) {
+    console.error('error came in updateStageNameSaga :: ', error);
+  }
+}
+
 function* updateStageNameSaga({ payload }: ReturnType<typeof updateStageName>) {
   try {
     const { id, name, orderTree } = payload.stage;
@@ -119,5 +145,8 @@ function* updateStageNameSaga({ payload }: ReturnType<typeof updateStageName>) {
 export function* StageListSaga() {
   yield takeLeading(StageListActions.ADD_NEW_STAGE, addNewStageSaga);
   yield takeEvery(StageListActions.DELETE_STAGE, deleteStageSaga);
+  // yield takeLeading(StageListActions.DUPLICATE_STAGE, duplicateStageSaga);
+  // TODO: when enabling this reorder saga, connect with BE to make sure the API works as per the need
+  yield takeLeading(StageListActions.REORDER_STAGE, reOrderStageSaga);
   yield takeEvery(StageListActions.UPDATE_STAGE_NAME, updateStageNameSaga);
 }

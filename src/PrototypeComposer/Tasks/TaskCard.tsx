@@ -30,6 +30,7 @@ import {
   addStop,
   deleteTask,
   removeStop,
+  reOrderTask,
   resetTaskActivityError,
   setActiveTask,
   updateTaskName,
@@ -37,7 +38,9 @@ import {
 import { TaskCardWrapper } from './styles';
 import { TaskCardProps } from './types';
 
-const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
+const TaskCard: FC<
+  TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
+> = ({ task, index, isFirstTask, isLastTask }) => {
   const {
     data,
     activities: { activityOrderInTaskInStage, listById },
@@ -75,7 +78,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
     timerOperator,
   } = task;
 
-  const stageIndex = listOrder.indexOf(activeStageId);
+  const stageIndex = listOrder.indexOf(activeStageId as string);
 
   const deleteTaskProps = {
     header: 'Delete Task',
@@ -124,6 +127,16 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
               fontSize="small"
               onClick={(event) => {
                 event.stopPropagation();
+                if (!isFirstTask) {
+                  dispatch(
+                    reOrderTask({
+                      from: index,
+                      to: index - 1,
+                      id: taskId,
+                      activeStageId: activeStageId,
+                    }),
+                  );
+                }
               }}
             />
             <ArrowDownward
@@ -131,6 +144,16 @@ const TaskCard: FC<TaskCardProps> = ({ task, index }) => {
               fontSize="small"
               onClick={(event) => {
                 event.stopPropagation();
+                if (!isLastTask) {
+                  dispatch(
+                    reOrderTask({
+                      from: index,
+                      to: index + 1,
+                      id: taskId,
+                      activeStageId: activeStageId,
+                    }),
+                  );
+                }
               }}
             />
           </div>

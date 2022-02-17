@@ -34,6 +34,9 @@ import {
   deleteTaskSuccess,
   removeTaskMedia,
   removeTaskTimer,
+  reOrderTask,
+  reOrderTaskError,
+  reOrderTaskSuccess,
   setTaskError,
   setTaskTimer,
   setValidationError,
@@ -140,6 +143,38 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
     }
   } catch (error) {
     console.error('error came in deleteTaskSaga :: ', error);
+  }
+}
+
+function* reOrderTaskSaga({ payload }: ReturnType<typeof reOrderTask>) {
+  const { to: toIndex, id: fromTaskId, from: fromIndex, activeStageId } = payload;
+  const {
+    tasksOrderInStage,
+  }: RootState['prototypeComposer']['tasks'] = yield select(
+    (state: RootState) => state.prototypeComposer.tasks,
+  );
+
+  const toTaskId = tasksOrderInStage[payload.activeStageId][payload.to];
+
+  try {
+    const { data: reorderData, errors: reorderErrors } = yield call(
+      request,
+      'PATCH',
+      apiReorderTasks(),
+      {
+        data: {
+          tasksOrder: { [toTaskId]: fromIndex, [fromTaskId]: toIndex },
+        },
+      },
+    );
+    if (reorderData) {
+      yield put(reOrderTaskSuccess({ ...payload }));
+    } else {
+      console.log('error came in reorder api :: ', reorderErrors);
+      yield put(reOrderTaskError(reorderErrors));
+    }
+  } catch (error) {
+    console.error('error came in updateStageNameSaga :: ', error);
   }
 }
 
@@ -320,4 +355,5 @@ export function* TaskListSaga() {
   yield takeLatest(TaskListActions.ADD_TASK_MEDIA, addTaskMediaSaga);
   yield takeLeading(TaskListActions.UPDATE_TASK_MEDIA, updateTaskMediaSaga);
   yield takeLatest(TaskListActions.REMOVE_TASK_MEDIA, removeTaskMediaSaga);
+  yield takeLeading(TaskListActions.REORDER_TASK, reOrderTaskSaga);
 }

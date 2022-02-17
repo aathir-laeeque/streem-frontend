@@ -183,6 +183,37 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         error: action.payload.error,
       };
 
+    case TaskListActions.REORDER_TASK_SUCCESS:
+      const { tasksOrderInStage, listById } = state;
+      const {
+        activeStageId,
+        from: fromIndex,
+        to: toIndex,
+        id: fromId,
+      } = action.payload;
+      const stageWiseTasks = [...tasksOrderInStage[activeStageId]];
+      const toId = tasksOrderInStage[activeStageId][toIndex];
+      stageWiseTasks[fromIndex] = stageWiseTasks.splice(
+        toIndex,
+        1,
+        stageWiseTasks[fromIndex],
+      )[0];
+      return {
+        ...state,
+        tasksOrderInStage: {
+          ...tasksOrderInStage,
+          [activeStageId]: [...stageWiseTasks],
+        },
+        listById: {
+          ...listById,
+          [fromId]: { ...listById[fromId], orderTree: toIndex + 1 },
+          [toId]: { ...listById[toId], orderTree: fromIndex + 1 },
+        },
+      };
+
+    case TaskListActions.REORDER_TASK_ERROR:
+      return { ...state, error: action.payload.error };
+
     default:
       return { ...state };
   }
