@@ -67,6 +67,7 @@ const Wrapper = styled.div.attrs({
 
           .primary {
             cursor: pointer;
+            color: #1d84ff;
 
             :hover {
               color: #1d84ff;
