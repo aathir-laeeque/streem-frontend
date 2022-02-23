@@ -69,13 +69,14 @@ export enum TaskExecutionState {
   SKIPPED = 'SKIPPED',
 }
 
+export type AuditUserType = Pick<
+  User,
+  'id' | 'employeeId' | 'firstName' | 'lastName'
+>;
+
 export interface Audit {
   modifiedAt: number;
-  modifiedBy: {
-    employeeId: string;
-    firstName: string;
-    lastName: string;
-  };
+  modifiedBy: AuditUserType;
 }
 
 export interface TaskExecution {
@@ -86,7 +87,7 @@ export interface TaskExecution {
   period?: number | null;
   reason?: string | null;
   startedAt?: number | null;
-  startedBy?: string | null;
+  startedBy?: AuditUserType;
   state: TaskExecutionState;
   assignees: User[];
 }

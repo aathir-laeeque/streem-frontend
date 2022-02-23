@@ -73,7 +73,7 @@ const JobHeader: FC<Pick<
   const {
     state,
     startedAt,
-    audit: { modifiedBy },
+    startedBy,
     reason,
     correctionReason,
     assignees,
@@ -125,8 +125,8 @@ const JobHeader: FC<Pick<
       )}
       {state in StartedTaskStates && startedAt ? (
         <div className="start-audit">
-          Task Started by {getUserName({ user: modifiedBy })}, ID:{' '}
-          {modifiedBy.employeeId} on{' '}
+          Task Started by {getUserName({ user: startedBy! })}, ID:{' '}
+          {startedBy!.employeeId} on{' '}
           {formatDateTime(startedAt, 'MMM D, YYYY h:mm A')}
         </div>
       ) : null}
