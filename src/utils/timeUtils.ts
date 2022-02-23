@@ -9,12 +9,13 @@ export const formatDateTime = (time: number, format = 'DD-MM-YYYY HH:mm:ss') =>
 export const formatDuration = (duration: number) => {
   const time = moment.duration(duration, 'seconds');
 
+  const days = time.days();
   const hours = time.hours();
   const minutes = time.minutes();
   const seconds = time.seconds();
 
-  if (hours) {
-    return hours
+  if (days || hours) {
+    return (days * 24 + hours)
       .toString()
       .padStart(2, '0')
       .concat(' hr : ')
