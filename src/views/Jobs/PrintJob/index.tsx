@@ -1,35 +1,40 @@
-import { useTypedSelector } from '#store';
-import { Task } from '#JobComposer/checklist.types';
-import TaskView from './Task';
-import React, { FC, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { PrintJobProps } from './types';
+import logo from '#assets/images/logo.png';
 import { fetchData } from '#JobComposer/actions';
-import cleenLogo from '#assets/images/cleen.png';
+import { Task } from '#JobComposer/checklist.types';
+import { Entity } from '#JobComposer/composer.types';
 import {
+  Checklist,
+  Properties,
+  TaskExecution,
+} from '#PrototypeComposer/checklist.types';
+import { useTypedSelector } from '#store';
+import {
+  Document,
+  Image,
   Page,
+  PDFViewer,
+  Svg,
   Text,
   View,
-  Document,
-  PDFViewer,
-  Image,
 } from '@react-pdf/renderer';
 import moment from 'moment';
-import {
-  Assigness,
-  TabLookLike,
-  ValueLabelGroup,
-  InputLabelGroup,
-} from './Components';
-import { styles, LoadingDiv } from './styles';
-import { Entity } from '#JobComposer/composer.types';
-import { Checklist, Properties, TaskExecution } from '#PrototypeComposer/checklist.types';
+import React, { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import {
   AssignedJobStates,
   CompletedJobStates,
   Job,
   JobStateType,
 } from '../NewListView/types';
+import {
+  Assigness,
+  InputLabelGroup,
+  TabLookLike,
+  ValueLabelGroup,
+} from './Components';
+import { LoadingDiv, styles } from './styles';
+import TaskView from './Task';
+import { PrintJobProps } from './types';
 
 const now = moment().format('Do MMM, YYYY, hh:mm a');
 
@@ -46,12 +51,12 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
 
   if (!data || !profile) return null;
 
-  const { checklist, ...jobExtras } = (data as unknown) as {
-    checklist: Checklist,
-    code: string,
-    properties: Properties,
-    state: JobStateType,
-    totalTasks: number
+  const { checklist, ...jobExtras } = data as unknown as {
+    checklist: Checklist;
+    code: string;
+    properties: Properties;
+    state: JobStateType;
+    totalTasks: number;
   };
   let assigneesObj: Record<string, any> = {};
   checklist.stages.forEach((stage) =>
@@ -95,7 +100,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
       <Document>
         <Page style={styles.page}>
           <View style={styles.header} fixed>
-            <Image src={cleenLogo} style={{ height: '24px' }} />
+            <Image src={logo} style={{ height: '24px' }} />
             <View
               style={[
                 styles.flexRow,
@@ -112,9 +117,8 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
 
           <View style={styles.mainHeader}>
             <Image src={settings?.logoUrl || ''} style={{ height: '24px' }} />
-            <Image src={cleenLogo} style={{ height: '24px' }} />
+            <Image src={logo} style={{ height: '24px' }} />
           </View>
-
           <View style={styles.container}>
             <TabLookLike title="Checklist Details">
               <View>
@@ -176,9 +180,11 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                     value={`${stage.tasks.length}`}
                   />
                 </View>
-                {(stage.tasks as unknown as Array<Task>).map((task, taskIndex: number) => (
-                  <TaskView taskIndex={taskIndex} task={task} key={task.id} />
-                ))}
+                {(stage.tasks as unknown as Array<Task>).map(
+                  (task, taskIndex: number) => (
+                    <TaskView taskIndex={taskIndex} task={task} key={task.id} />
+                  ),
+                )}
               </View>
             );
           })}

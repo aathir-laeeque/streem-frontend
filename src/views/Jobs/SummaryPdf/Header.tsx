@@ -1,4 +1,4 @@
-import cleenLogo from '#assets/images/cleen.png';
+import logo from '#assets/images/logo.png';
 import { Image, StyleSheet, View } from '@react-pdf/renderer';
 import React from 'react';
 
@@ -24,7 +24,7 @@ interface Props {
 const Header = ({ logoUrl }: Props) => (
   <View fixed style={styles.mainHeader}>
     <Image src={logoUrl} style={styles.image} />
-    <Image src={cleenLogo} style={styles.image} />
+    <Image src={logo} style={styles.image} />
   </View>
 );
 

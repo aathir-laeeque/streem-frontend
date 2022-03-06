@@ -224,7 +224,7 @@ function BaseView<T = Record<string, unknown>>({ pageName }: BaseViewProps) {
     <Wrapper config={config} style={config.wrapperStyle}>
       <div className="card" style={config.cardStyle}>
         <Logo className="logo" />
-        <div className="logo-caption">Digitalise Cleaning</div>
+        <div className="logo-caption">Orchestration Platform for Pharma</div>
         <div className="header-wrapper">
           {config.headingIcon && (
             <div className="heading-icon">{config.headingIcon}</div>

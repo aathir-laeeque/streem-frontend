@@ -1,4 +1,4 @@
-import cleenLogo from '#assets/images/cleen.png';
+import logo from '#assets/images/logo.png';
 import { useTypedSelector } from '#store';
 import {
   Document,
@@ -56,7 +56,7 @@ const MyPrintSessionActivity: FC = () => {
       <Document>
         <Page style={styles.page}>
           <View style={styles.header} fixed>
-            <Image src={cleenLogo} style={{ height: '24px' }} />
+            <Image src={logo} style={{ height: '24px' }} />
             <View
               style={[
                 styles.flexRow,
@@ -69,7 +69,7 @@ const MyPrintSessionActivity: FC = () => {
 
           <View style={styles.mainHeader}>
             <Image src={settings?.logoUrl || ''} style={{ height: '24px' }} />
-            <Image src={cleenLogo} style={{ height: '24px' }} />
+            <Image src={logo} style={{ height: '24px' }} />
           </View>
 
           <View style={styles.container}>
@@ -106,9 +106,7 @@ const MyPrintSessionActivity: FC = () => {
                             {moment.unix(log.triggeredAt).format('hh:mm A')}
                           </Text>
                           {log.severity ===
-                            SessionActivitySeverity.CRITICAL && (
-                            <View />
-                          )}
+                            SessionActivitySeverity.CRITICAL && <View />}
                           <Text
                             style={[
                               styles.contentItems,

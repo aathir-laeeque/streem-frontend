@@ -41,7 +41,10 @@ const Header: FC = () => {
   return (
     <Wrapper>
       <ImageWrapper>
-        <Logo style={{ width: '100px' }} />
+        <Logo
+          style={{ width: '100px', cursor: 'pointer' }}
+          onClick={() => navigate('/')}
+        />
       </ImageWrapper>
 
       {selectedFacility ? (

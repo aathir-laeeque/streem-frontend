@@ -1,33 +1,33 @@
-import React, { FC, useEffect } from 'react';
-import { groupBy } from 'lodash';
-import moment from 'moment';
-import cleenLogo from '#assets/images/cleen.png';
-import { useTypedSelector } from '#store';
+import logo from '#assets/images/logo.png';
 import { fetchData } from '#JobComposer/actions';
 import { Entity } from '#JobComposer/composer.types';
-import { useDispatch } from 'react-redux';
-import { LoadingDiv, styles } from './styles';
-import {
-  Page,
-  Text,
-  View,
-  Document,
-  PDFViewer,
-  Image,
-} from '@react-pdf/renderer';
+import { fetchJobActivities } from '#JobComposer/JobActivity/actions';
 import {
   JobActivity as JobActivityType,
   JobActivitySeverity,
 } from '#JobComposer/JobActivity/types';
 import { Checklist, TaskExecution } from '#PrototypeComposer/checklist.types';
-import { fetchJobActivities } from '#JobComposer/JobActivity/actions';
-import { PrintJobActivityProps } from './types';
-import {
-  TabLookLike,
-  InputLabelGroup,
-  Assigness,
-} from '../PrintJob/Components';
+import { useTypedSelector } from '#store';
 import { removeUnderscore } from '#utils/stringUtils';
+import {
+  Document,
+  Image,
+  Page,
+  PDFViewer,
+  Text,
+  View,
+} from '@react-pdf/renderer';
+import { groupBy } from 'lodash';
+import moment from 'moment';
+import React, { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import {
+  Assigness,
+  InputLabelGroup,
+  TabLookLike,
+} from '../PrintJob/Components';
+import { LoadingDiv, styles } from './styles';
+import { PrintJobActivityProps } from './types';
 
 const now = moment().format('Do MMM, YYYY, hh:mm a');
 
@@ -57,7 +57,7 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
 
   if (!logs || logs.length === 0 || !profile || !composerData) return null;
 
-  const { checklist, ...jobExtras } = (composerData as unknown) as Checklist;
+  const { checklist, ...jobExtras } = composerData as unknown as Checklist;
   let assigneesObj: Record<string, any> = {};
   (checklist as Checklist).stages.forEach((stage) =>
     stage.tasks.forEach((task) =>
@@ -88,7 +88,7 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
       <Document>
         <Page style={styles.page}>
           <View style={styles.header} fixed>
-            <Image src={cleenLogo} style={{ height: '24px' }} />
+            <Image src={logo} style={{ height: '24px' }} />
             <View
               style={[
                 styles.flexRow,
@@ -101,7 +101,7 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
 
           <View style={styles.mainHeader}>
             <Image src={settings?.logoUrl || ''} style={{ height: '24px' }} />
-            <Image src={cleenLogo} style={{ height: '24px' }} />
+            <Image src={logo} style={{ height: '24px' }} />
           </View>
 
           <View style={styles.container}>
