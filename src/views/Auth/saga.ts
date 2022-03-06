@@ -6,6 +6,7 @@ import {
 } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
+import { setInitialFacilityWiseConstants } from '#store/facilityWiseConstants/actions';
 import { fetchSelectedUserSuccess } from '#store/users/actions';
 import { User } from '#store/users/types';
 import {
@@ -99,6 +100,7 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
       setAuthHeader(data.accessToken);
       yield put(loginSuccess(data));
       yield put(fetchProfile({ id: data.id }));
+      yield put(setInitialFacilityWiseConstants(data.facilities));
     }
   } catch (error) {
     error = yield* handleCatch('Auth', 'loginSaga', error);
@@ -134,6 +136,7 @@ function* reLoginSaga({ payload }: ReturnType<typeof reLogin>) {
       setAuthHeader(data.accessToken);
       yield put(loginSuccess(data));
       yield put(fetchProfile({ id: data.id }));
+      yield put(setInitialFacilityWiseConstants(data.facilities));
     }
   } catch (error) {
     error = yield* handleCatch('Auth', 'reLoginSaga', error);
@@ -209,17 +212,10 @@ function* fetchProfileSaga({ payload }: ReturnType<typeof fetchProfile>) {
 
 function* registerSaga({ payload }: ReturnType<typeof register>) {
   try {
-    const {
-      data,
-      errors,
-    }: ResponseObj<LoginResponse & { token: string }> = yield call(
-      request,
-      'PATCH',
-      apiRegister(),
-      {
+    const { data, errors }: ResponseObj<LoginResponse & { token: string }> =
+      yield call(request, 'PATCH', apiRegister(), {
         data: payload,
-      },
-    );
+      });
 
     if (errors) {
       throw getErrorMsg(errors);

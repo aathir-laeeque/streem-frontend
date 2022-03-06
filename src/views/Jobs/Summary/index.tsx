@@ -1,6 +1,7 @@
 import { Avatar, Link as GoBack } from '#components';
 import { ExceptionReason } from '#JobComposer/modals/CompleteJobWithException';
 import { PARAMETER_OPERATORS } from '#PrototypeComposer/constants';
+import { useTypedSelector } from '#store';
 import { apiGetJobSummary } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { getFullName } from '#utils/stringUtils';
@@ -9,7 +10,6 @@ import { Print } from '@material-ui/icons';
 import { RouteComponentProps } from '@reach/router';
 import moment from 'moment';
 import React, { ReactNode, useEffect, useState } from 'react';
-
 import { CompletedJobStates, Job } from '../NewListView/types';
 import { Wrapper } from './styles';
 import {
@@ -28,13 +28,8 @@ const generateDescription = (exception: Exception): ReactNode => {
 
   switch (exception.type) {
     case 'DURATION_EXCEPTION':
-      const {
-        endedAt,
-        maxPeriod,
-        minPeriod,
-        startedAt,
-        timerOperator,
-      } = exception.timer as Timer;
+      const { endedAt, maxPeriod, minPeriod, startedAt, timerOperator } =
+        exception.timer as Timer;
 
       const taskStartTime = moment.unix(startedAt);
 
@@ -43,11 +38,11 @@ const generateDescription = (exception: Exception): ReactNode => {
       const taskDuration = taskCompleteTime.diff(taskStartTime, 's');
 
       const deviation = (() => {
-        if(timerOperator === 'NOT_LESS_THAN'){
-          if(taskDuration > maxPeriod) {
+        if (timerOperator === 'NOT_LESS_THAN') {
+          if (taskDuration > maxPeriod) {
             return taskDuration - maxPeriod;
           } else {
-            return  taskDuration - minPeriod;
+            return taskDuration - minPeriod;
           }
         }
         return taskDuration - maxPeriod;
@@ -127,6 +122,10 @@ const generateDescription = (exception: Exception): ReactNode => {
 const JobSummaryView = ({ jobId }: SummaryViewProps) => {
   const [loading, toggleLoading] = useState(false);
   const [data, setData] = useState<JobSummary | null>(null);
+  const { selectedFacility } = useTypedSelector((state) => state.auth);
+  const { timeStampFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
 
   useEffect(() => {
     (async () => {
@@ -175,7 +174,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
             <div className="card-header">Job Started on</div>
             <div className="card-body">
               {data.startedAt
-                ? formatDateTime(data.startedAt, 'D MMM YYYY, hh:mm A')
+                ? formatDateTime(data.startedAt, timeStampFormat)
                 : 'N/A'}
             </div>
           </div>
@@ -183,7 +182,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
             <div className="card-header">Job Completed on</div>
             <div className="card-body">
               {data.endedAt
-                ? formatDateTime(data.endedAt, 'D MMM YYYY, hh:mm A')
+                ? formatDateTime(data.endedAt, timeStampFormat)
                 : 'N/A'}
             </div>
           </div>

@@ -5,18 +5,17 @@ import { formatDateTime } from '#utils/timeUtils';
 import { Error } from '@material-ui/icons';
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
-
 import { MandatoryActivity, NonMandatoryActivity } from '../checklist.types';
 import ChecklistActivity from './Checklist';
 import InstructionActivity from './Instruction';
 import MaterialActivity from './Material';
+import MediaActivity from './Media';
 import MultiSelectActivity from './MultiSelect';
 import ShouldBeActivity from './ShouldBe';
 import SignatureActivity from './Signature';
 import TextboxActivity from './Textbox';
 import { ActivityListProps } from './types';
 import YesNoActivity from './YesNo';
-import MediaActivity from './Media';
 
 const Wrapper = styled.div.attrs({
   className: 'activity-list',
@@ -86,7 +85,13 @@ const ActivityList: FC<ActivityListProps> = ({
   isCorrectingError,
   isLoggedInUserAssigned,
 }) => {
-  const { entity } = useTypedSelector((state) => state.composer);
+  const {
+    auth: { selectedFacility },
+    composer: { entity },
+  } = useTypedSelector((state) => state);
+  const { timeStampFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
 
   return (
     <Wrapper
@@ -199,7 +204,7 @@ const ActivityList: FC<ActivityListProps> = ({
               <div className="activity-audit">
                 Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
                 {audit?.modifiedBy?.employeeId} on{' '}
-                {formatDateTime(audit?.modifiedAt, 'MMM D, YYYY h:mm A')}
+                {formatDateTime(audit?.modifiedAt, timeStampFormat)}
               </div>
             ) : null}
           </div>

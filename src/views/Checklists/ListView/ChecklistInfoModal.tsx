@@ -1,20 +1,20 @@
 import { Avatar, BaseModal, Textarea } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { apiGetChecklistInfo } from '#utils/apiUrls';
-import { request } from '#utils/request';
-import { getFullName } from '#utils/stringUtils';
-import { formatDateTime } from '#utils/timeUtils';
-import { isEmpty, noop } from 'lodash';
-import React, { FC, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { navigate } from '@reach/router';
-
-import { Checklist } from '../../../PrototypeComposer/checklist.types';
 import {
   Collaborator,
   CollaboratorState,
   CollaboratorType,
 } from '#PrototypeComposer/reviewer.types';
+import { useTypedSelector } from '#store';
+import { apiGetChecklistInfo } from '#utils/apiUrls';
+import { request } from '#utils/request';
+import { getFullName } from '#utils/stringUtils';
+import { formatDateTime } from '#utils/timeUtils';
+import { navigate } from '@reach/router';
+import { isEmpty, noop } from 'lodash';
+import React, { FC, useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { Checklist } from '../../../PrototypeComposer/checklist.types';
 
 const Wrapper = styled.div`
   .modal {
@@ -314,6 +314,10 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
   props: { checklistId } = {},
 }) => {
   const [state, setState] = useState<ChecklistInfo | null>(null);
+  const { selectedFacility } = useTypedSelector((state) => state.auth);
+  const { timeStampFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
 
   useEffect(() => {
     if (checklistId) {
@@ -449,7 +453,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                     {state.signOff.map((user) => (
                       <div className="date" key={user.employeeId}>
                         {user.signedAt &&
-                          formatDateTime(user.signedAt, 'Do MMMM, YYYY')}
+                          formatDateTime(user.signedAt, timeStampFormat)}
                       </div>
                     ))}
                   </div>

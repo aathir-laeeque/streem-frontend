@@ -16,6 +16,7 @@ import { FileUploadReducer } from './file-upload/reducer';
 import { PropertiesReducer } from './properties/reducer';
 import { UsersReducer } from './users/reducer';
 import { ExtrasReducer } from './extras/reducer';
+import { FacilityWiseConstantsReducer } from './facilityWiseConstants/reducer';
 
 export const rootReducer = combineReducers({
   auth: AuthReducer,
@@ -34,4 +35,5 @@ export const rootReducer = combineReducers({
   usersService: UsersServiceReducer,
   activityFilters: ActivityFiltersReducer,
   jobListView: NewJobListViewReducer,
+  facilityWiseConstants: FacilityWiseConstantsReducer,
 });

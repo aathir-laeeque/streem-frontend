@@ -45,7 +45,11 @@ const styles = StyleSheet.create({
 
 type Props = Pick<
   JobSummary,
-  'endedAt' | 'startedAt' | 'totalDuration' | 'totalTaskExceptions'
+  | 'endedAt'
+  | 'startedAt'
+  | 'totalDuration'
+  | 'totalTaskExceptions'
+  | 'timeStampFormat'
 >;
 
 const JobData = ({
@@ -53,13 +57,14 @@ const JobData = ({
   startedAt,
   totalDuration,
   totalTaskExceptions,
+  timeStampFormat,
 }: Props) => (
   <View style={styles.row}>
     <View style={styles.card}>
       <Text style={styles.cardHeader}>Job Started On</Text>
 
       <Text style={styles.cardBody}>
-        {startedAt ? formatDateTime(startedAt, 'D MMM YYYY, hh:mm A') : 'N/A'}
+        {startedAt ? formatDateTime(startedAt, timeStampFormat) : 'N/A'}
       </Text>
     </View>
 
@@ -67,7 +72,7 @@ const JobData = ({
       <Text style={styles.cardHeader}>Job Completed On</Text>
 
       <Text style={styles.cardBody}>
-        {endedAt ? formatDateTime(endedAt, 'D MMM YYYY, hh:mm A') : 'N/A'}
+        {endedAt ? formatDateTime(endedAt, timeStampFormat) : 'N/A'}
       </Text>
     </View>
 

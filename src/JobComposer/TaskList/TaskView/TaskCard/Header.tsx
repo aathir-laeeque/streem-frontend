@@ -18,7 +18,6 @@ import { Assignment, Error, MoreHoriz, PanTool } from '@material-ui/icons';
 import { capitalize } from 'lodash';
 import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { startTask } from '../../actions';
 import { Wrapper } from './styles';
 import TaskAssignmentContent from './TaskAssignmentContent';
@@ -33,12 +32,14 @@ type HeaderProps = {
   showAssignmentButton: boolean;
 };
 
-const JobHeader: FC<Pick<
-  HeaderProps,
-  'task' | 'enableStopForTask' | 'showAssignmentButton'
->> = ({ task, enableStopForTask, showAssignmentButton }) => {
+const JobHeader: FC<
+  Pick<HeaderProps, 'task' | 'enableStopForTask' | 'showAssignmentButton'>
+> = ({ task, enableStopForTask, showAssignmentButton }) => {
   const dispatch = useDispatch();
-  const { profile } = useTypedSelector((state) => state.auth);
+  const { profile, selectedFacility } = useTypedSelector((state) => state.auth);
+  const { timeStampFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
 
   const {
     stages: { activeStageId, stagesById },
@@ -70,14 +71,8 @@ const JobHeader: FC<Pick<
     );
   };
 
-  const {
-    state,
-    startedAt,
-    startedBy,
-    reason,
-    correctionReason,
-    assignees,
-  } = task.taskExecution;
+  const { state, startedAt, startedBy, reason, correctionReason, assignees } =
+    task.taskExecution;
 
   const isUserAssignedToTask = assignees.some(
     (user) => user.id === profile?.id,
@@ -127,7 +122,7 @@ const JobHeader: FC<Pick<
         <div className="start-audit">
           Task Started by {getUserName({ user: startedBy! })}, ID:{' '}
           {startedBy!.employeeId} on{' '}
-          {formatDateTime(startedAt, 'MMM D, YYYY h:mm A')}
+          {formatDateTime(startedAt, timeStampFormat)}
         </div>
       ) : null}
 

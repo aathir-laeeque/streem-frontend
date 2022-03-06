@@ -6,7 +6,6 @@ import { CheckCircle, Error, Warning } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import {
   approveRejectActivity,
   executeActivity,
@@ -104,9 +103,12 @@ const ShouldBeActivity: FC<ActivityProps> = ({
   isCorrectingError,
 }) => {
   const {
-    auth: { profile },
+    auth: { profile, selectedFacility },
     composer: { entityId: jobId },
   } = useTypedSelector((state) => state);
+  const { timeStampFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
 
   const numberInputRef = useRef<HTMLInputElement>(null);
   const reasonRef = useRef<HTMLTextAreaElement>(null);
@@ -281,13 +283,13 @@ const ShouldBeActivity: FC<ActivityProps> = ({
         <span className="approved">
           <CheckCircle className="icon" />
           Observation Approved by {getFullName(state.approver)} on{' '}
-          {formatDateTime(state.approvalTime, 'MMM D, YYYY h:mm A')}
+          {formatDateTime(state.approvalTime, timeStampFormat)}
         </span>
       ) : state.isApproved === false ? (
         <span className="rejected">
           <Error className="icon" />
           Observation rejected by {getFullName(state.approver)} on{' '}
-          {formatDateTime(state.approvalTime, 'MMM D, YYYY h:mm A')}
+          {formatDateTime(state.approvalTime, timeStampFormat)}
         </span>
       ) : null}
 

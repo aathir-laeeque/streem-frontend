@@ -8,7 +8,6 @@ import { RouteComponentProps } from '@reach/router';
 import { Document, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
 import { isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react';
-
 import { CompletedJobStates, Job } from '../NewListView/types';
 import { JobSummary } from '../Summary/types';
 import CWEReason from './CWEReason';
@@ -29,7 +28,12 @@ type State = {
 
 const JobSummaryPdf = ({ jobId }: Props) => {
   const { listByName: jobProperties } = useProperties(ComposerEntity.JOB);
-  const { profile, settings } = useTypedSelector((state) => state.auth);
+  const { profile, settings, selectedFacility } = useTypedSelector(
+    (state) => state.auth,
+  );
+  const { timeStampFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
 
   const [{ loading, data }, setState] = useState<State>({
     loading: false,
@@ -92,6 +96,7 @@ const JobSummaryPdf = ({ jobId }: Props) => {
               startedAt={data.startedAt}
               totalDuration={data.totalDuration}
               totalTaskExceptions={data.totalTaskExceptions}
+              timeStampFormat={timeStampFormat}
             />
 
             <JobDetails

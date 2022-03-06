@@ -164,12 +164,23 @@ type FooterProps = {
   task: Omit<Task, 'activities'>;
 };
 
-const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
+const generateName = ({
+  firstName,
+  lastName,
+}: {
+  firstName: string;
+  lastName: string;
+}) => `${firstName} ${lastName}`;
 
 const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   const dispatch = useDispatch();
-  const { profile } = useTypedSelector((state) => state.auth);
-  const { jobState } = useTypedSelector((state) => state.composer);
+  const {
+    auth: { profile, selectedFacility },
+    composer: { jobState },
+  } = useTypedSelector((state) => state);
+  const { timeStampFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
 
   const isJobBlocked = jobState === JobStateEnum.BLOCKED;
 
@@ -198,17 +209,17 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
       let text;
       if (
         moment
-          .unix(task.taskExecution.endedAt)
-          .diff(moment.unix(task.taskExecution.startedAt), 'seconds') >
-        task.maxPeriod
+          .unix(task.taskExecution.endedAt!)
+          .diff(moment.unix(task.taskExecution.startedAt!), 'seconds') >
+        task.maxPeriod!
       ) {
         text = 'after the set time';
       } else if (
         task.timerOperator === 'NOT_LESS_THAN' &&
         moment
-          .unix(task.taskExecution.endedAt)
-          .diff(moment.unix(task.taskExecution.startedAt), 'seconds') <
-          task.minPeriod
+          .unix(task.taskExecution.endedAt!)
+          .diff(moment.unix(task.taskExecution.startedAt!), 'seconds') <
+          task.minPeriod!
       ) {
         text = 'before the set time';
       }
@@ -220,7 +231,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
             <span>
               Task completed {text} by {generateName(modifiedBy)}, ID:{' '}
               {modifiedBy.employeeId} on{' '}
-              {formatDateTime(modifiedAt, 'MMM D, YYYY h:mm A')}
+              {formatDateTime(modifiedAt, timeStampFormat)}
             </span>
           </CompletedWrapper>
           {reason ? (
@@ -237,7 +248,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
           <span>
             Task completed by {generateName(modifiedBy)}, ID:{' '}
             {modifiedBy.employeeId} on{' '}
-            {formatDateTime(modifiedAt, 'MMM D, YYYY h:mm A')}
+            {formatDateTime(modifiedAt, timeStampFormat)}
           </span>
         </CompletedWrapper>
       );
@@ -251,7 +262,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         <span>
           Task completed with exception by {generateName(modifiedBy)}, ID:{' '}
           {modifiedBy.employeeId} on{' '}
-          {formatDateTime(modifiedAt, 'MMM D, YYYY h:mm A')}
+          {formatDateTime(modifiedAt, timeStampFormat)}
         </span>
       </CompletedWrapper>
     );
@@ -262,7 +273,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         <span>
           Task skipped by {generateName(modifiedBy)}, ID:{' '}
           {modifiedBy.employeeId} on{' '}
-          {formatDateTime(modifiedAt, 'MMM D, YYYY h:mm A')}
+          {formatDateTime(modifiedAt, timeStampFormat)}
         </span>
       </CompletedWrapper>
     );
