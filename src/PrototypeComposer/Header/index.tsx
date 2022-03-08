@@ -1,5 +1,6 @@
 import MemoArchive from '#assets/svg/Archive';
 import MemoViewInfo from '#assets/svg/ViewInfo';
+import ActivityIcon from '#assets/svg/ActivityIcon';
 import { Button1 } from '#components';
 import {
   closeAllOverlayAction,
@@ -31,7 +32,7 @@ import {
   Group,
   Info,
   Message,
-  MoreHoriz,
+  MoreVert,
   Settings,
 } from '@material-ui/icons';
 import { navigate } from '@reach/router';
@@ -446,7 +447,7 @@ const ChecklistHeader: FC = () => {
           setAnchorEl(event.currentTarget);
         }}
       >
-        <MoreHoriz className="icon" fontSize="small" />
+        <MoreVert className="icon" fontSize="small" />
       </Button1>
       <Menu
         style={{ right: 10 }}
@@ -471,6 +472,17 @@ const ChecklistHeader: FC = () => {
           <div className="list-item">
             <MemoViewInfo />
             <span>View Info</span>
+          </div>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            navigate(`${data.id}/activites`);
+          }}
+        >
+          <div className="list-item">
+            <ActivityIcon />
+            <span>View Activites</span>
           </div>
         </MenuItem>
         {data?.state === ChecklistStates.PUBLISHED ||
@@ -606,7 +618,6 @@ const ChecklistHeader: FC = () => {
       <div className="main-header">
         <div className="header-content">
           <div className="header-content-left">
-            <span className="checklist-name-label">Checklist Name</span>
             <div className="checklist-name">{data?.name}</div>
             <div className="checklist-state">
               <FiberManualRecord

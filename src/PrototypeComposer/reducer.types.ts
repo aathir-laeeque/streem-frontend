@@ -1,3 +1,6 @@
+import { ChecklistActivityState } from './ChecklistActivity/types';
+import ChecklistActivity from '#JobComposer/ActivityList/Checklist';
+import { Pageable } from '#utils/globalTypes';
 import {
   fetchComposerDataError,
   fetchComposerDataOngoing,
@@ -29,6 +32,7 @@ export type ComposerState = {
   readonly loading: boolean;
   readonly stages: StageListState;
   readonly tasks: TaskListState;
+  activity: ChecklistActivityState;
 };
 
 export enum ComposerAction {

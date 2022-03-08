@@ -8,7 +8,6 @@ import {
 import { Error } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { all, call, fork, put, takeLeading } from 'redux-saga/effects';
-
 import {
   fetchComposerData,
   fetchComposerDataOngoing,
@@ -17,6 +16,7 @@ import {
 } from './actions';
 import { setValidationError as setActivityValidationError } from './Activity/actions';
 import { ActivitySaga } from './Activity/saga';
+import { ChecklistActivitySaga } from './ChecklistActivity/saga';
 import { ComposerAction } from './reducer.types';
 import { ReviewerSaga } from './reviewer.saga';
 import { setValidationError as setStageValidationError } from './Stages/actions';
@@ -111,5 +111,6 @@ export function* ComposerSaga() {
     fork(TaskListSaga),
     fork(ActivitySaga),
     fork(ReviewerSaga),
+    fork(ChecklistActivitySaga),
   ]);
 }

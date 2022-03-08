@@ -113,6 +113,9 @@ export const apiGetSessionActivities = () => `${baseUrl}/users/audits`;
 export const apiGetJobActivity = (jobId: Job['id']) =>
   `${baseUrl}/audits/jobs/${jobId}`;
 
+export const apiGetChecklistActivity = (jobId: Job['id']) =>
+  `${baseUrl}/audits/checklists/${jobId}`;
+
 // Task
 export const apiAssignUsersToTask = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}/assignments`;

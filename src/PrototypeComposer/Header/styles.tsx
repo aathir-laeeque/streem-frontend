@@ -61,6 +61,16 @@ const HeaderWrapper = styled.div`
     border-radius: 4px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 
+    .checklist-nav-header {
+      padding: 16px 16px 0px 16px;
+
+      .checklist-nav-link {
+        color: #1d84ff;
+        font-size: 14px;
+        cursor: pointer;
+      }
+    }
+
     .header-content {
       display: flex;
       flex: 1;
@@ -73,14 +83,8 @@ const HeaderWrapper = styled.div`
         .checklist {
           &-name {
             font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 8px;
-
-            &-label {
-              font-size: 14px;
-              font-weight: normal;
-              margin-bottom: 4px;
-            }
+            color: #000000;
+            font-weight: 600;
           }
 
           &-state {
@@ -90,7 +94,7 @@ const HeaderWrapper = styled.div`
 
             .icon {
               color: #1d84ff;
-              margin: 0px 0px 0px -4px;
+              font-size: 15px;
             }
 
             span {

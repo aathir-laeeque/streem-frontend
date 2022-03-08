@@ -20,6 +20,10 @@ import {
   initialState as TaskListInitialState,
   taskReducer,
 } from './Tasks/reducer';
+import {
+  initialState as activityState,
+  checklistActivityReducer,
+} from './ChecklistActivity/reducers';
 
 const initialState: ComposerState = {
   activities: ActivityListState,
@@ -31,6 +35,7 @@ const initialState: ComposerState = {
   tasks: TaskListInitialState,
   collaborators: [],
   approvers: [],
+  activity: activityState,
 };
 
 /**
@@ -119,6 +124,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         activities: activityReducer(state.activities, action),
         stages: stageReducer(state.stages, action),
         tasks: taskReducer(state.tasks, action),
+        activity: checklistActivityReducer(state.activity, action),
       };
   }
 };
