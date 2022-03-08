@@ -1,23 +1,24 @@
 import { useTypedSelector } from '#store';
-import React, { FC, useEffect, useState } from 'react';
+import { CircularProgress } from '@material-ui/core';
+import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { fetchData, resetComposer } from './actions';
-import { ComposerProps, Tabs } from './composer.types';
+import { ComposerProps } from './composer.types';
 import Header from './Header';
-import ActivityView from './JobActivity';
 import StageList from './StageList';
 import {
   startPollActiveStageData,
   stopPollActiveStageData,
 } from './StageList/actions';
-import ComposerWrapper from './styles';
+import { ComposerWrapper, JobLoadingWrapper } from './styles';
 import TaskList from './TaskList';
 
 const Composer: FC<ComposerProps> = ({ id, entity }) => {
   const dispatch = useDispatch();
-  const { activeStageId } = useTypedSelector((state) => state.composer.stages);
-  const [activeTab, setActiveTab] = useState(Tabs.STAGES);
+  const {
+    stages: { activeStageId },
+    loading,
+  } = useTypedSelector((state) => state.composer);
 
   useEffect(() => {
     if (id) {
@@ -33,19 +34,15 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
     };
   }, []);
 
-  return (
-    <ComposerWrapper activeTab={activeTab}>
-      <Header activeTab={activeTab} onTabChange={setActiveTab} />
-
-      {activeTab === Tabs.ACTIVITY ? (
-        <ActivityView jobId={id} />
-      ) : (
-        <>
-          <StageList />
-
-          {activeStageId ? <TaskList /> : null}
-        </>
-      )}
+  return loading ? (
+    <JobLoadingWrapper>
+      <CircularProgress />
+    </JobLoadingWrapper>
+  ) : (
+    <ComposerWrapper>
+      <Header />
+      <StageList />
+      {activeStageId ? <TaskList /> : null}
     </ComposerWrapper>
   );
 };

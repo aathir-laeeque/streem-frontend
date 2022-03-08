@@ -1,4 +1,9 @@
-import { Checkbox, FilterProp, ListViewComponent } from '#components';
+import {
+  Checkbox,
+  FilterProp,
+  Link as GoBack,
+  ListViewComponent,
+} from '#components';
 import { useTypedSelector } from '#store';
 import {
   clearActivityFilters,
@@ -23,11 +28,11 @@ import {
   TimePicker,
 } from '@material-ui/pickers';
 import MomentUtils from '@material-ui/pickers/adapter/moment';
+import { RouteComponentProps } from '@reach/router';
 import { groupBy } from 'lodash';
 import moment, { Moment } from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { fetchJobActivities } from './actions';
 import { Composer, UserFilterWrapper } from './styles';
 import { JobActivity, JobActivitySeverity, JobActivityState } from './types';
@@ -56,7 +61,9 @@ const initialState: initialState = {
   appliedUsers: [],
 };
 
-const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
+type Props = RouteComponentProps<{ jobId: Job['id'] }>;
+
+const ActivityView: FC<Props> = ({ jobId }) => {
   const { logs, loading, pageable }: JobActivityState = useTypedSelector(
     (state) => state.composer.activity,
   );
@@ -239,7 +246,7 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
               });
             }
 
-            ((list as unknown) as Array<User>).forEach((user) => {
+            (list as unknown as Array<User>).forEach((user) => {
               const isSelected = selectedUsers.some(
                 (item) => item.id === user.id,
               );
@@ -356,13 +363,14 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
       });
 
       dispatch(setActivityFilters(filters));
-
-      dispatch(
-        fetchJobActivities({
-          jobId,
-          params: { size, filters, sort: 'triggeredAt,desc', page },
-        }),
-      );
+      if (jobId) {
+        dispatch(
+          fetchJobActivities({
+            jobId,
+            params: { size, filters, sort: 'triggeredAt,desc', page },
+          }),
+        );
+      }
     }
   };
 
@@ -382,78 +390,85 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
 
   return (
     <Composer>
-      <ListViewComponent
-        isSearchable={false}
-        fetchData={fetchLogs}
-        isLast={pageable.last}
-        currentPage={pageable.page}
-        data={data}
-        onPrimaryClick={() =>
-          window.open(`/job-activity/${jobId}/print`, '_blank')
-        }
-        primaryButtonText="Export"
-        filterProp={filterProp}
-        beforeColumns={[
-          {
-            header: 'TIME',
-            template: function renderComp(item) {
-              const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
-              let criticalCount = 0;
-              const itemId = item.id as string;
-              (item[itemId] as JobActivity[]).forEach((element) => {
-                if (element.severity === JobActivitySeverity.CRITICAL)
-                  criticalCount++;
-              });
-              return (
-                <div className="list-card-columns" key={`name_${itemId}`}>
-                  <div style={{ padding: '0px 8px', flex: 1 }}>
-                    <div className="log-header">
-                      <div className="header-item">{day}</div>
-                      <div className="header-item">
-                        {item[itemId].length} activities
-                      </div>
-                      {criticalCount !== 0 && (
-                        <>
-                          <div className="header-item">
-                            <ReportProblemOutlinedIcon className="icon" />
-                          </div>
-                          <div className="header-item">
-                            {criticalCount} Critical
-                          </div>
-                        </>
-                      )}
-                    </div>
-                    <div className="log-row">
-                      {(item[itemId] as JobActivity[]).map(
-                        (log: JobActivity) => (
-                          <div className="log-item" key={`${log.id}`}>
-                            <div className="circle" />
-                            <div className="content">
-                              <div
-                                className="content-items"
-                                style={{ whiteSpace: 'nowrap' }}
-                              >
-                                {moment.unix(log.triggeredAt).format('hh:mm A')}
-                              </div>
-                              {log.severity ===
-                                JobActivitySeverity.CRITICAL && (
-                                <div className="content-items">
-                                  <ReportProblemOutlinedIcon className="icon" />
-                                </div>
-                              )}
-                              <div className="content-items">{log.details}</div>
+      <GoBack label="Return to process" className="go-back" />
+      <div className="activity-wrapper">
+        <ListViewComponent
+          isSearchable={false}
+          fetchData={fetchLogs}
+          isLast={pageable.last}
+          currentPage={pageable.page}
+          data={data}
+          onPrimaryClick={() =>
+            window.open(`/job-activity/${jobId}/print`, '_blank')
+          }
+          primaryButtonText="Export"
+          filterProp={filterProp}
+          beforeColumns={[
+            {
+              header: 'TIME',
+              template: function renderComp(item) {
+                const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
+                let criticalCount = 0;
+                const itemId = item.id as string;
+                (item[itemId] as JobActivity[]).forEach((element) => {
+                  if (element.severity === JobActivitySeverity.CRITICAL)
+                    criticalCount++;
+                });
+                return (
+                  <div className="list-card-columns" key={`name_${itemId}`}>
+                    <div style={{ padding: '0px 8px', flex: 1 }}>
+                      <div className="log-header">
+                        <div className="header-item">{day}</div>
+                        <div className="header-item">
+                          {item[itemId].length} activities
+                        </div>
+                        {criticalCount !== 0 && (
+                          <>
+                            <div className="header-item">
+                              <ReportProblemOutlinedIcon className="icon" />
                             </div>
-                          </div>
-                        ),
-                      )}
+                            <div className="header-item">
+                              {criticalCount} Critical
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <div className="log-row">
+                        {(item[itemId] as JobActivity[]).map(
+                          (log: JobActivity) => (
+                            <div className="log-item" key={`${log.id}`}>
+                              <div className="circle" />
+                              <div className="content">
+                                <div
+                                  className="content-items"
+                                  style={{ whiteSpace: 'nowrap' }}
+                                >
+                                  {moment
+                                    .unix(log.triggeredAt)
+                                    .format('hh:mm A')}
+                                </div>
+                                {log.severity ===
+                                  JobActivitySeverity.CRITICAL && (
+                                  <div className="content-items">
+                                    <ReportProblemOutlinedIcon className="icon" />
+                                  </div>
+                                )}
+                                <div className="content-items">
+                                  {log.details}
+                                </div>
+                              </div>
+                            </div>
+                          ),
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
+                );
+              },
             },
-          },
-        ]}
-      />
+          ]}
+        />
+      </div>
     </Composer>
   );
 };

@@ -1,13 +1,7 @@
 import { Error } from '#utils/globalTypes';
 import { Job } from '#views/Jobs/NewListView/types';
 import { RouteComponentProps } from '@reach/router';
-
 import { Checklist } from './checklist.types';
-
-export enum Tabs {
-  STAGES = 'STAGES',
-  ACTIVITY = 'ACTIVITY',
-}
 
 export enum Entity {
   JOB = 'Job',

@@ -1,72 +1,96 @@
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  align-items: center;
   background-color: #ffffff;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-  display: flex;
   grid-area: header;
-  z-index: 1;
 
-  .header-item {
-    &.active {
-      border-bottom: 2px solid #1d84ff;
-    }
-
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 0.75;
-    color: #1d84ff;
-    padding: 16px;
-  }
-
-  .auto-save-text {
-    font-size: 12px;
-    font-weight: 200;
-    font-style: italic;
-    line-height: 0.75;
-    margin-left: auto;
-    margin-right: 16px;
-    visibility: hidden;
-  }
-
-  .buttons-container {
+  .job-primary-header {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border-bottom: 1px solid #f4f4f4;
+    padding: 16px;
 
-    button {
-      line-height: 1.14;
-      padding: 8px 16px;
+    .checklist-name {
+      font-size: 20px;
+      color: #000000;
+      line-height: 24px;
+      font-weight: 600;
     }
 
-    .bulk-assign,
-    .job-summary,
-    .print-job,
-    .sign-off,
-    .view-info {
-      margin-right: 8px;
-    }
-
-    .dropdown-button {
-      align-items: center;
-      background-color: #1d84ff;
-      border-radius: 4px;
+    .job-state {
       display: flex;
-      margin-right: 8px;
+      align-items: center;
+    }
+
+    .buttons-container {
+      display: flex;
+      align-items: center;
 
       button {
-        margin-right: 0;
+        line-height: 1.14;
+        padding: 8px 16px;
       }
 
-      .drop-menu {
-        border-left: 1px solid #005dcc;
-        display: flex;
-        padding: 4px;
+      .bulk-assign,
+      .job-summary,
+      .print-job,
+      .sign-off,
+      .view-info {
+        margin-right: 8px;
+      }
+    }
+  }
 
-        .icon {
-          color: #ffffff;
+  .job-secondary-header {
+    display: flex;
+    padding: 16px;
+
+    .job-id,
+    .checklist-id {
+      display: flex;
+      align-items: center;
+      padding-right: 16px;
+      border-right: 1px solid #f4f4f4;
+      font-size: 14px;
+      color: #000000;
+    }
+
+    .checklist-id {
+      padding-left: 16px;
+    }
+
+    .job-assignees {
+      padding: 0px 16px;
+      display: flex;
+
+      .avatar {
+        background: #f4f4f4;
+        color: #1d84ff;
+        border: 1px solid #ffffff;
+        transition: margin 0.1s ease-in-out;
+      }
+
+      .avatar:not(:first-child) {
+        margin-left: -8px;
+      }
+
+      &:hover {
+        .avatar:not(:last-child) {
+          margin-right: 10px;
         }
       }
+    }
+
+    .job-activities {
+      display: flex;
+      align-items: center;
+      padding: 0px 16px;
+      color: #1d84ff;
+      font-size: 14px;
+      cursor: pointer;
     }
   }
 `;

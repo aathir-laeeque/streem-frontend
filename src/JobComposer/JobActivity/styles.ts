@@ -1,83 +1,90 @@
 import styled from 'styled-components';
 export const Composer = styled.div`
-  grid-area: activity;
-  background: #fff;
-  box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);
-  padding-top: 8px;
+  margin: 8px;
   overflow: hidden;
   display: flex;
-  flex: 1;
+  flex-direction: column;
 
-  .list-card-columns:first-child {
-    width: unset;
+  .activity-wrapper {
+    grid-area: activity;
+    background: #fff;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);
+    padding-top: 8px;
+    overflow: hidden;
+    display: flex;
     flex: 1;
-  }
 
-  .icon {
-    font-size: 16px;
-    color: #ff6b6b;
-  }
-
-  .log-header {
-    display: flex;
-    align-items: center;
-
-    .header-item {
-      font-size: 14px;
-      color: #666666;
-      margin-right: 16px;
-      align-items: center;
-      display: flex;
-    }
-  }
-
-  .log-row {
-    display: flex;
-    flex-direction: column;
-    padding: 8px 11px;
-    margin-top: 16px;
-    border-left: 1px dashed #bababa;
-
-    .log-item {
-      display: flex;
-      align-items: center;
-      padding: 8px 0px;
+    .list-card-columns:first-child {
+      width: unset;
+      flex: 1;
     }
 
-    .circle {
-      margin-left: -16px;
-      background-color: #bababa;
-      border-radius: 4px;
-      height: 8px;
-      width: 8px;
+    .icon {
+      font-size: 16px;
+      color: #ff6b6b;
     }
 
-    .content {
-      margin-left: 16px;
+    .log-header {
       display: flex;
       align-items: center;
 
-      .content-items {
-        font-size: 12px;
+      .header-item {
+        font-size: 14px;
         color: #666666;
-        margin-right: 8px;
-        word-break: keep-all;
+        margin-right: 16px;
+        align-items: center;
+        display: flex;
       }
     }
-  }
 
-  .list-header-columns {
-    :first-child {
-      padding-left: 30px;
+    .log-row {
+      display: flex;
+      flex-direction: column;
+      padding: 8px 11px;
+      margin-top: 16px;
+      border-left: 1px dashed #bababa;
+
+      .log-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 0px;
+      }
+
+      .circle {
+        margin-left: -16px;
+        background-color: #bababa;
+        border-radius: 4px;
+        height: 8px;
+        width: 8px;
+      }
+
+      .content {
+        margin-left: 16px;
+        display: flex;
+        align-items: center;
+
+        .content-items {
+          font-size: 12px;
+          color: #666666;
+          margin-right: 8px;
+          word-break: keep-all;
+        }
+      }
     }
-  }
 
-  .user-actions {
-    font-size: 14px;
-    color: #666666;
-    font-weight: 600;
-    letter-spacing: 1px;
-    cursor: pointer;
+    .list-header-columns {
+      :first-child {
+        padding-left: 30px;
+      }
+    }
+
+    .user-actions {
+      font-size: 14px;
+      color: #666666;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
   }
 `;
 

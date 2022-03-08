@@ -20,24 +20,15 @@ import { TaskListState } from './TaskList/reducer.types';
 
 export type ComposerState = {
   activities: ActivityListState;
-
   data?: Job;
-
   entity?: Entity;
   entityId?: Job['id'];
-
   loading: boolean;
-
   jobState: JobStateType;
-
   stages: StageListState;
-
   tasks: TaskListState;
-
   assignees: User[];
-
   activity: JobActivityState;
-
   signOffError?: string;
 };
 

@@ -1,18 +1,10 @@
 import styled from 'styled-components';
-import { Tabs } from './composer.types';
 
-const ComposerWrapper = styled.div<{ activeTab: Tabs }>`
+export const ComposerWrapper = styled.div`
   display: grid;
   grid-gap: 8px;
   grid-row-gap: 16px;
-  ${({ activeTab }) =>
-    activeTab === Tabs.STAGES
-      ? `
-        grid-template-areas: 'header header' 'stages tasks';
-    `
-      : `
-        grid-template-areas: 'header header' 'activity activity';
-    `}
+  grid-template-areas: 'header header' 'stages tasks';
   grid-template-columns: 320px 1fr;
   grid-template-rows: auto 1fr;
   overflow: hidden;
@@ -27,4 +19,9 @@ const ComposerWrapper = styled.div<{ activeTab: Tabs }>`
   }
 `;
 
-export default ComposerWrapper;
+export const JobLoadingWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
