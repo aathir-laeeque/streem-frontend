@@ -50,6 +50,7 @@ import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
 import { CommonOverlayProps, OverlayNames } from './types';
+import ReasonModal from '../shared/ReasonModal';
 
 const Wrapper = styled.div``;
 
@@ -195,6 +196,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.ENTITY_START_ERROR_MODAL:
       return <StartErrorModal {...params} />;
+
+    case OverlayNames.REASON_MODAL:
+      return <ReasonModal {...params} />;
 
     default:
       return null;

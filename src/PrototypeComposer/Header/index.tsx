@@ -17,6 +17,7 @@ import {
 } from '#PrototypeComposer/reviewer.types';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
+import { Error } from '#utils/globalTypes';
 import {
   archiveChecklist,
   unarchiveChecklist,
@@ -36,7 +37,6 @@ import {
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { validatePrototype } from '../actions';
 import {
   Checklist,
@@ -77,12 +77,14 @@ const ChecklistHeader: FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [state, setState] = useState(initialState);
 
-  const { activeStageId, data, userId, listOrder } = useTypedSelector((state) => ({
-    userId: state.auth.userId,
-    data: state.prototypeComposer.data as Checklist,
-    activeStageId: state.prototypeComposer.stages.activeStageId,
-    listOrder: state.prototypeComposer.stages.listOrder
-  }));
+  const { activeStageId, data, userId, listOrder } = useTypedSelector(
+    (state) => ({
+      userId: state.auth.userId,
+      data: state.prototypeComposer.data as Checklist,
+      activeStageId: state.prototypeComposer.stages.activeStageId,
+      listOrder: state.prototypeComposer.stages.listOrder,
+    }),
+  );
 
   useEffect(() => {
     const newState = (data?.collaborators || []).reduce(
@@ -402,25 +404,25 @@ const ChecklistHeader: FC = () => {
         handleClose();
         dispatch(
           openOverlayAction({
-            type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+            type: OverlayNames.REASON_MODAL,
             props: {
-              header: data?.archived
+              modalTitle: data?.archived
                 ? 'Unarchive Checklist'
                 : 'Archive Checklist',
-              body: (
-                <span>
-                  Are you sure you want to{' '}
-                  {data?.archived ? 'Unarchive ' : 'Archive '}
-                  this Prototype ?
-                </span>
-              ),
-              onPrimaryClick: () => {
-                if (data?.archived) {
-                  dispatch(unarchiveChecklist(data?.id, true));
-                } else {
-                  dispatch(archiveChecklist(data?.id, true));
-                }
-              },
+              modalDesc: `Provide details for ${
+                data?.archived ? 'unarchiving' : 'archiving'
+              } the checklist`,
+              onSumbitHandler: (
+                reason: string,
+                setFormErrors: (errors?: Error[]) => void,
+              ) =>
+                data?.archived
+                  ? dispatch(
+                      unarchiveChecklist(data?.id, reason, setFormErrors, true),
+                    )
+                  : dispatch(
+                      archiveChecklist(data?.id, reason, setFormErrors, true),
+                    ),
             },
           }),
         );
@@ -483,7 +485,13 @@ const ChecklistHeader: FC = () => {
     </>
   );
 
-  const AuthorSubmitButton = ({ title, disabled = false }: { title: string, disabled?: boolean }) => (
+  const AuthorSubmitButton = ({
+    title,
+    disabled = false,
+  }: {
+    title: string;
+    disabled?: boolean;
+  }) => (
     <Button1
       disabled={disabled}
       className="submit"
@@ -537,7 +545,10 @@ const ChecklistHeader: FC = () => {
         return (
           <>
             {isPrimaryAuthor && (
-              <AuthorSubmitButton disabled={!listOrder.length} title="Submit For Review" />
+              <AuthorSubmitButton
+                disabled={!listOrder.length}
+                title="Submit For Review"
+              />
             )}
           </>
         );
@@ -555,7 +566,10 @@ const ChecklistHeader: FC = () => {
           <>
             <ViewReviewersButton />
             {isPrimaryAuthor && (
-              <AuthorSubmitButton disabled={!listOrder.length} title="Submit For Review" />
+              <AuthorSubmitButton
+                disabled={!listOrder.length}
+                title="Submit For Review"
+              />
             )}
           </>
         );

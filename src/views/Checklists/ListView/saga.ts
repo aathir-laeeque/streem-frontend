@@ -6,10 +6,10 @@ import {
   apiGetChecklists,
   apiUnarchiveChecklist,
 } from '#utils/apiUrls';
-import { ResponseObj } from '#utils/globalTypes';
+import { Error, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { call, put, takeLatest, takeLeading } from 'redux-saga/effects';
-
+import { store } from '../../../App';
 import { Checklist } from '../types';
 import {
   archiveChecklist,
@@ -22,7 +22,6 @@ import {
   updateList,
 } from './actions';
 import { ListViewAction } from './types';
-import { store } from '../../../App';
 
 function* fetchChecklistsSaga({ payload }: ReturnType<typeof fetchChecklists>) {
   try {
@@ -52,12 +51,13 @@ function* archiveChecklistSaga({
   payload,
 }: ReturnType<typeof archiveChecklist>) {
   try {
-    const { id, showPopup } = payload;
+    const { id, showPopup, reason, setFormErrors } = payload;
 
     const { data, errors } = yield call(
       request,
       'PATCH',
       apiArchiveChecklist(id),
+      { data: { reason } },
     );
 
     if (data) {
@@ -70,8 +70,13 @@ function* archiveChecklistSaga({
           }),
         );
       }
+      setFormErrors(errors);
     } else {
-      if (showPopup && errors[0]?.code === 'E120') {
+      if (
+        showPopup &&
+        (errors as Error[]).some((error) => error.code === 'E120')
+      ) {
+        setFormErrors(undefined);
         yield put(
           openOverlayAction({
             type: OverlayNames.ARCHIVE_MODAL,
@@ -79,6 +84,7 @@ function* archiveChecklistSaga({
           }),
         );
       } else {
+        setFormErrors(errors);
         console.error('error from apiArchiveChecklist :: ', errors);
       }
     }
@@ -91,12 +97,13 @@ function* unarchiveChecklistSaga({
   payload,
 }: ReturnType<typeof unarchiveChecklist>) {
   try {
-    const { id, showPopup } = payload;
+    const { id, showPopup, reason, setFormErrors } = payload;
 
     const { data, errors } = yield call(
       request,
       'PATCH',
       apiUnarchiveChecklist(id),
+      { data: { reason } },
     );
 
     if (data) {
@@ -112,6 +119,8 @@ function* unarchiveChecklistSaga({
     } else {
       console.error('error from apiUnarchiveChecklist :: ', errors);
     }
+
+    setFormErrors(errors);
   } catch (error) {
     console.error('error in UnarchiveChecklist saga :: ', error);
   }
@@ -128,12 +137,15 @@ function* handlePublishedArchiveSaga({
     if (data) {
       yield put(
         openOverlayAction({
-          type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+          type: OverlayNames.REASON_MODAL,
           props: {
-            header: 'Archive Checklist',
-            body: 'Are you sure you want to Archive this Checklist?',
-            onPrimaryClick: () => {
-              store.dispatch(archiveChecklist(id, true));
+            modalTitle: 'Archive Checklist',
+            modalDesc: `Provide details for archiving the checklist`,
+            onPrimaryClick: (
+              reason: string,
+              setFormErrors: (errors: Error[]) => void,
+            ) => {
+              store.dispatch(archiveChecklist(id, reason, setFormErrors, true));
             },
           },
         }),

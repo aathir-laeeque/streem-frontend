@@ -52,6 +52,7 @@ export enum OverlayNames {
   USER_ASSIGNMENT = 'USER_ASSIGNMENT',
   ASSIGNMENT_INFO = 'ASSIGNMENT_INFO',
   ENTITY_START_ERROR_MODAL = 'ENTITY_START_ERROR_MODAL',
+  REASON_MODAL = 'REASON_MODAL',
 }
 
 export interface CommonOverlayProps<T> {

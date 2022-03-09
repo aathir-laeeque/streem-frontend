@@ -21,7 +21,7 @@ import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
-import { FilterField } from '#utils/globalTypes';
+import { Error, FilterField } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/NewListView/actions';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
 import { Menu, MenuItem } from '@material-ui/core';
@@ -187,37 +187,31 @@ const ListView: FC<ListViewProps & { label: string }> = ({
       <div
         id="archive-unarchive"
         onClick={() => {
-          if (item.archived) {
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                props: {
-                  header: 'Unarchive Prototype',
-                  body: (
-                    <span>
-                      Are you sure you want to Unarchive this Prototype ?
-                    </span>
-                  ),
-                  onPrimaryClick: () => dispatch(unarchiveChecklist(item.id)),
-                },
-              }),
-            );
-          } else {
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                props: {
-                  header: 'Archive Prototype',
-                  body: (
-                    <span>
-                      Are you sure you want to Archive this Prototype ?
-                    </span>
-                  ),
-                  onPrimaryClick: () => dispatch(archiveChecklist(item.id)),
-                },
-              }),
-            );
-          }
+          dispatch(
+            openOverlayAction({
+              type: OverlayNames.REASON_MODAL,
+              props: {
+                modalTitle: item.archived
+                  ? 'Unarchive Protoype'
+                  : 'Archive Protoype',
+                modalDesc: `Provide details for ${
+                  item.archived ? 'unarchiving' : 'archiving'
+                } the prototype`,
+                onSumbitHandler: (
+                  reason: string,
+                  setFormErrors: (errors?: Error[]) => void,
+                ) =>
+                  item.archived
+                    ? dispatch(
+                        unarchiveChecklist(item.id, reason, setFormErrors),
+                      )
+                    : dispatch(
+                        archiveChecklist(item.id, reason, setFormErrors),
+                      ),
+                onSubmitModalText: item.archived ? 'Unarchive' : 'Archive',
+              },
+            }),
+          );
         }}
       >
         <MemoArchive style={{ marginRight: '8px' }} />
@@ -409,37 +403,41 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                       if (selectedChecklist?.id)
                         dispatch(
                           openOverlayAction({
-                            type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                            type: OverlayNames.REASON_MODAL,
                             props: {
-                              header: selectedChecklist?.archived
+                              modalTitle: selectedChecklist?.archived
                                 ? 'Unarchive Checklist'
                                 : 'Archive Checklist',
-                              body: (
-                                <span>
-                                  Are you sure you want to{' '}
-                                  {selectedChecklist?.archived
-                                    ? 'Unarchive'
-                                    : 'Archive'}{' '}
-                                  this Prototype ?
-                                </span>
-                              ),
-                              onPrimaryClick: () => {
-                                if (selectedChecklist?.archived) {
-                                  dispatch(
-                                    unarchiveChecklist(
-                                      selectedChecklist?.id,
-                                      true,
-                                    ),
-                                  );
-                                } else {
-                                  dispatch(
-                                    archiveChecklist(
-                                      selectedChecklist.id,
-                                      true,
-                                    ),
-                                  );
-                                }
+                              modalDesc: `Provide details for ${
+                                selectedChecklist?.archived
+                                  ? 'unarchiving'
+                                  : 'archiving'
+                              } the checklist`,
+                              onSumbitHandler: (
+                                reason: string,
+                                setFormErrors: (errors?: Error[]) => void,
+                              ) => {
+                                selectedChecklist?.archived
+                                  ? dispatch(
+                                      unarchiveChecklist(
+                                        selectedChecklist?.id,
+                                        reason,
+                                        setFormErrors,
+                                        true,
+                                      ),
+                                    )
+                                  : dispatch(
+                                      archiveChecklist(
+                                        selectedChecklist.id,
+                                        reason,
+                                        setFormErrors,
+                                        true,
+                                      ),
+                                    );
                               },
+                              onSubmitModalText: selectedChecklist?.archived
+                                ? 'Unarchive'
+                                : 'Archive',
                             },
                           }),
                         );

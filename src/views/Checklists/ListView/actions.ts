@@ -1,6 +1,5 @@
 import { actionSpreader } from '#store/helpers';
-import { ResponseObj } from '#utils/globalTypes';
-
+import { Error, ResponseObj } from '#utils/globalTypes';
 import { Checklist } from '../types';
 import { ListViewAction } from './types';
 
@@ -36,11 +35,31 @@ export const fetchChecklistsSuccess = ({
 export const fetchChecklistsError = (error: any) =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS_ERROR, { error });
 
-export const archiveChecklist = (id: Checklist['id'], showPopup?: boolean) =>
-  actionSpreader(ListViewAction.ARCHIVE, { id, showPopup });
+export const archiveChecklist = (
+  id: Checklist['id'],
+  reason: string,
+  setFormErrors: (errors?: Error[]) => void,
+  showPopup?: boolean,
+) =>
+  actionSpreader(ListViewAction.ARCHIVE, {
+    id,
+    showPopup,
+    reason,
+    setFormErrors,
+  });
 
-export const unarchiveChecklist = (id: Checklist['id'], showPopup?: boolean) =>
-  actionSpreader(ListViewAction.UNARCHIVE, { id, showPopup });
+export const unarchiveChecklist = (
+  id: Checklist['id'],
+  reason: string,
+  setFormErrors: (errors?: Error[]) => void,
+  showPopup?: boolean,
+) =>
+  actionSpreader(ListViewAction.UNARCHIVE, {
+    id,
+    showPopup,
+    reason,
+    setFormErrors,
+  });
 
 export const handlePublishedArchive = (id: Checklist['id']) =>
   actionSpreader(ListViewAction.HANDLE_PUBLISHED_ARCHIVE, { id });
