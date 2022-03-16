@@ -4,7 +4,7 @@ import { Task } from '#JobComposer/checklist.types';
 import { Entity } from '#JobComposer/composer.types';
 import {
   Checklist,
-  Properties,
+  ChecklistProperty,
   TaskExecution,
 } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
@@ -13,7 +13,6 @@ import {
   Image,
   Page,
   PDFViewer,
-  Svg,
   Text,
   View,
 } from '@react-pdf/renderer';
@@ -54,18 +53,18 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   const { checklist, ...jobExtras } = data as unknown as {
     checklist: Checklist;
     code: string;
-    properties: Properties;
+    properties: ChecklistProperty[];
     state: JobStateType;
     totalTasks: number;
   };
   let assigneesObj: Record<string, any> = {};
   checklist.stages.forEach((stage) =>
-    stage.tasks.forEach((task) =>
+    stage.tasks.forEach((task) => {
       task.taskExecution.assignees.forEach(
         (assignee) =>
           (assigneesObj = { ...assigneesObj, [assignee.id]: assignee }),
-      ),
-    ),
+      );
+    }),
   );
 
   const assignees: TaskExecution['assignees'][] = [];
@@ -140,13 +139,14 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                   label="State :"
                   value={getJobStatus(jobExtras.state)}
                 />
-                {Object.entries(jobExtras?.properties).map(([key, value]) => (
-                  <InputLabelGroup
-                    label={`${key.toLowerCase()} :`}
-                    value={value as string}
-                    key={key}
-                  />
-                ))}
+                {jobExtras.properties &&
+                  jobExtras?.properties.map((prop) => (
+                    <InputLabelGroup
+                      label={`${prop.name} :`}
+                      value={prop.value}
+                      key={prop.id}
+                    />
+                  ))}
               </View>
 
               <Assigness assignees={assignees} jobState={jobExtras.state} />

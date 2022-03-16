@@ -52,6 +52,7 @@ const transformFormData = ({
   return {
     description: data.description,
     name: data.name,
+    useCaseId: data.useCaseId,
     properties: data.properties.map((property) => ({
       ...pick(property, ['id', 'name', 'value']),
     })),

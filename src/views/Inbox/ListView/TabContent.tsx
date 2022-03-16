@@ -1,4 +1,5 @@
 import { DataTable, ProgressBar, SearchFilter } from '#components';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
@@ -7,7 +8,6 @@ import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import AssigneesColumn from '../../Jobs/NewListView/AssignessColumn';
 import {
   AssignedJobStates,
@@ -19,14 +19,15 @@ import { ListViewState, TabViewProps } from './types';
 const DEFAULT_PAGE_SIZE = 10;
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
-  const { job } = useTypedSelector((state) => state.properties);
   const { jobs }: ListViewState = useTypedSelector(
     (state) => state.inboxListView,
   );
-
-  const { selectedFacility: { id: facilityId = '' } = {} } = useTypedSelector(
-    (state) => state.auth,
+  const { list: jobProperties } = useTypedSelector(
+    (state) => state.properties[ComposerEntity.JOB],
   );
+
+  const { selectedFacility: { id: facilityId = '' } = {}, selectedUseCase } =
+    useTypedSelector((state) => state.auth);
   const reducerLabel = label.toLowerCase().split(' ').join('');
 
   const [filterFields, setFilterFields] = useState<FilterField[]>([]);
@@ -48,7 +49,11 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           page,
           size,
           sort: 'createdAt,desc',
-          fields: JSON.stringify({ op: 'AND', fields: filterFields }),
+          fields: JSON.stringify({
+            op: 'AND',
+            fields: filterFields,
+            useCaseId: selectedUseCase!.id,
+          }),
         },
         reducerLabel,
       ),
@@ -63,7 +68,11 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           page: 0,
           size: 10,
           sort: 'createdAt,desc',
-          filters: JSON.stringify({ op: 'AND', fields: filterFields }),
+          filters: JSON.stringify({
+            op: 'AND',
+            fields: filterFields,
+            useCaseId: selectedUseCase!.id,
+          }),
         },
         reducerLabel,
       ),
@@ -165,10 +174,10 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       label: 'Job ID',
       minWidth: 152,
     },
-    ...job.map((jobProperty) => {
+    ...jobProperties.map((jobProperty) => {
       return {
         id: jobProperty.id,
-        label: jobProperty.placeHolder,
+        label: jobProperty.label,
         minWidth: 125,
         maxWidth: 180,
       };
@@ -188,8 +197,8 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
               field: 'checklist.name',
               operator: 'LIKE',
             },
-            ...job.map(({ placeHolder, id }) => ({
-              label: placeHolder,
+            ...jobProperties.map(({ label, id }) => ({
+              label,
               value: id,
               field: 'jobPropertyValues.propertiesId',
               operator: 'EQ',
@@ -203,10 +212,13 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         rows={list.map((item) => {
           return {
             ...item,
-            ...job.reduce<Record<string, string>>((acc, jobProperty) => {
-              acc[jobProperty.id] = item.properties?.[jobProperty.name];
-              return acc;
-            }, {}),
+            ...item.properties!.reduce<Record<string, string>>(
+              (acc, itemProperty) => {
+                acc[itemProperty.id] = itemProperty.value;
+                return acc;
+              },
+              {},
+            ),
           };
         })}
       />

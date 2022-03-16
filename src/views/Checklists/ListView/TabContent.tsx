@@ -19,7 +19,6 @@ import {
 } from '#PrototypeComposer/checklist.types';
 import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
-import { useProperties } from '#services/properties';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
@@ -35,7 +34,6 @@ import {
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { addRevisionPrototype } from '../NewPrototype/actions';
 import { FormMode } from '../NewPrototype/types';
 import {
@@ -73,15 +71,14 @@ const ListView: FC<ListViewProps & { label: string }> = ({
 }) => {
   const {
     checklistListView: { pageable, currentPageData },
-    auth: { userId },
+    auth: { userId, selectedUseCase },
   } = useTypedSelector((state) => state);
-  const {
-    roles: userRoles,
-    selectedFacility: { id: facilityId = '' } = {},
-  } = useTypedSelector((state) => state.auth);
-
-  const { list: jobProperties } = useProperties(ComposerEntity.JOB);
-  const { list: checklistProperties } = useProperties(ComposerEntity.CHECKLIST);
+  const { roles: userRoles, selectedFacility: { id: facilityId = '' } = {} } =
+    useTypedSelector((state) => state.auth);
+  const propertiesStoreData = useTypedSelector((state) => state.properties);
+  const { list: jobProperties } = propertiesStoreData[ComposerEntity.JOB];
+  const { list: checklistProperties } =
+    propertiesStoreData[ComposerEntity.CHECKLIST];
 
   const dispatch = useDispatch();
 
@@ -106,7 +103,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   );
 
   const fetchData = (page: number, size: number) => {
-    const filters = JSON.stringify({ op: 'AND', fields: filterFields });
+    const filters = JSON.stringify({
+      op: 'AND',
+      fields: filterFields,
+      useCaseId: selectedUseCase!.id,
+    });
     dispatch(
       fetchChecklistsForListView(
         { facilityId, page, size, filters, sort: 'createdAt,desc' },
@@ -124,7 +125,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     dispatch(
       fetchChecklistsForListView(
         {
-          filters: JSON.stringify({ op: 'AND', fields: filterFields }),
+          filters: JSON.stringify({
+            op: 'AND',
+            fields: filterFields,
+            useCaseId: selectedUseCase!.id,
+          }),
           page: 0,
           size: 0,
           sort: 'createdAt,desc',
@@ -149,6 +154,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             error = true;
             return false;
           }
+          return true;
         } else {
           tempProperties.push({
             id: property.id,
@@ -270,7 +276,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     ...checklistProperties.map((checklistProperty) => {
       return {
         id: checklistProperty.id,
-        label: checklistProperty.placeHolder,
+        label: checklistProperty.label,
         minWidth: 125,
         maxWidth: 180,
       };
@@ -321,16 +327,32 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                   <MenuItem
                     onClick={() => {
                       handleClose();
-                      dispatch(
-                        openOverlayAction({
-                          type: OverlayNames.CREATE_JOB_MODAL,
-                          props: {
-                            selectedChecklist: selectedChecklist,
-                            properties: jobProperties,
-                            onCreateJob: onCreateJob,
-                          },
-                        }),
-                      );
+                      if (
+                        userRoles?.some(
+                          (role) => role === roles.ACCOUNT_OWNER,
+                        ) &&
+                        facilityId === '-1'
+                      ) {
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.ENTITY_START_ERROR_MODAL,
+                            props: {
+                              entity: ComposerEntity.JOB,
+                            },
+                          }),
+                        );
+                      } else {
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.CREATE_JOB_MODAL,
+                            props: {
+                              selectedChecklist: selectedChecklist,
+                              properties: jobProperties,
+                              onCreateJob: onCreateJob,
+                            },
+                          }),
+                        );
+                      }
                     }}
                   >
                     <div className="list-item">
@@ -339,7 +361,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     </div>
                   </MenuItem>
                 )}
-                {!item.archived && checkPermission(['checklists', 'revision']) && (               
+                {!item.archived && checkPermission(['checklists', 'revision']) && (
                   <MenuItem
                     onClick={() => {
                       handleClose();
@@ -652,7 +674,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({
               ) {
                 dispatch(
                   openOverlayAction({
-                    type: OverlayNames.PROTOTYPE_START_ERROR,
+                    type: OverlayNames.ENTITY_START_ERROR_MODAL,
+                    props: {
+                      entity: ComposerEntity.CHECKLIST,
+                    },
                   }),
                 );
               } else {
@@ -666,17 +691,15 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           </Button1>
         )}
       </div>
-
       <DataTable
         columns={columns}
         rows={currentPageData.map((item) => {
           return {
             ...item,
-            ...checklistProperties.reduce<Record<string, string>>(
-              (acc, checklistProperty) => {
-                acc[checklistProperty.id] =
-                  item.properties?.[checklistProperty.name];
-                return acc;
+            ...item.properties.reduce<Record<string, string>>(
+              (obj, checklistProperty) => {
+                obj[checklistProperty.id] = checklistProperty.value;
+                return obj;
               },
               {},
             ),

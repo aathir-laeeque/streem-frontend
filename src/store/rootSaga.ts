@@ -8,9 +8,7 @@ import { InboxListViewSaga } from '#views/Inbox/ListView/saga';
 import { SessionActivitySaga } from '#views/UserAccess/ListView/SessionActivity/saga';
 import { UserAccessSaga } from '#views/UserAccess/saga';
 import { all, fork } from 'redux-saga/effects';
-
 import { FileUploadSaga } from '../modules/file-upload/saga';
-import { PropertiesServiceSaga } from '../services/properties/saga';
 import { UsersServiceSaga } from '../services/users/saga';
 import { NewJobListViewSaga } from '../views/Jobs/NewListView/saga';
 import { FacilitiesSaga } from './facilities/saga';
@@ -23,7 +21,6 @@ export function* rootSaga() {
     // fork all sagas here
     fork(ChecklistListViewSaga),
     fork(AuthSaga),
-    fork(PropertiesSaga),
     fork(showNotificationSaga),
     fork(InboxListViewSaga),
     fork(UsersSaga),
@@ -35,7 +32,7 @@ export function* rootSaga() {
     fork(prototypeComposerSaga),
     fork(NewPrototypeSaga),
     fork(FileUploadSagaNew),
-    fork(PropertiesServiceSaga),
+    fork(PropertiesSaga),
     fork(UsersServiceSaga),
     fork(NewJobListViewSaga),
   ]);

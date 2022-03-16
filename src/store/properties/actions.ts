@@ -1,21 +1,21 @@
-import { actionSpreader } from '../helpers';
-import {
-  fetchPropertiesType,
-  fetchPropertiesSuccessType,
-  PropertiesAction,
-} from './types';
+import { ComposerEntity } from '#PrototypeComposer/types';
+import { actionSpreader } from '#store';
+import { fetchSuccessType, PropertiesAction } from './types';
 
-export const fetchProperties = ({ type }: fetchPropertiesType) =>
-  actionSpreader(PropertiesAction.FETCH_PROPERTIES, { type });
+export const fetch = (entityArr: ComposerEntity[], useCaseId: string) =>
+  actionSpreader(PropertiesAction.FETCH_PROPERTIES, {
+    entityArr,
+    useCaseId,
+  });
 
-export const fetchPropertiesOngoing = () =>
-  actionSpreader(PropertiesAction.FETCH_PROPERTIES_ONGOING);
+export const fetchOngoing = (entity: ComposerEntity) =>
+  actionSpreader(PropertiesAction.FETCH_PROPERTIES_ONGOING, { entity });
 
-export const fetchPropertiesSuccess = ({
-  data,
-  type,
-}: fetchPropertiesSuccessType) =>
-  actionSpreader(PropertiesAction.FETCH_PROPERTIES_SUCCESS, { data, type });
+export const fetchSuccess = (args: fetchSuccessType) =>
+  actionSpreader(PropertiesAction.FETCH_PROPERTIES_SUCCESS, { ...args });
 
-export const fetchPropertiesError = (error: string) =>
+export const fetchError = (error: string) =>
   actionSpreader(PropertiesAction.FETCH_PROPERTIES_ERROR, { error });
+
+export const resetPropertiesState = () =>
+  actionSpreader(PropertiesAction.RESET_PROPERTIES_STATE);

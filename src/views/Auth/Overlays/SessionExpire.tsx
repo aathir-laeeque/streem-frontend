@@ -1,12 +1,13 @@
 import { BaseModal, Button1, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
+import { fetch } from '#store/properties/actions';
 import { VisibilityOutlined } from '@material-ui/icons';
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-
 import { logout, reLogin } from '../actions';
 
 // TODO Handle closing of this modal if relogin api fails for some reason.
@@ -78,7 +79,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
   closeOverlay,
 }) => {
   const dispatch = useDispatch();
-  const { profile } = useTypedSelector((state) => state.auth);
+  const { profile, selectedUseCase } = useTypedSelector((state) => state.auth);
   const [passwordInputType, setPasswordInputType] = useState(true);
   const { register, handleSubmit, formState } = useForm<Inputs>({
     mode: 'onChange',
@@ -87,7 +88,21 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
 
   const onSubmit = (data: Inputs) => {
     if (profile && profile.username) {
-      dispatch(reLogin({ ...data, username: profile.username }));
+      dispatch(
+        reLogin({
+          ...data,
+          username: profile.username,
+        }),
+      );
+
+      if (selectedUseCase) {
+        dispatch(
+          fetch(
+            [ComposerEntity.JOB, ComposerEntity.CHECKLIST],
+            selectedUseCase.id,
+          ),
+        );
+      }
       closeOverlay();
     }
   };

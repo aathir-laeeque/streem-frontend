@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   grid-area: workarea;
-
   background-color: #ecedf1;
   border-top: 1.25px solid rgb(184, 184, 184);
   border-left: 0.75px solid rgba(0, 0, 0, 0.14);

@@ -74,6 +74,12 @@ const uiPermissions: Record<string, any> = {
       roles.SUPERVISOR,
     ],
   },
+  home: [
+    roles.ACCOUNT_OWNER,
+    roles.FACILITY_ADMIN,
+    roles.SUPERVISOR,
+    roles.OPERATOR,
+  ],
 };
 
 const checkPermission = (keys: string[]) => {

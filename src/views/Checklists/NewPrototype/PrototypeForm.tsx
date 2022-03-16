@@ -4,11 +4,10 @@ import {
   Button1,
   Select,
   Textarea,
-  TextInput
+  TextInput,
 } from '#components';
 import { Option } from '#components/shared/Select';
 import { ComposerEntity } from '#PrototypeComposer/types';
-import { useProperties } from '#services/properties';
 import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
 import { useTypedSelector } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
@@ -32,12 +31,11 @@ const FormError = styled.div`
   margin-bottom: 10px;
 
   form-error-icon {
-        font-size: 16px;
-        color: #eb5757;
-        margin-right: 5px;
+    font-size: 16px;
+    color: #eb5757;
+    margin-right: 5px;
   }
 `;
-
 
 const validateForm = (values: FormValues) => {
   const formErrors: FormErrors = { name: '', properties: {} };
@@ -60,17 +58,17 @@ const validateForm = (values: FormValues) => {
 
 const PrototypeForm: FC<Props> = (props) => {
   const { formMode, formData } = props;
-
   const dispatch = useDispatch();
-
-  const { listById } = useProperties(ComposerEntity.CHECKLIST);
+  const { listById } = useTypedSelector(
+    (state) => state.properties[ComposerEntity.CHECKLIST],
+  );
 
   const { users, usersById, loadMore } = useUsers({
     userState: OtherUserState.AUTHORS,
     params: { ...defaultParams(false) },
   });
 
-  const { profile } = useTypedSelector((state) => state.auth);
+  const { profile, selectedUseCase } = useTypedSelector((state) => state.auth);
 
   /*
     The UI receives createdBy only after making the API call hence when the user clicks on the "Start a Prototype" the owner details are blank. 
@@ -99,33 +97,32 @@ const PrototypeForm: FC<Props> = (props) => {
     if (!isEmpty(listById)) {
       setFormValues((values) => ({
         ...values,
-        properties: Object.values(listById)
-          .sort((a, b) => a.orderTree - b.orderTree)
-          .map((property) => ({
-            id: property.id,
-            mandatory: property.mandatory,
-            name: property.name,
-            placeHolder: property.placeHolder,
-            value:
-              formData?.properties?.find((el) => el.id === property.id)
-                ?.value ?? '',
-          })),
+        properties: Object.values(listById).map((property) => ({
+          id: property.id,
+          label: property.label,
+          mandatory: property.mandatory,
+          name: property.name,
+          placeHolder: property.placeHolder,
+          value:
+            formData?.properties?.find((el) => el.id === property.id)?.value ??
+            '',
+        })),
       }));
     }
   }, [listById]);
 
-  // TODO Create a single global error handler for apis  
+  // TODO Create a single global error handler for apis
   const getApiFormErrors = (apiFormErrors: Error[]) => {
     const updatedFormErrors = { ...formErrors };
-    if(apiFormErrors && apiFormErrors.length) {
-      apiFormErrors.forEach((formError)=> {
-        if(formError.code === "E124") {
+    if (apiFormErrors && apiFormErrors.length) {
+      apiFormErrors.forEach((formError) => {
+        if (formError.code === 'E124') {
           updatedFormErrors.authors = formError;
         }
-      })
+      });
       setFormErrors(updatedFormErrors);
     }
-  }
+  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -137,6 +134,7 @@ const PrototypeForm: FC<Props> = (props) => {
           addNewPrototype({
             ...formValues,
             authors: formValues.authors.map((author) => author.id),
+            useCaseId: selectedUseCase!.id,
           }),
         );
       } else if (formMode === FormMode.EDIT) {
@@ -145,10 +143,11 @@ const PrototypeForm: FC<Props> = (props) => {
             {
               ...formValues,
               authors: formValues.authors.map((author) => author.id),
+              useCaseId: selectedUseCase!.id,
             },
             formData?.prototypeId,
             formData?.authors?.map((author) => author.id),
-            getApiFormErrors
+            getApiFormErrors,
           ),
         );
       }
@@ -238,7 +237,7 @@ const PrototypeForm: FC<Props> = (props) => {
             defaultValue={property.value}
             disabled={formMode === FormMode.VIEW}
             error={formErrors.properties[property.id.toString()]}
-            label={property.placeHolder}
+            label={property.label}
             onChange={debounce(({ value }) => {
               setFormErrors((errors) => ({
                 ...errors,
@@ -277,14 +276,12 @@ const PrototypeForm: FC<Props> = (props) => {
           Select Authors <span className="optional-badge">Optional</span>
         </label>
 
-        {
-          formErrors.authors && (
-          <FormError> 
+        {formErrors.authors && (
+          <FormError>
             <ErrorIcon className="form-error-icon" />
             {formErrors.authors.message}
           </FormError>
-          )
-        }
+        )}
 
         {formValues.authors.map((author, index) => {
           return (
@@ -311,13 +308,13 @@ const PrototypeForm: FC<Props> = (props) => {
                     ...values,
                     authors: [
                       ...values.authors.slice(0, index),
-                      (selectedUser as unknown) as Author,
+                      selectedUser as unknown as Author,
                       ...values.authors.slice(index + 1),
                     ],
                   }));
                   // reset authors related form errors
-                  if(formErrors.authors){
-                    setFormErrors({...formErrors, authors: undefined});
+                  if (formErrors.authors) {
+                    setFormErrors({ ...formErrors, authors: undefined });
                   }
                 }}
               />
@@ -334,8 +331,8 @@ const PrototypeForm: FC<Props> = (props) => {
                       ],
                     }));
                     // reset authors related form errors
-                    if(formErrors.authors){
-                      setFormErrors({...formErrors, authors: undefined});
+                    if (formErrors.authors) {
+                      setFormErrors({ ...formErrors, authors: undefined });
                     }
                   }}
                 />

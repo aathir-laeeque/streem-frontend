@@ -3,9 +3,9 @@ import JobSummaryErrorCorrectionIcon from '#assets/svg/JobSummaryErrorCorrection
 import JobSummaryParameterIcon from '#assets/svg/JobSummaryParameterIcon';
 import JobSummarySkippedIcon from '#assets/svg/JobSummarySkippedIcon';
 import JobSummaryTimeIcon from '#assets/svg/JobSummaryTimeIcon';
+import { Property } from '#store/properties/types';
 import { User } from '#services/users';
 import React from 'react';
-
 import { CompletedJobStates, Job } from '../NewListView/types';
 
 export enum Exceptions {
@@ -36,7 +36,7 @@ export interface JobSummary {
   cweDetails: CWEDetails | null;
   endedAt: number;
   id: Job['id'];
-  properties: { [key: string]: string } | Record<string, string>;
+  properties: Pick<Property, 'id' | 'name' | 'value' | 'label'>[];
   stages: Stage[];
   state: CompletedJobStates;
   startedAt: number | null;

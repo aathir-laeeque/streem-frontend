@@ -1,7 +1,11 @@
 import { NotificationType } from '#components/Notification/types';
 import { actionSpreader } from '#store';
 import { User } from '#store/users/types';
-import { ChallengeQuestionPurpose, CredentialsInputs } from '#views/Auth/types';
+import {
+  ChallengeQuestionPurpose,
+  CredentialsInputs,
+  UseCaseType,
+} from '#views/Auth/types';
 import { EditUserRequestInputs } from '#views/UserAccess/ManageUser/types';
 
 import {
@@ -106,3 +110,20 @@ export const validateQuestion = (payload: {
   answer: string;
   token: string;
 }) => actionSpreader(AuthAction.VALIDATE_QUESTION, payload);
+
+export const fetchUseCaseList = () =>
+  actionSpreader(AuthAction.FETCH_USE_CASE_LIST);
+
+export const fetchUseCaseListOngoing = () =>
+  actionSpreader(AuthAction.FETCH_USE_CASE_LIST_ONGOING);
+
+export const fetchUseCaseListSuccess = (useCaseList: UseCaseType[]) =>
+  actionSpreader(AuthAction.FETCH_USE_CASE_LIST_SUCCESS, {
+    useCaseList,
+  });
+
+export const setSelectedUseCase = (selectedUseCase: UseCaseType) =>
+  actionSpreader(AuthAction.SET_SELECTED_USE_CASE, { selectedUseCase });
+
+export const fetchUseCaseListError = (error: string) =>
+  actionSpreader(AuthAction.FETCH_USE_CASE_LIST_ERROR, { error });

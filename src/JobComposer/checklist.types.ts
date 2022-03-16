@@ -1,8 +1,5 @@
+import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
-
-interface Properties {
-  [key: string]: string | null;
-}
 
 export enum MandatoryActivity {
   CHECKLIST = 'CHECKLIST',
@@ -15,6 +12,8 @@ export enum MandatoryActivity {
   TEXTBOX = 'TEXTBOX',
   YES_NO = 'YES_NO',
 }
+
+type ChecklistProperty = Pick<Property, 'id' | 'name' | 'value'>;
 
 export enum NonMandatoryActivity {
   INSTRUCTION = 'INSTRUCTION',
@@ -129,6 +128,6 @@ export interface Checklist {
   version: number | null;
   stages?: Stage[];
   noOfJobs?: number;
-  properties?: Properties;
+  properties?: ChecklistProperty[];
   noOfTasks?: number;
 }

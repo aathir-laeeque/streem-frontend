@@ -3,7 +3,6 @@ import { Stage, Task } from '#JobComposer/checklist.types';
 import { useTypedSelector } from '#store/helpers';
 import React from 'react';
 import styled from 'styled-components';
-
 import AssigneeList from './AssigneeList';
 
 const Wrapper = styled.div`

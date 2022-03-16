@@ -9,6 +9,10 @@ import {
   authError,
   cleanUp,
   fetchProfileSuccess,
+  fetchUseCaseList,
+  fetchUseCaseListError,
+  fetchUseCaseListOngoing,
+  fetchUseCaseListSuccess,
   login,
   loginSuccess,
   logout,
@@ -19,6 +23,7 @@ import {
   setChallengeQuestionSuccess,
   setIdentityToken,
   setIdle,
+  setSelectedUseCase,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
@@ -49,6 +54,19 @@ type Facility = {
   name: string;
 };
 
+// TODO Try to figure out a way to handle api data as not conditional once fetched
+export type UseCaseType = {
+  id: string;
+  name: string;
+  label: string;
+  description: string;
+  enabled: boolean;
+  archived: boolean;
+  metadata: {
+    ['card-color']: string;
+  };
+};
+
 export interface AuthState {
   readonly accessToken: string;
   readonly email?: string;
@@ -69,6 +87,9 @@ export interface AuthState {
   readonly token?: string;
   readonly userId: User['id'] | null;
   readonly NonGenuineLicenseMap: { [facilityId: string]: LicenseType };
+  useCastList: UseCaseType[];
+  selectedUseCase?: UseCaseType;
+  fetchingUseCaseList: boolean;
 }
 
 export enum TokenTypes {
@@ -235,6 +256,11 @@ export enum AuthAction {
   UPDATE_USER_PROFILE = '@@auth/MyProfile/UPDATE_USER_PROFILE',
   VALIDATE_IDENTITY = '@@auth/Forgot/VALIDATE_IDENTITY',
   VALIDATE_QUESTION = '@@auth/Forgot/VALIDATE_QUESTION',
+  FETCH_USE_CASE_LIST = '@@auth/FETCH_USE_CASE_LIST',
+  FETCH_USE_CASE_LIST_ERROR = '@@auth/FETCH_USE_CASE_LIST_ERROR',
+  FETCH_USE_CASE_LIST_ONGOING = '@@auth/FETCH_USE_CASE_LIST_ONGOING',
+  FETCH_USE_CASE_LIST_SUCCESS = '@@auth/FETCH_USE_CASE_LIST_SUCCESS',
+  SET_SELECTED_USE_CASE = '@@auth/SET_SELECTED_USE_CASE',
 }
 
 export type AuthActionType = ReturnType<
@@ -253,4 +279,9 @@ export type AuthActionType = ReturnType<
   | typeof switchFacilityError
   | typeof switchFacilitySuccess
   | typeof setChallengeQuestionSuccess
+  | typeof fetchUseCaseList
+  | typeof fetchUseCaseListOngoing
+  | typeof fetchUseCaseListSuccess
+  | typeof fetchUseCaseListError
+  | typeof setSelectedUseCase
 >;

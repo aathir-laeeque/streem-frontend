@@ -57,7 +57,7 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
 
   if (!logs || logs.length === 0 || !profile || !composerData) return null;
 
-  const { checklist, ...jobExtras } = composerData as unknown as Checklist;
+  const { checklist, ...jobExtras } = composerData;
   let assigneesObj: Record<string, any> = {};
   (checklist as Checklist).stages.forEach((stage) =>
     stage.tasks.forEach((task) =>
@@ -122,40 +122,18 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
                 label="State :"
                 value={removeUnderscore(jobExtras.state)}
               />
-              <View style={styles.flexRow}>
-                <View style={styles.flexRow}>
-                  <InputLabelGroup
-                    label="Equipment ID :"
-                    value={checklist?.properties['EQUIPMENT ID'] || ''}
-                    minWidth={50}
-                  />
-                </View>
-                <View style={styles.flexRow}>
-                  <InputLabelGroup
-                    label="Room ID :"
-                    value={jobExtras?.properties['ROOM ID'] || ''}
-                  />
-                </View>
-              </View>
-              <View style={styles.flexRow}>
-                <View style={styles.flexRow}>
-                  <InputLabelGroup
-                    label="Product Manufactured :"
-                    value={
-                      jobExtras?.properties
-                        ? jobExtras?.properties['PRODUCT MANUFACTURED']
-                        : ''
-                    }
-                    minWidth={50}
-                  />
-                </View>
-                <View style={styles.flexRow}>
-                  <InputLabelGroup
-                    label="Batch No :"
-                    value={jobExtras?.properties['BATCH NO']}
-                  />
-                </View>
-              </View>
+              {jobExtras?.properties &&
+                jobExtras.properties.map((props: any) => {
+                  return (
+                    <View style={styles.flexRow}>
+                      <InputLabelGroup
+                        label={props.label}
+                        value={props.value}
+                        key={props.id}
+                      />
+                    </View>
+                  );
+                })}
               <Assigness assignees={assignees} jobState={jobExtras.state} />
             </TabLookLike>
 
@@ -166,7 +144,7 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
               />
               <InputLabelGroup
                 label="Total Tasks :"
-                value={jobExtras.totalTasks}
+                value={jobExtras.totalTasks.toString()}
               />
             </TabLookLike>
           </View>

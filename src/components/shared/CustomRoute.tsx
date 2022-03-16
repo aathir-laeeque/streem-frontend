@@ -1,8 +1,8 @@
 import checkPermission from '#services/uiPermissions';
-import { logout } from '#views/Auth/actions';
 import { useTypedSelector } from '#store';
 import { setGlobalError } from '#store/extras/action';
-import { Redirect, RouteComponentProps, useLocation } from '@reach/router';
+import { logout } from '#views/Auth/actions';
+import { Redirect, RouteComponentProps } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -21,6 +21,7 @@ export const CustomRoute: FC<Props> = ({
     selectedFacility,
     hasSetChallengeQuestion,
     token,
+    selectedUseCase,
   } = useTypedSelector((state) => state.auth);
 
   const dispatch = useDispatch();
@@ -43,14 +44,21 @@ export const CustomRoute: FC<Props> = ({
         dispatch(logout());
       }
     } else {
-      if (selectedFacility || props.path === 'facility/selection') {
-        return isProtected && location?.pathname !== '/' ? (
-          <Component {...props} />
-        ) : checkPermission(['sidebar', 'inbox']) ? (
-          <Redirect from="" to="/inbox" noThrow />
-        ) : (
-          <Redirect from="" to="/users" noThrow />
-        );
+      const isFacilitySelectionPage = props.path === 'facility/selection';
+      if (selectedFacility || isFacilitySelectionPage) {
+        const userCanAccessHomePage = checkPermission(['home']);
+        if (
+          isFacilitySelectionPage ||
+          location?.pathname === '/users' ||
+          (props.path === 'home' && userCanAccessHomePage) ||
+          (selectedUseCase && isProtected && location?.pathname !== '/')
+        ) {
+          return <Component {...props} />;
+        } else if (userCanAccessHomePage) {
+          return <Redirect from="" to="/home" noThrow />;
+        } else {
+          return <Redirect from="" to="/users" noThrow />;
+        }
       }
 
       return <Redirect from="" to="/facility/selection" noThrow />;

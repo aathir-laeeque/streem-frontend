@@ -1,12 +1,9 @@
 import { ExceptionReason } from '#JobComposer/modals/CompleteJobWithException';
-import { ComposerEntity } from '#PrototypeComposer/types';
-import { useProperties } from '#services/properties';
 import { useTypedSelector } from '#store';
 import { apiGetJobSummary } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { RouteComponentProps } from '@reach/router';
 import { Document, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
-import { isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { CompletedJobStates, Job } from '../NewListView/types';
 import { JobSummary } from '../Summary/types';
@@ -27,10 +24,10 @@ type State = {
 };
 
 const JobSummaryPdf = ({ jobId }: Props) => {
-  const { listByName: jobProperties } = useProperties(ComposerEntity.JOB);
   const { profile, settings, selectedFacility } = useTypedSelector(
     (state) => state.auth,
   );
+
   const { timeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
@@ -48,19 +45,19 @@ const JobSummaryPdf = ({ jobId }: Props) => {
           loading: !prevState.loading,
         }));
 
-        const response = await request(
+        const jobSummaryData = await request(
           'GET',
           apiGetJobSummary(jobId as string),
         );
 
-        if (response.data) {
+        if (jobSummaryData.data) {
           setState((prevState) => ({
             ...prevState,
             loading: !prevState.loading,
-            data: response.data,
+            data: jobSummaryData.data,
           }));
         } else {
-          console.error('error in api response :: ', response?.errors);
+          console.error('error in api response :: ', jobSummaryData?.errors);
           setState((prevState) => ({
             ...prevState,
             loading: !prevState.loading,
@@ -72,7 +69,7 @@ const JobSummaryPdf = ({ jobId }: Props) => {
     })();
   }, []);
 
-  if (loading || !data || !profile || isEmpty(jobProperties)) {
+  if (loading || !data || !profile) {
     return null;
   }
 
@@ -103,7 +100,6 @@ const JobSummaryPdf = ({ jobId }: Props) => {
               code={data?.code}
               completedBy={data?.completedBy}
               createdBy={data?.createdBy}
-              jobProperties={jobProperties}
               properties={data?.properties}
             />
 

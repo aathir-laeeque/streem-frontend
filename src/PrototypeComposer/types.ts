@@ -16,9 +16,10 @@ export type ReOrderType = {
   to: number;
 };
 
+// TODO: merge this as well as Composer type from Job Composer
 export enum ComposerEntity {
-  CHECKLIST = 'checklist',
-  JOB = 'job',
+  CHECKLIST = 'CHECKLIST',
+  JOB = 'JOB',
 }
 
 export type ComposerProps = RouteComponentProps<{

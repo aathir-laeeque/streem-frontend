@@ -10,7 +10,7 @@ import {
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { ComposerEntity } from '#PrototypeComposer/types';
-import { useProperties } from '#services/properties';
+import { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
 import { User } from '#store/users/types';
 import { FilterField } from '#utils/globalTypes';
@@ -18,7 +18,6 @@ import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { createJob, fetchJobs } from './actions';
 import AssigneesColumn from './AssignessColumn';
 import { TabContentWrapper } from './styles';
@@ -43,11 +42,15 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
   const { jobs, pageable } = useTypedSelector((state) => state.jobListView);
 
-  const { selectedFacility: { id: facilityId } = {} } = useTypedSelector(
-    (state) => state.auth,
-  );
+  const {
+    selectedFacility: { id: facilityId } = {},
+    selectedUseCase,
+    roles: userRoles,
+  } = useTypedSelector((state) => state.auth);
 
-  const { list: jobProperties } = useProperties(ComposerEntity.JOB);
+  const { list: jobProperties } = useTypedSelector(
+    (state) => state.properties[ComposerEntity.JOB],
+  );
 
   const defaultFilters = useRef<FilterField[]>(getBaseFilter(values));
 
@@ -67,7 +70,11 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         page,
         size,
         sort: 'createdAt,desc',
-        filters: JSON.stringify({ op: 'AND', fields: filterFields }),
+        filters: JSON.stringify({
+          op: 'AND',
+          fields: filterFields,
+          useCaseId: selectedUseCase!.id,
+        }),
       }),
     );
   };
@@ -101,7 +108,11 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         page: 0,
         size: 10,
         sort: 'createdAt,desc',
-        filters: JSON.stringify({ op: 'AND', fields: filterFields }),
+        filters: JSON.stringify({
+          op: 'AND',
+          fields: filterFields,
+          useCaseId: selectedUseCase!.id,
+        }),
       }),
     );
   }, [filterFields]);
@@ -124,6 +135,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             error = true;
             return false;
           }
+          return true;
         } else {
           tempProperties.push({
             id: property.id,
@@ -261,7 +273,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     ...jobProperties.map((jobProperty) => {
       return {
         id: jobProperty.id,
-        label: jobProperty.placeHolder,
+        label: jobProperty.label,
         minWidth: 125,
         maxWidth: 180,
       };
@@ -281,8 +293,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
               field: 'checklist.name',
               operator: 'LIKE',
             },
-            ...jobProperties.map(({ placeHolder, id }) => ({
-              label: placeHolder,
+            ...jobProperties.map(({ label, id }) => ({
+              label: label,
               value: id,
               field: 'jobPropertyValues.propertiesId',
               operator: 'EQ',
@@ -339,18 +351,32 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         {values[0] in UnassignedJobStates && (
           <Button1
             id="create"
-            onClick={() =>
-              dispatch(
-                openOverlayAction({
-                  type: OverlayNames.CREATE_JOB_MODAL,
-                  props: {
-                    selectedChecklist: null,
-                    properties: jobProperties,
-                    onCreateJob: onCreateJob,
-                  },
-                }),
-              )
-            }
+            onClick={() => {
+              if (
+                userRoles?.some((role) => role === roles.ACCOUNT_OWNER) &&
+                facilityId === '-1'
+              ) {
+                dispatch(
+                  openOverlayAction({
+                    type: OverlayNames.ENTITY_START_ERROR_MODAL,
+                    props: {
+                      entity: ComposerEntity.JOB,
+                    },
+                  }),
+                );
+              } else {
+                dispatch(
+                  openOverlayAction({
+                    type: OverlayNames.CREATE_JOB_MODAL,
+                    props: {
+                      selectedChecklist: null,
+                      properties: jobProperties,
+                      onCreateJob: onCreateJob,
+                    },
+                  }),
+                );
+              }
+            }}
           >
             Create a Job
           </Button1>
@@ -362,9 +388,9 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         rows={jobs.map((item) => {
           return {
             ...item,
-            ...jobProperties.reduce<Record<string, string>>(
-              (acc, jobProperty) => {
-                acc[jobProperty.id] = item.properties?.[jobProperty.name];
+            ...item.properties!.reduce<Record<string, string>>(
+              (acc, itemProperty) => {
+                acc[itemProperty.id] = itemProperty.value;
                 return acc;
               },
               {},

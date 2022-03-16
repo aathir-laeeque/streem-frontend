@@ -7,22 +7,24 @@ import {
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
 import { setInitialFacilityWiseConstants } from '#store/facilityWiseConstants/actions';
+import { resetPropertiesState } from '#store/properties/actions';
 import { fetchSelectedUserSuccess } from '#store/users/actions';
 import { User } from '#store/users/types';
 import {
   apiAdditionalVerification,
+  apiChallengeQuestions,
   apiCheckTokenExpiry,
+  apiGetUseCaseList,
   apiGetUser,
   apiLogin,
   apiLogOut,
   apiNotifyAdmin,
   apiRegister,
+  apiReLogin,
   apiResetPassword,
   apiResetToken,
-  apiChallengeQuestions,
   apiValidateChallengeQuestion,
   apiValidateIdentity,
-  apiReLogin,
 } from '#utils/apiUrls';
 import { removeAuthHeader, setAuthHeader } from '#utils/axiosClient';
 import { LoginErrorCodes } from '#utils/constants';
@@ -32,9 +34,7 @@ import { encrypt } from '#utils/stringUtils';
 import { ValidateCredentialsPurpose } from '#views/UserAccess/types';
 import { navigate } from '@reach/router';
 import { call, put, select, takeLeading } from 'redux-saga/effects';
-import { store } from '../../App';
-
-import { persistor } from '../../App';
+import { persistor, store } from '../../App';
 import {
   additionalVerification,
   authError,
@@ -42,6 +42,9 @@ import {
   cleanUp,
   fetchProfile,
   fetchProfileSuccess,
+  fetchUseCaseListError,
+  fetchUseCaseListOngoing,
+  fetchUseCaseListSuccess,
   login,
   loginSuccess,
   logoutSuccess,
@@ -57,7 +60,7 @@ import {
   validateIdentity,
   validateQuestion,
 } from './actions';
-import { AuthAction, LoginResponse, TokenTypes } from './types';
+import { AuthAction, LoginResponse, TokenTypes, UseCaseType } from './types';
 
 const getUserId = (state: RootState) => state.auth.userId;
 const getIsLoggedIn = (state: RootState) => state.auth.isLoggedIn;
@@ -483,6 +486,25 @@ function* notifyAdminSaga({ payload }: ReturnType<typeof notifyAdmin>) {
   }
 }
 
+function* fetchUseCaseListSaga() {
+  try {
+    yield put(fetchUseCaseListOngoing());
+    const response: UseCaseType[] = yield call(
+      request,
+      'GET',
+      apiGetUseCaseList(),
+    );
+    yield put(fetchUseCaseListSuccess(response));
+    yield put(resetPropertiesState());
+  } catch (error) {
+    console.error(
+      'error from fetchUseCaseListSaga function in AuthSaga :: ',
+      error,
+    );
+    yield put(fetchUseCaseListError(error));
+  }
+}
+
 export function* AuthSaga() {
   yield takeLeading(AuthAction.LOGIN, loginSaga);
   yield takeLeading(AuthAction.RE_LOGIN, reLoginSaga);
@@ -506,4 +528,5 @@ export function* AuthSaga() {
   yield takeLeading(AuthAction.VALIDATE_QUESTION, validateQuestionSaga);
   yield takeLeading(AuthAction.RESET_TOKEN, resetTokenSaga);
   yield takeLeading(AuthAction.NOTIFY_ADMIN, notifyAdminSaga);
+  yield takeLeading(AuthAction.FETCH_USE_CASE_LIST, fetchUseCaseListSaga);
 }

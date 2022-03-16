@@ -37,7 +37,6 @@ import SessionExpireModal from '#views/Auth/Overlays/SessionExpire';
 import ArchiveModal from '#views/Checklists/ListView/ArchiveModal';
 import ChecklistInfoModal from '#views/Checklists/ListView/ChecklistInfoModal';
 import RevisionErrorModal from '#views/Checklists/Overlays/RevisionErrorModal';
-import PrototypeStartError from '#views/Checklists/Overlays/PrototypeStartError';
 import AssingnmentInfo from '#views/Jobs/Assignment/AssignmentInfo';
 import UserAssignment from '#views/Jobs/Assignment/UserAssignmentModal';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
@@ -46,12 +45,11 @@ import ValidateCredentialsModal from '#views/UserAccess/Overlays/ValidateCredent
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-
+import StartErrorModal from '../shared/StartErrorModal';
 import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
 import { CommonOverlayProps, OverlayNames } from './types';
-import ViewTaskModal from '../../views/Jobs/Assignment/ViewTaskModal';
 
 const Wrapper = styled.div``;
 
@@ -195,8 +193,8 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
     case OverlayNames.ASSIGNMENT_INFO:
       return <AssingnmentInfo {...params} />;
 
-    case OverlayNames.PROTOTYPE_START_ERROR:
-      return <PrototypeStartError {...params} />;
+    case OverlayNames.ENTITY_START_ERROR_MODAL:
+      return <StartErrorModal {...params} />;
 
     default:
       return null;

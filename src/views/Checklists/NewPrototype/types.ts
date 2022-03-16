@@ -4,7 +4,6 @@ import { Property } from '#store/properties/types';
 import { Error } from '#utils/globalTypes';
 import { addNewPrototype, updatePrototype } from './actions';
 
-
 export enum NewPrototypeActions {
   ADD_NEW_PROTOTYPE = '@@prototype/ADD_NEW_PROTOTYPE',
   ADD_REVISION_PROTOTYPE = '@@prototype/ADD_REVISION_PROTOTYPE',
@@ -21,7 +20,7 @@ export type NewPrototypeActionsType = ReturnType<
 
 export type PrototypeProperties = Pick<
   Property,
-  'id' | 'name' | 'placeHolder' | 'mandatory'
+  'id' | 'name' | 'placeHolder' | 'mandatory' | 'label'
 > & {
   value: string;
 };
@@ -53,7 +52,7 @@ export type FormValues = {
 export type FormValuesOnlyWithAuthorIds = Pick<
   FormValues,
   'description' | 'name' | 'createdBy' | 'properties'
-> & { authors: Author['id'][] };
+> & { authors: Author['id'][]; useCaseId: string };
 
 export type FormErrors = {
   name: string;

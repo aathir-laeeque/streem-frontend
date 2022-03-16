@@ -1,6 +1,6 @@
 import useTabsNew from '#components/shared/useTabsNew';
+import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
-
 import TabContent from './NewTabContent';
 import { ViewWrapper } from './styles';
 import {
@@ -11,6 +11,8 @@ import {
 } from './types';
 
 const ChecklistListView: FC<ListViewProps> = () => {
+  const { selectedUseCase } = useTypedSelector((state) => state.auth);
+
   const { renderTabHeader, renderTabContent } = useTabsNew({
     tabs: [
       {
@@ -41,7 +43,7 @@ const ChecklistListView: FC<ListViewProps> = () => {
   return (
     <ViewWrapper>
       <div className="header">
-        <div className="heading">Jobs</div>
+        <div className="heading">{selectedUseCase?.label} - Jobs</div>
         <div className="sub-heading">
           Create, Assign and view Completed Jobs
         </div>

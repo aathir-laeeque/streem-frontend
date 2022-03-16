@@ -1,48 +1,54 @@
 import { ComposerEntity } from '#PrototypeComposer/types';
 
 import {
-  fetchPropertiesError,
-  fetchPropertiesOngoing,
-  fetchPropertiesSuccess,
+  fetchError,
+  fetchOngoing,
+  fetchSuccess,
+  resetPropertiesState,
 } from './actions';
 
 export interface Property {
   id: string;
   name: string;
+  label: string;
   placeHolder: string;
-  orderTree: number;
   mandatory: boolean;
+  value: string;
 }
 
+export type PropertyById = Record<string, Property>;
+
+export type PropertyByName = Record<string, Property>;
+
+export type EntityProperties = {
+  list: Property[];
+  listById: PropertyById;
+  listByName: PropertyByName;
+  loading: boolean;
+};
+
 export interface PropertiesState {
-  readonly checklist: Property[];
-  readonly error?: string;
-  readonly job: Property[];
-  readonly loading: boolean;
+  readonly [ComposerEntity.CHECKLIST]: EntityProperties;
+  readonly [ComposerEntity.JOB]: EntityProperties;
+  readonly error?: unknown;
 }
 
 export enum PropertiesAction {
-  FETCH_PROPERTIES = '@@properties/FETCH_PROPERTIES',
-  FETCH_PROPERTIES_ERROR = '@@properties/FETCH_PROPERTIES_ERROR',
-  FETCH_PROPERTIES_ONGOING = '@@properties/FETCH_PROPERTIES_ONGOING',
-  FETCH_PROPERTIES_SUCCESS = '@@properties/FETCH_PROPERTIES_SUCCESS',
+  FETCH_PROPERTIES = '@@properties-service/FETCH_PROPERTIES',
+  FETCH_PROPERTIES_ERROR = '@@properties-service/FETCH_PROPERTIES_ERROR',
+  FETCH_PROPERTIES_ONGOING = '@@properties-service/FETCH_PROPERTIES_ONGOING',
+  FETCH_PROPERTIES_SUCCESS = '@@properties-service/FETCH_PROPERTIES_SUCCESS',
+  RESET_PROPERTIES_STATE = '@@properties-service/RESET_PROPERTIES_STATE',
 }
 
 export type PropertiesActionType = ReturnType<
-  | typeof fetchPropertiesError
-  | typeof fetchPropertiesOngoing
-  | typeof fetchPropertiesSuccess
+  | typeof fetchError
+  | typeof fetchOngoing
+  | typeof fetchSuccess
+  | typeof resetPropertiesState
 >;
 
-export type usePropertiesType = {
-  entity: ComposerEntity;
-};
-
-export type fetchPropertiesType = {
-  type: ComposerEntity;
-};
-
-export type fetchPropertiesSuccessType = {
+export type fetchSuccessType = {
   data: Property[];
-  type: ComposerEntity;
+  entity: ComposerEntity;
 };

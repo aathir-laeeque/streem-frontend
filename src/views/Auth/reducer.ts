@@ -20,6 +20,8 @@ const initialState: AuthState = {
   loading: false,
   facilities: [],
   NonGenuineLicenseMap: {},
+  useCastList: [],
+  fetchingUseCaseList: false,
 };
 
 const reducer = (state = initialState, action: AuthActionType): AuthState => {
@@ -73,17 +75,20 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
       return {
         ...initialState,
       };
+
     case AuthAction.AUTH_ERROR:
       return { ...state, loading: false, error: action.payload };
 
     case AuthAction.FETCH_PROFILE_SUCCESS:
       return { ...state, profile: action.payload };
+
     case AuthAction.REFRESH_TOKEN_SUCCESS:
       return {
         ...state,
         isLoggedIn: true,
         accessToken: action.payload.accessToken,
       };
+
     case AuthAction.SET_IDENTITY_TOKEN:
       return {
         ...state,
@@ -104,7 +109,24 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
         selectedFacility: state.facilities.find(
           (facility) => facility.id === action.payload.facilityId,
         ),
+        selectedUseCase: undefined,
       };
+
+    case AuthAction.FETCH_USE_CASE_LIST_ONGOING:
+      return { ...state, fetchingUseCaseList: true };
+
+    case AuthAction.FETCH_USE_CASE_LIST_SUCCESS:
+      return {
+        ...state,
+        fetchingUseCaseList: false,
+        useCastList: action.payload.useCaseList,
+      };
+
+    case AuthAction.SET_SELECTED_USE_CASE:
+      return { ...state, selectedUseCase: action.payload.selectedUseCase };
+
+    case AuthAction.FETCH_USE_CASE_LIST_ERROR:
+      return { ...state, error: action.payload?.error };
 
     default:
       return state;

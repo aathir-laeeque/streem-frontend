@@ -67,9 +67,8 @@ function* validatePrototypeSaga({
     const { errors } = yield call(request, 'GET', apiValidatePrototype(id));
 
     if ((errors as Array<Error>)?.length) {
-      const { stagesErrors, tasksErrors, activitiesErrors } = groupErrors(
-        errors,
-      );
+      const { stagesErrors, tasksErrors, activitiesErrors } =
+        groupErrors(errors);
       if (stagesErrors.length) {
         yield all(
           stagesErrors.map((error) => put(setStageValidationError(error))),

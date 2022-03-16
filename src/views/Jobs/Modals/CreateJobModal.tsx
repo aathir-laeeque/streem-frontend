@@ -10,7 +10,6 @@ import { useTypedSelector } from '#store';
 import { Property } from '#store/properties/types';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import { Checklist } from '#views/Checklists/types';
-import { capitalize } from 'lodash';
 import React, { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -189,7 +188,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
             {properties.map((property, index) => (
               <TextInput
                 key={`property_${index}`}
-                label={property.placeHolder}
+                label={property.label}
                 name={property.name}
                 optional={!property.mandatory}
                 ref={register({

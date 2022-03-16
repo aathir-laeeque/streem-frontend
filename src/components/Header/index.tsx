@@ -1,39 +1,47 @@
+import AvatarIcon from '#assets/svg/AvatarIcon';
 import Logo from '#assets/svg/Logo';
+import MoreOptionsIcon from '#assets/svg/MoreOptionsIcon';
+import SettingsIcon from '#assets/svg/SettingsIcon';
 import Select from '#components/shared/Select';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
-import { getInitials } from '#utils/stringUtils';
-import { logout } from '#views/Auth/actions';
+import { logout, setSelectedUseCase } from '#views/Auth/actions';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { KeyboardArrowDown } from '@material-ui/icons';
 import { navigate } from '@reach/router';
-import { capitalize } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { ImageWrapper } from '../../styles/ImageWrapper';
 import NestedMenuItem from '../shared/NestedMenuItem';
-import { HeaderMenu, MenuText, Wrapper } from './styles';
+import { HeaderMenu, Wrapper } from './styles';
+import { fetch } from '#store/properties/actions';
+
+type FacilityOption = {
+  label: string;
+  value: string;
+};
 
 const Header: FC = () => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [showUsersDropdown, setShowUsersDropdown] =
+    React.useState<null | HTMLElement>(null);
+  const [showSettingsDropDown, setSettingsDropDownVisibiltity] =
+    React.useState<null | HTMLElement>(null);
   const dispatch = useDispatch();
+  const [showUseCaseSelectionDropDown, setShowUseCaseSelectionDropDown] =
+    React.useState<null | HTMLElement>(null);
 
-  const { profile, facilities, selectedFacility, userId } = useTypedSelector(
-    (state) => state.auth,
-  );
+  const {
+    profile,
+    facilities,
+    selectedFacility,
+    userId,
+    selectedUseCase,
+    useCastList,
+  } = useTypedSelector((state) => state.auth);
 
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const facilitiesOptions = facilities.map((facility) => ({
+  const facilitiesOptions: FacilityOption[] = facilities.map((facility) => ({
     label: facility.name,
     value: facility.id,
   }));
@@ -46,82 +54,141 @@ const Header: FC = () => {
           onClick={() => navigate('/')}
         />
       </ImageWrapper>
-
-      {selectedFacility ? (
-        <Select
-          options={facilitiesOptions}
-          selectedValue={facilitiesOptions.find(
-            (option) => option.value === selectedFacility?.id,
-          )}
-          onChange={(option: any) =>
-            dispatch(
-              switchFacility({
-                facilityId: option.value as string,
-                loggedInUserId: userId as string,
-              }),
-            )
-          }
-        />
-      ) : null}
-
-      <HeaderMenu
-        aria-controls="top-menu"
-        aria-haspopup="true"
-        onClick={handleClick}
-      >
-        <div className="thumb">
-          {getInitials(`${profile?.firstName} ${profile?.lastName}`)}
-        </div>
-        <MenuText>{`${capitalize(profile?.firstName)} ${capitalize(
-          profile?.lastName,
-        )}`}</MenuText>
-        <KeyboardArrowDown style={{ color: '#1d84ff' }} />
-      </HeaderMenu>
-      <Menu
-        id="top-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        style={{ marginTop: 30 }}
-      >
-        {selectedFacility && (
-          <>
-            <MenuItem
-              onClick={() => {
-                navigate(`/users/profile/${profile?.id}`);
-                handleClose();
-              }}
-            >
-              My Account
-            </MenuItem>
-            {checkPermission(['header', 'usersAndAccess']) && (
-              <NestedMenuItem
-                left
-                label="System Settings"
-                mainMenuOpen={anchorEl ? true : false}
-              >
-                <MenuItem
-                  onClick={() => {
-                    navigate('/users');
-                    handleClose();
-                  }}
-                >
-                  Users and Access
-                </MenuItem>
-              </NestedMenuItem>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        {selectedFacility ? (
+          <Select
+            options={facilitiesOptions}
+            selectedValue={facilitiesOptions.find(
+              (option) => option.value === selectedFacility?.id,
             )}
+            onChange={(option) =>
+              dispatch(
+                switchFacility({
+                  facilityId: option.value as string,
+                  loggedInUserId: userId!,
+                }),
+              )
+            }
+          />
+        ) : null}
+        {selectedUseCase && !location.pathname.includes('/home') && (
+          <>
+            <HeaderMenu
+              aria-controls="top-menu"
+              aria-haspopup="true"
+              onClick={(event) =>
+                setShowUseCaseSelectionDropDown(event.currentTarget)
+              }
+              style={{ marginRight: '16px' }}
+            >
+              <MoreOptionsIcon />
+            </HeaderMenu>
+            <Menu
+              id="top-menu"
+              anchorEl={showUseCaseSelectionDropDown}
+              keepMounted
+              open={Boolean(showUseCaseSelectionDropDown)}
+              onClose={() => setShowUseCaseSelectionDropDown(null)}
+              style={{ marginTop: 30 }}
+            >
+              {useCastList.map((useCaseDetails) => (
+                <MenuItem
+                  autoFocus={selectedUseCase.id === useCaseDetails.id}
+                  onClick={() => {
+                    setShowUseCaseSelectionDropDown(null);
+                    dispatch(setSelectedUseCase(useCaseDetails));
+                    dispatch(
+                      fetch(
+                        [ComposerEntity.JOB, ComposerEntity.CHECKLIST],
+                        useCaseDetails.id,
+                      ),
+                    );
+                    navigate('/inbox');
+                  }}
+                  disabled={!useCaseDetails.enabled}
+                >
+                  {useCaseDetails.label}
+                </MenuItem>
+              ))}
+            </Menu>
           </>
         )}
-        <MenuItem
-          onClick={() => {
-            dispatch(logout());
-            handleClose();
-          }}
+        <HeaderMenu
+          aria-controls="top-menu"
+          aria-haspopup="true"
+          onClick={(event) =>
+            setSettingsDropDownVisibiltity(event.currentTarget)
+          }
+          style={{ marginRight: '16px' }}
         >
-          Logout
-        </MenuItem>
-      </Menu>
+          <SettingsIcon />
+        </HeaderMenu>
+        <Menu
+          id="top-menu"
+          anchorEl={showSettingsDropDown}
+          keepMounted
+          open={Boolean(showSettingsDropDown)}
+          onClose={() => setSettingsDropDownVisibiltity(null)}
+          style={{ marginTop: 30 }}
+        >
+          {selectedFacility && (
+            <>
+              {checkPermission(['header', 'usersAndAccess']) && (
+                <NestedMenuItem
+                  left
+                  label="System Settings"
+                  mainMenuOpen={showSettingsDropDown ? true : false}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      navigate('/users');
+                      setSettingsDropDownVisibiltity(null);
+                    }}
+                  >
+                    Users and Access
+                  </MenuItem>
+                </NestedMenuItem>
+              )}
+            </>
+          )}
+        </Menu>
+        <HeaderMenu
+          aria-controls="top-menu"
+          aria-haspopup="true"
+          onClick={(event) => setShowUsersDropdown(event.currentTarget)}
+        >
+          <AvatarIcon />
+        </HeaderMenu>
+        <Menu
+          id="top-menu"
+          anchorEl={showUsersDropdown}
+          keepMounted
+          open={Boolean(showUsersDropdown)}
+          onClose={() => setShowUsersDropdown(null)}
+          style={{ marginTop: 30 }}
+        >
+          {selectedFacility && (
+            <>
+              <MenuItem
+                onClick={() => {
+                  navigate(`/users/profile/${profile?.id}`);
+                  setShowUsersDropdown(null);
+                }}
+              >
+                My Account
+              </MenuItem>
+            </>
+          )}
+          <MenuItem
+            onClick={() => {
+              dispatch(logout());
+              setShowUsersDropdown(null);
+            }}
+          >
+            Logout
+          </MenuItem>
+        </Menu>
+      </div>
     </Wrapper>
   );
 };

@@ -1,6 +1,7 @@
 import CannotArchive from '#assets/svg/CannotArchive';
 import { BaseModal } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
@@ -42,7 +43,8 @@ const Wrapper = styled.div`
   }
 `;
 
-const PrototypeStartError: FC<CommonOverlayProps<unknown>> = ({
+const StartErrorModal: FC<CommonOverlayProps<{ entity: ComposerEntity }>> = ({
+  props: { entity },
   closeAllOverlays,
   closeOverlay,
 }) => (
@@ -55,9 +57,13 @@ const PrototypeStartError: FC<CommonOverlayProps<unknown>> = ({
     >
       <div className="body">
         <CannotArchive fontSize="160px" />
-        <div className="text1">{`Can't start Prototype`}</div>
+        <div className="text1">{`Can't start ${
+          entity === ComposerEntity.CHECKLIST ? 'Prototype' : 'Job'
+        }`}</div>
         <div className="text2">
-          {`Can't start a Prototype when in 'All Facility' view. Select a Facility
+          {`Can't start a ${
+            entity === ComposerEntity.CHECKLIST ? 'Prototype' : 'Job'
+          } when in 'All Facility' view. Select a Facility
           first.`}
         </div>
       </div>
@@ -65,4 +71,4 @@ const PrototypeStartError: FC<CommonOverlayProps<unknown>> = ({
   </Wrapper>
 );
 
-export default PrototypeStartError;
+export default StartErrorModal;

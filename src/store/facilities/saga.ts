@@ -1,3 +1,4 @@
+import { resetPropertiesState } from '#store/properties/actions';
 import { apiGetFacilities, apiSwitchFacility } from '#utils/apiUrls';
 import { setAuthHeader } from '#utils/axiosClient';
 import { ResponseObj } from '#utils/globalTypes';
@@ -45,6 +46,7 @@ function* switchFacilitySaga({
     if (data) {
       setAuthHeader(data.accessToken);
       yield put(switchFacilitySuccess(data.accessToken, facilityId));
+      yield put(resetPropertiesState());
       navigate('/');
     } else {
       console.log('some error :: ');

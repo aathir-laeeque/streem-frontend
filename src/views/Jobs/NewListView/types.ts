@@ -1,4 +1,5 @@
 import { Checklist } from '#PrototypeComposer/checklist.types';
+import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
@@ -17,16 +18,13 @@ export type Assignee = Pick<
   jobId: string;
 };
 
-type JobProperties = {
-  [key: string]: string | null;
-};
-
+// TODO properties as null seems unnecessary here consider removing it
 export type Job = {
   checklist: Checklist;
   code: string;
   completedTasks: number;
   id: string;
-  properties: JobProperties[] | null;
+  properties: Pick<Property, 'id' | 'name' | 'label' | 'value'>[] | null;
   state: JobStateType;
   totalTasks: number;
   name?: string;

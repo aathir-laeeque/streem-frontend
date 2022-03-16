@@ -1,12 +1,16 @@
-import '#i18n';
-
 import { CustomRoute, Notification, OverlayContainer } from '#components';
+import '#i18n';
 import { configureStore } from '#store';
 import { setAuthHeader } from '#utils/axiosClient';
-import { AuthView, FacilitySelectionView, HomeView } from '#views';
-import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
+import {
+  AuthView,
+  FacilitySelectionView,
+  HomeView,
+  UseCaseSelectionView,
+} from '#views';
 import PrintJob from '#views/Jobs/PrintJob';
 import PrintJobActivity from '#views/Jobs/PrintJobActivity';
+import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
 import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
 import { Router } from '@reach/router';
 import React, { FC } from 'react';
@@ -36,11 +40,12 @@ const App: FC = () => {
         <Router style={{ display: 'flex', flex: 1 }} basepath="/">
           <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
           <CustomRoute as={FacilitySelectionView} path="facility/selection" />
+          <CustomRoute as={HomeView} path="home" />
           <CustomRoute as={PrintJob} path="jobs/:jobId/print" />
           <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
           <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
           <CustomRoute as={PrintJobActivity} path="job-activity/:jobId/print" />
-          <CustomRoute as={HomeView} path="/*" />
+          <CustomRoute as={UseCaseSelectionView} path="/*" />
         </Router>
         <Notification
           position="top-right"

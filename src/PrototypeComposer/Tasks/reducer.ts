@@ -33,7 +33,7 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
 
       const checklist = isChecklist
         ? (data as Checklist)
-        : ((data as unknown) as Job).checklist;
+        : (data as unknown as Job).checklist;
 
       return {
         ...state,

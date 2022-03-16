@@ -1,9 +1,8 @@
+import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { CollaboratorState, Collaborator } from './reviewer.types';
 
-export type Properties = {
-  [key: string]: string | null;
-};
+export type ChecklistProperty = Pick<Property, 'id' | 'name' | 'value'>;
 
 export type Employee = Pick<
   User,
@@ -198,12 +197,11 @@ export type Checklist = {
   versionNumber: number;
   archived?: boolean;
   stages: Stage[];
-  properties?: Properties;
+  properties?: ChecklistProperty[];
   audit: Audit;
   phase?: number;
   comments: Comment[];
   collaborators: Collaborator[];
-
   noOfJobs?: number;
   noOfTasks?: number;
   version: number | null;

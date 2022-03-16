@@ -1,8 +1,6 @@
-import { PropertyByName } from '#services/properties';
 import { getUserName } from '#services/users';
 import { StyleSheet, Text, View } from '@react-pdf/renderer';
 import React from 'react';
-
 import { JobSummary } from '../Summary/types';
 import InputGroup from './InputGroup';
 
@@ -29,17 +27,9 @@ const styles = StyleSheet.create({
 type Props = Pick<
   JobSummary,
   'code' | 'completedBy' | 'createdBy' | 'properties'
-> & {
-  jobProperties: PropertyByName;
-};
+>;
 
-const JobDetails = ({
-  code,
-  completedBy,
-  createdBy,
-  jobProperties,
-  properties,
-}: Props) => (
+const JobDetails = ({ code, completedBy, createdBy, properties }: Props) => (
   <View style={styles.container}>
     <Text style={styles.title}>Job Details</Text>
 
@@ -58,12 +48,8 @@ const JobDetails = ({
     <InputGroup label="Job ID" value={code} />
 
     {/* render all the properties of the job */}
-    {Object.entries(properties).map(([propertyName, propertyValue]) => (
-      <InputGroup
-        key={propertyName}
-        label={jobProperties[propertyName]?.placeHolder}
-        value={propertyValue as string}
-      />
+    {Object.values(properties).map((prop) => (
+      <InputGroup key={prop.name} label={prop.label} value={prop.value} />
     ))}
   </View>
 );
