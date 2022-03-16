@@ -16,9 +16,9 @@ import {
   stageListReducer,
 } from './StageList/reducer';
 import {
-  initialState as activityState,
-  jobActivityReducer,
-} from './JobActivity/reducer';
+  initialState as auditLogsState,
+  jobAuditLogsReducer,
+} from './JobAuditLogs/reducer';
 import {
   initialState as taskListState,
   taskListReducer,
@@ -42,7 +42,7 @@ const initialState: ComposerState = {
 
   assignees: [],
 
-  activity: activityState,
+  auditLogs: auditLogsState,
 };
 
 /**
@@ -104,7 +104,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
         activities: activityListReducer(state.activities, action),
         stages: stageListReducer(state.stages, action),
         tasks: taskListReducer(state.tasks, action),
-        activity: jobActivityReducer(state.activity, action),
+        auditLogs: jobAuditLogsReducer(state.auditLogs, action),
       };
   }
 };

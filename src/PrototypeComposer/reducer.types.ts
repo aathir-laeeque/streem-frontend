@@ -1,6 +1,3 @@
-import { ChecklistActivityState } from './ChecklistActivity/types';
-import ChecklistActivity from '#JobComposer/ActivityList/Checklist';
-import { Pageable } from '#utils/globalTypes';
 import {
   fetchComposerDataError,
   fetchComposerDataOngoing,
@@ -9,6 +6,7 @@ import {
 } from './actions';
 import { ActivityListState } from './Activity/reducer.types';
 import { Checklist } from './checklist.types';
+import { ChecklistAuditLogsState } from './ChecklistAuditLogs/types';
 import {
   assignReviewerToChecklist,
   fetchApproversSuccess,
@@ -32,7 +30,7 @@ export type ComposerState = {
   readonly loading: boolean;
   readonly stages: StageListState;
   readonly tasks: TaskListState;
-  activity: ChecklistActivityState;
+  auditLogs: ChecklistAuditLogsState;
 };
 
 export enum ComposerAction {

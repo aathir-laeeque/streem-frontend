@@ -1,11 +1,8 @@
 import logo from '#assets/images/logo.png';
 import { fetchData } from '#JobComposer/actions';
 import { Entity } from '#JobComposer/composer.types';
-import { fetchJobActivities } from '#JobComposer/JobActivity/actions';
-import {
-  JobActivity as JobActivityType,
-  JobActivitySeverity,
-} from '#JobComposer/JobActivity/types';
+import { fetchJobAuditLogs } from '#JobComposer/JobAuditLogs/actions';
+import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
 import { Checklist, TaskExecution } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { removeUnderscore } from '#utils/stringUtils';
@@ -27,16 +24,15 @@ import {
   TabLookLike,
 } from '../PrintJob/Components';
 import { LoadingDiv, styles } from './styles';
-import { PrintJobActivityProps } from './types';
+import { PrintJobAuditLogProps } from './types';
 
 const now = moment().format('Do MMM, YYYY, hh:mm a');
 
-const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
+const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
   const { data: composerData } = useTypedSelector((state) => state.composer);
-  const { logs } = useTypedSelector((state) => state.composer.activity);
+  const { logs } = useTypedSelector((state) => state.composer.auditLogs);
   const { profile, settings } = useTypedSelector((state) => state.auth);
-  const { filters } = useTypedSelector((state) => state.activityFilters);
-
+  const { filters } = useTypedSelector((state) => state.auditLogFilters);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -48,7 +44,7 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
 
   const fetchLogs = (page = 0, size = 250) => {
     dispatch(
-      fetchJobActivities({
+      fetchJobAuditLogs({
         jobId,
         params: { size, filters, sort: 'triggeredAt,desc', page },
       }),
@@ -73,15 +69,14 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
     assignees.push(assigneesObj[key]);
   });
 
-  const grouped = groupBy(logs, 'triggeredOn');
-  const data = [] as Record<string, string | JobActivityType[]>[];
-
-  Object.keys(grouped).forEach((item) => {
-    data.push({
-      [`${item}`]: grouped[item],
-      id: item,
-    });
-  });
+  const grouped: { [index: string]: JobAuditLogType[] } = groupBy(
+    logs,
+    'triggeredOn',
+  );
+  const data = Object.keys(grouped).map((item) => ({
+    auditLogs: grouped[item],
+    id: item,
+  }));
 
   return (
     <PDFViewer style={{ width: '100%', height: '100%' }}>
@@ -152,38 +147,23 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
           <View style={styles.container} break>
             {data.map((item) => {
               const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
-              let criticalCount = 0;
-              item[item.id].forEach((element: JobActivityType) => {
-                if (element.severity === JobActivitySeverity.CRITICAL)
-                  criticalCount++;
-              });
 
               return (
                 <View style={styles.columns} key={`name_${item.id}`}>
                   <View style={styles.logHeader}>
                     <Text style={styles.headerItemText}>{day}</Text>
                     <Text style={styles.headerItemText}>
-                      {item[item.id].length} activities
+                      {item.auditLogs.length} activities
                     </Text>
-                    {criticalCount !== 0 && (
-                      <>
-                        <Text style={styles.headerItemText}>
-                          {criticalCount} Critical
-                        </Text>
-                      </>
-                    )}
                   </View>
                   <View style={styles.logRow}>
-                    {item[item.id].map((log: JobActivityType) => (
+                    {item.auditLogs.map((log: JobAuditLogType) => (
                       <View style={styles.logItem} key={`${log.id}`}>
                         <View style={styles.circle} />
                         <View style={styles.content} wrap={false}>
                           <Text style={styles.contentItems}>
                             {moment.unix(log.triggeredAt).format('hh:mm A')}
                           </Text>
-                          {log.severity === JobActivitySeverity.CRITICAL && (
-                            <View />
-                          )}
                           <Text
                             style={[
                               styles.contentItems,
@@ -212,7 +192,7 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
             <View style={styles.pageInfo}>
               <Text
                 style={{ fontSize: 10, minHeight: 10 }}
-                render={({ pageNumber, totalPages }) => `${pageNumber}`}
+                render={({ pageNumber }) => `${pageNumber}`}
                 fixed
               />
             </View>
@@ -223,13 +203,13 @@ const MyPrintJobActivity: FC<{ jobId: string }> = ({ jobId }) => {
   );
 };
 
-const MemoPrintJobActivity = React.memo(MyPrintJobActivity);
+const MemoPrintJobAuditLogs = React.memo(MyPrintJobAuditLogs);
 
-const PrintJobActivity: FC<PrintJobActivityProps> = ({ jobId }) => (
+const PrintJobAuditLogs: FC<PrintJobAuditLogProps> = ({ jobId }) => (
   <>
     <LoadingDiv>Loading...</LoadingDiv>
-    {jobId && <MemoPrintJobActivity jobId={jobId} />}
+    {jobId && <MemoPrintJobAuditLogs jobId={jobId} />}
   </>
 );
 
-export default PrintJobActivity;
+export default PrintJobAuditLogs;

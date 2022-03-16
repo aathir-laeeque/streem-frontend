@@ -16,7 +16,7 @@ import {
 } from './actions';
 import { setValidationError as setActivityValidationError } from './Activity/actions';
 import { ActivitySaga } from './Activity/saga';
-import { ChecklistActivitySaga } from './ChecklistActivity/saga';
+import { ChecklistAuditLogsSaga } from './ChecklistAuditLogs/saga';
 import { ComposerAction } from './reducer.types';
 import { ReviewerSaga } from './reviewer.saga';
 import { setValidationError as setStageValidationError } from './Stages/actions';
@@ -111,6 +111,6 @@ export function* ComposerSaga() {
     fork(TaskListSaga),
     fork(ActivitySaga),
     fork(ReviewerSaga),
-    fork(ChecklistActivitySaga),
+    fork(ChecklistAuditLogsSaga),
   ]);
 }

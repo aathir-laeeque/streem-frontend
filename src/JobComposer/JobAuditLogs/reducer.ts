@@ -1,12 +1,12 @@
 import { Pageable } from '#utils/globalTypes';
 import {
-  JobActivity,
+  JobAuditLogType,
   JobActivityAction,
   JobActivityActionType,
-  JobActivityState,
+  JobAuditLogState,
 } from './types';
 
-export const initialState: JobActivityState = {
+export const initialState: JobAuditLogState = {
   logs: [],
   loading: false,
   pageable: {
@@ -24,7 +24,7 @@ export const initialState: JobActivityState = {
 const reducer = (
   state = initialState,
   action: JobActivityActionType,
-): JobActivityState => {
+): JobAuditLogState => {
   switch (action.type) {
     case JobActivityAction.FETCH_JOB_ACTIVITY_ONGOING:
       return { ...state, loading: true };
@@ -37,8 +37,8 @@ const reducer = (
         pageable: pageable as Pageable,
         logs:
           pageable && pageable.page === 0
-            ? (data as Array<JobActivity>)
-            : [...state.logs, ...(data as JobActivity[])],
+            ? (data as Array<JobAuditLogType>)
+            : [...state.logs, ...(data as JobAuditLogType[])],
       };
 
     case JobActivityAction.FETCH_JOB_ACTIVITY_ERROR:
@@ -49,4 +49,4 @@ const reducer = (
   }
 };
 
-export { reducer as jobActivityReducer };
+export { reducer as jobAuditLogsReducer };

@@ -110,10 +110,10 @@ export const apiResetPassword = () => `${baseUrl}/auth/password`;
 
 export const apiGetSessionActivities = () => `${baseUrl}/users/audits`;
 
-export const apiGetJobActivity = (jobId: Job['id']) =>
+export const apiGetJobAuditLogs = (jobId: Job['id']) =>
   `${baseUrl}/audits/jobs/${jobId}`;
 
-export const apiGetChecklistActivity = (jobId: Job['id']) =>
+export const apiGetChecklistAuditLogs = (jobId: Job['id']) =>
   `${baseUrl}/audits/checklists/${jobId}`;
 
 // Task

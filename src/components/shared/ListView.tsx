@@ -1,5 +1,6 @@
 import NestedMenuItem from '#components/shared/NestedMenuItem';
-import { JobActivity } from '#JobComposer/JobActivity/types';
+import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
+import { ChecklistAuditLogsType } from '#PrototypeComposer/ChecklistAuditLogs/types';
 import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
 import Menu from '@material-ui/core/Menu';
 import { ArrowDropDown, Search } from '@material-ui/icons';
@@ -23,7 +24,8 @@ export type FilterProp = {
 
 type DataType =
   | Record<string, string | SessionActivity[]>
-  | Record<string, string | JobActivity[]>;
+  | Record<string, string | JobAuditLogType[]>
+  | Record<string, string | ChecklistAuditLogsType[]>;
 
 type ExtraColumn = {
   header: string;

@@ -2,28 +2,24 @@ import { ComposerActionType } from '#JobComposer/composer.reducer.types';
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
 import {
-  fetchJobActivitiesError,
-  fetchJobActivitiesOngoing,
-  fetchJobActivitiesSuccess,
+  fetchJobAuditLogsError,
+  fetchJobAuditLogsOngoing,
+  fetchJobAuditLogsSuccess,
 } from './actions';
 
-export interface JobActivity {
-  triggeredOn: string;
+export type JobAuditLogType = {
   id: string;
-  triggeredAt: number;
-  event: string;
+  jobId: string;
   action: string;
-  severity: string;
-  oldData: string | null;
-  newData: string | null;
-  diffData: string | null;
   details: string;
-}
+  triggeredAt: number;
+  triggeredBy: number;
+};
 
 export type JobActivityProps = RouteComponentProps;
 
-export interface JobActivityState {
-  readonly logs: JobActivity[];
+export interface JobAuditLogState {
+  readonly logs: JobAuditLogType[];
   readonly pageable: Pageable;
   readonly loading: boolean;
   readonly error?: any;
@@ -46,8 +42,8 @@ export enum JobActivitySeverity {
 
 export type JobActivityActionType =
   | ReturnType<
-      | typeof fetchJobActivitiesError
-      | typeof fetchJobActivitiesOngoing
-      | typeof fetchJobActivitiesSuccess
+      | typeof fetchJobAuditLogsError
+      | typeof fetchJobAuditLogsOngoing
+      | typeof fetchJobAuditLogsSuccess
     >
   | ComposerActionType;

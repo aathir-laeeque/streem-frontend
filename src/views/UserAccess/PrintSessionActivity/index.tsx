@@ -25,7 +25,7 @@ const now = moment().format('Do MMM, YYYY, hh:mm a');
 const MyPrintSessionActivity: FC = () => {
   const { logs } = useTypedSelector((state) => state.sessionActivity);
   const { profile, settings } = useTypedSelector((state) => state.auth);
-  const { filters } = useTypedSelector((state) => state.activityFilters);
+  const { filters } = useTypedSelector((state) => state.auditLogFilters);
 
   const dispatch = useDispatch();
 

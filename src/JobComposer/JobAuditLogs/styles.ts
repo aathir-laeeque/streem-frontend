@@ -5,7 +5,7 @@ export const Composer = styled.div`
   display: flex;
   flex-direction: column;
 
-  .activity-wrapper {
+  .audit-logs-wrapper {
     grid-area: activity;
     background: #fff;
     box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);

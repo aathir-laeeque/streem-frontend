@@ -9,7 +9,7 @@ import {
   UseCaseSelectionView,
 } from '#views';
 import PrintJob from '#views/Jobs/PrintJob';
-import PrintJobActivity from '#views/Jobs/PrintJobActivity';
+import PrintJobAuditLogs from '#views/Jobs/PrintJobAuditLogs';
 import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
 import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
 import { Router } from '@reach/router';
@@ -44,7 +44,10 @@ const App: FC = () => {
           <CustomRoute as={PrintJob} path="jobs/:jobId/print" />
           <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
           <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
-          <CustomRoute as={PrintJobActivity} path="job-activity/:jobId/print" />
+          <CustomRoute
+            as={PrintJobAuditLogs}
+            path="job-activity/:jobId/print"
+          />
           <CustomRoute as={UseCaseSelectionView} path="/*" />
         </Router>
         <Notification

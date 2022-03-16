@@ -9,7 +9,7 @@ import { combineReducers } from 'redux';
 import { PropertiesReducer } from './properties/reducer';
 import { UsersServiceReducer } from '../services/users/reducer';
 import { NewJobListViewReducer } from '../views/Jobs/NewListView/reducer';
-import { ActivityFiltersReducer } from './activity-filters/reducer';
+import { AuditLogFiltersReducer } from './audit-log-filters/reducer';
 import { FacilitiesReducer } from './facilities/reducer';
 import { FileUploadReducer } from './file-upload/reducer';
 import { UsersReducer } from './users/reducer';
@@ -30,7 +30,7 @@ export const rootReducer = combineReducers({
   extras: ExtrasReducer,
   properties: PropertiesReducer,
   usersService: UsersServiceReducer,
-  activityFilters: ActivityFiltersReducer,
+  auditLogFilters: AuditLogFiltersReducer,
   jobListView: NewJobListViewReducer,
   facilityWiseConstants: FacilityWiseConstantsReducer,
 });

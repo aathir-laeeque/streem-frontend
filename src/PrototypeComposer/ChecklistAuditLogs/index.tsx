@@ -6,15 +6,13 @@ import {
 } from '#components';
 import { useTypedSelector } from '#store';
 import {
-  clearActivityFilters,
-  setActivityFilters,
-} from '#store/activity-filters/action';
+  clearAuditLogFilters,
+  setAuditLogFilters,
+} from '#store/audit-log-filters/action';
 import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
-import { FilterOperators } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
-import { Job } from '#views/Jobs/NewListView/types';
 import TextField from '@material-ui/core/TextField';
 import { Search } from '@material-ui/icons';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
@@ -33,9 +31,9 @@ import { groupBy } from 'lodash';
 import moment, { Moment } from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchJobActivities } from './actions';
+import { fetchChecklistAuditLogs } from './actions';
 import { Composer, UserFilterWrapper } from './styles';
-import { JobActivity, JobActivitySeverity, JobActivityState } from './types';
+import { ChecklistAuditLogsType, ChecklistAuditLogsState } from './types';
 
 type initialState = {
   dateRange: DateRange<Moment>;
@@ -61,11 +59,11 @@ const initialState: initialState = {
   appliedUsers: [],
 };
 
-type Props = RouteComponentProps<{ jobId: Job['id'] }>;
+type Props = RouteComponentProps<{ id: string }>;
 
-const ActivityView: FC<Props> = ({ jobId }) => {
-  const { logs, loading, pageable }: JobActivityState = useTypedSelector(
-    (state) => state.composer.activity,
+const AuditLogs: FC<Props> = ({ id }) => {
+  const { logs, loading, pageable }: ChecklistAuditLogsState = useTypedSelector(
+    (state) => state.prototypeComposer.auditLogs,
   );
   const {
     list,
@@ -80,7 +78,7 @@ const ActivityView: FC<Props> = ({ jobId }) => {
 
   const resetFilter = () => {
     setstate(initialState);
-    dispatch(clearActivityFilters());
+    dispatch(clearAuditLogFilters());
   };
 
   const onCheckChanged = (user: User, checked: boolean) => {
@@ -291,7 +289,7 @@ const ActivityView: FC<Props> = ({ jobId }) => {
 
   useEffect(() => {
     return () => {
-      dispatch(clearActivityFilters());
+      dispatch(clearAuditLogFilters());
     };
   }, []);
 
@@ -307,10 +305,8 @@ const ActivityView: FC<Props> = ({ jobId }) => {
 
   const fetchUsersData = (page: number, size: number) => {
     const filters = JSON.stringify({
-      op: FilterOperators.AND,
-      fields: [
-        { field: 'firstName', op: FilterOperators.LIKE, values: [searchQuery] },
-      ],
+      op: 'AND',
+      fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
     });
     dispatch(fetchUsers({ page, size, filters }, UsersListType.ALL));
   };
@@ -339,12 +335,12 @@ const ActivityView: FC<Props> = ({ jobId }) => {
       const fields = [
         {
           field: 'triggeredAt',
-          op: FilterOperators.LOE,
+          op: 'LOE',
           values: [lowerThan],
         },
         {
           field: 'triggeredBy',
-          op: FilterOperators.ANY,
+          op: 'ANY',
           values: userFilter,
         },
       ];
@@ -352,21 +348,21 @@ const ActivityView: FC<Props> = ({ jobId }) => {
       if (state.appliedFilters['Date/Time Range']) {
         fields.push({
           field: 'triggeredAt',
-          op: FilterOperators.GOE,
+          op: 'GOE',
           values: [greaterThan],
         });
       }
 
       const filters = JSON.stringify({
-        op: FilterOperators.AND,
+        op: 'AND',
         fields,
       });
 
-      dispatch(setActivityFilters(filters));
-      if (jobId) {
+      dispatch(setAuditLogFilters(filters));
+      if (id) {
         dispatch(
-          fetchJobActivities({
-            jobId,
+          fetchChecklistAuditLogs({
+            checklistId: id,
             params: { size, filters, sort: 'triggeredAt,desc', page },
           }),
         );
@@ -378,18 +374,24 @@ const ActivityView: FC<Props> = ({ jobId }) => {
     return <div>{loading && 'Loading...'}</div>;
   }
 
-  const grouped = groupBy(logs, 'triggeredOn');
-  const data = [] as Record<string, string | JobActivity[]>[];
-
-  Object.keys(grouped).forEach((item) => {
-    data.push({
-      [`${item}`]: grouped[item],
-      id: item,
-    });
-  });
+  const grouped: { [index: string]: ChecklistAuditLogsType[] } = groupBy(
+    logs,
+    'triggeredOn',
+  );
+  const data = Object.keys(grouped).map((item) => ({
+    [item]: grouped[item],
+    id: item,
+  }));
 
   return (
-    <Composer>
+    <Composer
+      style={{
+        margin: '8px',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <GoBack label="Return to process" className="go-back" />
       <div className="activity-wrapper">
         <ListViewComponent
@@ -398,10 +400,6 @@ const ActivityView: FC<Props> = ({ jobId }) => {
           isLast={pageable.last}
           currentPage={pageable.page}
           data={data}
-          onPrimaryClick={() =>
-            window.open(`/job-activity/${jobId}/print`, '_blank')
-          }
-          primaryButtonText="Export"
           filterProp={filterProp}
           beforeColumns={[
             {
@@ -410,10 +408,7 @@ const ActivityView: FC<Props> = ({ jobId }) => {
                 const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
                 let criticalCount = 0;
                 const itemId = item.id as string;
-                (item[itemId] as JobActivity[]).forEach((element) => {
-                  if (element.severity === JobActivitySeverity.CRITICAL)
-                    criticalCount++;
-                });
+
                 return (
                   <div className="list-card-columns" key={`name_${itemId}`}>
                     <div style={{ padding: '0px 8px', flex: 1 }}>
@@ -434,8 +429,8 @@ const ActivityView: FC<Props> = ({ jobId }) => {
                         )}
                       </div>
                       <div className="log-row">
-                        {(item[itemId] as JobActivity[]).map(
-                          (log: JobActivity) => (
+                        {(item[itemId] as ChecklistAuditLogsType[]).map(
+                          (log) => (
                             <div className="log-item" key={`${log.id}`}>
                               <div className="circle" />
                               <div className="content">
@@ -447,12 +442,6 @@ const ActivityView: FC<Props> = ({ jobId }) => {
                                     .unix(log.triggeredAt)
                                     .format('hh:mm A')}
                                 </div>
-                                {log.severity ===
-                                  JobActivitySeverity.CRITICAL && (
-                                  <div className="content-items">
-                                    <ReportProblemOutlinedIcon className="icon" />
-                                  </div>
-                                )}
                                 <div className="content-items">
                                   {log.details}
                                 </div>
@@ -473,4 +462,4 @@ const ActivityView: FC<Props> = ({ jobId }) => {
   );
 };
 
-export default ActivityView;
+export default AuditLogs;

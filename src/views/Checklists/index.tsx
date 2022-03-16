@@ -1,5 +1,5 @@
 import Composer from '#PrototypeComposer';
-import ActivityView from '#PrototypeComposer/ChecklistActivity';
+import AuditLogs from '#PrototypeComposer/ChecklistAuditLogs';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { RouteComponentProps, Router } from '@reach/router';
 import React, { FC } from 'react';
@@ -10,7 +10,7 @@ const ChecklistView: FC<RouteComponentProps> = () => (
   <Router>
     <ListView path="/" />
     <Composer path="/:id" entity={ComposerEntity.CHECKLIST} />
-    <ActivityView path="/:id/activites" />
+    <AuditLogs path="/:id/activites" />
     <NewPrototype path="/prototype" />
   </Router>
 );

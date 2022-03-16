@@ -1,9 +1,9 @@
 import { Checkbox, FilterProp, ListViewComponent } from '#components';
 import { useTypedSelector } from '#store';
 import {
-  clearActivityFilters,
-  setActivityFilters,
-} from '#store/activity-filters/action';
+  clearAuditLogFilters,
+  setAuditLogFilters,
+} from '#store/audit-log-filters/action';
 import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
 import { FilterOperators } from '#utils/globalTypes';
@@ -26,7 +26,6 @@ import { groupBy } from 'lodash';
 import moment, { Moment } from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { TabViewProps } from '../types';
 import { fetchSessionActivities } from './actions';
 import { Composer, UserFilterWrapper } from './styles';
@@ -77,7 +76,7 @@ const SessionActivity: FC<TabViewProps> = () => {
 
   const resetFilter = () => {
     setstate(initialState);
-    dispatch(clearActivityFilters());
+    dispatch(clearAuditLogFilters());
   };
 
   const onCheckChanged = (user: User, checked: boolean) => {
@@ -243,7 +242,7 @@ const SessionActivity: FC<TabViewProps> = () => {
               });
             }
 
-            ((list as unknown) as Array<User>).forEach((user) => {
+            (list as unknown as Array<User>).forEach((user) => {
               const isSelected = selectedUsers.some(
                 (item) => item.id === user.id,
               );
@@ -288,7 +287,7 @@ const SessionActivity: FC<TabViewProps> = () => {
 
   useEffect(() => {
     return () => {
-      dispatch(clearActivityFilters());
+      dispatch(clearAuditLogFilters());
     };
   }, []);
 
@@ -358,7 +357,7 @@ const SessionActivity: FC<TabViewProps> = () => {
         fields,
       });
 
-      dispatch(setActivityFilters(filters));
+      dispatch(setAuditLogFilters(filters));
 
       dispatch(
         fetchSessionActivities({

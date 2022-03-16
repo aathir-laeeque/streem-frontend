@@ -1,8 +1,8 @@
 import { actionSpreader } from '#store/helpers';
 import { ResponseObj } from '#utils/globalTypes';
-import { JobActivityAction, JobActivity } from './types';
+import { JobActivityAction, JobAuditLogType } from './types';
 
-export const fetchJobActivities = (payload: {
+export const fetchJobAuditLogs = (payload: {
   jobId: string;
   params: {
     size: number;
@@ -12,17 +12,17 @@ export const fetchJobActivities = (payload: {
   };
 }) => actionSpreader(JobActivityAction.FETCH_JOB_ACTIVITY, payload);
 
-export const fetchJobActivitiesOngoing = () =>
+export const fetchJobAuditLogsOngoing = () =>
   actionSpreader(JobActivityAction.FETCH_JOB_ACTIVITY_ONGOING);
 
-export const fetchJobActivitiesSuccess = ({
+export const fetchJobAuditLogsSuccess = ({
   data,
   pageable,
-}: Partial<ResponseObj<JobActivity[]>>) =>
+}: Partial<ResponseObj<JobAuditLogType[]>>) =>
   actionSpreader(JobActivityAction.FETCH_JOB_ACTIVITY_SUCCESS, {
     data,
     pageable,
   });
 
-export const fetchJobActivitiesError = (error: any) =>
+export const fetchJobAuditLogsError = (error: any) =>
   actionSpreader(JobActivityAction.FETCH_JOB_ACTIVITY_ERROR, { error });

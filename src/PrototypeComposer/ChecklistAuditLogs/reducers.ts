@@ -1,12 +1,12 @@
 import { Pageable } from '#utils/globalTypes';
 import {
-  ChecklistActivity,
-  ChecklistActivityAction,
-  ChecklistActivityActionType,
-  ChecklistActivityState,
+  ChecklistAuditLogsType,
+  ChecklistAuditLogActions,
+  ChecklistAuditLogActionType,
+  ChecklistAuditLogsState,
 } from './types';
 
-export const initialState: ChecklistActivityState = {
+export const initialState: ChecklistAuditLogsState = {
   logs: [],
   loading: false,
   pageable: {
@@ -23,13 +23,13 @@ export const initialState: ChecklistActivityState = {
 
 const reducer = (
   state = initialState,
-  action: ChecklistActivityActionType,
-): ChecklistActivityState => {
+  action: ChecklistAuditLogActionType,
+): ChecklistAuditLogsState => {
   switch (action.type) {
-    case ChecklistActivityAction.FETCH_CHECKLIST_ACTIVITY_ONGOING:
+    case ChecklistAuditLogActions.FETCH_CHECKLIST_AUDIT_LOGS_ONGOING:
       return { ...state, loading: true };
 
-    case ChecklistActivityAction.FETCH_CHECKLIST_ACTIVITY_SUCCESS:
+    case ChecklistAuditLogActions.FETCH_CHECKLIST_AUDIT_LOGS_SUCCESS:
       const { data, pageable } = action.payload;
       return {
         ...state,
@@ -37,11 +37,11 @@ const reducer = (
         pageable: pageable as Pageable,
         logs:
           pageable && pageable.page === 0
-            ? (data as Array<ChecklistActivity>)
-            : [...state.logs, ...(data as ChecklistActivity[])],
+            ? (data as Array<ChecklistAuditLogsType>)
+            : [...state.logs, ...(data as ChecklistAuditLogsType[])],
       };
 
-    case ChecklistActivityAction.FETCH_CHECKLIST_ACTIVITY_ERROR:
+    case ChecklistAuditLogActions.FETCH_CHECKLIST_AUDIT_LOGS_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
 
     default:
@@ -49,4 +49,4 @@ const reducer = (
   }
 };
 
-export { reducer as checklistActivityReducer };
+export { reducer as checklistAuditLogsReducer };

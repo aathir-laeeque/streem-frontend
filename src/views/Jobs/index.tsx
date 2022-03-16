@@ -1,6 +1,6 @@
 import Composer from '#JobComposer';
 import { Entity } from '#JobComposer/composer.types';
-import ActivityView from '#JobComposer/JobActivity';
+import AuditLogs from '#JobComposer/JobAuditLogs';
 import { Router } from '@reach/router';
 import React, { FC } from 'react';
 import Assignments from './Assignment';
@@ -16,7 +16,7 @@ const JobsView: FC<JobsViewProps> = () => (
 
     <Assignments path="/:jobId/assignments" />
 
-    <ActivityView path="/:jobId/activites" />
+    <AuditLogs path="/:jobId/activites" />
 
     <JobSummary path="/:jobId/summary" />
   </Router>

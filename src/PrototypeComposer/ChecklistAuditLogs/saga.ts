@@ -1,29 +1,29 @@
-import { apiGetChecklistActivity } from '#utils/apiUrls';
+import { apiGetChecklistAuditLogs } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import moment from 'moment';
 import { call, put, takeLeading } from 'redux-saga/effects';
 
 import {
-  fetchChecklistActivities,
-  fetchChecklistActivitiesOngoing,
-  fetchChecklistActivitiesSuccess,
-  fetchChecklistActivitiesError,
+  fetchChecklistAuditLogs,
+  fetchChecklistAuditLogsOngoing,
+  fetchChecklistAuditLogsSuccess,
+  fetchChecklistAuditLogsError,
 } from './actions';
-import { ChecklistActivity, ChecklistActivityAction } from './types';
+import { ChecklistAuditLogsType, ChecklistAuditLogActions } from './types';
 
-function* fetchChecklistActivitiesSaga({
+function* fetchChecklistAuditLogsSaga({
   payload,
-}: ReturnType<typeof fetchChecklistActivities>) {
+}: ReturnType<typeof fetchChecklistAuditLogs>) {
   try {
     const { checklistId, params } = payload;
 
     if (params.page === 0) {
-      yield put(fetchChecklistActivitiesOngoing());
+      yield put(fetchChecklistAuditLogsOngoing());
     }
 
-    const { data, pageable, errors }: ResponseObj<ChecklistActivity[]> =
-      yield call(request, 'GET', apiGetChecklistActivity(checklistId), {
+    const { data, pageable, errors }: ResponseObj<ChecklistAuditLogsType[]> =
+      yield call(request, 'GET', apiGetChecklistAuditLogs(checklistId), {
         params,
       });
 
@@ -37,7 +37,7 @@ function* fetchChecklistActivitiesSaga({
     }));
 
     yield put(
-      fetchChecklistActivitiesSuccess({
+      fetchChecklistAuditLogsSuccess({
         data: newData,
         pageable,
       }),
@@ -48,13 +48,13 @@ function* fetchChecklistActivitiesSaga({
       'fetchChecklistActivitiesSaga',
       e,
     );
-    yield put(fetchChecklistActivitiesError(error));
+    yield put(fetchChecklistAuditLogsError(error));
   }
 }
 
-export function* ChecklistActivitySaga() {
+export function* ChecklistAuditLogsSaga() {
   yield takeLeading(
-    ChecklistActivityAction.FETCH_CHECKLIST_ACTIVITY,
-    fetchChecklistActivitiesSaga,
+    ChecklistAuditLogActions.FETCH_CHECKLIST_AUDIT_LOGS,
+    fetchChecklistAuditLogsSaga,
   );
 }

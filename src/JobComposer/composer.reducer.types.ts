@@ -13,7 +13,7 @@ import {
 } from './actions';
 import { ActivityListState } from './ActivityList/reducer.types';
 import { Entity } from './composer.types';
-import { JobActivityState } from './JobActivity/types';
+import { JobAuditLogState } from './JobAuditLogs/types';
 import { fetchActiveStageDataSuccess } from './StageList/actions';
 import { StageListState } from './StageList/reducer.types';
 import { TaskListState } from './TaskList/reducer.types';
@@ -28,7 +28,7 @@ export type ComposerState = {
   stages: StageListState;
   tasks: TaskListState;
   assignees: User[];
-  activity: JobActivityState;
+  auditLogs: JobAuditLogState;
   signOffError?: string;
 };
 

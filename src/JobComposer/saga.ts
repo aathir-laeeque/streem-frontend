@@ -42,7 +42,7 @@ import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
 import { ComposerAction } from './composer.reducer.types';
 import { Entity } from './composer.types';
-import { JobActivitySaga } from './JobActivity/saga';
+import { JobAuditLogsSaga } from './JobAuditLogs/saga';
 import { StageListSaga } from './StageList/saga';
 import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
@@ -125,9 +125,8 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
       );
     } else {
       if (!withException) {
-        const { tasksErrors, activitiesErrors, signOffErrors } = groupJobErrors(
-          errors,
-        );
+        const { tasksErrors, activitiesErrors, signOffErrors } =
+          groupJobErrors(errors);
 
         if (tasksErrors.length) {
           console.log('handle task level error here');
@@ -233,6 +232,6 @@ export function* ComposerSaga() {
     fork(StageListSaga),
     fork(TaskListSaga),
     fork(ActivityListSaga),
-    fork(JobActivitySaga),
+    fork(JobAuditLogsSaga),
   ]);
 }
