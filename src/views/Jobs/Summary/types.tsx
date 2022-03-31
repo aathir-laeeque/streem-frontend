@@ -4,6 +4,7 @@ import JobSummaryParameterIcon from '#assets/svg/JobSummaryParameterIcon';
 import JobSummarySkippedIcon from '#assets/svg/JobSummarySkippedIcon';
 import JobSummaryTimeIcon from '#assets/svg/JobSummaryTimeIcon';
 import { Property } from '#store/properties/types';
+import JobSummaryYesNoIcon from '#assets/svg/JobSummaryYesNoIcon';
 import { User } from '#services/users';
 import React from 'react';
 import { CompletedJobStates, Job } from '../NewListView/types';
@@ -14,6 +15,7 @@ export enum Exceptions {
   'COMPLETED_WITH_EXCEPTION' = 'Completed with Exception',
   'SKIPPED' = 'Skipped',
   'ERROR_CORRECTION' = 'Error Correction',
+  'YES_NO' = 'Yes/No',
 }
 
 export const ExceptionsIconMapping = {
@@ -22,6 +24,7 @@ export const ExceptionsIconMapping = {
   ['COMPLETED_WITH_EXCEPTION']: <JobSummaryCWEIcon className="icon" />,
   ['SKIPPED']: <JobSummarySkippedIcon className="icon" />,
   ['ERROR_CORRECTION']: <JobSummaryErrorCorrectionIcon className="icon" />,
+  ['YES_NO']: <JobSummaryYesNoIcon className="icon" />,
 };
 
 /**
@@ -78,7 +81,8 @@ type ExceptionType =
   | 'PARAMETER_DEVIATION'
   | 'COMPLETED_WITH_EXCEPTION'
   | 'SKIPPED'
-  | 'ERROR_CORRECTION';
+  | 'ERROR_CORRECTION'
+  | 'YES_NO';
 
 export interface Exception {
   initiator: CompletedBy;

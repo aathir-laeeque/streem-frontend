@@ -112,6 +112,10 @@ const generateDescription = (exception: Exception): ReactNode => {
     case 'ERROR_CORRECTION':
       description = 'Task data corrected with remarks';
       break;
+    
+    case 'YES_NO':
+      description = 'Task with a Yes/No Deviation';
+      break;
 
     default:
       description = '';
