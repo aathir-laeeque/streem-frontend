@@ -1,4 +1,4 @@
-import { FilterField } from '#utils/globalTypes';
+import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { Menu, MenuItem } from '@material-ui/core';
 import { ArrowDropDown, Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
@@ -58,7 +58,7 @@ type DropdownOption = {
   label: string;
   value: string;
   field: string;
-  operator: string;
+  operator: FilterOperators;
 };
 
 type SearchFilterProps = {
@@ -114,7 +114,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
             },
             {
               field: `${selectedOption.field.split('.')[0]}.value`,
-              op: 'LIKE',
+              op: FilterOperators.LIKE,
               values: [searchValue],
             },
           ]),

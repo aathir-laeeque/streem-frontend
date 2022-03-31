@@ -6,6 +6,7 @@ import {
 } from '#store/activity-filters/action';
 import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
+import { FilterOperators } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Job } from '#views/Jobs/NewListView/types';
@@ -299,8 +300,10 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
 
   const fetchUsersData = (page: number, size: number) => {
     const filters = JSON.stringify({
-      op: 'AND',
-      fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
+      op: FilterOperators.AND,
+      fields: [
+        { field: 'firstName', op: FilterOperators.LIKE, values: [searchQuery] },
+      ],
     });
     dispatch(fetchUsers({ page, size, filters }, UsersListType.ALL));
   };
@@ -329,12 +332,12 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
       const fields = [
         {
           field: 'triggeredAt',
-          op: 'LOE',
+          op: FilterOperators.LOE,
           values: [lowerThan],
         },
         {
           field: 'triggeredBy',
-          op: 'ANY',
+          op: FilterOperators.ANY,
           values: userFilter,
         },
       ];
@@ -342,13 +345,13 @@ const ActivityView: FC<{ jobId: Job['id'] }> = ({ jobId }) => {
       if (state.appliedFilters['Date/Time Range']) {
         fields.push({
           field: 'triggeredAt',
-          op: 'GOE',
+          op: FilterOperators.GOE,
           values: [greaterThan],
         });
       }
 
       const filters = JSON.stringify({
-        op: 'AND',
+        op: FilterOperators.AND,
         fields,
       });
 

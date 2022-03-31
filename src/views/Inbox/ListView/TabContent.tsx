@@ -1,7 +1,7 @@
 import { DataTable, ProgressBar, SearchFilter } from '#components';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
-import { FilterField } from '#utils/globalTypes';
+import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
 import { Job } from '#views/Jobs/NewListView/types';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
@@ -41,6 +41,15 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     dispatch(setSelectedState(reducerLabel));
   }, []);
 
+  const getFilteredFields = () => [
+    ...filterFields,
+    {
+      field: 'useCaseId',
+      op: FilterOperators.EQ,
+      values: [selectedUseCase?.id],
+    },
+  ];
+
   const fetchData = (page: number, size: number) => {
     dispatch(
       fetchInbox(
@@ -50,9 +59,8 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           size,
           sort: 'createdAt,desc',
           fields: JSON.stringify({
-            op: 'AND',
-            fields: filterFields,
-            useCaseId: selectedUseCase!.id,
+            op: FilterOperators.AND,
+            fields: getFilteredFields(),
           }),
         },
         reducerLabel,
@@ -69,9 +77,8 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           size: 10,
           sort: 'createdAt,desc',
           filters: JSON.stringify({
-            op: 'AND',
-            fields: filterFields,
-            useCaseId: selectedUseCase!.id,
+            op: FilterOperators.AND,
+            fields: getFilteredFields(),
           }),
         },
         reducerLabel,
@@ -195,13 +202,13 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
               label: 'Name',
               value: 'checklist.name',
               field: 'checklist.name',
-              operator: 'LIKE',
+              operator: FilterOperators.LIKE,
             },
             ...jobProperties.map(({ label, id }) => ({
               label,
               value: id,
               field: 'jobPropertyValues.propertiesId',
-              operator: 'EQ',
+              operator: FilterOperators.EQ,
             })),
           ]}
           updateFilterFields={(fields) => setFilterFields([...fields])}

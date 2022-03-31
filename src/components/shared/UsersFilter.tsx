@@ -6,6 +6,7 @@ import {
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { defaultParams, useUsers } from '#services/users';
 import { User } from '#store/users/types';
+import { FilterOperators } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Popover } from '@material-ui/core';
@@ -250,7 +251,11 @@ const UsersFilter: FC<UsersFilterProps> = ({
     anchorEl: null,
   };
 
-  const { users: list, loadMore, loadAgain } = useUsers({
+  const {
+    users: list,
+    loadMore,
+    loadAgain,
+  } = useUsers({
     params: defaultParams(false),
   });
   const [state, setstate] = useState(initialState);
@@ -268,8 +273,14 @@ const UsersFilter: FC<UsersFilterProps> = ({
         newParams: {
           ...defaultParams(),
           filters: JSON.stringify({
-            op: 'AND',
-            fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
+            op: FilterOperators.AND,
+            fields: [
+              {
+                field: 'firstName',
+                op: FilterOperators.LIKE,
+                values: [searchQuery],
+              },
+            ],
           }),
         },
       });
@@ -331,7 +342,7 @@ const UsersFilter: FC<UsersFilterProps> = ({
       });
     }
 
-    ((list as unknown) as Array<User>).forEach((user) => {
+    (list as unknown as Array<User>).forEach((user) => {
       const isSelected = selectedUsers.some((item) => item.id === user.id);
       const inApplied = appliedUsers.some((item) => item.id === user.id);
       if (user.id !== '0') {

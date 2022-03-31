@@ -11,7 +11,7 @@ import {
   UserStatesColors,
   UserStatesContent,
 } from '#store/users/types';
-import { FilterField } from '#utils/globalTypes';
+import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
 import { Menu, MenuItem } from '@material-ui/core';
@@ -25,7 +25,6 @@ import { navigate } from '@reach/router';
 import { startCase, toLower } from 'lodash';
 import React, { MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { removeUnderscore } from '../../../utils/stringUtils';
 import {
   archiveUser,
@@ -72,7 +71,10 @@ const TabContent: React.FC<TabContentProps> = (props) => {
           size,
           archived: props.values[0] === UsersListType.ACTIVE ? false : true,
           sort: 'createdAt,desc',
-          filters: JSON.stringify({ op: 'AND', fields: filterFields }),
+          filters: JSON.stringify({
+            op: FilterOperators.AND,
+            fields: filterFields,
+          }),
         },
         props.values[0],
       ),
@@ -475,25 +477,25 @@ const TabContent: React.FC<TabContentProps> = (props) => {
               label: 'First Name',
               value: 'firstName',
               field: 'firstName',
-              operator: 'LIKE',
+              operator: FilterOperators.LIKE,
             },
             {
               label: 'Last Name',
               value: 'lastName',
               field: 'lastName',
-              operator: 'LIKE',
+              operator: FilterOperators.LIKE,
             },
             {
               label: 'Employee ID',
               value: 'employeeId',
               field: 'employeeId',
-              operator: 'LIKE',
+              operator: FilterOperators.LIKE,
             },
             {
               label: 'Email',
               value: 'email',
               field: 'email',
-              operator: 'LIKE',
+              operator: FilterOperators.LIKE,
             },
           ]}
           updateFilterFields={(fields) => setFilterFields([...fields])}

@@ -21,7 +21,7 @@ import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
-import { Error, FilterField } from '#utils/globalTypes';
+import { Error, FilterField, FilterOperators } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/NewListView/actions';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
 import { Menu, MenuItem } from '@material-ui/core';
@@ -47,15 +47,15 @@ import { ListViewProps } from './types';
 const getBaseFilter = (label: string): FilterField[] => [
   {
     field: 'state',
-    op: label === 'published' ? 'EQ' : 'NE',
+    op: label === 'published' ? FilterOperators.EQ : FilterOperators.NE,
     values: [DisabledStates.PUBLISHED],
   },
-  { field: 'archived', op: 'EQ', values: [false] },
+  { field: 'archived', op: FilterOperators.EQ, values: [false] },
   ...(label === 'prototype'
     ? ([
         {
           field: 'state',
-          op: 'NE',
+          op: FilterOperators.NE,
           values: [DisabledStates.DEPRECATED],
         },
       ] as FilterField[])
@@ -102,11 +102,19 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     getBaseFilter(label),
   );
 
+  const getFilteredFields = () => [
+    ...filterFields,
+    {
+      field: 'useCaseId',
+      op: FilterOperators.EQ,
+      values: [selectedUseCase?.id],
+    },
+  ];
+
   const fetchData = (page: number, size: number) => {
     const filters = JSON.stringify({
-      op: 'AND',
-      fields: filterFields,
-      useCaseId: selectedUseCase!.id,
+      op: FilterOperators.AND,
+      fields: getFilteredFields(),
     });
     dispatch(
       fetchChecklistsForListView(
@@ -126,9 +134,8 @@ const ListView: FC<ListViewProps & { label: string }> = ({
       fetchChecklistsForListView(
         {
           filters: JSON.stringify({
-            op: 'AND',
-            fields: filterFields,
-            useCaseId: selectedUseCase!.id,
+            op: FilterOperators.AND,
+            fields: getFilteredFields(),
           }),
           page: 0,
           size: 0,
@@ -509,13 +516,13 @@ const ListView: FC<ListViewProps & { label: string }> = ({
               label: 'Checklist Name',
               value: 'name',
               field: 'name',
-              operator: 'LIKE',
+              operator: FilterOperators.LIKE,
             },
             ...checklistProperties.map(({ placeHolder, id }) => ({
               label: placeHolder,
               value: id,
               field: 'checklistPropertyValues.propertiesId',
-              operator: 'EQ',
+              operator: FilterOperators.EQ,
             })),
           ]}
           updateFilterFields={(fields) => {
@@ -549,7 +556,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     ...field,
                     ...(field.field === 'state'
                       ? {
-                          op: option.value === 'all' ? 'NE' : 'EQ',
+                          op:
+                            option.value === 'all'
+                              ? FilterOperators.NE
+                              : FilterOperators.EQ,
                           values: [
                             option.value === 'all' ? 'PUBLISHED' : option.value,
                           ],
@@ -591,7 +601,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                       ),
                       {
                         field: 'not.a.collaborator',
-                        op: 'NE',
+                        op: FilterOperators.NE,
                         values: [userId],
                       },
                     ] as FilterField[],
@@ -605,12 +615,12 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                       ),
                       {
                         field: 'collaborators.user.id',
-                        op: 'EQ',
+                        op: FilterOperators.EQ,
                         values: [userId],
                       },
                       {
                         field: 'collaborators.type',
-                        op: 'ANY',
+                        op: FilterOperators.ANY,
                         values: [
                           CollaboratorType.AUTHOR,
                           CollaboratorType.PRIMARY_AUTHOR,
@@ -628,10 +638,14 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                           field.field !== 'collaborators.user.id' &&
                           field.field !== 'not.a.collaborator',
                       ),
-                      { field: option.value, op: 'EQ', values: [userId] },
+                      {
+                        field: option.value,
+                        op: FilterOperators.EQ,
+                        values: [userId],
+                      },
                       {
                         field: 'collaborators.type',
-                        op: 'ANY',
+                        op: FilterOperators.ANY,
                         values: [CollaboratorType.REVIEWER],
                       },
                     ] as FilterField[],

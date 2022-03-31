@@ -8,6 +8,7 @@ import {
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { Property } from '#store/properties/types';
+import { FilterOperators } from '#utils/globalTypes';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import { Checklist } from '#views/Checklists/types';
 import React, { FC } from 'react';
@@ -109,11 +110,11 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     query = '',
   }: fetchDataParams) => {
     const filters = JSON.stringify({
-      op: 'AND',
+      op: FilterOperators.AND,
       fields: [
-        { field: 'code', op: 'LIKE', values: [query] },
-        { field: 'state', op: 'EQ', values: ['PUBLISHED'] },
-        { field: 'archived', op: 'EQ', values: [false] },
+        { field: 'code', op: FilterOperators.LIKE, values: [query] },
+        { field: 'state', op: FilterOperators.EQ, values: ['PUBLISHED'] },
+        { field: 'archived', op: FilterOperators.EQ, values: [false] },
       ],
     });
     dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, isReseting));

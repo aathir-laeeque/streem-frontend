@@ -12,6 +12,7 @@ import {
   apiGetAllUsersAssignedToJob,
   apiGetAllUsersAssignedToTask,
 } from '#utils/apiUrls';
+import { FilterOperators } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { getFullName } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
@@ -111,8 +112,14 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
         newParams: {
           ...defaultParams(false),
           filters: JSON.stringify({
-            op: 'AND',
-            fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
+            op: FilterOperators.AND,
+            fields: [
+              {
+                field: 'firstName',
+                op: FilterOperators.LIKE,
+                values: [searchQuery],
+              },
+            ],
           }),
         },
       });

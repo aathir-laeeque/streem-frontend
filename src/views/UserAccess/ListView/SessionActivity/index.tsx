@@ -6,6 +6,7 @@ import {
 } from '#store/activity-filters/action';
 import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
+import { FilterOperators } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import TextField from '@material-ui/core/TextField';
@@ -303,8 +304,10 @@ const SessionActivity: FC<TabViewProps> = () => {
 
   const fetchUsersData = (page: number, size: number) => {
     const filters = JSON.stringify({
-      op: 'AND',
-      fields: [{ field: 'firstName', op: 'LIKE', values: [searchQuery] }],
+      op: FilterOperators.AND,
+      fields: [
+        { field: 'firstName', op: FilterOperators.LIKE, values: [searchQuery] },
+      ],
     });
     dispatch(fetchUsers({ page, size, filters }, UsersListType.ALL));
   };
@@ -332,12 +335,12 @@ const SessionActivity: FC<TabViewProps> = () => {
       const fields = [
         {
           field: 'triggeredAt',
-          op: 'LOE',
+          op: FilterOperators.LOE,
           values: [lowerThan],
         },
         {
           field: 'triggeredBy',
-          op: 'ANY',
+          op: FilterOperators.ANY,
           values: userFilter,
         },
       ];
@@ -345,13 +348,13 @@ const SessionActivity: FC<TabViewProps> = () => {
       if (state.appliedFilters['Date/Time Range']) {
         fields.push({
           field: 'triggeredAt',
-          op: 'GOE',
+          op: FilterOperators.GOE,
           values: [greaterThan],
         });
       }
 
       const filters = JSON.stringify({
-        op: 'AND',
+        op: FilterOperators.AND,
         fields,
       });
 

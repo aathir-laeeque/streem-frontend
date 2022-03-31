@@ -2,7 +2,7 @@ import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { RootState } from '#store';
 import { apiGetJobs } from '#utils/apiUrls';
-import { ResponseObj } from '#utils/globalTypes';
+import { FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 
@@ -62,16 +62,15 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
 
     yield put(
       fetchJobs({
-        facilityId,
         page: 0,
         size: 10,
         sort: 'createdAt,desc',
         filters: JSON.stringify({
-          op: 'AND',
+          op: FilterOperators.AND,
           fields: [
             {
               field: 'state',
-              op: 'EQ',
+              op: FilterOperators.EQ,
               values: ['UNASSIGNED'],
             },
           ],

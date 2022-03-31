@@ -53,13 +53,20 @@ export type FileUploadData = {
   type: string;
 };
 
+export enum FilterOperators {
+  EQ = 'EQ',
+  ANY = 'ANY',
+  LIKE = 'LIKE',
+  GT = 'GT',
+  LT = 'LT',
+  NE = 'NE',
+  GOE = 'GOE',
+  LOE = 'LOE',
+  AND = 'AND',
+}
+
 export type FilterField = {
   field: string;
-  op: 'EQ' | 'ANY' | 'LIKE' | 'GT' | 'LT' | 'NE' | 'GOE' | 'LOE';
+  op: FilterOperators;
   values: [string | boolean] | string[];
-};
-
-export type ApiFilter = {
-  op: 'AND' | 'OR';
-  fields: FilterField[];
 };

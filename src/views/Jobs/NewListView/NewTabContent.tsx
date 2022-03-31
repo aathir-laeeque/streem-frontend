@@ -13,7 +13,7 @@ import { ComposerEntity } from '#PrototypeComposer/types';
 import { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
 import { User } from '#store/users/types';
-import { FilterField } from '#utils/globalTypes';
+import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -34,7 +34,11 @@ const DEFAULT_PAGE_NUMBER = 0;
 const DEFAULT_PAGE_SIZE = 10;
 
 const getBaseFilter = (values: string[]): FilterField[] => [
-  { field: 'state', op: values.length === 1 ? 'EQ' : 'ANY', values },
+  {
+    field: 'state',
+    op: values.length === 1 ? FilterOperators.EQ : FilterOperators.ANY,
+    values,
+  },
 ];
 
 const TabContent: FC<TabContentProps> = ({ label, values }) => {
@@ -43,7 +47,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   const { jobs, pageable } = useTypedSelector((state) => state.jobListView);
 
   const {
-    selectedFacility: { id: facilityId } = {},
+    selectedFacility,
     selectedUseCase,
     roles: userRoles,
   } = useTypedSelector((state) => state.auth);
@@ -60,20 +64,27 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
   const [assignedUsers, setAssignedUsers] = useState<User[]>([]);
 
+  const getFilteredValues = () => [
+    ...filterFields,
+    {
+      field: 'useCaseId',
+      op: FilterOperators.EQ,
+      values: [selectedUseCase?.id],
+    },
+  ];
+
   const fetchData = ({
     page = DEFAULT_PAGE_NUMBER,
     size = DEFAULT_PAGE_SIZE,
   }: fetchDataType = {}) => {
     dispatch(
       fetchJobs({
-        facilityId,
         page,
         size,
         sort: 'createdAt,desc',
         filters: JSON.stringify({
-          op: 'AND',
-          fields: filterFields,
-          useCaseId: selectedUseCase!.id,
+          op: FilterOperators.AND,
+          fields: getFilteredValues(),
         }),
       }),
     );
@@ -93,7 +104,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         ? [
             {
               field: 'taskExecutions.assignees.user.id',
-              op: 'ANY',
+              op: FilterOperators.ANY,
               values: assignedUsers.map((user) => user.id),
             },
           ]
@@ -104,14 +115,12 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   useEffect(() => {
     dispatch(
       fetchJobs({
-        facilityId,
         page: 0,
         size: 10,
         sort: 'createdAt,desc',
         filters: JSON.stringify({
-          op: 'AND',
-          fields: filterFields,
-          useCaseId: selectedUseCase!.id,
+          op: FilterOperators.AND,
+          fields: getFilteredValues(),
         }),
       }),
     );
@@ -291,13 +300,13 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
               label: 'Name',
               value: 'checklist.name',
               field: 'checklist.name',
-              operator: 'LIKE',
+              operator: FilterOperators.LIKE,
             },
             ...jobProperties.map(({ label, id }) => ({
               label: label,
               value: id,
               field: 'jobPropertyValues.propertiesId',
-              operator: 'EQ',
+              operator: FilterOperators.EQ,
             })),
           ]}
           updateFilterFields={(fields) => {
@@ -337,7 +346,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                   ? [
                       {
                         field: 'state',
-                        op: 'EQ',
+                        op: FilterOperators.EQ,
                         values: [CompletedJobStates.COMPLETED_WITH_EXCEPTION],
                       },
                     ]
@@ -354,7 +363,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             onClick={() => {
               if (
                 userRoles?.some((role) => role === roles.ACCOUNT_OWNER) &&
-                facilityId === '-1'
+                selectedFacility?.id === '-1'
               ) {
                 dispatch(
                   openOverlayAction({
