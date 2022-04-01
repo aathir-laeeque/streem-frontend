@@ -291,3 +291,6 @@ export const apiGetJobSummary = (jobId: Job['id']) =>
 export const apiGetTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}`;
 
 export const apiGetUseCaseList = () => `${baseUrl}/use-cases`;
+
+export const apiPrintJobDetails = (jobId: Job['id']) =>
+  `${baseUrl}/jobs/${jobId}/print`;

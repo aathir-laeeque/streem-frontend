@@ -1,11 +1,9 @@
 import logo from '#assets/images/logo.png';
-import { fetchData } from '#JobComposer/actions';
-import { Entity } from '#JobComposer/composer.types';
 import { fetchJobAuditLogs } from '#JobComposer/JobAuditLogs/actions';
 import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
-import { Checklist, TaskExecution } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
-import { removeUnderscore } from '#utils/stringUtils';
+import { apiPrintJobDetails } from '#utils/apiUrls';
+import { request } from '#utils/request';
 import {
   Document,
   Image,
@@ -16,29 +14,45 @@ import {
 } from '@react-pdf/renderer';
 import { groupBy } from 'lodash';
 import moment from 'moment';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
-  Assigness,
-  InputLabelGroup,
-  TabLookLike,
-} from '../PrintJob/Components';
+  CommonJobPdfDetails,
+  PdfJobDataType,
+} from '../Components/Documents/CommonJobPDFDetails';
 import { LoadingDiv, styles } from './styles';
 import { PrintJobAuditLogProps } from './types';
 
 const now = moment().format('Do MMM, YYYY, hh:mm a');
 
 const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
-  const { data: composerData } = useTypedSelector((state) => state.composer);
+  const [jobDetails, setJobDetails] = useState<PdfJobDataType | undefined>();
   const { logs } = useTypedSelector((state) => state.composer.auditLogs);
-  const { profile, settings } = useTypedSelector((state) => state.auth);
+  const { profile, settings, selectedFacility } = useTypedSelector(
+    (state) => state.auth,
+  );
   const { filters } = useTypedSelector((state) => state.auditLogFilters);
+  const { timeStampFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const fetchJobPdfData = async () => {
+      try {
+        const response: { data: PdfJobDataType } = await request(
+          'GET',
+          apiPrintJobDetails(jobId),
+        );
+        fetchLogs();
+        setJobDetails(response.data);
+      } catch (err) {
+        console.error('error from fetch job PDF data api ==>', err);
+      }
+    };
+
     if (jobId) {
-      dispatch(fetchData({ id: jobId, entity: Entity.JOB }));
-      fetchLogs();
+      fetchJobPdfData();
     }
   }, []);
 
@@ -51,23 +65,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
     );
   };
 
-  if (!logs || logs.length === 0 || !profile || !composerData) return null;
-
-  const { checklist, ...jobExtras } = composerData;
-  let assigneesObj: Record<string, any> = {};
-  (checklist as Checklist).stages.forEach((stage) =>
-    stage.tasks.forEach((task) =>
-      task.taskExecution.assignees.forEach(
-        (assignee) =>
-          (assigneesObj = { ...assigneesObj, [assignee.id]: assignee }),
-      ),
-    ),
-  );
-
-  const assignees: TaskExecution['assignees'][] = [];
-  Object.keys(assigneesObj).forEach((key) => {
-    assignees.push(assigneesObj[key]);
-  });
+  if (!logs || logs.length === 0 || !profile || !jobDetails) return null;
 
   const grouped: { [index: string]: JobAuditLogType[] } = groupBy(
     logs,
@@ -98,51 +96,10 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
             <Image src={settings?.logoUrl || ''} style={{ height: '24px' }} />
             <Image src={logo} style={{ height: '24px' }} />
           </View>
-
-          <View style={styles.container}>
-            <TabLookLike title="Checklist Details">
-              <InputLabelGroup
-                label="Checklist ID :"
-                value={checklist?.code || ''}
-              />
-              <InputLabelGroup
-                label="Checklist Name :"
-                value={checklist?.name || ''}
-              />
-            </TabLookLike>
-
-            <TabLookLike title="Job Details">
-              <InputLabelGroup label="Job ID :" value={jobExtras.code} />
-              <InputLabelGroup
-                label="State :"
-                value={removeUnderscore(jobExtras.state)}
-              />
-              {jobExtras?.properties &&
-                jobExtras.properties.map((props: any) => {
-                  return (
-                    <View style={styles.flexRow}>
-                      <InputLabelGroup
-                        label={props.label}
-                        value={props.value}
-                        key={props.id}
-                      />
-                    </View>
-                  );
-                })}
-              <Assigness assignees={assignees} jobState={jobExtras.state} />
-            </TabLookLike>
-
-            <TabLookLike title="Stage and Task Details">
-              <InputLabelGroup
-                label="Total Stages :"
-                value={checklist?.stages?.length.toString()}
-              />
-              <InputLabelGroup
-                label="Total Tasks :"
-                value={jobExtras.totalTasks.toString()}
-              />
-            </TabLookLike>
-          </View>
+          <CommonJobPdfDetails
+            jobPdfData={jobDetails}
+            timeStampFormat={timeStampFormat}
+          />
 
           <View style={styles.container} break>
             {data.map((item) => {

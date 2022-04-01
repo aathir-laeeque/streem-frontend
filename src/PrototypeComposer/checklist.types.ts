@@ -2,7 +2,10 @@ import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { CollaboratorState, Collaborator } from './reviewer.types';
 
-export type ChecklistProperty = Pick<Property, 'id' | 'name' | 'value'>;
+export type ChecklistProperty = Pick<
+  Property,
+  'id' | 'name' | 'value' | 'label'
+>;
 
 export type Employee = Pick<
   User,
