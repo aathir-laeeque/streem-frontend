@@ -98,6 +98,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   closeOverlay,
   props: { properties, onCreateJob, selectedChecklist },
 }) => {
+  const { selectedUseCase } = useTypedSelector((state) => state.auth);
   const { checklists, pageable, loading } = useTypedSelector(
     (state) => state.checklistListView,
   );
@@ -115,6 +116,11 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
         { field: 'code', op: FilterOperators.LIKE, values: [query] },
         { field: 'state', op: FilterOperators.EQ, values: ['PUBLISHED'] },
         { field: 'archived', op: FilterOperators.EQ, values: [false] },
+        {
+          field: 'useCaseId',
+          op: FilterOperators.EQ,
+          values: [selectedUseCase?.id],
+        },
       ],
     });
     dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, isReseting));

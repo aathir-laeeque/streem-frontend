@@ -73,6 +73,11 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
               op: FilterOperators.EQ,
               values: ['UNASSIGNED'],
             },
+            {
+              field: 'useCaseId',
+              op: FilterOperators.EQ,
+              values: [payload.selectedUseCaseId],
+            },
           ],
         }),
       }),

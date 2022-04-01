@@ -177,6 +177,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
         createJob({
           properties: parsedProperties,
           checklistId: selectedChecklist.id,
+          selectedUseCaseId: selectedUseCase!.id,
         }),
       );
     }

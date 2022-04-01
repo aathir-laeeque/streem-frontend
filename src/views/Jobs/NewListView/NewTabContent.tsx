@@ -160,6 +160,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         createJob({
           properties: parsedProperties,
           checklistId: selectedId,
+          selectedUseCaseId: selectedUseCase!.id,
         }),
       );
     }

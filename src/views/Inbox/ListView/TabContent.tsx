@@ -58,7 +58,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           page,
           size,
           sort: 'createdAt,desc',
-          fields: JSON.stringify({
+          filters: JSON.stringify({
             op: FilterOperators.AND,
             fields: getFilteredFields(),
           }),
