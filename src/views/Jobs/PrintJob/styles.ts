@@ -65,7 +65,6 @@ export const styles = StyleSheet.create({
     width: '100%',
     position: 'absolute',
     bottom: '0',
-    height: 32,
   },
   footerInfo: {
     fontSize: 10,

@@ -1,3 +1,4 @@
+import { Facility } from '#services/commonTypes';
 import { getUserName, User } from '#services/users';
 import { StyleSheet, Text, View } from '@react-pdf/renderer';
 import moment from 'moment';
@@ -36,16 +37,18 @@ const styles = StyleSheet.create({
 
 interface Props {
   user: Pick<User, 'employeeId' | 'firstName' | 'lastName'>;
+  selectedFacility: Facility;
 }
 
-const Footer = ({ user }: Props) => {
+const Footer = ({ user, selectedFacility }: Props) => {
   const now = moment().format('Do MMM, YYYY, hh:mm a');
   const userName = getUserName({ user, withEmployeeId: true });
 
   return (
     <View fixed style={styles.footer}>
       <Text style={styles.footerInfo}>
-        Downloaded on {now}. By {userName} using CLEEN App
+        Downloaded on {now}. By {userName} for {selectedFacility.name} using
+        CLEEN App
       </Text>
 
       <Text

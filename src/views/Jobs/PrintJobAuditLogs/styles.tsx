@@ -13,8 +13,7 @@ export const LoadingDiv = styled.div`
 
 Font.register({
   family: 'Nunito',
-  src:
-    'https://fonts.gstatic.com/s/nunitosans/v2/iJ4p9wO0GDKJ-D5teKuZqp0EAVxt0G0biEntp43Qt6E.ttf',
+  src: 'https://fonts.gstatic.com/s/nunitosans/v2/iJ4p9wO0GDKJ-D5teKuZqp0EAVxt0G0biEntp43Qt6E.ttf',
 });
 
 export const styles = StyleSheet.create({
@@ -59,7 +58,6 @@ export const styles = StyleSheet.create({
     width: '100%',
     position: 'absolute',
     bottom: '0',
-    height: 32,
   },
   footerInfo: {
     fontSize: 10,

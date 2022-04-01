@@ -144,7 +144,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
           <View fixed style={styles.footer}>
             <Text style={styles.footerInfo}>
               Downloaded on {now}. By {profile.firstName} {profile.lastName} ID:{' '}
-              {profile.employeeId} using CLEEN App
+              {profile.employeeId} for {selectedFacility?.name} using CLEEN App
             </Text>
             <View style={styles.pageInfo}>
               <Text

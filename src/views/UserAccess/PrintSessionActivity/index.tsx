@@ -24,7 +24,9 @@ const now = moment().format('Do MMM, YYYY, hh:mm a');
 
 const MyPrintSessionActivity: FC = () => {
   const { logs } = useTypedSelector((state) => state.sessionActivity);
-  const { profile, settings } = useTypedSelector((state) => state.auth);
+  const { profile, settings, selectedFacility } = useTypedSelector(
+    (state) => state.auth,
+  );
   const { filters } = useTypedSelector((state) => state.auditLogFilters);
 
   const dispatch = useDispatch();
@@ -130,7 +132,7 @@ const MyPrintSessionActivity: FC = () => {
           <View fixed style={styles.footer}>
             <Text style={styles.footerInfo}>
               Downloaded on {now}. By {profile.firstName} {profile.lastName} ID:{' '}
-              {profile.employeeId} using CLEEN App
+              {profile.employeeId} for {selectedFacility?.name} using CLEEN App
             </Text>
             <View style={styles.pageInfo}>
               <Text

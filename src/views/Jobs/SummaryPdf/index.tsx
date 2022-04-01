@@ -1,3 +1,4 @@
+import { Facility } from '#services/commonTypes';
 import { useTypedSelector } from '#store';
 import { apiGetJobSummary, apiPrintJobDetails } from '#utils/apiUrls';
 import { request } from '#utils/request';
@@ -109,7 +110,7 @@ const JobSummaryPdf = ({ jobId }: Props) => {
             />
           </View>
 
-          <Footer user={profile} />
+          <Footer user={profile} selectedFacility={selectedFacility!} />
         </Page>
       </Document>
     </PDFViewer>
