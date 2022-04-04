@@ -84,7 +84,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         reducerLabel,
       ),
     );
-  }, [filterFields]);
+  }, [filterFields, selectedUseCase]);
 
   const showPaginationArrows = pageable.totalPages > 10;
 
