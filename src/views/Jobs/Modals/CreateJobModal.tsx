@@ -200,7 +200,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
                 optional={!property.mandatory}
                 ref={register({
                   required: property.mandatory
-                    ? `${property.placeHolder} is required.`
+                    ? `${property.label} is required.`
                     : false,
                 })}
                 className="row"

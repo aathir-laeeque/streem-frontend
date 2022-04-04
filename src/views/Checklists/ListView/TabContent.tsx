@@ -519,10 +519,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({
               field: 'name',
               operator: FilterOperators.LIKE,
             },
-            ...checklistProperties.map(({ placeHolder, id }) => ({
-              label: placeHolder,
+            ...checklistProperties.map(({ label, id }) => ({
+              label,
               value: id,
-              field: 'checklistPropertyValues.facilityUseCasePropertyMapping.propertiesId',
+              field:
+                'checklistPropertyValues.facilityUseCasePropertyMapping.propertiesId',
               operator: FilterOperators.EQ,
             })),
           ]}
