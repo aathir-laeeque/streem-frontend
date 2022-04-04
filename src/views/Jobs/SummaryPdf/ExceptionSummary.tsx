@@ -24,13 +24,8 @@ const generateDescription = (exception: Exception): ReactNode => {
 
   switch (exception.type) {
     case 'DURATION_EXCEPTION':
-      const {
-        endedAt,
-        maxPeriod,
-        minPeriod,
-        startedAt,
-        timerOperator,
-      } = exception.timer as Timer;
+      const { endedAt, maxPeriod, minPeriod, startedAt, timerOperator } =
+        exception.timer as Timer;
 
       const taskStartTime = moment.unix(startedAt);
 
@@ -86,6 +81,10 @@ const generateDescription = (exception: Exception): ReactNode => {
 
     case 'ERROR_CORRECTION':
       description = 'Task data corrected with remarks';
+      break;
+
+    case 'YES_NO':
+      description = 'Task with a Yes/No Deviation';
       break;
 
     default:
