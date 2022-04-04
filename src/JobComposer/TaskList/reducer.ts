@@ -15,9 +15,7 @@ import { Task, TaskExecutionState } from '../checklist.types';
 
 export const initialState: TaskListState = {
   activeTaskId: undefined,
-
   bringIntoView: false,
-
   tasksById: {},
   taskIdWithStop: undefined,
   tasksOrderInStage: [],

@@ -12,13 +12,10 @@ import { TasksById, TasksOrderInStage } from './types';
 
 export type TaskListState = {
   activeTaskId?: Task['id'];
-
   bringIntoView: boolean;
-
   tasksById: TasksById;
   taskIdWithStop?: Task['id'];
   tasksOrderInStage: TasksOrderInStage;
-
   stageIdWithTaskStop?: Stage['id'];
 };
 

@@ -71,8 +71,15 @@ const JobHeader: FC<
     );
   };
 
-  const { state, startedAt, startedBy, reason, correctionReason, assignees } =
-    task.taskExecution;
+  const {
+    state,
+    startedAt,
+    startedBy,
+    reason,
+    correctionEnabled,
+    correctionReason,
+    assignees,
+  } = task.taskExecution;
 
   const isUserAssignedToTask = assignees.some(
     (user) => user.id === profile?.id,
@@ -216,8 +223,7 @@ const JobHeader: FC<
         </div>
       ) : null}
 
-      {state === TaskExecutionState.ENABLED_FOR_CORRECTION ||
-      state === TaskExecutionState.COMPLETED_WITH_CORRECTION ? (
+      {(correctionEnabled || correctionReason) && (
         <div className="correction-reason">
           <div className="badge">
             <Assignment className="icon" />
@@ -230,7 +236,7 @@ const JobHeader: FC<
             rows={4}
           />
         </div>
-      ) : null}
+      )}
     </div>
   );
 };

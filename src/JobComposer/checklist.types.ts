@@ -43,26 +43,20 @@ export interface Media {
 
 export enum StartedTaskStates {
   COMPLETED = 'COMPLETED',
-  COMPLETED_WITH_CORRECTION = 'COMPLETED_WITH_CORRECTION',
   COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
-  ENABLED_FOR_CORRECTION = 'ENABLED_FOR_CORRECTION',
   IN_PROGRESS = 'IN_PROGRESS',
   SKIPPED = 'SKIPPED',
 }
 
 export enum CompletedTaskStates {
   COMPLETED = 'COMPLETED',
-  COMPLETED_WITH_CORRECTION = 'COMPLETED_WITH_CORRECTION',
   COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
-  ENABLED_FOR_CORRECTION = 'ENABLED_FOR_CORRECTION',
   SKIPPED = 'SKIPPED',
 }
 
 export enum TaskExecutionState {
   COMPLETED = 'COMPLETED',
-  COMPLETED_WITH_CORRECTION = 'COMPLETED_WITH_CORRECTION',
   COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
-  ENABLED_FOR_CORRECTION = 'ENABLED_FOR_CORRECTION',
   IN_PROGRESS = 'IN_PROGRESS',
   NOT_STARTED = 'NOT_STARTED',
   SKIPPED = 'SKIPPED',
@@ -80,7 +74,6 @@ export interface Audit {
 
 export interface TaskExecution {
   audit: Audit;
-  correctionReason?: string | null;
   endedAt?: number;
   id: string;
   period?: number | null;
@@ -89,6 +82,8 @@ export interface TaskExecution {
   startedBy?: AuditUserType;
   state: TaskExecutionState;
   assignees: User[];
+  correctionEnabled: boolean;
+  correctionReason?: string | null;
 }
 
 export enum TimerOperator {

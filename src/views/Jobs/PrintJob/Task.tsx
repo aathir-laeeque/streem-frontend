@@ -121,6 +121,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
     startedAt,
     audit: { modifiedBy, modifiedAt },
     state: taskExecutionState,
+    correctionEnabled,
   } = task.taskExecution;
 
   const canSkipTask = !task.activities.reduce((acc, activity) => {
@@ -229,10 +230,14 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
             This Task was digitally completed via CLEEN{' '}
-            {task.timed && task.taskExecution.reason
+            {task.timed &&
+            task.taskExecution.endedAt &&
+            task.taskExecution.startedAt &&
+            task.taskExecution.reason
               ? (() => {
                   let text = `${'\n'}`;
                   if (
+                    task.maxPeriod &&
                     moment
                       .unix(task.taskExecution.endedAt)
                       .diff(
@@ -243,6 +248,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
                     text = `after the set time ${'\n'}`;
                   } else if (
                     task.timerOperator === 'NOT_LESS_THAN' &&
+                    task.minPeriod &&
                     moment
                       .unix(task.taskExecution.endedAt)
                       .diff(
@@ -266,8 +272,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
           )}
         </View>
       )}
-      {(taskExecutionState === TaskExecutionState.COMPLETED_WITH_CORRECTION ||
-        taskExecutionState === TaskExecutionState.ENABLED_FOR_CORRECTION) && (
+      {!!correctionEnabled && (
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
             This Task was Completed with Correction via CLEEN {'\n'}

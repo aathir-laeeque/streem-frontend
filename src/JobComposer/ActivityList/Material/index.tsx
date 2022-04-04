@@ -1,11 +1,10 @@
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { Entity } from '#JobComposer/composer.types';
 import { useTypedSelector } from '#store';
 import { ImageOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
 import { ActivityProps } from '../types';
 import { Wrapper } from './styles';
 

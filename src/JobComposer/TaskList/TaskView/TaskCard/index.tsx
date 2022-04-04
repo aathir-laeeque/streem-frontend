@@ -15,7 +15,6 @@ import {
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-
 import { setActiveTask } from '../../actions';
 import { TaskCardProps } from '../../types';
 import Footer from './Footer';
@@ -47,7 +46,12 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
 
   const { profile } = useTypedSelector((state) => state.auth);
 
-  const { state: taskState, reason, assignees } = task.taskExecution;
+  const {
+    state: taskState,
+    reason,
+    assignees,
+    correctionEnabled,
+  } = task.taskExecution;
 
   const dispatch = useDispatch();
 
@@ -74,17 +78,10 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
     );
 
     const isTaskStarted = taskState in StartedTaskStates;
-
     const isTaskDelayed = taskState === TaskExecutionState.COMPLETED && reason;
-
-    // As the task is skipped and user should not be able to do anything, treating it same as the completed task.
     const isTaskCompleted =
       taskState === TaskExecutionState.SKIPPED ||
       taskState === TaskExecutionState.COMPLETED ||
-      taskState === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
-      taskState === TaskExecutionState.COMPLETED_WITH_CORRECTION;
-
-    const isCompletedWithException =
       taskState === TaskExecutionState.COMPLETED_WITH_EXCEPTION;
 
     const showStartButton =
@@ -96,9 +93,6 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
       !(taskState in CompletedTaskStates) &&
       !(jobState in CompletedJobStates) &&
       location.pathname.split('/')[1] !== 'inbox';
-
-    const isCorrectingError =
-      taskState === TaskExecutionState.ENABLED_FOR_CORRECTION;
 
     return (
       <Wrapper
@@ -143,8 +137,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
             activities={activities}
             isTaskStarted={isTaskStarted}
             isTaskCompleted={isTaskCompleted}
-            isCompletedWithException={isCompletedWithException}
-            isCorrectingError={isCorrectingError}
+            isCorrectingError={!!correctionEnabled}
             isLoggedInUserAssigned={isLoggedInUserAssigned}
           />
         </div>

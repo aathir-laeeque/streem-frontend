@@ -6,7 +6,6 @@ export type ActivityListProps = {
   activities: Activity[];
   isTaskStarted: boolean;
   isTaskCompleted: boolean;
-  isCompletedWithException: boolean;
   isCorrectingError: boolean;
   isLoggedInUserAssigned: boolean;
 };

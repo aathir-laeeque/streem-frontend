@@ -29,10 +29,7 @@ const Wrapper = styled.div.attrs({
           border-top: 4px solid #f7b500;
           border-radius: 4px;
         `;
-      } else if (
-        taskExecutionState === TaskExecutionState.COMPLETED ||
-        taskExecutionState === TaskExecutionState.COMPLETED_WITH_CORRECTION
-      ) {
+      } else if (taskExecutionState === TaskExecutionState.COMPLETED) {
         return css`
           border-top: 4px solid #5aa700;
           border-radius: 4px;
@@ -108,8 +105,8 @@ const Wrapper = styled.div.attrs({
         .complete-options {
           display: ${({ taskExecutionState }) =>
             taskExecutionState === TaskExecutionState.COMPLETED ||
-            taskExecutionState === TaskExecutionState.COMPLETED_WITH_CORRECTION ||
-            taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
+            taskExecutionState ===
+              TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
             taskExecutionState === TaskExecutionState.SKIPPED
               ? 'flex'
               : 'none'};

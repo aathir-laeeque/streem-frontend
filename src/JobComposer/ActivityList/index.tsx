@@ -19,20 +19,20 @@ import YesNoActivity from './YesNo';
 
 const Wrapper = styled.div.attrs({
   className: 'activity-list',
-})<Omit<ActivityListProps, 'activities' | 'isCorrectingError'>>`
+})<Omit<ActivityListProps, 'activities'>>`
   display: flex;
   flex-direction: column;
 
-  ${({ isTaskStarted, isCompletedWithException, isLoggedInUserAssigned }) =>
-    !isTaskStarted || isCompletedWithException || !isLoggedInUserAssigned
+  ${({ isTaskStarted, isLoggedInUserAssigned }) =>
+    !isTaskStarted || !isLoggedInUserAssigned
       ? css`
           opacity: 0.5;
           pointer-events: none;
         `
       : null}
 
-  ${({ isTaskCompleted }) =>
-    isTaskCompleted
+  ${({ isTaskCompleted, isCorrectingError }) =>
+    isTaskCompleted && !isCorrectingError
       ? css`
           pointer-events: none;
         `
@@ -81,7 +81,6 @@ const ActivityList: FC<ActivityListProps> = ({
   activities,
   isTaskStarted,
   isTaskCompleted,
-  isCompletedWithException,
   isCorrectingError,
   isLoggedInUserAssigned,
 }) => {
@@ -97,8 +96,8 @@ const ActivityList: FC<ActivityListProps> = ({
     <Wrapper
       isTaskStarted={isTaskStarted}
       isTaskCompleted={isTaskCompleted}
-      isCompletedWithException={isCompletedWithException}
       isLoggedInUserAssigned={isLoggedInUserAssigned}
+      isCorrectingError={isCorrectingError}
     >
       {activities.map((activity) => {
         const { state, audit } = activity?.response;

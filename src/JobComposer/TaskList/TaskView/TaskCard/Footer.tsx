@@ -201,10 +201,52 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
     (user) => user.id === profile?.id,
   );
 
-  if (
-    taskExecutionState === TaskExecutionState.COMPLETED ||
-    taskExecutionState === TaskExecutionState.COMPLETED_WITH_CORRECTION
-  ) {
+  if (!!task.taskExecution.correctionEnabled) {
+    return (
+      <div
+        className="buttons-container"
+        style={{ display: 'flex', padding: '0 16px 16px' }}
+      >
+        <button
+          style={{
+            border: '1px solid #5ca6ff',
+            color: '#5ca6ff',
+            outline: 'none',
+            padding: '10px 0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+            background: 'transparent',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+          onClick={() => dispatch(completeErrorCorretcion(task.id))}
+        >
+          Confirm
+        </button>
+        <button
+          style={{
+            border: '1px solid #ff6b6b',
+            color: '#ff6b6b',
+            outline: 'none',
+            padding: '10px 0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+            marginLeft: '24px',
+            borderRadius: '4px',
+            background: 'transparent',
+            cursor: 'pointer',
+          }}
+          onClick={() => dispatch(cancelErrorCorretcion(task.id))}
+        >
+          Cancel
+        </button>
+      </div>
+    );
+  } else if (taskExecutionState === TaskExecutionState.COMPLETED) {
     if (isTaskDelayed) {
       let text;
       if (
@@ -386,53 +428,6 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         </Wrapper>
       );
     }
-  } else if (
-    task.taskExecution.state === TaskExecutionState.ENABLED_FOR_CORRECTION
-  ) {
-    return (
-      <div
-        className="buttons-container"
-        style={{ display: 'flex', padding: '0 16px 16px' }}
-      >
-        <button
-          style={{
-            border: '1px solid #5ca6ff',
-            color: '#5ca6ff',
-            outline: 'none',
-            padding: '10px 0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flex: 1,
-            background: 'transparent',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-          onClick={() => dispatch(completeErrorCorretcion(task.id))}
-        >
-          Confirm
-        </button>
-        <button
-          style={{
-            border: '1px solid #ff6b6b',
-            color: '#ff6b6b',
-            outline: 'none',
-            padding: '10px 0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flex: 1,
-            marginLeft: '24px',
-            borderRadius: '4px',
-            background: 'transparent',
-            cursor: 'pointer',
-          }}
-          onClick={() => dispatch(cancelErrorCorretcion(task.id))}
-        >
-          Cancel
-        </button>
-      </div>
-    );
   }
 
   return null;

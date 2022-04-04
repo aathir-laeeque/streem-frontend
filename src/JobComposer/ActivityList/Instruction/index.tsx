@@ -1,17 +1,15 @@
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-
 import { Entity } from '#JobComposer/composer.types';
 import { useTypedSelector } from '#store';
+import { emojis } from '#utils/constants';
 import { ContentState, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import React, { FC, useEffect, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
-
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { ActivityProps } from '../types';
 import EmojiComponent from './EmojiComponent';
 import { Wrapper } from './styles';
-import { emojis } from '#utils/constants';
 
 const toolbarOptions = {
   options: ['inline', 'list', 'emoji'],

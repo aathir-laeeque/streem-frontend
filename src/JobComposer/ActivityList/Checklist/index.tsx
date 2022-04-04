@@ -1,14 +1,13 @@
+import { CheckboxWithLabel } from '#components';
 import { Entity } from '#JobComposer/composer.types';
 import { useTypedSelector } from '#store';
 import { Close } from '@material-ui/icons';
 import { get } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-
+import { executeActivity, fixActivity } from '../actions';
 import { ActivityProps, Selections } from '../types';
 import { Wrapper } from './styles';
-import { executeActivity, fixActivity } from '../actions';
-import { CheckboxWithLabel } from '#components';
 
 const ChecklistActivity: FC<ActivityProps> = ({
   activity,
