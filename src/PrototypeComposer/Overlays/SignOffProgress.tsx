@@ -207,6 +207,11 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
     data: state.prototypeComposer.data as Checklist,
   }));
 
+  const { selectedFacility } = useTypedSelector((state) => state.auth);
+  const { dateAndTimeStampFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
+
   useEffect(() => {
     dispatch(fetchApprovers(data.id));
   }, []);
@@ -264,7 +269,7 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
                     {groupedApprovers[key][0].modifiedAt &&
                       moment
                         .unix(groupedApprovers[key][0].modifiedAt)
-                        .format('Do MMM, YYYY, hh:mm a')}
+                        .format(dateAndTimeStampFormat)}
                   </>
                 )}
               </div>
@@ -291,7 +296,7 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
                       {a.modifiedAt &&
                         moment
                           .unix(a.modifiedAt)
-                          .format('Do MMM, YYYY, hh:mm a')}
+                          .format(dateAndTimeStampFormat)}
                     </>
                   )}
                 </div>

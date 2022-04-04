@@ -178,7 +178,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
     auth: { profile, selectedFacility },
     composer: { jobState },
   } = useTypedSelector((state) => state);
-  const { timeStampFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
 
@@ -273,7 +273,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
             <span>
               Task completed {text} by {generateName(modifiedBy)}, ID:{' '}
               {modifiedBy.employeeId} on{' '}
-              {formatDateTime(modifiedAt, timeStampFormat)}
+              {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
             </span>
           </CompletedWrapper>
           {reason ? (
@@ -290,7 +290,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
           <span>
             Task completed by {generateName(modifiedBy)}, ID:{' '}
             {modifiedBy.employeeId} on{' '}
-            {formatDateTime(modifiedAt, timeStampFormat)}
+            {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
           </span>
         </CompletedWrapper>
       );
@@ -304,7 +304,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         <span>
           Task completed with exception by {generateName(modifiedBy)}, ID:{' '}
           {modifiedBy.employeeId} on{' '}
-          {formatDateTime(modifiedAt, timeStampFormat)}
+          {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
         </span>
       </CompletedWrapper>
     );
@@ -315,7 +315,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         <span>
           Task skipped by {generateName(modifiedBy)}, ID:{' '}
           {modifiedBy.employeeId} on{' '}
-          {formatDateTime(modifiedAt, timeStampFormat)}
+          {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
         </span>
       </CompletedWrapper>
     );

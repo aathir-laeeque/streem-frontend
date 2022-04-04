@@ -88,10 +88,10 @@ const jobDataStyles = StyleSheet.create({
 
 export const CommonJobPdfDetails = ({
   jobPdfData,
-  timeStampFormat,
+  dateAndTimeStampFormat,
 }: {
   jobPdfData: PdfJobDataType;
-  timeStampFormat: string;
+  dateAndTimeStampFormat: string;
 }) => {
   const {
     checklist,
@@ -139,7 +139,9 @@ export const CommonJobPdfDetails = ({
             <Text style={jobDataStyles.cardHeader}>Job Started On</Text>
 
             <Text style={jobDataStyles.cardBody}>
-              {startedAt ? formatDateTime(startedAt, timeStampFormat) : 'N/A'}
+              {startedAt
+                ? formatDateTime(startedAt, dateAndTimeStampFormat)
+                : 'N/A'}
             </Text>
           </View>
 
@@ -147,7 +149,9 @@ export const CommonJobPdfDetails = ({
             <Text style={jobDataStyles.cardHeader}>Job Completed On</Text>
 
             <Text style={jobDataStyles.cardBody}>
-              {endedAt ? formatDateTime(endedAt, timeStampFormat) : 'N/A'}
+              {endedAt
+                ? formatDateTime(endedAt, dateAndTimeStampFormat)
+                : 'N/A'}
             </Text>
           </View>
 
@@ -268,7 +272,7 @@ export const CommonJobPdfDetails = ({
         <Assigness
           assignees={assignees}
           jobState={jobState}
-          timeStampFormat={timeStampFormat}
+          dateAndTimeStampFormat={dateAndTimeStampFormat}
         />
       </TabLookLike>
 

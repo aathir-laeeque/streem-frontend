@@ -63,6 +63,10 @@ const SessionActivity: FC<TabViewProps> = () => {
   const { logs, loading, pageable }: SessionActivityState = useTypedSelector(
     (state) => state.sessionActivity,
   );
+  const { selectedFacility } = useTypedSelector((state) => state.auth);
+  const { dateFormat, timeFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
   const {
     list,
     pageable: { last, page },
@@ -399,7 +403,7 @@ const SessionActivity: FC<TabViewProps> = () => {
           {
             header: 'TIME',
             template: function renderComp(item) {
-              const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
+              const day = moment(Object.keys(item)[0]).format(dateFormat);
               let criticalCount = 0;
               const itemId = item.id as string;
               (item[itemId] as SessionActivityType[]).forEach((element) => {
@@ -434,7 +438,7 @@ const SessionActivity: FC<TabViewProps> = () => {
                               className="content-items"
                               style={{ whiteSpace: 'nowrap' }}
                             >
-                              {moment.unix(log.triggeredAt).format('hh:mm A')}
+                              {moment.unix(log.triggeredAt).format(timeFormat)}
                             </div>
                             {log.severity ===
                               SessionActivitySeverity.CRITICAL && (

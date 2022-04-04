@@ -47,7 +47,6 @@ export interface JobSummary {
   totalDuration: number | null;
   totalStageDuration: number | null;
   totalTaskExceptions: number;
-  timeStampFormat: string;
 }
 
 interface Checklist {

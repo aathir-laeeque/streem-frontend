@@ -358,6 +358,7 @@ const getInstructionTemplate = (res: Response[]): JSX.Element[] => {
 const activityTemplateFormatter = (
   activity: Activity,
   activityIndex: number,
+  dateAndTimeStampFormat: string,
 ) => {
   switch (activity.type) {
     case NonMandatoryActivity.INSTRUCTION:
@@ -497,7 +498,7 @@ const activityTemplateFormatter = (
                 on{' '}
                 {moment
                   .unix(activity.response.activityValueApprovalDto.createdAt)
-                  .format('MMM DD, h:mm A')}
+                  .format(dateAndTimeStampFormat)}
               </Text>
             </View>
           )}
@@ -728,14 +729,21 @@ const activityTemplateFormatter = (
   }
 };
 
-const MemoActivityList: FC<{ activities: Activity[] }> = ({ activities }) => {
+const MemoActivityList: FC<{
+  activities: Activity[];
+  dateAndTimeStampFormat: string;
+}> = ({ activities, dateAndTimeStampFormat }) => {
   return (
     <>
       {(activities as Array<Activity>).map(
         (activity, activityIndex: number) => {
           return (
             <View key={`${activity.id}`}>
-              {activityTemplateFormatter(activity, activityIndex)}
+              {activityTemplateFormatter(
+                activity,
+                activityIndex,
+                dateAndTimeStampFormat,
+              )}
               <View style={styles.activitySeprator} />
               {activity.response.state !== TaskExecutionState.NOT_STARTED && (
                 <View style={styles.taskFooter} wrap={false}>
@@ -746,7 +754,7 @@ const MemoActivityList: FC<{ activities: Activity[] }> = ({ activities }) => {
                     {activity.response.audit.modifiedBy.employeeId} on{' '}
                     {moment
                       .unix(activity.response.audit.modifiedAt)
-                      .format('MMM DD, h:mm A')}
+                      .format(dateAndTimeStampFormat)}
                   </Text>
                 </View>
               )}

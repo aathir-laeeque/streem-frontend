@@ -23,8 +23,6 @@ import {
 import { LoadingDiv, styles } from './styles';
 import { PrintJobAuditLogProps } from './types';
 
-const now = moment().format('Do MMM, YYYY, hh:mm a');
-
 const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
   const [jobDetails, setJobDetails] = useState<PdfJobDataType | undefined>();
   const { logs } = useTypedSelector((state) => state.composer.auditLogs);
@@ -32,7 +30,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
     (state) => state.auth,
   );
   const { filters } = useTypedSelector((state) => state.auditLogFilters);
-  const { timeStampFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat, timeFormat, dateFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
   const dispatch = useDispatch();
@@ -72,7 +70,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
     'triggeredOn',
   );
   const data = Object.keys(grouped).map((item) => ({
-    auditLogs: grouped[item],
+    [`${item}`]: grouped[item],
     id: item,
   }));
 
@@ -98,43 +96,45 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
           </View>
           <CommonJobPdfDetails
             jobPdfData={jobDetails}
-            timeStampFormat={timeStampFormat}
+            dateAndTimeStampFormat={dateAndTimeStampFormat}
           />
 
           <View style={styles.container} break>
             {data.map((item) => {
-              const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
+              const day = moment(Object.keys(item)[0]).format(dateFormat);
 
               return (
                 <View style={styles.columns} key={`name_${item.id}`}>
                   <View style={styles.logHeader}>
                     <Text style={styles.headerItemText}>{day}</Text>
                     <Text style={styles.headerItemText}>
-                      {item.auditLogs.length} activities
+                      {item[item.id].length} activities
                     </Text>
                   </View>
                   <View style={styles.logRow}>
-                    {item.auditLogs.map((log: JobAuditLogType) => (
-                      <View style={styles.logItem} key={`${log.id}`}>
-                        <View style={styles.circle} />
-                        <View style={styles.content} wrap={false}>
-                          <Text style={styles.contentItems}>
-                            {moment.unix(log.triggeredAt).format('hh:mm A')}
-                          </Text>
-                          <Text
-                            style={[
-                              styles.contentItems,
-                              {
-                                paddingRight: 100,
-                              },
-                            ]}
-                            wrap={false}
-                          >
-                            {log.details}
-                          </Text>
+                    {(item[item.id] as JobAuditLogType[]).map(
+                      (log: JobAuditLogType) => (
+                        <View style={styles.logItem} key={`${log.id}`}>
+                          <View style={styles.circle} />
+                          <View style={styles.content} wrap={false}>
+                            <Text style={styles.contentItems}>
+                              {moment.unix(log.triggeredAt).format(timeFormat)}
+                            </Text>
+                            <Text
+                              style={[
+                                styles.contentItems,
+                                {
+                                  paddingRight: 100,
+                                },
+                              ]}
+                              wrap={false}
+                            >
+                              {log.details}
+                            </Text>
+                          </View>
                         </View>
-                      </View>
-                    ))}
+                      ),
+                    )}
                   </View>
                 </View>
               );
@@ -143,8 +143,9 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
 
           <View fixed style={styles.footer}>
             <Text style={styles.footerInfo}>
-              Downloaded on {now}. By {profile.firstName} {profile.lastName} ID:{' '}
-              {profile.employeeId} for {selectedFacility?.name} using CLEEN App
+              Downloaded on {moment().format(dateAndTimeStampFormat)}. By{' '}
+              {profile.firstName} {profile.lastName} ID: {profile.employeeId}{' '}
+              for {selectedFacility?.name} using CLEEN App
             </Text>
             <View style={styles.pageInfo}>
               <Text

@@ -22,15 +22,13 @@ import { LoadingDiv, styles } from './styles';
 import TaskView from './Task';
 import { PrintJobProps } from './types';
 
-const now = moment().format('Do MMM, YYYY, hh:mm a');
-
 const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   const [data, setData] = useState<PdfJobDataType | undefined>();
   const { profile, settings, selectedFacility } = useTypedSelector(
     (state) => state.auth,
   );
 
-  const { timeStampFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat, timeFormat, dateFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
 
@@ -82,7 +80,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
           </View>
           <CommonJobPdfDetails
             jobPdfData={data}
-            timeStampFormat={timeStampFormat}
+            dateAndTimeStampFormat={dateAndTimeStampFormat}
           />
           {checklist?.stages.map((stage) => {
             return (
@@ -100,7 +98,14 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                 </View>
                 {(stage.tasks as unknown as Array<Task>).map(
                   (task, taskIndex: number) => (
-                    <TaskView taskIndex={taskIndex} task={task} key={task.id} />
+                    <TaskView
+                      taskIndex={taskIndex}
+                      dateFormat={dateFormat}
+                      timeFormat={timeFormat}
+                      dateAndTimeStampFormat={dateAndTimeStampFormat}
+                      task={task}
+                      key={task.id}
+                    />
                   ),
                 )}
               </View>
@@ -109,8 +114,9 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
 
           <View fixed style={styles.footer}>
             <Text style={styles.footerInfo}>
-              Downloaded on {now}. By {profile.firstName} {profile.lastName} ID:{' '}
-              {profile.employeeId} for {selectedFacility?.name} using CLEEN App
+              Downloaded on {moment().format(dateAndTimeStampFormat)}. By{' '}
+              {profile.firstName} {profile.lastName} ID: {profile.employeeId}{' '}
+              for {selectedFacility?.name} using CLEEN App
             </Text>
             <View style={styles.pageInfo}>
               <Text

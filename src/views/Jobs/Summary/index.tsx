@@ -112,7 +112,7 @@ const generateDescription = (exception: Exception): ReactNode => {
     case 'ERROR_CORRECTION':
       description = 'Task data corrected with remarks';
       break;
-    
+
     case 'YES_NO':
       description = 'Task with a Yes/No Deviation';
       break;
@@ -127,7 +127,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
   const [loading, toggleLoading] = useState(false);
   const [data, setData] = useState<JobSummary | null>(null);
   const { selectedFacility } = useTypedSelector((state) => state.auth);
-  const { timeStampFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
 
@@ -178,7 +178,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
             <div className="card-header">Job Started on</div>
             <div className="card-body">
               {data.startedAt
-                ? formatDateTime(data.startedAt, timeStampFormat)
+                ? formatDateTime(data.startedAt, dateAndTimeStampFormat)
                 : 'N/A'}
             </div>
           </div>
@@ -186,7 +186,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
             <div className="card-header">Job Completed on</div>
             <div className="card-body">
               {data.endedAt
-                ? formatDateTime(data.endedAt, timeStampFormat)
+                ? formatDateTime(data.endedAt, dateAndTimeStampFormat)
                 : 'N/A'}
             </div>
           </div>

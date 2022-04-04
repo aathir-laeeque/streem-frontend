@@ -20,12 +20,13 @@ import {
 } from '../ListView/SessionActivity/types';
 import { LoadingDiv, styles } from './styles';
 
-const now = moment().format('Do MMM, YYYY, hh:mm a');
-
 const MyPrintSessionActivity: FC = () => {
   const { logs } = useTypedSelector((state) => state.sessionActivity);
   const { profile, settings, selectedFacility } = useTypedSelector(
     (state) => state.auth,
+  );
+  const { timeFormat, dateAndTimeStampFormat, dateFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
   const { filters } = useTypedSelector((state) => state.auditLogFilters);
 
@@ -76,7 +77,7 @@ const MyPrintSessionActivity: FC = () => {
 
           <View style={styles.container}>
             {data.map((item) => {
-              const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
+              const day = moment(Object.keys(item)[0]).format(dateFormat);
               let criticalCount = 0;
               const itemId = item.id as string;
               (item[itemId] as SessionActivityType[]).forEach((element) => {
@@ -105,7 +106,7 @@ const MyPrintSessionActivity: FC = () => {
                         <View style={styles.circle} />
                         <View style={styles.content} wrap={false}>
                           <Text style={styles.contentItems}>
-                            {moment.unix(log.triggeredAt).format('hh:mm A')}
+                            {moment.unix(log.triggeredAt).format(timeFormat)}
                           </Text>
                           {log.severity ===
                             SessionActivitySeverity.CRITICAL && <View />}
@@ -131,8 +132,9 @@ const MyPrintSessionActivity: FC = () => {
 
           <View fixed style={styles.footer}>
             <Text style={styles.footerInfo}>
-              Downloaded on {now}. By {profile.firstName} {profile.lastName} ID:{' '}
-              {profile.employeeId} for {selectedFacility?.name} using CLEEN App
+              Downloaded on {moment().format(dateAndTimeStampFormat)}. By{' '}
+              {profile.firstName} {profile.lastName} ID: {profile.employeeId}{' '}
+              for {selectedFacility?.name} using CLEEN App
             </Text>
             <View style={styles.pageInfo}>
               <Text

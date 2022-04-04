@@ -8,7 +8,9 @@ export const setInitialFacilityWiseConstants = (facilities: Facility[]) => {
     (data, facilityData) => ({
       ...data,
       [facilityData.id]: {
-        timeStampFormat: 'MMM DD, YYYY HH:mm',
+        timeFormat: 'HH:mm',
+        dateFormat: 'MMM DD, YYYY',
+        dateAndTimeStampFormat: `MMM DD, YYYY HH:mm`,
       },
     }),
     {},
@@ -22,10 +24,12 @@ export const setInitialFacilityWiseConstants = (facilities: Facility[]) => {
 };
 
 export const setFacilityTimeStampFormat = (
-  timeStampFormat: string,
   facilityId: string,
+  dateFormat: string,
+  timeFormat: string,
 ) =>
   actionSpreader(FacilityWiseConstantsAction.SET_FACILITY_TIMESTAMP, {
     facilityId,
-    timeStampFormat,
+    dateFormat,
+    timeFormat,
   });

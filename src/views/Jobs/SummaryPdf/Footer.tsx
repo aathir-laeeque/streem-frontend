@@ -38,10 +38,11 @@ const styles = StyleSheet.create({
 interface Props {
   user: Pick<User, 'employeeId' | 'firstName' | 'lastName'>;
   selectedFacility: Facility;
+  dateAndTimeStampFormat: string;
 }
 
-const Footer = ({ user, selectedFacility }: Props) => {
-  const now = moment().format('Do MMM, YYYY, hh:mm a');
+const Footer = ({ user, selectedFacility, dateAndTimeStampFormat }: Props) => {
+  const now = moment().format(dateAndTimeStampFormat);
   const userName = getUserName({ user, withEmployeeId: true });
 
   return (

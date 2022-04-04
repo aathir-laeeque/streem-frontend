@@ -315,7 +315,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
 }) => {
   const [state, setState] = useState<ChecklistInfo | null>(null);
   const { selectedFacility } = useTypedSelector((state) => state.auth);
-  const { timeStampFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
 
@@ -453,7 +453,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                     {state.signOff.map((user) => (
                       <div className="date" key={user.employeeId}>
                         {user.signedAt &&
-                          formatDateTime(user.signedAt, timeStampFormat)}
+                          formatDateTime(user.signedAt, dateAndTimeStampFormat)}
                       </div>
                     ))}
                   </div>

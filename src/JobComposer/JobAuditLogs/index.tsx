@@ -66,6 +66,10 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
   const { logs, loading, pageable }: JobAuditLogState = useTypedSelector(
     (state) => state.composer.auditLogs,
   );
+  const { selectedFacility } = useTypedSelector((state) => state.auth);
+  const { timeFormat: timeFormat, dateFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
   const {
     list,
     pageable: { last, page },
@@ -387,8 +391,6 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
     id: item,
   }));
 
-  console.log('data', data);
-
   return (
     <Composer>
       <GoBack label="Return to process" className="go-back" />
@@ -408,7 +410,7 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
             {
               header: 'TIME',
               template: function renderComp(item) {
-                const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
+                const day = moment(Object.keys(item)[0]).format(dateFormat);
                 const itemId = item.id as string;
 
                 return (
@@ -429,7 +431,9 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
                                 className="content-items"
                                 style={{ whiteSpace: 'nowrap' }}
                               >
-                                {moment.unix(log.triggeredAt).format('hh:mm A')}
+                                {moment
+                                  .unix(log.triggeredAt)
+                                  .format(timeFormat)}
                               </div>
                               <div className="content-items">{log.details}</div>
                             </div>

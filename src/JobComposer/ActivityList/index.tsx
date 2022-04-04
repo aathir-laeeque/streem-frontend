@@ -88,7 +88,7 @@ const ActivityList: FC<ActivityListProps> = ({
     auth: { selectedFacility },
     composer: { entity },
   } = useTypedSelector((state) => state);
-  const { timeStampFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
 
@@ -203,7 +203,7 @@ const ActivityList: FC<ActivityListProps> = ({
               <div className="activity-audit">
                 Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
                 {audit?.modifiedBy?.employeeId} on{' '}
-                {formatDateTime(audit?.modifiedAt, timeStampFormat)}
+                {formatDateTime(audit?.modifiedAt, dateAndTimeStampFormat)}
               </div>
             ) : null}
           </div>

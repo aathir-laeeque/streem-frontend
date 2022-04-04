@@ -5,7 +5,9 @@ import {
 
 export type FaciltyWiseConstantsState = {
   [facilityId: string]: {
-    timeStampFormat: string;
+    timeFormat: string;
+    dateFormat: string;
+    dateAndTimeStampFormat: string;
   };
 };
 

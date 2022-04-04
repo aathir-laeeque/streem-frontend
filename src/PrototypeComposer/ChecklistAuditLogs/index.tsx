@@ -66,6 +66,10 @@ const AuditLogs: FC<Props> = ({ id }) => {
   const { logs, loading, pageable }: ChecklistAuditLogsState = useTypedSelector(
     (state) => state.prototypeComposer.auditLogs,
   );
+  const { selectedFacility } = useTypedSelector((state) => state.auth);
+  const { timeFormat: timeFormat, dateFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
   const {
     list,
     pageable: { last, page },
@@ -408,7 +412,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
             {
               header: 'TIME',
               template: function renderComp(item) {
-                const day = moment(Object.keys(item)[0]).format('MMM Do, YYYY');
+                const day = moment(Object.keys(item)[0]).format(dateFormat);
                 let criticalCount = 0;
                 const itemId = item.id as string;
 
@@ -443,7 +447,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
                                 >
                                   {moment
                                     .unix(log.triggeredAt)
-                                    .format('hh:mm A')}
+                                    .format(timeFormat)}
                                 </div>
                                 <div className="content-items">
                                   {log.details}

@@ -113,10 +113,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
-  task,
-  taskIndex,
-}) => {
+const MemoTask: FC<{
+  task: Task;
+  dateFormat: string;
+  timeFormat: string;
+  dateAndTimeStampFormat: string;
+  taskIndex: number;
+}> = ({ task, dateFormat, timeFormat, dateAndTimeStampFormat, taskIndex }) => {
   const {
     startedAt,
     audit: { modifiedBy, modifiedAt },
@@ -152,7 +155,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
             >
               {taskExecutionState !== TaskExecutionState.NOT_STARTED &&
               startedAt
-                ? moment.unix(startedAt).format('MMM DD YYYY')
+                ? moment.unix(startedAt).format(dateFormat)
                 : '___/__/____'}
             </Text>
             <Text style={styles.taskStartDateInput}>
@@ -172,7 +175,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
             >
               {taskExecutionState !== TaskExecutionState.NOT_STARTED &&
               startedAt
-                ? moment.unix(startedAt).format('h:mm a')
+                ? moment.unix(startedAt).format(timeFormat)
                 : '__:__ am / pm'}
             </Text>
             <Text style={styles.taskStartDateInput}>HH&nbsp;&nbsp;MM</Text>
@@ -224,7 +227,10 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
           </View>
         )}
       </View>
-      <ActivityList activities={task.activities} />
+      <ActivityList
+        activities={task.activities}
+        dateAndTimeStampFormat={dateAndTimeStampFormat}
+      />
 
       {taskExecutionState === TaskExecutionState.COMPLETED && (
         <View style={styles.taskFooter} wrap={false}>
@@ -263,7 +269,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
               : `${'\n'}`}
             by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
             {modifiedBy.employeeId} on{' '}
-            {moment.unix(modifiedAt).format('MMM DD, h:mm A')}
+            {moment.unix(modifiedAt).format(dateAndTimeStampFormat)}
           </Text>
           {task.timed && task.taskExecution.reason && (
             <View style={styles.comments}>
@@ -278,7 +284,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
             This Task was Completed with Correction via CLEEN {'\n'}
             by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
             {modifiedBy.employeeId} on{' '}
-            {moment.unix(modifiedAt).format('MMM DD, h:mm A')}
+            {moment.unix(modifiedAt).format(dateAndTimeStampFormat)}
           </Text>
           <View style={styles.comments}>
             <Text style={styles.text12}>
@@ -298,7 +304,7 @@ const MemoTask: FC<{ task: Task; taskIndex: number }> = ({
             via CLEEN {'\n'}
             by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
             {modifiedBy.employeeId} on{' '}
-            {moment.unix(modifiedAt).format('MMM DD, h:mm A')}
+            {moment.unix(modifiedAt).format(dateAndTimeStampFormat)}
           </Text>
           <View style={styles.comments}>
             <Text style={styles.text12}>{task.taskExecution.reason}</Text>

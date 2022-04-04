@@ -16,13 +16,17 @@ const reducer = (
         ...state,
         ...action.payload.initialFacilityWiseConstants,
       };
-    case FacilityWiseConstantsAction.SET_FACILITY_TIMESTAMP:
+    case FacilityWiseConstantsAction.SET_FACILITY_TIMESTAMP: {
+      const { timeFormat, dateFormat } = action.payload;
       return {
         ...state,
         [action.payload.facilityId]: {
-          timeStampFormat: action.payload.timeStampFormat,
+          timeFormat,
+          dateFormat,
+          dateAndTimeStampFormat: `${dateFormat} ${timeFormat}`,
         },
       };
+    }
 
     default:
       return state;

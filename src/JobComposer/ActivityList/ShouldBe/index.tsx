@@ -106,7 +106,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
     auth: { profile, selectedFacility },
     composer: { entityId: jobId },
   } = useTypedSelector((state) => state);
-  const { timeStampFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
 
@@ -283,13 +283,13 @@ const ShouldBeActivity: FC<ActivityProps> = ({
         <span className="approved">
           <CheckCircle className="icon" />
           Observation Approved by {getFullName(state.approver)} on{' '}
-          {formatDateTime(state.approvalTime, timeStampFormat)}
+          {formatDateTime(state.approvalTime, dateAndTimeStampFormat)}
         </span>
       ) : state.isApproved === false ? (
         <span className="rejected">
           <Error className="icon" />
           Observation rejected by {getFullName(state.approver)} on{' '}
-          {formatDateTime(state.approvalTime, timeStampFormat)}
+          {formatDateTime(state.approvalTime, dateAndTimeStampFormat)}
         </span>
       ) : null}
 

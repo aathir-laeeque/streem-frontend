@@ -165,12 +165,12 @@ const assigneStyles = StyleSheet.create({
 export const Assigness = ({
   assignees,
   jobState,
-  timeStampFormat,
+  dateAndTimeStampFormat,
   minWidth = 30,
 }: {
   assignees: PdfJobDataType['assignees'];
   jobState: string;
-  timeStampFormat: string;
+  dateAndTimeStampFormat: string;
   minWidth?: number;
 }) => {
   let rows = [];
@@ -201,7 +201,7 @@ export const Assigness = ({
           <View style={assigneStyles.assigneInput}>
             <Text style={commonStyles.text12}>
               {recentSignOffAt
-                ? formatDateTime(recentSignOffAt, timeStampFormat)
+                ? formatDateTime(recentSignOffAt, dateAndTimeStampFormat)
                 : '-'}
             </Text>
           </View>

@@ -30,7 +30,7 @@ const JobSummaryPdf = ({ jobId }: Props) => {
     (state) => state.auth,
   );
 
-  const { timeStampFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
 
@@ -95,7 +95,7 @@ const JobSummaryPdf = ({ jobId }: Props) => {
 
           <CommonJobPdfDetails
             jobPdfData={jobDetails}
-            timeStampFormat={timeStampFormat}
+            dateAndTimeStampFormat={dateAndTimeStampFormat}
           />
           <View style={styles.container}>
             <DurationSummary
@@ -110,7 +110,11 @@ const JobSummaryPdf = ({ jobId }: Props) => {
             />
           </View>
 
-          <Footer user={profile} selectedFacility={selectedFacility!} />
+          <Footer
+            user={profile}
+            selectedFacility={selectedFacility!}
+            dateAndTimeStampFormat={dateAndTimeStampFormat}
+          />
         </Page>
       </Document>
     </PDFViewer>

@@ -37,7 +37,7 @@ const JobHeader: FC<
 > = ({ task, enableStopForTask, showAssignmentButton }) => {
   const dispatch = useDispatch();
   const { profile, selectedFacility } = useTypedSelector((state) => state.auth);
-  const { timeStampFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
 
@@ -129,7 +129,7 @@ const JobHeader: FC<
         <div className="start-audit">
           Task Started by {getUserName({ user: startedBy! })}, ID:{' '}
           {startedBy!.employeeId} on{' '}
-          {formatDateTime(startedAt, timeStampFormat)}
+          {formatDateTime(startedAt, dateAndTimeStampFormat)}
         </div>
       ) : null}
 

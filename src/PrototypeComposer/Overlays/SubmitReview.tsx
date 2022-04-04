@@ -86,18 +86,20 @@ const initialState: InitialState = {
   reviewersOptions: [],
 };
 
-export const SubmitReviewModal: FC<CommonOverlayProps<{
-  isViewer: boolean;
-  sendToAuthor: boolean;
-  isAuthor: boolean;
-  isPrimaryAuthor: boolean;
-  continueReview: boolean;
-  allDoneOk: boolean;
-  reviewState:
-    | CollaboratorState.COMMENTED_CHANGES
-    | CollaboratorState.COMMENTED_OK
-    | null;
-}>> = ({ closeAllOverlays, closeOverlay, props }) => {
+export const SubmitReviewModal: FC<
+  CommonOverlayProps<{
+    isViewer: boolean;
+    sendToAuthor: boolean;
+    isAuthor: boolean;
+    isPrimaryAuthor: boolean;
+    continueReview: boolean;
+    allDoneOk: boolean;
+    reviewState:
+      | CollaboratorState.COMMENTED_CHANGES
+      | CollaboratorState.COMMENTED_OK
+      | null;
+  }>
+> = ({ closeAllOverlays, closeOverlay, props }) => {
   const isViewer = props?.isViewer || false;
   const isAuthor = props?.isAuthor || false;
   const isPrimaryAuthor = props?.isPrimaryAuthor || false;
@@ -111,7 +113,12 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
     userId: state.auth.userId,
     collaborators: state.prototypeComposer.collaborators,
     data: state.prototypeComposer.data as Checklist,
+    selectedFacility: state.auth.selectedFacility,
   }));
+
+  const { dateAndTimeStampFormat } = useTypedSelector(
+    (state) => state.facilityWiseConstants[selectedFacility!.id],
+  );
 
   const [state, setState] = useState(initialState);
 
@@ -224,7 +231,7 @@ export const SubmitReviewModal: FC<CommonOverlayProps<{
                         <span>
                           {moment
                             .unix(comment.commentedAt)
-                            .format('Do MMM, YYYY, h:mm a')}
+                            .format(dateAndTimeStampFormat)}
                         </span>
                       </div>
                     </div>
