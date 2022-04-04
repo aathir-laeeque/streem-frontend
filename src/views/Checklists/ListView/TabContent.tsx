@@ -522,7 +522,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             ...checklistProperties.map(({ placeHolder, id }) => ({
               label: placeHolder,
               value: id,
-              field: 'checklistPropertyValues.propertiesId',
+              field: 'checklistPropertyValues.facilityUseCasePropertyMapping.propertiesId',
               operator: FilterOperators.EQ,
             })),
           ]}

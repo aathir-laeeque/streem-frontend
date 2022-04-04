@@ -207,7 +207,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
             ...jobProperties.map(({ label, id }) => ({
               label,
               value: id,
-              field: 'jobPropertyValues.propertiesId',
+              field: 'jobPropertyValues.facilityUseCasePropertyMapping.propertiesId',
               operator: FilterOperators.EQ,
             })),
           ]}

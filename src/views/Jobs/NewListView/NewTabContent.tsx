@@ -306,7 +306,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             ...jobProperties.map(({ label, id }) => ({
               label: label,
               value: id,
-              field: 'jobPropertyValues.propertiesId',
+              field: 'jobPropertyValues.facilityUseCasePropertyMapping.propertiesId',
               operator: FilterOperators.EQ,
             })),
           ]}
