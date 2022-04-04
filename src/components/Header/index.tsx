@@ -113,45 +113,47 @@ const Header: FC = () => {
             </Menu>
           </>
         )}
-        <HeaderMenu
-          aria-controls="top-menu"
-          aria-haspopup="true"
-          onClick={(event) =>
-            setSettingsDropDownVisibiltity(event.currentTarget)
-          }
-          style={{ marginRight: '16px' }}
-        >
-          <SettingsIcon />
-        </HeaderMenu>
-        <Menu
-          id="top-menu"
-          anchorEl={showSettingsDropDown}
-          keepMounted
-          open={Boolean(showSettingsDropDown)}
-          onClose={() => setSettingsDropDownVisibiltity(null)}
-          style={{ marginTop: 30 }}
-        >
-          {selectedFacility && (
-            <>
-              {checkPermission(['header', 'usersAndAccess']) && (
-                <NestedMenuItem
-                  left
-                  label="System Settings"
-                  mainMenuOpen={showSettingsDropDown ? true : false}
-                >
-                  <MenuItem
-                    onClick={() => {
-                      navigate('/users');
-                      setSettingsDropDownVisibiltity(null);
-                    }}
+        {selectedFacility && (
+          <>
+            <HeaderMenu
+              aria-controls="top-menu"
+              aria-haspopup="true"
+              onClick={(event) =>
+                setSettingsDropDownVisibiltity(event.currentTarget)
+              }
+              style={{ marginRight: '16px' }}
+            >
+              <SettingsIcon />
+            </HeaderMenu>
+            <Menu
+              id="top-menu"
+              anchorEl={showSettingsDropDown}
+              keepMounted
+              open={Boolean(showSettingsDropDown)}
+              onClose={() => setSettingsDropDownVisibiltity(null)}
+              style={{ marginTop: 30 }}
+            >
+              <>
+                {checkPermission(['header', 'usersAndAccess']) && (
+                  <NestedMenuItem
+                    left
+                    label="System Settings"
+                    mainMenuOpen={showSettingsDropDown ? true : false}
                   >
-                    Users and Access
-                  </MenuItem>
-                </NestedMenuItem>
-              )}
-            </>
-          )}
-        </Menu>
+                    <MenuItem
+                      onClick={() => {
+                        navigate('/users');
+                        setSettingsDropDownVisibiltity(null);
+                      }}
+                    >
+                      Users and Access
+                    </MenuItem>
+                  </NestedMenuItem>
+                )}
+              </>
+            </Menu>
+          </>
+        )}
         <HeaderMenu
           aria-controls="top-menu"
           aria-haspopup="true"

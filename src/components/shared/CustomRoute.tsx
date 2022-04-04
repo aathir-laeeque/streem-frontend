@@ -49,7 +49,7 @@ export const CustomRoute: FC<Props> = ({
         const userCanAccessHomePage = checkPermission(['home']);
         if (
           isFacilitySelectionPage ||
-          location?.pathname === '/users' ||
+          location?.pathname.includes('/users') ||
           (props.path === 'home' && userCanAccessHomePage) ||
           (selectedUseCase && isProtected && location?.pathname !== '/')
         ) {
