@@ -127,7 +127,7 @@ const JobHeader: FC<
       )}
       {state in StartedTaskStates && startedAt ? (
         <div className="start-audit">
-          Task Started by {getUserName({ user: startedBy! })}, ID:{' '}
+          Task started by {getUserName({ user: startedBy! })}, ID:{' '}
           {startedBy!.employeeId} on{' '}
           {formatDateTime(startedAt, dateAndTimeStampFormat)}
         </div>
