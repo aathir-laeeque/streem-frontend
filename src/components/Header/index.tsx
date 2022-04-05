@@ -3,7 +3,6 @@ import Logo from '#assets/svg/Logo';
 import MoreOptionsIcon from '#assets/svg/MoreOptionsIcon';
 import SettingsIcon from '#assets/svg/SettingsIcon';
 import Select from '#components/shared/Select';
-import { ComposerEntity } from '#PrototypeComposer/types';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
@@ -16,7 +15,6 @@ import { useDispatch } from 'react-redux';
 import { ImageWrapper } from '../../styles/ImageWrapper';
 import NestedMenuItem from '../shared/NestedMenuItem';
 import { HeaderMenu, Wrapper } from './styles';
-import { fetch } from '#store/properties/actions';
 
 type FacilityOption = {
   label: string;
@@ -97,12 +95,6 @@ const Header: FC = () => {
                   onClick={() => {
                     setShowUseCaseSelectionDropDown(null);
                     dispatch(setSelectedUseCase(useCaseDetails));
-                    dispatch(
-                      fetch(
-                        [ComposerEntity.JOB, ComposerEntity.CHECKLIST],
-                        useCaseDetails.id,
-                      ),
-                    );
                     navigate('/inbox');
                   }}
                   disabled={!useCaseDetails.enabled}

@@ -2,13 +2,13 @@ import { BaseModal, Button1, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
-import { fetch } from '#store/properties/actions';
 import { VisibilityOutlined } from '@material-ui/icons';
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { logout, reLogin } from '../actions';
+import { fetch } from '#store/properties/actions';
 
 // TODO Handle closing of this modal if relogin api fails for some reason.
 const Wrapper = styled.div`
@@ -94,7 +94,6 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
           username: profile.username,
         }),
       );
-
       if (selectedUseCase) {
         dispatch(
           fetch(
@@ -103,6 +102,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
           ),
         );
       }
+
       closeOverlay();
     }
   };

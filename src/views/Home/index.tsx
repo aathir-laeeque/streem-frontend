@@ -1,9 +1,7 @@
 import { UseCaseLockIcon } from '#assets/svg/UseCaseLockIcon';
 import { Header } from '#components';
 import { DashboardLayout } from '#components/Layouts';
-import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
-import { fetch } from '#store/properties/actions';
 import { fetchUseCaseList, setSelectedUseCase } from '#views/Auth/actions';
 import { CircularProgress } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
@@ -66,12 +64,6 @@ const Home = () => {
                     onClick={() => {
                       if (useCaseDetails.enabled) {
                         dispatch(setSelectedUseCase(useCaseDetails));
-                        dispatch(
-                          fetch(
-                            [ComposerEntity.JOB, ComposerEntity.CHECKLIST],
-                            useCaseDetails.id,
-                          ),
-                        );
                         navigate('/inbox');
                       }
                     }}
