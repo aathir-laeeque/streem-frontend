@@ -109,12 +109,14 @@ export const SubmitReviewModal: FC<
   const allDoneOk = props?.allDoneOk || false;
 
   const dispatch = useDispatch();
-  const { data, userId, collaborators } = useTypedSelector((state) => ({
-    userId: state.auth.userId,
-    collaborators: state.prototypeComposer.collaborators,
-    data: state.prototypeComposer.data as Checklist,
-    selectedFacility: state.auth.selectedFacility,
-  }));
+  const { data, userId, collaborators, selectedFacility } = useTypedSelector(
+    (state) => ({
+      userId: state.auth.userId,
+      collaborators: state.prototypeComposer.collaborators,
+      data: state.prototypeComposer.data as Checklist,
+      selectedFacility: state.auth.selectedFacility,
+    }),
+  );
 
   const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
