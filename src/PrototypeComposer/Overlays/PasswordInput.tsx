@@ -75,9 +75,11 @@ type Inputs = {
   password: string;
 };
 
-const PasswordInputModal: FC<CommonOverlayProps<{
-  isReleasing: boolean;
-}>> = ({ closeAllOverlays, closeOverlay, props }) => {
+const PasswordInputModal: FC<
+  CommonOverlayProps<{
+    isReleasing: boolean;
+  }>
+> = ({ closeAllOverlays, closeOverlay, props }) => {
   const isReleasing = props?.isReleasing || false;
   const dispatch = useDispatch();
   const { data: checklist } = useTypedSelector((state) => ({
@@ -113,11 +115,23 @@ const PasswordInputModal: FC<CommonOverlayProps<{
         showFooter={false}
         title="Ready for Release"
       >
-        <span>
-          {isReleasing
-            ? 'By Entering your Account Password you will Release the Checklist for creating Jobs'
-            : 'By Entering your Account Password you will sign the Prototype and make it ready for release.'}
-        </span>
+        <div>
+          {isReleasing ? (
+            <>
+              <div>
+                Ongoing Jobs will be executed as per the previous version of the
+                the Checklist. All new Jobs will be created as per the latest
+                version.
+              </div>
+              <div style={{ marginTop: '10px' }}>
+                By Entering your Account Password you will Release the Checklist
+                for creating Jobs.
+              </div>
+            </>
+          ) : (
+            'By Entering your Account Password you will sign the Prototype and make it ready for release.'
+          )}
+        </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextInput
             ref={register({
