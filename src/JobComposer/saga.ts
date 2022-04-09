@@ -5,6 +5,7 @@ import {
   openOverlayAction,
 } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { setRecentServerTimestamp } from '#store/extras/action';
 import {
   apiCompleteJob,
   apiGetAllUsersAssignedToJob,
@@ -26,7 +27,6 @@ import {
   takeLatest,
   takeLeading,
 } from 'redux-saga/effects';
-
 import {
   completeJob,
   fetchData,
@@ -54,7 +54,7 @@ function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
 
     yield put(fetchDataOngoing());
 
-    const { data, errors } = yield call(
+    const { data, errors, timestamp } = yield call(
       request,
       'GET',
       entity === Entity.CHECKLIST ? apiGetChecklist(id) : apiGetSelectedJob(id),
@@ -62,6 +62,7 @@ function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
 
     if (data) {
       yield put(fetchDataSuccess(data, entity, setActive));
+      yield put(setRecentServerTimestamp(timestamp));
     } else {
       // TODO: handle the api error when design comes
       console.error('error from fetch checklist/job api ==>> ', errors);
@@ -125,9 +126,8 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
       );
     } else {
       if (!withException) {
-        const { tasksErrors, activitiesErrors, signOffErrors } = groupJobErrors(
-          errors,
-        );
+        const { tasksErrors, activitiesErrors, signOffErrors } =
+          groupJobErrors(errors);
 
         if (tasksErrors.length) {
           console.log('handle task level error here');

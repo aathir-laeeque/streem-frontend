@@ -1,11 +1,11 @@
 import { JOB_STAGE_POLLING_TIMEOUT } from '#JobComposer/composer.types';
 import { RootState } from '#store';
+import { setRecentServerTimestamp } from '#store/extras/action';
 import { apiGetStageData } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { CompletedJobStates } from '#views/Jobs/NewListView/types';
 import { keyBy } from 'lodash';
 import { call, delay, put, race, select, take } from 'redux-saga/effects';
-
 import {
   fetchActiveStageDataRes,
   fetchActiveStageDataSuccess,
@@ -32,7 +32,7 @@ function* activeStagePollingSaga({
       }
 
       if (activeStageId) {
-        const { data, errors } = yield call(
+        const { data, errors, timestamp } = yield call(
           request,
           'GET',
           apiGetStageData(jobId, activeStageId.toString()),
@@ -68,6 +68,7 @@ function* activeStagePollingSaga({
             stageReports,
           } as fetchActiveStageDataRes),
         );
+        yield put(setRecentServerTimestamp(timestamp));
 
         if (data.jobState in CompletedJobStates) {
           yield put(stopPollActiveStageData());

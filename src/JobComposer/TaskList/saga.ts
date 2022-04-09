@@ -1,6 +1,7 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
+import { setRecentServerTimestamp } from '#store/extras/action';
 import {
   apiEnableTaskErrorCorrection,
   apiPerformActionOnTask,
@@ -8,7 +9,6 @@ import {
 import { request } from '#utils/request';
 import { JobStateEnum } from '#views/Jobs/NewListView/types';
 import { all, call, put, select, takeLeading } from 'redux-saga/effects';
-
 import {
   apiCancelTaskErrorCorrection,
   apiCompleteTaskErrorCorrection,
@@ -64,7 +64,7 @@ function* performActionOnTaskSaga({
     const { taskId, action, reason } = payload;
 
     if (isJobStarted) {
-      const { data, errors } = yield call(
+      const { data, errors, timestamp } = yield call(
         request,
         'PATCH',
         apiPerformActionOnTask(taskId, action),
@@ -82,14 +82,12 @@ function* performActionOnTaskSaga({
             stages: { activeStageId },
           } = yield select((state: RootState) => state.composer);
 
-          const activitiesId = yield select(
+          const activitiesId: string[] = yield select(
             (state: RootState) =>
               state.composer.activities.activitiesOrderInTaskInStage[
                 activeStageId
               ][taskId],
           );
-
-          console.log('activities ids :: ', activitiesId);
 
           yield put(removeTaskError(taskId));
 
@@ -100,12 +98,10 @@ function* performActionOnTaskSaga({
           );
         }
 
-        console.log('data from api call in performActionOnTaskSaga :: ', data);
-
         yield put(updateTaskExecutionState(taskId, data));
+        yield put(setRecentServerTimestamp(timestamp));
       } else {
         const groupedErrors = groupJobErrors(errors);
-
         if (
           action === TaskAction.COMPLETE ||
           action === TaskAction.COMPLETE_WITH_EXCEPTION
