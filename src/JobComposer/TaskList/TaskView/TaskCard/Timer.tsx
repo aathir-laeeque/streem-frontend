@@ -1,10 +1,12 @@
 import { Task, TaskExecutionState } from '#JobComposer/checklist.types';
+import { useTypedSelector } from '#store';
 import { formatDuration } from '#utils/timeUtils';
 import { Timer as TimerIcon } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 
 const Timer: FC<{ task: Task }> = ({ task }) => {
+  const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
   const { state, startedAt, endedAt } = task.taskExecution;
 
   const isTaskCompleted =
@@ -17,7 +19,9 @@ const Timer: FC<{ task: Task }> = ({ task }) => {
     isTaskCompleted
       ? moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds')
       : isTaskStarted
-      ? moment().diff(moment.unix(startedAt), 'seconds')
+      ? moment
+          .unix(recentServerTimestamp!)
+          .diff(moment.unix(startedAt!), 'seconds')
       : 0,
   );
 
@@ -28,7 +32,7 @@ const Timer: FC<{ task: Task }> = ({ task }) => {
 
     if (state === TaskExecutionState.IN_PROGRESS) {
       interval = setInterval(() => {
-        setTimeElapsed(moment().diff(moment.unix(startedAt), 'seconds'));
+        setTimeElapsed((oldTimeElapsed) => oldTimeElapsed + 1);
       }, 1000);
     }
 

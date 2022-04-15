@@ -16,6 +16,8 @@ const reducer = (
     case ExtrasAction.SET_GLOBAL_ERROR:
       return { ...state, hasGlobalError: action.payload.hasError };
 
+    case ExtrasAction.SET_RECENT_SERVER_TIMESTAMP:
+      return { ...state, recentServerTimestamp: action.payload.timestamp };
     default:
       return state;
   }

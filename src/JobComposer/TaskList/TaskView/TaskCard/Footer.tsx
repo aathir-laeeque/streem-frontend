@@ -90,7 +90,12 @@ const DelayWrapper = styled.div`
 
 const CompletedWrapper = styled.div.attrs({
   className: '',
-})`
+})<{
+  completed?: boolean;
+  skipped?: boolean;
+  isTaskDelayed?: string;
+  completedWithException?: boolean;
+}>`
   align-items: center;
   ${({ completed, skipped, isTaskDelayed, completedWithException }) => {
     if (completed) {
@@ -165,9 +170,9 @@ type FooterProps = {
 };
 
 const generateName = ({
-  firstName,
-  lastName,
-}: {
+                        firstName,
+                        lastName,
+                      }: {
   firstName: string;
   lastName: string;
 }) => `${firstName} ${lastName}`;
@@ -181,6 +186,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
+  const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
 
   const isJobBlocked = jobState === JobStateEnum.BLOCKED;
 
@@ -261,7 +267,7 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
         moment
           .unix(task.taskExecution.endedAt!)
           .diff(moment.unix(task.taskExecution.startedAt!), 'seconds') <
-          task.minPeriod!
+        task.minPeriod!
       ) {
         text = 'before the set time';
       }
@@ -323,14 +329,18 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
     if (shouldAskForReason) {
       let text;
       if (
-        moment().diff(moment.unix(task.taskExecution.startedAt), 'seconds') >
-        task.maxPeriod
+        moment
+          .unix(recentServerTimestamp!)
+          .diff(moment.unix(task.taskExecution.startedAt!), 'seconds') >
+        task.maxPeriod!
       ) {
         text = 'State your reason for delay';
       } else if (
         task.timerOperator === 'NOT_LESS_THAN' &&
-        moment().diff(moment.unix(task.taskExecution.startedAt), 'seconds') <
-          task.minPeriod
+        moment
+          .unix(recentServerTimestamp!)
+          .diff(moment.unix(task.taskExecution.startedAt!), 'seconds') <
+        task.minPeriod!
       ) {
         text = 'State your reason for early completion';
       }
@@ -372,10 +382,12 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
                 className="complete-task"
                 onClick={() => {
                   if (!isJobBlocked) {
-                    const timeElapsed = moment().diff(
-                      moment.unix(task.taskExecution.startedAt),
-                      'seconds',
-                    );
+                    const timeElapsed = moment
+                      .unix(recentServerTimestamp!)
+                      .diff(
+                        moment.unix(task.taskExecution.startedAt!),
+                        'seconds',
+                      );
 
                     if (
                       task.timed &&
