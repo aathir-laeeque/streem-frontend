@@ -145,7 +145,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
             <Text style={styles.footerInfo}>
               Downloaded on {moment().format(dateAndTimeStampFormat)}. By{' '}
               {profile.firstName} {profile.lastName} ID: {profile.employeeId}{' '}
-              for {selectedFacility?.name} using CLEEN App
+              for {selectedFacility?.name} using Leucine App
             </Text>
             <View style={styles.pageInfo}>
               <Text

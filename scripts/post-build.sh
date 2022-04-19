@@ -5,7 +5,7 @@ CUSTOMER_VERSION=$(sed -nE 's/^\s*"customer_version": "(.*?)",$/\1/p' package.js
 VERSION=$(sed -nE 's/^\s*"version": "(.*?)",$/\1/p' package.json)
 
 # write version details to the file
-printf "Product: CLEEN\n\nVersion: %s" "$CUSTOMER_VERSION" > dist/version.txt
+printf "Product: Leucine\n\nVersion: %s" "$CUSTOMER_VERSION" > dist/version.txt
 
 # fetch the git commit
 LAST_COMMIT_SHA=$(git rev-parse HEAD)

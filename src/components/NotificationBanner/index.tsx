@@ -71,7 +71,7 @@ const NotificationBanner = () => {
       msgText: (
         <span>
           <span className="msg-title">NO INTERNET.</span>Please make sure your
-          are connected to internet to use the CLEEN App.
+          are connected to internet to use the Leucine App.
         </span>
       ),
       msgType: MessageType.ERROR,
@@ -79,13 +79,13 @@ const NotificationBanner = () => {
   } else if (license) {
     const expiredDate = moment(license.renewalDate).format('Do MMMM YYYY');
     msgObj = {
-      msgText: `Your CLEEN subscription will expire on ${expiredDate}. Please get in touch with your Account Manager to renew the subscription.`,
+      msgText: `Your Leucine subscription will expire on ${expiredDate}. Please get in touch with your Account Manager to renew the subscription.`,
       msgType: MessageType.WARNING,
     };
     if (license.state !== LicenseState.INTIMATE) {
       const graceEndsOn = moment(license.graceEndsOn).format('Do MMMM YYYY');
       msgObj = {
-        msgText: `Your CLEEN subscription expired on ${expiredDate}. Please renew before ${graceEndsOn} to ensure uninterrupted access to CLEEN.`,
+        msgText: `Your Leucine subscription expired on ${expiredDate}. Please renew before ${graceEndsOn} to ensure uninterrupted access to Leucine.`,
         msgType: MessageType.ERROR,
       };
     }

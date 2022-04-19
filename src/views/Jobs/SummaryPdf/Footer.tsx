@@ -49,7 +49,7 @@ const Footer = ({ user, selectedFacility, dateAndTimeStampFormat }: Props) => {
     <View fixed style={styles.footer}>
       <Text style={styles.footerInfo}>
         Downloaded on {now}. By {userName} for {selectedFacility.name} using
-        CLEEN App
+        Leucine App
       </Text>
 
       <Text

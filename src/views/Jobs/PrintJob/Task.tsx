@@ -235,7 +235,7 @@ const MemoTask: FC<{
       {taskExecutionState === TaskExecutionState.COMPLETED && (
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
-            This Task was digitally completed via CLEEN{' '}
+            This Task was digitally completed via Leucine{' '}
             {task.timed &&
             task.taskExecution.endedAt &&
             task.taskExecution.startedAt &&
@@ -281,7 +281,7 @@ const MemoTask: FC<{
       {!!correctionEnabled && (
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
-            This Task was Completed with Correction via CLEEN {'\n'}
+            This Task was Completed with Correction via Leucine {'\n'}
             by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
             {modifiedBy.employeeId} on{' '}
             {moment.unix(modifiedAt).format(dateAndTimeStampFormat)}
@@ -301,7 +301,7 @@ const MemoTask: FC<{
             {taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION
               ? ' Completed with Exception '
               : ' skipped '}
-            via CLEEN {'\n'}
+            via Leucine {'\n'}
             by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
             {modifiedBy.employeeId} on{' '}
             {moment.unix(modifiedAt).format(dateAndTimeStampFormat)}

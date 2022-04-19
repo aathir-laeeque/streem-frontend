@@ -487,7 +487,7 @@ const activityTemplateFormatter = (
               <Text style={styles.text12}>
                 This Activity was{' '}
                 {approvalState === 'APPROVED' ? 'approved' : 'rejected'}{' '}
-                digitally via CLEEN {'\n'}
+                digitally via Leucine {'\n'}
                 by{' '}
                 {
                   activity.response.activityValueApprovalDto.approver.firstName
@@ -748,7 +748,7 @@ const MemoActivityList: FC<{
               {activity.response.state !== TaskExecutionState.NOT_STARTED && (
                 <View style={styles.taskFooter} wrap={false}>
                   <Text style={styles.text12}>
-                    This Activity was last updated digitally via CLEEN {'\n'}
+                    This Activity was last updated digitally via Leucine {'\n'}
                     by {activity.response.audit.modifiedBy.firstName}{' '}
                     {activity.response.audit.modifiedBy.lastName}, ID:{' '}
                     {activity.response.audit.modifiedBy.employeeId} on{' '}
