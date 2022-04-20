@@ -7,11 +7,15 @@ import {
   RadioButtonUnchecked,
 } from '@material-ui/icons';
 import { noop } from 'lodash';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-
-import { updateActivity } from './actions';
+import {
+  addStoreActivityItem,
+  removeStoreActivityItem,
+  updateActivityApi,
+  updateStoreActivity,
+} from './actions';
 import { MultiSelectWrapper } from './styles';
 import { ActivityProps, SelectActivityErrors } from './types';
 
@@ -19,6 +23,15 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
   activity,
 }) => {
   const dispatch = useDispatch();
+  const [componentLoaded, updateComponentLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (componentLoaded) {
+      dispatch(updateActivityApi(activity));
+    } else if (activity) {
+      updateComponentLoaded(true);
+    }
+  }, [activity]);
 
   const isMultiSelect = activity.type === MandatoryActivity.MULTISELECT;
 
@@ -61,14 +74,11 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
               defaultValue={item.name}
               customOnChange={(value) => {
                 dispatch(
-                  updateActivity({
-                    ...activity,
-                    data: [
-                      ...activity.data.slice(0, index),
-                      { id: item.id, name: value },
-                      ...activity.data.slice(index + 1),
-                    ],
-                  }),
+                  updateStoreActivity(value, activity.id, [
+                    'data',
+                    index,
+                    'name',
+                  ]),
                 );
               }}
               error={isErrorPresent && !item.name}
@@ -78,12 +88,7 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
               className="icon"
               id="remove-item"
               onClick={() => {
-                dispatch(
-                  updateActivity({
-                    ...activity,
-                    data: [...activity.data.filter((el) => el.id !== item.id)],
-                  }),
-                );
+                dispatch(removeStoreActivityItem(activity.id, item.id));
               }}
             />
           </li>
@@ -102,10 +107,7 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         <AddNewItem
           onClick={() => {
             dispatch(
-              updateActivity({
-                ...activity,
-                data: [...activity.data, { id: uuidv4(), name: '' }],
-              }),
+              addStoreActivityItem(activity.id, { id: uuidv4(), name: '' }),
             );
           }}
         />

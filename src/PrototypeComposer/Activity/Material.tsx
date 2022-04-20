@@ -4,16 +4,32 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { MediaDetails } from '#PrototypeComposer/Tasks/types';
 import { ArrowDropDown, ArrowDropUp, Close, Error } from '@material-ui/icons';
-import React, { FC } from 'react';
+import { pick } from 'lodash';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-
-import { updateActivity } from './actions';
+import {
+  addStoreActivityItem,
+  removeStoreActivityItem,
+  updateActivityApi,
+  updateStoreActivity,
+  updateStoreMediaActivity,
+} from './actions';
 import { MaterialWrapper } from './styles';
 import { ActivityProps, MaterialActivityErrors } from './types';
 
 const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
+
+  const [componentLoaded, updateComponentLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (componentLoaded) {
+      dispatch(updateActivityApi(activity));
+    } else if (activity) {
+      updateComponentLoaded(true);
+    }
+  }, [activity]);
 
   const activityErrors = activity.errors.filter(
     (error) => error.code in MaterialActivityErrors,
@@ -31,13 +47,23 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           isActivity: true,
           execute: (data: MediaDetails) => {
             dispatch(
-              updateActivity({
-                ...activity,
-                data: [
-                  ...activity.data.slice(0, index),
-                  { ...item, ...data },
-                  ...activity.data.slice(index + 1),
-                ],
+              updateStoreMediaActivity(activity.id, index, {
+                ...pick(item, [
+                  'mediaId',
+                  'filename',
+                  'originalFilename',
+                  'link',
+                  'type',
+                  'description',
+                ]),
+                ...pick(data, [
+                  'mediaId',
+                  'filename',
+                  'originalFilename',
+                  'link',
+                  'type',
+                  'description',
+                ]),
               }),
             );
           },
@@ -106,14 +132,11 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
               defaultValue={item.name}
               customOnChange={(value) => {
                 dispatch(
-                  updateActivity({
-                    ...activity,
-                    data: [
-                      ...activity.data.slice(0, index),
-                      { ...item, name: value },
-                      ...activity.data.slice(index + 1),
-                    ],
-                  }),
+                  updateStoreActivity(value, activity.id, [
+                    'data',
+                    index,
+                    'name',
+                  ]),
                 );
               }}
               error={isErrorPresent && !item.name}
@@ -124,14 +147,11 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                 className="icon"
                 onClick={() => {
                   dispatch(
-                    updateActivity({
-                      ...activity,
-                      data: [
-                        ...activity.data.slice(0, index),
-                        { ...item, quantity: item.quantity + 1 },
-                        ...activity.data.slice(index + 1),
-                      ],
-                    }),
+                    updateStoreActivity(++item.quantity, activity.id, [
+                      'data',
+                      index,
+                      'quantity',
+                    ]),
                   );
                 }}
               />
@@ -145,14 +165,11 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                 onClick={() => {
                   if (item.quantity > 0) {
                     dispatch(
-                      updateActivity({
-                        ...activity,
-                        data: [
-                          ...activity.data.slice(0, index),
-                          { ...item, quantity: item.quantity - 1 },
-                          ...activity.data.slice(index + 1),
-                        ],
-                      }),
+                      updateStoreActivity(--item.quantity, activity.id, [
+                        'data',
+                        index,
+                        'quantity',
+                      ]),
                     );
                   }
                 }}
@@ -163,15 +180,7 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
               className="icon"
               id="remove-item"
               onClick={() => {
-                dispatch(
-                  updateActivity({
-                    ...activity,
-                    data: [
-                      ...activity.data.slice(0, index),
-                      ...activity.data.slice(index + 1),
-                    ],
-                  }),
-                );
+                dispatch(removeStoreActivityItem(activity.id, item.id));
               }}
             />
           </li>
@@ -186,16 +195,10 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         <AddNewItem
           onClick={() =>
             dispatch(
-              updateActivity({
-                ...activity,
-                data: [
-                  ...activity.data,
-                  {
-                    name: '',
-                    quantity: 0,
-                    id: uuidv4(),
-                  },
-                ],
+              addStoreActivityItem(activity.id, {
+                id: uuidv4(),
+                name: '',
+                quantity: 0,
               }),
             )
           }

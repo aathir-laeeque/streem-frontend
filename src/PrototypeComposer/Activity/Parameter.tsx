@@ -1,16 +1,26 @@
 import { Select, TextInput, NumberInput } from '#components';
 import { Error } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { PARAMETER_OPERATORS } from '#PrototypeComposer/constants';
 
 import { ParameterWrapper } from './styles';
 import { ActivityProps, ParameterActivityErrors } from './types';
 import { useDispatch } from 'react-redux';
-import { updateActivity } from './actions';
+import { updateActivityApi, updateStoreActivity } from './actions';
+import { Option } from '#components/shared/Select';
 
 const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
+  const [componentLoaded, updateComponentLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (componentLoaded) {
+      dispatch(updateActivityApi(activity));
+    } else if (activity) {
+      updateComponentLoaded(true);
+    }
+  }, [activity]);
 
   const activityErrors = activity.errors.filter(
     (error) => error.code in ParameterActivityErrors,
@@ -34,12 +44,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         defaultValue={activity.data.parameter}
         name="parameter"
         onChange={debounce(({ name, value }) => {
-          dispatch(
-            updateActivity({
-              ...activity,
-              data: { ...activity.data, [name]: value },
-            }),
-          );
+          dispatch(updateStoreActivity(value, activity.id, ['data', name]));
         }, 500)}
         error={
           isErrorPresent && !activity.data.parameter
@@ -53,12 +58,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         defaultValue={activity.data.uom}
         name="uom"
         onChange={debounce(({ name, value }) => {
-          dispatch(
-            updateActivity({
-              ...activity,
-              data: { ...activity.data, [name]: value },
-            }),
-          );
+          dispatch(updateStoreActivity(value, activity.id, ['data', name]));
         }, 500)}
         error={
           isErrorPresent && !activity.data.uom
@@ -73,10 +73,10 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         options={PARAMETER_OPERATORS}
         onChange={(option) => {
           dispatch(
-            updateActivity({
-              ...activity,
-              data: { ...activity.data, operator: option.value },
-            }),
+            updateStoreActivity((option as Option).value, activity.id, [
+              'data',
+              'operator',
+            ]),
           );
         }}
         selectedValue={PARAMETER_OPERATORS.find(
@@ -99,12 +99,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             label="Value"
             name="lowerValue"
             onChange={debounce(({ name, value }) => {
-              dispatch(
-                updateActivity({
-                  ...activity,
-                  data: { ...activity.data, [name]: value },
-                }),
-              );
+              dispatch(updateStoreActivity(value, activity.id, ['data', name]));
             }, 500)}
           />
 
@@ -120,12 +115,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             label="Value"
             name="upperValue"
             onChange={debounce(({ name, value }) => {
-              dispatch(
-                updateActivity({
-                  ...activity,
-                  data: { ...activity.data, [name]: value },
-                }),
-              );
+              dispatch(updateStoreActivity(value, activity.id, ['data', name]));
             }, 500)}
           />
         </div>
@@ -140,12 +130,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
           label="Value"
           name="value"
           onChange={debounce(({ name, value }) => {
-            dispatch(
-              updateActivity({
-                ...activity,
-                data: { ...activity.data, [name]: value },
-              }),
-            );
+            dispatch(updateStoreActivity(value, activity.id, ['data', name]));
           }, 500)}
         />
       )}
