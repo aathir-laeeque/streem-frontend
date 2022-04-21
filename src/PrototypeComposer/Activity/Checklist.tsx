@@ -1,15 +1,28 @@
 import { ActivityItemInput, AddNewItem } from '#components';
 import { CheckBoxOutlineBlankSharp, Close, Error } from '@material-ui/icons';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-
-import { updateActivity } from './actions';
+import {
+  addStoreActivityItem,
+  removeStoreActivityItem,
+  updateActivityApi,
+  updateStoreActivity,
+} from './actions';
 import { ChecklistWrapper } from './styles';
 import { ActivityProps, ChecklistActivityErrors } from './types';
 
 const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
+  const [componentLoaded, updateComponentLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (componentLoaded) {
+      dispatch(updateActivityApi(activity));
+    } else if (activity) {
+      updateComponentLoaded(true);
+    }
+  }, [activity]);
 
   const activityErrors = activity.errors.filter(
     (error) => error.code in ChecklistActivityErrors,
@@ -36,14 +49,11 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
               defaultValue={item.name}
               customOnChange={(value) => {
                 dispatch(
-                  updateActivity({
-                    ...activity,
-                    data: [
-                      ...activity.data.slice(0, index),
-                      { id: item.id, name: value },
-                      ...activity.data.slice(index + 1),
-                    ],
-                  }),
+                  updateStoreActivity(value, activity.id, [
+                    'data',
+                    index,
+                    'name',
+                  ]),
                 );
               }}
               error={isErrorPresent && !item.name}
@@ -53,12 +63,7 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
               className="icon"
               id="remove-item"
               onClick={() => {
-                dispatch(
-                  updateActivity({
-                    ...activity,
-                    data: [...activity.data.filter((el) => el.id !== item.id)],
-                  }),
-                );
+                dispatch(removeStoreActivityItem(activity.id, item.id));
               }}
             />
           </li>
@@ -73,10 +78,7 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         <AddNewItem
           onClick={() => {
             dispatch(
-              updateActivity({
-                ...activity,
-                data: [...activity.data, { id: uuidv4(), name: '' }],
-              }),
+              addStoreActivityItem(activity.id, { id: uuidv4(), name: '' }),
             );
           }}
         />

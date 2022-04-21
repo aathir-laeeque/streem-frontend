@@ -1,14 +1,23 @@
 import { ActivityItemInput } from '#components';
 import { Error } from '@material-ui/icons';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
-import { updateActivity } from './actions';
+import { updateActivityApi, updateStoreActivity } from './actions';
 import { YesNoWrapper } from './styles';
 import { ActivityProps, YesNoActivityErrors } from './types';
 
 const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
+
+  const [componentLoaded, updateComponentLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (componentLoaded) {
+      dispatch(updateActivityApi(activity));
+    } else if (activity) {
+      updateComponentLoaded(true);
+    }
+  }, [activity]);
 
   const activityErrors = activity.errors.filter(
     (error) => error.code in YesNoActivityErrors,
@@ -35,14 +44,14 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         label="Ask a question"
         name="label"
         customOnChange={(value) => {
-          dispatch(updateActivity({ ...activity, label: value }));
+          dispatch(updateStoreActivity(value, activity.id, ['label']));
         }}
       />
 
       <div className="options-container">
         {activity.data
           .sort((a, b) => (a.type > b.type ? -1 : 1))
-          .map((item, index) => (
+          .map((item, index: number) => (
             <ActivityItemInput
               defaultValue={item.name}
               error={
@@ -58,14 +67,11 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
               name={item.type}
               customOnChange={(value) => {
                 dispatch(
-                  updateActivity({
-                    ...activity,
-                    data: [
-                      ...activity.data.slice(0, index),
-                      { ...item, name: value },
-                      ...activity.data.slice(index + 1),
-                    ],
-                  }),
+                  updateStoreActivity(value, activity.id, [
+                    'data',
+                    index,
+                    'name',
+                  ]),
                 );
               }}
             />

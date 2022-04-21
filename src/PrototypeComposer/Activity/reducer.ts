@@ -1,6 +1,5 @@
-import { omit } from 'lodash';
+import { cloneDeep, omit, set } from 'lodash';
 import { Reducer } from 'redux';
-
 import { Checklist } from '../checklist.types';
 import { ComposerAction } from '../reducer.types';
 import { TaskListActions } from '../Tasks/reducer.types';
@@ -74,19 +73,70 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         },
       };
 
-    case ActivityListActions.UPDATE_ACTIVITY_SUCCESS:
-      const updatedActivity = action.payload.activity;
+    case ActivityListActions.UPDATE_STORE_ACTIVITY: {
+      const { updatePath, activityId, data } = action.payload;
 
       return {
         ...state,
         listById: {
           ...state.listById,
-          [updatedActivity.id]: {
-            ...updatedActivity,
-            errors: [...state.listById[updatedActivity.id].errors],
+          [activityId]: cloneDeep({
+            ...set(state.listById[activityId], updatePath, data),
+            errors: [],
+          }),
+        },
+      };
+    }
+
+    case ActivityListActions.UPDATE_STORE_MEDIA_ACTIVITY: {
+      const { activityId, dataIndex, data } = action.payload;
+
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [activityId]: cloneDeep({
+            ...set(state.listById[activityId], ['data', dataIndex], {
+              ...state.listById[activityId].data[dataIndex],
+              ...data,
+            }),
+            errors: [],
+          }),
+        },
+      };
+    }
+
+    case ActivityListActions.REMOVE_STORE_ACTIVITY_ITEM: {
+      const { activityId, activityItemId } = action.payload;
+      const activityToUpdate = state.listById[activityId];
+
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [activityId]: {
+            ...activityToUpdate,
+            data: activityToUpdate.data.filter(
+              ({ id }: { id: string }) => id !== activityItemId,
+            ),
           },
         },
       };
+    }
+
+    case ActivityListActions.ADD_STORE_ACTIVITY_ITEM: {
+      const { activityId, activityItemData } = action.payload;
+      const activityToUpdate = state.listById[activityId];
+      activityToUpdate.data.push(activityItemData);
+
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [activityId]: { ...activityToUpdate },
+        },
+      };
+    }
 
     case TaskListActions.ADD_NEW_TASK_SUCCESS:
       const { newTask, stageId } = action.payload;
@@ -133,18 +183,6 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
           [activityIdWithError]: {
             ...activityWithError,
             errors: [...activityWithError.errors, error],
-          },
-        },
-      };
-
-    case ActivityListActions.RESET_VALIDATION_ERROR:
-      return {
-        ...state,
-        listById: {
-          ...state.listById,
-          [action.payload.activityId]: {
-            ...state.listById[action.payload.activityId],
-            errors: [],
           },
         },
       };

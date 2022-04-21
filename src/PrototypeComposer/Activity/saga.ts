@@ -4,8 +4,7 @@ import {
   apiUpdateActivity,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { call, put, takeLeading } from 'redux-saga/effects';
-
+import { call, put, takeLatest, takeLeading } from 'redux-saga/effects';
 import {
   addNewActivity,
   addNewActivityError,
@@ -13,29 +12,25 @@ import {
   deleteActivity,
   deleteActivityError,
   deleteActivitySuccess,
-  resetValidationError,
-  updateActivity,
+  updateActivityApi,
   updateActivityError,
-  updateActivitySuccess,
 } from './actions';
 import { ActivityListActions } from './reducer.types';
 import { generateNewActivity } from './utils';
 
-function* updateActivitySaga({ payload }: ReturnType<typeof updateActivity>) {
+function* updateActivitySaga({
+  payload,
+}: ReturnType<typeof updateActivityApi>) {
   try {
     const { activity } = payload;
-
-    const { data, errors } = yield call(
+    const { errors } = yield call(
       request,
       'PATCH',
       apiUpdateActivity(activity.id),
       { data: { ...activity } },
     );
 
-    if (data) {
-      yield put(updateActivitySuccess(data));
-      yield put(resetValidationError(activity.id));
-    } else {
+    if (errors) {
       yield put(updateActivityError(errors));
     }
   } catch (error) {
@@ -90,6 +85,6 @@ function* deleteActivitySaga({ payload }: ReturnType<typeof deleteActivity>) {
 
 export function* ActivitySaga() {
   yield takeLeading(ActivityListActions.ADD_NEW_ACTIVITY, addNewActivitySaga);
-  yield takeLeading(ActivityListActions.UPDATE_ACTIVITY, updateActivitySaga);
+  yield takeLatest(ActivityListActions.UPDATE_ACTIVITY_API, updateActivitySaga);
   yield takeLeading(ActivityListActions.DELETE_ACTIVITY, deleteActivitySaga);
 }

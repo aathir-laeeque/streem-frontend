@@ -1,5 +1,3 @@
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-
 import { emojis } from '#utils/constants';
 import { Error } from '@material-ui/icons';
 import { ContentState, convertToRaw, EditorState } from 'draft-js';
@@ -8,9 +6,9 @@ import htmlToDraft from 'html-to-draftjs';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useDispatch } from 'react-redux';
-
-import { updateActivity } from '../actions';
+import { updateActivityApi, updateStoreActivity } from '../actions';
 import { ActivityProps } from '../types';
 import EmojiComponent from './EmojiComponent';
 import { Wrapper } from './styles';
@@ -30,6 +28,7 @@ const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
 }) => {
   const dispatch = useDispatch();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
+  const [componentLoaded, updateComponentLoaded] = useState<boolean>(false);
 
   const activityError = activity.errors.find((error) => error.code === 'E422');
 
@@ -41,8 +40,15 @@ const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
       );
 
       setEditorState(EditorState.createWithContent(contentState));
+
+      if (componentLoaded) {
+        dispatch(updateActivityApi(activity));
+      }
     } else {
       setEditorState(EditorState.createEmpty());
+    }
+    if (!componentLoaded) {
+      updateComponentLoaded(true);
     }
   }, [activity.data.text]);
 
@@ -67,14 +73,11 @@ const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         onChange={debounce((value) => {
           value = draftToHtml(convertToRaw(editorState.getCurrentContent()));
           dispatch(
-            updateActivity({
-              ...activity,
-              data: {
-                text: editorState.getCurrentContent().getPlainText()
-                  ? value
-                  : '',
-              },
-            }),
+            updateStoreActivity(
+              editorState.getCurrentContent().getPlainText() ? value : '',
+              activity.id,
+              ['data', 'text'],
+            ),
           );
         }, 500)}
         onEditorStateChange={(newEditorState) => setEditorState(newEditorState)}
