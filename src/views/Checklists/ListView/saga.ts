@@ -8,7 +8,7 @@ import {
 } from '#utils/apiUrls';
 import { Error, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { call, put, takeLatest, takeLeading } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 import { store } from '../../../App';
 import { Checklist } from '../types';
 import {
@@ -48,8 +48,8 @@ function* fetchChecklistsSaga({ payload }: ReturnType<typeof fetchChecklists>) {
 }
 
 function* archiveChecklistSaga({
-  payload,
-}: ReturnType<typeof archiveChecklist>) {
+                                 payload,
+                               }: ReturnType<typeof archiveChecklist>) {
   try {
     const { id, showPopup, reason, setFormErrors } = payload;
 
@@ -94,8 +94,8 @@ function* archiveChecklistSaga({
 }
 
 function* unarchiveChecklistSaga({
-  payload,
-}: ReturnType<typeof unarchiveChecklist>) {
+                                   payload,
+                                 }: ReturnType<typeof unarchiveChecklist>) {
   try {
     const { id, showPopup, reason, setFormErrors } = payload;
 
@@ -127,8 +127,8 @@ function* unarchiveChecklistSaga({
 }
 
 function* handlePublishedArchiveSaga({
-  payload,
-}: ReturnType<typeof handlePublishedArchive>) {
+                                       payload,
+                                     }: ReturnType<typeof handlePublishedArchive>) {
   try {
     const { id } = payload;
 
@@ -164,7 +164,7 @@ function* handlePublishedArchiveSaga({
 }
 
 export function* ChecklistListViewSaga() {
-  yield takeLeading(ListViewAction.FETCH_CHECKLISTS, fetchChecklistsSaga);
+  yield takeLatest(ListViewAction.FETCH_CHECKLISTS, fetchChecklistsSaga);
   yield takeLatest(
     ListViewAction.FETCH_CHECKLISTS_FOR_LISTVIEW,
     fetchChecklistsSaga,

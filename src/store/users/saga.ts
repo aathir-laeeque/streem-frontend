@@ -1,7 +1,7 @@
 import { apiGetUser, apiGetUsers } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { ResponseObj } from '#utils/globalTypes';
-import { call, put, takeLeading } from 'redux-saga/effects';
+import { call, put, takeLeading, takeLatest } from 'redux-saga/effects';
 
 import {
   fetchUsers,
@@ -64,6 +64,6 @@ function* fetchSelectedUserSaga({
 }
 
 export function* UsersSaga() {
-  yield takeLeading(UsersAction.FETCH_USERS, fetchUsersSaga);
+  yield takeLatest(UsersAction.FETCH_USERS, fetchUsersSaga);
   yield takeLeading(UsersAction.FETCH_SELECTED_USER, fetchSelectedUserSaga);
 }

@@ -4,6 +4,7 @@ import { Autocomplete, AutocompleteRenderOptionState } from '@material-ui/lab';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Control, Controller } from 'react-hook-form';
 import styled from 'styled-components';
+import { debounce } from 'lodash';
 
 const StyledTextField = styled(TextField)`
   .MuiInputLabel-formControl {
@@ -182,13 +183,13 @@ export function AutoComplete({
                       </>
                     ),
                   }}
-                  onChange={(e) => {
+                  onChange={debounce((e) => {
                     fetchData({
                       isReseting: true,
                       page: currentPage + 1,
                       query: e.target.value,
                     });
-                  }}
+                  }, 500)}
                 />
               )}
             />
