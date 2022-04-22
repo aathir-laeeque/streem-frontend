@@ -10,6 +10,7 @@ import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Popover } from '@material-ui/core';
 import { ArrowDropDown, ArrowDropUp, Search } from '@material-ui/icons';
+import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -435,9 +436,10 @@ const UsersFilter: FC<UsersFilterProps> = ({
               <input
                 className="searchbox"
                 type="text"
-                onChange={(e) =>
-                  setstate({ ...state, searchQuery: e.target.value })
-                }
+                onChange={debounce(
+                  (e) => setstate({ ...state, searchQuery: e.target.value }),
+                  500,
+                )}
                 defaultValue={searchQuery}
                 placeholder="Search Users"
               />

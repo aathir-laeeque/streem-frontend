@@ -8,8 +8,8 @@ import {
 } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { call, put, takeLatest, takeLeading } from 'redux-saga/effects';
-
+import { call, put, takeLatest } from 'redux-saga/effects';
+import { store } from '../../../App';
 import { Checklist } from '../types';
 import {
   archiveChecklist,
@@ -22,7 +22,6 @@ import {
   updateList,
 } from './actions';
 import { ListViewAction } from './types';
-import { store } from '../../../App';
 
 function* fetchChecklistsSaga({ payload }: ReturnType<typeof fetchChecklists>) {
   try {
@@ -152,7 +151,7 @@ function* handlePublishedArchiveSaga({
 }
 
 export function* ChecklistListViewSaga() {
-  yield takeLeading(ListViewAction.FETCH_CHECKLISTS, fetchChecklistsSaga);
+  yield takeLatest(ListViewAction.FETCH_CHECKLISTS, fetchChecklistsSaga);
   yield takeLatest(
     ListViewAction.FETCH_CHECKLISTS_FOR_LISTVIEW,
     fetchChecklistsSaga,

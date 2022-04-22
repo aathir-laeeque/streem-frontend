@@ -4,7 +4,7 @@ import { RootState } from '#store';
 import { apiGetJobs } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
-import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import {
   createJob,
@@ -85,5 +85,5 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
 
 export function* NewJobListViewSaga() {
   yield takeLatest(ListViewAction.CREATE_JOB, createJobSaga);
-  yield takeLeading(ListViewAction.FETCH_JOBS, fetchJobsSaga);
+  yield takeLatest(ListViewAction.FETCH_JOBS, fetchJobsSaga);
 }

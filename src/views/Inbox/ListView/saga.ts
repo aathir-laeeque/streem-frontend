@@ -2,7 +2,7 @@ import { apiGetInbox } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { Job } from '#views/Jobs/NewListView/types';
-import { call, put, takeLeading } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 
 import {
   fetchInbox,
@@ -40,5 +40,5 @@ function* fetchInboxSaga({ payload }: ReturnType<typeof fetchInbox>) {
 }
 
 export function* InboxListViewSaga() {
-  yield takeLeading(ListViewAction.FETCH_INBOX, fetchInboxSaga);
+  yield takeLatest(ListViewAction.FETCH_INBOX, fetchInboxSaga);
 }

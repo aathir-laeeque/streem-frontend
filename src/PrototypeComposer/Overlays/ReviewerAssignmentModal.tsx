@@ -11,6 +11,7 @@ import { useTypedSelector } from '#store';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Search } from '@material-ui/icons';
+import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -258,9 +259,10 @@ const ReviewerAssignmentModal: FC<CommonOverlayProps<{
             <input
               className="searchbox"
               type="text"
-              onChange={(e) =>
-                setstate({ ...state, searchQuery: e.target.value })
-              }
+              onChange={debounce(
+                (e) => setstate({ ...state, searchQuery: e.target.value }),
+                500,
+              )}
               placeholder="Search with First Name"
             />
           </div>

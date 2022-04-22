@@ -149,6 +149,7 @@ export function* approveRejectActivitySaga({
 }
 
 export function* ActivityListSaga() {
+  //TODO: Update execute activity to takeLatest rather than takeLeading, also remove the need for server dependent data
   yield takeLeading(ActivityListAction.EXECUTE_ACTIVITY, executeActivitySaga);
   yield takeLeading(ActivityListAction.FIX_ACTIVITY, fixActivitySaga);
   yield takeLeading(
