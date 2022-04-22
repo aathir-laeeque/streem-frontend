@@ -1,11 +1,11 @@
 import {
   executeActivity,
   fixActivity,
+  updateExecutedActivity,
 } from '#JobComposer/ActivityList/actions';
 import { apiUploadFile } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { call, put, takeLatest } from 'redux-saga/effects';
-
 import { uploadFile } from './action';
 import { FileUploadAction } from './types';
 
@@ -21,7 +21,17 @@ function* uploadFileSaga({ payload }: ReturnType<typeof uploadFile>) {
       if (activity) {
         // execute activtiy if in upload file action activity is passed
         const medias = [data];
-
+        yield put(
+          updateExecutedActivity({
+            ...activity,
+            response: {
+              ...activity.response,
+              medias,
+              audit: undefined,
+              state: 'EXECUTED',
+            },
+          }),
+        );
         if (isCorrectingError) {
           yield put(fixActivity({ ...activity, data: { medias } }));
         } else {

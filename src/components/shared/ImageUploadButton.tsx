@@ -11,6 +11,7 @@ type ImageUploadButtonProps = {
   label?: string;
   onUploadSuccess: (data: FileUploadData) => void;
   onUploadError: (error: string) => void;
+  onUploadStart?: () => void;
   disabled?: boolean;
   allowCapture?: boolean;
   additionalTypes?: string[];
@@ -37,6 +38,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
   label,
   onUploadError,
   onUploadSuccess,
+  onUploadStart,
   allowCapture = false,
   additionalTypes = [],
 }) => {
@@ -49,7 +51,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
       (async () => {
         const formData = new FormData();
         formData.append('file', file);
-
+        onUploadStart && onUploadStart();
         const res = await request('POST', apiUploadFile(), {
           formData,
         });

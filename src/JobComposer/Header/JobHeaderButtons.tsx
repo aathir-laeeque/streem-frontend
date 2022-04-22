@@ -87,6 +87,8 @@ const JobHeaderButtons: FC = () => {
       isLoggedInUserOperator) ||
     false;
 
+  if (!jobId) return null;
+
   return (
     <div className="buttons-container">
       {jobState === JobStateEnum.IN_PROGRESS &&

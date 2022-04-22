@@ -2,6 +2,8 @@ import { ComposerActionType } from '../composer.reducer.types';
 import {
   executeActivity,
   fixActivity,
+  executeActivityLeading,
+  fixActivityLeading,
   removeActivityError,
   setActivityError,
   updateExecutedActivity,
@@ -15,16 +17,19 @@ export type ActivityListState = {
 };
 
 export enum ActivityListAction {
-  EXECUTE_ACTIVITY = '@@jobComposer/activity-list/activity/EXECUTE_ACTIVITY',
+  EXECUTE_ACTIVITY_LATEST = '@@jobComposer/activity-list/activity/EXECUTE_ACTIVITY_LATEST',
   UPDATE_EXECUTED_ACTIVITY = '@@jobComposer/activity-list/activity/UPDATE_EXECUTED_ACTIVITY',
   SET_ACTIVITY_ERROR = '@@jobComposer/activity-list/activity/SET_ACTIVITY_ERROR',
   REMOVE_ACTIVITY_ERROR = '@@jobComposer/activity-list/activity/REMOVE_ACTIVITY_ERROR',
 
-  FIX_ACTIVITY = '@@jobComposer/activity-list/activity/FIX_ACTIVITY',
+  FIX_ACTIVITY_LATEST = '@@jobComposer/activity-list/activity/FIX_ACTIVITY_LATEST',
   APPROVE_ACTIVITY = '@@jobComposer/activity-list/activity/APPROVE_ACTIVITY',
   REJECT_ACTIVITY = '@@jobComposer/activity-list/activity/REJECT_ACTIVITY',
 
   UPDATE_MEDIA_ACTIVITY_SUCCESS = '@@jobComposer/activity-list/activity/UPDATE_MEDIA_ACTIVITY_SUCCESS',
+
+  EXECUTE_ACTIVITY_LEADING = '@@jobComposer/activity-list/activity/EXECUTE_ACTIVITY_LEADING',
+  FIX_ACTIVITY_LEADING = '@@jobComposer/activity-list/activity/FIX_ACTIVITY_LEADING',
 }
 
 export type ActivityListActionType =
@@ -35,5 +40,7 @@ export type ActivityListActionType =
       | typeof updateExecutedActivity
       | typeof removeActivityError
       | typeof updateMediaActivitySuccess
+      | typeof executeActivityLeading
+      | typeof fixActivityLeading
     >
   | ComposerActionType;

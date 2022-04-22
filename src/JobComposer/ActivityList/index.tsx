@@ -197,9 +197,15 @@ const ActivityList: FC<ActivityListProps> = ({
 
             {state !== 'NOT_STARTED' ? (
               <div className="activity-audit">
-                Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
-                {audit?.modifiedBy?.employeeId} on{' '}
-                {formatDateTime(audit?.modifiedAt, 'MMM D, YYYY h:mm A')}
+                {audit ? (
+                  <>
+                    Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
+                    {audit?.modifiedBy?.employeeId} on{' '}
+                    {formatDateTime(audit?.modifiedAt, 'MMM D, YYYY h:mm A')}
+                  </>
+                ) : (
+                  'Updating...'
+                )}
               </div>
             ) : null}
           </div>

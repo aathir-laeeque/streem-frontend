@@ -198,9 +198,8 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
       ?.collaborators as Checklist['collaborators'],
   }));
 
-  const [stateMediaDetails, setStateMediaDetails] = useState<MediaDetails>(
-    mediaDetails,
-  );
+  const [stateMediaDetails, setStateMediaDetails] =
+    useState<MediaDetails>(mediaDetails);
   const [fullScreeen, setFullScreeen] = useState(false);
   const [isAuthor, setIsAuthor] = useState(false);
   const [errors, setErrors] = useState({ name: '' });
@@ -253,16 +252,16 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                   error={errors.name}
                   label="Photo name"
                   name="name"
-                  onChange={debounce(({ name, value }) => {
+                  onBlur={(event) => {
                     setStateMediaDetails({
                       ...stateMediaDetails,
-                      [name]: value,
+                      name: event.target.value,
                     });
 
                     if (!!errors.name) {
                       setErrors({ ...errors, name: '' });
                     }
-                  }, 500)}
+                  }}
                 />
               )}
 
@@ -286,41 +285,41 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
 
               {!disableDescInput && (
                 <Button1
-                id="save-details"
-                onClick={() => {
-                  if (disableNameInput || !!stateMediaDetails.name) {
-                    if (isActivity && execute) {
-                      execute(stateMediaDetails);
-                      closeOverlay();
-                    } else {
-                      if (mediaDetails?.id) {
-                        dispatch(
-                          updateTaskMedia({
-                            taskId,
-                            mediaId: mediaDetails?.id,
-                            activityId: activityId,
-                            mediaDetails: {
-                              name: stateMediaDetails.name,
-                              description: stateMediaDetails.description,
-                            },
-                          }),
-                        );
+                  id="save-details"
+                  onClick={() => {
+                    if (disableNameInput || !!stateMediaDetails.name) {
+                      if (isActivity && execute) {
+                        execute(stateMediaDetails);
+                        closeOverlay();
                       } else {
-                        dispatch(
-                          addTaskMedia({
-                            taskId,
-                            mediaDetails: { ...stateMediaDetails },
-                          }),
-                        );
+                        if (mediaDetails?.id) {
+                          dispatch(
+                            updateTaskMedia({
+                              taskId,
+                              mediaId: mediaDetails?.id,
+                              activityId: activityId,
+                              mediaDetails: {
+                                name: stateMediaDetails.name,
+                                description: stateMediaDetails.description,
+                              },
+                            }),
+                          );
+                        } else {
+                          dispatch(
+                            addTaskMedia({
+                              taskId,
+                              mediaDetails: { ...stateMediaDetails },
+                            }),
+                          );
+                        }
                       }
+                    } else {
+                      setErrors({ name: 'Name is required' });
                     }
-                  } else {
-                    setErrors({ name: 'Name is required' });
-                  }
-                }}
-              >
-                Save
-              </Button1>
+                  }}
+                >
+                  Save
+                </Button1>
               )}
             </div>
 

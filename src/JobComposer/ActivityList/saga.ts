@@ -9,8 +9,7 @@ import {
   apiRejectActivity,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { call, put, select, takeLeading } from 'redux-saga/effects';
-
+import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 import {
   approveRejectActivity,
   executeActivity,
@@ -150,8 +149,16 @@ export function* approveRejectActivitySaga({
 
 export function* ActivityListSaga() {
   //TODO: Update execute activity to takeLatest rather than takeLeading, also remove the need for server dependent data
-  yield takeLeading(ActivityListAction.EXECUTE_ACTIVITY, executeActivitySaga);
-  yield takeLeading(ActivityListAction.FIX_ACTIVITY, fixActivitySaga);
+  yield takeLatest(
+    ActivityListAction.EXECUTE_ACTIVITY_LATEST,
+    executeActivitySaga,
+  );
+  yield takeLatest(ActivityListAction.FIX_ACTIVITY_LATEST, fixActivitySaga);
+  yield takeLeading(
+    ActivityListAction.EXECUTE_ACTIVITY_LEADING,
+    executeActivitySaga,
+  );
+  yield takeLeading(ActivityListAction.FIX_ACTIVITY_LEADING, fixActivitySaga);
   yield takeLeading(
     ActivityListAction.APPROVE_ACTIVITY,
     approveRejectActivitySaga,

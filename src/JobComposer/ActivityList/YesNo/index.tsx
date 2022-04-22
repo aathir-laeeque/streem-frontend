@@ -1,30 +1,136 @@
 import { Button1, Textarea } from '#components';
-import { debounce, get } from 'lodash';
+import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
-import { executeActivity, fixActivity } from '../actions';
+import {
+  executeActivity,
+  fixActivity,
+  updateExecutedActivity,
+} from '../actions';
 import { ActivityProps, Selections } from '../types';
 import { Wrapper } from './styles';
+
+type YesNoActivityState = {
+  reason: string;
+  selectedId?: string;
+  shouldAskForReason: boolean;
+  showButtons: boolean;
+  shouldCallApi?: boolean;
+  isEditing?: boolean;
+};
 
 const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const dispatch = useDispatch();
 
-  const [state, setState] = useState({
-    newData: {},
+  const getSelectedIdByChoices = () => {
+    return activity.response?.choices
+      ? Object.entries(activity.response?.choices).reduce(
+          (acc, [choiceId, choiceValue]) =>
+            choiceValue === Selections.SELECTED ? choiceId : acc,
+          '',
+        )
+      : undefined;
+  };
+
+  const [state, setState] = useState<YesNoActivityState>({
     reason: activity?.response?.reason ?? '',
     shouldAskForReason: !!activity?.response?.reason,
     showButtons: activity?.response?.state !== 'EXECUTED',
+    selectedId: getSelectedIdByChoices(),
   });
 
+  const dispatchActions = (data: any) => {
+    if (isCorrectingError) {
+      dispatch(
+        fixActivity(
+          {
+            ...activity,
+            data,
+          },
+          state.reason ? state.reason : undefined,
+        ),
+      );
+    } else {
+      dispatch(
+        executeActivity(
+          {
+            ...activity,
+            data,
+          },
+          state.reason ? state.reason : undefined,
+        ),
+      );
+    }
+  };
+
   useEffect(() => {
-    setState({
-      newData: {},
-      reason: activity?.response?.reason ?? '',
-      shouldAskForReason: !!activity?.response?.reason,
-      showButtons: activity?.response?.state !== 'EXECUTED',
-    });
-  }, [activity]);
+    if (state.shouldCallApi) {
+      if (state.selectedId) {
+        if (activity?.response?.choices) {
+          const data = activity.data.map((d: any) => ({
+            ...d,
+            state:
+              d.id === state.selectedId
+                ? Selections.SELECTED
+                : Selections.NOT_SELECTED,
+          }));
+          if (state.shouldAskForReason) {
+            if (state.reason) {
+              dispatchActions(data);
+            }
+          } else {
+            dispatchActions(data);
+          }
+        }
+      }
+      setState((prev) => ({
+        ...prev,
+        shouldCallApi: false,
+        isEditing: false,
+      }));
+    } else if (!state.isEditing) {
+      const selectedIoFromStore = getSelectedIdByChoices();
+      if (state.selectedId !== selectedIoFromStore) {
+        setState((prevState) => ({
+          ...prevState,
+          reason: activity?.response?.reason ?? '',
+          shouldAskForReason: !!activity?.response?.reason,
+          showButtons: activity?.response?.state !== 'EXECUTED',
+          selectedId: selectedIoFromStore,
+        }));
+      }
+    }
+  }, [
+    activity?.response?.choices,
+    activity?.response?.reason,
+    state.shouldCallApi,
+  ]);
+
+  const handleExecution = (id: string) => {
+    if (id) {
+      dispatch(
+        updateExecutedActivity({
+          ...activity,
+          response: {
+            ...activity.response,
+            audit: undefined,
+            choices: activity.data.reduce((acc: any, d: any) => {
+              acc[d.id] =
+                d.id === id ? Selections.SELECTED : Selections.NOT_SELECTED;
+              return acc;
+            }, {}),
+            reason: state.reason,
+            state: 'EXECUTED',
+          },
+        }),
+      );
+      setState((prevState) => ({
+        ...prevState,
+        shouldCallApi: true,
+        showButtons: false,
+      }));
+    }
+  };
 
   return (
     <Wrapper>
@@ -33,43 +139,29 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
         {activity.data
           .sort((a, b) => (a.type > b.type ? -1 : 1))
           .map((el, index) => {
-            const isSelected =
-              get(activity?.response?.choices, el.id) === Selections.SELECTED;
-
+            const isSelected = state.selectedId === el.id;
             return (
               <div key={index} className="button-item">
                 <button
                   className={isSelected ? 'filled' : ''}
                   onClick={() => {
-                    const newData = {
-                      ...activity,
-                      data: activity.data.map((e: any) => ({
-                        ...e,
-                        state:
-                          e.id === el.id
-                            ? Selections.SELECTED
-                            : Selections.NOT_SELECTED,
-                      })),
-                    };
-
                     if (el.type === 'no') {
-                      setState((values) => ({
-                        ...values,
-                        newData,
+                      setState((prevState) => ({
+                        ...prevState,
                         showButtons: true,
                         shouldAskForReason: true,
+                        isEditing: true,
+                        selectedId: el.id,
                       }));
                     } else {
-                      setState((val) => ({
-                        ...val,
+                      setState((prevState) => ({
+                        ...prevState,
                         reason: '',
                         shouldAskForReason: false,
+                        isEditing: true,
+                        selectedId: el.id,
                       }));
-                      if (isCorrectingError) {
-                        dispatch(fixActivity(newData));
-                      } else {
-                        dispatch(executeActivity(newData));
-                      }
+                      handleExecution(el.id);
                     }
                   }}
                 >
@@ -101,11 +193,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
                 variant="secondary"
                 color="blue"
                 onClick={() => {
-                  if (isCorrectingError) {
-                    dispatch(fixActivity(state.newData, state.reason));
-                  } else {
-                    dispatch(executeActivity(state.newData, state.reason));
-                  }
+                  handleExecution(state.selectedId!);
                 }}
               >
                 Submit
@@ -114,10 +202,15 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
                 variant="secondary"
                 color="red"
                 onClick={() =>
-                  setState((val) => ({
-                    ...val,
+                  setState((prevState) => ({
+                    ...prevState,
                     reason: '',
                     shouldAskForReason: false,
+                    selectedId: activity.data.reduce(
+                      (acc: any, d: any) =>
+                        d.id !== state.selectedId ? d.id : acc,
+                      '',
+                    ),
                   }))
                 }
               >

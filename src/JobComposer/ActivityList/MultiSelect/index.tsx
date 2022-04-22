@@ -2,8 +2,7 @@ import { get, isArray } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import Select from 'react-select';
-
-import { executeActivity, fixActivity } from '../actions';
+import { executeActivityLeading, fixActivityLeading } from '../actions';
 import { ActivityProps, Selections } from '../types';
 import { customSelectStyles } from './commonStyles';
 import { Wrapper } from './styles';
@@ -63,9 +62,9 @@ const MultiSelectActivity: FC<ActivityProps & { isMulti: boolean }> = ({
           }
 
           if (isCorrectingError) {
-            dispatch(fixActivity(newData));
+            dispatch(fixActivityLeading(newData));
           } else {
-            dispatch(executeActivity(newData));
+            dispatch(executeActivityLeading(newData));
           }
         }}
       />

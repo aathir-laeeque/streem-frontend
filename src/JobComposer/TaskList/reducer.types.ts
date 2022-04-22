@@ -1,4 +1,9 @@
-import { executeActivity, fixActivity } from '../ActivityList/actions';
+import {
+  executeActivity,
+  executeActivityLeading,
+  fixActivity,
+  fixActivityLeading,
+} from '../ActivityList/actions';
 import { Stage, Task } from '../checklist.types';
 import { ComposerActionType } from '../composer.reducer.types';
 import { setActiveStage } from '../StageList/actions';
@@ -47,6 +52,11 @@ export type TaskListActionType =
       | typeof updateTaskExecutionState
       | typeof removeTaskError
     >
-  | ReturnType<typeof executeActivity | typeof fixActivity>
+  | ReturnType<
+      | typeof executeActivity
+      | typeof fixActivity
+      | typeof executeActivityLeading
+      | typeof fixActivityLeading
+    >
   | ReturnType<typeof setActiveStage>
   | ComposerActionType;
