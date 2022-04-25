@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import Switch from 'react-switch';
 import styled from 'styled-components';
 
@@ -42,17 +42,14 @@ const ToggleSwitch: FC<Props> = ({
   onHandleColor = '#ffffff',
   onLabel,
   onChange,
-  uncheckedIcon = undefined,
   value = false,
   width = 32,
 }) => {
-  const [isChecked, toggleIsChecked] = useState(value);
-
   return (
     <Wrapper>
       <Switch
         activeBoxShadow=""
-        checked={isChecked}
+        checked={value}
         checkedIcon={
           typeof checkedIcon === 'undefined' ? undefined : checkedIcon
         }
@@ -63,12 +60,9 @@ const ToggleSwitch: FC<Props> = ({
         onColor={onColor}
         onHandleColor={onHandleColor}
         onChange={() => {
-          toggleIsChecked((val) => !val);
-          onChange(!isChecked);
+          onChange(!value);
         }}
-        uncheckedIcon={
-          typeof uncheckedIcon === 'undefined' ? undefined : uncheckedIcon
-        }
+        uncheckedIcon={false}
         width={width}
       />
       <label className="label">{value ? onLabel : offLabel}</label>

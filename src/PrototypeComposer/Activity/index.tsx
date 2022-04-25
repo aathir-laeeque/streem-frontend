@@ -125,7 +125,6 @@ const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
               }}
               onColor="#5aa700"
               onLabel={onLabel}
-              uncheckedIcon={false}
               value={activity.mandatory}
             />
           );

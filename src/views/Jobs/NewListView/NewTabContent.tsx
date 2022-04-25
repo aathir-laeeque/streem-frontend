@@ -342,9 +342,14 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         {values[0] in CompletedJobStates && (
           <ToggleSwitch
             checkedIcon={false}
-            value={false}
             onLabel="Jobs With Exception"
             offLabel="Jobs With Exception"
+            value={
+              !!(
+                filterFields.find((field) => field.field === 'state')
+                  ?.values[0] === CompletedJobStates.COMPLETED_WITH_EXCEPTION
+              )
+            }
             onChange={(isChecked) => {
               setFilterFields((currentFields) => [
                 ...currentFields.filter((el) => el.field !== 'state'),
