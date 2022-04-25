@@ -431,7 +431,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                                         selectedChecklist?.id,
                                         reason,
                                         setFormErrors,
-                                        true,
                                       ),
                                     )
                                   : dispatch(
@@ -439,7 +438,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                                         selectedChecklist.id,
                                         reason,
                                         setFormErrors,
-                                        true,
                                       ),
                                     );
                               },

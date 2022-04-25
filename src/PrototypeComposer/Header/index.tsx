@@ -420,11 +420,9 @@ const ChecklistHeader: FC = () => {
               ) =>
                 data?.archived
                   ? dispatch(
-                      unarchiveChecklist(data?.id, reason, setFormErrors, true),
+                      unarchiveChecklist(data?.id, reason, setFormErrors),
                     )
-                  : dispatch(
-                      archiveChecklist(data?.id, reason, setFormErrors, true),
-                    ),
+                  : dispatch(archiveChecklist(data?.id, reason, setFormErrors)),
             },
           }),
         );

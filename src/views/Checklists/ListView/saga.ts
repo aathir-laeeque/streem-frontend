@@ -48,10 +48,10 @@ function* fetchChecklistsSaga({ payload }: ReturnType<typeof fetchChecklists>) {
 }
 
 function* archiveChecklistSaga({
-                                 payload,
-                               }: ReturnType<typeof archiveChecklist>) {
+  payload,
+}: ReturnType<typeof archiveChecklist>) {
   try {
-    const { id, showPopup, reason, setFormErrors } = payload;
+    const { id, reason, setFormErrors } = payload;
 
     const { data, errors } = yield call(
       request,
@@ -62,20 +62,15 @@ function* archiveChecklistSaga({
 
     if (data) {
       yield put(updateList(id));
-      if (showPopup) {
-        yield put(
-          openOverlayAction({
-            type: OverlayNames.ARCHIVE_MODAL,
-            props: { mode: 'archive' },
-          }),
-        );
-      }
+      yield put(
+        openOverlayAction({
+          type: OverlayNames.ARCHIVE_MODAL,
+          props: { mode: 'archive' },
+        }),
+      );
       setFormErrors(errors);
     } else {
-      if (
-        showPopup &&
-        (errors as Error[]).some((error) => error.code === 'E120')
-      ) {
+      if ((errors as Error[]).some((error) => error.code === 'E120')) {
         setFormErrors(undefined);
         yield put(
           openOverlayAction({
@@ -94,10 +89,10 @@ function* archiveChecklistSaga({
 }
 
 function* unarchiveChecklistSaga({
-                                   payload,
-                                 }: ReturnType<typeof unarchiveChecklist>) {
+  payload,
+}: ReturnType<typeof unarchiveChecklist>) {
   try {
-    const { id, showPopup, reason, setFormErrors } = payload;
+    const { id, reason, setFormErrors } = payload;
 
     const { data, errors } = yield call(
       request,
@@ -108,14 +103,12 @@ function* unarchiveChecklistSaga({
 
     if (data) {
       yield put(updateList(id));
-      if (showPopup) {
-        yield put(
-          openOverlayAction({
-            type: OverlayNames.ARCHIVE_MODAL,
-            props: { mode: 'unarchive' },
-          }),
-        );
-      }
+      yield put(
+        openOverlayAction({
+          type: OverlayNames.ARCHIVE_MODAL,
+          props: { mode: 'unarchive' },
+        }),
+      );
     } else {
       console.error('error from apiUnarchiveChecklist :: ', errors);
     }
@@ -127,8 +120,8 @@ function* unarchiveChecklistSaga({
 }
 
 function* handlePublishedArchiveSaga({
-                                       payload,
-                                     }: ReturnType<typeof handlePublishedArchive>) {
+  payload,
+}: ReturnType<typeof handlePublishedArchive>) {
   try {
     const { id } = payload;
 
@@ -143,9 +136,9 @@ function* handlePublishedArchiveSaga({
             modalDesc: `Provide details for archiving the checklist`,
             onPrimaryClick: (
               reason: string,
-              setFormErrors: (errors: Error[]) => void,
+              setFormErrors: (errors?: Error[]) => void,
             ) => {
-              store.dispatch(archiveChecklist(id, reason, setFormErrors, true));
+              store.dispatch(archiveChecklist(id, reason, setFormErrors));
             },
           },
         }),

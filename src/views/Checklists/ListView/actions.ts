@@ -39,11 +39,9 @@ export const archiveChecklist = (
   id: Checklist['id'],
   reason: string,
   setFormErrors: (errors?: Error[]) => void,
-  showPopup?: boolean,
 ) =>
   actionSpreader(ListViewAction.ARCHIVE, {
     id,
-    showPopup,
     reason,
     setFormErrors,
   });
@@ -52,11 +50,9 @@ export const unarchiveChecklist = (
   id: Checklist['id'],
   reason: string,
   setFormErrors: (errors?: Error[]) => void,
-  showPopup?: boolean,
 ) =>
   actionSpreader(ListViewAction.UNARCHIVE, {
     id,
-    showPopup,
     reason,
     setFormErrors,
   });
