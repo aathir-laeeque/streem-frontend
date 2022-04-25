@@ -5,17 +5,19 @@ import { ListViewAction } from './types';
 
 export const fetchChecklists = (
   params: Record<string, string | number>,
-  dispatchOngoing = false,
+  enableLoading: boolean,
 ) =>
-  actionSpreader(ListViewAction.FETCH_CHECKLISTS, { params, dispatchOngoing });
+  actionSpreader(ListViewAction.FETCH_CHECKLISTS, {
+    params,
+    enableLoading,
+  });
 
 export const fetchChecklistsForListView = (
   params: Record<string, string | number>,
-  dispatchOngoing: boolean,
 ) =>
   actionSpreader(ListViewAction.FETCH_CHECKLISTS_FOR_LISTVIEW, {
     params,
-    dispatchOngoing,
+    enableLoading: true,
   });
 
 export const clearData = () => actionSpreader(ListViewAction.CLEAR_DATA);

@@ -14,7 +14,7 @@ import {
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
-import { Menu, MenuItem } from '@material-ui/core';
+import { CircularProgress, Menu, MenuItem } from '@material-ui/core';
 import {
   ArrowDropDown,
   ArrowLeft,
@@ -54,6 +54,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
     users: {
       [props.values[0] as UsersListType]: { pageable },
       currentPageData,
+      loading,
     },
   } = useTypedSelector((state) => state);
 
@@ -509,39 +510,51 @@ const TabContent: React.FC<TabContentProps> = (props) => {
         ) : null}
       </div>
 
-      <DataTable columns={columns} rows={currentPageData} />
+      <div
+        style={{
+          display: loading ? 'flex' : 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+        }}
+      >
+        <CircularProgress style={{ color: 'rgb(29, 132, 255)' }} />
+      </div>
+      <div style={{ ...(loading ? { display: 'none' } : {}) }}>
+        <DataTable columns={columns} rows={currentPageData} />
 
-      <div className="pagination">
-        <ArrowLeft
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page > 0) {
-              fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
-            }
-          }}
-        />
-        {Array.from({ length: pageable.totalPages }, (_, i) => i)
-          .slice(
-            Math.floor(pageable.page / 10) * 10,
-            Math.floor(pageable.page / 10) * 10 + 10,
-          )
-          .map((el) => (
-            <span
-              key={el}
-              className={pageable.page === el ? 'active' : ''}
-              onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
-            >
-              {el + 1}
-            </span>
-          ))}
-        <ArrowRight
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page < pageable.totalPages - 1) {
-              fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
-            }
-          }}
-        />
+        <div className="pagination">
+          <ArrowLeft
+            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+            onClick={() => {
+              if (pageable.page > 0) {
+                fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
+              }
+            }}
+          />
+          {Array.from({ length: pageable.totalPages }, (_, i) => i)
+            .slice(
+              Math.floor(pageable.page / 10) * 10,
+              Math.floor(pageable.page / 10) * 10 + 10,
+            )
+            .map((el) => (
+              <span
+                key={el}
+                className={pageable.page === el ? 'active' : ''}
+                onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
+              >
+                {el + 1}
+              </span>
+            ))}
+          <ArrowRight
+            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+            onClick={() => {
+              if (pageable.page < pageable.totalPages - 1) {
+                fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
+              }
+            }}
+          />
+        </div>
       </div>
     </TabContentWrapper>
   );

@@ -24,7 +24,7 @@ import { useTypedSelector } from '#store';
 import { Error, FilterField, FilterOperators } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/NewListView/actions';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
-import { Menu, MenuItem } from '@material-ui/core';
+import { CircularProgress, Menu, MenuItem } from '@material-ui/core';
 import {
   ArrowDropDown,
   ArrowLeft,
@@ -53,12 +53,12 @@ const getBaseFilter = (label: string): FilterField[] => [
   { field: 'archived', op: FilterOperators.EQ, values: [false] },
   ...(label === 'prototype'
     ? ([
-        {
-          field: 'state',
-          op: FilterOperators.NE,
-          values: [DisabledStates.DEPRECATED],
-        },
-      ] as FilterField[])
+      {
+        field: 'state',
+        op: FilterOperators.NE,
+        values: [DisabledStates.DEPRECATED],
+      },
+    ] as FilterField[])
     : []),
 ];
 
@@ -66,18 +66,23 @@ const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_PAGE_NUMBER = 0;
 
 const ListView: FC<ListViewProps & { label: string }> = ({
-  navigate = navigateTo,
-  label,
-}) => {
+                                                           navigate = navigateTo,
+                                                           label,
+                                                         }) => {
   const {
-    checklistListView: { pageable, currentPageData },
+    checklistListView: {
+      pageable,
+      currentPageData,
+      loading: checklistDataLoading,
+    },
     auth: { userId, selectedUseCase },
   } = useTypedSelector((state) => state);
   const { roles: userRoles, selectedFacility: { id: facilityId = '' } = {} } =
     useTypedSelector((state) => state.auth);
   const propertiesStoreData = useTypedSelector((state) => state.properties);
-  const { list: jobProperties } = propertiesStoreData[ComposerEntity.JOB];
-  const { list: checklistProperties } =
+  const { list: jobProperties, loading: jobPropertiesLoading } =
+    propertiesStoreData[ComposerEntity.JOB];
+  const { list: checklistProperties, loading: checklistPropertiesLoading } =
     propertiesStoreData[ComposerEntity.CHECKLIST];
 
   const dispatch = useDispatch();
@@ -117,10 +122,13 @@ const ListView: FC<ListViewProps & { label: string }> = ({
       fields: getFilteredFields(),
     });
     dispatch(
-      fetchChecklistsForListView(
-        { facilityId, page, size, filters, sort: 'createdAt,desc' },
-        true,
-      ),
+      fetchChecklistsForListView({
+        facilityId,
+        page,
+        size,
+        filters,
+        sort: 'createdAt,desc',
+      }),
     );
   };
 
@@ -131,19 +139,16 @@ const ListView: FC<ListViewProps & { label: string }> = ({
 
   useEffect(() => {
     dispatch(
-      fetchChecklistsForListView(
-        {
-          filters: JSON.stringify({
-            op: FilterOperators.AND,
-            fields: getFilteredFields(),
-          }),
-          page: 0,
-          size: 0,
-          sort: 'createdAt,desc',
-          facilityId,
-        },
-        false,
-      ),
+      fetchChecklistsForListView({
+        filters: JSON.stringify({
+          op: FilterOperators.AND,
+          fields: getFilteredFields(),
+        }),
+        page: 0,
+        size: 0,
+        sort: 'createdAt,desc',
+        facilityId,
+      }),
     );
   }, [filterFields]);
 
@@ -211,11 +216,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                 ) =>
                   item.archived
                     ? dispatch(
-                        unarchiveChecklist(item.id, reason, setFormErrors),
-                      )
+                      unarchiveChecklist(item.id, reason, setFormErrors),
+                    )
                     : dispatch(
-                        archiveChecklist(item.id, reason, setFormErrors),
-                      ),
+                      archiveChecklist(item.id, reason, setFormErrors),
+                    ),
                 onSubmitModalText: item.archived ? 'Unarchive' : 'Archive',
               },
             }),
@@ -231,25 +236,25 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   const columns = [
     ...(label === 'prototype'
       ? [
-          {
-            id: 'state',
-            label: 'State',
-            minWidth: 166,
-            format: function renderComp(item: Checklist) {
-              return (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <FiberManualRecord
-                    className="icon"
-                    style={{ color: ChecklistStatesColors[item.state] }}
-                  />
-                  <span title={ChecklistStatesContent[item.state]}>
+        {
+          id: 'state',
+          label: 'State',
+          minWidth: 166,
+          format: function renderComp(item: Checklist) {
+            return (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <FiberManualRecord
+                  className="icon"
+                  style={{ color: ChecklistStatesColors[item.state] }}
+                />
+                <span title={ChecklistStatesContent[item.state]}>
                     {ChecklistStatesContent[item.state]}
                   </span>
-                </div>
-              );
-            },
+              </div>
+            );
           },
-        ]
+        },
+      ]
       : []),
     {
       id: 'name',
@@ -427,19 +432,21 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                               ) => {
                                 selectedChecklist?.archived
                                   ? dispatch(
-                                      unarchiveChecklist(
-                                        selectedChecklist?.id,
-                                        reason,
-                                        setFormErrors,
-                                      ),
-                                    )
+                                    unarchiveChecklist(
+                                      selectedChecklist?.id,
+                                      reason,
+                                      setFormErrors,
+                                      true,
+                                    ),
+                                  )
                                   : dispatch(
-                                      archiveChecklist(
-                                        selectedChecklist.id,
-                                        reason,
-                                        setFormErrors,
-                                      ),
-                                    );
+                                    archiveChecklist(
+                                      selectedChecklist.id,
+                                      reason,
+                                      setFormErrors,
+                                      true,
+                                    ),
+                                  );
                               },
                               onSubmitModalText: selectedChecklist?.archived
                                 ? 'Unarchive'
@@ -478,29 +485,29 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     ...(label === 'published' &&
     currentPageData.some((item) => item.state === 'BEING_REVISED')
       ? [
-          {
-            id: 'revised',
-            label: '',
-            minWidth: 240,
-            format: function renderComp(item: Checklist) {
-              if (item.state === 'BEING_REVISED') {
-                return (
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <FiberManualRecord
-                      className="icon"
-                      style={{
-                        color: ChecklistStatesColors[item.state],
-                      }}
-                    />
-                    {ChecklistStatesContent[item.state]}
-                  </div>
-                );
-              } else {
-                return <div />;
-              }
-            },
+        {
+          id: 'revised',
+          label: '',
+          minWidth: 240,
+          format: function renderComp(item: Checklist) {
+            if (item.state === 'BEING_REVISED') {
+              return (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <FiberManualRecord
+                    className="icon"
+                    style={{
+                      color: ChecklistStatesColors[item.state],
+                    }}
+                  />
+                  {ChecklistStatesContent[item.state]}
+                </div>
+              );
+            } else {
+              return <div />;
+            }
           },
-        ]
+        },
+      ]
       : []),
   ];
 
@@ -556,14 +563,14 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     ...field,
                     ...(field.field === 'state'
                       ? {
-                          op:
-                            option.value === 'all'
-                              ? FilterOperators.NE
-                              : FilterOperators.EQ,
-                          values: [
-                            option.value === 'all' ? 'PUBLISHED' : option.value,
-                          ],
-                        }
+                        op:
+                          option.value === 'all'
+                            ? FilterOperators.NE
+                            : FilterOperators.EQ,
+                        values: [
+                          option.value === 'all' ? 'PUBLISHED' : option.value,
+                        ],
+                      }
                       : { values: field.values }),
                   })) as FilterField[],
               )
@@ -703,53 +710,78 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           </Button1>
         )}
       </div>
-      <DataTable
-        columns={columns}
-        rows={currentPageData.map((item) => {
-          return {
-            ...item,
-            ...item.properties.reduce<Record<string, string>>(
-              (obj, checklistProperty) => {
-                obj[checklistProperty.id] = checklistProperty.value;
-                return obj;
-              },
-              {},
-            ),
-          };
-        })}
-      />
+      <div
+        style={{
+          display:
+            checklistDataLoading ||
+            jobPropertiesLoading ||
+            checklistPropertiesLoading
+              ? 'flex'
+              : 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+        }}
+      >
+        <CircularProgress style={{ color: 'rgb(29, 132, 255)' }} />
+      </div>
+      <div
+        style={{
+          ...(checklistDataLoading ||
+          jobPropertiesLoading ||
+          checklistPropertiesLoading
+            ? { display: 'none' }
+            : {}),
+        }}
+      >
+        <DataTable
+          columns={columns}
+          rows={currentPageData.map((item) => {
+            return {
+              ...item,
+              ...item.properties.reduce<Record<string, string>>(
+                (obj, checklistProperty) => {
+                  obj[checklistProperty.id] = checklistProperty.value;
+                  return obj;
+                },
+                {},
+              ),
+            };
+          })}
+        />
 
-      <div className="pagination">
-        <ArrowLeft
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page > 0) {
-              fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
-            }
-          }}
-        />
-        {Array.from({ length: pageable.totalPages }, (_, i) => i)
-          .slice(
-            Math.floor(pageable.page / 10) * 10,
-            Math.floor(pageable.page / 10) * 10 + 10,
-          )
-          .map((el) => (
-            <span
-              key={el}
-              className={pageable.page === el ? 'active' : ''}
-              onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
-            >
-              {el + 1}
-            </span>
-          ))}
-        <ArrowRight
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page < pageable.totalPages - 1) {
-              fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
-            }
-          }}
-        />
+        <div className="pagination">
+          <ArrowLeft
+            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+            onClick={() => {
+              if (pageable.page > 0) {
+                fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
+              }
+            }}
+          />
+          {Array.from({ length: pageable.totalPages }, (_, i) => i)
+            .slice(
+              Math.floor(pageable.page / 10) * 10,
+              Math.floor(pageable.page / 10) * 10 + 10,
+            )
+            .map((el) => (
+              <span
+                key={el}
+                className={pageable.page === el ? 'active' : ''}
+                onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
+              >
+                {el + 1}
+              </span>
+            ))}
+          <ArrowRight
+            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+            onClick={() => {
+              if (pageable.page < pageable.totalPages - 1) {
+                fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
+              }
+            }}
+          />
+        </div>
       </div>
     </TabContentWrapper>
   );

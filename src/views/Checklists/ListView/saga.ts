@@ -25,8 +25,8 @@ import { ListViewAction } from './types';
 
 function* fetchChecklistsSaga({ payload }: ReturnType<typeof fetchChecklists>) {
   try {
-    const { params, dispatchOngoing } = payload;
-    if (params.page === 0 && dispatchOngoing) {
+    const { params, enableLoading } = payload;
+    if (enableLoading) {
       yield put(fetchChecklistsOngoing());
     }
 

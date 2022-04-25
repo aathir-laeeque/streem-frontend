@@ -14,6 +14,7 @@ import { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
 import { User } from '#store/users/types';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { CircularProgress } from '@material-ui/core';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -44,7 +45,11 @@ const getBaseFilter = (values: string[]): FilterField[] => [
 const TabContent: FC<TabContentProps> = ({ label, values }) => {
   const dispatch = useDispatch();
 
-  const { jobs, pageable } = useTypedSelector((state) => state.jobListView);
+  const {
+    jobs,
+    pageable,
+    loading: jobDataLoading,
+  } = useTypedSelector((state) => state.jobListView);
 
   const {
     selectedFacility,
@@ -52,9 +57,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     roles: userRoles,
   } = useTypedSelector((state) => state.auth);
 
-  const { list: jobProperties } = useTypedSelector(
-    (state) => state.properties[ComposerEntity.JOB],
-  );
+  const { list: jobProperties, loading: jobPropertiesLoading } =
+    useTypedSelector((state) => state.properties[ComposerEntity.JOB]);
 
   const defaultFilters = useRef<FilterField[]>(getBaseFilter(values));
 
@@ -74,9 +78,9 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   ];
 
   const fetchData = ({
-    page = DEFAULT_PAGE_NUMBER,
-    size = DEFAULT_PAGE_SIZE,
-  }: fetchDataType = {}) => {
+                       page = DEFAULT_PAGE_NUMBER,
+                       size = DEFAULT_PAGE_SIZE,
+                     }: fetchDataType = {}) => {
     dispatch(
       fetchJobs({
         page,
@@ -102,12 +106,12 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
       ...filteredFields,
       ...(assignedUsers.length > 0
         ? [
-            {
-              field: 'taskExecutions.assignees.user.id',
-              op: FilterOperators.ANY,
-              values: assignedUsers.map((user) => user.id),
-            },
-          ]
+          {
+            field: 'taskExecutions.assignees.user.id',
+            op: FilterOperators.ANY,
+            values: assignedUsers.map((user) => user.id),
+          },
+        ]
         : []),
     ]);
   }, [assignedUsers]);
@@ -172,55 +176,55 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         val in AssignedJobStates || val in CompletedJobStates,
     )
       ? [
-          {
-            id: 'state',
-            label: 'State',
-            minWidth: 166,
-            format: function renderComp({ state }: Job) {
-              const isJobBlocked = state === AssignedJobStates.BLOCKED;
-              const isJobStarted = state === AssignedJobStates.IN_PROGRESS;
-              const isJobCompleted = state === CompletedJobStates.COMPLETED;
-              const isCompletedWithException =
-                state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
+        {
+          id: 'state',
+          label: 'State',
+          minWidth: 166,
+          format: function renderComp({ state }: Job) {
+            const isJobBlocked = state === AssignedJobStates.BLOCKED;
+            const isJobStarted = state === AssignedJobStates.IN_PROGRESS;
+            const isJobCompleted = state === CompletedJobStates.COMPLETED;
+            const isCompletedWithException =
+              state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
 
-              const title = isJobCompleted
-                ? 'Completed'
-                : isCompletedWithException
+            const title = isJobCompleted
+              ? 'Completed'
+              : isCompletedWithException
                 ? 'Completed with Exception'
                 : isJobBlocked
-                ? 'Approval Pending'
-                : isJobStarted
-                ? 'Started'
-                : 'Not Started';
+                  ? 'Approval Pending'
+                  : isJobStarted
+                    ? 'Started'
+                    : 'Not Started';
 
-              return (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <FiberManualRecord
-                    className="icon"
-                    style={{
-                      fontSize: '20px',
-                      color: isJobCompleted
-                        ? '#5aa700'
-                        : isJobStarted
+            return (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <FiberManualRecord
+                  className="icon"
+                  style={{
+                    fontSize: '20px',
+                    color: isJobCompleted
+                      ? '#5aa700'
+                      : isJobStarted
                         ? '#1d84ff'
                         : '#f7b500',
-                    }}
-                  />
-                  <span title={title}>{title}</span>
-                </div>
-              );
-            },
+                  }}
+                />
+                <span title={title}>{title}</span>
+              </div>
+            );
           },
-        ]
+        },
+      ]
       : []),
     {
       id: 'name',
       label: 'Name',
       minWidth: 240,
       format: function renderComp({
-        id,
-        checklist: { id: checklistId, name: checklistName },
-      }: Job) {
+                                    id,
+                                    checklist: { id: checklistId, name: checklistName },
+                                  }: Job) {
         return (
           <span
             className="primary"
@@ -239,41 +243,41 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         val in AssignedJobStates || val in CompletedJobStates,
     )
       ? [
-          {
-            id: 'assignees',
-            label: 'Assignees',
-            minWidth: 152,
-            format: function renderComp(item: Job) {
-              return <AssigneesColumn assignees={item.assignees} />;
-            },
+        {
+          id: 'assignees',
+          label: 'Assignees',
+          minWidth: 152,
+          format: function renderComp(item: Job) {
+            return <AssigneesColumn assignees={item.assignees} />;
           },
-        ]
+        },
+      ]
       : []),
     ...(values.some((val: JobStateType) => val in AssignedJobStates)
       ? [
-          {
-            id: 'task-completed',
-            label: 'Task Completed',
-            minWidth: 152,
-            format: function renderComp({
-              completedTasks = 0,
-              totalTasks = 0,
-            }: Job) {
-              const percentage = totalTasks
-                ? (completedTasks / totalTasks) * 100
-                : 0;
+        {
+          id: 'task-completed',
+          label: 'Task Completed',
+          minWidth: 152,
+          format: function renderComp({
+                                        completedTasks = 0,
+                                        totalTasks = 0,
+                                      }: Job) {
+            const percentage = totalTasks
+              ? (completedTasks / totalTasks) * 100
+              : 0;
 
-              return (
-                <div className="task-progress">
-                  <ProgressBar whiteBackground percentage={percentage} />
-                  <span>
+            return (
+              <div className="task-progress">
+                <ProgressBar whiteBackground percentage={percentage} />
+                <span>
                     {completedTasks} of {totalTasks} Tasks
                   </span>
-                </div>
-              );
-            },
+              </div>
+            );
           },
-        ]
+        },
+      ]
       : []),
     {
       id: 'code',
@@ -317,8 +321,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                 field.field === 'taskExecutions.assignees.user.id'
                   ? true
                   : defaultFilters.current.some(
-                      (newField) => newField.field === field.field,
-                    ),
+                    (newField) => newField.field === field.field,
+                  ),
               ),
               ...fields,
             ]);
@@ -346,12 +350,12 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                 ...currentFields.filter((el) => el.field !== 'state'),
                 ...(isChecked
                   ? [
-                      {
-                        field: 'state',
-                        op: FilterOperators.EQ,
-                        values: [CompletedJobStates.COMPLETED_WITH_EXCEPTION],
-                      },
-                    ]
+                    {
+                      field: 'state',
+                      op: FilterOperators.EQ,
+                      values: [CompletedJobStates.COMPLETED_WITH_EXCEPTION],
+                    },
+                  ]
                   : [...getBaseFilter(values)]),
               ]);
             }}
@@ -394,52 +398,71 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         )}
       </div>
 
-      <DataTable
-        columns={columns}
-        rows={jobs.map((item) => {
-          return {
-            ...item,
-            ...item.properties!.reduce<Record<string, string>>(
-              (acc, itemProperty) => {
-                acc[itemProperty.id] = itemProperty.value;
-                return acc;
-              },
-              {},
-            ),
-          };
-        })}
-      />
-      <div className="pagination">
-        <ArrowLeft
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page > 0) {
-              fetchData({ page: pageable.page - 1, size: DEFAULT_PAGE_SIZE });
-            }
-          }}
+      <div
+        style={{
+          display: jobPropertiesLoading || jobDataLoading ? 'flex' : 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+        }}
+      >
+        <CircularProgress style={{ color: 'rgb(29, 132, 255)' }} />
+      </div>
+
+      <div
+        style={{
+          ...(jobPropertiesLoading || jobDataLoading
+            ? { display: 'none' }
+            : {}),
+        }}
+      >
+        <DataTable
+          columns={columns}
+          rows={jobs.map((item) => {
+            return {
+              ...item,
+              ...item.properties!.reduce<Record<string, string>>(
+                (acc, itemProperty) => {
+                  acc[itemProperty.id] = itemProperty.value;
+                  return acc;
+                },
+                {},
+              ),
+            };
+          })}
         />
-        {Array.from({ length: pageable.totalPages }, (_, i) => i)
-          .slice(
-            Math.floor(pageable.page / 10) * 10,
-            Math.floor(pageable.page / 10) * 10 + 10,
-          )
-          .map((el) => (
-            <span
-              key={el}
-              className={pageable.page === el ? 'active' : ''}
-              onClick={() => fetchData({ page: el, size: DEFAULT_PAGE_SIZE })}
-            >
-              {el + 1}
-            </span>
-          ))}
-        <ArrowRight
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page < pageable.totalPages - 1) {
-              fetchData({ page: pageable.page + 1, size: DEFAULT_PAGE_SIZE });
-            }
-          }}
-        />
+        <div className="pagination">
+          <ArrowLeft
+            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+            onClick={() => {
+              if (pageable.page > 0) {
+                fetchData({ page: pageable.page - 1, size: DEFAULT_PAGE_SIZE });
+              }
+            }}
+          />
+          {Array.from({ length: pageable.totalPages }, (_, i) => i)
+            .slice(
+              Math.floor(pageable.page / 10) * 10,
+              Math.floor(pageable.page / 10) * 10 + 10,
+            )
+            .map((el) => (
+              <span
+                key={el}
+                className={pageable.page === el ? 'active' : ''}
+                onClick={() => fetchData({ page: el, size: DEFAULT_PAGE_SIZE })}
+              >
+                {el + 1}
+              </span>
+            ))}
+          <ArrowRight
+            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+            onClick={() => {
+              if (pageable.page < pageable.totalPages - 1) {
+                fetchData({ page: pageable.page + 1, size: DEFAULT_PAGE_SIZE });
+              }
+            }}
+          />
+        </div>
       </div>
     </TabContentWrapper>
   );

@@ -4,6 +4,7 @@ import { useTypedSelector } from '#store';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
 import { Job } from '#views/Jobs/NewListView/types';
+import { CircularProgress } from '@material-ui/core';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -19,12 +20,11 @@ import { ListViewState, TabViewProps } from './types';
 const DEFAULT_PAGE_SIZE = 10;
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
-  const { jobs }: ListViewState = useTypedSelector(
+  const { jobs, loading: jobDataLoading }: ListViewState = useTypedSelector(
     (state) => state.inboxListView,
   );
-  const { list: jobProperties } = useTypedSelector(
-    (state) => state.properties[ComposerEntity.JOB],
-  );
+  const { list: jobProperties, loading: jobPropertiesLoading } =
+    useTypedSelector((state) => state.properties[ComposerEntity.JOB]);
 
   const { selectedFacility: { id: facilityId = '' } = {}, selectedUseCase } =
     useTypedSelector((state) => state.auth);
@@ -105,12 +105,12 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         const title = isJobCompleted
           ? 'Completed'
           : isCompletedWithException
-          ? 'Completed with Exception'
-          : isJobBlocked
-          ? 'Approval Pending'
-          : isJobStarted
-          ? 'Started'
-          : 'Not Started';
+            ? 'Completed with Exception'
+            : isJobBlocked
+              ? 'Approval Pending'
+              : isJobStarted
+                ? 'Started'
+                : 'Not Started';
 
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -121,8 +121,8 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
                 color: isJobCompleted
                   ? '#5aa700'
                   : isJobStarted
-                  ? '#1d84ff'
-                  : '#f7b500',
+                    ? '#1d84ff'
+                    : '#f7b500',
               }}
             />
             <span title={title}>{title}</span>
@@ -135,9 +135,9 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       label: 'Name',
       minWidth: 240,
       format: function renderComp({
-        id,
-        checklist: { id: checklistId, name: checklistName },
-      }: Job) {
+                                    id,
+                                    checklist: { id: checklistId, name: checklistName },
+                                  }: Job) {
         return (
           <span
             className="primary"
@@ -207,59 +207,78 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
             ...jobProperties.map(({ label, id }) => ({
               label,
               value: id,
-              field: 'jobPropertyValues.facilityUseCasePropertyMapping.propertiesId',
+              field:
+                'jobPropertyValues.facilityUseCasePropertyMapping.propertiesId',
               operator: FilterOperators.EQ,
             })),
           ]}
           updateFilterFields={(fields) => setFilterFields([...fields])}
         />
       </div>
-      <DataTable
-        columns={columns}
-        rows={list.map((item) => {
-          return {
-            ...item,
-            ...item.properties!.reduce<Record<string, string>>(
-              (acc, itemProperty) => {
-                acc[itemProperty.id] = itemProperty.value;
-                return acc;
-              },
-              {},
-            ),
-          };
-        })}
-      />
-      <div className="pagination">
-        <ArrowLeft
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page > 0) {
-              fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
-            }
-          }}
+      <div
+        style={{
+          display: jobDataLoading || jobPropertiesLoading ? 'flex' : 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+        }}
+      >
+        <CircularProgress style={{ color: 'rgb(29, 132, 255)' }} />
+      </div>
+      <div
+        style={{
+          ...(jobDataLoading || jobPropertiesLoading
+            ? { display: 'none' }
+            : {}),
+        }}
+      >
+        <DataTable
+          columns={columns}
+          rows={list.map((item) => {
+            return {
+              ...item,
+              ...item.properties!.reduce<Record<string, string>>(
+                (acc, itemProperty) => {
+                  acc[itemProperty.id] = itemProperty.value;
+                  return acc;
+                },
+                {},
+              ),
+            };
+          })}
         />
-        {Array.from({ length: pageable.totalPages }, (_, i) => i)
-          .slice(
-            Math.floor(pageable.page / 10) * 10,
-            Math.floor(pageable.page / 10) * 10 + 10,
-          )
-          .map((el) => (
-            <span
-              key={el}
-              className={pageable.page === el ? 'active' : ''}
-              onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
-            >
-              {el + 1}
-            </span>
-          ))}
-        <ArrowRight
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page < pageable.totalPages - 1) {
-              fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
-            }
-          }}
-        />
+        <div className="pagination">
+          <ArrowLeft
+            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+            onClick={() => {
+              if (pageable.page > 0) {
+                fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
+              }
+            }}
+          />
+          {Array.from({ length: pageable.totalPages }, (_, i) => i)
+            .slice(
+              Math.floor(pageable.page / 10) * 10,
+              Math.floor(pageable.page / 10) * 10 + 10,
+            )
+            .map((el) => (
+              <span
+                key={el}
+                className={pageable.page === el ? 'active' : ''}
+                onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
+              >
+                {el + 1}
+              </span>
+            ))}
+          <ArrowRight
+            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+            onClick={() => {
+              if (pageable.page < pageable.totalPages - 1) {
+                fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
+              }
+            }}
+          />
+        </div>
       </div>
     </TabContentWrapper>
   );
