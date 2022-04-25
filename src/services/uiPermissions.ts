@@ -7,6 +7,7 @@ export enum roles {
   FACILITY_ADMIN = 'FACILITY_ADMIN',
   SUPERVISOR = 'SUPERVISOR',
   OPERATOR = 'OPERATOR',
+  CHECKLIST_PUBLISHER = 'CHECKLIST_PUBLISHER',
 }
 
 export enum RoleIdByName {
@@ -15,6 +16,7 @@ export enum RoleIdByName {
   FACILITY_ADMIN = '2',
   SUPERVISOR = '4',
   OPERATOR = '5',
+  CHECKLIST_PUBLISHER = '6',
 }
 
 const uiPermissions: Record<string, any> = {
@@ -22,17 +24,29 @@ const uiPermissions: Record<string, any> = {
     inbox: [
       roles.ACCOUNT_OWNER,
       roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
       roles.SUPERVISOR,
       roles.OPERATOR,
     ],
-    jobs: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.SUPERVISOR],
-    checklists: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.SUPERVISOR],
+    jobs: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+    ],
+    checklists: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+    ],
   },
   header: {
     usersAndAccess: [
       roles.ACCOUNT_OWNER,
       roles.SYSTEM_ADMIN,
       roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
     ],
   },
   usersAndAccess: {
@@ -40,11 +54,13 @@ const uiPermissions: Record<string, any> = {
       roles.ACCOUNT_OWNER,
       roles.SYSTEM_ADMIN,
       roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
     ],
     archivedUsers: [
       roles.ACCOUNT_OWNER,
       roles.SYSTEM_ADMIN,
       roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
     ],
     addNewUser: [roles.ACCOUNT_OWNER, roles.SYSTEM_ADMIN],
     listViewActions: [roles.ACCOUNT_OWNER, roles.SYSTEM_ADMIN],
@@ -52,31 +68,46 @@ const uiPermissions: Record<string, any> = {
     selectedUser: {
       form: {
         editable: [roles.ACCOUNT_OWNER, roles.SYSTEM_ADMIN],
-        nonEditable: [roles.FACILITY_ADMIN],
+        nonEditable: [roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
       },
     },
     sessionActivity: [
       roles.ACCOUNT_OWNER,
       roles.SYSTEM_ADMIN,
       roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
     ],
   },
   checklists: {
-    create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
-    revision: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
-    archive: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
-    release: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
+    create: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+    ],
+    revision: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+    ],
+    archive: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+    ],
+    release: [roles.ACCOUNT_OWNER, roles.CHECKLIST_PUBLISHER],
   },
   inbox: {
     completeWithException: [
       roles.ACCOUNT_OWNER,
       roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
       roles.SUPERVISOR,
     ],
   },
   home: [
     roles.ACCOUNT_OWNER,
     roles.FACILITY_ADMIN,
+    roles.CHECKLIST_PUBLISHER,
     roles.SUPERVISOR,
     roles.OPERATOR,
   ],

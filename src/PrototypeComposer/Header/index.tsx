@@ -1,6 +1,6 @@
+import ActivityIcon from '#assets/svg/ActivityIcon';
 import MemoArchive from '#assets/svg/Archive';
 import MemoViewInfo from '#assets/svg/ViewInfo';
-import ActivityIcon from '#assets/svg/ActivityIcon';
 import { Button1 } from '#components';
 import {
   closeAllOverlayAction,
@@ -16,7 +16,7 @@ import {
   CollaboratorState,
   CollaboratorType,
 } from '#PrototypeComposer/reviewer.types';
-import checkPermission from '#services/uiPermissions';
+import checkPermission, { RoleIdByName } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { Error } from '#utils/globalTypes';
 import {
@@ -78,12 +78,13 @@ const ChecklistHeader: FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [state, setState] = useState(initialState);
 
-  const { activeStageId, data, userId, listOrder } = useTypedSelector(
+  const { activeStageId, data, userId, listOrder, profile } = useTypedSelector(
     (state) => ({
       userId: state.auth.userId,
       data: state.prototypeComposer.data as Checklist,
       activeStageId: state.prototypeComposer.stages.activeStageId,
       listOrder: state.prototypeComposer.stages.listOrder,
+      profile: state.auth.profile,
     }),
   );
 
@@ -641,16 +642,20 @@ const ChecklistHeader: FC = () => {
                   : null}
               </>
             )}
-
-            {approver && data?.state !== ChecklistStates.PUBLISHED && (
+            {/* Note: We check only against the first value of the array as currently we support a user being assigned a single role only*/}
+            {((approver && data?.state !== ChecklistStates.PUBLISHED) ||
+              (!!(
+                profile?.roles?.[0].id === RoleIdByName.CHECKLIST_PUBLISHER
+              ) &&
+                data?.state === ChecklistStates.READY_FOR_RELEASE)) && (
               <>
                 <ViewReviewersButton />
                 <ViewSigningStateButton />
-                {approver?.state !== CollaboratorState.SIGNED && (
-                  <SignOffButton />
-                )}
               </>
             )}
+            {approver &&
+              data?.state !== ChecklistStates.PUBLISHED &&
+              approver?.state !== CollaboratorState.SIGNED && <SignOffButton />}
             {data?.state === ChecklistStates.PUBLISHED && null}
             {data?.state === ChecklistStates.READY_FOR_RELEASE &&
               checkPermission(['checklists', 'release']) && (

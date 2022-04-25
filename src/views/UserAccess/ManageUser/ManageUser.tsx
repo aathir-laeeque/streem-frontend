@@ -34,10 +34,8 @@ import {
 const ManageUser: FC<EditUserProps> = ({
   user: selectedUser,
   facilities: list,
-  rolePlaceholder,
   isAccountOwner,
   isEditable,
-  selectedRoles,
   pageType,
 }) => {
   const dispatch = useDispatch();
@@ -90,7 +88,7 @@ const ManageUser: FC<EditUserProps> = ({
         (key) => data[key] === undefined && delete data[key],
       );
       reset({
-        ...((selectedUser as unknown) as EditUserRequestInputs),
+        ...(selectedUser as unknown as EditUserRequestInputs),
         ...data,
       });
       dispatch(
@@ -127,8 +125,6 @@ const ManageUser: FC<EditUserProps> = ({
       pageType,
       isEditable,
       isAccountOwner,
-      rolePlaceholder,
-      selectedRoles,
       selectedUser,
       onFacilityChange,
       updateToggles,

@@ -9,10 +9,10 @@ import { Facilities } from '#store/facilities/types';
 import { fetchSelectedUserSuccess } from '#store/users/actions';
 import { ChallengeQuestion, User, UserStates } from '#store/users/types';
 import {
+  apiChallengeQuestions,
   apiCheckEmail,
   apiCheckEmployeeId,
   apiGetAllChallengeQuestions,
-  apiChallengeQuestions,
   apiUpdatePassword,
 } from '#utils/apiUrls';
 import { ResponseObj, ValidatorProps } from '#utils/globalTypes';
@@ -23,11 +23,9 @@ import React, { useEffect, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-
 import { resendInvite } from '../actions';
-import { RoleType, ValidateCredentialsPurpose } from '../types';
+import { ValidateCredentialsPurpose } from '../types';
 import { Credentials, CustomInputGroup, KeyGenerator } from './styles';
-import { permissions, roles } from './temp';
 import { EditUserRequestInputs, PAGE_TYPE, TogglesState } from './types';
 
 export enum Toggleables {
@@ -42,8 +40,6 @@ type CreateSectionConfigProps = {
   isAccountOwner: boolean;
   formData: UseFormMethods<EditUserRequestInputs>;
   selectedUser?: User;
-  rolePlaceholder?: string;
-  selectedRoles?: RoleType[];
   toggles?: TogglesState;
   onFacilityChange?: (options: Option[]) => void;
   updateToggles?: (key: Toggleables) => void;
@@ -56,8 +52,6 @@ export const createSectionConfig = ({
   formData,
   isAccountOwner,
   selectedUser,
-  selectedRoles,
-  rolePlaceholder = 'Role',
   toggles,
   onFacilityChange,
   updateToggles,
@@ -65,15 +59,16 @@ export const createSectionConfig = ({
   const dispatch = useDispatch();
   const { t: translate } = useTranslation(['userManagement']);
   const [validatedToken, setValidatedToken] = useState<string | undefined>();
-  const [
-    currentlySelectedFacilities,
-    setCurrentlySelectedFacilities,
-  ] = useState<Option[] | undefined>(
-    selectedUser?.facilities?.map((facility) => ({
-      value: facility.id,
-      label: facility.name,
-    })) || undefined,
+  const [selectedRole, setSelectedRole] = useState<string | undefined>(
+    selectedUser?.roles && selectedUser.roles[0].id,
   );
+  const [currentlySelectedFacilities, setCurrentlySelectedFacilities] =
+    useState<Option[] | undefined>(
+      selectedUser?.facilities?.map((facility) => ({
+        value: facility.id,
+        label: facility.name,
+      })) || undefined,
+    );
   const { register, errors, getValues, setValue } = formData;
   const { roles: rolesValues } = getValues(['roles']);
 
@@ -253,11 +248,8 @@ export const createSectionConfig = ({
               {
                 type: 'role',
                 props: {
-                  permissions,
-                  roles,
                   id: 'roles',
-                  placeHolder: rolePlaceholder,
-                  selected: selectedRoles,
+                  selected: selectedRole,
                   disabled: !isEditable || isAccountOwner,
                   error: errors['roles']?.message,
                   onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -287,6 +279,7 @@ export const createSectionConfig = ({
                       shouldDirty: true,
                       shouldValidate: true,
                     });
+                    setSelectedRole(e.target.value);
                   },
                 },
               },
@@ -622,10 +615,8 @@ const UpdatePassword = ({
   });
 
   const [isPasswordInputType, setIsPasswordInputType] = useState(true);
-  const [
-    isConfirmPasswordTextHidden,
-    setIsConfirmPasswordTextHidden,
-  ] = useState(true);
+  const [isConfirmPasswordTextHidden, setIsConfirmPasswordTextHidden] =
+    useState(true);
 
   const PasswordAfterIcon = () => (
     <VisibilityOutlined

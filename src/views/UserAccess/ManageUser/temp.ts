@@ -1,114 +1,120 @@
 import { RoleIdByName } from '#services/uiPermissions';
-import { RoleType, PermissionType } from '../types';
 
-export const roles: RoleType[] = [
-  {
-    id: RoleIdByName.ACCOUNT_OWNER,
-    name: 'Account Owner',
-    permissions: {
-      'Create and manage Checklists': true,
-      'View existing Checklists': true,
-      'View Prototypes': true,
-      'Review and Approve Checklists': true,
-      'Create and Assign Jobs': true,
-      'Execute and Complete Jobs': true,
-      'Print Jobs': true,
-      'View Job Activity': true,
-      'Complete a Job with Exception': true,
-      'Make Corrections in completed Tasks': true,
-      'Manage Task Exceptions': true,
-      'Manage Users and Permissions': true,
-      'View existing Users': true,
-      'Manage Facility Access': true,
-      'View User’s Session Activity': true,
-    },
-  },
-  {
-    id: RoleIdByName.FACILITY_ADMIN,
+enum PermissionCategories {
+  CHECKLIST_FEATURES = 'Checklisting Features',
+  JOB_FEATURES = 'Job Features',
+  ADMINISTRATIVE_FEATURES = 'Administrative Features',
+}
+
+enum ChecklistFeatues {
+  CREATE_MANAGE_CHECKLISTS = 'Create and manage Checklists',
+  VIEW_EXISTING_CHECKLISTS = 'View existing Checklists',
+  VIEW_PROTOTYPES = 'View Prototypes',
+  REVIEW_AND_APPROVE_CHECKLISTS = 'Review and Approve Checklists',
+  RELEASE_PUBLISH_CHECKLISTS = 'Release and publish Checklists',
+}
+
+enum JobFeatures {
+  CREATE_ASSIGN_JOBS = 'Create and Assign Jobs',
+  EXECUTE_AND_COMPLETE_JOBS = 'Execute and Complete Jobs',
+  PRINT_JOBS = 'Print Jobs',
+  VIEW_JOB_ACTIVITY = 'View Job Activity',
+  COMPLETE_JOB_WITH_EXCEPTION = 'Complete a Job with Exception',
+  MAKE_CORRECTIONS_IN_COMPLETED_TASK = 'Make Corrections in completed Tasks',
+  MANAGE_TASK_EXCEPTIONS = 'Manage Task Exceptions',
+}
+
+enum AdministrativeFeatures {
+  MANAGE_USERS_AND_PERMISSIONS = 'Manage Users and Permissions',
+  VIEW_EXISTING_USERS = 'View existing Users',
+  MANAGE_FACILITY_ACCESS = 'Manage Facility Access',
+  VIEW_USER_SESSION_ACTIVITY = 'View User’s Session Activity',
+}
+
+export const rolesDetails = {
+  [RoleIdByName.FACILITY_ADMIN]: {
     name: 'Facility Admin',
     permissions: {
-      'Create and manage Checklists': true,
-      'View existing Checklists': true,
-      'View Prototypes': true,
-      'Review and Approve Checklists': true,
-      'Create and Assign Jobs': true,
-      'Execute and Complete Jobs': true,
-      'Print Jobs': true,
-      'View Job Activity': true,
-      'Complete a Job with Exception': true,
-      'Make Corrections in completed Tasks': true,
-      'Manage Task Exceptions': true,
-      'View existing Users': true,
-      'View User’s Session Activity': true,
+      [PermissionCategories.CHECKLIST_FEATURES]: [
+        ChecklistFeatues.CREATE_MANAGE_CHECKLISTS,
+        ChecklistFeatues.VIEW_EXISTING_CHECKLISTS,
+        ChecklistFeatues.VIEW_PROTOTYPES,
+        ChecklistFeatues.REVIEW_AND_APPROVE_CHECKLISTS,
+      ],
+      [PermissionCategories.JOB_FEATURES]: [
+        JobFeatures.CREATE_ASSIGN_JOBS,
+        JobFeatures.EXECUTE_AND_COMPLETE_JOBS,
+        JobFeatures.PRINT_JOBS,
+        JobFeatures.VIEW_JOB_ACTIVITY,
+        JobFeatures.COMPLETE_JOB_WITH_EXCEPTION,
+        JobFeatures.MAKE_CORRECTIONS_IN_COMPLETED_TASK,
+        JobFeatures.MANAGE_TASK_EXCEPTIONS,
+      ],
+      [PermissionCategories.ADMINISTRATIVE_FEATURES]: [
+        AdministrativeFeatures.VIEW_EXISTING_USERS,
+        AdministrativeFeatures.VIEW_USER_SESSION_ACTIVITY,
+      ],
     },
   },
-  {
-    id: RoleIdByName.SYSTEM_ADMIN,
+  [RoleIdByName.CHECKLIST_PUBLISHER]: {
+    name: 'Checklist Publisher',
+    permissions: {
+      [PermissionCategories.CHECKLIST_FEATURES]: [
+        ChecklistFeatues.CREATE_MANAGE_CHECKLISTS,
+        ChecklistFeatues.VIEW_EXISTING_CHECKLISTS,
+        ChecklistFeatues.VIEW_PROTOTYPES,
+        ChecklistFeatues.REVIEW_AND_APPROVE_CHECKLISTS,
+        ChecklistFeatues.RELEASE_PUBLISH_CHECKLISTS,
+      ],
+      [PermissionCategories.JOB_FEATURES]: [
+        JobFeatures.CREATE_ASSIGN_JOBS,
+        JobFeatures.EXECUTE_AND_COMPLETE_JOBS,
+        JobFeatures.PRINT_JOBS,
+        JobFeatures.VIEW_JOB_ACTIVITY,
+        JobFeatures.COMPLETE_JOB_WITH_EXCEPTION,
+        JobFeatures.MAKE_CORRECTIONS_IN_COMPLETED_TASK,
+        JobFeatures.MANAGE_TASK_EXCEPTIONS,
+      ],
+      [PermissionCategories.ADMINISTRATIVE_FEATURES]: [
+        AdministrativeFeatures.VIEW_EXISTING_USERS,
+        AdministrativeFeatures.VIEW_USER_SESSION_ACTIVITY,
+      ],
+    },
+  },
+  [RoleIdByName.SYSTEM_ADMIN]: {
     name: 'System Admin',
     permissions: {
-      'Manage Users and Permissions': true,
-      'View existing Users': true,
-      'Manage Facility Access': true,
-      'View User’s Session Activity': true,
+      [PermissionCategories.ADMINISTRATIVE_FEATURES]: [
+        AdministrativeFeatures.MANAGE_USERS_AND_PERMISSIONS,
+        AdministrativeFeatures.VIEW_EXISTING_USERS,
+        AdministrativeFeatures.MANAGE_FACILITY_ACCESS,
+        AdministrativeFeatures.VIEW_USER_SESSION_ACTIVITY,
+      ],
     },
   },
-  {
-    id: RoleIdByName.SUPERVISOR,
+  [RoleIdByName.SUPERVISOR]: {
     name: 'Supervisor',
     permissions: {
-      'Create and Assign Jobs': true,
-      'Execute and Complete Jobs': true,
-      'Print Jobs': true,
-      'View Job Activity': true,
-      'Complete a Job with Exception': true,
-      'Make Corrections in completed Tasks': true,
-      'Manage Task Exceptions': true,
+      [PermissionCategories.JOB_FEATURES]: [
+        JobFeatures.CREATE_ASSIGN_JOBS,
+        JobFeatures.EXECUTE_AND_COMPLETE_JOBS,
+        JobFeatures.PRINT_JOBS,
+        JobFeatures.VIEW_JOB_ACTIVITY,
+        JobFeatures.COMPLETE_JOB_WITH_EXCEPTION,
+        JobFeatures.MAKE_CORRECTIONS_IN_COMPLETED_TASK,
+        JobFeatures.MANAGE_TASK_EXCEPTIONS,
+      ],
     },
   },
-  {
-    id: RoleIdByName.OPERATOR,
+  [RoleIdByName.OPERATOR]: {
     name: 'Operator',
     permissions: {
-      'Execute and Complete Jobs': true,
-      'Print Jobs': true,
-      'View Job Activity': true,
-      'Make Corrections in completed Tasks': true,
+      [PermissionCategories.JOB_FEATURES]: [
+        JobFeatures.EXECUTE_AND_COMPLETE_JOBS,
+        JobFeatures.PRINT_JOBS,
+        JobFeatures.VIEW_JOB_ACTIVITY,
+        JobFeatures.MAKE_CORRECTIONS_IN_COMPLETED_TASK,
+      ],
     },
   },
-];
-
-export const permissions: PermissionType[] = [
-  {
-    id: 1,
-    name: 'Checklisting Features',
-    permissions: [
-      'Create and manage Checklists',
-      'View existing Checklists',
-      'View Prototypes',
-      'Review and Approve Checklists',
-    ],
-  },
-  {
-    id: 2,
-    name: 'Job Features',
-    permissions: [
-      'Create and Assign Jobs',
-      'Execute and Complete Jobs',
-      'Print Jobs',
-      'View Job Activity',
-      'Complete a Job with Exception',
-      'Make Corrections in completed Tasks',
-      'Manage Task Exceptions',
-    ],
-  },
-  {
-    id: 3,
-    name: 'Administrative Features',
-    permissions: [
-      'Manage Users and Permissions',
-      'View existing Users',
-      'Manage Facility Access',
-      'View User’s Session Activity',
-    ],
-  },
-];
+};

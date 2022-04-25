@@ -1,8 +1,8 @@
+import { RoleIdByName } from '#services/uiPermissions';
 import { Facilities } from '#store/facilities/types';
 import { User } from '#store/users/types';
 import { RouteComponentProps } from '@reach/router';
-
-import { RoleType } from '../types';
+import { InitialState } from '.';
 import { Toggleables } from './helpers';
 
 export enum PAGE_TYPE {
@@ -18,10 +18,8 @@ export type ViewUserProps = RouteComponentProps<{
 export type EditUserProps = RouteComponentProps & {
   user: User;
   facilities: Facilities;
-  rolePlaceholder: string;
   isAccountOwner: boolean;
   isEditable: boolean;
-  selectedRoles: RoleType[];
   pageType: PAGE_TYPE;
 };
 

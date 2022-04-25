@@ -1,20 +1,19 @@
 import { StyledRadio } from '#components';
-import { PermissionType, RoleType } from '#views/UserAccess/types';
+import { RoleIdByName } from '#services/uiPermissions';
+import { RoleType } from '#views/UserAccess/types';
 import { FormControlLabel, RadioGroup } from '@material-ui/core';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import CheckIcon from '@material-ui/icons/Check';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
+import { rolesDetails } from '#views/UserAccess/ManageUser/temp';
 
 export interface RoleProps {
   id: string;
-  permissions: PermissionType[];
-  roles: RoleType[];
-  selected?: RoleType[];
+  selected?: RoleIdByName;
   label: string;
   placeHolder: string;
   disabled?: boolean;
@@ -110,59 +109,22 @@ const Wrapper = styled.div.attrs({})`
       }
     }
 
-    .check-section {
-      display: flex;
-      flex: 1;
-      justify-content: space-between;
-    }
-
     .bordered {
       border-bottom: 1px dashed #dadada;
     }
 
-    .check-group {
-      display: flex;
-      flex: 1;
-      justify-content: center;
-      align-items: center;
-
-      .checkmark {
-        border-radius: 0px;
-        border-color: #333;
-        background-color: #fff;
-        border-width: 2px;
-
-        :after {
-          left: 4px;
-          top: 1px;
-          width: 4px;
-          height: 7px;
-        }
-      }
-
-      .container {
-        color: #333;
-        input:checked ~ .checkmark {
-          background-color: #1d84ff;
-          border: 2px solid #1d84ff;
-        }
-      }
-
+    .role-radio-group-wrapper {
       .MuiFormGroup-root {
-        flex-direction: row;
-        flex: 1;
-        justify-content: space-around;
-
-        .MuiFormControlLabel-label {
-          font-weight: normal;
-        }
+        display: grid;
+        row-gap: 8px;
+        grid-template-columns: auto auto auto;
       }
     }
 
     .input {
       flex: 1;
       font-size: 16px;
-      padding: 4px 8px;
+      padding: 4px 8px 4px 0px;
       color: #666666;
       border: none;
       outline: none;
@@ -234,14 +196,27 @@ const Wrapper = styled.div.attrs({})`
     color: #5aa700;
     font-size: 16px;
   }
+
+  .permission-list {
+    margin: 0px;
+    padding: 0px;
+    padding-left: 16px;
+
+    .permission-list-item {
+      color: #525252;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .permission-list-item:first-child {
+      margin-top: 12px;
+    }
+  }
 `;
 
 export const Role: FC<RoleProps> = ({
   label,
-  placeHolder,
   selected,
-  permissions,
-  roles,
   disabled = false,
   id,
   error,
@@ -264,7 +239,7 @@ export const Role: FC<RoleProps> = ({
 
   const getArrowIcon = (isOpen: boolean) => (
     <>
-      <div className="actions">Permissions</div>
+      <div className="actions">See Permissions</div>
       {isOpen ? (
         <ArrowDropUpIcon style={{ color: '#1d84ff' }} />
       ) : (
@@ -293,7 +268,7 @@ export const Role: FC<RoleProps> = ({
                   <input
                     className={`input disabled`}
                     style={{ textTransform: 'capitalize' }}
-                    value={placeHolder}
+                    value={rolesDetails[selected!].name}
                     onFocus={onFocus}
                     onBlur={onBlur}
                     disabled={disabled}
@@ -302,118 +277,80 @@ export const Role: FC<RoleProps> = ({
                 </>
               )}
               {!disabled && (
-                <div className="check-group">
+                <div>
                   <div
-                    style={{ display: 'flex', flex: 0.3, alignItems: 'center' }}
-                  >
-                    {getArrowIcon(isExpanded)}
-                  </div>
-                  <div
-                    className="check-group"
+                    className="role-radio-group-wrapper"
                     onClick={(e) => e.stopPropagation()}
-                    style={{ cursor: 'auto' }}
                   >
                     <RadioGroup
                       id={id}
                       name={id}
                       onChange={onChange}
-                      defaultValue={selected?.[0]?.id}
+                      defaultValue={selected}
                     >
-                      {roles.map((role) => {
-                        if (role.id === roles[0].id) return null;
+                      {Object.entries(rolesDetails).map(([roleId, role]) => {
                         return (
                           <FormControlLabel
                             control={<StyledRadio />}
-                            key={role.id.toString()}
+                            key={roleId}
                             label={role.name}
-                            value={role.id}
+                            value={roleId}
                           />
                         );
                       })}
                     </RadioGroup>
                   </div>
+                  {selected && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        marginTop: '16px',
+                      }}
+                    >
+                      {getArrowIcon(isExpanded)}
+                    </div>
+                  )}
                 </div>
               )}
-            </AccordionSummary>
-            <AccordionDetails>
-              {disabled
-                ? permissions.map((permissionGroup) => {
-                    let permissionGroupName = '';
-                    return (
-                      <div
-                        key={`${permissionGroup.id}`}
-                        className="permission-group"
-                      >
-                        <div className="permission">
-                          {permissionGroup.permissions.map((permission) => {
-                            if (selected?.[0]?.permissions?.[permission]) {
-                              permissionGroupName = permissionGroup.name;
-                              return (
-                                <span
-                                  className="permission-text"
-                                  key={`${permission}`}
-                                >
-                                  {permission}
-                                </span>
-                              );
-                            }
-                          })}
-                        </div>
-                        {permissionGroupName && (
-                          <div className="permission-group-text">
-                            {permissionGroup.name}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                : permissions.map((permissionGroup) => {
-                    return (
-                      <div
-                        key={`${permissionGroup.id}`}
-                        className="permission-group"
-                      >
+            </AccordionSummary>{' '}
+            {selected && (
+              <AccordionDetails>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'auto auto auto',
+                    columnGap: '8px',
+                  }}
+                >
+                  {Object.entries(rolesDetails[selected].permissions).map(
+                    ([permissionCategory, permissionArr], index) => (
+                      <div>
                         <div
-                          className="permission"
-                          style={{ flexDirection: 'column' }}
+                          style={{
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                            color: '#161616',
+                          }}
                         >
-                          {permissionGroup.permissions.map((permission) => {
-                            return (
-                              <div
-                                className="permission-details"
-                                key={`${permission}`}
-                              >
-                                <div className="permission-title">
-                                  {permission}
-                                </div>
-                                <div className="check-group bordered">
-                                  {roles.map((role) => {
-                                    if (role.id === roles[0].id) return null;
-                                    return (
-                                      <div
-                                        key={`${permission}_${role.id}`}
-                                        className="check-group"
-                                      >
-                                        {role.permissions[permission] ? (
-                                          <CheckIcon className="icon success" />
-                                        ) : (
-                                          '-'
-                                        )}
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            );
-                          })}
+                          {permissionCategory}
                         </div>
-                        <div className="permission-group-text">
-                          {permissionGroup.name}
-                        </div>
+                        <ul className="permission-list">
+                          {permissionArr.map((permission, i) => (
+                            <li
+                              className="permission-list-item"
+                              style={{ color: '#525252', fontSize: '14px' }}
+                            >
+                              {permission}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                    );
-                  })}
-            </AccordionDetails>
+                    ),
+                  )}
+                </div>
+              </AccordionDetails>
+            )}
           </Accordion>
         </div>
       </div>
