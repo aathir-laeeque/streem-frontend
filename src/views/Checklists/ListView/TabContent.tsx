@@ -25,7 +25,7 @@ import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/NewListView/actions';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
-import { Menu, MenuItem } from '@material-ui/core';
+import { CircularProgress, Menu, MenuItem } from '@material-ui/core';
 import {
   ArrowDropDown,
   ArrowLeft,
@@ -72,13 +72,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   label,
 }) => {
   const {
-    checklistListView: { pageable, currentPageData },
+    checklistListView: { pageable, currentPageData, loading },
     auth: { userId },
   } = useTypedSelector((state) => state);
-  const {
-    roles: userRoles,
-    selectedFacility: { id: facilityId = '' } = {},
-  } = useTypedSelector((state) => state.auth);
+  const { roles: userRoles, selectedFacility: { id: facilityId = '' } = {} } =
+    useTypedSelector((state) => state.auth);
 
   const { list: jobProperties } = useProperties(ComposerEntity.JOB);
   const { list: checklistProperties } = useProperties(ComposerEntity.CHECKLIST);
@@ -108,10 +106,13 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   const fetchData = (page: number, size: number) => {
     const filters = JSON.stringify({ op: 'AND', fields: filterFields });
     dispatch(
-      fetchChecklistsForListView(
-        { facilityId, page, size, filters, sort: 'createdAt,desc' },
-        true,
-      ),
+      fetchChecklistsForListView({
+        facilityId,
+        page,
+        size,
+        filters,
+        sort: 'createdAt,desc',
+      }),
     );
   };
 
@@ -122,16 +123,13 @@ const ListView: FC<ListViewProps & { label: string }> = ({
 
   useEffect(() => {
     dispatch(
-      fetchChecklistsForListView(
-        {
-          filters: JSON.stringify({ op: 'AND', fields: filterFields }),
-          page: 0,
-          size: 0,
-          sort: 'createdAt,desc',
-          facilityId,
-        },
-        false,
-      ),
+      fetchChecklistsForListView({
+        filters: JSON.stringify({ op: 'AND', fields: filterFields }),
+        page: 0,
+        size: 0,
+        sort: 'createdAt,desc',
+        facilityId,
+      }),
     );
   }, [filterFields]);
 
@@ -665,54 +663,66 @@ const ListView: FC<ListViewProps & { label: string }> = ({
         )}
       </div>
 
-      <DataTable
-        columns={columns}
-        rows={currentPageData.map((item) => {
-          return {
-            ...item,
-            ...checklistProperties.reduce<Record<string, string>>(
-              (acc, checklistProperty) => {
-                acc[checklistProperty.id] =
-                  item.properties?.[checklistProperty.name];
-                return acc;
-              },
-              {},
-            ),
-          };
-        })}
-      />
+      <div
+        style={{
+          display: loading ? 'flex' : 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+        }}
+      >
+        <CircularProgress style={{ color: 'rgb(29, 132, 255)' }} />
+      </div>
+      <div style={{ ...(loading ? { display: 'none' } : {}) }}>
+        <DataTable
+          columns={columns}
+          rows={currentPageData.map((item) => {
+            return {
+              ...item,
+              ...checklistProperties.reduce<Record<string, string>>(
+                (acc, checklistProperty) => {
+                  acc[checklistProperty.id] =
+                    item.properties?.[checklistProperty.name];
+                  return acc;
+                },
+                {},
+              ),
+            };
+          })}
+        />
 
-      <div className="pagination">
-        <ArrowLeft
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page > 0) {
-              fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
-            }
-          }}
-        />
-        {Array.from({ length: pageable.totalPages }, (_, i) => i)
-          .slice(
-            Math.floor(pageable.page / 10) * 10,
-            Math.floor(pageable.page / 10) * 10 + 10,
-          )
-          .map((el) => (
-            <span
-              key={el}
-              className={pageable.page === el ? 'active' : ''}
-              onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
-            >
-              {el + 1}
-            </span>
-          ))}
-        <ArrowRight
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page < pageable.totalPages - 1) {
-              fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
-            }
-          }}
-        />
+        <div className="pagination">
+          <ArrowLeft
+            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+            onClick={() => {
+              if (pageable.page > 0) {
+                fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
+              }
+            }}
+          />
+          {Array.from({ length: pageable.totalPages }, (_, i) => i)
+            .slice(
+              Math.floor(pageable.page / 10) * 10,
+              Math.floor(pageable.page / 10) * 10 + 10,
+            )
+            .map((el) => (
+              <span
+                key={el}
+                className={pageable.page === el ? 'active' : ''}
+                onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
+              >
+                {el + 1}
+              </span>
+            ))}
+          <ArrowRight
+            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+            onClick={() => {
+              if (pageable.page < pageable.totalPages - 1) {
+                fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
+              }
+            }}
+          />
+        </div>
       </div>
     </TabContentWrapper>
   );

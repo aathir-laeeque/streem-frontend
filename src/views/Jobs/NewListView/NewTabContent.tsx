@@ -14,6 +14,7 @@ import { useProperties } from '#services/properties';
 import { useTypedSelector } from '#store/helpers';
 import { User } from '#store/users/types';
 import { FilterField } from '#utils/globalTypes';
+import { CircularProgress } from '@material-ui/core';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -41,7 +42,9 @@ const getBaseFilter = (values: string[]): FilterField[] => [
 const TabContent: FC<TabContentProps> = ({ label, values }) => {
   const dispatch = useDispatch();
 
-  const { jobs, pageable } = useTypedSelector((state) => state.jobListView);
+  const { jobs, pageable, loading } = useTypedSelector(
+    (state) => state.jobListView,
+  );
 
   const { selectedFacility: { id: facilityId } = {} } = useTypedSelector(
     (state) => state.auth,
@@ -357,52 +360,65 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         )}
       </div>
 
-      <DataTable
-        columns={columns}
-        rows={jobs.map((item) => {
-          return {
-            ...item,
-            ...jobProperties.reduce<Record<string, string>>(
-              (acc, jobProperty) => {
-                acc[jobProperty.id] = item.properties?.[jobProperty.name];
-                return acc;
-              },
-              {},
-            ),
-          };
-        })}
-      />
-      <div className="pagination">
-        <ArrowLeft
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page > 0) {
-              fetchData({ page: pageable.page - 1, size: DEFAULT_PAGE_SIZE });
-            }
-          }}
+      <div
+        style={{
+          display: loading ? 'flex' : 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+        }}
+      >
+        <CircularProgress style={{ color: 'rgb(29, 132, 255)' }} />
+      </div>
+
+      <div style={{ ...(loading ? { display: 'none' } : {}) }}>
+        <DataTable
+          columns={columns}
+          rows={jobs.map((item) => {
+            return {
+              ...item,
+              ...jobProperties.reduce<Record<string, string>>(
+                (acc, jobProperty) => {
+                  acc[jobProperty.id] = item.properties?.[jobProperty.name];
+                  return acc;
+                },
+                {},
+              ),
+            };
+          })}
         />
-        {Array.from({ length: pageable.totalPages }, (_, i) => i)
-          .slice(
-            Math.floor(pageable.page / 10) * 10,
-            Math.floor(pageable.page / 10) * 10 + 10,
-          )
-          .map((el) => (
-            <span
-              key={el}
-              className={pageable.page === el ? 'active' : ''}
-              onClick={() => fetchData({ page: el, size: DEFAULT_PAGE_SIZE })}
-            >
-              {el + 1}
-            </span>
-          ))}
-        <ArrowRight
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page < pageable.totalPages - 1) {
-              fetchData({ page: pageable.page + 1, size: DEFAULT_PAGE_SIZE });
-            }
-          }}
-        />
+        <div className="pagination">
+          <ArrowLeft
+            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+            onClick={() => {
+              if (pageable.page > 0) {
+                fetchData({ page: pageable.page - 1, size: DEFAULT_PAGE_SIZE });
+              }
+            }}
+          />
+          {Array.from({ length: pageable.totalPages }, (_, i) => i)
+            .slice(
+              Math.floor(pageable.page / 10) * 10,
+              Math.floor(pageable.page / 10) * 10 + 10,
+            )
+            .map((el) => (
+              <span
+                key={el}
+                className={pageable.page === el ? 'active' : ''}
+                onClick={() => fetchData({ page: el, size: DEFAULT_PAGE_SIZE })}
+              >
+                {el + 1}
+              </span>
+            ))}
+          <ArrowRight
+            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+            onClick={() => {
+              if (pageable.page < pageable.totalPages - 1) {
+                fetchData({ page: pageable.page + 1, size: DEFAULT_PAGE_SIZE });
+              }
+            }}
+          />
+        </div>
       </div>
     </TabContentWrapper>
   );

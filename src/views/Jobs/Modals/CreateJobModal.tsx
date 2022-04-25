@@ -103,12 +103,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   );
   const dispatch = useDispatch();
 
-  const fetchData = ({
-    page,
-    isReseting = true,
-    size = 10,
-    query = '',
-  }: fetchDataParams) => {
+  const fetchData = ({ page, size = 10, query = '' }: fetchDataParams) => {
     const filters = JSON.stringify({
       op: 'AND',
       fields: [
@@ -117,7 +112,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
         { field: 'archived', op: 'EQ', values: [false] },
       ],
     });
-    dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, isReseting));
+    dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, page === 0));
   };
 
   const { control, handleSubmit, register, errors, formState } = useForm({

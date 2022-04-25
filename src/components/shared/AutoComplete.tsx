@@ -53,7 +53,6 @@ const StyledTextField = styled(TextField)`
 
 export type fetchDataParams = {
   page: number;
-  isReseting?: boolean;
   size?: number;
   query?: string;
 };
@@ -125,7 +124,6 @@ export function AutoComplete({
       !lastPage
     ) {
       fetchData({
-        isReseting: false,
         page: currentPage + 1,
         query: '',
       });
@@ -154,11 +152,12 @@ export function AutoComplete({
               open={open}
               options={choices}
               loading={loading}
-              onChange={(_, data) => props.onChange(data.id)}
+              onChange={(_, data) => {
+                props.onChange(data?.id);
+              }}
               getOptionLabel={getOptionLabel}
               getOptionSelected={getOptionSelected}
               renderOption={renderOption}
-              disableClearable
               onOpen={() => {
                 setOpen(true);
               }}
@@ -169,6 +168,12 @@ export function AutoComplete({
                 style: { maxHeight: '250px' },
                 onScroll: handleOnScroll,
               }}
+              onInputChange={debounce((_, value) => {
+                fetchData({
+                  page: 0,
+                  query: value,
+                });
+              }, 500)}
               renderInput={(params) => (
                 <StyledTextField
                   {...params}
@@ -183,13 +188,6 @@ export function AutoComplete({
                       </>
                     ),
                   }}
-                  onChange={debounce((e) => {
-                    fetchData({
-                      isReseting: true,
-                      page: currentPage + 1,
-                      query: e.target.value,
-                    });
-                  }, 500)}
                 />
               )}
             />
