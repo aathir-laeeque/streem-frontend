@@ -371,7 +371,9 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         <CircularProgress style={{ color: 'rgb(29, 132, 255)' }} />
       </div>
 
-      <div style={{ ...(loading ? { display: 'none' } : {}) }}>
+      <div
+        style={{ ...(loading ? { display: 'none' } : { display: 'contents' }) }}
+      >
         <DataTable
           columns={columns}
           rows={jobs.map((item) => {

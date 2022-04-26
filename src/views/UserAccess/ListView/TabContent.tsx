@@ -518,7 +518,9 @@ const TabContent: React.FC<TabContentProps> = (props) => {
       >
         <CircularProgress style={{ color: 'rgb(29, 132, 255)' }} />
       </div>
-      <div style={{ ...(loading ? { display: 'none' } : {}) }}>
+      <div
+        style={{ ...(loading ? { display: 'none' } : { display: 'contents' }) }}
+      >
         <DataTable columns={columns} rows={currentPageData} />
 
         <div className="pagination">
