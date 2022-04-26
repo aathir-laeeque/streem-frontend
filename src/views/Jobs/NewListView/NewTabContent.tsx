@@ -418,7 +418,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         style={{
           ...(jobPropertiesLoading || jobDataLoading
             ? { display: 'none' }
-            : {}),
+            : { display: 'contents' }),
         }}
       >
         <DataTable

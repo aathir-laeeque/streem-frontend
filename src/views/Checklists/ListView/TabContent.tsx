@@ -731,7 +731,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           jobPropertiesLoading ||
           checklistPropertiesLoading
             ? { display: 'none' }
-            : {}),
+            : { display: 'contents' }),
         }}
       >
         <DataTable

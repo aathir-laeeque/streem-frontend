@@ -229,7 +229,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         style={{
           ...(jobDataLoading || jobPropertiesLoading
             ? { display: 'none' }
-            : {}),
+            : { display: 'contents' }),
         }}
       >
         <DataTable
