@@ -388,7 +388,10 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                   <div className="column">
                     <label className="column-label">Creation Date</label>
                     <div className="creation-date">
-                      {formatDateTime(state?.audit?.createdAt, 'Do MMMM, YYYY')}
+                      {formatDateTime(
+                        state?.audit?.createdAt,
+                        dateAndTimeStampFormat,
+                      )}
                     </div>
                   </div>
                 </div>
@@ -491,7 +494,10 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                     <label className="column-label">Date</label>
 
                     <div className="date">
-                      {formatDateTime(state.release.releaseAt, 'Do MMMM, YYYY')}
+                      {formatDateTime(
+                        state.release.releaseAt,
+                        dateAndTimeStampFormat,
+                      )}
                     </div>
                   </div>
                 </div>
@@ -538,7 +544,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                         {version.deprecatedAt
                           ? formatDateTime(
                               version.deprecatedAt,
-                              'Do MMMM, YYYY',
+                              dateAndTimeStampFormat,
                             )
                           : 'Current'}
                       </div>
