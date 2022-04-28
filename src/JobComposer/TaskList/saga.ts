@@ -98,8 +98,8 @@ function* performActionOnTaskSaga({
           );
         }
 
-        yield put(updateTaskExecutionState(taskId, data));
         yield put(setRecentServerTimestamp(timestamp));
+        yield put(updateTaskExecutionState(taskId, data));
       } else {
         const groupedErrors = groupJobErrors(errors);
         if (

@@ -59,7 +59,7 @@ function* activeStagePollingSaga({
         }, {});
 
         const stageReports = keyBy(reports, 'stageId');
-
+        yield put(setRecentServerTimestamp(timestamp));
         yield put(
           fetchActiveStageDataSuccess({
             ...data,
@@ -68,7 +68,6 @@ function* activeStagePollingSaga({
             stageReports,
           } as fetchActiveStageDataRes),
         );
-        yield put(setRecentServerTimestamp(timestamp));
 
         if (data.jobState in CompletedJobStates) {
           yield put(stopPollActiveStageData());

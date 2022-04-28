@@ -61,8 +61,8 @@ function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
     );
 
     if (data) {
-      yield put(fetchDataSuccess(data, entity, setActive));
       yield put(setRecentServerTimestamp(timestamp));
+      yield put(fetchDataSuccess(data, entity, setActive));
     } else {
       // TODO: handle the api error when design comes
       console.error('error from fetch checklist/job api ==>> ', errors);
