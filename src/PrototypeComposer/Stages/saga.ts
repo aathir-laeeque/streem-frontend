@@ -58,8 +58,12 @@ function* deleteStageSaga({ payload }: ReturnType<typeof deleteStage>) {
     const { data, errors } = yield call(request, 'PATCH', apiDeleteStage(id));
 
     if (data) {
-      const { listById, listOrder }: RootState['prototypeComposer']['stages'] =
-        yield select((state: RootState) => state.prototypeComposer.stages);
+      const {
+        listById,
+        listOrder,
+      }: RootState['prototypeComposer']['stages'] = yield select(
+        (state: RootState) => state.prototypeComposer.stages,
+      );
 
       const deletedStageIndex = listOrder.indexOf(id);
       const stagesToReorder = listOrder.slice(deletedStageIndex + 1);
@@ -109,7 +113,7 @@ function* reOrderStageSaga({ payload }: ReturnType<typeof reOrderStage>) {
       apiReorderStages(),
       {
         data: {
-          tasksOrder: { [toStageId]: payload.from, [payload.id]: payload.to },
+          stagesOrder: { [toStageId]: payload.from, [payload.id]: payload.to },
         },
       },
     );
