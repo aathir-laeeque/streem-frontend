@@ -151,7 +151,18 @@ const Header: FC = () => {
           aria-haspopup="true"
           onClick={(event) => setShowUsersDropdown(event.currentTarget)}
         >
-          <AvatarIcon />
+          <div
+            style={{
+              display: 'flex',
+              gap: '4px',
+              alignItems: 'center',
+            }}
+          >
+            <AvatarIcon className="profile-icon" />
+            <div style={{ fontSize: '16px' }}>
+              {profile?.firstName} {profile?.lastName}
+            </div>
+          </div>
         </HeaderMenu>
         <Menu
           id="top-menu"

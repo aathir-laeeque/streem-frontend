@@ -289,14 +289,16 @@ export const Role: FC<RoleProps> = ({
                       defaultValue={selected}
                     >
                       {Object.entries(rolesDetails).map(([roleId, role]) => {
-                        return (
-                          <FormControlLabel
-                            control={<StyledRadio />}
-                            key={roleId}
-                            label={role.name}
-                            value={roleId}
-                          />
-                        );
+                        if (roleId !== RoleIdByName.ACCOUNT_OWNER) {
+                          return (
+                            <FormControlLabel
+                              control={<StyledRadio />}
+                              key={roleId}
+                              label={role.name}
+                              value={roleId}
+                            />
+                          );
+                        }
                       })}
                     </RadioGroup>
                   </div>

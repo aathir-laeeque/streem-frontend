@@ -1,4 +1,4 @@
-import { BaseModal, Button1, TextInput } from '#components';
+import { Avatar, BaseModal, Button1, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
@@ -123,7 +123,26 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
         title="Session Expired!"
         allowCloseOnOutsideClick={false}
       >
-        <span>
+        <div style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
+          <Avatar
+            user={profile!}
+            size="large"
+            color="blue"
+            borderColor="#ffffff"
+            allowMouseEvents={false}
+          />
+          <div>
+            <div style={{ fontSize: '12px', color: '#c2c2c2' }}>
+              {profile!.employeeId}
+            </div>
+            <div
+              style={{ color: '#161616', fontSize: '16px', marginTop: '4px' }}
+            >
+              {profile!.firstName} {profile!.lastName}
+            </div>
+          </div>
+        </div>
+        <span style={{ marginTop: '8px' }}>
           Your current session has expired. You may continue by entering your
           account password.
         </span>

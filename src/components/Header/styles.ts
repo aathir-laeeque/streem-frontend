@@ -6,11 +6,16 @@ export const Wrapper = styled.div.attrs({})`
   flex-direction: row;
   grid-area: header;
   justify-content: space-between;
-  padding: 0 12px;
+  padding: 0 16px;
 
   .select {
     margin-left: auto;
     margin-right: 12px;
+  }
+
+  .profile-icon {
+    width: 25px;
+    height: 25px;
   }
 `;
 

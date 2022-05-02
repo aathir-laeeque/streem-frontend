@@ -32,6 +32,33 @@ enum AdministrativeFeatures {
 }
 
 export const rolesDetails = {
+  [RoleIdByName.ACCOUNT_OWNER]: {
+    name: 'Account Owner',
+    permissions: {
+      [PermissionCategories.CHECKLIST_FEATURES]: [
+        ChecklistFeatues.CREATE_MANAGE_CHECKLISTS,
+        ChecklistFeatues.VIEW_EXISTING_CHECKLISTS,
+        ChecklistFeatues.VIEW_PROTOTYPES,
+        ChecklistFeatues.REVIEW_AND_APPROVE_CHECKLISTS,
+        ChecklistFeatues.RELEASE_PUBLISH_CHECKLISTS,
+      ],
+      [PermissionCategories.JOB_FEATURES]: [
+        JobFeatures.CREATE_ASSIGN_JOBS,
+        JobFeatures.EXECUTE_AND_COMPLETE_JOBS,
+        JobFeatures.PRINT_JOBS,
+        JobFeatures.VIEW_JOB_ACTIVITY,
+        JobFeatures.COMPLETE_JOB_WITH_EXCEPTION,
+        JobFeatures.MAKE_CORRECTIONS_IN_COMPLETED_TASK,
+        JobFeatures.MANAGE_TASK_EXCEPTIONS,
+      ],
+      [PermissionCategories.ADMINISTRATIVE_FEATURES]: [
+        AdministrativeFeatures.MANAGE_USERS_AND_PERMISSIONS,
+        AdministrativeFeatures.VIEW_EXISTING_USERS,
+        AdministrativeFeatures.MANAGE_FACILITY_ACCESS,
+        AdministrativeFeatures.VIEW_USER_SESSION_ACTIVITY,
+      ],
+    },
+  },
   [RoleIdByName.FACILITY_ADMIN]: {
     name: 'Facility Admin',
     permissions: {

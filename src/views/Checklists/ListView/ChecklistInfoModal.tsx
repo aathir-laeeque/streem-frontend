@@ -537,7 +537,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                   </div>
 
                   <div className="column">
-                    <label className="column-label">Depracated on</label>
+                    <label className="column-label">Deprecated on</label>
 
                     {state.versions.map((version, index) => (
                       <div key={index}>
