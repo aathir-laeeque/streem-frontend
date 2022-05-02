@@ -121,6 +121,7 @@ dist
 # custom
 /src/views/.Checklists
 /.vscode
+/src/version.json
 
 # shell script files
 connect.sh

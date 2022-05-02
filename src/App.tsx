@@ -1,3 +1,4 @@
+import { AppVersionCheck } from './AppVersionCheck';
 import { CustomRoute, Notification, OverlayContainer } from '#components';
 import '#i18n';
 import { configureStore } from '#store';
@@ -31,40 +32,45 @@ const App: FC = () => {
   };
 
   return (
-    <Provider store={store}>
-      <PersistGate
-        loading={null}
-        persistor={persistor}
-        onBeforeLift={onBeforeLift}
-      >
-        <Router style={{ display: 'flex', flex: 1 }} basepath="/">
-          <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
-          <CustomRoute as={FacilitySelectionView} path="facility/selection" />
-          <CustomRoute as={HomeView} path="home" />
-          <CustomRoute as={PrintJob} path="jobs/:jobId/print" />
-          <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
-          <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
-          <CustomRoute
-            as={PrintJobAuditLogs}
-            path="job-activity/:jobId/print"
+    <AppVersionCheck>
+      <Provider store={store}>
+        <PersistGate
+          loading={null}
+          persistor={persistor}
+          onBeforeLift={onBeforeLift}
+        >
+          <Router style={{ display: 'flex', flex: 1 }} basepath="/">
+            <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
+            <CustomRoute as={FacilitySelectionView} path="facility/selection" />
+            <CustomRoute as={HomeView} path="home" />
+            <CustomRoute as={PrintJob} path="jobs/:jobId/print" />
+            <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
+            <CustomRoute
+              as={PrintSessionActivity}
+              path="users-activity/print"
+            />
+            <CustomRoute
+              as={PrintJobAuditLogs}
+              path="job-activity/:jobId/print"
+            />
+            <CustomRoute as={UseCaseSelectionView} path="/*" />
+          </Router>
+          <Notification
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={true}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
           />
-          <CustomRoute as={UseCaseSelectionView} path="/*" />
-        </Router>
-        <Notification
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={true}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-        <OverlayContainer />
-        <GlobalStyles />
-      </PersistGate>
-    </Provider>
+          <OverlayContainer />
+          <GlobalStyles />
+        </PersistGate>
+      </Provider>
+    </AppVersionCheck>
   );
 };
 
