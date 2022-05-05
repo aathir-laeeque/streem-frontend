@@ -12,10 +12,10 @@ import {
   CompletedJobStates,
   JobStateEnum,
 } from '#views/Jobs/NewListView/types';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-
+import { CircularProgress } from '@material-ui/core';
 import { setActiveTask } from '../../actions';
 import { TaskCardProps } from '../../types';
 import Footer from './Footer';
@@ -23,7 +23,7 @@ import Header from './Header';
 
 const Wrapper = styled.div.attrs({
   className: 'task-card',
-})`
+})<{ isLoading: boolean }>`
   background-color: #ffffff;
   border: 1px solid #eeeeee;
   border-radius: 4px;
@@ -32,13 +32,25 @@ const Wrapper = styled.div.attrs({
   flex-direction: column;
   grid-area: task-card;
   height: max-content;
+  position: relative;
 
   :hover {
     box-shadow: 0 8px 8px 0 rgba(153, 153, 153, 0.16);
   }
+
+  .loading-wrapper {
+    position: absolute;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    display: ${(props) => (props.isLoading ? 'flex' : 'none')};
+    background: rgba(236, 236, 236, 0.3);
+  }
 `;
 
 const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
+  const [isLoading, setLoadingState] = useState<boolean>(false);
   const {
     jobState,
     activities: { activitiesById, activitiesOrderInTaskInStage },
@@ -102,6 +114,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
 
     return (
       <Wrapper
+        isLoading={isLoading}
         onClick={() => {
           if (!isActive) {
             dispatch(setActiveTask(task.id));
@@ -123,6 +136,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           isTaskDelayed={!!isTaskDelayed}
           enableStopForTask={enableStopForTask}
           showAssignmentButton={showAssignmentButton}
+          setLoadingState={setLoadingState}
         />
         <div
           onClick={() => {
@@ -153,7 +167,11 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           canSkipTask={!canSkipTask}
           task={task}
           activitiesHasError={activitiesHasError}
+          setLoadingState={setLoadingState}
         />
+        <div className="loading-wrapper">
+          <CircularProgress style={{ color: '#1d84ff' }} />
+        </div>
       </Wrapper>
     );
   } else {

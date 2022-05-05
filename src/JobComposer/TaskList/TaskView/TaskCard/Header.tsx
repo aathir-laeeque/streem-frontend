@@ -31,12 +31,13 @@ type HeaderProps = {
   isTaskDelayed: boolean;
   enableStopForTask: boolean;
   showAssignmentButton: boolean;
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const JobHeader: FC<Pick<
   HeaderProps,
-  'task' | 'enableStopForTask' | 'showAssignmentButton'
->> = ({ task, enableStopForTask, showAssignmentButton }) => {
+  'task' | 'enableStopForTask' | 'showAssignmentButton' | 'setLoadingState'
+>> = ({ task, enableStopForTask, showAssignmentButton, setLoadingState }) => {
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
 
@@ -163,7 +164,8 @@ const JobHeader: FC<Pick<
                       }),
                     );
                   } else {
-                    dispatch(startTask(task.id));
+                    setLoadingState(true);
+                    dispatch(startTask(task.id, setLoadingState));
                   }
                 }}
               >
@@ -187,7 +189,7 @@ const JobHeader: FC<Pick<
                     dispatch(
                       openOverlayAction({
                         type: OverlayNames.TASK_ERROR_CORRECTION,
-                        props: { taskId: task.id },
+                        props: { taskId: task.id, setLoadingState },
                       }),
                     );
                   }}
@@ -247,6 +249,7 @@ const Header: FC<HeaderProps> = ({
   isTaskDelayed,
   enableStopForTask,
   showAssignmentButton,
+  setLoadingState,
 }) => {
   return (
     <Wrapper
@@ -260,6 +263,7 @@ const Header: FC<HeaderProps> = ({
         task={task}
         enableStopForTask={enableStopForTask}
         showAssignmentButton={showAssignmentButton}
+        setLoadingState={setLoadingState}
       />
     </Wrapper>
   );

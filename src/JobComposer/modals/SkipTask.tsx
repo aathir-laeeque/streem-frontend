@@ -19,7 +19,12 @@ const Wrapper = styled.div`
 
 const SkipTaskModal: FC<CommonOverlayProps<{
   taskId: Task['id'];
-}>> = ({ closeAllOverlays, closeOverlay, props: { taskId } }) => {
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
+}>> = ({
+  closeAllOverlays,
+  closeOverlay,
+  props: { taskId, setLoadingState },
+}) => {
   const dispatch = useDispatch();
 
   const [skipReason, setSkipReason] = useState('');
@@ -29,7 +34,10 @@ const SkipTaskModal: FC<CommonOverlayProps<{
       <BaseModal
         closeAllModals={closeAllOverlays}
         closeModal={closeOverlay}
-        onPrimary={() => dispatch(skipTask(taskId, skipReason))}
+        onPrimary={() => {
+          setLoadingState(true);
+          dispatch(skipTask(taskId, setLoadingState, skipReason));
+        }}
         onSecondary={() => closeOverlay()}
         primaryText="Submit"
         secondaryText="Cancel"

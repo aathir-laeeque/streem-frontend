@@ -123,6 +123,9 @@ function* performActionOnTaskSaga({
       'error came in performActionOnTaskSaga in TaskListSaga :: ',
       error,
     );
+  } finally {
+    const { setLoadingState } = payload;
+    setLoadingState(false);
   }
 }
 
@@ -149,6 +152,9 @@ function* enableErrorCorrectionSaga({
     }
   } catch (error) {
     console.error('error came in enableErrorCorrectionSaga :: ', error);
+  } finally {
+    const { setLoadingState } = payload;
+    setLoadingState(false);
   }
 }
 
@@ -177,6 +183,9 @@ function* completeErrorCorrectionSaga({
     }
   } catch (error) {
     console.error('error came in completeErrorCorrectionSaga :: ', error);
+  } finally {
+    const { setLoadingState } = payload;
+    setLoadingState(false);
   }
 }
 
@@ -201,6 +210,9 @@ function* cancelErrorCorrectionSaga({
     }
   } catch (error) {
     console.error('error came in cancelErrorCorrectionSaga :: ', error);
+  } finally {
+    const { setLoadingState } = payload;
+    setLoadingState(false);
   }
 }
 

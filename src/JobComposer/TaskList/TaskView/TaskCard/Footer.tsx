@@ -162,11 +162,17 @@ type FooterProps = {
   canSkipTask: boolean;
   activitiesHasError: boolean;
   task: Omit<Task, 'activities'>;
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const generateName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
 
-const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
+const Footer: FC<FooterProps> = ({
+  canSkipTask,
+  task,
+  activitiesHasError,
+  setLoadingState,
+}) => {
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
   const { jobState } = useTypedSelector((state) => state.composer);
@@ -287,7 +293,10 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
           </div>
           <div className="buttons-container">
             <button
-              onClick={() => dispatch(completeTask(task.id, delayReason))}
+              onClick={() => {
+                setLoadingState(true);
+                dispatch(completeTask(task.id, setLoadingState, delayReason));
+              }}
             >
               Submit
             </button>
@@ -326,7 +335,8 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
                     ) {
                       setAskForReason(true);
                     } else {
-                      dispatch(completeTask(task.id));
+                      setLoadingState(true);
+                      dispatch(completeTask(task.id, setLoadingState));
                     }
                   }
                 }}
@@ -342,14 +352,14 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
                       dispatch(
                         openOverlayAction({
                           type: OverlayNames.SKIP_TASK_MODAL,
-                          props: { taskId: task.id },
+                          props: { taskId: task.id, setLoadingState },
                         }),
                       );
                     } else {
                       dispatch(
                         openOverlayAction({
                           type: OverlayNames.COMPLETE_TASK_WITH_EXCEPTION,
-                          props: { taskId: task.id },
+                          props: { taskId: task.id, setLoadingState },
                         }),
                       );
                     }
@@ -391,7 +401,10 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
             borderRadius: '4px',
             cursor: 'pointer',
           }}
-          onClick={() => dispatch(completeErrorCorretcion(task.id))}
+          onClick={() => {
+            setLoadingState(true);
+            dispatch(completeErrorCorretcion(task.id, setLoadingState));
+          }}
         >
           Confirm
         </button>
@@ -410,7 +423,10 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
             background: 'transparent',
             cursor: 'pointer',
           }}
-          onClick={() => dispatch(cancelErrorCorretcion(task.id))}
+          onClick={() => {
+            setLoadingState(true);
+            dispatch(cancelErrorCorretcion(task.id, setLoadingState));
+          }}
         >
           Cancel
         </button>
