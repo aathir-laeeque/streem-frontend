@@ -14,7 +14,7 @@ import {
   apiCompleteTaskErrorCorrection,
 } from '../../utils/apiUrls';
 import { setActivityError } from '../ActivityList/actions';
-import { Task } from '../checklist.types';
+import { MandatoryActivity, Task } from '../checklist.types';
 import { ErrorGroups } from '../composer.types';
 import { groupJobErrors } from '../utils';
 import { removeActivityError } from './../ActivityList/actions';
@@ -35,6 +35,55 @@ import { TaskAction } from './types';
 type TaskErrorSagaPayload = ErrorGroups & {
   taskId: Task['id'];
 };
+
+function* getActivitiesDataByTaskId(taskId: string) {
+  const { tasksById } = yield select(
+    (state: RootState) => state.composer.tasks,
+  );
+  const { activitiesById } = yield select(
+    (state: RootState) => state.composer.activities,
+  );
+  const task = tasksById[taskId];
+  return task.activities.map(({ id }: any) => {
+    const activity = activitiesById[id];
+    switch (activity.type) {
+      case MandatoryActivity.SIGNATURE:
+      case MandatoryActivity.MEDIA:
+        return {
+          ...activity,
+          reason: activity.response.reason || null,
+          data: { medias: activity.response.medias },
+        };
+
+      case MandatoryActivity.SHOULD_BE:
+      case MandatoryActivity.PARAMETER:
+      case MandatoryActivity.TEXTBOX:
+        return {
+          ...activity,
+          reason: activity.response.reason || null,
+          data: { ...activity.data, input: activity.response.value },
+        };
+
+      case MandatoryActivity.MULTISELECT:
+      case MandatoryActivity.SINGLE_SELECT:
+      case MandatoryActivity.CHECKLIST:
+      case MandatoryActivity.YES_NO:
+        return {
+          ...activity,
+          reason: activity.response.reason || null,
+          data: activity.data.map((d: any) => ({
+            ...d,
+            ...(activity.response.choices?.[d.id] && {
+              state: activity.response.choices[d.id],
+            }),
+          })),
+        };
+
+      default:
+        return activity;
+    }
+  });
+}
 
 function* taskCompleteErrorSaga(payload: TaskErrorSagaPayload) {
   const { activitiesErrors, taskId } = payload;
@@ -61,7 +110,7 @@ function* performActionOnTaskSaga({
 
     const isJobStarted = jobState === JobStateEnum.IN_PROGRESS;
 
-    const { taskId, action, reason } = payload;
+    const { taskId, action, reason = null } = payload;
 
     if (isJobStarted) {
       const { data, errors, timestamp } = yield call(
@@ -71,7 +120,10 @@ function* performActionOnTaskSaga({
         {
           data: {
             jobId,
-            ...(reason && { reason }),
+            reason,
+            ...(action !== TaskAction.START && {
+              activities: yield* getActivitiesDataByTaskId(taskId),
+            }),
           },
         },
       );
@@ -171,7 +223,7 @@ function* completeErrorCorrectionSaga({
       request,
       'PATCH',
       apiCompleteTaskErrorCorrection(taskId),
-      { data: { jobId } },
+      { data: { jobId, activities: yield* getActivitiesDataByTaskId(taskId) } },
     );
 
     if (data) {

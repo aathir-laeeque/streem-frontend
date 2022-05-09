@@ -14,9 +14,9 @@ import { ActivityProps, Selections } from '../types';
 import { Wrapper } from './styles';
 
 const ChecklistActivity: FC<ActivityProps> = ({
-                                                activity,
-                                                isCorrectingError,
-                                              }) => {
+  activity,
+  isCorrectingError,
+}) => {
   const metaInfo = useRef<{
     shouldCallApi?: boolean;
   }>({});
