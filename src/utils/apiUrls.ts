@@ -288,6 +288,9 @@ export const apiBulkAssignUsers = (jobId: Job['id']) =>
 export const apiGetJobSummary = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}/reports`;
 
+export const apiGetJobSummaryReportDetails = (jobId: Job['id']) =>
+  `${baseUrl}/jobs/${jobId}/reports/print`;
+
 export const apiGetTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}`;
 
 export const apiGetUseCaseList = () => `${baseUrl}/use-cases`;

@@ -1,6 +1,7 @@
-import { Facility } from '#services/commonTypes';
+import { Checklist } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
-import { apiGetJobSummary, apiPrintJobDetails } from '#utils/apiUrls';
+import { User } from '#store/users/types';
+import { apiGetJobSummaryReportDetails } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { RouteComponentProps } from '@reach/router';
 import { Document, Page, PDFViewer, View } from '@react-pdf/renderer';
@@ -17,12 +18,25 @@ import Footer from './Footer';
 import Header from './Header';
 import { styles } from './styles';
 
+type JobSummaryReportType = JobSummary & {
+  assignees: (Pick<
+    User,
+    'email' | 'id' | 'employeeId' | 'firstName' | 'lastName'
+  > & { recentSignOffAt: number })[];
+  endedBy: Pick<
+    User,
+    'id' | 'employeeId' | 'firstName' | 'lastName' | 'archived'
+  > | null;
+  totalStages: number;
+  totalTask: number;
+  checklist: Checklist;
+};
+
 type Props = RouteComponentProps<{ jobId: Job['id'] }>;
 
 type State = {
   loading: boolean;
-  jobSummaryData: JobSummary | null;
-  jobDetails: PdfJobDataType | null;
+  jobSummaryReportDetails: JobSummaryReportType | null;
 };
 
 const JobSummaryPdf = ({ jobId }: Props) => {
@@ -34,10 +48,9 @@ const JobSummaryPdf = ({ jobId }: Props) => {
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
 
-  const [{ loading, jobSummaryData, jobDetails }, setState] = useState<State>({
+  const [{ loading, jobSummaryReportDetails }, setState] = useState<State>({
     loading: false,
-    jobSummaryData: null,
-    jobDetails: null,
+    jobSummaryReportDetails: null,
   });
 
   useEffect(() => {
@@ -51,20 +64,14 @@ const JobSummaryPdf = ({ jobId }: Props) => {
         if (jobId) {
           const jobSummaryResponse = await request(
             'GET',
-            apiGetJobSummary(jobId as string),
-          );
-
-          const jobDetailsApiRespone: { data: PdfJobDataType } = await request(
-            'GET',
-            apiPrintJobDetails(jobId),
+            apiGetJobSummaryReportDetails(jobId as string),
           );
 
           if (jobSummaryResponse.data) {
             setState((prevState) => ({
               ...prevState,
               loading: !prevState.loading,
-              jobSummaryData: jobSummaryResponse.data,
-              jobDetails: jobDetailsApiRespone.data,
+              jobSummaryReportDetails: jobSummaryResponse.data,
             }));
           } else {
             console.error(
@@ -83,7 +90,7 @@ const JobSummaryPdf = ({ jobId }: Props) => {
     })();
   }, []);
 
-  if (loading || !jobSummaryData || !jobDetails || !profile) {
+  if (loading || !jobSummaryReportDetails || !profile) {
     return null;
   }
 
@@ -94,19 +101,25 @@ const JobSummaryPdf = ({ jobId }: Props) => {
           <Header logoUrl={settings?.logoUrl ?? ''} />
 
           <CommonJobPdfDetails
-            jobPdfData={jobDetails}
+            jobPdfData={(jobSummaryReportDetails as unknown) as PdfJobDataType}
             dateAndTimeStampFormat={dateAndTimeStampFormat}
           />
           <View style={styles.container}>
             <DurationSummary
-              stages={jobSummaryData?.stages ?? []}
-              totalStageDuration={jobSummaryData?.totalStageDuration ?? 0}
-              totalTaskExceptions={jobSummaryData?.totalTaskExceptions ?? 0}
+              stages={jobSummaryReportDetails?.stages ?? []}
+              totalStageDuration={
+                jobSummaryReportDetails?.totalStageDuration ?? 0
+              }
+              totalTaskExceptions={
+                jobSummaryReportDetails?.totalTaskExceptions ?? 0
+              }
             />
 
             <ExceptionSummary
-              stages={jobSummaryData?.stages ?? []}
-              totalTaskExceptions={jobSummaryData?.totalTaskExceptions ?? 0}
+              stages={jobSummaryReportDetails?.stages ?? []}
+              totalTaskExceptions={
+                jobSummaryReportDetails?.totalTaskExceptions ?? 0
+              }
             />
           </View>
 
