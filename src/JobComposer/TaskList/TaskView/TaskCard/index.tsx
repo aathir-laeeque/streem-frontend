@@ -20,6 +20,7 @@ import { setActiveTask } from '../../actions';
 import { TaskCardProps } from '../../types';
 import Footer from './Footer';
 import Header from './Header';
+import moment from 'moment';
 
 const Wrapper = styled.div.attrs({
   className: 'task-card',
@@ -50,16 +51,79 @@ const Wrapper = styled.div.attrs({
 `;
 
 const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
-  const [isLoading, setLoadingState] = useState<boolean>(false);
+  const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
   const {
     jobState,
     activities: { activitiesById, activitiesOrderInTaskInStage },
     stages: { activeStageId },
   } = useTypedSelector((state) => state.composer);
 
-  const { profile } = useTypedSelector((state) => state.auth);
+  const {
+    state: taskState,
+    reason,
+    assignees,
+    startedAt,
+    endedAt,
+  } = task.taskExecution;
 
-  const { state: taskState, reason, assignees } = task.taskExecution;
+  const isTaskStarted = taskState in StartedTaskStates;
+
+  const isTaskDelayed = taskState === TaskExecutionState.COMPLETED && reason;
+
+  // as the task is skipped and user should not be able to do anything, treating it same as the completed task.
+  const isTaskCompleted =
+    taskState === TaskExecutionState.SKIPPED ||
+    taskState === TaskExecutionState.COMPLETED ||
+    taskState === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
+    taskState === TaskExecutionState.COMPLETED_WITH_CORRECTION;
+
+  const isCompletedWithException =
+    taskState === TaskExecutionState.COMPLETED_WITH_EXCEPTION;
+
+  const showStartButton =
+    (jobState === JobStateEnum.ASSIGNED ||
+      jobState === JobStateEnum.IN_PROGRESS) &&
+    !isTaskStarted;
+
+  const showAssignmentButton =
+    !(taskState in CompletedTaskStates) &&
+    !(jobState in CompletedJobStates) &&
+    location.pathname.split('/')[1] !== 'inbox';
+
+  const isCorrectingError =
+    taskState === TaskExecutionState.ENABLED_FOR_CORRECTION;
+
+  const [isLoading, setLoadingState] = useState<boolean>(false);
+
+  const [timerState, setTimerState] = useState<{ [index: string]: boolean }>(
+    () => {
+      const timeElapsed =
+        isTaskCompleted && endedAt && startedAt
+          ? moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds')
+          : isTaskStarted && recentServerTimestamp && startedAt
+          ? moment
+              .unix(recentServerTimestamp)
+              .diff(moment.unix(startedAt), 'seconds')
+          : 0;
+
+      return {
+        earlyCompletion: !!(
+          task.timed &&
+          task.minPeriod &&
+          timeElapsed &&
+          timeElapsed < task.minPeriod
+        ),
+        limitCrossed: !!(
+          task.timed &&
+          task.maxPeriod &&
+          timeElapsed &&
+          timeElapsed > task.maxPeriod
+        ),
+      };
+    },
+  );
+
+  const { profile } = useTypedSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -84,33 +148,6 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
       },
       { canSkipTask: false, activitiesHasError: false },
     );
-
-    const isTaskStarted = taskState in StartedTaskStates;
-
-    const isTaskDelayed = taskState === TaskExecutionState.COMPLETED && reason;
-
-    // as the task is skipped and user should not be able to do anything, treating it same as the completed task.
-    const isTaskCompleted =
-      taskState === TaskExecutionState.SKIPPED ||
-      taskState === TaskExecutionState.COMPLETED ||
-      taskState === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
-      taskState === TaskExecutionState.COMPLETED_WITH_CORRECTION;
-
-    const isCompletedWithException =
-      taskState === TaskExecutionState.COMPLETED_WITH_EXCEPTION;
-
-    const showStartButton =
-      (jobState === JobStateEnum.ASSIGNED ||
-        jobState === JobStateEnum.IN_PROGRESS) &&
-      !isTaskStarted;
-
-    const showAssignmentButton =
-      !(taskState in CompletedTaskStates) &&
-      !(jobState in CompletedJobStates) &&
-      location.pathname.split('/')[1] !== 'inbox';
-
-    const isCorrectingError =
-      taskState === TaskExecutionState.ENABLED_FOR_CORRECTION;
 
     return (
       <Wrapper
@@ -137,6 +174,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           enableStopForTask={enableStopForTask}
           showAssignmentButton={showAssignmentButton}
           setLoadingState={setLoadingState}
+          timerState={timerState}
+          setTimerState={setTimerState}
         />
         <div
           onClick={() => {
@@ -167,6 +206,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           canSkipTask={!canSkipTask}
           task={task}
           activitiesHasError={activitiesHasError}
+          timerState={timerState}
           setLoadingState={setLoadingState}
         />
         <div className="loading-wrapper">

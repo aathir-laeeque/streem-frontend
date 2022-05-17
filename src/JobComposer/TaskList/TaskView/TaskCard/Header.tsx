@@ -32,12 +32,28 @@ type HeaderProps = {
   enableStopForTask: boolean;
   showAssignmentButton: boolean;
   setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
+  timerState: { [index: string]: boolean };
+  setTimerState: React.Dispatch<
+    React.SetStateAction<{ [index: string]: boolean }>
+  >;
 };
 
 const JobHeader: FC<Pick<
   HeaderProps,
-  'task' | 'enableStopForTask' | 'showAssignmentButton' | 'setLoadingState'
->> = ({ task, enableStopForTask, showAssignmentButton, setLoadingState }) => {
+  | 'task'
+  | 'enableStopForTask'
+  | 'showAssignmentButton'
+  | 'setLoadingState'
+  | 'timerState'
+  | 'setTimerState'
+>> = ({
+  task,
+  enableStopForTask,
+  showAssignmentButton,
+  setLoadingState,
+  timerState,
+  setTimerState,
+}) => {
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
 
@@ -202,7 +218,13 @@ const JobHeader: FC<Pick<
           )}
         </div>
 
-        {task.timed ? <Timer task={task} /> : null}
+        {task.timed ? (
+          <Timer
+            task={task}
+            timerState={timerState}
+            setTimerState={setTimerState}
+          />
+        ) : null}
       </div>
 
       {state === TaskExecutionState.SKIPPED ||
@@ -250,6 +272,8 @@ const Header: FC<HeaderProps> = ({
   enableStopForTask,
   showAssignmentButton,
   setLoadingState,
+  timerState,
+  setTimerState,
 }) => {
   return (
     <Wrapper
@@ -264,6 +288,8 @@ const Header: FC<HeaderProps> = ({
         enableStopForTask={enableStopForTask}
         showAssignmentButton={showAssignmentButton}
         setLoadingState={setLoadingState}
+        timerState={timerState}
+        setTimerState={setTimerState}
       />
     </Wrapper>
   );

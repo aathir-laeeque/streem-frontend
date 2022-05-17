@@ -162,6 +162,7 @@ type FooterProps = {
   canSkipTask: boolean;
   activitiesHasError: boolean;
   task: Omit<Task, 'activities'>;
+  timerState: { [index: string]: boolean };
   setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -171,12 +172,12 @@ const Footer: FC<FooterProps> = ({
   canSkipTask,
   task,
   activitiesHasError,
+  timerState,
   setLoadingState,
 }) => {
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
   const { jobState } = useTypedSelector((state) => state.composer);
-  const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
 
   const isJobBlocked = jobState === JobStateEnum.BLOCKED;
 
@@ -203,19 +204,11 @@ const Footer: FC<FooterProps> = ({
   ) {
     if (isTaskDelayed) {
       let text;
-      if (
-        moment
-          .unix(task.taskExecution.endedAt)
-          .diff(moment.unix(task.taskExecution.startedAt), 'seconds') >
-        task.maxPeriod
-      ) {
+      if (timerState.limitCrossed) {
         text = 'after the set time';
       } else if (
         task.timerOperator === 'NOT_LESS_THAN' &&
-        moment
-          .unix(task.taskExecution.endedAt)
-          .diff(moment.unix(task.taskExecution.startedAt), 'seconds') <
-          task.minPeriod
+        timerState.earlyCompletion
       ) {
         text = 'before the set time';
       }
@@ -263,19 +256,11 @@ const Footer: FC<FooterProps> = ({
   } else if (task.taskExecution.state === TaskExecutionState.IN_PROGRESS) {
     if (shouldAskForReason) {
       let text;
-      if (
-        moment
-          .unix(recentServerTimestamp)
-          .diff(moment.unix(task.taskExecution.startedAt), 'seconds') >
-        task.maxPeriod
-      ) {
+      if (timerState.limitCrossed) {
         text = 'State your reason for delay';
       } else if (
         task.timerOperator === 'NOT_LESS_THAN' &&
-        moment
-          .unix(recentServerTimestamp)
-          .diff(moment.unix(task.taskExecution.startedAt), 'seconds') <
-          task.minPeriod
+        timerState.earlyCompletion
       ) {
         text = 'State your reason for early completion';
       }
@@ -320,18 +305,9 @@ const Footer: FC<FooterProps> = ({
                 className="complete-task"
                 onClick={() => {
                   if (!isJobBlocked) {
-                    const timeElapsed = moment
-                      .unix(recentServerTimestamp)
-                      .diff(
-                        moment.unix(task.taskExecution.startedAt),
-                        'seconds',
-                      );
-
                     if (
                       task.timed &&
-                      (timeElapsed > task.maxPeriod ||
-                        (task.timerOperator === 'NOT_LESS_THAN' &&
-                          timeElapsed < task.minPeriod))
+                      (timerState.earlyCompletion || timerState.limitCrossed)
                     ) {
                       setAskForReason(true);
                     } else {

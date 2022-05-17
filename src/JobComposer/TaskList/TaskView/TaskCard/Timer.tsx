@@ -5,7 +5,13 @@ import { Timer as TimerIcon } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 
-const Timer: FC<{ task: Task }> = ({ task }) => {
+const Timer: FC<{
+  task: Omit<Task, 'activities'>;
+  timerState: { [index: string]: boolean };
+  setTimerState: React.Dispatch<
+    React.SetStateAction<{ [index: string]: boolean }>
+  >;
+}> = ({ task, timerState, setTimerState }) => {
   const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
   const { state, startedAt, endedAt } = task.taskExecution;
 
@@ -15,23 +21,45 @@ const Timer: FC<{ task: Task }> = ({ task }) => {
   const isTaskStarted = state === TaskExecutionState.IN_PROGRESS;
 
   const [timeElapsed, setTimeElapsed] = useState(
-    isTaskCompleted
+    isTaskCompleted && endedAt && startedAt
       ? moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds')
-      : isTaskStarted
+      : isTaskStarted && recentServerTimestamp && startedAt
       ? moment
-          .unix(recentServerTimestamp!)
-          .diff(moment.unix(startedAt!), 'seconds')
+          .unix(recentServerTimestamp)
+          .diff(moment.unix(startedAt), 'seconds')
       : 0,
   );
-
-  const [isLimitCrossed, setLimitCrossed] = useState(false);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined = undefined;
 
     if (state === TaskExecutionState.IN_PROGRESS) {
       interval = setInterval(() => {
-        setTimeElapsed((oldTimeElapsed) => oldTimeElapsed + 1);
+        setTimeElapsed((oldTimeElapsed) => {
+          const updatedTimeElapsed = ++oldTimeElapsed;
+          const updatedTimerState = {
+            earlyCompletion: false,
+            limitCrossed: false,
+          };
+
+          if (task.timerOperator === 'NOT_LESS_THAN') {
+            if (task.minPeriod && updatedTimeElapsed < task.minPeriod) {
+              updatedTimerState.earlyCompletion = true;
+            } else {
+              updatedTimerState.earlyCompletion = false;
+            }
+          }
+
+          if (task.maxPeriod && updatedTimeElapsed > task.maxPeriod) {
+            updatedTimerState.limitCrossed = true;
+          }
+
+          if (updatedTimerState !== timerState) {
+            setTimerState(updatedTimerState);
+          }
+
+          return updatedTimeElapsed;
+        });
       }, 1000);
     }
 
@@ -39,12 +67,6 @@ const Timer: FC<{ task: Task }> = ({ task }) => {
       clearInterval(interval);
     };
   }, [task]);
-
-  useEffect(() => {
-    if (timeElapsed > task?.maxPeriod) {
-      setLimitCrossed(true);
-    }
-  }, [timeElapsed]);
 
   return (
     <div className="task-timer">
@@ -54,18 +76,26 @@ const Timer: FC<{ task: Task }> = ({ task }) => {
         <div>
           {task.timerOperator === 'NOT_LESS_THAN' ? (
             <>
-              <span>Perform task in NLT {formatDuration(task?.minPeriod)}</span>
-              <span>Max Time limit - {formatDuration(task?.maxPeriod)}</span>
+              <span>
+                Perform task in NLT{' '}
+                {task.minPeriod && formatDuration(task.minPeriod)}
+              </span>
+              <span>
+                Max Time limit -{' '}
+                {task.maxPeriod && formatDuration(task?.maxPeriod)}
+              </span>
             </>
           ) : (
-            <span>Complete under {formatDuration(task?.maxPeriod)}</span>
+            <span>
+              Complete under {task.maxPeriod && formatDuration(task?.maxPeriod)}
+            </span>
           )}
         </div>
       </div>
 
-      <div className={`timer ${isLimitCrossed ? 'error' : ''}`}>
+      <div className={`timer ${timerState.limitCrossed ? 'error' : ''}`}>
         <span>{formatDuration(timeElapsed)}</span>
-        {isLimitCrossed ? <span>Limit Crossed</span> : null}
+        {timerState.limitCrossed ? <span>Limit Crossed</span> : null}
       </div>
     </div>
   );
