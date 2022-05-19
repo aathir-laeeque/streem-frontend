@@ -41,12 +41,13 @@ import {
 import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
 import { ComposerAction } from './composer.reducer.types';
-import { Entity } from './composer.types';
+import { Entity, JobWithExceptionInCompleteTaskErrors } from './composer.types';
 import { JobAuditLogsSaga } from './JobAuditLogs/saga';
 import { StageListSaga } from './StageList/saga';
 import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
 import { groupJobErrors } from './utils';
+import { Error } from '#utils/globalTypes';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   try {
@@ -152,6 +153,20 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
             openOverlayAction({
               type: OverlayNames.SIGNNING_NOT_COMPLETE,
               props: {},
+            }),
+          );
+        }
+      } else {
+        const showInCompleteTasksError = errors.some(
+          (err: Error) => err.code in JobWithExceptionInCompleteTaskErrors,
+        );
+        if (showInCompleteTasksError) {
+          yield put(
+            closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION),
+          );
+          yield put(
+            openOverlayAction({
+              type: OverlayNames.JOB_COMPLETE_ALL_TASKS_ERROR,
             }),
           );
         }

@@ -32,6 +32,11 @@ export enum JobErrors {
   E703 = 'JOB_ALREADY_COMPLETED',
 }
 
+export enum JobWithExceptionInCompleteTaskErrors {
+  E224 = 'TASK_IN_PROGRESS',
+  E223 = 'TASK_ENABLED_FOR_CORRECTION',
+}
+
 export type ErrorGroups = {
   stagesErrors: Error[];
   tasksErrors: Error[];

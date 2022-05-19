@@ -3,6 +3,7 @@ import AssignmentSuccessModal from '#JobComposer/modals/AssignmentSuccess';
 import CompletedWithExceptionInfo from '#JobComposer/modals/CompletedWithExceptionInfo';
 import CompleteJobWithException from '#JobComposer/modals/CompleteJobWithException';
 import CompleteTaskWithException from '#JobComposer/modals/CompleteTaskWithException';
+import JobCompleteAllTasksError from '#JobComposer/modals/CompleteAllTasksError';
 import ParameterApprovalModal from '#JobComposer/modals/ParameterApproval';
 import Signature from '#JobComposer/modals/SignatureActivity';
 import SignCompletedTasksModal from '#JobComposer/modals/SignCompletedTasks';
@@ -199,6 +200,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.REASON_MODAL:
       return <ReasonModal {...params} />;
+
+    case OverlayNames.JOB_COMPLETE_ALL_TASKS_ERROR:
+      return <JobCompleteAllTasksError {...params} />;
 
     default:
       return null;
