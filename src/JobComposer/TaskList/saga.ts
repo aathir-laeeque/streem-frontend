@@ -1,5 +1,6 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { RefetchJobErrorType } from '#JobComposer/modals/RefetchJobComposerData';
 import { RootState } from '#store';
 import { setRecentServerTimestamp } from '#store/extras/action';
 import {
@@ -17,6 +18,7 @@ import { setActivityError } from '../ActivityList/actions';
 import { MandatoryActivity, Task } from '../checklist.types';
 import { ErrorGroups } from '../composer.types';
 import { groupJobErrors } from '../utils';
+import { Error } from './../../utils/globalTypes';
 import { removeActivityError } from './../ActivityList/actions';
 import {
   cancelErrorCorretcion,
@@ -30,7 +32,7 @@ import {
   updateTaskExecutionState,
 } from './actions';
 import { TaskListAction } from './reducer.types';
-import { TaskAction } from './types';
+import { CompletedTaskErrors, TaskAction } from './types';
 
 type TaskErrorSagaPayload = ErrorGroups & {
   taskId: Task['id'];
@@ -153,12 +155,36 @@ function* performActionOnTaskSaga({
         yield put(setRecentServerTimestamp(timestamp));
         yield put(updateTaskExecutionState(taskId, data));
       } else {
-        const groupedErrors = groupJobErrors(errors);
-        if (
-          action === TaskAction.COMPLETE ||
-          action === TaskAction.COMPLETE_WITH_EXCEPTION
-        ) {
-          yield taskCompleteErrorSaga({ ...groupedErrors, taskId });
+        const hasCompletedTaskError = (errors as Error[]).find(
+          (err) => err.code in CompletedTaskErrors,
+        );
+        if (hasCompletedTaskError) {
+          yield put(
+            openOverlayAction({
+              type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
+              props: {
+                modalTitle: hasCompletedTaskError.message,
+                jobId,
+                errorType: RefetchJobErrorType.TASK,
+              },
+            }),
+          );
+        } else {
+          const { stagesErrors, tasksErrors, activitiesErrors, signOffErrors } =
+            groupJobErrors(errors);
+
+          if (
+            action === TaskAction.COMPLETE ||
+            action === TaskAction.COMPLETE_WITH_EXCEPTION
+          ) {
+            yield taskCompleteErrorSaga({
+              stagesErrors,
+              tasksErrors,
+              activitiesErrors,
+              signOffErrors,
+              taskId,
+            });
+          }
         }
       }
     } else {
@@ -201,6 +227,23 @@ function* enableErrorCorrectionSaga({
       console.log('data :: ', data);
 
       yield put(updateTaskExecutionState(taskId, data));
+    } else {
+      const alreadyEnabledErrorCorrection = (errors as Error[]).find(
+        (err) => err.code === 'E223',
+      );
+
+      if (alreadyEnabledErrorCorrection) {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
+            props: {
+              modalTitle: alreadyEnabledErrorCorrection.message,
+              jobId,
+              errorType: RefetchJobErrorType.TASK,
+            },
+          }),
+        );
+      }
     }
   } catch (error) {
     console.error('error came in enableErrorCorrectionSaga :: ', error);
@@ -229,9 +272,32 @@ function* completeErrorCorrectionSaga({
     if (data) {
       yield put(updateTaskExecutionState(taskId, data));
     } else {
-      const groupedErrors = groupJobErrors(errors);
+      const hasCompletedTaskError = (errors as Error[]).find(
+        (err) => err.code in CompletedTaskErrors,
+      );
+      if (hasCompletedTaskError) {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
+            props: {
+              modalTitle: hasCompletedTaskError.message,
+              jobId,
+              errorType: RefetchJobErrorType.TASK,
+            },
+          }),
+        );
+      } else {
+        const { stagesErrors, tasksErrors, activitiesErrors, signOffErrors } =
+          groupJobErrors(errors);
 
-      yield taskCompleteErrorSaga({ ...groupedErrors, taskId });
+        yield taskCompleteErrorSaga({
+          stagesErrors,
+          tasksErrors,
+          activitiesErrors,
+          signOffErrors,
+          taskId,
+        });
+      }
     }
   } catch (error) {
     console.error('error came in completeErrorCorrectionSaga :: ', error);
@@ -259,6 +325,23 @@ function* cancelErrorCorrectionSaga({
 
     if (data) {
       yield put(updateTaskExecutionState(taskId, data));
+    } else {
+      const taskNotEnabledForErrorCorrection = (errors as Error[]).find(
+        (err) => err.code === 'E214',
+      );
+
+      if (taskNotEnabledForErrorCorrection) {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
+            props: {
+              modalTitle: taskNotEnabledForErrorCorrection.message,
+              jobId,
+              errorType: RefetchJobErrorType.TASK,
+            },
+          }),
+        );
+      }
     }
   } catch (error) {
     console.error('error came in cancelErrorCorrectionSaga :: ', error);

@@ -1,10 +1,11 @@
 import AddStop from '#JobComposer/modals/AddStop';
 import AssignmentSuccessModal from '#JobComposer/modals/AssignmentSuccess';
+import JobCompleteAllTasksError from '#JobComposer/modals/CompleteAllTasksError';
 import CompletedWithExceptionInfo from '#JobComposer/modals/CompletedWithExceptionInfo';
 import CompleteJobWithException from '#JobComposer/modals/CompleteJobWithException';
 import CompleteTaskWithException from '#JobComposer/modals/CompleteTaskWithException';
-import JobCompleteAllTasksError from '#JobComposer/modals/CompleteAllTasksError';
 import ParameterApprovalModal from '#JobComposer/modals/ParameterApproval';
+import RefetchJobComposerData from '#JobComposer/modals/RefetchJobComposerData';
 import Signature from '#JobComposer/modals/SignatureActivity';
 import SignCompletedTasksModal from '#JobComposer/modals/SignCompletedTasks';
 import SignningNotCompleteModal from '#JobComposer/modals/SignningNotComplete';
@@ -46,6 +47,7 @@ import ValidateCredentialsModal from '#views/UserAccess/Overlays/ValidateCredent
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import ReasonModal from '../shared/ReasonModal';
 import StartErrorModal from '../shared/StartErrorModal';
 import WebCamOverlay from '#components/shared/WebCamOverlay';
 
@@ -53,7 +55,6 @@ import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
 import { CommonOverlayProps, OverlayNames } from './types';
-import ReasonModal from '../shared/ReasonModal';
 
 const Wrapper = styled.div``;
 
@@ -208,6 +209,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.WEBCAM_OVERLAY:
       return <WebCamOverlay {...params} />;
+
+    case OverlayNames.REFETCH_JOB_COMPOSER_DATA:
+      return <RefetchJobComposerData {...params} />;
 
     default:
       return null;

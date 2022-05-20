@@ -16,6 +16,7 @@ import {
   apiValidatePassword,
 } from '#utils/apiUrls';
 import { LoginErrorCodes } from '#utils/constants';
+import { Error } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import { navigate } from '@reach/router';
@@ -41,13 +42,17 @@ import {
 import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
 import { ComposerAction } from './composer.reducer.types';
-import { Entity, JobWithExceptionInCompleteTaskErrors } from './composer.types';
+import {
+  Entity,
+  JobErrors,
+  JobWithExceptionInCompleteTaskErrors,
+} from './composer.types';
 import { JobAuditLogsSaga } from './JobAuditLogs/saga';
+import { RefetchJobErrorType } from './modals/RefetchJobComposerData';
 import { StageListSaga } from './StageList/saga';
 import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
 import { groupJobErrors } from './utils';
-import { Error } from '#utils/globalTypes';
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   try {
@@ -90,6 +95,22 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
       yield put(closeOverlayAction(OverlayNames.START_JOB_MODAL));
     } else {
       console.error('handle errors on start job :: ', errors);
+      const alreadyStartedError = (errors as Error[]).find(
+        (err) => err.code === 'E707',
+      );
+      if (alreadyStartedError) {
+        yield put(closeOverlayAction(OverlayNames.START_JOB_MODAL));
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
+            props: {
+              modalTitle: alreadyStartedError.message,
+              jobId,
+              errorType: RefetchJobErrorType.JOB,
+            },
+          }),
+        );
+      }
     }
   } catch (error) {
     console.error('error came in startJobSaga in ComposerSaga :: ', error);
@@ -126,49 +147,72 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
         }),
       );
     } else {
-      if (!withException) {
-        const { tasksErrors, activitiesErrors, signOffErrors } =
-          groupJobErrors(errors);
+      const jobErrors = (errors as Error[]).find(
+        (err) => err.code in JobErrors,
+      );
 
-        if (tasksErrors.length) {
-          console.log('handle task level error here');
-
-          yield all(
-            tasksErrors.map((error) =>
-              put(setTaskError('Activity Incomplete', error.id)),
-            ),
-          );
-        }
-        if (activitiesErrors.length) {
-          console.log('handle activities level error here');
-          yield all(
-            activitiesErrors.map((error) =>
-              put(setActivityError(error, error.id)),
-            ),
-          );
-        }
-
-        if (signOffErrors.length) {
-          yield put(
-            openOverlayAction({
-              type: OverlayNames.SIGNNING_NOT_COMPLETE,
-              props: {},
-            }),
-          );
-        }
-      } else {
-        const showInCompleteTasksError = errors.some(
-          (err: Error) => err.code in JobWithExceptionInCompleteTaskErrors,
-        );
-        if (showInCompleteTasksError) {
+      if (jobErrors) {
+        if (withException) {
           yield put(
             closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION),
           );
-          yield put(
-            openOverlayAction({
-              type: OverlayNames.JOB_COMPLETE_ALL_TASKS_ERROR,
-            }),
+        }
+
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
+            props: {
+              modalTitle: jobErrors.message,
+              jobId,
+              errorType: RefetchJobErrorType.JOB,
+            },
+          }),
+        );
+      } else {
+        if (!withException) {
+          const { tasksErrors, activitiesErrors, signOffErrors } =
+            groupJobErrors(errors);
+
+          if (tasksErrors.length) {
+            console.log('handle task level error here');
+
+            yield all(
+              tasksErrors.map((error) =>
+                put(setTaskError('Activity Incomplete', error.id)),
+              ),
+            );
+          }
+          if (activitiesErrors.length) {
+            console.log('handle activities level error here');
+            yield all(
+              activitiesErrors.map((error) =>
+                put(setActivityError(error, error.id)),
+              ),
+            );
+          }
+
+          if (signOffErrors.length) {
+            yield put(
+              openOverlayAction({
+                type: OverlayNames.SIGNNING_NOT_COMPLETE,
+                props: {},
+              }),
+            );
+          }
+        } else {
+          const showInCompleteTasksError = errors.some(
+            (err: Error) => err.code in JobWithExceptionInCompleteTaskErrors,
           );
+          if (showInCompleteTasksError) {
+            yield put(
+              closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION),
+            );
+            yield put(
+              openOverlayAction({
+                type: OverlayNames.JOB_COMPLETE_ALL_TASKS_ERROR,
+              }),
+            );
+          }
         }
       }
     }

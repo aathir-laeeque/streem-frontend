@@ -1,15 +1,19 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { RefetchJobErrorType } from '#JobComposer/modals/RefetchJobComposerData';
 import { MandatoryActivity } from '#PrototypeComposer/checklist.types';
 import { RootState } from '#store';
 import {
+  apiApproveActivity,
   apiExecuteActivity,
   apiFixActivity,
-  apiApproveActivity,
   apiRejectActivity,
 } from '#utils/apiUrls';
+import { Error } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
+import { call, put, select, takeLeading, takeLatest } from 'redux-saga/effects';
+import { fetchData } from '../actions';
+import { Entity } from '../composer.types';
 import {
   approveRejectActivity,
   executeActivity,
@@ -18,8 +22,6 @@ import {
 } from './actions';
 import { ActivityListAction } from './reducer.types';
 import { SupervisorResponse } from './types';
-import { fetchData } from '../actions';
-import { Entity } from '../composer.types';
 
 function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
   try {
@@ -31,9 +33,14 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
       (state: RootState) => state.composer,
     );
 
-    const { data } = yield call(request, 'PATCH', apiExecuteActivity(), {
-      data: { jobId, activity, ...(!!reason ? { reason } : {}) },
-    });
+    const { data, errors } = yield call(
+      request,
+      'PATCH',
+      apiExecuteActivity(),
+      {
+        data: { jobId, activity, ...(!!reason ? { reason } : {}) },
+      },
+    );
 
     if (data) {
       if (
@@ -53,6 +60,24 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
         yield put(fetchData({ id: jobId, entity: Entity.JOB }));
       }
       yield put(updateExecutedActivity(data));
+    } else {
+      console.error('handle errors on execute Activity Saga :: ', errors);
+      const taskAlreadyCompletedError = (errors as Error[]).find(
+        (err) => err.code === 'E403',
+      );
+
+      if (taskAlreadyCompletedError) {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
+            props: {
+              modalTitle: taskAlreadyCompletedError.message,
+              jobId,
+              errorType: RefetchJobErrorType.ACTIVITY,
+            },
+          }),
+        );
+      }
     }
   } catch (error) {
     console.error(
@@ -72,12 +97,29 @@ function* fixActivitySaga({ payload }: ReturnType<typeof fixActivity>) {
       (state: RootState) => state.composer,
     );
 
-    const { data } = yield call(request, 'PATCH', apiFixActivity(), {
+    const { data, errors } = yield call(request, 'PATCH', apiFixActivity(), {
       data: { jobId, activity, ...(!!reason ? { reason } : {}) },
     });
 
     if (data) {
       yield put(updateExecutedActivity(data));
+    } else {
+      const taskAlreadyCompletedError = (errors as Error[]).find(
+        (err) => err.code === 'E403',
+      );
+
+      if (taskAlreadyCompletedError) {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
+            props: {
+              modalTitle: taskAlreadyCompletedError.message,
+              jobId,
+              errorType: RefetchJobErrorType.ACTIVITY,
+            },
+          }),
+        );
+      }
     }
   } catch (error) {
     console.error(
@@ -85,10 +127,6 @@ function* fixActivitySaga({ payload }: ReturnType<typeof fixActivity>) {
       error,
     );
   }
-}
-
-export function* handleActivityErrorSaga(payload) {
-  console.log('came to handleActivityErrorSaga with payload ::: ', payload);
 }
 
 export function* approveRejectActivitySaga({

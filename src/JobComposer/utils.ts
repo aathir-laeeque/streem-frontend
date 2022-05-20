@@ -1,5 +1,4 @@
 import { Error } from '#utils/globalTypes';
-
 import {
   ActivitiesById,
   ActivitiesOrderInTaskInStage,
@@ -11,8 +10,8 @@ import { StageErrors, StagesById, StagesOrder } from './StageList/types';
 import {
   TaskErrors,
   TasksById,
-  TasksOrderInStage,
   TaskSignOffError,
+  TasksOrderInStage,
 } from './TaskList/types';
 
 export const groupJobErrors = (errors: Error[]) =>

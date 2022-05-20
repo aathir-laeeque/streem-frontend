@@ -30,6 +30,13 @@ export enum TaskErrors {
   E202 = 'TASK_NOT_FOUND',
 }
 
+export enum CompletedTaskErrors {
+  E212 = 'TASK_NOT_IN_PROGRESS',
+  E213 = 'TASK_ALREADY_COMPLETED',
+  E214 = 'TASK_NOT_ENABLED_FOR_CORRECTION',
+  E224 = 'TASK_ALREADY_IN_PROGRESS',
+}
+
 export enum TaskSignOffError {
   E215 = 'TASK_NOT_SIGNNED',
 }

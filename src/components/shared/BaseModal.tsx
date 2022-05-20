@@ -21,6 +21,7 @@ interface BaseModalProps {
   animated?: boolean;
   disabledPrimary?: boolean;
   allowCloseOnOutsideClick?: boolean;
+  showCloseIcon?: boolean;
 }
 
 const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
@@ -206,6 +207,7 @@ export const BaseModal: FC<BaseModalProps> = ({
   animated = true,
   disabledPrimary = false,
   allowCloseOnOutsideClick = true,
+  showCloseIcon = true,
 }) => {
   const modalContainer = useRef<HTMLDivElement | null>(null);
 
@@ -251,10 +253,12 @@ export const BaseModal: FC<BaseModalProps> = ({
             className="modal"
             style={{ borderRadius: isRound ? '16px' : '4px', zIndex: 10 }}
           >
-            <Close
-              className="close-icon"
-              onClick={() => onBaseModalContainerClick(closeModal)}
-            />
+            {showCloseIcon && (
+              <Close
+                className="close-icon"
+                onClick={() => onBaseModalContainerClick(closeModal)}
+              />
+            )}
             {showHeader && (
               <div className="modal-header">
                 <h2>{title}</h2>
