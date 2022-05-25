@@ -24,8 +24,9 @@ export type TaskCardWrapperProps = {
 export type TaskMediasProps = {
   medias: Task['medias'];
   taskId?: Task['id'];
-  activityId: Activity['id'];
+  activityId?: Activity['id'];
   isActivity?: boolean;
+  isTaskCompleted?: boolean;
 };
 
 export type AddNewTaskType = {

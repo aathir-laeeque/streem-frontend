@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div.attrs({
+  className: 'yes-no-activity',
+})`
   display: flex;
   flex-direction: column;
 

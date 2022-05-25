@@ -23,19 +23,11 @@ const Wrapper = styled.div.attrs({
   display: flex;
   flex-direction: column;
 
-  ${({ isTaskStarted, isLoggedInUserAssigned }) =>
-    !isTaskStarted || !isLoggedInUserAssigned
+  ${({ isTaskStarted }) =>
+    !isTaskStarted
       ? css`
-        opacity: 0.5;
-        pointer-events: none;
-      `
-      : null}
-
-  ${({ isTaskCompleted, isCorrectingError }) =>
-    isTaskCompleted && !isCorrectingError
-      ? css`
-        pointer-events: none;
-      `
+          pointer-events: none;
+        `
       : null}
 
   .activity {
@@ -44,6 +36,19 @@ const Wrapper = styled.div.attrs({
 
     :last-child {
       border-bottom: none;
+    }
+
+    .checklist-activity,
+    .material-activity,
+    .should-be-activity,
+    .yes-no-activity,
+    .textbox-activity {
+      ${({ isTaskCompleted, isCorrectingError, isLoggedInUserAssigned }) =>
+        (isTaskCompleted && !isCorrectingError) || !isLoggedInUserAssigned
+          ? css`
+              pointer-events: none;
+            `
+          : null}
     }
 
     .optional-badge {
@@ -78,12 +83,12 @@ const Wrapper = styled.div.attrs({
 `;
 
 const ActivityList: FC<ActivityListProps> = ({
-                                               activities,
-                                               isTaskStarted,
-                                               isTaskCompleted,
-                                               isCorrectingError,
-                                               isLoggedInUserAssigned,
-                                             }) => {
+  activities,
+  isTaskStarted,
+  isTaskCompleted,
+  isCorrectingError,
+  isLoggedInUserAssigned,
+}) => {
   const {
     auth: { selectedFacility },
     composer: { entity },
@@ -148,6 +153,9 @@ const ActivityList: FC<ActivityListProps> = ({
                     <MediaActivity
                       activity={activity}
                       isCorrectingError={isCorrectingError}
+                      isTaskCompleted={
+                        isTaskCompleted || !isLoggedInUserAssigned
+                      }
                     />
                   );
 
@@ -175,6 +183,9 @@ const ActivityList: FC<ActivityListProps> = ({
                     <SignatureActivity
                       activity={activity}
                       isCorrectingError={isCorrectingError}
+                      isTaskCompleted={
+                        isTaskCompleted || !isLoggedInUserAssigned
+                      }
                     />
                   );
 

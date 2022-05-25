@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div.attrs({
+  className: 'checklist-activity',
+})`
   .list {
     &-container {
       list-style: none;

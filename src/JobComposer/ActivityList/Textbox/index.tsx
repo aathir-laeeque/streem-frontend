@@ -42,7 +42,7 @@ const TextboxActivity: FC<ActivityProps> = ({
 
   if (entity === Entity.JOB) {
     return (
-      <div>
+      <div className="textbox-activity">
         <div className="new-form-field">
           <label className="new-form-field-label">User Comments Box</label>
           <textarea

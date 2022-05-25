@@ -11,7 +11,11 @@ import { useDispatch } from 'react-redux';
 import { ActivityProps } from '../types';
 import { Wrapper } from './styles';
 
-const Signature: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
+const Signature: FC<ActivityProps> = ({
+  activity,
+  isCorrectingError,
+  isTaskCompleted,
+}) => {
   const {
     auth: { profile },
   } = useTypedSelector((state) => state);
@@ -59,8 +63,14 @@ const Signature: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   return (
     <Wrapper>
       <div
-        className="signature-interaction active"
-        onClick={openSignatureModal}
+        className={
+          !isTaskCompleted
+            ? 'signature-interaction active'
+            : 'signature-interaction'
+        }
+        {...(!isTaskCompleted && {
+          onClick: openSignatureModal,
+        })}
       >
         {(imageData && (
           <div>
@@ -71,7 +81,7 @@ const Signature: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
             <MemoSignature fontSize={48} color="#1d84ff" />
           </div>
         )}
-        <span>Tap here to sign</span>
+        {!isTaskCompleted && <span>Tap here to sign</span>}
       </div>
     </Wrapper>
   );

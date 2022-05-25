@@ -15,6 +15,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
   taskId,
   activityId,
   isActivity = false,
+  isTaskCompleted,
 }) => {
   const dispatch = useDispatch();
 
@@ -50,6 +51,8 @@ const TaskMedias: FC<TaskMediasProps> = ({
                     isActivity,
                     activityId,
                     mediaDetails: { ...activeMedia },
+                    disableNameInput: isTaskCompleted,
+                    disableDescInput: isTaskCompleted,
                   },
                 }),
               );
@@ -126,7 +129,9 @@ const TaskMedias: FC<TaskMediasProps> = ({
               }}
               label="Upload Media"
               icon={PermMedia}
-              disabled={!(data?.state in EnabledStates) && !data?.archived}
+              disabled={
+                data?.state && !(data.state in EnabledStates) && !data?.archived
+              }
             />
           ) : null}
         </div>

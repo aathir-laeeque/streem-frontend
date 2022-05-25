@@ -62,7 +62,11 @@ const MediaWrapper = styled.div.attrs({
   }
 `;
 
-const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
+const MediaActivity: FC<ActivityProps> = ({
+  activity,
+  isCorrectingError,
+  isTaskCompleted,
+}) => {
   const dispatch = useDispatch();
   const [isUploading, setIsUploading] = useState(false);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
@@ -137,46 +141,51 @@ const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
       <TaskMedias
         medias={activity.response?.medias ?? []}
         activityId={activity.id}
+        isTaskCompleted={isTaskCompleted}
         isActivity
       />
-      <div style={{ display: 'flex', marginTop: '24px' }}>
-        {isUploading ? (
-          <LinearProgress
-            style={{ height: 8, width: '100%', color: '#1d84ff' }}
-          />
-        ) : (
-          <>
-            <div className="card">
-              <ImageUploadButton
-                label="Upload images"
-                onUploadStart={onUploadStart}
-                onUploadSuccess={(fileData) => {
-                  console.log('fileData :: ', fileData);
-                  onUploaded(fileData);
-                }}
-                onUploadError={onUploadError}
-              />
-            </div>
-            <div
-              className="card"
-              style={videoDevices.length === 0 ? { cursor: 'not-allowed' } : {}}
-            >
-              <ImageUploadButton
-                label="User can capture photos"
-                onUploadStart={onUploadStart}
-                onUploadSuccess={(fileData) => {
-                  console.log('fileData :: ', fileData);
-                  onUploaded(fileData);
-                }}
-                icon={PhotoCamera}
-                allowCapture
-                disabled={videoDevices.length === 0}
-                onUploadError={onUploadError}
-              />
-            </div>
-          </>
-        )}
-      </div>
+      {!isTaskCompleted && (
+        <div style={{ display: 'flex', marginTop: '24px' }}>
+          {isUploading ? (
+            <LinearProgress
+              style={{ height: 8, width: '100%', color: '#1d84ff' }}
+            />
+          ) : (
+            <>
+              <div className="card">
+                <ImageUploadButton
+                  label="Upload images"
+                  onUploadStart={onUploadStart}
+                  onUploadSuccess={(fileData) => {
+                    console.log('fileData :: ', fileData);
+                    onUploaded(fileData);
+                  }}
+                  onUploadError={onUploadError}
+                />
+              </div>
+              <div
+                className="card"
+                style={
+                  videoDevices.length === 0 ? { cursor: 'not-allowed' } : {}
+                }
+              >
+                <ImageUploadButton
+                  label="User can capture photos"
+                  onUploadStart={onUploadStart}
+                  onUploadSuccess={(fileData) => {
+                    console.log('fileData :: ', fileData);
+                    onUploaded(fileData);
+                  }}
+                  icon={PhotoCamera}
+                  allowCapture
+                  disabled={videoDevices.length === 0}
+                  onUploadError={onUploadError}
+                />
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </MediaWrapper>
   );
 };
