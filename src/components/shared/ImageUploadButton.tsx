@@ -1,9 +1,12 @@
 import ImageUploadIcon from '#assets/svg/ImageUpload';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { apiUploadFile } from '#utils/apiUrls';
 import { FileUploadData } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { SvgIconComponent } from '@material-ui/icons';
 import React, { createRef, FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 type ImageUploadButtonProps = {
@@ -42,8 +45,8 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
   allowCapture = false,
   additionalTypes = [],
 }) => {
+  const dispatch = useDispatch();
   const [file, setFile] = useState<File | null>(null);
-
   const fileRef = createRef<HTMLInputElement>();
 
   useEffect(() => {
@@ -66,8 +69,6 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
     }
   }, [file]);
 
-  const extraProps = allowCapture ? { capture: 'environment' } : {};
-
   return (
     <Wrapper disabled={disabled}>
       <input
@@ -79,7 +80,6 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
             : 'image/*'
         }
         ref={fileRef}
-        {...extraProps}
         style={{ display: 'none' }}
         onChange={(event) => {
           event.stopPropagation();
@@ -87,8 +87,19 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
           setFile((event?.target?.files ?? [])[0]);
           event.currentTarget.value = '';
         }}
+        {...(allowCapture && {
+          onClick: (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.WEBCAM_OVERLAY,
+                props: { setFile },
+              }),
+            );
+          },
+        })}
       />
-
       <div
         onClick={() => {
           if (!disabled) {

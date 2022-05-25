@@ -2,10 +2,10 @@ import { ImageUploadButton } from '#components';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import TaskMedias from '#PrototypeComposer/Tasks/TaskMedias';
 import { FileUploadData } from '#utils/globalTypes';
-import { captureSupported } from '#utils/inputUtils';
+import { getVideoDevices } from '#utils/inputUtils';
 import { LinearProgress } from '@material-ui/core';
 import { PhotoCamera } from '@material-ui/icons';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { openOverlayAction } from '../../components/OverlayContainer/actions';
@@ -65,6 +65,7 @@ const MediaWrapper = styled.div.attrs({
 const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const dispatch = useDispatch();
   const [isUploading, setIsUploading] = useState(false);
+  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
 
   const onUploaded = (fileData: FileUploadData) => {
     dispatch(
@@ -122,6 +123,15 @@ const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
     setIsUploading(false);
   };
 
+  const fetchVideoDevices = async () => {
+    const devices = await getVideoDevices();
+    setVideoDevices(devices);
+  };
+
+  useEffect(() => {
+    fetchVideoDevices();
+  }, []);
+
   return (
     <MediaWrapper>
       <TaskMedias
@@ -149,7 +159,7 @@ const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
             </div>
             <div
               className="card"
-              style={!captureSupported() ? { cursor: 'not-allowed' } : {}}
+              style={videoDevices.length === 0 ? { cursor: 'not-allowed' } : {}}
             >
               <ImageUploadButton
                 label="User can capture photos"
@@ -160,7 +170,7 @@ const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
                 }}
                 icon={PhotoCamera}
                 allowCapture
-                disabled={!captureSupported()}
+                disabled={videoDevices.length === 0}
                 onUploadError={onUploadError}
               />
             </div>

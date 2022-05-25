@@ -47,6 +47,8 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import StartErrorModal from '../shared/StartErrorModal';
+import WebCamOverlay from '#components/shared/WebCamOverlay';
+
 import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
@@ -203,6 +205,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.JOB_COMPLETE_ALL_TASKS_ERROR:
       return <JobCompleteAllTasksError {...params} />;
+
+    case OverlayNames.WEBCAM_OVERLAY:
+      return <WebCamOverlay {...params} />;
 
     default:
       return null;
