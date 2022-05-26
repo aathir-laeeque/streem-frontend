@@ -19,14 +19,12 @@ import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { createJob, fetchJobs } from './actions';
 import AssigneesColumn from './AssignessColumn';
 import { TabContentWrapper } from './styles';
 import {
   AssignedJobStates,
   CompletedJobStates,
-  fetchDataType,
   Job,
   JobStateType,
   UnassignedJobStates,
@@ -41,14 +39,14 @@ const getBaseFilter = (values: string[]): FilterField[] => [
 
 const TabContent: FC<TabContentProps> = ({ label, values }) => {
   const dispatch = useDispatch();
+  const componentDidMount = useRef(false);
 
   const { jobs, pageable, loading } = useTypedSelector(
     (state) => state.jobListView,
   );
 
-  const { selectedFacility: { id: facilityId } = {} } = useTypedSelector(
-    (state) => state.auth,
-  );
+  const { selectedFacility } = useTypedSelector((state) => state.auth);
+  const facilityId = selectedFacility?.id;
 
   const { list: jobProperties } = useProperties(ComposerEntity.JOB);
 
@@ -60,57 +58,35 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
   const [assignedUsers, setAssignedUsers] = useState<User[]>([]);
 
-  const fetchData = ({
+  const fetchData = (
+    filtersArr: FilterField[],
     page = DEFAULT_PAGE_NUMBER,
     size = DEFAULT_PAGE_SIZE,
-  }: fetchDataType = {}) => {
+  ) => {
     dispatch(
       fetchJobs({
         facilityId,
         page,
         size,
         sort: 'createdAt,desc',
-        filters: JSON.stringify({ op: 'AND', fields: filterFields }),
+        filters: JSON.stringify({ op: 'AND', fields: filtersArr }),
       }),
     );
   };
 
   useEffect(() => {
-    setFilterFields(getBaseFilter(values));
+    console.log('jobs useEffect values');
+    if (componentDidMount.current) {
+      const updatedBaseFilterValues = getBaseFilter(values);
+      setFilterFields(getBaseFilter(values));
+      fetchData(updatedBaseFilterValues);
+    }
   }, [values]);
 
   useEffect(() => {
-    const filteredFields = filterFields.filter(
-      (field) => field.field !== 'taskExecutions.assignees.user.id',
-    );
-    setFilterFields([
-      ...filteredFields,
-      ...(assignedUsers.length > 0
-        ? [
-            {
-              field: 'taskExecutions.assignees.user.id',
-              op: 'ANY',
-              values: assignedUsers.map((user) => user.id),
-            },
-          ]
-        : []),
-    ]);
-  }, [assignedUsers]);
-
-  useEffect(() => {
-    dispatch(
-      fetchJobs({
-        facilityId,
-        page: 0,
-        size: 10,
-        sort: 'createdAt,desc',
-        filters: JSON.stringify({ op: 'AND', fields: filterFields }),
-      }),
-    );
-  }, [filterFields]);
-
-  useEffect(() => {
-    fetchData();
+    console.log('jobs componentDidMount');
+    fetchData(filterFields);
+    componentDidMount.current = true;
   }, []);
 
   const showPaginationArrows = pageable.totalPages > 10;
@@ -292,16 +268,20 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             })),
           ]}
           updateFilterFields={(fields) => {
-            setFilterFields((currentFields) => [
-              ...currentFields.filter((field) =>
-                field.field === 'taskExecutions.assignees.user.id'
-                  ? true
-                  : defaultFilters.current.some(
-                      (newField) => newField.field === field.field,
-                    ),
-              ),
-              ...fields,
-            ]);
+            setFilterFields((currentFields) => {
+              const updatedFilterFields = [
+                ...currentFields.filter((field) =>
+                  field.field === 'taskExecutions.assignees.user.id'
+                    ? true
+                    : defaultFilters.current.some(
+                        (newField) => newField.field === field.field,
+                      ),
+                ),
+                ...fields,
+              ];
+              fetchData(updatedFilterFields);
+              return updatedFilterFields;
+            });
           }}
         />
 
@@ -310,7 +290,29 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             options={assignedUsers}
             label="Assigned to"
             updateFilter={(fields) => {
+              console.log('UsersFilter', UsersFilter);
               setAssignedUsers(fields);
+
+              setFilterFields((currentFields) => {
+                const filteredFields = currentFields.filter(
+                  (field) => field.field !== 'taskExecutions.assignees.user.id',
+                );
+
+                const updatedFilterFields = [
+                  ...filteredFields,
+                  ...(fields.length > 0
+                    ? ([
+                        {
+                          field: 'taskExecutions.assignees.user.id',
+                          op: 'ANY',
+                          values: fields.map((user) => user.id),
+                        },
+                      ] as FilterField[])
+                    : []),
+                ];
+                fetchData(updatedFilterFields);
+                return updatedFilterFields;
+              });
             }}
           />
         )}
@@ -322,18 +324,22 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             onLabel="Jobs With Exception"
             offLabel="Jobs With Exception"
             onChange={(isChecked) => {
-              setFilterFields((currentFields) => [
-                ...currentFields.filter((el) => el.field !== 'state'),
-                ...(isChecked
-                  ? [
-                      {
-                        field: 'state',
-                        op: 'EQ',
-                        values: [CompletedJobStates.COMPLETED_WITH_EXCEPTION],
-                      },
-                    ]
-                  : [...getBaseFilter(values)]),
-              ]);
+              setFilterFields((currentFields) => {
+                const updatedFilterFields = [
+                  ...currentFields.filter((el) => el.field !== 'state'),
+                  ...(isChecked
+                    ? ([
+                        {
+                          field: 'state',
+                          op: 'EQ',
+                          values: [CompletedJobStates.COMPLETED_WITH_EXCEPTION],
+                        },
+                      ] as FilterField[])
+                    : [...getBaseFilter(values)]),
+                ];
+                fetchData(updatedFilterFields);
+                return updatedFilterFields;
+              });
             }}
             uncheckedIcon={false}
           />
@@ -394,7 +400,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             className={`icon ${showPaginationArrows ? '' : 'hide'}`}
             onClick={() => {
               if (pageable.page > 0) {
-                fetchData({ page: pageable.page - 1, size: DEFAULT_PAGE_SIZE });
+                fetchData(filterFields, pageable.page - 1, DEFAULT_PAGE_SIZE);
               }
             }}
           />
@@ -407,7 +413,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
               <span
                 key={el}
                 className={pageable.page === el ? 'active' : ''}
-                onClick={() => fetchData({ page: el, size: DEFAULT_PAGE_SIZE })}
+                onClick={() => fetchData(filterFields, el, DEFAULT_PAGE_SIZE)}
               >
                 {el + 1}
               </span>
@@ -416,7 +422,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             className={`icon ${showPaginationArrows ? '' : 'hide'}`}
             onClick={() => {
               if (pageable.page < pageable.totalPages - 1) {
-                fetchData({ page: pageable.page + 1, size: DEFAULT_PAGE_SIZE });
+                fetchData(filterFields, pageable.page + 1, DEFAULT_PAGE_SIZE);
               }
             }}
           />

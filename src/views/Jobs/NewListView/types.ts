@@ -89,6 +89,7 @@ export type fetchDataType = {
 };
 
 export type fetchJobsType = {
+  facilityId?: string;
   page: number;
   size: number;
   filters: string;

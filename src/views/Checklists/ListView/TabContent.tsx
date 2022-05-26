@@ -35,7 +35,6 @@ import {
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { addRevisionPrototype } from '../NewPrototype/actions';
 import { FormMode } from '../NewPrototype/types';
 import {
@@ -45,6 +44,9 @@ import {
   unarchiveChecklist,
 } from './actions';
 import { ListViewProps } from './types';
+
+const DEFAULT_PAGE_NUMBER = 0;
+const DEFAULT_PAGE_SIZE = 10;
 
 const getBaseFilter = (label: string): FilterField[] => [
   {
@@ -64,19 +66,20 @@ const getBaseFilter = (label: string): FilterField[] => [
     : []),
 ];
 
-const DEFAULT_PAGE_SIZE = 10;
-const DEFAULT_PAGE_NUMBER = 0;
-
 const ListView: FC<ListViewProps & { label: string }> = ({
   navigate = navigateTo,
   label,
 }) => {
+  const componentDidMount = useRef(false);
   const {
     checklistListView: { pageable, currentPageData, loading },
     auth: { userId },
   } = useTypedSelector((state) => state);
-  const { roles: userRoles, selectedFacility: { id: facilityId = '' } = {} } =
-    useTypedSelector((state) => state.auth);
+  const { roles: userRoles, selectedFacility } = useTypedSelector(
+    (state) => state.auth,
+  );
+
+  const facilityId = selectedFacility!.id;
 
   const { list: jobProperties } = useProperties(ComposerEntity.JOB);
   const { list: checklistProperties } = useProperties(ComposerEntity.CHECKLIST);
@@ -103,38 +106,36 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     getBaseFilter(label),
   );
 
-  const fetchData = (page: number, size: number) => {
-    const filters = JSON.stringify({ op: 'AND', fields: filterFields });
+  const fetchData = (
+    filtersArr: FilterField[],
+    page = DEFAULT_PAGE_NUMBER,
+    size = DEFAULT_PAGE_SIZE,
+  ) => {
     dispatch(
       fetchChecklistsForListView({
         facilityId,
         page,
         size,
-        filters,
         sort: 'createdAt,desc',
+        filters: JSON.stringify({ op: 'AND', fields: filtersArr }),
       }),
     );
   };
 
   useEffect(() => {
-    dispatch(clearData());
-    setFilterFields(getBaseFilter(label));
+    if (componentDidMount.current) {
+      dispatch(clearData());
+      setFilterFields(() => {
+        const baseFilters = getBaseFilter(label);
+        fetchData(baseFilters);
+        return baseFilters;
+      });
+    }
   }, [label]);
 
   useEffect(() => {
-    dispatch(
-      fetchChecklistsForListView({
-        filters: JSON.stringify({ op: 'AND', fields: filterFields }),
-        page: 0,
-        size: 0,
-        sort: 'createdAt,desc',
-        facilityId,
-      }),
-    );
-  }, [filterFields]);
-
-  useEffect(() => {
-    fetchData(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE);
+    fetchData(filterFields);
+    componentDidMount.current = true;
   }, []);
 
   const onCreateJob = (jobDetails: Record<string, string>) => {
@@ -495,14 +496,18 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             })),
           ]}
           updateFilterFields={(fields) => {
-            setFilterFields((currentFields) => [
-              ...currentFields.filter((field) =>
-                defaultFilters.current.some(
-                  (newField) => newField.field === field.field,
+            setFilterFields((currentFields) => {
+              const updatedFilterFields = [
+                ...currentFields.filter((field) =>
+                  defaultFilters.current.some(
+                    (newField) => newField.field === field.field,
+                  ),
                 ),
-              ),
-              ...fields,
-            ]);
+                ...fields,
+              ];
+              fetchData(updatedFilterFields);
+              return updatedFilterFields;
+            });
           }}
         />
 
@@ -519,20 +524,22 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                 })),
             ]}
             updateFilter={(option) =>
-              setFilterFields(
-                (currentFields) =>
-                  currentFields.map((field) => ({
-                    ...field,
-                    ...(field.field === 'state'
-                      ? {
-                          op: option.value === 'all' ? 'NE' : 'EQ',
-                          values: [
-                            option.value === 'all' ? 'PUBLISHED' : option.value,
-                          ],
-                        }
-                      : { values: field.values }),
-                  })) as FilterField[],
-              )
+              setFilterFields((currentFields) => {
+                const updatedFilterFields = currentFields.map((field) => ({
+                  ...field,
+                  ...(field.field === 'state'
+                    ? {
+                        op: option.value === 'all' ? 'NE' : 'EQ',
+                        values: [
+                          option.value === 'all' ? 'PUBLISHED' : option.value,
+                        ],
+                      }
+                    : { values: field.values }),
+                })) as FilterField[];
+
+                fetchData(updatedFilterFields);
+                return updatedFilterFields;
+              })
             }
           />
         )}
@@ -548,70 +555,79 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             ]}
             updateFilter={(option) => {
               if (option.value === 'any') {
-                setFilterFields((currentFields) =>
-                  currentFields.filter(
+                setFilterFields((currentFields) => {
+                  const updatedFilterFields = currentFields.filter(
                     (field) =>
                       field.field !== 'collaborators.type' &&
                       field.field !== 'collaborators.user.id' &&
                       field.field !== 'not.a.collaborator',
-                  ),
-                );
+                  );
+
+                  fetchData(updatedFilterFields);
+                  return updatedFilterFields;
+                });
               } else if (option.value === 'not.a.collaborator') {
-                setFilterFields(
-                  (currentFields) =>
-                    [
-                      ...currentFields.filter(
-                        (field) =>
-                          field.field !== 'collaborators.type' &&
-                          field.field !== 'collaborators.user.id',
-                      ),
-                      {
-                        field: 'not.a.collaborator',
-                        op: 'NE',
-                        values: [userId],
-                      },
-                    ] as FilterField[],
-                );
+                setFilterFields((currentFields) => {
+                  const updatedFilterFields = [
+                    ...currentFields.filter(
+                      (field) =>
+                        field.field !== 'collaborators.type' &&
+                        field.field !== 'collaborators.user.id',
+                    ),
+                    {
+                      field: 'not.a.collaborator',
+                      op: 'NE',
+                      values: [userId],
+                    },
+                  ] as FilterField[];
+
+                  fetchData(updatedFilterFields);
+                  return updatedFilterFields;
+                });
               } else if (option.value === 'collaborators.type') {
-                setFilterFields(
-                  (currentFields) =>
-                    [
-                      ...currentFields.filter(
-                        (field) => field.field !== 'not.a.collaborator',
-                      ),
-                      {
-                        field: 'collaborators.user.id',
-                        op: 'EQ',
-                        values: [userId],
-                      },
-                      {
-                        field: 'collaborators.type',
-                        op: 'ANY',
-                        values: [
-                          CollaboratorType.AUTHOR,
-                          CollaboratorType.PRIMARY_AUTHOR,
-                        ],
-                      },
-                    ] as FilterField[],
-                );
+                setFilterFields((currentFields) => {
+                  const updatedFilterFields = [
+                    ...currentFields.filter(
+                      (field) => field.field !== 'not.a.collaborator',
+                    ),
+                    {
+                      field: 'collaborators.user.id',
+                      op: 'EQ',
+                      values: [userId],
+                    },
+                    {
+                      field: 'collaborators.type',
+                      op: 'ANY',
+                      values: [
+                        CollaboratorType.AUTHOR,
+                        CollaboratorType.PRIMARY_AUTHOR,
+                      ],
+                    },
+                  ] as FilterField[];
+
+                  fetchData(updatedFilterFields);
+                  return updatedFilterFields;
+                });
               } else {
-                setFilterFields(
-                  (currentFields) =>
-                    [
-                      ...currentFields.filter(
-                        (field) =>
-                          field.field !== 'collaborators.type' &&
-                          field.field !== 'collaborators.user.id' &&
-                          field.field !== 'not.a.collaborator',
-                      ),
-                      { field: option.value, op: 'EQ', values: [userId] },
-                      {
-                        field: 'collaborators.type',
-                        op: 'ANY',
-                        values: [CollaboratorType.REVIEWER],
-                      },
-                    ] as FilterField[],
-                );
+                setFilterFields((currentFields) => {
+                  const updatedFilterFields = [
+                    ...currentFields.filter(
+                      (field) =>
+                        field.field !== 'collaborators.type' &&
+                        field.field !== 'collaborators.user.id' &&
+                        field.field !== 'not.a.collaborator',
+                    ),
+                    { field: option.value, op: 'EQ', values: [userId] },
+                    {
+                      field: 'collaborators.type',
+                      op: 'ANY',
+                      values: [CollaboratorType.REVIEWER],
+                    },
+                  ] as FilterField[];
+
+                  fetchData(updatedFilterFields);
+                  return updatedFilterFields;
+                });
               }
             }}
           />
@@ -626,14 +642,17 @@ const ListView: FC<ListViewProps & { label: string }> = ({
               ?.values[0]
           }
           onChange={(isChecked) =>
-            setFilterFields((currentFields) =>
-              currentFields.map((field) => ({
+            setFilterFields((currentFields) => {
+              const updatedFilterFields = currentFields.map((field) => ({
                 ...field,
                 ...(field.field === 'archived'
                   ? { values: [isChecked] }
                   : { values: field.values }),
-              })),
-            )
+              })) as FilterField[];
+
+              fetchData(updatedFilterFields);
+              return updatedFilterFields;
+            })
           }
           uncheckedIcon={false}
         />
@@ -698,7 +717,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             className={`icon ${showPaginationArrows ? '' : 'hide'}`}
             onClick={() => {
               if (pageable.page > 0) {
-                fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
+                fetchData(filterFields, pageable.page - 1, DEFAULT_PAGE_SIZE);
               }
             }}
           />
@@ -711,7 +730,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
               <span
                 key={el}
                 className={pageable.page === el ? 'active' : ''}
-                onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
+                onClick={() => fetchData(filterFields, el, DEFAULT_PAGE_SIZE)}
               >
                 {el + 1}
               </span>
@@ -720,7 +739,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             className={`icon ${showPaginationArrows ? '' : 'hide'}`}
             onClick={() => {
               if (pageable.page < pageable.totalPages - 1) {
-                fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
+                fetchData(filterFields, pageable.page + 1, DEFAULT_PAGE_SIZE);
               }
             }}
           />

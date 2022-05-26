@@ -6,7 +6,7 @@ import { Job } from '#views/Jobs/NewListView/types';
 import { CircularProgress } from '@material-ui/core';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import AssigneesColumn from '../../Jobs/NewListView/AssignessColumn';
@@ -17,9 +17,11 @@ import {
 import { fetchInbox, setSelectedState } from './actions';
 import { ListViewState, TabViewProps } from './types';
 
+const DEFAULT_PAGE_NUMBER = 0;
 const DEFAULT_PAGE_SIZE = 10;
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
+  const componentDidMount = useRef(false);
   const { job } = useTypedSelector((state) => state.properties);
   const { jobs, loading }: ListViewState = useTypedSelector(
     (state) => state.inboxListView,
@@ -36,12 +38,11 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    fetchData(0, 10);
-    dispatch(setSelectedState(reducerLabel));
-  }, []);
-
-  const fetchData = (page: number, size: number) => {
+  const fetchData = (
+    filtersArr: FilterField[],
+    page = DEFAULT_PAGE_NUMBER,
+    size = DEFAULT_PAGE_SIZE,
+  ) => {
     dispatch(
       fetchInbox(
         {
@@ -49,7 +50,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           page,
           size,
           sort: 'createdAt,desc',
-          fields: JSON.stringify({ op: 'AND', fields: filterFields }),
+          filters: JSON.stringify({ op: 'AND', fields: filtersArr }),
         },
         reducerLabel,
       ),
@@ -57,19 +58,10 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   };
 
   useEffect(() => {
-    dispatch(
-      fetchInbox(
-        {
-          facilityId,
-          page: 0,
-          size: 10,
-          sort: 'createdAt,desc',
-          filters: JSON.stringify({ op: 'AND', fields: filterFields }),
-        },
-        reducerLabel,
-      ),
-    );
-  }, [filterFields]);
+    fetchData(filterFields);
+    dispatch(setSelectedState(reducerLabel));
+    componentDidMount.current = true;
+  }, []);
 
   const showPaginationArrows = pageable.totalPages > 10;
 
@@ -196,7 +188,10 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
               operator: 'EQ',
             })),
           ]}
-          updateFilterFields={(fields) => setFilterFields([...fields])}
+          updateFilterFields={(fields) => {
+            setFilterFields([...fields]);
+            fetchData([...fields]);
+          }}
         />
       </div>
       <div
@@ -229,7 +224,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
             className={`icon ${showPaginationArrows ? '' : 'hide'}`}
             onClick={() => {
               if (pageable.page > 0) {
-                fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
+                fetchData(filterFields, pageable.page - 1, DEFAULT_PAGE_SIZE);
               }
             }}
           />
@@ -242,7 +237,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
               <span
                 key={el}
                 className={pageable.page === el ? 'active' : ''}
-                onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
+                onClick={() => fetchData(filterFields, el, DEFAULT_PAGE_SIZE)}
               >
                 {el + 1}
               </span>
@@ -251,7 +246,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
             className={`icon ${showPaginationArrows ? '' : 'hide'}`}
             onClick={() => {
               if (pageable.page < pageable.totalPages - 1) {
-                fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
+                fetchData(filterFields, pageable.page + 1, DEFAULT_PAGE_SIZE);
               }
             }}
           />
