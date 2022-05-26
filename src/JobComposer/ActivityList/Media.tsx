@@ -1,15 +1,19 @@
 import { ImageUploadButton } from '#components';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import TaskMedias from '#PrototypeComposer/Tasks/TaskMedias';
 import { FileUploadData } from '#utils/globalTypes';
 import { captureSupported } from '#utils/inputUtils';
-import TaskMedias from '#PrototypeComposer/Tasks/TaskMedias';
+import { LinearProgress } from '@material-ui/core';
 import { PhotoCamera } from '@material-ui/icons';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-
 import { openOverlayAction } from '../../components/OverlayContainer/actions';
-import { executeActivity, fixActivity } from './actions';
+import {
+  executeActivity,
+  fixActivity,
+  updateExecutedActivity,
+} from './actions';
 import { ActivityProps } from './types';
 
 const MediaWrapper = styled.div.attrs({
@@ -60,6 +64,7 @@ const MediaWrapper = styled.div.attrs({
 
 const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const dispatch = useDispatch();
+  const [isUploading, setIsUploading] = useState(false);
 
   const onUploaded = (fileData: FileUploadData) => {
     dispatch(
@@ -73,6 +78,17 @@ const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
           },
           isActivity: true,
           execute: (data) => {
+            dispatch(
+              updateExecutedActivity({
+                ...activity,
+                response: {
+                  ...activity.response,
+                  medias: [...(activity.response?.medias ?? []), data],
+                  audit: undefined,
+                  state: 'EXECUTED',
+                },
+              }),
+            );
             if (isCorrectingError) {
               dispatch(
                 fixActivity({
@@ -96,7 +112,16 @@ const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
         },
       }),
     );
+    setIsUploading(false);
   };
+
+  const onUploadStart = () => setIsUploading(true);
+
+  const onUploadError = (error: string) => {
+    console.log('error :: ', error);
+    setIsUploading(false);
+  };
+
   return (
     <MediaWrapper>
       <TaskMedias
@@ -105,32 +130,42 @@ const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
         isActivity
       />
       <div style={{ display: 'flex', marginTop: '24px' }}>
-        <div className="card">
-          <ImageUploadButton
-            label="Upload images"
-            onUploadSuccess={(fileData) => {
-              console.log('fileData :: ', fileData);
-              onUploaded(fileData);
-            }}
-            onUploadError={(error) => console.log('error :: ', error)}
+        {isUploading ? (
+          <LinearProgress
+            style={{ height: 8, width: '100%', color: '#1d84ff' }}
           />
-        </div>
-        <div
-          className="card"
-          style={!captureSupported() ? { cursor: 'not-allowed' } : {}}
-        >
-          <ImageUploadButton
-            label="User can capture photos"
-            onUploadSuccess={(fileData) => {
-              console.log('fileData :: ', fileData);
-              onUploaded(fileData);
-            }}
-            icon={PhotoCamera}
-            allowCapture
-            disabled={!captureSupported()}
-            onUploadError={(error) => console.log('error :: ', error)}
-          />
-        </div>
+        ) : (
+          <>
+            <div className="card">
+              <ImageUploadButton
+                label="Upload images"
+                onUploadStart={onUploadStart}
+                onUploadSuccess={(fileData) => {
+                  console.log('fileData :: ', fileData);
+                  onUploaded(fileData);
+                }}
+                onUploadError={onUploadError}
+              />
+            </div>
+            <div
+              className="card"
+              style={!captureSupported() ? { cursor: 'not-allowed' } : {}}
+            >
+              <ImageUploadButton
+                label="User can capture photos"
+                onUploadStart={onUploadStart}
+                onUploadSuccess={(fileData) => {
+                  console.log('fileData :: ', fileData);
+                  onUploaded(fileData);
+                }}
+                icon={PhotoCamera}
+                allowCapture
+                disabled={!captureSupported()}
+                onUploadError={onUploadError}
+              />
+            </div>
+          </>
+        )}
       </div>
     </MediaWrapper>
   );

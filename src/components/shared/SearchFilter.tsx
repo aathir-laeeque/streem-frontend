@@ -69,11 +69,11 @@ type SearchFilterProps = {
 };
 
 const SearchFilter: FC<SearchFilterProps> = ({
-  dropdownOptions,
-  showdropdown = false,
-  updateFilterFields,
-  key,
-}) => {
+                                               dropdownOptions,
+                                               showdropdown = false,
+                                               updateFilterFields,
+                                               key,
+                                             }) => {
   const [selectedOption, setSelectedOption] = useState<DropdownOption>(
     (dropdownOptions ?? [])[0],
   );
@@ -91,37 +91,40 @@ const SearchFilter: FC<SearchFilterProps> = ({
     setSearchValue('');
   }, [key]);
 
-  useEffect(() => {
-    const searchFilterFields: FilterField[] = [
-      ...(selectedOption.field === 'name' ||
-      selectedOption.field === 'checklist.name' ||
-      selectedOption.field === 'firstName' ||
-      selectedOption.field === 'lastName' ||
-      selectedOption.field === 'email' ||
-      selectedOption.field === 'employeeId'
+  const onUpdate = (
+    updatedOption: DropdownOption,
+    updatedSearchValue: string,
+  ) => {
+    const searchFilterFields = [
+      ...(updatedOption.field === 'name' ||
+      updatedOption.field === 'checklist.name' ||
+      updatedOption.field === 'firstName' ||
+      updatedOption.field === 'lastName' ||
+      updatedOption.field === 'email' ||
+      updatedOption.field === 'employeeId'
         ? [
-            {
-              field: selectedOption.field,
-              op: selectedOption.operator,
-              values: [searchValue],
-            },
-          ]
+          {
+            field: updatedOption.field,
+            op: updatedOption.operator,
+            values: [updatedSearchValue],
+          },
+        ]
         : [
-            {
-              field: selectedOption.field,
-              op: selectedOption.operator,
-              values: [selectedOption.value],
-            },
-            {
-              field: `${selectedOption.field.split('.')[0]}.value`,
-              op: FilterOperators.LIKE,
-              values: [searchValue],
-            },
-          ]),
-    ];
+          {
+            field: updatedOption.field,
+            op: updatedOption.operator,
+            values: [updatedOption.value],
+          },
+          {
+            field: `${updatedOption.field.split('.')[0]}.value`,
+            op: FilterOperators.LIKE,
+            values: [updatedSearchValue],
+          },
+        ]),
+    ] as FilterField[];
 
     updateFilterFields(searchFilterFields);
-  }, [selectedOption, searchValue]);
+  };
 
   return (
     <Wrapper>
@@ -145,6 +148,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
                 key={index}
                 onClick={() => {
                   setSelectedOption(option);
+                  onUpdate(option, searchValue);
                   handleClose();
                 }}
               >
@@ -159,7 +163,10 @@ const SearchFilter: FC<SearchFilterProps> = ({
         AfterElement={Search}
         afterElementClass=""
         placeholder={`Search with ${selectedOption.label}`}
-        onChange={debounce(({ value }) => setSearchValue(value), 500)}
+        onChange={debounce(({ value }) => {
+          setSearchValue(value);
+          onUpdate(selectedOption, value);
+        }, 500)}
       />
     </Wrapper>
   );

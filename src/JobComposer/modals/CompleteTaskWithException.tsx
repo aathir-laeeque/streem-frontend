@@ -38,7 +38,12 @@ const Wrapper = styled.div`
 
 const CompleteTaskWithExceptionModal: FC<CommonOverlayProps<{
   taskId: Task['id'];
-}>> = ({ closeAllOverlays, closeOverlay, props: { taskId } }) => {
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
+}>> = ({
+  closeAllOverlays,
+  closeOverlay,
+  props: { taskId, setLoadingState },
+}) => {
   const dispatch = useDispatch();
 
   const [exceptionReason, setExceptionReason] = useState('');
@@ -49,7 +54,10 @@ const CompleteTaskWithExceptionModal: FC<CommonOverlayProps<{
         closeAllModals={closeAllOverlays}
         closeModal={closeOverlay}
         onPrimary={() => {
-          dispatch(completeTask(taskId, exceptionReason, true));
+          setLoadingState(true);
+          dispatch(
+            completeTask(taskId, setLoadingState, exceptionReason, true),
+          );
           closeOverlay();
         }}
         onSecondary={() => closeOverlay()}

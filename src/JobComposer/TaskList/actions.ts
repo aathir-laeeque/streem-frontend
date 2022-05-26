@@ -6,9 +6,13 @@ import { TaskAction } from './types';
 export const setActiveTask = (id: Task['id'], bringIntoView = false) =>
   actionSpreader(TaskListAction.SET_ACTIVE_TASK, { id, bringIntoView });
 
-export const startTask = (taskId: Task['id']) =>
+export const startTask = (
+  taskId: Task['id'],
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>,
+) =>
   actionSpreader(TaskListAction.START_TASK, {
     taskId,
+    setLoadingState,
     action: TaskAction.START,
   });
 
@@ -20,6 +24,7 @@ export const updateTaskExecutionState = (taskId: Task['id'], data: any) =>
 
 export const completeTask = (
   taskId: Task['id'],
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>,
   reason?: string,
   withException?: boolean,
 ) =>
@@ -30,16 +35,22 @@ export const completeTask = (
     {
       reason,
       taskId,
+      setLoadingState,
       action: withException
         ? TaskAction.COMPLETE_WITH_EXCEPTION
         : TaskAction.COMPLETE,
     },
   );
 
-export const skipTask = (taskId: Task['id'], reason: string) =>
+export const skipTask = (
+  taskId: Task['id'],
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>,
+  reason: string,
+) =>
   actionSpreader(TaskListAction.SKIP_TASK, {
     reason,
     taskId,
+    setLoadingState,
     action: TaskAction.SKIP,
   });
 
@@ -52,14 +63,28 @@ export const removeTaskError = (taskId: Task['id']) =>
 export const enableErrorCorrection = (
   taskId: Task['id'],
   correctionReason: string,
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>,
 ) =>
   actionSpreader(TaskListAction.ENABLE_TASK_ERROR_CORRECTION, {
     taskId,
     correctionReason,
+    setLoadingState,
   });
 
-export const completeErrorCorretcion = (taskId: Task['id']) =>
-  actionSpreader(TaskListAction.COMPLTE_ERROR_CORRECTION, { taskId });
+export const completeErrorCorretcion = (
+  taskId: Task['id'],
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>,
+) =>
+  actionSpreader(TaskListAction.COMPLTE_ERROR_CORRECTION, {
+    taskId,
+    setLoadingState,
+  });
 
-export const cancelErrorCorretcion = (taskId: Task['id']) =>
-  actionSpreader(TaskListAction.CANCEL_ERROR_CORRECTION, { taskId });
+export const cancelErrorCorretcion = (
+  taskId: Task['id'],
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>,
+) =>
+  actionSpreader(TaskListAction.CANCEL_ERROR_CORRECTION, {
+    taskId,
+    setLoadingState,
+  });

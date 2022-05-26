@@ -1,6 +1,5 @@
 import { getActivities } from '#JobComposer/utils';
 import { Reducer } from 'redux';
-
 import { ComposerAction } from '../composer.reducer.types';
 import {
   ActivityListActionType,
@@ -102,8 +101,10 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         },
       };
 
-    case ActivityListAction.EXECUTE_ACTIVITY:
-    case ActivityListAction.FIX_ACTIVITY:
+    case ActivityListAction.EXECUTE_ACTIVITY_LATEST:
+    case ActivityListAction.FIX_ACTIVITY_LATEST:
+    case ActivityListAction.EXECUTE_ACTIVITY_LEADING:
+    case ActivityListAction.FIX_ACTIVITY_LEADING:
       return {
         ...state,
         activitiesById: {

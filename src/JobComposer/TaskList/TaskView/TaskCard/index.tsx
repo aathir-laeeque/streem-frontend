@@ -12,17 +12,19 @@ import {
   CompletedJobStates,
   JobStateEnum,
 } from '#views/Jobs/NewListView/types';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { setActiveTask } from '../../actions';
 import { TaskCardProps } from '../../types';
 import Footer from './Footer';
 import Header from './Header';
+import { CircularProgress } from '@material-ui/core';
+import moment from 'moment';
 
 const Wrapper = styled.div.attrs({
   className: 'task-card',
-})`
+})<{ isLoading: boolean }>`
   background-color: #ffffff;
   border: 1px solid #eeeeee;
   border-radius: 4px;
@@ -31,18 +33,32 @@ const Wrapper = styled.div.attrs({
   flex-direction: column;
   grid-area: task-card;
   height: max-content;
+  position: relative;
 
   :hover {
     box-shadow: 0 8px 8px 0 rgba(153, 153, 153, 0.16);
   }
+
+  .loading-wrapper {
+    position: absolute;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    display: ${(props) => (props.isLoading ? 'flex' : 'none')};
+    background: rgba(236, 236, 236, 0.3);
+  }
 `;
 
 const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
+  const [isLoading, setLoadingState] = useState<boolean>(false);
+
   const {
     jobState,
     activities: { activitiesById, activitiesOrderInTaskInStage },
     stages: { activeStageId },
   } = useTypedSelector((state) => state.composer);
+  const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
 
   const { profile } = useTypedSelector((state) => state.auth);
 
@@ -50,6 +66,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
     state: taskState,
     reason,
     assignees,
+    startedAt,
+    endedAt,
     correctionEnabled,
   } = task.taskExecution;
 
@@ -94,8 +112,37 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
       !(jobState in CompletedJobStates) &&
       location.pathname.split('/')[1] !== 'inbox';
 
+    const [timerState, setTimerState] = useState<{ [index: string]: boolean }>(
+      () => {
+        const timeElapsed =
+          isTaskCompleted && endedAt && startedAt
+            ? moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds')
+            : isTaskStarted && recentServerTimestamp && startedAt
+              ? moment
+                .unix(recentServerTimestamp)
+                .diff(moment.unix(startedAt), 'seconds')
+              : 0;
+
+        return {
+          earlyCompletion: !!(
+            task.timed &&
+            task.minPeriod &&
+            timeElapsed &&
+            timeElapsed < task.minPeriod
+          ),
+          limitCrossed: !!(
+            task.timed &&
+            task.maxPeriod &&
+            timeElapsed &&
+            timeElapsed > task.maxPeriod
+          ),
+        };
+      },
+    );
+
     return (
       <Wrapper
+        isLoading={isLoading}
         onClick={() => {
           if (!isActive) {
             dispatch(setActiveTask(task.id));
@@ -117,6 +164,9 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           isTaskDelayed={!!isTaskDelayed}
           enableStopForTask={enableStopForTask}
           showAssignmentButton={showAssignmentButton}
+          setLoadingState={setLoadingState}
+          timerState={timerState}
+          setTimerState={setTimerState}
         />
         <div
           onClick={() => {
@@ -146,7 +196,12 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           canSkipTask={!canSkipTask}
           task={task}
           activitiesHasError={activitiesHasError}
+          setLoadingState={setLoadingState}
+          timerState={timerState}
         />
+        <div className="loading-wrapper">
+          <CircularProgress style={{ color: '#1d84ff' }} />
+        </div>
       </Wrapper>
     );
   } else {

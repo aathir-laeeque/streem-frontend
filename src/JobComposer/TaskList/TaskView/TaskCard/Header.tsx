@@ -30,11 +30,31 @@ type HeaderProps = {
   isTaskDelayed: boolean;
   enableStopForTask: boolean;
   showAssignmentButton: boolean;
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
+  timerState: { [index: string]: boolean };
+  setTimerState: React.Dispatch<
+    React.SetStateAction<{ [index: string]: boolean }>
+    >;
 };
 
 const JobHeader: FC<
-  Pick<HeaderProps, 'task' | 'enableStopForTask' | 'showAssignmentButton'>
-> = ({ task, enableStopForTask, showAssignmentButton }) => {
+  Pick<
+    HeaderProps,
+    | 'task'
+    | 'enableStopForTask'
+    | 'showAssignmentButton'
+    | 'setLoadingState'
+    | 'timerState'
+    | 'setTimerState'
+    >
+  > = ({
+         task,
+         enableStopForTask,
+         showAssignmentButton,
+         setLoadingState,
+         timerState,
+         setTimerState,
+       }) => {
   const dispatch = useDispatch();
   const { profile, selectedFacility } = useTypedSelector((state) => state.auth);
   const { dateAndTimeStampFormat } = useTypedSelector(
@@ -165,7 +185,8 @@ const JobHeader: FC<
                       }),
                     );
                   } else {
-                    dispatch(startTask(task.id));
+                    setLoadingState(true);
+                    dispatch(startTask(task.id, setLoadingState));
                   }
                 }}
               >
@@ -189,7 +210,7 @@ const JobHeader: FC<
                     dispatch(
                       openOverlayAction({
                         type: OverlayNames.TASK_ERROR_CORRECTION,
-                        props: { taskId: task.id },
+                        props: { taskId: task.id, setLoadingState },
                       }),
                     );
                   }}
@@ -202,7 +223,13 @@ const JobHeader: FC<
           )}
         </div>
 
-        {task.timed ? <Timer task={task} /> : null}
+        {task.timed ? (
+          <Timer
+            task={task}
+            timerState={timerState}
+            setTimerState={setTimerState}
+          />
+        ) : null}
       </div>
 
       {state === TaskExecutionState.SKIPPED ||
@@ -242,13 +269,16 @@ const JobHeader: FC<
 };
 
 const Header: FC<HeaderProps> = ({
-  task,
-  showStartButton,
-  isTaskStarted,
-  isTaskDelayed,
-  enableStopForTask,
-  showAssignmentButton,
-}) => {
+                                   task,
+                                   showStartButton,
+                                   isTaskStarted,
+                                   isTaskDelayed,
+                                   enableStopForTask,
+                                   showAssignmentButton,
+                                   setLoadingState,
+                                   timerState,
+                                   setTimerState,
+                                 }) => {
   return (
     <Wrapper
       hasStop={task.hasStop}
@@ -261,6 +291,9 @@ const Header: FC<HeaderProps> = ({
         task={task}
         enableStopForTask={enableStopForTask}
         showAssignmentButton={showAssignmentButton}
+        setLoadingState={setLoadingState}
+        timerState={timerState}
+        setTimerState={setTimerState}
       />
     </Wrapper>
   );

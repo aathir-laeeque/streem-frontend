@@ -98,21 +98,21 @@ const CompletedWrapper = styled.div.attrs({
 }>`
   align-items: center;
   ${({ completed, skipped, isTaskDelayed, completedWithException }) => {
-    if (completed) {
-      if (isTaskDelayed) {
-        return css`
+  if (completed) {
+    if (isTaskDelayed) {
+      return css`
           background-color: #f7b500;
         `;
-      }
-      return css`
+    }
+    return css`
         background-color: #5aa700;
       `;
-    } else if (skipped || completedWithException) {
-      return css`
+  } else if (skipped || completedWithException) {
+    return css`
         background-color: #f7b500;
       `;
-    }
-  }}
+  }
+}}
   color: #ffffff;
   display: flex;
   justify-content: center;
@@ -167,6 +167,8 @@ type FooterProps = {
   canSkipTask: boolean;
   activitiesHasError: boolean;
   task: Omit<Task, 'activities'>;
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
+  timerState: { [index: string]: boolean };
 };
 
 const generateName = ({
@@ -177,7 +179,13 @@ const generateName = ({
   lastName: string;
 }) => `${firstName} ${lastName}`;
 
-const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
+const Footer: FC<FooterProps> = ({
+                                   canSkipTask,
+                                   task,
+                                   activitiesHasError,
+                                   setLoadingState,
+                                   timerState,
+                                 }) => {
   const dispatch = useDispatch();
   const {
     auth: { profile, selectedFacility },
@@ -186,7 +194,6 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
-  const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
 
   const isJobBlocked = jobState === JobStateEnum.BLOCKED;
 
@@ -227,7 +234,10 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
             borderRadius: '4px',
             cursor: 'pointer',
           }}
-          onClick={() => dispatch(completeErrorCorretcion(task.id))}
+          onClick={() => {
+            setLoadingState(true);
+            dispatch(completeErrorCorretcion(task.id, setLoadingState));
+          }}
         >
           Confirm
         </button>
@@ -246,7 +256,10 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
             background: 'transparent',
             cursor: 'pointer',
           }}
-          onClick={() => dispatch(cancelErrorCorretcion(task.id))}
+          onClick={() => {
+            setLoadingState(true);
+            dispatch(cancelErrorCorretcion(task.id, setLoadingState));
+          }}
         >
           Cancel
         </button>
@@ -255,19 +268,11 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   } else if (taskExecutionState === TaskExecutionState.COMPLETED) {
     if (isTaskDelayed) {
       let text;
-      if (
-        moment
-          .unix(task.taskExecution.endedAt!)
-          .diff(moment.unix(task.taskExecution.startedAt!), 'seconds') >
-        task.maxPeriod!
-      ) {
+      if (timerState.limitCrossed) {
         text = 'after the set time';
       } else if (
         task.timerOperator === 'NOT_LESS_THAN' &&
-        moment
-          .unix(task.taskExecution.endedAt!)
-          .diff(moment.unix(task.taskExecution.startedAt!), 'seconds') <
-        task.minPeriod!
+        timerState.earlyCompletion
       ) {
         text = 'before the set time';
       }
@@ -328,19 +333,11 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
   } else if (task.taskExecution.state === TaskExecutionState.IN_PROGRESS) {
     if (shouldAskForReason) {
       let text;
-      if (
-        moment
-          .unix(recentServerTimestamp!)
-          .diff(moment.unix(task.taskExecution.startedAt!), 'seconds') >
-        task.maxPeriod!
-      ) {
+      if (timerState.limitCrossed) {
         text = 'State your reason for delay';
       } else if (
         task.timerOperator === 'NOT_LESS_THAN' &&
-        moment
-          .unix(recentServerTimestamp!)
-          .diff(moment.unix(task.taskExecution.startedAt!), 'seconds') <
-        task.minPeriod!
+        timerState.earlyCompletion
       ) {
         text = 'State your reason for early completion';
       }
@@ -358,7 +355,10 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
           </div>
           <div className="buttons-container">
             <button
-              onClick={() => dispatch(completeTask(task.id, delayReason))}
+              onClick={() => {
+                setLoadingState(true);
+                dispatch(completeTask(task.id, setLoadingState, delayReason));
+              }}
             >
               Submit
             </button>
@@ -382,22 +382,14 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
                 className="complete-task"
                 onClick={() => {
                   if (!isJobBlocked) {
-                    const timeElapsed = moment
-                      .unix(recentServerTimestamp!)
-                      .diff(
-                        moment.unix(task.taskExecution.startedAt!),
-                        'seconds',
-                      );
-
                     if (
                       task.timed &&
-                      (timeElapsed > task.maxPeriod ||
-                        (task.timerOperator === 'NOT_LESS_THAN' &&
-                          timeElapsed < task.minPeriod))
+                      (timerState.earlyCompletion || timerState.limitCrossed)
                     ) {
                       setAskForReason(true);
                     } else {
-                      dispatch(completeTask(task.id));
+                      setLoadingState(true);
+                      dispatch(completeTask(task.id, setLoadingState));
                     }
                   }
                 }}
@@ -413,14 +405,14 @@ const Footer: FC<FooterProps> = ({ canSkipTask, task, activitiesHasError }) => {
                       dispatch(
                         openOverlayAction({
                           type: OverlayNames.SKIP_TASK_MODAL,
-                          props: { taskId: task.id },
+                          props: { taskId: task.id, setLoadingState },
                         }),
                       );
                     } else {
                       dispatch(
                         openOverlayAction({
                           type: OverlayNames.COMPLETE_TASK_WITH_EXCEPTION,
-                          props: { taskId: task.id },
+                          props: { taskId: task.id, setLoadingState },
                         }),
                       );
                     }

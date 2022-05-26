@@ -3,19 +3,80 @@ import { Entity } from '#JobComposer/composer.types';
 import { useTypedSelector } from '#store';
 import { Close } from '@material-ui/icons';
 import { get } from 'lodash';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { executeActivity, fixActivity } from '../actions';
+import {
+  executeActivity,
+  fixActivity,
+  updateExecutedActivity,
+} from '../actions';
 import { ActivityProps, Selections } from '../types';
 import { Wrapper } from './styles';
 
 const ChecklistActivity: FC<ActivityProps> = ({
-  activity,
-  isCorrectingError,
-}) => {
+                                                activity,
+                                                isCorrectingError,
+                                              }) => {
+  const metaInfo = useRef<{
+    shouldCallApi?: boolean;
+  }>({});
   const { entity } = useTypedSelector((state) => state.composer);
-
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (metaInfo.current?.shouldCallApi) {
+      metaInfo.current.shouldCallApi = false;
+      if (activity?.response?.choices) {
+        const data = activity.data.map((d: any) => {
+          return {
+            ...d,
+            state: get(
+              activity?.response?.choices,
+              d.id,
+              Selections.NOT_SELECTED,
+            ),
+          };
+        });
+        if (isCorrectingError) {
+          dispatch(
+            fixActivity({
+              ...activity,
+              data,
+            }),
+          );
+        } else {
+          dispatch(
+            executeActivity({
+              ...activity,
+              data,
+            }),
+          );
+        }
+      }
+    }
+  }, [activity?.response?.choices]);
+
+  const handleExecution = (id: string, choice: Selections) => {
+    metaInfo.current.shouldCallApi = true;
+    dispatch(
+      updateExecutedActivity({
+        ...activity,
+        response: {
+          ...activity.response,
+          audit: undefined,
+          choices: {
+            ...activity.response?.choices,
+            ...activity.data.reduce((acc: any, d: any) => {
+              if (d.id === id) {
+                acc[d.id] = choice;
+              }
+              return acc;
+            }, {}),
+          },
+        },
+      }),
+    );
+  };
 
   if (entity === Entity.JOB) {
     return (
@@ -29,29 +90,15 @@ const ChecklistActivity: FC<ActivityProps> = ({
               <li key={index} className="list-item">
                 <div
                   className="item-content"
-                  onClick={() => {
-                    const newData = {
-                      ...activity,
-                      data: activity.data.map((e) => ({
-                        ...e,
-                        ...(e.id === el.id
-                          ? {
-                              state: isItemSelected
-                                ? Selections.NOT_SELECTED
-                                : Selections.SELECTED,
-                            }
-                          : {
-                              state:
-                                get(activity?.response?.choices, e.id) ||
-                                Selections.NOT_SELECTED,
-                            }),
-                      })),
-                    };
-                    if (isCorrectingError) {
-                      dispatch(fixActivity(newData));
-                    } else {
-                      dispatch(executeActivity(newData));
-                    }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleExecution(
+                      el.id,
+                      isItemSelected
+                        ? Selections.NOT_SELECTED
+                        : Selections.SELECTED,
+                    );
                   }}
                 >
                   <CheckboxWithLabel

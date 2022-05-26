@@ -10,6 +10,7 @@ import {
   approveRejectActivity,
   executeActivity,
   fixActivity,
+  updateExecutedActivity,
 } from '../actions';
 import { ActivityProps, SupervisorResponse } from '../types';
 import { Wrapper } from './styles';
@@ -139,6 +140,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
     isValueChanged: false,
     reason: activity?.response?.reason ?? '',
     value: activity?.response?.value ?? null,
+    shouldCallApi: false,
   });
 
   useEffect(() => {
@@ -152,7 +154,10 @@ const ShouldBeActivity: FC<ActivityProps> = ({
         : undefined,
       isExecuted: activity?.response?.state === 'EXECUTED',
       isOffLimit: checkIsOffLimit({
-        observedValue: parseFloat(activity?.response?.value) ?? null,
+        observedValue:
+          prevState.value !== activity?.response?.value
+            ? prevState.value
+            : parseFloat(activity?.response?.value) ?? null,
         operator: activity?.data?.operator,
         ...(activity?.data?.operator === 'BETWEEN'
           ? {
@@ -161,11 +166,53 @@ const ShouldBeActivity: FC<ActivityProps> = ({
             }
           : { desiredValue1: parseFloat(activity?.data?.value) }),
       }),
-      isValueChanged: false,
-      reason: activity?.response?.reason ?? '',
-      value: activity?.response?.value ?? null,
+      isValueChanged: prevState.value !== activity?.response?.value,
+      reason:
+        prevState.reason !== activity?.response?.reason
+          ? prevState.reason
+          : activity?.response?.reason ?? '',
+      value:
+        prevState.value !== activity?.response?.value
+          ? prevState.value
+          : activity?.response?.value ?? null,
     }));
   }, [activity]);
+
+  useEffect(() => {
+    if (state.shouldCallApi) {
+      if (state.value || state.reason) {
+        if (isCorrectingError) {
+          dispatch(
+            fixActivity(
+              {
+                ...activity,
+                data: { ...activity.data, input: state.value },
+              },
+              state.reason ? state.reason : undefined,
+            ),
+          );
+        } else {
+          dispatch(
+            executeActivity(
+              {
+                ...activity,
+                data: { ...activity.data, input: state.value },
+              },
+              state.reason ? state.reason : undefined,
+            ),
+          );
+        }
+      }
+      setState((prev) => ({
+        ...prev,
+        shouldCallApi: false,
+      }));
+    }
+  }, [
+    activity?.response?.value,
+    activity?.response?.reason,
+    state.shouldCallApi,
+  ]);
 
   const renderSubmitButtons = () => (
     <div className="buttons-container">
@@ -193,6 +240,8 @@ const ShouldBeActivity: FC<ActivityProps> = ({
                   }
                 : { desiredValue1: parseFloat(activity?.data?.value) }),
             }),
+            value: activity?.response?.value,
+            reason: activity?.response?.reason,
             isValueChanged: false,
           }));
           if (numberInputRef && numberInputRef.current) {
@@ -245,27 +294,22 @@ const ShouldBeActivity: FC<ActivityProps> = ({
   );
 
   const handleExecution = (value: number, withReason = false) => {
-    if (!isCorrectingError) {
-      dispatch(
-        executeActivity(
-          {
-            ...activity,
-            data: { ...activity.data, input: value },
-          },
-          withReason ? state.reason : undefined,
-        ),
-      );
-    } else {
-      dispatch(
-        fixActivity(
-          {
-            ...activity,
-            data: { ...activity.data, input: value },
-          },
-          withReason ? state.reason : undefined,
-        ),
-      );
-    }
+    dispatch(
+      updateExecutedActivity({
+        ...activity,
+        response: {
+          ...activity.response,
+          ...(value !== activity.response.value && { audit: undefined }),
+          value,
+          reason: state.reason,
+          state: state.reason ? 'PENDING_FOR_APPROVAL' : 'EXECUTED',
+        },
+      }),
+    );
+    setState((prevState) => ({
+      ...prevState,
+      shouldCallApi: true,
+    }));
   };
 
   return (

@@ -26,16 +26,16 @@ const Wrapper = styled.div.attrs({
   ${({ isTaskStarted, isLoggedInUserAssigned }) =>
     !isTaskStarted || !isLoggedInUserAssigned
       ? css`
-          opacity: 0.5;
-          pointer-events: none;
-        `
+        opacity: 0.5;
+        pointer-events: none;
+      `
       : null}
 
   ${({ isTaskCompleted, isCorrectingError }) =>
     isTaskCompleted && !isCorrectingError
       ? css`
-          pointer-events: none;
-        `
+        pointer-events: none;
+      `
       : null}
 
   .activity {
@@ -78,12 +78,12 @@ const Wrapper = styled.div.attrs({
 `;
 
 const ActivityList: FC<ActivityListProps> = ({
-  activities,
-  isTaskStarted,
-  isTaskCompleted,
-  isCorrectingError,
-  isLoggedInUserAssigned,
-}) => {
+                                               activities,
+                                               isTaskStarted,
+                                               isTaskCompleted,
+                                               isCorrectingError,
+                                               isLoggedInUserAssigned,
+                                             }) => {
   const {
     auth: { selectedFacility },
     composer: { entity },
@@ -201,9 +201,15 @@ const ActivityList: FC<ActivityListProps> = ({
 
             {state !== 'NOT_STARTED' ? (
               <div className="activity-audit">
-                Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
-                {audit?.modifiedBy?.employeeId} on{' '}
-                {formatDateTime(audit?.modifiedAt, dateAndTimeStampFormat)}
+                {audit ? (
+                  <>
+                    Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
+                    {audit?.modifiedBy?.employeeId} on{' '}
+                    {formatDateTime(audit?.modifiedAt, 'MMM D, YYYY h:mm A')}
+                  </>
+                ) : (
+                  'Updating...'
+                )}
               </div>
             ) : null}
           </div>

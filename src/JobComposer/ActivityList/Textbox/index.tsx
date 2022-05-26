@@ -1,9 +1,8 @@
 import { Entity } from '#JobComposer/composer.types';
 import { useTypedSelector } from '#store';
 import { customOnChange } from '#utils/formEvents';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { executeActivity, fixActivity } from '../actions';
 import { ActivityProps } from '../types';
 
@@ -12,13 +11,15 @@ const TextboxActivity: FC<ActivityProps> = ({
   isCorrectingError,
 }) => {
   const dispatch = useDispatch();
-
+  const inputRef = useRef(null);
   const { entity } = useTypedSelector((state) => state.composer);
   const [value, setValue] = React.useState('');
 
   useEffect(() => {
-    if (activity?.response?.value) {
-      setValue(activity?.response?.value);
+    if (inputRef.current && document.activeElement !== inputRef.current) {
+      if (activity?.response?.value) {
+        setValue(activity?.response?.value);
+      }
     }
   }, [activity?.response?.value]);
 
@@ -45,6 +46,7 @@ const TextboxActivity: FC<ActivityProps> = ({
         <div className="new-form-field">
           <label className="new-form-field-label">User Comments Box</label>
           <textarea
+            ref={inputRef}
             className="new-form-field-textarea"
             placeholder="Users will write their comments here"
             value={value}
