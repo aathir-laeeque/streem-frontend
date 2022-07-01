@@ -3,7 +3,7 @@ import { useTypedSelector } from '#store';
 import { formatDuration } from '#utils/timeUtils';
 import { Timer as TimerIcon } from '@material-ui/icons';
 import moment from 'moment';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 
 const Timer: FC<{
   task: Omit<Task, 'activities'>;
@@ -14,6 +14,7 @@ const Timer: FC<{
 }> = ({ task, timerState, setTimerState }) => {
   const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
   const { state, startedAt, endedAt } = task.taskExecution;
+  const componentDidMount = useRef(false);
 
   const isTaskCompleted =
     state === TaskExecutionState.COMPLETED ||
@@ -21,15 +22,49 @@ const Timer: FC<{
 
   const isTaskStarted = state === TaskExecutionState.IN_PROGRESS;
 
-  const [timeElapsed, setTimeElapsed] = useState(
+  const calcTimeElapsed = () =>
     isTaskCompleted && endedAt && startedAt
       ? moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds')
       : isTaskStarted && recentServerTimestamp && startedAt
       ? moment
           .unix(recentServerTimestamp)
           .diff(moment.unix(startedAt), 'seconds')
-      : 0,
-  );
+      : 0;
+
+  const updateTimerState = (updatedTimeElapsed: number) => {
+    const updatedTimerState = {
+      earlyCompletion: false,
+      limitCrossed: false,
+    };
+
+    if (task.timerOperator === 'NOT_LESS_THAN') {
+      if (task.minPeriod && updatedTimeElapsed < task.minPeriod) {
+        updatedTimerState.earlyCompletion = true;
+      } else {
+        updatedTimerState.earlyCompletion = false;
+      }
+    }
+
+    if (task.maxPeriod && updatedTimeElapsed > task.maxPeriod) {
+      updatedTimerState.limitCrossed = true;
+    }
+
+    if (updatedTimerState !== timerState) {
+      setTimerState(updatedTimerState);
+    }
+  };
+
+  const [timeElapsed, setTimeElapsed] = useState(calcTimeElapsed());
+
+  useEffect(() => {
+    if (componentDidMount.current) {
+      const updatedTimeElapsed: number = calcTimeElapsed();
+      updateTimerState(updatedTimeElapsed);
+      setTimeElapsed(updatedTimeElapsed);
+    } else {
+      componentDidMount.current = true;
+    }
+  }, [recentServerTimestamp]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined = undefined;
@@ -38,27 +73,7 @@ const Timer: FC<{
       interval = setInterval(() => {
         setTimeElapsed((oldTimeElapsed) => {
           const updatedTimeElapsed = ++oldTimeElapsed;
-          const updatedTimerState = {
-            earlyCompletion: false,
-            limitCrossed: false,
-          };
-
-          if (task.timerOperator === 'NOT_LESS_THAN') {
-            if (task.minPeriod && updatedTimeElapsed < task.minPeriod) {
-              updatedTimerState.earlyCompletion = true;
-            } else {
-              updatedTimerState.earlyCompletion = false;
-            }
-          }
-
-          if (task.maxPeriod && updatedTimeElapsed > task.maxPeriod) {
-            updatedTimerState.limitCrossed = true;
-          }
-
-          if (updatedTimerState !== timerState) {
-            setTimerState(updatedTimerState);
-          }
-
+          updateTimerState(updatedTimeElapsed);
           return updatedTimeElapsed;
         });
       }, 1000);
