@@ -1,4 +1,7 @@
 {
+  "env": {
+    "browser": true
+  },
   "parser": "@typescript-eslint/parser", // Specifies the ESLint parser
   "parserOptions": {
     "ecmaVersion": 2020, // Allows for the parsing of modern ECMAScript features
@@ -13,7 +16,7 @@
     }
   },
   "extends": [
-    "prettier" // The "prettier" config now includes not just ESLint core rules, but also rules from all plugins 
+    "prettier" // The "prettier" config now includes not just ESLint core rules, but also rules from all plugins
   ],
   "rules": {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs

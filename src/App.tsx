@@ -3,12 +3,7 @@ import { CustomRoute, Notification, OverlayContainer } from '#components';
 import '#i18n';
 import { configureStore } from '#store';
 import { setAuthHeader } from '#utils/axiosClient';
-import {
-  AuthView,
-  FacilitySelectionView,
-  HomeView,
-  UseCaseSelectionView,
-} from '#views';
+import { AuthView, FacilitySelectionView, HomeView, UseCaseSelectionView } from '#views';
 import PrintJob from '#views/Jobs/PrintJob';
 import PrintJobAuditLogs from '#views/Jobs/PrintJobAuditLogs';
 import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
@@ -34,25 +29,15 @@ const App: FC = () => {
   return (
     <AppVersionCheck>
       <Provider store={store}>
-        <PersistGate
-          loading={null}
-          persistor={persistor}
-          onBeforeLift={onBeforeLift}
-        >
+        <PersistGate loading={null} persistor={persistor} onBeforeLift={onBeforeLift}>
           <Router style={{ display: 'flex', flex: 1 }} basepath="/">
             <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
             <CustomRoute as={FacilitySelectionView} path="facility/selection" />
             <CustomRoute as={HomeView} path="home" />
             <CustomRoute as={PrintJob} path="jobs/:jobId/print" />
             <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
-            <CustomRoute
-              as={PrintSessionActivity}
-              path="users-activity/print"
-            />
-            <CustomRoute
-              as={PrintJobAuditLogs}
-              path="job-activity/:jobId/print"
-            />
+            <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
+            <CustomRoute as={PrintJobAuditLogs} path="job-activity/:jobId/print" />
             <CustomRoute as={UseCaseSelectionView} path="/*" />
           </Router>
           <Notification

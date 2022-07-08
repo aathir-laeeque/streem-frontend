@@ -74,10 +74,7 @@ type Inputs = {
   password: string;
 };
 
-const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
-  closeAllOverlays,
-  closeOverlay,
-}) => {
+const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({ closeAllOverlays, closeOverlay }) => {
   const dispatch = useDispatch();
   const { profile, selectedUseCase } = useTypedSelector((state) => state.auth);
   const [passwordInputType, setPasswordInputType] = useState(true);
@@ -95,12 +92,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
         }),
       );
       if (selectedUseCase) {
-        dispatch(
-          fetch(
-            [ComposerEntity.JOB, ComposerEntity.CHECKLIST],
-            selectedUseCase.id,
-          ),
-        );
+        dispatch(fetch([ComposerEntity.JOB, ComposerEntity.CHECKLIST], selectedUseCase.id));
       }
 
       closeOverlay();
@@ -108,10 +100,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
   };
 
   const AfterIcon = () => (
-    <VisibilityOutlined
-      onClick={() => setPasswordInputType(!passwordInputType)}
-      style={{ color: passwordInputType ? '#000' : '#1d84ff' }}
-    />
+    <VisibilityOutlined onClick={() => setPasswordInputType(!passwordInputType)} style={{ color: passwordInputType ? '#000' : '#1d84ff' }} />
   );
 
   return (
@@ -123,29 +112,18 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
         title="Session Expired!"
         allowCloseOnOutsideClick={false}
       >
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
-          <Avatar
-            user={profile!}
-            size="large"
-            color="blue"
-            borderColor="#ffffff"
-            allowMouseEvents={false}
-          />
-          <div>
-            <div style={{ fontSize: '12px', color: '#c2c2c2' }}>
-              {profile!.employeeId}
-            </div>
-            <div
-              style={{ color: '#161616', fontSize: '16px', marginTop: '4px' }}
-            >
-              {profile!.firstName} {profile!.lastName}
+        {profile && (
+          <div style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
+            <Avatar user={profile!} size="large" color="blue" borderColor="#ffffff" allowMouseEvents={false} />
+            <div>
+              <div style={{ fontSize: '12px', color: '#c2c2c2' }}>{profile!.employeeId}</div>
+              <div style={{ color: '#161616', fontSize: '16px', marginTop: '4px' }}>
+                {profile!.firstName} {profile!.lastName}
+              </div>
             </div>
           </div>
-        </div>
-        <span style={{ marginTop: '8px' }}>
-          Your current session has expired. You may continue by entering your
-          account password.
-        </span>
+        )}
+        <span style={{ marginTop: '8px' }}>Your current session has expired. You may continue by entering your account password.</span>
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextInput
             ref={register({
@@ -168,11 +146,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
             >
               Logout
             </Button1>
-            <Button1
-              type="submit"
-              style={{ marginLeft: 'auto', width: 'auto' }}
-              disabled={!formState.isValid || !formState.isDirty}
-            >
+            <Button1 type="submit" style={{ marginLeft: 'auto', width: 'auto' }} disabled={!formState.isValid || !formState.isDirty}>
               Proceed to Login
             </Button1>
           </div>

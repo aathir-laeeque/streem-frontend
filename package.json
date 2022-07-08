@@ -18,17 +18,19 @@
     }
   ],
   "scripts": {
-    "watch": "rm -rf .cache/ dist/ && bash scripts/pre-build.sh && parcel -p 5000 src/index.html && bash scripts/post-build.sh",
-    "serve": "bash scripts/pre-build.sh && parcel -p 5000 src/index.html && bash scripts/post-build.sh",
-    "build:exp": "parcel build src/index.html --experimental-scope-hoisting",
-    "build": "bash scripts/pre-build.sh && parcel build src/index.html --no-source-maps && bash scripts/post-build.sh",
+    "start": "node scripts/start.js",
+    "build": "bash scripts/pre-build.sh && node scripts/build.js && bash scripts/post-build.sh",
     "lint:check": "eslint -c .eslintrc 'src/**/*{.ts,.tsx}'",
     "lint:fix": "eslint --fix .eslintrc 'src/**/*{.ts,.tsx}'",
     "test": "jest",
     "prepare": "husky install"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.0",
+    "@babel/core": "^7.18.5",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-react": "^7.17.12",
+    "@babel/preset-typescript": "^7.17.12",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@types/draft-js": "^0.11.4",
@@ -54,21 +56,42 @@
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^4.29.3",
     "@typescript-eslint/parser": "^4.29.3",
+    "assert": "^2.0.0",
+    "babel-loader": "^8.2.5",
     "babel-plugin-module-resolver": "^4.1.0",
+    "babel-plugin-styled-components": "^2.0.7",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "css-loader": "^6.7.1",
+    "dotenv": "^16.0.1",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
     "enzyme-to-json": "^3.6.2",
     "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-react": "^7.24.0",
+    "file-loader": "^6.2.0",
+    "fs-extra": "^10.1.0",
+    "html-webpack-plugin": "^5.5.0",
     "husky": "^7.0.0",
     "jest": "^27.0.6",
     "lint-staged": "^11.1.2",
-    "parcel-bundler": "^1.12.5",
     "prettier": "^2.3.2",
+    "process": "^0.11.10",
+    "react-dev-utils": "^12.0.1",
+    "react-refresh": "^0.14.0",
+    "stream-browserify": "^3.0.0",
+    "style-loader": "^3.3.1",
+    "terser-webpack-plugin": "^5.3.3",
     "ts-jest": "^27.0.5",
+    "ts-loader": "^9.3.0",
     "typescript": "^4.3.5",
+    "typescript-plugin-styled-components": "^2.0.0",
+    "util": "^0.12.4",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.9.2",
     "whatwg-fetch": "^3.6.2"
   },
   "dependencies": {
@@ -108,6 +131,18 @@
   "lint-staged": {
     "*.{js,ts,tsx}": [
       "eslint --fix"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
     ]
   }
 }

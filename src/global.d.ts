@@ -12,3 +12,18 @@ declare module '*.svg' {
   const svg: any;
   export default svg;
 }
+
+declare module '*.woff' {
+  const woff: any;
+  export default woff;
+}
+
+declare module '*.woff2' {
+  const woff2: any;
+  export default woff2;
+}
+
+declare module '*.eot' {
+  const eot: string;
+  export default eot;
+}
