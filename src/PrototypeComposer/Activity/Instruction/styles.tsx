@@ -9,7 +9,6 @@ export const Wrapper = styled.div`
   }
 
   .editor-class {
-    word-break: break-all;
     overflow-wrap: break-word;
     border: 1px solid #bababa;
     padding: 0 16px;
