@@ -119,7 +119,6 @@ dist
 
 
 # custom
-/src/views/.Checklists
 /.vscode
 /src/version.json
 
