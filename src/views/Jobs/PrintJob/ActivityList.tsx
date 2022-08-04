@@ -724,6 +724,63 @@ const activityTemplateFormatter = (
           ))}
         </View>
       );
+    case MandatoryActivity.MEDIA:
+      return (
+        <View style={styles.activityView} wrap={false}>
+          <Text style={{ ...styles.text12, marginBottom: 16 }}>
+            Uploaded Media:
+          </Text>
+          {activity.response?.medias?.length &&
+            activity.response.medias.map(
+              (imageDetails: {
+                link: string;
+                name: string;
+                id: string;
+                description: string | null;
+              }) => {
+                return (
+                  <View
+                    key={imageDetails.id}
+                    style={{ marginBottom: 16 }}
+                    wrap={false}
+                  >
+                    <Text style={styles.text12}>
+                      <Text
+                        style={{
+                          ...styles.text12,
+                          marginRight: '2px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        Name-
+                      </Text>
+                      {imageDetails.name}
+                    </Text>
+
+                    {imageDetails.description && (
+                      <Text style={styles.text12}>
+                        <Text
+                          style={{
+                            ...styles.text12,
+                            marginRight: '2px',
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          Description-
+                        </Text>
+                        {imageDetails.description}
+                      </Text>
+                    )}
+                    <Image
+                      src={imageDetails.link}
+                      style={{ width: '75%', marginTop: '8px' }}
+                    />
+                  </View>
+                );
+              },
+            )}
+        </View>
+      );
     default:
       return null;
   }
