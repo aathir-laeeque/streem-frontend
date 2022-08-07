@@ -9,6 +9,7 @@ import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useDispatch } from 'react-redux';
 import { updateActivityApi, updateStoreActivity } from '../actions';
+import ActivityLabelInput from '../ActivityLabelInput';
 import { ActivityProps } from '../types';
 import EmojiComponent from './EmojiComponent';
 import { Wrapper } from './styles';
@@ -63,6 +64,8 @@ const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         </div>
       ) : null}
       <div className="activity-header">Write your instruction/notes</div>
+
+      <ActivityLabelInput activity={activity} />
 
       <Editor
         defaultEditorState={editorState}

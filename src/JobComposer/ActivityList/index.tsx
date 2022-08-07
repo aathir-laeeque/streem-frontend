@@ -79,6 +79,10 @@ const Wrapper = styled.div.attrs({
       line-height: 0.83;
       margin-top: 16px;
     }
+
+    .activity-label {
+      margin-bottom: 16px;
+    }
   }
 `;
 
@@ -122,14 +126,16 @@ const ActivityList: FC<ActivityListProps> = ({
               </div>
             ) : null}
 
+            {activity?.label &&
+              ![`${MandatoryActivity.YES_NO}`, `${MandatoryActivity.PARAMETER}`].includes(
+                activity.type,
+              ) && <div className="activity-label">{activity.label}</div>}
+
             {(() => {
               switch (activity.type) {
                 case MandatoryActivity.CHECKLIST:
                   return (
-                    <ChecklistActivity
-                      activity={activity}
-                      isCorrectingError={isCorrectingError}
-                    />
+                    <ChecklistActivity activity={activity} isCorrectingError={isCorrectingError} />
                   );
 
                 case NonMandatoryActivity.INSTRUCTION:
@@ -142,10 +148,7 @@ const ActivityList: FC<ActivityListProps> = ({
 
                 case NonMandatoryActivity.MATERIAL:
                   return (
-                    <MaterialActivity
-                      activity={activity}
-                      isCorrectingError={isCorrectingError}
-                    />
+                    <MaterialActivity activity={activity} isCorrectingError={isCorrectingError} />
                   );
 
                 case MandatoryActivity.MEDIA:
@@ -153,9 +156,7 @@ const ActivityList: FC<ActivityListProps> = ({
                     <MediaActivity
                       activity={activity}
                       isCorrectingError={isCorrectingError}
-                      isTaskCompleted={
-                        isTaskCompleted || !isLoggedInUserAssigned
-                      }
+                      isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
                     />
                   );
 
@@ -172,10 +173,7 @@ const ActivityList: FC<ActivityListProps> = ({
                 case MandatoryActivity.SHOULD_BE:
                 case MandatoryActivity.PARAMETER:
                   return (
-                    <ShouldBeActivity
-                      activity={activity}
-                      isCorrectingError={isCorrectingError}
-                    />
+                    <ShouldBeActivity activity={activity} isCorrectingError={isCorrectingError} />
                   );
 
                 case MandatoryActivity.SIGNATURE:
@@ -183,26 +181,18 @@ const ActivityList: FC<ActivityListProps> = ({
                     <SignatureActivity
                       activity={activity}
                       isCorrectingError={isCorrectingError}
-                      isTaskCompleted={
-                        isTaskCompleted || !isLoggedInUserAssigned
-                      }
+                      isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
                     />
                   );
 
                 case MandatoryActivity.TEXTBOX:
                   return (
-                    <TextboxActivity
-                      activity={activity}
-                      isCorrectingError={isCorrectingError}
-                    />
+                    <TextboxActivity activity={activity} isCorrectingError={isCorrectingError} />
                   );
 
                 case MandatoryActivity.YES_NO:
                   return (
-                    <YesNoActivity
-                      activity={activity}
-                      isCorrectingError={isCorrectingError}
-                    />
+                    <YesNoActivity activity={activity} isCorrectingError={isCorrectingError} />
                   );
 
                 default:

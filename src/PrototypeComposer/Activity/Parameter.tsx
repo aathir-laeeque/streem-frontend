@@ -3,7 +3,6 @@ import { Error } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { PARAMETER_OPERATORS } from '#PrototypeComposer/constants';
-
 import { ParameterWrapper } from './styles';
 import { ActivityProps, ParameterActivityErrors } from './types';
 import { useDispatch } from 'react-redux';
@@ -16,7 +15,9 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
 
   useEffect(() => {
     if (componentLoaded) {
-      dispatch(updateActivityApi(activity));
+      dispatch(
+        updateActivityApi({ ...activity, label: activity?.data?.parameter }),
+      );
     } else if (activity) {
       updateComponentLoaded(true);
     }

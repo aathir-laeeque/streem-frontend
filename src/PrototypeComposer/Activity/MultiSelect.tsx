@@ -1,4 +1,4 @@
-import { ActivityItemInput, AddNewItem, Select } from '#components';
+import { ActivityItemInput, AddNewItem, TextInput } from '#components';
 import { MandatoryActivity } from '#PrototypeComposer/checklist.types';
 import {
   CheckBoxOutlineBlankSharp,
@@ -10,6 +10,7 @@ import { noop } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
+import ActivityLabelInput from './ActivityLabelInput';
 import {
   addStoreActivityItem,
   removeStoreActivityItem,
@@ -50,19 +51,19 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         </div>
       ) : null}
 
-      <Select
-        disabled
-        label={
-          isMultiSelect ? 'Creating a Multi Choice' : 'Creating a single choice'
-        }
-        options={[]}
-        onChange={noop}
+      <TextInput
         placeholder={
           isMultiSelect
             ? 'User can select one or more options'
             : 'User can select one option here'
         }
+        disabled
+        label={
+          isMultiSelect ? 'Creating a Multi Choice' : 'Creating a single choice'
+        }
       />
+
+      <ActivityLabelInput activity={activity} isControlled />
 
       <ul className="options-list">
         {activity?.data?.map((item, index) => (

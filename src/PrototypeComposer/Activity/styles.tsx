@@ -52,6 +52,10 @@ const ActivityWrapper = styled.div.attrs({
       margin: 0px 0px 16px;
     }
   }
+
+  .activity-label-input {
+    margin-top: 16px;
+  }
 `;
 
 const ChecklistWrapper = styled.div.attrs({
@@ -198,10 +202,10 @@ const TextboxWrapper = styled.div.attrs({
     color: #000000;
     display: block;
     font-size: 12px;
-    margin-bottom: 12px;
   }
 
   .textbox {
+    margin-top: 12px;
     align-items: center;
     background-color: #fafafa;
     border-radius: 4px;

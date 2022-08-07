@@ -8,6 +8,10 @@ export const Wrapper = styled.div`
     margin-bottom: 12px;
   }
 
+  .wrapper-class {
+    margin-top: 16px;
+  }
+
   .editor-class {
     overflow-wrap: break-word;
     border: 1px solid #bababa;

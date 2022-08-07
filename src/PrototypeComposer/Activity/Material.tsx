@@ -15,6 +15,7 @@ import {
   updateStoreActivity,
   updateStoreMediaActivity,
 } from './actions';
+import ActivityLabelInput from './ActivityLabelInput';
 import { MaterialWrapper } from './styles';
 import { ActivityProps, MaterialActivityErrors } from './types';
 
@@ -81,6 +82,8 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         </div>
       ) : null}
       <label>Add Materials</label>
+
+      <ActivityLabelInput activity={activity} isControlled />
 
       <ol className="material-list">
         {activity.data?.map((item, index: number) => (

@@ -9,6 +9,7 @@ import {
   updateActivityApi,
   updateStoreActivity,
 } from './actions';
+import ActivityLabelInput from './ActivityLabelInput';
 import { ChecklistWrapper } from './styles';
 import { ActivityProps, ChecklistActivityErrors } from './types';
 
@@ -40,6 +41,8 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
       ) : null}
 
       <label>Creating a checklist</label>
+
+      <ActivityLabelInput activity={activity} isControlled />
 
       <ul className="checklist-list">
         {activity?.data?.map((item, index) => (
