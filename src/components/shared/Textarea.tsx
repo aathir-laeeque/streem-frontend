@@ -21,6 +21,7 @@ type TextareaProps = {
   label?: string;
   onChange?: ({ name, value }: OnChangeType) => void;
   optional?: boolean;
+  onBlur?: ({ name, value }: OnChangeType) => void;
 } & ComponentPropsWithRef<'textarea'>;
 
 type WrapperProps = {
@@ -174,6 +175,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       optional = false,
       placeholder = 'Write here',
       rows = 1,
+      onBlur,
     } = props;
 
     const internalRef = createRef<HTMLTextAreaElement>();
@@ -199,6 +201,12 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       }
     };
 
+    const onBlurHandler = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+      if (typeof onBlur === 'function') {
+        console.log(e);
+      }
+    };
+
     return (
       <Wrapper
         activityItemInput={activityItemInput}
@@ -219,6 +227,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             defaultValue={defaultValue}
             disabled={disabled}
             name={name}
+            onBlur={onBlurHandler}
             onChange={onChangeHandler}
             placeholder={placeholder}
             ref={ref ?? internalRef}

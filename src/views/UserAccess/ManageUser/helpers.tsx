@@ -15,7 +15,7 @@ import {
   apiGetAllChallengeQuestions,
   apiUpdatePassword,
 } from '#utils/apiUrls';
-import { ResponseObj, ValidatorProps } from '#utils/globalTypes';
+import { InputTypes, ResponseObj, ValidatorProps } from '#utils/globalTypes';
 import { getErrorMsg, request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import { Create, VisibilityOutlined } from '@material-ui/icons';
@@ -41,7 +41,7 @@ type CreateSectionConfigProps = {
   formData: UseFormMethods<EditUserRequestInputs>;
   selectedUser?: User;
   toggles?: TogglesState;
-  onFacilityChange?: (options: Option[]) => void;
+  onFacilityChange: (options: Option[]) => void;
   updateToggles?: (key: Toggleables) => void;
 };
 
@@ -86,7 +86,7 @@ export const createSectionConfig = ({
           <FormGroup
             inputs={[
               {
-                type: 'text',
+                type: InputTypes.SINGLE_LINE,
                 props: {
                   placeholder: 'Enter Employee’s First Name',
                   label: 'First Name',
@@ -101,7 +101,7 @@ export const createSectionConfig = ({
                 },
               },
               {
-                type: 'text',
+                type: InputTypes.SINGLE_LINE,
                 props: {
                   placeholder: 'Enter Employee’s Last Name',
                   label: 'Last Name',
@@ -124,7 +124,7 @@ export const createSectionConfig = ({
           <FormGroup
             inputs={[
               {
-                type: 'text',
+                type: InputTypes.SINGLE_LINE,
                 props: {
                   placeholder: 'Enter Employee’s ID',
                   label: 'Employee ID',
@@ -162,7 +162,7 @@ export const createSectionConfig = ({
                 },
               },
               {
-                type: 'text',
+                type: InputTypes.SINGLE_LINE,
                 props: {
                   placeholder: 'Enter Employee’s Email Address',
                   label: 'Email ID',
@@ -192,7 +192,7 @@ export const createSectionConfig = ({
                 },
               },
               {
-                type: 'text',
+                type: InputTypes.SINGLE_LINE,
                 props: {
                   placeholder: 'Enter Employee’s Department',
                   label: 'Department',
@@ -246,7 +246,7 @@ export const createSectionConfig = ({
           <FormGroup
             inputs={[
               {
-                type: 'role',
+                type: InputTypes.ROLE,
                 props: {
                   id: 'roles',
                   selected: selectedRole,
@@ -300,7 +300,7 @@ export const createSectionConfig = ({
             <FormGroup
               inputs={[
                 {
-                  type: 'checkbox',
+                  type: InputTypes.MULTI_SELECT,
                   props: {
                     id: 'facilities',
                     isMulti: true,
@@ -478,7 +478,7 @@ const UpdateChallengeQuestion = ({
         data: { answer },
       }: ResponseObj<{ answer: string }> = await request(
         'GET',
-        apiChallengeQuestions(userId),
+        apiChallengeQuestions(userId!),
         { params: { token } },
       );
 
@@ -541,7 +541,7 @@ const UpdateChallengeQuestion = ({
       <FormGroup
         inputs={[
           {
-            type: 'checkbox',
+            type: InputTypes.SINGLE_SELECT,
             props: {
               id: 'challengeQuestion',
               options: state?.questions,
@@ -557,7 +557,7 @@ const UpdateChallengeQuestion = ({
             },
           },
           {
-            type: 'text',
+            type: InputTypes.SINGLE_LINE,
             props: {
               placeholder: 'Enter Your Answer',
               label: 'Your Answer',
@@ -737,7 +737,9 @@ const UpdatePassword = ({
       <FormGroup
         inputs={[
           {
-            type: isPasswordInputType ? 'password' : 'text',
+            type: isPasswordInputType
+              ? InputTypes.PASSWORD
+              : InputTypes.SINGLE_LINE,
             props: {
               placeholder: 'Create Password',
               label: 'Create Password',
@@ -751,14 +753,16 @@ const UpdatePassword = ({
             },
           },
           {
-            type: 'error-container',
+            type: InputTypes.ERROR_CONTAINER,
             props: {
               messages: validators.password.messages,
               errorsTypes: state?.errors?.password,
             },
           },
           {
-            type: isConfirmPasswordTextHidden ? 'password' : 'text',
+            type: isConfirmPasswordTextHidden
+              ? InputTypes.PASSWORD
+              : InputTypes.SINGLE_LINE,
             props: {
               placeholder: 'Confirm New Password',
               label: 'Confirm New Password',
@@ -772,7 +776,7 @@ const UpdatePassword = ({
             },
           },
           {
-            type: 'error-container',
+            type: InputTypes.ERROR_CONTAINER,
             props: {
               messages: validators.confirmPassword.messages,
               errorsTypes: state?.errors?.confirmPassword,

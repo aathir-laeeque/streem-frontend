@@ -57,14 +57,13 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     roles: userRoles,
   } = useTypedSelector((state) => state.auth);
 
-  const { list: jobProperties, loading: jobPropertiesLoading } =
-    useTypedSelector((state) => state.properties[ComposerEntity.JOB]);
+  const { list: jobProperties, loading: jobPropertiesLoading } = useTypedSelector(
+    (state) => state.properties[ComposerEntity.JOB],
+  );
 
   const defaultFilters = useRef<FilterField[]>(getBaseFilter(values));
 
-  const [filterFields, setFilterFields] = useState<FilterField[]>(
-    getBaseFilter(values),
-  );
+  const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(values));
 
   const [assignedUsers, setAssignedUsers] = useState<User[]>([]);
 
@@ -143,60 +142,53 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   };
 
   const columns = [
-    ...(values.some(
-      (val: JobStateType) =>
-        val in AssignedJobStates || val in CompletedJobStates,
-    )
+    ...(values.some((val: JobStateType) => val in AssignedJobStates || val in CompletedJobStates)
       ? [
-        {
-          id: 'state',
-          label: 'State',
-          minWidth: 166,
-          format: function renderComp({ state }: Job) {
-            const isJobBlocked = state === AssignedJobStates.BLOCKED;
-            const isJobStarted = state === AssignedJobStates.IN_PROGRESS;
-            const isJobCompleted = state === CompletedJobStates.COMPLETED;
-            const isCompletedWithException =
-              state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
+          {
+            id: 'state',
+            label: 'State',
+            minWidth: 166,
+            format: function renderComp({ state }: Job) {
+              const isJobBlocked = state === AssignedJobStates.BLOCKED;
+              const isJobStarted = state === AssignedJobStates.IN_PROGRESS;
+              const isJobCompleted = state === CompletedJobStates.COMPLETED;
+              const isCompletedWithException =
+                state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
 
-            const title = isJobCompleted
-              ? 'Completed'
-              : isCompletedWithException
+              const title = isJobCompleted
+                ? 'Completed'
+                : isCompletedWithException
                 ? 'Completed with Exception'
                 : isJobBlocked
-                  ? 'Approval Pending'
-                  : isJobStarted
-                    ? 'Started'
-                    : 'Not Started';
+                ? 'Approval Pending'
+                : isJobStarted
+                ? 'Started'
+                : 'Not Started';
 
-            return (
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <FiberManualRecord
-                  className="icon"
-                  style={{
-                    fontSize: '20px',
-                    color: isJobCompleted
-                      ? '#5aa700'
-                      : isJobStarted
-                        ? '#1d84ff'
-                        : '#f7b500',
-                  }}
-                />
-                <span title={title}>{title}</span>
-              </div>
-            );
+              return (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <FiberManualRecord
+                    className="icon"
+                    style={{
+                      fontSize: '20px',
+                      color: isJobCompleted ? '#5aa700' : isJobStarted ? '#1d84ff' : '#f7b500',
+                    }}
+                  />
+                  <span title={title}>{title}</span>
+                </div>
+              );
+            },
           },
-        },
-      ]
+        ]
       : []),
     {
       id: 'name',
       label: 'Name',
       minWidth: 240,
       format: function renderComp({
-                                    id,
-                                    checklist: { id: checklistId, name: checklistName },
-                                  }: Job) {
+        id,
+        checklist: { id: checklistId, name: checklistName },
+      }: Job) {
         return (
           <span
             className="primary"
@@ -210,46 +202,38 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         );
       },
     },
-    ...(values.some(
-      (val: JobStateType) =>
-        val in AssignedJobStates || val in CompletedJobStates,
-    )
+    ...(values.some((val: JobStateType) => val in AssignedJobStates || val in CompletedJobStates)
       ? [
-        {
-          id: 'assignees',
-          label: 'Assignees',
-          minWidth: 152,
-          format: function renderComp(item: Job) {
-            return <AssigneesColumn assignees={item.assignees} />;
+          {
+            id: 'assignees',
+            label: 'Assignees',
+            minWidth: 152,
+            format: function renderComp(item: Job) {
+              return <AssigneesColumn assignees={item.assignees} />;
+            },
           },
-        },
-      ]
+        ]
       : []),
     ...(values.some((val: JobStateType) => val in AssignedJobStates)
       ? [
-        {
-          id: 'task-completed',
-          label: 'Task Completed',
-          minWidth: 152,
-          format: function renderComp({
-                                        completedTasks = 0,
-                                        totalTasks = 0,
-                                      }: Job) {
-            const percentage = totalTasks
-              ? (completedTasks / totalTasks) * 100
-              : 0;
+          {
+            id: 'task-completed',
+            label: 'Task Completed',
+            minWidth: 152,
+            format: function renderComp({ completedTasks = 0, totalTasks = 0 }: Job) {
+              const percentage = totalTasks ? (completedTasks / totalTasks) * 100 : 0;
 
-            return (
-              <div className="task-progress">
-                <ProgressBar whiteBackground percentage={percentage} />
-                <span>
+              return (
+                <div className="task-progress">
+                  <ProgressBar whiteBackground percentage={percentage} />
+                  <span>
                     {completedTasks} of {totalTasks} Tasks
                   </span>
-              </div>
-            );
+                </div>
+              );
+            },
           },
-        },
-      ]
+        ]
       : []),
     {
       id: 'code',
@@ -270,8 +254,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     <TabContentWrapper>
       <div className="filters">
         <SearchFilter
-          key={label}
-          showdropdown
+          label={label}
+          showDropdown
           dropdownOptions={[
             {
               label: 'Name',
@@ -282,8 +266,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             ...jobProperties.map(({ label, id }) => ({
               label,
               value: id,
-              field:
-                'jobPropertyValues.facilityUseCasePropertyMapping.propertiesId',
+              field: 'jobPropertyValues.facilityUseCasePropertyMapping.propertiesId',
               operator: FilterOperators.EQ,
             })),
           ]}
@@ -293,9 +276,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                 ...currentFields.filter((field) =>
                   field.field === 'taskExecutions.assignees.user.id'
                     ? true
-                    : defaultFilters.current.some(
-                      (newField) => newField.field === field.field,
-                    ),
+                    : defaultFilters.current.some((newField) => newField.field === field.field),
                 ),
                 ...fields,
               ];
@@ -321,12 +302,12 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                   ...filteredFields,
                   ...(fields.length > 0
                     ? ([
-                      {
-                        field: 'taskExecutions.assignees.user.id',
-                        op: 'ANY',
-                        values: fields.map((user) => user.id),
-                      },
-                    ] as FilterField[])
+                        {
+                          field: 'taskExecutions.assignees.user.id',
+                          op: 'ANY',
+                          values: fields.map((user) => user.id),
+                        },
+                      ] as FilterField[])
                     : []),
                 ];
                 fetchData(updatedFilterFields);
@@ -343,8 +324,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             offLabel="Jobs With Exception"
             value={
               !!(
-                filterFields.find((field) => field.field === 'state')
-                  ?.values[0] === CompletedJobStates.COMPLETED_WITH_EXCEPTION
+                filterFields.find((field) => field.field === 'state')?.values[0] ===
+                CompletedJobStates.COMPLETED_WITH_EXCEPTION
               )
             }
             onChange={(isChecked) => {
@@ -353,12 +334,12 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                   ...currentFields.filter((el) => el.field !== 'state'),
                   ...(isChecked
                     ? ([
-                      {
-                        field: 'state',
-                        op: FilterOperators.EQ,
-                        values: [CompletedJobStates.COMPLETED_WITH_EXCEPTION],
-                      },
-                    ] as FilterField[])
+                        {
+                          field: 'state',
+                          op: FilterOperators.EQ,
+                          values: [CompletedJobStates.COMPLETED_WITH_EXCEPTION],
+                        },
+                      ] as FilterField[])
                     : [...getBaseFilter(values)]),
                 ];
                 fetchData(updatedFilterFields);
@@ -427,13 +408,10 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
           rows={jobs.map((item) => {
             return {
               ...item,
-              ...item.properties!.reduce<Record<string, string>>(
-                (acc, itemProperty) => {
-                  acc[itemProperty.id] = itemProperty.value;
-                  return acc;
-                },
-                {},
-              ),
+              ...item.properties!.reduce<Record<string, string>>((acc, itemProperty) => {
+                acc[itemProperty.id] = itemProperty.value;
+                return acc;
+              }, {}),
             };
           })}
         />
@@ -447,10 +425,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             }}
           />
           {Array.from({ length: pageable.totalPages }, (_, i) => i)
-            .slice(
-              Math.floor(pageable.page / 10) * 10,
-              Math.floor(pageable.page / 10) * 10 + 10,
-            )
+            .slice(Math.floor(pageable.page / 10) * 10, Math.floor(pageable.page / 10) * 10 + 10)
             .map((el) => (
               <span
                 key={el}

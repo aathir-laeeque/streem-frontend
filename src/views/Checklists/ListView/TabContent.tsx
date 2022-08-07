@@ -507,8 +507,8 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     <TabContentWrapper>
       <div className="filters">
         <SearchFilter
-          key={label}
-          showdropdown
+          label={label}
+          showDropdown
           dropdownOptions={[
             {
               label: 'Checklist Name',

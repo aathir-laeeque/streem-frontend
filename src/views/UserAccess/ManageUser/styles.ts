@@ -121,6 +121,19 @@ export const Composer = styled.form`
       color: #000;
     }
   }
+
+  .custom-select__multi-value--is-disabled {
+    ::before {
+      content: '';
+      border-radius: 50%;
+      border: 2px solid;
+      width: 0.5px;
+      height: 0.5px;
+      top: unset;
+      position: absolute;
+      left: 2px;
+    }
+  }
 `;
 
 export const CustomInputGroup = styled.div`

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import LoginBackground from '#assets/svg/LoginBackground.svg';
 import RegisterBackground from '#assets/svg/RegisterBackground.svg';
 import { Button1 } from '#components';
@@ -6,6 +5,7 @@ import { Option } from '#components/shared/Select';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
 import { apiCheckUsername } from '#utils/apiUrls';
+import { InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import {
@@ -133,10 +133,8 @@ export const createBaseViewConfig = ({
     userId,
   } = useTypedSelector((state) => state.auth);
   const [isPasswordInputType, setIsPasswordInputType] = useState(true);
-  const [
-    isConfirmPasswordTextHidden,
-    setIsConfirmPasswordTextHidden,
-  ] = useState(true);
+  const [isConfirmPasswordTextHidden, setIsConfirmPasswordTextHidden] =
+    useState(true);
 
   const PasswordAfterIcon = () => (
     <VisibilityOutlined
@@ -224,7 +222,7 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: 'text',
+              type: InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Write your Username or Email ID here',
                 label: 'Username or Email ID',
@@ -236,7 +234,9 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: isPasswordInputType ? 'password' : 'text',
+              type: isPasswordInputType
+                ? InputTypes.PASSWORD
+                : InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Enter your Password',
                 label: 'Password',
@@ -285,7 +285,7 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: 'text',
+              type: InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Write your Username or Email ID here',
                 label: 'Username or Email ID',
@@ -360,8 +360,7 @@ export const createBaseViewConfig = ({
           key: RecoveryOptions.CONTACT_ADMIN,
           label: 'Contact Administrator',
           value: RecoveryOptions.CONTACT_ADMIN,
-          desc:
-            'Send a request to your administrator to resest password for your account.',
+          desc: 'Send a request to your administrator to resest password for your account.',
         });
       }
 
@@ -372,7 +371,7 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: 'radio',
+              type: InputTypes.RADIO,
               props: {
                 groupProps: {
                   id: 'recoveryOption',
@@ -445,7 +444,7 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: 'checkbox',
+              type: InputTypes.SINGLE_SELECT,
               props: {
                 id: 'question',
                 name: 'question',
@@ -468,7 +467,7 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: 'text',
+              type: InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Write your Answer here',
                 label: 'Enter Your Answer',
@@ -527,7 +526,7 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: 'text',
+              type: InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Enter your Secret Key here',
                 label: 'Secret Key',
@@ -679,7 +678,9 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: isPasswordInputType ? 'password' : 'text',
+              type: isPasswordInputType
+                ? InputTypes.PASSWORD
+                : InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'New Password',
@@ -697,14 +698,16 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: 'error-container',
+              type: InputTypes.ERROR_CONTAINER,
               props: {
                 messages: validators.password.messages,
                 errorsTypes: keys(formState?.errors?.password?.types) || [],
               },
             },
             {
-              type: isConfirmPasswordTextHidden ? 'password' : 'text',
+              type: isConfirmPasswordTextHidden
+                ? InputTypes.PASSWORD
+                : InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Enter your new Password again',
                 label: 'Confirm Password',
@@ -719,7 +722,7 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: 'error-container',
+              type: InputTypes.ERROR_CONTAINER,
               props: {
                 messages: validators.confirmPassword.messages,
                 errorsTypes:
@@ -764,7 +767,7 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: 'text',
+              type: InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Enter your Employee ID',
                 label: 'Employee ID',
@@ -812,7 +815,7 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: 'text',
+              type: InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Full Name (Not Editable)',
                 label: 'Full Name (Not Editable)',
@@ -823,7 +826,7 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: 'text',
+              type: InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Employee ID (Not Editable)',
                 label: 'Employee ID (Not Editable)',
@@ -834,7 +837,7 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: 'text',
+              type: InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Create Username',
                 label: 'Create Username',
@@ -864,7 +867,9 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: isPasswordInputType ? 'password' : 'text',
+              type: isPasswordInputType
+                ? InputTypes.PASSWORD
+                : InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'Create Password',
@@ -882,14 +887,16 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: 'error-container',
+              type: InputTypes.ERROR_CONTAINER,
               props: {
                 messages: validators.password.messages,
                 errorsTypes: keys(formState?.errors?.password?.types) || [],
               },
             },
             {
-              type: isConfirmPasswordTextHidden ? 'password' : 'text',
+              type: isConfirmPasswordTextHidden
+                ? InputTypes.PASSWORD
+                : InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Enter your new Password again',
                 label: 'Confirm Password',
@@ -904,7 +911,7 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: 'error-container',
+              type: InputTypes.ERROR_CONTAINER,
               props: {
                 messages: validators.confirmPassword.messages,
                 errorsTypes:
@@ -949,7 +956,7 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: 'checkbox',
+              type: InputTypes.SINGLE_SELECT,
               props: {
                 id: 'question',
                 name: 'question',
@@ -972,7 +979,7 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: 'text',
+              type: InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Write your Answer here',
                 label: 'Enter Your Answer',
@@ -1154,7 +1161,7 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: 'checkbox',
+              type: InputTypes.SINGLE_SELECT,
               props: {
                 id: 'facility',
                 name: 'facility',

@@ -19,9 +19,7 @@ class NestedMenuItem extends React.Component {
     this.state = {
       subMenuOpen: false,
     };
-    const expandIconSize = this.props.MenuItemProps?.dense
-      ? 'small'
-      : 'default';
+    const expandIconSize = this.props.MenuItemProps?.dense ? 'small' : 'medium';
     this.expandIcon = this.props.expandIcon ? (
       this.props.expandIcon
     ) : props.left ? (

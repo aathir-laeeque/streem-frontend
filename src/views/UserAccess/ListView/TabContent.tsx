@@ -471,8 +471,8 @@ const TabContent: React.FC<TabContentProps> = (props) => {
     <TabContentWrapper>
       <div className="filters">
         <SearchFilter
-          key={props.label}
-          showdropdown
+          label={props.label}
+          showDropdown
           dropdownOptions={[
             {
               label: 'First Name',

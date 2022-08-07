@@ -70,3 +70,26 @@ export type FilterField = {
   op: FilterOperators;
   values: [string | boolean] | string[];
 };
+
+export enum InputTypes {
+  DATE = 'DATE',
+  DATE_TIME = 'DATE_TIME',
+  TIME = 'TIME',
+  NUMBER = 'NUMBER',
+  MULTI_LINE = 'MULTI_LINE',
+  MULTI_SELECT = 'MULTI_SELECT',
+  SINGLE_LINE = 'SINGLE_LINE',
+  SINGLE_SELECT = 'SINGLE_SELECT',
+  PASSWORD = 'PASSWORD',
+  ROLE = 'ROLE',
+  ERROR_CONTAINER = 'ERROR_CONTAINER',
+  RADIO = 'RADIO',
+}
+
+export type SelectOptions =
+  | {
+      label: string;
+      value: string;
+      externalId?: string;
+    }[]
+  | undefined;

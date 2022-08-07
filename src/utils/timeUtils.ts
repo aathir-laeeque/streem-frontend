@@ -1,9 +1,21 @@
 import 'moment-duration-format';
-
 import moment from 'moment';
+import { store } from '../App';
+import { InputTypes } from './globalTypes';
 
-export const formatDateTime = (time: number, format = 'DD-MM-YYYY HH:mm:ss') =>
-  moment.unix(time).utcOffset('+05:30').format(format);
+export const formatDateTime = (time: number, format?: string) => {
+  const {
+    auth: { selectedFacility },
+    facilityWiseConstants,
+  } = store.getState();
+  const { dateAndTimeStampFormat } =
+    facilityWiseConstants[selectedFacility!.id];
+
+  return moment
+    .unix(time)
+    .utcOffset('+05:30')
+    .format(format || dateAndTimeStampFormat);
+};
 
 // TODO:Deprecate this function and use the one below this one.
 export const formatDuration = (duration: number) => {
@@ -51,3 +63,15 @@ export const formatDuration1 = ({
   moment
     .duration(duration, unit ?? 's')
     .format(format, { ...formatSettings, trim: 'all' });
+
+export const formatDateByInputType = (
+  inputType: InputTypes,
+  value: string | number,
+) => {
+  const castedValue = typeof value === 'string' ? parseInt(value) : value;
+  return inputType === InputTypes.DATE
+    ? formatDateTime(castedValue, 'YYYY-MM-DD')
+    : inputType === InputTypes.TIME
+    ? formatDateTime(castedValue, 'h:mm')
+    : formatDateTime(castedValue);
+};

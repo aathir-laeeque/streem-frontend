@@ -86,8 +86,8 @@ export default function DataTable({
   columns: {
     id: string;
     label: string;
-    minWidth: number;
-    maxWidth?: number;
+    minWidth: number | string;
+    maxWidth?: number | string;
     align?: TableCellProps['align'];
     format?: (value: any) => any;
   }[];
@@ -124,9 +124,7 @@ export default function DataTable({
                           {column.format ? (
                             column.format(row)
                           ) : (
-                            <span title={row[column.id]}>
-                              {row[column.id] ?? '-N/A-'}
-                            </span>
+                            <span title={row[column.id]}>{row[column.id] ?? '-N/A-'}</span>
                           )}
                         </TableCell>
                       );

@@ -2,7 +2,7 @@ import { capitalize } from 'lodash';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 
-const HeaderWrapper = styled.div.attrs({
+export const HeaderWrapper = styled.div.attrs({
   className: 'tab-header',
 })`
   background-color: transparent;
@@ -30,12 +30,12 @@ const HeaderWrapper = styled.div.attrs({
   }
 `;
 
-const BodyWrapper = styled.div.attrs({
+export const BodyWrapper = styled.div.attrs({
   className: 'tab-body',
 })`
   background-color: #ffffff;
   grid-area: tab-body;
-  padding: 24px 8px 0px;
+  padding: 8px 8px 0px;
   display: flex;
   flex-direction: column;
   flex: 1;

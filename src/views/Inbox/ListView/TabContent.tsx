@@ -92,12 +92,12 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         const title = isJobCompleted
           ? 'Completed'
           : isCompletedWithException
-            ? 'Completed with Exception'
-            : isJobBlocked
-              ? 'Approval Pending'
-              : isJobStarted
-                ? 'Started'
-                : 'Not Started';
+          ? 'Completed with Exception'
+          : isJobBlocked
+          ? 'Approval Pending'
+          : isJobStarted
+          ? 'Started'
+          : 'Not Started';
 
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -108,8 +108,8 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
                 color: isJobCompleted
                   ? '#5aa700'
                   : isJobStarted
-                    ? '#1d84ff'
-                    : '#f7b500',
+                  ? '#1d84ff'
+                  : '#f7b500',
               }}
             />
             <span title={title}>{title}</span>
@@ -122,9 +122,9 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       label: 'Name',
       minWidth: 240,
       format: function renderComp({
-                                    id,
-                                    checklist: { id: checklistId, name: checklistName },
-                                  }: Job) {
+        id,
+        checklist: { id: checklistId, name: checklistName },
+      }: Job) {
         return (
           <span
             className="primary"
@@ -182,8 +182,8 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     <TabContentWrapper>
       <div className="filters">
         <SearchFilter
-          key={label}
-          showdropdown
+          label={label}
+          showDropdown
           dropdownOptions={[
             {
               label: 'Name',

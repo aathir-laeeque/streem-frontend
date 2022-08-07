@@ -4,7 +4,6 @@ import { ArrowDropDown, Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
-
 import { Button1 } from './Button';
 import { TextInput } from './Input';
 
@@ -62,18 +61,18 @@ type DropdownOption = {
 };
 
 type SearchFilterProps = {
-  showdropdown?: boolean;
+  showDropdown?: boolean;
   dropdownOptions?: DropdownOption[];
   updateFilterFields: (fields: FilterField[]) => void;
-  key: string;
+  label: string;
 };
 
 const SearchFilter: FC<SearchFilterProps> = ({
-                                               dropdownOptions,
-                                               showdropdown = false,
-                                               updateFilterFields,
-                                               key,
-                                             }) => {
+  dropdownOptions,
+  showDropdown = false,
+  updateFilterFields,
+  label,
+}) => {
   const [selectedOption, setSelectedOption] = useState<DropdownOption>(
     (dropdownOptions ?? [])[0],
   );
@@ -89,7 +88,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
 
   useEffect(() => {
     setSearchValue('');
-  }, [key]);
+  }, [label]);
 
   const onUpdate = (
     updatedOption: DropdownOption,
@@ -103,24 +102,24 @@ const SearchFilter: FC<SearchFilterProps> = ({
       updatedOption.field === 'email' ||
       updatedOption.field === 'employeeId'
         ? [
-          {
-            field: updatedOption.field,
-            op: updatedOption.operator,
-            values: [updatedSearchValue],
-          },
-        ]
+            {
+              field: updatedOption.field,
+              op: updatedOption.operator,
+              values: [updatedSearchValue],
+            },
+          ]
         : [
-          {
-            field: updatedOption.field,
-            op: updatedOption.operator,
-            values: [updatedOption.value],
-          },
-          {
-            field: `${updatedOption.field.split('.')[0]}.value`,
-            op: FilterOperators.LIKE,
-            values: [updatedSearchValue],
-          },
-        ]),
+            {
+              field: updatedOption.field,
+              op: updatedOption.operator,
+              values: [updatedOption.value],
+            },
+            {
+              field: `${updatedOption.field.split('.')[0]}.value`,
+              op: FilterOperators.LIKE,
+              values: [updatedSearchValue],
+            },
+          ]),
     ] as FilterField[];
 
     updateFilterFields(searchFilterFields);
@@ -128,7 +127,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
 
   return (
     <Wrapper>
-      {showdropdown ? (
+      {showDropdown ? (
         <div className="dropdown-button">
           <Button1 onClick={handleClick}>
             {selectedOption?.label} <ArrowDropDown className="icon" />

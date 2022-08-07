@@ -1,23 +1,24 @@
-import { TextInput, Role } from '#components';
-import Select, { StylesConfig } from 'react-select';
-import { v4 as uuidv4 } from 'uuid';
-import CheckCircle from '@material-ui/icons/CheckCircle';
-import React from 'react';
-import styled from 'styled-components';
-import { RoleProps } from './Role';
-import { makeStyles } from '@material-ui/core/styles';
+import { Role, Textarea, TextInput } from '#components';
+import { InputTypes } from '#utils/globalTypes';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio, { RadioProps } from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { makeStyles } from '@material-ui/core/styles';
+import CheckCircle from '@material-ui/icons/CheckCircle';
+import React from 'react';
+import Select, { NamedProps } from 'react-select';
+import styled from 'styled-components';
+import { v4 as uuidv4 } from 'uuid';
+import { RoleProps } from './Role';
 
 type FormInput = {
-  type: 'text' | 'password' | 'checkbox' | 'role' | 'error-container' | 'radio';
+  type: InputTypes;
   props: Record<any, any>;
 };
 
 export type FormGroupProps = {
   inputs: FormInput[];
-};
+} & React.HTMLProps<HTMLDivElement>;
 
 const Wrapper = styled.div.attrs({
   className: 'form-group',
@@ -31,19 +32,6 @@ const Wrapper = styled.div.attrs({
 
     :last-child {
       margin-bottom: unset;
-    }
-  }
-
-  .custom-select__multi-value--is-disabled {
-    ::before {
-      content: '';
-      border-radius: 50%;
-      border: 2px solid;
-      width: 0.5px;
-      height: 0.5px;
-      top: 11px;
-      position: absolute;
-      left: 2px;
     }
   }
 
@@ -70,7 +58,6 @@ const Wrapper = styled.div.attrs({
       flex: 1;
       font-size: 12px;
       letter-spacing: 0.32px;
-      color: #000000;
       line-height: 16px;
       align-items: center;
       margin-top: 10px;
@@ -104,15 +91,23 @@ const Wrapper = styled.div.attrs({
     color: #666666;
     margin: 0 0 24px 24px;
   }
-
-  .custom-select__multi-value--is-disabled {
-    ::before {
-      top: unset;
-    }
-  }
 `;
 
-export const selectStyles: StylesConfig = {
+export const formatOptionLabel: NamedProps<{
+  option: string;
+  label: string;
+  externalId: string;
+}>['formatOptionLabel'] = ({ externalId, label }, { context }) =>
+  context === 'value' ? (
+    label
+  ) : (
+    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div>{label}</div>
+      <div>{externalId}</div>
+    </div>
+  );
+
+const selectStyles: NamedProps['styles'] = {
   control: (styles, { isDisabled }) => ({
     ...styles,
     backgroundColor: isDisabled ? 'transparent' : '#f4f4f4',
@@ -176,11 +171,9 @@ const useStyles = makeStyles({
     borderRadius: '50%',
     width: 16,
     height: 16,
-    boxShadow:
-      'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
+    boxShadow: 'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
     backgroundColor: '#f5f8fa',
-    backgroundImage:
-      'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
+    backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
     '$root.Mui-focusVisible &': {
       outline: '2px auto rgba(19,124,189,.6)',
       outlineOffset: 2,
@@ -197,11 +190,9 @@ const useStyles = makeStyles({
     borderRadius: '50%',
     width: 16,
     height: 16,
-    boxShadow:
-      'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
+    boxShadow: 'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
     backgroundColor: '#1d84ff',
-    backgroundImage:
-      'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
+    backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
     '&:before': {
       display: 'block',
       width: 16,
@@ -234,54 +225,66 @@ export function StyledRadio(props: RadioProps) {
   );
 }
 
-export const FormGroup = ({ inputs }: FormGroupProps) => {
+export const FormGroup = ({ inputs, style }: FormGroupProps) => {
   return (
-    <Wrapper>
-      {inputs.map(({ type, props }) => {
+    <Wrapper style={style}>
+      {inputs.map(({ type, props }: FormInput) => {
         switch (type) {
-          case 'error-container':
+          case InputTypes.ERROR_CONTAINER:
             return (
               <div key={uuidv4()} className="error-container">
                 {Object.keys(props?.messages).map(
                   (item): JSX.Element => (
                     <div key={`${item}`}>
-                      <CheckCircle
-                        className="indicator"
-                        style={
-                          props?.errorsTypes?.includes(item)
-                            ? { color: '#bababa' }
-                            : {}
-                        }
-                      />
+                      {props?.errorsTypes && (
+                        <CheckCircle
+                          className="indicator"
+                          style={props.errorsTypes?.includes(item) ? { color: '#bababa' } : {}}
+                        />
+                      )}
                       {props?.messages?.[item]}
                     </div>
                   ),
                 )}
               </div>
             );
-          case 'password':
-          case 'text':
+          case InputTypes.PASSWORD:
+          case InputTypes.SINGLE_LINE:
+          case InputTypes.NUMBER:
+          case InputTypes.DATE:
+          case InputTypes.TIME:
+          case InputTypes.DATE_TIME:
             return (
               <TextInput
                 key={props.id}
-                type={type}
+                type={
+                  type === InputTypes.SINGLE_LINE
+                    ? 'text'
+                    : type === InputTypes.DATE_TIME
+                    ? 'datetime-local'
+                    : type.toLowerCase()
+                }
                 {...props}
               />
             );
-          case 'checkbox':
+          case InputTypes.MULTI_LINE:
+            return <Textarea key={props.id} {...props} />;
+          case InputTypes.SINGLE_SELECT:
+          case InputTypes.MULTI_SELECT:
             return (
               <div key={props.id}>
                 {props?.label && <label className="label">{props.label}</label>}
                 <Select
                   classNamePrefix="custom-select"
                   styles={selectStyles}
+                  isMulti={type === InputTypes.MULTI_SELECT}
                   {...props}
                 />
               </div>
             );
-          case 'role':
+          case InputTypes.ROLE:
             return <Role key={props.id} {...(props as RoleProps)} />;
-          case 'radio':
+          case InputTypes.RADIO:
             return (
               <RadioGroup key={props.groupProps.id} {...props.groupProps}>
                 {props.items.map((item: any) => (

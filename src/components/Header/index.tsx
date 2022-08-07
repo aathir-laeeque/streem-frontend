@@ -22,22 +22,16 @@ type FacilityOption = {
 };
 
 const Header: FC = () => {
-  const [showUsersDropdown, setShowUsersDropdown] =
-    React.useState<null | HTMLElement>(null);
-  const [showSettingsDropDown, setSettingsDropDownVisibiltity] =
-    React.useState<null | HTMLElement>(null);
+  const [showUsersDropdown, setShowUsersDropdown] = React.useState<null | HTMLElement>(null);
+  const [showSettingsDropDown, setSettingsDropDownVisibiltity] = React.useState<null | HTMLElement>(
+    null,
+  );
   const dispatch = useDispatch();
   const [showUseCaseSelectionDropDown, setShowUseCaseSelectionDropDown] =
     React.useState<null | HTMLElement>(null);
 
-  const {
-    profile,
-    facilities,
-    selectedFacility,
-    userId,
-    selectedUseCase,
-    useCastList,
-  } = useTypedSelector((state) => state.auth);
+  const { profile, facilities, selectedFacility, userId, selectedUseCase, useCastList } =
+    useTypedSelector((state) => state.auth);
 
   const facilitiesOptions: FacilityOption[] = facilities.map((facility) => ({
     label: facility.name,
@@ -47,10 +41,7 @@ const Header: FC = () => {
   return (
     <Wrapper>
       <ImageWrapper>
-        <Logo
-          style={{ width: '100px', cursor: 'pointer' }}
-          onClick={() => navigate('/')}
-        />
+        <Logo style={{ width: '100px', cursor: 'pointer' }} onClick={() => navigate('/')} />
       </ImageWrapper>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         {selectedFacility ? (
@@ -74,9 +65,7 @@ const Header: FC = () => {
             <HeaderMenu
               aria-controls="top-menu"
               aria-haspopup="true"
-              onClick={(event) =>
-                setShowUseCaseSelectionDropDown(event.currentTarget)
-              }
+              onClick={(event) => setShowUseCaseSelectionDropDown(event.currentTarget)}
               style={{ marginRight: '16px' }}
             >
               <MoreOptionsIcon />
@@ -98,6 +87,7 @@ const Header: FC = () => {
                     navigate('/inbox');
                   }}
                   disabled={!useCaseDetails.enabled}
+                  key={useCaseDetails.id}
                 >
                   {useCaseDetails.label}
                 </MenuItem>
@@ -110,9 +100,7 @@ const Header: FC = () => {
             <HeaderMenu
               aria-controls="top-menu"
               aria-haspopup="true"
-              onClick={(event) =>
-                setSettingsDropDownVisibiltity(event.currentTarget)
-              }
+              onClick={(event) => setSettingsDropDownVisibiltity(event.currentTarget)}
               style={{ marginRight: '16px' }}
             >
               <SettingsIcon />
@@ -125,24 +113,22 @@ const Header: FC = () => {
               onClose={() => setSettingsDropDownVisibiltity(null)}
               style={{ marginTop: 30 }}
             >
-              <>
-                {checkPermission(['header', 'usersAndAccess']) && (
-                  <NestedMenuItem
-                    left
-                    label="System Settings"
-                    mainMenuOpen={showSettingsDropDown ? true : false}
+              {checkPermission(['header', 'usersAndAccess']) && (
+                <NestedMenuItem
+                  left
+                  label="System Settings"
+                  mainMenuOpen={showSettingsDropDown ? true : false}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      navigate('/users');
+                      setSettingsDropDownVisibiltity(null);
+                    }}
                   >
-                    <MenuItem
-                      onClick={() => {
-                        navigate('/users');
-                        setSettingsDropDownVisibiltity(null);
-                      }}
-                    >
-                      Users and Access
-                    </MenuItem>
-                  </NestedMenuItem>
-                )}
-              </>
+                    Users and Access
+                  </MenuItem>
+                </NestedMenuItem>
+              )}
             </Menu>
           </>
         )}
@@ -173,16 +159,14 @@ const Header: FC = () => {
           style={{ marginTop: 30 }}
         >
           {selectedFacility && (
-            <>
-              <MenuItem
-                onClick={() => {
-                  navigate(`/users/profile/${profile?.id}`);
-                  setShowUsersDropdown(null);
-                }}
-              >
-                My Account
-              </MenuItem>
-            </>
+            <MenuItem
+              onClick={() => {
+                navigate(`/users/profile/${profile?.id}`);
+                setShowUsersDropdown(null);
+              }}
+            >
+              My Account
+            </MenuItem>
           )}
           <MenuItem
             onClick={() => {
