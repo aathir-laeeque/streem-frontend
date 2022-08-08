@@ -1,4 +1,7 @@
-import { BodyWrapper, DataTable } from '#components';
+import { BodyWrapper, Button1, DataTable } from '#components';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { DataTableColumn } from '#components/shared/DataTable';
 import { fetchComposerData, resetComposer } from '#PrototypeComposer/actions';
 import { LogType } from '#PrototypeComposer/checklist.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
@@ -9,7 +12,7 @@ import { TabContentWrapper, ViewWrapper } from '#views/Jobs/NewListView/styles';
 import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import { RouteComponentProps } from '@reach/router';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { fetchProcessLogs } from './ListView/actions';
@@ -38,6 +41,31 @@ const Logs: FC<Props> = ({ id }) => {
     prototypeComposer: { loading: loadingChecklist, data },
     checklistListView: { pageable, loading, jobLogs },
   } = useTypedSelector((state) => state);
+  const [state, setState] = useState<{
+    allColumns: DataTableColumn[];
+    columns: DataTableColumn[];
+    unSelectedColumnIds: Record<string, boolean>;
+  }>({
+    allColumns: [],
+    columns: [],
+    unSelectedColumnIds: {},
+  });
+  const { columns, allColumns, unSelectedColumnIds } = state;
+
+  const onColumnSelection = (_unSelectedColumnIds: Record<string, boolean>) => {
+    setState((prev) => ({
+      ...prev,
+      unSelectedColumnIds: _unSelectedColumnIds,
+    }));
+  };
+
+  const fetchData = (
+    page = DEFAULT_PAGE_NUMBER,
+    size = DEFAULT_PAGE_SIZE,
+    filtersArr?: FilterField[],
+  ) => {
+    if (id) dispatch(fetchProcessLogs(id));
+  };
 
   useEffect(() => {
     if (id) {
@@ -49,13 +77,73 @@ const Logs: FC<Props> = ({ id }) => {
     };
   }, [id]);
 
-  const fetchData = (
-    page = DEFAULT_PAGE_NUMBER,
-    size = DEFAULT_PAGE_SIZE,
-    filtersArr?: FilterField[],
-  ) => {
-    if (id) dispatch(fetchProcessLogs(id));
-  };
+  useEffect(() => {
+    if (data?.jobLogColumns?.length) {
+      const result = data.jobLogColumns.reduce<{
+        columns: DataTableColumn[];
+        allColumns: DataTableColumn[];
+      }>(
+        (acc, column) => {
+          const _id = column.id + column.triggerType;
+          const _column = {
+            id: _id,
+            label: column.displayName,
+            minWidth: `${
+              (column.displayName.length > 30
+                ? column.displayName.length / 3
+                : column.displayName.length + 10) + 5
+            }ch`,
+            format: (row: any) => {
+              if (row[column.id + column.triggerType]) {
+                if (column.type === LogType.DATE) {
+                  return formatDateTime(
+                    row[column.id + column.triggerType].value,
+                  );
+                } else if (
+                  column.type === LogType.FILE &&
+                  row[column.id + column.triggerType]?.medias?.length
+                ) {
+                  return (
+                    <div className="file-links">
+                      {row[column.id + column.triggerType].medias.map(
+                        (media: any) => (
+                          <a
+                            target="_blank"
+                            title={media.name}
+                            href={media.link}
+                          >
+                            {media.name}
+                          </a>
+                        ),
+                      )}
+                    </div>
+                  );
+                }
+                return (
+                  <span title={row[column.id + column.triggerType].value}>
+                    {row[column.id + column.triggerType].value}
+                  </span>
+                );
+              }
+              return '-';
+            },
+          };
+          if (!unSelectedColumnIds?.[_id]) {
+            acc.columns.push(_column);
+          }
+          acc.allColumns.push(_column);
+
+          return acc;
+        },
+        { columns: [], allColumns: [] },
+      );
+
+      setState((prev) => ({
+        ...prev,
+        ...result,
+      }));
+    }
+  }, [data?.jobLogColumns, unSelectedColumnIds]);
 
   // const showPaginationArrows = pageable.totalPages > 10;
 
@@ -72,52 +160,27 @@ const Logs: FC<Props> = ({ id }) => {
             loading={false}
             component={
               <TabContentWrapper>
+                <div className="filters">
+                  <Button1
+                    id="create"
+                    onClick={() => {
+                      dispatch(
+                        openOverlayAction({
+                          type: OverlayNames.CONFIGURE_COLUMNS,
+                          props: {
+                            columns: allColumns,
+                            unSelectedColumnIds,
+                            onColumnSelection,
+                          },
+                        }),
+                      );
+                    }}
+                  >
+                    Configure Columns
+                  </Button1>
+                </div>
                 <DataTable
-                  columns={(data?.jobLogColumns || []).map((column) => ({
-                    id: column.id + column.triggerType,
-                    label: column.displayName,
-                    minWidth: `${
-                      (column.displayName.length > 30
-                        ? column.displayName.length / 3
-                        : column.displayName.length + 10) + 5
-                    }ch`,
-                    format: (row: any) => {
-                      if (row[column.id + column.triggerType]) {
-                        if (column.type === LogType.DATE) {
-                          return formatDateTime(
-                            row[column.id + column.triggerType].value,
-                          );
-                        } else if (
-                          column.type === LogType.FILE &&
-                          row[column.id + column.triggerType]?.medias?.length
-                        ) {
-                          return (
-                            <div className="file-links">
-                              {row[column.id + column.triggerType].medias.map(
-                                (media: any) => (
-                                  <a
-                                    target="_blank"
-                                    title={media.name}
-                                    href={media.link}
-                                  >
-                                    {media.name}
-                                  </a>
-                                ),
-                              )}
-                            </div>
-                          );
-                        }
-                        return (
-                          <span
-                            title={row[column.id + column.triggerType].value}
-                          >
-                            {row[column.id + column.triggerType].value}
-                          </span>
-                        );
-                      }
-                      return '-';
-                    },
-                  }))}
+                  columns={columns}
                   rows={jobLogs.reduce((acc, jobLog, index) => {
                     jobLog.logs.forEach((log: any) => {
                       acc[index] = {

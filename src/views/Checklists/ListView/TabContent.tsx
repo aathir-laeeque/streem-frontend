@@ -306,7 +306,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                 keepMounted
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
-                style={{ marginTop: 40 }}
               >
                 <MenuItem
                   onClick={() => {

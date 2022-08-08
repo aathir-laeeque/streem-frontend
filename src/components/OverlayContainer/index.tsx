@@ -1,3 +1,4 @@
+import WebCamOverlay from '#components/shared/WebCamOverlay';
 import AddStop from '#JobComposer/modals/AddStop';
 import AssignmentSuccessModal from '#JobComposer/modals/AssignmentSuccess';
 import JobCompleteAllTasksError from '#JobComposer/modals/CompleteAllTasksError';
@@ -15,9 +16,9 @@ import StartJob from '#JobComposer/modals/StartJob';
 import StartTaskError from '#JobComposer/modals/StartTaskError';
 import TaskErrorCorrection from '#JobComposer/modals/TaskErrorCorrection';
 import { AssignedUserDetailsPopover } from '#JobComposer/Popovers/AssignedUserDetailsPopover';
+import { CalcActivityAddParamsModal } from '#PrototypeComposer/Activity/Calculation/AddParametersModal';
 import { TaskMediaModal, TimedTaskConfigModal } from '#PrototypeComposer/modals';
 import EditingDisabledModal from '#PrototypeComposer/modals/EditingDisabled';
-import { CalcActivityAddParamsModal } from '#PrototypeComposer/Activity/Calculation/AddParametersModal';
 import { AuthorsDetailsPopover } from '#PrototypeComposer/Overlays/AuthorsDetailsPopover';
 import InitiateSignOffModal from '#PrototypeComposer/Overlays/InitiateSignOff';
 import PasswordInputModal from '#PrototypeComposer/Overlays/PasswordInput';
@@ -47,11 +48,11 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import ReasonModal from '../shared/ReasonModal';
 import StartErrorModal from '../shared/StartErrorModal';
-import WebCamOverlay from '#components/shared/WebCamOverlay';
 import AutomationActionModal from '#JobComposer/modals/AutomationAction';
 
 import ChecklistUserAssignment from '#views/Checklists/Assignment/ChecklistUserAssignment';
 import { closeAllOverlayAction, closeOverlayAction } from './actions';
+import ConfigureColumnsModal from './ConfigureColumns';
 import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
 import { CommonOverlayProps, OverlayNames } from './types';
@@ -214,6 +215,8 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
     case OverlayNames.AUTOMATION_ACTION:
       return <AutomationActionModal {...params} />
 
+    case OverlayNames.CONFIGURE_COLUMNS:
+      return <ConfigureColumnsModal {...params} />;
     default:
       return null;
   }

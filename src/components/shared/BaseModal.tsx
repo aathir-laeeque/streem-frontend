@@ -118,8 +118,6 @@ const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
         }
         .modal-footer-buttons {
           display: flex;
-          flex: 1;
-          margin-left: auto;
         }
         .modal-body {
           padding: 16px;
