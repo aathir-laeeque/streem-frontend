@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import { Job, CompletedJobStates } from '../NewListView/types';
 import Section from './Section';
 
-const Wrapper = styled.div.attrs({})`
+export const Wrapper = styled.div.attrs({})`
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -31,7 +31,7 @@ const Wrapper = styled.div.attrs({})`
       .checkmark {
         background-color: #fff;
         border-color: #333;
-        border-radius: 0px;
+        border-radius: 0;
         border-width: 2px;
       }
 
@@ -153,7 +153,7 @@ const Assignments: FC<Props> = (props) => {
     [],
   );
 
-  const totalTasksCount = data?.checklist.noOfTasks;
+  const totalTasksCount = data?.totalTasks;
 
   if (loading) {
     return <div>Loading..</div>;
@@ -175,11 +175,7 @@ const Assignments: FC<Props> = (props) => {
                   type: 'SET_ALL_TASK_STATE',
                   payload: {
                     data,
-                    state: isAllTaskSelected
-                      ? false
-                      : isNoTaskSelected
-                      ? true
-                      : false,
+                    state: isAllTaskSelected ? false : isNoTaskSelected,
                   },
                 });
               }}

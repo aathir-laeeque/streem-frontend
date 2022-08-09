@@ -51,6 +51,7 @@ import ReasonModal from '../shared/ReasonModal';
 import StartErrorModal from '../shared/StartErrorModal';
 import WebCamOverlay from '#components/shared/WebCamOverlay';
 
+import ChecklistUserAssignment from '#views/Checklists/Assignment/ChecklistUserAssignment';
 import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
@@ -194,6 +195,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.USER_ASSIGNMENT:
       return <UserAssignment {...params} />;
+
+    case OverlayNames.CHECKLIST_USER_ASSIGNMENT:
+      return <ChecklistUserAssignment {...params} />;
 
     case OverlayNames.ASSIGNMENT_INFO:
       return <AssingnmentInfo {...params} />;

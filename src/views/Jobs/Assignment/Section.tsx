@@ -3,7 +3,6 @@ import { CompletedTaskStates, Stage } from '#JobComposer/checklist.types';
 import { ArrowDropDown, ArrowRight } from '@material-ui/icons';
 import React, { Dispatch, FC, useState } from 'react';
 import styled from 'styled-components';
-
 import AssigneeList from './AssigneeList';
 
 type Props = {
@@ -13,7 +12,7 @@ type Props = {
   isFirst: boolean;
 };
 
-const Wrapper = styled.div.attrs({
+export const AssignmentSectionWrapper = styled.div.attrs({
   className: 'section',
 })`
   display: flex;
@@ -163,7 +162,7 @@ const Section: FC<Props> = ({
   );
 
   return (
-    <Wrapper>
+    <AssignmentSectionWrapper>
       <div className="section-header">
         <div
           className="icon-wrapper"
@@ -271,7 +270,7 @@ const Section: FC<Props> = ({
           })}
         </div>
       ) : null}
-    </Wrapper>
+    </AssignmentSectionWrapper>
   );
 };
 

@@ -171,10 +171,9 @@ const ListView: FC<ListViewProps & { label: string }> = ({
       }
     });
     if (!error && tempProperties && selectedChecklist) {
-      const parsedProperties: { id: string; value: string }[] = tempProperties;
       dispatch(
         createJob({
-          properties: parsedProperties,
+          properties: tempProperties,
           checklistId: selectedChecklist.id,
           selectedUseCaseId: selectedUseCase!.id,
         }),
@@ -458,6 +457,16 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     </div>
                   </MenuItem>
                 )}
+                <MenuItem
+                  onClick={() =>
+                    navigate(`/checklists/${selectedChecklist?.id}/assignment`)
+                  }
+                >
+                  <div className="list-item">
+                    <MemoViewInfo />
+                    <span>Trained Users</span>
+                  </div>
+                </MenuItem>
               </Menu>
             </>
           );

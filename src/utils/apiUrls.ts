@@ -285,6 +285,15 @@ export const apiGetAllUsersAssignedToJob = (jobId: Job['id']) =>
 export const apiGetAllUsersAssignedToTask = () =>
   `${baseUrl}/tasks/assignments`;
 
+export const apiGetAllUsersAssignedToChecklistTask = (id: string) =>
+  `${baseUrl}/checklists/${id}/users/task/assignment`;
+
+export const apiAssignUsersForChecklist = (checklistId: string) =>
+  `${baseUrl}/checklists/${checklistId}/users/assignment`;
+
+export const apiGetAllUsersAssignedToChecklist = (checklistId: string) =>
+  `${baseUrl}/checklists/${checklistId}/users/allowed`;
+
 export const apiBulkAssignUsers = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}/assignments`;
 
