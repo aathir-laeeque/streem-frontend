@@ -4,10 +4,13 @@ import { useTypedSelector } from '#store';
 import { setInternetConnectivity } from '#store/extras/action';
 import { DEFAULT_SESSION_TIMEOUT_IN_MIN } from '#utils/constants';
 import { setIdle } from '#views/Auth/actions';
+import { ssoLogout } from '#views/Auth/saga';
+import { UserType } from '#views/UserAccess/ManageUser/types';
 import React, { FC, useEffect } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { useMsal } from '@azure/msal-react';
 
 const Layout = styled.div.attrs({
   className: 'main-layout-view',
@@ -28,9 +31,8 @@ const Layout = styled.div.attrs({
 
 const DashboardLayout: FC = ({ children }) => {
   const dispatch = useDispatch();
-  const { isIdle, isLoggedIn, settings } = useTypedSelector(
-    (state) => state.auth,
-  );
+  const { instance } = useMsal();
+  const { isIdle, isLoggedIn, settings, userType } = useTypedSelector((state) => state.auth);
 
   useEffect(() => {
     if (isIdle && isLoggedIn) {
@@ -49,17 +51,16 @@ const DashboardLayout: FC = ({ children }) => {
     window.addEventListener('offline', () => handleConnectivityChange(false));
 
     return () => {
-      window.removeEventListener('online', () =>
-        handleConnectivityChange(true),
-      );
-      window.removeEventListener('offline', () =>
-        handleConnectivityChange(false),
-      );
+      window.removeEventListener('online', () => handleConnectivityChange(true));
+      window.removeEventListener('offline', () => handleConnectivityChange(false));
     };
   }, []);
 
   const handleOnIdle = () => {
     if (!isIdle && isLoggedIn) {
+      if (userType === UserType.AZURE_AD) {
+        ssoLogout(instance);
+      }
       dispatch(setIdle(true));
       dispatch(
         openOverlayAction({
@@ -70,10 +71,7 @@ const DashboardLayout: FC = ({ children }) => {
   };
 
   useIdleTimer({
-    timeout:
-      1000 *
-      60 *
-      (settings?.sessionIdleTimeoutInMinutes || DEFAULT_SESSION_TIMEOUT_IN_MIN),
+    timeout: 1000 * 60 * (settings?.sessionIdleTimeoutInMinutes || DEFAULT_SESSION_TIMEOUT_IN_MIN),
     onIdle: handleOnIdle,
     debounce: 500,
   });

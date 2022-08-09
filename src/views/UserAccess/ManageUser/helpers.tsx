@@ -1,4 +1,9 @@
-import { Button1, FormGroup, useScrollableSectionsProps } from '#components';
+import {
+  Avatar,
+  Button1,
+  FormGroup,
+  useScrollableSectionsProps,
+} from '#components';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
@@ -9,6 +14,7 @@ import { Facilities } from '#store/facilities/types';
 import { fetchSelectedUserSuccess } from '#store/users/actions';
 import { ChallengeQuestion, User, UserStates } from '#store/users/types';
 import {
+  searchDirectoryUsers,
   apiChallengeQuestions,
   apiCheckEmail,
   apiCheckEmployeeId,
@@ -17,16 +23,24 @@ import {
 } from '#utils/apiUrls';
 import { InputTypes, ResponseObj, ValidatorProps } from '#utils/globalTypes';
 import { getErrorMsg, request } from '#utils/request';
-import { encrypt } from '#utils/stringUtils';
+import { encrypt, getFullName } from '#utils/stringUtils';
 import { Create, VisibilityOutlined } from '@material-ui/icons';
+import { debounce, uniqueId } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
+import { NamedProps } from 'react-select';
+import styled from 'styled-components';
 import { resendInvite } from '../actions';
 import { ValidateCredentialsPurpose } from '../types';
 import { Credentials, CustomInputGroup, KeyGenerator } from './styles';
-import { EditUserRequestInputs, PAGE_TYPE, TogglesState } from './types';
+import {
+  EditUserRequestInputs,
+  PAGE_TYPE,
+  TogglesState,
+  UserType,
+} from './types';
 
 export enum Toggleables {
   EDIT_PASSWORD = 'editPassword',
@@ -42,7 +56,78 @@ type CreateSectionConfigProps = {
   selectedUser?: User;
   toggles?: TogglesState;
   onFacilityChange: (options: Option[]) => void;
-  updateToggles?: (key: Toggleables) => void;
+  updateToggles: (key: Toggleables) => void;
+};
+
+const UserItem = {
+  firstName: '',
+  username: '',
+  employeeId: '',
+  lastName: '',
+  email: '',
+};
+
+type UserItem = typeof UserItem;
+
+const UserItemWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  .info {
+    display: flex;
+
+    .user-detail {
+      display: flex;
+      flex-direction: column;
+      margin-left: 16px;
+      justify-content: space-between;
+
+      .user-id {
+        opacity: 0.7;
+        font-size: 14px;
+      }
+    }
+  }
+  .meta {
+    font-size: 14px;
+    margin-top: 4px;
+  }
+`;
+
+export const formatOptionLabel: NamedProps<
+  {
+    option: string;
+    label: string;
+  } & UserItem
+>['formatOptionLabel'] = (option, { context }) => {
+  const firstName = option.firstName;
+  const lastName = option?.lastName || '';
+  return context === 'value' ? (
+    option.label
+  ) : (
+    <UserItemWrapper>
+      <div className="info">
+        <Avatar
+          user={{
+            ...option,
+            id: uniqueId(),
+            firstName,
+            lastName,
+            employeeId: '',
+          }}
+          allowMouseEvents={false}
+          size="large"
+        />
+        <div className="user-detail">
+          <span className="user-id">{option.employeeId || ''}</span>
+          <span className="user-name">
+            {getFullName({ firstName, lastName })}
+          </span>
+        </div>
+      </div>
+      <div className="meta">{option.email || ''}</div>
+    </UserItemWrapper>
+  );
 };
 
 export const createSectionConfig = ({
@@ -69,17 +154,135 @@ export const createSectionConfig = ({
         label: facility.name,
       })) || undefined,
     );
+  const [users, setUsers] = useState<UserItem[]>([]);
+  const [disabledKeys, setDisabledKeys] = useState<Record<string, boolean>>({});
   const { register, errors, getValues, setValue } = formData;
-  const { roles: rolesValues } = getValues(['roles']);
-
+  const { roles: rolesValues, userType } = getValues(['roles', 'userType']);
   const shouldShowAllFacilities = [
     RoleIdByName.ACCOUNT_OWNER,
     RoleIdByName.SYSTEM_ADMIN,
   ].includes(rolesValues as RoleIdByName);
 
+  const fetchUsers = async (query?: string) => {
+    const response = await request('GET', searchDirectoryUsers(), {
+      ...(query && {
+        params: {
+          query,
+        },
+      }),
+    });
+    if (response.data) {
+      setUsers(response.data);
+    }
+  };
+
+  useEffect(() => {
+    if (userType === UserType.AZURE_AD && !users.length) {
+      fetchUsers();
+    }
+  }, [userType]);
+
+  const onSelectUser = (user: UserItem) => {
+    const keysToDisable: Record<string, boolean> = {};
+    setValue('username', user['username'], {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    (Object.keys(UserItem) as Array<keyof UserItem>).forEach((key) => {
+      setValue(key, user?.[key], {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+      if (user?.[key]) {
+        keysToDisable[key] = true;
+      }
+    });
+    setDisabledKeys(keysToDisable);
+  };
+
+  const onChangeUserType = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === UserType.LOCAL) {
+      (Object.keys(UserItem) as Array<keyof UserItem>).forEach((key) => {
+        setValue(key, selectedUser?.[key], {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
+      });
+    }
+    setValue('userType', e.target.value, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    setDisabledKeys({});
+  };
+
   const config: useScrollableSectionsProps = {
     title: translate('userManagement:edit-title'),
     items: [
+      {
+        label: 'User Type',
+        view:
+          pageType === PAGE_TYPE.ADD ? (
+            <FormGroup
+              inputs={[
+                {
+                  type: InputTypes.RADIO,
+                  props: {
+                    groupProps: {
+                      id: 'userType',
+                      name: 'userType',
+                      defaultValue: selectedUser?.userType || UserType.LOCAL,
+                      onChange: onChangeUserType,
+                    },
+                    items: [
+                      {
+                        key: UserType.LOCAL,
+                        label: 'Add Manually',
+                        value: UserType.LOCAL,
+                      },
+                      {
+                        key: UserType.AZURE_AD,
+                        label: 'Add from Active Directory',
+                        value: UserType.AZURE_AD,
+                      },
+                    ],
+                  },
+                },
+                ...(userType === UserType.AZURE_AD
+                  ? [
+                      {
+                        type: InputTypes.SINGLE_SELECT,
+                        props: {
+                          id: 'userSelected',
+                          formatOptionLabel,
+                          options: users.map((user) => ({
+                            ...user,
+                            label: user?.email || user.firstName,
+                            value: user?.email || user.firstName,
+                          })),
+                          filterOption: () => true,
+                          placeholder:
+                            'Select with Name, Employee ID or Email ID',
+                          onChange: (value: UserItem) => {
+                            onSelectUser(value);
+                          },
+                          onInputChange: debounce((v) => {
+                            fetchUsers(v);
+                          }, 500),
+                        },
+                      },
+                    ]
+                  : []),
+              ]}
+            />
+          ) : (
+            <div style={{ padding: '24px 16px' }}>
+              {selectedUser?.userType === UserType.AZURE_AD
+                ? 'Added from Active Directory'
+                : 'Added Manually'}
+            </div>
+          ),
+      },
       {
         label: 'Basic Details',
         view: (
@@ -93,6 +296,7 @@ export const createSectionConfig = ({
                   id: 'firstName',
                   name: 'firstName',
                   error: errors['firstName']?.message,
+                  readOnly: disabledKeys?.['firstName'],
                   disabled:
                     pageType === PAGE_TYPE.PROFILE ? false : !isEditable,
                   ref: register({
@@ -109,6 +313,7 @@ export const createSectionConfig = ({
                   name: 'lastName',
                   optional: true,
                   error: errors['lastName']?.message,
+                  readOnly: disabledKeys?.['lastName'],
                   disabled:
                     pageType === PAGE_TYPE.PROFILE ? false : !isEditable,
                   ref: register,
@@ -132,6 +337,7 @@ export const createSectionConfig = ({
                   name: 'employeeId',
                   error: errors['employeeId']?.message,
                   disabled: pageType !== PAGE_TYPE.ADD,
+                  readOnly: disabledKeys?.['employeeId'],
                   ref:
                     pageType === PAGE_TYPE.ADD
                       ? register({
@@ -141,21 +347,24 @@ export const createSectionConfig = ({
                             message: "Shouldn't be greater than 45 characters.",
                           },
                           validate: async (value) => {
-                            const res = await request(
-                              'POST',
-                              apiCheckEmployeeId(),
-                              {
-                                data: {
-                                  employeeId: value,
+                            if (value) {
+                              const res = await request(
+                                'POST',
+                                apiCheckEmployeeId(),
+                                {
+                                  data: {
+                                    employeeId: value,
+                                  },
                                 },
-                              },
-                            );
-                            if (res?.errors?.length)
-                              return (
-                                res?.errors?.[0]?.message ||
-                                'Employee ID already exists'
                               );
-                            return true;
+                              if (res?.errors?.length)
+                                return (
+                                  res?.errors?.[0]?.message ||
+                                  'Employee ID already exists'
+                                );
+                              return true;
+                            }
+                            return false;
                           },
                         })
                       : register,
@@ -169,6 +378,7 @@ export const createSectionConfig = ({
                   id: 'email',
                   name: 'email',
                   error: errors['email']?.message,
+                  readOnly: disabledKeys?.['email'],
                   disabled:
                     pageType === PAGE_TYPE.PROFILE ? false : !isEditable,
                   optional: true,
@@ -216,25 +426,27 @@ export const createSectionConfig = ({
               view: (
                 <KeyGenerator>
                   <h3>Username : {selectedUser?.username}</h3>
-                  {!isAccountOwner && isEditable && (
-                    <>
-                      <Button1
-                        className="primary-button"
-                        variant="secondary"
-                        onClick={() =>
-                          dispatch(resendInvite({ id: selectedUser.id }))
-                        }
-                      >
-                        Generate Secret Key
-                      </Button1>
-                      <p>
-                        If the user has no access to their account, they can go
-                        to the login page and choose Forgot Password option.
-                        Here the user uses the Sceret Key to change their
-                        password.
-                      </p>
-                    </>
-                  )}
+                  {selectedUser.userType === UserType.LOCAL &&
+                    !isAccountOwner &&
+                    isEditable && (
+                      <>
+                        <Button1
+                          className="primary-button"
+                          variant="secondary"
+                          onClick={() =>
+                            dispatch(resendInvite({ id: selectedUser.id }))
+                          }
+                        >
+                          Generate Secret Key
+                        </Button1>
+                        <p>
+                          If the user has no access to their account, they can
+                          go to the login page and choose Forgot Password
+                          option. Here the user uses the Secret Key to change
+                          their password.
+                        </p>
+                      </>
+                    )}
                 </KeyGenerator>
               ),
             },
@@ -338,9 +550,9 @@ export const createSectionConfig = ({
   if (pageType === PAGE_TYPE.ADD) {
     config.title = translate('userManagement:add-title');
     config.items = [
-      ...config.items.slice(0, 2),
+      ...config.items.slice(0, 3),
       ...config.items.slice(
-        selectedUser?.state === UserStates.REGISTERED ? 3 : 2,
+        selectedUser?.state === UserStates.REGISTERED ? 4 : 3,
         config.items.length,
       ),
     ];
@@ -349,7 +561,7 @@ export const createSectionConfig = ({
   if (pageType === PAGE_TYPE.PROFILE) {
     config.title = translate('userManagement:profile-title');
     config.items = [
-      ...config.items.slice(0, 2),
+      ...config.items.slice(0, 3),
       {
         label: 'Login Credentials',
         view: (
@@ -359,88 +571,92 @@ export const createSectionConfig = ({
               <span className="custom-span">{selectedUser?.username}</span>
               <span className="custom-span" />
             </div>
-            <div className="row">
-              <span className="custom-span">Password</span>
-              {!toggles?.[Toggleables.EDIT_PASSWORD] ? (
-                <>
-                  <span className="custom-span">••••••</span>
-                  <span className="custom-span">
-                    <Button1
-                      variant="textOnly"
-                      className="with-icon"
-                      onClick={() =>
-                        dispatch(
-                          openOverlayAction({
-                            type: OverlayNames.VALIDATE_CREDENTIALS_MODAL,
-                            props: {
-                              purpose:
-                                ValidateCredentialsPurpose.PASSWORD_UPDATE,
-                              onSuccess: (token: string) => {
-                                setValidatedToken?.(token);
-                                updateToggles?.(Toggleables.EDIT_PASSWORD);
-                              },
-                            },
-                          }),
-                        )
-                      }
-                    >
-                      Edit <Create />
-                    </Button1>
-                  </span>
-                </>
-              ) : (
-                <UpdatePassword
-                  updateToggles={updateToggles}
-                  token={validatedToken as string}
-                />
-              )}
-            </div>
-            <div className="row">
-              <span className="custom-span">Challenge Question</span>
-              {!toggles?.[Toggleables.EDIT_QUESTIONS] ? (
-                <>
-                  <span className="custom-span">
-                    {selectedUser?.challengeQuestion?.question || 'Not Set'}
-                  </span>
-                  <span className="custom-span">
-                    <Button1
-                      variant="textOnly"
-                      className="with-icon"
-                      onClick={() =>
-                        dispatch(
-                          openOverlayAction({
-                            type: OverlayNames.VALIDATE_CREDENTIALS_MODAL,
-                            props: {
-                              purpose:
-                                ValidateCredentialsPurpose.CHALLENGE_QUESTION_UPDATE,
-                              onSuccess: (token: string) => {
-                                setValidatedToken?.(token);
-                                updateToggles?.(Toggleables.EDIT_QUESTIONS);
-                              },
-                            },
-                          }),
-                        )
-                      }
-                    >
-                      {selectedUser?.challengeQuestion?.question
-                        ? 'Edit '
-                        : 'Set Now '}
-                      <Create />
-                    </Button1>
-                  </span>
-                </>
-              ) : (
-                <UpdateChallengeQuestion
-                  updateToggles={updateToggles}
-                  token={validatedToken as string}
-                />
-              )}
-            </div>
+            {selectedUser?.userType === UserType.LOCAL && (
+              <>
+                <div className="row">
+                  <span className="custom-span">Password</span>
+                  {!toggles?.[Toggleables.EDIT_PASSWORD] ? (
+                    <>
+                      <span className="custom-span">••••••</span>
+                      <span className="custom-span">
+                        <Button1
+                          variant="textOnly"
+                          className="with-icon"
+                          onClick={() =>
+                            dispatch(
+                              openOverlayAction({
+                                type: OverlayNames.VALIDATE_CREDENTIALS_MODAL,
+                                props: {
+                                  purpose:
+                                    ValidateCredentialsPurpose.PASSWORD_UPDATE,
+                                  onSuccess: (token: string) => {
+                                    setValidatedToken?.(token);
+                                    updateToggles?.(Toggleables.EDIT_PASSWORD);
+                                  },
+                                },
+                              }),
+                            )
+                          }
+                        >
+                          Edit <Create />
+                        </Button1>
+                      </span>
+                    </>
+                  ) : (
+                    <UpdatePassword
+                      updateToggles={updateToggles}
+                      token={validatedToken as string}
+                    />
+                  )}
+                </div>
+                <div className="row">
+                  <span className="custom-span">Challenge Question</span>
+                  {!toggles?.[Toggleables.EDIT_QUESTIONS] ? (
+                    <>
+                      <span className="custom-span">
+                        {selectedUser?.challengeQuestion?.question || 'Not Set'}
+                      </span>
+                      <span className="custom-span">
+                        <Button1
+                          variant="textOnly"
+                          className="with-icon"
+                          onClick={() =>
+                            dispatch(
+                              openOverlayAction({
+                                type: OverlayNames.VALIDATE_CREDENTIALS_MODAL,
+                                props: {
+                                  purpose:
+                                    ValidateCredentialsPurpose.CHALLENGE_QUESTION_UPDATE,
+                                  onSuccess: (token: string) => {
+                                    setValidatedToken?.(token);
+                                    updateToggles?.(Toggleables.EDIT_QUESTIONS);
+                                  },
+                                },
+                              }),
+                            )
+                          }
+                        >
+                          {selectedUser?.challengeQuestion?.question
+                            ? 'Edit '
+                            : 'Set Now '}
+                          <Create />
+                        </Button1>
+                      </span>
+                    </>
+                  ) : (
+                    <UpdateChallengeQuestion
+                      updateToggles={updateToggles}
+                      token={validatedToken as string}
+                    />
+                  )}
+                </div>
+              </>
+            )}
           </Credentials>
         ),
       },
       ...config.items.slice(
-        selectedUser?.state === UserStates.REGISTERED ? 3 : 2,
+        selectedUser?.state === UserStates.REGISTERED ? 4 : 3,
         config.items.length,
       ),
     ];

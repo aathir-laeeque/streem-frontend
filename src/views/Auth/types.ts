@@ -24,6 +24,8 @@ import {
   setIdentityToken,
   setIdle,
   setSelectedUseCase,
+  accountLookUp,
+  accountLookUpSuccess,
 } from './actions';
 
 export type AuthViewProps = RouteComponentProps;
@@ -87,9 +89,10 @@ export interface AuthState {
   readonly token?: string;
   readonly userId: User['id'] | null;
   readonly NonGenuineLicenseMap: { [facilityId: string]: LicenseType };
-  useCastList: UseCaseType[];
-  selectedUseCase?: UseCaseType;
-  fetchingUseCaseList: boolean;
+  readonly useCastList: UseCaseType[];
+  readonly selectedUseCase?: UseCaseType;
+  readonly fetchingUseCaseList: boolean;
+  readonly userType?: string;
 }
 
 export enum TokenTypes {
@@ -136,6 +139,7 @@ export enum PAGE_NAMES {
   REGISTER_EMPLOYEE_ID = 'REGISTER_EMPLOYEE_ID',
   REGISTER_RECOVERY = 'REGISTER_RECOVERY',
   REGISTER_SECRET_KEY = 'REGISTER_SECRET_KEY',
+  ACCOUNT_LOOKUP = 'ACCOUNT_LOOKUP',
 }
 
 export enum RecoveryOptions {
@@ -261,6 +265,8 @@ export enum AuthAction {
   FETCH_USE_CASE_LIST_ONGOING = '@@auth/FETCH_USE_CASE_LIST_ONGOING',
   FETCH_USE_CASE_LIST_SUCCESS = '@@auth/FETCH_USE_CASE_LIST_SUCCESS',
   SET_SELECTED_USE_CASE = '@@auth/SET_SELECTED_USE_CASE',
+  ACCOUNT_LOOKUP = '@@auth/ACCOUNT_LOOKUP',
+  ACCOUNT_LOOKUP_SUCCESS = '@@auth/ACCOUNT_LOOKUP_SUCCESS',
 }
 
 export type AuthActionType = ReturnType<
@@ -284,4 +290,6 @@ export type AuthActionType = ReturnType<
   | typeof fetchUseCaseListSuccess
   | typeof fetchUseCaseListError
   | typeof setSelectedUseCase
+  | typeof accountLookUp
+  | typeof accountLookUpSuccess
 >;

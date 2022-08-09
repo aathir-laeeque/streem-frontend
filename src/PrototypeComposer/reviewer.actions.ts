@@ -3,6 +3,7 @@ import { User } from '#store/users/types';
 import { Checklist } from './checklist.types';
 import { ComposerAction } from './reducer.types';
 import { Collaborator, CommonReviewPayload } from './reviewer.types';
+import { IPublicClientApplication } from '@azure/msal-browser';
 
 // REVIEWER ASSIGNMENT
 export const fetchAssignedReviewersForChecklist = (
@@ -80,11 +81,13 @@ export const fetchApproversSuccess = (data: Collaborator[]) =>
 export const signOffPrototype = (
   checklistId: Checklist['id'],
   password: string,
+  instance?: IPublicClientApplication
 ) =>
-  actionSpreader(ComposerAction.SIGN_OFF_PROTOTYPE, { checklistId, password });
+  actionSpreader(ComposerAction.SIGN_OFF_PROTOTYPE, { checklistId, password, instance });
 
 export const releasePrototype = (
   checklistId: Checklist['id'],
   password: string,
+  instance?: IPublicClientApplication
 ) =>
-  actionSpreader(ComposerAction.RELEASE_PROTOTYPE, { checklistId, password });
+  actionSpreader(ComposerAction.RELEASE_PROTOTYPE, { checklistId, password, instance });

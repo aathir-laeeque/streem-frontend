@@ -1,12 +1,9 @@
 import { NotificationType } from '#components/Notification/types';
 import { actionSpreader } from '#store';
 import { User } from '#store/users/types';
-import {
-  ChallengeQuestionPurpose,
-  CredentialsInputs,
-  UseCaseType,
-} from '#views/Auth/types';
+import { ChallengeQuestionPurpose, CredentialsInputs, UseCaseType } from '#views/Auth/types';
 import { EditUserRequestInputs } from '#views/UserAccess/ManageUser/types';
+import { IPublicClientApplication } from '@azure/msal-browser';
 
 import {
   AdditionalVerificationTypes,
@@ -16,22 +13,20 @@ import {
   TokenTypes,
 } from './types';
 
-export const login = (payload: { username: string; password: string }) =>
+export const login = (payload: { username: string; password?: string; idToken?: string }) =>
   actionSpreader(AuthAction.LOGIN, payload);
 
-export const loginSuccess = (data: LoginResponse) =>
-  actionSpreader(AuthAction.LOGIN_SUCCESS, data);
+export const loginSuccess = (data: LoginResponse) => actionSpreader(AuthAction.LOGIN_SUCCESS, data);
 
-export const reLogin = (payload: { username: string; password: string }) =>
+export const reLogin = (payload: { username: string; password: string; idToken?: string }) =>
   actionSpreader(AuthAction.RE_LOGIN, payload);
 
-export const authError = (error: string) =>
-  actionSpreader(AuthAction.AUTH_ERROR, error);
+export const authError = (error: string) => actionSpreader(AuthAction.AUTH_ERROR, error);
 
-export const setIdle = (data: boolean) =>
-  actionSpreader(AuthAction.SET_IDLE, data);
+export const setIdle = (data: boolean) => actionSpreader(AuthAction.SET_IDLE, data);
 
-export const logout = () => actionSpreader(AuthAction.LOGOUT);
+export const logout = (instance?: IPublicClientApplication) =>
+  actionSpreader(AuthAction.LOGOUT, { instance });
 
 export const logoutSuccess = (payload?: {
   type?: NotificationType;
@@ -60,10 +55,8 @@ export const updateUserProfile = (payload: {
 export const refreshTokenSuccess = (data: RefreshTokenResponse) =>
   actionSpreader(AuthAction.REFRESH_TOKEN_SUCCESS, data);
 
-export const checkTokenExpiry = (payload: {
-  type: TokenTypes;
-  token: string;
-}) => actionSpreader(AuthAction.CHECK_TOKEN_EXPIRY, payload);
+export const checkTokenExpiry = (payload: { type: TokenTypes; token: string }) =>
+  actionSpreader(AuthAction.CHECK_TOKEN_EXPIRY, payload);
 
 export const resetPassword = (payload: {
   password: string;
@@ -85,11 +78,8 @@ export const additionalVerification = (payload: {
   type: AdditionalVerificationTypes;
 }) => actionSpreader(AuthAction.ADDITIONAL_VERIFICATION, payload);
 
-export const setChallengeQuestion = (payload: {
-  id: string;
-  answer: string;
-  token: string;
-}) => actionSpreader(AuthAction.SET_CHALLENGE_QUESTION, payload);
+export const setChallengeQuestion = (payload: { id: string; answer: string; token: string }) =>
+  actionSpreader(AuthAction.SET_CHALLENGE_QUESTION, payload);
 
 export const setChallengeQuestionSuccess = () =>
   actionSpreader(AuthAction.SET_CHALLENGE_QUESTION_SUCCESS);
@@ -100,22 +90,15 @@ export const validateIdentity = (payload: { identity: string }) =>
 export const resetToken = (payload: { token: string }) =>
   actionSpreader(AuthAction.RESET_TOKEN, payload);
 
-export const notifyAdmin = (payload: {
-  token: string;
-  purpose: ChallengeQuestionPurpose;
-}) => actionSpreader(AuthAction.NOTIFY_ADMIN, payload);
+export const notifyAdmin = (payload: { token: string; purpose: ChallengeQuestionPurpose }) =>
+  actionSpreader(AuthAction.NOTIFY_ADMIN, payload);
 
-export const validateQuestion = (payload: {
-  id: string;
-  answer: string;
-  token: string;
-}) => actionSpreader(AuthAction.VALIDATE_QUESTION, payload);
+export const validateQuestion = (payload: { id: string; answer: string; token: string }) =>
+  actionSpreader(AuthAction.VALIDATE_QUESTION, payload);
 
-export const fetchUseCaseList = () =>
-  actionSpreader(AuthAction.FETCH_USE_CASE_LIST);
+export const fetchUseCaseList = () => actionSpreader(AuthAction.FETCH_USE_CASE_LIST);
 
-export const fetchUseCaseListOngoing = () =>
-  actionSpreader(AuthAction.FETCH_USE_CASE_LIST_ONGOING);
+export const fetchUseCaseListOngoing = () => actionSpreader(AuthAction.FETCH_USE_CASE_LIST_ONGOING);
 
 export const fetchUseCaseListSuccess = (useCaseList: UseCaseType[]) =>
   actionSpreader(AuthAction.FETCH_USE_CASE_LIST_SUCCESS, {
@@ -127,3 +110,9 @@ export const setSelectedUseCase = (selectedUseCase: UseCaseType) =>
 
 export const fetchUseCaseListError = (error: string) =>
   actionSpreader(AuthAction.FETCH_USE_CASE_LIST_ERROR, { error });
+
+export const accountLookUp = (username: string, instance?: IPublicClientApplication) =>
+  actionSpreader(AuthAction.ACCOUNT_LOOKUP, { username, instance });
+
+export const accountLookUpSuccess = (payload: { type: string; username: string }) =>
+  actionSpreader(AuthAction.ACCOUNT_LOOKUP_SUCCESS, payload);

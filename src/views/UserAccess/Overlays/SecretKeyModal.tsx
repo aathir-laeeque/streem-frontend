@@ -73,14 +73,17 @@ const Wrapper = styled.div`
   }
 `;
 
-const SecretKeyModal: FC<CommonOverlayProps<{
-  heading: string;
-  subHeading: string;
-  key: string;
-}>> = ({
+const SecretKeyModal: FC<
+  CommonOverlayProps<{
+    heading: string;
+    subHeading: string;
+    key: string;
+    showSecretKeyInfo?: boolean;
+  }>
+> = ({
   closeAllOverlays,
   closeOverlay,
-  props: { heading, subHeading, key },
+  props: { heading, subHeading, key, showSecretKeyInfo = true },
 }) => {
   return (
     <Wrapper>
@@ -94,12 +97,16 @@ const SecretKeyModal: FC<CommonOverlayProps<{
           <CheckIcon className="icon" />
         </div>
         <div className="heading">{heading}</div>
-        <div className="sub-heading">{subHeading}</div>
-        <div className="key-content">Secret Key : {key}</div>
-        <div className="alert">
-          The Secret Key will not be visible again. The Secret key should be
-          given to the user for registration.
-        </div>
+        {showSecretKeyInfo && (
+          <>
+            <div className="sub-heading">{subHeading}</div>
+            <div className="key-content">Secret Key : {key}</div>
+            <div className="alert">
+              The Secret Key will not be visible again. The Secret key should be
+              given to the user for registration.
+            </div>
+          </>
+        )}
       </BaseModal>
     </Wrapper>
   );

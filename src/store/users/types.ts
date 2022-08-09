@@ -1,5 +1,6 @@
 import { Facility, Organisation } from '#services/commonTypes';
 import { Pageable } from '#utils/globalTypes';
+import { UserType } from '#views/UserAccess/ManageUser/types';
 import { RoleType } from '#views/UserAccess/types';
 
 import {
@@ -34,6 +35,7 @@ export interface User {
   facilities?: Facility[];
   organisation?: Organisation;
   challengeQuestion?: ChallengeQuestion;
+  userType: UserType;
 }
 
 export type Users = User[];

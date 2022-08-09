@@ -34,9 +34,15 @@ export type EditUserRequestInputs = {
   username?: string;
   password?: string;
   confirmPassword?: string;
+  userType?: string;
 };
 
 export type TogglesState = {
   [Toggleables.EDIT_PASSWORD]: boolean;
   [Toggleables.EDIT_QUESTIONS]: boolean;
 };
+
+export enum UserType {
+  LOCAL = 'LOCAL',
+  AZURE_AD = 'AZURE_AD',
+}

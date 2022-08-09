@@ -112,7 +112,11 @@ const AuthView: FC<RouteComponentProps> = () => {
           path="forgot-password"
           pageName={PAGE_NAMES.FORGOT_IDENTITY}
         />
-        <BaseView<LoginInputs> path="/*" pageName={PAGE_NAMES.LOGIN} />
+        <BaseView<LoginInputs>
+          path="/login-password"
+          pageName={PAGE_NAMES.LOGIN}
+        />
+        <BaseView<LoginInputs> path="/*" pageName={PAGE_NAMES.ACCOUNT_LOOKUP} />
       </Router>
       <div className="brand-footer">
         <div>

@@ -47,6 +47,7 @@ export type ButtonColor = 'blue' | 'green' | 'red' | 'dark';
 type Button1Props = {
   color?: ButtonColor;
   variant?: ButtonVariant;
+  loading?: boolean;
 } & ComponentPropsWithRef<'button'>;
 
 const ColorMap = {
@@ -82,7 +83,8 @@ const ColorMap = {
 
 const ButtonWrapper = styled.button.attrs(
   ({ type = 'button', disabled = false }) => ({ type, disabled }),
-)<Omit<Button1Props, 'loading'>>`
+)<Button1Props>`
+  position: relative;
   align-items: center;
   border: 1px solid transparent;
   border-radius: 4px;
@@ -164,7 +166,7 @@ const ButtonWrapper = styled.button.attrs(
     }
   }}
 
-  ${({ disabled, variant = 'primary' }) =>
+  ${({ disabled, variant = 'primary', loading, color = 'blue' }) =>
     disabled
       ? variant === 'secondary'
         ? css`
@@ -182,8 +184,39 @@ const ButtonWrapper = styled.button.attrs(
             border-color: transparent;
             color: #dadada;
             pointer-events: none;
+
+            ${loading &&
+            css`
+              color: transparent;
+              ::after {
+                content: '';
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                margin: auto;
+                border: 3px solid transparent;
+                border-top-color: ${ColorMap[color].textColor};
+                border-right-color: ${ColorMap[color].textColor};
+                border-radius: 50%;
+                animation: button-loading-spinner 1s ease infinite;
+              }
+            `}
           `
       : null}
+
+  @keyframes button-loading-spinner {
+    from {
+      transform: rotate(0turn);
+    }
+
+    to {
+      transform: rotate(1turn);
+    }
+  }
 `;
 
 export const Button1 = forwardRef<HTMLButtonElement, Button1Props>(

@@ -31,6 +31,7 @@ import {
 } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { encrypt } from '#utils/stringUtils';
+import { UserType } from './ManageUser/types';
 
 function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
   try {
@@ -199,7 +200,7 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
     let heading = 'Invitation Sent';
     let subHeading =
       'Invitation with Secret Key to register has been sent to the Employee’s Email ID.';
-    if (!data.email) {
+    if (!data.email || payload.userType === UserType.AZURE_AD) {
       heading = 'User Added';
       subHeading =
         'User will need to register themselves using the Secret Key shown below.';
@@ -211,6 +212,7 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
           heading,
           subHeading,
           key: data.token,
+          showSecretKeyInfo: payload.userType === UserType.LOCAL,
         },
       }),
     );

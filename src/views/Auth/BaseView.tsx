@@ -188,7 +188,7 @@ function BaseView<T = Record<string, unknown>>({ pageName }: BaseViewProps) {
 
   useEffect(() => {
     dispatch(resetError());
-    if (pageName === PAGE_NAMES.LOGIN) {
+    if (pageName === PAGE_NAMES.ACCOUNT_LOOKUP) {
       dispatch(cleanUp());
     }
     trigger();

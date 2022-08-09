@@ -29,6 +29,7 @@ import {
   EditUserRequestInputs,
   PAGE_TYPE,
   TogglesState,
+  UserType,
 } from './types';
 
 const ManageUser: FC<EditUserProps> = ({
@@ -57,6 +58,7 @@ const ManageUser: FC<EditUserProps> = ({
   });
 
   const { register, handleSubmit, formState, setValue, reset } = formData;
+  const { isDirty, isValid } = formState;
 
   useEffect(() => {
     reset({
@@ -68,6 +70,7 @@ const ManageUser: FC<EditUserProps> = ({
       department: selectedUser?.department,
       facilities: selectedUser?.facilities?.map((f) => ({ id: f.id })),
       roles: selectedUser?.roles?.[0]?.id,
+      userType: selectedUser?.userType || UserType.LOCAL,
     });
     return () => {
       dispatch(fetchSelectedUserSuccess({ data: undefined }));
@@ -76,6 +79,8 @@ const ManageUser: FC<EditUserProps> = ({
 
   register('facilities', { required: true });
   register('roles', { required: true });
+  register('userType', { required: true });
+  register('username');
 
   const onSubmit = (data: EditUserRequestInputs) => {
     const body = {
@@ -364,7 +369,7 @@ const ManageUser: FC<EditUserProps> = ({
           className="primary-button"
           type="submit"
           variant={pageType === PAGE_TYPE.EDIT ? 'secondary' : 'primary'}
-          disabled={!formState.isValid || !formState.isDirty}
+          disabled={!isValid || !isDirty}
         >
           Save Changes
         </Button1>

@@ -26,8 +26,9 @@ import { LoginErrorCodes } from '#utils/constants';
 import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
+import { ssoLogin, ssoLogout } from '#views/Auth/saga';
+import { UserType } from '#views/UserAccess/ManageUser/types';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
-
 import { Checklist, ChecklistStates, Comment } from './checklist.types';
 import { ComposerAction } from './reducer.types';
 import {
@@ -55,12 +56,13 @@ import {
 } from './reviewer.types';
 
 const getState = (state: RootState) => state.prototypeComposer.data?.state;
-const getCurrentPhase = (state: RootState) =>
-  state.prototypeComposer.data?.phase;
+const getCurrentPhase = (state: RootState) => state.prototypeComposer.data?.phase;
 const getCurrentReviewers = (state: RootState) =>
   (state.prototypeComposer.data as Checklist)?.collaborators || [];
 const getCurrentComments = (state: RootState) =>
   (state.prototypeComposer.data as Checklist)?.comments || [];
+const getUserType = (state: RootState) => state.auth.userType;
+const getUserName = (state: RootState) => state.auth.profile?.username;
 
 function* fetchReviewersForChecklistSaga({
   payload,
@@ -68,11 +70,7 @@ function* fetchReviewersForChecklistSaga({
   try {
     const { checklistId } = payload;
 
-    const { data, errors } = yield call(
-      request,
-      'GET',
-      apiGetReviewersForChecklist(checklistId),
-    );
+    const { data, errors } = yield call(request, 'GET', apiGetReviewersForChecklist(checklistId));
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -80,11 +78,7 @@ function* fetchReviewersForChecklistSaga({
 
     yield put(fetchAssignedReviewersForChecklistSuccess(data));
   } catch (error) {
-    yield* handleCatch(
-      'Prototype Composer',
-      'fetchReviewersForChecklistSaga',
-      error,
-    );
+    yield* handleCatch('Prototype Composer', 'fetchReviewersForChecklistSaga', error);
   }
 }
 
@@ -92,11 +86,7 @@ function* fetchApproversSaga({ payload }: ReturnType<typeof fetchApprovers>) {
   try {
     const { checklistId } = payload;
 
-    const { data, errors } = yield call(
-      request,
-      'GET',
-      apiGetApproversForChecklist(checklistId),
-    );
+    const { data, errors } = yield call(request, 'GET', apiGetApproversForChecklist(checklistId));
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -105,8 +95,7 @@ function* fetchApproversSaga({ payload }: ReturnType<typeof fetchApprovers>) {
     yield put(
       fetchApproversSuccess(
         data.filter(
-          (collaborator: Collaborator) =>
-            collaborator.type === CollaboratorType.SIGN_OFF_USER,
+          (collaborator: Collaborator) => collaborator.type === CollaboratorType.SIGN_OFF_USER,
         ),
       ),
     );
@@ -117,10 +106,7 @@ function* fetchApproversSaga({ payload }: ReturnType<typeof fetchApprovers>) {
 
 function* submitChecklistForReviewCall(checklistId: Checklist['id']) {
   try {
-    const {
-      data,
-      errors,
-    }: ResponseObj<CommonReviewResponse['checklist']> = yield call(
+    const { data, errors }: ResponseObj<CommonReviewResponse['checklist']> = yield call(
       request,
       'PATCH',
       apiSubmitChecklistForReview(checklistId),
@@ -138,31 +124,20 @@ function* submitChecklistForReviewCall(checklistId: Checklist['id']) {
   }
 }
 
-function* submitChecklistForReviewSaga({
-  payload,
-}: ReturnType<typeof submitChecklistForReview>) {
+function* submitChecklistForReviewSaga({ payload }: ReturnType<typeof submitChecklistForReview>) {
   const { checklistId } = payload;
 
   try {
     yield* submitChecklistForReviewCall(checklistId);
   } catch (error) {
-    yield* handleCatch(
-      'Prototype Composer',
-      'submitChecklistForReviewSaga',
-      error,
-      true,
-    );
+    yield* handleCatch('Prototype Composer', 'submitChecklistForReviewSaga', error, true);
   }
 }
 
 function* assignReviewersToChecklistSaga({
   payload,
 }: ReturnType<typeof assignReviewersToChecklist>) {
-  const {
-    checklistId,
-    assignIds: assignedUserIds,
-    unassignIds: unassignedUserIds,
-  } = payload;
+  const { checklistId, assignIds: assignedUserIds, unassignIds: unassignedUserIds } = payload;
 
   try {
     const state = getState(yield select());
@@ -176,23 +151,15 @@ function* assignReviewersToChecklistSaga({
       data = yield* submitChecklistForReviewCall(checklistId);
     }
 
-    const shouldCallAssignment =
-      assignedUserIds.length || unassignedUserIds.length;
+    const shouldCallAssignment = assignedUserIds.length || unassignedUserIds.length;
     if (shouldCallAssignment) {
-      const {
-        data: assignmentData,
-        errors,
-      }: ResponseObj<CommonReviewResponse['checklist']> = yield call(
-        request,
-        'PATCH',
-        apiAssignReviewersToChecklist(checklistId),
-        {
+      const { data: assignmentData, errors }: ResponseObj<CommonReviewResponse['checklist']> =
+        yield call(request, 'PATCH', apiAssignReviewersToChecklist(checklistId), {
           data: {
             assignedUserIds,
             unassignedUserIds,
           },
-        },
-      );
+        });
 
       if (errors) {
         throw getErrorMsg(errors);
@@ -218,18 +185,11 @@ function* assignReviewersToChecklistSaga({
       );
     }
   } catch (error) {
-    yield* handleCatch(
-      'Prototype Composer',
-      'assignReviewersToChecklistSaga',
-      error,
-      true,
-    );
+    yield* handleCatch('Prototype Composer', 'assignReviewersToChecklistSaga', error, true);
   }
 }
 
-function* startChecklistReviewSaga({
-  payload,
-}: ReturnType<typeof startChecklistReview>) {
+function* startChecklistReviewSaga({ payload }: ReturnType<typeof startChecklistReview>) {
   const { checklistId } = payload;
 
   try {
@@ -245,12 +205,7 @@ function* startChecklistReviewSaga({
 
     yield* onSuccess(data);
   } catch (error) {
-    yield* handleCatch(
-      'Prototype Composer',
-      'startChecklistReviewSaga',
-      error,
-      true,
-    );
+    yield* handleCatch('Prototype Composer', 'startChecklistReviewSaga', error, true);
   }
 }
 
@@ -370,17 +325,11 @@ function* afterSubmitChecklistReview(isLast: boolean, allDoneOk: boolean) {
       );
     }
   } catch (error) {
-    yield* handleCatch(
-      'Prototype Composer',
-      'afterSubmitChecklistReview',
-      error,
-    );
+    yield* handleCatch('Prototype Composer', 'afterSubmitChecklistReview', error);
   }
 }
 
-function* submitChecklistReviewSaga({
-  payload,
-}: ReturnType<typeof submitChecklistReview>) {
+function* submitChecklistReviewSaga({ payload }: ReturnType<typeof submitChecklistReview>) {
   const { checklistId } = payload;
 
   try {
@@ -397,12 +346,7 @@ function* submitChecklistReviewSaga({
     const { isLast, allDoneOk } = yield* onSuccess(data);
     yield* afterSubmitChecklistReview(isLast, allDoneOk);
   } catch (error) {
-    yield* handleCatch(
-      'Prototype Composer',
-      'submitChecklistReviewSaga',
-      error,
-      true,
-    );
+    yield* handleCatch('Prototype Composer', 'submitChecklistReviewSaga', error, true);
   }
 }
 
@@ -430,12 +374,7 @@ function* submitChecklistReviewWithCRSaga({
     const { isLast, allDoneOk } = yield* onSuccess(data);
     yield* afterSubmitChecklistReview(isLast, allDoneOk);
   } catch (error) {
-    yield* handleCatch(
-      'Prototype Composer',
-      'submitChecklistReviewWithCRSaga',
-      error,
-      true,
-    );
+    yield* handleCatch('Prototype Composer', 'submitChecklistReviewWithCRSaga', error, true);
   }
 }
 
@@ -460,8 +399,7 @@ function* sendReviewToCrSaga({ payload }: ReturnType<typeof sendReviewToCr>) {
         type: OverlayNames.CHECKLIST_SENT_TO_AUTHOR_SUCCESS,
         props: {
           heading:
-            data?.collaborators?.[0].state ===
-            CollaboratorState.REQUESTED_CHANGES
+            data?.collaborators?.[0].state === CollaboratorState.REQUESTED_CHANGES
               ? 'Comments Sent to Author'
               : 'Great Job !',
         },
@@ -476,10 +414,7 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
   const { checklistId, users } = payload;
 
   try {
-    const {
-      errors,
-      data,
-    }: ResponseObj<CommonReviewResponse> = yield call(
+    const { errors, data }: ResponseObj<CommonReviewResponse> = yield call(
       request,
       'POST',
       apiSignOffOrder(checklistId),
@@ -503,18 +438,31 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
   }
 }
 
-function* signOffPrototypeSaga({
-  payload,
-}: ReturnType<typeof signOffPrototype>) {
+function* signOffPrototypeSaga({ payload }: ReturnType<typeof signOffPrototype>) {
   try {
-    const { checklistId, password } = payload;
+    const { checklistId, password, instance } = payload;
+    const userType = getUserType(yield select());
+    let validateData, validateErrors;
 
-    const { data: validateData, errors: validateErrors } = yield call(
-      request,
-      'PATCH',
-      apiValidatePassword(),
-      { data: { password: encrypt(password) } },
-    );
+    if (userType === UserType.LOCAL) {
+      const { data: _validateData, errors: _validateErrors } = yield call(
+        request,
+        'PATCH',
+        apiValidatePassword(),
+        { data: { password: encrypt(password) } },
+      );
+      validateData = _validateData;
+      validateErrors = _validateErrors;
+    } else {
+      const username = getUserName(yield select());
+      if (instance && username) {
+        yield call(ssoLogout, instance, false);
+        const ssoResponse = yield call(ssoLogin, username, instance);
+        if (ssoResponse) {
+          validateData = true;
+        }
+      }
+    }
 
     if (validateData) {
       const { errors, data }: ResponseObj<CommonReviewResponse> = yield call(
@@ -541,33 +489,38 @@ function* signOffPrototypeSaga({
       throw 'Could Not Sign Off the Prototype';
     }
   } catch (error) {
-    yield* handleCatch(
-      'Prototype Composer',
-      'signOffPrototypeSaga',
-      error,
-      true,
-    );
+    yield* handleCatch('Prototype Composer', 'signOffPrototypeSaga', error, true);
   }
 }
 
-function* releasePrototypeSaga({
-  payload,
-}: ReturnType<typeof releasePrototype>) {
+function* releasePrototypeSaga({ payload }: ReturnType<typeof releasePrototype>) {
   try {
-    const { checklistId, password } = payload;
+    const { checklistId, password, instance } = payload;
+    const userType = getUserType(yield select());
+    let validateData, validateErrors;
 
-    const { data: validateData, errors: validateErrors } = yield call(
-      request,
-      'PATCH',
-      apiValidatePassword(),
-      { data: { password: encrypt(password) } },
-    );
+    if (userType === UserType.LOCAL) {
+      const { data: _validateData, errors: _validateErrors } = yield call(
+        request,
+        'PATCH',
+        apiValidatePassword(),
+        { data: { password: encrypt(password) } },
+      );
+      validateData = _validateData;
+      validateErrors = _validateErrors;
+    } else {
+      const username = getUserName(yield select());
+      if (instance && username) {
+        yield call(ssoLogout, instance, false);
+        const ssoResponse = yield call(ssoLogin, username, instance);
+        if (ssoResponse) {
+          validateData = true;
+        }
+      }
+    }
 
     if (validateData) {
-      const {
-        errors,
-        data,
-      }: ResponseObj<CommonReviewResponse['checklist']> = yield call(
+      const { errors, data }: ResponseObj<CommonReviewResponse['checklist']> = yield call(
         request,
         'PATCH',
         apiPrototypeRelease(checklistId),
@@ -588,41 +541,18 @@ function* releasePrototypeSaga({
       throw validateErrors?.[0]?.message || 'Unable to Release the Prototype';
     }
   } catch (error) {
-    yield* handleCatch(
-      'Prototype Composer',
-      'releasePrototypeSaga',
-      error,
-      true,
-    );
+    yield* handleCatch('Prototype Composer', 'releasePrototypeSaga', error, true);
   }
 }
 
 export function* ReviewerSaga() {
-  yield takeLatest(
-    ComposerAction.FETCH_REVIEWERS_FOR_CHECKLIST,
-    fetchReviewersForChecklistSaga,
-  );
+  yield takeLatest(ComposerAction.FETCH_REVIEWERS_FOR_CHECKLIST, fetchReviewersForChecklistSaga);
   yield takeLatest(ComposerAction.FETCH_APPROVERS, fetchApproversSaga);
-  yield takeLatest(
-    ComposerAction.ASSIGN_REVIEWERS_TO_CHECKLIST,
-    assignReviewersToChecklistSaga,
-  );
-  yield takeLatest(
-    ComposerAction.START_CHECKLIST_REVIEW,
-    startChecklistReviewSaga,
-  );
-  yield takeLatest(
-    ComposerAction.SUBMIT_CHECKLIST_FOR_REVIEW,
-    submitChecklistForReviewSaga,
-  );
-  yield takeLatest(
-    ComposerAction.SUBMIT_CHECKLIST_REVIEW,
-    submitChecklistReviewSaga,
-  );
-  yield takeLatest(
-    ComposerAction.SUBMIT_CHECKLIST_REVIEW_WITH_CR,
-    submitChecklistReviewWithCRSaga,
-  );
+  yield takeLatest(ComposerAction.ASSIGN_REVIEWERS_TO_CHECKLIST, assignReviewersToChecklistSaga);
+  yield takeLatest(ComposerAction.START_CHECKLIST_REVIEW, startChecklistReviewSaga);
+  yield takeLatest(ComposerAction.SUBMIT_CHECKLIST_FOR_REVIEW, submitChecklistForReviewSaga);
+  yield takeLatest(ComposerAction.SUBMIT_CHECKLIST_REVIEW, submitChecklistReviewSaga);
+  yield takeLatest(ComposerAction.SUBMIT_CHECKLIST_REVIEW_WITH_CR, submitChecklistReviewWithCRSaga);
   yield takeLatest(ComposerAction.INITIATE_SIGNOFF, initiateSignOffSaga);
   yield takeLatest(ComposerAction.SEND_REVIEW_TO_CR, sendReviewToCrSaga);
   yield takeLatest(ComposerAction.SIGN_OFF_PROTOTYPE, signOffPrototypeSaga);

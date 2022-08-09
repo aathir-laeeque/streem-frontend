@@ -1,9 +1,6 @@
 import { BaseModal, Button1, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import {
-  releasePrototype,
-  signOffPrototype,
-} from '#PrototypeComposer/reviewer.actions';
+import { releasePrototype, signOffPrototype } from '#PrototypeComposer/reviewer.actions';
 import { Checklist } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { Visibility } from '@material-ui/icons';
@@ -11,6 +8,8 @@ import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { useMsal } from '@azure/msal-react';
+import { UserType } from '#views/UserAccess/ManageUser/types';
 
 const Wrapper = styled.div`
   .modal {
@@ -82,21 +81,25 @@ const PasswordInputModal: FC<
 > = ({ closeAllOverlays, closeOverlay, props }) => {
   const isReleasing = props?.isReleasing || false;
   const dispatch = useDispatch();
+  const { instance } = useMsal();
   const { data: checklist } = useTypedSelector((state) => ({
     approvers: state.prototypeComposer.approvers,
     data: state.prototypeComposer.data as Checklist,
   }));
+  const { userType } = useTypedSelector((state) => state.auth);
   const [passwordInputType, setPasswordInputType] = useState(true);
   const { register, handleSubmit, formState } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
   });
+  const { isDirty, isValid } = formState;
 
   const onSubmit = (data: Inputs) => {
+    const _instance = userType === UserType.AZURE_AD ? instance : undefined;
     if (isReleasing) {
-      dispatch(releasePrototype(checklist.id, data.password));
+      dispatch(releasePrototype(checklist.id, data.password, _instance));
     } else {
-      dispatch(signOffPrototype(checklist.id, data.password));
+      dispatch(signOffPrototype(checklist.id, data.password, _instance));
     }
   };
 
@@ -119,34 +122,34 @@ const PasswordInputModal: FC<
           {isReleasing ? (
             <>
               <div>
-                Ongoing Jobs will be executed as per the previous version of the
-                the Checklist. All new Jobs will be created as per the latest
-                version.
+                Ongoing Jobs will be executed as per the previous version of the the Checklist. All
+                new Jobs will be created as per the latest version.
               </div>
               <div style={{ marginTop: '10px' }}>
-                By Entering your Account Password you will Release the Checklist
-                for creating Jobs.
+                By Continuing you will Release the Checklist for creating Jobs.
               </div>
             </>
           ) : (
-            'By Entering your Account Password you will sign the Prototype and make it ready for release.'
+            'By Continuing you will sign the Prototype and make it ready for release.'
           )}
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <TextInput
-            ref={register({
-              required: true,
-            })}
-            AfterElement={AfterIcon}
-            name="password"
-            label="Password"
-            placeholder="Password"
-            error={true}
-            type={passwordInputType ? 'password' : 'text'}
-          />
+          {userType === UserType.LOCAL && (
+            <TextInput
+              ref={register({
+                required: true,
+              })}
+              AfterElement={AfterIcon}
+              name="password"
+              label="Password"
+              placeholder="Password"
+              error={true}
+              type={passwordInputType ? 'password' : 'text'}
+            />
+          )}
           <Button1
             type="submit"
-            disabled={formState.isValid && formState.isDirty ? false : true}
+            disabled={userType === UserType.LOCAL ? !isValid || !isDirty : false}
           >
             Sign
           </Button1>

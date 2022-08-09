@@ -26,6 +26,7 @@ const initialState: AuthState = {
 
 const reducer = (state = initialState, action: AuthActionType): AuthState => {
   switch (action.type) {
+    case AuthAction.ACCOUNT_LOOKUP:
     case AuthAction.RESET_PASSWORD:
     case AuthAction.LOGIN:
       return { ...state, loading: true };
@@ -127,6 +128,14 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
 
     case AuthAction.FETCH_USE_CASE_LIST_ERROR:
       return { ...state, error: action.payload?.error };
+
+    case AuthAction.ACCOUNT_LOOKUP_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        userType: action.payload.type,
+        email: action.payload.username,
+      };
 
     default:
       return state;

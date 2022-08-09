@@ -13,6 +13,7 @@ import React, { FC } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import GlobalStyles from './styles/GlobalStyles';
+import { MsalComponent } from './MsalComponent';
 
 export const { store, persistor } = configureStore({});
 
@@ -28,33 +29,35 @@ const App: FC = () => {
 
   return (
     <AppVersionCheck>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor} onBeforeLift={onBeforeLift}>
-          <Router style={{ display: 'flex', flex: 1 }} basepath="/">
-            <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
-            <CustomRoute as={FacilitySelectionView} path="facility/selection" />
-            <CustomRoute as={HomeView} path="home" />
-            <CustomRoute as={PrintJob} path="jobs/:jobId/print" />
-            <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
-            <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
-            <CustomRoute as={PrintJobAuditLogs} path="job-activity/:jobId/print" />
-            <CustomRoute as={UseCaseSelectionView} path="/*" />
-          </Router>
-          <Notification
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={true}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
-          <OverlayContainer />
-          <GlobalStyles />
-        </PersistGate>
-      </Provider>
+      <MsalComponent>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor} onBeforeLift={onBeforeLift}>
+            <Router style={{ display: 'flex', flex: 1 }} basepath="/">
+              <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
+              <CustomRoute as={FacilitySelectionView} path="facility/selection" />
+              <CustomRoute as={HomeView} path="home" />
+              <CustomRoute as={PrintJob} path="jobs/:jobId/print" />
+              <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
+              <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
+              <CustomRoute as={PrintJobAuditLogs} path="job-activity/:jobId/print" />
+              <CustomRoute as={UseCaseSelectionView} path="/*" />
+            </Router>
+            <Notification
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={true}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
+            <OverlayContainer />
+            <GlobalStyles />
+          </PersistGate>
+        </Provider>
+      </MsalComponent>
     </AppVersionCheck>
   );
 };

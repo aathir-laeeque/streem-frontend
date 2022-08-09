@@ -9,6 +9,9 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { logout, reLogin } from '../actions';
 import { fetch } from '#store/properties/actions';
+import { useMsal } from '@azure/msal-react';
+import { UserType } from '#views/UserAccess/ManageUser/types';
+import { ssoLogin } from '../saga';
 
 // TODO Handle closing of this modal if relogin api fails for some reason.
 const Wrapper = styled.div`
@@ -74,21 +77,32 @@ type Inputs = {
   password: string;
 };
 
-const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({ closeAllOverlays, closeOverlay }) => {
+const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
+  closeAllOverlays,
+  closeOverlay,
+}) => {
   const dispatch = useDispatch();
-  const { profile, selectedUseCase } = useTypedSelector((state) => state.auth);
+  const { instance } = useMsal();
+  const { profile, selectedUseCase, userType } = useTypedSelector((state) => state.auth);
   const [passwordInputType, setPasswordInputType] = useState(true);
   const { register, handleSubmit, formState } = useForm<Inputs>({
     mode: 'onChange',
     criteriaMode: 'all',
   });
+  const { isDirty, isValid } = formState;
 
-  const onSubmit = (data: Inputs) => {
+  const onSubmit = async (data: Inputs) => {
     if (profile && profile.username) {
+      let idToken;
+      if (userType === UserType.AZURE_AD) {
+        const ssoResponse = await ssoLogin(profile.username, instance);
+        idToken = ssoResponse.idToken;
+      }
       dispatch(
         reLogin({
           ...data,
           username: profile.username,
+          idToken,
         }),
       );
       if (selectedUseCase) {
@@ -100,7 +114,10 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({ closeAllOverlays,
   };
 
   const AfterIcon = () => (
-    <VisibilityOutlined onClick={() => setPasswordInputType(!passwordInputType)} style={{ color: passwordInputType ? '#000' : '#1d84ff' }} />
+    <VisibilityOutlined
+      onClick={() => setPasswordInputType(!passwordInputType)}
+      style={{ color: passwordInputType ? '#000' : '#1d84ff' }}
+    />
   );
 
   return (
@@ -114,7 +131,13 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({ closeAllOverlays,
       >
         {profile && (
           <div style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
-            <Avatar user={profile!} size="large" color="blue" borderColor="#ffffff" allowMouseEvents={false} />
+            <Avatar
+              user={profile!}
+              size="large"
+              color="blue"
+              borderColor="#ffffff"
+              allowMouseEvents={false}
+            />
             <div>
               <div style={{ fontSize: '12px', color: '#c2c2c2' }}>{profile!.employeeId}</div>
               <div style={{ color: '#161616', fontSize: '16px', marginTop: '4px' }}>
@@ -123,19 +146,23 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({ closeAllOverlays,
             </div>
           </div>
         )}
-        <span style={{ marginTop: '8px' }}>Your current session has expired. You may continue by entering your account password.</span>
+        <span style={{ marginTop: '8px' }}>
+          Your current session has expired. You may continue by log in again.
+        </span>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <TextInput
-            ref={register({
-              required: true,
-            })}
-            AfterElement={AfterIcon}
-            name="password"
-            label="Password"
-            placeholder="Password"
-            error={true}
-            type={passwordInputType ? 'password' : 'text'}
-          />
+          {userType === UserType.LOCAL && (
+            <TextInput
+              ref={register({
+                required: true,
+              })}
+              AfterElement={AfterIcon}
+              name="password"
+              label="Password"
+              placeholder="Password"
+              error={true}
+              type={passwordInputType ? 'password' : 'text'}
+            />
+          )}
           <div style={{ display: 'flex' }}>
             <Button1
               style={{ width: 'auto' }}
@@ -146,7 +173,11 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({ closeAllOverlays,
             >
               Logout
             </Button1>
-            <Button1 type="submit" style={{ marginLeft: 'auto', width: 'auto' }} disabled={!formState.isValid || !formState.isDirty}>
+            <Button1
+              type="submit"
+              style={{ marginLeft: 'auto', width: 'auto' }}
+              disabled={userType === UserType.LOCAL ? !isValid || !isDirty : false}
+            >
               Proceed to Login
             </Button1>
           </div>

@@ -1,9 +1,6 @@
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
-import {
-  closeAllOverlayAction,
-  openOverlayAction,
-} from '#components/OverlayContainer/actions';
+import { closeAllOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
 import { setInitialFacilityWiseConstants } from '#store/facilityWiseConstants/actions';
@@ -11,6 +8,7 @@ import { resetPropertiesState } from '#store/properties/actions';
 import { fetchSelectedUserSuccess } from '#store/users/actions';
 import { User } from '#store/users/types';
 import {
+  apiAccountLookUp,
   apiAdditionalVerification,
   apiChallengeQuestions,
   apiCheckTokenExpiry,
@@ -32,10 +30,13 @@ import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import { ValidateCredentialsPurpose } from '#views/UserAccess/types';
+import { IPublicClientApplication } from '@azure/msal-browser';
 import { navigate } from '@reach/router';
 import { call, put, select, takeLeading } from 'redux-saga/effects';
 import { persistor, store } from '../../App';
 import {
+  accountLookUp,
+  accountLookUpSuccess,
   additionalVerification,
   authError,
   checkTokenExpiry,
@@ -47,6 +48,7 @@ import {
   fetchUseCaseListSuccess,
   login,
   loginSuccess,
+  logout,
   logoutSuccess,
   notifyAdmin,
   register,
@@ -68,16 +70,15 @@ const getAccessToken = (state: RootState) => state.auth.accessToken;
 
 function* loginSaga({ payload }: ReturnType<typeof login>) {
   try {
-    const { username, password } = payload;
+    const { username, password, idToken } = payload;
     const isLoggedIn = (yield select(getIsLoggedIn)) as boolean;
-    const { data, errors }: ResponseObj<LoginResponse> = yield call(
-      request,
-      'POST',
-      apiLogin(),
-      {
-        data: { username, password: encrypt(password) },
+    const { data, errors }: ResponseObj<LoginResponse> = yield call(request, 'POST', apiLogin(), {
+      data: {
+        username,
+        password: encrypt(password!),
+        idToken,
       },
-    );
+    });
 
     if (errors) {
       if (isLoggedIn) {
@@ -113,16 +114,11 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
 
 function* reLoginSaga({ payload }: ReturnType<typeof reLogin>) {
   try {
-    const { username, password } = payload;
+    const { username, password, idToken } = payload;
     const accessToken = (yield select(getAccessToken)) as string;
-    const { data, errors }: ResponseObj<LoginResponse> = yield call(
-      request,
-      'POST',
-      apiReLogin(),
-      {
-        data: { username, password: encrypt(password), accessToken },
-      },
-    );
+    const { data, errors }: ResponseObj<LoginResponse> = yield call(request, 'POST', apiReLogin(), {
+      data: { username, accessToken, password: encrypt(password), idToken },
+    });
 
     if (errors) {
       if (errors?.[0]?.code !== LoginErrorCodes.INVALID_CREDENTIALS) {
@@ -147,19 +143,18 @@ function* reLoginSaga({ payload }: ReturnType<typeof reLogin>) {
   }
 }
 
-function* logoutSaga() {
+function* logoutSaga({ payload }: ReturnType<typeof logout>) {
   try {
-    const { errors }: ResponseObj<LoginResponse> = yield call(
-      request,
-      'POST',
-      apiLogOut(),
-    );
+    const { instance } = payload;
+    const { errors }: ResponseObj<LoginResponse> = yield call(request, 'POST', apiLogOut());
 
     if (errors) {
       throw getErrorMsg(errors);
     }
-
     yield put(logoutSuccess());
+    if (instance) {
+      yield call(ssoLogout, instance);
+    }
   } catch (error) {
     yield* handleCatch('Auth', 'logoutSaga', error);
     yield put(cleanUp());
@@ -197,11 +192,7 @@ function* logoutSuccessSaga({ payload }: ReturnType<typeof logoutSuccess>) {
 function* fetchProfileSaga({ payload }: ReturnType<typeof fetchProfile>) {
   try {
     const { id } = payload;
-    const { data, errors }: ResponseObj<User> = yield call(
-      request,
-      'GET',
-      apiGetUser(id),
-    );
+    const { data, errors }: ResponseObj<User> = yield call(request, 'GET', apiGetUser(id));
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -215,10 +206,14 @@ function* fetchProfileSaga({ payload }: ReturnType<typeof fetchProfile>) {
 
 function* registerSaga({ payload }: ReturnType<typeof register>) {
   try {
-    const { data, errors }: ResponseObj<LoginResponse & { token: string }> =
-      yield call(request, 'PATCH', apiRegister(), {
+    const { data, errors }: ResponseObj<LoginResponse & { token: string }> = yield call(
+      request,
+      'PATCH',
+      apiRegister(),
+      {
         data: payload,
-      });
+      },
+    );
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -235,14 +230,9 @@ function* registerSaga({ payload }: ReturnType<typeof register>) {
 
 function* resetPasswordSaga({ payload }: ReturnType<typeof resetPassword>) {
   try {
-    const { errors }: ResponseObj<User> = yield call(
-      request,
-      'PATCH',
-      apiResetPassword(),
-      {
-        data: payload,
-      },
-    );
+    const { errors }: ResponseObj<User> = yield call(request, 'PATCH', apiResetPassword(), {
+      data: payload,
+    });
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -255,20 +245,13 @@ function* resetPasswordSaga({ payload }: ReturnType<typeof resetPassword>) {
   }
 }
 
-function* updateUserProfileSaga({
-  payload,
-}: ReturnType<typeof updateUserProfile>) {
+function* updateUserProfileSaga({ payload }: ReturnType<typeof updateUserProfile>) {
   try {
     const { body, id } = payload;
     const userId = (yield select(getUserId)) as string;
-    const { data, errors }: ResponseObj<User> = yield call(
-      request,
-      'PATCH',
-      apiGetUser(id),
-      {
-        data: body,
-      },
-    );
+    const { data, errors }: ResponseObj<User> = yield call(request, 'PATCH', apiGetUser(id), {
+      data: body,
+    });
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -288,26 +271,17 @@ function* updateUserProfileSaga({
   }
 }
 
-function* checkTokenExpirySaga({
-  payload,
-}: ReturnType<typeof checkTokenExpiry>) {
+function* checkTokenExpirySaga({ payload }: ReturnType<typeof checkTokenExpiry>) {
   try {
-    const { data, errors, token } = yield call(
-      request,
-      'PATCH',
-      apiCheckTokenExpiry(),
-      {
-        data: payload,
-      },
-    );
+    const { data, errors, token } = yield call(request, 'PATCH', apiCheckTokenExpiry(), {
+      data: payload,
+    });
 
     if (errors) {
       if (errors?.[0].code === LoginErrorCodes.FORGOT_PASSWORD_TOKEN_EXPIRED) {
         yield put(setIdentityToken({ token }));
         navigate('/auth/forgot-password/key-expired');
-      } else if (
-        errors?.[0].code === LoginErrorCodes.REGISTRATION_TOKEN_EXPIRED
-      ) {
+      } else if (errors?.[0].code === LoginErrorCodes.REGISTRATION_TOKEN_EXPIRED) {
         yield put(setIdentityToken({ token }));
         navigate('/auth/register/invite-expired');
       } else {
@@ -328,18 +302,11 @@ function* checkTokenExpirySaga({
   }
 }
 
-function* additionalVerificationSaga({
-  payload,
-}: ReturnType<typeof additionalVerification>) {
+function* additionalVerificationSaga({ payload }: ReturnType<typeof additionalVerification>) {
   try {
-    const { data, errors, token } = yield call(
-      request,
-      'PATCH',
-      apiAdditionalVerification(),
-      {
-        data: payload,
-      },
-    );
+    const { data, errors, token } = yield call(request, 'PATCH', apiAdditionalVerification(), {
+      data: payload,
+    });
 
     if (errors) {
       if (errors?.[0].code === LoginErrorCodes.USER_INVITE_EXPIRED) {
@@ -358,19 +325,12 @@ function* additionalVerificationSaga({
   }
 }
 
-function* setChallengeQuestionSaga({
-  payload,
-}: ReturnType<typeof setChallengeQuestion>) {
+function* setChallengeQuestionSaga({ payload }: ReturnType<typeof setChallengeQuestion>) {
   try {
     const userId = (yield select(getUserId)) as string;
-    const { errors } = yield call(
-      request,
-      'PATCH',
-      apiChallengeQuestions(userId),
-      {
-        data: payload,
-      },
-    );
+    const { errors } = yield call(request, 'PATCH', apiChallengeQuestions(userId), {
+      data: payload,
+    });
 
     if (errors) {
       if (errors[0].code === LoginErrorCodes.JWT_TOKEN_EXPIRED) {
@@ -397,18 +357,11 @@ function* setChallengeQuestionSaga({
   }
 }
 
-function* validateIdentitySaga({
-  payload,
-}: ReturnType<typeof validateIdentity>) {
+function* validateIdentitySaga({ payload }: ReturnType<typeof validateIdentity>) {
   try {
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiValidateIdentity(),
-      {
-        data: payload,
-      },
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiValidateIdentity(), {
+      data: payload,
+    });
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -422,18 +375,11 @@ function* validateIdentitySaga({
   }
 }
 
-function* validateQuestionSaga({
-  payload,
-}: ReturnType<typeof validateQuestion>) {
+function* validateQuestionSaga({ payload }: ReturnType<typeof validateQuestion>) {
   try {
-    const { data, errors, token } = yield call(
-      request,
-      'PATCH',
-      apiValidateChallengeQuestion(),
-      {
-        data: payload,
-      },
-    );
+    const { data, errors, token } = yield call(request, 'PATCH', apiValidateChallengeQuestion(), {
+      data: payload,
+    });
 
     if (errors) {
       if (errors?.[0].code === LoginErrorCodes.USER_ACCOUNT_LOCKED) {
@@ -489,19 +435,66 @@ function* notifyAdminSaga({ payload }: ReturnType<typeof notifyAdmin>) {
 function* fetchUseCaseListSaga() {
   try {
     yield put(fetchUseCaseListOngoing());
-    const response: UseCaseType[] = yield call(
-      request,
-      'GET',
-      apiGetUseCaseList(),
-    );
+    const response: UseCaseType[] = yield call(request, 'GET', apiGetUseCaseList());
     yield put(fetchUseCaseListSuccess(response));
     yield put(resetPropertiesState());
   } catch (error) {
-    console.error(
-      'error from fetchUseCaseListSaga function in AuthSaga :: ',
-      error,
-    );
+    console.error('error from fetchUseCaseListSaga function in AuthSaga :: ', error);
     yield put(fetchUseCaseListError(error));
+  }
+}
+
+export async function ssoLogin(username: string, instance: IPublicClientApplication) {
+  const loginRequest = {
+    scopes: ['User.Read'],
+    loginHint: username,
+  };
+  try {
+    return await instance.loginPopup(loginRequest);
+  } catch (error) {
+    console.error('Error While SSO Login', error);
+    throw error;
+  }
+}
+
+export async function ssoLogout(instance: IPublicClientApplication, shouldClear = true) {
+  try {
+    const loginHint = localStorage.getItem('loginHint');
+    if (shouldClear) localStorage.removeItem('loginHint');
+    return await instance.logoutPopup({
+      logoutHint: loginHint || undefined,
+    });
+  } catch (error) {
+    console.error('Error While SSO Logout', error);
+    throw error;
+  }
+}
+
+function* accountLookUpSaga({ payload }: ReturnType<typeof accountLookUp>) {
+  try {
+    const { username, instance } = payload;
+    const { data, errors }: ResponseObj<{ type: string; username: string }> = yield call(
+      request,
+      'GET',
+      apiAccountLookUp(),
+      {
+        params: { username },
+      },
+    );
+    if (errors) {
+      throw getErrorMsg(errors);
+    } else {
+      yield put(accountLookUpSuccess(data));
+      if (data.type === 'LOCAL') {
+        navigate('/auth/login-password');
+      } else if (instance) {
+        const ssoResponse = yield call(ssoLogin, data.username, instance);
+        yield put(login({ username, idToken: ssoResponse.idToken }));
+      }
+    }
+  } catch (error) {
+    error = yield* handleCatch('Auth', 'accountLookUpSaga', error);
+    yield put(authError(error));
   }
 }
 
@@ -516,17 +509,12 @@ export function* AuthSaga() {
   yield takeLeading(AuthAction.RESET_PASSWORD, resetPasswordSaga);
   yield takeLeading(AuthAction.UPDATE_USER_PROFILE, updateUserProfileSaga);
   yield takeLeading(AuthAction.CHECK_TOKEN_EXPIRY, checkTokenExpirySaga);
-  yield takeLeading(
-    AuthAction.ADDITIONAL_VERIFICATION,
-    additionalVerificationSaga,
-  );
-  yield takeLeading(
-    AuthAction.SET_CHALLENGE_QUESTION,
-    setChallengeQuestionSaga,
-  );
+  yield takeLeading(AuthAction.ADDITIONAL_VERIFICATION, additionalVerificationSaga);
+  yield takeLeading(AuthAction.SET_CHALLENGE_QUESTION, setChallengeQuestionSaga);
   yield takeLeading(AuthAction.VALIDATE_IDENTITY, validateIdentitySaga);
   yield takeLeading(AuthAction.VALIDATE_QUESTION, validateQuestionSaga);
   yield takeLeading(AuthAction.RESET_TOKEN, resetTokenSaga);
   yield takeLeading(AuthAction.NOTIFY_ADMIN, notifyAdminSaga);
   yield takeLeading(AuthAction.FETCH_USE_CASE_LIST, fetchUseCaseListSaga);
+  yield takeLeading(AuthAction.ACCOUNT_LOOKUP, accountLookUpSaga);
 }

@@ -7,6 +7,8 @@ import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
 import { logout, setSelectedUseCase } from '#views/Auth/actions';
+import { UserType } from '#views/UserAccess/ManageUser/types';
+import { useMsal } from '@azure/msal-react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { navigate } from '@reach/router';
@@ -29,8 +31,9 @@ const Header: FC = () => {
   const dispatch = useDispatch();
   const [showUseCaseSelectionDropDown, setShowUseCaseSelectionDropDown] =
     React.useState<null | HTMLElement>(null);
+  const { instance } = useMsal();
 
-  const { profile, facilities, selectedFacility, userId, selectedUseCase, useCastList } =
+  const { profile, facilities, selectedFacility, userId, selectedUseCase, useCastList, userType } =
     useTypedSelector((state) => state.auth);
 
   const facilitiesOptions: FacilityOption[] = facilities.map((facility) => ({
@@ -170,7 +173,7 @@ const Header: FC = () => {
           )}
           <MenuItem
             onClick={() => {
-              dispatch(logout());
+              dispatch(logout(userType === UserType.AZURE_AD ? instance : undefined));
               setShowUsersDropdown(null);
             }}
           >

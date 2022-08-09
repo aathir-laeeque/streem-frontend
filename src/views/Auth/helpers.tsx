@@ -9,6 +9,7 @@ import { InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import {
+  accountLookUp,
   additionalVerification,
   checkTokenExpiry,
   login,
@@ -20,6 +21,7 @@ import {
   validateIdentity,
   validateQuestion,
 } from '#views/Auth/actions';
+import { useMsal } from '@azure/msal-react';
 import {
   ArrowBack,
   CheckCircle,
@@ -121,7 +123,9 @@ export const createBaseViewConfig = ({
   clearErrors,
   questions,
 }: CreateBaseViewConfigProps) => {
+  const { isDirty, isValid, errors } = formState;
   const dispatch = useDispatch();
+  const { instance } = useMsal();
   const {
     firstName,
     lastName,
@@ -151,6 +155,10 @@ export const createBaseViewConfig = ({
       style={{ color: isConfirmPasswordTextHidden ? '#999' : '#1d84ff' }}
     />
   );
+
+  if (pageName === PAGE_NAMES.LOGIN && !email) {
+    navigate('/auth/login');
+  }
 
   if (
     [
@@ -187,9 +195,7 @@ export const createBaseViewConfig = ({
     confirmPassword: {
       functions: {
         passwordMatch: (value: string) =>
-          formState?.errors?.password?.length || value !== password
-            ? false
-            : true,
+          errors?.password?.length || value !== password ? false : true,
       },
       messages: {
         passwordMatch: 'Passwords Match',
@@ -214,7 +220,7 @@ export const createBaseViewConfig = ({
   });
 
   switch (pageName) {
-    case PAGE_NAMES.LOGIN:
+    case PAGE_NAMES.ACCOUNT_LOOKUP:
       return {
         ...leftCardConfig,
         heading: 'Welcome User',
@@ -233,6 +239,35 @@ export const createBaseViewConfig = ({
                 }),
               },
             },
+          ],
+          onSubmit: async (data: LoginInputs) => {
+            dispatch(accountLookUp(data.username, instance));
+          },
+          buttons: [
+            <Button1
+              key="login"
+              type="submit"
+              loading={loading}
+              disabled={loading || !isDirty || !isValid}
+            >
+              Continue
+            </Button1>,
+          ],
+        },
+        footerAction: (
+          <div>
+            New User ? <Link to="/auth/register">Register Yourself</Link>
+          </div>
+        ),
+      };
+
+    case PAGE_NAMES.LOGIN:
+      return {
+        ...leftCardConfig,
+        heading: 'Welcome User',
+        subHeading: 'Provide your credentials below to login',
+        formData: {
+          formInputs: [
             {
               type: isPasswordInputType
                 ? InputTypes.PASSWORD
@@ -256,16 +291,17 @@ export const createBaseViewConfig = ({
               },
             },
           ],
-          onSubmit: (data: LoginInputs) => {
-            dispatch(login(data));
+          onSubmit: async (data: LoginInputs) => {
+            dispatch(login({ ...data, username: email! }));
           },
           buttons: [
             <Button1
               key="login"
               type="submit"
-              disabled={loading || !formState.isDirty || !formState.isValid}
+              loading={loading}
+              disabled={loading || !isDirty || !isValid}
             >
-              Login
+              Continue
             </Button1>,
           ],
         },
@@ -304,7 +340,7 @@ export const createBaseViewConfig = ({
             <Button1
               key="forgot"
               type="submit"
-              disabled={loading || !formState.isDirty || !formState.isValid}
+              disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               Show Recovery Options
@@ -416,7 +452,7 @@ export const createBaseViewConfig = ({
             <Button1
               key="forgot"
               type="submit"
-              disabled={loading || !formState.isDirty || !formState.isValid}
+              disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               Continue
@@ -493,7 +529,7 @@ export const createBaseViewConfig = ({
             <Button1
               key="forgot"
               type="submit"
-              disabled={loading || !formState.isDirty || !formState.isValid}
+              disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               Verify Answer
@@ -553,7 +589,7 @@ export const createBaseViewConfig = ({
             <Button1
               key="forgot"
               type="submit"
-              disabled={loading || !formState.isDirty || !formState.isValid}
+              disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               {pageName === PAGE_NAMES.REGISTER_SECRET_KEY
@@ -701,7 +737,7 @@ export const createBaseViewConfig = ({
               type: InputTypes.ERROR_CONTAINER,
               props: {
                 messages: validators.password.messages,
-                errorsTypes: keys(formState?.errors?.password?.types) || [],
+                errorsTypes: keys(errors?.password?.types) || [],
               },
             },
             {
@@ -727,8 +763,8 @@ export const createBaseViewConfig = ({
                 messages: validators.confirmPassword.messages,
                 errorsTypes:
                   keys({
-                    [formState?.errors?.confirmPassword?.type]: true,
-                    ...formState?.errors?.confirmPassword?.types,
+                    [errors?.confirmPassword?.type]: true,
+                    ...errors?.confirmPassword?.types,
                   }) || [],
               },
             },
@@ -748,9 +784,7 @@ export const createBaseViewConfig = ({
             <Button1
               key="forgot"
               type="submit"
-              disabled={
-                loading || !formState.isDirty || password !== confirmPassword
-              }
+              disabled={loading || !isDirty || password !== confirmPassword}
               style={{ marginLeft: 'auto' }}
             >
               Set Password
@@ -794,7 +828,7 @@ export const createBaseViewConfig = ({
             <Button1
               key="forgot"
               type="submit"
-              disabled={loading || !formState.isDirty || !formState.isValid}
+              disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               Verify
@@ -843,7 +877,7 @@ export const createBaseViewConfig = ({
                 label: 'Create Username',
                 id: 'username',
                 name: 'username',
-                error: formState.errors['username']?.message,
+                error: errors['username']?.message,
                 ref: register({
                   required: true,
                   maxLength: {
@@ -890,7 +924,7 @@ export const createBaseViewConfig = ({
               type: InputTypes.ERROR_CONTAINER,
               props: {
                 messages: validators.password.messages,
-                errorsTypes: keys(formState?.errors?.password?.types) || [],
+                errorsTypes: keys(errors?.password?.types) || [],
               },
             },
             {
@@ -916,8 +950,8 @@ export const createBaseViewConfig = ({
                 messages: validators.confirmPassword.messages,
                 errorsTypes:
                   keys({
-                    [formState?.errors?.confirmPassword?.type]: true,
-                    ...formState?.errors?.confirmPassword?.types,
+                    [errors?.confirmPassword?.type]: true,
+                    ...errors?.confirmPassword?.types,
                   }) || [],
               },
             },
@@ -938,7 +972,7 @@ export const createBaseViewConfig = ({
             <Button1
               key="forgot"
               type="submit"
-              disabled={loading || !formState.isDirty || !formState.isValid}
+              disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               Register
@@ -1005,7 +1039,7 @@ export const createBaseViewConfig = ({
             <Button1
               key="forgot"
               type="submit"
-              disabled={loading || !formState.isDirty || !formState.isValid}
+              disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               Continue
@@ -1202,7 +1236,7 @@ export const createBaseViewConfig = ({
               key="forgot"
               type="submit"
               style={{ marginLeft: 'auto' }}
-              disabled={loading || !formState.isDirty || !formState.isValid}
+              disabled={loading || !isDirty || !isValid}
             >
               Proceed
             </Button1>,
