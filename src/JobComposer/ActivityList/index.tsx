@@ -18,6 +18,7 @@ import SignatureActivity from './Signature';
 import TextboxActivity from './Textbox';
 import { ActivityListProps } from './types';
 import YesNoActivity from './YesNo';
+import ResourceActivity from './Resource';
 
 const Wrapper = styled.div.attrs({
   className: 'activity-list',
@@ -236,6 +237,14 @@ const ActivityList: FC<ActivityListProps> = ({
                       activity={activity}
                       isCorrectingError={isCorrectingError}
                       isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
+                    />
+                  );
+                
+                case MandatoryActivity.RESOURCE:
+                  return (
+                    <ResourceActivity
+                      activity={activity}
+                      isCorrectingError={isCorrectingError}
                     />
                   );
 

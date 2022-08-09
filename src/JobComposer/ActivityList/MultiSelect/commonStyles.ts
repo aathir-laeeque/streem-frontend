@@ -7,7 +7,7 @@ export const customSelectStyles = {
     borderRadius: 'none',
     boxShadow: 'none',
     cursor: isDisabled ? 'not-allowed' : 'pointer',
-    padding: '8px',
+    padding: '2.7px 8px',
   }),
 
   option: (styles, { isFocused, isSelected }) => ({

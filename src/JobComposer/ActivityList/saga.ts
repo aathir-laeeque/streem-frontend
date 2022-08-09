@@ -10,7 +10,7 @@ import {
   apiRejectActivity,
 } from '#utils/apiUrls';
 import { Error } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, select, takeLeading, takeLatest } from 'redux-saga/effects';
 import { fetchData } from '../actions';
 import { Entity } from '../composer.types';
@@ -77,6 +77,8 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
             },
           }),
         );
+      } else {
+        yield* handleCatch('Activity', 'executeActivitySaga', getErrorMsg(errors), true)
       }
     }
   } catch (error) {
@@ -119,11 +121,13 @@ function* fixActivitySaga({ payload }: ReturnType<typeof fixActivity>) {
             },
           }),
         );
+      } else {
+        yield* handleCatch('Activity', 'fixActivitySaga', getErrorMsg(errors), true)
       }
     }
   } catch (error) {
     console.error(
-      'error came in the executeActivitySaga in ActivityListSaga :: ',
+      'error came in the fixActivitySaga in ActivityListSaga :: ',
       error,
     );
   }
