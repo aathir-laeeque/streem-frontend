@@ -34,6 +34,13 @@ const uiPermissions: Record<string, any> = {
       roles.CHECKLIST_PUBLISHER,
       roles.SUPERVISOR,
     ],
+    ontology: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+      roles.OPERATOR,
+    ],
     checklists: [
       roles.ACCOUNT_OWNER,
       roles.FACILITY_ADMIN,
@@ -111,6 +118,23 @@ const uiPermissions: Record<string, any> = {
     roles.SUPERVISOR,
     roles.OPERATOR,
   ],
+  ontology: {
+    create: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+    ],
+    edit: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+    ],
+    archive: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+    ]
+  }
 };
 
 const checkPermission = (keys: string[]) => {

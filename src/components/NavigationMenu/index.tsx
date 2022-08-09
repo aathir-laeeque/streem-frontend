@@ -2,7 +2,6 @@ import { FeaturedPlayList, LibraryAddCheck, Inbox } from '@material-ui/icons';
 import { Link } from '@reach/router';
 import React, { FC } from 'react';
 import checkPermission from '#services/uiPermissions';
-
 import { Menu, Wrapper, NavItem } from './styles';
 import { MenuItem } from './types';
 
@@ -17,6 +16,12 @@ const NavigationMenu: FC = () => {
       name: 'Checklists',
       icon: LibraryAddCheck,
       path: '/checklists',
+    });
+  if (checkPermission(['sidebar', 'ontology']))
+    menuItems.push({
+      name: 'Ontology',
+      icon: FeaturedPlayList,
+      path: '/ontology',
     });
 
   return (

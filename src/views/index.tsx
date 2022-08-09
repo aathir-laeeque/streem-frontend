@@ -8,3 +8,4 @@ export { default as UseCaseSelectionView } from './UseCaseSelectionView';
 export { default as AuthView } from './Auth';
 export { default as FacilitySelectionView } from './Auth/FacilitySelection';
 export { default as HomeView } from './Home';
+export { default as OntologyView } from './Ontology';

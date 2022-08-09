@@ -8,6 +8,15 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import styled from 'styled-components';
 
+export type DataTableColumn = {
+  id: string;
+  label: string;
+  minWidth: number | string;
+  maxWidth?: number | string;
+  align?: TableCellProps['align'];
+  format?: (value: any) => any;
+};
+
 const Wrapper = styled.div.attrs({
   className: 'data-table',
 })`
@@ -83,14 +92,7 @@ export default function DataTable({
   columns,
   rows,
 }: {
-  columns: {
-    id: string;
-    label: string;
-    minWidth: number | string;
-    maxWidth?: number | string;
-    align?: TableCellProps['align'];
-    format?: (value: any) => any;
-  }[];
+  columns: DataTableColumn[];
   rows: any[];
 }) {
   return (

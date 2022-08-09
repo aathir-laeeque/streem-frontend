@@ -4,10 +4,11 @@ import { Activity, Checklist, Stage } from '#PrototypeComposer/checklist.types';
 import { AddNewTaskType, MediaDetails } from '#PrototypeComposer/Tasks/types';
 import { User } from '#store/users/types';
 import { Job } from '#views/Jobs/NewListView/types';
+import { Object } from '#views/Ontology/types';
 
 import { fetchBaseUrl } from './constants';
 
-const baseUrl = fetchBaseUrl();
+export const baseUrl = fetchBaseUrl();
 
 export const apiGetChecklists = () => `${baseUrl}/checklists`;
 
@@ -221,6 +222,8 @@ export const apiValidatePrototype = (id: Checklist['id']) =>
 export const apiUpdatePrototype = (id: Checklist['id']) =>
   `${baseUrl}/checklists/${id}`;
 
+export const apiGetJobLogs = () => `${baseUrl}/job-logs`;
+
 export const apiValidatePassword = () => `${baseUrl}/auth/credentials/validate`;
 
 export const apiTaskSignOff = () => `${baseUrl}/tasks/sign-off`;
@@ -297,3 +300,17 @@ export const apiGetUseCaseList = () => `${baseUrl}/use-cases`;
 
 export const apiPrintJobDetails = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}/print`;
+
+// ONTOLOGY
+
+export const apiGetObjectTypes = (id?: string) =>
+  `${baseUrl}/object-types${id ? `/${id}` : ''}`;
+
+export const apiGetObjects = (id?: string) =>
+  `${baseUrl}/objects${id ? `/${id}` : ''}`;
+
+export const apiArchiveObject = (id: Object['id']) =>
+  `${baseUrl}/objects/${id}/archive`;
+
+export const apiUnArchiveObject = (id: Object['id']) =>
+  `${baseUrl}/objects/${id}/unarchive`;

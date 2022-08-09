@@ -7,6 +7,7 @@ import { NewPrototypeSaga } from '#views/Checklists/NewPrototype/saga';
 import { InboxListViewSaga } from '#views/Inbox/ListView/saga';
 import { SessionActivitySaga } from '#views/UserAccess/ListView/SessionActivity/saga';
 import { UserAccessSaga } from '#views/UserAccess/saga';
+import { OntologySaga } from '#views/Ontology/saga';
 import { all, fork } from 'redux-saga/effects';
 import { FileUploadSaga } from '../modules/file-upload/saga';
 import { UsersServiceSaga } from '../services/users/saga';
@@ -26,6 +27,7 @@ export function* rootSaga() {
     fork(UsersSaga),
     fork(FacilitiesSaga),
     fork(UserAccessSaga),
+    fork(OntologySaga),
     fork(FileUploadSaga),
     fork(SessionActivitySaga),
     fork(ComposerSaga),

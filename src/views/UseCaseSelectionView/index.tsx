@@ -3,7 +3,13 @@ import { DashboardLayout } from '#components/Layouts';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
 import { fetch } from '#store/properties/actions';
-import { ChecklistView, InboxView, JobsView, UserAccessView } from '#views';
+import {
+  ChecklistView,
+  InboxView,
+  JobsView,
+  UserAccessView,
+  OntologyView,
+} from '#views';
 import { RouteComponentProps, Router } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -36,6 +42,7 @@ const UseCaseSelectionView: FC<RouteComponentProps> = () => {
             <ChecklistView path="checklists/*" />
             <InboxView path="inbox/*" />
             <JobsView path="jobs/*" />
+            <OntologyView path="ontology/*" />
             <UserAccessView path="users/*" />
           </Router>
         </ErrorBoundary>
