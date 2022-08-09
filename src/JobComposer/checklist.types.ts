@@ -11,6 +11,7 @@ export enum MandatoryActivity {
   SIGNATURE = 'SIGNATURE',
   TEXTBOX = 'TEXTBOX',
   YES_NO = 'YES_NO',
+  NUMBER = 'NUMBER',
 }
 
 type ChecklistProperty = Pick<Property, 'id' | 'name' | 'value'>;

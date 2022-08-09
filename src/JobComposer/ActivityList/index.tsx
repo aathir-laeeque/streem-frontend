@@ -14,6 +14,7 @@ import MultiSelectActivity from './MultiSelect';
 import ShouldBeActivity from './ShouldBe';
 import SignatureActivity from './Signature';
 import TextboxActivity from './Textbox';
+import NumberActivity from './Number';
 import { ActivityListProps } from './types';
 import YesNoActivity from './YesNo';
 
@@ -42,7 +43,8 @@ const Wrapper = styled.div.attrs({
     .material-activity,
     .should-be-activity,
     .yes-no-activity,
-    .textbox-activity {
+    .textbox-activity,
+    .number-activity {
       ${({ isTaskCompleted, isCorrectingError, isLoggedInUserAssigned }) =>
         (isTaskCompleted && !isCorrectingError) || !isLoggedInUserAssigned
           ? css`
@@ -193,6 +195,14 @@ const ActivityList: FC<ActivityListProps> = ({
                 case MandatoryActivity.YES_NO:
                   return (
                     <YesNoActivity activity={activity} isCorrectingError={isCorrectingError} />
+                  );
+
+                case MandatoryActivity.NUMBER:
+                  return (
+                    <NumberActivity
+                      activity={activity}
+                      isCorrectingError={isCorrectingError}
+                    />
                   );
 
                 default:

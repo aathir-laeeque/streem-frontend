@@ -29,6 +29,7 @@ export enum MandatoryActivity {
   SINGLE_SELECT = 'SINGLE_SELECT',
   TEXTBOX = 'TEXTBOX',
   YES_NO = 'YES_NO',
+  NUMBER = 'NUMBER',
 }
 
 export enum NonMandatoryActivity {

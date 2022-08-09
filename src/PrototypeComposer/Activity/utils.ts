@@ -97,6 +97,7 @@ const generateNewActivity = ({
         mandatory: true,
       };
 
+    case MandatoryActivity.NUMBER:
     case NonMandatoryActivity.INSTRUCTION:
       return {
         orderTree,

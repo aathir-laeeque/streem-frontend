@@ -22,6 +22,7 @@ import { ActivityWrapper } from './styles';
 import TextboxActivity from './Textbox';
 import { ActivityProps } from './types';
 import YesNoActivity from './YesNo';
+import NumberActivity from './Number';
 
 const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
   const { activeStageId: stageId } = useTypedSelector(
@@ -92,6 +93,9 @@ const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
 
           case NonMandatoryActivity.MATERIAL:
             return <MaterialActivity activity={activity} />;
+
+          case MandatoryActivity.NUMBER:
+            return <NumberActivity activity={activity} />;
 
           default:
             return null;

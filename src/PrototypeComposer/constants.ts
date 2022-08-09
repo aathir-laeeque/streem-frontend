@@ -11,6 +11,7 @@ export const ActivityOptions = [
   { label: 'Single-select', value: MandatoryActivity.SINGLE_SELECT },
   { label: 'Comments', value: MandatoryActivity.TEXTBOX },
   { label: 'Yes/No', value: MandatoryActivity.YES_NO },
+  { label: 'Number', value: MandatoryActivity.NUMBER },
 ];
 
 export const PARAMETER_OPERATORS = [
