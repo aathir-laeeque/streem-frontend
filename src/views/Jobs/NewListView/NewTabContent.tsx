@@ -136,6 +136,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
           properties: parsedProperties,
           checklistId: selectedId,
           selectedUseCaseId: selectedUseCase!.id,
+          relations: jobDetails?.relations,
         }),
       );
     }

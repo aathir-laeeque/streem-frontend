@@ -19,4 +19,5 @@ export const createJob = (params: {
   properties: { id: string; value: string }[];
   checklistId: Checklist['id'];
   selectedUseCaseId: string;
+  relations?: any;
 }) => actionSpreader(ListViewAction.CREATE_JOB, params);

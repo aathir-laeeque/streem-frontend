@@ -56,19 +56,19 @@ const getBaseFilter = (label: string): FilterField[] => [
   { field: 'archived', op: FilterOperators.EQ, values: [false] },
   ...(label === 'prototype'
     ? ([
-      {
-        field: 'state',
-        op: FilterOperators.NE,
-        values: [DisabledStates.DEPRECATED],
-      },
-    ] as FilterField[])
+        {
+          field: 'state',
+          op: FilterOperators.NE,
+          values: [DisabledStates.DEPRECATED],
+        },
+      ] as FilterField[])
     : []),
 ];
 
 const ListView: FC<ListViewProps & { label: string }> = ({
-                                                           navigate = navigateTo,
-                                                           label,
-                                                         }) => {
+  navigate = navigateTo,
+  label,
+}) => {
   const componentDidMount = useRef(false);
   const {
     checklistListView: {
@@ -176,6 +176,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           properties: tempProperties,
           checklistId: selectedChecklist.id,
           selectedUseCaseId: selectedUseCase!.id,
+          relations: jobDetails?.relations,
         }),
       );
     }
@@ -209,11 +210,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                 ) =>
                   item.archived
                     ? dispatch(
-                      unarchiveChecklist(item.id, reason, setFormErrors),
-                    )
+                        unarchiveChecklist(item.id, reason, setFormErrors),
+                      )
                     : dispatch(
-                      archiveChecklist(item.id, reason, setFormErrors),
-                    ),
+                        archiveChecklist(item.id, reason, setFormErrors),
+                      ),
                 onSubmitModalText: item.archived ? 'Unarchive' : 'Archive',
               },
             }),
@@ -229,25 +230,25 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   const columns = [
     ...(label === 'prototype'
       ? [
-        {
-          id: 'state',
-          label: 'State',
-          minWidth: 166,
-          format: function renderComp(item: Checklist) {
-            return (
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <FiberManualRecord
-                  className="icon"
-                  style={{ color: ChecklistStatesColors[item.state] }}
-                />
-                <span title={ChecklistStatesContent[item.state]}>
+          {
+            id: 'state',
+            label: 'State',
+            minWidth: 166,
+            format: function renderComp(item: Checklist) {
+              return (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <FiberManualRecord
+                    className="icon"
+                    style={{ color: ChecklistStatesColors[item.state] }}
+                  />
+                  <span title={ChecklistStatesContent[item.state]}>
                     {ChecklistStatesContent[item.state]}
                   </span>
-              </div>
-            );
+                </div>
+              );
+            },
           },
-        },
-      ]
+        ]
       : []),
     {
       id: 'name',
@@ -425,19 +426,19 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                               ) => {
                                 selectedChecklist?.archived
                                   ? dispatch(
-                                    unarchiveChecklist(
-                                      selectedChecklist?.id,
-                                      reason,
-                                      setFormErrors,
-                                    ),
-                                  )
+                                      unarchiveChecklist(
+                                        selectedChecklist?.id,
+                                        reason,
+                                        setFormErrors,
+                                      ),
+                                    )
                                   : dispatch(
-                                    archiveChecklist(
-                                      selectedChecklist.id,
-                                      reason,
-                                      setFormErrors,
-                                    ),
-                                  );
+                                      archiveChecklist(
+                                        selectedChecklist.id,
+                                        reason,
+                                        setFormErrors,
+                                      ),
+                                    );
                               },
                               onSubmitModalText: selectedChecklist?.archived
                                 ? 'Unarchive'
@@ -486,29 +487,29 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     ...(label === 'published' &&
     currentPageData.some((item) => item.state === 'BEING_REVISED')
       ? [
-        {
-          id: 'revised',
-          label: '',
-          minWidth: 240,
-          format: function renderComp(item: Checklist) {
-            if (item.state === 'BEING_REVISED') {
-              return (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <FiberManualRecord
-                    className="icon"
-                    style={{
-                      color: ChecklistStatesColors[item.state],
-                    }}
-                  />
-                  {ChecklistStatesContent[item.state]}
-                </div>
-              );
-            } else {
-              return <div />;
-            }
+          {
+            id: 'revised',
+            label: '',
+            minWidth: 240,
+            format: function renderComp(item: Checklist) {
+              if (item.state === 'BEING_REVISED') {
+                return (
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <FiberManualRecord
+                      className="icon"
+                      style={{
+                        color: ChecklistStatesColors[item.state],
+                      }}
+                    />
+                    {ChecklistStatesContent[item.state]}
+                  </div>
+                );
+              } else {
+                return <div />;
+              }
+            },
           },
-        },
-      ]
+        ]
       : []),
   ];
 
@@ -567,14 +568,14 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                   ...field,
                   ...(field.field === 'state'
                     ? {
-                      op:
-                        option.value === 'all'
-                          ? FilterOperators.NE
-                          : FilterOperators.EQ,
-                      values: [
-                        option.value === 'all' ? 'PUBLISHED' : option.value,
-                      ],
-                    }
+                        op:
+                          option.value === 'all'
+                            ? FilterOperators.NE
+                            : FilterOperators.EQ,
+                        values: [
+                          option.value === 'all' ? 'PUBLISHED' : option.value,
+                        ],
+                      }
                     : { values: field.values }),
                 })) as FilterField[];
 

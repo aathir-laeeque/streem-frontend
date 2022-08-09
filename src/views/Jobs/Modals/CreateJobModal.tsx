@@ -4,17 +4,22 @@ import {
   Button1,
   fetchDataParams,
   TextInput,
+  formatOptionLabel,
+  FormGroup,
 } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { Property } from '#store/properties/types';
-import { FilterOperators } from '#utils/globalTypes';
+import { baseUrl } from '#utils/apiUrls';
+import { request } from '#utils/request';
+import { FilterOperators, InputTypes } from '#utils/globalTypes';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import { Checklist } from '#views/Checklists/types';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { Cardinality } from '#views/Ontology/types';
 
 export interface CreateJobModalProps {
   selectedChecklist: Checklist | null;
@@ -39,6 +44,7 @@ const Wrapper = styled.div.attrs({})`
 
     .modal-body {
       padding: 24px !important;
+      overflow: auto;
 
       .properties-container {
         display: flex;
@@ -98,6 +104,18 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   closeOverlay,
   props: { properties, onCreateJob, selectedChecklist },
 }) => {
+  const [selectOptions, setSelectOptions] = useState<
+    Record<
+      string,
+      {
+        isFetching: boolean;
+        dependency?: string;
+        options?: any[];
+      }
+    >
+  >();
+  const [checklist, setChecklist] = useState(selectedChecklist);
+  const [reRender, setReRender] = useState(false);
   const { selectedUseCase } = useTypedSelector((state) => state.auth);
   const { checklists, pageable, loading } = useTypedSelector(
     (state) => state.checklistListView,
@@ -121,14 +139,75 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, page === 0));
   };
 
-  const { control, handleSubmit, register, errors, formState } = useForm({
+  const {
+    control,
+    handleSubmit,
+    register,
+    errors,
+    formState: { isDirty, isValid },
+    getValues,
+    setValue,
+  } = useForm({
     mode: 'onChange',
     criteriaMode: 'all',
   });
 
   const onSubmit = (data: Record<string, string>) => {
-    onCreateJob(data);
+    const parsedData = {
+      ...data,
+      ...(checklist &&
+        data?.relations &&
+        Object.entries(data.relations).reduce(
+          (acc, [key, value]: [string, any]) => {
+            const relation = checklist.relations.find(
+              (relation: any) => relation.externalId === key,
+            );
+            if (relation) {
+              acc['relations'][relation.id] = value;
+            }
+            return acc;
+          },
+          {
+            relations: {},
+          } as any,
+        )),
+    };
+    onCreateJob(parsedData);
     closeOverlay();
+  };
+
+  const getOptions = async (
+    path: string,
+    inputId: string,
+    dependency?: string,
+  ) => {
+    if (!dependency || selectOptions?.[inputId]?.dependency !== dependency) {
+      try {
+        setSelectOptions({
+          ...selectOptions,
+          [inputId]: {
+            isFetching: true,
+            dependency,
+          },
+        });
+        if (inputId && path) {
+          const response: { data: any[]; errors: { message: string }[] } =
+            await request('GET', `${baseUrl}${path}`);
+          if (response.data) {
+            setSelectOptions({
+              ...selectOptions,
+              [inputId]: {
+                isFetching: false,
+                options: response.data,
+                dependency,
+              },
+            });
+          }
+        }
+      } catch (e) {
+        console.error(`Error in Fetching Options for ${inputId}`, e);
+      }
+    }
   };
 
   return (
@@ -139,7 +218,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
         title="Creating a Job"
         showFooter={false}
       >
-        <form onSubmit={handleSubmit((data) => onSubmit(data))}>
+        <form onSubmit={handleSubmit((data) => onSubmit(data))} style={{}}>
           {selectedChecklist ? (
             <>
               <TextInput
@@ -167,6 +246,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               loading={loading}
               getOptionLabel={(option) => `${option.name} - ${option.code}`}
               getOptionSelected={(option, value) => option.id === value.id}
+              onChange={(data) => setChecklist(data)}
               renderOption={(option) => (
                 <div
                   style={{
@@ -207,14 +287,79 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               />
             ))}
           </div>
+          {checklist && checklist?.relations?.length > 0 && (
+            <FormGroup
+              style={{ padding: '24px 0 0' }}
+              inputs={[
+                ...checklist.relations.map((relation: any) => {
+                  const registrationId = `relations.${relation.externalId}`;
+                  register(registrationId);
+                  const isMulti =
+                    relation?.target.cardinality === Cardinality.ONE_TO_MANY;
+                  if (
+                    relation?.variables &&
+                    Object.keys(relation.variables).length
+                  ) {
+                    const keyToCheck = Object.keys(relation.variables)[0];
+                    const parsedKey = keyToCheck.replace('$', '');
+                    const variableValue = getValues(
+                      `relations.${parsedKey}`,
+                    )?.[0]?.[relation.variables[keyToCheck]];
+                    if (variableValue) {
+                      getOptions(
+                        relation.target.urlPath.replace(
+                          keyToCheck,
+                          variableValue,
+                        ),
+                        relation.id,
+                        variableValue,
+                      );
+                    }
+                  } else if (
+                    !selectOptions?.[relation.id]?.isFetching &&
+                    !selectOptions?.[relation.id]?.options
+                  ) {
+                    getOptions(relation.target.urlPath, relation.id);
+                  }
+                  return {
+                    type: InputTypes.MULTI_SELECT,
+                    props: {
+                      isMulti,
+                      placeholder: `Select ${relation.displayName}`,
+                      label: relation.displayName,
+                      id: registrationId,
+                      name: registrationId,
+                      options:
+                        selectOptions?.[relation.id]?.options?.map(
+                          (option) => ({
+                            value: option,
+                            label: option.displayName,
+                            externalId: option.externalId,
+                          }),
+                        ) || [],
+                      formatOptionLabel,
+                      onChange: (options: any) => {
+                        setValue(
+                          registrationId,
+                          isMulti ? options.map(option => option.value) : [options.value],
+                          {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          },
+                        );
+                        setReRender(!reRender);
+                      },
+                    },
+                  };
+                }),
+              ]}
+            />
+          )}
           <div className="buttons-container">
             <Button1 variant="secondary" color="red" onClick={closeOverlay}>
               Cancel
             </Button1>
-            <Button1
-              disabled={!formState.isValid || !formState.isDirty}
-              type="submit"
-            >
+            <Button1 disabled={!isValid || !isDirty} type="submit">
               Create Job
             </Button1>
           </div>

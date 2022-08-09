@@ -16,4 +16,5 @@ export interface Checklist {
   properties: ChecklistProperty[];
   state: AllChecklistStates;
   version: number | null;
+  relations: any;
 }

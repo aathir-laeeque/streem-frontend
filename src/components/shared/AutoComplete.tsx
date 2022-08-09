@@ -68,6 +68,7 @@ type AutoCompletePropType = {
   rules?: Record<string, any>;
   getOptionLabel?: (option: any) => string;
   getOptionSelected?: (option: any, value: any) => boolean;
+  onChange?: (data: any) => void;
   renderOption: (
     option: any,
     state: AutocompleteRenderOptionState,
@@ -109,6 +110,7 @@ export function AutoComplete({
   getOptionLabel,
   getOptionSelected,
   renderOption,
+  onChange
 }: AutoCompletePropType) {
   const [open, setOpen] = useState(false);
 
@@ -154,6 +156,7 @@ export function AutoComplete({
               loading={loading}
               onChange={(_, data) => {
                 props.onChange(data?.id);
+                onChange && onChange(data);
               }}
               getOptionLabel={getOptionLabel}
               getOptionSelected={getOptionSelected}
