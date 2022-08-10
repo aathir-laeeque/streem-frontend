@@ -16,16 +16,15 @@ const initalPageable = {
 const initialState: ListViewState = {
   checklists: [],
   currentPageData: [],
+  automations: [],
   loading: false,
   pageable: initalPageable,
 };
 
 // TODO: optimize the reducer for Published and prototype tabs
-const reducer = (
-  state = initialState,
-  action: ListViewActionType,
-): ListViewState => {
+const reducer = (state = initialState, action: ListViewActionType): ListViewState => {
   switch (action.type) {
+    case ListViewAction.FETCH_AUTOMATIONS:
     case ListViewAction.FETCH_CHECKLISTS_ONGOING:
       return { ...state, loading: true };
 
@@ -45,8 +44,17 @@ const reducer = (
         currentPageData: data as Checklist[],
       };
 
+    case ListViewAction.FETCH_AUTOMATIONS_ERROR:
     case ListViewAction.FETCH_CHECKLISTS_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
+
+    case ListViewAction.FETCH_AUTOMATIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        automations: action.payload.data!,
+        pageable: action.payload.pageable!,
+      };
 
     case ListViewAction.UPDATE_LIST:
       return {

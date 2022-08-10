@@ -468,6 +468,16 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     <span>Trained Users</span>
                   </div>
                 </MenuItem>
+                <MenuItem
+                  onClick={() =>
+                    navigate(`/checklists/${selectedChecklist?.id}/automation`)
+                  }
+                >
+                  <div className="list-item">
+                    <MemoViewInfo />
+                    <span>Automations</span>
+                  </div>
+                </MenuItem>
               </Menu>
             </>
           );

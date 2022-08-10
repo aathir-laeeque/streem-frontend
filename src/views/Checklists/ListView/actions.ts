@@ -1,7 +1,7 @@
 import { actionSpreader } from '#store/helpers';
 import { Error, ResponseObj } from '#utils/globalTypes';
 import { Checklist } from '../types';
-import { ListViewAction } from './types';
+import { Automation, ListViewAction } from './types';
 
 export const fetchChecklists = (
   params: Record<string, string | number>,
@@ -64,3 +64,15 @@ export const handlePublishedArchive = (id: Checklist['id']) =>
 
 export const updateList = (id: Checklist['id']) =>
   actionSpreader(ListViewAction.UPDATE_LIST, { id });
+
+export const fetchAutomations = (params: Record<string, string | number>) =>
+  actionSpreader(ListViewAction.FETCH_AUTOMATIONS, { params });
+
+export const fetchAutomationsError = (error?: any) =>
+  actionSpreader(ListViewAction.FETCH_AUTOMATIONS_ERROR, { error });
+
+export const fetchAutomationsSuccess = ({ data, pageable }: Partial<ResponseObj<Automation[]>>) =>
+  actionSpreader(ListViewAction.FETCH_AUTOMATIONS_SUCCESS, {
+    data,
+    pageable,
+  });

@@ -9,19 +9,36 @@ import {
   fetchChecklistsOngoing,
   fetchChecklistsSuccess,
   updateList,
+  fetchAutomations,
+  fetchAutomationsError,
+  fetchAutomationsSuccess,
 } from './actions';
 
 export type ListViewProps = RouteComponentProps;
+
+export enum AutomationAction {
+  CREATE_JOB = 'CREATE_JOB',
+}
+
+export enum AutomationVisual {
+  CREATE_JOB = 'Create Job',
+}
+
+export type Automation = {
+  action: AutomationAction;
+  cron: string;
+};
 export interface ListViewState {
   readonly checklists: Checklist[];
   readonly currentPageData: Checklist[];
   readonly pageable: Pageable;
+  readonly automations: Automation[];
   readonly loading: boolean;
   readonly error?: any;
 }
 
 export enum ListViewAction {
-  CLEAR_DATA = '@@checklis/ListView/CLEAR_DATA',
+  CLEAR_DATA = '@@checklist/ListView/CLEAR_DATA',
 
   FETCH_CHECKLISTS = '@@checklist/ListView/FETCH_CHECKLISTS',
   FETCH_CHECKLISTS_FOR_LISTVIEW = '@@checklist/ListView/FETCH_CHECKLISTS_FOR_LISTVIEW',
@@ -34,6 +51,10 @@ export enum ListViewAction {
   HANDLE_PUBLISHED_ARCHIVE = '@@checklist/ListView/HANDLE_PUBLISHED_ARCHIVE',
   UNARCHIVE = '@@checklist/ListView/UNARCHIVE',
   UPDATE_LIST = '@@checklist/ListView/UPDATE_LIST',
+
+  FETCH_AUTOMATIONS = '@@checklist/ListView/FETCH_AUTOMATIONS',
+  FETCH_AUTOMATIONS_ERROR = '@@checklist/ListView/FETCH_AUTOMATIONS_ERROR',
+  FETCH_AUTOMATIONS_SUCCESS = '@@checklist/ListView/FETCH_AUTOMATIONS_SUCCESS',
 }
 
 export type ListViewActionType = ReturnType<
@@ -43,4 +64,7 @@ export type ListViewActionType = ReturnType<
   | typeof fetchChecklistsSuccess
   | typeof updateList
   | typeof clearData
+  | typeof fetchAutomations
+  | typeof fetchAutomationsError
+  | typeof fetchAutomationsSuccess
 >;

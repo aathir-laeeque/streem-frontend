@@ -6,6 +6,7 @@ import React, { FC } from 'react';
 import ListView from './ListView';
 import NewPrototype from './NewPrototype';
 import Assignment from './Assignment';
+import Automation from './Automation';
 
 const ChecklistView: FC<RouteComponentProps> = () => (
   <Router>
@@ -13,6 +14,7 @@ const ChecklistView: FC<RouteComponentProps> = () => (
     <Composer path="/:id" entity={ComposerEntity.CHECKLIST} />
     <AuditLogs path="/:id/activites" />
     <Assignment path="/:id/assignment" />
+    <Automation path="/:id/automation" />
     <NewPrototype path="/prototype" />
   </Router>
 );

@@ -5,6 +5,7 @@ import {
   apiArchiveValidate,
   apiGetChecklists,
   apiUnarchiveChecklist,
+  apiGetAutomations
 } from '#utils/apiUrls';
 import { Error, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
@@ -20,6 +21,9 @@ import {
   handlePublishedArchive,
   unarchiveChecklist,
   updateList,
+  fetchAutomations,
+  fetchAutomationsError,
+  fetchAutomationsSuccess,
 } from './actions';
 import { ListViewAction } from './types';
 
@@ -156,6 +160,20 @@ function* handlePublishedArchiveSaga({
   }
 }
 
+function* fetchAutomationsSaga({ payload }: ReturnType<typeof fetchAutomations>) {
+  try {
+    const { params } = payload;
+    const { data, pageable } = yield call(request, 'GET', apiGetAutomations(), { params });
+
+    if (data) {
+      yield put(fetchAutomationsSuccess({ data, pageable }));
+    }
+  } catch (error) {
+    console.error('error from fetchAutomationsSaga function in Checklist ListView Saga :: ', error);
+    yield put(fetchAutomationsError(error));
+  }
+}
+
 export function* ChecklistListViewSaga() {
   yield takeLatest(ListViewAction.FETCH_CHECKLISTS, fetchChecklistsSaga);
   yield takeLatest(
@@ -168,4 +186,5 @@ export function* ChecklistListViewSaga() {
     ListViewAction.HANDLE_PUBLISHED_ARCHIVE,
     handlePublishedArchiveSaga,
   );
+  yield takeLatest(ListViewAction.FETCH_AUTOMATIONS, fetchAutomationsSaga);
 }
