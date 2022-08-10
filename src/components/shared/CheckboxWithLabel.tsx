@@ -12,9 +12,6 @@ const Wrapper = styled.div`
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-
-    text-decoration: ${({ isChecked }) =>
-      isChecked ? 'line-through' : 'none'};
     font-size: 14px;
   }
 
@@ -80,7 +77,7 @@ interface CheckboxProps {
 }
 
 const Checkbox: FC<CheckboxProps> = ({ label, isChecked = false }) => (
-  <Wrapper isChecked={isChecked}>
+  <Wrapper>
     <label className="container">
       {label}
       <input type="checkbox" checked={isChecked} readOnly />
