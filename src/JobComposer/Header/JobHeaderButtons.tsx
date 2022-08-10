@@ -51,7 +51,7 @@ const JobHeaderButtons: FC<{
 
   return (
     <div className="buttons-container">
-      {jobState === JobStateEnum.IN_PROGRESS &&
+      {/* {jobState === JobStateEnum.IN_PROGRESS &&
       (isLoggedInUserAssigned ||
         checkPermission(['inbox', 'completeWithException'])) ? (
         <>
@@ -71,7 +71,7 @@ const JobHeaderButtons: FC<{
             {isLoggedInUserAssigned ? 'Sign Completed Task' : 'Sign Off State'}
           </Button1>
         </>
-      ) : null}
+      ) : null} */}
 
       {!isInboxView && jobState in CompletedJobStates && (
         <Button1
