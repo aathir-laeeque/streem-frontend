@@ -59,6 +59,7 @@ const ResourceActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
                 objectId: o.value.id,
                 objectDisplayName: o.value.displayName,
                 objectExternalId: o.value.externalId,
+                collection: o.value.collection,
               })),
             },
           };
