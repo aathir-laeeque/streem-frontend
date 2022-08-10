@@ -6,15 +6,16 @@ import { Error } from '@material-ui/icons';
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
 import { MandatoryActivity, NonMandatoryActivity } from '../checklist.types';
+import CalculationActivity from './Calculation';
 import ChecklistActivity from './Checklist';
 import InstructionActivity from './Instruction';
 import MaterialActivity from './Material';
 import MediaActivity from './Media';
 import MultiSelectActivity from './MultiSelect';
+import NumberActivity from './Number';
 import ShouldBeActivity from './ShouldBe';
 import SignatureActivity from './Signature';
 import TextboxActivity from './Textbox';
-import NumberActivity from './Number';
 import { ActivityListProps } from './types';
 import YesNoActivity from './YesNo';
 
@@ -44,7 +45,8 @@ const Wrapper = styled.div.attrs({
     .should-be-activity,
     .yes-no-activity,
     .textbox-activity,
-    .number-activity {
+    .number-activity,
+    .calculation-activity {
       ${({ isTaskCompleted, isCorrectingError, isLoggedInUserAssigned }) =>
         (isTaskCompleted && !isCorrectingError) || !isLoggedInUserAssigned
           ? css`
@@ -82,6 +84,35 @@ const Wrapper = styled.div.attrs({
       margin-top: 16px;
     }
 
+    .calculation-activity {
+      display: flex;
+      flex-direction: column;
+
+      .head {
+        opacity: 0.6;
+        margin-bottom: 16px;
+      }
+
+      .expression {
+        margin-bottom: 24px;
+      }
+
+      .variable {
+        margin-bottom: 4px;
+        .name {
+          margin-right: 4px;
+        }
+        .value {
+          margin-left: 4px;
+        }
+      }
+
+      .result {
+        padding: 8px;
+        background-color: rgba(29, 132, 255, 0.1);
+      }
+    }
+
     .activity-label {
       margin-bottom: 16px;
     }
@@ -99,9 +130,6 @@ const ActivityList: FC<ActivityListProps> = ({
     auth: { selectedFacility },
     composer: { entity },
   } = useTypedSelector((state) => state);
-  const { dateAndTimeStampFormat } = useTypedSelector(
-    (state) => state.facilityWiseConstants[selectedFacility!.id],
-  );
 
   return (
     <Wrapper
@@ -199,9 +227,15 @@ const ActivityList: FC<ActivityListProps> = ({
 
                 case MandatoryActivity.NUMBER:
                   return (
-                    <NumberActivity
+                    <NumberActivity activity={activity} isCorrectingError={isCorrectingError} />
+                  );
+
+                case MandatoryActivity.CALCULATION:
+                  return (
+                    <CalculationActivity
                       activity={activity}
                       isCorrectingError={isCorrectingError}
+                      isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
                     />
                   );
 

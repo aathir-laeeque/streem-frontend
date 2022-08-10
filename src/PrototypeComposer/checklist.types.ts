@@ -30,6 +30,7 @@ export enum MandatoryActivity {
   TEXTBOX = 'TEXTBOX',
   YES_NO = 'YES_NO',
   NUMBER = 'NUMBER',
+  CALCULATION = 'CALCULATION',
 }
 
 export enum NonMandatoryActivity {
@@ -58,6 +59,7 @@ export type Activity = {
   orderTree: number;
   response?: ActivityResponse | null;
   type: ActivityType;
+  description?: string;
 };
 
 export type Media = {

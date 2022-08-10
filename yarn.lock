@@ -3386,7 +3386,7 @@ cjs-module-lexer@^1.0.0:
   resolved "https://registry.yarnpkg.com/cjs-module-lexer/-/cjs-module-lexer-1.2.2.tgz#9f84ba3244a512f3a54e5277e8eef4c489864e40"
   integrity sha512-cOU9usZw8/dXIXKtwa8pM0OTJQuJkxMN6w30csNRUerHfeQ5R6U3kkU/FtJeIf3M202OHfY2U8ccInBG7/xogA==
 
-classnames@^2.2.6:
+classnames@^2.0.0, classnames@^2.2.6:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
@@ -4152,6 +4152,18 @@ enzyme@^3.11.0:
     raf "^3.4.1"
     rst-selector-parser "^2.2.3"
     string.prototype.trim "^1.2.1"
+
+equation-parser@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/equation-parser/-/equation-parser-0.3.1.tgz#4e3ea783c3dbbb251e053543533b8de0566efe1a"
+  integrity sha512-lFSqabHXcR6ds0KtjxQnMssph+gvnP+u7zf2hzB0CVmzIYbTnJv1mAwy/spO74/TbUf2A3ng4Mu+f81oUqCq+w==
+
+equation-resolver@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/equation-resolver/-/equation-resolver-1.0.0-rc.1.tgz#ed52e0456ee824f156e6457cc2848e36a161fdd6"
+  integrity sha512-vS49YDKo4/Yx3IXEJ1Cfq3KuBsOqqv22Bi9pLZ1x4pvWnwbs2WVBNZld95tax8E0DLH+C/aDmzHwUenuXh0QHA==
+  dependencies:
+    equation-parser "^0.3.1"
 
 error-ex@^1.3.1:
   version "1.3.2"
@@ -7352,6 +7364,15 @@ react-draft-wysiwyg@^1.14.7:
     html-to-draftjs "^1.5.0"
     linkify-it "^2.2.0"
     prop-types "^15.7.2"
+
+react-equation@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/react-equation/-/react-equation-1.0.0-rc.1.tgz#6d1cdc7bd4520718da0a88ea6d82f916ff99197b"
+  integrity sha512-B6q8p/L24QgaC8haTa9yqZW2T0SbuNIHz845y6F6YXXo+MBeozFE6mECLZGYsu1Y99wE3F0LU+cwXDOOiQ2G2g==
+  dependencies:
+    classnames "^2.0.0"
+    equation-parser "^0.3.1"
+    equation-resolver "^1.0.0-rc.1"
 
 react-error-overlay@^6.0.11:
   version "6.0.11"

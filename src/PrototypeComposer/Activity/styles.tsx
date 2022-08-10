@@ -53,6 +53,30 @@ const ActivityWrapper = styled.div.attrs({
     }
   }
 
+  .calculation-activity {
+    display: flex;
+    flex-direction: column;
+
+    .head {
+      opacity: 0.6;
+      margin-bottom: 16px;
+    }
+
+    .expression {
+      margin-bottom: 24px;
+    }
+
+    .variable {
+      margin-bottom: 4px;
+      .name {
+        margin-right: 4px;
+      }
+      .value {
+        margin-left: 4px;
+      }
+    }
+  }
+
   .activity-label-input {
     margin-top: 16px;
   }

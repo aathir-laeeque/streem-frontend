@@ -10,6 +10,9 @@ import { fetchBaseUrl } from './constants';
 
 export const baseUrl = fetchBaseUrl();
 
+export const apiGetActivitiesForCalc = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/activities-for-calculation`;
+
 export const apiGetChecklists = () => `${baseUrl}/checklists`;
 
 export const apiGetChecklist = (checklistId: Checklist['id']) =>

@@ -12,6 +12,7 @@ export const ActivityOptions = [
   { label: 'Comments', value: MandatoryActivity.TEXTBOX },
   { label: 'Yes/No', value: MandatoryActivity.YES_NO },
   { label: 'Number', value: MandatoryActivity.NUMBER },
+  { label: 'Calculation', value: MandatoryActivity.CALCULATION },
 ];
 
 export const PARAMETER_OPERATORS = [

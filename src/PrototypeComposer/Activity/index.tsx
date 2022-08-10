@@ -3,14 +3,11 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
 import { Delete } from '@material-ui/icons';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { MandatoryActivity, NonMandatoryActivity } from '../checklist.types';
-import {
-  deleteActivity,
-  updateActivityApi,
-  updateStoreActivity,
-} from './actions';
+import { deleteActivity, updateStoreActivity } from './actions';
+import CalculationActivity from './Calculation';
 import ChecklistActivity from './Checklist';
 import InstructionActivity from './Instruction';
 import MaterialActivity from './Material';
@@ -96,6 +93,9 @@ const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
 
           case MandatoryActivity.NUMBER:
             return <NumberActivity activity={activity} />;
+
+          case MandatoryActivity.CALCULATION:
+            return <CalculationActivity activity={activity} />;
 
           default:
             return null;

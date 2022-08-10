@@ -15,11 +15,9 @@ import StartJob from '#JobComposer/modals/StartJob';
 import StartTaskError from '#JobComposer/modals/StartTaskError';
 import TaskErrorCorrection from '#JobComposer/modals/TaskErrorCorrection';
 import { AssignedUserDetailsPopover } from '#JobComposer/Popovers/AssignedUserDetailsPopover';
-import {
-  TaskMediaModal,
-  TimedTaskConfigModal,
-} from '#PrototypeComposer/modals';
+import { TaskMediaModal, TimedTaskConfigModal } from '#PrototypeComposer/modals';
 import EditingDisabledModal from '#PrototypeComposer/modals/EditingDisabled';
+import { CalcActivityAddParamsModal } from '#PrototypeComposer/Activity/Calculation/AddParametersModal';
 import { AuthorsDetailsPopover } from '#PrototypeComposer/Overlays/AuthorsDetailsPopover';
 import InitiateSignOffModal from '#PrototypeComposer/Overlays/InitiateSignOff';
 import PasswordInputModal from '#PrototypeComposer/Overlays/PasswordInput';
@@ -132,24 +130,16 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
       return <SessionExpireModal {...params} />;
 
     case OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT_POPOVER:
-      return params.popOverAnchorEl ? (
-        <ReviewerAssignmentPopover {...params} />
-      ) : null;
+      return params.popOverAnchorEl ? <ReviewerAssignmentPopover {...params} /> : null;
 
     case OverlayNames.ASSIGNED_USER_DETAIL:
-      return params.popOverAnchorEl ? (
-        <AssignedUserDetailsPopover {...params} />
-      ) : null;
+      return params.popOverAnchorEl ? <AssignedUserDetailsPopover {...params} /> : null;
 
     case OverlayNames.AUTHORS_DETAIL:
-      return params.popOverAnchorEl ? (
-        <AuthorsDetailsPopover {...params} />
-      ) : null;
+      return params.popOverAnchorEl ? <AuthorsDetailsPopover {...params} /> : null;
 
     case OverlayNames.REVIEWERS_DETAIL:
-      return params.popOverAnchorEl ? (
-        <ReviewersDetailsPopover {...params} />
-      ) : null;
+      return params.popOverAnchorEl ? <ReviewersDetailsPopover {...params} /> : null;
 
     case OverlayNames.SIMPLE_CONFIRMATION_MODAL:
       return <SimpleConfirmationModal {...params} />;
@@ -217,6 +207,8 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
     case OverlayNames.REFETCH_JOB_COMPOSER_DATA:
       return <RefetchJobComposerData {...params} />;
 
+    case OverlayNames.CALC_ACTIVITY_ADD_PARAMS_MODAL:
+      return <CalcActivityAddParamsModal {...params} />;
     default:
       return null;
   }
@@ -225,9 +217,7 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 const OverlayContainer: FC = () => {
   const dispatch = useDispatch();
 
-  const { currentOverlays } = useTypedSelector(
-    (state) => state.overlayContainer,
-  );
+  const { currentOverlays } = useTypedSelector((state) => state.overlayContainer);
 
   const closeOverlay = (params: OverlayNames) => {
     dispatch(closeOverlayAction(params));

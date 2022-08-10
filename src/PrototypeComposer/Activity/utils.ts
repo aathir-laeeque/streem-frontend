@@ -97,6 +97,20 @@ const generateNewActivity = ({
         mandatory: true,
       };
 
+    case MandatoryActivity.CALCULATION:
+      return {
+        orderTree,
+        type,
+        data: {
+          expression: '',
+          uom: '',
+          variables: {},
+        },
+        label: '',
+        description: '',
+        mandatory: true,
+      };
+    
     case MandatoryActivity.NUMBER:
     case NonMandatoryActivity.INSTRUCTION:
       return {
