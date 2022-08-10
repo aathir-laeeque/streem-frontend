@@ -151,18 +151,6 @@ const MediaActivity: FC<ActivityProps> = ({
               style={{ height: 8, width: '100%', color: '#1d84ff' }}
             />
           ) : (
-            <>
-              <div className="card">
-                <ImageUploadButton
-                  label="Upload images"
-                  onUploadStart={onUploadStart}
-                  onUploadSuccess={(fileData) => {
-                    console.log('fileData :: ', fileData);
-                    onUploaded(fileData);
-                  }}
-                  onUploadError={onUploadError}
-                />
-              </div>
               <div
                 className="card"
                 style={
@@ -182,7 +170,6 @@ const MediaActivity: FC<ActivityProps> = ({
                   onUploadError={onUploadError}
                 />
               </div>
-            </>
           )}
         </div>
       )}
