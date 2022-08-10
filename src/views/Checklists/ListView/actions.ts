@@ -76,3 +76,18 @@ export const fetchAutomationsSuccess = ({ data, pageable }: Partial<ResponseObj<
     data,
     pageable,
   });
+
+export const fetchProcessLogs = (id: Checklist['id']) =>
+  actionSpreader(ListViewAction.FETCH_PROCESS_LOGS, { id });
+
+export const fetchProcessLogsError = (error?: any) =>
+  actionSpreader(ListViewAction.FETCH_PROCESS_LOGS_ERROR, { error });
+
+export const fetchProcessLogsSuccess = ({
+  data,
+  pageable,
+}: Partial<ResponseObj<any[]>>) =>
+  actionSpreader(ListViewAction.FETCH_PROCESS_LOGS_SUCCESS, {
+    data,
+    pageable,
+  });

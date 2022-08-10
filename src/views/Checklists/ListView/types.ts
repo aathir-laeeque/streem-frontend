@@ -1,6 +1,5 @@
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
-
 import { Checklist } from '../types';
 import {
   clearData,
@@ -12,6 +11,9 @@ import {
   fetchAutomations,
   fetchAutomationsError,
   fetchAutomationsSuccess,
+  fetchProcessLogs,
+  fetchProcessLogsError,
+  fetchProcessLogsSuccess,
 } from './actions';
 
 export type ListViewProps = RouteComponentProps;
@@ -33,6 +35,7 @@ export interface ListViewState {
   readonly currentPageData: Checklist[];
   readonly pageable: Pageable;
   readonly automations: Automation[];
+  readonly jobLogs: any[];
   readonly loading: boolean;
   readonly error?: any;
 }
@@ -55,6 +58,9 @@ export enum ListViewAction {
   FETCH_AUTOMATIONS = '@@checklist/ListView/FETCH_AUTOMATIONS',
   FETCH_AUTOMATIONS_ERROR = '@@checklist/ListView/FETCH_AUTOMATIONS_ERROR',
   FETCH_AUTOMATIONS_SUCCESS = '@@checklist/ListView/FETCH_AUTOMATIONS_SUCCESS',
+  FETCH_PROCESS_LOGS = '@@checklist/ListView/FETCH_PROCESS_LOGS',
+  FETCH_PROCESS_LOGS_ERROR = '@@checklist/ListView/FETCH_PROCESS_LOGS_ERROR',
+  FETCH_PROCESS_LOGS_SUCCESS = '@@checklist/ListView/FETCH_PROCESS_LOGS_SUCCESS',
 }
 
 export type ListViewActionType = ReturnType<
@@ -67,4 +73,7 @@ export type ListViewActionType = ReturnType<
   | typeof fetchAutomations
   | typeof fetchAutomationsError
   | typeof fetchAutomationsSuccess
+  | typeof fetchProcessLogs
+  | typeof fetchProcessLogsError
+  | typeof fetchProcessLogsSuccess
 >;

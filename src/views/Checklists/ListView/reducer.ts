@@ -19,12 +19,14 @@ const initialState: ListViewState = {
   automations: [],
   loading: false,
   pageable: initalPageable,
+  jobLogs: [],
 };
 
 // TODO: optimize the reducer for Published and prototype tabs
 const reducer = (state = initialState, action: ListViewActionType): ListViewState => {
   switch (action.type) {
     case ListViewAction.FETCH_AUTOMATIONS:
+    case ListViewAction.FETCH_PROCESS_LOGS:
     case ListViewAction.FETCH_CHECKLISTS_ONGOING:
       return { ...state, loading: true };
 
@@ -45,6 +47,7 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
       };
 
     case ListViewAction.FETCH_AUTOMATIONS_ERROR:
+    case ListViewAction.FETCH_PROCESS_LOGS_ERROR:
     case ListViewAction.FETCH_CHECKLISTS_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
 
@@ -62,6 +65,17 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
         currentPageData: state.currentPageData.filter(
           (checklist) => checklist.id !== action.payload.id,
         ),
+      };
+
+    case ListViewAction.FETCH_PROCESS_LOGS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        jobLogs: action.payload.data!,
+        // TODO :: Remove this check when BE supports pagination.
+        ...(action.payload?.pageable && {
+          pageable: action.payload.pageable,
+        }),
       };
 
     default:

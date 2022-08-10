@@ -58,6 +58,7 @@ export type Activity = {
   mandatory: boolean;
   orderTree: number;
   response?: ActivityResponse | null;
+  description: string | null;
   type: ActivityType;
   description?: string;
 };
@@ -206,7 +207,19 @@ export type Checklist = {
   phase?: number;
   comments: Comment[];
   collaborators: Collaborator[];
+  jobLogColumns: {
+    id: string;
+    type: LogType;
+    displayName: string;
+    triggerType: string;
+  }[];
   noOfJobs?: number;
   noOfTasks?: number;
   version: number | null;
 };
+
+export enum LogType {
+  DATE = 'DATE',
+  FILE = 'FILE',
+  TEXT = 'TEXT',
+}

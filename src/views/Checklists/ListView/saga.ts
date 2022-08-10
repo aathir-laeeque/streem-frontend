@@ -5,7 +5,8 @@ import {
   apiArchiveValidate,
   apiGetChecklists,
   apiUnarchiveChecklist,
-  apiGetAutomations
+  apiGetAutomations,
+  apiGetProcessLogs,
 } from '#utils/apiUrls';
 import { Error, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
@@ -24,6 +25,9 @@ import {
   fetchAutomations,
   fetchAutomationsError,
   fetchAutomationsSuccess,
+  fetchProcessLogs,
+  fetchProcessLogsError,
+  fetchProcessLogsSuccess,
 } from './actions';
 import { ListViewAction } from './types';
 
@@ -174,6 +178,29 @@ function* fetchAutomationsSaga({ payload }: ReturnType<typeof fetchAutomations>)
   }
 }
 
+function* fetchProcessLogsSaga({
+  payload,
+}: ReturnType<typeof fetchProcessLogs>) {
+  try {
+    const { id } = payload;
+    const { data, pageable } = yield call(
+      request,
+      'GET',
+      apiGetProcessLogs(id),
+    );
+
+    if (data) {
+      yield put(fetchProcessLogsSuccess({ data, pageable }));
+    }
+  } catch (error) {
+    console.error(
+      'error from fetchProcessLogsSaga function in Checklist ListView Saga :: ',
+      error,
+    );
+    yield put(fetchProcessLogsError(error));
+  }
+}
+
 export function* ChecklistListViewSaga() {
   yield takeLatest(ListViewAction.FETCH_CHECKLISTS, fetchChecklistsSaga);
   yield takeLatest(
@@ -187,4 +214,5 @@ export function* ChecklistListViewSaga() {
     handlePublishedArchiveSaga,
   );
   yield takeLatest(ListViewAction.FETCH_AUTOMATIONS, fetchAutomationsSaga);
+  yield takeLatest(ListViewAction.FETCH_PROCESS_LOGS, fetchProcessLogsSaga);
 }

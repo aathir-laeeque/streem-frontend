@@ -75,7 +75,7 @@ const JobLogsTabContent: FC<TabContentProps> = ({ label, values: { objectTypeId,
           if (row['JOB_START_TIME']) {
             return formatDateTime(row['JOB_START_TIME']);
           }
-          return '-N/A-';
+          return '-';
         },
       },
       {
@@ -86,7 +86,7 @@ const JobLogsTabContent: FC<TabContentProps> = ({ label, values: { objectTypeId,
           if (row['JOB_END_TIME']) {
             return formatDateTime(row['JOB_END_TIME']);
           }
-          return '-N/A-';
+          return '-';
         },
       },
     ],

@@ -329,9 +329,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     onClick={() => {
                       handleClose();
                       if (
-                        userRoles?.some(
-                          (role) => role === roles.ACCOUNT_OWNER,
-                        ) &&
+                        userRoles?.some((role) => role === roles.ACCOUNT_OWNER) &&
                         facilityId === '-1'
                       ) {
                         dispatch(
@@ -375,12 +373,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                               body: (
                                 <>
                                   <span>
-                                    Are you sure you want to start a Revision on
-                                    this Checklist ?
+                                    Are you sure you want to start a Revision on this Checklist ?
                                   </span>
                                   <span style={{ color: '#999999' }}>
-                                    This will Deprecate the current Checklist
-                                    and create a new Prototype as a revision.
+                                    This will Deprecate the current Checklist and create a new
+                                    Prototype as a revision.
                                   </span>
                                 </>
                               ),
@@ -416,9 +413,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                                 ? 'Unarchive Checklist'
                                 : 'Archive Checklist',
                               modalDesc: `Provide details for ${
-                                selectedChecklist?.archived
-                                  ? 'unarchiving'
-                                  : 'archiving'
+                                selectedChecklist?.archived ? 'unarchiving' : 'archiving'
                               } the checklist`,
                               onSumbitHandler: (
                                 reason: string,
@@ -433,11 +428,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                                       ),
                                     )
                                   : dispatch(
-                                      archiveChecklist(
-                                        selectedChecklist.id,
-                                        reason,
-                                        setFormErrors,
-                                      ),
+                                      archiveChecklist(selectedChecklist.id, reason, setFormErrors),
                                     );
                               },
                               onSubmitModalText: selectedChecklist?.archived
@@ -451,27 +442,27 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     <div className="list-item">
                       <MemoArchive />
                       <span>
-                        {selectedChecklist?.archived
-                          ? 'Unarchive Checklist'
-                          : 'Archive Checklist'}
+                        {selectedChecklist?.archived ? 'Unarchive Checklist' : 'Archive Checklist'}
                       </span>
                     </div>
                   </MenuItem>
                 )}
                 <MenuItem
-                  onClick={() =>
-                    navigate(`/checklists/${selectedChecklist?.id}/assignment`)
-                  }
+                  onClick={() => navigate(`/checklists/${selectedChecklist?.id}/assignment`)}
                 >
                   <div className="list-item">
                     <MemoViewInfo />
                     <span>Trained Users</span>
                   </div>
                 </MenuItem>
+                <MenuItem onClick={() => navigate(`/checklists/${selectedChecklist?.id}/logs`)}>
+                  <div className="list-item">
+                    <MemoViewInfo />
+                    <span>View Job Logs</span>
+                  </div>
+                </MenuItem>
                 <MenuItem
-                  onClick={() =>
-                    navigate(`/checklists/${selectedChecklist?.id}/automation`)
-                  }
+                  onClick={() => navigate(`/checklists/${selectedChecklist?.id}/automation`)}
                 >
                   <div className="list-item">
                     <MemoViewInfo />

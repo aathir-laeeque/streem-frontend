@@ -227,6 +227,9 @@ export const apiUpdatePrototype = (id: Checklist['id']) =>
 
 export const apiGetJobLogs = () => `${baseUrl}/job-logs`;
 
+export const apiGetProcessLogs = (id: Checklist['id']) =>
+  `${apiGetJobLogs()}/checklists/${id}`;
+
 export const apiValidatePassword = () => `${baseUrl}/auth/credentials/validate`;
 
 export const apiTaskSignOff = () => `${baseUrl}/tasks/sign-off`;
