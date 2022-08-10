@@ -1,5 +1,6 @@
 import clockIcon from '#assets/images/clock.png';
 import handIcon from '#assets/images/hand.png';
+import { ActivitiesById } from '#JobComposer/ActivityList/types';
 import {
   NonMandatoryActivity,
   Task,
@@ -119,7 +120,8 @@ const MemoTask: FC<{
   timeFormat: string;
   dateAndTimeStampFormat: string;
   taskIndex: number;
-}> = ({ task, dateFormat, timeFormat, dateAndTimeStampFormat, taskIndex }) => {
+  activitiesById: ActivitiesById;
+}> = ({ task, dateFormat, timeFormat, dateAndTimeStampFormat, taskIndex, activitiesById }) => {
   const {
     startedAt,
     audit: { modifiedBy, modifiedAt },
@@ -153,14 +155,11 @@ const MemoTask: FC<{
                 },
               ]}
             >
-              {taskExecutionState !== TaskExecutionState.NOT_STARTED &&
-              startedAt
+              {taskExecutionState !== TaskExecutionState.NOT_STARTED && startedAt
                 ? moment.unix(startedAt).format(dateFormat)
                 : '___/__/____'}
             </Text>
-            <Text style={styles.taskStartDateInput}>
-              MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;YYYY
-            </Text>
+            <Text style={styles.taskStartDateInput}>MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;YYYY</Text>
           </View>
           <View style={styles.taskStartTime}>
             <Text style={styles.taskTopHeaderTitle}>Start Time</Text>
@@ -173,8 +172,7 @@ const MemoTask: FC<{
                 },
               ]}
             >
-              {taskExecutionState !== TaskExecutionState.NOT_STARTED &&
-              startedAt
+              {taskExecutionState !== TaskExecutionState.NOT_STARTED && startedAt
                 ? moment.unix(startedAt).format(timeFormat)
                 : '__:__ am / pm'}
             </Text>
@@ -193,9 +191,7 @@ const MemoTask: FC<{
           <Text style={[styles.taskTitle, { maxWidth: '80%' }]}>
             Task {`${task.orderTree}. ${task.name}`}
           </Text>
-          <Text style={styles.taskTitle}>
-            {!canSkipTask ? `Mandatory` : `Optional`}
-          </Text>
+          <Text style={styles.taskTitle}>{!canSkipTask ? `Mandatory` : `Optional`}</Text>
         </View>
         {task.timed && (
           <View>
@@ -207,20 +203,13 @@ const MemoTask: FC<{
                   alignItems: 'center',
                 }}
               >
-                <Image
-                  src={clockIcon}
-                  style={{ height: '18px', marginRight: 8 }}
-                />
+                <Image src={clockIcon} style={{ height: '18px', marginRight: 8 }} />
                 <Text style={[styles.text12, { display: 'flex' }]}>
                   {task.timerOperator === TimerOperator.NOT_LESS_THAN
                     ? `Perform task in Not Less Than ${formatDuration(
                         task.minPeriod as number,
-                      )} :: Max Time limit - ${formatDuration(
-                        task?.maxPeriod as number,
-                      )}`
-                    : `Complete under ${formatDuration(
-                        task.maxPeriod as number,
-                      )}`}
+                      )} :: Max Time limit - ${formatDuration(task?.maxPeriod as number)}`
+                    : `Complete under ${formatDuration(task.maxPeriod as number)}`}
                 </Text>
               </View>
             </View>
@@ -228,6 +217,7 @@ const MemoTask: FC<{
         )}
       </View>
       <ActivityList
+        activitiesById={activitiesById}
         activities={task.activities}
         dateAndTimeStampFormat={dateAndTimeStampFormat}
       />
@@ -246,10 +236,7 @@ const MemoTask: FC<{
                     task.maxPeriod &&
                     moment
                       .unix(task.taskExecution.endedAt)
-                      .diff(
-                        moment.unix(task.taskExecution.startedAt),
-                        'seconds',
-                      ) > task.maxPeriod
+                      .diff(moment.unix(task.taskExecution.startedAt), 'seconds') > task.maxPeriod
                   ) {
                     text = `after the set time ${'\n'}`;
                   } else if (
@@ -257,18 +244,14 @@ const MemoTask: FC<{
                     task.minPeriod &&
                     moment
                       .unix(task.taskExecution.endedAt)
-                      .diff(
-                        moment.unix(task.taskExecution.startedAt),
-                        'seconds',
-                      ) < task.minPeriod
+                      .diff(moment.unix(task.taskExecution.startedAt), 'seconds') < task.minPeriod
                   ) {
                     text = `before the set time ${'\n'}`;
                   }
                   return text;
                 })()
               : `${'\n'}`}
-            by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
-            {modifiedBy.employeeId} on{' '}
+            by {modifiedBy.firstName} {modifiedBy.lastName}, ID: {modifiedBy.employeeId} on{' '}
             {moment.unix(modifiedAt).format(dateAndTimeStampFormat)}
           </Text>
           {task.timed && task.taskExecution.reason && (
@@ -282,14 +265,11 @@ const MemoTask: FC<{
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
             This Task was Completed with Correction via Leucine {'\n'}
-            by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
-            {modifiedBy.employeeId} on{' '}
+            by {modifiedBy.firstName} {modifiedBy.lastName}, ID: {modifiedBy.employeeId} on{' '}
             {moment.unix(modifiedAt).format(dateAndTimeStampFormat)}
           </Text>
           <View style={styles.comments}>
-            <Text style={styles.text12}>
-              {task.taskExecution.correctionReason}
-            </Text>
+            <Text style={styles.text12}>{task.taskExecution.correctionReason}</Text>
           </View>
         </View>
       )}
@@ -302,8 +282,7 @@ const MemoTask: FC<{
               ? ' Completed with Exception '
               : ' skipped '}
             via Leucine {'\n'}
-            by {modifiedBy.firstName} {modifiedBy.lastName}, ID:{' '}
-            {modifiedBy.employeeId} on{' '}
+            by {modifiedBy.firstName} {modifiedBy.lastName}, ID: {modifiedBy.employeeId} on{' '}
             {moment.unix(modifiedAt).format(dateAndTimeStampFormat)}
           </Text>
           <View style={styles.comments}>
@@ -313,18 +292,13 @@ const MemoTask: FC<{
       )}
       {(taskExecutionState === TaskExecutionState.NOT_STARTED ||
         taskExecutionState === TaskExecutionState.IN_PROGRESS) && (
-        <View
-          style={[styles.taskFooter, { flexDirection: 'row' }]}
-          wrap={false}
-        >
+        <View style={[styles.taskFooter, { flexDirection: 'row' }]} wrap={false}>
           <View style={styles.flexView}>
             <Text style={styles.taskFooterLabel}>First Name</Text>
             <View style={styles.taskFooterInputs}>
               <Text style={styles.text12} />
             </View>
-            <Text style={[styles.taskFooterLabel, { marginTop: 5 }]}>
-              Last Name
-            </Text>
+            <Text style={[styles.taskFooterLabel, { marginTop: 5 }]}>Last Name</Text>
             <View style={styles.taskFooterInputs}>
               <Text style={styles.text12} />
             </View>
@@ -347,9 +321,7 @@ const MemoTask: FC<{
               >
                 ___/__/____
               </Text>
-              <Text style={styles.taskStartDateInput}>
-                MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;YYYY
-              </Text>
+              <Text style={styles.taskStartDateInput}>MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;YYYY</Text>
             </View>
           </View>
           <View style={[styles.flexView, { margin: '0px 4px' }]}>

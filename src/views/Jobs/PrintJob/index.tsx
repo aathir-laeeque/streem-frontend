@@ -1,22 +1,14 @@
 import logo from '#assets/images/logo.png';
-import { Task } from '#JobComposer/checklist.types';
+import { ActivitiesById, ActivitiesOrderInTaskInStage } from '#JobComposer/ActivityList/types';
+import { Checklist, Task } from '#JobComposer/checklist.types';
+import { getActivities } from '#JobComposer/utils';
 import { useTypedSelector } from '#store';
 import { apiPrintJobDetails } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import {
-  Document,
-  Image,
-  Page,
-  PDFViewer,
-  Text,
-  View,
-} from '@react-pdf/renderer';
+import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
 import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
-import {
-  CommonJobPdfDetails,
-  PdfJobDataType,
-} from '../Components/Documents/CommonJobPDFDetails';
+import { CommonJobPdfDetails, PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
 import { ValueLabelGroup } from '../Components/Documents/utils';
 import { LoadingDiv, styles } from './styles';
 import TaskView from './Task';
@@ -24,9 +16,15 @@ import { PrintJobProps } from './types';
 
 const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   const [data, setData] = useState<PdfJobDataType | undefined>();
-  const { profile, settings, selectedFacility } = useTypedSelector(
-    (state) => state.auth,
-  );
+  const [activitiesData, setActivitiesData] = useState<{
+    activitiesById: ActivitiesById;
+    activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage;
+  }>({
+    activitiesById: {},
+    activitiesOrderInTaskInStage: {},
+  });
+  const { activitiesById } = activitiesData;
+  const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
 
   const { dateAndTimeStampFormat, timeFormat, dateFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
@@ -35,9 +33,9 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   useEffect(() => {
     const fetchJobPdfData = async () => {
       try {
-        const response: { data: PdfJobDataType } = await request(
-          'GET',
-          apiPrintJobDetails(jobId),
+        const response: { data: PdfJobDataType } = await request('GET', apiPrintJobDetails(jobId));
+        setActivitiesData(
+          getActivities({ checklist: response.data.checklist as unknown as Checklist }),
         );
         setData(response.data);
       } catch (err) {
@@ -50,7 +48,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
     }
   }, []);
 
-  if (!data || !profile) return null;
+  if (!data || !profile || !Object.keys(activitiesById).length) return null;
 
   const { checklist, code } = data;
 
@@ -68,9 +66,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                 },
               ]}
             >
-              <Text style={[styles.text12, { fontWeight: 'bold' }]}>
-                Job ID : {code}
-              </Text>
+              <Text style={[styles.text12, { fontWeight: 'bold' }]}>Job ID : {code}</Text>
             </View>
           </View>
 
@@ -78,45 +74,35 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
             <Image src={settings?.logoUrl || ''} style={{ height: '24px' }} />
             <Image src={logo} style={{ height: '24px' }} />
           </View>
-          <CommonJobPdfDetails
-            jobPdfData={data}
-            dateAndTimeStampFormat={dateAndTimeStampFormat}
-          />
+          <CommonJobPdfDetails jobPdfData={data} dateAndTimeStampFormat={dateAndTimeStampFormat} />
           {checklist?.stages.map((stage) => {
             return (
               <View key={`${stage.id}`} break>
                 <View style={styles.stageHeader}>
-                  <ValueLabelGroup
-                    label="Stage :"
-                    value={`${stage.orderTree}`}
-                  />
+                  <ValueLabelGroup label="Stage :" value={`${stage.orderTree}`} />
                   <Text style={{ marginVertical: 8 }}>{stage.name}</Text>
-                  <ValueLabelGroup
-                    label="Tasks :"
-                    value={`${stage.tasks.length}`}
-                  />
+                  <ValueLabelGroup label="Tasks :" value={`${stage.tasks.length}`} />
                 </View>
-                {(stage.tasks as unknown as Array<Task>).map(
-                  (task, taskIndex: number) => (
-                    <TaskView
-                      taskIndex={taskIndex}
-                      dateFormat={dateFormat}
-                      timeFormat={timeFormat}
-                      dateAndTimeStampFormat={dateAndTimeStampFormat}
-                      task={task}
-                      key={task.id}
-                    />
-                  ),
-                )}
+                {(stage.tasks as unknown as Array<Task>).map((task, taskIndex: number) => (
+                  <TaskView
+                    activitiesById={activitiesById}
+                    taskIndex={taskIndex}
+                    dateFormat={dateFormat}
+                    timeFormat={timeFormat}
+                    dateAndTimeStampFormat={dateAndTimeStampFormat}
+                    task={task}
+                    key={task.id}
+                  />
+                ))}
               </View>
             );
           })}
 
           <View fixed style={styles.footer}>
             <Text style={styles.footerInfo}>
-              Downloaded on {moment().format(dateAndTimeStampFormat)}. By{' '}
-              {profile.firstName} {profile.lastName} ID: {profile.employeeId}{' '}
-              for {selectedFacility?.name} using Leucine App
+              Downloaded on {moment().format(dateAndTimeStampFormat)}. By {profile.firstName}{' '}
+              {profile.lastName} ID: {profile.employeeId} for {selectedFacility?.name} using Leucine
+              App
             </Text>
             <View style={styles.pageInfo}>
               <Text
