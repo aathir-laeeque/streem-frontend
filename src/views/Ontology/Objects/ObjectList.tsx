@@ -104,7 +104,7 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
             }
           }
         } else {
-          propertyValue = '-N/A-';
+          propertyValue = '-';
         }
         return createColumnValue(propertyValue, item, isPrimary);
       },
