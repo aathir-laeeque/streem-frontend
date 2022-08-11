@@ -71,8 +71,8 @@ function* objectActionSaga({
 }: ReturnType<typeof actions.createObject | typeof actions.editObject>) {
   try {
     const isEditing = 'objectId' in payload;
-    const { object, objectTypeId } = payload;
-    const { errors }: ResponseObj<any> = yield call(
+    const { object, objectTypeId, onDone } = payload;
+    const { data, errors }: ResponseObj<any> = yield call(
       request,
       isEditing ? 'PATCH' : 'POST',
       apiGetObjects(isEditing ? payload.objectId : undefined),
@@ -82,6 +82,8 @@ function* objectActionSaga({
       throw getErrorMsg(errors);
     }
 
+    yield put(actions.setActiveObject(data));
+
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,
@@ -89,7 +91,7 @@ function* objectActionSaga({
       }),
     );
 
-    navigate(-1);
+    onDone();
   } catch (e) {
     yield* handleCatch(
       'ObjectsView',

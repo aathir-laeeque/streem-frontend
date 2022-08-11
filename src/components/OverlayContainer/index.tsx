@@ -48,6 +48,7 @@ import styled from 'styled-components';
 import ReasonModal from '../shared/ReasonModal';
 import StartErrorModal from '../shared/StartErrorModal';
 import WebCamOverlay from '#components/shared/WebCamOverlay';
+import AutomationActionModal from '#JobComposer/modals/AutomationAction';
 
 import ChecklistUserAssignment from '#views/Checklists/Assignment/ChecklistUserAssignment';
 import { closeAllOverlayAction, closeOverlayAction } from './actions';
@@ -209,6 +210,10 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.CALC_ACTIVITY_ADD_PARAMS_MODAL:
       return <CalcActivityAddParamsModal {...params} />;
+
+    case OverlayNames.AUTOMATION_ACTION:
+      return <AutomationActionModal {...params} />
+
     default:
       return null;
   }

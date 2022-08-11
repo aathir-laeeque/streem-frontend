@@ -1,5 +1,5 @@
 import { actionSpreader } from '#store';
-import { Task } from '../checklist.types';
+import { AutomationAction, Task } from '../checklist.types';
 import { TaskListAction } from './reducer.types';
 import { TaskAction } from './types';
 
@@ -22,23 +22,27 @@ export const updateTaskExecutionState = (taskId: Task['id'], data: any) =>
     data,
   });
 
-export const completeTask = (
-  taskId: Task['id'],
-  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>,
-  reason?: string,
-  withException?: boolean,
-) =>
+export const completeTask = ({
+  taskId,
+  setLoadingState,
+  reason,
+  withException,
+  automations,
+}: {
+  taskId: Task['id'];
+  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
+  reason?: string;
+  withException?: boolean;
+  automations?: AutomationAction[];
+}) =>
   actionSpreader(
-    withException
-      ? TaskListAction.COMPLETE_TASK_WITH_EXCEPTION
-      : TaskListAction.COMPLETE_TASK,
+    withException ? TaskListAction.COMPLETE_TASK_WITH_EXCEPTION : TaskListAction.COMPLETE_TASK,
     {
       reason,
       taskId,
       setLoadingState,
-      action: withException
-        ? TaskAction.COMPLETE_WITH_EXCEPTION
-        : TaskAction.COMPLETE,
+      automations,
+      action: withException ? TaskAction.COMPLETE_WITH_EXCEPTION : TaskAction.COMPLETE,
     },
   );
 

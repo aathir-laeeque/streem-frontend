@@ -1,3 +1,5 @@
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { RefetchJobErrorType } from '#JobComposer/modals/RefetchJobComposerData';
@@ -15,7 +17,7 @@ import {
   apiCompleteTaskErrorCorrection,
 } from '../../utils/apiUrls';
 import { setActivityError } from '../ActivityList/actions';
-import { MandatoryActivity, Task } from '../checklist.types';
+import { AutomationAction, MandatoryActivity, Task } from '../checklist.types';
 import { ErrorGroups } from '../composer.types';
 import { groupJobErrors } from '../utils';
 import { Error } from './../../utils/globalTypes';
@@ -33,6 +35,7 @@ import {
 } from './actions';
 import { TaskListAction } from './reducer.types';
 import { CompletedTaskErrors, TaskAction } from './types';
+import { getAutomationActionTexts } from './utils';
 
 type TaskErrorSagaPayload = ErrorGroups & {
   taskId: Task['id'];
@@ -88,7 +91,7 @@ function* getActivitiesDataByTaskId(taskId: string) {
 }
 
 function* taskCompleteErrorSaga(payload: TaskErrorSagaPayload) {
-  const { activitiesErrors, taskId } = payload;
+  const { activitiesErrors, taskId, automations = null } = payload;
 
   if (activitiesErrors.length) {
     console.log('handle activities level error here');
@@ -112,7 +115,7 @@ function* performActionOnTaskSaga({
 
     const isJobStarted = jobState === JobStateEnum.IN_PROGRESS;
 
-    const { taskId, action, reason = null } = payload;
+    const { taskId, action, reason = null, automations = null } = payload;
 
     if (isJobStarted) {
       const { data, errors, timestamp } = yield call(
@@ -152,9 +155,31 @@ function* performActionOnTaskSaga({
           );
         }
 
+        if (automations) {
+          for(let i = 0; i <automations.length; i++) {
+            yield put(
+              showNotification({
+                type: NotificationType.SUCCESS,
+                msg: getAutomationActionTexts(automations[i], 'success'),
+              }),
+            );
+          }
+        }
+
         yield put(setRecentServerTimestamp(timestamp));
         yield put(updateTaskExecutionState(taskId, data));
       } else {
+        if (automations) {
+          for(let i = 0; i <automations.length; i++) {
+            yield put(
+              showNotification({
+                type: NotificationType.ERROR,
+                msg: getAutomationActionTexts(automations[i], 'error'),
+              }),
+            );
+          }
+        }
+
         const hasCompletedTaskError = (errors as Error[]).find(
           (err) => err.code in CompletedTaskErrors,
         );

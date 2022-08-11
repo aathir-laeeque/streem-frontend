@@ -8,10 +8,7 @@ import {
   TaskExecutionState,
 } from '#JobComposer/checklist.types';
 import { useTypedSelector } from '#store';
-import {
-  CompletedJobStates,
-  JobStateEnum,
-} from '#views/Jobs/NewListView/types';
+import { CompletedJobStates, JobStateEnum } from '#views/Jobs/NewListView/types';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -19,6 +16,7 @@ import { setActiveTask } from '../../actions';
 import { TaskCardProps } from '../../types';
 import Footer from './Footer';
 import Header from './Header';
+import AutomationInfo from './AutomationInfo';
 import { CircularProgress } from '@material-ui/core';
 import moment from 'moment';
 
@@ -73,9 +71,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
 
   const dispatch = useDispatch();
 
-  const isLoggedInUserAssigned = assignees.some(
-    (user) => user.id === profile?.id,
-  );
+  const isLoggedInUserAssigned = assignees.some((user) => user.id === profile?.id);
 
   if (activeStageId) {
     const activities = activitiesOrderInTaskInStage[activeStageId][task.id].map(
@@ -103,8 +99,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
       taskState === TaskExecutionState.COMPLETED_WITH_EXCEPTION;
 
     const showStartButton =
-      (jobState === JobStateEnum.ASSIGNED ||
-        jobState === JobStateEnum.IN_PROGRESS) &&
+      (jobState === JobStateEnum.ASSIGNED || jobState === JobStateEnum.IN_PROGRESS) &&
       !isTaskStarted;
 
     const showAssignmentButton =
@@ -112,33 +107,29 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
       !(jobState in CompletedJobStates) &&
       location.pathname.split('/')[1] !== 'inbox';
 
-    const [timerState, setTimerState] = useState<{ [index: string]: boolean }>(
-      () => {
-        const timeElapsed =
-          isTaskCompleted && endedAt && startedAt
-            ? moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds')
-            : isTaskStarted && recentServerTimestamp && startedAt
-              ? moment
-                .unix(recentServerTimestamp)
-                .diff(moment.unix(startedAt), 'seconds')
-              : 0;
+    const [timerState, setTimerState] = useState<{ [index: string]: boolean }>(() => {
+      const timeElapsed =
+        isTaskCompleted && endedAt && startedAt
+          ? moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds')
+          : isTaskStarted && recentServerTimestamp && startedAt
+          ? moment.unix(recentServerTimestamp).diff(moment.unix(startedAt), 'seconds')
+          : 0;
 
-        return {
-          earlyCompletion: !!(
-            task.timed &&
-            task.minPeriod &&
-            timeElapsed &&
-            timeElapsed < task.minPeriod
-          ),
-          limitCrossed: !!(
-            task.timed &&
-            task.maxPeriod &&
-            timeElapsed &&
-            timeElapsed > task.maxPeriod
-          ),
-        };
-      },
-    );
+      return {
+        earlyCompletion: !!(
+          task.timed &&
+          task.minPeriod &&
+          timeElapsed &&
+          timeElapsed < task.minPeriod
+        ),
+        limitCrossed: !!(
+          task.timed &&
+          task.maxPeriod &&
+          timeElapsed &&
+          timeElapsed > task.maxPeriod
+        ),
+      };
+    });
 
     return (
       <Wrapper
@@ -170,11 +161,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
         />
         <div
           onClick={() => {
-            if (
-              jobState === JobStateEnum.IN_PROGRESS &&
-              !isTaskStarted &&
-              isLoggedInUserAssigned
-            ) {
+            if (jobState === JobStateEnum.IN_PROGRESS && !isTaskStarted && isLoggedInUserAssigned) {
               dispatch(
                 openOverlayAction({
                   type: OverlayNames.START_TASK_ERROR_MODAL,
@@ -191,6 +178,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
             isLoggedInUserAssigned={isLoggedInUserAssigned}
           />
         </div>
+
+        <AutomationInfo task={task} />
 
         <Footer
           canSkipTask={!canSkipTask}

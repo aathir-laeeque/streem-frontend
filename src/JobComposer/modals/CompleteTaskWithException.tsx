@@ -56,7 +56,7 @@ const CompleteTaskWithExceptionModal: FC<CommonOverlayProps<{
         onPrimary={() => {
           setLoadingState(true);
           dispatch(
-            completeTask(taskId, setLoadingState, exceptionReason, true),
+            completeTask({taskId, setLoadingState, reason: exceptionReason, withException: true}),
           );
           closeOverlay();
         }}

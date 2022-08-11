@@ -1,4 +1,4 @@
-import { Stage, Task, TaskExecutionState } from '../checklist.types';
+import { AutomationAction, AutomationActionActionTypeVisual, AutomationActionTriggerTypeVisual, Stage, Task, TaskExecutionState } from '../checklist.types';
 import { TasksById, TasksOrderInStage } from './types';
 
 type ReEvaluateTaskWithStopType = {
@@ -37,4 +37,25 @@ export const reEvaluateTaskWithStop = ({
   });
 
   return { stageIdWithTaskStop, taskIdWithStop };
+};
+
+export const getAutomationActionTexts = (
+  automation: AutomationAction,
+  forNotify?: 'success' | 'error',
+) => {
+  if (forNotify === 'success') {
+    return `Triggered "${AutomationActionActionTypeVisual[automation.actionType]} ${
+      automation.actionDetails.propertyDisplayName || ''
+    } of the selected ${automation.actionDetails.objectTypeDisplayName}"`;
+  } else if (forNotify === 'error') {
+    return `Not able to trigger "${AutomationActionActionTypeVisual[automation.actionType]} ${
+      automation.actionDetails.propertyDisplayName || ''
+    } of the selected ${automation.actionDetails.objectTypeDisplayName}"`;
+  }
+
+  return `${AutomationActionActionTypeVisual[automation.actionType]} ${
+    automation.actionDetails.propertyDisplayName || ''
+  } of the selected ${automation.actionDetails.objectTypeDisplayName} when the ${
+    AutomationActionTriggerTypeVisual[automation.triggerType]
+  }.`;
 };

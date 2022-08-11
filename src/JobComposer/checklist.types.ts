@@ -1,5 +1,6 @@
 import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
+import { InputTypes } from '#utils/globalTypes';
 
 export enum MandatoryActivity {
   CHECKLIST = 'CHECKLIST',
@@ -65,10 +66,7 @@ export enum TaskExecutionState {
   SKIPPED = 'SKIPPED',
 }
 
-export type AuditUserType = Pick<
-  User,
-  'id' | 'employeeId' | 'firstName' | 'lastName'
->;
+export type AuditUserType = Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName'>;
 
 export interface Audit {
   modifiedAt: number;
@@ -94,6 +92,55 @@ export enum TimerOperator {
   NOT_LESS_THAN = 'NOT_LESS_THAN',
 }
 
+export enum AutomationActionType {
+  PROCESS_BASED = 'PROCESS_BASED',
+  OBJECT_BASED = 'OBJECT_BASED',
+}
+
+export enum AutomationActionActionType {
+  INCREASE_PROPERTY = 'INCREASE_PROPERTY',
+  DECREASE_PROPERTY = 'DECREASE_PROPERTY',
+  CREATE_OBJECT = 'CREATE_OBJECT',
+}
+
+export enum AutomationActionActionTypeVisual {
+  INCREASE_PROPERTY = 'Increase',
+  DECREASE_PROPERTY = 'Decrease',
+  CREATE_OBJECT = 'Create Object',
+}
+
+export enum AutomationActionTriggerType {
+  TASK_COMPLETED = 'TASK_COMPLETED',
+}
+
+export enum AutomationActionTriggerTypeVisual {
+  TASK_COMPLETED = 'task is completed',
+}
+
+export type AutomationActionDetails = {
+  value: number;
+  sortOrder: number;
+  activityId: string;
+  propertyId: string;
+  propertyInputType: InputTypes;
+  propertyExternalId: string;
+  propertyDisplayName: string;
+  relationId: number;
+  urlPath: string;
+  collection: string;
+  objectTypeId: string;
+  objectTypeExternalId: string;
+  objectTypeDisplayName: string;
+};
+
+export type AutomationAction = {
+  id: string;
+  type: AutomationActionType;
+  actionType: AutomationActionActionType;
+  actionDetails: AutomationActionDetails;
+  triggerType: AutomationActionTriggerType;
+};
+
 export interface Task {
   activities: Activity[];
   code: string;
@@ -108,6 +155,7 @@ export interface Task {
   taskExecution: TaskExecution;
   timed: boolean;
   timerOperator: TimerOperator;
+  automations: AutomationAction[];
 }
 
 export interface Stage {

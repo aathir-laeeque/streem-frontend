@@ -31,14 +31,20 @@ export const fetchObjectsError = (error: any) =>
 export const setActiveObject = (object?: Object) =>
   actionSpreader(OntologyAction.SET_ACTIVE_OBJECT, { object });
 
-export const createObject = (object: any, objectTypeId: string) =>
-  actionSpreader(OntologyAction.CREATE_OBJECT, { object, objectTypeId });
+export const createObject = (object: any, objectTypeId: string, onDone: () => void) =>
+  actionSpreader(OntologyAction.CREATE_OBJECT, { object, objectTypeId, onDone });
 
-export const editObject = (object: any, objectTypeId: string, objectId: string) =>
+export const editObject = (
+  object: any,
+  objectTypeId: string,
+  objectId: string,
+  onDone: () => void,
+) =>
   actionSpreader(OntologyAction.EDIT_OBJECT, {
     object,
     objectTypeId,
     objectId,
+    onDone,
   });
 
 export const resetOntology = (keys: string[]) =>

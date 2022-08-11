@@ -1,6 +1,6 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { Task, TaskExecutionState } from '#JobComposer/checklist.types';
+import { AutomationActionActionType, Task, TaskExecutionState } from '#JobComposer/checklist.types';
 import { useTypedSelector } from '#store/helpers';
 import { formatDateTime } from '#utils/timeUtils';
 import { JobStateEnum } from '#views/Jobs/NewListView/types';
@@ -10,11 +10,7 @@ import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 
-import {
-  cancelErrorCorretcion,
-  completeErrorCorretcion,
-  completeTask,
-} from '../../actions';
+import { cancelErrorCorretcion, completeErrorCorretcion, completeTask } from '../../actions';
 
 const Wrapper = styled.div.attrs({
   className: 'task-buttons',
@@ -98,21 +94,21 @@ const CompletedWrapper = styled.div.attrs({
 }>`
   align-items: center;
   ${({ completed, skipped, isTaskDelayed, completedWithException }) => {
-  if (completed) {
-    if (isTaskDelayed) {
-      return css`
+    if (completed) {
+      if (isTaskDelayed) {
+        return css`
           background-color: #f7b500;
         `;
-    }
-    return css`
+      }
+      return css`
         background-color: #5aa700;
       `;
-  } else if (skipped || completedWithException) {
-    return css`
+    } else if (skipped || completedWithException) {
+      return css`
         background-color: #f7b500;
       `;
-  }
-}}
+    }
+  }}
   color: #ffffff;
   display: flex;
   justify-content: center;
@@ -171,21 +167,16 @@ type FooterProps = {
   timerState: { [index: string]: boolean };
 };
 
-const generateName = ({
-                        firstName,
-                        lastName,
-                      }: {
-  firstName: string;
-  lastName: string;
-}) => `${firstName} ${lastName}`;
+const generateName = ({ firstName, lastName }: { firstName: string; lastName: string }) =>
+  `${firstName} ${lastName}`;
 
 const Footer: FC<FooterProps> = ({
-                                   canSkipTask,
-                                   task,
-                                   activitiesHasError,
-                                   setLoadingState,
-                                   timerState,
-                                 }) => {
+  canSkipTask,
+  task,
+  activitiesHasError,
+  setLoadingState,
+  timerState,
+}) => {
   const dispatch = useDispatch();
   const {
     auth: { profile, selectedFacility },
@@ -207,19 +198,62 @@ const Footer: FC<FooterProps> = ({
     assignees,
   } = task.taskExecution;
 
-  const isTaskDelayed =
-    taskExecutionState === TaskExecutionState.COMPLETED && reason;
+  const isTaskDelayed = taskExecutionState === TaskExecutionState.COMPLETED && reason;
 
-  const isUserAssignedToTask = assignees.some(
-    (user) => user.id === profile?.id,
-  );
+  const isUserAssignedToTask = assignees.some((user) => user.id === profile?.id);
+
+  const onCompleteJob = (reason?: string) => {
+    setLoadingState(true);
+    if (task.automations?.length) {
+      const createObjectAutomation = (task.automations || []).find(
+        (automation) => automation.actionType === AutomationActionActionType.CREATE_OBJECT,
+      );
+      if (createObjectAutomation) {
+        const otherAutomations = task.automations.filter(
+          (automation) => automation.actionType !== AutomationActionActionType.CREATE_OBJECT,
+        );
+        dispatch(
+          openOverlayAction({
+            type: OverlayNames.AUTOMATION_ACTION,
+            props: {
+              objectTypeId: createObjectAutomation.actionDetails.objectTypeId,
+              onDone: () =>
+                dispatch(
+                  completeTask({
+                    taskId: task.id,
+                    setLoadingState,
+                    reason,
+                    automations: otherAutomations.length ? otherAutomations : undefined,
+                  }),
+                ),
+              setLoadingState,
+            },
+          }),
+        );
+      } else {
+        dispatch(
+          completeTask({
+            taskId: task.id,
+            setLoadingState,
+            reason,
+            automations: task.automations,
+          }),
+        );
+      }
+    } else {
+      dispatch(
+        completeTask({
+          taskId: task.id,
+          setLoadingState,
+          reason,
+        }),
+      );
+    }
+  };
 
   if (!!task.taskExecution.correctionEnabled) {
     return (
-      <div
-        className="buttons-container"
-        style={{ display: 'flex', padding: '0 16px 16px' }}
-      >
+      <div className="buttons-container" style={{ display: 'flex', padding: '0 16px 16px' }}>
         <button
           style={{
             border: '1px solid #5ca6ff',
@@ -270,10 +304,7 @@ const Footer: FC<FooterProps> = ({
       let text;
       if (timerState.limitCrossed) {
         text = 'after the set time';
-      } else if (
-        task.timerOperator === 'NOT_LESS_THAN' &&
-        timerState.earlyCompletion
-      ) {
+      } else if (task.timerOperator === 'NOT_LESS_THAN' && timerState.earlyCompletion) {
         text = 'before the set time';
       }
 
@@ -282,8 +313,7 @@ const Footer: FC<FooterProps> = ({
           <CompletedWrapper completed isTaskDelayed={isTaskDelayed}>
             <Error className="icon" />
             <span>
-              Task completed {text} by {generateName(modifiedBy)}, ID:{' '}
-              {modifiedBy.employeeId} on{' '}
+              Task completed {text} by {generateName(modifiedBy)}, ID: {modifiedBy.employeeId} on{' '}
               {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
             </span>
           </CompletedWrapper>
@@ -299,23 +329,19 @@ const Footer: FC<FooterProps> = ({
         <CompletedWrapper completed>
           <CheckCircle className="icon" />
           <span>
-            Task completed by {generateName(modifiedBy)}, ID:{' '}
-            {modifiedBy.employeeId} on{' '}
+            Task completed by {generateName(modifiedBy)}, ID: {modifiedBy.employeeId} on{' '}
             {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
           </span>
         </CompletedWrapper>
       );
     }
-  } else if (
-    taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION
-  ) {
+  } else if (taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION) {
     return (
       <CompletedWrapper completedWithException>
         <CheckCircle className="icon" />
         <span>
-          Task completed with exception by {generateName(modifiedBy)}, ID:{' '}
-          {modifiedBy.employeeId} on{' '}
-          {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
+          Task completed with exception by {generateName(modifiedBy)}, ID: {modifiedBy.employeeId}{' '}
+          on {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
         </span>
       </CompletedWrapper>
     );
@@ -324,8 +350,7 @@ const Footer: FC<FooterProps> = ({
       <CompletedWrapper skipped>
         <CheckCircle className="icon" />
         <span>
-          Task skipped by {generateName(modifiedBy)}, ID:{' '}
-          {modifiedBy.employeeId} on{' '}
+          Task skipped by {generateName(modifiedBy)}, ID: {modifiedBy.employeeId} on{' '}
           {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
         </span>
       </CompletedWrapper>
@@ -335,10 +360,7 @@ const Footer: FC<FooterProps> = ({
       let text;
       if (timerState.limitCrossed) {
         text = 'State your reason for delay';
-      } else if (
-        task.timerOperator === 'NOT_LESS_THAN' &&
-        timerState.earlyCompletion
-      ) {
+      } else if (task.timerOperator === 'NOT_LESS_THAN' && timerState.earlyCompletion) {
         text = 'State your reason for early completion';
       }
       return (
@@ -356,8 +378,7 @@ const Footer: FC<FooterProps> = ({
           <div className="buttons-container">
             <button
               onClick={() => {
-                setLoadingState(true);
-                dispatch(completeTask(task.id, setLoadingState, delayReason));
+                onCompleteJob(delayReason);
               }}
             >
               Submit
@@ -382,14 +403,10 @@ const Footer: FC<FooterProps> = ({
                 className="complete-task"
                 onClick={() => {
                   if (!isJobBlocked) {
-                    if (
-                      task.timed &&
-                      (timerState.earlyCompletion || timerState.limitCrossed)
-                    ) {
+                    if (task.timed && (timerState.earlyCompletion || timerState.limitCrossed)) {
                       setAskForReason(true);
                     } else {
-                      setLoadingState(true);
-                      dispatch(completeTask(task.id, setLoadingState));
+                      onCompleteJob();
                     }
                   }
                 }}

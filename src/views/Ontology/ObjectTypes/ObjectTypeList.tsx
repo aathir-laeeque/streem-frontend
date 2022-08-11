@@ -1,11 +1,10 @@
 import { DataTable, TabContentProps } from '#components';
 import { useTypedSelector } from '#store';
-import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { FilterField } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
-import { CircularProgress, Menu, MenuItem } from '@material-ui/core';
-import { ArrowDropDown } from '@material-ui/icons';
+import { CircularProgress } from '@material-ui/core';
 import { navigate } from '@reach/router';
-import React, { FC, useState, MouseEvent, useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchObjectTypes } from '../actions';
 
@@ -40,11 +39,6 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
   const {
     objectTypes: { list, listLoading },
   } = useTypedSelector((state) => state.ontology);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const fetchData = (
     page = DEFAULT_PAGE_NUMBER,
@@ -86,43 +80,6 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
                     >
                       {item.displayName}
                     </span>
-                  );
-                },
-              },
-              {
-                id: 'actions',
-                label: 'Actions',
-                minWidth: 100,
-                format: function renderComp(item) {
-                  return (
-                    <>
-                      <div
-                        id="more-actions"
-                        onClick={(event: MouseEvent<HTMLDivElement>) => {
-                          setAnchorEl(event.currentTarget);
-                        }}
-                      >
-                        More <ArrowDropDown className="icon" />
-                      </div>
-                      <Menu
-                        id="row-more-actions"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                        style={{ marginTop: 40 }}
-                      >
-                        <MenuItem>
-                          <div className="list-item">Item 1</div>
-                        </MenuItem>
-                        <MenuItem>
-                          <div className="list-item">Item 2</div>
-                        </MenuItem>
-                        <MenuItem>
-                          <div className="list-item">Item 3</div>
-                        </MenuItem>
-                      </Menu>
-                    </>
                   );
                 },
               },
