@@ -67,11 +67,12 @@ export const formatDuration1 = ({
 export const formatDateByInputType = (
   inputType: InputTypes,
   value: string | number,
+  format?: string
 ) => {
   const castedValue = typeof value === 'string' ? parseInt(value) : value;
   return inputType === InputTypes.DATE
-    ? formatDateTime(castedValue, 'YYYY-MM-DD')
+    ? formatDateTime(castedValue, format || 'YYYY-MM-DD')
     : inputType === InputTypes.TIME
-    ? formatDateTime(castedValue, 'h:mm')
-    : formatDateTime(castedValue);
+    ? formatDateTime(castedValue, format || 'h:mm')
+    : formatDateTime(castedValue, format || 'YYYY-MM-DDThh:mm');
 };

@@ -17,6 +17,7 @@ export enum FlagPositions {
   TITLE,
   SEARCHABLE,
   MANDATORY,
+  AUTOGENERATE,
 }
 // TODO move this to utils & expose methods for each flag specifically.
 export const getBooleanFromDecimal = (flag: number, pos: number) => {

@@ -100,7 +100,11 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
             if (
               [InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(property.inputType)
             ) {
-              propertyValue = formatDateByInputType(property.inputType, propertyValue);
+              propertyValue = formatDateByInputType(
+                property.inputType,
+                propertyValue,
+                property.inputType === InputTypes.DATE_TIME ? 'MMM DD, YYYY HH:mm' : undefined,
+              );
             }
           }
         } else {
