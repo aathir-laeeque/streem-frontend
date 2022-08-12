@@ -1,7 +1,7 @@
 import { BaseModal } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
-import { fetchObjectType, resetOntology } from '#views/Ontology/actions';
+import { fetchObjectType, resetOntology, setActiveObject } from '#views/Ontology/actions';
 import ObjectView from '#views/Ontology/Objects/ObjectView';
 import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import React, { FC, useEffect } from 'react';
@@ -42,6 +42,7 @@ const AutomationActionModal: FC<
   } = useTypedSelector((state) => state.ontology);
 
   useEffect(() => {
+    dispatch(setActiveObject());
     if (objectTypeId) {
       dispatch(fetchObjectType(objectTypeId));
     }
