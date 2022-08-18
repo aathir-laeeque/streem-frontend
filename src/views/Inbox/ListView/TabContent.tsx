@@ -10,10 +10,7 @@ import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AssigneesColumn from '../../Jobs/NewListView/AssignessColumn';
-import {
-  AssignedJobStates,
-  CompletedJobStates,
-} from '../../Jobs/NewListView/types';
+import { AssignedJobStates, CompletedJobStates } from '../../Jobs/NewListView/types';
 import { fetchInbox, setSelectedState } from './actions';
 import { ListViewState, TabViewProps } from './types';
 
@@ -21,15 +18,16 @@ const DEFAULT_PAGE_NUMBER = 0;
 const DEFAULT_PAGE_SIZE = 10;
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
-  const componentDidMount = useRef(false);
   const { jobs, loading: jobDataLoading }: ListViewState = useTypedSelector(
     (state) => state.inboxListView,
   );
-  const { list: jobProperties, loading: jobPropertiesLoading } =
-    useTypedSelector((state) => state.properties[ComposerEntity.JOB]);
+  const { list: jobProperties, loading: jobPropertiesLoading } = useTypedSelector(
+    (state) => state.properties[ComposerEntity.JOB],
+  );
 
-  const { selectedFacility: { id: facilityId = '' } = {}, selectedUseCase } =
-    useTypedSelector((state) => state.auth);
+  const { selectedFacility: { id: facilityId = '' } = {}, selectedUseCase } = useTypedSelector(
+    (state) => state.auth,
+  );
   const reducerLabel = label.toLowerCase().split(' ').join('');
 
   const [filterFields, setFilterFields] = useState<FilterField[]>([]);
@@ -68,10 +66,11 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   };
 
   useEffect(() => {
-    fetchData(filterFields);
-    dispatch(setSelectedState(reducerLabel));
-    componentDidMount.current = true;
-  }, []);
+    if (selectedUseCase?.id) {
+      fetchData(filterFields);
+      dispatch(setSelectedState(reducerLabel));
+    }
+  }, [selectedUseCase?.id]);
 
   const showPaginationArrows = pageable.totalPages > 10;
 
@@ -86,8 +85,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
 
         const isJobCompleted = state === CompletedJobStates.COMPLETED;
 
-        const isCompletedWithException =
-          state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
+        const isCompletedWithException = state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
 
         const title = isJobCompleted
           ? 'Completed'
@@ -105,11 +103,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
               className="icon"
               style={{
                 fontSize: '20px',
-                color: isJobCompleted
-                  ? '#5aa700'
-                  : isJobStarted
-                  ? '#1d84ff'
-                  : '#f7b500',
+                color: isJobCompleted ? '#5aa700' : isJobStarted ? '#1d84ff' : '#f7b500',
               }}
             />
             <span title={title}>{title}</span>
@@ -194,8 +188,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
             ...jobProperties.map(({ label, id }) => ({
               label,
               value: id,
-              field:
-                'jobPropertyValues.facilityUseCasePropertyMapping.propertiesId',
+              field: 'jobPropertyValues.facilityUseCasePropertyMapping.propertiesId',
               operator: FilterOperators.EQ,
             })),
           ]}
@@ -227,13 +220,10 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           rows={list.map((item) => {
             return {
               ...item,
-              ...item.properties!.reduce<Record<string, string>>(
-                (acc, itemProperty) => {
-                  acc[itemProperty.id] = itemProperty.value;
-                  return acc;
-                },
-                {},
-              ),
+              ...item.properties!.reduce<Record<string, string>>((acc, itemProperty) => {
+                acc[itemProperty.id] = itemProperty.value;
+                return acc;
+              }, {}),
             };
           })}
         />
@@ -247,10 +237,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
             }}
           />
           {Array.from({ length: pageable.totalPages }, (_, i) => i)
-            .slice(
-              Math.floor(pageable.page / 10) * 10,
-              Math.floor(pageable.page / 10) * 10 + 10,
-            )
+            .slice(Math.floor(pageable.page / 10) * 10, Math.floor(pageable.page / 10) * 10 + 10)
             .map((el) => (
               <span
                 key={el}
