@@ -126,7 +126,7 @@ const MemoTask: FC<{
     startedAt,
     audit: { modifiedBy, modifiedAt },
     state: taskExecutionState,
-    correctionEnabled,
+    correctionReason
   } = task.taskExecution;
 
   const canSkipTask = !task.activities.reduce((acc, activity) => {
@@ -261,10 +261,10 @@ const MemoTask: FC<{
           )}
         </View>
       )}
-      {!!correctionEnabled && (
+      {!!correctionReason && (
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
-            This Task was Completed with Correction via Leucine {'\n'}
+            This Task was corrected via Leucine {'\n'}
             by {modifiedBy.firstName} {modifiedBy.lastName}, ID: {modifiedBy.employeeId} on{' '}
             {moment.unix(modifiedAt).format(dateAndTimeStampFormat)}
           </Text>

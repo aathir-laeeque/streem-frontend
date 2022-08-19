@@ -45,6 +45,7 @@ const ErrorCorrectionModal: FC<CommonOverlayProps<{
         primaryText="Submit"
         secondaryText="Cancel"
         title="Error Correction"
+        disabledPrimary={!correctionReason}
       >
         <div className="new-form-field">
           <label className="new-form-field-label">

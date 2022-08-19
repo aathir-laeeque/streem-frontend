@@ -128,7 +128,6 @@ const ActivityList: FC<ActivityListProps> = ({
   isLoggedInUserAssigned,
 }) => {
   const {
-    auth: { selectedFacility },
     composer: { entity },
   } = useTypedSelector((state) => state);
 
@@ -259,7 +258,7 @@ const ActivityList: FC<ActivityListProps> = ({
                   <>
                     Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
                     {audit?.modifiedBy?.employeeId} on{' '}
-                    {formatDateTime(audit?.modifiedAt, 'MMM D, YYYY h:mm A')}
+                    {formatDateTime(audit?.modifiedAt)}
                   </>
                 ) : (
                   'Updating...'

@@ -101,7 +101,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
           <View fixed style={styles.footer}>
             <Text style={styles.footerInfo}>
               Downloaded on {moment().format(dateAndTimeStampFormat)}. By {profile.firstName}{' '}
-              {profile.lastName} ID: {profile.employeeId} for {selectedFacility?.name} using Leucine
+              {profile.lastName} ID: {profile.employeeId} for {selectedFacility!.id !== '-1' ? 'Facility: ' : ''}{selectedFacility?.name} using Leucine
               App
             </Text>
             <View style={styles.pageInfo}>

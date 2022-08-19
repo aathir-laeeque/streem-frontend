@@ -134,7 +134,7 @@ const MyPrintSessionActivity: FC = () => {
             <Text style={styles.footerInfo}>
               Downloaded on {moment().format(dateAndTimeStampFormat)}. By{' '}
               {profile.firstName} {profile.lastName} ID: {profile.employeeId}{' '}
-              for {selectedFacility?.name} using Leucine App
+              for {selectedFacility!.id !== '-1' ? 'Facility: ' : ''}{selectedFacility?.name} using Leucine App
             </Text>
             <View style={styles.pageInfo}>
               <Text
