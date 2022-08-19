@@ -29,8 +29,7 @@ const Wrapper = styled.div.attrs({
     display: flex;
 
     .icon:only-of-type {
-      cursor: ${({ disabled }) =>
-        disabled ? 'not-allowed' : 'pointer'} !important;
+      cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')} !important;
     }
   }
 `;
@@ -46,14 +45,21 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
   additionalTypes = [],
 }) => {
   const dispatch = useDispatch();
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState<Blob | File | null>(null);
   const fileRef = createRef<HTMLInputElement>();
 
   useEffect(() => {
     if (file) {
       (async () => {
+        let _file = file;
+        if (!(file instanceof File)) {
+          _file = new File([file], `file.${file.type.split('/')[1]}`, {
+            type: file.type,
+            lastModified: new Date().getTime(),
+          });
+        }
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', _file);
         onUploadStart && onUploadStart();
         const res = await request('POST', apiUploadFile(), {
           formData,
@@ -74,11 +80,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
       <input
         type="file"
         id="file"
-        accept={
-          additionalTypes.length
-            ? 'image/*'.concat(`,${additionalTypes.join()}`)
-            : 'image/*'
-        }
+        accept={additionalTypes.length ? 'image/*'.concat(`,${additionalTypes.join()}`) : 'image/*'}
         ref={fileRef}
         style={{ display: 'none' }}
         onChange={(event) => {
