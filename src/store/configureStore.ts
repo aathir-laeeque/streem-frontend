@@ -1,22 +1,19 @@
-import {
-  Overlay,
-  OverlayContainerAction,
-} from '#components/OverlayContainer/types';
+import { Overlay, OverlayContainerAction } from '#components/OverlayContainer/types';
+import { authInitialState } from '#views/Auth/reducer';
 import { AuthAction } from '#views/Auth/types';
-import {
-  AnyAction,
-  applyMiddleware,
-  compose,
-  createStore,
-  Middleware,
-} from 'redux';
+import { AnyAction, applyMiddleware, compose, createStore, Middleware } from 'redux';
 import { createTransform, persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import createSagaMiddleware from 'redux-saga';
-
 import { rootReducer } from './rootReducer';
 import { rootSaga } from './rootSaga';
 import { RootState } from './types';
+
+const isPageReloaded = () => {
+  if (window.performance.getEntriesByType) {
+    return window.performance.getEntriesByType('navigation')[0].type === 'reload';
+  }
+};
 
 const sagaMiddleware = createSagaMiddleware();
 const persistConfig = {
@@ -40,10 +37,15 @@ const persistConfig = {
             return inboundState;
         }
       },
-      (outboundState: RootState) => {
-        return {
-          ...outboundState,
-        };
+      (outboundState: RootState, key) => {
+        const pageReloaded = isPageReloaded();
+        const keepPersistedData = localStorage.getItem('keepPersistedData');
+        switch (key) {
+          case 'auth':
+            return pageReloaded || keepPersistedData ? outboundState : authInitialState;
+          default:
+            return outboundState;
+        }
       },
     ),
   ],
@@ -90,8 +92,7 @@ export const configureStore = (initialState: Partial<RootState>) => {
   const middlewares = [handleOnIdle, sagaMiddleware];
 
   const composeEnhancers =
-    typeof window === 'object' &&
-    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    typeof window === 'object' && (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
       ? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
           actionSanitizer: (action: AnyAction) =>
             action.type === '@@overlay/Container/OPEN_OVERLAY'

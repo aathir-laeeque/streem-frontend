@@ -10,7 +10,7 @@ import {
   LicenseWorkflowType,
 } from './types';
 
-const initialState: AuthState = {
+export const authInitialState: AuthState = {
   userId: null,
   isLoggedIn: false,
   isIdle: false,
@@ -24,7 +24,7 @@ const initialState: AuthState = {
   fetchingUseCaseList: false,
 };
 
-const reducer = (state = initialState, action: AuthActionType): AuthState => {
+const reducer = (state = authInitialState, action: AuthActionType): AuthState => {
   switch (action.type) {
     case AuthAction.ACCOUNT_LOOKUP:
     case AuthAction.RESET_PASSWORD:
@@ -36,10 +36,7 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
         licesneArr: LicenseType[],
       ): { [facilityId: string]: LicenseType } => {
         return licesneArr.reduce((acc, { facilityId, ...rest }) => {
-          if (
-            rest.state === LicenseState.GENUINE ||
-            rest.workflow === LicenseWorkflowType.NONE
-          ) {
+          if (rest.state === LicenseState.GENUINE || rest.workflow === LicenseWorkflowType.NONE) {
             return acc;
           }
           return { ...acc, [facilityId]: { ...rest } };
@@ -60,9 +57,7 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
             : state.selectedFacility,
         facilities: action.payload.facilities,
         ...(!!action.payload.licenses && {
-          NonGenuineLicenseMap: getNonGenuineLicenseHashMap(
-            action.payload.licenses,
-          ),
+          NonGenuineLicenseMap: getNonGenuineLicenseHashMap(action.payload.licenses),
         }),
       };
 
@@ -74,7 +69,7 @@ const reducer = (state = initialState, action: AuthActionType): AuthState => {
 
     case AuthAction.CLEANUP:
       return {
-        ...initialState,
+        ...authInitialState,
       };
 
     case AuthAction.AUTH_ERROR:

@@ -3,6 +3,7 @@ import { ActivitiesById, ActivitiesOrderInTaskInStage } from '#JobComposer/Activ
 import { Checklist, Task } from '#JobComposer/checklist.types';
 import { getActivities } from '#JobComposer/utils';
 import { useTypedSelector } from '#store';
+import { setKeepPersistedData } from '#utils';
 import { apiPrintJobDetails } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
@@ -31,6 +32,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   );
 
   useEffect(() => {
+    setKeepPersistedData();
     const fetchJobPdfData = async () => {
       try {
         const response: { data: PdfJobDataType } = await request('GET', apiPrintJobDetails(jobId));

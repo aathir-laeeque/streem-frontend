@@ -2,6 +2,7 @@ import { Avatar, Link as GoBack } from '#components';
 import { ExceptionReason } from '#JobComposer/modals/CompleteJobWithException';
 import { PARAMETER_OPERATORS } from '#PrototypeComposer/constants';
 import { useTypedSelector } from '#store';
+import { openLinkInNewTab } from '#utils';
 import { apiGetJobSummary } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { getFullName } from '#utils/stringUtils';
@@ -28,8 +29,7 @@ const generateDescription = (exception: Exception): ReactNode => {
 
   switch (exception.type) {
     case 'DURATION_EXCEPTION':
-      const { endedAt, maxPeriod, minPeriod, startedAt, timerOperator } =
-        exception.timer as Timer;
+      const { endedAt, maxPeriod, minPeriod, startedAt, timerOperator } = exception.timer as Timer;
 
       const taskStartTime = moment.unix(startedAt);
 
@@ -59,18 +59,14 @@ const generateDescription = (exception: Exception): ReactNode => {
       description = (
         <div>
           <span>
-            Task Completed{' '}
-            {formatDuration1({ duration: Math.abs(deviation) ?? 0, unit: 's' })}{' '}
+            Task Completed {formatDuration1({ duration: Math.abs(deviation) ?? 0, unit: 's' })}{' '}
             {deviation > 0 ? 'late' : 'early'}
           </span>
           <br />
           <span>Expected: {expectedString}</span>
           <br />
           {timerOperator === 'NOT_LESS_THAN' ? (
-            <span>
-              Max Time :{' '}
-              {formatDuration1({ duration: maxPeriod ?? 0, unit: 's' })}
-            </span>
+            <span>Max Time : {formatDuration1({ duration: maxPeriod ?? 0, unit: 's' })}</span>
           ) : null}
         </div>
       );
@@ -88,8 +84,7 @@ const generateDescription = (exception: Exception): ReactNode => {
           <span>{parameter} is off limits</span>
           <br />
           <span>
-            Expected value :{' '}
-            {PARAMETER_OPERATORS.find((el) => el.value === operator)?.label}{' '}
+            Expected value : {PARAMETER_OPERATORS.find((el) => el.value === operator)?.label}{' '}
             {value} {uom}
           </span>
           <br />
@@ -135,10 +130,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
     (async () => {
       try {
         toggleLoading((val) => !val);
-        const response = await request(
-          'GET',
-          apiGetJobSummary(jobId as string),
-        );
+        const response = await request('GET', apiGetJobSummary(jobId as string));
 
         if (response.data) {
           setData(response.data);
@@ -165,9 +157,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
           <span className="page-header-label">Job Summary</span>
           <div
             className="icon-wrapper"
-            onClick={() =>
-              window.open(`/jobs/${jobId as string}/summary/print`, '_blank')
-            }
+            onClick={() => openLinkInNewTab(`/jobs/${jobId as string}/summary/print`)}
           >
             <Print className="icon print" />
           </div>
@@ -177,68 +167,43 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
           <div className="card">
             <div className="card-header">Job Started on</div>
             <div className="card-body">
-              {data.startedAt
-                ? formatDateTime(data.startedAt, dateAndTimeStampFormat)
-                : 'N/A'}
+              {data.startedAt ? formatDateTime(data.startedAt, dateAndTimeStampFormat) : 'N/A'}
             </div>
           </div>
           <div className="card">
             <div className="card-header">Job Completed on</div>
             <div className="card-body">
-              {data.endedAt
-                ? formatDateTime(data.endedAt, dateAndTimeStampFormat)
-                : 'N/A'}
+              {data.endedAt ? formatDateTime(data.endedAt, dateAndTimeStampFormat) : 'N/A'}
             </div>
           </div>
           <div className="card">
             <div className="card-header">Job Duration</div>
             <div className="card-body">
-              {data.totalDuration
-                ? formatDuration1({ duration: data.totalDuration })
-                : 'N/A'}
+              {data.totalDuration ? formatDuration1({ duration: data.totalDuration }) : 'N/A'}
             </div>
           </div>
           <div className="card">
             <div className="card-header">Total Exceptions</div>
-            <div className="card-body exception">
-              {data.totalTaskExceptions ?? 0}
-            </div>
+            <div className="card-body exception">{data.totalTaskExceptions ?? 0}</div>
           </div>
         </div>
 
         {data.state === CompletedJobStates['COMPLETED_WITH_EXCEPTION'] ? (
           <div className="job-cwe">
-            <div className="job-cwe-label">
-              This Job is completed with Exception
-            </div>
+            <div className="job-cwe-label">This Job is completed with Exception</div>
 
             <div className="job-cwe-details">
-              <span className="job-cwe-details-label">
-                Reason for Exception
-              </span>
+              <span className="job-cwe-details-label">Reason for Exception</span>
               <span className="job-cwe-details-value">
-                {
-                  ExceptionReason.find(
-                    (item) => item.value === data.cweDetails?.reason,
-                  )?.label
-                }
+                {ExceptionReason.find((item) => item.value === data.cweDetails?.reason)?.label}
               </span>
               <span className="job-cwe-details-label">Additional Comments</span>
-              <span className="job-cwe-details-value">
-                {data.cweDetails?.comment}
-              </span>
-              <span className="job-cwe-details-label">
-                Link to attached Document
-              </span>
+              <span className="job-cwe-details-value">{data.cweDetails?.comment}</span>
+              <span className="job-cwe-details-label">Link to attached Document</span>
               <ol className="job-cwe-details-value">
                 {data.cweDetails?.medias.map((item) => (
                   <li key={item.id}>
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="media-link"
-                    >
+                    <a href={item.link} target="_blank" rel="noreferrer" className="media-link">
                       {item.link}
                     </a>
                   </li>
@@ -275,9 +240,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
                     <tr key={stage.id}>
                       <td className="name">
                         <div className="container">
-                          <span className="stage-order">
-                            Stage {stage.orderTree}
-                          </span>
+                          <span className="stage-order">Stage {stage.orderTree}</span>
                           <span className="stage-name">{stage.name}</span>
                         </div>
                       </td>
@@ -291,14 +254,8 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
                           duration: stage.averageTaskCompletionDuration ?? 0,
                         })}
                       </td>
-                      <td
-                        className={`exceptions${
-                          stage.totalTaskExceptions ? ' colored' : ''
-                        }`}
-                      >
-                        {stage.totalTaskExceptions
-                          ? stage.totalTaskExceptions
-                          : '-'}
+                      <td className={`exceptions${stage.totalTaskExceptions ? ' colored' : ''}`}>
+                        {stage.totalTaskExceptions ? stage.totalTaskExceptions : '-'}
                       </td>
                     </tr>
                   ))}
@@ -311,11 +268,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
                       })}
                     </td>
                     <td className="task-duration">-</td>
-                    <td
-                      className={`exceptions${
-                        data.totalTaskExceptions ? ' colored' : ''
-                      }`}
-                    >
+                    <td className={`exceptions${data.totalTaskExceptions ? ' colored' : ''}`}>
                       {data.totalTaskExceptions}
                     </td>
                   </tr>
@@ -335,12 +288,8 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
           {data.stages.length ? (
             <>
               <div className="exception-details">
-                <div className="exception-details-label">
-                  Total No. of Exceptions
-                </div>
-                <div className="exception-details-value">
-                  {data.totalTaskExceptions}
-                </div>
+                <div className="exception-details-label">Total No. of Exceptions</div>
+                <div className="exception-details-value">{data.totalTaskExceptions}</div>
               </div>
 
               <table className="exceptions-detail-table">
@@ -361,9 +310,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
                           <tr key={stage.id} className="stage-detail">
                             <td className="name">
                               <div className="container">
-                                <span className="order">
-                                  Stage {stage.orderTree}
-                                </span>
+                                <span className="order">Stage {stage.orderTree}</span>
                                 <span className="name">{stage.name}</span>
                               </div>
                             </td>
@@ -376,20 +323,14 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
                           {stage.tasks.map((task) => {
                             if (task.exceptions.length) {
                               return task.exceptions.map((exception, index) => (
-                                <tr
-                                  className="exception-detail"
-                                  key={`exception-${index}`}
-                                >
+                                <tr className="exception-detail" key={`exception-${index}`}>
                                   <td className="name">
                                     {index === 0 ? (
                                       <div className="container">
                                         <span className="order">
-                                          Task {stage.orderTree}.
-                                          {task.orderTree}
+                                          Task {stage.orderTree}.{task.orderTree}
                                         </span>
-                                        <span className="name">
-                                          {task.name}
-                                        </span>
+                                        <span className="name">{task.name}</span>
                                       </div>
                                     ) : null}
                                   </td>
@@ -403,15 +344,10 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
                                       </span>
                                     </div>
                                   </td>
-                                  <td className="description">
-                                    {generateDescription(exception)}
-                                  </td>
+                                  <td className="description">{generateDescription(exception)}</td>
                                   <td className="initiator">
                                     <div className="initiator-detail">
-                                      <Avatar
-                                        user={exception.initiator}
-                                        size="large"
-                                      />
+                                      <Avatar user={exception.initiator} size="large" />
                                       <div className="user-detail">
                                         <span className="user-id">
                                           {exception.initiator.employeeId}
@@ -422,9 +358,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
                                       </div>
                                     </div>
                                   </td>
-                                  <td className="user-remarks">
-                                    {exception.remark}
-                                  </td>
+                                  <td className="user-remarks">{exception.remark}</td>
                                 </tr>
                               ));
                             }

@@ -6,6 +6,7 @@ import {
 } from '#store/audit-log-filters/action';
 import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
+import { openLinkInNewTab } from '#utils';
 import { FilterOperators } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
@@ -396,7 +397,7 @@ const SessionActivity: FC<TabViewProps> = () => {
         isLast={pageable.last}
         currentPage={pageable.page}
         data={data}
-        onPrimaryClick={() => window.open(`users-activity/print`, '_blank')}
+        onPrimaryClick={() => openLinkInNewTab('/users-activity/print')}
         primaryButtonText="Export"
         filterProp={filterProp}
         beforeColumns={[

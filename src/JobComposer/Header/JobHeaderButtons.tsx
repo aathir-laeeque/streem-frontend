@@ -4,6 +4,7 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission from '#services/uiPermissions';
 import { User } from '#store/users/types';
 import { Job, JobStateEnum, JobStateType } from '#views/Jobs/NewListView/types';
+import { openLinkInNewTab } from '#utils';
 import { Menu, MenuItem } from '@material-ui/core';
 import { MoreVert } from '@material-ui/icons';
 import { navigate } from '@reach/router';
@@ -27,23 +28,19 @@ const JobHeaderButtons: FC<{
 
   const handleClose = () => setAnchorEl(null);
 
-  const handleClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => setAnchorEl(event.currentTarget);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+    setAnchorEl(event.currentTarget);
 
   const showBulkAssignButton =
     jobState !== JobStateEnum.COMPLETED &&
     jobState !== JobStateEnum.COMPLETED_WITH_EXCEPTION &&
     !isInboxView;
 
-  const isLoggedInUserOperator = profile?.roles?.some(
-    (role) => role.name === 'OPERATOR',
-  );
+  const isLoggedInUserOperator = profile?.roles?.some((role) => role.name === 'OPERATOR');
 
   let hidePrintJob = false;
   hidePrintJob =
-    ((jobState === JobStateEnum.COMPLETED ||
-      jobState === JobStateEnum.COMPLETED_WITH_EXCEPTION) &&
+    ((jobState === JobStateEnum.COMPLETED || jobState === JobStateEnum.COMPLETED_WITH_EXCEPTION) &&
       isLoggedInUserOperator) ||
     false;
 
@@ -107,48 +104,34 @@ const JobHeaderButtons: FC<{
       )}
 
       {showBulkAssignButton && (
-        <Button1
-          className="bulk-assign"
-          onClick={() => navigate(`/jobs/${jobId}/assignments`)}
-        >
+        <Button1 className="bulk-assign" onClick={() => navigate(`/jobs/${jobId}/assignments`)}>
           Bulk Assign Tasks
         </Button1>
       )}
 
-      {isInboxView &&
-        jobState === JobStateEnum.ASSIGNED &&
-        isLoggedInUserAssigned && (
-          <Button
-            onClick={() =>
-              dispatch(
-                openOverlayAction({
-                  type: OverlayNames.START_JOB_MODAL,
-                  props: { jobId },
-                }),
-              )
-            }
-          >
-            Start Job
-          </Button>
-        )}
-
-      {jobState === JobStateEnum.IN_PROGRESS && isLoggedInUserAssigned && (
+      {isInboxView && jobState === JobStateEnum.ASSIGNED && isLoggedInUserAssigned && (
         <Button
           onClick={() =>
-            dispatch(completeJob({ jobId, details: { code }, isInboxView }))
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.START_JOB_MODAL,
+                props: { jobId },
+              }),
+            )
           }
         >
+          Start Job
+        </Button>
+      )}
+
+      {jobState === JobStateEnum.IN_PROGRESS && isLoggedInUserAssigned && (
+        <Button onClick={() => dispatch(completeJob({ jobId, details: { code }, isInboxView }))}>
           Complete Job
         </Button>
       )}
 
       <div>
-        <Button1
-          id="more"
-          variant="secondary"
-          onClick={handleClick}
-          style={{ border: 'none' }}
-        >
+        <Button1 id="more" variant="secondary" onClick={handleClick} style={{ border: 'none' }}>
           <MoreVert className="icon" fontSize="small" />
         </Button1>
 
@@ -163,7 +146,7 @@ const JobHeaderButtons: FC<{
           {!hidePrintJob && (
             <MenuItem
               onClick={() => {
-                window.open(`/jobs/${jobId}/print`, '_blank');
+                openLinkInNewTab(`/jobs/${jobId}/print`);
                 handleClose();
               }}
             >
@@ -193,9 +176,7 @@ const JobHeaderButtons: FC<{
                   handleClose();
                 }}
               >
-                <span style={{ color: '#da1e28' }}>
-                  Complete Job with Exception
-                </span>
+                <span style={{ color: '#da1e28' }}>Complete Job with Exception</span>
               </MenuItem>
             )}
           {jobState !== JobStateEnum.IN_PROGRESS &&
@@ -213,9 +194,7 @@ const JobHeaderButtons: FC<{
                   handleClose();
                 }}
               >
-                <span style={{ color: '#da1e28' }}>
-                  Complete Job with Exception
-                </span>
+                <span style={{ color: '#da1e28' }}>Complete Job with Exception</span>
               </MenuItem>
             )}
         </Menu>

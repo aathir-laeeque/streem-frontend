@@ -1,13 +1,7 @@
 import logo from '#assets/images/logo.png';
 import { useTypedSelector } from '#store';
-import {
-  Document,
-  Image,
-  Page,
-  PDFViewer,
-  Text,
-  View,
-} from '@react-pdf/renderer';
+import { setKeepPersistedData } from '#utils';
+import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
 import { groupBy } from 'lodash';
 import moment from 'moment';
 import React, { FC, useEffect } from 'react';
@@ -22,9 +16,7 @@ import { LoadingDiv, styles } from './styles';
 
 const MyPrintSessionActivity: FC = () => {
   const { logs } = useTypedSelector((state) => state.sessionActivity);
-  const { profile, settings, selectedFacility } = useTypedSelector(
-    (state) => state.auth,
-  );
+  const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
   const { timeFormat, dateAndTimeStampFormat, dateFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
@@ -33,13 +25,12 @@ const MyPrintSessionActivity: FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    setKeepPersistedData();
     fetchLogs();
   }, []);
 
   const fetchLogs = (page = 0, size = 250) => {
-    dispatch(
-      fetchSessionActivities({ size, filters, sort: 'triggeredAt,desc', page }),
-    );
+    dispatch(fetchSessionActivities({ size, filters, sort: 'triggeredAt,desc', page }));
   };
 
   if (!logs || logs.length === 0 || !profile) return null;
@@ -81,22 +72,17 @@ const MyPrintSessionActivity: FC = () => {
               let criticalCount = 0;
               const itemId = item.id as string;
               (item[itemId] as SessionActivityType[]).forEach((element) => {
-                if (element.severity === SessionActivitySeverity.CRITICAL)
-                  criticalCount++;
+                if (element.severity === SessionActivitySeverity.CRITICAL) criticalCount++;
               });
 
               return (
                 <View style={styles.columns} key={`name_${item.id}`}>
                   <View style={styles.logHeader}>
                     <Text style={styles.headerItemText}>{day}</Text>
-                    <Text style={styles.headerItemText}>
-                      {item[itemId].length} activities
-                    </Text>
+                    <Text style={styles.headerItemText}>{item[itemId].length} activities</Text>
                     {criticalCount !== 0 && (
                       <>
-                        <Text style={styles.headerItemText}>
-                          {criticalCount} Critical
-                        </Text>
+                        <Text style={styles.headerItemText}>{criticalCount} Critical</Text>
                       </>
                     )}
                   </View>
@@ -108,8 +94,7 @@ const MyPrintSessionActivity: FC = () => {
                           <Text style={styles.contentItems}>
                             {moment.unix(log.triggeredAt).format(timeFormat)}
                           </Text>
-                          {log.severity ===
-                            SessionActivitySeverity.CRITICAL && <View />}
+                          {log.severity === SessionActivitySeverity.CRITICAL && <View />}
                           <Text
                             style={[
                               styles.contentItems,
@@ -132,9 +117,10 @@ const MyPrintSessionActivity: FC = () => {
 
           <View fixed style={styles.footer}>
             <Text style={styles.footerInfo}>
-              Downloaded on {moment().format(dateAndTimeStampFormat)}. By{' '}
-              {profile.firstName} {profile.lastName} ID: {profile.employeeId}{' '}
-              for {selectedFacility!.id !== '-1' ? 'Facility: ' : ''}{selectedFacility?.name} using Leucine App
+              Downloaded on {moment().format(dateAndTimeStampFormat)}. By {profile.firstName}{' '}
+              {profile.lastName} ID: {profile.employeeId} for{' '}
+              {selectedFacility!.id !== '-1' ? 'Facility: ' : ''}
+              {selectedFacility?.name} using Leucine App
             </Text>
             <View style={styles.pageInfo}>
               <Text

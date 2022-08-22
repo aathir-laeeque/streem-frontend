@@ -1,15 +1,13 @@
 import { Checklist } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { User } from '#store/users/types';
+import { setKeepPersistedData } from '#utils';
 import { apiGetJobSummaryReportDetails } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { RouteComponentProps } from '@reach/router';
 import { Document, Page, PDFViewer, View } from '@react-pdf/renderer';
 import React, { useEffect, useState } from 'react';
-import {
-  CommonJobPdfDetails,
-  PdfJobDataType,
-} from '../Components/Documents/CommonJobPDFDetails';
+import { CommonJobPdfDetails, PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
 import { Job } from '../NewListView/types';
 import { JobSummary } from '../Summary/types';
 import DurationSummary from './DurationSummary';
@@ -19,14 +17,10 @@ import Header from './Header';
 import { styles } from './styles';
 
 type JobSummaryReportType = JobSummary & {
-  assignees: (Pick<
-    User,
-    'email' | 'id' | 'employeeId' | 'firstName' | 'lastName'
-  > & { recentSignOffAt: number })[];
-  endedBy: Pick<
-    User,
-    'id' | 'employeeId' | 'firstName' | 'lastName' | 'archived'
-  > | null;
+  assignees: (Pick<User, 'email' | 'id' | 'employeeId' | 'firstName' | 'lastName'> & {
+    recentSignOffAt: number;
+  })[];
+  endedBy: Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName' | 'archived'> | null;
   totalStages: number;
   totalTask: number;
   checklist: Checklist;
@@ -40,9 +34,7 @@ type State = {
 };
 
 const JobSummaryPdf = ({ jobId }: Props) => {
-  const { profile, settings, selectedFacility } = useTypedSelector(
-    (state) => state.auth,
-  );
+  const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
 
   const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
@@ -54,6 +46,7 @@ const JobSummaryPdf = ({ jobId }: Props) => {
   });
 
   useEffect(() => {
+    setKeepPersistedData();
     (async () => {
       try {
         setState((prevState) => ({
@@ -74,10 +67,7 @@ const JobSummaryPdf = ({ jobId }: Props) => {
               jobSummaryReportDetails: jobSummaryResponse.data,
             }));
           } else {
-            console.error(
-              'error in api response :: ',
-              jobSummaryResponse?.errors,
-            );
+            console.error('error in api response :: ', jobSummaryResponse?.errors);
             setState((prevState) => ({
               ...prevState,
               loading: !prevState.loading,
@@ -101,25 +91,19 @@ const JobSummaryPdf = ({ jobId }: Props) => {
           <Header logoUrl={settings?.logoUrl ?? ''} />
 
           <CommonJobPdfDetails
-            jobPdfData={(jobSummaryReportDetails as unknown) as PdfJobDataType}
+            jobPdfData={jobSummaryReportDetails as unknown as PdfJobDataType}
             dateAndTimeStampFormat={dateAndTimeStampFormat}
           />
           <View style={styles.container}>
             <DurationSummary
               stages={jobSummaryReportDetails?.stages ?? []}
-              totalStageDuration={
-                jobSummaryReportDetails?.totalStageDuration ?? 0
-              }
-              totalTaskExceptions={
-                jobSummaryReportDetails?.totalTaskExceptions ?? 0
-              }
+              totalStageDuration={jobSummaryReportDetails?.totalStageDuration ?? 0}
+              totalTaskExceptions={jobSummaryReportDetails?.totalTaskExceptions ?? 0}
             />
 
             <ExceptionSummary
               stages={jobSummaryReportDetails?.stages ?? []}
-              totalTaskExceptions={
-                jobSummaryReportDetails?.totalTaskExceptions ?? 0
-              }
+              totalTaskExceptions={jobSummaryReportDetails?.totalTaskExceptions ?? 0}
             />
           </View>
 

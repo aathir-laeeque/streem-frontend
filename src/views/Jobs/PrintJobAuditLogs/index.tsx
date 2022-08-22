@@ -2,33 +2,22 @@ import logo from '#assets/images/logo.png';
 import { fetchJobAuditLogs } from '#JobComposer/JobAuditLogs/actions';
 import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
 import { useTypedSelector } from '#store';
+import { setKeepPersistedData } from '#utils';
 import { apiPrintJobDetails } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import {
-  Document,
-  Image,
-  Page,
-  PDFViewer,
-  Text,
-  View,
-} from '@react-pdf/renderer';
+import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
 import { groupBy } from 'lodash';
 import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  CommonJobPdfDetails,
-  PdfJobDataType,
-} from '../Components/Documents/CommonJobPDFDetails';
+import { CommonJobPdfDetails, PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
 import { LoadingDiv, styles } from './styles';
 import { PrintJobAuditLogProps } from './types';
 
 const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
   const [jobDetails, setJobDetails] = useState<PdfJobDataType | undefined>();
   const { logs } = useTypedSelector((state) => state.composer.auditLogs);
-  const { profile, settings, selectedFacility } = useTypedSelector(
-    (state) => state.auth,
-  );
+  const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
   const { filters } = useTypedSelector((state) => state.auditLogFilters);
   const { dateAndTimeStampFormat, timeFormat, dateFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
@@ -36,12 +25,10 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    setKeepPersistedData();
     const fetchJobPdfData = async () => {
       try {
-        const response: { data: PdfJobDataType } = await request(
-          'GET',
-          apiPrintJobDetails(jobId),
-        );
+        const response: { data: PdfJobDataType } = await request('GET', apiPrintJobDetails(jobId));
         fetchLogs();
         setJobDetails(response.data);
       } catch (err) {
@@ -65,10 +52,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
 
   if (!logs || logs.length === 0 || !profile || !jobDetails) return null;
 
-  const grouped: { [index: string]: JobAuditLogType[] } = groupBy(
-    logs,
-    'triggeredOn',
-  );
+  const grouped: { [index: string]: JobAuditLogType[] } = groupBy(logs, 'triggeredOn');
   const data = Object.keys(grouped).map((item) => ({
     [`${item}`]: grouped[item],
     id: item,
@@ -107,34 +91,30 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
                 <View style={styles.columns} key={`name_${item.id}`}>
                   <View style={styles.logHeader}>
                     <Text style={styles.headerItemText}>{day}</Text>
-                    <Text style={styles.headerItemText}>
-                      {item[item.id].length} activities
-                    </Text>
+                    <Text style={styles.headerItemText}>{item[item.id].length} activities</Text>
                   </View>
                   <View style={styles.logRow}>
-                    {(item[item.id] as JobAuditLogType[]).map(
-                      (log: JobAuditLogType) => (
-                        <View style={styles.logItem} key={`${log.id}`}>
-                          <View style={styles.circle} />
-                          <View style={styles.content} wrap={false}>
-                            <Text style={styles.contentItems}>
-                              {moment.unix(log.triggeredAt).format(timeFormat)}
-                            </Text>
-                            <Text
-                              style={[
-                                styles.contentItems,
-                                {
-                                  paddingRight: 100,
-                                },
-                              ]}
-                              wrap={false}
-                            >
-                              {log.details}
-                            </Text>
-                          </View>
+                    {(item[item.id] as JobAuditLogType[]).map((log: JobAuditLogType) => (
+                      <View style={styles.logItem} key={`${log.id}`}>
+                        <View style={styles.circle} />
+                        <View style={styles.content} wrap={false}>
+                          <Text style={styles.contentItems}>
+                            {moment.unix(log.triggeredAt).format(timeFormat)}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.contentItems,
+                              {
+                                paddingRight: 100,
+                              },
+                            ]}
+                            wrap={false}
+                          >
+                            {log.details}
+                          </Text>
                         </View>
-                      ),
-                    )}
+                      </View>
+                    ))}
                   </View>
                 </View>
               );
@@ -143,9 +123,10 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
 
           <View fixed style={styles.footer}>
             <Text style={styles.footerInfo}>
-              Downloaded on {moment().format(dateAndTimeStampFormat)}. By{' '}
-              {profile.firstName} {profile.lastName} ID: {profile.employeeId}{' '}
-              for {selectedFacility!.id !== '-1' ? 'Facility: ' : ''}{selectedFacility?.name} using Leucine App
+              Downloaded on {moment().format(dateAndTimeStampFormat)}. By {profile.firstName}{' '}
+              {profile.lastName} ID: {profile.employeeId} for{' '}
+              {selectedFacility!.id !== '-1' ? 'Facility: ' : ''}
+              {selectedFacility?.name} using Leucine App
             </Text>
             <View style={styles.pageInfo}>
               <Text

@@ -1,18 +1,19 @@
-import { RouteComponentProps, Router } from '@reach/router';
-import React, { FC } from 'react';
-import styled from 'styled-components';
 import LeucineLogo from '#assets/svg/LeucineLogo';
-
+import { useMsal } from '@azure/msal-react';
+import { RouteComponentProps, Router } from '@reach/router';
+import React, { FC, useEffect } from 'react';
+import styled from 'styled-components';
 import BaseView from './BaseView';
+import { ssoLogout } from './saga';
 import {
-  LoginInputs,
-  SecretKeyInputs,
-  EmployeeIdInputs,
-  PAGE_NAMES,
   CredentialsInputs,
+  EmployeeIdInputs,
   ForgotPasswordInputs,
-  RecoveryInputs,
+  LoginInputs,
   NewPasswordInputs,
+  PAGE_NAMES,
+  RecoveryInputs,
+  SecretKeyInputs,
 } from './types';
 
 const Wrapper = styled.div.attrs({
@@ -51,6 +52,14 @@ const Wrapper = styled.div.attrs({
 `;
 
 const AuthView: FC<RouteComponentProps> = () => {
+  const { instance } = useMsal();
+
+  useEffect(() => {
+    if (instance.initialized && localStorage.getItem('loginHint')) {
+      ssoLogout(instance);
+    }
+  }, [instance?.initialized]);
+
   return (
     <Wrapper>
       <Router style={{ display: 'flex', flex: 1, overflow: 'auto' }}>
@@ -62,36 +71,18 @@ const AuthView: FC<RouteComponentProps> = () => {
           path="register/credentials"
           pageName={PAGE_NAMES.REGISTER_CREDENTIALS}
         />
-        <BaseView
-          path="register/invite-expired"
-          pageName={PAGE_NAMES.INVITATION_EXPIRED}
-        />
+        <BaseView path="register/invite-expired" pageName={PAGE_NAMES.INVITATION_EXPIRED} />
         <BaseView<RecoveryInputs>
           path="register/recovery"
           pageName={PAGE_NAMES.REGISTER_RECOVERY}
         />
-        <BaseView<SecretKeyInputs>
-          path="register"
-          pageName={PAGE_NAMES.REGISTER_SECRET_KEY}
-        />
-        <BaseView
-          path="forgot-password/key-expired"
-          pageName={PAGE_NAMES.KEY_EXPIRED}
-        />
+        <BaseView<SecretKeyInputs> path="register" pageName={PAGE_NAMES.REGISTER_SECRET_KEY} />
+        <BaseView path="forgot-password/key-expired" pageName={PAGE_NAMES.KEY_EXPIRED} />
         <BaseView path="account-locked" pageName={PAGE_NAMES.ACCOUNT_LOCKED} />
-        <BaseView
-          path="password-expired"
-          pageName={PAGE_NAMES.PASSWORD_EXPIRED}
-        />
+        <BaseView path="password-expired" pageName={PAGE_NAMES.PASSWORD_EXPIRED} />
         <BaseView path="notified" pageName={PAGE_NAMES.ADMIN_NOTIFIED} />
-        <BaseView
-          path="forgot-password/email-sent"
-          pageName={PAGE_NAMES.FORGOT_EMAIL_SENT}
-        />
-        <BaseView
-          path="forgot-password/updated"
-          pageName={PAGE_NAMES.PASSWORD_UPDATED}
-        />
+        <BaseView path="forgot-password/email-sent" pageName={PAGE_NAMES.FORGOT_EMAIL_SENT} />
+        <BaseView path="forgot-password/updated" pageName={PAGE_NAMES.PASSWORD_UPDATED} />
         <BaseView<ForgotPasswordInputs>
           path="forgot-password/recovery"
           pageName={PAGE_NAMES.FORGOT_RECOVERY}
@@ -112,10 +103,7 @@ const AuthView: FC<RouteComponentProps> = () => {
           path="forgot-password"
           pageName={PAGE_NAMES.FORGOT_IDENTITY}
         />
-        <BaseView<LoginInputs>
-          path="/login-password"
-          pageName={PAGE_NAMES.LOGIN}
-        />
+        <BaseView<LoginInputs> path="/login-password" pageName={PAGE_NAMES.LOGIN} />
         <BaseView<LoginInputs> path="/*" pageName={PAGE_NAMES.ACCOUNT_LOOKUP} />
       </Router>
       <div className="brand-footer">
