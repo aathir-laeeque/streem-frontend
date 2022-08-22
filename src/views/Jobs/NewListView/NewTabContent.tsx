@@ -249,6 +249,14 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         maxWidth: 180,
       };
     }),
+    ...(jobs?.[0]?.relations || []).map((relation) => {
+      return {
+        id: relation.id,
+        label: relation.displayName,
+        minWidth: 125,
+        maxWidth: 180,
+      };
+    }),
   ];
 
   return (
@@ -411,6 +419,12 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
               ...item,
               ...item.properties!.reduce<Record<string, string>>((acc, itemProperty) => {
                 acc[itemProperty.id] = itemProperty.value;
+                return acc;
+              }, {}),
+              ...item.relations!.reduce<Record<string, string>>((acc, relation) => {
+                acc[relation.id] = relation.targets
+                  .map((target) => `${target.displayName} - ${target.externalId}`)
+                  .join('\n');
                 return acc;
               }, {}),
             };

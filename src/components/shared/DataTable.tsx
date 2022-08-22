@@ -88,13 +88,7 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-export default function DataTable({
-  columns,
-  rows,
-}: {
-  columns: DataTableColumn[];
-  rows: any[];
-}) {
+export default function DataTable({ columns, rows }: { columns: DataTableColumn[]; rows: any[] }) {
   return (
     <Wrapper>
       <Paper square>
@@ -126,7 +120,14 @@ export default function DataTable({
                           {column.format ? (
                             column.format(row)
                           ) : (
-                            <span title={row[column.id]}>{row[column.id] ?? '-N/A-'}</span>
+                            <span
+                              title={row[column.id]}
+                              style={{
+                                maxWidth: column?.maxWidth,
+                              }}
+                            >
+                              {row[column.id] ?? '-N/A-'}
+                            </span>
                           )}
                         </TableCell>
                       );

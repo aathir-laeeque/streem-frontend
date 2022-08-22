@@ -170,6 +170,14 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         maxWidth: 180,
       };
     }),
+    ...(list?.[0]?.relations || []).map((relation) => {
+      return {
+        id: relation.id,
+        label: relation.displayName,
+        minWidth: 125,
+        maxWidth: 180,
+      };
+    }),
   ];
 
   return (
@@ -222,6 +230,12 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
               ...item,
               ...item.properties!.reduce<Record<string, string>>((acc, itemProperty) => {
                 acc[itemProperty.id] = itemProperty.value;
+                return acc;
+              }, {}),
+              ...item.relations!.reduce<Record<string, string>>((acc, relation) => {
+                acc[relation.id] = relation.targets
+                  .map((target) => `${target.displayName} - ${target.externalId}`)
+                  .join('\n');
                 return acc;
               }, {}),
             };
