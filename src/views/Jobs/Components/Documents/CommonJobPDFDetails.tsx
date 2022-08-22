@@ -7,6 +7,7 @@ import React from 'react';
 import {
   AssignedJobStates,
   CompletedJobStates,
+  JobRelation,
   JobStateType,
 } from '../../NewListView/types';
 import {
@@ -30,17 +31,14 @@ export type PdfJobDataType = Pick<
   | 'state'
   | 'cweDetails'
 > & {
-  assignees: (Pick<
-    User,
-    'email' | 'id' | 'employeeId' | 'firstName' | 'lastName'
-  > & { recentSignOffAt: number })[];
-  endedBy: Pick<
-    User,
-    'id' | 'employeeId' | 'firstName' | 'lastName' | 'archived'
-  > | null;
+  assignees: (Pick<User, 'email' | 'id' | 'employeeId' | 'firstName' | 'lastName'> & {
+    recentSignOffAt: number;
+  })[];
+  endedBy: Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName' | 'archived'> | null;
   totalStages: number;
   totalTask: number;
   checklist: Checklist;
+  relations: JobRelation[];
 };
 
 const jobDataStyles = StyleSheet.create({
@@ -107,14 +105,14 @@ export const CommonJobPdfDetails = ({
     totalDuration,
     cweDetails,
     totalStages,
+    relations,
   } = jobPdfData;
 
   const getJobStatus = (state: JobStateType) => {
     const isJobBlocked = state === AssignedJobStates.BLOCKED;
     const isJobStarted = state === AssignedJobStates.IN_PROGRESS;
     const isJobCompleted = state === CompletedJobStates.COMPLETED;
-    const isCompletedWithException =
-      state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
+    const isCompletedWithException = state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
 
     let status = '';
 
@@ -139,9 +137,7 @@ export const CommonJobPdfDetails = ({
             <Text style={jobDataStyles.cardHeader}>Job Started On</Text>
 
             <Text style={jobDataStyles.cardBody}>
-              {startedAt
-                ? formatDateTime(startedAt, dateAndTimeStampFormat)
-                : 'N/A'}
+              {startedAt ? formatDateTime(startedAt, dateAndTimeStampFormat) : 'N/A'}
             </Text>
           </View>
 
@@ -149,9 +145,7 @@ export const CommonJobPdfDetails = ({
             <Text style={jobDataStyles.cardHeader}>Job Completed On</Text>
 
             <Text style={jobDataStyles.cardBody}>
-              {endedAt
-                ? formatDateTime(endedAt, dateAndTimeStampFormat)
-                : 'N/A'}
+              {endedAt ? formatDateTime(endedAt, dateAndTimeStampFormat) : 'N/A'}
             </Text>
           </View>
 
@@ -159,9 +153,7 @@ export const CommonJobPdfDetails = ({
             <Text style={jobDataStyles.cardHeader}>Job Duration</Text>
 
             <Text style={jobDataStyles.cardBody}>
-              {totalDuration
-                ? formatDuration1({ duration: totalDuration })
-                : 'N/A'}
+              {totalDuration ? formatDuration1({ duration: totalDuration }) : 'N/A'}
             </Text>
           </View>
         </View>
@@ -170,10 +162,7 @@ export const CommonJobPdfDetails = ({
       {checklist && (
         <TabLookLike title="Checklist Details">
           <View>
-            <InlineInputLabelGroup
-              label="Checklist ID:"
-              value={checklist.code}
-            />
+            <InlineInputLabelGroup label="Checklist ID:" value={checklist.code} />
             <InlineInputLabelGroup label="Name:" value={checklist.name} />
             {checklist.properties?.map((property) => (
               <InlineInputLabelGroup
@@ -189,10 +178,7 @@ export const CommonJobPdfDetails = ({
       <TabLookLike title="Job Details">
         <View>
           <InlineInputLabelGroup label="Job ID:" value={code} />
-          <InlineInputLabelGroup
-            label="State:"
-            value={getJobStatus(jobState)}
-          />
+          <InlineInputLabelGroup label="State:" value={getJobStatus(jobState)} />
           <InlineInputLabelGroup
             label="Job Created By:"
             value={
@@ -204,18 +190,24 @@ export const CommonJobPdfDetails = ({
           <InlineInputLabelGroup
             label="Job Completed By:"
             value={
-              endedBy
-                ? `${endedBy.firstName} ${endedBy.lastName} ID:${endedBy.employeeId}`
-                : '-'
+              endedBy ? `${endedBy.firstName} ${endedBy.lastName} ID:${endedBy.employeeId}` : '-'
             }
           />
           {properties &&
             properties.map((prop) => {
               return (
+                <InlineInputLabelGroup label={`${prop.label}:`} value={prop.value} key={prop.id} />
+              );
+            })}
+          {relations &&
+            relations.map((relation) => {
+              return (
                 <InlineInputLabelGroup
-                  label={`${prop.label}:`}
-                  value={prop.value}
-                  key={prop.id}
+                  label={`${relation.displayName}:`}
+                  value={relation.targets
+                    .map((target) => `${target.displayName} - ${target.externalId}`)
+                    .join('\n')}
+                  key={relation.id}
                 />
               );
             })}
@@ -224,22 +216,14 @@ export const CommonJobPdfDetails = ({
 
       {cweDetails && (
         <TabLookLike title="Job Completed with Exception">
-          <InputLabelGroup
-            label={'Reason for Exception:'}
-            value={cweDetails.reason}
-          />
+          <InputLabelGroup label={'Reason for Exception:'} value={cweDetails.reason} />
           <View style={{ marginTop: '8px' }}>
-            <InputLabelGroup
-              label={'Additional Comments:'}
-              value={cweDetails.comment}
-            />
+            <InputLabelGroup label={'Additional Comments:'} value={cweDetails.comment} />
           </View>
           {cweDetails.medias?.length ? (
             <View style={{ marginTop: '8px' }}>
               <View>
-                <Text style={commonStyles.inputLabel}>
-                  Link to Attached Document :
-                </Text>
+                <Text style={commonStyles.inputLabel}>Link to Attached Document :</Text>
               </View>
               <View style={commonStyles.inputView}>
                 {cweDetails.medias.map((media, index) => (
@@ -278,10 +262,7 @@ export const CommonJobPdfDetails = ({
 
       <TabLookLike title="Stage and Task Details">
         <View>
-          <InputLabelGroup
-            label="Total Stages"
-            value={totalStages.toString()}
-          />
+          <InputLabelGroup label="Total Stages" value={totalStages.toString()} />
           <View style={{ marginTop: '8px' }}>
             <InputLabelGroup label="Total Tasks" value={totalTask.toString()} />
           </View>

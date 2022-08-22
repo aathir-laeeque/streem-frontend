@@ -4,18 +4,24 @@ import { User } from '#store/users/types';
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
 
-import {
-  fetchJobs,
-  fetchJobsError,
-  fetchJobsOngoing,
-  fetchJobsSuccess,
-} from './actions';
+import { fetchJobs, fetchJobsError, fetchJobsOngoing, fetchJobsSuccess } from './actions';
 
-export type Assignee = Pick<
-  User,
-  'employeeId' | 'firstName' | 'id' | 'lastName'
-> & {
+export type Assignee = Pick<User, 'employeeId' | 'firstName' | 'id' | 'lastName'> & {
   jobId: string;
+};
+
+export type JobRelationTarget = {
+  id: string;
+  externalId: string;
+  displayName: string;
+  collection: string;
+};
+
+export type JobRelation = {
+  id: string;
+  externalId: string;
+  displayName: string;
+  targets: JobRelationTarget[];
 };
 
 // TODO properties as null seems unnecessary here consider removing it
@@ -29,6 +35,7 @@ export type Job = {
   totalTasks: number;
   name?: string;
   assignees: Assignee[];
+  relations: JobRelation[];
 };
 
 export type ListViewProps = RouteComponentProps;
@@ -48,10 +55,7 @@ export enum CompletedJobStates {
   COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
 }
 
-export type JobStateType =
-  | AssignedJobStates
-  | UnassignedJobStates
-  | CompletedJobStates;
+export type JobStateType = AssignedJobStates | UnassignedJobStates | CompletedJobStates;
 
 export const JobStateEnum = {
   ...AssignedJobStates,
@@ -75,10 +79,7 @@ export enum ListViewAction {
 }
 
 export type ListViewActionType = ReturnType<
-  | typeof fetchJobs
-  | typeof fetchJobsError
-  | typeof fetchJobsOngoing
-  | typeof fetchJobsSuccess
+  typeof fetchJobs | typeof fetchJobsError | typeof fetchJobsOngoing | typeof fetchJobsSuccess
 >;
 
 export type fetchDataType = {
