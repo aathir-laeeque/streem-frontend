@@ -689,7 +689,7 @@ const activityTemplateFormatter = (
           })}
           <Text style={{ ...styles.activityHintText, marginTop: 24, marginBottom: 6 }}>Result</Text>
           <Text style={{ ...styles.text12, backgroundColor: '#F0F0F0', padding: 8 }}>
-            {activity.label} = {activity.response?.value ? activity.response.value : '_________'}
+            {activity.label} = {activity.response?.value ? activity.response.value : '_________'} {activity.data.uom}
           </Text>
         </View>
       );

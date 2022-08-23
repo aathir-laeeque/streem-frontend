@@ -55,7 +55,7 @@ const CalculationActivity: FC<ActivityProps> = ({
             Result
           </span>
           <span className="result">
-            {activity.label} = {activity.response.value}
+            {activity.label} = {activity.response.value} {activity.data.uom}
           </span>
         </>
       )}
