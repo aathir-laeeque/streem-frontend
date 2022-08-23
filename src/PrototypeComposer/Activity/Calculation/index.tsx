@@ -1,6 +1,8 @@
 import { Button1, Textarea, TextInput } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { EnabledStates } from '#PrototypeComposer/checklist.types';
+import { useTypedSelector } from '#store';
 import { Error } from '#utils/globalTypes';
 import { EquationNode, EquationParserError, parse } from 'equation-parser';
 import {
@@ -135,11 +137,7 @@ const getEquationError = (
       return message;
     }
   }
-  if (
-    parsedEquation &&
-    parsedEquation.length &&
-    parsedEquation[0].type.includes('error')
-  ) {
+  if (parsedEquation && parsedEquation.length && parsedEquation[0].type.includes('error')) {
     switch ((parsedEquation[0] as any).errorType) {
       case 'operatorLast':
         return 'Invalid operator add to the end of the equation';
@@ -153,11 +151,10 @@ const getEquationError = (
   }
 };
 
-const CalculationActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
-  activity,
-}) => {
+const CalculationActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
   const [componentLoaded, updateComponentLoaded] = useState<boolean>(false);
+  const { data } = useTypedSelector((state) => state.prototypeComposer);
 
   useEffect(() => {
     if (componentLoaded) {
@@ -200,8 +197,7 @@ const CalculationActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         <TextInput
           error={
             (activity.errors.length &&
-              activity.errors.find((error) => error.code === 'E435')
-                ?.message) ||
+              activity.errors.find((error) => error.code === 'E435')?.message) ||
             null
           }
           placeholder="Placeholder text"
@@ -212,33 +208,33 @@ const CalculationActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
           }, 500)}
         />
       </div>
-      <Button1
-        variant="textOnly"
-        onClick={() => {
-          dispatch(
-            openOverlayAction({
-              type: OverlayNames.CALC_ACTIVITY_ADD_PARAMS_MODAL,
-              props: {
-                activityId: activity.id,
-                variables: activity.data.variables,
-              },
-            }),
-          );
-        }}
-        className="add-params-btn"
-      >
-        Add Parameters
-      </Button1>
+      {data?.state && data.state in EnabledStates && (
+        <Button1
+          variant="textOnly"
+          onClick={() => {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.CALC_ACTIVITY_ADD_PARAMS_MODAL,
+                props: {
+                  activityId: activity.id,
+                  variables: activity.data.variables,
+                },
+              }),
+            );
+          }}
+          className="add-params-btn"
+        >
+          Add Parameters
+        </Button1>
+      )}
       {!isEmpty(activity.data.variables) && (
         <div className="add-params-wrapper">
           <div className="add-params-label">Added Parameters</div>
-          {Object.entries(activity.data.variables).map(
-            ([variableName, variableObj], index) => (
-              <div key={index} className="added-param">
-                {variableName}: {(variableObj as { label: string }).label}
-              </div>
-            ),
-          )}
+          {Object.entries(activity.data.variables).map(([variableName, variableObj], index) => (
+            <div key={index} className="added-param">
+              {variableName}: {(variableObj as { label: string }).label}
+            </div>
+          ))}
         </div>
       )}
       <div className="calc-formula-input">
@@ -248,9 +244,7 @@ const CalculationActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
           rows={4}
           onChange={debounce(({ value }) => {
             Object.keys(activity.data.variables).forEach((name) => {});
-            dispatch(
-              updateStoreActivity(value, activity.id, ['data', 'expression']),
-            );
+            dispatch(updateStoreActivity(value, activity.id, ['data', 'expression']));
           }, 500)}
           placeholder="Placeholder text"
           error={equationError}
@@ -261,10 +255,7 @@ const CalculationActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         <EquationOptions variables={defaultVariables}>
           {parsedEquations.map((node, idx) => (
             <div key={idx}>
-              <Equation
-                className="formula"
-                value={activity.data.expression as string}
-              />
+              <Equation className="formula" value={activity.data.expression as string} />
             </div>
           ))}
         </EquationOptions>
