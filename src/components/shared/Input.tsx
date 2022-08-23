@@ -197,9 +197,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         ) : null}
       </div>
 
-      {typeof error === 'string' && !!error ? (
-        <span className="field-error">{error}</span>
-      ) : null}
+      {typeof error === 'string' && !!error ? <span className="field-error">{error}</span> : null}
     </Wrapper>
   );
 });
@@ -207,13 +205,18 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 Input.displayName = 'Input';
 
 const TextInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => (
-  <Input type="text" ref={ref} {...props} />
+  <Input type="text" onWheel={(e) => (e.target as HTMLInputElement).blur()} ref={ref} {...props} />
 ));
 
 TextInput.displayName = 'TextInput';
 
 const NumberInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => (
-  <Input type="number" ref={ref} {...props} />
+  <Input
+    type="number"
+    onWheel={(e) => (e.target as HTMLInputElement).blur()}
+    ref={ref}
+    {...props}
+  />
 ));
 
 NumberInput.displayName = 'NumberInput';
