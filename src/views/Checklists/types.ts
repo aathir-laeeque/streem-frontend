@@ -19,6 +19,7 @@ export type ChecklistRelation = {
     urlPath: string;
     cardinality: Cardinality;
   };
+  isMandatory: boolean;
 };
 
 // TODO REMOVE THESE TYPES AND USE FROM PROTOTYPE COMPOSER TYPES FILES.

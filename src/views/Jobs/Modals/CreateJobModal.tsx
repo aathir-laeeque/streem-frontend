@@ -293,7 +293,9 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               inputs={[
                 ...checklist.relations.map((relation: any) => {
                   const registrationId = `relations.${relation.externalId}`;
-                  register(registrationId);
+                  register(registrationId, {
+                    required: relation.isMandatory
+                  });
                   const isMulti =
                     relation?.target.cardinality === Cardinality.ONE_TO_MANY;
                   if (
