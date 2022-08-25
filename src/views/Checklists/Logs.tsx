@@ -40,6 +40,7 @@ const Logs: FC<Props> = ({ id }) => {
   const {
     prototypeComposer: { loading: loadingChecklist, data },
     checklistListView: { pageable, loading, jobLogs },
+    auth: { userId },
   } = useTypedSelector((state) => state);
   const [state, setState] = useState<{
     allColumns: DataTableColumn[];
@@ -48,7 +49,10 @@ const Logs: FC<Props> = ({ id }) => {
   }>({
     allColumns: [],
     columns: [],
-    unSelectedColumnIds: {},
+    unSelectedColumnIds:
+      JSON.parse(localStorage.getItem('jobLogsUnSelectedColumnIds') || '{}')?.[
+        `${userId!}_${id}`
+      ] || {},
   });
   const { columns, allColumns, unSelectedColumnIds } = state;
 
@@ -57,6 +61,13 @@ const Logs: FC<Props> = ({ id }) => {
       ...prev,
       unSelectedColumnIds: _unSelectedColumnIds,
     }));
+    const jobLogsUnSelectedColumnIds = JSON.parse(
+      localStorage.getItem('jobLogsUnSelectedColumnIds') || '{}',
+    );
+    localStorage.setItem(
+      'jobLogsUnSelectedColumnIds',
+      JSON.stringify({ ...jobLogsUnSelectedColumnIds, [`${userId!}_${id}`]: _unSelectedColumnIds }),
+    );
   };
 
   const fetchData = (
@@ -96,26 +107,18 @@ const Logs: FC<Props> = ({ id }) => {
             format: (row: any) => {
               if (row[column.id + column.triggerType]) {
                 if (column.type === LogType.DATE) {
-                  return formatDateTime(
-                    row[column.id + column.triggerType].value,
-                  );
+                  return formatDateTime(row[column.id + column.triggerType].value);
                 } else if (
                   column.type === LogType.FILE &&
                   row[column.id + column.triggerType]?.medias?.length
                 ) {
                   return (
                     <div className="file-links">
-                      {row[column.id + column.triggerType].medias.map(
-                        (media: any) => (
-                          <a
-                            target="_blank"
-                            title={media.name}
-                            href={media.link}
-                          >
-                            {media.name}
-                          </a>
-                        ),
-                      )}
+                      {row[column.id + column.triggerType].medias.map((media: any) => (
+                        <a target="_blank" title={media.name} href={media.link}>
+                          {media.name}
+                        </a>
+                      ))}
                     </div>
                   );
                 }
