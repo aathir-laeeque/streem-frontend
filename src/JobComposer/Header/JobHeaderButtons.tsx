@@ -11,7 +11,7 @@ import { navigate } from '@reach/router';
 import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { CompletedJobStates } from '../../views/Jobs/NewListView/types';
-import { completeJob, getSignOffState } from '../actions';
+import { completeJob } from '../actions';
 
 const JobHeaderButtons: FC<{
   jobState: JobStateType;
@@ -36,41 +36,11 @@ const JobHeaderButtons: FC<{
     jobState !== JobStateEnum.COMPLETED_WITH_EXCEPTION &&
     !isInboxView;
 
-  const isLoggedInUserOperator = profile?.roles?.some((role) => role.name === 'OPERATOR');
-
-  let hidePrintJob = false;
-  hidePrintJob =
-    ((jobState === JobStateEnum.COMPLETED || jobState === JobStateEnum.COMPLETED_WITH_EXCEPTION) &&
-      isLoggedInUserOperator) ||
-    false;
-
   if (!jobId) return null;
 
   return (
     <div className="buttons-container">
-      {/* {jobState === JobStateEnum.IN_PROGRESS &&
-      (isLoggedInUserAssigned ||
-        checkPermission(['inbox', 'completeWithException'])) ? (
-        <>
-          <Button1
-            className="sign-off"
-            color="blue"
-            variant="secondary"
-            onClick={() =>
-              dispatch(
-                getSignOffState({
-                  jobId,
-                  allowSignOff: isLoggedInUserAssigned,
-                }),
-              )
-            }
-          >
-            {isLoggedInUserAssigned ? 'Sign Completed Task' : 'Sign Off State'}
-          </Button1>
-        </>
-      ) : null} */}
-
-      {!isInboxView && jobState in CompletedJobStates && (
+      {jobState in CompletedJobStates && (
         <Button1
           className="job-summary"
           color="blue"
@@ -143,16 +113,14 @@ const JobHeaderButtons: FC<{
           onClose={handleClose}
           style={{ marginTop: 40 }}
         >
-          {!hidePrintJob && (
-            <MenuItem
-              onClick={() => {
-                openLinkInNewTab(`/jobs/${jobId}/print`);
-                handleClose();
-              }}
-            >
-              Download Job
-            </MenuItem>
-          )}
+          <MenuItem
+            onClick={() => {
+              openLinkInNewTab(`/jobs/${jobId}/print`);
+              handleClose();
+            }}
+          >
+            Download Job
+          </MenuItem>
           <MenuItem
             className="job-activities"
             onClick={() => {
