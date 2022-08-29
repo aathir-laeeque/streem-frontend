@@ -484,6 +484,14 @@ const ChecklistHeader: FC = () => {
             <span>View Activites</span>
           </div>
         </MenuItem>
+        <MenuItem
+          onClick={() => navigate(`/checklists/${data?.id}/logs`)}
+        >
+          <div className="list-item">
+            <MemoViewInfo />
+            <span>View Job Logs</span>
+          </div>
+        </MenuItem>
         {data?.state === ChecklistStates.PUBLISHED ||
         data?.audit?.createdBy?.archived ? (
           checkPermission(['checklists', 'archive']) ? (
