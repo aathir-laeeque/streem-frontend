@@ -181,7 +181,6 @@ export const Assigness = ({
           <View style={assigneStyles.assigneInput} />
           <View style={[assigneStyles.assigneInput, { margin: '0px 8px' }]} />
           <View style={[assigneStyles.assigneInput, { margin: '0px 8px' }]} />
-          <View style={assigneStyles.assigneInput} />
         </View>,
       );
     }
@@ -197,13 +196,6 @@ export const Assigness = ({
           </View>
           <View style={[assigneStyles.assigneInput, { margin: '0px 8px' }]}>
             <Text style={commonStyles.text12}>{employeeId}</Text>
-          </View>
-          <View style={assigneStyles.assigneInput}>
-            <Text style={commonStyles.text12}>
-              {recentSignOffAt
-                ? formatDateTime(recentSignOffAt, dateAndTimeStampFormat)
-                : '-'}
-            </Text>
           </View>
         </View>
       ),
@@ -225,11 +217,6 @@ export const Assigness = ({
           </View>
           <View style={[commonStyles.flexView, { margin: '0px 8px' }]}>
             <Text style={assigneStyles.assigneHeading}>Employee Id</Text>
-          </View>
-          <View style={commonStyles.flexView}>
-            <Text style={assigneStyles.assigneHeading}>
-              Latest Signing Details
-            </Text>
           </View>
         </View>
         {rows}
