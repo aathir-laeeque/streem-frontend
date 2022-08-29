@@ -612,7 +612,7 @@ const activityTemplateFormatter = (
       return (
         <View style={styles.activityView} wrap={false}>
           <Text style={{ ...styles.text12, marginBottom: 16 }}>Uploaded Media:</Text>
-          {activity.response?.medias?.length &&
+          {activity.response?.medias?.length > 0 &&
             activity.response.medias.map(
               (imageDetails: {
                 link: string;
