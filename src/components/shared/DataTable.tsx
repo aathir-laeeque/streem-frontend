@@ -82,6 +82,10 @@ const Wrapper = styled.div.attrs({
               color: #1d84ff;
             }
           }
+
+          .MuiChip-label {
+            display: flex !important;
+          }
         }
       }
     }

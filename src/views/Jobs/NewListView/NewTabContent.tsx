@@ -14,7 +14,7 @@ import { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
 import { User } from '#store/users/types';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Chip } from '@material-ui/core';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -249,14 +249,36 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         maxWidth: 180,
       };
     }),
-    ...(jobs?.[0]?.relations || []).map((relation) => {
-      return {
-        id: relation.id,
-        label: relation.displayName,
-        minWidth: 125,
-        maxWidth: 180,
-      };
-    }),
+    {
+      id: 'moreDetails',
+      label: 'More Details',
+      minWidth: 152,
+      format: (item: Job) => {
+        console.log('item', item);
+        if (!item?.['relations']?.length) return '-';
+        return (
+          <>
+            {item['relations'].map((relation) => {
+              const content = relation.targets
+                .map((target) => `${target.displayName} - ${target.externalId}`)
+                .join('\n');
+              return (
+                <Chip
+                  key={relation.id}
+                  style={{ margin: '4px 8px 0 0' }}
+                  label={
+                    <span style={{ cursor: 'pointer' }} title={content}>
+                      {relation.displayName} {' : '}
+                      {content.length > 10 ? `${content.substring(0, 10)}...` : content}
+                    </span>
+                  }
+                />
+              );
+            })}
+          </>
+        );
+      },
+    },
   ];
 
   return (
@@ -419,12 +441,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
               ...item,
               ...item.properties!.reduce<Record<string, string>>((acc, itemProperty) => {
                 acc[itemProperty.id] = itemProperty.value;
-                return acc;
-              }, {}),
-              ...item.relations!.reduce<Record<string, string>>((acc, relation) => {
-                acc[relation.id] = relation.targets
-                  .map((target) => `${target.displayName} - ${target.externalId}`)
-                  .join('\n');
                 return acc;
               }, {}),
             };
