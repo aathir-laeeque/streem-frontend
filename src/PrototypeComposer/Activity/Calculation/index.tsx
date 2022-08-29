@@ -23,6 +23,9 @@ import ActivityLabelInput from '../ActivityLabelInput';
 import { ActivityProps, CalcActivityErrors } from '../types';
 
 const CalculationActivityView = styled.div`
+  > label {
+    font-size: 14px;
+  }
   .calc-uom {
     .input-label {
       color: #000000;
@@ -181,6 +184,7 @@ const CalculationActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) =>
 
   return (
     <CalculationActivityView>
+      <label>Calculation</label>
       <ActivityLabelInput activity={activity} isControlled />
       <div className="calc-desc">
         <Textarea
