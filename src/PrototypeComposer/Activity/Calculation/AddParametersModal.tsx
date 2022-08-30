@@ -105,6 +105,7 @@ export const CalcActivityAddParamsModal: FC<
       activityId: string | undefined;
       taskId: string | undefined;
       label: string;
+      key: number;
     }[]
   >(
     isEmpty(variables)
@@ -114,15 +115,17 @@ export const CalcActivityAddParamsModal: FC<
             activityId: undefined,
             taskId: undefined,
             label: '',
+            key: 0
           },
         ]
       : Object.entries(variables).map(
-          ([variableName, { activityId, taskId, label }]) => {
+          ([variableName, { activityId, taskId, label }], index) => {
             return {
               variableName,
               activityId,
               taskId,
               label,
+              key: index
             };
           },
         ),
@@ -230,7 +233,7 @@ export const CalcActivityAddParamsModal: FC<
             <div className="add-params-modal-body">
               <div>
                 {params.map((param, index) => (
-                  <div key={index} className="param-details-row">
+                  <div key={param.key} title={param.key.toString()} className="param-details-row">
                     <div className="row-header">
                       <div className="header-label">Parameter Name</div>
                       <div />
@@ -341,6 +344,7 @@ export const CalcActivityAddParamsModal: FC<
                       activityId: undefined,
                       taskId: undefined,
                       label: '',
+                      key: oldParams.length
                     });
                     return updatedParams;
                   });
