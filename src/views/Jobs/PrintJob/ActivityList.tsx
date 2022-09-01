@@ -621,7 +621,12 @@ const activityTemplateFormatter = (
                 description: string | null;
               }) => {
                 return (
-                  <View key={imageDetails.id} style={{ marginBottom: 16 }} wrap={false}>
+                  <View
+                    key={imageDetails.id}
+                    style={{ marginBottom: 16 }}
+                    wrap={false}
+                    break
+                  >
                     <Text style={styles.text12}>
                       <Text
                         style={{
@@ -649,7 +654,10 @@ const activityTemplateFormatter = (
                         {imageDetails.description}
                       </Text>
                     )}
-                    <Image src={imageDetails.link} style={{ width: '75%', marginTop: '8px' }} />
+                    <Image
+                      src={imageDetails.link}
+                      style={{ maxHeight: '230mm', marginTop: '8px', maxWidth: '100%' }}
+                    />
                   </View>
                 );
               },
