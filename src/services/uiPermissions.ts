@@ -28,12 +28,7 @@ const uiPermissions: Record<string, any> = {
       roles.SUPERVISOR,
       roles.OPERATOR,
     ],
-    jobs: [
-      roles.ACCOUNT_OWNER,
-      roles.FACILITY_ADMIN,
-      roles.CHECKLIST_PUBLISHER,
-      roles.SUPERVISOR,
-    ],
+    jobs: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER, roles.SUPERVISOR],
     ontology: [
       roles.ACCOUNT_OWNER,
       roles.FACILITY_ADMIN,
@@ -46,6 +41,7 @@ const uiPermissions: Record<string, any> = {
       roles.FACILITY_ADMIN,
       roles.CHECKLIST_PUBLISHER,
       roles.SUPERVISOR,
+      roles.OPERATOR,
     ],
   },
   header: {
@@ -86,22 +82,25 @@ const uiPermissions: Record<string, any> = {
     ],
   },
   checklists: {
-    create: [
-      roles.ACCOUNT_OWNER,
-      roles.FACILITY_ADMIN,
-      roles.CHECKLIST_PUBLISHER,
-    ],
-    revision: [
-      roles.ACCOUNT_OWNER,
-      roles.FACILITY_ADMIN,
-      roles.CHECKLIST_PUBLISHER,
-    ],
-    archive: [
-      roles.ACCOUNT_OWNER,
-      roles.FACILITY_ADMIN,
-      roles.CHECKLIST_PUBLISHER,
-    ],
+    create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+    revision: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+    archive: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
     release: [roles.ACCOUNT_OWNER, roles.CHECKLIST_PUBLISHER],
+    createJob: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+    ],
+    prototype: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+    ],
+  },
+  trainedUsers: {
+    edit: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER, roles.SUPERVISOR],
   },
   inbox: {
     completeWithException: [
@@ -119,22 +118,10 @@ const uiPermissions: Record<string, any> = {
     roles.OPERATOR,
   ],
   ontology: {
-    create: [
-      roles.ACCOUNT_OWNER,
-      roles.FACILITY_ADMIN,
-      roles.CHECKLIST_PUBLISHER,
-    ],
-    edit: [
-      roles.ACCOUNT_OWNER,
-      roles.FACILITY_ADMIN,
-      roles.CHECKLIST_PUBLISHER,
-    ],
-    archive: [
-      roles.ACCOUNT_OWNER,
-      roles.FACILITY_ADMIN,
-      roles.CHECKLIST_PUBLISHER,
-    ]
-  }
+    create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+    edit: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+    archive: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+  },
 };
 
 const checkPermission = (keys: string[]) => {

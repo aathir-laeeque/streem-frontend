@@ -481,7 +481,7 @@ const ChecklistHeader: FC = () => {
         >
           <div className="list-item">
             <ActivityIcon />
-            <span>View Activites</span>
+            <span>View Activities</span>
           </div>
         </MenuItem>
         <MenuItem

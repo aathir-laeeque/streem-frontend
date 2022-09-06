@@ -15,6 +15,7 @@ import { apiGetAllUsersAssignedToChecklist } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { ResponseObj } from '#utils/globalTypes';
 import { User } from '#services/users';
+import checkPermission from '#services/uiPermissions';
 
 type Props = RouteComponentProps<{ id: string }>;
 type ReducerState = {
@@ -250,41 +251,44 @@ const Logs: FC<Props> = ({ id }) => {
         <GoBack label="Return to process" className="go-back" />
         <Wrapper>
           <div className="header">
-            <Checkbox
-              {...(isAllTaskSelected
-                ? { checked: true, partial: false }
-                : isNoTaskSelected
-                ? { checked: false, partial: false }
-                : { checked: false, partial: true })}
-              label="Select All Tasks And Stages"
-              onClick={() => {
-                localDispatch({
-                  type: 'SET_ALL_TASK_STATE',
-                  payload: {
-                    data,
-                    state: isAllTaskSelected ? false : isNoTaskSelected,
-                  },
-                });
-              }}
-            />
-
-            <Button1
-              onClick={() => {
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.CHECKLIST_USER_ASSIGNMENT,
-                    props: {
-                      checklistId: id,
-                      selectedTasks,
-                      onClose: () => setRefresh(!refresh),
-                    },
-                  }),
-                );
-              }}
-              disabled={isNoTaskSelected}
-            >
-              {selectedTasks.length ? `Assign ${selectedTasks.length} Tasks` : 'Assign Tasks'}
-            </Button1>
+            {checkPermission(['trainedUsers', 'edit']) && (
+              <>
+                <Checkbox
+                  {...(isAllTaskSelected
+                    ? { checked: true, partial: false }
+                    : isNoTaskSelected
+                    ? { checked: false, partial: false }
+                    : { checked: false, partial: true })}
+                  label="Select All Tasks And Stages"
+                  onClick={() => {
+                    localDispatch({
+                      type: 'SET_ALL_TASK_STATE',
+                      payload: {
+                        data,
+                        state: isAllTaskSelected ? false : isNoTaskSelected,
+                      },
+                    });
+                  }}
+                />
+                <Button1
+                  onClick={() => {
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.CHECKLIST_USER_ASSIGNMENT,
+                        props: {
+                          checklistId: id,
+                          selectedTasks,
+                          onClose: () => setRefresh(!refresh),
+                        },
+                      }),
+                    );
+                  }}
+                  disabled={isNoTaskSelected}
+                >
+                  {selectedTasks.length ? `Assign ${selectedTasks.length} Tasks` : 'Assign Tasks'}
+                </Button1>
+              </>
+            )}
           </div>
 
           {listOrder.map((stageId, index) => (

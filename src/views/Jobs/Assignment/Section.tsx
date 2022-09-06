@@ -110,6 +110,11 @@ export const AssignmentSectionWrapper = styled.div.attrs({
         display: flex;
         padding: 10px 16px;
 
+        > span {
+          margin-left: 32px;
+          margin-right: auto;
+        }
+
         &.disabled {
           opacity: 0.5;
           pointer-events: none;

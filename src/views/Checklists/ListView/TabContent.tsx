@@ -323,7 +323,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     <span>View Info</span>
                   </div>
                 </MenuItem>
-                {!item.archived && (
+                {!item.archived && checkPermission(['checklists', 'createJob'])  && (
                   <MenuItem
                     onClick={() => {
                       handleClose();

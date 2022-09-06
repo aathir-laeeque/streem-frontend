@@ -6,6 +6,7 @@ import { State } from '.';
 import AssigneeList from '#views/Jobs/Assignment/AssigneeList';
 import { User } from '#services/users';
 import { AssignmentSectionWrapper } from '#views/Jobs/Assignment/Section';
+import checkPermission from '#services/uiPermissions';
 
 type Props = {
   stage: Stage;
@@ -31,6 +32,7 @@ const Section: FC<Props> = ({
   const [isOpen, toggleIsOpen] = useState(isFirst);
   let isAllTaskAssigned = true;
   let isNoTaskAssigned = true;
+  const isEditingAllowed = checkPermission(['trainedUsers', 'edit']);
 
   stage.tasks.forEach((task) => {
     if (mappedTasks?.[task.id]) {
@@ -43,60 +45,48 @@ const Section: FC<Props> = ({
   return (
     <AssignmentSectionWrapper>
       <div className="section-header">
-        <div
-          className="icon-wrapper"
-          onClick={() => toggleIsOpen((val) => !val)}
-        >
+        <div className="icon-wrapper" onClick={() => toggleIsOpen((val) => !val)}>
           {isOpen ? (
             <ArrowDropDown className="icon toggle-section" />
           ) : (
             <ArrowRight className="icon toggle-section" />
           )}
         </div>
-
-        <Checkbox
-          {...(isAllTaskSelected
-            ? { checked: true, partial: false }
-            : isNoTaskSelected
-            ? { checked: false, partial: false }
-            : { checked: false, partial: true })}
-          label={
-            <div>
-              <span style={{ fontWeight: 'bold' }}>
-                Stage {stage.orderTree}
-              </span>{' '}
-              {stage.name}
-            </div>
-          }
-          onClick={() => {
-            localDispatch({
-              type: 'SET_TASK_SELECTED_STATE',
-              payload: {
-                stageId: stage.id,
-                taskIds: stage.tasks.map((task) => task.id),
-
-                states: stage.tasks.map(() =>
-                  isAllTaskSelected ? false : isNoTaskSelected,
-                ),
-              },
-            });
-          }}
-        />
+        {isEditingAllowed ? (
+          <Checkbox
+            {...(isAllTaskSelected
+              ? { checked: true, partial: false }
+              : isNoTaskSelected
+              ? { checked: false, partial: false }
+              : { checked: false, partial: true })}
+            label={
+              <div>
+                <span style={{ fontWeight: 'bold' }}>Stage {stage.orderTree}</span> {stage.name}
+              </div>
+            }
+            onClick={() => {
+              localDispatch({
+                type: 'SET_TASK_SELECTED_STATE',
+                payload: {
+                  stageId: stage.id,
+                  taskIds: stage.tasks.map((task) => task.id),
+                  states: stage.tasks.map(() => (isAllTaskSelected ? false : isNoTaskSelected)),
+                },
+              });
+            }}
+          />
+        ) : (
+          <div style={{ marginRight: 'auto' }}>
+            <span style={{ fontWeight: 'bold' }}>Stage {stage.orderTree}</span> {stage.name}
+          </div>
+        )}
 
         <div
           className={`pill ${
-            isAllTaskAssigned
-              ? 'assigned'
-              : isNoTaskAssigned
-              ? 'unassigned'
-              : 'partial'
+            isAllTaskAssigned ? 'assigned' : isNoTaskAssigned ? 'unassigned' : 'partial'
           }`}
         >
-          {isAllTaskAssigned
-            ? 'Assigned'
-            : isNoTaskAssigned
-            ? 'Unassigned'
-            : 'Partial Assigned'}
+          {isAllTaskAssigned ? 'Assigned' : isNoTaskAssigned ? 'Unassigned' : 'Partial Assigned'}
         </div>
       </div>
       {isOpen && (
@@ -104,28 +94,30 @@ const Section: FC<Props> = ({
           {stage.tasks.map((task) => {
             return (
               <div className="section-body-item" key={task.id}>
-                <Checkbox
-                  checked={sectionState[task.id] ?? false}
-                  label={`Task ${stage.orderTree}.${task.orderTree} : ${task.name}`}
-                  onClick={() => {
-                    localDispatch({
-                      type: 'SET_TASK_SELECTED_STATE',
-                      payload: {
-                        stageId: stage.id,
-                        taskIds: [task.id],
-                        states: [!sectionState[task.id]],
-                      },
-                    });
-                  }}
-                />
+                {isEditingAllowed ? (
+                  <Checkbox
+                    checked={sectionState[task.id] ?? false}
+                    label={`Task ${stage.orderTree}.${task.orderTree} : ${task.name}`}
+                    onClick={() => {
+                      localDispatch({
+                        type: 'SET_TASK_SELECTED_STATE',
+                        payload: {
+                          stageId: stage.id,
+                          taskIds: [task.id],
+                          states: [!sectionState[task.id]],
+                        },
+                      });
+                    }}
+                  />
+                ) : (
+                  <span>
+                    Task {stage.orderTree}.{task.orderTree} : {task.name}
+                  </span>
+                )}
 
                 {mappedTasks?.[task.id] ? (
                   <AssigneeList
-                    users={
-                      mappedTasks[task.id].map(
-                        (userId) => assignedUsersMap[userId],
-                      ) as User[]
-                    }
+                    users={mappedTasks[task.id].map((userId) => assignedUsersMap[userId]) as User[]}
                   />
                 ) : (
                   <div className="pill unassigned">Unassigned</div>
