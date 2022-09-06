@@ -15,7 +15,7 @@ import { request } from '#utils/request';
 import { FilterOperators, InputTypes } from '#utils/globalTypes';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import { Checklist } from '#views/Checklists/types';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -117,9 +117,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   const [checklist, setChecklist] = useState(selectedChecklist);
   const [reRender, setReRender] = useState(false);
   const { selectedUseCase } = useTypedSelector((state) => state.auth);
-  const { checklists, pageable, loading } = useTypedSelector(
-    (state) => state.checklistListView,
-  );
+  const { checklists, pageable, loading } = useTypedSelector((state) => state.checklistListView);
   const dispatch = useDispatch();
 
   const fetchData = ({ page, size = 10, query = '' }: fetchDataParams) => {
@@ -152,6 +150,12 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     criteriaMode: 'all',
   });
 
+  useEffect(() => {
+    if (selectedChecklist) {
+      setValue('checklistId', selectedChecklist.id, { shouldDirty: true });
+    }
+  }, []);
+
   const onSubmit = (data: Record<string, string>) => {
     const parsedData = {
       ...data,
@@ -176,11 +180,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     closeOverlay();
   };
 
-  const getOptions = async (
-    path: string,
-    inputId: string,
-    dependency?: string,
-  ) => {
+  const getOptions = async (path: string, inputId: string, dependency?: string) => {
     if (!dependency || selectOptions?.[inputId]?.dependency !== dependency) {
       try {
         setSelectOptions({
@@ -191,8 +191,10 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
           },
         });
         if (inputId && path) {
-          const response: { data: any[]; errors: { message: string }[] } =
-            await request('GET', `${baseUrl}${path}`);
+          const response: { data: any[]; errors: { message: string }[] } = await request(
+            'GET',
+            `${baseUrl}${path}`,
+          );
           if (response.data) {
             setSelectOptions({
               ...selectOptions,
@@ -221,11 +223,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
         <form onSubmit={handleSubmit((data) => onSubmit(data))} style={{}}>
           {selectedChecklist ? (
             <>
-              <TextInput
-                label="Checklist"
-                defaultValue={selectedChecklist.name}
-                disabled
-              />
+              <TextInput label="Checklist" defaultValue={selectedChecklist.name} disabled />
               <input
                 ref={register({ required: true })}
                 value={selectedChecklist.id}
@@ -262,11 +260,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               )}
             />
           )}
-          <div
-            className={`properties-container ${
-              properties.length <= 4 ? 'vertical' : ''
-            }`}
-          >
+          <div className={`properties-container ${properties.length <= 4 ? 'vertical' : ''}`}>
             {properties.map((property, index) => (
               <TextInput
                 key={`property_${index}`}
@@ -274,16 +268,10 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
                 name={property.name}
                 optional={!property.mandatory}
                 ref={register({
-                  required: property.mandatory
-                    ? `${property.label} is required.`
-                    : false,
+                  required: property.mandatory ? `${property.label} is required.` : false,
                 })}
                 className="row"
-                error={
-                  errors[property.name]?.message !== ''
-                    ? errors[property.name]?.message
-                    : ''
-                }
+                error={errors[property.name]?.message !== '' ? errors[property.name]?.message : ''}
               />
             ))}
           </div>
@@ -294,25 +282,18 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
                 ...checklist.relations.map((relation: any) => {
                   const registrationId = `relations.${relation.externalId}`;
                   register(registrationId, {
-                    required: relation.isMandatory
+                    required: relation.isMandatory,
                   });
-                  const isMulti =
-                    relation?.target.cardinality === Cardinality.ONE_TO_MANY;
-                  if (
-                    relation?.variables &&
-                    Object.keys(relation.variables).length
-                  ) {
+                  const isMulti = relation?.target.cardinality === Cardinality.ONE_TO_MANY;
+                  if (relation?.variables && Object.keys(relation.variables).length) {
                     const keyToCheck = Object.keys(relation.variables)[0];
                     const parsedKey = keyToCheck.replace('$', '');
-                    const variableValue = getValues(
-                      `relations.${parsedKey}`,
-                    )?.[0]?.[relation.variables[keyToCheck]];
+                    const variableValue = getValues(`relations.${parsedKey}`)?.[0]?.[
+                      relation.variables[keyToCheck]
+                    ];
                     if (variableValue) {
                       getOptions(
-                        relation.target.urlPath.replace(
-                          keyToCheck,
-                          variableValue,
-                        ),
+                        relation.target.urlPath.replace(keyToCheck, variableValue),
                         relation.id,
                         variableValue,
                       );
@@ -332,18 +313,16 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
                       id: registrationId,
                       name: registrationId,
                       options:
-                        selectOptions?.[relation.id]?.options?.map(
-                          (option) => ({
-                            value: option,
-                            label: option.displayName,
-                            externalId: option.externalId,
-                          }),
-                        ) || [],
+                        selectOptions?.[relation.id]?.options?.map((option) => ({
+                          value: option,
+                          label: option.displayName,
+                          externalId: option.externalId,
+                        })) || [],
                       formatOptionLabel,
                       onChange: (options: any) => {
                         setValue(
                           registrationId,
-                          isMulti ? options.map(option => option.value) : [options.value],
+                          isMulti ? options.map((option) => option.value) : [options.value],
                           {
                             shouldDirty: true,
                             shouldValidate: true,
