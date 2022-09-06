@@ -99,12 +99,11 @@ const Wrapper = styled.div.attrs({
       }
 
       .variable {
+        display: flex;
         margin-bottom: 4px;
+        gap: 8px;
         .name {
-          margin-right: 4px;
-        }
-        .value {
-          margin-left: 4px;
+          font-weight: bold;
         }
       }
 
@@ -157,7 +156,7 @@ const ActivityList: FC<ActivityListProps> = ({
             ) : null}
 
             {activity?.label &&
-              ![`${MandatoryActivity.YES_NO}`, `${MandatoryActivity.PARAMETER}`].includes(
+              ![`${MandatoryActivity.YES_NO}`, `${MandatoryActivity.PARAMETER}`, `${MandatoryActivity.CALCULATION}`].includes(
                 activity.type,
               ) && <div className="activity-label">{activity.label}</div>}
 

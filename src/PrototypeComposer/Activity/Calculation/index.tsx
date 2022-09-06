@@ -57,9 +57,13 @@ const CalculationActivityView = styled.div`
       color: #6f6f6f;
       margin-bottom: 8px;
     }
-    .add-params {
-      font-size: 14px;
-      color: #161616;
+    .added-param {
+      display: flex;
+      margin-bottom: 4px;
+      gap: 4px;
+      .param-name {
+        font-weight: bold;
+      }
     }
   }
 
@@ -236,7 +240,8 @@ const CalculationActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) =>
           <div className="add-params-label">Added Parameters</div>
           {Object.entries(activity.data.variables).map(([variableName, variableObj], index) => (
             <div key={index} className="added-param">
-              {variableName}: {(variableObj as { label: string }).label}
+              <span className="param-name">{variableName}:</span>
+              <span>{(variableObj as { label: string }).label}</span>
             </div>
           ))}
         </div>

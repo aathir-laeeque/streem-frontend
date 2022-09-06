@@ -29,6 +29,7 @@ const Wrapper = styled.div.attrs({
   }
 
   .button {
+    text-align: left;
     align-items: center;
     background-color: #f4f4f4;
     border: 1px solid transparent;

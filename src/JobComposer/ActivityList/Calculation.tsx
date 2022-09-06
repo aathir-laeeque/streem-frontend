@@ -25,12 +25,10 @@ const CalculationActivity: FC<ActivityProps> = ({
       {Object.entries(activity.data.variables).map(([key, value]: any) => {
         return (
           <span className="variable">
-            <span className="name">{key}</span>
-            {value.label && (
-              <span className="value">
-                : {activitiesById?.[value.activityId]?.response?.value || '-N/A-'}
-              </span>
-            )}
+            <span className="name">{key}:</span>
+            <span className="value">
+              {value.label} = {activitiesById?.[value.activityId]?.response?.value || '-'}
+            </span>
           </span>
         );
       })}
