@@ -14,7 +14,8 @@ import { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
 import { User } from '#store/users/types';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
-import { CircularProgress, Chip } from '@material-ui/core';
+import MoreDetails from '#views/Jobs/Components/MoreDetailsColumn';
+import { CircularProgress } from '@material-ui/core';
 import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -253,31 +254,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
       id: 'moreDetails',
       label: 'More Details',
       minWidth: 152,
-      format: (item: Job) => {
-        console.log('item', item);
-        if (!item?.['relations']?.length) return '-';
-        return (
-          <>
-            {item['relations'].map((relation) => {
-              const content = relation.targets
-                .map((target) => `${target.displayName} - ${target.externalId}`)
-                .join('\n');
-              return (
-                <Chip
-                  key={relation.id}
-                  style={{ margin: '4px 8px 0 0' }}
-                  label={
-                    <span style={{ cursor: 'pointer' }} title={content}>
-                      {relation.displayName} {' : '}
-                      {content.length > 10 ? `${content.substring(0, 10)}...` : content}
-                    </span>
-                  }
-                />
-              );
-            })}
-          </>
-        );
-      },
+      format: (item: Job) => <MoreDetails item={item} />,
     },
   ];
 

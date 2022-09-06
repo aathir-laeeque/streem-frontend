@@ -111,6 +111,7 @@
     "equation-resolver": "^1.0.0-rc.1",
     "i18next": "^20.4.0",
     "lodash": "^4.17.21",
+    "material-ui-popup-state": "^1.9.3",
     "moment": "^2.27.0",
     "moment-duration-format": "^2.3.2",
     "normalize.css": "^8.0.1",
