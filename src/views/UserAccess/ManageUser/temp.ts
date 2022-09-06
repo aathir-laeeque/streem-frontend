@@ -122,6 +122,11 @@ export const rolesDetails = {
   [RoleIdByName.SUPERVISOR]: {
     name: 'Supervisor',
     permissions: {
+      [PermissionCategories.CHECKLIST_FEATURES]: [
+        ChecklistFeatues.VIEW_EXISTING_CHECKLISTS,
+        ChecklistFeatues.VIEW_PROTOTYPES,
+        ChecklistFeatues.REVIEW_AND_APPROVE_CHECKLISTS,
+      ],
       [PermissionCategories.JOB_FEATURES]: [
         JobFeatures.CREATE_ASSIGN_JOBS,
         JobFeatures.EXECUTE_AND_COMPLETE_JOBS,
