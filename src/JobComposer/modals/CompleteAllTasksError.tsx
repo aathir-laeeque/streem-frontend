@@ -49,8 +49,8 @@ const JobCompleteAllTasksError: FC<CommonOverlayProps<{}>> = ({
       <div className="body">
         <EditingDisabledIcon className="editing-disabled-icon" />
         <div className="text">
-          Some of the tasks are in progress. Please complete them before
-          completing Job with Exception
+          Some of the tasks are in progress. Please complete them before completing Job with
+          Exception
         </div>
       </div>
     </BaseModal>

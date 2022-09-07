@@ -36,10 +36,7 @@ const initalState: UsersState = {
   [OtherUserState.AUTHORS]: initialUserGroup,
 };
 
-const reducer: Reducer<UsersState, UsersActionType> = (
-  state = initalState,
-  action,
-) => {
+const reducer: Reducer<UsersState, UsersActionType> = (state = initalState, action) => {
   switch (action.type) {
     case UsersAction.FETCH_USERS_ONGOING:
       return { ...state, loading: true };

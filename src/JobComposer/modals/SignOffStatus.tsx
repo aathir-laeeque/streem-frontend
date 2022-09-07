@@ -89,20 +89,13 @@ const SignOffStateModal: FC<CommonOverlayProps<Props>> = ({
           {assignees?.map((assignee, index) => {
             const { assignedTasks, id, signedOffTasks } = assignee;
 
-            const percentage = Math.round(
-              (signedOffTasks / assignedTasks) * 100,
-            );
+            const percentage = Math.round((signedOffTasks / assignedTasks) * 100);
 
             return (
               <div key={`${id}-${index}`} className="item">
                 <Avatar
                   color="blue"
-                  user={pick(assignee, [
-                    'id',
-                    'firstName',
-                    'lastName',
-                    'employeeId',
-                  ])}
+                  user={pick(assignee, ['id', 'firstName', 'lastName', 'employeeId'])}
                 />
 
                 <div className="progress-details">

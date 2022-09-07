@@ -12,8 +12,9 @@ import { UseCaseCard, Wrapper } from './styles';
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { firstName, lastName, fetchingUseCaseList, useCastList } =
-    useTypedSelector((state) => state.auth);
+  const { firstName, lastName, fetchingUseCaseList, useCastList } = useTypedSelector(
+    (state) => state.auth,
+  );
 
   useEffect(() => {
     dispatch(fetchUseCaseList());
@@ -50,14 +51,10 @@ const Home = () => {
                   cardColor={useCaseDetails.metadata['card-color']}
                   cardEnabled={useCaseDetails.enabled}
                 >
-                  {!useCaseDetails.enabled && (
-                    <UseCaseLockIcon className="use-case-lock-icon" />
-                  )}
+                  {!useCaseDetails.enabled && <UseCaseLockIcon className="use-case-lock-icon" />}
                   <div className="use-case-card-body">
                     <div className="use-case-label">{useCaseDetails.label}</div>
-                    <div className="use-case-desc">
-                      {useCaseDetails.description}
-                    </div>
+                    <div className="use-case-desc">{useCaseDetails.description}</div>
                   </div>
                   <div
                     className="use-case-card-footer"

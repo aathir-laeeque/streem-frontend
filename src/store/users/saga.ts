@@ -30,24 +30,15 @@ function* fetchUsersSaga({ payload }: ReturnType<typeof fetchUsers>) {
     );
     yield put(fetchUsersSuccess({ data, pageable }, type));
   } catch (error) {
-    console.error(
-      'error from fetchUsers function in UsersUsersSaga :: ',
-      error,
-    );
+    console.error('error from fetchUsers function in UsersUsersSaga :: ', error);
     yield put(fetchUsersError(error));
   }
 }
 
-function* fetchSelectedUserSaga({
-  payload,
-}: ReturnType<typeof fetchSelectedUser>) {
+function* fetchSelectedUserSaga({ payload }: ReturnType<typeof fetchSelectedUser>) {
   try {
     const { id } = payload;
-    const { data, errors }: ResponseObj<User> = yield call(
-      request,
-      'GET',
-      apiGetUser(id),
-    );
+    const { data, errors }: ResponseObj<User> = yield call(request, 'GET', apiGetUser(id));
 
     if (errors) {
       return false;
@@ -55,10 +46,7 @@ function* fetchSelectedUserSaga({
 
     yield put(fetchSelectedUserSuccess({ data }));
   } catch (error) {
-    console.error(
-      'error from fetchSelectedUserSaga function in Auth :: ',
-      error,
-    );
+    console.error('error from fetchSelectedUserSaga function in Auth :: ', error);
     yield put(fetchSelectedUserError(error));
   }
 }

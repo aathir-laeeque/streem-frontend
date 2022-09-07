@@ -1,10 +1,4 @@
-import {
-  User,
-  UsersAction,
-  UsersActionType,
-  UsersListType,
-  UsersState,
-} from '#store/users/types';
+import { User, UsersAction, UsersActionType, UsersListType, UsersState } from '#store/users/types';
 
 const initialTabState = {
   list: [],

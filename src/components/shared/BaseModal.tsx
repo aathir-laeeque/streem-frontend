@@ -44,23 +44,19 @@ const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
               transform: scale(1);
               .modal-background {
                 background: rgba(0, 0, 0, 0);
-                animation: fadeIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
-                  forwards;
+                animation: fadeIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
                 .modal {
                   opacity: 0;
-                  animation: scaleUp 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
-                    forwards;
+                  animation: scaleUp 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
                 }
               }
 
               &.out {
                 animation: quickScaleDown 0s 0.5s linear forwards;
                 .modal-background {
-                  animation: fadeOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
-                    forwards;
+                  animation: fadeOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
                   .modal {
-                    animation: scaleDown 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
-                      forwards;
+                    animation: scaleDown 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
                   }
                 }
               }
@@ -82,8 +78,8 @@ const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
         border-radius: 16px;
         min-width: 600px;
         max-width: calc(100vw - 40vw);
-        box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12),
-          0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
+          0 2px 4px -1px rgba(0, 0, 0, 0.2);
         h2 {
           font-size: 20px;
           font-weight: 600;
@@ -229,9 +225,7 @@ export const BaseModal: FC<BaseModalProps> = ({
 
   useEffect(() => {
     if (allowCloseOnOutsideClick) {
-      document.addEventListener('keydown', (evt) =>
-        evt.key === 'Escape' ? closeModal() : null,
-      );
+      document.addEventListener('keydown', (evt) => (evt.key === 'Escape' ? closeModal() : null));
     }
 
     return () => {
@@ -247,15 +241,9 @@ export const BaseModal: FC<BaseModalProps> = ({
     <Wrapper animated={animated}>
       <div id="modal-container" ref={modalContainer} className="openup">
         <div className="modal-background">
-          <div
-            className="modal"
-            style={{ borderRadius: isRound ? '16px' : '4px', zIndex: 10 }}
-          >
+          <div className="modal" style={{ borderRadius: isRound ? '16px' : '4px', zIndex: 10 }}>
             {showCloseIcon && (
-              <Close
-                className="close-icon"
-                onClick={() => onBaseModalContainerClick(closeModal)}
-              />
+              <Close className="close-icon" onClick={() => onBaseModalContainerClick(closeModal)} />
             )}
             {showHeader && (
               <div className="modal-header">
@@ -266,9 +254,7 @@ export const BaseModal: FC<BaseModalProps> = ({
             {showFooter && (
               <div className="modal-footer">
                 {modalFooterOptions && (
-                  <div className="modal-footer-options">
-                    {modalFooterOptions}
-                  </div>
+                  <div className="modal-footer-options">{modalFooterOptions}</div>
                 )}
                 <div className="modal-footer-buttons">
                   {showSecondary && (

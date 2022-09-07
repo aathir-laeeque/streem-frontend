@@ -1,8 +1,5 @@
 import { FormGroupProps } from '#components';
-import {
-  switchFacilityError,
-  switchFacilitySuccess,
-} from '#store/facilities/actions';
+import { switchFacilityError, switchFacilitySuccess } from '#store/facilities/actions';
 import { User } from '#store/users/types';
 import { RouteComponentProps } from '@reach/router';
 import {

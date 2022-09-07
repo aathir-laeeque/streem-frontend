@@ -4,11 +4,7 @@ import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import {
-  DisabledStates,
-  AllChecklistStates,
-  EnabledStates,
-} from '../checklist.types';
+import { DisabledStates, AllChecklistStates, EnabledStates } from '../checklist.types';
 
 const Wrapper = styled.div`
   .modal {
@@ -41,10 +37,12 @@ const Wrapper = styled.div`
   }
 `;
 
-const EditingDisabledModal: FC<CommonOverlayProps<{
-  state: AllChecklistStates;
-  archived: boolean;
-}>> = ({ closeAllOverlays, closeOverlay, props: { state, archived } = {} }) => (
+const EditingDisabledModal: FC<
+  CommonOverlayProps<{
+    state: AllChecklistStates;
+    archived: boolean;
+  }>
+> = ({ closeAllOverlays, closeOverlay, props: { state, archived } = {} }) => (
   <Wrapper>
     <BaseModal
       closeAllModals={closeAllOverlays}

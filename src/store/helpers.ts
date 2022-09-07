@@ -16,10 +16,7 @@ export function actionSpreader<T extends string, P extends any>(
   payload: P,
 ): { type: T; payload: P };
 // actual actionSpreader function with payload as optional
-export function actionSpreader<T extends string, P extends any>(
-  type: T,
-  payload?: P,
-) {
+export function actionSpreader<T extends string, P extends any>(type: T, payload?: P) {
   return { type, payload };
 }
 

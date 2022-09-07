@@ -17,14 +17,12 @@ const Wrapper = styled.div`
   }
 `;
 
-const ErrorCorrectionModal: FC<CommonOverlayProps<{
-  taskId: Task['id'];
-  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
-}>> = ({
-  closeAllOverlays,
-  closeOverlay,
-  props: { taskId, setLoadingState },
-}) => {
+const ErrorCorrectionModal: FC<
+  CommonOverlayProps<{
+    taskId: Task['id'];
+    setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
+  }>
+> = ({ closeAllOverlays, closeOverlay, props: { taskId, setLoadingState } }) => {
   const dispatch = useDispatch();
 
   const [correctionReason, setCorrectionReason] = useState('');
@@ -36,9 +34,7 @@ const ErrorCorrectionModal: FC<CommonOverlayProps<{
         closeModal={closeOverlay}
         onPrimary={() => {
           setLoadingState(true);
-          dispatch(
-            enableErrorCorrection(taskId, correctionReason, setLoadingState),
-          );
+          dispatch(enableErrorCorrection(taskId, correctionReason, setLoadingState));
           closeOverlay();
         }}
         onSecondary={() => closeOverlay()}

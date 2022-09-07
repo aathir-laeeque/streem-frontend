@@ -26,10 +26,7 @@ type deleteStageSuccessType = {
   newOrderMap?: Record<string, number>;
 };
 
-export const deleteStageSuccess = ({
-  id,
-  newOrderMap,
-}: deleteStageSuccessType) =>
+export const deleteStageSuccess = ({ id, newOrderMap }: deleteStageSuccessType) =>
   actionSpreader(StageListActions.DELETE_STAGE_SUCCESS, { id, newOrderMap });
 
 // duplicate stage actions
@@ -57,9 +54,8 @@ export const setActiveStage = ({ id }: Pick<Stage, 'id'>) =>
   actionSpreader(StageListActions.SET_ACTIVE_STAGE, { id });
 
 // upodate stage/stage name actions
-export const updateStageName = (
-  stage: Pick<Stage, 'name' | 'id' | 'orderTree'>,
-) => actionSpreader(StageListActions.UPDATE_STAGE_NAME, { stage });
+export const updateStageName = (stage: Pick<Stage, 'name' | 'id' | 'orderTree'>) =>
+  actionSpreader(StageListActions.UPDATE_STAGE_NAME, { stage });
 
 export const updateStageNameError = (error: any) =>
   actionSpreader(StageListActions.UPDATE_STAGE_NAME_ERROR, { error });

@@ -26,10 +26,7 @@ export const updateExecutedActivity = (activity: Activity) =>
     activity,
   });
 
-export const updateMediaActivitySuccess = (
-  media: Media,
-  activityId: Activity['id'],
-) =>
+export const updateMediaActivitySuccess = (media: Media, activityId: Activity['id']) =>
   actionSpreader(ActivityListAction.UPDATE_MEDIA_ACTIVITY_SUCCESS, {
     media,
     activityId,
@@ -41,11 +38,7 @@ export const setActivityError = (error: any, activityId: Activity['id']) =>
 export const removeActivityError = (activityId: Activity['id']) =>
   actionSpreader(ActivityListAction.REMOVE_ACTIVITY_ERROR, { activityId });
 
-export const approveRejectActivity = ({
-  activityId,
-  jobId,
-  type,
-}: approveRejectActivityType) =>
+export const approveRejectActivity = ({ activityId, jobId, type }: approveRejectActivityType) =>
   actionSpreader(
     type === SupervisorResponse.APPROVE
       ? ActivityListAction.APPROVE_ACTIVITY

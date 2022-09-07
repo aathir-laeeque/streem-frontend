@@ -22,10 +22,7 @@ const initialState: SessionActivityState = {
   },
 };
 
-const reducer = (
-  state = initialState,
-  action: SessionActivityActionType,
-): SessionActivityState => {
+const reducer = (state = initialState, action: SessionActivityActionType): SessionActivityState => {
   switch (action.type) {
     case SessionActivityAction.FETCH_SESSION_ACTIVITY_ONGOING:
       return { ...state, loading: true };

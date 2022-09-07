@@ -10,8 +10,7 @@ export const fetchChecklistAuditLogs = (payload: {
     sort: string;
     page: number;
   };
-}) =>
-  actionSpreader(ChecklistAuditLogActions.FETCH_CHECKLIST_AUDIT_LOGS, payload);
+}) => actionSpreader(ChecklistAuditLogActions.FETCH_CHECKLIST_AUDIT_LOGS, payload);
 
 export const fetchChecklistAuditLogsOngoing = () =>
   actionSpreader(ChecklistAuditLogActions.FETCH_CHECKLIST_AUDIT_LOGS_ONGOING);

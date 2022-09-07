@@ -25,12 +25,9 @@ const HeaderWrapper = styled.div<{ msgType: MessageType }>`
   .alert {
     padding: 4px;
     border-radius: 4px;
-    border: solid 1px
-      ${(p) => (p.msgType === MessageType.ERROR ? '#ff6b6b' : '#ffe58f')};
+    border: solid 1px ${(p) => (p.msgType === MessageType.ERROR ? '#ff6b6b' : '#ffe58f')};
     background-color: ${(p) =>
-      p.msgType === MessageType.ERROR
-        ? 'rgba(255, 107, 107, 0.16)'
-        : '#fffbe6'};
+      p.msgType === MessageType.ERROR ? 'rgba(255, 107, 107, 0.16)' : '#fffbe6'};
     display: flex;
     flex-direction: row;
     flex: unset;
@@ -47,8 +44,7 @@ const HeaderWrapper = styled.div<{ msgType: MessageType }>`
     }
 
     svg {
-      color: ${(p) =>
-        p.msgType === MessageType.ERROR ? '#cc5656' : '#faad14'};
+      color: ${(p) => (p.msgType === MessageType.ERROR ? '#cc5656' : '#faad14')};
       font-size: 16px;
       line-height: 14px;
     }
@@ -57,21 +53,16 @@ const HeaderWrapper = styled.div<{ msgType: MessageType }>`
 
 const NotificationBanner = () => {
   const { connected } = useTypedSelector((state) => state.extras);
-  const { NonGenuineLicenseMap, selectedFacility } = useTypedSelector(
-    (state) => state.auth,
-  );
-  const license =
-    selectedFacility?.id && NonGenuineLicenseMap?.[selectedFacility.id];
+  const { NonGenuineLicenseMap, selectedFacility } = useTypedSelector((state) => state.auth);
+  const license = selectedFacility?.id && NonGenuineLicenseMap?.[selectedFacility.id];
 
-  let msgObj:
-    | { msgText: JSX.Element | string; msgType: MessageType }
-    | undefined = undefined;
+  let msgObj: { msgText: JSX.Element | string; msgType: MessageType } | undefined = undefined;
   if (!connected) {
     msgObj = {
       msgText: (
         <span>
-          <span className="msg-title">NO INTERNET.</span>Please make sure your
-          are connected to internet to use the Leucine App.
+          <span className="msg-title">NO INTERNET.</span>Please make sure your are connected to
+          internet to use the Leucine App.
         </span>
       ),
       msgType: MessageType.ERROR,

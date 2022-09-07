@@ -11,17 +11,8 @@ import { navigate } from '@reach/router';
 import { isArray, pick } from 'lodash';
 import { call, put, select, takeLeading } from 'redux-saga/effects';
 
-import {
-  addNewPrototype,
-  addRevisionPrototype,
-  updatePrototype,
-} from './actions';
-import {
-  Author,
-  FormMode,
-  FormValuesOnlyWithAuthorIds,
-  NewPrototypeActions,
-} from './types';
+import { addNewPrototype, addRevisionPrototype, updatePrototype } from './actions';
+import { Author, FormMode, FormValuesOnlyWithAuthorIds, NewPrototypeActions } from './types';
 
 type transformFormDataType = {
   data: FormValuesOnlyWithAuthorIds;
@@ -29,11 +20,7 @@ type transformFormDataType = {
   originalAuthors?: Author['id'][];
 };
 
-const transformFormData = ({
-  data,
-  mode,
-  originalAuthors,
-}: transformFormDataType) => {
+const transformFormData = ({ data, mode, originalAuthors }: transformFormDataType) => {
   const addAuthorIds: Author['id'][] = [],
     removeAuthorIds: Author['id'][] = [];
 
@@ -72,17 +59,12 @@ function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
 
     const { selectedFacility } = yield select((state: RootState) => state.auth);
 
-    const { data: response, errors } = yield call(
-      request,
-      'POST',
-      apiCreateNewPrototype(),
-      {
-        data: {
-          ...transformFormData({ data, mode: FormMode.ADD }),
-          facilityId: selectedFacility?.id,
-        },
+    const { data: response, errors } = yield call(request, 'POST', apiCreateNewPrototype(), {
+      data: {
+        ...transformFormData({ data, mode: FormMode.ADD }),
+        facilityId: selectedFacility?.id,
       },
-    );
+    });
 
     if (response) {
       navigate(`/checklists/${response.id}`);
@@ -90,16 +72,11 @@ function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
       console.error('error from the create checklist api  :: ', errors);
     }
   } catch (error) {
-    console.error(
-      'error came in addPrototypeSaga in NewPrototypeSaga :: ',
-      error,
-    );
+    console.error('error came in addPrototypeSaga in NewPrototypeSaga :: ', error);
   }
 }
 
-function* addRevisionPrototypeSaga({
-  payload,
-}: ReturnType<typeof addRevisionPrototype>) {
+function* addRevisionPrototypeSaga({ payload }: ReturnType<typeof addRevisionPrototype>) {
   try {
     const { checklistId, code, name } = payload;
 
@@ -139,10 +116,7 @@ function* addRevisionPrototypeSaga({
       }
     }
   } catch (error) {
-    console.error(
-      'error came in addRevisionPrototypeSaga in NewPrototypeSaga :: ',
-      error,
-    );
+    console.error('error came in addRevisionPrototypeSaga in NewPrototypeSaga :: ', error);
   }
 }
 
@@ -152,17 +126,12 @@ function* updatePrototypeSaga({ payload }: ReturnType<typeof updatePrototype>) {
 
     const { selectedFacility } = yield select((state: RootState) => state.auth);
 
-    const { data: response, errors } = yield call(
-      request,
-      'PATCH',
-      apiUpdatePrototype(id),
-      {
-        data: {
-          ...transformFormData({ data, originalAuthors, mode: FormMode.EDIT }),
-          facilityId: selectedFacility?.id,
-        },
+    const { data: response, errors } = yield call(request, 'PATCH', apiUpdatePrototype(id), {
+      data: {
+        ...transformFormData({ data, originalAuthors, mode: FormMode.EDIT }),
+        facilityId: selectedFacility?.id,
       },
-    );
+    });
 
     if (response) {
       navigate(`/checklists/${id}`);
@@ -171,18 +140,12 @@ function* updatePrototypeSaga({ payload }: ReturnType<typeof updatePrototype>) {
       console.error('error from the create checklist api  :: ', errors);
     }
   } catch (error) {
-    console.error(
-      'error came in addPrototypeSaga in NewPrototypeSaga :: ',
-      error,
-    );
+    console.error('error came in addPrototypeSaga in NewPrototypeSaga :: ', error);
   }
 }
 
 export function* NewPrototypeSaga() {
   yield takeLeading(NewPrototypeActions.ADD_NEW_PROTOTYPE, addPrototypeSaga);
   yield takeLeading(NewPrototypeActions.UPDATE_PROTOTYPE, updatePrototypeSaga);
-  yield takeLeading(
-    NewPrototypeActions.ADD_REVISION_PROTOTYPE,
-    addRevisionPrototypeSaga,
-  );
+  yield takeLeading(NewPrototypeActions.ADD_REVISION_PROTOTYPE, addRevisionPrototypeSaga);
 }

@@ -29,17 +29,12 @@ function* addNewStageSaga() {
 
     const newStage: Pick<Stage, 'name' | 'orderTree'> = {
       name: '',
-      orderTree: listOrder.length
-        ? listById[listOrder[listOrder.length - 1]].orderTree + 1
-        : 1,
+      orderTree: listOrder.length ? listById[listOrder[listOrder.length - 1]].orderTree + 1 : 1,
     };
 
-    const { data, errors } = yield call(
-      request,
-      'POST',
-      apiCreateStage(checklistId),
-      { data: { ...newStage } },
-    );
+    const { data, errors } = yield call(request, 'POST', apiCreateStage(checklistId), {
+      data: { ...newStage },
+    });
 
     if (data) {
       yield put(addNewStageSuccess(data));
@@ -58,10 +53,7 @@ function* deleteStageSaga({ payload }: ReturnType<typeof deleteStage>) {
     const { data, errors } = yield call(request, 'PATCH', apiDeleteStage(id));
 
     if (data) {
-      const {
-        listById,
-        listOrder,
-      }: RootState['prototypeComposer']['stages'] = yield select(
+      const { listById, listOrder }: RootState['prototypeComposer']['stages'] = yield select(
         (state: RootState) => state.prototypeComposer.stages,
       );
 
@@ -69,13 +61,10 @@ function* deleteStageSaga({ payload }: ReturnType<typeof deleteStage>) {
       const stagesToReorder = listOrder.slice(deletedStageIndex + 1);
 
       if (stagesToReorder.length) {
-        const reOrderMap = stagesToReorder.reduce<Record<string, number>>(
-          (acc, stageId) => {
-            acc[stageId] = listById[stageId].orderTree - 1;
-            return acc;
-          },
-          {},
-        );
+        const reOrderMap = stagesToReorder.reduce<Record<string, number>>((acc, stageId) => {
+          acc[stageId] = listById[stageId].orderTree - 1;
+          return acc;
+        }, {});
 
         const { data: reorderData, errors: reorderErrors } = yield call(
           request,

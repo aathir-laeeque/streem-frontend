@@ -15,12 +15,9 @@ export const setInitialFacilityWiseConstants = (facilities: Facility[]) => {
     }),
     {},
   );
-  return actionSpreader(
-    FacilityWiseConstantsAction.SET_INITIAL_FACILITY_WISE_CONSTANTS,
-    {
-      initialFacilityWiseConstants,
-    },
-  );
+  return actionSpreader(FacilityWiseConstantsAction.SET_INITIAL_FACILITY_WISE_CONSTANTS, {
+    initialFacilityWiseConstants,
+  });
 };
 
 export const setFacilityTimeStampFormat = (

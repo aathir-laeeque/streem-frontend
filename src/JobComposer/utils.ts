@@ -1,18 +1,9 @@
 import { Error } from '#utils/globalTypes';
-import {
-  ActivitiesById,
-  ActivitiesOrderInTaskInStage,
-  ActivityErrors,
-} from './ActivityList/types';
+import { ActivitiesById, ActivitiesOrderInTaskInStage, ActivityErrors } from './ActivityList/types';
 import { Checklist, Stage, Task, TaskExecutionState } from './checklist.types';
 import { ErrorGroups } from './composer.types';
 import { StageErrors, StagesById, StagesOrder } from './StageList/types';
-import {
-  TaskErrors,
-  TasksById,
-  TaskSignOffError,
-  TasksOrderInStage,
-} from './TaskList/types';
+import { TaskErrors, TasksById, TaskSignOffError, TasksOrderInStage } from './TaskList/types';
 
 export const groupJobErrors = (errors: Error[]) =>
   errors.reduce<ErrorGroups>(
@@ -42,10 +33,7 @@ type GetStageType = {
   setActiveStage?: boolean;
 };
 
-export const getStages = ({
-  checklist,
-  setActiveStage = false,
-}: GetStageType) => {
+export const getStages = ({ checklist, setActiveStage = false }: GetStageType) => {
   const stagesById: StagesById = {},
     stagesOrder: StagesOrder = [];
 
@@ -73,10 +61,7 @@ type GetTasksType = {
   setActiveTask?: boolean;
 };
 
-export const getTasks = ({
-  checklist,
-  setActiveTask = false,
-}: GetTasksType) => {
+export const getTasks = ({ checklist, setActiveTask = false }: GetTasksType) => {
   const tasksById: TasksById = {},
     tasksOrderInStage: TasksOrderInStage = {};
 

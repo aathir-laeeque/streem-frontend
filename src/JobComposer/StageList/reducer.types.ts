@@ -19,6 +19,4 @@ export enum StageListAction {
   FETCH_ACTIVE_STAGE_DATA_SUCCESS = '@@jobComposer/stage-action/FETCH_ACTIVE_STAGE_DATA_SUCCESS',
 }
 
-export type StageListActionType =
-  | ReturnType<typeof setActiveStage>
-  | ComposerActionType;
+export type StageListActionType = ReturnType<typeof setActiveStage> | ComposerActionType;

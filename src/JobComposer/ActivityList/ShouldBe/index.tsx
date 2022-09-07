@@ -41,9 +41,7 @@ const generateText = (data) => {
         return;
     }
 
-    return `${data.parameter} should be ${operatorString} ${
-      data?.value ?? 50
-    } ${data.uom}`;
+    return `${data.parameter} should be ${operatorString} ${data?.value ?? 50} ${data.uom}`;
   }
 };
 
@@ -88,9 +86,7 @@ const checkIsOffLimit = ({
         }
         break;
       case 'BETWEEN':
-        if (
-          !(observedValue >= desiredValue1 && observedValue <= desiredValue2)
-        ) {
+        if (!(observedValue >= desiredValue1 && observedValue <= desiredValue2)) {
           return true;
         }
       default:
@@ -99,10 +95,7 @@ const checkIsOffLimit = ({
   }
 };
 
-const ShouldBeActivity: FC<ActivityProps> = ({
-  activity,
-  isCorrectingError,
-}) => {
+const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const {
     auth: { profile, selectedFacility },
     composer: { entityId: jobId },
@@ -134,9 +127,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
           }
         : { desiredValue1: parseFloat(activity?.data?.value) }),
     }),
-    isUserSupervisor: profile?.roles?.some(
-      (role) => role.name === 'SUPERVISOR',
-    ),
+    isUserSupervisor: profile?.roles?.some((role) => role.name === 'SUPERVISOR'),
     isValueChanged: false,
     reason: activity?.response?.reason ?? '',
     value: activity?.response?.value ?? null,
@@ -208,11 +199,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({
         shouldCallApi: false,
       }));
     }
-  }, [
-    activity?.response?.value,
-    activity?.response?.reason,
-    state.shouldCallApi,
-  ]);
+  }, [activity?.response?.value, activity?.response?.reason, state.shouldCallApi]);
 
   const renderSubmitButtons = () => (
     <div className="buttons-container">

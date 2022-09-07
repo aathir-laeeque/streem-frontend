@@ -77,12 +77,7 @@ const Wrapper = styled.div`
 const AssignmentInfo: FC<CommonOverlayProps<AssignmentInfoProps>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: {
-    assignedUsers = [],
-    errors = [],
-    selectedTasks = [],
-    unassignedUsers = [],
-  } = {},
+  props: { assignedUsers = [], errors = [], selectedTasks = [], unassignedUsers = [] } = {},
 }) => {
   const { tasksById } = useTypedSelector((state) => state.composer.tasks);
 
@@ -91,11 +86,7 @@ const AssignmentInfo: FC<CommonOverlayProps<AssignmentInfoProps>> = ({
       <BaseModal
         closeAllModals={closeAllOverlays}
         closeModal={closeOverlay}
-        title={
-          errors?.length
-            ? 'Action could not be taken for the following users'
-            : ''
-        }
+        title={errors?.length ? 'Action could not be taken for the following users' : ''}
         showFooter={false}
         showHeader={!!errors.length}
       >
@@ -133,9 +124,7 @@ const AssignmentInfo: FC<CommonOverlayProps<AssignmentInfoProps>> = ({
           ) : (
             <div className="success-info">
               <AssignmentSuccess className="icon success-icon" />
-              <span className="success-text">
-                Action Completed Successfully
-              </span>
+              <span className="success-text">Action Completed Successfully</span>
             </div>
           )
         }

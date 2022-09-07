@@ -38,8 +38,7 @@ export const Wrapper = styled.div`
 
     .card {
       border-radius: 4px;
-      box-shadow: 0 4px 4px -2px rgba(24, 39, 75, 0.08),
-        0 2px 4px -2px rgba(24, 39, 75, 0.12);
+      box-shadow: 0 4px 4px -2px rgba(24, 39, 75, 0.08), 0 2px 4px -2px rgba(24, 39, 75, 0.12);
       background-color: #f7f9fa;
       flex: 1;
       margin-right: 24px;
@@ -79,8 +78,7 @@ export const Wrapper = styled.div`
   .job-cwe {
     background-color: #ffffff;
     border-radius: 4px;
-    box-shadow: 0 4px 4px -2px rgba(24, 39, 75, 0.08),
-      0 2px 4px -2px rgba(24, 39, 75, 0.12);
+    box-shadow: 0 4px 4px -2px rgba(24, 39, 75, 0.08), 0 2px 4px -2px rgba(24, 39, 75, 0.12);
     display: flex;
     flex-direction: column;
     margin-top: 24px;
@@ -131,8 +129,7 @@ export const Wrapper = styled.div`
   }
 
   .duration-summary {
-    box-shadow: 0 4px 4px -2px rgba(24, 39, 75, 0.08),
-      0 2px 4px -2px rgba(24, 39, 75, 0.12);
+    box-shadow: 0 4px 4px -2px rgba(24, 39, 75, 0.08), 0 2px 4px -2px rgba(24, 39, 75, 0.12);
     display: flex;
     flex-direction: column;
     margin-top: 24px;
@@ -255,8 +252,7 @@ export const Wrapper = styled.div`
   }
 
   .exception-summary {
-    box-shadow: 0 4px 4px -2px rgba(24, 39, 75, 0.08),
-      0 2px 4px -2px rgba(24, 39, 75, 0.12);
+    box-shadow: 0 4px 4px -2px rgba(24, 39, 75, 0.08), 0 2px 4px -2px rgba(24, 39, 75, 0.12);
     display: flex;
     flex-direction: column;
     margin-top: 24px;

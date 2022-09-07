@@ -90,9 +90,7 @@ export const CalcActivityAddParamsModal: FC<
   }>
 > = ({ closeAllOverlays, closeOverlay, props: { variables, activityId } }) => {
   const dispatch = useDispatch();
-  const { id: checklistId } = useTypedSelector(
-    (state) => state.prototypeComposer.data,
-  );
+  const { id: checklistId } = useTypedSelector((state) => state.prototypeComposer.data);
 
   const [loading, setLoading] = useState<Boolean>(false);
 
@@ -115,20 +113,18 @@ export const CalcActivityAddParamsModal: FC<
             activityId: undefined,
             taskId: undefined,
             label: '',
-            key: 0
+            key: 0,
           },
         ]
-      : Object.entries(variables).map(
-          ([variableName, { activityId, taskId, label }], index) => {
-            return {
-              variableName,
-              activityId,
-              taskId,
-              label,
-              key: index
-            };
-          },
-        ),
+      : Object.entries(variables).map(([variableName, { activityId, taskId, label }], index) => {
+          return {
+            variableName,
+            activityId,
+            taskId,
+            label,
+            key: index,
+          };
+        }),
   );
 
   const [formErrors, setFormErrors] = useState<
@@ -148,14 +144,9 @@ export const CalcActivityAddParamsModal: FC<
     setLoading(true);
     const getActivitiesForCalc = async () => {
       if (checklistId) {
-        const activitiesForCalc = await request(
-          'GET',
-          apiGetActivitiesForCalc(checklistId),
-        );
+        const activitiesForCalc = await request('GET', apiGetActivitiesForCalc(checklistId));
         updateActivitiesForCalc(
-          activitiesForCalc.data.filter(
-            (activity: { id: string }) => activity.id !== activityId,
-          ),
+          activitiesForCalc.data.filter((activity: { id: string }) => activity.id !== activityId),
         );
       }
     };
@@ -170,8 +161,7 @@ export const CalcActivityAddParamsModal: FC<
       if (!paramObj.variableName || paramObj.variableName.length === 0) {
         setFormErrors((oldFormErrors) => {
           const updatedFormErrors = [...oldFormErrors];
-          updatedFormErrors[index].paramNameError =
-            'Parameter name cannot be empty';
+          updatedFormErrors[index].paramNameError = 'Parameter name cannot be empty';
           allFormFieldsValid = false;
           return updatedFormErrors;
         });
@@ -181,8 +171,7 @@ export const CalcActivityAddParamsModal: FC<
       if (!paramObj.activityId || paramObj.variableName.length === 0) {
         setFormErrors((oldFormErrors) => {
           const updatedFormErrors = [...oldFormErrors];
-          updatedFormErrors[index].paramError =
-            'Atleast one Parameter must be selected';
+          updatedFormErrors[index].paramError = 'Atleast one Parameter must be selected';
           return updatedFormErrors;
         });
         allFormFieldsValid = false;
@@ -206,12 +195,7 @@ export const CalcActivityAddParamsModal: FC<
         };
       }, {});
 
-      dispatch(
-        updateStoreActivity(updatedStoreParams, activityId, [
-          'data',
-          'variables',
-        ]),
-      );
+      dispatch(updateStoreActivity(updatedStoreParams, activityId, ['data', 'variables']));
       closeOverlay();
     }
   };
@@ -254,16 +238,13 @@ export const CalcActivityAddParamsModal: FC<
                             });
                             setFormErrors((oldFormErrors) => {
                               const updatedFormErrors = [...oldFormErrors];
-                              updatedFormErrors[index].paramNameError =
-                                undefined;
+                              updatedFormErrors[index].paramNameError = undefined;
                               return updatedFormErrors;
                             });
                           })}
                         />
                         {formErrors[index].paramNameError && (
-                          <div className="add-param-form-error">
-                            {formErrors[index].paramError}
-                          </div>
+                          <div className="add-param-form-error">{formErrors[index].paramError}</div>
                         )}
                       </div>
                       <DragHandle />
@@ -288,19 +269,13 @@ export const CalcActivityAddParamsModal: FC<
                           onChange={(option) => {
                             setParams((oldParams) => {
                               const updatedParams = [...oldParams];
-                              updatedParams[index].activityId = (
-                                option as { value: string }
-                              ).value;
+                              updatedParams[index].activityId = (option as { value: string }).value;
                               const selectedActivity = activitiesForCalc.find(
-                                (activity) =>
-                                  activity.id ===
-                                  (option as { value: string }).value,
+                                (activity) => activity.id === (option as { value: string }).value,
                               );
                               if (selectedActivity) {
-                                updatedParams[index].taskId =
-                                  selectedActivity.taskId;
-                                updatedParams[index].label =
-                                  selectedActivity.label;
+                                updatedParams[index].taskId = selectedActivity.taskId;
+                                updatedParams[index].label = selectedActivity.label;
                               }
                               return updatedParams;
                             });
@@ -312,9 +287,7 @@ export const CalcActivityAddParamsModal: FC<
                           }}
                         />
                         {formErrors[index].paramError && (
-                          <div className="add-param-form-error">
-                            {formErrors[index].paramError}
-                          </div>
+                          <div className="add-param-form-error">{formErrors[index].paramError}</div>
                         )}
                       </div>
                       {params.length > 1 && (
@@ -344,7 +317,7 @@ export const CalcActivityAddParamsModal: FC<
                       activityId: undefined,
                       taskId: undefined,
                       label: '',
-                      key: oldParams.length
+                      key: oldParams.length,
                     });
                     return updatedParams;
                   });

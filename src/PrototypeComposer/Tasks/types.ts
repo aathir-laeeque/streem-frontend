@@ -1,10 +1,5 @@
 import { FileUploadData, Error } from '#utils/globalTypes';
-import {
-  Activity,
-  Checklist,
-  Stage,
-  Task as TaskType,
-} from '../checklist.types';
+import { Activity, Checklist, Stage, Task as TaskType } from '../checklist.types';
 
 export type Task = TaskType & {
   errors: Error[];

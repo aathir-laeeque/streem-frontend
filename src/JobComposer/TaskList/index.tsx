@@ -24,16 +24,16 @@ const TaskListView: FC = () => {
 
   const shouldStageHaveStop =
     stagesOrder.indexOf(stageIdWithTaskStop) > -1 &&
-    stagesOrder.indexOf(activeStageId) >=
-      stagesOrder.indexOf(stageIdWithTaskStop);
+    stagesOrder.indexOf(activeStageId) >= stagesOrder.indexOf(stageIdWithTaskStop);
 
-  const refMap = tasksListIds.reduce<
-    Record<Task['id'], RefObject<HTMLDivElement>>
-  >((acc, taskId) => {
-    acc[taskId] = createRef<HTMLDivElement>();
+  const refMap = tasksListIds.reduce<Record<Task['id'], RefObject<HTMLDivElement>>>(
+    (acc, taskId) => {
+      acc[taskId] = createRef<HTMLDivElement>();
 
-    return acc;
-  }, {});
+      return acc;
+    },
+    {},
+  );
 
   useEffect(() => {
     if (activeTaskId && bringIntoView) {

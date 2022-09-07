@@ -15,10 +15,7 @@ import {
 import { Activity } from './types';
 
 export type ActivitiesById = Record<string, Activity>;
-export type ActivityOrderInTaskInStage = Record<
-  string,
-  Record<string, Activity['id'][]>
->;
+export type ActivityOrderInTaskInStage = Record<string, Record<string, Activity['id'][]>>;
 
 export type ActivityListState = {
   readonly activityOrderInTaskInStage: ActivityOrderInTaskInStage;

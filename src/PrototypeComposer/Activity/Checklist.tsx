@@ -25,9 +25,7 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
     }
   }, [activity]);
 
-  const activityErrors = activity.errors.filter(
-    (error) => error.code in ChecklistActivityErrors,
-  );
+  const activityErrors = activity.errors.filter((error) => error.code in ChecklistActivityErrors);
 
   const isErrorPresent = !!activityErrors.length;
 
@@ -51,13 +49,7 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
               Icon={CheckBoxOutlineBlankSharp}
               defaultValue={item.name}
               customOnChange={(value) => {
-                dispatch(
-                  updateStoreActivity(value, activity.id, [
-                    'data',
-                    index,
-                    'name',
-                  ]),
-                );
+                dispatch(updateStoreActivity(value, activity.id, ['data', index, 'name']));
               }}
               error={isErrorPresent && !item.name}
             />
@@ -80,9 +72,7 @@ const ChecklistActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
 
         <AddNewItem
           onClick={() => {
-            dispatch(
-              addStoreActivityItem(activity.id, { id: uuidv4(), name: '' }),
-            );
+            dispatch(addStoreActivityItem(activity.id, { id: uuidv4(), name: '' }));
           }}
         />
       </ul>

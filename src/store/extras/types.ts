@@ -1,8 +1,4 @@
-import {
-  setGlobalError,
-  setInternetConnectivity,
-  setRecentServerTimestamp,
-} from './action';
+import { setGlobalError, setInternetConnectivity, setRecentServerTimestamp } from './action';
 
 export interface ExtrasState {
   readonly connected: boolean;
@@ -17,7 +13,5 @@ export enum ExtrasAction {
 }
 
 export type ExtrasActionType = ReturnType<
-  | typeof setInternetConnectivity
-  | typeof setGlobalError
-  | typeof setRecentServerTimestamp
+  typeof setInternetConnectivity | typeof setGlobalError | typeof setRecentServerTimestamp
 >;

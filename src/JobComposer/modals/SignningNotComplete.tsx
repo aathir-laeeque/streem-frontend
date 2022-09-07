@@ -49,9 +49,7 @@ const SignningNotCompleteModal: FC<CommonOverlayProps<any>> = ({
       >
         <div className="body">
           <SignningNotCompleted className="not-siggned-icon" />
-          <div className="text">
-            Sign Off Completed Tasks before Completing the Job
-          </div>
+          <div className="text">Sign Off Completed Tasks before Completing the Job</div>
         </div>
       </BaseModal>
     </Wrapper>

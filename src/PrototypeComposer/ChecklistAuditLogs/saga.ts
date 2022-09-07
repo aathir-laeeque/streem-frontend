@@ -12,9 +12,7 @@ import {
 } from './actions';
 import { ChecklistAuditLogsType, ChecklistAuditLogActions } from './types';
 
-function* fetchChecklistAuditLogsSaga({
-  payload,
-}: ReturnType<typeof fetchChecklistAuditLogs>) {
+function* fetchChecklistAuditLogsSaga({ payload }: ReturnType<typeof fetchChecklistAuditLogs>) {
   try {
     const { checklistId, params } = payload;
 
@@ -22,10 +20,14 @@ function* fetchChecklistAuditLogsSaga({
       yield put(fetchChecklistAuditLogsOngoing());
     }
 
-    const { data, pageable, errors }: ResponseObj<ChecklistAuditLogsType[]> =
-      yield call(request, 'GET', apiGetChecklistAuditLogs(checklistId), {
+    const { data, pageable, errors }: ResponseObj<ChecklistAuditLogsType[]> = yield call(
+      request,
+      'GET',
+      apiGetChecklistAuditLogs(checklistId),
+      {
         params,
-      });
+      },
+    );
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -43,11 +45,7 @@ function* fetchChecklistAuditLogsSaga({
       }),
     );
   } catch (e) {
-    const error = yield* handleCatch(
-      'ChecklistActivity',
-      'fetchChecklistActivitiesSaga',
-      e,
-    );
+    const error = yield* handleCatch('ChecklistActivity', 'fetchChecklistActivitiesSaga', e);
     yield put(fetchChecklistAuditLogsError(error));
   }
 }

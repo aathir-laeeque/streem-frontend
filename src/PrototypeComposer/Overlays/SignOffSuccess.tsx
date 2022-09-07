@@ -31,10 +31,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const SignOffSuccessModal: FC<CommonOverlayProps<any>> = ({
-  closeAllOverlays,
-  closeOverlay,
-}) => {
+const SignOffSuccessModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, closeOverlay }) => {
   return (
     <Wrapper>
       <BaseModal

@@ -5,13 +5,7 @@ import { StyleSheet, Text, View } from '@react-pdf/renderer';
 import moment from 'moment';
 import React, { Fragment, ReactNode } from 'react';
 
-import {
-  Exception,
-  Exceptions,
-  JobSummary,
-  ParameterDeviation,
-  Timer,
-} from '../Summary/types';
+import { Exception, Exceptions, JobSummary, ParameterDeviation, Timer } from '../Summary/types';
 import { styles as baseStyles } from './styles';
 import TableRow from './TableRow';
 
@@ -24,8 +18,7 @@ const generateDescription = (exception: Exception): ReactNode => {
 
   switch (exception.type) {
     case 'DURATION_EXCEPTION':
-      const { endedAt, maxPeriod, minPeriod, startedAt, timerOperator } =
-        exception.timer as Timer;
+      const { endedAt, maxPeriod, minPeriod, startedAt, timerOperator } = exception.timer as Timer;
 
       const taskStartTime = moment.unix(startedAt);
 
@@ -33,9 +26,7 @@ const generateDescription = (exception: Exception): ReactNode => {
 
       const taskDuration = taskCompleteTime.diff(taskStartTime, 's');
 
-      const deviation =
-        taskDuration -
-        (timerOperator === 'NOT_LESS_THAN' ? minPeriod : maxPeriod);
+      const deviation = taskDuration - (timerOperator === 'NOT_LESS_THAN' ? minPeriod : maxPeriod);
 
       const expectedString =
         timerOperator === 'NOT_LESS_THAN'
@@ -215,12 +206,7 @@ const ExceptionSummary = ({ stages, totalTaskExceptions }: Props) => (
                 />
 
                 {tasks.map((task) => {
-                  const {
-                    exceptions,
-                    id: taskId,
-                    name: taskName,
-                    orderTree: taskOrderTree,
-                  } = task;
+                  const { exceptions, id: taskId, name: taskName, orderTree: taskOrderTree } = task;
 
                   if (exceptions.length) {
                     return exceptions.map((exception, index) => (
@@ -277,9 +263,7 @@ const ExceptionSummary = ({ stages, totalTaskExceptions }: Props) => (
                             },
                           },
                         ]}
-                        customStyle={
-                          !isEven(index) ? { backgroundColor: '#fff' } : {}
-                        }
+                        customStyle={!isEven(index) ? { backgroundColor: '#fff' } : {}}
                         key={`${taskId}-${index}`}
                       />
                     ));

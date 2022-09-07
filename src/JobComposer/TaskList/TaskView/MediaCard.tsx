@@ -123,9 +123,7 @@ const MediaCard: FC<MediaCardProps> = ({ medias, isTaskActive }) => {
           <div className="media-list">
             {medias.map((media, index) => (
               <div
-                className={`media-item${
-                  activeMedia.id === media.id ? ' active' : ''
-                }`}
+                className={`media-item${activeMedia.id === media.id ? ' active' : ''}`}
                 key={index}
                 onClick={() => setActiveMedia(media)}
                 style={{

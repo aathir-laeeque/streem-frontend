@@ -51,18 +51,10 @@ const Wrapper = styled.div.attrs({})`
   }
 `;
 
-export const ConfirmationModal: FC<CommonOverlayProps<
-  ConfirmationModalProps
->> = ({
+export const ConfirmationModal: FC<CommonOverlayProps<ConfirmationModalProps>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: {
-    onPrimary,
-    primaryText = 'Ok',
-    secondaryText = 'Cancel',
-    title,
-    body,
-  },
+  props: { onPrimary, primaryText = 'Ok', secondaryText = 'Cancel', title, body },
 }) => {
   return (
     <Wrapper>

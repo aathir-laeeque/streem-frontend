@@ -16,17 +16,10 @@ export const MsalComponent = ({ children }: { children: ReactElement }) => {
   if (config && !msalInstance) {
     msalInstance = new PublicClientApplication(config);
     msalInstance.addEventCallback((event: EventMessage) => {
-      if (
-        msalInstance &&
-        event.eventType === EventType.LOGIN_SUCCESS &&
-        event.payload
-      ) {
+      if (msalInstance && event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
         const payload = event.payload as AuthenticationResult;
         if (payload?.account?.idTokenClaims?.login_hint)
-          localStorage.setItem(
-            'loginHint',
-            payload?.account?.idTokenClaims?.login_hint,
-          );
+          localStorage.setItem('loginHint', payload?.account?.idTokenClaims?.login_hint);
         msalInstance.setActiveAccount(payload.account);
       }
     });

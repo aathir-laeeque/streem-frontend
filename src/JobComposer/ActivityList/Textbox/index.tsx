@@ -6,10 +6,7 @@ import { useDispatch } from 'react-redux';
 import { executeActivity, fixActivity } from '../actions';
 import { ActivityProps } from '../types';
 
-const TextboxActivity: FC<ActivityProps> = ({
-  activity,
-  isCorrectingError,
-}) => {
+const TextboxActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const { entity } = useTypedSelector((state) => state.composer);

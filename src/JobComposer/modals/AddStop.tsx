@@ -52,10 +52,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const TaskStopModal: FC<CommonOverlayProps<any>> = ({
-  closeAllOverlays,
-  closeOverlay,
-}) => {
+const TaskStopModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, closeOverlay }) => {
   const dispatch = useDispatch();
 
   const {

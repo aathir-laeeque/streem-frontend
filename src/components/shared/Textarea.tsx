@@ -161,90 +161,86 @@ const Wrapper = styled.div.attrs(({ className }) => ({
   }
 `;
 
-const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  (props, ref) => {
-    const {
-      activityItemInput = false,
-      allowResize = true,
-      defaultValue,
-      disabled = false,
-      error,
-      label,
-      name,
-      onChange,
-      optional = false,
-      placeholder = 'Write here',
-      rows = 1,
-      onBlur,
-    } = props;
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => {
+  const {
+    activityItemInput = false,
+    allowResize = true,
+    defaultValue,
+    disabled = false,
+    error,
+    label,
+    name,
+    onChange,
+    optional = false,
+    placeholder = 'Write here',
+    rows = 1,
+    onBlur,
+  } = props;
 
-    const internalRef = createRef<HTMLTextAreaElement>();
+  const internalRef = createRef<HTMLTextAreaElement>();
 
-    const [text, setText] = useState(defaultValue);
-    const [textAreaHeight, setTextAreaHeight] = useState('auto');
-    const [parentHeight, setParentHeight] = useState('auto');
+  const [text, setText] = useState(defaultValue);
+  const [textAreaHeight, setTextAreaHeight] = useState('auto');
+  const [parentHeight, setParentHeight] = useState('auto');
 
-    useEffect(() => {
-      setParentHeight(`${internalRef.current?.scrollHeight}px`);
-      setTextAreaHeight(`${internalRef.current?.scrollHeight}px`);
-    }, [text]);
+  useEffect(() => {
+    setParentHeight(`${internalRef.current?.scrollHeight}px`);
+    setTextAreaHeight(`${internalRef.current?.scrollHeight}px`);
+  }, [text]);
 
-    const onChangeHandler = ({
-      target: { name, value },
-    }: ChangeEvent<HTMLTextAreaElement>) => {
-      setTextAreaHeight('auto');
-      setParentHeight(`${internalRef.current?.scrollHeight}px`);
-      setText(value);
+  const onChangeHandler = ({ target: { name, value } }: ChangeEvent<HTMLTextAreaElement>) => {
+    setTextAreaHeight('auto');
+    setParentHeight(`${internalRef.current?.scrollHeight}px`);
+    setText(value);
 
-      if (typeof onChange === 'function') {
-        onChange({ name, value });
-      }
-    };
+    if (typeof onChange === 'function') {
+      onChange({ name, value });
+    }
+  };
 
-    const onBlurHandler = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-      if (typeof onBlur === 'function') {
-        console.log(e);
-      }
-    };
+  const onBlurHandler = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    if (typeof onBlur === 'function') {
+      console.log(e);
+    }
+  };
 
-    return (
-      <Wrapper
-        activityItemInput={activityItemInput}
-        allowResize={allowResize}
-        hasError={!!error}
-        parentHeight={parentHeight}
-        textAreaHeight={textAreaHeight}
-      >
-        {label ? (
-          <label className="input-label">
-            {label}
-            {optional ? <span className="optional-badge">Optional</span> : null}
-          </label>
-        ) : null}
+  return (
+    <Wrapper
+      activityItemInput={activityItemInput}
+      allowResize={allowResize}
+      hasError={!!error}
+      parentHeight={parentHeight}
+      textAreaHeight={textAreaHeight}
+    >
+      {label ? (
+        <label className="input-label">
+          {label}
+          {optional ? <span className="optional-badge">Optional</span> : null}
+        </label>
+      ) : null}
 
-        <div className="textarea-wrapper">
-          <textarea
-            defaultValue={defaultValue}
-            disabled={disabled}
-            name={name}
-            onBlur={onBlurHandler}
-            onChange={onChangeHandler}
-            placeholder={placeholder}
-            ref={ref ?? internalRef}
-            rows={rows}
-          />
-        </div>
+      <div className="textarea-wrapper">
+        <textarea
+          defaultValue={defaultValue}
+          disabled={disabled}
+          name={name}
+          onBlur={onBlurHandler}
+          onChange={onChangeHandler}
+          placeholder={placeholder}
+          ref={ref ?? internalRef}
+          rows={rows}
+        />
+      </div>
 
-        {typeof error === 'string' && !!error ? (
-          <span className="field-error">
-            <ErrorIcon className="icon" />
-            {error}
-          </span>
-        ) : null}
-      </Wrapper>
-    );
-  },
-);
+      {typeof error === 'string' && !!error ? (
+        <span className="field-error">
+          <ErrorIcon className="icon" />
+          {error}
+        </span>
+      ) : null}
+    </Wrapper>
+  );
+});
 
 Textarea.displayName = 'textarea';
 

@@ -208,21 +208,16 @@ const collaboratorTypeOrder = {
   [CollaboratorType.REVIEWER]: 3,
 } as const;
 
-const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
-  closeAllOverlays,
-  closeOverlay,
-}) => {
+const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, closeOverlay }) => {
   const dispatch = useDispatch();
   const [users, setUsers] = useState<ParsedUser[]>([]);
   const [error, setError] = useState(
     'You need to select at least one Reviewer and one Approver to Initiate the Sign Off process',
   );
-  const [selection, setSelection] = useState<
-    { userId: string; orderTree: number }[]
-  >([]);
+  const [selection, setSelection] = useState<{ userId: string; orderTree: number }[]>([]);
 
   const { data } = useTypedSelector((state) => ({
-    data: (state.prototypeComposer?.data as unknown) as Checklist,
+    data: state.prototypeComposer?.data as unknown as Checklist,
   }));
 
   const sortSignatories = (users: ParsedUser[]) => {
@@ -237,10 +232,7 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
   };
 
   useEffect(() => {
-    const { newUsers, selectedUsers } = uniqBy(
-      data?.collaborators || [],
-      'id',
-    ).reduce(
+    const { newUsers, selectedUsers } = uniqBy(data?.collaborators || [], 'id').reduce(
       (acc, collaborator) => {
         const isAuthor =
           collaborator.type === CollaboratorType.AUTHOR ||
@@ -258,8 +250,7 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
           checkedApprover: false,
         });
 
-        if (isAuthor)
-          acc.selectedUsers.push({ userId: collaborator.id, orderTree: 1 });
+        if (isAuthor) acc.selectedUsers.push({ userId: collaborator.id, orderTree: 1 });
 
         return acc;
       },
@@ -340,13 +331,9 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
         'You need to select at least one Reviewer and one Approver to Initiate the Sign Off process',
       );
     } else if (consistReviewer === false) {
-      setError(
-        'You need to select at least one Reviewer to Initiate the Sign Off process',
-      );
+      setError('You need to select at least one Reviewer to Initiate the Sign Off process');
     } else if (consistApprover === false) {
-      setError(
-        'You need to select at least one Approver to Initiate the Sign Off process',
-      );
+      setError('You need to select at least one Approver to Initiate the Sign Off process');
     } else {
       setError('');
     }
@@ -416,12 +403,7 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({
                   <div className="checkmark-wrapper">
                     {(u.type === CollaboratorType.AUTHOR ||
                       u.type === CollaboratorType.PRIMARY_AUTHOR) && (
-                      <Checkbox
-                        checked
-                        disabled
-                        label=""
-                        onClick={() => console.log('checked')}
-                      />
+                      <Checkbox checked disabled label="" onClick={() => console.log('checked')} />
                     )}
                   </div>
                 </td>

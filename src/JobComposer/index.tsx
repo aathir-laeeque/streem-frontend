@@ -6,10 +6,7 @@ import { fetchData, resetComposer } from './actions';
 import { ComposerProps } from './composer.types';
 import Header from './Header';
 import StageList from './StageList';
-import {
-  startPollActiveStageData,
-  stopPollActiveStageData,
-} from './StageList/actions';
+import { startPollActiveStageData, stopPollActiveStageData } from './StageList/actions';
 import { ComposerWrapper, JobLoadingWrapper } from './styles';
 import TaskList from './TaskList';
 

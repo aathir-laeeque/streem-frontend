@@ -230,9 +230,7 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
           </div>
         ) : null}
         <div className="details">
-          <span>
-            You’re about to complete the following job with exceptions:
-          </span>
+          <span>You’re about to complete the following job with exceptions:</span>
           <span>
             {code} {name}
           </span>
@@ -268,9 +266,7 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
         <Textarea
           defaultValue={values.comment}
           error={
-            errors.comment
-              ? 'You Need to provide additional Remarks before submitting'
-              : false
+            errors.comment ? 'You Need to provide additional Remarks before submitting' : false
           }
           label="Additional Remarks"
           onChange={debounce(({ value }) => {
@@ -289,9 +285,7 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
             <ImageUploadButton
               icon={Add}
               label="Add New File"
-              onUploadError={(error) =>
-                console.log('error on media upload :: ', error)
-              }
+              onUploadError={(error) => console.log('error on media upload :: ', error)}
               onUploadSuccess={(file) => {
                 console.log('file on upload :: ', file);
                 setValues((val) => ({ ...val, medias: [...val.medias, file] }));

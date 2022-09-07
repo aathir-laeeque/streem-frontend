@@ -44,9 +44,11 @@ const Wrapper = styled.div`
   }
 `;
 
-const ArchiveModal: FC<CommonOverlayProps<{
-  mode: 'archive' | 'unarchive' | 'cannotArchive';
-}>> = ({ closeAllOverlays, closeOverlay, props: { mode } = {} }) => (
+const ArchiveModal: FC<
+  CommonOverlayProps<{
+    mode: 'archive' | 'unarchive' | 'cannotArchive';
+  }>
+> = ({ closeAllOverlays, closeOverlay, props: { mode } = {} }) => (
   <Wrapper>
     <BaseModal
       closeAllModals={closeAllOverlays}
@@ -62,9 +64,7 @@ const ArchiveModal: FC<CommonOverlayProps<{
               <>
                 <ArchiveSuccessful fontSize="140px" />
                 <div className="text1">Archive Successful</div>
-                <div className="text2">
-                  Great Job! Checklist Archived Successfully
-                </div>
+                <div className="text2">Great Job! Checklist Archived Successfully</div>
               </>
             );
           }

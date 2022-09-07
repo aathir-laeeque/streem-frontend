@@ -8,8 +8,7 @@ export const fetchUsers = (
   type: UsersListType,
 ) => actionSpreader(UsersAction.FETCH_USERS, { params, type });
 
-export const fetchUsersOngoing = () =>
-  actionSpreader(UsersAction.FETCH_USERS_ONGOING);
+export const fetchUsersOngoing = () => actionSpreader(UsersAction.FETCH_USERS_ONGOING);
 
 export const fetchUsersSuccess = (
   { data, pageable }: Partial<ResponseObj<User[]>>,
@@ -30,9 +29,7 @@ export const setSelectedState = (state: UsersListType) =>
 export const fetchSelectedUser = (id: User['id']) =>
   actionSpreader(UsersAction.FETCH_SELECTED_USER, { id });
 
-export const fetchSelectedUserSuccess = ({
-  data,
-}: Partial<ResponseObj<User>>) =>
+export const fetchSelectedUserSuccess = ({ data }: Partial<ResponseObj<User>>) =>
   actionSpreader(UsersAction.FETCH_SELECTED_USER_SUCCESS, {
     data,
   });

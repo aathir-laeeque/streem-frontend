@@ -44,11 +44,7 @@ const ReviewerAssignmentModal: FC<
     checklistId: Checklist['id'];
     isModal: boolean;
   }>
-> = ({
-  closeAllOverlays = () => false,
-  closeOverlay,
-  props: { checklistId, isModal = true },
-}) => {
+> = ({ closeAllOverlays = () => false, closeOverlay, props: { checklistId, isModal = true } }) => {
   const {
     data: { collaborators, state: checklistState },
     assignees,
@@ -59,8 +55,7 @@ const ReviewerAssignmentModal: FC<
 
   const dispatch = useDispatch();
   const [state, setstate] = useState(initialState);
-  const { assignedUsers, unassignedUsers, searchQuery, preAssignedUsers } =
-    state;
+  const { assignedUsers, unassignedUsers, searchQuery, preAssignedUsers } = state;
   const prevSearch = usePrevious(searchQuery);
   const prevAssignees = usePrevious(assignees);
 
@@ -114,15 +109,10 @@ const ReviewerAssignmentModal: FC<
   const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
     e.stopPropagation();
     const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7)
-      loadMore();
+    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7) loadMore();
   };
 
-  const onCheckChanged = (
-    user: Collaborator,
-    checked: boolean,
-    isPreAssigned: boolean,
-  ) => {
+  const onCheckChanged = (user: Collaborator, checked: boolean, isPreAssigned: boolean) => {
     if (checked) {
       if (isPreAssigned) {
         setstate({
@@ -155,11 +145,7 @@ const ReviewerAssignmentModal: FC<
     }
   };
 
-  const userRow = (
-    user: Collaborator,
-    checked: boolean,
-    isPreAssigned: boolean,
-  ) => {
+  const userRow = (user: Collaborator, checked: boolean, isPreAssigned: boolean) => {
     return (
       <div className="item" key={`user_${user.id}`}>
         <div className="right">
@@ -176,9 +162,7 @@ const ReviewerAssignmentModal: FC<
             />
           )}
         </div>
-        <div className="thumb">
-          {getInitials(`${user.firstName} ${user.lastName}`)}
-        </div>
+        <div className="thumb">{getInitials(`${user.firstName} ${user.lastName}`)}</div>
         <div className="middle">
           <span className="userId">{user.employeeId}</span>
           <span className="userName">{`${user.firstName} ${user.lastName}`}</span>
@@ -206,15 +190,12 @@ const ReviewerAssignmentModal: FC<
     }
 
     (list as unknown as Array<Collaborator>).forEach((user) => {
-      const isPreAssigned = preAssignedUsers.some(
-        (item) => item.id === user.id,
-      );
+      const isPreAssigned = preAssignedUsers.some((item) => item.id === user.id);
       const checked = assignees.some((item) => item.id === user.id);
       const isAuthor = collaborators.some(
         (item) =>
           item.id === user.id &&
-          (item.type === CollaboratorType.AUTHOR ||
-            item.type === CollaboratorType.PRIMARY_AUTHOR),
+          (item.type === CollaboratorType.AUTHOR || item.type === CollaboratorType.PRIMARY_AUTHOR),
       );
 
       if (user.id !== '0' && !isAuthor) {
@@ -268,10 +249,7 @@ const ReviewerAssignmentModal: FC<
             <input
               className="searchbox"
               type="text"
-              onChange={debounce(
-                (e) => setstate({ ...state, searchQuery: e.target.value }),
-                500,
-              )}
+              onChange={debounce((e) => setstate({ ...state, searchQuery: e.target.value }), 500)}
               placeholder="Search with First Name"
             />
           </div>

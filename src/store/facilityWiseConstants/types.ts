@@ -1,7 +1,4 @@
-import {
-  setFacilityTimeStampFormat,
-  setInitialFacilityWiseConstants,
-} from './actions';
+import { setFacilityTimeStampFormat, setInitialFacilityWiseConstants } from './actions';
 
 export type FaciltyWiseConstantsState = {
   [facilityId: string]: {

@@ -18,10 +18,7 @@ import { Editor } from 'react-draft-wysiwyg';
 import { ContentState, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
-import {
-  CommonOverlayProps,
-  OverlayNames,
-} from '#components/OverlayContainer/types';
+import { CommonOverlayProps, OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import {
   Checklist,
@@ -94,10 +91,7 @@ export const SubmitReviewModal: FC<
     isPrimaryAuthor: boolean;
     continueReview: boolean;
     allDoneOk: boolean;
-    reviewState:
-      | CollaboratorState.COMMENTED_CHANGES
-      | CollaboratorState.COMMENTED_OK
-      | null;
+    reviewState: CollaboratorState.COMMENTED_CHANGES | CollaboratorState.COMMENTED_OK | null;
   }>
 > = ({ closeAllOverlays, closeOverlay, props }) => {
   const isViewer = props?.isViewer || false;
@@ -109,14 +103,12 @@ export const SubmitReviewModal: FC<
   const allDoneOk = props?.allDoneOk || false;
 
   const dispatch = useDispatch();
-  const { data, userId, collaborators, selectedFacility } = useTypedSelector(
-    (state) => ({
-      userId: state.auth.userId,
-      collaborators: state.prototypeComposer.collaborators,
-      data: state.prototypeComposer.data as Checklist,
-      selectedFacility: state.auth.selectedFacility,
-    }),
-  );
+  const { data, userId, collaborators, selectedFacility } = useTypedSelector((state) => ({
+    userId: state.auth.userId,
+    collaborators: state.prototypeComposer.collaborators,
+    data: state.prototypeComposer.data as Checklist,
+    selectedFacility: state.auth.selectedFacility,
+  }));
 
   const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
@@ -142,9 +134,7 @@ export const SubmitReviewModal: FC<
 
         if (commentExist.length) {
           const content = htmlToDraft(commentExist[0].comments);
-          const contentState = ContentState.createFromBlockArray(
-            content.contentBlocks,
-          );
+          const contentState = ContentState.createFromBlockArray(content.contentBlocks);
 
           editorState = EditorState.createWithContent(contentState);
         }
@@ -181,11 +171,8 @@ export const SubmitReviewModal: FC<
   };
 
   const handleOnCompleteWithCR = () => {
-    const comments = draftToHtml(
-      convertToRaw(state.editorState.getCurrentContent()),
-    );
-    if (data && data?.id)
-      dispatch(submitChecklistReviewWithCR(data?.id, comments));
+    const comments = draftToHtml(convertToRaw(state.editorState.getCurrentContent()));
+    if (data && data?.id) dispatch(submitChecklistReviewWithCR(data?.id, comments));
   };
 
   const groupedComments = groupBy(data?.comments, 'phase');
@@ -203,26 +190,16 @@ export const SubmitReviewModal: FC<
         shouldInculdeUser = false;
       }
       if (shouldInculde) {
-        groupedComments[item] = orderBy(
-          groupedComments[item],
-          ['commentedAt'],
-          ['desc'],
-        );
+        groupedComments[item] = orderBy(groupedComments[item], ['commentedAt'], ['desc']);
         comments.push(
           <div className="reviews-group" key={`reviewerGroup_${item}`}>
             <span>{`${getOrdinal(Number(item))} Review`}</span>
             <div className="comments-group">
               {groupedComments[item].map((comment) => {
-                if (
-                  !shouldInculdeUser &&
-                  state.selectedReviewer !== comment.commentedBy.id
-                )
+                if (!shouldInculdeUser && state.selectedReviewer !== comment.commentedBy.id)
                   return null;
                 return (
-                  <div
-                    className="comment-section"
-                    key={`comment_${comment.id}`}
-                  >
+                  <div className="comment-section" key={`comment_${comment.id}`}>
                     <div className="user-detail">
                       <div>
                         <Avatar user={comment.commentedBy} />
@@ -231,9 +208,7 @@ export const SubmitReviewModal: FC<
                       </div>
                       <div>
                         <span>
-                          {moment
-                            .unix(comment.commentedAt)
-                            .format(dateAndTimeStampFormat)}
+                          {moment.unix(comment.commentedAt).format(dateAndTimeStampFormat)}
                         </span>
                       </div>
                     </div>
@@ -284,9 +259,7 @@ export const SubmitReviewModal: FC<
         popOverAnchorEl: event.currentTarget,
         props: {
           users: users.filter(
-            (u) =>
-              u.type === CollaboratorType.AUTHOR ||
-              u.type === CollaboratorType.PRIMARY_AUTHOR,
+            (u) => u.type === CollaboratorType.AUTHOR || u.type === CollaboratorType.PRIMARY_AUTHOR,
           ),
         },
       }),
@@ -317,9 +290,7 @@ export const SubmitReviewModal: FC<
     );
   };
 
-  const handleAssignReviewers = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-  ) => {
+  const handleAssignReviewers = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     dispatch(
       openOverlayAction({
         type: OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT_POPOVER,
@@ -334,29 +305,22 @@ export const SubmitReviewModal: FC<
   const getTitle = () => {
     if (sendToAuthor && !isViewer) return 'Send to Author';
     if (state.selected === Options.OK) return 'Confirm your choice';
-    if (continueReview && reviewState === CollaboratorState.COMMENTED_OK)
-      return 'Add Comments';
+    if (continueReview && reviewState === CollaboratorState.COMMENTED_OK) return 'Add Comments';
     if (continueReview && reviewState === CollaboratorState.COMMENTED_CHANGES)
       return 'How do you want to Continue?';
-    if (!sendToAuthor && !isViewer && state.selected === null)
-      return 'How is the Prototype ?';
+    if (!sendToAuthor && !isViewer && state.selected === null) return 'How is the Prototype ?';
 
     return '';
   };
 
   const getShowHeader = () => {
-    if (!sendToAuthor && (isViewer || state.selected === Options.COMMENTS))
-      return false;
+    if (!sendToAuthor && (isViewer || state.selected === Options.COMMENTS)) return false;
 
     return true;
   };
 
   return (
-    <Wrapper
-      comments={
-        !sendToAuthor && (isViewer || state.selected === Options.COMMENTS)
-      }
-    >
+    <Wrapper comments={!sendToAuthor && (isViewer || state.selected === Options.COMMENTS)}>
       <BaseModal
         showFooter={false}
         showHeader={getShowHeader()}
@@ -378,9 +342,7 @@ export const SubmitReviewModal: FC<
                 <div className="box-wrapper" style={{ padding: '0px 208px' }}>
                   <div
                     className="box"
-                    onClick={() =>
-                      setState({ ...state, selected: Options.COMMENTS })
-                    }
+                    onClick={() => setState({ ...state, selected: Options.COMMENTS })}
                   >
                     <div className="icon-wrapper">
                       <MemoNeedsCommenting />
@@ -391,14 +353,8 @@ export const SubmitReviewModal: FC<
                 </div>
               </div>
             ) : (
-              <div
-                className="box-wrapper"
-                style={{ padding: '0px 48px 100px' }}
-              >
-                <div
-                  className="box"
-                  onClick={() => setState({ ...state, selected: Options.OK })}
-                >
+              <div className="box-wrapper" style={{ padding: '0px 48px 100px' }}>
+                <div className="box" onClick={() => setState({ ...state, selected: Options.OK })}>
                   <div className="icon-wrapper">
                     <MemoRemoveComments />
                   </div>
@@ -407,9 +363,7 @@ export const SubmitReviewModal: FC<
                 </div>
                 <div
                   className="box"
-                  onClick={() =>
-                    setState({ ...state, selected: Options.COMMENTS })
-                  }
+                  onClick={() => setState({ ...state, selected: Options.COMMENTS })}
                 >
                   <div className="icon-wrapper">
                     <MemoMoreComments />
@@ -460,92 +414,69 @@ export const SubmitReviewModal: FC<
           </div>
         )}
 
-        {!sendToAuthor &&
-          !continueReview &&
-          !isViewer &&
-          state.selected === null && (
-            <>
+        {!sendToAuthor && !continueReview && !isViewer && state.selected === null && (
+          <>
+            <div className="box-wrapper" style={{ padding: '0px 48px 100px' }}>
+              <div className="box" onClick={() => setState({ ...state, selected: Options.OK })}>
+                <div className="icon-wrapper">
+                  <MemoAllOk />
+                </div>
+                <h3>All OK</h3>
+                <span>No Comments Needed</span>
+              </div>
               <div
-                className="box-wrapper"
-                style={{ padding: '0px 48px 100px' }}
+                className="box"
+                onClick={() => setState({ ...state, selected: Options.COMMENTS })}
               >
-                <div
-                  className="box"
-                  onClick={() => setState({ ...state, selected: Options.OK })}
-                >
-                  <div className="icon-wrapper">
-                    <MemoAllOk />
-                  </div>
-                  <h3>All OK</h3>
-                  <span>No Comments Needed</span>
+                <div className="icon-wrapper">
+                  <MemoNeedsCommenting />
                 </div>
-                <div
-                  className="box"
-                  onClick={() =>
-                    setState({ ...state, selected: Options.COMMENTS })
-                  }
-                >
-                  <div className="icon-wrapper">
-                    <MemoNeedsCommenting />
-                  </div>
-                  <h3>Needs Commenting</h3>
-                  <span>Some Changes Are Needed</span>
-                </div>
+                <h3>Needs Commenting</h3>
+                <span>Some Changes Are Needed</span>
               </div>
-            </>
-          )}
+            </div>
+          </>
+        )}
 
-        {!sendToAuthor &&
-          continueReview &&
-          !isViewer &&
-          state.selected === Options.OK && (
-            <>
-              <div className="box-wrapper" style={{ padding: '0px 208px' }}>
-                <div className="box">
-                  <div className="icon-wrapper">
-                    <MemoRemoveComments />
-                  </div>
-                  <h3>Remove Comments</h3>
-                  <span>No Changes are Necessary</span>
+        {!sendToAuthor && continueReview && !isViewer && state.selected === Options.OK && (
+          <>
+            <div className="box-wrapper" style={{ padding: '0px 208px' }}>
+              <div className="box">
+                <div className="icon-wrapper">
+                  <MemoRemoveComments />
                 </div>
+                <h3>Remove Comments</h3>
+                <span>No Changes are Necessary</span>
               </div>
-              <Button1 className="submit" onClick={handleOnAllOK}>
-                Confirm
-              </Button1>
-              <Button1
-                variant="textOnly"
-                onClick={() => setState({ ...state, selected: null })}
-              >
-                Go Back
-              </Button1>
-            </>
-          )}
+            </div>
+            <Button1 className="submit" onClick={handleOnAllOK}>
+              Confirm
+            </Button1>
+            <Button1 variant="textOnly" onClick={() => setState({ ...state, selected: null })}>
+              Go Back
+            </Button1>
+          </>
+        )}
 
-        {!sendToAuthor &&
-          !continueReview &&
-          !isViewer &&
-          state.selected === Options.OK && (
-            <>
-              <div className="box-wrapper" style={{ padding: '0px 208px' }}>
-                <div className="box">
-                  <div className="icon-wrapper">
-                    <MemoAllOk />
-                  </div>
-                  <h3>All OK</h3>
-                  <span>No Comments Needed</span>
+        {!sendToAuthor && !continueReview && !isViewer && state.selected === Options.OK && (
+          <>
+            <div className="box-wrapper" style={{ padding: '0px 208px' }}>
+              <div className="box">
+                <div className="icon-wrapper">
+                  <MemoAllOk />
                 </div>
+                <h3>All OK</h3>
+                <span>No Comments Needed</span>
               </div>
-              <Button1 className="submit" onClick={handleOnAllOK}>
-                Confirm
-              </Button1>
-              <Button1
-                variant="textOnly"
-                onClick={() => setState({ ...state, selected: null })}
-              >
-                Go Back
-              </Button1>
-            </>
-          )}
+            </div>
+            <Button1 className="submit" onClick={handleOnAllOK}>
+              Confirm
+            </Button1>
+            <Button1 variant="textOnly" onClick={() => setState({ ...state, selected: null })}>
+              Go Back
+            </Button1>
+          </>
+        )}
 
         {!sendToAuthor && (isViewer || state.selected === Options.COMMENTS) ? (
           <>
@@ -581,12 +512,8 @@ export const SubmitReviewModal: FC<
                 <div
                   className="icon-wrapper"
                   aria-haspopup="true"
-                  onMouseEnter={(e) =>
-                    handleAuthorMouseOver(e, data?.collaborators)
-                  }
-                  onMouseLeave={() =>
-                    dispatch(closeOverlayAction(OverlayNames.AUTHORS_DETAIL))
-                  }
+                  onMouseEnter={(e) => handleAuthorMouseOver(e, data?.collaborators)}
+                  onMouseLeave={() => dispatch(closeOverlayAction(OverlayNames.AUTHORS_DETAIL))}
                 >
                   <Assignment
                     style={{
@@ -601,12 +528,8 @@ export const SubmitReviewModal: FC<
                 <div
                   className="icon-wrapper"
                   aria-haspopup="true"
-                  onMouseEnter={(e) =>
-                    handleReviewersMouseOver(e, collaborators)
-                  }
-                  onMouseLeave={() =>
-                    dispatch(closeOverlayAction(OverlayNames.REVIEWERS_DETAIL))
-                  }
+                  onMouseEnter={(e) => handleReviewersMouseOver(e, collaborators)}
+                  onMouseLeave={() => dispatch(closeOverlayAction(OverlayNames.REVIEWERS_DETAIL))}
                 >
                   <Message
                     style={{
@@ -644,9 +567,7 @@ export const SubmitReviewModal: FC<
                     editorClassName="editor"
                     toolbarClassName="editor-toolbar"
                     toolbar={toolbarOptions}
-                    onEditorStateChange={(editorState: any) =>
-                      setState({ ...state, editorState })
-                    }
+                    onEditorStateChange={(editorState: any) => setState({ ...state, editorState })}
                   />
                   <div className="actions-container">
                     <Button1
@@ -658,9 +579,7 @@ export const SubmitReviewModal: FC<
                     </Button1>
                     <Button1
                       onClick={handleOnCompleteWithCR}
-                      disabled={
-                        !state.editorState.getCurrentContent().hasText()
-                      }
+                      disabled={!state.editorState.getCurrentContent().hasText()}
                     >
                       Submit
                     </Button1>
@@ -698,9 +617,7 @@ export const SubmitReviewModal: FC<
                   {comments.length > 0 ? (
                     comments
                   ) : !isViewer ? (
-                    <div className="no-comments">
-                      No Comments by other Reviewers
-                    </div>
+                    <div className="no-comments">No Comments by other Reviewers</div>
                   ) : (
                     <div />
                   )}

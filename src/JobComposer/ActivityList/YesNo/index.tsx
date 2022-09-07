@@ -2,11 +2,7 @@ import { Button1, Textarea } from '#components';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  executeActivity,
-  fixActivity,
-  updateExecutedActivity,
-} from '../actions';
+import { executeActivity, fixActivity, updateExecutedActivity } from '../actions';
 import { ActivityProps, Selections } from '../types';
 import { Wrapper } from './styles';
 
@@ -25,8 +21,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const getSelectedIdByChoices = () => {
     return activity.response?.choices
       ? Object.entries(activity.response?.choices).reduce(
-          (acc, [choiceId, choiceValue]) =>
-            choiceValue === Selections.SELECTED ? choiceId : acc,
+          (acc, [choiceId, choiceValue]) => (choiceValue === Selections.SELECTED ? choiceId : acc),
           '',
         )
       : undefined;
@@ -69,10 +64,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
         if (activity?.response?.choices) {
           const data = activity.data.map((d: any) => ({
             ...d,
-            state:
-              d.id === state.selectedId
-                ? Selections.SELECTED
-                : Selections.NOT_SELECTED,
+            state: d.id === state.selectedId ? Selections.SELECTED : Selections.NOT_SELECTED,
           }));
           if (state.shouldAskForReason) {
             if (state.reason) {
@@ -100,11 +92,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
         }));
       }
     }
-  }, [
-    activity?.response?.choices,
-    activity?.response?.reason,
-    state.shouldCallApi,
-  ]);
+  }, [activity?.response?.choices, activity?.response?.reason, state.shouldCallApi]);
 
   const handleExecution = (id: string) => {
     if (id) {
@@ -115,8 +103,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
             ...activity.response,
             audit: undefined,
             choices: activity.data.reduce((acc: any, d: any) => {
-              acc[d.id] =
-                d.id === id ? Selections.SELECTED : Selections.NOT_SELECTED;
+              acc[d.id] = d.id === id ? Selections.SELECTED : Selections.NOT_SELECTED;
               return acc;
             }, {}),
             reason: state.reason,
@@ -207,8 +194,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
                     reason: '',
                     shouldAskForReason: false,
                     selectedId: activity.data.reduce(
-                      (acc: any, d: any) =>
-                        d.id !== state.selectedId ? d.id : acc,
+                      (acc: any, d: any) => (d.id !== state.selectedId ? d.id : acc),
                       '',
                     ),
                   }))

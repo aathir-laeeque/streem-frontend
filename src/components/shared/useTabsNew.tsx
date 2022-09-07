@@ -67,9 +67,7 @@ const useTabsNew = ({ tabs }: useTabType) => {
     <HeaderWrapper>
       {tabs.map((tab) => (
         <div
-          className={`tab-header-item ${
-            activeTab.label === tab.label ? 'active' : ''
-          }`}
+          className={`tab-header-item ${activeTab.label === tab.label ? 'active' : ''}`}
           key={tab.label}
           onClick={() => setActiveTab(tab)}
         >

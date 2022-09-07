@@ -14,9 +14,7 @@ export enum AuthorState {
   IN_PROGRESS = 'IN_PROGRESS',
 }
 
-export type NewPrototypeActionsType = ReturnType<
-  typeof addNewPrototype | typeof updatePrototype
->;
+export type NewPrototypeActionsType = ReturnType<typeof addNewPrototype | typeof updatePrototype>;
 
 export type PrototypeProperties = Pick<
   Property,
@@ -25,10 +23,7 @@ export type PrototypeProperties = Pick<
   value: string;
 };
 
-export type Author = Pick<
-  User,
-  'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'
-> & {
+export type Author = Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'> & {
   state: AuthorState;
 };
 
@@ -42,10 +37,7 @@ export type FormValues = {
   authors: Author[];
   description: string;
   name: string;
-  createdBy: Pick<
-    User,
-    'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'
-  >;
+  createdBy: Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'>;
   properties: PrototypeProperties[];
 };
 
@@ -68,10 +60,7 @@ export type FormData = {
   prototypeId: Checklist['id'];
   revisedCode?: Checklist['code'];
   revisedName?: Checklist['name'];
-  createdBy: Pick<
-    User,
-    'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'
-  >;
+  createdBy: Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'>;
 };
 
 export type Props = {

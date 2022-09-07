@@ -32,9 +32,7 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
     }
   }, [activity]);
 
-  const activityErrors = activity.errors.filter(
-    (error) => error.code in MaterialActivityErrors,
-  );
+  const activityErrors = activity.errors.filter((error) => error.code in MaterialActivityErrors);
 
   const isErrorPresent = !!activityErrors.length;
 
@@ -122,10 +120,7 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                     );
                   }}
                   onUploadError={(error) =>
-                    console.error(
-                      'error came in fileupload for material item :: ',
-                      error,
-                    )
+                    console.error('error came in fileupload for material item :: ', error)
                   }
                 />
               )}
@@ -134,13 +129,7 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             <ActivityItemInput
               defaultValue={item.name}
               customOnChange={(value) => {
-                dispatch(
-                  updateStoreActivity(value, activity.id, [
-                    'data',
-                    index,
-                    'name',
-                  ]),
-                );
+                dispatch(updateStoreActivity(value, activity.id, ['data', index, 'name']));
               }}
               error={isErrorPresent && !item.name}
             />
@@ -150,19 +139,11 @@ const MaterialActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                 className="icon"
                 onClick={() => {
                   dispatch(
-                    updateStoreActivity(++item.quantity, activity.id, [
-                      'data',
-                      index,
-                      'quantity',
-                    ]),
+                    updateStoreActivity(++item.quantity, activity.id, ['data', index, 'quantity']),
                   );
                 }}
               />
-              <span>
-                {item.quantity === 0
-                  ? 'Any'
-                  : item.quantity.toString().padStart(2, '0')}
-              </span>
+              <span>{item.quantity === 0 ? 'Any' : item.quantity.toString().padStart(2, '0')}</span>
               <ArrowDropDown
                 className="icon"
                 onClick={() => {

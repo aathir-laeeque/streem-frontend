@@ -2,10 +2,7 @@ import ActivityIcon from '#assets/svg/ActivityIcon';
 import MemoArchive from '#assets/svg/Archive';
 import MemoViewInfo from '#assets/svg/ViewInfo';
 import { Button1 } from '#components';
-import {
-  closeAllOverlayAction,
-  openOverlayAction,
-} from '#components/OverlayContainer/actions';
+import { closeAllOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   startChecklistReview,
@@ -19,10 +16,7 @@ import {
 import checkPermission, { RoleIdByName } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { Error } from '#utils/globalTypes';
-import {
-  archiveChecklist,
-  unarchiveChecklist,
-} from '#views/Checklists/ListView/actions';
+import { archiveChecklist, unarchiveChecklist } from '#views/Checklists/ListView/actions';
 import { FormMode } from '#views/Checklists/NewPrototype/types';
 import { Menu, MenuItem } from '@material-ui/core';
 import {
@@ -78,23 +72,18 @@ const ChecklistHeader: FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [state, setState] = useState(initialState);
 
-  const { activeStageId, data, userId, listOrder, profile } = useTypedSelector(
-    (state) => ({
-      userId: state.auth.userId,
-      data: state.prototypeComposer.data as Checklist,
-      activeStageId: state.prototypeComposer.stages.activeStageId,
-      listOrder: state.prototypeComposer.stages.listOrder,
-      profile: state.auth.profile,
-    }),
-  );
+  const { activeStageId, data, userId, listOrder, profile } = useTypedSelector((state) => ({
+    userId: state.auth.userId,
+    data: state.prototypeComposer.data as Checklist,
+    activeStageId: state.prototypeComposer.stages.activeStageId,
+    listOrder: state.prototypeComposer.stages.listOrder,
+    profile: state.auth.profile,
+  }));
 
   useEffect(() => {
     const newState = (data?.collaborators || []).reduce(
       (acc, collaborator) => {
-        if (
-          collaborator.type === CollaboratorType.REVIEWER &&
-          collaborator.phase === data.phase
-        ) {
+        if (collaborator.type === CollaboratorType.REVIEWER && collaborator.phase === data.phase) {
           // Rather Than Comparing with all Invalid States, Its better to neglect the valid as invalid states are more.
           if (
             collaborator.state in CollaboratorState &&
@@ -118,8 +107,7 @@ const ChecklistHeader: FC = () => {
             case CollaboratorType.AUTHOR:
               acc.author = collaborator;
 
-              if (collaborator.type === CollaboratorType.PRIMARY_AUTHOR)
-                acc.isPrimaryAuthor = true;
+              if (collaborator.type === CollaboratorType.PRIMARY_AUTHOR) acc.isPrimaryAuthor = true;
 
               switch (data.state) {
                 case ChecklistStates.SUBMITTED_FOR_REVIEW:
@@ -151,21 +139,15 @@ const ChecklistHeader: FC = () => {
                       content: 'Prototype Submitted for your Review',
                       class: 'secondary',
                     };
-                  } else if (
-                    collaborator.state === CollaboratorState.COMMENTED_CHANGES
-                  ) {
+                  } else if (collaborator.state === CollaboratorState.COMMENTED_CHANGES) {
                     acc.headerNotification = {
-                      content:
-                        'You have already submitted this checklist with comments',
+                      content: 'You have already submitted this checklist with comments',
                       class: 'secondary',
                     };
-                  } else if (
-                    collaborator.state === CollaboratorState.COMMENTED_OK
-                  ) {
+                  } else if (collaborator.state === CollaboratorState.COMMENTED_OK) {
                     if (acc.allDoneOk) {
                       acc.headerNotification = {
-                        content:
-                          'You and your team members have No Comments for changes',
+                        content: 'You and your team members have No Comments for changes',
                         class: 'success',
                       };
                     } else {
@@ -180,18 +162,14 @@ const ChecklistHeader: FC = () => {
                     data.state !== ChecklistStates.PUBLISHED
                   ) {
                     acc.headerNotification = {
-                      content:
-                        'You have already submitted your review to author.',
+                      content: 'You have already submitted your review to author.',
                     };
                   }
                 }
               }
               break;
             case CollaboratorType.SIGN_OFF_USER:
-              if (
-                !acc.approver ||
-                collaborator.state === CollaboratorState.NOT_STARTED
-              ) {
+              if (!acc.approver || collaborator.state === CollaboratorState.NOT_STARTED) {
                 acc.approver = collaborator;
               }
               break;
@@ -264,9 +242,7 @@ const ChecklistHeader: FC = () => {
           onPrimary: () => onStartReview(),
           primaryText: 'Confirm',
           title: 'Start Reviewing',
-          body: (
-            <>Are you sure you want to start reviewing this Prototype now?</>
-          ),
+          body: <>Are you sure you want to start reviewing this Prototype now?</>,
         },
       }),
     );
@@ -297,10 +273,7 @@ const ChecklistHeader: FC = () => {
       case CollaboratorState.BEING_REVIEWED:
         return (
           <>
-            <Button1
-              className="submit"
-              onClick={() => handleSubmitForReview(false)}
-            >
+            <Button1 className="submit" onClick={() => handleSubmitForReview(false)}>
               Provide Review
             </Button1>
           </>
@@ -319,17 +292,16 @@ const ChecklistHeader: FC = () => {
                 Continue Review
               </Button1>
             )}
-            {data?.state !== ChecklistStates.SIGNING_IN_PROGRESS &&
-              !areReviewsPending && (
-                <Button1
-                  color={allDoneOk ? 'green' : 'blue'}
-                  className="submit"
-                  onClick={handleSendToAuthor}
-                >
-                  <DoneAll style={{ fontSize: '16px', marginRight: '8px' }} />
-                  Send to Author
-                </Button1>
-              )}
+            {data?.state !== ChecklistStates.SIGNING_IN_PROGRESS && !areReviewsPending && (
+              <Button1
+                color={allDoneOk ? 'green' : 'blue'}
+                className="submit"
+                onClick={handleSendToAuthor}
+              >
+                <DoneAll style={{ fontSize: '16px', marginRight: '8px' }} />
+                Send to Author
+              </Button1>
+            )}
           </>
         );
 
@@ -382,9 +354,7 @@ const ChecklistHeader: FC = () => {
               description: data?.description,
               name: data.name,
               properties: data.properties,
-              authors: data.collaborators.filter(
-                (u) => u.type === CollaboratorType.AUTHOR,
-              ),
+              authors: data.collaborators.filter((u) => u.type === CollaboratorType.AUTHOR),
               prototypeId: data.id,
               createdBy: data.audit?.createdBy,
             },
@@ -408,20 +378,13 @@ const ChecklistHeader: FC = () => {
           openOverlayAction({
             type: OverlayNames.REASON_MODAL,
             props: {
-              modalTitle: data?.archived
-                ? 'Unarchive Checklist'
-                : 'Archive Checklist',
+              modalTitle: data?.archived ? 'Unarchive Checklist' : 'Archive Checklist',
               modalDesc: `Provide details for ${
                 data?.archived ? 'unarchiving' : 'archiving'
               } the checklist`,
-              onSumbitHandler: (
-                reason: string,
-                setFormErrors: (errors?: Error[]) => void,
-              ) =>
+              onSumbitHandler: (reason: string, setFormErrors: (errors?: Error[]) => void) =>
                 data?.archived
-                  ? dispatch(
-                      unarchiveChecklist(data?.id, reason, setFormErrors),
-                    )
+                  ? dispatch(unarchiveChecklist(data?.id, reason, setFormErrors))
                   : dispatch(archiveChecklist(data?.id, reason, setFormErrors)),
             },
           }),
@@ -430,9 +393,7 @@ const ChecklistHeader: FC = () => {
     >
       <div className="list-item">
         <MemoArchive />
-        <span>
-          {data?.archived ? 'Unarchive Checklist' : 'Archive Checklist'}
-        </span>
+        <span>{data?.archived ? 'Unarchive Checklist' : 'Archive Checklist'}</span>
       </div>
     </MenuItem>
   );
@@ -484,16 +445,13 @@ const ChecklistHeader: FC = () => {
             <span>View Activities</span>
           </div>
         </MenuItem>
-        <MenuItem
-          onClick={() => navigate(`/checklists/${data?.id}/logs`)}
-        >
+        <MenuItem onClick={() => navigate(`/checklists/${data?.id}/logs`)}>
           <div className="list-item">
             <MemoViewInfo />
             <span>View Job Logs</span>
           </div>
         </MenuItem>
-        {data?.state === ChecklistStates.PUBLISHED ||
-        data?.audit?.createdBy?.archived ? (
+        {data?.state === ChecklistStates.PUBLISHED || data?.audit?.createdBy?.archived ? (
           checkPermission(['checklists', 'archive']) ? (
             <ArchiveMenuItem />
           ) : null
@@ -539,9 +497,7 @@ const ChecklistHeader: FC = () => {
   const ViewSigningStateButton = () => (
     <Button1
       variant="secondary"
-      onClick={() =>
-        dispatch(openOverlayAction({ type: OverlayNames.SIGN_OFF_PROGRESS }))
-      }
+      onClick={() => dispatch(openOverlayAction({ type: OverlayNames.SIGN_OFF_PROGRESS }))}
     >
       View Signing Status
     </Button1>
@@ -550,9 +506,7 @@ const ChecklistHeader: FC = () => {
   const SignOffButton = () => (
     <Button1
       className="submit"
-      onClick={() =>
-        dispatch(openOverlayAction({ type: OverlayNames.PASSWORD_INPUT }))
-      }
+      onClick={() => dispatch(openOverlayAction({ type: OverlayNames.PASSWORD_INPUT }))}
     >
       Sign
     </Button1>
@@ -564,10 +518,7 @@ const ChecklistHeader: FC = () => {
         return (
           <>
             {isPrimaryAuthor && (
-              <AuthorSubmitButton
-                disabled={!listOrder.length}
-                title="Submit For Review"
-              />
+              <AuthorSubmitButton disabled={!listOrder.length} title="Submit For Review" />
             )}
           </>
         );
@@ -585,10 +536,7 @@ const ChecklistHeader: FC = () => {
           <>
             <ViewReviewersButton />
             {isPrimaryAuthor && (
-              <AuthorSubmitButton
-                disabled={!listOrder.length}
-                title="Submit For Review"
-              />
+              <AuthorSubmitButton disabled={!listOrder.length} title="Submit For Review" />
             )}
           </>
         );
@@ -597,9 +545,7 @@ const ChecklistHeader: FC = () => {
         return (
           <>
             <ViewReviewersButton />
-            {isPrimaryAuthor && (
-              <InitiateSignOffButton title="Initiate Sign Off " />
-            )}
+            {isPrimaryAuthor && <InitiateSignOffButton title="Initiate Sign Off " />}
           </>
         );
 
@@ -650,9 +596,7 @@ const ChecklistHeader: FC = () => {
             )}
             {/* Note: We check only against the first value of the array as currently we support a user being assigned a single role only*/}
             {((approver && data?.state !== ChecklistStates.PUBLISHED) ||
-              (!!(
-                profile?.roles?.[0].id === RoleIdByName.CHECKLIST_PUBLISHER
-              ) &&
+              (!!(profile?.roles?.[0].id === RoleIdByName.CHECKLIST_PUBLISHER) &&
                 data?.state === ChecklistStates.READY_FOR_RELEASE)) && (
               <>
                 <ViewReviewersButton />
@@ -688,11 +632,7 @@ const ChecklistHeader: FC = () => {
           (data?.state === ChecklistStates.BEING_BUILT ||
             data?.state === ChecklistStates.REQUESTED_CHANGES) && (
             <div className="prototype-add-buttons">
-              <Button1
-                variant="textOnly"
-                id="new-stage"
-                onClick={() => dispatch(addNewStage())}
-              >
+              <Button1 variant="textOnly" id="new-stage" onClick={() => dispatch(addNewStage())}>
                 <AddCircle className="icon" fontSize="small" />
                 Add a new Stage
               </Button1>

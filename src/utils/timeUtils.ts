@@ -8,8 +8,7 @@ export const formatDateTime = (time: number, format?: string) => {
     auth: { selectedFacility },
     facilityWiseConstants,
   } = store.getState();
-  const { dateAndTimeStampFormat } =
-    facilityWiseConstants[selectedFacility!.id];
+  const { dateAndTimeStampFormat } = facilityWiseConstants[selectedFacility!.id];
 
   return moment
     .unix(time)
@@ -60,14 +59,12 @@ export const formatDuration1 = ({
   unit,
   formatSettings = {},
 }: formatDurationArgs) =>
-  moment
-    .duration(duration, unit ?? 's')
-    .format(format, { ...formatSettings, trim: 'all' });
+  moment.duration(duration, unit ?? 's').format(format, { ...formatSettings, trim: 'all' });
 
 export const formatDateByInputType = (
   inputType: InputTypes,
   value: string | number,
-  format?: string
+  format?: string,
 ) => {
   const castedValue = typeof value === 'string' ? parseInt(value) : value;
   return inputType === InputTypes.DATE

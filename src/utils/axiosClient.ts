@@ -62,12 +62,8 @@ axiosInstance.interceptors.response.use(
         const {
           auth: { isLoggedIn },
         } = store.getState();
-        if (
-          isLoggedIn &&
-          Object.values(ErrorCodesToLogout).some((val) => val === code)
-        ) {
-          const msg =
-            typeof message === 'string' ? message : 'Oops! Please Try Again.';
+        if (isLoggedIn && Object.values(ErrorCodesToLogout).some((val) => val === code)) {
+          const msg = typeof message === 'string' ? message : 'Oops! Please Try Again.';
           store.dispatch(closeAllOverlayAction());
           store.dispatch(
             logoutSuccess({
@@ -78,10 +74,7 @@ axiosInstance.interceptors.response.use(
         } else {
           return response?.data;
         }
-      } else if (
-        originalReq.url !== REFRESH_TOKEN_URL &&
-        !originalReq?.isRetryAttempt
-      ) {
+      } else if (originalReq.url !== REFRESH_TOKEN_URL && !originalReq?.isRetryAttempt) {
         const {
           auth: { refreshToken, accessToken },
         } = store.getState();
@@ -110,9 +103,7 @@ axiosInstance.interceptors.response.use(
       const { config: originalReq } = error;
 
       if (!connected) {
-        if (
-          !isMatchAny(originalReq.url, EXCULDE_BY_REGEX_FOR_NO_INTERNET_TOAST)
-        ) {
+        if (!isMatchAny(originalReq.url, EXCULDE_BY_REGEX_FOR_NO_INTERNET_TOAST)) {
           store.dispatch(
             showNotification({
               type: NotificationType.ERROR,
@@ -136,8 +127,7 @@ axiosInstance.interceptors.response.use(
   },
 );
 
-export const removeAuthHeader = () =>
-  delete axiosInstance.defaults.headers.common['Authorization'];
+export const removeAuthHeader = () => delete axiosInstance.defaults.headers.common['Authorization'];
 
 export const setAuthHeader = (token: string) =>
   (axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`);

@@ -15,14 +15,7 @@ import {
   apiUpdateTaskMedia,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import {
-  call,
-  put,
-  select,
-  takeEvery,
-  takeLatest,
-  takeLeading,
-} from 'redux-saga/effects';
+import { call, put, select, takeEvery, takeLatest, takeLeading } from 'redux-saga/effects';
 import { updateMediaActivitySuccess } from '../../JobComposer/ActivityList/actions';
 
 import {
@@ -58,21 +51,15 @@ function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
     const activeStageTasksOrder = tasksOrderInStage[stageId];
 
     const newTaskOrderTree = activeStageTasksOrder.length
-      ? listById[activeStageTasksOrder[activeStageTasksOrder.length - 1]]
-          .orderTree + 1
+      ? listById[activeStageTasksOrder[activeStageTasksOrder.length - 1]].orderTree + 1
       : 1;
 
-    const { data, errors } = yield call(
-      request,
-      'POST',
-      apiCreateTask({ checklistId, stageId }),
-      {
-        data: {
-          name: '',
-          orderTree: newTaskOrderTree,
-        },
+    const { data, errors } = yield call(request, 'POST', apiCreateTask({ checklistId, stageId }), {
+      data: {
+        name: '',
+        orderTree: newTaskOrderTree,
       },
-    );
+    });
 
     if (data) {
       yield put(addNewTaskSuccess(data, stageId));
@@ -90,35 +77,21 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
       (state: RootState) => state.prototypeComposer.stages.activeStageId,
     );
 
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiDeleteTask(payload.taskId),
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiDeleteTask(payload.taskId));
 
     if (data) {
-      const {
-        listById,
-        tasksOrderInStage,
-      }: RootState['prototypeComposer']['tasks'] = yield select(
+      const { listById, tasksOrderInStage }: RootState['prototypeComposer']['tasks'] = yield select(
         (state: RootState) => state.prototypeComposer.tasks,
       );
 
-      const deletedTaskIndex = tasksOrderInStage[activeStageId].indexOf(
-        payload.taskId,
-      );
-      const tasksToReorder = tasksOrderInStage[activeStageId].slice(
-        deletedTaskIndex + 1,
-      );
+      const deletedTaskIndex = tasksOrderInStage[activeStageId].indexOf(payload.taskId);
+      const tasksToReorder = tasksOrderInStage[activeStageId].slice(deletedTaskIndex + 1);
 
       if (tasksToReorder.length) {
-        const reOrderMap = tasksToReorder.reduce<Record<string, number>>(
-          (acc, taskId) => {
-            acc[taskId] = listById[taskId].orderTree - 1;
-            return acc;
-          },
-          {},
-        );
+        const reOrderMap = tasksToReorder.reduce<Record<string, number>>((acc, taskId) => {
+          acc[taskId] = listById[taskId].orderTree - 1;
+          return acc;
+        }, {});
 
         const { data: reorderData, errors: reorderErrors } = yield call(
           request,
@@ -128,9 +101,7 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
         );
 
         if (reorderData) {
-          yield put(
-            deleteTaskSuccess(payload.taskId, activeStageId, reOrderMap),
-          );
+          yield put(deleteTaskSuccess(payload.taskId, activeStageId, reOrderMap));
         } else {
           console.log('error came in reorder api  :: ', reorderErrors);
           throw new Error(reorderErrors);
@@ -148,9 +119,7 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
 
 function* reOrderTaskSaga({ payload }: ReturnType<typeof reOrderTask>) {
   const { to: toIndex, id: fromTaskId, from: fromIndex, activeStageId } = payload;
-  const {
-    tasksOrderInStage,
-  }: RootState['prototypeComposer']['tasks'] = yield select(
+  const { tasksOrderInStage }: RootState['prototypeComposer']['tasks'] = yield select(
     (state: RootState) => state.prototypeComposer.tasks,
   );
 
@@ -197,11 +166,7 @@ function* removeStopSaga({ payload }: ReturnType<typeof addStop>) {
   try {
     const { taskId } = payload;
 
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiRemoveStop(taskId),
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiRemoveStop(taskId));
     if (data) {
       yield put(updateTask(data));
     } else {
@@ -216,12 +181,9 @@ function* updateTaskSaga({ payload }: ReturnType<typeof updateTaskName>) {
   try {
     const { task } = payload;
 
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiUpdateTask(task.id),
-      { data: { ...task } },
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiUpdateTask(task.id), {
+      data: { ...task },
+    });
 
     if (data) {
       yield put(updateTask(data));
@@ -237,12 +199,9 @@ function* setTaskTimerSaga({ payload }: ReturnType<typeof setTaskTimer>) {
   try {
     const { maxPeriod, minPeriod, taskId, timerOperator } = payload;
 
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiSetTaskTimer(taskId),
-      { data: { maxPeriod, minPeriod, timerOperator } },
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiSetTaskTimer(taskId), {
+      data: { maxPeriod, minPeriod, timerOperator },
+    });
 
     if (data) {
       yield put(updateTask(data));
@@ -258,11 +217,7 @@ function* removeTaskTimerSaga({ payload }: ReturnType<typeof removeTaskTimer>) {
   try {
     const { taskId } = payload;
 
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiRemoveTaskTimer(taskId),
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiRemoveTaskTimer(taskId));
 
     if (data) {
       yield put(closeOverlayAction(OverlayNames.TIMED_TASK_CONFIG));
@@ -279,12 +234,9 @@ function* addTaskMediaSaga({ payload }: ReturnType<typeof addTaskMedia>) {
   try {
     const { mediaDetails, taskId } = payload;
 
-    const { data, errors } = yield call(
-      request,
-      'POST',
-      apiAddMediaToTask(taskId),
-      { data: { ...mediaDetails } },
-    );
+    const { data, errors } = yield call(request, 'POST', apiAddMediaToTask(taskId), {
+      data: { ...mediaDetails },
+    });
 
     if (data) {
       yield put(updateTask(data));
@@ -301,12 +253,9 @@ function* updateTaskMediaSaga({ payload }: ReturnType<typeof updateTaskMedia>) {
   try {
     const { mediaDetails, taskId, activityId, mediaId } = payload;
 
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiUpdateTaskMedia(taskId, mediaId),
-      { data: { ...mediaDetails } },
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiUpdateTaskMedia(taskId, mediaId), {
+      data: { ...mediaDetails },
+    });
 
     //TODO carve out media related logi separately and remove dependency from task media
     if (data && taskId) {
@@ -327,11 +276,7 @@ function* removeTaskMediaSaga({ payload }: ReturnType<typeof removeTaskMedia>) {
   try {
     const { taskId, mediaId } = payload;
 
-    const { data, errors } = yield call(
-      request,
-      'DELETE',
-      apiRemoveTaskMedia({ taskId, mediaId }),
-    );
+    const { data, errors } = yield call(request, 'DELETE', apiRemoveTaskMedia({ taskId, mediaId }));
 
     if (data) {
       yield put(updateTask(data));

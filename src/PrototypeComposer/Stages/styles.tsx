@@ -126,13 +126,12 @@ const StageCardWrapper = styled.div.attrs({
       justify-content: flex-start;
       margin-top: 8px;
       margin-bottom: 8px;
-    
+
       .stage-error-icon {
         font-size: 16px;
         color: #eb5757;
         margin-right: 5px;
       }
-    
     }
 
     &-footer {

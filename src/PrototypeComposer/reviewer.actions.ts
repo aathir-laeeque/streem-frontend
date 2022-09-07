@@ -6,14 +6,10 @@ import { Collaborator, CommonReviewPayload } from './reviewer.types';
 import { IPublicClientApplication } from '@azure/msal-browser';
 
 // REVIEWER ASSIGNMENT
-export const fetchAssignedReviewersForChecklist = (
-  checklistId: Checklist['id'],
-) =>
+export const fetchAssignedReviewersForChecklist = (checklistId: Checklist['id']) =>
   actionSpreader(ComposerAction.FETCH_REVIEWERS_FOR_CHECKLIST, { checklistId });
 
-export const fetchAssignedReviewersForChecklistSuccess = (
-  data: Collaborator[],
-) =>
+export const fetchAssignedReviewersForChecklistSuccess = (data: Collaborator[]) =>
   actionSpreader(ComposerAction.FETCH_REVIEWERS_FOR_CHECKLIST_SUCCESS, {
     data,
   });
@@ -53,10 +49,7 @@ export const updateChecklistForReview = ({
 export const submitChecklistReview = (checklistId: Checklist['id']) =>
   actionSpreader(ComposerAction.SUBMIT_CHECKLIST_REVIEW, { checklistId });
 
-export const submitChecklistReviewWithCR = (
-  checklistId: Checklist['id'],
-  comments: string,
-) =>
+export const submitChecklistReviewWithCR = (checklistId: Checklist['id'], comments: string) =>
   actionSpreader(ComposerAction.SUBMIT_CHECKLIST_REVIEW_WITH_CR, {
     checklistId,
     comments,
@@ -81,13 +74,11 @@ export const fetchApproversSuccess = (data: Collaborator[]) =>
 export const signOffPrototype = (
   checklistId: Checklist['id'],
   password: string,
-  instance?: IPublicClientApplication
-) =>
-  actionSpreader(ComposerAction.SIGN_OFF_PROTOTYPE, { checklistId, password, instance });
+  instance?: IPublicClientApplication,
+) => actionSpreader(ComposerAction.SIGN_OFF_PROTOTYPE, { checklistId, password, instance });
 
 export const releasePrototype = (
   checklistId: Checklist['id'],
   password: string,
-  instance?: IPublicClientApplication
-) =>
-  actionSpreader(ComposerAction.RELEASE_PROTOTYPE, { checklistId, password, instance });
+  instance?: IPublicClientApplication,
+) => actionSpreader(ComposerAction.RELEASE_PROTOTYPE, { checklistId, password, instance });

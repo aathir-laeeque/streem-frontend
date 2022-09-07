@@ -2,15 +2,9 @@ import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { CollaboratorState, Collaborator } from './reviewer.types';
 
-export type ChecklistProperty = Pick<
-  Property,
-  'id' | 'name' | 'value' | 'label'
->;
+export type ChecklistProperty = Pick<Property, 'id' | 'name' | 'value' | 'label'>;
 
-export type Employee = Pick<
-  User,
-  'id' | 'employeeId' | 'firstName' | 'lastName' | 'archived'
->;
+export type Employee = Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName' | 'archived'>;
 
 export type Audit = {
   createdAt: string;
@@ -91,14 +85,7 @@ export type TaskExecution = {
   state: TaskExecutionState;
   assignees: Pick<
     User,
-    | 'id'
-    | 'employeeId'
-    | 'firstName'
-    | 'lastName'
-    | 'email'
-    | 'username'
-    | 'archived'
-    | 'verified'
+    'id' | 'employeeId' | 'firstName' | 'lastName' | 'email' | 'username' | 'archived' | 'verified'
   >[];
 };
 

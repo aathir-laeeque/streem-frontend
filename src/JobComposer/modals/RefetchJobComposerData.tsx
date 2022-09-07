@@ -1,10 +1,7 @@
 import { BaseModal } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Entity } from '#JobComposer/composer.types';
-import {
-  startPollActiveStageData,
-  stopPollActiveStageData,
-} from '#JobComposer/StageList/actions';
+import { startPollActiveStageData, stopPollActiveStageData } from '#JobComposer/StageList/actions';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -45,11 +42,7 @@ const RefetchJobComposerData: FC<
     jobId: string;
     errorType: RefetchJobErrorType;
   }>
-> = ({
-  closeOverlay,
-  closeAllOverlays,
-  props: { modalTitle, jobId, errorType },
-}) => {
+> = ({ closeOverlay, closeAllOverlays, props: { modalTitle, jobId, errorType } }) => {
   const dispatch = useDispatch();
 
   return (
@@ -65,16 +58,14 @@ const RefetchJobComposerData: FC<
         onPrimary={() => {
           dispatch(resetComposer());
           dispatch(stopPollActiveStageData());
-          dispatch(
-            fetchData({ id: jobId, entity: Entity.JOB, setActive: true }),
-          );
+          dispatch(fetchData({ id: jobId, entity: Entity.JOB, setActive: true }));
           dispatch(startPollActiveStageData({ jobId }));
           closeOverlay();
         }}
       >
         <div>
-          Some actions were already performed on this {errorType.toLowerCase()}.
-          Please refresh the job to see the changes.
+          Some actions were already performed on this {errorType.toLowerCase()}. Please refresh the
+          job to see the changes.
         </div>
       </BaseModal>
     </Wrapper>

@@ -25,10 +25,7 @@ import {
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { UserAccessAction } from './types';
 import { fetchSelectedUserSuccess } from '#store/users/actions';
-import {
-  closeOverlayAction,
-  openOverlayAction,
-} from '#components/OverlayContainer/actions';
+import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { encrypt } from '#utils/stringUtils';
 import { UserType } from './ManageUser/types';
@@ -36,11 +33,7 @@ import { UserType } from './ManageUser/types';
 function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
   try {
     const { id } = payload;
-    const { data, errors }: ResponseObj<User> = yield call(
-      request,
-      'PATCH',
-      apiResendInvite(id),
-    );
+    const { data, errors }: ResponseObj<User> = yield call(request, 'PATCH', apiResendInvite(id));
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -66,11 +59,7 @@ function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
 function* cancelInviteSaga({ payload }: ReturnType<typeof cancelInvite>) {
   try {
     const { id, fetchData } = payload;
-    const { data, errors }: ResponseObj<User> = yield call(
-      request,
-      'PATCH',
-      apiCancelInvite(id),
-    );
+    const { data, errors }: ResponseObj<User> = yield call(request, 'PATCH', apiCancelInvite(id));
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -97,11 +86,7 @@ function* cancelInviteSaga({ payload }: ReturnType<typeof cancelInvite>) {
 function* archiveUserSaga({ payload }: ReturnType<typeof archiveUser>) {
   try {
     const { id, fetchData } = payload;
-    const { data, errors }: ResponseObj<User> = yield call(
-      request,
-      'PATCH',
-      apiArchiveUser(id),
-    );
+    const { data, errors }: ResponseObj<User> = yield call(request, 'PATCH', apiArchiveUser(id));
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -126,11 +111,7 @@ function* archiveUserSaga({ payload }: ReturnType<typeof archiveUser>) {
 function* unArchiveUserSaga({ payload }: ReturnType<typeof unArchiveUser>) {
   try {
     const { id, fetchData } = payload;
-    const { data, errors }: ResponseObj<User> = yield call(
-      request,
-      'PATCH',
-      apiUnArchiveUser(id),
-    );
+    const { data, errors }: ResponseObj<User> = yield call(request, 'PATCH', apiUnArchiveUser(id));
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -155,11 +136,7 @@ function* unArchiveUserSaga({ payload }: ReturnType<typeof unArchiveUser>) {
 function* unLockUserSaga({ payload }: ReturnType<typeof unLockUser>) {
   try {
     const { id, fetchData } = payload;
-    const { data, errors }: ResponseObj<User> = yield call(
-      request,
-      'PATCH',
-      apiUnLockUser(id),
-    );
+    const { data, errors }: ResponseObj<User> = yield call(request, 'PATCH', apiUnLockUser(id));
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -202,8 +179,7 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
       'Invitation with Secret Key to register has been sent to the Employee’s Email ID.';
     if (!data.email || payload.userType === UserType.AZURE_AD) {
       heading = 'User Added';
-      subHeading =
-        'User will need to register themselves using the Secret Key shown below.';
+      subHeading = 'User will need to register themselves using the Secret Key shown below.';
     }
     yield put(
       openOverlayAction({
@@ -221,9 +197,7 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
   }
 }
 
-function* validateCredentialsSaga({
-  payload,
-}: ReturnType<typeof validateCredentials>) {
+function* validateCredentialsSaga({ payload }: ReturnType<typeof validateCredentials>) {
   try {
     const { onSuccess, password, purpose } = payload;
     const { data, errors }: ResponseObj<{ token: string }> = yield call(
@@ -253,8 +227,5 @@ export function* UserAccessSaga() {
   yield takeLatest(UserAccessAction.UNARCHIVE_USER, unArchiveUserSaga);
   yield takeLatest(UserAccessAction.UNLOCK_USER, unLockUserSaga);
   yield takeLatest(UserAccessAction.ADD_USER, addUserSaga);
-  yield takeLatest(
-    UserAccessAction.VALIDATE_CREDENTIALS,
-    validateCredentialsSaga,
-  );
+  yield takeLatest(UserAccessAction.VALIDATE_CREDENTIALS, validateCredentialsSaga);
 }

@@ -1,18 +1,11 @@
-import {
-  FacilitiesAction,
-  FacilitiesActionType,
-  FacilitiesState,
-} from './types';
+import { FacilitiesAction, FacilitiesActionType, FacilitiesState } from './types';
 
 const initialState: FacilitiesState = {
   list: undefined,
   loading: false,
 };
 
-const reducer = (
-  state = initialState,
-  action: FacilitiesActionType,
-): FacilitiesState => {
+const reducer = (state = initialState, action: FacilitiesActionType): FacilitiesState => {
   switch (action.type) {
     case FacilitiesAction.FETCH_FACILITIES_ONGOING:
       return { ...state, loading: true };

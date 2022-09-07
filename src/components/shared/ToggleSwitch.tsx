@@ -50,9 +50,7 @@ const ToggleSwitch: FC<Props> = ({
       <Switch
         activeBoxShadow=""
         checked={value}
-        checkedIcon={
-          typeof checkedIcon === 'undefined' ? undefined : checkedIcon
-        }
+        checkedIcon={typeof checkedIcon === 'undefined' ? undefined : checkedIcon}
         handleDiameter={height - 6}
         height={height}
         offColor={offColor}

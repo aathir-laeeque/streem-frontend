@@ -69,10 +69,7 @@ type AutoCompletePropType = {
   getOptionLabel?: (option: any) => string;
   getOptionSelected?: (option: any, value: any) => boolean;
   onChange?: (data: any) => void;
-  renderOption: (
-    option: any,
-    state: AutocompleteRenderOptionState,
-  ) => React.ReactNode;
+  renderOption: (option: any, state: AutocompleteRenderOptionState) => React.ReactNode;
   loading?: boolean;
   optional?: boolean;
 };
@@ -110,7 +107,7 @@ export function AutoComplete({
   getOptionLabel,
   getOptionSelected,
   renderOption,
-  onChange
+  onChange,
 }: AutoCompletePropType) {
   const [open, setOpen] = useState(false);
 
@@ -121,10 +118,7 @@ export function AutoComplete({
   const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
     e.stopPropagation();
     const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-    if (
-      scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 &&
-      !lastPage
-    ) {
+    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 && !lastPage) {
       fetchData({
         page: currentPage + 1,
         query: '',
@@ -143,9 +137,7 @@ export function AutoComplete({
             {label ? (
               <label className="input-label">
                 {label}
-                {optional ? (
-                  <span className="optional-badge">Optional</span>
-                ) : null}
+                {optional ? <span className="optional-badge">Optional</span> : null}
               </label>
             ) : null}
             <Autocomplete

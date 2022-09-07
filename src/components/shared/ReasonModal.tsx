@@ -72,10 +72,7 @@ const Wrapper = styled.div`
 `;
 
 type Props = {
-  onSumbitHandler: (
-    reason: string,
-    setFormErrors: (errors?: Error[]) => void,
-  ) => void;
+  onSumbitHandler: (reason: string, setFormErrors: (errors?: Error[]) => void) => void;
   modalTitle?: string;
   onSubmitModalText?: string;
   modalDesc?: string;
@@ -148,11 +145,7 @@ const ReasonModal = (props: CommonOverlayProps<Props>) => {
           <Button1 variant="secondary" onClick={() => closeOverlay()}>
             Cancel
           </Button1>
-          <Button1
-            color="red"
-            onClick={onSubmitModal}
-            disabled={reasonTextIsEmpty}
-          >
+          <Button1 color="red" onClick={onSubmitModal} disabled={reasonTextIsEmpty}>
             {onSubmitModalText ? onSubmitModalText : 'Submit'}
           </Button1>
         </div>

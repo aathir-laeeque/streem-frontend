@@ -1,8 +1,4 @@
-import {
-  ArrowDropDown,
-  ArrowDropUp,
-  SvgIconComponent,
-} from '@material-ui/icons';
+import { ArrowDropDown, ArrowDropUp, SvgIconComponent } from '@material-ui/icons';
 import { noop } from 'lodash';
 import React, { ComponentPropsWithRef, FC, useState, useRef } from 'react';
 import styled from 'styled-components';
@@ -142,9 +138,7 @@ const Select: FC<SelectProps> = (props) => {
   } = props;
 
   const [isOpen, toggleOpen] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState<Option | undefined>(
-    selectedValue,
-  );
+  const [selectedOption, setSelectedOption] = useState<Option | undefined>(selectedValue);
   const wrapperRef = useRef(null);
 
   const onOutSideClick = () => {
@@ -172,29 +166,19 @@ const Select: FC<SelectProps> = (props) => {
       >
         {SelectButtonIcon ? (
           <SelectButtonIcon
-            className={`icon ${
-              selectButtonIconClass ? selectButtonIconClass : ''
-            }`}
+            className={`icon ${selectButtonIconClass ? selectButtonIconClass : ''}`}
             id="select-button-icon"
           />
         ) : null}
 
-        <span
-          className={selectedOption ? 'selected-label' : 'placeholder-text'}
-        >
+        <span className={selectedOption ? 'selected-label' : 'placeholder-text'}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
 
-        {isOpen ? (
-          <ArrowDropUp className="icon" />
-        ) : (
-          <ArrowDropDown className="icon" />
-        )}
+        {isOpen ? <ArrowDropUp className="icon" /> : <ArrowDropDown className="icon" />}
       </div>
 
-      {typeof error === 'string' && !!error ? (
-        <span className="field-error">{error}</span>
-      ) : null}
+      {typeof error === 'string' && !!error ? <span className="field-error">{error}</span> : null}
 
       {isOpen ? (
         <div className="option-list" onScroll={handleOnScroll}>
@@ -216,9 +200,7 @@ const Select: FC<SelectProps> = (props) => {
             >
               {OptionsItemBeforeIcon ? (
                 <OptionsItemBeforeIcon
-                  className={`icon ${
-                    optionsItemBeforeIconClass ? optionsItemBeforeIconClass : ''
-                  }`}
+                  className={`icon ${optionsItemBeforeIconClass ? optionsItemBeforeIconClass : ''}`}
                   id="option-list-item-before-icon"
                 />
               ) : null}
@@ -227,9 +209,7 @@ const Select: FC<SelectProps> = (props) => {
 
               {OptionsItemAfterIcon ? (
                 <OptionsItemAfterIcon
-                  className={`icon ${
-                    optionsItemAfterIconClass ? optionsItemAfterIconClass : ''
-                  }`}
+                  className={`icon ${optionsItemAfterIconClass ? optionsItemAfterIconClass : ''}`}
                   id="option-list-item-after-icon"
                 />
               ) : null}

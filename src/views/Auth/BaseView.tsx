@@ -160,19 +160,11 @@ function BaseView<T = Record<string, unknown>>({ pageName }: BaseViewProps) {
   const [state, setState] = useState<{
     questions?: Option[];
   }>();
-  const {
-    register,
-    handleSubmit,
-    formState,
-    getValues,
-    trigger,
-    setValue,
-    setError,
-    clearErrors,
-  } = useForm<T>({
-    mode: 'onChange',
-    criteriaMode: 'all',
-  });
+  const { register, handleSubmit, formState, getValues, trigger, setValue, setError, clearErrors } =
+    useForm<T>({
+      mode: 'onChange',
+      criteriaMode: 'all',
+    });
 
   const config = createBaseViewConfig({
     loading,
@@ -192,10 +184,7 @@ function BaseView<T = Record<string, unknown>>({ pageName }: BaseViewProps) {
       dispatch(cleanUp());
     }
     trigger();
-    if (
-      pageName === PAGE_NAMES.REGISTER_RECOVERY ||
-      pageName === PAGE_NAMES.FORGOT_QUESTIONS
-    ) {
+    if (pageName === PAGE_NAMES.REGISTER_RECOVERY || pageName === PAGE_NAMES.FORGOT_QUESTIONS) {
       const fetchQuestions = async () => {
         try {
           const { data }: ResponseObj<ChallengeQuestion[]> = await request(
@@ -226,9 +215,7 @@ function BaseView<T = Record<string, unknown>>({ pageName }: BaseViewProps) {
         <Logo className="logo" />
         <div className="logo-caption">Orchestration Platform for Pharma</div>
         <div className="header-wrapper">
-          {config.headingIcon && (
-            <div className="heading-icon">{config.headingIcon}</div>
-          )}
+          {config.headingIcon && <div className="heading-icon">{config.headingIcon}</div>}
           {config.heading && <div className="heading">{config.heading}</div>}
         </div>
         <div className="sub-heading">{config.subHeading}</div>
@@ -251,9 +238,7 @@ function BaseView<T = Record<string, unknown>>({ pageName }: BaseViewProps) {
             {config.formData.buttons.map((Button) => Button)}
           </form>
         )}
-        {config.footerAction && (
-          <div className="footer-action">{config.footerAction}</div>
-        )}
+        {config.footerAction && <div className="footer-action">{config.footerAction}</div>}
       </div>
     </Wrapper>
   );

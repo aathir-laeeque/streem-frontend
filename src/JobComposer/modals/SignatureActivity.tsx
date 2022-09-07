@@ -118,10 +118,7 @@ const SignatureModal: FC<CommonOverlayProps<SignatureModalProps>> = ({
           >
             Cancel
           </FlatButton>
-          <Button
-            style={{ marginRight: 0, fontWeight: 600 }}
-            onClick={onSuccess}
-          >
+          <Button style={{ marginRight: 0, fontWeight: 600 }} onClick={onSuccess}>
             Accept Signature
           </Button>
         </div>

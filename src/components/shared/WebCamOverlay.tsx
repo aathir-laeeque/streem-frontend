@@ -65,9 +65,7 @@ const WebCamOverlay: FC<
         showHeader={false}
       >
         {loading && !error && <span>Loading...</span>}
-        {!loading && error && (
-          <span>There seems to be an issue. Please Try Again..</span>
-        )}
+        {!loading && error && <span>There seems to be an issue. Please Try Again..</span>}
         <Webcam
           height={'100%'}
           screenshotFormat="image/jpeg"

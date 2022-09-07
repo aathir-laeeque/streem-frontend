@@ -1,4 +1,11 @@
-import { AutomationAction, AutomationActionActionTypeVisual, AutomationActionTriggerTypeVisual, Stage, Task, TaskExecutionState } from '../checklist.types';
+import {
+  AutomationAction,
+  AutomationActionActionTypeVisual,
+  AutomationActionTriggerTypeVisual,
+  Stage,
+  Task,
+  TaskExecutionState,
+} from '../checklist.types';
 import { TasksById, TasksOrderInStage } from './types';
 
 type ReEvaluateTaskWithStopType = {

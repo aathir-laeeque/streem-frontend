@@ -19,9 +19,7 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
     }
   }, [activity]);
 
-  const activityErrors = activity.errors.filter(
-    (error) => error.code in YesNoActivityErrors,
-  );
+  const activityErrors = activity.errors.filter((error) => error.code in YesNoActivityErrors);
 
   const isErrorPresent = !!activityErrors.length;
 
@@ -56,23 +54,14 @@ const YesNoActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
               defaultValue={item.name}
               error={
                 isErrorPresent && !item.name
-                  ? activityErrors.find((error) => error.code === 'E407')
-                      ?.message
+                  ? activityErrors.find((error) => error.code === 'E407')?.message
                   : null
               }
               key={index}
-              label={
-                item.type === 'yes' ? 'Positive Response' : 'Negative Response'
-              }
+              label={item.type === 'yes' ? 'Positive Response' : 'Negative Response'}
               name={item.type}
               customOnChange={(value) => {
-                dispatch(
-                  updateStoreActivity(value, activity.id, [
-                    'data',
-                    index,
-                    'name',
-                  ]),
-                );
+                dispatch(updateStoreActivity(value, activity.id, ['data', index, 'name']));
               }}
             />
           ))}

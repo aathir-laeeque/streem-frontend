@@ -104,10 +104,7 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
     setState((prevState) => ({ ...prevState, loading: true }));
     (async () => {
       try {
-        const { data, errors } = await request(
-          'GET',
-          apiGetJobCweDetails(jobId),
-        );
+        const { data, errors } = await request('GET', apiGetJobCweDetails(jobId));
 
         if (data) {
           setState({ loading: false, data });
@@ -120,9 +117,7 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
     })();
   }, []);
 
-  const reason = ExceptionReason.find(
-    (reason) => reason.value === state.data?.reason,
-  );
+  const reason = ExceptionReason.find((reason) => reason.value === state.data?.reason);
 
   return (
     <Wrapper>
@@ -159,10 +154,7 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
               {state.data?.medias?.map((media, index) => (
                 <li key={index} className="item">
                   <div>{media.filename}</div>
-                  <div
-                    className="download"
-                    onClick={() => window.open(media.link, '_blank')}
-                  >
+                  <div className="download" onClick={() => window.open(media.link, '_blank')}>
                     <GetAppOutlined className="icon" />
                     Download
                   </div>

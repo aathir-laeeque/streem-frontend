@@ -8,5 +8,4 @@ type getUserNameArgs = {
 export const getUserName = ({
   user: { firstName, lastName, employeeId },
   withEmployeeId = false,
-}: getUserNameArgs) =>
-  `${firstName} ${lastName}${withEmployeeId ? ` ID: ${employeeId}` : ''}`;
+}: getUserNameArgs) => `${firstName} ${lastName}${withEmployeeId ? ` ID: ${employeeId}` : ''}`;

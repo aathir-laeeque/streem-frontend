@@ -36,14 +36,12 @@ const Wrapper = styled.div`
   }
 `;
 
-const CompleteTaskWithExceptionModal: FC<CommonOverlayProps<{
-  taskId: Task['id'];
-  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
-}>> = ({
-  closeAllOverlays,
-  closeOverlay,
-  props: { taskId, setLoadingState },
-}) => {
+const CompleteTaskWithExceptionModal: FC<
+  CommonOverlayProps<{
+    taskId: Task['id'];
+    setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
+  }>
+> = ({ closeAllOverlays, closeOverlay, props: { taskId, setLoadingState } }) => {
   const dispatch = useDispatch();
 
   const [exceptionReason, setExceptionReason] = useState('');
@@ -56,7 +54,7 @@ const CompleteTaskWithExceptionModal: FC<CommonOverlayProps<{
         onPrimary={() => {
           setLoadingState(true);
           dispatch(
-            completeTask({taskId, setLoadingState, reason: exceptionReason, withException: true}),
+            completeTask({ taskId, setLoadingState, reason: exceptionReason, withException: true }),
           );
           closeOverlay();
         }}
@@ -66,9 +64,7 @@ const CompleteTaskWithExceptionModal: FC<CommonOverlayProps<{
         title="Complete with Exception"
       >
         <div className="new-form-field">
-          <label className="new-form-field-label">
-            Provide the details for Exception
-          </label>
+          <label className="new-form-field-label">Provide the details for Exception</label>
           <textarea
             className="new-form-field-textarea"
             value={exceptionReason}

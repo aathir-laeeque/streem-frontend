@@ -52,10 +52,7 @@ const ErrorBoundary: FC = ({ children }) => {
         <ErrorFallbackIcon className="icon error-fallback" />
         <h3>Oops! Looks like page did not load properly</h3>
         <h6>You can reload the page by clicking the button below</h6>
-        <Button1
-          className="reload"
-          onClick={() => dispatch(setGlobalError(false))}
-        >
+        <Button1 className="reload" onClick={() => dispatch(setGlobalError(false))}>
           Reload Page
         </Button1>
       </Wrapper>

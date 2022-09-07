@@ -97,66 +97,64 @@ const Wrapper = styled.div.attrs(({ className }) => ({
 `;
 
 // NOTE: THIS IS A TEXTAREA ONLY. DONT CHANGE TEXTAREA TO ANY THING ELSE.
-const ActivityItemInput = forwardRef<HTMLTextAreaElement, Props>(
-  (props, ref) => {
-    const {
-      Icon,
-      customOnChange,
-      defaultValue = '',
-      disabled = false,
-      error,
-      label,
-      name,
-      optional = false,
-      placeholder = 'Write here',
-      rows = 1,
-      AfterElement = Error,
-      afterElementClass = 'error',
-    } = props;
+const ActivityItemInput = forwardRef<HTMLTextAreaElement, Props>((props, ref) => {
+  const {
+    Icon,
+    customOnChange,
+    defaultValue = '',
+    disabled = false,
+    error,
+    label,
+    name,
+    optional = false,
+    placeholder = 'Write here',
+    rows = 1,
+    AfterElement = Error,
+    afterElementClass = 'error',
+  } = props;
 
-    return (
-      <Wrapper hasError={!!error}>
-        {label ? (
-          <label className="input-label">
-            {label}
-            {optional ? <span className="optional-badge">Optional</span> : null}
-          </label>
-        ) : null}
+  return (
+    <Wrapper hasError={!!error}>
+      {label ? (
+        <label className="input-label">
+          {label}
+          {optional ? <span className="optional-badge">Optional</span> : null}
+        </label>
+      ) : null}
 
-        <div className="input-wrapper">
-          {Icon ? <Icon className="icon activity-input-item" /> : null}
+      <div className="input-wrapper">
+        {Icon ? <Icon className="icon activity-input-item" /> : null}
 
-          <Textarea
-            activityItemInput
-            defaultValue={defaultValue}
-            disabled={disabled}
-            name={name}
-            onChange={debounce(({ value }) => {
-              customOnChange(value as string);
-            }, 500)}
-            placeholder={placeholder}
-            ref={ref}
-            rows={rows}
+        <Textarea
+          activityItemInput
+          defaultValue={defaultValue}
+          disabled={disabled}
+          name={name}
+          onChange={debounce(({ value }) => {
+            customOnChange(value as string);
+          }, 500)}
+          placeholder={placeholder}
+          ref={ref}
+          rows={rows}
+        />
+
+        {AfterElement && error ? (
+          <AfterElement
+            className={`icon ${afterElementClass ? afterElementClass : ''}`}
+            id="after-icon"
           />
-
-          {AfterElement && error ? (
-            <AfterElement
-              className={`icon ${afterElementClass ? afterElementClass : ''}`}
-              id="after-icon"
-            />
-          ) : null}
-        </div>
-
-        {typeof error === 'string' && !!error ? (
-          <span className="field-error">
-            <Error className="icon error" />
-            {error}
-          </span>
         ) : null}
-      </Wrapper>
-    );
-  },
-);
+      </div>
+
+      {typeof error === 'string' && !!error ? (
+        <span className="field-error">
+          <Error className="icon error" />
+          {error}
+        </span>
+      ) : null}
+    </Wrapper>
+  );
+});
 
 ActivityItemInput.displayName = 'activity-item-input';
 

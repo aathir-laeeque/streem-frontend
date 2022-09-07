@@ -4,10 +4,7 @@ import React, { FC, MouseEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 
-import {
-  closeOverlayAction,
-  openOverlayAction,
-} from '../OverlayContainer/actions';
+import { closeOverlayAction, openOverlayAction } from '../OverlayContainer/actions';
 import { OverlayNames } from '../OverlayContainer/types';
 
 type User = Pick<UserType, 'id' | 'firstName' | 'lastName' | 'employeeId'>;
@@ -30,8 +27,7 @@ const Wrapper = styled.div.attrs({
   background-color: ${({ backgroundColor }) => `${backgroundColor}`};
   border: 1px solid ${({ borderColor }) => `${borderColor}`};
   border-radius: 50%;
-  color: ${({ color = 'default' }) =>
-    color === 'default' ? '#333333' : '#1d84ff'};
+  color: ${({ color = 'default' }) => (color === 'default' ? '#333333' : '#1d84ff')};
   display: flex;
   justify-content: center;
 

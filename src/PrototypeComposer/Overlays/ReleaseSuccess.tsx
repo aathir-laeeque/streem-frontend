@@ -31,10 +31,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const ReleaseSuccessModal: FC<CommonOverlayProps<any>> = ({
-  closeAllOverlays,
-  closeOverlay,
-}) => {
+const ReleaseSuccessModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, closeOverlay }) => {
   return (
     <Wrapper>
       <BaseModal

@@ -252,25 +252,12 @@ const Wrapper = styled.div`
 
 type Author = Pick<
   Collaborator,
-  | 'modifiedAt'
-  | 'email'
-  | 'employeeId'
-  | 'firstName'
-  | 'lastName'
-  | 'id'
-  | 'state'
-  | 'type'
+  'modifiedAt' | 'email' | 'employeeId' | 'firstName' | 'lastName' | 'id' | 'state' | 'type'
 > & { orderTree: number };
 
 type SignOffUser = Pick<
   Author,
-  | 'id'
-  | 'employeeId'
-  | 'email'
-  | 'firstName'
-  | 'lastName'
-  | 'orderTree'
-  | 'state'
+  'id' | 'employeeId' | 'email' | 'firstName' | 'lastName' | 'orderTree' | 'state'
 > & { signedAt: number };
 
 type Version = Pick<Checklist, 'id' | 'code' | 'name' | 'versionNumber'> & {
@@ -280,10 +267,7 @@ type Version = Pick<Checklist, 'id' | 'code' | 'name' | 'versionNumber'> & {
 type Audit = {
   createdAt: number;
   modifiedAt: number;
-  modifiedBy: Pick<
-    Collaborator,
-    'id' | 'employeeId' | 'firstName' | 'lastName'
-  >;
+  modifiedBy: Pick<Collaborator, 'id' | 'employeeId' | 'firstName' | 'lastName'>;
   createdBy: Pick<Collaborator, 'id' | 'employeeId' | 'firstName' | 'lastName'>;
 };
 
@@ -295,10 +279,7 @@ type ChecklistInfo = Pick<
   signOff: SignOffUser[];
   release: {
     releaseAt: number;
-    releaseBy: Pick<
-      Collaborator,
-      'id' | 'firstName' | 'lastName' | 'employeeId'
-    >;
+    releaseBy: Pick<Collaborator, 'id' | 'firstName' | 'lastName' | 'employeeId'>;
   };
   versions: Version[];
   audit: Audit;
@@ -322,10 +303,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
   useEffect(() => {
     if (checklistId) {
       (async () => {
-        const { data, errors } = await request(
-          'GET',
-          apiGetChecklistInfo(checklistId),
-        );
+        const { data, errors } = await request('GET', apiGetChecklistInfo(checklistId));
 
         if (data) {
           setState(data);
@@ -366,12 +344,8 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                     <div className="owner">
                       <Avatar user={primaryAuthor as Author} />
                       <div className="owner-details">
-                        <div className="owner-id">
-                          {primaryAuthor?.employeeId}
-                        </div>
-                        <div className="owner-name">
-                          {getFullName(primaryAuthor)}
-                        </div>
+                        <div className="owner-id">{primaryAuthor?.employeeId}</div>
+                        <div className="owner-name">{getFullName(primaryAuthor)}</div>
                       </div>
                     </div>
                   </div>
@@ -388,10 +362,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                   <div className="column">
                     <label className="column-label">Creation Date</label>
                     <div className="creation-date">
-                      {formatDateTime(
-                        state?.audit?.createdAt,
-                        dateAndTimeStampFormat,
-                      )}
+                      {formatDateTime(state?.audit?.createdAt, dateAndTimeStampFormat)}
                     </div>
                   </div>
                 </div>
@@ -455,8 +426,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
 
                     {state.signOff.map((user) => (
                       <div className="date" key={user.employeeId}>
-                        {user.signedAt &&
-                          formatDateTime(user.signedAt, dateAndTimeStampFormat)}
+                        {user.signedAt && formatDateTime(user.signedAt, dateAndTimeStampFormat)}
                       </div>
                     ))}
                   </div>
@@ -475,12 +445,8 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                     <div className="owner">
                       <Avatar user={state.release.releaseBy} />
                       <div className="owner-details">
-                        <div className="owner-id">
-                          {state.release.releaseBy.employeeId}
-                        </div>
-                        <div className="owner-name">
-                          {getFullName(state.release.releaseBy)}
-                        </div>
+                        <div className="owner-id">{state.release.releaseBy.employeeId}</div>
+                        <div className="owner-name">{getFullName(state.release.releaseBy)}</div>
                       </div>
                     </div>
                   </div>
@@ -494,10 +460,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                     <label className="column-label">Date</label>
 
                     <div className="date">
-                      {formatDateTime(
-                        state.release.releaseAt,
-                        dateAndTimeStampFormat,
-                      )}
+                      {formatDateTime(state.release.releaseAt, dateAndTimeStampFormat)}
                     </div>
                   </div>
                 </div>
@@ -542,10 +505,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                     {state.versions.map((version, index) => (
                       <div key={index}>
                         {version.deprecatedAt
-                          ? formatDateTime(
-                              version.deprecatedAt,
-                              dateAndTimeStampFormat,
-                            )
+                          ? formatDateTime(version.deprecatedAt, dateAndTimeStampFormat)
                           : 'Current'}
                       </div>
                     ))}

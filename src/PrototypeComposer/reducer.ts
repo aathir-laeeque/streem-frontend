@@ -1,25 +1,12 @@
 import { unionBy } from 'lodash';
 import { Reducer } from 'redux';
 
-import {
-  activityReducer,
-  initialState as ActivityListState,
-} from './Activity/reducer';
+import { activityReducer, initialState as ActivityListState } from './Activity/reducer';
 import { Checklist } from './checklist.types';
-import {
-  ComposerAction,
-  ComposerActionType,
-  ComposerState,
-} from './reducer.types';
+import { ComposerAction, ComposerActionType, ComposerState } from './reducer.types';
 import { CollaboratorState } from './reviewer.types';
-import {
-  initialState as StageListInitialState,
-  stageReducer,
-} from './Stages/reducer';
-import {
-  initialState as TaskListInitialState,
-  taskReducer,
-} from './Tasks/reducer';
+import { initialState as StageListInitialState, stageReducer } from './Stages/reducer';
+import { initialState as TaskListInitialState, taskReducer } from './Tasks/reducer';
 import {
   initialState as auditLogsState,
   checklistAuditLogsReducer,
@@ -42,10 +29,7 @@ const initialState: ComposerState = {
  * TODO: optimize the reducer for rendering process and eassy access of the tasks in the stages and activities in tasks
  * ? mabe look into splitting the reducer to smaller parts
  */
-const reducer: Reducer<ComposerState, ComposerActionType> = (
-  state = initialState,
-  action,
-) => {
+const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialState, action) => {
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_ONGOING:
       return {
@@ -98,9 +82,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (
     case ComposerAction.UNASSIGN_REVIEWER_FROM_CHECKLIST:
       return {
         ...state,
-        collaborators: state.collaborators.filter(
-          (item) => item.id !== action.payload.user.id,
-        ),
+        collaborators: state.collaborators.filter((item) => item.id !== action.payload.user.id),
       };
 
     case ComposerAction.UPDATE_FOR_REVIEW_PROCESS:

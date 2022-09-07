@@ -24,13 +24,7 @@ import {
 import { modalBody } from '../ListView/TabContent';
 import { createSectionConfig, Toggleables } from './helpers';
 import { Composer } from './styles';
-import {
-  EditUserProps,
-  EditUserRequestInputs,
-  PAGE_TYPE,
-  TogglesState,
-  UserType,
-} from './types';
+import { EditUserProps, EditUserRequestInputs, PAGE_TYPE, TogglesState, UserType } from './types';
 
 const ManageUser: FC<EditUserProps> = ({
   user: selectedUser,
@@ -89,9 +83,7 @@ const ManageUser: FC<EditUserProps> = ({
       roles: [{ id: data.roles }],
     };
     if (selectedUser?.id && data.facilities) {
-      Object.keys(data).forEach(
-        (key) => data[key] === undefined && delete data[key],
-      );
+      Object.keys(data).forEach((key) => data[key] === undefined && delete data[key]);
       reset({
         ...(selectedUser as unknown as EditUserRequestInputs),
         ...data,
@@ -216,28 +208,19 @@ const ManageUser: FC<EditUserProps> = ({
   };
 
   const ArchiveButton = () => (
-    <Button1
-      className="primary-button"
-      onClick={() => onArchiveUser(selectedUser)}
-    >
+    <Button1 className="primary-button" onClick={() => onArchiveUser(selectedUser)}>
       Archive
     </Button1>
   );
 
   const UnArchiveButton = () => (
-    <Button1
-      className="primary-button"
-      onClick={() => onUnArchiveUser(selectedUser)}
-    >
+    <Button1 className="primary-button" onClick={() => onUnArchiveUser(selectedUser)}>
       Unarchive
     </Button1>
   );
 
   const UnlockButton = () => (
-    <Button1
-      className="primary-button"
-      onClick={() => onUnlockUser(selectedUser)}
-    >
+    <Button1 className="primary-button" onClick={() => onUnlockUser(selectedUser)}>
       Unlock
     </Button1>
   );
@@ -252,11 +235,7 @@ const ManageUser: FC<EditUserProps> = ({
   );
 
   const CancelInviteButton = () => (
-    <Button1
-      className="primary-button"
-      color="dark"
-      onClick={() => onCancelInvite(selectedUser)}
-    >
+    <Button1 className="primary-button" color="dark" onClick={() => onCancelInvite(selectedUser)}>
       Cancel Invite
     </Button1>
   );
@@ -358,9 +337,7 @@ const ManageUser: FC<EditUserProps> = ({
         {renderIcon()}
 
         {selectedUser?.state === UserStates.UNREGISTERED && (
-          <span className="registration-info">
-            User has not registered yet.
-          </span>
+          <span className="registration-info">User has not registered yet.</span>
         )}
 
         {showButtons()}
@@ -373,11 +350,7 @@ const ManageUser: FC<EditUserProps> = ({
         >
           Save Changes
         </Button1>
-        <Button1
-          className="cancel-button"
-          variant="textOnly"
-          onClick={() => navigate(-1)}
-        >
+        <Button1 className="cancel-button" variant="textOnly" onClick={() => navigate(-1)}>
           Go Back
         </Button1>
       </div>

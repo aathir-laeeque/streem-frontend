@@ -92,8 +92,7 @@ const Wrapper = styled.div.attrs({
           border-radius: 4px;
           color: #1d84ff;
           cursor: pointer;
-          display: ${({ showStartButton }) =>
-            showStartButton ? 'flex' : 'none'};
+          display: ${({ showStartButton }) => (showStartButton ? 'flex' : 'none')};
           font-size: 14px;
           line-height: 1.29;
           letter-spacing: 0.16px;
@@ -105,8 +104,7 @@ const Wrapper = styled.div.attrs({
         .complete-options {
           display: ${({ taskExecutionState }) =>
             taskExecutionState === TaskExecutionState.COMPLETED ||
-            taskExecutionState ===
-              TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
+            taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
             taskExecutionState === TaskExecutionState.SKIPPED
               ? 'flex'
               : 'none'};

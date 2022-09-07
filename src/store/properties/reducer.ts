@@ -23,10 +23,7 @@ const initialState: PropertiesState = {
   },
 };
 
-const reducer: Reducer<PropertiesState, PropertiesActionType> = (
-  state = initialState,
-  action,
-) => {
+const reducer: Reducer<PropertiesState, PropertiesActionType> = (state = initialState, action) => {
   switch (action.type) {
     case PropertiesAction.FETCH_PROPERTIES_ONGOING:
       return {

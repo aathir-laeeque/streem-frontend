@@ -5,10 +5,7 @@ const initialState: ExtrasState = {
   hasGlobalError: false,
 };
 
-const reducer = (
-  state = initialState,
-  action: ExtrasActionType,
-): ExtrasState => {
+const reducer = (state = initialState, action: ExtrasActionType): ExtrasState => {
   switch (action.type) {
     case ExtrasAction.SET_INTERNET_CONNECTIVITY:
       return { ...state, connected: action.payload.connected };

@@ -33,10 +33,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const StartTaskModal: FC<CommonOverlayProps> = ({
-  closeAllOverlays,
-  closeOverlay,
-}) => {
+const StartTaskModal: FC<CommonOverlayProps> = ({ closeAllOverlays, closeOverlay }) => {
   return (
     <Wrapper>
       <BaseModal
@@ -47,9 +44,7 @@ const StartTaskModal: FC<CommonOverlayProps> = ({
       >
         <div className="start-task">
           <div className="header">Press Start Task First</div>
-          <div className="body">
-            You need to start the Task before begining any Activity
-          </div>
+          <div className="body">You need to start the Task before begining any Activity</div>
         </div>
       </BaseModal>
     </Wrapper>

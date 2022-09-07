@@ -21,10 +21,7 @@ export const initialState: JobAuditLogState = {
   },
 };
 
-const reducer = (
-  state = initialState,
-  action: JobActivityActionType,
-): JobAuditLogState => {
+const reducer = (state = initialState, action: JobActivityActionType): JobAuditLogState => {
   switch (action.type) {
     case JobActivityAction.FETCH_JOB_ACTIVITY_ONGOING:
       return { ...state, loading: true };

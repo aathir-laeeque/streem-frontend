@@ -27,20 +27,18 @@ const Wrapper = styled.div.attrs({
 `;
 
 const StageListView: FC = () => {
-  const {
-    activeStageId,
-    stagesById,
-    stagesOrder,
-    bringIntoView,
-  } = useTypedSelector((state) => state.composer.stages);
+  const { activeStageId, stagesById, stagesOrder, bringIntoView } = useTypedSelector(
+    (state) => state.composer.stages,
+  );
 
-  const refMap = stagesOrder.reduce<
-    Record<Stage['id'], RefObject<HTMLDivElement>>
-  >((acc, stageId) => {
-    acc[stageId] = createRef<HTMLDivElement>();
+  const refMap = stagesOrder.reduce<Record<Stage['id'], RefObject<HTMLDivElement>>>(
+    (acc, stageId) => {
+      acc[stageId] = createRef<HTMLDivElement>();
 
-    return acc;
-  }, {});
+      return acc;
+    },
+    {},
+  );
 
   useEffect(() => {
     if (activeStageId && bringIntoView) {

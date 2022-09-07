@@ -5,12 +5,10 @@ interface ButtonProps {
   type?: string;
 }
 
-export const Button = styled.button.attrs<ButtonProps>(
-  ({ type, disabled = false }) => ({
-    disabled,
-    type: type ? type : 'button',
-  }),
-)<ButtonProps>`
+export const Button = styled.button.attrs<ButtonProps>(({ type, disabled = false }) => ({
+  disabled,
+  type: type ? type : 'button',
+}))<ButtonProps>`
   border-radius: 3px;
   background-color: #1d84ff;
   color: #ffffff;
@@ -81,9 +79,10 @@ const ColorMap = {
   },
 };
 
-const ButtonWrapper = styled.button.attrs(
-  ({ type = 'button', disabled = false }) => ({ type, disabled }),
-)<Button1Props>`
+const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }) => ({
+  type,
+  disabled,
+}))<Button1Props>`
   position: relative;
   align-items: center;
   border: 1px solid transparent;

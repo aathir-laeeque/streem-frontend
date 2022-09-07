@@ -2,17 +2,13 @@ import React, { FC } from 'react';
 import { Popover, Zoom } from '@material-ui/core';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import TaskUserAssignment from '#JobComposer/modals/TaskUserAssignment';
- 
+
 // TODO: make this common with the reviewer assignment in prototype
-export const TaskAssignmentPopover: FC<CommonOverlayProps<{
-  taskId: number;
-}>> = ({
-  closeOverlay,
-  closeAllOverlays,
-  popOverAnchorEl,
-  type,
-  props: { taskId },
-}) => {
+export const TaskAssignmentPopover: FC<
+  CommonOverlayProps<{
+    taskId: number;
+  }>
+> = ({ closeOverlay, closeAllOverlays, popOverAnchorEl, type, props: { taskId } }) => {
   return (
     <Popover
       id={`taskAssginmentPopOver${taskId}`}

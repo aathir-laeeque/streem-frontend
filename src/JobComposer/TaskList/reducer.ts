@@ -5,11 +5,7 @@ import { getTasks } from '../utils';
 import { ActivityListAction } from '../ActivityList/reducer.types';
 import { StageListAction } from '../StageList/reducer.types';
 import { reEvaluateTaskWithStop } from './utils';
-import {
-  TaskListActionType,
-  TaskListState,
-  TaskListAction,
-} from './reducer.types';
+import { TaskListActionType, TaskListState, TaskListAction } from './reducer.types';
 import { Task, TaskExecutionState } from '../checklist.types';
 
 export const initialState: TaskListState = {
@@ -22,10 +18,7 @@ export const initialState: TaskListState = {
   stageIdWithTaskStop: undefined,
 };
 
-const reducer: Reducer<TaskListState, TaskListActionType> = (
-  state = initialState,
-  action,
-) => {
+const reducer: Reducer<TaskListState, TaskListActionType> = (state = initialState, action) => {
   let oldTask: Task;
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:

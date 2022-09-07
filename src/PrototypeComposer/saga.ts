@@ -26,9 +26,7 @@ import { TaskListSaga } from './Tasks/saga';
 import { ComposerEntity } from './types';
 import { groupErrors } from './utils';
 
-function* fetchComposerDataSaga({
-  payload,
-}: ReturnType<typeof fetchComposerData>) {
+function* fetchComposerDataSaga({ payload }: ReturnType<typeof fetchComposerData>) {
   try {
     const { id, entity } = payload;
 
@@ -59,34 +57,23 @@ function* fetchComposerDataSaga({
   }
 }
 
-function* validatePrototypeSaga({
-  payload,
-}: ReturnType<typeof validatePrototype>) {
+function* validatePrototypeSaga({ payload }: ReturnType<typeof validatePrototype>) {
   try {
     const { id } = payload;
     const { errors } = yield call(request, 'GET', apiValidatePrototype(id));
 
     if ((errors as Array<Error>)?.length) {
-      const { stagesErrors, tasksErrors, activitiesErrors } =
-        groupErrors(errors);
+      const { stagesErrors, tasksErrors, activitiesErrors } = groupErrors(errors);
       if (stagesErrors.length) {
-        yield all(
-          stagesErrors.map((error) => put(setStageValidationError(error))),
-        );
+        yield all(stagesErrors.map((error) => put(setStageValidationError(error))));
       }
 
       if (tasksErrors.length) {
-        yield all(
-          tasksErrors.map((error) => put(setTaskValidationError(error))),
-        );
+        yield all(tasksErrors.map((error) => put(setTaskValidationError(error))));
       }
 
       if (activitiesErrors.length) {
-        yield all(
-          activitiesErrors.map((error) =>
-            put(setActivityValidationError(error)),
-          ),
-        );
+        yield all(activitiesErrors.map((error) => put(setActivityValidationError(error))));
       }
     } else {
       yield put(

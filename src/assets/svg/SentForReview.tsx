@@ -10,22 +10,10 @@ function SentForReview() {
       viewBox="0 0 250 159"
     >
       <g clipPath="url(#clip0)" filter="url(#filter0_d)">
-        <path
-          fill="url(#paint0_linear)"
-          d="M58.9 80.7l8.9 45.3L246 3 58.9 80.7z"
-        ></path>
-        <path
-          fill="url(#paint1_linear)"
-          d="M246 3L58.9 80.7 4 36.5 246 3z"
-        ></path>
-        <path
-          fill="url(#paint2_linear)"
-          d="M80.7 98.3L67.8 126 246 3 80.7 98.3z"
-        ></path>
-        <path
-          fill="url(#paint3_linear)"
-          d="M246 3L80.7 98.3l68.7 55.2L246 3z"
-        ></path>
+        <path fill="url(#paint0_linear)" d="M58.9 80.7l8.9 45.3L246 3 58.9 80.7z"></path>
+        <path fill="url(#paint1_linear)" d="M246 3L58.9 80.7 4 36.5 246 3z"></path>
+        <path fill="url(#paint2_linear)" d="M80.7 98.3L67.8 126 246 3 80.7 98.3z"></path>
+        <path fill="url(#paint3_linear)" d="M246 3L80.7 98.3l68.7 55.2L246 3z"></path>
       </g>
       <defs>
         <filter
@@ -45,15 +33,8 @@ function SentForReview() {
           <feOffset dy="1"></feOffset>
           <feGaussianBlur stdDeviation="2"></feGaussianBlur>
           <feColorMatrix values="0 0 0 0 0.4 0 0 0 0 0.4 0 0 0 0 0.4 0 0 0 0.08 0"></feColorMatrix>
-          <feBlend
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow"
-          ></feBlend>
-          <feBlend
-            in="SourceGraphic"
-            in2="effect1_dropShadow"
-            result="shape"
-          ></feBlend>
+          <feBlend in2="BackgroundImageFix" result="effect1_dropShadow"></feBlend>
+          <feBlend in="SourceGraphic" in2="effect1_dropShadow" result="shape"></feBlend>
         </filter>
         <linearGradient
           id="paint0_linear"
@@ -100,11 +81,7 @@ function SentForReview() {
           <stop offset="1" stopColor="#E8F3FF"></stop>
         </linearGradient>
         <clipPath id="clip0">
-          <path
-            fill="#fff"
-            d="M0 0H242V150.5H0z"
-            transform="translate(4 3)"
-          ></path>
+          <path fill="#fff" d="M0 0H242V150.5H0z" transform="translate(4 3)"></path>
         </clipPath>
       </defs>
     </svg>

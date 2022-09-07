@@ -11,10 +11,7 @@ export const capitalizeFirstLetter = (str: string) => {
 };
 
 // TODO : remove this function from here and use the one defined in the helpers of users service
-export const getFullName = ({
-  firstName,
-  lastName,
-}: Pick<User, 'firstName' | 'lastName'>) => {
+export const getFullName = ({ firstName, lastName }: Pick<User, 'firstName' | 'lastName'>) => {
   return `${firstName} ${lastName}`;
 };
 
@@ -42,8 +39,7 @@ export const parseMarkUp = (n: HTMLElement) => {
           childs: [],
         });
       } else if (
-        (cNode.nodeType === 3 &&
-          nValue?.codePointAt(0)?.toString(16) !== 'a') ||
+        (cNode.nodeType === 3 && nValue?.codePointAt(0)?.toString(16) !== 'a') ||
         cNode.hasChildNodes()
       ) {
         arr.push({

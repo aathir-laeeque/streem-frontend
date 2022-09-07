@@ -3,12 +3,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { fetch } from './actions';
-import {
-  fetchUsersParams,
-  UserState,
-  useUsersType,
-  useUsersReturnType,
-} from './types';
+import { fetchUsersParams, UserState, useUsersType, useUsersReturnType } from './types';
 
 const defaultParams = (includeSorting = true): fetchUsersParams => {
   return {
@@ -22,9 +17,7 @@ const useUsers = ({
   userState = UserState.ACTIVE,
   params = defaultParams(),
 }: useUsersType): useUsersReturnType => {
-  const { pageable, users, usersById } = useTypedSelector(
-    (state) => state.usersService[userState],
-  );
+  const { pageable, users, usersById } = useTypedSelector((state) => state.usersService[userState]);
 
   const dispatch = useDispatch();
 

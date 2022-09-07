@@ -1,20 +1,13 @@
 import { Reducer } from 'redux';
 
-import {
-  FileUploadAction,
-  FileUploadActionType,
-  FileUploadState,
-} from './types';
+import { FileUploadAction, FileUploadActionType, FileUploadState } from './types';
 
 const initialState: FileUploadState = {
   data: undefined,
   error: undefined,
 };
 
-const reducer: Reducer<FileUploadState, FileUploadActionType> = (
-  state = initialState,
-  action,
-) => {
+const reducer: Reducer<FileUploadState, FileUploadActionType> = (state = initialState, action) => {
   switch (action.type) {
     case FileUploadAction.UPLOAD_FILE_ERROR:
       return { ...state, error: action.payload.error };

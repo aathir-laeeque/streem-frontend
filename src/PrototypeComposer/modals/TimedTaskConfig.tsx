@@ -3,23 +3,14 @@ import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Task, TimerOperator } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
-import {
-  ArrowDropDown,
-  ArrowDropUp,
-  Delete,
-  Error as ErrorIcon,
-} from '@material-ui/icons';
+import { ArrowDropDown, ArrowDropUp, Delete, Error as ErrorIcon } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useEffect, useReducer, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { TaskTimerErrorCodes } from '../Tasks/types';
 
-import {
-  removeTaskTimer,
-  resetTaskError,
-  setTaskTimer,
-} from '../Tasks/actions';
+import { removeTaskTimer, resetTaskError, setTaskTimer } from '../Tasks/actions';
 
 const TIMER_OPERATORS = [
   {
@@ -150,12 +141,7 @@ type InputFieldProps = {
   value: number;
 };
 
-const InputField: FC<InputFieldProps> = ({
-  decrease,
-  increase,
-  unit,
-  value,
-}) => (
+const InputField: FC<InputFieldProps> = ({ decrease, increase, unit, value }) => (
   <div className="input-group-item">
     <ArrowDropUp className="icon" id="increase" onClick={() => increase()} />
     <span>{`${value.toString().padStart(2, '0')} ${unit}`}</span>
@@ -172,17 +158,11 @@ const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
         value={duration.hours()}
         unit="Hr"
         increase={() => {
-          setValue(
-            moment.duration(duration.add(1, 'hour'), 'seconds').asSeconds(),
-          );
+          setValue(moment.duration(duration.add(1, 'hour'), 'seconds').asSeconds());
         }}
         decrease={() => {
           if (duration.hours() > 0) {
-            setValue(
-              moment
-                .duration(duration.subtract(1, 'hour'), 'seconds')
-                .asSeconds(),
-            );
+            setValue(moment.duration(duration.subtract(1, 'hour'), 'seconds').asSeconds());
           }
         }}
       />
@@ -190,17 +170,11 @@ const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
         value={duration.minutes()}
         unit="Min"
         increase={() => {
-          setValue(
-            moment.duration(duration.add(1, 'minute'), 'seconds').asSeconds(),
-          );
+          setValue(moment.duration(duration.add(1, 'minute'), 'seconds').asSeconds());
         }}
         decrease={() => {
           if (duration.minutes() > 0) {
-            setValue(
-              moment
-                .duration(duration.subtract(1, 'minute'), 'seconds')
-                .asSeconds(),
-            );
+            setValue(moment.duration(duration.subtract(1, 'minute'), 'seconds').asSeconds());
           }
         }}
       />
@@ -208,17 +182,11 @@ const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
         value={duration.seconds()}
         unit="Sec"
         increase={() => {
-          setValue(
-            moment.duration(duration.add(1, 'second'), 'seconds').asSeconds(),
-          );
+          setValue(moment.duration(duration.add(1, 'second'), 'seconds').asSeconds());
         }}
         decrease={() => {
           if (duration.seconds() > 0) {
-            setValue(
-              moment
-                .duration(duration.subtract(1, 'second'), 'seconds')
-                .asSeconds(),
-            );
+            setValue(moment.duration(duration.subtract(1, 'second'), 'seconds').asSeconds());
           }
         }}
       />
@@ -258,12 +226,7 @@ const reducer = (state: TimerState, action: any): TimerState => {
 const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: {
-    maxPeriod = 0,
-    minPeriod = 0,
-    taskId,
-    timerOperator = TimerOperator.LESS_THAN,
-  },
+  props: { maxPeriod = 0, minPeriod = 0, taskId, timerOperator = TimerOperator.LESS_THAN },
 }) => {
   const dispatch = useDispatch();
   const taskErrors = useTypedSelector(
@@ -363,9 +326,7 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
                 });
               }}
               placeholder="Choose an option"
-              selectedValue={TIMER_OPERATORS.find(
-                (el) => el.value === state.timerOperator,
-              )}
+              selectedValue={TIMER_OPERATORS.find((el) => el.value === state.timerOperator)}
             />
           </div>
 
@@ -409,8 +370,7 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
                             hasChanged: true,
                             ...(state.maxPeriod < val
                               ? {
-                                  error:
-                                    'Maximum time should be more than Minimum time',
+                                  error: 'Maximum time should be more than Minimum time',
                                 }
                               : { error: null }),
                           },
@@ -430,8 +390,7 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
                             hasChanged: true,
                             ...(state.minPeriod > val
                               ? {
-                                  error:
-                                    'Maximum time should be more than Minimum time',
+                                  error: 'Maximum time should be more than Minimum time',
                                 }
                               : { error: null }),
                           },

@@ -34,9 +34,11 @@ const Wrapper = styled.div`
   }
 `;
 
-const RevisionErrorModal: FC<CommonOverlayProps<{
-  id: Checklist['id'];
-}>> = ({ closeAllOverlays, closeOverlay, props }) => {
+const RevisionErrorModal: FC<
+  CommonOverlayProps<{
+    id: Checklist['id'];
+  }>
+> = ({ closeAllOverlays, closeOverlay, props }) => {
   const id = props?.id || null;
   if (!id) {
     return closeOverlay();
@@ -52,8 +54,8 @@ const RevisionErrorModal: FC<CommonOverlayProps<{
         <MemoRevisionError fontSize={280} style={{ height: '150px' }} />
         <h3>Checklist is already being Revised</h3>
         <span>
-          You cannot Revise the Checklist, it is already being revised by your
-          Team Members. But, you can view the ongoing Revision.
+          You cannot Revise the Checklist, it is already being revised by your Team Members. But,
+          you can view the ongoing Revision.
         </span>
         <Button1
           onClick={() => {

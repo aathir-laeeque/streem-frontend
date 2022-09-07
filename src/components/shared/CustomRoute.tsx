@@ -11,18 +11,9 @@ type Props = RouteComponentProps & {
   isProtected?: boolean;
 };
 
-export const CustomRoute: FC<Props> = ({
-  as: Component,
-  isProtected = true,
-  ...props
-}) => {
-  const {
-    isLoggedIn,
-    selectedFacility,
-    hasSetChallengeQuestion,
-    token,
-    selectedUseCase,
-  } = useTypedSelector((state) => state.auth);
+export const CustomRoute: FC<Props> = ({ as: Component, isProtected = true, ...props }) => {
+  const { isLoggedIn, selectedFacility, hasSetChallengeQuestion, token, selectedUseCase } =
+    useTypedSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -39,8 +30,7 @@ export const CustomRoute: FC<Props> = ({
   if (isLoggedIn) {
     if (!hasSetChallengeQuestion) {
       if (location?.pathname !== '/auth/register/recovery') {
-        if (token)
-          return <Redirect from="" to="/auth/register/recovery" noThrow />;
+        if (token) return <Redirect from="" to="/auth/register/recovery" noThrow />;
         dispatch(logout());
       }
     } else {
@@ -65,9 +55,5 @@ export const CustomRoute: FC<Props> = ({
     }
   }
 
-  return !isProtected ? (
-    <Component {...props} />
-  ) : (
-    <Redirect from="" to="/auth/login" noThrow />
-  );
+  return !isProtected ? <Component {...props} /> : <Redirect from="" to="/auth/login" noThrow />;
 };

@@ -77,22 +77,20 @@ const TaskMedias: FC<TaskMediasProps> = ({
               }}
             />
 
-            {medias
-              .slice(sliderIndex.start, sliderIndex.end)
-              .map((media, index) => (
-                <div
-                  className={`media-list-item ${
-                    media.filename === activeMedia?.filename ? 'active' : ''
-                  }`}
-                  key={index}
-                  onClick={() => setActiveMedia(media)}
-                  style={{
-                    background: `url(${media.link}) center/cover no-repeat`,
-                  }}
-                >
-                  <div className="media-list-item-name">{media.name}</div>
-                </div>
-              ))}
+            {medias.slice(sliderIndex.start, sliderIndex.end).map((media, index) => (
+              <div
+                className={`media-list-item ${
+                  media.filename === activeMedia?.filename ? 'active' : ''
+                }`}
+                key={index}
+                onClick={() => setActiveMedia(media)}
+                style={{
+                  background: `url(${media.link}) center/cover no-repeat`,
+                }}
+              >
+                <div className="media-list-item-name">{media.name}</div>
+              </div>
+            ))}
 
             <ArrowRight
               className="icon"
@@ -129,9 +127,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
               }}
               label="Upload Media"
               icon={PermMedia}
-              disabled={
-                data?.state && !(data.state in EnabledStates) && !data?.archived
-              }
+              disabled={data?.state && !(data.state in EnabledStates) && !data?.archived}
             />
           ) : null}
         </div>

@@ -5,17 +5,11 @@ import { fetchSuccessType, fetchType, UsersAction, UserState } from './types';
 export const fetch = ({ initialCall, params, type }: fetchType) =>
   actionSpreader(UsersAction.FETCH_USERS, { params, type, initialCall });
 
-export const fetchOngoing = () =>
-  actionSpreader(UsersAction.FETCH_USERS_ONGOING);
+export const fetchOngoing = () => actionSpreader(UsersAction.FETCH_USERS_ONGOING);
 
-export const fetchMoreOngoing = () =>
-  actionSpreader(UsersAction.FETCH_MORE_USERS_ONGOING);
+export const fetchMoreOngoing = () => actionSpreader(UsersAction.FETCH_MORE_USERS_ONGOING);
 
-export const fetchSuccess = ({
-  data: { list, pageable },
-  type,
-  initialCall,
-}: fetchSuccessType) =>
+export const fetchSuccess = ({ data: { list, pageable }, type, initialCall }: fetchSuccessType) =>
   actionSpreader(UsersAction.FETCH_USERS_SUCCESS, {
     list,
     pageable,

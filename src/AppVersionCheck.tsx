@@ -2,11 +2,7 @@ import { CircularProgress } from '@material-ui/core';
 import React, { ReactElement, useEffect, useState } from 'react';
 import versionJson from './version.json';
 
-export const AppVersionCheck = ({
-  children,
-}: {
-  children: ReactElement<any, any>;
-}) => {
+export const AppVersionCheck = ({ children }: { children: ReactElement<any, any> }) => {
   const isProductionEnv = process.env.NODE_ENV === 'production';
   const currentCommit = versionJson.commit;
   const [cacheStatus, setCacheStatus] = useState({

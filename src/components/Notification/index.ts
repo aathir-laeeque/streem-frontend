@@ -8,8 +8,8 @@ const Notification = styled(ToastContainer)`
   .Toastify__toast {
     min-height: 48px;
     border-radius: 4px;
-    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12),
-      0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
+      0 2px 4px -1px rgba(0, 0, 0, 0.2);
   }
   .Toastify__toast--default {
     padding: 0 8px 0 0;

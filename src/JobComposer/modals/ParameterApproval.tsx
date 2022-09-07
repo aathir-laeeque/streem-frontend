@@ -56,11 +56,7 @@ type Props = {
 const ParameterApprovalModal: FC<CommonOverlayProps<Props>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: {
-    observationSent = true,
-    observationApproved = false,
-    observationRejected = false,
-  } = {},
+  props: { observationSent = true, observationApproved = false, observationRejected = false } = {},
 }) => {
   return (
     <Wrapper>
@@ -76,9 +72,7 @@ const ParameterApprovalModal: FC<CommonOverlayProps<Props>> = ({
               return (
                 <>
                   <ObservationAccepted className="icon" />
-                  <div className="observation-sent">
-                    Observation sent to Supervisor
-                  </div>
+                  <div className="observation-sent">Observation sent to Supervisor</div>
                 </>
               );
             }
@@ -86,9 +80,7 @@ const ParameterApprovalModal: FC<CommonOverlayProps<Props>> = ({
               return (
                 <>
                   <ObservationAccepted className="icon" />
-                  <div className="observation-approved">
-                    Observation Accepted
-                  </div>
+                  <div className="observation-approved">Observation Accepted</div>
                 </>
               );
             }
@@ -96,12 +88,9 @@ const ParameterApprovalModal: FC<CommonOverlayProps<Props>> = ({
               return (
                 <>
                   <ObservationRejected className="icon" />
-                  <div className="observation-rejected">
-                    Observation Rejected
-                  </div>
+                  <div className="observation-rejected">Observation Rejected</div>
                   <div className="rejected-details">
-                    The requester will be intimated to change the provided value
-                    of the Parameter
+                    The requester will be intimated to change the provided value of the Parameter
                   </div>
                 </>
               );

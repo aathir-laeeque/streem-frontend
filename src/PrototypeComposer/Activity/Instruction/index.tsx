@@ -24,9 +24,7 @@ const toolbarOptions = {
   },
 };
 
-const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
-  activity,
-}) => {
+const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [componentLoaded, updateComponentLoaded] = useState<boolean>(false);
@@ -36,9 +34,7 @@ const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
   useEffect(() => {
     const contentBlock = htmlToDraft(activity.data.text);
     if (contentBlock) {
-      const contentState = ContentState.createFromBlockArray(
-        contentBlock.contentBlocks,
-      );
+      const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
 
       setEditorState(EditorState.createWithContent(contentState));
 
@@ -86,9 +82,7 @@ const InstructionActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         onEditorStateChange={(newEditorState) => setEditorState(newEditorState)}
       />
 
-      {activityError ? (
-        <div className="activity-error">{activityError?.message}</div>
-      ) : null}
+      {activityError ? <div className="activity-error">{activityError?.message}</div> : null}
     </Wrapper>
   );
 };

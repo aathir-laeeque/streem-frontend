@@ -21,8 +21,7 @@ const useScrollSpy = ({
         // Diving by 12 helps in calculating active index of elements having offsetTop small then Scroll Target clientHeight.
         if (
           item?.offsetTop <
-          scrollTarget.current.scrollTop +
-            contentTarget.current.clientHeight / 12
+          scrollTarget.current.scrollTop + contentTarget.current.clientHeight / 12
         ) {
           active = i;
           break;

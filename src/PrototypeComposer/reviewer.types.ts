@@ -47,10 +47,7 @@ export enum PhaseType {
   SIGN_OFF = 'SIGN_OFF',
 }
 
-export type Collaborator = Pick<
-  User,
-  'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'
-> &
+export type Collaborator = Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'> &
   Pick<Comment, 'id' | 'comments' | 'commentedAt' | 'modifiedAt'> & {
     state: CollaboratorState;
     phase: number;
@@ -60,9 +57,7 @@ export type Collaborator = Pick<
 
 export type CommonReviewPayload = {
   collaborators: Collaborator[] | [];
-  checklist:
-    | Pick<Checklist, 'id' | 'state' | 'phase'>
-    | Record<string, unknown>;
+  checklist: Pick<Checklist, 'id' | 'state' | 'phase'> | Record<string, unknown>;
   comments: Comment[] | [];
 };
 

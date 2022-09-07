@@ -38,10 +38,7 @@ const TableRow = ({
   <View break={breakView} fixed={fixed} style={[styles.tableRow, customStyle]}>
     {columns.map(({ text, customStyle = {} }, index) =>
       typeof text === 'string' ? (
-        <Text
-          key={`${text}-${index}`}
-          style={[styles.tableColumn, customStyle]}
-        >
+        <Text key={`${text}-${index}`} style={[styles.tableColumn, customStyle]}>
           {text}
         </Text>
       ) : (

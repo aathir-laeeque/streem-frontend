@@ -6,10 +6,7 @@ import { JobSummary } from '../Summary/types';
 import { styles as baseStyles } from './styles';
 import TableRow from './TableRow';
 
-type Props = Pick<
-  JobSummary,
-  'stages' | 'totalStageDuration' | 'totalTaskExceptions'
->;
+type Props = Pick<JobSummary, 'stages' | 'totalStageDuration' | 'totalTaskExceptions'>;
 
 const isEven = (n: number) => n % 2 === 0;
 
@@ -42,19 +39,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const DurationSummary = ({
-  stages = [],
-  totalStageDuration,
-  totalTaskExceptions,
-}: Props) => (
+const DurationSummary = ({ stages = [], totalStageDuration, totalTaskExceptions }: Props) => (
   <View break style={styles.durationSummary}>
     <View fixed>
       <Text style={styles.durationSummaryTitle}>Duration Summary</Text>
 
       {stages.length ? (
         <Text style={styles.totalStageDuration}>
-          Total Stage Duration :{' '}
-          {formatDuration1({ duration: totalStageDuration ?? 0 })}
+          Total Stage Duration : {formatDuration1({ duration: totalStageDuration ?? 0 })}
         </Text>
       ) : null}
     </View>
@@ -90,13 +82,7 @@ const DurationSummary = ({
         />
 
         {stages.map((stage, index) => {
-          const {
-            averageTaskCompletionDuration,
-            id,
-            name,
-            orderTree,
-            totalDuration,
-          } = stage;
+          const { averageTaskCompletionDuration, id, name, orderTree, totalDuration } = stage;
 
           return (
             <TableRow

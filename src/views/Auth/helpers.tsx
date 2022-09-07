@@ -137,8 +137,7 @@ export const createBaseViewConfig = ({
     userId,
   } = useTypedSelector((state) => state.auth);
   const [isPasswordInputType, setIsPasswordInputType] = useState(true);
-  const [isConfirmPasswordTextHidden, setIsConfirmPasswordTextHidden] =
-    useState(true);
+  const [isConfirmPasswordTextHidden, setIsConfirmPasswordTextHidden] = useState(true);
 
   const PasswordAfterIcon = () => (
     <VisibilityOutlined
@@ -149,9 +148,7 @@ export const createBaseViewConfig = ({
 
   const ConfirmPasswordAfterIcon = () => (
     <VisibilityOutlined
-      onClick={() =>
-        setIsConfirmPasswordTextHidden(!isConfirmPasswordTextHidden)
-      }
+      onClick={() => setIsConfirmPasswordTextHidden(!isConfirmPasswordTextHidden)}
       style={{ color: isConfirmPasswordTextHidden ? '#999' : '#1d84ff' }}
     />
   );
@@ -269,9 +266,7 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: isPasswordInputType
-                ? InputTypes.PASSWORD
-                : InputTypes.SINGLE_LINE,
+              type: isPasswordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Enter your Password',
                 label: 'Password',
@@ -431,18 +426,13 @@ export const createBaseViewConfig = ({
                     token,
                   }),
                 );
-              } else if (
-                data.recoveryOption === RecoveryOptions.CHALLENGE_QUESTION
-              ) {
+              } else if (data.recoveryOption === RecoveryOptions.CHALLENGE_QUESTION) {
                 navigate('/auth/forgot-password/challenge');
-              } else if (
-                data.recoveryOption === RecoveryOptions.CONTACT_ADMIN
-              ) {
+              } else if (data.recoveryOption === RecoveryOptions.CONTACT_ADMIN) {
                 dispatch(
                   notifyAdmin({
                     token,
-                    purpose:
-                      ChallengeQuestionPurpose.PASSWORD_RECOVERY_CHALLENGE_QUESTION_NOT_SET,
+                    purpose: ChallengeQuestionPurpose.PASSWORD_RECOVERY_CHALLENGE_QUESTION_NOT_SET,
                   }),
                 );
               }
@@ -592,17 +582,14 @@ export const createBaseViewConfig = ({
               disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
-              {pageName === PAGE_NAMES.REGISTER_SECRET_KEY
-                ? 'Identify me'
-                : 'Verify'}
+              {pageName === PAGE_NAMES.REGISTER_SECRET_KEY ? 'Identify me' : 'Verify'}
             </Button1>,
           ],
         },
         footerAction:
           pageName === PAGE_NAMES.REGISTER_SECRET_KEY ? (
             <div>
-              Already Registered?{' '}
-              <Link to="/auth/login">Login to your Account</Link>
+              Already Registered? <Link to="/auth/login">Login to your Account</Link>
             </div>
           ) : (
             <div>
@@ -702,10 +689,7 @@ export const createBaseViewConfig = ({
         ),
       };
     case PAGE_NAMES.FORGOT_NEW_PASSWORD: {
-      const { password, confirmPassword } = getValues([
-        'password',
-        'confirmPassword',
-      ]);
+      const { password, confirmPassword } = getValues(['password', 'confirmPassword']);
       const validators = passwordValidators(password);
 
       return {
@@ -714,9 +698,7 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: isPasswordInputType
-                ? InputTypes.PASSWORD
-                : InputTypes.SINGLE_LINE,
+              type: isPasswordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'New Password',
@@ -741,9 +723,7 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: isConfirmPasswordTextHidden
-                ? InputTypes.PASSWORD
-                : InputTypes.SINGLE_LINE,
+              type: isConfirmPasswordTextHidden ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Enter your new Password again',
                 label: 'Confirm Password',
@@ -837,10 +817,7 @@ export const createBaseViewConfig = ({
         },
       };
     case PAGE_NAMES.REGISTER_CREDENTIALS: {
-      const { password, confirmPassword } = getValues([
-        'password',
-        'confirmPassword',
-      ]);
+      const { password, confirmPassword } = getValues(['password', 'confirmPassword']);
       const validators = passwordValidators(password);
 
       return {
@@ -892,18 +869,14 @@ export const createBaseViewConfig = ({
                       },
                     });
                     if (res?.errors?.length)
-                      return (
-                        res?.errors?.[0]?.message || 'Username Already Taken'
-                      );
+                      return res?.errors?.[0]?.message || 'Username Already Taken';
                     return true;
                   },
                 }),
               },
             },
             {
-              type: isPasswordInputType
-                ? InputTypes.PASSWORD
-                : InputTypes.SINGLE_LINE,
+              type: isPasswordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Enter your new Password',
                 label: 'Create Password',
@@ -928,9 +901,7 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: isConfirmPasswordTextHidden
-                ? InputTypes.PASSWORD
-                : InputTypes.SINGLE_LINE,
+              type: isConfirmPasswordTextHidden ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
               props: {
                 placeholder: 'Enter your new Password again',
                 label: 'Confirm Password',
@@ -1053,8 +1024,7 @@ export const createBaseViewConfig = ({
         ...centerCardConfig,
         heading: 'Key Expired',
         headingIcon: <LockIcon />,
-        subHeading:
-          'Your secret key has expired as you failed to use it under 24 hours.',
+        subHeading: 'Your secret key has expired as you failed to use it under 24 hours.',
         footerAction: (
           <div>
             <ContactAdminButton
@@ -1063,16 +1033,14 @@ export const createBaseViewConfig = ({
                 dispatch(
                   notifyAdmin({
                     token,
-                    purpose:
-                      ChallengeQuestionPurpose.PASSWORD_RECOVERY_KEY_EXPIRED,
+                    purpose: ChallengeQuestionPurpose.PASSWORD_RECOVERY_KEY_EXPIRED,
                   }),
                 );
               }}
             >
               Contact
             </ContactAdminButton>
-            your Administrator to generate a new Secret Key for your
-            registration.
+            your Administrator to generate a new Secret Key for your registration.
           </div>
         ),
       };
@@ -1081,8 +1049,7 @@ export const createBaseViewConfig = ({
         ...centerCardConfig,
         heading: 'Account Locked',
         headingIcon: <LockIcon />,
-        subHeading:
-          'Access to to your account has been locked due to multiple failed attempts.',
+        subHeading: 'Access to to your account has been locked due to multiple failed attempts.',
         footerAction: (
           <div>
             <ContactAdminButton
@@ -1091,8 +1058,7 @@ export const createBaseViewConfig = ({
                 dispatch(
                   notifyAdmin({
                     token,
-                    purpose:
-                      ChallengeQuestionPurpose.PASSWORD_RECOVERY_ACCOUNT_LOCKED,
+                    purpose: ChallengeQuestionPurpose.PASSWORD_RECOVERY_ACCOUNT_LOCKED,
                   }),
                 );
               }}
@@ -1190,8 +1156,7 @@ export const createBaseViewConfig = ({
           maxWidth: '30vw',
         },
         heading: 'Choose Facility',
-        subHeading:
-          'Select a facility to login to from the list of facilities give below.',
+        subHeading: 'Select a facility to login to from the list of facilities give below.',
         formData: {
           formInputs: [
             {

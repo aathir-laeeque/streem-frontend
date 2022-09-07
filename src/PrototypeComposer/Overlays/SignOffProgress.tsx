@@ -176,11 +176,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const getOptions = (
-  key: string,
-  isStateComplete: boolean,
-  inProgressKey: string,
-) => {
+const getOptions = (key: string, isStateComplete: boolean, inProgressKey: string) => {
   const options: { status: string; heading: string; accentColor: string } = {
     status: inProgressKey === key ? 'In Progress' : 'Not Started',
     accentColor: inProgressKey === key ? '#1d84ff' : '#eeeeee',
@@ -197,10 +193,7 @@ const getOptions = (
   return options;
 };
 
-const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
-  closeAllOverlays,
-  closeOverlay,
-}) => {
+const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, closeOverlay }) => {
   const dispatch = useDispatch();
   const { data, approvers } = useTypedSelector((state) => ({
     approvers: state.prototypeComposer.approvers,
@@ -230,17 +223,11 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
     groupedViews.push(
       <>
         <tr key={key}>
-          <td
-            rowSpan={groupedApprovers[key].length}
-            style={{ borderColor: options.accentColor }}
-          >
+          <td rowSpan={groupedApprovers[key].length} style={{ borderColor: options.accentColor }}>
             <div className="heading">
               <div className="top">
                 <span>{options.heading}</span>
-                <div
-                  className="ellipse"
-                  style={{ backgroundColor: options.accentColor }}
-                >
+                <div className="ellipse" style={{ backgroundColor: options.accentColor }}>
                   {key}
                 </div>
               </div>
@@ -251,17 +238,13 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
             <div className="item">
               <Avatar size="large" user={groupedApprovers[key][0]} />
               <div className="middle">
-                <span className="userId">
-                  {groupedApprovers[key][0].employeeId}
-                </span>
+                <span className="userId">{groupedApprovers[key][0].employeeId}</span>
                 <span className="userName">
-                  {groupedApprovers[key][0].firstName}{' '}
-                  {groupedApprovers[key][0].lastName}
+                  {groupedApprovers[key][0].firstName} {groupedApprovers[key][0].lastName}
                 </span>
               </div>
               <div className="right-container">
-                {groupedApprovers[key][0].state ===
-                CollaboratorState.NOT_STARTED ? (
+                {groupedApprovers[key][0].state === CollaboratorState.NOT_STARTED ? (
                   <div className="right">Pending</div>
                 ) : (
                   <>
@@ -293,10 +276,7 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({
                   ) : (
                     <>
                       <div className="right success">Signed</div>
-                      {a.modifiedAt &&
-                        moment
-                          .unix(a.modifiedAt)
-                          .format(dateAndTimeStampFormat)}
+                      {a.modifiedAt && moment.unix(a.modifiedAt).format(dateAndTimeStampFormat)}
                     </>
                   )}
                 </div>

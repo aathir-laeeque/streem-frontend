@@ -126,7 +126,7 @@ const MemoTask: FC<{
     startedAt,
     audit: { modifiedBy, modifiedAt },
     state: taskExecutionState,
-    correctionReason
+    correctionReason,
   } = task.taskExecution;
 
   const canSkipTask = !task.activities.reduce((acc, activity) => {

@@ -28,14 +28,10 @@ type fetchDataSuccessType = {
   data: Checklist;
   entity: ComposerEntity;
 };
-export const fetchComposerDataSuccess = ({
-  data,
-  entity,
-}: fetchDataSuccessType) =>
+export const fetchComposerDataSuccess = ({ data, entity }: fetchDataSuccessType) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_SUCCESS, { data, entity });
 
-export const resetComposer = () =>
-  actionSpreader(ComposerAction.RESET_COMPOSER);
+export const resetComposer = () => actionSpreader(ComposerAction.RESET_COMPOSER);
 
 export const validatePrototype = (id: Checklist['id']) =>
   actionSpreader(ComposerAction.VALIDATE_PROTOTYPE, { id });

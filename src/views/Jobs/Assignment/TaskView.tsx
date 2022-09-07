@@ -59,9 +59,7 @@ const TaskView = ({ task, stageOrder }: Props) => {
     taskExecution: { assignees },
   } = task;
 
-  const isLoggedInUserAssigned = task.taskExecution.assignees.some(
-    (user) => user.id === userId,
-  );
+  const isLoggedInUserAssigned = task.taskExecution.assignees.some((user) => user.id === userId);
 
   return (
     <Wrapper>
@@ -77,9 +75,7 @@ const TaskView = ({ task, stageOrder }: Props) => {
         </div>
       ) : null}
 
-      <div className="task-name">
-        {`${stageOrder}.${task.orderTree} ${taskName}`}
-      </div>
+      <div className="task-name">{`${stageOrder}.${task.orderTree} ${taskName}`}</div>
 
       <ActivityList
         activities={activities}

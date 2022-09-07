@@ -2,13 +2,7 @@ import { apiGetUsers } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { call, put, takeLatest } from 'redux-saga/effects';
 
-import {
-  fetch,
-  fetchError,
-  fetchMoreOngoing,
-  fetchOngoing,
-  fetchSuccess,
-} from './actions';
+import { fetch, fetchError, fetchMoreOngoing, fetchOngoing, fetchSuccess } from './actions';
 import { OtherUserState, User, UsersAction } from './types';
 
 function* fetchSaga({ payload }: ReturnType<typeof fetch>) {

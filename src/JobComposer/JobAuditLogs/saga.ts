@@ -12,9 +12,7 @@ import {
 } from './actions';
 import { JobAuditLogType, JobActivityAction } from './types';
 
-function* fetchJobAuditLogsSaga({
-  payload,
-}: ReturnType<typeof fetchJobAuditLogs>) {
+function* fetchJobAuditLogsSaga({ payload }: ReturnType<typeof fetchJobAuditLogs>) {
   try {
     const { jobId, params } = payload;
 
@@ -22,8 +20,12 @@ function* fetchJobAuditLogsSaga({
       yield put(fetchJobAuditLogsOngoing());
     }
 
-    const { data, pageable, errors }: ResponseObj<JobAuditLogType[]> =
-      yield call(request, 'GET', apiGetJobAuditLogs(jobId), { params });
+    const { data, pageable, errors }: ResponseObj<JobAuditLogType[]> = yield call(
+      request,
+      'GET',
+      apiGetJobAuditLogs(jobId),
+      { params },
+    );
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -47,8 +49,5 @@ function* fetchJobAuditLogsSaga({
 }
 
 export function* JobAuditLogsSaga() {
-  yield takeLeading(
-    JobActivityAction.FETCH_JOB_ACTIVITY,
-    fetchJobAuditLogsSaga,
-  );
+  yield takeLeading(JobActivityAction.FETCH_JOB_ACTIVITY, fetchJobAuditLogsSaga);
 }

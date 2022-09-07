@@ -23,26 +23,18 @@ type DropdownFilterProps = {
   label?: string;
 };
 
-const DropdownFilter: FC<DropdownFilterProps> = ({
-  options,
-  updateFilter,
-  label,
-}) => (
+const DropdownFilter: FC<DropdownFilterProps> = ({ options, updateFilter, label }) => (
   <Wrapper>
     <Select
       label={label}
       persistValue
       options={options}
       onChange={
-        ((option: Option) => updateFilter(option)) as ((
-          option: Option,
-        ) => void) &
+        ((option: Option) => updateFilter(option)) as ((option: Option) => void) &
           ((event: ChangeEvent<HTMLSelectElement>) => void)
       }
       placeholder="State"
-      selectedValue={
-        options.filter((el) => el.value === 'all' || el.value === 'any')[0]
-      }
+      selectedValue={options.filter((el) => el.value === 'all' || el.value === 'any')[0]}
     />
   </Wrapper>
 );

@@ -9,11 +9,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { openOverlayAction } from '../../components/OverlayContainer/actions';
-import {
-  executeActivity,
-  fixActivity,
-  updateExecutedActivity,
-} from './actions';
+import { executeActivity, fixActivity, updateExecutedActivity } from './actions';
 import { ActivityProps } from './types';
 
 const MediaWrapper = styled.div.attrs({
@@ -62,11 +58,7 @@ const MediaWrapper = styled.div.attrs({
   }
 `;
 
-const MediaActivity: FC<ActivityProps> = ({
-  activity,
-  isCorrectingError,
-  isTaskCompleted,
-}) => {
+const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError, isTaskCompleted }) => {
   const dispatch = useDispatch();
   const [isUploading, setIsUploading] = useState(false);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
@@ -147,29 +139,25 @@ const MediaActivity: FC<ActivityProps> = ({
       {!isTaskCompleted && (
         <div style={{ display: 'flex', marginTop: '24px' }}>
           {isUploading ? (
-            <LinearProgress
-              style={{ height: 8, width: '100%', color: '#1d84ff' }}
-            />
+            <LinearProgress style={{ height: 8, width: '100%', color: '#1d84ff' }} />
           ) : (
-              <div
-                className="card"
-                style={
-                  videoDevices.length === 0 ? { cursor: 'not-allowed' } : {}
-                }
-              >
-                <ImageUploadButton
-                  label="User can capture photos"
-                  onUploadStart={onUploadStart}
-                  onUploadSuccess={(fileData) => {
-                    console.log('fileData :: ', fileData);
-                    onUploaded(fileData);
-                  }}
-                  icon={PhotoCamera}
-                  allowCapture
-                  disabled={videoDevices.length === 0}
-                  onUploadError={onUploadError}
-                />
-              </div>
+            <div
+              className="card"
+              style={videoDevices.length === 0 ? { cursor: 'not-allowed' } : {}}
+            >
+              <ImageUploadButton
+                label="User can capture photos"
+                onUploadStart={onUploadStart}
+                onUploadSuccess={(fileData) => {
+                  console.log('fileData :: ', fileData);
+                  onUploaded(fileData);
+                }}
+                icon={PhotoCamera}
+                allowCapture
+                disabled={videoDevices.length === 0}
+                onUploadError={onUploadError}
+              />
+            </div>
           )}
         </div>
       )}

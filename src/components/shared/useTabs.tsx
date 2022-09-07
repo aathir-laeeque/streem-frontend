@@ -59,11 +59,7 @@ export function useTabs<T>(tabs: Tab<T>[]) {
           <span
             className={`tab-title ${tab.active && 'tab-active'}`}
             key={`tab_${index}`}
-            onClick={() =>
-              updateTabs(
-                tabs.map((el, idx) => ({ ...el, active: idx === index })),
-              )
-            }
+            onClick={() => updateTabs(tabs.map((el, idx) => ({ ...el, active: idx === index })))}
           >
             {capitalize(tab.label)}
           </span>
@@ -73,21 +69,15 @@ export function useTabs<T>(tabs: Tab<T>[]) {
   );
   const renderTabsContent = (): JSX.Element => (
     <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-      {stateTabs.map(
-        ({ TabContent, label, passThroughTabContentProps }, index) => {
-          if (label === activeTab?.label) {
-            return (
-              <TabContent
-                {...passThroughTabContentProps}
-                label={label}
-                key={`${label}-${index}`}
-              />
-            );
-          } else {
-            return null;
-          }
-        },
-      )}
+      {stateTabs.map(({ TabContent, label, passThroughTabContentProps }, index) => {
+        if (label === activeTab?.label) {
+          return (
+            <TabContent {...passThroughTabContentProps} label={label} key={`${label}-${index}`} />
+          );
+        } else {
+          return null;
+        }
+      })}
     </div>
   );
   return { renderTabsHeader, renderTabsContent };

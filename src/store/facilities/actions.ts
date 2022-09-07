@@ -2,8 +2,7 @@ import { actionSpreader } from '../helpers';
 import { Facilities, FacilitiesAction } from './types';
 import { Facility } from '#services/commonTypes';
 
-export const fetchFacilities = () =>
-  actionSpreader(FacilitiesAction.FETCH_FACILITIES);
+export const fetchFacilities = () => actionSpreader(FacilitiesAction.FETCH_FACILITIES);
 
 export const fetchFacilitiesOngoing = () =>
   actionSpreader(FacilitiesAction.FETCH_FACILITIES_ONGOING);
@@ -28,10 +27,7 @@ export const switchFacility = ({
     loggedInUserId,
   });
 
-export const switchFacilitySuccess = (
-  accessToken: string,
-  facilityId: Facility['id'],
-) =>
+export const switchFacilitySuccess = (accessToken: string, facilityId: Facility['id']) =>
   actionSpreader(FacilitiesAction.SWITCH_FACILITY_SUCCESS, {
     accessToken,
     facilityId,

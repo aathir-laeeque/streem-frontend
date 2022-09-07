@@ -3,11 +3,7 @@ import { Reducer } from 'redux';
 import { Checklist } from '../checklist.types';
 import { ComposerAction } from '../reducer.types';
 import { TaskListActions } from '../Tasks/reducer.types';
-import {
-  ActivityListActions,
-  ActivityListActionType,
-  ActivityListState,
-} from './reducer.types';
+import { ActivityListActions, ActivityListActionType, ActivityListState } from './reducer.types';
 import { getActivities } from './utils';
 
 export const initialState: ActivityListState = {
@@ -38,9 +34,7 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
           [action.payload.stageId]: {
             ...state.activityOrderInTaskInStage[action.payload.stageId],
             [action.payload.taskId]: [
-              ...state.activityOrderInTaskInStage[action.payload.stageId][
-                action.payload.taskId
-              ],
+              ...state.activityOrderInTaskInStage[action.payload.stageId][action.payload.taskId],
               action.payload.activity.id,
             ],
           },
@@ -116,9 +110,7 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
           ...state.listById,
           [activityId]: {
             ...activityToUpdate,
-            data: activityToUpdate.data.filter(
-              ({ id }: { id: string }) => id !== activityItemId,
-            ),
+            data: activityToUpdate.data.filter(({ id }: { id: string }) => id !== activityItemId),
           },
         },
       };

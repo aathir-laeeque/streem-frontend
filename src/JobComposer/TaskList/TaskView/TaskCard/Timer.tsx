@@ -8,17 +8,14 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 const Timer: FC<{
   task: Omit<Task, 'activities'>;
   timerState: { [index: string]: boolean };
-  setTimerState: React.Dispatch<
-    React.SetStateAction<{ [index: string]: boolean }>
-  >;
+  setTimerState: React.Dispatch<React.SetStateAction<{ [index: string]: boolean }>>;
 }> = ({ task, timerState, setTimerState }) => {
   const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
   const { state, startedAt, endedAt } = task.taskExecution;
   const componentDidMount = useRef(false);
 
   const isTaskCompleted =
-    state === TaskExecutionState.COMPLETED ||
-    state === TaskExecutionState.COMPLETED_WITH_EXCEPTION;
+    state === TaskExecutionState.COMPLETED || state === TaskExecutionState.COMPLETED_WITH_EXCEPTION;
 
   const isTaskStarted = state === TaskExecutionState.IN_PROGRESS;
 
@@ -26,9 +23,7 @@ const Timer: FC<{
     isTaskCompleted && endedAt && startedAt
       ? moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds')
       : isTaskStarted && recentServerTimestamp && startedAt
-      ? moment
-          .unix(recentServerTimestamp)
-          .diff(moment.unix(startedAt), 'seconds')
+      ? moment.unix(recentServerTimestamp).diff(moment.unix(startedAt), 'seconds')
       : 0;
 
   const updateTimerState = (updatedTimeElapsed: number) => {
@@ -92,19 +87,11 @@ const Timer: FC<{
         <div>
           {task.timerOperator === 'NOT_LESS_THAN' ? (
             <>
-              <span>
-                Perform task in NLT{' '}
-                {task.minPeriod && formatDuration(task.minPeriod)}
-              </span>
-              <span>
-                Max Time limit -{' '}
-                {task.maxPeriod && formatDuration(task?.maxPeriod)}
-              </span>
+              <span>Perform task in NLT {task.minPeriod && formatDuration(task.minPeriod)}</span>
+              <span>Max Time limit - {task.maxPeriod && formatDuration(task?.maxPeriod)}</span>
             </>
           ) : (
-            <span>
-              Complete under {task.maxPeriod && formatDuration(task?.maxPeriod)}
-            </span>
+            <span>Complete under {task.maxPeriod && formatDuration(task?.maxPeriod)}</span>
           )}
         </div>
       </div>

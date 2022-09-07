@@ -88,10 +88,7 @@ type useScrollableSectionsState = {
   paddingBottom: number;
 };
 
-export function useScrollableSections({
-  title,
-  items,
-}: useScrollableSectionsProps) {
+export function useScrollableSections({ title, items }: useScrollableSectionsProps) {
   const [state, setState] = useState<useScrollableSectionsState>({
     paddingBottom: 0,
   });
@@ -107,14 +104,9 @@ export function useScrollableSections({
   });
 
   const updateSize = () => {
-    if (
-      scrollTarget.current &&
-      contentTarget.current &&
-      itemsRef.current.length
-    ) {
+    if (scrollTarget.current && contentTarget.current && itemsRef.current.length) {
       const scrollHeight = scrollTarget.current.clientHeight;
-      const lastItemHeight =
-        itemsRef.current[itemsRef.current.length - 1].clientHeight;
+      const lastItemHeight = itemsRef.current[itemsRef.current.length - 1].clientHeight;
       const padding = scrollHeight - lastItemHeight;
       setState({
         paddingBottom: padding,

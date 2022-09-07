@@ -290,9 +290,7 @@ export const FormGroup = ({ inputs, style }: FormGroupProps) => {
                 {props.items.map((item: any) => (
                   <>
                     <FormControlLabel control={<StyledRadio />} {...item} />
-                    {item?.desc && (
-                      <span className="radio-desc">{item.desc}</span>
-                    )}
+                    {item?.desc && <span className="radio-desc">{item.desc}</span>}
                   </>
                 ))}
               </RadioGroup>

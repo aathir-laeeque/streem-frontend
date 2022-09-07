@@ -35,10 +35,7 @@ type Params = {
   orderTree: Activity['orderTree'];
 };
 
-const generateNewActivity = ({
-  type,
-  orderTree,
-}: Params): Partial<Activity> | null => {
+const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | null => {
   switch (type) {
     case MandatoryActivity.CHECKLIST:
       return {
@@ -110,7 +107,7 @@ const generateNewActivity = ({
         description: '',
         mandatory: true,
       };
-    
+
     case MandatoryActivity.NUMBER:
     case NonMandatoryActivity.INSTRUCTION:
       return {

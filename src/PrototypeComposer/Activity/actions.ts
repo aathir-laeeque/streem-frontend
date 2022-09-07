@@ -1,10 +1,7 @@
 import { Activity } from './../checklist.types';
 import { actionSpreader } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
-import {
-  ActivityListActions,
-  ActivityOrderInTaskInStage,
-} from './reducer.types';
+import { ActivityListActions, ActivityOrderInTaskInStage } from './reducer.types';
 import { AddNewActivityType, DeleteActivityType } from './types';
 
 export const addNewActivity = (params: AddNewActivityType) =>
@@ -17,8 +14,7 @@ export const addNewActivitySuccess = (
   params: Pick<AddNewActivityType, 'stageId' | 'taskId'> & {
     activity: Activity;
   },
-) =>
-  actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY_SUCCESS, { ...params });
+) => actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY_SUCCESS, { ...params });
 
 export const deleteActivity = (params: DeleteActivityType) =>
   actionSpreader(ActivityListActions.DELETE_ACTIVITY, { ...params });
@@ -54,10 +50,7 @@ export const updateStoreMediaActivity = (
     data,
   });
 
-export const removeStoreActivityItem = (
-  activityId: Activity['id'],
-  activityItemId: string,
-) =>
+export const removeStoreActivityItem = (activityId: Activity['id'], activityItemId: string) =>
   actionSpreader(ActivityListActions.REMOVE_STORE_ACTIVITY_ITEM, {
     activityId,
     activityItemId,

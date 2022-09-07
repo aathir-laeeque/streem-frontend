@@ -73,16 +73,13 @@ const SearchFilter: FC<SearchFilterProps> = ({
   updateFilterFields,
   label,
 }) => {
-  const [selectedOption, setSelectedOption] = useState<DropdownOption>(
-    (dropdownOptions ?? [])[0],
-  );
+  const [selectedOption, setSelectedOption] = useState<DropdownOption>((dropdownOptions ?? [])[0]);
 
   const [searchValue, setSearchValue] = useState('');
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) =>
-    setAnchorEl(event.currentTarget);
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
 
   const handleClose = () => setAnchorEl(null);
 
@@ -90,10 +87,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
     setSearchValue('');
   }, [label]);
 
-  const onUpdate = (
-    updatedOption: DropdownOption,
-    updatedSearchValue: string,
-  ) => {
+  const onUpdate = (updatedOption: DropdownOption, updatedSearchValue: string) => {
     const searchFilterFields = [
       ...(updatedOption.field === 'name' ||
       updatedOption.field === 'checklist.name' ||

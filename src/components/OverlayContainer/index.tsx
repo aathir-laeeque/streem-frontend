@@ -213,7 +213,7 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
       return <CalcActivityAddParamsModal {...params} />;
 
     case OverlayNames.AUTOMATION_ACTION:
-      return <AutomationActionModal {...params} />
+      return <AutomationActionModal {...params} />;
 
     case OverlayNames.CONFIGURE_COLUMNS:
       return <ConfigureColumnsModal {...params} />;

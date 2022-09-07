@@ -163,9 +163,7 @@ export const LabeledInput: FC<LabeledInputProps> = ({
             id={id}
             className="input"
             ref={refFun}
-            placeholder={
-              state.placeHolderText ? state.placeHolderText : placeHolder
-            }
+            placeholder={state.placeHolderText ? state.placeHolderText : placeHolder}
             onFocus={onFocus}
             data-testid={id}
             onBlur={onBlur}
@@ -175,9 +173,7 @@ export const LabeledInput: FC<LabeledInputProps> = ({
           />
           {icon && <div className="icon">{icon}</div>}
         </div>
-        {error && error !== '' && (
-          <span className="optional-text error">{error}</span>
-        )}
+        {error && error !== '' && <span className="optional-text error">{error}</span>}
         {!required && <span className="optional-text">Optional</span>}
       </div>
     </Wrapper>

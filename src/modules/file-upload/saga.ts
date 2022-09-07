@@ -39,9 +39,7 @@ function* uploadFileSaga({ payload }: ReturnType<typeof uploadFile>) {
         }
       }
     } else {
-      console.error(
-        'api call is success but gopt some error from BE for some reason',
-      );
+      console.error('api call is success but gopt some error from BE for some reason');
     }
   } catch (error) {
     console.error('error came in file upload saga :: ', error);

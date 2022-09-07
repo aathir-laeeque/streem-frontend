@@ -14,8 +14,7 @@ const Wrapper = styled.div.attrs({
   position: relative;
   width: 100%;
 
-  background-color: ${({ whiteBackground }) =>
-    whiteBackground ? '#ffffff' : '#f4f4f4'};
+  background-color: ${({ whiteBackground }) => (whiteBackground ? '#ffffff' : '#f4f4f4')};
   height: ${({ height }) => `${height}px`};
 
   .filler {
@@ -43,16 +42,8 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const ProgressBar: FC<Props> = ({
-  percentage = 0,
-  height = 8,
-  whiteBackground = false,
-}) => (
-  <Wrapper
-    percentage={percentage}
-    height={height}
-    whiteBackground={whiteBackground}
-  >
+const ProgressBar: FC<Props> = ({ percentage = 0, height = 8, whiteBackground = false }) => (
+  <Wrapper percentage={percentage} height={height} whiteBackground={whiteBackground}>
     <div className="filler"></div>
   </Wrapper>
 );

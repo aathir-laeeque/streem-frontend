@@ -5,18 +5,11 @@ import { Close } from '@material-ui/icons';
 import { get } from 'lodash';
 import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  executeActivity,
-  fixActivity,
-  updateExecutedActivity,
-} from '../actions';
+import { executeActivity, fixActivity, updateExecutedActivity } from '../actions';
 import { ActivityProps, Selections } from '../types';
 import { Wrapper } from './styles';
 
-const ChecklistActivity: FC<ActivityProps> = ({
-  activity,
-  isCorrectingError,
-}) => {
+const ChecklistActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const metaInfo = useRef<{
     shouldCallApi?: boolean;
   }>({});
@@ -30,11 +23,7 @@ const ChecklistActivity: FC<ActivityProps> = ({
         const data = activity.data.map((d: any) => {
           return {
             ...d,
-            state: get(
-              activity?.response?.choices,
-              d.id,
-              Selections.NOT_SELECTED,
-            ),
+            state: get(activity?.response?.choices, d.id, Selections.NOT_SELECTED),
           };
         });
         if (isCorrectingError) {
@@ -83,8 +72,7 @@ const ChecklistActivity: FC<ActivityProps> = ({
       <Wrapper>
         <ul className="list-container">
           {activity.data.map((el, index) => {
-            const isItemSelected =
-              get(activity?.response?.choices, el.id) === Selections.SELECTED;
+            const isItemSelected = get(activity?.response?.choices, el.id) === Selections.SELECTED;
 
             return (
               <li key={index} className="list-item">
@@ -95,16 +83,11 @@ const ChecklistActivity: FC<ActivityProps> = ({
                     e.preventDefault();
                     handleExecution(
                       el.id,
-                      isItemSelected
-                        ? Selections.NOT_SELECTED
-                        : Selections.SELECTED,
+                      isItemSelected ? Selections.NOT_SELECTED : Selections.SELECTED,
                     );
                   }}
                 >
-                  <CheckboxWithLabel
-                    isChecked={isItemSelected}
-                    label={el.name}
-                  />
+                  <CheckboxWithLabel isChecked={isItemSelected} label={el.name} />
                 </div>
 
                 <Close className="icon" />

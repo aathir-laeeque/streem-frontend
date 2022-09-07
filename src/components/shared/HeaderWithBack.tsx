@@ -33,17 +33,11 @@ const Wrapper = styled.div.attrs({})`
   }
 `;
 
-export const HeaderWithBack: FC<HeaderWithBack> = ({
-  heading,
-  onActionPress,
-  actionText,
-}) => {
+export const HeaderWithBack: FC<HeaderWithBack> = ({ heading, onActionPress, actionText }) => {
   return (
     <Wrapper>
       <span className="top-action" onClick={onActionPress}>
-        <ArrowBackIosIcon
-          style={{ fontSize: 16, fontWeight: 'bold', padding: '0px 4px' }}
-        />
+        <ArrowBackIosIcon style={{ fontSize: 16, fontWeight: 'bold', padding: '0px 4px' }} />
         {actionText}
       </span>
       <span className="top-title">{heading}</span>

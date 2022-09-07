@@ -7,12 +7,7 @@ import {
 import { Stage, Task } from '../checklist.types';
 import { ComposerActionType } from '../composer.reducer.types';
 import { setActiveStage } from '../StageList/actions';
-import {
-  removeTaskError,
-  setActiveTask,
-  setTaskError,
-  updateTaskExecutionState,
-} from './actions';
+import { removeTaskError, setActiveTask, setTaskError, updateTaskExecutionState } from './actions';
 import { TasksById, TasksOrderInStage } from './types';
 
 export type TaskListState = {

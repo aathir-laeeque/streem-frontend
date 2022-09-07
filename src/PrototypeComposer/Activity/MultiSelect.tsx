@@ -1,11 +1,6 @@
 import { ActivityItemInput, AddNewItem, TextInput } from '#components';
 import { MandatoryActivity } from '#PrototypeComposer/checklist.types';
-import {
-  CheckBoxOutlineBlankSharp,
-  Close,
-  Error,
-  RadioButtonUnchecked,
-} from '@material-ui/icons';
+import { CheckBoxOutlineBlankSharp, Close, Error, RadioButtonUnchecked } from '@material-ui/icons';
 import { noop } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -20,9 +15,7 @@ import {
 import { MultiSelectWrapper } from './styles';
 import { ActivityProps, SelectActivityErrors } from './types';
 
-const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
-  activity,
-}) => {
+const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
   const [componentLoaded, updateComponentLoaded] = useState<boolean>(false);
 
@@ -36,9 +29,7 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
 
   const isMultiSelect = activity.type === MandatoryActivity.MULTISELECT;
 
-  const activityErrors = activity.errors.filter(
-    (error) => SelectActivityErrors,
-  );
+  const activityErrors = activity.errors.filter((error) => SelectActivityErrors);
 
   const isErrorPresent = !!activityErrors.length;
 
@@ -53,14 +44,10 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
 
       <TextInput
         placeholder={
-          isMultiSelect
-            ? 'User can select one or more options'
-            : 'User can select one option here'
+          isMultiSelect ? 'User can select one or more options' : 'User can select one option here'
         }
         disabled
-        label={
-          isMultiSelect ? 'Creating a Multi Choice' : 'Creating a single choice'
-        }
+        label={isMultiSelect ? 'Creating a Multi Choice' : 'Creating a single choice'}
       />
 
       <ActivityLabelInput activity={activity} isControlled />
@@ -69,18 +56,10 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         {activity?.data?.map((item, index) => (
           <li className="options-list-item" key={item.id}>
             <ActivityItemInput
-              Icon={
-                isMultiSelect ? CheckBoxOutlineBlankSharp : RadioButtonUnchecked
-              }
+              Icon={isMultiSelect ? CheckBoxOutlineBlankSharp : RadioButtonUnchecked}
               defaultValue={item.name}
               customOnChange={(value) => {
-                dispatch(
-                  updateStoreActivity(value, activity.id, [
-                    'data',
-                    index,
-                    'name',
-                  ]),
-                );
+                dispatch(updateStoreActivity(value, activity.id, ['data', index, 'name']));
               }}
               error={isErrorPresent && !item.name}
             />
@@ -98,18 +77,15 @@ const MultiSelectActivity: FC<Omit<ActivityProps, 'taskId'>> = ({
         {isErrorPresent ? (
           <div className="activity-error">
             {
-              activityErrors.find((error) =>
-                error.code === isMultiSelect ? 'E411' : 'E413',
-              )?.message
+              activityErrors.find((error) => (error.code === isMultiSelect ? 'E411' : 'E413'))
+                ?.message
             }
           </div>
         ) : null}
 
         <AddNewItem
           onClick={() => {
-            dispatch(
-              addStoreActivityItem(activity.id, { id: uuidv4(), name: '' }),
-            );
+            dispatch(addStoreActivityItem(activity.id, { id: uuidv4(), name: '' }));
           }}
         />
       </ul>

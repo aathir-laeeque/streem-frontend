@@ -44,16 +44,10 @@ const EditUserContainer: FC<ViewUserProps> = ({ id, pageType }) => {
   useEffect(() => {
     if (selectedUser) {
       const isAccountOwner = !!(
-        selectedUser.roles &&
-        selectedUser.roles[0].id === RoleIdByName.ACCOUNT_OWNER
+        selectedUser.roles && selectedUser.roles[0].id === RoleIdByName.ACCOUNT_OWNER
       );
 
-      const isEditable = checkPermission([
-        'usersAndAccess',
-        'selectedUser',
-        'form',
-        'editable',
-      ])
+      const isEditable = checkPermission(['usersAndAccess', 'selectedUser', 'form', 'editable'])
         ? isAccountOwner
           ? checkPermission(['usersAndAccess', 'editAccountOwner'])
           : true

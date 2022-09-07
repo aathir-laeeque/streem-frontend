@@ -11,11 +11,7 @@ import { useDispatch } from 'react-redux';
 import { ActivityProps } from '../types';
 import { Wrapper } from './styles';
 
-const Signature: FC<ActivityProps> = ({
-  activity,
-  isCorrectingError,
-  isTaskCompleted,
-}) => {
+const Signature: FC<ActivityProps> = ({ activity, isCorrectingError, isTaskCompleted }) => {
   const {
     auth: { profile },
   } = useTypedSelector((state) => state);
@@ -53,8 +49,7 @@ const Signature: FC<ActivityProps> = ({
             id: profile?.employeeId,
             name: `${profile?.firstName} ${profile?.lastName}`,
           },
-          onAcceptSignature: (imageData: string) =>
-            onAcceptSignature(imageData),
+          onAcceptSignature: (imageData: string) => onAcceptSignature(imageData),
         },
       }),
     );
@@ -63,11 +58,7 @@ const Signature: FC<ActivityProps> = ({
   return (
     <Wrapper>
       <div
-        className={
-          !isTaskCompleted
-            ? 'signature-interaction active'
-            : 'signature-interaction'
-        }
+        className={!isTaskCompleted ? 'signature-interaction active' : 'signature-interaction'}
         {...(!isTaskCompleted && {
           onClick: openSignatureModal,
         })}

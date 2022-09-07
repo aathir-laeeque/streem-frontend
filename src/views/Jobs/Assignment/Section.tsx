@@ -143,12 +143,7 @@ export const AssignmentSectionWrapper = styled.div.attrs({
   }
 `;
 
-const Section: FC<Props> = ({
-  stage,
-  sectionState = {},
-  localDispatch,
-  isFirst,
-}) => {
+const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }) => {
   const [isOpen, toggleIsOpen] = useState(isFirst);
 
   const isAllTaskAssigned = stage.tasks
@@ -159,20 +154,13 @@ const Section: FC<Props> = ({
     .map((task) => !!task.taskExecution.assignees.length)
     .every((val) => val === false);
 
-  const isAllTaskSelected = Object.values(sectionState).every(
-    (val) => val[0] === true,
-  );
-  const isNoTaskSelected = Object.values(sectionState).every(
-    (val) => val[0] === false,
-  );
+  const isAllTaskSelected = Object.values(sectionState).every((val) => val[0] === true);
+  const isNoTaskSelected = Object.values(sectionState).every((val) => val[0] === false);
 
   return (
     <AssignmentSectionWrapper>
       <div className="section-header">
-        <div
-          className="icon-wrapper"
-          onClick={() => toggleIsOpen((val) => !val)}
-        >
+        <div className="icon-wrapper" onClick={() => toggleIsOpen((val) => !val)}>
           {isOpen ? (
             <ArrowDropDown className="icon toggle-section" />
           ) : (
@@ -188,10 +176,7 @@ const Section: FC<Props> = ({
             : { checked: false, partial: true })}
           label={
             <div>
-              <span style={{ fontWeight: 'bold' }}>
-                Stage {stage.orderTree}
-              </span>{' '}
-              {stage.name}
+              <span style={{ fontWeight: 'bold' }}>Stage {stage.orderTree}</span> {stage.name}
             </div>
           }
           onClick={() => {
@@ -200,20 +185,12 @@ const Section: FC<Props> = ({
               payload: {
                 stageId: stage.id,
                 taskExecutionIds: stage.tasks
-                  .filter(
-                    (task) =>
-                      !(task.taskExecution.state in CompletedTaskStates),
-                  )
+                  .filter((task) => !(task.taskExecution.state in CompletedTaskStates))
                   .map((task) => task.taskExecution.id),
 
                 states: stage.tasks
-                  .filter(
-                    (task) =>
-                      !(task.taskExecution.state in CompletedTaskStates),
-                  )
-                  .map(() =>
-                    isAllTaskSelected ? false : isNoTaskSelected ? true : false,
-                  ),
+                  .filter((task) => !(task.taskExecution.state in CompletedTaskStates))
+                  .map(() => (isAllTaskSelected ? false : isNoTaskSelected ? true : false)),
               },
             });
           }}
@@ -221,33 +198,22 @@ const Section: FC<Props> = ({
 
         <div
           className={`pill ${
-            isAllTaskAssigned
-              ? 'assigned'
-              : isNoTaskAssigned
-              ? 'unassigned'
-              : 'partial'
+            isAllTaskAssigned ? 'assigned' : isNoTaskAssigned ? 'unassigned' : 'partial'
           }`}
         >
-          {isAllTaskAssigned
-            ? 'Assigned'
-            : isNoTaskAssigned
-            ? 'Unassigned'
-            : 'Partial Assigned'}
+          {isAllTaskAssigned ? 'Assigned' : isNoTaskAssigned ? 'Unassigned' : 'Partial Assigned'}
         </div>
       </div>
       {isOpen ? (
         <div className="section-body">
           {stage.tasks.map((task) => {
-            const isTaskCompleted =
-              task.taskExecution.state in CompletedTaskStates;
+            const isTaskCompleted = task.taskExecution.state in CompletedTaskStates;
 
             return (
               <div className="section-body-item" key={task.id}>
                 <Checkbox
                   disabled={isTaskCompleted}
-                  checked={
-                    (sectionState[task.taskExecution.id] ?? [])[0] ?? false
-                  }
+                  checked={(sectionState[task.taskExecution.id] ?? [])[0] ?? false}
                   label={`Task ${stage.orderTree}.${task.orderTree} : ${task.name}`}
                   onClick={() => {
                     localDispatch({
@@ -267,9 +233,7 @@ const Section: FC<Props> = ({
                   <div className="pill unassigned">Unassigned</div>
                 )}
 
-                {isTaskCompleted ? (
-                  <div className="pill completed">Task Complete</div>
-                ) : null}
+                {isTaskCompleted ? <div className="pill completed">Task Complete</div> : null}
               </div>
             );
           })}

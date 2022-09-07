@@ -1,8 +1,5 @@
 import { Checkbox } from '#components';
-import {
-  closeOverlayAction,
-  openOverlayAction,
-} from '#components/OverlayContainer/actions';
+import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { defaultParams, useUsers } from '#services/users';
 import { User } from '#store/users/types';
@@ -240,11 +237,7 @@ type initialState = {
   anchorEl: HTMLButtonElement | null;
 };
 
-const UsersFilter: FC<UsersFilterProps> = ({
-  options,
-  updateFilter,
-  label,
-}) => {
+const UsersFilter: FC<UsersFilterProps> = ({ options, updateFilter, label }) => {
   const initialState: initialState = {
     searchQuery: '',
     selectedUsers: [],
@@ -290,9 +283,7 @@ const UsersFilter: FC<UsersFilterProps> = ({
 
   const onCheckChanged = (user: User, checked: boolean) => {
     if (checked) {
-      const newSelected = [...appliedUsers, ...selectedUsers].filter(
-        (u) => user.id !== u.id,
-      );
+      const newSelected = [...appliedUsers, ...selectedUsers].filter((u) => user.id !== u.id);
       setstate({ ...state, selectedUsers: newSelected });
       updateFilter([...newSelected]);
     } else {
@@ -305,15 +296,9 @@ const UsersFilter: FC<UsersFilterProps> = ({
     return (
       <div className="item" key={`user_${user.id}`}>
         <div className="right">
-          <Checkbox
-            checked={checked}
-            label=""
-            onClick={() => onCheckChanged(user, checked)}
-          />
+          <Checkbox checked={checked} label="" onClick={() => onCheckChanged(user, checked)} />
         </div>
-        <div className="thumb">
-          {getInitials(`${user.firstName} ${user.lastName}`)}
-        </div>
+        <div className="thumb">{getInitials(`${user.firstName} ${user.lastName}`)}</div>
         <div className="middle">
           <span className="userId">{user.employeeId}</span>
           <span className="userName">{`${user.firstName} ${user.lastName}`}</span>
@@ -325,8 +310,7 @@ const UsersFilter: FC<UsersFilterProps> = ({
   const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
     e.stopPropagation();
     const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7)
-      loadMore();
+    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7) loadMore();
   };
 
   const handleUnselectAll = () => {
@@ -389,9 +373,7 @@ const UsersFilter: FC<UsersFilterProps> = ({
                   aria-haspopup="true"
                   onMouseEnter={(e) => handleAssigneeClick(e, [user])}
                   onMouseLeave={() =>
-                    dispatch(
-                      closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL),
-                    )
+                    dispatch(closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL))
                   }
                 >
                   {getInitials(`${user.firstName} ${user.lastName}`)}
@@ -402,13 +384,9 @@ const UsersFilter: FC<UsersFilterProps> = ({
                   key={`assignee_length`}
                   className="user-thumb"
                   aria-haspopup="true"
-                  onMouseEnter={(e) =>
-                    handleAssigneeClick(e, appliedUsers.slice(4))
-                  }
+                  onMouseEnter={(e) => handleAssigneeClick(e, appliedUsers.slice(4))}
                   onMouseLeave={() =>
-                    dispatch(
-                      closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL),
-                    )
+                    dispatch(closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL))
                   }
                 >
                   +{appliedUsers.length - 8}
@@ -420,11 +398,7 @@ const UsersFilter: FC<UsersFilterProps> = ({
           <span className="placeholder-text">Select Assignees</span>
         )}
 
-        {anchorEl ? (
-          <ArrowDropUp className="icon" />
-        ) : (
-          <ArrowDropDown className="icon" />
-        )}
+        {anchorEl ? <ArrowDropUp className="icon" /> : <ArrowDropDown className="icon" />}
       </div>
       <Popover
         id={anchorEl ? 'user-filter-popover' : undefined}
@@ -447,10 +421,7 @@ const UsersFilter: FC<UsersFilterProps> = ({
               <input
                 className="searchbox"
                 type="text"
-                onChange={debounce(
-                  (e) => setstate({ ...state, searchQuery: e.target.value }),
-                  500,
-                )}
+                onChange={debounce((e) => setstate({ ...state, searchQuery: e.target.value }), 500)}
                 defaultValue={searchQuery}
                 placeholder="Search Users"
               />

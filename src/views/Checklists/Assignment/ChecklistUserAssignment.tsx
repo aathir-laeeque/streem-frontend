@@ -26,19 +26,9 @@ type ListItemProps = {
   onClick: () => void;
 };
 
-const ListItem = ({
-  user,
-  selected,
-  partialSelected = false,
-  onClick,
-}: ListItemProps) => (
+const ListItem = ({ user, selected, partialSelected = false, onClick }: ListItemProps) => (
   <div className="list-item">
-    <Checkbox
-      onClick={onClick}
-      label=""
-      checked={selected}
-      partial={partialSelected}
-    />
+    <Checkbox onClick={onClick} label="" checked={selected} partial={partialSelected} />
     <Avatar user={user} size="large" />
     <div className="user-detail">
       <span className="user-id">{user.employeeId}</span>
@@ -53,11 +43,9 @@ const ChecklistUserAssignment: FC<CommonOverlayProps<Props>> = ({
   props: { checklistId, selectedTasks = [], onClose } = {},
 }) => {
   // users that are already selected
-  const [preAssignedUsers, setPreAssignedUsers] =
-    useState<User[]>([]);
+  const [preAssignedUsers, setPreAssignedUsers] = useState<User[]>([]);
   // users that are newly selected or selected after unselecting
-  const [assignedUserList, setAssignedUserList] =
-    useState<User[]>([]);
+  const [assignedUserList, setAssignedUserList] = useState<User[]>([]);
   // users that are unselected
   const [unAssignedUserList, setUnAssignedUserList] = useState<User[]>([]);
 
@@ -108,9 +96,7 @@ const ChecklistUserAssignment: FC<CommonOverlayProps<Props>> = ({
     const assignedUsers = assignedUserList.filter(
       (user) =>
         !preAssignedUsers.some(
-          (_user) =>
-            _user.id === user.id &&
-            _user.completelyAssigned === user.completelyAssigned,
+          (_user) => _user.id === user.id && _user.completelyAssigned === user.completelyAssigned,
         ),
     );
 
@@ -134,8 +120,7 @@ const ChecklistUserAssignment: FC<CommonOverlayProps<Props>> = ({
   const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
     e.stopPropagation();
     const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7)
-      loadMore();
+    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7) loadMore();
   };
 
   return (
@@ -175,10 +160,7 @@ const ChecklistUserAssignment: FC<CommonOverlayProps<Props>> = ({
           <span
             className="deselect"
             onClick={() => {
-              setUnAssignedUserList([
-                ...unAssignedUserList,
-                ...assignedUserList,
-              ]);
+              setUnAssignedUserList([...unAssignedUserList, ...assignedUserList]);
               setAssignedUserList([]);
             }}
           >
@@ -193,9 +175,7 @@ const ChecklistUserAssignment: FC<CommonOverlayProps<Props>> = ({
               onClick={() => {
                 if (!!user.completelyAssigned) {
                   // unselect user
-                  setAssignedUserList((_users) =>
-                    _users.filter((_user) => _user.id !== user.id),
-                  );
+                  setAssignedUserList((_users) => _users.filter((_user) => _user.id !== user.id));
 
                   setUnAssignedUserList((_users) => [..._users, user]);
                 } else {
@@ -203,9 +183,7 @@ const ChecklistUserAssignment: FC<CommonOverlayProps<Props>> = ({
                   setAssignedUserList((_users) =>
                     _users.map((_user) => ({
                       ..._user,
-                      ...(_user.id === user.id
-                        ? { completelyAssigned: true }
-                        : {}),
+                      ...(_user.id === user.id ? { completelyAssigned: true } : {}),
                     })),
                   );
                 }
@@ -216,27 +194,23 @@ const ChecklistUserAssignment: FC<CommonOverlayProps<Props>> = ({
             />
           ))}
 
-          {[
-            ...users.filter(
-              (user) => !assignedUserList.some((_user) => _user.id === user.id),
+          {[...users.filter((user) => !assignedUserList.some((_user) => _user.id === user.id))].map(
+            (user) => (
+              <ListItem
+                user={user}
+                key={user.id}
+                selected={false}
+                partialSelected={false}
+                onClick={() => {
+                  setUnAssignedUserList((_users) => _users.filter((_user) => _user.id !== user.id));
+                  setAssignedUserList((_users) => [
+                    ..._users,
+                    { ...user, completelyAssigned: true },
+                  ]);
+                }}
+              />
             ),
-          ].map((user) => (
-            <ListItem
-              user={user}
-              key={user.id}
-              selected={false}
-              partialSelected={false}
-              onClick={() => {
-                setUnAssignedUserList((_users) =>
-                  _users.filter((_user) => _user.id !== user.id),
-                );
-                setAssignedUserList((_users) => [
-                  ..._users,
-                  { ...user, completelyAssigned: true },
-                ]);
-              }}
-            />
-          ))}
+          )}
         </div>
       </BaseModal>
     </Wrapper>

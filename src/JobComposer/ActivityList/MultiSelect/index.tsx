@@ -18,23 +18,16 @@ const MultiSelectActivity: FC<ActivityProps & { isMulti: boolean }> = ({
 
   return (
     <Wrapper>
-      <div className="activity-header">
-        {isMulti ? 'Multi Select' : 'Single Select'}
-      </div>
+      <div className="activity-header">{isMulti ? 'Multi Select' : 'Single Select'}</div>
 
       <Select
         isMulti={isMulti}
         className="multi-select"
         options={options}
         value={options.filter(
-          (el) =>
-            get(activity?.response?.choices, el.value) === Selections.SELECTED,
+          (el) => get(activity?.response?.choices, el.value) === Selections.SELECTED,
         )}
-        placeholder={
-          isMulti
-            ? 'Select one or more options'
-            : 'You can select one option here'
-        }
+        placeholder={isMulti ? 'Select one or more options' : 'You can select one option here'}
         styles={customSelectStyles}
         onChange={(options) => {
           let newData;

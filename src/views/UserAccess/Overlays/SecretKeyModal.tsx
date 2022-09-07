@@ -102,8 +102,8 @@ const SecretKeyModal: FC<
             <div className="sub-heading">{subHeading}</div>
             <div className="key-content">Secret Key : {key}</div>
             <div className="alert">
-              The Secret Key will not be visible again. The Secret key should be
-              given to the user for registration.
+              The Secret Key will not be visible again. The Secret key should be given to the user
+              for registration.
             </div>
           </>
         )}

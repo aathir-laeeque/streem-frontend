@@ -1,11 +1,4 @@
-import {
-  AddNewItem,
-  Avatar,
-  Button1,
-  Select,
-  Textarea,
-  TextInput,
-} from '#components';
+import { AddNewItem, Avatar, Button1, Select, Textarea, TextInput } from '#components';
 import { Option } from '#components/shared/Select';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
@@ -59,9 +52,7 @@ const validateForm = (values: FormValues) => {
 const PrototypeForm: FC<Props> = (props) => {
   const { formMode, formData } = props;
   const dispatch = useDispatch();
-  const { listById } = useTypedSelector(
-    (state) => state.properties[ComposerEntity.CHECKLIST],
-  );
+  const { listById } = useTypedSelector((state) => state.properties[ComposerEntity.CHECKLIST]);
 
   const { users, usersById, loadMore } = useUsers({
     userState: OtherUserState.AUTHORS,
@@ -103,9 +94,7 @@ const PrototypeForm: FC<Props> = (props) => {
           mandatory: property.mandatory,
           name: property.name,
           placeHolder: property.placeHolder,
-          value:
-            formData?.properties?.find((el) => el.id === property.id)?.value ??
-            '',
+          value: formData?.properties?.find((el) => el.id === property.id)?.value ?? '',
         })),
       }));
     }
@@ -159,8 +148,7 @@ const PrototypeForm: FC<Props> = (props) => {
   const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
     e.stopPropagation();
     const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7)
-      loadMore();
+    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7) loadMore();
   };
 
   const filterUsers = (users: User[]) => {
@@ -212,9 +200,7 @@ const PrototypeForm: FC<Props> = (props) => {
             <Avatar user={formValues.createdBy} />
             <div className="owner-details">
               <div className="owner-id">{formValues.createdBy.employeeId}</div>
-              <div className="owner-name">
-                {getFullName(formValues.createdBy)}
-              </div>
+              <div className="owner-name">{getFullName(formValues.createdBy)}</div>
             </div>
           </div>
         </div>
@@ -291,9 +277,7 @@ const PrototypeForm: FC<Props> = (props) => {
                   // This check is required to create a unselected select component on click of Add New ie line no : 303.
                   author.id !== '0'
                     ? {
-                        label: `${getFullName(author)}, ID : ${
-                          author.employeeId
-                        }`,
+                        label: `${getFullName(author)}, ID : ${author.employeeId}`,
                         value: author.id,
                       }
                     : undefined

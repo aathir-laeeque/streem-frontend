@@ -24,10 +24,7 @@ const styles = StyleSheet.create({
   },
 });
 
-type Props = Pick<
-  JobSummary,
-  'code' | 'completedBy' | 'createdBy' | 'properties'
->;
+type Props = Pick<JobSummary, 'code' | 'completedBy' | 'createdBy' | 'properties'>;
 
 const JobDetails = ({ code, completedBy, createdBy, properties }: Props) => (
   <View style={styles.container}>

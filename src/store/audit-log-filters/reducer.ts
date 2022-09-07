@@ -1,8 +1,4 @@
-import {
-  AuditLogsFiltersState,
-  AuditLogFiltersActionType,
-  AuditLogsFiltersAction,
-} from './types';
+import { AuditLogsFiltersState, AuditLogFiltersActionType, AuditLogsFiltersAction } from './types';
 
 const initialState: AuditLogsFiltersState = {
   filters: '',

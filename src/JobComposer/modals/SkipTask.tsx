@@ -17,14 +17,12 @@ const Wrapper = styled.div`
   }
 `;
 
-const SkipTaskModal: FC<CommonOverlayProps<{
-  taskId: Task['id'];
-  setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
-}>> = ({
-  closeAllOverlays,
-  closeOverlay,
-  props: { taskId, setLoadingState },
-}) => {
+const SkipTaskModal: FC<
+  CommonOverlayProps<{
+    taskId: Task['id'];
+    setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
+  }>
+> = ({ closeAllOverlays, closeOverlay, props: { taskId, setLoadingState } }) => {
   const dispatch = useDispatch();
 
   const [skipReason, setSkipReason] = useState('');
@@ -44,9 +42,7 @@ const SkipTaskModal: FC<CommonOverlayProps<{
         title="Skip Task"
       >
         <div className="new-form-field">
-          <label className="new-form-field-label">
-            Provide the details for skipping the task
-          </label>
+          <label className="new-form-field-label">Provide the details for skipping the task</label>
           <textarea
             className="new-form-field-textarea"
             value={skipReason}

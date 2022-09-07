@@ -3,11 +3,7 @@ import { Entity } from '#JobComposer/composer.types';
 import { getStages } from '#JobComposer/utils';
 import { Reducer } from 'redux';
 
-import {
-  StageListAction,
-  StageListActionType,
-  StageListState,
-} from './reducer.types';
+import { StageListAction, StageListActionType, StageListState } from './reducer.types';
 
 export const initialState: StageListState = {
   activeStageId: undefined,
@@ -18,10 +14,7 @@ export const initialState: StageListState = {
   stagesOrder: [],
 };
 
-const reducer: Reducer<StageListState, StageListActionType> = (
-  state = initialState,
-  action,
-) => {
+const reducer: Reducer<StageListState, StageListActionType> = (state = initialState, action) => {
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
       const { data, entity, setActive } = action.payload;

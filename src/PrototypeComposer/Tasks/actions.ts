@@ -4,12 +4,7 @@ import { Error } from '#utils/globalTypes';
 
 import { Media, Stage, Task } from '../checklist.types';
 import { TaskListActions } from './reducer.types';
-import {
-  AddMediaType,
-  AddNewTaskType,
-  SetTaskTimerType,
-  UpdateMediaType,
-} from './types';
+import { AddMediaType, AddNewTaskType, SetTaskTimerType, UpdateMediaType } from './types';
 
 export const addNewTask = ({ checklistId, stageId }: AddNewTaskType) =>
   actionSpreader(TaskListActions.ADD_NEW_TASK, { checklistId, stageId });
@@ -23,13 +18,10 @@ export const addTaskMedia = ({ mediaDetails, taskId }: AddMediaType) =>
 export const updateTaskMedia = (payload: UpdateMediaType) =>
   actionSpreader(TaskListActions.UPDATE_TASK_MEDIA, payload);
 
-export const updateTaskMediaSuccess = (payload: {
-  media: Media;
-  taskId: Task['id'];
-}) => actionSpreader(TaskListActions.UPDATE_TASK_MEDIA_SUCCESS, payload);
+export const updateTaskMediaSuccess = (payload: { media: Media; taskId: Task['id'] }) =>
+  actionSpreader(TaskListActions.UPDATE_TASK_MEDIA_SUCCESS, payload);
 
-export const addStop = (taskId: Task['id']) =>
-  actionSpreader(TaskListActions.ADD_STOP, { taskId });
+export const addStop = (taskId: Task['id']) => actionSpreader(TaskListActions.ADD_STOP, { taskId });
 
 export const deleteTask = (taskId: Task['id']) =>
   actionSpreader(TaskListActions.DELETE_TASK, { taskId });
@@ -60,8 +52,7 @@ export const setTaskTimer = (setTimerType: SetTaskTimerType) =>
 export const removeTaskTimer = (taskId: Task['id']) =>
   actionSpreader(TaskListActions.REMOVE_TASK_TIMER, { taskId });
 
-export const updateTask = (task: Task) =>
-  actionSpreader(TaskListActions.UPDATE_TASK, { task });
+export const updateTask = (task: Task) => actionSpreader(TaskListActions.UPDATE_TASK, { task });
 
 export const updateTaskName = (task: Pick<Task, 'name' | 'id'>) =>
   actionSpreader(TaskListActions.UPDATE_TASK_NAME, { task });

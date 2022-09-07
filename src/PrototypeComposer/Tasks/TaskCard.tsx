@@ -1,11 +1,7 @@
 import { ImageUploadButton, Select, Textarea } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import {
-  ActivityType,
-  EnabledStates,
-  TimerOperator,
-} from '#PrototypeComposer/checklist.types';
+import { ActivityType, EnabledStates, TimerOperator } from '#PrototypeComposer/checklist.types';
 import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { useTypedSelector } from '#store/helpers';
 import { formatDuration } from '#utils/timeUtils';
@@ -38,9 +34,12 @@ import {
 import { TaskCardWrapper } from './styles';
 import { TaskCardProps } from './types';
 
-const TaskCard: FC<
-  TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
-> = ({ task, index, isFirstTask, isLastTask }) => {
+const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }> = ({
+  task,
+  index,
+  isFirstTask,
+  isLastTask,
+}) => {
   const {
     data,
     activities: { activityOrderInTaskInStage, listById },
@@ -86,8 +85,7 @@ const TaskCard: FC<
     onPrimaryClick: () => dispatch(deleteTask(taskId)),
   };
 
-  const noActivityError =
-    task.errors.find((error) => error.code === 'E211') ?? undefined;
+  const noActivityError = task.errors.find((error) => error.code === 'E211') ?? undefined;
 
   if (activeStageId) {
     const taskActivities = activityOrderInTaskInStage[activeStageId][taskId];
@@ -105,9 +103,7 @@ const TaskCard: FC<
       >
         <div
           className={`overlap ${
-            isAuthor && data?.state in EnabledStates && !data?.archived
-              ? 'hide'
-              : ''
+            isAuthor && data?.state in EnabledStates && !data?.archived ? 'hide' : ''
           }`}
           onClick={() => {
             if (activeTaskId === taskId) {
@@ -181,10 +177,7 @@ const TaskCard: FC<
           <div className="task-config">
             <Textarea
               defaultValue={name}
-              error={
-                !task.name &&
-                task.errors.find((error) => error.code === 'E210')?.message
-              }
+              error={!task.name && task.errors.find((error) => error.code === 'E210')?.message}
               label="Name the task"
               onChange={debounce(({ value }) => {
                 dispatch(updateTaskName({ id: taskId, name: value }));
@@ -272,19 +265,13 @@ const TaskCard: FC<
               const activity = listById[activityId];
 
               return (
-                <Activity
-                  activity={activity}
-                  key={`${activityId}-${index}`}
-                  taskId={taskId}
-                />
+                <Activity activity={activity} key={`${activityId}-${index}`} taskId={taskId} />
               );
             })}
           </div>
         </div>
 
-        {noActivityError ? (
-          <div className="task-error">{noActivityError?.message}</div>
-        ) : null}
+        {noActivityError ? <div className="task-error">{noActivityError?.message}</div> : null}
 
         <div className="task-footer">
           <Select

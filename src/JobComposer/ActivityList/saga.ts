@@ -29,18 +29,11 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
 
     const { activity, reason } = payload;
 
-    const { entityId: jobId } = yield select(
-      (state: RootState) => state.composer,
-    );
+    const { entityId: jobId } = yield select((state: RootState) => state.composer);
 
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiExecuteActivity(),
-      {
-        data: { jobId, activity, ...(!!reason ? { reason } : {}) },
-      },
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiExecuteActivity(), {
+      data: { jobId, activity, ...(!!reason ? { reason } : {}) },
+    });
 
     if (data) {
       if (
@@ -62,9 +55,7 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
       yield put(updateExecutedActivity(data));
     } else {
       console.error('handle errors on execute Activity Saga :: ', errors);
-      const taskAlreadyCompletedError = (errors as Error[]).find(
-        (err) => err.code === 'E403',
-      );
+      const taskAlreadyCompletedError = (errors as Error[]).find((err) => err.code === 'E403');
 
       if (taskAlreadyCompletedError) {
         yield put(
@@ -78,14 +69,11 @@ function* executeActivitySaga({ payload }: ReturnType<typeof executeActivity>) {
           }),
         );
       } else {
-        yield* handleCatch('Activity', 'executeActivitySaga', getErrorMsg(errors), true)
+        yield* handleCatch('Activity', 'executeActivitySaga', getErrorMsg(errors), true);
       }
     }
   } catch (error) {
-    console.error(
-      'error came in the executeActivitySaga in ActivityListSaga :: ',
-      error,
-    );
+    console.error('error came in the executeActivitySaga in ActivityListSaga :: ', error);
   }
 }
 
@@ -95,9 +83,7 @@ function* fixActivitySaga({ payload }: ReturnType<typeof fixActivity>) {
 
     const { activity, reason } = payload;
 
-    const { entityId: jobId } = yield select(
-      (state: RootState) => state.composer,
-    );
+    const { entityId: jobId } = yield select((state: RootState) => state.composer);
 
     const { data, errors } = yield call(request, 'PATCH', apiFixActivity(), {
       data: { jobId, activity, ...(!!reason ? { reason } : {}) },
@@ -106,9 +92,7 @@ function* fixActivitySaga({ payload }: ReturnType<typeof fixActivity>) {
     if (data) {
       yield put(updateExecutedActivity(data));
     } else {
-      const taskAlreadyCompletedError = (errors as Error[]).find(
-        (err) => err.code === 'E403',
-      );
+      const taskAlreadyCompletedError = (errors as Error[]).find((err) => err.code === 'E403');
 
       if (taskAlreadyCompletedError) {
         yield put(
@@ -122,30 +106,22 @@ function* fixActivitySaga({ payload }: ReturnType<typeof fixActivity>) {
           }),
         );
       } else {
-        yield* handleCatch('Activity', 'fixActivitySaga', getErrorMsg(errors), true)
+        yield* handleCatch('Activity', 'fixActivitySaga', getErrorMsg(errors), true);
       }
     }
   } catch (error) {
-    console.error(
-      'error came in the fixActivitySaga in ActivityListSaga :: ',
-      error,
-    );
+    console.error('error came in the fixActivitySaga in ActivityListSaga :: ', error);
   }
 }
 
-export function* approveRejectActivitySaga({
-  payload,
-}: ReturnType<typeof approveRejectActivity>) {
+export function* approveRejectActivitySaga({ payload }: ReturnType<typeof approveRejectActivity>) {
   try {
     const { activityId, jobId, type } = payload;
 
     if (type === SupervisorResponse.APPROVE) {
-      const { data, errors } = yield call(
-        request,
-        'PATCH',
-        apiApproveActivity(),
-        { data: { activityId, jobId } },
-      );
+      const { data, errors } = yield call(request, 'PATCH', apiApproveActivity(), {
+        data: { activityId, jobId },
+      });
 
       if (data) {
         yield put(updateExecutedActivity(data));
@@ -163,12 +139,9 @@ export function* approveRejectActivitySaga({
         console.log('error from approval api :: ', errors);
       }
     } else {
-      const { data, errors } = yield call(
-        request,
-        'PATCH',
-        apiRejectActivity(),
-        { data: { activityId, jobId } },
-      );
+      const { data, errors } = yield call(request, 'PATCH', apiRejectActivity(), {
+        data: { activityId, jobId },
+      });
 
       if (data) {
         yield put(updateExecutedActivity(data));
@@ -191,22 +164,10 @@ export function* approveRejectActivitySaga({
 
 export function* ActivityListSaga() {
   //TODO: Update execute activity to takeLatest rather than takeLeading, also remove the need for server dependent data
-  yield takeLatest(
-    ActivityListAction.EXECUTE_ACTIVITY_LATEST,
-    executeActivitySaga,
-  );
+  yield takeLatest(ActivityListAction.EXECUTE_ACTIVITY_LATEST, executeActivitySaga);
   yield takeLatest(ActivityListAction.FIX_ACTIVITY_LATEST, fixActivitySaga);
-  yield takeLeading(
-    ActivityListAction.EXECUTE_ACTIVITY_LEADING,
-    executeActivitySaga,
-  );
+  yield takeLeading(ActivityListAction.EXECUTE_ACTIVITY_LEADING, executeActivitySaga);
   yield takeLeading(ActivityListAction.FIX_ACTIVITY_LEADING, fixActivitySaga);
-  yield takeLeading(
-    ActivityListAction.APPROVE_ACTIVITY,
-    approveRejectActivitySaga,
-  );
-  yield takeLeading(
-    ActivityListAction.REJECT_ACTIVITY,
-    approveRejectActivitySaga,
-  );
+  yield takeLeading(ActivityListAction.APPROVE_ACTIVITY, approveRejectActivitySaga);
+  yield takeLeading(ActivityListAction.REJECT_ACTIVITY, approveRejectActivitySaga);
 }

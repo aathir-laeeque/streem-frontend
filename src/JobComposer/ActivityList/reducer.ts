@@ -1,11 +1,7 @@
 import { getActivities } from '#JobComposer/utils';
 import { Reducer } from 'redux';
 import { ComposerAction } from '../composer.reducer.types';
-import {
-  ActivityListActionType,
-  ActivityListState,
-  ActivityListAction,
-} from './reducer.types';
+import { ActivityListActionType, ActivityListState, ActivityListAction } from './reducer.types';
 import { Entity } from '../composer.types';
 import { StageListAction } from '#JobComposer/StageList/reducer.types';
 
@@ -61,9 +57,7 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
             response: {
               ...state.activitiesById[action.payload.activityId].response,
               medias: [
-                ...state.activitiesById[
-                  action.payload.activityId
-                ].response?.medias.filter(
+                ...state.activitiesById[action.payload.activityId].response?.medias.filter(
                   (media) => media.id !== action.payload.media.id,
                 ),
                 action.payload.media,

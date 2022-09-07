@@ -18,17 +18,10 @@ import { Facilities, FacilitiesAction } from './types';
 function* fetchFacilitiesSaga() {
   try {
     yield put(fetchFacilitiesOngoing());
-    const { data }: ResponseObj<Facilities> = yield call(
-      request,
-      'GET',
-      apiGetFacilities(),
-    );
+    const { data }: ResponseObj<Facilities> = yield call(request, 'GET', apiGetFacilities());
     yield put(fetchFacilitiesSuccess(data));
   } catch (error) {
-    console.error(
-      'error from fetchFacilitiesSaga function in FacilitiesSaga :: ',
-      error,
-    );
+    console.error('error from fetchFacilitiesSaga function in FacilitiesSaga :: ', error);
     yield put(fetchFacilitiesError(error));
   }
 }
@@ -37,11 +30,7 @@ function* switchFacilitySaga({
   payload: { facilityId, loggedInUserId: userId },
 }: ReturnType<typeof switchFacility>) {
   try {
-    const { data } = yield call(
-      request,
-      'PATCH',
-      apiSwitchFacility(userId, facilityId),
-    );
+    const { data } = yield call(request, 'PATCH', apiSwitchFacility(userId, facilityId));
 
     if (data) {
       setAuthHeader(data.accessToken);

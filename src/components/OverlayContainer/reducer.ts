@@ -1,8 +1,4 @@
-import {
-  OverlayContainerAction,
-  OverlayContainerActionType,
-  OverlayContainerState,
-} from './types';
+import { OverlayContainerAction, OverlayContainerActionType, OverlayContainerState } from './types';
 
 const initialState: OverlayContainerState = {
   currentOverlays: [],
@@ -26,9 +22,7 @@ const reducer = (
     case OverlayContainerAction.CLOSE_OVERLAY:
       return {
         ...state,
-        currentOverlays: state.currentOverlays.filter(
-          (x) => x.type !== action.payload.type,
-        ),
+        currentOverlays: state.currentOverlays.filter((x) => x.type !== action.payload.type),
       };
     case OverlayContainerAction.CLOSE_ALL_OVERLAY:
       return {

@@ -78,39 +78,21 @@ function NoConnection(props: React.SVGProps<SVGSVGElement>) {
             in="SourceAlpha"
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
           ></feColorMatrix>
-          <feMorphology
-            in="SourceAlpha"
-            radius="4"
-            result="effect1_dropShadow"
-          ></feMorphology>
+          <feMorphology in="SourceAlpha" radius="4" result="effect1_dropShadow"></feMorphology>
           <feOffset dy="14"></feOffset>
           <feGaussianBlur stdDeviation="32"></feGaussianBlur>
           <feColorMatrix values="0 0 0 0 0.0941176 0 0 0 0 0.152941 0 0 0 0 0.294118 0 0 0 0.12 0"></feColorMatrix>
-          <feBlend
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow"
-          ></feBlend>
+          <feBlend in2="BackgroundImageFix" result="effect1_dropShadow"></feBlend>
           <feColorMatrix
             in="SourceAlpha"
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
           ></feColorMatrix>
-          <feMorphology
-            in="SourceAlpha"
-            radius="6"
-            result="effect2_dropShadow"
-          ></feMorphology>
+          <feMorphology in="SourceAlpha" radius="6" result="effect2_dropShadow"></feMorphology>
           <feOffset dy="8"></feOffset>
           <feGaussianBlur stdDeviation="11"></feGaussianBlur>
           <feColorMatrix values="0 0 0 0 0.0941176 0 0 0 0 0.152941 0 0 0 0 0.294118 0 0 0 0.12 0"></feColorMatrix>
-          <feBlend
-            in2="effect1_dropShadow"
-            result="effect2_dropShadow"
-          ></feBlend>
-          <feBlend
-            in="SourceGraphic"
-            in2="effect2_dropShadow"
-            result="shape"
-          ></feBlend>
+          <feBlend in2="effect1_dropShadow" result="effect2_dropShadow"></feBlend>
+          <feBlend in="SourceGraphic" in2="effect2_dropShadow" result="shape"></feBlend>
         </filter>
       </defs>
     </svg>

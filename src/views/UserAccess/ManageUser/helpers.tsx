@@ -1,9 +1,4 @@
-import {
-  Avatar,
-  Button1,
-  FormGroup,
-  useScrollableSectionsProps,
-} from '#components';
+import { Avatar, Button1, FormGroup, useScrollableSectionsProps } from '#components';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
@@ -35,12 +30,7 @@ import styled from 'styled-components';
 import { resendInvite } from '../actions';
 import { ValidateCredentialsPurpose } from '../types';
 import { Credentials, CustomInputGroup, KeyGenerator } from './styles';
-import {
-  EditUserRequestInputs,
-  PAGE_TYPE,
-  TogglesState,
-  UserType,
-} from './types';
+import { EditUserRequestInputs, PAGE_TYPE, TogglesState, UserType } from './types';
 
 export enum Toggleables {
   EDIT_PASSWORD = 'editPassword',
@@ -120,9 +110,7 @@ export const formatOptionLabel: NamedProps<
         />
         <div className="user-detail">
           <span className="user-id">{option.employeeId || ''}</span>
-          <span className="user-name">
-            {getFullName({ firstName, lastName })}
-          </span>
+          <span className="user-name">{getFullName({ firstName, lastName })}</span>
         </div>
       </div>
       <div className="meta">{option.email || ''}</div>
@@ -147,21 +135,21 @@ export const createSectionConfig = ({
   const [selectedRole, setSelectedRole] = useState<string | undefined>(
     selectedUser?.roles && selectedUser.roles[0].id,
   );
-  const [currentlySelectedFacilities, setCurrentlySelectedFacilities] =
-    useState<Option[] | undefined>(
-      selectedUser?.facilities?.map((facility) => ({
-        value: facility.id,
-        label: facility.name,
-      })) || undefined,
-    );
+  const [currentlySelectedFacilities, setCurrentlySelectedFacilities] = useState<
+    Option[] | undefined
+  >(
+    selectedUser?.facilities?.map((facility) => ({
+      value: facility.id,
+      label: facility.name,
+    })) || undefined,
+  );
   const [users, setUsers] = useState<UserItem[]>([]);
   const [disabledKeys, setDisabledKeys] = useState<Record<string, boolean>>({});
   const { register, errors, getValues, setValue } = formData;
   const { roles: rolesValues, userType } = getValues(['roles', 'userType']);
-  const shouldShowAllFacilities = [
-    RoleIdByName.ACCOUNT_OWNER,
-    RoleIdByName.SYSTEM_ADMIN,
-  ].includes(rolesValues as RoleIdByName);
+  const shouldShowAllFacilities = [RoleIdByName.ACCOUNT_OWNER, RoleIdByName.SYSTEM_ADMIN].includes(
+    rolesValues as RoleIdByName,
+  );
 
   const fetchUsers = async (query?: string) => {
     const response = await request('GET', searchDirectoryUsers(), {
@@ -261,8 +249,7 @@ export const createSectionConfig = ({
                             value: user?.email || user.firstName,
                           })),
                           filterOption: () => true,
-                          placeholder:
-                            'Select with Name, Employee ID or Email ID',
+                          placeholder: 'Select with Name, Employee ID or Email ID',
                           onChange: (value: UserItem) => {
                             onSelectUser(value);
                           },
@@ -297,8 +284,7 @@ export const createSectionConfig = ({
                   name: 'firstName',
                   error: errors['firstName']?.message,
                   readOnly: disabledKeys?.['firstName'],
-                  disabled:
-                    pageType === PAGE_TYPE.PROFILE ? false : !isEditable,
+                  disabled: pageType === PAGE_TYPE.PROFILE ? false : !isEditable,
                   ref: register({
                     required: true,
                   }),
@@ -314,8 +300,7 @@ export const createSectionConfig = ({
                   optional: true,
                   error: errors['lastName']?.message,
                   readOnly: disabledKeys?.['lastName'],
-                  disabled:
-                    pageType === PAGE_TYPE.PROFILE ? false : !isEditable,
+                  disabled: pageType === PAGE_TYPE.PROFILE ? false : !isEditable,
                   ref: register,
                 },
               },
@@ -348,20 +333,13 @@ export const createSectionConfig = ({
                           },
                           validate: async (value) => {
                             if (value) {
-                              const res = await request(
-                                'POST',
-                                apiCheckEmployeeId(),
-                                {
-                                  data: {
-                                    employeeId: value,
-                                  },
+                              const res = await request('POST', apiCheckEmployeeId(), {
+                                data: {
+                                  employeeId: value,
                                 },
-                              );
+                              });
                               if (res?.errors?.length)
-                                return (
-                                  res?.errors?.[0]?.message ||
-                                  'Employee ID already exists'
-                                );
+                                return res?.errors?.[0]?.message || 'Employee ID already exists';
                               return true;
                             }
                             return false;
@@ -379,8 +357,7 @@ export const createSectionConfig = ({
                   name: 'email',
                   error: errors['email']?.message,
                   readOnly: disabledKeys?.['email'],
-                  disabled:
-                    pageType === PAGE_TYPE.PROFILE ? false : !isEditable,
+                  disabled: pageType === PAGE_TYPE.PROFILE ? false : !isEditable,
                   optional: true,
                   ref: register({
                     pattern: {
@@ -393,9 +370,7 @@ export const createSectionConfig = ({
                         data: { email: value },
                       });
                       if (res?.errors?.length)
-                        return (
-                          res?.errors?.[0]?.message || 'Email ID already exists'
-                        );
+                        return res?.errors?.[0]?.message || 'Email ID already exists';
                       return true;
                     },
                   }),
@@ -426,27 +401,22 @@ export const createSectionConfig = ({
               view: (
                 <KeyGenerator>
                   <h3>Username : {selectedUser?.username}</h3>
-                  {selectedUser.userType === UserType.LOCAL &&
-                    !isAccountOwner &&
-                    isEditable && (
-                      <>
-                        <Button1
-                          className="primary-button"
-                          variant="secondary"
-                          onClick={() =>
-                            dispatch(resendInvite({ id: selectedUser.id }))
-                          }
-                        >
-                          Generate Secret Key
-                        </Button1>
-                        <p>
-                          If the user has no access to their account, they can
-                          go to the login page and choose Forgot Password
-                          option. Here the user uses the Secret Key to change
-                          their password.
-                        </p>
-                      </>
-                    )}
+                  {selectedUser.userType === UserType.LOCAL && !isAccountOwner && isEditable && (
+                    <>
+                      <Button1
+                        className="primary-button"
+                        variant="secondary"
+                        onClick={() => dispatch(resendInvite({ id: selectedUser.id }))}
+                      >
+                        Generate Secret Key
+                      </Button1>
+                      <p>
+                        If the user has no access to their account, they can go to the login page
+                        and choose Forgot Password option. Here the user uses the Secret Key to
+                        change their password.
+                      </p>
+                    </>
+                  )}
                 </KeyGenerator>
               ),
             },
@@ -466,10 +436,9 @@ export const createSectionConfig = ({
                   error: errors['roles']?.message,
                   onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
                     if (
-                      [
-                        RoleIdByName.ACCOUNT_OWNER,
-                        RoleIdByName.SYSTEM_ADMIN,
-                      ].includes(e.target.value as RoleIdByName)
+                      [RoleIdByName.ACCOUNT_OWNER, RoleIdByName.SYSTEM_ADMIN].includes(
+                        e.target.value as RoleIdByName,
+                      )
                     ) {
                       setValue('facilities', [{ id: '-1' }], {
                         shouldDirty: true,
@@ -505,8 +474,8 @@ export const createSectionConfig = ({
           <>
             {shouldShowAllFacilities && (
               <div style={{ padding: '24px 16px' }}>
-                The user with the selected role has access to all the
-                facilities. Facility selection is disabled for such users.
+                The user with the selected role has access to all the facilities. Facility selection
+                is disabled for such users.
               </div>
             )}
             <FormGroup
@@ -522,9 +491,7 @@ export const createSectionConfig = ({
                           label: i.name,
                           value: i.id,
                         })),
-                    placeholder: shouldShowAllFacilities
-                      ? 'All Facilities'
-                      : 'Select',
+                    placeholder: shouldShowAllFacilities ? 'All Facilities' : 'Select',
                     defaultValue: selectedUser?.facilities?.map((f) => ({
                       label: f.name,
                       value: f.id,
@@ -587,8 +554,7 @@ export const createSectionConfig = ({
                               openOverlayAction({
                                 type: OverlayNames.VALIDATE_CREDENTIALS_MODAL,
                                 props: {
-                                  purpose:
-                                    ValidateCredentialsPurpose.PASSWORD_UPDATE,
+                                  purpose: ValidateCredentialsPurpose.PASSWORD_UPDATE,
                                   onSuccess: (token: string) => {
                                     setValidatedToken?.(token);
                                     updateToggles?.(Toggleables.EDIT_PASSWORD);
@@ -625,8 +591,7 @@ export const createSectionConfig = ({
                               openOverlayAction({
                                 type: OverlayNames.VALIDATE_CREDENTIALS_MODAL,
                                 props: {
-                                  purpose:
-                                    ValidateCredentialsPurpose.CHALLENGE_QUESTION_UPDATE,
+                                  purpose: ValidateCredentialsPurpose.CHALLENGE_QUESTION_UPDATE,
                                   onSuccess: (token: string) => {
                                     setValidatedToken?.(token);
                                     updateToggles?.(Toggleables.EDIT_QUESTIONS);
@@ -636,9 +601,7 @@ export const createSectionConfig = ({
                             )
                           }
                         >
-                          {selectedUser?.challengeQuestion?.question
-                            ? 'Edit '
-                            : 'Set Now '}
+                          {selectedUser?.challengeQuestion?.question ? 'Edit ' : 'Set Now '}
                           <Create />
                         </Button1>
                       </span>
@@ -692,11 +655,9 @@ const UpdateChallengeQuestion = ({
 
       const {
         data: { answer },
-      }: ResponseObj<{ answer: string }> = await request(
-        'GET',
-        apiChallengeQuestions(userId!),
-        { params: { token } },
-      );
+      }: ResponseObj<{ answer: string }> = await request('GET', apiChallengeQuestions(userId!), {
+        params: { token },
+      });
 
       const questions = data.map(({ question, id }) => ({
         value: id,
@@ -791,16 +752,10 @@ const UpdateChallengeQuestion = ({
         ]}
       />
       <div className="actions-bar" style={{ paddingLeft: '16px' }}>
-        <Button1
-          color="dark"
-          onClick={() => updateToggles?.(Toggleables.EDIT_QUESTIONS)}
-        >
+        <Button1 color="dark" onClick={() => updateToggles?.(Toggleables.EDIT_QUESTIONS)}>
           Cancel
         </Button1>
-        <Button1
-          disabled={!state?.selected || !state.answer}
-          onClick={onUpdate}
-        >
+        <Button1 disabled={!state?.selected || !state.answer} onClick={onUpdate}>
           Update
         </Button1>
       </div>
@@ -831,8 +786,7 @@ const UpdatePassword = ({
   });
 
   const [isPasswordInputType, setIsPasswordInputType] = useState(true);
-  const [isConfirmPasswordTextHidden, setIsConfirmPasswordTextHidden] =
-    useState(true);
+  const [isConfirmPasswordTextHidden, setIsConfirmPasswordTextHidden] = useState(true);
 
   const PasswordAfterIcon = () => (
     <VisibilityOutlined
@@ -843,9 +797,7 @@ const UpdatePassword = ({
 
   const ConfirmPasswordAfterIcon = () => (
     <VisibilityOutlined
-      onClick={() =>
-        setIsConfirmPasswordTextHidden(!isConfirmPasswordTextHidden)
-      }
+      onClick={() => setIsConfirmPasswordTextHidden(!isConfirmPasswordTextHidden)}
       style={{ color: isConfirmPasswordTextHidden ? '#999' : '#1d84ff' }}
     />
   );
@@ -871,9 +823,7 @@ const UpdatePassword = ({
     confirmPassword: {
       functions: {
         passwordMatch: (value: string) =>
-          state?.errors?.password?.length || value !== state?.password
-            ? false
-            : true,
+          state?.errors?.password?.length || value !== state?.password ? false : true,
       },
       messages: {
         passwordMatch: 'Passwords Match',
@@ -881,10 +831,7 @@ const UpdatePassword = ({
     },
   };
 
-  const onInputChange = (
-    value: string,
-    name: 'password' | 'confirmPassword',
-  ) => {
+  const onInputChange = (value: string, name: 'password' | 'confirmPassword') => {
     const errors: string[] = [];
     Object.keys(validators[name].functions).forEach((key) => {
       if (!validators[name].functions[key](value)) errors.push(key);
@@ -915,17 +862,13 @@ const UpdatePassword = ({
   const onUpdate = async () => {
     if (userId) {
       const { password, confirmPassword } = state;
-      const { errors }: ResponseObj<unknown> = await request(
-        'PATCH',
-        apiUpdatePassword(userId),
-        {
-          data: {
-            password: encrypt(password),
-            confirmPassword: encrypt(confirmPassword),
-            token,
-          },
+      const { errors }: ResponseObj<unknown> = await request('PATCH', apiUpdatePassword(userId), {
+        data: {
+          password: encrypt(password),
+          confirmPassword: encrypt(confirmPassword),
+          token,
         },
-      );
+      });
 
       if (errors) {
         const error = getErrorMsg(errors);
@@ -953,9 +896,7 @@ const UpdatePassword = ({
       <FormGroup
         inputs={[
           {
-            type: isPasswordInputType
-              ? InputTypes.PASSWORD
-              : InputTypes.SINGLE_LINE,
+            type: isPasswordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
             props: {
               placeholder: 'Create Password',
               label: 'Create Password',
@@ -976,9 +917,7 @@ const UpdatePassword = ({
             },
           },
           {
-            type: isConfirmPasswordTextHidden
-              ? InputTypes.PASSWORD
-              : InputTypes.SINGLE_LINE,
+            type: isConfirmPasswordTextHidden ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
             props: {
               placeholder: 'Confirm New Password',
               label: 'Confirm New Password',
@@ -1001,19 +940,13 @@ const UpdatePassword = ({
         ]}
       />
       <div className="actions-bar">
-        <Button1
-          color="dark"
-          onClick={() => updateToggles?.(Toggleables.EDIT_PASSWORD)}
-        >
+        <Button1 color="dark" onClick={() => updateToggles?.(Toggleables.EDIT_PASSWORD)}>
           Cancel
         </Button1>
         <Button1
           onClick={onUpdate}
           disabled={
-            state?.errors?.confirmPassword?.length ||
-            state?.errors?.password?.length
-              ? true
-              : false
+            state?.errors?.confirmPassword?.length || state?.errors?.password?.length ? true : false
           }
         >
           Update

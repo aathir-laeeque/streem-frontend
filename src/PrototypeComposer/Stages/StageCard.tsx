@@ -8,49 +8,36 @@ import {
   ArrowUpward,
   AssignmentTurnedIn,
   Delete,
-  Error, Error as ErrorIcon, PanTool
+  Error,
+  Error as ErrorIcon,
+  PanTool,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Checklist, EnabledStates } from '../checklist.types';
-import {
-  deleteStage,
-  reOrderStage,
-  setActiveStage,
-  updateStageName
-} from './actions';
+import { deleteStage, reOrderStage, setActiveStage, updateStageName } from './actions';
 import { StageCardWrapper } from './styles';
 import { StageCardProps } from './types';
 
 const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
   const { index, isActive, isFirstItem, isLastItem, stage } = props;
 
-  const { tasksInStage, data, activitisInStage, userId } = useTypedSelector(
-    (state) => ({
-      tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[
-        stage.id
-      ].map((taskId) => state.prototypeComposer.tasks.listById[taskId]),
-      data: state.prototypeComposer.data,
-      userId: state.auth.userId,
-      activitisInStage: Object.keys(
-        state.prototypeComposer.activities.activityOrderInTaskInStage[
-          stage.id
-        ] ?? {},
+  const { tasksInStage, data, activitisInStage, userId } = useTypedSelector((state) => ({
+    tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[stage.id].map(
+      (taskId) => state.prototypeComposer.tasks.listById[taskId],
+    ),
+    data: state.prototypeComposer.data,
+    userId: state.auth.userId,
+    activitisInStage: Object.keys(
+      state.prototypeComposer.activities.activityOrderInTaskInStage[stage.id] ?? {},
+    )
+      .map(
+        (taskId) => state.prototypeComposer.activities.activityOrderInTaskInStage[stage.id][taskId],
       )
-        .map(
-          (taskId) =>
-            state.prototypeComposer.activities.activityOrderInTaskInStage[
-              stage.id
-            ][taskId],
-        )
-        .flat()
-        .map(
-          (activityId) =>
-            state.prototypeComposer.activities.listById[activityId],
-        ),
-    }),
-  );
+      .flat()
+      .map((activityId) => state.prototypeComposer.activities.listById[activityId]),
+  }));
 
   const [isAuthor, setIsAuthor] = useState(false);
 
@@ -67,9 +54,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
 
   const approvalNeeded = false;
 
-  const anyActivityHasError = activitisInStage.some(
-    (activity) => !!activity.errors?.length,
-  );
+  const anyActivityHasError = activitisInStage.some((activity) => !!activity.errors?.length);
 
   const { stageHasStop, anyTaskHasError } = tasksInStage.reduce(
     ({ stageHasStop, anyTaskHasError }, task) => {
@@ -84,11 +69,10 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
 
   const dispatch = useDispatch();
 
-  const stageWiseError = 
-  !!stage.errors.length && (stage.errors.find((error) => error.code === 'E128'));
+  const stageWiseError =
+    !!stage.errors.length && stage.errors.find((error) => error.code === 'E128');
 
-  const stageHasError = 
-  !!stage.errors.length || anyActivityHasError || anyTaskHasError;  
+  const stageHasError = !!stage.errors.length || anyActivityHasError || anyTaskHasError;
 
   return (
     <StageCardWrapper
@@ -99,9 +83,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
     >
       <div
         className={`overlap ${
-          isAuthor && data?.state in EnabledStates && !data?.archived
-            ? 'hide'
-            : ''
+          isAuthor && data?.state in EnabledStates && !data?.archived ? 'hide' : ''
         }`}
         onClick={() => {
           if (isActive) {
@@ -122,9 +104,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
             onClick={(event) => {
               event.stopPropagation();
               if (!isFirstItem) {
-                dispatch(
-                  reOrderStage({ from: index, to: index - 1, id: stage.id }),
-                );
+                dispatch(reOrderStage({ from: index, to: index - 1, id: stage.id }));
               }
             }}
           />
@@ -134,9 +114,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
             onClick={(event) => {
               event.stopPropagation();
               if (!isLastItem) {
-                dispatch(
-                  reOrderStage({ from: index, to: index + 1, id: stage.id }),
-                );
+                dispatch(reOrderStage({ from: index, to: index + 1, id: stage.id }));
               }
             }}
           />
@@ -159,9 +137,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
                   onPrimaryClick: () => dispatch(deleteStage({ id: stage.id })),
                   body: (
                     <>
-                      <span>
-                        You cannot recover your tasks once you delete the stage.
-                      </span>
+                      <span>You cannot recover your tasks once you delete the stage.</span>
                       <span>Are you sure you want to delete the stage?</span>
                     </>
                   ),
@@ -174,32 +150,26 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
 
       <div className="stage-body">
         <div className="stage-task-properties">
-          {approvalNeeded ? (
-            <AssignmentTurnedIn className="icon" id="approval-needed" />
-          ) : null}
+          {approvalNeeded ? <AssignmentTurnedIn className="icon" id="approval-needed" /> : null}
 
           {stageHasStop ? <PanTool className="icon" id="task-stop" /> : null}
 
-          {( anyActivityHasError || anyTaskHasError || stageWiseError ) && (
+          {(anyActivityHasError || anyTaskHasError || stageWiseError) && (
             <div className="stage-badge">
               <Error className="icon" />
               <span>Error Found</span>
             </div>
           )}
         </div>
-        {
-          stageWiseError && (
-          <div className="stage-error-wrapper"> 
+        {stageWiseError && (
+          <div className="stage-error-wrapper">
             <ErrorIcon className="stage-error-icon" />
             {stageWiseError.message}
-          </div>)
-        }
+          </div>
+        )}
         <Textarea
           defaultValue={stage.name}
-          error={
-            !stage.name &&
-            stage.errors.find((error) => error.code === 'E303')?.message
-          }
+          error={!stage.name && stage.errors.find((error) => error.code === 'E303')?.message}
           label="Name the Stage"
           onChange={debounce(({ value }) => {
             dispatch(

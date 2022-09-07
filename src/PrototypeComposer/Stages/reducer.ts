@@ -3,12 +3,7 @@ import { Reducer } from 'redux';
 
 import { Checklist } from '../checklist.types';
 import { ComposerAction } from '../reducer.types';
-import {
-  StageListActions,
-  StageListActionType,
-  StageListState,
-  StagesById,
-} from './reducer.types';
+import { StageListActions, StageListActionType, StageListState, StagesById } from './reducer.types';
 
 export const initialState: StageListState = {
   activeStageId: undefined,
@@ -17,10 +12,7 @@ export const initialState: StageListState = {
   listById: {},
 };
 
-const reducer: Reducer<StageListState, StageListActionType> = (
-  state = initialState,
-  action,
-) => {
+const reducer: Reducer<StageListState, StageListActionType> = (state = initialState, action) => {
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
       const { data } = action.payload;
@@ -66,12 +58,13 @@ const reducer: Reducer<StageListState, StageListActionType> = (
         listOrder: state.listOrder.filter((el) => el !== action.payload.id),
         listById: {
           ...omit(state.listById, [action.payload.id]),
-          ...Object.entries(action.payload.newOrderMap || {}).reduce<
-            StagesById
-          >((acc, [stageId, orderTree]) => {
-            acc[stageId] = { ...state.listById[stageId], orderTree };
-            return acc;
-          }, {}),
+          ...Object.entries(action.payload.newOrderMap || {}).reduce<StagesById>(
+            (acc, [stageId, orderTree]) => {
+              acc[stageId] = { ...state.listById[stageId], orderTree };
+              return acc;
+            },
+            {},
+          ),
         },
       };
 

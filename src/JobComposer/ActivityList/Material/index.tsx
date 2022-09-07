@@ -42,9 +42,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
 
               <div className="list-item-quantity">
                 <span className="quantity">
-                  {el.quantity === 0
-                    ? null
-                    : el.quantity.toString().padStart(2, '0')}
+                  {el.quantity === 0 ? null : el.quantity.toString().padStart(2, '0')}
                 </span>
               </div>
             </li>

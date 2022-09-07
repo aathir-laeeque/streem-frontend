@@ -1,11 +1,6 @@
 import { ComposerEntity } from '#PrototypeComposer/types';
 
-import {
-  fetchError,
-  fetchOngoing,
-  fetchSuccess,
-  resetPropertiesState,
-} from './actions';
+import { fetchError, fetchOngoing, fetchSuccess, resetPropertiesState } from './actions';
 
 export interface Property {
   id: string;
@@ -42,10 +37,7 @@ export enum PropertiesAction {
 }
 
 export type PropertiesActionType = ReturnType<
-  | typeof fetchError
-  | typeof fetchOngoing
-  | typeof fetchSuccess
-  | typeof resetPropertiesState
+  typeof fetchError | typeof fetchOngoing | typeof fetchSuccess | typeof resetPropertiesState
 >;
 
 export type fetchSuccessType = {

@@ -156,9 +156,11 @@ const ActivityList: FC<ActivityListProps> = ({
             ) : null}
 
             {activity?.label &&
-              ![`${MandatoryActivity.YES_NO}`, `${MandatoryActivity.PARAMETER}`, `${MandatoryActivity.CALCULATION}`].includes(
-                activity.type,
-              ) && <div className="activity-label">{activity.label}</div>}
+              ![
+                `${MandatoryActivity.YES_NO}`,
+                `${MandatoryActivity.PARAMETER}`,
+                `${MandatoryActivity.CALCULATION}`,
+              ].includes(activity.type) && <div className="activity-label">{activity.label}</div>}
 
             {(() => {
               switch (activity.type) {
@@ -237,13 +239,10 @@ const ActivityList: FC<ActivityListProps> = ({
                       isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
                     />
                   );
-                
+
                 case MandatoryActivity.RESOURCE:
                   return (
-                    <ResourceActivity
-                      activity={activity}
-                      isCorrectingError={isCorrectingError}
-                    />
+                    <ResourceActivity activity={activity} isCorrectingError={isCorrectingError} />
                   );
 
                 default:
@@ -256,8 +255,7 @@ const ActivityList: FC<ActivityListProps> = ({
                 {audit ? (
                   <>
                     Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
-                    {audit?.modifiedBy?.employeeId} on{' '}
-                    {formatDateTime(audit?.modifiedAt)}
+                    {audit?.modifiedBy?.employeeId} on {formatDateTime(audit?.modifiedAt)}
                   </>
                 ) : (
                   'Updating...'

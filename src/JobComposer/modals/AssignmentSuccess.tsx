@@ -47,9 +47,7 @@ const AssignmentSuccessModal: FC<CommonOverlayProps<{ notify: boolean }>> = ({
         <MemoUserAssigned fontSize={300} style={{ height: '205px' }} />
         <h3>Assignments Modified</h3>
         <span>
-          {notify
-            ? 'Selected users will be notified'
-            : 'Selected users can execute the task'}
+          {notify ? 'Selected users will be notified' : 'Selected users can execute the task'}
         </span>
       </BaseModal>
     </Wrapper>

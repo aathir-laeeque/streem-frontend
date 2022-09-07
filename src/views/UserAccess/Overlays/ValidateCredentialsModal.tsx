@@ -67,10 +67,12 @@ type Inputs = {
   password: string;
 };
 
-const ValidateCredentialsModal: FC<CommonOverlayProps<{
-  purpose: ValidateCredentialsPurpose;
-  onSuccess: (token: string) => void;
-}>> = ({ closeAllOverlays, closeOverlay, props: { purpose, onSuccess } }) => {
+const ValidateCredentialsModal: FC<
+  CommonOverlayProps<{
+    purpose: ValidateCredentialsPurpose;
+    onSuccess: (token: string) => void;
+  }>
+> = ({ closeAllOverlays, closeOverlay, props: { purpose, onSuccess } }) => {
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
   const [passwordInputType, setPasswordInputType] = useState(true);
@@ -92,10 +94,7 @@ const ValidateCredentialsModal: FC<CommonOverlayProps<{
   };
 
   const AfterIcon = () => (
-    <div
-      onClick={() => setPasswordInputType(!passwordInputType)}
-      style={{ cursor: 'pointer' }}
-    >
+    <div onClick={() => setPasswordInputType(!passwordInputType)} style={{ cursor: 'pointer' }}>
       {!passwordInputType ? (
         <Visibility style={{ color: '#1d84ff' }} />
       ) : (
@@ -125,10 +124,7 @@ const ValidateCredentialsModal: FC<CommonOverlayProps<{
             error={true}
             type={passwordInputType ? 'password' : 'text'}
           />
-          <Button1
-            type="submit"
-            disabled={!formState.isValid || !formState.isDirty}
-          >
+          <Button1 type="submit" disabled={!formState.isValid || !formState.isDirty}>
             Confirm
           </Button1>
         </form>

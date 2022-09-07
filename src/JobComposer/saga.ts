@@ -1,9 +1,6 @@
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
-import {
-  closeOverlayAction,
-  openOverlayAction,
-} from '#components/OverlayContainer/actions';
+import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { setRecentServerTimestamp } from '#store/extras/action';
 import {
@@ -20,14 +17,7 @@ import { Error } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import { navigate } from '@reach/router';
-import {
-  all,
-  call,
-  fork,
-  put,
-  takeLatest,
-  takeLeading,
-} from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest, takeLeading } from 'redux-saga/effects';
 import {
   completeJob,
   fetchData,
@@ -42,11 +32,7 @@ import {
 import { setActivityError } from './ActivityList/actions';
 import { ActivityListSaga } from './ActivityList/saga';
 import { ComposerAction } from './composer.reducer.types';
-import {
-  Entity,
-  JobErrors,
-  JobWithExceptionInCompleteTaskErrors,
-} from './composer.types';
+import { Entity, JobErrors, JobWithExceptionInCompleteTaskErrors } from './composer.types';
 import { JobAuditLogsSaga } from './JobAuditLogs/saga';
 import { RefetchJobErrorType } from './modals/RefetchJobComposerData';
 import { StageListSaga } from './StageList/saga';
@@ -84,20 +70,14 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
     console.log('payload for start job :: ', payload);
     const { jobId } = payload;
 
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiStartJob(jobId, 'start'),
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiStartJob(jobId, 'start'));
 
     if (data) {
       yield put(startJobSuccess());
       yield put(closeOverlayAction(OverlayNames.START_JOB_MODAL));
     } else {
       console.error('handle errors on start job :: ', errors);
-      const alreadyStartedError = (errors as Error[]).find(
-        (err) => err.code === 'E707',
-      );
+      const alreadyStartedError = (errors as Error[]).find((err) => err.code === 'E707');
       if (alreadyStartedError) {
         yield put(closeOverlayAction(OverlayNames.START_JOB_MODAL));
         yield put(
@@ -121,12 +101,9 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
   try {
     const { jobId, withException, values, details, isInboxView } = payload;
 
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiCompleteJob(withException, jobId),
-      { ...(withException ? { data: { ...values } } : {}) },
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiCompleteJob(withException, jobId), {
+      ...(withException ? { data: { ...values } } : {}),
+    });
 
     if (data) {
       if (withException) {
@@ -147,15 +124,11 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
         }),
       );
     } else {
-      const jobErrors = (errors as Error[]).find(
-        (err) => err.code in JobErrors,
-      );
+      const jobErrors = (errors as Error[]).find((err) => err.code in JobErrors);
 
       if (jobErrors) {
         if (withException) {
-          yield put(
-            closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION),
-          );
+          yield put(closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION));
         }
 
         yield put(
@@ -170,25 +143,18 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
         );
       } else {
         if (!withException) {
-          const { tasksErrors, activitiesErrors, signOffErrors } =
-            groupJobErrors(errors);
+          const { tasksErrors, activitiesErrors, signOffErrors } = groupJobErrors(errors);
 
           if (tasksErrors.length) {
             console.log('handle task level error here');
 
             yield all(
-              tasksErrors.map((error) =>
-                put(setTaskError('Activity Incomplete', error.id)),
-              ),
+              tasksErrors.map((error) => put(setTaskError('Activity Incomplete', error.id))),
             );
           }
           if (activitiesErrors.length) {
             console.log('handle activities level error here');
-            yield all(
-              activitiesErrors.map((error) =>
-                put(setActivityError(error, error.id)),
-              ),
-            );
+            yield all(activitiesErrors.map((error) => put(setActivityError(error, error.id))));
           }
 
           if (signOffErrors.length) {
@@ -204,9 +170,7 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
             (err: Error) => err.code in JobWithExceptionInCompleteTaskErrors,
           );
           if (showInCompleteTasksError) {
-            yield put(
-              closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION),
-            );
+            yield put(closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION));
             yield put(
               openOverlayAction({
                 type: OverlayNames.JOB_COMPLETE_ALL_TASKS_ERROR,
@@ -225,11 +189,7 @@ function* getSignOffStateSaga({ payload }: ReturnType<typeof getSignOffState>) {
   try {
     const { jobId, allowSignOff } = payload;
 
-    const { data, errors } = yield call(
-      request,
-      'GET',
-      apiGetAllUsersAssignedToJob(jobId),
-    );
+    const { data, errors } = yield call(request, 'GET', apiGetAllUsersAssignedToJob(jobId));
 
     if (data) {
       yield put(

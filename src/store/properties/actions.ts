@@ -17,5 +17,4 @@ export const fetchSuccess = (args: fetchSuccessType) =>
 export const fetchError = (error: string) =>
   actionSpreader(PropertiesAction.FETCH_PROPERTIES_ERROR, { error });
 
-export const resetPropertiesState = () =>
-  actionSpreader(PropertiesAction.RESET_PROPERTIES_STATE);
+export const resetPropertiesState = () => actionSpreader(PropertiesAction.RESET_PROPERTIES_STATE);

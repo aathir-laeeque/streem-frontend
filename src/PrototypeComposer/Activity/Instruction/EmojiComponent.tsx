@@ -11,10 +11,7 @@ class LayoutComponent extends Component {
       config: { popupClassName = '', emojis },
     } = this.props;
     return (
-      <div
-        className={`rdw-emoji-modal ${popupClassName}`}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={`rdw-emoji-modal ${popupClassName}`} onClick={(e) => e.stopPropagation()}>
         {emojis.map((Emoji, index) => (
           <span
             key={index}
@@ -45,10 +42,7 @@ class LayoutComponent extends Component {
         aria-expanded={expanded}
         title={title || translations['components.controls.emoji.emoji']}
       >
-        <div
-          className="rdw-option-wrapper"
-          onClick={onExpandEvent}
-        >
+        <div className="rdw-option-wrapper" onClick={onExpandEvent}>
           <img src={icon} alt="" />
         </div>
         {expanded ? this.renderEmojiModal() : undefined}

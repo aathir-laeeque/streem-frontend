@@ -22,9 +22,7 @@ import YesNoActivity from './YesNo';
 import NumberActivity from './Number';
 
 const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
-  const { activeStageId: stageId } = useTypedSelector(
-    (state) => state.prototypeComposer.stages,
-  );
+  const { activeStageId: stageId } = useTypedSelector((state) => state.prototypeComposer.stages);
 
   const dispatch = useDispatch();
 
@@ -123,9 +121,7 @@ const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
             <ToggleSwitch
               offLabel={offLabel}
               onChange={(isChecked) => {
-                dispatch(
-                  updateStoreActivity(isChecked, activity.id, ['mandatory']),
-                );
+                dispatch(updateStoreActivity(isChecked, activity.id, ['mandatory']));
               }}
               onColor="#5aa700"
               onLabel={onLabel}

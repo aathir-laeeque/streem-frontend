@@ -15,5 +15,5 @@ export type StageCardProps = {
 
 export enum StageErrors {
   E303 = 'STAGE_NAME_CANNOT_BE_EMPTY',
-  E128 = 'STAGE_MUST_CONTAIN_ATLEAST_ONE_TASK'
+  E128 = 'STAGE_MUST_CONTAIN_ATLEAST_ONE_TASK',
 }

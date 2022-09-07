@@ -1,8 +1,4 @@
-import {
-  apiAddNewActivity,
-  apiDeleteActivity,
-  apiUpdateActivity,
-} from '#utils/apiUrls';
+import { apiAddNewActivity, apiDeleteActivity, apiUpdateActivity } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { call, put, takeLatest, takeLeading } from 'redux-saga/effects';
 import {
@@ -18,17 +14,12 @@ import {
 import { ActivityListActions } from './reducer.types';
 import { generateNewActivity } from './utils';
 
-function* updateActivitySaga({
-  payload,
-}: ReturnType<typeof updateActivityApi>) {
+function* updateActivitySaga({ payload }: ReturnType<typeof updateActivityApi>) {
   try {
     const { activity } = payload;
-    const { errors } = yield call(
-      request,
-      'PATCH',
-      apiUpdateActivity(activity.id),
-      { data: { ...activity } },
-    );
+    const { errors } = yield call(request, 'PATCH', apiUpdateActivity(activity.id), {
+      data: { ...activity },
+    });
 
     if (errors) {
       yield put(updateActivityError(errors));
@@ -40,13 +31,7 @@ function* updateActivitySaga({
 
 function* addNewActivitySaga({ payload }: ReturnType<typeof addNewActivity>) {
   try {
-    const {
-      activityType: type,
-      checklistId,
-      orderTree,
-      stageId,
-      taskId,
-    } = payload;
+    const { activityType: type, checklistId, orderTree, stageId, taskId } = payload;
 
     const { data, errors } = yield call(
       request,
@@ -67,11 +52,7 @@ function* addNewActivitySaga({ payload }: ReturnType<typeof addNewActivity>) {
 
 function* deleteActivitySaga({ payload }: ReturnType<typeof deleteActivity>) {
   try {
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiDeleteActivity(payload.activityId),
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiDeleteActivity(payload.activityId));
 
     if (data) {
       yield put(deleteActivitySuccess(payload));

@@ -57,9 +57,11 @@ const useStyles = makeStyles({
   },
 });
 
-export const ReviewersDetailsPopover: FC<CommonOverlayProps<{
-  users: Collaborator[];
-}>> = ({ closeOverlay, popOverAnchorEl, props: { users } }) => {
+export const ReviewersDetailsPopover: FC<
+  CommonOverlayProps<{
+    users: Collaborator[];
+  }>
+> = ({ closeOverlay, popOverAnchorEl, props: { users } }) => {
   const classes = useStyles();
 
   return (
@@ -86,13 +88,10 @@ export const ReviewersDetailsPopover: FC<CommonOverlayProps<{
         <span className={classes.heading}>State</span>
       </div>
       {users.map((user: Collaborator, index: number) => (
-        <div
-          className={classes.wrapper}
-          key={`reviewersDetailsPopOver_${user.id}`}
-        >
-          <span className={classes.title}>{`${index + 1}. ${user.firstName} ${
-            user.lastName
-          } ID: ${user.employeeId}`}</span>
+        <div className={classes.wrapper} key={`reviewersDetailsPopOver_${user.id}`}>
+          <span className={classes.title}>{`${index + 1}. ${user.firstName} ${user.lastName} ID: ${
+            user.employeeId
+          }`}</span>
           <span
             className={classes.state}
             style={{

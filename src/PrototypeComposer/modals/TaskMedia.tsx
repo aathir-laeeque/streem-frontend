@@ -6,17 +6,9 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 import { Delete } from '@material-ui/icons';
-import {
-  Checklist,
-  EnabledStates,
-  Task,
-} from '#PrototypeComposer/checklist.types';
+import { Checklist, EnabledStates, Task } from '#PrototypeComposer/checklist.types';
 
-import {
-  addTaskMedia,
-  removeTaskMedia,
-  updateTaskMedia,
-} from '../Tasks/actions';
+import { addTaskMedia, removeTaskMedia, updateTaskMedia } from '../Tasks/actions';
 import { MediaDetails } from '../Tasks/types';
 import { useTypedSelector } from '#store';
 import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
@@ -71,9 +63,7 @@ const Wrapper = styled.div<{
                 height: 24px;
                 cursor: pointer;
                 border-radius: 50%;
-                background-color: ${fullScreeen
-                  ? 'rgba(0, 0, 0, 1)'
-                  : 'rgba(0, 0, 0, 0.2)'};
+                background-color: ${fullScreeen ? 'rgba(0, 0, 0, 1)' : 'rgba(0, 0, 0, 0.2)'};
               }
             }
 
@@ -189,12 +179,10 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
   const { state, collaborators, userId } = useTypedSelector((state) => ({
     userId: state.auth.userId,
     state: state.prototypeComposer?.data?.state as Checklist['state'],
-    collaborators: state.prototypeComposer?.data
-      ?.collaborators as Checklist['collaborators'],
+    collaborators: state.prototypeComposer?.data?.collaborators as Checklist['collaborators'],
   }));
 
-  const [stateMediaDetails, setStateMediaDetails] =
-    useState<MediaDetails>(mediaDetails);
+  const [stateMediaDetails, setStateMediaDetails] = useState<MediaDetails>(mediaDetails);
   const [fullScreeen, setFullScreeen] = useState(false);
   const [isAuthor, setIsAuthor] = useState(false);
   const [errors, setErrors] = useState({ name: '' });
@@ -230,18 +218,14 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
         <div className="wrapper">
           <div className="left-side">
             <img src={stateMediaDetails.link} />
-            <div
-              className="full-screen-action"
-              onClick={() => setFullScreeen(!fullScreeen)}
-            >
+            <div className="full-screen-action" onClick={() => setFullScreeen(!fullScreeen)}>
               <FullScreenIcon />
             </div>
           </div>
 
           <div className="right-side">
             <div className="media-details">
-              {(!disableNameInput ||
-                (disableNameInput && stateMediaDetails.name)) && (
+              {(!disableNameInput || (disableNameInput && stateMediaDetails.name)) && (
                 <TextInput
                   defaultValue={stateMediaDetails.name}
                   error={errors.name}
@@ -260,8 +244,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                 />
               )}
 
-              {(!disableDescInput ||
-                (disableDescInput && stateMediaDetails.description)) && (
+              {(!disableDescInput || (disableDescInput && stateMediaDetails.description)) && (
                 <Textarea
                   optional
                   defaultValue={stateMediaDetails.description}

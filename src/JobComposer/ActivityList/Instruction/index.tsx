@@ -25,15 +25,11 @@ const InstructionActivity: FC<ActivityProps> = ({ activity }) => {
   const { entity } = useTypedSelector((state) => state.composer);
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [contentBlock, setContentBlock] = useState(
-    htmlToDraft(activity.data.text),
-  );
+  const [contentBlock, setContentBlock] = useState(htmlToDraft(activity.data.text));
 
   useEffect(() => {
     if (contentBlock) {
-      const contentState = ContentState.createFromBlockArray(
-        contentBlock.contentBlocks,
-      );
+      const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
 
       setEditorState(EditorState.createWithContent(contentState));
     }
@@ -54,9 +50,7 @@ const InstructionActivity: FC<ActivityProps> = ({ activity }) => {
         toolbarClassName="toolbar-class"
         toolbar={toolbarOptions}
         onBlur={() => {
-          const value = draftToHtml(
-            convertToRaw(editorState.getCurrentContent()),
-          );
+          const value = draftToHtml(convertToRaw(editorState.getCurrentContent()));
 
           console.log('value :: ', value);
         }}

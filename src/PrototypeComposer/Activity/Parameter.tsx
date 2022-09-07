@@ -15,24 +15,18 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
 
   useEffect(() => {
     if (componentLoaded) {
-      dispatch(
-        updateActivityApi({ ...activity, label: activity?.data?.parameter }),
-      );
+      dispatch(updateActivityApi({ ...activity, label: activity?.data?.parameter }));
     } else if (activity) {
       updateComponentLoaded(true);
     }
   }, [activity]);
 
-  const activityErrors = activity.errors.filter(
-    (error) => error.code in ParameterActivityErrors,
-  );
+  const activityErrors = activity.errors.filter((error) => error.code in ParameterActivityErrors);
 
   const isErrorPresent = !!activityErrors.length;
 
   return (
-    <ParameterWrapper
-      errorInSelect={(isErrorPresent && !activity.data.operator) || false}
-    >
+    <ParameterWrapper errorInSelect={(isErrorPresent && !activity.data.operator) || false}>
       {isErrorPresent ? (
         <div className="activity-error top">
           <Error />
@@ -74,10 +68,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         options={PARAMETER_OPERATORS}
         onChange={(option) => {
           dispatch(
-            updateStoreActivity((option as Option).value, activity.id, [
-              'data',
-              'operator',
-            ]),
+            updateStoreActivity((option as Option).value, activity.id, ['data', 'operator']),
           );
         }}
         selectedValue={PARAMETER_OPERATORS.find(

@@ -12,20 +12,14 @@ import {
 } from './actions';
 import { SessionActivityAction } from './types';
 
-function* fetchSessionActivitiesSaga({
-  payload,
-}: ReturnType<typeof fetchSessionActivities>) {
+function* fetchSessionActivitiesSaga({ payload }: ReturnType<typeof fetchSessionActivities>) {
   try {
     const params = payload || {};
     if (params.page === 0) {
       yield put(fetchSessionActivitiesOngoing());
     }
 
-    const {
-      data,
-      pageable,
-      errors,
-    }: ResponseObj<SessionActivity[]> = yield call(
+    const { data, pageable, errors }: ResponseObj<SessionActivity[]> = yield call(
       request,
       'GET',
       apiGetSessionActivities(),
@@ -48,18 +42,11 @@ function* fetchSessionActivitiesSaga({
       }),
     );
   } catch (e) {
-    const error = yield* handleCatch(
-      'SessionActivity',
-      'fetchSessionActivitiesSaga',
-      e,
-    );
+    const error = yield* handleCatch('SessionActivity', 'fetchSessionActivitiesSaga', e);
     yield put(fetchSessionActivitiesError(error as string));
   }
 }
 
 export function* SessionActivitySaga() {
-  yield takeLeading(
-    SessionActivityAction.FETCH_SESSION_ACTIVITY,
-    fetchSessionActivitiesSaga,
-  );
+  yield takeLeading(SessionActivityAction.FETCH_SESSION_ACTIVITY, fetchSessionActivitiesSaga);
 }
