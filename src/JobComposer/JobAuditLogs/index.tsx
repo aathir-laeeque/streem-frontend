@@ -1,4 +1,4 @@
-import { Checkbox, FilterProp, Link as GoBack, ListViewComponent } from '#components';
+import { Checkbox, FilterProp, Link as GoBack, InfiniteListView } from '#components';
 import { useTypedSelector } from '#store';
 import { clearAuditLogFilters, setAuditLogFilters } from '#store/audit-log-filters/action';
 import { fetchUsers } from '#store/users/actions';
@@ -7,7 +7,7 @@ import { openLinkInNewTab } from '#utils';
 import { FilterOperators } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
-import { Job } from '#views/Jobs/NewListView/types';
+import { Job } from '#views/Jobs/ListView/types';
 import TextField from '@material-ui/core/TextField';
 import { Search } from '@material-ui/icons';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
@@ -360,7 +360,7 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
     <Composer>
       <GoBack label="Return to process" className="go-back" />
       <div className="audit-logs-wrapper">
-        <ListViewComponent
+        <InfiniteListView
           isSearchable={false}
           fetchData={fetchLogs}
           isLast={pageable.last}

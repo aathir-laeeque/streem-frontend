@@ -1,6 +1,5 @@
 import { User } from '#store/users/types';
-import { Job, JobStateType } from '#views/Jobs/NewListView/types';
-
+import { Job, JobStateType } from '#views/Jobs/ListView/types';
 import {
   completeJob,
   fetchDataError,

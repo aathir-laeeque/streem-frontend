@@ -5,7 +5,7 @@ import { apiGetJobLogs } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { formatDateTime } from '#utils/timeUtils';
-import { ViewWrapper } from '#views/Jobs/NewListView/styles';
+import { ViewWrapper } from '#views/Jobs/ListView/styles';
 import { navigate, RouteComponentProps } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import ObjectView from './ObjectView';

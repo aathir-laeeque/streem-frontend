@@ -1,7 +1,7 @@
 import useTabsNew, { Tab } from '#components/shared/useTabsNew';
 import checkPermission from '#services/uiPermissions';
 import { UsersListType } from '#store/users/types';
-import { ViewWrapper } from '#views/Jobs/NewListView/styles';
+import { ViewWrapper } from '#views/Jobs/ListView/styles';
 import React, { FC } from 'react';
 
 import SessionActivity from './SessionActivity';

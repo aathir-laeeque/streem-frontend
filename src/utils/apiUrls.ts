@@ -3,7 +3,7 @@ import { AddNewActivityType } from '#PrototypeComposer/Activity/types';
 import { Activity, Checklist, Stage } from '#PrototypeComposer/checklist.types';
 import { AddNewTaskType, MediaDetails } from '#PrototypeComposer/Tasks/types';
 import { User } from '#store/users/types';
-import { Job } from '#views/Jobs/NewListView/types';
+import { Job } from '#views/Jobs/ListView/types';
 import { Object } from '#views/Ontology/types';
 
 import { fetchBaseUrl } from './constants';
@@ -40,31 +40,25 @@ export const apiPerformActionOnTask = (taskId: Task['id'], action: string) =>
   `${baseUrl}/tasks/${taskId}/${action}`;
 
 export const apiCompleteJob = (withException: boolean, jobId: Job['id']) =>
-  `${baseUrl}/jobs/${jobId}/${
-    withException ? 'complete-with-exception' : 'complete'
-  }`;
+  `${baseUrl}/jobs/${jobId}/${withException ? 'complete-with-exception' : 'complete'}`;
 
 export const apiGetProperties = () => `${baseUrl}/properties`;
 
 export const apiGetFacilities = () => `${baseUrl}/facilities`;
 
-export const apiGetUsers = (type = '') =>
-  `${baseUrl}/users${type ? `/${type}` : ''}`;
+export const apiGetUsers = (type = '') => `${baseUrl}/users${type ? `/${type}` : ''}`;
 
 export const apiGetUser = (id: User['id']) => `${baseUrl}/users/${id}`;
 
-export const apiUpdatePassword = (id: User['id']) =>
-  `${baseUrl}/users/${id}/password`;
+export const apiUpdatePassword = (id: User['id']) => `${baseUrl}/users/${id}/password`;
 
-export const apiGetSelectedJob = (jobId: Job['id']) =>
-  `${baseUrl}/jobs/${jobId}`;
+export const apiGetSelectedJob = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}`;
 
 export const apiExecuteActivity = () => `${baseUrl}/activities/execute`;
 
 export const apiFixActivity = () => `${baseUrl}/activities/error-correction`;
 
-export const apiCompleteTask = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}`;
+export const apiCompleteTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}`;
 
 export const apiEnableTaskErrorCorrection = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}/correction/start`;
@@ -93,20 +87,15 @@ export const apiLogOut = () => `${baseUrl}/auth/logout`;
 
 export const apiRefreshToken = () => `${baseUrl}/auth/token/refresh`;
 
-export const apiResendInvite = (id: User['id']) =>
-  `${baseUrl}/users/${id}/token/reset`;
+export const apiResendInvite = (id: User['id']) => `${baseUrl}/users/${id}/token/reset`;
 
-export const apiCancelInvite = (id: User['id']) =>
-  `${baseUrl}/users/${id}/token/cancel`;
+export const apiCancelInvite = (id: User['id']) => `${baseUrl}/users/${id}/token/cancel`;
 
-export const apiArchiveUser = (id: User['id']) =>
-  `${baseUrl}/users/${id}/archive`;
+export const apiArchiveUser = (id: User['id']) => `${baseUrl}/users/${id}/archive`;
 
-export const apiUnArchiveUser = (id: User['id']) =>
-  `${baseUrl}/users/${id}/unarchive`;
+export const apiUnArchiveUser = (id: User['id']) => `${baseUrl}/users/${id}/unarchive`;
 
-export const apiUnLockUser = (id: User['id']) =>
-  `${baseUrl}/users/${id}/unlock`;
+export const apiUnLockUser = (id: User['id']) => `${baseUrl}/users/${id}/unlock`;
 
 export const apiRegister = () => `${baseUrl}/auth/register`;
 
@@ -114,8 +103,7 @@ export const apiResetPassword = () => `${baseUrl}/auth/password`;
 
 export const apiGetSessionActivities = () => `${baseUrl}/users/audits`;
 
-export const apiGetJobAuditLogs = (jobId: Job['id']) =>
-  `${baseUrl}/audits/jobs/${jobId}`;
+export const apiGetJobAuditLogs = (jobId: Job['id']) => `${baseUrl}/audits/jobs/${jobId}`;
 
 export const apiGetChecklistAuditLogs = (jobId: Job['id']) =>
   `${baseUrl}/audits/checklists/${jobId}`;
@@ -137,17 +125,14 @@ export const apiCreateRevisionPrototype = (checklistId: Checklist['id']) =>
 export const apiCreateStage = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/stages`;
 
-export const apiDeleteStage = (stageId: Stage['id']) =>
-  `${baseUrl}/stages/${stageId}/archive`;
+export const apiDeleteStage = (stageId: Stage['id']) => `${baseUrl}/stages/${stageId}/archive`;
 
-export const apiUpdateStage = (stageId: Stage['id']) =>
-  `${baseUrl}/stages/${stageId}`;
+export const apiUpdateStage = (stageId: Stage['id']) => `${baseUrl}/stages/${stageId}`;
 
 export const apiCreateTask = ({ checklistId, stageId }: AddNewTaskType) =>
   `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks`;
 
-export const apiDeleteTask = (taskId: string) =>
-  `${baseUrl}/tasks/${taskId}/archive`;
+export const apiDeleteTask = (taskId: string) => `${baseUrl}/tasks/${taskId}/archive`;
 
 export const apiAddNewActivity = ({
   checklistId,
@@ -196,39 +181,28 @@ export const apiPrototypeRelease = (checklistId: Checklist['id']) =>
 export const apiUpdateActivity = (activityId: Activity['id']) =>
   `${baseUrl}/activities/${activityId}`;
 
-export const apiAddStop = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/stop/add`;
+export const apiAddStop = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/stop/add`;
 
-export const apiRemoveStop = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/stop/remove`;
+export const apiRemoveStop = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/stop/remove`;
 
-export const apiUpdateTask = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}`;
+export const apiUpdateTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}`;
 
-export const apiSetTaskTimer = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/timer/set`;
+export const apiSetTaskTimer = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/timer/set`;
 
-export const apiRemoveTaskTimer = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/timer/unset`;
+export const apiRemoveTaskTimer = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/timer/unset`;
 
-export const apiAddMediaToTask = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/medias`;
+export const apiAddMediaToTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/medias`;
 
-export const apiUpdateTaskMedia = (
-  taskId: Task['id'],
-  mediaId: MediaDetails['mediaId'],
-) => `${baseUrl}/medias/${mediaId}`;
+export const apiUpdateTaskMedia = (taskId: Task['id'], mediaId: MediaDetails['mediaId']) =>
+  `${baseUrl}/medias/${mediaId}`;
 
-export const apiValidatePrototype = (id: Checklist['id']) =>
-  `${baseUrl}/checklists/${id}/validate`;
+export const apiValidatePrototype = (id: Checklist['id']) => `${baseUrl}/checklists/${id}/validate`;
 
-export const apiUpdatePrototype = (id: Checklist['id']) =>
-  `${baseUrl}/checklists/${id}`;
+export const apiUpdatePrototype = (id: Checklist['id']) => `${baseUrl}/checklists/${id}`;
 
 export const apiGetJobLogs = () => `${baseUrl}/job-logs`;
 
-export const apiGetProcessLogs = (id: Checklist['id']) =>
-  `${apiGetJobLogs()}/checklists/${id}`;
+export const apiGetProcessLogs = (id: Checklist['id']) => `${apiGetJobLogs()}/checklists/${id}`;
 
 export const apiValidatePassword = () => `${baseUrl}/auth/credentials/validate`;
 
@@ -238,8 +212,7 @@ export const apiApproveActivity = () => `${baseUrl}/activities/approve`;
 
 export const apiRejectActivity = () => `${baseUrl}/activities/reject`;
 
-export const apiArchiveChecklist = (id: Checklist['id']) =>
-  `${baseUrl}/checklists/${id}/archive`;
+export const apiArchiveChecklist = (id: Checklist['id']) => `${baseUrl}/checklists/${id}/archive`;
 
 export const apiArchiveValidate = (id: Checklist['id']) =>
   `${baseUrl}/checklists/${id}/archive/validate`;
@@ -247,37 +220,26 @@ export const apiArchiveValidate = (id: Checklist['id']) =>
 export const apiUnarchiveChecklist = (id: Checklist['id']) =>
   `${baseUrl}/checklists/${id}/unarchive`;
 
-export const apiGetChecklistInfo = (id: Checklist['id']) =>
-  `${baseUrl}/checklists/${id}/info`;
+export const apiGetChecklistInfo = (id: Checklist['id']) => `${baseUrl}/checklists/${id}/info`;
 
-export const apiGetJobCweDetails = (id: Job['id']) =>
-  `${baseUrl}/jobs/${id}/cwe-details`;
+export const apiGetJobCweDetails = (id: Job['id']) => `${baseUrl}/jobs/${id}/cwe-details`;
 
-export const apiRemoveTaskMedia = ({
-  taskId,
-  mediaId,
-}: {
-  taskId: string;
-  mediaId: string;
-}) => `${baseUrl}/tasks/${taskId}/medias/${mediaId}`;
+export const apiRemoveTaskMedia = ({ taskId, mediaId }: { taskId: string; mediaId: string }) =>
+  `${baseUrl}/tasks/${taskId}/medias/${mediaId}`;
 
 export const apiReorderStages = () => `${baseUrl}/stages/reorder`;
 
 export const apiReorderTasks = () => `${baseUrl}/tasks/reorder`;
 
-export const apiGetAllChallengeQuestions = () =>
-  `${baseUrl}/challenge-questions`;
+export const apiGetAllChallengeQuestions = () => `${baseUrl}/challenge-questions`;
 
-export const apiChallengeQuestions = (id: string) =>
-  `${baseUrl}/users/${id}/challenge-questions`;
+export const apiChallengeQuestions = (id: string) => `${baseUrl}/users/${id}/challenge-questions`;
 
-export const apiAdditionalVerification = () =>
-  `${baseUrl}/auth/additional/verification`;
+export const apiAdditionalVerification = () => `${baseUrl}/auth/additional/verification`;
 
 export const apiValidateIdentity = () => `${baseUrl}/auth/identity/validate`;
 
-export const apiValidateChallengeQuestion = () =>
-  `${baseUrl}/auth/challenge-questions/validate`;
+export const apiValidateChallengeQuestion = () => `${baseUrl}/auth/challenge-questions/validate`;
 
 export const apiNotifyAdmin = () => `${baseUrl}/auth/admin/notify`;
 
@@ -288,8 +250,7 @@ export const apiSwitchFacility = (userId: string, facilityId: string) =>
 export const apiGetAllUsersAssignedToJob = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}/assignments`;
 
-export const apiGetAllUsersAssignedToTask = () =>
-  `${baseUrl}/tasks/assignments`;
+export const apiGetAllUsersAssignedToTask = () => `${baseUrl}/tasks/assignments`;
 
 export const apiGetAllUsersAssignedToChecklistTask = (id: string) =>
   `${baseUrl}/checklists/${id}/users/task/assignment`;
@@ -300,11 +261,9 @@ export const apiAssignUsersForChecklist = (checklistId: string) =>
 export const apiGetAllUsersAssignedToChecklist = (checklistId: string) =>
   `${baseUrl}/checklists/${checklistId}/users/allowed`;
 
-export const apiBulkAssignUsers = (jobId: Job['id']) =>
-  `${baseUrl}/jobs/${jobId}/assignments`;
+export const apiBulkAssignUsers = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}/assignments`;
 
-export const apiGetJobSummary = (jobId: Job['id']) =>
-  `${baseUrl}/jobs/${jobId}/reports`;
+export const apiGetJobSummary = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}/reports`;
 
 export const apiGetJobSummaryReportDetails = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}/reports/print`;
@@ -313,22 +272,17 @@ export const apiGetTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}`;
 
 export const apiGetUseCaseList = () => `${baseUrl}/use-cases`;
 
-export const apiPrintJobDetails = (jobId: Job['id']) =>
-  `${baseUrl}/jobs/${jobId}/print`;
+export const apiPrintJobDetails = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}/print`;
 
 // ONTOLOGY
 
-export const apiGetObjectTypes = (id?: string) =>
-  `${baseUrl}/object-types${id ? `/${id}` : ''}`;
+export const apiGetObjectTypes = (id?: string) => `${baseUrl}/object-types${id ? `/${id}` : ''}`;
 
-export const apiGetObjects = (id?: string) =>
-  `${baseUrl}/objects${id ? `/${id}` : ''}`;
+export const apiGetObjects = (id?: string) => `${baseUrl}/objects${id ? `/${id}` : ''}`;
 
-export const apiArchiveObject = (id: Object['id']) =>
-  `${baseUrl}/objects/${id}/archive`;
+export const apiArchiveObject = (id: Object['id']) => `${baseUrl}/objects/${id}/archive`;
 
-export const apiUnArchiveObject = (id: Object['id']) =>
-  `${baseUrl}/objects/${id}/unarchive`;
+export const apiUnArchiveObject = (id: Object['id']) => `${baseUrl}/objects/${id}/unarchive`;
 
 export const apiAccountLookUp = () => `${baseUrl}/auth/account/lookup`;
 

@@ -1,22 +1,15 @@
 import NoTaskToSign from '#assets/svg/NoTaskToSign';
 import TaskSignOfComplete from '#assets/svg/TaskSignOfComplete';
-import {
-  Avatar,
-  BaseModal,
-  Button1,
-  ProgressBar,
-  TextInput,
-} from '#components';
+import { Avatar, BaseModal, Button1, ProgressBar, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
 import { getFullName } from '#utils/stringUtils';
-import { Job } from '#views/Jobs/NewListView/types';
+import { Job } from '#views/Jobs/ListView/types';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { debounce, pick } from 'lodash';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
-
 import { resetSignOffTaskError, signOffTasks } from '../actions';
 
 const Wrapper = styled.div<{ isErrorPresent: boolean }>`
@@ -160,13 +153,9 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const isLoggedInUserAssigned = assignees.some(
-    (assignee) => assignee.id === profile?.id,
-  );
+  const isLoggedInUserAssigned = assignees.some((assignee) => assignee.id === profile?.id);
 
-  const otherUsersTasksSignOff = assignees?.filter(
-    (assignee) => assignee.id !== profile?.id,
-  );
+  const otherUsersTasksSignOff = assignees?.filter((assignee) => assignee.id !== profile?.id);
 
   return (
     <Wrapper isErrorPresent={!!signOffError}>
@@ -196,11 +185,7 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
                   (assignee) => assignee.id === profile?.id,
                 )[0];
 
-                const {
-                  assignedTasks,
-                  pendingSignOffs,
-                  signedOffTasks,
-                } = userTasksSignOff;
+                const { assignedTasks, pendingSignOffs, signedOffTasks } = userTasksSignOff;
 
                 const isSignOffComplete = signedOffTasks === assignedTasks;
                 const isSignOffStarted = signedOffTasks !== 0;
@@ -246,13 +231,9 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
 
                         <TextInput
                           afterElementWithoutError
-                          AfterElement={
-                            showPassword ? VisibilityOff : Visibility
-                          }
+                          AfterElement={showPassword ? VisibilityOff : Visibility}
                           afterElementClass=""
-                          afterElementClick={() =>
-                            setShowPassword((val) => !val)
-                          }
+                          afterElementClick={() => setShowPassword((val) => !val)}
                           defaultValue={password}
                           onChange={debounce(({ value }) => {
                             if (!!signOffError) {
@@ -264,9 +245,7 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
                           type={showPassword ? 'text' : 'password'}
                         />
 
-                        {signOffError ? (
-                          <div className="input-error">{signOffError}</div>
-                        ) : null}
+                        {signOffError ? <div className="input-error">{signOffError}</div> : null}
 
                         <Button1
                           onClick={() => {
@@ -287,27 +266,18 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
             </div>
           ) : null}
           <div className="right-side">
-            {allowSignOff ? (
-              <div className="text">Other Assignees Sign Off State</div>
-            ) : null}
+            {allowSignOff ? <div className="text">Other Assignees Sign Off State</div> : null}
 
             {otherUsersTasksSignOff?.map((assignee, index) => {
               const { assignedTasks, id, signedOffTasks } = assignee;
 
-              const percentage = Math.round(
-                (signedOffTasks / assignedTasks) * 100,
-              );
+              const percentage = Math.round((signedOffTasks / assignedTasks) * 100);
 
               return (
                 <div key={`${id}-${index}`} className="item">
                   <Avatar
                     color="blue"
-                    user={pick(assignee, [
-                      'id',
-                      'firstName',
-                      'lastName',
-                      'employeeId',
-                    ])}
+                    user={pick(assignee, ['id', 'firstName', 'lastName', 'employeeId'])}
                   />
 
                   <div className="progress-details">

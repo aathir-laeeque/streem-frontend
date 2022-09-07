@@ -2,13 +2,7 @@ import MemoArchive from '#assets/svg/Archive';
 import MemoCreateJob from '#assets/svg/CreateJob';
 import MemoStartRevision from '#assets/svg/StartRevision';
 import MemoViewInfo from '#assets/svg/ViewInfo';
-import {
-  Button1,
-  DataTable,
-  DropdownFilter,
-  SearchFilter,
-  ToggleSwitch,
-} from '#components';
+import { Button1, DataTable, DropdownFilter, SearchFilter, ToggleSwitch } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
@@ -22,15 +16,10 @@ import { ComposerEntity } from '#PrototypeComposer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { Error, FilterField, FilterOperators } from '#utils/globalTypes';
-import { createJob } from '#views/Jobs/NewListView/actions';
-import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
+import { createJob } from '#views/Jobs/ListView/actions';
+import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { CircularProgress, Menu, MenuItem } from '@material-ui/core';
-import {
-  ArrowDropDown,
-  ArrowLeft,
-  ArrowRight,
-  FiberManualRecord,
-} from '@material-ui/icons';
+import { ArrowDropDown, ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -65,21 +54,15 @@ const getBaseFilter = (label: string): FilterField[] => [
     : []),
 ];
 
-const ListView: FC<ListViewProps & { label: string }> = ({
-  navigate = navigateTo,
-  label,
-}) => {
+const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo, label }) => {
   const componentDidMount = useRef(false);
   const {
-    checklistListView: {
-      pageable,
-      currentPageData,
-      loading: checklistDataLoading,
-    },
+    checklistListView: { pageable, currentPageData, loading: checklistDataLoading },
     auth: { userId, selectedUseCase },
   } = useTypedSelector((state) => state);
-  const { roles: userRoles, selectedFacility: { id: facilityId = '' } = {} } =
-    useTypedSelector((state) => state.auth);
+  const { roles: userRoles, selectedFacility: { id: facilityId = '' } = {} } = useTypedSelector(
+    (state) => state.auth,
+  );
   const propertiesStoreData = useTypedSelector((state) => state.properties);
   const { list: jobProperties, loading: jobPropertiesLoading } =
     propertiesStoreData[ComposerEntity.JOB];
@@ -88,8 +71,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
 
   const dispatch = useDispatch();
 
-  const selectChecklist = (id: string | number) =>
-    navigate(`/checklists/${id}`);
+  const selectChecklist = (id: string | number) => navigate(`/checklists/${id}`);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -98,15 +80,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({
     setSelectedChecklist(null);
   };
 
-  const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(
-    null,
-  );
+  const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(null);
 
   const defaultFilters = useRef<FilterField[]>(getBaseFilter(label));
 
-  const [filterFields, setFilterFields] = useState<FilterField[]>(
-    getBaseFilter(label),
-  );
+  const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(label));
 
   const fetchData = (
     filtersArr: FilterField[],
@@ -185,10 +163,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
   const showPaginationArrows = pageable.totalPages > 10;
 
   const prototypeActionsTemplate = (item: Checklist | null = null) => {
-    if (!item)
-      return (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>-N/A-</div>
-      );
+    if (!item) return <div style={{ display: 'flex', justifyContent: 'center' }}>-N/A-</div>;
 
     return (
       <div
@@ -198,23 +173,14 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             openOverlayAction({
               type: OverlayNames.REASON_MODAL,
               props: {
-                modalTitle: item.archived
-                  ? 'Unarchive Protoype'
-                  : 'Archive Protoype',
+                modalTitle: item.archived ? 'Unarchive Protoype' : 'Archive Protoype',
                 modalDesc: `Provide details for ${
                   item.archived ? 'unarchiving' : 'archiving'
                 } the prototype`,
-                onSumbitHandler: (
-                  reason: string,
-                  setFormErrors: (errors?: Error[]) => void,
-                ) =>
+                onSumbitHandler: (reason: string, setFormErrors: (errors?: Error[]) => void) =>
                   item.archived
-                    ? dispatch(
-                        unarchiveChecklist(item.id, reason, setFormErrors),
-                      )
-                    : dispatch(
-                        archiveChecklist(item.id, reason, setFormErrors),
-                      ),
+                    ? dispatch(unarchiveChecklist(item.id, reason, setFormErrors))
+                    : dispatch(archiveChecklist(item.id, reason, setFormErrors)),
                 onSubmitModalText: item.archived ? 'Unarchive' : 'Archive',
               },
             }),
@@ -256,11 +222,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
       minWidth: 240,
       format: function renderComp(item: Checklist) {
         return (
-          <span
-            className="primary"
-            onClick={() => selectChecklist(item.id)}
-            title={item.name}
-          >
+          <span className="primary" onClick={() => selectChecklist(item.id)} title={item.name}>
             {item.name}
           </span>
         );
@@ -323,7 +285,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     <span>View Info</span>
                   </div>
                 </MenuItem>
-                {!item.archived && checkPermission(['checklists', 'createJob'])  && (
+                {!item.archived && checkPermission(['checklists', 'createJob']) && (
                   <MenuItem
                     onClick={() => {
                       handleClose();
@@ -484,8 +446,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
         }
       },
     },
-    ...(label === 'published' &&
-    currentPageData.some((item) => item.state === 'BEING_REVISED')
+    ...(label === 'published' && currentPageData.some((item) => item.state === 'BEING_REVISED')
       ? [
           {
             id: 'revised',
@@ -529,8 +490,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             ...checklistProperties.map(({ label, id }) => ({
               label,
               value: id,
-              field:
-                'checklistPropertyValues.facilityUseCasePropertyMapping.propertiesId',
+              field: 'checklistPropertyValues.facilityUseCasePropertyMapping.propertiesId',
               operator: FilterOperators.EQ,
             })),
           ]}
@@ -538,9 +498,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             setFilterFields((currentFields) => {
               const updatedFilterFields = [
                 ...currentFields.filter((field) =>
-                  defaultFilters.current.some(
-                    (newField) => newField.field === field.field,
-                  ),
+                  defaultFilters.current.some((newField) => newField.field === field.field),
                 ),
                 ...fields,
               ];
@@ -568,13 +526,8 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                   ...field,
                   ...(field.field === 'state'
                     ? {
-                        op:
-                          option.value === 'all'
-                            ? FilterOperators.NE
-                            : FilterOperators.EQ,
-                        values: [
-                          option.value === 'all' ? 'PUBLISHED' : option.value,
-                        ],
+                        op: option.value === 'all' ? FilterOperators.NE : FilterOperators.EQ,
+                        values: [option.value === 'all' ? 'PUBLISHED' : option.value],
                       }
                     : { values: field.values }),
                 })) as FilterField[];
@@ -629,9 +582,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
               } else if (option.value === 'collaborators.type') {
                 setFilterFields((currentFields) => {
                   const updatedFilterFields = [
-                    ...currentFields.filter(
-                      (field) => field.field !== 'not.a.collaborator',
-                    ),
+                    ...currentFields.filter((field) => field.field !== 'not.a.collaborator'),
                     {
                       field: 'collaborators.user.id',
                       op: FilterOperators.EQ,
@@ -640,10 +591,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
                     {
                       field: 'collaborators.type',
                       op: FilterOperators.ANY,
-                      values: [
-                        CollaboratorType.AUTHOR,
-                        CollaboratorType.PRIMARY_AUTHOR,
-                      ],
+                      values: [CollaboratorType.AUTHOR, CollaboratorType.PRIMARY_AUTHOR],
                     },
                   ] as FilterField[];
 
@@ -683,10 +631,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           checkedIcon={false}
           offLabel="Show Archived"
           onLabel="Showing Archived"
-          value={
-            !!filterFields.find((field) => field.field === 'archived')
-              ?.values[0]
-          }
+          value={!!filterFields.find((field) => field.field === 'archived')?.values[0]}
           onChange={(isChecked) =>
             setFilterFields((currentFields) => {
               const updatedFilterFields = currentFields.map((field) => ({
@@ -707,10 +652,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           <Button1
             id="create"
             onClick={() => {
-              if (
-                userRoles?.some((role) => role === roles.ACCOUNT_OWNER) &&
-                facilityId === '-1'
-              ) {
+              if (userRoles?.some((role) => role === roles.ACCOUNT_OWNER) && facilityId === '-1') {
                 dispatch(
                   openOverlayAction({
                     type: OverlayNames.ENTITY_START_ERROR_MODAL,
@@ -733,9 +675,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
       <div
         style={{
           display:
-            checklistDataLoading ||
-            jobPropertiesLoading ||
-            checklistPropertiesLoading
+            checklistDataLoading || jobPropertiesLoading || checklistPropertiesLoading
               ? 'flex'
               : 'none',
           alignItems: 'center',
@@ -747,9 +687,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
       </div>
       <div
         style={{
-          ...(checklistDataLoading ||
-          jobPropertiesLoading ||
-          checklistPropertiesLoading
+          ...(checklistDataLoading || jobPropertiesLoading || checklistPropertiesLoading
             ? { display: 'none' }
             : { display: 'contents' }),
         }}
@@ -759,13 +697,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({
           rows={currentPageData.map((item) => {
             return {
               ...item,
-              ...item.properties.reduce<Record<string, string>>(
-                (obj, checklistProperty) => {
-                  obj[checklistProperty.id] = checklistProperty.value;
-                  return obj;
-                },
-                {},
-              ),
+              ...item.properties.reduce<Record<string, string>>((obj, checklistProperty) => {
+                obj[checklistProperty.id] = checklistProperty.value;
+                return obj;
+              }, {}),
             };
           })}
         />
@@ -780,10 +715,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({
             }}
           />
           {Array.from({ length: pageable.totalPages }, (_, i) => i)
-            .slice(
-              Math.floor(pageable.page / 10) * 10,
-              Math.floor(pageable.page / 10) * 10 + 10,
-            )
+            .slice(Math.floor(pageable.page / 10) * 10, Math.floor(pageable.page / 10) * 10 + 10)
             .map((el) => (
               <span
                 key={el}

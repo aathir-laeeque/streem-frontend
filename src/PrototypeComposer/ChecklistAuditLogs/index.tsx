@@ -1,14 +1,6 @@
-import {
-  Checkbox,
-  FilterProp,
-  Link as GoBack,
-  ListViewComponent,
-} from '#components';
+import { Checkbox, FilterProp, Link as GoBack, InfiniteListView } from '#components';
 import { useTypedSelector } from '#store';
-import {
-  clearAuditLogFilters,
-  setAuditLogFilters,
-} from '#store/audit-log-filters/action';
+import { clearAuditLogFilters, setAuditLogFilters } from '#store/audit-log-filters/action';
 import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
 import { FilterOperators } from '#utils/globalTypes';
@@ -108,15 +100,9 @@ const AuditLogs: FC<Props> = ({ id }) => {
     return (
       <div className="item" key={`user_${user.id}`}>
         <div className="right">
-          <Checkbox
-            checked={checked}
-            label=""
-            onClick={() => onCheckChanged(user, checked)}
-          />
+          <Checkbox checked={checked} label="" onClick={() => onCheckChanged(user, checked)} />
         </div>
-        <div className="thumb">
-          {getInitials(`${user.firstName} ${user.lastName}`)}
-        </div>
+        <div className="thumb">{getInitials(`${user.firstName} ${user.lastName}`)}</div>
         <div className="middle">
           <span className="userId">{user.employeeId}</span>
           <span className="userName">{`${user.firstName} ${user.lastName}`}</span>
@@ -160,9 +146,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
               displayStaticWrapperAs="desktop"
               value={state.dateRange}
               calendars={1}
-              onChange={(newValue) =>
-                setstate({ ...state, dateRange: newValue })
-              }
+              onChange={(newValue) => setstate({ ...state, dateRange: newValue })}
               renderInput={(startProps, endProps) => (
                 <>
                   <TextField {...startProps} />
@@ -182,9 +166,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
                   startAdornment: <AccessTimeIcon />,
                 }}
                 openPickerIcon={<ArrowDropDownIcon />}
-                onChange={(newValue) =>
-                  setstate({ ...state, startTime: newValue })
-                }
+                onChange={(newValue) => setstate({ ...state, startTime: newValue })}
               />
               <TimePicker
                 renderInput={(props) => <TextField {...props} />}
@@ -195,9 +177,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
                   startAdornment: <AccessTimeIcon />,
                 }}
                 openPickerIcon={<ArrowDropDownIcon />}
-                onChange={(newValue) =>
-                  setstate({ ...state, endTime: newValue })
-                }
+                onChange={(newValue) => setstate({ ...state, endTime: newValue })}
               />
             </div>
           </LocalizationProvider>
@@ -208,9 +188,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
         onApply: () => {
           const applicapleUsers = [
             ...selectedUsers,
-            ...appliedUsers.filter(
-              (user) => !unSelectedUsers.some((item) => item.id === user.id),
-            ),
+            ...appliedUsers.filter((user) => !unSelectedUsers.some((item) => item.id === user.id)),
           ];
           if (!!applicapleUsers.length) {
             setstate({
@@ -242,20 +220,14 @@ const AuditLogs: FC<Props> = ({ id }) => {
           if (list) {
             if (searchQuery === '') {
               appliedUsers.forEach((user) => {
-                const isUnSelected = !unSelectedUsers.some(
-                  (item) => item.id === user.id,
-                );
+                const isUnSelected = !unSelectedUsers.some((item) => item.id === user.id);
                 bodyView.push(userRow(user, isUnSelected));
               });
             }
 
             (list as unknown as Array<User>).forEach((user) => {
-              const isSelected = selectedUsers.some(
-                (item) => item.id === user.id,
-              );
-              const inApplied = appliedUsers.some(
-                (item) => item.id === user.id,
-              );
+              const isSelected = selectedUsers.some((item) => item.id === user.id);
+              const inApplied = appliedUsers.some((item) => item.id === user.id);
               if (!inApplied) {
                 bodyView.push(userRow(user, isSelected));
               }
@@ -269,9 +241,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
                   <input
                     className="searchbox"
                     type="text"
-                    onChange={(e) =>
-                      setstate({ ...state, searchQuery: e.target.value })
-                    }
+                    onChange={(e) => setstate({ ...state, searchQuery: e.target.value })}
                     defaultValue={searchQuery}
                     placeholder="Search Users"
                   />
@@ -287,9 +257,8 @@ const AuditLogs: FC<Props> = ({ id }) => {
       },
     ],
     onReset: () => resetFilter(),
-    activeCount: Object.keys(state.appliedFilters).filter(
-      (key) => !!state.appliedFilters[key],
-    ).length,
+    activeCount: Object.keys(state.appliedFilters).filter((key) => !!state.appliedFilters[key])
+      .length,
   };
 
   useEffect(() => {
@@ -311,9 +280,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
   const fetchUsersData = (page: number, size: number) => {
     const filters = JSON.stringify({
       op: FilterOperators.AND,
-      fields: [
-        { field: 'firstName', op: FilterOperators.LIKE, values: [searchQuery] },
-      ],
+      fields: [{ field: 'firstName', op: FilterOperators.LIKE, values: [searchQuery] }],
     });
     dispatch(fetchUsers({ page, size, filters }, UsersListType.ALL));
   };
@@ -381,10 +348,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
     return <div>{loading && 'Loading...'}</div>;
   }
 
-  const grouped: { [index: string]: ChecklistAuditLogsType[] } = groupBy(
-    logs,
-    'triggeredOn',
-  );
+  const grouped: { [index: string]: ChecklistAuditLogsType[] } = groupBy(logs, 'triggeredOn');
   const data = Object.keys(grouped).map((item) => ({
     [item]: grouped[item],
     id: item,
@@ -401,7 +365,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
     >
       <GoBack label="Return to process" className="go-back" />
       <div className="activity-wrapper">
-        <ListViewComponent
+        <InfiniteListView
           isSearchable={false}
           fetchData={fetchLogs}
           isLast={pageable.last}
@@ -421,41 +385,28 @@ const AuditLogs: FC<Props> = ({ id }) => {
                     <div style={{ padding: '0px 8px', flex: 1 }}>
                       <div className="log-header">
                         <div className="header-item">{day}</div>
-                        <div className="header-item">
-                          {item[itemId].length} activities
-                        </div>
+                        <div className="header-item">{item[itemId].length} activities</div>
                         {criticalCount !== 0 && (
                           <>
                             <div className="header-item">
                               <ReportProblemOutlinedIcon className="icon" />
                             </div>
-                            <div className="header-item">
-                              {criticalCount} Critical
-                            </div>
+                            <div className="header-item">{criticalCount} Critical</div>
                           </>
                         )}
                       </div>
                       <div className="log-row">
-                        {(item[itemId] as ChecklistAuditLogsType[]).map(
-                          (log) => (
-                            <div className="log-item" key={`${log.id}`}>
-                              <div className="circle" />
-                              <div className="content">
-                                <div
-                                  className="content-items"
-                                  style={{ whiteSpace: 'nowrap' }}
-                                >
-                                  {moment
-                                    .unix(log.triggeredAt)
-                                    .format(timeFormat)}
-                                </div>
-                                <div className="content-items">
-                                  {log.details}
-                                </div>
+                        {(item[itemId] as ChecklistAuditLogsType[]).map((log) => (
+                          <div className="log-item" key={`${log.id}`}>
+                            <div className="circle" />
+                            <div className="content">
+                              <div className="content-items" style={{ whiteSpace: 'nowrap' }}>
+                                {moment.unix(log.triggeredAt).format(timeFormat)}
                               </div>
+                              <div className="content-items">{log.details}</div>
                             </div>
-                          ),
-                        )}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>

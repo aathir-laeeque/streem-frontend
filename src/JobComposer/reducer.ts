@@ -1,28 +1,11 @@
 import { Reducer } from 'redux';
-import { JobStateEnum } from '#views/Jobs/NewListView/types';
-
-import {
-  activityListReducer,
-  initialState as activityListState,
-} from './ActivityList/reducer';
-import {
-  ComposerAction,
-  ComposerActionType,
-  ComposerState,
-} from './composer.reducer.types';
+import { JobStateEnum } from '#views/Jobs/ListView/types';
+import { activityListReducer, initialState as activityListState } from './ActivityList/reducer';
+import { ComposerAction, ComposerActionType, ComposerState } from './composer.reducer.types';
 import { Entity } from './composer.types';
-import {
-  initialState as stageListState,
-  stageListReducer,
-} from './StageList/reducer';
-import {
-  initialState as auditLogsState,
-  jobAuditLogsReducer,
-} from './JobAuditLogs/reducer';
-import {
-  initialState as taskListState,
-  taskListReducer,
-} from './TaskList/reducer';
+import { initialState as stageListState, stageListReducer } from './StageList/reducer';
+import { initialState as auditLogsState, jobAuditLogsReducer } from './JobAuditLogs/reducer';
+import { initialState as taskListState, taskListReducer } from './TaskList/reducer';
 import { StageListAction } from './StageList/reducer.types';
 
 const initialState: ComposerState = {
@@ -50,10 +33,7 @@ const initialState: ComposerState = {
  * ? mabe look into splitting the reducer to smaller parts
  */
 
-const reducer: Reducer<ComposerState, ComposerActionType> = (
-  state = initialState,
-  action,
-) => {
+const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialState, action) => {
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_ONGOING:
       return { ...state, loading: true };

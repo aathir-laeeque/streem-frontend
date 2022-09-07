@@ -22,6 +22,8 @@
     "build": "bash scripts/pre-build.sh && node scripts/build.js && bash scripts/post-build.sh",
     "lint:check": "eslint -c .eslintrc 'src/**/*{.ts,.tsx}'",
     "lint:fix": "eslint --fix .eslintrc 'src/**/*{.ts,.tsx}'",
+    "prettier:check": "prettier --config .prettierrc --check 'src/**/*{.ts,.tsx}'",
+    "prettier:write": "prettier --config .prettierrc --write 'src/**/*{.ts,.tsx}'",
     "test": "jest",
     "prepare": "husky install"
   },
@@ -137,7 +139,8 @@
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
-      "eslint --fix"
+      "eslint --fix .eslintrc",
+      "prettier --config .prettierrc --write"
     ]
   },
   "browserslist": {

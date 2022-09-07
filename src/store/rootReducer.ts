@@ -8,7 +8,7 @@ import { SessionActivityReducer } from '#views/UserAccess/ListView/SessionActivi
 import { combineReducers } from 'redux';
 import { PropertiesReducer } from './properties/reducer';
 import { UsersServiceReducer } from '../services/users/reducer';
-import { NewJobListViewReducer } from '../views/Jobs/NewListView/reducer';
+import { NewJobListViewReducer } from '#views/Jobs/ListView/reducer';
 import { AuditLogFiltersReducer } from './audit-log-filters/reducer';
 import { FacilitiesReducer } from './facilities/reducer';
 import { FileUploadReducer } from './file-upload/reducer';

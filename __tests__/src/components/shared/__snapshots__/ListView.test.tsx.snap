@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<ListViewComponent /> should render and match the snapshot 1`] = `
+exports[`<InfiniteListView /> should render and match the snapshot 1`] = `
 <div
   className="sc-fzoXzr jMCLKa"
 >

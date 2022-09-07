@@ -1,15 +1,10 @@
 import { apiGetInbox } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
-import { Job } from '#views/Jobs/NewListView/types';
+import { Job } from '#views/Jobs/ListView/types';
 import { call, put, takeLatest } from 'redux-saga/effects';
 
-import {
-  fetchInbox,
-  fetchInboxError,
-  fetchInboxOngoing,
-  fetchInboxSuccess,
-} from './actions';
+import { fetchInbox, fetchInboxError, fetchInboxOngoing, fetchInboxSuccess } from './actions';
 import { ListViewAction } from './types';
 
 function* fetchInboxSaga({ payload }: ReturnType<typeof fetchInbox>) {

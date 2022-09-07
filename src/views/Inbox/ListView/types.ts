@@ -1,5 +1,5 @@
 import { Pageable } from '#utils/globalTypes';
-import { Job } from '#views/Jobs/NewListView/types';
+import { Job } from '#views/Jobs/ListView/types';
 import { RouteComponentProps } from '@reach/router';
 
 import {

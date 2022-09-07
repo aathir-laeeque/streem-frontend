@@ -1,10 +1,9 @@
 import { BaseModal } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { Job } from '#views/Jobs/NewListView/types';
+import { Job } from '#views/Jobs/ListView/types';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-
 import { startJob } from '../actions';
 
 const Wrapper = styled.div`
@@ -88,9 +87,11 @@ const Wrapper = styled.div`
   }
 `;
 
-const StartJobModal: FC<CommonOverlayProps<{
-  jobId: Job['id'];
-}>> = ({ closeAllOverlays, closeOverlay, props: { jobId } }) => {
+const StartJobModal: FC<
+  CommonOverlayProps<{
+    jobId: Job['id'];
+  }>
+> = ({ closeAllOverlays, closeOverlay, props: { jobId } }) => {
   const dispatch = useDispatch();
 
   return (
@@ -110,9 +111,7 @@ const StartJobModal: FC<CommonOverlayProps<{
 
               <div className="buttons-container">
                 <button onClick={() => closeOverlay()}>Cancel</button>
-                <button onClick={() => dispatch(startJob(jobId))}>
-                  Confirm
-                </button>
+                <button onClick={() => dispatch(startJob(jobId))}>Confirm</button>
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { Job } from '#views/Jobs/NewListView/types';
+import { Job } from '#views/Jobs/ListView/types';
 import { omit } from 'lodash';
 import { Reducer } from 'redux';
 
@@ -6,12 +6,7 @@ import { Checklist } from '../checklist.types';
 import { ComposerAction } from '../reducer.types';
 import { StageListActions } from '../Stages/reducer.types';
 import { ComposerEntity } from '../types';
-import {
-  TaskListActions,
-  TaskListActionType,
-  TaskListState,
-  TasksById,
-} from './reducer.types';
+import { TaskListActions, TaskListActionType, TaskListState, TasksById } from './reducer.types';
 import { getTasks } from './utils';
 
 export const initialState: TaskListState = {
@@ -21,19 +16,14 @@ export const initialState: TaskListState = {
   tasksOrderInStage: {},
 };
 
-const reducer: Reducer<TaskListState, TaskListActionType> = (
-  state = initialState,
-  action,
-) => {
+const reducer: Reducer<TaskListState, TaskListActionType> = (state = initialState, action) => {
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
       const { data, entity } = action.payload;
 
       const isChecklist = entity === ComposerEntity.CHECKLIST;
 
-      const checklist = isChecklist
-        ? (data as Checklist)
-        : (data as unknown as Job).checklist;
+      const checklist = isChecklist ? (data as Checklist) : (data as unknown as Job).checklist;
 
       return {
         ...state,
@@ -77,9 +67,9 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
         },
         tasksOrderInStage: {
           ...state.tasksOrderInStage,
-          [action.payload.stageId]: state.tasksOrderInStage[
-            action.payload.stageId
-          ].filter((el) => el !== action.payload.taskId),
+          [action.payload.stageId]: state.tasksOrderInStage[action.payload.stageId].filter(
+            (el) => el !== action.payload.taskId,
+          ),
         },
       };
 
@@ -185,19 +175,10 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (
 
     case TaskListActions.REORDER_TASK_SUCCESS:
       const { tasksOrderInStage, listById } = state;
-      const {
-        activeStageId,
-        from: fromIndex,
-        to: toIndex,
-        id: fromId,
-      } = action.payload;
+      const { activeStageId, from: fromIndex, to: toIndex, id: fromId } = action.payload;
       const stageWiseTasks = [...tasksOrderInStage[activeStageId]];
       const toId = tasksOrderInStage[activeStageId][toIndex];
-      stageWiseTasks[fromIndex] = stageWiseTasks.splice(
-        toIndex,
-        1,
-        stageWiseTasks[fromIndex],
-      )[0];
+      stageWiseTasks[fromIndex] = stageWiseTasks.splice(toIndex, 1, stageWiseTasks[fromIndex])[0];
       return {
         ...state,
         tasksOrderInStage: {

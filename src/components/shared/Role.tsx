@@ -9,7 +9,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
-import { rolesDetails } from '#views/UserAccess/ManageUser/temp';
+import { rolesDetails } from '#views/UserAccess/ManageUser/rolesDetails';
 
 export interface RoleProps {
   id: string;
@@ -214,14 +214,7 @@ const Wrapper = styled.div.attrs({})`
   }
 `;
 
-export const Role: FC<RoleProps> = ({
-  label,
-  selected,
-  disabled = false,
-  id,
-  error,
-  onChange,
-}) => {
+export const Role: FC<RoleProps> = ({ label, selected, disabled = false, id, error, onChange }) => {
   const [isActive, setIsActive] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -278,16 +271,8 @@ export const Role: FC<RoleProps> = ({
               )}
               {!disabled && (
                 <div>
-                  <div
-                    className="role-radio-group-wrapper"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <RadioGroup
-                      id={id}
-                      name={id}
-                      onChange={onChange}
-                      defaultValue={selected}
-                    >
+                  <div className="role-radio-group-wrapper" onClick={(e) => e.stopPropagation()}>
+                    <RadioGroup id={id} name={id} onChange={onChange} defaultValue={selected}>
                       {Object.entries(rolesDetails).map(([roleId, role]) => {
                         if (roleId !== RoleIdByName.ACCOUNT_OWNER) {
                           return (

@@ -29,26 +29,18 @@ function* fetchJobsSaga({ payload }: ReturnType<typeof fetchJobs>) {
       yield put(fetchJobsSuccess({ data, pageable }));
     }
   } catch (error) {
-    console.error(
-      'error from fetchJobsSaga function in JobListView Saga :: ',
-      error,
-    );
+    console.error('error from fetchJobsSaga function in JobListView Saga :: ', error);
     yield put(fetchJobsError(error));
   }
 }
 
 function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
   try {
-    const facilityId: string = yield select(
-      (state: RootState) => state.auth.selectedFacility?.id,
-    );
+    const facilityId: string = yield select((state: RootState) => state.auth.selectedFacility?.id);
 
-    const { errors }: ResponseObj<Job> = yield call(
-      request,
-      'POST',
-      apiGetJobs(),
-      { data: payload },
-    );
+    const { errors }: ResponseObj<Job> = yield call(request, 'POST', apiGetJobs(), {
+      data: payload,
+    });
     if (errors) {
       throw getErrorMsg(errors);
     }

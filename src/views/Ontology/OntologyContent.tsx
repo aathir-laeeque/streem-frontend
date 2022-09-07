@@ -1,6 +1,6 @@
 import useTabsNew from '#components/shared/useTabsNew';
 import { useTypedSelector } from '#store';
-import { ViewWrapper } from '#views/Jobs/NewListView/styles';
+import { ViewWrapper } from '#views/Jobs/ListView/styles';
 import React, { FC } from 'react';
 import ObjectTypeList from './ObjectTypes/ObjectTypeList';
 

@@ -5,19 +5,13 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { RefetchJobErrorType } from '#JobComposer/modals/RefetchJobComposerData';
 import { RootState } from '#store';
 import { setRecentServerTimestamp } from '#store/extras/action';
-import {
-  apiEnableTaskErrorCorrection,
-  apiPerformActionOnTask,
-} from '#utils/apiUrls';
+import { apiEnableTaskErrorCorrection, apiPerformActionOnTask } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { JobStateEnum } from '#views/Jobs/NewListView/types';
+import { JobStateEnum } from '#views/Jobs/ListView/types';
 import { all, call, put, select, takeLeading } from 'redux-saga/effects';
-import {
-  apiCancelTaskErrorCorrection,
-  apiCompleteTaskErrorCorrection,
-} from '../../utils/apiUrls';
+import { apiCancelTaskErrorCorrection, apiCompleteTaskErrorCorrection } from '../../utils/apiUrls';
 import { setActivityError } from '../ActivityList/actions';
-import { AutomationAction, MandatoryActivity, Task } from '../checklist.types';
+import { MandatoryActivity, Task } from '../checklist.types';
 import { ErrorGroups } from '../composer.types';
 import { groupJobErrors } from '../utils';
 import { Error } from './../../utils/globalTypes';
@@ -42,12 +36,8 @@ type TaskErrorSagaPayload = ErrorGroups & {
 };
 
 function* getActivitiesDataByTaskId(taskId: string) {
-  const { tasksById } = yield select(
-    (state: RootState) => state.composer.tasks,
-  );
-  const { activitiesById } = yield select(
-    (state: RootState) => state.composer.activities,
-  );
+  const { tasksById } = yield select((state: RootState) => state.composer.tasks);
+  const { activitiesById } = yield select((state: RootState) => state.composer.activities);
   const task = tasksById[taskId];
   return task.activities.map(({ id }: any) => {
     const activity = activitiesById[id];
@@ -95,9 +85,7 @@ function* taskCompleteErrorSaga(payload: TaskErrorSagaPayload) {
 
   if (activitiesErrors.length) {
     console.log('handle activities level error here');
-    yield all(
-      activitiesErrors.map((error) => put(setActivityError(error, error.id))),
-    );
+    yield all(activitiesErrors.map((error) => put(setActivityError(error, error.id))));
   }
 
   yield put(setTaskError('Activity Incomplete', taskId));
@@ -109,9 +97,7 @@ function* performActionOnTaskSaga({
   try {
     console.log('came to performActionOnTaskSaga with payload :: ', payload);
 
-    const { jobState, entityId: jobId } = yield select(
-      (state: RootState) => state.composer,
-    );
+    const { jobState, entityId: jobId } = yield select((state: RootState) => state.composer);
 
     const isJobStarted = jobState === JobStateEnum.IN_PROGRESS;
 
@@ -141,22 +127,16 @@ function* performActionOnTaskSaga({
 
           const activitiesId: string[] = yield select(
             (state: RootState) =>
-              state.composer.activities.activitiesOrderInTaskInStage[
-                activeStageId
-              ][taskId],
+              state.composer.activities.activitiesOrderInTaskInStage[activeStageId][taskId],
           );
 
           yield put(removeTaskError(taskId));
 
-          yield all(
-            activitiesId.map((activityId) =>
-              put(removeActivityError(activityId)),
-            ),
-          );
+          yield all(activitiesId.map((activityId) => put(removeActivityError(activityId))));
         }
 
         if (automations) {
-          for(let i = 0; i <automations.length; i++) {
+          for (let i = 0; i < automations.length; i++) {
             yield put(
               showNotification({
                 type: NotificationType.SUCCESS,
@@ -170,7 +150,7 @@ function* performActionOnTaskSaga({
         yield put(updateTaskExecutionState(taskId, data));
       } else {
         if (automations) {
-          for(let i = 0; i <automations.length; i++) {
+          for (let i = 0; i < automations.length; i++) {
             yield put(
               showNotification({
                 type: NotificationType.ERROR,
@@ -198,10 +178,7 @@ function* performActionOnTaskSaga({
           const { stagesErrors, tasksErrors, activitiesErrors, signOffErrors } =
             groupJobErrors(errors);
 
-          if (
-            action === TaskAction.COMPLETE ||
-            action === TaskAction.COMPLETE_WITH_EXCEPTION
-          ) {
+          if (action === TaskAction.COMPLETE || action === TaskAction.COMPLETE_WITH_EXCEPTION) {
             yield taskCompleteErrorSaga({
               stagesErrors,
               tasksErrors,
@@ -222,40 +199,30 @@ function* performActionOnTaskSaga({
       );
     }
   } catch (error) {
-    console.error(
-      'error came in performActionOnTaskSaga in TaskListSaga :: ',
-      error,
-    );
+    console.error('error came in performActionOnTaskSaga in TaskListSaga :: ', error);
   } finally {
     const { setLoadingState } = payload;
     setLoadingState(false);
   }
 }
 
-function* enableErrorCorrectionSaga({
-  payload,
-}: ReturnType<typeof enableErrorCorrection>) {
+function* enableErrorCorrectionSaga({ payload }: ReturnType<typeof enableErrorCorrection>) {
   console.log('came in correction saga ::', payload);
   try {
     const { taskId, correctionReason } = payload;
 
     const { entityId: jobId } = yield select((state) => state.composer);
 
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiEnableTaskErrorCorrection(taskId),
-      { data: { correctionReason, jobId } },
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiEnableTaskErrorCorrection(taskId), {
+      data: { correctionReason, jobId },
+    });
 
     if (data) {
       console.log('data :: ', data);
 
       yield put(updateTaskExecutionState(taskId, data));
     } else {
-      const alreadyEnabledErrorCorrection = (errors as Error[]).find(
-        (err) => err.code === 'E223',
-      );
+      const alreadyEnabledErrorCorrection = (errors as Error[]).find((err) => err.code === 'E223');
 
       if (alreadyEnabledErrorCorrection) {
         yield put(
@@ -278,21 +245,16 @@ function* enableErrorCorrectionSaga({
   }
 }
 
-function* completeErrorCorrectionSaga({
-  payload,
-}: ReturnType<typeof completeErrorCorretcion>) {
+function* completeErrorCorrectionSaga({ payload }: ReturnType<typeof completeErrorCorretcion>) {
   console.log('came in correction saga ::', payload);
   try {
     const { taskId } = payload;
 
     const { entityId: jobId } = yield select((state) => state.composer);
 
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiCompleteTaskErrorCorrection(taskId),
-      { data: { jobId, activities: yield* getActivitiesDataByTaskId(taskId) } },
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiCompleteTaskErrorCorrection(taskId), {
+      data: { jobId, activities: yield* getActivitiesDataByTaskId(taskId) },
+    });
 
     if (data) {
       yield put(updateTaskExecutionState(taskId, data));
@@ -332,21 +294,16 @@ function* completeErrorCorrectionSaga({
   }
 }
 
-function* cancelErrorCorrectionSaga({
-  payload,
-}: ReturnType<typeof cancelErrorCorretcion>) {
+function* cancelErrorCorrectionSaga({ payload }: ReturnType<typeof cancelErrorCorretcion>) {
   console.log('came to error correction saga ::', payload);
   try {
     const { taskId } = payload;
 
     const { entityId: jobId } = yield select((state) => state.composer);
 
-    const { data, errors } = yield call(
-      request,
-      'PATCH',
-      apiCancelTaskErrorCorrection(taskId),
-      { data: { jobId } },
-    );
+    const { data, errors } = yield call(request, 'PATCH', apiCancelTaskErrorCorrection(taskId), {
+      data: { jobId },
+    });
 
     if (data) {
       yield put(updateTaskExecutionState(taskId, data));
@@ -380,20 +337,8 @@ export function* TaskListSaga() {
   yield takeLeading(TaskListAction.START_TASK, performActionOnTaskSaga);
   yield takeLeading(TaskListAction.COMPLETE_TASK, performActionOnTaskSaga);
   yield takeLeading(TaskListAction.SKIP_TASK, performActionOnTaskSaga);
-  yield takeLeading(
-    TaskListAction.COMPLETE_TASK_WITH_EXCEPTION,
-    performActionOnTaskSaga,
-  );
-  yield takeLeading(
-    TaskListAction.ENABLE_TASK_ERROR_CORRECTION,
-    enableErrorCorrectionSaga,
-  );
-  yield takeLeading(
-    TaskListAction.COMPLTE_ERROR_CORRECTION,
-    completeErrorCorrectionSaga,
-  );
-  yield takeLeading(
-    TaskListAction.CANCEL_ERROR_CORRECTION,
-    cancelErrorCorrectionSaga,
-  );
+  yield takeLeading(TaskListAction.COMPLETE_TASK_WITH_EXCEPTION, performActionOnTaskSaga);
+  yield takeLeading(TaskListAction.ENABLE_TASK_ERROR_CORRECTION, enableErrorCorrectionSaga);
+  yield takeLeading(TaskListAction.COMPLTE_ERROR_CORRECTION, completeErrorCorrectionSaga);
+  yield takeLeading(TaskListAction.CANCEL_ERROR_CORRECTION, cancelErrorCorrectionSaga);
 }

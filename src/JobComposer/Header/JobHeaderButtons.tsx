@@ -3,14 +3,14 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission from '#services/uiPermissions';
 import { User } from '#store/users/types';
-import { Job, JobStateEnum, JobStateType } from '#views/Jobs/NewListView/types';
+import { Job, JobStateEnum, JobStateType } from '#views/Jobs/ListView/types';
 import { openLinkInNewTab } from '#utils';
 import { Menu, MenuItem } from '@material-ui/core';
 import { MoreVert } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { CompletedJobStates } from '../../views/Jobs/NewListView/types';
+import { CompletedJobStates } from '#views/Jobs/ListView/types';
 import { completeJob } from '../actions';
 
 const JobHeaderButtons: FC<{

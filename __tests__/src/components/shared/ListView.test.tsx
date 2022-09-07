@@ -1,15 +1,15 @@
-import { ListViewComponent } from '#components';
+import { InfiniteListView } from '#components';
 import { jobs, jobsProperties } from '#mocks';
 import { Job } from '#views/Jobs/types';
 import React from 'react';
 import { create, ReactTestRenderer } from 'react-test-renderer';
 
-describe('<ListViewComponent />', () => {
+describe('<InfiniteListView />', () => {
   let snapshot: ReactTestRenderer;
   const data: Job[] = jobs.data;
   beforeAll(() => {
     const component = (
-      <ListViewComponent
+      <InfiniteListView
         properties={jobsProperties.data}
         fetchData={() => jest.fn()}
         isLast={true}

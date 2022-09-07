@@ -4,7 +4,7 @@ import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { InputTypes } from '#utils/globalTypes';
 import { formatDateByInputType } from '#utils/timeUtils';
-import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
+import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { Menu, MenuItem } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
 import { navigate, useLocation } from '@reach/router';

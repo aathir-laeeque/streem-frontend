@@ -6,8 +6,7 @@ import { fetchJobsType, fetchJobsSuccessType, ListViewAction } from './types';
 export const fetchJobs = (params: fetchJobsType) =>
   actionSpreader(ListViewAction.FETCH_JOBS, { params });
 
-export const fetchJobsOngoing = () =>
-  actionSpreader(ListViewAction.FETCH_JOBS_ONGOING);
+export const fetchJobsOngoing = () => actionSpreader(ListViewAction.FETCH_JOBS_ONGOING);
 
 export const fetchJobsSuccess = ({ data, pageable }: fetchJobsSuccessType) =>
   actionSpreader(ListViewAction.FETCH_JOBS_SUCCESS, { data, pageable });

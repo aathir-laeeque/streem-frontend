@@ -9,8 +9,7 @@ import { isEmpty } from 'lodash';
 import React, { FC, useEffect, useReducer } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-
-import { Job, CompletedJobStates } from '../NewListView/types';
+import { Job, CompletedJobStates } from '../ListView/types';
 import Section from './Section';
 
 export const Wrapper = styled.div.attrs({})`
@@ -71,17 +70,11 @@ const reducer = (state: State, action: any): State => {
         ...state,
         [action.payload.stageId]: {
           ...state[action.payload.stageId],
-          ...action.payload.taskExecutionIds.reduce(
-            (acc: any, id: string, index: number) => {
-              acc[id] = [
-                action.payload.states[index],
-                state[action.payload.stageId][id][1],
-              ];
+          ...action.payload.taskExecutionIds.reduce((acc: any, id: string, index: number) => {
+            acc[id] = [action.payload.states[index], state[action.payload.stageId][id][1]];
 
-              return acc;
-            },
-            {},
-          ),
+            return acc;
+          }, {}),
         },
       };
 
@@ -91,9 +84,7 @@ const reducer = (state: State, action: any): State => {
           temp[stage.id] = {
             ...temp[stage.id],
             [task.taskExecution.id]: [
-              task.taskExecution.state in CompletedJobStates
-                ? false
-                : action.payload.state,
+              task.taskExecution.state in CompletedJobStates ? false : action.payload.state,
               task.id,
             ],
           };
@@ -120,15 +111,11 @@ const Assignments: FC<Props> = (props) => {
   const [state, localDispatch] = useReducer(reducer, {});
 
   const isAllTaskSelected = Object.keys(state)
-    .map((stageId) =>
-      Object.values(state[stageId]).every((val) => val[0] === true),
-    )
+    .map((stageId) => Object.values(state[stageId]).every((val) => val[0] === true))
     .every(Boolean);
 
   const isNoTaskSelected = Object.keys(state)
-    .map((stageId) =>
-      Object.values(state[stageId]).every((val) => val[0] === false),
-    )
+    .map((stageId) => Object.values(state[stageId]).every((val) => val[0] === false))
     .every(Boolean);
 
   useEffect(() => {
@@ -143,15 +130,12 @@ const Assignments: FC<Props> = (props) => {
     }
   }, [data]);
 
-  const selectedTasks = Object.keys(state).reduce<[string, string][]>(
-    (acc, stageId) => {
-      Object.entries(state[stageId]).forEach(([taskExecutionId, val]) =>
-        val[0] === true ? acc.push([taskExecutionId, val[1]]) : null,
-      );
-      return acc;
-    },
-    [],
-  );
+  const selectedTasks = Object.keys(state).reduce<[string, string][]>((acc, stageId) => {
+    Object.entries(state[stageId]).forEach(([taskExecutionId, val]) =>
+      val[0] === true ? acc.push([taskExecutionId, val[1]]) : null,
+    );
+    return acc;
+  }, []);
 
   const totalTasksCount = data?.totalTasks;
 
@@ -189,17 +173,14 @@ const Assignments: FC<Props> = (props) => {
                     props: {
                       jobId,
                       selectedTasks,
-                      assignToEntireJob:
-                        selectedTasks.length === totalTasksCount,
+                      assignToEntireJob: selectedTasks.length === totalTasksCount,
                     },
                   }),
                 );
               }}
               disabled={isNoTaskSelected}
             >
-              {selectedTasks.length
-                ? `Assign ${selectedTasks.length} Tasks`
-                : 'Assign Tasks'}
+              {selectedTasks.length ? `Assign ${selectedTasks.length} Tasks` : 'Assign Tasks'}
             </Button1>
           </div>
 

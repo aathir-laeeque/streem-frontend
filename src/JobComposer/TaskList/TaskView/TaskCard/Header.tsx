@@ -1,18 +1,11 @@
-import {
-  closeOverlayAction,
-  openOverlayAction,
-} from '#components/OverlayContainer/actions';
+import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import {
-  StartedTaskStates,
-  Task,
-  TaskExecutionState,
-} from '#JobComposer/checklist.types';
+import { StartedTaskStates, Task, TaskExecutionState } from '#JobComposer/checklist.types';
 import { getUserName } from '#services/users/helpers';
 import { useTypedSelector } from '#store';
 import { User } from '#store/users/types';
 import { formatDateTime } from '#utils/timeUtils';
-import { JobStateEnum } from '#views/Jobs/NewListView/types';
+import { JobStateEnum } from '#views/Jobs/ListView/types';
 import { Menu, MenuItem } from '@material-ui/core';
 import { Assignment, Error, MoreHoriz, PanTool } from '@material-ui/icons';
 import { capitalize } from 'lodash';
@@ -32,9 +25,7 @@ type HeaderProps = {
   showAssignmentButton: boolean;
   setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
   timerState: { [index: string]: boolean };
-  setTimerState: React.Dispatch<
-    React.SetStateAction<{ [index: string]: boolean }>
-    >;
+  setTimerState: React.Dispatch<React.SetStateAction<{ [index: string]: boolean }>>;
 };
 
 const JobHeader: FC<
@@ -46,15 +37,15 @@ const JobHeader: FC<
     | 'setLoadingState'
     | 'timerState'
     | 'setTimerState'
-    >
-  > = ({
-         task,
-         enableStopForTask,
-         showAssignmentButton,
-         setLoadingState,
-         timerState,
-         setTimerState,
-       }) => {
+  >
+> = ({
+  task,
+  enableStopForTask,
+  showAssignmentButton,
+  setLoadingState,
+  timerState,
+  setTimerState,
+}) => {
   const dispatch = useDispatch();
   const { profile, selectedFacility } = useTypedSelector((state) => state.auth);
   const { dateAndTimeStampFormat } = useTypedSelector(
@@ -67,8 +58,7 @@ const JobHeader: FC<
     data: { id: jobId } = {},
   } = useTypedSelector((state) => state.composer);
 
-  const isJobStarted =
-    jobState === JobStateEnum.IN_PROGRESS || jobState === JobStateEnum.BLOCKED;
+  const isJobStarted = jobState === JobStateEnum.IN_PROGRESS || jobState === JobStateEnum.BLOCKED;
 
   const stageOrderTree = stagesById[activeStageId as string].orderTree;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -91,19 +81,10 @@ const JobHeader: FC<
     );
   };
 
-  const {
-    state,
-    startedAt,
-    startedBy,
-    reason,
-    correctionEnabled,
-    correctionReason,
-    assignees,
-  } = task.taskExecution;
+  const { state, startedAt, startedBy, reason, correctionEnabled, correctionReason, assignees } =
+    task.taskExecution;
 
-  const isUserAssignedToTask = assignees.some(
-    (user) => user.id === profile?.id,
-  );
+  const isUserAssignedToTask = assignees.some((user) => user.id === profile?.id);
 
   return (
     <div className="job-header">
@@ -117,11 +98,7 @@ const JobHeader: FC<
                 className="user-thumb"
                 aria-haspopup="true"
                 onMouseEnter={(e) => handleAssigneeClick(e, [user])}
-                onMouseLeave={() =>
-                  dispatch(
-                    closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL),
-                  )
-                }
+                onMouseLeave={() => dispatch(closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL))}
               >
                 {capitalize(user.firstName).substring(0, 1)}
                 {capitalize(user.lastName).substring(0, 1)}
@@ -133,11 +110,7 @@ const JobHeader: FC<
                 className="user-thumb"
                 aria-haspopup="true"
                 onMouseEnter={(e) => handleAssigneeClick(e, assignees.slice(4))}
-                onMouseLeave={() =>
-                  dispatch(
-                    closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL),
-                  )
-                }
+                onMouseLeave={() => dispatch(closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL))}
               >
                 +{assignees.length - 4}
               </div>
@@ -147,8 +120,7 @@ const JobHeader: FC<
       )}
       {state in StartedTaskStates && startedAt ? (
         <div className="start-audit">
-          Task started by {getUserName({ user: startedBy! })}, ID:{' '}
-          {startedBy!.employeeId} on{' '}
+          Task started by {getUserName({ user: startedBy! })}, ID: {startedBy!.employeeId} on{' '}
           {formatDateTime(startedAt, dateAndTimeStampFormat)}
         </div>
       ) : null}
@@ -224,11 +196,7 @@ const JobHeader: FC<
         </div>
 
         {task.timed ? (
-          <Timer
-            task={task}
-            timerState={timerState}
-            setTimerState={setTimerState}
-          />
+          <Timer task={task} timerState={timerState} setTimerState={setTimerState} />
         ) : null}
       </div>
 
@@ -269,16 +237,16 @@ const JobHeader: FC<
 };
 
 const Header: FC<HeaderProps> = ({
-                                   task,
-                                   showStartButton,
-                                   isTaskStarted,
-                                   isTaskDelayed,
-                                   enableStopForTask,
-                                   showAssignmentButton,
-                                   setLoadingState,
-                                   timerState,
-                                   setTimerState,
-                                 }) => {
+  task,
+  showStartButton,
+  isTaskStarted,
+  isTaskDelayed,
+  enableStopForTask,
+  showAssignmentButton,
+  setLoadingState,
+  timerState,
+  setTimerState,
+}) => {
   return (
     <Wrapper
       hasStop={task.hasStop}

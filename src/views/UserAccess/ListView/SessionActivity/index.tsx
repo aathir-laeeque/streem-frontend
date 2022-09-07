@@ -1,9 +1,6 @@
-import { Checkbox, FilterProp, ListViewComponent } from '#components';
+import { Checkbox, FilterProp, InfiniteListView } from '#components';
 import { useTypedSelector } from '#store';
-import {
-  clearAuditLogFilters,
-  setAuditLogFilters,
-} from '#store/audit-log-filters/action';
+import { clearAuditLogFilters, setAuditLogFilters } from '#store/audit-log-filters/action';
 import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
 import { openLinkInNewTab } from '#utils';
@@ -106,15 +103,9 @@ const SessionActivity: FC<TabViewProps> = () => {
     return (
       <div className="item" key={`user_${user.id}`}>
         <div className="right">
-          <Checkbox
-            checked={checked}
-            label=""
-            onClick={() => onCheckChanged(user, checked)}
-          />
+          <Checkbox checked={checked} label="" onClick={() => onCheckChanged(user, checked)} />
         </div>
-        <div className="thumb">
-          {getInitials(`${user.firstName} ${user.lastName}`)}
-        </div>
+        <div className="thumb">{getInitials(`${user.firstName} ${user.lastName}`)}</div>
         <div className="middle">
           <span className="userId">{user.employeeId}</span>
           <span className="userName">{`${user.firstName} ${user.lastName}`}</span>
@@ -158,9 +149,7 @@ const SessionActivity: FC<TabViewProps> = () => {
               displayStaticWrapperAs="desktop"
               value={state.dateRange}
               calendars={1}
-              onChange={(newValue) =>
-                setstate({ ...state, dateRange: newValue })
-              }
+              onChange={(newValue) => setstate({ ...state, dateRange: newValue })}
               renderInput={(startProps, endProps) => (
                 <>
                   <TextField {...startProps} />
@@ -180,9 +169,7 @@ const SessionActivity: FC<TabViewProps> = () => {
                   startAdornment: <AccessTimeIcon />,
                 }}
                 openPickerIcon={<ArrowDropDownIcon />}
-                onChange={(newValue) =>
-                  setstate({ ...state, startTime: newValue })
-                }
+                onChange={(newValue) => setstate({ ...state, startTime: newValue })}
               />
               <TimePicker
                 renderInput={(props) => <TextField {...props} />}
@@ -193,9 +180,7 @@ const SessionActivity: FC<TabViewProps> = () => {
                   startAdornment: <AccessTimeIcon />,
                 }}
                 openPickerIcon={<ArrowDropDownIcon />}
-                onChange={(newValue) =>
-                  setstate({ ...state, endTime: newValue })
-                }
+                onChange={(newValue) => setstate({ ...state, endTime: newValue })}
               />
             </div>
           </LocalizationProvider>
@@ -206,9 +191,7 @@ const SessionActivity: FC<TabViewProps> = () => {
         onApply: () => {
           const applicapleUsers = [
             ...selectedUsers,
-            ...appliedUsers.filter(
-              (user) => !unSelectedUsers.some((item) => item.id === user.id),
-            ),
+            ...appliedUsers.filter((user) => !unSelectedUsers.some((item) => item.id === user.id)),
           ];
           if (!!applicapleUsers.length) {
             setstate({
@@ -240,20 +223,14 @@ const SessionActivity: FC<TabViewProps> = () => {
           if (list) {
             if (searchQuery === '') {
               appliedUsers.forEach((user) => {
-                const isUnSelected = !unSelectedUsers.some(
-                  (item) => item.id === user.id,
-                );
+                const isUnSelected = !unSelectedUsers.some((item) => item.id === user.id);
                 bodyView.push(userRow(user, isUnSelected));
               });
             }
 
             (list as unknown as Array<User>).forEach((user) => {
-              const isSelected = selectedUsers.some(
-                (item) => item.id === user.id,
-              );
-              const inApplied = appliedUsers.some(
-                (item) => item.id === user.id,
-              );
+              const isSelected = selectedUsers.some((item) => item.id === user.id);
+              const inApplied = appliedUsers.some((item) => item.id === user.id);
               if (!inApplied) {
                 bodyView.push(userRow(user, isSelected));
               }
@@ -267,9 +244,7 @@ const SessionActivity: FC<TabViewProps> = () => {
                   <input
                     className="searchbox"
                     type="text"
-                    onChange={(e) =>
-                      setstate({ ...state, searchQuery: e.target.value })
-                    }
+                    onChange={(e) => setstate({ ...state, searchQuery: e.target.value })}
                     defaultValue={searchQuery}
                     placeholder="First Name"
                   />
@@ -285,9 +260,8 @@ const SessionActivity: FC<TabViewProps> = () => {
       },
     ],
     onReset: () => resetFilter(),
-    activeCount: Object.keys(state.appliedFilters).filter(
-      (key) => !!state.appliedFilters[key],
-    ).length,
+    activeCount: Object.keys(state.appliedFilters).filter((key) => !!state.appliedFilters[key])
+      .length,
   };
 
   useEffect(() => {
@@ -309,9 +283,7 @@ const SessionActivity: FC<TabViewProps> = () => {
   const fetchUsersData = (page: number, size: number) => {
     const filters = JSON.stringify({
       op: FilterOperators.AND,
-      fields: [
-        { field: 'firstName', op: FilterOperators.LIKE, values: [searchQuery] },
-      ],
+      fields: [{ field: 'firstName', op: FilterOperators.LIKE, values: [searchQuery] }],
     });
     dispatch(fetchUsers({ page, size, filters }, UsersListType.ALL));
   };
@@ -391,7 +363,7 @@ const SessionActivity: FC<TabViewProps> = () => {
 
   return (
     <Composer>
-      <ListViewComponent
+      <InfiniteListView
         isSearchable={false}
         fetchData={fetchLogs}
         isLast={pageable.last}
@@ -408,25 +380,20 @@ const SessionActivity: FC<TabViewProps> = () => {
               let criticalCount = 0;
               const itemId = item.id as string;
               (item[itemId] as SessionActivityType[]).forEach((element) => {
-                if (element.severity === SessionActivitySeverity.CRITICAL)
-                  criticalCount++;
+                if (element.severity === SessionActivitySeverity.CRITICAL) criticalCount++;
               });
               return (
                 <div className="list-card-columns" key={`name_${itemId}`}>
                   <div style={{ padding: '0px 8px', flex: 1 }}>
                     <div className="log-header">
                       <div className="header-item">{day}</div>
-                      <div className="header-item">
-                        {item[itemId].length} activities
-                      </div>
+                      <div className="header-item">{item[itemId].length} activities</div>
                       {criticalCount !== 0 && (
                         <>
                           <div className="header-item">
                             <ReportProblemOutlinedIcon className="icon" />
                           </div>
-                          <div className="header-item">
-                            {criticalCount} Critical
-                          </div>
+                          <div className="header-item">{criticalCount} Critical</div>
                         </>
                       )}
                     </div>
@@ -435,14 +402,10 @@ const SessionActivity: FC<TabViewProps> = () => {
                         <div className="log-item" key={`${log.id}`}>
                           <div className="circle" />
                           <div className="content">
-                            <div
-                              className="content-items"
-                              style={{ whiteSpace: 'nowrap' }}
-                            >
+                            <div className="content-items" style={{ whiteSpace: 'nowrap' }}>
                               {moment.unix(log.triggeredAt).format(timeFormat)}
                             </div>
-                            {log.severity ===
-                              SessionActivitySeverity.CRITICAL && (
+                            {log.severity === SessionActivitySeverity.CRITICAL && (
                               <div className="content-items">
                                 <ReportProblemOutlinedIcon className="icon" />
                               </div>

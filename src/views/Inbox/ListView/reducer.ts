@@ -1,12 +1,7 @@
 import { Pageable } from '#utils/globalTypes';
-import { Job } from '#views/Jobs/NewListView/types';
+import { Job } from '#views/Jobs/ListView/types';
 
-import {
-  InboxState,
-  ListViewAction,
-  ListViewActionType,
-  ListViewState,
-} from './types';
+import { InboxState, ListViewAction, ListViewActionType, ListViewState } from './types';
 
 const initialState: ListViewState = {
   loading: false,
@@ -29,10 +24,7 @@ const initialState: ListViewState = {
   },
 };
 
-const reducer = (
-  state = initialState,
-  action: ListViewActionType,
-): ListViewState => {
+const reducer = (state = initialState, action: ListViewActionType): ListViewState => {
   switch (action.type) {
     case ListViewAction.FETCH_INBOX_ONGOING:
       return { ...state, loading: true };

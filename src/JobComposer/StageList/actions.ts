@@ -1,6 +1,6 @@
+import { ActivitiesById } from '#JobComposer/ActivityList/types';
 import { actionSpreader } from '#store';
-import { Job, JobStateType } from '#views/Jobs/NewListView/types';
-
+import { Job, JobStateType } from '#views/Jobs/ListView/types';
 import { Stage } from '../checklist.types';
 import { TasksById } from '../TaskList/types';
 import { StageListAction } from './reducer.types';
@@ -22,9 +22,7 @@ export interface fetchActiveStageDataRes {
 export const setActiveStage = (id: Stage['id'], bringIntoView = false) =>
   actionSpreader(StageListAction.SET_ACTIVE_STAGE, { id, bringIntoView });
 
-export const startPollActiveStageData = ({
-  jobId,
-}: startPollActiveStageDataType) =>
+export const startPollActiveStageData = ({ jobId }: startPollActiveStageDataType) =>
   actionSpreader(StageListAction.START_POLL_ACTIVE_STAGE_DATA, { jobId });
 
 export const stopPollActiveStageData = () =>

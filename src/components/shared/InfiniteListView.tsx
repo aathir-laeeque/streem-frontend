@@ -7,10 +7,9 @@ import { ArrowDropDown, Search } from '@material-ui/icons';
 import { noop } from 'lodash';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
-
 import { Button, FlatButton } from './Button';
 
-export type Filter = {
+type Filter = {
   label: string;
   content: JSX.Element | (() => JSX.Element);
   onApply: () => void;
@@ -191,7 +190,7 @@ const Wrapper = styled.div.attrs({})`
   }
 `;
 
-export const ListView: FC<ListViewProps> = ({
+export const InfiniteListView: FC<ListViewProps> = ({
   primaryButtonText,
   onPrimaryClick = () => noop,
   data,
@@ -210,9 +209,7 @@ export const ListView: FC<ListViewProps> = ({
     setAnchorEl(null);
   };
 
-  const handleOpen = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -220,10 +217,7 @@ export const ListView: FC<ListViewProps> = ({
     e.stopPropagation();
     if (callOnScroll) {
       const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-      if (
-        scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 &&
-        !isLast
-      )
+      if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 && !isLast)
         fetchData(currentPage + 1, 10);
     }
   };
@@ -239,14 +233,8 @@ export const ListView: FC<ListViewProps> = ({
       <div className="list-options">
         {filterProp && (
           <>
-            <FlatButton
-              aria-controls="top-menu"
-              aria-haspopup="true"
-              onClick={handleOpen}
-            >
-              {filterProp?.activeCount !== 0
-                ? `${filterProp?.activeCount} Filters`
-                : 'Filters '}
+            <FlatButton aria-controls="top-menu" aria-haspopup="true" onClick={handleOpen}>
+              {filterProp?.activeCount !== 0 ? `${filterProp?.activeCount} Filters` : 'Filters '}
               <ArrowDropDown style={{ fontSize: 20, color: '#1d84ff' }} />
             </FlatButton>
             <Menu
@@ -273,9 +261,7 @@ export const ListView: FC<ListViewProps> = ({
                       onKeyDown={(e) => e.stopPropagation()}
                       className="filter-container"
                     >
-                      {typeof filter.content === 'function'
-                        ? filter.content()
-                        : filter.content}
+                      {typeof filter.content === 'function' ? filter.content() : filter.content}
                       <div className="picker-actions">
                         <Button
                           style={{ marginRight: 0 }}
@@ -303,28 +289,19 @@ export const ListView: FC<ListViewProps> = ({
           </span>
         ) : null}
         {primaryButtonText && (
-          <Button
-            style={{ marginLeft: `auto`, marginRight: 0 }}
-            onClick={onPrimaryClick}
-          >
+          <Button style={{ marginLeft: `auto`, marginRight: 0 }} onClick={onPrimaryClick}>
             {primaryButtonText}
           </Button>
         )}
       </div>
       <div className="list-header">
         {beforeColumns?.map((beforeColumn) => (
-          <div
-            key={`beforeColumn_${beforeColumn.header}`}
-            className="list-header-columns"
-          >
+          <div key={`beforeColumn_${beforeColumn.header}`} className="list-header-columns">
             {beforeColumn.header}
           </div>
         ))}
         {afterColumns?.map((afterColumn) => (
-          <div
-            key={`afterColumn_${afterColumn.header}`}
-            className="list-header-columns"
-          >
+          <div key={`afterColumn_${afterColumn.header}`} className="list-header-columns">
             {afterColumn.header}
           </div>
         ))}
@@ -332,12 +309,8 @@ export const ListView: FC<ListViewProps> = ({
       <div className="list-body" onScroll={handleOnScroll}>
         {data.map((el, index) => (
           <div key={`list_el_${el.id}`} className="list-card">
-            {beforeColumns?.map((beforeColumn) =>
-              beforeColumn.template(el, index),
-            )}
-            {afterColumns?.map((afterColumn) =>
-              afterColumn.template(el, index),
-            )}
+            {beforeColumns?.map((beforeColumn) => beforeColumn.template(el, index))}
+            {afterColumns?.map((afterColumn) => afterColumn.template(el, index))}
           </div>
         ))}
       </div>

@@ -1,6 +1,6 @@
 import useTabsNew from '#components/shared/useTabsNew';
 import { useTypedSelector } from '#store';
-import { ViewWrapper } from '#views/Jobs/NewListView/styles';
+import { ViewWrapper } from '#views/Jobs/ListView/styles';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { resetInbox } from './actions';

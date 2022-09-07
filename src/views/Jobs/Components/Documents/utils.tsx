@@ -1,7 +1,6 @@
-import React, { ReactNode } from 'react';
+import { JobStateEnum } from '#views/Jobs/ListView/types';
 import { StyleSheet, Text, View } from '@react-pdf/renderer';
-import { JobStateEnum } from '#views/Jobs/NewListView/types';
-import { formatDateTime } from '#utils/timeUtils';
+import React, { ReactNode } from 'react';
 import { PdfJobDataType } from './CommonJobPDFDetails';
 
 export const commonStyles = StyleSheet.create({
@@ -111,13 +110,7 @@ export const InlineInputLabelGroup = ({
   </View>
 );
 
-export const InputLabelGroup = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) => (
+export const InputLabelGroup = ({ label, value }: { label: string; value: string }) => (
   <View>
     <View>
       <Text style={commonStyles.inputLabel}>{label}:</Text>
@@ -185,28 +178,23 @@ export const Assigness = ({
       );
     }
   } else {
-    rows = assignees.map(
-      ({ firstName, lastName, employeeId, recentSignOffAt }, index) => (
-        <View style={assigneStyles.assigneRow} key={`assignes_${employeeId}`}>
-          <View style={assigneStyles.assigneInput}>
-            <Text style={commonStyles.text12}>{firstName}</Text>
-          </View>
-          <View style={[assigneStyles.assigneInput, { margin: '0px 8px' }]}>
-            <Text style={commonStyles.text12}>{lastName}</Text>
-          </View>
-          <View style={[assigneStyles.assigneInput, { margin: '0px 8px' }]}>
-            <Text style={commonStyles.text12}>{employeeId}</Text>
-          </View>
+    rows = assignees.map(({ firstName, lastName, employeeId, recentSignOffAt }, index) => (
+      <View style={assigneStyles.assigneRow} key={`assignes_${employeeId}`}>
+        <View style={assigneStyles.assigneInput}>
+          <Text style={commonStyles.text12}>{firstName}</Text>
         </View>
-      ),
-    );
+        <View style={[assigneStyles.assigneInput, { margin: '0px 8px' }]}>
+          <Text style={commonStyles.text12}>{lastName}</Text>
+        </View>
+        <View style={[assigneStyles.assigneInput, { margin: '0px 8px' }]}>
+          <Text style={commonStyles.text12}>{employeeId}</Text>
+        </View>
+      </View>
+    ));
   }
 
   return (
-    <View
-      style={[assigneStyles.assigneWrapper, { alignItems: 'flex-start' }]}
-      wrap={false}
-    >
+    <View style={[assigneStyles.assigneWrapper, { alignItems: 'flex-start' }]} wrap={false}>
       <View style={assigneStyles.assignView}>
         <View style={[assigneStyles.assigneRow]}>
           <View style={commonStyles.flexView}>
@@ -225,13 +213,7 @@ export const Assigness = ({
   );
 };
 
-export const ValueLabelGroup = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) => (
+export const ValueLabelGroup = ({ label, value }: { label: string; value: string }) => (
   <View style={{ display: 'flex', flexDirection: 'row' }}>
     <Text style={commonStyles.inputLabel}>{label}</Text>
     <Text style={[commonStyles.text12, { marginLeft: 8 }]}>{value}</Text>

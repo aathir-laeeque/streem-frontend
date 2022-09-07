@@ -17,10 +17,7 @@ const initialState: ListViewState = {
 };
 
 // TODO: optimize the reducer for Unassigned, Assigned and completed tabs
-const reducer = (
-  state = initialState,
-  action: ListViewActionType,
-): ListViewState => {
+const reducer = (state = initialState, action: ListViewActionType): ListViewState => {
   switch (action.type) {
     case ListViewAction.FETCH_JOBS_ONGOING:
       return { ...state, loading: true };

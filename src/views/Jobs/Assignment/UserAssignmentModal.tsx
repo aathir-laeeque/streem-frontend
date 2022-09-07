@@ -1,9 +1,6 @@
 import { Avatar, BaseModal, Checkbox, TextInput } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
-import {
-  CommonOverlayProps,
-  OverlayNames,
-} from '#components/OverlayContainer/types';
+import { CommonOverlayProps, OverlayNames } from '#components/OverlayContainer/types';
 import { fetchData } from '#JobComposer/actions';
 import { Entity } from '#JobComposer/composer.types';
 import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
@@ -20,8 +17,7 @@ import { Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
-import { Job } from '../NewListView/types';
+import { Job } from '../ListView/types';
 import { Wrapper } from './styles';
 
 type Props = {
@@ -37,19 +33,9 @@ type ListItemProps = {
   onClick: () => void;
 };
 
-const ListItem = ({
-  user,
-  selected,
-  partialSelected = false,
-  onClick,
-}: ListItemProps) => (
+const ListItem = ({ user, selected, partialSelected = false, onClick }: ListItemProps) => (
   <div className="list-item">
-    <Checkbox
-      onClick={onClick}
-      label=""
-      checked={selected}
-      partial={partialSelected}
-    />
+    <Checkbox onClick={onClick} label="" checked={selected} partial={partialSelected} />
     <Avatar user={user} size="large" />
     <div className="user-detail">
       <span className="user-id">{user.employeeId}</span>
@@ -85,10 +71,7 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
         let data;
 
         if (assignToEntireJob) {
-          data = await request(
-            'GET',
-            apiGetAllUsersAssignedToJob(jobId as string),
-          );
+          data = await request('GET', apiGetAllUsersAssignedToJob(jobId as string));
 
           setPreAssignedUsers(data.data);
           setAssignedUserList(data.data);
@@ -130,9 +113,7 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
     const assignedUsers = assignedUserList.filter(
       (user) =>
         !preAssignedUsers.some(
-          (_user) =>
-            _user.id === user.id &&
-            _user.completelyAssigned === user.completelyAssigned,
+          (_user) => _user.id === user.id && _user.completelyAssigned === user.completelyAssigned,
         ),
     );
 
@@ -142,9 +123,7 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
 
     const data = await request('PATCH', apiBulkAssignUsers(jobId as string), {
       data: {
-        taskExecutionIds: selectedTasks.map(
-          ([taskExecutionId]) => taskExecutionId,
-        ),
+        taskExecutionIds: selectedTasks.map(([taskExecutionId]) => taskExecutionId),
         assignedUserIds: assignedUsers.map((user) => user.id),
         unassignedUserIds: unassignedUsers.map((user) => user.id),
       },
@@ -170,8 +149,7 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
   const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
     e.stopPropagation();
     const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7)
-      loadMore();
+    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7) loadMore();
   };
 
   return (
@@ -211,10 +189,7 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
           <span
             className="deselect"
             onClick={() => {
-              setUnAssignedUserList([
-                ...unAssignedUserList,
-                ...assignedUserList,
-              ]);
+              setUnAssignedUserList([...unAssignedUserList, ...assignedUserList]);
               setAssignedUserList([]);
             }}
           >
@@ -231,9 +206,7 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
                 onClick={() => {
                   if (!!user.completelyAssigned) {
                     // unselect user
-                    setAssignedUserList((_users) =>
-                      _users.filter((_user) => _user.id !== user.id),
-                    );
+                    setAssignedUserList((_users) => _users.filter((_user) => _user.id !== user.id));
 
                     setUnAssignedUserList((_users) => [..._users, user]);
                   } else {
@@ -241,9 +214,7 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
                     setAssignedUserList((_users) =>
                       _users.map((_user) => ({
                         ..._user,
-                        ...(_user.id === user.id
-                          ? { completelyAssigned: true }
-                          : {}),
+                        ...(_user.id === user.id ? { completelyAssigned: true } : {}),
                       })),
                     );
                   }
@@ -254,27 +225,23 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
               />
             ))}
 
-          {[
-            ...users.filter(
-              (user) => !assignedUserList.some((_user) => _user.id === user.id),
+          {[...users.filter((user) => !assignedUserList.some((_user) => _user.id === user.id))].map(
+            (user) => (
+              <ListItem
+                user={user}
+                key={user.id}
+                selected={false}
+                partialSelected={false}
+                onClick={() => {
+                  setUnAssignedUserList((_users) => _users.filter((_user) => _user.id !== user.id));
+                  setAssignedUserList((_users) => [
+                    ..._users,
+                    { ...user, completelyAssigned: true },
+                  ]);
+                }}
+              />
             ),
-          ].map((user) => (
-            <ListItem
-              user={user}
-              key={user.id}
-              selected={false}
-              partialSelected={false}
-              onClick={() => {
-                setUnAssignedUserList((_users) =>
-                  _users.filter((_user) => _user.id !== user.id),
-                );
-                setAssignedUserList((_users) => [
-                  ..._users,
-                  { ...user, completelyAssigned: true },
-                ]);
-              }}
-            />
-          ))}
+          )}
         </div>
       </BaseModal>
     </Wrapper>

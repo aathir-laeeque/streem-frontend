@@ -3,7 +3,7 @@ export const fetchBaseUrl = () => {
 
   let apiUrl = '';
 
-  if (hostname === 'localhost') {
+  if (hostname === 'localhost' || hostname === '0.0.0.0') {
     apiUrl = process.env.API_URL ?? 'http://localhost:8080/v1';
   } else {
     apiUrl = `${protocol}//api.${hostname}/v1`;

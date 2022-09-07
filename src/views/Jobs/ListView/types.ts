@@ -3,7 +3,6 @@ import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
-
 import { fetchJobs, fetchJobsError, fetchJobsOngoing, fetchJobsSuccess } from './actions';
 
 export type Assignee = Pick<User, 'employeeId' | 'firstName' | 'id' | 'lastName'> & {

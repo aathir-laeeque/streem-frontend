@@ -11,7 +11,7 @@ import { OntologySaga } from '#views/Ontology/saga';
 import { all, fork } from 'redux-saga/effects';
 import { FileUploadSaga } from '../modules/file-upload/saga';
 import { UsersServiceSaga } from '../services/users/saga';
-import { NewJobListViewSaga } from '../views/Jobs/NewListView/saga';
+import { NewJobListViewSaga } from '#views/Jobs/ListView/saga';
 import { FacilitiesSaga } from './facilities/saga';
 import { FileUploadSagaNew } from './file-upload/saga';
 import { PropertiesSaga } from './properties/saga';

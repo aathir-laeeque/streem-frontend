@@ -4,13 +4,13 @@ import AuditLogs from '#JobComposer/JobAuditLogs';
 import { Router } from '@reach/router';
 import React, { FC } from 'react';
 import Assignments from './Assignment';
-import NewListView from './NewListView';
+import ListView from './ListView';
 import JobSummary from './Summary';
 import { JobsViewProps } from './types';
 
 const JobsView: FC<JobsViewProps> = () => (
   <Router>
-    <NewListView path="/" />
+    <ListView path="/" />
 
     <Composer path="/:id" entity={Entity.JOB} />
 

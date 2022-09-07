@@ -1,5 +1,5 @@
 import { actionSpreader } from '#store';
-import { Job } from '#views/Jobs/NewListView/types';
+import { Job } from '#views/Jobs/ListView/types';
 
 import { ComposerAction } from './composer.reducer.types';
 import { Entity, FetchDataType } from './composer.types';
@@ -11,29 +11,21 @@ export const fetchData = ({ id, entity, setActive = false }: FetchDataType) =>
 export const fetchDataError = (error: any) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_ERROR, { error });
 
-export const fetchDataOngoing = () =>
-  actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_ONGOING);
+export const fetchDataOngoing = () => actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_ONGOING);
 
 // TODO: look into this any data type
-export const fetchDataSuccess = (
-  data: any,
-  entity: Entity,
-  setActive = false,
-) =>
+export const fetchDataSuccess = (data: any, entity: Entity, setActive = false) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_SUCCESS, {
     data,
     entity,
     setActive,
   });
 
-export const resetComposer = () =>
-  actionSpreader(ComposerAction.RESET_COMPOSER);
+export const resetComposer = () => actionSpreader(ComposerAction.RESET_COMPOSER);
 
-export const startJob = (jobId: Job['id']) =>
-  actionSpreader(ComposerAction.START_JOB, { jobId });
+export const startJob = (jobId: Job['id']) => actionSpreader(ComposerAction.START_JOB, { jobId });
 
-export const startJobSuccess = () =>
-  actionSpreader(ComposerAction.START_JOB_SUCCESS);
+export const startJobSuccess = () => actionSpreader(ComposerAction.START_JOB_SUCCESS);
 
 type CompleteJobType = {
   jobId: Job['id'];
@@ -73,10 +65,7 @@ type GetSignOffStateType = {
   allowSignOff?: boolean;
 };
 
-export const getSignOffState = ({
-  jobId,
-  allowSignOff = false,
-}: GetSignOffStateType) =>
+export const getSignOffState = ({ jobId, allowSignOff = false }: GetSignOffStateType) =>
   actionSpreader(ComposerAction.GET_SIGN_OFF_STATE, { jobId, allowSignOff });
 
 type signOffTasksType = {

@@ -1,7 +1,7 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { Task } from '#JobComposer/checklist.types';
-import { Job } from '#views/Jobs/NewListView/types';
+import { Job } from '#views/Jobs/ListView/types';
 import { People } from '@material-ui/icons';
 import React, { MouseEvent } from 'react';
 import { useDispatch } from 'react-redux';
@@ -12,11 +12,7 @@ type Props = {
   taskExecutionId: Task['taskExecution']['id'];
 };
 
-export default function TaskAssignmentContent({
-  taskId,
-  jobId,
-  taskExecutionId,
-}: Props) {
+export default function TaskAssignmentContent({ taskId, jobId, taskExecutionId }: Props) {
   const dispatch = useDispatch();
 
   const handlePopoverOpen = (event: MouseEvent) => {

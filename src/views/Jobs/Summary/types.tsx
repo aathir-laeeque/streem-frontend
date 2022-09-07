@@ -7,7 +7,7 @@ import { Property } from '#store/properties/types';
 import JobSummaryYesNoIcon from '#assets/svg/JobSummaryYesNoIcon';
 import { User } from '#services/users';
 import React from 'react';
-import { CompletedJobStates, Job } from '../NewListView/types';
+import { CompletedJobStates, Job } from '../ListView/types';
 
 export enum Exceptions {
   'DURATION_EXCEPTION' = 'Duration Exception',

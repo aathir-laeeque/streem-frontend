@@ -1,5 +1,4 @@
-import { Job } from '#views/Jobs/NewListView/types';
-
+import { Job } from '#views/Jobs/ListView/types';
 import { Activity, Stage, Task } from '../checklist.types';
 
 export type ActivityListProps = {

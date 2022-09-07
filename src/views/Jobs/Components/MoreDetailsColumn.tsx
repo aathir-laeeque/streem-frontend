@@ -1,4 +1,4 @@
-import { Job } from '#views/Jobs/NewListView/types';
+import { Job } from '#views/Jobs/ListView/types';
 import { Chip, Popover } from '@material-ui/core';
 import PopupState, { bindPopover, bindToggle } from 'material-ui-popup-state';
 import React from 'react';

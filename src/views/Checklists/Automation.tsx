@@ -2,7 +2,7 @@ import { BodyWrapper, DataTable } from '#components';
 import { useTypedSelector } from '#store';
 import cronstrue from 'cronstrue';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
-import { TabContentWrapper, ViewWrapper } from '#views/Jobs/NewListView/styles';
+import { TabContentWrapper, ViewWrapper } from '#views/Jobs/ListView/styles';
 import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import { RouteComponentProps } from '@reach/router';

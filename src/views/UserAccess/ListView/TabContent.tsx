@@ -13,36 +13,21 @@ import {
 } from '#store/users/types';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
-import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
+import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { CircularProgress, Menu, MenuItem } from '@material-ui/core';
-import {
-  ArrowDropDown,
-  ArrowLeft,
-  ArrowRight,
-  FiberManualRecord,
-} from '@material-ui/icons';
+import { ArrowDropDown, ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import { startCase, toLower } from 'lodash';
 import React, { MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { removeUnderscore } from '../../../utils/stringUtils';
-import {
-  archiveUser,
-  cancelInvite,
-  resendInvite,
-  unArchiveUser,
-  unLockUser,
-} from '../actions';
+import { archiveUser, cancelInvite, resendInvite, unArchiveUser, unLockUser } from '../actions';
 
 export function modalBody(text: string, user?: User) {
   return (
     <div className="body-content" style={{ textAlign: 'left' }}>
       {text}
-      {user && (
-        <span
-          style={{ fontWeight: 'bold' }}
-        >{` ${user.firstName} ${user.lastName}.`}</span>
-      )}
+      {user && <span style={{ fontWeight: 'bold' }}>{` ${user.firstName} ${user.lastName}.`}</span>}
     </div>
   );
 }
@@ -218,9 +203,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
       minWidth: 152,
       format: function renderComp(item: User) {
         const userRolesString = removeUnderscore(
-          item?.roles
-            ?.map((role) => startCase(toLower(role.name)))
-            .join(', ') || '',
+          item?.roles?.map((role) => startCase(toLower(role.name))).join(', ') || '',
         );
         return <span title={userRolesString}>{userRolesString}</span>;
       },
@@ -353,15 +336,10 @@ const TabContent: React.FC<TabContentProps> = (props) => {
   );
 
   const showButtons = (item: User) => {
-    const isItemAccountOwner = item?.roles?.some(
-      (i) => i?.name === roles.ACCOUNT_OWNER,
-    );
+    const isItemAccountOwner = item?.roles?.some((i) => i?.name === roles.ACCOUNT_OWNER);
 
     if (isItemAccountOwner) {
-      if (
-        isUserLocked(item.state) &&
-        checkPermission(['usersAndAccess', 'editAccountOwner'])
-      )
+      if (isUserLocked(item.state) && checkPermission(['usersAndAccess', 'editAccountOwner']))
         return (
           <>
             <div
@@ -520,9 +498,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
       >
         <CircularProgress style={{ color: 'rgb(29, 132, 255)' }} />
       </div>
-      <div
-        style={{ ...(loading ? { display: 'none' } : { display: 'contents' }) }}
-      >
+      <div style={{ ...(loading ? { display: 'none' } : { display: 'contents' }) }}>
         <DataTable columns={columns} rows={currentPageData} />
 
         <div className="pagination">
@@ -535,10 +511,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
             }}
           />
           {Array.from({ length: pageable.totalPages }, (_, i) => i)
-            .slice(
-              Math.floor(pageable.page / 10) * 10,
-              Math.floor(pageable.page / 10) * 10 + 10,
-            )
+            .slice(Math.floor(pageable.page / 10) * 10, Math.floor(pageable.page / 10) * 10 + 10)
             .map((el) => (
               <span
                 key={el}

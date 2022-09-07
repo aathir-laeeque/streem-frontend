@@ -3,7 +3,7 @@ import { RootState } from '#store';
 import { setRecentServerTimestamp } from '#store/extras/action';
 import { apiGetStageData } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { CompletedJobStates } from '#views/Jobs/NewListView/types';
+import { CompletedJobStates } from '#views/Jobs/ListView/types';
 import { keyBy } from 'lodash';
 import { call, delay, put, race, select, take } from 'redux-saga/effects';
 import {
@@ -15,12 +15,9 @@ import {
 import { StageListAction } from './reducer.types';
 
 const getCurrentStatus = (state: RootState) => state.composer.jobState;
-const getActiveStageId = (state: RootState) =>
-  state.composer.stages.activeStageId;
+const getActiveStageId = (state: RootState) => state.composer.stages.activeStageId;
 
-function* activeStagePollingSaga({
-  payload,
-}: ReturnType<typeof startPollActiveStageData>) {
+function* activeStagePollingSaga({ payload }: ReturnType<typeof startPollActiveStageData>) {
   const { jobId } = payload;
   while (true) {
     try {
@@ -76,10 +73,7 @@ function* activeStagePollingSaga({
 
       yield delay(JOB_STAGE_POLLING_TIMEOUT);
     } catch (err) {
-      console.error(
-        'error from startPollActiveStageData in Stage Saga :: ',
-        err,
-      );
+      console.error('error from startPollActiveStageData in Stage Saga :: ', err);
       yield delay(JOB_STAGE_POLLING_TIMEOUT);
     }
   }

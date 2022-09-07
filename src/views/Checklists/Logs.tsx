@@ -8,7 +8,7 @@ import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
 import { formatDateTime } from '#utils/timeUtils';
-import { TabContentWrapper, ViewWrapper } from '#views/Jobs/NewListView/styles';
+import { TabContentWrapper, ViewWrapper } from '#views/Jobs/ListView/styles';
 import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import { RouteComponentProps } from '@reach/router';

@@ -1,7 +1,7 @@
 import { DataTable, TabContentProps } from '#components';
 import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
-import { TabContentWrapper } from '#views/Jobs/NewListView/styles';
+import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { CircularProgress } from '@material-ui/core';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect } from 'react';

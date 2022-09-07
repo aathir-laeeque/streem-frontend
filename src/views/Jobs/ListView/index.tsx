@@ -1,16 +1,11 @@
 import useTabsNew from '#components/shared/useTabsNew';
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
-import TabContent from './NewTabContent';
+import TabContent from './TabContent';
 import { ViewWrapper } from './styles';
-import {
-  AssignedJobStates,
-  CompletedJobStates,
-  ListViewProps,
-  UnassignedJobStates,
-} from './types';
+import { AssignedJobStates, CompletedJobStates, ListViewProps, UnassignedJobStates } from './types';
 
-const ChecklistListView: FC<ListViewProps> = () => {
+const JobListView: FC<ListViewProps> = () => {
   const { selectedUseCase } = useTypedSelector((state) => state.auth);
 
   const { renderTabHeader, renderTabContent } = useTabsNew({
@@ -31,10 +26,7 @@ const ChecklistListView: FC<ListViewProps> = () => {
       },
       {
         label: 'Completed',
-        values: [
-          CompletedJobStates.COMPLETED,
-          CompletedJobStates.COMPLETED_WITH_EXCEPTION,
-        ],
+        values: [CompletedJobStates.COMPLETED, CompletedJobStates.COMPLETED_WITH_EXCEPTION],
         tabContent: TabContent,
       },
     ],
@@ -44,9 +36,7 @@ const ChecklistListView: FC<ListViewProps> = () => {
     <ViewWrapper>
       <div className="header">
         <div className="heading">{selectedUseCase?.label} - Jobs</div>
-        <div className="sub-heading">
-          Create, Assign and view Completed Jobs
-        </div>
+        <div className="sub-heading">Create, Assign and view Completed Jobs</div>
       </div>
 
       <div className="list-table">
@@ -56,4 +46,4 @@ const ChecklistListView: FC<ListViewProps> = () => {
     </ViewWrapper>
   );
 };
-export default ChecklistListView;
+export default JobListView;

@@ -9,7 +9,7 @@ import {
   CompletedJobStates,
   Job,
   JobStateEnum,
-} from '#views/Jobs/NewListView/types';
+} from '#views/Jobs/ListView/types';
 import { FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { useEffect, useState } from 'react';
@@ -17,9 +17,7 @@ import JobHeaderButtons from './JobHeaderButtons';
 import Wrapper from './styles';
 
 const Header = () => {
-  const [assignedUsers, setAssignedUsers] = useState<Users | undefined>(
-    undefined,
-  );
+  const [assignedUsers, setAssignedUsers] = useState<Users | undefined>(undefined);
   const [isLoggedInUserAssigned, setIsLoggedInUserAssigned] = useState(false);
   const {
     composer: { jobState, data },
@@ -29,18 +27,15 @@ const Header = () => {
   const prevJobState = usePrevious(jobState);
   const getAssignments = async () => {
     if (jobId) {
-      const response: { data: Users; errors: { message: string }[] } =
-        await request('GET', apiGetAllUsersAssignedToJob(jobId));
+      const response: { data: Users; errors: { message: string }[] } = await request(
+        'GET',
+        apiGetAllUsersAssignedToJob(jobId),
+      );
       if (response.data) {
         setAssignedUsers(response.data);
-        setIsLoggedInUserAssigned(
-          response.data.some((user) => user.id === profile?.id),
-        );
+        setIsLoggedInUserAssigned(response.data.some((user) => user.id === profile?.id));
       } else {
-        console.error(
-          'error came in fetch assigned users from component :: ',
-          response.errors,
-        );
+        console.error('error came in fetch assigned users from component :: ', response.errors);
       }
     }
   };
@@ -50,10 +45,7 @@ const Header = () => {
   }, [jobId]);
 
   useEffect(() => {
-    if (
-      prevJobState === JobStateEnum.UNASSIGNED &&
-      jobState === JobStateEnum.ASSIGNED
-    )
+    if (prevJobState === JobStateEnum.UNASSIGNED && jobState === JobStateEnum.ASSIGNED)
       getAssignments();
   }, [jobState]);
 
@@ -61,8 +53,7 @@ const Header = () => {
   const isJobBlocked = jobState === AssignedJobStates.BLOCKED;
   const isJobStarted = jobState === AssignedJobStates.IN_PROGRESS;
   const isJobCompleted = jobState === CompletedJobStates.COMPLETED;
-  const isCompletedWithException =
-    jobState === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
+  const isCompletedWithException = jobState === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
 
   const jobStateTitle = isJobCompleted
     ? 'Completed'
@@ -84,11 +75,7 @@ const Header = () => {
               className="icon"
               style={{
                 fontSize: '15px',
-                color: isJobCompleted
-                  ? '#5aa700'
-                  : isJobStarted
-                  ? '#1d84ff'
-                  : '#f7b500',
+                color: isJobCompleted ? '#5aa700' : isJobStarted ? '#1d84ff' : '#f7b500',
               }}
             />
             <div>{jobStateTitle}</div>
@@ -107,9 +94,7 @@ const Header = () => {
         <div className="checklist-id">Checklist ID: {checklist?.code}</div>
         <div className="job-assignees">
           {assignedUsers &&
-            assignedUsers?.map((author) => (
-              <Avatar user={author} key={author?.employeeId} />
-            ))}
+            assignedUsers?.map((author) => <Avatar user={author} key={author?.employeeId} />)}
         </div>
       </div>
     </Wrapper>

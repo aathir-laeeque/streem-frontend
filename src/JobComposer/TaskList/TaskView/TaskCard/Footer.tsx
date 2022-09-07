@@ -3,13 +3,11 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { AutomationActionActionType, Task, TaskExecutionState } from '#JobComposer/checklist.types';
 import { useTypedSelector } from '#store/helpers';
 import { formatDateTime } from '#utils/timeUtils';
-import { JobStateEnum } from '#views/Jobs/NewListView/types';
+import { JobStateEnum } from '#views/Jobs/ListView/types';
 import { ArrowRightAlt, CheckCircle, Error } from '@material-ui/icons';
-import moment from 'moment';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
-
 import { cancelErrorCorretcion, completeErrorCorretcion, completeTask } from '../../actions';
 
 const Wrapper = styled.div.attrs({

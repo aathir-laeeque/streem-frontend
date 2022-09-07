@@ -1,7 +1,6 @@
 import { Avatar, AvatarExtras } from '#components/shared/Avatar';
 import React, { FC } from 'react';
 import styled from 'styled-components';
-
 import { User } from '../../../services/users/types';
 import { Assignee } from './types';
 

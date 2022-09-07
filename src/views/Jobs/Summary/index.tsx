@@ -11,7 +11,7 @@ import { Print } from '@material-ui/icons';
 import { RouteComponentProps } from '@reach/router';
 import moment from 'moment';
 import React, { ReactNode, useEffect, useState } from 'react';
-import { CompletedJobStates, Job } from '../NewListView/types';
+import { CompletedJobStates, Job } from '../ListView/types';
 import { Wrapper } from './styles';
 import {
   Exception,

@@ -9,7 +9,7 @@ import {
   CompletedJobStates,
   JobRelation,
   JobStateType,
-} from '../../NewListView/types';
+} from '../../ListView/types';
 import {
   Assigness,
   commonStyles,

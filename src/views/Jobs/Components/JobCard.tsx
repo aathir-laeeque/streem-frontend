@@ -3,8 +3,7 @@ import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import React, { FC } from 'react';
 import styled from 'styled-components';
-
-import { Job, JobStateEnum } from '../NewListView/types';
+import { Job, JobStateEnum } from '../ListView/types';
 
 const Wrapper = styled.div.attrs({
   className: 'list-card-columns',

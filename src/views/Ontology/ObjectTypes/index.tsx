@@ -2,7 +2,7 @@ import { DataTable, TabContentProps } from '#components';
 import useTabsNew from '#components/shared/useTabsNew';
 import { useTypedSelector } from '#store';
 import { formatDateTime } from '#utils/timeUtils';
-import { ViewWrapper } from '#views/Jobs/NewListView/styles';
+import { ViewWrapper } from '#views/Jobs/ListView/styles';
 import { RouteComponentProps } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';

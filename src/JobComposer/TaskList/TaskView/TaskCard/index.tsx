@@ -8,7 +8,7 @@ import {
   TaskExecutionState,
 } from '#JobComposer/checklist.types';
 import { useTypedSelector } from '#store';
-import { CompletedJobStates, JobStateEnum } from '#views/Jobs/NewListView/types';
+import { CompletedJobStates, JobStateEnum } from '#views/Jobs/ListView/types';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
