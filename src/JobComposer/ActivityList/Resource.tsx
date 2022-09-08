@@ -1,8 +1,9 @@
 import { formatOptionLabel } from '#components';
 import { baseUrl } from '#utils/apiUrls';
+import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { isArray } from 'lodash';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import { executeActivityLeading, fixActivityLeading } from './actions';
@@ -12,20 +13,33 @@ import { ActivityProps } from './types';
 
 const ResourceActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState<any[]>([]);
+  const pagination = useRef({
+    current: -1,
+    isLast: false,
+  });
 
   useEffect(() => {
     getOptions();
   }, []);
 
   const getOptions = async () => {
-    const response: { data: any[]; errors: { message: string }[] } = await request(
+    setIsLoading(true);
+    const response: ResponseObj<any> = await request(
       'GET',
-      `${baseUrl}${activity.data.urlPath}`,
+      `${baseUrl}${activity.data.urlPath}&page=${pagination.current.current + 1}`,
     );
     if (response.data) {
-      setOptions(response.data);
+      setOptions([...options, ...response.data]);
+      if (response.pageable) {
+        pagination.current = {
+          current: response.pageable?.page,
+          isLast: response.pageable?.last,
+        };
+      }
     }
+    setIsLoading(false);
   };
 
   return (
@@ -48,6 +62,11 @@ const ResourceActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
           }),
         )}
         placeholder="You can select one option here"
+        onMenuScrollToBottom={() => {
+          if (!isLoading && !pagination.current.isLast) {
+            getOptions();
+          }
+        }}
         styles={customSelectStyles}
         onChange={(options) => {
           const castedOptions = isArray(options) ? options : [options];
