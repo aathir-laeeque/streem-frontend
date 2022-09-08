@@ -13,8 +13,14 @@ import { ActivityProps } from './types';
 
 const ResourceActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
-  const [options, setOptions] = useState<any[]>([]);
+  const [state, setState] = useState<{
+    isLoading: Boolean;
+    options: any[];
+  }>({
+    isLoading: false,
+    options: [],
+  });
+  const { options, isLoading } = state;
   const pagination = useRef({
     current: -1,
     isLast: false,
@@ -25,21 +31,28 @@ const ResourceActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
   }, []);
 
   const getOptions = async () => {
-    setIsLoading(true);
-    const response: ResponseObj<any> = await request(
-      'GET',
-      `${baseUrl}${activity.data.urlPath}&page=${pagination.current.current + 1}`,
-    );
-    if (response.data) {
-      setOptions([...options, ...response.data]);
-      if (response.pageable) {
-        pagination.current = {
-          current: response.pageable?.page,
-          isLast: response.pageable?.last,
-        };
+    setState((prev) => ({ ...prev, isLoading: true }));
+    try {
+      const response: ResponseObj<any> = await request(
+        'GET',
+        `${baseUrl}${activity.data.urlPath}&page=${pagination.current.current + 1}`,
+      );
+      if (response.data) {
+        if (response.pageable) {
+          pagination.current = {
+            current: response.pageable?.page,
+            isLast: response.pageable?.last,
+          };
+        }
+        setState((prev) => ({
+          ...prev,
+          options: [...prev.options, ...response.data],
+          isLoading: false,
+        }));
       }
+    } catch (e) {
+      setState((prev) => ({ ...prev, isLoading: false }));
     }
-    setIsLoading(false);
   };
 
   return (
