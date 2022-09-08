@@ -1,8 +1,8 @@
 {
   "name": "streem-frontend",
   "license": "UNLICENSED",
-  "customer_version": "2.0.0",
-  "version": "2.0.8",
+  "customer_version": "3.1",
+  "version": "3.0.0-beta",
   "contributors": [
     {
       "name": "Snehal Seth",
