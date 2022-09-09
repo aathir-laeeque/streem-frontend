@@ -12,14 +12,15 @@ import { useTypedSelector } from '#store';
 import { Property } from '#store/properties/types';
 import { baseUrl } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { FilterOperators, InputTypes } from '#utils/globalTypes';
+import { FilterOperators, InputTypes, ResponseObj } from '#utils/globalTypes';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import { Checklist } from '#views/Checklists/types';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Cardinality } from '#views/Ontology/types';
+import { isNil } from 'lodash';
 
 export interface CreateJobModalProps {
   selectedChecklist: Checklist | null;
@@ -114,6 +115,15 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
       }
     >
   >();
+  const pagination = useRef<
+    Record<
+      string,
+      {
+        current: number;
+        isLast: boolean;
+      }
+    >
+  >();
   const [checklist, setChecklist] = useState(selectedChecklist);
   const [reRender, setReRender] = useState(false);
   const { selectedUseCase } = useTypedSelector((state) => state.auth);
@@ -181,29 +191,56 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   };
 
   const getOptions = async (path: string, inputId: string, dependency?: string) => {
-    if (!dependency || selectOptions?.[inputId]?.dependency !== dependency) {
+    if (
+      !dependency ||
+      selectOptions?.[inputId]?.dependency !== dependency ||
+      !pagination.current?.[inputId]?.isLast
+    ) {
       try {
-        setSelectOptions({
-          ...selectOptions,
+        pagination.current = {
+          ...pagination.current,
           [inputId]: {
+            current: !isNil(pagination.current?.[inputId]?.current)
+              ? pagination.current![inputId].current
+              : -1,
+            isLast: !isNil(pagination.current?.[inputId]?.isLast)
+              ? pagination.current![inputId].isLast
+              : false,
+          },
+        };
+        setSelectOptions((prev) => ({
+          ...prev,
+          [inputId]: {
+            ...prev?.[inputId],
             isFetching: true,
             dependency,
           },
-        });
+        }));
         if (inputId && path) {
-          const response: { data: any[]; errors: { message: string }[] } = await request(
+          const response: ResponseObj<any> = await request(
             'GET',
-            `${baseUrl}${path}`,
+            `${baseUrl}${path}&page=${
+              (!isNil(pagination.current?.[inputId]?.current)
+                ? pagination.current![inputId]?.current
+                : -1) + 1
+            }`,
           );
           if (response.data) {
-            setSelectOptions({
-              ...selectOptions,
+            pagination.current = {
+              ...pagination.current,
+              [inputId]: {
+                current: response?.pageable?.page || 0,
+                isLast: response?.pageable?.last || false,
+              },
+            };
+            setSelectOptions((prev) => ({
+              ...prev,
               [inputId]: {
                 isFetching: false,
-                options: response.data,
+                options: [...(prev?.[inputId]?.options || []), ...response.data],
                 dependency,
               },
-            });
+            }));
           }
         }
       } catch (e) {
@@ -285,24 +322,23 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
                     required: relation.isMandatory,
                   });
                   const isMulti = relation?.target.cardinality === Cardinality.ONE_TO_MANY;
+                  let variableValue: string | undefined;
+                  let urlPath = relation.target.urlPath;
                   if (relation?.variables && Object.keys(relation.variables).length) {
                     const keyToCheck = Object.keys(relation.variables)[0];
                     const parsedKey = keyToCheck.replace('$', '');
-                    const variableValue = getValues(`relations.${parsedKey}`)?.[0]?.[
+                    variableValue = getValues(`relations.${parsedKey}`)?.[0]?.[
                       relation.variables[keyToCheck]
                     ];
                     if (variableValue) {
-                      getOptions(
-                        relation.target.urlPath.replace(keyToCheck, variableValue),
-                        relation.id,
-                        variableValue,
-                      );
+                      urlPath = relation.target.urlPath.replace(keyToCheck, variableValue);
+                      getOptions(urlPath, relation.id, variableValue);
                     }
                   } else if (
                     !selectOptions?.[relation.id]?.isFetching &&
                     !selectOptions?.[relation.id]?.options
                   ) {
-                    getOptions(relation.target.urlPath, relation.id);
+                    getOptions(urlPath, relation.id);
                   }
                   return {
                     type: InputTypes.MULTI_SELECT,
@@ -319,10 +355,18 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
                           externalId: option.externalId,
                         })) || [],
                       formatOptionLabel,
+                      onMenuScrollToBottom() {
+                        if (
+                          !selectOptions?.[relation.id]?.isFetching &&
+                          !pagination.current?.[relation.id]?.isLast
+                        ) {
+                          getOptions(urlPath, relation.id, variableValue);
+                        }
+                      },
                       onChange: (options: any) => {
                         setValue(
                           registrationId,
-                          isMulti ? options.map((option) => option.value) : [options.value],
+                          isMulti ? options.map((option: any) => option.value) : [options.value],
                           {
                             shouldDirty: true,
                             shouldValidate: true,
