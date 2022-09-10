@@ -325,10 +325,17 @@ const activityTemplateFormatter = (
         signatureItems.push(<View style={[styles.commentsRow, { borderBottomWidth: 0 }]} />);
       }
       return (
-        <View style={styles.activityView} wrap={false}>
+        <View
+          style={styles.activityView}
+          wrap={false}
+          {...(activity.response?.medias?.[0] && { break: true })}
+        >
           <Text style={styles.text12}>Sign Below</Text>
           {activity.response?.medias?.[0] ? (
-            <Image src={activity.response?.medias[0]?.link} style={{ width: '300px' }} />
+            <Image
+              src={activity.response?.medias[0]?.link}
+              style={{ width: '300px', maxHeight: '230mm' }}
+            />
           ) : (
             <View style={[styles.comments, { width: 300 }]}>{signatureItems}</View>
           )}
