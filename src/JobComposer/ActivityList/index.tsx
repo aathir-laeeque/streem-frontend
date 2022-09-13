@@ -187,7 +187,8 @@ const ActivityList: FC<ActivityListProps> = ({
                     <MediaActivity
                       activity={activity}
                       isCorrectingError={isCorrectingError}
-                      isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
+                      isTaskCompleted={isTaskCompleted}
+                      isLoggedInUserAssigned={isLoggedInUserAssigned}
                     />
                   );
 

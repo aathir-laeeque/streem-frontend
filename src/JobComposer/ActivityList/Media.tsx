@@ -58,7 +58,12 @@ const MediaWrapper = styled.div.attrs({
   }
 `;
 
-const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError, isTaskCompleted }) => {
+const MediaActivity: FC<ActivityProps> = ({
+  activity,
+  isCorrectingError,
+  isTaskCompleted,
+  isLoggedInUserAssigned,
+}) => {
   const dispatch = useDispatch();
   const [isUploading, setIsUploading] = useState(false);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
@@ -133,7 +138,7 @@ const MediaActivity: FC<ActivityProps> = ({ activity, isCorrectingError, isTaskC
       <TaskMedias
         medias={activity.response?.medias ?? []}
         activityId={activity.id}
-        isTaskCompleted={isTaskCompleted}
+        isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
         isActivity
       />
       {!isTaskCompleted && (

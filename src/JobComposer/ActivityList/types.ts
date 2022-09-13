@@ -13,6 +13,7 @@ export type ActivityProps = {
   activity: Activity;
   isCorrectingError: boolean;
   isTaskCompleted?: boolean;
+  isLoggedInUserAssigned?: boolean;
 };
 
 export enum Selections {
