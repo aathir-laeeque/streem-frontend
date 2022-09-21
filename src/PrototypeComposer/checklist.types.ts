@@ -1,3 +1,4 @@
+import { AutomationAction } from '#JobComposer/checklist.types';
 import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { CollaboratorState, Collaborator } from './reviewer.types';
@@ -108,6 +109,7 @@ export type Task = {
   taskExecution: TaskExecution;
   timed: boolean;
   timerOperator?: TimerOperator;
+  automations: AutomationAction[];
 };
 
 export type Stage = {

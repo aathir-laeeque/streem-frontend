@@ -97,6 +97,11 @@ export enum AutomationActionType {
   OBJECT_BASED = 'OBJECT_BASED',
 }
 
+export enum AutomationTargetEntityType {
+  OBJECT = 'OBJECT',
+  RESOURCE_ACTIVITY = 'RESOURCE_ACTIVITY',
+}
+
 export enum AutomationActionActionType {
   INCREASE_PROPERTY = 'INCREASE_PROPERTY',
   DECREASE_PROPERTY = 'DECREASE_PROPERTY',
@@ -131,6 +136,7 @@ export type AutomationActionDetails = {
   objectTypeId: string;
   objectTypeExternalId: string;
   objectTypeDisplayName: string;
+  referencedActivityId: string;
 };
 
 export type AutomationAction = {

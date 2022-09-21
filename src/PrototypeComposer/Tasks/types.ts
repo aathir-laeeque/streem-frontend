@@ -54,6 +54,22 @@ export type UpdateMediaType = {
   mediaDetails: Pick<MediaDetails, 'name' | 'description'>;
 };
 
+export type AddActionType = {
+  action: any;
+  taskId: Task['id'];
+};
+
+export type UpdateActionType = {
+  taskId: Task['id'];
+  action: any;
+  actionId: string;
+};
+
+export type ArchiveActionType = {
+  taskId: Task['id'];
+  actionId: string;
+};
+
 export enum TaskErrors {
   E210 = 'TASK_NAME_CANNOT_BE_EMPTY',
   E211 = 'TASK_SHOULD_HAVE_ATLEAST_ONE_EXECUTABLE_ACTIVITY',

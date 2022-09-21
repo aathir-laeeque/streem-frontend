@@ -193,8 +193,16 @@ export const apiRemoveTaskTimer = (taskId: Task['id']) => `${baseUrl}/tasks/${ta
 
 export const apiAddMediaToTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/medias`;
 
+export const apiAddTaskAction = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/automations`;
+
+export const apiUpdateTaskAction = (taskId: Task['id'], actionId: string) =>
+  `${baseUrl}/tasks/${taskId}/automations/${actionId}`;
+
 export const apiUpdateTaskMedia = (taskId: Task['id'], mediaId: MediaDetails['mediaId']) =>
   `${baseUrl}/medias/${mediaId}`;
+
+export const apiGetResourceActivitiesByType = (checklistId: Checklist['id'], type: string) =>
+  `${baseUrl}/checklists/${checklistId}/activities?type=${type}`;
 
 export const apiValidatePrototype = (id: Checklist['id']) => `${baseUrl}/checklists/${id}/validate`;
 

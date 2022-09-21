@@ -195,6 +195,19 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (state = initialStat
     case TaskListActions.REORDER_TASK_ERROR:
       return { ...state, error: action.payload.error };
 
+    case TaskListActions.UPDATE_TASK_ACTION_SUCCESS:
+      return {
+        ...state,
+        listById: {
+          ...state.listById,
+          [action.payload.taskId]: {
+            ...state.listById[action.payload.taskId],
+            automations: [action.payload.action],
+            errors: [],
+          },
+        },
+      };
+
     default:
       return { ...state };
   }

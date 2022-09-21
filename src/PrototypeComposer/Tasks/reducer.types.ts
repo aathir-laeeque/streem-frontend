@@ -11,6 +11,7 @@ import {
   setTaskError,
   setValidationError,
   updateTask,
+  updateTaskActionSuccess,
   updateTaskMediaSuccess,
 } from './actions';
 import { Task } from './types';
@@ -54,6 +55,10 @@ export enum TaskListActions {
   REORDER_TASK = '@@prototypeComposer/prototype/task-list/REORDER_TASK',
   REORDER_TASK_SUCCESS = '@@prototypeComposer/prototype/task-list/REORDER_TASK_SUCCESS',
   REORDER_TASK_ERROR = '@@prototypeComposer/prototype/task-list/REORDER_TASK_ERROR',
+  ADD_TASK_ACTION = '@@prototypeComposer/prototype/task-list/ADD_TASK_ACTION',
+  UPDATE_TASK_ACTION = '@@prototypeComposer/prototype/task-list/UPDATE_TASK_ACTION',
+  UPDATE_TASK_ACTION_SUCCESS = '@@prototypeComposer/prototype/task-list/UPDATE_TASK_ACTION_SUCCESS',
+  ARCHIVE_TASK_ACTION = '@@prototypeComposer/prototype/task-list/ARCHIVE_TASK_ACTION',
 }
 
 export type TaskListActionType =
@@ -69,6 +74,7 @@ export type TaskListActionType =
       | typeof resetTaskError
       | typeof reOrderTaskSuccess
       | typeof reOrderTaskError
+      | typeof updateTaskActionSuccess
     >
   | ReturnType<typeof addNewStageSuccess | typeof deleteStageSuccess>
   | ComposerActionType;

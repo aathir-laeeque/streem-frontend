@@ -9,6 +9,7 @@ import {
   AddBox,
   ArrowDownward,
   ArrowUpward,
+  Autorenew,
   Delete,
   PanTool,
   PermMedia,
@@ -255,6 +256,26 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
                 <div>
                   <PanTool className="icon" />
                   {hasStop ? 'Stop Added' : 'Add Stop'}
+                </div>
+              </div>
+              <div
+                className="task-config-control-item"
+                id="add-actions"
+                onClick={() => {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.CONFIGURE_ACTIONS,
+                      props: {
+                        task,
+                        checklistId: data?.id,
+                      },
+                    }),
+                  );
+                }}
+              >
+                <div>
+                  <Autorenew className="icon" />
+                  Configure Actions
                 </div>
               </div>
             </div>

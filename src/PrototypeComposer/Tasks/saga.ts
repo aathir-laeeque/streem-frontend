@@ -4,6 +4,7 @@ import { RootState } from '#store';
 import {
   apiAddMediaToTask,
   apiAddStop,
+  apiAddTaskAction,
   apiCreateTask,
   apiDeleteTask,
   apiRemoveStop,
@@ -12,17 +13,19 @@ import {
   apiReorderTasks,
   apiSetTaskTimer,
   apiUpdateTask,
+  apiUpdateTaskAction,
   apiUpdateTaskMedia,
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { call, put, select, takeEvery, takeLatest, takeLeading } from 'redux-saga/effects';
 import { updateMediaActivitySuccess } from '../../JobComposer/ActivityList/actions';
-
 import {
   addNewTask,
   addNewTaskSuccess,
   addStop,
+  addTaskAction,
   addTaskMedia,
+  archiveTaskAction,
   deleteTask,
   deleteTaskSuccess,
   removeTaskMedia,
@@ -34,6 +37,8 @@ import {
   setTaskTimer,
   setValidationError,
   updateTask,
+  updateTaskAction,
+  updateTaskActionSuccess,
   updateTaskMedia,
   updateTaskMediaSuccess,
   updateTaskName,
@@ -289,6 +294,58 @@ function* removeTaskMediaSaga({ payload }: ReturnType<typeof removeTaskMedia>) {
   }
 }
 
+function* addTaskActionSaga({ payload }: ReturnType<typeof addTaskAction>) {
+  try {
+    const { action, taskId } = payload;
+    const { data, errors } = yield call(request, 'POST', apiAddTaskAction(taskId), {
+      data: action,
+    });
+
+    if (data) {
+      yield put(updateTask(data));
+      yield put(closeOverlayAction(OverlayNames.CONFIGURE_ACTIONS));
+    } else {
+      console.error('error from add action to task api :: ', errors);
+    }
+  } catch (error) {
+    console.error('error came in addTaskActionSaga :: ', error);
+  }
+}
+
+function* updateTaskActionSaga({ payload }: ReturnType<typeof updateTaskAction>) {
+  try {
+    const { taskId, action, actionId } = payload;
+    const { data, errors } = yield call(request, 'PATCH', apiUpdateTaskAction(taskId, actionId), {
+      data: action,
+    });
+
+    if (data) {
+      yield put(updateTaskActionSuccess({ action: data, taskId }));
+      yield put(closeOverlayAction(OverlayNames.CONFIGURE_ACTIONS));
+    } else {
+      console.error('error from update action to task api :: ', errors);
+    }
+  } catch (error) {
+    console.error('error came in updateTaskActionSaga :: ', error);
+  }
+}
+
+function* archiveTaskActionSaga({ payload }: ReturnType<typeof archiveTaskAction>) {
+  try {
+    const { taskId, actionId } = payload;
+    const { data, errors } = yield call(request, 'DELETE', apiUpdateTaskAction(taskId, actionId));
+
+    if (data) {
+      yield put(updateTask(data));
+      yield put(closeOverlayAction(OverlayNames.CONFIGURE_ACTIONS));
+    } else {
+      console.error('error from archive action from task api :: ', errors);
+    }
+  } catch (error) {
+    console.error('error came in archiveTaskActionSaga :: ', error);
+  }
+}
+
 export function* TaskListSaga() {
   yield takeLeading(TaskListActions.ADD_NEW_TASK, addNewTaskSaga);
   yield takeEvery(TaskListActions.DELETE_TASK, deleteTaskSaga);
@@ -301,4 +358,7 @@ export function* TaskListSaga() {
   yield takeLeading(TaskListActions.UPDATE_TASK_MEDIA, updateTaskMediaSaga);
   yield takeLatest(TaskListActions.REMOVE_TASK_MEDIA, removeTaskMediaSaga);
   yield takeLeading(TaskListActions.REORDER_TASK, reOrderTaskSaga);
+  yield takeLeading(TaskListActions.ADD_TASK_ACTION, addTaskActionSaga);
+  yield takeLeading(TaskListActions.UPDATE_TASK_ACTION, updateTaskActionSaga);
+  yield takeLeading(TaskListActions.ARCHIVE_TASK_ACTION, archiveTaskActionSaga);
 }

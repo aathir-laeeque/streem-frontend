@@ -1,10 +1,18 @@
+import { AutomationAction } from '#JobComposer/checklist.types';
 import { ReOrderType } from '#PrototypeComposer/types';
 import { actionSpreader } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
-
 import { Media, Stage, Task } from '../checklist.types';
 import { TaskListActions } from './reducer.types';
-import { AddMediaType, AddNewTaskType, SetTaskTimerType, UpdateMediaType } from './types';
+import {
+  AddActionType,
+  AddMediaType,
+  AddNewTaskType,
+  ArchiveActionType,
+  SetTaskTimerType,
+  UpdateActionType,
+  UpdateMediaType,
+} from './types';
 
 export const addNewTask = ({ checklistId, stageId }: AddNewTaskType) =>
   actionSpreader(TaskListActions.ADD_NEW_TASK, { checklistId, stageId });
@@ -93,3 +101,17 @@ export const reOrderTaskSuccess = ({
     to,
     activeStageId,
   });
+
+export const addTaskAction = (payload: AddActionType) =>
+  actionSpreader(TaskListActions.ADD_TASK_ACTION, payload);
+
+export const updateTaskAction = (payload: UpdateActionType) =>
+  actionSpreader(TaskListActions.UPDATE_TASK_ACTION, payload);
+
+export const updateTaskActionSuccess = (payload: {
+  action: AutomationAction;
+  taskId: Task['id'];
+}) => actionSpreader(TaskListActions.UPDATE_TASK_ACTION_SUCCESS, payload);
+
+export const archiveTaskAction = (payload: ArchiveActionType) =>
+  actionSpreader(TaskListActions.ARCHIVE_TASK_ACTION, payload);

@@ -49,12 +49,12 @@ import styled from 'styled-components';
 import ReasonModal from '../shared/ReasonModal';
 import StartErrorModal from '../shared/StartErrorModal';
 import AutomationActionModal from '#JobComposer/modals/AutomationAction';
-
 import ChecklistUserAssignment from '#views/Checklists/Assignment/ChecklistUserAssignment';
 import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import ConfigureColumnsModal from './ConfigureColumns';
 import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
+import ConfigureActions from '#PrototypeComposer/Overlays/ConfigureActions';
 import { CommonOverlayProps, OverlayNames } from './types';
 
 const Wrapper = styled.div``;
@@ -217,6 +217,10 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.CONFIGURE_COLUMNS:
       return <ConfigureColumnsModal {...params} />;
+
+    case OverlayNames.CONFIGURE_ACTIONS:
+      return <ConfigureActions {...params} />;
+
     default:
       return null;
   }
