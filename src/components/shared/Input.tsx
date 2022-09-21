@@ -100,6 +100,7 @@ const Wrapper = styled.div.attrs(({ className }) => ({
       border: none;
       flex: 1;
       outline: none;
+      padding: 0;
     }
 
     ${({ hasError }) =>

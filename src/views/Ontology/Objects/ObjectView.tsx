@@ -10,15 +10,13 @@ import { useTypedSelector } from '#store';
 import { baseUrl } from '#utils/apiUrls';
 import { InputTypes, SelectOptions } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { formatDateByInputType } from '#utils/timeUtils';
 import { navigate } from '@reach/router';
 import { get, merge, set } from 'lodash';
-import moment from 'moment';
 import React, { FC, useRef, useState } from 'react';
 import { RegisterOptions, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { createObject, editObject, setActiveObject } from '../actions';
+import { createObject, editObject } from '../actions';
 import { FlagPositions, getBooleanFromDecimal } from '../ObjectTypes';
 import { Cardinality, CommonFields, Constraint, Validation } from '../types';
 
@@ -302,19 +300,8 @@ const ObjectView: FC<TabContentProps> = ({
                       ...([InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(
                         inputType,
                       ) && {
-                        ...(defaultValue && {
-                          defaultValue: formatDateByInputType(inputType, defaultValue),
-                        }),
-                        onChange: (e: { name: string; value: string }) => {
-                          let value = moment(e.value).unix();
-                          if (inputType === InputTypes.TIME) {
-                            const [hour, min] = e.value.split(':');
-                            value = moment()
-                              .set('hour', parseInt(hour))
-                              .set('minute', parseInt(min))
-                              .unix();
-                          }
-                          set(dateTimeInputs.current, registrationId, value.toString());
+                        onChange: ({ value }: { name: string; value: string }) => {
+                          set(dateTimeInputs.current, registrationId, value);
                         },
                       }),
                       ...(inputType === InputTypes.MULTI_LINE && {

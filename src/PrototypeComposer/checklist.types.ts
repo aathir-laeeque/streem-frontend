@@ -25,6 +25,7 @@ export enum MandatoryActivity {
   YES_NO = 'YES_NO',
   NUMBER = 'NUMBER',
   CALCULATION = 'CALCULATION',
+  RESOURCE = 'RESOURCE',
 }
 
 export enum NonMandatoryActivity {
@@ -54,7 +55,6 @@ export type Activity = {
   response?: ActivityResponse | null;
   description: string | null;
   type: ActivityType;
-  description?: string;
 };
 
 export type Media = {
@@ -85,7 +85,7 @@ export type TaskExecution = {
   state: TaskExecutionState;
   assignees: Pick<
     User,
-    'id' | 'employeeId' | 'firstName' | 'lastName' | 'email' | 'username' | 'archived' | 'verified'
+    'id' | 'employeeId' | 'firstName' | 'lastName' | 'email' | 'username' | 'archived'
   >[];
 };
 

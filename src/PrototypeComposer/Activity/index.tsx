@@ -20,6 +20,7 @@ import TextboxActivity from './Textbox';
 import { ActivityProps } from './types';
 import YesNoActivity from './YesNo';
 import NumberActivity from './Number';
+import ResourceActivity from './Resource';
 
 const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
   const { activeStageId: stageId } = useTypedSelector((state) => state.prototypeComposer.stages);
@@ -94,6 +95,9 @@ const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
 
           case MandatoryActivity.CALCULATION:
             return <CalculationActivity activity={activity} />;
+
+          case MandatoryActivity.RESOURCE:
+            return <ResourceActivity activity={activity} />;
 
           default:
             return null;

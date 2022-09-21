@@ -1,10 +1,12 @@
 import { Role, Textarea, TextInput } from '#components';
 import { InputTypes } from '#utils/globalTypes';
+import { formatDateByInputType } from '#utils/timeUtils';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio, { RadioProps } from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import { makeStyles } from '@material-ui/core/styles';
 import CheckCircle from '@material-ui/icons/CheckCircle';
+import moment from 'moment';
 import React from 'react';
 import Select, { NamedProps } from 'react-select';
 import styled from 'styled-components';
@@ -116,7 +118,7 @@ const selectStyles: NamedProps['styles'] = {
     borderRadius: 'none',
     boxShadow: 'none',
     cursor: isDisabled ? 'not-allowed' : 'pointer',
-    padding: '0.2vh',
+    padding: '1.7px',
     minHeight: 'auto',
   }),
 
@@ -225,9 +227,9 @@ export function StyledRadio(props: RadioProps) {
   );
 }
 
-export const FormGroup = ({ inputs, style }: FormGroupProps) => {
+export const FormGroup = ({ inputs, ...rest }: FormGroupProps) => {
   return (
-    <Wrapper style={style}>
+    <Wrapper {...rest}>
       {inputs.map(({ type, props }: FormInput) => {
         switch (type) {
           case InputTypes.ERROR_CONTAINER:
@@ -265,6 +267,24 @@ export const FormGroup = ({ inputs, style }: FormGroupProps) => {
                     : type.toLowerCase()
                 }
                 {...props}
+                {...([InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(type) && {
+                  onChange: (e) => {
+                    if ('value' in e && 'name' in e) {
+                      let value = moment(e.value).unix();
+                      if (type === InputTypes.TIME) {
+                        const [hour, min] = (e.value as string).split(':');
+                        value = moment()
+                          .set('hour', parseInt(hour))
+                          .set('minute', parseInt(min))
+                          .unix();
+                      }
+                      props?.onChange && props.onChange({ name, value: value.toString() });
+                    }
+                  },
+                  ...(props?.defaultValue && {
+                    defaultValue: formatDateByInputType(type, props.defaultValue),
+                  }),
+                })}
               />
             );
           case InputTypes.MULTI_LINE:

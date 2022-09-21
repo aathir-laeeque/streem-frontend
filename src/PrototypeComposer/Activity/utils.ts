@@ -108,7 +108,32 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         mandatory: true,
       };
 
+    case MandatoryActivity.RESOURCE:
+      return {
+        orderTree,
+        type,
+        data: {
+          variables: {},
+          urlPath: '',
+          collection: '',
+          objectTypeExternalId: '',
+          objectTypeDisplayName: '',
+          objectTypeId: '',
+          propertyValidations: [],
+        },
+        label: '',
+        mandatory: true,
+      };
+
     case MandatoryActivity.NUMBER:
+      return {
+        orderTree,
+        type,
+        data: { text: '' },
+        label: '',
+        mandatory: true,
+      };
+
     case NonMandatoryActivity.INSTRUCTION:
       return {
         orderTree,

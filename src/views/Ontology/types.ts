@@ -24,6 +24,7 @@ export enum Constraint {
   MIN = 'MIN', // String Length or Choice Count
   MAX = 'MAX', // String Length or Choice Count
   PATTERN = 'PATTERN',
+  EQ = 'EQ',
 }
 
 export type CommonFields = {
@@ -50,6 +51,7 @@ export type ObjectTypeProperty = CommonFields & {
   description?: string;
   options?: Choice[];
   validations?: Validation[];
+  _options?: Choice[];
 };
 
 export type ObjectTypeTarget = {
@@ -149,8 +151,8 @@ export type OntologyActionType = ReturnType<
 
 export type fetchDataType = {
   facilityId?: string;
-  page: number;
-  size: number;
+  page?: number;
+  size?: number;
   usageStatus?: number;
   collection?: string;
   sort?: string;

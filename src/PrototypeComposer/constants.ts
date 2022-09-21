@@ -13,6 +13,7 @@ export const ActivityOptions = [
   { label: 'Yes/No', value: MandatoryActivity.YES_NO },
   { label: 'Number', value: MandatoryActivity.NUMBER },
   { label: 'Calculation', value: MandatoryActivity.CALCULATION },
+  { label: 'Resource', value: MandatoryActivity.RESOURCE },
 ];
 
 export const PARAMETER_OPERATORS = [
