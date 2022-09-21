@@ -56,6 +56,7 @@ export type Activity = {
   response?: ActivityResponse | null;
   description: string | null;
   type: ActivityType;
+  validations: any;
 };
 
 export type Media = {

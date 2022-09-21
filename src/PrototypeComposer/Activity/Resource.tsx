@@ -340,7 +340,6 @@ const ResourceActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                             })),
                             value: selectedValidationOption,
                             onChange: (value: any) => {
-                              console.log('value', value);
                               setSelectedValidationOption(isArray(value) ? value : [value]);
                               dispatch(
                                 updateStoreActivity(

@@ -44,6 +44,7 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         data: [{ id: uuidv4(), name: '' }],
         label: '',
         mandatory: true,
+        validations: {},
       };
 
     case MandatoryActivity.YES_NO:
@@ -56,6 +57,7 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         ],
         label: '',
         mandatory: true,
+        validations: {},
       };
 
     case MandatoryActivity.MULTISELECT:
@@ -66,6 +68,7 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         data: [{ id: uuidv4(), name: '' }],
         label: '',
         mandatory: true,
+        validations: {},
       };
 
     case MandatoryActivity.PARAMETER:
@@ -81,6 +84,7 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         },
         label: '',
         mandatory: true,
+        validations: {},
       };
 
     case MandatoryActivity.MEDIA:
@@ -92,6 +96,7 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         data: {},
         label: '',
         mandatory: true,
+        validations: {},
       };
 
     case MandatoryActivity.CALCULATION:
@@ -106,6 +111,7 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         label: '',
         description: '',
         mandatory: true,
+        validations: {},
       };
 
     case MandatoryActivity.RESOURCE:
@@ -123,6 +129,7 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         },
         label: '',
         mandatory: true,
+        validations: {},
       };
 
     case MandatoryActivity.NUMBER:
@@ -132,6 +139,7 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         data: { text: '' },
         label: '',
         mandatory: true,
+        validations: {},
       };
 
     case NonMandatoryActivity.INSTRUCTION:
@@ -141,6 +149,7 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         data: { text: '' },
         label: '',
         mandatory: false,
+        validations: {},
       };
 
     case NonMandatoryActivity.MATERIAL:
@@ -160,6 +169,7 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         ],
         label: '',
         mandatory: false,
+        validations: {},
       };
 
     default:
