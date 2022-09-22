@@ -298,6 +298,7 @@ export const FormGroup = ({ inputs, ...rest }: FormGroupProps) => {
                   classNamePrefix="custom-select"
                   styles={selectStyles}
                   isMulti={type === InputTypes.MULTI_SELECT}
+                  captureMenuScroll
                   {...props}
                 />
               </div>

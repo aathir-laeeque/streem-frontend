@@ -75,6 +75,7 @@ const ResourceActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
           }),
         )}
         placeholder="You can select one option here"
+        captureMenuScroll
         onMenuScrollToBottom={() => {
           if (!isLoading && !pagination.current.isLast) {
             getOptions();
