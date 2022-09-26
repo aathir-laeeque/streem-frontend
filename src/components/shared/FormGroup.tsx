@@ -282,7 +282,15 @@ export const FormGroup = ({ inputs, ...rest }: FormGroupProps) => {
                     }
                   },
                   ...(props?.defaultValue && {
-                    defaultValue: formatDateByInputType(type, props.defaultValue),
+                    defaultValue: formatDateByInputType(
+                      type,
+                      props.defaultValue,
+                      type === InputTypes.DATE
+                        ? 'YYYY-MM-DD'
+                        : type === InputTypes.TIME
+                        ? 'HH:mm'
+                        : 'YYYY-MM-DDTHH:mm',
+                    ),
                   }),
                 })}
               />

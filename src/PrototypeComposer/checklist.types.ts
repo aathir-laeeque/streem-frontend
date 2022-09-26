@@ -27,6 +27,7 @@ export enum MandatoryActivity {
   NUMBER = 'NUMBER',
   CALCULATION = 'CALCULATION',
   RESOURCE = 'RESOURCE',
+  DATE = 'DATE',
 }
 
 export enum NonMandatoryActivity {

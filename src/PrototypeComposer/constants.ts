@@ -14,6 +14,7 @@ export const ActivityOptions = [
   { label: 'Number', value: MandatoryActivity.NUMBER },
   { label: 'Calculation', value: MandatoryActivity.CALCULATION },
   { label: 'Resource', value: MandatoryActivity.RESOURCE },
+  { label: 'Date', value: MandatoryActivity.DATE },
 ];
 
 export const PARAMETER_OPERATORS = [

@@ -66,10 +66,16 @@ export const formatDateByInputType = (
   value: string | number,
   format?: string,
 ) => {
+  const {
+    auth: { selectedFacility },
+    facilityWiseConstants,
+  } = store.getState();
+  const { dateAndTimeStampFormat, timeFormat, dateFormat } =
+    facilityWiseConstants[selectedFacility!.id];
   const castedValue = typeof value === 'string' ? parseInt(value) : value;
   return inputType === InputTypes.DATE
-    ? formatDateTime(castedValue, format || 'YYYY-MM-DD')
+    ? formatDateTime(castedValue, format || dateFormat)
     : inputType === InputTypes.TIME
-    ? formatDateTime(castedValue, format || 'h:mm')
-    : formatDateTime(castedValue, format || 'YYYY-MM-DDThh:mm');
+    ? formatDateTime(castedValue, format || timeFormat)
+    : formatDateTime(castedValue, format || dateAndTimeStampFormat);
 };

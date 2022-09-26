@@ -21,6 +21,7 @@ import { ActivityProps } from './types';
 import YesNoActivity from './YesNo';
 import NumberActivity from './Number';
 import ResourceActivity from './Resource';
+import DateActivity from './Date';
 
 const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
   const { activeStageId: stageId } = useTypedSelector((state) => state.prototypeComposer.stages);
@@ -98,6 +99,9 @@ const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
 
           case MandatoryActivity.RESOURCE:
             return <ResourceActivity activity={activity} />;
+
+          case MandatoryActivity.DATE:
+            return <DateActivity activity={activity} />;
 
           default:
             return null;

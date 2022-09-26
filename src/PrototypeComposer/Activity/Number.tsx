@@ -112,7 +112,7 @@ const NumberActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   return (
     <NumberWrapper>
       <label>Number Activity</label>
-      <ActivityLabelInput activity={activity} />
+      <ActivityLabelInput activity={activity} isControlled />
       <div className="textbox" style={{ padding: 20 }}>
         Users will write their input here
       </div>

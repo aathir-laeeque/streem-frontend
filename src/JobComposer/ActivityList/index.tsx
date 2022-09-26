@@ -19,6 +19,7 @@ import TextboxActivity from './Textbox';
 import { ActivityListProps } from './types';
 import YesNoActivity from './YesNo';
 import ResourceActivity from './Resource';
+import DateActivity from './Date';
 
 const Wrapper = styled.div.attrs({
   className: 'activity-list',
@@ -47,6 +48,7 @@ const Wrapper = styled.div.attrs({
     .yes-no-activity,
     .textbox-activity,
     .number-activity,
+    .date-activity,
     .calculation-activity {
       ${({ isTaskCompleted, isCorrectingError, isLoggedInUserAssigned }) =>
         (isTaskCompleted && !isCorrectingError) || !isLoggedInUserAssigned
@@ -245,6 +247,9 @@ const ActivityList: FC<ActivityListProps> = ({
                   return (
                     <ResourceActivity activity={activity} isCorrectingError={isCorrectingError} />
                   );
+
+                case MandatoryActivity.DATE:
+                  return <DateActivity activity={activity} isCorrectingError={isCorrectingError} />;
 
                 default:
                   return null;

@@ -132,6 +132,7 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         validations: {},
       };
 
+    case MandatoryActivity.DATE:
     case MandatoryActivity.NUMBER:
       return {
         orderTree,

@@ -35,6 +35,8 @@ import { EmojisUniCodes } from '#utils/constants';
 import { InstructionTags } from './types';
 import { ActivitiesById } from '#JobComposer/ActivityList/types';
 import ResourceActivity from './Resource';
+import { formatDateByInputType } from '#utils/timeUtils';
+import { InputTypes } from '#utils/globalTypes';
 
 export const styles = StyleSheet.create({
   text12: {
@@ -707,6 +709,18 @@ const activityTemplateFormatter = (
 
     case MandatoryActivity.RESOURCE:
       return <ResourceActivity activity={activity} />;
+
+    case MandatoryActivity.DATE:
+      return (
+        <View style={styles.activityView} wrap={false}>
+          <Text style={{ ...styles.text12, marginTop: 6 }}>
+            {activity.label}:{' '}
+            {activity.response?.value
+              ? formatDateByInputType(InputTypes.DATE, activity.response?.value)
+              : '_____'}
+          </Text>
+        </View>
+      );
 
     default:
       return null;

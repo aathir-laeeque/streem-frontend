@@ -15,6 +15,7 @@ export enum MandatoryActivity {
   NUMBER = 'NUMBER',
   CALCULATION = 'CALCULATION',
   RESOURCE = 'RESOURCE',
+  DATE = 'DATE',
 }
 
 type ChecklistProperty = Pick<Property, 'id' | 'name' | 'value'>;
