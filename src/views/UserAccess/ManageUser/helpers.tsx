@@ -16,6 +16,7 @@ import {
   apiGetAllChallengeQuestions,
   apiUpdatePassword,
 } from '#utils/apiUrls';
+import { ALL_FACILITY_ID } from '#utils/constants';
 import { InputTypes, ResponseObj, ValidatorProps } from '#utils/globalTypes';
 import { getErrorMsg, request } from '#utils/request';
 import { encrypt, getFullName } from '#utils/stringUtils';
@@ -440,7 +441,7 @@ export const createSectionConfig = ({
                         e.target.value as RoleIdByName,
                       )
                     ) {
-                      setValue('facilities', [{ id: '-1' }], {
+                      setValue('facilities', [{ id: ALL_FACILITY_ID }], {
                         shouldDirty: true,
                         shouldValidate: true,
                       });
@@ -486,7 +487,7 @@ export const createSectionConfig = ({
                     id: 'facilities',
                     isMulti: true,
                     options: shouldShowAllFacilities
-                      ? [{ label: 'All Facilities', value: '-1' }]
+                      ? [{ label: 'All Facilities', value: ALL_FACILITY_ID }]
                       : facilities.map((i) => ({
                           label: i.name,
                           value: i.id,
@@ -502,7 +503,7 @@ export const createSectionConfig = ({
                     },
                     isDisabled: !isEditable || shouldShowAllFacilities,
                     ...(shouldShowAllFacilities
-                      ? { value: { label: 'All Facilities', value: '-1' } }
+                      ? { value: { label: 'All Facilities', value: ALL_FACILITY_ID } }
                       : {}),
                   },
                 },

@@ -15,6 +15,7 @@ import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
+import { ALL_FACILITY_ID } from '#utils/constants';
 import { Error, FilterField, FilterOperators } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/ListView/actions';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
@@ -291,7 +292,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                       handleClose();
                       if (
                         userRoles?.some((role) => role === roles.ACCOUNT_OWNER) &&
-                        facilityId === '-1'
+                        facilityId === ALL_FACILITY_ID
                       ) {
                         dispatch(
                           openOverlayAction({
@@ -652,7 +653,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
           <Button1
             id="create"
             onClick={() => {
-              if (userRoles?.some((role) => role === roles.ACCOUNT_OWNER) && facilityId === '-1') {
+              if (
+                userRoles?.some((role) => role === roles.ACCOUNT_OWNER) &&
+                facilityId === ALL_FACILITY_ID
+              ) {
                 dispatch(
                   openOverlayAction({
                     type: OverlayNames.ENTITY_START_ERROR_MODAL,

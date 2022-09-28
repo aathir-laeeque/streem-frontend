@@ -4,6 +4,7 @@ import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { apiPrintJobDetails } from '#utils/apiUrls';
+import { ALL_FACILITY_ID } from '#utils/constants';
 import { request } from '#utils/request';
 import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
 import { groupBy } from 'lodash';
@@ -125,7 +126,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
             <Text style={styles.footerInfo}>
               Downloaded on {moment().format(dateAndTimeStampFormat)}. By {profile.firstName}{' '}
               {profile.lastName} ID: {profile.employeeId} for{' '}
-              {selectedFacility!.id !== '-1' ? 'Facility: ' : ''}
+              {selectedFacility!.id !== ALL_FACILITY_ID ? 'Facility: ' : ''}
               {selectedFacility?.name} using Leucine App
             </Text>
             <View style={styles.pageInfo}>

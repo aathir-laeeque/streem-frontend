@@ -5,6 +5,7 @@ import { getActivities } from '#JobComposer/utils';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { apiPrintJobDetails } from '#utils/apiUrls';
+import { ALL_FACILITY_ID } from '#utils/constants';
 import { request } from '#utils/request';
 import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
 import moment from 'moment';
@@ -104,7 +105,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
             <Text style={styles.footerInfo}>
               Downloaded on {moment().format(dateAndTimeStampFormat)}. By {profile.firstName}{' '}
               {profile.lastName} ID: {profile.employeeId} for{' '}
-              {selectedFacility!.id !== '-1' ? 'Facility: ' : ''}
+              {selectedFacility!.id !== ALL_FACILITY_ID ? 'Facility: ' : ''}
               {selectedFacility?.name} using Leucine App
             </Text>
             <View style={styles.pageInfo}>

@@ -1,6 +1,7 @@
 import logo from '#assets/images/logo.png';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
+import { ALL_FACILITY_ID } from '#utils/constants';
 import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
 import { groupBy } from 'lodash';
 import moment from 'moment';
@@ -119,7 +120,7 @@ const MyPrintSessionActivity: FC = () => {
             <Text style={styles.footerInfo}>
               Downloaded on {moment().format(dateAndTimeStampFormat)}. By {profile.firstName}{' '}
               {profile.lastName} ID: {profile.employeeId} for{' '}
-              {selectedFacility!.id !== '-1' ? 'Facility: ' : ''}
+              {selectedFacility!.id !== ALL_FACILITY_ID ? 'Facility: ' : ''}
               {selectedFacility?.name} using Leucine App
             </Text>
             <View style={styles.pageInfo}>

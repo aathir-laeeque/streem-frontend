@@ -13,6 +13,7 @@ import { ComposerEntity } from '#PrototypeComposer/types';
 import { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
 import { User } from '#store/users/types';
+import { ALL_FACILITY_ID } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import MoreDetails from '#views/Jobs/Components/MoreDetailsColumn';
 import { CircularProgress } from '@material-ui/core';
@@ -364,7 +365,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             onClick={() => {
               if (
                 userRoles?.some((role) => role === roles.ACCOUNT_OWNER) &&
-                selectedFacility?.id === '-1'
+                selectedFacility?.id === ALL_FACILITY_ID
               ) {
                 dispatch(
                   openOverlayAction({

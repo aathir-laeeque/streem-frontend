@@ -44,6 +44,8 @@ export const EXCULDE_BY_REGEX_FOR_NO_INTERNET_TOAST = [
 
 export const DEFAULT_SESSION_TIMEOUT_IN_MIN = 10;
 
+export const ALL_FACILITY_ID = '-1';
+
 export enum EmojisUniCodes {
   CHECK = '2705',
   EYE = 'DC41',

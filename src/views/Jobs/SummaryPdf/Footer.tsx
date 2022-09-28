@@ -1,5 +1,6 @@
 import { Facility } from '#services/commonTypes';
 import { getUserName, User } from '#services/users';
+import { ALL_FACILITY_ID } from '#utils/constants';
 import { StyleSheet, Text, View } from '@react-pdf/renderer';
 import moment from 'moment';
 import React from 'react';
@@ -48,7 +49,8 @@ const Footer = ({ user, selectedFacility, dateAndTimeStampFormat }: Props) => {
   return (
     <View fixed style={styles.footer}>
       <Text style={styles.footerInfo}>
-        Downloaded on {now}. By {userName} for {selectedFacility!.id !== '-1' ? 'Facility: ' : ''}
+        Downloaded on {now}. By {userName} for{' '}
+        {selectedFacility!.id !== ALL_FACILITY_ID ? 'Facility: ' : ''}
         {selectedFacility.name} using Leucine App
       </Text>
 
