@@ -11,7 +11,12 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const clearConsole = require('react-dev-utils/clearConsole');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
-const { choosePort, createCompiler, prepareProxy, prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
+const {
+  choosePort,
+  createCompiler,
+  prepareProxy,
+  prepareUrls,
+} = require('react-dev-utils/WebpackDevServerUtils');
 const openBrowser = require('react-dev-utils/openBrowser');
 const paths = require('../configs/paths');
 const webpackConfig = require('../configs/webpack.config');
@@ -26,7 +31,13 @@ if (!checkRequiredFiles([paths.dotenv, paths.appHtml, paths.appIndex])) {
 }
 
 if (process.env.HOST) {
-  console.log(chalk.cyan(`Attempting to bind to HOST environment variable: ${chalk.yellow(chalk.bold(process.env.HOST))}`));
+  console.log(
+    chalk.cyan(
+      `Attempting to bind to HOST environment variable: ${chalk.yellow(
+        chalk.bold(process.env.HOST),
+      )}`,
+    ),
+  );
   console.log();
 }
 
@@ -60,6 +71,7 @@ checkBrowsers(paths.appPath, isInteractive)
     const serverConfig = {
       ...webpackDevServerConfig,
       host: HOST,
+      https: true,
       port,
     };
 

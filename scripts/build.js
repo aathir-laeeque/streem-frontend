@@ -44,8 +44,14 @@ checkBrowsers(paths.appPath, isInteractive)
     if (warnings.length) {
       console.log(chalk.yellow('Compiled with warnings.\n'));
       console.log(warnings.join('\n\n'));
-      console.log('\nSearch for the ' + chalk.underline(chalk.yellow('keywords')) + ' to learn more about each warning.');
-      console.log('To ignore, add ' + chalk.cyan('// eslint-disable-next-line') + ' to the line before.\n');
+      console.log(
+        '\nSearch for the ' +
+          chalk.underline(chalk.yellow('keywords')) +
+          ' to learn more about each warning.',
+      );
+      console.log(
+        'To ignore, add ' + chalk.cyan('// eslint-disable-next-line') + ' to the line before.\n',
+      );
     } else {
       console.log(chalk.green('Compiled successfully.\n'));
     }
@@ -75,7 +81,9 @@ const build = (previousFileSizes) => {
           warnings: [],
         });
       } else {
-        messages = formatWebpackMessages(stats.toJson({ all: false, warnings: true, errors: true }));
+        messages = formatWebpackMessages(
+          stats.toJson({ all: false, warnings: true, errors: true }),
+        );
       }
 
       if (messages.errors.length) {
