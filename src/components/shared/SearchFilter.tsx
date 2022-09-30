@@ -4,7 +4,7 @@ import { ArrowDropDown, Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Button1 } from './Button';
+import { Button } from './Button';
 import { TextInput } from './Input';
 
 const Wrapper = styled.div`
@@ -123,9 +123,9 @@ const SearchFilter: FC<SearchFilterProps> = ({
     <Wrapper>
       {showDropdown ? (
         <div className="dropdown-button">
-          <Button1 onClick={handleClick}>
+          <Button onClick={handleClick}>
             {selectedOption?.label} <ArrowDropDown className="icon" />
-          </Button1>
+          </Button>
 
           <Menu
             keepMounted

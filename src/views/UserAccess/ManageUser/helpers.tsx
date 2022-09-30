@@ -1,4 +1,4 @@
-import { Avatar, Button1, FormGroup, useScrollableSectionsProps } from '#components';
+import { Avatar, Button, FormGroup, useScrollableSectionsProps } from '#components';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
@@ -406,13 +406,13 @@ export const createSectionConfig = ({
                   <h3>Username : {selectedUser?.username}</h3>
                   {selectedUser.userType === UserType.LOCAL && !isAccountOwner && isEditable && (
                     <>
-                      <Button1
+                      <Button
                         className="primary-button"
                         variant="secondary"
                         onClick={() => dispatch(resendInvite({ id: selectedUser.id }))}
                       >
                         Generate Secret Key
-                      </Button1>
+                      </Button>
                       <p>
                         If the user has no access to their account, they can go to the login page
                         and choose Forgot Password option. Here the user uses the Secret Key to
@@ -551,7 +551,7 @@ export const createSectionConfig = ({
                     <>
                       <span className="custom-span">••••••</span>
                       <span className="custom-span">
-                        <Button1
+                        <Button
                           variant="textOnly"
                           className="with-icon"
                           onClick={() =>
@@ -570,7 +570,7 @@ export const createSectionConfig = ({
                           }
                         >
                           Edit <Create />
-                        </Button1>
+                        </Button>
                       </span>
                     </>
                   ) : (
@@ -588,7 +588,7 @@ export const createSectionConfig = ({
                         {selectedUser?.challengeQuestion?.question || 'Not Set'}
                       </span>
                       <span className="custom-span">
-                        <Button1
+                        <Button
                           variant="textOnly"
                           className="with-icon"
                           onClick={() =>
@@ -608,7 +608,7 @@ export const createSectionConfig = ({
                         >
                           {selectedUser?.challengeQuestion?.question ? 'Edit ' : 'Set Now '}
                           <Create />
-                        </Button1>
+                        </Button>
                       </span>
                     </>
                   ) : (
@@ -757,12 +757,12 @@ const UpdateChallengeQuestion = ({
         ]}
       />
       <div className="actions-bar" style={{ paddingLeft: '16px' }}>
-        <Button1 color="dark" onClick={() => updateToggles?.(Toggleables.EDIT_QUESTIONS)}>
+        <Button color="dark" onClick={() => updateToggles?.(Toggleables.EDIT_QUESTIONS)}>
           Cancel
-        </Button1>
-        <Button1 disabled={!state?.selected || !state.answer} onClick={onUpdate}>
+        </Button>
+        <Button disabled={!state?.selected || !state.answer} onClick={onUpdate}>
           Update
-        </Button1>
+        </Button>
       </div>
     </CustomInputGroup>
   );
@@ -945,17 +945,17 @@ const UpdatePassword = ({
         ]}
       />
       <div className="actions-bar">
-        <Button1 color="dark" onClick={() => updateToggles?.(Toggleables.EDIT_PASSWORD)}>
+        <Button color="dark" onClick={() => updateToggles?.(Toggleables.EDIT_PASSWORD)}>
           Cancel
-        </Button1>
-        <Button1
+        </Button>
+        <Button
           onClick={onUpdate}
           disabled={
             state?.errors?.confirmPassword?.length || state?.errors?.password?.length ? true : false
           }
         >
           Update
-        </Button1>
+        </Button>
       </div>
     </CustomInputGroup>
   );

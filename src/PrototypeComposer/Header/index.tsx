@@ -1,7 +1,7 @@
 import ActivityIcon from '#assets/svg/ActivityIcon';
 import MemoArchive from '#assets/svg/Archive';
 import MemoViewInfo from '#assets/svg/ViewInfo';
-import { Button1 } from '#components';
+import { Button } from '#components';
 import { closeAllOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
@@ -274,17 +274,17 @@ const ChecklistHeader: FC = () => {
       case CollaboratorState.NOT_STARTED:
         return (
           <>
-            <Button1 className="submit" onClick={handleStartReview}>
+            <Button className="submit" onClick={handleStartReview}>
               Start Review
-            </Button1>
+            </Button>
           </>
         );
       case CollaboratorState.BEING_REVIEWED:
         return (
           <>
-            <Button1 className="submit" onClick={() => handleSubmitForReview(false)}>
+            <Button className="submit" onClick={() => handleSubmitForReview(false)}>
               Provide Review
-            </Button1>
+            </Button>
           </>
         );
       case CollaboratorState.COMMENTED_OK:
@@ -292,24 +292,24 @@ const ChecklistHeader: FC = () => {
         return (
           <>
             {data?.state !== ChecklistStates.SIGNING_IN_PROGRESS && (
-              <Button1
+              <Button
                 className="submit"
                 style={{ backgroundColor: '#333333' }}
                 onClick={handleContinueReview}
               >
                 <Message style={{ fontSize: '16px', marginRight: '8px' }} />
                 Continue Review
-              </Button1>
+              </Button>
             )}
             {data?.state !== ChecklistStates.SIGNING_IN_PROGRESS && !areReviewsPending && (
-              <Button1
+              <Button
                 color={allDoneOk ? 'green' : 'blue'}
                 className="submit"
                 onClick={handleSendToAuthor}
               >
                 <DoneAll style={{ fontSize: '16px', marginRight: '8px' }} />
                 Send to Author
-              </Button1>
+              </Button>
             )}
           </>
         );
@@ -347,7 +347,7 @@ const ChecklistHeader: FC = () => {
   };
 
   const PrototypeEditButton = () => (
-    <Button1
+    <Button
       id="edit"
       variant="secondary"
       onClick={() =>
@@ -372,7 +372,7 @@ const ChecklistHeader: FC = () => {
       }
     >
       <Settings className="icon" fontSize="small" />
-    </Button1>
+    </Button>
   );
 
   const handleClose = () => {
@@ -418,7 +418,7 @@ const ChecklistHeader: FC = () => {
 
   const MoreButton = () => (
     <>
-      <Button1
+      <Button
         id="more"
         variant="secondary"
         onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -426,7 +426,7 @@ const ChecklistHeader: FC = () => {
         }}
       >
         <MoreVert className="icon" fontSize="small" />
-      </Button1>
+      </Button>
       <Menu
         style={{ right: 10 }}
         id="row-more-actions"
@@ -485,47 +485,43 @@ const ChecklistHeader: FC = () => {
     title: string;
     disabled?: boolean;
   }) => (
-    <Button1
+    <Button
       disabled={disabled}
       className="submit"
       onClick={() => dispatch(validatePrototype(data.id))}
     >
       {title}
-    </Button1>
+    </Button>
   );
 
   const InitiateSignOffButton = ({ title }: { title: string }) => (
-    <Button1 className="submit" onClick={() => handleInitiateSignOff()}>
+    <Button className="submit" onClick={() => handleInitiateSignOff()}>
       {title}
-    </Button1>
+    </Button>
   );
 
   const ViewReviewersButton = () => (
-    <Button1
-      id="view-collaborators"
-      variant="secondary"
-      onClick={() => handleSubmitForReview(true)}
-    >
+    <Button id="view-collaborators" variant="secondary" onClick={() => handleSubmitForReview(true)}>
       <Group className="icon" fontSize="small" />
-    </Button1>
+    </Button>
   );
 
   const ViewSigningStateButton = () => (
-    <Button1
+    <Button
       variant="secondary"
       onClick={() => dispatch(openOverlayAction({ type: OverlayNames.SIGN_OFF_PROGRESS }))}
     >
       View Signing Status
-    </Button1>
+    </Button>
   );
 
   const SignOffButton = () => (
-    <Button1
+    <Button
       className="submit"
       onClick={() => dispatch(openOverlayAction({ type: OverlayNames.PASSWORD_INPUT }))}
     >
       Sign
-    </Button1>
+    </Button>
   );
 
   const renderButtonsForAuthor = () => {
@@ -635,7 +631,7 @@ const ChecklistHeader: FC = () => {
               approver?.state !== CollaboratorState.SIGNED && <SignOffButton />}
             {data?.state === ChecklistStates.PUBLISHED && null}
             {checkReleasePermission() && (
-              <Button1
+              <Button
                 className="submit"
                 onClick={() =>
                   dispatch(
@@ -649,7 +645,7 @@ const ChecklistHeader: FC = () => {
                 }
               >
                 Release Prototype
-              </Button1>
+              </Button>
             )}
             <MoreButton />
           </div>
@@ -658,12 +654,12 @@ const ChecklistHeader: FC = () => {
           (data?.state === ChecklistStates.BEING_BUILT ||
             data?.state === ChecklistStates.REQUESTED_CHANGES) && (
             <div className="prototype-add-buttons">
-              <Button1 variant="textOnly" id="new-stage" onClick={() => dispatch(addNewStage())}>
+              <Button variant="textOnly" id="new-stage" onClick={() => dispatch(addNewStage())}>
                 <AddCircle className="icon" fontSize="small" />
                 Add a new Stage
-              </Button1>
+              </Button>
 
-              <Button1
+              <Button
                 variant="textOnly"
                 id="new-task"
                 onClick={() => {
@@ -679,7 +675,7 @@ const ChecklistHeader: FC = () => {
               >
                 <AddCircle className="icon" fontSize="small" />
                 Add a new Task
-              </Button1>
+              </Button>
 
               <div id="preview" />
             </div>

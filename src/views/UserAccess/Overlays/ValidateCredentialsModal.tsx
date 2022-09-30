@@ -1,4 +1,4 @@
-import { BaseModal, Button1, TextInput } from '#components';
+import { BaseModal, Button, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { encrypt } from '#utils/stringUtils';
@@ -124,9 +124,9 @@ const ValidateCredentialsModal: FC<
             error={true}
             type={passwordInputType ? 'password' : 'text'}
           />
-          <Button1 type="submit" disabled={!formState.isValid || !formState.isDirty}>
+          <Button type="submit" disabled={!formState.isValid || !formState.isDirty}>
             Confirm
-          </Button1>
+          </Button>
         </form>
       </BaseModal>
     </Wrapper>

@@ -2,7 +2,7 @@ import MemoArchive from '#assets/svg/Archive';
 import MemoCreateJob from '#assets/svg/CreateJob';
 import MemoStartRevision from '#assets/svg/StartRevision';
 import MemoViewInfo from '#assets/svg/ViewInfo';
-import { Button1, DataTable, DropdownFilter, SearchFilter, ToggleSwitch } from '#components';
+import { Button, DataTable, DropdownFilter, SearchFilter, ToggleSwitch } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
@@ -728,7 +728,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
         />
 
         {checkStartPrototypePermission() && (
-          <Button1
+          <Button
             id="create"
             onClick={() => {
               navigate('/checklists/prototype', {
@@ -737,7 +737,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
             }}
           >
             Start a Prototype
-          </Button1>
+          </Button>
         )}
       </div>
       <div

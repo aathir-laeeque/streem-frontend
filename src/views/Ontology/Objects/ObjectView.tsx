@@ -1,10 +1,4 @@
-import {
-  Button1,
-  formatOptionLabel,
-  FormGroup,
-  FormGroupProps,
-  TabContentProps,
-} from '#components';
+import { Button, formatOptionLabel, FormGroup, FormGroupProps, TabContentProps } from '#components';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { baseUrl } from '#utils/apiUrls';
@@ -404,17 +398,17 @@ const ObjectView: FC<TabContentProps> = ({
         />
         {!isReadOnly && (
           <div className="actions">
-            <Button1 type="submit" disabled={!isDirty || !isValid}>
+            <Button type="submit" disabled={!isDirty || !isValid}>
               {isEditing ? 'Update' : 'Create'}
-            </Button1>
-            <Button1
+            </Button>
+            <Button
               variant="secondary"
               onClick={() => {
                 onCancel();
               }}
             >
               Cancel
-            </Button1>
+            </Button>
           </div>
         )}
       </form>

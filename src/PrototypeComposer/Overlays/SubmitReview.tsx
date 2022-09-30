@@ -4,7 +4,7 @@ import MemoNeedsCommenting from '#assets/svg/NeedsCommenting';
 import MemoSentToAuthor from '#assets/svg/SentToAuthor';
 import MemoRemoveComments from '#assets/svg/RemoveComments';
 import MemoMoreComments from '#assets/svg/MoreComments';
-import { Avatar, BaseModal, Button1, Select } from '#components';
+import { Avatar, BaseModal, Button, Select } from '#components';
 import React, { FC, useEffect, useState } from 'react';
 import {
   Message,
@@ -403,13 +403,13 @@ export const SubmitReviewModal: FC<
                 </div>
               )}
             </div>
-            <Button1 className="submit" onClick={handleSendToAuthor}>
+            <Button className="submit" onClick={handleSendToAuthor}>
               Confirm
-            </Button1>
+            </Button>
             {!allDoneOk && (
-              <Button1 variant="textOnly" onClick={toggleSendToAuthor}>
+              <Button variant="textOnly" onClick={toggleSendToAuthor}>
                 View Requested Changes
-              </Button1>
+              </Button>
             )}
           </div>
         )}
@@ -449,12 +449,12 @@ export const SubmitReviewModal: FC<
                 <span>No Changes are Necessary</span>
               </div>
             </div>
-            <Button1 className="submit" onClick={handleOnAllOK}>
+            <Button className="submit" onClick={handleOnAllOK}>
               Confirm
-            </Button1>
-            <Button1 variant="textOnly" onClick={() => setState({ ...state, selected: null })}>
+            </Button>
+            <Button variant="textOnly" onClick={() => setState({ ...state, selected: null })}>
               Go Back
-            </Button1>
+            </Button>
           </>
         )}
 
@@ -469,12 +469,12 @@ export const SubmitReviewModal: FC<
                 <span>No Comments Needed</span>
               </div>
             </div>
-            <Button1 className="submit" onClick={handleOnAllOK}>
+            <Button className="submit" onClick={handleOnAllOK}>
               Confirm
-            </Button1>
-            <Button1 variant="textOnly" onClick={() => setState({ ...state, selected: null })}>
+            </Button>
+            <Button variant="textOnly" onClick={() => setState({ ...state, selected: null })}>
               Go Back
-            </Button1>
+            </Button>
           </>
         )}
 
@@ -570,19 +570,19 @@ export const SubmitReviewModal: FC<
                     onEditorStateChange={(editorState: any) => setState({ ...state, editorState })}
                   />
                   <div className="actions-container">
-                    <Button1
+                    <Button
                       color="red"
                       variant="secondary"
                       onClick={() => setState({ ...state, selected: null })}
                     >
                       Cancel
-                    </Button1>
-                    <Button1
+                    </Button>
+                    <Button
                       onClick={handleOnCompleteWithCR}
                       disabled={!state.editorState.getCurrentContent().hasText()}
                     >
                       Submit
-                    </Button1>
+                    </Button>
                   </div>
                 </div>
               )}

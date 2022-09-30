@@ -1,4 +1,4 @@
-import { BaseModal, Button1, formatOptionLabel, FormGroup } from '#components';
+import { BaseModal, Button, formatOptionLabel, FormGroup } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import {
   AutomationActionActionType,
@@ -434,21 +434,21 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
               ]}
             />
             <div className="buttons-container">
-              <Button1 variant="secondary" color="red" onClick={closeOverlay}>
+              <Button variant="secondary" color="red" onClick={closeOverlay}>
                 Cancel
-              </Button1>
-              <Button1 disabled={!isDirty || !isValid} type="submit">
+              </Button>
+              <Button disabled={!isDirty || !isValid} type="submit">
                 Confirm
-              </Button1>
+              </Button>
               {task.automations.length > 0 && (
-                <Button1
+                <Button
                   variant="primary"
                   color="red"
                   onClick={archiveAction}
                   style={{ marginLeft: 'auto' }}
                 >
                   Delete
-                </Button1>
+                </Button>
               )}
             </div>
           </form>

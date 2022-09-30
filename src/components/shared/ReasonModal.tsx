@@ -1,4 +1,4 @@
-import { BaseModal, Button1 } from '#components';
+import { BaseModal, Button } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { TextareaAutosize } from '@material-ui/core';
 import { debounce } from 'lodash';
@@ -142,12 +142,12 @@ const ReasonModal = (props: CommonOverlayProps<Props>) => {
           )}
         </div>
         <div className="reason-modal-footer">
-          <Button1 variant="secondary" onClick={() => closeOverlay()}>
+          <Button variant="secondary" onClick={() => closeOverlay()}>
             Cancel
-          </Button1>
-          <Button1 color="red" onClick={onSubmitModal} disabled={reasonTextIsEmpty}>
+          </Button>
+          <Button color="red" onClick={onSubmitModal} disabled={reasonTextIsEmpty}>
             {onSubmitModalText ? onSubmitModalText : 'Submit'}
-          </Button1>
+          </Button>
         </div>
       </BaseModal>
     </Wrapper>

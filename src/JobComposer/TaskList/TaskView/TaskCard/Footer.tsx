@@ -1,3 +1,4 @@
+import { Button } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { AutomationActionActionType, Task, TaskExecutionState } from '#JobComposer/checklist.types';
@@ -18,29 +19,17 @@ const Wrapper = styled.div.attrs({
   padding: 0 16px 16px;
 
   button {
-    align-items: center;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    outline: none;
+    margin: unset;
+    padding: 8px 16px;
   }
 
   .complete-task {
-    border: 1px solid #1d84ff;
-    border-radius: 4px;
-    color: #1d84ff;
-    padding: 8px 16px;
-
     > .icon {
-      color: #1d84ff;
       margin-left: 12px;
     }
   }
 
   .skip-task {
-    color: #1d84ff;
     margin-top: 16px;
   }
 
@@ -61,29 +50,12 @@ const DelayWrapper = styled.div`
 
   .buttons-container {
     margin-top: 16px;
-
-    button {
-      border: 1px solid transparent;
-      outline: none;
-      padding: 10px 24px;
-      background: transparent;
-
-      :first-child {
-        border-color: #1d84ff;
-        color: #1d84ff;
-      }
-
-      :last-child {
-        margin-left: 24px;
-        border-color: #ff6b6b;
-        color: #ff6b6b;
-      }
-    }
+    display: flex;
   }
 `;
 
 const CompletedWrapper = styled.div.attrs({
-  className: '',
+  className: 'completed-task',
 })<{
   completed?: boolean;
   skipped?: boolean;
@@ -252,49 +224,27 @@ const Footer: FC<FooterProps> = ({
   if (!!task.taskExecution.correctionEnabled) {
     return (
       <div className="buttons-container" style={{ display: 'flex', padding: '0 16px 16px' }}>
-        <button
-          style={{
-            border: '1px solid #5ca6ff',
-            color: '#5ca6ff',
-            outline: 'none',
-            padding: '10px 0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flex: 1,
-            background: 'transparent',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
+        <Button
+          style={{ flex: 1 }}
+          variant="secondary"
           onClick={() => {
             setLoadingState(true);
             dispatch(completeErrorCorretcion(task.id, setLoadingState));
           }}
         >
           Confirm
-        </button>
-        <button
-          style={{
-            border: '1px solid #ff6b6b',
-            color: '#ff6b6b',
-            outline: 'none',
-            padding: '10px 0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flex: 1,
-            marginLeft: '24px',
-            borderRadius: '4px',
-            background: 'transparent',
-            cursor: 'pointer',
-          }}
+        </Button>
+        <Button
+          style={{ flex: 1 }}
+          variant="secondary"
+          color="red"
           onClick={() => {
             setLoadingState(true);
             dispatch(cancelErrorCorretcion(task.id, setLoadingState));
           }}
         >
           Cancel
-        </button>
+        </Button>
       </div>
     );
   } else if (taskExecutionState === TaskExecutionState.COMPLETED) {
@@ -374,21 +324,24 @@ const Footer: FC<FooterProps> = ({
             />
           </div>
           <div className="buttons-container">
-            <button
+            <Button
+              variant="secondary"
               onClick={() => {
                 onCompleteJob(delayReason);
               }}
             >
               Submit
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="secondary"
+              color="red"
               onClick={() => {
                 setDelayReason('');
                 setAskForReason(false);
               }}
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </DelayWrapper>
       );
@@ -397,8 +350,9 @@ const Footer: FC<FooterProps> = ({
         <Wrapper>
           {isUserAssignedToTask && (
             <>
-              <button
+              <Button
                 className="complete-task"
+                variant="secondary"
                 onClick={() => {
                   if (!isJobBlocked) {
                     if (task.timed && (timerState.earlyCompletion || timerState.limitCrossed)) {
@@ -410,10 +364,11 @@ const Footer: FC<FooterProps> = ({
                 }}
               >
                 Complete Task <ArrowRightAlt className="icon" />
-              </button>
+              </Button>
 
-              <button
+              <Button
                 className="skip-task"
+                variant="textOnly"
                 onClick={() => {
                   if (!isJobBlocked) {
                     if (canSkipTask) {
@@ -435,7 +390,7 @@ const Footer: FC<FooterProps> = ({
                 }}
               >
                 {canSkipTask ? 'Skip the task' : 'Complete with Exception'}
-              </button>
+              </Button>
             </>
           )}
 

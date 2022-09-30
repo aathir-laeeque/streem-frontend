@@ -1,4 +1,4 @@
-import { BodyWrapper, Button1, DataTable } from '#components';
+import { BodyWrapper, Button, DataTable } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { DataTableColumn } from '#components/shared/DataTable';
@@ -164,7 +164,7 @@ const Logs: FC<Props> = ({ id }) => {
             component={
               <TabContentWrapper>
                 <div className="filters">
-                  <Button1
+                  <Button
                     id="create"
                     onClick={() => {
                       dispatch(
@@ -180,7 +180,7 @@ const Logs: FC<Props> = ({ id }) => {
                     }}
                   >
                     Configure Columns
-                  </Button1>
+                  </Button>
                 </div>
                 <DataTable
                   columns={columns}

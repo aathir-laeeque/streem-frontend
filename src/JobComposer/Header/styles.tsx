@@ -29,9 +29,9 @@ const Wrapper = styled.div`
       display: flex;
       align-items: center;
 
-      button {
-        line-height: 1.14;
-        padding: 8px 16px;
+      .more {
+        padding: 12px 4px;
+        border: none;
       }
 
       .bulk-assign,

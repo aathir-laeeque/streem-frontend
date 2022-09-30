@@ -1,6 +1,6 @@
 import LoginBackground from '#assets/svg/LoginBackground.svg';
 import RegisterBackground from '#assets/svg/RegisterBackground.svg';
-import { Button1, Option } from '#components';
+import { Button, Option } from '#components';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
 import { apiCheckUsername } from '#utils/apiUrls';
@@ -104,7 +104,7 @@ const centerCardConfig: BaseViewConfigType = {
   },
 };
 
-const ContactAdminButton = styled(Button1)`
+const ContactAdminButton = styled(Button)`
   display: inline-block;
   padding: 0;
   margin-right: 4px !important;
@@ -240,14 +240,14 @@ export const createBaseViewConfig = ({
             dispatch(accountLookUp(data.username, instance));
           },
           buttons: [
-            <Button1
+            <Button
               key="login"
               type="submit"
               loading={loading}
               disabled={loading || !isDirty || !isValid}
             >
               Continue
-            </Button1>,
+            </Button>,
           ],
         },
         footerAction: (
@@ -289,14 +289,14 @@ export const createBaseViewConfig = ({
             dispatch(login({ ...data, username: email! }));
           },
           buttons: [
-            <Button1
+            <Button
               key="login"
               type="submit"
               loading={loading}
               disabled={loading || !isDirty || !isValid}
             >
               Continue
-            </Button1>,
+            </Button>,
           ],
         },
         footerAction: (
@@ -331,14 +331,14 @@ export const createBaseViewConfig = ({
             dispatch(validateIdentity(data));
           },
           buttons: [
-            <Button1
+            <Button
               key="forgot"
               type="submit"
               disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               Show Recovery Options
-            </Button1>,
+            </Button>,
           ],
         },
         footerAction: (
@@ -438,14 +438,14 @@ export const createBaseViewConfig = ({
             }
           },
           buttons: [
-            <Button1
+            <Button
               key="forgot"
               type="submit"
               disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               Continue
-            </Button1>,
+            </Button>,
           ],
         },
         footerAction: (
@@ -515,14 +515,14 @@ export const createBaseViewConfig = ({
             }
           },
           buttons: [
-            <Button1
+            <Button
               key="forgot"
               type="submit"
               disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               Verify Answer
-            </Button1>,
+            </Button>,
           ],
         },
         footerAction: (
@@ -575,14 +575,14 @@ export const createBaseViewConfig = ({
             );
           },
           buttons: [
-            <Button1
+            <Button
               key="forgot"
               type="submit"
               disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               {pageName === PAGE_NAMES.REGISTER_SECRET_KEY ? 'Identify me' : 'Verify'}
-            </Button1>,
+            </Button>,
           ],
         },
         footerAction:
@@ -760,14 +760,14 @@ export const createBaseViewConfig = ({
             }
           },
           buttons: [
-            <Button1
+            <Button
               key="forgot"
               type="submit"
               disabled={loading || !isDirty || password !== confirmPassword}
               style={{ marginLeft: 'auto' }}
             >
               Set Password
-            </Button1>,
+            </Button>,
           ],
         },
       };
@@ -804,14 +804,14 @@ export const createBaseViewConfig = ({
             }
           },
           buttons: [
-            <Button1
+            <Button
               key="forgot"
               type="submit"
               disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               Verify
-            </Button1>,
+            </Button>,
           ],
         },
       };
@@ -939,14 +939,14 @@ export const createBaseViewConfig = ({
             }
           },
           buttons: [
-            <Button1
+            <Button
               key="forgot"
               type="submit"
               disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               Register
-            </Button1>,
+            </Button>,
           ],
         },
       };
@@ -1006,14 +1006,14 @@ export const createBaseViewConfig = ({
             }
           },
           buttons: [
-            <Button1
+            <Button
               key="forgot"
               type="submit"
               disabled={loading || !isDirty || !isValid}
               style={{ marginLeft: 'auto' }}
             >
               Continue
-            </Button1>,
+            </Button>,
           ],
         },
       };
@@ -1128,13 +1128,13 @@ export const createBaseViewConfig = ({
               {`You're unable to login as your password has expired. Please set a
               new password for your Account.`}
             </div>
-            <Button1
+            <Button
               key="forgot"
               style={{ marginRight: 'auto' }}
               onClick={() => navigate('/auth/forgot-password')}
             >
               Set a New Password
-            </Button1>
+            </Button>
           </div>
         ),
       };
@@ -1196,14 +1196,14 @@ export const createBaseViewConfig = ({
             }
           },
           buttons: [
-            <Button1
+            <Button
               key="forgot"
               type="submit"
               style={{ marginLeft: 'auto' }}
               disabled={loading || !isDirty || !isValid}
             >
               Proceed
-            </Button1>,
+            </Button>,
           ],
         },
       };

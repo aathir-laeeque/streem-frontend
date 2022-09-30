@@ -1,4 +1,4 @@
-import { Button1, Textarea, TextInput } from '#components';
+import { Button, Textarea, TextInput } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { EnabledStates } from '#PrototypeComposer/checklist.types';
@@ -217,7 +217,7 @@ const CalculationActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) =>
         />
       </div>
       {data?.state && data.state in EnabledStates && (
-        <Button1
+        <Button
           variant="textOnly"
           onClick={() => {
             dispatch(
@@ -233,7 +233,7 @@ const CalculationActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) =>
           className="add-params-btn"
         >
           Add Parameters
-        </Button1>
+        </Button>
       )}
       {!isEmpty(activity.data.variables) && (
         <div className="add-params-wrapper">

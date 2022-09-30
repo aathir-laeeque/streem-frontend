@@ -1,7 +1,7 @@
 import {
   AutoComplete,
   BaseModal,
-  Button1,
+  Button,
   fetchDataParams,
   TextInput,
   formatOptionLabel,
@@ -381,12 +381,12 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
             />
           )}
           <div className="buttons-container">
-            <Button1 variant="secondary" color="red" onClick={closeOverlay}>
+            <Button variant="secondary" color="red" onClick={closeOverlay}>
               Cancel
-            </Button1>
-            <Button1 disabled={!isValid || !isDirty} type="submit">
+            </Button>
+            <Button disabled={!isValid || !isDirty} type="submit">
               Create Job
-            </Button1>
+            </Button>
           </div>
         </form>
       </BaseModal>

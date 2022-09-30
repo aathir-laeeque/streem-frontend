@@ -1,4 +1,4 @@
-import { Button, Button1 } from '#components';
+import { Button } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission from '#services/uiPermissions';
@@ -42,18 +42,18 @@ const JobHeaderButtons: FC<{
   return (
     <div className="buttons-container">
       {jobState in CompletedJobStates && (
-        <Button1
+        <Button
           className="job-summary"
           color="blue"
           variant="secondary"
           onClick={() => navigate(`/jobs/${jobId}/summary`)}
         >
           Job Summary
-        </Button1>
+        </Button>
       )}
 
       {jobState === JobStateEnum.COMPLETED_WITH_EXCEPTION && (
-        <Button1
+        <Button
           className="view-info"
           color="blue"
           variant="secondary"
@@ -71,17 +71,18 @@ const JobHeaderButtons: FC<{
           }
         >
           View Info
-        </Button1>
+        </Button>
       )}
 
       {showBulkAssignButton && (
-        <Button1 className="bulk-assign" onClick={() => navigate(`/jobs/${jobId}/assignments`)}>
+        <Button className="bulk-assign" onClick={() => navigate(`/jobs/${jobId}/assignments`)}>
           Bulk Assign Tasks
-        </Button1>
+        </Button>
       )}
 
       {isInboxView && jobState === JobStateEnum.ASSIGNED && isLoggedInUserAssigned && (
         <Button
+          className="bulk-assign"
           onClick={() =>
             dispatch(
               openOverlayAction({
@@ -96,78 +97,80 @@ const JobHeaderButtons: FC<{
       )}
 
       {jobState === JobStateEnum.IN_PROGRESS && isLoggedInUserAssigned && (
-        <Button onClick={() => dispatch(completeJob({ jobId, details: { code }, isInboxView }))}>
+        <Button
+          className="bulk-assign"
+          onClick={() => dispatch(completeJob({ jobId, details: { code }, isInboxView }))}
+        >
           Complete Job
         </Button>
       )}
 
-      <div>
-        <Button1 id="more" variant="secondary" onClick={handleClick} style={{ border: 'none' }}>
-          <MoreVert className="icon" fontSize="small" />
-        </Button1>
+      <Button className="more" variant="secondary" onClick={handleClick}>
+        <MoreVert className="icon" fontSize="small" />
+      </Button>
 
-        <Menu
-          id="job-more-options-menu"
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-          style={{ marginTop: 40 }}
+      <Menu
+        id="job-more-options-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        disableEnforceFocus
+        style={{ marginTop: 40 }}
+      >
+        <MenuItem
+          onClick={() => {
+            openLinkInNewTab(`/jobs/${jobId}/print`);
+            handleClose();
+          }}
         >
-          <MenuItem
-            onClick={() => {
-              openLinkInNewTab(`/jobs/${jobId}/print`);
-              handleClose();
-            }}
-          >
-            Download Job
-          </MenuItem>
-          <MenuItem
-            className="job-activities"
-            onClick={() => {
-              navigate(`/jobs/${jobId}/activites`);
-              handleClose();
-            }}
-          >
-            View Activities
-          </MenuItem>
-          {jobState === JobStateEnum.IN_PROGRESS &&
-            isLoggedInUserAssigned &&
-            checkPermission(['inbox', 'completeWithException']) && (
-              <MenuItem
-                onClick={() => {
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.COMPLETE_JOB_WITH_EXCEPTION,
-                      props: { jobId, code, name, isInboxView },
-                    }),
-                  );
-                  handleClose();
-                }}
-              >
-                <span style={{ color: '#da1e28' }}>Complete Job with Exception</span>
-              </MenuItem>
-            )}
-          {jobState !== JobStateEnum.IN_PROGRESS &&
-            jobState !== JobStateEnum.COMPLETED &&
-            jobState !== JobStateEnum.COMPLETED_WITH_EXCEPTION &&
-            checkPermission(['inbox', 'completeWithException']) && (
-              <MenuItem
-                onClick={() => {
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.COMPLETE_JOB_WITH_EXCEPTION,
-                      props: { jobId, code, name },
-                    }),
-                  );
-                  handleClose();
-                }}
-              >
-                <span style={{ color: '#da1e28' }}>Complete Job with Exception</span>
-              </MenuItem>
-            )}
-        </Menu>
-      </div>
+          Download Job
+        </MenuItem>
+        <MenuItem
+          className="job-activities"
+          onClick={() => {
+            navigate(`/jobs/${jobId}/activites`);
+            handleClose();
+          }}
+        >
+          View Activities
+        </MenuItem>
+        {jobState === JobStateEnum.IN_PROGRESS &&
+          isLoggedInUserAssigned &&
+          checkPermission(['inbox', 'completeWithException']) && (
+            <MenuItem
+              onClick={() => {
+                dispatch(
+                  openOverlayAction({
+                    type: OverlayNames.COMPLETE_JOB_WITH_EXCEPTION,
+                    props: { jobId, code, name, isInboxView },
+                  }),
+                );
+                handleClose();
+              }}
+            >
+              <span style={{ color: '#da1e28' }}>Complete Job with Exception</span>
+            </MenuItem>
+          )}
+        {jobState !== JobStateEnum.IN_PROGRESS &&
+          jobState !== JobStateEnum.COMPLETED &&
+          jobState !== JobStateEnum.COMPLETED_WITH_EXCEPTION &&
+          checkPermission(['inbox', 'completeWithException']) && (
+            <MenuItem
+              onClick={() => {
+                dispatch(
+                  openOverlayAction({
+                    type: OverlayNames.COMPLETE_JOB_WITH_EXCEPTION,
+                    props: { jobId, code, name },
+                  }),
+                );
+                handleClose();
+              }}
+            >
+              <span style={{ color: '#da1e28' }}>Complete Job with Exception</span>
+            </MenuItem>
+          )}
+      </Menu>
     </div>
   );
 };

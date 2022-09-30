@@ -3,11 +3,11 @@ import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
 import { ChecklistAuditLogsType } from '#PrototypeComposer/ChecklistAuditLogs/types';
 import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
 import Menu from '@material-ui/core/Menu';
-import { ArrowDropDown, Search } from '@material-ui/icons';
+import { ExpandMore, Search } from '@material-ui/icons';
 import { noop } from 'lodash';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
-import { Button, FlatButton } from './Button';
+import { Button } from './Button';
 
 type Filter = {
   label: string;
@@ -59,8 +59,8 @@ const Wrapper = styled.div.attrs({})`
 
   .list-options {
     display: flex;
-    padding: 8px 16px;
     align-items: center;
+    justify-content: space-between;
   }
 
   .list-body {
@@ -233,10 +233,16 @@ export const InfiniteListView: FC<ListViewProps> = ({
       <div className="list-options">
         {filterProp && (
           <>
-            <FlatButton aria-controls="top-menu" aria-haspopup="true" onClick={handleOpen}>
+            <Button
+              variant="secondary"
+              aria-controls="top-menu"
+              aria-haspopup="true"
+              onClick={handleOpen}
+              style={{ padding: '8px 16px 8px 24px' }}
+            >
               {filterProp?.activeCount !== 0 ? `${filterProp?.activeCount} Filters` : 'Filters '}
-              <ArrowDropDown style={{ fontSize: 20, color: '#1d84ff' }} />
-            </FlatButton>
+              <ExpandMore style={{ fontSize: 20, marginLeft: 8 }} />
+            </Button>
             <Menu
               id="filter-menu"
               anchorEl={anchorEl}
@@ -264,7 +270,7 @@ export const InfiniteListView: FC<ListViewProps> = ({
                       {typeof filter.content === 'function' ? filter.content() : filter.content}
                       <div className="picker-actions">
                         <Button
-                          style={{ marginRight: 0 }}
+                          style={{ padding: '6px 12px' }}
                           onClick={(e) => onApplyFilter(e, filter.onApply)}
                         >
                           Apply Filter
@@ -288,11 +294,7 @@ export const InfiniteListView: FC<ListViewProps> = ({
             Reset
           </span>
         ) : null}
-        {primaryButtonText && (
-          <Button style={{ marginLeft: `auto`, marginRight: 0 }} onClick={onPrimaryClick}>
-            {primaryButtonText}
-          </Button>
-        )}
+        {primaryButtonText && <Button onClick={onPrimaryClick}>{primaryButtonText}</Button>}
       </div>
       <div className="list-header">
         {beforeColumns?.map((beforeColumn) => (

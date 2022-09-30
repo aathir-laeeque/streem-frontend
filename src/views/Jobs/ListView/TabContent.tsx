@@ -1,5 +1,5 @@
 import {
-  Button1,
+  Button,
   DataTable,
   ProgressBar,
   SearchFilter,
@@ -360,7 +360,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         )}
 
         {values[0] in UnassignedJobStates && checkPermission(['checklists', 'createJob']) && (
-          <Button1
+          <Button
             id="create"
             onClick={() => {
               if (
@@ -390,7 +390,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             }}
           >
             Create a Job
-          </Button1>
+          </Button>
         )}
       </div>
 

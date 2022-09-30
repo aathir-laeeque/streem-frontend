@@ -1,4 +1,4 @@
-import { Button1, NumberInput, Textarea } from '#components';
+import { Button, NumberInput, Textarea } from '#components';
 import { useTypedSelector } from '#store';
 import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
@@ -203,15 +203,15 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
 
   const renderSubmitButtons = () => (
     <div className="buttons-container">
-      <Button1
+      <Button
         variant="secondary"
         color="blue"
         onClick={() => handleExecution(state.value, true)}
         disabled={state.isApprovalPending}
       >
         Submit
-      </Button1>
-      <Button1
+      </Button>
+      <Button
         variant="secondary"
         color="red"
         onClick={() => {
@@ -241,13 +241,13 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
         disabled={state.isApprovalPending}
       >
         Cancel
-      </Button1>
+      </Button>
     </div>
   );
 
   const renderApprovalButtons = () => (
     <div className="buttons-container">
-      <Button1
+      <Button
         variant="secondary"
         color="blue"
         onClick={() => {
@@ -261,8 +261,8 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
         }}
       >
         Approve
-      </Button1>
-      <Button1
+      </Button>
+      <Button
         variant="secondary"
         color="red"
         onClick={() => {
@@ -276,7 +276,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
         }}
       >
         Reject
-      </Button1>
+      </Button>
     </div>
   );
 

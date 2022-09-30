@@ -115,7 +115,6 @@ const HeaderWrapper = styled.div`
           border: none;
           > .icon {
             font-size: 14px;
-            color: #000;
             margin: 0px;
           }
         }
@@ -125,7 +124,6 @@ const HeaderWrapper = styled.div`
           padding: 12px;
           > .icon {
             font-size: 14px;
-            color: #000;
             margin: 0px;
           }
         }

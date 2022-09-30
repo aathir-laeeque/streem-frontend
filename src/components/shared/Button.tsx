@@ -1,48 +1,10 @@
 import React, { ComponentPropsWithRef, forwardRef } from 'react';
 import styled, { css } from 'styled-components';
 
-interface ButtonProps {
-  type?: string;
-}
-
-export const Button = styled.button.attrs<ButtonProps>(({ type, disabled = false }) => ({
-  disabled,
-  type: type ? type : 'button',
-}))<ButtonProps>`
-  border-radius: 3px;
-  background-color: #1d84ff;
-  color: #ffffff;
-  line-height: 0.75;
-  padding: 10px 16px;
-  border: none;
-  outline: none;
-  margin-right: 8px;
-  cursor: pointer;
-  :disabled {
-    opacity: 0.4;
-    cursor: unset;
-  }
-`;
-
-export const FlatButton = styled.button`
-  border-radius: 3px;
-  background-color: #fff;
-  border: 1px solid #1d84ff;
-  color: #1d84ff;
-  display: flex;
-  align-items: center;
-  line-height: 0.75;
-  cursor: pointer;
-  padding: 5px 8px 5px 16px;
-  outline: none;
-  font-size: 14px;
-  margin-right: 16px;
-`;
-
 export type ButtonVariant = 'primary' | 'secondary' | 'textOnly';
 export type ButtonColor = 'blue' | 'green' | 'red' | 'dark';
 
-type Button1Props = {
+type ButtonProps = {
   color?: ButtonColor;
   variant?: ButtonVariant;
   loading?: boolean;
@@ -82,18 +44,23 @@ const ColorMap = {
 const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }) => ({
   type,
   disabled,
-}))<Button1Props>`
+}))<ButtonProps>`
   position: relative;
   align-items: center;
   border: 1px solid transparent;
-  border-radius: 4px;
   cursor: pointer;
   display: flex;
   font-size: 14px;
   justify-content: center;
   margin-right: 24px;
   outline: none;
-  padding: 12px 24px;
+  padding: 6px 24px;
+  @media (min-width: 768px) {
+    padding: 8px 24px;
+  }
+  @media (min-width: 1200px) {
+    padding: 12px 24px;
+  }
 
   :last-of-type {
     margin-right: 0;
@@ -132,7 +99,7 @@ const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }
           color: ${colors.textColor};
 
           > .icon {
-            color: ${colors.textColor} !important;
+            color: inherit;
           }
 
           :hover {
@@ -140,7 +107,7 @@ const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }
             color: #ffffff;
 
             > .icon {
-              color: #ffffff !important;
+              color: inherit;
             }
           }
 
@@ -218,12 +185,10 @@ const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }
   }
 `;
 
-export const Button1 = forwardRef<HTMLButtonElement, Button1Props>(
-  ({ children, ...props }, ref) => (
-    <ButtonWrapper ref={ref} {...props}>
-      {children}
-    </ButtonWrapper>
-  ),
-);
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => (
+  <ButtonWrapper ref={ref} {...props}>
+    {children}
+  </ButtonWrapper>
+));
 
-Button1.displayName = 'Button';
+Button.displayName = 'Button';

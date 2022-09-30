@@ -2,7 +2,12 @@ import styled, { css } from 'styled-components';
 
 const Wrapper = styled.div.attrs({
   className: 'stage-list-item',
-})`
+})<{
+  isActive: boolean;
+  isAnyTaskStarted: boolean;
+  allTasksCompleted: boolean;
+  anyTaskHasError: boolean;
+}>`
   background-color: #ffffff;
   border: solid 1px transparent;
   border-color: #eeeeee;

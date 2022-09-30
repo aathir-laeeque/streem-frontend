@@ -1,4 +1,4 @@
-import { BaseModal, Button1, Select, TextInput } from '#components';
+import { BaseModal, Button, Select, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { ActivityType } from '#JobComposer/checklist.types';
 import { Activity } from '#PrototypeComposer/checklist.types';
@@ -306,7 +306,7 @@ export const CalcActivityAddParamsModal: FC<
                   </div>
                 ))}
               </div>
-              <Button1
+              <Button
                 variant="secondary"
                 className="add-new-params-btn"
                 onClick={() => {
@@ -333,15 +333,15 @@ export const CalcActivityAddParamsModal: FC<
                 }}
               >
                 Add <Add style={{ fontSize: '14px', marginLeft: '5px' }} />
-              </Button1>
+              </Button>
             </div>
             <div className="add-params-modal-footer">
-              <Button1 variant="secondary" onClick={closeOverlay}>
+              <Button variant="secondary" onClick={closeOverlay}>
                 Cancel
-              </Button1>
-              <Button1 variant="primary" onClick={updateStoreParams}>
+              </Button>
+              <Button variant="primary" onClick={updateStoreParams}>
                 Save
-              </Button1>
+              </Button>
             </div>
           </>
         )}

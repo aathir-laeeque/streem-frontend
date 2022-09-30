@@ -1,4 +1,4 @@
-import { Button1, DataTable, SearchFilter, TabContentProps } from '#components';
+import { Button, DataTable, SearchFilter, TabContentProps } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
@@ -482,9 +482,9 @@ const TabContent: React.FC<TabContentProps> = (props) => {
 
         {checkPermission(['usersAndAccess', 'addNewUser']) &&
         props.values[0] === UsersListType.ACTIVE ? (
-          <Button1 id="create" onClick={() => navigate('users/add')}>
+          <Button id="create" onClick={() => navigate('users/add')}>
             Add a new User
-          </Button1>
+          </Button>
         ) : null}
       </div>
 

@@ -33,7 +33,6 @@ export const Wrapper = styled.div.attrs({
 
         button {
           border: 1px solid #5aa700;
-          border-radius: 4px;
           color: #5aa700;
           outline: none;
 
@@ -59,7 +58,6 @@ export const Wrapper = styled.div.attrs({
 
         button {
           border: 1px solid #ff6b6b;
-          border-radius: 4px;
           color: #ff6b6b;
 
           &.filled {

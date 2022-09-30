@@ -1,6 +1,6 @@
-import { Button, FlatButton, BaseModal } from '#components';
+import { BaseModal, Button } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import React, { FC, useRef, useEffect } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 import styled from 'styled-components';
 
@@ -46,7 +46,7 @@ const Wrapper = styled.div.attrs({})`
   }
 
   .sign-modal-body {
-    padding: 40px 33px;
+    padding: 16px 0;
     height: 350px;
 
     canvas {
@@ -57,7 +57,6 @@ const Wrapper = styled.div.attrs({})`
   .sign-modal-footer-buttons {
     display: flex;
     justify-content: space-between;
-    padding: 0px 30px 10px;
   }
 `;
 
@@ -107,20 +106,10 @@ const SignatureModal: FC<CommonOverlayProps<SignatureModalProps>> = ({
           <SignatureCanvas ref={canvasRef} backgroundColor="#fafafa" />
         </div>
         <div className="sign-modal-footer-buttons">
-          <FlatButton
-            style={{
-              padding: `5px 16px`,
-              fontWeight: 600,
-              border: '1px solid #eb5757',
-              color: '#eb5757',
-            }}
-            onClick={closeOverlay}
-          >
+          <Button variant="secondary" color="red" onClick={closeOverlay}>
             Cancel
-          </FlatButton>
-          <Button style={{ marginRight: 0, fontWeight: 600 }} onClick={onSuccess}>
-            Accept Signature
           </Button>
+          <Button onClick={onSuccess}>Accept Signature</Button>
         </div>
       </BaseModal>
     </Wrapper>

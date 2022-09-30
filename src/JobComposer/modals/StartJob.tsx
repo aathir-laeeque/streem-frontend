@@ -1,4 +1,4 @@
-import { BaseModal } from '#components';
+import { BaseModal, Button } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Job } from '#views/Jobs/ListView/types';
 import React, { FC } from 'react';
@@ -62,26 +62,6 @@ const Wrapper = styled.div`
       .buttons-container {
         display: flex;
         margin-top: 24px;
-
-        button {
-          background: transparent;
-          border: 1px solid transparent;
-          border-radius: 4px;
-          cursor: pointer;
-          outline: none;
-          padding: 12px 24px;
-
-          :first-child {
-            border-color: #ff6b6b;
-            color: #ff6b6b;
-            margin-right: 24px;
-          }
-
-          :last-child {
-            background-color: #1d84ff;
-            color: #ffffff;
-          }
-        }
       }
     }
   }
@@ -110,8 +90,10 @@ const StartJobModal: FC<
               <span>Are you sure you want to Start Job?</span>
 
               <div className="buttons-container">
-                <button onClick={() => closeOverlay()}>Cancel</button>
-                <button onClick={() => dispatch(startJob(jobId))}>Confirm</button>
+                <Button variant="secondary" color="red" onClick={() => closeOverlay()}>
+                  Cancel
+                </Button>
+                <Button onClick={() => dispatch(startJob(jobId))}>Confirm</Button>
               </div>
             </div>
           </div>

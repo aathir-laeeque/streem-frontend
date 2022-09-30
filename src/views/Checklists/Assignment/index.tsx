@@ -1,4 +1,4 @@
-import { Button1, Checkbox, Link as GoBack } from '#components';
+import { Button, Checkbox, Link as GoBack } from '#components';
 import { fetchComposerData, resetComposer } from '#PrototypeComposer/actions';
 import { Checklist } from '#PrototypeComposer/checklist.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
@@ -270,7 +270,7 @@ const Logs: FC<Props> = ({ id }) => {
                     });
                   }}
                 />
-                <Button1
+                <Button
                   onClick={() => {
                     dispatch(
                       openOverlayAction({
@@ -286,7 +286,7 @@ const Logs: FC<Props> = ({ id }) => {
                   disabled={isNoTaskSelected}
                 >
                   {selectedTasks.length ? `Assign ${selectedTasks.length} Tasks` : 'Assign Tasks'}
-                </Button1>
+                </Button>
               </>
             )}
           </div>

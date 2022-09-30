@@ -1,4 +1,4 @@
-import { Button1 } from '#components';
+import { Button } from '#components';
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
@@ -33,7 +33,7 @@ const CalculationActivity: FC<ActivityProps> = ({
         );
       })}
       {(isCorrectingError || !isTaskCompleted) && (
-        <Button1
+        <Button
           style={{ marginTop: 24, maxWidth: 100 }}
           variant="secondary"
           onClick={() => {
@@ -45,7 +45,7 @@ const CalculationActivity: FC<ActivityProps> = ({
           }}
         >
           Calculate
-        </Button1>
+        </Button>
       )}
       {activity?.response?.value && (
         <>

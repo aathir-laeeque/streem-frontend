@@ -1,3 +1,4 @@
+import { Button } from '#components';
 import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { StartedTaskStates, Task, TaskExecutionState } from '#JobComposer/checklist.types';
@@ -146,8 +147,9 @@ const JobHeader: FC<
 
           {isJobStarted && isUserAssignedToTask && (
             <>
-              <button
+              <Button
                 className="start-task"
+                variant="secondary"
                 onClick={() => {
                   if (enableStopForTask) {
                     dispatch(
@@ -163,7 +165,7 @@ const JobHeader: FC<
                 }}
               >
                 Start task
-              </button>
+              </Button>
               <div onClick={handleClick}>
                 <MoreHoriz className="icon complete-options" />
               </div>

@@ -1,4 +1,4 @@
-import { Button1, DataTable, TabContentProps, ToggleSwitch } from '#components';
+import { Button, DataTable, TabContentProps, ToggleSwitch } from '#components';
 import MemoArchive from '#assets/svg/Archive';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
@@ -235,7 +235,7 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
               }}
             />
             {checkPermission(['ontology', 'create']) && (
-              <Button1
+              <Button
                 id="create"
                 onClick={() => {
                   dispatch(setActiveObject());
@@ -243,7 +243,7 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
                 }}
               >
                 Create New
-              </Button1>
+              </Button>
             )}
           </div>
           <DataTable

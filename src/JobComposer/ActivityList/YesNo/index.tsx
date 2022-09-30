@@ -1,4 +1,4 @@
-import { Button1, Textarea } from '#components';
+import { Button, Textarea } from '#components';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -176,7 +176,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
 
           {state.showButtons ? (
             <div className="buttons-container">
-              <Button1
+              <Button
                 variant="secondary"
                 color="blue"
                 onClick={() => {
@@ -184,8 +184,8 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
                 }}
               >
                 Submit
-              </Button1>
-              <Button1
+              </Button>
+              <Button
                 variant="secondary"
                 color="red"
                 onClick={() =>
@@ -201,7 +201,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
                 }
               >
                 Cancel
-              </Button1>
+              </Button>
             </div>
           ) : null}
         </div>

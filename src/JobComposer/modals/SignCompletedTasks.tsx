@@ -1,6 +1,6 @@
 import NoTaskToSign from '#assets/svg/NoTaskToSign';
 import TaskSignOfComplete from '#assets/svg/TaskSignOfComplete';
-import { Avatar, BaseModal, Button1, ProgressBar, TextInput } from '#components';
+import { Avatar, BaseModal, Button, ProgressBar, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
 import { getFullName } from '#utils/stringUtils';
@@ -247,7 +247,7 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
 
                         {signOffError ? <div className="input-error">{signOffError}</div> : null}
 
-                        <Button1
+                        <Button
                           onClick={() => {
                             if (jobId) {
                               dispatch(signOffTasks({ jobId, password }));
@@ -255,7 +255,7 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
                           }}
                         >
                           Sign Off
-                        </Button1>
+                        </Button>
                       </div>
                     ) : (
                       <Icon className="sign-off-icon" />

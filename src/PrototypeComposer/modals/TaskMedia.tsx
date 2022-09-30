@@ -1,11 +1,11 @@
-import { BaseModal, Button1, Textarea, TextInput } from '#components';
+import { BaseModal, Button, Textarea, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import FullScreenIcon from '#assets/svg/FullScreen';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
-import { Delete } from '@material-ui/icons';
+import { DeleteOutlined } from '@material-ui/icons';
 import { Checklist, EnabledStates, Task } from '#PrototypeComposer/checklist.types';
 
 import { addTaskMedia, removeTaskMedia, updateTaskMedia } from '../Tasks/actions';
@@ -262,7 +262,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
               )}
 
               {!disableDescInput && (
-                <Button1
+                <Button
                   id="save-details"
                   onClick={() => {
                     if (disableNameInput || !!stateMediaDetails.name) {
@@ -297,7 +297,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                   }}
                 >
                   Save
-                </Button1>
+                </Button>
               )}
             </div>
 
@@ -308,7 +308,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                   dispatch(removeTaskMedia(taskId, mediaDetails.id));
                 }}
               >
-                <Delete className="icon" />
+                <DeleteOutlined className="icon" />
                 Delete
               </div>
             )}

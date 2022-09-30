@@ -1,4 +1,4 @@
-import { BaseModal, Button1, Select } from '#components';
+import { BaseModal, Button, Select } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { customSelectStyles } from '#JobComposer/ActivityList/MultiSelect/commonStyles';
 import { useTypedSelector } from '#store';
@@ -250,14 +250,14 @@ const ProcessSharing: FC<CommonOverlayProps<Props>> = ({
               </div>
             </div>
           ))}
-          <Button1
+          <Button
             type="button"
             variant="textOnly"
             onClick={() => setSelectionRows((prev) => ({ ...prev, [uuidv4()]: {} }))}
             disabled={selectionRowsLength === list?.length}
           >
             <Add /> Add New
-          </Button1>
+          </Button>
         </div>
       </BaseModal>
     </Wrapper>

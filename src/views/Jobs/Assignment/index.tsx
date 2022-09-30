@@ -1,4 +1,4 @@
-import { Button1, Checkbox, Link as GoBack } from '#components';
+import { Button, Checkbox, Link as GoBack } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { fetchData } from '#JobComposer/actions';
@@ -165,7 +165,7 @@ const Assignments: FC<Props> = (props) => {
               }}
             />
 
-            <Button1
+            <Button
               onClick={() => {
                 dispatch(
                   openOverlayAction({
@@ -181,7 +181,7 @@ const Assignments: FC<Props> = (props) => {
               disabled={isNoTaskSelected}
             >
               {selectedTasks.length ? `Assign ${selectedTasks.length} Tasks` : 'Assign Tasks'}
-            </Button1>
+            </Button>
           </div>
 
           {stagesOrder.map((stageId, index) => (

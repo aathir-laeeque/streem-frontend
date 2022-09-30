@@ -34,7 +34,6 @@ export default function TaskAssignmentContent({ taskId, jobId, taskExecutionId }
       style={{
         color: '#1d84ff',
         border: '1px solid #1d84ff',
-        borderRadius: '4px',
         padding: '2px',
       }}
       onClick={(e: MouseEvent) => handlePopoverOpen(e)}

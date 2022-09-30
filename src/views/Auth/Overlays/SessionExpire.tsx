@@ -1,4 +1,4 @@
-import { Avatar, BaseModal, Button1, TextInput } from '#components';
+import { Avatar, BaseModal, Button, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
@@ -15,58 +15,61 @@ import { ssoLogin } from '../saga';
 
 // TODO Handle closing of this modal if relogin api fails for some reason.
 const Wrapper = styled.div`
-  .modal {
-    max-width: 468px !important;
-    min-width: 300px !important;
+  #modal-container {
+    z-index: 1500 !important;
+    .modal {
+      max-width: 468px !important;
+      min-width: 300px !important;
 
-    .close-icon {
-      display: none !important;
-    }
-
-    h2 {
-      color: #000 !important;
-      font-weight: bold !important;
-      font-size: 24px !important;
-      line-height: 29px !important;
-    }
-
-    .modal-header {
-      padding: 24px 24px 8px !important;
-      border-bottom: none !important;
-    }
-
-    .modal-body {
-      text-align: left;
-      padding: 0px 24px 24px !important;
-      display: flex;
-      flex-direction: column;
-
-      > span {
-        font-size: 14px;
-        line-height: 1.33;
-        letter-spacing: 0.32px;
-        text-align: left;
-        color: #999999;
+      .close-icon {
+        display: none !important;
       }
 
-      form {
-        margin-top: 24px;
+      h2 {
+        color: #000 !important;
+        font-weight: bold !important;
+        font-size: 24px !important;
+        line-height: 29px !important;
+      }
 
-        .input {
-          .input-label {
-            font-size: 12px;
-          }
+      .modal-header {
+        padding: 24px 24px 8px !important;
+        border-bottom: none !important;
+      }
 
-          .input-wrapper {
-            border-color: transparent;
-            border-bottom-color: #999999;
-          }
+      .modal-body {
+        text-align: left;
+        padding: 0px 24px 24px !important;
+        display: flex;
+        flex-direction: column;
+
+        > span {
+          font-size: 14px;
+          line-height: 1.33;
+          letter-spacing: 0.32px;
+          text-align: left;
+          color: #999999;
         }
 
-        button {
-          width: 100%;
-          margin-top: 40px;
-          justify-content: center;
+        form {
+          margin-top: 24px;
+
+          .input {
+            .input-label {
+              font-size: 12px;
+            }
+
+            .input-wrapper {
+              border-color: transparent;
+              border-bottom-color: #999999;
+            }
+          }
+
+          button {
+            width: 100%;
+            margin-top: 40px;
+            justify-content: center;
+          }
         }
       }
     }
@@ -164,7 +167,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
             />
           )}
           <div style={{ display: 'flex' }}>
-            <Button1
+            <Button
               style={{ width: 'auto' }}
               variant="secondary"
               onClick={() => {
@@ -172,14 +175,14 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
               }}
             >
               Logout
-            </Button1>
-            <Button1
+            </Button>
+            <Button
               type="submit"
               style={{ marginLeft: 'auto', width: 'auto' }}
               disabled={userType === UserType.LOCAL ? !isValid || !isDirty : false}
             >
               Proceed to Login
-            </Button1>
+            </Button>
           </div>
         </form>
       </BaseModal>

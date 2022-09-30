@@ -1,7 +1,7 @@
 import EditUser from '#assets/svg/EditUser';
 import InviteExpired from '#assets/svg/InviteExpired';
 import PushNew from '#assets/svg/PushNew';
-import { Button1, Option, useScrollableSections } from '#components';
+import { Button, useScrollableSections, Option } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { fetchSelectedUserSuccess } from '#store/users/actions';
@@ -207,45 +207,45 @@ const ManageUser: FC<EditUserProps> = ({
   };
 
   const ArchiveButton = () => (
-    <Button1 className="primary-button" onClick={() => onArchiveUser(selectedUser)}>
+    <Button className="primary-button" onClick={() => onArchiveUser(selectedUser)}>
       Archive
-    </Button1>
+    </Button>
   );
 
   const UnArchiveButton = () => (
-    <Button1 className="primary-button" onClick={() => onUnArchiveUser(selectedUser)}>
+    <Button className="primary-button" onClick={() => onUnArchiveUser(selectedUser)}>
       Unarchive
-    </Button1>
+    </Button>
   );
 
   const UnlockButton = () => (
-    <Button1 className="primary-button" onClick={() => onUnlockUser(selectedUser)}>
+    <Button className="primary-button" onClick={() => onUnlockUser(selectedUser)}>
       Unlock
-    </Button1>
+    </Button>
   );
 
   const ResendInviteButton = () => (
-    <Button1
+    <Button
       className="primary-button"
       onClick={() => dispatch(resendInvite({ id: selectedUser.id }))}
     >
       Reset Invite
-    </Button1>
+    </Button>
   );
 
   const CancelInviteButton = () => (
-    <Button1 className="primary-button" color="dark" onClick={() => onCancelInvite(selectedUser)}>
+    <Button className="primary-button" color="dark" onClick={() => onCancelInvite(selectedUser)}>
       Cancel Invite
-    </Button1>
+    </Button>
   );
 
   const GenerateNewSecretButton = () => (
-    <Button1
+    <Button
       className="primary-button"
       onClick={() => dispatch(resendInvite({ id: selectedUser.id }))}
     >
       Generate New Secret Key
-    </Button1>
+    </Button>
   );
 
   const showButtons = () => {
@@ -341,17 +341,17 @@ const ManageUser: FC<EditUserProps> = ({
 
         {showButtons()}
 
-        <Button1
+        <Button
           className="primary-button"
           type="submit"
           variant={pageType === PAGE_TYPE.EDIT ? 'secondary' : 'primary'}
           disabled={!isValid || !isDirty}
         >
           Save Changes
-        </Button1>
-        <Button1 className="cancel-button" variant="textOnly" onClick={() => navigate(-1)}>
+        </Button>
+        <Button className="cancel-button" variant="textOnly" onClick={() => navigate(-1)}>
           Go Back
-        </Button1>
+        </Button>
       </div>
     </Composer>
   );

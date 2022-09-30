@@ -1,4 +1,4 @@
-import { BaseModal, Checkbox, Button1, TextInput } from '#components';
+import { BaseModal, Checkbox, Button, TextInput } from '#components';
 import { Search, Clear } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, useState } from 'react';
@@ -119,9 +119,9 @@ const ConfigureColumnsModal: FC<CommonOverlayProps<Props>> = ({
         onSecondary={closeOverlay}
         onPrimary={onPrimary}
         modalFooterOptions={
-          <Button1 variant="textOnly" onClick={onRemoveAll}>
+          <Button variant="textOnly" onClick={onRemoveAll}>
             Remove All Columns
-          </Button1>
+          </Button>
         }
       >
         <div className="body">

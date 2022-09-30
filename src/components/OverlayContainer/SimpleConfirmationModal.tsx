@@ -1,4 +1,4 @@
-import { BaseModal, Button1 } from '#components';
+import { BaseModal, Button } from '#components';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
@@ -68,17 +68,17 @@ const SimpleConfirmationModal: FC<CommonOverlayProps<Props>> = ({
           {typeof body === 'object' ? body : <span>{body}</span>}
 
           <div className="buttons-container">
-            <Button1 variant="secondary" color="red" onClick={closeOverlay}>
+            <Button variant="secondary" color="red" onClick={closeOverlay}>
               Cancel
-            </Button1>
-            <Button1
+            </Button>
+            <Button
               onClick={() => {
                 onPrimaryClick();
                 closeOverlay();
               }}
             >
               Confirm
-            </Button1>
+            </Button>
           </div>
         </div>
       </BaseModal>

@@ -1,4 +1,4 @@
-import { BaseModal, Button1, TextInput } from '#components';
+import { BaseModal, Button, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { releasePrototype, signOffPrototype } from '#PrototypeComposer/reviewer.actions';
 import { Checklist } from '#PrototypeComposer/checklist.types';
@@ -147,12 +147,12 @@ const PasswordInputModal: FC<
               type={passwordInputType ? 'password' : 'text'}
             />
           )}
-          <Button1
+          <Button
             type="submit"
             disabled={userType === UserType.LOCAL ? !isValid || !isDirty : false}
           >
             Sign
-          </Button1>
+          </Button>
         </form>
       </BaseModal>
     </Wrapper>

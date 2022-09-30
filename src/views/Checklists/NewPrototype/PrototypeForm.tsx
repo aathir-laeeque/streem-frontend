@@ -1,4 +1,4 @@
-import { AddNewItem, Avatar, Button1, Select, Option, Textarea, TextInput } from '#components';
+import { AddNewItem, Avatar, Button, Select, Textarea, TextInput, Option } from '#components';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
 import { useTypedSelector } from '#store/helpers';
@@ -66,7 +66,7 @@ const PrototypeForm: FC<Props> = (props) => {
   const { profile, selectedUseCase } = useTypedSelector((state) => state.auth);
 
   /*
-    The UI receives createdBy only after making the API call hence when the user clicks on the "Start a Prototype" the owner details are blank. 
+    The UI receives createdBy only after making the API call hence when the user clicks on the "Start a Prototype" the owner details are blank.
     The user creating the Prototype is the owner.
   */
   const [formValues, setFormValues] = useState<FormValues>({
@@ -340,10 +340,10 @@ const PrototypeForm: FC<Props> = (props) => {
       </div>
 
       <div className="form-submit-buttons">
-        <Button1 color="red" variant="secondary" onClick={() => navigate(-1)}>
+        <Button color="red" variant="secondary" onClick={() => navigate(-1)}>
           Cancel
-        </Button1>
-        {formMode !== FormMode.VIEW && <Button1 type="submit">Submit</Button1>}
+        </Button>
+        {formMode !== FormMode.VIEW && <Button type="submit">Submit</Button>}
       </div>
     </form>
   );

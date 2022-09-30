@@ -87,18 +87,9 @@ const Wrapper = styled.div.attrs({
         }
 
         .start-task {
-          background: transparent;
-          border: 1px solid #1d84ff;
-          border-radius: 4px;
-          color: #1d84ff;
-          cursor: pointer;
           display: ${({ showStartButton }) => (showStartButton ? 'flex' : 'none')};
-          font-size: 14px;
-          line-height: 1.29;
-          letter-spacing: 0.16px;
-          margin-left: 16px;
-          outline: none;
           padding: 4px 8px;
+          margin-left: 8px;
         }
 
         .complete-options {

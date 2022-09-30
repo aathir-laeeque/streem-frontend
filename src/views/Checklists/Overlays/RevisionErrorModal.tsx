@@ -1,4 +1,4 @@
-import { BaseModal, Button1 } from '#components';
+import { BaseModal, Button } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import MemoRevisionError from '#assets/svg/RevisionError';
 import React, { FC } from 'react';
@@ -57,14 +57,14 @@ const RevisionErrorModal: FC<
           You cannot Revise the Checklist, it is already being revised by your Team Members. But,
           you can view the ongoing Revision.
         </span>
-        <Button1
+        <Button
           onClick={() => {
             closeOverlay();
             navigate(`checklists/${id}`);
           }}
         >
           View Ongoing Revision
-        </Button1>
+        </Button>
       </BaseModal>
     </Wrapper>
   );

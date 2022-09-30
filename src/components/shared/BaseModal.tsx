@@ -1,4 +1,4 @@
-import { Button1 } from '#components';
+import { Button } from '#components';
 import { Close } from '@material-ui/icons';
 import React, { FC, ReactNode, useEffect, useRef } from 'react';
 import styled, { css } from 'styled-components';
@@ -258,21 +258,21 @@ export const BaseModal: FC<BaseModalProps> = ({
                 )}
                 <div className="modal-footer-buttons">
                   {showSecondary && (
-                    <Button1
+                    <Button
                       color="red"
                       variant="secondary"
                       onClick={() => onBaseModalContainerClick(onSecondary)}
                     >
                       {secondaryText}
-                    </Button1>
+                    </Button>
                   )}
                   {showPrimary && (
-                    <Button1
+                    <Button
                       onClick={() => onBaseModalContainerClick(onPrimary)}
                       disabled={disabledPrimary}
                     >
                       {primaryText}
-                    </Button1>
+                    </Button>
                   )}
                 </div>
               </div>
