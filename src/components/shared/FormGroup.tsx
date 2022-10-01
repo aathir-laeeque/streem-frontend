@@ -81,6 +81,12 @@ const Wrapper = styled.div.attrs({
     color: #666666;
     margin: 0 0 24px 24px;
   }
+
+  .optional-badge {
+    color: #999999;
+    font-size: 12px;
+    margin-left: 4px;
+  }
 `;
 
 const useStyles = makeStyles({
