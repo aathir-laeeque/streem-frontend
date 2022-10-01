@@ -16,7 +16,6 @@ const HeaderWrapper = styled.div<{ msgType: MessageType }>`
   justify-content: center;
   overflow: unset !important;
   flex: unset !important;
-  padding-top: 8px;
 
   .msg-wrapper {
     padding-left: 5px;
@@ -24,13 +23,12 @@ const HeaderWrapper = styled.div<{ msgType: MessageType }>`
 
   .alert {
     padding: 4px;
-    border-radius: 4px;
     border: solid 1px ${(p) => (p.msgType === MessageType.ERROR ? '#ff6b6b' : '#ffe58f')};
     background-color: ${(p) =>
       p.msgType === MessageType.ERROR ? 'rgba(255, 107, 107, 0.16)' : '#fffbe6'};
     display: flex;
     flex-direction: row;
-    flex: unset;
+    flex: 1;
     align-items: center;
     justify-content: center;
     font-size: 14px;

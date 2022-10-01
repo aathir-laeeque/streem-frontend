@@ -1,7 +1,7 @@
+import { Block, CheckCircle, Error, SvgIconComponent } from '@material-ui/icons';
 import React, { ReactNode } from 'react';
-import { takeLatest, call, delay } from 'redux-saga/effects';
-import { Check, Close, SvgIconComponent } from '@material-ui/icons';
 import { toast } from 'react-toastify';
+import { call, delay, takeLatest } from 'redux-saga/effects';
 import { NotificationActions, NotificationActionType, NotificationType } from './types';
 
 function* showNotificationGenerator({ payload }: NotificationActionType) {
@@ -14,8 +14,9 @@ function* showNotificationGenerator({ payload }: NotificationActionType) {
 
   const Layout = (): ReactNode => (
     <div className={`notification-layout notification--${type}`}>
-      {type === NotificationType.SUCCESS && showIcon(icon || Check, 'toast_icon--success')}
-      {type === NotificationType.ERROR && showIcon(icon || Close, 'toast_icon--error')}
+      {type === NotificationType.SUCCESS && showIcon(icon || CheckCircle, 'toast_icon--success')}
+      {type === NotificationType.ERROR && showIcon(icon || Block, 'toast_icon--error')}
+      {type === NotificationType.WARNING && showIcon(icon || Error, 'toast_icon--warning')}
       <div className="content">
         {msg}
         {detail && <span>{detail}</span>}
