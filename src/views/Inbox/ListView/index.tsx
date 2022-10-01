@@ -1,4 +1,4 @@
-import useTabsNew from '#components/shared/useTabsNew';
+import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
 import { ViewWrapper } from '#views/Jobs/ListView/styles';
 import React, { FC, useEffect } from 'react';
@@ -17,7 +17,7 @@ const ListView: FC<ListViewProps> = () => {
     };
   }, []);
 
-  const { renderTabHeader, renderTabContent } = useTabsNew({
+  const { renderTabHeader, renderTabContent } = useTabs({
     tabs: [
       {
         label: InboxState.MYINBOX,

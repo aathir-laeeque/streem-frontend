@@ -1,5 +1,5 @@
 import { DataTable, TabContentProps } from '#components';
-import useTabsNew from '#components/shared/useTabsNew';
+import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
 import { apiGetJobLogs } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
@@ -134,7 +134,7 @@ const ObjectsContent = ({
     objectTypes: { active: selectedObjectType },
   } = useTypedSelector((state) => state.ontology);
 
-  const { renderTabHeader, renderTabContent } = useTabsNew({
+  const { renderTabHeader, renderTabContent } = useTabs({
     tabs: [
       {
         label: 'Detail',

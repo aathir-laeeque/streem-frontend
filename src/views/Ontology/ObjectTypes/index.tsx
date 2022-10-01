@@ -1,5 +1,5 @@
 import { DataTable, TabContentProps } from '#components';
-import useTabsNew from '#components/shared/useTabsNew';
+import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
 import { formatDateTime } from '#utils/timeUtils';
 import { ViewWrapper } from '#views/Jobs/ListView/styles';
@@ -59,7 +59,7 @@ const ReadOnlyGroupWrapper = styled.div`
   }
 `;
 
-const ReadOnlyGroup = ({ items }: { items: { label: string; value: string }[] }) => {
+export const ReadOnlyGroup = ({ items }: { items: { label: string; value: string }[] }) => {
   return (
     <ReadOnlyGroupWrapper>
       {items.map((item, index) => (
@@ -182,7 +182,7 @@ const ObjectTypesContent = ({ id }: RouteComponentProps<{ id: string }>) => {
     };
   }, []);
 
-  const { renderTabHeader, renderTabContent } = useTabsNew({
+  const { renderTabHeader, renderTabContent } = useTabs({
     tabs: [
       {
         label: 'Objects',

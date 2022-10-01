@@ -1,4 +1,4 @@
-import useTabsNew, { Tab } from '#components/shared/useTabsNew';
+import useTabs, { Tab } from '#components/shared/useTabs';
 import checkPermission from '#services/uiPermissions';
 import { UsersListType } from '#store/users/types';
 import { ViewWrapper } from '#views/Jobs/ListView/styles';
@@ -30,7 +30,7 @@ const ListView: FC<ListViewProps> = () => {
       tabContent: SessionActivity,
     });
 
-  const { renderTabContent, renderTabHeader } = useTabsNew({
+  const { renderTabContent, renderTabHeader } = useTabs({
     tabs: shownTabs,
   });
 

@@ -1,4 +1,4 @@
-import useTabsNew from '#components/shared/useTabsNew';
+import useTabs from '#components/shared/useTabs';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { ViewWrapper } from '#views/Jobs/ListView/styles';
@@ -9,7 +9,7 @@ import { ListViewProps } from './types';
 const ChecklistListView: FC<ListViewProps> = ({}) => {
   const { selectedUseCase } = useTypedSelector((state) => state.auth);
 
-  const { renderTabHeader, renderTabContent } = useTabsNew({
+  const { renderTabHeader, renderTabContent } = useTabs({
     tabs: [
       { label: 'published', tabContent: TabContent },
       ...(checkPermission(['checklists', 'prototype'])

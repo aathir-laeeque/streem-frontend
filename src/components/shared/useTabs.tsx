@@ -2,83 +2,88 @@ import { capitalize } from 'lodash';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 
-import { TabContentProps } from './useTabsNew';
+export const HeaderWrapper = styled.div.attrs({
+  className: 'tab-header',
+})`
+  background-color: transparent;
+  display: flex;
+  grid-area: tab-header;
 
-const Wrapper = styled.div`
-  .tab-title {
-    font-size: 16px;
-    font-weight: normal;
-    color: #666666;
+  .tab-header-item {
+    align-items: center;
+    background-color: #f4f4f4;
+    border-top: 2px solid transparent;
     cursor: pointer;
-    padding: 14px 32px;
-    text-transform: capitalize;
-  }
-
-  .tab-active {
-    border-bottom: 2px solid #1d84ff;
-    color: #1d84ff;
-    font-weight: 600;
-  }
-
-  .tabs-row {
     display: flex;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-    margin-bottom: 8px;
-    background: #fff;
+    min-width: 160px;
+    padding: 12px 16px;
+    text-transform: capitalize;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.29;
+    letter-spacing: 0.16px;
+
+    &.active {
+      background-color: #ffffff;
+      border-top-color: #1d84ff;
+    }
   }
 `;
 
-export const initialTabState = {
-  list: [],
-  pageable: {
-    page: 0,
-    pageSize: 10,
-    numberOfElements: 0,
-    totalPages: 0,
-    totalElements: 0,
-    first: true,
-    last: true,
-    empty: true,
-  },
+export const BodyWrapper = styled.div.attrs({
+  className: 'tab-body',
+})`
+  background-color: #ffffff;
+  grid-area: tab-body;
+  padding: 8px 8px 0px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+`;
+
+export type Tab = {
+  label: string;
+  values?: any;
+  tabContent: FC | FC<TabContentProps>;
+  passThroughProps?: TabContentProps;
 };
 
-export interface Tab<T> {
-  label: string;
-  active: boolean;
-  TabContent: FC | FC<TabContentProps>;
-  passThroughProps?: T;
-}
+export type TabContentProps = {
+  label: Tab['label'];
+  values?: Tab['values'];
+};
 
-export function useTabs<T>(tabs: Tab<T>[]) {
-  const [stateTabs, updateTabs] = useState<Tab<T>[]>(tabs);
-  const activeTab = stateTabs.find((el) => el.active);
-  const renderTabsHeader = (): JSX.Element => (
-    <Wrapper>
-      <div className="tabs-row">
-        {stateTabs.map((tab, index) => (
-          <span
-            className={`tab-title ${tab.active && 'tab-active'}`}
-            key={`tab_${index}`}
-            onClick={() => updateTabs(tabs.map((el, idx) => ({ ...el, active: idx === index })))}
-          >
-            {capitalize(tab.label)}
-          </span>
-        ))}
-      </div>
-    </Wrapper>
+type useTabType = {
+  tabs: Tab[];
+};
+
+const useTabs = ({ tabs }: useTabType) => {
+  const [activeTab, setActiveTab] = useState(tabs[0]);
+
+  const TabContent = activeTab.tabContent;
+
+  const renderTabHeader = () => (
+    <HeaderWrapper>
+      {tabs.map((tab) => (
+        <div
+          className={`tab-header-item ${activeTab.label === tab.label ? 'active' : ''}`}
+          key={tab.label}
+          onClick={() => setActiveTab(tab)}
+        >
+          {capitalize(tab.label)}
+        </div>
+      ))}
+    </HeaderWrapper>
   );
-  const renderTabsContent = (): JSX.Element => (
-    <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-      {stateTabs.map(({ TabContent, label, passThroughTabContentProps }, index) => {
-        if (label === activeTab?.label) {
-          return (
-            <TabContent {...passThroughTabContentProps} label={label} key={`${label}-${index}`} />
-          );
-        } else {
-          return null;
-        }
-      })}
-    </div>
+
+  const renderTabContent = () => (
+    <BodyWrapper>
+      <TabContent label={activeTab.label} values={activeTab?.values} />
+    </BodyWrapper>
   );
-  return { renderTabsHeader, renderTabsContent };
-}
+
+  return { renderTabHeader, renderTabContent };
+};
+
+export default useTabs;

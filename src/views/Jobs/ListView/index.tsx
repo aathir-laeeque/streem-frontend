@@ -1,4 +1,4 @@
-import useTabsNew from '#components/shared/useTabsNew';
+import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import TabContent from './TabContent';
@@ -8,7 +8,7 @@ import { AssignedJobStates, CompletedJobStates, ListViewProps, UnassignedJobStat
 const JobListView: FC<ListViewProps> = () => {
   const { selectedUseCase } = useTypedSelector((state) => state.auth);
 
-  const { renderTabHeader, renderTabContent } = useTabsNew({
+  const { renderTabHeader, renderTabContent } = useTabs({
     tabs: [
       {
         label: 'Unassigned',
