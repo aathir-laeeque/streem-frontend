@@ -31,13 +31,19 @@ const TaskCardWrapper = styled.div.attrs({
 })<TaskCardWrapperProps>`
   background-color: #ffffff;
   border: solid 1px #eeeeee;
-  border-radius: 4px;
   box-shadow: 0 1px 4px 0 rgba(102, 102, 102, 0.08);
   display: flex;
   flex-direction: column;
   grid-area: task-card;
   height: max-content;
   position: relative;
+
+  ${({ isActive }) =>
+    isActive
+      ? css`
+          border-color: #1d84ff;
+        `
+      : null}
 
   .overlap {
     height: 100%;
@@ -49,9 +55,10 @@ const TaskCardWrapper = styled.div.attrs({
   .task {
     &-header {
       align-items: center;
-      background-color: #fafafa;
+      background-color: #fff;
       border-top-left-radius: 4px;
       border-top-right-radius: 4px;
+      border-bottom: 1px solid #f4f4f4;
       display: flex;
 
       .order-control {
@@ -77,12 +84,16 @@ const TaskCardWrapper = styled.div.attrs({
           font-size: 14px;
         }
       }
+
+      svg {
+        color: #161616;
+      }
     }
 
     &-body {
       .task-config {
         border-bottom: 1px solid #dadada;
-        padding: 32px;
+        padding: 24px;
 
         @media (max-width: 1200px) {
           padding: 12px;
@@ -181,12 +192,12 @@ const TaskCardWrapper = styled.div.attrs({
 
     &-error {
       color: #eb5757;
-      padding: 24px 32px;
+      padding: 24px;
     }
 
     &-footer {
       border-top: 1px solid #dadada;
-      padding: 32px;
+      padding: 24px;
 
       @media (max-width: 1200px) {
         padding: 16px;

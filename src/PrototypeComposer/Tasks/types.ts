@@ -8,12 +8,14 @@ export type Task = TaskType & {
 export type TaskCardProps = {
   index: number;
   task: Task;
+  isActive: boolean;
 };
 
 export type TaskCardWrapperProps = {
   hasMedias: boolean;
   hasStop: boolean;
   isTimed: boolean;
+  isActive: boolean;
 };
 
 export type TaskMediasProps = {

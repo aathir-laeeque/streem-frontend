@@ -1,19 +1,23 @@
+import { Button } from '#components';
 import { useTypedSelector } from '#store/helpers';
+import { AddCircleOutline } from '@material-ui/icons';
 import React, { createRef, FC } from 'react';
-
+import { useDispatch } from 'react-redux';
+import { addNewTask } from './actions';
 import { TaskListWrapper } from './styles';
 import TaskCard from './TaskCard';
 import TaskMedias from './TaskMedias';
 
-const Tasks: FC = () => {
+const Tasks: FC<{ allowNewAddition: boolean }> = ({ allowNewAddition }) => {
+  const dispatch = useDispatch();
   const {
     stages: { activeStageId },
-    tasks: { tasksOrderInStage, listById },
+    tasks: { tasksOrderInStage, listById, activeTaskId },
+    data,
   } = useTypedSelector((state) => state.prototypeComposer);
 
   if (activeStageId) {
     const taskListOrder = tasksOrderInStage[activeStageId];
-
     const refMap = taskListOrder.map(() => createRef<HTMLDivElement>());
 
     return (
@@ -26,6 +30,7 @@ const Tasks: FC = () => {
               <TaskCard
                 task={task}
                 index={index}
+                isActive={taskId === activeTaskId}
                 isFirstTask={index === 0}
                 isLastTask={index === taskListOrder.length - 1}
               />
@@ -33,6 +38,25 @@ const Tasks: FC = () => {
             </div>
           );
         })}
+        {allowNewAddition && (
+          <Button
+            variant="secondary"
+            className="add-item"
+            onClick={() => {
+              if (data && activeStageId) {
+                dispatch(
+                  addNewTask({
+                    checklistId: data.id,
+                    stageId: activeStageId,
+                  }),
+                );
+              }
+            }}
+          >
+            <AddCircleOutline className="icon" fontSize="small" />
+            Add New Task
+          </Button>
+        )}
       </TaskListWrapper>
     );
   }

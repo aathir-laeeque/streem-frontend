@@ -6,6 +6,7 @@ const StageListWrapper = styled.div.attrs({
 })`
   grid-area: stage-list;
   overflow: auto;
+  padding: 0px 8px 0px 16px;
 `;
 
 const StageCardWrapper = styled.div.attrs({
@@ -13,11 +14,9 @@ const StageCardWrapper = styled.div.attrs({
 })<Pick<StageCardProps, 'isActive'> & { hasError: boolean }>`
   background-color: #ffffff;
   border: solid 1px #eeeeee;
-  border-radius: 4px;
   box-shadow: 1px 2px 8px 0 rgba(29, 132, 255, 0.2);
   display: flex;
   flex-direction: column;
-  margin-right: 12px;
   margin-bottom: 16px;
   position: relative;
 
@@ -31,7 +30,8 @@ const StageCardWrapper = styled.div.attrs({
   .stage {
     &-header {
       align-items: center;
-      background-color: #fafafa;
+      background-color: #fff;
+      border-bottom: 1px solid #f4f4f4;
       border-top-left-radius: 4px;
       border-top-right-radius: 4px;
       display: flex;
@@ -52,6 +52,10 @@ const StageCardWrapper = styled.div.attrs({
         @media (max-width: 1200px) {
           margin-right: 8px;
         }
+      }
+
+      svg {
+        color: #161616;
       }
     }
 

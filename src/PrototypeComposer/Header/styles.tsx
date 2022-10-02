@@ -9,28 +9,25 @@ const HeaderWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: -6px 0px 4px 0px;
 
     .alert {
       padding: 4px 80px;
-      border-radius: 4px;
-      border: solid 1px #d6e9ff;
       background-color: #e7f1fd;
-      min-width: 600px;
+      border: solid 1px #d6e9ff;
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
 
       span {
         color: #1d84ff;
-        font-size: 12px;
-        line-height: 12px;
+        font-size: 14px;
       }
 
       svg {
         color: #1d84ff;
-        font-size: 13.3px;
-        line-height: 13.3px;
+        font-size: 16px;
+        line-height: 14px;
         margin-right: 10px;
       }
     }
@@ -58,8 +55,6 @@ const HeaderWrapper = styled.div`
 
   .main-header {
     background-color: #ffffff;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 
     .checklist-nav-header {
       padding: 16px 16px 0px 16px;
@@ -98,7 +93,8 @@ const HeaderWrapper = styled.div`
             }
 
             span {
-              font-size: 12px;
+              font-size: 14px;
+              margin-left: 8px;
               line-height: 24px;
             }
           }
@@ -110,60 +106,19 @@ const HeaderWrapper = styled.div`
         display: flex;
         margin-left: auto;
 
+        button {
+          margin-right: 8px;
+        }
+
         #more {
-          padding: 12px 6px;
+          padding: 10px 4px;
           border: none;
-          > .icon {
-            font-size: 14px;
-            margin: 0px;
-          }
         }
 
         #edit,
         #view-collaborators {
-          padding: 12px;
-          > .icon {
-            font-size: 14px;
-            margin: 0px;
-          }
+          padding: 10px;
         }
-
-        #edit:hover {
-          > .icon {
-            font-size: 14px;
-            color: #fff;
-          }
-        }
-      }
-    }
-
-    .prototype-add-buttons {
-      border-top: 1px solid #dadada;
-      display: grid;
-      grid-template-areas: 'add-stage add-task preview';
-      grid-template-columns: 300px 2fr 1fr;
-
-      > button {
-        justify-content: center;
-        margin-right: 0;
-        padding: 12px;
-
-        > .icon {
-          color: #1d84ff;
-          margin-right: 8px;
-        }
-      }
-
-      #new-stage {
-        grid-area: add-stage;
-      }
-
-      #new-task {
-        grid-area: add-task;
-      }
-
-      #preview {
-        grid-area: preview;
       }
     }
   }

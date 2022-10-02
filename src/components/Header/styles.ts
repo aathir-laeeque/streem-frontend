@@ -11,6 +11,7 @@ export const Wrapper = styled.div.attrs({})`
   .select {
     margin-left: auto;
     margin-right: 12px;
+    min-width: 200px;
   }
 
   .profile-icon {

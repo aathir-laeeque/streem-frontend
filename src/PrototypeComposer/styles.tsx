@@ -1,13 +1,12 @@
 import styled from 'styled-components';
 
-const ComposerWrapper = styled.div`
+export const ComposerWrapper = styled.div`
   display: grid;
-  grid-gap: 8px;
   grid-row-gap: 16px;
+  grid-column-gap: 8px;
   grid-template-areas: 'header header' 'stage-list task-list';
   grid-template-columns: 320px 1fr;
   grid-template-rows: auto 1fr;
-  padding: 8px;
   overflow: hidden;
   height: 100%;
 
@@ -22,13 +21,22 @@ const ComposerWrapper = styled.div`
   @media (min-width: 1201px) and (max-width: 1366px) {
     grid-template-columns: 280px 1fr;
   }
-`;
 
-const LoaderWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  height: inherit;
-  justify-content: center;
-`;
+  .add-item {
+    background-color: transparent;
+    width: 100%;
+    margin-bottom: 16px;
 
-export { ComposerWrapper, LoaderWrapper };
+    :hover {
+      color: unset;
+      border-color: unset;
+      > .icon {
+        color: inherit;
+      }
+    }
+
+    > .icon {
+      margin-right: 8px;
+    }
+  }
+`;

@@ -1,10 +1,14 @@
+import { Button } from '#components';
 import { useTypedSelector } from '#store/helpers';
+import { AddCircleOutline } from '@material-ui/icons';
 import React, { createRef, FC } from 'react';
-
+import { useDispatch } from 'react-redux';
+import { addNewStage } from './actions';
 import StageCard from './StageCard';
 import { StageListWrapper } from './styles';
 
-const Stages: FC = () => {
+const Stages: FC<{ allowNewAddition: boolean }> = ({ allowNewAddition }) => {
+  const dispatch = useDispatch();
   const { activeStageId, listOrder, listById } = useTypedSelector(
     (state) => state.prototypeComposer.stages,
   );
@@ -24,6 +28,12 @@ const Stages: FC = () => {
           stage={listById[stageId]}
         />
       ))}
+      {allowNewAddition && (
+        <Button variant="secondary" className="add-item" onClick={() => dispatch(addNewStage())}>
+          <AddCircleOutline className="icon" fontSize="small" />
+          Add New Stage
+        </Button>
+      )}
     </StageListWrapper>
   );
 };

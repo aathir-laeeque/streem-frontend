@@ -22,7 +22,7 @@ const Layout = styled.div.attrs({
   grid-template-rows: 50px 1fr;
   grid-template-columns: 120px 1fr;
   flex: 1;
-  background-color: #fafafa;
+  background-color: #fff;
 
   @media (max-width: 1200px) {
     grid-template-columns: 100px 1fr;

@@ -75,7 +75,6 @@ const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
         display: inline-block;
         font-weight: 300;
         position: relative;
-        border-radius: 16px;
         min-width: 600px;
         max-width: calc(100vw - 40vw);
         box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
@@ -241,7 +240,7 @@ export const BaseModal: FC<BaseModalProps> = ({
     <Wrapper animated={animated}>
       <div id="modal-container" ref={modalContainer} className="openup">
         <div className="modal-background">
-          <div className="modal" style={{ borderRadius: isRound ? '16px' : '4px', zIndex: 10 }}>
+          <div className="modal" style={{ borderRadius: isRound ? '16px' : 'unset', zIndex: 10 }}>
             {showCloseIcon && (
               <Close className="close-icon" onClick={() => onBaseModalContainerClick(closeModal)} />
             )}

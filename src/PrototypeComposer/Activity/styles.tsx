@@ -4,7 +4,7 @@ const ActivityWrapper = styled.div.attrs({
   className: 'activity',
 })`
   border-bottom: 1px dashed #dadada;
-  padding: 32px;
+  padding: 24px;
   position: relative;
 
   @media (max-width: 1200px) {
@@ -24,6 +24,7 @@ const ActivityWrapper = styled.div.attrs({
     right: 32px;
     top: 32px;
     z-index: 1;
+    color: #161616;
 
     @media (max-width: 1200px) {
       right: 16px;

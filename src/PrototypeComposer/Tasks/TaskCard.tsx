@@ -13,6 +13,7 @@ import {
   DeleteOutlined,
   PanTool,
   PanToolOutlined,
+  PermMedia,
   PermMediaOutlined,
   Timer,
 } from '@material-ui/icons';
@@ -40,6 +41,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
   index,
   isFirstTask,
   isLastTask,
+  isActive,
 }) => {
   const {
     data,
@@ -90,12 +92,14 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
 
   if (activeStageId) {
     const taskActivities = activityOrderInTaskInStage[activeStageId][taskId];
+    const hasMedias = !!medias.length;
 
     return (
       <TaskCardWrapper
         isTimed={timed}
-        hasMedias={!!medias.length}
+        hasMedias={hasMedias}
         hasStop={hasStop}
+        isActive={isActive}
         onClick={() => {
           if (activeTaskId !== taskId) {
             dispatch(setActiveTask(taskId));
@@ -239,7 +243,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
                     console.error('error in fileUpload :: ', error);
                   }}
                   label="Attach Media"
-                  icon={PermMediaOutlined}
+                  icon={hasMedias ? PermMedia : PermMediaOutlined}
                 />
               </div>
               <div
