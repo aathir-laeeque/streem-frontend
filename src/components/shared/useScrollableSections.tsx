@@ -9,8 +9,14 @@ const LabelsWrapper = styled.div.attrs({
 })`
   display: flex;
   flex-direction: column;
-  padding: 16px;
   overflow: auto;
+  padding: 16px 6px;
+  @media (min-width: 768px) {
+    padding: 16px 8px;
+  }
+  @media (min-width: 1200px) {
+    padding: 16px;
+  }
 
   h1 {
     margin: 0 0 24px;
@@ -52,7 +58,13 @@ const ViewsWrapper = styled.div.attrs({
   flex-direction: column;
   overflow: auto;
   margin: 16px 0px;
-  padding: 0px 16px;
+  padding: 0px 6px;
+  @media (min-width: 768px) {
+    padding: 0px 8px;
+  }
+  @media (min-width: 1200px) {
+    padding: 0px 16px;
+  }
 
   h4 {
     padding: 16px;
@@ -66,7 +78,13 @@ const ViewsWrapper = styled.div.attrs({
 
   .view {
     background: #fff;
-    margin-bottom: 24px;
+    margin-bottom: 6px;
+    @media (min-width: 768px) {
+      margin-bottom: 8px;
+    }
+    @media (min-width: 1200px) {
+      margin-bottom: 24px;
+    }
 
     :last-child {
       margin-bottom: unset;
