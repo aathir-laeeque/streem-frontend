@@ -174,6 +174,7 @@ const JobHeader: FC<
                 id="task-error-correction"
                 anchorEl={anchorEl}
                 keepMounted
+                disableEnforceFocus
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
                 style={{ marginTop: 30 }}

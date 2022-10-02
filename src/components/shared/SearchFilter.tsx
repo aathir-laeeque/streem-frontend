@@ -129,6 +129,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
 
           <Menu
             keepMounted
+            disableEnforceFocus
             anchorEl={anchorEl}
             id="search-filter-dropdown"
             onClose={handleClose}

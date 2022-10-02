@@ -327,6 +327,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                 id="row-more-actions"
                 anchorEl={anchorEl}
                 keepMounted
+                disableEnforceFocus
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >

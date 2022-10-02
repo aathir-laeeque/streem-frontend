@@ -247,6 +247,7 @@ export const InfiniteListView: FC<ListViewProps> = ({
               id="filter-menu"
               anchorEl={anchorEl}
               keepMounted
+              disableEnforceFocus
               open={Boolean(anchorEl)}
               onClose={handleClose}
               style={{ marginTop: 40 }}

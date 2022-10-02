@@ -91,7 +91,6 @@ const SignatureModal: FC<CommonOverlayProps<SignatureModalProps>> = ({
         closeModal={closeOverlay}
         showHeader={false}
         showFooter={false}
-        isRound={false}
       >
         <div className="sign-modal-header">
           <div className="header">

@@ -44,7 +44,7 @@ const Header: FC = () => {
   return (
     <Wrapper>
       <ImageWrapper>
-        <Logo style={{ width: '100px', cursor: 'pointer' }} onClick={() => navigate('/')} />
+        <Logo style={{ width: '125px', cursor: 'pointer' }} onClick={() => navigate('/')} />
       </ImageWrapper>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         {selectedFacility ? (
@@ -75,6 +75,7 @@ const Header: FC = () => {
               id="top-menu"
               anchorEl={showUseCaseSelectionDropDown}
               keepMounted
+              disableEnforceFocus
               open={Boolean(showUseCaseSelectionDropDown)}
               onClose={() => setShowUseCaseSelectionDropDown(null)}
               style={{ marginTop: 30 }}
@@ -110,6 +111,7 @@ const Header: FC = () => {
               id="top-menu"
               anchorEl={showSettingsDropDown}
               keepMounted
+              disableEnforceFocus
               open={Boolean(showSettingsDropDown)}
               onClose={() => setSettingsDropDownVisibiltity(null)}
               style={{ marginTop: 30 }}
@@ -155,6 +157,7 @@ const Header: FC = () => {
           id="top-menu"
           anchorEl={showUsersDropdown}
           keepMounted
+          disableEnforceFocus
           open={Boolean(showUsersDropdown)}
           onClose={() => setShowUsersDropdown(null)}
           style={{ marginTop: 30 }}

@@ -356,6 +356,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
               id="row-more-actions"
               anchorEl={anchorEl}
               keepMounted
+              disableEnforceFocus
               open={Boolean(anchorEl)}
               onClose={handleClose}
               style={{ marginTop: 30 }}
@@ -383,6 +384,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
           id="row-more-actions"
           anchorEl={anchorEl}
           keepMounted
+          disableEnforceFocus
           open={Boolean(anchorEl)}
           onClose={handleClose}
           style={{ marginTop: 30 }}

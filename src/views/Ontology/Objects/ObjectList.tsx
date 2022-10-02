@@ -151,6 +151,7 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
               id="row-more-actions"
               anchorEl={anchorEl}
               keepMounted
+              disableEnforceFocus
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
