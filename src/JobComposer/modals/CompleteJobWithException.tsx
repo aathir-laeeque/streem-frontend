@@ -3,7 +3,7 @@ import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { FileUploadData } from '#utils/globalTypes';
 import {
   Add,
-  Delete,
+  DeleteOutlined,
   Error as ErrorIcon,
   RadioButtonChecked,
   RadioButtonUnchecked,
@@ -299,7 +299,7 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
               <li className="item" key={index}>
                 <div>{media.filename}</div>
                 <div className="remove">
-                  <Delete className="icon" />
+                  <DeleteOutlined className="icon" />
                   Delete
                 </div>
               </li>

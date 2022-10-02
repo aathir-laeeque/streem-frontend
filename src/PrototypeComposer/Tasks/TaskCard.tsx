@@ -7,18 +7,18 @@ import { useTypedSelector } from '#store/helpers';
 import { formatDuration } from '#utils/timeUtils';
 import {
   AddBox,
-  ArrowDownward,
-  ArrowUpward,
+  ArrowDropDown,
+  ArrowDropUp,
   Autorenew,
-  Delete,
+  DeleteOutlined,
   PanTool,
-  PermMedia,
+  PanToolOutlined,
+  PermMediaOutlined,
   Timer,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import Activity from '../Activity';
 import { addNewActivity } from '../Activity/actions';
 import { Checklist } from '../checklist.types';
@@ -119,7 +119,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
         />
         <div className="task-header">
           <div className="order-control">
-            <ArrowUpward
+            <ArrowDropUp
               className="icon"
               fontSize="small"
               onClick={(event) => {
@@ -136,7 +136,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
                 }
               }}
             />
-            <ArrowDownward
+            <ArrowDropDown
               className="icon"
               fontSize="small"
               onClick={(event) => {
@@ -159,7 +159,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
             Task {stageIndex + 1}.{index + 1}
           </div>
 
-          <Delete
+          <DeleteOutlined
             className="icon"
             id="task-delete"
             onClick={(event) => {
@@ -239,7 +239,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
                     console.error('error in fileUpload :: ', error);
                   }}
                   label="Attach Media"
-                  icon={PermMedia}
+                  icon={PermMediaOutlined}
                 />
               </div>
               <div
@@ -254,8 +254,15 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
                 }}
               >
                 <div>
-                  <PanTool className="icon" />
-                  {hasStop ? 'Stop Added' : 'Add Stop'}
+                  {hasStop ? (
+                    <>
+                      <PanTool className="icon" /> Stop Added
+                    </>
+                  ) : (
+                    <>
+                      <PanToolOutlined className="icon" /> Add Stop
+                    </>
+                  )}
                 </div>
               </div>
               <div
@@ -284,7 +291,6 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
           <div className="activity-list">
             {taskActivities?.map((activityId, index) => {
               const activity = listById[activityId];
-
               return (
                 <Activity activity={activity} key={`${activityId}-${index}`} taskId={taskId} />
               );

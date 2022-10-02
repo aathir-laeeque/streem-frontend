@@ -3,7 +3,7 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { EnabledStates, Media } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store/helpers';
-import { ArrowLeft, ArrowRight, PermMedia } from '@material-ui/icons';
+import { ArrowLeft, ArrowRight, PermMediaOutlined } from '@material-ui/icons';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -126,7 +126,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
                 console.log('handle image upload error :: ', error);
               }}
               label="Upload Media"
-              icon={PermMedia}
+              icon={PermMediaOutlined}
               disabled={data?.state && !(data.state in EnabledStates) && !data?.archived}
             />
           ) : null}

@@ -1,4 +1,9 @@
-import { FeaturedPlayList, LibraryAddCheck, Inbox } from '@material-ui/icons';
+import {
+  PeopleOutline,
+  DescriptionOutlined,
+  MailOutline,
+  AccountTreeOutlined,
+} from '@material-ui/icons';
 import { Link } from '@reach/router';
 import React, { FC } from 'react';
 import checkPermission from '#services/uiPermissions';
@@ -8,10 +13,10 @@ import { useTypedSelector } from '#store';
 import { ALL_FACILITY_ID } from '#utils/constants';
 
 export const navigationOptions = {
-  inbox: { name: 'Inbox', icon: Inbox },
-  jobs: { name: 'Jobs', icon: FeaturedPlayList },
-  checklists: { name: 'Checklists', icon: LibraryAddCheck },
-  ontology: { name: 'Ontology', icon: FeaturedPlayList },
+  inbox: { name: 'Inbox', icon: MailOutline },
+  jobs: { name: 'Jobs', icon: PeopleOutline },
+  checklists: { name: 'Processes', icon: DescriptionOutlined },
+  ontology: { name: 'Ontology', icon: AccountTreeOutlined },
 };
 
 const NavigationMenu: FC = () => {
@@ -37,7 +42,7 @@ const NavigationMenu: FC = () => {
 
               return {
                 style: {
-                  color: isActive ? '#ffffff' : '#808080',
+                  color: isActive ? '#ffffff' : '#161616',
                   backgroundColor: isActive ? '#1d84ff' : 'transparent',
                   textDecoration: 'none',
                 },

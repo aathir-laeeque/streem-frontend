@@ -1,7 +1,7 @@
 import { BaseModal } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
-import { PanTool } from '@material-ui/icons';
+import { PanToolOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -74,7 +74,7 @@ const TaskStopModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, closeOve
       >
         <div className="task-stop">
           <div className="header">
-            <PanTool className="icon" />
+            <PanToolOutlined className="icon" />
             Stop
           </div>
           <div className="body">

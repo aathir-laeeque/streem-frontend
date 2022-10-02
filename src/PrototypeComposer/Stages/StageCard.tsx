@@ -4,10 +4,10 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { useTypedSelector } from '#store/helpers';
 import {
-  ArrowDownward,
-  ArrowUpward,
+  ArrowDropDown,
+  ArrowDropUp,
   AssignmentTurnedIn,
-  Delete,
+  DeleteOutlined,
   Error,
   Error as ErrorIcon,
   PanTool,
@@ -23,13 +23,13 @@ import { StageCardProps } from './types';
 const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
   const { index, isActive, isFirstItem, isLastItem, stage } = props;
 
-  const { tasksInStage, data, activitisInStage, userId } = useTypedSelector((state) => ({
+  const { tasksInStage, data, activitiesInStage, userId } = useTypedSelector((state) => ({
     tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[stage.id].map(
       (taskId) => state.prototypeComposer.tasks.listById[taskId],
     ),
     data: state.prototypeComposer.data,
     userId: state.auth.userId,
-    activitisInStage: Object.keys(
+    activitiesInStage: Object.keys(
       state.prototypeComposer.activities.activityOrderInTaskInStage[stage.id] ?? {},
     )
       .map(
@@ -54,7 +54,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
 
   const approvalNeeded = false;
 
-  const anyActivityHasError = activitisInStage.some((activity) => !!activity.errors?.length);
+  const anyActivityHasError = activitiesInStage.some((activity) => !!activity.errors?.length);
 
   const { stageHasStop, anyTaskHasError } = tasksInStage.reduce(
     ({ stageHasStop, anyTaskHasError }, task) => {
@@ -98,7 +98,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
       />
       <div className="stage-header">
         <div className="order-control">
-          <ArrowUpward
+          <ArrowDropUp
             className="icon"
             fontSize="small"
             onClick={(event) => {
@@ -108,7 +108,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
               }
             }}
           />
-          <ArrowDownward
+          <ArrowDropDown
             className="icon"
             fontSize="small"
             onClick={(event) => {
@@ -122,7 +122,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
 
         <div className="stage-name">Stage {index + 1}</div>
 
-        <Delete
+        <DeleteOutlined
           className="icon"
           id="stage-delete"
           onClick={(event) => {

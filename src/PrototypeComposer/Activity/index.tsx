@@ -2,7 +2,7 @@ import { ToggleSwitch } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
-import { Delete } from '@material-ui/icons';
+import { DeleteOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { MandatoryActivity, NonMandatoryActivity } from '../checklist.types';
@@ -45,7 +45,7 @@ const Activity: FC<ActivityProps> = ({ activity, taskId }) => {
 
   return (
     <ActivityWrapper>
-      <Delete
+      <DeleteOutlined
         className="icon"
         id="delete"
         fontSize="small"

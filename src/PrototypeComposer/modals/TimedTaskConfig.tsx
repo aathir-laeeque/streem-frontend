@@ -3,7 +3,7 @@ import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { Task, TimerOperator } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
-import { ArrowDropDown, ArrowDropUp, Delete, Error as ErrorIcon } from '@material-ui/icons';
+import { ArrowDropDown, ArrowDropUp, DeleteOutlined, Error as ErrorIcon } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useEffect, useReducer, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -304,7 +304,7 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
       >
         <div className="header">Time your Task</div>
         <div className="body">
-          <Delete
+          <DeleteOutlined
             className="icon"
             fontSize="small"
             onClick={() => dispatch(removeTaskTimer(taskId))}
