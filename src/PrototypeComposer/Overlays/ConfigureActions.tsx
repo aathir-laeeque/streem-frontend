@@ -89,7 +89,6 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
   useEffect(() => {
     if (task.automations.length) {
       fetchActivities();
-      fetchObjectType(task.automations[0].actionDetails.objectTypeId);
     }
   }, []);
 
@@ -141,6 +140,17 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
         request('GET', apiGetResourceActivitiesByType(checklistId, 'RESOURCE')),
         request('GET', apiGetResourceActivitiesByType(checklistId, 'NUMBER')),
       ]);
+      if (
+        task.automations.length &&
+        task.automations[0].actionType !== AutomationActionActionType.CREATE_OBJECT
+      ) {
+        const _selectedResource = resources.data.find(
+          (r: any) => r.id === task.automations[0]?.actionDetails?.referencedActivityId,
+        );
+        if (_selectedResource) {
+          fetchObjectType(_selectedResource.data.objectTypeId);
+        }
+      }
       setResourceActivities(resources.data);
       setNumberActivities(numbers.data);
       setIsLoadingActivities(false);
@@ -180,10 +190,7 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
               'propertyInputType',
               'propertyExternalId',
               'propertyDisplayName',
-              'objectTypeId',
-              'objectTypeExternalId',
               'referencedActivityId',
-              'objectTypeDisplayName',
             ].every((key) => !!v?.[key]);
           }
           return true;
@@ -319,9 +326,6 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                   setValue(
                                     'actionDetails',
                                     {
-                                      objectTypeId: _option.objectTypeId,
-                                      objectTypeExternalId: _option.objectTypeExternalId,
-                                      objectTypeDisplayName: _option.objectTypeDisplayName,
                                       referencedActivityId: _option.value,
                                       activityId: actionDetails?.activityId,
                                     },
