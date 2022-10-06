@@ -18,7 +18,7 @@ function* fetchSaga({ payload }: ReturnType<typeof fetch>) {
     const { data, pageable, errors } = yield call(
       request,
       'GET',
-      apiGetUsers(type.toUpperCase() in OtherUserState ? type : ''),
+      apiGetUsers(type.toUpperCase() in OtherUserState ? type.replaceAll('_', '/') : ''),
       { params },
     );
 

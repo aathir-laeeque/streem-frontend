@@ -15,6 +15,7 @@ import {
 } from '#PrototypeComposer/reviewer.types';
 import checkPermission, { RoleIdByName } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
+import { ALL_FACILITY_ID } from '#utils/constants';
 import { Error } from '#utils/globalTypes';
 import { archiveChecklist, unarchiveChecklist } from '#views/Checklists/ListView/actions';
 import { FormMode } from '#views/Checklists/NewPrototype/types';
@@ -72,12 +73,20 @@ const ChecklistHeader: FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [state, setState] = useState(initialState);
 
-  const { activeStageId, data, userId, listOrder, profile } = useTypedSelector((state) => ({
+  const {
+    activeStageId,
+    data,
+    userId,
+    listOrder,
+    profile,
+    selectedFacility: { id: facilityId = '' } = {},
+  } = useTypedSelector((state) => ({
     userId: state.auth.userId,
     data: state.prototypeComposer.data as Checklist,
     activeStageId: state.prototypeComposer.stages.activeStageId,
     listOrder: state.prototypeComposer.stages.listOrder,
     profile: state.auth.profile,
+    selectedFacility: state.auth.selectedFacility,
   }));
 
   useEffect(() => {
@@ -558,6 +567,17 @@ const ChecklistHeader: FC = () => {
     }
   };
 
+  const checkReleasePermission = () => {
+    if (data?.state === ChecklistStates.READY_FOR_RELEASE) {
+      if (facilityId === ALL_FACILITY_ID) {
+        return checkPermission(['checklists', 'releaseGlobal']);
+      } else {
+        return checkPermission(['checklists', 'release']);
+      }
+    }
+    return false;
+  };
+
   return (
     <HeaderWrapper>
       <div className="before-header">
@@ -607,24 +627,23 @@ const ChecklistHeader: FC = () => {
               data?.state !== ChecklistStates.PUBLISHED &&
               approver?.state !== CollaboratorState.SIGNED && <SignOffButton />}
             {data?.state === ChecklistStates.PUBLISHED && null}
-            {data?.state === ChecklistStates.READY_FOR_RELEASE &&
-              checkPermission(['checklists', 'release']) && (
-                <Button1
-                  className="submit"
-                  onClick={() =>
-                    dispatch(
-                      openOverlayAction({
-                        type: OverlayNames.PASSWORD_INPUT,
-                        props: {
-                          isReleasing: true,
-                        },
-                      }),
-                    )
-                  }
-                >
-                  Release Prototype
-                </Button1>
-              )}
+            {checkReleasePermission() && (
+              <Button1
+                className="submit"
+                onClick={() =>
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.PASSWORD_INPUT,
+                      props: {
+                        isReleasing: true,
+                      },
+                    }),
+                  )
+                }
+              >
+                Release Prototype
+              </Button1>
+            )}
             <MoreButton />
           </div>
         </div>

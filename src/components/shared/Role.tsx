@@ -308,6 +308,7 @@ export const Role: FC<RoleProps> = ({ label, selected, disabled = false, id, err
                     display: 'grid',
                     gridTemplateColumns: 'auto auto auto',
                     columnGap: '8px',
+                    gridRowGap: '16px',
                   }}
                 >
                   {Object.entries(rolesDetails[selected].permissions).map(

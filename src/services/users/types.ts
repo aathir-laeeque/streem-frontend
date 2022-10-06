@@ -23,6 +23,8 @@ export enum OtherUserState {
   TASKS = 'tasks',
   REVIEWERS = 'reviewers',
   AUTHORS = 'authors',
+  AUTHORS_GLOBAL = 'authors_global',
+  REVIEWERS_GLOBAL = 'reviewers_global',
 }
 
 export interface User {
@@ -63,6 +65,8 @@ export type UsersState = {
   readonly [OtherUserState.TASKS]: UserGroup;
   readonly [OtherUserState.REVIEWERS]: UserGroup;
   readonly [OtherUserState.AUTHORS]: UserGroup;
+  readonly [OtherUserState.AUTHORS_GLOBAL]: UserGroup;
+  readonly [OtherUserState.REVIEWERS_GLOBAL]: UserGroup;
 };
 
 export enum UsersAction {

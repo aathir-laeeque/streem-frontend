@@ -299,3 +299,6 @@ export const apiAuthExtras = () => `${baseUrl}/auth/extras`;
 export const searchDirectoryUsers = () => `${baseUrl}/users/directory/users`;
 
 export const apiGetAutomations = () => `${baseUrl}/automation/planner`;
+
+export const apiProcessSharing = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/facility/share`;

@@ -8,6 +8,7 @@ import {
 } from '#PrototypeComposer/reviewer.types';
 import { defaultParams, OtherUserState, useUsers } from '#services/users';
 import { useTypedSelector } from '#store';
+import { ALL_FACILITY_ID } from '#utils/constants';
 import { FilterOperators } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
@@ -15,7 +16,6 @@ import { Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import {
   assignReviewersToChecklist,
   assignReviewerToChecklist,
@@ -48,13 +48,15 @@ const ReviewerAssignmentModal: FC<
   const {
     data: { collaborators, state: checklistState },
     assignees,
+    selectedFacility: { id: facilityId = '' } = {},
   } = useTypedSelector((state) => ({
     assignees: state.prototypeComposer.collaborators,
     data: state.prototypeComposer.data as Checklist,
+    selectedFacility: state.auth.selectedFacility,
   }));
 
   const dispatch = useDispatch();
-  const [state, setstate] = useState(initialState);
+  const [state, setState] = useState(initialState);
   const { assignedUsers, unassignedUsers, searchQuery, preAssignedUsers } = state;
   const prevSearch = usePrevious(searchQuery);
   const prevAssignees = usePrevious(assignees);
@@ -64,7 +66,8 @@ const ReviewerAssignmentModal: FC<
     loadMore,
     loadAgain,
   } = useUsers({
-    userState: OtherUserState.REVIEWERS,
+    userState:
+      facilityId === ALL_FACILITY_ID ? OtherUserState.REVIEWERS_GLOBAL : OtherUserState.REVIEWERS,
     params: { ...defaultParams(false) },
   });
 
@@ -82,7 +85,7 @@ const ReviewerAssignmentModal: FC<
       assignedUsers.length === 0 &&
       unassignedUsers.length === 0
     ) {
-      setstate({ ...state, preAssignedUsers: assignees });
+      setState({ ...state, preAssignedUsers: assignees });
     }
   }, [assignees]);
 
@@ -115,14 +118,14 @@ const ReviewerAssignmentModal: FC<
   const onCheckChanged = (user: Collaborator, checked: boolean, isPreAssigned: boolean) => {
     if (checked) {
       if (isPreAssigned) {
-        setstate({
+        setState({
           ...state,
           unassignedUsers: [...unassignedUsers, user.id],
           assignedUsers: assignedUsers.filter((i) => i !== user.id),
         });
         dispatch(unAssignReviewerFromChecklist(user));
       } else {
-        setstate({
+        setState({
           ...state,
           assignedUsers: assignedUsers.filter((i) => i !== user.id),
         });
@@ -130,12 +133,12 @@ const ReviewerAssignmentModal: FC<
       }
     } else {
       if (isPreAssigned) {
-        setstate({
+        setState({
           ...state,
           unassignedUsers: unassignedUsers.filter((i) => i !== user.id),
         });
       } else {
-        setstate({
+        setState({
           ...state,
           assignedUsers: [...assignedUsers, user.id],
           unassignedUsers: unassignedUsers.filter((i) => i !== user.id),
@@ -249,7 +252,7 @@ const ReviewerAssignmentModal: FC<
             <input
               className="searchbox"
               type="text"
-              onChange={debounce((e) => setstate({ ...state, searchQuery: e.target.value }), 500)}
+              onChange={debounce((e) => setState({ ...state, searchQuery: e.target.value }), 500)}
               placeholder="Search with First Name"
             />
           </div>

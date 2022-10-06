@@ -207,6 +207,7 @@ export type Checklist = {
   noOfJobs?: number;
   noOfTasks?: number;
   version: number | null;
+  global: boolean;
 };
 
 export enum LogType {

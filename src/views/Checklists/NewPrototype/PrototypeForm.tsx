@@ -3,6 +3,7 @@ import { Option } from '#components/shared/Select';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
 import { useTypedSelector } from '#store/helpers';
+import { ALL_FACILITY_ID } from '#utils/constants';
 import { Error } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
 import { Close, Error as ErrorIcon } from '@material-ui/icons';
@@ -53,9 +54,13 @@ const PrototypeForm: FC<Props> = (props) => {
   const { formMode, formData } = props;
   const dispatch = useDispatch();
   const { listById } = useTypedSelector((state) => state.properties[ComposerEntity.CHECKLIST]);
+  const { selectedFacility: { id: facilityId = '' } = {} } = useTypedSelector(
+    (state) => state.auth,
+  );
 
   const { users, usersById, loadMore } = useUsers({
-    userState: OtherUserState.AUTHORS,
+    userState:
+      facilityId === ALL_FACILITY_ID ? OtherUserState.AUTHORS_GLOBAL : OtherUserState.AUTHORS,
     params: { ...defaultParams(false) },
   });
 

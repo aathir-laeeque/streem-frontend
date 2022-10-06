@@ -4,25 +4,26 @@ import React, { FC } from 'react';
 import checkPermission from '#services/uiPermissions';
 import { Menu, Wrapper, NavItem } from './styles';
 import { MenuItem } from './types';
+import { useTypedSelector } from '#store';
+import { ALL_FACILITY_ID } from '#utils/constants';
+
+export const navigationOptions = {
+  inbox: { name: 'Inbox', icon: Inbox },
+  jobs: { name: 'Jobs', icon: FeaturedPlayList },
+  checklists: { name: 'Checklists', icon: LibraryAddCheck },
+  ontology: { name: 'Ontology', icon: FeaturedPlayList },
+};
 
 const NavigationMenu: FC = () => {
+  const { selectedFacility: { id: facilityId = '' } = {} } = useTypedSelector(
+    (state) => state.auth,
+  );
   const menuItems: MenuItem[] = [];
-  if (checkPermission(['sidebar', 'inbox']))
-    menuItems.push({ name: 'Inbox', icon: Inbox, path: '/inbox' });
-  if (checkPermission(['sidebar', 'jobs']))
-    menuItems.push({ name: 'Jobs', icon: FeaturedPlayList, path: '/jobs' });
-  if (checkPermission(['sidebar', 'checklists']))
-    menuItems.push({
-      name: 'Checklists',
-      icon: LibraryAddCheck,
-      path: '/checklists',
-    });
-  if (checkPermission(['sidebar', 'ontology']))
-    menuItems.push({
-      name: 'Ontology',
-      icon: FeaturedPlayList,
-      path: '/ontology',
-    });
+  Object.entries(navigationOptions).forEach(([key, value]) => {
+    if (checkPermission([facilityId === ALL_FACILITY_ID ? 'globalSidebar' : 'sidebar', key])) {
+      menuItems.push({ ...value, path: `/${key}` });
+    }
+  });
 
   return (
     <Wrapper>

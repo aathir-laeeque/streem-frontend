@@ -148,9 +148,11 @@ export const createSectionConfig = ({
   const [disabledKeys, setDisabledKeys] = useState<Record<string, boolean>>({});
   const { register, errors, getValues, setValue } = formData;
   const { roles: rolesValues, userType } = getValues(['roles', 'userType']);
-  const shouldShowAllFacilities = [RoleIdByName.ACCOUNT_OWNER, RoleIdByName.SYSTEM_ADMIN].includes(
-    rolesValues as RoleIdByName,
-  );
+  const shouldShowAllFacilities = [
+    RoleIdByName.ACCOUNT_OWNER,
+    RoleIdByName.SYSTEM_ADMIN,
+    RoleIdByName.GLOBAL_ADMIN,
+  ].includes(rolesValues as RoleIdByName);
 
   const fetchUsers = async (query?: string) => {
     const response = await request('GET', searchDirectoryUsers(), {
@@ -437,9 +439,11 @@ export const createSectionConfig = ({
                   error: errors['roles']?.message,
                   onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
                     if (
-                      [RoleIdByName.ACCOUNT_OWNER, RoleIdByName.SYSTEM_ADMIN].includes(
-                        e.target.value as RoleIdByName,
-                      )
+                      [
+                        RoleIdByName.ACCOUNT_OWNER,
+                        RoleIdByName.SYSTEM_ADMIN,
+                        RoleIdByName.GLOBAL_ADMIN,
+                      ].includes(e.target.value as RoleIdByName)
                     ) {
                       setValue('facilities', [{ id: ALL_FACILITY_ID }], {
                         shouldDirty: true,

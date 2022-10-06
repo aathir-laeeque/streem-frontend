@@ -34,6 +34,8 @@ const initalState: UsersState = {
   [OtherUserState.TASKS]: initialUserGroup,
   [OtherUserState.REVIEWERS]: initialUserGroup,
   [OtherUserState.AUTHORS]: initialUserGroup,
+  [OtherUserState.AUTHORS_GLOBAL]: initialUserGroup,
+  [OtherUserState.REVIEWERS_GLOBAL]: initialUserGroup,
 };
 
 const reducer: Reducer<UsersState, UsersActionType> = (state = initalState, action) => {

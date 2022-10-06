@@ -55,6 +55,7 @@ import ConfigureColumnsModal from './ConfigureColumns';
 import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
 import ConfigureActions from '#PrototypeComposer/Overlays/ConfigureActions';
+import ProcessSharing from '#views/Checklists/Overlays/ProcessSharing';
 import { CommonOverlayProps, OverlayNames } from './types';
 
 const Wrapper = styled.div``;
@@ -220,6 +221,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.CONFIGURE_ACTIONS:
       return <ConfigureActions {...params} />;
+
+    case OverlayNames.PROCESS_SHARING:
+      return <ProcessSharing {...params} />;
 
     default:
       return null;

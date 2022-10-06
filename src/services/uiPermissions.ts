@@ -8,6 +8,7 @@ export enum roles {
   SUPERVISOR = 'SUPERVISOR',
   OPERATOR = 'OPERATOR',
   CHECKLIST_PUBLISHER = 'CHECKLIST_PUBLISHER',
+  GLOBAL_ADMIN = 'GLOBAL_ADMIN',
 }
 
 export enum RoleIdByName {
@@ -17,9 +18,16 @@ export enum RoleIdByName {
   SUPERVISOR = '4',
   OPERATOR = '5',
   CHECKLIST_PUBLISHER = '6',
+  GLOBAL_ADMIN = '7',
 }
 
 const uiPermissions: Record<string, any> = {
+  globalSidebar: {
+    inbox: [roles.ACCOUNT_OWNER],
+    jobs: [roles.ACCOUNT_OWNER],
+    checklists: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
+    ontology: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
+  },
   sidebar: {
     inbox: [
       roles.ACCOUNT_OWNER,
@@ -28,13 +36,12 @@ const uiPermissions: Record<string, any> = {
       roles.SUPERVISOR,
       roles.OPERATOR,
     ],
-    jobs: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER, roles.SUPERVISOR],
-    ontology: [
+    jobs: [
       roles.ACCOUNT_OWNER,
       roles.FACILITY_ADMIN,
       roles.CHECKLIST_PUBLISHER,
       roles.SUPERVISOR,
-      roles.OPERATOR,
+      roles.GLOBAL_ADMIN,
     ],
     checklists: [
       roles.ACCOUNT_OWNER,
@@ -42,6 +49,15 @@ const uiPermissions: Record<string, any> = {
       roles.CHECKLIST_PUBLISHER,
       roles.SUPERVISOR,
       roles.OPERATOR,
+      roles.GLOBAL_ADMIN,
+    ],
+    ontology: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+      roles.OPERATOR,
+      roles.GLOBAL_ADMIN,
     ],
   },
   header: {
@@ -50,6 +66,7 @@ const uiPermissions: Record<string, any> = {
       roles.SYSTEM_ADMIN,
       roles.FACILITY_ADMIN,
       roles.CHECKLIST_PUBLISHER,
+      roles.GLOBAL_ADMIN,
     ],
   },
   usersAndAccess: {
@@ -58,12 +75,14 @@ const uiPermissions: Record<string, any> = {
       roles.SYSTEM_ADMIN,
       roles.FACILITY_ADMIN,
       roles.CHECKLIST_PUBLISHER,
+      roles.GLOBAL_ADMIN,
     ],
     archivedUsers: [
       roles.ACCOUNT_OWNER,
       roles.SYSTEM_ADMIN,
       roles.FACILITY_ADMIN,
       roles.CHECKLIST_PUBLISHER,
+      roles.GLOBAL_ADMIN,
     ],
     addNewUser: [roles.ACCOUNT_OWNER, roles.SYSTEM_ADMIN],
     listViewActions: [roles.ACCOUNT_OWNER, roles.SYSTEM_ADMIN],
@@ -79,13 +98,16 @@ const uiPermissions: Record<string, any> = {
       roles.SYSTEM_ADMIN,
       roles.FACILITY_ADMIN,
       roles.CHECKLIST_PUBLISHER,
+      roles.GLOBAL_ADMIN,
     ],
   },
   checklists: {
     create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+    createGlobal: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
     revision: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
     archive: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
     release: [roles.ACCOUNT_OWNER, roles.CHECKLIST_PUBLISHER],
+    releaseGlobal: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
     createJob: [
       roles.ACCOUNT_OWNER,
       roles.FACILITY_ADMIN,
@@ -97,6 +119,7 @@ const uiPermissions: Record<string, any> = {
       roles.FACILITY_ADMIN,
       roles.CHECKLIST_PUBLISHER,
       roles.SUPERVISOR,
+      roles.GLOBAL_ADMIN,
     ],
   },
   trainedUsers: {
@@ -116,6 +139,7 @@ const uiPermissions: Record<string, any> = {
     roles.CHECKLIST_PUBLISHER,
     roles.SUPERVISOR,
     roles.OPERATOR,
+    roles.GLOBAL_ADMIN,
   ],
   ontology: {
     create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],

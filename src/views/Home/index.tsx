@@ -1,7 +1,10 @@
 import { UseCaseLockIcon } from '#assets/svg/UseCaseLockIcon';
 import { Header } from '#components';
 import { DashboardLayout } from '#components/Layouts';
+import { navigationOptions } from '#components/NavigationMenu';
+import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
+import { ALL_FACILITY_ID } from '#utils/constants';
 import { fetchUseCaseList, setSelectedUseCase } from '#views/Auth/actions';
 import { CircularProgress } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
@@ -12,9 +15,13 @@ import { UseCaseCard, Wrapper } from './styles';
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { firstName, lastName, fetchingUseCaseList, useCastList } = useTypedSelector(
-    (state) => state.auth,
-  );
+  const {
+    firstName,
+    lastName,
+    fetchingUseCaseList,
+    useCastList,
+    selectedFacility: { id: facilityId = '' } = {},
+  } = useTypedSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(fetchUseCaseList());
@@ -61,7 +68,20 @@ const Home = () => {
                     onClick={() => {
                       if (useCaseDetails.enabled) {
                         dispatch(setSelectedUseCase(useCaseDetails));
-                        navigate('/inbox');
+                        let navigateTo = 'inbox';
+                        Object.keys(navigationOptions).every((key) => {
+                          if (
+                            checkPermission([
+                              facilityId === ALL_FACILITY_ID ? 'globalSidebar' : 'sidebar',
+                              key,
+                            ])
+                          ) {
+                            navigateTo = key;
+                            return false;
+                          }
+                          return true;
+                        });
+                        navigate(`/${navigateTo}`);
                       }
                     }}
                   >

@@ -19,11 +19,12 @@ import { ALL_FACILITY_ID } from '#utils/constants';
 import { Error, FilterField, FilterOperators } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/ListView/actions';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { CircularProgress, Menu, MenuItem } from '@material-ui/core';
+import { Chip, CircularProgress, Menu, MenuItem } from '@material-ui/core';
 import { ArrowDropDown, ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 import { addRevisionPrototype } from '../NewPrototype/actions';
 import { FormMode } from '../NewPrototype/types';
 import {
@@ -55,6 +56,15 @@ const getBaseFilter = (label: string): FilterField[] => [
     : []),
 ];
 
+const TypeChip = styled(Chip)<{ fontColor: string; backGroundColor: string }>`
+  height: 24px !important;
+  background-color: ${({ backGroundColor }) => backGroundColor} !important;
+  color: ${({ fontColor }) => fontColor} !important;
+  line-height: 1.33;
+  letter-spacing: 0.32px;
+  font-size: 12px !important;
+`;
+
 const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo, label }) => {
   const componentDidMount = useRef(false);
   const {
@@ -78,7 +88,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
 
   const handleClose = () => {
     setAnchorEl(null);
-    setSelectedChecklist(null);
+    setTimeout(() => setSelectedChecklist(null), 200);
   };
 
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(null);
@@ -107,6 +117,15 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
               op: FilterOperators.EQ,
               values: [selectedUseCase?.id],
             },
+            ...(facilityId === ALL_FACILITY_ID
+              ? [
+                  {
+                    field: 'isGlobal',
+                    op: FilterOperators.EQ,
+                    values: [true],
+                  },
+                ]
+              : []),
           ],
         }),
       }),
@@ -194,6 +213,22 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
     );
   };
 
+  const checkArchiveAndRevisionPermission = (action: 'archive' | 'revision') => {
+    if (selectedChecklist?.global) {
+      if (facilityId === ALL_FACILITY_ID) return true;
+    } else if (checkPermission(['checklists', action])) {
+      return true;
+    }
+    return false;
+  };
+
+  const checkStartPrototypePermission = () => {
+    if (facilityId === ALL_FACILITY_ID) {
+      return checkPermission(['checklists', 'createGlobal']);
+    }
+    return checkPermission(['checklists', 'create']);
+  };
+
   const columns = [
     ...(label === 'prototype'
       ? [
@@ -225,6 +260,23 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
         return (
           <span className="primary" onClick={() => selectChecklist(item.id)} title={item.name}>
             {item.name}
+          </span>
+        );
+      },
+    },
+    {
+      id: 'isGlobal',
+      label: 'Local/Global',
+      minWidth: 100,
+      format: function renderComp(item: Checklist) {
+        const tagTitle = item?.global ? 'Global' : 'Local';
+        return (
+          <span title={tagTitle}>
+            <TypeChip
+              label={tagTitle}
+              backGroundColor={item?.global ? '#d0e2ff' : '#a7f0ba'}
+              fontColor={item?.global ? '#0043ce' : '#0e6027'}
+            />
           </span>
         );
       },
@@ -322,7 +374,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     </div>
                   </MenuItem>
                 )}
-                {!item.archived && checkPermission(['checklists', 'revision']) && (
+                {!item.archived && checkArchiveAndRevisionPermission('revision') && (
                   <MenuItem
                     onClick={() => {
                       handleClose();
@@ -362,7 +414,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     </div>
                   </MenuItem>
                 )}
-                {checkPermission(['checklists', 'archive']) && (
+                {checkArchiveAndRevisionPermission('archive') && (
                   <MenuItem
                     onClick={() => {
                       handleClose();
@@ -409,28 +461,51 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     </div>
                   </MenuItem>
                 )}
-                <MenuItem
-                  onClick={() => navigate(`/checklists/${selectedChecklist?.id}/assignment`)}
-                >
-                  <div className="list-item">
-                    <MemoViewInfo />
-                    <span>Trained Users</span>
-                  </div>
-                </MenuItem>
-                <MenuItem onClick={() => navigate(`/checklists/${selectedChecklist?.id}/logs`)}>
-                  <div className="list-item">
-                    <MemoViewInfo />
-                    <span>View Job Logs</span>
-                  </div>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => navigate(`/checklists/${selectedChecklist?.id}/automation`)}
-                >
-                  <div className="list-item">
-                    <MemoViewInfo />
-                    <span>Automations</span>
-                  </div>
-                </MenuItem>
+                {facilityId !== ALL_FACILITY_ID ? (
+                  <>
+                    <MenuItem onClick={() => navigate(`/checklists/${selectedChecklist?.id}/logs`)}>
+                      <div className="list-item">
+                        <MemoViewInfo />
+                        <span>View Job Logs</span>
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => navigate(`/checklists/${selectedChecklist?.id}/assignment`)}
+                    >
+                      <div className="list-item">
+                        <MemoViewInfo />
+                        <span>Trained Users</span>
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => navigate(`/checklists/${selectedChecklist?.id}/automation`)}
+                    >
+                      <div className="list-item">
+                        <MemoViewInfo />
+                        <span>Automations</span>
+                      </div>
+                    </MenuItem>
+                  </>
+                ) : (
+                  !item.archived && (
+                    <MenuItem
+                      onClick={() => {
+                        handleClose();
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.PROCESS_SHARING,
+                            props: { checklistId: selectedChecklist?.id },
+                          }),
+                        );
+                      }}
+                    >
+                      <div className="list-item">
+                        <MemoViewInfo />
+                        <span>Sharing</span>
+                      </div>
+                    </MenuItem>
+                  )
+                )}
               </Menu>
             </>
           );
@@ -649,27 +724,13 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
           uncheckedIcon={false}
         />
 
-        {checkPermission(['checklists', 'create']) && (
+        {checkStartPrototypePermission() && (
           <Button1
             id="create"
             onClick={() => {
-              if (
-                userRoles?.some((role) => role === roles.ACCOUNT_OWNER) &&
-                facilityId === ALL_FACILITY_ID
-              ) {
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.ENTITY_START_ERROR_MODAL,
-                    props: {
-                      entity: ComposerEntity.CHECKLIST,
-                    },
-                  }),
-                );
-              } else {
-                navigate('/checklists/prototype', {
-                  state: { mode: FormMode.ADD },
-                });
-              }
+              navigate('/checklists/prototype', {
+                state: { mode: FormMode.ADD },
+              });
             }}
           >
             Start a Prototype
