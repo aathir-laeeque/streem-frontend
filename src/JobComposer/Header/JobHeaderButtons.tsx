@@ -34,7 +34,8 @@ const JobHeaderButtons: FC<{
   const showBulkAssignButton =
     jobState !== JobStateEnum.COMPLETED &&
     jobState !== JobStateEnum.COMPLETED_WITH_EXCEPTION &&
-    !isInboxView;
+    !isInboxView &&
+    checkPermission(['checklists', 'createJob']);
 
   if (!jobId) return null;
 

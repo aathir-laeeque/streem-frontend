@@ -10,7 +10,7 @@ import {
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { ComposerEntity } from '#PrototypeComposer/types';
-import { roles } from '#services/uiPermissions';
+import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
 import { User } from '#store/users/types';
 import { ALL_FACILITY_ID } from '#utils/constants';
@@ -359,7 +359,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
           />
         )}
 
-        {values[0] in UnassignedJobStates && (
+        {values[0] in UnassignedJobStates && checkPermission(['checklists', 'createJob']) && (
           <Button1
             id="create"
             onClick={() => {
