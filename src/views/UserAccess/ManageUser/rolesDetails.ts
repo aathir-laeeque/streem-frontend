@@ -121,6 +121,9 @@ export const rolesDetails = {
   [RoleIdByName.OPERATOR]: {
     name: 'Operator',
     permissions: {
+      [PermissionCategories.CHECKLIST_FEATURES]: [
+        ChecklistFeatures.VIEW_EXISTING_UNIT_LEVEL_CHECKLISTS,
+      ],
       [PermissionCategories.JOB_FEATURES]: [
         JobFeatures.EXECUTE_AND_COMPLETE_JOBS,
         JobFeatures.PRINT_JOBS,
