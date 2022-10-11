@@ -171,7 +171,7 @@ const PrototypeForm: FC<Props> = (props) => {
     return filteredUsers;
   };
 
-  if (!users.length || !Object.values(listById).length) {
+  if (!users.length) {
     return null;
   }
 
