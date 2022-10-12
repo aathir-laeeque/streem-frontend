@@ -501,7 +501,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     >
                       <div className="list-item">
                         <MemoViewInfo />
-                        <span>Sharing</span>
+                        <span>Sharing with Units</span>
                       </div>
                     </MenuItem>
                   )
