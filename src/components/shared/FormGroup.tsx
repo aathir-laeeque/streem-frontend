@@ -293,6 +293,9 @@ export const FormGroup = ({ inputs, ...rest }: FormGroupProps) => {
                     ),
                   }),
                 })}
+                {...(type === InputTypes.NUMBER && {
+                  step: 'any',
+                })}
               />
             );
           case InputTypes.MULTI_LINE:
