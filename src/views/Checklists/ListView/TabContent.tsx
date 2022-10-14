@@ -117,11 +117,23 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
               op: FilterOperators.EQ,
               values: [selectedUseCase?.id],
             },
-            {
-              field: 'isGlobal',
-              op: FilterOperators.EQ,
-              values: [facilityId === ALL_FACILITY_ID],
-            },
+            ...(facilityId === ALL_FACILITY_ID
+              ? [
+                  {
+                    field: 'isGlobal',
+                    op: FilterOperators.EQ,
+                    values: [true],
+                  },
+                ]
+              : label === 'prototype'
+              ? [
+                  {
+                    field: 'isGlobal',
+                    op: FilterOperators.EQ,
+                    values: [false],
+                  },
+                ]
+              : []),
           ],
         }),
       }),
