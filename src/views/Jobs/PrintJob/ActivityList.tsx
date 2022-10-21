@@ -311,6 +311,7 @@ const activityTemplateFormatter = (
       }
       return (
         <View style={styles.activityView} wrap={false}>
+          <Text style={styles.text12}>{activity.label}</Text>
           <Text style={styles.text12}>Write Your Comments</Text>
           <View style={styles.comments}>
             {activity.response?.value ? (
