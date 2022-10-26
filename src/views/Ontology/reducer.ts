@@ -42,9 +42,7 @@ const reducer = (state = initialState, action: OntologyActionType): OntologyStat
       return updateKey('objectTypes', {
         listLoading: false,
         list: action.payload.data,
-        ...(action.payload?.pageable && {
-          pageable: action.payload.pageable,
-        }),
+        pageable: action.payload.pageable,
       });
 
     case OntologyAction.FETCH_OBJECT_TYPE_SUCCESS:
@@ -57,9 +55,7 @@ const reducer = (state = initialState, action: OntologyActionType): OntologyStat
       return updateKey('objects', {
         listLoading: false,
         list: action.payload.data,
-        ...(action.payload?.pageable && {
-          pageable: action.payload.pageable,
-        }),
+        pageable: action.payload.pageable,
       });
 
     case OntologyAction.FETCH_OBJECTS_ERROR:

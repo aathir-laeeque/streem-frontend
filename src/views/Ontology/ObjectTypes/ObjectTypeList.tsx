@@ -3,13 +3,14 @@ import { useTypedSelector } from '#store';
 import { FilterField } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { CircularProgress } from '@material-ui/core';
+import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchObjectTypes } from '../actions';
 
 const DEFAULT_PAGE_NUMBER = 0;
-const DEFAULT_PAGE_SIZE = 100;
+const DEFAULT_PAGE_SIZE = 10;
 
 export const LoadingContainer = ({
   loading,
@@ -37,7 +38,7 @@ export const LoadingContainer = ({
 const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
   const dispatch = useDispatch();
   const {
-    objectTypes: { list, listLoading },
+    objectTypes: { list, listLoading, pageable },
   } = useTypedSelector((state) => state.ontology);
 
   const fetchData = (
@@ -53,6 +54,8 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
       }),
     );
   };
+
+  const showPaginationArrows = pageable.totalPages > 10;
 
   useEffect(() => {
     fetchData();
@@ -88,6 +91,35 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
           />
         }
       />
+      <div className="pagination">
+        <ArrowLeft
+          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+          onClick={() => {
+            if (pageable.page > 0) {
+              fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
+            }
+          }}
+        />
+        {Array.from({ length: pageable.totalPages }, (_, i) => i)
+          .slice(Math.floor(pageable.page / 10) * 10, Math.floor(pageable.page / 10) * 10 + 10)
+          .map((el) => (
+            <span
+              key={el}
+              className={pageable.page === el ? 'active' : ''}
+              onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
+            >
+              {el + 1}
+            </span>
+          ))}
+        <ArrowRight
+          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
+          onClick={() => {
+            if (pageable.page < pageable.totalPages - 1) {
+              fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
+            }
+          }}
+        />
+      </div>
     </TabContentWrapper>
   );
 };

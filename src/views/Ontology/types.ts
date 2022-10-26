@@ -160,5 +160,5 @@ export type fetchDataType = {
 
 export type fetchListSuccessType<T = unknown> = {
   data: T[];
-  pageable: Pageable | null;
+  pageable: Pageable;
 };
