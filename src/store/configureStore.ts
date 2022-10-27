@@ -19,7 +19,7 @@ const sagaMiddleware = createSagaMiddleware();
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'activityFilters', 'facilityWiseConstants'],
+  whitelist: ['auth', 'auditLogFilters', 'facilityWiseConstants'],
   transforms: [
     createTransform(
       (inboundState: RootState, key) => {
