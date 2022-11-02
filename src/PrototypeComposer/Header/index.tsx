@@ -407,6 +407,15 @@ const ChecklistHeader: FC = () => {
     </MenuItem>
   );
 
+  const checkArchivePermission = () => {
+    if (data?.global) {
+      if (facilityId === ALL_FACILITY_ID) return true;
+    } else if (checkPermission(['checklists', 'archive'])) {
+      return true;
+    }
+    return false;
+  };
+
   const MoreButton = () => (
     <>
       <Button1
@@ -462,13 +471,9 @@ const ChecklistHeader: FC = () => {
             </div>
           </MenuItem>
         )}
-        {data?.state === ChecklistStates.PUBLISHED || data?.audit?.createdBy?.archived ? (
-          checkPermission(['checklists', 'archive']) ? (
-            <ArchiveMenuItem />
-          ) : null
-        ) : data?.audit?.createdBy?.id === userId ? (
-          <ArchiveMenuItem />
-        ) : null}
+        {data?.state === ChecklistStates.PUBLISHED || data?.audit?.createdBy?.archived
+          ? checkArchivePermission() && <ArchiveMenuItem />
+          : data?.audit?.createdBy?.id === userId && <ArchiveMenuItem />}
       </Menu>
     </>
   );
