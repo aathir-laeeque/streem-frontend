@@ -126,7 +126,7 @@ const MyPrintSessionActivity: FC = () => {
             <View style={styles.pageInfo}>
               <Text
                 style={{ fontSize: 10, minHeight: 10 }}
-                render={({ pageNumber, totalPages }) => `${pageNumber}`}
+                render={({ pageNumber, totalPages }) => `${pageNumber}/${totalPages}`}
                 fixed
               />
             </View>

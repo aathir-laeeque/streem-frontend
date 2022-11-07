@@ -80,13 +80,13 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   pageInfo: {
-    width: 20,
-    height: 20,
-    borderRadius: 100,
+    borderRadius: 4,
     backgroundColor: '#bababa',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    marginLeft: 4,
+    padding: '2px 4px',
   },
   stageHeader: {
     paddingHorizontal: 40,

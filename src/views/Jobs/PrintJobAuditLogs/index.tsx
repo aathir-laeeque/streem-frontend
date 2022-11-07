@@ -132,7 +132,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
             <View style={styles.pageInfo}>
               <Text
                 style={{ fontSize: 10, minHeight: 10 }}
-                render={({ pageNumber }) => `${pageNumber}`}
+                render={({ pageNumber, totalPages }) => `${pageNumber}/${totalPages}`}
                 fixed
               />
             </View>

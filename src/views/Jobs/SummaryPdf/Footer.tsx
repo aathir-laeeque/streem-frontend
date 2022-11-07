@@ -29,10 +29,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#bababa',
     borderRadius: 4,
     display: 'flex',
-    fontSize: 10,
     justifyContent: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    marginLeft: 4,
+    padding: '2px 4px',
   },
 });
 
@@ -54,11 +53,13 @@ const Footer = ({ user, selectedFacility, dateAndTimeStampFormat }: Props) => {
         {selectedFacility.name} using Leucine App
       </Text>
 
-      <Text
-        style={styles.pageInfo}
-        render={({ pageNumber, totalPages }) => `${pageNumber}/${totalPages}`}
-        fixed
-      />
+      <View style={styles.pageInfo}>
+        <Text
+          style={{ fontSize: 10, minHeight: 10 }}
+          render={({ pageNumber, totalPages }) => `${pageNumber}/${totalPages}`}
+          fixed
+        />
+      </View>
     </View>
   );
 };
