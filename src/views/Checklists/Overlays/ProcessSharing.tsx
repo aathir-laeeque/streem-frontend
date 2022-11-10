@@ -1,4 +1,4 @@
-import { BaseModal, Button1 } from '#components';
+import { BaseModal, Button1, Select } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { customSelectStyles } from '#JobComposer/ActivityList/MultiSelect/commonStyles';
 import { useTypedSelector } from '#store';
@@ -7,7 +7,6 @@ import { fetchFacilities } from '#store/facilities/actions';
 import { Add, Close } from '@material-ui/icons';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import Select from 'react-select';
 import styled from 'styled-components';
 import { getErrorMsg, request } from '#utils/request';
 import { apiProcessSharing } from '#utils/apiUrls';

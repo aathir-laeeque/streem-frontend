@@ -1,11 +1,10 @@
-import { formatOptionLabel } from '#components';
+import { formatOptionLabel, Select } from '#components';
 import { baseUrl } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import Select from 'react-select';
 import { executeActivityLeading, fixActivityLeading } from './actions';
 import { customSelectStyles } from './MultiSelect/commonStyles';
 import { Wrapper } from './MultiSelect/styles';

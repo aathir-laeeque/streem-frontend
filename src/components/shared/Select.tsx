@@ -1,224 +1,122 @@
-import { ArrowDropDown, ArrowDropUp, SvgIconComponent } from '@material-ui/icons';
-import { noop } from 'lodash';
-import React, { ComponentPropsWithRef, FC, useState, useRef } from 'react';
+import React, { FC } from 'react';
+import ReactSelect, { Props } from 'react-select';
 import styled from 'styled-components';
-import useOutsideAlerter from '#utils/useOutsideAlerter';
+
+export const formatOptionLabel: Props<{
+  option: string;
+  label: string;
+  externalId: string;
+}>['formatOptionLabel'] = ({ externalId, label }, { context }) =>
+  context === 'value' ? (
+    label
+  ) : (
+    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div>{label}</div>
+      <div>{externalId}</div>
+    </div>
+  );
+
+type SelectProps = Props & {
+  error?: string;
+  label?: string;
+  optional?: boolean;
+};
 
 const Wrapper = styled.div.attrs({
-  className: 'select',
+  className: 'react-custom-select',
 })`
-  position: relative;
-
-  .select-label {
+  .label {
+    align-items: center;
     color: #161616;
-    display: block;
+    display: flex;
     font-size: 14px;
+    justify-content: flex-start;
     letter-spacing: 0.16px;
     line-height: 1.29;
     margin-bottom: 8px;
-
-    .optional-badge {
-      color: #999999;
-      font-size: 12px;
-      margin-left: 4px;
-    }
-  }
-
-  .button {
-    text-align: left;
-    align-items: center;
-    background-color: #f4f4f4;
-    border: 1px solid transparent;
-    border-bottom-color: #bababa;
-    cursor: pointer;
-    display: flex;
-    padding: 10px 16px;
-
-    @media (max-width: 1200px) {
-      padding: 8px;
-      font-size: 14px;
-    }
-
-    span {
-      &.placeholder-text {
-        color: #999999;
-      }
-
-      &.selected-option {
-        color: #000000;
-      }
-    }
-
-    > .icon {
-      margin-left: auto;
-    }
-
-    #select-button-icon {
-      margin-left: 0;
-      margin-right: 12px;
-    }
-  }
-
-  .option-list {
-    background-color: #f4f4f4;
-    border: 1px solid #1d84ff;
-    border-radius: 4px;
-    box-shadow: 1px 2px 8px 0 rgba(29, 132, 255, 0.2);
-    display: flex;
-    flex-direction: column;
-    max-height: 300px;
-    overflow: scroll;
-    padding: 0 16px;
-    position: absolute;
-    width: 100%;
-    z-index: 99;
-
-    @media (max-width: 1200px) {
-      padding: 0 8px;
-    }
-
-    &-item {
-      border: 1px solid transparent;
-      border-bottom-color: #bababa;
-      cursor: pointer;
-      padding: 10px 0;
-      text-align: start;
-
-      @media (max-width: 1200px) {
-        padding: 8px 0;
-        font-size: 14px;
-      }
-    }
-  }
-
-  .field-error {
-    color: #eb5757;
-    margin-top: 8px;
   }
 `;
 
 export type Option = { label: string; value: string | number };
 
-type SelectProps = ComponentPropsWithRef<'select'> & {
-  disabled?: boolean;
-  error?: boolean | string;
-  label?: string;
-  onChange?: (option: Option) => void;
-  optional?: boolean;
-  options: Option[];
-  OptionsItemAfterIcon?: SvgIconComponent;
-  optionsItemAfterIconClass?: string;
-  OptionsItemBeforeIcon?: SvgIconComponent;
-  optionsItemBeforeIconClass?: string;
-  persistValue?: boolean;
-  SelectButtonIcon?: SvgIconComponent;
-  selectButtonIconClass?: string;
-  selectedValue?: Option;
-  handleOnScroll?: (e: React.UIEvent<HTMLElement>) => void;
-} & ComponentPropsWithRef<'select'>;
+export const selectStyles: Props['styles'] = {
+  control: (styles, { isDisabled }) => ({
+    ...styles,
+    backgroundColor: isDisabled ? 'transparent' : '#f4f4f4',
+    border: 'none',
+    borderBottom: isDisabled ? 'none' : '1px solid #bababa',
+    borderRadius: 'none',
+    boxShadow: 'none',
+    cursor: isDisabled ? 'not-allowed' : 'pointer',
+    padding: '1.7px',
+    minHeight: 'auto',
+  }),
 
-const Select: FC<SelectProps> = (props) => {
-  const {
-    disabled = false,
-    error = false,
-    label,
-    onChange,
-    optional = false,
-    options,
-    OptionsItemAfterIcon,
-    optionsItemAfterIconClass,
-    OptionsItemBeforeIcon,
-    optionsItemBeforeIconClass,
-    placeholder = 'Placeholder Text',
-    persistValue = true,
-    SelectButtonIcon,
-    selectButtonIconClass,
-    selectedValue,
-    handleOnScroll = noop,
-  } = props;
+  valueContainer: (styles, { isDisabled }) => ({
+    ...styles,
+    flexDirection: isDisabled ? 'column' : styles.flexDirection,
+    alignItems: isDisabled ? 'flex-start' : styles.alignItems,
+  }),
 
-  const [isOpen, toggleOpen] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState<Option | undefined>(selectedValue);
-  const wrapperRef = useRef(null);
+  multiValue: (styles, { isDisabled }) => ({
+    ...styles,
+    backgroundColor: isDisabled ? 'transparent' : styles.backgroundColor,
+  }),
 
-  const onOutSideClick = () => {
-    toggleOpen(false);
-  };
+  multiValueLabel: (styles, { isDisabled }) => ({
+    ...styles,
+    marginTop: isDisabled ? '-7px' : 'unset',
+  }),
 
-  useOutsideAlerter(wrapperRef, onOutSideClick);
+  multiValueRemove: (styles, { isDisabled }) => ({
+    ...styles,
+    display: isDisabled ? 'none' : styles.display,
+  }),
 
+  indicatorsContainer: (styles, { isDisabled }) => ({
+    ...styles,
+    display: isDisabled ? 'none' : styles.display,
+  }),
+
+  option: (styles, { isFocused, isSelected }) => ({
+    ...styles,
+    backgroundColor: isSelected || isFocused ? '#f4f4f4' : '#ffffff',
+    borderBottom: '1px solid #bababa',
+    color: '#000000',
+    cursor: 'pointer',
+    padding: '10px 16px',
+  }),
+
+  menu: (styles) => ({
+    ...styles,
+    borderRadius: 'none',
+  }),
+
+  menuList: (styles) => ({
+    ...styles,
+    padding: 0,
+  }),
+};
+
+export const Select: FC<SelectProps> = ({
+  styles = selectStyles,
+  optional = false,
+  label = '',
+  error = '',
+  ...rest
+}) => {
   return (
-    <Wrapper ref={wrapperRef}>
-      {label ? (
-        <label className="select-label">
-          {label}
-          {optional ? <span className="optional-badge">Optional</span> : null}
-        </label>
-      ) : null}
-
-      <div
-        className="button"
-        onClick={() => {
-          if (!disabled) {
-            toggleOpen(!isOpen);
-          }
-        }}
-      >
-        {SelectButtonIcon ? (
-          <SelectButtonIcon
-            className={`icon ${selectButtonIconClass ? selectButtonIconClass : ''}`}
-            id="select-button-icon"
-          />
-        ) : null}
-
-        <span className={selectedOption ? 'selected-label' : 'placeholder-text'}>
-          {selectedOption ? selectedOption.label : placeholder}
-        </span>
-
-        {isOpen ? <ArrowDropUp className="icon" /> : <ArrowDropDown className="icon" />}
-      </div>
-
-      {typeof error === 'string' && !!error ? <span className="field-error">{error}</span> : null}
-
-      {isOpen ? (
-        <div className="option-list" onScroll={handleOnScroll}>
-          {options.map((option, index) => (
-            <div
-              className="option-list-item"
-              key={index}
-              onClick={() => {
-                if (typeof onChange === 'function') {
-                  onChange(option);
-                }
-
-                if (persistValue) {
-                  setSelectedOption(option);
-                }
-
-                toggleOpen(!isOpen);
-              }}
-            >
-              {OptionsItemBeforeIcon ? (
-                <OptionsItemBeforeIcon
-                  className={`icon ${optionsItemBeforeIconClass ? optionsItemBeforeIconClass : ''}`}
-                  id="option-list-item-before-icon"
-                />
-              ) : null}
-
-              <span>{option.label}</span>
-
-              {OptionsItemAfterIcon ? (
-                <OptionsItemAfterIcon
-                  className={`icon ${optionsItemAfterIconClass ? optionsItemAfterIconClass : ''}`}
-                  id="option-list-item-after-icon"
-                />
-              ) : null}
-            </div>
-          ))}
-        </div>
-      ) : null}
+    <Wrapper>
+      {label && <label className="label">{label}</label>}
+      <ReactSelect
+        classNamePrefix="custom-select"
+        menuPlacement="auto"
+        styles={styles}
+        isClearable={optional}
+        captureMenuScroll={true}
+        {...rest}
+      />
+      {error && <span className="field-error">{error}</span>}
     </Wrapper>
   );
 };
-
-export default Select;

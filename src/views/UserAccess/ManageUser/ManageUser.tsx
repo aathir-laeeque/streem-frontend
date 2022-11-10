@@ -1,10 +1,9 @@
 import EditUser from '#assets/svg/EditUser';
 import InviteExpired from '#assets/svg/InviteExpired';
 import PushNew from '#assets/svg/PushNew';
-import { Button1, useScrollableSections } from '#components';
+import { Button1, Option, useScrollableSections } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { Option } from '#components/shared/Select';
 import { fetchSelectedUserSuccess } from '#store/users/actions';
 import { User, UserStates } from '#store/users/types';
 import { updateUserProfile } from '#views/Auth/actions';

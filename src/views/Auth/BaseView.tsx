@@ -1,6 +1,5 @@
 import Logo from '#assets/svg/Logo';
-import { FormGroup } from '#components';
-import { Option } from '#components/shared/Select';
+import { FormGroup, Option } from '#components';
 import { useTypedSelector } from '#store';
 import { ChallengeQuestion } from '#store/users/types';
 import { apiGetAllChallengeQuestions } from '#utils/apiUrls';

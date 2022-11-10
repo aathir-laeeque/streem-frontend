@@ -26,7 +26,7 @@ import React, { useEffect, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { NamedProps } from 'react-select';
+import { Props } from 'react-select';
 import styled from 'styled-components';
 import { resendInvite } from '../actions';
 import { ValidateCredentialsPurpose } from '../types';
@@ -85,7 +85,7 @@ const UserItemWrapper = styled.div`
   }
 `;
 
-export const formatOptionLabel: NamedProps<
+export const formatOptionLabel: Props<
   {
     option: string;
     label: string;

@@ -1,7 +1,7 @@
+import { Select } from '#components';
 import { get, isArray } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import Select from 'react-select';
 import { executeActivityLeading, fixActivityLeading } from '../actions';
 import { ActivityProps, Selections } from '../types';
 import { customSelectStyles } from './commonStyles';
@@ -19,7 +19,6 @@ const MultiSelectActivity: FC<ActivityProps & { isMulti: boolean }> = ({
   return (
     <Wrapper>
       <div className="activity-header">{isMulti ? 'Multi Select' : 'Single Select'}</div>
-
       <Select
         isMulti={isMulti}
         className="multi-select"

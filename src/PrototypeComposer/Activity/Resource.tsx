@@ -229,16 +229,13 @@ const ResourceActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
                   formatOptionLabel,
                   label: 'Object Property',
                   isLoading: isActiveLoading,
-                  options: selectedObjectType?.properties.map((objectTypeProperty) => {
-                    return {
-                      ...objectTypeProperty,
-                      _options: [...(objectTypeProperty.options || [])],
-                      options: undefined,
-                      externalId: objectTypeProperty.externalId,
-                      label: objectTypeProperty.displayName,
-                      value: objectTypeProperty.id,
-                    };
-                  }),
+                  options: selectedObjectType?.properties.map((objectTypeProperty) => ({
+                    _options: objectTypeProperty.options,
+                    externalId: objectTypeProperty.externalId,
+                    label: objectTypeProperty.displayName,
+                    value: objectTypeProperty.id,
+                    inputType: objectTypeProperty.inputType,
+                  })),
                   value: activity.data?.propertyValidations?.[0]
                     ? [
                         {

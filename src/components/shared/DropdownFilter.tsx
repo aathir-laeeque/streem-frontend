@@ -1,7 +1,6 @@
 import React, { ChangeEvent, FC } from 'react';
 import styled from 'styled-components';
-
-import Select, { Option } from './Select';
+import { Select, Option } from './Select';
 
 const Wrapper = styled.div`
   margin-left: 16px;
@@ -27,14 +26,13 @@ const DropdownFilter: FC<DropdownFilterProps> = ({ options, updateFilter, label 
   <Wrapper>
     <Select
       label={label}
-      persistValue
       options={options}
       onChange={
         ((option: Option) => updateFilter(option)) as ((option: Option) => void) &
           ((event: ChangeEvent<HTMLSelectElement>) => void)
       }
       placeholder="State"
-      selectedValue={options.filter((el) => el.value === 'all' || el.value === 'any')[0]}
+      value={options.filter((el) => el.value === 'all' || el.value === 'any')[0]}
     />
   </Wrapper>
 );

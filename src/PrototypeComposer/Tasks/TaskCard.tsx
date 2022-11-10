@@ -1,4 +1,4 @@
-import { ImageUploadButton, Select, Textarea } from '#components';
+import { Select, ImageUploadButton, Textarea } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { ActivityType, EnabledStates, TimerOperator } from '#PrototypeComposer/checklist.types';
@@ -310,8 +310,6 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
               );
             }}
             placeholder="Add Activity"
-            persistValue={false}
-            SelectButtonIcon={AddBox}
           />
         </div>
       </TaskCardWrapper>

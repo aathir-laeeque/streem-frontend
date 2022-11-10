@@ -1,4 +1,4 @@
-import { Select, TextInput, NumberInput } from '#components';
+import { TextInput, NumberInput, Select, Option } from '#components';
 import { Error } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
@@ -7,7 +7,6 @@ import { ParameterWrapper } from './styles';
 import { ActivityProps, ParameterActivityErrors } from './types';
 import { useDispatch } from 'react-redux';
 import { updateActivityApi, updateStoreActivity } from './actions';
-import { Option } from '#components/shared/Select';
 
 const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
   const dispatch = useDispatch();
@@ -71,9 +70,7 @@ const ParameterActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             updateStoreActivity((option as Option).value, activity.id, ['data', 'operator']),
           );
         }}
-        selectedValue={PARAMETER_OPERATORS.find(
-          (option) => option.value === activity.data.operator,
-        )}
+        value={PARAMETER_OPERATORS.find((option) => option.value === activity.data.operator)}
         error={isErrorPresent && !activity.data.operator}
       />
 

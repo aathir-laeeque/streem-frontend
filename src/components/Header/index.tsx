@@ -2,7 +2,7 @@ import AvatarIcon from '#assets/svg/AvatarIcon';
 import Logo from '#assets/svg/Logo';
 import MoreOptionsIcon from '#assets/svg/MoreOptionsIcon';
 import SettingsIcon from '#assets/svg/SettingsIcon';
-import Select from '#components/shared/Select';
+import { Select } from '#components/shared/Select';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
@@ -50,9 +50,7 @@ const Header: FC = () => {
         {selectedFacility ? (
           <Select
             options={facilitiesOptions}
-            selectedValue={facilitiesOptions.find(
-              (option) => option.value === selectedFacility?.id,
-            )}
+            value={facilitiesOptions.find((option) => option.value === selectedFacility?.id)}
             onChange={(option) =>
               dispatch(
                 switchFacility({

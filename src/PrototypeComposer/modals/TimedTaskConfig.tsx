@@ -326,7 +326,7 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
                 });
               }}
               placeholder="Choose an option"
-              selectedValue={TIMER_OPERATORS.find((el) => el.value === state.timerOperator)}
+              value={TIMER_OPERATORS.find((el) => el.value === state.timerOperator)}
             />
           </div>
 

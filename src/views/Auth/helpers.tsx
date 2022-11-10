@@ -1,7 +1,6 @@
 import LoginBackground from '#assets/svg/LoginBackground.svg';
 import RegisterBackground from '#assets/svg/RegisterBackground.svg';
-import { Button1 } from '#components';
-import { Option } from '#components/shared/Select';
+import { Button1, Option } from '#components';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
 import { apiCheckUsername } from '#utils/apiUrls';

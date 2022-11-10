@@ -257,7 +257,7 @@ export const CalcActivityAddParamsModal: FC<
                               value: activity.id,
                             };
                           })}
-                          selectedValue={
+                          value={
                             param?.activityId
                               ? {
                                   value: param.activityId,

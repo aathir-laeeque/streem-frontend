@@ -596,7 +596,6 @@ export const SubmitReviewModal: FC<
                         setState({ ...state, selectedReviewer: option.value });
                       }}
                       placeholder="All"
-                      persistValue={true}
                     />
                   </div>
                   {state.reviewCycleOptions.length > 2 && (
@@ -608,7 +607,6 @@ export const SubmitReviewModal: FC<
                           setState({ ...state, selectedCycle: option.value });
                         }}
                         placeholder="All"
-                        persistValue={true}
                       />
                     </div>
                   )}

@@ -1,4 +1,4 @@
-import { Role, Textarea, TextInput } from '#components';
+import { Role, Textarea, TextInput, Select } from '#components';
 import { InputTypes } from '#utils/globalTypes';
 import { formatDateByInputType } from '#utils/timeUtils';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -8,7 +8,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import CheckCircle from '@material-ui/icons/CheckCircle';
 import moment from 'moment';
 import React from 'react';
-import Select, { NamedProps } from 'react-select';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
 import { RoleProps } from './Role';
@@ -35,17 +34,6 @@ const Wrapper = styled.div.attrs({
     :last-child {
       margin-bottom: unset;
     }
-  }
-
-  .label {
-    align-items: center;
-    color: #161616;
-    display: flex;
-    font-size: 14px;
-    justify-content: flex-start;
-    letter-spacing: 0.16px;
-    line-height: 1.29;
-    margin-bottom: 8px;
   }
 
   .error-container {
@@ -94,74 +82,6 @@ const Wrapper = styled.div.attrs({
     margin: 0 0 24px 24px;
   }
 `;
-
-export const formatOptionLabel: NamedProps<{
-  option: string;
-  label: string;
-  externalId: string;
-}>['formatOptionLabel'] = ({ externalId, label }, { context }) =>
-  context === 'value' ? (
-    label
-  ) : (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <div>{label}</div>
-      <div>{externalId}</div>
-    </div>
-  );
-
-const selectStyles: NamedProps['styles'] = {
-  control: (styles, { isDisabled }) => ({
-    ...styles,
-    backgroundColor: isDisabled ? 'transparent' : '#f4f4f4',
-    border: 'none',
-    borderBottom: isDisabled ? 'none' : '1px solid #bababa',
-    borderRadius: 'none',
-    boxShadow: 'none',
-    cursor: isDisabled ? 'not-allowed' : 'pointer',
-    padding: '1.7px',
-    minHeight: 'auto',
-  }),
-
-  valueContainer: (styles, { isDisabled }) => ({
-    ...styles,
-    flexDirection: isDisabled ? 'column' : styles.flexDirection,
-    alignItems: isDisabled ? 'flex-start' : styles.alignItems,
-  }),
-
-  multiValue: (styles, { isDisabled }) => ({
-    ...styles,
-    backgroundColor: isDisabled ? 'transparent' : styles.backgroundColor,
-  }),
-
-  multiValueLabel: (styles, { isDisabled }) => ({
-    ...styles,
-    marginTop: isDisabled ? '-7px' : 'unset',
-  }),
-
-  multiValueRemove: (styles, { isDisabled }) => ({
-    ...styles,
-    display: isDisabled ? 'none' : styles.display,
-  }),
-
-  indicatorsContainer: (styles, { isDisabled }) => ({
-    ...styles,
-    display: isDisabled ? 'none' : styles.display,
-  }),
-
-  option: (styles, { isFocused, isSelected }) => ({
-    ...styles,
-    backgroundColor: isSelected || isFocused ? '#dadada' : '#f4f4f4',
-    borderBottom: '1px solid #bababa',
-    color: '#000000',
-    cursor: 'pointer',
-    padding: '10px 16px',
-  }),
-
-  clearIndicator: (styles) => ({
-    ...styles,
-    display: 'none',
-  }),
-};
 
 const useStyles = makeStyles({
   root: {
@@ -304,14 +224,7 @@ export const FormGroup = ({ inputs, ...rest }: FormGroupProps) => {
           case InputTypes.MULTI_SELECT:
             return (
               <div key={props.id}>
-                {props?.label && <label className="label">{props.label}</label>}
-                <Select
-                  classNamePrefix="custom-select"
-                  styles={selectStyles}
-                  isMulti={type === InputTypes.MULTI_SELECT}
-                  captureMenuScroll
-                  {...props}
-                />
+                <Select isMulti={type === InputTypes.MULTI_SELECT} {...props} />
               </div>
             );
           case InputTypes.ROLE:

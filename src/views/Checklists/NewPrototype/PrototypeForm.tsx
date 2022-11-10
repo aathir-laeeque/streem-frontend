@@ -1,5 +1,4 @@
-import { AddNewItem, Avatar, Button1, Select, Textarea, TextInput } from '#components';
-import { Option } from '#components/shared/Select';
+import { AddNewItem, Avatar, Button1, Select, Option, Textarea, TextInput } from '#components';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
 import { useTypedSelector } from '#store/helpers';
@@ -150,10 +149,8 @@ const PrototypeForm: FC<Props> = (props) => {
     }
   };
 
-  const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
-    e.stopPropagation();
-    const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
-    if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7) loadMore();
+  const handleOnScroll = () => {
+    loadMore();
   };
 
   const filterUsers = (users: User[]) => {
@@ -278,7 +275,7 @@ const PrototypeForm: FC<Props> = (props) => {
           return (
             <div key={`${index}-${author.id}`} className="author">
               <Select
-                selectedValue={
+                value={
                   // This check is required to create a unselected select component on click of Add New ie line no : 303.
                   author.id !== '0'
                     ? {
@@ -288,8 +285,8 @@ const PrototypeForm: FC<Props> = (props) => {
                     : undefined
                 }
                 placeholder="Choose Users"
-                disabled={formMode === FormMode.VIEW}
-                handleOnScroll={handleOnScroll}
+                isDisabled={formMode === FormMode.VIEW}
+                onMenuScrollToBottom={handleOnScroll}
                 options={filterUsers(users)}
                 onChange={(selectedOption: any) => {
                   const selectedUser = usersById?.[selectedOption.value];
