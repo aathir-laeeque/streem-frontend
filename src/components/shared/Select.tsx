@@ -35,6 +35,12 @@ const Wrapper = styled.div.attrs({
     line-height: 1.29;
     margin-bottom: 8px;
   }
+
+  .optional-badge {
+    color: #999999;
+    font-size: 12px;
+    margin-left: 4px;
+  }
 `;
 
 export type Option = { label: string; value: string | number };
@@ -107,7 +113,11 @@ export const Select: FC<SelectProps> = ({
 }) => {
   return (
     <Wrapper>
-      {label && <label className="label">{label}</label>}
+      {label && (
+        <label className="label">
+          {label} {optional && <span className="optional-badge">Optional</span>}
+        </label>
+      )}
       <ReactSelect
         classNamePrefix="custom-select"
         menuPlacement="auto"
