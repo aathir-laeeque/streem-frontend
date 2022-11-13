@@ -33,6 +33,7 @@ export * from './shared/useTabs';
 export { default as ActivityItemInput } from './shared/ActivityItemInput';
 export { default as DataTable } from './shared/DataTable';
 export { Link } from './shared/Link';
+export * from './shared/NestedSelect';
 export * from './shared/Select';
 export * from './shared/StyledTabs';
 export * from './shared/useDrawer';

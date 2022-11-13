@@ -171,10 +171,6 @@ const GlobalStyles = createGlobalStyle`
     padding: 0px !important;
   }
 
-  .MuiMenu-paper {
-    min-width: 180px !important;
-  }
-
   .MuiListItem-button:hover {
     text-decoration: none !important;
     background-color: rgba(29, 132, 255, 0.2) !important;
@@ -192,7 +188,7 @@ const GlobalStyles = createGlobalStyle`
   .header-more-actions {
     .MuiPaper-root {
       right: 16px !important;
-      left: auto !important; 
+      left: auto !important;
       top: 130px !important;
     }
   }
