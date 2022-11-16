@@ -6,10 +6,6 @@ export const getInitials = (name: string) => {
   return initials;
 };
 
-export const capitalizeFirstLetter = (str: string) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
-
 // TODO : remove this function from here and use the one defined in the helpers of users service
 export const getFullName = ({ firstName, lastName }: Pick<User, 'firstName' | 'lastName'>) => {
   return `${firstName} ${lastName}`;

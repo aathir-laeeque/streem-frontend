@@ -12,12 +12,6 @@ export enum UserAccessAction {
   VALIDATE_CREDENTIALS = '@@userAccess/MyProfile/VALIDATE_CREDENTIALS',
 }
 
-export type PermissionType = {
-  id: number;
-  name: string;
-  permissions: string[];
-};
-
 export type RoleType = {
   id: string;
   name: string;

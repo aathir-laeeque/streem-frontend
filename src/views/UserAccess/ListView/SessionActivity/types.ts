@@ -21,8 +21,6 @@ export interface SessionActivity {
   details: string;
 }
 
-export type SessionActivityProps = RouteComponentProps;
-
 export interface SessionActivityState {
   readonly logs: SessionActivity[];
   readonly pageable: Pageable;

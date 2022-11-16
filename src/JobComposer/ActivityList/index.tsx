@@ -204,7 +204,6 @@ const ActivityList: FC<ActivityListProps> = ({
                     />
                   );
 
-                case MandatoryActivity.SHOULD_BE:
                 case MandatoryActivity.PARAMETER:
                   return (
                     <ShouldBeActivity activity={activity} isCorrectingError={isCorrectingError} />

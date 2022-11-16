@@ -40,10 +40,6 @@ export interface User {
 
 export type Users = User[];
 
-export interface ParsedUser extends User {
-  properties: Record<string, string>;
-}
-
 export type UsersGroup = {
   list: User[];
   pageable: Pageable;

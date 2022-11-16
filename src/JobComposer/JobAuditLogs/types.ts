@@ -16,8 +16,6 @@ export type JobAuditLogType = {
   triggeredBy: number;
 };
 
-export type JobActivityProps = RouteComponentProps;
-
 export interface JobAuditLogState {
   readonly logs: JobAuditLogType[];
   readonly pageable: Pageable;
@@ -30,14 +28,6 @@ export enum JobActivityAction {
   FETCH_JOB_ACTIVITY_ERROR = '@@jobComposer/JobActivity/FETCH_JOB_ACTIVITY_ERROR',
   FETCH_JOB_ACTIVITY_ONGOING = '@@jobComposer/JobActivity/FETCH_JOB_ACTIVITY_ONGOING',
   FETCH_JOB_ACTIVITY_SUCCESS = '@@jobComposer/JobActivity/FETCH_JOB_ACTIVITY_SUCCESS',
-}
-
-export enum JobActivitySeverity {
-  CRITICAL = 'CRITICAL',
-  ERROR = 'ERROR',
-  WARNING = 'WARNING',
-  INFORMATION = 'INFORMATION',
-  UNKNOWN = 'UNKNOWN',
 }
 
 export type JobActivityActionType =

@@ -81,11 +81,6 @@ export type ListViewActionType = ReturnType<
   typeof fetchJobs | typeof fetchJobsError | typeof fetchJobsOngoing | typeof fetchJobsSuccess
 >;
 
-export type fetchDataType = {
-  page?: number;
-  size?: number;
-};
-
 export type fetchJobsType = {
   facilityId?: string;
   page: number;

@@ -24,12 +24,6 @@ export const apiGetInbox = () => `${baseUrl}/jobs/assignee/me`;
 // Job
 export const apiGetJobs = () => `${baseUrl}/jobs`;
 
-export const apiAssignUser = (jobId: string, userId: string | number) =>
-  `${baseUrl}/jobs/${jobId}/users/${userId}`;
-
-export const apiUnAssignUser = (jobId: string, userId: string | number) =>
-  `${baseUrl}/jobs/${jobId}/users/${userId}`;
-
 export const apiStartJob = (jobId: Job['id'], action: string) =>
   `${baseUrl}/jobs/${jobId}/${action}`;
 
@@ -57,8 +51,6 @@ export const apiGetSelectedJob = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}
 export const apiExecuteActivity = () => `${baseUrl}/activities/execute`;
 
 export const apiFixActivity = () => `${baseUrl}/activities/error-correction`;
-
-export const apiCompleteTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}`;
 
 export const apiEnableTaskErrorCorrection = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}/correction/start`;
@@ -107,15 +99,6 @@ export const apiGetJobAuditLogs = (jobId: Job['id']) => `${baseUrl}/audits/jobs/
 
 export const apiGetChecklistAuditLogs = (jobId: Job['id']) =>
   `${baseUrl}/audits/checklists/${jobId}`;
-
-// Task
-export const apiAssignUsersToTask = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/assignments`;
-
-export const apiAssignUsersToJob = () => `${baseUrl}/tasks/assignments`;
-
-export const apiGetAssignedUsersForJob = (jobId: Job['id']) =>
-  `${baseUrl}/tasks/assignments?jobId=${jobId}`;
 
 export const apiCreateNewPrototype = () => `${baseUrl}/checklists`;
 
@@ -292,8 +275,6 @@ export const apiGetJobSummary = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}/
 
 export const apiGetJobSummaryReportDetails = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}/reports/print`;
-
-export const apiGetTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}`;
 
 export const apiGetUseCaseList = () => `${baseUrl}/use-cases`;
 

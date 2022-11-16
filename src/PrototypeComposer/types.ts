@@ -1,15 +1,6 @@
 import { Error } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
 
-// TODO: moves this to Jobs view types
-export enum JobStates {
-  ASSIGNED = 'ASSIGNED',
-  COMPLETED = 'COMPLETED',
-  COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
-  IN_PROGRESS = 'IN_PROGRESS',
-  UNASSIGNED = 'UNASSIGNED',
-}
-
 export type ReOrderType = {
   from: number;
   id: string;

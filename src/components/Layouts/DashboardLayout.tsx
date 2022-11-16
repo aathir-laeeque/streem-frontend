@@ -19,14 +19,10 @@ const Layout = styled.div.attrs({
   grid-template-areas:
     'header header'
     'nav-menu workarea';
-  grid-template-rows: 50px 1fr;
-  grid-template-columns: 120px 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: auto 1fr;
   flex: 1;
   background-color: #fff;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: 100px 1fr;
-  }
 `;
 
 const DashboardLayout: FC = ({ children }) => {
@@ -80,6 +76,3 @@ const DashboardLayout: FC = ({ children }) => {
 };
 
 export default DashboardLayout;
-function dispatch(arg0: any) {
-  throw new Error('Function not implemented.');
-}

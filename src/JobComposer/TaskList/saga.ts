@@ -50,7 +50,6 @@ function* getActivitiesDataByTaskId(taskId: string) {
           data: { medias: activity.response.medias },
         };
 
-      case MandatoryActivity.SHOULD_BE:
       case MandatoryActivity.PARAMETER:
       case MandatoryActivity.TEXTBOX:
         return {

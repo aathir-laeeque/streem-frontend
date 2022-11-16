@@ -14,8 +14,6 @@ export enum AuthorState {
   IN_PROGRESS = 'IN_PROGRESS',
 }
 
-export type NewPrototypeActionsType = ReturnType<typeof addNewPrototype | typeof updatePrototype>;
-
 export type PrototypeProperties = Pick<
   Property,
   'id' | 'name' | 'placeHolder' | 'mandatory' | 'label'

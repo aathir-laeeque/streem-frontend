@@ -53,13 +53,6 @@ export const completeJob = ({
     isInboxView,
   });
 
-export const completeJobSuccess = (withException = false) =>
-  actionSpreader(
-    withException
-      ? ComposerAction.COMPLETE_JOB_WITH_EXCEPTION_SUCCESS
-      : ComposerAction.COMPLETE_JOB_SUCCESS,
-  );
-
 type GetSignOffStateType = {
   jobId: Job['id'];
   allowSignOff?: boolean;

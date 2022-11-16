@@ -92,12 +92,6 @@ const TabContentWrapper = styled.div`
     }
   }
 
-  // Only For Checklist Listview
-
-  .list-options {
-    padding: 0;
-  }
-
   #more-actions {
     display: flex;
     align-items: center;

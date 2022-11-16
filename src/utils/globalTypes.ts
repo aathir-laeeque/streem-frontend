@@ -28,11 +28,6 @@ export interface ResponseObj<T> {
   errors?: ResponseError[];
 }
 
-export enum ACTIVITY_SELECTIONS {
-  SELECTED = 'SELECTED',
-  NOT_SELECTED = 'NOT_SELECTED',
-}
-
 export type ValidatorProps = {
   functions: Record<string, Validate>;
   messages: Record<string, string>;

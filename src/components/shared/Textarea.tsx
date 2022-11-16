@@ -1,12 +1,12 @@
+import { Error as ErrorIcon } from '@material-ui/icons';
 import React, {
+  ChangeEvent,
   ComponentPropsWithRef,
   createRef,
   forwardRef,
-  useState,
   useEffect,
-  ChangeEvent,
+  useState,
 } from 'react';
-import { Error as ErrorIcon } from '@material-ui/icons';
 import styled, { css } from 'styled-components';
 
 type OnChangeType = {
@@ -15,7 +15,6 @@ type OnChangeType = {
 };
 
 type TextareaProps = {
-  activityItemInput?: boolean;
   allowResize?: boolean;
   error?: boolean | string;
   label?: string;
@@ -25,7 +24,6 @@ type TextareaProps = {
 } & ComponentPropsWithRef<'textarea'>;
 
 type WrapperProps = {
-  activityItemInput: boolean;
   allowResize: boolean;
   hasError: boolean;
   parentHeight: string;
@@ -86,17 +84,10 @@ const Wrapper = styled.div.attrs(({ className }) => ({
         resize: none;
       }
 
-      ${({ activityItemInput }) =>
-        !activityItemInput
-          ? css`
-              :active,
-              :focus {
-                border-color: #1d84ff;
-              }
-            `
-          : css`
-              border-bottom-color: transparent;
-            `}
+      :active,
+      :focus {
+        border-color: #1d84ff;
+      }
 
       :-webkit-input-placeholder {
         text-align: center;
@@ -163,7 +154,6 @@ const Wrapper = styled.div.attrs(({ className }) => ({
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => {
   const {
-    activityItemInput = false,
     allowResize = true,
     defaultValue,
     disabled = false,
@@ -206,7 +196,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
 
   return (
     <Wrapper
-      activityItemInput={activityItemInput}
       allowResize={allowResize}
       hasError={!!error}
       parentHeight={parentHeight}
