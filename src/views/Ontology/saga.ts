@@ -4,21 +4,20 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   apiArchiveObject,
-  apiUnArchiveObject,
   apiGetObjects,
   apiGetObjectTypes,
+  apiUnArchiveObject,
 } from '#utils/apiUrls';
-import { ResponseObj, Error } from '#utils/globalTypes';
+import { Error, ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
-import { navigate } from '@reach/router';
 import { call, put, takeLatest, takeLeading } from 'redux-saga/effects';
 import * as actions from './actions';
 import { ObjectType, OntologyAction } from './types';
 
 function* fetchObjectTypesSaga({ payload }: ReturnType<typeof actions.fetchObjectTypes>) {
   try {
-    const { params } = payload;
-    const { data, pageable, errors }: ResponseObj<ObjectType[]> = yield call(
+    const { params, appendData } = payload;
+    const { data, pageable }: ResponseObj<ObjectType[]> = yield call(
       request,
       'GET',
       apiGetObjectTypes(),
@@ -27,8 +26,8 @@ function* fetchObjectTypesSaga({ payload }: ReturnType<typeof actions.fetchObjec
       },
     );
 
-    if (data) {
-      yield put(actions.fetchObjectTypesSuccess({ data, pageable }));
+    if (data && pageable) {
+      yield put(actions.fetchObjectTypesSuccess({ data, pageable, appendData }));
     }
   } catch (error) {
     console.error('error from fetchObjectTypesSaga function in Ontology Saga :: ', error);

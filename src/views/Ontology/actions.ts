@@ -1,11 +1,15 @@
 import { actionSpreader } from '#store/helpers';
 import { fetchDataType, fetchListSuccessType, Object, ObjectType, OntologyAction } from './types';
 
-export const fetchObjectTypes = (params: fetchDataType) =>
-  actionSpreader(OntologyAction.FETCH_OBJECT_TYPES, { params });
+export const fetchObjectTypes = (params: fetchDataType, appendData = false) =>
+  actionSpreader(OntologyAction.FETCH_OBJECT_TYPES, { params, appendData });
 
-export const fetchObjectTypesSuccess = ({ data, pageable }: fetchListSuccessType<ObjectType>) =>
-  actionSpreader(OntologyAction.FETCH_OBJECT_TYPES_SUCCESS, { data, pageable });
+export const fetchObjectTypesSuccess = ({
+  data,
+  pageable,
+  appendData,
+}: fetchListSuccessType<ObjectType>) =>
+  actionSpreader(OntologyAction.FETCH_OBJECT_TYPES_SUCCESS, { data, pageable, appendData });
 
 export const fetchObjectTypesError = (error: any) =>
   actionSpreader(OntologyAction.FETCH_OBJECT_TYPES_ERROR, { error });

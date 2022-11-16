@@ -161,4 +161,5 @@ export type fetchDataType = {
 export type fetchListSuccessType<T = unknown> = {
   data: T[];
   pageable: Pageable;
+  appendData?: boolean;
 };

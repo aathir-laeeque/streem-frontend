@@ -41,7 +41,9 @@ const reducer = (state = initialState, action: OntologyActionType): OntologyStat
     case OntologyAction.FETCH_OBJECT_TYPES_SUCCESS:
       return updateKey('objectTypes', {
         listLoading: false,
-        list: action.payload.data,
+        list: action.payload.appendData
+          ? [...state.objectTypes.list, ...action.payload.data]
+          : action.payload.data,
         pageable: action.payload.pageable,
       });
 
