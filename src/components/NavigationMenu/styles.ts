@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export const Wrapper = styled.div`
   flex: 1;
   grid-area: nav-menu;
-  padding-top: 15px;
 `;
 
 export const Menu = styled.nav`
@@ -16,7 +15,7 @@ export const NavItem = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 12px 0;
+  padding: 12px;
 
   > span {
     font-size: 14px;

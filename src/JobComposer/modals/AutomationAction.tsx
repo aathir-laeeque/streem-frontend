@@ -14,7 +14,7 @@ const Wrapper = styled.div`
     flex-direction: column;
     font-size: 16px;
     padding: 0 !important;
-    max-height: 90vh;
+    max-height: 80vh;
 
     form {
       margin: 0;

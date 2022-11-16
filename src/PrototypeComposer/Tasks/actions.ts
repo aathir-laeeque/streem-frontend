@@ -115,3 +115,10 @@ export const updateTaskActionSuccess = (payload: {
 
 export const archiveTaskAction = (payload: ArchiveActionType) =>
   actionSpreader(TaskListActions.ARCHIVE_TASK_ACTION, payload);
+
+export const reOrderActivities = (payload: {
+  checklistId: string;
+  taskId: string;
+  stageId: string;
+  orderedIds: string[];
+}) => actionSpreader(TaskListActions.REORDER_ACTIVITIES, payload);

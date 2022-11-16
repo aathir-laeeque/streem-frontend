@@ -9,7 +9,6 @@ export enum OverlayNames {
   ADD_STOP = 'ADD_STOP',
   ARCHIVE_MODAL = 'ARCHIVE_MODAL',
   ASSIGNED_USER_DETAIL = 'ASSIGNED_USER_DETAIL',
-  ASSIGNMENT_SUCCESS = 'ASSIGNMENT_SUCCESS',
   AUTHORS_DETAIL = 'AUTHORS_DETAIL',
   CHECKLIST_INFO = 'CHECKLIST_INFO',
   CHECKLIST_REVIEWER_ASSIGNMENT = 'CHECKLIST_REVIEWER_ASSIGNMENT',
@@ -57,11 +56,11 @@ export enum OverlayNames {
   JOB_COMPLETE_ALL_TASKS_ERROR = 'JOB_COMPLETE_ALL_TASKS_ERROR',
   WEBCAM_OVERLAY = 'WEBCAM_OVERLAY',
   REFETCH_JOB_COMPOSER_DATA = 'REFETCH_JOB_COMPOSER_DATA',
-  CALC_ACTIVITY_ADD_PARAMS_MODAL = 'CALC_ACTIVITY_ADD_PARAMS_MODAL',
   AUTOMATION_ACTION = 'AUTOMATION_ACTION',
   CONFIGURE_COLUMNS = 'CONFIGURE_COLUMNS',
   CONFIGURE_ACTIONS = 'CONFIGURE_ACTIONS',
   PROCESS_SHARING = 'PROCESS_SHARING',
+  CONFIGURE_JOB_PARAMETERS = 'CONFIGURE_JOB_PARAMETERS',
 }
 
 export interface CommonOverlayProps<T> {
@@ -77,12 +76,6 @@ export interface Overlay {
   type: OverlayNames;
   props?: Record<string, any>;
   popOverAnchorEl?: Element | ((element: Element) => Element);
-}
-
-export interface OverlayContainerProps {
-  currentOverlays: Overlay[];
-  closeOverlay: () => void;
-  closeAllOverlays: () => void;
 }
 
 export enum OverlayContainerAction {

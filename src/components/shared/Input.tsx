@@ -25,6 +25,7 @@ type InputProps = {
     action: () => void;
   };
   disabled?: boolean;
+  description?: string;
 } & ComponentPropsWithRef<'input'>;
 
 type WrapperProps = {
@@ -40,12 +41,12 @@ const Wrapper = styled.div.attrs(({ className }) => ({
 
   .input-label {
     align-items: center;
-    color: #161616;
+    color: #525252;
     display: flex;
-    font-size: 14px;
+    font-size: 12px;
     justify-content: flex-start;
-    letter-spacing: 0.16px;
-    line-height: 1.29;
+    letter-spacing: 0.32px;
+    line-height: 1.33;
     margin-bottom: 8px;
 
     .optional-badge {
@@ -117,6 +118,14 @@ const Wrapper = styled.div.attrs(({ className }) => ({
     justify-content: flex-start;
     margin-top: 8px;
   }
+
+  .description {
+    font-size: 12px;
+    line-height: 1.33;
+    letter-spacing: 0.32px;
+    color: #6f6f6f;
+    margin-top: 8px;
+  }
 `;
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
@@ -140,6 +149,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     onChange,
     className,
     secondaryAction,
+    description = '',
     ...rest
   } = props;
 
@@ -197,7 +207,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           />
         ) : null}
       </div>
-
+      {description && <span className="description">{description}</span>}
       {typeof error === 'string' && !!error ? <span className="field-error">{error}</span> : null}
     </Wrapper>
   );

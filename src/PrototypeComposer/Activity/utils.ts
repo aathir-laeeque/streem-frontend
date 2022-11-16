@@ -5,7 +5,6 @@ import {
   MandatoryActivity,
   NonMandatoryActivity,
 } from '../checklist.types';
-import { PARAMETER_OPERATORS } from '../constants';
 import { ActivitiesById, ActivityOrderInTaskInStage } from './reducer.types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,20 +29,24 @@ const getActivities = (checklist: Checklist | Partial<Checklist>) => {
   return { listById, activityOrderInTaskInStage };
 };
 
-type Params = {
+const generateNewActivity = ({
+  type,
+  orderTree,
+  mandatory,
+  label,
+  description,
+}: Pick<Activity, 'label' | 'description' | 'mandatory' | 'orderTree'> & {
   type: ActivityType;
-  orderTree: Activity['orderTree'];
-};
-
-const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | null => {
+}): Partial<Activity> | null => {
   switch (type) {
     case MandatoryActivity.CHECKLIST:
       return {
         orderTree,
         type,
         data: [{ id: uuidv4(), name: '' }],
-        label: '',
-        mandatory: true,
+        label,
+        mandatory,
+        description,
         validations: {},
       };
 
@@ -55,8 +58,9 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
           { id: uuidv4(), name: '', type: 'yes' },
           { id: uuidv4(), name: '', type: 'no' },
         ],
-        label: '',
-        mandatory: true,
+        label,
+        mandatory,
+        description,
         validations: {},
       };
 
@@ -66,8 +70,9 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         orderTree,
         type,
         data: [{ id: uuidv4(), name: '' }],
-        label: '',
-        mandatory: true,
+        label,
+        mandatory,
+        description,
         validations: {},
       };
 
@@ -82,8 +87,9 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
           operator: '',
           parameter: '',
         },
-        label: '',
-        mandatory: true,
+        label,
+        mandatory,
+        description,
         validations: {},
       };
 
@@ -94,8 +100,9 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         orderTree,
         type,
         data: {},
-        label: '',
-        mandatory: true,
+        label,
+        mandatory,
+        description,
         validations: {},
       };
 
@@ -108,9 +115,9 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
           uom: '',
           variables: {},
         },
-        label: '',
-        description: '',
-        mandatory: true,
+        label,
+        mandatory,
+        description,
         validations: {},
       };
 
@@ -127,8 +134,9 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
           objectTypeId: '',
           propertyValidations: [],
         },
-        label: '',
-        mandatory: true,
+        label,
+        mandatory,
+        description,
         validations: {},
       };
 
@@ -138,8 +146,9 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         orderTree,
         type,
         data: { text: '' },
-        label: '',
-        mandatory: true,
+        label,
+        mandatory,
+        description,
         validations: {},
       };
 
@@ -148,8 +157,9 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
         orderTree,
         type,
         data: { text: '' },
-        label: '',
-        mandatory: false,
+        label,
+        mandatory,
+        description,
         validations: {},
       };
 
@@ -168,8 +178,9 @@ const generateNewActivity = ({ type, orderTree }: Params): Partial<Activity> | n
             mediaId: '',
           },
         ],
-        label: '',
-        mandatory: false,
+        label,
+        mandatory,
+        description,
         validations: {},
       };
 

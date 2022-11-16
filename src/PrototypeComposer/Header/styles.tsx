@@ -3,7 +3,6 @@ import styled from 'styled-components';
 const HeaderWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  grid-area: header;
 
   .before-header {
     display: flex;
@@ -117,7 +116,13 @@ const HeaderWrapper = styled.div`
 
         #edit,
         #view-collaborators {
-          padding: 10px;
+          padding-inline: 10px;
+          @media (min-width: 768px) {
+            padding-block: 6px;
+          }
+          @media (min-width: 1200px) {
+            padding-block: 10px;
+          }
         }
       }
     }

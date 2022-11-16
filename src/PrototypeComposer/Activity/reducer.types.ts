@@ -1,5 +1,7 @@
+import { ActivityType } from '#PrototypeComposer/checklist.types';
+import { Pageable } from '#utils/globalTypes';
 import { ComposerActionType } from '../reducer.types';
-import { addNewTaskSuccess, deleteTaskSuccess } from '../Tasks/actions';
+import { addNewTaskSuccess, deleteTaskSuccess, reOrderActivities } from '../Tasks/actions';
 import {
   addNewActivityError,
   addNewActivitySuccess,
@@ -11,6 +13,10 @@ import {
   removeStoreActivityItem,
   addStoreActivityItem,
   updateStoreMediaActivity,
+  toggleNewParameter,
+  fetchParameters,
+  fetchParametersError,
+  fetchParametersSuccess,
 } from './actions';
 import { Activity } from './types';
 
@@ -21,6 +27,19 @@ export type ActivityListState = {
   readonly activityOrderInTaskInStage: ActivityOrderInTaskInStage;
   readonly error?: any;
   readonly listById: ActivitiesById;
+  readonly addParameter?: {
+    action: 'task' | 'list';
+    title: string;
+    activityId?: string;
+    fetchData?: () => void;
+    type?: ActivityType;
+  };
+  readonly parameters: {
+    listLoading: boolean;
+    pageable: Pageable;
+    list: any[];
+    error?: any;
+  };
 };
 
 export enum ActivityListActions {
@@ -38,10 +57,16 @@ export enum ActivityListActions {
   UPDATE_STORE_MEDIA_ACTIVITY = '@@prototypeComposer/prototype/activity-list/UPDATE_STORE_MEDIA_ACTIVITY',
   ADD_STORE_ACTIVITY_ITEM = '@@prototypeComposer/prototype/activity-list/ADD_STORE_ACTIVITY_ITEM',
   REMOVE_STORE_ACTIVITY_ITEM = '@@prototypeComposer/prototype/activity-list/REMOVE_STORE_ACTIVITY_ITEM',
+
+  TOGGLE_NEW_PARAMETER = '@@prototypeComposer/prototype/activity-list/TOGGLE_NEW_PARAMETER',
+  FETCH_PARAMETERS = '@@prototypeComposer/prototype/activity-list/FETCH_PARAMETERS',
+  FETCH_PARAMETERS_SUCCESS = '@@prototypeComposer/prototype/activity-list/FETCH_PARAMETERS_SUCCESS',
+  FETCH_PARAMETERS_ERROR = '@@prototypeComposer/prototype/activity-list/FETCH_PARAMETERS_ERROR',
 }
 
 export type ActivityListActionType =
   | ReturnType<
+      | typeof toggleNewParameter
       | typeof addNewActivityError
       | typeof addNewActivitySuccess
       | typeof deleteActivityError
@@ -52,6 +77,10 @@ export type ActivityListActionType =
       | typeof updateStoreMediaActivity
       | typeof addStoreActivityItem
       | typeof removeStoreActivityItem
+      | typeof fetchParameters
+      | typeof fetchParametersError
+      | typeof fetchParametersSuccess
+      | typeof reOrderActivities
     >
   | ReturnType<typeof addNewTaskSuccess | typeof deleteTaskSuccess>
   | ComposerActionType;

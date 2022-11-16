@@ -38,3 +38,4 @@ export * from './shared/Select';
 export * from './shared/StyledTabs';
 export * from './shared/useDrawer';
 export * from './shared/Pagination';
+export * from './shared/EmojiComponent';

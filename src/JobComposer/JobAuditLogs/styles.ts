@@ -9,7 +9,7 @@ export const Composer = styled.div`
     grid-area: activity;
     background: #fff;
     box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);
-    padding-top: 8px;
+    padding: 8px;
     overflow: hidden;
     display: flex;
     flex: 1;

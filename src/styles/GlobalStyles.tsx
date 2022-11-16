@@ -1,8 +1,12 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
+  html {
+    height: 100%
+  }
+
   body {
-    height: 100vh;
+    height: 100%;
     width: 100vw;
     display: flex;
     flex: 1;

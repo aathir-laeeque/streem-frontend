@@ -29,9 +29,10 @@ const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
 }>`
   #modal-container {
     position: fixed;
-    display: table;
-    height: 100%;
-    width: 100%;
+    display: flex;
+    flex: 1;
+    bottom: 0;
+    right: 0;
     top: 0;
     left: 0;
     z-index: 999;
@@ -65,14 +66,16 @@ const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
         : ``}
 
     .modal-background {
-      display: table-cell;
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
       background: rgba(0, 0, 0, 0.8);
-      text-align: center;
-      vertical-align: middle;
       .modal {
         overflow: hidden;
         background: white;
-        display: inline-block;
+        display: flex;
+        flex-direction: column;
         font-weight: 300;
         position: relative;
         min-width: 600px;
@@ -82,7 +85,7 @@ const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
         h2 {
           font-size: 20px;
           font-weight: 600;
-          color: #666666;
+          color: #000000;
           line-height: 20px;
           margin: 0;
         }
@@ -92,20 +95,20 @@ const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
           position: absolute;
           top: 16px;
           right: 16px;
-          color: #bababa;
+          color: #000000;
         }
         .modal-header {
           display: flex;
           align-items: center;
           padding: 16px;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.32);
+          border-bottom: 1px solid #eeeeee;
           justify-content: space-between;
         }
         .modal-footer {
           display: flex;
           align-items: center;
           padding: 16px;
-          border-top: 1px solid rgba(0, 0, 0, 0.32);
+          border-top: 1px solid #eeeeee;
         }
         .modal-footer-options {
           display: flex;

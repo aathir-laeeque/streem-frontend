@@ -9,6 +9,20 @@ import { getActivities } from './utils';
 export const initialState: ActivityListState = {
   activityOrderInTaskInStage: {},
   listById: {},
+  parameters: {
+    list: [],
+    listLoading: true,
+    pageable: {
+      page: 0,
+      pageSize: 10,
+      numberOfElements: 0,
+      totalPages: 0,
+      totalElements: 0,
+      first: true,
+      last: true,
+      empty: true,
+    },
+  },
 };
 
 const reducer: Reducer<ActivityListState, ActivityListActionType> = (
@@ -16,6 +30,9 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
   action,
 ) => {
   switch (action.type) {
+    case ActivityListActions.TOGGLE_NEW_PARAMETER:
+      return { ...state, addParameter: action.payload };
+
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
       const { data } = action.payload;
 
@@ -74,10 +91,12 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         ...state,
         listById: {
           ...state.listById,
-          [activityId]: cloneDeep({
-            ...set(state.listById[activityId], updatePath, data),
-            errors: [],
-          }),
+          [activityId]: updatePath
+            ? cloneDeep({
+                ...set(state.listById[activityId], updatePath, data),
+                errors: [],
+              })
+            : { ...data, errors: [] },
         },
       };
     }
@@ -130,6 +149,18 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
       };
     }
 
+    case TaskListActions.REORDER_ACTIVITIES:
+      return {
+        ...state,
+        activityOrderInTaskInStage: {
+          ...state.activityOrderInTaskInStage,
+          [action.payload.stageId]: {
+            ...state.activityOrderInTaskInStage[action.payload.stageId],
+            [action.payload.taskId]: action.payload.orderedIds,
+          },
+        },
+      };
+
     case TaskListActions.ADD_NEW_TASK_SUCCESS:
       const { newTask, stageId } = action.payload;
 
@@ -176,6 +207,35 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
             ...activityWithError,
             errors: [...activityWithError.errors, error],
           },
+        },
+      };
+
+    case ActivityListActions.FETCH_PARAMETERS:
+      return {
+        ...state,
+        parameters: {
+          ...state.parameters,
+          listLoading: true,
+        },
+      };
+
+    case ActivityListActions.FETCH_PARAMETERS_SUCCESS:
+      return {
+        ...state,
+        parameters: {
+          list: action.payload.data,
+          pageable: action.payload.pageable!,
+          listLoading: false,
+        },
+      };
+
+    case ActivityListActions.FETCH_PARAMETERS_ERROR:
+      return {
+        ...state,
+        parameters: {
+          ...state.parameters,
+          listLoading: false,
+          error: action.payload.error,
         },
       };
 

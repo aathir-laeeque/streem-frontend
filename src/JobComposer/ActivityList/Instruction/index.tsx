@@ -1,3 +1,4 @@
+import { EmojiComponent } from '#components';
 import { Entity } from '#JobComposer/composer.types';
 import { useTypedSelector } from '#store';
 import { emojis } from '#utils/constants';
@@ -8,7 +9,6 @@ import React, { FC, useEffect, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { ActivityProps } from '../types';
-import EmojiComponent from './EmojiComponent';
 import { Wrapper } from './styles';
 
 const toolbarOptions = {

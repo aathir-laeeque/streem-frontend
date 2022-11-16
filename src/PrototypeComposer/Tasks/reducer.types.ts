@@ -59,6 +59,7 @@ export enum TaskListActions {
   UPDATE_TASK_ACTION = '@@prototypeComposer/prototype/task-list/UPDATE_TASK_ACTION',
   UPDATE_TASK_ACTION_SUCCESS = '@@prototypeComposer/prototype/task-list/UPDATE_TASK_ACTION_SUCCESS',
   ARCHIVE_TASK_ACTION = '@@prototypeComposer/prototype/task-list/ARCHIVE_TASK_ACTION',
+  REORDER_ACTIVITIES = '@@prototypeComposer/prototype/task-list/REORDER_ACTIVITIES',
 }
 
 export type TaskListActionType =

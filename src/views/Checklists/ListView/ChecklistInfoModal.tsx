@@ -20,13 +20,12 @@ const Wrapper = styled.div`
   .modal {
     min-width: 850px !important;
     width: 850px !important;
-    max-height: 600px;
-    height: 600px;
+    max-height: 80vh;
   }
 
   .modal-body {
     padding: 0 !important;
-    height: inherit;
+    max-height: inherit;
     display: grid;
     grid-template-areas: 'header' 'body';
     grid-template-rows: 92px 1fr;

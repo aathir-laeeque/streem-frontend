@@ -54,12 +54,13 @@ const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }
   justify-content: center;
   margin-right: 24px;
   outline: none;
-  padding: 6px 24px;
+  padding-block: 6px;
+  padding-inline: 24px;
   @media (min-width: 768px) {
-    padding: 8px 24px;
+    padding-block: 8px;
   }
   @media (min-width: 1200px) {
-    padding: 12px 24px;
+    padding-block: 12px;
   }
 
   :last-of-type {

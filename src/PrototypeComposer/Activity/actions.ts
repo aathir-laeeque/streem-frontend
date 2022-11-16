@@ -1,23 +1,24 @@
-import { Activity } from './../checklist.types';
 import { actionSpreader } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
-import { ActivityListActions, ActivityOrderInTaskInStage } from './reducer.types';
+import { fetchListSuccessType } from '#views/Ontology/types';
+import { Activity, Stage, Task } from './../checklist.types';
+import { ActivityListActions, ActivityListState } from './reducer.types';
 import { AddNewActivityType, DeleteActivityType } from './types';
 
 export const addNewActivity = (params: AddNewActivityType) =>
-  actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY, { ...params });
+  actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY, params);
 
 export const addNewActivityError = (error: any) =>
   actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY_ERROR, { error });
 
-export const addNewActivitySuccess = (
-  params: Pick<AddNewActivityType, 'stageId' | 'taskId'> & {
-    activity: Activity;
-  },
-) => actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY_SUCCESS, { ...params });
+export const addNewActivitySuccess = (params: {
+  stageId: Stage['id'];
+  taskId: Task['id'];
+  activity: Activity;
+}) => actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY_SUCCESS, params);
 
 export const deleteActivity = (params: DeleteActivityType) =>
-  actionSpreader(ActivityListActions.DELETE_ACTIVITY, { ...params });
+  actionSpreader(ActivityListActions.DELETE_ACTIVITY, params);
 
 export const deleteActivityError = (error: any) =>
   actionSpreader(ActivityListActions.DELETE_ACTIVITY_ERROR, { error });
@@ -25,13 +26,13 @@ export const deleteActivityError = (error: any) =>
 export const deleteActivitySuccess = (params: DeleteActivityType) =>
   actionSpreader(ActivityListActions.DELETE_ACTIVITY_SUCCESS, { ...params });
 
-export const updateActivityApi = (activity: Activity) =>
-  actionSpreader(ActivityListActions.UPDATE_ACTIVITY_API, { activity });
+export const updateActivityApi = (activity: Activity, fromList?: boolean) =>
+  actionSpreader(ActivityListActions.UPDATE_ACTIVITY_API, { activity, fromList });
 
 export const updateStoreActivity = (
   data: Activity['data'],
   activityId: Activity['id'],
-  updatePath: (string | number)[],
+  updatePath?: (string | number)[],
 ) =>
   actionSpreader(ActivityListActions.UPDATE_STORE_ACTIVITY, {
     updatePath,
@@ -70,3 +71,15 @@ export const updateActivityError = (error: any) =>
 
 export const setValidationError = (error: Error) =>
   actionSpreader(ActivityListActions.SET_VALIDATION_ERROR, { error });
+
+export const toggleNewParameter = (payload?: ActivityListState['addParameter']) =>
+  actionSpreader(ActivityListActions.TOGGLE_NEW_PARAMETER, payload);
+
+export const fetchParameters = (checklistId: string, params?: Record<string, string | number>) =>
+  actionSpreader(ActivityListActions.FETCH_PARAMETERS, { checklistId, params });
+
+export const fetchParametersSuccess = ({ data, pageable }: fetchListSuccessType<any>) =>
+  actionSpreader(ActivityListActions.FETCH_PARAMETERS_SUCCESS, { data, pageable });
+
+export const fetchParametersError = (error: any) =>
+  actionSpreader(ActivityListActions.FETCH_PARAMETERS_ERROR, { error });

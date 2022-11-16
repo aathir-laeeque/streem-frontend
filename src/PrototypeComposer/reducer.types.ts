@@ -2,6 +2,7 @@ import {
   fetchComposerDataError,
   fetchComposerDataOngoing,
   fetchComposerDataSuccess,
+  processParametersMapSuccess,
   resetComposer,
 } from './actions';
 import { ActivityListState } from './Activity/reducer.types';
@@ -57,6 +58,7 @@ export enum ComposerAction {
   UNASSIGN_REVIEWER_FROM_CHECKLIST = '@@prototypeComposer/prototype/UNASSIGN_REVIEWER_FROM_CHECKLIST',
   UPDATE_FOR_REVIEW_PROCESS = '@@prototypeComposer/prototype/UPDATE_FOR_REVIEW_PROCESS',
   VALIDATE_PROTOTYPE = '@@prototypeComposer/prototype/validate',
+  PROCESS_PARAMETER_MAP_SUCCESS = '@@prototypeComposer/prototype/PROCESS_PARAMETER_MAP_SUCCESS',
 }
 
 export type ComposerActionType = ReturnType<
@@ -70,4 +72,5 @@ export type ComposerActionType = ReturnType<
   | typeof revertReviewersForChecklist
   | typeof unAssignReviewerFromChecklist
   | typeof updateChecklistForReview
+  | typeof processParametersMapSuccess
 >;

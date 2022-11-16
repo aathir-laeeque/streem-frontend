@@ -32,16 +32,7 @@ const Wrapper = styled.div.attrs({})`
   .modal {
     min-width: 500px !important;
     max-width: 720px !important;
-
-    .modal-header {
-      padding: 24px !important;
-      border-bottom: 1px solid #eeeeee;
-
-      h2 {
-        color: #000 !important;
-        font-weight: bold !important;
-      }
-    }
+    max-height: 80vh;
 
     .modal-body {
       padding: 24px !important;

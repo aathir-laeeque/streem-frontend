@@ -10,6 +10,7 @@ import {
   apiRemoveStop,
   apiRemoveTaskMedia,
   apiRemoveTaskTimer,
+  apiReOrderActivities,
   apiReorderTasks,
   apiSetTaskTimer,
   apiUpdateTask,
@@ -30,6 +31,7 @@ import {
   deleteTaskSuccess,
   removeTaskMedia,
   removeTaskTimer,
+  reOrderActivities,
   reOrderTask,
   reOrderTaskError,
   reOrderTaskSuccess,
@@ -346,6 +348,31 @@ function* archiveTaskActionSaga({ payload }: ReturnType<typeof archiveTaskAction
   }
 }
 
+function* reOrderActivitiesSaga({ payload }: ReturnType<typeof reOrderActivities>) {
+  try {
+    const { checklistId, taskId, stageId, orderedIds } = payload;
+    const { errors } = yield call(
+      request,
+      'PATCH',
+      apiReOrderActivities(checklistId, taskId, stageId),
+      {
+        data: {
+          parametersOrder: orderedIds.reduce<Record<string, number>>((acc, id, index) => {
+            acc[id] = index + 1;
+            return acc;
+          }, {}),
+        },
+      },
+    );
+
+    if (errors) {
+      console.error('error from reorder activities from task api :: ', errors);
+    }
+  } catch (error) {
+    console.error('error came in reOrderActivitiesSaga :: ', error);
+  }
+}
+
 export function* TaskListSaga() {
   yield takeLeading(TaskListActions.ADD_NEW_TASK, addNewTaskSaga);
   yield takeEvery(TaskListActions.DELETE_TASK, deleteTaskSaga);
@@ -361,4 +388,5 @@ export function* TaskListSaga() {
   yield takeLeading(TaskListActions.ADD_TASK_ACTION, addTaskActionSaga);
   yield takeLeading(TaskListActions.UPDATE_TASK_ACTION, updateTaskActionSaga);
   yield takeLeading(TaskListActions.ARCHIVE_TASK_ACTION, archiveTaskActionSaga);
+  yield takeLatest(TaskListActions.REORDER_ACTIVITIES, reOrderActivitiesSaga);
 }

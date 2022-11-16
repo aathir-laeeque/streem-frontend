@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class LayoutComponent extends Component {
+export class EmojiComponent extends Component {
   onChange = (event): void => {
     const { onChange } = this.props;
     onChange(event.target.innerHTML);
@@ -13,13 +13,7 @@ class LayoutComponent extends Component {
     return (
       <div className={`rdw-emoji-modal ${popupClassName}`} onClick={(e) => e.stopPropagation()}>
         {emojis.map((Emoji, index) => (
-          <span
-            key={index}
-            className="rdw-emoji-icon"
-            alt=""
-            title={Emoji.name}
-            onClick={this.onChange}
-          >
+          <span key={index} className="rdw-emoji-icon" title={Emoji.name} onClick={this.onChange}>
             {Emoji.value}
           </span>
         ))}
@@ -50,5 +44,3 @@ class LayoutComponent extends Component {
     );
   }
 }
-
-export default LayoutComponent;

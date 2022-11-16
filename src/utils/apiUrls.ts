@@ -138,8 +138,13 @@ export const apiAddNewActivity = ({
   checklistId,
   stageId,
   taskId,
-}: Omit<AddNewActivityType, 'activityType' | 'orderTree'>) =>
-  `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks/${taskId}/activities`;
+}: Pick<AddNewActivityType, 'checklistId' | 'stageId' | 'taskId'>) => {
+  if (!stageId && !taskId) {
+    return `${baseUrl}/checklists/${checklistId}/activities`;
+  } else {
+    return `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks/${taskId}/activities`;
+  }
+};
 
 export const apiDeleteActivity = (activityId: Activity['id']) =>
   `${baseUrl}/activities/${activityId}/archive`;
@@ -178,7 +183,7 @@ export const apiPrototypeSignOff = (checklistId: Checklist['id']) =>
 export const apiPrototypeRelease = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/publish`;
 
-export const apiUpdateActivity = (activityId: Activity['id']) =>
+export const apiSingleActivity = (activityId: Activity['id']) =>
   `${baseUrl}/activities/${activityId}`;
 
 export const apiAddStop = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/stop/add`;
@@ -198,11 +203,23 @@ export const apiAddTaskAction = (taskId: Task['id']) => `${baseUrl}/tasks/${task
 export const apiUpdateTaskAction = (taskId: Task['id'], actionId: string) =>
   `${baseUrl}/tasks/${taskId}/automations/${actionId}`;
 
+export const apiReOrderActivities = (
+  checklistId: Checklist['id'],
+  taskId: Task['id'],
+  stageId: Stage['id'],
+) => `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks/${taskId}/activities/reorder`;
+
 export const apiUpdateTaskMedia = (taskId: Task['id'], mediaId: MediaDetails['mediaId']) =>
   `${baseUrl}/medias/${mediaId}`;
 
-export const apiGetResourceActivitiesByType = (checklistId: Checklist['id'], type: string) =>
-  `${baseUrl}/checklists/${checklistId}/activities?type=${type}`;
+export const apiGetActivities = (checklistId: Checklist['id'], type?: string) =>
+  `${baseUrl}/checklists/${checklistId}/activities${type ? `?type=${type}` : ''}`;
+
+export const apiBatchMapParameters = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/activities/map`;
+
+export const apiMapParameterToTask = (checklistId: Checklist['id'], taskId: Task['id']) =>
+  `${baseUrl}/checklists/${checklistId}/tasks/${taskId}/activities/map`;
 
 export const apiValidatePrototype = (id: Checklist['id']) => `${baseUrl}/checklists/${id}/validate`;
 

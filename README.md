@@ -31,3 +31,6 @@ TODO: Describe and show how to build your code and run the tests.
 
 ## Fonts To be used (.ttf as Pdf only Supports Those)
 - https://github.com/googlefonts/nunito/tree/master/fonts/TTF
+
+## Notes:
+- mui default z-index = 1300

@@ -100,6 +100,15 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
         } as Checklist,
       };
 
+    case ComposerAction.PROCESS_PARAMETER_MAP_SUCCESS:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          parameters: action.payload.parameters,
+        },
+      };
+
     default:
       return {
         ...state,

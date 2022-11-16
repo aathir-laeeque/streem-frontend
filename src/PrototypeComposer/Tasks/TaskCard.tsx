@@ -1,14 +1,37 @@
-import { Select, ImageUploadButton, Textarea } from '#components';
+import { NestedSelect, ImageUploadButton, Textarea } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { ActivityType, EnabledStates, TimerOperator } from '#PrototypeComposer/checklist.types';
+import {
+  EnabledStates,
+  MandatoryActivity,
+  NonMandatoryActivity,
+  TargetEntityType,
+  TimerOperator,
+} from '#PrototypeComposer/checklist.types';
+import ParameterTaskView from '#PrototypeComposer/Parameters/TaskViews';
 import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { useTypedSelector } from '#store/helpers';
+import { apiGetActivities, apiMapParameterToTask } from '#utils/apiUrls';
+import { DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { FilterOperators, ResponseObj } from '#utils/globalTypes';
+import { request } from '#utils/request';
 import { formatDuration } from '#utils/timeUtils';
 import {
-  AddBox,
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import {
+  AddCircleOutline,
   ArrowDropDown,
   ArrowDropUp,
+  ArrowLeft,
+  ArrowRight,
   Autorenew,
   DeleteOutlined,
   PanTool,
@@ -20,21 +43,30 @@ import {
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import Activity from '../Activity';
-import { addNewActivity } from '../Activity/actions';
+import { addNewActivitySuccess, toggleNewParameter } from '../Activity/actions';
 import { Checklist } from '../checklist.types';
-import { ActivityOptions } from '../constants';
 import {
   addStop,
   deleteTask,
   removeStop,
+  reOrderActivities,
   reOrderTask,
-  resetTaskActivityError,
   setActiveTask,
   updateTaskName,
 } from './actions';
-import { TaskCardWrapper } from './styles';
+import { TaskCardWrapper, AddActivityItemWrapper } from './styles';
 import { TaskCardProps } from './types';
+
+const AddActivity = () => {
+  return (
+    <AddActivityItemWrapper>
+      <div className="label">
+        <AddCircleOutline /> Add Activity
+      </div>
+      <ArrowDropDown />
+    </AddActivityItemWrapper>
+  );
+};
 
 const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }> = ({
   task,
@@ -49,6 +81,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
     stages: { activeStageId, listOrder },
     tasks: { activeTaskId },
   } = useTypedSelector((state) => state.prototypeComposer);
+  const stageIndex = listOrder.indexOf(activeStageId as string);
 
   const { userId } = useTypedSelector((state) => ({
     userId: state.auth.userId,
@@ -58,16 +91,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
 
   const [isAuthor, setIsAuthor] = useState(false);
 
-  useEffect(() => {
-    setIsAuthor(
-      (data as Checklist)?.collaborators?.some(
-        (collaborator) =>
-          (collaborator.type === CollaboratorType.PRIMARY_AUTHOR ||
-            collaborator.type === CollaboratorType.AUTHOR) &&
-          collaborator.id === userId,
-      ),
-    );
-  }, []);
+  const sensors = useSensors(useSensor(PointerSensor));
 
   const {
     id: taskId,
@@ -80,7 +104,94 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
     timerOperator,
   } = task;
 
-  const stageIndex = listOrder.indexOf(activeStageId as string);
+  const handleDragEnd = (e: DragEndEvent) => {
+    const { active, over } = e;
+    if (data?.id && activeStageId && over && active.id !== over.id) {
+      const taskActivities = activityOrderInTaskInStage[activeStageId][taskId];
+      const oldIndex = taskActivities.indexOf(active.id as string);
+      const newIndex = taskActivities.indexOf(over.id as string);
+      dispatch(
+        reOrderActivities({
+          checklistId: data.id,
+          stageId: activeStageId,
+          taskId,
+          orderedIds: arrayMove(taskActivities, oldIndex, newIndex),
+        }),
+      );
+    }
+  };
+
+  useEffect(() => {
+    setIsAuthor(
+      (data as Checklist)?.collaborators?.some(
+        (collaborator) =>
+          (collaborator.type === CollaboratorType.PRIMARY_AUTHOR ||
+            collaborator.type === CollaboratorType.AUTHOR) &&
+          collaborator.id === userId,
+      ),
+    );
+  }, []);
+
+  const onChildChange = async (option: any) => {
+    switch (option.value) {
+      case 'add-new-parameter':
+        dispatch(toggleNewParameter({ action: 'task', title: 'Create a New Process Parameter' }));
+        break;
+      case 'add-text':
+        dispatch(
+          toggleNewParameter({
+            action: 'task',
+            title: 'Create a New Instruction',
+            type: NonMandatoryActivity.INSTRUCTION,
+          }),
+        );
+        break;
+      case 'add-material':
+        dispatch(
+          toggleNewParameter({
+            action: 'task',
+            title: 'Create a New Instruction',
+            type: NonMandatoryActivity.MATERIAL,
+          }),
+        );
+        break;
+      case 'subtasks':
+        dispatch(
+          toggleNewParameter({
+            action: 'task',
+            title: 'Create a New Subtask',
+            type: MandatoryActivity.CHECKLIST,
+          }),
+        );
+        break;
+      default:
+        if (activeStageId && activeTaskId) {
+          const activitiesInTask = activityOrderInTaskInStage[activeStageId][taskId];
+          const maxOrderTree =
+            listById?.[activitiesInTask?.[activitiesInTask?.length - 1]]?.orderTree ?? 0;
+          const response: ResponseObj<any> = await request(
+            'PATCH',
+            apiMapParameterToTask(data!.id, activeTaskId),
+            {
+              data: {
+                parameterId: option.id,
+                orderTree: maxOrderTree + 1,
+              },
+            },
+          );
+          if (response?.data) {
+            dispatch(
+              addNewActivitySuccess({
+                activity: response.data,
+                stageId: activeStageId,
+                taskId: activeTaskId,
+              }),
+            );
+          }
+        }
+        break;
+    }
+  };
 
   const deleteTaskProps = {
     header: 'Delete Task',
@@ -108,7 +219,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
       >
         <div
           className={`overlap ${
-            isAuthor && data?.state in EnabledStates && !data?.archived ? 'hide' : ''
+            isAuthor && data!.state in EnabledStates && !data?.archived ? 'hide' : ''
           }`}
           onClick={() => {
             if (activeTaskId === taskId) {
@@ -292,41 +403,155 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
             </div>
           </div>
 
-          <div className="activity-list">
-            {taskActivities?.map((activityId, index) => {
-              const activity = listById[activityId];
-              return (
-                <Activity activity={activity} key={`${activityId}-${index}`} taskId={taskId} />
-              );
-            })}
-          </div>
+          {hasMedias && (
+            <div className="media-list">
+              <ArrowLeft className="icon" />
+
+              <div className="media-list-items">
+                {medias.map((media, index) => (
+                  <div
+                    className="media-list-item"
+                    key={index}
+                    onClick={() => {
+                      dispatch(
+                        openOverlayAction({
+                          type: OverlayNames.TASK_MEDIA,
+                          props: {
+                            taskId,
+                            mediaDetails: media,
+                            disableNameInput: false,
+                            disableDescInput: false,
+                          },
+                        }),
+                      );
+                    }}
+                    style={{
+                      background: `url(${media.link}) center/cover no-repeat`,
+                    }}
+                  >
+                    <div className="media-list-item-name">{media.name}</div>
+                  </div>
+                ))}
+              </div>
+
+              <ArrowRight className="icon" />
+            </div>
+          )}
+
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            modifiers={[restrictToVerticalAxis]}
+          >
+            <SortableContext items={taskActivities} strategy={verticalListSortingStrategy}>
+              <div className="activity-list">
+                {taskActivities?.map((activityId, index) => {
+                  const activity = listById[activityId];
+                  return (
+                    <ParameterTaskView
+                      activity={activity}
+                      key={`${activityId}-${index}`}
+                      taskId={taskId}
+                    />
+                  );
+                })}
+              </div>
+            </SortableContext>
+          </DndContext>
         </div>
 
         {noActivityError ? <div className="task-error">{noActivityError?.message}</div> : null}
 
         <div className="task-footer">
-          <Select
-            options={ActivityOptions}
-            onChange={(option: any) => {
-              dispatch(resetTaskActivityError(taskId));
-              dispatch(
-                addNewActivity({
-                  activityType: option.value as ActivityType,
-                  checklistId: (data as Checklist).id,
-                  taskId: taskId,
-                  stageId: activeStageId,
-                  orderTree: taskActivities.length + 1,
-                }),
-              );
+          <NestedSelect
+            id="add-activity-selector"
+            width="100%"
+            label={AddActivity}
+            items={{
+              parameters: {
+                label: 'Parameters',
+                items: {
+                  'add-new-parameter': {
+                    label: 'Add New',
+                  },
+                  'existing-parameter': {
+                    label: 'Choose from Existing',
+                    fetchItems: async (pageNumber?: number, query = '') => {
+                      if (typeof pageNumber === 'number') {
+                        try {
+                          const { data: resData, pageable }: ResponseObj<any[]> = await request(
+                            'GET',
+                            apiGetActivities(data!.id),
+                            {
+                              params: {
+                                page: pageNumber + 1,
+                                size: DEFAULT_PAGE_SIZE,
+                                filters: JSON.stringify({
+                                  op: FilterOperators.AND,
+                                  fields: [
+                                    {
+                                      field: 'targetEntityType',
+                                      op: FilterOperators.EQ,
+                                      values: [TargetEntityType.UNMAPPED],
+                                    },
+                                    { field: 'archived', op: FilterOperators.EQ, values: [false] },
+                                    ...(query
+                                      ? [
+                                          {
+                                            field: 'label',
+                                            op: FilterOperators.LIKE,
+                                            values: [query],
+                                          },
+                                        ]
+                                      : []),
+                                  ],
+                                }),
+                              },
+                            },
+                          );
+                          if (resData && pageable) {
+                            return {
+                              options: resData.map((item) => ({
+                                ...item,
+                                value: item.id,
+                              })),
+                              pageable,
+                            };
+                          }
+                        } catch (e) {
+                          console.error('Error while fetching existing unmapped parameters', e);
+                        }
+                      }
+                      return {
+                        options: [],
+                      };
+                    },
+                  },
+                },
+              },
+              instructions: {
+                label: 'Instruction',
+                items: {
+                  'add-text': {
+                    label: 'Add Text',
+                  },
+                  'add-material': {
+                    label: 'Add Material',
+                  },
+                },
+              },
+              subtasks: {
+                label: 'Subtasks',
+              },
             }}
-            placeholder="Add Activity"
+            onChildChange={onChildChange}
           />
         </div>
       </TaskCardWrapper>
     );
-  } else {
-    return null;
   }
+  return null;
 };
 
 export default TaskCard;

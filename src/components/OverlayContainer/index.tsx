@@ -1,6 +1,5 @@
 import WebCamOverlay from '#components/shared/WebCamOverlay';
 import AddStop from '#JobComposer/modals/AddStop';
-import AssignmentSuccessModal from '#JobComposer/modals/AssignmentSuccess';
 import JobCompleteAllTasksError from '#JobComposer/modals/CompleteAllTasksError';
 import CompletedWithExceptionInfo from '#JobComposer/modals/CompletedWithExceptionInfo';
 import CompleteJobWithException from '#JobComposer/modals/CompleteJobWithException';
@@ -16,7 +15,6 @@ import StartJob from '#JobComposer/modals/StartJob';
 import StartTaskError from '#JobComposer/modals/StartTaskError';
 import TaskErrorCorrection from '#JobComposer/modals/TaskErrorCorrection';
 import { AssignedUserDetailsPopover } from '#JobComposer/Popovers/AssignedUserDetailsPopover';
-import { CalcActivityAddParamsModal } from '#PrototypeComposer/Activity/Calculation/AddParametersModal';
 import { TaskMediaModal, TimedTaskConfigModal } from '#PrototypeComposer/modals';
 import EditingDisabledModal from '#PrototypeComposer/modals/EditingDisabled';
 import { AuthorsDetailsPopover } from '#PrototypeComposer/Overlays/AuthorsDetailsPopover';
@@ -56,6 +54,7 @@ import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
 import ConfigureActions from '#PrototypeComposer/Overlays/ConfigureActions';
 import ProcessSharing from '#views/Checklists/Overlays/ProcessSharing';
+import ConfigureJobParameters from '#PrototypeComposer/Overlays/ConfigureJobParameters';
 import { CommonOverlayProps, OverlayNames } from './types';
 
 const Wrapper = styled.div``;
@@ -92,9 +91,6 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.ADD_STOP:
       return <AddStop {...params} />;
-
-    case OverlayNames.ASSIGNMENT_SUCCESS:
-      return <AssignmentSuccessModal {...params} />;
 
     case OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT:
       return <ReviewerAssignmentModal {...params} />;
@@ -210,9 +206,6 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
     case OverlayNames.REFETCH_JOB_COMPOSER_DATA:
       return <RefetchJobComposerData {...params} />;
 
-    case OverlayNames.CALC_ACTIVITY_ADD_PARAMS_MODAL:
-      return <CalcActivityAddParamsModal {...params} />;
-
     case OverlayNames.AUTOMATION_ACTION:
       return <AutomationActionModal {...params} />;
 
@@ -224,6 +217,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.PROCESS_SHARING:
       return <ProcessSharing {...params} />;
+
+    case OverlayNames.CONFIGURE_JOB_PARAMETERS:
+      return <ConfigureJobParameters {...params} />;
 
     default:
       return null;

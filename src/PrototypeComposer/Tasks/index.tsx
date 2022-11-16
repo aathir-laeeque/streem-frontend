@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { addNewTask } from './actions';
 import { TaskListWrapper } from './styles';
 import TaskCard from './TaskCard';
-import TaskMedias from './TaskMedias';
 
 const Tasks: FC<{ allowNewAddition: boolean }> = ({ allowNewAddition }) => {
   const dispatch = useDispatch();
@@ -34,7 +33,6 @@ const Tasks: FC<{ allowNewAddition: boolean }> = ({ allowNewAddition }) => {
                 isFirstTask={index === 0}
                 isLastTask={index === taskListOrder.length - 1}
               />
-              <TaskMedias medias={task.medias} taskId={task.id} />
             </div>
           );
         })}

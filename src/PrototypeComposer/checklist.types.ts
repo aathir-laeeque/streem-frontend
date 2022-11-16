@@ -18,7 +18,6 @@ export enum MandatoryActivity {
   CHECKLIST = 'CHECKLIST',
   MEDIA = 'MEDIA',
   MULTISELECT = 'MULTISELECT',
-  SHOULD_BE = 'SHOULD_BE',
   PARAMETER = 'PARAMETER',
   SIGNATURE = 'SIGNATURE',
   SINGLE_SELECT = 'SINGLE_SELECT',
@@ -46,6 +45,12 @@ export type ActivityResponse = {
   state: ActivityState;
 };
 
+export enum TargetEntityType {
+  TASK = 'TASK',
+  PROCESS = 'PROCESS',
+  UNMAPPED = 'UNMAPPED',
+}
+
 export type Activity = {
   code: string;
   // TODO: look into this any type for activity data
@@ -58,6 +63,7 @@ export type Activity = {
   description: string | null;
   type: ActivityType;
   validations: any;
+  targetEntityType: TargetEntityType;
 };
 
 export type Media = {
@@ -208,6 +214,7 @@ export type Checklist = {
   noOfTasks?: number;
   version: number | null;
   global: boolean;
+  parameters: any[];
 };
 
 export enum LogType {

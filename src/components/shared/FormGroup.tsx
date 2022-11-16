@@ -29,7 +29,7 @@ const Wrapper = styled.div.attrs({
   padding: 24px 16px;
 
   > div {
-    margin-bottom: 32px;
+    margin-bottom: 24px;
 
     :last-child {
       margin-bottom: unset;

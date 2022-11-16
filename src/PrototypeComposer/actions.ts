@@ -37,3 +37,6 @@ export const validatePrototype = (id: Checklist['id']) =>
   actionSpreader(ComposerAction.VALIDATE_PROTOTYPE, { id });
 
 // BLOCK ENDS
+
+export const processParametersMapSuccess = (parameters: any[]) =>
+  actionSpreader(ComposerAction.PROCESS_PARAMETER_MAP_SUCCESS, { parameters });

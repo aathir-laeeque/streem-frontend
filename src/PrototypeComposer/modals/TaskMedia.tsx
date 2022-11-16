@@ -19,137 +19,140 @@ const Wrapper = styled.div<{
   disableDescInput: boolean;
   disableNameInput: boolean;
 }>`
-  ${({ fullScreeen, disableDescInput, disableNameInput }) => {
-    return css`
-      .modal {
-        min-width: ${fullScreeen ? '100% !important' : 'calc(100vw - 40vw)'};
-        height: ${fullScreeen ? '100%' : 'max-content'};
-        background: ${fullScreeen ? 'transparent !important' : 'white'};
-        padding: ${fullScreeen ? '10px !important' : 'unset'};
+  #modal-container {
+    z-index: 1400 !important;
+    ${({ fullScreeen, disableDescInput, disableNameInput }) => {
+      return css`
+        .modal {
+          min-width: ${fullScreeen ? '100% !important' : 'calc(100vw - 40vw)'};
+          height: ${fullScreeen ? '100%' : 'max-content'};
+          background: ${fullScreeen ? 'transparent !important' : 'white'};
+          padding: ${fullScreeen ? '10px !important' : 'unset'};
 
-        .close-icon {
-          display: ${fullScreeen ? 'none' : 'inline-block'};
-        }
+          .close-icon {
+            display: ${fullScreeen ? 'none' : 'inline-block'};
+          }
 
-        &-body {
-          height: ${fullScreeen ? '100%' : 'inherit'};
-          padding: 0 !important;
+          &-body {
+            height: ${fullScreeen ? '100%' : 'inherit'};
+            padding: 0 !important;
 
-          .wrapper {
-            display: flex;
-            height: inherit;
-            align-items: ${fullScreeen ? 'center' : 'unset'};
-
-            .left-side {
-              align-items: center;
+            .wrapper {
               display: flex;
-              flex: 2;
-              justify-content: center;
-              max-width: ${fullScreeen ? '100%' : '600px'};
-              max-height: ${fullScreeen ? 'unset' : '90%'};
-              height: ${fullScreeen ? '100%' : 'unset'};
-              position: relative;
+              height: inherit;
+              align-items: ${fullScreeen ? 'center' : 'unset'};
 
-              img {
-                max-width: 100%;
-                max-height: 100%;
-              }
+              .left-side {
+                align-items: center;
+                display: flex;
+                flex: 2;
+                justify-content: center;
+                max-width: ${fullScreeen ? '100%' : '600px'};
+                max-height: ${fullScreeen ? 'unset' : '90%'};
+                height: ${fullScreeen ? '100%' : 'unset'};
+                position: relative;
 
-              .full-screen-action {
-                position: absolute;
-                right: 16px;
-                top: 24px;
-                width: 24px;
-                height: 24px;
-                cursor: pointer;
-                border-radius: 50%;
-                background-color: ${fullScreeen ? 'rgba(0, 0, 0, 1)' : 'rgba(0, 0, 0, 0.2)'};
-              }
-            }
-
-            .right-side {
-              border-left: 1px solid #eeeeee;
-              display: ${fullScreeen ? 'none' : 'flex'};
-              flex: 1;
-              flex-direction: column;
-              justify-content: center;
-              max-width: 320px;
-
-              .media-details {
-                padding: 24px;
-
-                ${disableDescInput
-                  ? css`
-                      .input-label {
-                        color: #999999;
-                        font-size: 12px;
-
-                        .optional-badge {
-                          display: none;
-                        }
-                      }
-                    `
-                  : null}
-
-                .input {
-                  margin-bottom: 40px;
-
-                  .input-wrapper {
-                    ${disableDescInput || disableNameInput
-                      ? css`
-                          background: none;
-                          border: none;
-                          padding: 10px 0px;
-                          pointer-events: none;
-
-                          input {
-                            font-size: 14px;
-                            font-weight: bold;
-                            ::placeholder {
-                              visibility: hidden;
-                            }
-                          }
-                        `
-                      : null}
-                  }
+                img {
+                  max-width: 100%;
+                  max-height: 100%;
                 }
 
-                .textarea {
-                  margin-bottom: 15px;
+                .full-screen-action {
+                  position: absolute;
+                  right: 16px;
+                  top: 24px;
+                  width: 24px;
+                  height: 24px;
+                  cursor: pointer;
+                  border-radius: 50%;
+                  background-color: ${fullScreeen ? 'rgba(0, 0, 0, 1)' : 'rgba(0, 0, 0, 0.2)'};
+                }
+              }
 
-                  .textarea-wrapper {
-                    textarea:disabled {
-                      background: none;
-                      font-size: 14px;
-                      color: #000;
-                      border-radius: 4px;
-                      border: solid 1px #eeeeee;
-                      ::placeholder {
-                        visibility: hidden;
+              .right-side {
+                border-left: 1px solid #eeeeee;
+                display: ${fullScreeen ? 'none' : 'flex'};
+                flex: 1;
+                flex-direction: column;
+                justify-content: center;
+                max-width: 320px;
+
+                .media-details {
+                  padding: 24px;
+
+                  ${disableDescInput
+                    ? css`
+                        .input-label {
+                          color: #999999;
+                          font-size: 12px;
+
+                          .optional-badge {
+                            display: none;
+                          }
+                        }
+                      `
+                    : null}
+
+                  .input {
+                    margin-bottom: 40px;
+
+                    .input-wrapper {
+                      ${disableDescInput || disableNameInput
+                        ? css`
+                            background: none;
+                            border: none;
+                            padding: 10px 0px;
+                            pointer-events: none;
+
+                            input {
+                              font-size: 14px;
+                              font-weight: bold;
+                              ::placeholder {
+                                visibility: hidden;
+                              }
+                            }
+                          `
+                        : null}
+                    }
+                  }
+
+                  .textarea {
+                    margin-bottom: 15px;
+
+                    .textarea-wrapper {
+                      textarea:disabled {
+                        background: none;
+                        font-size: 14px;
+                        color: #000;
+                        border-radius: 4px;
+                        border: solid 1px #eeeeee;
+                        ::placeholder {
+                          visibility: hidden;
+                        }
                       }
                     }
                   }
+
+                  button#save-details {
+                    margin-left: auto;
+                  }
                 }
 
-                button#save-details {
-                  margin-left: auto;
+                .delete-media {
+                  display: flex;
+                  align-items: center;
+                  padding: 16px 24px;
+                  margin-top: auto;
+                  border-top: 1px solid #eeeeee;
+                  cursor: pointer;
                 }
-              }
-
-              .delete-media {
-                display: flex;
-                align-items: center;
-                padding: 16px 24px;
-                margin-top: auto;
-                border-top: 1px solid #eeeeee;
-                cursor: pointer;
               }
             }
           }
         }
-      }
-    `;
-  }}
+      `;
+    }}
+  }
 `;
 
 type Props = {

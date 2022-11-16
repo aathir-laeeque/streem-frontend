@@ -12,41 +12,44 @@ export interface ConfirmationModalProps {
 }
 
 const Wrapper = styled.div.attrs({})`
-  .modal {
-    min-width: 400px !important;
+  #modal-container {
+    z-index: 1400 !important;
+    .modal {
+      min-width: 400px !important;
 
-    h2 {
-      color: #000 !important;
-      font-weight: bold !important;
-    }
+      h2 {
+        color: #000 !important;
+        font-weight: bold !important;
+      }
 
-    .modal-header {
-      padding: 24px !important;
-      border-bottom: none !important;
-    }
+      .modal-header {
+        padding: 24px !important;
+        border-bottom: none !important;
+      }
 
-    .modal-footer {
-      padding: 24px 16px !important;
-      flex-direction: row-reverse !important;
-      border-top: none !important;
+      .modal-footer {
+        padding: 24px 16px !important;
+        flex-direction: row-reverse !important;
+        border-top: none !important;
 
-      .modal-footer-options {
-        padding: 0px 16px !important;
+        .modal-footer-options {
+          padding: 0px 16px !important;
 
-        span {
-          padding: 3px 8px;
+          span {
+            padding: 3px 8px;
+          }
+        }
+
+        .modal-footer-buttons {
+          padding: 0px 8px !important;
         }
       }
 
-      .modal-footer-buttons {
-        padding: 0px 8px !important;
+      .modal-body {
+        padding: 0px 24px !important;
+        font-size: 14px;
+        color: #000000;
       }
-    }
-
-    .modal-body {
-      padding: 0px 24px !important;
-      font-size: 14px;
-      color: #000000;
     }
   }
 `;

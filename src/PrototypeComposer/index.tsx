@@ -1,3 +1,4 @@
+import { StyledTabs } from '#components';
 import {
   Collaborator,
   CollaboratorState,
@@ -11,8 +12,10 @@ import { fetchComposerData, resetComposer } from './actions';
 import { ChecklistStates } from './checklist.types';
 import Header from './Header';
 import Stages from './Stages';
-import { ComposerWrapper } from './styles';
+import { ComposerWrapper, TasksTabWrapper } from './styles';
 import Tasks from './Tasks';
+import AddParameter from './Tasks/AddParameter';
+import ParametersList from './Parameters/ListView';
 import { ComposerProps } from './types';
 
 export type ProcessInitialState = {
@@ -111,7 +114,6 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
               case CollaboratorType.REVIEWER:
                 if (collaborator.phase === data.phase) {
                   acc.reviewer = collaborator;
-
                   if (data.state === ChecklistStates.READY_FOR_SIGNING) {
                     acc.headerNotification = {
                       content: 'Author has to start the signing process',
@@ -190,8 +192,50 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
         <>
           <ComposerWrapper>
             <Header {...state} />
-            <Stages allowNewAddition={!!allowNewAddition} />
-            <Tasks allowNewAddition={!!allowNewAddition} />
+            <StyledTabs
+              containerProps={{
+                className: 'process-tabs',
+              }}
+              tabListProps={{
+                className: 'process-tabs-list',
+              }}
+              panelsProps={{
+                className: 'process-tabs-panel',
+              }}
+              tabs={[
+                {
+                  value: '0',
+                  label: 'Tasks',
+                  panelContent: (
+                    <TasksTabWrapper>
+                      <Stages allowNewAddition={!!allowNewAddition} />
+                      <Tasks allowNewAddition={!!allowNewAddition} />
+                    </TasksTabWrapper>
+                  ),
+                },
+                {
+                  value: '1',
+                  label: 'Parameters',
+                  panelContent: <ParametersList />,
+                },
+                // {
+                //   value: '2',
+                //   label: 'Assignees',
+                //   panelContent: <div>Assignees</div>,
+                // },
+                // {
+                //   value: '3',
+                //   label: 'Verifiers',
+                //   panelContent: <div>Verifiers</div>,
+                // },
+                // {
+                //   value: '4',
+                //   label: 'Automation',
+                //   panelContent: <div>Automation</div>,
+                // },
+              ]}
+            />
+            <AddParameter />
           </ComposerWrapper>
         </>
       }

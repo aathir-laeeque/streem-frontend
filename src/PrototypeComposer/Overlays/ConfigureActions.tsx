@@ -14,7 +14,7 @@ import {
 } from '#PrototypeComposer/Tasks/actions';
 import { Task } from '#PrototypeComposer/Tasks/types';
 import { useTypedSelector } from '#store';
-import { apiGetObjectTypes, apiGetResourceActivitiesByType } from '#utils/apiUrls';
+import { apiGetObjectTypes, apiGetActivities } from '#utils/apiUrls';
 import { InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { fetchObjectTypes } from '#views/Ontology/actions';
@@ -137,8 +137,8 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
     if (!resourceActivities.length && !numberActivities.length) {
       setIsLoadingActivities(true);
       const [resources, numbers] = await Promise.all([
-        request('GET', apiGetResourceActivitiesByType(checklistId, 'RESOURCE')),
-        request('GET', apiGetResourceActivitiesByType(checklistId, 'NUMBER')),
+        request('GET', apiGetActivities(checklistId, 'RESOURCE')),
+        request('GET', apiGetActivities(checklistId, 'NUMBER')),
       ]);
       if (
         task.automations.length &&
@@ -385,7 +385,7 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                       formatOptionLabel,
                                       label: 'Object Property',
                                       isLoading: isLoadingObjectType,
-                                      options: selectedObjectType?.properties.reduce<
+                                      options: selectedObjectType?.properties?.reduce<
                                         Array<Record<string, string>>
                                       >((acc, objectTypeProperty) => {
                                         if (objectTypeProperty.inputType === InputTypes.NUMBER) {

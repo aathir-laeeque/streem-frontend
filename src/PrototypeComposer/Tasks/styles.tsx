@@ -6,23 +6,10 @@ const TaskListWrapper = styled.div.attrs({
 })`
   grid-area: task-list;
   overflow: auto;
+  padding-right: 16px;
 
   .task-list-item {
-    display: grid;
-    grid-template-areas: 'task-card task-medias';
-    grid-template-columns: 2fr 1fr;
-    grid-gap: 16px;
     margin-bottom: 16px;
-
-    @media (max-width: 1200px) {
-      grid-template-columns: 1.5fr 1fr;
-      grid-gap: 8px;
-    }
-
-    @media (min-width: 1920px) {
-      max-width: 1200px;
-      margin: 0 auto 32px;
-    }
   }
 `;
 
@@ -34,7 +21,6 @@ const TaskCardWrapper = styled.div.attrs({
   box-shadow: 0 1px 4px 0 rgba(102, 102, 102, 0.08);
   display: flex;
   flex-direction: column;
-  grid-area: task-card;
   height: max-content;
   position: relative;
 
@@ -93,7 +79,7 @@ const TaskCardWrapper = styled.div.attrs({
     &-body {
       .task-config {
         border-bottom: 1px solid #dadada;
-        padding: 24px;
+        padding: 24px 24px 0;
 
         @media (max-width: 1200px) {
           padding: 12px;
@@ -184,6 +170,52 @@ const TaskCardWrapper = styled.div.attrs({
         }
       }
 
+      .media-list {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        border-bottom: 1px solid #dadada;
+        max-height: 186px;
+
+        .icon {
+          color: #161616;
+          font-size: 28px;
+        }
+
+        &-items {
+          display: flex;
+          flex: 1;
+          overflow-x: auto;
+          padding-block: 16px;
+        }
+
+        &-item {
+          border: 1px solid #eeeeee;
+          border-radius: 5px;
+          box-sizing: border-box;
+          cursor: pointer;
+          min-height: 150px;
+          position: relative;
+          margin-right: 16px;
+          min-width: 250px;
+
+          &-name {
+            color: #ffffff;
+            font-size: 12px;
+            left: 8px;
+            position: absolute;
+            top: 8px;
+            padding: 2px 6px;
+            background-color: rgba(0, 0, 0, 0.3);
+          }
+
+          :last-child {
+            margin-right: 0;
+          }
+        }
+      }
+
       .activity-list {
         display: flex;
         flex-direction: column;
@@ -207,8 +239,6 @@ const TaskCardWrapper = styled.div.attrs({
 `;
 
 const TaskMediasWrapper = styled.div`
-  grid-area: task-medias;
-
   .container {
     background-color: #ffffff;
     border: solid 1px #eeeeee;
@@ -321,4 +351,24 @@ const TaskMediasWrapper = styled.div`
   }
 `;
 
-export { TaskListWrapper, TaskCardWrapper, TaskMediasWrapper };
+const AddActivityItemWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7.5px 12px;
+  background-color: #f4f4f4;
+  border-bottom: 1px solid #bababa;
+  color: #808ba5;
+
+  :hover {
+    border-bottom: 1px solid #005dcc;
+  }
+
+  .label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+`;
+
+export { TaskListWrapper, TaskCardWrapper, TaskMediasWrapper, AddActivityItemWrapper };

@@ -2,16 +2,11 @@ import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   .modal {
-    max-height: 600px;
+    max-height: 80vh;
     min-width: 500px !important;
 
-    &-header {
-      border-bottom-color: #eeeeee !important;
-    }
-
     &-body {
-      height: 400px;
-      max-height: 400px;
+      height: calc(80vh - 120px);
       padding: 0 !important;
 
       .list-controller {
