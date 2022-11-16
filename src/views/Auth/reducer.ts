@@ -1,5 +1,6 @@
 import { roles } from '#services/uiPermissions';
 import { FacilitiesAction } from '#store/facilities/types';
+import { keyBy } from 'lodash';
 
 import {
   AuthAction,
@@ -20,7 +21,7 @@ export const authInitialState: AuthState = {
   loading: false,
   facilities: [],
   NonGenuineLicenseMap: {},
-  useCastList: [],
+  useCaseMap: {},
   fetchingUseCaseList: false,
 };
 
@@ -115,7 +116,7 @@ const reducer = (state = authInitialState, action: AuthActionType): AuthState =>
       return {
         ...state,
         fetchingUseCaseList: false,
-        useCastList: action.payload.useCaseList,
+        useCaseMap: keyBy(action.payload.useCases, 'id'),
       };
 
     case AuthAction.SET_SELECTED_USE_CASE:

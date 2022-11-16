@@ -25,8 +25,6 @@ import {
   accountLookUpSuccess,
 } from './actions';
 
-export type AuthViewProps = RouteComponentProps;
-
 interface Settings {
   logoUrl: string;
   sessionIdleTimeoutInMinutes: number;
@@ -86,7 +84,7 @@ export interface AuthState {
   readonly token?: string;
   readonly userId: User['id'] | null;
   readonly NonGenuineLicenseMap: { [facilityId: string]: LicenseType };
-  readonly useCastList: UseCaseType[];
+  readonly useCaseMap: Record<UseCaseType['id'], UseCaseType>;
   readonly selectedUseCase?: UseCaseType;
   readonly fetchingUseCaseList: boolean;
   readonly userType?: string;
@@ -184,12 +182,6 @@ export type BaseViewConfigType = {
 
 export type BaseViewProps = RouteComponentProps & {
   pageName: PAGE_NAMES;
-};
-
-export type RegisterProps = {
-  name: string;
-  email: string;
-  token: string;
 };
 
 export type LoginInputs = {

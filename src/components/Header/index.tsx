@@ -2,20 +2,17 @@ import AvatarIcon from '#assets/svg/AvatarIcon';
 import Logo from '#assets/svg/Logo';
 import MoreOptionsIcon from '#assets/svg/MoreOptionsIcon';
 import SettingsIcon from '#assets/svg/SettingsIcon';
-import { Select } from '#components/shared/Select';
+import { NestedSelect, Select } from '#components';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
 import { logout, setSelectedUseCase } from '#views/Auth/actions';
 import { UserType } from '#views/UserAccess/ManageUser/types';
 import { useMsal } from '@azure/msal-react';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import { navigate } from '@reach/router';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { ImageWrapper } from '../../styles/ImageWrapper';
-import NestedMenuItem from '../shared/NestedMenuItem';
 import { HeaderMenu, Wrapper } from './styles';
 
 type FacilityOption = {
@@ -24,16 +21,10 @@ type FacilityOption = {
 };
 
 const Header: FC = () => {
-  const [showUsersDropdown, setShowUsersDropdown] = React.useState<null | HTMLElement>(null);
-  const [showSettingsDropDown, setSettingsDropDownVisibiltity] = React.useState<null | HTMLElement>(
-    null,
-  );
   const dispatch = useDispatch();
-  const [showUseCaseSelectionDropDown, setShowUseCaseSelectionDropDown] =
-    React.useState<null | HTMLElement>(null);
   const { instance } = useMsal();
 
-  const { profile, facilities, selectedFacility, userId, selectedUseCase, useCastList, userType } =
+  const { profile, facilities, selectedFacility, userId, selectedUseCase, useCaseMap, userType } =
     useTypedSelector((state) => state.auth);
 
   const facilitiesOptions: FacilityOption[] = facilities.map((facility) => ({
@@ -46,12 +37,12 @@ const Header: FC = () => {
       <ImageWrapper>
         <Logo style={{ width: '125px', cursor: 'pointer' }} onClick={() => navigate('/')} />
       </ImageWrapper>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div className="right-section">
         {selectedFacility ? (
           <Select
             options={facilitiesOptions}
             value={facilitiesOptions.find((option) => option.value === selectedFacility?.id)}
-            onChange={(option) =>
+            onChange={(option: any) =>
               dispatch(
                 switchFacility({
                   facilityId: option.value as string,
@@ -62,125 +53,79 @@ const Header: FC = () => {
           />
         ) : null}
         {selectedUseCase && !location.pathname.includes('/home') && (
-          <>
-            <HeaderMenu
-              aria-controls="top-menu"
-              aria-haspopup="true"
-              onClick={(event) => setShowUseCaseSelectionDropDown(event.currentTarget)}
-              style={{ marginRight: '16px' }}
-            >
-              <MoreOptionsIcon />
-            </HeaderMenu>
-            <Menu
-              id="top-menu"
-              anchorEl={showUseCaseSelectionDropDown}
-              keepMounted
-              disableEnforceFocus
-              open={Boolean(showUseCaseSelectionDropDown)}
-              onClose={() => setShowUseCaseSelectionDropDown(null)}
-              style={{ marginTop: 30 }}
-            >
-              {useCastList.map((useCaseDetails) => (
-                <MenuItem
-                  autoFocus={selectedUseCase.id === useCaseDetails.id}
-                  onClick={() => {
-                    setShowUseCaseSelectionDropDown(null);
-                    dispatch(setSelectedUseCase(useCaseDetails));
-                    navigate('/inbox');
-                  }}
-                  disabled={!useCaseDetails.enabled}
-                  key={useCaseDetails.id}
-                >
-                  {useCaseDetails.label}
-                </MenuItem>
-              ))}
-            </Menu>
-          </>
-        )}
-        {selectedFacility && (
-          <>
-            <HeaderMenu
-              aria-controls="top-menu"
-              aria-haspopup="true"
-              onClick={(event) => setSettingsDropDownVisibiltity(event.currentTarget)}
-              style={{ marginRight: '16px' }}
-            >
-              <SettingsIcon />
-            </HeaderMenu>
-            <Menu
-              id="top-menu"
-              anchorEl={showSettingsDropDown}
-              keepMounted
-              disableEnforceFocus
-              open={Boolean(showSettingsDropDown)}
-              onClose={() => setSettingsDropDownVisibiltity(null)}
-              style={{ marginTop: 30 }}
-            >
-              {checkPermission(['header', 'usersAndAccess']) && (
-                <NestedMenuItem
-                  left
-                  label="System Settings"
-                  mainMenuOpen={showSettingsDropDown ? true : false}
-                >
-                  <MenuItem
-                    onClick={() => {
-                      navigate('/users');
-                      setSettingsDropDownVisibiltity(null);
-                    }}
-                  >
-                    Users and Access
-                  </MenuItem>
-                </NestedMenuItem>
-              )}
-            </Menu>
-          </>
-        )}
-        <HeaderMenu
-          aria-controls="top-menu"
-          aria-haspopup="true"
-          onClick={(event) => setShowUsersDropdown(event.currentTarget)}
-        >
-          <div
-            style={{
-              display: 'flex',
-              gap: '4px',
-              alignItems: 'center',
+          <NestedSelect
+            id="use-case-selector"
+            items={Object.values(useCaseMap).reduce<any>((acc, useCase) => {
+              if (useCase.enabled) {
+                acc[useCase.id] = {
+                  ...useCase,
+                  disabled: !useCase.enabled,
+                };
+              }
+              return acc;
+            }, {})}
+            onChildChange={(option: any) => {
+              dispatch(setSelectedUseCase(option));
+              navigate('/inbox');
             }}
-          >
-            <AvatarIcon className="profile-icon" />
-            <div style={{ fontSize: '16px' }}>
-              {profile?.firstName} {profile?.lastName}
-            </div>
-          </div>
-        </HeaderMenu>
-        <Menu
-          id="top-menu"
-          anchorEl={showUsersDropdown}
-          keepMounted
-          disableEnforceFocus
-          open={Boolean(showUsersDropdown)}
-          onClose={() => setShowUsersDropdown(null)}
-          style={{ marginTop: 30 }}
-        >
-          {selectedFacility && (
-            <MenuItem
-              onClick={() => {
-                navigate(`/users/profile/${profile?.id}`);
-                setShowUsersDropdown(null);
-              }}
-            >
-              My Account
-            </MenuItem>
-          )}
-          <MenuItem
-            onClick={() => {
+            label={() => (
+              <HeaderMenu>
+                <MoreOptionsIcon />
+              </HeaderMenu>
+            )}
+          />
+        )}
+        {selectedFacility && checkPermission(['header', 'usersAndAccess']) && (
+          <NestedSelect
+            id="system-settings-selector"
+            items={{
+              'system-settings': {
+                label: 'System Settings',
+                items: {
+                  'users-and-access': {
+                    label: 'Users and Access',
+                  },
+                },
+              },
+            }}
+            onChildChange={() => {
+              navigate('/users');
+            }}
+            label={() => (
+              <HeaderMenu>
+                <SettingsIcon />
+              </HeaderMenu>
+            )}
+          />
+        )}
+        <NestedSelect
+          id="account-operations-selector"
+          items={{
+            ...(selectedFacility && {
+              'my-account': {
+                label: 'My Account',
+              },
+            }),
+            logout: {
+              label: 'Logout',
+            },
+          }}
+          onChildChange={(option: any) => {
+            if (option.value === 'my-account') {
+              navigate(`/users/profile/${profile?.id}`);
+            } else {
               dispatch(logout(userType === UserType.AZURE_AD ? instance : undefined));
-              setShowUsersDropdown(null);
-            }}
-          >
-            Logout
-          </MenuItem>
-        </Menu>
+            }
+          }}
+          label={() => (
+            <HeaderMenu>
+              <AvatarIcon className="profile-icon" />
+              <div style={{ fontSize: '16px' }}>
+                {profile?.firstName} {profile?.lastName}
+              </div>
+            </HeaderMenu>
+          )}
+        />
       </div>
     </Wrapper>
   );

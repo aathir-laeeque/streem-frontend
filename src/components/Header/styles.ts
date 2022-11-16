@@ -18,12 +18,18 @@ export const Wrapper = styled.div.attrs({})`
     width: 25px;
     height: 25px;
   }
+
+  .right-section {
+    display: flex;
+    gap: 16px;
+  }
 `;
 
 export const HeaderMenu = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+  gap: 4px;
 
   .thumb {
     width: 32px;
@@ -36,10 +42,4 @@ export const HeaderMenu = styled.div`
     color: #fff;
     font-size: 12px;
   }
-`;
-
-export const MenuText = styled.span`
-  color: #1d84ff;
-  font-family: 'Open Sans', sans-serif;
-  padding: 0 10px 0 7px;
 `;

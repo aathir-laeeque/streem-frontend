@@ -19,7 +19,7 @@ const Home = () => {
     firstName,
     lastName,
     fetchingUseCaseList,
-    useCastList,
+    useCaseMap,
     selectedFacility: { id: facilityId = '' } = {},
   } = useTypedSelector((state) => state.auth);
 
@@ -52,44 +52,43 @@ const Home = () => {
             </span>
           </div>
           <div className="use-case-list-wrapper">
-            {useCastList &&
-              useCastList.map((useCaseDetails) => (
-                <UseCaseCard
-                  cardColor={useCaseDetails.metadata['card-color']}
-                  cardEnabled={useCaseDetails.enabled}
+            {Object.values(useCaseMap).map((useCaseDetails) => (
+              <UseCaseCard
+                cardColor={useCaseDetails.metadata['card-color']}
+                cardEnabled={useCaseDetails.enabled}
+              >
+                {!useCaseDetails.enabled && <UseCaseLockIcon className="use-case-lock-icon" />}
+                <div className="use-case-card-body">
+                  <div className="use-case-label">{useCaseDetails.label}</div>
+                  <div className="use-case-desc">{useCaseDetails.description}</div>
+                </div>
+                <div
+                  className="use-case-card-footer"
+                  onClick={() => {
+                    if (useCaseDetails.enabled) {
+                      dispatch(setSelectedUseCase(useCaseDetails));
+                      let navigateTo = 'inbox';
+                      Object.keys(navigationOptions).every((key) => {
+                        if (
+                          checkPermission([
+                            facilityId === ALL_FACILITY_ID ? 'globalSidebar' : 'sidebar',
+                            key,
+                          ])
+                        ) {
+                          navigateTo = key;
+                          return false;
+                        }
+                        return true;
+                      });
+                      navigate(`/${navigateTo}`);
+                    }
+                  }}
                 >
-                  {!useCaseDetails.enabled && <UseCaseLockIcon className="use-case-lock-icon" />}
-                  <div className="use-case-card-body">
-                    <div className="use-case-label">{useCaseDetails.label}</div>
-                    <div className="use-case-desc">{useCaseDetails.description}</div>
-                  </div>
-                  <div
-                    className="use-case-card-footer"
-                    onClick={() => {
-                      if (useCaseDetails.enabled) {
-                        dispatch(setSelectedUseCase(useCaseDetails));
-                        let navigateTo = 'inbox';
-                        Object.keys(navigationOptions).every((key) => {
-                          if (
-                            checkPermission([
-                              facilityId === ALL_FACILITY_ID ? 'globalSidebar' : 'sidebar',
-                              key,
-                            ])
-                          ) {
-                            navigateTo = key;
-                            return false;
-                          }
-                          return true;
-                        });
-                        navigate(`/${navigateTo}`);
-                      }
-                    }}
-                  >
-                    <div className="use-case-card-footer-text">View</div>
-                    <ArrowForwardIcon className="use-case-card-footer-icon" />
-                  </div>
-                </UseCaseCard>
-              ))}
+                  <div className="use-case-card-footer-text">View</div>
+                  <ArrowForwardIcon className="use-case-card-footer-icon" />
+                </div>
+              </UseCaseCard>
+            ))}
           </div>
         </div>
       </DashboardLayout>

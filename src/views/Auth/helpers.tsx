@@ -98,7 +98,6 @@ const centerCardConfig: BaseViewConfigType = {
   cardPosition: CARD_POSITIONS.CENTER,
   cardStyle: {
     backgroundColor: '#FFF',
-    borderRadius: '8px',
     boxShadow:
       '0 0 1px 0 rgba(0, 0, 0, 0.04), 0 2px 6px 0 rgba(0, 0, 0, 0.04), 0 16px 24px 0 rgba(0, 0, 0, 0.06)',
   },
@@ -1149,7 +1148,6 @@ export const createBaseViewConfig = ({
         cardPosition: CARD_POSITIONS.CENTER,
         cardStyle: {
           backgroundColor: '#FFF',
-          borderRadius: '8px',
           boxShadow:
             '0 0 1px 0 rgba(0, 0, 0, 0.04), 0 2px 6px 0 rgba(0, 0, 0, 0.04), 0 16px 24px 0 rgba(0, 0, 0, 0.06)',
           maxWidth: '30vw',

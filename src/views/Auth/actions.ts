@@ -100,9 +100,9 @@ export const fetchUseCaseList = () => actionSpreader(AuthAction.FETCH_USE_CASE_L
 
 export const fetchUseCaseListOngoing = () => actionSpreader(AuthAction.FETCH_USE_CASE_LIST_ONGOING);
 
-export const fetchUseCaseListSuccess = (useCaseList: UseCaseType[]) =>
+export const fetchUseCaseListSuccess = (useCases: UseCaseType[]) =>
   actionSpreader(AuthAction.FETCH_USE_CASE_LIST_SUCCESS, {
-    useCaseList,
+    useCases,
   });
 
 export const setSelectedUseCase = (selectedUseCase: UseCaseType) =>
