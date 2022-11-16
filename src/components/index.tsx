@@ -37,3 +37,4 @@ export * from './shared/NestedSelect';
 export * from './shared/Select';
 export * from './shared/StyledTabs';
 export * from './shared/useDrawer';
+export * from './shared/Pagination';

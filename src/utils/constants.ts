@@ -46,6 +46,10 @@ export const DEFAULT_SESSION_TIMEOUT_IN_MIN = 10;
 
 export const ALL_FACILITY_ID = '-1';
 
+export const DEFAULT_PAGE_NUMBER = 0;
+
+export const DEFAULT_PAGE_SIZE = 10;
+
 export enum EmojisUniCodes {
   CHECK = '2705',
   EYE = 'DC41',

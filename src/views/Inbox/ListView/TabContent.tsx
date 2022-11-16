@@ -1,22 +1,19 @@
-import { DataTable, ProgressBar, SearchFilter } from '#components';
+import { DataTable, PaginatedFetchData, Pagination, ProgressBar, SearchFilter } from '#components';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import MoreDetails from '#views/Jobs/Components/MoreDetailsColumn';
+import AssigneesColumn from '#views/Jobs/ListView/AssigneesColumn';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { Job } from '#views/Jobs/ListView/types';
+import { AssignedJobStates, CompletedJobStates, Job } from '#views/Jobs/ListView/types';
 import { CircularProgress } from '@material-ui/core';
-import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
+import { FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import AssigneesColumn from '#views/Jobs/ListView/AssignessColumn';
-import { AssignedJobStates, CompletedJobStates } from '#views/Jobs/ListView/types';
 import { fetchInbox, setSelectedState } from './actions';
 import { ListViewState, TabViewProps } from './types';
-
-const DEFAULT_PAGE_NUMBER = 0;
-const DEFAULT_PAGE_SIZE = 10;
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { jobs, loading: jobDataLoading }: ListViewState = useTypedSelector(
@@ -37,11 +34,8 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
 
   const dispatch = useDispatch();
 
-  const fetchData = (
-    filtersArr: FilterField[],
-    page = DEFAULT_PAGE_NUMBER,
-    size = DEFAULT_PAGE_SIZE,
-  ) => {
+  const fetchData = (params: PaginatedFetchData = {}) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     dispatch(
       fetchInbox(
         {
@@ -52,7 +46,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           filters: JSON.stringify({
             op: FilterOperators.AND,
             fields: [
-              ...filtersArr,
+              ...filters,
               {
                 field: 'useCaseId',
                 op: FilterOperators.EQ,
@@ -68,12 +62,10 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
 
   useEffect(() => {
     if (selectedUseCase?.id) {
-      fetchData(filterFields);
+      fetchData();
       dispatch(setSelectedState(reducerLabel));
     }
   }, [selectedUseCase?.id]);
-
-  const showPaginationArrows = pageable.totalPages > 10;
 
   const columns = [
     {
@@ -201,7 +193,9 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           ]}
           updateFilterFields={(fields) => {
             setFilterFields([...fields]);
-            fetchData([...fields]);
+            fetchData({
+              filters: [...fields],
+            });
           }}
         />
       </div>
@@ -234,35 +228,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
             };
           })}
         />
-        <div className="pagination">
-          <ArrowLeft
-            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-            onClick={() => {
-              if (pageable.page > 0) {
-                fetchData(filterFields, pageable.page - 1, DEFAULT_PAGE_SIZE);
-              }
-            }}
-          />
-          {Array.from({ length: pageable.totalPages }, (_, i) => i)
-            .slice(Math.floor(pageable.page / 10) * 10, Math.floor(pageable.page / 10) * 10 + 10)
-            .map((el) => (
-              <span
-                key={el}
-                className={pageable.page === el ? 'active' : ''}
-                onClick={() => fetchData(filterFields, el, DEFAULT_PAGE_SIZE)}
-              >
-                {el + 1}
-              </span>
-            ))}
-          <ArrowRight
-            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-            onClick={() => {
-              if (pageable.page < pageable.totalPages - 1) {
-                fetchData(filterFields, pageable.page + 1, DEFAULT_PAGE_SIZE);
-              }
-            }}
-          />
-        </div>
+        <Pagination pageable={pageable} fetchData={fetchData} />
       </div>
     </TabContentWrapper>
   );

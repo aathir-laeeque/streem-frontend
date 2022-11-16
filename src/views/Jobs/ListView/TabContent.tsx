@@ -1,6 +1,8 @@
 import {
   Button,
   DataTable,
+  PaginatedFetchData,
+  Pagination,
   ProgressBar,
   SearchFilter,
   TabContentProps,
@@ -13,16 +15,16 @@ import { ComposerEntity } from '#PrototypeComposer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
 import { User } from '#store/users/types';
-import { ALL_FACILITY_ID } from '#utils/constants';
+import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import MoreDetails from '#views/Jobs/Components/MoreDetailsColumn';
 import { CircularProgress } from '@material-ui/core';
-import { ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
+import { FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { createJob, fetchJobs } from './actions';
-import AssigneesColumn from './AssignessColumn';
+import AssigneesColumn from './AssigneesColumn';
 import { TabContentWrapper } from './styles';
 import {
   AssignedJobStates,
@@ -31,9 +33,6 @@ import {
   JobStateType,
   UnassignedJobStates,
 } from './types';
-
-const DEFAULT_PAGE_NUMBER = 0;
-const DEFAULT_PAGE_SIZE = 10;
 
 const getBaseFilter = (values: string[]): FilterField[] => [
   {
@@ -69,11 +68,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
   const [assignedUsers, setAssignedUsers] = useState<User[]>([]);
 
-  const fetchData = (
-    filtersArr: FilterField[],
-    page = DEFAULT_PAGE_NUMBER,
-    size = DEFAULT_PAGE_SIZE,
-  ) => {
+  const fetchData = (params: PaginatedFetchData = {}) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     dispatch(
       fetchJobs({
         page,
@@ -82,7 +78,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         filters: JSON.stringify({
           op: FilterOperators.AND,
           fields: [
-            ...filtersArr,
+            ...filters,
             {
               field: 'useCaseId',
               op: FilterOperators.EQ,
@@ -98,16 +94,14 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     if (componentDidMount.current) {
       const updatedBaseFilterValues = getBaseFilter(values);
       setFilterFields(getBaseFilter(values));
-      fetchData(updatedBaseFilterValues);
+      fetchData({ filters: updatedBaseFilterValues });
     }
   }, [values]);
 
   useEffect(() => {
-    fetchData(filterFields);
+    fetchData({ filters: filterFields });
     componentDidMount.current = true;
   }, []);
-
-  const showPaginationArrows = pageable.totalPages > 10;
 
   const onCreateJob = (jobDetails: Record<string, string>) => {
     const tempProperties: { id: string; value: string }[] = [];
@@ -289,7 +283,9 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                 ),
                 ...fields,
               ];
-              fetchData(updatedFilterFields);
+              fetchData({
+                filters: updatedFilterFields,
+              });
               return updatedFilterFields;
             });
           }}
@@ -319,7 +315,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                       ] as FilterField[])
                     : []),
                 ];
-                fetchData(updatedFilterFields);
+                fetchData({ filters: updatedFilterFields });
                 return updatedFilterFields;
               });
             }}
@@ -351,7 +347,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                       ] as FilterField[])
                     : [...getBaseFilter(values)]),
                 ];
-                fetchData(updatedFilterFields);
+                fetchData({ filters: updatedFilterFields });
                 return updatedFilterFields;
               });
             }}
@@ -424,35 +420,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             };
           })}
         />
-        <div className="pagination">
-          <ArrowLeft
-            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-            onClick={() => {
-              if (pageable.page > 0) {
-                fetchData(filterFields, pageable.page - 1, DEFAULT_PAGE_SIZE);
-              }
-            }}
-          />
-          {Array.from({ length: pageable.totalPages }, (_, i) => i)
-            .slice(Math.floor(pageable.page / 10) * 10, Math.floor(pageable.page / 10) * 10 + 10)
-            .map((el) => (
-              <span
-                key={el}
-                className={pageable.page === el ? 'active' : ''}
-                onClick={() => fetchData(filterFields, el, DEFAULT_PAGE_SIZE)}
-              >
-                {el + 1}
-              </span>
-            ))}
-          <ArrowRight
-            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-            onClick={() => {
-              if (pageable.page < pageable.totalPages - 1) {
-                fetchData(filterFields, pageable.page + 1, DEFAULT_PAGE_SIZE);
-              }
-            }}
-          />
-        </div>
+        <Pagination pageable={pageable} fetchData={fetchData} />
       </div>
     </TabContentWrapper>
   );

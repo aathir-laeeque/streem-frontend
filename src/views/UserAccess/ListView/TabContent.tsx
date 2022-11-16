@@ -1,4 +1,11 @@
-import { Button, DataTable, SearchFilter, TabContentProps } from '#components';
+import {
+  Button,
+  DataTable,
+  PaginatedFetchData,
+  Pagination,
+  SearchFilter,
+  TabContentProps,
+} from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
@@ -11,11 +18,12 @@ import {
   UserStatesColors,
   UserStatesContent,
 } from '#store/users/types';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { CircularProgress, Menu, MenuItem } from '@material-ui/core';
-import { ArrowDropDown, ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
+import { ArrowDropDown, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import { startCase, toLower } from 'lodash';
 import React, { MouseEvent, useEffect, useState } from 'react';
@@ -32,8 +40,6 @@ export function modalBody(text: string, user?: User) {
   );
 }
 
-const DEFAULT_PAGE_SIZE = 10;
-
 const TabContent: React.FC<TabContentProps> = (props) => {
   const {
     users: {
@@ -49,7 +55,8 @@ const TabContent: React.FC<TabContentProps> = (props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const fetchData = (page: number, size: number) => {
+  const fetchData = (params: PaginatedFetchData = {}) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     dispatch(
       fetchUsers(
         {
@@ -68,7 +75,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
   };
 
   useEffect(() => {
-    fetchData(0, 10);
+    fetchData();
   }, [props.values, filterFields]);
 
   const onArchiveUser = (user: User) => {
@@ -82,9 +89,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
             dispatch(
               archiveUser({
                 id: user.id,
-                fetchData: () => {
-                  fetchData(0, 10);
-                },
+                fetchData,
               }),
             ),
           body: modalBody('You’re about to archive', user),
@@ -104,9 +109,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
             dispatch(
               unArchiveUser({
                 id: user.id,
-                fetchData: () => {
-                  fetchData(0, 10);
-                },
+                fetchData,
               }),
             ),
           body: modalBody('You’re about to unarchive', user),
@@ -126,9 +129,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
             dispatch(
               cancelInvite({
                 id: user.id,
-                fetchData: () => {
-                  fetchData(0, 10);
-                },
+                fetchData,
               }),
             ),
           body: modalBody('You are about to cancel the invite sent to', user),
@@ -148,9 +149,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
             dispatch(
               unLockUser({
                 id: user.id,
-                fetchData: () => {
-                  fetchData(0, 10);
-                },
+                fetchData,
               }),
             ),
           body: modalBody('You’re about to unlock the account of', user),
@@ -158,8 +157,6 @@ const TabContent: React.FC<TabContentProps> = (props) => {
       }),
     );
   };
-
-  const showPaginationArrows = pageable.totalPages > 10;
 
   const columns = [
     {
@@ -502,36 +499,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
       </div>
       <div style={{ ...(loading ? { display: 'none' } : { display: 'contents' }) }}>
         <DataTable columns={columns} rows={currentPageData} />
-
-        <div className="pagination">
-          <ArrowLeft
-            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-            onClick={() => {
-              if (pageable.page > 0) {
-                fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
-              }
-            }}
-          />
-          {Array.from({ length: pageable.totalPages }, (_, i) => i)
-            .slice(Math.floor(pageable.page / 10) * 10, Math.floor(pageable.page / 10) * 10 + 10)
-            .map((el) => (
-              <span
-                key={el}
-                className={pageable.page === el ? 'active' : ''}
-                onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
-              >
-                {el + 1}
-              </span>
-            ))}
-          <ArrowRight
-            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-            onClick={() => {
-              if (pageable.page < pageable.totalPages - 1) {
-                fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
-              }
-            }}
-          />
-        </div>
+        <Pagination pageable={pageable} fetchData={fetchData} />
       </div>
     </TabContentWrapper>
   );

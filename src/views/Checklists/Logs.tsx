@@ -10,7 +10,6 @@ import { FilterField } from '#utils/globalTypes';
 import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper, ViewWrapper } from '#views/Jobs/ListView/styles';
 import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
-import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import { RouteComponentProps } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -148,8 +147,6 @@ const Logs: FC<Props> = ({ id }) => {
     }
   }, [data?.jobLogColumns, unSelectedColumnIds]);
 
-  // const showPaginationArrows = pageable.totalPages > 10;
-
   return (
     <TrainingUserWrapper>
       <div className="header">
@@ -194,38 +191,6 @@ const Logs: FC<Props> = ({ id }) => {
                     return acc;
                   }, [])}
                 />
-                {/* <div className="pagination">
-                  <ArrowLeft
-                    className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-                    onClick={() => {
-                      if (pageable.page > 0) {
-                        fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
-                      }
-                    }}
-                  />
-                  {Array.from({ length: pageable.totalPages }, (_, i) => i)
-                    .slice(
-                      Math.floor(pageable.page / 10) * 10,
-                      Math.floor(pageable.page / 10) * 10 + 10,
-                    )
-                    .map((el) => (
-                      <span
-                        key={el}
-                        className={pageable.page === el ? 'active' : ''}
-                        onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
-                      >
-                        {el + 1}
-                      </span>
-                    ))}
-                  <ArrowRight
-                    className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-                    onClick={() => {
-                      if (pageable.page < pageable.totalPages - 1) {
-                        fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
-                      }
-                    }}
-                  />
-                </div> */}
               </TabContentWrapper>
             }
           />

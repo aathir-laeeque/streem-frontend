@@ -2,7 +2,15 @@ import MemoArchive from '#assets/svg/Archive';
 import MemoCreateJob from '#assets/svg/CreateJob';
 import MemoStartRevision from '#assets/svg/StartRevision';
 import MemoViewInfo from '#assets/svg/ViewInfo';
-import { Button, DataTable, DropdownFilter, SearchFilter, ToggleSwitch } from '#components';
+import {
+  Button,
+  DataTable,
+  DropdownFilter,
+  PaginatedFetchData,
+  Pagination,
+  SearchFilter,
+  ToggleSwitch,
+} from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
@@ -15,12 +23,12 @@ import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
-import { ALL_FACILITY_ID } from '#utils/constants';
+import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { Error, FilterField, FilterOperators } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/ListView/actions';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { Chip, CircularProgress, Menu, MenuItem } from '@material-ui/core';
-import { ArrowDropDown, ArrowLeft, ArrowRight, FiberManualRecord } from '@material-ui/icons';
+import { ArrowDropDown, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -34,9 +42,6 @@ import {
   unarchiveChecklist,
 } from './actions';
 import { ListViewProps } from './types';
-
-const DEFAULT_PAGE_NUMBER = 0;
-const DEFAULT_PAGE_SIZE = 10;
 
 const getBaseFilter = (label: string): FilterField[] => [
   {
@@ -97,11 +102,8 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
 
   const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(label));
 
-  const fetchData = (
-    filtersArr: FilterField[],
-    page = DEFAULT_PAGE_NUMBER,
-    size = DEFAULT_PAGE_SIZE,
-  ) => {
+  const fetchData = (params: PaginatedFetchData = {}) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     dispatch(
       fetchChecklistsForListView({
         facilityId,
@@ -111,7 +113,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
         filters: JSON.stringify({
           op: FilterOperators.AND,
           fields: [
-            ...filtersArr,
+            ...filters,
             {
               field: 'useCaseId',
               op: FilterOperators.EQ,
@@ -145,14 +147,14 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
       dispatch(clearData());
       setFilterFields(() => {
         const baseFilters = getBaseFilter(label);
-        fetchData(baseFilters);
+        fetchData({ filters: baseFilters });
         return baseFilters;
       });
     }
   }, [label]);
 
   useEffect(() => {
-    fetchData(filterFields);
+    fetchData({ filters: filterFields });
     componentDidMount.current = true;
   }, []);
 
@@ -187,8 +189,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
       );
     }
   };
-
-  const showPaginationArrows = pageable.totalPages > 10;
 
   const prototypeActionsTemplate = (item: Checklist | null = null) => {
     if (!item) return <div style={{ display: 'flex', justifyContent: 'center' }}>-N/A-</div>;
@@ -582,7 +582,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                 ),
                 ...fields,
               ];
-              fetchData(updatedFilterFields);
+              fetchData({ filters: updatedFilterFields });
               return updatedFilterFields;
             });
           }}
@@ -596,7 +596,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
               ...Object.keys(ChecklistStatesContent)
                 .filter((key) => key !== 'PUBLISHED')
                 .map((key) => ({
-                  label: ChecklistStatesContent[key],
+                  label: ChecklistStatesContent[key as keyof typeof ChecklistStatesContent],
                   value: key,
                 })),
             ]}
@@ -612,7 +612,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     : { values: field.values }),
                 })) as FilterField[];
 
-                fetchData(updatedFilterFields);
+                fetchData({ filters: updatedFilterFields });
                 return updatedFilterFields;
               })
             }
@@ -638,7 +638,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                       field.field !== 'not.a.collaborator',
                   );
 
-                  fetchData(updatedFilterFields);
+                  fetchData({ filters: updatedFilterFields });
                   return updatedFilterFields;
                 });
               } else if (option.value === 'not.a.collaborator') {
@@ -656,7 +656,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     },
                   ] as FilterField[];
 
-                  fetchData(updatedFilterFields);
+                  fetchData({ filters: updatedFilterFields });
                   return updatedFilterFields;
                 });
               } else if (option.value === 'collaborators.type') {
@@ -675,7 +675,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     },
                   ] as FilterField[];
 
-                  fetchData(updatedFilterFields);
+                  fetchData({ filters: updatedFilterFields });
                   return updatedFilterFields;
                 });
               } else {
@@ -699,7 +699,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     },
                   ] as FilterField[];
 
-                  fetchData(updatedFilterFields);
+                  fetchData({ filters: updatedFilterFields });
                   return updatedFilterFields;
                 });
               }
@@ -721,7 +721,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                   : { values: field.values }),
               })) as FilterField[];
 
-              fetchData(updatedFilterFields);
+              fetchData({ filters: updatedFilterFields });
               return updatedFilterFields;
             })
           }
@@ -774,35 +774,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
           })}
         />
 
-        <div className="pagination">
-          <ArrowLeft
-            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-            onClick={() => {
-              if (pageable.page > 0) {
-                fetchData(filterFields, pageable.page - 1, DEFAULT_PAGE_SIZE);
-              }
-            }}
-          />
-          {Array.from({ length: pageable.totalPages }, (_, i) => i)
-            .slice(Math.floor(pageable.page / 10) * 10, Math.floor(pageable.page / 10) * 10 + 10)
-            .map((el) => (
-              <span
-                key={el}
-                className={pageable.page === el ? 'active' : ''}
-                onClick={() => fetchData(filterFields, el, DEFAULT_PAGE_SIZE)}
-              >
-                {el + 1}
-              </span>
-            ))}
-          <ArrowRight
-            className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-            onClick={() => {
-              if (pageable.page < pageable.totalPages - 1) {
-                fetchData(filterFields, pageable.page + 1, DEFAULT_PAGE_SIZE);
-              }
-            }}
-          />
-        </div>
+        <Pagination pageable={pageable} fetchData={fetchData} />
       </div>
     </TabContentWrapper>
   );

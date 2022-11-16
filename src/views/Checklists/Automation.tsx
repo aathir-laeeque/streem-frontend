@@ -1,11 +1,11 @@
-import { BodyWrapper, DataTable } from '#components';
+import { BodyWrapper, DataTable, PaginatedFetchData, Pagination } from '#components';
 import { useTypedSelector } from '#store';
-import cronstrue from 'cronstrue';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { TabContentWrapper, ViewWrapper } from '#views/Jobs/ListView/styles';
 import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
-import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import { RouteComponentProps } from '@reach/router';
+import cronstrue from 'cronstrue';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -17,9 +17,6 @@ const AutomationWrapper = styled(ViewWrapper)`
     grid-template-rows: 0px minmax(0, 1fr);
   }
 `;
-
-const DEFAULT_PAGE_NUMBER = 0;
-const DEFAULT_PAGE_SIZE = 10;
 
 const getBaseFilter = (checklistId: string): FilterField[] => [
   {
@@ -40,7 +37,8 @@ const Automation: FC<Props> = ({ id }) => {
 
   const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(id!));
 
-  const fetchData = (page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE) => {
+  const fetchData = (params: PaginatedFetchData = {}) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     if (id)
       dispatch(
         fetchAutomations({
@@ -58,8 +56,6 @@ const Automation: FC<Props> = ({ id }) => {
     console.log('in mount of automations');
     fetchData();
   }, [filterFields]);
-
-  const showPaginationArrows = pageable.totalPages > 10;
 
   return (
     <AutomationWrapper>
@@ -91,38 +87,7 @@ const Automation: FC<Props> = ({ id }) => {
                   ]}
                   rows={automations}
                 />
-                <div className="pagination">
-                  <ArrowLeft
-                    className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-                    onClick={() => {
-                      if (pageable.page > 0) {
-                        fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
-                      }
-                    }}
-                  />
-                  {Array.from({ length: pageable.totalPages }, (_, i) => i)
-                    .slice(
-                      Math.floor(pageable.page / 10) * 10,
-                      Math.floor(pageable.page / 10) * 10 + 10,
-                    )
-                    .map((el) => (
-                      <span
-                        key={el}
-                        className={pageable.page === el ? 'active' : ''}
-                        onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
-                      >
-                        {el + 1}
-                      </span>
-                    ))}
-                  <ArrowRight
-                    className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-                    onClick={() => {
-                      if (pageable.page < pageable.totalPages - 1) {
-                        fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
-                      }
-                    }}
-                  />
-                </div>
+                <Pagination pageable={pageable} fetchData={fetchData} />
               </TabContentWrapper>
             }
           />
