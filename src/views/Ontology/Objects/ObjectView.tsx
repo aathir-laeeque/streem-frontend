@@ -258,14 +258,17 @@ const ObjectView: FC<TabContentProps> = ({
                         label: option.displayName,
                         value: option.id,
                       })),
+                      optional: !isRequired,
                       isDisabled: isReadOnly,
                       ...(isReadOnly && { styles: undefined }),
                       onChange: (_options: { value: string } | { value: string }[]) => {
                         setValue(
                           registrationId,
-                          Array.isArray(_options)
-                            ? _options.map((option) => option.value)
-                            : [_options.value],
+                          _options
+                            ? Array.isArray(_options)
+                              ? _options.map((option) => option.value)
+                              : [_options.value]
+                            : undefined,
                           {
                             shouldDirty: true,
                             shouldValidate: true,
