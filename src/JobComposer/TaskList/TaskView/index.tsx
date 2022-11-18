@@ -2,7 +2,6 @@ import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 
 import { TaskViewProps } from '../types';
-import MediaCard from './MediaCard';
 import TaskCard from './TaskCard';
 
 const Wrapper = styled.div.attrs({
@@ -10,8 +9,8 @@ const Wrapper = styled.div.attrs({
 })`
   display: grid;
   grid-column-gap: 16px;
-  grid-template-areas: 'task-card task-media-card';
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-areas: 'task-card ';
+  grid-template-columns: 1fr;
   margin-bottom: 16px;
 
   @media (min-width: 1920px) {
@@ -26,8 +25,6 @@ const TaskView = forwardRef<Ref, TaskViewProps>((props, ref) => {
   return (
     <Wrapper ref={ref}>
       <TaskCard {...props} />
-
-      <MediaCard medias={props.task.medias} isTaskActive={props.isActive} />
     </Wrapper>
   );
 });

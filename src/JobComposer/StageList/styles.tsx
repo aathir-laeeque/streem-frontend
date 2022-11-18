@@ -11,7 +11,6 @@ const Wrapper = styled.div.attrs({
   background-color: #ffffff;
   border: solid 1px transparent;
   border-color: #eeeeee;
-  border-radius: 4px;
   box-shadow: 0 1px 4px 0 rgba(102, 102, 102, 0.08);
   cursor: pointer;
   display: flex;

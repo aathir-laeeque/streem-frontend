@@ -8,7 +8,6 @@ export const ComposerWrapper = styled.div`
   grid-template-columns: 320px 1fr;
   grid-template-rows: auto 1fr;
   overflow: hidden;
-  padding: 8px;
 
   @media (max-width: 1200px) {
     grid-template-columns: 240px 1fr;

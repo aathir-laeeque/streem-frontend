@@ -43,6 +43,7 @@ const Wrapper = styled.div`
 
   .tasks-list {
     grid-area: tasks-list;
+    padding-right: 16px;
   }
 `;
 

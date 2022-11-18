@@ -11,7 +11,7 @@ const Wrapper = styled.div`
     justify-content: space-between;
     width: 100%;
     border-bottom: 1px solid #f4f4f4;
-    padding: 16px;
+    padding: 12px 16px;
 
     .checklist-name {
       font-size: 20px;

@@ -26,21 +26,18 @@ const Wrapper = styled.div.attrs({
     ${({ taskExecutionState, isTaskDelayed }) => {
       if (isTaskDelayed) {
         return css`
-          border-top: 4px solid #f7b500;
-          border-radius: 4px;
+          border-top: 1px solid #f7b500;
         `;
       } else if (taskExecutionState === TaskExecutionState.COMPLETED) {
         return css`
-          border-top: 4px solid #5aa700;
-          border-radius: 4px;
+          border-top: 1px solid #5aa700;
         `;
       } else if (
         taskExecutionState === TaskExecutionState.SKIPPED ||
         taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION
       ) {
         return css`
-          border-top: 4px solid #f7b500;
-          border-radius: 4px;
+          border-top: 1px solid #f7b500;
         `;
       }
     }}

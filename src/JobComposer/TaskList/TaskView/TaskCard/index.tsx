@@ -19,13 +19,13 @@ import Header from './Header';
 import AutomationInfo from './AutomationInfo';
 import { CircularProgress } from '@material-ui/core';
 import moment from 'moment';
+import MediaCard from '../MediaCard';
 
 const Wrapper = styled.div.attrs({
   className: 'task-card',
 })<{ isLoading: boolean }>`
   background-color: #ffffff;
   border: 1px solid #eeeeee;
-  border-radius: 4px;
   box-shadow: 0 1px 4px 0 rgba(18, 170, 179, 0.08);
   display: flex;
   flex-direction: column;
@@ -159,6 +159,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           timerState={timerState}
           setTimerState={setTimerState}
         />
+        <MediaCard medias={task.medias} isTaskActive={isActive} />
         <div
           onClick={() => {
             if (jobState === JobStateEnum.IN_PROGRESS && !isTaskStarted && isLoggedInUserAssigned) {
