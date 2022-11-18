@@ -12,6 +12,8 @@ import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { CompletedJobStates } from '#views/Jobs/ListView/types';
 import { completeJob } from '../actions';
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 
 const JobHeaderButtons: FC<{
   jobState: JobStateType;
@@ -19,7 +21,17 @@ const JobHeaderButtons: FC<{
   isInboxView: boolean;
   profile: User | null;
   jobData?: Job;
-}> = ({ jobData, jobState, isInboxView, profile, isLoggedInUserAssigned }) => {
+  fullView: boolean;
+  setFullView: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({
+  jobData,
+  jobState,
+  isInboxView,
+  profile,
+  isLoggedInUserAssigned,
+  setFullView,
+  fullView,
+}) => {
   const { id: jobId, code, checklist } = (jobData as Job) ?? {};
 
   const dispatch = useDispatch();
@@ -107,6 +119,13 @@ const JobHeaderButtons: FC<{
 
       <Button className="more" variant="secondary" onClick={handleClick}>
         <MoreVert className="icon" fontSize="small" />
+      </Button>
+      <Button className="more" variant="secondary" onClick={() => setFullView((prev) => !prev)}>
+        {fullView ? (
+          <FullscreenExitIcon className="icon" fontSize="small" />
+        ) : (
+          <FullscreenIcon className="icon" fontSize="small" />
+        )}
       </Button>
 
       <Menu

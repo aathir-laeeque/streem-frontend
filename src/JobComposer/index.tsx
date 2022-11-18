@@ -1,6 +1,6 @@
 import { useTypedSelector } from '#store';
 import { CircularProgress } from '@material-ui/core';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchData, resetComposer } from './actions';
 import { ComposerProps } from './composer.types';
@@ -16,6 +16,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
     stages: { activeStageId },
     loading,
   } = useTypedSelector((state) => state.composer);
+  const [fullView, setFullView] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -36,8 +37,8 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
       <CircularProgress />
     </JobLoadingWrapper>
   ) : (
-    <ComposerWrapper>
-      <Header />
+    <ComposerWrapper fullView={fullView}>
+      <Header fullView={fullView} setFullView={setFullView} />
       <StageList />
       {activeStageId ? <TaskList /> : null}
     </ComposerWrapper>

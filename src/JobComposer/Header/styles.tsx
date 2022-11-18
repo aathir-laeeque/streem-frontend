@@ -32,6 +32,7 @@ const Wrapper = styled.div`
       .more {
         padding: 12px 4px;
         border: none;
+        margin-right: unset;
       }
 
       .bulk-assign,

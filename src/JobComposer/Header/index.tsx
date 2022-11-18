@@ -12,11 +12,14 @@ import {
 } from '#views/Jobs/ListView/types';
 import { FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import JobHeaderButtons from './JobHeaderButtons';
 import Wrapper from './styles';
 
-const Header = () => {
+const Header: FC<{
+  fullView: boolean;
+  setFullView: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ fullView, setFullView }) => {
   const [assignedUsers, setAssignedUsers] = useState<Users | undefined>(undefined);
   const [isLoggedInUserAssigned, setIsLoggedInUserAssigned] = useState(false);
   const {
@@ -87,16 +90,20 @@ const Header = () => {
           isInboxView={isInboxView}
           isLoggedInUserAssigned={isLoggedInUserAssigned}
           profile={profile}
+          setFullView={setFullView}
+          fullView={fullView}
         />
       </div>
-      <div className="job-secondary-header">
-        <div className="job-id">Job ID: {jobCode}</div>
-        <div className="checklist-id">Checklist ID: {checklist?.code}</div>
-        <div className="job-assignees">
-          {assignedUsers &&
-            assignedUsers?.map((author) => <Avatar user={author} key={author?.employeeId} />)}
+      {!fullView && (
+        <div className="job-secondary-header">
+          <div className="job-id">Job ID: {jobCode}</div>
+          <div className="checklist-id">Checklist ID: {checklist?.code}</div>
+          <div className="job-assignees">
+            {assignedUsers &&
+              assignedUsers?.map((author) => <Avatar user={author} key={author?.employeeId} />)}
+          </div>
         </div>
-      </div>
+      )}
     </Wrapper>
   );
 };

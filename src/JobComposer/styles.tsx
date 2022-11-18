@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const ComposerWrapper = styled.div`
+export const ComposerWrapper = styled.div<Pick<any, 'fullView'>>`
   display: grid;
   grid-gap: 8px;
   grid-row-gap: 16px;
@@ -8,6 +8,9 @@ export const ComposerWrapper = styled.div`
   grid-template-columns: 320px 1fr;
   grid-template-rows: auto 1fr;
   overflow: hidden;
+  background-color: #ecedf1;
+  position: ${({ fullView }) => (fullView ? 'fixed' : 'static')};
+  inset: ${({ fullView }) => (fullView ? '0' : 'unset')};
 
   @media (max-width: 1200px) {
     grid-template-columns: 240px 1fr;
