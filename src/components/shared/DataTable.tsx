@@ -38,6 +38,7 @@ const Wrapper = styled.div.attrs({
       .MuiTableHead-root {
         .MuiTableCell-stickyHeader {
           background-color: #dadada;
+          z-index: 0;
         }
 
         .MuiTableCell-head {
