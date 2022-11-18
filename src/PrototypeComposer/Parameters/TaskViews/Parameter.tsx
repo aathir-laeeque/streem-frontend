@@ -1,12 +1,12 @@
 import { FormGroup } from '#components';
-import { ActivityProps } from '#PrototypeComposer/Activity/types';
+import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { PARAMETER_OPERATORS } from '#PrototypeComposer/constants';
 import { InputTypes } from '#utils/globalTypes';
 import React, { FC } from 'react';
 import { FormatOptionLabelContext } from 'react-select';
 
-const ShouldBeTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
-  const selectedOperator = PARAMETER_OPERATORS.filter((o) => activity.data.operator === o.value);
+const ShouldBeTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
+  const selectedOperator = PARAMETER_OPERATORS.filter((o) => parameter.data.operator === o.value);
   return (
     <FormGroup
       inputs={[
@@ -16,7 +16,7 @@ const ShouldBeTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             id: 'uom',
             label: 'Unit of Measurement',
             placeholder: '',
-            value: activity.data.uom,
+            value: parameter.data.uom,
             disabled: true,
           },
         },
@@ -46,7 +46,7 @@ const ShouldBeTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
             id: 'value',
             label: 'Value',
             placeholder: '',
-            value: activity.data.value,
+            value: parameter.data.value,
             disabled: true,
           },
         },

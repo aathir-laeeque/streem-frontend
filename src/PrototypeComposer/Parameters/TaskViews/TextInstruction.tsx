@@ -1,4 +1,4 @@
-import { ActivityProps } from '#PrototypeComposer/Activity/types';
+import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { ContentState, EditorState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 import React, { FC, useEffect, useState } from 'react';
@@ -27,11 +27,11 @@ export const Wrapper = styled.div`
   }
 `;
 
-const TextInstructionTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
+const TextInstructionTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
   const [editorState, setEditorState] = useState<EditorState | null>(null);
 
   useEffect(() => {
-    const contentBlock = htmlToDraft(activity.data.text || '');
+    const contentBlock = htmlToDraft(parameter.data.text || '');
     if (contentBlock) {
       const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
       setEditorState(EditorState.createWithContent(contentState));

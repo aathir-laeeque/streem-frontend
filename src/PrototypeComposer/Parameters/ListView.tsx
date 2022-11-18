@@ -2,7 +2,7 @@ import { Button, DataTable, PaginatedFetchData, Pagination, TextInput } from '#c
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { fetchParameters, toggleNewParameter } from '#PrototypeComposer/Activity/actions';
-import { MandatoryActivity } from '#PrototypeComposer/checklist.types';
+import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap, TargetEntityTypeVisual } from '#PrototypeComposer/constants';
 import { TabPanelWrapper } from '#PrototypeComposer/styles';
 import { useTypedSelector } from '#store';
@@ -18,7 +18,7 @@ import { useDispatch } from 'react-redux';
 const ParametersList = () => {
   const {
     data,
-    activities: {
+    parameters: {
       parameters: { list, listLoading, pageable },
     },
   } = useTypedSelector((state) => state.prototypeComposer);
@@ -114,13 +114,13 @@ const ParametersList = () => {
                               toggleNewParameter({
                                 action: 'list',
                                 title: `Edit Process ${
-                                  item.type === MandatoryActivity.CHECKLIST
+                                  item.type === MandatoryParameter.CHECKLIST
                                     ? 'Subtask'
-                                    : item.type in MandatoryActivity
+                                    : item.type in MandatoryParameter
                                     ? 'Parameter'
                                     : 'Instruction'
                                 }`,
-                                activityId: item.id,
+                                parameterId: item.id,
                                 fetchData,
                               }),
                             );

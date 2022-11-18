@@ -7,12 +7,12 @@ import { debounce } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
-  approveRejectActivity,
-  executeActivity,
-  fixActivity,
-  updateExecutedActivity,
+  approveRejectParameter,
+  executeParameter,
+  fixParameter,
+  updateExecutedParameter,
 } from '../actions';
-import { ActivityProps, SupervisorResponse } from '../types';
+import { ParameterProps, SupervisorResponse } from '../types';
 import { Wrapper } from './styles';
 
 const generateText = (data) => {
@@ -95,7 +95,7 @@ const checkIsOffLimit = ({
   }
 };
 
-const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
+const ShouldBeParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const {
     auth: { profile, selectedFacility },
     composer: { entityId: jobId },
@@ -110,84 +110,84 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
   const dispatch = useDispatch();
 
   const [state, setState] = useState({
-    approvalTime: activity?.response?.activityValueApprovalDto?.createdAt,
-    approver: activity?.response?.activityValueApprovalDto?.approver,
-    isApprovalPending: activity?.response?.state === 'PENDING_FOR_APPROVAL',
-    isApproved: activity?.response?.activityValueApprovalDto
-      ? activity?.response?.activityValueApprovalDto?.state === 'APPROVED'
+    approvalTime: parameter?.response?.parameterValueApprovalDto?.createdAt,
+    approver: parameter?.response?.parameterValueApprovalDto?.approver,
+    isApprovalPending: parameter?.response?.state === 'PENDING_FOR_APPROVAL',
+    isApproved: parameter?.response?.parameterValueApprovalDto
+      ? parameter?.response?.parameterValueApprovalDto?.state === 'APPROVED'
       : undefined,
-    isExecuted: activity?.response?.state === 'EXECUTED',
+    isExecuted: parameter?.response?.state === 'EXECUTED',
     isOffLimit: checkIsOffLimit({
-      observedValue: parseFloat(activity?.response?.value) ?? null,
-      operator: activity?.data?.operator,
-      ...(activity?.data?.operator === 'BETWEEN'
+      observedValue: parseFloat(parameter?.response?.value) ?? null,
+      operator: parameter?.data?.operator,
+      ...(parameter?.data?.operator === 'BETWEEN'
         ? {
-            desiredValue1: parseFloat(activity?.data?.lowerValue),
-            desiredValue2: parseFloat(activity?.data?.upperValue),
+            desiredValue1: parseFloat(parameter?.data?.lowerValue),
+            desiredValue2: parseFloat(parameter?.data?.upperValue),
           }
-        : { desiredValue1: parseFloat(activity?.data?.value) }),
+        : { desiredValue1: parseFloat(parameter?.data?.value) }),
     }),
     isUserSupervisor: profile?.roles?.some((role) => role.name === 'SUPERVISOR'),
     isValueChanged: false,
-    reason: activity?.response?.reason ?? '',
-    value: activity?.response?.value ?? null,
+    reason: parameter?.response?.reason ?? '',
+    value: parameter?.response?.value ?? null,
     shouldCallApi: false,
   });
 
   useEffect(() => {
     setState((prevState) => ({
       ...prevState,
-      approvalTime: activity?.response?.activityValueApprovalDto?.createdAt,
-      approver: activity?.response?.activityValueApprovalDto?.approver,
-      isApprovalPending: activity?.response?.state === 'PENDING_FOR_APPROVAL',
-      isApproved: activity?.response?.activityValueApprovalDto
-        ? activity?.response?.activityValueApprovalDto?.state === 'APPROVED'
+      approvalTime: parameter?.response?.parameterValueApprovalDto?.createdAt,
+      approver: parameter?.response?.parameterValueApprovalDto?.approver,
+      isApprovalPending: parameter?.response?.state === 'PENDING_FOR_APPROVAL',
+      isApproved: parameter?.response?.parameterValueApprovalDto
+        ? parameter?.response?.parameterValueApprovalDto?.state === 'APPROVED'
         : undefined,
-      isExecuted: activity?.response?.state === 'EXECUTED',
+      isExecuted: parameter?.response?.state === 'EXECUTED',
       isOffLimit: checkIsOffLimit({
         observedValue:
-          prevState.value !== activity?.response?.value
+          prevState.value !== parameter?.response?.value
             ? prevState.value
-            : parseFloat(activity?.response?.value) ?? null,
-        operator: activity?.data?.operator,
-        ...(activity?.data?.operator === 'BETWEEN'
+            : parseFloat(parameter?.response?.value) ?? null,
+        operator: parameter?.data?.operator,
+        ...(parameter?.data?.operator === 'BETWEEN'
           ? {
-              desiredValue1: parseFloat(activity?.data?.lowerValue),
-              desiredValue2: parseFloat(activity?.data?.upperValue),
+              desiredValue1: parseFloat(parameter?.data?.lowerValue),
+              desiredValue2: parseFloat(parameter?.data?.upperValue),
             }
-          : { desiredValue1: parseFloat(activity?.data?.value) }),
+          : { desiredValue1: parseFloat(parameter?.data?.value) }),
       }),
-      isValueChanged: prevState.value !== activity?.response?.value,
+      isValueChanged: prevState.value !== parameter?.response?.value,
       reason:
-        prevState.reason !== activity?.response?.reason
+        prevState.reason !== parameter?.response?.reason
           ? prevState.reason
-          : activity?.response?.reason ?? '',
+          : parameter?.response?.reason ?? '',
       value:
-        prevState.value !== activity?.response?.value
+        prevState.value !== parameter?.response?.value
           ? prevState.value
-          : activity?.response?.value ?? null,
+          : parameter?.response?.value ?? null,
     }));
-  }, [activity]);
+  }, [parameter]);
 
   useEffect(() => {
     if (state.shouldCallApi) {
       if (state.value || state.reason) {
         if (isCorrectingError) {
           dispatch(
-            fixActivity(
+            fixParameter(
               {
-                ...activity,
-                data: { ...activity.data, input: state.value },
+                ...parameter,
+                data: { ...parameter.data, input: state.value },
               },
               state.reason ? state.reason : undefined,
             ),
           );
         } else {
           dispatch(
-            executeActivity(
+            executeParameter(
               {
-                ...activity,
-                data: { ...activity.data, input: state.value },
+                ...parameter,
+                data: { ...parameter.data, input: state.value },
               },
               state.reason ? state.reason : undefined,
             ),
@@ -199,7 +199,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
         shouldCallApi: false,
       }));
     }
-  }, [activity?.response?.value, activity?.response?.reason, state.shouldCallApi]);
+  }, [parameter?.response?.value, parameter?.response?.reason, state.shouldCallApi]);
 
   const renderSubmitButtons = () => (
     <div className="buttons-container">
@@ -218,24 +218,24 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
           setState((prevState) => ({
             ...prevState,
             isOffLimit: checkIsOffLimit({
-              observedValue: parseFloat(activity?.response?.value) ?? null,
-              operator: activity?.data?.operator,
-              ...(activity?.data?.operator === 'BETWEEN'
+              observedValue: parseFloat(parameter?.response?.value) ?? null,
+              operator: parameter?.data?.operator,
+              ...(parameter?.data?.operator === 'BETWEEN'
                 ? {
-                    desiredValue1: parseFloat(activity?.data?.lowerValue),
-                    desiredValue2: parseFloat(activity?.data?.upperValue),
+                    desiredValue1: parseFloat(parameter?.data?.lowerValue),
+                    desiredValue2: parseFloat(parameter?.data?.upperValue),
                   }
-                : { desiredValue1: parseFloat(activity?.data?.value) }),
+                : { desiredValue1: parseFloat(parameter?.data?.value) }),
             }),
-            value: activity?.response?.value,
-            reason: activity?.response?.reason,
+            value: parameter?.response?.value,
+            reason: parameter?.response?.reason,
             isValueChanged: false,
           }));
           if (numberInputRef && numberInputRef.current) {
-            numberInputRef.current.value = activity?.response?.value;
+            numberInputRef.current.value = parameter?.response?.value;
           }
           if (reasonRef && reasonRef.current) {
-            reasonRef.current.value = activity?.response?.reason;
+            reasonRef.current.value = parameter?.response?.reason;
           }
         }}
         disabled={state.isApprovalPending}
@@ -252,9 +252,9 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
         color="blue"
         onClick={() => {
           dispatch(
-            approveRejectActivity({
+            approveRejectParameter({
               jobId,
-              activityId: activity.id,
+              parameterId: parameter.id,
               type: SupervisorResponse.APPROVE,
             }),
           );
@@ -267,9 +267,9 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
         color="red"
         onClick={() => {
           dispatch(
-            approveRejectActivity({
+            approveRejectParameter({
               jobId,
-              activityId: activity.id,
+              parameterId: parameter.id,
               type: SupervisorResponse.REJECT,
             }),
           );
@@ -282,11 +282,11 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
 
   const handleExecution = (value: number, withReason = false) => {
     dispatch(
-      updateExecutedActivity({
-        ...activity,
+      updateExecutedParameter({
+        ...parameter,
         response: {
-          ...activity.response,
-          ...(value !== activity.response.value && { audit: undefined }),
+          ...parameter.response,
+          ...(value !== parameter.response.value && { audit: undefined }),
           value,
           reason: state.reason,
           state: state.reason ? 'PENDING_FOR_APPROVAL' : 'EXECUTED',
@@ -305,7 +305,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
         <span className="pending-approval">
           <Warning className="icon" />
           {state.isUserSupervisor
-            ? 'This Activity Needs Approval'
+            ? 'This Parameter Needs Approval'
             : 'Pending Approval from Supervisor'}
         </span>
       ) : null}
@@ -324,7 +324,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
         </span>
       ) : null}
 
-      <span className="parameter-text">{generateText(activity?.data)}</span>
+      <span className="parameter-text">{generateText(parameter?.data)}</span>
 
       <NumberInput
         defaultValue={state.value}
@@ -334,37 +334,37 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
             value,
             isValueChanged: prevState.value !== value,
           }));
-          switch (activity?.data?.operator) {
+          switch (parameter?.data?.operator) {
             case 'EQUAL_TO':
-              if (!(parseFloat(value) === parseFloat(activity?.data?.value))) {
+              if (!(parseFloat(value) === parseFloat(parameter?.data?.value))) {
                 setState((prevState) => ({ ...prevState, isOffLimit: true }));
               } else {
                 handleExecution(value);
               }
               break;
             case 'LESS_THAN':
-              if (!(parseFloat(value) < parseFloat(activity?.data?.value))) {
+              if (!(parseFloat(value) < parseFloat(parameter?.data?.value))) {
                 setState((prevState) => ({ ...prevState, isOffLimit: true }));
               } else {
                 handleExecution(value);
               }
               break;
             case 'LESS_THAN_EQUAL_TO':
-              if (!(parseFloat(value) <= parseFloat(activity?.data?.value))) {
+              if (!(parseFloat(value) <= parseFloat(parameter?.data?.value))) {
                 setState((prevState) => ({ ...prevState, isOffLimit: true }));
               } else {
                 handleExecution(value);
               }
               break;
             case 'MORE_THAN':
-              if (!(parseFloat(value) > parseFloat(activity?.data?.value))) {
+              if (!(parseFloat(value) > parseFloat(parameter?.data?.value))) {
                 setState((prevState) => ({ ...prevState, isOffLimit: true }));
               } else {
                 handleExecution(value);
               }
               break;
             case 'MORE_THAN_EQUAL_TO':
-              if (!(parseFloat(value) >= parseFloat(activity?.data?.value))) {
+              if (!(parseFloat(value) >= parseFloat(parameter?.data?.value))) {
                 setState((prevState) => ({ ...prevState, isOffLimit: true }));
               } else {
                 handleExecution(value);
@@ -373,8 +373,8 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
             case 'BETWEEN':
               if (
                 !(
-                  parseFloat(value) >= parseFloat(activity?.data?.lowerValue) &&
-                  parseFloat(value) <= parseFloat(activity?.data?.upperValue)
+                  parseFloat(value) >= parseFloat(parameter?.data?.lowerValue) &&
+                  parseFloat(value) <= parseFloat(parameter?.data?.upperValue)
                 )
               ) {
                 setState((prevState) => ({ ...prevState, isOffLimit: true }));
@@ -392,7 +392,7 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
 
       {state.isOffLimit ? (
         <div className="off-limit-reason">
-          <div className="warning">Warning! {generateText(activity?.data)}</div>
+          <div className="warning">Warning! {generateText(parameter?.data)}</div>
 
           <Textarea
             defaultValue={state.reason}
@@ -413,8 +413,8 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
               } else if (state.isOffLimit && state.isValueChanged) {
                 return renderSubmitButtons();
               } else if (
-                activity?.response?.state === 'BEING_EXECUTED_AFTER_REJECTED' ||
-                activity?.response?.state === 'BEING_EXECUTED_AFTER_APPROVAL' ||
+                parameter?.response?.state === 'BEING_EXECUTED_AFTER_REJECTED' ||
+                parameter?.response?.state === 'BEING_EXECUTED_AFTER_APPROVAL' ||
                 state.isExecuted
               ) {
                 return null;
@@ -433,4 +433,4 @@ const ShouldBeActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
   );
 };
 
-export default ShouldBeActivity;
+export default ShouldBeParameter;

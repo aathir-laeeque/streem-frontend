@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.div.attrs({
-  className: 'checklist-activity',
+  className: 'checklist-parameter',
 })`
   .list {
     &-container {

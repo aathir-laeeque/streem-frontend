@@ -92,7 +92,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
                 <View style={styles.columns} key={`name_${item.id}`}>
                   <View style={styles.logHeader}>
                     <Text style={styles.headerItemText}>{day}</Text>
-                    <Text style={styles.headerItemText}>{item[item.id].length} activities</Text>
+                    <Text style={styles.headerItemText}>{item[item.id].length} parameters</Text>
                   </View>
                   <View style={styles.logRow}>
                     {(item[item.id] as JobAuditLogType[]).map((log: JobAuditLogType) => (

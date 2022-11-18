@@ -5,11 +5,11 @@ import { Close } from '@material-ui/icons';
 import { get } from 'lodash';
 import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { executeActivity, fixActivity, updateExecutedActivity } from '../actions';
-import { ActivityProps, Selections } from '../types';
+import { executeParameter, fixParameter, updateExecutedParameter } from '../actions';
+import { ParameterProps, Selections } from '../types';
 import { Wrapper } from './styles';
 
-const ChecklistActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
+const ChecklistParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const metaInfo = useRef<{
     shouldCallApi?: boolean;
   }>({});
@@ -19,43 +19,43 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =
   useEffect(() => {
     if (metaInfo.current?.shouldCallApi) {
       metaInfo.current.shouldCallApi = false;
-      if (activity?.response?.choices) {
-        const data = activity.data.map((d: any) => {
+      if (parameter?.response?.choices) {
+        const data = parameter.data.map((d: any) => {
           return {
             ...d,
-            state: get(activity?.response?.choices, d.id, Selections.NOT_SELECTED),
+            state: get(parameter?.response?.choices, d.id, Selections.NOT_SELECTED),
           };
         });
         if (isCorrectingError) {
           dispatch(
-            fixActivity({
-              ...activity,
+            fixParameter({
+              ...parameter,
               data,
             }),
           );
         } else {
           dispatch(
-            executeActivity({
-              ...activity,
+            executeParameter({
+              ...parameter,
               data,
             }),
           );
         }
       }
     }
-  }, [activity?.response?.choices]);
+  }, [parameter?.response?.choices]);
 
   const handleExecution = (id: string, choice: Selections) => {
     metaInfo.current.shouldCallApi = true;
     dispatch(
-      updateExecutedActivity({
-        ...activity,
+      updateExecutedParameter({
+        ...parameter,
         response: {
-          ...activity.response,
+          ...parameter.response,
           audit: undefined,
           choices: {
-            ...activity.response?.choices,
-            ...activity.data.reduce((acc: any, d: any) => {
+            ...parameter.response?.choices,
+            ...parameter.data.reduce((acc: any, d: any) => {
               if (d.id === id) {
                 acc[d.id] = choice;
               }
@@ -71,8 +71,8 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =
     return (
       <Wrapper>
         <ul className="list-container">
-          {activity.data.map((el, index) => {
-            const isItemSelected = get(activity?.response?.choices, el.id) === Selections.SELECTED;
+          {parameter.data.map((el, index) => {
+            const isItemSelected = get(parameter?.response?.choices, el.id) === Selections.SELECTED;
 
             return (
               <li key={index} className="list-item">
@@ -102,4 +102,4 @@ const ChecklistActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =
   }
 };
 
-export default ChecklistActivity;
+export default ChecklistParameter;

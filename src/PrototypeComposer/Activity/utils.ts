@@ -1,45 +1,45 @@
 import {
-  Activity,
-  ActivityType,
+  Parameter,
+  ParameterType,
   Checklist,
-  MandatoryActivity,
-  NonMandatoryActivity,
+  MandatoryParameter,
+  NonMandatoryParameter,
 } from '../checklist.types';
-import { ActivitiesById, ActivityOrderInTaskInStage } from './reducer.types';
+import { ParametersById, ParameterOrderInTaskInStage } from './reducer.types';
 import { v4 as uuidv4 } from 'uuid';
 
-const getActivities = (checklist: Checklist | Partial<Checklist>) => {
-  const listById: ActivitiesById = {},
-    activityOrderInTaskInStage: ActivityOrderInTaskInStage = {};
+const getParameters = (checklist: Checklist | Partial<Checklist>) => {
+  const listById: ParametersById = {},
+    parameterOrderInTaskInStage: ParameterOrderInTaskInStage = {};
 
   checklist?.stages?.map((stage) => {
-    activityOrderInTaskInStage[stage.id] = {};
+    parameterOrderInTaskInStage[stage.id] = {};
 
     stage?.tasks?.map((task) => {
-      activityOrderInTaskInStage[stage.id][task.id] = [];
+      parameterOrderInTaskInStage[stage.id][task.id] = [];
 
-      task?.activities?.map((activity) => {
-        activityOrderInTaskInStage[stage.id][task.id].push(activity.id);
+      task?.parameters?.map((parameter) => {
+        parameterOrderInTaskInStage[stage.id][task.id].push(parameter.id);
 
-        listById[activity.id] = { ...activity, errors: [] };
+        listById[parameter.id] = { ...parameter, errors: [] };
       });
     });
   });
 
-  return { listById, activityOrderInTaskInStage };
+  return { listById, parameterOrderInTaskInStage };
 };
 
-const generateNewActivity = ({
+const generateNewParameter = ({
   type,
   orderTree,
   mandatory,
   label,
   description,
-}: Pick<Activity, 'label' | 'description' | 'mandatory' | 'orderTree'> & {
-  type: ActivityType;
-}): Partial<Activity> | null => {
+}: Pick<Parameter, 'label' | 'description' | 'mandatory' | 'orderTree'> & {
+  type: ParameterType;
+}): Partial<Parameter> | null => {
   switch (type) {
-    case MandatoryActivity.CHECKLIST:
+    case MandatoryParameter.CHECKLIST:
       return {
         orderTree,
         type,
@@ -50,7 +50,7 @@ const generateNewActivity = ({
         validations: {},
       };
 
-    case MandatoryActivity.YES_NO:
+    case MandatoryParameter.YES_NO:
       return {
         orderTree,
         type,
@@ -64,8 +64,8 @@ const generateNewActivity = ({
         validations: {},
       };
 
-    case MandatoryActivity.MULTISELECT:
-    case MandatoryActivity.SINGLE_SELECT:
+    case MandatoryParameter.MULTISELECT:
+    case MandatoryParameter.SINGLE_SELECT:
       return {
         orderTree,
         type,
@@ -76,7 +76,7 @@ const generateNewActivity = ({
         validations: {},
       };
 
-    case MandatoryActivity.PARAMETER:
+    case MandatoryParameter.PARAMETER:
       return {
         orderTree,
         type,
@@ -93,9 +93,9 @@ const generateNewActivity = ({
         validations: {},
       };
 
-    case MandatoryActivity.MEDIA:
-    case MandatoryActivity.SIGNATURE:
-    case MandatoryActivity.TEXTBOX:
+    case MandatoryParameter.MEDIA:
+    case MandatoryParameter.SIGNATURE:
+    case MandatoryParameter.MULTI_LINE:
       return {
         orderTree,
         type,
@@ -106,7 +106,7 @@ const generateNewActivity = ({
         validations: {},
       };
 
-    case MandatoryActivity.CALCULATION:
+    case MandatoryParameter.CALCULATION:
       return {
         orderTree,
         type,
@@ -121,7 +121,7 @@ const generateNewActivity = ({
         validations: {},
       };
 
-    case MandatoryActivity.RESOURCE:
+    case MandatoryParameter.RESOURCE:
       return {
         orderTree,
         type,
@@ -140,8 +140,8 @@ const generateNewActivity = ({
         validations: {},
       };
 
-    case MandatoryActivity.DATE:
-    case MandatoryActivity.NUMBER:
+    case MandatoryParameter.DATE:
+    case MandatoryParameter.NUMBER:
       return {
         orderTree,
         type,
@@ -152,7 +152,7 @@ const generateNewActivity = ({
         validations: {},
       };
 
-    case NonMandatoryActivity.INSTRUCTION:
+    case NonMandatoryParameter.INSTRUCTION:
       return {
         orderTree,
         type,
@@ -163,7 +163,7 @@ const generateNewActivity = ({
         validations: {},
       };
 
-    case NonMandatoryActivity.MATERIAL:
+    case NonMandatoryParameter.MATERIAL:
       return {
         orderTree,
         type,
@@ -189,4 +189,4 @@ const generateNewActivity = ({
   }
 };
 
-export { getActivities, generateNewActivity };
+export { getParameters, generateNewParameter };

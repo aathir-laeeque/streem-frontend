@@ -14,35 +14,36 @@ export type Audit = {
   createdBy: Employee;
 };
 
-export enum MandatoryActivity {
+export enum MandatoryParameter {
   CHECKLIST = 'CHECKLIST',
   MEDIA = 'MEDIA',
   MULTISELECT = 'MULTISELECT',
   PARAMETER = 'PARAMETER',
   SIGNATURE = 'SIGNATURE',
   SINGLE_SELECT = 'SINGLE_SELECT',
-  TEXTBOX = 'TEXTBOX',
+  MULTI_LINE = 'MULTI_LINE',
   YES_NO = 'YES_NO',
   NUMBER = 'NUMBER',
   CALCULATION = 'CALCULATION',
   RESOURCE = 'RESOURCE',
   DATE = 'DATE',
+  SINGLE_LINE = 'SINGLE_LINE',
 }
 
-export enum NonMandatoryActivity {
+export enum NonMandatoryParameter {
   INSTRUCTION = 'INSTRUCTION',
   MATERIAL = 'MATERIAL',
 }
 
-export type ActivityType = MandatoryActivity | NonMandatoryActivity;
+export type ParameterType = MandatoryParameter | NonMandatoryParameter;
 
-export enum ActivityState {
+export enum ParameterState {
   EXECUTED = 'EXECUTED',
 }
 
-export type ActivityResponse = {
+export type ParameterResponse = {
   audit: Audit;
-  state: ActivityState;
+  state: ParameterState;
 };
 
 export enum TargetEntityType {
@@ -51,17 +52,17 @@ export enum TargetEntityType {
   UNMAPPED = 'UNMAPPED',
 }
 
-export type Activity = {
+export type Parameter = {
   code: string;
-  // TODO: look into this any type for activity data
+  // TODO: look into this any type for parameter data
   data: any;
   id: string;
   label: string;
   mandatory: boolean;
   orderTree: number;
-  response?: ActivityResponse | null;
+  response?: ParameterResponse | null;
   description: string | null;
-  type: ActivityType;
+  type: ParameterType;
   validations: any;
   targetEntityType: TargetEntityType;
 };
@@ -104,7 +105,7 @@ export enum TimerOperator {
 }
 
 export type Task = {
-  activities: Activity[];
+  parameters: Parameter[];
   code: string;
   hasStop: boolean;
   id: string;

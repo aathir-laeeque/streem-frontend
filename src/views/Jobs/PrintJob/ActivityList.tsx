@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import {
   TaskExecutionState,
-  Activity,
-  MandatoryActivity,
-  NonMandatoryActivity,
+  Parameter,
+  MandatoryParameter,
+  NonMandatoryParameter,
 } from '#JobComposer/checklist.types';
 import checkmark from '#assets/images/checkmark.png';
 import checkEmoji from '#assets/images/emojis/check.png';
@@ -33,8 +33,8 @@ import moment from 'moment';
 import { parseMarkUp } from '#utils/stringUtils';
 import { EmojisUniCodes } from '#utils/constants';
 import { InstructionTags } from './types';
-import { ActivitiesById } from '#JobComposer/ActivityList/types';
-import ResourceActivity from './Resource';
+import { ParametersById } from '#JobComposer/ActivityList/types';
+import ResourceParameter from './Resource';
 import { formatDateByInputType } from '#utils/timeUtils';
 import { InputTypes } from '#utils/globalTypes';
 
@@ -46,21 +46,21 @@ export const styles = StyleSheet.create({
   textS12: {
     fontSize: 12,
   },
-  activityHintText: {
+  parameterHintText: {
     color: '#666666',
     fontSize: 12,
     fontFamily: 'Nunito',
   },
-  activityView: {
+  parameterView: {
     paddingVertical: 8,
     marginBottom: 8,
   },
-  activitySeprator: {
+  parameterSeprator: {
     borderTopWidth: 1,
     borderTopColor: '#dadada',
     borderTopStyle: 'dashed',
   },
-  materialActivityItems: {
+  materialParameterItems: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -292,51 +292,51 @@ const getInstructionTemplate = (res: Response[]): JSX.Element[] => {
   ));
 };
 
-const activityTemplateFormatter = (
-  activity: Activity,
-  activityIndex: number,
+const parameterTemplateFormatter = (
+  parameter: Parameter,
+  parameterIndex: number,
   dateAndTimeStampFormat: string,
-  activitiesById: ActivitiesById,
+  parametersById: ParametersById,
 ) => {
-  switch (activity.type) {
-    case NonMandatoryActivity.INSTRUCTION:
+  switch (parameter.type) {
+    case NonMandatoryParameter.INSTRUCTION:
       const node = document.createElement('div');
-      node.innerHTML = activity.data.text;
+      node.innerHTML = parameter.data.text;
       const res = parseMarkUp(node);
-      return <View style={styles.activityView}>{getInstructionTemplate(res)}</View>;
-    case MandatoryActivity.TEXTBOX:
+      return <View style={styles.parameterView}>{getInstructionTemplate(res)}</View>;
+    case MandatoryParameter.MULTI_LINE:
       const items = [];
       for (let i = 0; i < 8; i++) {
         items.push(<View style={styles.commentsRow} />);
       }
       return (
-        <View style={styles.activityView} wrap={false}>
-          <Text style={styles.text12}>{activity.label}</Text>
+        <View style={styles.parameterView} wrap={false}>
+          <Text style={styles.text12}>{parameter.label}</Text>
           <Text style={styles.text12}>Write Your Comments</Text>
           <View style={styles.comments}>
-            {activity.response?.value ? (
-              <Text style={styles.text12}>{activity.response?.value}</Text>
+            {parameter.response?.value ? (
+              <Text style={styles.text12}>{parameter.response?.value}</Text>
             ) : (
               items
             )}
           </View>
         </View>
       );
-    case MandatoryActivity.SIGNATURE:
+    case MandatoryParameter.SIGNATURE:
       const signatureItems = [];
       for (let i = 0; i < 8; i++) {
         signatureItems.push(<View style={[styles.commentsRow, { borderBottomWidth: 0 }]} />);
       }
       return (
         <View
-          style={styles.activityView}
+          style={styles.parameterView}
           wrap={false}
-          {...(activity.response?.medias?.[0] && { break: true })}
+          {...(parameter.response?.medias?.[0] && { break: true })}
         >
           <Text style={styles.text12}>Sign Below</Text>
-          {activity.response?.medias?.[0] ? (
+          {parameter.response?.medias?.[0] ? (
             <Image
-              src={activity.response?.medias[0]?.link}
+              src={parameter.response?.medias[0]?.link}
               style={{ width: '300px', maxHeight: '230mm' }}
             />
           ) : (
@@ -344,9 +344,9 @@ const activityTemplateFormatter = (
           )}
         </View>
       );
-    case MandatoryActivity.PARAMETER:
+    case MandatoryParameter.PARAMETER:
       let content = '';
-      const { data } = activity;
+      const { data } = parameter;
       switch (data.operator) {
         case 'EQUAL_TO':
           content = ` (=) Equal to ${data.value} ${data.uom}`;
@@ -370,16 +370,16 @@ const activityTemplateFormatter = (
           break;
       }
 
-      const approvalState = activity?.response?.activityValueApprovalDto?.state;
+      const approvalState = parameter?.response?.parameterValueApprovalDto?.state;
       return (
-        <View style={styles.activityView}>
-          <Text style={styles.text12}>{`${activity.data.parameter} Should be${content}`}</Text>
+        <View style={styles.parameterView}>
+          <Text style={styles.text12}>{`${parameter.data.parameter} Should be${content}`}</Text>
           <Text style={[styles.text12, { marginTop: 11, marginBottom: 16 }]}>
             Write your Observed Value
           </Text>
           <View style={{ display: 'flex', flexDirection: 'row' }}>
-            {activity.response?.value ? (
-              [...activity.response?.value].map((char) =>
+            {parameter.response?.value ? (
+              [...parameter.response?.value].map((char) =>
                 char === '.' ? (
                   <View
                     style={{
@@ -419,30 +419,30 @@ const activityTemplateFormatter = (
           {approvalState && (
             <View style={styles.taskFooter} wrap={false}>
               <Text style={styles.text12}>
-                This Activity was {approvalState === 'APPROVED' ? 'approved' : 'rejected'} digitally
-                via Leucine {'\n'}
-                by {activity.response.activityValueApprovalDto.approver.firstName}{' '}
-                {activity.response.activityValueApprovalDto.approver.lastName}, ID:{' '}
-                {activity.response.activityValueApprovalDto.approver.employeeId} on{' '}
+                This Parameter was {approvalState === 'APPROVED' ? 'approved' : 'rejected'}{' '}
+                digitally via Leucine {'\n'}
+                by {parameter.response.parameterValueApprovalDto.approver.firstName}{' '}
+                {parameter.response.parameterValueApprovalDto.approver.lastName}, ID:{' '}
+                {parameter.response.parameterValueApprovalDto.approver.employeeId} on{' '}
                 {moment
-                  .unix(activity.response.activityValueApprovalDto.createdAt)
+                  .unix(parameter.response.parameterValueApprovalDto.createdAt)
                   .format(dateAndTimeStampFormat)}
               </Text>
             </View>
           )}
-          {!!activity?.response?.reason && (
+          {!!parameter?.response?.reason && (
             <View style={styles.comments}>
-              <Text style={styles.text12}>{activity.response.reason}</Text>
+              <Text style={styles.text12}>{parameter.response.reason}</Text>
             </View>
           )}
         </View>
       );
-    case MandatoryActivity.CHECKLIST:
+    case MandatoryParameter.CHECKLIST:
       return (
-        <View style={styles.activityView}>
+        <View style={styles.parameterView}>
           <View
             style={[
-              styles.materialActivityItems,
+              styles.materialParameterItems,
               {
                 justifyContent: 'flex-start',
                 borderBottomWidth: 0,
@@ -451,20 +451,21 @@ const activityTemplateFormatter = (
             ]}
             wrap={false}
           >
-            <Text style={styles.activityHintText}>Check all the items. E.g. -</Text>
+            <Text style={styles.parameterHintText}>Check all the items. E.g. -</Text>
             <Image src={checkmark} style={{ height: '16px', marginHorizontal: 5 }} />
-            <Text style={styles.activityHintText}>Remove the jacket from the assembly</Text>
+            <Text style={styles.parameterHintText}>Remove the jacket from the assembly</Text>
           </View>
-          {activity.data.map((item) => (
+          {parameter.data.map((item) => (
             <View
               wrap={false}
               key={`${item.id}`}
               style={[
-                styles.materialActivityItems,
+                styles.materialParameterItems,
                 { justifyContent: 'flex-start', borderBottomWidth: 0 },
               ]}
             >
-              {activity.response?.choices && activity.response?.choices[item.id] === 'SELECTED' ? (
+              {parameter.response?.choices &&
+              parameter.response?.choices[item.id] === 'SELECTED' ? (
                 <Image src={checkmark} style={{ height: '16px', marginHorizontal: 5 }} />
               ) : (
                 <View style={styles.checkBox} />
@@ -474,13 +475,13 @@ const activityTemplateFormatter = (
           ))}
         </View>
       );
-    case MandatoryActivity.SINGLE_SELECT:
-    case MandatoryActivity.MULTISELECT:
+    case MandatoryParameter.SINGLE_SELECT:
+    case MandatoryParameter.MULTISELECT:
       return (
-        <View style={styles.activityView}>
+        <View style={styles.parameterView}>
           <View
             style={[
-              styles.materialActivityItems,
+              styles.materialParameterItems,
               {
                 justifyContent: 'flex-start',
                 borderBottomWidth: 0,
@@ -489,24 +490,25 @@ const activityTemplateFormatter = (
             ]}
             wrap={false}
           >
-            <Text style={styles.activityHintText}>
-              {activity.type === MandatoryActivity.MULTISELECT
+            <Text style={styles.parameterHintText}>
+              {parameter.type === MandatoryParameter.MULTISELECT
                 ? 'You can select multiple items . E.g. -'
                 : 'You can select only one item. E.g. - '}
             </Text>
             <Image src={checkmark} style={{ height: '16px', marginHorizontal: 5 }} />
-            <Text style={styles.activityHintText}>Remove the jacket from the assembly</Text>
+            <Text style={styles.parameterHintText}>Remove the jacket from the assembly</Text>
           </View>
-          {activity.data.map((item) => (
+          {parameter.data.map((item) => (
             <View
               key={`${item.id}`}
               style={[
-                styles.materialActivityItems,
+                styles.materialParameterItems,
                 { justifyContent: 'flex-start', borderBottomWidth: 0 },
               ]}
               wrap={false}
             >
-              {activity.response?.choices && activity.response?.choices[item.id] === 'SELECTED' ? (
+              {parameter.response?.choices &&
+              parameter.response?.choices[item.id] === 'SELECTED' ? (
                 <Image
                   src={checkmark}
                   style={{
@@ -523,16 +525,16 @@ const activityTemplateFormatter = (
           ))}
         </View>
       );
-    case MandatoryActivity.YES_NO:
+    case MandatoryParameter.YES_NO:
       const yesNoItems = [];
       for (let i = 0; i < 4; i++) {
         yesNoItems.push(<View style={styles.commentsRow} />);
       }
       return (
-        <View style={styles.activityView}>
+        <View style={styles.parameterView}>
           <View
             style={[
-              styles.materialActivityItems,
+              styles.materialParameterItems,
               {
                 justifyContent: 'flex-start',
                 borderBottomWidth: 0,
@@ -541,15 +543,15 @@ const activityTemplateFormatter = (
             ]}
             wrap={false}
           >
-            <Text style={styles.activityHintText}>Check either one option E.g. -</Text>
+            <Text style={styles.parameterHintText}>Check either one option E.g. -</Text>
             <Image src={checkmark} style={{ height: '16px', marginHorizontal: 5 }} />
-            <Text style={styles.activityHintText}>or</Text>
+            <Text style={styles.parameterHintText}>or</Text>
             <View style={styles.checkBoxFaded} />
           </View>
-          <Text style={styles.yesNoLabel}>{activity.label}</Text>
+          <Text style={styles.yesNoLabel}>{parameter.label}</Text>
           <View
             style={[
-              styles.materialActivityItems,
+              styles.materialParameterItems,
               {
                 justifyContent: 'flex-start',
                 borderBottomWidth: 0,
@@ -558,34 +560,34 @@ const activityTemplateFormatter = (
             ]}
             wrap={false}
           >
-            {(activity.response?.choices && activity.response?.choices[activity.data[0].id]) ===
+            {(parameter.response?.choices && parameter.response?.choices[parameter.data[0].id]) ===
             'SELECTED' ? (
               <Image src={checkmark} style={{ height: '16px', marginHorizontal: 5 }} />
             ) : (
               <View style={styles.checkBox} />
             )}
             <Text style={styles.text12}>
-              {activity.data?.filter((d) => d.type === 'yes')[0].name || 'Positive'}
+              {parameter.data?.filter((d) => d.type === 'yes')[0].name || 'Positive'}
             </Text>
             <Text style={[styles.text12, { marginHorizontal: 20 }]}>or</Text>
-            {activity.response?.choices &&
-            activity.response?.choices[activity.data[1].id] === 'SELECTED' ? (
+            {parameter.response?.choices &&
+            parameter.response?.choices[parameter.data[1].id] === 'SELECTED' ? (
               <Image src={checkmark} style={{ height: '16px', marginHorizontal: 5 }} />
             ) : (
               <View style={styles.checkBox} />
             )}
             <Text style={styles.text12}>
-              {activity.data?.filter((d) => d.type === 'no')[0].name || 'Negative'}
+              {parameter.data?.filter((d) => d.type === 'no')[0].name || 'Negative'}
             </Text>
           </View>
           <View style={{ paddingVertical: 8 }} wrap={false}>
             <Text style={styles.text12}>
-              If ‘{activity.data?.filter((d) => d.type === 'no')[0].name || 'Negative'}’ is ticked,
+              If ‘{parameter.data?.filter((d) => d.type === 'no')[0].name || 'Negative'}’ is ticked,
               a reason has to be written below
             </Text>
             <View style={styles.comments}>
-              {activity.response?.reason ? (
-                <Text style={styles.text12}>{activity.response?.reason}</Text>
+              {parameter.response?.reason ? (
+                <Text style={styles.text12}>{parameter.response?.reason}</Text>
               ) : (
                 yesNoItems
               )}
@@ -593,20 +595,20 @@ const activityTemplateFormatter = (
           </View>
         </View>
       );
-    case NonMandatoryActivity.MATERIAL:
+    case NonMandatoryParameter.MATERIAL:
       return (
         <View
           style={[
-            styles.activityView,
+            styles.parameterView,
             {
               width: '75%',
             },
           ]}
         >
-          {activity.data.map((item, itemIndex: number) => (
+          {parameter.data.map((item, itemIndex: number) => (
             <View
-              key={`${activity.id}_${itemIndex}`}
-              style={styles.materialActivityItems}
+              key={`${parameter.id}_${itemIndex}`}
+              style={styles.materialParameterItems}
               wrap={false}
             >
               <Text style={styles.text12}>
@@ -617,12 +619,12 @@ const activityTemplateFormatter = (
           ))}
         </View>
       );
-    case MandatoryActivity.MEDIA:
+    case MandatoryParameter.MEDIA:
       return (
-        <View style={styles.activityView} wrap={false}>
+        <View style={styles.parameterView} wrap={false}>
           <Text style={{ ...styles.text12, marginBottom: 16 }}>Uploaded Media:</Text>
-          {activity.response?.medias?.length > 0 &&
-            activity.response.medias.map(
+          {parameter.response?.medias?.length > 0 &&
+            parameter.response.medias.map(
               (imageDetails: {
                 link: string;
                 name: string;
@@ -669,54 +671,56 @@ const activityTemplateFormatter = (
         </View>
       );
 
-    case MandatoryActivity.NUMBER:
+    case MandatoryParameter.NUMBER:
       return (
-        <View style={styles.activityView} wrap={false}>
+        <View style={styles.parameterView} wrap={false}>
           <Text style={{ ...styles.text12, marginTop: 6 }}>
-            {activity.label}: {activity.response?.value ? activity.response?.value : '___'}{' '}
-            {activity.data?.uom}
+            {parameter.label}: {parameter.response?.value ? parameter.response?.value : '___'}{' '}
+            {parameter.data?.uom}
           </Text>
         </View>
       );
 
-    case MandatoryActivity.CALCULATION:
+    case MandatoryParameter.CALCULATION:
       return (
-        <View style={styles.activityView} wrap={false}>
-          <Text style={{ ...styles.activityHintText, marginBottom: 6 }}>Calculation</Text>
+        <View style={styles.parameterView} wrap={false}>
+          <Text style={{ ...styles.parameterHintText, marginBottom: 6 }}>Calculation</Text>
           <Text style={styles.text12}>
-            {activity.label} = {activity.data.expression}
+            {parameter.label} = {parameter.data.expression}
           </Text>
-          <Text style={{ ...styles.activityHintText, marginTop: 24, marginBottom: 6 }}>
+          <Text style={{ ...styles.parameterHintText, marginTop: 24, marginBottom: 6 }}>
             Input(s)
           </Text>
-          {Object.entries(activity.data.variables).map(([key, value]: any) => {
+          {Object.entries(parameter.data.variables).map(([key, value]: any) => {
             return (
               <Text style={styles.text12}>
                 {key}:{' '}
-                {activitiesById?.[value.activityId]?.response?.value
-                  ? activitiesById?.[value.activityId]?.response.value
+                {parametersById?.[value.parameterId]?.response?.value
+                  ? parametersById?.[value.parameterId]?.response.value
                   : '____'}
               </Text>
             );
           })}
-          <Text style={{ ...styles.activityHintText, marginTop: 24, marginBottom: 6 }}>Result</Text>
+          <Text style={{ ...styles.parameterHintText, marginTop: 24, marginBottom: 6 }}>
+            Result
+          </Text>
           <Text style={{ ...styles.text12, backgroundColor: '#F0F0F0', padding: 8 }}>
-            {activity.label} = {activity.response?.value ? activity.response.value : '_________'}{' '}
-            {activity.data.uom}
+            {parameter.label} = {parameter.response?.value ? parameter.response.value : '_________'}{' '}
+            {parameter.data.uom}
           </Text>
         </View>
       );
 
-    case MandatoryActivity.RESOURCE:
-      return <ResourceActivity activity={activity} />;
+    case MandatoryParameter.RESOURCE:
+      return <ResourceParameter parameter={parameter} />;
 
-    case MandatoryActivity.DATE:
+    case MandatoryParameter.DATE:
       return (
-        <View style={styles.activityView} wrap={false}>
+        <View style={styles.parameterView} wrap={false}>
           <Text style={{ ...styles.text12, marginTop: 6 }}>
-            {activity.label}:{' '}
-            {activity.response?.value
-              ? formatDateByInputType(InputTypes.DATE, activity.response?.value)
+            {parameter.label}:{' '}
+            {parameter.response?.value
+              ? formatDateByInputType(InputTypes.DATE, parameter.response?.value)
               : '_____'}
           </Text>
         </View>
@@ -727,31 +731,31 @@ const activityTemplateFormatter = (
   }
 };
 
-const MemoActivityList: FC<{
-  activities: Activity[];
+const MemoParameterList: FC<{
+  parameters: Parameter[];
   dateAndTimeStampFormat: string;
-  activitiesById: ActivitiesById;
-}> = ({ activities, dateAndTimeStampFormat, activitiesById }) => {
+  parametersById: ParametersById;
+}> = ({ parameters, dateAndTimeStampFormat, parametersById }) => {
   return (
     <>
-      {(activities as Array<Activity>).map((activity, activityIndex: number) => {
+      {(parameters as Array<Parameter>).map((parameter, parameterIndex: number) => {
         return (
-          <View key={`${activity.id}`}>
-            {activityTemplateFormatter(
-              activity,
-              activityIndex,
+          <View key={`${parameter.id}`}>
+            {parameterTemplateFormatter(
+              parameter,
+              parameterIndex,
               dateAndTimeStampFormat,
-              activitiesById,
+              parametersById,
             )}
-            <View style={styles.activitySeprator} />
-            {activity.response.state !== TaskExecutionState.NOT_STARTED && (
+            <View style={styles.parameterSeprator} />
+            {parameter.response.state !== TaskExecutionState.NOT_STARTED && (
               <View style={styles.taskFooter} wrap={false}>
                 <Text style={styles.text12}>
-                  This Activity was last updated digitally via Leucine {'\n'}
-                  by {activity.response.audit.modifiedBy.firstName}{' '}
-                  {activity.response.audit.modifiedBy.lastName}, ID:{' '}
-                  {activity.response.audit.modifiedBy.employeeId} on{' '}
-                  {moment.unix(activity.response.audit.modifiedAt).format(dateAndTimeStampFormat)}
+                  This Parameter was last updated digitally via Leucine {'\n'}
+                  by {parameter.response.audit.modifiedBy.firstName}{' '}
+                  {parameter.response.audit.modifiedBy.lastName}, ID:{' '}
+                  {parameter.response.audit.modifiedBy.employeeId} on{' '}
+                  {moment.unix(parameter.response.audit.modifiedAt).format(dateAndTimeStampFormat)}
                 </Text>
               </View>
             )}
@@ -762,6 +766,6 @@ const MemoActivityList: FC<{
   );
 };
 
-const ActivityList = React.memo(MemoActivityList);
+const ParameterList = React.memo(MemoParameterList);
 
-export default ActivityList;
+export default ParameterList;

@@ -1,5 +1,5 @@
 import { Button } from '#components';
-import { ActivityProps } from '#PrototypeComposer/Activity/types';
+import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
@@ -22,14 +22,14 @@ const YesNoTaskViewWrapper = styled.div`
   }
 `;
 
-const YesNoTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
+const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
   return (
     <YesNoTaskViewWrapper>
       <Button variant="secondary" className="yes-label">
-        {activity.data[0].name}
+        {parameter.data[0].name}
       </Button>
       <Button variant="secondary" className="no-label">
-        {activity.data[1].name}
+        {parameter.data[1].name}
       </Button>
     </YesNoTaskViewWrapper>
   );

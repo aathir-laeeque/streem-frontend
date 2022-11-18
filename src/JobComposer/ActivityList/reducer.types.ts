@@ -1,46 +1,46 @@
 import { ComposerActionType } from '../composer.reducer.types';
 import {
-  executeActivity,
-  fixActivity,
-  executeActivityLeading,
-  fixActivityLeading,
-  removeActivityError,
-  setActivityError,
-  updateExecutedActivity,
-  updateMediaActivitySuccess,
+  executeParameter,
+  fixParameter,
+  executeParameterLeading,
+  fixParameterLeading,
+  removeParameterError,
+  setParameterError,
+  updateExecutedParameter,
+  updateMediaParameterSuccess,
 } from './actions';
-import { ActivitiesById, ActivitiesOrderInTaskInStage } from './types';
+import { ParametersById, ParametersOrderInTaskInStage } from './types';
 
-export type ActivityListState = {
-  activitiesById: ActivitiesById;
-  activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage;
+export type ParameterListState = {
+  parametersById: ParametersById;
+  parametersOrderInTaskInStage: ParametersOrderInTaskInStage;
 };
 
-export enum ActivityListAction {
-  EXECUTE_ACTIVITY_LATEST = '@@jobComposer/activity-list/activity/EXECUTE_ACTIVITY_LATEST',
-  UPDATE_EXECUTED_ACTIVITY = '@@jobComposer/activity-list/activity/UPDATE_EXECUTED_ACTIVITY',
-  SET_ACTIVITY_ERROR = '@@jobComposer/activity-list/activity/SET_ACTIVITY_ERROR',
-  REMOVE_ACTIVITY_ERROR = '@@jobComposer/activity-list/activity/REMOVE_ACTIVITY_ERROR',
+export enum ParameterListAction {
+  EXECUTE_PARAMETER_LATEST = '@@jobComposer/parameter-list/parameter/EXECUTE_PARAMETER_LATEST',
+  UPDATE_EXECUTED_PARAMETER = '@@jobComposer/parameter-list/parameter/UPDATE_EXECUTED_PARAMETER',
+  SET_PARAMETER_ERROR = '@@jobComposer/parameter-list/parameter/SET_PARAMETER_ERROR',
+  REMOVE_PARAMETER_ERROR = '@@jobComposer/parameter-list/parameter/REMOVE_PARAMETER_ERROR',
 
-  FIX_ACTIVITY_LATEST = '@@jobComposer/activity-list/activity/FIX_ACTIVITY_LATEST',
-  APPROVE_ACTIVITY = '@@jobComposer/activity-list/activity/APPROVE_ACTIVITY',
-  REJECT_ACTIVITY = '@@jobComposer/activity-list/activity/REJECT_ACTIVITY',
+  FIX_PARAMETER_LATEST = '@@jobComposer/parameter-list/parameter/FIX_PARAMETER_LATEST',
+  APPROVE_PARAMETER = '@@jobComposer/parameter-list/parameter/APPROVE_PARAMETER',
+  REJECT_PARAMETER = '@@jobComposer/parameter-list/parameter/REJECT_PARAMETER',
 
-  UPDATE_MEDIA_ACTIVITY_SUCCESS = '@@jobComposer/activity-list/activity/UPDATE_MEDIA_ACTIVITY_SUCCESS',
+  UPDATE_MEDIA_PARAMETER_SUCCESS = '@@jobComposer/parameter-list/parameter/UPDATE_MEDIA_PARAMETER_SUCCESS',
 
-  EXECUTE_ACTIVITY_LEADING = '@@jobComposer/activity-list/activity/EXECUTE_ACTIVITY_LEADING',
-  FIX_ACTIVITY_LEADING = '@@jobComposer/activity-list/activity/FIX_ACTIVITY_LEADING',
+  EXECUTE_PARAMETER_LEADING = '@@jobComposer/parameter-list/parameter/EXECUTE_PARAMETER_LEADING',
+  FIX_PARAMETER_LEADING = '@@jobComposer/parameter-list/parameter/FIX_PARAMETER_LEADING',
 }
 
-export type ActivityListActionType =
+export type ParameterListActionType =
   | ReturnType<
-      | typeof executeActivity
-      | typeof fixActivity
-      | typeof setActivityError
-      | typeof updateExecutedActivity
-      | typeof removeActivityError
-      | typeof updateMediaActivitySuccess
-      | typeof executeActivityLeading
-      | typeof fixActivityLeading
+      | typeof executeParameter
+      | typeof fixParameter
+      | typeof setParameterError
+      | typeof updateExecutedParameter
+      | typeof removeParameterError
+      | typeof updateMediaParameterSuccess
+      | typeof executeParameterLeading
+      | typeof fixParameterLeading
     >
   | ComposerActionType;

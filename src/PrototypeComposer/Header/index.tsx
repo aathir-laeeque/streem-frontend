@@ -310,7 +310,7 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
         <MenuItem
           onClick={() => {
             handleClose();
-            navigate(`${data.id}/activites`);
+            navigate(`${data.id}/activities`);
           }}
         >
           <div className="list-item">

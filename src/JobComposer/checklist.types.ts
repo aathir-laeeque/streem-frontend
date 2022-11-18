@@ -2,14 +2,14 @@ import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { InputTypes } from '#utils/globalTypes';
 
-export enum MandatoryActivity {
+export enum MandatoryParameter {
   CHECKLIST = 'CHECKLIST',
   MEDIA = 'MEDIA',
   MULTISELECT = 'MULTISELECT',
   PARAMETER = 'PARAMETER',
   SINGLE_SELECT = 'SINGLE_SELECT',
   SIGNATURE = 'SIGNATURE',
-  TEXTBOX = 'TEXTBOX',
+  MULTI_LINE = 'MULTI_LINE',
   YES_NO = 'YES_NO',
   NUMBER = 'NUMBER',
   CALCULATION = 'CALCULATION',
@@ -19,20 +19,21 @@ export enum MandatoryActivity {
 
 type ChecklistProperty = Pick<Property, 'id' | 'name' | 'value'>;
 
-export enum NonMandatoryActivity {
+export enum NonMandatoryParameter {
   INSTRUCTION = 'INSTRUCTION',
   MATERIAL = 'MATERIAL',
 }
 
-export type ActivityType = MandatoryActivity | NonMandatoryActivity;
+export type ParameterType = MandatoryParameter | NonMandatoryParameter;
 
-export interface Activity {
+export interface Parameter {
   id: string;
-  type: ActivityType;
-  // TODO: look into type for data in activity
+  type: ParameterType;
+  // TODO: look into type for data in parameter
   data: any;
   mandatory: boolean;
   orderTree: number;
+  hasError: boolean;
   label?: string;
   response?: any;
 }
@@ -99,7 +100,7 @@ export enum AutomationActionType {
 
 export enum AutomationTargetEntityType {
   OBJECT = 'OBJECT',
-  RESOURCE_ACTIVITY = 'RESOURCE_ACTIVITY',
+  RESOURCE_PARAMETER = 'RESOURCE_PARAMETER',
 }
 
 export enum AutomationActionActionType {
@@ -125,7 +126,7 @@ export enum AutomationActionTriggerTypeVisual {
 export type AutomationActionDetails = {
   value: number;
   sortOrder: number;
-  activityId: string;
+  parameterId: string;
   propertyId: string;
   propertyInputType: InputTypes;
   propertyExternalId: string;
@@ -136,7 +137,7 @@ export type AutomationActionDetails = {
   objectTypeId: string;
   objectTypeExternalId: string;
   objectTypeDisplayName: string;
-  referencedActivityId: string;
+  referencedParameterId: string;
 };
 
 export type AutomationAction = {
@@ -148,7 +149,7 @@ export type AutomationAction = {
 };
 
 export interface Task {
-  activities: Activity[];
+  parameters: Parameter[];
   code: string;
   hasStop: boolean;
   id: string;

@@ -2,11 +2,11 @@ import { Button, Textarea } from '#components';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { executeActivity, fixActivity, updateExecutedActivity } from '../actions';
-import { ActivityProps, Selections } from '../types';
+import { executeParameter, fixParameter, updateExecutedParameter } from '../actions';
+import { ParameterProps, Selections } from '../types';
 import { Wrapper } from './styles';
 
-type YesNoActivityState = {
+type YesNoParameterState = {
   reason: string;
   selectedId?: string;
   shouldAskForReason: boolean;
@@ -15,31 +15,31 @@ type YesNoActivityState = {
   isEditing?: boolean;
 };
 
-const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
+const YesNoParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
 
   const getSelectedIdByChoices = () => {
-    return activity.response?.choices
-      ? Object.entries(activity.response?.choices).reduce(
+    return parameter.response?.choices
+      ? Object.entries(parameter.response?.choices).reduce(
           (acc, [choiceId, choiceValue]) => (choiceValue === Selections.SELECTED ? choiceId : acc),
           '',
         )
       : undefined;
   };
 
-  const [state, setState] = useState<YesNoActivityState>({
-    reason: activity?.response?.reason ?? '',
-    shouldAskForReason: !!activity?.response?.reason,
-    showButtons: activity?.response?.state !== 'EXECUTED',
+  const [state, setState] = useState<YesNoParameterState>({
+    reason: parameter?.response?.reason ?? '',
+    shouldAskForReason: !!parameter?.response?.reason,
+    showButtons: parameter?.response?.state !== 'EXECUTED',
     selectedId: getSelectedIdByChoices(),
   });
 
   const dispatchActions = (data: any) => {
     if (isCorrectingError) {
       dispatch(
-        fixActivity(
+        fixParameter(
           {
-            ...activity,
+            ...parameter,
             data,
           },
           state.reason ? state.reason : undefined,
@@ -47,9 +47,9 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
       );
     } else {
       dispatch(
-        executeActivity(
+        executeParameter(
           {
-            ...activity,
+            ...parameter,
             data,
           },
           state.reason ? state.reason : undefined,
@@ -61,8 +61,8 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   useEffect(() => {
     if (state.shouldCallApi) {
       if (state.selectedId) {
-        if (activity?.response?.choices) {
-          const data = activity.data.map((d: any) => ({
+        if (parameter?.response?.choices) {
+          const data = parameter.data.map((d: any) => ({
             ...d,
             state: d.id === state.selectedId ? Selections.SELECTED : Selections.NOT_SELECTED,
           }));
@@ -85,24 +85,24 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
       if (state.selectedId !== selectedIoFromStore) {
         setState((prevState) => ({
           ...prevState,
-          reason: activity?.response?.reason ?? '',
-          shouldAskForReason: !!activity?.response?.reason,
-          showButtons: activity?.response?.state !== 'EXECUTED',
+          reason: parameter?.response?.reason ?? '',
+          shouldAskForReason: !!parameter?.response?.reason,
+          showButtons: parameter?.response?.state !== 'EXECUTED',
           selectedId: selectedIoFromStore,
         }));
       }
     }
-  }, [activity?.response?.choices, activity?.response?.reason, state.shouldCallApi]);
+  }, [parameter?.response?.choices, parameter?.response?.reason, state.shouldCallApi]);
 
   const handleExecution = (id: string) => {
     if (id) {
       dispatch(
-        updateExecutedActivity({
-          ...activity,
+        updateExecutedParameter({
+          ...parameter,
           response: {
-            ...activity.response,
+            ...parameter.response,
             audit: undefined,
-            choices: activity.data.reduce((acc: any, d: any) => {
+            choices: parameter.data.reduce((acc: any, d: any) => {
               acc[d.id] = d.id === id ? Selections.SELECTED : Selections.NOT_SELECTED;
               return acc;
             }, {}),
@@ -121,9 +121,9 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
 
   return (
     <Wrapper>
-      <div>{activity.label}</div>
+      <div>{parameter.label}</div>
       <div className="buttons-container">
-        {activity.data
+        {parameter.data
           .sort((a, b) => (a.type > b.type ? -1 : 1))
           .map((el, index) => {
             const isSelected = state.selectedId === el.id;
@@ -193,7 +193,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
                     ...prevState,
                     reason: '',
                     shouldAskForReason: false,
-                    selectedId: activity.data.reduce(
+                    selectedId: parameter.data.reduce(
                       (acc: any, d: any) => (d.id !== state.selectedId ? d.id : acc),
                       '',
                     ),
@@ -210,4 +210,4 @@ const YesNoActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
   );
 };
 
-export default YesNoActivity;
+export default YesNoParameter;

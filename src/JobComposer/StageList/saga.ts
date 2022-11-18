@@ -43,13 +43,13 @@ function* activeStagePollingSaga({ payload }: ReturnType<typeof startPollActiveS
           stage: { tasks },
           stageReports: reports,
         } = data;
-        let activitiesById: any = {};
+        let parametersById: any = {};
 
         const tasksById = tasks.reduce((acc, task) => {
-          activitiesById = {
-            ...activitiesById,
-            ...task.activities.reduce((ac, activity) => {
-              return { ...ac, [activity.id]: activity };
+          parametersById = {
+            ...parametersById,
+            ...task.parameters.reduce((ac, parameter) => {
+              return { ...ac, [parameter.id]: parameter };
             }, {}),
           };
           return { ...acc, [task.id]: task };
@@ -61,7 +61,7 @@ function* activeStagePollingSaga({ payload }: ReturnType<typeof startPollActiveS
           fetchActiveStageDataSuccess({
             ...data,
             tasksById,
-            activitiesById,
+            parametersById,
             stageReports,
           } as fetchActiveStageDataRes),
         );

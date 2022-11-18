@@ -3,15 +3,15 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   EnabledStates,
-  MandatoryActivity,
-  NonMandatoryActivity,
+  MandatoryParameter,
+  NonMandatoryParameter,
   TargetEntityType,
   TimerOperator,
 } from '#PrototypeComposer/checklist.types';
 import ParameterTaskView from '#PrototypeComposer/Parameters/TaskViews';
 import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { useTypedSelector } from '#store/helpers';
-import { apiGetActivities, apiMapParameterToTask } from '#utils/apiUrls';
+import { apiGetParameters, apiMapParameterToTask } from '#utils/apiUrls';
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
@@ -43,28 +43,28 @@ import {
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addNewActivitySuccess, toggleNewParameter } from '../Activity/actions';
+import { addNewParameterSuccess, toggleNewParameter } from '../Activity/actions';
 import { Checklist } from '../checklist.types';
 import {
   addStop,
   deleteTask,
   removeStop,
-  reOrderActivities,
+  reOrderParameters,
   reOrderTask,
   setActiveTask,
   updateTaskName,
 } from './actions';
-import { TaskCardWrapper, AddActivityItemWrapper } from './styles';
+import { TaskCardWrapper, AddParameterItemWrapper } from './styles';
 import { TaskCardProps } from './types';
 
-const AddActivity = () => {
+const AddParameter = () => {
   return (
-    <AddActivityItemWrapper>
+    <AddParameterItemWrapper>
       <div className="label">
-        <AddCircleOutline /> Add Activity
+        <AddCircleOutline /> Add Parameter
       </div>
       <ArrowDropDown />
-    </AddActivityItemWrapper>
+    </AddParameterItemWrapper>
   );
 };
 
@@ -77,7 +77,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
 }) => {
   const {
     data,
-    activities: { activityOrderInTaskInStage, listById },
+    parameters: { parameterOrderInTaskInStage, listById },
     stages: { activeStageId, listOrder },
     tasks: { activeTaskId },
   } = useTypedSelector((state) => state.prototypeComposer);
@@ -107,15 +107,15 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, over } = e;
     if (data?.id && activeStageId && over && active.id !== over.id) {
-      const taskActivities = activityOrderInTaskInStage[activeStageId][taskId];
-      const oldIndex = taskActivities.indexOf(active.id as string);
-      const newIndex = taskActivities.indexOf(over.id as string);
+      const taskParameters = parameterOrderInTaskInStage[activeStageId][taskId];
+      const oldIndex = taskParameters.indexOf(active.id as string);
+      const newIndex = taskParameters.indexOf(over.id as string);
       dispatch(
-        reOrderActivities({
+        reOrderParameters({
           checklistId: data.id,
           stageId: activeStageId,
           taskId,
-          orderedIds: arrayMove(taskActivities, oldIndex, newIndex),
+          orderedIds: arrayMove(taskParameters, oldIndex, newIndex),
         }),
       );
     }
@@ -142,7 +142,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
           toggleNewParameter({
             action: 'task',
             title: 'Create a New Instruction',
-            type: NonMandatoryActivity.INSTRUCTION,
+            type: NonMandatoryParameter.INSTRUCTION,
           }),
         );
         break;
@@ -151,7 +151,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
           toggleNewParameter({
             action: 'task',
             title: 'Create a New Instruction',
-            type: NonMandatoryActivity.MATERIAL,
+            type: NonMandatoryParameter.MATERIAL,
           }),
         );
         break;
@@ -160,15 +160,15 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
           toggleNewParameter({
             action: 'task',
             title: 'Create a New Subtask',
-            type: MandatoryActivity.CHECKLIST,
+            type: MandatoryParameter.CHECKLIST,
           }),
         );
         break;
       default:
         if (activeStageId && activeTaskId) {
-          const activitiesInTask = activityOrderInTaskInStage[activeStageId][taskId];
+          const parametersInTask = parameterOrderInTaskInStage[activeStageId][taskId];
           const maxOrderTree =
-            listById?.[activitiesInTask?.[activitiesInTask?.length - 1]]?.orderTree ?? 0;
+            listById?.[parametersInTask?.[parametersInTask?.length - 1]]?.orderTree ?? 0;
           const response: ResponseObj<any> = await request(
             'PATCH',
             apiMapParameterToTask(data!.id, activeTaskId),
@@ -181,8 +181,8 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
           );
           if (response?.data) {
             dispatch(
-              addNewActivitySuccess({
-                activity: response.data,
+              addNewParameterSuccess({
+                parameter: response.data,
                 stageId: activeStageId,
                 taskId: activeTaskId,
               }),
@@ -199,10 +199,10 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
     onPrimaryClick: () => dispatch(deleteTask(taskId)),
   };
 
-  const noActivityError = task.errors.find((error) => error.code === 'E211') ?? undefined;
+  const noParameterError = task.errors.find((error) => error.code === 'E211') ?? undefined;
 
   if (activeStageId) {
-    const taskActivities = activityOrderInTaskInStage[activeStageId][taskId];
+    const taskParameters = parameterOrderInTaskInStage[activeStageId][taskId];
     const hasMedias = !!medias.length;
 
     return (
@@ -444,14 +444,14 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
             onDragEnd={handleDragEnd}
             modifiers={[restrictToVerticalAxis]}
           >
-            <SortableContext items={taskActivities} strategy={verticalListSortingStrategy}>
-              <div className="activity-list">
-                {taskActivities?.map((activityId, index) => {
-                  const activity = listById[activityId];
+            <SortableContext items={taskParameters} strategy={verticalListSortingStrategy}>
+              <div className="parameter-list">
+                {taskParameters?.map((parameterId, index) => {
+                  const parameter = listById[parameterId];
                   return (
                     <ParameterTaskView
-                      activity={activity}
-                      key={`${activityId}-${index}`}
+                      parameter={parameter}
+                      key={`${parameterId}-${index}`}
                       taskId={taskId}
                     />
                   );
@@ -461,13 +461,13 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
           </DndContext>
         </div>
 
-        {noActivityError ? <div className="task-error">{noActivityError?.message}</div> : null}
+        {noParameterError ? <div className="task-error">{noParameterError?.message}</div> : null}
 
         <div className="task-footer">
           <NestedSelect
-            id="add-activity-selector"
+            id="add-parameter-selector"
             width="100%"
-            label={AddActivity}
+            label={AddParameter}
             items={{
               parameters: {
                 label: 'Parameters',
@@ -482,7 +482,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
                         try {
                           const { data: resData, pageable }: ResponseObj<any[]> = await request(
                             'GET',
-                            apiGetActivities(data!.id),
+                            apiGetParameters(data!.id),
                             {
                               params: {
                                 page: pageNumber + 1,

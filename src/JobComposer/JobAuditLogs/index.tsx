@@ -381,7 +381,7 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
                     <div style={{ padding: '0px 8px', flex: 1 }}>
                       <div className="log-header">
                         <div className="header-item">{day}</div>
-                        <div className="header-item">{item[itemId].length} activities</div>
+                        <div className="header-item">{item[itemId].length} parameters</div>
                       </div>
                       <div className="log-row">
                         {(item[itemId] as JobAuditLogType[]).map((log) => (

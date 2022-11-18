@@ -1,6 +1,6 @@
 import { Button, formatOptionLabel, FormGroup } from '#components';
 import { useTypedSelector } from '#store';
-import { apiGetActivities, apiGetObjectTypes } from '#utils/apiUrls';
+import { apiGetParameters, apiGetObjectTypes } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { ObjectType } from '#views/Ontology/types';
@@ -12,8 +12,8 @@ import { labelByConstraint, ValidationWrapper } from './Resource';
 
 type NumberValidationState = {
   isLoadingObjectType: Record<number, boolean>;
-  isLoadingActivities: boolean;
-  resourceActivities: any[];
+  isLoadingParameters: boolean;
+  resourceParameters: any[];
   selectedObjectTypes: Record<number, ObjectType>;
 };
 
@@ -21,16 +21,16 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
   const { id: checklistId } = useTypedSelector((state) => state.prototypeComposer.data!);
   const { watch, setValue, register } = form;
   const validations = watch('validations', {});
-  const { resourceActivityValidations = [] } = validations;
+  const { resourceParameterValidations = [] } = validations;
   const [state, setState] = useState<NumberValidationState>({
     isLoadingObjectType: {},
-    isLoadingActivities: true,
-    resourceActivities: [],
+    isLoadingParameters: true,
+    resourceParameters: [],
     selectedObjectTypes: {},
   });
-  const { isLoadingObjectType, resourceActivities, isLoadingActivities, selectedObjectTypes } =
+  const { isLoadingObjectType, resourceParameters, isLoadingParameters, selectedObjectTypes } =
     state;
-  const resourceActivitiesMap = useRef<Record<string, any>>({});
+  const resourceParametersMap = useRef<Record<string, any>>({});
 
   const fetchObjectType = async (id: string, index: number) => {
     let result = Object.values(selectedObjectTypes).find((objectType) => {
@@ -60,10 +60,10 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
     }));
   };
 
-  const fetchActivities = async () => {
-    if (!resourceActivities.length) {
-      setState((prev) => ({ ...prev, isLoadingActivities: true }));
-      const resources = await request('GET', apiGetActivities(checklistId, 'RESOURCE'), {
+  const fetchParameters = async () => {
+    if (!resourceParameters.length) {
+      setState((prev) => ({ ...prev, isLoadingParameters: true }));
+      const resources = await request('GET', apiGetParameters(checklistId, 'RESOURCE'), {
         params: {
           // page: pageNumber + 1,
           // size: DEFAULT_PAGE_SIZE,
@@ -79,27 +79,27 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
           // }),
         },
       });
-      resourceActivitiesMap.current = keyBy(resources.data || [], 'id');
+      resourceParametersMap.current = keyBy(resources.data || [], 'id');
       setState((prev) => ({
         ...prev,
-        isLoadingActivities: false,
-        resourceActivities: resources.data,
+        isLoadingParameters: false,
+        resourceParameters: resources.data,
       }));
     }
   };
 
   useEffect(() => {
     register('validations');
-    fetchActivities();
+    fetchParameters();
   }, []);
 
   useEffect(() => {
-    if (resourceActivities.length) {
+    if (resourceParameters.length) {
       const fetchedObjectTypeIds: Record<string, boolean> = {};
-      resourceActivityValidations.forEach((validation: any, index: number) => {
+      resourceParameterValidations.forEach((validation: any, index: number) => {
         const objectTypeId =
-          resourceActivitiesMap.current?.[validation.activityId]?.data?.objectTypeId;
-        if (validation.activityId && objectTypeId) {
+          resourceParametersMap.current?.[validation.parameterId]?.data?.objectTypeId;
+        if (validation.parameterId && objectTypeId) {
           if (!fetchedObjectTypeIds[objectTypeId]) {
             fetchObjectType(objectTypeId, index);
             fetchedObjectTypeIds[objectTypeId] = true;
@@ -107,14 +107,14 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
         }
       });
     }
-  }, [resourceActivities]);
+  }, [resourceParameters]);
 
   const updateValidations = (updatedValidations: any) => {
     setValue(
       'validations',
       {
         ...validations,
-        resourceActivityValidations: updatedValidations,
+        resourceParameterValidations: updatedValidations,
       },
       {
         shouldDirty: true,
@@ -125,7 +125,7 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
 
   return (
     <ValidationWrapper>
-      {resourceActivityValidations.map((item: any, index: number) => (
+      {resourceParameterValidations.map((item: any, index: number) => (
         <div className="validation" key={index}>
           <div className="upper-row">
             <FormGroup
@@ -136,33 +136,33 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                     id: 'objectType',
                     formatOptionLabel,
                     label: 'Resource Parameter',
-                    isLoading: isLoadingActivities,
-                    options: resourceActivities.map((resource: any) => ({
+                    isLoading: isLoadingParameters,
+                    options: resourceParameters.map((resource: any) => ({
                       ...resource.data,
                       label: resource.label,
                       value: resource.id,
                     })),
-                    value: item?.activityId
+                    value: item?.parameterId
                       ? [
                           {
-                            label: resourceActivitiesMap.current?.[item.activityId]?.label,
-                            value: item.activityId,
+                            label: resourceParametersMap.current?.[item.parameterId]?.label,
+                            value: item.parameterId,
                           },
                         ]
                       : undefined,
                     isSearchable: false,
                     placeholder: 'Select Resource Parameter',
                     onChange: (value: any) => {
-                      resourceActivityValidations[index] = {
-                        ...resourceActivityValidations[index],
-                        activityId: value.value,
+                      resourceParameterValidations[index] = {
+                        ...resourceParameterValidations[index],
+                        parameterId: value.value,
                       };
-                      updateValidations(resourceActivityValidations);
+                      updateValidations(resourceParameterValidations);
                       fetchObjectType(value.objectTypeId, index);
                     },
                   },
                 },
-                ...(item?.activityId
+                ...(item?.parameterId
                   ? [
                       {
                         type: InputTypes.SINGLE_SELECT,
@@ -195,14 +195,14 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                               ]
                             : undefined,
                           onChange: (value: any) => {
-                            resourceActivityValidations[index] = {
-                              ...resourceActivityValidations[index],
+                            resourceParameterValidations[index] = {
+                              ...resourceParameterValidations[index],
                               propertyId: value.value,
                               propertyInputType: value.inputType,
                               propertyExternalId: value.externalId,
                               propertyDisplayName: value.label,
                             };
-                            updateValidations(resourceActivityValidations);
+                            updateValidations(resourceParameterValidations);
                           },
                         },
                       },
@@ -231,11 +231,11 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                               ]
                             : undefined,
                           onChange: (value: any) => {
-                            resourceActivityValidations[index] = {
-                              ...resourceActivityValidations[index],
+                            resourceParameterValidations[index] = {
+                              ...resourceParameterValidations[index],
                               constraint: value.value,
                             };
-                            updateValidations(resourceActivityValidations);
+                            updateValidations(resourceParameterValidations);
                           },
                         },
                       },
@@ -246,7 +246,7 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
             <Close
               className="remove-icon"
               onClick={() => {
-                const updated = [...resourceActivityValidations];
+                const updated = [...resourceParameterValidations];
                 updated.splice(index, 1);
                 updateValidations(updated);
               }}
@@ -266,11 +266,11 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                         'This message will be displayed when the validation rule is breached',
                       defaultValue: item?.errorMessage,
                       onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
-                        resourceActivityValidations[index] = {
-                          ...resourceActivityValidations[index],
+                        resourceParameterValidations[index] = {
+                          ...resourceParameterValidations[index],
                           errorMessage: e.target.value,
                         };
-                        updateValidations(resourceActivityValidations);
+                        updateValidations(resourceParameterValidations);
                       },
                     },
                   },
@@ -285,7 +285,7 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
         variant="secondary"
         style={{ marginBottom: 24, padding: '6px 8px' }}
         onClick={() => {
-          updateValidations([...resourceActivityValidations, {}]);
+          updateValidations([...resourceParameterValidations, {}]);
         }}
       >
         <AddCircleOutline style={{ marginRight: 8 }} /> Add

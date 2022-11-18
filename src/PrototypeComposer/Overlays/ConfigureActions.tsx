@@ -14,7 +14,7 @@ import {
 } from '#PrototypeComposer/Tasks/actions';
 import { Task } from '#PrototypeComposer/Tasks/types';
 import { useTypedSelector } from '#store';
-import { apiGetObjectTypes, apiGetActivities } from '#utils/apiUrls';
+import { apiGetObjectTypes, apiGetParameters } from '#utils/apiUrls';
 import { InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { fetchObjectTypes } from '#views/Ontology/actions';
@@ -64,9 +64,9 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
   const {
     objectTypes: { list, listLoading },
   } = useTypedSelector((state) => state.ontology);
-  const [isLoadingActivities, setIsLoadingActivities] = useState(false);
-  const [resourceActivities, setResourceActivities] = useState<any>([]);
-  const [numberActivities, setNumberActivities] = useState<any>([]);
+  const [isLoadingParameters, setIsLoadingParameters] = useState(false);
+  const [resourceParameters, setResourceParameters] = useState<any>([]);
+  const [numberParameters, setNumberParameters] = useState<any>([]);
   const [selectedObjectType, setSelectedObjectType] = useState<ObjectType | undefined>(undefined);
   const [isLoadingObjectType, setIsLoadingObjectType] = useState(false);
   const {
@@ -88,7 +88,7 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
 
   useEffect(() => {
     if (task.automations.length) {
-      fetchActivities();
+      fetchParameters();
     }
   }, []);
 
@@ -106,7 +106,7 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
       targetEntityType:
         data.actionType === AutomationActionActionType.CREATE_OBJECT
           ? AutomationTargetEntityType.OBJECT
-          : AutomationTargetEntityType.RESOURCE_ACTIVITY,
+          : AutomationTargetEntityType.RESOURCE_PARAMETER,
       triggerDetails: {},
     };
     if (task.automations.length) {
@@ -133,27 +133,27 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
     }
   };
 
-  const fetchActivities = async () => {
-    if (!resourceActivities.length && !numberActivities.length) {
-      setIsLoadingActivities(true);
+  const fetchParameters = async () => {
+    if (!resourceParameters.length && !numberParameters.length) {
+      setIsLoadingParameters(true);
       const [resources, numbers] = await Promise.all([
-        request('GET', apiGetActivities(checklistId, 'RESOURCE')),
-        request('GET', apiGetActivities(checklistId, 'NUMBER')),
+        request('GET', apiGetParameters(checklistId, 'RESOURCE')),
+        request('GET', apiGetParameters(checklistId, 'NUMBER')),
       ]);
       if (
         task.automations.length &&
         task.automations[0].actionType !== AutomationActionActionType.CREATE_OBJECT
       ) {
         const _selectedResource = resources.data.find(
-          (r: any) => r.id === task.automations[0]?.actionDetails?.referencedActivityId,
+          (r: any) => r.id === task.automations[0]?.actionDetails?.referencedParameterId,
         );
         if (_selectedResource) {
           fetchObjectType(_selectedResource.data.objectTypeId);
         }
       }
-      setResourceActivities(resources.data);
-      setNumberActivities(numbers.data);
-      setIsLoadingActivities(false);
+      setResourceParameters(resources.data);
+      setNumberParameters(numbers.data);
+      setIsLoadingParameters(false);
     }
   };
 
@@ -185,12 +185,12 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
         if (actionType) {
           if (actionType !== AutomationActionActionType.CREATE_OBJECT) {
             return [
-              'activityId',
+              'parameterId',
               'propertyId',
               'propertyInputType',
               'propertyExternalId',
               'propertyDisplayName',
-              'referencedActivityId',
+              'referencedParameterId',
             ].every((key) => !!v?.[key]);
           }
           return true;
@@ -245,8 +245,8 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                             usageStatus: 1,
                           }),
                         );
-                      } else if (!resourceActivities.length) {
-                        fetchActivities();
+                      } else if (!resourceParameters.length) {
+                        fetchParameters();
                       }
                     },
                   },
@@ -303,20 +303,20 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                 id: 'objectType',
                                 formatOptionLabel,
                                 label: 'Resource Parameter',
-                                isLoading: isLoadingActivities,
-                                options: resourceActivities.map((resource: any) => ({
+                                isLoading: isLoadingParameters,
+                                options: resourceParameters.map((resource: any) => ({
                                   ...resource.data,
                                   label: resource.label,
                                   value: resource.id,
                                 })),
-                                value: actionDetails?.referencedActivityId
+                                value: actionDetails?.referencedParameterId
                                   ? [
                                       {
-                                        label: resourceActivities.find(
+                                        label: resourceParameters.find(
                                           (resource: any) =>
-                                            resource.id === actionDetails.referencedActivityId,
+                                            resource.id === actionDetails.referencedParameterId,
                                         )?.label,
-                                        value: actionDetails.referencedActivityId,
+                                        value: actionDetails.referencedParameterId,
                                       },
                                     ]
                                   : undefined,
@@ -326,8 +326,8 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                   setValue(
                                     'actionDetails',
                                     {
-                                      referencedActivityId: _option.value,
-                                      activityId: actionDetails?.activityId,
+                                      referencedParameterId: _option.value,
+                                      parameterId: actionDetails?.parameterId,
                                     },
                                     {
                                       shouldDirty: true,
@@ -341,21 +341,21 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                             {
                               type: InputTypes.SINGLE_SELECT,
                               props: {
-                                id: 'numberActivity',
+                                id: 'numberParameter',
                                 formatOptionLabel,
                                 label: 'Number Parameter',
-                                isLoading: isLoadingActivities,
-                                options: numberActivities.map((number: any) => ({
+                                isLoading: isLoadingParameters,
+                                options: numberParameters.map((number: any) => ({
                                   label: number.label,
                                   value: number.id,
                                 })),
-                                value: actionDetails?.activityId
+                                value: actionDetails?.parameterId
                                   ? [
                                       {
-                                        label: numberActivities.find(
-                                          (number: any) => number.id === actionDetails.activityId,
+                                        label: numberParameters.find(
+                                          (number: any) => number.id === actionDetails.parameterId,
                                         )?.label,
-                                        value: actionDetails.activityId,
+                                        value: actionDetails.parameterId,
                                       },
                                     ]
                                   : undefined,
@@ -366,7 +366,7 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                     'actionDetails',
                                     {
                                       ...actionDetails,
-                                      activityId: _option.value,
+                                      parameterId: _option.value,
                                     },
                                     {
                                       shouldDirty: true,

@@ -1,5 +1,9 @@
 import { Error } from '#utils/globalTypes';
-import { ActivitiesById, ActivitiesOrderInTaskInStage, ActivityErrors } from './ActivityList/types';
+import {
+  ParametersById,
+  ParametersOrderInTaskInStage,
+  ParameterErrors,
+} from './ActivityList/types';
 import { Checklist, Stage, Task, TaskExecutionState } from './checklist.types';
 import { ErrorGroups } from './composer.types';
 import { StageErrors, StagesById, StagesOrder } from './StageList/types';
@@ -8,8 +12,8 @@ import { TaskErrors, TasksById, TaskSignOffError, TasksOrderInStage } from './Ta
 export const groupJobErrors = (errors: Error[]) =>
   errors.reduce<ErrorGroups>(
     (acc, error) => {
-      if (error.code in ActivityErrors) {
-        acc.activitiesErrors.push(error);
+      if (error.code in ParameterErrors) {
+        acc.parametersErrors.push(error);
       } else if (error.code in TaskErrors) {
         acc.tasksErrors.push(error);
       } else if (error.code in StageErrors) {
@@ -23,7 +27,7 @@ export const groupJobErrors = (errors: Error[]) =>
     {
       stagesErrors: [],
       tasksErrors: [],
-      activitiesErrors: [],
+      parametersErrors: [],
       signOffErrors: [],
     },
   );
@@ -104,27 +108,27 @@ export const getTasks = ({ checklist, setActiveTask = false }: GetTasksType) => 
   };
 };
 
-type GetActivitiesType = {
+type GetParametersType = {
   checklist: Checklist;
 };
 
-export const getActivities = ({ checklist }: GetActivitiesType) => {
-  const activitiesById: ActivitiesById = {},
-    activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage = {};
+export const getParameters = ({ checklist }: GetParametersType) => {
+  const parametersById: ParametersById = {},
+    parametersOrderInTaskInStage: ParametersOrderInTaskInStage = {};
 
   checklist?.stages?.map((stage) => {
-    activitiesOrderInTaskInStage[stage.id] = {};
+    parametersOrderInTaskInStage[stage.id] = {};
 
     stage?.tasks?.map((task) => {
-      activitiesOrderInTaskInStage[stage.id][task.id] = [];
+      parametersOrderInTaskInStage[stage.id][task.id] = [];
 
-      task?.activities?.map((activity) => {
-        activitiesOrderInTaskInStage[stage.id][task.id].push(activity.id);
+      task?.parameters?.map((parameter) => {
+        parametersOrderInTaskInStage[stage.id][task.id].push(parameter.id);
 
-        activitiesById[activity.id] = { ...activity, hasError: false };
+        parametersById[parameter.id] = { ...parameter, hasError: false };
       });
     });
   });
 
-  return { activitiesById, activitiesOrderInTaskInStage };
+  return { parametersById, parametersOrderInTaskInStage };
 };

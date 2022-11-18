@@ -3,10 +3,10 @@ import { useTypedSelector } from '#store';
 import { customOnChange } from '#utils/formEvents';
 import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { executeActivity, fixActivity } from '../actions';
-import { ActivityProps } from '../types';
+import { executeParameter, fixParameter } from '../actions';
+import { ParameterProps } from '../types';
 
-const TextboxActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
+const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const { entity } = useTypedSelector((state) => state.composer);
@@ -14,24 +14,24 @@ const TextboxActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => 
 
   useEffect(() => {
     if (inputRef.current && document.activeElement !== inputRef.current) {
-      if (activity?.response?.value) {
-        setValue(activity?.response?.value);
+      if (parameter?.response?.value) {
+        setValue(parameter?.response?.value);
       }
     }
-  }, [activity?.response?.value]);
+  }, [parameter?.response?.value]);
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.persist();
     customOnChange(e, (event) => {
       const newData = {
-        ...activity,
-        data: { ...activity.data, input: event.target.value },
+        ...parameter,
+        data: { ...parameter.data, input: event.target.value },
       };
 
       if (isCorrectingError) {
-        dispatch(fixActivity(newData));
+        dispatch(fixParameter(newData));
       } else {
-        dispatch(executeActivity(newData));
+        dispatch(executeParameter(newData));
       }
     });
     setValue(e.currentTarget.value);
@@ -39,7 +39,7 @@ const TextboxActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => 
 
   if (entity === Entity.JOB) {
     return (
-      <div className="textbox-activity">
+      <div className="textbox-parameter">
         <div className="new-form-field">
           <label className="new-form-field-label">User Comments Box</label>
           <textarea
@@ -58,4 +58,4 @@ const TextboxActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => 
   }
 };
 
-export default TextboxActivity;
+export default TextboxParameter;

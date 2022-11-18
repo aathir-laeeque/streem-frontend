@@ -1,85 +1,85 @@
 import { actionSpreader } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
 import { fetchListSuccessType } from '#views/Ontology/types';
-import { Activity, Stage, Task } from './../checklist.types';
-import { ActivityListActions, ActivityListState } from './reducer.types';
-import { AddNewActivityType, DeleteActivityType } from './types';
+import { Parameter, Stage, Task } from './../checklist.types';
+import { ParameterListActions, ParameterListState } from './reducer.types';
+import { AddNewParameterType, DeleteParameterType } from './types';
 
-export const addNewActivity = (params: AddNewActivityType) =>
-  actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY, params);
+export const addNewParameter = (params: AddNewParameterType) =>
+  actionSpreader(ParameterListActions.ADD_NEW_PARAMETER, params);
 
-export const addNewActivityError = (error: any) =>
-  actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY_ERROR, { error });
+export const addNewParameterError = (error: any) =>
+  actionSpreader(ParameterListActions.ADD_NEW_PARAMETER_ERROR, { error });
 
-export const addNewActivitySuccess = (params: {
+export const addNewParameterSuccess = (params: {
   stageId: Stage['id'];
   taskId: Task['id'];
-  activity: Activity;
-}) => actionSpreader(ActivityListActions.ADD_NEW_ACTIVITY_SUCCESS, params);
+  parameter: Parameter;
+}) => actionSpreader(ParameterListActions.ADD_NEW_PARAMETER_SUCCESS, params);
 
-export const deleteActivity = (params: DeleteActivityType) =>
-  actionSpreader(ActivityListActions.DELETE_ACTIVITY, params);
+export const deleteParameter = (params: DeleteParameterType) =>
+  actionSpreader(ParameterListActions.DELETE_PARAMETER, params);
 
-export const deleteActivityError = (error: any) =>
-  actionSpreader(ActivityListActions.DELETE_ACTIVITY_ERROR, { error });
+export const deleteParameterError = (error: any) =>
+  actionSpreader(ParameterListActions.DELETE_PARAMETER_ERROR, { error });
 
-export const deleteActivitySuccess = (params: DeleteActivityType) =>
-  actionSpreader(ActivityListActions.DELETE_ACTIVITY_SUCCESS, { ...params });
+export const deleteParameterSuccess = (params: DeleteParameterType) =>
+  actionSpreader(ParameterListActions.DELETE_PARAMETER_SUCCESS, { ...params });
 
-export const updateActivityApi = (activity: Activity, fromList?: boolean) =>
-  actionSpreader(ActivityListActions.UPDATE_ACTIVITY_API, { activity, fromList });
+export const updateParameterApi = (parameter: Parameter, fromList?: boolean) =>
+  actionSpreader(ParameterListActions.UPDATE_PARAMETER_API, { parameter, fromList });
 
-export const updateStoreActivity = (
-  data: Activity['data'],
-  activityId: Activity['id'],
+export const updateStoreParameter = (
+  data: Parameter['data'],
+  parameterId: Parameter['id'],
   updatePath?: (string | number)[],
 ) =>
-  actionSpreader(ActivityListActions.UPDATE_STORE_ACTIVITY, {
+  actionSpreader(ParameterListActions.UPDATE_STORE_PARAMETER, {
     updatePath,
-    activityId,
+    parameterId,
     data,
   });
 
-export const updateStoreMediaActivity = (
-  activityId: Activity['id'],
+export const updateStoreMediaParameter = (
+  parameterId: Parameter['id'],
   dataIndex: number,
-  data: Activity['data'],
+  data: Parameter['data'],
 ) =>
-  actionSpreader(ActivityListActions.UPDATE_STORE_MEDIA_ACTIVITY, {
-    activityId,
+  actionSpreader(ParameterListActions.UPDATE_STORE_MEDIA_PARAMETER, {
+    parameterId,
     dataIndex,
     data,
   });
 
-export const removeStoreActivityItem = (activityId: Activity['id'], activityItemId: string) =>
-  actionSpreader(ActivityListActions.REMOVE_STORE_ACTIVITY_ITEM, {
-    activityId,
-    activityItemId,
+export const removeStoreParameterItem = (parameterId: Parameter['id'], parameterItemId: string) =>
+  actionSpreader(ParameterListActions.REMOVE_STORE_PARAMETER_ITEM, {
+    parameterId,
+    parameterItemId,
   });
 
-export const addStoreActivityItem = (
-  activityId: Activity['id'],
-  activityItemData: Activity['data'],
+export const addStoreParameterItem = (
+  parameterId: Parameter['id'],
+  parameterItemData: Parameter['data'],
 ) =>
-  actionSpreader(ActivityListActions.ADD_STORE_ACTIVITY_ITEM, {
-    activityId,
-    activityItemData,
+  actionSpreader(ParameterListActions.ADD_STORE_PARAMETER_ITEM, {
+    parameterId,
+    parameterItemData,
   });
 
-export const updateActivityError = (error: any) =>
-  actionSpreader(ActivityListActions.UPDATE_ACTIVITY_ERROR, { error });
+export const updateParameterError = (error: any) =>
+  actionSpreader(ParameterListActions.UPDATE_PARAMETER_ERROR, { error });
 
 export const setValidationError = (error: Error) =>
-  actionSpreader(ActivityListActions.SET_VALIDATION_ERROR, { error });
+  actionSpreader(ParameterListActions.SET_VALIDATION_ERROR, { error });
 
-export const toggleNewParameter = (payload?: ActivityListState['addParameter']) =>
-  actionSpreader(ActivityListActions.TOGGLE_NEW_PARAMETER, payload);
+export const toggleNewParameter = (payload?: ParameterListState['addParameter']) =>
+  actionSpreader(ParameterListActions.TOGGLE_NEW_PARAMETER, payload);
 
 export const fetchParameters = (checklistId: string, params?: Record<string, string | number>) =>
-  actionSpreader(ActivityListActions.FETCH_PARAMETERS, { checklistId, params });
+  actionSpreader(ParameterListActions.FETCH_PARAMETERS, { checklistId, params });
 
 export const fetchParametersSuccess = ({ data, pageable }: fetchListSuccessType<any>) =>
-  actionSpreader(ActivityListActions.FETCH_PARAMETERS_SUCCESS, { data, pageable });
+  actionSpreader(ParameterListActions.FETCH_PARAMETERS_SUCCESS, { data, pageable });
 
 export const fetchParametersError = (error: any) =>
-  actionSpreader(ActivityListActions.FETCH_PARAMETERS_ERROR, { error });
+  actionSpreader(ParameterListActions.FETCH_PARAMETERS_ERROR, { error });

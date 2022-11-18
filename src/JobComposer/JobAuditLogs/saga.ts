@@ -10,7 +10,7 @@ import {
   fetchJobAuditLogsOngoing,
   fetchJobAuditLogsSuccess,
 } from './actions';
-import { JobAuditLogType, JobActivityAction } from './types';
+import { JobAuditLogType, JobParameterAction } from './types';
 
 function* fetchJobAuditLogsSaga({ payload }: ReturnType<typeof fetchJobAuditLogs>) {
   try {
@@ -43,11 +43,11 @@ function* fetchJobAuditLogsSaga({ payload }: ReturnType<typeof fetchJobAuditLogs
       }),
     );
   } catch (e) {
-    const error = yield* handleCatch('JobActivity', 'fetchJobAuditLogsSaga', e);
+    const error = yield* handleCatch('JobParameter', 'fetchJobAuditLogsSaga', e);
     yield put(fetchJobAuditLogsError(error));
   }
 }
 
 export function* JobAuditLogsSaga() {
-  yield takeLeading(JobActivityAction.FETCH_JOB_ACTIVITY, fetchJobAuditLogsSaga);
+  yield takeLeading(JobParameterAction.FETCH_JOB_PARAMETER, fetchJobAuditLogsSaga);
 }

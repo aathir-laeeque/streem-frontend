@@ -1,4 +1,4 @@
-import { ActivitiesById } from '#JobComposer/ActivityList/types';
+import { ParametersById } from '#JobComposer/ActivityList/types';
 import { actionSpreader } from '#store';
 import { Job, JobStateType } from '#views/Jobs/ListView/types';
 import { Stage } from '../checklist.types';
@@ -15,7 +15,7 @@ export interface fetchActiveStageDataRes {
   jobState: JobStateType;
   stage: Stage;
   tasksById: TasksById;
-  activitiesById: ActivitiesById;
+  parametersById: ParametersById;
   stageReports: StageReports;
 }
 

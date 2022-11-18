@@ -1,19 +1,19 @@
 import { Button, FormGroup, StyledTabs, ToggleSwitch, useDrawer } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { ActivityType } from '#JobComposer/checklist.types';
+import { ParameterType } from '#JobComposer/checklist.types';
 import {
-  addNewActivity,
-  deleteActivitySuccess,
+  addNewParameter,
+  deleteParameterSuccess,
   toggleNewParameter,
-  updateActivityApi,
+  updateParameterApi,
 } from '#PrototypeComposer/Activity/actions';
-import { generateNewActivity } from '#PrototypeComposer/Activity/utils';
+import { generateNewParameter } from '#PrototypeComposer/Activity/utils';
 import {
-  Activity,
+  Parameter,
   Checklist,
-  MandatoryActivity,
-  NonMandatoryActivity,
+  MandatoryParameter,
+  NonMandatoryParameter,
 } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap, TargetEntityTypeVisual } from '#PrototypeComposer/constants';
 import ResourceFilter from '#PrototypeComposer/Parameters/FilterViews/Resource';
@@ -27,7 +27,7 @@ import MaterialInstruction from '#PrototypeComposer/Parameters/SetupViews/Materi
 import NumberValidation from '#PrototypeComposer/Parameters/ValidationViews/Number';
 import ResourceValidation from '#PrototypeComposer/Parameters/ValidationViews/Resource';
 import { useTypedSelector } from '#store';
-import { apiDeleteActivity, apiSingleActivity } from '#utils/apiUrls';
+import { apiDeleteParameter, apiSingleParameter } from '#utils/apiUrls';
 import { InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { Step, StepIconProps, StepLabel, Stepper } from '@material-ui/core';
@@ -41,7 +41,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { resetTaskActivityError } from './actions';
+import { resetTaskParameterError } from './actions';
 
 export const AddParameterWrapper = styled.form`
   display: flex;
@@ -128,19 +128,19 @@ function CustomStepIcon(props: StepIconProps) {
   );
 }
 
-const isFiltersAllowed = (type: ActivityType) => {
+const isFiltersAllowed = (type: ParameterType) => {
   switch (type) {
-    // case MandatoryActivity.RESOURCE:
+    // case MandatoryParameter.RESOURCE:
     //   return true;
     default:
       return false;
   }
 };
 
-const isValidationsAllowed = (type: ActivityType) => {
+const isValidationsAllowed = (type: ParameterType) => {
   switch (type) {
-    case MandatoryActivity.RESOURCE:
-    case MandatoryActivity.NUMBER:
+    case MandatoryParameter.RESOURCE:
+    case MandatoryParameter.NUMBER:
       return true;
     default:
       return false;
@@ -159,20 +159,20 @@ const AddParameter: FC = () => {
   const dispatch = useDispatch();
   const {
     data,
-    activities: { activityOrderInTaskInStage, listById, addParameter },
+    parameters: { parameterOrderInTaskInStage, listById, addParameter },
     stages: { activeStageId },
     tasks: { activeTaskId },
   } = useTypedSelector((state) => state.prototypeComposer);
   const [activeStep, setActiveStep] = useState(0);
-  const [currentActivity, setCurrentActivity] = useState<Activity>();
-  const [activityOptions, setActivityOptions] = useState<
+  const [currentParameter, setCurrentParameter] = useState<Parameter>();
+  const [parameterOptions, setParameterOptions] = useState<
     { label: string | JSX.Element; value: string }[]
   >([]);
   const form = useForm<{
     mandatory: boolean;
     label: string;
     description: string;
-    type: ActivityType;
+    type: ParameterType;
     data: any;
     validations: Record<string, any>;
   }>({
@@ -183,6 +183,9 @@ const AddParameter: FC = () => {
       ...defaultValues,
       ...(addParameter?.type && {
         type: addParameter.type,
+        ...(addParameter.type in NonMandatoryParameter && {
+          mandatory: false,
+        }),
       }),
     },
   });
@@ -245,7 +248,7 @@ const AddParameter: FC = () => {
         }}
         key="setup-section"
       >
-        {(!type || (type in MandatoryActivity && type !== MandatoryActivity.CHECKLIST)) && (
+        {(!type || (type in MandatoryParameter && type !== MandatoryParameter.CHECKLIST)) && (
           <FormGroup
             style={{ marginBottom: 24 }}
             inputs={[
@@ -254,7 +257,7 @@ const AddParameter: FC = () => {
                 props: {
                   id: 'type',
                   label: 'Parameter Type',
-                  options: activityOptions,
+                  options: parameterOptions,
                   isSearchable: false,
                   placeholder: 'Select Parameter Type',
                   value: type ? [{ label: ParameterTypeMap[type], value: type }] : undefined,
@@ -269,7 +272,7 @@ const AddParameter: FC = () => {
             ]}
           />
         )}
-        {!(type in NonMandatoryActivity) && (
+        {!(type in NonMandatoryParameter) && (
           <ToggleSwitch
             height={24}
             width={48}
@@ -292,21 +295,21 @@ const AddParameter: FC = () => {
 
   const renderSetupViewsByType = () => {
     switch (type) {
-      case MandatoryActivity.SINGLE_SELECT:
-      case MandatoryActivity.MULTISELECT:
-      case MandatoryActivity.CHECKLIST:
+      case MandatoryParameter.SINGLE_SELECT:
+      case MandatoryParameter.MULTISELECT:
+      case MandatoryParameter.CHECKLIST:
         return <ChecklistParameter form={form} />;
-      case MandatoryActivity.YES_NO:
+      case MandatoryParameter.YES_NO:
         return <YesNoParameter form={form} />;
-      case MandatoryActivity.CALCULATION:
+      case MandatoryParameter.CALCULATION:
         return <CalculationParameter form={form} />;
-      case MandatoryActivity.RESOURCE:
+      case MandatoryParameter.RESOURCE:
         return <ResourceParameter form={form} />;
-      case MandatoryActivity.PARAMETER:
+      case MandatoryParameter.PARAMETER:
         return <ParameterParameter form={form} />;
-      case NonMandatoryActivity.INSTRUCTION:
+      case NonMandatoryParameter.INSTRUCTION:
         return <TextInstruction form={form} />;
-      case NonMandatoryActivity.MATERIAL:
+      case NonMandatoryParameter.MATERIAL:
         return <MaterialInstruction form={form} />;
       default:
         return null;
@@ -328,7 +331,7 @@ const AddParameter: FC = () => {
 
   const renderFiltersByType = () => {
     switch (type) {
-      case MandatoryActivity.RESOURCE:
+      case MandatoryParameter.RESOURCE:
         return <ResourceFilter form={form} />;
       default:
         return null;
@@ -350,9 +353,9 @@ const AddParameter: FC = () => {
 
   const renderValidationsByType = () => {
     switch (type) {
-      case MandatoryActivity.RESOURCE:
+      case MandatoryParameter.RESOURCE:
         return <ResourceValidation form={form} />;
-      case MandatoryActivity.NUMBER:
+      case MandatoryParameter.NUMBER:
         return <NumberValidation form={form} />;
       default:
         return null;
@@ -367,15 +370,15 @@ const AddParameter: FC = () => {
         })}
         key="location-section"
       >
-        {currentActivity?.targetEntityType
-          ? TargetEntityTypeVisual[currentActivity.targetEntityType]
+        {currentParameter?.targetEntityType
+          ? TargetEntityTypeVisual[currentParameter.targetEntityType]
           : ''}
       </div>
     );
   };
 
   const sections =
-    type in NonMandatoryActivity
+    type in NonMandatoryParameter
       ? [
           {
             label: 'Setup',
@@ -419,7 +422,7 @@ const AddParameter: FC = () => {
                 },
               ]
             : []),
-          ...(addParameter?.activityId
+          ...(addParameter?.parameterId
             ? [
                 {
                   label: 'Location',
@@ -437,10 +440,10 @@ const AddParameter: FC = () => {
         ];
 
   useEffect(() => {
-    setActivityOptions(
+    setParameterOptions(
       Object.entries(ParameterTypeMap).reduce<{ label: string | JSX.Element; value: string }[]>(
         (acc, [value, label]) => {
-          if (!(value in NonMandatoryActivity) && value !== MandatoryActivity.CHECKLIST) {
+          if (!(value in NonMandatoryParameter) && value !== MandatoryParameter.CHECKLIST) {
             acc.push({
               label,
               value,
@@ -459,10 +462,14 @@ const AddParameter: FC = () => {
       setActiveStep(0);
     }
 
-    if (addParameter?.activityId) {
-      fetchActivity();
+    if (addParameter?.parameterId) {
+      fetchParameter();
     } else if (addParameter?.type) {
-      reset({ ...defaultValues, type: addParameter.type });
+      reset({
+        ...defaultValues,
+        type: addParameter.type,
+        ...(addParameter.type in NonMandatoryParameter && { mandatory: false }),
+      });
     } else {
       reset(defaultValues);
     }
@@ -490,13 +497,13 @@ const AddParameter: FC = () => {
   const onSubmit = () => {
     if (addParameter) {
       const _data = getValues();
-      if (addParameter.activityId && currentActivity) {
+      if (addParameter.parameterId && currentParameter) {
         dispatch(
-          updateActivityApi(
+          updateParameterApi(
             {
-              ...currentActivity,
-              ...(currentActivity.type !== _data.type && {
-                ...generateNewActivity({ ...currentActivity, type: _data.type }),
+              ...currentParameter,
+              ...(currentParameter.type !== _data.type && {
+                ...generateNewParameter({ ...currentParameter, type: _data.type }),
               }),
               ..._data,
             },
@@ -505,16 +512,16 @@ const AddParameter: FC = () => {
         );
       } else {
         let orderTree = 1;
-        const generatedActivity = generateNewActivity({ orderTree, ..._data });
+        const generatedParameter = generateNewParameter({ orderTree, ..._data });
         if (addParameter.action === 'task' && activeTaskId && activeStageId) {
-          const activitiesInTask = activityOrderInTaskInStage?.[activeStageId]?.[activeTaskId];
+          const parametersInTask = parameterOrderInTaskInStage?.[activeStageId]?.[activeTaskId];
           const maxOrderTree =
-            listById?.[activitiesInTask?.[activitiesInTask?.length - 1]]?.orderTree ?? 0;
+            listById?.[parametersInTask?.[parametersInTask?.length - 1]]?.orderTree ?? 0;
           orderTree = maxOrderTree + 1;
-          dispatch(resetTaskActivityError(activeTaskId));
+          dispatch(resetTaskParameterError(activeTaskId));
           dispatch(
-            addNewActivity({
-              ...generatedActivity,
+            addNewParameter({
+              ...generatedParameter,
               orderTree,
               checklistId: (data as Checklist).id,
               taskId: activeTaskId,
@@ -524,8 +531,8 @@ const AddParameter: FC = () => {
           );
         } else {
           dispatch(
-            addNewActivity({
-              ...generatedActivity,
+            addNewParameter({
+              ...generatedParameter,
               checklistId: (data as Checklist).id,
               orderTree,
               ..._data,
@@ -536,11 +543,11 @@ const AddParameter: FC = () => {
     }
   };
 
-  const fetchActivity = async () => {
+  const fetchParameter = async () => {
     try {
-      const response = await request('GET', apiSingleActivity(addParameter!.activityId!));
+      const response = await request('GET', apiSingleParameter(addParameter!.parameterId!));
       if (response.data) {
-        setCurrentActivity(response.data);
+        setCurrentParameter(response.data);
         reset({
           mandatory: response.data.mandatory,
           label: response.data.label,
@@ -551,19 +558,19 @@ const AddParameter: FC = () => {
         });
       }
     } catch (e) {
-      console.error('Error Fetching Activity', e);
+      console.error('Error Fetching Parameter', e);
     }
   };
 
   const onDelete = async () => {
-    const { data } = await request('PATCH', apiDeleteActivity(addParameter!.activityId!));
+    const { data } = await request('PATCH', apiDeleteParameter(addParameter!.parameterId!));
     if (data) {
       if (data?.taskId && data?.stageId) {
         dispatch(
-          deleteActivitySuccess({
+          deleteParameterSuccess({
             taskId: data.taskId,
             stageId: data.stageId,
-            activityId: addParameter!.activityId!,
+            parameterId: addParameter!.parameterId!,
           }),
         );
       }
@@ -608,9 +615,9 @@ const AddParameter: FC = () => {
             },
           ]}
         />
-        {!(type in NonMandatoryActivity) && (
+        {!(type in NonMandatoryParameter) && (
           <>
-            {addParameter?.activityId ? (
+            {addParameter?.parameterId ? (
               <StyledTabs
                 containerProps={{
                   className: 'parameters-tabs',
@@ -648,12 +655,12 @@ const AddParameter: FC = () => {
     ),
     footerContent: (
       <>
-        {!addParameter?.activityId && activeStep !== 0 && (
+        {!addParameter?.parameterId && activeStep !== 0 && (
           <Button variant="secondary" onClick={handleBack}>
             Back
           </Button>
         )}
-        {addParameter?.activityId && (
+        {addParameter?.parameterId && (
           <Button variant="textOnly" color="red" onClick={handleDeleteParameter}>
             <DeleteOutlined /> Delete Parameter
           </Button>

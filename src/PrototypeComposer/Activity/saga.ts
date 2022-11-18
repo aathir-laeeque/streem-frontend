@@ -2,75 +2,75 @@ import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { RootState } from '#store';
 import {
-  apiAddNewActivity,
-  apiDeleteActivity,
-  apiGetActivities,
-  apiSingleActivity,
+  apiAddNewParameter,
+  apiDeleteParameter,
+  apiGetParameters,
+  apiSingleParameter,
 } from '#utils/apiUrls';
 import { FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 import {
-  addNewActivity,
-  addNewActivityError,
-  addNewActivitySuccess,
-  deleteActivity,
-  deleteActivityError,
-  deleteActivitySuccess,
+  addNewParameter,
+  addNewParameterError,
+  addNewParameterSuccess,
+  deleteParameter,
+  deleteParameterError,
+  deleteParameterSuccess,
   fetchParameters,
   fetchParametersError,
   fetchParametersSuccess,
   toggleNewParameter,
-  updateActivityApi,
-  updateActivityError,
-  updateStoreActivity,
+  updateParameterApi,
+  updateParameterError,
+  updateStoreParameter,
 } from './actions';
-import { ActivityListActions } from './reducer.types';
+import { ParameterListActions } from './reducer.types';
 
-function* updateActivitySaga({ payload }: ReturnType<typeof updateActivityApi>) {
+function* updateParameterSaga({ payload }: ReturnType<typeof updateParameterApi>) {
   try {
-    const { fromList, activity } = payload;
-    const { data, errors } = yield call(request, 'PATCH', apiSingleActivity(activity.id), {
-      data: { ...activity },
+    const { fromList, parameter } = payload;
+    const { data, errors } = yield call(request, 'PATCH', apiSingleParameter(parameter.id), {
+      data: { ...parameter },
     });
 
     if (fromList && data) {
-      yield put(updateStoreActivity(data, activity.id));
+      yield put(updateStoreParameter(data, parameter.id));
       yield put(toggleNewParameter());
       yield put(
         showNotification({
           type: NotificationType.SUCCESS,
           msg: 'Parameter Updated Successfully',
-          detail: activity.label,
+          detail: parameter.label,
         }),
       );
     }
 
     if (errors) {
-      yield put(updateActivityError(errors));
+      yield put(updateParameterError(errors));
     }
   } catch (error) {
-    console.error('error came in the updateActivitySaga :: ', error);
+    console.error('error came in the updateParameterSaga :: ', error);
   }
 }
 
-function* addNewActivitySaga({ payload }: ReturnType<typeof addNewActivity>) {
+function* addNewParameterSaga({ payload }: ReturnType<typeof addNewParameter>) {
   try {
-    const { checklistId, stageId, taskId, ...activity } = payload;
+    const { checklistId, stageId, taskId, ...parameter } = payload;
 
     const { data, errors } = yield call(
       request,
       'POST',
-      apiAddNewActivity({ checklistId, stageId, taskId }),
-      { data: activity },
+      apiAddNewParameter({ checklistId, stageId, taskId }),
+      { data: parameter },
     );
 
     if (data) {
       if (stageId && taskId) {
-        yield put(addNewActivitySuccess({ activity: data, stageId, taskId }));
+        yield put(addNewParameterSuccess({ parameter: data, stageId, taskId }));
       } else {
         const {
-          activities: {
+          parameters: {
             parameters: { pageable },
           },
         } = yield select((state: RootState) => state.prototypeComposer);
@@ -90,28 +90,28 @@ function* addNewActivitySaga({ payload }: ReturnType<typeof addNewActivity>) {
         showNotification({
           type: NotificationType.SUCCESS,
           msg: 'New Parameter Created',
-          detail: activity.label,
+          detail: parameter.label,
         }),
       );
     } else {
-      yield put(addNewActivityError(errors));
+      yield put(addNewParameterError(errors));
     }
   } catch (error) {
-    console.error('error came in addNewActivitySaga :: ', error);
+    console.error('error came in addNewParameterSaga :: ', error);
   }
 }
 
-function* deleteActivitySaga({ payload }: ReturnType<typeof deleteActivity>) {
+function* deleteParameterSaga({ payload }: ReturnType<typeof deleteParameter>) {
   try {
-    const { data, errors } = yield call(request, 'PATCH', apiDeleteActivity(payload.activityId));
+    const { data, errors } = yield call(request, 'PATCH', apiDeleteParameter(payload.parameterId));
 
     if (data) {
-      yield put(deleteActivitySuccess(payload));
+      yield put(deleteParameterSuccess(payload));
     } else {
-      yield put(deleteActivityError(errors));
+      yield put(deleteParameterError(errors));
     }
   } catch (error) {
-    console.error('error came in deleteACtivitySaga :: ', error);
+    console.error('error came in deleteParameterSaga :: ', error);
   }
 }
 
@@ -121,7 +121,7 @@ function* fetchParametersSaga({ payload }: ReturnType<typeof fetchParameters>) {
     const { data, pageable }: ResponseObj<any[]> = yield call(
       request,
       'GET',
-      apiGetActivities(checklistId),
+      apiGetParameters(checklistId),
       {
         params,
       },
@@ -136,9 +136,9 @@ function* fetchParametersSaga({ payload }: ReturnType<typeof fetchParameters>) {
   }
 }
 
-export function* ActivitySaga() {
-  yield takeLeading(ActivityListActions.ADD_NEW_ACTIVITY, addNewActivitySaga);
-  yield takeLatest(ActivityListActions.UPDATE_ACTIVITY_API, updateActivitySaga);
-  yield takeLeading(ActivityListActions.DELETE_ACTIVITY, deleteActivitySaga);
-  yield takeLatest(ActivityListActions.FETCH_PARAMETERS, fetchParametersSaga);
+export function* ParameterSaga() {
+  yield takeLeading(ParameterListActions.ADD_NEW_PARAMETER, addNewParameterSaga);
+  yield takeLatest(ParameterListActions.UPDATE_PARAMETER_API, updateParameterSaga);
+  yield takeLeading(ParameterListActions.DELETE_PARAMETER, deleteParameterSaga);
+  yield takeLatest(ParameterListActions.FETCH_PARAMETERS, fetchParametersSaga);
 }

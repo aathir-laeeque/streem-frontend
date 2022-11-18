@@ -1,8 +1,8 @@
 import { Pageable } from '#utils/globalTypes';
 import {
   JobAuditLogType,
-  JobActivityAction,
-  JobActivityActionType,
+  JobParameterAction,
+  JobParameterActionType,
   JobAuditLogState,
 } from './types';
 
@@ -21,12 +21,12 @@ export const initialState: JobAuditLogState = {
   },
 };
 
-const reducer = (state = initialState, action: JobActivityActionType): JobAuditLogState => {
+const reducer = (state = initialState, action: JobParameterActionType): JobAuditLogState => {
   switch (action.type) {
-    case JobActivityAction.FETCH_JOB_ACTIVITY_ONGOING:
+    case JobParameterAction.FETCH_JOB_PARAMETER_ONGOING:
       return { ...state, loading: true };
 
-    case JobActivityAction.FETCH_JOB_ACTIVITY_SUCCESS:
+    case JobParameterAction.FETCH_JOB_PARAMETER_SUCCESS:
       const { data, pageable } = action.payload;
       return {
         ...state,
@@ -38,7 +38,7 @@ const reducer = (state = initialState, action: JobActivityActionType): JobAuditL
             : [...state.logs, ...(data as JobAuditLogType[])],
       };
 
-    case JobActivityAction.FETCH_JOB_ACTIVITY_ERROR:
+    case JobParameterAction.FETCH_JOB_PARAMETER_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
 
     default:

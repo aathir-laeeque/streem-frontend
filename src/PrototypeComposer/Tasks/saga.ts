@@ -10,7 +10,7 @@ import {
   apiRemoveStop,
   apiRemoveTaskMedia,
   apiRemoveTaskTimer,
-  apiReOrderActivities,
+  apiReOrderParameters,
   apiReorderTasks,
   apiSetTaskTimer,
   apiUpdateTask,
@@ -19,7 +19,7 @@ import {
 } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { call, put, select, takeEvery, takeLatest, takeLeading } from 'redux-saga/effects';
-import { updateMediaActivitySuccess } from '../../JobComposer/ActivityList/actions';
+import { updateMediaParameterSuccess } from '../../JobComposer/ActivityList/actions';
 import {
   addNewTask,
   addNewTaskSuccess,
@@ -31,7 +31,7 @@ import {
   deleteTaskSuccess,
   removeTaskMedia,
   removeTaskTimer,
-  reOrderActivities,
+  reOrderParameters,
   reOrderTask,
   reOrderTaskError,
   reOrderTaskSuccess,
@@ -258,7 +258,7 @@ function* addTaskMediaSaga({ payload }: ReturnType<typeof addTaskMedia>) {
 
 function* updateTaskMediaSaga({ payload }: ReturnType<typeof updateTaskMedia>) {
   try {
-    const { mediaDetails, taskId, activityId, mediaId } = payload;
+    const { mediaDetails, taskId, parameterId, mediaId } = payload;
 
     const { data, errors } = yield call(request, 'PATCH', apiUpdateTaskMedia(taskId, mediaId), {
       data: { ...mediaDetails },
@@ -268,9 +268,9 @@ function* updateTaskMediaSaga({ payload }: ReturnType<typeof updateTaskMedia>) {
     if (data && taskId) {
       yield put(closeOverlayAction(OverlayNames.TASK_MEDIA));
       yield put(updateTaskMediaSuccess({ media: data, taskId }));
-    } else if (data && activityId) {
+    } else if (data && parameterId) {
       yield put(closeOverlayAction(OverlayNames.TASK_MEDIA));
-      yield put(updateMediaActivitySuccess(data, activityId));
+      yield put(updateMediaParameterSuccess(data, parameterId));
     } else {
       console.error('error from update media to task api :: ', errors);
     }
@@ -348,13 +348,13 @@ function* archiveTaskActionSaga({ payload }: ReturnType<typeof archiveTaskAction
   }
 }
 
-function* reOrderActivitiesSaga({ payload }: ReturnType<typeof reOrderActivities>) {
+function* reOrderParametersSaga({ payload }: ReturnType<typeof reOrderParameters>) {
   try {
     const { checklistId, taskId, stageId, orderedIds } = payload;
     const { errors } = yield call(
       request,
       'PATCH',
-      apiReOrderActivities(checklistId, taskId, stageId),
+      apiReOrderParameters(checklistId, taskId, stageId),
       {
         data: {
           parametersOrder: orderedIds.reduce<Record<string, number>>((acc, id, index) => {
@@ -366,10 +366,10 @@ function* reOrderActivitiesSaga({ payload }: ReturnType<typeof reOrderActivities
     );
 
     if (errors) {
-      console.error('error from reorder activities from task api :: ', errors);
+      console.error('error from reorder parameters from task api :: ', errors);
     }
   } catch (error) {
-    console.error('error came in reOrderActivitiesSaga :: ', error);
+    console.error('error came in reOrderParametersSaga :: ', error);
   }
 }
 
@@ -388,5 +388,5 @@ export function* TaskListSaga() {
   yield takeLeading(TaskListActions.ADD_TASK_ACTION, addTaskActionSaga);
   yield takeLeading(TaskListActions.UPDATE_TASK_ACTION, updateTaskActionSaga);
   yield takeLeading(TaskListActions.ARCHIVE_TASK_ACTION, archiveTaskActionSaga);
-  yield takeLatest(TaskListActions.REORDER_ACTIVITIES, reOrderActivitiesSaga);
+  yield takeLatest(TaskListActions.REORDER_PARAMETERS, reOrderParametersSaga);
 }

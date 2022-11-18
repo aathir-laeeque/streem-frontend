@@ -5,7 +5,7 @@ import {
   processParametersMapSuccess,
   resetComposer,
 } from './actions';
-import { ActivityListState } from './Activity/reducer.types';
+import { ParameterListState } from './Activity/reducer.types';
 import { Checklist } from './checklist.types';
 import { ChecklistAuditLogsState } from './ChecklistAuditLogs/types';
 import {
@@ -22,7 +22,7 @@ import { TaskListState } from './Tasks/reducer.types';
 import { ComposerEntity } from './types';
 
 export type ComposerState = {
-  readonly activities: ActivityListState;
+  readonly parameters: ParameterListState;
   readonly approvers: Collaborator[];
   readonly collaborators: Collaborator[];
   readonly data?: Checklist;

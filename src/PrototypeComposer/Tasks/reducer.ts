@@ -122,7 +122,7 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (state = initialStat
         },
       };
 
-    case TaskListActions.RESET_TASK_ACTIVITY_ERROR:
+    case TaskListActions.RESET_TASK_PARAMETER_ERROR:
       return {
         ...state,
         listById: {

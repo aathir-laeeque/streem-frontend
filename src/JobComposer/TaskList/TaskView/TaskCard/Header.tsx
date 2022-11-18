@@ -18,7 +18,7 @@ import TaskAssignmentContent from './TaskAssignmentContent';
 import Timer from './Timer';
 
 type HeaderProps = {
-  task: Omit<Task, 'activities'>;
+  task: Omit<Task, 'parameters'>;
   showStartButton: boolean;
   isTaskStarted: boolean;
   isTaskDelayed: boolean;

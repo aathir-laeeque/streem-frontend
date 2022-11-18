@@ -1,16 +1,16 @@
-import { getActivities } from '#JobComposer/utils';
+import { getParameters } from '#JobComposer/utils';
 import { Reducer } from 'redux';
 import { ComposerAction } from '../composer.reducer.types';
-import { ActivityListActionType, ActivityListState, ActivityListAction } from './reducer.types';
+import { ParameterListActionType, ParameterListState, ParameterListAction } from './reducer.types';
 import { Entity } from '../composer.types';
 import { StageListAction } from '#JobComposer/StageList/reducer.types';
 
-export const initialState: ActivityListState = {
-  activitiesById: {},
-  activitiesOrderInTaskInStage: {},
+export const initialState: ParameterListState = {
+  parametersById: {},
+  parametersOrderInTaskInStage: {},
 };
 
-const reducer: Reducer<ActivityListState, ActivityListActionType> = (
+const reducer: Reducer<ParameterListState, ParameterListActionType> = (
   state = initialState,
   action,
 ) => {
@@ -22,42 +22,42 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
 
       return {
         ...state,
-        ...getActivities({ checklist }),
+        ...getParameters({ checklist }),
       };
 
     case StageListAction.FETCH_ACTIVE_STAGE_DATA_SUCCESS:
       const {
-        data: { activitiesById: updatedActivitiesById },
+        data: { parametersById: updatedParametersById },
       } = action.payload;
 
       return {
         ...state,
-        activitiesById: {
-          ...state.activitiesById,
-          ...updatedActivitiesById,
+        parametersById: {
+          ...state.parametersById,
+          ...updatedParametersById,
         },
       };
 
-    case ActivityListAction.UPDATE_EXECUTED_ACTIVITY:
+    case ParameterListAction.UPDATE_EXECUTED_PARAMETER:
       return {
         ...state,
-        activitiesById: {
-          ...state.activitiesById,
-          [action.payload.activity.id]: { ...action.payload.activity },
+        parametersById: {
+          ...state.parametersById,
+          [action.payload.parameter.id]: { ...action.payload.parameter },
         },
       };
 
-    case ActivityListAction.UPDATE_MEDIA_ACTIVITY_SUCCESS:
+    case ParameterListAction.UPDATE_MEDIA_PARAMETER_SUCCESS:
       return {
         ...state,
-        activitiesById: {
-          ...state.activitiesById,
-          [action.payload.activityId]: {
-            ...state.activitiesById[action.payload.activityId],
+        parametersById: {
+          ...state.parametersById,
+          [action.payload.parameterId]: {
+            ...state.parametersById[action.payload.parameterId],
             response: {
-              ...state.activitiesById[action.payload.activityId].response,
+              ...state.parametersById[action.payload.parameterId].response,
               medias: [
-                ...state.activitiesById[action.payload.activityId].response?.medias.filter(
+                ...state.parametersById[action.payload.parameterId].response?.medias.filter(
                   (media) => media.id !== action.payload.media.id,
                 ),
                 action.payload.media,
@@ -67,44 +67,44 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         },
       };
 
-    case ActivityListAction.SET_ACTIVITY_ERROR:
-      const { activityId, error } = action.payload;
+    case ParameterListAction.SET_PARAMETER_ERROR:
+      const { parameterId, error } = action.payload;
 
       return {
         ...state,
-        activitiesById: {
-          ...state.activitiesById,
-          [activityId]: {
-            ...state.activitiesById[activityId],
+        parametersById: {
+          ...state.parametersById,
+          [parameterId]: {
+            ...state.parametersById[parameterId],
             hasError: true,
             errorMessage: error.message,
           },
         },
       };
 
-    case ActivityListAction.REMOVE_ACTIVITY_ERROR:
+    case ParameterListAction.REMOVE_PARAMETER_ERROR:
       return {
         ...state,
-        activitiesById: {
-          ...state.activitiesById,
-          [action.payload.activityId]: {
-            ...state.activitiesById[action.payload.activityId],
+        parametersById: {
+          ...state.parametersById,
+          [action.payload.parameterId]: {
+            ...state.parametersById[action.payload.parameterId],
             hasError: false,
             errorMessage: '',
           },
         },
       };
 
-    case ActivityListAction.EXECUTE_ACTIVITY_LATEST:
-    case ActivityListAction.FIX_ACTIVITY_LATEST:
-    case ActivityListAction.EXECUTE_ACTIVITY_LEADING:
-    case ActivityListAction.FIX_ACTIVITY_LEADING:
+    case ParameterListAction.EXECUTE_PARAMETER_LATEST:
+    case ParameterListAction.FIX_PARAMETER_LATEST:
+    case ParameterListAction.EXECUTE_PARAMETER_LEADING:
+    case ParameterListAction.FIX_PARAMETER_LEADING:
       return {
         ...state,
-        activitiesById: {
-          ...state.activitiesById,
-          [action.payload.activity.id]: {
-            ...state.activitiesById[action.payload.activity.id],
+        parametersById: {
+          ...state.parametersById,
+          [action.payload.parameter.id]: {
+            ...state.parametersById[action.payload.parameter.id],
             hasError: false,
             errorMessage: undefined,
           },
@@ -116,4 +116,4 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
   }
 };
 
-export { reducer as activityListReducer };
+export { reducer as parameterListReducer };

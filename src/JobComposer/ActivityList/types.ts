@@ -1,16 +1,16 @@
 import { Job } from '#views/Jobs/ListView/types';
-import { Activity, Stage, Task } from '../checklist.types';
+import { Parameter, Stage, Task } from '../checklist.types';
 
-export type ActivityListProps = {
-  activities: Activity[];
+export type ParameterListProps = {
+  parameters: Parameter[];
   isTaskStarted: boolean;
   isTaskCompleted: boolean;
   isCorrectingError: boolean;
   isLoggedInUserAssigned: boolean;
 };
 
-export type ActivityProps = {
-  activity: Activity;
+export type ParameterProps = {
+  parameter: Parameter;
   isCorrectingError: boolean;
   isTaskCompleted?: boolean;
   isLoggedInUserAssigned?: boolean;
@@ -21,18 +21,18 @@ export enum Selections {
   NOT_SELECTED = 'NOT_SELECTED',
 }
 
-export type ActivitiesById = Record<
-  Activity['id'],
-  Activity & { hasError: boolean; errorMessage?: string }
+export type ParametersById = Record<
+  Parameter['id'],
+  Parameter & { hasError: boolean; errorMessage?: string }
 >;
 
-export type ActivitiesOrderInTaskInStage = Record<
+export type ParametersOrderInTaskInStage = Record<
   Stage['id'],
-  Record<Task['id'], Activity['id'][]>
+  Record<Task['id'], Parameter['id'][]>
 >;
 
-export enum ActivityErrors {
-  E401 = 'ACTIVITY_INCOMPLETE',
+export enum ParameterErrors {
+  E401 = 'PARAMETER_INCOMPLETE',
 }
 
 export enum SupervisorResponse {
@@ -40,8 +40,8 @@ export enum SupervisorResponse {
   REJECT = 'REJECT',
 }
 
-export type approveRejectActivityType = {
+export type approveRejectParameterType = {
   jobId: Job['id'];
-  activityId: Activity['id'];
+  parameterId: Parameter['id'];
   type: SupervisorResponse;
 };

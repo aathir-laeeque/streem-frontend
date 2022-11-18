@@ -1,12 +1,12 @@
 import { FormGroup } from '#components';
-import { ActivityProps } from '#PrototypeComposer/Activity/types';
+import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { baseUrl } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { FormatOptionLabelContext } from 'react-select';
 
-const ResourceTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
+const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];
@@ -29,7 +29,7 @@ const ResourceTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
     try {
       const response: ResponseObj<any> = await request(
         'GET',
-        `${baseUrl}${activity.data.urlPath}&page=${pagination.current.current + 1}`,
+        `${baseUrl}${parameter.data.urlPath}&page=${pagination.current.current + 1}`,
       );
       if (response.data) {
         if (response.pageable) {
@@ -55,7 +55,7 @@ const ResourceTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
         {
           type: InputTypes.SINGLE_SELECT,
           props: {
-            id: activity.id,
+            id: parameter.id,
             options: options?.map((option) => ({
               value: option,
               label: option.displayName,

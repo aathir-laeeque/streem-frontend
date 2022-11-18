@@ -1,8 +1,8 @@
 import clockIcon from '#assets/images/clock.png';
 import handIcon from '#assets/images/hand.png';
-import { ActivitiesById } from '#JobComposer/ActivityList/types';
+import { ParametersById } from '#JobComposer/ActivityList/types';
 import {
-  NonMandatoryActivity,
+  NonMandatoryParameter,
   Task,
   TaskExecutionState,
   TimerOperator,
@@ -11,7 +11,7 @@ import { formatDuration } from '#utils/timeUtils';
 import { Image, StyleSheet, Text, View } from '@react-pdf/renderer';
 import moment from 'moment';
 import React, { FC } from 'react';
-import ActivityList from './ActivityList';
+import ParameterList from './ActivityList';
 
 const styles = StyleSheet.create({
   flexView: {
@@ -120,8 +120,8 @@ const MemoTask: FC<{
   timeFormat: string;
   dateAndTimeStampFormat: string;
   taskIndex: number;
-  activitiesById: ActivitiesById;
-}> = ({ task, dateFormat, timeFormat, dateAndTimeStampFormat, taskIndex, activitiesById }) => {
+  parametersById: ParametersById;
+}> = ({ task, dateFormat, timeFormat, dateAndTimeStampFormat, taskIndex, parametersById }) => {
   const {
     startedAt,
     audit: { modifiedBy, modifiedAt },
@@ -129,14 +129,14 @@ const MemoTask: FC<{
     correctionReason,
   } = task.taskExecution;
 
-  const canSkipTask = !task.activities.reduce((acc, activity) => {
+  const canSkipTask = !task.parameters.reduce((acc, parameter) => {
     if (
-      activity.type === NonMandatoryActivity.INSTRUCTION ||
-      activity.type === NonMandatoryActivity.MATERIAL
+      parameter.type === NonMandatoryParameter.INSTRUCTION ||
+      parameter.type === NonMandatoryParameter.MATERIAL
     ) {
       return acc;
     }
-    acc = acc || activity.mandatory;
+    acc = acc || parameter.mandatory;
     return acc;
   }, false);
 
@@ -216,9 +216,9 @@ const MemoTask: FC<{
           </View>
         )}
       </View>
-      <ActivityList
-        activitiesById={activitiesById}
-        activities={task.activities}
+      <ParameterList
+        parametersById={parametersById}
+        parameters={task.parameters}
         dateAndTimeStampFormat={dateAndTimeStampFormat}
       />
 

@@ -1,9 +1,9 @@
 import { TextInput } from '#components';
-import { ActivityProps } from '#PrototypeComposer/Activity/types';
+import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import React, { FC } from 'react';
 
-const CalculationTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
-  return <TextInput disabled placeholder="" value={activity.data.expression} />;
+const CalculationTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
+  return <TextInput disabled placeholder="" value={parameter.data.expression} />;
 };
 
 export default CalculationTaskView;

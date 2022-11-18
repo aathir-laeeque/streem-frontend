@@ -5,12 +5,12 @@ import { request } from '#utils/request';
 import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { executeActivityLeading, fixActivityLeading } from './actions';
+import { executeParameterLeading, fixParameterLeading } from './actions';
 import { customSelectStyles } from './MultiSelect/commonStyles';
 import { Wrapper } from './MultiSelect/styles';
-import { ActivityProps } from './types';
+import { ParameterProps } from './types';
 
-const ResourceActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) => {
+const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
   const [state, setState] = useState<{
     isLoading: Boolean;
@@ -34,7 +34,7 @@ const ResourceActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
     try {
       const response: ResponseObj<any> = await request(
         'GET',
-        `${baseUrl}${activity.data.urlPath}&page=${pagination.current.current + 1}`,
+        `${baseUrl}${parameter.data.urlPath}&page=${pagination.current.current + 1}`,
       );
       if (response.data) {
         if (response.pageable) {
@@ -66,7 +66,7 @@ const ResourceActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
             externalId: option.externalId,
           })) as any
         }
-        value={(activity.response?.choices || []).map(
+        value={(parameter.response?.choices || []).map(
           (c: { objectId: string; objectDisplayName: string; objectExternalId: string }) => ({
             value: c,
             label: c.objectDisplayName,
@@ -84,9 +84,9 @@ const ResourceActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
         onChange={(options) => {
           const castedOptions = isArray(options) ? options : [options];
           const newData = {
-            ...activity,
+            ...parameter,
             data: {
-              ...activity.data,
+              ...parameter.data,
               choices: castedOptions.map((o) => ({
                 objectId: o.value.id,
                 objectDisplayName: o.value.displayName,
@@ -97,9 +97,9 @@ const ResourceActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
           };
 
           if (isCorrectingError) {
-            dispatch(fixActivityLeading(newData));
+            dispatch(fixParameterLeading(newData));
           } else {
-            dispatch(executeActivityLeading(newData));
+            dispatch(executeParameterLeading(newData));
           }
         }}
       />
@@ -107,4 +107,4 @@ const ResourceActivity: FC<ActivityProps> = ({ activity, isCorrectingError }) =>
   );
 };
 
-export default ResourceActivity;
+export default ResourceParameter;

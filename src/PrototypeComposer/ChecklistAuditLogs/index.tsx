@@ -364,7 +364,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
       }}
     >
       <GoBack label="Return to process" className="go-back" />
-      <div className="activity-wrapper">
+      <div className="parameter-wrapper">
         <InfiniteListView
           isSearchable={false}
           fetchData={fetchLogs}
@@ -385,7 +385,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
                     <div style={{ padding: '0px 8px', flex: 1 }}>
                       <div className="log-header">
                         <div className="header-item">{day}</div>
-                        <div className="header-item">{item[itemId].length} activities</div>
+                        <div className="header-item">{item[itemId].length} parameters</div>
                         {criticalCount !== 0 && (
                           <>
                             <div className="header-item">

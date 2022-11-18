@@ -2,7 +2,7 @@ import { Entity } from '#JobComposer/composer.types';
 import { Reducer } from 'redux';
 import { ComposerAction } from '../composer.reducer.types';
 import { getTasks } from '../utils';
-import { ActivityListAction } from '../ActivityList/reducer.types';
+import { ParameterListAction } from '../ActivityList/reducer.types';
 import { StageListAction } from '../StageList/reducer.types';
 import { reEvaluateTaskWithStop } from './utils';
 import { TaskListActionType, TaskListState, TaskListAction } from './reducer.types';
@@ -106,10 +106,10 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (state = initialStat
         },
       };
 
-    case ActivityListAction.EXECUTE_ACTIVITY_LATEST:
-    case ActivityListAction.FIX_ACTIVITY_LATEST:
-    case ActivityListAction.EXECUTE_ACTIVITY_LEADING:
-    case ActivityListAction.FIX_ACTIVITY_LEADING:
+    case ParameterListAction.EXECUTE_PARAMETER_LATEST:
+    case ParameterListAction.FIX_PARAMETER_LATEST:
+    case ParameterListAction.EXECUTE_PARAMETER_LEADING:
+    case ParameterListAction.FIX_PARAMETER_LEADING:
       return {
         ...state,
         tasksById: {

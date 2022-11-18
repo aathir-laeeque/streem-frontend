@@ -1,6 +1,6 @@
 import { Task } from '#JobComposer/checklist.types';
-import { AddNewActivityType } from '#PrototypeComposer/Activity/types';
-import { Activity, Checklist, Stage } from '#PrototypeComposer/checklist.types';
+import { AddNewParameterType } from '#PrototypeComposer/Activity/types';
+import { Parameter, Checklist, Stage } from '#PrototypeComposer/checklist.types';
 import { AddNewTaskType, MediaDetails } from '#PrototypeComposer/Tasks/types';
 import { User } from '#store/users/types';
 import { Job } from '#views/Jobs/ListView/types';
@@ -10,8 +10,8 @@ import { fetchBaseUrl } from './constants';
 
 export const baseUrl = fetchBaseUrl();
 
-export const apiGetActivitiesForCalc = (checklistId: Checklist['id']) =>
-  `${baseUrl}/checklists/${checklistId}/activities-for-calculation`;
+export const apiGetParametersForCalc = (checklistId: Checklist['id']) =>
+  `${baseUrl}/checklists/${checklistId}/parameters-for-calculation`;
 
 export const apiGetChecklists = () => `${baseUrl}/checklists`;
 
@@ -48,9 +48,9 @@ export const apiUpdatePassword = (id: User['id']) => `${baseUrl}/users/${id}/pas
 
 export const apiGetSelectedJob = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}`;
 
-export const apiExecuteActivity = () => `${baseUrl}/activities/execute`;
+export const apiExecuteParameter = () => `${baseUrl}/parameters/execute`;
 
-export const apiFixActivity = () => `${baseUrl}/activities/error-correction`;
+export const apiFixParameter = () => `${baseUrl}/parameters/error-correction`;
 
 export const apiEnableTaskErrorCorrection = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}/correction/start`;
@@ -117,20 +117,20 @@ export const apiCreateTask = ({ checklistId, stageId }: AddNewTaskType) =>
 
 export const apiDeleteTask = (taskId: string) => `${baseUrl}/tasks/${taskId}/archive`;
 
-export const apiAddNewActivity = ({
+export const apiAddNewParameter = ({
   checklistId,
   stageId,
   taskId,
-}: Pick<AddNewActivityType, 'checklistId' | 'stageId' | 'taskId'>) => {
+}: Pick<AddNewParameterType, 'checklistId' | 'stageId' | 'taskId'>) => {
   if (!stageId && !taskId) {
-    return `${baseUrl}/checklists/${checklistId}/activities`;
+    return `${baseUrl}/checklists/${checklistId}/parameters`;
   } else {
-    return `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks/${taskId}/activities`;
+    return `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks/${taskId}/parameters`;
   }
 };
 
-export const apiDeleteActivity = (activityId: Activity['id']) =>
-  `${baseUrl}/activities/${activityId}/archive`;
+export const apiDeleteParameter = (parameterId: Parameter['id']) =>
+  `${baseUrl}/parameters/${parameterId}/archive`;
 
 // Reviewer
 export const apiGetReviewersForChecklist = (checklistId: Checklist['id']) =>
@@ -166,8 +166,8 @@ export const apiPrototypeSignOff = (checklistId: Checklist['id']) =>
 export const apiPrototypeRelease = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/publish`;
 
-export const apiSingleActivity = (activityId: Activity['id']) =>
-  `${baseUrl}/activities/${activityId}`;
+export const apiSingleParameter = (parameterId: Parameter['id']) =>
+  `${baseUrl}/parameters/${parameterId}`;
 
 export const apiAddStop = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/stop/add`;
 
@@ -186,23 +186,23 @@ export const apiAddTaskAction = (taskId: Task['id']) => `${baseUrl}/tasks/${task
 export const apiUpdateTaskAction = (taskId: Task['id'], actionId: string) =>
   `${baseUrl}/tasks/${taskId}/automations/${actionId}`;
 
-export const apiReOrderActivities = (
+export const apiReOrderParameters = (
   checklistId: Checklist['id'],
   taskId: Task['id'],
   stageId: Stage['id'],
-) => `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks/${taskId}/activities/reorder`;
+) => `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks/${taskId}/parameters/reorder`;
 
 export const apiUpdateTaskMedia = (taskId: Task['id'], mediaId: MediaDetails['mediaId']) =>
   `${baseUrl}/medias/${mediaId}`;
 
-export const apiGetActivities = (checklistId: Checklist['id'], type?: string) =>
-  `${baseUrl}/checklists/${checklistId}/activities${type ? `?type=${type}` : ''}`;
+export const apiGetParameters = (checklistId: Checklist['id'], type?: string) =>
+  `${baseUrl}/checklists/${checklistId}/parameters${type ? `?type=${type}` : ''}`;
 
 export const apiBatchMapParameters = (checklistId: Checklist['id']) =>
-  `${baseUrl}/checklists/${checklistId}/activities/map`;
+  `${baseUrl}/checklists/${checklistId}/parameters/map`;
 
 export const apiMapParameterToTask = (checklistId: Checklist['id'], taskId: Task['id']) =>
-  `${baseUrl}/checklists/${checklistId}/tasks/${taskId}/activities/map`;
+  `${baseUrl}/checklists/${checklistId}/tasks/${taskId}/parameters/map`;
 
 export const apiValidatePrototype = (id: Checklist['id']) => `${baseUrl}/checklists/${id}/validate`;
 
@@ -216,9 +216,9 @@ export const apiValidatePassword = () => `${baseUrl}/auth/credentials/validate`;
 
 export const apiTaskSignOff = () => `${baseUrl}/tasks/sign-off`;
 
-export const apiApproveActivity = () => `${baseUrl}/activities/approve`;
+export const apiApproveParameter = () => `${baseUrl}/parameters/approve`;
 
-export const apiRejectActivity = () => `${baseUrl}/activities/reject`;
+export const apiRejectParameter = () => `${baseUrl}/parameters/reject`;
 
 export const apiArchiveChecklist = (id: Checklist['id']) => `${baseUrl}/checklists/${id}/archive`;
 

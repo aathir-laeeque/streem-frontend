@@ -23,20 +23,21 @@ import { StageCardProps } from './types';
 const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
   const { index, isActive, isFirstItem, isLastItem, stage } = props;
 
-  const { tasksInStage, data, activitiesInStage, userId } = useTypedSelector((state) => ({
+  const { tasksInStage, data, parametersInStage, userId } = useTypedSelector((state) => ({
     tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[stage.id].map(
       (taskId) => state.prototypeComposer.tasks.listById[taskId],
     ),
     data: state.prototypeComposer.data,
     userId: state.auth.userId,
-    activitiesInStage: Object.keys(
-      state.prototypeComposer.activities.activityOrderInTaskInStage[stage.id] ?? {},
+    parametersInStage: Object.keys(
+      state.prototypeComposer.parameters.parameterOrderInTaskInStage[stage.id] ?? {},
     )
       .map(
-        (taskId) => state.prototypeComposer.activities.activityOrderInTaskInStage[stage.id][taskId],
+        (taskId) =>
+          state.prototypeComposer.parameters.parameterOrderInTaskInStage[stage.id][taskId],
       )
       .flat()
-      .map((activityId) => state.prototypeComposer.activities.listById[activityId]),
+      .map((parameterId) => state.prototypeComposer.parameters.listById[parameterId]),
   }));
 
   const [isAuthor, setIsAuthor] = useState(false);
@@ -54,7 +55,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
 
   const approvalNeeded = false;
 
-  const anyActivityHasError = activitiesInStage.some((activity) => !!activity.errors?.length);
+  const anyParameterHasError = parametersInStage.some((parameter) => !!parameter.errors?.length);
 
   const { stageHasStop, anyTaskHasError } = tasksInStage.reduce(
     ({ stageHasStop, anyTaskHasError }, task) => {
@@ -72,7 +73,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
   const stageWiseError =
     !!stage.errors.length && stage.errors.find((error) => error.code === 'E128');
 
-  const stageHasError = !!stage.errors.length || anyActivityHasError || anyTaskHasError;
+  const stageHasError = !!stage.errors.length || anyParameterHasError || anyTaskHasError;
 
   return (
     <StageCardWrapper
@@ -154,7 +155,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
 
           {stageHasStop ? <PanTool className="icon" id="task-stop" /> : null}
 
-          {(anyActivityHasError || anyTaskHasError || stageWiseError) && (
+          {(anyParameterHasError || anyTaskHasError || stageWiseError) && (
             <div className="stage-badge">
               <Error className="icon" />
               <span>Error Found</span>

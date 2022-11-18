@@ -216,7 +216,7 @@ const TaskCardWrapper = styled.div.attrs({
         }
       }
 
-      .activity-list {
+      .parameter-list {
         display: flex;
         flex-direction: column;
       }
@@ -351,7 +351,7 @@ const TaskMediasWrapper = styled.div`
   }
 `;
 
-const AddActivityItemWrapper = styled.div`
+const AddParameterItemWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -371,4 +371,4 @@ const AddActivityItemWrapper = styled.div`
   }
 `;
 
-export { TaskListWrapper, TaskCardWrapper, TaskMediasWrapper, AddActivityItemWrapper };
+export { TaskListWrapper, TaskCardWrapper, TaskMediasWrapper, AddParameterItemWrapper };

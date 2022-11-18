@@ -10,15 +10,15 @@ import { request } from '#utils/request';
 import { JobStateEnum } from '#views/Jobs/ListView/types';
 import { all, call, put, select, takeLeading } from 'redux-saga/effects';
 import { apiCancelTaskErrorCorrection, apiCompleteTaskErrorCorrection } from '../../utils/apiUrls';
-import { setActivityError } from '../ActivityList/actions';
-import { MandatoryActivity, Task } from '../checklist.types';
+import { setParameterError } from '../ActivityList/actions';
+import { MandatoryParameter, Task } from '../checklist.types';
 import { ErrorGroups } from '../composer.types';
 import { groupJobErrors } from '../utils';
 import { Error } from './../../utils/globalTypes';
-import { removeActivityError } from './../ActivityList/actions';
+import { removeParameterError } from './../ActivityList/actions';
 import {
-  cancelErrorCorretcion,
-  completeErrorCorretcion,
+  cancelErrorCorrection,
+  completeErrorCorrection,
   completeTask,
   enableErrorCorrection,
   removeTaskError,
@@ -35,59 +35,59 @@ type TaskErrorSagaPayload = ErrorGroups & {
   taskId: Task['id'];
 };
 
-function* getActivitiesDataByTaskId(taskId: string) {
+function* getParametersDataByTaskId(taskId: string) {
   const { tasksById } = yield select((state: RootState) => state.composer.tasks);
-  const { activitiesById } = yield select((state: RootState) => state.composer.activities);
+  const { parametersById } = yield select((state: RootState) => state.composer.parameters);
   const task = tasksById[taskId];
-  return task.activities.map(({ id }: any) => {
-    const activity = activitiesById[id];
-    switch (activity.type) {
-      case MandatoryActivity.SIGNATURE:
-      case MandatoryActivity.MEDIA:
+  return task.parameters.map(({ id }: any) => {
+    const parameter = parametersById[id];
+    switch (parameter.type) {
+      case MandatoryParameter.SIGNATURE:
+      case MandatoryParameter.MEDIA:
         return {
-          ...activity,
-          reason: activity.response.reason || null,
-          data: { medias: activity.response.medias },
+          ...parameter,
+          reason: parameter.response.reason || null,
+          data: { medias: parameter.response.medias },
         };
 
-      case MandatoryActivity.PARAMETER:
-      case MandatoryActivity.TEXTBOX:
+      case MandatoryParameter.PARAMETER:
+      case MandatoryParameter.MULTI_LINE:
         return {
-          ...activity,
-          reason: activity.response.reason || null,
-          data: { ...activity.data, input: activity.response.value },
+          ...parameter,
+          reason: parameter.response.reason || null,
+          data: { ...parameter.data, input: parameter.response.value },
         };
 
-      case MandatoryActivity.MULTISELECT:
-      case MandatoryActivity.SINGLE_SELECT:
-      case MandatoryActivity.CHECKLIST:
-      case MandatoryActivity.YES_NO:
+      case MandatoryParameter.MULTISELECT:
+      case MandatoryParameter.SINGLE_SELECT:
+      case MandatoryParameter.CHECKLIST:
+      case MandatoryParameter.YES_NO:
         return {
-          ...activity,
-          reason: activity.response.reason || null,
-          data: activity.data.map((d: any) => ({
+          ...parameter,
+          reason: parameter.response.reason || null,
+          data: parameter.data.map((d: any) => ({
             ...d,
-            ...(activity.response.choices?.[d.id] && {
-              state: activity.response.choices[d.id],
+            ...(parameter.response.choices?.[d.id] && {
+              state: parameter.response.choices[d.id],
             }),
           })),
         };
 
       default:
-        return activity;
+        return parameter;
     }
   });
 }
 
 function* taskCompleteErrorSaga(payload: TaskErrorSagaPayload) {
-  const { activitiesErrors, taskId, automations = null } = payload;
+  const { parametersErrors, taskId, automations = null } = payload;
 
-  if (activitiesErrors.length) {
-    console.log('handle activities level error here');
-    yield all(activitiesErrors.map((error) => put(setActivityError(error, error.id))));
+  if (parametersErrors.length) {
+    console.log('handle parameters level error here');
+    yield all(parametersErrors.map((error) => put(setParameterError(error, error.id))));
   }
 
-  yield put(setTaskError('Activity Incomplete', taskId));
+  yield put(setTaskError('Parameter Incomplete', taskId));
 }
 
 function* performActionOnTaskSaga({
@@ -112,7 +112,7 @@ function* performActionOnTaskSaga({
             jobId,
             reason,
             ...(action !== TaskAction.START && {
-              activities: yield* getActivitiesDataByTaskId(taskId),
+              parameters: yield* getParametersDataByTaskId(taskId),
             }),
           },
         },
@@ -124,14 +124,14 @@ function* performActionOnTaskSaga({
             stages: { activeStageId },
           } = yield select((state: RootState) => state.composer);
 
-          const activitiesId: string[] = yield select(
+          const parametersId: string[] = yield select(
             (state: RootState) =>
-              state.composer.activities.activitiesOrderInTaskInStage[activeStageId][taskId],
+              state.composer.parameters.parametersOrderInTaskInStage[activeStageId][taskId],
           );
 
           yield put(removeTaskError(taskId));
 
-          yield all(activitiesId.map((activityId) => put(removeActivityError(activityId))));
+          yield all(parametersId.map((parameterId) => put(removeParameterError(parameterId))));
         }
 
         if (automations) {
@@ -174,14 +174,14 @@ function* performActionOnTaskSaga({
             }),
           );
         } else {
-          const { stagesErrors, tasksErrors, activitiesErrors, signOffErrors } =
+          const { stagesErrors, tasksErrors, parametersErrors, signOffErrors } =
             groupJobErrors(errors);
 
           if (action === TaskAction.COMPLETE || action === TaskAction.COMPLETE_WITH_EXCEPTION) {
             yield taskCompleteErrorSaga({
               stagesErrors,
               tasksErrors,
-              activitiesErrors,
+              parametersErrors,
               signOffErrors,
               taskId,
             });
@@ -244,7 +244,7 @@ function* enableErrorCorrectionSaga({ payload }: ReturnType<typeof enableErrorCo
   }
 }
 
-function* completeErrorCorrectionSaga({ payload }: ReturnType<typeof completeErrorCorretcion>) {
+function* completeErrorCorrectionSaga({ payload }: ReturnType<typeof completeErrorCorrection>) {
   console.log('came in correction saga ::', payload);
   try {
     const { taskId } = payload;
@@ -252,7 +252,7 @@ function* completeErrorCorrectionSaga({ payload }: ReturnType<typeof completeErr
     const { entityId: jobId } = yield select((state) => state.composer);
 
     const { data, errors } = yield call(request, 'PATCH', apiCompleteTaskErrorCorrection(taskId), {
-      data: { jobId, activities: yield* getActivitiesDataByTaskId(taskId) },
+      data: { jobId, parameters: yield* getParametersDataByTaskId(taskId) },
     });
 
     if (data) {
@@ -273,13 +273,13 @@ function* completeErrorCorrectionSaga({ payload }: ReturnType<typeof completeErr
           }),
         );
       } else {
-        const { stagesErrors, tasksErrors, activitiesErrors, signOffErrors } =
+        const { stagesErrors, tasksErrors, parametersErrors, signOffErrors } =
           groupJobErrors(errors);
 
         yield taskCompleteErrorSaga({
           stagesErrors,
           tasksErrors,
-          activitiesErrors,
+          parametersErrors,
           signOffErrors,
           taskId,
         });
@@ -293,7 +293,7 @@ function* completeErrorCorrectionSaga({ payload }: ReturnType<typeof completeErr
   }
 }
 
-function* cancelErrorCorrectionSaga({ payload }: ReturnType<typeof cancelErrorCorretcion>) {
+function* cancelErrorCorrectionSaga({ payload }: ReturnType<typeof cancelErrorCorrection>) {
   console.log('came to error correction saga ::', payload);
   try {
     const { taskId } = payload;

@@ -5,25 +5,25 @@ import { formatDateTime } from '#utils/timeUtils';
 import { Error } from '@material-ui/icons';
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
-import { MandatoryActivity, NonMandatoryActivity } from '../checklist.types';
-import CalculationActivity from './Calculation';
-import ChecklistActivity from './Checklist';
-import InstructionActivity from './Instruction';
-import MaterialActivity from './Material';
-import MediaActivity from './Media';
-import MultiSelectActivity from './MultiSelect';
-import NumberActivity from './Number';
-import ShouldBeActivity from './ShouldBe';
-import SignatureActivity from './Signature';
-import TextboxActivity from './Textbox';
-import { ActivityListProps } from './types';
-import YesNoActivity from './YesNo';
-import ResourceActivity from './Resource';
-import DateActivity from './Date';
+import { MandatoryParameter, NonMandatoryParameter } from '../checklist.types';
+import CalculationParameter from './Calculation';
+import ChecklistParameter from './Checklist';
+import InstructionParameter from './Instruction';
+import MaterialParameter from './Material';
+import MediaParameter from './Media';
+import MultiSelectParameter from './MultiSelect';
+import NumberParameter from './Number';
+import ShouldBeParameter from './ShouldBe';
+import SignatureParameter from './Signature';
+import TextboxParameter from './Textbox';
+import { ParameterListProps } from './types';
+import YesNoParameter from './YesNo';
+import ResourceParameter from './Resource';
+import DateParameter from './Date';
 
 const Wrapper = styled.div.attrs({
-  className: 'activity-list',
-})<Omit<ActivityListProps, 'activities'>>`
+  className: 'parameter-list',
+})<Omit<ParameterListProps, 'parameters'>>`
   display: flex;
   flex-direction: column;
 
@@ -34,7 +34,7 @@ const Wrapper = styled.div.attrs({
         `
       : null}
 
-  .activity {
+  .parameter {
     border-bottom: 1px dashed #dadada;
     padding: 16px;
 
@@ -42,14 +42,14 @@ const Wrapper = styled.div.attrs({
       border-bottom: none;
     }
 
-    .checklist-activity,
-    .material-activity,
-    .should-be-activity,
-    .yes-no-activity,
-    .textbox-activity,
-    .number-activity,
-    .date-activity,
-    .calculation-activity {
+    .checklist-parameter,
+    .material-parameter,
+    .should-be-parameter,
+    .yes-no-parameter,
+    .textbox-parameter,
+    .number-parameter,
+    .date-parameter,
+    .calculation-parameter {
       ${({ isTaskCompleted, isCorrectingError, isLoggedInUserAssigned }) =>
         (isTaskCompleted && !isCorrectingError) || !isLoggedInUserAssigned
           ? css`
@@ -80,14 +80,14 @@ const Wrapper = styled.div.attrs({
       }
     }
 
-    .activity-audit {
+    .parameter-audit {
       color: #999999;
       font-size: 12px;
       line-height: 0.83;
       margin-top: 16px;
     }
 
-    .calculation-activity {
+    .calculation-parameter {
       display: flex;
       flex-direction: column;
 
@@ -115,14 +115,14 @@ const Wrapper = styled.div.attrs({
       }
     }
 
-    .activity-label {
+    .parameter-label {
       margin-bottom: 16px;
     }
   }
 `;
 
-const ActivityList: FC<ActivityListProps> = ({
-  activities,
+const ParameterList: FC<ParameterListProps> = ({
+  parameters,
   isTaskStarted,
   isTaskCompleted,
   isCorrectingError,
@@ -139,116 +139,132 @@ const ActivityList: FC<ActivityListProps> = ({
       isLoggedInUserAssigned={isLoggedInUserAssigned}
       isCorrectingError={isCorrectingError}
     >
-      {activities.map((activity) => {
-        const { state, audit } = activity?.response;
+      {parameters.map((parameter) => {
+        const { state, audit } = parameter?.response;
 
         return (
-          <div key={activity.id} className="activity">
+          <div key={parameter.id} className="parameter">
             {entity === Entity.JOB ? (
-              activity.type in MandatoryActivity && !activity.mandatory ? (
+              parameter.type in MandatoryParameter && !parameter.mandatory ? (
                 <div className="optional-badge">Optional</div>
               ) : null
             ) : null}
 
-            {activity.hasError ? (
+            {parameter.hasError ? (
               <div className="error-badge">
                 <Error className="icon" />
-                <span>Mandatory Activity Incomplete</span>
+                <span>Mandatory Parameter Incomplete</span>
               </div>
             ) : null}
 
-            {activity?.label &&
+            {parameter?.label &&
               ![
-                `${MandatoryActivity.YES_NO}`,
-                `${MandatoryActivity.PARAMETER}`,
-                `${MandatoryActivity.CALCULATION}`,
-              ].includes(activity.type) && <div className="activity-label">{activity.label}</div>}
+                `${MandatoryParameter.YES_NO}`,
+                `${MandatoryParameter.PARAMETER}`,
+                `${MandatoryParameter.CALCULATION}`,
+              ].includes(parameter.type) && (
+                <div className="parameter-label">{parameter.label}</div>
+              )}
 
             {(() => {
-              switch (activity.type) {
-                case MandatoryActivity.CHECKLIST:
+              switch (parameter.type) {
+                case MandatoryParameter.CHECKLIST:
                   return (
-                    <ChecklistActivity activity={activity} isCorrectingError={isCorrectingError} />
-                  );
-
-                case NonMandatoryActivity.INSTRUCTION:
-                  return (
-                    <InstructionActivity
-                      activity={activity}
+                    <ChecklistParameter
+                      parameter={parameter}
                       isCorrectingError={isCorrectingError}
                     />
                   );
 
-                case NonMandatoryActivity.MATERIAL:
+                case NonMandatoryParameter.INSTRUCTION:
                   return (
-                    <MaterialActivity activity={activity} isCorrectingError={isCorrectingError} />
+                    <InstructionParameter
+                      parameter={parameter}
+                      isCorrectingError={isCorrectingError}
+                    />
                   );
 
-                case MandatoryActivity.MEDIA:
+                case NonMandatoryParameter.MATERIAL:
                   return (
-                    <MediaActivity
-                      activity={activity}
+                    <MaterialParameter
+                      parameter={parameter}
+                      isCorrectingError={isCorrectingError}
+                    />
+                  );
+
+                case MandatoryParameter.MEDIA:
+                  return (
+                    <MediaParameter
+                      parameter={parameter}
                       isCorrectingError={isCorrectingError}
                       isTaskCompleted={isTaskCompleted}
                       isLoggedInUserAssigned={isLoggedInUserAssigned}
                     />
                   );
 
-                case MandatoryActivity.MULTISELECT:
-                case MandatoryActivity.SINGLE_SELECT:
+                case MandatoryParameter.MULTISELECT:
+                case MandatoryParameter.SINGLE_SELECT:
                   return (
-                    <MultiSelectActivity
-                      activity={activity}
+                    <MultiSelectParameter
+                      parameter={parameter}
                       isCorrectingError={isCorrectingError}
-                      isMulti={activity.type === MandatoryActivity.MULTISELECT}
+                      isMulti={parameter.type === MandatoryParameter.MULTISELECT}
                     />
                   );
 
-                case MandatoryActivity.PARAMETER:
+                case MandatoryParameter.PARAMETER:
                   return (
-                    <ShouldBeActivity activity={activity} isCorrectingError={isCorrectingError} />
-                  );
-
-                case MandatoryActivity.SIGNATURE:
-                  return (
-                    <SignatureActivity
-                      activity={activity}
+                    <ShouldBeParameter
+                      parameter={parameter}
                       isCorrectingError={isCorrectingError}
-                      isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
                     />
                   );
 
-                case MandatoryActivity.TEXTBOX:
+                case MandatoryParameter.SIGNATURE:
                   return (
-                    <TextboxActivity activity={activity} isCorrectingError={isCorrectingError} />
-                  );
-
-                case MandatoryActivity.YES_NO:
-                  return (
-                    <YesNoActivity activity={activity} isCorrectingError={isCorrectingError} />
-                  );
-
-                case MandatoryActivity.NUMBER:
-                  return (
-                    <NumberActivity activity={activity} isCorrectingError={isCorrectingError} />
-                  );
-
-                case MandatoryActivity.CALCULATION:
-                  return (
-                    <CalculationActivity
-                      activity={activity}
+                    <SignatureParameter
+                      parameter={parameter}
                       isCorrectingError={isCorrectingError}
                       isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
                     />
                   );
 
-                case MandatoryActivity.RESOURCE:
+                case MandatoryParameter.MULTI_LINE:
                   return (
-                    <ResourceActivity activity={activity} isCorrectingError={isCorrectingError} />
+                    <TextboxParameter parameter={parameter} isCorrectingError={isCorrectingError} />
                   );
 
-                case MandatoryActivity.DATE:
-                  return <DateActivity activity={activity} isCorrectingError={isCorrectingError} />;
+                case MandatoryParameter.YES_NO:
+                  return (
+                    <YesNoParameter parameter={parameter} isCorrectingError={isCorrectingError} />
+                  );
+
+                case MandatoryParameter.NUMBER:
+                  return (
+                    <NumberParameter parameter={parameter} isCorrectingError={isCorrectingError} />
+                  );
+
+                case MandatoryParameter.CALCULATION:
+                  return (
+                    <CalculationParameter
+                      parameter={parameter}
+                      isCorrectingError={isCorrectingError}
+                      isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
+                    />
+                  );
+
+                case MandatoryParameter.RESOURCE:
+                  return (
+                    <ResourceParameter
+                      parameter={parameter}
+                      isCorrectingError={isCorrectingError}
+                    />
+                  );
+
+                case MandatoryParameter.DATE:
+                  return (
+                    <DateParameter parameter={parameter} isCorrectingError={isCorrectingError} />
+                  );
 
                 default:
                   return null;
@@ -256,7 +272,7 @@ const ActivityList: FC<ActivityListProps> = ({
             })()}
 
             {state !== 'NOT_STARTED' ? (
-              <div className="activity-audit">
+              <div className="parameter-audit">
                 {audit ? (
                   <>
                     Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
@@ -274,4 +290,4 @@ const ActivityList: FC<ActivityListProps> = ({
   );
 };
 
-export default ActivityList;
+export default ParameterList;

@@ -1,8 +1,8 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { deleteActivity, toggleNewParameter } from '#PrototypeComposer/Activity/actions';
-import { ActivityProps } from '#PrototypeComposer/Activity/types';
-import { MandatoryActivity, NonMandatoryActivity } from '#PrototypeComposer/checklist.types';
+import { deleteParameter, toggleNewParameter } from '#PrototypeComposer/Activity/actions';
+import { ParameterProps } from '#PrototypeComposer/Activity/types';
+import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap } from '#PrototypeComposer/constants';
 import CalculationTaskView from '#PrototypeComposer/Parameters/TaskViews/Calculation';
 import MaterialInstructionTaskView from '#PrototypeComposer/Parameters/TaskViews/MaterialInstruction';
@@ -157,9 +157,9 @@ export const ParameterTaskViewWrapper = styled.div`
   }
 `;
 
-const ParameterTaskView: FC<ActivityProps> = ({ activity, taskId }) => {
+const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: activity.id,
+    id: parameter.id,
   });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -168,13 +168,13 @@ const ParameterTaskView: FC<ActivityProps> = ({ activity, taskId }) => {
   const dispatch = useDispatch();
   const { activeStageId: stageId } = useTypedSelector((state) => state.prototypeComposer.stages);
   const {
-    activities: { listById },
+    parameters: { listById },
   } = useTypedSelector((state) => state.prototypeComposer);
-  const activityType = listById[activity.id].type;
+  const parameterType = listById[parameter.id].type;
 
   const onDelete = () => {
     if (stageId) {
-      dispatch(deleteActivity({ activityId: activity.id, taskId, stageId }));
+      dispatch(deleteParameter({ parameterId: parameter.id, taskId, stageId }));
     }
   };
 
@@ -187,9 +187,9 @@ const ParameterTaskView: FC<ActivityProps> = ({ activity, taskId }) => {
             toggleNewParameter({
               action: 'task',
               title: 'Edit Process Parameter',
-              activityId: activity.id,
-              ...(activity.type in NonMandatoryActivity && {
-                type: activity.type,
+              parameterId: parameter.id,
+              ...(parameter.type in NonMandatoryParameter && {
+                type: parameter.type,
               }),
             }),
           )
@@ -202,57 +202,57 @@ const ParameterTaskView: FC<ActivityProps> = ({ activity, taskId }) => {
   };
 
   const renderTaskViewByType = () => {
-    switch (activityType) {
-      case MandatoryActivity.MEDIA:
-        return <MediaTaskView activity={activity} />;
+    switch (parameterType) {
+      case MandatoryParameter.MEDIA:
+        return <MediaTaskView parameter={parameter} />;
 
-      case MandatoryActivity.CHECKLIST:
-      case MandatoryActivity.MULTISELECT:
-      case MandatoryActivity.SINGLE_SELECT:
-        return <SingleSelectTaskView activity={activity} />;
+      case MandatoryParameter.CHECKLIST:
+      case MandatoryParameter.MULTISELECT:
+      case MandatoryParameter.SINGLE_SELECT:
+        return <SingleSelectTaskView parameter={parameter} />;
 
-      case MandatoryActivity.PARAMETER:
-        return <ShouldBeTaskView activity={activity} />;
+      case MandatoryParameter.PARAMETER:
+        return <ShouldBeTaskView parameter={parameter} />;
 
-      case MandatoryActivity.SIGNATURE:
-        return <SignatureTaskView activity={activity} />;
+      case MandatoryParameter.SIGNATURE:
+        return <SignatureTaskView parameter={parameter} />;
 
-      case MandatoryActivity.NUMBER:
+      case MandatoryParameter.NUMBER:
         return (
           <>
-            <SingleLineTaskView activity={activity} />
-            {activity.validations?.resourceActivityValidations &&
+            <SingleLineTaskView parameter={parameter} />
+            {parameter.validations?.resourceParameterValidations &&
               renderFiltersValidationsAction(
                 'Validations',
-                activity.validations.resourceActivityValidations.length,
+                parameter.validations.resourceParameterValidations.length,
               )}
           </>
         );
 
-      case MandatoryActivity.TEXTBOX:
-      case MandatoryActivity.DATE:
-        return <SingleLineTaskView activity={activity} />;
+      case MandatoryParameter.MULTI_LINE:
+      case MandatoryParameter.DATE:
+        return <SingleLineTaskView parameter={parameter} />;
 
-      case MandatoryActivity.YES_NO:
-        return <YesNoTaskView activity={activity} />;
+      case MandatoryParameter.YES_NO:
+        return <YesNoTaskView parameter={parameter} />;
 
-      case NonMandatoryActivity.INSTRUCTION:
-        return <TextInstructionTaskView activity={activity} />;
+      case NonMandatoryParameter.INSTRUCTION:
+        return <TextInstructionTaskView parameter={parameter} />;
 
-      case NonMandatoryActivity.MATERIAL:
-        return <MaterialInstructionTaskView activity={activity} />;
+      case NonMandatoryParameter.MATERIAL:
+        return <MaterialInstructionTaskView parameter={parameter} />;
 
-      case MandatoryActivity.CALCULATION:
-        return <CalculationTaskView activity={activity} />;
+      case MandatoryParameter.CALCULATION:
+        return <CalculationTaskView parameter={parameter} />;
 
-      case MandatoryActivity.RESOURCE:
+      case MandatoryParameter.RESOURCE:
         return (
           <>
-            <ResourceTaskView activity={activity} />
-            {activity.data?.propertyValidations?.length > 0 &&
+            <ResourceTaskView parameter={parameter} />
+            {parameter.data?.propertyValidations?.length > 0 &&
               renderFiltersValidationsAction(
                 'Filters and Validations',
-                activity.data.propertyValidations.length,
+                parameter.data.propertyValidations.length,
               )}
           </>
         );
@@ -280,12 +280,12 @@ const ParameterTaskView: FC<ActivityProps> = ({ activity, taskId }) => {
                   toggleNewParameter({
                     action: 'task',
                     title:
-                      activity.type in NonMandatoryActivity
+                      parameter.type in NonMandatoryParameter
                         ? 'Edit Instruction'
                         : 'Edit Process Parameter',
-                    activityId: activity.id,
-                    ...(activity.type in NonMandatoryActivity && {
-                      type: activity.type,
+                    parameterId: parameter.id,
+                    ...(parameter.type in NonMandatoryParameter && {
+                      type: parameter.type,
                     }),
                   }),
                 )
@@ -310,8 +310,8 @@ const ParameterTaskView: FC<ActivityProps> = ({ activity, taskId }) => {
               }}
             />
           </div>
-          {ParameterTypeMap[activity.type]}
-          <span className="parameter-label">{activity.label}</span>
+          {ParameterTypeMap[parameter.type]}
+          <span className="parameter-label">{parameter.label}</span>
           {renderTaskViewByType()}
         </div>
       </div>

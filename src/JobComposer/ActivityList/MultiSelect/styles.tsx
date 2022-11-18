@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.div.attrs({
-  className: 'material-activity',
+  className: 'material-parameter',
 })`
-  .activity-header {
+  .parameter-header {
     font-size: 14px;
     line-height: 1.33;
     letter-spacing: 0.32px;

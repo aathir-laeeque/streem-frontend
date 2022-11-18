@@ -1,13 +1,15 @@
 import { TextInput } from '#components';
-import { ActivityProps } from '#PrototypeComposer/Activity/types';
-import { MandatoryActivity } from '#PrototypeComposer/checklist.types';
+import { ParameterProps } from '#PrototypeComposer/Activity/types';
+import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import React, { FC } from 'react';
 
-const SingleLineTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
+const SingleLineTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
   return (
     <TextInput
       disabled
-      type={activity.type === MandatoryActivity.TEXTBOX ? 'text' : activity.type.toLowerCase()}
+      type={
+        parameter.type === MandatoryParameter.MULTI_LINE ? 'text' : parameter.type.toLowerCase()
+      }
     />
   );
 };

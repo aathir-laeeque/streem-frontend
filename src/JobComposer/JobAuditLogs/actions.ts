@@ -1,6 +1,6 @@
 import { actionSpreader } from '#store/helpers';
 import { ResponseObj } from '#utils/globalTypes';
-import { JobActivityAction, JobAuditLogType } from './types';
+import { JobParameterAction, JobAuditLogType } from './types';
 
 export const fetchJobAuditLogs = (payload: {
   jobId: string;
@@ -10,19 +10,19 @@ export const fetchJobAuditLogs = (payload: {
     sort: string;
     page: number;
   };
-}) => actionSpreader(JobActivityAction.FETCH_JOB_ACTIVITY, payload);
+}) => actionSpreader(JobParameterAction.FETCH_JOB_PARAMETER, payload);
 
 export const fetchJobAuditLogsOngoing = () =>
-  actionSpreader(JobActivityAction.FETCH_JOB_ACTIVITY_ONGOING);
+  actionSpreader(JobParameterAction.FETCH_JOB_PARAMETER_ONGOING);
 
 export const fetchJobAuditLogsSuccess = ({
   data,
   pageable,
 }: Partial<ResponseObj<JobAuditLogType[]>>) =>
-  actionSpreader(JobActivityAction.FETCH_JOB_ACTIVITY_SUCCESS, {
+  actionSpreader(JobParameterAction.FETCH_JOB_PARAMETER_SUCCESS, {
     data,
     pageable,
   });
 
 export const fetchJobAuditLogsError = (error: any) =>
-  actionSpreader(JobActivityAction.FETCH_JOB_ACTIVITY_ERROR, { error });
+  actionSpreader(JobParameterAction.FETCH_JOB_PARAMETER_ERROR, { error });

@@ -5,10 +5,10 @@ import { useTypedSelector } from '#store';
 import { ImageOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import { ActivityProps } from '../types';
+import { ParameterProps } from '../types';
 import { Wrapper } from './styles';
 
-const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
+const MaterialParameter: FC<ParameterProps> = ({ parameter }) => {
   const dispatch = useDispatch();
 
   const { entity } = useTypedSelector((state) => state.composer);
@@ -17,7 +17,7 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
     <Wrapper>
       {entity === Entity.JOB ? (
         <ol className="list-container">
-          {activity.data.map((el, index) => (
+          {parameter.data.map((el, index) => (
             <li className="list-item" key={index}>
               {el.link ? (
                 <img
@@ -53,4 +53,4 @@ const YesNoActivity: FC<ActivityProps> = ({ activity }) => {
   );
 };
 
-export default YesNoActivity;
+export default MaterialParameter;

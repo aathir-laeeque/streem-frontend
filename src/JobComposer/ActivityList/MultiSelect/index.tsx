@@ -2,29 +2,29 @@ import { Select } from '#components';
 import { get, isArray } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import { executeActivityLeading, fixActivityLeading } from '../actions';
-import { ActivityProps, Selections } from '../types';
+import { executeParameterLeading, fixParameterLeading } from '../actions';
+import { ParameterProps, Selections } from '../types';
 import { customSelectStyles } from './commonStyles';
 import { Wrapper } from './styles';
 
-const MultiSelectActivity: FC<ActivityProps & { isMulti: boolean }> = ({
-  activity,
+const MultiSelectParameter: FC<ParameterProps & { isMulti: boolean }> = ({
+  parameter,
   isCorrectingError,
   isMulti,
 }) => {
   const dispatch = useDispatch();
 
-  const options = activity.data.map((el) => ({ label: el.name, value: el.id }));
+  const options = parameter.data.map((el) => ({ label: el.name, value: el.id }));
 
   return (
     <Wrapper>
-      <div className="activity-header">{isMulti ? 'Multi Select' : 'Single Select'}</div>
+      <div className="parameter-header">{isMulti ? 'Multi Select' : 'Single Select'}</div>
       <Select
         isMulti={isMulti}
         className="multi-select"
         options={options}
         value={options.filter(
-          (el) => get(activity?.response?.choices, el.value) === Selections.SELECTED,
+          (el) => get(parameter?.response?.choices, el.value) === Selections.SELECTED,
         )}
         placeholder={isMulti ? 'Select one or more options' : 'You can select one option here'}
         styles={customSelectStyles}
@@ -33,8 +33,8 @@ const MultiSelectActivity: FC<ActivityProps & { isMulti: boolean }> = ({
 
           if (isArray(options)) {
             newData = {
-              ...activity,
-              data: activity.data.map((el) => ({
+              ...parameter,
+              data: parameter.data.map((el) => ({
                 ...el,
                 ...(options.findIndex((e) => e.value === el.id) > -1
                   ? { state: Selections.SELECTED }
@@ -43,8 +43,8 @@ const MultiSelectActivity: FC<ActivityProps & { isMulti: boolean }> = ({
             };
           } else {
             newData = {
-              ...activity,
-              data: activity.data.map((el) => ({
+              ...parameter,
+              data: parameter.data.map((el) => ({
                 ...el,
                 ...(options.value === el.id
                   ? { state: Selections.SELECTED }
@@ -54,9 +54,9 @@ const MultiSelectActivity: FC<ActivityProps & { isMulti: boolean }> = ({
           }
 
           if (isCorrectingError) {
-            dispatch(fixActivityLeading(newData));
+            dispatch(fixParameterLeading(newData));
           } else {
-            dispatch(executeActivityLeading(newData));
+            dispatch(executeParameterLeading(newData));
           }
         }}
       />
@@ -64,4 +64,4 @@ const MultiSelectActivity: FC<ActivityProps & { isMulti: boolean }> = ({
   );
 };
 
-export default MultiSelectActivity;
+export default MultiSelectParameter;

@@ -4,14 +4,12 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { dataUriToBlob } from '#utils/dataUriToBlob';
 import { uploadFile } from '#modules/file-upload/action';
-
 import React, { FC, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-import { ActivityProps } from '../types';
+import { ParameterProps } from '../types';
 import { Wrapper } from './styles';
 
-const Signature: FC<ActivityProps> = ({ activity, isCorrectingError, isTaskCompleted }) => {
+const Signature: FC<ParameterProps> = ({ parameter, isCorrectingError, isTaskCompleted }) => {
   const {
     auth: { profile },
   } = useTypedSelector((state) => state);
@@ -19,10 +17,10 @@ const Signature: FC<ActivityProps> = ({ activity, isCorrectingError, isTaskCompl
   const [imageData, setImageData] = useState<string | null>(null);
 
   useEffect(() => {
-    if (activity.response?.medias) {
-      setImageData(activity.response?.medias[0]?.link);
+    if (parameter.response?.medias) {
+      setImageData(parameter.response?.medias[0]?.link);
     }
-  }, [activity.response?.medias]);
+  }, [parameter.response?.medias]);
 
   const dispatch = useDispatch();
 
@@ -34,7 +32,7 @@ const Signature: FC<ActivityProps> = ({ activity, isCorrectingError, isTaskCompl
 
       formData.append('file', file, 'image.jpg');
 
-      dispatch(uploadFile({ formData, activity, isCorrectingError }));
+      dispatch(uploadFile({ formData, parameter, isCorrectingError }));
 
       setImageData(imageData);
     }

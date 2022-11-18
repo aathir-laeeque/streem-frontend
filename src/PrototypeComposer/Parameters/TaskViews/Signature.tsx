@@ -1,4 +1,4 @@
-import { ActivityProps } from '#PrototypeComposer/Activity/types';
+import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import SignatureIcon from '#assets/svg/Signature';
 import React, { FC } from 'react';
 import styled from 'styled-components';
@@ -27,7 +27,7 @@ const SignatureTaskViewWrapper = styled.div`
   }
 `;
 
-const SignatureTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
+const SignatureTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
   return (
     <SignatureTaskViewWrapper>
       <SignatureIcon className="icon" />

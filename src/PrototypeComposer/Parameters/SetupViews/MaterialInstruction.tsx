@@ -82,7 +82,7 @@ const MaterialInstruction: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
         props: {
           mediaDetails,
           disableNameInput: true,
-          isActivity: true,
+          isParameter: true,
           execute: (_data: MediaDetails) => {
             updateInstructionData(
               pick(_data, [

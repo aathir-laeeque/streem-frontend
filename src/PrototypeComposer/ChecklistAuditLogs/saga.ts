@@ -45,7 +45,7 @@ function* fetchChecklistAuditLogsSaga({ payload }: ReturnType<typeof fetchCheckl
       }),
     );
   } catch (e) {
-    const error = yield* handleCatch('ChecklistActivity', 'fetchChecklistActivitiesSaga', e);
+    const error = yield* handleCatch('ChecklistParameter', 'fetchChecklistParametersSaga', e);
     yield put(fetchChecklistAuditLogsError(error));
   }
 }

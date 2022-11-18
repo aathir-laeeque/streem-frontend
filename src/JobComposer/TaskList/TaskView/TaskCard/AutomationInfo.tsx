@@ -31,7 +31,7 @@ const Wrapper = styled.div.attrs({
 `;
 
 type AutomationInfoProps = {
-  task: Omit<Task, 'activities'>;
+  task: Omit<Task, 'parameters'>;
 };
 
 const AutomationInfo: FC<AutomationInfoProps> = ({ task }) => {

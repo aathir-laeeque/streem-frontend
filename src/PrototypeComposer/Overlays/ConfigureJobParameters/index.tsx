@@ -5,7 +5,7 @@ import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { processParametersMapSuccess } from '#PrototypeComposer/actions';
 import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
-import { apiBatchMapParameters, apiGetActivities } from '#utils/apiUrls';
+import { apiBatchMapParameters, apiGetParameters } from '#utils/apiUrls';
 import { FilterField, FilterOperators, Pageable, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
@@ -219,7 +219,7 @@ const ConfigureJobParameters: FC<CommonOverlayProps<Props>> = ({
       try {
         const { data, pageable }: ResponseObj<any[]> = await request(
           'GET',
-          apiGetActivities(checklistId),
+          apiGetParameters(checklistId),
           {
             params: {
               page: typeof pageNumber === 'number' ? pageNumber : pagination.page + 1,

@@ -9,11 +9,12 @@ import {
   LayersOutlined,
   LineStyle,
   ShortTextOutlined,
+  SubjectOutlined,
   TonalityOutlined,
 } from '@material-ui/icons';
 import React from 'react';
 import styled from 'styled-components';
-import { MandatoryActivity, NonMandatoryActivity, TargetEntityType } from './checklist.types';
+import { MandatoryParameter, NonMandatoryParameter, TargetEntityType } from './checklist.types';
 
 const ParameterLabelWrapper = styled.div`
   display: flex;
@@ -47,36 +48,41 @@ const RenderParameterLabel: React.FC<{ label: string; icon: JSX.Element }> = ({ 
 };
 
 export const ParameterTypeMap: Record<string, JSX.Element | string> = {
-  [MandatoryActivity.CHECKLIST]: <RenderParameterLabel label="Checklist" icon={<LineStyle />} />,
-  [NonMandatoryActivity.INSTRUCTION]: (
+  [MandatoryParameter.CHECKLIST]: <RenderParameterLabel label="Checklist" icon={<LineStyle />} />,
+  [NonMandatoryParameter.INSTRUCTION]: (
     <RenderParameterLabel label="Instruction" icon={<LineStyle />} />
   ),
-  [NonMandatoryActivity.MATERIAL]: <RenderParameterLabel label="Material" icon={<LineStyle />} />,
-  [MandatoryActivity.MEDIA]: (
+  [NonMandatoryParameter.MATERIAL]: <RenderParameterLabel label="Material" icon={<LineStyle />} />,
+  [MandatoryParameter.MEDIA]: (
     <RenderParameterLabel label="Image Capture" icon={<CameraAltOutlined />} />
   ),
-  [MandatoryActivity.MULTISELECT]: (
+  [MandatoryParameter.MULTISELECT]: (
     <RenderParameterLabel label="Multi-select dropdown" icon={<DoneAllOutlined />} />
   ),
-  [MandatoryActivity.PARAMETER]: (
+  [MandatoryParameter.PARAMETER]: (
     <RenderParameterLabel label="Should Be" icon={<ExposureOutlined />} />
   ),
-  [MandatoryActivity.SIGNATURE]: (
+  [MandatoryParameter.SIGNATURE]: (
     <RenderParameterLabel label="Signature" icon={<GestureOutlined />} />
   ),
-  [MandatoryActivity.SINGLE_SELECT]: (
+  [MandatoryParameter.SINGLE_SELECT]: (
     <RenderParameterLabel label="Single-select dropdown" icon={<DoneAllOutlined />} />
   ),
-  [MandatoryActivity.TEXTBOX]: (
-    <RenderParameterLabel label="Comments" icon={<ShortTextOutlined />} />
+  [MandatoryParameter.SINGLE_LINE]: (
+    <RenderParameterLabel label="Single-line text" icon={<ShortTextOutlined />} />
   ),
-  [MandatoryActivity.YES_NO]: <RenderParameterLabel label="Yes/No" icon={<TonalityOutlined />} />,
-  [MandatoryActivity.NUMBER]: <RenderParameterLabel label="Number" icon={<Filter1Outlined />} />,
-  [MandatoryActivity.CALCULATION]: (
+  [MandatoryParameter.MULTI_LINE]: (
+    <RenderParameterLabel label="Multi-line text" icon={<SubjectOutlined />} />
+  ),
+  [MandatoryParameter.YES_NO]: <RenderParameterLabel label="Yes/No" icon={<TonalityOutlined />} />,
+  [MandatoryParameter.NUMBER]: <RenderParameterLabel label="Number" icon={<Filter1Outlined />} />,
+  [MandatoryParameter.CALCULATION]: (
     <RenderParameterLabel label="Calculation" icon={<FunctionsOutlined />} />
   ),
-  [MandatoryActivity.DATE]: <RenderParameterLabel label="Date" icon={<DateRangeOutlined />} />,
-  [MandatoryActivity.RESOURCE]: <RenderParameterLabel label="Resource" icon={<LayersOutlined />} />,
+  [MandatoryParameter.DATE]: <RenderParameterLabel label="Date" icon={<DateRangeOutlined />} />,
+  [MandatoryParameter.RESOURCE]: (
+    <RenderParameterLabel label="Resource" icon={<LayersOutlined />} />
+  ),
 };
 
 export const PARAMETER_OPERATORS = [

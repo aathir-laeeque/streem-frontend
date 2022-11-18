@@ -129,7 +129,7 @@ const JobHeaderButtons: FC<{
         <MenuItem
           className="job-activities"
           onClick={() => {
-            navigate(`/jobs/${jobId}/activites`);
+            navigate(`/jobs/${jobId}/activities`);
             handleClose();
           }}
         >

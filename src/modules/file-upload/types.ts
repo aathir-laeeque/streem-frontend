@@ -1,4 +1,4 @@
-import { Activity } from '#JobComposer/checklist.types';
+import { Parameter } from '#JobComposer/checklist.types';
 export enum FileUploadAction {
   UPLOAD_FILE = '@@file-upload/UPLOAD_FILE',
   UPLOAD_FILE_ERROR = '@@file-upload/UPLOAD_FILE_ERROR',
@@ -7,6 +7,6 @@ export enum FileUploadAction {
 
 export type UploadFileType = {
   formData: FormData;
-  activity?: Activity;
+  parameter?: Parameter;
   isCorrectingError: boolean;
 };

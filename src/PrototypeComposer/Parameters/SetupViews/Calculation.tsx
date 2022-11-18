@@ -1,7 +1,7 @@
 import { Button, selectStyles, Textarea, TextInput } from '#components';
-import { ActivityType } from '#PrototypeComposer/checklist.types';
+import { ParameterType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
-import { apiGetActivitiesForCalc } from '#utils/apiUrls';
+import { apiGetParametersForCalc } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { Add, Clear, DragHandle } from '@material-ui/icons';
 import { EquationNode, EquationParserError, parse } from 'equation-parser';
@@ -90,8 +90,8 @@ const CalculationParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
   const expression = watch('data.expression', '');
 
   const [loading, setLoading] = useState<Boolean>(false);
-  const [activitiesForCalc, updateActivitiesForCalc] = useState<
-    { id: string; type: ActivityType; label: string; taskId: string }[]
+  const [parametersForCalc, updateParametersForCalc] = useState<
+    { id: string; type: ParameterType; label: string; taskId: string }[]
   >([]);
 
   const equations = (expression as string)
@@ -109,11 +109,11 @@ const CalculationParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
   const parsedEquations = math(equations, defaultVariables);
   const equationError = getEquationError(parsedEquations);
 
-  const getActivitiesForCalc = async () => {
+  const getParametersForCalc = async () => {
     if (checklistId) {
       setLoading(true);
-      const activitiesForCalc = await request('GET', apiGetActivitiesForCalc(checklistId));
-      updateActivitiesForCalc(activitiesForCalc.data);
+      const parametersForCalc = await request('GET', apiGetParametersForCalc(checklistId));
+      updateParametersForCalc(parametersForCalc.data);
       setLoading(false);
     }
   };
@@ -129,7 +129,7 @@ const CalculationParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
   }, [equationError]);
 
   useEffect(() => {
-    getActivitiesForCalc();
+    getParametersForCalc();
   }, []);
 
   register('data.variables');
@@ -190,14 +190,14 @@ const CalculationParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                     isLoading={!!loading}
                     styles={selectStyles}
                     isSearchable={false}
-                    options={activitiesForCalc.map((activity) => ({
-                      value: activity.id,
-                      ...activity,
+                    options={parametersForCalc.map((parameter) => ({
+                      value: parameter.id,
+                      ...parameter,
                     }))}
                     defaultValue={
-                      value?.activityId
+                      value?.parameterId
                         ? {
-                            value: value.activityId,
+                            value: value.parameterId,
                             label: value.label,
                           }
                         : undefined
@@ -208,7 +208,7 @@ const CalculationParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                         {
                           ...variables,
                           [variableName]: {
-                            activityId: option.id,
+                            parameterId: option.id,
                             taskId: option.taskId,
                             label: option.label,
                           },

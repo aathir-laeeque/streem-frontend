@@ -8,7 +8,7 @@ import htmlToDraft from 'html-to-draftjs';
 import React, { FC, useEffect, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import { ActivityProps } from '../types';
+import { ParameterProps } from '../types';
 import { Wrapper } from './styles';
 
 const toolbarOptions = {
@@ -21,11 +21,11 @@ const toolbarOptions = {
   },
 };
 
-const InstructionActivity: FC<ActivityProps> = ({ activity }) => {
+const InstructionParameter: FC<ParameterProps> = ({ parameter }) => {
   const { entity } = useTypedSelector((state) => state.composer);
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [contentBlock, setContentBlock] = useState(htmlToDraft(activity.data.text));
+  const [contentBlock, setContentBlock] = useState(htmlToDraft(parameter.data.text));
 
   useEffect(() => {
     if (contentBlock) {
@@ -36,12 +36,12 @@ const InstructionActivity: FC<ActivityProps> = ({ activity }) => {
   }, [contentBlock]);
 
   useEffect(() => {
-    setContentBlock(htmlToDraft(activity.data.text));
-  }, [activity]);
+    setContentBlock(htmlToDraft(parameter.data.text));
+  }, [parameter]);
 
   return (
     <Wrapper isJobView={entity === Entity.JOB}>
-      <div className="activity-header">Write your instruction/notes</div>
+      <div className="parameter-header">Write your instruction/notes</div>
 
       <Editor
         editorState={editorState}
@@ -60,4 +60,4 @@ const InstructionActivity: FC<ActivityProps> = ({ activity }) => {
   );
 };
 
-export default InstructionActivity;
+export default InstructionParameter;

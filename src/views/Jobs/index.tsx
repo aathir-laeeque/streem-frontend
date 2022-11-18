@@ -16,7 +16,7 @@ const JobsView: FC<JobsViewProps> = () => (
 
     <Assignments path="/:jobId/assignments" />
 
-    <AuditLogs path="/:jobId/activites" />
+    <AuditLogs path="/:jobId/activities" />
 
     <JobSummary path="/:jobId/summary" />
   </Router>

@@ -75,7 +75,7 @@ export const enableErrorCorrection = (
     setLoadingState,
   });
 
-export const completeErrorCorretcion = (
+export const completeErrorCorrection = (
   taskId: Task['id'],
   setLoadingState: React.Dispatch<React.SetStateAction<boolean>>,
 ) =>
@@ -84,7 +84,7 @@ export const completeErrorCorretcion = (
     setLoadingState,
   });
 
-export const cancelErrorCorretcion = (
+export const cancelErrorCorrection = (
   taskId: Task['id'],
   setLoadingState: React.Dispatch<React.SetStateAction<boolean>>,
 ) =>

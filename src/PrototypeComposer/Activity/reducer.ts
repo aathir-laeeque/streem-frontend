@@ -3,11 +3,11 @@ import { Reducer } from 'redux';
 import { Checklist } from '../checklist.types';
 import { ComposerAction } from '../reducer.types';
 import { TaskListActions } from '../Tasks/reducer.types';
-import { ActivityListActions, ActivityListActionType, ActivityListState } from './reducer.types';
-import { getActivities } from './utils';
+import { ParameterListActions, ParameterListActionType, ParameterListState } from './reducer.types';
+import { getParameters } from './utils';
 
-export const initialState: ActivityListState = {
-  activityOrderInTaskInStage: {},
+export const initialState: ParameterListState = {
+  parameterOrderInTaskInStage: {},
   listById: {},
   parameters: {
     list: [],
@@ -25,12 +25,12 @@ export const initialState: ActivityListState = {
   },
 };
 
-const reducer: Reducer<ActivityListState, ActivityListActionType> = (
+const reducer: Reducer<ParameterListState, ParameterListActionType> = (
   state = initialState,
   action,
 ) => {
   switch (action.type) {
-    case ActivityListActions.TOGGLE_NEW_PARAMETER:
+    case ParameterListActions.TOGGLE_NEW_PARAMETER:
       return { ...state, addParameter: action.payload };
 
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
@@ -40,60 +40,60 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
 
       return {
         ...state,
-        ...getActivities(checklist),
+        ...getParameters(checklist),
       };
 
-    case ActivityListActions.ADD_NEW_ACTIVITY_SUCCESS:
+    case ParameterListActions.ADD_NEW_PARAMETER_SUCCESS:
       return {
         ...state,
-        activityOrderInTaskInStage: {
-          ...state.activityOrderInTaskInStage,
+        parameterOrderInTaskInStage: {
+          ...state.parameterOrderInTaskInStage,
           [action.payload.stageId]: {
-            ...state.activityOrderInTaskInStage[action.payload.stageId],
+            ...state.parameterOrderInTaskInStage[action.payload.stageId],
             [action.payload.taskId]: [
-              ...state.activityOrderInTaskInStage[action.payload.stageId][action.payload.taskId],
-              action.payload.activity.id,
+              ...state.parameterOrderInTaskInStage[action.payload.stageId][action.payload.taskId],
+              action.payload.parameter.id,
             ],
           },
         },
         listById: {
           ...state.listById,
-          [action.payload.activity.id]: {
-            ...action.payload.activity,
+          [action.payload.parameter.id]: {
+            ...action.payload.parameter,
             errors: [],
           },
         },
       };
 
-    case ActivityListActions.DELETE_ACTIVITY_SUCCESS:
+    case ParameterListActions.DELETE_PARAMETER_SUCCESS:
       return {
         ...state,
-        activityOrderInTaskInStage: {
-          ...state.activityOrderInTaskInStage,
+        parameterOrderInTaskInStage: {
+          ...state.parameterOrderInTaskInStage,
           [action.payload.stageId]: {
-            ...state.activityOrderInTaskInStage[action.payload.stageId],
+            ...state.parameterOrderInTaskInStage[action.payload.stageId],
             [action.payload.taskId]: [
-              ...state.activityOrderInTaskInStage[action.payload.stageId][
+              ...state.parameterOrderInTaskInStage[action.payload.stageId][
                 action.payload.taskId
-              ].filter((el) => el !== action.payload.activityId),
+              ].filter((el) => el !== action.payload.parameterId),
             ],
           },
         },
         listById: {
-          ...omit(state.listById, [action.payload.activityId]),
+          ...omit(state.listById, [action.payload.parameterId]),
         },
       };
 
-    case ActivityListActions.UPDATE_STORE_ACTIVITY: {
-      const { updatePath, activityId, data } = action.payload;
+    case ParameterListActions.UPDATE_STORE_PARAMETER: {
+      const { updatePath, parameterId, data } = action.payload;
 
       return {
         ...state,
         listById: {
           ...state.listById,
-          [activityId]: updatePath
+          [parameterId]: updatePath
             ? cloneDeep({
-                ...set(state.listById[activityId], updatePath, data),
+                ...set(state.listById[parameterId], updatePath, data),
                 errors: [],
               })
             : { ...data, errors: [] },
@@ -101,16 +101,16 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
       };
     }
 
-    case ActivityListActions.UPDATE_STORE_MEDIA_ACTIVITY: {
-      const { activityId, dataIndex, data } = action.payload;
+    case ParameterListActions.UPDATE_STORE_MEDIA_PARAMETER: {
+      const { parameterId, dataIndex, data } = action.payload;
 
       return {
         ...state,
         listById: {
           ...state.listById,
-          [activityId]: cloneDeep({
-            ...set(state.listById[activityId], ['data', dataIndex], {
-              ...state.listById[activityId].data[dataIndex],
+          [parameterId]: cloneDeep({
+            ...set(state.listById[parameterId], ['data', dataIndex], {
+              ...state.listById[parameterId].data[dataIndex],
               ...data,
             }),
             errors: [],
@@ -119,43 +119,43 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
       };
     }
 
-    case ActivityListActions.REMOVE_STORE_ACTIVITY_ITEM: {
-      const { activityId, activityItemId } = action.payload;
-      const activityToUpdate = state.listById[activityId];
+    case ParameterListActions.REMOVE_STORE_PARAMETER_ITEM: {
+      const { parameterId, parameterItemId } = action.payload;
+      const parameterToUpdate = state.listById[parameterId];
 
       return {
         ...state,
         listById: {
           ...state.listById,
-          [activityId]: {
-            ...activityToUpdate,
-            data: activityToUpdate.data.filter(({ id }: { id: string }) => id !== activityItemId),
+          [parameterId]: {
+            ...parameterToUpdate,
+            data: parameterToUpdate.data.filter(({ id }: { id: string }) => id !== parameterItemId),
           },
         },
       };
     }
 
-    case ActivityListActions.ADD_STORE_ACTIVITY_ITEM: {
-      const { activityId, activityItemData } = action.payload;
-      const activityToUpdate = state.listById[activityId];
-      activityToUpdate.data.push(activityItemData);
+    case ParameterListActions.ADD_STORE_PARAMETER_ITEM: {
+      const { parameterId, parameterItemData } = action.payload;
+      const parameterToUpdate = state.listById[parameterId];
+      parameterToUpdate.data.push(parameterItemData);
 
       return {
         ...state,
         listById: {
           ...state.listById,
-          [activityId]: { ...activityToUpdate },
+          [parameterId]: { ...parameterToUpdate },
         },
       };
     }
 
-    case TaskListActions.REORDER_ACTIVITIES:
+    case TaskListActions.REORDER_PARAMETERS:
       return {
         ...state,
-        activityOrderInTaskInStage: {
-          ...state.activityOrderInTaskInStage,
+        parameterOrderInTaskInStage: {
+          ...state.parameterOrderInTaskInStage,
           [action.payload.stageId]: {
-            ...state.activityOrderInTaskInStage[action.payload.stageId],
+            ...state.parameterOrderInTaskInStage[action.payload.stageId],
             [action.payload.taskId]: action.payload.orderedIds,
           },
         },
@@ -166,11 +166,11 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
 
       return {
         ...state,
-        activityOrderInTaskInStage: {
-          ...state.activityOrderInTaskInStage,
+        parameterOrderInTaskInStage: {
+          ...state.parameterOrderInTaskInStage,
           [stageId]: {
-            ...state.activityOrderInTaskInStage[stageId],
-            [newTask.id]: newTask.activities.map((activity) => activity.id),
+            ...state.parameterOrderInTaskInStage[stageId],
+            [newTask.id]: newTask.parameters.map((parameter) => parameter.id),
           },
         },
       };
@@ -178,39 +178,39 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
     case TaskListActions.DELETE_TASK_SUCCESS:
       return {
         ...state,
-        activityOrderInTaskInStage: {
-          ...state.activityOrderInTaskInStage,
+        parameterOrderInTaskInStage: {
+          ...state.parameterOrderInTaskInStage,
           [action.payload.stageId]: {
-            ...omit(state.activityOrderInTaskInStage[action.payload.stageId], [
+            ...omit(state.parameterOrderInTaskInStage[action.payload.stageId], [
               action.payload.taskId,
             ]),
           },
         },
       };
 
-    case ActivityListActions.DELETE_ACTIVITY_ERROR:
-    case ActivityListActions.UPDATE_ACTIVITY_ERROR:
+    case ParameterListActions.DELETE_PARAMETER_ERROR:
+    case ParameterListActions.UPDATE_PARAMETER_ERROR:
       return {
         ...state,
         error: action.payload.error,
       };
 
-    case ActivityListActions.SET_VALIDATION_ERROR:
+    case ParameterListActions.SET_VALIDATION_ERROR:
       const { error } = action.payload;
-      const activityIdWithError = action.payload.error.id;
-      const activityWithError = state.listById[activityIdWithError];
+      const parameterIdWithError = action.payload.error.id;
+      const parameterWithError = state.listById[parameterIdWithError];
       return {
         ...state,
         listById: {
           ...state.listById,
-          [activityIdWithError]: {
-            ...activityWithError,
-            errors: [...activityWithError.errors, error],
+          [parameterIdWithError]: {
+            ...parameterWithError,
+            errors: [...parameterWithError.errors, error],
           },
         },
       };
 
-    case ActivityListActions.FETCH_PARAMETERS:
+    case ParameterListActions.FETCH_PARAMETERS:
       return {
         ...state,
         parameters: {
@@ -219,7 +219,7 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         },
       };
 
-    case ActivityListActions.FETCH_PARAMETERS_SUCCESS:
+    case ParameterListActions.FETCH_PARAMETERS_SUCCESS:
       return {
         ...state,
         parameters: {
@@ -229,7 +229,7 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
         },
       };
 
-    case ActivityListActions.FETCH_PARAMETERS_ERROR:
+    case ParameterListActions.FETCH_PARAMETERS_ERROR:
       return {
         ...state,
         parameters: {
@@ -244,4 +244,4 @@ const reducer: Reducer<ActivityListState, ActivityListActionType> = (
   }
 };
 
-export { reducer as activityReducer };
+export { reducer as parameterReducer };

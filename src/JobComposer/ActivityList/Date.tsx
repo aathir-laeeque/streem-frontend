@@ -1,44 +1,44 @@
-import { FormGroup, TextInput } from '#components';
+import { FormGroup } from '#components';
 import { customOnChange } from '#utils/formEvents';
 import { InputTypes } from '#utils/globalTypes';
 import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { executeActivity, fixActivity } from './actions';
-import { ActivityProps } from './types';
+import { executeParameter, fixParameter } from './actions';
+import { ParameterProps } from './types';
 
-const DateActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity, isCorrectingError }) => {
+const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
-  const [value, setValue] = React.useState(activity?.response?.value);
+  const [value, setValue] = React.useState(parameter?.response?.value);
 
   useEffect(() => {
     if (inputRef.current && document.activeElement !== inputRef.current) {
-      if (activity?.response?.value) {
-        setValue(activity?.response?.value);
+      if (parameter?.response?.value) {
+        setValue(parameter?.response?.value);
       }
     }
-  }, [activity?.response?.value]);
+  }, [parameter?.response?.value]);
 
   const onChange = (val: string) => {
     customOnChange(val, (val: string) => {
       const newData = {
-        ...activity,
-        data: { ...activity.data, input: val },
+        ...parameter,
+        data: { ...parameter.data, input: val },
       };
 
       if (isCorrectingError) {
-        dispatch(fixActivity(newData));
+        dispatch(fixParameter(newData));
       } else {
-        dispatch(executeActivity(newData));
+        dispatch(executeParameter(newData));
       }
     });
     setValue(val);
   };
 
   return (
-    <div className="date-activity">
+    <div className="date-parameter">
       <div className="new-form-field">
-        <label className="new-form-field-label">Date Activity</label>
+        <label className="new-form-field-label">Date Parameter</label>
         <FormGroup
           style={{ padding: 0 }}
           inputs={[
@@ -59,4 +59,4 @@ const DateActivity: FC<Omit<ActivityProps, 'taskId'>> = ({ activity, isCorrectin
   );
 };
 
-export default DateActivity;
+export default DateParameter;

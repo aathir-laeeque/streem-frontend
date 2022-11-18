@@ -1,9 +1,9 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import ActivityList from '#JobComposer/ActivityList';
+import ParameterList from '#JobComposer/ActivityList';
 import {
   CompletedTaskStates,
-  MandatoryActivity,
+  MandatoryParameter,
   StartedTaskStates,
   TaskExecutionState,
 } from '#JobComposer/checklist.types';
@@ -53,7 +53,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
 
   const {
     jobState,
-    activities: { activitiesById, activitiesOrderInTaskInStage },
+    parameters: { parametersById, parametersOrderInTaskInStage },
     stages: { activeStageId },
   } = useTypedSelector((state) => state.composer);
   const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
@@ -74,21 +74,21 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
   const isLoggedInUserAssigned = assignees.some((user) => user.id === profile?.id);
 
   if (activeStageId) {
-    const activities = activitiesOrderInTaskInStage[activeStageId][task.id].map(
-      (activityId) => activitiesById[activityId],
+    const parameters = parametersOrderInTaskInStage[activeStageId][task.id].map(
+      (parameterId) => parametersById[parameterId],
     );
 
-    const { canSkipTask, activitiesHasError } = activities.reduce(
-      ({ canSkipTask, activitiesHasError }, activity) => {
-        activitiesHasError ||= activity.hasError;
+    const { canSkipTask, parametersHasError } = parameters.reduce(
+      ({ canSkipTask, parametersHasError }, parameter) => {
+        parametersHasError ||= parameter.hasError;
 
-        if (activity.type in MandatoryActivity) {
-          canSkipTask ||= activity.mandatory;
+        if (parameter.type in MandatoryParameter) {
+          canSkipTask ||= parameter.mandatory;
         }
 
-        return { activitiesHasError, canSkipTask: canSkipTask };
+        return { parametersHasError, canSkipTask: canSkipTask };
       },
-      { canSkipTask: false, activitiesHasError: false },
+      { canSkipTask: false, parametersHasError: false },
     );
 
     const isTaskStarted = taskState in StartedTaskStates;
@@ -170,8 +170,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
             }
           }}
         >
-          <ActivityList
-            activities={activities}
+          <ParameterList
+            parameters={parameters}
             isTaskStarted={isTaskStarted}
             isTaskCompleted={isTaskCompleted}
             isCorrectingError={!!correctionEnabled}
@@ -184,7 +184,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
         <Footer
           canSkipTask={!canSkipTask}
           task={task}
-          activitiesHasError={activitiesHasError}
+          parametersHasError={parametersHasError}
           setLoadingState={setLoadingState}
           timerState={timerState}
         />

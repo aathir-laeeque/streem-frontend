@@ -68,8 +68,8 @@ export const updateTaskName = (task: Pick<Task, 'name' | 'id'>) =>
 export const setValidationError = (error: Error) =>
   actionSpreader(TaskListActions.SET_VALIDATION_ERROR, { error });
 
-export const resetTaskActivityError = (taskId: Task['id']) =>
-  actionSpreader(TaskListActions.RESET_TASK_ACTIVITY_ERROR, { taskId });
+export const resetTaskParameterError = (taskId: Task['id']) =>
+  actionSpreader(TaskListActions.RESET_TASK_PARAMETER_ERROR, { taskId });
 
 export const resetTaskError = (taskId: Task['id']) =>
   actionSpreader(TaskListActions.RESET_TASK_ERROR, { taskId });
@@ -116,9 +116,9 @@ export const updateTaskActionSuccess = (payload: {
 export const archiveTaskAction = (payload: ArchiveActionType) =>
   actionSpreader(TaskListActions.ARCHIVE_TASK_ACTION, payload);
 
-export const reOrderActivities = (payload: {
+export const reOrderParameters = (payload: {
   checklistId: string;
   taskId: string;
   stageId: string;
   orderedIds: string[];
-}) => actionSpreader(TaskListActions.REORDER_ACTIVITIES, payload);
+}) => actionSpreader(TaskListActions.REORDER_PARAMETERS, payload);

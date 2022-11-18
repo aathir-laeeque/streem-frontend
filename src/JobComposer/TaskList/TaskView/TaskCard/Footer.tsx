@@ -9,7 +9,7 @@ import { ArrowRightAlt, CheckCircle, Error } from '@material-ui/icons';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
-import { cancelErrorCorretcion, completeErrorCorretcion, completeTask } from '../../actions';
+import { cancelErrorCorrection, completeErrorCorrection, completeTask } from '../../actions';
 
 const Wrapper = styled.div.attrs({
   className: 'task-buttons',
@@ -131,8 +131,8 @@ const DelayedWrapper = styled.div`
 
 type FooterProps = {
   canSkipTask: boolean;
-  activitiesHasError: boolean;
-  task: Omit<Task, 'activities'>;
+  parametersHasError: boolean;
+  task: Omit<Task, 'parameters'>;
   setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
   timerState: { [index: string]: boolean };
 };
@@ -143,7 +143,7 @@ const generateName = ({ firstName, lastName }: { firstName: string; lastName: st
 const Footer: FC<FooterProps> = ({
   canSkipTask,
   task,
-  activitiesHasError,
+  parametersHasError,
   setLoadingState,
   timerState,
 }) => {
@@ -229,7 +229,7 @@ const Footer: FC<FooterProps> = ({
           variant="secondary"
           onClick={() => {
             setLoadingState(true);
-            dispatch(completeErrorCorretcion(task.id, setLoadingState));
+            dispatch(completeErrorCorrection(task.id, setLoadingState));
           }}
         >
           Confirm
@@ -240,7 +240,7 @@ const Footer: FC<FooterProps> = ({
           color="red"
           onClick={() => {
             setLoadingState(true);
-            dispatch(cancelErrorCorretcion(task.id, setLoadingState));
+            dispatch(cancelErrorCorrection(task.id, setLoadingState));
           }}
         >
           Cancel
@@ -394,9 +394,9 @@ const Footer: FC<FooterProps> = ({
             </>
           )}
 
-          {activitiesHasError ? (
+          {parametersHasError ? (
             <div className="error-badge">
-              Mandatory Activity is incomplete, you cannot complete this Task,
+              Mandatory Parameter is incomplete, you cannot complete this Task,
             </div>
           ) : null}
         </Wrapper>

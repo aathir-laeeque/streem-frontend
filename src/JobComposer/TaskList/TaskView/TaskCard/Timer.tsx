@@ -6,7 +6,7 @@ import moment from 'moment';
 import React, { FC, useEffect, useRef, useState } from 'react';
 
 const Timer: FC<{
-  task: Omit<Task, 'activities'>;
+  task: Omit<Task, 'parameters'>;
   timerState: { [index: string]: boolean };
   setTimerState: React.Dispatch<React.SetStateAction<{ [index: string]: boolean }>>;
 }> = ({ task, timerState, setTimerState }) => {

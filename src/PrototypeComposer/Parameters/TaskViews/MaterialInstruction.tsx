@@ -1,6 +1,6 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { ActivityProps } from '#PrototypeComposer/Activity/types';
+import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { ImageOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
@@ -76,12 +76,12 @@ const MaterialInstructionTaskViewWrapper = styled.div`
   }
 `;
 
-const MaterialInstructionTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
+const MaterialInstructionTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
   const dispatch = useDispatch();
   return (
     <MaterialInstructionTaskViewWrapper>
       <ol className="list-container">
-        {activity.data.map((el: any, index: number) => (
+        {parameter.data.map((el: any, index: number) => (
           <li className="list-item" key={index}>
             {el.link ? (
               <img

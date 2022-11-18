@@ -10,7 +10,7 @@ import { fetchData, resetComposer } from '../actions';
 export enum RefetchJobErrorType {
   JOB = 'JOB',
   TASK = 'TASK',
-  ACTIVITY = 'ACTIVITY',
+  PARAMETER = 'PARAMETER',
 }
 
 const Wrapper = styled.div`

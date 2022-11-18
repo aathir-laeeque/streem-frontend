@@ -92,11 +92,11 @@ export interface Exception {
 }
 
 export interface ParameterDeviation {
-  activity: Activity;
+  parameter: Parameter;
   userInput: number;
 }
 
-interface Activity {
+interface Parameter {
   operator: string;
   parameter: string;
   type: string;

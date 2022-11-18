@@ -23,14 +23,14 @@ export interface JobAuditLogState {
   readonly error?: any;
 }
 
-export enum JobActivityAction {
-  FETCH_JOB_ACTIVITY = '@@jobComposer/JobActivity/FETCH_JOB_ACTIVITY',
-  FETCH_JOB_ACTIVITY_ERROR = '@@jobComposer/JobActivity/FETCH_JOB_ACTIVITY_ERROR',
-  FETCH_JOB_ACTIVITY_ONGOING = '@@jobComposer/JobActivity/FETCH_JOB_ACTIVITY_ONGOING',
-  FETCH_JOB_ACTIVITY_SUCCESS = '@@jobComposer/JobActivity/FETCH_JOB_ACTIVITY_SUCCESS',
+export enum JobParameterAction {
+  FETCH_JOB_PARAMETER = '@@jobComposer/JobParameter/FETCH_JOB_PARAMETER',
+  FETCH_JOB_PARAMETER_ERROR = '@@jobComposer/JobParameter/FETCH_JOB_PARAMETER_ERROR',
+  FETCH_JOB_PARAMETER_ONGOING = '@@jobComposer/JobParameter/FETCH_JOB_PARAMETER_ONGOING',
+  FETCH_JOB_PARAMETER_SUCCESS = '@@jobComposer/JobParameter/FETCH_JOB_PARAMETER_SUCCESS',
 }
 
-export type JobActivityActionType =
+export type JobParameterActionType =
   | ReturnType<
       | typeof fetchJobAuditLogsError
       | typeof fetchJobAuditLogsOngoing

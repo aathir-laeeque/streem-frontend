@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
 import { JobStateEnum } from '#views/Jobs/ListView/types';
-import { activityListReducer, initialState as activityListState } from './ActivityList/reducer';
+import { parameterListReducer, initialState as parameterListState } from './ActivityList/reducer';
 import { ComposerAction, ComposerActionType, ComposerState } from './composer.reducer.types';
 import { Entity } from './composer.types';
 import { initialState as stageListState, stageListReducer } from './StageList/reducer';
@@ -9,7 +9,7 @@ import { initialState as taskListState, taskListReducer } from './TaskList/reduc
 import { StageListAction } from './StageList/reducer.types';
 
 const initialState: ComposerState = {
-  activities: activityListState,
+  parameters: parameterListState,
 
   data: undefined,
 
@@ -29,7 +29,7 @@ const initialState: ComposerState = {
 };
 
 /**
- * TODO: optimize the reducer for rendering process and easy access of the tasks in the stages and activities in tasks. Look into easy access of the taska and stages for error handling and also keep in mind for polling of data
+ * TODO: optimize the reducer for rendering process and easy access of the tasks in the stages and parameters in tasks. Look into easy access of the taska and stages for error handling and also keep in mind for polling of data
  * ? mabe look into splitting the reducer to smaller parts
  */
 
@@ -49,7 +49,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
         loading: false,
 
         ...(entity === Entity.JOB ? { jobState: data.state } : {}),
-        activities: activityListReducer(state.activities, action),
+        parameters: parameterListReducer(state.parameters, action),
         stages: stageListReducer(state.stages, action),
         tasks: taskListReducer(state.tasks, action),
       };
@@ -64,7 +64,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
       return {
         ...state,
         jobState,
-        activities: activityListReducer(state.activities, action),
+        parameters: parameterListReducer(state.parameters, action),
         stages: stageListReducer(state.stages, action),
         tasks: taskListReducer(state.tasks, action),
       };
@@ -81,7 +81,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
     default:
       return {
         ...state,
-        activities: activityListReducer(state.activities, action),
+        parameters: parameterListReducer(state.parameters, action),
         stages: stageListReducer(state.stages, action),
         tasks: taskListReducer(state.tasks, action),
         auditLogs: jobAuditLogsReducer(state.auditLogs, action),

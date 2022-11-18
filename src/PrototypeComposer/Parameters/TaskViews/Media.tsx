@@ -1,4 +1,4 @@
-import { ActivityProps } from '#PrototypeComposer/Activity/types';
+import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { PhotoCamera } from '@material-ui/icons';
 import React, { FC } from 'react';
 import styled from 'styled-components';
@@ -25,7 +25,7 @@ const MediaTaskViewWrapper = styled.div`
   }
 `;
 
-const MediaTaskView: FC<Omit<ActivityProps, 'taskId'>> = ({ activity }) => {
+const MediaTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
   return (
     <MediaTaskViewWrapper>
       <PhotoCamera className="icon" />

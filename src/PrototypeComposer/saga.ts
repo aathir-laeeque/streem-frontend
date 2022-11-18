@@ -14,8 +14,8 @@ import {
   fetchComposerDataSuccess,
   validatePrototype,
 } from './actions';
-import { setValidationError as setActivityValidationError } from './Activity/actions';
-import { ActivitySaga } from './Activity/saga';
+import { setValidationError as setParameterValidationError } from './Activity/actions';
+import { ParameterSaga } from './Activity/saga';
 import { ChecklistAuditLogsSaga } from './ChecklistAuditLogs/saga';
 import { ComposerAction } from './reducer.types';
 import { ReviewerSaga } from './reviewer.saga';
@@ -63,7 +63,7 @@ function* validatePrototypeSaga({ payload }: ReturnType<typeof validatePrototype
     const { errors } = yield call(request, 'GET', apiValidatePrototype(id));
 
     if ((errors as Array<Error>)?.length) {
-      const { stagesErrors, tasksErrors, activitiesErrors } = groupErrors(errors);
+      const { stagesErrors, tasksErrors, parametersErrors } = groupErrors(errors);
       if (stagesErrors.length) {
         yield all(stagesErrors.map((error) => put(setStageValidationError(error))));
       }
@@ -72,8 +72,8 @@ function* validatePrototypeSaga({ payload }: ReturnType<typeof validatePrototype
         yield all(tasksErrors.map((error) => put(setTaskValidationError(error))));
       }
 
-      if (activitiesErrors.length) {
-        yield all(activitiesErrors.map((error) => put(setActivityValidationError(error))));
+      if (parametersErrors.length) {
+        yield all(parametersErrors.map((error) => put(setParameterValidationError(error))));
       }
     } else {
       yield put(
@@ -96,7 +96,7 @@ export function* ComposerSaga() {
   yield all([
     fork(StageListSaga),
     fork(TaskListSaga),
-    fork(ActivitySaga),
+    fork(ParameterSaga),
     fork(ReviewerSaga),
     fork(ChecklistAuditLogsSaga),
   ]);

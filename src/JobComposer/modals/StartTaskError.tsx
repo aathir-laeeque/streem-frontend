@@ -44,7 +44,7 @@ const StartTaskModal: FC<CommonOverlayProps> = ({ closeAllOverlays, closeOverlay
       >
         <div className="start-task">
           <div className="header">Press Start Task First</div>
-          <div className="body">You need to start the Task before begining any Activity</div>
+          <div className="body">You need to start the Task before beginning any Parameter</div>
         </div>
       </BaseModal>
     </Wrapper>

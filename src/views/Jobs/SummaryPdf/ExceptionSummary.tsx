@@ -52,7 +52,7 @@ const generateDescription = (exception: Exception): ReactNode => {
 
     case 'PARAMETER_DEVIATION':
       const {
-        activity: { operator, parameter, uom, value },
+        parameter: { operator, parameter, uom, value },
         userInput,
       } = exception.parameterDeviation as ParameterDeviation;
 

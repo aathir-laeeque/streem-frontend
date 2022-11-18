@@ -13,7 +13,7 @@ const ChecklistView: FC<RouteComponentProps> = () => (
   <Router>
     <ListView path="/" />
     <Composer path="/:id" entity={ComposerEntity.CHECKLIST} />
-    <AuditLogs path="/:id/activites" />
+    <AuditLogs path="/:id/activities" />
     <Assignment path="/:id/assignment" />
     <Automation path="/:id/automation" />
     <Logs path="/:id/logs" />

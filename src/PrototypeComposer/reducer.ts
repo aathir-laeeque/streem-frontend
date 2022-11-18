@@ -1,7 +1,7 @@
 import { unionBy } from 'lodash';
 import { Reducer } from 'redux';
 
-import { activityReducer, initialState as ActivityListState } from './Activity/reducer';
+import { parameterReducer, initialState as ParameterListState } from './Activity/reducer';
 import { Checklist } from './checklist.types';
 import { ComposerAction, ComposerActionType, ComposerState } from './reducer.types';
 import { CollaboratorState } from './reviewer.types';
@@ -13,7 +13,7 @@ import {
 } from './ChecklistAuditLogs/reducers';
 
 const initialState: ComposerState = {
-  activities: ActivityListState,
+  parameters: ParameterListState,
   data: undefined,
   entity: undefined,
   error: undefined,
@@ -26,7 +26,7 @@ const initialState: ComposerState = {
 };
 
 /**
- * TODO: optimize the reducer for rendering process and eassy access of the tasks in the stages and activities in tasks
+ * TODO: optimize the reducer for rendering process and eassy access of the tasks in the stages and parameters in tasks
  * ? mabe look into splitting the reducer to smaller parts
  */
 const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialState, action) => {
@@ -41,7 +41,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
       return {
         ...state,
-        activities: activityReducer(state.activities, action),
+        parameters: parameterReducer(state.parameters, action),
         data: action.payload.data,
         loading: false,
         stages: stageReducer(state.stages, action),
@@ -112,7 +112,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
     default:
       return {
         ...state,
-        activities: activityReducer(state.activities, action),
+        parameters: parameterReducer(state.parameters, action),
         stages: stageReducer(state.stages, action),
         tasks: taskReducer(state.tasks, action),
         auditLogs: checklistAuditLogsReducer(state.auditLogs, action),

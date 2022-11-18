@@ -2,32 +2,32 @@ import { Button } from '#components';
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import { executeActivity, fixActivity } from './actions';
-import { ActivityProps } from './types';
+import { executeParameter, fixParameter } from './actions';
+import { ParameterProps } from './types';
 
-const CalculationActivity: FC<ActivityProps> = ({
-  activity,
+const CalculationParameter: FC<ParameterProps> = ({
+  parameter,
   isCorrectingError,
   isTaskCompleted,
 }) => {
   const dispatch = useDispatch();
   const {
-    activities: { activitiesById },
+    parameters: { parametersById },
   } = useTypedSelector((state) => state.composer);
 
   return (
-    <div className="calculation-activity">
+    <div className="calculation-parameter">
       <span className="head">Calculation</span>
       <span className="expression">
-        {activity.label} = {activity.data.expression}
+        {parameter.label} = {parameter.data.expression}
       </span>
       <span className="head">Input(s)</span>
-      {Object.entries(activity.data.variables).map(([key, value]: any) => {
+      {Object.entries(parameter.data.variables).map(([key, value]: any) => {
         return (
           <span className="variable">
             <span className="name">{key}:</span>
             <span className="value">
-              {value.label} = {activitiesById?.[value.activityId]?.response?.value || '-'}
+              {value.label} = {parametersById?.[value.parameterId]?.response?.value || '-'}
             </span>
           </span>
         );
@@ -38,22 +38,22 @@ const CalculationActivity: FC<ActivityProps> = ({
           variant="secondary"
           onClick={() => {
             if (isCorrectingError) {
-              dispatch(fixActivity(activity));
+              dispatch(fixParameter(parameter));
             } else {
-              dispatch(executeActivity(activity));
+              dispatch(executeParameter(parameter));
             }
           }}
         >
           Calculate
         </Button>
       )}
-      {activity?.response?.value && (
+      {parameter?.response?.value && (
         <>
           <span className="head" style={{ marginTop: 24 }}>
             Result
           </span>
           <span className="result">
-            {activity.label} = {activity.response.value} {activity.data.uom}
+            {parameter.label} = {parameter.response.value} {parameter.data.uom}
           </span>
         </>
       )}
@@ -61,4 +61,4 @@ const CalculationActivity: FC<ActivityProps> = ({
   );
 };
 
-export default CalculationActivity;
+export default CalculationParameter;

@@ -5,7 +5,7 @@ import {
   deleteTaskSuccess,
   reOrderTaskError,
   reOrderTaskSuccess,
-  resetTaskActivityError,
+  resetTaskParameterError,
   resetTaskError,
   setActiveTask,
   setTaskError,
@@ -40,7 +40,7 @@ export enum TaskListActions {
   REMOVE_STOP = '@@prototypeComposer/prototype/task-list/REMOVE_STOP',
   REMOVE_TASK_MEDIA = '@@prototypeComposer/prototype/task-list/REMOVE_TASK_MEDIA',
   REMOVE_TASK_TIMER = '@@prototypeComposer/prototype/task-list/REMOVE_TASK_TIMER',
-  RESET_TASK_ACTIVITY_ERROR = '@@prototypeComposer/prototype/task-list/RESET_TASK_ACTIVITY_ERROR',
+  RESET_TASK_PARAMETER_ERROR = '@@prototypeComposer/prototype/task-list/RESET_TASK_PARAMETER_ERROR',
   RESET_TASK_ERROR = '@@prototypeComposer/prototype/task-list/RESET_TASK_ERROR',
 
   SET_ACTIVE_TASK = '@@prototypeComposer/prototype/task-list/SET_ACTIVE_TASK',
@@ -59,14 +59,14 @@ export enum TaskListActions {
   UPDATE_TASK_ACTION = '@@prototypeComposer/prototype/task-list/UPDATE_TASK_ACTION',
   UPDATE_TASK_ACTION_SUCCESS = '@@prototypeComposer/prototype/task-list/UPDATE_TASK_ACTION_SUCCESS',
   ARCHIVE_TASK_ACTION = '@@prototypeComposer/prototype/task-list/ARCHIVE_TASK_ACTION',
-  REORDER_ACTIVITIES = '@@prototypeComposer/prototype/task-list/REORDER_ACTIVITIES',
+  REORDER_PARAMETERS = '@@prototypeComposer/prototype/task-list/REORDER_PARAMETERS',
 }
 
 export type TaskListActionType =
   | ReturnType<
       | typeof addNewTaskSuccess
       | typeof deleteTaskSuccess
-      | typeof resetTaskActivityError
+      | typeof resetTaskParameterError
       | typeof setActiveTask
       | typeof setTaskError
       | typeof setValidationError

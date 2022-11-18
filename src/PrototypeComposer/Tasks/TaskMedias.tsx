@@ -13,8 +13,8 @@ import { TaskMediasProps } from './types';
 const TaskMedias: FC<TaskMediasProps> = ({
   medias,
   taskId,
-  activityId,
-  isActivity = false,
+  parameterId,
+  isParameter = false,
   isTaskCompleted,
 }) => {
   const dispatch = useDispatch();
@@ -36,7 +36,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
     }
   }, [medias]);
 
-  if ((taskId === activeTaskId || isActivity) && activeMedia) {
+  if ((taskId === activeTaskId || isParameter) && activeMedia) {
     return (
       <TaskMediasWrapper>
         <div className="container">
@@ -48,8 +48,8 @@ const TaskMedias: FC<TaskMediasProps> = ({
                   type: OverlayNames.TASK_MEDIA,
                   props: {
                     taskId,
-                    isActivity,
-                    activityId,
+                    isParameter,
+                    parameterId,
                     mediaDetails: { ...activeMedia },
                     disableNameInput: isTaskCompleted,
                     disableDescInput: isTaskCompleted,
@@ -105,7 +105,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
             />
           </div>
 
-          {!isActivity ? (
+          {!isParameter ? (
             <ImageUploadButton
               onUploadSuccess={(fileData) => {
                 dispatch(

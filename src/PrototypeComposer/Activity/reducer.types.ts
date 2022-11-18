@@ -1,38 +1,38 @@
-import { ActivityType } from '#PrototypeComposer/checklist.types';
+import { ParameterType } from '#PrototypeComposer/checklist.types';
 import { Pageable } from '#utils/globalTypes';
 import { ComposerActionType } from '../reducer.types';
-import { addNewTaskSuccess, deleteTaskSuccess, reOrderActivities } from '../Tasks/actions';
+import { addNewTaskSuccess, deleteTaskSuccess, reOrderParameters } from '../Tasks/actions';
 import {
-  addNewActivityError,
-  addNewActivitySuccess,
-  deleteActivityError,
-  deleteActivitySuccess,
+  addNewParameterError,
+  addNewParameterSuccess,
+  deleteParameterError,
+  deleteParameterSuccess,
   setValidationError,
-  updateStoreActivity,
-  updateActivityError,
-  removeStoreActivityItem,
-  addStoreActivityItem,
-  updateStoreMediaActivity,
+  updateStoreParameter,
+  updateParameterError,
+  removeStoreParameterItem,
+  addStoreParameterItem,
+  updateStoreMediaParameter,
   toggleNewParameter,
   fetchParameters,
   fetchParametersError,
   fetchParametersSuccess,
 } from './actions';
-import { Activity } from './types';
+import { Parameter } from './types';
 
-export type ActivitiesById = Record<string, Activity>;
-export type ActivityOrderInTaskInStage = Record<string, Record<string, Activity['id'][]>>;
+export type ParametersById = Record<string, Parameter>;
+export type ParameterOrderInTaskInStage = Record<string, Record<string, Parameter['id'][]>>;
 
-export type ActivityListState = {
-  readonly activityOrderInTaskInStage: ActivityOrderInTaskInStage;
+export type ParameterListState = {
+  readonly parameterOrderInTaskInStage: ParameterOrderInTaskInStage;
   readonly error?: any;
-  readonly listById: ActivitiesById;
+  readonly listById: ParametersById;
   readonly addParameter?: {
     action: 'task' | 'list';
     title: string;
-    activityId?: string;
+    parameterId?: string;
     fetchData?: () => void;
-    type?: ActivityType;
+    type?: ParameterType;
   };
   readonly parameters: {
     listLoading: boolean;
@@ -42,45 +42,45 @@ export type ActivityListState = {
   };
 };
 
-export enum ActivityListActions {
-  ADD_NEW_ACTIVITY = '@@prototypeComposer/prototype/activity-list/ADD_NEW_ACTIVITY',
-  ADD_NEW_ACTIVITY_ERROR = '@@prototypeComposer/prototype/activity-list/ADD_NEW_ACTIVITY_ERROR',
-  ADD_NEW_ACTIVITY_SUCCESS = '@@prototypeComposer/prototype/activity-list/ADD_NEW_ACTIVITY_SUCCESS',
-  DELETE_ACTIVITY = '@@prototypeComposer/prototype/activity-list/DELETE_ACTIVITY',
-  DELETE_ACTIVITY_ERROR = '@@prototypeComposer/prototype/activity-list/DELETE_ACTIVITY_ERROR',
-  DELETE_ACTIVITY_SUCCESS = '@@prototypeComposer/prototype/activity-list/DELETE_ACTIVITY_SUCCESS',
-  RESET_VALIDATION_ERROR = '@@prototypeComposer/prototype/activity-list/RESET_VALIDATION_ERROR',
-  SET_VALIDATION_ERROR = '@@prototypeComposer/prototype/activity-list/SET_VALIDATION_ERROR',
-  UPDATE_ACTIVITY_API = '@@prototypeComposer/prototype/activity-list/UPDATE_ACTIVITY_API',
-  UPDATE_ACTIVITY_ERROR = '@@prototypeComposer/prototype/activity-list/UPDATE_ACTIVITY_ERROR',
-  UPDATE_STORE_ACTIVITY = '@@prototypeComposer/prototype/activity-list/UPDATE_STORE_ACTIVITY',
-  UPDATE_STORE_MEDIA_ACTIVITY = '@@prototypeComposer/prototype/activity-list/UPDATE_STORE_MEDIA_ACTIVITY',
-  ADD_STORE_ACTIVITY_ITEM = '@@prototypeComposer/prototype/activity-list/ADD_STORE_ACTIVITY_ITEM',
-  REMOVE_STORE_ACTIVITY_ITEM = '@@prototypeComposer/prototype/activity-list/REMOVE_STORE_ACTIVITY_ITEM',
+export enum ParameterListActions {
+  ADD_NEW_PARAMETER = '@@prototypeComposer/prototype/parameter-list/ADD_NEW_PARAMETER',
+  ADD_NEW_PARAMETER_ERROR = '@@prototypeComposer/prototype/parameter-list/ADD_NEW_PARAMETER_ERROR',
+  ADD_NEW_PARAMETER_SUCCESS = '@@prototypeComposer/prototype/parameter-list/ADD_NEW_PARAMETER_SUCCESS',
+  DELETE_PARAMETER = '@@prototypeComposer/prototype/parameter-list/DELETE_PARAMETER',
+  DELETE_PARAMETER_ERROR = '@@prototypeComposer/prototype/parameter-list/DELETE_PARAMETER_ERROR',
+  DELETE_PARAMETER_SUCCESS = '@@prototypeComposer/prototype/parameter-list/DELETE_PARAMETER_SUCCESS',
+  RESET_VALIDATION_ERROR = '@@prototypeComposer/prototype/parameter-list/RESET_VALIDATION_ERROR',
+  SET_VALIDATION_ERROR = '@@prototypeComposer/prototype/parameter-list/SET_VALIDATION_ERROR',
+  UPDATE_PARAMETER_API = '@@prototypeComposer/prototype/parameter-list/UPDATE_PARAMETER_API',
+  UPDATE_PARAMETER_ERROR = '@@prototypeComposer/prototype/parameter-list/UPDATE_PARAMETER_ERROR',
+  UPDATE_STORE_PARAMETER = '@@prototypeComposer/prototype/parameter-list/UPDATE_STORE_PARAMETER',
+  UPDATE_STORE_MEDIA_PARAMETER = '@@prototypeComposer/prototype/parameter-list/UPDATE_STORE_MEDIA_PARAMETER',
+  ADD_STORE_PARAMETER_ITEM = '@@prototypeComposer/prototype/parameter-list/ADD_STORE_PARAMETER_ITEM',
+  REMOVE_STORE_PARAMETER_ITEM = '@@prototypeComposer/prototype/parameter-list/REMOVE_STORE_PARAMETER_ITEM',
 
-  TOGGLE_NEW_PARAMETER = '@@prototypeComposer/prototype/activity-list/TOGGLE_NEW_PARAMETER',
-  FETCH_PARAMETERS = '@@prototypeComposer/prototype/activity-list/FETCH_PARAMETERS',
-  FETCH_PARAMETERS_SUCCESS = '@@prototypeComposer/prototype/activity-list/FETCH_PARAMETERS_SUCCESS',
-  FETCH_PARAMETERS_ERROR = '@@prototypeComposer/prototype/activity-list/FETCH_PARAMETERS_ERROR',
+  TOGGLE_NEW_PARAMETER = '@@prototypeComposer/prototype/parameter-list/TOGGLE_NEW_PARAMETER',
+  FETCH_PARAMETERS = '@@prototypeComposer/prototype/parameter-list/FETCH_PARAMETERS',
+  FETCH_PARAMETERS_SUCCESS = '@@prototypeComposer/prototype/parameter-list/FETCH_PARAMETERS_SUCCESS',
+  FETCH_PARAMETERS_ERROR = '@@prototypeComposer/prototype/parameter-list/FETCH_PARAMETERS_ERROR',
 }
 
-export type ActivityListActionType =
+export type ParameterListActionType =
   | ReturnType<
       | typeof toggleNewParameter
-      | typeof addNewActivityError
-      | typeof addNewActivitySuccess
-      | typeof deleteActivityError
-      | typeof deleteActivitySuccess
+      | typeof addNewParameterError
+      | typeof addNewParameterSuccess
+      | typeof deleteParameterError
+      | typeof deleteParameterSuccess
       | typeof setValidationError
-      | typeof updateActivityError
-      | typeof updateStoreActivity
-      | typeof updateStoreMediaActivity
-      | typeof addStoreActivityItem
-      | typeof removeStoreActivityItem
+      | typeof updateParameterError
+      | typeof updateStoreParameter
+      | typeof updateStoreMediaParameter
+      | typeof addStoreParameterItem
+      | typeof removeStoreParameterItem
       | typeof fetchParameters
       | typeof fetchParametersError
       | typeof fetchParametersSuccess
-      | typeof reOrderActivities
+      | typeof reOrderParameters
     >
   | ReturnType<typeof addNewTaskSuccess | typeof deleteTaskSuccess>
   | ComposerActionType;

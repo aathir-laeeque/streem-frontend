@@ -1,7 +1,7 @@
 import {
-  executeActivity,
-  fixActivity,
-  updateExecutedActivity,
+  executeParameter,
+  fixParameter,
+  updateExecutedParameter,
 } from '#JobComposer/ActivityList/actions';
 import { apiUploadFile } from '#utils/apiUrls';
 import { request } from '#utils/request';
@@ -11,21 +11,21 @@ import { FileUploadAction } from './types';
 
 function* uploadFileSaga({ payload }: ReturnType<typeof uploadFile>) {
   try {
-    const { formData, activity, isCorrectingError } = payload;
+    const { formData, parameter, isCorrectingError } = payload;
 
     const { data } = yield call(request, 'POST', apiUploadFile(), {
       formData: formData,
     });
 
     if (data) {
-      if (activity) {
-        // execute activtiy if in upload file action activity is passed
+      if (parameter) {
+        // execute parameter if in upload file action parameter is passed
         const medias = [data];
         yield put(
-          updateExecutedActivity({
-            ...activity,
+          updateExecutedParameter({
+            ...parameter,
             response: {
-              ...activity.response,
+              ...parameter.response,
               medias,
               audit: undefined,
               state: 'EXECUTED',
@@ -33,9 +33,9 @@ function* uploadFileSaga({ payload }: ReturnType<typeof uploadFile>) {
           }),
         );
         if (isCorrectingError) {
-          yield put(fixActivity({ ...activity, data: { medias } }));
+          yield put(fixParameter({ ...parameter, data: { medias } }));
         } else {
-          yield put(executeActivity({ ...activity, data: { medias } }));
+          yield put(executeParameter({ ...parameter, data: { medias } }));
         }
       }
     } else {

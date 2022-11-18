@@ -1,5 +1,5 @@
 import { FileUploadData, Error } from '#utils/globalTypes';
-import { Activity, Checklist, Stage, Task as TaskType } from '../checklist.types';
+import { Parameter, Checklist, Stage, Task as TaskType } from '../checklist.types';
 
 export type Task = TaskType & {
   errors: Error[];
@@ -21,8 +21,8 @@ export type TaskCardWrapperProps = {
 export type TaskMediasProps = {
   medias: Task['medias'];
   taskId?: Task['id'];
-  activityId?: Activity['id'];
-  isActivity?: boolean;
+  parameterId?: Parameter['id'];
+  isParameter?: boolean;
   isTaskCompleted?: boolean;
 };
 
@@ -51,7 +51,7 @@ export type AddMediaType = {
 
 export type UpdateMediaType = {
   taskId: Task['id'];
-  activityId: Activity['id'];
+  parameterId: Parameter['id'];
   mediaId: MediaDetails['mediaId'];
   mediaDetails: Pick<MediaDetails, 'name' | 'description'>;
 };
@@ -74,7 +74,7 @@ export type ArchiveActionType = {
 
 export enum TaskErrors {
   E210 = 'TASK_NAME_CANNOT_BE_EMPTY',
-  E211 = 'TASK_SHOULD_HAVE_ATLEAST_ONE_EXECUTABLE_ACTIVITY',
+  E211 = 'TASK_SHOULD_HAVE_ATLEAST_ONE_EXECUTABLE_PARAMETER',
 }
 
 export enum TaskTimerErrorCodes {

@@ -21,7 +21,7 @@ enum JobFeatures {
   CREATE_AND_ASSIGN_JOBS = 'Create and Assign Jobs',
   EXECUTE_AND_COMPLETE_JOBS = 'Execute and Complete Jobs',
   PRINT_JOBS = 'Print Jobs',
-  VIEW_JOBS_AND_JOB_ACTIVITY = 'View Jobs and Job Activity',
+  VIEW_JOBS_AND_JOB_PARAMETER = 'View Jobs and Job Parameter',
   COMPLETE_JOB_WITH_EXCEPTION = 'Complete a Job with Exception',
   MAKE_CORRECTIONS_IN_COMPLETED_TASK = 'Make Corrections in completed Tasks',
   MANAGE_TASK_EXCEPTIONS = 'Manage Task Exceptions',
@@ -127,7 +127,7 @@ export const rolesDetails = {
       [PermissionCategories.JOB_FEATURES]: [
         JobFeatures.EXECUTE_AND_COMPLETE_JOBS,
         JobFeatures.PRINT_JOBS,
-        JobFeatures.VIEW_JOBS_AND_JOB_ACTIVITY,
+        JobFeatures.VIEW_JOBS_AND_JOB_PARAMETER,
         JobFeatures.MAKE_CORRECTIONS_IN_COMPLETED_TASK,
       ],
       [PermissionCategories.ONTOLOGY_FEATURES]: [
@@ -145,7 +145,7 @@ export const rolesDetails = {
       ],
       [PermissionCategories.JOB_FEATURES]: [
         JobFeatures.PRINT_JOBS,
-        JobFeatures.VIEW_JOBS_AND_JOB_ACTIVITY,
+        JobFeatures.VIEW_JOBS_AND_JOB_PARAMETER,
       ],
       [PermissionCategories.ADMINISTRATIVE_FEATURES]: [
         AdministrativeFeatures.VIEW_EXISTING_USERS,

@@ -9,11 +9,11 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { openOverlayAction } from '../../components/OverlayContainer/actions';
-import { executeActivity, fixActivity, updateExecutedActivity } from './actions';
-import { ActivityProps } from './types';
+import { executeParameter, fixParameter, updateExecutedParameter } from './actions';
+import { ParameterProps } from './types';
 
 const MediaWrapper = styled.div.attrs({
-  className: 'activity-media',
+  className: 'parameter-media',
 })`
   display: flex;
   flex-direction: column;
@@ -58,8 +58,8 @@ const MediaWrapper = styled.div.attrs({
   }
 `;
 
-const MediaActivity: FC<ActivityProps> = ({
-  activity,
+const MediaParameter: FC<ParameterProps> = ({
+  parameter,
   isCorrectingError,
   isTaskCompleted,
   isLoggedInUserAssigned,
@@ -78,14 +78,14 @@ const MediaActivity: FC<ActivityProps> = ({
             name: '',
             description: '',
           },
-          isActivity: true,
+          isParameter: true,
           execute: (data) => {
             dispatch(
-              updateExecutedActivity({
-                ...activity,
+              updateExecutedParameter({
+                ...parameter,
                 response: {
-                  ...activity.response,
-                  medias: [...(activity.response?.medias ?? []), data],
+                  ...parameter.response,
+                  medias: [...(parameter.response?.medias ?? []), data],
                   audit: undefined,
                   state: 'EXECUTED',
                 },
@@ -93,19 +93,19 @@ const MediaActivity: FC<ActivityProps> = ({
             );
             if (isCorrectingError) {
               dispatch(
-                fixActivity({
-                  ...activity,
+                fixParameter({
+                  ...parameter,
                   data: {
-                    medias: [...(activity.data?.medias ?? []), { ...data }],
+                    medias: [...(parameter.data?.medias ?? []), { ...data }],
                   },
                 }),
               );
             } else {
               dispatch(
-                executeActivity({
-                  ...activity,
+                executeParameter({
+                  ...parameter,
                   data: {
-                    medias: [...(activity.data?.medias ?? []), { ...data }],
+                    medias: [...(parameter.data?.medias ?? []), { ...data }],
                   },
                 }),
               );
@@ -136,10 +136,10 @@ const MediaActivity: FC<ActivityProps> = ({
   return (
     <MediaWrapper>
       <TaskMedias
-        medias={activity.response?.medias ?? []}
-        activityId={activity.id}
+        medias={parameter.response?.medias ?? []}
+        parameterId={parameter.id}
         isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
-        isActivity
+        isParameter
       />
       {!isTaskCompleted && (
         <div style={{ display: 'flex', marginTop: '24px' }}>
@@ -170,4 +170,4 @@ const MediaActivity: FC<ActivityProps> = ({
   );
 };
 
-export default MediaActivity;
+export default MediaParameter;

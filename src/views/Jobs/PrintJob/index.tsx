@@ -1,7 +1,7 @@
 import logo from '#assets/images/logo.png';
-import { ActivitiesById, ActivitiesOrderInTaskInStage } from '#JobComposer/ActivityList/types';
+import { ParametersById, ParametersOrderInTaskInStage } from '#JobComposer/ActivityList/types';
 import { Checklist, Task } from '#JobComposer/checklist.types';
-import { getActivities } from '#JobComposer/utils';
+import { getParameters } from '#JobComposer/utils';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { apiPrintJobDetails } from '#utils/apiUrls';
@@ -18,14 +18,14 @@ import { PrintJobProps } from './types';
 
 const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   const [data, setData] = useState<PdfJobDataType | undefined>();
-  const [activitiesData, setActivitiesData] = useState<{
-    activitiesById: ActivitiesById;
-    activitiesOrderInTaskInStage: ActivitiesOrderInTaskInStage;
+  const [parametersData, setParametersData] = useState<{
+    parametersById: ParametersById;
+    parametersOrderInTaskInStage: ParametersOrderInTaskInStage;
   }>({
-    activitiesById: {},
-    activitiesOrderInTaskInStage: {},
+    parametersById: {},
+    parametersOrderInTaskInStage: {},
   });
-  const { activitiesById } = activitiesData;
+  const { parametersById } = parametersData;
   const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
 
   const { dateAndTimeStampFormat, timeFormat, dateFormat } = useTypedSelector(
@@ -37,8 +37,8 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
     const fetchJobPdfData = async () => {
       try {
         const response: { data: PdfJobDataType } = await request('GET', apiPrintJobDetails(jobId));
-        setActivitiesData(
-          getActivities({ checklist: response.data.checklist as unknown as Checklist }),
+        setParametersData(
+          getParameters({ checklist: response.data.checklist as unknown as Checklist }),
         );
         setData(response.data);
       } catch (err) {
@@ -51,7 +51,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
     }
   }, []);
 
-  if (!data || !profile || !Object.keys(activitiesById).length) return null;
+  if (!data || !profile || !Object.keys(parametersById).length) return null;
 
   const { checklist, code } = data;
 
@@ -88,7 +88,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                 </View>
                 {(stage.tasks as unknown as Array<Task>).map((task, taskIndex: number) => (
                   <TaskView
-                    activitiesById={activitiesById}
+                    parametersById={parametersById}
                     taskIndex={taskIndex}
                     dateFormat={dateFormat}
                     timeFormat={timeFormat}

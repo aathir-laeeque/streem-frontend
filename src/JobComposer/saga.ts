@@ -29,8 +29,8 @@ import {
   startJob,
   startJobSuccess,
 } from './actions';
-import { setActivityError } from './ActivityList/actions';
-import { ActivityListSaga } from './ActivityList/saga';
+import { setParameterError } from './ActivityList/actions';
+import { ParameterListSaga } from './ActivityList/saga';
 import { ComposerAction } from './composer.reducer.types';
 import { Entity, JobErrors, JobWithExceptionInCompleteTaskErrors } from './composer.types';
 import { JobAuditLogsSaga } from './JobAuditLogs/saga';
@@ -143,18 +143,18 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
         );
       } else {
         if (!withException) {
-          const { tasksErrors, activitiesErrors, signOffErrors } = groupJobErrors(errors);
+          const { tasksErrors, parametersErrors, signOffErrors } = groupJobErrors(errors);
 
           if (tasksErrors.length) {
             console.log('handle task level error here');
 
             yield all(
-              tasksErrors.map((error) => put(setTaskError('Activity Incomplete', error.id))),
+              tasksErrors.map((error) => put(setTaskError('Parameter Incomplete', error.id))),
             );
           }
-          if (activitiesErrors.length) {
-            console.log('handle activities level error here');
-            yield all(activitiesErrors.map((error) => put(setActivityError(error, error.id))));
+          if (parametersErrors.length) {
+            console.log('handle parameters level error here');
+            yield all(parametersErrors.map((error) => put(setParameterError(error, error.id))));
           }
 
           if (signOffErrors.length) {
@@ -251,7 +251,7 @@ export function* ComposerSaga() {
     // fork other sagas here
     fork(StageListSaga),
     fork(TaskListSaga),
-    fork(ActivityListSaga),
+    fork(ParameterListSaga),
     fork(JobAuditLogsSaga),
   ]);
 }

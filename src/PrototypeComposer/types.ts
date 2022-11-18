@@ -22,5 +22,5 @@ export type ComposerProps = RouteComponentProps<{
 export type ErrorGroups = {
   stagesErrors: Error[];
   tasksErrors: Error[];
-  activitiesErrors: Error[];
+  parametersErrors: Error[];
 };
