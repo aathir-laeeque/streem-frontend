@@ -128,13 +128,13 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
 }
 
 function* reOrderTaskSaga({ payload }: ReturnType<typeof reOrderTask>) {
-  const { to: toIndex, id: fromTaskId, from: fromIndex } = payload;
+  const { to: toIndex, id: fromTaskId, from: fromIndex, activeStageId } = payload;
   const {
     tasks: { tasksOrderInStage },
     data: processData,
   }: RootState['prototypeComposer'] = yield select((state: RootState) => state.prototypeComposer);
 
-  const toTaskId = tasksOrderInStage[payload.activeStageId][payload.to];
+  const toTaskId = tasksOrderInStage[activeStageId][toIndex];
 
   try {
     const { data: reorderData, errors: reorderErrors } = yield call(
@@ -143,19 +143,19 @@ function* reOrderTaskSaga({ payload }: ReturnType<typeof reOrderTask>) {
       apiReorderTasks(),
       {
         data: {
-          tasksOrder: { [toTaskId]: fromIndex, [fromTaskId]: toIndex },
+          tasksOrder: { [toTaskId]: fromIndex + 1, [fromTaskId]: toIndex + 1 },
           checklistId: processData?.id,
         },
       },
     );
     if (reorderData) {
-      yield put(reOrderTaskSuccess({ ...payload }));
+      yield put(reOrderTaskSuccess(payload));
     } else {
       console.log('error came in reorder api :: ', reorderErrors);
       yield put(reOrderTaskError(reorderErrors));
     }
   } catch (error) {
-    console.error('error came in updateStageNameSaga :: ', error);
+    console.error('error came in reOrderTaskSaga :: ', error);
   }
 }
 

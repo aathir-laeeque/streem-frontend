@@ -102,18 +102,18 @@ function* reOrderStageSaga({ payload }: ReturnType<typeof reOrderStage>) {
       apiReorderStages(),
       {
         data: {
-          stagesOrder: { [toStageId]: payload.from, [payload.id]: payload.to },
+          stagesOrder: { [toStageId]: payload.from + 1, [payload.id]: payload.to + 1 },
         },
       },
     );
     if (reorderData) {
-      yield put(reOrderStageSuccess({ ...payload }));
+      yield put(reOrderStageSuccess(payload));
     } else {
       console.error('error came in reorder api :: ', reorderErrors);
       yield put(reOrderStageError(reorderErrors));
     }
   } catch (error) {
-    console.error('error came in updateStageNameSaga :: ', error);
+    console.error('error came in reOrderStageSaga :: ', error);
   }
 }
 

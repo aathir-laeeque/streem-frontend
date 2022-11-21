@@ -69,7 +69,8 @@ const reducer: Reducer<StageListState, StageListActionType> = (state = initialSt
       };
 
     case StageListActions.REORDER_STAGE_SUCCESS:
-      const { listOrder } = state;
+      const { listOrder, listById } = state;
+      const toId = listOrder[action.payload.to];
       listOrder[action.payload.from] = listOrder.splice(
         action.payload.to,
         1,
@@ -78,6 +79,17 @@ const reducer: Reducer<StageListState, StageListActionType> = (state = initialSt
       return {
         ...state,
         listOrder,
+        listById: {
+          ...listById,
+          [action.payload.id]: {
+            ...listById[action.payload.id],
+            orderTree: action.payload.to + 1,
+          },
+          [toId]: {
+            ...listById[toId],
+            orderTree: action.payload.from + 1,
+          },
+        },
       };
 
     case StageListActions.UPDATE_STAGE_NAME_SUCCESS:
