@@ -10,10 +10,7 @@ export const formatDateTime = (time: number, format?: string) => {
   } = store.getState();
   const { dateAndTimeStampFormat } = facilityWiseConstants[selectedFacility!.id];
 
-  return moment
-    .unix(time)
-    .utcOffset('+05:30')
-    .format(format || dateAndTimeStampFormat);
+  return moment.unix(time).format(format || dateAndTimeStampFormat);
 };
 
 // TODO:Deprecate this function and use the one below this one.
