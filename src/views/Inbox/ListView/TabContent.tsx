@@ -1,9 +1,16 @@
-import { DataTable, PaginatedFetchData, Pagination, ProgressBar, SearchFilter } from '#components';
+import {
+  DataTable,
+  fetchDataParams,
+  PaginatedFetchData,
+  Pagination,
+  ProgressBar,
+  SearchFilter,
+  Select,
+} from '#components';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
-import MoreDetails from '#views/Jobs/Components/MoreDetailsColumn';
 import AssigneesColumn from '#views/Jobs/ListView/AssigneesColumn';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { AssignedJobStates, CompletedJobStates, Job } from '#views/Jobs/ListView/types';
@@ -14,6 +21,11 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchInbox, setSelectedState } from './actions';
 import { ListViewState, TabViewProps } from './types';
+import { keyBy } from 'lodash';
+import DetailsPopover from '#views/Jobs/Components/DetailsPopover';
+import { fetchParameters, fetchParametersSuccess } from '#PrototypeComposer/Activity/actions';
+import { fetchChecklists } from '#views/Checklists/ListView/actions';
+import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { jobs, loading: jobDataLoading }: ListViewState = useTypedSelector(
@@ -26,6 +38,17 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { selectedFacility: { id: facilityId = '' } = {}, selectedUseCase } = useTypedSelector(
     (state) => state.auth,
   );
+  const {
+    checklists,
+    pageable: checlistViewPageable,
+    loading,
+  } = useTypedSelector((state) => state.checklistListView);
+  const {
+    parameters: {
+      parameters: { list: parametersList, pageable: parameterPageable },
+    },
+  } = useTypedSelector((state) => state.prototypeComposer);
+
   const reducerLabel = label.toLowerCase().split(' ').join('');
 
   const [filterFields, setFilterFields] = useState<FilterField[]>([]);
@@ -63,9 +86,10 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   useEffect(() => {
     if (selectedUseCase?.id) {
       fetchData();
+      fetchChecklistData({ page: 0 });
       dispatch(setSelectedState(reducerLabel));
     }
-  }, [selectedUseCase?.id]);
+  }, [selectedUseCase?.id, filterFields]);
 
   const columns = [
     {
@@ -155,21 +179,79 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       label: 'Job ID',
       minWidth: 152,
     },
-    ...jobProperties.map((jobProperty) => {
+    ...parametersList.map((parameter) => {
       return {
-        id: jobProperty.id,
-        label: jobProperty.label,
+        id: parameter.id,
+        label: parameter.label,
         minWidth: 125,
         maxWidth: 180,
+        format: (item: Job) => <DetailsPopover item={item} parameterId={parameter.id} />,
       };
     }),
-    {
-      id: 'moreDetails',
-      label: 'More Details',
-      minWidth: 152,
-      format: (item: Job) => <MoreDetails item={item} />,
-    },
   ];
+
+  const fetchChecklistData = ({ page, size = 10, query = '' }: fetchDataParams) => {
+    const filters = JSON.stringify({
+      op: FilterOperators.AND,
+      fields: [
+        { field: 'code', op: FilterOperators.LIKE, values: [query] },
+        { field: 'state', op: FilterOperators.EQ, values: ['PUBLISHED'] },
+        { field: 'archived', op: FilterOperators.EQ, values: [false] },
+        {
+          field: 'useCaseId',
+          op: FilterOperators.EQ,
+          values: [selectedUseCase?.id],
+        },
+      ],
+    });
+    dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, page === 0));
+  };
+
+  const fetchParametersListData = async (params: PaginatedFetchData = {}, option) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
+    if (option?.id) {
+      dispatch(
+        fetchParameters(option.id, {
+          page,
+          size,
+          filters: JSON.stringify({
+            op: FilterOperators.AND,
+            fields: [
+              {
+                field: 'targetEntityType',
+                op: FilterOperators.EQ,
+                values: [TargetEntityType.PROCESS],
+              },
+              { field: 'archived', op: FilterOperators.EQ, values: [false] },
+            ],
+          }),
+          sort: 'id,desc',
+        }),
+      );
+    }
+  };
+
+  const selectChangeHandler = (option) => {
+    if (option) {
+      const selectedFilterField = [
+        {
+          field: 'checklist.id',
+          op: FilterOperators.EQ,
+          values: [option.id],
+        },
+      ];
+      setFilterFields(selectedFilterField);
+      fetchParametersListData({ page: DEFAULT_PAGE_NUMBER, size: DEFAULT_PAGE_SIZE }, option);
+    } else {
+      setFilterFields([]);
+      dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
+    }
+  };
+
+  const handleMenuScrollToBottom = () => {
+    console.log('scroll');
+    fetchChecklistData({ page: checlistViewPageable.page + 1 });
+  };
 
   return (
     <TabContentWrapper>
@@ -198,6 +280,19 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
             });
           }}
         />
+        <Select
+          className="process-filter"
+          backspaceRemovesValue={false}
+          hideSelectedOptions={false}
+          onChange={(newValue) => {
+            selectChangeHandler(newValue);
+          }}
+          options={checklists.map((currList) => ({ ...currList, label: currList.name }))}
+          placeholder="Processes"
+          tabSelectsValue={false}
+          onMenuScrollToBottom={handleMenuScrollToBottom}
+          optional
+        />
       </div>
       <div
         style={{
@@ -221,10 +316,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           rows={list.map((item) => {
             return {
               ...item,
-              ...item.properties!.reduce<Record<string, string>>((acc, itemProperty) => {
-                acc[itemProperty.id] = itemProperty.value;
-                return acc;
-              }, {}),
+              parameterValues: keyBy(item.parameterValues, 'id'),
             };
           })}
         />

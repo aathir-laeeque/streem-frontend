@@ -79,6 +79,13 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
   const { roles: userRoles, selectedFacility: { id: facilityId = '' } = {} } = useTypedSelector(
     (state) => state.auth,
   );
+  const {
+    data,
+    parameters: {
+      parameters: { list: parametersList, pageable: parameterPageable },
+    },
+  } = useTypedSelector((state) => state.prototypeComposer);
+
   const propertiesStoreData = useTypedSelector((state) => state.properties);
   const { list: jobProperties, loading: jobPropertiesLoading } =
     propertiesStoreData[ComposerEntity.JOB];
@@ -161,27 +168,27 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
   const onCreateJob = (jobDetails: Record<string, string>) => {
     const tempProperties: { id: string; value: string }[] = [];
     let error = false;
-    jobProperties.every((property) => {
-      if (property.name) {
-        if (!jobDetails[property.name]) {
-          if (property.mandatory) {
-            error = true;
-            return false;
-          }
-          return true;
-        } else {
-          tempProperties.push({
-            id: property.id,
-            value: jobDetails[property.name],
-          });
-          return true;
-        }
-      }
-    });
+    // jobProperties.every((property) => {
+    //   if (property.name) {
+    //     if (!jobDetails[property.name]) {
+    //       if (property.mandatory) {
+    //         error = true;
+    //         return false;
+    //       }
+    //       return true;
+    //     } else {
+    //       tempProperties.push({
+    //         id: property.id,
+    //         value: jobDetails[property.name],
+    //       });
+    //       return true;
+    //     }
+    //   }
+    // });
     if (!error && tempProperties && selectedChecklist) {
       dispatch(
         createJob({
-          properties: tempProperties,
+          properties: jobDetails.properties,
           checklistId: selectedChecklist.id,
           selectedUseCaseId: selectedUseCase!.id,
           relations: jobDetails?.relations,
@@ -369,7 +376,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                             type: OverlayNames.CREATE_JOB_MODAL,
                             props: {
                               selectedChecklist: selectedChecklist,
-                              properties: jobProperties,
+                              properties: parametersList,
                               onCreateJob: onCreateJob,
                             },
                           }),

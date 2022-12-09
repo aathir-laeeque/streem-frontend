@@ -4,6 +4,7 @@ import {
   Button,
   fetchDataParams,
   TextInput,
+  PaginatedFetchData,
   formatOptionLabel,
   FormGroup,
 } from '#components';
@@ -21,10 +22,14 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Cardinality } from '#views/Ontology/types';
 import { isNil } from 'lodash';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { TargetEntityType } from '#PrototypeComposer/checklist.types';
+import { fetchParameters, fetchParametersSuccess } from '#PrototypeComposer/Activity/actions';
+import ParameterView from '#PrototypeComposer/Parameters/ExecutionViews';
 
 export interface CreateJobModalProps {
   selectedChecklist: Checklist | null;
-  properties: Property[];
+  parameterValues: any;
   onCreateJob: (jobDetails: Record<string, string>) => void;
 }
 
@@ -41,6 +46,7 @@ const Wrapper = styled.div.attrs({})`
       .properties-container {
         display: flex;
         flex-wrap: wrap;
+        margin-top: 32px;
 
         .row {
           flex: unset;
@@ -94,7 +100,7 @@ const Wrapper = styled.div.attrs({})`
 export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: { properties, onCreateJob, selectedChecklist },
+  props: { parameterValues, onCreateJob, selectedChecklist },
 }) => {
   const [selectOptions, setSelectOptions] = useState<
     Record<
@@ -119,6 +125,12 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   const [reRender, setReRender] = useState(false);
   const { selectedUseCase } = useTypedSelector((state) => state.auth);
   const { checklists, pageable, loading } = useTypedSelector((state) => state.checklistListView);
+  const {
+    data,
+    parameters: {
+      parameters: { list: parametersList, pageable: parameterPageable },
+    },
+  } = useTypedSelector((state) => state.prototypeComposer);
   const dispatch = useDispatch();
 
   const fetchData = ({ page, size = 10, query = '' }: fetchDataParams) => {
@@ -138,6 +150,11 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, page === 0));
   };
 
+  const reactForm = useForm({
+    mode: 'onChange',
+    criteriaMode: 'all',
+  });
+
   const {
     control,
     handleSubmit,
@@ -146,10 +163,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     formState: { isDirty, isValid },
     getValues,
     setValue,
-  } = useForm({
-    mode: 'onChange',
-    criteriaMode: 'all',
-  });
+  } = reactForm;
 
   useEffect(() => {
     if (selectedChecklist) {
@@ -157,27 +171,21 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     }
   }, []);
 
-  const onSubmit = (data: Record<string, string>) => {
-    const parsedData = {
-      ...data,
-      ...(checklist &&
-        data?.relations &&
-        Object.entries(data.relations).reduce(
-          (acc, [key, value]: [string, any]) => {
-            const relation = checklist.relations.find(
-              (relation: any) => relation.externalId === key,
-            );
-            if (relation) {
-              acc['relations'][relation.id] = value;
-            }
-            return acc;
-          },
-          {
-            relations: {},
-          } as any,
-        )),
-    };
-    onCreateJob(parsedData);
+  const onSubmit = (data: any) => {
+    const parameterValues = parametersList.reduce((acc, parameter: any, index: any) => {
+      if (data.data[parameter.id]) {
+        acc[parameter.id] = {
+          parameter: data.data[parameter.id],
+          reason: data.data[parameter?.id]?.response?.reason || '',
+        };
+        return acc;
+      }
+    }, {});
+
+    console.log('zero parameter values', parameterValues);
+
+    onCreateJob({ checklistId: data.checklistId, properties: parameterValues });
+    setChecklist(null);
     closeOverlay();
   };
 
@@ -240,11 +248,47 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     }
   };
 
+  const fetchParametersListData = async (params: PaginatedFetchData = {}, option) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
+    if (option?.id) {
+      dispatch(
+        fetchParameters(option.id, {
+          page,
+          size,
+          filters: JSON.stringify({
+            op: FilterOperators.AND,
+            fields: [
+              {
+                field: 'targetEntityType',
+                op: FilterOperators.EQ,
+                values: [TargetEntityType.PROCESS],
+              },
+              { field: 'archived', op: FilterOperators.EQ, values: [false] },
+            ],
+          }),
+          sort: 'id,desc',
+        }),
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchParametersListData({ page: DEFAULT_PAGE_NUMBER, size: DEFAULT_PAGE_SIZE }, checklist);
+    if (!checklist) {
+      dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
+    }
+  }, [checklist]);
+
   return (
     <Wrapper>
       <BaseModal
         closeAllModals={closeAllOverlays}
-        closeModal={closeOverlay}
+        closeModal={() => {
+          closeOverlay();
+          dispatch(
+            fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }),
+          );
+        }}
         title="Creating a Job"
         showFooter={false}
       >
@@ -288,8 +332,11 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               )}
             />
           )}
-          <div className={`properties-container ${properties.length <= 4 ? 'vertical' : ''}`}>
-            {properties.map((property, index) => (
+          <div className={`properties-container ${parametersList.length <= 4 ? 'vertical' : ''}`}>
+            {parametersList.map((parameter, index) => (
+              <ParameterView key={`parameter_${index}`} form={reactForm} parameter={parameter} />
+            ))}
+            {/* {properties.map((property, index) => (
               <TextInput
                 key={`property_${index}`}
                 label={property.label}
@@ -301,7 +348,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
                 className="row"
                 error={errors[property.name]?.message !== '' ? errors[property.name]?.message : ''}
               />
-            ))}
+            ))} */}
           </div>
           {checklist && checklist?.relations?.length > 0 && (
             <FormGroup
@@ -372,7 +419,16 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
             />
           )}
           <div className="buttons-container">
-            <Button variant="secondary" color="red" onClick={closeOverlay}>
+            <Button
+              variant="secondary"
+              color="red"
+              onClick={() => {
+                closeOverlay();
+                dispatch(
+                  fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }),
+                );
+              }}
+            >
               Cancel
             </Button>
             <Button disabled={!isValid || !isDirty} type="submit">

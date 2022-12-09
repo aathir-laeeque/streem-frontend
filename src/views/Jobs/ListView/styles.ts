@@ -51,6 +51,11 @@ const TabContentWrapper = styled.div`
     align-items: flex-end;
     display: flex;
     padding: 0 0 8px;
+
+    .process-filter {
+      margin-left: 16px;
+      width: 200px;
+    }
   }
 
   #create {

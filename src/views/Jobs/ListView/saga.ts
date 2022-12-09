@@ -39,7 +39,12 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
     const facilityId: string = yield select((state: RootState) => state.auth.selectedFacility?.id);
 
     const { errors }: ResponseObj<Job> = yield call(request, 'POST', apiGetJobs(), {
-      data: payload,
+      data: {
+        // ...payload,
+        parameterValues: payload.properties,
+        selectedUseCaseId: payload.selectedUseCaseId,
+        checklistId: payload.checklistId,
+      },
     });
     if (errors) {
       throw getErrorMsg(errors);
