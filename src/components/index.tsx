@@ -32,3 +32,4 @@ export * from './shared/StyledTabs';
 export * from './shared/useDrawer';
 export * from './shared/Pagination';
 export * from './shared/EmojiComponent';
+export * from './shared/QRScanner';
