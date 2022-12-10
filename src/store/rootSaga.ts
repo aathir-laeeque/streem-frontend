@@ -16,6 +16,7 @@ import { FacilitiesSaga } from './facilities/saga';
 import { FileUploadSagaNew } from './file-upload/saga';
 import { PropertiesSaga } from './properties/saga';
 import { UsersSaga } from './users/saga';
+import { ReportsListViewSaga } from '../views/Reports/ListView/saga';
 
 export function* rootSaga() {
   yield all([
@@ -37,5 +38,6 @@ export function* rootSaga() {
     fork(PropertiesSaga),
     fork(UsersServiceSaga),
     fork(NewJobListViewSaga),
+    fork(ReportsListViewSaga),
   ]);
 }

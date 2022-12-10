@@ -306,3 +306,7 @@ export const apiGetAutomations = () => `${baseUrl}/automation/planner`;
 
 export const apiProcessSharing = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/facility/share`;
+
+export const apiGetReports = () => `${baseUrl}/reports`;
+
+export const apiGetReport = (id?: string) => `${baseUrl}/reports/${id}`;

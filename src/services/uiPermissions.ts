@@ -27,6 +27,7 @@ const uiPermissions: Record<string, any> = {
     jobs: [roles.ACCOUNT_OWNER],
     checklists: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
     ontology: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
+    reports: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
   },
   sidebar: {
     inbox: [
@@ -52,6 +53,14 @@ const uiPermissions: Record<string, any> = {
       roles.GLOBAL_ADMIN,
     ],
     ontology: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+      roles.OPERATOR,
+      roles.GLOBAL_ADMIN,
+    ],
+    reports: [
       roles.ACCOUNT_OWNER,
       roles.FACILITY_ADMIN,
       roles.CHECKLIST_PUBLISHER,

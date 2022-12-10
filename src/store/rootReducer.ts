@@ -16,7 +16,7 @@ import { UsersReducer } from './users/reducer';
 import { ExtrasReducer } from './extras/reducer';
 import { FacilityWiseConstantsReducer } from './facilityWiseConstants/reducer';
 import { OntologyReducer } from '../views/Ontology/reducer';
-
+import { ReportsListViewReducer } from '../views/Reports/ListView/reducer';
 export const rootReducer = combineReducers({
   auth: AuthReducer,
   checklistListView: ChecklistListViewReducer,
@@ -35,4 +35,5 @@ export const rootReducer = combineReducers({
   jobListView: NewJobListViewReducer,
   facilityWiseConstants: FacilityWiseConstantsReducer,
   ontology: OntologyReducer,
+  reports: ReportsListViewReducer,
 });

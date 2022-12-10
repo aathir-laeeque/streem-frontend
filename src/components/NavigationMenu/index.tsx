@@ -3,6 +3,7 @@ import {
   DescriptionOutlined,
   MailOutline,
   AccountTreeOutlined,
+  AssessmentOutlined,
 } from '@material-ui/icons';
 import { Link } from '@reach/router';
 import React, { FC } from 'react';
@@ -17,6 +18,7 @@ export const navigationOptions = {
   jobs: { name: 'Jobs', icon: PeopleOutline },
   checklists: { name: 'Processes', icon: DescriptionOutlined },
   ontology: { name: 'Ontology', icon: AccountTreeOutlined },
+  reports: { name: 'Reports', icon: AssessmentOutlined },
 };
 
 const NavigationMenu: FC = () => {

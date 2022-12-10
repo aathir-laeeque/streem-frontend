@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
+import ListView from './ListView';
 
-import MemoUnderConstruction from '#assets/svg/UnderConstruction';
 import { ReportsViewProps } from './types';
 
 const ReportsView: FC<ReportsViewProps> = () => (
   <div>
-    <MemoUnderConstruction />
+    <ListView path="/" />
   </div>
 );
 
