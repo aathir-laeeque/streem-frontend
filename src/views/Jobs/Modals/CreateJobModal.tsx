@@ -261,7 +261,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               { field: 'archived', op: FilterOperators.EQ, values: [false] },
             ],
           }),
-          sort: 'id,desc',
+          sort: 'orderTree,asc',
         }),
       );
     }

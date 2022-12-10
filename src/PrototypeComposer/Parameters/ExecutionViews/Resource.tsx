@@ -1,8 +1,9 @@
-import { formatOptionLabel, formatOptionLabel, FormGroup } from '#components';
+import { Button, FormGroup } from '#components';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
-import { baseUrl } from '#utils/apiUrls';
+import { apiGetObjects, baseUrl } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
+import { LinkOutlined } from '@material-ui/icons';
 import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { FormatOptionLabelContext } from 'react-select';
@@ -50,67 +51,141 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
     }
   };
 
-  const { setValue } = form;
+  const { setValue, getValues, watch } = form;
+  const parameterInForm = watch(`data.${parameter.id}`, {});
 
-  return (
-    <FormGroup
-      inputs={[
+  const handleAutoInitialize = async () => {
+    const formData = getValues();
+    const dependentParameter = formData.data?.[parameter?.autoInitialize?.parameterId];
+    console.log('dependentParameter', dependentParameter);
+    const objectId = dependentParameter.data.choices[0].objectId;
+    const collection = dependentParameter.data.choices[0].collection;
+    const res = await request('GET', apiGetObjects(objectId), {
+      params: {
+        collection,
+      },
+    });
+    if (res.data) {
+      const relation = res.data.relations.find(
+        (r) => r.id === parameter.autoInitialize.relation.id,
+      );
+      const target = relation.targets[0];
+      setValue(
+        `data.${parameter.id}`,
         {
-          type: InputTypes.SINGLE_SELECT,
-          props: {
-            id: parameter.id,
-            options: options?.map((option) => ({
-              value: option,
-              label: option.displayName,
-              externalId: option.externalId,
-            })),
-            formatOptionLabel: (option: any) => (
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div>{option.label}</div>
-                <div>{option.externalId}</div>
-              </div>
-            ),
-            onMenuScrollToBottom: () => {
-              if (!isLoading && !pagination.current.isLast) {
-                getOptions();
-              }
-            },
-            onChange: (value: any) => {
-              const selectedOption = isArray(value.value) ? value.value : [value.value];
-              setValue(
-                `data.${parameter.id}`,
-                {
-                  ...parameter,
-                  data: {
-                    ...parameter.data,
-                    choices: selectedOption.map((currOption: any) => ({
-                      objectId: currOption.id,
-                      objectDisplayName: currOption.displayName,
-                      objectExternalId: currOption.externalId,
-                      collection: currOption.collection,
-                    })),
-                  },
-                  response: {
-                    value: null,
-                    reason: '',
-                    state: 'EXECUTED',
-                    choices: {},
-                    medias: [],
-                    parameterValueApprovalDto: null,
-                  },
-                },
-                {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                },
-              );
-            },
-            isSearchable: false,
-            placeholder: '',
+          ...parameter,
+          data: {
+            ...parameter.data,
+            choices: [
+              {
+                objectId: target.id,
+                objectDisplayName: target.displayName,
+                objectExternalId: target.externalId,
+                collection: target.collection,
+              },
+            ],
+          },
+          response: {
+            value: null,
+            reason: '',
+            state: 'EXECUTED',
+            choices: {},
+            medias: [],
+            parameterValueApprovalDto: null,
           },
         },
-      ]}
-    />
+        {
+          shouldDirty: true,
+          shouldValidate: true,
+        },
+      );
+    }
+  };
+
+  return (
+    <>
+      <FormGroup
+        inputs={[
+          {
+            type: InputTypes.SINGLE_SELECT,
+            props: {
+              id: parameter.id,
+              options: options?.map((option) => ({
+                value: option,
+                label: option.displayName,
+                externalId: option.externalId,
+              })),
+              formatOptionLabel: (
+                option: any,
+                { context }: { context: FormatOptionLabelContext },
+              ) => {
+                if (context === 'menu' || context === 'value') {
+                  return option.label;
+                }
+                return <div />;
+              },
+              onMenuScrollToBottom: () => {
+                if (!isLoading && !pagination.current.isLast) {
+                  getOptions();
+                }
+              },
+              onChange: (value: any) => {
+                const selectedOption = isArray(value.value) ? value.value : [value.value];
+                setValue(
+                  `data.${parameter.id}`,
+                  {
+                    ...parameter,
+                    data: {
+                      ...parameter.data,
+                      choices: selectedOption.map((currOption: any) => ({
+                        objectId: currOption.id,
+                        objectDisplayName: currOption.displayName,
+                        objectExternalId: currOption.externalId,
+                        collection: currOption.collection,
+                      })),
+                    },
+                    response: {
+                      value: null,
+                      reason: '',
+                      state: 'EXECUTED',
+                      choices: {},
+                      medias: [],
+                      parameterValueApprovalDto: null,
+                    },
+                  },
+                  {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  },
+                );
+              },
+              isSearchable: false,
+              placeholder: '',
+              isDisabled: parameter?.autoInitialized,
+              ...(parameter?.autoInitialized && {
+                value: [
+                  {
+                    label: parameterInForm?.data?.choices?.[0]?.objectDisplayName,
+                    externalId: parameterInForm?.data?.choices?.[0]?.objectExternalId,
+                    value: parameterInForm?.data?.choices?.[0]?.objectId,
+                  },
+                ],
+              }),
+            },
+          },
+        ]}
+      />
+      {parameter?.autoInitialized && (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘Resource Parameter Name’
+          </div>
+          <Button variant="secondary" onClick={handleAutoInitialize} style={{ marginBlock: 8 }}>
+            Get Value
+          </Button>
+        </>
+      )}
+    </>
   );
 };
 
