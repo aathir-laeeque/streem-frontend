@@ -1,12 +1,14 @@
-import { formatOptionLabel, Select } from '#components';
-import { baseUrl } from '#utils/apiUrls';
+import { Button, formatOptionLabel, Select } from '#components';
+import { useTypedSelector } from '#store';
+import { apiAutoInitialize, baseUrl } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import QRIcon from '#assets/svg/QR';
+import { LinkOutlined } from '@material-ui/icons';
 import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { executeParameterLeading, fixParameterLeading } from './actions';
+import { executeParameterLeading, fixParameterLeading, updateExecutedParameter } from './actions';
 import { customSelectStyles } from './MultiSelect/commonStyles';
 import { Wrapper } from './MultiSelect/styles';
 import { ParameterProps } from './types';
@@ -33,6 +35,9 @@ const ResourceParameterWrapper = styled.div`
 
 const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
+  const {
+    composer: { data },
+  } = useTypedSelector((state) => state);
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];
@@ -111,11 +116,28 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     }
   };
 
+  const handleAutoInitialize = async () => {
+    if (data && data?.id) {
+      // setLoading(true);
+      const res = await request('PATCH', apiAutoInitialize(parameter.id), {
+        data: {
+          jobId: data!.id,
+        },
+      });
+      if (res.data) {
+        dispatch(updateExecutedParameter(res.data));
+      }
+      // setResourceParameters(resources.data || []);
+      // setLoading(false);
+    }
+  };
+
   return (
     <Wrapper>
       <ResourceParameterWrapper>
         <Select
           className="multi-select"
+          isDisabled={parameter?.autoInitialized}
           formatOptionLabel={formatOptionLabel}
           options={
             options?.map((option) => ({
@@ -157,6 +179,16 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
           <QRIcon />
         </div>
       </ResourceParameterWrapper>
+      {parameter?.autoInitialized && (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘Resource Parameter Name’
+          </div>
+          <Button variant="secondary" onClick={handleAutoInitialize} style={{ marginBlock: 8 }}>
+            Get Value
+          </Button>
+        </>
+      )}
     </Wrapper>
   );
 };
