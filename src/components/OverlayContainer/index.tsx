@@ -55,7 +55,7 @@ import SimpleConfirmationModal from './SimpleConfirmationModal';
 import ConfigureActions from '#PrototypeComposer/Overlays/ConfigureActions';
 import ProcessSharing from '#views/Checklists/Overlays/ProcessSharing';
 import ConfigureJobParameters from '#PrototypeComposer/Overlays/ConfigureJobParameters';
-import { QRScanner } from '#components';
+import { QRScanner, QRGenerator } from '#components';
 import { CommonOverlayProps, OverlayNames } from './types';
 
 const Wrapper = styled.div``;
@@ -224,6 +224,10 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.QR_SCANNER:
       return <QRScanner {...params} />;
+
+    case OverlayNames.QR_GENERATOR:
+      return <QRGenerator {...params} />;
+
     default:
       return null;
   }

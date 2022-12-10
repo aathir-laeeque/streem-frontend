@@ -62,6 +62,7 @@ export enum OverlayNames {
   PROCESS_SHARING = 'PROCESS_SHARING',
   CONFIGURE_JOB_PARAMETERS = 'CONFIGURE_JOB_PARAMETERS',
   QR_SCANNER = 'QR_SCANNER',
+  QR_GENERATOR = 'QR_GENERATOR',
 }
 
 export interface CommonOverlayProps<T> {

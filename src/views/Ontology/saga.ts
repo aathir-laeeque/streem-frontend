@@ -49,6 +49,20 @@ function* fetchObjectTypeSaga({ payload }: ReturnType<typeof actions.fetchObject
   }
 }
 
+function* fetchObjectSaga({ payload }: ReturnType<typeof actions.fetchObject>) {
+  try {
+    const { id, params } = payload;
+    const { data } = yield call(request, 'GET', apiGetObjects(id), { params });
+
+    if (data) {
+      yield put(actions.fetchObjectSuccess(data));
+    }
+  } catch (error) {
+    console.error('error from fetchObjectSaga function in Ontology Saga :: ', error);
+    yield put(actions.fetchObjectError(error));
+  }
+}
+
 function* fetchObjectsSaga({ payload }: ReturnType<typeof actions.fetchObjects>) {
   try {
     const { params } = payload;
@@ -166,6 +180,7 @@ function* unarchiveObjectSaga({ payload }: ReturnType<typeof actions.unarchiveOb
 export function* OntologySaga() {
   yield takeLatest(OntologyAction.FETCH_OBJECT_TYPES, fetchObjectTypesSaga);
   yield takeLatest(OntologyAction.FETCH_OBJECT_TYPE, fetchObjectTypeSaga);
+  yield takeLatest(OntologyAction.FETCH_OBJECT, fetchObjectSaga);
   yield takeLatest(OntologyAction.FETCH_OBJECTS, fetchObjectsSaga);
   yield takeLeading(OntologyAction.CREATE_OBJECT, objectActionSaga);
   yield takeLeading(OntologyAction.EDIT_OBJECT, objectActionSaga);

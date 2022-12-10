@@ -7,48 +7,49 @@ import { useDispatch } from 'react-redux';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 
+const ViewFinderWrapper = styled.div`
+  .label {
+    top: calc(50vh - 200px);
+    left: calc(50vw - 6ch);
+    z-index: 2;
+    position: absolute;
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .overlay {
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+    box-sizing: border-box;
+    border-inline: calc(50vw - 300px) solid rgba(0, 0, 0, 0.72);
+    border-block: calc(50vh - 300px) solid rgba(0, 0, 0, 0.72);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  .quiet-zone {
+    top: -10%;
+    left: -10%;
+    z-index: 1;
+    box-sizing: border-box;
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    border: rgb(29, 132, 255) solid 4px;
+    border-radius: 15px;
+  }
+`;
+
 const ViewFinder = () => (
-  <>
-    <span
-      style={{
-        top: '30vh',
-        left: 'calc(50vw - 6ch)',
-        zIndex: 2,
-        position: 'absolute',
-        color: '#FFF',
-        fontSize: '20px',
-        fontWeight: 600,
-      }}
-    >
-      Scan QR Code
-    </span>
-    <div
-      style={{
-        top: 0,
-        left: 0,
-        zIndex: 1,
-        boxSizing: 'border-box',
-        borderInline: '40vw solid rgba(0, 0, 0, 0.72)',
-        borderBlock: '40vh solid rgba(0, 0, 0, 0.72)',
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-      }}
-    >
-      <div
-        style={{
-          top: -17,
-          left: -17,
-          zIndex: 1,
-          boxSizing: 'border-box',
-          outline: '4px solid #1d84ff',
-          position: 'absolute',
-          width: 'calc(100% + 34px)',
-          height: 'calc(100% + 34px)',
-        }}
-      ></div>
+  <ViewFinderWrapper>
+    <span className="label">Scan QR Code</span>
+    <div className="overlay">
+      <div className="quiet-zone" />
     </div>
-  </>
+  </ViewFinderWrapper>
 );
 
 const Wrapper = styled.div`

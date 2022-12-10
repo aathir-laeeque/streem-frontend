@@ -32,6 +32,15 @@ export const fetchObjectsSuccess = ({ data, pageable }: fetchListSuccessType<Obj
 export const fetchObjectsError = (error: any) =>
   actionSpreader(OntologyAction.FETCH_OBJECTS_ERROR, { error });
 
+export const fetchObject = (id: string, params: fetchDataType) =>
+  actionSpreader(OntologyAction.FETCH_OBJECT, { id, params });
+
+export const fetchObjectSuccess = (data?: Object) =>
+  actionSpreader(OntologyAction.FETCH_OBJECT_SUCCESS, { data });
+
+export const fetchObjectError = (error: any) =>
+  actionSpreader(OntologyAction.FETCH_OBJECT_ERROR, { error });
+
 export const setActiveObject = (object?: Object) =>
   actionSpreader(OntologyAction.SET_ACTIVE_OBJECT, { object });
 

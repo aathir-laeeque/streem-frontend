@@ -1,14 +1,17 @@
 import { Button, DataTable, TabContentProps, ToggleSwitch } from '#components';
 import MemoArchive from '#assets/svg/Archive';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { DataTableColumn } from '#components/shared/DataTable';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { InputTypes } from '#utils/globalTypes';
 import { formatDateByInputType } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { Menu, MenuItem } from '@material-ui/core';
-import { ArrowDropDown, ArrowLeft, ArrowRight } from '@material-ui/icons';
+import { ArrowDropDown, ArrowLeft, ArrowRight, CropFree } from '@material-ui/icons';
 import { navigate, useLocation } from '@reach/router';
-import React, { FC, useEffect, MouseEvent, useState, useRef } from 'react';
+import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   archiveObject,
@@ -19,9 +22,6 @@ import {
 } from '../actions';
 import { LoadingContainer } from '../ObjectTypes/ObjectTypeList';
 import { Choice, Object, ObjectTypeProperty } from '../types';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
-import { DataTableColumn } from '#components/shared/DataTable';
 
 const DEFAULT_PAGE_NUMBER = 0;
 const DEFAULT_PAGE_SIZE = 10;
@@ -44,7 +44,6 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
 
   const handleClose = () => {
     setAnchorEl(null);
-    setSelectedObject(null);
   };
 
   const fetchData = (page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE) => {
@@ -111,6 +110,29 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
         return createColumnValue(propertyValue, item, isPrimary);
       },
     };
+  };
+
+  const handlePrintQRCode = () => {
+    const iFrame = document.createElement('iframe');
+    iFrame.setAttribute('style', 'height: 0px; width: 0px; position: absolute');
+    document.body.appendChild(iFrame);
+    const qrCode = document.getElementById('QRCode');
+    const contentWindow = iFrame.contentWindow;
+    if (qrCode && contentWindow) {
+      const container = contentWindow.document.createElement('div');
+      container.setAttribute(
+        'style',
+        'height: 100%; width: 100%; gap: 16px; display: flex; align-items: center; flex-direction: column; justify-content: center; flex: 1;',
+      );
+      container.innerHTML = `<span>Object Name : ${selectedObject?.displayName}</span>`;
+      container.appendChild(qrCode);
+      contentWindow.document.open();
+      contentWindow.document.appendChild(container);
+      contentWindow.document.close();
+      contentWindow.focus();
+      contentWindow.print();
+      document.body.removeChild(iFrame);
+    }
   };
 
   const columns = [
@@ -208,6 +230,36 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
                   </div>
                 </MenuItem>
               )}
+              <MenuItem
+                onClick={() => {
+                  handleClose();
+                  if (selectedObject?.id)
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.QR_GENERATOR,
+                        props: {
+                          data: {
+                            id: selectedObject?.id,
+                            collection: selectedObject?.collection,
+                            externalId: selectedObject?.externalId,
+                            displayName: selectedObject?.displayName,
+                            objectTypeId: selectedObject?.objectType?.id,
+                            entityType: 'object',
+                          },
+                          id: 'QRCode',
+                          onPrimary: handlePrintQRCode,
+                          primaryText: 'Print',
+                          title: `QR Code for ${selectedObject?.displayName}`,
+                        },
+                      }),
+                    );
+                }}
+              >
+                <div className="list-item">
+                  <CropFree />
+                  <span>View QR Code</span>
+                </div>
+              </MenuItem>
             </Menu>
           </>
         );

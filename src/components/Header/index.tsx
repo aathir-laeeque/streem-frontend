@@ -1,8 +1,11 @@
 import AvatarIcon from '#assets/svg/AvatarIcon';
 import Logo from '#assets/svg/Logo';
+import QRIcon from '#assets/svg/QR';
 import MoreOptionsIcon from '#assets/svg/MoreOptionsIcon';
 import SettingsIcon from '#assets/svg/SettingsIcon';
 import { NestedSelect, Select } from '#components';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
@@ -32,12 +35,37 @@ const Header: FC = () => {
     value: facility.id,
   }));
 
+  const onSelectWithQR = (data: any) => {
+    try {
+      const qrData = JSON.parse(data);
+      console.log('qrData', qrData);
+      if (qrData?.entityType === 'object') {
+        navigate(`/ontology/object-types/${qrData.objectTypeId}/objects/${qrData.id}`);
+      }
+    } catch (e) {
+      console.log('error while parsing qr data', e);
+    }
+  };
+
   return (
     <Wrapper>
       <ImageWrapper>
         <Logo style={{ width: '125px', cursor: 'pointer' }} onClick={() => navigate('/')} />
       </ImageWrapper>
       <div className="right-section">
+        <div
+          className="qr-scanner"
+          onClick={() => {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.QR_SCANNER,
+                props: { onSuccess: onSelectWithQR },
+              }),
+            );
+          }}
+        >
+          <QRIcon />
+        </div>
         {selectedFacility ? (
           <Select
             options={facilitiesOptions}

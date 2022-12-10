@@ -8,6 +8,9 @@ import { formatDateTime } from '#utils/timeUtils';
 import { ViewWrapper } from '#views/Jobs/ListView/styles';
 import { navigate, RouteComponentProps } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { fetchObject, fetchObjectType, resetOntology } from '../actions';
+import { LoadingContainer } from '../ObjectTypes/ObjectTypeList';
 import ObjectView from './ObjectView';
 
 type RelationLogsState = {
@@ -129,10 +132,28 @@ const ObjectsContent = ({
   id,
   objectTypeId,
 }: RouteComponentProps<{ id: string; objectTypeId: string }>) => {
+  const dispatch = useDispatch();
   const {
-    objects: { active: selectedObject, activeLoading },
+    objects: { active: selectedObject, activeLoading: loadingObject },
     objectTypes: { active: selectedObjectType },
   } = useTypedSelector((state) => state.ontology);
+  const isAddingNew = id === 'new';
+
+  useEffect(() => {
+    if (objectTypeId && !selectedObjectType) {
+      dispatch(fetchObjectType(objectTypeId));
+    }
+
+    return () => {
+      dispatch(resetOntology(['objects', 'activeLoading']));
+    };
+  }, []);
+
+  useEffect(() => {
+    if (selectedObjectType && selectedObjectType.externalId && id && !isAddingNew) {
+      dispatch(fetchObject(id, { collection: selectedObjectType.externalId }));
+    }
+  }, [selectedObjectType]);
 
   const { renderTabHeader, renderTabContent } = useTabs({
     tabs: [
@@ -150,20 +171,25 @@ const ObjectsContent = ({
   });
 
   return (
-    <ViewWrapper>
-      <div className="header">
-        <div className="heading">
-          {id === 'new'
-            ? `Adding a new ${selectedObjectType?.displayName}`
-            : `${selectedObjectType?.displayName} - ${selectedObject?.displayName}`}
-        </div>
-      </div>
+    <LoadingContainer
+      loading={isAddingNew ? false : loadingObject}
+      component={
+        <ViewWrapper>
+          <div className="header">
+            <div className="heading">
+              {isAddingNew
+                ? `Adding a new ${selectedObjectType?.displayName}`
+                : `${selectedObjectType?.displayName} - ${selectedObject?.displayName}`}
+            </div>
+          </div>
 
-      <div className="list-table">
-        {renderTabHeader()}
-        {renderTabContent()}
-      </div>
-    </ViewWrapper>
+          <div className="list-table">
+            {renderTabHeader()}
+            {renderTabContent()}
+          </div>
+        </ViewWrapper>
+      }
+    />
   );
 };
 

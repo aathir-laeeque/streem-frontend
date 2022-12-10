@@ -22,6 +22,11 @@ export const Wrapper = styled.div.attrs({})`
   .right-section {
     display: flex;
     gap: 16px;
+    .qr-scanner {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
   }
 `;
 

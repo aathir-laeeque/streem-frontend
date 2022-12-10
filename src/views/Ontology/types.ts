@@ -96,7 +96,7 @@ export type ObjectRelation = CommonFields & {
 
 export type Object = CommonFields & {
   collection: string;
-  objectType?: string;
+  objectType?: CommonFields;
   properties: ObjectProperty[];
   relations: ObjectRelation[];
   updatedAt: number;
@@ -118,6 +118,9 @@ export enum OntologyAction {
   FETCH_OBJECT_TYPE = '@@ontology/FETCH_OBJECT_TYPE',
   FETCH_OBJECT_TYPE_ERROR = '@@ontology/FETCH_OBJECT_TYPE_ERROR',
   FETCH_OBJECT_TYPE_SUCCESS = '@@ontology/FETCH_OBJECT_TYPE_SUCCESS',
+  FETCH_OBJECT = '@@ontology/FETCH_OBJECT',
+  FETCH_OBJECT_ERROR = '@@ontology/FETCH_OBJECT_ERROR',
+  FETCH_OBJECT_SUCCESS = '@@ontology/FETCH_OBJECT_SUCCESS',
 
   FETCH_OBJECTS = '@@ontology/FETCH_OBJECTS',
   FETCH_OBJECTS_ERROR = '@@ontology/FETCH_OBJECTS_ERROR',
@@ -147,6 +150,9 @@ export type OntologyActionType = ReturnType<
   | typeof actions.editObject
   | typeof actions.resetOntology
   | typeof actions.updateObjectsList
+  | typeof actions.fetchObject
+  | typeof actions.fetchObjectError
+  | typeof actions.fetchObjectSuccess
 >;
 
 export type fetchDataType = {
