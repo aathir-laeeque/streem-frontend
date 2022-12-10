@@ -9,7 +9,6 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 const TooltipWrapper = styled.div.attrs({
   className: 'tooltip-wrapper',
 })`
-  padding-inline: 4px;
   border-top: 1px solid #f4f4f4;
 
   .MuiTooltip-tooltip {
@@ -64,7 +63,8 @@ const DetailsPopover = ({ item, parameterId }) => {
         break;
       case MandatoryParameter.RESOURCE:
         contentString = process.response.choices.reduce(
-          (acc, currChoice) => (acc = currChoice.objectDisplayName),
+          (acc, currChoice) =>
+            (acc = `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId})`),
           '',
         );
         break;
@@ -88,55 +88,53 @@ const DetailsPopover = ({ item, parameterId }) => {
     return detailList.join(', ');
   };
 
+  const contentString = content(
+    item.parameterValues[parameterId]?.type,
+    item.parameterValues[parameterId],
+  );
+
   return (
     <TooltipWrapper>
       <ClickAwayListener onClickAway={handleTooltipClose}>
         <div>
-          <Tooltip
-            PopperProps={{
-              disablePortal: true,
-            }}
-            onClose={handleTooltipClose}
-            open={openTooltip}
-            disableFocusListener
-            disableHoverListener
-            disableTouchListener
-            arrow
-            title={
-              <div>
-                {content(item.parameterValues[parameterId]?.type, item.parameterValues[parameterId])
-                  ?.split(', ')
-                  ?.map((str) => (
+          {contentString ? (
+            <Tooltip
+              PopperProps={{
+                disablePortal: true,
+              }}
+              onClose={handleTooltipClose}
+              open={openTooltip}
+              disableFocusListener
+              disableHoverListener
+              disableTouchListener
+              arrow
+              title={
+                <div>
+                  {contentString?.split(', ')?.map((str) => (
                     <div>{str}</div>
                   ))}
-              </div>
-            }
-          >
-            <Chip
-              key={item.id}
-              label={
-                <div
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    setOpenTooltip(true);
-                  }}
-                >
-                  {content(
-                    item.parameterValues[parameterId]?.type,
-                    item.parameterValues[parameterId],
-                  )?.length > 10
-                    ? `${content(
-                        item.parameterValues[parameterId]?.type,
-                        item.parameterValues[parameterId],
-                      )?.substring(0, 10)}...`
-                    : content(
-                        item.parameterValues[parameterId]?.type,
-                        item.parameterValues[parameterId],
-                      )}
                 </div>
               }
-            />
-          </Tooltip>
+            >
+              <Chip
+                key={item.id}
+                label={
+                  <div
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      setOpenTooltip(true);
+                    }}
+                  >
+                    {contentString?.length > 32
+                      ? `${contentString?.substring(0, 32)}...`
+                      : contentString}
+                  </div>
+                }
+              />
+            </Tooltip>
+          ) : (
+            '-'
+          )}
         </div>
       </ClickAwayListener>
     </TooltipWrapper>

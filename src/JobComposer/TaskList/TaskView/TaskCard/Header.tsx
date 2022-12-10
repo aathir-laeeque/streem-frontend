@@ -149,7 +149,6 @@ const JobHeader: FC<
             <>
               <Button
                 className="start-task"
-                variant="secondary"
                 onClick={() => {
                   if (enableStopForTask) {
                     dispatch(

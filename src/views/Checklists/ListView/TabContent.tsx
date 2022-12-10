@@ -166,30 +166,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
   }, []);
 
   const onCreateJob = (jobDetails: Record<string, string>) => {
-    const tempProperties: { id: string; value: string }[] = [];
-    let error = false;
-    // jobProperties.every((property) => {
-    //   if (property.name) {
-    //     if (!jobDetails[property.name]) {
-    //       if (property.mandatory) {
-    //         error = true;
-    //         return false;
-    //       }
-    //       return true;
-    //     } else {
-    //       tempProperties.push({
-    //         id: property.id,
-    //         value: jobDetails[property.name],
-    //       });
-    //       return true;
-    //     }
-    //   }
-    // });
-    if (!error && tempProperties && selectedChecklist) {
+    if (jobDetails.checklistId) {
       dispatch(
         createJob({
           properties: jobDetails.properties,
-          checklistId: selectedChecklist.id,
+          checklistId: jobDetails.checklistId,
           selectedUseCaseId: selectedUseCase!.id,
           relations: jobDetails?.relations,
         }),
@@ -242,6 +223,30 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
       return checkPermission(['checklists', 'createGlobal']);
     }
     return checkPermission(['checklists', 'create']);
+  };
+
+  const handleOnCreateJob = (item: Checklist) => {
+    if (userRoles?.some((role) => role === roles.ACCOUNT_OWNER) && facilityId === ALL_FACILITY_ID) {
+      dispatch(
+        openOverlayAction({
+          type: OverlayNames.ENTITY_START_ERROR_MODAL,
+          props: {
+            entity: ComposerEntity.JOB,
+          },
+        }),
+      );
+    } else {
+      dispatch(
+        openOverlayAction({
+          type: OverlayNames.CREATE_JOB_MODAL,
+          props: {
+            selectedChecklist: item,
+            properties: parametersList,
+            onCreateJob: onCreateJob,
+          },
+        }),
+      );
+    }
   };
 
   const columns = [
@@ -319,7 +324,18 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
       format: function renderComp(item: Checklist) {
         if (label === 'published') {
           return (
-            <>
+            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+              {!item.archived && checkPermission(['checklists', 'createJob']) && (
+                <div
+                  className="primary"
+                  style={{ height: 18 }}
+                  onClick={async () => {
+                    handleOnCreateJob(item);
+                  }}
+                >
+                  <span>Create Job</span>
+                </div>
+              )}
               <div
                 id="more-actions"
                 onClick={(event: MouseEvent<HTMLDivElement>) => {
@@ -354,42 +370,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     <span>View Info</span>
                   </div>
                 </MenuItem>
-                {!item.archived && checkPermission(['checklists', 'createJob']) && (
-                  <MenuItem
-                    onClick={() => {
-                      handleClose();
-                      if (
-                        userRoles?.some((role) => role === roles.ACCOUNT_OWNER) &&
-                        facilityId === ALL_FACILITY_ID
-                      ) {
-                        dispatch(
-                          openOverlayAction({
-                            type: OverlayNames.ENTITY_START_ERROR_MODAL,
-                            props: {
-                              entity: ComposerEntity.JOB,
-                            },
-                          }),
-                        );
-                      } else {
-                        dispatch(
-                          openOverlayAction({
-                            type: OverlayNames.CREATE_JOB_MODAL,
-                            props: {
-                              selectedChecklist: selectedChecklist,
-                              properties: parametersList,
-                              onCreateJob: onCreateJob,
-                            },
-                          }),
-                        );
-                      }
-                    }}
-                  >
-                    <div className="list-item">
-                      <MemoCreateJob />
-                      <span>Create Job</span>
-                    </div>
-                  </MenuItem>
-                )}
                 {!item.archived && checkArchiveAndRevisionPermission('revision') && (
                   <MenuItem
                     onClick={() => {
@@ -523,7 +503,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                   )
                 )}
               </Menu>
-            </>
+            </div>
           );
         } else {
           if (item?.audit?.createdBy?.id === userId || checkPermission(['checklists', 'archive'])) {

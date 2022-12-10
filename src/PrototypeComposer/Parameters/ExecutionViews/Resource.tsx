@@ -1,4 +1,4 @@
-import { FormGroup } from '#components';
+import { formatOptionLabel, formatOptionLabel, FormGroup } from '#components';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { baseUrl } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
@@ -64,15 +64,12 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
               label: option.displayName,
               externalId: option.externalId,
             })),
-            formatOptionLabel: (
-              option: any,
-              { context }: { context: FormatOptionLabelContext },
-            ) => {
-              if (context === 'menu' || context === 'value') {
-                return option.label;
-              }
-              return <div />;
-            },
+            formatOptionLabel: (option: any) => (
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div>{option.label}</div>
+                <div>{option.externalId}</div>
+              </div>
+            ),
             onMenuScrollToBottom: () => {
               if (!isLoading && !pagination.current.isLast) {
                 getOptions();

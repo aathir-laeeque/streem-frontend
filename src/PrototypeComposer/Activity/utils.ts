@@ -147,7 +147,7 @@ const generateNewParameter = ({
       return {
         orderTree,
         type,
-        data: { text: '' },
+        data: {},
         label,
         mandatory,
         description,
@@ -158,7 +158,7 @@ const generateNewParameter = ({
       return {
         orderTree,
         type,
-        data: { text: '' },
+        data: {},
         label,
         mandatory,
         description,

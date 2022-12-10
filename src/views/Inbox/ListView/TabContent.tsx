@@ -6,6 +6,7 @@ import {
   ProgressBar,
   SearchFilter,
   Select,
+  ToggleSwitch,
 } from '#components';
 import { fetchParameters, fetchParametersSuccess } from '#PrototypeComposer/Activity/actions';
 import { TargetEntityType } from '#PrototypeComposer/checklist.types';
@@ -51,7 +52,22 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
 
   const reducerLabel = label.toLowerCase().split(' ').join('');
 
-  const [filterFields, setFilterFields] = useState<FilterField[]>([]);
+  const [filterFields, setFilterFields] = useState<FilterField[]>([
+    {
+      field: 'useCaseId',
+      op: FilterOperators.EQ,
+      values: [selectedUseCase?.id!],
+    },
+    {
+      field: 'state',
+      op: FilterOperators.ANY,
+      values: [
+        AssignedJobStates.ASSIGNED,
+        AssignedJobStates.IN_PROGRESS,
+        AssignedJobStates.BLOCKED,
+      ],
+    },
+  ]);
 
   const { pageable, list } = jobs[reducerLabel];
 
@@ -68,14 +84,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           sort: 'createdAt,desc',
           filters: JSON.stringify({
             op: FilterOperators.AND,
-            fields: [
-              ...filters,
-              {
-                field: 'useCaseId',
-                op: FilterOperators.EQ,
-                values: [selectedUseCase?.id],
-              },
-            ],
+            fields: [...filters],
           }),
         },
         reducerLabel,
@@ -84,9 +93,12 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   };
 
   useEffect(() => {
+    fetchChecklistData({ page: 0 });
+  }, []);
+
+  useEffect(() => {
     if (selectedUseCase?.id) {
       fetchData();
-      fetchChecklistData({ page: 0 });
       dispatch(setSelectedState(reducerLabel));
     }
   }, [selectedUseCase?.id, filterFields]);
@@ -250,10 +262,10 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           values: [option.id],
         },
       ];
-      setFilterFields(selectedFilterField);
+      setFilterFields((prev) => [...prev, ...selectedFilterField]);
       fetchParametersListData({ page: DEFAULT_PAGE_NUMBER, size: DEFAULT_PAGE_SIZE }, option);
     } else {
-      setFilterFields([]);
+      setFilterFields((prev) => prev.filter((filter) => filter.field !== 'checklist.id'));
       dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
     }
   };
@@ -284,9 +296,6 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           ]}
           updateFilterFields={(fields) => {
             setFilterFields([...fields]);
-            fetchData({
-              filters: [...fields],
-            });
           }}
         />
         <Select
@@ -305,6 +314,32 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           tabSelectsValue={false}
           onMenuScrollToBottom={handleMenuScrollToBottom}
           optional
+        />
+        <ToggleSwitch
+          offLabel="Show Completed"
+          onLabel="Showing Completed"
+          value={filterFields.find((field) => field.field === 'state')?.values?.length === 2}
+          onChange={(isChecked) =>
+            setFilterFields((currentFields) =>
+              currentFields.map((field) => ({
+                ...field,
+                ...(field.field === 'state'
+                  ? {
+                      values: isChecked
+                        ? [
+                            CompletedJobStates.COMPLETED,
+                            CompletedJobStates.COMPLETED_WITH_EXCEPTION,
+                          ]
+                        : [
+                            AssignedJobStates.ASSIGNED,
+                            AssignedJobStates.BLOCKED,
+                            AssignedJobStates.IN_PROGRESS,
+                          ],
+                    }
+                  : { values: field.values }),
+              })),
+            )
+          }
         />
       </div>
       <div
