@@ -138,7 +138,14 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
         <Select
           className="multi-select"
           isDisabled={parameter?.autoInitialized}
-          formatOptionLabel={formatOptionLabel}
+          formatOptionLabel={(option: any) => {
+            return (
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div>{option.label}</div>
+                <div>{option.externalId}</div>
+              </div>
+            );
+          }}
           options={
             options?.map((option) => ({
               value: option,
