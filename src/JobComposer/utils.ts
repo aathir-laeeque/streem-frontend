@@ -116,22 +116,34 @@ type GetParametersType = {
 export const getParameters = ({ checklist }: GetParametersType) => {
   const parametersById: ParametersById = {},
     parametersOrderInTaskInStage: ParametersOrderInTaskInStage = {};
-
+  const hiddenIds: Record<string, boolean> = {};
   checklist?.stages?.map((stage) => {
+    let hiddenTasksLength = 0;
     parametersOrderInTaskInStage[stage.id] = {};
 
     stage?.tasks?.map((task) => {
+      let hiddenParametersLength = 0;
       parametersOrderInTaskInStage[stage.id][task.id] = [];
 
       task?.parameters?.map((parameter) => {
         parametersOrderInTaskInStage[stage.id][task.id].push(parameter.id);
-
         parametersById[parameter.id] = { ...parameter, hasError: false };
+        if (parameter.response?.hidden) {
+          hiddenParametersLength++;
+          hiddenIds[parameter.id] = true;
+        }
       });
+      if (task?.parameters?.length === hiddenParametersLength) {
+        hiddenTasksLength++;
+        hiddenIds[task.id] = true;
+      }
     });
+    if (stage?.tasks?.length === hiddenTasksLength) {
+      hiddenIds[stage.id] = true;
+    }
   });
 
-  return { parametersById, parametersOrderInTaskInStage };
+  return { parametersById, parametersOrderInTaskInStage, hiddenIds };
 };
 
 export const updateHiddenIds = (composerState: ComposerState) => {

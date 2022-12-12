@@ -23,9 +23,11 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
       const { data, entity } = action.payload;
 
       const checklist = entity === Entity.CHECKLIST ? data : data?.checklist;
+      const { parametersById, parametersOrderInTaskInStage } = getParameters({ checklist });
       return {
         ...state,
-        ...getParameters({ checklist }),
+        parametersById,
+        parametersOrderInTaskInStage,
         parametersMappedToJobById: keyBy(data?.parameterValues, 'id'),
       };
 

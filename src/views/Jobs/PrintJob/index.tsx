@@ -21,11 +21,13 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   const [parametersData, setParametersData] = useState<{
     parametersById: ParametersById;
     parametersOrderInTaskInStage: ParametersOrderInTaskInStage;
+    hiddenIds: Record<string, boolean>;
   }>({
     parametersById: {},
     parametersOrderInTaskInStage: {},
+    hiddenIds: {},
   });
-  const { parametersById } = parametersData;
+  const { parametersById, hiddenIds } = parametersData;
   const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
 
   const { dateAndTimeStampFormat, timeFormat, dateFormat } = useTypedSelector(
@@ -79,26 +81,33 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
           </View>
           <CommonJobPdfDetails jobPdfData={data} dateAndTimeStampFormat={dateAndTimeStampFormat} />
           {checklist?.stages.map((stage) => {
-            return (
-              <View key={`${stage.id}`} break>
-                <View style={styles.stageHeader}>
-                  <ValueLabelGroup label="Stage :" value={`${stage.orderTree}`} />
-                  <Text style={{ marginVertical: 8 }}>{stage.name}</Text>
-                  <ValueLabelGroup label="Tasks :" value={`${stage.tasks.length}`} />
+            if (hiddenIds[stage.id] === undefined) {
+              return (
+                <View key={`${stage.id}`} break>
+                  <View style={styles.stageHeader}>
+                    <ValueLabelGroup label="Stage :" value={`${stage.orderTree}`} />
+                    <Text style={{ marginVertical: 8 }}>{stage.name}</Text>
+                    <ValueLabelGroup label="Tasks :" value={`${stage.tasks.length}`} />
+                  </View>
+                  {(stage.tasks as unknown as Array<Task>).map((task, taskIndex: number) => {
+                    if (hiddenIds[task.id] === undefined) {
+                      return (
+                        <TaskView
+                          parametersById={parametersById}
+                          taskIndex={taskIndex}
+                          dateFormat={dateFormat}
+                          timeFormat={timeFormat}
+                          dateAndTimeStampFormat={dateAndTimeStampFormat}
+                          task={task}
+                          key={task.id}
+                          hiddenIds={hiddenIds}
+                        />
+                      );
+                    }
+                  })}
                 </View>
-                {(stage.tasks as unknown as Array<Task>).map((task, taskIndex: number) => (
-                  <TaskView
-                    parametersById={parametersById}
-                    taskIndex={taskIndex}
-                    dateFormat={dateFormat}
-                    timeFormat={timeFormat}
-                    dateAndTimeStampFormat={dateAndTimeStampFormat}
-                    task={task}
-                    key={task.id}
-                  />
-                ))}
-              </View>
-            );
+              );
+            }
           })}
 
           <View fixed style={styles.footer}>

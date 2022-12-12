@@ -121,7 +121,16 @@ const MemoTask: FC<{
   dateAndTimeStampFormat: string;
   taskIndex: number;
   parametersById: ParametersById;
-}> = ({ task, dateFormat, timeFormat, dateAndTimeStampFormat, taskIndex, parametersById }) => {
+  hiddenIds: Record<string, boolean>;
+}> = ({
+  task,
+  dateFormat,
+  timeFormat,
+  dateAndTimeStampFormat,
+  taskIndex,
+  parametersById,
+  hiddenIds,
+}) => {
   const {
     startedAt,
     audit: { modifiedBy, modifiedAt },
@@ -216,12 +225,13 @@ const MemoTask: FC<{
           </View>
         )}
       </View>
-      <ParameterList
-        parametersById={parametersById}
-        parameters={task.parameters}
-        dateAndTimeStampFormat={dateAndTimeStampFormat}
-      />
-
+      {hiddenIds[task.id] === undefined && (
+        <ParameterList
+          parametersById={parametersById}
+          parameters={task.parameters}
+          dateAndTimeStampFormat={dateAndTimeStampFormat}
+        />
+      )}
       {taskExecutionState === TaskExecutionState.COMPLETED && (
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
