@@ -102,7 +102,7 @@ const JobLogsTabContent: FC<TabContentProps> = ({ label, values: { objectTypeId,
         try {
           const logsData: ResponseObj<any> = await request('GET', apiGetJobLogs(), {
             params: {
-              triggerType: 'RELATION_VALUE',
+              triggerType: 'RESOURCE_PARAMETER',
               value: active.externalId,
             },
           });
