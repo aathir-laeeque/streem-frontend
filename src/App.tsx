@@ -9,7 +9,7 @@ import PrintJobAuditLogs from '#views/Jobs/PrintJobAuditLogs';
 import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
 import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
 import { Router } from '@reach/router';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import GlobalStyles from './styles/GlobalStyles';
@@ -26,6 +26,20 @@ const App: FC = () => {
       setAuthHeader(accessToken);
     }
   };
+
+  useEffect(() => {
+    const script = document.createElement('script');
+
+    script.src = 'https://js-eu1.hs-scripts.com/25337116.js';
+
+    script.async = true;
+
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   return (
     <AppVersionCheck>
