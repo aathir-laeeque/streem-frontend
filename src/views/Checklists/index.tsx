@@ -7,7 +7,7 @@ import ListView from './ListView';
 import NewPrototype from './NewPrototype';
 import Assignment from './Assignment';
 import Automation from './Automation';
-import Logs from './Logs';
+import JobLogs from './JobLogs';
 
 const ChecklistView: FC<RouteComponentProps> = () => (
   <Router>
@@ -16,7 +16,7 @@ const ChecklistView: FC<RouteComponentProps> = () => (
     <AuditLogs path="/:id/activities" />
     <Assignment path="/:id/assignment" />
     <Automation path="/:id/automation" />
-    <Logs path="/:id/logs" />
+    <JobLogs path="/:id/logs" />
     <NewPrototype path="/prototype" />
   </Router>
 );

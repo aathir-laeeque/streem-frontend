@@ -1,8 +1,9 @@
 import { Pageable } from '#utils/globalTypes';
+import { keyBy } from 'lodash';
 import { Checklist } from '../types';
 import { ListViewAction, ListViewActionType, ListViewState } from './types';
 
-const initalPageable = {
+const initialPageable = {
   page: 0,
   pageSize: 10,
   numberOfElements: 0,
@@ -18,8 +19,12 @@ const initialState: ListViewState = {
   currentPageData: [],
   automations: [],
   loading: false,
-  pageable: initalPageable,
+  pageable: initialPageable,
   jobLogs: [],
+  customViews: {
+    loading: false,
+    views: {},
+  },
 };
 
 // TODO: optimize the reducer for Published and prototype tabs
@@ -31,7 +36,7 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
       return { ...state, loading: true };
 
     case ListViewAction.CLEAR_DATA:
-      return { ...state, checklists: [], pageable: initalPageable };
+      return { ...state, checklists: [], pageable: initialPageable };
 
     case ListViewAction.FETCH_CHECKLISTS_SUCCESS:
       const { data, pageable } = action.payload;
@@ -72,10 +77,60 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
         ...state,
         loading: false,
         jobLogs: action.payload.data!,
-        // TODO :: Remove this check when BE supports pagination.
-        ...(action.payload?.pageable && {
-          pageable: action.payload.pageable,
-        }),
+        pageable: action.payload.pageable!,
+      };
+
+    case ListViewAction.SAVE_CUSTOM_VIEW:
+    case ListViewAction.GET_CUSTOM_VIEW:
+    case ListViewAction.ADD_CUSTOM_VIEW:
+      return {
+        ...state,
+        customViews: {
+          ...state.customViews,
+          loading: true,
+        },
+      };
+
+    case ListViewAction.ADD_CUSTOM_VIEW_SUCCESS:
+      return {
+        ...state,
+        customViews: {
+          ...state.customViews,
+          loading: false,
+          views: { ...state.customViews.views, [action.payload.data.id]: action.payload.data },
+        },
+      };
+
+    case ListViewAction.SAVE_CUSTOM_VIEW_ERROR:
+    case ListViewAction.GET_CUSTOM_VIEW_ERROR:
+    case ListViewAction.ADD_CUSTOM_VIEW_ERROR:
+      return {
+        ...state,
+        error: action.payload?.error,
+        customViews: {
+          ...state.customViews,
+          loading: false,
+        },
+      };
+
+    case ListViewAction.GET_CUSTOM_VIEW_SUCCESS:
+      return {
+        ...state,
+        customViews: {
+          ...state.customViews,
+          loading: false,
+          views: { ...keyBy(action.payload.data, 'id') },
+        },
+      };
+
+    case ListViewAction.SAVE_CUSTOM_VIEW_SUCCESS:
+      return {
+        ...state,
+        customViews: {
+          ...state.customViews,
+          loading: false,
+          views: { ...state.customViews.views, [action.payload.data.id]: action.payload.data },
+        },
       };
 
     default:

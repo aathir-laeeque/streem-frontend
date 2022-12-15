@@ -192,6 +192,14 @@ export type Comment = {
   state: CollaboratorState;
 };
 
+export type JobLogColumnType = {
+  id: string;
+  type: LogType;
+  displayName: string;
+  triggerType: string;
+  orderTree: number;
+};
+
 export type Checklist = {
   description: string;
   id: string;
@@ -206,12 +214,7 @@ export type Checklist = {
   phase?: number;
   comments: Comment[];
   collaborators: Collaborator[];
-  jobLogColumns: {
-    id: string;
-    type: LogType;
-    displayName: string;
-    triggerType: string;
-  }[];
+  jobLogColumns: JobLogColumnType[];
   noOfJobs?: number;
   noOfTasks?: number;
   version: number | null;

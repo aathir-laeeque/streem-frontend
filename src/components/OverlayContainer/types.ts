@@ -63,6 +63,7 @@ export enum OverlayNames {
   CONFIGURE_JOB_PARAMETERS = 'CONFIGURE_JOB_PARAMETERS',
   QR_SCANNER = 'QR_SCANNER',
   QR_GENERATOR = 'QR_GENERATOR',
+  PUT_CUSTOM_VIEW = 'PUT_CUSTOM_VIEW',
 }
 
 export interface CommonOverlayProps<T> {

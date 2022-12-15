@@ -68,8 +68,8 @@ export const fetchAutomationsSuccess = ({ data, pageable }: Partial<ResponseObj<
     pageable,
   });
 
-export const fetchProcessLogs = (id: Checklist['id']) =>
-  actionSpreader(ListViewAction.FETCH_PROCESS_LOGS, { id });
+export const fetchProcessLogs = (params: any) =>
+  actionSpreader(ListViewAction.FETCH_PROCESS_LOGS, params);
 
 export const fetchProcessLogsError = (error?: any) =>
   actionSpreader(ListViewAction.FETCH_PROCESS_LOGS_ERROR, { error });
@@ -78,4 +78,44 @@ export const fetchProcessLogsSuccess = ({ data, pageable }: Partial<ResponseObj<
   actionSpreader(ListViewAction.FETCH_PROCESS_LOGS_SUCCESS, {
     data,
     pageable,
+  });
+
+export const addCustomView = ({
+  data,
+  checklistId,
+  setActiveTab,
+}: {
+  data: any;
+  checklistId: string;
+  setActiveTab: any;
+}) => actionSpreader(ListViewAction.ADD_CUSTOM_VIEW, { data, checklistId, setActiveTab });
+
+export const addCustomViewError = (error?: any) =>
+  actionSpreader(ListViewAction.ADD_CUSTOM_VIEW_ERROR, { error });
+
+export const addCustomViewSuccess = (data: any) =>
+  actionSpreader(ListViewAction.ADD_CUSTOM_VIEW_SUCCESS, {
+    data,
+  });
+
+export const getCustomView = (checklistId: string) =>
+  actionSpreader(ListViewAction.GET_CUSTOM_VIEW, { checklistId });
+
+export const getCustomViewError = (error?: any) =>
+  actionSpreader(ListViewAction.GET_CUSTOM_VIEW_ERROR, { error });
+
+export const getCustomViewSuccess = (data: any) =>
+  actionSpreader(ListViewAction.GET_CUSTOM_VIEW_SUCCESS, {
+    data,
+  });
+
+export const saveCustomView = ({ data, viewId }: { data: any; viewId: string }) =>
+  actionSpreader(ListViewAction.SAVE_CUSTOM_VIEW, { data, viewId });
+
+export const saveCustomViewError = (error?: any) =>
+  actionSpreader(ListViewAction.SAVE_CUSTOM_VIEW_ERROR, { error });
+
+export const saveCustomViewSuccess = (data: any) =>
+  actionSpreader(ListViewAction.SAVE_CUSTOM_VIEW_SUCCESS, {
+    data,
   });

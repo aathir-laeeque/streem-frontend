@@ -310,3 +310,8 @@ export const apiProcessSharing = (checklistId: Checklist['id']) =>
 export const apiGetReports = () => `${baseUrl}/reports`;
 
 export const apiGetReport = (id?: string) => `${baseUrl}/reports/${id}`;
+
+export const apiProcessJobLogView = (id: Checklist['id']) =>
+  `${baseUrl}/job-log-views/checklists/${id}`;
+
+export const apiJobLogView = (id: string) => `${baseUrl}/job-log-views/${id}`;

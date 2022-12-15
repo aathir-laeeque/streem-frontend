@@ -70,6 +70,7 @@ export type useDrawerProps = {
   headerProps?: React.HTMLAttributes<HTMLDivElement>;
   bodyProps?: React.HTMLAttributes<HTMLDivElement>;
   footerProps?: React.HTMLAttributes<HTMLDivElement>;
+  hideCloseIcon?: boolean;
 };
 
 export const useDrawer = ({
@@ -81,6 +82,7 @@ export const useDrawer = ({
   headerProps,
   bodyProps,
   footerProps,
+  hideCloseIcon = false,
 }: useDrawerProps) => {
   const [drawerOpen, setDrawerOpen] = useState(isOpen);
 
@@ -95,7 +97,7 @@ export const useDrawer = ({
     >
       <div className="drawer-header" {...headerProps}>
         <h4>{title}</h4>
-        <Close onClick={() => setDrawerOpen(false)} />
+        {!hideCloseIcon && <Close onClick={() => setDrawerOpen(false)} />}
       </div>
       <div className="drawer-body" {...bodyProps}>
         {bodyContent}

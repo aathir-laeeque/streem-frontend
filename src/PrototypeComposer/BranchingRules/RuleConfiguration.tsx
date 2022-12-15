@@ -1,6 +1,6 @@
 import { Button, FormGroup } from '#components';
 import { updateParameterApi } from '#PrototypeComposer/Activity/actions';
-import { ParameterType } from '#PrototypeComposer/checklist.types';
+import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { InputTypes } from '#utils/globalTypes';
 import { Constraint } from '#views/Ontology/types';
@@ -125,8 +125,13 @@ const RuleCardWrapper = styled.div`
   }
 `;
 
-const conditionByParameterType = (type: ParameterType) => {
+export const conditionByParameterType = (type: ParameterType) => {
   switch (type) {
+    case MandatoryParameter.DATE_TIME:
+      return {
+        [Constraint.GT]: 'is greater than',
+        [Constraint.LT]: 'is less than',
+      };
     default:
       return {
         [Constraint.EQ]: 'is equal to',

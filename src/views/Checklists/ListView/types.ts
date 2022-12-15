@@ -1,3 +1,4 @@
+import { JobLogColumnType, LogType } from '#PrototypeComposer/checklist.types';
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
 import { Checklist } from '../types';
@@ -14,6 +15,15 @@ import {
   fetchProcessLogs,
   fetchProcessLogsError,
   fetchProcessLogsSuccess,
+  addCustomView,
+  addCustomViewError,
+  addCustomViewSuccess,
+  getCustomView,
+  getCustomViewError,
+  getCustomViewSuccess,
+  saveCustomView,
+  saveCustomViewError,
+  saveCustomViewSuccess,
 } from './actions';
 
 export type ListViewProps = RouteComponentProps;
@@ -30,12 +40,23 @@ export type Automation = {
   action: AutomationAction;
   cron: string;
 };
+
+export type CustomView = {
+  id: string;
+  columns: JobLogColumnType[];
+  filters: any[];
+  processId: string;
+};
 export interface ListViewState {
   readonly checklists: Checklist[];
   readonly currentPageData: Checklist[];
   readonly pageable: Pageable;
   readonly automations: Automation[];
   readonly jobLogs: any[];
+  readonly customViews: {
+    loading: boolean;
+    views: Record<string, CustomView>;
+  };
   readonly loading: boolean;
   readonly error?: any;
 }
@@ -61,6 +82,18 @@ export enum ListViewAction {
   FETCH_PROCESS_LOGS = '@@checklist/ListView/FETCH_PROCESS_LOGS',
   FETCH_PROCESS_LOGS_ERROR = '@@checklist/ListView/FETCH_PROCESS_LOGS_ERROR',
   FETCH_PROCESS_LOGS_SUCCESS = '@@checklist/ListView/FETCH_PROCESS_LOGS_SUCCESS',
+
+  ADD_CUSTOM_VIEW = '@@checklist/ListView/ADD_CUSTOM_VIEW',
+  ADD_CUSTOM_VIEW_ERROR = '@@checklist/ListView/ADD_CUSTOM_VIEW_ERROR',
+  ADD_CUSTOM_VIEW_SUCCESS = '@@checklist/ListView/ADD_CUSTOM_VIEW_SUCCESS',
+
+  GET_CUSTOM_VIEW = '@@checklist/ListView/GET_CUSTOM_VIEW',
+  GET_CUSTOM_VIEW_ERROR = '@@checklist/ListView/GET_CUSTOM_VIEW_ERROR',
+  GET_CUSTOM_VIEW_SUCCESS = '@@checklist/ListView/GET_CUSTOM_VIEW_SUCCESS',
+
+  SAVE_CUSTOM_VIEW = '@@checklist/ListView/SAVE_CUSTOM_VIEW',
+  SAVE_CUSTOM_VIEW_ERROR = '@@checklist/ListView/SAVE_CUSTOM_VIEW_ERROR',
+  SAVE_CUSTOM_VIEW_SUCCESS = '@@checklist/ListView/SAVE_CUSTOM_VIEW_SUCCESS',
 }
 
 export type ListViewActionType = ReturnType<
@@ -76,4 +109,13 @@ export type ListViewActionType = ReturnType<
   | typeof fetchProcessLogs
   | typeof fetchProcessLogsError
   | typeof fetchProcessLogsSuccess
+  | typeof addCustomView
+  | typeof addCustomViewError
+  | typeof addCustomViewSuccess
+  | typeof getCustomView
+  | typeof getCustomViewError
+  | typeof getCustomViewSuccess
+  | typeof saveCustomView
+  | typeof saveCustomViewError
+  | typeof saveCustomViewSuccess
 >;

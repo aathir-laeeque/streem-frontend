@@ -56,6 +56,7 @@ import ConfigureActions from '#PrototypeComposer/Overlays/ConfigureActions';
 import ProcessSharing from '#views/Checklists/Overlays/ProcessSharing';
 import ConfigureJobParameters from '#PrototypeComposer/Overlays/ConfigureJobParameters';
 import { QRScanner, QRGenerator } from '#components';
+import PutCustomViewModal from '#views/Checklists/JobLogs/Overlays/PutCustomViewModal';
 import { CommonOverlayProps, OverlayNames } from './types';
 
 const Wrapper = styled.div``;
@@ -227,6 +228,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.QR_GENERATOR:
       return <QRGenerator {...params} />;
+
+    case OverlayNames.PUT_CUSTOM_VIEW:
+      return <PutCustomViewModal {...params} />;
 
     default:
       return null;

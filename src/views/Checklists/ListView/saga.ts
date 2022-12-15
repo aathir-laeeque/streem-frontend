@@ -1,4 +1,6 @@
-import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
+import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   apiArchiveChecklist,
@@ -7,10 +9,12 @@ import {
   apiUnarchiveChecklist,
   apiGetAutomations,
   apiGetProcessLogs,
+  apiProcessJobLogView,
+  apiJobLogView,
 } from '#utils/apiUrls';
 import { Error, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { all, call, delay, put, takeLatest, takeLeading } from 'redux-saga/effects';
 import { store } from '../../../App';
 import { Checklist } from '../types';
 import {
@@ -28,6 +32,14 @@ import {
   fetchProcessLogs,
   fetchProcessLogsError,
   fetchProcessLogsSuccess,
+  addCustomView,
+  addCustomViewSuccess,
+  addCustomViewError,
+  getCustomViewSuccess,
+  getCustomViewError,
+  getCustomView,
+  saveCustomView,
+  saveCustomViewSuccess,
 } from './actions';
 import { ListViewAction } from './types';
 
@@ -162,8 +174,10 @@ function* fetchAutomationsSaga({ payload }: ReturnType<typeof fetchAutomations>)
 
 function* fetchProcessLogsSaga({ payload }: ReturnType<typeof fetchProcessLogs>) {
   try {
-    const { id } = payload;
-    const { data, pageable } = yield call(request, 'GET', apiGetProcessLogs(id));
+    const { id, ...params } = payload;
+    const { data, pageable } = yield call(request, 'GET', apiGetProcessLogs(id), {
+      params,
+    });
 
     if (data) {
       yield put(fetchProcessLogsSuccess({ data, pageable }));
@@ -171,6 +185,63 @@ function* fetchProcessLogsSaga({ payload }: ReturnType<typeof fetchProcessLogs>)
   } catch (error) {
     console.error('error from fetchProcessLogsSaga function in Checklist ListView Saga :: ', error);
     yield put(fetchProcessLogsError(error));
+  }
+}
+
+function* addCustomViewSaga({ payload }: ReturnType<typeof addCustomView>) {
+  try {
+    const { data } = yield call(request, 'POST', apiProcessJobLogView(payload.checklistId), {
+      data: payload.data,
+    });
+
+    if (data) {
+      yield put(addCustomViewSuccess(data));
+      yield put(closeOverlayAction(OverlayNames.PUT_CUSTOM_VIEW));
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `${data.label} view created successfully`,
+        }),
+      );
+      payload.setActiveTab(data);
+    }
+  } catch (error) {
+    console.error('error from addCustomViewSaga function in Checklist ListView Saga :: ', error);
+    yield put(addCustomViewError(error));
+  }
+}
+
+function* getCustomViewSaga({ payload }: ReturnType<typeof getCustomView>) {
+  try {
+    const { data } = yield call(request, 'GET', apiProcessJobLogView(payload.checklistId));
+
+    if (data) {
+      yield put(getCustomViewSuccess(data));
+    }
+  } catch (error) {
+    console.error('error from getCustomViewSaga function in Checklist ListView Saga :: ', error);
+    yield put(getCustomViewError(error));
+  }
+}
+
+function* saveCustomViewSaga({ payload }: ReturnType<typeof saveCustomView>) {
+  try {
+    const { data } = yield call(request, 'PATCH', apiJobLogView(payload.viewId), {
+      data: payload.data,
+    });
+
+    if (data) {
+      yield put(saveCustomViewSuccess(data));
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `${data.label} view updated successfully`,
+        }),
+      );
+    }
+  } catch (error) {
+    console.error('error from saveCustomViewSaga function in Checklist ListView Saga :: ', error);
+    yield put(addCustomViewError(error));
   }
 }
 
@@ -182,4 +253,7 @@ export function* ChecklistListViewSaga() {
   yield takeLatest(ListViewAction.HANDLE_PUBLISHED_ARCHIVE, handlePublishedArchiveSaga);
   yield takeLatest(ListViewAction.FETCH_AUTOMATIONS, fetchAutomationsSaga);
   yield takeLatest(ListViewAction.FETCH_PROCESS_LOGS, fetchProcessLogsSaga);
+  yield takeLeading(ListViewAction.ADD_CUSTOM_VIEW, addCustomViewSaga);
+  yield takeLeading(ListViewAction.GET_CUSTOM_VIEW, getCustomViewSaga);
+  yield takeLeading(ListViewAction.SAVE_CUSTOM_VIEW, saveCustomViewSaga);
 }

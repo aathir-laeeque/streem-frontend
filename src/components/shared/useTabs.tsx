@@ -8,24 +8,29 @@ export const HeaderWrapper = styled.div.attrs({
   background-color: transparent;
   display: flex;
   grid-area: tab-header;
+  overflow-x: hidden;
 
-  .tab-header-item {
-    align-items: center;
-    background-color: #f4f4f4;
-    border-top: 2px solid transparent;
-    cursor: pointer;
+  .tab-header-items {
     display: flex;
-    min-width: 160px;
-    padding: 12px 16px;
-    text-transform: capitalize;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.29;
-    letter-spacing: 0.16px;
+    overflow-x: auto;
+    .tab-header-item {
+      align-items: center;
+      background-color: #f4f4f4;
+      border-top: 2px solid transparent;
+      cursor: pointer;
+      display: flex;
+      min-width: 160px;
+      padding: 12px 16px;
+      text-transform: capitalize;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.29;
+      letter-spacing: 0.16px;
 
-    &.active {
-      background-color: #ffffff;
-      border-top-color: #1d84ff;
+      &.active {
+        background-color: #ffffff;
+        border-top-color: #1d84ff;
+      }
     }
   }
 `;
@@ -56,24 +61,38 @@ export type TabContentProps = {
 
 type useTabType = {
   tabs: Tab[];
+  BeforeHeader?: {
+    Component: FC<any>;
+    props?: any;
+  };
+  AfterHeader?: {
+    Component: FC<any>;
+    props?: any;
+  };
 };
 
-const useTabs = ({ tabs }: useTabType) => {
+const useTabs = ({ tabs, BeforeHeader, AfterHeader }: useTabType) => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
   const TabContent = activeTab.tabContent;
 
   const renderTabHeader = () => (
     <HeaderWrapper>
-      {tabs.map((tab) => (
-        <div
-          className={`tab-header-item ${activeTab.label === tab.label ? 'active' : ''}`}
-          key={tab.label}
-          onClick={() => setActiveTab(tab)}
-        >
-          {capitalize(tab.label)}
-        </div>
-      ))}
+      {BeforeHeader && (
+        <BeforeHeader.Component setActiveTab={setActiveTab} {...BeforeHeader.props} />
+      )}
+      <div className="tab-header-items">
+        {tabs.map((tab) => (
+          <div
+            className={`tab-header-item ${activeTab.label === tab.label ? 'active' : ''}`}
+            key={tab.label}
+            onClick={() => setActiveTab(tab)}
+          >
+            {capitalize(tab.label)}
+          </div>
+        ))}
+      </div>
+      {AfterHeader && <AfterHeader.Component setActiveTab={setActiveTab} {...AfterHeader.props} />}
     </HeaderWrapper>
   );
 
