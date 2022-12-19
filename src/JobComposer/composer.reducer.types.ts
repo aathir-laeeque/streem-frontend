@@ -9,6 +9,7 @@ import {
   resetSignOffTaskError,
   setSignOffError,
   startJobSuccess,
+  updateHiddenIds,
 } from './actions';
 import { ParameterListState } from './ActivityList/reducer.types';
 import { Entity } from './composer.types';
@@ -47,6 +48,7 @@ export enum ComposerAction {
   SIGN_OFF_TASKS_ERROR_RESET = '@@jobComposer/job-action/SIGN_OFF_TASKS_ERROR_RESET',
   START_JOB = '@@jobComposer/job-action/START_JOB',
   START_JOB_SUCCESS = '@@jobComposer/job-action/START_JOB_SUCCESS',
+  UPDATE_HIDDEN_IDS = '@@jobComposer/job-action/UPDATE_HIDDEN_IDS',
 }
 
 export type ComposerActionType = ReturnType<
@@ -59,4 +61,5 @@ export type ComposerActionType = ReturnType<
   | typeof resetSignOffTaskError
   | typeof setSignOffError
   | typeof startJobSuccess
+  | typeof updateHiddenIds
 >;

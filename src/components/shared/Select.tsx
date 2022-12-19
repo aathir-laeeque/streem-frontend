@@ -20,6 +20,7 @@ type SelectProps = Props & {
   error?: string;
   label?: string;
   optional?: boolean;
+  style?: React.CSSProperties;
 };
 
 const Wrapper = styled.div.attrs({
@@ -74,6 +75,7 @@ export const selectStyles: Props['styles'] = {
 
   menu: (styles) => ({
     ...styles,
+    zIndex: 3,
     borderRadius: 'none',
   }),
 
@@ -86,6 +88,12 @@ export const selectStyles: Props['styles'] = {
     ...styles,
     color: 'hsl(0, 0%, 20%)',
   }),
+
+  groupHeading: (styles) => ({
+    ...styles,
+    color: 'rgba(0,0,0,0.87)',
+    fontSize: '80%',
+  }),
 };
 
 export const Select: FC<SelectProps> = ({
@@ -93,10 +101,11 @@ export const Select: FC<SelectProps> = ({
   optional = false,
   label = '',
   error = '',
+  style = {},
   ...rest
 }) => {
   return (
-    <Wrapper>
+    <Wrapper style={style}>
       {label && (
         <label className="label">
           {label} {optional && <span className="optional-badge">Optional</span>}

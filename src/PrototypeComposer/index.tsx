@@ -16,6 +16,7 @@ import { ComposerWrapper, TasksTabWrapper } from './styles';
 import Tasks from './Tasks';
 import AddParameter from './Tasks/AddParameter';
 import ParametersList from './Parameters/ListView';
+import BranchingRules from './BranchingRules';
 import { ComposerProps } from './types';
 
 export type ProcessInitialState = {
@@ -215,11 +216,11 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
                   label: 'Parameters',
                   panelContent: <ParametersList isReadOnly={!isNotReadOnly} />,
                 },
-                // {
-                //   value: '2',
-                //   label: 'Assignees',
-                //   panelContent: <div>Assignees</div>,
-                // },
+                {
+                  value: '2',
+                  label: 'Branching Rules',
+                  panelContent: <BranchingRules isReadOnly={!isNotReadOnly} />,
+                },
                 // {
                 //   value: '3',
                 //   label: 'Verifiers',

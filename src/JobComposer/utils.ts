@@ -1,10 +1,11 @@
 import { Error } from '#utils/globalTypes';
 import {
+  ParameterErrors,
   ParametersById,
   ParametersOrderInTaskInStage,
-  ParameterErrors,
 } from './ActivityList/types';
 import { Checklist, Stage, Task, TaskExecutionState } from './checklist.types';
+import { ComposerState } from './composer.reducer.types';
 import { ErrorGroups } from './composer.types';
 import { StageErrors, StagesById, StagesOrder } from './StageList/types';
 import { TaskErrors, TasksById, TaskSignOffError, TasksOrderInStage } from './TaskList/types';
@@ -131,4 +132,45 @@ export const getParameters = ({ checklist }: GetParametersType) => {
   });
 
   return { parametersById, parametersOrderInTaskInStage };
+};
+
+export const updateHiddenIds = (composerState: ComposerState) => {
+  const {
+    parameters,
+    stages: { stagesOrder, stagesById, activeStageId },
+    tasks,
+  } = composerState;
+  const _hiddenIds: Record<string, boolean> = {};
+  let _activeStageId: string | undefined = activeStageId;
+
+  stagesOrder.forEach((stageId) => {
+    let hiddenTasksLength = 0;
+    const stage = stagesById[stageId];
+    tasks.tasksOrderInStage[stageId].forEach((taskId) => {
+      let hiddenParametersLength = 0;
+      const task = tasks.tasksById[taskId];
+      parameters.parametersOrderInTaskInStage[stageId][taskId].forEach((parameterId) => {
+        const parameter = parameters.parametersById[parameterId];
+        if (parameter.response?.hidden) {
+          hiddenParametersLength++;
+          _hiddenIds[parameterId] = true;
+        }
+      });
+      if (task?.parameters?.length === hiddenParametersLength) {
+        hiddenTasksLength++;
+        _hiddenIds[task.id] = true;
+      }
+    });
+    if (stage?.tasks?.length === hiddenTasksLength) {
+      _hiddenIds[stage.id] = true;
+      if (stageId === activeStageId) {
+        _activeStageId = undefined;
+      }
+    }
+    if (!_activeStageId && !_hiddenIds?.[stageId]) {
+      _activeStageId = stageId;
+    }
+  });
+
+  return { _hiddenIds, _activeStageId };
 };

@@ -17,6 +17,25 @@ import React from 'react';
 import styled from 'styled-components';
 import { MandatoryParameter, NonMandatoryParameter, TargetEntityType } from './checklist.types';
 
+export const ParameterIconByType = {
+  [MandatoryParameter.CHECKLIST]: <LineStyle />,
+  [NonMandatoryParameter.INSTRUCTION]: <LineStyle />,
+  [NonMandatoryParameter.MATERIAL]: <LineStyle />,
+  [MandatoryParameter.MEDIA]: <CameraAltOutlined />,
+  [MandatoryParameter.MULTISELECT]: <DoneAllOutlined />,
+  [MandatoryParameter.SHOULD_BE]: <ExposureOutlined />,
+  [MandatoryParameter.SIGNATURE]: <GestureOutlined />,
+  [MandatoryParameter.SINGLE_SELECT]: <DoneAllOutlined />,
+  [MandatoryParameter.SINGLE_LINE]: <ShortTextOutlined />,
+  [MandatoryParameter.MULTI_LINE]: <SubjectOutlined />,
+  [MandatoryParameter.YES_NO]: <TonalityOutlined />,
+  [MandatoryParameter.NUMBER]: <Filter1Outlined />,
+  [MandatoryParameter.CALCULATION]: <FunctionsOutlined />,
+  [MandatoryParameter.DATE]: <DateRangeOutlined />,
+  [MandatoryParameter.DATE_TIME]: <EventNoteOutlined />,
+  [MandatoryParameter.RESOURCE]: <LayersOutlined />,
+};
+
 const ParameterLabelWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -49,43 +68,92 @@ const RenderParameterLabel: React.FC<{ label: string; icon: JSX.Element }> = ({ 
 };
 
 export const ParameterTypeMap: Record<string, JSX.Element | string> = {
-  [MandatoryParameter.CHECKLIST]: <RenderParameterLabel label="Subtasks" icon={<LineStyle />} />,
-  [NonMandatoryParameter.INSTRUCTION]: (
-    <RenderParameterLabel label="Instruction" icon={<LineStyle />} />
+  [MandatoryParameter.CHECKLIST]: (
+    <RenderParameterLabel
+      label="Subtasks"
+      icon={ParameterIconByType[MandatoryParameter.CHECKLIST]}
+    />
   ),
-  [NonMandatoryParameter.MATERIAL]: <RenderParameterLabel label="Material" icon={<LineStyle />} />,
+  [NonMandatoryParameter.INSTRUCTION]: (
+    <RenderParameterLabel
+      label="Instruction"
+      icon={ParameterIconByType[NonMandatoryParameter.INSTRUCTION]}
+    />
+  ),
+  [NonMandatoryParameter.MATERIAL]: (
+    <RenderParameterLabel
+      label="Material"
+      icon={ParameterIconByType[NonMandatoryParameter.MATERIAL]}
+    />
+  ),
   [MandatoryParameter.MEDIA]: (
-    <RenderParameterLabel label="Image Capture" icon={<CameraAltOutlined />} />
+    <RenderParameterLabel
+      label="Image Capture"
+      icon={ParameterIconByType[MandatoryParameter.MEDIA]}
+    />
   ),
   [MandatoryParameter.MULTISELECT]: (
-    <RenderParameterLabel label="Multi-select dropdown" icon={<DoneAllOutlined />} />
+    <RenderParameterLabel
+      label="Multi-select dropdown"
+      icon={ParameterIconByType[MandatoryParameter.MULTISELECT]}
+    />
   ),
   [MandatoryParameter.SHOULD_BE]: (
-    <RenderParameterLabel label="Should Be" icon={<ExposureOutlined />} />
+    <RenderParameterLabel
+      label="Should Be"
+      icon={ParameterIconByType[MandatoryParameter.SHOULD_BE]}
+    />
   ),
   [MandatoryParameter.SIGNATURE]: (
-    <RenderParameterLabel label="Signature" icon={<GestureOutlined />} />
+    <RenderParameterLabel
+      label="Signature"
+      icon={ParameterIconByType[MandatoryParameter.SIGNATURE]}
+    />
   ),
   [MandatoryParameter.SINGLE_SELECT]: (
-    <RenderParameterLabel label="Single-select dropdown" icon={<DoneAllOutlined />} />
+    <RenderParameterLabel
+      label="Single-select dropdown"
+      icon={ParameterIconByType[MandatoryParameter.SINGLE_SELECT]}
+    />
   ),
   [MandatoryParameter.SINGLE_LINE]: (
-    <RenderParameterLabel label="Single-line text" icon={<ShortTextOutlined />} />
+    <RenderParameterLabel
+      label="Single-line text"
+      icon={ParameterIconByType[MandatoryParameter.SINGLE_LINE]}
+    />
   ),
   [MandatoryParameter.MULTI_LINE]: (
-    <RenderParameterLabel label="Multi-line text" icon={<SubjectOutlined />} />
+    <RenderParameterLabel
+      label="Multi-line text"
+      icon={ParameterIconByType[MandatoryParameter.MULTI_LINE]}
+    />
   ),
-  [MandatoryParameter.YES_NO]: <RenderParameterLabel label="Yes/No" icon={<TonalityOutlined />} />,
-  [MandatoryParameter.NUMBER]: <RenderParameterLabel label="Number" icon={<Filter1Outlined />} />,
+  [MandatoryParameter.YES_NO]: (
+    <RenderParameterLabel label="Yes/No" icon={ParameterIconByType[MandatoryParameter.YES_NO]} />
+  ),
+  [MandatoryParameter.NUMBER]: (
+    <RenderParameterLabel label="Number" icon={ParameterIconByType[MandatoryParameter.NUMBER]} />
+  ),
   [MandatoryParameter.CALCULATION]: (
-    <RenderParameterLabel label="Calculation" icon={<FunctionsOutlined />} />
+    <RenderParameterLabel
+      label="Calculation"
+      icon={ParameterIconByType[MandatoryParameter.CALCULATION]}
+    />
   ),
-  [MandatoryParameter.DATE]: <RenderParameterLabel label="Date" icon={<DateRangeOutlined />} />,
+  [MandatoryParameter.DATE]: (
+    <RenderParameterLabel label="Date" icon={ParameterIconByType[MandatoryParameter.DATE]} />
+  ),
   [MandatoryParameter.DATE_TIME]: (
-    <RenderParameterLabel label="Date-Time" icon={<EventNoteOutlined />} />
+    <RenderParameterLabel
+      label="Date-Time"
+      icon={ParameterIconByType[MandatoryParameter.DATE_TIME]}
+    />
   ),
   [MandatoryParameter.RESOURCE]: (
-    <RenderParameterLabel label="Resource" icon={<LayersOutlined />} />
+    <RenderParameterLabel
+      label="Resource"
+      icon={ParameterIconByType[MandatoryParameter.RESOURCE]}
+    />
   ),
 };
 

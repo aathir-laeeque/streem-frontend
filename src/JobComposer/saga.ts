@@ -28,6 +28,7 @@ import {
   signOffTasks,
   startJob,
   startJobSuccess,
+  updateHiddenIds,
 } from './actions';
 import { setParameterError } from './ActivityList/actions';
 import { ParameterListSaga } from './ActivityList/saga';
@@ -55,6 +56,7 @@ function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
     if (data) {
       yield put(setRecentServerTimestamp(timestamp));
       yield put(fetchDataSuccess(data, entity, setActive));
+      yield put(updateHiddenIds());
     } else {
       // TODO: handle the api error when design comes
       console.error('error from fetch checklist/job api ==>> ', errors);

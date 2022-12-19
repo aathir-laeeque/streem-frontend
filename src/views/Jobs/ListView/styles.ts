@@ -63,6 +63,7 @@ const TabContentWrapper = styled.div`
   }
 
   .task-progress {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
 

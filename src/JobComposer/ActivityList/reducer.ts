@@ -1,15 +1,17 @@
+import { Parameter } from '#JobComposer/checklist.types';
+import { StageListAction } from '#JobComposer/StageList/reducer.types';
 import { getParameters } from '#JobComposer/utils';
 import { Reducer } from 'redux';
 import { ComposerAction } from '../composer.reducer.types';
-import { ParameterListActionType, ParameterListState, ParameterListAction } from './reducer.types';
 import { Entity } from '../composer.types';
-import { StageListAction } from '#JobComposer/StageList/reducer.types';
 import { keyBy } from 'lodash';
+import { ParameterListAction, ParameterListActionType, ParameterListState } from './reducer.types';
 
 export const initialState: ParameterListState = {
   parametersById: {},
   parametersOrderInTaskInStage: {},
   parametersMappedToJobById: {},
+  hiddenIds: {},
 };
 
 const reducer: Reducer<ParameterListState, ParameterListActionType> = (
@@ -46,6 +48,32 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
         parametersById: {
           ...state.parametersById,
           [action.payload.parameter.id]: { ...action.payload.parameter },
+          ...(action.payload.parameter?.hide || []).reduce<Record<string, Parameter>>(
+            (acc, pId) => {
+              acc[pId] = {
+                ...state.parametersById[pId],
+                response: {
+                  ...state.parametersById[pId].response,
+                  hidden: true,
+                },
+              };
+              return acc;
+            },
+            {},
+          ),
+          ...(action.payload.parameter?.show || []).reduce<Record<string, Parameter>>(
+            (acc, pId) => {
+              acc[pId] = {
+                ...state.parametersById[pId],
+                response: {
+                  ...state.parametersById[pId].response,
+                  hidden: false,
+                },
+              };
+              return acc;
+            },
+            {},
+          ),
         },
       };
 

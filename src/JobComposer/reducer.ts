@@ -7,6 +7,7 @@ import { initialState as stageListState, stageListReducer } from './StageList/re
 import { initialState as auditLogsState, jobAuditLogsReducer } from './JobAuditLogs/reducer';
 import { initialState as taskListState, taskListReducer } from './TaskList/reducer';
 import { StageListAction } from './StageList/reducer.types';
+import { updateHiddenIds } from './utils';
 
 const initialState: ComposerState = {
   parameters: parameterListState,
@@ -52,6 +53,20 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
         parameters: parameterListReducer(state.parameters, action),
         stages: stageListReducer(state.stages, action),
         tasks: taskListReducer(state.tasks, action),
+      };
+
+    case ComposerAction.UPDATE_HIDDEN_IDS:
+      const { _hiddenIds, _activeStageId } = updateHiddenIds(state);
+      return {
+        ...state,
+        parameters: {
+          ...state.parameters,
+          hiddenIds: _hiddenIds,
+        },
+        stages: {
+          ...state.stages,
+          activeStageId: _activeStageId,
+        },
       };
 
     case ComposerAction.RESET_COMPOSER:

@@ -38,6 +38,8 @@ export interface Parameter {
   hasError: boolean;
   label?: string;
   response?: any;
+  hide?: string[];
+  show?: string[];
 }
 
 export interface Media {

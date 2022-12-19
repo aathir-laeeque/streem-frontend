@@ -12,7 +12,7 @@ import {
 import { Error } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, select, takeLeading, takeLatest } from 'redux-saga/effects';
-import { fetchData } from '../actions';
+import { fetchData, updateHiddenIds } from '../actions';
 import { Entity } from '../composer.types';
 import {
   approveRejectParameter,
@@ -51,6 +51,7 @@ function* executeParameterSaga({ payload }: ReturnType<typeof executeParameter>)
         yield put(fetchData({ id: jobId, entity: Entity.JOB }));
       }
       yield put(updateExecutedParameter(data));
+      yield put(updateHiddenIds());
     } else {
       console.error('handle errors on execute Parameter Saga :: ', errors);
       const taskAlreadyCompletedError = (errors as Error[]).find((err) => err.code === 'E403');

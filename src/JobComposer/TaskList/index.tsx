@@ -16,6 +16,7 @@ const TaskListView: FC = () => {
       tasksOrderInStage,
       stageIdWithTaskStop,
     },
+    parameters: { hiddenIds },
   } = useTypedSelector((state) => state.composer);
 
   const activeStage = stagesById[activeStageId];
@@ -54,6 +55,7 @@ const TaskListView: FC = () => {
 
       <div className="tasks-list">
         {tasksListIds.map((taskId, index) => {
+          if (hiddenIds?.[taskId]) return null;
           const enableStopForTask =
             shouldStageHaveStop && index > tasksListIds.indexOf(taskIdWithStop);
 

@@ -5,6 +5,7 @@ import {
   processParametersMapSuccess,
   resetComposer,
 } from './actions';
+import { updateStoreParameter } from './Activity/actions';
 import { ParameterListState } from './Activity/reducer.types';
 import { Checklist } from './checklist.types';
 import { ChecklistAuditLogsState } from './ChecklistAuditLogs/types';
@@ -73,4 +74,5 @@ export type ComposerActionType = ReturnType<
   | typeof unAssignReviewerFromChecklist
   | typeof updateChecklistForReview
   | typeof processParametersMapSuccess
+  | typeof updateStoreParameter
 >;

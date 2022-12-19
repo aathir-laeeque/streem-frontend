@@ -1,6 +1,7 @@
 import { unionBy } from 'lodash';
 import { Reducer } from 'redux';
 import { initialState as ParameterListState, parameterReducer } from './Activity/reducer';
+import { ParameterListActions } from './Activity/reducer.types';
 import { Checklist } from './checklist.types';
 import {
   checklistAuditLogsReducer,
@@ -46,6 +47,19 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
         stages: stageReducer(state.stages, action),
         tasks: taskReducer(state.tasks, action),
       };
+
+    case ParameterListActions.UPDATE_STORE_PARAMETER: {
+      const { parameterId, data } = action.payload;
+
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          parameters: (state.data?.parameters || []).map((p) => (p.id === parameterId ? data : p)),
+        },
+        parameters: parameterReducer(state.parameters, action),
+      };
+    }
 
     case ComposerAction.FETCH_COMPOSER_DATA_ERROR:
       return {

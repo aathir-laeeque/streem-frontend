@@ -1,13 +1,12 @@
 import { ProgressBar } from '#components';
+import { useTypedSelector } from '#store';
 import { Assignment, CheckCircle, Error, PanTool } from '@material-ui/icons';
 import React, { forwardRef } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { CompletedTaskStates, StartedTaskStates } from '../checklist.types';
 import { setActiveStage, startPollActiveStageData, stopPollActiveStageData } from './actions';
 import Wrapper from './styles';
 import { StageCardProps } from './types';
-import { useTypedSelector } from '#store';
 
 type Ref = HTMLDivElement;
 
@@ -17,15 +16,20 @@ const StageCard = forwardRef<Ref, StageCardProps>(({ stage, isActive }, ref) => 
   const {
     tasks: { tasksById, tasksOrderInStage },
     jobId,
+    hiddenIds,
   } = useTypedSelector((state) => ({
     tasks: state.composer.tasks,
     jobId: state.composer.entityId,
     stageReports: state.composer.stages?.stageReports,
+    hiddenIds: state.composer.parameters.hiddenIds,
   }));
 
-  const tasks = tasksOrderInStage[stage.id].map((taskId) => tasksById[taskId]);
+  const tasks = tasksOrderInStage[stage.id].reduce<any[]>((acc, taskId) => {
+    if (!hiddenIds?.[taskId]) acc.push(tasksById[taskId]);
+    return acc;
+  }, []);
 
-  const tasksStatus = tasks.reduce(
+  const { isAnyTaskStarted, completedTasks, anyTaskHasError } = tasks.reduce(
     ({ isAnyTaskStarted, anyTaskHasError, completedTasks }, task) => {
       const {
         taskExecution: { state },
@@ -44,10 +48,7 @@ const StageCard = forwardRef<Ref, StageCardProps>(({ stage, isActive }, ref) => 
     { isAnyTaskStarted: false, anyTaskHasError: false, completedTasks: 0 },
   );
 
-  const { isAnyTaskStarted, completedTasks } = tasksStatus;
-  const { anyTaskHasError } = tasksStatus;
-
-  const precentageOfCompleteTasks = Math.round((completedTasks / tasks.length) * 100);
+  const percentageOfCompleteTasks = Math.round((completedTasks / tasks.length) * 100);
 
   const allTasksCompleted = completedTasks === tasks.length;
 
@@ -111,8 +112,8 @@ const StageCard = forwardRef<Ref, StageCardProps>(({ stage, isActive }, ref) => 
       <div className="stage-name">{stage.name}</div>
 
       <div className="stage-task-bar">
-        <span>{precentageOfCompleteTasks}% Task completed</span>
-        <ProgressBar percentage={precentageOfCompleteTasks} />
+        <span>{percentageOfCompleteTasks}% Task completed</span>
+        <ProgressBar percentage={percentageOfCompleteTasks} />
       </div>
     </Wrapper>
   );

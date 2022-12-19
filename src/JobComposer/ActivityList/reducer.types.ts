@@ -15,6 +15,7 @@ export type ParameterListState = {
   parametersById: ParametersById;
   parametersOrderInTaskInStage: ParametersOrderInTaskInStage;
   parametersMappedToJobById: ParametersById;
+  hiddenIds: Record<string, boolean>;
 };
 
 export enum ParameterListAction {

@@ -74,3 +74,5 @@ export const setSignOffError = (error: string) =>
 
 export const resetSignOffTaskError = () =>
   actionSpreader(ComposerAction.SIGN_OFF_TASKS_ERROR_RESET);
+
+export const updateHiddenIds = () => actionSpreader(ComposerAction.UPDATE_HIDDEN_IDS);

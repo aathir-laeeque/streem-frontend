@@ -27,9 +27,10 @@ const Wrapper = styled.div.attrs({
 `;
 
 const StageListView: FC = () => {
-  const { activeStageId, stagesById, stagesOrder, bringIntoView } = useTypedSelector(
-    (state) => state.composer.stages,
-  );
+  const {
+    stages: { activeStageId, stagesById, stagesOrder, bringIntoView },
+    parameters: { hiddenIds },
+  } = useTypedSelector((state) => state.composer);
 
   const refMap = stagesOrder.reduce<Record<Stage['id'], RefObject<HTMLDivElement>>>(
     (acc, stageId) => {
@@ -53,14 +54,17 @@ const StageListView: FC = () => {
 
   return (
     <Wrapper>
-      {stagesOrder.map((stageId) => (
-        <StageCard
-          isActive={stageId === activeStageId}
-          key={stageId}
-          stage={stagesById[stageId]}
-          ref={refMap[stageId]}
-        />
-      ))}
+      {stagesOrder.map((stageId) => {
+        if (hiddenIds?.[stageId]) return null;
+        return (
+          <StageCard
+            isActive={stageId === activeStageId}
+            key={stageId}
+            stage={stagesById[stageId]}
+            ref={refMap[stageId]}
+          />
+        );
+      })}
     </Wrapper>
   );
 };

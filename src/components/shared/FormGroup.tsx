@@ -228,11 +228,7 @@ export const FormGroup = ({ inputs, ...rest }: FormGroupProps) => {
             return <Textarea key={props.id} {...props} />;
           case InputTypes.SINGLE_SELECT:
           case InputTypes.MULTI_SELECT:
-            return (
-              <div key={props.id}>
-                <Select isMulti={type === InputTypes.MULTI_SELECT} {...props} />
-              </div>
-            );
+            return <Select key={props.id} isMulti={type === InputTypes.MULTI_SELECT} {...props} />;
           case InputTypes.ROLE:
             return <Role key={props.id} {...(props as RoleProps)} />;
           case InputTypes.RADIO:

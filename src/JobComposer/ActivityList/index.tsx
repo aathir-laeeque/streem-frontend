@@ -129,7 +129,10 @@ const ParameterList: FC<ParameterListProps> = ({
   isLoggedInUserAssigned,
 }) => {
   const {
-    composer: { entity },
+    composer: {
+      entity,
+      parameters: { hiddenIds },
+    },
   } = useTypedSelector((state) => state);
 
   return (
@@ -141,7 +144,7 @@ const ParameterList: FC<ParameterListProps> = ({
     >
       {parameters.map((parameter) => {
         const { state, audit } = parameter?.response;
-
+        if (hiddenIds?.[parameter.id]) return null;
         return (
           <div key={parameter.id} className="parameter">
             {entity === Entity.JOB ? (
