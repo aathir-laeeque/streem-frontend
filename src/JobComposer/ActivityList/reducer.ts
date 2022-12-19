@@ -4,10 +4,12 @@ import { ComposerAction } from '../composer.reducer.types';
 import { ParameterListActionType, ParameterListState, ParameterListAction } from './reducer.types';
 import { Entity } from '../composer.types';
 import { StageListAction } from '#JobComposer/StageList/reducer.types';
+import { keyBy } from 'lodash';
 
 export const initialState: ParameterListState = {
   parametersById: {},
   parametersOrderInTaskInStage: {},
+  parametersMappedToJobById: {},
 };
 
 const reducer: Reducer<ParameterListState, ParameterListActionType> = (
@@ -19,10 +21,10 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
       const { data, entity } = action.payload;
 
       const checklist = entity === Entity.CHECKLIST ? data : data?.checklist;
-
       return {
         ...state,
         ...getParameters({ checklist }),
+        parametersMappedToJobById: keyBy(data?.parameterValues, 'id'),
       };
 
     case StageListAction.FETCH_ACTIVE_STAGE_DATA_SUCCESS:

@@ -1,7 +1,4 @@
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
-import { deleteParameter, toggleNewParameter } from '#PrototypeComposer/Activity/actions';
-import { parameterReducer } from '#PrototypeComposer/Activity/reducer';
+import { toggleNewParameter } from '#PrototypeComposer/Activity/actions';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap } from '#PrototypeComposer/constants';
@@ -15,25 +12,13 @@ import SingleLineTaskView from '#PrototypeComposer/Parameters/ExecutionViews/Sin
 import SingleSelectTaskView from '#PrototypeComposer/Parameters/ExecutionViews/SingleSelect';
 import TextInstructionTaskView from '#PrototypeComposer/Parameters/ExecutionViews/TextInstruction';
 import YesNoTaskView from '#PrototypeComposer/Parameters/ExecutionViews/YesNo';
-// import MediaView from '.././../../views/Jobs/Modals/ParameterViews/Media';
-// remove this
 import { useTypedSelector } from '#store/helpers';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import {
-  DeleteOutlined,
-  DragIndicator,
-  EditOutlined,
-  FilterList,
-  VisibilityOutlined,
-} from '@material-ui/icons';
-import React, { FC } from 'react';
+import { FilterList } from '@material-ui/icons';
+import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-export const ParameterViewWrapper = styled.div<{ isReadOnly: boolean }>`
-  // padding: ${({ isReadOnly }) => (isReadOnly ? '16px 8px' : '16px 8px 16px 0')};
-
+export const ParameterViewWrapper = styled.div`
   width: 100%;
 
   :last-child {
@@ -43,17 +28,6 @@ export const ParameterViewWrapper = styled.div<{ isReadOnly: boolean }>`
   :hover {
     .container {
       touch-action: none;
-      // background-color: rgba(29, 132, 255, 0.04);
-      // border: 1px solid #1d84ff;
-      // .draggable {
-      //   visibility: visible;
-      // }
-
-      // .content {
-      //   .actions {
-      //     display: flex;
-      //   }
-      // }
     }
   }
 
@@ -64,33 +38,6 @@ export const ParameterViewWrapper = styled.div<{ isReadOnly: boolean }>`
 
     flex-direction: column;
 
-    // &.dragging {
-    //   z-index: 1;
-    //   transition: none;
-
-    //   * {
-    //     cursor: grabbing;
-    //   }
-
-    //   box-shadow: -1px 0 15px 0 rgba(34, 33, 81, 0.01), 0px 15px 15px 0 rgba(34, 33, 81, 0.25);
-
-    //   &:focus-visible {
-    //     box-shadow: 0 0px 10px 2px #4c9ffe;
-    //   }
-    // }
-
-    // .draggable {
-    //   background-color: #1d84ff;
-    //   align-items: center;
-    //   cursor: pointer;
-    //   display: flex;
-    //   visibility: hidden;
-    //   svg {
-    //     color: #fff;
-    //     font-size: 16px;
-    //   }
-    // }
-
     .content {
       display: flex;
       flex-direction: column;
@@ -98,39 +45,6 @@ export const ParameterViewWrapper = styled.div<{ isReadOnly: boolean }>`
       flex: 1;
       padding-block: 16px;
 
-      // padding: 16px 16px 16px 8px;
-      // .actions {
-      //   position: absolute;
-      //   right: 16px;
-      //   top: -16px;
-      //   height: 32px;
-      //   align-items: center;
-      //   background: #fff;
-      //   border: 1px solid #1d84ff;
-      //   color: #1d84ff;
-      //   display: none;
-      //   @media (max-width: 1200px) {
-      //     top: -12px;
-      //     height: 24px;
-      //   }
-      //   svg {
-      //     color: inherit;
-      //     font-size: 32px;
-      //     padding-inline: 4px;
-      //     cursor: pointer;
-      //     border-right: 1px solid #1d84ff;
-      //     :last-of-type {
-      //       border-right: none;
-      //     }
-      //     :hover {
-      //       background-color: #1d84ff;
-      //       color: #fff;
-      //     }
-      //     @media (max-width: 1200px) {
-      //       font-size: 24px !important;
-      //     }
-      //   }
-      // }
       .filters-validations {
         margin-top: 8px;
         display: flex;
@@ -167,30 +81,26 @@ export const ParameterViewWrapper = styled.div<{ isReadOnly: boolean }>`
   }
 `;
 
-const ParameterView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly, form }) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: parameter.id,
-    disabled: isReadOnly,
-  });
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+const ParameterView: FC<ParameterProps> = ({ parameter, form }) => {
   const dispatch = useDispatch();
-  const { activeStageId: stageId } = useTypedSelector((state) => state.prototypeComposer.stages);
   const {
     parameters: { listById },
   } = useTypedSelector((state) => state.prototypeComposer);
 
   const parameterType = listById[parameter.id]?.type;
 
-  const onDelete = () => {
-    if (stageId) {
-      dispatch(deleteParameter({ parameterId: parameter.id, taskId, stageId }));
-    }
-  };
+  const { register, unregister } = form;
 
-  // console.log('zero paramter view', isReadOnly, form);
+  useEffect(() => {
+    register(`data.${parameter.id}`, {
+      required: parameter.mandatory,
+    });
+    return () => {
+      unregister(`data.${parameter.id}`, {
+        required: parameter.mandatory,
+      });
+    };
+  }, []);
 
   const renderFiltersValidationsAction = (label: string, count: number) => {
     return (
@@ -246,16 +156,17 @@ const ParameterView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly, form
       case MandatoryParameter.MULTI_LINE:
       case MandatoryParameter.DATE:
       case MandatoryParameter.SINGLE_LINE:
+      case MandatoryParameter.DATE_TIME:
         return <SingleLineTaskView parameter={parameter} form={form} />;
 
       case MandatoryParameter.YES_NO:
         return <YesNoTaskView parameter={parameter} form={form} />;
 
       case NonMandatoryParameter.INSTRUCTION:
-        return <TextInstructionTaskView parameter={parameter} isReadOnly={isReadOnly} />;
+        return <TextInstructionTaskView parameter={parameter} />;
 
       case NonMandatoryParameter.MATERIAL:
-        return <MaterialInstructionTaskView parameter={parameter} isReadOnly={isReadOnly} />;
+        return <MaterialInstructionTaskView parameter={parameter} />;
 
       case MandatoryParameter.CALCULATION:
         return <CalculationTaskView parameter={parameter} form={form} />;
@@ -277,63 +188,10 @@ const ParameterView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly, form
     }
   };
 
-  const onViewOrEditParameter = () => {
-    const titlePreFix = isReadOnly ? 'View' : 'Edit';
-    dispatch(
-      toggleNewParameter({
-        action: 'task',
-        title:
-          parameter.type in NonMandatoryParameter
-            ? `${titlePreFix} Instruction`
-            : `${titlePreFix} Process Parameter`,
-        parameterId: parameter.id,
-        ...(parameter.type in NonMandatoryParameter && {
-          type: parameter.type,
-        }),
-      }),
-    );
-  };
-
   return (
-    <ParameterViewWrapper isReadOnly={isReadOnly}>
-      <div
-        ref={setNodeRef}
-        style={style}
-        className={isDragging ? 'container dragging' : 'container'}
-      >
-        {/* {!isReadOnly && (
-          <div className="draggable" {...attributes} {...listeners}>
-            <DragIndicator />
-          </div>
-        )} */}
+    <ParameterViewWrapper>
+      <div className="container">
         <div className="content">
-          {/* <div className="actions">
-            {isReadOnly ? (
-              <VisibilityOutlined onClick={onViewOrEditParameter} />
-            ) : (
-              <>
-                <EditOutlined onClick={onViewOrEditParameter} />
-                <DeleteOutlined
-                  onClick={() => {
-                    if (stageId) {
-                      dispatch(
-                        openOverlayAction({
-                          type: OverlayNames.CONFIRMATION_MODAL,
-                          props: {
-                            onPrimary: onDelete,
-                            primaryText: 'Yes',
-                            secondaryText: 'No',
-                            title: 'Delete Parameter',
-                            body: <>Are you sure you want to Delete this Parameter ?</>,
-                          },
-                        }),
-                      );
-                    }
-                  }}
-                />
-              </>
-            )}
-          </div> */}
           {ParameterTypeMap[parameter.type]}
           <span className="parameter-label">{parameter.label}</span>
           {renderTaskViewByType()}

@@ -37,14 +37,7 @@ const MediaTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
   const [isUploading, setIsUploading] = useState(false);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
 
-  const { register, watch, setValue } = form;
-  const data = watch('data', {});
-
-  register('data', {
-    required: true,
-  });
-
-  console.log(parameter, 'zero execution');
+  const { setValue } = form;
 
   const onUploaded = (fileData: FileUploadData) => {
     dispatch(
@@ -58,7 +51,6 @@ const MediaTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
           },
           isParameter: true,
           execute: (value) => {
-            console.log(value, 'zero execution check');
             setValue(
               'data',
               {

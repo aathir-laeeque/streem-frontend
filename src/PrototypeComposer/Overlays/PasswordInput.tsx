@@ -119,19 +119,8 @@ const PasswordInputModal: FC<
         title="Ready for Release"
       >
         <div>
-          {isReleasing ? (
-            <>
-              <div>
-                Ongoing Jobs will be executed as per the previous version of the the Checklist. All
-                new Jobs will be created as per the latest version.
-              </div>
-              <div style={{ marginTop: '10px' }}>
-                By Continuing you will Release the Checklist for creating Jobs.
-              </div>
-            </>
-          ) : (
-            'By Continuing you will sign the Prototype and make it ready for release.'
-          )}
+          By Entering you Account Password and Approving it, you will Release the Checklist from
+          your end.
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           {userType === UserType.LOCAL && (
@@ -151,7 +140,7 @@ const PasswordInputModal: FC<
             type="submit"
             disabled={userType === UserType.LOCAL ? !isValid || !isDirty : false}
           >
-            Sign
+            Approve
           </Button>
         </form>
       </BaseModal>

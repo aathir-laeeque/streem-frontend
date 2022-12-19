@@ -5,12 +5,7 @@ import React, { FC } from 'react';
 import { FormatOptionLabelContext } from 'react-select';
 
 const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
-  const { register, watch, setValue } = form;
-  const data = watch('data', {});
-
-  register('data', {
-    required: true,
-  });
+  const { setValue } = form;
 
   const typeOfSelect = (type) => {
     if (type === 'MULTISELECT') {
@@ -92,20 +87,17 @@ const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, f
             },
             onChange: (value: any) => {
               setValue(
-                'data',
+                `data.${parameter.id}`,
                 {
-                  ...data,
-                  [parameter.id]: {
-                    ...parameter,
-                    data: selectedData(value, parameter.data),
-                    response: {
-                      value: null,
-                      reason: '',
-                      state: 'EXECUTED',
-                      choices: optionChosen(value, parameter.data),
-                      medias: [],
-                      parameterValueApprovalDto: null,
-                    },
+                  ...parameter,
+                  data: selectedData(value, parameter.data),
+                  response: {
+                    value: null,
+                    reason: '',
+                    state: 'EXECUTED',
+                    choices: optionChosen(value, parameter.data),
+                    medias: [],
+                    parameterValueApprovalDto: null,
                   },
                 },
                 {

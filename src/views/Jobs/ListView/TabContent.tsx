@@ -6,10 +6,10 @@ import {
   Pagination,
   ProgressBar,
   SearchFilter,
+  Select,
   TabContentProps,
   ToggleSwitch,
   UsersFilter,
-  Select,
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
@@ -25,11 +25,12 @@ import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import { CircularProgress } from '@material-ui/core';
 import { FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
+import { debounce, keyBy } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import DetailsPopover from '../Components/DetailsPopover';
 import { createJob, fetchJobs } from './actions';
 import AssigneesColumn from './AssigneesColumn';
-import DetailsPopover from '../Components/DetailsPopover';
 import { TabContentWrapper } from './styles';
 import {
   AssignedJobStates,
@@ -38,7 +39,6 @@ import {
   JobStateType,
   UnassignedJobStates,
 } from './types';
-import { keyBy } from 'lodash';
 
 const getBaseFilter = (values: string[]): FilterField[] => [
   {
@@ -59,7 +59,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   } = useTypedSelector((state) => state.jobListView);
 
   const {
-    data,
     parameters: {
       parameters: { list: parametersList, pageable: parameterPageable },
     },
@@ -73,8 +72,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
   const {
     checklists,
-    pageable: checlistViewPageable,
-    loading,
+    pageable: checklistPageable,
+    loading: checklistsLoading,
   } = useTypedSelector((state) => state.checklistListView);
 
   const { list: jobProperties, loading: jobPropertiesLoading } = useTypedSelector(
@@ -86,7 +85,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(values));
 
   const [assignedUsers, setAssignedUsers] = useState<User[]>([]);
-  const [selectedChecklistOption, setSelectedChecklistOption] = useState<string | undefined>();
 
   const fetchData = (params: PaginatedFetchData = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
@@ -120,35 +118,19 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
   useEffect(() => {
     fetchData({ filters: filterFields });
-    // fetchParametersListData();
     fetchChecklistData({ page: 0 });
     componentDidMount.current = true;
   }, []);
 
+  useEffect(() => {
+    return () => {
+      dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
+    };
+  }, [label]);
+
   const onCreateJob = (jobDetails: Record<string, string>) => {
-    const tempProperties: { id: string; value: string }[] = [];
     const selectedId = jobDetails.checklistId;
-    let error = false;
-    // if (!jobProperties) return false;
-    // jobProperties.every((property) => {
-    //   if (property.name) {
-    //     if (!jobDetails[property.name]) {
-    //       if (property.mandatory) {
-    //         error = true;
-    //         return false;
-    //       }
-    //       return true;
-    //     } else {
-    //       tempProperties.push({
-    //         id: property.id,
-    //         value: jobDetails[property.name],
-    //       });
-    //       return true;
-    //     }
-    //   }
-    // });
-    if (!error && tempProperties && selectedId) {
-      const parsedProperties: { id: string; value: string }[] = tempProperties;
+    if (selectedId) {
       dispatch(
         createJob({
           properties: jobDetails.properties,
@@ -271,21 +253,23 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   ];
 
   const rows = jobs.map((item) => {
-    console.log('zero rows', item);
     return {
       ...item,
       parameterValues: keyBy(item.parameterValues, 'id'),
     };
   });
 
-  // for the dropdown
-  const fetchChecklistData = ({ page, size = 10, query = '' }: fetchDataParams) => {
+  const fetchChecklistData = ({
+    page = DEFAULT_PAGE_NUMBER,
+    size = DEFAULT_PAGE_SIZE,
+    query = '',
+  }: fetchDataParams) => {
     const filters = JSON.stringify({
       op: FilterOperators.AND,
       fields: [
-        { field: 'code', op: FilterOperators.LIKE, values: [query] },
         { field: 'state', op: FilterOperators.EQ, values: ['PUBLISHED'] },
         { field: 'archived', op: FilterOperators.EQ, values: [false] },
+        ...(query ? [{ field: 'name', op: FilterOperators.LIKE, values: [query] }] : []),
         {
           field: 'useCaseId',
           op: FilterOperators.EQ,
@@ -295,11 +279,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     });
     dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, page === 0));
   };
-
-  // const [processFilterFields, setProcessFilterFields] = useState<FilterField[]>([
-  //   { field: 'targetEntityType', op: FilterOperators.EQ, values: [TargetEntityType.PROCESS] },
-  //   { field: 'archived', op: FilterOperators.EQ, values: [false] },
-  // ]);
 
   const fetchParametersListData = async (params: PaginatedFetchData = {}, option) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
@@ -342,9 +321,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     });
   };
 
-  // rename
-  const onUpdate = (option) => {
-    console.log(option);
+  const onSelectUpdate = (option) => {
     if (option) {
       const selectedFilterField = [
         {
@@ -361,10 +338,8 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     }
   };
 
-  console.log(checlistViewPageable, 'page');
-
   const handleMenuScrollToBottom = () => {
-    fetchChecklistData({ page: checlistViewPageable.page + 1 });
+    fetchChecklistData({ page: checklistPageable.page + 1 });
   };
 
   return (
@@ -404,37 +379,17 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             });
           }}
         />
-
-        {/* <ProcessFilterDropdown
-          selectOptions={checklists.map((currList) => ({ ...currList, label: currList.name }))}
-          selectedOption={selectedChecklistOption}
-          setSelectedOption={setSelectedChecklistOption}
-          updateFilterFields={(fields) => {
-            setFilterFields((currentFields) => {
-              const updatedFilterFields = [
-                ...currentFields.filter((field) =>
-                  field.field === 'taskExecutions.assignees.user.id'
-                    ? true
-                    : defaultFilters.current.some((newField) => newField.field === field.field),
-                ),
-                ...fields,
-              ];
-              fetchData({
-                filters: updatedFilterFields,
-              });
-              return updatedFilterFields;
-            });
-          }}
-          defaultFilters={filterFields}
-        /> */}
-
         <Select
           className="process-filter"
           backspaceRemovesValue={false}
           hideSelectedOptions={false}
           onChange={(newValue) => {
-            onUpdate(newValue);
+            onSelectUpdate(newValue);
           }}
+          isLoading={checklistsLoading}
+          onInputChange={debounce((searchedValue: string) => {
+            fetchChecklistData({ page: DEFAULT_PAGE_NUMBER, query: searchedValue });
+          }, 500)}
           options={checklists.map((currList) => ({ ...currList, label: currList.name }))}
           placeholder="Processes"
           tabSelectsValue={false}

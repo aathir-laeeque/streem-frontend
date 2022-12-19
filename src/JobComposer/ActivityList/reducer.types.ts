@@ -14,6 +14,7 @@ import { ParametersById, ParametersOrderInTaskInStage } from './types';
 export type ParameterListState = {
   parametersById: ParametersById;
   parametersOrderInTaskInStage: ParametersOrderInTaskInStage;
+  parametersMappedToJobById: ParametersById;
 };
 
 export enum ParameterListAction {

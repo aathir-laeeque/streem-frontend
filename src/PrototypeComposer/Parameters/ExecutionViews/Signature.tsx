@@ -1,5 +1,4 @@
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
-import SignatureIcon from '#assets/svg/Signature';
 import React, { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { OverlayNames } from '#components/OverlayContainer/types';
@@ -49,12 +48,7 @@ const SignatureTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form
 
   const dispatch = useDispatch();
 
-  // const { register, watch, setValue } = form;
-  // const data = watch('data', {});
-
-  // register('data', {
-  //   required: true,
-  // });
+  // const {  setValue } = form;
 
   const onAcceptSignature = (imageData: string) => {
     if (imageData) {

@@ -1,5 +1,7 @@
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
+import { closeOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
 import { apiGetJobs } from '#utils/apiUrls';
 import { FilterOperators, ResponseObj } from '#utils/globalTypes';
@@ -40,7 +42,6 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
 
     const { errors }: ResponseObj<Job> = yield call(request, 'POST', apiGetJobs(), {
       data: {
-        // ...payload,
         parameterValues: payload.properties,
         selectedUseCaseId: payload.selectedUseCaseId,
         checklistId: payload.checklistId,
@@ -49,6 +50,8 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
     if (errors) {
       throw getErrorMsg(errors);
     }
+
+    yield put(closeOverlayAction(OverlayNames.CREATE_JOB_MODAL));
 
     yield put(
       showNotification({

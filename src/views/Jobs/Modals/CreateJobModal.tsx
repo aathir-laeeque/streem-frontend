@@ -10,7 +10,6 @@ import {
 } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
-import { Property } from '#store/properties/types';
 import { baseUrl } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { FilterOperators, InputTypes, ResponseObj } from '#utils/globalTypes';
@@ -178,15 +177,11 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
           parameter: data.data[parameter.id],
           reason: data.data[parameter?.id]?.response?.reason || '',
         };
-        return acc;
       }
+      return acc;
     }, {});
 
-    console.log('zero parameter values', parameterValues);
-
     onCreateJob({ checklistId: data.checklistId, properties: parameterValues });
-    setChecklist(null);
-    closeOverlay();
   };
 
   const getOptions = async (path: string, inputId: string, dependency?: string) => {
@@ -279,16 +274,17 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     }
   }, [checklist]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
+    };
+  }, []);
+
   return (
     <Wrapper>
       <BaseModal
         closeAllModals={closeAllOverlays}
-        closeModal={() => {
-          closeOverlay();
-          dispatch(
-            fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }),
-          );
-        }}
+        closeModal={closeOverlay}
         title="Creating a Job"
         showFooter={false}
       >
@@ -336,19 +332,6 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
             {parametersList.map((parameter, index) => (
               <ParameterView key={`parameter_${index}`} form={reactForm} parameter={parameter} />
             ))}
-            {/* {properties.map((property, index) => (
-              <TextInput
-                key={`property_${index}`}
-                label={property.label}
-                name={property.name}
-                optional={!property.mandatory}
-                ref={register({
-                  required: property.mandatory ? `${property.label} is required.` : false,
-                })}
-                className="row"
-                error={errors[property.name]?.message !== '' ? errors[property.name]?.message : ''}
-              />
-            ))} */}
           </div>
           {checklist && checklist?.relations?.length > 0 && (
             <FormGroup
@@ -419,16 +402,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
             />
           )}
           <div className="buttons-container">
-            <Button
-              variant="secondary"
-              color="red"
-              onClick={() => {
-                closeOverlay();
-                dispatch(
-                  fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }),
-                );
-              }}
-            >
+            <Button variant="secondary" color="red" onClick={closeOverlay}>
               Cancel
             </Button>
             <Button disabled={!isValid || !isDirty} type="submit">

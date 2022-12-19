@@ -7,6 +7,14 @@ import { FormatOptionLabelContext } from 'react-select';
 
 const ShouldBeTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
   const selectedOperator = PARAMETER_OPERATORS.filter((o) => parameter.data.operator === o.value);
+  const taskValue = (parameter) => {
+    if (parameter.data.value) {
+      return parameter.data.value;
+    } else {
+      return `${parameter.data.lowerValue} <-> ${parameter.data.upperValue}`;
+    }
+  };
+
   return (
     <FormGroup
       inputs={[
@@ -46,7 +54,7 @@ const ShouldBeTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) 
             id: 'value',
             label: 'Value',
             placeholder: '',
-            value: parameter.data.value,
+            value: taskValue(parameter),
             disabled: true,
           },
         },

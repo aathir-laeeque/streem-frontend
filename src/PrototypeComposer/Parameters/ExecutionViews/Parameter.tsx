@@ -40,16 +40,11 @@ const Wrapper = styled.div`
 
 const ShouldBeTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
   const [inputValue, setInputValue] = useState('');
-  const { register, watch, setValue } = form;
-  const data = watch('data', {});
-
-  register('data', {
-    required: true,
-  });
+  const { setValue } = form;
 
   const generateText = (data, label) => {
     if (data.operator === 'BETWEEN') {
-      return `${data.parameter} should be between ${data.lowerValue} ${data.uom} and ${data.upperValue} ${data.uom}`;
+      return `${label} should be between ${data.lowerValue} ${data.uom} and ${data.upperValue} ${data.uom}`;
     } else {
       let operatorString: string;
 
@@ -78,34 +73,35 @@ const ShouldBeTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
 
   const observedValueChecker = (input, data) => {
     if (inputValue !== '') {
-      if (data.operator === 'BETWEEN') {
-        if (input > data.lowerValue && input < data.upperValue) {
-          return false;
-        }
-      } else {
-        let warningFlag: boolean;
+      let warningFlag: boolean;
 
-        switch (data.operator) {
-          case 'EQUAL_TO':
-            warningFlag = input === data.value ? false : true;
-            break;
-          case 'LESS_THAN':
-            warningFlag = input < data.value ? false : true;
-            break;
-          case 'LESS_THAN_EQUAL_TO':
-            warningFlag = input <= data.value ? false : true;
-            break;
-          case 'MORE_THAN':
-            warningFlag = input > data.value ? false : true;
-            break;
-          case 'MORE_THAN_EQUAL_TO':
-            warningFlag = input >= data.value ? false : true;
-            break;
-          default:
-            return;
-        }
-        return warningFlag;
+      switch (data.operator) {
+        case 'EQUAL_TO':
+          warningFlag = input === Number(data.value) ? false : true;
+          break;
+        case 'LESS_THAN':
+          warningFlag = input < Number(data.value) ? false : true;
+          break;
+        case 'LESS_THAN_EQUAL_TO':
+          warningFlag = input <= Number(data.value) ? false : true;
+          break;
+        case 'MORE_THAN':
+          warningFlag = input > Number(data.value) ? false : true;
+          break;
+        case 'MORE_THAN_EQUAL_TO':
+          warningFlag = input >= Number(data.value) ? false : true;
+          break;
+        case 'BETWEEN':
+          if (input > Number(data.lowerValue) && input < Number(data.upperValue)) {
+            warningFlag = false;
+          } else {
+            warningFlag = true;
+          }
+          break;
+        default:
+          return;
       }
+      return warningFlag;
     }
   };
 
@@ -121,20 +117,17 @@ const ShouldBeTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
               onChange: (value: any) => {
                 setInputValue(value.value);
                 setValue(
-                  'data',
+                  `data.${parameter.id}`,
                   {
-                    ...data,
-                    [parameter.id]: {
-                      ...parameter,
-                      data: { ...parameter.data, input: value.value },
-                      response: {
-                        value: value.value,
-                        reason: '',
-                        state: 'EXECUTED',
-                        choices: {},
-                        medias: [],
-                        parameterValueApprovalDto: null,
-                      },
+                    ...parameter,
+                    data: { ...parameter.data, input: value.value },
+                    response: {
+                      value: value.value,
+                      reason: '',
+                      state: 'EXECUTED',
+                      choices: {},
+                      medias: [],
+                      parameterValueApprovalDto: null,
                     },
                   },
                   {
@@ -148,7 +141,7 @@ const ShouldBeTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
           },
         ]}
       />
-      {observedValueChecker(inputValue, parameter?.data) && (
+      {observedValueChecker(Number(inputValue), parameter?.data) && (
         <div className="parameter-textarea">
           <div className="warning-label">
             Warning! {generateText(parameter?.data, parameter.label)}

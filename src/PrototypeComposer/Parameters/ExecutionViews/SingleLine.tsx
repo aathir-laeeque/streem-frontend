@@ -1,16 +1,28 @@
-import { FormGroup, TextInput } from '#components';
+import { FormGroup } from '#components';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import React, { FC } from 'react';
+import moment from 'moment';
+import { InputTypes } from '#utils/globalTypes';
 
 const SingleLineTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
-  const { register, watch, setValue } = form;
-  const data = watch('data', {});
+  const { setValue } = form;
 
-  register('data', {
-    required: true,
-  });
-
-  console.log('zero five two', parameter);
+  const valueChecker = (value, type) => {
+    let date;
+    switch (type) {
+      case InputTypes.DATE:
+        date = moment.unix(parseInt(value));
+        return date.format('Do MMM YYYY');
+      case InputTypes.DATE_TIME:
+        date = moment.unix(parseInt(value));
+        return date.format('Do MMM YYYY h:mm:ss A');
+      case InputTypes.SINGLE_LINE:
+      case InputTypes.MULTI_LINE:
+        return value;
+      default:
+        return;
+    }
+  };
 
   return (
     <FormGroup
@@ -21,20 +33,17 @@ const SingleLineTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, for
           props: {
             onChange: (value: any) => {
               setValue(
-                'data',
+                `data.${parameter.id}`,
                 {
-                  ...data,
-                  [parameter.id]: {
-                    ...parameter,
-                    data: { ...parameter.data, input: value.value },
-                    response: {
-                      value: value.value,
-                      reason: '',
-                      state: 'EXECUTED',
-                      choices: {},
-                      medias: [],
-                      parameterValueApprovalDto: null,
-                    },
+                  ...parameter,
+                  data: { ...parameter.data, input: valueChecker(value.value, parameter.type) },
+                  response: {
+                    value: valueChecker(value.value, parameter.type),
+                    reason: '',
+                    state: 'EXECUTED',
+                    choices: {},
+                    medias: [],
+                    parameterValueApprovalDto: null,
                   },
                 },
                 {

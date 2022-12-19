@@ -7,25 +7,25 @@ import {
   SearchFilter,
   Select,
 } from '#components';
+import { fetchParameters, fetchParametersSuccess } from '#PrototypeComposer/Activity/actions';
+import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { fetchChecklists } from '#views/Checklists/ListView/actions';
+import DetailsPopover from '#views/Jobs/Components/DetailsPopover';
 import AssigneesColumn from '#views/Jobs/ListView/AssigneesColumn';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { AssignedJobStates, CompletedJobStates, Job } from '#views/Jobs/ListView/types';
 import { CircularProgress } from '@material-ui/core';
 import { FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
+import { debounce, keyBy } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchInbox, setSelectedState } from './actions';
 import { ListViewState, TabViewProps } from './types';
-import { keyBy } from 'lodash';
-import DetailsPopover from '#views/Jobs/Components/DetailsPopover';
-import { fetchParameters, fetchParametersSuccess } from '#PrototypeComposer/Activity/actions';
-import { fetchChecklists } from '#views/Checklists/ListView/actions';
-import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { jobs, loading: jobDataLoading }: ListViewState = useTypedSelector(
@@ -40,8 +40,8 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   );
   const {
     checklists,
-    pageable: checlistViewPageable,
-    loading,
+    pageable: checklistPageable,
+    loading: checklistsLoading,
   } = useTypedSelector((state) => state.checklistListView);
   const {
     parameters: {
@@ -90,6 +90,12 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       dispatch(setSelectedState(reducerLabel));
     }
   }, [selectedUseCase?.id, filterFields]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
+    };
+  }, []);
 
   const columns = [
     {
@@ -190,13 +196,17 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
     }),
   ];
 
-  const fetchChecklistData = ({ page, size = 10, query = '' }: fetchDataParams) => {
+  const fetchChecklistData = ({
+    page = DEFAULT_PAGE_NUMBER,
+    size = DEFAULT_PAGE_SIZE,
+    query = '',
+  }: fetchDataParams) => {
     const filters = JSON.stringify({
       op: FilterOperators.AND,
       fields: [
-        { field: 'code', op: FilterOperators.LIKE, values: [query] },
         { field: 'state', op: FilterOperators.EQ, values: ['PUBLISHED'] },
         { field: 'archived', op: FilterOperators.EQ, values: [false] },
+        ...(query ? [{ field: 'name', op: FilterOperators.LIKE, values: [query] }] : []),
         {
           field: 'useCaseId',
           op: FilterOperators.EQ,
@@ -249,8 +259,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   };
 
   const handleMenuScrollToBottom = () => {
-    console.log('scroll');
-    fetchChecklistData({ page: checlistViewPageable.page + 1 });
+    fetchChecklistData({ page: checklistPageable.page + 1 });
   };
 
   return (
@@ -287,6 +296,10 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
           onChange={(newValue) => {
             selectChangeHandler(newValue);
           }}
+          isLoading={checklistsLoading}
+          onInputChange={debounce((searchedValue: string) => {
+            fetchChecklistData({ page: DEFAULT_PAGE_NUMBER, query: searchedValue });
+          }, 500)}
           options={checklists.map((currList) => ({ ...currList, label: currList.name }))}
           placeholder="Processes"
           tabSelectsValue={false}

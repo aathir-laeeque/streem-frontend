@@ -1,6 +1,10 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { deleteParameter, toggleNewParameter } from '#PrototypeComposer/Activity/actions';
+import {
+  deleteParameter,
+  deleteParameterSuccess,
+  toggleNewParameter,
+} from '#PrototypeComposer/Activity/actions';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap } from '#PrototypeComposer/constants';
@@ -26,7 +30,9 @@ import {
 } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
+import { request } from '#utils/request';
 import styled from 'styled-components';
+import { apiDeleteParameter } from '#utils/apiUrls';
 
 export const ParameterTaskViewWrapper = styled.div<{ isReadOnly: boolean }>`
   padding: ${({ isReadOnly }) => (isReadOnly ? '16px 8px' : '16px 8px 16px 0')};
@@ -179,8 +185,27 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
   const parameterType = listById[parameter.id].type;
 
   const onDelete = () => {
-    if (stageId) {
+    if (
+      parameter.type === 'INSTRUCTION' ||
+      parameter.type === 'CHECKLIST' ||
+      parameter.type === 'MATERIAL'
+    ) {
+      archiveParameter();
+    } else {
       dispatch(deleteParameter({ parameterId: parameter.id, taskId, stageId }));
+    }
+  };
+
+  const archiveParameter = async () => {
+    const { data } = await request('PATCH', apiDeleteParameter(parameter.id));
+    if (data?.taskId && data?.stageId) {
+      dispatch(
+        deleteParameterSuccess({
+          taskId: data.taskId,
+          stageId: data.stageId,
+          parameterId: parameter.id,
+        }),
+      );
     }
   };
 

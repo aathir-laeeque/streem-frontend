@@ -36,12 +36,7 @@ const YesNoTaskViewWrapper = styled.div`
 
 const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
   const [selection, setSelection] = useState('');
-  const { register, watch, setValue } = form;
-  const data = watch('data', {});
-
-  register('data', {
-    required: true,
-  });
+  const { setValue } = form;
 
   const selectedData = (selectedOptions: any, optionsList: any) => {
     return optionsList.map((currOption) => {
@@ -63,23 +58,20 @@ const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
           onClick={() => {
             setSelection(parameter.data[0].name);
             setValue(
-              'data',
+              `data.${parameter.id}`,
               {
-                ...data,
-                [parameter.id]: {
-                  ...parameter,
-                  data: selectedData(parameter.data[0], parameter.data),
-                  response: {
-                    value: null,
-                    reason: '',
-                    state: 'EXECUTED',
-                    choices: {
-                      [parameter.data[0].id]: 'SELECTED',
-                      [parameter.data[1].id]: 'NOT_SELECTED',
-                    },
-                    medias: [],
-                    parameterValueApprovalDto: null,
+                ...parameter,
+                data: selectedData(parameter.data[0], parameter.data),
+                response: {
+                  value: null,
+                  reason: '',
+                  state: 'EXECUTED',
+                  choices: {
+                    [parameter.data[0].id]: 'SELECTED',
+                    [parameter.data[1].id]: 'NOT_SELECTED',
                   },
+                  medias: [],
+                  parameterValueApprovalDto: null,
                 },
               },
               {
@@ -114,23 +106,20 @@ const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
                   rows: '4',
                   onChange: (value: any) => {
                     setValue(
-                      'data',
+                      `data.${parameter.id}`,
                       {
-                        ...data,
-                        [parameter.id]: {
-                          ...parameter,
-                          data: selectedData(parameter.data[1], parameter.data),
-                          response: {
-                            value: null,
-                            reason: value.value,
-                            state: 'EXECUTED',
-                            choices: {
-                              [parameter.data[1].id]: 'SELECTED',
-                              [parameter.data[0].id]: 'NOT_SELECTED',
-                            },
-                            medias: [],
-                            parameterValueApprovalDto: null,
+                        ...parameter,
+                        data: selectedData(parameter.data[1], parameter.data),
+                        response: {
+                          value: null,
+                          reason: value.value,
+                          state: 'EXECUTED',
+                          choices: {
+                            [parameter.data[1].id]: 'SELECTED',
+                            [parameter.data[0].id]: 'NOT_SELECTED',
                           },
+                          medias: [],
+                          parameterValueApprovalDto: null,
                         },
                       },
                       {

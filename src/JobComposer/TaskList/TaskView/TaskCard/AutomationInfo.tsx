@@ -3,6 +3,7 @@ import { Task } from '#JobComposer/checklist.types';
 import { FC } from 'react';
 import styled from 'styled-components';
 import { getAutomationActionTexts } from '../../utils';
+import { useTypedSelector } from '#store';
 
 const Wrapper = styled.div.attrs({
   className: 'automation-info',
@@ -35,15 +36,28 @@ type AutomationInfoProps = {
 };
 
 const AutomationInfo: FC<AutomationInfoProps> = ({ task }) => {
+  const {
+    parameters: { parametersById, parametersMappedToJobById },
+  } = useTypedSelector((state) => state.composer);
+
   if (task.automations?.length) {
     return (
       <Wrapper>
-        {task.automations.map((automation) => (
-          <div className="automation">
-            <span className="heading">Automation:</span>
-            <span>{getAutomationActionTexts(automation)}</span>
-          </div>
-        ))}
+        {task.automations.map((automation) => {
+          const objectTypeDisplayName = parametersById[
+            automation.actionDetails.referencedParameterId
+          ]
+            ? parametersById[automation.actionDetails.referencedParameterId]?.data
+                ?.objectTypeDisplayName
+            : parametersMappedToJobById[automation.actionDetails.referencedParameterId]?.data
+                ?.objectTypeDisplayName;
+          return (
+            <div className="automation">
+              <span className="heading">Automation:</span>
+              <span>{getAutomationActionTexts(automation, null, objectTypeDisplayName)}</span>
+            </div>
+          );
+        })}
       </Wrapper>
     );
   }

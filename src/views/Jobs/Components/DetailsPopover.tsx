@@ -25,6 +25,12 @@ const TooltipWrapper = styled.div.attrs({
   .MuiTooltip-arrow {
     color: #393939;
   }
+
+  .MuiChip-root {
+    padding: 4px 8px;
+    border-radius: 50px;
+    height: 24px;
+  }
 `;
 
 const DetailsPopover = ({ item, parameterId }) => {
@@ -39,12 +45,15 @@ const DetailsPopover = ({ item, parameterId }) => {
 
     switch (type) {
       case MandatoryParameter.SHOULD_BE:
-        contentString = process.data.value;
+        contentString = process.data.value
+          ? process.data.value
+          : `${process.data.lowerValue} - ${process.data.upperValue}`;
         break;
       case MandatoryParameter.MULTI_LINE:
       case MandatoryParameter.SINGLE_LINE:
       case MandatoryParameter.NUMBER:
       case MandatoryParameter.DATE:
+      case MandatoryParameter.DATE_TIME:
         contentString = process.response.value;
         break;
       case MandatoryParameter.YES_NO:

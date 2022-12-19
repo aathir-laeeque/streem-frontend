@@ -48,21 +48,22 @@ export const reEvaluateTaskWithStop = ({
 
 export const getAutomationActionTexts = (
   automation: AutomationAction,
-  forNotify?: 'success' | 'error',
+  forNotify?: 'success' | 'error' | null,
+  objectTypeDisplayName?: string,
 ) => {
   if (forNotify === 'success') {
     return `Triggered "${AutomationActionActionTypeVisual[automation.actionType]} ${
       automation.actionDetails.propertyDisplayName || ''
-    } of the selected ${automation.actionDetails.objectTypeDisplayName}"`;
+    } of the selected ${automation.actionDetails.objectTypeDisplayName || objectTypeDisplayName}"`;
   } else if (forNotify === 'error') {
     return `Not able to trigger "${AutomationActionActionTypeVisual[automation.actionType]} ${
       automation.actionDetails.propertyDisplayName || ''
-    } of the selected ${automation.actionDetails.objectTypeDisplayName}"`;
+    } of the selected ${automation.actionDetails.objectTypeDisplayName || objectTypeDisplayName}"`;
   }
 
   return `${AutomationActionActionTypeVisual[automation.actionType]} ${
     automation.actionDetails.propertyDisplayName || ''
-  } of the selected ${automation.actionDetails.objectTypeDisplayName} when the ${
-    AutomationActionTriggerTypeVisual[automation.triggerType]
-  }.`;
+  } of the selected ${
+    automation.actionDetails.objectTypeDisplayName || objectTypeDisplayName
+  } when the ${AutomationActionTriggerTypeVisual[automation.triggerType]}.`;
 };

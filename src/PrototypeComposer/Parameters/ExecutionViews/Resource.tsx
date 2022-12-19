@@ -50,12 +50,7 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
     }
   };
 
-  const { register, watch, setValue } = form;
-  const data = watch('data', {});
-
-  register('data', {
-    required: true,
-  });
+  const { setValue } = form;
 
   return (
     <FormGroup
@@ -86,28 +81,25 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
             onChange: (value: any) => {
               const selectedOption = isArray(value.value) ? value.value : [value.value];
               setValue(
-                'data',
+                `data.${parameter.id}`,
                 {
-                  ...data,
-                  [parameter.id]: {
-                    ...parameter,
-                    data: {
-                      ...parameter.data,
-                      choices: selectedOption.map((currOption: any) => ({
-                        objectId: currOption.id,
-                        objectDisplayName: currOption.displayName,
-                        objectExternalId: currOption.externalId,
-                        collection: currOption.collection,
-                      })),
-                    },
-                    response: {
-                      value: null,
-                      reason: '',
-                      state: 'EXECUTED',
-                      choices: {},
-                      medias: [],
-                      parameterValueApprovalDto: null,
-                    },
+                  ...parameter,
+                  data: {
+                    ...parameter.data,
+                    choices: selectedOption.map((currOption: any) => ({
+                      objectId: currOption.id,
+                      objectDisplayName: currOption.displayName,
+                      objectExternalId: currOption.externalId,
+                      collection: currOption.collection,
+                    })),
+                  },
+                  response: {
+                    value: null,
+                    reason: '',
+                    state: 'EXECUTED',
+                    choices: {},
+                    medias: [],
+                    parameterValueApprovalDto: null,
                   },
                 },
                 {

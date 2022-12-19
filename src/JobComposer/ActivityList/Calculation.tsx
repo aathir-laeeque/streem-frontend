@@ -12,7 +12,7 @@ const CalculationParameter: FC<ParameterProps> = ({
 }) => {
   const dispatch = useDispatch();
   const {
-    parameters: { parametersById },
+    parameters: { parametersById, parametersMappedToJobById },
   } = useTypedSelector((state) => state.composer);
 
   return (
@@ -27,7 +27,10 @@ const CalculationParameter: FC<ParameterProps> = ({
           <span className="variable">
             <span className="name">{key}:</span>
             <span className="value">
-              {value.label} = {parametersById?.[value.parameterId]?.response?.value || '-'}
+              {value.label} =
+              {parametersById?.[value.parameterId]?.response?.value ||
+                parametersMappedToJobById?.[value.parameterId]?.response?.value ||
+                '-'}
             </span>
           </span>
         );

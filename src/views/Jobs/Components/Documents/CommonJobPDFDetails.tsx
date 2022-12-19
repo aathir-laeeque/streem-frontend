@@ -39,6 +39,7 @@ export type PdfJobDataType = Pick<
   totalTask: number;
   checklist: Checklist;
   relations: JobRelation[];
+  parameterValues: [];
 };
 
 const jobDataStyles = StyleSheet.create({
@@ -97,7 +98,6 @@ export const CommonJobPdfDetails = ({
     state: jobState,
     assignees,
     totalTask,
-    properties,
     startedAt,
     createdBy,
     endedAt,
@@ -106,6 +106,7 @@ export const CommonJobPdfDetails = ({
     cweDetails,
     totalStages,
     relations,
+    parameterValues,
   } = jobPdfData;
 
   const getJobStatus = (state: JobStateType) => {
@@ -127,6 +128,32 @@ export const CommonJobPdfDetails = ({
       : (status = 'Not Started');
 
     return status;
+  };
+
+  const getParameterValue = (parameter) => {
+    if (parameter.response.value) {
+      return parameter.response.value;
+    } else if (parameter.response.choices && Array.isArray(parameter.response.choices)) {
+      return parameter.response.choices.map((currChoice) => currChoice.objectDisplayName);
+    } else if (parameter.response.choices && !Array.isArray(parameter.response.choices)) {
+      return choicesValue(parameter);
+    }
+  };
+
+  const choicesValue = (parameter) => {
+    let selectedKeys = [];
+    for (let keys in parameter.response.choices) {
+      if (parameter.response.choices[keys] === 'SELECTED') {
+        selectedKeys.push(keys);
+      }
+    }
+
+    const valuesArray = parameter.data.reduce((acc: [], currData) => {
+      selectedKeys.includes(currData.id) ? acc.push(currData.name) : acc;
+      return acc;
+    }, []);
+
+    return valuesArray.join(', ');
   };
 
   return (
@@ -193,12 +220,10 @@ export const CommonJobPdfDetails = ({
               endedBy ? `${endedBy.firstName} ${endedBy.lastName} ID:${endedBy.employeeId}` : '-'
             }
           />
-          {properties &&
-            properties.map((prop) => {
-              return (
-                <InlineInputLabelGroup label={`${prop.label}:`} value={prop.value} key={prop.id} />
-              );
-            })}
+          {parameterValues.map((currParam) => (
+            <InlineInputLabelGroup label={currParam.label} value={getParameterValue(currParam)} />
+          ))}
+
           {relations &&
             relations.map((relation) => {
               return (

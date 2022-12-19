@@ -14,7 +14,7 @@ import {
   resolve,
   VariableLookup,
 } from 'equation-resolver';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import Select from 'react-select';
 import { CommonWrapper } from './styles';
@@ -187,14 +187,14 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
                 label="Parameter Name"
                 defaultValue={variableName === 'undefined' ? undefined : variableName}
                 disabled={isReadOnly}
-                onChange={(e: any) => {
+                onBlur={(e: any) => {
                   const formValue = variables[variableName];
                   delete variables[variableName];
                   setValue(
                     'data.variables',
                     {
                       ...variables,
-                      [e.value]: formValue,
+                      [e.target.value]: formValue,
                     },
                     {
                       shouldDirty: true,

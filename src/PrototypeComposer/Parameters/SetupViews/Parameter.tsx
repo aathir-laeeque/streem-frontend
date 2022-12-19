@@ -63,6 +63,7 @@ const ParameterParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
                     id: 'lowerValue',
                     label: 'Lower Value',
                     placeholder: 'Write Here',
+                    type: 'number',
                     name: 'data.lowerValue',
                     disabled: isReadOnly,
                     ref: register({
@@ -76,6 +77,7 @@ const ParameterParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
                     id: 'upperValue',
                     label: 'Upper Value',
                     placeholder: 'Write Here',
+                    type: 'number',
                     name: 'data.upperValue',
                     disabled: isReadOnly,
                     ref: register({
@@ -91,6 +93,7 @@ const ParameterParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
                     id: 'value',
                     label: 'Value',
                     placeholder: 'Write Here',
+                    type: 'number',
                     name: 'data.value',
                     disabled: isReadOnly,
                     ref: register({
