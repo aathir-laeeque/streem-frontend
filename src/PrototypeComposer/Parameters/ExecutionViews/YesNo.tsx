@@ -4,12 +4,22 @@ import { InputTypes } from '#utils/globalTypes';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 
-const YesNoTaskViewWrapper = styled.div`
+const YesNoTaskViewWrapper = styled.div<{ type: string }>`
   display: flex;
   flex-direction: column;
 
   .parameter-header {
     display: flex;
+
+    button:first-child {
+      background-color: ${(p) => (p.type === 'yes' ? '#5aa700' : '#ffffff')};
+      color: ${(p) => (p.type === 'yes' ? '#ffffff' : '#5aa700')};
+    }
+
+    button:last-child {
+      background-color: ${(p) => (p.type === 'no' ? '#ff6b6b' : '#ffffff')};
+      color: ${(p) => (p.type === 'no' ? '#ffffff' : '#ff6b6b')};
+    }
   }
 
   .parameter-textarea {
@@ -23,19 +33,17 @@ const YesNoTaskViewWrapper = styled.div`
       margin-bottom: 8px;
     }
   }
-
-  .yes-label {
-    color: #24a148;
-    border-color: #24a148;
-  }
-  .no-label {
-    color: #da1e28;
-    border-color: #da1e28;
-  }
 `;
 
+type InitialState = {
+  id: string;
+  name: string;
+  type: string;
+};
+
 const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
-  const [selection, setSelection] = useState('');
+  const initialState: InitialState = { id: '', name: '', type: '' };
+  const [selection, setSelection] = useState(initialState);
   const { setValue } = form;
 
   const selectedData = (selectedOptions: any, optionsList: any) => {
@@ -50,13 +58,13 @@ const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
   };
 
   return (
-    <YesNoTaskViewWrapper>
+    <YesNoTaskViewWrapper type={selection?.type}>
       <div className="parameter-header">
         <Button
           variant="secondary"
           color="green"
           onClick={() => {
-            setSelection(parameter.data[0].name);
+            setSelection(parameter.data[0]);
             setValue(
               `data.${parameter.id}`,
               {
@@ -87,13 +95,13 @@ const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
           variant="secondary"
           color="red"
           onClick={() => {
-            setSelection(parameter.data[1].name);
+            setSelection(parameter.data[1]);
           }}
         >
           {parameter.data[1].name}
         </Button>
       </div>
-      {selection === parameter.data[1].name && (
+      {selection?.name === parameter.data[1].name && (
         <div className="parameter-textarea">
           <div className="input-label">State your Reason</div>
           <FormGroup
