@@ -1,5 +1,6 @@
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
+import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { RootState } from '#store';
 import {
   apiAddNewParameter,
@@ -40,7 +41,13 @@ function* updateParameterSaga({ payload }: ReturnType<typeof updateParameterApi>
       yield put(
         showNotification({
           type: NotificationType.SUCCESS,
-          msg: 'Parameter Updated Successfully',
+          msg: [NonMandatoryParameter.INSTRUCTION, NonMandatoryParameter.MATERIAL].includes(
+            parameter?.type,
+          )
+            ? 'Instruction Updated Successfully'
+            : parameter.type === MandatoryParameter.CHECKLIST
+            ? 'Subtask Updated Successfully'
+            : 'Parameter Updated Successfully',
           detail: parameter.label,
         }),
       );
@@ -90,7 +97,13 @@ function* addNewParameterSaga({ payload }: ReturnType<typeof addNewParameter>) {
       yield put(
         showNotification({
           type: NotificationType.SUCCESS,
-          msg: 'New Parameter Created',
+          msg: [NonMandatoryParameter.INSTRUCTION, NonMandatoryParameter.MATERIAL].includes(
+            parameter?.type,
+          )
+            ? 'New Instruction Created'
+            : parameter.type === MandatoryParameter.CHECKLIST
+            ? 'New Subtask Created'
+            : 'New Parameter Created',
           detail: parameter.label,
         }),
       );
