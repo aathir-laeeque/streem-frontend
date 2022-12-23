@@ -1,6 +1,7 @@
 import {
   Button,
   DataTable,
+  NestedSelect,
   PaginatedFetchData,
   Pagination,
   Select,
@@ -11,21 +12,26 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { DataTableColumn } from '#components/shared/DataTable';
 import { JobLogColumnType, LogType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
-import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { apiGetObjects } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { filtersToQueryParams } from '#utils/filtersToQueryParams';
+import { FilterField, FilterOperators, ResponseObj } from '#utils/globalTypes';
+import { request } from '#utils/request';
 import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
+import { fetchObjectTypes } from '#views/Ontology/actions';
 import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
+import { ExpandMore } from '@material-ui/icons';
+import ClearIcon from '@material-ui/icons/Clear';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import TuneIcon from '@material-ui/icons/Tune';
+import { isEqual } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { fetchProcessLogs, saveCustomView } from '../ListView/actions';
 import { CustomView } from '../ListView/types';
 import FiltersDrawer from './Overlays/FiltersDrawer';
-import { isEqual } from 'lodash';
-import TuneIcon from '@material-ui/icons/Tune';
-
 const JobLogsTabWrapper = styled.div`
   display: flex;
   height: 100%;
@@ -37,6 +43,7 @@ const JobLogsTabWrapper = styled.div`
   }
 
   .filters {
+    gap: 12px;
     .filter-buttons-wrapper {
       display: flex;
       margin-left: 10px;
@@ -54,15 +61,63 @@ const JobLogsTabWrapper = styled.div`
   }
 `;
 
+const ResourceFilterWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7.5px 0px 7.5px 12px;
+  background-color: #f4f4f4;
+  border-bottom: 1px solid #bababa;
+  color: #808ba5;
+
+  :hover {
+    border-bottom: 1px solid #005dcc;
+  }
+
+  .resource-filter-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    // TODO remove this css ellipsis not working
+    // white-space: nowrap;
+    // width: 120px;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
+  }
+
+  .active {
+    color: #000000;
+  }
+
+  .resource-filter-icons {
+    display: flex;
+    align-items: center;
+    padding-inline: 4px 6px;
+    border-left: 1px solid hsl(0, 0%, 90%);
+
+    svg:nth-child(n) {
+      height: 24px;
+      width: 24px;
+      &:hover {
+        color: #101010;
+      }
+    }
+  }
+`;
+
 const DynamicContent: FC<TabContentProps> = ({ values }) => {
   const { id, checklistId } = values;
   const dispatch = useDispatch();
   const {
     prototypeComposer: { loading: loadingChecklist, data },
     checklistListView: { pageable, loading, jobLogs, customViews },
+    auth: { selectedFacility },
+    ontology: {
+      objectTypes: { list, listLoading, pageable: objectTypePagination },
+    },
   } = useTypedSelector((state) => state);
   const { loading: customViewLoading } = customViews;
-  const { selectedFacility } = useTypedSelector((state) => state.auth);
   const [filterFields, setFilterFields] = useState<FilterField[]>([]);
 
   const [state, setState] = useState<{
@@ -70,12 +125,16 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
     columns: DataTableColumn[];
     showDrawer: boolean;
     isChanged: boolean;
+    resourceOptions?: any;
+    selectedResource?: any;
   }>({
     columns: [],
     showDrawer: false,
     isChanged: false,
+    resourceOptions: {},
+    selectedResource: {},
   });
-  const { columns, showDrawer, viewDetails, isChanged } = state;
+  const { columns, showDrawer, viewDetails, isChanged, resourceOptions, selectedResource } = state;
 
   const compareKeys = (key: keyof CustomView, _viewDetails = viewDetails) => {
     let _isChanged = isChanged;
@@ -120,7 +179,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
           page,
           size,
           filters: {
-            op: FilterOperators.AND,
+            op: 'AND',
             fields: [
               ...filters,
               ...filtersToQueryParams(viewDetails?.filters || []),
@@ -136,6 +195,75 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
         }),
       );
   };
+
+  const fetchResourcesData = (params: PaginatedFetchData = {}) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
+
+    dispatch(
+      fetchObjectTypes({
+        page,
+        size,
+        usageStatus: 1,
+      }),
+    );
+  };
+
+  useEffect(() => {
+    fetchResourcesData();
+  }, []);
+
+  useEffect(() => {
+    if (list.length) {
+      const listOptions = list.reduce<any>((acc, item) => {
+        acc[item.id] = {
+          label: item.displayName,
+          fetchItems: async (pageNumber?: number, query = '') => {
+            if (typeof pageNumber === 'number') {
+              try {
+                const { data: resData, pageable }: ResponseObj<any[]> = await request(
+                  'GET',
+                  apiGetObjects(),
+                  {
+                    params: {
+                      page: pageNumber + 1,
+                      size: DEFAULT_PAGE_SIZE,
+                      collection: item.externalId,
+                      filters: JSON.stringify({
+                        op: FilterOperators.AND,
+                        fields: [
+                          ...(query
+                            ? [{ field: 'displayName', op: FilterOperators.LIKE, values: [query] }]
+                            : []),
+                        ],
+                      }),
+                      usageStatus: 1,
+                    },
+                  },
+                );
+                if (resData && pageable) {
+                  return {
+                    options: resData.map((item) => ({
+                      ...item,
+                      value: item.id,
+                      label: item.displayName,
+                    })),
+                    pageable,
+                  };
+                }
+              } catch (e) {
+                console.error('Error while fetching existing unmapped parameters', e);
+              }
+            }
+            return {
+              options: [],
+            };
+          },
+        };
+        return acc;
+      }, {});
+      setState((prev) => ({ ...prev, resourceOptions: listOptions }));
+    }
+  }, [list]);
 
   useEffect(() => {
     if (viewDetails?.filters && filterFields) {
@@ -218,6 +346,52 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
     }
   };
 
+  const onChildChange = (option: any) => {
+    setFilterFields((prev) => [
+      ...prev,
+      { field: 'logs.triggerType', op: FilterOperators.EQ, values: ['RESOURCE_PARAMETER'] },
+      {
+        field: 'logs.identifierValue',
+        op: FilterOperators.EQ,
+        values: [option.id],
+      },
+    ]);
+    setState((prev) => ({ ...prev, selectedResource: option }));
+  };
+
+  const ResourceFilterLabel = () => {
+    return (
+      <ResourceFilterWrapper>
+        <div
+          className={
+            selectedResource?.id ? 'resource-filter-label active' : 'resource-filter-label'
+          }
+        >
+          {selectedResource?.displayName?.length > 15
+            ? `${selectedResource?.displayName.slice(0, 16)}...`
+            : selectedResource?.displayName || `Resource Filter`}
+          {/* {selectedResource?.displayName || `Resource Filter`} */}
+        </div>
+        <div className="resource-filter-icons">
+          {selectedResource?.id && (
+            <ClearIcon
+              onMouseDown={() => {
+                setState((prev) => ({ ...prev, selectedResource: {} }));
+                setFilterFields((prev) =>
+                  prev.filter(
+                    (currField) => !currField.field.split('.').some((str) => str === 'logs'),
+                  ),
+                );
+              }}
+            />
+          )}
+          {listLoading && <MoreHorizIcon />}
+          <ExpandMore />
+        </div>
+      </ResourceFilterWrapper>
+    );
+  };
+
   return (
     <JobLogsTabWrapper>
       <LoadingContainer
@@ -230,6 +404,16 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                 style={{ width: '200px' }}
                 isDisabled
                 value={{ label: data?.name }}
+              />
+              <NestedSelect
+                id="resource-filter-selector"
+                width="23ch"
+                label={ResourceFilterLabel}
+                items={resourceOptions}
+                onChildChange={onChildChange}
+                pagination={objectTypePagination}
+                fetchData={fetchResourcesData}
+                maxHeight={350}
               />
               <div className="filter-buttons-wrapper">
                 <Button

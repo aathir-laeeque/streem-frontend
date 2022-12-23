@@ -1,3 +1,4 @@
+import { ExpandMore } from '@material-ui/icons';
 import React, { FC } from 'react';
 import ReactSelect, { Props } from 'react-select';
 import styled from 'styled-components';
@@ -6,21 +7,19 @@ export const formatOptionLabel: Props<{
   option: string;
   label: string;
   externalId: string;
-}>['formatOptionLabel'] = ({ externalId, label }, { context }) =>
-  context === 'value' ? (
-    label
-  ) : (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <div>{label}</div>
-      <div>{externalId}</div>
-    </div>
-  );
+}>['formatOptionLabel'] = ({ externalId, label }) => (
+  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+    <div>{label}</div>
+    {externalId && <div>{externalId}</div>}
+  </div>
+);
 
 type SelectProps = Props & {
   error?: string;
   label?: string;
   optional?: boolean;
   style?: React.CSSProperties;
+  formatOptionLabel?: any;
 };
 
 const Wrapper = styled.div.attrs({
@@ -41,6 +40,17 @@ const Wrapper = styled.div.attrs({
     color: #999999;
     font-size: 12px;
     margin-left: 4px;
+  }
+
+  .MuiSvgIcon-root {
+    color: #808ba5;
+    height: 24px;
+    width: 24px;
+    margin: 6px 4px;
+
+    &:hover {
+      color: #101010;
+    }
   }
 `;
 
@@ -96,6 +106,8 @@ export const selectStyles: Props['styles'] = {
   }),
 };
 
+const DropdownIndicator = () => <ExpandMore />;
+
 export const Select: FC<SelectProps> = ({
   styles = selectStyles,
   optional = false,
@@ -117,6 +129,8 @@ export const Select: FC<SelectProps> = ({
         styles={styles}
         isClearable={optional}
         captureMenuScroll={true}
+        formatOptionLabel={formatOptionLabel}
+        components={{ DropdownIndicator }}
         {...rest}
       />
       {error && <span className="field-error">{error}</span>}

@@ -1,14 +1,16 @@
-import React, { FC, useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import { NavigateBefore, NavigateNext, Search } from '@material-ui/icons';
-import { StylesConfig } from 'react-select';
+import { DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { customOnChange } from '#utils/formEvents';
+import { Pageable } from '#utils/globalTypes';
+import MenuItem from '@material-ui/core/MenuItem';
 import Select, { SelectProps } from '@material-ui/core/Select';
 import { makeStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
+import { NavigateBefore, NavigateNext, Search } from '@material-ui/icons';
 import { get } from 'lodash';
-import { Pageable } from '#utils/globalTypes';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { StylesConfig } from 'react-select';
+import styled from 'styled-components';
+import { PaginatedFetchData } from './Pagination';
 import { Select as CustomSelect } from './Select';
-import { customOnChange } from '#utils/formEvents';
 
 const PopOutWrapper = styled.div.attrs({
   className: 'popout-wrapper',
@@ -100,6 +102,9 @@ type NestedSelectProps = {
   onChildChange: (option: any) => void;
   width?: string;
   id: string;
+  pagination?: Pageable;
+  fetchData?: ({ page, size }: PaginatedFetchData) => void;
+  maxHeight?: string | number;
 } & SelectProps;
 
 type State = {
@@ -342,6 +347,7 @@ export const NestedSelect: FC<NestedSelectProps> = ({
   onChildChange,
   label,
   width = 'auto',
+  maxHeight = 'auto',
   id,
   ...rest
 }) => {
@@ -368,6 +374,23 @@ export const NestedSelect: FC<NestedSelectProps> = ({
     }, 200);
   };
 
+  const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
+    const { scrollHeight, scrollTop, clientHeight } = e.target;
+    const { fetchData, pagination } = rest;
+
+    if (
+      scrollHeight - scrollTop - clientHeight <= 0 &&
+      pagination &&
+      fetchData &&
+      !pagination.last
+    ) {
+      fetchData({
+        page: pagination?.page + 1,
+        size: pagination?.pageSize || DEFAULT_PAGE_SIZE,
+      });
+    }
+  };
+
   return (
     <StyledSelect
       id={id}
@@ -379,6 +402,10 @@ export const NestedSelect: FC<NestedSelectProps> = ({
         anchorOrigin: {
           vertical: 'bottom',
           horizontal: 'left',
+        },
+        style: { maxHeight: maxHeight },
+        PaperProps: {
+          onScroll: handleOnScroll,
         },
         container: document.getElementById(id),
         ...rest.MenuProps,
