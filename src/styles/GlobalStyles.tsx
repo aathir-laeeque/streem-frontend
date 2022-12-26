@@ -472,6 +472,10 @@ const GlobalStyles = createGlobalStyle`
       }
     }
   }
+
+  .widget-align-right {
+    z-index: 1299 !important;
+  }
 `;
 
 export default GlobalStyles;

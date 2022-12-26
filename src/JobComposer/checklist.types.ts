@@ -111,12 +111,14 @@ export enum AutomationActionActionType {
   INCREASE_PROPERTY = 'INCREASE_PROPERTY',
   DECREASE_PROPERTY = 'DECREASE_PROPERTY',
   CREATE_OBJECT = 'CREATE_OBJECT',
+  SET_PROPERTY = 'SET_PROPERTY',
 }
 
 export enum AutomationActionActionTypeVisual {
   INCREASE_PROPERTY = 'Increase',
   DECREASE_PROPERTY = 'Decrease',
   CREATE_OBJECT = 'Create Object',
+  SET_PROPERTY = 'Set Property',
 }
 
 export enum AutomationActionTriggerType {
@@ -128,9 +130,9 @@ export enum AutomationActionTriggerTypeVisual {
 }
 
 export type AutomationActionDetails = {
-  value: number;
+  value?: number;
   sortOrder: number;
-  parameterId: string;
+  parameterId?: string;
   propertyId: string;
   propertyInputType: InputTypes;
   propertyExternalId: string;
@@ -142,6 +144,11 @@ export type AutomationActionDetails = {
   objectTypeExternalId: string;
   objectTypeDisplayName: string;
   referencedParameterId: string;
+  choices?: any[];
+  entityId?: string;
+  entityType?: string;
+  dateUnit?: string;
+  captureProperty?: string;
 };
 
 export type AutomationAction = {
