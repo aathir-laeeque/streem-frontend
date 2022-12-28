@@ -1,16 +1,12 @@
-import { DataTable, TabContentProps } from '#components';
+import { DataTable, PaginatedFetchData, Pagination, TabContentProps } from '#components';
 import { useTypedSelector } from '#store';
-import { FilterField } from '#utils/globalTypes';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { CircularProgress } from '@material-ui/core';
-import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchObjectTypes } from '../actions';
-
-const DEFAULT_PAGE_NUMBER = 0;
-const DEFAULT_PAGE_SIZE = 10;
 
 export const LoadingContainer = ({
   loading,
@@ -41,11 +37,8 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
     objectTypes: { list, listLoading, pageable },
   } = useTypedSelector((state) => state.ontology);
 
-  const fetchData = (
-    page = DEFAULT_PAGE_NUMBER,
-    size = DEFAULT_PAGE_SIZE,
-    filtersArr?: FilterField[],
-  ) => {
+  const fetchData = (params: PaginatedFetchData = {}) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     dispatch(
       fetchObjectTypes({
         page,
@@ -54,8 +47,6 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
       }),
     );
   };
-
-  const showPaginationArrows = pageable.totalPages > 10;
 
   useEffect(() => {
     fetchData();
@@ -91,35 +82,7 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
           />
         }
       />
-      <div className="pagination">
-        <ArrowLeft
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page > 0) {
-              fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
-            }
-          }}
-        />
-        {Array.from({ length: pageable.totalPages }, (_, i) => i)
-          .slice(Math.floor(pageable.page / 10) * 10, Math.floor(pageable.page / 10) * 10 + 10)
-          .map((el) => (
-            <span
-              key={el}
-              className={pageable.page === el ? 'active' : ''}
-              onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
-            >
-              {el + 1}
-            </span>
-          ))}
-        <ArrowRight
-          className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-          onClick={() => {
-            if (pageable.page < pageable.totalPages - 1) {
-              fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
-            }
-          }}
-        />
-      </div>
+      <Pagination pageable={pageable} fetchData={fetchData} />
     </TabContentWrapper>
   );
 };

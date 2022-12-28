@@ -1,15 +1,23 @@
-import { Button, DataTable, TabContentProps, ToggleSwitch } from '#components';
 import MemoArchive from '#assets/svg/Archive';
+import {
+  Button,
+  DataTable,
+  PaginatedFetchData,
+  Pagination,
+  TabContentProps,
+  ToggleSwitch,
+} from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { DataTableColumn } from '#components/shared/DataTable';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { InputTypes } from '#utils/globalTypes';
 import { formatDateByInputType } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { Menu, MenuItem } from '@material-ui/core';
-import { ArrowDropDown, ArrowLeft, ArrowRight, CropFree } from '@material-ui/icons';
+import { ArrowDropDown, CropFree } from '@material-ui/icons';
 import { navigate, useLocation } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -22,9 +30,6 @@ import {
 } from '../actions';
 import { LoadingContainer } from '../ObjectTypes/ObjectTypeList';
 import { Choice, Object, ObjectTypeProperty } from '../types';
-
-const DEFAULT_PAGE_NUMBER = 0;
-const DEFAULT_PAGE_SIZE = 10;
 
 const ObjectList: FC<TabContentProps> = ({ label }) => {
   const dispatch = useDispatch();
@@ -46,7 +51,8 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
     setAnchorEl(null);
   };
 
-  const fetchData = (page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE) => {
+  const fetchData = (params: PaginatedFetchData = {}) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     dispatch(
       fetchObjects({
         page,
@@ -56,8 +62,6 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
       }),
     );
   };
-
-  const showPaginationArrows = pageable.totalPages > 10;
 
   useEffect(() => {
     if (shouldFetch.current) {
@@ -318,35 +322,7 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
               }, {}),
             }))}
           />
-          <div className="pagination">
-            <ArrowLeft
-              className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-              onClick={() => {
-                if (pageable.page > 0) {
-                  fetchData(pageable.page - 1, DEFAULT_PAGE_SIZE);
-                }
-              }}
-            />
-            {Array.from({ length: pageable.totalPages }, (_, i) => i)
-              .slice(Math.floor(pageable.page / 10) * 10, Math.floor(pageable.page / 10) * 10 + 10)
-              .map((el) => (
-                <span
-                  key={el}
-                  className={pageable.page === el ? 'active' : ''}
-                  onClick={() => fetchData(el, DEFAULT_PAGE_SIZE)}
-                >
-                  {el + 1}
-                </span>
-              ))}
-            <ArrowRight
-              className={`icon ${showPaginationArrows ? '' : 'hide'}`}
-              onClick={() => {
-                if (pageable.page < pageable.totalPages - 1) {
-                  fetchData(pageable.page + 1, DEFAULT_PAGE_SIZE);
-                }
-              }}
-            />
-          </div>
+          <Pagination pageable={pageable} fetchData={fetchData} />
         </TabContentWrapper>
       }
     />
