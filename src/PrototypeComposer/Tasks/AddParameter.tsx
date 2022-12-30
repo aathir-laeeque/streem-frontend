@@ -153,6 +153,8 @@ const defaultValues = {
   description: '',
   type: undefined,
   validations: {},
+  autoInitialize: undefined,
+  autoInitialized: undefined,
 };
 
 const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
@@ -175,6 +177,8 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     type: ParameterType;
     data: any;
     validations: Record<string, any>;
+    autoInitialize: Record<string, any>;
+    autoInitialized?: boolean;
   }>({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -555,6 +559,8 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
           type: response.data.type,
           data: response.data.data,
           validations: response.data.validations,
+          autoInitialize: response.data?.autoInitialize,
+          autoInitialized: response.data?.autoInitialized,
         });
       }
     } catch (e) {

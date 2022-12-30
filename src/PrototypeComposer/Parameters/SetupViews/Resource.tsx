@@ -19,17 +19,19 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
 }) => {
   const dispatch = useDispatch();
   const {
-    objectTypes: { list, listLoading, pageable },
-  } = useTypedSelector((state) => state.ontology);
-  const { id: checklistId } = useTypedSelector((state) => state.prototypeComposer.data!);
+    prototypeComposer: {
+      data: processData,
+      parameters: { listById },
+    },
+    ontology: {
+      objectTypes: { list, listLoading, pageable },
+    },
+  } = useTypedSelector((state) => state);
+  const { id: checklistId } = processData!;
   const { register, watch, setValue } = form;
   const data = watch('data', {});
   const autoInitialized = watch('autoInitialized', false);
   const autoInitialize = watch('autoInitialize', {});
-  // const [state, setState] = useState<any>({
-  //   loading: false,
-
-  // });
   const [loading, setLoading] = useState<Boolean>(false);
   const [resourceParameters, setResourceParameters] = useState<
     { id: string; type: ParameterType; label: string; taskId: string }[]
@@ -99,11 +101,19 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
     register('autoInitialized');
 
     if (!list.length) fetchData(0);
+    if (
+      autoInitialize?.parameterId &&
+      listById?.[autoInitialize?.parameterId]?.data?.objectTypeId
+    ) {
+      getProperties(listById[autoInitialize.parameterId].data.objectTypeId);
+    }
   }, []);
 
   const renderLinkingSection = () => {
     register('autoInitialize', {
-      required: true,
+      validate: (value) => {
+        return value ? 'parameterId' in value && 'relation' in value : true;
+      },
     });
     return (
       <>
@@ -121,14 +131,14 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
                   ...parameter,
                   value: parameter.id,
                 })),
-                // defaultValue: data?.objectTypeId
-                //   ? [
-                //       {
-                //         label: data?.objectTypeDisplayName,
-                //         value: data?.objectTypeId,
-                //       },
-                //     ]
-                //   : undefined,
+                defaultValue: autoInitialize?.parameterId
+                  ? [
+                      {
+                        label: listById?.[autoInitialize.parameterId]?.label,
+                        value: autoInitialize.parameterId,
+                      },
+                    ]
+                  : undefined,
                 isSearchable: false,
                 placeholder: 'Select',
                 isDisabled: isReadOnly,
@@ -160,14 +170,15 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
                   label: properties.displayName,
                   value: properties.id,
                 })),
-                // defaultValue: data?.objectTypeId
-                //   ? [
-                //       {
-                //         label: data?.objectTypeDisplayName,
-                //         value: data?.objectTypeId,
-                //       },
-                //     ]
-                //   : undefined,
+                defaultValue: autoInitialize?.relation
+                  ? [
+                      {
+                        label: autoInitialize.relation?.displayName,
+                        value: autoInitialize.relation?.id,
+                        externalId: autoInitialize.relation?.externalId,
+                      },
+                    ]
+                  : undefined,
                 isSearchable: false,
                 placeholder: 'Select',
                 isDisabled: isReadOnly,
@@ -272,7 +283,9 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
           style={{ padding: '8px', marginBlock: 16 }}
           onClick={() => {
             fetchResourceParameters();
-            setValue('autoInitialized', true);
+            setValue('autoInitialized', true, {
+              shouldDirty: true,
+            });
           }}
         >
           <LinkOutlined style={{ marginRight: 8 }} /> Link Resource
