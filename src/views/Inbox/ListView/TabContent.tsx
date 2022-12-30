@@ -10,7 +10,6 @@ import {
 } from '#components';
 import { fetchParameters, fetchParametersSuccess } from '#PrototypeComposer/Activity/actions';
 import { TargetEntityType } from '#PrototypeComposer/checklist.types';
-import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
@@ -31,9 +30,6 @@ import { ListViewState, TabViewProps } from './types';
 const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   const { jobs, loading: jobDataLoading }: ListViewState = useTypedSelector(
     (state) => state.inboxListView,
-  );
-  const { list: jobProperties, loading: jobPropertiesLoading } = useTypedSelector(
-    (state) => state.properties[ComposerEntity.JOB],
   );
 
   const { selectedFacility: { id: facilityId = '' } = {}, selectedUseCase } = useTypedSelector(
@@ -287,12 +283,6 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
               field: 'checklist.name',
               operator: FilterOperators.LIKE,
             },
-            ...jobProperties.map(({ label, id }) => ({
-              label,
-              value: id,
-              field: 'jobPropertyValues.facilityUseCasePropertyMapping.propertiesId',
-              operator: FilterOperators.EQ,
-            })),
           ]}
           updateFilterFields={(fields) => {
             setFilterFields([...fields]);
@@ -344,7 +334,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       </div>
       <div
         style={{
-          display: jobDataLoading || jobPropertiesLoading ? 'flex' : 'none',
+          display: jobDataLoading ? 'flex' : 'none',
           alignItems: 'center',
           justifyContent: 'center',
           height: '100%',
@@ -354,9 +344,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       </div>
       <div
         style={{
-          ...(jobDataLoading || jobPropertiesLoading
-            ? { display: 'none' }
-            : { display: 'contents' }),
+          ...(jobDataLoading ? { display: 'none' } : { display: 'contents' }),
         }}
       >
         <DataTable

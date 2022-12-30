@@ -1,5 +1,4 @@
 import MemoArchive from '#assets/svg/Archive';
-import MemoCreateJob from '#assets/svg/CreateJob';
 import MemoStartRevision from '#assets/svg/StartRevision';
 import MemoViewInfo from '#assets/svg/ViewInfo';
 import {
@@ -87,8 +86,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
   } = useTypedSelector((state) => state.prototypeComposer);
 
   const propertiesStoreData = useTypedSelector((state) => state.properties);
-  const { list: jobProperties, loading: jobPropertiesLoading } =
-    propertiesStoreData[ComposerEntity.JOB];
   const { list: checklistProperties, loading: checklistPropertiesLoading } =
     propertiesStoreData[ComposerEntity.CHECKLIST];
 
@@ -172,7 +169,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
           parameterValues: jobDetails.parameterValues,
           checklistId: jobDetails.checklistId,
           selectedUseCaseId: selectedUseCase!.id,
-          relations: jobDetails?.relations,
         }),
       );
     }
@@ -730,10 +726,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
       </div>
       <div
         style={{
-          display:
-            checklistDataLoading || jobPropertiesLoading || checklistPropertiesLoading
-              ? 'flex'
-              : 'none',
+          display: checklistDataLoading || checklistPropertiesLoading ? 'flex' : 'none',
           alignItems: 'center',
           justifyContent: 'center',
           height: '100%',
@@ -743,7 +736,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
       </div>
       <div
         style={{
-          ...(checklistDataLoading || jobPropertiesLoading || checklistPropertiesLoading
+          ...(checklistDataLoading || checklistPropertiesLoading
             ? { display: 'none' }
             : { display: 'contents' }),
         }}

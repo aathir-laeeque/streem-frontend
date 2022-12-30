@@ -4,12 +4,7 @@ import { formatDateTime, formatDuration1 } from '#utils/timeUtils';
 import { JobSummary } from '#views/Jobs/Summary/types';
 import { Link, StyleSheet, Text, View } from '@react-pdf/renderer';
 import React from 'react';
-import {
-  AssignedJobStates,
-  CompletedJobStates,
-  JobRelation,
-  JobStateType,
-} from '../../ListView/types';
+import { AssignedJobStates, CompletedJobStates, JobStateType } from '../../ListView/types';
 import {
   Assigness,
   commonStyles,
@@ -26,7 +21,6 @@ export type PdfJobDataType = Pick<
   | 'createdBy'
   | 'startedAt'
   | 'endedAt'
-  | 'properties'
   | 'totalDuration'
   | 'state'
   | 'cweDetails'
@@ -38,7 +32,6 @@ export type PdfJobDataType = Pick<
   totalStages: number;
   totalTask: number;
   checklist: Checklist;
-  relations: JobRelation[];
   parameterValues: [];
 };
 
@@ -105,7 +98,6 @@ export const CommonJobPdfDetails = ({
     totalDuration,
     cweDetails,
     totalStages,
-    relations,
     parameterValues,
   } = jobPdfData;
 
@@ -223,19 +215,6 @@ export const CommonJobPdfDetails = ({
           {parameterValues.map((currParam) => (
             <InlineInputLabelGroup label={currParam.label} value={getParameterValue(currParam)} />
           ))}
-
-          {relations &&
-            relations.map((relation) => {
-              return (
-                <InlineInputLabelGroup
-                  label={`${relation.displayName}:`}
-                  value={relation.targets
-                    .map((target) => `${target.displayName} - ${target.externalId}`)
-                    .join('\n')}
-                  key={relation.id}
-                />
-              );
-            })}
         </View>
       </TabLookLike>
 

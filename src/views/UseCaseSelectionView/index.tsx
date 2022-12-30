@@ -23,7 +23,7 @@ const UseCaseSelectionView: FC<RouteComponentProps> = () => {
 
   useEffect(() => {
     if (selectedUseCase) {
-      dispatch(fetch([ComposerEntity.JOB, ComposerEntity.CHECKLIST], selectedUseCase.id));
+      dispatch(fetch([ComposerEntity.CHECKLIST], selectedUseCase.id));
     }
   }, [selectedUseCase]);
 

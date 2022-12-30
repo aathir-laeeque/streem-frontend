@@ -109,7 +109,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
         }),
       );
       if (selectedUseCase) {
-        dispatch(fetch([ComposerEntity.JOB, ComposerEntity.CHECKLIST], selectedUseCase.id));
+        dispatch(fetch([ComposerEntity.CHECKLIST], selectedUseCase.id));
       }
 
       closeOverlay();

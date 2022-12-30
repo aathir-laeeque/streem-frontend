@@ -8,7 +8,7 @@ import { RouteComponentProps } from '@reach/router';
 import { Document, Page, PDFViewer, View } from '@react-pdf/renderer';
 import React, { useEffect, useState } from 'react';
 import { CommonJobPdfDetails, PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
-import { Job, JobRelation } from '../ListView/types';
+import { Job } from '../ListView/types';
 import { JobSummary } from '../Summary/types';
 import DurationSummary from './DurationSummary';
 import ExceptionSummary from './ExceptionSummary';
@@ -24,7 +24,6 @@ type JobSummaryReportType = JobSummary & {
   totalStages: number;
   totalTask: number;
   checklist: Checklist;
-  relations: JobRelation[];
 };
 
 type Props = RouteComponentProps<{ jobId: Job['id'] }>;

@@ -3,28 +3,22 @@ import {
   BaseModal,
   Button,
   fetchDataParams,
-  TextInput,
   PaginatedFetchData,
-  formatOptionLabel,
-  FormGroup,
+  TextInput,
 } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
+import { fetchParameters, fetchParametersSuccess } from '#PrototypeComposer/Activity/actions';
+import { TargetEntityType } from '#PrototypeComposer/checklist.types';
+import ParameterView from '#PrototypeComposer/Parameters/ExecutionViews';
 import { useTypedSelector } from '#store';
-import { baseUrl } from '#utils/apiUrls';
-import { request } from '#utils/request';
-import { FilterOperators, InputTypes, ResponseObj } from '#utils/globalTypes';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { FilterOperators } from '#utils/globalTypes';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import { Checklist } from '#views/Checklists/types';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { Cardinality } from '#views/Ontology/types';
-import { isNil } from 'lodash';
-import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { TargetEntityType } from '#PrototypeComposer/checklist.types';
-import { fetchParameters, fetchParametersSuccess } from '#PrototypeComposer/Activity/actions';
-import ParameterView from '#PrototypeComposer/Parameters/ExecutionViews';
 
 export interface CreateJobModalProps {
   selectedChecklist: Checklist | null;
@@ -101,27 +95,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   closeOverlay,
   props: { parameterValues, onCreateJob, selectedChecklist },
 }) => {
-  const [selectOptions, setSelectOptions] = useState<
-    Record<
-      string,
-      {
-        isFetching: boolean;
-        dependency?: string;
-        options?: any[];
-      }
-    >
-  >();
-  const pagination = useRef<
-    Record<
-      string,
-      {
-        current: number;
-        isLast: boolean;
-      }
-    >
-  >();
   const [checklist, setChecklist] = useState(selectedChecklist);
-  const [reRender, setReRender] = useState(false);
   const { selectedUseCase } = useTypedSelector((state) => state.auth);
   const { checklists, pageable, loading } = useTypedSelector((state) => state.checklistListView);
   const {
@@ -182,65 +156,6 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     }, {});
 
     onCreateJob({ checklistId: data.checklistId, parameterValues });
-  };
-
-  const getOptions = async (path: string, inputId: string, dependency?: string) => {
-    if (
-      !dependency ||
-      selectOptions?.[inputId]?.dependency !== dependency ||
-      !pagination.current?.[inputId]?.isLast
-    ) {
-      try {
-        pagination.current = {
-          ...pagination.current,
-          [inputId]: {
-            current: !isNil(pagination.current?.[inputId]?.current)
-              ? pagination.current![inputId].current
-              : -1,
-            isLast: !isNil(pagination.current?.[inputId]?.isLast)
-              ? pagination.current![inputId].isLast
-              : false,
-          },
-        };
-        setSelectOptions((prev) => ({
-          ...prev,
-          [inputId]: {
-            ...prev?.[inputId],
-            isFetching: true,
-            dependency,
-          },
-        }));
-        if (inputId && path) {
-          const response: ResponseObj<any> = await request(
-            'GET',
-            `${baseUrl}${path}&page=${
-              (!isNil(pagination.current?.[inputId]?.current)
-                ? pagination.current![inputId]?.current
-                : -1) + 1
-            }`,
-          );
-          if (response.data) {
-            pagination.current = {
-              ...pagination.current,
-              [inputId]: {
-                current: response?.pageable?.page || 0,
-                isLast: response?.pageable?.last || false,
-              },
-            };
-            setSelectOptions((prev) => ({
-              ...prev,
-              [inputId]: {
-                isFetching: false,
-                options: [...(prev?.[inputId]?.options || []), ...response.data],
-                dependency,
-              },
-            }));
-          }
-        }
-      } catch (e) {
-        console.error(`Error in Fetching Options for ${inputId}`, e);
-      }
-    }
   };
 
   const fetchParametersListData = async (params: PaginatedFetchData = {}, option) => {
@@ -333,74 +248,6 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               <ParameterView key={`parameter_${index}`} form={reactForm} parameter={parameter} />
             ))}
           </div>
-          {checklist && checklist?.relations?.length > 0 && (
-            <FormGroup
-              style={{ padding: '24px 0 0' }}
-              inputs={[
-                ...checklist.relations.map((relation: any) => {
-                  const registrationId = `relations.${relation.externalId}`;
-                  register(registrationId, {
-                    required: relation.isMandatory,
-                  });
-                  const isMulti = relation?.target.cardinality === Cardinality.ONE_TO_MANY;
-                  let variableValue: string | undefined;
-                  let urlPath = relation.target.urlPath;
-                  if (relation?.variables && Object.keys(relation.variables).length) {
-                    const keyToCheck = Object.keys(relation.variables)[0];
-                    const parsedKey = keyToCheck.replace('$', '');
-                    variableValue = getValues(`relations.${parsedKey}`)?.[0]?.[
-                      relation.variables[keyToCheck]
-                    ];
-                    if (variableValue) {
-                      urlPath = relation.target.urlPath.replace(keyToCheck, variableValue);
-                      getOptions(urlPath, relation.id, variableValue);
-                    }
-                  } else if (
-                    !selectOptions?.[relation.id]?.isFetching &&
-                    !selectOptions?.[relation.id]?.options
-                  ) {
-                    getOptions(urlPath, relation.id);
-                  }
-                  return {
-                    type: InputTypes.MULTI_SELECT,
-                    props: {
-                      isMulti,
-                      placeholder: `Select ${relation.displayName}`,
-                      label: relation.displayName,
-                      id: registrationId,
-                      name: registrationId,
-                      options:
-                        selectOptions?.[relation.id]?.options?.map((option) => ({
-                          value: option,
-                          label: option.displayName,
-                          externalId: option.externalId,
-                        })) || [],
-                      formatOptionLabel,
-                      onMenuScrollToBottom() {
-                        if (
-                          !selectOptions?.[relation.id]?.isFetching &&
-                          !pagination.current?.[relation.id]?.isLast
-                        ) {
-                          getOptions(urlPath, relation.id, variableValue);
-                        }
-                      },
-                      onChange: (options: any) => {
-                        setValue(
-                          registrationId,
-                          isMulti ? options.map((option: any) => option.value) : [options.value],
-                          {
-                            shouldDirty: true,
-                            shouldValidate: true,
-                          },
-                        );
-                        setReRender(!reRender);
-                      },
-                    },
-                  };
-                }),
-              ]}
-            />
-          )}
           <div className="buttons-container">
             <Button variant="secondary" color="red" onClick={closeOverlay}>
               Cancel

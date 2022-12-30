@@ -3,7 +3,6 @@ import JobSummaryErrorCorrectionIcon from '#assets/svg/JobSummaryErrorCorrection
 import JobSummaryParameterIcon from '#assets/svg/JobSummaryParameterIcon';
 import JobSummarySkippedIcon from '#assets/svg/JobSummarySkippedIcon';
 import JobSummaryTimeIcon from '#assets/svg/JobSummaryTimeIcon';
-import { Property } from '#store/properties/types';
 import JobSummaryYesNoIcon from '#assets/svg/JobSummaryYesNoIcon';
 import { User } from '#services/users';
 import React from 'react';
@@ -39,7 +38,6 @@ export interface JobSummary {
   cweDetails: CWEDetails | null;
   endedAt: number;
   id: Job['id'];
-  properties: Pick<Property, 'id' | 'name' | 'value' | 'label'>[];
   stages: Stage[];
   state: CompletedJobStates;
   startedAt: number | null;

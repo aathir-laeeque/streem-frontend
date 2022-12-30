@@ -76,10 +76,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     loading: checklistsLoading,
   } = useTypedSelector((state) => state.checklistListView);
 
-  const { list: jobProperties, loading: jobPropertiesLoading } = useTypedSelector(
-    (state) => state.properties[ComposerEntity.JOB],
-  );
-
   const defaultFilters = useRef<FilterField[]>(getBaseFilter(values));
 
   const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(values));
@@ -136,7 +132,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
           parameterValues: jobDetails.parameterValues,
           checklistId: selectedId,
           selectedUseCaseId: selectedUseCase!.id,
-          relations: jobDetails?.relations,
         }),
       );
     }
@@ -355,12 +350,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
               field: 'checklist.name',
               operator: FilterOperators.LIKE,
             },
-            ...jobProperties.map(({ label, id }) => ({
-              label,
-              value: id,
-              field: 'jobPropertyValues.facilityUseCasePropertyMapping.propertiesId',
-              operator: FilterOperators.EQ,
-            })),
           ]}
           updateFilterFields={(fields) => {
             setFilterFields((currentFields) => {
@@ -498,7 +487,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
       <div
         style={{
-          display: jobPropertiesLoading || jobDataLoading ? 'flex' : 'none',
+          display: jobDataLoading ? 'flex' : 'none',
           alignItems: 'center',
           justifyContent: 'center',
           height: '100%',
@@ -509,9 +498,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
 
       <div
         style={{
-          ...(jobPropertiesLoading || jobDataLoading
-            ? { display: 'none' }
-            : { display: 'contents' }),
+          ...(jobDataLoading ? { display: 'none' } : { display: 'contents' }),
         }}
       >
         <DataTable columns={columns} rows={rows} />

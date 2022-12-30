@@ -1,5 +1,4 @@
 import { Checklist } from '#PrototypeComposer/checklist.types';
-import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
@@ -16,25 +15,16 @@ export type JobRelationTarget = {
   collection: string;
 };
 
-export type JobRelation = {
-  id: string;
-  externalId: string;
-  displayName: string;
-  targets: JobRelationTarget[];
-};
-
 // TODO properties as null seems unnecessary here consider removing it
 export type Job = {
   checklist: Checklist;
   code: string;
   completedTasks: number;
   id: string;
-  properties: Pick<Property, 'id' | 'name' | 'label' | 'value'>[] | null;
   state: JobStateType;
   totalTasks: number;
   name?: string;
   assignees: Assignee[];
-  relations: JobRelation[];
 };
 
 export type ListViewProps = RouteComponentProps;
