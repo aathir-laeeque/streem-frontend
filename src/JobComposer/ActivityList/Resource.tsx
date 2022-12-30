@@ -1,20 +1,20 @@
-import { Button, formatOptionLabel, Select } from '#components';
+import QRIcon from '#assets/svg/QR';
+import { Button, Select } from '#components';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { apiAutoInitialize, baseUrl } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import QRIcon from '#assets/svg/QR';
 import { LinkOutlined } from '@material-ui/icons';
 import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 import { executeParameterLeading, fixParameterLeading, updateExecutedParameter } from './actions';
 import { customSelectStyles } from './MultiSelect/commonStyles';
 import { Wrapper } from './MultiSelect/styles';
 import { ParameterProps } from './types';
-import styled from 'styled-components';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
 
 const ResourceParameterWrapper = styled.div`
   display: flex;
@@ -138,14 +138,6 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
         <Select
           className="multi-select"
           isDisabled={parameter?.autoInitialized}
-          formatOptionLabel={(option: any) => {
-            return (
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div>{option.label}</div>
-                <div>{option.externalId}</div>
-              </div>
-            );
-          }}
           options={
             options?.map((option) => ({
               value: option,

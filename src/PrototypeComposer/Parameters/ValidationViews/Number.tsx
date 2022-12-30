@@ -1,7 +1,7 @@
-import { Button, formatOptionLabel, FormGroup } from '#components';
+import { Button, FormGroup } from '#components';
 import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
-import { apiGetParameters, apiGetObjectTypes } from '#utils/apiUrls';
+import { apiGetObjectTypes, apiGetParameters } from '#utils/apiUrls';
 import { FilterOperators, InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { ObjectType } from '#views/Ontology/types';
@@ -164,7 +164,6 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
                   type: InputTypes.SINGLE_SELECT,
                   props: {
                     id: 'objectType',
-                    formatOptionLabel,
                     label: 'Resource Parameter',
                     isLoading: isLoadingParameters,
                     options: resourceParameters.map((resource: any) => ({
@@ -199,7 +198,6 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
                         type: InputTypes.SINGLE_SELECT,
                         props: {
                           id: 'objectProperty',
-                          formatOptionLabel,
                           label: 'Object Property',
                           isLoading: isLoadingObjectType?.[index],
                           options: (selectedObjectTypes?.[index]?.properties || []).reduce<

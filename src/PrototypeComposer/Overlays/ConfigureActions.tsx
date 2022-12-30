@@ -1,4 +1,4 @@
-import { BaseModal, Button, formatOptionLabel, FormGroup } from '#components';
+import { BaseModal, Button, FormGroup } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import {
   AutomationActionActionType,
@@ -398,7 +398,6 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                 type: InputTypes.SINGLE_SELECT,
                                 props: {
                                   id: 'actionDetails',
-                                  formatOptionLabel,
                                   label: 'Object Type',
                                   isLoading: listLoading,
                                   options: list.map((objectType) => ({
@@ -440,7 +439,6 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                 type: InputTypes.SINGLE_SELECT,
                                 props: {
                                   id: 'objectType',
-                                  formatOptionLabel,
                                   label: 'Resource Parameter',
                                   isLoading: isLoadingParameters,
                                   options: resourceParameters.map((resource: any) => ({
@@ -484,7 +482,6 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                       type: InputTypes.SINGLE_SELECT,
                                       props: {
                                         id: 'numberParameter',
-                                        formatOptionLabel,
                                         label: 'Number Parameter',
                                         isLoading: isLoadingParameters,
                                         options: numberParameters.map((number: any) => ({
@@ -526,7 +523,6 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                       type: InputTypes.SINGLE_SELECT,
                                       props: {
                                         id: 'objectProperty',
-                                        formatOptionLabel,
                                         label: 'Object Property',
                                         isLoading: isLoadingObjectType,
                                         options: selectedObjectType?.properties?.reduce<
@@ -592,7 +588,6 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                             type: InputTypes.SINGLE_SELECT,
                                             props: {
                                               id: 'value',
-                                              formatOptionLabel,
                                               label: 'Select Value',
                                               options: selectedProperty._options.map((o: any) => ({
                                                 label: o.displayName,
@@ -632,7 +627,6 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                             type: InputTypes.SINGLE_SELECT,
                                             props: {
                                               id: 'setAs',
-                                              formatOptionLabel,
                                               label: 'Set As',
                                               options: getSetAsOptions(),
                                               defaultValue: actionDetails?.entityId

@@ -356,14 +356,6 @@ const FilterCard: FC<any> = ({ item, index, remove, form, parameterList, shouldR
                             getOptions();
                           }
                         },
-                        formatOptionLabel: (option: any) => {
-                          return (
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                              <div>{option.label}</div>
-                              <div>{option.externalId}</div>
-                            </div>
-                          );
-                        },
                       }),
                     },
                   },

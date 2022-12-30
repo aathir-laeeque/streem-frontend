@@ -1,4 +1,4 @@
-import { Button, formatOptionLabel, FormGroup } from '#components';
+import { Button, FormGroup } from '#components';
 import { ParameterType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { apiGetObjectTypes, apiGetParameters } from '#utils/apiUrls';
@@ -123,7 +123,6 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
               type: InputTypes.SINGLE_SELECT,
               props: {
                 id: 'resourceParameter',
-                formatOptionLabel,
                 label: 'Resource Parameter',
                 isLoading: loading,
                 onMenuScrollToBottom: handleMenuScrollToBottom,
@@ -161,7 +160,6 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
               type: InputTypes.SINGLE_SELECT,
               props: {
                 id: 'resourceParameter',
-                formatOptionLabel,
                 label: 'Object Property to be linked',
                 isLoading: loadingProperties,
                 onMenuScrollToBottom: handleMenuScrollToBottom,
@@ -230,7 +228,6 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
             type: InputTypes.SINGLE_SELECT,
             props: {
               id: 'objectType',
-              formatOptionLabel,
               label: 'Object Type',
               isLoading: listLoading,
               onMenuScrollToBottom: handleMenuScrollToBottom,

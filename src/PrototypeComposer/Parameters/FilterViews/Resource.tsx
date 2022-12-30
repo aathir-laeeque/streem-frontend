@@ -1,4 +1,4 @@
-import { Button, formatOptionLabel, FormGroup } from '#components';
+import { Button, FormGroup } from '#components';
 import { apiGetObjectTypes } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
@@ -199,7 +199,6 @@ const ResourceFilter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = (
                     type: InputTypes.SINGLE_SELECT,
                     props: {
                       id: 'objectProperty',
-                      formatOptionLabel,
                       label: 'Object Property',
                       isLoading: isActiveLoading,
                       options: selectedObjectType?.properties.map((objectTypeProperty) => ({

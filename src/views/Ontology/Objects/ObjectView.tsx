@@ -1,4 +1,4 @@
-import { Button, formatOptionLabel, FormGroup, FormGroupProps, TabContentProps } from '#components';
+import { Button, FormGroup, FormGroupProps, TabContentProps } from '#components';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { baseUrl } from '#utils/apiUrls';
@@ -371,7 +371,6 @@ const ObjectView: FC<TabContentProps> = ({
                   label: relation.displayName,
                   id: registrationId,
                   name: registrationId,
-                  formatOptionLabel,
                   isDisabled: isReadOnly,
                   ...(isReadOnly && { styles: undefined }),
                   options: selectOptions?.[relation.id]?.options?.map((option) => ({
