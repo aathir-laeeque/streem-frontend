@@ -43,6 +43,10 @@ const StyledSelect = styled(Select)<{ width: string }>`
   .MuiInputBase-input {
     padding: 0px;
   }
+  .MuiList-padding {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
 `;
 
 const selectStyles: StylesConfig<any> = {
@@ -85,6 +89,17 @@ const useMenuStyles = makeStyles({
     '.MuiMenuItem-root': {
       padding: '0 !important',
     },
+  },
+});
+
+const useMenuItemStyles = makeStyles({
+  root: {
+    fontSize: '14px !important',
+    justifyContent: 'space-between !important',
+    fontWeight: 'normal !important',
+    lineHeight: 'normal !important',
+    letterSpacing: 'normal !important',
+    color: '#666666 !important',
   },
 });
 
@@ -206,6 +221,7 @@ const MenuTree: FC<MenuTreeProps> = ({
   setState,
 }) => {
   const { parentPath, options, isLoading, selectOptions, openPopOut } = state;
+  const menuItemClasses = useMenuItemStyles();
 
   const getItems = async (fn: ItemType['fetchItems']) => {
     if (fn) {
@@ -304,6 +320,7 @@ const MenuTree: FC<MenuTreeProps> = ({
         <>
           <MenuItem
             key={index}
+            classes={{ root: menuItemClasses.root }}
             onClick={() => {
               if (currOption.value === 'back') {
                 pagination.current = initialPagination;

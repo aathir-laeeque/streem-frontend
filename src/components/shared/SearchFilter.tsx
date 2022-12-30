@@ -1,11 +1,12 @@
 import { FilterField, FilterOperators } from '#utils/globalTypes';
-import { Menu, MenuItem } from '@material-ui/core';
+import { MenuItem } from '@material-ui/core';
 import { ArrowDropDown, Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Button } from './Button';
 import { TextInput } from './Input';
+import { StyledMenu } from './StyledMenu';
 
 const Wrapper = styled.div`
   display: flex;
@@ -127,7 +128,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
             {selectedOption?.label} <ArrowDropDown className="icon" />
           </Button>
 
-          <Menu
+          <StyledMenu
             keepMounted
             disableEnforceFocus
             anchorEl={anchorEl}
@@ -149,7 +150,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
                 {option.label}
               </MenuItem>
             ))}
-          </Menu>
+          </StyledMenu>
         </div>
       ) : null}
       <TextInput

@@ -34,3 +34,4 @@ export * from './shared/Pagination';
 export * from './shared/EmojiComponent';
 export * from './shared/QRScanner';
 export * from './shared/QRGenerator';
+export * from './shared/StyledMenu';

@@ -1,7 +1,7 @@
 import AvatarIcon from '#assets/svg/AvatarIcon';
 import Logo from '#assets/svg/Logo';
-import QRIcon from '#assets/svg/QR';
 import MoreOptionsIcon from '#assets/svg/MoreOptionsIcon';
+import QRIcon from '#assets/svg/QR';
 import SettingsIcon from '#assets/svg/SettingsIcon';
 import { NestedSelect, Select } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';

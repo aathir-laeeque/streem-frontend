@@ -1,6 +1,7 @@
 import {
   Button,
   DataTable,
+  ListActionMenu,
   PaginatedFetchData,
   Pagination,
   SearchFilter,
@@ -22,7 +23,7 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { CircularProgress, Menu, MenuItem } from '@material-ui/core';
+import { CircularProgress, MenuItem } from '@material-ui/core';
 import { ArrowDropDown, FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import { startCase, toLower } from 'lodash';
@@ -30,7 +31,6 @@ import React, { MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { removeUnderscore } from '../../../utils/stringUtils';
 import { archiveUser, cancelInvite, resendInvite, unArchiveUser, unLockUser } from '../actions';
-
 export function modalBody(text: string, user?: User) {
   return (
     <div className="body-content" style={{ textAlign: 'left' }}>
@@ -349,7 +349,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
             >
               More <ArrowDropDown className="icon" />
             </div>
-            <Menu
+            <ListActionMenu
               id="row-more-actions"
               anchorEl={anchorEl}
               keepMounted
@@ -359,7 +359,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
               style={{ marginTop: 30 }}
             >
               <UnlockButton />
-            </Menu>
+            </ListActionMenu>
           </>
         );
       return null;
@@ -377,7 +377,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
         >
           More <ArrowDropDown className="icon" />
         </div>
-        <Menu
+        <ListActionMenu
           id="row-more-actions"
           anchorEl={anchorEl}
           keepMounted
@@ -439,7 +439,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
               );
             }
           })()}
-        </Menu>
+        </ListActionMenu>
       </>
     );
   };

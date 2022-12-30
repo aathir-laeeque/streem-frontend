@@ -1,7 +1,7 @@
 import ActivityIcon from '#assets/svg/ActivityIcon';
 import MemoArchive from '#assets/svg/Archive';
 import MemoViewInfo from '#assets/svg/ViewInfo';
-import { Button } from '#components';
+import { Button, ListActionMenu } from '#components';
 import { closeAllOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { ProcessInitialState } from '#PrototypeComposer';
@@ -16,7 +16,7 @@ import { ALL_FACILITY_ID } from '#utils/constants';
 import { Error } from '#utils/globalTypes';
 import { archiveChecklist, unarchiveChecklist } from '#views/Checklists/ListView/actions';
 import { FormMode } from '#views/Checklists/NewPrototype/types';
-import { Menu, MenuItem } from '@material-ui/core';
+import { MenuItem } from '@material-ui/core';
 import {
   DoneAll,
   FiberManualRecord,
@@ -29,6 +29,7 @@ import {
 import { navigate } from '@reach/router';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 import { validatePrototype } from '../actions';
 import {
   Checklist,
@@ -37,6 +38,14 @@ import {
   ChecklistStatesContent,
 } from '../checklist.types';
 import HeaderWrapper from './styles';
+
+const ListActionMenuButton = styled(ListActionMenu)`
+  .MuiPaper-root {
+    right: 16px !important;
+    left: auto !important;
+    top: 130px !important;
+  }
+`;
 
 const ChecklistHeader: FC<ProcessInitialState> = ({
   isPrimaryAuthor,
@@ -281,10 +290,9 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
       >
         <MoreVert className="icon" fontSize="small" />
       </Button>
-      <Menu
+      <ListActionMenuButton
         style={{ right: 10 }}
         id="row-more-actions"
-        className="header-more-actions"
         anchorEl={anchorEl}
         keepMounted
         disableEnforceFocus
@@ -329,7 +337,7 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
         {data?.state === ChecklistStates.PUBLISHED || data?.audit?.createdBy?.archived
           ? checkArchivePermission() && <ArchiveMenuItem />
           : data?.audit?.createdBy?.id === userId && <ArchiveMenuItem />}
-      </Menu>
+      </ListActionMenuButton>
     </>
   );
 

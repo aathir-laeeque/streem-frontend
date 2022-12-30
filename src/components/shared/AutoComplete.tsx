@@ -51,6 +51,12 @@ const StyledTextField = styled(TextField)`
   }
 `;
 
+const StyledAutocomplete = styled(Autocomplete)`
+  .MuiAutocomplete-option[data-focus='true'] {
+    background-color: rgba(29, 132, 255, 0.2) !important;
+  }
+`;
+
 export type fetchDataParams = {
   page: number;
   size?: number;
@@ -140,7 +146,7 @@ export function AutoComplete({
                 {optional ? <span className="optional-badge">Optional</span> : null}
               </label>
             ) : null}
-            <Autocomplete
+            <StyledAutocomplete
               {...props}
               id={`${name}-auto-complete`}
               open={open}

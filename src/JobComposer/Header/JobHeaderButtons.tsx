@@ -1,16 +1,16 @@
 import { Button } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { StyledMenu } from '#components/shared/StyledMenu';
 import checkPermission from '#services/uiPermissions';
 import { User } from '#store/users/types';
-import { Job, JobStateEnum, JobStateType } from '#views/Jobs/ListView/types';
 import { openLinkInNewTab } from '#utils';
-import { Menu, MenuItem } from '@material-ui/core';
+import { CompletedJobStates, Job, JobStateEnum, JobStateType } from '#views/Jobs/ListView/types';
+import { MenuItem } from '@material-ui/core';
 import { MoreVert } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { CompletedJobStates } from '#views/Jobs/ListView/types';
 import { completeJob } from '../actions';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
@@ -128,13 +128,12 @@ const JobHeaderButtons: FC<{
         )}
       </Button>
 
-      <Menu
+      <StyledMenu
         id="job-more-options-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
-        disableEnforceFocus
         style={{ marginTop: 40 }}
       >
         <MenuItem
@@ -148,7 +147,7 @@ const JobHeaderButtons: FC<{
         <MenuItem
           className="job-activities"
           onClick={() => {
-            navigate(`/jobs/${jobId}/activities`);
+            navigate(`/jobs/${jobId}/activites`);
             handleClose();
           }}
         >
@@ -189,7 +188,7 @@ const JobHeaderButtons: FC<{
               <span style={{ color: '#da1e28' }}>Complete Job with Exception</span>
             </MenuItem>
           )}
-      </Menu>
+      </StyledMenu>
     </div>
   );
 };

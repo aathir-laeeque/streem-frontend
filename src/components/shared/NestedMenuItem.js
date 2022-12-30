@@ -1,9 +1,9 @@
-import React from 'react';
-import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import ArrowRight from '@material-ui/icons/ArrowRight';
 import ArrowLeft from '@material-ui/icons/ArrowLeft';
+import ArrowRight from '@material-ui/icons/ArrowRight';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { StyledMenu } from './StyledMenu';
 
 class NestedMenuItem extends React.Component {
   static propTypes = {
@@ -27,9 +27,7 @@ class NestedMenuItem extends React.Component {
     ) : (
       <ArrowRight fontSize={expandIconSize} />
     );
-    this.highlightColor = this.props.highlightColor
-      ? this.props.highlightColor
-      : '#dddddd';
+    this.highlightColor = this.props.highlightColor ? this.props.highlightColor : '#dddddd';
     this.subMenuRef = React.createRef(null);
     this.nestedMenuRef = React.createRef(null);
   }
@@ -68,16 +66,10 @@ class NestedMenuItem extends React.Component {
     if (length && length > 0) {
       // When keyboard nav goes out of bounds, wrap around the current menu
       // and prevent parent menu from receiving the key input
-      if (
-        evt.target === this.subMenuRef.current?.children[length - 1] &&
-        evt.key === 'ArrowDown'
-      ) {
+      if (evt.target === this.subMenuRef.current?.children[length - 1] && evt.key === 'ArrowDown') {
         evt.stopPropagation();
         this.subMenuRef.current?.children[0]?.focus();
-      } else if (
-        evt.target === this.subMenuRef.current?.children[0] &&
-        evt.key === 'ArrowUp'
-      ) {
+      } else if (evt.target === this.subMenuRef.current?.children[0] && evt.key === 'ArrowUp') {
         evt.stopPropagation();
         this.subMenuRef.current?.children[length - 1]?.focus();
       } else if (this.isSubmenuFocused()) {
@@ -118,7 +110,7 @@ class NestedMenuItem extends React.Component {
       >
         {this.props.label}
         {this.expandIcon}
-        <Menu
+        <StyledMenu
           // set to pointerEvents to none to prevent menu from capturing
           // events meant for child elements
           style={{ pointerEvents: 'none' }}
@@ -142,7 +134,7 @@ class NestedMenuItem extends React.Component {
           <div ref={this.subMenuRef} style={{ pointerEvents: 'auto' }}>
             {this.props.children}
           </div>
-        </Menu>
+        </StyledMenu>
       </MenuItem>
     );
   }

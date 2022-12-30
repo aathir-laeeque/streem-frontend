@@ -2,12 +2,12 @@ import NestedMenuItem from '#components/shared/NestedMenuItem';
 import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
 import { ChecklistAuditLogsType } from '#PrototypeComposer/ChecklistAuditLogs/types';
 import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
-import Menu from '@material-ui/core/Menu';
 import { ExpandMore, Search } from '@material-ui/icons';
 import { noop } from 'lodash';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import { Button } from './Button';
+import { StyledMenu } from './StyledMenu';
 
 type Filter = {
   label: string;
@@ -190,6 +190,141 @@ const Wrapper = styled.div.attrs({})`
   }
 `;
 
+const FilterWrapper = styled.div.attrs({})`
+  width: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  .MuiPickersStaticWrapper-root {
+    border-bottom: 1px solid #dadada;
+
+    .MuiPickersDesktopDateRangeCalendar-root {
+      justify-content: center;
+
+      .MuiPickersDesktopDateRangeCalendar-arrowSwitcher {
+        padding: 16px 8px 8px 8px;
+
+        .MuiSvgIcon-root {
+          color: #333333;
+        }
+      }
+    }
+  }
+
+  .MuiTypography-subtitle1 {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333333;
+  }
+
+  .MuiPickersDesktopDateRangeCalendar-calendar {
+    min-height: 230px;
+  }
+
+  .MuiInput-underline:before {
+    border-bottom: 1px solid #999999;
+  }
+
+  .MuiInput-underline:after {
+    border-bottom: 2px solid #1d84ff;
+  }
+
+  .MuiInput-underline:hover:not(.Mui-disabled):before {
+    border-bottom: 1px solid #999999;
+  }
+
+  .MuiFormLabel-root {
+    font-size: 10px;
+  }
+
+  .MuiIconButton-root {
+    color: #999999;
+  }
+
+  .MuiFormLabel-root.Mui-focused {
+    color: #1d84ff;
+  }
+
+  .MuiPickersCalendar-weekDayLabel {
+    font-size: 12px;
+    line-height: 0.83;
+    color: #7f8fa4;
+  }
+
+  .MuiPickersDay-root {
+    border-radius: 0px !important;
+  }
+
+  .MuiPickersDay-today {
+    border: none !important;
+  }
+
+  .MuiPickersDay-root.Mui-selected {
+    background-color: #1d84ff !important;
+    color: #000;
+  }
+
+  .MuiPickersDateRangeDay-dayInsideRangeInterval {
+    color: #000;
+  }
+
+  .MuiPickersDateRangeDay-rangeIntervalDayPreview {
+    border-radius: 0px !important;
+    border-top-left-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+  }
+
+  .MuiPickersDateRangeDay-rangeIntervalDayHighlight {
+    background-color: rgba(29, 132, 255, 0.2);
+    border-radius: 0px !important;
+    border-top-left-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+  }
+
+  .MuiInputBase-input {
+    font-family: 'Nunito', sans-serif;
+    color: #999999;
+  }
+
+  .timepicker-container {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+    padding: 16px;
+
+    .MuiFormControl-root {
+      margin-left: 8px;
+
+      :first-child {
+        margin-right: 8px;
+        margin-left: 0px;
+      }
+
+      .MuiInputBase-adornedStart {
+        svg {
+          padding-left: 4px;
+          padding-right: 4px;
+          color: #999999;
+        }
+      }
+
+      .MuiFormHelperText-root {
+        display: none;
+      }
+    }
+  }
+
+  .picker-actions {
+    width: 100%;
+    padding: 16px;
+    display: flex;
+    justify-content: flex-end;
+  }
+`;
+
 export const InfiniteListView: FC<ListViewProps> = ({
   primaryButtonText,
   onPrimaryClick = () => noop,
@@ -243,7 +378,7 @@ export const InfiniteListView: FC<ListViewProps> = ({
               {filterProp?.activeCount !== 0 ? `${filterProp?.activeCount} Filters` : 'Filters '}
               <ExpandMore style={{ fontSize: 20, marginLeft: 8 }} />
             </Button>
-            <Menu
+            <StyledMenu
               id="filter-menu"
               anchorEl={anchorEl}
               keepMounted
@@ -261,12 +396,11 @@ export const InfiniteListView: FC<ListViewProps> = ({
                     label={filter.label}
                     mainMenuOpen={anchorEl ? true : false}
                   >
-                    <div
+                    <FilterWrapper
                       onClick={(e) => {
                         e.stopPropagation();
                       }}
                       onKeyDown={(e) => e.stopPropagation()}
-                      className="filter-container"
                     >
                       {typeof filter.content === 'function' ? filter.content() : filter.content}
                       <div className="picker-actions">
@@ -277,11 +411,11 @@ export const InfiniteListView: FC<ListViewProps> = ({
                           Apply Filter
                         </Button>
                       </div>
-                    </div>
+                    </FilterWrapper>
                   </NestedMenuItem>
                 );
               })}
-            </Menu>
+            </StyledMenu>
           </>
         )}
         {isSearchable && (

@@ -5,6 +5,7 @@ import {
   Button,
   DataTable,
   DropdownFilter,
+  ListActionMenu,
   PaginatedFetchData,
   Pagination,
   SearchFilter,
@@ -26,7 +27,7 @@ import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/
 import { Error, FilterField, FilterOperators } from '#utils/globalTypes';
 import { createJob } from '#views/Jobs/ListView/actions';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { Chip, CircularProgress, Menu, MenuItem } from '@material-ui/core';
+import { Chip, CircularProgress, MenuItem } from '@material-ui/core';
 import { ArrowDropDown, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
@@ -342,7 +343,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                 More <ArrowDropDown className="icon" />
               </div>
 
-              <Menu
+              <ListActionMenu
                 id="row-more-actions"
                 anchorEl={anchorEl}
                 keepMounted
@@ -498,7 +499,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     </MenuItem>
                   )
                 )}
-              </Menu>
+              </ListActionMenu>
             </div>
           );
         } else {

@@ -1,4 +1,4 @@
-import { Button } from '#components';
+import { Button, StyledMenu } from '#components';
 import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { StartedTaskStates, Task, TaskExecutionState } from '#JobComposer/checklist.types';
@@ -7,7 +7,7 @@ import { useTypedSelector } from '#store';
 import { User } from '#store/users/types';
 import { formatDateTime } from '#utils/timeUtils';
 import { JobStateEnum } from '#views/Jobs/ListView/types';
-import { Menu, MenuItem } from '@material-ui/core';
+import { MenuItem } from '@material-ui/core';
 import { Assignment, Error, MoreHoriz, PanTool } from '@material-ui/icons';
 import { capitalize } from 'lodash';
 import React, { FC, MouseEvent, useState } from 'react';
@@ -169,7 +169,7 @@ const JobHeader: FC<
                 <MoreHoriz className="icon complete-options" />
               </div>
 
-              <Menu
+              <StyledMenu
                 id="task-error-correction"
                 anchorEl={anchorEl}
                 keepMounted
@@ -192,7 +192,7 @@ const JobHeader: FC<
                   <Error className="icon" />
                   Error correction
                 </MenuItem>
-              </Menu>
+              </StyledMenu>
             </>
           )}
         </div>

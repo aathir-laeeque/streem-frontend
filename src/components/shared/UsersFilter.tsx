@@ -95,6 +95,15 @@ const Wrapper = styled.div`
   }
 `;
 
+const StyledPopover = styled(Popover)`
+  .MuiPopover-paper {
+    border: 1px solid #1d84ff;
+    background: #f4f4f4;
+    border-radius: 0px;
+    box-shadow: none;
+  }
+`;
+
 const PopoverWrapper = styled.div`
   min-height: 360px;
   height: 360px;
@@ -400,7 +409,7 @@ const UsersFilter: FC<UsersFilterProps> = ({ options, updateFilter, label }) => 
 
         {anchorEl ? <ArrowDropUp className="icon" /> : <ArrowDropDown className="icon" />}
       </div>
-      <Popover
+      <StyledPopover
         id={anchorEl ? 'user-filter-popover' : undefined}
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
@@ -432,7 +441,7 @@ const UsersFilter: FC<UsersFilterProps> = ({ options, updateFilter, label }) => 
             {bodyView}
           </div>
         </PopoverWrapper>
-      </Popover>
+      </StyledPopover>
     </Wrapper>
   );
 };

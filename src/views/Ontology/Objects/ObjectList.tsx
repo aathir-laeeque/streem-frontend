@@ -2,6 +2,7 @@ import MemoArchive from '#assets/svg/Archive';
 import {
   Button,
   DataTable,
+  ListActionMenu,
   PaginatedFetchData,
   Pagination,
   TabContentProps,
@@ -16,8 +17,8 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { InputTypes } from '#utils/globalTypes';
 import { formatDateByInputType } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { Menu, MenuItem } from '@material-ui/core';
-import { ArrowDropDown, CropFree } from '@material-ui/icons';
+import { MenuItem } from '@material-ui/core';
+import { ArrowDropDown, ArrowLeft, ArrowRight, CropFree } from '@material-ui/icons';
 import { navigate, useLocation } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -173,7 +174,7 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
               More <ArrowDropDown className="icon" />
             </div>
 
-            <Menu
+            <ListActionMenu
               id="row-more-actions"
               anchorEl={anchorEl}
               keepMounted
@@ -264,7 +265,7 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
                   <span>View QR Code</span>
                 </div>
               </MenuItem>
-            </Menu>
+            </ListActionMenu>
           </>
         );
       },
