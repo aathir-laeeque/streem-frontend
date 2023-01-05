@@ -44,10 +44,6 @@ const DetailsPopover = ({ item, parameterId }) => {
 
     switch (type) {
       case MandatoryParameter.SHOULD_BE:
-        contentString = process.data.value
-          ? process.data.value
-          : `${process.data.lowerValue} - ${process.data.upperValue}`;
-        break;
       case MandatoryParameter.MULTI_LINE:
       case MandatoryParameter.SINGLE_LINE:
       case MandatoryParameter.NUMBER:
