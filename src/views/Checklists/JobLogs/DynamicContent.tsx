@@ -2,6 +2,7 @@ import {
   Button,
   DataTable,
   NestedSelect,
+  NestedSelectProps,
   PaginatedFetchData,
   Pagination,
   Select,
@@ -21,6 +22,7 @@ import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { fetchObjectTypes } from '#views/Ontology/actions';
 import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
+import { Object } from '#views/Ontology/types';
 import { ExpandMore } from '@material-ui/icons';
 import ClearIcon from '@material-ui/icons/Clear';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
@@ -35,6 +37,7 @@ import FiltersDrawer from './Overlays/FiltersDrawer';
 const JobLogsTabWrapper = styled.div`
   display: flex;
   height: 100%;
+  justify-content: center;
   .file-links {
     display: flex;
     a {
@@ -75,15 +78,10 @@ const ResourceFilterWrapper = styled.div`
   }
 
   .resource-filter-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    // TODO remove this css ellipsis not working
-    // white-space: nowrap;
-    // width: 120px;
-    // overflow: hidden;
-    // text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .active {
@@ -125,14 +123,13 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
     columns: DataTableColumn[];
     showDrawer: boolean;
     isChanged: boolean;
-    resourceOptions?: any;
-    selectedResource?: any;
+    resourceOptions: NestedSelectProps['items'];
+    selectedResource?: Object;
   }>({
     columns: [],
     showDrawer: false,
     isChanged: false,
     resourceOptions: {},
-    selectedResource: {},
   });
   const { columns, showDrawer, viewDetails, isChanged, resourceOptions, selectedResource } = state;
 
@@ -179,7 +176,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
           page,
           size,
           filters: {
-            op: 'AND',
+            op: FilterOperators.AND,
             fields: [
               ...filters,
               ...filtersToQueryParams(viewDetails?.filters || []),
@@ -367,21 +364,14 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
             selectedResource?.id ? 'resource-filter-label active' : 'resource-filter-label'
           }
         >
-          {selectedResource?.displayName?.length > 15
-            ? `${selectedResource?.displayName.slice(0, 16)}...`
-            : selectedResource?.displayName || `Resource Filter`}
-          {/* {selectedResource?.displayName || `Resource Filter`} */}
+          {selectedResource?.displayName || `Resource Filter`}
         </div>
         <div className="resource-filter-icons">
           {selectedResource?.id && (
             <ClearIcon
               onMouseDown={() => {
-                setState((prev) => ({ ...prev, selectedResource: {} }));
-                setFilterFields((prev) =>
-                  prev.filter(
-                    (currField) => !currField.field.split('.').some((str) => str === 'logs'),
-                  ),
-                );
+                setState((prev) => ({ ...prev, selectedResource: undefined }));
+                setFilterFields([]);
               }}
             />
           )}
@@ -407,7 +397,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
               />
               <NestedSelect
                 id="resource-filter-selector"
-                width="23ch"
+                width="200px"
                 label={ResourceFilterLabel}
                 items={resourceOptions}
                 onChildChange={onChildChange}

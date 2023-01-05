@@ -96,7 +96,7 @@ type PopOutProps = {
   onInputChange: (newValue: string) => void;
 } & Pick<NestedSelectProps, 'onChildChange'>;
 
-type NestedSelectProps = {
+export type NestedSelectProps = {
   items: ItemsType;
   label: (value: unknown) => React.ReactNode;
   onChildChange: (option: any) => void;
@@ -356,7 +356,7 @@ export const NestedSelect: FC<NestedSelectProps> = ({
   const [state, setState] = useState<State>(initialState);
   const parent = useRef<ItemType | null>(null);
   const pagination = useRef<Pageable>(initialPagination);
-  const { openSelect } = state;
+  const { openSelect, openPopOut } = state;
 
   const handleOnChildChange = (option: any) => {
     onChildChange(option);
@@ -379,10 +379,10 @@ export const NestedSelect: FC<NestedSelectProps> = ({
     const { fetchData, pagination } = rest;
 
     if (
-      scrollHeight - scrollTop - clientHeight <= 0 &&
-      pagination &&
       fetchData &&
-      !pagination.last
+      pagination &&
+      !pagination.last &&
+      scrollHeight - scrollTop - clientHeight <= 0
     ) {
       fetchData({
         page: pagination?.page + 1,
@@ -403,7 +403,7 @@ export const NestedSelect: FC<NestedSelectProps> = ({
           vertical: 'bottom',
           horizontal: 'left',
         },
-        style: { maxHeight: maxHeight },
+        style: { maxHeight: openPopOut ? 'unset' : maxHeight },
         PaperProps: {
           onScroll: handleOnScroll,
         },

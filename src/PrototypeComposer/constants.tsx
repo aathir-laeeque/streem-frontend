@@ -47,13 +47,17 @@ const ParameterLabelWrapper = styled.div`
   .parameter-icon {
     background-color: #4589ff;
     border-radius: 50%;
-    color: #fff;
     margin-right: 8px;
     display: flex;
     padding: 4px;
-
     svg {
-      font-size: 16px;
+      color: #fff;
+      height: 16px;
+      width: 16px;
+      margin: unset;
+      &:hover {
+        color: #fff;
+      }
     }
   }
 `;

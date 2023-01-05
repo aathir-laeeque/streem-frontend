@@ -14,12 +14,12 @@ export const formatOptionLabel: Props<{
   </div>
 );
 
-type SelectProps = Props & {
+type SelectProps = Props<any> & {
   error?: string;
   label?: string;
   optional?: boolean;
   style?: React.CSSProperties;
-  formatOptionLabel?: any;
+  formatOptionLabel?: Props<any>['formatOptionLabel'];
 };
 
 const Wrapper = styled.div.attrs({

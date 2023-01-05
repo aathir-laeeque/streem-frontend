@@ -17,6 +17,7 @@ import { fetchProcessLogs } from '../ListView/actions';
 const JobLogsTabWrapper = styled.div`
   display: flex;
   height: 100%;
+  justify-content: center;
   .file-links {
     display: flex;
     a {
