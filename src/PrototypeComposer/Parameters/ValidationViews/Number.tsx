@@ -1,7 +1,8 @@
 import { Button, formatOptionLabel, FormGroup } from '#components';
+import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { apiGetParameters, apiGetObjectTypes } from '#utils/apiUrls';
-import { InputTypes, ResponseObj } from '#utils/globalTypes';
+import { FilterOperators, InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { ObjectType } from '#views/Ontology/types';
 import { AddCircleOutline, Close } from '@material-ui/icons';
@@ -17,12 +18,22 @@ type NumberValidationState = {
   selectedObjectTypes: Record<number, ObjectType>;
 };
 
+const keyToValidate = [
+  'parameterId',
+  'propertyId',
+  'propertyInputType',
+  'propertyExternalId',
+  'propertyDisplayName',
+  'constraint',
+  'errorMessage',
+];
+
 const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
   form,
   isReadOnly,
 }) => {
   const { id: checklistId } = useTypedSelector((state) => state.prototypeComposer.data!);
-  const { watch, setValue, register } = form;
+  const { watch, setValue, register, setError, clearErrors } = form;
   const validations = watch('validations', {});
   const { resourceParameterValidations = [] } = validations;
   const [state, setState] = useState<NumberValidationState>({
@@ -66,20 +77,19 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
   const fetchParameters = async () => {
     if (!resourceParameters.length) {
       setState((prev) => ({ ...prev, isLoadingParameters: true }));
-      const resources = await request('GET', apiGetParameters(checklistId, 'RESOURCE'), {
+      const resources = await request('GET', apiGetParameters(checklistId), {
         params: {
-          // page: pageNumber + 1,
-          // size: DEFAULT_PAGE_SIZE,
-          // filters: JSON.stringify({
-          //   op: FilterOperators.AND,
-          //   fields: [
-          //     {
-          //       field: 'targetEntityType',
-          //       op: FilterOperators.EQ,
-          //       values: [TargetEntityType.TASK],
-          //     },
-          //   ],
-          // }),
+          filters: JSON.stringify({
+            op: FilterOperators.AND,
+            fields: [
+              { field: 'archived', op: FilterOperators.EQ, values: [false] },
+              {
+                field: 'type',
+                op: FilterOperators.EQ,
+                values: [MandatoryParameter.RESOURCE],
+              },
+            ],
+          }),
         },
       });
       resourceParametersMap.current = keyBy(resources.data || [], 'id');
@@ -112,7 +122,18 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
     }
   }, [resourceParameters]);
 
-  const updateValidations = (updatedValidations: any) => {
+  const updateValidations = (updatedValidations: any[]) => {
+    let isValid = true;
+    updatedValidations.every((validation: any) => {
+      keyToValidate.every((key) => {
+        const checkSingleProperty = !!validation?.[key]?.length;
+        if (!checkSingleProperty) {
+          isValid = false;
+        }
+        return isValid;
+      });
+      return isValid;
+    });
     setValue(
       'validations',
       {
@@ -121,9 +142,15 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
       },
       {
         shouldDirty: true,
-        shouldValidate: true,
       },
     );
+    if (!isValid) {
+      setError('data', {
+        message: 'All Validation Options Should be Filled.',
+      });
+    } else {
+      clearErrors('data');
+    }
   };
 
   return (

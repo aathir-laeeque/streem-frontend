@@ -195,42 +195,44 @@ const TaskCard: FC<
         isReadOnly={isReadOnly}
       >
         <div className="task-header">
-          <div className="order-control">
-            <ArrowDropUp
-              className="icon"
-              fontSize="small"
-              onClick={(event) => {
-                event.stopPropagation();
-                if (!isFirstTask) {
-                  dispatch(
-                    reOrderTask({
-                      from: index,
-                      to: index - 1,
-                      id: taskId,
-                      activeStageId: activeStageId,
-                    }),
-                  );
-                }
-              }}
-            />
-            <ArrowDropDown
-              className="icon"
-              fontSize="small"
-              onClick={(event) => {
-                event.stopPropagation();
-                if (!isLastTask) {
-                  dispatch(
-                    reOrderTask({
-                      from: index,
-                      to: index + 1,
-                      id: taskId,
-                      activeStageId: activeStageId,
-                    }),
-                  );
-                }
-              }}
-            />
-          </div>
+          {!isReadOnly && (
+            <div className="order-control">
+              <ArrowDropUp
+                className="icon"
+                fontSize="small"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  if (!isFirstTask) {
+                    dispatch(
+                      reOrderTask({
+                        from: index,
+                        to: index - 1,
+                        id: taskId,
+                        activeStageId: activeStageId,
+                      }),
+                    );
+                  }
+                }}
+              />
+              <ArrowDropDown
+                className="icon"
+                fontSize="small"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  if (!isLastTask) {
+                    dispatch(
+                      reOrderTask({
+                        from: index,
+                        to: index + 1,
+                        id: taskId,
+                        activeStageId: activeStageId,
+                      }),
+                    );
+                  }
+                }}
+              />
+            </div>
+          )}
 
           <div className="task-name">
             Task {stageIndex + 1}.{index + 1}

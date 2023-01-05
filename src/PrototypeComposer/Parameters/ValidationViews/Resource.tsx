@@ -39,6 +39,11 @@ export const ValidationWrapper = styled.div`
       flex: 1;
       margin-bottom: 16px;
     }
+
+    textarea {
+      height: auto;
+      padding: 10px;
+    }
   }
 
   .custom-select__menu {
@@ -100,7 +105,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
   form,
   isReadOnly,
 }) => {
-  const { watch, setValue } = form;
+  const { watch, setValue, setError, clearErrors } = form;
   const data = watch('data', {
     propertyValidations: [],
   });
@@ -117,12 +122,12 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
     const res: ResponseObj<ObjectType> = await request('GET', apiGetObjectTypes(id));
     if (res.data) {
       propertiesMap.current = keyBy(res.data.properties || [], 'id');
-      updateValidationOptions(res.data, propertyValidations);
+      updateValidationOptions(propertyValidations);
     }
     setState((prev) => ({ ...prev, isActiveLoading: false, selectedObjectType: res.data }));
   };
 
-  const updateValidationOptions = (objectType: ObjectType, validation: any[]) => {
+  const updateValidationOptions = (validation: any[]) => {
     const updatedOptions: Record<number, Choice[]> = {};
     validation.forEach((validation: any, index: number) => {
       updatedOptions[index] = propertiesMap.current?.[validation.propertyId]?.options || [];
@@ -136,7 +141,35 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
     }
   }, [data?.objectTypeId]);
 
-  const updateValidations = (updatedValidations: any) => {
+  const updateValidations = (updatedValidations: any[]) => {
+    let isValid = true;
+    updatedValidations.every((validation: any) => {
+      const keyToValidate = [
+        'propertyId',
+        'propertyInputType',
+        'propertyExternalId',
+        'propertyDisplayName',
+        'constraint',
+        [InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(
+          validation.propertyInputType,
+        )
+          ? 'dateUnit'
+          : [InputTypes.SINGLE_SELECT, InputTypes.MULTI_SELECT].includes(
+              validation.propertyInputType,
+            )
+          ? 'options'
+          : 'value',
+        'errorMessage',
+      ];
+      keyToValidate.every((key) => {
+        const checkSingleProperty = !!validation?.[key]?.length;
+        if (!checkSingleProperty) {
+          isValid = false;
+        }
+        return isValid;
+      });
+      return isValid;
+    });
     setValue(
       'data',
       {
@@ -145,9 +178,15 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
       },
       {
         shouldDirty: true,
-        shouldValidate: true,
       },
     );
+    if (!isValid) {
+      setError('data', {
+        message: 'All Validation Options Should be Filled.',
+      });
+    } else {
+      clearErrors('data');
+    }
   };
 
   return (
@@ -319,7 +358,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
                   const updated = [...propertyValidations];
                   updated.splice(index, 1);
                   updateValidations(updated);
-                  updateValidationOptions(selectedObjectType!, updated);
+                  updateValidationOptions(updated);
                 }}
               />
             )}

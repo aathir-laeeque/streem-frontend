@@ -98,28 +98,30 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
         }}
       />
       <div className="stage-header">
-        <div className="order-control">
-          <ArrowDropUp
-            className="icon"
-            fontSize="small"
-            onClick={(event) => {
-              event.stopPropagation();
-              if (!isFirstItem) {
-                dispatch(reOrderStage({ from: index, to: index - 1, id: stage.id }));
-              }
-            }}
-          />
-          <ArrowDropDown
-            className="icon"
-            fontSize="small"
-            onClick={(event) => {
-              event.stopPropagation();
-              if (!isLastItem) {
-                dispatch(reOrderStage({ from: index, to: index + 1, id: stage.id }));
-              }
-            }}
-          />
-        </div>
+        {!isReadOnly && (
+          <div className="order-control">
+            <ArrowDropUp
+              className="icon"
+              fontSize="small"
+              onClick={(event) => {
+                event.stopPropagation();
+                if (!isFirstItem) {
+                  dispatch(reOrderStage({ from: index, to: index - 1, id: stage.id }));
+                }
+              }}
+            />
+            <ArrowDropDown
+              className="icon"
+              fontSize="small"
+              onClick={(event) => {
+                event.stopPropagation();
+                if (!isLastItem) {
+                  dispatch(reOrderStage({ from: index, to: index + 1, id: stage.id }));
+                }
+              }}
+            />
+          </div>
+        )}
 
         <div className="stage-name">Stage {index + 1}</div>
         {!isReadOnly && (

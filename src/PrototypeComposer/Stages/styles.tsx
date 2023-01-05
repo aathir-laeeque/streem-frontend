@@ -41,7 +41,6 @@ const StageCardWrapper = styled.div.attrs({
         border-top-left-radius: 4px;
         display: flex;
         flex-direction: column;
-        margin-right: 16px;
         padding: 4px;
       }
 
@@ -63,6 +62,8 @@ const StageCardWrapper = styled.div.attrs({
       color: #000000;
       font-size: 20px;
       font-weight: bold;
+      margin-left: 16px;
+      padding-block: 12px;
 
       @media (max-width: 1200px) {
         font-size: 16px;

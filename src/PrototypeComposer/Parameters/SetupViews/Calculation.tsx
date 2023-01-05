@@ -119,33 +119,34 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
   const getParametersForCalc = async () => {
     if (checklistId) {
       setLoading(true);
-      const parametersForCalc = await request(
-        'GET',
-        apiGetParameters(
-          checklistId,
-          [
-            MandatoryParameter.NUMBER,
-            MandatoryParameter.CALCULATION,
-            MandatoryParameter.SHOULD_BE,
-          ].toString(),
-        ),
-        addParameter?.parameterId
-          ? {
-              params: {
-                filters: JSON.stringify({
-                  op: FilterOperators.AND,
-                  fields: [
+      const parametersForCalc = await request('GET', apiGetParameters(checklistId), {
+        params: {
+          filters: JSON.stringify({
+            op: FilterOperators.AND,
+            fields: [
+              { field: 'archived', op: FilterOperators.EQ, values: [false] },
+              {
+                field: 'type',
+                op: FilterOperators.ANY,
+                values: [
+                  MandatoryParameter.NUMBER,
+                  MandatoryParameter.CALCULATION,
+                  MandatoryParameter.SHOULD_BE,
+                ],
+              },
+              ...(addParameter?.parameterId
+                ? [
                     {
                       field: 'id',
                       op: FilterOperators.NE,
                       values: [addParameter.parameterId],
                     },
-                  ],
-                }),
-              },
-            }
-          : undefined,
-      );
+                  ]
+                : []),
+            ],
+          }),
+        },
+      });
       updateParametersForCalc(parametersForCalc.data);
       setLoading(false);
     }
@@ -215,7 +216,6 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
                     flex: 1,
                     ...(variableName === 'undefined' && {
                       background: '#f4f4f4',
-                      paddingBlock: 8,
                     }),
                   }}
                 >

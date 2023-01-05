@@ -189,7 +189,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
 
   const onBlurHandler = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (typeof onBlur === 'function') {
-      console.log(e);
+      onBlur(e);
     }
   };
 
