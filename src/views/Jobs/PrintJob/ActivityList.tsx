@@ -754,17 +754,20 @@ const MemoParameterList: FC<{
               parametersById,
             )}
             <View style={styles.parameterSeprator} />
-            {parameter.response.state !== TaskExecutionState.NOT_STARTED && (
-              <View style={styles.taskFooter} wrap={false}>
-                <Text style={styles.text12}>
-                  This Parameter was last updated digitally via Leucine {'\n'}
-                  by {parameter.response.audit.modifiedBy.firstName}{' '}
-                  {parameter.response.audit.modifiedBy.lastName}, ID:{' '}
-                  {parameter.response.audit.modifiedBy.employeeId} on{' '}
-                  {moment.unix(parameter.response.audit.modifiedAt).format(dateAndTimeStampFormat)}
-                </Text>
-              </View>
-            )}
+            {parameter.response.state !== TaskExecutionState.NOT_STARTED &&
+              parameter.response.audit.modifiedBy && (
+                <View style={styles.taskFooter} wrap={false}>
+                  <Text style={styles.text12}>
+                    This Activity was last updated digitally via Leucine {'\n'}
+                    by {parameter.response.audit.modifiedBy.firstName}{' '}
+                    {parameter.response.audit.modifiedBy.lastName}, ID:{' '}
+                    {parameter.response.audit.modifiedBy.employeeId} on{' '}
+                    {moment
+                      .unix(parameter.response.audit.modifiedAt)
+                      .format(dateAndTimeStampFormat)}
+                  </Text>
+                </View>
+              )}
           </View>
         );
       })}

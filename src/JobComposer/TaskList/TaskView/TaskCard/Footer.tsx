@@ -258,13 +258,15 @@ const Footer: FC<FooterProps> = ({
 
       return (
         <DelayedWrapper>
-          <CompletedWrapper completed isTaskDelayed={isTaskDelayed}>
-            <Error className="icon" />
-            <span>
-              Task completed {text} by {generateName(modifiedBy)}, ID: {modifiedBy.employeeId} on{' '}
-              {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
-            </span>
-          </CompletedWrapper>
+          {modifiedBy && (
+            <CompletedWrapper completed isTaskDelayed={isTaskDelayed}>
+              <Error className="icon" />
+              <span>
+                Task completed {text} by {generateName(modifiedBy)}, ID: {modifiedBy.employeeId} on{' '}
+                {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
+              </span>
+            </CompletedWrapper>
+          )}
           {reason ? (
             <div className="task-off-limit-reason">
               <textarea value={reason} rows={4} disabled />
@@ -274,34 +276,46 @@ const Footer: FC<FooterProps> = ({
       );
     } else {
       return (
-        <CompletedWrapper completed>
-          <CheckCircle className="icon" />
-          <span>
-            Task completed by {generateName(modifiedBy)}, ID: {modifiedBy.employeeId} on{' '}
-            {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
-          </span>
-        </CompletedWrapper>
+        <>
+          {modifiedBy && (
+            <CompletedWrapper completed>
+              <CheckCircle className="icon" />
+              <span>
+                Task completed by {generateName(modifiedBy)}, ID: {modifiedBy.employeeId} on{' '}
+                {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
+              </span>
+            </CompletedWrapper>
+          )}
+        </>
       );
     }
   } else if (taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION) {
     return (
-      <CompletedWrapper completedWithException>
-        <CheckCircle className="icon" />
-        <span>
-          Task completed with exception by {generateName(modifiedBy)}, ID: {modifiedBy.employeeId}{' '}
-          on {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
-        </span>
-      </CompletedWrapper>
+      <>
+        {modifiedBy && (
+          <CompletedWrapper completedWithException>
+            <CheckCircle className="icon" />
+            <span>
+              Task completed with exception by {generateName(modifiedBy)}, ID:{' '}
+              {modifiedBy.employeeId} on {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
+            </span>
+          </CompletedWrapper>
+        )}
+      </>
     );
   } else if (taskExecutionState === TaskExecutionState.SKIPPED) {
     return (
-      <CompletedWrapper skipped>
-        <CheckCircle className="icon" />
-        <span>
-          Task skipped by {generateName(modifiedBy)}, ID: {modifiedBy.employeeId} on{' '}
-          {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
-        </span>
-      </CompletedWrapper>
+      <>
+        {modifiedBy && (
+          <CompletedWrapper skipped>
+            <CheckCircle className="icon" />
+            <span>
+              Task skipped by {generateName(modifiedBy)}, ID: {modifiedBy.employeeId} on{' '}
+              {formatDateTime(modifiedAt, dateAndTimeStampFormat)}
+            </span>
+          </CompletedWrapper>
+        )}
+      </>
     );
   } else if (task.taskExecution.state === TaskExecutionState.IN_PROGRESS) {
     if (shouldAskForReason) {

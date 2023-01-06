@@ -90,6 +90,8 @@ export interface TaskExecution {
   assignees: User[];
   correctionEnabled: boolean;
   correctionReason?: string | null;
+  correctedAt?: boolean | null;
+  correctedBy?: Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName' | 'archived'>;
 }
 
 export enum TimerOperator {

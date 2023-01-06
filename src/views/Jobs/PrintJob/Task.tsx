@@ -136,6 +136,8 @@ const MemoTask: FC<{
     audit: { modifiedBy, modifiedAt },
     state: taskExecutionState,
     correctionReason,
+    correctedBy,
+    correctedAt,
   } = task.taskExecution;
 
   const canSkipTask = !task.parameters.reduce((acc, parameter) => {
@@ -275,8 +277,8 @@ const MemoTask: FC<{
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
             This Task was corrected via Leucine {'\n'}
-            by {modifiedBy.firstName} {modifiedBy.lastName}, ID: {modifiedBy.employeeId} on{' '}
-            {moment.unix(modifiedAt).format(dateAndTimeStampFormat)}
+            by {correctedBy.firstName} {correctedBy.lastName}, ID: {correctedBy.employeeId} on{' '}
+            {moment.unix(correctedAt).format(dateAndTimeStampFormat)}
           </Text>
           <View style={styles.comments}>
             <Text style={styles.text12}>{task.taskExecution.correctionReason}</Text>

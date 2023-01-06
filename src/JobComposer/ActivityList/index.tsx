@@ -278,14 +278,14 @@ const ParameterList: FC<ParameterListProps> = ({
 
             {state !== 'NOT_STARTED' ? (
               <div className="parameter-audit">
-                {audit ? (
-                  <>
-                    Last updated by {getFullName(audit?.modifiedBy)}, ID:{' '}
-                    {audit?.modifiedBy?.employeeId} on {formatDateTime(audit?.modifiedAt)}
-                  </>
-                ) : (
-                  'Updating...'
-                )}
+                {audit
+                  ? audit.modifiedBy && (
+                      <>
+                        Last updated by {getFullName(audit.modifiedBy)}, ID:{' '}
+                        {audit.modifiedBy.employeeId} on {formatDateTime(audit.modifiedAt)}
+                      </>
+                    )
+                  : 'Updating...'}
               </div>
             ) : null}
           </div>
