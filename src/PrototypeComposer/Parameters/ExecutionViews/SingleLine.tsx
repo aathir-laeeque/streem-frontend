@@ -18,6 +18,7 @@ const SingleLineTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, for
         return date.format('Do MMM YYYY h:mm:ss A');
       case InputTypes.SINGLE_LINE:
       case InputTypes.MULTI_LINE:
+      case InputTypes.NUMBER:
         return value;
       default:
         return;
