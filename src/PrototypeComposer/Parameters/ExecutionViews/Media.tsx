@@ -204,10 +204,7 @@ const MediaTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
               <ImageUploadButton
                 label="User can capture photos"
                 onUploadStart={onUploadStart}
-                onUploadSuccess={(fileData) => {
-                  console.log('fileData :: ', fileData);
-                  onUploaded(fileData);
-                }}
+                onUploadSuccess={onUploaded}
                 icon={PhotoCamera}
                 allowCapture
                 disabled={videoDevices.length === 0}

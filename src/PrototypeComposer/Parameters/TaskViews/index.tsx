@@ -186,9 +186,9 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
 
   const onDelete = () => {
     if (
-      parameter.type === 'INSTRUCTION' ||
-      parameter.type === 'CHECKLIST' ||
-      parameter.type === 'MATERIAL'
+      parameter.type === NonMandatoryParameter.INSTRUCTION ||
+      parameter.type === MandatoryParameter.CHECKLIST ||
+      parameter.type === NonMandatoryParameter.MATERIAL
     ) {
       archiveParameter();
     } else {

@@ -181,7 +181,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
       return acc;
     }, {});
 
-    onCreateJob({ checklistId: data.checklistId, properties: parameterValues });
+    onCreateJob({ checklistId: data.checklistId, parameterValues });
   };
 
   const getOptions = async (path: string, inputId: string, dependency?: string) => {

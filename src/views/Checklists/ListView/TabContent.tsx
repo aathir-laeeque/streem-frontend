@@ -169,7 +169,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
     if (jobDetails.checklistId) {
       dispatch(
         createJob({
-          properties: jobDetails.properties,
+          parameterValues: jobDetails.parameterValues,
           checklistId: jobDetails.checklistId,
           selectedUseCaseId: selectedUseCase!.id,
           relations: jobDetails?.relations,

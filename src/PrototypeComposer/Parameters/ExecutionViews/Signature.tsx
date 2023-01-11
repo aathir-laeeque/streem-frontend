@@ -48,37 +48,11 @@ const SignatureTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form
 
   const dispatch = useDispatch();
 
-  // const {  setValue } = form;
-
   const onAcceptSignature = (imageData: string) => {
     if (imageData) {
       const file = dataUriToBlob(imageData);
-
       const formData = new FormData();
-
       formData.append('file', file, 'image.jpg');
-
-      // dispatch(uploadFile({ formData, parameter, isCorrectingError: false }));
-
-      // setValue(
-      //   'data',
-      //   {
-      //     ...data,
-      //     [parameter.id]: {
-      //       value: null,
-      //       reason: '',
-      //       state: 'EXECUTED',
-      //       choices: {},
-      //       medias: [formData],
-      //       parameterValueApprovalDto: null,
-      //     },
-      //   },
-      //   {
-      //     shouldDirty: true,
-      //     shouldValidate: true,
-      //   },
-      // );
-
       setImageData(imageData);
     }
   };

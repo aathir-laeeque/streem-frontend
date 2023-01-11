@@ -133,7 +133,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     if (selectedId) {
       dispatch(
         createJob({
-          properties: jobDetails.properties,
+          parameterValues: jobDetails.parameterValues,
           checklistId: selectedId,
           selectedUseCaseId: selectedUseCase!.id,
           relations: jobDetails?.relations,

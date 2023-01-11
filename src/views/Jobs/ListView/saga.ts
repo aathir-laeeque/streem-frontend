@@ -38,11 +38,9 @@ function* fetchJobsSaga({ payload }: ReturnType<typeof fetchJobs>) {
 
 function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
   try {
-    const facilityId: string = yield select((state: RootState) => state.auth.selectedFacility?.id);
-
     const { errors }: ResponseObj<Job> = yield call(request, 'POST', apiGetJobs(), {
       data: {
-        parameterValues: payload.properties,
+        parameterValues: payload.parameterValues,
         selectedUseCaseId: payload.selectedUseCaseId,
         checklistId: payload.checklistId,
       },
