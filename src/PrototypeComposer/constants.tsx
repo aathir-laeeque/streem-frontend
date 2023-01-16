@@ -2,6 +2,7 @@ import {
   CameraAltOutlined,
   DateRangeOutlined,
   DoneAllOutlined,
+  EventNoteOutlined,
   ExposureOutlined,
   Filter1Outlined,
   FunctionsOutlined,
@@ -48,7 +49,7 @@ const RenderParameterLabel: React.FC<{ label: string; icon: JSX.Element }> = ({ 
 };
 
 export const ParameterTypeMap: Record<string, JSX.Element | string> = {
-  [MandatoryParameter.CHECKLIST]: <RenderParameterLabel label="Checklist" icon={<LineStyle />} />,
+  [MandatoryParameter.CHECKLIST]: <RenderParameterLabel label="Subtasks" icon={<LineStyle />} />,
   [NonMandatoryParameter.INSTRUCTION]: (
     <RenderParameterLabel label="Instruction" icon={<LineStyle />} />
   ),
@@ -59,7 +60,7 @@ export const ParameterTypeMap: Record<string, JSX.Element | string> = {
   [MandatoryParameter.MULTISELECT]: (
     <RenderParameterLabel label="Multi-select dropdown" icon={<DoneAllOutlined />} />
   ),
-  [MandatoryParameter.PARAMETER]: (
+  [MandatoryParameter.SHOULD_BE]: (
     <RenderParameterLabel label="Should Be" icon={<ExposureOutlined />} />
   ),
   [MandatoryParameter.SIGNATURE]: (
@@ -80,6 +81,9 @@ export const ParameterTypeMap: Record<string, JSX.Element | string> = {
     <RenderParameterLabel label="Calculation" icon={<FunctionsOutlined />} />
   ),
   [MandatoryParameter.DATE]: <RenderParameterLabel label="Date" icon={<DateRangeOutlined />} />,
+  [MandatoryParameter.DATE_TIME]: (
+    <RenderParameterLabel label="Date-Time" icon={<EventNoteOutlined />} />
+  ),
   [MandatoryParameter.RESOURCE]: (
     <RenderParameterLabel label="Resource" icon={<LayersOutlined />} />
   ),

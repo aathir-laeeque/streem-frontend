@@ -4,7 +4,7 @@ import { InputTypes } from '#utils/globalTypes';
 import React, { FC } from 'react';
 import { FormatOptionLabelContext } from 'react-select';
 
-const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
+const SingleSelectTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
   return (
     <FormGroup
       inputs={[

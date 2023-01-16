@@ -14,6 +14,7 @@ export type Parameter = ParameterTypeType & {
 export type ParameterProps = {
   parameter: Parameter;
   taskId: Task['id'];
+  isReadOnly: boolean;
 };
 
 export type AddNewParameterType = {

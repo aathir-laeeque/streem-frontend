@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import Switch from 'react-switch';
+import Switch, { ReactSwitchProps } from 'react-switch';
 import styled from 'styled-components';
 
 const Wrapper = styled.div.attrs({
@@ -30,7 +30,7 @@ type Props = {
   uncheckedIcon?: false | JSX.Element;
   value?: boolean;
   width?: number;
-};
+} & ReactSwitchProps;
 
 const ToggleSwitch: FC<Props> = ({
   checkedIcon = undefined,
@@ -44,6 +44,7 @@ const ToggleSwitch: FC<Props> = ({
   onChange,
   value = false,
   width = 32,
+  ...rest
 }) => {
   return (
     <Wrapper>
@@ -62,6 +63,7 @@ const ToggleSwitch: FC<Props> = ({
         }}
         uncheckedIcon={false}
         width={width}
+        {...rest}
       />
       <label className="label">{value ? onLabel : offLabel}</label>
     </Wrapper>

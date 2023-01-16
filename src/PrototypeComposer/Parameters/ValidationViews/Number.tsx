@@ -17,7 +17,10 @@ type NumberValidationState = {
   selectedObjectTypes: Record<number, ObjectType>;
 };
 
-const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
+const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
+  form,
+  isReadOnly,
+}) => {
   const { id: checklistId } = useTypedSelector((state) => state.prototypeComposer.data!);
   const { watch, setValue, register } = form;
   const validations = watch('validations', {});
@@ -142,6 +145,7 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                       label: resource.label,
                       value: resource.id,
                     })),
+                    isDisabled: isReadOnly,
                     value: item?.parameterId
                       ? [
                           {
@@ -185,6 +189,7 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                             return acc;
                           }, []),
                           isSearchable: false,
+                          isDisabled: isReadOnly,
                           placeholder: 'Select Object Property',
                           value: item?.propertyId
                             ? [
@@ -219,6 +224,7 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                             ([value, label]) => ({ label, value }),
                           ),
                           isSearchable: false,
+                          isDisabled: isReadOnly,
                           placeholder: 'Select Condition',
                           value: item?.constraint
                             ? [
@@ -243,14 +249,16 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                   : []),
               ]}
             />
-            <Close
-              className="remove-icon"
-              onClick={() => {
-                const updated = [...resourceParameterValidations];
-                updated.splice(index, 1);
-                updateValidations(updated);
-              }}
-            />
+            {!isReadOnly && (
+              <Close
+                className="remove-icon"
+                onClick={() => {
+                  const updated = [...resourceParameterValidations];
+                  updated.splice(index, 1);
+                  updateValidations(updated);
+                }}
+              />
+            )}
           </div>
           {item?.propertyInputType && (
             <>
@@ -265,6 +273,7 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                       description:
                         'This message will be displayed when the validation rule is breached',
                       defaultValue: item?.errorMessage,
+                      disabled: isReadOnly,
                       onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
                         resourceParameterValidations[index] = {
                           ...resourceParameterValidations[index],
@@ -280,16 +289,18 @@ const NumberValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
           )}
         </div>
       ))}
-      <Button
-        type="button"
-        variant="secondary"
-        style={{ marginBottom: 24, padding: '6px 8px' }}
-        onClick={() => {
-          updateValidations([...resourceParameterValidations, {}]);
-        }}
-      >
-        <AddCircleOutline style={{ marginRight: 8 }} /> Add
-      </Button>
+      {!isReadOnly && (
+        <Button
+          type="button"
+          variant="secondary"
+          style={{ marginBottom: 24, padding: '6px 8px' }}
+          onClick={() => {
+            updateValidations([...resourceParameterValidations, {}]);
+          }}
+        >
+          <AddCircleOutline style={{ marginRight: 8 }} /> Add
+        </Button>
+      )}
     </ValidationWrapper>
   );
 };

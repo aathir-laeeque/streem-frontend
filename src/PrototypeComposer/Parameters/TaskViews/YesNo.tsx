@@ -22,7 +22,7 @@ const YesNoTaskViewWrapper = styled.div`
   }
 `;
 
-const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
+const YesNoTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
   return (
     <YesNoTaskViewWrapper>
       <Button variant="secondary" className="yes-label">

@@ -26,16 +26,11 @@ export const deleteParameterError = (error: any) =>
 export const deleteParameterSuccess = (params: DeleteParameterType) =>
   actionSpreader(ParameterListActions.DELETE_PARAMETER_SUCCESS, { ...params });
 
-export const updateParameterApi = (parameter: Parameter, fromList?: boolean) =>
-  actionSpreader(ParameterListActions.UPDATE_PARAMETER_API, { parameter, fromList });
+export const updateParameterApi = (parameter: Parameter) =>
+  actionSpreader(ParameterListActions.UPDATE_PARAMETER_API, { parameter });
 
-export const updateStoreParameter = (
-  data: Parameter['data'],
-  parameterId: Parameter['id'],
-  updatePath?: (string | number)[],
-) =>
+export const updateStoreParameter = (data: Parameter['data'], parameterId: Parameter['id']) =>
   actionSpreader(ParameterListActions.UPDATE_STORE_PARAMETER, {
-    updatePath,
     parameterId,
     data,
   });

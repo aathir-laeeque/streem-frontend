@@ -1,15 +1,22 @@
-import { TextInput } from '#components';
+import { FormGroup } from '#components';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
+import { InputTypes } from '#utils/globalTypes';
 import React, { FC } from 'react';
 
-const SingleLineTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
+const SingleLineTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
   return (
-    <TextInput
-      disabled
-      type={
-        parameter.type === MandatoryParameter.MULTI_LINE ? 'text' : parameter.type.toLowerCase()
-      }
+    <FormGroup
+      inputs={[
+        {
+          type: parameter.type as unknown as InputTypes,
+          props: {
+            id: parameter.label,
+            disabled: true,
+            ...(parameter.type === MandatoryParameter.MULTI_LINE && { rows: 3 }),
+          },
+        },
+      ]}
     />
   );
 };

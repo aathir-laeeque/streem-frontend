@@ -160,7 +160,7 @@ const ParameterList: FC<ParameterListProps> = ({
             {parameter?.label &&
               ![
                 `${MandatoryParameter.YES_NO}`,
-                `${MandatoryParameter.PARAMETER}`,
+                `${MandatoryParameter.SHOULD_BE}`,
                 `${MandatoryParameter.CALCULATION}`,
               ].includes(parameter.type) && (
                 <div className="parameter-label">{parameter.label}</div>
@@ -212,7 +212,7 @@ const ParameterList: FC<ParameterListProps> = ({
                     />
                   );
 
-                case MandatoryParameter.PARAMETER:
+                case MandatoryParameter.SHOULD_BE:
                   return (
                     <ShouldBeParameter
                       parameter={parameter}
@@ -229,6 +229,7 @@ const ParameterList: FC<ParameterListProps> = ({
                     />
                   );
 
+                case MandatoryParameter.SINGLE_LINE:
                 case MandatoryParameter.MULTI_LINE:
                   return (
                     <TextboxParameter parameter={parameter} isCorrectingError={isCorrectingError} />
@@ -261,6 +262,7 @@ const ParameterList: FC<ParameterListProps> = ({
                     />
                   );
 
+                case MandatoryParameter.DATE_TIME:
                 case MandatoryParameter.DATE:
                   return (
                     <DateParameter parameter={parameter} isCorrectingError={isCorrectingError} />

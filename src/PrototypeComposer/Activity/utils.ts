@@ -76,7 +76,7 @@ const generateNewParameter = ({
         validations: {},
       };
 
-    case MandatoryParameter.PARAMETER:
+    case MandatoryParameter.SHOULD_BE:
       return {
         orderTree,
         type,
@@ -96,6 +96,7 @@ const generateNewParameter = ({
     case MandatoryParameter.MEDIA:
     case MandatoryParameter.SIGNATURE:
     case MandatoryParameter.MULTI_LINE:
+    case MandatoryParameter.SINGLE_LINE:
       return {
         orderTree,
         type,
@@ -141,6 +142,7 @@ const generateNewParameter = ({
       };
 
     case MandatoryParameter.DATE:
+    case MandatoryParameter.DATE_TIME:
     case MandatoryParameter.NUMBER:
       return {
         orderTree,

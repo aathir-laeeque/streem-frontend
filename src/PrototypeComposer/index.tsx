@@ -9,7 +9,7 @@ import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchComposerData, resetComposer } from './actions';
-import { ChecklistStates } from './checklist.types';
+import { ChecklistStates, EnabledStates } from './checklist.types';
 import Header from './Header';
 import Stages from './Stages';
 import { ComposerWrapper, TasksTabWrapper } from './styles';
@@ -180,10 +180,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
 
   const { author } = state;
 
-  const allowNewAddition =
-    author &&
-    (data?.state === ChecklistStates.BEING_BUILT ||
-      data?.state === ChecklistStates.REQUESTED_CHANGES);
+  const isNotReadOnly = author && (data?.archived || (data?.state || '') in EnabledStates);
 
   return (
     <LoadingContainer
@@ -208,15 +205,15 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
                   label: 'Tasks',
                   panelContent: (
                     <TasksTabWrapper>
-                      <Stages allowNewAddition={!!allowNewAddition} />
-                      <Tasks allowNewAddition={!!allowNewAddition} />
+                      <Stages isReadOnly={!isNotReadOnly} />
+                      <Tasks isReadOnly={!isNotReadOnly} />
                     </TasksTabWrapper>
                   ),
                 },
                 {
                   value: '1',
                   label: 'Parameters',
-                  panelContent: <ParametersList />,
+                  panelContent: <ParametersList isReadOnly={!isNotReadOnly} />,
                 },
                 // {
                 //   value: '2',
@@ -235,7 +232,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
                 // },
               ]}
             />
-            <AddParameter />
+            {data && data.state && <AddParameter isReadOnly={!isNotReadOnly} />}
           </ComposerWrapper>
         </>
       }

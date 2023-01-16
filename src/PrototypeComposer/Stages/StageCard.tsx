@@ -21,7 +21,7 @@ import { StageCardWrapper } from './styles';
 import { StageCardProps } from './types';
 
 const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
-  const { index, isActive, isFirstItem, isLastItem, stage } = props;
+  const { index, isActive, isFirstItem, isLastItem, stage, isReadOnly } = props;
 
   const { tasksInStage, data, parametersInStage, userId } = useTypedSelector((state) => ({
     tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[stage.id].map(
@@ -122,31 +122,32 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
         </div>
 
         <div className="stage-name">Stage {index + 1}</div>
-
-        <DeleteOutlined
-          className="icon"
-          id="stage-delete"
-          onClick={(event) => {
-            event.stopPropagation();
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                props: {
-                  header: 'Delete Stage',
-                  primaryText: 'Confirm',
-                  secondaryText: 'Cancel',
-                  onPrimaryClick: () => dispatch(deleteStage({ id: stage.id })),
-                  body: (
-                    <>
-                      <span>You cannot recover your tasks once you delete the stage.</span>
-                      <span>Are you sure you want to delete the stage?</span>
-                    </>
-                  ),
-                },
-              }),
-            );
-          }}
-        />
+        {!isReadOnly && (
+          <DeleteOutlined
+            className="icon"
+            id="stage-delete"
+            onClick={(event) => {
+              event.stopPropagation();
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                  props: {
+                    header: 'Delete Stage',
+                    primaryText: 'Confirm',
+                    secondaryText: 'Cancel',
+                    onPrimaryClick: () => dispatch(deleteStage({ id: stage.id })),
+                    body: (
+                      <>
+                        <span>You cannot recover your tasks once you delete the stage.</span>
+                        <span>Are you sure you want to delete the stage?</span>
+                      </>
+                    ),
+                  },
+                }),
+              );
+            }}
+          />
+        )}
       </div>
 
       <div className="stage-body">

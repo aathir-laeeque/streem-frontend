@@ -304,9 +304,11 @@ const parameterTemplateFormatter = (
       node.innerHTML = parameter.data.text;
       const res = parseMarkUp(node);
       return <View style={styles.parameterView}>{getInstructionTemplate(res)}</View>;
+    case MandatoryParameter.SINGLE_LINE:
     case MandatoryParameter.MULTI_LINE:
       const items = [];
-      for (let i = 0; i < 8; i++) {
+      const rowsCounts = parameter.type === MandatoryParameter.MULTI_LINE ? 8 : 1;
+      for (let i = 0; i < rowsCounts; i++) {
         items.push(<View style={styles.commentsRow} />);
       }
       return (
@@ -344,7 +346,7 @@ const parameterTemplateFormatter = (
           )}
         </View>
       );
-    case MandatoryParameter.PARAMETER:
+    case MandatoryParameter.SHOULD_BE:
       let content = '';
       const { data } = parameter;
       switch (data.operator) {
@@ -373,7 +375,7 @@ const parameterTemplateFormatter = (
       const approvalState = parameter?.response?.parameterValueApprovalDto?.state;
       return (
         <View style={styles.parameterView}>
-          <Text style={styles.text12}>{`${parameter.data.parameter} Should be${content}`}</Text>
+          <Text style={styles.text12}>{`${parameter.label} Should be${content}`}</Text>
           <Text style={[styles.text12, { marginTop: 11, marginBottom: 16 }]}>
             Write your Observed Value
           </Text>
@@ -714,13 +716,17 @@ const parameterTemplateFormatter = (
     case MandatoryParameter.RESOURCE:
       return <ResourceParameter parameter={parameter} />;
 
+    case MandatoryParameter.DATE_TIME:
     case MandatoryParameter.DATE:
       return (
         <View style={styles.parameterView} wrap={false}>
           <Text style={{ ...styles.text12, marginTop: 6 }}>
             {parameter.label}:{' '}
             {parameter.response?.value
-              ? formatDateByInputType(InputTypes.DATE, parameter.response?.value)
+              ? formatDateByInputType(
+                  parameter.type as unknown as InputTypes,
+                  parameter.response?.value,
+                )
               : '_____'}
           </Text>
         </View>

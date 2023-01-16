@@ -102,6 +102,10 @@ const Wrapper = styled.div.attrs(({ className }) => ({
       flex: 1;
       outline: none;
       padding: 0;
+
+      :disabled {
+        color: hsl(0, 0%, 20%);
+      }
     }
 
     ${({ hasError }) =>

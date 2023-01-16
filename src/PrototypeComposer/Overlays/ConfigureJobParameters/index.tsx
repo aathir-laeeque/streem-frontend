@@ -3,12 +3,11 @@ import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { processParametersMapSuccess } from '#PrototypeComposer/actions';
-import { TargetEntityType } from '#PrototypeComposer/checklist.types';
+import { MandatoryParameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { apiBatchMapParameters, apiGetParameters } from '#utils/apiUrls';
 import { FilterField, FilterOperators, Pageable, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
   closestCenter,
   DndContext,
@@ -17,6 +16,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
   arrayMove,
   SortableContext,
@@ -166,6 +166,13 @@ const ConfigureJobParameters: FC<CommonOverlayProps<Props>> = ({
     { field: 'targetEntityType', op: FilterOperators.EQ, values: [TargetEntityType.UNMAPPED] },
     { field: 'label', op: FilterOperators.LIKE, values: [''] },
     { field: 'archived', op: FilterOperators.EQ, values: [false] },
+    {
+      field: 'type',
+      op: FilterOperators.ANY,
+      values: Object.values(MandatoryParameter).filter(
+        (type) => type !== MandatoryParameter.CHECKLIST,
+      ),
+    },
   ]);
 
   const searchInput = useRef<HTMLInputElement | null>(null);
@@ -248,20 +255,21 @@ const ConfigureJobParameters: FC<CommonOverlayProps<Props>> = ({
   const sensors = useSensors(useSensor(PointerSensor));
 
   const onPrimary = async () => {
+    const payload = {
+      mappedParameters: items.reduce((acc, item, index) => {
+        acc[item.id] = index + 1;
+        return acc;
+      }, {}),
+    };
     const { data }: ResponseObj<any[]> = await request(
       'PATCH',
       apiBatchMapParameters(checklistId),
       {
-        data: {
-          mappedParameters: items.reduce((acc, item, index) => {
-            acc[item.id] = index + 1;
-            return acc;
-          }, {}),
-        },
+        data: payload,
       },
     );
     if (data) {
-      dispatch(processParametersMapSuccess(data));
+      dispatch(processParametersMapSuccess(data, payload));
       dispatch(
         showNotification({
           type: NotificationType.SUCCESS,

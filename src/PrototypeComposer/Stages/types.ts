@@ -11,6 +11,7 @@ export type StageCardProps = {
   isFirstItem: boolean;
   isLastItem: boolean;
   stage: Stage;
+  isReadOnly: boolean;
 };
 
 export enum StageErrors {

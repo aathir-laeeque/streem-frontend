@@ -15,9 +15,11 @@ export const groupErrors = (errors: Error[]) =>
         acc.tasksErrors.push(error);
       } else if (error.code in StageErrors) {
         acc.stagesErrors.push(error);
+      } else {
+        acc.otherErrors.push(error);
       }
 
       return acc;
     },
-    { stagesErrors: [], tasksErrors: [], parametersErrors: [] },
+    { stagesErrors: [], tasksErrors: [], parametersErrors: [], otherErrors: [] },
   );

@@ -39,9 +39,9 @@ const Wrapper = styled.div.attrs(({ className }) => ({
 
   .input-label {
     align-items: center;
-    color: #161616;
+    color: #525252;
     display: flex;
-    font-size: 14px;
+    font-size: 12px;
     justify-content: flex-start;
     letter-spacing: 0.16px;
     line-height: 1.29;
@@ -79,8 +79,7 @@ const Wrapper = styled.div.attrs(({ className }) => ({
 
       :disabled {
         background-color: #fafafa;
-        border-color: transparent;
-        color: #999999;
+        color: hsl(0, 0%, 20%);
         resize: none;
       }
 

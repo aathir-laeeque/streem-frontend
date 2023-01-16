@@ -1,4 +1,5 @@
 import { FormGroup } from '#components';
+import { MandatoryParameter } from '#JobComposer/checklist.types';
 import { customOnChange } from '#utils/formEvents';
 import { InputTypes } from '#utils/globalTypes';
 import React, { FC, useEffect, useRef } from 'react';
@@ -43,10 +44,11 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
           style={{ padding: 0 }}
           inputs={[
             {
-              type: InputTypes.DATE,
+              type: parameter.type as unknown as InputTypes,
               props: {
                 defaultValue: value,
-                label: 'Enter Date',
+                label:
+                  parameter.type === MandatoryParameter.DATE ? 'Enter Date' : 'Enter Date Time',
                 onChange: ({ value }: { name: string; value: string }) => {
                   onChange(value);
                 },

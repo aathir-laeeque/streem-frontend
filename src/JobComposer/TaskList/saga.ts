@@ -50,7 +50,7 @@ function* getParametersDataByTaskId(taskId: string) {
           data: { medias: parameter.response.medias },
         };
 
-      case MandatoryParameter.PARAMETER:
+      case MandatoryParameter.SHOULD_BE:
       case MandatoryParameter.MULTI_LINE:
         return {
           ...parameter,

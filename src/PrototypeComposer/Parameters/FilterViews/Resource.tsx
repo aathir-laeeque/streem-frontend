@@ -96,7 +96,10 @@ type ResourceFilterState = {
   selectedObjectType?: ObjectType;
 };
 
-const ResourceFilter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
+const ResourceFilter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
+  form,
+  isReadOnly,
+}) => {
   const { watch, setValue } = form;
   const data = watch('data', {
     propertyFilters: [],
@@ -167,6 +170,7 @@ const ResourceFilter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                 },
               ],
               isSearchable: false,
+              isDisabled: isReadOnly,
               defaultValue: [
                 {
                   label: 'AND',
@@ -205,6 +209,7 @@ const ResourceFilter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                         value: objectTypeProperty.id,
                         inputType: objectTypeProperty.inputType,
                       })),
+                      isDisabled: isReadOnly,
                       value: item?.propertyId
                         ? [
                             {
@@ -256,6 +261,7 @@ const ResourceFilter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                             ),
                             isSearchable: false,
                             placeholder: 'Select Condition',
+                            isDisabled: isReadOnly,
                             value: item?.constraint
                               ? [
                                   {
@@ -294,6 +300,7 @@ const ResourceFilter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                                     label: option.displayName,
                                     value: option.id,
                                   })),
+                                  isDisabled: isReadOnly,
                                   onChange: (value: any) => {
                                     propertyFilters[index] = {
                                       ...propertyFilters[index],
@@ -328,6 +335,7 @@ const ResourceFilter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                                   label: 'Value',
                                   placeholder: 'Enter Value',
                                   defaultValue: item?.value,
+                                  disabled: isReadOnly,
                                   onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
                                     propertyFilters[index] = {
                                       ...propertyFilters[index],
@@ -342,15 +350,17 @@ const ResourceFilter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                     : []),
                 ]}
               />
-              <Close
-                className="remove-icon"
-                onClick={() => {
-                  const updated = [...propertyFilters];
-                  updated.splice(index, 1);
-                  updateFilters(updated);
-                  updateFilterOptions(selectedObjectType!, updated);
-                }}
-              />
+              {!isReadOnly && (
+                <Close
+                  className="remove-icon"
+                  onClick={() => {
+                    const updated = [...propertyFilters];
+                    updated.splice(index, 1);
+                    updateFilters(updated);
+                    updateFilterOptions(selectedObjectType!, updated);
+                  }}
+                />
+              )}
             </div>
             {item?.propertyInputType &&
               [InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(
@@ -370,6 +380,7 @@ const ResourceFilter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                           }),
                         ),
                         isSearchable: false,
+                        isDisabled: isReadOnly,
                         placeholder: 'Select Unit',
                         defaultValue: item?.dateUnit
                           ? [
@@ -395,16 +406,18 @@ const ResourceFilter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
               )}
           </div>
         ))}
-        <Button
-          type="button"
-          variant="secondary"
-          className="add-button"
-          onClick={() => {
-            updateFilters([...propertyFilters, {}]);
-          }}
-        >
-          <AddCircleOutline style={{ marginRight: 8 }} /> Add
-        </Button>
+        {!isReadOnly && (
+          <Button
+            type="button"
+            variant="secondary"
+            className="add-button"
+            onClick={() => {
+              updateFilters([...propertyFilters, {}]);
+            }}
+          >
+            <AddCircleOutline style={{ marginRight: 8 }} /> Add
+          </Button>
+        )}
       </div>
     </FilterWrapper>
   );

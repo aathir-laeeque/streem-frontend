@@ -27,9 +27,9 @@ const Wrapper = styled.div.attrs({
 })`
   .label {
     align-items: center;
-    color: #161616;
+    color: #525252;
     display: flex;
-    font-size: 14px;
+    font-size: 12px;
     justify-content: flex-start;
     letter-spacing: 0.16px;
     line-height: 1.29;
@@ -48,9 +48,9 @@ export type Option = { label: string; value: string | number };
 export const selectStyles: Props['styles'] = {
   control: (styles, { isDisabled }) => ({
     ...styles,
-    backgroundColor: isDisabled ? 'transparent' : '#f4f4f4',
+    backgroundColor: '#f4f4f4',
     border: 'none',
-    borderBottom: isDisabled ? 'none' : '1px solid #bababa',
+    borderBottom: '1px solid #bababa',
     borderRadius: 'none',
     boxShadow: 'none',
     cursor: isDisabled ? 'not-allowed' : 'pointer',
@@ -58,28 +58,7 @@ export const selectStyles: Props['styles'] = {
     minHeight: 'auto',
   }),
 
-  valueContainer: (styles, { isDisabled }) => ({
-    ...styles,
-    flexDirection: isDisabled ? 'column' : styles.flexDirection,
-    alignItems: isDisabled ? 'flex-start' : styles.alignItems,
-  }),
-
-  multiValue: (styles, { isDisabled }) => ({
-    ...styles,
-    backgroundColor: isDisabled ? 'transparent' : styles.backgroundColor,
-  }),
-
-  multiValueLabel: (styles, { isDisabled }) => ({
-    ...styles,
-    marginTop: isDisabled ? '-7px' : 'unset',
-  }),
-
   multiValueRemove: (styles, { isDisabled }) => ({
-    ...styles,
-    display: isDisabled ? 'none' : styles.display,
-  }),
-
-  indicatorsContainer: (styles, { isDisabled }) => ({
     ...styles,
     display: isDisabled ? 'none' : styles.display,
   }),
@@ -101,6 +80,11 @@ export const selectStyles: Props['styles'] = {
   menuList: (styles) => ({
     ...styles,
     padding: 0,
+  }),
+
+  singleValue: (styles, { isDisabled }) => ({
+    ...styles,
+    color: 'hsl(0, 0%, 20%)',
   }),
 };
 

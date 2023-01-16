@@ -69,7 +69,10 @@ const MaterialWrapper = styled.div`
   }
 `;
 
-const MaterialInstruction: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
+const MaterialInstruction: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
+  form,
+  isReadOnly,
+}) => {
   const dispatch = useDispatch();
   const { register, watch, setValue } = form;
   register('data', { required: true });

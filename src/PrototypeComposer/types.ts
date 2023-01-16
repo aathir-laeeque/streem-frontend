@@ -23,4 +23,5 @@ export type ErrorGroups = {
   stagesErrors: Error[];
   tasksErrors: Error[];
   parametersErrors: Error[];
+  otherErrors: Error[];
 };

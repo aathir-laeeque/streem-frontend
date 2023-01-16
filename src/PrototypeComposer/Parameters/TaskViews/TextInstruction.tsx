@@ -27,7 +27,7 @@ export const Wrapper = styled.div`
   }
 `;
 
-const TextInstructionTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
+const TextInstructionTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
   const [editorState, setEditorState] = useState<EditorState | null>(null);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const TextInstructionTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter
     } else {
       setEditorState(EditorState.createEmpty());
     }
-  }, []);
+  }, [parameter.data.text]);
 
   if (!editorState) return null;
 

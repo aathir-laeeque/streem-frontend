@@ -1,15 +1,13 @@
-import { NestedSelect, ImageUploadButton, Textarea } from '#components';
+import { ImageUploadButton, NestedSelect, Textarea } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
-  EnabledStates,
   MandatoryParameter,
   NonMandatoryParameter,
   TargetEntityType,
   TimerOperator,
 } from '#PrototypeComposer/checklist.types';
 import ParameterTaskView from '#PrototypeComposer/Parameters/TaskViews';
-import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { useTypedSelector } from '#store/helpers';
 import { apiGetParameters, apiMapParameterToTask } from '#utils/apiUrls';
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
@@ -41,10 +39,9 @@ import {
   Timer,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { addNewParameterSuccess, toggleNewParameter } from '../Activity/actions';
-import { Checklist } from '../checklist.types';
 import {
   addStop,
   deleteTask,
@@ -54,27 +51,23 @@ import {
   setActiveTask,
   updateTaskName,
 } from './actions';
-import { TaskCardWrapper, AddParameterItemWrapper } from './styles';
+import { AddActivityItemWrapper, TaskCardWrapper } from './styles';
 import { TaskCardProps } from './types';
 
-const AddParameter = () => {
+const AddActivity = () => {
   return (
-    <AddParameterItemWrapper>
+    <AddActivityItemWrapper>
       <div className="label">
-        <AddCircleOutline /> Add Parameter
+        <AddCircleOutline /> Add Activity
       </div>
       <ArrowDropDown />
-    </AddParameterItemWrapper>
+    </AddActivityItemWrapper>
   );
 };
 
-const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }> = ({
-  task,
-  index,
-  isFirstTask,
-  isLastTask,
-  isActive,
-}) => {
+const TaskCard: FC<
+  TaskCardProps & { isFirstTask: boolean; isLastTask: boolean; isReadOnly: boolean }
+> = ({ task, index, isFirstTask, isLastTask, isActive, isReadOnly }) => {
   const {
     data,
     parameters: { parameterOrderInTaskInStage, listById },
@@ -83,13 +76,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
   } = useTypedSelector((state) => state.prototypeComposer);
   const stageIndex = listOrder.indexOf(activeStageId as string);
 
-  const { userId } = useTypedSelector((state) => ({
-    userId: state.auth.userId,
-  }));
-
   const dispatch = useDispatch();
-
-  const [isAuthor, setIsAuthor] = useState(false);
 
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -120,17 +107,6 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
       );
     }
   };
-
-  useEffect(() => {
-    setIsAuthor(
-      (data as Checklist)?.collaborators?.some(
-        (collaborator) =>
-          (collaborator.type === CollaboratorType.PRIMARY_AUTHOR ||
-            collaborator.type === CollaboratorType.AUTHOR) &&
-          collaborator.id === userId,
-      ),
-    );
-  }, []);
 
   const onChildChange = async (option: any) => {
     switch (option.value) {
@@ -216,22 +192,8 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
             dispatch(setActiveTask(taskId));
           }
         }}
+        isReadOnly={isReadOnly}
       >
-        <div
-          className={`overlap ${
-            isAuthor && data!.state in EnabledStates && !data?.archived ? 'hide' : ''
-          }`}
-          onClick={() => {
-            if (activeTaskId === taskId) {
-              dispatch(
-                openOverlayAction({
-                  type: OverlayNames.EDITING_DISABLED,
-                  props: { state: data?.state, archived: data?.archived },
-                }),
-              );
-            }
-          }}
-        />
         <div className="task-header">
           <div className="order-control">
             <ArrowDropUp
@@ -273,21 +235,22 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
           <div className="task-name">
             Task {stageIndex + 1}.{index + 1}
           </div>
+          {!isReadOnly && (
+            <DeleteOutlined
+              className="icon"
+              id="task-delete"
+              onClick={(event) => {
+                event.stopPropagation();
 
-          <DeleteOutlined
-            className="icon"
-            id="task-delete"
-            onClick={(event) => {
-              event.stopPropagation();
-
-              dispatch(
-                openOverlayAction({
-                  type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-                  props: deleteTaskProps,
-                }),
-              );
-            }}
-          />
+                dispatch(
+                  openOverlayAction({
+                    type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+                    props: deleteTaskProps,
+                  }),
+                );
+              }}
+            />
+          )}
         </div>
         <div className="task-body">
           <div className="task-config">
@@ -295,112 +258,114 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
               defaultValue={name}
               error={!task.name && task.errors.find((error) => error.code === 'E210')?.message}
               label="Name the task"
+              disabled={isReadOnly}
               onChange={debounce(({ value }) => {
                 dispatch(updateTaskName({ id: taskId, name: value }));
               }, 500)}
             />
-
-            <div className="task-config-control">
-              <div
-                className="task-config-control-item"
-                id="timed"
-                onClick={() =>
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.TIMED_TASK_CONFIG,
-                      props: { maxPeriod, minPeriod, taskId, timerOperator },
-                    }),
-                  )
-                }
-              >
-                <div>
-                  <Timer className="icon" />
-                  Timed
+            {!isReadOnly && (
+              <div className="task-config-control">
+                <div
+                  className="task-config-control-item"
+                  id="timed"
+                  onClick={() =>
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.TIMED_TASK_CONFIG,
+                        props: { maxPeriod, minPeriod, taskId, timerOperator },
+                      }),
+                    )
+                  }
+                >
+                  <div>
+                    <Timer className="icon" />
+                    Timed
+                  </div>
+                  {timed ? (
+                    <div className="timer-config">
+                      {timerOperator === TimerOperator.LESS_THAN ? (
+                        <>
+                          <span>Complete Under</span>
+                          <span>{formatDuration(maxPeriod)}</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>NLT {formatDuration(minPeriod)}</span>
+                          <span>Max: {formatDuration(maxPeriod)}</span>
+                        </>
+                      )}
+                    </div>
+                  ) : null}
                 </div>
-                {timed ? (
-                  <div className="timer-config">
-                    {timerOperator === TimerOperator.LESS_THAN ? (
+                <div className="task-config-control-item" id="attach-media">
+                  <ImageUploadButton
+                    onUploadSuccess={(fileData) => {
+                      dispatch(
+                        openOverlayAction({
+                          type: OverlayNames.TASK_MEDIA,
+                          props: {
+                            mediaDetails: {
+                              ...fileData,
+                              name: '',
+                              description: '',
+                            },
+                            taskId: taskId,
+                          },
+                        }),
+                      );
+                    }}
+                    onUploadError={(error) => {
+                      console.error('error in fileUpload :: ', error);
+                    }}
+                    label="Attach Media"
+                    icon={hasMedias ? PermMedia : PermMediaOutlined}
+                  />
+                </div>
+                <div
+                  className="task-config-control-item"
+                  id="add-stop"
+                  onClick={() => {
+                    if (hasStop) {
+                      dispatch(removeStop(taskId));
+                    } else {
+                      dispatch(addStop(taskId));
+                    }
+                  }}
+                >
+                  <div>
+                    {hasStop ? (
                       <>
-                        <span>Complete Under</span>
-                        <span>{formatDuration(maxPeriod)}</span>
+                        <PanTool className="icon" /> Stop Added
                       </>
                     ) : (
                       <>
-                        <span>NLT {formatDuration(minPeriod)}</span>
-                        <span>Max: {formatDuration(maxPeriod)}</span>
+                        <PanToolOutlined className="icon" /> Add Stop
                       </>
                     )}
                   </div>
-                ) : null}
-              </div>
-              <div className="task-config-control-item" id="attach-media">
-                <ImageUploadButton
-                  onUploadSuccess={(fileData) => {
+                </div>
+                <div
+                  className="task-config-control-item"
+                  id="add-actions"
+                  onClick={() => {
                     dispatch(
                       openOverlayAction({
-                        type: OverlayNames.TASK_MEDIA,
+                        type: OverlayNames.CONFIGURE_ACTIONS,
                         props: {
-                          mediaDetails: {
-                            ...fileData,
-                            name: '',
-                            description: '',
-                          },
-                          taskId: taskId,
+                          task,
+                          checklistId: data?.id,
                         },
                       }),
                     );
                   }}
-                  onUploadError={(error) => {
-                    console.error('error in fileUpload :: ', error);
-                  }}
-                  label="Attach Media"
-                  icon={hasMedias ? PermMedia : PermMediaOutlined}
-                />
-              </div>
-              <div
-                className="task-config-control-item"
-                id="add-stop"
-                onClick={() => {
-                  if (hasStop) {
-                    dispatch(removeStop(taskId));
-                  } else {
-                    dispatch(addStop(taskId));
-                  }
-                }}
-              >
-                <div>
-                  {hasStop ? (
-                    <>
-                      <PanTool className="icon" /> Stop Added
-                    </>
-                  ) : (
-                    <>
-                      <PanToolOutlined className="icon" /> Add Stop
-                    </>
-                  )}
+                >
+                  <div>
+                    <Autorenew className="icon" />
+                    Configure Actions
+                  </div>
                 </div>
               </div>
-              <div
-                className="task-config-control-item"
-                id="add-actions"
-                onClick={() => {
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.CONFIGURE_ACTIONS,
-                      props: {
-                        task,
-                        checklistId: data?.id,
-                      },
-                    }),
-                  );
-                }}
-              >
-                <div>
-                  <Autorenew className="icon" />
-                  Configure Actions
-                </div>
-              </div>
-            </div>
+            )}
           </div>
 
           {hasMedias && (
@@ -453,6 +418,7 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
                       parameter={parameter}
                       key={`${parameterId}-${index}`}
                       taskId={taskId}
+                      isReadOnly={isReadOnly}
                     />
                   );
                 })}
@@ -462,92 +428,97 @@ const TaskCard: FC<TaskCardProps & { isFirstTask: boolean; isLastTask: boolean }
         </div>
 
         {noParameterError ? <div className="task-error">{noParameterError?.message}</div> : null}
-
-        <div className="task-footer">
-          <NestedSelect
-            id="add-parameter-selector"
-            width="100%"
-            label={AddParameter}
-            items={{
-              parameters: {
-                label: 'Parameters',
-                items: {
-                  'add-new-parameter': {
-                    label: 'Add New',
-                  },
-                  'existing-parameter': {
-                    label: 'Choose from Existing',
-                    fetchItems: async (pageNumber?: number, query = '') => {
-                      if (typeof pageNumber === 'number') {
-                        try {
-                          const { data: resData, pageable }: ResponseObj<any[]> = await request(
-                            'GET',
-                            apiGetParameters(data!.id),
-                            {
-                              params: {
-                                page: pageNumber + 1,
-                                size: DEFAULT_PAGE_SIZE,
-                                filters: JSON.stringify({
-                                  op: FilterOperators.AND,
-                                  fields: [
-                                    {
-                                      field: 'targetEntityType',
-                                      op: FilterOperators.EQ,
-                                      values: [TargetEntityType.UNMAPPED],
-                                    },
-                                    { field: 'archived', op: FilterOperators.EQ, values: [false] },
-                                    ...(query
-                                      ? [
-                                          {
-                                            field: 'label',
-                                            op: FilterOperators.LIKE,
-                                            values: [query],
-                                          },
-                                        ]
-                                      : []),
-                                  ],
-                                }),
+        {!isReadOnly && (
+          <div className="task-footer">
+            <NestedSelect
+              id="add-parameter-selector"
+              width="100%"
+              label={AddActivity}
+              items={{
+                parameters: {
+                  label: 'Parameters',
+                  items: {
+                    'add-new-parameter': {
+                      label: 'Add New',
+                    },
+                    'existing-parameter': {
+                      label: 'Choose from Existing',
+                      fetchItems: async (pageNumber?: number, query = '') => {
+                        if (typeof pageNumber === 'number') {
+                          try {
+                            const { data: resData, pageable }: ResponseObj<any[]> = await request(
+                              'GET',
+                              apiGetParameters(data!.id),
+                              {
+                                params: {
+                                  page: pageNumber + 1,
+                                  size: DEFAULT_PAGE_SIZE,
+                                  filters: JSON.stringify({
+                                    op: FilterOperators.AND,
+                                    fields: [
+                                      {
+                                        field: 'targetEntityType',
+                                        op: FilterOperators.EQ,
+                                        values: [TargetEntityType.UNMAPPED],
+                                      },
+                                      {
+                                        field: 'archived',
+                                        op: FilterOperators.EQ,
+                                        values: [false],
+                                      },
+                                      ...(query
+                                        ? [
+                                            {
+                                              field: 'label',
+                                              op: FilterOperators.LIKE,
+                                              values: [query],
+                                            },
+                                          ]
+                                        : []),
+                                    ],
+                                  }),
+                                },
                               },
-                            },
-                          );
-                          if (resData && pageable) {
-                            return {
-                              options: resData.map((item) => ({
-                                ...item,
-                                value: item.id,
-                              })),
-                              pageable,
-                            };
+                            );
+                            if (resData && pageable) {
+                              return {
+                                options: resData.map((item) => ({
+                                  ...item,
+                                  value: item.id,
+                                })),
+                                pageable,
+                              };
+                            }
+                          } catch (e) {
+                            console.error('Error while fetching existing unmapped parameters', e);
                           }
-                        } catch (e) {
-                          console.error('Error while fetching existing unmapped parameters', e);
                         }
-                      }
-                      return {
-                        options: [],
-                      };
+                        return {
+                          options: [],
+                        };
+                      },
                     },
                   },
                 },
-              },
-              instructions: {
-                label: 'Instruction',
-                items: {
-                  'add-text': {
-                    label: 'Add Text',
-                  },
-                  'add-material': {
-                    label: 'Add Material',
+                instructions: {
+                  label: 'Instruction',
+                  items: {
+                    'add-text': {
+                      label: 'Add Text',
+                    },
+                    'add-material': {
+                      label: 'Add Material',
+                    },
                   },
                 },
-              },
-              subtasks: {
-                label: 'Subtasks',
-              },
-            }}
-            onChildChange={onChildChange}
-          />
-        </div>
+                subtasks: {
+                  label: 'Subtasks',
+                },
+              }}
+              onChildChange={onChildChange}
+            />
+          </div>
+        )}
       </TaskCardWrapper>
     );
   }

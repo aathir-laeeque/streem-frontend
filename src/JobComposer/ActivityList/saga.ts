@@ -25,8 +25,6 @@ import { SupervisorResponse } from './types';
 
 function* executeParameterSaga({ payload }: ReturnType<typeof executeParameter>) {
   try {
-    console.log('payload from executeParameterSaga :: ', payload);
-
     const { parameter, reason } = payload;
 
     const { entityId: jobId } = yield select((state: RootState) => state.composer);
@@ -37,7 +35,7 @@ function* executeParameterSaga({ payload }: ReturnType<typeof executeParameter>)
 
     if (data) {
       if (
-        data?.type === MandatoryParameter.PARAMETER &&
+        data?.type === MandatoryParameter.SHOULD_BE &&
         data?.response?.state === 'PENDING_FOR_APPROVAL'
       ) {
         yield put(
@@ -79,8 +77,6 @@ function* executeParameterSaga({ payload }: ReturnType<typeof executeParameter>)
 
 function* fixParameterSaga({ payload }: ReturnType<typeof fixParameter>) {
   try {
-    console.log('payload from fixParameterSaga :: ', payload);
-
     const { parameter, reason } = payload;
 
     const { entityId: jobId } = yield select((state: RootState) => state.composer);

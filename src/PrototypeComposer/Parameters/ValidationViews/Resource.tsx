@@ -96,7 +96,10 @@ type ResourceValidationState = {
   selectedObjectType?: ObjectType;
 };
 
-const ResourceValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
+const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
+  form,
+  isReadOnly,
+}) => {
   const { watch, setValue } = form;
   const data = watch('data', {
     propertyValidations: [],
@@ -177,6 +180,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                         ]
                       : undefined,
                     isSearchable: false,
+                    isDisabled: isReadOnly,
                     placeholder: 'Select Object Property',
                     onChange: (value: any) => {
                       propertyValidations[index] = {
@@ -219,6 +223,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                           ),
                           isSearchable: false,
                           placeholder: 'Select Condition',
+                          isDisabled: isReadOnly,
                           value: item?.constraint
                             ? [
                                 {
@@ -253,6 +258,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                                   label: option.displayName,
                                   value: option.id,
                                 })),
+                                isDisabled: isReadOnly,
                                 value: (item?.options || []).map((option: any) => ({
                                   label: option.displayName,
                                   value: option.id,
@@ -289,6 +295,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                               props: {
                                 id: 'objectPropertyValue',
                                 label: 'Value',
+                                disabled: isReadOnly,
                                 placeholder: 'Enter Value',
                                 defaultValue: item?.value,
                                 onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
@@ -305,15 +312,17 @@ const ResourceValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                   : []),
               ]}
             />
-            <Close
-              className="remove-icon"
-              onClick={() => {
-                const updated = [...propertyValidations];
-                updated.splice(index, 1);
-                updateValidations(updated);
-                updateValidationOptions(selectedObjectType!, updated);
-              }}
-            />
+            {!isReadOnly && (
+              <Close
+                className="remove-icon"
+                onClick={() => {
+                  const updated = [...propertyValidations];
+                  updated.splice(index, 1);
+                  updateValidations(updated);
+                  updateValidationOptions(selectedObjectType!, updated);
+                }}
+              />
+            )}
           </div>
           {item?.propertyInputType && (
             <FormGroup
@@ -333,6 +342,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                               value,
                             }),
                           ),
+                          isDisabled: isReadOnly,
                           isSearchable: false,
                           placeholder: 'Select Unit',
                           defaultValue: item?.dateUnit
@@ -365,6 +375,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                     description:
                       'This message will be displayed when the validation rule is breached',
                     defaultValue: item?.errorMessage,
+                    disabled: isReadOnly,
                     onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
                       propertyValidations[index] = {
                         ...propertyValidations[index],
@@ -379,16 +390,18 @@ const ResourceValidation: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
           )}
         </div>
       ))}
-      <Button
-        type="button"
-        variant="secondary"
-        style={{ marginBottom: 24, padding: '6px 8px' }}
-        onClick={() => {
-          updateValidations([...propertyValidations, {}]);
-        }}
-      >
-        <AddCircleOutline style={{ marginRight: 8 }} /> Add
-      </Button>
+      {!isReadOnly && (
+        <Button
+          type="button"
+          variant="secondary"
+          style={{ marginBottom: 24, padding: '6px 8px' }}
+          onClick={() => {
+            updateValidations([...propertyValidations, {}]);
+          }}
+        >
+          <AddCircleOutline style={{ marginRight: 8 }} /> Add
+        </Button>
+      )}
     </ValidationWrapper>
   );
 };

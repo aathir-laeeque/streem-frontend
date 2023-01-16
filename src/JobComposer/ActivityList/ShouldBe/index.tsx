@@ -15,9 +15,9 @@ import {
 import { ParameterProps, SupervisorResponse } from '../types';
 import { Wrapper } from './styles';
 
-const generateText = (data) => {
+const generateText = (label: string | undefined, data: any) => {
   if (data.operator === 'BETWEEN') {
-    return `${data.parameter} should be between ${data.lowerValue} ${data.uom} and ${data.upperValue} ${data.uom}`;
+    return `${label} should be between ${data.lowerValue} ${data.uom} and ${data.upperValue} ${data.uom}`;
   } else {
     let operatorString: string;
 
@@ -41,7 +41,7 @@ const generateText = (data) => {
         return;
     }
 
-    return `${data.parameter} should be ${operatorString} ${data?.value ?? 50} ${data.uom}`;
+    return `${label} should be ${operatorString} ${data?.value ?? 50} ${data.uom}`;
   }
 };
 
@@ -324,7 +324,7 @@ const ShouldBeParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
         </span>
       ) : null}
 
-      <span className="parameter-text">{generateText(parameter?.data)}</span>
+      <span className="parameter-text">{generateText(parameter?.label, parameter?.data)}</span>
 
       <NumberInput
         defaultValue={state.value}
@@ -392,7 +392,7 @@ const ShouldBeParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
 
       {state.isOffLimit ? (
         <div className="off-limit-reason">
-          <div className="warning">Warning! {generateText(parameter?.data)}</div>
+          <div className="warning">Warning! {generateText(parameter?.label, parameter?.data)}</div>
 
           <Textarea
             defaultValue={state.reason}

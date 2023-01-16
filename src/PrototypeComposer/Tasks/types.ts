@@ -16,6 +16,7 @@ export type TaskCardWrapperProps = {
   hasStop: boolean;
   isTimed: boolean;
   isActive: boolean;
+  isReadOnly: boolean;
 };
 
 export type TaskMediasProps = {

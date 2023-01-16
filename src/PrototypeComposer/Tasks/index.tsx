@@ -7,7 +7,7 @@ import { addNewTask } from './actions';
 import { TaskListWrapper } from './styles';
 import TaskCard from './TaskCard';
 
-const Tasks: FC<{ allowNewAddition: boolean }> = ({ allowNewAddition }) => {
+const Tasks: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   const dispatch = useDispatch();
   const {
     stages: { activeStageId },
@@ -32,11 +32,12 @@ const Tasks: FC<{ allowNewAddition: boolean }> = ({ allowNewAddition }) => {
                 isActive={taskId === activeTaskId}
                 isFirstTask={index === 0}
                 isLastTask={index === taskListOrder.length - 1}
+                isReadOnly={isReadOnly}
               />
             </div>
           );
         })}
-        {allowNewAddition && (
+        {!isReadOnly && (
           <Button
             variant="secondary"
             className="add-item"

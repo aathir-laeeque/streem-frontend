@@ -18,7 +18,10 @@ const fields = [
   },
 ];
 
-const YesNoParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
+const YesNoParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
+  form,
+  isReadOnly,
+}) => {
   const { register } = form;
 
   return (
@@ -50,6 +53,7 @@ const YesNoParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                 required: true,
               })}
               defaultValue={item.name}
+              disabled={isReadOnly}
             />
           </li>
         ))}

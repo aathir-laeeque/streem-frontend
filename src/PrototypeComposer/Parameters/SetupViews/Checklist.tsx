@@ -67,9 +67,10 @@ const SortableItemWrapper = styled.div`
   }
 `;
 
-function SortableItem({ item, index, remove, register }: any) {
+function SortableItem({ item, index, remove, register, isReadOnly }: any) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: item.id,
+    disabled: isReadOnly,
   });
 
   const style = {
@@ -80,7 +81,7 @@ function SortableItem({ item, index, remove, register }: any) {
   return (
     <SortableItemWrapper ref={setNodeRef} style={style} className={isDragging ? 'dragging' : ''}>
       <div className="content">
-        <DragIndicator {...attributes} {...listeners} />
+        {!isReadOnly && <DragIndicator {...attributes} {...listeners} />}
         <input
           type="hidden"
           name={`data.${index}.id`}
@@ -96,17 +97,23 @@ function SortableItem({ item, index, remove, register }: any) {
             required: true,
           })}
           defaultValue={item.name}
+          disabled={isReadOnly}
         />
       </div>
-      <div className="action">
-        <Close onClick={() => remove(index)} />
-      </div>
+      {!isReadOnly && (
+        <div className="action">
+          <Close onClick={() => remove(index)} />
+        </div>
+      )}
     </SortableItemWrapper>
   );
 }
 
-const ChecklistParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
-  const { register, control, setError, clearErrors, errors } = form;
+const ChecklistParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
+  form,
+  isReadOnly,
+}) => {
+  const { register, control, setError, clearErrors, errors, unregister } = form;
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: 'data',
@@ -152,6 +159,7 @@ const ChecklistParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                 index={index}
                 register={register}
                 remove={remove}
+                isReadOnly={isReadOnly}
               />
             ))}
           </SortableContext>

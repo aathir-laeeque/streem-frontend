@@ -84,7 +84,10 @@ const toolbarOptions = {
   },
 };
 
-const TextInstruction: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
+const TextInstruction: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
+  form,
+  isReadOnly,
+}) => {
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const { register, setValue, getValues } = form;
   register('data.text', { required: true });

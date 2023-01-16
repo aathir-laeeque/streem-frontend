@@ -10,20 +10,20 @@ import {
 } from '#PrototypeComposer/Activity/actions';
 import { generateNewParameter } from '#PrototypeComposer/Activity/utils';
 import {
-  Parameter,
   Checklist,
   MandatoryParameter,
   NonMandatoryParameter,
+  Parameter,
 } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap, TargetEntityTypeVisual } from '#PrototypeComposer/constants';
 import ResourceFilter from '#PrototypeComposer/Parameters/FilterViews/Resource';
 import CalculationParameter from '#PrototypeComposer/Parameters/SetupViews/Calculation';
 import ChecklistParameter from '#PrototypeComposer/Parameters/SetupViews/Checklist';
-import ResourceParameter from '#PrototypeComposer/Parameters/SetupViews/Resource';
-import ParameterParameter from '#PrototypeComposer/Parameters/SetupViews/Parameter';
-import YesNoParameter from '#PrototypeComposer/Parameters/SetupViews/YesNo';
-import TextInstruction from '#PrototypeComposer/Parameters/SetupViews/TextInstruction';
 import MaterialInstruction from '#PrototypeComposer/Parameters/SetupViews/MaterialInstruction';
+import ParameterParameter from '#PrototypeComposer/Parameters/SetupViews/Parameter';
+import ResourceParameter from '#PrototypeComposer/Parameters/SetupViews/Resource';
+import TextInstruction from '#PrototypeComposer/Parameters/SetupViews/TextInstruction';
+import YesNoParameter from '#PrototypeComposer/Parameters/SetupViews/YesNo';
 import NumberValidation from '#PrototypeComposer/Parameters/ValidationViews/Number';
 import ResourceValidation from '#PrototypeComposer/Parameters/ValidationViews/Resource';
 import { useTypedSelector } from '#store';
@@ -130,8 +130,8 @@ function CustomStepIcon(props: StepIconProps) {
 
 const isFiltersAllowed = (type: ParameterType) => {
   switch (type) {
-    // case MandatoryParameter.RESOURCE:
-    //   return true;
+    case MandatoryParameter.RESOURCE:
+      return true;
     default:
       return false;
   }
@@ -155,7 +155,7 @@ const defaultValues = {
   validations: {},
 };
 
-const AddParameter: FC = () => {
+const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   const dispatch = useDispatch();
   const {
     data,
@@ -231,6 +231,7 @@ const AddParameter: FC = () => {
               name: 'description',
               rows: 3,
               optional: true,
+              disabled: isReadOnly,
               ref: register,
             },
           },
@@ -261,6 +262,7 @@ const AddParameter: FC = () => {
                   isSearchable: false,
                   placeholder: 'Select Parameter Type',
                   value: type ? [{ label: ParameterTypeMap[type], value: type }] : undefined,
+                  isDisabled: isReadOnly || !!addParameter?.parameterId,
                   onChange: (option: { value: string }) => {
                     setValue('type', option.value, {
                       shouldDirty: true,
@@ -286,6 +288,7 @@ const AddParameter: FC = () => {
             }}
             onLabel="Required"
             value={mandatory}
+            disabled={isReadOnly}
           />
         )}
         {renderSetupViewsByType()}
@@ -298,19 +301,19 @@ const AddParameter: FC = () => {
       case MandatoryParameter.SINGLE_SELECT:
       case MandatoryParameter.MULTISELECT:
       case MandatoryParameter.CHECKLIST:
-        return <ChecklistParameter form={form} />;
+        return <ChecklistParameter form={form} isReadOnly={isReadOnly} />;
       case MandatoryParameter.YES_NO:
-        return <YesNoParameter form={form} />;
+        return <YesNoParameter form={form} isReadOnly={isReadOnly} />;
       case MandatoryParameter.CALCULATION:
-        return <CalculationParameter form={form} />;
+        return <CalculationParameter form={form} isReadOnly={isReadOnly} />;
       case MandatoryParameter.RESOURCE:
-        return <ResourceParameter form={form} />;
-      case MandatoryParameter.PARAMETER:
-        return <ParameterParameter form={form} />;
+        return <ResourceParameter form={form} isReadOnly={isReadOnly} />;
+      case MandatoryParameter.SHOULD_BE:
+        return <ParameterParameter form={form} isReadOnly={isReadOnly} />;
       case NonMandatoryParameter.INSTRUCTION:
-        return <TextInstruction form={form} />;
+        return <TextInstruction form={form} isReadOnly={isReadOnly} />;
       case NonMandatoryParameter.MATERIAL:
-        return <MaterialInstruction form={form} />;
+        return <MaterialInstruction form={form} isReadOnly={isReadOnly} />;
       default:
         return null;
     }
@@ -332,7 +335,7 @@ const AddParameter: FC = () => {
   const renderFiltersByType = () => {
     switch (type) {
       case MandatoryParameter.RESOURCE:
-        return <ResourceFilter form={form} />;
+        return <ResourceFilter form={form} isReadOnly={isReadOnly} />;
       default:
         return null;
     }
@@ -354,9 +357,9 @@ const AddParameter: FC = () => {
   const renderValidationsByType = () => {
     switch (type) {
       case MandatoryParameter.RESOURCE:
-        return <ResourceValidation form={form} />;
+        return <ResourceValidation form={form} isReadOnly={isReadOnly} />;
       case MandatoryParameter.NUMBER:
-        return <NumberValidation form={form} />;
+        return <NumberValidation form={form} isReadOnly={isReadOnly} />;
       default:
         return null;
     }
@@ -499,16 +502,13 @@ const AddParameter: FC = () => {
       const _data = getValues();
       if (addParameter.parameterId && currentParameter) {
         dispatch(
-          updateParameterApi(
-            {
-              ...currentParameter,
-              ...(currentParameter.type !== _data.type && {
-                ...generateNewParameter({ ...currentParameter, type: _data.type }),
-              }),
-              ..._data,
-            },
-            true,
-          ),
+          updateParameterApi({
+            ...currentParameter,
+            ...(currentParameter.type !== _data.type && {
+              ...generateNewParameter({ ...currentParameter, type: _data.type }),
+            }),
+            ..._data,
+          }),
         );
       } else {
         let orderTree = 1;
@@ -608,6 +608,7 @@ const AddParameter: FC = () => {
                 label: 'Label',
                 id: 'label',
                 name: 'label',
+                disabled: isReadOnly,
                 ref: register({
                   required: true,
                 }),
@@ -655,27 +656,31 @@ const AddParameter: FC = () => {
     ),
     footerContent: (
       <>
-        {!addParameter?.parameterId && activeStep !== 0 && (
+        {!isReadOnly && !addParameter?.parameterId && activeStep !== 0 && (
           <Button variant="secondary" onClick={handleBack}>
             Back
           </Button>
         )}
-        {addParameter?.parameterId && (
+        {!isReadOnly && addParameter?.parameterId && (
           <Button variant="textOnly" color="red" onClick={handleDeleteParameter}>
             <DeleteOutlined /> Delete Parameter
           </Button>
         )}
         <Button variant="secondary" style={{ marginLeft: 'auto' }} onClick={handleCloseDrawer}>
-          Cancel
+          {isReadOnly ? 'Close' : 'Cancel'}
         </Button>
-        {activeStep === sections.length - 1 ? (
-          <Button type="submit" disabled={!isDirty || !isValid} onClick={onSubmit}>
-            Save
-          </Button>
-        ) : (
-          <Button onClick={handleNext} disabled={activeStep === 0 ? !label : !isValid}>
-            Next
-          </Button>
+        {!isReadOnly && (
+          <>
+            {activeStep === sections.length - 1 ? (
+              <Button type="submit" disabled={!isDirty || !isValid} onClick={onSubmit}>
+                Save
+              </Button>
+            ) : (
+              <Button onClick={handleNext} disabled={activeStep === 0 ? !label : !isValid}>
+                Next
+              </Button>
+            )}
+          </>
         )}
       </>
     ),

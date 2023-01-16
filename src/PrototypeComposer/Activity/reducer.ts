@@ -1,6 +1,6 @@
 import { cloneDeep, omit, set } from 'lodash';
 import { Reducer } from 'redux';
-import { Checklist } from '../checklist.types';
+import { Checklist, TargetEntityType } from '../checklist.types';
 import { ComposerAction } from '../reducer.types';
 import { TaskListActions } from '../Tasks/reducer.types';
 import { ParameterListActions, ParameterListActionType, ParameterListState } from './reducer.types';
@@ -85,19 +85,41 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
       };
 
     case ParameterListActions.UPDATE_STORE_PARAMETER: {
-      const { updatePath, parameterId, data } = action.payload;
+      const { parameterId, data } = action.payload;
 
       return {
         ...state,
-        listById: {
-          ...state.listById,
-          [parameterId]: updatePath
-            ? cloneDeep({
-                ...set(state.listById[parameterId], updatePath, data),
-                errors: [],
-              })
-            : { ...data, errors: [] },
-        },
+        ...(data.targetEntityType === TargetEntityType.TASK
+          ? {
+              listById: {
+                ...state.listById,
+                [parameterId]: { ...data, errors: [] },
+              },
+              parameters: {
+                ...state.parameters,
+                list: state.parameters.list.map((p) =>
+                  p.id === parameterId
+                    ? {
+                        ...p,
+                        ...data,
+                      }
+                    : p,
+                ),
+              },
+            }
+          : {
+              parameters: {
+                ...state.parameters,
+                list: state.parameters.list.map((p) =>
+                  p.id === parameterId
+                    ? {
+                        ...p,
+                        ...data,
+                      }
+                    : p,
+                ),
+              },
+            }),
       };
     }
 
@@ -236,6 +258,29 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
           ...state.parameters,
           listLoading: false,
           error: action.payload.error,
+        },
+      };
+
+    case ComposerAction.PROCESS_PARAMETER_MAP_SUCCESS:
+      return {
+        ...state,
+        parameters: {
+          ...state.parameters,
+          list: state.parameters.list.map((p) =>
+            action.payload.payload.mappedParameters?.[p.id]
+              ? {
+                  ...p,
+                  targetEntityType: TargetEntityType.PROCESS,
+                  orderTree: action.payload.payload.mappedParameters[p.id],
+                }
+              : {
+                  ...p,
+                  ...(p.targetEntityType === TargetEntityType.PROCESS && {
+                    targetEntityType: TargetEntityType.UNMAPPED,
+                    orderTree: 1,
+                  }),
+                },
+          ),
         },
       };
 

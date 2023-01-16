@@ -1,7 +1,8 @@
 import { Button, selectStyles, Textarea, TextInput } from '#components';
-import { ParameterType } from '#PrototypeComposer/checklist.types';
+import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
-import { apiGetParametersForCalc } from '#utils/apiUrls';
+import { apiGetParameters } from '#utils/apiUrls';
+import { FilterOperators } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { Add, Clear, DragHandle } from '@material-ui/icons';
 import { EquationNode, EquationParserError, parse } from 'equation-parser';
@@ -13,7 +14,7 @@ import {
   resolve,
   VariableLookup,
 } from 'equation-resolver';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import Select from 'react-select';
 import { CommonWrapper } from './styles';
@@ -83,9 +84,15 @@ const math = (equationsArr: string[], defaultVariables: VariableLookup) => {
   return equations;
 };
 
-const CalculationParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
+const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
+  form,
+  isReadOnly,
+}) => {
   const { id: checklistId } = useTypedSelector((state) => state.prototypeComposer.data!);
-  const { register, watch, setValue, setError, clearErrors } = form;
+  const {
+    parameters: { addParameter },
+  } = useTypedSelector((state) => state.prototypeComposer);
+  const { register, watch, setValue, errors, setError, clearErrors } = form;
   const variables = watch('data.variables', {});
   const expression = watch('data.expression', '');
 
@@ -112,11 +119,42 @@ const CalculationParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
   const getParametersForCalc = async () => {
     if (checklistId) {
       setLoading(true);
-      const parametersForCalc = await request('GET', apiGetParametersForCalc(checklistId));
+      const parametersForCalc = await request(
+        'GET',
+        apiGetParameters(
+          checklistId,
+          [
+            MandatoryParameter.NUMBER,
+            MandatoryParameter.CALCULATION,
+            MandatoryParameter.SHOULD_BE,
+          ].toString(),
+        ),
+        addParameter?.parameterId
+          ? {
+              params: {
+                filters: JSON.stringify({
+                  op: FilterOperators.AND,
+                  fields: [
+                    {
+                      field: 'id',
+                      op: FilterOperators.NE,
+                      values: [addParameter.parameterId],
+                    },
+                  ],
+                }),
+              },
+            }
+          : undefined,
+      );
       updateParametersForCalc(parametersForCalc.data);
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    register('data.variables');
+    getParametersForCalc();
+  }, []);
 
   useEffect(() => {
     if (equationError) {
@@ -128,23 +166,18 @@ const CalculationParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
     }
   }, [equationError]);
 
-  useEffect(() => {
-    getParametersForCalc();
-  }, []);
-
-  register('data.variables');
-
   return (
     <CommonWrapper>
       <TextInput
         type="text"
         name={`data.uom`}
         label="Unit of Measurement"
+        disabled={isReadOnly}
         ref={register({
           required: true,
         })}
       />
-      <ul className="list">
+      <ul className="list" {...(isReadOnly && { style: { marginBottom: '16px' } })}>
         {Object.entries(variables).map(([variableName, value]: [string, any], index) => {
           return (
             <li className="list-item" key={variableName}>
@@ -153,6 +186,7 @@ const CalculationParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                 type="text"
                 label="Parameter Name"
                 defaultValue={variableName === 'undefined' ? undefined : variableName}
+                disabled={isReadOnly}
                 onChange={(e: any) => {
                   const formValue = variables[variableName];
                   delete variables[variableName];
@@ -186,7 +220,7 @@ const CalculationParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                   }}
                 >
                   <Select
-                    isDisabled={variableName === 'undefined'}
+                    isDisabled={isReadOnly || variableName === 'undefined'}
                     isLoading={!!loading}
                     styles={selectStyles}
                     isSearchable={false}
@@ -222,56 +256,65 @@ const CalculationParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                   />
                 </div>
               </div>
-              <Clear
-                style={{ marginLeft: 16, cursor: 'pointer' }}
-                onClick={() => {
-                  delete variables[variableName];
-                  setValue(
-                    'data.variables',
-                    {
-                      ...variables,
-                    },
-                    {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    },
-                  );
-                }}
-              />
+              {!isReadOnly && (
+                <Clear
+                  style={{ marginLeft: 16, cursor: 'pointer' }}
+                  onClick={() => {
+                    delete variables[variableName];
+                    setValue(
+                      'data.variables',
+                      {
+                        ...variables,
+                      },
+                      {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      },
+                    );
+                  }}
+                />
+              )}
             </li>
           );
         })}
       </ul>
-      <Button
-        type="button"
-        variant="textOnly"
-        style={{ padding: '8px 0', marginBlock: 16 }}
-        onClick={() => {
-          setValue(
-            'data.variables',
-            {
-              ...variables,
-              ['undefined']: undefined,
-            },
-            {
-              shouldDirty: true,
-              shouldValidate: true,
-            },
-          );
-        }}
-        disabled={'undefined' in variables}
-      >
-        <Add /> Add Parameter
-      </Button>
+      {!isReadOnly && (
+        <Button
+          type="button"
+          variant="textOnly"
+          style={{ padding: '8px 0', marginBlock: 16 }}
+          onClick={() => {
+            setValue(
+              'data.variables',
+              {
+                ...variables,
+                ['undefined']: undefined,
+              },
+              {
+                shouldDirty: true,
+                shouldValidate: true,
+              },
+            );
+          }}
+          disabled={'undefined' in variables}
+        >
+          <Add /> Add Parameter
+        </Button>
+      )}
       <Textarea
         defaultValue={expression}
         name="data.expression"
         ref={register({
           required: true,
+          pattern: {
+            value: /^[^=]+$/,
+            message: "Invalid operator '=' in the equation",
+          },
         })}
         label="Write Calculation"
         rows={4}
-        error={equationError}
+        disabled={isReadOnly}
+        error={equationError || errors?.data?.expression?.message}
       />
     </CommonWrapper>
   );

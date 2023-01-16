@@ -18,7 +18,7 @@ const Wrapper = styled.div.attrs({})`
       min-width: 400px !important;
 
       h2 {
-        color: #000 !important;
+        color: #161616 !important;
         font-weight: bold !important;
       }
 
@@ -48,7 +48,7 @@ const Wrapper = styled.div.attrs({})`
       .modal-body {
         padding: 0px 24px !important;
         font-size: 14px;
-        color: #000000;
+        color: #525252;
       }
     }
   }

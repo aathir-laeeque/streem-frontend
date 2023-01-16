@@ -1,3 +1,5 @@
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
@@ -63,7 +65,7 @@ function* validatePrototypeSaga({ payload }: ReturnType<typeof validatePrototype
     const { errors } = yield call(request, 'GET', apiValidatePrototype(id));
 
     if ((errors as Array<Error>)?.length) {
-      const { stagesErrors, tasksErrors, parametersErrors } = groupErrors(errors);
+      const { stagesErrors, tasksErrors, parametersErrors, otherErrors } = groupErrors(errors);
       if (stagesErrors.length) {
         yield all(stagesErrors.map((error) => put(setStageValidationError(error))));
       }
@@ -74,6 +76,19 @@ function* validatePrototypeSaga({ payload }: ReturnType<typeof validatePrototype
 
       if (parametersErrors.length) {
         yield all(parametersErrors.map((error) => put(setParameterValidationError(error))));
+      }
+
+      if (otherErrors.length) {
+        yield all(
+          otherErrors.map((error) =>
+            put(
+              showNotification({
+                type: NotificationType.ERROR,
+                msg: error.message,
+              }),
+            ),
+          ),
+        );
       }
     } else {
       yield put(

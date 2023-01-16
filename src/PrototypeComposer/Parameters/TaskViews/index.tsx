@@ -17,13 +17,19 @@ import YesNoTaskView from '#PrototypeComposer/Parameters/TaskViews/YesNo';
 import { useTypedSelector } from '#store/helpers';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { DeleteOutlined, DragIndicator, EditOutlined, FilterList } from '@material-ui/icons';
+import {
+  RemoveCircleOutlineOutlined,
+  DragIndicator,
+  EditOutlined,
+  FilterList,
+  VisibilityOutlined,
+} from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-export const ParameterTaskViewWrapper = styled.div`
-  padding: 16px 8px 16px 0;
+export const ParameterTaskViewWrapper = styled.div<{ isReadOnly: boolean }>`
+  padding: ${({ isReadOnly }) => (isReadOnly ? '16px 8px' : '16px 8px 16px 0')};
 
   :last-child {
     border-bottom: none;
@@ -83,7 +89,6 @@ export const ParameterTaskViewWrapper = styled.div`
       flex-direction: column;
       gap: 8px;
       flex: 1;
-      /* transition: 0.2s all ease; */
       padding: 16px 16px 16px 8px;
 
       .actions {
@@ -157,9 +162,10 @@ export const ParameterTaskViewWrapper = styled.div`
   }
 `;
 
-const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId }) => {
+const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: parameter.id,
+    disabled: isReadOnly,
   });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -211,7 +217,7 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId }) => {
       case MandatoryParameter.SINGLE_SELECT:
         return <SingleSelectTaskView parameter={parameter} />;
 
-      case MandatoryParameter.PARAMETER:
+      case MandatoryParameter.SHOULD_BE:
         return <ShouldBeTaskView parameter={parameter} />;
 
       case MandatoryParameter.SIGNATURE:
@@ -229,8 +235,10 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId }) => {
           </>
         );
 
+      case MandatoryParameter.SINGLE_LINE:
       case MandatoryParameter.MULTI_LINE:
       case MandatoryParameter.DATE:
+      case MandatoryParameter.DATE_TIME:
         return <SingleLineTaskView parameter={parameter} />;
 
       case MandatoryParameter.YES_NO:
@@ -262,53 +270,62 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId }) => {
     }
   };
 
+  const onViewOrEditParameter = () => {
+    const titlePrefix = isReadOnly ? 'View' : 'Edit';
+    dispatch(
+      toggleNewParameter({
+        action: 'task',
+        title:
+          parameter.type in NonMandatoryParameter
+            ? `${titlePrefix} Instruction`
+            : `${titlePrefix} Process Parameter`,
+        parameterId: parameter.id,
+        ...(parameter.type in NonMandatoryParameter && {
+          type: parameter.type,
+        }),
+      }),
+    );
+  };
+
   return (
-    <ParameterTaskViewWrapper>
+    <ParameterTaskViewWrapper isReadOnly={isReadOnly}>
       <div
         ref={setNodeRef}
         style={style}
         className={isDragging ? 'container dragging' : 'container'}
       >
-        <div className="draggable" {...attributes} {...listeners}>
-          <DragIndicator />
-        </div>
+        {!isReadOnly && (
+          <div className="draggable" {...attributes} {...listeners}>
+            <DragIndicator />
+          </div>
+        )}
         <div className="content">
           <div className="actions">
-            <EditOutlined
-              onClick={() =>
-                dispatch(
-                  toggleNewParameter({
-                    action: 'task',
-                    title:
-                      parameter.type in NonMandatoryParameter
-                        ? 'Edit Instruction'
-                        : 'Edit Process Parameter',
-                    parameterId: parameter.id,
-                    ...(parameter.type in NonMandatoryParameter && {
-                      type: parameter.type,
-                    }),
-                  }),
-                )
-              }
-            />
-            <DeleteOutlined
-              onClick={() => {
-                if (stageId) {
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.CONFIRMATION_MODAL,
-                      props: {
-                        onPrimary: onDelete,
-                        primaryText: 'Yes',
-                        secondaryText: 'No',
-                        title: 'Delete Parameter',
-                        body: <>Are you sure you want to Delete this Parameter ?</>,
-                      },
-                    }),
-                  );
-                }
-              }}
-            />
+            {isReadOnly ? (
+              <VisibilityOutlined onClick={onViewOrEditParameter} />
+            ) : (
+              <>
+                <EditOutlined onClick={onViewOrEditParameter} />
+                <RemoveCircleOutlineOutlined
+                  onClick={() => {
+                    if (stageId) {
+                      dispatch(
+                        openOverlayAction({
+                          type: OverlayNames.CONFIRMATION_MODAL,
+                          props: {
+                            onPrimary: onDelete,
+                            primaryText: 'Yes',
+                            secondaryText: 'No',
+                            title: 'Remove Parameter',
+                            body: <>Are you sure you want to remove this Parameter from task?</>,
+                          },
+                        }),
+                      );
+                    }
+                  }}
+                />
+              </>
+            )}
           </div>
           {ParameterTypeMap[parameter.type]}
           <span className="parameter-label">{parameter.label}</span>

@@ -8,6 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { get } from 'lodash';
 import { Pageable } from '#utils/globalTypes';
 import { Select as CustomSelect } from './Select';
+import { customOnChange } from '#utils/formEvents';
 
 const PopOutWrapper = styled.div.attrs({
   className: 'popout-wrapper',
@@ -161,7 +162,9 @@ const PopOut: FC<PopOutProps> = ({
 
   useEffect(() => {
     if (typeof inputValue === 'string') {
-      onInputChange(inputValue);
+      customOnChange(inputValue, (value: string) => {
+        onInputChange(value);
+      });
     }
   }, [inputValue]);
 
@@ -355,6 +358,7 @@ export const NestedSelect: FC<NestedSelectProps> = ({
   };
 
   const onClose = () => {
+    pagination.current = initialPagination;
     setState((prev) => ({
       ...prev,
       openSelect: false,

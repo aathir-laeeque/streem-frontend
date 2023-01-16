@@ -76,7 +76,7 @@ const MaterialInstructionTaskViewWrapper = styled.div`
   }
 `;
 
-const MaterialInstructionTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
+const MaterialInstructionTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
   const dispatch = useDispatch();
   return (
     <MaterialInstructionTaskViewWrapper>

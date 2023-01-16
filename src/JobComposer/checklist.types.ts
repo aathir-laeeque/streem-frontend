@@ -6,7 +6,7 @@ export enum MandatoryParameter {
   CHECKLIST = 'CHECKLIST',
   MEDIA = 'MEDIA',
   MULTISELECT = 'MULTISELECT',
-  PARAMETER = 'PARAMETER',
+  SHOULD_BE = 'SHOULD_BE',
   SINGLE_SELECT = 'SINGLE_SELECT',
   SIGNATURE = 'SIGNATURE',
   MULTI_LINE = 'MULTI_LINE',
@@ -15,6 +15,8 @@ export enum MandatoryParameter {
   CALCULATION = 'CALCULATION',
   RESOURCE = 'RESOURCE',
   DATE = 'DATE',
+  DATE_TIME = 'DATE_TIME',
+  SINGLE_LINE = 'SINGLE_LINE',
 }
 
 type ChecklistProperty = Pick<Property, 'id' | 'name' | 'value'>;

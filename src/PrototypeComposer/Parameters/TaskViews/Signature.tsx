@@ -27,7 +27,7 @@ const SignatureTaskViewWrapper = styled.div`
   }
 `;
 
-const SignatureTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
+const SignatureTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
   return (
     <SignatureTaskViewWrapper>
       <SignatureIcon className="icon" />

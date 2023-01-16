@@ -79,7 +79,7 @@ const TaskCardWrapper = styled.div.attrs({
     &-body {
       .task-config {
         border-bottom: 1px solid #dadada;
-        padding: 24px 24px 0;
+        padding: ${({ isReadOnly }) => (isReadOnly ? '24px' : '24px 24px 0')};
 
         @media (max-width: 1200px) {
           padding: 12px;
@@ -351,7 +351,7 @@ const TaskMediasWrapper = styled.div`
   }
 `;
 
-const AddParameterItemWrapper = styled.div`
+const AddActivityItemWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -371,4 +371,4 @@ const AddParameterItemWrapper = styled.div`
   }
 `;
 
-export { TaskListWrapper, TaskCardWrapper, TaskMediasWrapper, AddParameterItemWrapper };
+export { TaskListWrapper, TaskCardWrapper, TaskMediasWrapper, AddActivityItemWrapper };

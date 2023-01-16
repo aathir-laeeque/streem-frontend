@@ -6,7 +6,7 @@ import { request } from '#utils/request';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { FormatOptionLabelContext } from 'react-select';
 
-const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
+const ResourceTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];

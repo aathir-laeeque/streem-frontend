@@ -25,7 +25,7 @@ const MediaTaskViewWrapper = styled.div`
   }
 `;
 
-const MediaTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
+const MediaTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
   return (
     <MediaTaskViewWrapper>
       <PhotoCamera className="icon" />

@@ -1,3 +1,5 @@
+import { TextInput } from '#components';
+import { MandatoryParameter } from '#JobComposer/checklist.types';
 import { Entity } from '#JobComposer/composer.types';
 import { useTypedSelector } from '#store';
 import { customOnChange } from '#utils/formEvents';
@@ -20,12 +22,11 @@ const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) 
     }
   }, [parameter?.response?.value]);
 
-  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    e.persist();
-    customOnChange(e, (event) => {
+  const onChange = (v: string) => {
+    customOnChange(v, (value: string) => {
       const newData = {
         ...parameter,
-        data: { ...parameter.data, input: event.target.value },
+        data: { ...parameter.data, input: value },
       };
 
       if (isCorrectingError) {
@@ -34,22 +35,35 @@ const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) 
         dispatch(executeParameter(newData));
       }
     });
-    setValue(e.currentTarget.value);
+    setValue(v);
   };
 
   if (entity === Entity.JOB) {
     return (
       <div className="textbox-parameter">
         <div className="new-form-field">
-          <label className="new-form-field-label">User Comments Box</label>
-          <textarea
-            ref={inputRef}
-            className="new-form-field-textarea"
-            placeholder="Users will write their comments here"
-            value={value}
-            rows={4}
-            onChange={(e) => onChange(e)}
-          />
+          <label className="new-form-field-label">
+            {parameter.type === MandatoryParameter.MULTI_LINE
+              ? 'Multi Line Input'
+              : 'Single Line Input'}
+          </label>
+          {parameter.type === MandatoryParameter.MULTI_LINE ? (
+            <textarea
+              ref={inputRef}
+              className="new-form-field-textarea"
+              placeholder="Users will write their comments here"
+              value={value}
+              rows={4}
+              onChange={(e) => onChange(e.target.value)}
+            />
+          ) : (
+            <TextInput
+              ref={inputRef}
+              placeholder="Write here"
+              value={value}
+              onChange={({ value }) => onChange(value)}
+            />
+          )}
         </div>
       </div>
     );

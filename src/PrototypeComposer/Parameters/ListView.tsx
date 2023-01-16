@@ -12,10 +12,10 @@ import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import { Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-const ParametersList = () => {
+const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   const {
     data,
     parameters: {
@@ -25,6 +25,13 @@ const ParametersList = () => {
   const dispatch = useDispatch();
   const [filterFields, setFilterFields] = useState<FilterField[]>([
     { field: 'archived', op: FilterOperators.EQ, values: [false] },
+    {
+      field: 'type',
+      op: FilterOperators.ANY,
+      values: Object.values(MandatoryParameter).filter(
+        (type) => type !== MandatoryParameter.CHECKLIST,
+      ),
+    },
   ]);
 
   const fetchData = async (params: PaginatedFetchData = {}) => {
@@ -38,6 +45,7 @@ const ParametersList = () => {
             op: FilterOperators.AND,
             fields: filterFields,
           }),
+          sort: 'id,desc',
         }),
       );
     }
@@ -67,33 +75,37 @@ const ParametersList = () => {
               )}
             />
           </div>
-          <Button
-            id="create"
-            variant="secondary"
-            onClick={() => {
-              dispatch(
-                openOverlayAction({
-                  type: OverlayNames.CONFIGURE_JOB_PARAMETERS,
-                  props: {
-                    checklistId: data?.id!,
-                  },
-                }),
-              );
-            }}
-            style={{ marginRight: 16 }}
-          >
-            Configure 'Create job' form
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              dispatch(
-                toggleNewParameter({ action: 'list', title: 'Create a New Process Parameter' }),
-              );
-            }}
-          >
-            Create Parameter
-          </Button>
+          {!isReadOnly && (
+            <>
+              <Button
+                id="create"
+                variant="secondary"
+                onClick={() => {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.CONFIGURE_JOB_PARAMETERS,
+                      props: {
+                        checklistId: data?.id!,
+                      },
+                    }),
+                  );
+                }}
+                style={{ marginRight: 16 }}
+              >
+                Configure 'Create job' form
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  dispatch(
+                    toggleNewParameter({ action: 'list', title: 'Create a New Process Parameter' }),
+                  );
+                }}
+              >
+                Create Parameter
+              </Button>
+            </>
+          )}
         </div>
         <LoadingContainer
           loading={listLoading}
@@ -110,10 +122,11 @@ const ParametersList = () => {
                         <span
                           className="primary"
                           onClick={() => {
+                            const titlePrefix = isReadOnly ? 'View' : 'Edit';
                             dispatch(
                               toggleNewParameter({
                                 action: 'list',
-                                title: `Edit Process ${
+                                title: `${titlePrefix} Process ${
                                   item.type === MandatoryParameter.CHECKLIST
                                     ? 'Subtask'
                                     : item.type in MandatoryParameter

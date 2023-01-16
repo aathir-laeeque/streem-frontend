@@ -5,7 +5,7 @@ import { InputTypes } from '#utils/globalTypes';
 import React, { FC } from 'react';
 import { FormatOptionLabelContext } from 'react-select';
 
-const ShouldBeTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
+const ShouldBeTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
   const selectedOperator = PARAMETER_OPERATORS.filter((o) => parameter.data.operator === o.value);
   return (
     <FormGroup

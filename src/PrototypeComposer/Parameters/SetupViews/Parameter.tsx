@@ -5,7 +5,10 @@ import React, { FC } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import { CommonWrapper } from './styles';
 
-const ParameterParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
+const ParameterParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
+  form,
+  isReadOnly,
+}) => {
   const { register, watch, setValue } = form;
   register('data.operator', { required: true });
   const operator = watch('data.operator');
@@ -21,6 +24,7 @@ const ParameterParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
               label: 'Unit of Measurement',
               placeholder: 'Write Here',
               name: 'data.uom',
+              disabled: isReadOnly,
               ref: register({
                 required: true,
               }),
@@ -37,6 +41,7 @@ const ParameterParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                 : undefined,
               isSearchable: false,
               placeholder: 'Choose an option',
+              isDisabled: isReadOnly,
               onChange: (value: any) => {
                 setValue('data.operator', value.value, {
                   shouldDirty: true,
@@ -59,6 +64,7 @@ const ParameterParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                     label: 'Lower Value',
                     placeholder: 'Write Here',
                     name: 'data.lowerValue',
+                    disabled: isReadOnly,
                     ref: register({
                       required: true,
                     }),
@@ -71,6 +77,7 @@ const ParameterParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                     label: 'Upper Value',
                     placeholder: 'Write Here',
                     name: 'data.upperValue',
+                    disabled: isReadOnly,
                     ref: register({
                       required: true,
                     }),
@@ -85,6 +92,7 @@ const ParameterParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                     label: 'Value',
                     placeholder: 'Write Here',
                     name: 'data.value',
+                    disabled: isReadOnly,
                     ref: register({
                       required: true,
                     }),

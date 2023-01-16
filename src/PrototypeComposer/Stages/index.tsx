@@ -7,7 +7,7 @@ import { addNewStage } from './actions';
 import StageCard from './StageCard';
 import { StageListWrapper } from './styles';
 
-const Stages: FC<{ allowNewAddition: boolean }> = ({ allowNewAddition }) => {
+const Stages: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   const dispatch = useDispatch();
   const { activeStageId, listOrder, listById } = useTypedSelector(
     (state) => state.prototypeComposer.stages,
@@ -26,9 +26,10 @@ const Stages: FC<{ allowNewAddition: boolean }> = ({ allowNewAddition }) => {
           key={`${stageId}-${index}`}
           ref={refMap[index]}
           stage={listById[stageId]}
+          isReadOnly={isReadOnly}
         />
       ))}
-      {allowNewAddition && (
+      {!isReadOnly && (
         <Button variant="secondary" className="add-item" onClick={() => dispatch(addNewStage())}>
           <AddCircleOutline className="icon" fontSize="small" />
           Add New Stage

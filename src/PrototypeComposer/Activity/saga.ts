@@ -3,9 +3,9 @@ import { NotificationType } from '#components/Notification/types';
 import { RootState } from '#store';
 import {
   apiAddNewParameter,
-  apiDeleteParameter,
   apiGetParameters,
   apiSingleParameter,
+  apiUnmapParameter,
 } from '#utils/apiUrls';
 import { FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
@@ -29,12 +29,12 @@ import { ParameterListActions } from './reducer.types';
 
 function* updateParameterSaga({ payload }: ReturnType<typeof updateParameterApi>) {
   try {
-    const { fromList, parameter } = payload;
+    const { parameter } = payload;
     const { data, errors } = yield call(request, 'PATCH', apiSingleParameter(parameter.id), {
       data: { ...parameter },
     });
 
-    if (fromList && data) {
+    if (data) {
       yield put(updateStoreParameter(data, parameter.id));
       yield put(toggleNewParameter());
       yield put(
@@ -82,6 +82,7 @@ function* addNewParameterSaga({ payload }: ReturnType<typeof addNewParameter>) {
               op: FilterOperators.AND,
               fields: [{ field: 'archived', op: FilterOperators.EQ, values: [false] }],
             }),
+            sort: 'id,desc',
           }),
         );
       }
@@ -103,7 +104,7 @@ function* addNewParameterSaga({ payload }: ReturnType<typeof addNewParameter>) {
 
 function* deleteParameterSaga({ payload }: ReturnType<typeof deleteParameter>) {
   try {
-    const { data, errors } = yield call(request, 'PATCH', apiDeleteParameter(payload.parameterId));
+    const { data, errors } = yield call(request, 'PATCH', apiUnmapParameter(payload.parameterId));
 
     if (data) {
       yield put(deleteParameterSuccess(payload));

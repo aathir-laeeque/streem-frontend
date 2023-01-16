@@ -8,7 +8,10 @@ import { UseFormMethods } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { CommonWrapper } from './styles';
 
-const ResourceParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
+const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
+  form,
+  isReadOnly,
+}) => {
   const dispatch = useDispatch();
   const {
     objectTypes: { list, listLoading, pageable },
@@ -70,6 +73,7 @@ const ResourceParameter: FC<{ form: UseFormMethods<any> }> = ({ form }) => {
                 : undefined,
               isSearchable: false,
               placeholder: 'Select Object Type',
+              isDisabled: isReadOnly,
               onChange: (value: any) => {
                 setValue(
                   'data',

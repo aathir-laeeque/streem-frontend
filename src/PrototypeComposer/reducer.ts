@@ -1,16 +1,15 @@
 import { unionBy } from 'lodash';
 import { Reducer } from 'redux';
-
-import { parameterReducer, initialState as ParameterListState } from './Activity/reducer';
+import { initialState as ParameterListState, parameterReducer } from './Activity/reducer';
 import { Checklist } from './checklist.types';
+import {
+  checklistAuditLogsReducer,
+  initialState as auditLogsState,
+} from './ChecklistAuditLogs/reducers';
 import { ComposerAction, ComposerActionType, ComposerState } from './reducer.types';
 import { CollaboratorState } from './reviewer.types';
 import { initialState as StageListInitialState, stageReducer } from './Stages/reducer';
 import { initialState as TaskListInitialState, taskReducer } from './Tasks/reducer';
-import {
-  initialState as auditLogsState,
-  checklistAuditLogsReducer,
-} from './ChecklistAuditLogs/reducers';
 
 const initialState: ComposerState = {
   parameters: ParameterListState,
@@ -107,6 +106,7 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
           ...state.data,
           parameters: action.payload.parameters,
         },
+        parameters: parameterReducer(state.parameters, action),
       };
 
     default:

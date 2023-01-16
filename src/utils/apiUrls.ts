@@ -132,6 +132,9 @@ export const apiAddNewParameter = ({
 export const apiDeleteParameter = (parameterId: Parameter['id']) =>
   `${baseUrl}/parameters/${parameterId}/archive`;
 
+export const apiUnmapParameter = (parameterId: Parameter['id']) =>
+  `${baseUrl}/parameters/${parameterId}/unmap`;
+
 // Reviewer
 export const apiGetReviewersForChecklist = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/reviewers`;
@@ -196,7 +199,7 @@ export const apiUpdateTaskMedia = (taskId: Task['id'], mediaId: MediaDetails['me
   `${baseUrl}/medias/${mediaId}`;
 
 export const apiGetParameters = (checklistId: Checklist['id'], type?: string) =>
-  `${baseUrl}/checklists/${checklistId}/parameters${type ? `?type=${type}` : ''}`;
+  `${baseUrl}/checklists/${checklistId}/parameters${type ? `?types=${type}` : ''}`;
 
 export const apiBatchMapParameters = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/parameters/map`;

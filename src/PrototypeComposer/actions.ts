@@ -1,5 +1,4 @@
 import { actionSpreader } from '#store';
-
 import { Checklist } from './checklist.types';
 import { ComposerAction } from './reducer.types';
 import { ComposerEntity } from './types';
@@ -38,5 +37,9 @@ export const validatePrototype = (id: Checklist['id']) =>
 
 // BLOCK ENDS
 
-export const processParametersMapSuccess = (parameters: any[]) =>
-  actionSpreader(ComposerAction.PROCESS_PARAMETER_MAP_SUCCESS, { parameters });
+export const processParametersMapSuccess = (
+  parameters: any[],
+  payload: {
+    mappedParameters: Record<string, number>;
+  },
+) => actionSpreader(ComposerAction.PROCESS_PARAMETER_MAP_SUCCESS, { parameters, payload });
