@@ -145,7 +145,11 @@ export const CommonJobPdfDetails = ({
       return acc;
     }, []);
 
-    return valuesArray.join(', ');
+    const contentString = !!parameter.response.reason
+      ? `${valuesArray.join(', ')} [ Reason: ${parameter.response.reason} ]`
+      : valuesArray.join(', ');
+
+    return contentString;
   };
 
   return (
