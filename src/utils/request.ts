@@ -21,16 +21,18 @@ export const request = async (
 ) => {
   if ([apiLogin(), apiRefreshToken(), apiCheckTokenExpiry(), apiReLogin()].includes(url))
     removeAuthHeader();
+  const { headers, formData, params, data, ...rest } = options || {};
 
   return axiosInstance({
     method,
     url,
     headers: {
-      ...options?.headers,
-      ...(options?.formData && { 'Content-Type': 'multipart/form-data' }),
+      ...headers,
+      ...(formData && { 'Content-Type': 'multipart/form-data' }),
     },
-    params: options?.params,
-    data: options?.data || options?.formData,
+    params: params,
+    data: data || formData,
+    ...rest,
   })
     .then(function (response) {
       return response;

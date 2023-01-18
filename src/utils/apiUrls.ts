@@ -315,3 +315,5 @@ export const apiProcessJobLogView = (id: Checklist['id']) =>
   `${baseUrl}/job-log-views/checklists/${id}`;
 
 export const apiJobLogView = (id: string) => `${baseUrl}/job-log-views/${id}`;
+
+export const apiGetJobLogsExcel = () => `${baseUrl}/job-logs/download`;

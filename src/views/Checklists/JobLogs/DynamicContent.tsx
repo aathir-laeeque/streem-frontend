@@ -25,6 +25,7 @@ import { fetchObjectTypes } from '#views/Ontology/actions';
 import { Object } from '#views/Ontology/types';
 import { ExpandMore } from '@material-ui/icons';
 import ClearIcon from '@material-ui/icons/Clear';
+import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import TuneIcon from '@material-ui/icons/Tune';
 import { isEqual } from 'lodash';
@@ -33,7 +34,9 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { fetchProcessLogs, saveCustomView } from '../ListView/actions';
 import { CustomView } from '../ListView/types';
+import { fetchJobLogsExcel } from './actions';
 import FiltersDrawer from './Overlays/FiltersDrawer';
+
 const JobLogsTabWrapper = styled.div`
   display: flex;
   height: 100%;
@@ -59,6 +62,14 @@ const JobLogsTabWrapper = styled.div`
         :last-of-type {
           margin-right: 0;
         }
+      }
+      .button-download {
+        color: #005dcc;
+        display: flex;
+        align-items: center;
+        margin-left: 16px;
+        height: 24px;
+        width: 24px;
       }
     }
   }
@@ -433,6 +444,30 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                   <TuneIcon />
                   Filters <span>{`(${viewDetails?.filters.length || 0})`}</span>
                 </Button>
+                <NestedSelect
+                  id="download-logs"
+                  label={() => <GetAppOutlinedIcon className="button-download" />}
+                  items={{
+                    'download-excel': {
+                      label: 'Download as Excel',
+                    },
+                  }}
+                  onChildChange={(option: any) => {
+                    dispatch(
+                      fetchJobLogsExcel({
+                        checklistId: checklistId,
+                        jobLogViewId: id,
+                        filters: {
+                          op: FilterOperators.AND,
+                          fields: [
+                            ...filterFields,
+                            ...filtersToQueryParams(viewDetails?.filters || []),
+                          ],
+                        },
+                      }),
+                    );
+                  }}
+                />
               </div>
               {isChanged && (
                 <div id="create" style={{ display: 'flex' }}>
