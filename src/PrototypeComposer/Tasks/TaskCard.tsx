@@ -1,4 +1,4 @@
-import { ImageUploadButton, NestedSelect, Textarea } from '#components';
+import { ImageGallery, ImageUploadButton, NestedSelect, Textarea } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
@@ -28,8 +28,6 @@ import {
   AddCircleOutline,
   ArrowDropDown,
   ArrowDropUp,
-  ArrowLeft,
-  ArrowRight,
   Autorenew,
   DeleteOutlined,
   PanTool,
@@ -371,38 +369,22 @@ const TaskCard: FC<
           </div>
 
           {hasMedias && (
-            <div className="media-list">
-              <ArrowLeft className="icon" />
-
-              <div className="media-list-items">
-                {medias.map((media, index) => (
-                  <div
-                    className="media-list-item"
-                    key={index}
-                    onClick={() => {
-                      dispatch(
-                        openOverlayAction({
-                          type: OverlayNames.TASK_MEDIA,
-                          props: {
-                            taskId,
-                            mediaDetails: media,
-                            disableNameInput: false,
-                            disableDescInput: false,
-                          },
-                        }),
-                      );
-                    }}
-                    style={{
-                      background: `url(${media.link}) center/cover no-repeat`,
-                    }}
-                  >
-                    <div className="media-list-item-name">{media.name}</div>
-                  </div>
-                ))}
-              </div>
-
-              <ArrowRight className="icon" />
-            </div>
+            <ImageGallery
+              medias={medias}
+              onClickHandler={(media) => {
+                dispatch(
+                  openOverlayAction({
+                    type: OverlayNames.TASK_MEDIA,
+                    props: {
+                      taskId,
+                      mediaDetails: media,
+                      disableNameInput: false,
+                      disableDescInput: false,
+                    },
+                  }),
+                );
+              }}
+            />
           )}
 
           <DndContext

@@ -32,6 +32,7 @@ const Wrapper = styled.div.attrs({
   grid-area: task-card;
   height: max-content;
   position: relative;
+  overflow-x: hidden;
 
   :hover {
     box-shadow: 0 8px 8px 0 rgba(153, 153, 153, 0.16);

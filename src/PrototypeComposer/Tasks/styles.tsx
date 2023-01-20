@@ -171,52 +171,6 @@ const TaskCardWrapper = styled.div.attrs({
         }
       }
 
-      .media-list {
-        align-items: center;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        border-bottom: 1px solid #dadada;
-        max-height: 186px;
-
-        .icon {
-          color: #161616;
-          font-size: 28px;
-        }
-
-        &-items {
-          display: flex;
-          flex: 1;
-          overflow-x: auto;
-          padding-block: 16px;
-        }
-
-        &-item {
-          border: 1px solid #eeeeee;
-          border-radius: 5px;
-          box-sizing: border-box;
-          cursor: pointer;
-          min-height: 150px;
-          position: relative;
-          margin-right: 16px;
-          min-width: 250px;
-
-          &-name {
-            color: #ffffff;
-            font-size: 12px;
-            left: 8px;
-            position: absolute;
-            top: 8px;
-            padding: 2px 6px;
-            background-color: rgba(0, 0, 0, 0.3);
-          }
-
-          :last-child {
-            margin-right: 0;
-          }
-        }
-      }
-
       .parameter-list {
         display: flex;
         flex-direction: column;
@@ -275,59 +229,6 @@ const TaskMediasWrapper = styled.div`
         border-radius: 5px;
         height: 100%;
         width: 100%;
-      }
-    }
-
-    .media-list {
-      align-items: center;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      margin-top: 16px;
-
-      .icon {
-        background-color: #f4f4f4;
-        border-radius: 50%;
-
-        :first-of-type {
-          margin-right: 8px;
-        }
-
-        :last-of-type {
-          margin-left: 8px;
-        }
-      }
-
-      &-item {
-        border: 1px solid #eeeeee;
-        border-radius: 5px;
-        box-sizing: border-box;
-        cursor: pointer;
-        height: 100px;
-        position: relative;
-        width: 26%;
-
-        &-img {
-          border-radius: 5px;
-          height: 100%;
-          width: 100%;
-        }
-
-        &-name {
-          color: #ffffff;
-          font-size: 12px;
-          left: 8px;
-          position: absolute;
-          top: 8px;
-        }
-
-        :nth-child(3n) {
-          margin-right: 0;
-        }
-
-        &.active {
-          border-color: #1d84ff;
-        }
       }
     }
 

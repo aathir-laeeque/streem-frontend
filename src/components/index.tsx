@@ -35,3 +35,4 @@ export * from './shared/EmojiComponent';
 export * from './shared/QRScanner';
 export * from './shared/QRGenerator';
 export * from './shared/StyledMenu';
+export * from './shared/ImageGallery';

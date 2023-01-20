@@ -1,12 +1,11 @@
-import { ImageUploadButton } from '#components';
+import { ImageGallery, ImageUploadButton } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
-import { Media } from '#PrototypeComposer/checklist.types';
 import { FileUploadData } from '#utils/globalTypes';
 import { getVideoDevices } from '#utils/inputUtils';
 import { LinearProgress } from '@material-ui/core';
-import { ArrowLeft, ArrowRight, PhotoCamera } from '@material-ui/icons';
+import { PhotoCamera } from '@material-ui/icons';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -67,67 +66,12 @@ const MediaViewWrapper = styled.div`
       }
     }
   }
-
-  .media-list {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin-top: 16px;
-
-    .icon {
-      background-color: #f4f4f4;
-      border-radius: 50%;
-
-      :first-of-type {
-        margin-right: 8px;
-      }
-
-      :last-of-type {
-        margin-left: 8px;
-      }
-    }
-
-    &-item {
-      border: 1px solid #eeeeee;
-      border-radius: 5px;
-      box-sizing: border-box;
-      cursor: pointer;
-      height: 100px;
-      position: relative;
-      width: 26%;
-
-      &-img {
-        border-radius: 5px;
-        height: 100%;
-        width: 100%;
-      }
-
-      &-name {
-        color: #ffffff;
-        font-size: 12px;
-        left: 8px;
-        position: absolute;
-        top: 8px;
-      }
-
-      :nth-child(3n) {
-        margin-right: 0;
-      }
-
-      &.active {
-        border-color: #1d84ff;
-      }
-    }
-  }
 `;
 
 const MediaTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
   const [imagesData, setImagesData] = useState<any>([]);
-  const [sliderIndex, setSliderIndex] = useState({ start: 0, end: 3 });
-  const [activeMedia, setActiveMedia] = useState<Media | null>(null);
   const dispatch = useDispatch();
   const { setValue } = form;
 
@@ -215,46 +159,20 @@ const MediaTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
         )}
       </div>
       {imagesData.length !== 0 && (
-        <div className="media-list">
-          <ArrowLeft
-            className="icon"
-            onClick={() => {
-              if (sliderIndex.start > 0) {
-                setSliderIndex({
-                  start: sliderIndex.start - 1,
-                  end: sliderIndex.end - 1,
-                });
-              }
-            }}
-          />
-
-          {imagesData.slice(sliderIndex.start, sliderIndex.end).map((media, index) => (
-            <div
-              className={`media-list-item ${
-                media.filename === activeMedia?.filename ? 'active' : ''
-              }`}
-              key={index}
-              onClick={() => setActiveMedia(media)}
-              style={{
-                background: `url(${media.link}) center/cover no-repeat`,
-              }}
-            >
-              <div className="media-list-item-name">{media.name}</div>
-            </div>
-          ))}
-
-          <ArrowRight
-            className="icon"
-            onClick={() => {
-              if (sliderIndex.end < imagesData.length) {
-                setSliderIndex({
-                  start: sliderIndex.start + 1,
-                  end: sliderIndex.end + 1,
-                });
-              }
-            }}
-          />
-        </div>
+        <ImageGallery
+          medias={imagesData}
+          onClickHandler={(media) => {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.TASK_MEDIA,
+                props: {
+                  mediaDetails: media,
+                  disableDescInput: true,
+                },
+              }),
+            );
+          }}
+        />
       )}
     </MediaViewWrapper>
   );
