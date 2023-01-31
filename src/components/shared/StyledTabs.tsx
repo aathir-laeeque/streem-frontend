@@ -15,12 +15,15 @@ export const StyledTabList = styled(Tabs)`
       text-transform: unset;
     }
 
-    .MuiTab-wrapper {
-      align-items: flex-start;
-      font-size: 14px;
-      line-height: 1.14;
-      letter-spacing: 0.16px;
-      color: '#161616';
+    .MuiTab-root {
+      min-width: unset;
+      .MuiTab-wrapper {
+        align-items: flex-start;
+        font-size: 14px;
+        line-height: 1.14;
+        letter-spacing: 0.16px;
+        color: '#161616';
+      }
     }
     .Mui-selected {
       .MuiTab-wrapper {
