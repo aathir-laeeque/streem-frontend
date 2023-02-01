@@ -111,7 +111,6 @@ const JobHeader: FC<
                 className="user-thumb"
                 aria-haspopup="true"
                 onMouseEnter={(e) => handleAssigneeClick(e, assignees.slice(4))}
-                onMouseLeave={() => dispatch(closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL))}
               >
                 +{assignees.length - 4}
               </div>

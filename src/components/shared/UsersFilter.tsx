@@ -388,17 +388,14 @@ const UsersFilter: FC<UsersFilterProps> = ({ options, updateFilter, label }) => 
                   {getInitials(`${user.firstName} ${user.lastName}`)}
                 </div>
               ))}
-              {appliedUsers.length > 8 && (
+              {appliedUsers.length > 4 && (
                 <div
                   key={`assignee_length`}
                   className="user-thumb"
                   aria-haspopup="true"
                   onMouseEnter={(e) => handleAssigneeClick(e, appliedUsers.slice(4))}
-                  onMouseLeave={() =>
-                    dispatch(closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL))
-                  }
                 >
-                  +{appliedUsers.length - 8}
+                  +{appliedUsers.length - 4}
                 </div>
               )}
             </div>

@@ -130,9 +130,6 @@ export const AvatarExtras: FC<AvatarExtrasProps> = ({
           }),
         );
       }}
-      onMouseLeave={() => {
-        dispatch(closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL));
-      }}
     >
       +{users.length}
     </Wrapper>

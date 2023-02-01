@@ -5,12 +5,9 @@ import { Popover } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
-  popover: {
-    pointerEvents: 'none',
-  },
   paper: {
     marginTop: '5px',
-    overflow: 'visible',
+    overflow: 'auto',
     padding: '8px',
 
     '&::before': {
@@ -66,10 +63,12 @@ export const AssignedUserDetailsPopover: FC<
         vertical: 'top',
         horizontal: 'center',
       }}
-      className={classes.popover}
       classes={{
         paper: classes.paper,
       }}
+      {...(users.length === 1 && {
+        style: { pointerEvents: 'none' },
+      })}
     >
       {(users as Users).map((user) => (
         <div className={classes.wrapper} key={`assignedUserDetailsPopOver_${user.id}`}>
