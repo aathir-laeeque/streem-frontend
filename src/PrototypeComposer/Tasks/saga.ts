@@ -80,15 +80,18 @@ function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
 
 function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
   try {
-    const activeStageId = yield select(
+    const activeStageId: RootState['prototypeComposer']['stages']['activeStageId'] = yield select(
       (state: RootState) => state.prototypeComposer.stages.activeStageId,
     );
 
     const { data, errors } = yield call(request, 'PATCH', apiDeleteTask(payload.taskId));
 
-    if (data) {
-      const { listById, tasksOrderInStage }: RootState['prototypeComposer']['tasks'] = yield select(
-        (state: RootState) => state.prototypeComposer.tasks,
+    if (data && activeStageId) {
+      const {
+        tasks: { listById, tasksOrderInStage },
+        data: processData,
+      }: RootState['prototypeComposer'] = yield select(
+        (state: RootState) => state.prototypeComposer,
       );
 
       const deletedTaskIndex = tasksOrderInStage[activeStageId].indexOf(payload.taskId);
@@ -104,7 +107,7 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
           request,
           'PATCH',
           apiReorderTasks(),
-          { data: { tasksOrder: reOrderMap } },
+          { data: { tasksOrder: reOrderMap, checklistId: processData?.id } },
         );
 
         if (reorderData) {
@@ -125,10 +128,11 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
 }
 
 function* reOrderTaskSaga({ payload }: ReturnType<typeof reOrderTask>) {
-  const { to: toIndex, id: fromTaskId, from: fromIndex, activeStageId } = payload;
-  const { tasksOrderInStage }: RootState['prototypeComposer']['tasks'] = yield select(
-    (state: RootState) => state.prototypeComposer.tasks,
-  );
+  const { to: toIndex, id: fromTaskId, from: fromIndex } = payload;
+  const {
+    tasks: { tasksOrderInStage },
+    data: processData,
+  }: RootState['prototypeComposer'] = yield select((state: RootState) => state.prototypeComposer);
 
   const toTaskId = tasksOrderInStage[payload.activeStageId][payload.to];
 
@@ -140,6 +144,7 @@ function* reOrderTaskSaga({ payload }: ReturnType<typeof reOrderTask>) {
       {
         data: {
           tasksOrder: { [toTaskId]: fromIndex, [fromTaskId]: toIndex },
+          checklistId: processData?.id,
         },
       },
     );
@@ -264,7 +269,7 @@ function* updateTaskMediaSaga({ payload }: ReturnType<typeof updateTaskMedia>) {
       data: { ...mediaDetails },
     });
 
-    //TODO carve out media related logi separately and remove dependency from task media
+    //TODO carve out media related logic separately and remove dependency from task media
     if (data && taskId) {
       yield put(closeOverlayAction(OverlayNames.TASK_MEDIA));
       yield put(updateTaskMediaSuccess({ media: data, taskId }));
