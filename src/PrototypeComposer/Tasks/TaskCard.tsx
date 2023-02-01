@@ -1,4 +1,6 @@
 import { ImageGallery, ImageUploadButton, NestedSelect, Textarea } from '#components';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
@@ -159,6 +161,13 @@ const TaskCard: FC<
                 parameter: response.data,
                 stageId: activeStageId,
                 taskId: activeTaskId,
+              }),
+            );
+            dispatch(
+              showNotification({
+                type: NotificationType.SUCCESS,
+                msg: 'Parameter added',
+                detail: response.data.label,
               }),
             );
           }
