@@ -151,6 +151,17 @@ const Wrapper = styled.div.attrs({
       }
     }
   }
+
+  @media (max-width: 768px) {
+    padding: 6vh 24px;
+
+    .card {
+      width: calc(100vw - 48px);
+      .logo {
+        width: 14vw;
+      }
+    }
+  }
 `;
 
 function BaseView<T = Record<string, unknown>>({ pageName }: BaseViewProps) {

@@ -45,6 +45,10 @@ const Wrapper = styled.div.attrs({
         svg {
           width: 7vw;
           height: 5vh;
+
+          @media (max-width: 768px) {
+            width: 14vw;
+          }
         }
       }
     }
