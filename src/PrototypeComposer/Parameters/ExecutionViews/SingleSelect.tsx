@@ -2,7 +2,6 @@ import { FormGroup } from '#components';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { InputTypes } from '#utils/globalTypes';
 import React, { FC } from 'react';
-import { FormatOptionLabelContext } from 'react-select';
 
 const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
   const { setValue } = form;
@@ -75,16 +74,9 @@ const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, f
               label: option.name,
               value: option.id,
             })),
-
-            formatOptionLabel: (
-              option: any,
-              { context }: { context: FormatOptionLabelContext },
-            ) => {
-              if (context === 'menu' || context === 'value') {
-                return option.label;
-              }
-              return <div />;
-            },
+            menuPortalTarget: document.body,
+            menuPosition: 'fixed',
+            menuShouldBlockScroll: true,
             onChange: (value: any) => {
               setValue(
                 `data.${parameter.id}`,

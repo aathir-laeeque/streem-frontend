@@ -94,7 +94,7 @@ export const selectStyles: Props['styles'] = {
     padding: 0,
   }),
 
-  singleValue: (styles, { isDisabled }) => ({
+  singleValue: (styles) => ({
     ...styles,
     color: 'hsl(0, 0%, 20%)',
   }),
@@ -104,6 +104,8 @@ export const selectStyles: Props['styles'] = {
     color: 'rgba(0,0,0,0.87)',
     fontSize: '80%',
   }),
+
+  menuPortal: (styles) => ({ ...styles, zIndex: 9999 }),
 };
 
 const DropdownIndicator = () => <ExpandMore />;

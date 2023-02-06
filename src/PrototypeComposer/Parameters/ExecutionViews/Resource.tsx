@@ -6,7 +6,6 @@ import { request } from '#utils/request';
 import { LinkOutlined } from '@material-ui/icons';
 import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { FormatOptionLabelContext } from 'react-select';
 
 const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
   const [state, setState] = useState<{
@@ -115,6 +114,9 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
                 label: option.displayName,
                 externalId: option.externalId,
               })),
+              menuPortalTarget: document.body,
+              menuPosition: 'fixed',
+              menuShouldBlockScroll: true,
               onMenuScrollToBottom: () => {
                 if (!isLoading && !pagination.current.isLast) {
                   getOptions();
