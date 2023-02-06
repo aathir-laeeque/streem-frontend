@@ -1,11 +1,8 @@
 import { BaseModal } from '#components';
-import React, { FC } from 'react';
-import styled from 'styled-components';
-import { QrReader } from 'react-qr-reader';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { useDispatch } from 'react-redux';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
+import React, { FC } from 'react';
+import { QrReader } from 'react-qr-reader';
+import styled from 'styled-components';
 
 const ViewFinderWrapper = styled.div`
   .label {
@@ -82,9 +79,8 @@ type Props = {
 export const QRScanner: FC<CommonOverlayProps<Props>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: { header, onSuccess },
+  props: { onSuccess },
 }) => {
-  const dispatch = useDispatch();
   return (
     <Wrapper>
       <BaseModal
@@ -99,22 +95,12 @@ export const QRScanner: FC<CommonOverlayProps<Props>> = ({
           scanDelay={500}
           ViewFinder={ViewFinder}
           onResult={(result, error) => {
-            if (!!result) {
+            if (result) {
               onSuccess(result?.getText());
               closeOverlay();
             }
-
-            if (!!error) {
-              if (error.message) {
-                console.log(error.message);
-                dispatch(
-                  showNotification({
-                    type: NotificationType.ERROR,
-                    msg: error.message,
-                  }),
-                );
-                closeOverlay();
-              }
+            if (error && error.message) {
+              console.log(error.message);
             }
           }}
         />
