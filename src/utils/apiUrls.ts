@@ -51,7 +51,7 @@ export const apiGetSelectedJob = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}
 export const apiExecuteParameter = () => `${baseUrl}/parameters/execute`;
 
 export const apiAutoInitialize = (parameterId: string) =>
-  `${baseUrl}/parameters/${parameterId}/execute`;
+  `${baseUrl}/parameters/${parameterId}/auto-initialize`;
 
 export const apiFixParameter = () => `${baseUrl}/parameters/error-correction`;
 
