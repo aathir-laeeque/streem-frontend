@@ -41,7 +41,6 @@ export const ValidationWrapper = styled.div`
     }
 
     textarea {
-      height: auto;
       padding: 10px;
     }
   }

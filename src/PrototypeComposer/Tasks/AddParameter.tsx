@@ -212,18 +212,12 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
 
   const { mandatory, label, type } = watch(['mandatory', 'label', 'type']);
 
-  // console.log('errors', errors);
-  // console.log('getValues', getValues());
-  // console.log('isDirty, isValid', isDirty, isValid);
   const showFiltersSection = isFiltersAllowed(type);
   const showValidationsSection = isValidationsAllowed(type);
 
-  const basicInfoSection = (isActive: boolean) => {
+  const basicInfoSection = () => {
     return (
       <FormGroup
-        {...(!isActive && {
-          style: { display: 'none' },
-        })}
         key="basic-info-section"
         inputs={[
           {
@@ -244,12 +238,11 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     );
   };
 
-  const setupSection = (isActive: boolean) => {
+  const setupSection = () => {
     return (
       <div
         style={{
           height: '100%',
-          display: isActive ? 'block' : 'none',
         }}
         key="setup-section"
       >
@@ -323,17 +316,8 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     }
   };
 
-  const filtersSection = (isActive: boolean) => {
-    return (
-      <div
-        {...(!isActive && {
-          style: { display: 'none' },
-        })}
-        key="filters-section"
-      >
-        {renderFiltersByType()}
-      </div>
-    );
+  const filtersSection = () => {
+    return <div key="filters-section">{renderFiltersByType()}</div>;
   };
 
   const renderFiltersByType = () => {
@@ -345,17 +329,8 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     }
   };
 
-  const validationsSection = (isActive: boolean) => {
-    return (
-      <div
-        {...(!isActive && {
-          style: { display: 'none' },
-        })}
-        key="validations-section"
-      >
-        {renderValidationsByType()}
-      </div>
-    );
+  const validationsSection = () => {
+    return <div key="validations-section">{renderValidationsByType()}</div>;
   };
 
   const renderValidationsByType = () => {
@@ -369,14 +344,9 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     }
   };
 
-  const locationSection = (isActive: boolean) => {
+  const locationSection = () => {
     return (
-      <div
-        {...(!isActive && {
-          style: { display: 'none' },
-        })}
-        key="location-section"
-      >
+      <div key="location-section">
         {currentParameter?.targetEntityType
           ? TargetEntityTypeVisual[currentParameter.targetEntityType]
           : ''}
@@ -656,7 +626,7 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
           </>
         )}
         {sections.map((section) => {
-          return section.renderFn(activeStep === parseInt(section.value));
+          return activeStep === parseInt(section.value) ? section.renderFn() : null;
         })}
       </AddParameterWrapper>
     ),
