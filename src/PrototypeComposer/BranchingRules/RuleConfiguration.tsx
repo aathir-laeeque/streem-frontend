@@ -400,7 +400,7 @@ const RuleCard: FC<any> = ({
               onChange: (value: any[]) => {
                 setValue(
                   `rules.${index}.hide.parameters`,
-                  value.map((v) => v.value),
+                  value.length ? value.map((v) => v.value) : null,
                   {
                     shouldDirty: true,
                     shouldValidate: true,
