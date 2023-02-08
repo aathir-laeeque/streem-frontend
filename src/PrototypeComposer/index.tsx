@@ -1,22 +1,21 @@
-import { StyledTabs } from '#components';
+import { LoadingContainer, StyledTabs } from '#components';
 import {
   Collaborator,
   CollaboratorState,
   CollaboratorType,
 } from '#PrototypeComposer/reviewer.types';
 import { useTypedSelector } from '#store';
-import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchComposerData, resetComposer } from './actions';
+import BranchingRules from './BranchingRules';
 import { ChecklistStates, EnabledStates } from './checklist.types';
 import Header from './Header';
+import ParametersList from './Parameters/ListView';
 import Stages from './Stages';
 import { ComposerWrapper, TasksTabWrapper } from './styles';
 import Tasks from './Tasks';
 import AddParameter from './Tasks/AddParameter';
-import ParametersList from './Parameters/ListView';
-import BranchingRules from './BranchingRules';
 import { ComposerProps } from './types';
 
 export type ProcessInitialState = {

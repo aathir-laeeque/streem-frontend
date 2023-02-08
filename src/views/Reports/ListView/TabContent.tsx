@@ -1,35 +1,11 @@
-import { DataTable, PaginatedFetchData, Pagination, ProgressBar } from '#components';
-import { openLinkInNewTab } from '#utils';
+import { DataTable, LoadingContainer, PaginatedFetchData, Pagination } from '#components';
 import { useTypedSelector } from '#store';
+import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { CircularProgress } from '@material-ui/core';
-import React, { FC, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchReports, fetchReport, fetchReportSuccess } from './action';
-
-export const LoadingContainer = ({
-  loading,
-  component,
-}: {
-  loading: boolean;
-  component?: JSX.Element;
-}) => {
-  return loading ? (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-      }}
-    >
-      <CircularProgress style={{ color: 'rgb(29, 132, 255)' }} />
-    </div>
-  ) : (
-    component || <></>
-  );
-};
+import { fetchReport, fetchReports, fetchReportSuccess } from './action';
 
 const TabContent = () => {
   const dispatch = useDispatch();

@@ -1,4 +1,10 @@
-import { DataTable, PaginatedFetchData, Pagination, TabContentProps } from '#components';
+import {
+  DataTable,
+  LoadingContainer,
+  PaginatedFetchData,
+  Pagination,
+  TabContentProps,
+} from '#components';
 import { DataTableColumn } from '#components/shared/DataTable';
 import { fetchComposerData } from '#PrototypeComposer/actions';
 import { LogType } from '#PrototypeComposer/checklist.types';
@@ -8,7 +14,6 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';

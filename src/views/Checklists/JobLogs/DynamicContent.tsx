@@ -1,6 +1,7 @@
 import {
   Button,
   DataTable,
+  LoadingContainer,
   NestedSelect,
   NestedSelectProps,
   PaginatedFetchData,
@@ -21,7 +22,6 @@ import { request } from '#utils/request';
 import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { fetchObjectTypes } from '#views/Ontology/actions';
-import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import { Object } from '#views/Ontology/types';
 import { ExpandMore } from '@material-ui/icons';
 import ClearIcon from '@material-ui/icons/Clear';

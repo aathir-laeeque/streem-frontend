@@ -1,4 +1,4 @@
-import { DataTable, TabContentProps } from '#components';
+import { DataTable, LoadingContainer, TabContentProps } from '#components';
 import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
 import { formatDateTime } from '#utils/timeUtils';
@@ -9,7 +9,6 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { fetchObjectType, resetOntology } from '../actions';
 import ObjectList from '../Objects/ObjectList';
-import { LoadingContainer } from './ObjectTypeList';
 // TODO change this enum to Object and have positions defined explicity
 export enum FlagPositions {
   SYSTEM,

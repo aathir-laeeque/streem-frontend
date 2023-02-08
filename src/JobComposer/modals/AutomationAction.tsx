@@ -1,9 +1,8 @@
-import { BaseModal } from '#components';
+import { BaseModal, LoadingContainer } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { fetchObjectType, resetOntology, setActiveObject } from '#views/Ontology/actions';
 import ObjectView from '#views/Ontology/Objects/ObjectView';
-import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';

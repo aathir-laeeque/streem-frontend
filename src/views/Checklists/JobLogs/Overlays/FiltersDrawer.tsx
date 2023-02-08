@@ -1,11 +1,10 @@
-import { Button, FormGroup, useDrawer } from '#components';
+import { Button, FormGroup, LoadingContainer, useDrawer } from '#components';
 import { conditionByParameterType } from '#PrototypeComposer/BranchingRules/RuleConfiguration';
 import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { apiGetParameters, baseUrl } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { JobStateEnum } from '#views/Jobs/ListView/types';
-import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import { Constraint } from '#views/Ontology/types';
 import { AddCircleOutline, Close } from '@material-ui/icons';
 import { camelCase, startCase } from 'lodash';

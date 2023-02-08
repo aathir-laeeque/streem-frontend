@@ -3,6 +3,7 @@ import {
   Button,
   DataTable,
   ListActionMenu,
+  LoadingContainer,
   PaginatedFetchData,
   Pagination,
   TabContentProps,
@@ -18,7 +19,7 @@ import { InputTypes } from '#utils/globalTypes';
 import { formatDateByInputType } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { MenuItem } from '@material-ui/core';
-import { ArrowDropDown, ArrowLeft, ArrowRight, CropFree } from '@material-ui/icons';
+import { ArrowDropDown, CropFree } from '@material-ui/icons';
 import { navigate, useLocation } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -29,7 +30,6 @@ import {
   setActiveObject,
   unarchiveObject,
 } from '../actions';
-import { LoadingContainer } from '../ObjectTypes/ObjectTypeList';
 import { Choice, Object, ObjectTypeProperty } from '../types';
 
 const ObjectList: FC<TabContentProps> = ({ label }) => {

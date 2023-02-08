@@ -1,4 +1,11 @@
-import { Button, DataTable, PaginatedFetchData, Pagination, TextInput } from '#components';
+import {
+  Button,
+  DataTable,
+  LoadingContainer,
+  PaginatedFetchData,
+  Pagination,
+  TextInput,
+} from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { fetchParameters, toggleNewParameter } from '#PrototypeComposer/Activity/actions';
@@ -9,7 +16,6 @@ import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import { Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';

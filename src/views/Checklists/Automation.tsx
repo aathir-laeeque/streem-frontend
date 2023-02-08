@@ -1,9 +1,14 @@
-import { BodyWrapper, DataTable, PaginatedFetchData, Pagination } from '#components';
+import {
+  BodyWrapper,
+  DataTable,
+  LoadingContainer,
+  PaginatedFetchData,
+  Pagination,
+} from '#components';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { TabContentWrapper, ViewWrapper } from '#views/Jobs/ListView/styles';
-import { LoadingContainer } from '#views/Ontology/ObjectTypes/ObjectTypeList';
 import { RouteComponentProps } from '@reach/router';
 import cronstrue from 'cronstrue';
 import React, { FC, useEffect, useState } from 'react';

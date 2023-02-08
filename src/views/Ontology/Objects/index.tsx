@@ -1,4 +1,4 @@
-import { DataTable, TabContentProps } from '#components';
+import { DataTable, LoadingContainer, TabContentProps } from '#components';
 import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
 import { apiGetJobLogs } from '#utils/apiUrls';
@@ -10,7 +10,6 @@ import { navigate, RouteComponentProps } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchObject, fetchObjectType, resetOntology } from '../actions';
-import { LoadingContainer } from '../ObjectTypes/ObjectTypeList';
 import ObjectView from './ObjectView';
 
 type RelationLogsState = {
