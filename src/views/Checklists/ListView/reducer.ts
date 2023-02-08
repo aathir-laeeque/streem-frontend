@@ -1,25 +1,15 @@
+import { DEFAULT_PAGINATION } from '#utils/constants';
 import { Pageable } from '#utils/globalTypes';
 import { keyBy } from 'lodash';
 import { Checklist } from '../types';
 import { ListViewAction, ListViewActionType, ListViewState } from './types';
-
-const initialPageable = {
-  page: 0,
-  pageSize: 10,
-  numberOfElements: 0,
-  totalPages: 0,
-  totalElements: 0,
-  first: true,
-  last: true,
-  empty: true,
-};
 
 const initialState: ListViewState = {
   checklists: [],
   currentPageData: [],
   automations: [],
   loading: false,
-  pageable: initialPageable,
+  pageable: DEFAULT_PAGINATION,
   jobLogs: [],
   customViews: {
     loading: false,

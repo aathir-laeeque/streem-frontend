@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { DEFAULT_PAGE_SIZE, DEFAULT_PAGINATION } from '#utils/constants';
 import { customOnChange } from '#utils/formEvents';
 import { Pageable } from '#utils/globalTypes';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -161,16 +161,7 @@ const initialState: State = {
   openSelect: false,
 };
 
-const initialPagination = {
-  page: -1,
-  pageSize: 10,
-  numberOfElements: 0,
-  totalPages: 0,
-  totalElements: 0,
-  first: true,
-  last: true,
-  empty: true,
-};
+const initialPagination = DEFAULT_PAGINATION;
 
 const PopOut: FC<PopOutProps> = ({
   handleMenuScrollToBottom,
@@ -223,10 +214,10 @@ const MenuTree: FC<MenuTreeProps> = ({
   const { parentPath, options, isLoading, selectOptions, openPopOut } = state;
   const menuItemClasses = useMenuItemStyles();
 
-  const getItems = async (fn: ItemType['fetchItems']) => {
+  const getItems = async (fn: ItemType['fetchItems'], pageNumber?: number) => {
     if (fn) {
       setState((prev) => ({ ...prev, isLoading: true }));
-      const { options: awaitedOptions, pageable } = await fn(pagination.current.page);
+      const { options: awaitedOptions, pageable } = await fn(pageNumber);
       if (pageable) {
         pagination.current = pageable;
       }
@@ -263,7 +254,7 @@ const MenuTree: FC<MenuTreeProps> = ({
     if (parentPath.length) {
       updatedParent = { ...get(items, parentPath, {}) };
       if (updatedParent.fetchItems) {
-        getItems(updatedParent.fetchItems);
+        getItems(updatedParent.fetchItems, pagination.current.page);
         updatedOpenPopOut = true;
       }
       nodes = {
@@ -289,7 +280,7 @@ const MenuTree: FC<MenuTreeProps> = ({
 
   const handleMenuScrollToBottom = () => {
     if (!isLoading && !pagination.current.last && parent.current?.fetchItems) {
-      getItems(parent.current.fetchItems);
+      getItems(parent.current.fetchItems, pagination.current.page + 1);
     }
   };
 

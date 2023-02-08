@@ -1,17 +1,9 @@
 import { User, UsersAction, UsersActionType, UsersListType, UsersState } from '#store/users/types';
+import { DEFAULT_PAGINATION } from '#utils/constants';
 
 const initialTabState = {
   list: [],
-  pageable: {
-    page: 0,
-    pageSize: 10,
-    numberOfElements: 0,
-    totalPages: 0,
-    totalElements: 0,
-    first: true,
-    last: true,
-    empty: true,
-  },
+  pageable: DEFAULT_PAGINATION,
 };
 
 const initialState: UsersState = {

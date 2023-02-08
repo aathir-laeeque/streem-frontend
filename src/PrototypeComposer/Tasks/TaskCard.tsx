@@ -444,7 +444,7 @@ const TaskCard: FC<
                               apiGetParameters(data!.id),
                               {
                                 params: {
-                                  page: pageNumber + 1,
+                                  page: pageNumber,
                                   size: DEFAULT_PAGE_SIZE,
                                   filters: JSON.stringify({
                                     op: FilterOperators.AND,

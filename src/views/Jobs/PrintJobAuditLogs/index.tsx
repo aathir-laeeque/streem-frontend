@@ -4,7 +4,7 @@ import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { apiPrintJobDetails } from '#utils/apiUrls';
-import { ALL_FACILITY_ID } from '#utils/constants';
+import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER } from '#utils/constants';
 import { request } from '#utils/request';
 import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
 import { groupBy } from 'lodash';
@@ -42,7 +42,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
     }
   }, []);
 
-  const fetchLogs = (page = 0, size = 250) => {
+  const fetchLogs = (page = DEFAULT_PAGE_NUMBER, size = 250) => {
     dispatch(
       fetchJobAuditLogs({
         jobId,

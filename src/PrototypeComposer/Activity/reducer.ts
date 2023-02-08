@@ -1,3 +1,4 @@
+import { DEFAULT_PAGINATION } from '#utils/constants';
 import { cloneDeep, omit, set } from 'lodash';
 import { Reducer } from 'redux';
 import { Checklist, TargetEntityType } from '../checklist.types';
@@ -12,16 +13,7 @@ export const initialState: ParameterListState = {
   parameters: {
     list: [],
     listLoading: true,
-    pageable: {
-      page: 0,
-      pageSize: 10,
-      numberOfElements: 0,
-      totalPages: 0,
-      totalElements: 0,
-      first: true,
-      last: true,
-      empty: true,
-    },
+    pageable: DEFAULT_PAGINATION,
   },
 };
 

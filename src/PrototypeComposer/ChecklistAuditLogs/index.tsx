@@ -1,8 +1,9 @@
-import { Checkbox, FilterProp, Link as GoBack, InfiniteListView } from '#components';
+import { Checkbox, FilterProp, InfiniteListView, Link as GoBack } from '#components';
 import { useTypedSelector } from '#store';
 import { clearAuditLogFilters, setAuditLogFilters } from '#store/audit-log-filters/action';
 import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
+import { DEFAULT_PAGE_NUMBER } from '#utils/constants';
 import { FilterOperators } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
@@ -26,7 +27,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchChecklistAuditLogs } from './actions';
 import { Composer, UserFilterWrapper } from './styles';
-import { ChecklistAuditLogsType, ChecklistAuditLogsState } from './types';
+import { ChecklistAuditLogsState, ChecklistAuditLogsType } from './types';
 
 type initialState = {
   dateRange: DateRange<Moment>;
@@ -285,7 +286,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
     dispatch(fetchUsers({ page, size, filters }, UsersListType.ALL));
   };
 
-  const fetchLogs = (page = 0, size = 250) => {
+  const fetchLogs = (page = DEFAULT_PAGE_NUMBER, size = 250) => {
     size = 250;
     const { dateRange, startTime, endTime } = state;
     let greaterDate = moment().startOf('day').subtract(7, 'days');

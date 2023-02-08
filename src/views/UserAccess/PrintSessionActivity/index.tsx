@@ -1,7 +1,7 @@
 import logo from '#assets/images/logo.png';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
-import { ALL_FACILITY_ID } from '#utils/constants';
+import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER } from '#utils/constants';
 import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
 import { groupBy } from 'lodash';
 import moment from 'moment';
@@ -30,7 +30,7 @@ const MyPrintSessionActivity: FC = () => {
     fetchLogs();
   }, []);
 
-  const fetchLogs = (page = 0, size = 250) => {
+  const fetchLogs = (page = DEFAULT_PAGE_NUMBER, size = 250) => {
     dispatch(fetchSessionActivities({ size, filters, sort: 'triggeredAt,desc', page }));
   };
 

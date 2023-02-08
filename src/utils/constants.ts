@@ -50,6 +50,17 @@ export const DEFAULT_PAGE_NUMBER = 0;
 
 export const DEFAULT_PAGE_SIZE = 10;
 
+export const DEFAULT_PAGINATION = {
+  page: 0,
+  pageSize: 10,
+  numberOfElements: 0,
+  totalPages: 0,
+  totalElements: 0,
+  first: true,
+  last: true,
+  empty: true,
+};
+
 export enum EmojisUniCodes {
   CHECK = '2705',
   EYE = 'DC41',

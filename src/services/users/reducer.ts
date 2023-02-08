@@ -1,3 +1,4 @@
+import { DEFAULT_PAGINATION } from '#utils/constants';
 import { Reducer } from 'redux';
 
 import {
@@ -11,16 +12,7 @@ import {
 } from './types';
 
 const initialUserGroup: UserGroup = {
-  pageable: {
-    page: 0,
-    pageSize: 10,
-    numberOfElements: 0,
-    totalPages: 0,
-    totalElements: 0,
-    first: true,
-    last: true,
-    empty: true,
-  },
+  pageable: DEFAULT_PAGINATION,
   users: [],
   usersById: {},
 };

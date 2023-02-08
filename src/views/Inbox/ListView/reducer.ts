@@ -1,3 +1,4 @@
+import { DEFAULT_PAGINATION } from '#utils/constants';
 import { Pageable } from '#utils/globalTypes';
 import { Job } from '#views/Jobs/ListView/types';
 
@@ -10,16 +11,7 @@ const initialState: ListViewState = {
   jobs: {
     myjobs: {
       list: [],
-      pageable: {
-        page: 0,
-        pageSize: 10,
-        numberOfElements: 0,
-        totalPages: 0,
-        totalElements: 0,
-        first: true,
-        last: true,
-        empty: true,
-      },
+      pageable: DEFAULT_PAGINATION,
     },
   },
 };

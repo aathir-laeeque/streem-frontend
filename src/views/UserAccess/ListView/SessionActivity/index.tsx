@@ -4,6 +4,7 @@ import { clearAuditLogFilters, setAuditLogFilters } from '#store/audit-log-filte
 import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
 import { openLinkInNewTab } from '#utils';
+import { DEFAULT_PAGE_NUMBER } from '#utils/constants';
 import { FilterOperators } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
@@ -288,7 +289,7 @@ const SessionActivity: FC<TabViewProps> = () => {
     dispatch(fetchUsers({ page, size, filters }, UsersListType.ALL));
   };
 
-  const fetchLogs = (page = 0, size = 250) => {
+  const fetchLogs = (page = DEFAULT_PAGE_NUMBER, size = 250) => {
     const { dateRange, startTime, endTime } = state;
     let greaterDate = moment().startOf('day').subtract(7, 'days');
     let lowerDate = moment().endOf('day');

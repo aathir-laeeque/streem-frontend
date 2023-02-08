@@ -6,6 +6,7 @@ import { processParametersMapSuccess } from '#PrototypeComposer/actions';
 import { MandatoryParameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { apiBatchMapParameters, apiGetParameters } from '#utils/apiUrls';
+import { DEFAULT_PAGINATION } from '#utils/constants';
 import { FilterField, FilterOperators, Pageable, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import {
@@ -151,16 +152,7 @@ const ConfigureJobParameters: FC<CommonOverlayProps<Props>> = ({
   const [items, setItems] = useState<any[]>(orderBy(parameters, ['orderTree'], ['asc']));
   const [allItems, setAllItems] = useState<Record<string, any>>({});
   const [isLoading, setLoading] = useState(false);
-  const [pagination, setPagination] = useState<Pageable>({
-    page: -1,
-    pageSize: 10,
-    numberOfElements: 0,
-    totalPages: 0,
-    totalElements: 0,
-    first: true,
-    last: true,
-    empty: true,
-  });
+  const [pagination, setPagination] = useState<Pageable>(DEFAULT_PAGINATION);
 
   const [filterFields, setFilterFields] = useState<FilterField[]>([
     { field: 'targetEntityType', op: FilterOperators.EQ, values: [TargetEntityType.UNMAPPED] },
