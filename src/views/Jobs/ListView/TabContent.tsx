@@ -282,7 +282,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
         fetchParameters(option.id, {
           page,
           size,
-          filters: JSON.stringify({
+          filters: {
             op: FilterOperators.AND,
             fields: [
               {
@@ -292,7 +292,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
               },
               { field: 'archived', op: FilterOperators.EQ, values: [false] },
             ],
-          }),
+          },
           sort: 'id,desc',
         }),
       );

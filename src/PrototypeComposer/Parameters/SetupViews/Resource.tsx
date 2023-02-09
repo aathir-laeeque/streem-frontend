@@ -1,5 +1,5 @@
 import { Button, FormGroup } from '#components';
-import { ParameterType } from '#PrototypeComposer/checklist.types';
+import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { apiGetObjectTypes, apiGetParameters } from '#utils/apiUrls';
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
@@ -61,9 +61,9 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
   const fetchResourceParameters = async () => {
     if (checklistId) {
       setLoading(true);
-      const resources = await request('GET', apiGetParameters(checklistId, 'RESOURCE'), {
+      const resources = await request('GET', apiGetParameters(checklistId), {
         params: {
-          filters: JSON.stringify({
+          filters: {
             op: FilterOperators.AND,
             fields: [
               {
@@ -71,8 +71,13 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
                 op: FilterOperators.EQ,
                 values: [false],
               },
+              {
+                field: 'type',
+                op: FilterOperators.EQ,
+                values: [MandatoryParameter.RESOURCE],
+              },
             ],
-          }),
+          },
         },
       });
       setResourceParameters(resources.data || []);

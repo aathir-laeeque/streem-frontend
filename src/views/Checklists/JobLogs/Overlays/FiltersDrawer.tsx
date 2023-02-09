@@ -2,7 +2,7 @@ import { Button, FormGroup, LoadingContainer, useDrawer } from '#components';
 import { conditionByParameterType } from '#PrototypeComposer/BranchingRules/RuleConfiguration';
 import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { apiGetParameters, baseUrl } from '#utils/apiUrls';
-import { InputTypes, ResponseObj } from '#utils/globalTypes';
+import { FilterOperators, InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { JobStateEnum } from '#views/Jobs/ListView/types';
 import { Constraint } from '#views/Ontology/types';
@@ -430,13 +430,21 @@ const FiltersDrawer: FC<any> = ({
   const fetchParameter = async () => {
     if (checklistId) {
       setState((prev) => ({ ...prev, loading: true }));
-      const parametersForCalc = await request(
-        'GET',
-        apiGetParameters(
-          checklistId,
-          [MandatoryParameter.RESOURCE, MandatoryParameter.SINGLE_SELECT].toString(),
-        ),
-      );
+      const parametersForCalc = await request('GET', apiGetParameters(checklistId), {
+        params: {
+          filters: {
+            op: FilterOperators.AND,
+            fields: [
+              { field: 'archived', op: FilterOperators.EQ, values: [false] },
+              {
+                field: 'type',
+                op: FilterOperators.ANY,
+                values: [MandatoryParameter.RESOURCE, MandatoryParameter.SINGLE_SELECT],
+              },
+            ],
+          },
+        },
+      });
       setState((prev) => ({ ...prev, parameterList: parametersForCalc.data, loading: false }));
     }
   };

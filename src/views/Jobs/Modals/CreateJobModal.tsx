@@ -165,7 +165,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
         fetchParameters(option.id, {
           page,
           size,
-          filters: JSON.stringify({
+          filters: {
             op: FilterOperators.AND,
             fields: [
               {
@@ -175,7 +175,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               },
               { field: 'archived', op: FilterOperators.EQ, values: [false] },
             ],
-          }),
+          },
           sort: 'orderTree,asc',
         }),
       );

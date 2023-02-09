@@ -223,10 +223,10 @@ const ConfigureJobParameters: FC<CommonOverlayProps<Props>> = ({
             params: {
               page: typeof pageNumber === 'number' ? pageNumber : pagination.page + 1,
               size: pagination.pageSize,
-              filters: JSON.stringify({
+              filters: {
                 op: FilterOperators.AND,
                 fields: filterFields,
-              }),
+              },
             },
           },
         );

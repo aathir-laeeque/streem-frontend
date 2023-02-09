@@ -70,7 +70,7 @@ export const setValidationError = (error: Error) =>
 export const toggleNewParameter = (payload?: ParameterListState['addParameter']) =>
   actionSpreader(ParameterListActions.TOGGLE_NEW_PARAMETER, payload);
 
-export const fetchParameters = (checklistId: string, params?: Record<string, string | number>) =>
+export const fetchParameters = (checklistId: string, params?: Record<string, any>) =>
   actionSpreader(ParameterListActions.FETCH_PARAMETERS, { checklistId, params });
 
 export const fetchParametersSuccess = ({ data, pageable }: fetchListSuccessType<any>) =>

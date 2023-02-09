@@ -79,7 +79,7 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
       setState((prev) => ({ ...prev, isLoadingParameters: true }));
       const resources = await request('GET', apiGetParameters(checklistId), {
         params: {
-          filters: JSON.stringify({
+          filters: {
             op: FilterOperators.AND,
             fields: [
               { field: 'archived', op: FilterOperators.EQ, values: [false] },
@@ -89,7 +89,7 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
                 values: [MandatoryParameter.RESOURCE],
               },
             ],
-          }),
+          },
         },
       });
       resourceParametersMap.current = keyBy(resources.data || [], 'id');

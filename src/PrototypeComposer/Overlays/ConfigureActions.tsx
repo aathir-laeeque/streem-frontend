@@ -7,6 +7,7 @@ import {
   AutomationActionType,
   AutomationTargetEntityType,
 } from '#JobComposer/checklist.types';
+import { MandatoryParameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
 import {
   addTaskAction,
   archiveTaskAction,
@@ -15,7 +16,7 @@ import {
 import { Task } from '#PrototypeComposer/Tasks/types';
 import { useTypedSelector } from '#store';
 import { apiGetObjectTypes, apiGetParameters } from '#utils/apiUrls';
-import { InputTypes } from '#utils/globalTypes';
+import { FilterOperators, InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { fetchObjectTypes } from '#views/Ontology/actions';
 import { ObjectType } from '#views/Ontology/types';
@@ -204,12 +205,34 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
     }
   };
 
+  const getParameterByType = (type: MandatoryParameter) =>
+    request('GET', apiGetParameters(checklistId), {
+      params: {
+        filters: {
+          op: FilterOperators.AND,
+          fields: [
+            { field: 'archived', op: FilterOperators.EQ, values: [false] },
+            {
+              field: 'type',
+              op: FilterOperators.EQ,
+              values: [type],
+            },
+            {
+              field: 'targetEntityType',
+              op: FilterOperators.NE,
+              values: [TargetEntityType.UNMAPPED],
+            },
+          ],
+        },
+      },
+    });
+
   const fetchParameters = async () => {
     if (!resourceParameters.length && !numberParameters.length) {
       setIsLoadingParameters(true);
       const [resources, numbers] = await Promise.all([
-        request('GET', apiGetParameters(checklistId, 'RESOURCE')),
-        request('GET', apiGetParameters(checklistId, 'NUMBER')),
+        getParameterByType(MandatoryParameter.RESOURCE),
+        getParameterByType(MandatoryParameter.NUMBER),
       ]);
       if (
         task.automations.length &&

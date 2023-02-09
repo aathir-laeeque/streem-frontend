@@ -121,7 +121,7 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
       setLoading(true);
       const parametersForCalc = await request('GET', apiGetParameters(checklistId), {
         params: {
-          filters: JSON.stringify({
+          filters: {
             op: FilterOperators.AND,
             fields: [
               { field: 'archived', op: FilterOperators.EQ, values: [false] },
@@ -144,7 +144,7 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
                   ]
                 : []),
             ],
-          }),
+          },
         },
       });
       updateParametersForCalc(parametersForCalc.data);

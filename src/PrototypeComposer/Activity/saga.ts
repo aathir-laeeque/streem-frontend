@@ -85,10 +85,10 @@ function* addNewParameterSaga({ payload }: ReturnType<typeof addNewParameter>) {
           fetchParameters(checklistId, {
             page: pageable.page,
             size: pageable.size,
-            filters: JSON.stringify({
+            filters: {
               op: FilterOperators.AND,
               fields: [{ field: 'archived', op: FilterOperators.EQ, values: [false] }],
-            }),
+            },
             sort: 'id,desc',
           }),
         );

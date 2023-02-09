@@ -47,10 +47,10 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
         fetchParameters(data.id, {
           page,
           size,
-          filters: JSON.stringify({
+          filters: {
             op: FilterOperators.AND,
             fields: filterFields,
-          }),
+          },
           sort: 'id,desc',
         }),
       );

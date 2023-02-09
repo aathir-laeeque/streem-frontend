@@ -446,7 +446,7 @@ const TaskCard: FC<
                                 params: {
                                   page: pageNumber,
                                   size: DEFAULT_PAGE_SIZE,
-                                  filters: JSON.stringify({
+                                  filters: {
                                     op: FilterOperators.AND,
                                     fields: [
                                       {
@@ -469,7 +469,7 @@ const TaskCard: FC<
                                           ]
                                         : []),
                                     ],
-                                  }),
+                                  },
                                 },
                               },
                             );
