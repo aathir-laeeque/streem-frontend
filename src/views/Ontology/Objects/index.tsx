@@ -112,7 +112,7 @@ const JobLogsTabContent: FC<TabContentProps> = ({ label, values: { objectTypeId,
                 [log.triggerType]: log.value,
               };
             });
-            acc[index]['jobId'] = jobLog.jobId;
+            acc[index]['jobId'] = jobLog.id;
             acc[index]['checklistId'] = jobLog.checklistId;
             return acc;
           }, []);
