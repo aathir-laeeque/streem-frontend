@@ -3,7 +3,6 @@ import {
   DataTable,
   LoadingContainer,
   NestedSelect,
-  PaginatedFetchData,
   Pagination,
   ResourceFilter,
   Select,
@@ -18,7 +17,7 @@ import { setAuditLogFilters, setPdfColumns } from '#store/audit-log-filters/acti
 import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { filtersToQueryParams } from '#utils/filtersToQueryParams';
-import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
 import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { GetAppOutlined, Tune } from '@material-ui/icons';
@@ -136,7 +135,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
     });
   };
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     if (id)
       dispatch(

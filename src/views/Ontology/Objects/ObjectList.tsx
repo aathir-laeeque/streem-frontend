@@ -4,7 +4,6 @@ import {
   DataTable,
   ListActionMenu,
   LoadingContainer,
-  PaginatedFetchData,
   Pagination,
   TabContentProps,
   ToggleSwitch,
@@ -15,7 +14,7 @@ import { DataTableColumn } from '#components/shared/DataTable';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { InputTypes } from '#utils/globalTypes';
+import { fetchDataParams, InputTypes } from '#utils/globalTypes';
 import { formatDateByInputType } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { MenuItem } from '@material-ui/core';
@@ -55,7 +54,7 @@ const ObjectList: FC<TabContentProps> = () => {
     setAnchorEl(null);
   };
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     dispatch(
       fetchObjects({

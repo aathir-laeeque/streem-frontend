@@ -14,7 +14,6 @@ import {
   DataTable,
   DropdownFilter,
   ListActionMenu,
-  PaginatedFetchData,
   Pagination,
   SearchFilter,
   ToggleSwitch,
@@ -24,8 +23,8 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { Error, FilterField, FilterOperators } from '#utils/globalTypes';
 import CreateJob from '#views/Jobs/Components/CreateJob';
+import { Error, fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { Chip, CircularProgress, MenuItem } from '@material-ui/core';
 import { ArrowDropDown, FiberManualRecord } from '@material-ui/icons';
@@ -99,7 +98,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
     setTimeout(() => setSelectedChecklist(null), 200);
   };
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     dispatch(
       fetchChecklistsForListView({

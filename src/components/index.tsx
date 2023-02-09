@@ -22,7 +22,6 @@ export { default as SearchFilter } from './shared/SearchFilter';
 export { default as ToggleSwitch } from './shared/ToggleSwitch';
 export { default as DropdownFilter } from './shared/DropdownFilter';
 export { default as UsersFilter } from './shared/UsersFilter';
-export * from './shared/AutoComplete';
 export * from './shared/useTabs';
 export { default as DataTable } from './shared/DataTable';
 export { Link } from './shared/Link';

@@ -3,12 +3,11 @@ import {
   DataTable,
   GeneralHeader,
   LoadingContainer,
-  PaginatedFetchData,
   Pagination,
 } from '#components';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
 import { TabContentWrapper, ViewWrapper } from '#views/Jobs/ListView/styles';
 import { RouteComponentProps } from '@reach/router';
 import cronstrue from 'cronstrue';
@@ -43,7 +42,7 @@ const Automation: FC<Props> = ({ id }) => {
 
   const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(id!));
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     if (id)
       dispatch(
@@ -59,7 +58,6 @@ const Automation: FC<Props> = ({ id }) => {
   };
 
   useEffect(() => {
-    console.log('in mount of automations');
     fetchData();
   }, [filterFields]);
 

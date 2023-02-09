@@ -2,12 +2,12 @@ import {
   Button,
   DataTable,
   LoadingContainer,
-  PaginatedFetchData,
   Pagination,
   TabContentProps,
 } from '#components';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { fetchDataParams } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect } from 'react';
@@ -20,7 +20,7 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
     objectTypes: { list, listLoading, pageable },
   } = useTypedSelector((state) => state.ontology);
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     dispatch(
       fetchObjectTypes({

@@ -1,6 +1,6 @@
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGINATION } from '#utils/constants';
 import { customOnChange } from '#utils/formEvents';
-import { Pageable } from '#utils/globalTypes';
+import { fetchDataParams, Pageable } from '#utils/globalTypes';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select, { SelectProps } from '@material-ui/core/Select';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,7 +9,6 @@ import { get } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { StylesConfig, Props } from 'react-select';
 import styled from 'styled-components';
-import { PaginatedFetchData } from './Pagination';
 import { Select as CustomSelect } from './Select';
 
 const PopOutWrapper = styled.div.attrs({
@@ -119,7 +118,7 @@ export type NestedSelectProps = {
   width?: string;
   id: string;
   pagination?: Pageable;
-  fetchData?: ({ page, size }: PaginatedFetchData) => void;
+  fetchData?: ({ page, size }: fetchDataParams) => void;
   maxHeight?: string | number;
   popOutProps?: Props;
 } & SelectProps;

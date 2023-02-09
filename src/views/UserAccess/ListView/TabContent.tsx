@@ -2,7 +2,6 @@ import {
   Button,
   DataTable,
   ListActionMenu,
-  PaginatedFetchData,
   Pagination,
   SearchFilter,
   TabContentProps,
@@ -20,7 +19,7 @@ import {
   UserStatesContent,
 } from '#store/users/types';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { CircularProgress, MenuItem } from '@material-ui/core';
@@ -55,7 +54,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     dispatch(
       fetchUsers(

@@ -1,11 +1,4 @@
-import {
-  Button,
-  DataTable,
-  LoadingContainer,
-  PaginatedFetchData,
-  Pagination,
-  TextInput,
-} from '#components';
+import { Button, DataTable, LoadingContainer, Pagination, TextInput } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { fetchParameters, toggleNewParameter } from '#PrototypeComposer/Activity/actions';
@@ -14,7 +7,7 @@ import { ParameterTypeMap, TargetEntityTypeVisual } from '#PrototypeComposer/con
 import { TabPanelWrapper } from '#PrototypeComposer/styles';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
@@ -40,7 +33,7 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     },
   ]);
 
-  const fetchData = async (params: PaginatedFetchData = {}) => {
+  const fetchData = async (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     if (data?.id) {
       dispatch(

@@ -4,8 +4,8 @@ import { clearAuditLogFilters, setAuditLogFilters } from '#store/audit-log-filte
 import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
 import { openLinkInNewTab } from '#utils';
-import { DEFAULT_PAGE_NUMBER } from '#utils/constants';
-import { FilterOperators } from '#utils/globalTypes';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { fetchDataParams, FilterOperators } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Job } from '#views/Jobs/ListView/types';
@@ -117,7 +117,7 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
     e.stopPropagation();
     const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
     if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 && !last)
-      fetchUsersData(page + 1, 10);
+      fetchUsersData({ page: page + 1, size: DEFAULT_PAGE_SIZE });
   };
 
   const handleUnselectAll = () => {
@@ -275,11 +275,12 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
 
   useEffect(() => {
     if (prevSearch !== searchQuery) {
-      fetchUsersData(0, 10);
+      fetchUsersData({ page: DEFAULT_PAGE_NUMBER, size: DEFAULT_PAGE_SIZE });
     }
   }, [searchQuery]);
 
-  const fetchUsersData = (page: number, size: number) => {
+  const fetchUsersData = (params: fetchDataParams = {}) => {
+    const { page, size } = params;
     const filters = JSON.stringify({
       op: FilterOperators.AND,
       fields: [{ field: 'firstName', op: FilterOperators.LIKE, values: [searchQuery] }],
@@ -287,8 +288,8 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
     dispatch(fetchUsers({ page, size, filters }, UsersListType.ALL));
   };
 
-  const fetchLogs = (page = DEFAULT_PAGE_NUMBER, size = 250) => {
-    size = 250;
+  const fetchLogs = (params: fetchDataParams = {}) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
     const { dateRange, startTime, endTime } = state;
     let greaterDate = moment().startOf('day').subtract(7, 'days');
     let lowerDate = moment().endOf('day');

@@ -1,6 +1,8 @@
 import NestedMenuItem from '#components/shared/NestedMenuItem';
 import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
 import { ChecklistAuditLogsType } from '#PrototypeComposer/ChecklistAuditLogs/types';
+import { DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { fetchDataParams } from '#utils/globalTypes';
 import { SessionActivity } from '#views/UserAccess/ListView/SessionActivity/types';
 import { ExpandMore, Search } from '@material-ui/icons';
 import { noop } from 'lodash';
@@ -37,7 +39,7 @@ interface ListViewProps {
   filterProp?: FilterProp;
   callOnScroll?: boolean;
   data: DataType[];
-  fetchData: (page: number, size: number) => void;
+  fetchData: (params: fetchDataParams) => void;
   isLast: boolean;
   currentPage: number;
   isSearchable?: boolean;
@@ -353,7 +355,7 @@ export const InfiniteListView: FC<ListViewProps> = ({
     if (callOnScroll) {
       const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
       if (scrollTop + clientHeight >= scrollHeight - clientHeight * 0.7 && !isLast)
-        fetchData(currentPage + 1, 10);
+        fetchData({ page: currentPage + 1, size: DEFAULT_PAGE_SIZE });
     }
   };
 

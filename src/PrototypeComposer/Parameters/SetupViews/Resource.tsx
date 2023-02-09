@@ -1,7 +1,7 @@
 import { FormGroup } from '#components';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { InputTypes } from '#utils/globalTypes';
+import { InputTypes, fetchDataParams } from '#utils/globalTypes';
 import { fetchObjectTypes } from '#views/Ontology/actions';
 import React, { FC, useEffect } from 'react';
 import { UseFormMethods } from 'react-hook-form';
@@ -22,7 +22,8 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
   const data = watch('data', {});
   const autoInitialized = watch('autoInitialized', false);
 
-  const fetchData = (page: number) => {
+  const fetchData = (params: fetchDataParams = {}) => {
+    const { page } = params;
     dispatch(
       fetchObjectTypes(
         {
@@ -37,7 +38,7 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
 
   const handleMenuScrollToBottom = () => {
     if (!listLoading && !pageable.last) {
-      fetchData(pageable.page + 1);
+      fetchData({ page: pageable.page + 1 });
     }
   };
 
@@ -54,7 +55,7 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
       required: true,
     });
 
-    if (!list.length) fetchData(0);
+    if (!list.length) fetchData({ page: 0 });
   }, []);
 
   return (

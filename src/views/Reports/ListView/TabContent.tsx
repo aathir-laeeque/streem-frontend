@@ -1,7 +1,8 @@
-import { DataTable, LoadingContainer, PaginatedFetchData, Pagination } from '#components';
+import { DataTable, LoadingContainer, Pagination } from '#components';
 import { useTypedSelector } from '#store';
 import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { fetchDataParams } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -18,7 +19,7 @@ const TabContent = () => {
     report,
   } = useTypedSelector((state) => state.reports);
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     dispatch(
       fetchReports({

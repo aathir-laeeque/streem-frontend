@@ -1,5 +1,5 @@
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterField, Pageable } from '#utils/globalTypes';
+import { fetchDataParams, Pageable } from '#utils/globalTypes';
 import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import React, { FC } from 'react';
 import styled from 'styled-components';
@@ -31,16 +31,10 @@ const PaginationWrapper = styled.div.attrs(({ className = 'pagination', id = 'pa
   }
 `;
 
-export type PaginatedFetchData = {
-  filters?: FilterField[];
-  page?: number;
-  size?: number;
-};
-
 export const Pagination: FC<{
   pageable: Pageable;
   pageSize?: number;
-  fetchData: ({ filters, page, size }: PaginatedFetchData) => void;
+  fetchData: ({ filters, page, size }: fetchDataParams) => void;
 }> = ({ pageable, pageSize, fetchData }) => {
   const showPaginationArrows = pageable.totalPages > 10;
 

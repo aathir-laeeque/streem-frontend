@@ -1,17 +1,11 @@
-import {
-  DataTable,
-  LoadingContainer,
-  PaginatedFetchData,
-  Pagination,
-  TabContentProps,
-} from '#components';
+import { DataTable, LoadingContainer, Pagination, TabContentProps } from '#components';
 import { DataTableColumn } from '#components/shared/DataTable';
 import { fetchComposerData } from '#PrototypeComposer/actions';
 import { LogType } from '#PrototypeComposer/checklist.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
 import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import React, { FC, useEffect, useState } from 'react';
@@ -51,7 +45,7 @@ const Logs: FC<TabContentProps> = ({ values }) => {
 
   const [filterFields, setFilterFields] = useState<FilterField[]>([]);
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     if (id)
       dispatch(

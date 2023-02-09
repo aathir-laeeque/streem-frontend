@@ -1,11 +1,4 @@
-import {
-  AutoComplete,
-  BaseModal,
-  Button,
-  fetchDataParams,
-  PaginatedFetchData,
-  TextInput,
-} from '#components';
+import { BaseModal, Button, Select, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import {
   executeBranchingRulesParameter,
@@ -17,9 +10,10 @@ import { MandatoryParameter, TargetEntityType } from '#PrototypeComposer/checkli
 import ParameterView from '#PrototypeComposer/Parameters/ExecutionViews';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterOperators } from '#utils/globalTypes';
+import { fetchDataParams, FilterOperators } from '#utils/globalTypes';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import { Checklist } from '#views/Checklists/types';
+import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -102,7 +96,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
 }) => {
   const [checklist, setChecklist] = useState(selectedChecklist);
   const { selectedUseCase } = useTypedSelector((state) => state.auth);
-  const { checklists, pageable, loading } = useTypedSelector((state) => state.checklistListView);
+  const { checklists, pageable } = useTypedSelector((state) => state.checklistListView);
   const {
     data,
     parameters: {
@@ -112,11 +106,8 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   } = useTypedSelector((state) => state.prototypeComposer);
   const dispatch = useDispatch();
 
-  const fetchData = ({
-    page = DEFAULT_PAGE_NUMBER,
-    size = DEFAULT_PAGE_SIZE,
-    query = '',
-  }: fetchDataParams) => {
+  const fetchData = (params: fetchDataParams = {}) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, query = '' } = params;
     const filters = JSON.stringify({
       op: FilterOperators.AND,
       fields: [
@@ -139,12 +130,9 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   });
 
   const {
-    control,
     handleSubmit,
     register,
-
     formState: { isDirty, isValid },
-
     setValue,
   } = reactForm;
 
@@ -168,7 +156,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     onCreateJob({ checklistId: data.checklistId, parameterValues });
   };
 
-  const fetchParametersListData = async (params: PaginatedFetchData = {}, option) => {
+  const fetchParametersListData = async (params: fetchDataParams = {}, option) => {
     const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
     if (option?.id) {
       dispatch(
@@ -218,6 +206,9 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   }, [checklist]);
 
   useEffect(() => {
+    if (!selectedChecklist) {
+      register('checklistId', { required: true });
+    }
     return () => {
       dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
     };
@@ -243,32 +234,39 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
               />
             </>
           ) : (
-            <AutoComplete
-              control={control}
+            <Select
               label="Checklist"
-              name="checklistId"
-              choices={checklists}
-              fetchData={fetchData}
-              currentPage={pageable.page}
-              lastPage={pageable.last}
-              rules={{ required: true }}
-              loading={loading}
-              getOptionLabel={(option) => `${option.name} - ${option.code}`}
-              getOptionSelected={(option, value) => option.id === value.id}
-              onChange={(data) => setChecklist(data)}
-              renderOption={(option) => (
-                <div
-                  style={{
-                    display: 'flex',
-                    flex: 1,
-                    justifyContent: 'space-between',
-                    fontSize: '14px',
-                  }}
-                >
-                  <span style={{ color: '#666' }}>{option.name}</span>
-                  <span style={{ color: '#999' }}>{option.code}</span>
-                </div>
-              )}
+              placeholder="Checklist"
+              isClearable
+              menuPortalTarget={document.body}
+              menuPosition="fixed"
+              menuShouldBlockScroll
+              options={checklists.map((currChecklist) => ({
+                ...currChecklist,
+                label: currChecklist.name,
+                externalId: currChecklist.code,
+              }))}
+              onMenuScrollToBottom={() => {
+                if (!pageable.last) {
+                  fetchData({
+                    page: pageable.page + 1,
+                  });
+                }
+              }}
+              onChange={(data) => {
+                if (data) {
+                  setValue('checklistId', data.id, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  });
+                }
+                setChecklist(data);
+              }}
+              onInputChange={debounce((value) => {
+                fetchData({
+                  query: value,
+                });
+              }, 500)}
             />
           )}
           <div className={`properties-container ${parametersList.length <= 4 ? 'vertical' : ''}`}>

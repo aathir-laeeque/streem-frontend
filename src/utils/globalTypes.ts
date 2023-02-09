@@ -95,3 +95,10 @@ export enum CustomViewsTargetType {
   PROCESS = 'PROCESS',
   JOB = 'JOB',
 }
+
+export type fetchDataParams = {
+  page?: number;
+  size?: number;
+  query?: string;
+  filters?: FilterField[];
+};
