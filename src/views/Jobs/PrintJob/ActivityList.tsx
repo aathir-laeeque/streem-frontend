@@ -741,35 +741,38 @@ const MemoParameterList: FC<{
   parameters: Parameter[];
   dateAndTimeStampFormat: string;
   parametersById: ParametersById;
-}> = ({ parameters, dateAndTimeStampFormat, parametersById }) => {
+  hiddenIds: Record<string, boolean>;
+}> = ({ parameters, dateAndTimeStampFormat, parametersById, hiddenIds }) => {
   return (
     <>
       {(parameters as Array<Parameter>).map((parameter, parameterIndex: number) => {
-        return (
-          <View key={`${parameter.id}`}>
-            {parameterTemplateFormatter(
-              parameter,
-              parameterIndex,
-              dateAndTimeStampFormat,
-              parametersById,
-            )}
-            <View style={styles.parameterSeprator} />
-            {parameter.response.state !== TaskExecutionState.NOT_STARTED &&
-              parameter.response.audit.modifiedBy && (
-                <View style={styles.taskFooter} wrap={false}>
-                  <Text style={styles.text12}>
-                    This Activity was last updated digitally via Leucine {'\n'}
-                    by {parameter.response.audit.modifiedBy.firstName}{' '}
-                    {parameter.response.audit.modifiedBy.lastName}, ID:{' '}
-                    {parameter.response.audit.modifiedBy.employeeId} on{' '}
-                    {moment
-                      .unix(parameter.response.audit.modifiedAt)
-                      .format(dateAndTimeStampFormat)}
-                  </Text>
-                </View>
+        if (hiddenIds[parameter.id] === undefined) {
+          return (
+            <View key={`${parameter.id}`}>
+              {parameterTemplateFormatter(
+                parameter,
+                parameterIndex,
+                dateAndTimeStampFormat,
+                parametersById,
               )}
-          </View>
-        );
+              <View style={styles.parameterSeprator} />
+              {parameter.response.state !== TaskExecutionState.NOT_STARTED &&
+                parameter.response.audit.modifiedBy && (
+                  <View style={styles.taskFooter} wrap={false}>
+                    <Text style={styles.text12}>
+                      This Activity was last updated digitally via Leucine {'\n'}
+                      by {parameter.response.audit.modifiedBy.firstName}{' '}
+                      {parameter.response.audit.modifiedBy.lastName}, ID:{' '}
+                      {parameter.response.audit.modifiedBy.employeeId} on{' '}
+                      {moment
+                        .unix(parameter.response.audit.modifiedAt)
+                        .format(dateAndTimeStampFormat)}
+                    </Text>
+                  </View>
+                )}
+            </View>
+          );
+        }
       })}
     </>
   );

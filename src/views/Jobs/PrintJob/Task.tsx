@@ -227,13 +227,13 @@ const MemoTask: FC<{
           </View>
         )}
       </View>
-      {hiddenIds[task.id] === undefined && (
-        <ParameterList
-          parametersById={parametersById}
-          parameters={task.parameters}
-          dateAndTimeStampFormat={dateAndTimeStampFormat}
-        />
-      )}
+      <ParameterList
+        parametersById={parametersById}
+        parameters={task.parameters}
+        dateAndTimeStampFormat={dateAndTimeStampFormat}
+        hiddenIds={hiddenIds}
+      />
+
       {taskExecutionState === TaskExecutionState.COMPLETED && (
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
