@@ -26,7 +26,7 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
       return { ...state, loading: true };
 
     case ListViewAction.CLEAR_DATA:
-      return { ...state, checklists: [], pageable: initialPageable };
+      return { ...state, checklists: [], pageable: DEFAULT_PAGINATION };
 
     case ListViewAction.FETCH_CHECKLISTS_SUCCESS:
       const { data, pageable } = action.payload;
