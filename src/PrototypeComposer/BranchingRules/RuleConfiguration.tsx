@@ -311,6 +311,7 @@ const RuleCard: FC<any> = ({
                 ],
                 isSearchable: false,
                 isDisabled: true,
+                menuPlacement: 'bottom',
                 placeholder: 'Select Parameter',
                 style: {
                   flex: 1,
@@ -355,6 +356,7 @@ const RuleCard: FC<any> = ({
               isSearchable: false,
               isDisabled: isReadOnly,
               placeholder: 'Select Value',
+              menuPlacement: 'bottom',
               onChange: (value: any) => {
                 setValue(`rules.${index}.input`, value.value, {
                   shouldDirty: true,
@@ -401,6 +403,7 @@ const RuleCard: FC<any> = ({
               placeholder: 'Select Parameters',
               closeMenuOnSelect: false,
               components: { Option },
+              menuPlacement: 'bottom',
               onChange: (value: any[]) => {
                 setValue(
                   `rules.${index}.hide.parameters`,
