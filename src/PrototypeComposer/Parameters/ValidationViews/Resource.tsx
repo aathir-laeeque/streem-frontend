@@ -61,6 +61,8 @@ export const labelByConstraint = (inputType: InputTypes) => {
       };
     case InputTypes.SINGLE_LINE:
     case InputTypes.MULTI_LINE:
+    case InputTypes.SINGLE_SELECT:
+    case InputTypes.MULTI_SELECT:
       return {
         [Constraint.EQ]: 'is equal to',
         [Constraint.NE]: 'is not equal to',
