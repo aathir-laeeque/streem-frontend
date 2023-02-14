@@ -4,12 +4,15 @@ import MoreOptionsIcon from '#assets/svg/MoreOptionsIcon';
 import QRIcon from '#assets/svg/QR';
 import SettingsIcon from '#assets/svg/SettingsIcon';
 import { NestedSelect, Select } from '#components';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
 import { logout, setSelectedUseCase } from '#views/Auth/actions';
+import { getObjectData } from '#views/Ontology/utils';
 import { UserType } from '#views/UserAccess/ManageUser/types';
 import { useMsal } from '@azure/msal-react';
 import { navigate } from '@reach/router';
@@ -35,15 +38,29 @@ const Header: FC = () => {
     value: facility.id,
   }));
 
-  const onSelectWithQR = (data: any) => {
+  const onSelectWithQR = async (data: string) => {
     try {
       const qrData = JSON.parse(data);
-      console.log('qrData', qrData);
       if (qrData?.entityType === 'object') {
-        navigate(`/ontology/object-types/${qrData.objectTypeId}/objects/${qrData.id}`);
+        const fetchedData = await getObjectData({
+          id: qrData.id,
+          collection: qrData.collection,
+        });
+        if (selectedFacility?.id === fetchedData?.facilityId) {
+          navigate(`/ontology/object-types/${qrData.objectTypeId}/objects/${qrData.id}`);
+        } else {
+          throw 'Object not found';
+        }
+      } else {
+        throw 'Invalid QR Code';
       }
-    } catch (e) {
-      console.log('error while parsing qr data', e);
+    } catch (error) {
+      dispatch(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
+        }),
+      );
     }
   };
 

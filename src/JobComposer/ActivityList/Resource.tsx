@@ -1,11 +1,14 @@
 import QRIcon from '#assets/svg/QR';
 import { Button, Select } from '#components';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { apiAutoInitialize, baseUrl } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
+import { getObjectData } from '#views/Ontology/utils';
 import { LinkOutlined } from '@material-ui/icons';
 import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -37,6 +40,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   const dispatch = useDispatch();
   const {
     composer: { data },
+    auth: { selectedFacility },
   } = useTypedSelector((state) => state);
   const [state, setState] = useState<{
     isLoading: Boolean;
@@ -80,18 +84,34 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     }
   };
 
-  const onSelectWithQR = (data: any) => {
+  const onSelectWithQR = async (data: string) => {
     try {
       const qrData = JSON.parse(data);
-      console.log('qrData', qrData);
-      onSelectOption([
-        {
-          value: qrData,
-        },
-      ]);
-      console.log('qrData', qrData);
-    } catch (e) {
-      console.log('error while parsing qr data', e);
+      if (qrData?.entityType === 'object') {
+        const fetchedData = await getObjectData({
+          id: qrData.id,
+          collection: qrData.collection,
+          usageStatus: 1,
+        });
+        if (selectedFacility?.id === fetchedData?.facilityId) {
+          onSelectOption([
+            {
+              value: qrData,
+            },
+          ]);
+        } else {
+          throw 'Object not found';
+        }
+      } else {
+        throw 'Invalid QR Code';
+      }
+    } catch (error) {
+      dispatch(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
+        }),
+      );
     }
   };
 
