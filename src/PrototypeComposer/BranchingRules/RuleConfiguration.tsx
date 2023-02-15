@@ -1,6 +1,10 @@
 import { Button, FormGroup } from '#components';
 import { updateParameterApi } from '#PrototypeComposer/Activity/actions';
-import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
+import {
+  MandatoryParameter,
+  ParameterType,
+  TargetEntityType,
+} from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { InputTypes } from '#utils/globalTypes';
 import { Constraint } from '#views/Ontology/types';
@@ -171,7 +175,7 @@ const renderNestedOption = (props: OptionProps<any>, label: string, nestedOption
         </div>
       </div>
       {nestedOptions.map((nestedOption) => {
-        if (nestedOption.options) {
+        if (nestedOption.options?.length) {
           return renderNestedOption(props, nestedOption.label, nestedOption.options);
         }
         const isChecked = !!selectedValues?.[nestedOption.value];
@@ -428,6 +432,7 @@ const RuleConfiguration: FC<{ parameter: any; isReadOnly: boolean }> = ({
     parameters: { listById, parameterOrderInTaskInStage },
     stages: { listOrder, listById: stagesById },
     tasks: { listById: tasksById, tasksOrderInStage },
+    data: { parameters: jobParameters },
   } = useTypedSelector((state) => state.prototypeComposer);
   const dispatch = useDispatch();
   const form = useForm<{
@@ -450,36 +455,55 @@ const RuleConfiguration: FC<{ parameter: any; isReadOnly: boolean }> = ({
 
   useEffect(() => {
     const listOptions: any[] = [];
-    listOrder.forEach((stageId, stageIndex) => {
-      const stage = stagesById[stageId];
-      const stageNumber = stageIndex + 1;
-      const stageOption: any = {
-        label: `Stage ${stageNumber} : ${stage.name}`,
-        value: stage.id,
+    if (parameter.targetEntityType === TargetEntityType.PROCESS) {
+      const createJobOption = {
+        label: 'Create Job Form',
         options: [],
       };
-      tasksOrderInStage[stageId].forEach((taskId, taskIndex) => {
-        const task = tasksById[taskId];
-        const taskOption: any = {
-          label: `Task ${stageNumber}.${taskIndex + 1} : ${task.name}`,
-          value: task.id,
+      jobParameters.forEach((currParameter: any) => {
+        const jobParameterOption: any = {
+          label: currParameter.label,
+          value: currParameter.id,
+        };
+        createJobOption.options.push(jobParameterOption);
+      });
+      listOptions.push({
+        label: '',
+        value: '',
+        options: [createJobOption],
+      });
+    } else {
+      listOrder.forEach((stageId, stageIndex) => {
+        const stage = stagesById[stageId];
+        const stageNumber = stageIndex + 1;
+        const stageOption: any = {
+          label: `Stage ${stageNumber} : ${stage.name}`,
+          value: stage.id,
           options: [],
         };
-        parameterOrderInTaskInStage[stageId][taskId].forEach((parameterId) => {
-          if (parameterId !== parameter.id) {
-            const p = listById[parameterId];
-            taskOption.options.push({
-              label: p.label,
-              value: p.id,
-            });
+        tasksOrderInStage[stageId].forEach((taskId, taskIndex) => {
+          const task = tasksById[taskId];
+          const taskOption: any = {
+            label: `Task ${stageNumber}.${taskIndex + 1} : ${task.name}`,
+            value: task.id,
+            options: [],
+          };
+          parameterOrderInTaskInStage[stageId][taskId].forEach((parameterId) => {
+            if (parameterId !== parameter.id) {
+              const p = listById[parameterId];
+              taskOption.options.push({
+                label: p.label,
+                value: p.id,
+              });
+            }
+          });
+          if (taskOption.options.length) {
+            stageOption.options.push(taskOption);
           }
         });
-        if (taskOption.options.length) {
-          stageOption.options.push(taskOption);
-        }
+        listOptions.push(stageOption);
       });
-      listOptions.push(stageOption);
-    });
+    }
     setParametersList(listOptions);
     reset({
       rules: parameter?.rules || [],

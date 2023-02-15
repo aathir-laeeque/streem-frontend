@@ -3,9 +3,12 @@ import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { InputTypes } from '#utils/globalTypes';
 import React, { FC } from 'react';
 
-const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
+const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({
+  parameter,
+  form,
+  onChangeHandler,
+}) => {
   const { setValue } = form;
-
   const typeOfSelect = (type) => {
     if (type === 'MULTISELECT') {
       return InputTypes.MULTI_SELECT;
@@ -78,25 +81,23 @@ const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, f
             menuPosition: 'fixed',
             menuShouldBlockScroll: true,
             onChange: (value: any) => {
-              setValue(
-                `data.${parameter.id}`,
-                {
-                  ...parameter,
-                  data: selectedData(value, parameter.data),
-                  response: {
-                    value: null,
-                    reason: '',
-                    state: 'EXECUTED',
-                    choices: optionChosen(value, parameter.data),
-                    medias: [],
-                    parameterValueApprovalDto: null,
-                  },
+              let parameterData = {
+                ...parameter,
+                data: selectedData(value, parameter.data),
+                response: {
+                  value: null,
+                  reason: '',
+                  state: 'EXECUTED',
+                  choices: optionChosen(value, parameter.data),
+                  medias: [],
+                  parameterValueApprovalDto: null,
                 },
-                {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                },
-              );
+              };
+              setValue(`data.${parameter.id}`, parameterData, {
+                shouldDirty: true,
+                shouldValidate: true,
+              });
+              onChangeHandler(parameterData);
             },
             isSearchable: false,
             placeholder: '',

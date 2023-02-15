@@ -66,6 +66,7 @@ export type Parameter = {
   type: ParameterType;
   validations: any;
   targetEntityType: TargetEntityType;
+  reason?: string;
 };
 
 export type Media = {

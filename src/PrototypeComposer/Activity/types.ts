@@ -15,6 +15,7 @@ export type ParameterProps = {
   parameter: Parameter;
   taskId: Task['id'];
   isReadOnly: boolean;
+  onChangeHandler: (data: Parameter) => void;
 };
 
 export type AddNewParameterType = {

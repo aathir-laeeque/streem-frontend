@@ -3,17 +3,20 @@ import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
+  apiBranchingRuleExecute,
   apiGetChecklist,
   apiGetSelectedJob as apiGetJob,
   apiValidatePrototype,
 } from '#utils/apiUrls';
 import { Error } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { all, call, fork, put, takeLeading } from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest, takeLeading } from 'redux-saga/effects';
 import {
+  executeBranchingRulesParameter,
   fetchComposerData,
   fetchComposerDataOngoing,
   fetchComposerDataSuccess,
+  updateHiddenParameterIds,
   validatePrototype,
 } from './actions';
 import { setValidationError as setParameterValidationError } from './Activity/actions';
@@ -105,9 +108,24 @@ function* validatePrototypeSaga({ payload }: ReturnType<typeof validatePrototype
   }
 }
 
+function* executeBranchingRulesSaga({
+  payload,
+}: ReturnType<typeof executeBranchingRulesParameter>) {
+  try {
+    const { parameterValues } = payload;
+    const { data } = yield call(request, 'PATCH', apiBranchingRuleExecute(), {
+      data: { parameterValues },
+    });
+    yield put(updateHiddenParameterIds(data));
+  } catch (error) {
+    console.error('error from executeBranchingRules function in Composer Saga :: ', error);
+  }
+}
+
 export function* ComposerSaga() {
   yield takeLeading(ComposerAction.FETCH_COMPOSER_DATA, fetchComposerDataSaga);
   yield takeLeading(ComposerAction.VALIDATE_PROTOTYPE, validatePrototypeSaga);
+  yield takeLatest(ComposerAction.EXECUTE_LATEST_BRANCHING_RULES, executeBranchingRulesSaga);
   yield all([
     fork(StageListSaga),
     fork(TaskListSaga),

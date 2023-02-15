@@ -1,9 +1,11 @@
 import {
+  executeBranchingRulesParameter,
   fetchComposerDataError,
   fetchComposerDataOngoing,
   fetchComposerDataSuccess,
   processParametersMapSuccess,
   resetComposer,
+  updateHiddenParameterIds,
 } from './actions';
 import { updateStoreParameter } from './Activity/actions';
 import { ParameterListState } from './Activity/reducer.types';
@@ -46,6 +48,8 @@ export enum ComposerAction {
   FETCH_COMPOSER_DATA_SUCCESS = '@@prototypeComposer/prototype/FETCH_COMPOSER_DATA_SUCCESS',
   FETCH_REVIEWERS_FOR_CHECKLIST = '@@prototypeComposer/prototype/FETCH_REVIEWERS_FOR_CHECKLIST',
   FETCH_REVIEWERS_FOR_CHECKLIST_SUCCESS = '@@prototypeComposer/prototype/FETCH_REVIEWERS_FOR_CHECKLIST_SUCCESS',
+  EXECUTE_LATEST_BRANCHING_RULES = '@@prototypeComposer/prototype/EXECUTE_LATEST_BRANCHING_RULES',
+  UPDATE_HIDDEN_PARAMETER_IDS = '@@prototypeComposer/prototype/UPDATE_HIDDEN_PARAMETER_IDS',
   INITIATE_SIGNOFF = '@@prototypeComposer/prototype/INITIATE_SIGNOFF',
   RELEASE_PROTOTYPE = '@@prototypeComposer/prototype/RELEASE_PROTOTYPE',
   RESET_COMPOSER = '@@prototypeComposer/prototype/RESET_COMPOSER',
@@ -75,4 +79,6 @@ export type ComposerActionType = ReturnType<
   | typeof updateChecklistForReview
   | typeof processParametersMapSuccess
   | typeof updateStoreParameter
+  | typeof executeBranchingRulesParameter
+  | typeof updateHiddenParameterIds
 >;

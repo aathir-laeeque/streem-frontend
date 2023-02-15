@@ -81,7 +81,7 @@ export const ParameterViewWrapper = styled.div`
   }
 `;
 
-const ParameterView: FC<ParameterProps> = ({ parameter, form }) => {
+const ParameterView: FC<ParameterProps> = ({ parameter, form, onChangeHandler }) => {
   const dispatch = useDispatch();
   const {
     parameters: { listById },
@@ -133,7 +133,13 @@ const ParameterView: FC<ParameterProps> = ({ parameter, form }) => {
       case MandatoryParameter.CHECKLIST:
       case MandatoryParameter.MULTISELECT:
       case MandatoryParameter.SINGLE_SELECT:
-        return <SingleSelectTaskView parameter={parameter} form={form} />;
+        return (
+          <SingleSelectTaskView
+            parameter={parameter}
+            form={form}
+            onChangeHandler={onChangeHandler}
+          />
+        );
 
       case MandatoryParameter.SHOULD_BE:
         return <ShouldBeTaskView parameter={parameter} form={form} />;

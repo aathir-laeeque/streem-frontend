@@ -7,8 +7,13 @@ import {
   TextInput,
 } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
+import {
+  executeBranchingRulesParameter,
+  updateHiddenParameterIds,
+} from '#PrototypeComposer/actions';
 import { fetchParameters, fetchParametersSuccess } from '#PrototypeComposer/Activity/actions';
-import { TargetEntityType } from '#PrototypeComposer/checklist.types';
+import { Parameter } from '#PrototypeComposer/Activity/types';
+import { MandatoryParameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
 import ParameterView from '#PrototypeComposer/Parameters/ExecutionViews';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
@@ -102,6 +107,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     data,
     parameters: {
       parameters: { list: parametersList, pageable: parameterPageable },
+      hiddenParameterIds,
     },
   } = useTypedSelector((state) => state.prototypeComposer);
   const dispatch = useDispatch();
@@ -182,6 +188,22 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     }
   };
 
+  const onCloseHandler = () => {
+    dispatch(updateHiddenParameterIds([]));
+    closeOverlay();
+  };
+
+  const onChangeHandler = (parameterData: Parameter) => {
+    let parameterValues: Record<string, Parameter> = {};
+    if (parameterData.type === MandatoryParameter.SINGLE_SELECT) {
+      parameterValues[parameterData.id] = {
+        parameter: parameterData,
+        reason: parameterData?.response?.reason || '',
+      };
+      dispatch(executeBranchingRulesParameter(parameterValues));
+    }
+  };
+
   useEffect(() => {
     fetchParametersListData({ page: DEFAULT_PAGE_NUMBER, size: DEFAULT_PAGE_SIZE }, checklist);
     if (!checklist) {
@@ -199,7 +221,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     <Wrapper>
       <BaseModal
         closeAllModals={closeAllOverlays}
-        closeModal={closeOverlay}
+        closeModal={onCloseHandler}
         title="Creating a Job"
         showFooter={false}
       >
@@ -244,12 +266,20 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
             />
           )}
           <div className={`properties-container ${parametersList.length <= 4 ? 'vertical' : ''}`}>
-            {parametersList.map((parameter, index) => (
-              <ParameterView key={`parameter_${index}`} form={reactForm} parameter={parameter} />
-            ))}
+            {parametersList.map(
+              (parameter, index) =>
+                hiddenParameterIds[parameter.id] !== true && (
+                  <ParameterView
+                    key={`parameter_${index}`}
+                    form={reactForm}
+                    parameter={parameter}
+                    onChangeHandler={onChangeHandler}
+                  />
+                ),
+            )}
           </div>
           <div className="buttons-container">
-            <Button variant="secondary" color="red" onClick={closeOverlay}>
+            <Button variant="secondary" color="red" onClick={onCloseHandler}>
               Cancel
             </Button>
             <Button disabled={!isValid || !isDirty} type="submit">

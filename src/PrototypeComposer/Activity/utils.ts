@@ -191,4 +191,19 @@ const generateNewParameter = ({
   }
 };
 
-export { getParameters, generateNewParameter };
+const updateHiddenParameterIds = (data: Record<string, Array<string>>[]) => {
+  let hiddenIds: Record<string, boolean> = {};
+  if (data.length) {
+    data.forEach((currData) => {
+      currData.hide.forEach((id: string) => {
+        hiddenIds[id] = true;
+      });
+      currData.show.forEach((id: string) => {
+        hiddenIds[id] = false;
+      });
+    });
+  }
+  return hiddenIds;
+};
+
+export { getParameters, generateNewParameter, updateHiddenParameterIds };

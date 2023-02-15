@@ -5,11 +5,12 @@ import { Checklist, TargetEntityType } from '../checklist.types';
 import { ComposerAction } from '../reducer.types';
 import { TaskListActions } from '../Tasks/reducer.types';
 import { ParameterListActions, ParameterListActionType, ParameterListState } from './reducer.types';
-import { getParameters } from './utils';
+import { getParameters, updateHiddenParameterIds } from './utils';
 
 export const initialState: ParameterListState = {
   parameterOrderInTaskInStage: {},
   listById: {},
+  hiddenParameterIds: {},
   parameters: {
     list: [],
     listLoading: true,
@@ -276,6 +277,11 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
         },
       };
 
+    case ComposerAction.UPDATE_HIDDEN_PARAMETER_IDS:
+      return {
+        ...state,
+        hiddenParameterIds: updateHiddenParameterIds(action.payload.data),
+      };
     default:
       return { ...state };
   }

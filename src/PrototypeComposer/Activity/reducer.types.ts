@@ -34,6 +34,7 @@ export type ParameterListState = {
     fetchData?: () => void;
     type?: ParameterType;
   };
+  readonly hiddenParameterIds: Record<string, boolean>;
   readonly parameters: {
     listLoading: boolean;
     pageable: Pageable;
