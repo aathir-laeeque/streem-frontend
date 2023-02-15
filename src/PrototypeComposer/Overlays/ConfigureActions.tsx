@@ -142,10 +142,6 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
   const actionType = watch('actionType');
   const actionDetails = watch('actionDetails');
 
-  useEffect(() => {
-    console.log('actionDetails', actionDetails);
-  }, [actionDetails]);
-
   const onSubmit = (data: {
     actionType: AutomationActionActionType;
     actionDetails: AutomationActionDetails;
@@ -479,7 +475,7 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                           value: actionDetails.referencedParameterId,
                                         },
                                       ]
-                                    : undefined,
+                                    : null,
                                   isSearchable: false,
                                   placeholder: 'Select Resource Parameter',
                                   onChange: (_option: any) => {
@@ -521,7 +517,7 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                                 value: actionDetails.parameterId,
                                               },
                                             ]
-                                          : undefined,
+                                          : null,
                                         isSearchable: false,
                                         placeholder: 'Select Number Parameter',
                                         onChange: (_option: any) => {
@@ -578,10 +574,11 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                                 value: actionDetails.propertyId,
                                               },
                                             ]
-                                          : undefined,
+                                          : null,
                                         isSearchable: false,
                                         placeholder: 'Select Object Property',
                                         onChange: (_option: any) => {
+                                          delete actionDetails?.['dateUnit'];
                                           setValue(
                                             'actionDetails',
                                             {
@@ -621,7 +618,7 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                                     label: c.displayName,
                                                     value: c.id,
                                                   }))
-                                                : undefined,
+                                                : null,
                                               isSearchable: false,
                                               placeholder: 'Select Value',
                                               onChange: (_option: any) => {
@@ -652,7 +649,7 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                               id: 'setAs',
                                               label: 'Set As',
                                               options: getSetAsOptions(),
-                                              defaultValue: actionDetails?.entityId
+                                              value: actionDetails?.entityId
                                                 ? getSetAsOptions().filter(
                                                     (o) =>
                                                       o.value.captureProperty ===
@@ -660,7 +657,7 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                                       o.value.entityType ===
                                                         actionDetails?.entityType,
                                                   )
-                                                : undefined,
+                                                : null,
                                               isSearchable: false,
                                               placeholder: 'Select Set As',
                                               onChange: (_option: any) => {
@@ -705,7 +702,7 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                           })),
                           isSearchable: false,
                           placeholder: 'Select Unit',
-                          defaultValue: actionDetails?.dateUnit
+                          value: actionDetails?.dateUnit
                             ? [
                                 {
                                   label: getDateUnits(actionDetails.propertyInputType)[
@@ -714,7 +711,7 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
                                   value: actionDetails.dateUnit,
                                 },
                               ]
-                            : undefined,
+                            : null,
                           onChange: (_option: any) => {
                             setValue(
                               'actionDetails',
