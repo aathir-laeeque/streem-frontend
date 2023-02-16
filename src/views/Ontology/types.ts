@@ -25,6 +25,7 @@ export enum Constraint {
   MAX = 'MAX', // String Length or Choice Count
   PATTERN = 'PATTERN',
   EQ = 'EQ',
+  ANY = 'ANY',
 }
 
 export type CommonFields = {
@@ -111,6 +112,7 @@ export type Object = CommonFields & {
 export interface OntologyState {
   readonly objectTypes: EntityBaseState<ObjectType>;
   readonly objects: EntityBaseState<Object>;
+  readonly objectChangeLogs: EntityBaseState<any>;
 }
 
 export enum OntologyAction {
@@ -148,6 +150,8 @@ export enum OntologyAction {
 
   EDIT_QR_DATA = '@@ontology/EDIT_QR_DATA',
   SHORT_CODE_QR_DATA = '@@ontology/SHORT_CODE_QR_DATA',
+  FETCH_OBJECT_CHANGE_LOGS = '@@ontology/FETCH_OBJECT_CHANGE_LOGS',
+  FETCH_OBJECT_CHANGE_LOGS_SUCCESS = '@@ontology/FETCH_OBJECT_CHANGE_LOGS_SUCCESS',
 }
 
 export type OntologyActionType = ReturnType<
@@ -175,6 +179,8 @@ export type OntologyActionType = ReturnType<
   | typeof actions.createObjectTypeRelation
   | typeof actions.fetchQrShortCodeData
   | typeof actions.editQrData
+  | typeof actions.fetchObjectChangeLogs
+  | typeof actions.fetchObjectChangeLogsSuccess
 >;
 
 export type fetchDataType = {

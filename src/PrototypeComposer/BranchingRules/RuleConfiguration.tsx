@@ -142,6 +142,7 @@ export const conditionByParameterType = (type: ParameterType) => {
     default:
       return {
         [Constraint.EQ]: 'is equal to',
+        [Constraint.NE]: 'is not equal to',
       };
   }
 };

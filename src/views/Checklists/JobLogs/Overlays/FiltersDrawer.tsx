@@ -38,7 +38,7 @@ export const FiltersWrapper = styled.form`
   }
 `;
 
-const FilterCardWrapper = styled.div`
+export const FilterCardWrapper = styled.div`
   border: 1px solid #e0e0e0;
   padding-top: 16px;
 

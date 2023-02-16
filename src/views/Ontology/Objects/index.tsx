@@ -32,6 +32,7 @@ import { Choice, ObjectTypeProperty } from '../types';
 import AddEditObjectDrawer from './components/AddEditObjectDrawer';
 import ProcessTabContent from './components/ProcessTabContent';
 import RelationTabContent from './components/RelationTabContent';
+import TabContent from './TabContent';
 
 const ObjectViewWrapper = styled.div`
   display: flex;
@@ -489,6 +490,11 @@ const ObjectsContent = ({
                 label: 'Process',
                 panelContent: <ProcessTabContent />,
               },
+              {
+                value: '3',
+                label: 'Audit Logs',
+                panelContent: <TabContent />
+              }
             ]}
           />
           {selectedObject && selectedObjectType && showAddEditObjectDrawer && (

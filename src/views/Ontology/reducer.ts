@@ -12,6 +12,7 @@ const initialEntityBase = {
 const initialState: OntologyState = {
   objectTypes: initialEntityBase,
   objects: initialEntityBase,
+  objectChangeLogs: initialEntityBase,
 };
 
 const reducer = (state = initialState, action: OntologyActionType): OntologyState => {
@@ -90,6 +91,16 @@ const reducer = (state = initialState, action: OntologyActionType): OntologyStat
       return updateKey('objects', {
         listLoading: false,
         list: state.objects.list.filter((object) => object.id !== action.payload.id),
+      });
+
+    case OntologyAction.FETCH_OBJECT_CHANGE_LOGS:
+      return updateKey('objectChangeLogs', { listLoading: true });
+
+    case OntologyAction.FETCH_OBJECT_CHANGE_LOGS_SUCCESS:
+      return updateKey('objectChangeLogs', {
+        listLoading: false,
+        list: action.payload.data,
+        pageable: action.payload.pageable,
       });
 
     default:

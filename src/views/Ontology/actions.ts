@@ -120,3 +120,9 @@ export const fetchQrShortCodeData = (params: Record<string, string | undefined>)
   actionSpreader(OntologyAction.SHORT_CODE_QR_DATA, { params });
 
 export const editQrData = (params: any) => actionSpreader(OntologyAction.EDIT_QR_DATA, { params });
+
+export const fetchObjectChangeLogs = (params: any) =>
+  actionSpreader(OntologyAction.FETCH_OBJECT_CHANGE_LOGS, { params });
+
+export const fetchObjectChangeLogsSuccess = ({ data, pageable }: any) =>
+  actionSpreader(OntologyAction.FETCH_OBJECT_CHANGE_LOGS_SUCCESS, { data, pageable });

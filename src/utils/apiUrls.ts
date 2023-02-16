@@ -384,3 +384,5 @@ export const apiEditObjectTypeRelation = (objectTypeId: string, relationId: stri
   `${baseUrl}/object-types/${objectTypeId}/relations/${relationId}`;
 
 export const apiQrShortCode = () => `${baseUrl}/short-code`;
+
+export const apiGetObjectAuditChangeLog = () => `${baseUrl}/objects/change-logs`;

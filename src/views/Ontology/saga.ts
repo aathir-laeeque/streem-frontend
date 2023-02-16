@@ -12,6 +12,7 @@ import {
   apiEditObjectType,
   apiEditObjectTypeProperty,
   apiEditObjectTypeRelation,
+  apiGetObjectAuditChangeLog,
   apiGetObjects,
   apiGetObjectTypes,
   apiQrShortCode,
@@ -458,6 +459,20 @@ function* postQrEditSaga({ payload }: ReturnType<typeof actions.editQrData>) {
   }
 }
 
+function* fetchObjectChangeLogsSaga({ payload }: ReturnType<typeof actions.fetchObjectChangeLogs>) {
+  try {
+    const { params } = payload;
+    const { data, pageable } = yield call(request, 'GET', apiGetObjectAuditChangeLog(), {
+      params,
+    });
+    if (data) {
+      yield put(actions.fetchObjectChangeLogsSuccess({ data, pageable }));
+    }
+  } catch (error) {
+    console.error('error from fetchObjectChangeLogsSaga function in Ontology Saga :: ', error);
+  }
+}
+
 export function* OntologySaga() {
   yield takeLatest(OntologyAction.FETCH_OBJECT_TYPES, fetchObjectTypesSaga);
   yield takeLatest(OntologyAction.FETCH_OBJECT_TYPE, fetchObjectTypeSaga);
@@ -477,4 +492,5 @@ export function* OntologySaga() {
   yield takeLatest(OntologyAction.EDIT_OBJECT_TYPE, editObjectTypeSaga);
   yield takeLatest(OntologyAction.SHORT_CODE_QR_DATA, postQrShortCodeSaga);
   yield takeLatest(OntologyAction.EDIT_QR_DATA, postQrEditSaga);
+  yield takeLatest(OntologyAction.FETCH_OBJECT_CHANGE_LOGS, fetchObjectChangeLogsSaga);
 }
