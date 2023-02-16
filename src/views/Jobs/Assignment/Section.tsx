@@ -1,5 +1,6 @@
 import { Checkbox } from '#components';
 import { CompletedTaskStates, Stage } from '#JobComposer/checklist.types';
+import { useTypedSelector } from '#store';
 import { ArrowDropDown, ArrowRight } from '@material-ui/icons';
 import React, { Dispatch, FC, useState } from 'react';
 import styled from 'styled-components';
@@ -145,6 +146,9 @@ export const AssignmentSectionWrapper = styled.div.attrs({
 
 const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }) => {
   const [isOpen, toggleIsOpen] = useState(isFirst);
+  const {
+    parameters: { hiddenIds },
+  } = useTypedSelector((state) => state.composer);
 
   const isAllTaskAssigned = stage.tasks
     .map((task) => !!task.taskExecution.assignees.length)
@@ -185,7 +189,11 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
               payload: {
                 stageId: stage.id,
                 taskExecutionIds: stage.tasks
-                  .filter((task) => !(task.taskExecution.state in CompletedTaskStates))
+                  .filter((task) => {
+                    if (!(task.taskExecution.state in CompletedTaskStates)) {
+                      return hiddenIds[task.id] === undefined;
+                    }
+                  })
                   .map((task) => task.taskExecution.id),
 
                 states: stage.tasks
@@ -208,8 +216,7 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
         <div className="section-body">
           {stage.tasks.map((task) => {
             const isTaskCompleted = task.taskExecution.state in CompletedTaskStates;
-
-            return (
+            return hiddenIds[task.id] === undefined ? (
               <div className="section-body-item" key={task.id}>
                 <Checkbox
                   disabled={isTaskCompleted}
@@ -235,7 +242,7 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
 
                 {isTaskCompleted ? <div className="pill completed">Task Complete</div> : null}
               </div>
-            );
+            ) : null;
           })}
         </div>
       ) : null}

@@ -81,13 +81,15 @@ const reducer = (state: State, action: any): State => {
     case 'SET_ALL_TASK_STATE':
       (action.payload.data as Job).checklist.stages.forEach((stage) => {
         stage.tasks.forEach((task) => {
-          temp[stage.id] = {
-            ...temp[stage.id],
-            [task.taskExecution.id]: [
-              task.taskExecution.state in CompletedJobStates ? false : action.payload.state,
-              task.id,
-            ],
-          };
+          if (action.payload.hiddenIds[task.id] === undefined) {
+            temp[stage.id] = {
+              ...temp[stage.id],
+              [task.taskExecution.id]: [
+                task.taskExecution.state in CompletedJobStates ? false : action.payload.state,
+                task.id,
+              ],
+            };
+          }
         });
       });
       return { ...state, ...temp };
@@ -106,6 +108,7 @@ const Assignments: FC<Props> = (props) => {
     data,
     loading,
     stages: { stagesById, stagesOrder },
+    parameters: { hiddenIds },
   } = useTypedSelector((state) => state.composer);
 
   const [state, localDispatch] = useReducer(reducer, {});
@@ -160,6 +163,7 @@ const Assignments: FC<Props> = (props) => {
                   payload: {
                     data,
                     state: isAllTaskSelected ? false : isNoTaskSelected,
+                    hiddenIds,
                   },
                 });
               }}
@@ -184,15 +188,17 @@ const Assignments: FC<Props> = (props) => {
             </Button>
           </div>
 
-          {stagesOrder.map((stageId, index) => (
-            <Section
-              stage={stagesById[stageId]}
-              key={stageId}
-              sectionState={state[stageId]}
-              localDispatch={localDispatch}
-              isFirst={index === 0}
-            />
-          ))}
+          {stagesOrder.map((stageId, index) => {
+            return hiddenIds[stageId] === undefined ? (
+              <Section
+                stage={stagesById[stageId]}
+                key={stageId}
+                sectionState={state[stageId]}
+                localDispatch={localDispatch}
+                isFirst={index === 0}
+              />
+            ) : null;
+          })}
         </Wrapper>
       </div>
     );
