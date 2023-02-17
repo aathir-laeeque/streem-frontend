@@ -52,6 +52,8 @@ const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) 
               ref={inputRef}
               className="new-form-field-textarea"
               placeholder="Users will write their comments here"
+              data-id={parameter.id}
+              data-type={parameter.type}
               value={value}
               rows={4}
               onChange={(e) => onChange(e.target.value)}
@@ -60,6 +62,8 @@ const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) 
             <TextInput
               ref={inputRef}
               placeholder="Write here"
+              data-id={parameter.id}
+              data-type={parameter.type}
               value={value}
               onChange={({ value }) => onChange(value)}
             />

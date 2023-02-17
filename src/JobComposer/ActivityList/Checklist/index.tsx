@@ -70,7 +70,7 @@ const ChecklistParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }
   if (entity === Entity.JOB) {
     return (
       <Wrapper>
-        <ul className="list-container">
+        <ul className="list-container" data-id={parameter.id} data-type={parameter.type}>
           {parameter.data.map((el, index) => {
             const isItemSelected = get(parameter?.response?.choices, el.id) === Selections.SELECTED;
 

@@ -166,7 +166,9 @@ const ParameterList: FC<ParameterListProps> = ({
                 `${MandatoryParameter.SHOULD_BE}`,
                 `${MandatoryParameter.CALCULATION}`,
               ].includes(parameter.type) && (
-                <div className="parameter-label">{parameter.label}</div>
+                <div className="parameter-label" data-for={parameter.id}>
+                  {parameter.label}
+                </div>
               )}
 
             {(() => {

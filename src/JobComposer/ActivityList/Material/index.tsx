@@ -16,7 +16,7 @@ const MaterialParameter: FC<ParameterProps> = ({ parameter }) => {
   return (
     <Wrapper>
       {entity === Entity.JOB ? (
-        <ol className="list-container">
+        <ol className="list-container" data-id={parameter.id} data-type={parameter.type}>
           {parameter.data.map((el, index) => (
             <li className="list-item" key={index}>
               {el.link ? (

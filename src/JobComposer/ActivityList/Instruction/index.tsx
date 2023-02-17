@@ -55,6 +55,8 @@ const InstructionParameter: FC<ParameterProps> = ({ parameter }) => {
           console.log('value :: ', value);
         }}
         onEditorStateChange={(newEditorState) => setEditorState(newEditorState)}
+        data-id={parameter.id}
+        data-type={parameter.type}
       />
     </Wrapper>
   );

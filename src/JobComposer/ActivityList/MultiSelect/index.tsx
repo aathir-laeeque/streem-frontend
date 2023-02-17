@@ -22,6 +22,8 @@ const MultiSelectParameter: FC<ParameterProps & { isMulti: boolean }> = ({
       <Select
         isMulti={isMulti}
         className="multi-select"
+        data-id={parameter.id}
+        data-type={parameter.type}
         options={options}
         value={options.filter(
           (el) => get(parameter?.response?.choices, el.value) === Selections.SELECTED,

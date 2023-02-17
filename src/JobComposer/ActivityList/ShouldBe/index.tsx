@@ -300,7 +300,7 @@ const ShouldBeParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   };
 
   return (
-    <Wrapper>
+    <Wrapper data-id={parameter.id} data-type={parameter.type}>
       {state.isApprovalPending ? (
         <span className="pending-approval">
           <Warning className="icon" />
@@ -324,7 +324,9 @@ const ShouldBeParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
         </span>
       ) : null}
 
-      <span className="parameter-text">{generateText(parameter?.label, parameter?.data)}</span>
+      <span className="parameter-text" data-for={parameter.id}>
+        {generateText(parameter?.label, parameter?.data)}
+      </span>
 
       <NumberInput
         defaultValue={state.value}

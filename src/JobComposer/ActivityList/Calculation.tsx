@@ -16,9 +16,9 @@ const CalculationParameter: FC<ParameterProps> = ({
   } = useTypedSelector((state) => state.composer);
 
   return (
-    <div className="calculation-parameter">
+    <div className="calculation-parameter" data-id={parameter.id} data-type={parameter.type}>
       <span className="head">Calculation</span>
-      <span className="expression">
+      <span className="expression" data-for={parameter.id}>
         {parameter.label} = {parameter.data.expression}
       </span>
       <span className="head">Input(s)</span>

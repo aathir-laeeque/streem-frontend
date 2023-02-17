@@ -42,6 +42,8 @@ const NumberParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) =
           placeholder="Ex. 2"
           type="number"
           className="number-parameter-input"
+          data-id={parameter.id}
+          data-type={parameter.type}
           defaultValue={value}
           label="Enter Number"
           onChange={({ value }) => onChange(value)}

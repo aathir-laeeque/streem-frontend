@@ -47,6 +47,8 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
               type: parameter.type as unknown as InputTypes,
               props: {
                 defaultValue: value,
+                ['data-id']: parameter.id,
+                ['data-type']: parameter.type,
                 label:
                   parameter.type === MandatoryParameter.DATE ? 'Enter Date' : 'Enter Date Time',
                 onChange: ({ value }: { name: string; value: string }) => {

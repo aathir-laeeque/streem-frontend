@@ -1,10 +1,10 @@
 import MemoSignature from '#assets/svg/Signature';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { uploadFile } from '#modules/file-upload/action';
 import { useTypedSelector } from '#store';
 import { dataUriToBlob } from '#utils/dataUriToBlob';
-import { uploadFile } from '#modules/file-upload/action';
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ParameterProps } from '../types';
 import { Wrapper } from './styles';
@@ -60,6 +60,8 @@ const Signature: FC<ParameterProps> = ({ parameter, isCorrectingError, isTaskCom
         {...(!isTaskCompleted && {
           onClick: openSignatureModal,
         })}
+        data-id={parameter.id}
+        data-type={parameter.type}
       >
         {(imageData && (
           <div>

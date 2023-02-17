@@ -134,7 +134,7 @@ const MediaParameter: FC<ParameterProps> = ({
   }, []);
 
   return (
-    <MediaWrapper>
+    <MediaWrapper data-id={parameter.id} data-type={parameter.type}>
       <TaskMedias
         medias={parameter.response?.medias ?? []}
         parameterId={parameter.id}

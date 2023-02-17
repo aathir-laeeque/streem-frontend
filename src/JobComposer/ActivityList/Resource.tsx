@@ -158,7 +158,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
 
   return (
-    <Wrapper>
+    <Wrapper data-id={parameter.id} data-type={parameter.type}>
       <ResourceParameterWrapper>
         <Select
           className="multi-select"
