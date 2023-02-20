@@ -165,7 +165,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   };
 
   const fetchParametersListData = async (params: PaginatedFetchData = {}, option) => {
-    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
+    const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
     if (option?.id) {
       dispatch(
         fetchParameters(option.id, {
@@ -205,7 +205,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   };
 
   useEffect(() => {
-    fetchParametersListData({ page: DEFAULT_PAGE_NUMBER, size: DEFAULT_PAGE_SIZE }, checklist);
+    fetchParametersListData({ page: DEFAULT_PAGE_NUMBER }, checklist);
     if (!checklist) {
       dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
     }

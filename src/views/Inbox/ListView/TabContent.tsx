@@ -226,7 +226,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
   };
 
   const fetchParametersListData = async (params: PaginatedFetchData = {}, option) => {
-    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
+    const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
     if (option?.id) {
       dispatch(
         fetchParameters(option.id, {
@@ -259,7 +259,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         },
       ];
       setFilterFields((prev) => [...prev, ...selectedFilterField]);
-      fetchParametersListData({ page: DEFAULT_PAGE_NUMBER, size: DEFAULT_PAGE_SIZE }, option);
+      fetchParametersListData({ page: DEFAULT_PAGE_NUMBER }, option);
     } else {
       setFilterFields((prev) => prev.filter((filter) => filter.field !== 'checklist.id'));
       dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
