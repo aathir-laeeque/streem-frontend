@@ -206,21 +206,23 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
             },
           ]}
         />
-        <Button
-          type="button"
-          variant="textOnly"
-          color="red"
-          style={{ padding: '8px', marginBlock: 16 }}
-          onClick={() => {
-            setValue('autoInitialized', false);
-            setValue('autoInitialize', null, {
-              shouldDirty: true,
-              shouldValidate: true,
-            });
-          }}
-        >
-          <LinkOffOutlined style={{ marginRight: 8 }} /> Remove Link
-        </Button>
+        {!isReadOnly && (
+          <Button
+            type="button"
+            variant="textOnly"
+            color="red"
+            style={{ padding: '8px', marginBlock: 16 }}
+            onClick={() => {
+              setValue('autoInitialized', false);
+              setValue('autoInitialize', null, {
+                shouldDirty: true,
+                shouldValidate: true,
+              });
+            }}
+          >
+            <LinkOffOutlined style={{ marginRight: 8 }} /> Remove Link
+          </Button>
+        )}
       </>
     );
   };
