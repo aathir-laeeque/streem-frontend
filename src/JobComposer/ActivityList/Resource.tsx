@@ -39,8 +39,11 @@ const ResourceParameterWrapper = styled.div`
 const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
   const {
-    composer: { data },
     auth: { selectedFacility },
+    composer: {
+      data,
+      parameters: { parametersById },
+    },
   } = useTypedSelector((state) => state);
   const [state, setState] = useState<{
     isLoading: Boolean;
@@ -152,6 +155,8 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     }
   };
 
+  const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
+
   return (
     <Wrapper>
       <ResourceParameterWrapper>
@@ -201,7 +206,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
       {parameter?.autoInitialized && (
         <>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘Resource Parameter Name’
+            <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘{linkedResourceParameter?.label}’
           </div>
           <Button variant="secondary" onClick={handleAutoInitialize} style={{ marginBlock: 8 }}>
             Get Value

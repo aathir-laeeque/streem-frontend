@@ -1,5 +1,6 @@
 import { Button, FormGroup } from '#components';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
+import { useTypedSelector } from '#store';
 import { apiGetObjects, baseUrl } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
@@ -8,6 +9,11 @@ import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 
 const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
+  const {
+    parameters: {
+      parameters: { list: parametersList },
+    },
+  } = useTypedSelector((state) => state.prototypeComposer);
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];
@@ -101,6 +107,10 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
     }
   };
 
+  const linkedResourceParameter = parametersList.find(
+    (currParameter) => currParameter?.id === parameter?.autoInitialize?.parameterId,
+  );
+
   return (
     <>
       <FormGroup
@@ -171,7 +181,7 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
       {parameter?.autoInitialized && (
         <>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘Resource Parameter Name’
+            <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘{linkedResourceParameter?.label}’
           </div>
           <Button variant="secondary" onClick={handleAutoInitialize} style={{ marginBlock: 8 }}>
             Get Value
