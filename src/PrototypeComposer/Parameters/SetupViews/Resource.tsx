@@ -98,6 +98,14 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
     setLoadingProperties(false);
   };
 
+  const onRemoveLink = () => {
+    setValue('autoInitialized', false);
+    setValue('autoInitialize', null, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
   useEffect(() => {
     register('data', {
       required: true,
@@ -212,13 +220,7 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
             variant="textOnly"
             color="red"
             style={{ padding: '8px', marginBlock: 16 }}
-            onClick={() => {
-              setValue('autoInitialized', false);
-              setValue('autoInitialize', null, {
-                shouldDirty: true,
-                shouldValidate: true,
-              });
-            }}
+            onClick={onRemoveLink}
           >
             <LinkOffOutlined style={{ marginRight: 8 }} /> Remove Link
           </Button>
@@ -270,6 +272,9 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
                     shouldValidate: true,
                   },
                 );
+                if (autoInitialized) {
+                  onRemoveLink();
+                }
               },
             },
           },
