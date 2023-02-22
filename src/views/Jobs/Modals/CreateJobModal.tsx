@@ -112,7 +112,11 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
   } = useTypedSelector((state) => state.prototypeComposer);
   const dispatch = useDispatch();
 
-  const fetchData = ({ page, size = 10, query = '' }: fetchDataParams) => {
+  const fetchData = ({
+    page = DEFAULT_PAGE_NUMBER,
+    size = DEFAULT_PAGE_SIZE,
+    query = '',
+  }: fetchDataParams) => {
     const filters = JSON.stringify({
       op: FilterOperators.AND,
       fields: [

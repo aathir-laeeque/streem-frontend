@@ -88,3 +88,8 @@ export type SelectOptions =
       externalId?: string;
     }[]
   | undefined;
+
+export enum CustomViewsTargetType {
+  PROCESS = 'PROCESS',
+  JOB = 'JOB',
+}

@@ -2,6 +2,7 @@ import { AuditLogsFiltersState, AuditLogFiltersActionType, AuditLogsFiltersActio
 
 const initialState: AuditLogsFiltersState = {
   filters: '',
+  columns: [],
 };
 
 const reducer = (
@@ -11,6 +12,9 @@ const reducer = (
   switch (action.type) {
     case AuditLogsFiltersAction.SET_FILTERS:
       return { ...state, filters: action.payload };
+
+    case AuditLogsFiltersAction.SET_COLUMNS:
+      return { ...state, columns: action.payload };
 
     case AuditLogsFiltersAction.CLEAR_FILTRES:
       return initialState;

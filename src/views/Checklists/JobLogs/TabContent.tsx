@@ -35,8 +35,11 @@ const Logs: FC<TabContentProps> = ({ values }) => {
   const { checklistId: id } = values;
   const dispatch = useDispatch();
   const {
-    prototypeComposer: { loading: loadingChecklist, data },
-    checklistListView: { pageable, loading, jobLogs },
+    prototypeComposer: { data },
+    checklistListView: {
+      pageable,
+      jobLogs: { list, loading },
+    },
   } = useTypedSelector((state) => state);
   const [state, setState] = useState<{
     columns: DataTableColumn[];
@@ -53,7 +56,6 @@ const Logs: FC<TabContentProps> = ({ values }) => {
     if (id)
       dispatch(
         fetchProcessLogs({
-          id: id,
           page,
           size,
           sort: 'id,desc',
@@ -143,7 +145,7 @@ const Logs: FC<TabContentProps> = ({ values }) => {
           <TabContentWrapper>
             <DataTable
               columns={columns}
-              rows={jobLogs.reduce((acc, jobLog, index) => {
+              rows={list.reduce((acc, jobLog, index) => {
                 jobLog.logs.forEach((log: any) => {
                   acc[index] = {
                     ...acc[index],

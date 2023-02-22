@@ -2,17 +2,18 @@ import { Button, NestedSelect } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import useTabs from '#components/shared/useTabs';
+import { resetComposer } from '#PrototypeComposer/actions';
+import { useTypedSelector } from '#store';
+import { CustomViewsTargetType, FilterOperators } from '#utils/globalTypes';
 import { ViewWrapper } from '#views/Jobs/ListView/styles';
+import ArrowDropDownOutlinedIcon from '@material-ui/icons/ArrowDropDownOutlined';
 import { RouteComponentProps } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { addCustomView, getCustomView } from '../ListView/actions';
-import TabContent from './TabContent';
+import { addCustomView, getCustomViews } from '../ListView/actions';
 import DynamicContent from './DynamicContent';
-import { useTypedSelector } from '#store';
-import { resetComposer } from '#PrototypeComposer/actions';
-import ArrowDropDownOutlinedIcon from '@material-ui/icons/ArrowDropDownOutlined';
+import TabContent from './TabContent';
 
 const AfterHeaderWrapper = styled.div`
   display: flex;
@@ -55,11 +56,17 @@ const AfterHeader: FC<any> = ({ setActiveTab, checklistId }) => {
       addCustomView({
         data: {
           ...data,
-          filters: [],
           columns: (processData?.jobLogColumns || []).map((column: any, i: number) => ({
             ...column,
             orderTree: i + 1,
           })),
+          filters: [
+            {
+              key: 'checklistId',
+              constraint: FilterOperators.EQ,
+              value: checklistId,
+            },
+          ],
         },
         setActiveTab: handleSetActiveTab,
         checklistId,
@@ -123,7 +130,22 @@ const JobLogs: FC<RouteComponentProps<{ id: string }>> = ({ id }) => {
 
   useEffect(() => {
     if (id) {
-      dispatch(getCustomView(id));
+      dispatch(
+        getCustomViews({
+          filters: {
+            op: FilterOperators.AND,
+            fields: [
+              { field: 'archived', op: FilterOperators.EQ, values: [false] },
+              {
+                field: 'targetType',
+                op: FilterOperators.EQ,
+                values: [CustomViewsTargetType.PROCESS],
+              },
+              { field: 'processId', op: FilterOperators.EQ, values: [id] },
+            ],
+          },
+        }),
+      );
     }
     return () => {
       dispatch(resetComposer());

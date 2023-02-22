@@ -10,7 +10,11 @@ const initialState: ListViewState = {
   automations: [],
   loading: false,
   pageable: DEFAULT_PAGINATION,
-  jobLogs: [],
+  jobLogs: {
+    list: [],
+    loading: false,
+    pageable: DEFAULT_PAGINATION,
+  },
   customViews: {
     loading: false,
     views: {},
@@ -21,9 +25,11 @@ const initialState: ListViewState = {
 const reducer = (state = initialState, action: ListViewActionType): ListViewState => {
   switch (action.type) {
     case ListViewAction.FETCH_AUTOMATIONS:
-    case ListViewAction.FETCH_PROCESS_LOGS:
     case ListViewAction.FETCH_CHECKLISTS_ONGOING:
       return { ...state, loading: true };
+
+    case ListViewAction.FETCH_PROCESS_LOGS:
+      return { ...state, jobLogs: { ...state.jobLogs, loading: true } };
 
     case ListViewAction.CLEAR_DATA:
       return { ...state, checklists: [], pageable: DEFAULT_PAGINATION };
@@ -42,9 +48,14 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
       };
 
     case ListViewAction.FETCH_AUTOMATIONS_ERROR:
-    case ListViewAction.FETCH_PROCESS_LOGS_ERROR:
     case ListViewAction.FETCH_CHECKLISTS_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
+
+    case ListViewAction.FETCH_PROCESS_LOGS_ERROR:
+      return {
+        ...state,
+        jobLogs: { ...state.jobLogs, loading: false, error: action.payload?.error },
+      };
 
     case ListViewAction.FETCH_AUTOMATIONS_SUCCESS:
       return {
@@ -65,13 +76,16 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
     case ListViewAction.FETCH_PROCESS_LOGS_SUCCESS:
       return {
         ...state,
-        loading: false,
-        jobLogs: action.payload.data!,
-        pageable: action.payload.pageable!,
+        jobLogs: {
+          ...state.jobLogs,
+          loading: false,
+          list: action.payload.data!,
+          pageable: action.payload.pageable!,
+        },
       };
 
     case ListViewAction.SAVE_CUSTOM_VIEW:
-    case ListViewAction.GET_CUSTOM_VIEW:
+    case ListViewAction.GET_CUSTOM_VIEWS:
     case ListViewAction.ADD_CUSTOM_VIEW:
       return {
         ...state,
@@ -91,8 +105,9 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
         },
       };
 
+    case ListViewAction.DELETE_CUSTOM_VIEW_ERROR:
     case ListViewAction.SAVE_CUSTOM_VIEW_ERROR:
-    case ListViewAction.GET_CUSTOM_VIEW_ERROR:
+    case ListViewAction.GET_CUSTOM_VIEWS_ERROR:
     case ListViewAction.ADD_CUSTOM_VIEW_ERROR:
       return {
         ...state,
@@ -103,7 +118,7 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
         },
       };
 
-    case ListViewAction.GET_CUSTOM_VIEW_SUCCESS:
+    case ListViewAction.GET_CUSTOM_VIEWS_SUCCESS:
       return {
         ...state,
         customViews: {
@@ -120,6 +135,17 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
           ...state.customViews,
           loading: false,
           views: { ...state.customViews.views, [action.payload.data.id]: action.payload.data },
+        },
+      };
+
+    case ListViewAction.DELETE_CUSTOM_VIEW_SUCCESS:
+      const updatedViews = state.customViews.views;
+      delete updatedViews[action.payload.data.id];
+      return {
+        ...state,
+        customViews: {
+          ...state.customViews,
+          views: updatedViews,
         },
       };
 

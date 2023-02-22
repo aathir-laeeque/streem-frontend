@@ -216,8 +216,6 @@ export const apiUpdatePrototype = (id: Checklist['id']) => `${baseUrl}/checklist
 
 export const apiGetJobLogs = () => `${baseUrl}/job-logs`;
 
-export const apiGetProcessLogs = (id: Checklist['id']) => `${apiGetJobLogs()}/checklists/${id}`;
-
 export const apiValidatePassword = () => `${baseUrl}/auth/credentials/validate`;
 
 export const apiTaskSignOff = () => `${baseUrl}/tasks/sign-off`;
@@ -311,10 +309,12 @@ export const apiGetReports = () => `${baseUrl}/reports`;
 
 export const apiGetReport = (id?: string) => `${baseUrl}/reports/${id}`;
 
-export const apiProcessJobLogView = (id: Checklist['id']) =>
-  `${baseUrl}/job-log-views/checklists/${id}`;
+export const apiProcessCustomViews = (id: Checklist['id']) =>
+  `${baseUrl}/custom-views/checklists/${id}`;
 
-export const apiJobLogView = (id: string) => `${baseUrl}/job-log-views/${id}`;
+export const apiCustomViews = (id?: string) => `${baseUrl}/custom-views${id ? `/${id}` : ''}`;
+
+export const apiCustomViewsArchive = (id?: string) => `${baseUrl}/custom-views/${id}/archive`;
 
 export const apiGetJobLogsExcel = () => `${baseUrl}/job-logs/download`;
 export const apiBranchingRuleExecute = () => `${baseUrl}/parameters/rules/execute/temporary`;

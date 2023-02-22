@@ -1,14 +1,15 @@
 import styled from 'styled-components';
 export const Composer = styled.div`
-  margin: 8px;
+  margin: 8px 8px 0px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  flex: 1;
 
   .parameter-wrapper {
     background: #fff;
     box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1);
-    padding-top: 8px;
+    padding: 8px 8px 0px;
     overflow: hidden;
     display: flex;
     flex: 1;

@@ -18,12 +18,14 @@ import {
   addCustomView,
   addCustomViewError,
   addCustomViewSuccess,
-  getCustomView,
-  getCustomViewError,
-  getCustomViewSuccess,
+  getCustomViews,
+  getCustomViewsError,
+  getCustomViewsSuccess,
   saveCustomView,
   saveCustomViewError,
   saveCustomViewSuccess,
+  deleteCustomViewError,
+  deleteCustomViewSuccess,
 } from './actions';
 
 export type ListViewProps = RouteComponentProps;
@@ -52,7 +54,12 @@ export interface ListViewState {
   readonly currentPageData: Checklist[];
   readonly pageable: Pageable;
   readonly automations: Automation[];
-  readonly jobLogs: any[];
+  readonly jobLogs: {
+    list: any[];
+    loading: boolean;
+    pageable: Pageable;
+    error?: any;
+  };
   readonly customViews: {
     loading: boolean;
     views: Record<string, CustomView>;
@@ -87,13 +94,17 @@ export enum ListViewAction {
   ADD_CUSTOM_VIEW_ERROR = '@@checklist/ListView/ADD_CUSTOM_VIEW_ERROR',
   ADD_CUSTOM_VIEW_SUCCESS = '@@checklist/ListView/ADD_CUSTOM_VIEW_SUCCESS',
 
-  GET_CUSTOM_VIEW = '@@checklist/ListView/GET_CUSTOM_VIEW',
-  GET_CUSTOM_VIEW_ERROR = '@@checklist/ListView/GET_CUSTOM_VIEW_ERROR',
-  GET_CUSTOM_VIEW_SUCCESS = '@@checklist/ListView/GET_CUSTOM_VIEW_SUCCESS',
+  GET_CUSTOM_VIEWS = '@@checklist/ListView/GET_CUSTOM_VIEWS',
+  GET_CUSTOM_VIEWS_ERROR = '@@checklist/ListView/GET_CUSTOM_VIEWS_ERROR',
+  GET_CUSTOM_VIEWS_SUCCESS = '@@checklist/ListView/GET_CUSTOM_VIEWS_SUCCESS',
 
   SAVE_CUSTOM_VIEW = '@@checklist/ListView/SAVE_CUSTOM_VIEW',
   SAVE_CUSTOM_VIEW_ERROR = '@@checklist/ListView/SAVE_CUSTOM_VIEW_ERROR',
   SAVE_CUSTOM_VIEW_SUCCESS = '@@checklist/ListView/SAVE_CUSTOM_VIEW_SUCCESS',
+
+  DELETE_CUSTOM_VIEW = '@@checklist/ListView/DELETE_CUSTOM_VIEW',
+  DELETE_CUSTOM_VIEW_ERROR = '@@checklist/ListView/DELETE_CUSTOM_VIEW_ERROR',
+  DELETE_CUSTOM_VIEW_SUCCESS = '@@checklist/ListView/DELETE_CUSTOM_VIEW_SUCCESS',
 }
 
 export type ListViewActionType = ReturnType<
@@ -112,10 +123,12 @@ export type ListViewActionType = ReturnType<
   | typeof addCustomView
   | typeof addCustomViewError
   | typeof addCustomViewSuccess
-  | typeof getCustomView
-  | typeof getCustomViewError
-  | typeof getCustomViewSuccess
+  | typeof getCustomViews
+  | typeof getCustomViewsError
+  | typeof getCustomViewsSuccess
   | typeof saveCustomView
   | typeof saveCustomViewError
   | typeof saveCustomViewSuccess
+  | typeof deleteCustomViewError
+  | typeof deleteCustomViewSuccess
 >;

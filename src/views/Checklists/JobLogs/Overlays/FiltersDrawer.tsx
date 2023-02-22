@@ -10,7 +10,6 @@ import { AddCircleOutline, Close } from '@material-ui/icons';
 import { camelCase, startCase } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -93,7 +92,15 @@ const metaFilters = [
   },
 ];
 
-const FilterCard: FC<any> = ({ item, index, remove, form, parameterList, shouldRegister }) => {
+const FilterCard: FC<any> = ({
+  item,
+  index,
+  remove,
+  form,
+  parameterList,
+  shouldRegister,
+  styles = {},
+}) => {
   const { setValue, register, watch } = form;
   const formValues = watch('filters', []);
   const filter = formValues?.[index];
@@ -126,6 +133,7 @@ const FilterCard: FC<any> = ({ item, index, remove, form, parameterList, shouldR
     register(`filters.${index}.constraint`, {
       required: true,
     });
+    register(`filters.${index}.displayName`);
 
     setValue(`filters.${index}.id`, item.id, {
       shouldValidate: true,
@@ -139,6 +147,7 @@ const FilterCard: FC<any> = ({ item, index, remove, form, parameterList, shouldR
     setValue(`filters.${index}.value`, item?.value, {
       shouldValidate: true,
     });
+    setValue(`filters.${index}.displayName`, item?.displayName);
 
     if (item?.key || item?.value) {
       let _selectedParameter: any = undefined;
@@ -214,7 +223,7 @@ const FilterCard: FC<any> = ({ item, index, remove, form, parameterList, shouldR
   };
 
   return (
-    <FilterCardWrapper>
+    <FilterCardWrapper style={styles}>
       <div className="upper-row">
         <FormGroup
           inputs={[
@@ -243,18 +252,28 @@ const FilterCard: FC<any> = ({ item, index, remove, form, parameterList, shouldR
                     current: -1,
                     isLast: false,
                   };
-                  const isMetaFilter = metaFilters.find((filter) => value.value === filter.value);
-                  if (isMetaFilter) {
+                  if (metaFilters.some((currFilter) => currFilter.value === value.value)) {
                     setValue(`filters.${index}.key`, `${value.value}`, {
                       shouldDirty: true,
                       shouldValidate: true,
                     });
                   } else {
-                    setValue(`filters.${index}.key`, `parameterValues.${value.value}`, {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    });
+                    if (
+                      value.type === MandatoryParameter.SINGLE_SELECT ||
+                      value.type === MandatoryParameter.RESOURCE
+                    ) {
+                      setValue(`filters.${index}.key`, `parameterValues.${value.value}`, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                    } else {
+                      setValue(`filters.${index}.key`, `${value.value}`, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                    }
                   }
+                  setValue(`filters.${index}.displayName`, `${value.label}`);
                   setState((prev) => ({ ...prev, selectedParameter: value }));
                 },
                 style: {
@@ -373,7 +392,6 @@ const FiltersDrawer: FC<any> = ({
   onApplyMoreFilters,
   filters,
 }: any) => {
-  const dispatch = useDispatch();
   const [state, setState] = useState<{
     loading: boolean;
     parameterList: any[];
@@ -423,30 +441,30 @@ const FiltersDrawer: FC<any> = ({
   };
 
   useEffect(() => {
-    fetchParameter();
+    if (checklistId) {
+      fetchParameter();
+    }
     setDrawerOpen(true);
-  }, []);
+  }, [checklistId]);
 
   const fetchParameter = async () => {
-    if (checklistId) {
-      setState((prev) => ({ ...prev, loading: true }));
-      const parametersForCalc = await request('GET', apiGetParameters(checklistId), {
-        params: {
-          filters: {
-            op: FilterOperators.AND,
-            fields: [
-              { field: 'archived', op: FilterOperators.EQ, values: [false] },
-              {
-                field: 'type',
-                op: FilterOperators.ANY,
-                values: [MandatoryParameter.RESOURCE, MandatoryParameter.SINGLE_SELECT],
-              },
-            ],
-          },
+    setState((prev) => ({ ...prev, loading: true }));
+    const parametersForCalc = await request('GET', apiGetParameters(checklistId), {
+      params: {
+        filters: {
+          op: FilterOperators.AND,
+          fields: [
+            { field: 'archived', op: FilterOperators.EQ, values: [false] },
+            {
+              field: 'type',
+              op: FilterOperators.ANY,
+              values: [MandatoryParameter.RESOURCE, MandatoryParameter.SINGLE_SELECT],
+            },
+          ],
         },
-      });
-      setState((prev) => ({ ...prev, parameterList: parametersForCalc.data, loading: false }));
-    }
+      },
+    });
+    setState((prev) => ({ ...prev, parameterList: parametersForCalc.data, loading: false }));
   };
 
   const onAddNewFilter = () => {
@@ -472,17 +490,20 @@ const FiltersDrawer: FC<any> = ({
           loading={loading}
           component={
             <div className="filter-cards">
-              {fields.map((item, index) => (
-                <FilterCard
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  form={form}
-                  remove={onRemoveFilter}
-                  parameterList={parameterList}
-                  shouldRegister={shouldRegister}
-                />
-              ))}
+              {fields.map((item, index) => {
+                return (
+                  <FilterCard
+                    key={item.id}
+                    item={item}
+                    index={index}
+                    form={form}
+                    remove={onRemoveFilter}
+                    parameterList={parameterList}
+                    shouldRegister={shouldRegister}
+                    styles={item?.key === 'checklistId' ? { display: 'none' } : {}}
+                  />
+                );
+              })}
               <Button
                 type="button"
                 variant="secondary"

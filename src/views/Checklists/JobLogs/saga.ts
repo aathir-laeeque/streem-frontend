@@ -11,13 +11,14 @@ function* fetchJobLogsExcelSaga({ payload }: ReturnType<typeof fetchJobLogsExcel
       params,
       responseType: 'blob',
     });
-
-    const url = window.URL.createObjectURL(new Blob([res]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `${params.checklistId}.xlsx`);
-    document.body.appendChild(link);
-    link.click();
+    if (res) {
+      const url = window.URL.createObjectURL(new Blob([res]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${params.customViewId}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+    }
   } catch (error) {
     console.error('error from fetchJobLogsExcel function in JobLogsSaga :: ', error);
     yield put(fetchJobLogsExcelError(error));

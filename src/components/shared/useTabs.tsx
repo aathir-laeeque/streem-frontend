@@ -1,4 +1,3 @@
-import { capitalize } from 'lodash';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 
@@ -79,7 +78,11 @@ const useTabs = ({ tabs, BeforeHeader, AfterHeader }: useTabType) => {
   const renderTabHeader = () => (
     <HeaderWrapper>
       {BeforeHeader && (
-        <BeforeHeader.Component setActiveTab={setActiveTab} {...BeforeHeader.props} />
+        <BeforeHeader.Component
+          setActiveTab={setActiveTab}
+          activeTab={activeTab}
+          {...BeforeHeader.props}
+        />
       )}
       <div className="tab-header-items">
         {tabs.map((tab) => (
@@ -88,11 +91,17 @@ const useTabs = ({ tabs, BeforeHeader, AfterHeader }: useTabType) => {
             key={tab.label}
             onClick={() => setActiveTab(tab)}
           >
-            {capitalize(tab.label)}
+            {tab.label}
           </div>
         ))}
       </div>
-      {AfterHeader && <AfterHeader.Component setActiveTab={setActiveTab} {...AfterHeader.props} />}
+      {AfterHeader && (
+        <AfterHeader.Component
+          setActiveTab={setActiveTab}
+          activeTab={activeTab}
+          {...AfterHeader.props}
+        />
+      )}
     </HeaderWrapper>
   );
 

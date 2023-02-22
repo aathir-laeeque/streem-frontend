@@ -311,7 +311,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   };
 
   const handleMenuScrollToBottom = () => {
-    fetchChecklistData({ page: checklistPageable.page + 1 });
+    if (!checklistPageable.last) fetchChecklistData({ page: checklistPageable.page + 1 });
   };
 
   return (
@@ -346,8 +346,9 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             onSelectUpdate(newValue);
           }}
           isLoading={checklistsLoading}
-          onInputChange={debounce((searchedValue: string) => {
-            fetchChecklistData({ page: DEFAULT_PAGE_NUMBER, query: searchedValue });
+          onInputChange={debounce((searchedValue: string, actionMeta) => {
+            if (searchedValue !== actionMeta.prevInputValue)
+              fetchChecklistData({ page: DEFAULT_PAGE_NUMBER, query: searchedValue });
           }, 500)}
           options={checklists.map((currList) => ({ ...currList, label: currList.name }))}
           placeholder="Processes"

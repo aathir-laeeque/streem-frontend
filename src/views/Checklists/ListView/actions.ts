@@ -1,5 +1,6 @@
 import { actionSpreader } from '#store/helpers';
 import { Error, ResponseObj } from '#utils/globalTypes';
+import { AxiosRequestConfig } from 'axios';
 import { Checklist } from '../types';
 import { Automation, ListViewAction } from './types';
 
@@ -86,7 +87,7 @@ export const addCustomView = ({
   setActiveTab,
 }: {
   data: any;
-  checklistId: string;
+  checklistId?: string;
   setActiveTab: any;
 }) => actionSpreader(ListViewAction.ADD_CUSTOM_VIEW, { data, checklistId, setActiveTab });
 
@@ -98,14 +99,14 @@ export const addCustomViewSuccess = (data: any) =>
     data,
   });
 
-export const getCustomView = (checklistId: string) =>
-  actionSpreader(ListViewAction.GET_CUSTOM_VIEW, { checklistId });
+export const getCustomViews = (params: AxiosRequestConfig['params'] = {}) =>
+  actionSpreader(ListViewAction.GET_CUSTOM_VIEWS, { params });
 
-export const getCustomViewError = (error?: any) =>
-  actionSpreader(ListViewAction.GET_CUSTOM_VIEW_ERROR, { error });
+export const getCustomViewsError = (error?: any) =>
+  actionSpreader(ListViewAction.GET_CUSTOM_VIEWS_ERROR, { error });
 
-export const getCustomViewSuccess = (data: any) =>
-  actionSpreader(ListViewAction.GET_CUSTOM_VIEW_SUCCESS, {
+export const getCustomViewsSuccess = (data: any) =>
+  actionSpreader(ListViewAction.GET_CUSTOM_VIEWS_SUCCESS, {
     data,
   });
 
@@ -117,5 +118,16 @@ export const saveCustomViewError = (error?: any) =>
 
 export const saveCustomViewSuccess = (data: any) =>
   actionSpreader(ListViewAction.SAVE_CUSTOM_VIEW_SUCCESS, {
+    data,
+  });
+
+export const deleteCustomView = ({ view }: { view: any }) =>
+  actionSpreader(ListViewAction.DELETE_CUSTOM_VIEW, { view });
+
+export const deleteCustomViewError = (error?: any) =>
+  actionSpreader(ListViewAction.DELETE_CUSTOM_VIEW_ERROR, { error });
+
+export const deleteCustomViewSuccess = (data: any) =>
+  actionSpreader(ListViewAction.DELETE_CUSTOM_VIEW_SUCCESS, {
     data,
   });

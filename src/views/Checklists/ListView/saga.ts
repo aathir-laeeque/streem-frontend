@@ -5,41 +5,46 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   apiArchiveChecklist,
   apiArchiveValidate,
-  apiGetChecklists,
-  apiUnarchiveChecklist,
+  apiCustomViews,
+  apiCustomViewsArchive,
   apiGetAutomations,
-  apiGetProcessLogs,
-  apiProcessJobLogView,
-  apiJobLogView,
+  apiGetChecklists,
+  apiGetJobLogs,
+  apiProcessCustomViews,
+  apiUnarchiveChecklist,
 } from '#utils/apiUrls';
-import { Error, ResponseObj } from '#utils/globalTypes';
+import { CustomViewsTargetType, Error, FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { all, call, delay, put, takeLatest, takeLeading } from 'redux-saga/effects';
+import { call, put, takeLatest, takeLeading } from 'redux-saga/effects';
 import { store } from '../../../App';
 import { Checklist } from '../types';
 import {
+  addCustomView,
+  addCustomViewError,
+  addCustomViewSuccess,
   archiveChecklist,
+  deleteCustomView,
+  deleteCustomViewError,
+  deleteCustomViewSuccess,
+  fetchAutomations,
+  fetchAutomationsError,
+  fetchAutomationsSuccess,
   fetchChecklists,
   fetchChecklistsError,
   fetchChecklistsOngoing,
   fetchChecklistsSuccess,
-  handlePublishedArchive,
-  unarchiveChecklist,
-  updateList,
-  fetchAutomations,
-  fetchAutomationsError,
-  fetchAutomationsSuccess,
   fetchProcessLogs,
   fetchProcessLogsError,
   fetchProcessLogsSuccess,
-  addCustomView,
-  addCustomViewSuccess,
-  addCustomViewError,
-  getCustomViewSuccess,
-  getCustomViewError,
-  getCustomView,
+  getCustomViews,
+  getCustomViewsError,
+  getCustomViewsSuccess,
+  handlePublishedArchive,
   saveCustomView,
+  saveCustomViewError,
   saveCustomViewSuccess,
+  unarchiveChecklist,
+  updateList,
 } from './actions';
 import { ListViewAction } from './types';
 
@@ -174,9 +179,8 @@ function* fetchAutomationsSaga({ payload }: ReturnType<typeof fetchAutomations>)
 
 function* fetchProcessLogsSaga({ payload }: ReturnType<typeof fetchProcessLogs>) {
   try {
-    const { id, ...params } = payload;
-    const { data, pageable } = yield call(request, 'GET', apiGetProcessLogs(id), {
-      params,
+    const { data, pageable } = yield call(request, 'GET', apiGetJobLogs(), {
+      params: payload,
     });
 
     if (data) {
@@ -190,9 +194,14 @@ function* fetchProcessLogsSaga({ payload }: ReturnType<typeof fetchProcessLogs>)
 
 function* addCustomViewSaga({ payload }: ReturnType<typeof addCustomView>) {
   try {
-    const { data } = yield call(request, 'POST', apiProcessJobLogView(payload.checklistId), {
-      data: payload.data,
-    });
+    const { data } = yield call(
+      request,
+      'POST',
+      payload?.checklistId ? apiProcessCustomViews(payload.checklistId) : apiCustomViews(),
+      {
+        data: payload.data,
+      },
+    );
 
     if (data) {
       yield put(addCustomViewSuccess(data));
@@ -211,22 +220,25 @@ function* addCustomViewSaga({ payload }: ReturnType<typeof addCustomView>) {
   }
 }
 
-function* getCustomViewSaga({ payload }: ReturnType<typeof getCustomView>) {
+function* getCustomViewsSaga({ payload }: ReturnType<typeof getCustomViews>) {
   try {
-    const { data } = yield call(request, 'GET', apiProcessJobLogView(payload.checklistId));
+    const { params } = payload;
+    const { data } = yield call(request, 'GET', apiCustomViews(), {
+      params,
+    });
 
     if (data) {
-      yield put(getCustomViewSuccess(data));
+      yield put(getCustomViewsSuccess(data));
     }
   } catch (error) {
-    console.error('error from getCustomViewSaga function in Checklist ListView Saga :: ', error);
-    yield put(getCustomViewError(error));
+    console.error('error from getCustomViewsSaga function in Checklist ListView Saga :: ', error);
+    yield put(getCustomViewsError(error));
   }
 }
 
 function* saveCustomViewSaga({ payload }: ReturnType<typeof saveCustomView>) {
   try {
-    const { data } = yield call(request, 'PATCH', apiJobLogView(payload.viewId), {
+    const { data } = yield call(request, 'PATCH', apiCustomViews(payload.viewId), {
       data: payload.data,
     });
 
@@ -241,7 +253,27 @@ function* saveCustomViewSaga({ payload }: ReturnType<typeof saveCustomView>) {
     }
   } catch (error) {
     console.error('error from saveCustomViewSaga function in Checklist ListView Saga :: ', error);
-    yield put(addCustomViewError(error));
+    yield put(saveCustomViewError(error));
+  }
+}
+
+function* deleteCustomViewSaga({ payload }: ReturnType<typeof deleteCustomView>) {
+  try {
+    const { view } = payload;
+    const { data } = yield call(request, 'PATCH', apiCustomViewsArchive(view.id));
+
+    if (data) {
+      yield put(deleteCustomViewSuccess(view));
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `“${view.label}” deleted successfully!`,
+        }),
+      );
+    }
+  } catch (error) {
+    console.error('error from deleteCustomViewSaga function in Checklist ListView Saga :: ', error);
+    yield put(deleteCustomViewError(error));
   }
 }
 
@@ -254,6 +286,7 @@ export function* ChecklistListViewSaga() {
   yield takeLatest(ListViewAction.FETCH_AUTOMATIONS, fetchAutomationsSaga);
   yield takeLatest(ListViewAction.FETCH_PROCESS_LOGS, fetchProcessLogsSaga);
   yield takeLeading(ListViewAction.ADD_CUSTOM_VIEW, addCustomViewSaga);
-  yield takeLeading(ListViewAction.GET_CUSTOM_VIEW, getCustomViewSaga);
+  yield takeLeading(ListViewAction.GET_CUSTOM_VIEWS, getCustomViewsSaga);
   yield takeLeading(ListViewAction.SAVE_CUSTOM_VIEW, saveCustomViewSaga);
+  yield takeLeading(ListViewAction.DELETE_CUSTOM_VIEW, deleteCustomViewSaga);
 }

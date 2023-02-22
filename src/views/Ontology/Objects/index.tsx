@@ -2,7 +2,7 @@ import { DataTable, LoadingContainer, TabContentProps } from '#components';
 import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
 import { apiGetJobLogs } from '#utils/apiUrls';
-import { ResponseObj } from '#utils/globalTypes';
+import { FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { formatDateTime } from '#utils/timeUtils';
 import { ViewWrapper } from '#views/Jobs/ListView/styles';
@@ -101,8 +101,17 @@ const JobLogsTabContent: FC<TabContentProps> = ({ label, values: { objectTypeId,
         try {
           const logsData: ResponseObj<any> = await request('GET', apiGetJobLogs(), {
             params: {
-              triggerType: 'RESOURCE_PARAMETER',
-              value: active.externalId,
+              filters: {
+                op: FilterOperators.AND,
+                fields: [
+                  {
+                    field: 'logs.triggerType',
+                    op: FilterOperators.EQ,
+                    values: ['RESOURCE_PARAMETER'],
+                  },
+                  { field: 'logs.value', op: FilterOperators.EQ, values: [active.externalId] },
+                ],
+              },
             },
           });
           const data = logsData.data.reduce((acc: any, jobLog: any, index: number) => {

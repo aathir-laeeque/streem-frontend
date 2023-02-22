@@ -1,5 +1,8 @@
-import { BaseModal, Checkbox, Button, TextInput } from '#components';
-import { JobLogColumnType } from '#PrototypeComposer/checklist.types';
+import { BaseModal, Checkbox, Button, TextInput, PaginatedFetchData } from '#components';
+import { JobLogColumnType, LogType } from '#PrototypeComposer/checklist.types';
+import { useTypedSelector } from '#store';
+import { DEFAULT_PAGE_NUMBER } from '#utils/constants';
+import { fetchObjectTypes } from '#views/Ontology/actions';
 import {
   closestCenter,
   DndContext,
@@ -16,9 +19,11 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Search, Clear, DragIndicator } from '@material-ui/icons';
+import { Accordion, AccordionDetails, AccordionSummary } from '@material-ui/core';
+import { Search, Clear, DragIndicator, ExpandMore } from '@material-ui/icons';
 import { debounce, findIndex, orderBy } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { CommonOverlayProps } from './types';
 
@@ -50,9 +55,16 @@ const Wrapper = styled.div`
           }
 
           &-list {
-            margin-top: 16px;
-            padding: 16px;
+            padding: 0 8px;
             overflow: auto;
+
+            &-heading {
+              font-size: 14px;
+              font-weight: bold;
+              line-height: 1.57;
+              color: #161616;
+              margin-bottom: 12px;
+            }
 
             .checkbox-input {
               padding-block: 16px 8px;
@@ -84,6 +96,51 @@ const Wrapper = styled.div`
               .container input:disabled ~ .checkmark {
                 background-color: #eeeeee;
                 border: none;
+              }
+            }
+
+            .MuiAccordion-root {
+              :before {
+                background-color: unset;
+              }
+            }
+
+            .MuiAccordion-root.Mui-expanded {
+              margin: unset;
+            }
+
+            .columns-accordion {
+              box-shadow: none;
+              width: 100%;
+
+              .MuiAccordionSummary-root.Mui-expanded {
+                min-height: unset;
+                .MuiAccordionSummary-content.Mui-expanded {
+                  margin: 12px 0;
+                }
+              }
+
+              .MuiAccordionDetails-root {
+                padding: 8px 0 8px 8px;
+              }
+
+              .MuiAccordionSummary-root {
+                padding: 0px 16px 0px 0px;
+              }
+
+              .MuiAccordionSummary-content {
+                font-size: 14px;
+                line-height: 1.14;
+                letter-spacing: 0.16px;
+                color: #141414;
+              }
+
+              .MuiAccordionDetails-root {
+                flex-direction: column;
+              }
+
+              .MuiAccordion-root.Mui-expanded {
+                margin-top: 8px;
               }
             }
           }
@@ -118,11 +175,23 @@ type Props = {
   onColumnSelection: (selectedColumns: JobLogColumnType[]) => void;
 };
 
+const accordionSections = {
+  commonColumns: 'Process Agnostic Properties /Common Properties',
+  resourceColumns: 'Resources',
+  processColumns: 'Process properties',
+};
+
 const ConfigureColumnsModal: FC<CommonOverlayProps<Props>> = ({
   closeAllOverlays,
   closeOverlay,
   props: { columns, selectedColumns, onColumnSelection },
 }) => {
+  const dispatch = useDispatch();
+  const {
+    ontology: {
+      objectTypes: { list },
+    },
+  } = useTypedSelector((state) => state);
   const [items, setItems] = useState<JobLogColumnType[]>(
     orderBy(selectedColumns, ['orderTree'], ['asc']),
   );
@@ -175,7 +244,16 @@ const ConfigureColumnsModal: FC<CommonOverlayProps<Props>> = ({
       return acc;
     }, {});
 
-    const allColumns = columns.reduce((acc, column) => {
+    const allColumns = [
+      ...columns,
+      ...list.map((ot, i) => ({
+        id: ot.id,
+        type: LogType.TEXT,
+        displayName: ot.displayName,
+        triggerType: 'RESOURCE',
+        orderTree: columns.length + i + 1,
+      })),
+    ].reduce((acc, column) => {
       if (!_selectedColumns?.[`${column.id}_${column.triggerType}`])
         acc[`${column.id}_${column.triggerType}`] = {
           ...column,
@@ -187,11 +265,46 @@ const ConfigureColumnsModal: FC<CommonOverlayProps<Props>> = ({
     setAllItems(allColumns);
   };
 
+  const fetchResourcesData = (params: PaginatedFetchData = {}) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
+
+    dispatch(
+      fetchObjectTypes(
+        {
+          page,
+          size,
+          usageStatus: 1,
+        },
+        true,
+      ),
+    );
+  };
+
   useEffect(() => {
-    parseDataToState();
-  }, []);
+    if (list.length) {
+      parseDataToState();
+    } else {
+      fetchResourcesData();
+    }
+  }, [list]);
 
   const sensors = useSensors(useSensor(PointerSensor));
+
+  const allColumns = Object.entries(allItems).reduce<Record<string, Record<string, any>>>(
+    (acc, [key, c]) => {
+      if (c.triggerType !== 'RESOURCE') {
+        if (c.id === '-1') {
+          acc.commonColumns[key] = c;
+        } else {
+          acc.processColumns[key] = c;
+        }
+      } else {
+        acc.resourceColumns[key] = c;
+      }
+      return acc;
+    },
+    { commonColumns: {}, processColumns: {}, resourceColumns: {} },
+  );
 
   return (
     <Wrapper>
@@ -223,31 +336,41 @@ const ConfigureColumnsModal: FC<CommonOverlayProps<Props>> = ({
               autoComplete="off"
             />
             <div className="section-list">
-              {Object.entries(allItems).map(([key, column]) => {
-                if (
-                  searchQuery &&
-                  column.displayName.toLowerCase().search(searchQuery.toLowerCase()) === -1
-                )
-                  return null;
-                return (
-                  <Checkbox
-                    key={key}
-                    checked={column.checked}
-                    label={column.displayName}
-                    onClick={(e) => {
-                      if (e.target.checked) {
-                        setItems((prev) => [...prev, column]);
-                      } else {
-                        setItems((prev) => prev.filter((i) => `${i.id}_${i.triggerType}` !== key));
-                      }
-                      setAllItems((prev) => ({
-                        ...prev,
-                        [key]: { ...prev[key], checked: e.target.checked },
-                      }));
-                    }}
-                  />
-                );
-              })}
+              <div className="section-list-heading">All Columns</div>
+              {Object.entries(accordionSections).map(([_key, label]) => (
+                <Accordion className="columns-accordion" key={_key} square>
+                  <AccordionSummary expandIcon={<ExpandMore />}>{label}</AccordionSummary>
+                  <AccordionDetails>
+                    {Object.entries(allColumns[_key]).map(([key, column]) => {
+                      if (
+                        searchQuery &&
+                        column.displayName.toLowerCase().search(searchQuery.toLowerCase()) === -1
+                      )
+                        return null;
+                      return (
+                        <Checkbox
+                          key={key}
+                          checked={column.checked}
+                          label={column.displayName}
+                          onClick={(e) => {
+                            if (e.target.checked) {
+                              setItems((prev) => [...prev, column]);
+                            } else {
+                              setItems((prev) =>
+                                prev.filter((i) => `${i.id}_${i.triggerType}` !== key),
+                              );
+                            }
+                            setAllItems((prev) => ({
+                              ...prev,
+                              [key]: { ...prev[key], checked: e.target.checked },
+                            }));
+                          }}
+                        />
+                      );
+                    })}
+                  </AccordionDetails>
+                </Accordion>
+              ))}
             </div>
           </div>
           <div className="section section-right">

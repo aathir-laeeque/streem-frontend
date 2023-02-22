@@ -356,14 +356,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
   }));
 
   return (
-    <Composer
-      style={{
-        margin: '8px',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
+    <Composer>
       <GoBack label="Return to process" className="go-back" />
       <div className="parameter-wrapper">
         <InfiniteListView

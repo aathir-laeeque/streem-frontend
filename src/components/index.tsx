@@ -37,3 +37,4 @@ export * from './shared/QRGenerator';
 export * from './shared/StyledMenu';
 export * from './shared/ImageGallery';
 export * from './shared/LoadingContainer';
+export * from './shared/ResourceFilter';

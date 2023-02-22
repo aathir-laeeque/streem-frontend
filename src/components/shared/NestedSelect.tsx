@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { NavigateBefore, NavigateNext, Search } from '@material-ui/icons';
 import { get } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { StylesConfig } from 'react-select';
+import { StylesConfig, Props } from 'react-select';
 import styled from 'styled-components';
 import { PaginatedFetchData } from './Pagination';
 import { Select as CustomSelect } from './Select';
@@ -109,6 +109,7 @@ type PopOutProps = {
   handleMenuScrollToBottom: () => void;
   selectOptions: ItemType[];
   onInputChange: (newValue: string) => void;
+  popOutProps?: Props;
 } & Pick<NestedSelectProps, 'onChildChange'>;
 
 export type NestedSelectProps = {
@@ -120,6 +121,7 @@ export type NestedSelectProps = {
   pagination?: Pageable;
   fetchData?: ({ page, size }: PaginatedFetchData) => void;
   maxHeight?: string | number;
+  popOutProps?: Props;
 } & SelectProps;
 
 type State = {
@@ -150,6 +152,7 @@ type MenuTreeProps = {
   parent: React.MutableRefObject<ItemType | null>;
   pagination: React.MutableRefObject<Pageable>;
   setState: React.Dispatch<React.SetStateAction<State>>;
+  popOutProps?: Props;
 };
 
 const initialState: State = {
@@ -168,7 +171,9 @@ const PopOut: FC<PopOutProps> = ({
   selectOptions,
   onChildChange,
   onInputChange,
+  popOutProps,
 }) => {
+  const { components, ...rest } = popOutProps || {};
   const [inputValue, setInputValue] = useState<string | undefined>();
 
   useEffect(() => {
@@ -184,7 +189,7 @@ const PopOut: FC<PopOutProps> = ({
       <CustomSelect
         autoFocus
         backspaceRemovesValue={false}
-        components={{ DropdownIndicator, IndicatorSeparator: null }}
+        components={{ DropdownIndicator, IndicatorSeparator: null, ...components }}
         controlShouldRenderValue={false}
         hideSelectedOptions={false}
         menuIsOpen
@@ -197,7 +202,10 @@ const PopOut: FC<PopOutProps> = ({
         styles={selectStyles}
         tabSelectsValue={false}
         onMenuScrollToBottom={handleMenuScrollToBottom}
-        onInputChange={(value) => setInputValue(value)}
+        onInputChange={(value, actionMeta) => {
+          if (actionMeta.prevInputValue !== value) setInputValue(value);
+        }}
+        {...rest}
       />
     </PopOutWrapper>
   );
@@ -210,6 +218,7 @@ const MenuTree: FC<MenuTreeProps> = ({
   parent,
   pagination,
   setState,
+  popOutProps,
 }) => {
   const { parentPath, options, isLoading, selectOptions, openPopOut } = state;
   const menuItemClasses = useMenuItemStyles();
@@ -276,7 +285,7 @@ const MenuTree: FC<MenuTreeProps> = ({
         openPopOut: updatedOpenPopOut,
       };
     });
-  }, [parentPath]);
+  }, [parentPath, items]);
 
   const handleMenuScrollToBottom = () => {
     if (!isLoading && !pagination.current.last && parent.current?.fetchItems) {
@@ -344,6 +353,7 @@ const MenuTree: FC<MenuTreeProps> = ({
           selectOptions={selectOptions}
           onChildChange={onChildChange}
           onInputChange={onInputChange}
+          popOutProps={popOutProps}
         />
       )}
     </>
@@ -357,13 +367,16 @@ export const NestedSelect: FC<NestedSelectProps> = ({
   width = 'auto',
   maxHeight = 'auto',
   id,
+  popOutProps,
+  fetchData,
+  pagination,
   ...rest
 }) => {
   const selectClasses = useSelectStyles();
   const menuClasses = useMenuStyles();
   const [state, setState] = useState<State>(initialState);
   const parent = useRef<ItemType | null>(null);
-  const pagination = useRef<Pageable>(initialPagination);
+  const _pagination = useRef<Pageable>(initialPagination);
   const { openSelect, openPopOut } = state;
 
   const handleOnChildChange = (option: any) => {
@@ -372,7 +385,7 @@ export const NestedSelect: FC<NestedSelectProps> = ({
   };
 
   const onClose = () => {
-    pagination.current = initialPagination;
+    _pagination.current = initialPagination;
     setState((prev) => ({
       ...prev,
       openSelect: false,
@@ -383,9 +396,7 @@ export const NestedSelect: FC<NestedSelectProps> = ({
   };
 
   const handleOnScroll = (e: React.UIEvent<HTMLElement>) => {
-    const { scrollHeight, scrollTop, clientHeight } = e.target;
-    const { fetchData, pagination } = rest;
-
+    const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
     if (
       fetchData &&
       pagination &&
@@ -434,9 +445,10 @@ export const NestedSelect: FC<NestedSelectProps> = ({
         items={items}
         onChildChange={handleOnChildChange}
         state={state}
-        pagination={pagination}
+        pagination={_pagination}
         parent={parent}
         setState={setState}
+        popOutProps={popOutProps}
       />
     </StyledSelect>
   );

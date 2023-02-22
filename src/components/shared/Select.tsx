@@ -116,6 +116,7 @@ export const Select: FC<SelectProps> = ({
   label = '',
   error = '',
   style = {},
+  components,
   ...rest
 }) => {
   return (
@@ -132,7 +133,7 @@ export const Select: FC<SelectProps> = ({
         isClearable={optional}
         captureMenuScroll={true}
         formatOptionLabel={formatOptionLabel}
-        components={{ DropdownIndicator }}
+        components={{ DropdownIndicator, ...components }}
         {...rest}
       />
       {error && <span className="field-error">{error}</span>}

@@ -1,18 +1,25 @@
 import {
   Button,
   DataTable,
-  LoadingContainer,
+  fetchDataParams,
   NestedSelect,
   PaginatedFetchData,
   Pagination,
   ResourceFilter,
   Select,
   TabContentProps,
+  LoadingContainer,
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { DataTableColumn } from '#components/shared/DataTable';
+import {
+  fetchComposerData,
+  fetchComposerDataSuccess,
+  resetComposer,
+} from '#PrototypeComposer/actions';
 import { JobLogColumnType, LogType } from '#PrototypeComposer/checklist.types';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
 import { setAuditLogFilters, setPdfColumns } from '#store/audit-log-filters/action';
 import { openLinkInNewTab } from '#utils';
@@ -20,16 +27,22 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { filtersToQueryParams } from '#utils/filtersToQueryParams';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { formatDateTime } from '#utils/timeUtils';
+import { fetchJobLogsExcel } from '#views/Checklists/JobLogs/actions';
+import FiltersDrawer from '#views/Checklists/JobLogs/Overlays/FiltersDrawer';
+import {
+  fetchChecklists,
+  fetchProcessLogs,
+  saveCustomView,
+} from '#views/Checklists/ListView/actions';
+import { CustomView } from '#views/Checklists/ListView/types';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { GetAppOutlined, Tune } from '@material-ui/icons';
-import { isEqual } from 'lodash';
+import { GetAppOutlined } from '@material-ui/icons';
+import TuneIcon from '@material-ui/icons/Tune';
+import { debounce, isEqual } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { fetchProcessLogs, saveCustomView } from '../ListView/actions';
-import { CustomView } from '../ListView/types';
-import { fetchJobLogsExcel } from './actions';
-import FiltersDrawer from './Overlays/FiltersDrawer';
+import { commonColumns } from '.';
 
 const JobLogsTabWrapper = styled.div`
   display: flex;
@@ -57,50 +70,50 @@ const JobLogsTabWrapper = styled.div`
           margin-right: 0;
         }
       }
-      .button-download {
-        color: #005dcc;
-        display: flex;
-        align-items: center;
-        margin-left: 16px;
-        height: 24px;
-        width: 24px;
-      }
+    }
+    .button-download {
+      color: #005dcc;
+      display: flex;
+      align-items: center;
+      margin-left: 16px;
+      height: 24px;
+      width: 24px;
+    }
+    .process-filter {
+      margin-left: unset;
     }
   }
 `;
 
 const DynamicContent: FC<TabContentProps> = ({ values }) => {
-  const { id, checklistId } = values;
+  const { id } = values;
   const dispatch = useDispatch();
   const {
-    prototypeComposer: { data },
+    prototypeComposer: { loading: loadingProcess, data },
     checklistListView: {
-      loading,
+      checklists,
+      pageable: processListPageable,
+      loading: loadingProcessList,
       jobLogs: { list, loading: logsLoading, pageable },
       customViews,
     },
-    auth: { selectedFacility },
+    auth: { selectedFacility, selectedUseCase },
   } = useTypedSelector((state) => state);
   const { loading: customViewLoading } = customViews;
-  const [filterFields, setFilterFields] = useState<FilterField[]>([
-    {
-      field: 'facilityId',
-      op: FilterOperators.EQ,
-      values: [selectedFacility!.id],
-    },
-  ]);
+  const [filterFields, setFilterFields] = useState<FilterField[]>([]);
 
   const [state, setState] = useState<{
     viewDetails?: CustomView;
     columns: DataTableColumn[];
     showDrawer: boolean;
     isChanged: boolean;
+    checklistId?: string;
   }>({
     columns: [],
     showDrawer: false,
     isChanged: false,
   });
-  const { columns, showDrawer, viewDetails, isChanged } = state;
+  const { columns, showDrawer, viewDetails, isChanged, checklistId } = state;
 
   const compareKeys = (key: keyof CustomView, _viewDetails = viewDetails) => {
     let _isChanged = isChanged;
@@ -145,12 +158,19 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
           size,
           filters: {
             op: FilterOperators.AND,
-            fields: [...filters, ...filtersToQueryParams(viewDetails?.filters || [])],
+            fields: [
+              ...filters,
+              ...filtersToQueryParams(viewDetails?.filters || []),
+              {
+                field: 'facilityId',
+                op: FilterOperators.EQ,
+                values: [selectedFacility?.id],
+              },
+            ],
           },
           sort: 'id,desc',
         }),
       );
-
     dispatch(
       setAuditLogFilters(
         JSON.stringify({
@@ -196,6 +216,21 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
           }ch`,
           format: (row: any) => {
             if (row[column.id + column.triggerType]) {
+              if (column.triggerType === 'RESOURCE') {
+                const rowValue = row[column.id + column.triggerType];
+                const cellValue = Object.values(rowValue.resourceParameters).reduce<any[]>(
+                  (acc, p: any) => {
+                    acc.push(
+                      `${p.displayName}: ${p.choices
+                        .map((c: any) => c.objectDisplayName)
+                        .join(',')}`,
+                    );
+                    return acc;
+                  },
+                  [],
+                );
+                return cellValue.join(',');
+              }
               if (column.type === LogType.DATE) {
                 return formatDateTime(row[column.id + column.triggerType].value);
               } else if (
@@ -232,11 +267,24 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
     }));
   }, [data?.jobLogColumns, viewDetails?.columns]);
 
+  useEffect(() => {
+    if (checklistId && !data) {
+      dispatch(fetchComposerData({ entity: ComposerEntity.CHECKLIST, id: checklistId }));
+    }
+
+    return () => {
+      dispatch(resetComposer());
+    };
+  }, [checklistId]);
+
   const onResetToDefault = () => {
+    const _viewDetails = customViews.views?.[id];
     setState((prev) => ({
       ...prev,
-      viewDetails: customViews.views?.[id],
+      viewDetails: _viewDetails,
       isChanged: false,
+      checklistId: (_viewDetails?.filters || []).find((filter) => filter.key === 'checklistId')
+        ?.value,
     }));
   };
 
@@ -263,17 +311,128 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
     ]);
   };
 
+  const onClearResourceFilter = () => {
+    setFilterFields([]);
+  };
+
+  const fetchChecklistData = ({
+    page = DEFAULT_PAGE_NUMBER,
+    size = DEFAULT_PAGE_SIZE,
+    query = '',
+  }: fetchDataParams) => {
+    const filters = JSON.stringify({
+      op: FilterOperators.AND,
+      fields: [
+        { field: 'state', op: FilterOperators.EQ, values: ['PUBLISHED'] },
+        { field: 'archived', op: FilterOperators.EQ, values: [false] },
+        ...(query ? [{ field: 'name', op: FilterOperators.LIKE, values: [query] }] : []),
+        {
+          field: 'useCaseId',
+          op: FilterOperators.EQ,
+          values: [selectedUseCase?.id],
+        },
+      ],
+    });
+    dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, false));
+  };
+
+  const onSelectUpdate = (option: any) => {
+    if (option) {
+      dispatch(
+        fetchComposerDataSuccess({
+          entity: ComposerEntity.CHECKLIST,
+          data: option,
+        }),
+      );
+      setState((prev) => {
+        const previousSelectProcess = (prev.viewDetails?.filters || []).find(
+          (f) => f.key === 'checklistId',
+        );
+        if (previousSelectProcess?.value === option.id) {
+          return prev;
+        }
+        let updatedFilters = prev.viewDetails?.filters;
+        if (previousSelectProcess) {
+          updatedFilters = prev.viewDetails?.filters.filter(
+            (f) => f.key !== 'checklistId' && f.key.split('.')[0] !== 'parameterValues',
+          );
+        }
+        const upDatedViewDetails = prev.viewDetails
+          ? {
+              ...prev.viewDetails,
+              filters: [
+                ...(updatedFilters || []),
+                {
+                  key: 'checklistId',
+                  constraint: FilterOperators.EQ,
+                  value: option.id,
+                  displayName: option.label,
+                },
+              ],
+              columns: (option.jobLogColumns || []).map((column: any, i: number) => ({
+                ...column,
+                orderTree: i + 1,
+              })),
+            }
+          : prev.viewDetails;
+        return {
+          ...prev,
+          viewDetails: upDatedViewDetails,
+          isChanged: compareKeys('filters', upDatedViewDetails),
+          checklistId: option.id,
+        };
+      });
+    } else {
+      dispatch(resetComposer());
+      setState((prev) => {
+        const upDatedViewDetails = prev.viewDetails
+          ? {
+              ...prev.viewDetails,
+              filters: (viewDetails?.filters || []).filter(
+                (filter) => filter.key !== 'checklistId',
+              ),
+              columns: commonColumns,
+            }
+          : prev.viewDetails;
+        return {
+          ...prev,
+          viewDetails: upDatedViewDetails,
+          isChanged: compareKeys('filters', upDatedViewDetails),
+          checklistId: undefined,
+        };
+      });
+    }
+  };
+
+  const handleMenuScrollToBottom = () => {
+    if (!processListPageable.last) fetchChecklistData({ page: processListPageable.page + 1 });
+  };
+
   return (
     <JobLogsTabWrapper>
       <TabContentWrapper>
         <div className="filters">
           <Select
-            label="Processes"
-            style={{ width: '200px' }}
-            isDisabled
-            value={{ label: data?.name }}
+            className="process-filter"
+            style={{ marginLeft: 'unset' }}
+            backspaceRemovesValue={false}
+            hideSelectedOptions={false}
+            onChange={onSelectUpdate}
+            isLoading={loadingProcessList}
+            onInputChange={debounce((searchedValue: string, actionMeta) => {
+              if (searchedValue !== actionMeta.prevInputValue)
+                fetchChecklistData({ page: DEFAULT_PAGE_NUMBER, query: searchedValue });
+            }, 500)}
+            options={checklists.map((currList) => ({ ...currList, label: currList.name }))}
+            placeholder="Processes"
+            tabSelectsValue={false}
+            onMenuScrollToBottom={handleMenuScrollToBottom}
+            optional
+            {...(data?.name && {
+              value: { label: data?.name, value: checklistId },
+            })}
           />
-          <ResourceFilter onChange={onChildChange} onClear={() => setFilterFields([])} />
+          <ResourceFilter onChange={onChildChange} onClear={onClearResourceFilter} />
           <div className="filter-buttons-wrapper">
             <Button
               variant="textOnly"
@@ -290,7 +449,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                 );
               }}
             >
-              <Tune />
+              <TuneIcon />
               Configure Columns <span>{`(${viewDetails?.columns.length || 0})`}</span>
             </Button>
             <Button
@@ -299,8 +458,11 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                 setState((prev) => ({ ...prev, showDrawer: true }));
               }}
             >
-              <Tune />
-              Filters <span>{`(${viewDetails?.filters.length || 0})`}</span>
+              <TuneIcon />
+              Filters{' '}
+              <span>{`(${
+                (viewDetails?.filters || []).filter((f) => f.key !== 'checklistId').length || 0
+              })`}</span>
             </Button>
             <NestedSelect
               id="download-logs"
@@ -351,7 +513,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
           )}
         </div>
         <LoadingContainer
-          loading={loading || logsLoading}
+          loading={loadingProcess || logsLoading}
           component={
             <>
               <DataTable

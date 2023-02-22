@@ -7,6 +7,7 @@ import { AuthView, FacilitySelectionView, HomeView, UseCaseSelectionView } from 
 import PrintJob from '#views/Jobs/PrintJob';
 import PrintJobAuditLogs from '#views/Jobs/PrintJobAuditLogs';
 import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
+import PrintJobLogs from '#views/Jobs/PrintJobLogs';
 import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
 import { Router } from '@reach/router';
 import React, { FC, useEffect } from 'react';
@@ -54,6 +55,7 @@ const App: FC = () => {
               <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
               <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
               <CustomRoute as={PrintJobAuditLogs} path="job-activity/:jobId/print" />
+              <CustomRoute as={PrintJobLogs} path="job-logs/:viewId/print" />
               <CustomRoute as={UseCaseSelectionView} path="/*" />
             </Router>
             <Notification
