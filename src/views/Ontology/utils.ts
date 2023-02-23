@@ -1,5 +1,5 @@
 import { apiGetObjects } from '#utils/apiUrls';
-import { request } from '#utils/request';
+import { getErrorMsg, request } from '#utils/request';
 export const getObjectData = async (data: Record<string, string | number | undefined>) => {
   try {
     const { id, ...params } = data;
@@ -12,6 +12,6 @@ export const getObjectData = async (data: Record<string, string | number | undef
     throw response?.errors;
   } catch (error) {
     console.error('Error in get objects data function :: ', error);
-    throw error;
+    throw getErrorMsg(error as any);
   }
 };

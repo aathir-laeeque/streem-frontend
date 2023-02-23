@@ -1,4 +1,5 @@
 import { Error } from '#utils/globalTypes';
+import { UseFormMethods } from 'react-hook-form';
 import {
   Parameter as ParameterTypeType,
   ParameterType,
@@ -16,6 +17,7 @@ export type ParameterProps = {
   taskId: Task['id'];
   isReadOnly: boolean;
   onChangeHandler: (data: Parameter) => void;
+  form: UseFormMethods;
 };
 
 export type AddNewParameterType = {

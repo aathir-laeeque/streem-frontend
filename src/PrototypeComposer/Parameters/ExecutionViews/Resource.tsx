@@ -1,4 +1,6 @@
 import { Button, FormGroup } from '#components';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { useTypedSelector } from '#store';
 import { apiGetObjects, baseUrl } from '#utils/apiUrls';
@@ -7,13 +9,41 @@ import { request } from '#utils/request';
 import { LinkOutlined } from '@material-ui/icons';
 import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import QRIcon from '#assets/svg/QR';
+import styled from 'styled-components';
+import { getObjectData } from '#views/Ontology/utils';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
+
+const ResourceParameterWrapper = styled.div`
+  display: flex;
+  gap: 12px;
+  .form-group,
+  .react-custom-select {
+    flex: 1;
+  }
+  .qr-selector {
+    cursor: pointer;
+    border: 1px solid #1d84ff;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+  }
+`;
 
 const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
+  const dispatch = useDispatch();
   const {
-    parameters: {
-      parameters: { list: parametersList },
+    auth: { selectedFacility },
+    prototypeComposer: {
+      parameters: {
+        parameters: { list: parametersList },
+      },
     },
-  } = useTypedSelector((state) => state.prototypeComposer);
+  } = useTypedSelector((state) => state);
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];
@@ -62,7 +92,6 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
   const handleAutoInitialize = async () => {
     const formData = getValues();
     const dependentParameter = formData.data?.[parameter?.autoInitialize?.parameterId];
-    console.log('dependentParameter', dependentParameter);
     const objectId = dependentParameter.data.choices[0].objectId;
     const collection = dependentParameter.data.choices[0].collection;
     const res = await request('GET', apiGetObjects(objectId), {
@@ -111,61 +140,114 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
     (currParameter) => currParameter?.id === parameter?.autoInitialize?.parameterId,
   );
 
+  const onSelectWithQR = async (data: string) => {
+    try {
+      const qrData = JSON.parse(data);
+      if (qrData?.entityType === 'object') {
+        const fetchedData = await getObjectData({
+          id: qrData.id,
+          collection: qrData.collection,
+          usageStatus: 1,
+        });
+        if (selectedFacility?.id === fetchedData?.facilityId) {
+          setValue(
+            `data.${parameter.id}`,
+            {
+              ...parameter,
+              data: {
+                ...parameter.data,
+                choices: [qrData].map((currOption: any) => ({
+                  objectId: currOption.id,
+                  objectDisplayName: currOption.displayName,
+                  objectExternalId: currOption.externalId,
+                  collection: currOption.collection,
+                })),
+              },
+              response: {
+                value: null,
+                reason: '',
+                state: 'EXECUTED',
+                choices: {},
+                medias: [],
+                parameterValueApprovalDto: null,
+              },
+            },
+            {
+              shouldDirty: true,
+              shouldValidate: true,
+            },
+          );
+        } else {
+          throw 'Object not found';
+        }
+      } else {
+        throw 'Invalid QR Code';
+      }
+    } catch (error) {
+      dispatch(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
+        }),
+      );
+    }
+  };
+
   return (
     <>
-      <FormGroup
-        inputs={[
-          {
-            type: InputTypes.SINGLE_SELECT,
-            props: {
-              id: parameter.id,
-              options: options?.map((option) => ({
-                value: option,
-                label: option.displayName,
-                externalId: option.externalId,
-              })),
-              menuPortalTarget: document.body,
-              menuPosition: 'fixed',
-              menuShouldBlockScroll: true,
-              onMenuScrollToBottom: () => {
-                if (!isLoading && !pagination.current.isLast) {
-                  getOptions();
-                }
-              },
-              onChange: (value: any) => {
-                const selectedOption = isArray(value.value) ? value.value : [value.value];
-                setValue(
-                  `data.${parameter.id}`,
-                  {
-                    ...parameter,
-                    data: {
-                      ...parameter.data,
-                      choices: selectedOption.map((currOption: any) => ({
-                        objectId: currOption.id,
-                        objectDisplayName: currOption.displayName,
-                        objectExternalId: currOption.externalId,
-                        collection: currOption.collection,
-                      })),
+      <ResourceParameterWrapper>
+        <FormGroup
+          inputs={[
+            {
+              type: InputTypes.SINGLE_SELECT,
+              props: {
+                id: parameter.id,
+                options: options?.map((option) => ({
+                  value: option,
+                  label: option.displayName,
+                  externalId: option.externalId,
+                })),
+                menuPortalTarget: document.body,
+                menuPosition: 'fixed',
+                menuShouldBlockScroll: true,
+                onMenuScrollToBottom: () => {
+                  if (!isLoading && !pagination.current.isLast) {
+                    getOptions();
+                  }
+                },
+                onChange: (value: any) => {
+                  const selectedOption = isArray(value.value) ? value.value : [value.value];
+                  setValue(
+                    `data.${parameter.id}`,
+                    {
+                      ...parameter,
+                      data: {
+                        ...parameter.data,
+                        choices: selectedOption.map((currOption: any) => ({
+                          objectId: currOption.id,
+                          objectDisplayName: currOption.displayName,
+                          objectExternalId: currOption.externalId,
+                          collection: currOption.collection,
+                        })),
+                      },
+                      response: {
+                        value: null,
+                        reason: '',
+                        state: 'EXECUTED',
+                        choices: {},
+                        medias: [],
+                        parameterValueApprovalDto: null,
+                      },
                     },
-                    response: {
-                      value: null,
-                      reason: '',
-                      state: 'EXECUTED',
-                      choices: {},
-                      medias: [],
-                      parameterValueApprovalDto: null,
+                    {
+                      shouldDirty: true,
+                      shouldValidate: true,
                     },
-                  },
-                  {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  },
-                );
-              },
-              isSearchable: false,
-              placeholder: '',
-              isDisabled: parameter?.autoInitialized,
-              ...(parameter?.autoInitialized && {
+                  );
+                },
+                isSearchable: false,
+                placeholder: '',
+                isDisabled: parameter?.autoInitialized,
                 value: [
                   {
                     label: parameterInForm?.data?.choices?.[0]?.objectDisplayName,
@@ -173,11 +255,24 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
                     value: parameterInForm?.data?.choices?.[0]?.objectId,
                   },
                 ],
-              }),
+              },
             },
-          },
-        ]}
-      />
+          ]}
+        />
+        <div
+          className="qr-selector"
+          onClick={() => {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.QR_SCANNER,
+                props: { onSuccess: onSelectWithQR },
+              }),
+            );
+          }}
+        >
+          <QRIcon />
+        </div>
+      </ResourceParameterWrapper>
       {parameter?.autoInitialized && (
         <>
           <div style={{ display: 'flex', alignItems: 'center' }}>
