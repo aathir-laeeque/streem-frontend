@@ -1,4 +1,4 @@
-import { Button, NestedSelect } from '#components';
+import { Button, Select } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import useTabs from '#components/shared/useTabs';
@@ -6,12 +6,13 @@ import { resetComposer } from '#PrototypeComposer/actions';
 import { useTypedSelector } from '#store';
 import { CustomViewsTargetType, FilterOperators } from '#utils/globalTypes';
 import { ViewWrapper } from '#views/Jobs/ListView/styles';
-import ArrowDropDownOutlinedIcon from '@material-ui/icons/ArrowDropDownOutlined';
+import { DeleteOutlineOutlined } from '@material-ui/icons';
 import { RouteComponentProps } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { components, OptionProps } from 'react-select';
 import styled from 'styled-components';
-import { addCustomView, getCustomViews } from '../ListView/actions';
+import { addCustomView, deleteCustomView, getCustomViews } from '../ListView/actions';
 import DynamicContent from './DynamicContent';
 import TabContent from './TabContent';
 
@@ -22,21 +23,30 @@ const AfterHeaderWrapper = styled.div`
   min-width: fit-content;
   flex: 1;
   justify-content: space-between;
-`;
 
-const LabelWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  border: solid 1px #8c8c8c;
-  padding: 9px 16px;
-  gap: 2px;
-
-  .MuiSvgIcon-root {
-    font-size: 16px;
+  .custom-select__menu-list {
+    position: fixed;
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
+      0 2px 4px -1px rgba(0, 0, 0, 0.2);
   }
 `;
 
-const AfterHeader: FC<any> = ({ setActiveTab, checklistId }) => {
+const OptionWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-transform: capitalize;
+
+  .delete-icon {
+    margin: 0;
+    color: #161616;
+    :hover {
+      color: #ff6b6b;
+    }
+  }
+`;
+
+const AfterHeader: FC<any> = ({ setActiveTab, activeTab, checklistId, defaultView }) => {
   const dispatch = useDispatch();
   const {
     prototypeComposer: { data: processData },
@@ -85,22 +95,54 @@ const AfterHeader: FC<any> = ({ setActiveTab, checklistId }) => {
     );
   };
 
+  const onClickDeleteView = (e: React.MouseEvent<SVGSVGElement, MouseEvent>, view: any) => {
+    e.stopPropagation();
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
+        props: {
+          header: 'Delete View',
+          body: <span>{`Are you sure you want to delete “${view.label}” view?`}</span>,
+          onPrimaryClick: () => handleDeleteView(view),
+        },
+      }),
+    );
+  };
+
+  const handleDeleteView = (view: any) => {
+    dispatch(deleteCustomView({ view }));
+    if (activeTab.label === view.label) {
+      setActiveTab(defaultView);
+    }
+  };
+
+  const Option = (props: OptionProps<any>) => {
+    return (
+      <components.Option {...props}>
+        <OptionWrapper>
+          {props.label}
+          {props.data.id && (
+            <DeleteOutlineOutlined
+              className="delete-icon"
+              onClick={(e) => onClickDeleteView(e, props.data)}
+            />
+          )}
+        </OptionWrapper>
+      </components.Option>
+    );
+  };
+
   return (
     <AfterHeaderWrapper>
       <Button variant="secondary" onClick={handleAddNew}>
         Add New
       </Button>
-      <NestedSelect
-        id="more-views-selector"
-        label={() => (
-          <LabelWrapper>
-            More Views <ArrowDropDownOutlinedIcon />
-          </LabelWrapper>
-        )}
-        items={Object.values(customViews.views) as any}
-        onChildChange={(value) => {
-          handleSetActiveTab(value);
-        }}
+      <Select
+        options={[defaultView, ...Object.values(customViews.views)]}
+        value={[{ value: 'more views', label: 'More Views' }]}
+        components={{ Option }}
+        onChange={handleSetActiveTab}
+        style={{ minWidth: 180 }}
       />
     </AfterHeaderWrapper>
   );
@@ -124,7 +166,10 @@ const JobLogs: FC<RouteComponentProps<{ id: string }>> = ({ id }) => {
     ],
     AfterHeader: {
       Component: AfterHeader,
-      props: { checklistId: id },
+      props: {
+        checklistId: id,
+        defaultView: { label: 'Default', tabContent: TabContent, values: { checklistId: id } },
+      },
     },
   });
 

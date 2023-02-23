@@ -68,35 +68,36 @@ export const FirstPage = ({
           </View>
         </TabLookLike>
       )}
-
-      <TabLookLike title="Filters Applied">
-        <View style={[assigneStyles.assigneWrapper, { alignItems: 'flex-start' }]}>
-          <View style={assigneStyles.assignView}>
-            {Object.values(filters).map((currField, index) => {
-              return (
-                <View style={assigneStyles.assigneRow} wrap={false}>
-                  <Text style={{ ...assigneStyles.assigneHeading, width: '12%' }}>
-                    Filter {index + 1} - Where:
-                  </Text>
-                  <View style={assigneStyles.assigneInput}>
-                    <Text style={commonStyles.text12}>{currField.label}</Text>
-                  </View>
-                  <Text style={{ ...assigneStyles.assigneHeading, width: '8%' }}>Condition:</Text>
-                  <View style={assigneStyles.assigneInput}>
-                    <Text style={commonStyles.text12}>
-                      {ConstraintVisual[currField.op as keyof typeof ConstraintVisual]}
+      {!!Object.values(filters).length && (
+        <TabLookLike title="Filters Applied">
+          <View style={[assigneStyles.assigneWrapper, { alignItems: 'flex-start' }]}>
+            <View style={assigneStyles.assignView}>
+              {Object.values(filters).map((currField, index) => {
+                return (
+                  <View style={assigneStyles.assigneRow} wrap={false}>
+                    <Text style={{ ...assigneStyles.assigneHeading, width: '12%' }}>
+                      Filter {index + 1} - Where:
                     </Text>
+                    <View style={assigneStyles.assigneInput}>
+                      <Text style={commonStyles.text12}>{currField.label}</Text>
+                    </View>
+                    <Text style={{ ...assigneStyles.assigneHeading, width: '8%' }}>Condition:</Text>
+                    <View style={assigneStyles.assigneInput}>
+                      <Text style={commonStyles.text12}>
+                        {ConstraintVisual[currField.op as keyof typeof ConstraintVisual]}
+                      </Text>
+                    </View>
+                    <Text style={{ ...assigneStyles.assigneHeading, width: '6%' }}>Value:</Text>
+                    <View style={assigneStyles.assigneInput}>
+                      <Text style={commonStyles.text12}>{currField.value}</Text>
+                    </View>
                   </View>
-                  <Text style={{ ...assigneStyles.assigneHeading, width: '6%' }}>Value:</Text>
-                  <View style={assigneStyles.assigneInput}>
-                    <Text style={commonStyles.text12}>{currField.value}</Text>
-                  </View>
-                </View>
-              );
-            })}
+                );
+              })}
+            </View>
           </View>
-        </View>
-      </TabLookLike>
+        </TabLookLike>
+      )}
     </View>
   );
 };
