@@ -117,7 +117,7 @@ const ShouldBeTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
               onChange: (value: any) => {
                 setInputValue(value.value);
                 setValue(
-                  `data.${parameter.id}`,
+                  parameter.id,
                   {
                     ...parameter,
                     data: { ...parameter.data, input: value.value },

@@ -110,7 +110,7 @@ const MediaTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
   useEffect(() => {
     if (imagesData) {
       setValue(
-        `data.${parameter.id}`,
+        parameter.id,
         {
           ...parameter,
           data: {

@@ -138,9 +138,9 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
     control,
     handleSubmit,
     register,
-    errors,
+
     formState: { isDirty, isValid },
-    getValues,
+
     setValue,
   } = reactForm;
 
@@ -152,10 +152,10 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
 
   const onSubmit = (data: any) => {
     const parameterValues = parametersList.reduce((acc, parameter: any, index: any) => {
-      if (data.data[parameter.id]) {
+      if (data[parameter.id]) {
         acc[parameter.id] = {
-          parameter: data.data[parameter.id],
-          reason: data.data[parameter?.id]?.response?.reason || '',
+          parameter: data[parameter.id],
+          reason: data[parameter?.id]?.response?.reason || '',
         };
       }
       return acc;

@@ -87,11 +87,11 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
   };
 
   const { setValue, getValues, watch } = form;
-  const parameterInForm = watch(`data.${parameter.id}`, {});
+  const parameterInForm = watch(parameter.id, {});
 
   const handleAutoInitialize = async () => {
     const formData = getValues();
-    const dependentParameter = formData.data?.[parameter?.autoInitialize?.parameterId];
+    const dependentParameter = formData?.[parameter?.autoInitialize?.parameterId];
     const objectId = dependentParameter.data.choices[0].objectId;
     const collection = dependentParameter.data.choices[0].collection;
     const res = await request('GET', apiGetObjects(objectId), {
@@ -105,7 +105,7 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
       );
       const target = relation.targets[0];
       setValue(
-        `data.${parameter.id}`,
+        parameter.id,
         {
           ...parameter,
           data: {
@@ -218,7 +218,7 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
                 onChange: (value: any) => {
                   const selectedOption = isArray(value.value) ? value.value : [value.value];
                   setValue(
-                    `data.${parameter.id}`,
+                    parameter.id,
                     {
                       ...parameter,
                       data: {
@@ -229,14 +229,6 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
                           objectExternalId: currOption.externalId,
                           collection: currOption.collection,
                         })),
-                      },
-                      response: {
-                        value: null,
-                        reason: '',
-                        state: 'EXECUTED',
-                        choices: {},
-                        medias: [],
-                        parameterValueApprovalDto: null,
                       },
                     },
                     {

@@ -66,7 +66,7 @@ const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
           onClick={() => {
             setSelection(parameter.data[0]);
             setValue(
-              `data.${parameter.id}`,
+              parameter.id,
               {
                 ...parameter,
                 data: selectedData(parameter.data[0], parameter.data),
@@ -114,7 +114,7 @@ const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
                   rows: '4',
                   onChange: (value: any) => {
                     setValue(
-                      `data.${parameter.id}`,
+                      parameter.id,
                       {
                         ...parameter,
                         data: selectedData(parameter.data[1], parameter.data),

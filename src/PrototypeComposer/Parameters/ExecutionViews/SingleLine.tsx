@@ -34,7 +34,7 @@ const SingleLineTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, for
           props: {
             onChange: (value: any) => {
               setValue(
-                `data.${parameter.id}`,
+                parameter.id,
                 {
                   ...parameter,
                   data: { ...parameter.data, input: valueChecker(value.value, parameter.type) },

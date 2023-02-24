@@ -3,7 +3,7 @@ import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { InputTypes } from '#utils/globalTypes';
 import React, { FC } from 'react';
 
-const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({
+const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId' | 'isReadOnly'>> = ({
   parameter,
   form,
   onChangeHandler,
@@ -81,7 +81,7 @@ const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({
             menuPosition: 'fixed',
             menuShouldBlockScroll: true,
             onChange: (value: any) => {
-              let parameterData = {
+              const parameterData = {
                 ...parameter,
                 data: selectedData(value, parameter.data),
                 response: {
@@ -93,7 +93,7 @@ const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({
                   parameterValueApprovalDto: null,
                 },
               };
-              setValue(`data.${parameter.id}`, parameterData, {
+              setValue(parameter.id, parameterData, {
                 shouldDirty: true,
                 shouldValidate: true,
               });

@@ -88,13 +88,11 @@ const ParameterView: FC<ParameterProps> = ({ parameter, form, onChangeHandler })
   const { register, unregister } = form;
 
   useEffect(() => {
-    register(`data.${parameter.id}`, {
+    register(parameter.id, {
       required: parameter.mandatory,
     });
     return () => {
-      unregister(`data.${parameter.id}`, {
-        required: parameter.mandatory,
-      });
+      unregister(parameter.id);
     };
   }, []);
 
