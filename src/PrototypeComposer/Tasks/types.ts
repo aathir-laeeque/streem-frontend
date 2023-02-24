@@ -76,6 +76,7 @@ export type ArchiveActionType = {
 export enum TaskErrors {
   E210 = 'TASK_NAME_CANNOT_BE_EMPTY',
   E211 = 'TASK_SHOULD_HAVE_ATLEAST_ONE_EXECUTABLE_PARAMETER',
+  E456 = 'ARCHIVED_PARAMETERS_EXISTS',
 }
 
 export enum TaskTimerErrorCodes {
