@@ -1,4 +1,3 @@
-import { toggleNewParameter } from '#PrototypeComposer/Activity/actions';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap } from '#PrototypeComposer/constants';
@@ -13,9 +12,7 @@ import SingleSelectTaskView from '#PrototypeComposer/Parameters/ExecutionViews/S
 import TextInstructionTaskView from '#PrototypeComposer/Parameters/ExecutionViews/TextInstruction';
 import YesNoTaskView from '#PrototypeComposer/Parameters/ExecutionViews/YesNo';
 import { useTypedSelector } from '#store/helpers';
-import { FilterList } from '@material-ui/icons';
 import React, { FC, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 export const ParameterViewWrapper = styled.div`
@@ -82,7 +79,6 @@ export const ParameterViewWrapper = styled.div`
 `;
 
 const ParameterView: FC<ParameterProps> = ({ parameter, form, onChangeHandler }) => {
-  const dispatch = useDispatch();
   const {
     parameters: { listById },
   } = useTypedSelector((state) => state.prototypeComposer);
@@ -101,29 +97,6 @@ const ParameterView: FC<ParameterProps> = ({ parameter, form, onChangeHandler })
       });
     };
   }, []);
-
-  const renderFiltersValidationsAction = (label: string, count: number) => {
-    return (
-      <div
-        className="filters-validations"
-        onClick={() =>
-          dispatch(
-            toggleNewParameter({
-              action: 'task',
-              title: 'Edit Process Parameter',
-              parameterId: parameter.id,
-              ...(parameter.type in NonMandatoryParameter && {
-                type: parameter.type,
-              }),
-            }),
-          )
-        }
-      >
-        <FilterList />
-        {label} ({count})
-      </div>
-    );
-  };
 
   const renderTaskViewByType = () => {
     switch (parameterType || parameter.type) {
@@ -148,17 +121,6 @@ const ParameterView: FC<ParameterProps> = ({ parameter, form, onChangeHandler })
         return <SignatureTaskView parameter={parameter} form={form} />;
 
       case MandatoryParameter.NUMBER:
-        return (
-          <>
-            <SingleLineTaskView parameter={parameter} form={form} />
-            {parameter.validations?.resourceParameterValidations &&
-              renderFiltersValidationsAction(
-                'Validations',
-                parameter.validations.resourceParameterValidations.length,
-              )}
-          </>
-        );
-
       case MandatoryParameter.MULTI_LINE:
       case MandatoryParameter.DATE:
       case MandatoryParameter.SINGLE_LINE:
@@ -178,16 +140,7 @@ const ParameterView: FC<ParameterProps> = ({ parameter, form, onChangeHandler })
         return <CalculationTaskView parameter={parameter} form={form} />;
 
       case MandatoryParameter.RESOURCE:
-        return (
-          <>
-            <ResourceTaskView parameter={parameter} form={form} />
-            {parameter.data?.propertyValidations?.length > 0 &&
-              renderFiltersValidationsAction(
-                'Filters and Validations',
-                parameter.data.propertyValidations.length,
-              )}
-          </>
-        );
+        return <ResourceTaskView parameter={parameter} form={form} />;
 
       default:
         return null;
