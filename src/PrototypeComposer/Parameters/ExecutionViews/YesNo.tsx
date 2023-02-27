@@ -58,7 +58,7 @@ const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
   };
 
   return (
-    <YesNoTaskViewWrapper type={selection?.type}>
+    <YesNoTaskViewWrapper type={selection?.type} data-id={parameter.id} data-type={parameter.type}>
       <div className="parameter-header">
         <Button
           variant="secondary"

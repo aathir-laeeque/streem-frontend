@@ -80,6 +80,8 @@ const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId' | 'isReadOnly'>> = 
             menuPortalTarget: document.body,
             menuPosition: 'fixed',
             menuShouldBlockScroll: true,
+            ['data-id']: parameter.id,
+            ['data-type']: parameter.type,
             onChange: (value: any) => {
               const parameterData = {
                 ...parameter,

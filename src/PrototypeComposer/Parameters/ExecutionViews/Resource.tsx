@@ -210,6 +210,8 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
                 menuPortalTarget: document.body,
                 menuPosition: 'fixed',
                 menuShouldBlockScroll: true,
+                ['data-id']: parameter.id,
+                ['data-type']: parameter.type,
                 onMenuScrollToBottom: () => {
                   if (!isLoading && !pagination.current.isLast) {
                     getOptions();

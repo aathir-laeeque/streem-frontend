@@ -72,7 +72,7 @@ const SignatureTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form
     );
   };
   return (
-    <SignatureTaskViewWrapper>
+    <SignatureTaskViewWrapper data-id={parameter.id} data-type={parameter.type}>
       <div className={'signature-interaction active'} onClick={openSignatureModal}>
         {(imageData && (
           <div>

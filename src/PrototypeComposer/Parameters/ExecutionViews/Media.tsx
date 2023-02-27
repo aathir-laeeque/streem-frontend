@@ -135,7 +135,7 @@ const MediaTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
   }, [imagesData]);
 
   return (
-    <MediaViewWrapper>
+    <MediaViewWrapper data-id={parameter.id} data-type={parameter.type}>
       <div style={{ display: 'flex', marginTop: '24px' }}>
         {isUploading ? (
           <LinearProgress style={{ height: 8, width: '100%', color: '#1d84ff' }} />

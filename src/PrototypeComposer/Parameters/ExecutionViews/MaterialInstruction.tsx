@@ -80,7 +80,7 @@ const MaterialInstructionTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ param
   const dispatch = useDispatch();
   return (
     <MaterialInstructionTaskViewWrapper>
-      <ol className="list-container">
+      <ol className="list-container" data-id={parameter.id} data-type={parameter.type}>
         {parameter.data.map((el: any, index: number) => (
           <li className="list-item" key={index}>
             {el.link ? (

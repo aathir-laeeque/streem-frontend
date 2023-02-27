@@ -53,6 +53,8 @@ const SingleLineTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, for
                 },
               );
             },
+            ['data-id']: parameter.id,
+            ['data-type']: parameter.type,
           },
         },
       ]}

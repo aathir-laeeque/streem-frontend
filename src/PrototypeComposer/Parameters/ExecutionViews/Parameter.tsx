@@ -136,6 +136,8 @@ const ShouldBeTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
                   },
                 );
               },
+              ['data-id']: parameter.id,
+              ['data-type']: parameter.type,
               placeholder: 'Enter Observed Value',
             },
           },

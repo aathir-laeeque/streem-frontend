@@ -49,6 +49,8 @@ const TextInstructionTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter
         wrapperClassName="wrapper-class"
         editorClassName="editor-class"
         toolbarClassName="toolbar-class"
+        data-id={parameter.id}
+        data-type={parameter.type}
       />
     </Wrapper>
   );
