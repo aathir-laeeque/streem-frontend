@@ -35,6 +35,7 @@ export enum CompletedTaskErrors {
   E213 = 'TASK_ALREADY_COMPLETED',
   E214 = 'TASK_NOT_ENABLED_FOR_CORRECTION',
   E224 = 'TASK_ALREADY_IN_PROGRESS',
+  E450 = 'PARAMETER_DATA_INCONSISTENT',
 }
 
 export enum TaskSignOffError {

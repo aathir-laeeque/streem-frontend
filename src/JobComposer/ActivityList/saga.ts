@@ -53,6 +53,7 @@ function* executeParameterSaga({ payload }: ReturnType<typeof executeParameter>)
       yield put(updateExecutedParameter(data));
       yield put(updateHiddenIds());
     } else {
+      yield put(updateExecutedParameter(parameter));
       console.error('handle errors on execute Parameter Saga :: ', errors);
       const taskAlreadyCompletedError = (errors as Error[]).find((err) => err.code === 'E403');
 
@@ -89,6 +90,7 @@ function* fixParameterSaga({ payload }: ReturnType<typeof fixParameter>) {
     if (data) {
       yield put(updateExecutedParameter(data));
     } else {
+      yield put(updateExecutedParameter(parameter));
       const taskAlreadyCompletedError = (errors as Error[]).find((err) => err.code === 'E403');
 
       if (taskAlreadyCompletedError) {
