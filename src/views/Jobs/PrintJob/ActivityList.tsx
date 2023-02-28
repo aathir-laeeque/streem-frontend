@@ -303,7 +303,12 @@ const parameterTemplateFormatter = (
       const node = document.createElement('div');
       node.innerHTML = parameter.data.text;
       const res = parseMarkUp(node);
-      return <View style={styles.parameterView}>{getInstructionTemplate(res)}</View>;
+      return (
+        <View style={styles.parameterView}>
+          <Text style={styles.text12}>{parameter.label}</Text>
+          {getInstructionTemplate(res)}
+        </View>
+      );
     case MandatoryParameter.SINGLE_LINE:
     case MandatoryParameter.MULTI_LINE:
       const items = [];
@@ -335,6 +340,7 @@ const parameterTemplateFormatter = (
           wrap={false}
           {...(parameter.response?.medias?.[0] && { break: true })}
         >
+          <Text style={styles.text12}>{parameter.label}</Text>
           <Text style={styles.text12}>Sign Below</Text>
           {parameter.response?.medias?.[0] ? (
             <Image
@@ -442,6 +448,7 @@ const parameterTemplateFormatter = (
     case MandatoryParameter.CHECKLIST:
       return (
         <View style={styles.parameterView}>
+          <Text style={styles.text12}>{parameter.label}</Text>
           <View
             style={[
               styles.materialParameterItems,
@@ -481,6 +488,7 @@ const parameterTemplateFormatter = (
     case MandatoryParameter.MULTISELECT:
       return (
         <View style={styles.parameterView}>
+          <Text style={styles.text12}>{parameter.label}</Text>
           <View
             style={[
               styles.materialParameterItems,
@@ -607,6 +615,7 @@ const parameterTemplateFormatter = (
             },
           ]}
         >
+          <Text style={styles.text12}>{parameter.label}</Text>
           {parameter.data.map((item, itemIndex: number) => (
             <View
               key={`${parameter.id}_${itemIndex}`}
@@ -624,6 +633,7 @@ const parameterTemplateFormatter = (
     case MandatoryParameter.MEDIA:
       return (
         <View style={styles.parameterView} wrap={false}>
+          <Text style={styles.text12}>{parameter.label}</Text>
           <Text style={{ ...styles.text12, marginBottom: 16 }}>Uploaded Media:</Text>
           {parameter.response?.medias?.length > 0 &&
             parameter.response.medias.map(
