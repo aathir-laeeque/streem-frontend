@@ -98,7 +98,7 @@ const useTabs = ({ tabs, BeforeHeader, AfterHeader }: useTabType) => {
 
   const renderTabContent = () => (
     <BodyWrapper>
-      <TabContent label={activeTab.label} values={activeTab?.values} />
+      <TabContent label={activeTab.label} values={activeTab?.values} key={activeTab.label} />
     </BodyWrapper>
   );
 

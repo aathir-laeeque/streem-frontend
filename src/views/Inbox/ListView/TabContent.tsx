@@ -90,6 +90,9 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
 
   useEffect(() => {
     fetchChecklistData({ page: 0 });
+    return () => {
+      dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
+    };
   }, []);
 
   useEffect(() => {
@@ -98,12 +101,6 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
       dispatch(setSelectedState(reducerLabel));
     }
   }, [selectedUseCase?.id, filterFields]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
-    };
-  }, []);
 
   const columns = [
     {
@@ -251,17 +248,23 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
 
   const selectChangeHandler = (option) => {
     if (option) {
-      const selectedFilterField = [
-        {
-          field: 'checklist.id',
-          op: FilterOperators.EQ,
-          values: [option.id],
-        },
-      ];
-      setFilterFields((prev) => [...prev, ...selectedFilterField]);
-      fetchParametersListData({ page: DEFAULT_PAGE_NUMBER }, option);
+      const selectedFilterField = {
+        field: 'checklist.id',
+        op: FilterOperators.EQ,
+        values: [option.id],
+      };
+      setFilterFields((currentFields) => {
+        const updatedFilterFields = [
+          ...currentFields.filter((field) => field.field !== selectedFilterField?.field),
+          selectedFilterField,
+        ];
+        return updatedFilterFields;
+      });
+      fetchParametersListData({ page: DEFAULT_PAGE_NUMBER, size: DEFAULT_PAGE_SIZE }, option);
     } else {
-      setFilterFields((prev) => prev.filter((filter) => filter.field !== 'checklist.id'));
+      setFilterFields((currentFields) =>
+        currentFields.filter((curr) => curr.field !== 'checklist.id'),
+      );
       dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
     }
   };
@@ -285,7 +288,13 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
             },
           ]}
           updateFilterFields={(fields) => {
-            setFilterFields([...fields]);
+            setFilterFields((currentFields) => {
+              const updatedFilterFields = [
+                ...currentFields.filter((field) => field.field !== fields?.[0].field),
+                ...fields,
+              ];
+              return updatedFilterFields;
+            });
           }}
         />
         <Select

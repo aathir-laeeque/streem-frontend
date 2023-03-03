@@ -30,7 +30,7 @@ import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { Chip, CircularProgress, MenuItem } from '@material-ui/core';
 import { ArrowDropDown, FiberManualRecord } from '@material-ui/icons';
 import { navigate as navigateTo } from '@reach/router';
-import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
+import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { addRevisionPrototype } from '../NewPrototype/actions';
@@ -71,7 +71,6 @@ const TypeChip = styled(Chip)<{ fontColor: string; backGroundColor: string }>`
 `;
 
 const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo, label }) => {
-  const componentDidMount = useRef(false);
   const {
     checklistListView: { pageable, currentPageData, loading: checklistDataLoading },
     auth: { userId, selectedUseCase },
@@ -102,8 +101,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
   };
 
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(null);
-
-  const defaultFilters = useRef<FilterField[]>(getBaseFilter(label));
 
   const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(label));
 
@@ -148,20 +145,12 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
   };
 
   useEffect(() => {
-    if (componentDidMount.current) {
-      dispatch(clearData());
-      setFilterFields(() => {
-        const baseFilters = getBaseFilter(label);
-        fetchData({ filters: baseFilters });
-        return baseFilters;
-      });
-    }
-  }, [label]);
+    dispatch(clearData());
+  }, []);
 
   useEffect(() => {
     fetchData({ filters: filterFields });
-    componentDidMount.current = true;
-  }, []);
+  }, [filterFields]);
 
   const onCreateJob = (jobDetails: Record<string, string>) => {
     if (jobDetails.checklistId) {
@@ -561,12 +550,17 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
           updateFilterFields={(fields) => {
             setFilterFields((currentFields) => {
               const updatedFilterFields = [
-                ...currentFields.filter((field) =>
-                  defaultFilters.current.some((newField) => newField.field === field.field),
+                ...currentFields.filter(
+                  (field) =>
+                    ![
+                      ...fields,
+                      {
+                        field: 'name',
+                      },
+                    ].some((newField) => newField.field === field.field),
                 ),
                 ...fields,
               ];
-              fetchData({ filters: updatedFilterFields });
               return updatedFilterFields;
             });
           }}
@@ -595,8 +589,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                       }
                     : { values: field.values }),
                 })) as FilterField[];
-
-                fetchData({ filters: updatedFilterFields });
                 return updatedFilterFields;
               })
             }
@@ -621,8 +613,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                       field.field !== 'collaborators.user.id' &&
                       field.field !== 'not.a.collaborator',
                   );
-
-                  fetchData({ filters: updatedFilterFields });
                   return updatedFilterFields;
                 });
               } else if (option.value === 'not.a.collaborator') {
@@ -639,8 +629,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                       values: [userId],
                     },
                   ] as FilterField[];
-
-                  fetchData({ filters: updatedFilterFields });
                   return updatedFilterFields;
                 });
               } else if (option.value === 'collaborators.type') {
@@ -658,8 +646,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                       values: [CollaboratorType.AUTHOR, CollaboratorType.PRIMARY_AUTHOR],
                     },
                   ] as FilterField[];
-
-                  fetchData({ filters: updatedFilterFields });
                   return updatedFilterFields;
                 });
               } else {
@@ -682,8 +668,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                       values: [CollaboratorType.REVIEWER],
                     },
                   ] as FilterField[];
-
-                  fetchData({ filters: updatedFilterFields });
                   return updatedFilterFields;
                 });
               }
@@ -705,7 +689,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                   : { values: field.values }),
               })) as FilterField[];
 
-              fetchData({ filters: updatedFilterFields });
               return updatedFilterFields;
             })
           }

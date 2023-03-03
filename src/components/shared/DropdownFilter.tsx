@@ -32,7 +32,7 @@ const DropdownFilter: FC<DropdownFilterProps> = ({ options, updateFilter, label 
           ((event: ChangeEvent<HTMLSelectElement>) => void)
       }
       placeholder="State"
-      value={options.filter((el) => el.value === 'all' || el.value === 'any')[0]}
+      defaultValue={options.filter((el) => el.value === 'all' || el.value === 'any')[0]}
     />
   </Wrapper>
 );

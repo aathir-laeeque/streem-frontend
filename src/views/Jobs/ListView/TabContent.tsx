@@ -26,7 +26,7 @@ import { CircularProgress } from '@material-ui/core';
 import { FiberManualRecord } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import { debounce, keyBy } from 'lodash';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import DetailsPopover from '../Components/DetailsPopover';
 import { createJob, fetchJobs } from './actions';
@@ -50,7 +50,6 @@ const getBaseFilter = (values: string[]): FilterField[] => [
 
 const TabContent: FC<TabContentProps> = ({ label, values }) => {
   const dispatch = useDispatch();
-  const componentDidMount = useRef(false);
 
   const {
     jobs,
@@ -75,8 +74,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     pageable: checklistPageable,
     loading: checklistsLoading,
   } = useTypedSelector((state) => state.checklistListView);
-
-  const defaultFilters = useRef<FilterField[]>(getBaseFilter(values));
 
   const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(values));
 
@@ -105,24 +102,15 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
   };
 
   useEffect(() => {
-    if (componentDidMount.current) {
-      const updatedBaseFilterValues = getBaseFilter(values);
-      setFilterFields(getBaseFilter(values));
-      fetchData({ filters: updatedBaseFilterValues });
-    }
-  }, [values]);
-
-  useEffect(() => {
-    fetchData({ filters: filterFields });
     fetchChecklistData({ page: 0 });
-    componentDidMount.current = true;
-  }, []);
-
-  useEffect(() => {
     return () => {
       dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
     };
-  }, [label]);
+  }, []);
+
+  useEffect(() => {
+    fetchData({ filters: filterFields });
+  }, [filterFields]);
 
   const onCreateJob = (jobDetails: Record<string, string>) => {
     const selectedId = jobDetails.checklistId;
@@ -299,36 +287,25 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
     }
   };
 
-  const updateFilterFields = (fields) => {
-    setFilterFields((currentFields) => {
-      const updatedFilterFields = [
-        ...currentFields.filter((field) =>
-          field.field === 'taskExecutions.assignees.user.id'
-            ? true
-            : defaultFilters.current.some((newField) => newField.field === field.field),
-        ),
-        ...fields,
-      ];
-      fetchData({
-        filters: updatedFilterFields,
-      });
-      return updatedFilterFields;
-    });
-  };
-
   const onSelectUpdate = (option) => {
     if (option) {
-      const selectedFilterField = [
-        {
-          field: 'checklist.id',
-          op: FilterOperators.EQ,
-          values: [option.id],
-        },
-      ];
-      updateFilterFields(selectedFilterField);
-      fetchParametersListData({ page: DEFAULT_PAGE_NUMBER }, option);
+      const selectedFilterField = {
+        field: 'checklist.id',
+        op: FilterOperators.EQ,
+        values: [option.id],
+      };
+      setFilterFields((currentFields) => {
+        const updatedFilterFields = [
+          ...currentFields.filter((field) => field.field !== selectedFilterField?.field),
+          selectedFilterField,
+        ];
+        return updatedFilterFields;
+      });
+      fetchParametersListData({ page: DEFAULT_PAGE_NUMBER, size: DEFAULT_PAGE_SIZE }, option);
     } else {
-      updateFilterFields(filterFields.filter((curr) => curr.field !== 'checklist.id'));
+      setFilterFields((currentFields) =>
+        currentFields.filter((curr) => curr.field !== 'checklist.id'),
+      );
       dispatch(fetchParametersSuccess({ data: [], pageable: { ...parameterPageable, page: 0 } }));
     }
   };
@@ -354,16 +331,9 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
           updateFilterFields={(fields) => {
             setFilterFields((currentFields) => {
               const updatedFilterFields = [
-                ...currentFields.filter((field) =>
-                  field.field === 'taskExecutions.assignees.user.id'
-                    ? true
-                    : defaultFilters.current.some((newField) => newField.field === field.field),
-                ),
+                ...currentFields.filter((field) => field.field !== fields?.[0].field),
                 ...fields,
               ];
-              fetchData({
-                filters: updatedFilterFields,
-              });
               return updatedFilterFields;
             });
           }}
@@ -410,7 +380,6 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
                       ] as FilterField[])
                     : []),
                 ];
-                fetchData({ filters: updatedFilterFields });
                 return updatedFilterFields;
               });
             }}
