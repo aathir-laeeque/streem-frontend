@@ -125,7 +125,8 @@ const ObjectView: FC<TabContentProps> = ({
   >();
   const dateTimeInputs = useRef<Record<string, string>>({});
   const [reRender, setReRender] = useState(false);
-  const isReadOnly = readOnly || !checkPermission(['ontology', 'edit']) || !id;
+  const isArchived = selectedObject?.usageStatus === 7;
+  const isReadOnly = readOnly || !checkPermission(['ontology', 'edit']) || !id || isArchived;
   const isEditing = id && id !== 'new';
 
   const getOptions = async (path: string, inputId: string, dependency?: string) => {
@@ -397,11 +398,13 @@ const ObjectView: FC<TabContentProps> = ({
             }, []),
           ]}
         />
-        {!isReadOnly && (
-          <div className="actions">
+        <div className="actions">
+          {!isReadOnly && (
             <Button type="submit" disabled={!isDirty || !isValid}>
               {isEditing ? 'Update' : 'Create'}
             </Button>
+          )}
+          {(!isReadOnly || isArchived) && (
             <Button
               variant="secondary"
               onClick={() => {
@@ -410,8 +413,8 @@ const ObjectView: FC<TabContentProps> = ({
             >
               Cancel
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </form>
     </ObjectFormWrapper>
   );
