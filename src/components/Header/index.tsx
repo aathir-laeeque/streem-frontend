@@ -12,7 +12,7 @@ import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
 import { logout, setSelectedUseCase } from '#views/Auth/actions';
-import { getObjectData } from '#views/Ontology/utils';
+import { qrCodeValidator } from '#views/Ontology/utils';
 import { UserType } from '#views/UserAccess/ManageUser/types';
 import { useMsal } from '@azure/msal-react';
 import { navigate } from '@reach/router';
@@ -41,18 +41,13 @@ const Header: FC = () => {
   const onSelectWithQR = async (data: string) => {
     try {
       const qrData = JSON.parse(data);
-      if (qrData?.entityType === 'object') {
-        const fetchedData = await getObjectData({
-          id: qrData.id,
-          collection: qrData.collection,
+      if (qrData) {
+        await qrCodeValidator({
+          data: qrData,
+          callBack: () =>
+            navigate(`/ontology/object-types/${qrData.objectTypeId}/objects/${qrData.id}`),
+          validateObjectType: true,
         });
-        if (selectedFacility?.id === fetchedData?.facilityId) {
-          navigate(`/ontology/object-types/${qrData.objectTypeId}/objects/${qrData.id}`);
-        } else {
-          throw 'Object not found';
-        }
-      } else {
-        throw 'Invalid QR Code';
       }
     } catch (error) {
       dispatch(

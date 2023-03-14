@@ -8,7 +8,7 @@ import { useTypedSelector } from '#store';
 import { apiAutoInitialize, baseUrl } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { getObjectData } from '#views/Ontology/utils';
+import { qrCodeValidator } from '#views/Ontology/utils';
 import { LinkOutlined } from '@material-ui/icons';
 import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -90,23 +90,17 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   const onSelectWithQR = async (data: string) => {
     try {
       const qrData = JSON.parse(data);
-      if (qrData?.entityType === 'object') {
-        const fetchedData = await getObjectData({
-          id: qrData.id,
-          collection: qrData.collection,
-          usageStatus: 1,
+      if (qrData) {
+        await qrCodeValidator({
+          data: qrData,
+          callBack: () =>
+            onSelectOption([
+              {
+                value: qrData,
+              },
+            ]),
+          validateObjectType: qrData?.objectTypeId === parameter?.data?.objectTypeId,
         });
-        if (selectedFacility?.id === fetchedData?.facilityId) {
-          onSelectOption([
-            {
-              value: qrData,
-            },
-          ]);
-        } else {
-          throw 'Object not found';
-        }
-      } else {
-        throw 'Invalid QR Code';
       }
     } catch (error) {
       dispatch(

@@ -1,4 +1,7 @@
+import QRIcon from '#assets/svg/QR';
 import { Button, FormGroup } from '#components';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
@@ -6,15 +9,12 @@ import { useTypedSelector } from '#store';
 import { apiGetObjects, baseUrl } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
+import { qrCodeValidator } from '#views/Ontology/utils';
 import { LinkOutlined } from '@material-ui/icons';
 import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import QRIcon from '#assets/svg/QR';
 import styled from 'styled-components';
-import { getObjectData } from '#views/Ontology/utils';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
 
 const ResourceParameterWrapper = styled.div`
   display: flex;
@@ -143,45 +143,40 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
   const onSelectWithQR = async (data: string) => {
     try {
       const qrData = JSON.parse(data);
-      if (qrData?.entityType === 'object') {
-        const fetchedData = await getObjectData({
-          id: qrData.id,
-          collection: qrData.collection,
-          usageStatus: 1,
+
+      if (qrData) {
+        await qrCodeValidator({
+          data: qrData,
+          callBack: () =>
+            setValue(
+              parameter.id,
+              {
+                ...parameter,
+                data: {
+                  ...parameter.data,
+                  choices: [qrData].map((currOption: any) => ({
+                    objectId: currOption.id,
+                    objectDisplayName: currOption.displayName,
+                    objectExternalId: currOption.externalId,
+                    collection: currOption.collection,
+                  })),
+                },
+                response: {
+                  value: null,
+                  reason: '',
+                  state: 'EXECUTED',
+                  choices: {},
+                  medias: [],
+                  parameterValueApprovalDto: null,
+                },
+              },
+              {
+                shouldDirty: true,
+                shouldValidate: true,
+              },
+            ),
+          validateObjectType: qrData?.objectTypeId === parameter?.data?.objectTypeId,
         });
-        if (selectedFacility?.id === fetchedData?.facilityId) {
-          setValue(
-            `data.${parameter.id}`,
-            {
-              ...parameter,
-              data: {
-                ...parameter.data,
-                choices: [qrData].map((currOption: any) => ({
-                  objectId: currOption.id,
-                  objectDisplayName: currOption.displayName,
-                  objectExternalId: currOption.externalId,
-                  collection: currOption.collection,
-                })),
-              },
-              response: {
-                value: null,
-                reason: '',
-                state: 'EXECUTED',
-                choices: {},
-                medias: [],
-                parameterValueApprovalDto: null,
-              },
-            },
-            {
-              shouldDirty: true,
-              shouldValidate: true,
-            },
-          );
-        } else {
-          throw 'Object not found';
-        }
-      } else {
-        throw 'Invalid QR Code';
       }
     } catch (error) {
       dispatch(
