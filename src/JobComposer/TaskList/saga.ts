@@ -52,6 +52,10 @@ function* getParametersDataByTaskId(taskId: string) {
 
       case MandatoryParameter.SHOULD_BE:
       case MandatoryParameter.MULTI_LINE:
+      case MandatoryParameter.DATE:
+      case MandatoryParameter.DATE_TIME:
+      case MandatoryParameter.SINGLE_LINE:
+      case MandatoryParameter.NUMBER:
         return {
           ...parameter,
           reason: parameter.response.reason || null,
@@ -71,6 +75,13 @@ function* getParametersDataByTaskId(taskId: string) {
               state: parameter.response.choices[d.id],
             }),
           })),
+        };
+      case MandatoryParameter.RESOURCE:
+      case MandatoryParameter.CALCULATION:
+        return {
+          ...parameter,
+          reason: parameter.response.reason || null,
+          data: parameter.response.choices,
         };
 
       default:
