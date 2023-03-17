@@ -2,6 +2,7 @@ import { FormGroup } from '#components';
 import { MandatoryParameter } from '#JobComposer/checklist.types';
 import { customOnChange } from '#utils/formEvents';
 import { InputTypes } from '#utils/globalTypes';
+import moment from 'moment';
 import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { executeParameter, fixParameter } from './actions';
@@ -20,7 +21,7 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
     }
   }, [parameter?.response?.value]);
 
-  const onChange = (val: string) => {
+  const onBlurHandler = (val: string) => {
     customOnChange(val, (val: string) => {
       const newData = {
         ...parameter,
@@ -51,8 +52,9 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
                 ['data-type']: parameter.type,
                 label:
                   parameter.type === MandatoryParameter.DATE ? 'Enter Date' : 'Enter Date Time',
-                onChange: ({ value }: { name: string; value: string }) => {
-                  onChange(value);
+                onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
+                  const value = moment(e.target.value).unix().toString();
+                  onBlurHandler(value);
                 },
               },
             },
