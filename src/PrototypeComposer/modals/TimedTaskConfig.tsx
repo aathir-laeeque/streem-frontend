@@ -155,7 +155,7 @@ const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
   return (
     <div className="input-group">
       <InputField
-        value={duration.hours()}
+        value={duration.asHours()}
         unit="Hr"
         increase={() => {
           setValue(moment.duration(duration.add(1, 'hour'), 'seconds').asSeconds());
