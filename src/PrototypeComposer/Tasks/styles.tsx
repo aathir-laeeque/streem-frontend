@@ -15,7 +15,7 @@ const TaskListWrapper = styled.div.attrs({
 
 const TaskCardWrapper = styled.div.attrs({
   className: 'task-card',
-})<TaskCardWrapperProps>`
+})<TaskCardWrapperProps & { hasError: boolean }>`
   background-color: #ffffff;
   border: solid 1px #eeeeee;
   box-shadow: 0 1px 4px 0 rgba(102, 102, 102, 0.08);
@@ -28,6 +28,13 @@ const TaskCardWrapper = styled.div.attrs({
     isActive
       ? css`
           border-color: #1d84ff;
+        `
+      : null}
+
+  ${({ hasError }) =>
+    hasError
+      ? css`
+          border-color: #eb5757;
         `
       : null}
 
@@ -168,6 +175,21 @@ const TaskCardWrapper = styled.div.attrs({
               `;
             }
           }}
+        }
+        .task-error-wrapper {
+          align-items: center;
+          color: #eb5757;
+          display: flex;
+          font-size: 12px;
+          justify-content: flex-start;
+          margin-top: 8px;
+          margin-bottom: 8px;
+
+          .task-error-icon {
+            font-size: 16px;
+            color: #eb5757;
+            margin-right: 5px;
+          }
         }
       }
 

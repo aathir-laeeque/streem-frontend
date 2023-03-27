@@ -32,6 +32,7 @@ import {
   ArrowDropUp,
   Autorenew,
   DeleteOutlined,
+  Error as ErrorIcon,
   PanTool,
   PanToolOutlined,
   PermMedia,
@@ -189,6 +190,7 @@ const TaskCard: FC<
   };
 
   const noParameterError = task.errors.find((error) => error.code === 'E211') ?? undefined;
+  const archiveParameterError = task.errors.find((error) => error.code === 'E225');
 
   if (activeStageId) {
     const taskParameters = parameterOrderInTaskInStage[activeStageId][taskId];
@@ -206,6 +208,7 @@ const TaskCard: FC<
           }
         }}
         isReadOnly={isReadOnly}
+        hasError={!!archiveParameterError?.code}
       >
         <div className="task-header">
           {!isReadOnly && (
@@ -269,6 +272,13 @@ const TaskCard: FC<
         </div>
         <div className="task-body">
           <div className="task-config">
+            {!!archiveParameterError?.code && (
+              <div className="task-error-wrapper">
+                <ErrorIcon className="task-error-icon" />
+                {archiveParameterError.message}
+              </div>
+            )}
+
             <Textarea
               defaultValue={name}
               error={!task.name && task.errors.find((error) => error.code === 'E210')?.message}
