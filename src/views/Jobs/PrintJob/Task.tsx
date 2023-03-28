@@ -11,7 +11,7 @@ import { formatDuration } from '#utils/timeUtils';
 import { Image, StyleSheet, Text, View } from '@react-pdf/renderer';
 import moment from 'moment';
 import React, { FC } from 'react';
-import ParameterList from './ActivityList';
+import ParameterList, { styles as parameterStyles } from './ActivityList';
 
 const styles = StyleSheet.create({
   flexView: {
@@ -227,6 +227,27 @@ const MemoTask: FC<{
           </View>
         )}
       </View>
+
+      {task?.medias?.length > 0 && (
+        <View style={parameterStyles.parameterView} wrap={false}>
+          {task.medias.map((imageDetails: { id: string; link: string }) => {
+            return (
+              <View key={imageDetails.id} style={{ marginBottom: 16 }} wrap={false} break>
+                <Image
+                  src={imageDetails.link}
+                  style={{
+                    maxHeight: '230mm',
+                    marginTop: '8px',
+                    maxWidth: '100%',
+                    objectFit: 'contain',
+                  }}
+                />
+              </View>
+            );
+          })}
+        </View>
+      )}
+
       <ParameterList
         parametersById={parametersById}
         parameters={task.parameters}
