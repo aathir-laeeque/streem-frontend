@@ -9,6 +9,7 @@ import PrintJobAuditLogs from '#views/Jobs/PrintJobAuditLogs';
 import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
 import PrintJobLogs from '#views/Jobs/PrintJobLogs';
 import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
+import PrintObjectChangeLogs from '#views/Ontology/PrintObjectChangeLogs/index';
 import { Router } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { Provider } from 'react-redux';
@@ -56,6 +57,7 @@ const App: FC = () => {
               <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
               <CustomRoute as={PrintJobAuditLogs} path="job-activity/:jobId/print" />
               <CustomRoute as={PrintJobLogs} path="job-logs/:viewId/print" />
+              <CustomRoute as={PrintObjectChangeLogs} path="object-change-logs/:objectId/print" />
               <CustomRoute as={UseCaseSelectionView} path="/*" />
             </Router>
             <Notification

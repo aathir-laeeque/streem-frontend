@@ -6,10 +6,17 @@ import {
   Pagination,
 } from '#components';
 import { useTypedSelector } from '#store';
+import {
+  clearAuditLogFilters,
+  setAuditLogFilters,
+  setPdfMetaData,
+} from '#store/audit-log-filters/action';
+import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators, InputTypes } from '#utils/globalTypes';
 import { formatDateByInputType } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
+import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
 import TuneIcon from '@material-ui/icons/Tune';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -62,10 +69,10 @@ const TabContent: FC = () => {
   const { showDrawer, filterFields } = state;
   const {
     objectChangeLogs: { list, listLoading, pageable },
-    objects: { active: selectedObject }
+    objects: { active: activeObject },
   } = useTypedSelector((state) => state.ontology);
   const { selectedFacility } = useTypedSelector((state) => state.auth);
-  const objectId = selectedObject?.id;
+  const objectId = activeObject?.id;
   const fetchData = (params: PaginatedFetchData = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     if (objectId) {
@@ -128,6 +135,33 @@ const TabContent: FC = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    dispatch(
+      setAuditLogFilters(
+        JSON.stringify({
+          op: FilterOperators.AND,
+          fields: [
+            ...filterFields,
+            {
+              field: 'objectId',
+              op: FilterOperators.EQ,
+              values: [objectId],
+            },
+            {
+              field: 'facilityId',
+              op: FilterOperators.EQ,
+              values: [selectedFacility?.id],
+            },
+          ],
+        }),
+      ),
+    );
+
+    return () => {
+      dispatch(clearAuditLogFilters());
+    };
+  }, [filterFields]);
+
   return (
     <AuditLogsTabWrapper>
       <LoadingContainer
@@ -144,10 +178,21 @@ const TabContent: FC = () => {
                 >
                   <TuneIcon />
                 </Button>
-                {/* Download PDF */}
-                {/* <Button variant="textOnly">
+                <Button
+                  variant="textOnly"
+                  onClick={() => {
+                    dispatch(
+                      setPdfMetaData({
+                        objectTypeDisplayName: activeObject?.objectType?.displayName!,
+                        objectDisplayName: activeObject?.displayName!,
+                        objectExternalId: activeObject?.externalId!,
+                      }),
+                    );
+                    openLinkInNewTab(`/object-change-logs/${objectId}/print`);
+                  }}
+                >
                   <GetAppOutlinedIcon />
-                </Button> */}
+                </Button>
               </div>
             </div>
             <DataTable

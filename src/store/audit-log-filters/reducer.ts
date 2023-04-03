@@ -3,6 +3,7 @@ import { AuditLogsFiltersState, AuditLogFiltersActionType, AuditLogsFiltersActio
 const initialState: AuditLogsFiltersState = {
   filters: '',
   columns: [],
+  pdfMetaData: {},
 };
 
 const reducer = (
@@ -15,6 +16,9 @@ const reducer = (
 
     case AuditLogsFiltersAction.SET_COLUMNS:
       return { ...state, columns: action.payload };
+
+    case AuditLogsFiltersAction.SET_PDF_META_DATA:
+      return { ...state, pdfMetaData: action.payload };
 
     case AuditLogsFiltersAction.CLEAR_FILTRES:
       return initialState;

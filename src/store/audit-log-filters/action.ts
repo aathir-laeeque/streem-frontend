@@ -8,3 +8,6 @@ export const setPdfColumns = (payload: any[]) =>
   actionSpreader(AuditLogsFiltersAction.SET_COLUMNS, payload);
 
 export const clearAuditLogFilters = () => actionSpreader(AuditLogsFiltersAction.CLEAR_FILTRES);
+
+export const setPdfMetaData = (payload: Record<string, string>) =>
+  actionSpreader(AuditLogsFiltersAction.SET_PDF_META_DATA, payload);

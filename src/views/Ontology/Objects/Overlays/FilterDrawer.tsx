@@ -22,10 +22,6 @@ const metaFilters = [
     label: 'Change Done To',
     value: 'entityId',
   },
-  // {
-  //   label: 'Change To',
-  //   value: 'newEntityData.input',
-  // },
   {
     label: 'Change Done At',
     value: 'modifiedAt',
