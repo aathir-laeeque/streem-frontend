@@ -44,13 +44,11 @@ const AutomationInfo: FC<AutomationInfoProps> = ({ task }) => {
     return (
       <Wrapper>
         {task.automations.map((automation) => {
-          const objectTypeDisplayName = parametersById[
-            automation.actionDetails.referencedParameterId
-          ]
-            ? parametersById[automation.actionDetails.referencedParameterId]?.data
-                ?.objectTypeDisplayName
-            : parametersMappedToJobById[automation.actionDetails.referencedParameterId]?.data
-                ?.objectTypeDisplayName;
+          const objectTypeDisplayName =
+            parametersById[automation.actionDetails.referencedParameterId]?.data
+              ?.objectTypeDisplayName ||
+            parametersMappedToJobById[automation.actionDetails.referencedParameterId]?.data
+              ?.objectTypeDisplayName;
           return (
             <div className="automation">
               <span className="heading">Automation:</span>

@@ -147,6 +147,13 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
   const actionType = watch('actionType');
   const actionDetails = watch('actionDetails');
 
+  useEffect(() => {
+    console.log({
+      actionType,
+      actionDetails,
+    });
+  }, [actionType, actionDetails]);
+
   const onSubmit = (data: {
     actionType: AutomationActionActionType;
     actionDetails: AutomationActionDetails;
@@ -162,7 +169,12 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
       triggerDetails: {},
     };
     let _actionDetails = data.actionDetails;
-    if (data.actionType !== AutomationActionActionType.CREATE_OBJECT) {
+    if (
+      ![
+        AutomationActionActionType.CREATE_OBJECT,
+        AutomationActionActionType.ARCHIVE_OBJECT,
+      ].includes(data.actionType)
+    ) {
       let keysToValidate: string[] = [];
       if (data.actionType === AutomationActionActionType.SET_PROPERTY) {
         if (_actionDetails?.propertyInputType) {
@@ -237,7 +249,10 @@ const ConfigureActions: FC<CommonOverlayProps<Props>> = ({
       ]);
       if (
         task.automations.length &&
-        task.automations[0].actionType !== AutomationActionActionType.CREATE_OBJECT
+        ![
+          AutomationActionActionType.CREATE_OBJECT,
+          AutomationActionActionType.ARCHIVE_OBJECT,
+        ].includes(task.automations[0].actionType)
       ) {
         const _selectedResource = resources.data.find(
           (r: any) => r.id === task.automations[0]?.actionDetails?.referencedParameterId,

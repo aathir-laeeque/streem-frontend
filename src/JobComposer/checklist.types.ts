@@ -128,6 +128,7 @@ export enum AutomationActionActionType {
   DECREASE_PROPERTY = 'DECREASE_PROPERTY',
   CREATE_OBJECT = 'CREATE_OBJECT',
   SET_PROPERTY = 'SET_PROPERTY',
+  ARCHIVE_OBJECT = 'ARCHIVE_OBJECT',
 }
 
 export enum AutomationActionActionTypeVisual {
@@ -135,6 +136,7 @@ export enum AutomationActionActionTypeVisual {
   DECREASE_PROPERTY = 'Decrease',
   CREATE_OBJECT = 'Create Object',
   SET_PROPERTY = 'Set Property',
+  ARCHIVE_OBJECT = 'Archive Object',
 }
 
 export enum AutomationActionTriggerType {

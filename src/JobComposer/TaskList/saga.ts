@@ -107,7 +107,11 @@ function* performActionOnTaskSaga({
   try {
     console.log('came to performActionOnTaskSaga with payload :: ', payload);
 
-    const { jobState, entityId: jobId } = yield select((state: RootState) => state.composer);
+    const {
+      jobState,
+      entityId: jobId,
+      parameters: { parametersById, parametersMappedToJobById },
+    } = yield select((state: RootState) => state.composer);
 
     const isJobStarted = jobState === JobStateEnum.IN_PROGRESS;
 
@@ -145,12 +149,17 @@ function* performActionOnTaskSaga({
           yield all(parametersId.map((parameterId) => put(removeParameterError(parameterId))));
         }
 
-        if (automations) {
-          for (let i = 0; i < automations.length; i++) {
+        if (automations?.length) {
+          for (const automation of automations) {
+            const objectTypeDisplayName =
+              parametersById[automation.actionDetails.referencedParameterId]?.data
+                ?.objectTypeDisplayName ||
+              parametersMappedToJobById[automation.actionDetails.referencedParameterId]?.data
+                ?.objectTypeDisplayName;
             yield put(
               showNotification({
                 type: NotificationType.SUCCESS,
-                msg: getAutomationActionTexts(automations[i], 'success'),
+                msg: getAutomationActionTexts(automation, 'success', objectTypeDisplayName),
               }),
             );
           }
@@ -159,12 +168,17 @@ function* performActionOnTaskSaga({
         yield put(setRecentServerTimestamp(timestamp));
         yield put(updateTaskExecutionState(taskId, data));
       } else {
-        if (automations) {
-          for (let i = 0; i < automations.length; i++) {
+        if (automations?.length) {
+          for (const automation of automations) {
+            const objectTypeDisplayName =
+              parametersById[automation.actionDetails.referencedParameterId]?.data
+                ?.objectTypeDisplayName ||
+              parametersMappedToJobById[automation.actionDetails.referencedParameterId]?.data
+                ?.objectTypeDisplayName;
             yield put(
               showNotification({
                 type: NotificationType.ERROR,
-                msg: getAutomationActionTexts(automations[i], 'error'),
+                msg: getAutomationActionTexts(automation, 'error', objectTypeDisplayName),
               }),
             );
           }
