@@ -12,6 +12,7 @@ import {
   apiGetJobLogs,
   apiProcessCustomViews,
   apiUnarchiveChecklist,
+  apiExportChecklist,
 } from '#utils/apiUrls';
 import { CustomViewsTargetType, Error, FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
@@ -45,6 +46,7 @@ import {
   saveCustomViewSuccess,
   unarchiveChecklist,
   updateList,
+  exportChecklist,
 } from './actions';
 import { ListViewAction } from './types';
 
@@ -277,6 +279,31 @@ function* deleteCustomViewSaga({ payload }: ReturnType<typeof deleteCustomView>)
   }
 }
 
+function* getExportChecklist({ payload }: ReturnType<typeof exportChecklist>) {
+  try {
+    const params = { ...payload, ids: payload.checklistId };
+    const res = yield call(request, 'GET', apiExportChecklist(), { params });
+
+    const responseFile = JSON.stringify(res);
+    const url = window.URL.createObjectURL(new Blob([responseFile], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${params?.ids || 'all'}.json`);
+    document.body.appendChild(link);
+    link.click();
+    if (res) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `Process Exported`,
+        }),
+      );
+    }
+  } catch (error) {
+    console.error('error from getExportChecklist function in Process ListView Saga :: ', error);
+  }
+}
+
 export function* ChecklistListViewSaga() {
   yield takeLatest(ListViewAction.FETCH_CHECKLISTS, fetchChecklistsSaga);
   yield takeLatest(ListViewAction.FETCH_CHECKLISTS_FOR_LISTVIEW, fetchChecklistsSaga);
@@ -289,4 +316,5 @@ export function* ChecklistListViewSaga() {
   yield takeLeading(ListViewAction.GET_CUSTOM_VIEWS, getCustomViewsSaga);
   yield takeLeading(ListViewAction.SAVE_CUSTOM_VIEW, saveCustomViewSaga);
   yield takeLeading(ListViewAction.DELETE_CUSTOM_VIEW, deleteCustomViewSaga);
+  yield takeLatest(ListViewAction.EXPORT_CHECKLIST, getExportChecklist);
 }

@@ -26,6 +26,7 @@ import {
   saveCustomViewSuccess,
   deleteCustomViewError,
   deleteCustomViewSuccess,
+  exportChecklist,
 } from './actions';
 
 export type ListViewProps = RouteComponentProps;
@@ -105,6 +106,7 @@ export enum ListViewAction {
   DELETE_CUSTOM_VIEW = '@@checklist/ListView/DELETE_CUSTOM_VIEW',
   DELETE_CUSTOM_VIEW_ERROR = '@@checklist/ListView/DELETE_CUSTOM_VIEW_ERROR',
   DELETE_CUSTOM_VIEW_SUCCESS = '@@checklist/ListView/DELETE_CUSTOM_VIEW_SUCCESS',
+  EXPORT_CHECKLIST = '@@checklist/ListView/EXPORT_CHECKLIST',
 }
 
 export type ListViewActionType = ReturnType<
@@ -131,4 +133,5 @@ export type ListViewActionType = ReturnType<
   | typeof saveCustomViewSuccess
   | typeof deleteCustomViewError
   | typeof deleteCustomViewSuccess
+  | typeof exportChecklist
 >;

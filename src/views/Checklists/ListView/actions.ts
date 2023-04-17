@@ -131,3 +131,6 @@ export const deleteCustomViewSuccess = (data: any) =>
   actionSpreader(ListViewAction.DELETE_CUSTOM_VIEW_SUCCESS, {
     data,
   });
+
+export const exportChecklist = (params: Record<string, string>) =>
+  actionSpreader(ListViewAction.EXPORT_CHECKLIST, params);

@@ -17,7 +17,8 @@ type ImageUploadButtonProps = {
   onUploadStart?: () => void;
   disabled?: boolean;
   allowCapture?: boolean;
-  additionalTypes?: string[];
+  acceptedTypes?: string[];
+  apiCall?: () => string;
 };
 
 const Wrapper = styled.div.attrs({
@@ -42,7 +43,8 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
   onUploadSuccess,
   onUploadStart,
   allowCapture = false,
-  additionalTypes = [],
+  acceptedTypes = ['image/*'],
+  apiCall = apiUploadFile,
 }) => {
   const dispatch = useDispatch();
   const [file, setFile] = useState<Blob | File | null>(null);
@@ -61,7 +63,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
         const formData = new FormData();
         formData.append('file', _file);
         onUploadStart && onUploadStart();
-        const res = await request('POST', apiUploadFile(), {
+        const res = await request('POST', apiCall(), {
           formData,
         });
 
@@ -80,7 +82,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
       <input
         type="file"
         id="file"
-        accept={additionalTypes.length ? 'image/*'.concat(`,${additionalTypes.join()}`) : 'image/*'}
+        accept={acceptedTypes.join(' ,')}
         ref={fileRef}
         style={{ display: 'none' }}
         onChange={(event) => {

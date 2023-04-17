@@ -13,21 +13,27 @@ import {
   Button,
   DataTable,
   DropdownFilter,
+  ImageUploadButton,
   ListActionMenu,
   Pagination,
   SearchFilter,
   ToggleSwitch,
 } from '#components';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
+import { apiImportChecklist } from '#utils/apiUrls';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import CreateJob from '#views/Jobs/Components/CreateJob';
 import { Error, fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { Chip, CircularProgress, MenuItem } from '@material-ui/core';
 import { ArrowDropDown, FiberManualRecord } from '@material-ui/icons';
+import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
+import PublishOutlinedIcon from '@material-ui/icons/PublishOutlined';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -37,6 +43,7 @@ import { FormMode } from '../NewPrototype/types';
 import {
   archiveChecklist,
   clearData,
+  exportChecklist,
   fetchChecklistsForListView,
   unarchiveChecklist,
 } from './actions';
@@ -361,6 +368,21 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     <span>Schedular</span>
                   </div>
                 </MenuItem>
+
+                {checkPermission(['checklists', 'importExport']) && (
+                  <MenuItem
+                    onClick={() => {
+                      if (selectedChecklist?.id) {
+                        dispatch(exportChecklist({ checklistId: selectedChecklist.id }));
+                      }
+                    }}
+                  >
+                    <div className="list-item">
+                      <PublishOutlinedIcon />
+                      <span>Export</span>
+                    </div>
+                  </MenuItem>
+                )}
                 {!item.archived && checkArchiveAndRevisionPermission('revision') && (
                   <MenuItem
                     onClick={() => {
@@ -700,6 +722,30 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
           uncheckedIcon={false}
         />
 
+        {label === 'prototype' && checkPermission(['checklists', 'importExport']) && (
+          <ImageUploadButton
+            icon={GetAppOutlinedIcon}
+            label="Import"
+            onUploadSuccess={() => {
+              dispatch(
+                showNotification({
+                  type: NotificationType.SUCCESS,
+                  msg: 'Process Imported',
+                }),
+              );
+            }}
+            onUploadError={(error) => {
+              dispatch(
+                showNotification({
+                  type: NotificationType.ERROR,
+                  msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
+                }),
+              );
+            }}
+            apiCall={apiImportChecklist}
+            acceptedTypes={['.json']}
+          />
+        )}
         {checkStartPrototypePermission() && (
           <Button
             id="create"

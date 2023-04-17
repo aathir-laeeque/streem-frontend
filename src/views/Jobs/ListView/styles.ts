@@ -34,6 +34,11 @@ const TabContentWrapper = styled.div`
       margin-left: 16px;
       width: 200px;
     }
+    .upload-image > div {
+      gap: 6px;
+      margin-left: 24px;
+      margin-bottom: 8px;
+    }
   }
 
   #create {
