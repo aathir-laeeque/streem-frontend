@@ -252,7 +252,7 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
         return (
           <>
             <SingleLineTaskView parameter={parameter} />
-            {parameter.validations?.resourceParameterValidations &&
+            {parameter.validations?.resourceParameterValidations?.length > 0 &&
               renderFiltersValidationsAction(
                 'Validations',
                 parameter.validations.resourceParameterValidations.length,
