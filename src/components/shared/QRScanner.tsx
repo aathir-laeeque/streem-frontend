@@ -50,21 +50,24 @@ const ViewFinder = () => (
 );
 
 const Wrapper = styled.div`
-  .modal {
-    min-height: 100vh !important;
-    min-width: 100vw !important;
+  #modal-container {
+    z-index: 1301 !important;
+    .modal {
+      min-height: 100vh !important;
+      min-width: 100vw !important;
 
-    .close-icon {
-      font-size: 32px !important;
-      color: #fff !important;
-      z-index: 10 !important;
-    }
+      .close-icon {
+        font-size: 32px !important;
+        color: #fff !important;
+        z-index: 10 !important;
+      }
 
-    &-body {
-      > section {
-        > div {
-          padding-top: unset !important;
-          position: unset !important;
+      &-body {
+        > section {
+          > div {
+            padding-top: unset !important;
+            position: unset !important;
+          }
         }
       }
     }
