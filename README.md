@@ -34,3 +34,11 @@ TODO: Describe and show how to build your code and run the tests.
 
 ## Notes:
 - mui default z-index = 1300
+
+## Documentation Reference:
+ **Please refer to the documentation of the version specified in package.json**
+- MUIv4 - https://v4.mui.com/
+- react-hook-form - https://react-hook-form.com/
+- react-redux - https://react-redux.js.org/
+- redux-saga - https://redux-saga.js.org/
+- react-pdf - https://react-pdf.org/
