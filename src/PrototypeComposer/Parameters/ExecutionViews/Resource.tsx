@@ -267,19 +267,21 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
             },
           ]}
         />
-        <div
-          className="qr-selector"
-          onClick={() => {
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.QR_SCANNER,
-                props: { onSuccess: onSelectWithQR },
-              }),
-            );
-          }}
-        >
-          <QRIcon />
-        </div>
+        {!parameter?.autoInitialized && (
+          <div
+            className="qr-selector"
+            onClick={() => {
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.QR_SCANNER,
+                  props: { onSuccess: onSelectWithQR },
+                }),
+              );
+            }}
+          >
+            <QRIcon />
+          </div>
+        )}
       </ResourceParameterWrapper>
       {parameter?.autoInitialized && (
         <>

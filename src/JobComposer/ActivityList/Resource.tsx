@@ -186,19 +186,21 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
             onSelectOption(castedOptions);
           }}
         />
-        <div
-          className="qr-selector"
-          onClick={() => {
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.QR_SCANNER,
-                props: { onSuccess: onSelectWithQR },
-              }),
-            );
-          }}
-        >
-          <QRIcon />
-        </div>
+        {!parameter?.autoInitialized && (
+          <div
+            className="qr-selector"
+            onClick={() => {
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.QR_SCANNER,
+                  props: { onSuccess: onSelectWithQR },
+                }),
+              );
+            }}
+          >
+            <QRIcon />
+          </div>
+        )}
       </ResourceParameterWrapper>
       {parameter?.autoInitialized && (
         <>
