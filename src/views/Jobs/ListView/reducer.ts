@@ -1,4 +1,5 @@
 import { DEFAULT_PAGINATION } from '#utils/constants';
+import { List } from '@material-ui/core';
 import { ListViewAction, ListViewActionType, ListViewState } from './types';
 
 const initialState: ListViewState = {
@@ -30,6 +31,7 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
     case ListViewAction.FETCH_JOBS_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
 
+    case ListViewAction.UPDATE_JOB:
     case ListViewAction.CREATE_JOB:
       return { ...state, submitting: true };
 
@@ -38,6 +40,13 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
         ...state,
         submitting: false,
         createdData: action.payload.data,
+        reRender: action.payload.shouldReRender ? !state.reRender : state.reRender,
+      };
+
+    case ListViewAction.UPDATE_JOB_SUCCESS:
+      return {
+        ...state,
+        submitting: false,
         reRender: action.payload.shouldReRender ? !state.reRender : state.reRender,
       };
 

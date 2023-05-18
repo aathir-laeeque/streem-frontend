@@ -3,7 +3,7 @@ import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { closeOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { apiGetJobs } from '#utils/apiUrls';
+import { apiGetJobs, apiGetSelectedJob } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, takeLatest } from 'redux-saga/effects';
@@ -15,6 +15,8 @@ import {
   fetchJobsError,
   fetchJobsOngoing,
   fetchJobsSuccess,
+  updateJob,
+  updateJobSuccess,
 } from './actions';
 import { Job, ListViewAction } from './types';
 import { navigate } from '@reach/router';
@@ -81,7 +83,36 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
   }
 }
 
+function* updateJobSaga({ payload }: ReturnType<typeof updateJob>) {
+  try {
+    const { job } = payload;
+    const { errors, data }: ResponseObj<Job> = yield call(
+      request,
+      'PATCH',
+      apiGetSelectedJob(job.id!),
+      {
+        data: job,
+      },
+    );
+    if (errors) {
+      throw getErrorMsg(errors);
+    }
+
+    yield put(closeOverlayAction(OverlayNames.SET_DATE));
+    yield put(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'Job Updated Successfully.',
+      }),
+    ),
+      yield put(updateJobSuccess(data));
+  } catch (e) {
+    yield* handleCatch('JobListView', 'updateJobSaga', e, true);
+  }
+}
+
 export function* NewJobListViewSaga() {
   yield takeLatest(ListViewAction.CREATE_JOB, createJobSaga);
   yield takeLatest(ListViewAction.FETCH_JOBS, fetchJobsSaga);
+  yield takeLatest(ListViewAction.UPDATE_JOB, updateJobSaga);
 }

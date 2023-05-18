@@ -5,7 +5,10 @@ import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
 import moment from 'moment';
 import React, { FC, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { updateJob } from '../ListView/actions';
+import { useTypedSelector } from '#store';
 
 export interface SetDateModalProps {
   jobId: string;
@@ -88,6 +91,8 @@ const SetDateModal: FC<CommonOverlayProps<SetDateModalProps>> = ({
   closeAllOverlays,
   closeOverlay,
 }) => {
+  const dispatch = useDispatch();
+  const { submitting } = useTypedSelector((state) => state.jobListView);
   const form = useForm({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -100,64 +105,80 @@ const SetDateModal: FC<CommonOverlayProps<SetDateModalProps>> = ({
     setValue,
     errors,
     watch,
+    getValues,
   } = form;
+  console.log('🚀 ~ file: SetDateModal.tsx:111 ~ getValues:', getValues());
 
   useEffect(() => {
-    register('dueDateInterval', {
+    // register('dueDateInterval', {
+    //   required: true,
+    // });
+    register('expectedStartDate', {
       required: true,
     });
-    setValue('dueDateInterval', 0, {
-      shouldValidate: true,
+    register('expectedEndDate', {
+      required: true,
     });
+    // setValue('dueDateInterval', 0, {
+    //   shouldValidate: true,
+    // });
   }, []);
 
-  const { expectedStartDate, dueDateDuration } = watch(['expectedStartDate', 'dueDateDuration']);
+  // const { expectedStartDate, dueDateDuration } = watch(['expectedStartDate', 'dueDateDuration']);
 
-  useEffect(() => {
-    if (dueDateDuration) updateDueDateInterval();
-  }, [dueDateDuration]);
+  // useEffect(() => {
+  //   if (dueDateDuration) updateDueDateInterval();
+  // }, [dueDateDuration]);
 
-  const updateDueDateInterval = () => {
-    let durationSeconds = 0;
-    Object.entries(dueDateDuration).forEach(([key, value]: any) => {
-      if (value) durationSeconds += moment.duration(value, key).asSeconds();
-    });
-    setValue('dueDateInterval', durationSeconds, {
-      shouldValidate: true,
-    });
-  };
+  // const updateDueDateInterval = () => {
+  //   let durationSeconds = 0;
+  //   Object.entries(dueDateDuration).forEach(([key, value]: any) => {
+  //     if (value) durationSeconds += moment.duration(value, key).asSeconds();
+  //   });
+  //   setValue('dueDateInterval', durationSeconds, {
+  //     shouldValidate: true,
+  //   });
+  // };
 
   const onSubmit = (data: any) => {
-    console.log('Data', data);
+    console.log(jobId, 'Data', data);
+    dispatch(
+      updateJob({
+        job: {
+          id: jobId,
+          ...data,
+        },
+      }),
+    );
   };
 
   const onCloseHandler = () => {
     closeOverlay();
   };
 
-  const getDueOnSummary = () => {
-    if (dueDateDuration) {
-      const { isValid, values } = Object.entries(dueDateDuration).reduce<any>(
-        (acc, [key, value]: any) => {
-          if (value) {
-            acc.isValid = true;
-            acc.values.push(` ${value} ${value > 1 ? `${key}s` : key}`);
-          }
-          return acc;
-        },
-        { isValid: false, values: [] },
-      );
-      if (isValid) {
-        return [
-          {
-            label: 'Due in',
-            value: values.join() + ' from Start',
-          },
-        ];
-      }
-    }
-    return [];
-  };
+  // const getDueOnSummary = () => {
+  //   if (dueDateDuration) {
+  //     const { isValid, values } = Object.entries(dueDateDuration).reduce<any>(
+  //       (acc, [key, value]: any) => {
+  //         if (value) {
+  //           acc.isValid = true;
+  //           acc.values.push(` ${value} ${value > 1 ? `${key}s` : key}`);
+  //         }
+  //         return acc;
+  //       },
+  //       { isValid: false, values: [] },
+  //     );
+  //     if (isValid) {
+  //       return [
+  //         {
+  //           label: 'Due in',
+  //           value: values.join() + ' from Start',
+  //         },
+  //       ];
+  //     }
+  //   }
+  //   return [];
+  // };
 
   return (
     <Wrapper>
@@ -167,7 +188,7 @@ const SetDateModal: FC<CommonOverlayProps<SetDateModalProps>> = ({
         title="Schedule"
         primaryText="Save"
         secondaryText="Cancel"
-        disabledPrimary={!isValid || !isDirty}
+        disabledPrimary={!isValid || !isDirty || submitting}
         onPrimary={handleSubmit((data) => onSubmit(data))}
       >
         <form>
@@ -182,15 +203,39 @@ const SetDateModal: FC<CommonOverlayProps<SetDateModalProps>> = ({
                     label: 'Start Date & Time',
                     id: 'expectedStartDate',
                     name: 'expectedStartDate',
-                    ref: register({
-                      required: true,
-                    }),
+                    // ref: register({
+                    //   required: true,
+                    // }),
+                    onChange: ({ value }) => {
+                      setValue('expectedStartDate', value, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+                    },
+                  },
+                },
+                {
+                  type: InputTypes.DATE_TIME,
+                  props: {
+                    placeholder: 'End Date & Time',
+                    label: 'End Date & Time',
+                    id: 'expectedEndDate',
+                    name: 'expectedEndDate',
+                    // ref: register({
+                    //   required: true,
+                    // }),
+                    onChange: ({ value }) => {
+                      setValue('expectedEndDate', value, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+                    },
                   },
                 },
               ]}
             />
-            <p className="custom-label">Due After</p>
-            <div className="due-after-section">
+            {/* <p className="custom-label">Due After</p> */}
+            {/* <div className="due-after-section">
               <FormGroup
                 key="due-after-section"
                 inputs={[
@@ -307,7 +352,7 @@ const SetDateModal: FC<CommonOverlayProps<SetDateModalProps>> = ({
                   ]}
                 />
               </div>
-            )}
+            )} */}
           </>
         </form>
       </BaseModal>

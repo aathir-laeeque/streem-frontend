@@ -1,6 +1,6 @@
 import { Checklist } from '#PrototypeComposer/checklist.types';
 import { actionSpreader } from '#store/helpers';
-import { ListViewAction, fetchJobsSuccessType, fetchJobsType } from './types';
+import { fetchJobsType, fetchJobsSuccessType, ListViewAction, Job } from './types';
 
 export const fetchJobs = (params: fetchJobsType) =>
   actionSpreader(ListViewAction.FETCH_JOBS, { params });
@@ -23,3 +23,9 @@ export const createJobSuccess = (data: any, shouldReRender = true) =>
   actionSpreader(ListViewAction.CREATE_JOB_SUCCESS, { data, shouldReRender });
 
 export const createJobError = () => actionSpreader(ListViewAction.CREATE_JOB_ERROR);
+
+export const updateJob = (payload: { job: Partial<Job> }) =>
+  actionSpreader(ListViewAction.UPDATE_JOB, payload);
+
+export const updateJobSuccess = (data: Job, shouldReRender = true) =>
+  actionSpreader(ListViewAction.UPDATE_JOB_SUCCESS, { data, shouldReRender });

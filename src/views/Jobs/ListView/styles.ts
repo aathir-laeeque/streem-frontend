@@ -153,6 +153,10 @@ const TabContentWrapper = styled.div`
                   line-height: 12px;
                   letter-spacing: 0.32px;
                   color: #161616;
+                  &.primary {
+                    color: #1d84ff;
+                    cursor: pointer;
+                  }
                 }
                 .icon {
                   padding: 2px;

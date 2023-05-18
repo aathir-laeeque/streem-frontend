@@ -501,7 +501,7 @@ const JobsContent: FC<TabContentProps> = ({
     page = DEFAULT_PAGE_NUMBER,
     size = DEFAULT_PAGE_SIZE,
     query = '',
-  }: fetchDataParams) => {
+  }) => {
     const filters = JSON.stringify({
       op: FilterOperators.AND,
       fields: [

@@ -282,8 +282,8 @@ const TaskCard: FC<
             <Textarea
               defaultValue={name}
               error={!task.name && task.errors.find((error) => error.code === 'E210')?.message}
-              label="Name the task"
-              disabled={isReadOnly}
+              label={task.type === TaskTypeEnum.SUBPROCESS ? 'Process Name' : 'Name the task'}
+              disabled={isReadOnly || task.type === TaskTypeEnum.SUBPROCESS}
               onChange={debounce(({ value }) => {
                 dispatch(updateTaskName({ id: taskId, name: value }));
               }, 500)}

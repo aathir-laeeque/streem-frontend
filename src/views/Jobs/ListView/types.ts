@@ -11,6 +11,8 @@ import {
   fetchJobsError,
   fetchJobsOngoing,
   fetchJobsSuccess,
+  updateJob,
+  updateJobSuccess,
 } from './actions';
 import { ParameterExecutionState } from '#JobComposer/checklist.types';
 
@@ -107,6 +109,8 @@ export enum ListViewAction {
   CREATE_JOB = '@@job/ListView/CREATE_JOB',
   CREATE_JOB_SUCCESS = '@@job/ListView/CREATE_JOB_SUCCESS',
   CREATE_JOB_ERROR = '@@job/ListView/CREATE_JOB_ERROR',
+  UPDATE_JOB = '@@job/ListView/UPDATE_JOB',
+  UPDATE_JOB_SUCCESS = '@@job/ListView/UPDATE_JOB_SUCCESS',
 }
 
 export type ListViewActionType = ReturnType<
@@ -117,6 +121,8 @@ export type ListViewActionType = ReturnType<
   | typeof createJobSuccess
   | typeof createJob
   | typeof createJobError
+  | typeof updateJob
+  | typeof updateJobSuccess
 >;
 
 export type fetchJobsType = {
