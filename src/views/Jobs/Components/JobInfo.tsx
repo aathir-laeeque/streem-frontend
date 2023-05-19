@@ -1,4 +1,3 @@
-import { MandatoryParameter } from '#JobComposer/checklist.types';
 import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { Button, LoadingContainer, StyledTabs, useDrawer } from '#components';
 import { apiJobInfo } from '#utils/apiUrls';
@@ -8,6 +7,7 @@ import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { RRule } from 'rrule';
 import styled from 'styled-components';
+import { getParameterContent } from '#utils/parameterUtils';
 
 const JobInfoDrawerWrapper = styled.div`
   display: flex;
@@ -107,51 +107,6 @@ const JobInfoDrawer: FC<{
   useEffect(() => {
     fetchJobInfo();
   }, []);
-
-  const content = (parameter: any) => {
-    let contentString;
-
-    switch (parameter.type) {
-      case MandatoryParameter.SHOULD_BE:
-      case MandatoryParameter.MULTI_LINE:
-      case MandatoryParameter.SINGLE_LINE:
-      case MandatoryParameter.NUMBER:
-      case MandatoryParameter.DATE:
-      case MandatoryParameter.DATE_TIME:
-        contentString = parameter.response.value;
-        break;
-      case MandatoryParameter.YES_NO:
-        contentString = contentDetails(parameter);
-        break;
-      case MandatoryParameter.SINGLE_SELECT:
-        contentString = contentDetails(parameter);
-        break;
-      case MandatoryParameter.RESOURCE:
-        contentString = parameter.response.choices.reduce(
-          (acc: any, currChoice: any) =>
-            (acc = `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId})`),
-          '',
-        );
-        break;
-      case MandatoryParameter.MULTISELECT:
-        contentString = contentDetails(parameter);
-        break;
-      default:
-        return;
-    }
-
-    return contentString;
-  };
-
-  const contentDetails = ({ data, response }: any) => {
-    let detailList: any[] = [];
-    data.forEach((currData: any) => {
-      if (response.choices[currData.id] === 'SELECTED') {
-        return detailList.push(`${currData.name}${response.reason ? ` :${response.reason}` : ''}`);
-      }
-    });
-    return detailList.join(', ');
-  };
 
   const getDueOnSummary = () => {
     if (job.jobScheduler.dueDateDuration) {
@@ -285,7 +240,7 @@ const JobInfoDrawer: FC<{
                           if (parameter.targetEntityType === TargetEntityType.PROCESS) {
                             acc.push({
                               label: parameter.label,
-                              value: content(parameter),
+                              value: getParameterContent(parameter),
                             });
                           }
                           return acc;

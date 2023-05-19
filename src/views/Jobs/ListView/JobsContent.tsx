@@ -1,5 +1,5 @@
 import { LabelValueRow } from '#JobComposer/Header/styles';
-import { Checklist, MandatoryParameter } from '#JobComposer/checklist.types';
+import { Checklist } from '#JobComposer/checklist.types';
 import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import {
@@ -20,6 +20,7 @@ import { useTypedSelector } from '#store/helpers';
 import { apiJobsCount } from '#utils/apiUrls';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { getParameterContent } from '#utils/parameterUtils';
 import { request } from '#utils/request';
 import {
   formatDateTime,
@@ -560,51 +561,6 @@ const JobsContent: FC<TabContentProps> = ({
     if (!checklistPageable.last) fetchChecklistData({ page: checklistPageable.page + 1 });
   };
 
-  const content = (parameter: any) => {
-    let contentString;
-
-    switch (parameter.type) {
-      case MandatoryParameter.SHOULD_BE:
-      case MandatoryParameter.MULTI_LINE:
-      case MandatoryParameter.SINGLE_LINE:
-      case MandatoryParameter.NUMBER:
-      case MandatoryParameter.DATE:
-      case MandatoryParameter.DATE_TIME:
-        contentString = parameter.response.value;
-        break;
-      case MandatoryParameter.YES_NO:
-        contentString = contentDetails(parameter);
-        break;
-      case MandatoryParameter.SINGLE_SELECT:
-        contentString = contentDetails(parameter);
-        break;
-      case MandatoryParameter.RESOURCE:
-        contentString = parameter.response.choices.reduce(
-          (acc: any, currChoice: any) =>
-            (acc = `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId})`),
-          '',
-        );
-        break;
-      case MandatoryParameter.MULTISELECT:
-        contentString = contentDetails(parameter);
-        break;
-      default:
-        return;
-    }
-
-    return contentString;
-  };
-
-  const contentDetails = ({ data, response }: any) => {
-    let detailList: any[] = [];
-    data.forEach((currData: any) => {
-      if (response.choices[currData.id] === 'SELECTED') {
-        return detailList.push(`${currData.name}${response.reason ? ` :${response.reason}` : ''}`);
-      }
-    });
-    return detailList.join(', ');
-  };
-
   return (
     <TabContentWrapper>
       {cardsValues.length > 0 && <CountCards items={cardsValues} onChange={setFilterFields} />}
@@ -713,7 +669,9 @@ const JobsContent: FC<TabContentProps> = ({
                           .map((parameter) => (
                             <div className="info-item" key={parameter.label}>
                               <label className="info-item-label">{parameter.label}</label>
-                              <span className="info-item-value">{content(parameter)}</span>
+                              <span className="info-item-value">
+                                {getParameterContent(parameter)}
+                              </span>
                             </div>
                           ))}
                       </LabelValueRow>
