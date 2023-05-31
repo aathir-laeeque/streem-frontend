@@ -138,6 +138,7 @@ const ParameterView: FC<ParameterProps> = ({ parameter, form, onChangeHandler })
         return <CalculationTaskView parameter={parameter} form={form} />;
 
       case MandatoryParameter.RESOURCE:
+      case MandatoryParameter.MULTI_RESOURCE:
         return <ResourceTaskView parameter={parameter} form={form} />;
 
       default:

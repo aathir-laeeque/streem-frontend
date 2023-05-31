@@ -164,10 +164,10 @@ const ResourceFilter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = (
                   label: 'AND',
                   value: 'AND',
                 },
-                {
-                  label: 'OR',
-                  value: 'OR',
-                },
+                // {
+                //   label: 'OR',
+                //   value: 'OR',
+                // },
               ],
               isSearchable: false,
               isDisabled: isReadOnly,

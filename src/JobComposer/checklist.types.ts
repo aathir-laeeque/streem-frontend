@@ -2,6 +2,8 @@ import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { InputTypes } from '#utils/globalTypes';
 
+// TODO : merge (job composer & prototype composer) types.
+
 export enum MandatoryParameter {
   CHECKLIST = 'CHECKLIST',
   MEDIA = 'MEDIA',
@@ -14,6 +16,7 @@ export enum MandatoryParameter {
   NUMBER = 'NUMBER',
   CALCULATION = 'CALCULATION',
   RESOURCE = 'RESOURCE',
+  MULTI_RESOURCE = 'MULTI_RESOURCE',
   DATE = 'DATE',
   DATE_TIME = 'DATE_TIME',
   SINGLE_LINE = 'SINGLE_LINE',
@@ -40,6 +43,8 @@ export interface Parameter {
   response?: any;
   hide?: string[];
   show?: string[];
+  autoInitialize?: Record<string, any>;
+  autoInitialized?: boolean;
 }
 
 export interface Media {

@@ -3,6 +3,8 @@ import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { CollaboratorState, Collaborator } from './reviewer.types';
 
+// TODO : merge (job composer & prototype composer) types.
+
 export type ChecklistProperty = Pick<Property, 'id' | 'name' | 'value' | 'label'>;
 
 export type Employee = Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName' | 'archived'>;
@@ -29,6 +31,7 @@ export enum MandatoryParameter {
   DATE = 'DATE',
   DATE_TIME = 'DATE_TIME',
   SINGLE_LINE = 'SINGLE_LINE',
+  MULTI_RESOURCE = 'MULTI_RESOURCE',
 }
 
 export enum NonMandatoryParameter {
@@ -67,6 +70,8 @@ export type Parameter = {
   validations: any;
   targetEntityType: TargetEntityType;
   reason?: string;
+  autoInitialize?: Record<string, any>;
+  autoInitialized?: boolean;
 };
 
 export type Media = {

@@ -283,7 +283,7 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
               uncheckedIcon={false}
               offLabel="Show Archived"
               onLabel="Showing Archived"
-              value={filters.usageStatus === 7}
+              checked={filters.usageStatus === 7}
               onChange={(isChecked) => {
                 shouldFetch.current = true;
                 setFilters((currentFilters) => ({

@@ -3,7 +3,6 @@ import { Pageable } from '#utils/globalTypes';
 import { ComposerActionType } from '../reducer.types';
 import { addNewTaskSuccess, deleteTaskSuccess, reOrderParameters } from '../Tasks/actions';
 import {
-  addNewParameterError,
   addNewParameterSuccess,
   deleteParameterError,
   deleteParameterSuccess,
@@ -45,7 +44,6 @@ export type ParameterListState = {
 
 export enum ParameterListActions {
   ADD_NEW_PARAMETER = '@@prototypeComposer/prototype/parameter-list/ADD_NEW_PARAMETER',
-  ADD_NEW_PARAMETER_ERROR = '@@prototypeComposer/prototype/parameter-list/ADD_NEW_PARAMETER_ERROR',
   ADD_NEW_PARAMETER_SUCCESS = '@@prototypeComposer/prototype/parameter-list/ADD_NEW_PARAMETER_SUCCESS',
   DELETE_PARAMETER = '@@prototypeComposer/prototype/parameter-list/DELETE_PARAMETER',
   DELETE_PARAMETER_ERROR = '@@prototypeComposer/prototype/parameter-list/DELETE_PARAMETER_ERROR',
@@ -68,7 +66,6 @@ export enum ParameterListActions {
 export type ParameterListActionType =
   | ReturnType<
       | typeof toggleNewParameter
-      | typeof addNewParameterError
       | typeof addNewParameterSuccess
       | typeof deleteParameterError
       | typeof deleteParameterSuccess

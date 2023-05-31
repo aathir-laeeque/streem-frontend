@@ -123,6 +123,7 @@ const generateNewParameter = ({
       };
 
     case MandatoryParameter.RESOURCE:
+    case MandatoryParameter.MULTI_RESOURCE:
       return {
         orderTree,
         type,

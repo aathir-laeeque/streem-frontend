@@ -34,6 +34,7 @@ export const ParameterIconByType = {
   [MandatoryParameter.DATE]: <DateRangeOutlined />,
   [MandatoryParameter.DATE_TIME]: <EventNoteOutlined />,
   [MandatoryParameter.RESOURCE]: <LayersOutlined />,
+  [MandatoryParameter.MULTI_RESOURCE]: <LayersOutlined />,
 };
 
 const ParameterLabelWrapper = styled.div`
@@ -155,8 +156,14 @@ export const ParameterTypeMap: Record<string, JSX.Element | string> = {
   ),
   [MandatoryParameter.RESOURCE]: (
     <RenderParameterLabel
-      label="Resource"
+      label="Single Resource Selector"
       icon={ParameterIconByType[MandatoryParameter.RESOURCE]}
+    />
+  ),
+  [MandatoryParameter.MULTI_RESOURCE]: (
+    <RenderParameterLabel
+      label="Multiple Resource Selector"
+      icon={ParameterIconByType[MandatoryParameter.MULTI_RESOURCE]}
     />
   ),
 };

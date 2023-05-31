@@ -392,7 +392,7 @@ const TabContent: FC<TabContentProps> = ({ label, values }) => {
             checkedIcon={false}
             onLabel="Jobs With Exception"
             offLabel="Jobs With Exception"
-            value={
+            checked={
               !!(
                 filterFields.find((field) => field.field === 'state')?.values[0] ===
                 CompletedJobStates.COMPLETED_WITH_EXCEPTION

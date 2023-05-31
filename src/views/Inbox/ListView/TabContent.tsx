@@ -318,7 +318,7 @@ const TabContent: FC<TabViewProps> = ({ navigate = navigateTo, label }) => {
         <ToggleSwitch
           offLabel="Show Completed"
           onLabel="Showing Completed"
-          value={filterFields.find((field) => field.field === 'state')?.values?.length === 2}
+          checked={filterFields.find((field) => field.field === 'state')?.values?.length === 2}
           onChange={(isChecked) =>
             setFilterFields((currentFields) =>
               currentFields.map((field) => ({

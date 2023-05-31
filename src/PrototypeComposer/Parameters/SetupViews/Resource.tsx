@@ -29,6 +29,7 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
   } = useTypedSelector((state) => state);
   const { id: checklistId } = processData!;
   const { register, watch, setValue } = form;
+  const type = watch('type', MandatoryParameter.RESOURCE);
   const data = watch('data', {});
   const autoInitialized = watch('autoInitialized', false);
   const autoInitialize = watch('autoInitialize', {});
@@ -280,12 +281,17 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
           },
         ]}
       />
-      <h5>Link to a Resource Parameters Property</h5>
-      <h6>
-        This Parameter will get auto initialized with the value of on Object Property of Resource
-        Parameter. The Type of the linked object property should match the type of this Parameter
-      </h6>
-      {!isReadOnly && !autoInitialized && (
+      {type === MandatoryParameter.RESOURCE && (
+        <>
+          <h5>Link to a Resource Parameters Property</h5>
+          <h6>
+            This Parameter will get auto initialized with the value of on Object Property of
+            Resource Parameter. The Type of the linked object property should match the type of this
+            Parameter
+          </h6>
+        </>
+      )}
+      {!isReadOnly && !autoInitialized && type === MandatoryParameter.RESOURCE && (
         <Button
           type="button"
           variant="secondary"

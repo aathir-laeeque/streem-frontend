@@ -279,6 +279,7 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
         return <CalculationTaskView parameter={parameter} />;
 
       case MandatoryParameter.RESOURCE:
+      case MandatoryParameter.MULTI_RESOURCE:
         return (
           <>
             <ResourceTaskView parameter={parameter} />

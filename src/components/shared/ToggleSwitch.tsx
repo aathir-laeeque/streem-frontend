@@ -28,7 +28,7 @@ type Props = {
   onLabel: string;
   onChange: (isChecked: boolean) => void;
   uncheckedIcon?: false | JSX.Element;
-  value?: boolean;
+  checked?: boolean;
   width?: number;
 } & ReactSwitchProps;
 
@@ -42,7 +42,7 @@ const ToggleSwitch: FC<Props> = ({
   onHandleColor = '#ffffff',
   onLabel,
   onChange,
-  value = false,
+  checked = false,
   width = 32,
   ...rest
 }) => {
@@ -50,7 +50,7 @@ const ToggleSwitch: FC<Props> = ({
     <Wrapper>
       <Switch
         activeBoxShadow=""
-        checked={value}
+        checked={checked}
         checkedIcon={typeof checkedIcon === 'undefined' ? undefined : checkedIcon}
         handleDiameter={height - 6}
         height={height}
@@ -59,13 +59,13 @@ const ToggleSwitch: FC<Props> = ({
         onColor={onColor}
         onHandleColor={onHandleColor}
         onChange={() => {
-          onChange(!value);
+          onChange(!checked);
         }}
         uncheckedIcon={false}
         width={width}
         {...rest}
       />
-      <label className="label">{value ? onLabel : offLabel}</label>
+      <label className="label">{checked ? onLabel : offLabel}</label>
     </Wrapper>
   );
 };

@@ -8,9 +8,6 @@ import { AddNewParameterType, DeleteParameterType } from './types';
 export const addNewParameter = (params: AddNewParameterType) =>
   actionSpreader(ParameterListActions.ADD_NEW_PARAMETER, params);
 
-export const addNewParameterError = (error: any) =>
-  actionSpreader(ParameterListActions.ADD_NEW_PARAMETER_ERROR, { error });
-
 export const addNewParameterSuccess = (params: {
   stageId: Stage['id'];
   taskId: Task['id'];

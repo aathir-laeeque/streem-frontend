@@ -260,6 +260,7 @@ const ParameterList: FC<ParameterListProps> = ({
                   );
 
                 case MandatoryParameter.RESOURCE:
+                case MandatoryParameter.MULTI_RESOURCE:
                   return (
                     <ResourceParameter
                       parameter={parameter}

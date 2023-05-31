@@ -9,11 +9,10 @@ import {
   apiUnmapParameter,
 } from '#utils/apiUrls';
 import { FilterOperators, ResponseObj } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 import {
   addNewParameter,
-  addNewParameterError,
   addNewParameterSuccess,
   deleteParameter,
   deleteParameterError,
@@ -108,10 +107,10 @@ function* addNewParameterSaga({ payload }: ReturnType<typeof addNewParameter>) {
         }),
       );
     } else {
-      yield put(addNewParameterError(errors));
+      yield* handleCatch('Parameter', 'executeParameterSaga', getErrorMsg(errors), true);
     }
-  } catch (error) {
-    console.error('error came in addNewParameterSaga :: ', error);
+  } catch (errors) {
+    yield* handleCatch('Parameter', 'executeParameterSaga', errors);
   }
 }
 

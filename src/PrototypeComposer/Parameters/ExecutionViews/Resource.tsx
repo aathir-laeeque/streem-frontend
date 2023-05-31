@@ -5,10 +5,12 @@ import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
+import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { apiGetObjects, baseUrl } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
+import { Object } from '#views/Ontology/types';
 import { qrCodeValidator } from '#views/Ontology/utils';
 import { LinkOutlined } from '@material-ui/icons';
 import { isArray } from 'lodash';
@@ -37,7 +39,6 @@ const ResourceParameterWrapper = styled.div`
 const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
   const dispatch = useDispatch();
   const {
-    auth: { selectedFacility },
     prototypeComposer: {
       parameters: {
         parameters: { list: parametersList },
@@ -56,6 +57,9 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
     current: -1,
     isLast: false,
   });
+
+  const { setValue, getValues, watch } = form;
+  const parameterInForm = watch(parameter.id, {});
 
   useEffect(() => {
     getOptions();
@@ -86,53 +90,52 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
     }
   };
 
-  const { setValue, getValues, watch } = form;
-  const parameterInForm = watch(parameter.id, {});
-
   const handleAutoInitialize = async () => {
     const formData = getValues();
-    const dependentParameter = formData?.[parameter?.autoInitialize?.parameterId];
+    const dependentParameter = formData?.[parameter.autoInitialize?.parameterId];
     const objectId = dependentParameter.data.choices[0].objectId;
     const collection = dependentParameter.data.choices[0].collection;
-    const res = await request('GET', apiGetObjects(objectId), {
+    const res: ResponseObj<Object> = await request('GET', apiGetObjects(objectId), {
       params: {
         collection,
       },
     });
     if (res.data) {
       const relation = res.data.relations.find(
-        (r) => r.id === parameter.autoInitialize.relation.id,
+        (r) => r.id === parameter.autoInitialize?.relation.id,
       );
-      const target = relation.targets[0];
-      setValue(
-        parameter.id,
-        {
-          ...parameter,
-          data: {
-            ...parameter.data,
-            choices: [
-              {
-                objectId: target.id,
-                objectDisplayName: target.displayName,
-                objectExternalId: target.externalId,
-                collection: target.collection,
-              },
-            ],
+      if (relation) {
+        const target = relation?.targets?.[0];
+        setValue(
+          parameter.id,
+          {
+            ...parameter,
+            data: {
+              ...parameter.data,
+              choices: [
+                {
+                  objectId: target.id,
+                  objectDisplayName: target.displayName,
+                  objectExternalId: target.externalId,
+                  collection: target.collection,
+                },
+              ],
+            },
+            response: {
+              value: null,
+              reason: '',
+              state: 'EXECUTED',
+              choices: {},
+              medias: [],
+              parameterValueApprovalDto: null,
+            },
           },
-          response: {
-            value: null,
-            reason: '',
-            state: 'EXECUTED',
-            choices: {},
-            medias: [],
-            parameterValueApprovalDto: null,
+          {
+            shouldDirty: true,
+            shouldValidate: true,
           },
-        },
-        {
-          shouldDirty: true,
-          shouldValidate: true,
-        },
-      );
+        );
+      }
     }
   };
 
@@ -188,19 +191,31 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
     }
   };
 
+  const inputByViewType = (type: ParameterType) => {
+    switch (type) {
+      case MandatoryParameter.RESOURCE:
+        return InputTypes.SINGLE_SELECT;
+      case MandatoryParameter.MULTI_RESOURCE:
+        return InputTypes.MULTI_SELECT;
+      default:
+        return InputTypes.SINGLE_SELECT;
+    }
+  };
+
   return (
     <>
       <ResourceParameterWrapper>
         <FormGroup
           inputs={[
             {
-              type: InputTypes.SINGLE_SELECT,
+              type: inputByViewType(parameter.type),
               props: {
                 id: parameter.id,
                 options: options?.map((option) => ({
-                  value: option,
+                  value: option.id,
                   label: option.displayName,
                   externalId: option.externalId,
+                  option,
                 })),
                 menuPortalTarget: document.body,
                 menuPosition: 'fixed',
@@ -212,8 +227,8 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
                     getOptions();
                   }
                 },
-                onChange: (value: any) => {
-                  const selectedOption = isArray(value.value) ? value.value : [value.value];
+                onChange: (_value: any) => {
+                  const selectedOption = isArray(_value) ? _value : [_value];
                   setValue(
                     parameter.id,
                     {
@@ -221,10 +236,10 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
                       data: {
                         ...parameter.data,
                         choices: selectedOption.map((currOption: any) => ({
-                          objectId: currOption.id,
-                          objectDisplayName: currOption.displayName,
-                          objectExternalId: currOption.externalId,
-                          collection: currOption.collection,
+                          objectId: currOption.value,
+                          objectDisplayName: currOption.option.displayName,
+                          objectExternalId: currOption.option.externalId,
+                          collection: currOption.option.collection,
                         })),
                       },
                     },
@@ -234,16 +249,20 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
                     },
                   );
                 },
+                value: parameterInForm?.data?.choices?.length
+                  ? parameterInForm?.data?.choices.map((c: any) => ({
+                      value: c.objectId,
+                      label: c.objectDisplayName,
+                      externalId: <div>&nbsp;(ID: {c.objectExternalId})</div>,
+                      option: {
+                        displayName: c.objectDisplayName,
+                        externalId: c.objectExternalId,
+                        collection: c.collection,
+                      },
+                    }))
+                  : null,
                 isSearchable: false,
-                placeholder: '',
                 isDisabled: parameter?.autoInitialized,
-                value: [
-                  {
-                    label: parameterInForm?.data?.choices?.[0]?.objectDisplayName,
-                    externalId: parameterInForm?.data?.choices?.[0]?.objectExternalId,
-                    value: parameterInForm?.data?.choices?.[0]?.objectId,
-                  },
-                ],
               },
             },
           ]}

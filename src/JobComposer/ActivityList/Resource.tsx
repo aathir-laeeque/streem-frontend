@@ -1,3 +1,4 @@
+import { MandatoryParameter } from '#JobComposer/checklist.types';
 import QRIcon from '#assets/svg/QR';
 import { Button, Select } from '#components';
 import { showNotification } from '#components/Notification/actions';
@@ -14,9 +15,9 @@ import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { executeParameterLeading, fixParameterLeading, updateExecutedParameter } from './actions';
 import { customSelectStyles } from './MultiSelect/commonStyles';
 import { Wrapper } from './MultiSelect/styles';
+import { executeParameterLeading, fixParameterLeading, updateExecutedParameter } from './actions';
 import { ParameterProps } from './types';
 
 const ResourceParameterWrapper = styled.div`
@@ -39,7 +40,6 @@ const ResourceParameterWrapper = styled.div`
 const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
   const {
-    auth: { selectedFacility },
     composer: {
       data,
       parameters: { parametersById },
@@ -69,19 +69,17 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
         'GET',
         `${baseUrl}${parameter.data.urlPath}&page=${pagination.current.current + 1}`,
       );
-      if (response.data) {
-        if (response.pageable) {
-          pagination.current = {
-            current: response.pageable?.page,
-            isLast: response.pageable?.last,
-          };
-        }
-        setState((prev) => ({
-          ...prev,
-          options: [...prev.options, ...response.data],
-          isLoading: false,
-        }));
+      if (response.pageable) {
+        pagination.current = {
+          current: response.pageable.page,
+          isLast: response.pageable.last,
+        };
       }
+      setState((prev) => ({
+        ...prev,
+        options: [...prev.options, ...response.data],
+        isLoading: false,
+      }));
     } catch (e) {
       setState((prev) => ({ ...prev, isLoading: false }));
     }
@@ -96,7 +94,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
           callBack: () =>
             onSelectOption([
               {
-                value: qrData,
+                option: qrData,
               },
             ]),
           validateObjectType: qrData?.objectTypeId === parameter?.data?.objectTypeId,
@@ -116,12 +114,12 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     const newData = {
       ...parameter,
       data: {
-        ...parameter.data,
-        choices: options.map((o: any) => ({
-          objectId: o.value.id,
-          objectDisplayName: o.value.displayName,
-          objectExternalId: o.value.externalId,
-          collection: o.value.collection,
+        ...parameter?.data,
+        choices: options?.map((o: any) => ({
+          objectId: o.option?.id,
+          objectDisplayName: o.option?.displayName,
+          objectExternalId: o.option?.externalId,
+          collection: o.option?.collection,
         })),
       },
     };
@@ -135,7 +133,6 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
 
   const handleAutoInitialize = async () => {
     if (data && data?.id) {
-      // setLoading(true);
       const res = await request('PATCH', apiAutoInitialize(parameter.id), {
         data: {
           jobId: data!.id,
@@ -144,8 +141,6 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
       if (res.data) {
         dispatch(updateExecutedParameter(res.data));
       }
-      // setResourceParameters(resources.data || []);
-      // setLoading(false);
     }
   };
 
@@ -157,20 +152,28 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
         <Select
           className="multi-select"
           isDisabled={parameter?.autoInitialized}
-          options={
-            options?.map((option) => ({
-              value: option,
-              label: option.displayName,
-              externalId: option.externalId,
-            })) as any
+          options={options?.map((option) => ({
+            value: option.id,
+            label: option?.displayName,
+            externalId: option?.externalId,
+            option,
+          }))}
+          isMulti={parameter.type === MandatoryParameter.MULTI_RESOURCE}
+          value={
+            parameter?.response?.choices?.length
+              ? parameter.response.choices.map((currChoice: any) => ({
+                  value: currChoice.objectId,
+                  label: currChoice?.objectDisplayName,
+                  externalId: <div>&nbsp;(ID: {currChoice?.objectExternalId})</div>,
+                  option: {
+                    id: currChoice.objectId,
+                    displayName: currChoice?.objectDisplayName,
+                    externalId: currChoice?.objectExternalId,
+                    collection: currChoice?.collection,
+                  },
+                }))
+              : null
           }
-          value={(parameter.response?.choices || []).map(
-            (c: { objectId: string; objectDisplayName: string; objectExternalId: string }) => ({
-              value: c,
-              label: c.objectDisplayName,
-              externalId: c.objectExternalId,
-            }),
-          )}
           placeholder="You can select one option here"
           onMenuScrollToBottom={() => {
             if (!isLoading && !pagination.current.isLast) {

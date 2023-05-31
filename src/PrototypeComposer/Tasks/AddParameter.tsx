@@ -201,7 +201,6 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     setValue,
     watch,
     getValues,
-    errors,
     reset,
   } = form;
 
@@ -284,7 +283,7 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
               });
             }}
             onLabel="Required"
-            value={mandatory}
+            checked={mandatory}
             disabled={isReadOnly}
           />
         )}
@@ -304,6 +303,7 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
       case MandatoryParameter.CALCULATION:
         return <CalculationParameter form={form} isReadOnly={isReadOnly} />;
       case MandatoryParameter.RESOURCE:
+      case MandatoryParameter.MULTI_RESOURCE:
         return <ResourceParameter form={form} isReadOnly={isReadOnly} />;
       case MandatoryParameter.SHOULD_BE:
         return <ParameterParameter form={form} isReadOnly={isReadOnly} />;
@@ -323,6 +323,7 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   const renderFiltersByType = () => {
     switch (type) {
       case MandatoryParameter.RESOURCE:
+      case MandatoryParameter.MULTI_RESOURCE:
         return <ResourceFilter form={form} isReadOnly={isReadOnly} />;
       default:
         return null;
@@ -336,6 +337,7 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   const renderValidationsByType = () => {
     switch (type) {
       case MandatoryParameter.RESOURCE:
+      case MandatoryParameter.MULTI_RESOURCE:
         return <ResourceValidation form={form} isReadOnly={isReadOnly} />;
       case MandatoryParameter.NUMBER:
         return <NumberValidation form={form} isReadOnly={isReadOnly} />;
