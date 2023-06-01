@@ -35,9 +35,9 @@ import { EmojisUniCodes } from '#utils/constants';
 import { InstructionTags } from './types';
 import { ParametersById } from '#JobComposer/ActivityList/types';
 import ResourceParameter from './Resource';
+import MultiResourceParameter from './MultiResource';
 import { formatDateByInputType } from '#utils/timeUtils';
 import { InputTypes } from '#utils/globalTypes';
-
 export const styles = StyleSheet.create({
   text12: {
     fontSize: 12,
@@ -725,6 +725,9 @@ const parameterTemplateFormatter = (
 
     case MandatoryParameter.RESOURCE:
       return <ResourceParameter parameter={parameter} />;
+
+    case MandatoryParameter.MULTI_RESOURCE:
+      return <MultiResourceParameter parameter={parameter} />;
 
     case MandatoryParameter.DATE_TIME:
     case MandatoryParameter.DATE:
