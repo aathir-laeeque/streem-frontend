@@ -169,7 +169,7 @@ const ObjectView: FC<TabContentProps> = ({
           Object.entries<string>(data.relations).reduce<Record<string, Record<string, string>>>(
             (acc, [key, value]) => {
               const relation = selectedObjectType?.relations.find(
-                (relation) => relation.externalId === key,
+                (relation) => relation.objectTypeId === key,
               );
               if (relation) {
                 acc['relations'][relation.id] = value;
@@ -325,7 +325,7 @@ const ObjectView: FC<TabContentProps> = ({
               [],
             ),
             ...selectedObjectType.relations.reduce<FormGroupProps['inputs']>((acc, relation) => {
-              const registrationId = `relations.${relation.externalId}`;
+              const registrationId = `relations.${relation.objectTypeId}`;
               register(registrationId);
               const isMulti = relation.target.cardinality === Cardinality.ONE_TO_MANY;
               let defaultValue: SelectOptions;

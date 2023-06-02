@@ -35,21 +35,6 @@ const CalculationParameter: FC<ParameterProps> = ({
           </span>
         );
       })}
-      {(isCorrectingError || !isTaskCompleted) && (
-        <Button
-          style={{ marginTop: 24, maxWidth: 100 }}
-          variant="secondary"
-          onClick={() => {
-            if (isCorrectingError) {
-              dispatch(fixParameter(parameter));
-            } else {
-              dispatch(executeParameter(parameter));
-            }
-          }}
-        >
-          Calculate
-        </Button>
-      )}
       {parameter?.response?.value && (
         <>
           <span className="head" style={{ marginTop: 24 }}>

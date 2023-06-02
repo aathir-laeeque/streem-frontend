@@ -65,6 +65,7 @@ export type ObjectTypeRelation = CommonFields & {
   target: ObjectTypeTarget;
   sortOrder: number;
   variables?: Record<string, string>;
+  objectTypeId: string;
 };
 
 export type ObjectType = CommonFields & {
@@ -102,6 +103,7 @@ export type Object = CommonFields & {
   updatedAt: number;
   createdAt: number;
   usageStatus: number;
+  facilityId?: string;
 };
 
 export interface OntologyState {

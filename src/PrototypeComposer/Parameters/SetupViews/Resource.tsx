@@ -1,14 +1,9 @@
-import { Button, FormGroup } from '#components';
-import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
+import { FormGroup } from '#components';
 import { useTypedSelector } from '#store';
-import { apiGetObjectTypes, apiGetParameters } from '#utils/apiUrls';
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterOperators, InputTypes, ResponseObj } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { InputTypes } from '#utils/globalTypes';
 import { fetchObjectTypes } from '#views/Ontology/actions';
-import { ObjectType } from '#views/Ontology/types';
-import { LinkOffOutlined, LinkOutlined } from '@material-ui/icons';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { CommonWrapper } from './styles';
@@ -19,26 +14,13 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
 }) => {
   const dispatch = useDispatch();
   const {
-    prototypeComposer: {
-      data: processData,
-      parameters: { listById },
-    },
     ontology: {
       objectTypes: { list, listLoading, pageable },
     },
   } = useTypedSelector((state) => state);
-  const { id: checklistId } = processData!;
   const { register, watch, setValue } = form;
-  const type = watch('type', MandatoryParameter.RESOURCE);
   const data = watch('data', {});
   const autoInitialized = watch('autoInitialized', false);
-  const autoInitialize = watch('autoInitialize', {});
-  const [loading, setLoading] = useState<Boolean>(false);
-  const [resourceParameters, setResourceParameters] = useState<
-    { id: string; type: ParameterType; label: string; taskId: string }[]
-  >([]);
-  const [loadingProperties, setLoadingProperties] = useState<Boolean>(false);
-  const [objectProperties, setObjectProperties] = useState<any[]>([]);
 
   const fetchData = (page: number) => {
     dispatch(
@@ -59,46 +41,6 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
     }
   };
 
-  const fetchResourceParameters = async () => {
-    if (checklistId) {
-      setLoading(true);
-      const resources = await request('GET', apiGetParameters(checklistId), {
-        params: {
-          filters: {
-            op: FilterOperators.AND,
-            fields: [
-              {
-                field: 'archived',
-                op: FilterOperators.EQ,
-                values: [false],
-              },
-              {
-                field: 'type',
-                op: FilterOperators.EQ,
-                values: [MandatoryParameter.RESOURCE],
-              },
-            ],
-          },
-        },
-      });
-      setResourceParameters(resources.data || []);
-      setLoading(false);
-    }
-  };
-
-  const getProperties = async (id: string) => {
-    setLoadingProperties(true);
-    const response: ResponseObj<ObjectType> = await request('GET', apiGetObjectTypes(id));
-    if (response?.data?.relations) {
-      setObjectProperties(
-        response.data.relations.filter(
-          (relation: any) => relation.externalId === data?.objectTypeExternalId,
-        ) || [],
-      );
-    }
-    setLoadingProperties(false);
-  };
-
   const onRemoveLink = () => {
     setValue('autoInitialized', false);
     setValue('autoInitialize', null, {
@@ -112,123 +54,8 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
       required: true,
     });
 
-    register('autoInitialized');
-
     if (!list.length) fetchData(0);
-    if (
-      autoInitialize?.parameterId &&
-      listById?.[autoInitialize?.parameterId]?.data?.objectTypeId
-    ) {
-      getProperties(listById[autoInitialize.parameterId].data.objectTypeId);
-    }
   }, []);
-
-  const renderLinkingSection = () => {
-    register('autoInitialize', {
-      validate: (value) => {
-        return value ? 'parameterId' in value && 'relation' in value : true;
-      },
-    });
-    return (
-      <>
-        <FormGroup
-          inputs={[
-            {
-              type: InputTypes.SINGLE_SELECT,
-              props: {
-                id: 'resourceParameter',
-                label: 'Resource Parameter',
-                isLoading: loading,
-                onMenuScrollToBottom: handleMenuScrollToBottom,
-                options: resourceParameters.map((parameter) => ({
-                  ...parameter,
-                  value: parameter.id,
-                })),
-                defaultValue: autoInitialize?.parameterId
-                  ? [
-                      {
-                        label: listById?.[autoInitialize.parameterId]?.label,
-                        value: autoInitialize.parameterId,
-                      },
-                    ]
-                  : undefined,
-                isSearchable: false,
-                placeholder: 'Select',
-                isDisabled: isReadOnly,
-                onChange: (value: any) => {
-                  setValue(
-                    'autoInitialize',
-                    {
-                      parameterId: value.id,
-                    },
-                    {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    },
-                  );
-                  getProperties(value.data.objectTypeId);
-                },
-              },
-            },
-            {
-              type: InputTypes.SINGLE_SELECT,
-              props: {
-                id: 'resourceParameter',
-                label: 'Object Property to be linked',
-                isLoading: loadingProperties,
-                onMenuScrollToBottom: handleMenuScrollToBottom,
-                options: objectProperties.map((properties) => ({
-                  ...properties,
-                  label: properties.displayName,
-                  value: properties.id,
-                })),
-                defaultValue: autoInitialize?.relation
-                  ? [
-                      {
-                        label: autoInitialize.relation?.displayName,
-                        value: autoInitialize.relation?.id,
-                        externalId: autoInitialize.relation?.externalId,
-                      },
-                    ]
-                  : undefined,
-                isSearchable: false,
-                placeholder: 'Select',
-                isDisabled: isReadOnly,
-                onChange: (value: any) => {
-                  setValue(
-                    'autoInitialize',
-                    {
-                      ...autoInitialize,
-                      relation: {
-                        id: value.id,
-                        displayName: value.displayName,
-                        externalId: value.externalId,
-                      },
-                    },
-                    {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    },
-                  );
-                },
-              },
-            },
-          ]}
-        />
-        {!isReadOnly && (
-          <Button
-            type="button"
-            variant="textOnly"
-            color="red"
-            style={{ padding: '8px', marginBlock: 16 }}
-            onClick={onRemoveLink}
-          >
-            <LinkOffOutlined style={{ marginRight: 8 }} /> Remove Link
-          </Button>
-        )}
-      </>
-    );
-  };
 
   return (
     <CommonWrapper>
@@ -281,32 +108,6 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
           },
         ]}
       />
-      {type === MandatoryParameter.RESOURCE && (
-        <>
-          <h5>Link to a Resource Parameters Property</h5>
-          <h6>
-            This Parameter will get auto initialized with the value of on Object Property of
-            Resource Parameter. The Type of the linked object property should match the type of this
-            Parameter
-          </h6>
-        </>
-      )}
-      {!isReadOnly && !autoInitialized && type === MandatoryParameter.RESOURCE && (
-        <Button
-          type="button"
-          variant="secondary"
-          style={{ padding: '8px', marginBlock: 16 }}
-          onClick={() => {
-            fetchResourceParameters();
-            setValue('autoInitialized', true, {
-              shouldDirty: true,
-            });
-          }}
-        >
-          <LinkOutlined style={{ marginRight: 8 }} /> Link Resource
-        </Button>
-      )}
-      {autoInitialized && renderLinkingSection()}
     </CommonWrapper>
   );
 };

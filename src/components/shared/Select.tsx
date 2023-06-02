@@ -20,6 +20,7 @@ type SelectProps = Props<any> & {
   optional?: boolean;
   style?: React.CSSProperties;
   formatOptionLabel?: Props<any>['formatOptionLabel'];
+  reference?: any;
 };
 
 const Wrapper = styled.div.attrs({
@@ -117,6 +118,7 @@ export const Select: FC<SelectProps> = ({
   error = '',
   style = {},
   components,
+  reference,
   ...rest
 }) => {
   return (
@@ -134,6 +136,7 @@ export const Select: FC<SelectProps> = ({
         captureMenuScroll={true}
         formatOptionLabel={formatOptionLabel}
         components={{ DropdownIndicator, ...components }}
+        ref={reference}
         {...rest}
       />
       {error && <span className="field-error">{error}</span>}

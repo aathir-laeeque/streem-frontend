@@ -1,12 +1,11 @@
 import QRIcon from '#assets/svg/QR';
-import { Button, FormGroup } from '#components';
+import { FormGroup } from '#components';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
-import { useTypedSelector } from '#store';
 import { apiGetObjects, baseUrl } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
@@ -38,13 +37,6 @@ const ResourceParameterWrapper = styled.div`
 
 const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
   const dispatch = useDispatch();
-  const {
-    prototypeComposer: {
-      parameters: {
-        parameters: { list: parametersList },
-      },
-    },
-  } = useTypedSelector((state) => state);
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];
@@ -58,12 +50,25 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
     isLast: false,
   });
 
-  const { setValue, getValues, watch } = form;
+  const { setValue, watch } = form;
   const parameterInForm = watch(parameter.id, {});
+  const linkedParameter = watch(parameter?.autoInitialize?.parameterId);
+  let interval: number | undefined = undefined;
 
   useEffect(() => {
     getOptions();
   }, []);
+
+  useEffect(() => {
+    interval = window.setInterval(() => {
+      if (linkedParameter?.data?.choices?.length) {
+        handleAutoInitialize();
+      }
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [linkedParameter]);
 
   const getOptions = async () => {
     setState((prev) => ({ ...prev, isLoading: true }));
@@ -72,76 +77,96 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
         'GET',
         `${baseUrl}${parameter.data.urlPath}&page=${pagination.current.current + 1}`,
       );
-      if (response.data) {
-        if (response.pageable) {
-          pagination.current = {
-            current: response.pageable?.page,
-            isLast: response.pageable?.last,
-          };
-        }
-        setState((prev) => ({
-          ...prev,
-          options: [...prev.options, ...response.data],
-          isLoading: false,
-        }));
+      if (response.pageable) {
+        pagination.current = {
+          current: response.pageable?.page,
+          isLast: response.pageable?.last,
+        };
       }
+      setState((prev) => ({
+        ...prev,
+        options: [...prev.options, ...response.data],
+        isLoading: false,
+      }));
     } catch (e) {
       setState((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
   const handleAutoInitialize = async () => {
-    const formData = getValues();
-    const dependentParameter = formData?.[parameter.autoInitialize?.parameterId];
-    const objectId = dependentParameter.data.choices[0].objectId;
-    const collection = dependentParameter.data.choices[0].collection;
-    const res: ResponseObj<Object> = await request('GET', apiGetObjects(objectId), {
-      params: {
-        collection,
-      },
-    });
-    if (res.data) {
-      const relation = res.data.relations.find(
-        (r) => r.id === parameter.autoInitialize?.relation.id,
-      );
-      if (relation) {
-        const target = relation?.targets?.[0];
-        setValue(
-          parameter.id,
-          {
-            ...parameter,
-            data: {
-              ...parameter.data,
-              choices: [
-                {
-                  objectId: target.id,
-                  objectDisplayName: target.displayName,
-                  objectExternalId: target.externalId,
-                  collection: target.collection,
+    const objectId = linkedParameter?.data?.choices[0]?.objectId;
+    const collection = linkedParameter?.data?.choices[0]?.collection;
+    try {
+      if (linkedParameter && objectId && collection) {
+        const res: ResponseObj<Object> = await request('GET', apiGetObjects(objectId), {
+          params: {
+            collection,
+          },
+        });
+        if (res.data) {
+          const relation = res.data.relations.find(
+            (r) => r.id === parameter.autoInitialize?.relation.id,
+          );
+          if (relation) {
+            const target = relation.targets[0];
+            setValue(
+              parameter.id,
+              {
+                ...parameter,
+                data: {
+                  ...parameter.data,
+                  choices: [
+                    {
+                      objectId: target.id,
+                      objectDisplayName: target.displayName,
+                      objectExternalId: target.externalId,
+                      collection: target.collection,
+                    },
+                  ],
                 },
-              ],
-            },
-            response: {
-              value: null,
-              reason: '',
-              state: 'EXECUTED',
-              choices: {},
-              medias: [],
-              parameterValueApprovalDto: null,
-            },
-          },
-          {
-            shouldDirty: true,
-            shouldValidate: true,
-          },
-        );
+                response: {
+                  value: null,
+                  reason: '',
+                  state: 'EXECUTED',
+                  choices: {},
+                  medias: [],
+                  parameterValueApprovalDto: null,
+                },
+              },
+              {
+                shouldDirty: true,
+                shouldValidate: true,
+              },
+            );
+          }
+        }
+      } else {
+        throw `${linkedParameter?.label} must be selected before selecting ${parameter.label} parameter`;
       }
+    } catch (error) {
+      dispatch(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
+        }),
+      );
+      clearInterval(interval);
+      setValue(
+        parameter.id,
+        {
+          ...parameter,
+          data: {
+            ...parameter.data,
+            choices: undefined,
+          },
+        },
+        {
+          shouldDirty: true,
+          shouldValidate: true,
+        },
+      );
     }
   };
-
-  const linkedResourceParameter = parametersList.find(
-    (currParameter) => currParameter?.id === parameter?.autoInitialize?.parameterId,
-  );
 
   const onSelectWithQR = async (data: string) => {
     try {
@@ -284,14 +309,9 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
         )}
       </ResourceParameterWrapper>
       {parameter?.autoInitialized && (
-        <>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘{linkedResourceParameter?.label}’
-          </div>
-          <Button variant="secondary" onClick={handleAutoInitialize} style={{ marginBlock: 8 }}>
-            Get Value
-          </Button>
-        </>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘{linkedParameter?.label}’
+        </div>
       )}
     </>
   );

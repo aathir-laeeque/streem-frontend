@@ -1,7 +1,9 @@
-import { FormGroup } from '#components';
 import { MandatoryParameter } from '#JobComposer/checklist.types';
+import { FormGroup } from '#components';
+import { useTypedSelector } from '#store';
 import { customOnChange } from '#utils/formEvents';
 import { InputTypes } from '#utils/globalTypes';
+import { LinkOutlined } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -12,6 +14,11 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const [value, setValue] = React.useState(parameter?.response?.value);
+  const {
+    composer: {
+      parameters: { parametersById },
+    },
+  } = useTypedSelector((state) => state);
 
   useEffect(() => {
     if (inputRef.current && document.activeElement !== inputRef.current) {
@@ -37,6 +44,8 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
     setValue(val);
   };
 
+  const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
+
   return (
     <div className="date-parameter">
       <div className="new-form-field">
@@ -50,6 +59,8 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
                 defaultValue: value,
                 ['data-id']: parameter.id,
                 ['data-type']: parameter.type,
+                ref: inputRef,
+                disabled: parameter?.autoInitialized,
                 label:
                   parameter.type === MandatoryParameter.DATE ? 'Enter Date' : 'Enter Date Time',
                 onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
@@ -61,6 +72,11 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
           ]}
         />
       </div>
+      {parameter?.autoInitialized && (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘{linkedResourceParameter?.label}’
+        </div>
+      )}
     </div>
   );
 };

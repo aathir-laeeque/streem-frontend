@@ -8,7 +8,7 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { apiAutoInitialize, baseUrl } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { getErrorMsg, request } from '#utils/request';
 import { qrCodeValidator } from '#views/Ontology/utils';
 import { LinkOutlined } from '@material-ui/icons';
 import { isArray } from 'lodash';
@@ -57,10 +57,29 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     current: -1,
     isLast: false,
   });
+  const selectRef = useRef<any>();
 
   useEffect(() => {
     getOptions();
   }, []);
+
+  useEffect(() => {
+    if (parameter?.autoInitialized && parameter?.response?.choices?.length && selectRef.current) {
+      selectRef.current?.setValue(
+        parameter?.response?.choices.map((currChoice: any) => ({
+          value: currChoice.objectId,
+          label: currChoice?.objectDisplayName,
+          externalId: <div>&nbsp;(ID: {currChoice?.objectExternalId})</div>,
+          option: {
+            id: currChoice.objectId,
+            displayName: currChoice?.objectDisplayName,
+            externalId: currChoice?.objectExternalId,
+            collection: currChoice?.collection,
+          },
+        })),
+      );
+    }
+  }, [parameter?.response?.choices]);
 
   const getOptions = async () => {
     setState((prev) => ({ ...prev, isLoading: true }));
@@ -132,15 +151,30 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   };
 
   const handleAutoInitialize = async () => {
-    if (data && data?.id) {
-      const res = await request('PATCH', apiAutoInitialize(parameter.id), {
-        data: {
-          jobId: data!.id,
-        },
-      });
-      if (res.data) {
-        dispatch(updateExecutedParameter(res.data));
+    try {
+      if (data && data?.id) {
+        const { data: fetchedData, errors } = await request(
+          'PATCH',
+          apiAutoInitialize(parameter.id),
+          {
+            data: {
+              jobId: data!.id,
+            },
+          },
+        );
+        if (fetchedData) {
+          dispatch(updateExecutedParameter(fetchedData));
+        } else if (errors) {
+          throw getErrorMsg(errors);
+        }
       }
+    } catch (error) {
+      dispatch(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
+        }),
+      );
     }
   };
 
@@ -159,6 +193,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
             option,
           }))}
           isMulti={parameter.type === MandatoryParameter.MULTI_RESOURCE}
+          reference={selectRef}
           value={
             parameter?.response?.choices?.length
               ? parameter.response.choices.map((currChoice: any) => ({
@@ -182,8 +217,10 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
           }}
           styles={customSelectStyles}
           onChange={(options) => {
-            const castedOptions = isArray(options) ? options : [options];
-            onSelectOption(castedOptions);
+            if (!parameter?.autoInitialized) {
+              const castedOptions = isArray(options) ? options : [options];
+              onSelectOption(castedOptions);
+            }
           }}
         />
         {!parameter?.autoInitialized && (

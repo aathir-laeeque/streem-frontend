@@ -1,11 +1,13 @@
 import { apiGetObjects } from '#utils/apiUrls';
+import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, request } from '#utils/request';
-import { validate } from 'uuid';
 import { store } from '../../App';
+import { Object } from './types';
+
 export const getObjectData = async (data: Record<string, string | number | undefined>) => {
   try {
     const { id, ...params } = data;
-    const response = await request('GET', apiGetObjects(id as string), {
+    const response: ResponseObj<Object> = await request('GET', apiGetObjects(id as string), {
       params,
     });
     if (response.data) {

@@ -22,6 +22,7 @@ import ChecklistParameter from '#PrototypeComposer/Parameters/SetupViews/Checkli
 import MaterialInstruction from '#PrototypeComposer/Parameters/SetupViews/MaterialInstruction';
 import ParameterParameter from '#PrototypeComposer/Parameters/SetupViews/Parameter';
 import ResourceParameter from '#PrototypeComposer/Parameters/SetupViews/Resource';
+import LinkParameter from '#PrototypeComposer/Parameters/SetupViews/LinkParameter';
 import TextInstruction from '#PrototypeComposer/Parameters/SetupViews/TextInstruction';
 import YesNoParameter from '#PrototypeComposer/Parameters/SetupViews/YesNo';
 import NumberValidation from '#PrototypeComposer/Parameters/ValidationViews/Number';
@@ -288,6 +289,14 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
           />
         )}
         {renderSetupViewsByType()}
+        {[
+          MandatoryParameter.NUMBER,
+          MandatoryParameter.SINGLE_LINE,
+          MandatoryParameter.DATE,
+          MandatoryParameter.DATE_TIME,
+          MandatoryParameter.MULTI_LINE,
+          MandatoryParameter.RESOURCE,
+        ].includes(type) && <LinkParameter form={form} isReadOnly={isReadOnly} />}
       </div>
     );
   };

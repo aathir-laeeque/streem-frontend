@@ -1,8 +1,8 @@
-import { TextInput } from '#components';
 import { MandatoryParameter } from '#JobComposer/checklist.types';
-import { Entity } from '#JobComposer/composer.types';
+import { TextInput } from '#components';
 import { useTypedSelector } from '#store';
 import { customOnChange } from '#utils/formEvents';
+import { LinkOutlined } from '@material-ui/icons';
 import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { executeParameter, fixParameter } from '../actions';
@@ -11,7 +11,9 @@ import { ParameterProps } from '../types';
 const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
-  const { entity } = useTypedSelector((state) => state.composer);
+  const {
+    parameters: { parametersById },
+  } = useTypedSelector((state) => state.composer);
   const [value, setValue] = React.useState('');
 
   useEffect(() => {
@@ -38,42 +40,47 @@ const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) 
     setValue(v);
   };
 
-  if (entity === Entity.JOB) {
-    return (
-      <div className="textbox-parameter">
-        <div className="new-form-field">
-          <label className="new-form-field-label">
-            {parameter.type === MandatoryParameter.MULTI_LINE
-              ? 'Multi Line Input'
-              : 'Single Line Input'}
-          </label>
-          {parameter.type === MandatoryParameter.MULTI_LINE ? (
-            <textarea
-              ref={inputRef}
-              className="new-form-field-textarea"
-              placeholder="Users will write their comments here"
-              data-id={parameter.id}
-              data-type={parameter.type}
-              value={value}
-              rows={4}
-              onChange={(e) => onChange(e.target.value)}
-            />
-          ) : (
-            <TextInput
-              ref={inputRef}
-              placeholder="Write here"
-              data-id={parameter.id}
-              data-type={parameter.type}
-              value={value}
-              onChange={({ value }) => onChange(value)}
-            />
-          )}
-        </div>
+  const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
+
+  return (
+    <div className="textbox-parameter">
+      <div className="new-form-field">
+        <label className="new-form-field-label">
+          {parameter.type === MandatoryParameter.MULTI_LINE
+            ? 'Multi Line Input'
+            : 'Single Line Input'}
+        </label>
+        {parameter.type === MandatoryParameter.MULTI_LINE ? (
+          <textarea
+            ref={inputRef}
+            className="new-form-field-textarea"
+            placeholder="Users will write their comments here"
+            data-id={parameter.id}
+            data-type={parameter.type}
+            value={value}
+            disabled={parameter?.autoInitialized}
+            rows={4}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        ) : (
+          <TextInput
+            ref={inputRef}
+            placeholder="Write here"
+            data-id={parameter.id}
+            data-type={parameter.type}
+            value={value}
+            disabled={parameter?.autoInitialized}
+            onChange={({ value }) => onChange(value)}
+          />
+        )}
       </div>
-    );
-  } else {
-    return null;
-  }
+      {parameter?.autoInitialized && (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘{linkedResourceParameter?.label}’
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default TextboxParameter;

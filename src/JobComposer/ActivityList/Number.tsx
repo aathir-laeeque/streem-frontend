@@ -1,5 +1,7 @@
 import { TextInput } from '#components';
+import { useTypedSelector } from '#store';
 import { customOnChange } from '#utils/formEvents';
+import { LinkOutlined } from '@material-ui/icons';
 import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { executeParameter, fixParameter } from './actions';
@@ -7,6 +9,11 @@ import { ParameterProps } from './types';
 
 const NumberParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
+  const {
+    composer: {
+      parameters: { parametersById },
+    },
+  } = useTypedSelector((state) => state);
   const inputRef = useRef(null);
   const [value, setValue] = React.useState(parameter?.response?.value);
 
@@ -34,6 +41,8 @@ const NumberParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) =
     setValue(val);
   };
 
+  const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
+
   return (
     <div className="number-parameter">
       <div className="new-form-field">
@@ -44,11 +53,18 @@ const NumberParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) =
           className="number-parameter-input"
           data-id={parameter.id}
           data-type={parameter.type}
-          defaultValue={value}
+          ref={inputRef}
+          disabled={parameter?.autoInitialized}
+          value={value}
           label="Enter Number"
           onChange={({ value }) => onChange(value)}
         />
       </div>
+      {parameter?.autoInitialized && (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘{linkedResourceParameter?.label}’
+        </div>
+      )}
     </div>
   );
 };
