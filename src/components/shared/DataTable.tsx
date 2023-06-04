@@ -73,6 +73,8 @@ const Wrapper = styled.div.attrs({
           line-height: 1.29;
           color: #333333;
           font-family: inherit;
+          padding: 8px 16px;
+          vertical-align: top;
 
           .primary {
             cursor: pointer;
@@ -83,8 +85,40 @@ const Wrapper = styled.div.attrs({
             }
           }
 
+          .flex-column {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+          }
+
+          .description {
+            font-size: 12px;
+            letter-spacing: 0.16px;
+            color: #6f6f6f;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            svg {
+              font-size: 12px;
+            }
+          }
+
           .MuiChip-label {
             display: flex !important;
+          }
+
+          .overdue {
+            font-size: 12px;
+            line-height: 1.6;
+            letter-spacing: 0.16px;
+
+            &.orange {
+              color: #f1821b;
+            }
+
+            &.red {
+              color: #da1e28;
+            }
           }
         }
       }

@@ -157,7 +157,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
         afterElementWithoutError
         AfterElement={Search}
         afterElementClass=""
-        placeholder={`Search with ${selectedOption.label}`}
+        placeholder={`Search ${showDropdown ? `with ${selectedOption?.label}` : ''}`}
         onChange={debounce(({ value }) => {
           setSearchValue(value);
           onUpdate(selectedOption, value);

@@ -1,7 +1,6 @@
 import { Checklist } from '#PrototypeComposer/checklist.types';
 import { actionSpreader } from '#store/helpers';
-
-import { fetchJobsType, fetchJobsSuccessType, ListViewAction } from './types';
+import { ListViewAction, fetchJobsSuccessType, fetchJobsType } from './types';
 
 export const fetchJobs = (params: fetchJobsType) =>
   actionSpreader(ListViewAction.FETCH_JOBS, { params });
@@ -19,3 +18,8 @@ export const createJob = (params: {
   checklistId: Checklist['id'];
   selectedUseCaseId: string;
 }) => actionSpreader(ListViewAction.CREATE_JOB, params);
+
+export const createJobSuccess = (data: any, shouldReRender = true) =>
+  actionSpreader(ListViewAction.CREATE_JOB_SUCCESS, { data, shouldReRender });
+
+export const createJobError = () => actionSpreader(ListViewAction.CREATE_JOB_ERROR);

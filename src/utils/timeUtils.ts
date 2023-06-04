@@ -88,3 +88,41 @@ export const convertSecondsToTime = (seconds: number) => {
     seconds: remainingSeconds,
   };
 };
+
+export const formatDateTimeToHumanReadable = (epoch: number) => {
+  const {
+    auth: { selectedFacility },
+    facilityWiseConstants,
+  } = store.getState();
+  const { dateAndTimeStampFormat, timeFormat } = facilityWiseConstants[selectedFacility!.id];
+  let dateText: string | undefined = moment.unix(epoch).from(new Date());
+  const startOfToday = moment().startOf('day');
+  const startOfDate = moment.unix(epoch).startOf('day');
+  const daysDiff = startOfDate.diff(startOfToday, 'days');
+  const days: any = {
+    '0': 'Today',
+    '-1': 'Yesterday',
+    '1': 'Tomorrow',
+  };
+  if (Math.abs(daysDiff) <= 1) {
+    dateText = days[daysDiff.toString()];
+  } else {
+    dateText = undefined;
+  }
+  if (dateText) {
+    return `${dateText}, ${moment.unix(epoch).format(timeFormat)}`;
+  }
+  return moment.unix(epoch).format(dateAndTimeStampFormat);
+};
+
+export const getOverDueByEpoch = (epoch: number) => {
+  if (moment.unix(epoch).diff(moment()) < 1) {
+    return `Overdue by ${moment.unix(epoch).fromNow()}`.replace(' ago', '');
+  }
+};
+
+export const getDelayBetweenEpoch = (expected: number, actual: number) => {
+  if (moment.unix(actual).diff(moment.unix(expected)) > 1) {
+    return `Delayed by ${moment.unix(actual).from(moment.unix(expected))}`.replace(' in', '');
+  }
+};

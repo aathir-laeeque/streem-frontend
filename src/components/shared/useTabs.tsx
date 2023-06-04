@@ -39,7 +39,7 @@ export const BodyWrapper = styled.div.attrs({
 })`
   background-color: #ffffff;
   grid-area: tab-body;
-  padding: 8px 8px 0px;
+  padding: 16px 16px 0px;
   display: flex;
   flex-direction: column;
   flex: 1;

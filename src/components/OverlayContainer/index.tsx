@@ -39,6 +39,7 @@ import RevisionErrorModal from '#views/Checklists/Overlays/RevisionErrorModal';
 import AssingnmentInfo from '#views/Jobs/Assignment/AssignmentInfo';
 import UserAssignment from '#views/Jobs/Assignment/UserAssignmentModal';
 import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
+import SetDateModal from '#views/Jobs/Overlays/SetDateModal';
 import SecretKeyModal from '#views/UserAccess/Overlays/SecretKeyModal';
 import ValidateCredentialsModal from '#views/UserAccess/Overlays/ValidateCredentialsModal';
 import React, { FC } from 'react';
@@ -231,6 +232,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.PUT_CUSTOM_VIEW:
       return <PutCustomViewModal {...params} />;
+
+    case OverlayNames.SET_DATE:
+      return <SetDateModal {...params} />;
 
     default:
       return null;

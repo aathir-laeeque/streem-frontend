@@ -1,55 +1,13 @@
-import { Button, GeneralHeader, Select } from '#components';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
-import useTabs from '#components/shared/useTabs';
-import { resetComposer } from '#PrototypeComposer/actions';
 import { LogType } from '#PrototypeComposer/checklist.types';
+import { GeneralHeader } from '#components';
+import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
-import { CustomViewsTargetType, FilterOperators } from '#utils/globalTypes';
-import {
-  addCustomView,
-  deleteCustomView,
-  getCustomViews,
-} from '#views/Checklists/ListView/actions';
-import { DeleteOutlineOutlined } from '@material-ui/icons';
-import React, { FC, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { components, OptionProps } from 'react-select';
-import styled from 'styled-components';
-import DynamicContent from './DynamicContent';
+import { FilterOperators } from '#utils/globalTypes';
+import moment from 'moment';
+import React, { FC } from 'react';
+import JobsContent from './JobsContent';
 import { ViewWrapper } from './styles';
-import TabContent from './TabContent';
 import { AssignedJobStates, CompletedJobStates, ListViewProps, UnassignedJobStates } from './types';
-
-const AfterHeaderWrapper = styled.div`
-  display: flex;
-  padding: 2px 0px 8px 8px;
-  gap: 8px;
-  min-width: fit-content;
-  flex: 1;
-  justify-content: space-between;
-
-  .custom-select__menu-list {
-    position: fixed;
-    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
-      0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  }
-`;
-
-const OptionWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-transform: capitalize;
-
-  .delete-icon {
-    margin: 0;
-    color: #161616;
-    :hover {
-      color: #ff6b6b;
-    }
-  }
-`;
 
 export const commonColumns = [
   {
@@ -124,175 +82,161 @@ export const commonColumns = [
   },
 ];
 
-const defaultViews = [
-  {
-    label: 'Unassigned',
-    values: [UnassignedJobStates.UNASSIGNED],
-    tabContent: TabContent,
-  },
-  {
-    label: 'Assigned',
-    values: [AssignedJobStates.ASSIGNED, AssignedJobStates.IN_PROGRESS, AssignedJobStates.BLOCKED],
-    tabContent: TabContent,
-  },
-  {
-    label: 'Completed',
-    values: [CompletedJobStates.COMPLETED, CompletedJobStates.COMPLETED_WITH_EXCEPTION],
-    tabContent: TabContent,
-  },
-];
-
-const AfterHeader: FC<any> = ({ setActiveTab, activeTab }) => {
-  const dispatch = useDispatch();
-  const {
-    checklistListView: { customViews },
-    auth: { selectedUseCase },
-  } = useTypedSelector((state) => state);
-
-  const handleSetActiveTab = (view: any) => {
-    if (view.id) {
-      setActiveTab({
-        label: view.label,
-        tabContent: DynamicContent,
-        values: { id: view.id },
-      });
-    } else {
-      setActiveTab(view);
-    }
-  };
-
-  const onPrimary = (data: any) => {
-    dispatch(
-      addCustomView({
-        data: {
-          ...data,
-          filters: [],
-          columns: commonColumns,
-          targetType: CustomViewsTargetType.JOB,
-          useCaseId: selectedUseCase?.id!,
-        },
-        setActiveTab: handleSetActiveTab,
-      }),
-    );
-  };
-
-  const handleAddNew = () => {
-    dispatch(
-      openOverlayAction({
-        type: OverlayNames.PUT_CUSTOM_VIEW,
-        props: {
-          onPrimary,
-        },
-      }),
-    );
-  };
-
-  const Option = (props: OptionProps<any>) => {
-    return (
-      <components.Option {...props}>
-        <OptionWrapper>
-          {props.label}
-          {props.data.id && (
-            <DeleteOutlineOutlined
-              className="delete-icon"
-              onClick={(e) => onClickDeleteView(e, props.data)}
-            />
-          )}
-        </OptionWrapper>
-      </components.Option>
-    );
-  };
-
-  const handleDeleteView = (view: any) => {
-    dispatch(deleteCustomView({ view }));
-    if (activeTab.label === view.label) {
-      setActiveTab(defaultViews[0]);
-    }
-  };
-
-  const onClickDeleteView = (e: React.MouseEvent<SVGSVGElement, MouseEvent>, view: any) => {
-    e.stopPropagation();
-    dispatch(
-      openOverlayAction({
-        type: OverlayNames.SIMPLE_CONFIRMATION_MODAL,
-        props: {
-          header: 'Delete View',
-          body: <span>{`Are you sure you want to delete “${view.label}” view?`}</span>,
-          onPrimaryClick: () => handleDeleteView(view),
-        },
-      }),
-    );
-  };
-
-  return (
-    <AfterHeaderWrapper>
-      <Button variant="secondary" onClick={handleAddNew}>
-        Add New
-      </Button>
-      <Select
-        options={[...defaultViews, ...Object.values(customViews.views)]}
-        value={[{ value: 'more views', label: 'More Views' }]}
-        components={{ Option }}
-        onChange={handleSetActiveTab}
-        style={{ minWidth: 180 }}
-      />
-    </AfterHeaderWrapper>
-  );
-};
-
-const JobListView: FC<ListViewProps> = () => {
-  const dispatch = useDispatch();
+const JobListView: FC<ListViewProps> = ({ location }) => {
   const { selectedUseCase } = useTypedSelector((state) => state.auth);
-  const {
-    checklistListView: { customViews },
-  } = useTypedSelector((state) => state);
+  const processFilter = location?.state?.processFilter
+    ? location?.state?.processFilter?.schedulerId
+      ? [
+          {
+            field: 'checklist.id',
+            op: FilterOperators.EQ,
+            values: [location.state.processFilter.processId],
+          },
+          {
+            field: 'schedulerId',
+            op: FilterOperators.EQ,
+            values: [location.state.processFilter.schedulerId],
+          },
+        ]
+      : [
+          {
+            field: 'checklist.id',
+            op: FilterOperators.EQ,
+            values: [location.state.processFilter.id],
+          },
+        ]
+    : [];
 
   const { renderTabHeader, renderTabContent } = useTabs({
     tabs: [
-      ...defaultViews,
-      ...Object.values(customViews.views).map((view: any) => ({
-        label: view.label,
-        tabContent: DynamicContent,
-        values: { id: view.id },
-      })),
-    ],
-    AfterHeader: {
-      Component: AfterHeader,
-    },
-  });
-
-  useEffect(() => {
-    dispatch(
-      getCustomViews({
-        filters: {
-          op: FilterOperators.AND,
-          fields: [
+      {
+        label: 'Created',
+        values: {
+          baseFilters: [
             {
-              field: 'useCaseId',
-              op: FilterOperators.EQ,
-              values: [selectedUseCase?.id!],
+              field: 'state',
+              op: FilterOperators.ANY,
+              values: [UnassignedJobStates.UNASSIGNED, AssignedJobStates.ASSIGNED],
             },
-            { field: 'archived', op: FilterOperators.EQ, values: [false] },
+            ...processFilter,
+          ],
+          cards: [
             {
-              field: 'targetType',
-              op: FilterOperators.EQ,
-              values: [CustomViewsTargetType.JOB],
+              label: 'Scheduled',
+              className: 'blue',
+              filters: [
+                {
+                  field: 'isScheduled',
+                  op: FilterOperators.EQ,
+                  values: [true],
+                },
+              ],
+            },
+            {
+              label: 'Unscheduled',
+              className: 'grey',
+              filters: [
+                {
+                  field: 'isScheduled',
+                  op: FilterOperators.EQ,
+                  values: [false],
+                },
+              ],
+            },
+            {
+              label: 'Over Due',
+              className: 'orange',
+              filters: [
+                {
+                  field: 'expectedEndDate',
+                  op: FilterOperators.LT,
+                  values: [moment(moment.now()).unix().toString()],
+                },
+              ],
+            },
+            {
+              label: 'Start Delayed',
+              className: 'yellow',
+              filters: [
+                {
+                  field: 'expectedStartDate',
+                  op: FilterOperators.LT,
+                  values: [moment(moment.now()).unix().toString()],
+                },
+              ],
             },
           ],
+          processFilter: location?.state?.processFilter,
         },
-      }),
-    );
-    return () => {
-      dispatch(resetComposer());
-    };
-  }, []);
+        tabContent: JobsContent,
+      },
+      {
+        label: 'On Going',
+        values: {
+          baseFilters: [
+            {
+              field: 'state',
+              op: FilterOperators.ANY,
+              values: [AssignedJobStates.IN_PROGRESS, AssignedJobStates.BLOCKED],
+            },
+            ...processFilter,
+          ],
+          cards: [
+            {
+              label: 'Over Due',
+              className: 'orange',
+              filters: [
+                {
+                  field: 'expectedEndDate',
+                  op: FilterOperators.LT,
+                  values: [moment(moment.now()).unix().toString()],
+                },
+              ],
+            },
+            {
+              label: 'Pending Approval',
+              className: 'yellow',
+              filters: [
+                {
+                  field: 'state',
+                  op: FilterOperators.EQ,
+                  values: [AssignedJobStates.BLOCKED],
+                },
+              ],
+            },
+          ],
+          processFilter: location?.state?.processFilter,
+        },
+        tabContent: JobsContent,
+      },
+      {
+        label: 'Completed',
+        values: {
+          baseFilters: [
+            {
+              field: 'state',
+              op: FilterOperators.ANY,
+              values: [CompletedJobStates.COMPLETED, CompletedJobStates.COMPLETED_WITH_EXCEPTION],
+            },
+          ],
+          processFilter: location?.state?.processFilter,
+        },
+        tabContent: JobsContent,
+      },
+    ],
+  });
+
+  const selectedProcessName = location?.state?.processFilter?.processName;
 
   return (
     <ViewWrapper>
       <GeneralHeader
-        heading={`${selectedUseCase?.label} - Jobs`}
+        heading={`${selectedUseCase?.label} - Jobs ${
+          selectedProcessName ? `for ${selectedProcessName}` : ''
+        }`}
         subHeading="Create, Assign and view Completed Jobs"
       />
+
       <div className="list-table">
         {renderTabHeader()}
         {renderTabContent()}

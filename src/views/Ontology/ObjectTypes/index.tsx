@@ -58,9 +58,12 @@ const ReadOnlyGroupWrapper = styled.div`
   }
 `;
 
-export const ReadOnlyGroup = ({ items }: { items: { label: string; value: string }[] }) => {
+export const ReadOnlyGroup = ({
+  items,
+  ...rest
+}: { items: { label: string; value: string }[] } & React.HTMLProps<HTMLDivElement>) => {
   return (
-    <ReadOnlyGroupWrapper>
+    <ReadOnlyGroupWrapper {...rest}>
       {items.map((item, index) => (
         <div className="read-only" key={index}>
           <span className="content">{item.label}</span>
@@ -127,7 +130,7 @@ const GeneralTabContent: FC<TabContentProps> = ({ label }) => {
   );
 };
 
-const PropertiesTabContent: FC<TabContentProps> = ({ label }) => {
+const PropertiesTabContent: FC<TabContentProps> = () => {
   const {
     objectTypes: { active },
   } = useTypedSelector((state) => state.ontology);

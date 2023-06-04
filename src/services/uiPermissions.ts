@@ -155,6 +155,10 @@ const uiPermissions: Record<string, any> = {
     edit: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
     archive: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
   },
+  scheduler: {
+    create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
+    actions: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
+  },
 };
 
 const checkPermission = (keys: string[]) => {

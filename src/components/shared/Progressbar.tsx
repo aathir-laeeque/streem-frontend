@@ -5,6 +5,7 @@ type Props = {
   height?: number;
   percentage: number;
   whiteBackground?: boolean;
+  danger?: boolean;
 };
 
 const Wrapper = styled.div.attrs({
@@ -14,8 +15,9 @@ const Wrapper = styled.div.attrs({
   position: relative;
   width: 100%;
 
-  background-color: ${({ whiteBackground }) => (whiteBackground ? '#ffffff' : '#f4f4f4')};
+  background-color: ${({ whiteBackground }) => (whiteBackground ? '#ffffff' : '#eee')};
   height: ${({ height }) => `${height}px`};
+  box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.08);
 
   .filler {
     border-radius: inherit;
@@ -23,27 +25,37 @@ const Wrapper = styled.div.attrs({
     transition: width 0.2s ease-in;
     width: ${({ percentage }) => `${percentage}%`};
 
-    ${({ percentage }) => {
+    ${({ percentage, danger }) => {
       if (percentage === 100) {
         return css`
-          background-color: #5aa700;
+          background-color: ${danger ? '#da1e28' : '#5aa700'};
         `;
       } else if (percentage === 0) {
         return css`
-          background-color: #666666;
+          background-color: ${danger ? '#da1e28' : '#666666'};
           width: 6%;
         `;
       } else {
         return css`
-          background-color: #1d84ff;
+          background-color: ${danger ? '#da1e28' : '#1d84ff'};
         `;
       }
     }}
   }
 `;
 
-const ProgressBar: FC<Props> = ({ percentage = 0, height = 8, whiteBackground = false }) => (
-  <Wrapper percentage={percentage} height={height} whiteBackground={whiteBackground}>
+const ProgressBar: FC<Props> = ({
+  percentage = 0,
+  height = 8,
+  whiteBackground = false,
+  danger = false,
+}) => (
+  <Wrapper
+    percentage={percentage}
+    height={height}
+    whiteBackground={whiteBackground}
+    danger={danger}
+  >
     <div className="filler"></div>
   </Wrapper>
 );

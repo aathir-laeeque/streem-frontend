@@ -2,14 +2,14 @@ import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { closeOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { RootState } from '#store';
 import { apiGetJobs } from '#utils/apiUrls';
-import { FilterOperators, ResponseObj } from '#utils/globalTypes';
+import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
-import { call, put, select, takeLatest } from 'redux-saga/effects';
-
+import { call, put, takeLatest } from 'redux-saga/effects';
 import {
   createJob,
+  createJobError,
+  createJobSuccess,
   fetchJobs,
   fetchJobsError,
   fetchJobsOngoing,
@@ -38,7 +38,7 @@ function* fetchJobsSaga({ payload }: ReturnType<typeof fetchJobs>) {
 
 function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
   try {
-    const { errors }: ResponseObj<Job> = yield call(request, 'POST', apiGetJobs(), {
+    const { errors, data }: ResponseObj<Job> = yield call(request, 'POST', apiGetJobs(), {
       data: {
         parameterValues: payload.parameterValues,
         selectedUseCaseId: payload.selectedUseCaseId,
@@ -59,28 +59,15 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
     );
 
     yield put(
-      fetchJobs({
-        page: 0,
-        size: 10,
-        sort: 'createdAt,desc',
-        filters: JSON.stringify({
-          op: FilterOperators.AND,
-          fields: [
-            {
-              field: 'state',
-              op: FilterOperators.EQ,
-              values: ['UNASSIGNED'],
-            },
-            {
-              field: 'useCaseId',
-              op: FilterOperators.EQ,
-              values: [payload.selectedUseCaseId],
-            },
-          ],
-        }),
+      createJobSuccess({
+        parameterValues: payload.parameterValues,
+        selectedUseCaseId: payload.selectedUseCaseId,
+        checklistId: payload.checklistId,
+        id: data.id,
       }),
     );
   } catch (e) {
+    yield put(createJobError());
     yield* handleCatch('JobListView', 'createJobSaga', e, true);
   }
 }

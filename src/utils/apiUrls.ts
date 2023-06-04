@@ -319,9 +319,30 @@ export const apiGetJobLogsExcel = () => `${baseUrl}/job-logs/download`;
 
 export const apiBranchingRuleExecute = () => `${baseUrl}/parameters/execute/temporary`;
 
+export const apiJobSchedulers = (jobId: string, schedulerId?: string) =>
+  `${baseUrl}/jobs/${jobId}/schedulers${schedulerId ? `/${schedulerId}` : ''}`;
+
+export const apiJobsCount = () => `${baseUrl}/jobs/count`;
+
+export const apiInboxJobsCount = () => `${baseUrl}/jobs/assignee/me/count`;
+
+export const apiJobInfo = (jobId: string) => `${baseUrl}/jobs/${jobId}/info`;
+
 export const apiInitializeSubTask = (taskId: string) =>
   `${baseUrl}/tasks/${taskId}/sub-task/initialize`;
 
 export const apiPauseJob = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/pause`;
 
 export const apiResumeJob = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/resume`;
+export const apiScheduleJob = (jobId: string) => `${baseUrl}/jobs/${jobId}/schedule`;
+
+export const apiProcessScheduler = () => `${baseUrl}/schedulers`;
+
+export const apiArchiveProcessScheduler = (schedulerId: string) =>
+  `${baseUrl}/schedulers/${schedulerId}/archive`;
+
+export const apiVersionHistoryProcessScheduler = (schedulerId: string) =>
+  `${baseUrl}/schedulers/${schedulerId}/info`;
+
+export const apiSingleProcessScheduler = (schedulerId: string) =>
+  `${baseUrl}/schedulers/${schedulerId}`;

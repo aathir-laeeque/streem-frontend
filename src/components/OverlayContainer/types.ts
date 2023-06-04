@@ -64,6 +64,7 @@ export enum OverlayNames {
   QR_SCANNER = 'QR_SCANNER',
   QR_GENERATOR = 'QR_GENERATOR',
   PUT_CUSTOM_VIEW = 'PUT_CUSTOM_VIEW',
+  SET_DATE = 'SET_DATE',
 }
 
 export interface CommonOverlayProps<T> {

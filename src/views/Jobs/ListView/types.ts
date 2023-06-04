@@ -2,7 +2,15 @@ import { Checklist } from '#PrototypeComposer/checklist.types';
 import { User } from '#store/users/types';
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
-import { fetchJobs, fetchJobsError, fetchJobsOngoing, fetchJobsSuccess } from './actions';
+import {
+  createJob,
+  createJobError,
+  createJobSuccess,
+  fetchJobs,
+  fetchJobsError,
+  fetchJobsOngoing,
+  fetchJobsSuccess,
+} from './actions';
 
 export type Assignee = Pick<User, 'employeeId' | 'firstName' | 'id' | 'lastName'> & {
   jobId: string;
@@ -25,9 +33,18 @@ export type Job = {
   totalTasks: number;
   name?: string;
   assignees: Assignee[];
+  expectedStartDate?: number;
+  expectedEndDate?: number;
+  startedAt?: number;
+  endedAt?: number;
+  jobScheduler?: Record<string, any>;
+  jobSchedulerId?: number;
 };
 
-export type ListViewProps = RouteComponentProps;
+export type ListViewProps = RouteComponentProps<{
+  id: Checklist['id'];
+  location: { state: { processFilter?: Record<string, string> } };
+}>;
 
 export enum AssignedJobStates {
   ASSIGNED = 'ASSIGNED',
@@ -57,6 +74,9 @@ export interface ListViewState {
   readonly loading: boolean;
   readonly error: any;
   readonly pageable: Pageable;
+  readonly submitting: boolean;
+  readonly createdData: any;
+  readonly reRender: boolean;
 }
 
 export enum ListViewAction {
@@ -65,17 +85,25 @@ export enum ListViewAction {
   FETCH_JOBS_ONGOING = '@@job/New-ListView/FETCH_JOBS_ONGOING',
   FETCH_JOBS_SUCCESS = '@@job/New-ListView/FETCH_JOBS_SUCCESS',
   CREATE_JOB = '@@job/ListView/CREATE_JOB',
+  CREATE_JOB_SUCCESS = '@@job/ListView/CREATE_JOB_SUCCESS',
+  CREATE_JOB_ERROR = '@@job/ListView/CREATE_JOB_ERROR',
 }
 
 export type ListViewActionType = ReturnType<
-  typeof fetchJobs | typeof fetchJobsError | typeof fetchJobsOngoing | typeof fetchJobsSuccess
+  | typeof fetchJobs
+  | typeof fetchJobsError
+  | typeof fetchJobsOngoing
+  | typeof fetchJobsSuccess
+  | typeof createJobSuccess
+  | typeof createJob
+  | typeof createJobError
 >;
 
 export type fetchJobsType = {
   facilityId?: string;
   page: number;
   size: number;
-  filters: string;
+  filters: Record<string, any>;
   sort: string;
 };
 

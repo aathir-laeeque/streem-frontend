@@ -11,13 +11,9 @@ import { JobsViewProps } from './types';
 const JobsView: FC<JobsViewProps> = () => (
   <Router>
     <ListView path="/" />
-
     <Composer path="/:id" entity={Entity.JOB} />
-
     <Assignments path="/:jobId/assignments" />
-
     <AuditLogs path="/:jobId/activities" />
-
     <JobSummary path="/:jobId/summary" />
   </Router>
 );

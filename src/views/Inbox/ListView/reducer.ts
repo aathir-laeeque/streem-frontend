@@ -1,19 +1,13 @@
 import { DEFAULT_PAGINATION } from '#utils/constants';
-import { Pageable } from '#utils/globalTypes';
-import { Job } from '#views/Jobs/ListView/types';
 
 import { InboxState, ListViewAction, ListViewActionType, ListViewState } from './types';
 
 const initialState: ListViewState = {
   loading: false,
   error: undefined,
-  selectedState: InboxState.MYINBOX,
-  jobs: {
-    myjobs: {
-      list: [],
-      pageable: DEFAULT_PAGINATION,
-    },
-  },
+  selectedState: InboxState.NOT_STARTED,
+  jobs: [],
+  pageable: DEFAULT_PAGINATION,
 };
 
 const reducer = (state = initialState, action: ListViewActionType): ListViewState => {
@@ -22,17 +16,12 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
       return { ...state, loading: true };
 
     case ListViewAction.FETCH_INBOX_SUCCESS:
-      const { data, pageable, type } = action.payload;
+      const { data, pageable } = action.payload;
       return {
         ...state,
         loading: false,
-        jobs: {
-          ...state.jobs,
-          [type]: {
-            list: data as Array<Job>,
-            pageable: pageable as Pageable,
-          },
-        },
+        jobs: data,
+        pageable: pageable,
       };
 
     case ListViewAction.FETCH_INBOX_ERROR:

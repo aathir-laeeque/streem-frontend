@@ -15,22 +15,18 @@ type TabContentProps = Record<string, any>;
 export type ListViewProps = RouteComponentProps;
 export type TabViewProps = RouteComponentProps<TabContentProps>;
 
-export type Inbox = Record<
-  string,
-  {
-    list: Job[];
-    pageable: Pageable;
-  }
->;
 export interface ListViewState {
-  readonly jobs: Inbox;
+  readonly jobs: Job[];
   readonly loading: boolean;
   readonly error: any;
   readonly selectedState: string;
+  readonly pageable: Pageable;
 }
 
 export enum InboxState {
-  MYINBOX = 'My Jobs',
+  NOT_STARTED = 'Not Started',
+  ON_GOING = 'On Going',
+  COMPLETED = 'Completed',
 }
 
 export enum ListViewAction {

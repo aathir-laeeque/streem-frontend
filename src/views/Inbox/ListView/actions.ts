@@ -1,16 +1,16 @@
 import { actionSpreader } from '#store/helpers';
-import { ResponseObj } from '#utils/globalTypes';
-import { Job } from '#views/Jobs/ListView/types';
+import { Pageable } from '#utils/globalTypes';
+import { Job, fetchJobsType } from '#views/Jobs/ListView/types';
 
 import { ListViewAction } from './types';
 
-export const fetchInbox = (params: Record<string, string | number>, type: string) =>
-  actionSpreader(ListViewAction.FETCH_INBOX, { params, type });
+export const fetchInbox = (params: fetchJobsType) =>
+  actionSpreader(ListViewAction.FETCH_INBOX, { params });
 
 export const fetchInboxOngoing = () => actionSpreader(ListViewAction.FETCH_INBOX_ONGOING);
 
-export const fetchInboxSuccess = ({ data, pageable }: Partial<ResponseObj<Job[]>>, type: string) =>
-  actionSpreader(ListViewAction.FETCH_INBOX_SUCCESS, { data, pageable, type });
+export const fetchInboxSuccess = ({ data, pageable }: { data: Job[]; pageable: Pageable }) =>
+  actionSpreader(ListViewAction.FETCH_INBOX_SUCCESS, { data, pageable });
 
 export const fetchInboxError = (error: any) =>
   actionSpreader(ListViewAction.FETCH_INBOX_ERROR, { error });

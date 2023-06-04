@@ -18,6 +18,7 @@ import { PropertiesSaga } from './properties/saga';
 import { UsersSaga } from './users/saga';
 import { ReportsListViewSaga } from '../views/Reports/ListView/saga';
 import { JobLogsSaga } from '../views/Checklists/JobLogs/saga';
+import { SchedularListViewSaga } from '#views/Checklists/Schedular/saga';
 
 export function* rootSaga() {
   yield all([
@@ -41,5 +42,6 @@ export function* rootSaga() {
     fork(NewJobListViewSaga),
     fork(ReportsListViewSaga),
     fork(JobLogsSaga),
+    fork(SchedularListViewSaga),
   ]);
 }

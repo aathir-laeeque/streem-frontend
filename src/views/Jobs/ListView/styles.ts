@@ -88,6 +88,18 @@ const TabContentWrapper = styled.div`
     }
   }
 
+  #more-actions-disabled {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    color: #bbbbbb;
+    cursor: not-allowed;
+
+    > .icon {
+      color: #bbbbbb;
+    }
+  }
+
   .item-state {
     font-size: 12px;
     display: flex;

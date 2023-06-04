@@ -1,6 +1,5 @@
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
-import { ParameterTypeMap } from '#PrototypeComposer/constants';
 import CalculationTaskView from '#PrototypeComposer/Parameters/ExecutionViews/Calculation';
 import MaterialInstructionTaskView from '#PrototypeComposer/Parameters/ExecutionViews/MaterialInstruction';
 import MediaTaskView from '#PrototypeComposer/Parameters/ExecutionViews/Media';
@@ -40,7 +39,6 @@ export const ParameterViewWrapper = styled.div`
       flex-direction: column;
       gap: 8px;
       flex: 1;
-      padding-block: 16px;
 
       .filters-validations {
         margin-top: 8px;
@@ -61,17 +59,14 @@ export const ParameterViewWrapper = styled.div`
         font-size: 14px;
         line-height: 1.33;
         letter-spacing: 0.32px;
-        color: #161616;
+        color: #525252;
       }
 
       .form-group {
         padding: 0;
+        margin-bottom: 0px;
         > div {
-          margin-bottom: 8px;
-
-          :last-of-type {
-            margin-bottom: 0px;
-          }
+          margin-bottom: 0px;
         }
       }
     }
@@ -150,7 +145,6 @@ const ParameterView: FC<ParameterProps> = ({ parameter, form, onChangeHandler })
     <ParameterViewWrapper>
       <div className="container">
         <div className="content">
-          {ParameterTypeMap[parameter.type]}
           <span className="parameter-label">{parameter.label}</span>
           {renderTaskViewByType()}
         </div>

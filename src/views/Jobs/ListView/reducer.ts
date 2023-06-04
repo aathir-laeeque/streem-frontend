@@ -6,6 +6,9 @@ const initialState: ListViewState = {
   error: undefined,
   jobs: [],
   pageable: DEFAULT_PAGINATION,
+  submitting: false,
+  createdData: undefined,
+  reRender: false,
 };
 
 // TODO: optimize the reducer for Unassigned, Assigned and completed tabs
@@ -26,6 +29,23 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
 
     case ListViewAction.FETCH_JOBS_ERROR:
       return { ...state, loading: false, error: action.payload?.error };
+
+    case ListViewAction.CREATE_JOB:
+      return { ...state, submitting: true };
+
+    case ListViewAction.CREATE_JOB_SUCCESS:
+      return {
+        ...state,
+        submitting: false,
+        createdData: action.payload.data,
+        reRender: action.payload.shouldReRender ? !state.reRender : state.reRender,
+      };
+
+    case ListViewAction.CREATE_JOB_ERROR:
+      return {
+        ...state,
+        submitting: false,
+      };
 
     default:
       return { ...state };

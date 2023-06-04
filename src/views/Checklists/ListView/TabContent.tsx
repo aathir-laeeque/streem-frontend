@@ -1,3 +1,11 @@
+import {
+  Checklist,
+  ChecklistStatesColors,
+  ChecklistStatesContent,
+  DisabledStates,
+} from '#PrototypeComposer/checklist.types';
+import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
+import { ComposerEntity } from '#PrototypeComposer/types';
 import MemoArchive from '#assets/svg/Archive';
 import MemoStartRevision from '#assets/svg/StartRevision';
 import MemoViewInfo from '#assets/svg/ViewInfo';
@@ -13,19 +21,11 @@ import {
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import {
-  Checklist,
-  ChecklistStatesColors,
-  ChecklistStatesContent,
-  DisabledStates,
-} from '#PrototypeComposer/checklist.types';
-import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
-import { ComposerEntity } from '#PrototypeComposer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { Error, FilterField, FilterOperators } from '#utils/globalTypes';
-import { createJob } from '#views/Jobs/ListView/actions';
+import CreateJob from '#views/Jobs/Components/CreateJob';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { Chip, CircularProgress, MenuItem } from '@material-ui/core';
 import { ArrowDropDown, FiberManualRecord } from '@material-ui/icons';
@@ -42,6 +42,7 @@ import {
   unarchiveChecklist,
 } from './actions';
 import { ListViewProps } from './types';
+import TimelineOutlinedIcon from '@material-ui/icons/TimelineOutlined';
 
 const getBaseFilter = (label: string): FilterField[] => [
   {
@@ -71,38 +72,32 @@ const TypeChip = styled(Chip)<{ fontColor: string; backGroundColor: string }>`
 `;
 
 const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo, label }) => {
+  const dispatch = useDispatch();
   const {
     checklistListView: { pageable, currentPageData, loading: checklistDataLoading },
-    auth: { userId, selectedUseCase },
-  } = useTypedSelector((state) => state);
-  const { roles: userRoles, selectedFacility: { id: facilityId = '' } = {} } = useTypedSelector(
-    (state) => state.auth,
-  );
-  const {
-    data,
-    parameters: {
-      parameters: { list: parametersList, pageable: parameterPageable },
+    auth: {
+      userId,
+      selectedUseCase,
+      roles: userRoles,
+      selectedFacility: { id: facilityId = '' } = {},
     },
-  } = useTypedSelector((state) => state.prototypeComposer);
+    properties: propertiesStoreData,
+  } = useTypedSelector((state) => state);
 
-  const propertiesStoreData = useTypedSelector((state) => state.properties);
   const { list: checklistProperties, loading: checklistPropertiesLoading } =
     propertiesStoreData[ComposerEntity.CHECKLIST];
-
-  const dispatch = useDispatch();
 
   const selectChecklist = (id: string | number) => navigate(`/checklists/${id}`);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [createJobDrawerVisible, setCreateJobDrawerVisible] = useState(false);
+  const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(null);
+  const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(label));
 
   const handleClose = () => {
     setAnchorEl(null);
     setTimeout(() => setSelectedChecklist(null), 200);
   };
-
-  const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(null);
-
-  const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(label));
 
   const fetchData = (params: PaginatedFetchData = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
@@ -151,18 +146,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
   useEffect(() => {
     fetchData({ filters: filterFields });
   }, [filterFields]);
-
-  const onCreateJob = (jobDetails: Record<string, string>) => {
-    if (jobDetails.checklistId) {
-      dispatch(
-        createJob({
-          parameterValues: jobDetails.parameterValues,
-          checklistId: jobDetails.checklistId,
-          selectedUseCaseId: selectedUseCase!.id,
-        }),
-      );
-    }
-  };
 
   const prototypeActionsTemplate = (item: Checklist | null = null) => {
     if (!item) return <div style={{ display: 'flex', justifyContent: 'center' }}>-N/A-</div>;
@@ -222,16 +205,8 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
         }),
       );
     } else {
-      dispatch(
-        openOverlayAction({
-          type: OverlayNames.CREATE_JOB_MODAL,
-          props: {
-            selectedChecklist: item,
-            properties: parametersList,
-            onCreateJob: onCreateJob,
-          },
-        }),
-      );
+      setSelectedChecklist(item);
+      setCreateJobDrawerVisible(true);
     }
   };
 
@@ -354,6 +329,37 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                   <div className="list-item">
                     <MemoViewInfo />
                     <span>View Info</span>
+                  </div>
+                </MenuItem>
+                <MenuItem
+                  onClick={() =>
+                    navigate(`/checklists/jobs`, {
+                      state: {
+                        processFilter: {
+                          processName: selectedChecklist?.name,
+                          id: selectedChecklist?.id,
+                        },
+                      },
+                    })
+                  }
+                >
+                  <div className="list-item">
+                    <MemoViewInfo />
+                    <span>View Jobs</span>
+                  </div>
+                </MenuItem>
+                <MenuItem
+                  onClick={() =>
+                    navigate(`/checklists/${selectedChecklist?.id}/scheduler`, {
+                      state: {
+                        process: selectedChecklist,
+                      },
+                    })
+                  }
+                >
+                  <div className="list-item">
+                    <TimelineOutlinedIcon />
+                    <span>Schedular</span>
                   </div>
                 </MenuItem>
                 {!item.archived && checkArchiveAndRevisionPermission('revision') && (
@@ -740,6 +746,12 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
 
         <Pagination pageable={pageable} fetchData={fetchData} />
       </div>
+      {createJobDrawerVisible && selectedChecklist && (
+        <CreateJob
+          checklist={{ label: selectedChecklist.name, value: selectedChecklist.id }}
+          onCloseDrawer={setCreateJobDrawerVisible}
+        />
+      )}
     </TabContentWrapper>
   );
 };
