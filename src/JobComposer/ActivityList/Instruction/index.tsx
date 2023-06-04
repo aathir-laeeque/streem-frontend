@@ -1,6 +1,4 @@
 import { EmojiComponent } from '#components';
-import { Entity } from '#JobComposer/composer.types';
-import { useTypedSelector } from '#store';
 import { emojis } from '#utils/constants';
 import { ContentState, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
@@ -22,8 +20,6 @@ const toolbarOptions = {
 };
 
 const InstructionParameter: FC<ParameterProps> = ({ parameter }) => {
-  const { entity } = useTypedSelector((state) => state.composer);
-
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [contentBlock, setContentBlock] = useState(htmlToDraft(parameter.data.text));
 
@@ -40,7 +36,7 @@ const InstructionParameter: FC<ParameterProps> = ({ parameter }) => {
   }, [parameter]);
 
   return (
-    <Wrapper isJobView={entity === Entity.JOB}>
+    <Wrapper>
       <div className="parameter-header">Write your instruction/notes</div>
 
       <Editor
@@ -50,9 +46,7 @@ const InstructionParameter: FC<ParameterProps> = ({ parameter }) => {
         toolbarClassName="toolbar-class"
         toolbar={toolbarOptions}
         onBlur={() => {
-          const value = draftToHtml(convertToRaw(editorState.getCurrentContent()));
-
-          console.log('value :: ', value);
+          draftToHtml(convertToRaw(editorState.getCurrentContent()));
         }}
         onEditorStateChange={(newEditorState) => setEditorState(newEditorState)}
         data-id={parameter.id}

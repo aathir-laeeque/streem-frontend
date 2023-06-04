@@ -17,6 +17,10 @@ export interface fetchActiveStageDataRes {
   tasksById: TasksById;
   parametersById: ParametersById;
   stageReports: StageReports;
+  tasksOrderInStage: any;
+  parametersOrderInTaskInStage: any;
+  hiddenIds: Record<string, boolean>;
+  activeTaskId?: string;
 }
 
 export const setActiveStage = (id: Stage['id'], bringIntoView = false) =>

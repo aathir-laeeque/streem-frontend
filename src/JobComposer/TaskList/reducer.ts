@@ -1,12 +1,12 @@
 import { Entity } from '#JobComposer/composer.types';
 import { Reducer } from 'redux';
-import { ComposerAction } from '../composer.reducer.types';
-import { getTasks } from '../utils';
 import { ParameterListAction } from '../ActivityList/reducer.types';
 import { StageListAction } from '../StageList/reducer.types';
+import { TaskExecutionState } from '../checklist.types';
+import { ComposerAction } from '../composer.reducer.types';
+import { getTasks } from '../utils';
+import { TaskListAction, TaskListActionType, TaskListState } from './reducer.types';
 import { reEvaluateTaskWithStop } from './utils';
-import { TaskListActionType, TaskListState, TaskListAction } from './reducer.types';
-import { Task, TaskExecutionState } from '../checklist.types';
 
 export const initialState: TaskListState = {
   activeTaskId: undefined,
@@ -14,12 +14,11 @@ export const initialState: TaskListState = {
   tasksById: {},
   taskIdWithStop: undefined,
   tasksOrderInStage: [],
-
   stageIdWithTaskStop: undefined,
+  tasksOrderList: [],
 };
 
 const reducer: Reducer<TaskListState, TaskListActionType> = (state = initialState, action) => {
-  let oldTask: Task;
   switch (action.type) {
     case ComposerAction.FETCH_COMPOSER_DATA_SUCCESS:
       const { data, entity, setActive } = action.payload;
@@ -38,18 +37,28 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (state = initialStat
         bringIntoView: true,
       };
 
+    case TaskListAction.UPDATE_TASK_ORDER_LIST:
+      return {
+        ...state,
+        tasksOrderList: action.payload.data,
+      };
+
     case StageListAction.FETCH_ACTIVE_STAGE_DATA_SUCCESS:
       const { data: payloadData } = action.payload;
-
       const updatedTasksById = { ...state.tasksById, ...payloadData.tasksById };
 
       return {
         ...state,
         tasksById: updatedTasksById,
+        tasksOrderInStage: {
+          ...state.tasksOrderInStage,
+          [payloadData.stage.id]: payloadData.tasksOrderInStage,
+        },
         ...reEvaluateTaskWithStop({
           tasksById: updatedTasksById,
           tasksOrderInStage: state.tasksOrderInStage,
         }),
+        activeTaskId: payloadData.activeTaskId,
       };
 
     case TaskListAction.SET_ACTIVE_TASK:
@@ -102,6 +111,22 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (state = initialStat
           [action.payload.taskId]: {
             ...state.tasksById[action.payload.taskId],
             hasError: false,
+          },
+        },
+      };
+
+    case TaskListAction.UPDATE_TASK_EXECUTION_DURATION:
+      const {
+        data: { duration },
+      } = action.payload;
+
+      return {
+        ...state,
+        tasksById: {
+          ...state.tasksById,
+          [action.payload.taskId]: {
+            ...state.tasksById[action.payload.taskId],
+            taskExecution: { ...state.tasksById[action.payload.taskId].taskExecution, duration },
           },
         },
       };

@@ -216,7 +216,7 @@ export const BaseModal: FC<BaseModalProps> = ({
             }
             toExecute();
           })();
-        }, 500)
+        }, 200)
       : (() => {
           if (modalContainer && modalContainer.current) {
             modalContainer.current.classList.add('out');

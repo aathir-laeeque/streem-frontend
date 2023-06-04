@@ -1,17 +1,18 @@
-import ActivityIcon from '#assets/svg/ActivityIcon';
-import MemoArchive from '#assets/svg/Archive';
-import MemoViewInfo from '#assets/svg/ViewInfo';
-import { Button, ListActionMenu } from '#components';
-import { closeAllOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
 import { ProcessInitialState } from '#PrototypeComposer';
 import {
   startChecklistReview,
   submitChecklistForReview,
 } from '#PrototypeComposer/reviewer.actions';
 import { CollaboratorState, CollaboratorType } from '#PrototypeComposer/reviewer.types';
+import ActivityIcon from '#assets/svg/ActivityIcon';
+import MemoArchive from '#assets/svg/Archive';
+import MemoViewInfo from '#assets/svg/ViewInfo';
+import { Button, ListActionMenu } from '#components';
+import { closeAllOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission, { RoleIdByName } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
+import { toggleIsDrawerOpen } from '#store/extras/action';
 import { ALL_FACILITY_ID } from '#utils/constants';
 import { Error } from '#utils/globalTypes';
 import { archiveChecklist, unarchiveChecklist } from '#views/Checklists/ListView/actions';
@@ -22,6 +23,7 @@ import {
   FiberManualRecord,
   Group,
   Info,
+  Menu,
   Message,
   MoreVert,
   Settings,
@@ -455,6 +457,9 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
         )}
       </div>
       <div className="main-header">
+        <div className="drawer-toggle" onClick={() => dispatch(toggleIsDrawerOpen())}>
+          <Menu />
+        </div>
         <div className="header-content">
           <div className="header-content-left">
             <div className="checklist-name">{data?.name}</div>

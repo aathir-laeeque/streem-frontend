@@ -1,21 +1,18 @@
-import { Button, StyledMenu } from '#components';
+import { Task, TaskExecutionState } from '#JobComposer/checklist.types';
+import { StyledMenu, Textarea } from '#components';
 import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { StartedTaskStates, Task, TaskExecutionState } from '#JobComposer/checklist.types';
-import { getUserName } from '#services/users/helpers';
 import { useTypedSelector } from '#store';
 import { User } from '#store/users/types';
-import { formatDateTime } from '#utils/timeUtils';
+import { formatDuration } from '#utils/timeUtils';
 import { JobStateEnum } from '#views/Jobs/ListView/types';
 import { MenuItem } from '@material-ui/core';
-import { Assignment, Error, MoreHoriz, PanTool } from '@material-ui/icons';
+import { MoreVert, PanTool } from '@material-ui/icons';
 import { capitalize } from 'lodash';
 import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { startTask } from '../../actions';
-import { Wrapper } from './styles';
-import TaskAssignmentContent from './TaskAssignmentContent';
 import Timer from './Timer';
+import { Wrapper } from './styles';
 
 type HeaderProps = {
   task: Omit<Task, 'parameters'>;
@@ -27,6 +24,7 @@ type HeaderProps = {
   setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
   timerState: { [index: string]: boolean };
   setTimerState: React.Dispatch<React.SetStateAction<{ [index: string]: boolean }>>;
+  canSkipTask: boolean;
 };
 
 const JobHeader: FC<
@@ -38,31 +36,20 @@ const JobHeader: FC<
     | 'setLoadingState'
     | 'timerState'
     | 'setTimerState'
+    | 'canSkipTask'
   >
-> = ({
-  task,
-  enableStopForTask,
-  showAssignmentButton,
-  setLoadingState,
-  timerState,
-  setTimerState,
-}) => {
+> = ({ task, setLoadingState, timerState, setTimerState, canSkipTask }) => {
   const dispatch = useDispatch();
-  const { profile, selectedFacility } = useTypedSelector((state) => state.auth);
-  const { dateAndTimeStampFormat } = useTypedSelector(
-    (state) => state.facilityWiseConstants[selectedFacility!.id],
-  );
-
   const {
-    stages: { activeStageId, stagesById },
-    jobState,
-    data: { id: jobId } = {},
-  } = useTypedSelector((state) => state.composer);
+    composer: { jobState },
+    auth: { userId },
+  } = useTypedSelector((state) => state);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const isJobStarted = jobState === JobStateEnum.IN_PROGRESS || jobState === JobStateEnum.BLOCKED;
-
-  const stageOrderTree = stagesById[activeStageId as string].orderTree;
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { state, reason, correctionEnabled, correctionReason, assignees } = task.taskExecution;
+  const isUserAssignedToTask = (assignees || []).some((user) => user.id === userId);
 
   const handleClose = () => setAnchorEl(null);
 
@@ -82,90 +69,77 @@ const JobHeader: FC<
     );
   };
 
-  const { state, startedAt, startedBy, reason, correctionEnabled, correctionReason, assignees } =
-    task.taskExecution;
-
-  const isUserAssignedToTask = assignees.some((user) => user.id === profile?.id);
-
   return (
     <div className="job-header">
-      {assignees && assignees.length > 0 && (
-        <div className="task-assignees">
-          <span>This Task’s Assignees</span>
-          <div>
-            {assignees.slice(0, 4).map((user) => (
-              <div
-                key={`assignee_${user.id}`}
-                className="user-thumb"
-                aria-haspopup="true"
-                onMouseEnter={(e) => handleAssigneeClick(e, [user])}
-                onMouseLeave={() => dispatch(closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL))}
-              >
-                {capitalize(user.firstName).substring(0, 1)}
-                {capitalize(user.lastName).substring(0, 1)}
+      <div className="task-config">
+        <div className="wrapper">
+          <div className="task-name">{task.name}</div>
+          <Timer task={task} timerState={timerState} setTimerState={setTimerState} />
+        </div>
+      </div>
+      <div className="task-info">
+        <div className="left-section">
+          {task.hasStop && (
+            <div>
+              <PanTool className="icon" style={{ color: '#f2c94c' }} />
+            </div>
+          )}
+          {task.timed && (
+            <div className="time-info">
+              <div>
+                {task.timerOperator === 'NOT_LESS_THAN' ? (
+                  <>
+                    <span>
+                      Perform task in NLT {task.minPeriod && formatDuration(task.minPeriod)}
+                    </span>
+                    <span>
+                      Max Time limit - {task.maxPeriod && formatDuration(task?.maxPeriod)}
+                    </span>
+                  </>
+                ) : (
+                  <span>Complete under {task.maxPeriod && formatDuration(task?.maxPeriod)}</span>
+                )}
               </div>
-            ))}
-            {assignees.length > 4 && (
-              <div
-                key={`assignee_length`}
-                className="user-thumb"
-                aria-haspopup="true"
-                onMouseEnter={(e) => handleAssigneeClick(e, assignees.slice(4))}
-              >
-                +{assignees.length - 4}
+            </div>
+          )}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>Assignees:</span>
+            {assignees && assignees.length > 0 && (
+              <div className="task-assignees">
+                {assignees.slice(0, 4).map((user) => (
+                  <div
+                    key={`assignee_${user.id}`}
+                    className="user-thumb"
+                    aria-haspopup="true"
+                    onMouseEnter={(e) => handleAssigneeClick(e, [user])}
+                    onMouseLeave={() =>
+                      dispatch(closeOverlayAction(OverlayNames.ASSIGNED_USER_DETAIL))
+                    }
+                  >
+                    {capitalize(user.firstName).substring(0, 1)}
+                    {capitalize(user.lastName).substring(0, 1)}
+                  </div>
+                ))}
+                {assignees.length > 4 && (
+                  <div
+                    key={`assignee_length`}
+                    className="user-thumb"
+                    aria-haspopup="true"
+                    onMouseEnter={(e) => handleAssigneeClick(e, assignees.slice(4))}
+                  >
+                    +{assignees.length - 4}
+                  </div>
+                )}
               </div>
             )}
           </div>
         </div>
-      )}
-      {state in StartedTaskStates && startedAt ? (
-        <div className="start-audit">
-          Task started by {getUserName({ user: startedBy! })}, ID: {startedBy!.employeeId} on{' '}
-          {formatDateTime(startedAt, dateAndTimeStampFormat)}
-        </div>
-      ) : null}
-
-      <div className="stop-banner">
-        <PanTool className="icon" />
-
-        <span>Complete this task before proceeding to the next task.</span>
-      </div>
-
-      <div className="task-config">
-        <div className="wrapper">
-          <div className="task-name">
-            {stageOrderTree}.{task.orderTree}. {task.name}
-          </div>
-          {showAssignmentButton && (
-            <TaskAssignmentContent
-              taskId={task.id}
-              jobId={jobId as string}
-              taskExecutionId={task.taskExecution.id}
-            />
-          )}
-
+        <div className="right-section" style={{ paddingRight: 16 }}>
           {isJobStarted && isUserAssignedToTask && (
             <>
-              <Button
-                className="start-task"
-                onClick={() => {
-                  if (enableStopForTask) {
-                    dispatch(
-                      openOverlayAction({
-                        type: OverlayNames.ADD_STOP,
-                        props: {},
-                      }),
-                    );
-                  } else {
-                    setLoadingState(true);
-                    dispatch(startTask(task.id, setLoadingState));
-                  }
-                }}
-              >
-                Start task
-              </Button>
-              <div onClick={handleClick}>
-                <MoreHoriz className="icon complete-options" />
+              <div onClick={handleClick} className="more">
+                <MoreVert />
               </div>
 
               <StyledMenu
@@ -177,60 +151,70 @@ const JobHeader: FC<
                 onClose={handleClose}
                 style={{ marginTop: 30 }}
               >
+                {task.taskExecution.state === TaskExecutionState.COMPLETED ||
+                  task.taskExecution.state === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
+                  (task.taskExecution.state === TaskExecutionState.SKIPPED && (
+                    <MenuItem
+                      onClick={() => {
+                        handleClose();
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.TASK_ERROR_CORRECTION,
+                            props: { taskId: task.id, setLoadingState },
+                          }),
+                        );
+                      }}
+                    >
+                      Error correction
+                    </MenuItem>
+                  ))}
                 <MenuItem
                   onClick={() => {
                     handleClose();
-                    dispatch(
-                      openOverlayAction({
-                        type: OverlayNames.TASK_ERROR_CORRECTION,
-                        props: { taskId: task.id, setLoadingState },
-                      }),
-                    );
+                    if (jobState !== JobStateEnum.BLOCKED) {
+                      if (canSkipTask) {
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.SKIP_TASK_MODAL,
+                            props: { taskId: task.id, setLoadingState },
+                          }),
+                        );
+                      } else {
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.COMPLETE_TASK_WITH_EXCEPTION,
+                            props: { taskId: task.id, setLoadingState },
+                          }),
+                        );
+                      }
+                    }
                   }}
                 >
-                  <Error className="icon" />
-                  Error correction
+                  {canSkipTask ? 'Skip the task' : 'Complete with Exception'}
                 </MenuItem>
               </StyledMenu>
             </>
           )}
         </div>
-
-        {task.timed ? (
-          <Timer task={task} timerState={timerState} setTimerState={setTimerState} />
-        ) : null}
       </div>
 
-      {state === TaskExecutionState.SKIPPED ||
-      state === TaskExecutionState.COMPLETED_WITH_EXCEPTION ? (
+      {[TaskExecutionState.SKIPPED, TaskExecutionState.COMPLETED_WITH_EXCEPTION].includes(
+        state,
+      ) && (
         <div className="skip-reason">
           <div className="badge">
-            <Assignment className="icon" />
             {state === TaskExecutionState.COMPLETED_WITH_EXCEPTION
               ? 'Completed with exception'
               : 'Task Skipped'}
           </div>
-          <textarea
-            className="new-form-field-textarea"
-            value={reason ?? undefined}
-            disabled
-            rows={4}
-          />
+          <Textarea defaultValue={reason ?? undefined} disabled rows={6} />
         </div>
-      ) : null}
+      )}
 
       {(correctionEnabled || correctionReason) && (
         <div className="correction-reason">
-          <div className="badge">
-            <Assignment className="icon" />
-            Error Correction
-          </div>
-          <textarea
-            className="new-form-field-textarea"
-            value={correctionReason ?? undefined}
-            disabled
-            rows={4}
-          />
+          <div className="badge">Error Correction</div>
+          <Textarea defaultValue={correctionReason ?? undefined} disabled rows={6} />
         </div>
       )}
     </div>
@@ -240,20 +224,18 @@ const JobHeader: FC<
 const Header: FC<HeaderProps> = ({
   task,
   showStartButton,
-  isTaskStarted,
   isTaskDelayed,
   enableStopForTask,
   showAssignmentButton,
   setLoadingState,
   timerState,
   setTimerState,
+  canSkipTask,
 }) => {
   return (
     <Wrapper
-      hasStop={task.hasStop}
       showStartButton={showStartButton}
       taskExecutionState={task.taskExecution.state}
-      isTaskStarted={isTaskStarted}
       isTaskDelayed={isTaskDelayed}
     >
       <JobHeader
@@ -263,6 +245,7 @@ const Header: FC<HeaderProps> = ({
         setLoadingState={setLoadingState}
         timerState={timerState}
         setTimerState={setTimerState}
+        canSkipTask={canSkipTask}
       />
     </Wrapper>
   );

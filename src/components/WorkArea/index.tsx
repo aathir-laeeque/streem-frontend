@@ -2,9 +2,9 @@ import React, { FC } from 'react';
 
 import { ContentArea, Wrapper } from './styles';
 
-const WorkArea: FC = ({ children }) => {
+const WorkArea: FC = ({ children, ...rest }) => {
   return (
-    <Wrapper>
+    <Wrapper {...rest}>
       <ContentArea>{children}</ContentArea>
     </Wrapper>
   );

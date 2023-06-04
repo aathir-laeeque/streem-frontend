@@ -5,31 +5,9 @@ const ViewWrapper = styled.div`
   grid-row-gap: 16px;
   grid-template-areas: 'header' 'list-table';
   grid-template-rows: 50px minmax(0, 1fr);
-  padding: 8px 8px 0px;
+  padding-inline: 8px;
   overflow: hidden;
   flex: 1;
-
-  .header {
-    display: flex;
-    flex-direction: column;
-    grid-area: header;
-    justify-content: space-between;
-
-    .heading {
-      color: #000000;
-      font-size: 20px;
-      font-weight: bold;
-      line-height: normal;
-      text-align: left;
-    }
-
-    .sub-heading {
-      color: #666666;
-      font-size: 12px;
-      line-height: normal;
-      text-align: left;
-    }
-  }
 
   .list-table {
     display: grid;
@@ -50,7 +28,7 @@ const TabContentWrapper = styled.div`
   .filters {
     align-items: flex-end;
     display: flex;
-    padding: 0 0 8px;
+    padding: 0 0 16px;
 
     .process-filter {
       margin-left: 16px;

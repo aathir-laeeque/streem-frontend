@@ -4,6 +4,7 @@ import { ViewWrapper } from '#views/Jobs/ListView/styles';
 import React, { FC } from 'react';
 import TabContent from './TabContent';
 import { ReportState } from './types';
+import { GeneralHeader } from '#components';
 
 const ListView = () => {
   const { selectedUseCase } = useTypedSelector((state) => state.auth);
@@ -19,9 +20,7 @@ const ListView = () => {
 
   return (
     <ViewWrapper>
-      <div className="header">
-        <div className="heading">{selectedUseCase?.label} - Reports</div>
-      </div>
+      <GeneralHeader heading={`${selectedUseCase?.label} - Reports`} />
 
       <div className="list-table">
         {renderTabHeader()}

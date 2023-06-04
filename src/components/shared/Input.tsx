@@ -64,9 +64,8 @@ const Wrapper = styled.div.attrs(({ className }) => ({
 
   .input-wrapper {
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1px solid transparent;
-    border-bottom-color: #bababa;
+    background-color: #fff;
+    border: 1px solid #ccc;
     display: flex;
     flex: 1;
     padding: 10px 16px;

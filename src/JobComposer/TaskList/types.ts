@@ -9,6 +9,7 @@ export type TaskViewProps = {
   isActive: boolean;
   task: Task;
   enableStopForTask: boolean;
+  overviewOpen: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
 };
 
 export type TaskCardProps = TaskViewProps;

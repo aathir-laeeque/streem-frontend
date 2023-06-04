@@ -11,6 +11,7 @@ export const Wrapper = styled.div.attrs({})`
     align-items: center;
     min-height: 240px;
     border: dashed 1px #e0e0e0;
+    background-color: #fff;
 
     > span {
       color: #bdbdbd;
@@ -28,7 +29,7 @@ export const Wrapper = styled.div.attrs({})`
   .signature-interaction.active {
     background-color: #fff;
     cursor: pointer;
-
+    border: 1px solid #e0e0e0;
     > span {
       color: #000;
       font-size: 14px;

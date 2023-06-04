@@ -1,5 +1,5 @@
 export interface MenuItem {
   icon: React.ReactType;
-  name: string;
+  name?: string;
   path: string;
 }

@@ -1,25 +1,26 @@
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
 import ParameterList from '#JobComposer/ActivityList';
+import TasksOverview from '#JobComposer/OverviewPage';
 import {
   CompletedTaskStates,
   MandatoryParameter,
   StartedTaskStates,
   TaskExecutionState,
 } from '#JobComposer/checklist.types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { CompletedJobStates, JobStateEnum } from '#views/Jobs/ListView/types';
+import { CircularProgress } from '@material-ui/core';
+import moment from 'moment';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { setActiveTask } from '../../actions';
 import { TaskCardProps } from '../../types';
+import MediaCard from '../MediaCard';
+import AutomationInfo from './AutomationInfo';
 import Footer from './Footer';
 import Header from './Header';
-import AutomationInfo from './AutomationInfo';
-import { CircularProgress } from '@material-ui/core';
-import moment from 'moment';
-import MediaCard from '../MediaCard';
 
 const Wrapper = styled.div.attrs({
   className: 'task-card',
@@ -27,12 +28,17 @@ const Wrapper = styled.div.attrs({
   background-color: #ffffff;
   border: 1px solid #eeeeee;
   box-shadow: 0 1px 4px 0 rgba(18, 170, 179, 0.08);
-  display: flex;
-  flex-direction: column;
   grid-area: task-card;
-  height: max-content;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto auto;
+  grid-template-areas:
+    'task-header'
+    'task-media-card'
+    'task-body'
+    'task-automation'
+    'task-footer';
 
   :hover {
     box-shadow: 0 8px 8px 0 rgba(153, 153, 153, 0.16);
@@ -49,16 +55,14 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
+const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overviewOpen }) => {
   const [isLoading, setLoadingState] = useState<boolean>(false);
-
   const {
     jobState,
     parameters: { parametersById, parametersOrderInTaskInStage },
     stages: { activeStageId },
   } = useTypedSelector((state) => state.composer);
   const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
-
   const { profile } = useTypedSelector((state) => state.auth);
 
   const {
@@ -72,10 +76,10 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
 
   const dispatch = useDispatch();
 
-  const isLoggedInUserAssigned = assignees.some((user) => user.id === profile?.id);
+  const isLoggedInUserAssigned = (assignees || []).some((user) => user.id === profile?.id);
 
   if (activeStageId) {
-    const parameters = parametersOrderInTaskInStage[activeStageId][task.id].map(
+    const parameters = parametersOrderInTaskInStage[activeStageId]?.[task.id].map(
       (parameterId) => parametersById[parameterId],
     );
 
@@ -139,49 +143,64 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           if (!isActive) {
             dispatch(setActiveTask(task.id));
           }
-          if (jobState === JobStateEnum.ASSIGNED && !showAssignmentButton) {
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.START_JOB_MODAL,
-                props: {},
-              }),
-            );
-          }
         }}
       >
-        <Header
-          task={task}
-          showStartButton={showStartButton}
-          isTaskStarted={isTaskStarted}
-          isTaskDelayed={!!isTaskDelayed}
-          enableStopForTask={enableStopForTask}
-          showAssignmentButton={showAssignmentButton}
-          setLoadingState={setLoadingState}
-          timerState={timerState}
-          setTimerState={setTimerState}
-        />
-        <MediaCard medias={task.medias} isTaskActive={isActive} />
-        <div
-          onClick={() => {
-            if (jobState === JobStateEnum.IN_PROGRESS && !isTaskStarted && isLoggedInUserAssigned) {
-              dispatch(
-                openOverlayAction({
-                  type: OverlayNames.START_TASK_ERROR_MODAL,
-                }),
-              );
-            }
-          }}
-        >
-          <ParameterList
-            parameters={parameters}
-            isTaskStarted={isTaskStarted}
-            isTaskCompleted={isTaskCompleted}
-            isCorrectingError={!!correctionEnabled}
-            isLoggedInUserAssigned={isLoggedInUserAssigned}
-          />
-        </div>
-
-        <AutomationInfo task={task} />
+        {overviewOpen?.[0] ? (
+          <TasksOverview setOverviewOpen={overviewOpen[1]} />
+        ) : (
+          <>
+            <Header
+              task={task}
+              showStartButton={showStartButton}
+              isTaskStarted={isTaskStarted}
+              isTaskDelayed={!!isTaskDelayed}
+              enableStopForTask={enableStopForTask}
+              showAssignmentButton={showAssignmentButton}
+              setLoadingState={setLoadingState}
+              timerState={timerState}
+              setTimerState={setTimerState}
+              canSkipTask={!canSkipTask}
+            />
+            <MediaCard medias={task.medias} isTaskActive={isActive} />
+            <div
+              style={{
+                gridArea: 'task-body',
+                overflow: 'auto',
+                background: '#F4F4F4',
+              }}
+              onClick={() => {
+                if (jobState === JobStateEnum.ASSIGNED && !showAssignmentButton) {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.START_JOB_MODAL,
+                      props: {},
+                    }),
+                  );
+                }
+                if (
+                  jobState === JobStateEnum.IN_PROGRESS &&
+                  !isTaskStarted &&
+                  isLoggedInUserAssigned
+                ) {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.START_TASK_ERROR_MODAL,
+                    }),
+                  );
+                }
+              }}
+            >
+              <ParameterList
+                parameters={parameters}
+                isTaskStarted={isTaskStarted}
+                isTaskCompleted={isTaskCompleted}
+                isCorrectingError={!!correctionEnabled}
+                isLoggedInUserAssigned={isLoggedInUserAssigned}
+              />
+            </div>
+            <AutomationInfo task={task} />
+          </>
+        )}
 
         <Footer
           canSkipTask={!canSkipTask}
@@ -189,6 +208,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask }) => {
           parametersHasError={parametersHasError}
           setLoadingState={setLoadingState}
           timerState={timerState}
+          enableStopForTask={enableStopForTask}
         />
         <div className="loading-wrapper">
           <CircularProgress style={{ color: '#1d84ff' }} />

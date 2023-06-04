@@ -1,7 +1,4 @@
-import { Button, FormGroup, StyledTabs, ToggleSwitch, useDrawer } from '#components';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
-import { ParameterType } from '#JobComposer/checklist.types';
+import { ParameterMode, ParameterType } from '#JobComposer/checklist.types';
 import {
   addNewParameter,
   deleteParameterSuccess,
@@ -9,6 +6,17 @@ import {
   updateParameterApi,
 } from '#PrototypeComposer/Activity/actions';
 import { generateNewParameter } from '#PrototypeComposer/Activity/utils';
+import ResourceFilter from '#PrototypeComposer/Parameters/FilterViews/Resource';
+import CalculationParameter from '#PrototypeComposer/Parameters/SetupViews/Calculation';
+import ChecklistParameter from '#PrototypeComposer/Parameters/SetupViews/Checklist';
+import LinkParameter from '#PrototypeComposer/Parameters/SetupViews/LinkParameter';
+import MaterialInstruction from '#PrototypeComposer/Parameters/SetupViews/MaterialInstruction';
+import ParameterParameter from '#PrototypeComposer/Parameters/SetupViews/Parameter';
+import ResourceParameter from '#PrototypeComposer/Parameters/SetupViews/Resource';
+import TextInstruction from '#PrototypeComposer/Parameters/SetupViews/TextInstruction';
+import YesNoParameter from '#PrototypeComposer/Parameters/SetupViews/YesNo';
+import NumberValidation from '#PrototypeComposer/Parameters/ValidationViews/Number';
+import ResourceValidation from '#PrototypeComposer/Parameters/ValidationViews/Resource';
 import {
   Checklist,
   MandatoryParameter,
@@ -16,17 +24,9 @@ import {
   Parameter,
 } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap, TargetEntityTypeVisual } from '#PrototypeComposer/constants';
-import ResourceFilter from '#PrototypeComposer/Parameters/FilterViews/Resource';
-import CalculationParameter from '#PrototypeComposer/Parameters/SetupViews/Calculation';
-import ChecklistParameter from '#PrototypeComposer/Parameters/SetupViews/Checklist';
-import MaterialInstruction from '#PrototypeComposer/Parameters/SetupViews/MaterialInstruction';
-import ParameterParameter from '#PrototypeComposer/Parameters/SetupViews/Parameter';
-import ResourceParameter from '#PrototypeComposer/Parameters/SetupViews/Resource';
-import LinkParameter from '#PrototypeComposer/Parameters/SetupViews/LinkParameter';
-import TextInstruction from '#PrototypeComposer/Parameters/SetupViews/TextInstruction';
-import YesNoParameter from '#PrototypeComposer/Parameters/SetupViews/YesNo';
-import NumberValidation from '#PrototypeComposer/Parameters/ValidationViews/Number';
-import ResourceValidation from '#PrototypeComposer/Parameters/ValidationViews/Resource';
+import { Button, FormGroup, StyledTabs, ToggleSwitch, useDrawer } from '#components';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { apiDeleteParameter, apiSingleParameter } from '#utils/apiUrls';
 import { InputTypes } from '#utils/globalTypes';
@@ -164,7 +164,6 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     data,
     parameters: { parameterOrderInTaskInStage, listById, addParameter },
     stages: { activeStageId },
-    tasks: { activeTaskId },
   } = useTypedSelector((state) => state.prototypeComposer);
   const [activeStep, setActiveStep] = useState(0);
   const [currentParameter, setCurrentParameter] = useState<Parameter>();
@@ -174,6 +173,7 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   const form = useForm<{
     mandatory: boolean;
     label: string;
+    mode: string;
     description: string;
     type: ParameterType;
     data: any;
@@ -205,13 +205,16 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     reset,
   } = form;
 
+  register('mode');
   register('mandatory');
   register('type', {
     required: true,
   });
 
-  const { mandatory, label, type } = watch(['mandatory', 'label', 'type']);
+  const { mandatory, label, type, mode } = watch(['mandatory', 'label', 'type', 'mode']);
 
+  const isLabelReadOnly = isReadOnly;
+  isReadOnly = mode === ParameterMode.READ_ONLY ? true : isReadOnly;
   const showFiltersSection = isFiltersAllowed(type);
   const showValidationsSection = isValidationsAllowed(type);
 
@@ -498,18 +501,19 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
       } else {
         let orderTree = 1;
         const generatedParameter = generateNewParameter({ orderTree, ..._data });
-        if (addParameter.action === 'task' && activeTaskId && activeStageId) {
-          const parametersInTask = parameterOrderInTaskInStage?.[activeStageId]?.[activeTaskId];
+        if (addParameter.action === 'task' && addParameter.taskId && activeStageId) {
+          const parametersInTask =
+            parameterOrderInTaskInStage?.[activeStageId]?.[addParameter.taskId];
           const maxOrderTree =
             listById?.[parametersInTask?.[parametersInTask?.length - 1]]?.orderTree ?? 0;
           orderTree = maxOrderTree + 1;
-          dispatch(resetTaskParameterError(activeTaskId));
+          dispatch(resetTaskParameterError(addParameter.taskId));
           dispatch(
             addNewParameter({
               ...generatedParameter,
               orderTree,
               checklistId: (data as Checklist).id,
-              taskId: activeTaskId,
+              taskId: addParameter.taskId,
               stageId: activeStageId,
               ..._data,
             }),
@@ -536,6 +540,7 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
         reset({
           mandatory: response.data.mandatory,
           label: response.data.label,
+          mode: response.data.mode,
           description: response.data.description,
           type: response.data.type,
           data: response.data.data,
@@ -552,15 +557,14 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   const onDelete = async () => {
     const { data } = await request('PATCH', apiDeleteParameter(addParameter!.parameterId!));
     if (data) {
-      if (data?.taskId && data?.stageId) {
-        dispatch(
-          deleteParameterSuccess({
-            taskId: data.taskId,
-            stageId: data.stageId,
-            parameterId: addParameter!.parameterId!,
-          }),
-        );
-      }
+      dispatch(
+        deleteParameterSuccess({
+          taskId: data.taskId,
+          stageId: data.stageId,
+          parameterId: addParameter!.parameterId!,
+          targetEntityType: currentParameter?.targetEntityType,
+        }),
+      );
     }
     addParameter?.fetchData && addParameter.fetchData();
     handleCloseDrawer();
@@ -595,7 +599,7 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
                 label: 'Label',
                 id: 'label',
                 name: 'label',
-                disabled: isReadOnly,
+                disabled: isLabelReadOnly,
                 ref: register({
                   required: true,
                 }),
@@ -643,7 +647,7 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     ),
     footerContent: (
       <>
-        {!isReadOnly && !addParameter?.parameterId && activeStep !== 0 && (
+        {!isLabelReadOnly && !addParameter?.parameterId && activeStep !== 0 && (
           <Button variant="secondary" onClick={handleBack}>
             Back
           </Button>
@@ -654,9 +658,9 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
           </Button>
         )}
         <Button variant="secondary" style={{ marginLeft: 'auto' }} onClick={handleCloseDrawer}>
-          {isReadOnly ? 'Close' : 'Cancel'}
+          {isLabelReadOnly ? 'Close' : 'Cancel'}
         </Button>
-        {!isReadOnly && (
+        {!isLabelReadOnly && (
           <>
             {activeStep === sections.length - 1 ? (
               <Button type="submit" disabled={!isDirty || !isValid} onClick={onSubmit}>

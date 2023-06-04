@@ -61,20 +61,23 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
     case ParameterListActions.DELETE_PARAMETER_SUCCESS:
       return {
         ...state,
-        parameterOrderInTaskInStage: {
-          ...state.parameterOrderInTaskInStage,
-          [action.payload.stageId]: {
-            ...state.parameterOrderInTaskInStage[action.payload.stageId],
-            [action.payload.taskId]: [
-              ...state.parameterOrderInTaskInStage[action.payload.stageId][
-                action.payload.taskId
-              ].filter((el) => el !== action.payload.parameterId),
-            ],
-          },
-        },
-        listById: {
-          ...omit(state.listById, [action.payload.parameterId]),
-        },
+        ...(action.payload.taskId &&
+          action.payload.stageId && {
+            parameterOrderInTaskInStage: {
+              ...state.parameterOrderInTaskInStage,
+              [action.payload.stageId]: {
+                ...state.parameterOrderInTaskInStage[action.payload.stageId],
+                [action.payload.taskId]: [
+                  ...state.parameterOrderInTaskInStage[action.payload.stageId][
+                    action.payload.taskId
+                  ].filter((el) => el !== action.payload.parameterId),
+                ],
+              },
+            },
+            listById: {
+              ...omit(state.listById, [action.payload.parameterId]),
+            },
+          }),
       };
 
     case ParameterListActions.UPDATE_STORE_PARAMETER: {

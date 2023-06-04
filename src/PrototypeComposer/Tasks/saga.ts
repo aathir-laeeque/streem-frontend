@@ -49,27 +49,35 @@ import { TaskListActions } from './reducer.types';
 
 function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
   try {
-    const { checklistId, stageId } = payload;
+    const { checklistId, stageId, orderTree, type = 'STATIC', data, name = '' } = payload;
+    let newTaskOrderTree = orderTree;
 
-    const {
-      tasks: { tasksOrderInStage, listById },
-    } = yield select((state: RootState) => state.prototypeComposer);
+    if (!newTaskOrderTree) {
+      const {
+        tasks: { tasksOrderInStage, listById },
+      } = yield select((state: RootState) => state.prototypeComposer);
+      const activeStageTasksOrder = tasksOrderInStage[stageId];
+      newTaskOrderTree = activeStageTasksOrder.length
+        ? listById[activeStageTasksOrder[activeStageTasksOrder.length - 1]].orderTree + 1
+        : 1;
+    }
 
-    const activeStageTasksOrder = tasksOrderInStage[stageId];
-
-    const newTaskOrderTree = activeStageTasksOrder.length
-      ? listById[activeStageTasksOrder[activeStageTasksOrder.length - 1]].orderTree + 1
-      : 1;
-
-    const { data, errors } = yield call(request, 'POST', apiCreateTask({ checklistId, stageId }), {
-      data: {
-        name: '',
-        orderTree: newTaskOrderTree,
+    const { data: _data, errors } = yield call(
+      request,
+      'POST',
+      apiCreateTask({ checklistId, stageId }),
+      {
+        data: {
+          name,
+          orderTree: newTaskOrderTree,
+          type,
+          data,
+        },
       },
-    });
+    );
 
-    if (data) {
-      yield put(addNewTaskSuccess(data, stageId));
+    if (_data) {
+      yield put(addNewTaskSuccess({ ..._data }, stageId));
     } else {
       yield put(setTaskError(errors));
     }
@@ -111,13 +119,19 @@ function* deleteTaskSaga({ payload }: ReturnType<typeof deleteTask>) {
         );
 
         if (reorderData) {
-          yield put(deleteTaskSuccess(payload.taskId, activeStageId, reOrderMap));
+          yield put(
+            deleteTaskSuccess({
+              taskId: payload.taskId,
+              stageId: activeStageId,
+              newOrderMap: reOrderMap,
+            }),
+          );
         } else {
           console.log('error came in reorder api  :: ', reorderErrors);
           throw new Error(reorderErrors);
         }
       } else {
-        yield put(deleteTaskSuccess(payload.taskId, activeStageId));
+        yield put(deleteTaskSuccess({ taskId: payload.taskId, stageId: activeStageId }));
       }
     } else {
       yield put(setTaskError(errors));

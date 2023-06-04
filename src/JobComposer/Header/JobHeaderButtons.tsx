@@ -7,13 +7,10 @@ import { User } from '#store/users/types';
 import { openLinkInNewTab } from '#utils';
 import { CompletedJobStates, Job, JobStateEnum, JobStateType } from '#views/Jobs/ListView/types';
 import { MenuItem } from '@material-ui/core';
-import { MoreVert } from '@material-ui/icons';
+import { ChevronLeft, ChevronRight, MoreVert } from '@material-ui/icons';
 import { navigate } from '@reach/router';
-import React, { FC, MouseEvent, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { completeJob } from '../actions';
-import FullscreenIcon from '@material-ui/icons/Fullscreen';
-import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 
 const JobHeaderButtons: FC<{
   jobState: JobStateType;
@@ -21,26 +18,17 @@ const JobHeaderButtons: FC<{
   isInboxView: boolean;
   profile: User | null;
   jobData?: Job;
-  fullView: boolean;
-  setFullView: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({
-  jobData,
-  jobState,
-  isInboxView,
-  profile,
-  isLoggedInUserAssigned,
-  setFullView,
-  fullView,
-}) => {
+  overviewOpen: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+}> = ({ jobData, jobState, isInboxView, isLoggedInUserAssigned, overviewOpen }) => {
   const { id: jobId, code, checklist } = (jobData as Job) ?? {};
 
   const dispatch = useDispatch();
-
+  const [isOverviewOpen, setOverviewOpen] = overviewOpen;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClose = () => setAnchorEl(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+  const handleClick: React.MouseEventHandler<HTMLDivElement> = (event) =>
     setAnchorEl(event.currentTarget);
 
   const showBulkAssignButton =
@@ -92,41 +80,13 @@ const JobHeaderButtons: FC<{
         </Button>
       )}
 
-      {isInboxView && jobState === JobStateEnum.ASSIGNED && isLoggedInUserAssigned && (
-        <Button
-          className="bulk-assign"
-          onClick={() =>
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.START_JOB_MODAL,
-                props: { jobId },
-              }),
-            )
-          }
-        >
-          Start Job
-        </Button>
-      )}
+      <div className="more open-overview" onClick={() => setOverviewOpen((prev) => !prev)}>
+        {isOverviewOpen ? <ChevronRight /> : <ChevronLeft />}
+      </div>
 
-      {jobState === JobStateEnum.IN_PROGRESS && isLoggedInUserAssigned && (
-        <Button
-          className="bulk-assign"
-          onClick={() => dispatch(completeJob({ jobId, details: { code }, isInboxView }))}
-        >
-          Complete Job
-        </Button>
-      )}
-
-      <Button className="more" variant="secondary" onClick={handleClick}>
-        <MoreVert className="icon" fontSize="small" />
-      </Button>
-      <Button className="more" variant="secondary" onClick={() => setFullView((prev) => !prev)}>
-        {fullView ? (
-          <FullscreenExitIcon className="icon" fontSize="small" />
-        ) : (
-          <FullscreenIcon className="icon" fontSize="small" />
-        )}
-      </Button>
+      <div className="more" onClick={handleClick}>
+        <MoreVert />
+      </div>
 
       <StyledMenu
         id="job-more-options-menu"

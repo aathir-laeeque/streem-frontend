@@ -7,6 +7,7 @@ import React, { FC } from 'react';
 import SessionActivity from './SessionActivity';
 import TabContent from './TabContent';
 import { ListViewProps } from './types';
+import { GeneralHeader } from '#components';
 
 const ListView: FC<ListViewProps> = () => {
   const shownTabs: Tab[] = [];
@@ -36,10 +37,7 @@ const ListView: FC<ListViewProps> = () => {
 
   return (
     <ViewWrapper>
-      <div className="header">
-        <div className="heading">Users</div>
-        <div className="sub-heading">Add, Remove or Edit Users</div>
-      </div>
+      <GeneralHeader heading="Users" subHeading="Add, Remove or Edit Users" />
 
       <div className="list-table">
         {renderTabHeader()}

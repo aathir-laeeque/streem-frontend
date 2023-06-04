@@ -275,6 +275,7 @@ const PrototypeForm: FC<Props> = (props) => {
           return (
             <div key={`${index}-${author.id}`} className="author">
               <Select
+                style={{ width: '100%' }}
                 value={
                   // This check is required to create a unselected select component on click of Add New ie line no : 303.
                   author.id !== '0'

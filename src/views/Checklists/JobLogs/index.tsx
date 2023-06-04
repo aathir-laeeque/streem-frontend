@@ -1,4 +1,4 @@
-import { Button, Select } from '#components';
+import { Button, GeneralHeader, Select } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import useTabs from '#components/shared/useTabs';
@@ -199,11 +199,7 @@ const JobLogs: FC<RouteComponentProps<{ id: string }>> = ({ id }) => {
 
   return (
     <ViewWrapper>
-      <div className="header">
-        <div className="heading">Job Logs</div>
-        <div className="sub-heading">View your Job Logs</div>
-      </div>
-
+      <GeneralHeader heading="Job Logs" subHeading="View your Job Logs" />
       <div className="list-table">
         {renderTabHeader()}
         {renderTabContent()}

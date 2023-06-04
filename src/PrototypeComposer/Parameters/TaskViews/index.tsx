@@ -1,13 +1,10 @@
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
+import { ParameterMode } from '#JobComposer/checklist.types';
 import {
   deleteParameter,
   deleteParameterSuccess,
   toggleNewParameter,
 } from '#PrototypeComposer/Activity/actions';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
-import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
-import { ParameterTypeMap } from '#PrototypeComposer/constants';
 import CalculationTaskView from '#PrototypeComposer/Parameters/TaskViews/Calculation';
 import MaterialInstructionTaskView from '#PrototypeComposer/Parameters/TaskViews/MaterialInstruction';
 import MediaTaskView from '#PrototypeComposer/Parameters/TaskViews/Media';
@@ -18,21 +15,25 @@ import SingleLineTaskView from '#PrototypeComposer/Parameters/TaskViews/SingleLi
 import SingleSelectTaskView from '#PrototypeComposer/Parameters/TaskViews/SingleSelect';
 import TextInstructionTaskView from '#PrototypeComposer/Parameters/TaskViews/TextInstruction';
 import YesNoTaskView from '#PrototypeComposer/Parameters/TaskViews/YesNo';
+import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
+import { ParameterTypeMap } from '#PrototypeComposer/constants';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
+import { apiDeleteParameter } from '#utils/apiUrls';
+import { request } from '#utils/request';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  RemoveCircleOutlineOutlined,
   DragIndicator,
   EditOutlined,
   FilterList,
+  RemoveCircleOutlineOutlined,
   VisibilityOutlined,
 } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import { request } from '#utils/request';
 import styled from 'styled-components';
-import { apiDeleteParameter } from '#utils/apiUrls';
 
 export const ParameterTaskViewWrapper = styled.div<{ isReadOnly: boolean }>`
   padding: ${({ isReadOnly }) => (isReadOnly ? '16px 8px' : '16px 8px 16px 0')};
@@ -170,7 +171,7 @@ export const ParameterTaskViewWrapper = styled.div<{ isReadOnly: boolean }>`
 
 const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: parameter.id,
+    id: parameter?.id,
     disabled: isReadOnly,
   });
   const style = {
@@ -178,32 +179,32 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
     transition,
   };
   const dispatch = useDispatch();
-  const { activeStageId: stageId } = useTypedSelector((state) => state.prototypeComposer.stages);
   const {
     parameters: { listById },
+    stages: { activeStageId: stageId },
   } = useTypedSelector((state) => state.prototypeComposer);
-  const parameterType = listById[parameter.id].type;
+  const parameterType = listById[parameter?.id]?.type;
 
   const onDelete = () => {
     if (
-      parameter.type === NonMandatoryParameter.INSTRUCTION ||
-      parameter.type === MandatoryParameter.CHECKLIST ||
-      parameter.type === NonMandatoryParameter.MATERIAL
+      parameter?.type === NonMandatoryParameter.INSTRUCTION ||
+      parameter?.type === MandatoryParameter.CHECKLIST ||
+      parameter?.type === NonMandatoryParameter.MATERIAL
     ) {
       archiveParameter();
     } else {
-      dispatch(deleteParameter({ parameterId: parameter.id, taskId, stageId }));
+      dispatch(deleteParameter({ parameterId: parameter?.id, taskId, stageId }));
     }
   };
 
   const archiveParameter = async () => {
-    const { data } = await request('PATCH', apiDeleteParameter(parameter.id));
+    const { data } = await request('PATCH', apiDeleteParameter(parameter?.id));
     if (data?.taskId && data?.stageId) {
       dispatch(
         deleteParameterSuccess({
           taskId: data.taskId,
           stageId: data.stageId,
-          parameterId: parameter.id,
+          parameterId: parameter?.id,
         }),
       );
     }
@@ -218,9 +219,9 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
             toggleNewParameter({
               action: 'task',
               title: 'Edit Process Parameter',
-              parameterId: parameter.id,
-              ...(parameter.type in NonMandatoryParameter && {
-                type: parameter.type,
+              parameterId: parameter?.id,
+              ...(parameter?.type in NonMandatoryParameter && {
+                type: parameter?.type,
               }),
             }),
           )
@@ -302,25 +303,28 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
       toggleNewParameter({
         action: 'task',
         title:
-          parameter.type in NonMandatoryParameter
+          parameter?.type in NonMandatoryParameter
             ? `${titlePrefix} Instruction`
             : `${titlePrefix} Process Parameter`,
-        parameterId: parameter.id,
-        ...(parameter.type in NonMandatoryParameter && {
-          type: parameter.type,
+        parameterId: parameter?.id,
+        ...(parameter?.type in NonMandatoryParameter && {
+          type: parameter?.type,
         }),
       }),
     );
   };
 
   return (
-    <ParameterTaskViewWrapper isReadOnly={isReadOnly}>
+    <ParameterTaskViewWrapper
+      isReadOnly={isReadOnly || parameter.mode === ParameterMode.READ_ONLY}
+      className="parameter-task-view"
+    >
       <div
         ref={setNodeRef}
         style={style}
         className={isDragging ? 'container dragging' : 'container'}
       >
-        {!isReadOnly && (
+        {!isReadOnly && parameter.mode !== ParameterMode.READ_ONLY && (
           <div className="draggable" {...attributes} {...listeners}>
             <DragIndicator />
           </div>
@@ -332,29 +336,33 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
             ) : (
               <>
                 <EditOutlined onClick={onViewOrEditParameter} />
-                <RemoveCircleOutlineOutlined
-                  onClick={() => {
-                    if (stageId) {
-                      dispatch(
-                        openOverlayAction({
-                          type: OverlayNames.CONFIRMATION_MODAL,
-                          props: {
-                            onPrimary: onDelete,
-                            primaryText: 'Yes',
-                            secondaryText: 'No',
-                            title: 'Remove Parameter',
-                            body: <>Are you sure you want to remove this Parameter from task?</>,
-                          },
-                        }),
-                      );
-                    }
-                  }}
-                />
+                {parameter?.mode !== ParameterMode.READ_ONLY && (
+                  <RemoveCircleOutlineOutlined
+                    onClick={() => {
+                      if (stageId) {
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.CONFIRMATION_MODAL,
+                            props: {
+                              onPrimary: onDelete,
+                              primaryText: 'Yes',
+                              secondaryText: 'No',
+                              title: 'Remove Parameter',
+                              body: <>Are you sure you want to remove this Parameter from task?</>,
+                            },
+                          }),
+                        );
+                      }
+                    }}
+                  />
+                )}
               </>
             )}
           </div>
-          {ParameterTypeMap[parameter.type]}
-          <span className="parameter-label">{parameter.label}</span>
+          <>
+            {ParameterTypeMap[parameter?.type]}
+            <span className="parameter-label">{parameter?.label}</span>
+          </>
           {renderTaskViewByType()}
         </div>
       </div>

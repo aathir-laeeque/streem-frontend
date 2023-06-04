@@ -33,14 +33,27 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
 
     case StageListAction.FETCH_ACTIVE_STAGE_DATA_SUCCESS:
       const {
-        data: { parametersById: updatedParametersById },
+        data: {
+          parametersById: _parametersById,
+          parametersOrderInTaskInStage: _parametersOrderInTaskInStage,
+          hiddenIds: _hiddenIds,
+          stage,
+        },
       } = action.payload;
 
       return {
         ...state,
         parametersById: {
           ...state.parametersById,
-          ...updatedParametersById,
+          ..._parametersById,
+        },
+        hiddenIds: { ..._hiddenIds },
+        parametersOrderInTaskInStage: {
+          ...state.parametersOrderInTaskInStage,
+          [stage.id]: {
+            ...state.parametersOrderInTaskInStage[stage.id],
+            ..._parametersOrderInTaskInStage,
+          },
         },
       };
 

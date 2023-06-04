@@ -11,7 +11,7 @@ const Wrapper = styled.div.attrs({
   display: flex;
   flex-direction: column;
   background-color: #f7f9fa;
-  margin-bottom: 24px;
+  grid-area: task-automation;
 
   .automation {
     padding: 8px 24px;

@@ -338,6 +338,6 @@ export function* TaskListSaga() {
   yield takeLeading(TaskListAction.SKIP_TASK, performActionOnTaskSaga);
   yield takeLeading(TaskListAction.COMPLETE_TASK_WITH_EXCEPTION, performActionOnTaskSaga);
   yield takeLeading(TaskListAction.ENABLE_TASK_ERROR_CORRECTION, enableErrorCorrectionSaga);
-  yield takeLeading(TaskListAction.COMPLTE_ERROR_CORRECTION, completeErrorCorrectionSaga);
+  yield takeLeading(TaskListAction.COMPLETE_ERROR_CORRECTION, completeErrorCorrectionSaga);
   yield takeLeading(TaskListAction.CANCEL_ERROR_CORRECTION, cancelErrorCorrectionSaga);
 }

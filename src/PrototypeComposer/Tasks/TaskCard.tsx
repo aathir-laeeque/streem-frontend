@@ -1,15 +1,15 @@
-import { ImageGallery, ImageUploadButton, NestedSelect, Textarea } from '#components';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
+import ParameterTaskView from '#PrototypeComposer/Parameters/TaskViews';
 import {
   MandatoryParameter,
   NonMandatoryParameter,
   TargetEntityType,
   TimerOperator,
 } from '#PrototypeComposer/checklist.types';
-import ParameterTaskView from '#PrototypeComposer/Parameters/TaskViews';
+import { ImageGallery, ImageUploadButton, NestedSelect, Textarea } from '#components';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
 import { apiGetParameters, apiMapParameterToTask } from '#utils/apiUrls';
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
@@ -17,15 +17,15 @@ import { FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { formatDuration } from '#utils/timeUtils';
 import {
-  closestCenter,
   DndContext,
   DragEndEvent,
   PointerSensor,
+  closestCenter,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import {
   AddCircleOutline,
   ArrowDropDown,
@@ -39,15 +39,16 @@ import {
   Timer,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addNewParameterSuccess, toggleNewParameter } from '../Activity/actions';
+import DynamicTaskDrawer from './DynamicTaskDrawer';
 import {
   addStop,
   deleteTask,
-  removeStop,
   reOrderParameters,
   reOrderTask,
+  removeStop,
   setActiveTask,
   updateTaskName,
 } from './actions';
@@ -68,15 +69,15 @@ const AddActivity = () => {
 const TaskCard: FC<
   TaskCardProps & { isFirstTask: boolean; isLastTask: boolean; isReadOnly: boolean }
 > = ({ task, index, isFirstTask, isLastTask, isActive, isReadOnly }) => {
+  const dispatch = useDispatch();
   const {
     data,
     parameters: { parameterOrderInTaskInStage, listById },
     stages: { activeStageId, listOrder },
     tasks: { activeTaskId },
   } = useTypedSelector((state) => state.prototypeComposer);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const stageIndex = listOrder.indexOf(activeStageId as string);
-
-  const dispatch = useDispatch();
 
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -111,7 +112,9 @@ const TaskCard: FC<
   const onChildChange = async (option: any) => {
     switch (option.value) {
       case 'add-new-parameter':
-        dispatch(toggleNewParameter({ action: 'task', title: 'Create a New Process Parameter' }));
+        dispatch(
+          toggleNewParameter({ action: 'task', title: 'Create a New Process Parameter', taskId }),
+        );
         break;
       case 'add-text':
         dispatch(
@@ -119,6 +122,7 @@ const TaskCard: FC<
             action: 'task',
             title: 'Create a New Instruction',
             type: NonMandatoryParameter.INSTRUCTION,
+            taskId,
           }),
         );
         break;
@@ -128,26 +132,28 @@ const TaskCard: FC<
             action: 'task',
             title: 'Create a New Instruction',
             type: NonMandatoryParameter.MATERIAL,
+            taskId,
           }),
         );
         break;
-      case 'subtasks':
+      case 'checklist':
         dispatch(
           toggleNewParameter({
             action: 'task',
-            title: 'Create a New Subtask',
+            title: 'Create a New Checklist',
             type: MandatoryParameter.CHECKLIST,
+            taskId,
           }),
         );
         break;
       default:
-        if (activeStageId && activeTaskId) {
+        if (activeStageId) {
           const parametersInTask = parameterOrderInTaskInStage[activeStageId][taskId];
           const maxOrderTree =
             listById?.[parametersInTask?.[parametersInTask?.length - 1]]?.orderTree ?? 0;
           const response: ResponseObj<any> = await request(
             'PATCH',
-            apiMapParameterToTask(data!.id, activeTaskId),
+            apiMapParameterToTask(data!.id, taskId),
             {
               data: {
                 parameterId: option.id,
@@ -160,7 +166,7 @@ const TaskCard: FC<
               addNewParameterSuccess({
                 parameter: response.data,
                 stageId: activeStageId,
-                taskId: activeTaskId,
+                taskId,
               }),
             );
             dispatch(
@@ -504,14 +510,15 @@ const TaskCard: FC<
                     },
                   },
                 },
-                subtasks: {
-                  label: 'Subtasks',
+                checklist: {
+                  label: 'Checklist',
                 },
               }}
               onChildChange={onChildChange}
             />
           </div>
         )}
+        {isDrawerOpen && <DynamicTaskDrawer onCloseDrawer={setIsDrawerOpen} />}
       </TaskCardWrapper>
     );
   }

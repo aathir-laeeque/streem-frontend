@@ -22,6 +22,11 @@ export const updateTaskExecutionState = (taskId: Task['id'], data: any) =>
     data,
   });
 
+export const updateTaskOrderList = (data: any) =>
+  actionSpreader(TaskListAction.UPDATE_TASK_ORDER_LIST, {
+    data,
+  });
+
 export const completeTask = ({
   taskId,
   setLoadingState,
@@ -79,7 +84,7 @@ export const completeErrorCorrection = (
   taskId: Task['id'],
   setLoadingState: React.Dispatch<React.SetStateAction<boolean>>,
 ) =>
-  actionSpreader(TaskListAction.COMPLTE_ERROR_CORRECTION, {
+  actionSpreader(TaskListAction.COMPLETE_ERROR_CORRECTION, {
     taskId,
     setLoadingState,
   });
@@ -91,4 +96,10 @@ export const cancelErrorCorrection = (
   actionSpreader(TaskListAction.CANCEL_ERROR_CORRECTION, {
     taskId,
     setLoadingState,
+  });
+
+export const updateTaskExecutionDurationOnResume = (taskId: Task['id'], data: any) =>
+  actionSpreader(TaskListAction.UPDATE_TASK_EXECUTION_DURATION, {
+    taskId,
+    data,
   });

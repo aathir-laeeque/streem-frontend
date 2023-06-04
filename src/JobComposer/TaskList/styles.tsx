@@ -3,47 +3,31 @@ import styled from 'styled-components';
 const Wrapper = styled.div`
   display: grid;
   grid-area: tasks;
-  grid-row-gap: 16px;
-  grid-template-areas: 'stage-number' 'stage-name' 'tasks-list';
-  grid-template-rows: 16px 32px 1fr;
+  grid-template-areas: 'overview tasks-list';
+  grid-template-rows: 1fr;
+  grid-template-columns: auto 1fr;
   overflow: auto;
 
-  .stage {
-    &-name {
-      align-items: center;
-      color: #000000;
-      cursor: default;
-      display: flex;
-      font-size: 24px;
-      font-weight: bold;
-      grid-area: stage-name;
+  .overview {
+    overflow: auto;
+    background-color: #fff;
+    width: 36vw;
+    display: flex;
 
-      @media (min-width: 1920px) {
-        max-width: 1200px;
-        width: 1200px;
-        margin: 0 auto;
-      }
-    }
-
-    &-number {
-      align-items: center;
-      color: #666666;
-      cursor: default;
-      display: flex;
-      font-size: 12px;
-      grid-area: stage-number;
-
-      @media (min-width: 1920px) {
-        max-width: 1200px;
-        width: 1200px;
-        margin: 0 auto;
-      }
+    @media (max-width: 900px) {
+      display: none;
     }
   }
 
   .tasks-list {
     grid-area: tasks-list;
-    padding-right: 16px;
+    overflow: hidden;
+    grid-template-rows: 1fr;
+    display: grid;
+
+    @media (max-width: 900px) {
+      padding-right: 0;
+    }
   }
 `;
 

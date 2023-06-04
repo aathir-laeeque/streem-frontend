@@ -151,11 +151,11 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
   } = useTypedSelector((state) => state.composer);
 
   const isAllTaskAssigned = stage.tasks
-    .map((task) => !!task.taskExecution.assignees.length)
+    .map((task) => !!task.taskExecution.assignees?.length)
     .every(Boolean);
 
   const isNoTaskAssigned = stage.tasks
-    .map((task) => !!task.taskExecution.assignees.length)
+    .map((task) => !!task.taskExecution.assignees?.length)
     .every((val) => val === false);
 
   const isAllTaskSelected = Object.values(sectionState).every((val) => val[0] === true);
@@ -216,7 +216,7 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
         <div className="section-body">
           {stage.tasks.map((task) => {
             const isTaskCompleted = task.taskExecution.state in CompletedTaskStates;
-            return hiddenIds[task.id] === undefined ? (
+            return (
               <div className="section-body-item" key={task.id}>
                 <Checkbox
                   disabled={isTaskCompleted}
@@ -242,7 +242,7 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
 
                 {isTaskCompleted ? <div className="pill completed">Task Complete</div> : null}
               </div>
-            ) : null;
+            );
           })}
         </div>
       ) : null}

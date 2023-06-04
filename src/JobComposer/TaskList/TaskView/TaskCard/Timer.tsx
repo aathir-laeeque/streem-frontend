@@ -17,14 +17,20 @@ const Timer: FC<{
   const isTaskCompleted =
     state === TaskExecutionState.COMPLETED || state === TaskExecutionState.COMPLETED_WITH_EXCEPTION;
 
-  const isTaskStarted = state === TaskExecutionState.IN_PROGRESS;
+  const isTaskStarted =
+    state === TaskExecutionState.IN_PROGRESS || state === TaskExecutionState.PAUSED;
 
-  const calcTimeElapsed = () =>
-    isTaskCompleted && endedAt && startedAt
-      ? moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds')
-      : isTaskStarted && recentServerTimestamp && startedAt
-      ? moment.unix(recentServerTimestamp).diff(moment.unix(startedAt), 'seconds')
-      : 0;
+  const calcTimeElapsed = () => {
+    if (isTaskCompleted && endedAt && startedAt) {
+      return moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds');
+    } else if (isTaskStarted && task?.taskExecution?.duration && startedAt) {
+      return task?.taskExecution?.duration;
+    } else if (isTaskStarted && recentServerTimestamp && startedAt) {
+      return moment.unix(recentServerTimestamp).diff(moment.unix(startedAt), 'seconds');
+    } else {
+      return 0;
+    }
+  };
 
   const updateTimerState = (updatedTimeElapsed: number) => {
     const updatedTimerState = {
@@ -52,7 +58,7 @@ const Timer: FC<{
   const [timeElapsed, setTimeElapsed] = useState(calcTimeElapsed());
 
   useEffect(() => {
-    if (componentDidMount.current) {
+    if (componentDidMount.current && !task?.taskExecution?.duration) {
       const updatedTimeElapsed: number = calcTimeElapsed();
       updateTimerState(updatedTimeElapsed);
       setTimeElapsed(updatedTimeElapsed);
@@ -83,22 +89,10 @@ const Timer: FC<{
     <div className="task-timer">
       <div className="timer-config">
         <TimerIcon className="icon" />
-
-        <div>
-          {task.timerOperator === 'NOT_LESS_THAN' ? (
-            <>
-              <span>Perform task in NLT {task.minPeriod && formatDuration(task.minPeriod)}</span>
-              <span>Max Time limit - {task.maxPeriod && formatDuration(task?.maxPeriod)}</span>
-            </>
-          ) : (
-            <span>Complete under {task.maxPeriod && formatDuration(task?.maxPeriod)}</span>
-          )}
-        </div>
       </div>
 
       <div className={`timer ${timerState.limitCrossed ? 'error' : ''}`}>
         <span>{formatDuration(timeElapsed)}</span>
-        {timerState.limitCrossed ? <span>Limit Crossed</span> : null}
       </div>
     </div>
   );

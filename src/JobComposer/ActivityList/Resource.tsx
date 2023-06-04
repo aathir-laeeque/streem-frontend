@@ -1,14 +1,14 @@
-import { MandatoryParameter } from '#JobComposer/checklist.types';
+import { MandatoryParameter, ParameterMode } from '#JobComposer/checklist.types';
 import QRIcon from '#assets/svg/QR';
-import { Button, Select } from '#components';
+import { Select } from '#components';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
-import { apiAutoInitialize, baseUrl } from '#utils/apiUrls';
+import { baseUrl } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
-import { getErrorMsg, request } from '#utils/request';
+import { request } from '#utils/request';
 import { qrCodeValidator } from '#views/Ontology/utils';
 import { LinkOutlined } from '@material-ui/icons';
 import { isArray } from 'lodash';
@@ -17,12 +17,13 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { customSelectStyles } from './MultiSelect/commonStyles';
 import { Wrapper } from './MultiSelect/styles';
-import { executeParameterLeading, fixParameterLeading, updateExecutedParameter } from './actions';
+import { executeParameterLeading, fixParameterLeading } from './actions';
 import { ParameterProps } from './types';
 
 const ResourceParameterWrapper = styled.div`
   display: flex;
   gap: 12px;
+  background-color: #fff;
   .react-custom-select {
     flex: 1;
   }
@@ -60,8 +61,8 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   const selectRef = useRef<any>();
 
   useEffect(() => {
-    getOptions();
-  }, []);
+    if (parameter?.mode && parameter.mode !== ParameterMode.READ_ONLY) getOptions();
+  }, [parameter?.mode]);
 
   useEffect(() => {
     if (parameter?.autoInitialized && parameter?.response?.choices?.length && selectRef.current) {
@@ -150,41 +151,12 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     }
   };
 
-  const handleAutoInitialize = async () => {
-    try {
-      if (data && data?.id) {
-        const { data: fetchedData, errors } = await request(
-          'PATCH',
-          apiAutoInitialize(parameter.id),
-          {
-            data: {
-              jobId: data!.id,
-            },
-          },
-        );
-        if (fetchedData) {
-          dispatch(updateExecutedParameter(fetchedData));
-        } else if (errors) {
-          throw getErrorMsg(errors);
-        }
-      }
-    } catch (error) {
-      dispatch(
-        showNotification({
-          type: NotificationType.ERROR,
-          msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
-        }),
-      );
-    }
-  };
-
   const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
 
   return (
     <Wrapper data-id={parameter.id} data-type={parameter.type}>
       <ResourceParameterWrapper>
         <Select
-          className="multi-select"
           isDisabled={parameter?.autoInitialized}
           options={options?.map((option) => ({
             value: option.id,
@@ -240,14 +212,9 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
         )}
       </ResourceParameterWrapper>
       {parameter?.autoInitialized && (
-        <>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘{linkedResourceParameter?.label}’
-          </div>
-          <Button variant="secondary" onClick={handleAutoInitialize} style={{ marginBlock: 8 }}>
-            Get Value
-          </Button>
-        </>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <LinkOutlined style={{ marginRight: 8 }} /> Linked to ‘{linkedResourceParameter?.label}’
+        </div>
       )}
     </Wrapper>
   );

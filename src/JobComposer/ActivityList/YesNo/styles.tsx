@@ -8,16 +8,19 @@ export const Wrapper = styled.div.attrs({
 
   .buttons-container {
     display: flex;
-    margin-top: 12px;
 
     .button-item {
+      flex: 1;
+      display: flex;
+      background-color: #ffffff;
       button {
         background-color: transparent;
         cursor: pointer;
         font-size: 14px;
         letter-spacing: 0.16px;
         line-height: 1.29;
-        padding: 5px 20px;
+        padding: 8px 20px;
+        flex: 1;
       }
 
       :first-child {
@@ -71,5 +74,14 @@ export const Wrapper = styled.div.attrs({
 
   .decline-reason {
     margin-top: 16px;
+    .textarea {
+      .textarea-wrapper {
+        margin-bottom: 10px;
+        > textarea {
+          background-color: #fff;
+          border: 1px solid #e0e0e0;
+        }
+      }
+    }
   }
 `;

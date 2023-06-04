@@ -18,7 +18,6 @@ const MultiSelectParameter: FC<ParameterProps & { isMulti: boolean }> = ({
 
   return (
     <Wrapper>
-      <div className="parameter-header">{isMulti ? 'Multi Select' : 'Single Select'}</div>
       <Select
         isMulti={isMulti}
         className="multi-select"

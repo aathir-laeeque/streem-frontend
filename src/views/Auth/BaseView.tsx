@@ -152,7 +152,7 @@ const Wrapper = styled.div.attrs({
     }
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     padding: 6vh 24px;
 
     .card {

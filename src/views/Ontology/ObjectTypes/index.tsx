@@ -1,4 +1,4 @@
-import { DataTable, LoadingContainer, TabContentProps } from '#components';
+import { DataTable, GeneralHeader, LoadingContainer, TabContentProps } from '#components';
 import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
 import { formatDateTime } from '#utils/timeUtils';
@@ -197,10 +197,7 @@ const ObjectTypesContent = ({ id }: RouteComponentProps<{ id: string }>) => {
 
   return (
     <ViewWrapper>
-      <div className="header">
-        <div className="heading">Object Types - {activeLoading ? '...' : active?.pluralName}</div>
-      </div>
-
+      <GeneralHeader heading={`Object Types - ${activeLoading ? '...' : active?.pluralName}`} />
       <div className="list-table">
         {renderTabHeader()}
         <LoadingContainer loading={activeLoading} component={<>{renderTabContent()}</>} />

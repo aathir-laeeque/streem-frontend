@@ -24,10 +24,11 @@ export const Wrapper = styled.div.attrs({
   }
 
   .parameter-text {
-    color: #000;
+    margin-bottom: 8px;
+    color: #525252;
+    font-weight: 400;
     font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 24px;
+    line-height: 12px;
   }
 
   .off-limit-reason {

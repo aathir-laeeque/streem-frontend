@@ -3,6 +3,7 @@ import { ExtrasState, ExtrasAction, ExtrasActionType } from './types';
 const initialState: ExtrasState = {
   connected: true,
   hasGlobalError: false,
+  isDrawerOpen: false,
 };
 
 const reducer = (state = initialState, action: ExtrasActionType): ExtrasState => {
@@ -15,6 +16,9 @@ const reducer = (state = initialState, action: ExtrasActionType): ExtrasState =>
 
     case ExtrasAction.SET_RECENT_SERVER_TIMESTAMP:
       return { ...state, recentServerTimestamp: action.payload.timestamp };
+
+    case ExtrasAction.TOGGLE_IS_DRAWER_OPEN:
+      return { ...state, isDrawerOpen: !state.isDrawerOpen };
     default:
       return state;
   }

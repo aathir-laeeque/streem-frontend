@@ -10,7 +10,7 @@ export const DrawerWrapper = styled(Drawer)`
     @media (min-width: 576px) {
       width: 100vw;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 900px) {
       width: 75vw;
     }
     @media (min-width: 1200px) {
@@ -39,7 +39,7 @@ export const DrawerWrapper = styled(Drawer)`
     }
     .drawer-body {
       padding: 0px 12px;
-      @media (min-width: 768px) {
+      @media (min-width: 900px) {
         padding: 0px 16px;
       }
       @media (min-width: 1200px) {

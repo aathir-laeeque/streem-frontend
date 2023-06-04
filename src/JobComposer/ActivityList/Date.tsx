@@ -1,4 +1,3 @@
-import { MandatoryParameter } from '#JobComposer/checklist.types';
 import { FormGroup } from '#components';
 import { useTypedSelector } from '#store';
 import { customOnChange } from '#utils/formEvents';
@@ -49,7 +48,6 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
   return (
     <div className="date-parameter">
       <div className="new-form-field">
-        <label className="new-form-field-label">Date Parameter</label>
         <FormGroup
           style={{ padding: 0 }}
           inputs={[
@@ -61,8 +59,6 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
                 ['data-type']: parameter.type,
                 ref: inputRef,
                 disabled: parameter?.autoInitialized,
-                label:
-                  parameter.type === MandatoryParameter.DATE ? 'Enter Date' : 'Enter Date Time',
                 onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
                   const value = moment(e.target.value).unix().toString();
                   onBlurHandler(value);

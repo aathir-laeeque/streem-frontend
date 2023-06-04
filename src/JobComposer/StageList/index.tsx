@@ -15,6 +15,10 @@ const Wrapper = styled.div.attrs({
   overflow: auto;
   padding: 0px 8px 0px 16px;
 
+  @media (max-width: 900px) {
+    display: none;
+  }
+
   .add-new-item {
     align-items: center;
     background-color: #1d84ff;

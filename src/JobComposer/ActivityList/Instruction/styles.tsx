@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   .parameter-header {
@@ -10,6 +10,8 @@ export const Wrapper = styled.div`
 
   .editor-class {
     overflow-wrap: break-word;
+    background-color: #fff;
+    padding: 8px 12px;
 
     * {
       font-weight: unset;
@@ -65,23 +67,4 @@ export const Wrapper = styled.div`
       margin: 0;
     }
   }
-
-  ${({ isJobsView }) =>
-    !isJobsView
-      ? css`
-          .parameter-header {
-            display: none;
-          }
-
-          .toolbar-class {
-            display: none;
-          }
-
-          .editor-class {
-            border: none;
-            padding: 0;
-            pointer-events: none;
-          }
-        `
-      : null}
 `;

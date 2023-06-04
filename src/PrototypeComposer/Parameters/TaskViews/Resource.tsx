@@ -1,10 +1,10 @@
 import { FormGroup } from '#components';
+import { ParameterMode } from '#JobComposer/checklist.types';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { baseUrl } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { FormatOptionLabelContext } from 'react-select';
 
 const ResourceTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
   const [state, setState] = useState<{
@@ -21,8 +21,8 @@ const ResourceTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) 
   });
 
   useEffect(() => {
-    getOptions();
-  }, []);
+    if (parameter?.mode && parameter.mode !== ParameterMode.READ_ONLY) getOptions();
+  }, [parameter?.mode]);
 
   const getOptions = async () => {
     setState((prev) => ({ ...prev, isLoading: true }));

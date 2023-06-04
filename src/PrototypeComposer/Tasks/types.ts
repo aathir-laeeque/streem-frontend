@@ -30,6 +30,10 @@ export type TaskMediasProps = {
 export type AddNewTaskType = {
   checklistId: Checklist['id'];
   stageId: Stage['id'];
+  orderTree?: number;
+  type?: string;
+  data?: Record<string, string>;
+  name?: string;
 };
 
 export type SetTaskTimerType = {

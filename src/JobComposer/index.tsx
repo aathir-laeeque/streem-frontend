@@ -2,21 +2,21 @@ import { useTypedSelector } from '#store';
 import { CircularProgress } from '@material-ui/core';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import Header from './Header';
+import { startPollActiveStageData, stopPollActiveStageData } from './StageList/actions';
+import TaskList from './TaskList';
 import { fetchData, resetComposer } from './actions';
 import { ComposerProps } from './composer.types';
-import Header from './Header';
-import StageList from './StageList';
-import { startPollActiveStageData, stopPollActiveStageData } from './StageList/actions';
 import { ComposerWrapper, JobLoadingWrapper } from './styles';
-import TaskList from './TaskList';
 
 const Composer: FC<ComposerProps> = ({ id, entity }) => {
   const dispatch = useDispatch();
+  const infoExpanded = useState(false);
+  const overviewOpen = useState(false);
   const {
     stages: { activeStageId },
     loading,
   } = useTypedSelector((state) => state.composer);
-  const [fullView, setFullView] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -37,10 +37,9 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
       <CircularProgress />
     </JobLoadingWrapper>
   ) : (
-    <ComposerWrapper fullView={fullView}>
-      <Header fullView={fullView} setFullView={setFullView} />
-      <StageList />
-      {activeStageId ? <TaskList /> : null}
+    <ComposerWrapper>
+      <Header infoExpanded={infoExpanded} overviewOpen={overviewOpen} />
+      {activeStageId ? <TaskList overviewOpen={overviewOpen} /> : null}
     </ComposerWrapper>
   );
 };

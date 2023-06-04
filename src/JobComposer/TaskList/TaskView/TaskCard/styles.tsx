@@ -2,21 +2,20 @@ import { TaskExecutionState } from '#JobComposer/checklist.types';
 import styled, { css } from 'styled-components';
 
 type Props = {
-  hasStop: boolean;
   showStartButton: boolean;
   taskExecutionState: TaskExecutionState;
-  isTaskStarted: boolean;
   isTaskDelayed: boolean;
 };
 
 const Wrapper = styled.div.attrs({
   className: 'task-header',
 })<Props>`
+  grid-area: task-header;
   .task-config {
-    background-color: #fafafa;
     display: flex;
     flex-direction: column;
     padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .job-header {
@@ -42,21 +41,78 @@ const Wrapper = styled.div.attrs({
       }
     }}
 
-    .stop-banner {
+    .task-info {
+      padding-block: 16px;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      background-color: #eeeeee;
-      justify-content: center;
-      padding: 8px 16px;
+      font-weight: 400;
       font-size: 12px;
-      line-height: 1.33;
-      font-weight: normal;
+      line-height: 12px;
+      letter-spacing: 0.32px;
+      color: #525252;
+      border-bottom: 1px solid #e0e0e0;
+      .left-section {
+        display: flex;
+        align-items: center;
+        > div {
+          padding-inline: 16px;
+          border-right: 1px solid #e0e0e0;
+          :last-child {
+            border-right: none;
+          }
+        }
 
-      display: ${({ hasStop }) => (hasStop ? 'flex' : 'none')};
+        .task-assignees {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
 
-      > .icon {
-        margin-right: 12px;
-        font-size: 16px;
-        color: #f2c94c;
+          > span {
+            font-size: 14px;
+            color: #999999;
+          }
+
+          > div {
+            display: flex;
+          }
+
+          .user-thumb {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            border: solid 1px #fff;
+            align-items: center;
+            background-color: #eeeeee;
+            justify-content: center;
+            display: flex;
+            color: #1d84ff;
+            margin-right: -5px;
+            font-size: 13px;
+            cursor: pointer;
+          }
+        }
+      }
+      .right-section {
+        padding-right: 16px;
+        .more {
+          padding: 6px;
+          border: none;
+          cursor: pointer;
+          background-color: #f4f4f4;
+          color: #161616;
+          display: flex;
+          align-items: center;
+        }
+
+        .complete-options {
+          display: ${({ taskExecutionState }) =>
+            taskExecutionState === TaskExecutionState.COMPLETED ||
+            taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
+            taskExecutionState === TaskExecutionState.SKIPPED
+              ? 'flex'
+              : 'none'};
+        }
       }
     }
 
@@ -76,10 +132,10 @@ const Wrapper = styled.div.attrs({
         display: flex;
 
         .task-name {
-          color: #000000;
+          color: #161616;
           flex: 1;
           font-size: 16px;
-          font-weight: bold;
+          font-weight: 600;
           line-height: 1.25;
         }
 
@@ -88,22 +144,13 @@ const Wrapper = styled.div.attrs({
           padding: 4px 8px;
           margin-left: 8px;
         }
-
-        .complete-options {
-          display: ${({ taskExecutionState }) =>
-            taskExecutionState === TaskExecutionState.COMPLETED ||
-            taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
-            taskExecutionState === TaskExecutionState.SKIPPED
-              ? 'flex'
-              : 'none'};
-        }
       }
 
       .task-timer {
         align-items: flex-start;
         display: flex;
-        margin-top: 16px;
         justify-content: space-between;
+        align-items: center;
 
         .timer-config {
           display: flex;
@@ -129,21 +176,24 @@ const Wrapper = styled.div.attrs({
 
           > .icon {
             margin-right: 8px;
-            font-size: 16px;
+            font-size: 24px;
+            color: #525252;
           }
         }
 
         .timer {
-          display: ${({ isTaskStarted }) => (isTaskStarted ? 'flex' : 'none')};
+          display: flex;
           flex-direction: column;
           align-items: center;
-          font-size: 14px;
-          line-height: 1.14;
+          font-size: 24px;
+          line-height: 24px;
+          font-weight: 700;
+          color: #525252;
 
           span {
             :first-child {
-              background-color: #eeeeee;
               padding: 4px;
+              font-weight: 700;
             }
 
             :nth-child(2n) {
@@ -154,103 +204,58 @@ const Wrapper = styled.div.attrs({
 
           &.error {
             color: #ff6b6b;
+            font-weight: 700;
           }
         }
       }
     }
 
     .skip-reason {
-      background-color: #fafafa;
-      border-top: 1px solid #dadada;
+      /* background-color: #ffedd7; */
       padding: 16px;
       display: flex;
       flex: 1;
       flex-direction: column;
 
       .badge {
-        background-color: #f7b500;
-        border-radius: 4px;
-        padding: 4px;
+        background-color: #ffedd7;
+        padding: 4px 12px;
         display: flex;
         align-items: center;
-        color: #ffffff;
+        color: #ff541e;
         width: max-content;
         margin-bottom: 16px;
-
-        .icon {
-          color: #ffffff;
-          margin-right: 4px;
-        }
       }
 
       textarea {
         border: 1px solid #dadada;
-        border-radius: 4px;
+        height: auto;
+        overflow: auto;
+        padding: 12px 16px;
       }
     }
 
     .correction-reason {
-      background-color: #fafafa;
-      border-top: 1px solid #dadada;
-      padding: 16px 32px;
+      /* background-color: #fafafa; */
+      padding: 16px;
       display: flex;
       flex: 1;
       flex-direction: column;
 
       .badge {
-        background-color: #333333;
-        border-radius: 4px;
-        padding: 4px;
+        background-color: #e0e0e0;
+        padding: 4px 12px;
         display: flex;
         align-items: center;
-        color: #ffffff;
         width: max-content;
         margin-bottom: 16px;
-
-        .icon {
-          color: #ffffff;
-          margin-right: 4px;
-        }
       }
 
       textarea {
         border: 1px solid #dadada;
-        border-radius: 4px;
-      }
-    }
-
-    .task-assignees {
-      display: flex;
-      justify-content: space-between;
-      padding: 4px 16px;
-      align-items: center;
-
-      @media (min-width: 1201px) {
-        padding: 4px 32px;
-      }
-
-      > span {
-        font-size: 14px;
-        color: #999999;
-      }
-
-      > div {
-        display: flex;
-
-        .user-thumb {
-          width: 32px;
-          height: 32px;
-          border-radius: 16px;
-          border: solid 1px #fff;
-          align-items: center;
-          background-color: #eeeeee;
-          justify-content: center;
-          display: flex;
-          color: #1d84ff;
-          margin-right: -5px;
-          font-size: 13px;
-          cursor: pointer;
-        }
+        height: auto;
+        overflow: auto;
+        padding: 12px 16px;
       }
     }
   }

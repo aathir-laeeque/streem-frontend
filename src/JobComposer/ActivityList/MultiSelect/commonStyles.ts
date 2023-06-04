@@ -1,9 +1,8 @@
 export const customSelectStyles = {
   control: (styles, { isDisabled }) => ({
     ...styles,
-    backgroundColor: '#f4f4f4',
-    border: 'none',
-    borderBottom: '1px solid #bababa',
+    backgroundColor: '#fff',
+    border: '1px solid #E0E0E0',
     borderRadius: 'none',
     boxShadow: 'none',
     cursor: isDisabled ? 'not-allowed' : 'pointer',

@@ -1,9 +1,9 @@
 import ErrorFallbackIcon from '#assets/svg/ErrorFallbackIcon';
 import { Button } from '#components';
-import { useTypedSelector } from '#store';
+import { RootState } from '#store';
 import { setGlobalError } from '#store/extras/action';
-import React, { FC } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 const Wrapper = styled.div.attrs({
@@ -42,24 +42,46 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-const ErrorBoundary: FC = ({ children }) => {
-  const { hasGlobalError } = useTypedSelector((state) => state.extras);
-  const dispatch = useDispatch();
-
-  if (hasGlobalError) {
-    return (
-      <Wrapper>
-        <ErrorFallbackIcon className="icon error-fallback" />
-        <h3>Oops! Looks like page did not load properly</h3>
-        <h6>You can reload the page by clicking the button below</h6>
-        <Button className="reload" onClick={() => dispatch(setGlobalError(false))}>
-          Reload Page
-        </Button>
-      </Wrapper>
-    );
+class ErrorBoundaryComponent extends React.Component<
+  ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps
+> {
+  constructor(props: any) {
+    super(props);
   }
 
-  return <>{children}</>;
+  componentDidCatch(error: any) {
+    console.log('error', error);
+    const { setGlobalError } = this.props;
+    setGlobalError(true);
+  }
+
+  render() {
+    const { children, hasGlobalError, setGlobalError, ...rest } = this.props;
+    if (hasGlobalError) {
+      return (
+        <Wrapper {...rest}>
+          <ErrorFallbackIcon className="icon error-fallback" />
+          <h3>Oops! Looks like page did not load properly</h3>
+          <h6>You can reload the page by clicking the button below</h6>
+          <Button className="reload" onClick={() => setGlobalError(false)}>
+            Reload Page
+          </Button>
+        </Wrapper>
+      );
+    }
+
+    return children;
+  }
+}
+
+const mapStateToProps = (state: RootState) => ({
+  hasGlobalError: state.extras?.hasGlobalError,
+});
+
+const mapDispatchToProps = {
+  setGlobalError,
 };
+
+const ErrorBoundary = connect(mapStateToProps, mapDispatchToProps)(ErrorBoundaryComponent);
 
 export { ErrorBoundary };

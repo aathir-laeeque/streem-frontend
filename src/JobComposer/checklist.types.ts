@@ -9,8 +9,8 @@ export enum MandatoryParameter {
   MEDIA = 'MEDIA',
   MULTISELECT = 'MULTISELECT',
   SHOULD_BE = 'SHOULD_BE',
-  SINGLE_SELECT = 'SINGLE_SELECT',
   SIGNATURE = 'SIGNATURE',
+  SINGLE_SELECT = 'SINGLE_SELECT',
   MULTI_LINE = 'MULTI_LINE',
   YES_NO = 'YES_NO',
   NUMBER = 'NUMBER',
@@ -31,6 +31,11 @@ export enum NonMandatoryParameter {
 
 export type ParameterType = MandatoryParameter | NonMandatoryParameter;
 
+export enum ParameterMode {
+  READ_ONLY = 'READ_ONLY',
+  READ_WRITE = 'READ_WRITE',
+}
+
 export interface Parameter {
   id: string;
   type: ParameterType;
@@ -45,6 +50,7 @@ export interface Parameter {
   show?: string[];
   autoInitialize?: Record<string, any>;
   autoInitialized?: boolean;
+  mode: ParameterMode;
 }
 
 export interface Media {
@@ -74,6 +80,8 @@ export enum TaskExecutionState {
   IN_PROGRESS = 'IN_PROGRESS',
   NOT_STARTED = 'NOT_STARTED',
   SKIPPED = 'SKIPPED',
+  PAUSED = 'PAUSED',
+  BLOCKED = 'BLOCKED',
 }
 
 export type AuditUserType = Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName'>;
@@ -181,6 +189,7 @@ export interface Task {
   timed: boolean;
   timerOperator: TimerOperator;
   automations: AutomationAction[];
+  hidden: boolean;
 }
 
 export interface Stage {

@@ -58,6 +58,7 @@ const CompleteTaskWithExceptionModal: FC<
           );
           closeOverlay();
         }}
+        disabledPrimary={exceptionReason?.length === 0}
         onSecondary={() => closeOverlay()}
         primaryText="Submit"
         secondaryText="Cancel"

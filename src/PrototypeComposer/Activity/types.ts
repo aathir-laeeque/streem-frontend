@@ -6,6 +6,7 @@ import {
   Checklist,
   Stage,
   Task,
+  TargetEntityType,
 } from '../checklist.types';
 
 export type Parameter = ParameterTypeType & {
@@ -34,8 +35,9 @@ export type AddNewParameterType = {
 
 export type DeleteParameterType = {
   parameterId: Parameter['id'];
-  taskId: Task['id'];
-  stageId: Stage['id'];
+  taskId?: Task['id'];
+  stageId?: Stage['id'];
+  targetEntityType?: TargetEntityType;
 };
 
 export enum ParameterErrors {

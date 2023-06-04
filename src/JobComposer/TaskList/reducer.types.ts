@@ -7,7 +7,14 @@ import {
 import { Stage, Task } from '../checklist.types';
 import { ComposerActionType } from '../composer.reducer.types';
 import { setActiveStage } from '../StageList/actions';
-import { removeTaskError, setActiveTask, setTaskError, updateTaskExecutionState } from './actions';
+import {
+  removeTaskError,
+  setActiveTask,
+  setTaskError,
+  updateTaskExecutionDurationOnResume,
+  updateTaskExecutionState,
+  updateTaskOrderList,
+} from './actions';
 import { TasksById, TasksOrderInStage } from './types';
 
 export type TaskListState = {
@@ -17,10 +24,12 @@ export type TaskListState = {
   taskIdWithStop?: Task['id'];
   tasksOrderInStage: TasksOrderInStage;
   stageIdWithTaskStop?: Stage['id'];
+  tasksOrderList: Record<string, string>[];
 };
 
 export enum TaskListAction {
   SET_ACTIVE_TASK = '@@jobComposer/task-list/SET_ACTIVE_TASK',
+  SET_ACTIVE_SUB_TASK = '@@jobComposer/task-list/SET_ACTIVE_SUB_TASK',
 
   START_TASK = '@@jobComposer/task-list/task/START_TASK',
   COMPLETE_TASK = '@@jobComposer/task-list/task/COMPLETE_TASK',
@@ -34,7 +43,9 @@ export enum TaskListAction {
 
   ENABLE_TASK_ERROR_CORRECTION = '@@jobComposer/task-list/task/ENABLE_TASK_ERROR_CORRECTION',
   CANCEL_ERROR_CORRECTION = '@@jobComposer/task-list/task/CANCEL_ERROR_CORRECTION',
-  COMPLTE_ERROR_CORRECTION = '@@jobComposer/task-list/task/COMPLTE_ERROR_CORRECTION',
+  COMPLETE_ERROR_CORRECTION = '@@jobComposer/task-list/task/COMPLETE_ERROR_CORRECTION',
+  UPDATE_TASK_EXECUTION_DURATION = '@@jobComposer/task-list/task/UPDATE_TASK_EXECUTION_DURATION',
+  UPDATE_TASK_ORDER_LIST = '@@jobComposer/task-list/task/UPDATE_TASK_ORDER_LIST',
 }
 
 export type TaskListActionType =
@@ -43,6 +54,8 @@ export type TaskListActionType =
       | typeof setTaskError
       | typeof updateTaskExecutionState
       | typeof removeTaskError
+      | typeof updateTaskExecutionDurationOnResume
+      | typeof updateTaskOrderList
     >
   | ReturnType<
       | typeof executeParameter

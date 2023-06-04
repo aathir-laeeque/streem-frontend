@@ -1,23 +1,22 @@
 import styled from 'styled-components';
 
-export const ComposerWrapper = styled.div<Pick<any, 'fullView'>>`
+export const ComposerWrapper = styled.div`
   display: grid;
-  grid-gap: 8px;
-  grid-row-gap: 16px;
-  grid-template-areas: 'header header' 'stages tasks';
-  grid-template-columns: 320px 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-areas: 'header' 'tasks';
+  grid-template-rows: 64px 1fr;
   overflow: hidden;
-  background-color: #ecedf1;
-  position: ${({ fullView }) => (fullView ? 'fixed' : 'static')};
-  inset: ${({ fullView }) => (fullView ? '0' : 'unset')};
+  height: 100%;
+  grid-gap: 0px;
+  grid-row-gap: 0px;
+  position: relative;
 
-  @media (max-width: 1200px) {
-    grid-template-columns: 240px 1fr;
-  }
-
-  @media (min-width: 1201px) and (max-width: 1366px) {
-    grid-template-columns: 280px 1fr;
+  .tasks-list-floating-btn {
+    position: absolute;
+    right: 5%;
+    bottom: 12%;
+    .MuiFab-primary {
+      background-color: #1d84ff;
+    }
   }
 `;
 

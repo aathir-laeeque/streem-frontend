@@ -46,7 +46,6 @@ const NumberParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) =
   return (
     <div className="number-parameter">
       <div className="new-form-field">
-        <label className="new-form-field-label">Number Parameter</label>
         <TextInput
           placeholder="Ex. 2"
           type="number"

@@ -41,7 +41,6 @@ export type State = {
 };
 
 const reducer = (state: ReducerState, action: any): ReducerState => {
-  console.log('action.type', action.type);
   switch (action.type) {
     case 'SET_INITIAL_STATE':
       state = {

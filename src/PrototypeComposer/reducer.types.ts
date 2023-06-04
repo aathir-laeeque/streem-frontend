@@ -7,7 +7,7 @@ import {
   resetComposer,
   updateHiddenParameterIds,
 } from './actions';
-import { updateStoreParameter } from './Activity/actions';
+import { deleteParameterSuccess, updateStoreParameter } from './Activity/actions';
 import { ParameterListState } from './Activity/reducer.types';
 import { Checklist } from './checklist.types';
 import { ChecklistAuditLogsState } from './ChecklistAuditLogs/types';
@@ -81,4 +81,5 @@ export type ComposerActionType = ReturnType<
   | typeof updateStoreParameter
   | typeof executeBranchingRulesParameter
   | typeof updateHiddenParameterIds
+  | typeof deleteParameterSuccess
 >;

@@ -46,7 +46,7 @@ const Wrapper = styled.div.attrs({
           width: 7vw;
           height: 5vh;
 
-          @media (max-width: 768px) {
+          @media (max-width: 900px) {
             width: 14vw;
           }
         }

@@ -128,12 +128,12 @@ export const getParameters = ({ checklist }: GetParametersType) => {
       task?.parameters?.map((parameter) => {
         parametersOrderInTaskInStage[stage.id][task.id].push(parameter.id);
         parametersById[parameter.id] = { ...parameter, hasError: false };
-        if (parameter.response?.hidden) {
+        if (parameter.response?.hidden || task.hidden) {
           hiddenParametersLength++;
           hiddenIds[parameter.id] = true;
         }
       });
-      if (task?.parameters?.length === hiddenParametersLength) {
+      if (task.hidden || task?.parameters?.length === hiddenParametersLength) {
         hiddenTasksLength++;
         hiddenIds[task.id] = true;
       }
@@ -163,12 +163,12 @@ export const updateHiddenIds = (composerState: ComposerState) => {
       const task = tasks.tasksById[taskId];
       parameters.parametersOrderInTaskInStage[stageId][taskId].forEach((parameterId) => {
         const parameter = parameters.parametersById[parameterId];
-        if (parameter.response?.hidden) {
+        if (parameter.response?.hidden || task.hidden) {
           hiddenParametersLength++;
           _hiddenIds[parameterId] = true;
         }
       });
-      if (task?.parameters?.length === hiddenParametersLength) {
+      if (task.hidden || task?.parameters?.length === hiddenParametersLength) {
         hiddenTasksLength++;
         _hiddenIds[task.id] = true;
       }

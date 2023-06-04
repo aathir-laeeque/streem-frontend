@@ -56,7 +56,7 @@ const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }
   outline: none;
   padding-block: 6px;
   padding-inline: 24px;
-  @media (min-width: 768px) {
+  @media (min-width: 900px) {
     padding-block: 8px;
   }
   @media (min-width: 1200px) {

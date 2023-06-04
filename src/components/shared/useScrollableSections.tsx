@@ -11,7 +11,7 @@ const LabelsWrapper = styled.div.attrs({
   flex-direction: column;
   overflow: auto;
   padding: 16px 6px;
-  @media (min-width: 768px) {
+  @media (min-width: 900px) {
     padding: 16px 8px;
   }
   @media (min-width: 1200px) {
@@ -59,7 +59,7 @@ const ViewsWrapper = styled.div.attrs({
   overflow: auto;
   margin: 16px 0px;
   padding: 0px 6px;
-  @media (min-width: 768px) {
+  @media (min-width: 900px) {
     padding: 0px 8px;
   }
   @media (min-width: 1200px) {
@@ -79,7 +79,7 @@ const ViewsWrapper = styled.div.attrs({
   .view {
     background: #fff;
     margin-bottom: 6px;
-    @media (min-width: 768px) {
+    @media (min-width: 900px) {
       margin-bottom: 8px;
     }
     @media (min-width: 1200px) {

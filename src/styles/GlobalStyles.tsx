@@ -148,6 +148,15 @@ const GlobalStyles = createGlobalStyle`
       margin-top: 8px;
     }
   }
+
+  // Handle input heights on osx/ios devices
+  input[type="number"],
+  input[type="text"],
+  input[type="email"],
+  input[type="date"],
+  input[type="datetime-local"] {
+    min-height: 18px;
+  }
 `;
 
 export default GlobalStyles;

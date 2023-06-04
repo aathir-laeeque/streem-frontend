@@ -1,11 +1,10 @@
 import { Task } from '#JobComposer/checklist.types';
 import { AddNewParameterType } from '#PrototypeComposer/Activity/types';
-import { Parameter, Checklist, Stage } from '#PrototypeComposer/checklist.types';
+import { Checklist, Parameter, Stage } from '#PrototypeComposer/checklist.types';
 import { AddNewTaskType, MediaDetails } from '#PrototypeComposer/Tasks/types';
 import { User } from '#store/users/types';
 import { Job } from '#views/Jobs/ListView/types';
 import { Object } from '#views/Ontology/types';
-
 import { fetchBaseUrl } from './constants';
 
 export const baseUrl = fetchBaseUrl();
@@ -317,4 +316,12 @@ export const apiCustomViews = (id?: string) => `${baseUrl}/custom-views${id ? `/
 export const apiCustomViewsArchive = (id?: string) => `${baseUrl}/custom-views/${id}/archive`;
 
 export const apiGetJobLogsExcel = () => `${baseUrl}/job-logs/download`;
-export const apiBranchingRuleExecute = () => `${baseUrl}/parameters/rules/execute/temporary`;
+
+export const apiBranchingRuleExecute = () => `${baseUrl}/parameters/execute/temporary`;
+
+export const apiInitializeSubTask = (taskId: string) =>
+  `${baseUrl}/tasks/${taskId}/sub-task/initialize`;
+
+export const apiPauseJob = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/pause`;
+
+export const apiResumeJob = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/resume`;

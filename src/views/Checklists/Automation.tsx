@@ -1,6 +1,7 @@
 import {
   BodyWrapper,
   DataTable,
+  GeneralHeader,
   LoadingContainer,
   PaginatedFetchData,
   Pagination,
@@ -64,9 +65,7 @@ const Automation: FC<Props> = ({ id }) => {
 
   return (
     <AutomationWrapper>
-      <div className="header">
-        <div className="heading">Automations</div>
-      </div>
+      <GeneralHeader heading="Automations" />
 
       <div className="list-table">
         <BodyWrapper>

@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { useMsal } from '@azure/msal-react';
 
-const Layout = styled.div.attrs({
+const Layout = styled.div.attrs<React.HTMLAttributes<HTMLDivElement>>({
   className: 'main-layout-view',
 })`
   display: grid;
@@ -25,7 +25,7 @@ const Layout = styled.div.attrs({
   background-color: #fff;
 `;
 
-const DashboardLayout: FC = ({ children }) => {
+const DashboardLayout: FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, ...rest }) => {
   const dispatch = useDispatch();
   const { instance } = useMsal();
   const { isIdle, isLoggedIn, settings, userType } = useTypedSelector((state) => state.auth);
@@ -72,7 +72,7 @@ const DashboardLayout: FC = ({ children }) => {
     debounce: 500,
   });
 
-  return <Layout>{children}</Layout>;
+  return <Layout {...rest}>{children}</Layout>;
 };
 
 export default DashboardLayout;

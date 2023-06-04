@@ -1,5 +1,7 @@
-import { Avatar } from '#components';
+import { MandatoryParameter } from '#JobComposer/checklist.types';
+import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
+import { toggleIsDrawerOpen } from '#store/extras/action';
 import { Users } from '#store/users/types';
 import { apiGetAllUsersAssignedToJob } from '#utils/apiUrls';
 import { request } from '#utils/request';
@@ -10,23 +12,25 @@ import {
   Job,
   JobStateEnum,
 } from '#views/Jobs/ListView/types';
-import { FiberManualRecord } from '@material-ui/icons';
-import { navigate } from '@reach/router';
+import { FiberManualRecord, KeyboardArrowDown, KeyboardArrowUp, Menu } from '@material-ui/icons';
 import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import JobHeaderButtons from './JobHeaderButtons';
 import Wrapper from './styles';
 
 const Header: FC<{
-  fullView: boolean;
-  setFullView: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ fullView, setFullView }) => {
+  infoExpanded: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+  overviewOpen: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+}> = ({ infoExpanded, overviewOpen }) => {
+  const dispatch = useDispatch();
+  const [isInfoExpanded, setInfoExpanded] = infoExpanded;
   const [assignedUsers, setAssignedUsers] = useState<Users | undefined>(undefined);
   const [isLoggedInUserAssigned, setIsLoggedInUserAssigned] = useState(false);
   const {
     composer: { jobState, data },
     auth: { profile },
   } = useTypedSelector((state) => state);
-  const { code: jobCode, id: jobId, checklist } = (data as Job) ?? {};
+  const { id: jobId, checklist } = (data as Job) ?? {};
   const prevJobState = usePrevious(jobState);
   const getAssignments = async () => {
     if (jobId) {
@@ -52,6 +56,51 @@ const Header: FC<{
       getAssignments();
   }, [jobState]);
 
+  const content = (parameter: any) => {
+    let contentString;
+
+    switch (parameter.type) {
+      case MandatoryParameter.SHOULD_BE:
+      case MandatoryParameter.MULTI_LINE:
+      case MandatoryParameter.SINGLE_LINE:
+      case MandatoryParameter.NUMBER:
+      case MandatoryParameter.DATE:
+      case MandatoryParameter.DATE_TIME:
+        contentString = parameter.response.value;
+        break;
+      case MandatoryParameter.YES_NO:
+        contentString = contentDetails(parameter);
+        break;
+      case MandatoryParameter.SINGLE_SELECT:
+        contentString = contentDetails(parameter);
+        break;
+      case MandatoryParameter.RESOURCE:
+        contentString = parameter.response.choices.reduce(
+          (acc: any, currChoice: any) =>
+            (acc = `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId})`),
+          '',
+        );
+        break;
+      case MandatoryParameter.MULTISELECT:
+        contentString = contentDetails(parameter);
+        break;
+      default:
+        return;
+    }
+
+    return contentString;
+  };
+
+  const contentDetails = ({ data, response }: any) => {
+    let detailList: any[] = [];
+    data.forEach((currData: any) => {
+      if (response.choices[currData.id] === 'SELECTED') {
+        return detailList.push(`${currData.name}${response.reason ? ` :${response.reason}` : ''}`);
+      }
+    });
+    return detailList.join(', ');
+  };
+
   const isInboxView = location.pathname.split('/')[1] === 'inbox';
   const isJobBlocked = jobState === AssignedJobStates.BLOCKED;
   const isJobStarted = jobState === AssignedJobStates.IN_PROGRESS;
@@ -69,41 +118,85 @@ const Header: FC<{
     : 'Not Started';
 
   return (
-    <Wrapper>
-      <div className="job-primary-header">
-        <div>
-          <div className="checklist-name">{checklist?.name}</div>
-          <div className="job-state">
-            <FiberManualRecord
-              className="icon"
-              style={{
-                fontSize: '15px',
-                color: isJobCompleted ? '#5aa700' : isJobStarted ? '#1d84ff' : '#f7b500',
-              }}
-            />
-            <div>{jobStateTitle}</div>
-          </div>
+    <Wrapper isInfoExpanded={isInfoExpanded}>
+      <div className="main-header">
+        <div className="drawer-toggle" onClick={() => dispatch(toggleIsDrawerOpen())}>
+          <Menu />
         </div>
-        <JobHeaderButtons
-          jobData={data}
-          jobState={jobState}
-          isInboxView={isInboxView}
-          isLoggedInUserAssigned={isLoggedInUserAssigned}
-          profile={profile}
-          setFullView={setFullView}
-          fullView={fullView}
-        />
+        <div className="job-primary-header">
+          <div>
+            <div className="checklist-name">{checklist?.name}</div>
+            <div className="job-state">
+              <FiberManualRecord
+                className="icon"
+                style={{
+                  fontSize: '8px',
+                  marginRight: '8px',
+                  color: isJobCompleted ? '#5aa700' : isJobStarted ? '#1d84ff' : '#f7b500',
+                }}
+              />
+              <div>{jobStateTitle}</div>
+            </div>
+          </div>
+          <JobHeaderButtons
+            jobData={data}
+            jobState={jobState}
+            isInboxView={isInboxView}
+            isLoggedInUserAssigned={isLoggedInUserAssigned}
+            profile={profile}
+            overviewOpen={overviewOpen}
+          />
+        </div>
+        <div className="expand-job-meta" onClick={() => setInfoExpanded((prev) => !prev)}>
+          {isInfoExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+        </div>
       </div>
-      {!fullView && (
-        <div className="job-secondary-header">
-          <div className="job-id">Job ID: {jobCode}</div>
-          <div className="checklist-id">Checklist ID: {checklist?.code}</div>
-          <div className="job-assignees">
-            {assignedUsers &&
-              assignedUsers?.map((author) => <Avatar user={author} key={author?.employeeId} />)}
+      <div className="job-info">
+        <div className="content">
+          <h4>Process Information</h4>
+          <div
+            className="info-row"
+            style={{ paddingBottom: 16, borderBottom: '1px solid #E0E0E0' }}
+          >
+            {[
+              { label: 'Checklist Name', value: data?.checklist.name },
+              { label: 'Checklist ID', value: data?.checklist.code },
+            ].map(({ label, value }) => (
+              <div className="info-item" key={label}>
+                <label className="info-item-label">{label}</label>
+                <span className="info-item-value">{value}</span>
+              </div>
+            ))}
           </div>
+          {data?.parameterValues?.length > 0 && (
+            <>
+              <h4>Job Information</h4>
+              <div className="info-row">
+                <div className="info-item" key={'Job ID'}>
+                  <label className="info-item-label">Job ID</label>
+                  <span className="info-item-value">{data?.code}</span>
+                </div>
+                {(data?.parameterValues || [])
+                  .reduce((acc: any, parameter: any) => {
+                    if (parameter.targetEntityType === TargetEntityType.PROCESS) {
+                      acc.push({
+                        label: parameter.label,
+                        value: content(parameter),
+                      });
+                    }
+                    return acc;
+                  }, [])
+                  .map(({ label, value }) => (
+                    <div className="info-item" key={label}>
+                      <label className="info-item-label">{label}</label>
+                      <span className="info-item-value">{value}</span>
+                    </div>
+                  ))}
+              </div>
+            </>
+          )}
         </div>
-      )}
+      </div>
     </Wrapper>
   );
 };

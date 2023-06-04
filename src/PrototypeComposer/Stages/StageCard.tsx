@@ -55,7 +55,7 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
 
   const approvalNeeded = false;
 
-  const anyParameterHasError = parametersInStage.some((parameter) => !!parameter.errors?.length);
+  const anyParameterHasError = parametersInStage.some((parameter) => !!parameter?.errors?.length);
 
   const { stageHasStop, anyTaskHasError } = tasksInStage.reduce(
     ({ stageHasStop, anyTaskHasError }, task) => {

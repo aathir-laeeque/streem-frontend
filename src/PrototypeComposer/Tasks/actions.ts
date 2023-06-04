@@ -14,8 +14,8 @@ import {
   UpdateMediaType,
 } from './types';
 
-export const addNewTask = ({ checklistId, stageId }: AddNewTaskType) =>
-  actionSpreader(TaskListActions.ADD_NEW_TASK, { checklistId, stageId });
+export const addNewTask = (payload: AddNewTaskType) =>
+  actionSpreader(TaskListActions.ADD_NEW_TASK, payload);
 
 export const addNewTaskSuccess = (newTask: Task, stageId: Stage['id']) =>
   actionSpreader(TaskListActions.ADD_NEW_TASK_SUCCESS, { newTask, stageId });
@@ -34,11 +34,15 @@ export const addStop = (taskId: Task['id']) => actionSpreader(TaskListActions.AD
 export const deleteTask = (taskId: Task['id']) =>
   actionSpreader(TaskListActions.DELETE_TASK, { taskId });
 
-export const deleteTaskSuccess = (
-  taskId: Task['id'],
-  stageId: Stage['id'],
-  newOrderMap?: Record<string, number>,
-) =>
+export const deleteTaskSuccess = ({
+  taskId,
+  stageId,
+  newOrderMap,
+}: {
+  taskId: Task['id'];
+  stageId: Stage['id'];
+  newOrderMap?: Record<string, number>;
+}) =>
   actionSpreader(TaskListActions.DELETE_TASK_SUCCESS, {
     taskId,
     stageId,

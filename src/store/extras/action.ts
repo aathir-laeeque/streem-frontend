@@ -9,3 +9,5 @@ export const setGlobalError = (hasError: boolean) =>
 
 export const setRecentServerTimestamp = (timestamp: number) =>
   actionSpreader(ExtrasAction.SET_RECENT_SERVER_TIMESTAMP, { timestamp });
+
+export const toggleIsDrawerOpen = () => actionSpreader(ExtrasAction.TOGGLE_IS_DRAWER_OPEN);

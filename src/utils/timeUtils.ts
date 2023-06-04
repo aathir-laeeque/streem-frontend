@@ -26,17 +26,17 @@ export const formatDuration = (duration: number) => {
     return (days * 24 + hours)
       .toString()
       .padStart(2, '0')
-      .concat(' hr : ')
-      .concat(minutes.toString().padStart(2, '0').concat(' min : '))
-      .concat(seconds.toString().padStart(2, '0').concat(' sec'));
+      .concat(' : ')
+      .concat(minutes.toString().padStart(2, '0').concat(' : '))
+      .concat(seconds.toString().padStart(2, '0'));
   } else if (minutes) {
     return minutes
       .toString()
       .padStart(2, '0')
-      .concat(' min : ')
-      .concat(seconds.toString().padStart(2, '0').concat(' sec'));
+      .concat(' : ')
+      .concat(seconds.toString().padStart(2, '0'));
   } else {
-    return seconds.toString().padStart(2, '0').concat(' sec');
+    return seconds.toString().padStart(2, '0');
   }
 };
 
@@ -75,4 +75,16 @@ export const formatDateByInputType = (
     : inputType === InputTypes.TIME
     ? formatDateTime(castedValue, format || timeFormat)
     : formatDateTime(castedValue, format || dateAndTimeStampFormat);
+};
+
+export const convertSecondsToTime = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  return {
+    hours,
+    minutes,
+    seconds: remainingSeconds,
+  };
 };

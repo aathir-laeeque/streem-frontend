@@ -2,7 +2,7 @@ import { unionBy } from 'lodash';
 import { Reducer } from 'redux';
 import { initialState as ParameterListState, parameterReducer } from './Activity/reducer';
 import { ParameterListActions } from './Activity/reducer.types';
-import { Checklist } from './checklist.types';
+import { Checklist, TargetEntityType } from './checklist.types';
 import {
   checklistAuditLogsReducer,
   initialState as auditLogsState,
@@ -58,6 +58,26 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
           parameters: (state.data?.parameters || []).map((p) => (p.id === parameterId ? data : p)),
         },
         parameters: parameterReducer(state.parameters, action),
+      };
+    }
+
+    case ParameterListActions.DELETE_PARAMETER_SUCCESS: {
+      const { parameterId, targetEntityType } = action.payload;
+
+      return {
+        ...state,
+        ...(targetEntityType === TargetEntityType.PROCESS
+          ? {
+              data: {
+                ...state.data,
+                ...(targetEntityType === TargetEntityType.PROCESS && {
+                  parameters: (state.data?.parameters || []).filter((p) => p.id !== parameterId),
+                }),
+              },
+            }
+          : {
+              parameters: parameterReducer(state.parameters, action),
+            }),
       };
     }
 

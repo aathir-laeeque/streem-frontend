@@ -141,6 +141,7 @@ type ItemType = {
     query?: string,
   ) => Promise<{ options: ItemType[]; pageable?: Pageable }>;
   value?: string;
+  disabled?: boolean;
 };
 
 type ItemsType = Record<string, ItemType>;
@@ -321,6 +322,7 @@ const MenuTree: FC<MenuTreeProps> = ({
           <MenuItem
             key={index}
             classes={{ root: menuItemClasses.root }}
+            disabled={currOption.disabled}
             onClick={() => {
               if (currOption.value === 'back') {
                 pagination.current = initialPagination;
@@ -384,7 +386,8 @@ export const NestedSelect: FC<NestedSelectProps> = ({
     onClose();
   };
 
-  const onClose = () => {
+  const onClose = (e?: React.ChangeEvent<{}>) => {
+    e && e.stopPropagation();
     _pagination.current = initialPagination;
     setState((prev) => ({
       ...prev,
@@ -410,6 +413,8 @@ export const NestedSelect: FC<NestedSelectProps> = ({
     }
   };
 
+  const { MenuProps, ...restStyledSelectProps } = rest;
+
   return (
     <StyledSelect
       id={id}
@@ -427,7 +432,7 @@ export const NestedSelect: FC<NestedSelectProps> = ({
           onScroll: handleOnScroll,
         },
         container: document.getElementById(id),
-        ...rest.MenuProps,
+        ...MenuProps,
       }}
       displayEmpty
       classes={{
@@ -437,9 +442,12 @@ export const NestedSelect: FC<NestedSelectProps> = ({
       className={selectClasses.styles}
       renderValue={label}
       open={openSelect}
-      onOpen={() => setState((prev) => ({ ...prev, openSelect: true }))}
+      onOpen={(e) => {
+        e.stopPropagation();
+        setState((prev) => ({ ...prev, openSelect: true }));
+      }}
       onClose={onClose}
-      {...rest}
+      {...restStyledSelectProps}
     >
       <MenuTree
         items={items}

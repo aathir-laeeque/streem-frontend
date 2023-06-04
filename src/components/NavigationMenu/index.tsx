@@ -1,17 +1,40 @@
+import Logo from '#assets/svg/Logo';
+import QRIcon from '#assets/svg/QR.svg';
+import AccountCircle from '#assets/svg/account-circle.svg';
+import UseCaseIcon from '#assets/svg/use-case.svg';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { NestedSelect, NestedSelectProps } from '#components/shared/NestedSelect';
+import checkPermission from '#services/uiPermissions';
+import { useTypedSelector } from '#store';
+import { toggleIsDrawerOpen } from '#store/extras/action';
+import { switchFacility } from '#store/facilities/actions';
+import { ALL_FACILITY_ID } from '#utils/constants';
+import { logout, setSelectedUseCase } from '#views/Auth/actions';
+import { qrCodeValidator } from '#views/Ontology/utils';
+import { UserType } from '#views/UserAccess/ManageUser/types';
+import { useMsal } from '@azure/msal-react';
+import { Divider } from '@material-ui/core';
+import { SelectProps } from '@material-ui/core/Select';
 import {
-  PeopleOutline,
+  AccountTreeOutlined,
+  ArrowForwardIos,
+  AssessmentOutlined,
+  ChevronLeft,
   DescriptionOutlined,
   MailOutline,
-  AccountTreeOutlined,
-  AssessmentOutlined,
+  Menu as MenuIcon,
+  PeopleOutline,
+  PublicOutlined,
+  Settings,
 } from '@material-ui/icons';
-import { Link } from '@reach/router';
+import { Link, navigate } from '@reach/router';
 import React, { FC } from 'react';
-import checkPermission from '#services/uiPermissions';
-import { Menu, Wrapper, NavItem } from './styles';
+import { useDispatch } from 'react-redux';
+import { Menu, NavItem, Wrapper } from './styles';
 import { MenuItem } from './types';
-import { useTypedSelector } from '#store';
-import { ALL_FACILITY_ID } from '#utils/constants';
 
 export const navigationOptions = {
   inbox: { name: 'Inbox', icon: MailOutline },
@@ -21,19 +44,73 @@ export const navigationOptions = {
   reports: { name: 'Reports', icon: AssessmentOutlined },
 };
 
+const menuProps: SelectProps['MenuProps'] = {
+  anchorOrigin: {
+    vertical: 'top',
+    horizontal: 'right',
+  },
+  transformOrigin: {
+    horizontal: -4,
+    vertical: 'top',
+  },
+};
+
 const NavigationMenu: FC = () => {
-  const { selectedFacility: { id: facilityId = '' } = {} } = useTypedSelector(
-    (state) => state.auth,
-  );
-  const menuItems: MenuItem[] = [];
+  const dispatch = useDispatch();
+  const { instance } = useMsal();
+  const {
+    auth: { facilities, selectedFacility, userId, selectedUseCase, useCaseMap, profile, userType },
+    extras: { isDrawerOpen },
+  } = useTypedSelector((state) => state);
+
+  const facilitiesOptions = facilities.reduce<NestedSelectProps['items']>((acc, facility) => {
+    acc[facility.id] = {
+      label: facility.name,
+    };
+    return acc;
+  }, {});
+
+  const menuItems: MenuItem[] = [
+    {
+      path: '/home',
+      icon: () => (
+        <div style={{ width: 204 }}>
+          <Logo style={{ width: '172px' }} />
+        </div>
+      ),
+    },
+  ];
   Object.entries(navigationOptions).forEach(([key, value]) => {
-    if (checkPermission([facilityId === ALL_FACILITY_ID ? 'globalSidebar' : 'sidebar', key])) {
+    if (
+      checkPermission([selectedFacility?.id === ALL_FACILITY_ID ? 'globalSidebar' : 'sidebar', key])
+    ) {
       menuItems.push({ ...value, path: `/${key}` });
     }
   });
 
+  const onSelectWithQR = async (data: string) => {
+    try {
+      const qrData = JSON.parse(data);
+      if (qrData) {
+        await qrCodeValidator({
+          data: qrData,
+          callBack: () =>
+            navigate(`/ontology/object-types/${qrData.objectTypeId}/objects/${qrData.id}`),
+          validateObjectType: true,
+        });
+      }
+    } catch (error) {
+      dispatch(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
+        }),
+      );
+    }
+  };
+
   return (
-    <Wrapper>
+    <Wrapper className="navigation-menu">
       <Menu>
         {menuItems.map(({ path, name, icon: Icon }, index) => (
           <Link
@@ -50,13 +127,136 @@ const NavigationMenu: FC = () => {
                 },
               };
             }}
+            onClick={() => isDrawerOpen && dispatch(toggleIsDrawerOpen())}
           >
             <NavItem>
               <Icon size="24" />
-              <span>{name}</span>
+              {name && <span>{name}</span>}
             </NavItem>
           </Link>
         ))}
+      </Menu>
+      <Menu>
+        {selectedFacility && (
+          <>
+            <Divider />
+            <NestedSelect
+              id="facility-selector"
+              items={facilitiesOptions}
+              onChildChange={(option) => {
+                dispatch(
+                  switchFacility({
+                    facilityId: option.value as string,
+                    loggedInUserId: userId!,
+                  }),
+                );
+              }}
+              MenuProps={menuProps}
+              label={() => (
+                <NavItem>
+                  <PublicOutlined />
+                  <span>{selectedFacility?.name || ''} Facility</span>
+                  <ArrowForwardIos className="secondary-icon" />
+                </NavItem>
+              )}
+            />
+            <Divider />
+          </>
+        )}
+        <NavItem
+          onClick={() => {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.QR_SCANNER,
+                props: { onSuccess: onSelectWithQR },
+              }),
+            );
+          }}
+        >
+          <img src={QRIcon} />
+          <span>Scan</span>
+        </NavItem>
+        {selectedUseCase && !location.pathname.includes('/home') && (
+          <NestedSelect
+            id="use-case-selector"
+            items={Object.values(useCaseMap).reduce<any>((acc, useCase) => {
+              if (useCase.enabled) {
+                acc[useCase.id] = {
+                  ...useCase,
+                  disabled: !useCase.enabled,
+                };
+              }
+              return acc;
+            }, {})}
+            onChildChange={(option) => {
+              dispatch(setSelectedUseCase(option));
+              navigate('/inbox');
+            }}
+            MenuProps={menuProps}
+            label={() => (
+              <NavItem>
+                <img src={UseCaseIcon} />
+                <span>Use Case</span>
+                <ArrowForwardIos className="secondary-icon" />
+              </NavItem>
+            )}
+          />
+        )}
+        {selectedFacility && checkPermission(['header', 'usersAndAccess']) && (
+          <NestedSelect
+            id="system-settings-selector"
+            items={{
+              'users-and-access': {
+                label: 'Users and Access',
+              },
+            }}
+            onChildChange={() => {
+              navigate('/users');
+            }}
+            MenuProps={menuProps}
+            label={() => (
+              <NavItem>
+                <Settings />
+                <span>Settings</span>
+                <ArrowForwardIos className="secondary-icon" />
+              </NavItem>
+            )}
+          />
+        )}
+        <NestedSelect
+          id="account-operations-selector"
+          items={{
+            ...(selectedFacility && {
+              'my-account': {
+                label: 'My Account',
+              },
+            }),
+            logout: {
+              label: 'Logout',
+            },
+          }}
+          MenuProps={menuProps}
+          onChildChange={(option: any) => {
+            if (option.value === 'my-account') {
+              navigate(`/users/profile/${profile?.id}`);
+            } else {
+              dispatch(logout(userType === UserType.AZURE_AD ? instance : undefined));
+            }
+          }}
+          label={() => (
+            <NavItem>
+              <img src={AccountCircle} />
+              <span>
+                {profile?.firstName} {profile?.lastName}
+              </span>
+              <ArrowForwardIos className="secondary-icon" />
+            </NavItem>
+          )}
+        />
+        <Divider />
+        <NavItem key="nav-drawer-toggle" onClick={() => dispatch(toggleIsDrawerOpen())}>
+          {isDrawerOpen ? <ChevronLeft /> : <MenuIcon />}
+        </NavItem>
       </Menu>
     </Wrapper>
   );

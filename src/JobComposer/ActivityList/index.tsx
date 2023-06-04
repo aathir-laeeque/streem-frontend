@@ -1,4 +1,3 @@
-import { Entity } from '#JobComposer/composer.types';
 import { useTypedSelector } from '#store';
 import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
@@ -8,18 +7,18 @@ import styled, { css } from 'styled-components';
 import { MandatoryParameter, NonMandatoryParameter } from '../checklist.types';
 import CalculationParameter from './Calculation';
 import ChecklistParameter from './Checklist';
+import DateParameter from './Date';
 import InstructionParameter from './Instruction';
 import MaterialParameter from './Material';
 import MediaParameter from './Media';
 import MultiSelectParameter from './MultiSelect';
 import NumberParameter from './Number';
+import ResourceParameter from './Resource';
 import ShouldBeParameter from './ShouldBe';
 import SignatureParameter from './Signature';
 import TextboxParameter from './Textbox';
-import { ParameterListProps } from './types';
 import YesNoParameter from './YesNo';
-import ResourceParameter from './Resource';
-import DateParameter from './Date';
+import { ParameterListProps } from './types';
 
 const Wrapper = styled.div.attrs({
   className: 'parameter-list',
@@ -35,8 +34,7 @@ const Wrapper = styled.div.attrs({
       : null}
 
   .parameter {
-    border-bottom: 1px dashed #dadada;
-    padding: 16px;
+    padding: 14px 16px;
 
     :last-child {
       border-bottom: none;
@@ -84,26 +82,30 @@ const Wrapper = styled.div.attrs({
       color: #999999;
       font-size: 12px;
       line-height: 0.83;
-      margin-top: 16px;
+      margin-top: 8px;
     }
 
     .calculation-parameter {
       display: flex;
       flex-direction: column;
+      background-color: #fff;
+      padding: 10px 12px;
+      border: 1px solid #e0e0e0;
 
       .head {
         opacity: 0.6;
-        margin-bottom: 16px;
+        margin-bottom: 10px;
       }
 
       .expression {
-        margin-bottom: 24px;
+        margin-bottom: 15px;
+        margin-left: 12px;
       }
 
       .variable {
         display: flex;
-        margin-bottom: 4px;
         gap: 8px;
+        margin-left: 12px;
         .name {
           font-weight: bold;
         }
@@ -116,7 +118,11 @@ const Wrapper = styled.div.attrs({
     }
 
     .parameter-label {
-      margin-bottom: 16px;
+      margin-bottom: 8px;
+      color: #525252;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 12px;
     }
   }
 `;
@@ -130,7 +136,6 @@ const ParameterList: FC<ParameterListProps> = ({
 }) => {
   const {
     composer: {
-      entity,
       parameters: { hiddenIds },
     },
   } = useTypedSelector((state) => state);
@@ -143,22 +148,20 @@ const ParameterList: FC<ParameterListProps> = ({
       isCorrectingError={isCorrectingError}
     >
       {parameters.map((parameter) => {
-        const { state, audit } = parameter?.response;
+        const { state, audit } = parameter?.response || {};
         if (hiddenIds?.[parameter.id]) return null;
         return (
           <div key={parameter.id} className="parameter">
-            {entity === Entity.JOB ? (
-              parameter.type in MandatoryParameter && !parameter.mandatory ? (
-                <div className="optional-badge">Optional</div>
-              ) : null
-            ) : null}
+            {parameter.type in MandatoryParameter && !parameter.mandatory && (
+              <div className="optional-badge">Optional</div>
+            )}
 
-            {parameter.hasError ? (
+            {parameter.hasError && (
               <div className="error-badge">
                 <Error className="icon" />
                 <span>Mandatory Parameter Incomplete</span>
               </div>
-            ) : null}
+            )}
 
             {parameter?.label &&
               ![
@@ -170,7 +173,6 @@ const ParameterList: FC<ParameterListProps> = ({
                   {parameter.label}
                 </div>
               )}
-
             {(() => {
               switch (parameter.type) {
                 case MandatoryParameter.CHECKLIST:
@@ -279,7 +281,7 @@ const ParameterList: FC<ParameterListProps> = ({
               }
             })()}
 
-            {state !== 'NOT_STARTED' ? (
+            {state !== 'NOT_STARTED' && (
               <div className="parameter-audit">
                 {audit
                   ? audit.modifiedBy && (
@@ -290,7 +292,7 @@ const ParameterList: FC<ParameterListProps> = ({
                     )
                   : 'Updating...'}
               </div>
-            ) : null}
+            )}
           </div>
         );
       })}

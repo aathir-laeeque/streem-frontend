@@ -1,15 +1,14 @@
+import { Task, TimerOperator } from '#PrototypeComposer/checklist.types';
 import { BaseModal, Select } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { Task, TimerOperator } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
 import { ArrowDropDown, ArrowDropUp, DeleteOutlined, Error as ErrorIcon } from '@material-ui/icons';
-import moment from 'moment';
 import React, { FC, useEffect, useReducer, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { TaskTimerErrorCodes } from '../Tasks/types';
-
+import { convertSecondsToTime } from '#utils/timeUtils';
 import { removeTaskTimer, resetTaskError, setTaskTimer } from '../Tasks/actions';
 
 const TIMER_OPERATORS = [
@@ -150,43 +149,43 @@ const InputField: FC<InputFieldProps> = ({ decrease, increase, unit, value }) =>
 );
 
 const InputGroup: FC<InputGroupProps> = ({ setValue, value }) => {
-  const duration = moment.duration(value, 'seconds');
+  const { hours, minutes, seconds } = convertSecondsToTime(value);
 
   return (
     <div className="input-group">
       <InputField
-        value={duration.asHours()}
+        value={hours}
         unit="Hr"
         increase={() => {
-          setValue(moment.duration(duration.add(1, 'hour'), 'seconds').asSeconds());
+          setValue(value + 3600);
         }}
         decrease={() => {
-          if (duration.hours() > 0) {
-            setValue(moment.duration(duration.subtract(1, 'hour'), 'seconds').asSeconds());
+          if (hours > 0) {
+            setValue(value - 3600);
           }
         }}
       />
       <InputField
-        value={duration.minutes()}
+        value={minutes}
         unit="Min"
         increase={() => {
-          setValue(moment.duration(duration.add(1, 'minute'), 'seconds').asSeconds());
+          setValue(value + 60);
         }}
         decrease={() => {
-          if (duration.minutes() > 0) {
-            setValue(moment.duration(duration.subtract(1, 'minute'), 'seconds').asSeconds());
+          if (minutes > 0) {
+            setValue(value - 60);
           }
         }}
       />
       <InputField
-        value={duration.seconds()}
+        value={seconds}
         unit="Sec"
         increase={() => {
-          setValue(moment.duration(duration.add(1, 'second'), 'seconds').asSeconds());
+          setValue(value + 1);
         }}
         decrease={() => {
-          if (duration.seconds() > 0) {
-            setValue(moment.duration(duration.subtract(1, 'second'), 'seconds').asSeconds());
+          if (seconds > 0) {
+            setValue(value - 1);
           }
         }}
       />
@@ -241,7 +240,7 @@ const TimedTaskConfig: FC<CommonOverlayProps<TimedTaskConfigProps>> = ({
     error: null,
   });
 
-  const timeout = useRef<null | number>(null);
+  const timeout = useRef<null | ReturnType<typeof setTimeout>>(null);
 
   useEffect(() => {
     localDispatch({

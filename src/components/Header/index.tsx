@@ -60,8 +60,8 @@ const Header: FC = () => {
   };
 
   return (
-    <Wrapper>
-      <ImageWrapper>
+    <Wrapper className="header-bar">
+      <ImageWrapper className="header-logo">
         <Logo style={{ width: '125px', cursor: 'pointer' }} onClick={() => navigate('/')} />
       </ImageWrapper>
       <div className="right-section">

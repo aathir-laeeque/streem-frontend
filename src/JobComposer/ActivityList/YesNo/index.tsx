@@ -121,7 +121,9 @@ const YesNoParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) =>
 
   return (
     <Wrapper data-id={parameter.id} data-type={parameter.type}>
-      <div data-for={parameter.id}>{parameter.label}</div>
+      <div className="parameter-label" data-for={parameter.id}>
+        {parameter.label}
+      </div>
       <div className="buttons-container">
         {parameter.data
           .sort((a, b) => (a.type > b.type ? -1 : 1))

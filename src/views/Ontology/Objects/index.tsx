@@ -1,4 +1,4 @@
-import { DataTable, LoadingContainer, TabContentProps } from '#components';
+import { DataTable, GeneralHeader, LoadingContainer, TabContentProps } from '#components';
 import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
 import { apiGetJobLogs } from '#utils/apiUrls';
@@ -19,11 +19,11 @@ type RelationLogsState = {
   checklistId?: string;
 };
 
-const JobLogsTabContent: FC<TabContentProps> = ({ label, values: { objectTypeId, id } }) => {
+const JobLogsTabContent: FC<TabContentProps> = () => {
   const {
     objects: { active },
   } = useTypedSelector((state) => state.ontology);
-  const [{ rows, columns, checklistId, loading }, setState] = useState<RelationLogsState>({
+  const [{ rows, columns }, setState] = useState<RelationLogsState>({
     rows: [],
     columns: [
       {
@@ -183,14 +183,13 @@ const ObjectsContent = ({
       loading={isAddingNew ? false : loadingObject}
       component={
         <ViewWrapper>
-          <div className="header">
-            <div className="heading">
-              {isAddingNew
+          <GeneralHeader
+            heading={
+              isAddingNew
                 ? `Adding a new ${selectedObjectType?.displayName}`
-                : `${selectedObjectType?.displayName} - ${selectedObject?.displayName}`}
-            </div>
-          </div>
-
+                : `${selectedObjectType?.displayName} - ${selectedObject?.displayName}`
+            }
+          />
           <div className="list-table">
             {renderTabHeader()}
             {renderTabContent()}

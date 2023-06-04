@@ -1,4 +1,4 @@
-import { AutomationAction } from '#JobComposer/checklist.types';
+import { AutomationAction, ParameterMode } from '#JobComposer/checklist.types';
 import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { CollaboratorState, Collaborator } from './reviewer.types';
@@ -72,6 +72,8 @@ export type Parameter = {
   reason?: string;
   autoInitialize?: Record<string, any>;
   autoInitialized?: boolean;
+  mode: ParameterMode;
+  hidden: boolean;
 };
 
 export type Media = {

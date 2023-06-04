@@ -1,4 +1,4 @@
-import { Button, Select } from '#components';
+import { Button, GeneralHeader, Select } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import useTabs from '#components/shared/useTabs';
@@ -289,11 +289,10 @@ const JobListView: FC<ListViewProps> = () => {
 
   return (
     <ViewWrapper>
-      <div className="header">
-        <div className="heading">{selectedUseCase?.label} - Jobs</div>
-        <div className="sub-heading">Create, Assign and view Completed Jobs</div>
-      </div>
-
+      <GeneralHeader
+        heading={`${selectedUseCase?.label} - Jobs`}
+        subHeading="Create, Assign and view Completed Jobs"
+      />
       <div className="list-table">
         {renderTabHeader()}
         {renderTabContent()}

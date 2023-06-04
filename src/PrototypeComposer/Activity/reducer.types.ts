@@ -32,6 +32,7 @@ export type ParameterListState = {
     parameterId?: string;
     fetchData?: () => void;
     type?: ParameterType;
+    taskId?: string;
   };
   readonly hiddenParameterIds: Record<string, boolean>;
   readonly parameters: {

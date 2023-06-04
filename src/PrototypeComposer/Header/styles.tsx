@@ -54,6 +54,28 @@ const HeaderWrapper = styled.div`
 
   .main-header {
     background-color: #ffffff;
+    display: flex;
+
+    .drawer-toggle {
+      width: 0px;
+      overflow: hidden;
+      transition: width 0.2s ease-in;
+      display: flex;
+      gap: 12px;
+      margin: 12px 0px 12px 12px;
+      cursor: pointer;
+      align-items: center;
+      background: #f4f4f4;
+      justify-content: center;
+    }
+
+    @media (max-width: 900px) {
+      height: 64px;
+      .drawer-toggle {
+        width: 40px;
+        height: 40px;
+      }
+    }
 
     .checklist-nav-header {
       padding: 16px 16px 0px 16px;
@@ -69,6 +91,7 @@ const HeaderWrapper = styled.div`
       display: flex;
       flex: 1;
       padding: 12px 16px;
+      align-items: center;
 
       &-left {
         display: flex;
@@ -117,7 +140,7 @@ const HeaderWrapper = styled.div`
         #edit,
         #view-collaborators {
           padding-inline: 10px;
-          @media (min-width: 768px) {
+          @media (min-width: 900px) {
             padding-block: 6px;
           }
           @media (min-width: 1200px) {

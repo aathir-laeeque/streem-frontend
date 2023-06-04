@@ -8,7 +8,7 @@ export enum Entity {
   CHECKLIST = 'Checklist',
 }
 
-export const JOB_STAGE_POLLING_TIMEOUT = 60000;
+export const JOB_STAGE_POLLING_TIMEOUT = 3000;
 
 export type ComposerProps = RouteComponentProps<{
   id: Checklist['id'] | Job['id'];

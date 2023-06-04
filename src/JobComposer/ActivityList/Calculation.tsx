@@ -1,16 +1,8 @@
-import { Button } from '#components';
 import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
-import { useDispatch } from 'react-redux';
-import { executeParameter, fixParameter } from './actions';
 import { ParameterProps } from './types';
 
-const CalculationParameter: FC<ParameterProps> = ({
-  parameter,
-  isCorrectingError,
-  isTaskCompleted,
-}) => {
-  const dispatch = useDispatch();
+const CalculationParameter: FC<ParameterProps> = ({ parameter }) => {
   const {
     parameters: { parametersById, parametersMappedToJobById },
   } = useTypedSelector((state) => state.composer);
@@ -30,7 +22,7 @@ const CalculationParameter: FC<ParameterProps> = ({
               {value.label} =
               {parametersById?.[value.parameterId]?.response?.value ||
                 parametersMappedToJobById?.[value.parameterId]?.response?.value ||
-                '-'}
+                ' -'}
             </span>
           </span>
         );

@@ -20,9 +20,8 @@ const MediaWrapper = styled.div.attrs({
 
   .card {
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1px solid #1d84ff;
-    border-radius: 4px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -135,14 +134,16 @@ const MediaParameter: FC<ParameterProps> = ({
 
   return (
     <MediaWrapper data-id={parameter.id} data-type={parameter.type}>
-      <TaskMedias
-        medias={parameter.response?.medias ?? []}
-        parameterId={parameter.id}
-        isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
-        isParameter
-      />
+      {parameter.response?.medias?.length > 0 && (
+        <TaskMedias
+          medias={parameter.response?.medias ?? []}
+          parameterId={parameter.id}
+          isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
+          isParameter
+        />
+      )}
       {!isTaskCompleted && (
-        <div style={{ display: 'flex', marginTop: '24px' }}>
+        <div style={{ display: 'flex' }}>
           {isUploading ? (
             <LinearProgress style={{ height: 8, width: '100%', color: '#1d84ff' }} />
           ) : (

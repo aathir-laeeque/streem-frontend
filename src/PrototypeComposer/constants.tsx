@@ -75,7 +75,7 @@ const RenderParameterLabel: React.FC<{ label: string; icon: JSX.Element }> = ({ 
 export const ParameterTypeMap: Record<string, JSX.Element | string> = {
   [MandatoryParameter.CHECKLIST]: (
     <RenderParameterLabel
-      label="Subtasks"
+      label="Checklist"
       icon={ParameterIconByType[MandatoryParameter.CHECKLIST]}
     />
   ),

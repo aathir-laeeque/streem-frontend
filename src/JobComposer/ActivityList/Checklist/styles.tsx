@@ -3,6 +3,8 @@ import styled from 'styled-components';
 export const Wrapper = styled.div.attrs({
   className: 'checklist-parameter',
 })`
+  background-color: #fff;
+  padding: 0 12px;
   .list {
     &-container {
       list-style: none;

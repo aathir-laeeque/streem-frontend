@@ -83,11 +83,11 @@ export const getDateUnits = (inputType: InputTypes) => {
   switch (inputType) {
     case InputTypes.DATE:
       return {
-        DAYS: 'Days',
+        DAYS: 'Days from today',
       };
     default:
       return {
-        HOURS: 'Hours',
+        HOURS: 'Hours from now',
         // DAYS: 'Days',
         // WEEKS: 'Weeks',
         // MONTHS: 'Months',

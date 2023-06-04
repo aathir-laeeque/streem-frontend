@@ -8,6 +8,7 @@ export const Wrapper = styled.div.attrs({
     line-height: 1.33;
     letter-spacing: 0.32px;
     margin-bottom: 8px;
+    background-color: #fff;
   }
 
   .multi-select {
@@ -27,7 +28,7 @@ export const Wrapper = styled.div.attrs({
 
       .item-content {
         align-items: center;
-        background-color: #f4f4f4;
+        /* background-color: #f4f4f4; */
         border: 1px solid transparent;
         border-bottom-color: #bababa;
         display: flex;
