@@ -5,7 +5,7 @@ import { NotificationActions, NotificationType } from './types';
 
 export const showNotification = (payload: {
   type: NotificationType;
-  msg: string;
+  msg: string | JSX.Element;
   delayTime?: number;
   detail?: string;
   icon?: SvgIconComponent;

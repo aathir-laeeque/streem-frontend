@@ -165,7 +165,8 @@ function CustomStepIcon(props: StepIconProps) {
 const CreateJobDrawer: FC<{
   onCloseDrawer: React.Dispatch<React.SetStateAction<any>>;
   checklist?: Record<string, string>;
-}> = ({ onCloseDrawer, checklist }) => {
+  selectedObject?: any;
+}> = ({ onCloseDrawer, checklist, selectedObject }) => {
   const dispatch = useDispatch();
   const {
     jobListView: { submitting, createdData },
@@ -190,10 +191,10 @@ const CreateJobDrawer: FC<{
 
   const sections = [
     {
-      label: 'Select a Process',
+      label: 'Job Details',
       value: '0',
       panelContent: <div />,
-      renderFn: () => <JobForm form={form} checklist={checklist} />,
+      renderFn: () => <JobForm form={form} checklist={checklist} selectedObject={selectedObject} />,
     },
     {
       label: 'Schedule',

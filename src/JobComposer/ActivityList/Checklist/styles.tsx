@@ -4,7 +4,7 @@ export const Wrapper = styled.div.attrs({
   className: 'checklist-parameter',
 })`
   background-color: #fff;
-  padding: 0 12px;
+  padding-inline: 16px;
   .list {
     &-container {
       list-style: none;
@@ -28,6 +28,10 @@ export const Wrapper = styled.div.attrs({
         background-color: transparent;
         cursor: pointer;
         padding-left: 0;
+
+        :last-child {
+          border-bottom: none;
+        }
       }
 
       > .icon {

@@ -10,18 +10,25 @@ import React, { FC, useRef, useState } from 'react';
 import { RegisterOptions, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { createObject, editObject } from '../actions';
 import { FlagPositions, getBooleanFromDecimal } from '../ObjectTypes';
+import { createObject, editObject } from '../actions';
 import { Cardinality, CommonFields, Constraint, Validation } from '../types';
 
 const ObjectFormWrapper = styled.div`
   background-color: #fff;
   overflow: auto;
   height: 100%;
+  display: flex;
+  flex: 1;
 
   form {
-    margin: auto;
-    max-width: 500px;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    .form-group {
+      justify-content: space-between;
+    }
 
     .error-container {
       color: #cc5656;
@@ -30,6 +37,11 @@ const ObjectFormWrapper = styled.div`
     .actions {
       padding: 0 16px 16px;
       display: flex;
+      flex-direction: row-reverse;
+      gap: 16px;
+      button {
+        margin-right: 0;
+      }
     }
   }
 `;

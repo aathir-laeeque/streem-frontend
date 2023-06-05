@@ -31,8 +31,9 @@ import {
   unarchiveObject,
 } from '../actions';
 import { Choice, Object, ObjectTypeProperty } from '../types';
+import AddEditObjectDrawer from './components/AddEditObjectDrawer';
 
-const ObjectList: FC<TabContentProps> = ({ label }) => {
+const ObjectList: FC<TabContentProps> = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const {
@@ -44,6 +45,7 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
   const [filters, setFilters] = useState<Record<string, string | number>>({
     usageStatus: 1,
   });
+  const [showAddEditObjectDrawer, setShowAddEditObjectDrawer] = useState(false);
   const shouldFetch = useRef(true);
   const properties = active?.properties || [];
   const relations = active?.relations || [];
@@ -297,7 +299,7 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
                 id="create"
                 onClick={() => {
                   dispatch(setActiveObject());
-                  navigate(`${location.pathname}/objects/new`);
+                  setShowAddEditObjectDrawer(true);
                 }}
               >
                 Create New
@@ -324,6 +326,15 @@ const ObjectList: FC<TabContentProps> = ({ label }) => {
             }))}
           />
           <Pagination pageable={pageable} fetchData={fetchData} />
+          {active && showAddEditObjectDrawer && (
+            <AddEditObjectDrawer
+              onCloseDrawer={setShowAddEditObjectDrawer}
+              values={{
+                objectTypeId: active.id,
+                id: 'new',
+              }}
+            />
+          )}
         </TabContentWrapper>
       }
     />

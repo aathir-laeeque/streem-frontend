@@ -1,7 +1,35 @@
+import { DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { FilterField, Pageable } from '#utils/globalTypes';
 import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import React, { FC } from 'react';
-import { FilterField, Pageable } from '#utils/globalTypes';
-import { DEFAULT_PAGE_SIZE } from '#utils/constants';
+import styled from 'styled-components';
+
+const PaginationWrapper = styled.div.attrs(({ className = 'pagination', id = 'pagination' }) => ({
+  className,
+  id,
+}))`
+  margin-top: auto;
+  padding: 4px 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  > .icon {
+    color: #000000;
+  }
+
+  > span {
+    cursor: pointer;
+    padding: 8px 0;
+    margin: 0 10px;
+    font-size: 14px;
+    border-bottom: 4px solid transparent;
+
+    &.active {
+      border-bottom-color: #1d84ff;
+    }
+  }
+`;
 
 export type PaginatedFetchData = {
   filters?: FilterField[];
@@ -17,14 +45,14 @@ export const Pagination: FC<{
   const showPaginationArrows = pageable.totalPages > 10;
 
   return (
-    <div className="pagination">
+    <PaginationWrapper>
       <ArrowLeft
         className={`icon ${showPaginationArrows ? '' : 'hide'}`}
         onClick={() => {
           if (pageable.page > 0) {
             fetchData({
               page: pageable.page - 1,
-              size: pageSize || DEFAULT_PAGE_SIZE,
+              size: pageSize || pageable.pageSize || DEFAULT_PAGE_SIZE,
             });
           }
         }}
@@ -38,7 +66,7 @@ export const Pagination: FC<{
             onClick={() =>
               fetchData({
                 page: el,
-                size: pageSize || DEFAULT_PAGE_SIZE,
+                size: pageSize || pageable.pageSize || DEFAULT_PAGE_SIZE,
               })
             }
           >
@@ -51,11 +79,11 @@ export const Pagination: FC<{
           if (pageable.page < pageable.totalPages - 1) {
             fetchData({
               page: pageable.page + 1,
-              size: pageSize || DEFAULT_PAGE_SIZE,
+              size: pageSize || pageable.pageSize || DEFAULT_PAGE_SIZE,
             });
           }
         }}
       />
-    </div>
+    </PaginationWrapper>
   );
 };

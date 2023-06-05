@@ -331,9 +331,17 @@ export const apiJobInfo = (jobId: string) => `${baseUrl}/jobs/${jobId}/info`;
 export const apiInitializeSubTask = (taskId: string) =>
   `${baseUrl}/tasks/${taskId}/sub-task/initialize`;
 
+export const apiGetProcessesByResource = (objectTypeId: string) =>
+  `${baseUrl}/checklists/by/resource/${objectTypeId}`;
+
+export const apiGetJobsByResource = (objectId: string) => `${baseUrl}/jobs/by/resource/${objectId}`;
+
+export const apiGetJobsForObject = () => `${baseUrl}/jobs/by/resource`;
+
 export const apiPauseJob = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/pause`;
 
 export const apiResumeJob = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/resume`;
+
 export const apiScheduleJob = (jobId: string) => `${baseUrl}/jobs/${jobId}/schedule`;
 
 export const apiProcessScheduler = () => `${baseUrl}/schedulers`;

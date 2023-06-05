@@ -16,6 +16,7 @@ import styled from 'styled-components';
 export interface JobFormProps {
   form: any;
   checklist?: Record<string, string>;
+  selectedObject?: any;
 }
 
 const JobFormWrapper = styled.div.attrs({})`
@@ -25,7 +26,7 @@ const JobFormWrapper = styled.div.attrs({})`
   gap: 8px;
 `;
 
-export const JobForm: FC<JobFormProps> = ({ form, checklist }) => {
+export const JobForm: FC<JobFormProps> = ({ form, checklist, selectedObject }) => {
   const { register, setValue, watch } = form;
   const { checklistId } = watch(['checklistId']);
   const dispatch = useDispatch();
@@ -177,6 +178,7 @@ export const JobForm: FC<JobFormProps> = ({ form, checklist }) => {
               form={form}
               parameter={parameter}
               onChangeHandler={onChangeHandler}
+              selectedObject={selectedObject}
             />
           ),
       )}

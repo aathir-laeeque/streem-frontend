@@ -1,3 +1,4 @@
+import React from 'react';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { closeOverlayAction } from '#components/OverlayContainer/actions';
@@ -16,6 +17,7 @@ import {
   fetchJobsSuccess,
 } from './actions';
 import { Job, ListViewAction } from './types';
+import { navigate } from '@reach/router';
 
 function* fetchJobsSaga({ payload }: ReturnType<typeof fetchJobs>) {
   try {
@@ -54,7 +56,14 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,
-        msg: 'Job created successfully',
+        msg: (
+          <div>
+            <a className="clickable" onClick={() => navigate(`/inbox/${data.id}`)}>
+              {data.code}
+            </a>{' '}
+            created successfully
+          </div>
+        ),
       }),
     );
 

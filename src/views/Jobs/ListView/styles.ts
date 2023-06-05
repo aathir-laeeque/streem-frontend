@@ -52,30 +52,6 @@ const TabContentWrapper = styled.div`
     }
   }
 
-  .pagination {
-    margin-top: auto;
-    padding: 4px 0 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    > .icon {
-      color: #000000;
-    }
-
-    > span {
-      cursor: pointer;
-      padding: 8px 0;
-      margin: 0 10px;
-      font-size: 14px;
-      border-bottom: 4px solid transparent;
-
-      &.active {
-        border-bottom-color: #1d84ff;
-      }
-    }
-  }
-
   #more-actions {
     display: flex;
     align-items: center;
@@ -121,6 +97,83 @@ const TabContentWrapper = styled.div`
 
     :hover {
       color: #1d84ff;
+    }
+  }
+
+  .job-list {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+    gap: 16px;
+    .job-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+      border: 1px solid #e0e0e0;
+      .job-row-section {
+        display: flex;
+        &.left {
+          flex: 1;
+          flex-direction: column;
+          gap: 8px;
+          padding: 16px 16px 8px 16px;
+          height: 100%;
+          .job-row-section-left {
+            display: flex;
+            &.top {
+              .job-name {
+                margin: 0;
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 16px;
+                letter-spacing: 0.16px;
+                color: #1d84ff;
+                cursor: pointer;
+              }
+              .schedule-info {
+                margin-left: auto;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                span {
+                  font-weight: 400;
+                  font-size: 12px;
+                  line-height: 12px;
+                  letter-spacing: 0.32px;
+                  color: #161616;
+                }
+                .icon {
+                  padding: 2px;
+                  background: #e0e0e0;
+                  border-radius: 50%;
+
+                  svg {
+                    font-size: 12px;
+                  }
+                }
+                .primary {
+                  cursor: pointer;
+                  color: #1d84ff;
+
+                  :hover {
+                    color: #1d84ff;
+                  }
+                }
+              }
+            }
+          }
+        }
+        &.right {
+          width: 36px;
+          height: 100px;
+          background-color: #f4f4f4;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        }
+      }
     }
   }
 `;

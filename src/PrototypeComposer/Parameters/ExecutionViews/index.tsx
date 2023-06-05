@@ -73,7 +73,12 @@ export const ParameterViewWrapper = styled.div`
   }
 `;
 
-const ParameterView: FC<ParameterProps> = ({ parameter, form, onChangeHandler }) => {
+const ParameterView: FC<ParameterProps> = ({
+  parameter,
+  form,
+  onChangeHandler,
+  selectedObject,
+}) => {
   const {
     parameters: { listById },
   } = useTypedSelector((state) => state.prototypeComposer);
@@ -135,7 +140,9 @@ const ParameterView: FC<ParameterProps> = ({ parameter, form, onChangeHandler })
 
       case MandatoryParameter.RESOURCE:
       case MandatoryParameter.MULTI_RESOURCE:
-        return <ResourceTaskView parameter={parameter} form={form} />;
+        return (
+          <ResourceTaskView parameter={parameter} form={form} selectedObject={selectedObject} />
+        );
 
       default:
         return null;

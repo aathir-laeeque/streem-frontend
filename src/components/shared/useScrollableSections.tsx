@@ -1,7 +1,7 @@
+import useScrollSpy from '#utils/useScrollSpy';
 import { capitalize } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import useScrollSpy from '#utils/useScrollSpy';
 
 const LabelsWrapper = styled.div.attrs({
   className: 'scrollable-labels',
@@ -49,6 +49,37 @@ const LabelsWrapper = styled.div.attrs({
   }
 `;
 
+export const CardWithTitle = styled.div.attrs(
+  ({ className = 'card-with-title', id = 'card-with-title' }) => ({
+    className,
+    id,
+  }),
+)`
+  .card-label {
+    padding: 16px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16px;
+    color: #161616;
+    margin: unset;
+    border-bottom: solid 1px #e0e0e0;
+  }
+  background: #fff;
+  margin-bottom: 6px;
+  display: flex;
+  flex-direction: column;
+  @media (min-width: 900px) {
+    margin-bottom: 8px;
+  }
+  @media (min-width: 1200px) {
+    margin-bottom: 16px;
+  }
+
+  :last-child {
+    margin-bottom: unset;
+  }
+`;
+
 const ViewsWrapper = styled.div.attrs({
   className: 'scrollable-views',
   id: 'scrollable-views',
@@ -64,31 +95,6 @@ const ViewsWrapper = styled.div.attrs({
   }
   @media (min-width: 1200px) {
     padding: 0px 16px;
-  }
-
-  h4 {
-    padding: 16px;
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 1.2;
-    color: #333333;
-    margin: unset;
-    border-bottom: solid 1px #dadada;
-  }
-
-  .view {
-    background: #fff;
-    margin-bottom: 6px;
-    @media (min-width: 900px) {
-      margin-bottom: 8px;
-    }
-    @media (min-width: 1200px) {
-      margin-bottom: 24px;
-    }
-
-    :last-child {
-      margin-bottom: unset;
-    }
   }
 `;
 
@@ -166,15 +172,14 @@ export function useScrollableSections({ title, items }: useScrollableSectionsPro
     <ViewsWrapper ref={scrollTarget}>
       <div ref={contentTarget} style={{ paddingBottom }}>
         {items.map(({ view: View, label }, index) => (
-          <div
-            className="view"
+          <CardWithTitle
             id={`section_view_${index}`}
             key={`section_view_${index}`}
             ref={(el) => (itemsRef.current[index] = el as HTMLDivElement)}
           >
-            {label && <h4>{label}</h4>}
+            {label && <h4 className="card-label">{label}</h4>}
             {View}
-          </div>
+          </CardWithTitle>
         ))}
       </div>
     </ViewsWrapper>

@@ -4,7 +4,6 @@ import { Button, LoadingContainer, StyledTabs, useDrawer } from '#components';
 import { apiJobInfo } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
-import { CreateOutlined } from '@material-ui/icons';
 import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { RRule } from 'rrule';
@@ -315,9 +314,6 @@ const JobInfoDrawer: FC<{
                   <div className="job-summary">
                     <div className="scheduler-heading">
                       <h4>Schedule</h4>
-                      <Button variant="textOnly">
-                        <CreateOutlined /> Create
-                      </Button>
                     </div>
                     {job.jobScheduler ? (
                       <ReadOnlyGroup

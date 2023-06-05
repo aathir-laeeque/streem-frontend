@@ -1,6 +1,6 @@
 import { ToastContainer } from 'react-toastify';
-import styled from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
+import styled from 'styled-components';
 
 const Notification = styled(ToastContainer)`
   .Toastify__toast-container {
@@ -37,6 +37,10 @@ const Notification = styled(ToastContainer)`
           margin-top: 4px;
           font-size: 12px;
           color: inherit;
+        }
+        .clickable {
+          text-decoration: underline;
+          font-weight: 600;
         }
       }
     }

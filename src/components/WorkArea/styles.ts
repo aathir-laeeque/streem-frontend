@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   grid-area: workarea;
-  background-color: #ecedf1;
+  background-color: #f4f4f4;
   display: flex;
   flex-direction: column;
   overflow: hidden;

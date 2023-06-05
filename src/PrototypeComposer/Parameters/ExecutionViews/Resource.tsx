@@ -36,7 +36,11 @@ const ResourceParameterWrapper = styled.div`
   }
 `;
 
-const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
+const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'> & { selectedObject?: any }> = ({
+  parameter,
+  form,
+  selectedObject,
+}) => {
   const dispatch = useDispatch();
   const [state, setState] = useState<{
     isLoading: Boolean;
@@ -83,6 +87,42 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
       clearInterval(interval);
     };
   }, [linkedParameter]);
+
+  useEffect(() => {
+    if (selectedObject?.objectType?.id === parameter?.data?.objectTypeId) {
+      setTimeout(() => {
+        setValue(
+          parameter.id,
+          {
+            ...parameter,
+            data: {
+              ...parameter.data,
+              choices: [
+                {
+                  objectId: selectedObject.id,
+                  objectDisplayName: selectedObject.displayName,
+                  objectExternalId: selectedObject.externalId,
+                  collection: selectedObject.collection,
+                },
+              ],
+            },
+            response: {
+              value: null,
+              reason: '',
+              state: 'EXECUTED',
+              choices: {},
+              medias: [],
+              parameterValueApprovalDto: null,
+            },
+          },
+          {
+            shouldDirty: true,
+            shouldValidate: true,
+          },
+        );
+      }, 100);
+    }
+  }, []);
 
   const getOptions = async (url?: string) => {
     if (url) {

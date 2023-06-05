@@ -93,6 +93,7 @@ export type ObjectTarget = CommonFields & {
 
 export type ObjectRelation = CommonFields & {
   targets: ObjectTarget[];
+  objectTypeId: string;
 };
 
 export type Object = CommonFields & {

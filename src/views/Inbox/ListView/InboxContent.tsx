@@ -1,6 +1,7 @@
-import { Checklist } from '#JobComposer/checklist.types';
+import { LabelValueRow } from '#JobComposer/Header/styles';
+import { Checklist, MandatoryParameter } from '#JobComposer/checklist.types';
+import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 import {
-  DataTable,
   LoadingContainer,
   PaginatedFetchData,
   Pagination,
@@ -14,10 +15,13 @@ import { apiInboxJobsCount } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { request } from '#utils/request';
+import { formatDateTime } from '#utils/timeUtils';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import JobInfoDrawer from '#views/Jobs/Components/JobInfo';
-import { CountCards, getJobsColumnByTab } from '#views/Jobs/ListView/JobsContent';
+import { CountCards } from '#views/Jobs/ListView/JobsContent';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
+import { ArrowForward, ChevronLeft } from '@material-ui/icons';
+import { navigate } from '@reach/router';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -150,6 +154,51 @@ const InboxContent: FC<TabContentProps> = ({
     if (!checklistPageable.last) fetchChecklistData({ page: checklistPageable.page + 1 });
   };
 
+  const content = (parameter: any) => {
+    let contentString;
+
+    switch (parameter.type) {
+      case MandatoryParameter.SHOULD_BE:
+      case MandatoryParameter.MULTI_LINE:
+      case MandatoryParameter.SINGLE_LINE:
+      case MandatoryParameter.NUMBER:
+      case MandatoryParameter.DATE:
+      case MandatoryParameter.DATE_TIME:
+        contentString = parameter.response.value;
+        break;
+      case MandatoryParameter.YES_NO:
+        contentString = contentDetails(parameter);
+        break;
+      case MandatoryParameter.SINGLE_SELECT:
+        contentString = contentDetails(parameter);
+        break;
+      case MandatoryParameter.RESOURCE:
+        contentString = parameter.response.choices.reduce(
+          (acc: any, currChoice: any) =>
+            (acc = `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId})`),
+          '',
+        );
+        break;
+      case MandatoryParameter.MULTISELECT:
+        contentString = contentDetails(parameter);
+        break;
+      default:
+        return;
+    }
+
+    return contentString;
+  };
+
+  const contentDetails = ({ data, response }: any) => {
+    let detailList: any[] = [];
+    data.forEach((currData: any) => {
+      if (response.choices[currData.id] === 'SELECTED') {
+        return detailList.push(`${currData.name}${response.reason ? ` :${response.reason}` : ''}`);
+      }
+    });
+    return detailList.join(', ');
+  };
+
   return (
     <TabContentWrapper>
       {cardsValues.length > 0 && <CountCards items={cardsValues} onChange={setFilterFields} />}
@@ -202,7 +251,49 @@ const InboxContent: FC<TabContentProps> = ({
         loading={loading}
         component={
           <>
-            <DataTable columns={getJobsColumnByTab(label, setSelectedJob)} rows={jobs} />
+            <div className="job-list">
+              {jobs.map((job) => (
+                <div className="job-row" key={job.id}>
+                  <div className="job-row-section left">
+                    <div className="job-row-section-left top">
+                      <h5 className="job-name" onClick={() => navigate(`/inbox/${job.id}`)}>
+                        {job.checklist.name}
+                      </h5>
+                      {job.expectedStartDate && job.expectedEndDate && (
+                        <div className="schedule-info">
+                          <span>{formatDateTime(job.expectedStartDate)}</span>
+                          <span className="icon">
+                            <ArrowForward />
+                          </span>
+                          <span>{formatDateTime(job.expectedEndDate)}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="job-row-section-left bottom">
+                      <LabelValueRow>
+                        {(job?.parameterValues || [])
+                          .filter((p) => p.targetEntityType === TargetEntityType.PROCESS)
+                          .slice(0, 5)
+                          .map((parameter) => (
+                            <div className="info-item" key={parameter.label}>
+                              <label className="info-item-label">{parameter.label}</label>
+                              <span className="info-item-value">{content(parameter)}</span>
+                            </div>
+                          ))}
+                      </LabelValueRow>
+                    </div>
+                  </div>
+                  <div
+                    className="job-row-section right"
+                    onClick={() => {
+                      setSelectedJob(job);
+                    }}
+                  >
+                    <ChevronLeft />
+                  </div>
+                </div>
+              ))}
+            </div>
             <Pagination pageable={pageable} fetchData={fetchData} />
           </>
         }

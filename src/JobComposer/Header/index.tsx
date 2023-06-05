@@ -16,7 +16,7 @@ import { FiberManualRecord, KeyboardArrowDown, KeyboardArrowUp, Menu } from '@ma
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import JobHeaderButtons from './JobHeaderButtons';
-import Wrapper from './styles';
+import Wrapper, { LabelValueRow } from './styles';
 
 const Header: FC<{
   infoExpanded: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
@@ -81,6 +81,18 @@ const Header: FC<{
           '',
         );
         break;
+
+      case MandatoryParameter.MULTI_RESOURCE:
+        contentString = parameter?.response?.choices
+          .reduce(
+            (acc: any, currChoice: any) =>
+              (acc =
+                acc + `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId})\n`),
+            '',
+          )
+          ?.split('\n')
+          ?.map((str: any) => <p>{str}</p>);
+        break;
       case MandatoryParameter.MULTISELECT:
         contentString = contentDetails(parameter);
         break;
@@ -118,7 +130,7 @@ const Header: FC<{
     : 'Not Started';
 
   return (
-    <Wrapper isInfoExpanded={isInfoExpanded}>
+    <Wrapper isInfoExpanded={isInfoExpanded} style={{ zIndex: 2 }}>
       <div className="main-header">
         <div className="drawer-toggle" onClick={() => dispatch(toggleIsDrawerOpen())}>
           <Menu />
@@ -154,10 +166,7 @@ const Header: FC<{
       <div className="job-info">
         <div className="content">
           <h4>Process Information</h4>
-          <div
-            className="info-row"
-            style={{ paddingBottom: 16, borderBottom: '1px solid #E0E0E0' }}
-          >
+          <LabelValueRow style={{ paddingBottom: 16, borderBottom: '1px solid #E0E0E0' }}>
             {[
               { label: 'Checklist Name', value: data?.checklist.name },
               { label: 'Checklist ID', value: data?.checklist.code },
@@ -167,11 +176,11 @@ const Header: FC<{
                 <span className="info-item-value">{value}</span>
               </div>
             ))}
-          </div>
+          </LabelValueRow>
           {data?.parameterValues?.length > 0 && (
             <>
               <h4>Job Information</h4>
-              <div className="info-row">
+              <LabelValueRow>
                 <div className="info-item" key={'Job ID'}>
                   <label className="info-item-label">Job ID</label>
                   <span className="info-item-value">{data?.code}</span>
@@ -192,7 +201,7 @@ const Header: FC<{
                       <span className="info-item-value">{value}</span>
                     </div>
                   ))}
-              </div>
+              </LabelValueRow>
             </>
           )}
         </div>

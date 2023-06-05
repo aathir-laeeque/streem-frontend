@@ -19,6 +19,7 @@ export type ParameterProps = {
   isReadOnly: boolean;
   onChangeHandler: (data: Parameter) => void;
   form: UseFormMethods;
+  selectedObject?: any;
 };
 
 export type AddNewParameterType = {

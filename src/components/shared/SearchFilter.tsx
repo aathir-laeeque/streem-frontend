@@ -73,6 +73,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
   showDropdown = false,
   updateFilterFields,
   label,
+  ...rest
 }) => {
   const [selectedOption, setSelectedOption] = useState<DropdownOption>((dropdownOptions ?? [])[0]);
 
@@ -121,7 +122,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
   };
 
   return (
-    <Wrapper>
+    <Wrapper {...rest}>
       {showDropdown ? (
         <div className="dropdown-button">
           <Button onClick={handleClick}>
