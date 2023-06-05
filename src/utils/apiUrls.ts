@@ -339,6 +339,8 @@ export const apiCreateObjectTypeProperty = (objectTypeId: string) =>
 export const apiArchiveObjectTypeProperty = (objectTypeId: string) =>
   `${baseUrl}/object-types/${objectTypeId}/properties/archive`;
 
+export const apiHiddenParams = () => `${baseUrl}/parameters/visibility`;
+
 export const apiCreateObjectTypeRelation = (objectTypeId: string) =>
   `${baseUrl}/object-types/${objectTypeId}/relations`;
 

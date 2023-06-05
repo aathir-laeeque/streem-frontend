@@ -33,9 +33,11 @@ import { groupErrors } from './utils';
 
 function* fetchComposerDataSaga({ payload }: ReturnType<typeof fetchComposerData>) {
   try {
-    const { id, entity } = payload;
+    const { id, entity, setLoading } = payload;
 
-    yield put(fetchComposerDataOngoing({ entity }));
+    if (setLoading) {
+      yield put(fetchComposerDataOngoing({ entity }));
+    }
 
     if (entity === ComposerEntity.CHECKLIST) {
       const { data, errors } = yield call(request, 'GET', apiGetChecklist(id));

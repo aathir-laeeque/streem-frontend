@@ -1,5 +1,8 @@
 import { PaginatedFetchData, Select } from '#components';
-import { executeBranchingRulesParameter } from '#PrototypeComposer/actions';
+import {
+  executeBranchingRulesParameter,
+  updateHiddenParameterIds,
+} from '#PrototypeComposer/actions';
 import { fetchParameters, fetchParametersSuccess } from '#PrototypeComposer/Activity/actions';
 import { Parameter } from '#PrototypeComposer/Activity/types';
 import { MandatoryParameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
@@ -41,6 +44,27 @@ export const JobForm: FC<JobFormProps> = ({ form, checklist, selectedObject }) =
     },
   } = useTypedSelector((state) => state);
 
+  useEffect(() => {
+    const initialHiddenParameters: Record<string, string[]>[] = [];
+    if (parametersList.length) {
+      let updatedParam = {
+        hide: [],
+        show: [],
+      };
+      parametersList.forEach((param) => {
+        if (param.hidden) {
+          updatedParam = { ...param, hide: [...updatedParam.hide, param.id], show: [] };
+          initialHiddenParameters.push(updatedParam);
+          dispatch(updateHiddenParameterIds(initialHiddenParameters));
+        }
+      });
+    }
+
+    return () => {
+      dispatch(updateHiddenParameterIds([]));
+    };
+  }, [parametersList]);
+
   const fetchChecklistsData = (
     params: {
       page?: number;
@@ -68,7 +92,9 @@ export const JobForm: FC<JobFormProps> = ({ form, checklist, selectedObject }) =
 
   const onChangeHandler = (parameterData: Parameter) => {
     let parameterValues: Record<string, any> = {};
-    if (parameterData.type === MandatoryParameter.SINGLE_SELECT) {
+    if (
+      [MandatoryParameter.SINGLE_SELECT, MandatoryParameter.RESOURCE].includes(parameterData.type)
+    ) {
       parameterValues[parameterData.id] = {
         parameter: parameterData,
         reason: parameterData?.response?.reason || '',

@@ -45,6 +45,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { resetTaskParameterError } from './actions';
 import { resetOntology } from '#views/Ontology/actions';
+import { fetchComposerData } from '#PrototypeComposer/actions';
 
 export const AddParameterWrapper = styled.form`
   display: flex;
@@ -160,7 +161,11 @@ const defaultValues = {
   autoInitialized: undefined,
 };
 
-const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
+const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntity }> = ({
+  isReadOnly,
+  id,
+  entity,
+}) => {
   const dispatch = useDispatch();
   const {
     data,

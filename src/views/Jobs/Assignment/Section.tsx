@@ -189,11 +189,7 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
               payload: {
                 stageId: stage.id,
                 taskExecutionIds: stage.tasks
-                  .filter((task) => {
-                    if (!(task.taskExecution.state in CompletedTaskStates)) {
-                      return hiddenIds[task.id] === undefined;
-                    }
-                  })
+                  .filter((task) => !(task.taskExecution.state in CompletedTaskStates))
                   .map((task) => task.taskExecution.id),
 
                 states: stage.tasks

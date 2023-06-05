@@ -36,11 +36,9 @@ const ResourceParameterWrapper = styled.div`
   }
 `;
 
-const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'> & { selectedObject?: any }> = ({
-  parameter,
-  form,
-  selectedObject,
-}) => {
+const ResourceTaskView: FC<
+  Omit<ParameterProps, 'taskId'> & { selectedObject?: any; onChangeHandler?: any }
+> = ({ parameter, form, selectedObject, onChangeHandler }) => {
   const dispatch = useDispatch();
   const [state, setState] = useState<{
     isLoading: Boolean;
@@ -91,35 +89,33 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'> & { selectedObject?: a
   useEffect(() => {
     if (selectedObject?.objectType?.id === parameter?.data?.objectTypeId) {
       setTimeout(() => {
-        setValue(
-          parameter.id,
-          {
-            ...parameter,
-            data: {
-              ...parameter.data,
-              choices: [
-                {
-                  objectId: selectedObject.id,
-                  objectDisplayName: selectedObject.displayName,
-                  objectExternalId: selectedObject.externalId,
-                  collection: selectedObject.collection,
-                },
-              ],
-            },
-            response: {
-              value: null,
-              reason: '',
-              state: 'EXECUTED',
-              choices: {},
-              medias: [],
-              parameterValueApprovalDto: null,
-            },
+        const parameterData = {
+          ...parameter,
+          data: {
+            ...parameter.data,
+            choices: [
+              {
+                objectId: selectedObject.id,
+                objectDisplayName: selectedObject.displayName,
+                objectExternalId: selectedObject.externalId,
+                collection: selectedObject.collection,
+              },
+            ],
           },
-          {
-            shouldDirty: true,
-            shouldValidate: true,
+          response: {
+            value: null,
+            reason: '',
+            state: 'EXECUTED',
+            choices: {},
+            medias: [],
+            parameterValueApprovalDto: null,
           },
-        );
+        };
+        setValue(parameter.id, parameterData, {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
+        onChangeHandler(parameterData);
       }, 100);
     }
   }, []);
@@ -190,35 +186,33 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'> & { selectedObject?: a
           );
           if (relation) {
             const target = relation.targets[0];
-            setValue(
-              parameter.id,
-              {
-                ...parameter,
-                data: {
-                  ...parameter.data,
-                  choices: [
-                    {
-                      objectId: target.id,
-                      objectDisplayName: target.displayName,
-                      objectExternalId: target.externalId,
-                      collection: target.collection,
-                    },
-                  ],
-                },
-                response: {
-                  value: null,
-                  reason: '',
-                  state: 'EXECUTED',
-                  choices: {},
-                  medias: [],
-                  parameterValueApprovalDto: null,
-                },
+            const parameterData = {
+              ...parameter,
+              data: {
+                ...parameter.data,
+                choices: [
+                  {
+                    objectId: target.id,
+                    objectDisplayName: target.displayName,
+                    objectExternalId: target.externalId,
+                    collection: target.collection,
+                  },
+                ],
               },
-              {
-                shouldDirty: true,
-                shouldValidate: true,
+              response: {
+                value: null,
+                reason: '',
+                state: 'EXECUTED',
+                choices: {},
+                medias: [],
+                parameterValueApprovalDto: null,
               },
-            );
+            };
+            setValue(parameter.id, parameterData, {
+              shouldDirty: true,
+              shouldValidate: true,
+            });
+            onChangeHandler(parameterData);
           }
         }
       } else {
@@ -232,20 +226,18 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'> & { selectedObject?: a
         }),
       );
       clearInterval(interval);
-      setValue(
-        parameter.id,
-        {
-          ...parameter,
-          data: {
-            ...parameter.data,
-            choices: undefined,
-          },
+      const parameterData = {
+        ...parameter,
+        data: {
+          ...parameter.data,
+          choices: undefined,
         },
-        {
-          shouldDirty: true,
-          shouldValidate: true,
-        },
-      );
+      };
+      setValue(parameter.id, parameterData, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+      onChangeHandler(parameterData);
     }
   };
 
@@ -254,36 +246,35 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'> & { selectedObject?: a
       const qrData = JSON.parse(data);
 
       if (qrData) {
+        const parameterData = {
+          ...parameter,
+          data: {
+            ...parameter.data,
+            choices: [qrData].map((currOption: any) => ({
+              objectId: currOption.id,
+              objectDisplayName: currOption.displayName,
+              objectExternalId: currOption.externalId,
+              collection: currOption.collection,
+            })),
+          },
+          response: {
+            value: null,
+            reason: '',
+            state: 'EXECUTED',
+            choices: {},
+            medias: [],
+            parameterValueApprovalDto: null,
+          },
+        };
         await qrCodeValidator({
           data: qrData,
-          callBack: () =>
-            setValue(
-              parameter.id,
-              {
-                ...parameter,
-                data: {
-                  ...parameter.data,
-                  choices: [qrData].map((currOption: any) => ({
-                    objectId: currOption.id,
-                    objectDisplayName: currOption.displayName,
-                    objectExternalId: currOption.externalId,
-                    collection: currOption.collection,
-                  })),
-                },
-                response: {
-                  value: null,
-                  reason: '',
-                  state: 'EXECUTED',
-                  choices: {},
-                  medias: [],
-                  parameterValueApprovalDto: null,
-                },
-              },
-              {
-                shouldDirty: true,
-                shouldValidate: true,
-              },
-            ),
+          callBack: () => {
+            setValue(parameter.id, parameterData, {
+              shouldDirty: true,
+              shouldValidate: true,
+            });
+            onChangeHandler(parameterData);
+          },
           validateObjectType: qrData?.objectTypeId === parameter?.data?.objectTypeId,
         });
       }
@@ -335,25 +326,23 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'> & { selectedObject?: a
                 },
                 onChange: (_value: any) => {
                   const selectedOption = isArray(_value) ? _value : [_value];
-                  setValue(
-                    parameter.id,
-                    {
-                      ...parameter,
-                      data: {
-                        ...parameter.data,
-                        choices: selectedOption.map((currOption: any) => ({
-                          objectId: currOption.value,
-                          objectDisplayName: currOption.option.displayName,
-                          objectExternalId: currOption.option.externalId,
-                          collection: currOption.option.collection,
-                        })),
-                      },
+                  const parameterData = {
+                    ...parameter,
+                    data: {
+                      ...parameter.data,
+                      choices: selectedOption.map((currOption: any) => ({
+                        objectId: currOption.value,
+                        objectDisplayName: currOption.option.displayName,
+                        objectExternalId: currOption.option.externalId,
+                        collection: currOption.option.collection,
+                      })),
                     },
-                    {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    },
-                  );
+                  };
+                  setValue(parameter.id, parameterData, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  });
+                  onChangeHandler(parameterData);
                 },
                 value: parameterInForm?.data?.choices?.length
                   ? parameterInForm?.data?.choices.map((c: any) => ({

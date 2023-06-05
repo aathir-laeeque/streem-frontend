@@ -129,7 +129,10 @@ const BranchingRules: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
 
   const renderParameterOption = (parameterId?: string, parameter?: Parameter) => {
     const _parameter = !parameter && parameterId ? parameters.listById[parameterId] : parameter;
-    if (_parameter && _parameter.type === MandatoryParameter.SINGLE_SELECT) {
+    if (
+      _parameter &&
+      [MandatoryParameter.SINGLE_SELECT, MandatoryParameter.RESOURCE].includes(_parameter.type)
+    ) {
       let shouldPushParameter = false;
       if (!searchQuery) {
         shouldPushParameter = true;
@@ -186,6 +189,7 @@ const BranchingRules: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     const _tasks = Object.values(tasks.tasksOrderInStage[stage.id])
       .map((taskId) => renderTaskOption(stage.id, taskId))
       .filter((t) => t);
+
     if (_tasks.length) {
       return (
         <Accordion

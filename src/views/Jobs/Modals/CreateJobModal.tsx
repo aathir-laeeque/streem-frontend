@@ -199,7 +199,9 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
 
   const onChangeHandler = (parameterData: Parameter) => {
     let parameterValues: Record<string, Parameter> = {};
-    if (parameterData.type === MandatoryParameter.SINGLE_SELECT) {
+    if (
+      [MandatoryParameter.SINGLE_SELECT, MandatoryParameter.RESOURCE].includes(parameterData.type)
+    ) {
       parameterValues[parameterData.id] = {
         parameter: parameterData,
         reason: parameterData?.response?.reason || '',

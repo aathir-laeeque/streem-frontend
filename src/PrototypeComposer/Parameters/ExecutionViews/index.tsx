@@ -141,7 +141,12 @@ const ParameterView: FC<ParameterProps> = ({
       case MandatoryParameter.RESOURCE:
       case MandatoryParameter.MULTI_RESOURCE:
         return (
-          <ResourceTaskView parameter={parameter} form={form} selectedObject={selectedObject} />
+          <ResourceTaskView
+            parameter={parameter}
+            form={form}
+            selectedObject={selectedObject}
+            onChangeHandler={onChangeHandler}
+          />
         );
 
       default:

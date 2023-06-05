@@ -17,6 +17,7 @@ import { ComposerWrapper, TasksTabWrapper } from './styles';
 import Tasks from './Tasks';
 import AddParameter from './Tasks/AddParameter';
 import { ComposerProps } from './types';
+import HiddenParameters from './HiddenParameters';
 
 export type ProcessInitialState = {
   isPrimaryAuthor: boolean;
@@ -220,6 +221,13 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
                   label: 'Branching Rules',
                   panelContent: <BranchingRules isReadOnly={!isNotReadOnly} />,
                 },
+                {
+                  value: '3',
+                  label: 'Hidden Parameters',
+                  panelContent: (
+                    <HiddenParameters id={id} entity={entity} isReadOnly={!isNotReadOnly} />
+                  ),
+                },
                 // {
                 //   value: '3',
                 //   label: 'Verifiers',
@@ -232,7 +240,9 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
                 // },
               ]}
             />
-            {data && data.state && <AddParameter isReadOnly={!isNotReadOnly} />}
+            {data && data.state && (
+              <AddParameter isReadOnly={!isNotReadOnly} id={id} entity={entity} />
+            )}
           </ComposerWrapper>
         </>
       }

@@ -8,9 +8,10 @@ import { ComposerEntity } from './types';
 type fetchDataType = {
   id: Checklist['id'];
   entity: ComposerEntity;
+  setLoading?: boolean;
 };
-export const fetchComposerData = ({ id, entity }: fetchDataType) =>
-  actionSpreader(ComposerAction.FETCH_COMPOSER_DATA, { id, entity });
+export const fetchComposerData = ({ id, entity, setLoading = true }: fetchDataType) =>
+  actionSpreader(ComposerAction.FETCH_COMPOSER_DATA, { id, entity, setLoading });
 
 type fetchDataErrorType = {
   error: any;
