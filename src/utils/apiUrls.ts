@@ -347,6 +347,9 @@ export const apiCreateObjectTypeRelation = (objectTypeId: string) =>
 export const apiArchiveObjectTypeRelation = (objectTypeId: string) =>
   `${baseUrl}/object-types/${objectTypeId}/relations/archive`;
 
+export const apiMultipleTaskAction = (taskId: Task['id']) =>
+  `${baseUrl}/tasks/${taskId}/automations`;
+
 export const apiGetProcessesByResource = (objectTypeId: string) =>
   `${baseUrl}/checklists/by/resource/${objectTypeId}`;
 

@@ -278,12 +278,13 @@ const TaskCard: FC<
                 dispatch(updateTaskName({ id: taskId, name: value }));
               }, 500)}
             />
-            {!isReadOnly && (
-              <div className="task-config-control">
+            <div className="task-config-control">
+              <>
                 <div
                   className="task-config-control-item"
                   id="timed"
                   onClick={() =>
+                    !isReadOnly &&
                     dispatch(
                       openOverlayAction({
                         type: OverlayNames.TIMED_TASK_CONFIG,
@@ -334,16 +335,19 @@ const TaskCard: FC<
                     }}
                     label="Attach Media"
                     icon={hasMedias ? PermMedia : PermMediaOutlined}
+                    disabled={isReadOnly}
                   />
                 </div>
                 <div
                   className="task-config-control-item"
                   id="add-stop"
                   onClick={() => {
-                    if (hasStop) {
-                      dispatch(removeStop(taskId));
-                    } else {
-                      dispatch(addStop(taskId));
+                    if (!isReadOnly) {
+                      if (hasStop) {
+                        dispatch(removeStop(taskId));
+                      } else {
+                        dispatch(addStop(taskId));
+                      }
                     }
                   }}
                 >
@@ -359,28 +363,30 @@ const TaskCard: FC<
                     )}
                   </div>
                 </div>
-                <div
-                  className="task-config-control-item"
-                  id="add-actions"
-                  onClick={() => {
-                    dispatch(
-                      openOverlayAction({
-                        type: OverlayNames.CONFIGURE_ACTIONS,
-                        props: {
-                          task,
-                          checklistId: data?.id,
-                        },
-                      }),
-                    );
-                  }}
-                >
-                  <div>
-                    <Autorenew className="icon" />
-                    Configure Actions
-                  </div>
+              </>
+              <div
+                style={{ alignItems: isReadOnly ? 'flex-end' : 'center' }}
+                className="task-config-control-item"
+                id="add-actions"
+                onClick={() => {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.CONFIGURE_CHECK,
+                      props: {
+                        task,
+                        checklistId: data?.id,
+                        isReadOnly,
+                      },
+                    }),
+                  );
+                }}
+              >
+                <div>
+                  <Autorenew className="icon" />
+                  Configure Actions
                 </div>
               </div>
-            )}
+            </div>
           </div>
 
           {hasMedias && (

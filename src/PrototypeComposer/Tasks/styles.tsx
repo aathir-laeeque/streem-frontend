@@ -80,7 +80,7 @@ const TaskCardWrapper = styled.div.attrs({
     &-body {
       .task-config {
         border-bottom: 1px solid #dadada;
-        padding: ${({ isReadOnly }) => (isReadOnly ? '24px' : '24px 24px 0')};
+        padding: 24px 24px 0;
 
         @media (max-width: 1200px) {
           padding: 12px;

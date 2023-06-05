@@ -126,3 +126,6 @@ export const reOrderParameters = (payload: {
   stageId: string;
   orderedIds: string[];
 }) => actionSpreader(TaskListActions.REORDER_PARAMETERS, payload);
+
+export const addMultipleTaskAction = (payload: any) =>
+  actionSpreader(TaskListActions.ADD_MULTIPLE_TASK_ACTION, payload);

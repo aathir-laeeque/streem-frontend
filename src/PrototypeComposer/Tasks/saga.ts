@@ -7,6 +7,7 @@ import {
   apiAddTaskAction,
   apiCreateTask,
   apiDeleteTask,
+  apiMultipleTaskAction,
   apiRemoveStop,
   apiRemoveTaskMedia,
   apiRemoveTaskTimer,
@@ -21,6 +22,7 @@ import { request } from '#utils/request';
 import { call, put, select, takeEvery, takeLatest, takeLeading } from 'redux-saga/effects';
 import { updateMediaParameterSuccess } from '../../JobComposer/ActivityList/actions';
 import {
+  addMultipleTaskAction,
   addNewTask,
   addNewTaskSuccess,
   addStop,
@@ -359,6 +361,12 @@ function* archiveTaskActionSaga({ payload }: ReturnType<typeof archiveTaskAction
     if (data) {
       yield put(updateTask(data));
       yield put(closeOverlayAction(OverlayNames.CONFIGURE_ACTIONS));
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: 'Action Deleted Successfully',
+        }),
+      );
     } else {
       console.error('error from archive action from task api :: ', errors);
     }
@@ -392,6 +400,30 @@ function* reOrderParametersSaga({ payload }: ReturnType<typeof reOrderParameters
   }
 }
 
+function* addMultipleTaskActionSaga({ payload }: ReturnType<typeof addMultipleTaskAction>) {
+  try {
+    const { actions, taskId } = payload;
+    const { data, errors } = yield call(request, 'POST', apiMultipleTaskAction(taskId), {
+      data: actions,
+    });
+
+    if (data) {
+      yield put(updateTask(data));
+      yield put(closeOverlayAction(OverlayNames.CONFIGURE_CHECK));
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: 'Actions Updated Successfully',
+        }),
+      );
+    } else {
+      console.error('error from add action to task api :: ', errors);
+    }
+  } catch (error) {
+    console.error('error came in addTaskActionSaga :: ', error);
+  }
+}
+
 export function* TaskListSaga() {
   yield takeLeading(TaskListActions.ADD_NEW_TASK, addNewTaskSaga);
   yield takeEvery(TaskListActions.DELETE_TASK, deleteTaskSaga);
@@ -408,4 +440,5 @@ export function* TaskListSaga() {
   yield takeLeading(TaskListActions.UPDATE_TASK_ACTION, updateTaskActionSaga);
   yield takeLeading(TaskListActions.ARCHIVE_TASK_ACTION, archiveTaskActionSaga);
   yield takeLatest(TaskListActions.REORDER_PARAMETERS, reOrderParametersSaga);
+  yield takeLatest(TaskListActions.ADD_MULTIPLE_TASK_ACTION, addMultipleTaskActionSaga);
 }
