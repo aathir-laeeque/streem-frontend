@@ -20,7 +20,6 @@ type SelectProps = Props<any> & {
   optional?: boolean;
   style?: React.CSSProperties;
   formatOptionLabel?: Props<any>['formatOptionLabel'];
-  reference?: any;
 };
 
 const Wrapper = styled.div.attrs({
@@ -60,9 +59,8 @@ export type Option = { label: string; value: string | number };
 export const selectStyles: Props['styles'] = {
   control: (styles, { isDisabled }) => ({
     ...styles,
-    backgroundColor: '#f4f4f4',
-    border: 'none',
-    borderBottom: '1px solid #bababa',
+    backgroundColor: '#fff',
+    border: '1px solid #ccc',
     borderRadius: 'none',
     boxShadow: 'none',
     cursor: isDisabled ? 'not-allowed' : 'pointer',
@@ -118,7 +116,6 @@ export const Select: FC<SelectProps> = ({
   error = '',
   style = {},
   components,
-  reference,
   ...rest
 }) => {
   return (
@@ -136,7 +133,6 @@ export const Select: FC<SelectProps> = ({
         captureMenuScroll={true}
         formatOptionLabel={formatOptionLabel}
         components={{ DropdownIndicator, ...components }}
-        ref={reference}
         {...rest}
       />
       {error && <span className="field-error">{error}</span>}

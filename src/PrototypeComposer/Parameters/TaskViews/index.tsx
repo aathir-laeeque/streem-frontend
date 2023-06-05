@@ -284,10 +284,12 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
         return (
           <>
             <ResourceTaskView parameter={parameter} />
-            {parameter.data?.propertyValidations?.length > 0 &&
+            {(parameter.data?.propertyValidations?.length > 0 ||
+              parameter.data?.propertyFilters?.fields?.length > 0) &&
               renderFiltersValidationsAction(
                 'Filters and Validations',
-                parameter.data.propertyValidations.length,
+                (parameter.data?.propertyValidations?.length ?? 0) +
+                  (parameter.data?.propertyFilters?.fields?.length ?? 0),
               )}
           </>
         );

@@ -79,6 +79,8 @@ export enum InputTypes {
   ROLE = 'ROLE',
   ERROR_CONTAINER = 'ERROR_CONTAINER',
   RADIO = 'RADIO',
+  ONE_TO_ONE = 'ONE_TO_ONE',
+  ONE_TO_MANY = 'ONE_TO_MANY',
 }
 
 export type SelectOptions =

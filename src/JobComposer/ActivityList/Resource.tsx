@@ -11,7 +11,7 @@ import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { qrCodeValidator } from '#views/Ontology/utils';
 import { LinkOutlined } from '@material-ui/icons';
-import { isArray } from 'lodash';
+import { isArray, keyBy } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -23,7 +23,6 @@ import { ParameterProps } from './types';
 const ResourceParameterWrapper = styled.div`
   display: flex;
   gap: 12px;
-  background-color: #fff;
   .react-custom-select {
     flex: 1;
   }
@@ -49,59 +48,130 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];
+    value: any;
   }>({
     isLoading: false,
     options: [],
+    value: null,
   });
-  const { options, isLoading } = state;
+  const { options, isLoading, value } = state;
   const pagination = useRef({
     current: -1,
     isLast: false,
   });
-  const selectRef = useRef<any>();
-
-  useEffect(() => {
-    if (parameter?.mode && parameter.mode !== ParameterMode.READ_ONLY) getOptions();
-  }, [parameter?.mode]);
-
-  useEffect(() => {
-    if (parameter?.autoInitialized && parameter?.response?.choices?.length && selectRef.current) {
-      selectRef.current?.setValue(
-        parameter?.response?.choices.map((currChoice: any) => ({
-          value: currChoice.objectId,
-          label: currChoice?.objectDisplayName,
-          externalId: <div>&nbsp;(ID: {currChoice?.objectExternalId})</div>,
-          option: {
-            id: currChoice.objectId,
-            displayName: currChoice?.objectDisplayName,
-            externalId: currChoice?.objectExternalId,
-            collection: currChoice?.collection,
-          },
-        })),
-      );
-    }
-  }, [parameter?.response?.choices]);
-
-  const getOptions = async () => {
-    setState((prev) => ({ ...prev, isLoading: true }));
-    try {
-      const response: ResponseObj<any> = await request(
-        'GET',
-        `${baseUrl}${parameter.data.urlPath}&page=${pagination.current.current + 1}`,
-      );
-      if (response.pageable) {
-        pagination.current = {
-          current: response.pageable.page,
-          isLast: response.pageable.last,
-        };
+  const cjfParametersById = keyBy(data?.parameterValues, 'id');
+  const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
+  const referencedParameterId = parameter?.data?.propertyFilters?.fields?.reduce(
+    (acc, currField) => {
+      if (currField?.hasOwnProperty('referencedParameterId')) {
+        acc = currField.referencedParameterId;
+        return acc;
+      } else {
+        return null;
       }
+    },
+    '',
+  );
+
+  useEffect(() => {
+    if (parameter.mode !== ParameterMode.READ_ONLY) getOptions(getUrl(0));
+  }, [
+    parameter?.mode,
+    parametersById?.[referencedParameterId]?.response?.choices,
+    cjfParametersById?.[referencedParameterId]?.response?.choices,
+  ]);
+
+  useEffect(() => {
+    if (parameter?.autoInitialized && parameter?.response?.choices?.length) {
       setState((prev) => ({
         ...prev,
-        options: [...prev.options, ...response.data],
-        isLoading: false,
+        value: parametersById[parameter.id].response.choices.map((choice: any) => ({
+          value: choice.objectId,
+          label: choice?.objectDisplayName,
+          externalId: <div>&nbsp;(ID: {choice?.objectExternalId})</div>,
+          option: {
+            id: choice.objectId,
+            displayName: choice?.objectDisplayName,
+            externalId: choice?.objectExternalId,
+            collection: choice?.collection,
+          },
+        })),
       }));
-    } catch (e) {
-      setState((prev) => ({ ...prev, isLoading: false }));
+    } else if (parametersById?.[parameter.id]?.data?.choices?.length) {
+      setState((prev) => ({
+        ...prev,
+        value: null,
+      }));
+    }
+  }, [parameter?.response?.choices, parameter?.data?.choices]);
+
+  const getUrl = (page: number) => {
+    if (parameter?.data?.propertyFilters) {
+      if (referencedParameterId) {
+        if (parametersById[referencedParameterId]?.response?.choices?.length > 0) {
+          return `${baseUrl}${parameter.data.urlPath}&page=${page}&filters=${encodeURIComponent(
+            JSON.stringify(getFields(parameter?.data?.propertyFilters)),
+          )}`;
+        }
+      } else {
+        return `${baseUrl}${parameter.data.urlPath}&page=${page}&filters=${encodeURIComponent(
+          JSON.stringify(getFields(parameter?.data?.propertyFilters)),
+        )}`;
+      }
+    } else {
+      return `${baseUrl}${parameter.data.urlPath}&page=${page}`;
+    }
+  };
+
+  const getFields = (filters: { op: string; fields: any[] }) => {
+    const { fields, op } = filters;
+    const _fields = fields?.map((currField) => {
+      if (currField.hasOwnProperty('referencedParameterId')) {
+        const referencedParameterData =
+          parametersById[currField.referencedParameterId]?.response?.value ??
+          parametersById[currField.referencedParameterId]?.response?.choices?.[0] ??
+          cjfParametersById[currField.referencedParameterId]?.response?.choices?.[0];
+        let value;
+        if (
+          parametersById[currField.referencedParameterId]?.type === 'CALCULATION' ||
+          parametersById[currField.referencedParameterId]?.type === 'NUMBER'
+        ) {
+          value = Number(referencedParameterData);
+        } else {
+          value = referencedParameterData;
+        }
+        return {
+          field: currField?.field,
+          op: currField?.op,
+          values: [referencedParameterData?.objectId ?? value],
+        };
+      } else {
+        return currField;
+      }
+    });
+    return { op, fields: _fields };
+  };
+
+  const getOptions = async (url?: string) => {
+    if (url) {
+      setState((prev) => ({ ...prev, isLoading: true }));
+      try {
+        const response: ResponseObj<any> = await request('GET', url);
+        if (response.pageable) {
+          pagination.current = {
+            current: response.pageable.page,
+            isLast: response.pageable.last,
+          };
+        }
+        setState((prev) => ({
+          ...prev,
+          options:
+            pagination.current.current === 0 ? response.data : [...prev.options, ...response.data],
+          isLoading: false,
+        }));
+      } catch (e) {
+        setState((prev) => ({ ...prev, isLoading: false }));
+      }
     }
   };
 
@@ -144,6 +214,11 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
       },
     };
 
+    setState((prev) => ({
+      ...prev,
+      value: options,
+    }));
+
     if (isCorrectingError) {
       dispatch(fixParameterLeading(newData));
     } else {
@@ -151,10 +226,8 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     }
   };
 
-  const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
-
   return (
-    <Wrapper data-id={parameter.id} data-type={parameter.type}>
+    <Wrapper data-id={parameter.id} data-type={parameter?.type}>
       <ResourceParameterWrapper>
         <Select
           isDisabled={parameter?.autoInitialized}
@@ -165,34 +238,17 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
             option,
           }))}
           isMulti={parameter.type === MandatoryParameter.MULTI_RESOURCE}
-          reference={selectRef}
-          value={
-            parameter?.response?.choices?.length
-              ? parameter.response.choices.map((currChoice: any) => ({
-                  value: currChoice.objectId,
-                  label: currChoice?.objectDisplayName,
-                  externalId: <div>&nbsp;(ID: {currChoice?.objectExternalId})</div>,
-                  option: {
-                    id: currChoice.objectId,
-                    displayName: currChoice?.objectDisplayName,
-                    externalId: currChoice?.objectExternalId,
-                    collection: currChoice?.collection,
-                  },
-                }))
-              : null
-          }
+          value={value}
           placeholder="You can select one option here"
           onMenuScrollToBottom={() => {
-            if (!isLoading && !pagination.current.isLast) {
-              getOptions();
+            if (!isLoading && !pagination?.current?.isLast) {
+              getOptions(getUrl(pagination?.current?.current + 1));
             }
           }}
           styles={customSelectStyles}
           onChange={(options) => {
-            if (!parameter?.autoInitialized) {
-              const castedOptions = isArray(options) ? options : [options];
-              onSelectOption(castedOptions);
-            }
+            const castedOptions = isArray(options) ? options : [options];
+            onSelectOption(castedOptions);
           }}
         />
         {!parameter?.autoInitialized && (

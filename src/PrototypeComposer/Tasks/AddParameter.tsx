@@ -38,11 +38,13 @@ import {
   RadioButtonChecked,
   RadioButtonUnchecked,
 } from '@material-ui/icons';
+import { cloneDeep } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { resetTaskParameterError } from './actions';
+import { resetOntology } from '#views/Ontology/actions';
 
 export const AddParameterWrapper = styled.form`
   display: flex;
@@ -207,6 +209,9 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
 
   register('mode');
   register('mandatory');
+  register('data', {
+    required: true,
+  });
   register('type', {
     required: true,
   });
@@ -217,6 +222,7 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   isReadOnly = mode === ParameterMode.READ_ONLY ? true : isReadOnly;
   const showFiltersSection = isFiltersAllowed(type);
   const showValidationsSection = isValidationsAllowed(type);
+  const [formDescription, setFormDescription] = useState<string>('');
 
   const basicInfoSection = () => {
     return (
@@ -233,7 +239,11 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
               rows: 3,
               optional: true,
               disabled: isReadOnly,
+              defaultValue: formDescription,
               ref: register,
+              onChange: (value: Record<string, string>) => {
+                setFormDescription(value?.value);
+              },
             },
           },
         ]}
@@ -268,6 +278,26 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
                       shouldDirty: true,
                       shouldValidate: true,
                     });
+                    if (
+                      [
+                        MandatoryParameter.DATE,
+                        MandatoryParameter.DATE_TIME,
+                        MandatoryParameter.MEDIA,
+                        MandatoryParameter.MULTI_LINE,
+                        MandatoryParameter.NUMBER,
+                        MandatoryParameter.SIGNATURE,
+                        MandatoryParameter.SINGLE_LINE,
+                      ].includes(option.value)
+                    ) {
+                      setValue(
+                        'data',
+                        {},
+                        {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                        },
+                      );
+                    }
                   },
                 },
               },
@@ -336,7 +366,7 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     switch (type) {
       case MandatoryParameter.RESOURCE:
       case MandatoryParameter.MULTI_RESOURCE:
-        return <ResourceFilter form={form} isReadOnly={isReadOnly} />;
+        return <ResourceFilter form={form} isReadOnly={isReadOnly} parameter={currentParameter} />;
       default:
         return null;
     }
@@ -464,6 +494,13 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     } else {
       reset(defaultValues);
     }
+    return () => {
+      dispatch(resetOntology(['objectTypes']));
+      if (addParameter?.parameterId) {
+        setCurrentParameter(undefined);
+      }
+      setFormDescription('');
+    };
   }, [addParameter]);
 
   const handleNext = () => {
@@ -471,6 +508,9 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   };
 
   const handleBack = () => {
+    if (activeStep === 1) {
+      reset({ ...getValues(), description: formDescription });
+    }
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
@@ -483,23 +523,40 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     setTimeout(() => {
       dispatch(toggleNewParameter());
     }, 200);
+    setFormDescription('');
   };
 
   const onSubmit = () => {
     if (addParameter) {
       const _data = getValues();
+      const compactFilters = _data?.data?.propertyFilters?.fields?.filter((field) => !!field);
       if (addParameter.parameterId && currentParameter) {
         dispatch(
           updateParameterApi({
             ...currentParameter,
-            ...(currentParameter.type !== _data.type && {
-              ...generateNewParameter({ ...currentParameter, type: _data.type }),
-            }),
             ..._data,
+            ...(formDescription.length > 0 && { description: formDescription }),
+            ...((compactFilters?.length > 0 || _data?.data?.propertyValidations) && {
+              data: {
+                ..._data.data,
+                ...(compactFilters?.length > 0 && {
+                  propertyFilters: {
+                    ..._data?.data?.propertyFilters,
+                    fields: compactFilters,
+                  },
+                }),
+                ...(_data?.data?.propertyValidations && {
+                  propertyValidations: (_data?.data?.propertyValidations || []).filter(
+                    (field) => !!field,
+                  ),
+                }),
+              },
+            }),
           }),
         );
       } else {
         let orderTree = 1;
+        if ('data' in _data && !_data.data) delete _data.data;
         const generatedParameter = generateNewParameter({ orderTree, ..._data });
         if (addParameter.action === 'task' && addParameter.taskId && activeStageId) {
           const parametersInTask =
@@ -516,6 +573,24 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
               taskId: addParameter.taskId,
               stageId: activeStageId,
               ..._data,
+              ...(formDescription.length > 0 && { description: formDescription }),
+              ...(compactFilters?.length > 0 && {
+                data: {
+                  ..._data.data,
+                  propertyFilters: {
+                    ..._data?.data?.propertyFilters,
+                    fields: compactFilters,
+                  },
+                },
+              }),
+              ...(_data?.data?.propertyValidations && {
+                data: {
+                  ..._data.data,
+                  propertyValidations: (_data?.data?.propertyValidations || []).filter(
+                    (field) => !!field,
+                  ),
+                },
+              }),
             }),
           );
         } else {
@@ -525,6 +600,24 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
               checklistId: (data as Checklist).id,
               orderTree,
               ..._data,
+              ...(formDescription.length > 0 && { description: formDescription }),
+              ...(compactFilters?.length > 0 && {
+                data: {
+                  ..._data.data,
+                  propertyFilters: {
+                    ..._data?.data?.propertyFilters,
+                    fields: compactFilters,
+                  },
+                },
+              }),
+              ...(_data?.data?.propertyValidations && {
+                data: {
+                  ..._data.data,
+                  propertyValidations: (_data?.data?.propertyValidations || []).filter(
+                    (field) => !!field,
+                  ),
+                },
+              }),
             }),
           );
         }
@@ -536,7 +629,6 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     try {
       const response = await request('GET', apiSingleParameter(addParameter!.parameterId!));
       if (response.data) {
-        setCurrentParameter(response.data);
         reset({
           mandatory: response.data.mandatory,
           label: response.data.label,
@@ -548,6 +640,8 @@ const AddParameter: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
           autoInitialize: response.data?.autoInitialize,
           autoInitialized: response.data?.autoInitialized,
         });
+        setFormDescription(response.data.description);
+        setCurrentParameter(cloneDeep(response.data));
       }
     } catch (e) {
       console.error('Error Fetching Parameter', e);

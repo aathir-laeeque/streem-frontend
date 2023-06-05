@@ -51,14 +51,27 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
     isLast: false,
   });
 
+  const referencedParameterId = parameter?.data?.propertyFilters?.fields?.reduce(
+    (acc, currField) => {
+      if (currField.hasOwnProperty('referencedParameterId')) {
+        acc = currField.referencedParameterId;
+        return acc;
+      } else {
+        return null;
+      }
+    },
+    '',
+  );
+
   const { setValue, watch } = form;
   const parameterInForm = watch(parameter.id, {});
   const linkedParameter = watch(parameter?.autoInitialize?.parameterId);
+  const parameterForFilters = watch(referencedParameterId);
   let interval: number | undefined = undefined;
 
   useEffect(() => {
-    if (parameter?.mode && parameter.mode !== ParameterMode.READ_ONLY) getOptions();
-  }, [parameter?.mode]);
+    if (parameter?.mode && parameter.mode !== ParameterMode.READ_ONLY) getOptions(getUrl(0));
+  }, [parameterForFilters?.data?.choices, parameter?.mode]);
 
   useEffect(() => {
     interval = window.setInterval(() => {
@@ -71,27 +84,54 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
     };
   }, [linkedParameter]);
 
-  const getOptions = async () => {
-    setState((prev) => ({ ...prev, isLoading: true }));
-    try {
-      const response: ResponseObj<any> = await request(
-        'GET',
-        `${baseUrl}${parameter.data.urlPath}&page=${pagination.current.current + 1}`,
-      );
-      if (response.pageable) {
-        pagination.current = {
-          current: response.pageable?.page,
-          isLast: response.pageable?.last,
-        };
+  const getOptions = async (url?: string) => {
+    if (url) {
+      setState((prev) => ({ ...prev, isLoading: true }));
+      try {
+        const response: ResponseObj<any> = await request('GET', url);
+        if (response.pageable) {
+          pagination.current = {
+            current: response.pageable?.page,
+            isLast: response.pageable?.last,
+          };
+        }
+        setState((prev) => ({
+          ...prev,
+          options: [...prev.options, ...response.data],
+          isLoading: false,
+        }));
+      } catch (e) {
+        setState((prev) => ({ ...prev, isLoading: false }));
       }
-      setState((prev) => ({
-        ...prev,
-        options: [...prev.options, ...response.data],
-        isLoading: false,
-      }));
-    } catch (e) {
-      setState((prev) => ({ ...prev, isLoading: false }));
     }
+  };
+
+  const getUrl = (page: number) => {
+    if (parameter?.data?.propertyFilters) {
+      return `${baseUrl}${parameter.data.urlPath}&page=${page}&filters=${encodeURIComponent(
+        JSON.stringify(getFields(parameter.data.propertyFilters)),
+      )}`;
+    } else {
+      return `${baseUrl}${parameter.data.urlPath}&page=${page}`;
+    }
+  };
+
+  const getFields = (filters: { op: string; fields: any[] }) => {
+    const { fields, op } = filters;
+    const _fields = fields.map((currField) => {
+      if (currField.hasOwnProperty('referencedParameterId')) {
+        const referencedParameterData = parameterForFilters?.data?.choices?.[0];
+        return {
+          field: currField.field,
+          op: currField.op,
+          values: [referencedParameterData?.objectId],
+        };
+      } else {
+        _fields.push(currField);
+        return true;
+      }
+    });
+    return { op, fields: _fields };
   };
 
   const handleAutoInitialize = async () => {
@@ -250,7 +290,7 @@ const ResourceTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
                 ['data-type']: parameter.type,
                 onMenuScrollToBottom: () => {
                   if (!isLoading && !pagination.current.isLast) {
-                    getOptions();
+                    getOptions(getUrl(pagination.current.current + 1));
                   }
                 },
                 onChange: (_value: any) => {

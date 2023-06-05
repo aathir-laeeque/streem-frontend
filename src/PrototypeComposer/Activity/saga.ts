@@ -54,9 +54,16 @@ function* updateParameterSaga({ payload }: ReturnType<typeof updateParameterApi>
 
     if (errors) {
       yield put(updateParameterError(errors));
+      throw getErrorMsg(errors);
     }
   } catch (error) {
     console.error('error came in the updateParameterSaga :: ', error);
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
+      }),
+    );
   }
 }
 

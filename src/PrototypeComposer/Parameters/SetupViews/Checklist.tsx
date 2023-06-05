@@ -1,19 +1,24 @@
 import { AddNewItem, TextInput } from '#components';
 import {
-  closestCenter,
   DndContext,
   DragEndEvent,
   PointerSensor,
+  closestCenter,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import {
+  SortableContext,
+  arrayMove,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { Close, DragIndicator } from '@material-ui/icons';
-import { findIndex } from 'lodash';
-import React, { FC, useEffect } from 'react';
-import { useFieldArray, UseFormMethods } from 'react-hook-form';
+import { compact, findIndex } from 'lodash';
+import React, { FC } from 'react';
+import { UseFormMethods } from 'react-hook-form';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
 import { CommonWrapper } from './styles';
@@ -67,7 +72,7 @@ const SortableItemWrapper = styled.div`
   }
 `;
 
-function SortableItem({ item, index, remove, register, isReadOnly }: any) {
+function SortableItem({ item, index, remove, isReadOnly, onChangeOptionLabel }: any) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: item.id,
     disabled: isReadOnly,
@@ -79,30 +84,32 @@ function SortableItem({ item, index, remove, register, isReadOnly }: any) {
   };
 
   return (
-    <SortableItemWrapper ref={setNodeRef} style={style} className={isDragging ? 'dragging' : ''}>
+    <SortableItemWrapper
+      ref={setNodeRef}
+      style={style}
+      key={item.id}
+      className={isDragging ? 'dragging' : ''}
+    >
       <div className="content">
         {!isReadOnly && <DragIndicator {...attributes} {...listeners} />}
-        <input
-          type="hidden"
-          name={`data.${index}.id`}
-          ref={register({
-            required: true,
-          })}
-          defaultValue={item.id}
-        />
+        <input type="hidden" name={`data${index}.id`} defaultValue={item.id} />
         <TextInput
           type="text"
-          name={`data.${index}.name`}
-          ref={register({
-            required: true,
-          })}
+          name={`data${index}.name`}
           defaultValue={item.name}
           disabled={isReadOnly}
+          onChange={({ value }: any) => {
+            onChangeOptionLabel(value, index);
+          }}
         />
       </div>
       {!isReadOnly && (
         <div className="action">
-          <Close onClick={() => remove(index)} />
+          <Close
+            onClick={() => {
+              remove(index);
+            }}
+          />
         </div>
       )}
     </SortableItemWrapper>
@@ -113,24 +120,21 @@ const ChecklistParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
   form,
   isReadOnly,
 }) => {
-  const { register, control, setError, clearErrors, errors, unregister } = form;
-  const { fields, append, remove, move } = useFieldArray({
-    control,
-    name: 'data',
-  });
+  const { register, setError, clearErrors, setValue, watch, trigger } = form;
+  const fields = watch('data', []);
+  const sensors = useSensors(useSensor(PointerSensor));
 
-  useEffect(() => {
-    if (fields.length && errors?.data) {
-      clearErrors('data');
-    } else if (!fields.length && !errors?.data) {
+  const setFormErrors = (isValid?: boolean) => {
+    if (!isValid) {
       setError('data', {
-        message: 'At least one option is required.',
+        message: 'All Options Should be Filled.',
         type: 'minLength',
       });
+    } else {
+      clearErrors('data');
+      trigger();
     }
-  }, [fields]);
-
-  const sensors = useSensors(useSensor(PointerSensor));
+  };
 
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, over } = e;
@@ -138,8 +142,46 @@ const ChecklistParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
     if (over && active.id !== over.id) {
       const oldIndex = findIndex(fields, ['id', active.id]);
       const newIndex = findIndex(fields, ['id', over.id]);
-      move(oldIndex, newIndex);
+      setValue('data', arrayMove(fields, oldIndex, newIndex), {
+        shouldDirty: true,
+      });
     }
+  };
+
+  const handleRemove = (index: number) => {
+    fields[index] = undefined;
+    setValue('data', compact(fields), {
+      shouldDirty: true,
+    });
+    validateErrors();
+  };
+
+  const validateErrors = () => {
+    let isValid = true;
+    fields.every((validation: any) => {
+      if (!validation) return true;
+      const keyToValidate = ['name'];
+      keyToValidate.every((key) => {
+        const checkSingleProperty = !!validation?.[key]?.length;
+        if (!checkSingleProperty) {
+          isValid = false;
+        }
+        return isValid;
+      });
+      return isValid;
+    });
+    setFormErrors(isValid);
+  };
+
+  const onChangeOptionLabel = (value: string, index: number) => {
+    fields[index] = {
+      ...fields[index],
+      name: value,
+    };
+    setValue('data', fields, {
+      shouldDirty: true,
+    });
+    validateErrors();
   };
 
   return (
@@ -152,20 +194,33 @@ const ChecklistParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
           onDragEnd={handleDragEnd}
         >
           <SortableContext items={fields as any} strategy={verticalListSortingStrategy}>
-            {fields.map((item, index) => (
-              <SortableItem
-                key={item.id}
-                item={item}
-                index={index}
-                register={register}
-                remove={remove}
-                isReadOnly={isReadOnly}
-              />
-            ))}
+            {fields.map((item, index) => {
+              if (!item) return null;
+              return (
+                <SortableItem
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  register={register}
+                  remove={handleRemove}
+                  isReadOnly={isReadOnly}
+                  setValue={setValue}
+                  onChangeOptionLabel={onChangeOptionLabel}
+                />
+              );
+            })}
           </SortableContext>
         </DndContext>
       </ul>
-      <AddNewItem onClick={() => append({ id: uuidv4(), name: '' })} />
+      <AddNewItem
+        onClick={() => {
+          fields[fields.length] = { id: uuidv4(), name: '' };
+          setValue('data', fields, {
+            shouldDirty: true,
+          });
+          setFormErrors();
+        }}
+      />
     </CommonWrapper>
   );
 };
