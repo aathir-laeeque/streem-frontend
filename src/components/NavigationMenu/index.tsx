@@ -96,7 +96,7 @@ const NavigationMenu: FC = () => {
           data: qrData,
           callBack: () =>
             navigate(`/ontology/object-types/${qrData.objectTypeId}/objects/${qrData.id}`),
-          validateObjectType: true,
+          objectTypeValidation: true,
         });
       }
     } catch (error) {

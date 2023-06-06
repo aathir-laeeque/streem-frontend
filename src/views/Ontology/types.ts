@@ -105,6 +105,7 @@ export type Object = CommonFields & {
   createdAt: number;
   usageStatus: number;
   facilityId?: string;
+  shortCode: string;
 };
 
 export interface OntologyState {
@@ -144,6 +145,9 @@ export enum OntologyAction {
   EDIT_OBJECT_TYPE_RELATION = '@@ontology/EDIT_OBJECT_TYPE_RELATION',
   EDIT_OBJECT_TYPE_PROPERTY = '@@ontology/EDIT_OBJECT_TYPE_PROPERTY',
   EDIT_OBJECT_TYPE = '@@ontology/EDIT_OBJECT_TYPE',
+
+  EDIT_QR_DATA = '@@ontology/EDIT_QR_DATA',
+  SHORT_CODE_QR_DATA = '@@ontology/SHORT_CODE_QR_DATA',
 }
 
 export type OntologyActionType = ReturnType<
@@ -169,6 +173,8 @@ export type OntologyActionType = ReturnType<
   | typeof actions.createObjectTypeProperty
   | typeof actions.archiveObjectTypeRelation
   | typeof actions.createObjectTypeRelation
+  | typeof actions.fetchQrShortCodeData
+  | typeof actions.editQrData
 >;
 
 export type fetchDataType = {

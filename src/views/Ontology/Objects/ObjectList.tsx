@@ -26,6 +26,7 @@ import { useDispatch } from 'react-redux';
 import {
   archiveObject,
   fetchObjects,
+  fetchQrShortCodeData,
   resetOntology,
   setActiveObject,
   unarchiveObject,
@@ -240,19 +241,14 @@ const ObjectList: FC<TabContentProps> = () => {
               <MenuItem
                 onClick={() => {
                   handleClose();
-                  if (selectedObject?.id)
+
+                  if (selectedObject?.id && selectedObject?.shortCode) {
                     dispatch(
                       openOverlayAction({
                         type: OverlayNames.QR_GENERATOR,
                         props: {
-                          data: {
-                            id: selectedObject?.id,
-                            collection: selectedObject?.collection,
-                            externalId: selectedObject?.externalId,
-                            displayName: selectedObject?.displayName,
-                            objectTypeId: selectedObject?.objectType?.id,
-                            entityType: 'object',
-                          },
+                          data: selectedObject?.shortCode,
+                          selectedObject: selectedObject,
                           id: 'QRCode',
                           onPrimary: handlePrintQRCode,
                           primaryText: 'Print',
@@ -260,6 +256,14 @@ const ObjectList: FC<TabContentProps> = () => {
                         },
                       }),
                     );
+                  } else if (!selectedObject?.shortCode) {
+                    dispatch(
+                      fetchQrShortCodeData({
+                        objectId: selectedObject?.id,
+                        objectTypeId: selectedObject?.objectType?.id,
+                      }),
+                    );
+                  }
                 }}
               >
                 <div className="list-item">

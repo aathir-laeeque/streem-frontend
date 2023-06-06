@@ -14,6 +14,7 @@ import {
   apiEditObjectTypeRelation,
   apiGetObjects,
   apiGetObjectTypes,
+  apiQrShortCode,
   apiUnArchiveObject,
 } from '#utils/apiUrls';
 import { Error, ResponseObj } from '#utils/globalTypes';
@@ -251,10 +252,15 @@ function* createObjectTypePropertySaga({
     const {
       params: { objectTypeId, data },
     } = payload;
-    const res = yield call(request, 'PATCH', apiCreateObjectTypeProperty(objectTypeId), {
-      data,
-    });
-    if (res.data) {
+    const { data: _data, errors } = yield call(
+      request,
+      'PATCH',
+      apiCreateObjectTypeProperty(objectTypeId),
+      {
+        data,
+      },
+    );
+    if (_data) {
       yield put(
         showNotification({
           type: NotificationType.SUCCESS,
@@ -262,8 +268,8 @@ function* createObjectTypePropertySaga({
         }),
       );
       setTimeout(() => location.reload(), 1300);
-    } else if (res.errors) {
-      throw getErrorMsg(res.errors);
+    } else if (errors) {
+      throw getErrorMsg(errors);
     }
   } catch (error) {
     console.error('error in createObjectTypePropertySaga :: ', error);
@@ -277,10 +283,15 @@ function* createObjectTypeRelationSaga({
     const {
       params: { objectTypeId, data },
     } = payload;
-    const res = yield call(request, 'PATCH', apiCreateObjectTypeRelation(objectTypeId), {
-      data: data,
-    });
-    if (res.data) {
+    const { data: _data, errors } = yield call(
+      request,
+      'PATCH',
+      apiCreateObjectTypeRelation(objectTypeId),
+      {
+        data: data,
+      },
+    );
+    if (_data) {
       yield put(
         showNotification({
           type: NotificationType.SUCCESS,
@@ -288,8 +299,8 @@ function* createObjectTypeRelationSaga({
         }),
       );
       setTimeout(() => location.reload(), 1300);
-    } else if (res.errors) {
-      throw getErrorMsg(res.errors);
+    } else if (errors) {
+      throw getErrorMsg(errors);
     }
   } catch (error) {
     console.error('error in createObjectTypeRelationSaga :: ', error);
@@ -312,7 +323,6 @@ function* archiveObjectTypeRelationSaga({
         params: { relationId, reason },
       },
     );
-
     if (data) {
       yield put(
         showNotification({
@@ -415,6 +425,39 @@ function* editObjectTypeSaga({ payload }: ReturnType<any>) {
   }
 }
 
+function* postQrShortCodeSaga({ payload }: ReturnType<typeof actions.fetchQrShortCodeData>) {
+  try {
+    const { params } = payload;
+    yield call(request, 'POST', apiQrShortCode(), {
+      data: params,
+    });
+  } catch (error) {
+    console.error('error in postQrShortCodeSaga :: ', error);
+  }
+}
+
+function* postQrEditSaga({ payload }: ReturnType<typeof actions.editQrData>) {
+  try {
+    const { params } = payload;
+    const { data, errors } = yield call(request, 'PATCH', apiQrShortCode(), {
+      data: params,
+    });
+
+    if (data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `Object QR Code Modified`,
+        }),
+      );
+    } else {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    console.error('error in postQrEditSaga :: ', error);
+  }
+}
+
 export function* OntologySaga() {
   yield takeLatest(OntologyAction.FETCH_OBJECT_TYPES, fetchObjectTypesSaga);
   yield takeLatest(OntologyAction.FETCH_OBJECT_TYPE, fetchObjectTypeSaga);
@@ -432,4 +475,6 @@ export function* OntologySaga() {
   yield takeLatest(OntologyAction.EDIT_OBJECT_TYPE_RELATION, editObjectTypeRelationSaga);
   yield takeLatest(OntologyAction.EDIT_OBJECT_TYPE_PROPERTY, editObjectTypePropertySaga);
   yield takeLatest(OntologyAction.EDIT_OBJECT_TYPE, editObjectTypeSaga);
+  yield takeLatest(OntologyAction.SHORT_CODE_QR_DATA, postQrShortCodeSaga);
+  yield takeLatest(OntologyAction.EDIT_QR_DATA, postQrEditSaga);
 }

@@ -12,7 +12,7 @@ import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
 import { logout, setSelectedUseCase } from '#views/Auth/actions';
-import { qrCodeValidator } from '#views/Ontology/utils';
+import { getQrCodeData, qrCodeValidator } from '#views/Ontology/utils';
 import { UserType } from '#views/UserAccess/ManageUser/types';
 import { useMsal } from '@azure/msal-react';
 import { navigate } from '@reach/router';
@@ -40,13 +40,13 @@ const Header: FC = () => {
 
   const onSelectWithQR = async (data: string) => {
     try {
-      const qrData = JSON.parse(data);
-      if (qrData) {
+      const qrData = await getQrCodeData({ shortCode: JSON.stringify(data) });
+      if (qrData?.objectId) {
         await qrCodeValidator({
           data: qrData,
           callBack: () =>
-            navigate(`/ontology/object-types/${qrData.objectTypeId}/objects/${qrData.id}`),
-          validateObjectType: true,
+            navigate(`/ontology/object-types/${qrData.objectTypeId}/objects/${qrData.objectId}`),
+          objectTypeValidation: true,
         });
       }
     } catch (error) {

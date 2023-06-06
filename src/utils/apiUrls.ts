@@ -382,3 +382,5 @@ export const apiEditObjectTypeProperty = (objectTypeId: string, propertyId: stri
 
 export const apiEditObjectTypeRelation = (objectTypeId: string, relationId: string) =>
   `${baseUrl}/object-types/${objectTypeId}/relations/${relationId}`;
+
+export const apiQrShortCode = () => `${baseUrl}/short-code`;

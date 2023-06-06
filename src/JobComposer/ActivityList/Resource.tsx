@@ -9,7 +9,7 @@ import { useTypedSelector } from '#store';
 import { baseUrl } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { qrCodeValidator } from '#views/Ontology/utils';
+import { getQrCodeData, qrCodeValidator } from '#views/Ontology/utils';
 import { LinkOutlined } from '@material-ui/icons';
 import { isArray, keyBy } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -177,8 +177,10 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
 
   const onSelectWithQR = async (data: string) => {
     try {
-      const qrData = JSON.parse(data);
-      if (qrData) {
+      const qrData = await getQrCodeData({
+        shortCode: JSON.stringify(data),
+      });
+      if (qrData?.objectId) {
         await qrCodeValidator({
           data: qrData,
           callBack: () =>
@@ -187,7 +189,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
                 option: qrData,
               },
             ]),
-          validateObjectType: qrData?.objectTypeId === parameter?.data?.objectTypeId,
+          objectTypeValidation: qrData?.objectTypeId === parameter?.data?.objectTypeId,
         });
       }
     } catch (error) {

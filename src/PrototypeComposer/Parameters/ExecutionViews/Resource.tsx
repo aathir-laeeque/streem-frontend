@@ -11,7 +11,7 @@ import { apiGetObjects, baseUrl } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { Object } from '#views/Ontology/types';
-import { qrCodeValidator } from '#views/Ontology/utils';
+import { getQrCodeData, qrCodeValidator } from '#views/Ontology/utils';
 import { LinkOutlined } from '@material-ui/icons';
 import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -243,9 +243,11 @@ const ResourceTaskView: FC<
 
   const onSelectWithQR = async (data: string) => {
     try {
-      const qrData = JSON.parse(data);
-
-      if (qrData) {
+      const qrData = await getQrCodeData({
+        shortCode: JSON.stringify(data),
+        objectTypeId: parameter?.data?.objectTypeId,
+      });
+      if (qrData?.objectId) {
         const parameterData = {
           ...parameter,
           data: {
@@ -275,7 +277,7 @@ const ResourceTaskView: FC<
             });
             onChangeHandler(parameterData);
           },
-          validateObjectType: qrData?.objectTypeId === parameter?.data?.objectTypeId,
+          objectTypeValidation: qrData?.objectTypeId === parameter?.data?.objectTypeId,
         });
       }
     } catch (error) {

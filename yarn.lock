@@ -6379,6 +6379,11 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
+jsqr@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/jsqr/-/jsqr-1.4.0.tgz#8efb8d0a7cc6863cb6d95116b9069123ce9eb2d1"
+  integrity sha512-dxLob7q65Xg2DvstYkRpkYtmKm2sPJ9oFhrhmudT1dZvNFFTlroai3AWSpLey/w5vMcLBXRgOJsbXpdN9HzU/A==
+
 jss-plugin-camel-case@^10.5.1:
   version "10.7.1"
   resolved "https://registry.yarnpkg.com/jss-plugin-camel-case/-/jss-plugin-camel-case-10.7.1.tgz#e7f7097cf97e9deec599cef3275e213452318b93"
@@ -7461,6 +7466,13 @@ qr.js@0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/qr.js/-/qr.js-0.0.0.tgz#cace86386f59a0db8050fa90d9b6b0e88a1e364f"
   integrity sha512-c4iYnWb+k2E+vYpRimHqSu575b1/wKl4XFeJGpFmrJQz5I88v9aY2czh7s0w36srfCM1sXgC/xpoJz5dJfq+OQ==
+
+qrcode-decoder@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/qrcode-decoder/-/qrcode-decoder-0.3.3.tgz#17904502ace7c863a791735618c7b5e3f252d714"
+  integrity sha512-0pwJIK2cHJDPZ2Rpbd0aLcQg3N4pFOnfHjBUNJnutBOCkcGhsYMiyBgDPEaiZQV+pxrM97bkPPKlSkl724u14Q==
+  dependencies:
+    jsqr "^1.4.0"
 
 qs@6.10.3:
   version "6.10.3"

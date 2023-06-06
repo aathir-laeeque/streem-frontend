@@ -1,5 +1,5 @@
-import { apiGetObjects } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
+import { apiGetObjects, apiQrShortCode } from '#utils/apiUrls';
 import { getErrorMsg, request } from '#utils/request';
 import { store } from '../../App';
 import { Object } from './types';
@@ -23,17 +23,16 @@ export const getObjectData = async (data: Record<string, string | number | undef
 export const qrCodeValidator = async ({
   data,
   callBack,
-  validateObjectType,
+  objectTypeValidation,
 }: {
   data: Record<string, string>;
   callBack: () => void;
-  validateObjectType: boolean;
+  objectTypeValidation: boolean;
 }) => {
-  if (validateObjectType && data?.entityType === 'object') {
+  if (objectTypeValidation && data?.entityType === 'OBJECTS') {
     const fetchedData = await getObjectData({
-      id: data.id,
+      id: data.objectId,
       collection: data.collection,
-      usageStatus: 1,
     });
     const {
       auth: { selectedFacility },
@@ -41,10 +40,22 @@ export const qrCodeValidator = async ({
     if (selectedFacility?.id === fetchedData?.facilityId) {
       callBack();
     } else {
-      throw 'Object not found';
+      throw "Object doesn't belong in the facility";
     }
   } else {
-    throw 'Invalid QR Code';
+    throw 'Resource Not Found';
+  }
+};
+
+export const getQrCodeData = async (params: any) => {
+  const { data, errors } = await request('GET', apiQrShortCode(), {
+    params,
+  });
+  if (data) {
+    return data;
+  }
+  if (errors) {
+    throw getErrorMsg(errors as any);
   }
 };
 

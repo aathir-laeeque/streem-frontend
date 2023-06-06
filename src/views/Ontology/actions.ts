@@ -115,3 +115,8 @@ export const editObjectTypeProperty = (params: any) =>
 
 export const editObjectType = (params: any) =>
   actionSpreader(OntologyAction.EDIT_OBJECT_TYPE, { params });
+
+export const fetchQrShortCodeData = (params: Record<string, string | undefined>) =>
+  actionSpreader(OntologyAction.SHORT_CODE_QR_DATA, { params });
+
+export const editQrData = (params: any) => actionSpreader(OntologyAction.EDIT_QR_DATA, { params });
