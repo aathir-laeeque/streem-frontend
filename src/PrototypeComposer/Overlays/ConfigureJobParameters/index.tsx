@@ -162,7 +162,14 @@ const ConfigureJobParameters: FC<CommonOverlayProps<Props>> = ({
       field: 'type',
       op: FilterOperators.ANY,
       values: Object.values(MandatoryParameter).filter(
-        (type) => type !== MandatoryParameter.CHECKLIST,
+        (type) =>
+          ![
+            MandatoryParameter.CHECKLIST,
+            MandatoryParameter.MEDIA,
+            MandatoryParameter.FILE_UPLOAD,
+            MandatoryParameter.SIGNATURE,
+            MandatoryParameter.CALCULATION,
+          ].includes(type),
       ),
     },
   ]);
