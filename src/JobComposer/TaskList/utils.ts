@@ -67,3 +67,15 @@ export const getAutomationActionTexts = (
     automation.actionDetails.objectTypeDisplayName || objectTypeDisplayName
   } when the ${AutomationActionTriggerTypeVisual[automation.triggerType]}.`;
 };
+
+export const ObjectIdsDataFromChoices = (choices: any) => {
+  let data: string[] = [];
+  if (choices?.length > 0) {
+    choices?.forEach((choice: any) => {
+      data.push(choice.objectId);
+    });
+    return data;
+  } else {
+    return null;
+  }
+};

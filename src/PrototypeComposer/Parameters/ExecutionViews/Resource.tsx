@@ -5,6 +5,7 @@ import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { ParameterMode } from '#JobComposer/checklist.types';
+import { ObjectIdsDataFromChoices } from '#JobComposer/TaskList/utils';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
 import { apiGetObjects, baseUrl } from '#utils/apiUrls';
@@ -53,27 +54,29 @@ const ResourceTaskView: FC<
     isLast: false,
   });
 
-  const referencedParameterId = parameter?.data?.propertyFilters?.fields?.reduce(
-    (acc, currField) => {
+  const referencedParameterIds = useRef(
+    parameter?.data?.propertyFilters?.fields?.reduce((acc, currField) => {
       if (currField.hasOwnProperty('referencedParameterId')) {
-        acc = currField.referencedParameterId;
-        return acc;
-      } else {
-        return null;
+        acc.push(currField.referencedParameterId);
       }
-    },
-    '',
+      return acc;
+    }, []) || [],
   );
 
   const { setValue, watch } = form;
   const parameterInForm = watch(parameter.id, {});
   const linkedParameter = watch(parameter?.autoInitialize?.parameterId);
-  const parameterForFilters = watch(referencedParameterId);
+  const parameterForFilters = watch(referencedParameterIds.current, {});
   let interval: number | undefined = undefined;
 
+  const parameterForFiltersValueChange = referencedParameterIds.current?.map(
+    (curr) =>
+      parameterForFilters?.[curr]?.data?.input ?? parameterForFilters?.[curr]?.data?.choices,
+  );
+
   useEffect(() => {
-    if (parameter?.mode && parameter.mode !== ParameterMode.READ_ONLY) getOptions(getUrl(0));
-  }, [parameterForFilters?.data?.choices, parameter?.mode]);
+    if (parameter.mode !== ParameterMode.READ_ONLY) getOptions(getUrl(0));
+  }, parameterForFiltersValueChange);
 
   useEffect(() => {
     interval = window.setInterval(() => {
@@ -156,15 +159,36 @@ const ResourceTaskView: FC<
     const { fields, op } = filters;
     const _fields = fields.map((currField) => {
       if (currField.hasOwnProperty('referencedParameterId')) {
-        const referencedParameterData = parameterForFilters?.data?.choices?.[0];
+        const referencedParameterData =
+          parameterForFilters?.[currField?.referencedParameterId]?.data?.input ??
+          ObjectIdsDataFromChoices(
+            parameterForFilters?.[currField?.referencedParameterId]?.data?.choices,
+          );
+
+        let value;
+
+        if (referencedParameterData) {
+          if (
+            parameterForFilters?.[currField?.referencedParameterId]?.type ===
+              MandatoryParameter.CALCULATION ||
+            parameterForFilters?.[currField?.referencedParameterId]?.type ===
+              MandatoryParameter.NUMBER
+          ) {
+            value = Number(referencedParameterData);
+          } else {
+            value = referencedParameterData;
+          }
+        }
         return {
           field: currField.field,
           op: currField.op,
-          values: [referencedParameterData?.objectId],
+          values:
+            isArray(referencedParameterData) && referencedParameterData.length > 0
+              ? referencedParameterData
+              : [value],
         };
       } else {
-        _fields.push(currField);
-        return true;
+        return currField;
       }
     });
     return { op, fields: _fields };

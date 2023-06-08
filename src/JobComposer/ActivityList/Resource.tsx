@@ -19,6 +19,7 @@ import { customSelectStyles } from './MultiSelect/commonStyles';
 import { Wrapper } from './MultiSelect/styles';
 import { executeParameterLeading, fixParameterLeading } from './actions';
 import { ParameterProps } from './types';
+import { ObjectIdsDataFromChoices } from '#JobComposer/TaskList/utils';
 
 const ResourceParameterWrapper = styled.div`
   display: flex;
@@ -59,27 +60,31 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     current: -1,
     isLast: false,
   });
-  const cjfParametersById = keyBy(data?.parameterValues, 'id');
-  const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
-  const referencedParameterId = parameter?.data?.propertyFilters?.fields?.reduce(
-    (acc, currField) => {
-      if (currField?.hasOwnProperty('referencedParameterId')) {
-        acc = currField.referencedParameterId;
-        return acc;
-      } else {
-        return null;
+
+  const referencedParameterIds = useRef(
+    parameter?.data?.propertyFilters?.fields?.reduce((acc, currField) => {
+      if (currField.hasOwnProperty('referencedParameterId')) {
+        acc.push(currField.referencedParameterId);
       }
-    },
-    '',
+      return acc;
+    }, []) || [],
+  );
+
+  const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
+
+  const cjfParametersById = keyBy(data?.parameterValues, 'id');
+
+  const parameterForFilters = { ...cjfParametersById, ...parametersById };
+
+  const parameterForFiltersValueChange = referencedParameterIds.current?.map(
+    (curr) =>
+      parameterForFilters?.[curr]?.response?.value ??
+      parameterForFilters?.[curr]?.response?.choices,
   );
 
   useEffect(() => {
-    if (parameter.mode !== ParameterMode.READ_ONLY) getOptions(getUrl(0));
-  }, [
-    parameter?.mode,
-    parametersById?.[referencedParameterId]?.response?.choices,
-    cjfParametersById?.[referencedParameterId]?.response?.choices,
-  ]);
+    if (parameter?.mode !== ParameterMode.READ_ONLY) getOptions(getUrl(0));
+  }, parameterForFiltersValueChange);
 
   useEffect(() => {
     if (parameter?.autoInitialized && parameter?.response?.choices?.length) {
@@ -107,17 +112,9 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
 
   const getUrl = (page: number) => {
     if (parameter?.data?.propertyFilters) {
-      if (referencedParameterId) {
-        if (parametersById[referencedParameterId]?.response?.choices?.length > 0) {
-          return `${baseUrl}${parameter.data.urlPath}&page=${page}&filters=${encodeURIComponent(
-            JSON.stringify(getFields(parameter?.data?.propertyFilters)),
-          )}`;
-        }
-      } else {
-        return `${baseUrl}${parameter.data.urlPath}&page=${page}&filters=${encodeURIComponent(
-          JSON.stringify(getFields(parameter?.data?.propertyFilters)),
-        )}`;
-      }
+      return `${baseUrl}${parameter.data.urlPath}&page=${page}&filters=${encodeURIComponent(
+        JSON.stringify(getFields(parameter?.data?.propertyFilters)),
+      )}`;
     } else {
       return `${baseUrl}${parameter.data.urlPath}&page=${page}`;
     }
@@ -129,21 +126,30 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
       if (currField.hasOwnProperty('referencedParameterId')) {
         const referencedParameterData =
           parametersById[currField.referencedParameterId]?.response?.value ??
-          parametersById[currField.referencedParameterId]?.response?.choices?.[0] ??
-          cjfParametersById[currField.referencedParameterId]?.response?.choices?.[0];
+          ObjectIdsDataFromChoices(
+            parametersById[currField.referencedParameterId]?.response?.choices ??
+              cjfParametersById[currField.referencedParameterId]?.response?.choices,
+          );
+
         let value;
-        if (
-          parametersById[currField.referencedParameterId]?.type === 'CALCULATION' ||
-          parametersById[currField.referencedParameterId]?.type === 'NUMBER'
-        ) {
-          value = Number(referencedParameterData);
-        } else {
-          value = referencedParameterData;
+        if (referencedParameterData) {
+          if (
+            parametersById[currField.referencedParameterId]?.type ===
+              MandatoryParameter.CALCULATION ||
+            parametersById[currField.referencedParameterId]?.type === MandatoryParameter.NUMBER
+          ) {
+            value = Number(referencedParameterData);
+          } else {
+            value = referencedParameterData;
+          }
         }
         return {
           field: currField?.field,
           op: currField?.op,
-          values: [referencedParameterData?.objectId ?? value],
+          values:
+            isArray(referencedParameterData) && referencedParameterData.length > 0
+              ? referencedParameterData
+              : [value],
         };
       } else {
         return currField;
