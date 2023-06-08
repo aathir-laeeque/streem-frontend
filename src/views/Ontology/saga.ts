@@ -221,9 +221,9 @@ function* archiveObjectTypePropertySaga({
     const { data, errors } = yield call(
       request,
       'PATCH',
-      apiArchiveObjectTypeProperty(objectTypeId),
+      apiArchiveObjectTypeProperty(objectTypeId, propertyId),
       {
-        params: { propertyId, reason },
+        data: { reason },
       },
     );
 
@@ -318,9 +318,9 @@ function* archiveObjectTypeRelationSaga({
     const { data, errors } = yield call(
       request,
       'PATCH',
-      apiArchiveObjectTypeRelation(objectTypeId),
+      apiArchiveObjectTypeRelation(objectTypeId, relationId),
       {
-        params: { relationId, reason },
+        data: { reason },
       },
     );
     if (data) {

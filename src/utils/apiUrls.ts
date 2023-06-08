@@ -336,16 +336,16 @@ export const apiCreateObjectType = () => `${baseUrl}/object-types`;
 export const apiCreateObjectTypeProperty = (objectTypeId: string) =>
   `${baseUrl}/object-types/${objectTypeId}/properties`;
 
-export const apiArchiveObjectTypeProperty = (objectTypeId: string) =>
-  `${baseUrl}/object-types/${objectTypeId}/properties/archive`;
+export const apiArchiveObjectTypeProperty = (objectTypeId: string, propertyId: string) =>
+  `${baseUrl}/object-types/${objectTypeId}/properties/${propertyId}/archive`;
 
 export const apiHiddenParams = () => `${baseUrl}/parameters/visibility`;
 
 export const apiCreateObjectTypeRelation = (objectTypeId: string) =>
   `${baseUrl}/object-types/${objectTypeId}/relations`;
 
-export const apiArchiveObjectTypeRelation = (objectTypeId: string) =>
-  `${baseUrl}/object-types/${objectTypeId}/relations/archive`;
+export const apiArchiveObjectTypeRelation = (objectTypeId: string, relationId: string) =>
+  `${baseUrl}/object-types/${objectTypeId}/relations/${relationId}/archive`;
 
 export const apiMultipleTaskAction = (taskId: Task['id']) =>
   `${baseUrl}/tasks/${taskId}/automations`;
