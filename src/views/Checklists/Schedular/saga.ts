@@ -1,5 +1,6 @@
 import {
   apiArchiveProcessScheduler,
+  apiGetChecklistInfo,
   apiProcessScheduler,
   apiSingleProcessScheduler,
   apiVersionHistoryProcessScheduler,
@@ -135,6 +136,31 @@ function* patchEditScheduler({ payload }: ReturnType<typeof schedulerActions.mod
   }
 }
 
+function* getChecklistInfo({ payload }: ReturnType<typeof schedulerActions.fetchChecklistInfo>) {
+  try {
+    const { checklistId } = payload;
+    const { data, errors }: ResponseObj<any> = yield call(
+      request,
+      'GET',
+      apiGetChecklistInfo(checklistId),
+    );
+
+    if (data) {
+      yield put(schedulerActions.fetchChecklistInfoSuccess({ data }));
+    } else {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    console.error('error from getSingleScheduler function in SchedulerListViewSaga ::  ', error);
+    yield put(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
+      }),
+    );
+  }
+}
+
 export function* SchedularListViewSaga() {
   yield takeLatest(SchedulerActionsEnum.saveScheduler, postCreateScheduler);
   yield takeLatest(SchedulerActionsEnum.fetchSchedulers, getSchedulerList);
@@ -144,4 +170,5 @@ export function* SchedularListViewSaga() {
     getSchedulerVersionHisoryList,
   );
   yield takeLatest(SchedulerActionsEnum.modifyScheduler, patchEditScheduler);
+  yield takeLatest(SchedulerActionsEnum.fetchChecklistInfo, getChecklistInfo);
 }

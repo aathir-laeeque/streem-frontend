@@ -5,14 +5,20 @@ import React, { FC } from 'react';
 import TabContent from './TabContent';
 
 const SchedularListView: FC<any> = ({ location }) => {
-  const processData = location?.state?.process;
-  const { renderTabContent } = useTabs({
-    tabs: [{ label: '', tabContent: TabContent, values: processData }],
+  const processData = location?.state?.processFilter;
+  const { renderTabHeader, renderTabContent } = useTabs({
+    tabs: [
+      { label: 'Active', tabContent: TabContent, values: processData },
+      { label: 'Deprecated', tabContent: TabContent, values: processData },
+    ],
   });
   return (
     <ViewWrapper>
-      <GeneralHeader heading={`${processData?.name} Schedule`} />
-      <div className="list-table">{renderTabContent()}</div>
+      <GeneralHeader heading={`${processData?.processName} Schedule`} />
+      <div className="list-table">
+        {renderTabHeader()}
+        {renderTabContent()}
+      </div>
     </ViewWrapper>
   );
 };
