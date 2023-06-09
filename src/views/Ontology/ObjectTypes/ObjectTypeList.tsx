@@ -1,4 +1,5 @@
 import {
+  Button,
   DataTable,
   LoadingContainer,
   PaginatedFetchData,
@@ -36,6 +37,17 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
 
   return (
     <TabContentWrapper>
+      <div className="filters">
+        <Button
+          id="create"
+          onClick={() => {
+            navigate('/ontology/object-types/add');
+          }}
+        >
+          Add New Object Type
+        </Button>
+      </div>
+
       <LoadingContainer
         loading={listLoading}
         component={
@@ -45,6 +57,7 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
                 id: 'name',
                 label: 'Object Types',
                 minWidth: 240,
+                maxWidth: 800,
                 format: function renderComp(item) {
                   return (
                     <span
@@ -55,6 +68,24 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
                       title={item.displayName}
                     >
                       {item.displayName}
+                    </span>
+                  );
+                },
+              },
+              {
+                id: 'actions',
+                label: 'Actions',
+                minWidth: 240,
+                align: 'center',
+                format: function renderComp(item) {
+                  return (
+                    <span
+                      className="primary"
+                      onClick={() => {
+                        navigate(`/ontology/${values.rootPath}/edit/${item.id}`);
+                      }}
+                    >
+                      Edit
                     </span>
                   );
                 },

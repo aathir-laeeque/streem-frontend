@@ -331,6 +331,20 @@ export const apiJobInfo = (jobId: string) => `${baseUrl}/jobs/${jobId}/info`;
 export const apiInitializeSubTask = (taskId: string) =>
   `${baseUrl}/tasks/${taskId}/sub-task/initialize`;
 
+export const apiCreateObjectType = () => `${baseUrl}/object-types`;
+
+export const apiCreateObjectTypeProperty = (objectTypeId: string) =>
+  `${baseUrl}/object-types/${objectTypeId}/properties`;
+
+export const apiArchiveObjectTypeProperty = (objectTypeId: string) =>
+  `${baseUrl}/object-types/${objectTypeId}/properties/archive`;
+
+export const apiCreateObjectTypeRelation = (objectTypeId: string) =>
+  `${baseUrl}/object-types/${objectTypeId}/relations`;
+
+export const apiArchiveObjectTypeRelation = (objectTypeId: string) =>
+  `${baseUrl}/object-types/${objectTypeId}/relations/archive`;
+
 export const apiGetProcessesByResource = (objectTypeId: string) =>
   `${baseUrl}/checklists/by/resource/${objectTypeId}`;
 
@@ -354,3 +368,12 @@ export const apiVersionHistoryProcessScheduler = (schedulerId: string) =>
 
 export const apiSingleProcessScheduler = (schedulerId: string) =>
   `${baseUrl}/schedulers/${schedulerId}`;
+
+export const apiEditObjectType = (objectTypeId: string) =>
+  `${baseUrl}/object-types/${objectTypeId}`;
+
+export const apiEditObjectTypeProperty = (objectTypeId: string, propertyId: string) =>
+  `${baseUrl}/object-types/${objectTypeId}/properties/${propertyId}`;
+
+export const apiEditObjectTypeRelation = (objectTypeId: string, relationId: string) =>
+  `${baseUrl}/object-types/${objectTypeId}/relations/${relationId}`;

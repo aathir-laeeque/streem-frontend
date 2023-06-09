@@ -91,3 +91,27 @@ export const unarchiveObject = (
 
 export const updateObjectsList = (id: Object['id']) =>
   actionSpreader(OntologyAction.UPDATE_OBJECTS_LIST, { id });
+
+export const createObjectType = (params: any) =>
+  actionSpreader(OntologyAction.CREATE_OBJECT_TYPE, { params });
+
+export const archiveObjectTypeProperty = (params: any) =>
+  actionSpreader(OntologyAction.ARCHIVE_OBJECT_TYPE_PROPERTY, { params });
+
+export const createObjectTypeProperty = (params: any) =>
+  actionSpreader(OntologyAction.CREATE_OBJECT_TYPE_PROPERTY, { params });
+
+export const createObjectTypeRelation = (params: any) =>
+  actionSpreader(OntologyAction.CREATE_OBJECT_TYPE_RELATION, { params });
+
+export const archiveObjectTypeRelation = (params: any) =>
+  actionSpreader(OntologyAction.ARCHIVE_OBJECT_TYPE_RELATION, { params });
+
+export const editObjectTypeRelation = (params: any) =>
+  actionSpreader(OntologyAction.EDIT_OBJECT_TYPE_RELATION, { params });
+
+export const editObjectTypeProperty = (params: any) =>
+  actionSpreader(OntologyAction.EDIT_OBJECT_TYPE_PROPERTY, { params });
+
+export const editObjectType = (params: any) =>
+  actionSpreader(OntologyAction.EDIT_OBJECT_TYPE, { params });

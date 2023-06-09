@@ -1,14 +1,39 @@
-import { DataTable, GeneralHeader, LoadingContainer, TabContentProps } from '#components';
+import {
+  Button,
+  GeneralHeader,
+  DataTable,
+  LoadingContainer,
+  TabContentProps,
+  ListActionMenu,
+} from '#components';
 import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
 import { formatDateTime } from '#utils/timeUtils';
-import { ViewWrapper } from '#views/Jobs/ListView/styles';
+import { TabContentWrapper, ViewWrapper } from '#views/Jobs/ListView/styles';
 import { RouteComponentProps } from '@reach/router';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { fetchObjectType, resetOntology } from '../actions';
+import {
+  archiveObjectTypeProperty,
+  archiveObjectTypeRelation,
+  fetchObjectType,
+  fetchObjectTypes,
+  resetOntology,
+} from '../actions';
 import ObjectList from '../Objects/ObjectList';
+import { startCase } from 'lodash';
+import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
+import AddPropertyDrawer from './Components/PropertyDrawer';
+import AddRelationDrawer from './Components/RelationDrawer';
+import { ArrowDropDown } from '@material-ui/icons';
+import { MenuItem } from '@material-ui/core';
+import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import { PropertyFlags } from '../utils';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { DEFAULT_PAGE_SIZE } from '#utils/constants';
 // TODO change this enum to Object and have positions defined explicity
 export enum FlagPositions {
   SYSTEM,
@@ -135,36 +160,341 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
     objectTypes: { active },
   } = useTypedSelector((state) => state.ontology);
   const properties = active?.properties || [];
+  const [createPropertyDrawer, setCreatePropertyDrawer] = useState<string | boolean>('');
+  const dispatch = useDispatch();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setTimeout(() => setSelectedProperty(null), 200);
+  };
 
   return (
-    <DataTable
-      columns={[
-        {
-          id: 'displayName',
-          label: 'Property Name',
-          minWidth: 100,
-        },
-        {
-          id: 'inputType',
-          label: 'Input Type',
-          minWidth: 100,
-        },
-        {
-          id: 'mandatory',
-          label: 'Is Mandatory?',
-          minWidth: 100,
-          format: (item) =>
-            getBooleanFromDecimal(item.flags, FlagPositions.MANDATORY) ? 'Yes' : 'No',
-        },
-        {
-          id: 'status',
-          label: 'Status',
-          minWidth: 100,
-          format: (item) => 'Active',
-        },
-      ]}
-      rows={properties}
-    />
+    <TabContentWrapper>
+      <div className="filters">
+        <Button
+          id="create"
+          onClick={() => {
+            setCreatePropertyDrawer(true);
+          }}
+        >
+          Create New Property
+        </Button>
+      </div>
+      <DataTable
+        columns={[
+          {
+            id: 'displayName',
+            label: 'Property Name',
+            minWidth: 100,
+          },
+          {
+            id: 'inputType',
+            label: 'Input Type',
+            minWidth: 100,
+            format: (item) => {
+              const contentString = (inputType: string) => {
+                switch (inputType) {
+                  case MandatoryParameter.SINGLE_LINE:
+                    return 'Single Line';
+                  case MandatoryParameter.MULTI_LINE:
+                    return 'Multi Line';
+                  case MandatoryParameter.DATE:
+                    return 'Date';
+                  case MandatoryParameter.DATE_TIME:
+                    return 'Date Time';
+                  case MandatoryParameter.NUMBER:
+                    return 'Number';
+                  case MandatoryParameter.SINGLE_SELECT:
+                    return 'Single Select';
+                  case MandatoryParameter.MULTISELECT:
+                  case 'MULTI_SELECT':
+                    return 'Multi Select';
+                  default:
+                    return '';
+                }
+              };
+              return contentString(item.inputType);
+            },
+          },
+          {
+            id: 'mandatory',
+            label: 'Is Mandatory?',
+            minWidth: 100,
+            format: (item) =>
+              getBooleanFromDecimal(item.flags, FlagPositions.MANDATORY) ? 'Yes' : 'No',
+          },
+          {
+            id: 'status',
+            label: 'Status',
+            minWidth: 100,
+            format: (item) => 'Active',
+          },
+          {
+            id: 'action',
+            label: 'Action',
+            minWidth: 100,
+            format: function renderComp(item) {
+              return ![PropertyFlags.EXTERNAL_ID].includes(item.flags) ? (
+                <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                  <div
+                    id="more-actions"
+                    onClick={(event: any) => {
+                      setAnchorEl(event.currentTarget);
+                      setSelectedProperty(item);
+                    }}
+                  >
+                    More <ArrowDropDown className="icon" />
+                  </div>
+
+                  <ListActionMenu
+                    id="row-more-actions"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    disableEnforceFocus
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                  >
+                    {[PropertyFlags.MANDATORY, PropertyFlags.OPTIONAL]?.includes(
+                      selectedProperty?.flags,
+                    ) && (
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          dispatch(
+                            openOverlayAction({
+                              type: OverlayNames.REASON_MODAL,
+                              props: {
+                                modalTitle: 'Archive Property',
+                                modalDesc: `Are you sure you want to archive this property?`,
+                                onSumbitHandler: (
+                                  reason: string,
+                                  setFormErrors: (errors?: Error[]) => void,
+                                ) => {
+                                  dispatch(
+                                    archiveObjectTypeProperty({
+                                      objectTypeId: active?.id,
+                                      propertyId: selectedProperty?.id,
+                                      reason,
+                                      setFormErrors,
+                                    }),
+                                  );
+                                },
+                                onSubmitModalText: 'Archive',
+                              },
+                            }),
+                          );
+                        }}
+                      >
+                        <div className="list-item">
+                          <ArchiveOutlinedIcon />
+                          <span>Archived</span>
+                        </div>
+                      </MenuItem>
+                    )}
+                    {[
+                      PropertyFlags.MANDATORY,
+                      PropertyFlags.DISPLAY_NAME,
+                      PropertyFlags.OPTIONAL,
+                    ]?.includes(selectedProperty?.flags) && (
+                      <MenuItem
+                        onClick={() => {
+                          setAnchorEl(null);
+                          setCreatePropertyDrawer('Edit');
+                        }}
+                      >
+                        <div className="list-item">
+                          <EditOutlinedIcon />
+                          <span>Edit</span>
+                        </div>
+                      </MenuItem>
+                    )}
+                  </ListActionMenu>
+                </div>
+              ) : null;
+            },
+          },
+        ]}
+        rows={properties.filter((currProp) => currProp?.usageStatus !== 7)}
+      />
+      {createPropertyDrawer && (
+        <AddPropertyDrawer
+          label={createPropertyDrawer}
+          onCloseDrawer={setCreatePropertyDrawer}
+          property={selectedProperty}
+        />
+      )}
+    </TabContentWrapper>
+  );
+};
+
+const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
+  const {
+    objectTypes: { active },
+  } = useTypedSelector((state) => state.ontology);
+  const relations = active?.relations || [];
+  const [createRelationDrawer, setRelationDrawer] = useState<string | boolean>('');
+  const dispatch = useDispatch();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedRelation, setSelectedRelation] = useState(null);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setTimeout(() => setSelectedRelation(null), 200);
+  };
+
+  const fetchData = (page: number) => {
+    dispatch(
+      fetchObjectTypes({
+        page,
+        size: 256,
+        usageStatus: 1,
+      }),
+    );
+  };
+
+  useEffect(() => {
+    fetchData(0);
+  }, []);
+
+  return (
+    <TabContentWrapper>
+      <div className="filters">
+        <Button
+          id="create"
+          onClick={() => {
+            setRelationDrawer(true);
+          }}
+        >
+          Create New Relation
+        </Button>
+      </div>
+      <DataTable
+        columns={[
+          {
+            id: 'relatedTo',
+            label: 'Related To',
+            minWidth: 100,
+            format: (item) => {
+              return startCase(item.externalId);
+            },
+          },
+          {
+            id: 'displayName',
+            label: 'Relation Name',
+            minWidth: 100,
+          },
+          {
+            id: 'cardinality',
+            label: 'Cardinality',
+            minWidth: 100,
+            format: (item) => {
+              const contentString = (cardinality: string) => {
+                switch (cardinality) {
+                  case 'ONE_TO_ONE':
+                    return 'One to One';
+                  case 'ONE_TO_MANY':
+                    return 'One to Many';
+                  default:
+                    return '';
+                }
+              };
+              return contentString(item?.target?.cardinality);
+            },
+          },
+
+          {
+            id: 'status',
+            label: 'Status',
+            minWidth: 100,
+            format: (item) => 'Active',
+          },
+          {
+            id: 'action',
+            label: 'Action',
+            minWidth: 100,
+            format: function renderComp(item) {
+              return (
+                <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                  <div
+                    id="more-actions"
+                    onClick={(event: any) => {
+                      setAnchorEl(event.currentTarget);
+                      setSelectedRelation(item);
+                    }}
+                  >
+                    More <ArrowDropDown className="icon" />
+                  </div>
+
+                  <ListActionMenu
+                    id="row-more-actions"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    disableEnforceFocus
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        handleClose();
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.REASON_MODAL,
+                            props: {
+                              modalTitle: 'Archive Relation',
+                              modalDesc: `Are you sure you want to archive this relation?`,
+                              onSumbitHandler: (
+                                reason: string,
+                                setFormErrors: (errors?: Error[]) => void,
+                              ) => {
+                                dispatch(
+                                  archiveObjectTypeRelation({
+                                    objectTypeId: active?.id,
+                                    relationId: selectedRelation?.id,
+                                    reason,
+                                    setFormErrors,
+                                  }),
+                                );
+                              },
+                              onSubmitModalText: 'Archive',
+                            },
+                          }),
+                        );
+                      }}
+                    >
+                      <div className="list-item">
+                        <ArchiveOutlinedIcon />
+                        <span>Archived</span>
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        setAnchorEl(null);
+                        setRelationDrawer('Edit');
+                      }}
+                    >
+                      <div className="list-item">
+                        <EditOutlinedIcon />
+                        <span>Edit</span>
+                      </div>
+                    </MenuItem>
+                  </ListActionMenu>
+                </div>
+              );
+            },
+          },
+        ]}
+        rows={relations.filter((currProp) => currProp.usageStatus !== 7)}
+      />
+      {createRelationDrawer && (
+        <AddRelationDrawer
+          label={createRelationDrawer}
+          onCloseDrawer={setRelationDrawer}
+          relation={selectedRelation}
+        />
+      )}
+    </TabContentWrapper>
   );
 };
 
@@ -194,6 +524,10 @@ const ObjectTypesContent = ({ id }: RouteComponentProps<{ id: string }>) => {
       {
         label: 'Properties',
         tabContent: PropertiesTabContent,
+      },
+      {
+        label: 'Relations',
+        tabContent: RelationsTabContent,
       },
     ],
   });

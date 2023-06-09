@@ -47,3 +47,13 @@ export const qrCodeValidator = async ({
     throw 'Invalid QR Code';
   }
 };
+
+// TODO : Seems like a duplicate and wrongly implemented version of : 'FlagPositions' 'getBooleanFromDecimal'
+export enum PropertyFlags {
+  SYSTEM = 1,
+  EXTERNAL_ID = 27,
+  EXTERNAL_ID_AUTO_GENERATE = 59,
+  DISPLAY_NAME = 21,
+  MANDATORY = 16,
+  OPTIONAL = 0,
+}

@@ -136,6 +136,14 @@ export enum OntologyAction {
   UPDATE_OBJECTS_LIST = '@@ontology/UPDATE_OBJECTS_LIST',
   //RESET
   RESET_ONTOLOGY = '@@ontology/RESET_ONTOLOGY',
+  CREATE_OBJECT_TYPE = '@@ontology/CREATE_OBJECT_TYPE',
+  ARCHIVE_OBJECT_TYPE_PROPERTY = '@@ontology/ARCHIVE_OBJECT_TYPE_PROPERTY',
+  CREATE_OBJECT_TYPE_PROPERTY = '@@ontology/CREATE_OBJECT_TYPE_PROPERTY',
+  CREATE_OBJECT_TYPE_RELATION = '@@ontology/CREATE_OBJECT_TYPE_RELATION',
+  ARCHIVE_OBJECT_TYPE_RELATION = '@@ontology/ARCHIVE_OBJECT_TYPE_RELATION',
+  EDIT_OBJECT_TYPE_RELATION = '@@ontology/EDIT_OBJECT_TYPE_RELATION',
+  EDIT_OBJECT_TYPE_PROPERTY = '@@ontology/EDIT_OBJECT_TYPE_PROPERTY',
+  EDIT_OBJECT_TYPE = '@@ontology/EDIT_OBJECT_TYPE',
 }
 
 export type OntologyActionType = ReturnType<
@@ -156,6 +164,11 @@ export type OntologyActionType = ReturnType<
   | typeof actions.fetchObject
   | typeof actions.fetchObjectError
   | typeof actions.fetchObjectSuccess
+  | typeof actions.createObjectType
+  | typeof actions.archiveObjectTypeProperty
+  | typeof actions.createObjectTypeProperty
+  | typeof actions.archiveObjectTypeRelation
+  | typeof actions.createObjectTypeRelation
 >;
 
 export type fetchDataType = {

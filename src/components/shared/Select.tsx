@@ -8,7 +8,7 @@ export const formatOptionLabel: Props<{
   label: string;
   externalId: string;
 }>['formatOptionLabel'] = ({ externalId, label }) => (
-  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+  <div style={{ display: 'flex', justifyContent: 'space-between', gap: '6px' }}>
     <div>{label}</div>
     {externalId && <div>{externalId}</div>}
   </div>

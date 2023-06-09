@@ -333,6 +333,7 @@ const ObjectList: FC<TabContentProps> = () => {
                 objectTypeId: active.id,
                 id: 'new',
               }}
+              onCreate={() => fetchData({ page: pageable.page })}
             />
           )}
         </TabContentWrapper>

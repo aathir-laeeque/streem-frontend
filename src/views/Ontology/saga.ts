@@ -4,6 +4,14 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import {
   apiArchiveObject,
+  apiArchiveObjectTypeProperty,
+  apiArchiveObjectTypeRelation,
+  apiCreateObjectType,
+  apiCreateObjectTypeProperty,
+  apiCreateObjectTypeRelation,
+  apiEditObjectType,
+  apiEditObjectTypeProperty,
+  apiEditObjectTypeRelation,
   apiGetObjects,
   apiGetObjectTypes,
   apiUnArchiveObject,
@@ -177,6 +185,236 @@ function* unarchiveObjectSaga({ payload }: ReturnType<typeof actions.unarchiveOb
   }
 }
 
+function* createObjectTypeSaga({ payload }: ReturnType<typeof actions.createObjectType>) {
+  try {
+    const {
+      params: { data: objectTypeData, navigate },
+    } = payload;
+    const { data, errors } = yield call(request, 'POST', apiCreateObjectType(), {
+      data: objectTypeData,
+    });
+    if (data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `New Object Type Created Successfully`,
+        }),
+      );
+      navigate('/ontology');
+    } else if (errors) {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    console.error('error in create objectTypes saga :: ', error);
+  }
+}
+
+function* archiveObjectTypePropertySaga({
+  payload,
+}: ReturnType<typeof actions.archiveObjectTypeProperty>) {
+  try {
+    const {
+      params: { objectTypeId, propertyId, reason, setFormErrors },
+    } = payload;
+
+    const { data, errors } = yield call(
+      request,
+      'PATCH',
+      apiArchiveObjectTypeProperty(objectTypeId),
+      {
+        params: { propertyId, reason },
+      },
+    );
+
+    if (data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `Object Property Archived`,
+        }),
+      );
+      setFormErrors(errors);
+      setTimeout(() => location.reload(), 1300);
+    } else if (errors) {
+      setFormErrors(errors);
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    console.error('error in archiveObjectTypePropertySaga :: ', error);
+  }
+}
+
+function* createObjectTypePropertySaga({
+  payload,
+}: ReturnType<typeof actions.createObjectTypeProperty>) {
+  try {
+    const {
+      params: { objectTypeId, data },
+    } = payload;
+    const res = yield call(request, 'PATCH', apiCreateObjectTypeProperty(objectTypeId), {
+      data,
+    });
+    if (res.data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `New Object Type Property Created Successfully`,
+        }),
+      );
+      setTimeout(() => location.reload(), 1300);
+    } else if (res.errors) {
+      throw getErrorMsg(res.errors);
+    }
+  } catch (error) {
+    console.error('error in createObjectTypePropertySaga :: ', error);
+  }
+}
+
+function* createObjectTypeRelationSaga({
+  payload,
+}: ReturnType<typeof actions.createObjectTypeRelation>) {
+  try {
+    const {
+      params: { objectTypeId, data },
+    } = payload;
+    const res = yield call(request, 'PATCH', apiCreateObjectTypeRelation(objectTypeId), {
+      data: data,
+    });
+    if (res.data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `New Object Type Relation Created Successfully`,
+        }),
+      );
+      setTimeout(() => location.reload(), 1300);
+    } else if (res.errors) {
+      throw getErrorMsg(res.errors);
+    }
+  } catch (error) {
+    console.error('error in createObjectTypeRelationSaga :: ', error);
+  }
+}
+
+function* archiveObjectTypeRelationSaga({
+  payload,
+}: ReturnType<typeof actions.archiveObjectTypeRelation>) {
+  try {
+    const {
+      params: { objectTypeId, relationId, reason, setFormErrors },
+    } = payload;
+
+    const { data, errors } = yield call(
+      request,
+      'PATCH',
+      apiArchiveObjectTypeRelation(objectTypeId),
+      {
+        params: { relationId, reason },
+      },
+    );
+
+    if (data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `Object Relation Archived`,
+        }),
+      );
+      setFormErrors(errors);
+      setTimeout(() => location.reload(), 1300);
+    } else if (errors) {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    console.error('error in archiveObjectTypeRelationSaga :: ', error);
+  }
+}
+
+function* editObjectTypeRelationSaga({ payload }: ReturnType<any>) {
+  try {
+    const {
+      params: { objectTypeId, data: editedData, relationId },
+    } = payload;
+
+    const { data, errors } = yield call(
+      request,
+      'PATCH',
+      apiEditObjectTypeRelation(objectTypeId, relationId),
+      {
+        data: editedData,
+      },
+    );
+
+    if (data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `Object Relation Updated`,
+        }),
+      );
+      setTimeout(() => location.reload(), 1300);
+    } else if (errors) {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    console.error('error in editObjectRelationSaga :: ', error);
+  }
+}
+
+function* editObjectTypePropertySaga({ payload }: ReturnType<any>) {
+  try {
+    const {
+      params: { objectTypeId, data: editedData, propertyId },
+    } = payload;
+    const { data, errors } = yield call(
+      request,
+      'PATCH',
+      apiEditObjectTypeProperty(objectTypeId, propertyId),
+      {
+        data: editedData,
+      },
+    );
+
+    if (data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `Object Property Updated`,
+        }),
+      );
+      setTimeout(() => location.reload(), 1300);
+    } else if (errors) {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    console.error('error in editObjectPropertySaga :: ', error);
+  }
+}
+
+function* editObjectTypeSaga({ payload }: ReturnType<any>) {
+  try {
+    const {
+      params: { objectTypeId, data: editedData, navigate },
+    } = payload;
+    const { data, errors } = yield call(request, 'PATCH', apiEditObjectType(objectTypeId), {
+      data: editedData,
+    });
+    if (data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `Object Type Updated`,
+        }),
+      );
+      navigate('/ontology');
+    } else if (errors) {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    console.error('error in editObjectType :: ', error);
+  }
+}
+
 export function* OntologySaga() {
   yield takeLatest(OntologyAction.FETCH_OBJECT_TYPES, fetchObjectTypesSaga);
   yield takeLatest(OntologyAction.FETCH_OBJECT_TYPE, fetchObjectTypeSaga);
@@ -186,4 +424,12 @@ export function* OntologySaga() {
   yield takeLeading(OntologyAction.EDIT_OBJECT, objectActionSaga);
   yield takeLatest(OntologyAction.ARCHIVE_OBJECT, archiveObjectSaga);
   yield takeLatest(OntologyAction.UNARCHIVE_OBJECT, unarchiveObjectSaga);
+  yield takeLatest(OntologyAction.CREATE_OBJECT_TYPE, createObjectTypeSaga);
+  yield takeLatest(OntologyAction.ARCHIVE_OBJECT_TYPE_PROPERTY, archiveObjectTypePropertySaga);
+  yield takeLatest(OntologyAction.CREATE_OBJECT_TYPE_PROPERTY, createObjectTypePropertySaga);
+  yield takeLatest(OntologyAction.CREATE_OBJECT_TYPE_RELATION, createObjectTypeRelationSaga);
+  yield takeLatest(OntologyAction.ARCHIVE_OBJECT_TYPE_RELATION, archiveObjectTypeRelationSaga);
+  yield takeLatest(OntologyAction.EDIT_OBJECT_TYPE_RELATION, editObjectTypeRelationSaga);
+  yield takeLatest(OntologyAction.EDIT_OBJECT_TYPE_PROPERTY, editObjectTypePropertySaga);
+  yield takeLatest(OntologyAction.EDIT_OBJECT_TYPE, editObjectTypeSaga);
 }
