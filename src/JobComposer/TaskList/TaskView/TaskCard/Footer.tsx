@@ -462,7 +462,7 @@ const Footer: FC<FooterProps> = ({
   const timerjobApiCall = async () => {
     try {
       const { data, errors }: ResponseObj<any> = await request(
-        'POST',
+        task.taskExecution.state === 'PAUSED' ? 'PATCH' : 'POST',
         task.taskExecution.state === 'PAUSED' ? apiResumeJob(task.id) : apiPauseJob(task.id),
         {
           data: { jobId },
