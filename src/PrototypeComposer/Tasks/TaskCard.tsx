@@ -54,7 +54,7 @@ import {
   updateTaskName,
 } from './actions';
 import { AddActivityItemWrapper, TaskCardWrapper } from './styles';
-import { TaskCardProps } from './types';
+import { TaskCardProps, TaskTypeEnum } from './types';
 
 const AddActivity = () => {
   return (

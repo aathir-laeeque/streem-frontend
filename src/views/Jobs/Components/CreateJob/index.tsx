@@ -1,10 +1,6 @@
 import { Button, useDrawer } from '#components';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
 import { useTypedSelector } from '#store';
-import { apiJobSchedulers } from '#utils/apiUrls';
-import { request } from '#utils/request';
-import { createJob, createJobSuccess } from '#views/Jobs/ListView/actions';
+import { createJob, createJobSuccess, updateJob } from '#views/Jobs/ListView/actions';
 import { Step, StepIconProps, StepLabel, Stepper } from '@material-ui/core';
 import { CheckCircleOutline, RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons';
 import moment from 'moment';
@@ -247,23 +243,18 @@ const CreateJobDrawer: FC<{
     );
   };
 
-  const handleScheduleJob = async () => {
+  const handleScheduleJob = () => {
     const _data = getValues();
-    try {
-      _data.expectedStartDate = moment(_data.expectedStartDate).unix();
-      await request('POST', apiJobSchedulers(createdData.id), {
-        data: { ..._data, ...createdData },
-      });
-      dispatch(
-        showNotification({
-          type: NotificationType.SUCCESS,
-          msg: 'Schedule created successfully',
-        }),
-      );
-      handleCloseDrawer(true);
-    } catch (e) {
-      console.error('Error while creating schedule for job', e);
-    }
+    dispatch(
+      updateJob({
+        job: {
+          id: createdData?.id,
+          expectedStartDate: moment(_data.expectedStartDate).unix(),
+          expectedEndDate: moment(_data.expectedEndDate).unix(),
+        },
+      }),
+    );
+    handleCloseDrawer();
   };
 
   const { StyledDrawer, setDrawerOpen } = useDrawer({
