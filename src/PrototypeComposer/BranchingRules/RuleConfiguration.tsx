@@ -234,6 +234,7 @@ const RuleCard: FC<any> = ({
   visibleParametersList,
   shouldRegister,
   compareValues,
+  setHasChanged,
 }) => {
   const { setValue, register, watch } = form;
   const formValues = watch('rules', []);
@@ -462,7 +463,15 @@ const RuleCard: FC<any> = ({
             },
           ]}
         />
-        {!isReadOnly && <Close className="remove-icon" onClick={() => remove(index)} />}
+        {!isReadOnly && (
+          <Close
+            className="remove-icon"
+            onClick={() => {
+              setHasChanged(true);
+              remove(index);
+            }}
+          />
+        )}
       </div>
       <FormGroup
         inputs={[
@@ -869,6 +878,7 @@ const RuleConfiguration: FC<{ parameter: any; isReadOnly: boolean }> = ({
             visibleParametersList={visibleParametersList}
             shouldRegister={shouldRegister}
             compareValues={compareValues}
+            setHasChanged={setHasChanged}
           />
         ))}
         {!isReadOnly && (
