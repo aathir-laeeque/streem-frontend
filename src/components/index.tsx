@@ -38,3 +38,4 @@ export * from './shared/ImageGallery';
 export * from './shared/LoadingContainer';
 export * from './shared/ResourceFilter';
 export * from './shared/GeneralHeader';
+export * from './shared/FileGallery';

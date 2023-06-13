@@ -14,6 +14,7 @@ import SignatureTaskView from '#PrototypeComposer/Parameters/TaskViews/Signature
 import SingleLineTaskView from '#PrototypeComposer/Parameters/TaskViews/SingleLine';
 import SingleSelectTaskView from '#PrototypeComposer/Parameters/TaskViews/SingleSelect';
 import TextInstructionTaskView from '#PrototypeComposer/Parameters/TaskViews/TextInstruction';
+import FileUploadTaskView from '#PrototypeComposer/Parameters/TaskViews/FileUpload';
 import YesNoTaskView from '#PrototypeComposer/Parameters/TaskViews/YesNo';
 import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap } from '#PrototypeComposer/constants';
@@ -237,6 +238,9 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
     switch (parameterType) {
       case MandatoryParameter.MEDIA:
         return <MediaTaskView parameter={parameter} />;
+
+      case MandatoryParameter.FILE_UPLOAD:
+        return <FileUploadTaskView parameter={parameter} />;
 
       case MandatoryParameter.CHECKLIST:
       case MandatoryParameter.MULTISELECT:

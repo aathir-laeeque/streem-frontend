@@ -12,6 +12,7 @@ import {
   ShortTextOutlined,
   SubjectOutlined,
   TonalityOutlined,
+  PublishOutlined,
 } from '@material-ui/icons';
 import React from 'react';
 import styled from 'styled-components';
@@ -35,6 +36,7 @@ export const ParameterIconByType = {
   [MandatoryParameter.DATE_TIME]: <EventNoteOutlined />,
   [MandatoryParameter.RESOURCE]: <LayersOutlined />,
   [MandatoryParameter.MULTI_RESOURCE]: <LayersOutlined />,
+  [MandatoryParameter.FILE_UPLOAD]: <PublishOutlined />,
 };
 
 const ParameterLabelWrapper = styled.div`
@@ -164,6 +166,12 @@ export const ParameterTypeMap: Record<string, JSX.Element | string> = {
     <RenderParameterLabel
       label="Multiple Resource Selector"
       icon={ParameterIconByType[MandatoryParameter.MULTI_RESOURCE]}
+    />
+  ),
+  [MandatoryParameter.FILE_UPLOAD]: (
+    <RenderParameterLabel
+      label="File Upload"
+      icon={ParameterIconByType[MandatoryParameter.FILE_UPLOAD]}
     />
   ),
 };

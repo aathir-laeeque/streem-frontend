@@ -19,6 +19,7 @@ import SignatureParameter from './Signature';
 import TextboxParameter from './Textbox';
 import YesNoParameter from './YesNo';
 import { ParameterListProps } from './types';
+import FileUploadParameter from './FileUpload';
 
 const Wrapper = styled.div.attrs({
   className: 'parameter-list',
@@ -202,6 +203,15 @@ const ParameterList: FC<ParameterListProps> = ({
                 case MandatoryParameter.MEDIA:
                   return (
                     <MediaParameter
+                      parameter={parameter}
+                      isCorrectingError={isCorrectingError}
+                      isTaskCompleted={isTaskCompleted}
+                      isLoggedInUserAssigned={isLoggedInUserAssigned}
+                    />
+                  );
+                case MandatoryParameter.FILE_UPLOAD:
+                  return (
+                    <FileUploadParameter
                       parameter={parameter}
                       isCorrectingError={isCorrectingError}
                       isTaskCompleted={isTaskCompleted}

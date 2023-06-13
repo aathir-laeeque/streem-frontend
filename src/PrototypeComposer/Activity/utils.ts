@@ -97,6 +97,7 @@ const generateNewParameter = ({
     case MandatoryParameter.SIGNATURE:
     case MandatoryParameter.MULTI_LINE:
     case MandatoryParameter.SINGLE_LINE:
+    case MandatoryParameter.FILE_UPLOAD:
       return {
         orderTree,
         type,

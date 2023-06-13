@@ -20,6 +20,7 @@ export enum MandatoryParameter {
   DATE = 'DATE',
   DATE_TIME = 'DATE_TIME',
   SINGLE_LINE = 'SINGLE_LINE',
+  FILE_UPLOAD = 'FILE_UPLOAD',
 }
 
 type ChecklistProperty = Pick<Property, 'id' | 'name' | 'value'>;

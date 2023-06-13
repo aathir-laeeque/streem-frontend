@@ -32,6 +32,7 @@ export enum MandatoryParameter {
   DATE_TIME = 'DATE_TIME',
   SINGLE_LINE = 'SINGLE_LINE',
   MULTI_RESOURCE = 'MULTI_RESOURCE',
+  FILE_UPLOAD = 'FILE_UPLOAD',
 }
 
 export enum NonMandatoryParameter {

@@ -292,6 +292,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
                         MandatoryParameter.NUMBER,
                         MandatoryParameter.SIGNATURE,
                         MandatoryParameter.SINGLE_LINE,
+                        MandatoryParameter.FILE_UPLOAD,
                       ].includes(option.value)
                     ) {
                       setValue(

@@ -630,6 +630,7 @@ const parameterTemplateFormatter = (
           ))}
         </View>
       );
+    case MandatoryParameter.FILE_UPLOAD:
     case MandatoryParameter.MEDIA:
       return (
         <View style={styles.parameterView} wrap={false}>
