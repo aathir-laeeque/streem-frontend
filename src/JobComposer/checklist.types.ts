@@ -175,6 +175,8 @@ export type AutomationAction = {
   actionType: AutomationActionActionType;
   actionDetails: AutomationActionDetails;
   triggerType: AutomationActionTriggerType;
+  displayName: string;
+  orderTree: number;
 };
 
 export interface Task {

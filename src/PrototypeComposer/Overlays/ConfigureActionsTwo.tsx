@@ -444,7 +444,12 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
     validate: {
       isValid: (v) => {
         if (actionType) {
-          if (actionType !== AutomationActionActionType.CREATE_OBJECT) {
+          if (
+            ![
+              AutomationActionActionType.CREATE_OBJECT,
+              AutomationActionActionType.ARCHIVE_OBJECT,
+            ].includes(actionType)
+          ) {
             let keysToValidate: string[] = [];
             if (actionType === AutomationActionActionType.SET_PROPERTY) {
               if (v?.propertyInputType) {
@@ -707,11 +712,19 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
                                             shouldValidate: true,
                                           },
                                         );
-                                        fetchObjectType(_option.objectTypeId);
+
+                                        if (
+                                          actionType !== AutomationActionActionType.ARCHIVE_OBJECT
+                                        ) {
+                                          fetchObjectType(_option.objectTypeId);
+                                        }
                                       },
                                     },
                                   },
-                                  ...(actionType === AutomationActionActionType.SET_PROPERTY
+                                  ...([
+                                    AutomationActionActionType.SET_PROPERTY,
+                                    AutomationActionActionType.ARCHIVE_OBJECT,
+                                  ].includes(actionType)
                                     ? []
                                     : [
                                         {
@@ -754,7 +767,8 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
                                           },
                                         },
                                       ]),
-                                  ...(selectedObjectType
+                                  ...(selectedObjectType &&
+                                  actionType !== AutomationActionActionType.ARCHIVE_OBJECT
                                     ? [
                                         {
                                           type: InputTypes.SINGLE_SELECT,
