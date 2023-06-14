@@ -157,9 +157,9 @@ export const CommonJobPdfDetails = ({
       </TabLookLike>
 
       {checklist && (
-        <TabLookLike title="Checklist Details">
+        <TabLookLike title="Process Details">
           <View>
-            <InlineInputLabelGroup label="Checklist ID:" value={checklist.code} />
+            <InlineInputLabelGroup label="Process ID:" value={checklist.code} />
             <InlineInputLabelGroup label="Name:" value={checklist.name} />
             {checklist.properties?.map((property) => (
               <InlineInputLabelGroup

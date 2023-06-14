@@ -1,7 +1,7 @@
 import { RoleIdByName } from '#services/uiPermissions';
 
 enum PermissionCategories {
-  CHECKLIST_FEATURES = 'Checklisting Features',
+  CHECKLIST_FEATURES = 'Processing Features',
   JOB_FEATURES = 'Job Features',
   ADMINISTRATIVE_FEATURES = 'Administrative Features',
   ONTOLOGY_FEATURES = 'Ontology',
@@ -9,12 +9,12 @@ enum PermissionCategories {
 }
 
 enum ChecklistFeatures {
-  CREATE_UNIT_LEVEL_CHECKLISTS = 'Create Unit-Level Checklists',
-  VIEW_EXISTING_UNIT_LEVEL_CHECKLISTS = 'View existing Unit-Level Checklists',
+  CREATE_UNIT_LEVEL_CHECKLISTS = 'Create Unit-Level Processes',
+  VIEW_EXISTING_UNIT_LEVEL_CHECKLISTS = 'View existing Unit-Level Processes',
   VIEW_UNIT_LEVEL_PROTOTYPES = 'View Unit-Level Prototypes',
-  REVIEW_AND_APPROVE_UNIT_LEVEL_CHECKLISTS = 'Review and Approve Unit-Level Checklists',
-  RELEASE_UNIT_LEVEL_CHECKLISTS = 'Release Unit-Level Checklists',
-  REVISE_AND_ARCHIVE_UNIT_LEVEL_CHECKLISTS = 'Revise and Archive Unit-Level Checklists',
+  REVIEW_AND_APPROVE_UNIT_LEVEL_CHECKLISTS = 'Review and Approve Unit-Level Processes',
+  RELEASE_UNIT_LEVEL_CHECKLISTS = 'Release Unit-Level Processes',
+  REVISE_AND_ARCHIVE_UNIT_LEVEL_CHECKLISTS = 'Revise and Archive Unit-Level Processes',
 }
 
 enum JobFeatures {
@@ -47,12 +47,12 @@ enum OntologyFeatures {
 
 enum GlobalPortalFeatures {
   ACCESS_GLOBAL_PORTAL = 'Access Global Portal',
-  CREATE_GLOBAL_CHECKLISTS = 'Create Global Checklists',
-  VIEW_GLOBAL_CHECKLISTS = 'View Global Checklists',
-  SHARE_GLOBAL_CHECKLISTS_WITH_UNITS = 'Share Global Checklists with Units',
-  REVIEW_AND_APPROVE_GLOBAL_CHECKLISTS = 'Review and Approve Global Checklists',
-  RELEASE_GLOBAL_CHECKLISTS = 'Release Global Checklists',
-  REVISE_AND_ARCHIVE_GLOBAL_CHECKLISTS = 'Revise and Archive Global Checklists',
+  CREATE_GLOBAL_CHECKLISTS = 'Create Global Processes',
+  VIEW_GLOBAL_CHECKLISTS = 'View Global Processes',
+  SHARE_GLOBAL_CHECKLISTS_WITH_UNITS = 'Share Global Processes with Units',
+  REVIEW_AND_APPROVE_GLOBAL_CHECKLISTS = 'Review and Approve Global Processes',
+  RELEASE_GLOBAL_CHECKLISTS = 'Release Global Processes',
+  REVISE_AND_ARCHIVE_GLOBAL_CHECKLISTS = 'Revise and Archive Global Processes',
 }
 
 export const rolesDetails = {
@@ -93,7 +93,7 @@ export const rolesDetails = {
     },
   },
   [RoleIdByName.CHECKLIST_PUBLISHER]: {
-    name: 'Checklist Publisher',
+    name: 'Process Publisher',
     permissions: {
       [PermissionCategories.CHECKLIST_FEATURES]: Object.values(ChecklistFeatures).map((v) => v),
       [PermissionCategories.JOB_FEATURES]: Object.values(JobFeatures).map((v) => v),

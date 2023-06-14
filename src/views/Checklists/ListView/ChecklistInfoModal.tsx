@@ -330,7 +330,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
           showFooter={false}
         >
           <div className="header">
-            <label>Checklist Name</label>
+            <label>Process Name</label>
             <span>{state?.name}</span>
           </div>
           <div className="body">
@@ -339,7 +339,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                 <label>Authoring Information</label>
                 <div>
                   <div className="column">
-                    <label className="column-label">Checklist Owner</label>
+                    <label className="column-label">Process Owner</label>
                     <div className="owner">
                       <Avatar user={primaryAuthor as Author} />
                       <div className="owner-details">
@@ -480,7 +480,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                   </div>
 
                   <div className="column">
-                    <label className="column-label">Checklist ID</label>
+                    <label className="column-label">Process ID</label>
 
                     {state.versions.map((version, index) => (
                       <div
@@ -515,7 +515,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
 
             {!!state.description ? (
               <section className="description">
-                <label>Checklist Description</label>
+                <label>Process Description</label>
 
                 <Textarea
                   defaultValue={state.description}

@@ -225,7 +225,7 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
         <form onSubmit={handleSubmit((data) => onSubmit(data))} style={{}}>
           {selectedChecklist ? (
             <>
-              <TextInput label="Checklist" defaultValue={selectedChecklist.name} disabled />
+              <TextInput label="Process" defaultValue={selectedChecklist.name} disabled />
               <input
                 ref={register({ required: true })}
                 value={selectedChecklist.id}
@@ -235,8 +235,8 @@ export const CreateJobModal: FC<CommonOverlayProps<CreateJobModalProps>> = ({
             </>
           ) : (
             <Select
-              label="Checklist"
-              placeholder="Checklist"
+              label="Process"
+              placeholder="Process"
               isClearable
               menuPortalTarget={document.body}
               menuPosition="fixed"

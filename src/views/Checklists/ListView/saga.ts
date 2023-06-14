@@ -144,8 +144,8 @@ function* handlePublishedArchiveSaga({ payload }: ReturnType<typeof handlePublis
         openOverlayAction({
           type: OverlayNames.REASON_MODAL,
           props: {
-            modalTitle: 'Archive Checklist',
-            modalDesc: `Provide details for archiving the checklist`,
+            modalTitle: 'Archive Process',
+            modalDesc: `Provide details for archiving the process`,
             onPrimaryClick: (reason: string, setFormErrors: (errors?: Error[]) => void) => {
               store.dispatch(archiveChecklist(id, reason, setFormErrors));
             },

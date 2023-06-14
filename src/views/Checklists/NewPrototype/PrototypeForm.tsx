@@ -36,7 +36,7 @@ const validateForm = (values: FormValues) => {
 
   if (!values.name) {
     isValid = false;
-    formErrors.name = 'Checklist name is required';
+    formErrors.name = 'Process name is required';
   }
 
   values.properties.map((property) => {
@@ -179,24 +179,24 @@ const PrototypeForm: FC<Props> = (props) => {
 
   return (
     <form className="prototype-form" onSubmit={handleSubmit}>
-      <h3 className="heading">New Checklist Prototype</h3>
+      <h3 className="heading">New Process Prototype</h3>
 
       <div className="left-side">
         {formData.revisedCode && (
           <>
             <div className="input-field">
-              <h5 className="label">Checklist Being Revised</h5>
+              <h5 className="label">Process Being Revised</h5>
               <h4 className="value">{formData.revisedName}</h4>
             </div>
             <div className="input-field">
-              <h5 className="label">Checklist ID</h5>
+              <h5 className="label">Process ID</h5>
               <h4 className="value">{formData.revisedCode}</h4>
             </div>
           </>
         )}
         <div className={formData.revisedCode ? 'owner revised' : 'owner'}>
           <h5 className={formData.revisedCode ? 'label-light' : 'label'}>
-            {formData.revisedCode ? 'Being Revised by' : 'Checklist Owner'}
+            {formData.revisedCode ? 'Being Revised by' : 'Process Owner'}
           </h5>
           <div className="container">
             <Avatar user={formValues.createdBy} />
@@ -210,7 +210,7 @@ const PrototypeForm: FC<Props> = (props) => {
         <TextInput
           defaultValue={formValues.name}
           error={formErrors.name}
-          label="Checklist Name"
+          label="Process Name"
           disabled={formMode === FormMode.VIEW}
           name="name"
           onChange={debounce(({ name, value }) => {

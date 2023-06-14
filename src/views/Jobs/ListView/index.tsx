@@ -48,14 +48,14 @@ export const commonColumns = [
   {
     id: '-1',
     type: LogType.TEXT,
-    displayName: 'Checklist Id',
+    displayName: 'Process Id',
     triggerType: 'CHK_ID',
     orderTree: 6,
   },
   {
     id: '-1',
     type: LogType.TEXT,
-    displayName: 'Checklist Name',
+    displayName: 'Process Name',
     triggerType: 'CHK_NAME',
     orderTree: 7,
   },

@@ -41,7 +41,7 @@ const ReleaseSuccessModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, cl
         showHeader={false}
       >
         <MemoReleaseSuccess fontSize={280} style={{ height: '150px' }} />
-        <h3>Checklist has been Released</h3>
+        <h3>Process has been Released</h3>
       </BaseModal>
     </Wrapper>
   );

@@ -128,7 +128,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
                       };
                     } else if (collaborator.state === CollaboratorState.COMMENTED_CHANGES) {
                       acc.headerNotification = {
-                        content: 'You have already submitted this checklist with comments',
+                        content: 'You have already submitted this process with comments',
                         class: 'secondary',
                       };
                     } else if (collaborator.state === CollaboratorState.COMMENTED_OK) {
@@ -165,7 +165,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
 
           if (data.state === ChecklistStates.READY_FOR_RELEASE) {
             acc.headerNotification = {
-              content: 'Checklist is Ready for Release',
+              content: 'Process is Ready for Release',
               class: 'success',
             };
           }

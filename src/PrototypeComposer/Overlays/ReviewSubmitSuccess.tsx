@@ -44,7 +44,7 @@ const ReviewSubmitSuccessModal: FC<CommonOverlayProps<any>> = ({
       >
         <MemoSentConfirmation fontSize={280} style={{ height: '200px' }} />
         <h3>Review Submited</h3>
-        <span>Your other team members are still reviewing the checklist.</span>
+        <span>Your other team members are still reviewing the process.</span>
       </BaseModal>
     </Wrapper>
   );

@@ -159,7 +159,7 @@ type Props = {
   checklistId: string;
 };
 
-const defaultParameters = ['Checklist ID', 'Checklist Name', 'Job ID'];
+const defaultParameters = ['Process ID', 'Process Name', 'Job ID'];
 
 const ConfigureJobParameters: FC<CommonOverlayProps<Props>> = ({
   closeAllOverlays,

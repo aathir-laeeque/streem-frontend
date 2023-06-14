@@ -252,10 +252,10 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
           openOverlayAction({
             type: OverlayNames.REASON_MODAL,
             props: {
-              modalTitle: data?.archived ? 'Unarchive Checklist' : 'Archive Checklist',
+              modalTitle: data?.archived ? 'Unarchive Process' : 'Archive Process',
               modalDesc: `Provide details for ${
                 data?.archived ? 'unarchiving' : 'archiving'
-              } the checklist`,
+              } the process`,
               onSubmitHandler: (reason: string, setFormErrors: (errors?: Error[]) => void) =>
                 data?.archived
                   ? dispatch(unarchiveChecklist(data?.id, reason, setFormErrors))
@@ -267,7 +267,7 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
     >
       <div className="list-item">
         <MemoArchive />
-        <span>{data?.archived ? 'Unarchive Checklist' : 'Archive Checklist'}</span>
+        <span>{data?.archived ? 'Unarchive Process' : 'Archive Process'}</span>
       </div>
     </MenuItem>
   );

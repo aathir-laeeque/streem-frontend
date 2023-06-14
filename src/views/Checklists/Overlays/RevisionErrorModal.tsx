@@ -52,10 +52,10 @@ const RevisionErrorModal: FC<
         showHeader={false}
       >
         <MemoRevisionError fontSize={280} style={{ height: '150px' }} />
-        <h3>Checklist is already being Revised</h3>
+        <h3>Process is already being Revised</h3>
         <span>
-          You cannot Revise the Checklist, it is already being revised by your Team Members. But,
-          you can view the ongoing Revision.
+          You cannot Revise the Process, it is already being revised by your Team Members. But, you
+          can view the ongoing Revision.
         </span>
         <Button
           onClick={() => {

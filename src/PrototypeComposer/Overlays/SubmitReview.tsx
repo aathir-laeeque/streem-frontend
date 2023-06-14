@@ -482,7 +482,7 @@ export const SubmitReviewModal: FC<
           <>
             <div className="header">
               <div className="header-left">
-                <h5>Checklist Name</h5>
+                <h5>Process Name</h5>
                 <h4>{data?.name}</h4>
                 <h6>
                   <FiberManualRecord

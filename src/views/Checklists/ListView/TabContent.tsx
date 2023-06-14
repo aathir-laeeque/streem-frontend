@@ -271,7 +271,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
     },
     {
       id: 'checklist-id',
-      label: 'Checklist ID',
+      label: 'Process ID',
       minWidth: 152,
       format: function renderComp(item: Checklist) {
         return <div key={item.id}>{item.code}</div>;
@@ -416,10 +416,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                               body: (
                                 <>
                                   <span>
-                                    Are you sure you want to start a Revision on this Checklist ?
+                                    Are you sure you want to start a Revision on this Process ?
                                   </span>
                                   <span style={{ color: '#999999' }}>
-                                    This will Deprecate the current Checklist and create a new
+                                    This will Deprecate the current Process and create a new
                                     Prototype as a revision.
                                   </span>
                                 </>
@@ -453,11 +453,11 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                             type: OverlayNames.REASON_MODAL,
                             props: {
                               modalTitle: selectedChecklist?.archived
-                                ? 'Unarchive Checklist'
-                                : 'Archive Checklist',
+                                ? 'Unarchive Process'
+                                : 'Archive Process',
                               modalDesc: `Provide details for ${
                                 selectedChecklist?.archived ? 'unarchiving' : 'archiving'
-                              } the checklist`,
+                              } the process`,
                               onSubmitHandler: (
                                 reason: string,
                                 setFormErrors: (errors?: Error[]) => void,
@@ -485,7 +485,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     <div className="list-item">
                       <MemoArchive />
                       <span>
-                        {selectedChecklist?.archived ? 'Unarchive Checklist' : 'Archive Checklist'}
+                        {selectedChecklist?.archived ? 'Unarchive Process' : 'Archive Process'}
                       </span>
                     </div>
                   </MenuItem>
@@ -582,7 +582,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
           showDropdown
           dropdownOptions={[
             {
-              label: 'Checklist Name',
+              label: 'Process Name',
               value: 'name',
               field: 'name',
               operator: FilterOperators.LIKE,

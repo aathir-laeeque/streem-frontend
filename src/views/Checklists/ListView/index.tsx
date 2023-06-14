@@ -27,8 +27,8 @@ const ChecklistListView: FC<ListViewProps> = ({}) => {
   return (
     <ViewWrapper>
       <GeneralHeader
-        heading={`${selectedUseCase?.label} - Checklists`}
-        subHeading="Create, view or edit your Checklists and Prototypes"
+        heading={`${selectedUseCase?.label} - Processes`}
+        subHeading="Create, view or edit your Processes and Prototypes"
       />
       <div className="list-table">
         {renderTabHeader()}

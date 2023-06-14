@@ -143,8 +143,8 @@ const Header: FC<{
           <h4>Process Information</h4>
           <LabelValueRow style={{ paddingBottom: 16, borderBottom: '1px solid #E0E0E0' }}>
             {[
-              { label: 'Checklist Name', value: data?.checklist.name },
-              { label: 'Checklist ID', value: data?.checklist.code },
+              { label: 'Process Name', value: data?.checklist.name },
+              { label: 'Process ID', value: data?.checklist.code },
             ].map(({ label, value }) => (
               <div className="info-item" key={label}>
                 <label className="info-item-label">{label}</label>

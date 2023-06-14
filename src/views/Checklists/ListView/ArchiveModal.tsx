@@ -64,7 +64,7 @@ const ArchiveModal: FC<
               <>
                 <ArchiveSuccessful fontSize="140px" />
                 <div className="text1">Archive Successful</div>
-                <div className="text2">Great Job! Checklist Archived Successfully</div>
+                <div className="text2">Great Job! Process Archived Successfully</div>
               </>
             );
           }
@@ -84,7 +84,7 @@ const ArchiveModal: FC<
                 <CannotArchive fontSize="160px" />
                 <div className="text1">Cannot Archive</div>
                 <div className="text2">
-                  {`Oops! You can't archive a Checklist that has running Jobs.`}
+                  {`Oops! You can't archive a Process that has running Jobs.`}
                 </div>
               </>
             );

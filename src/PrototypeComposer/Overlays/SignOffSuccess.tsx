@@ -41,7 +41,7 @@ const SignOffSuccessModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, cl
         showHeader={false}
       >
         <MemoSignOffSuccess fontSize={280} style={{ height: '150px' }} />
-        <h3>You have successfully Signed Off the checklist</h3>
+        <h3>You have successfully Signed Off the process</h3>
       </BaseModal>
     </Wrapper>
   );

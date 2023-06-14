@@ -119,8 +119,8 @@ const PasswordInputModal: FC<
         title="Ready for Release"
       >
         <div>
-          By Entering you Account Password and Approving it, you will Release the Checklist from
-          your end.
+          By Entering you Account Password and Approving it, you will Release the Process from your
+          end.
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           {userType === UserType.LOCAL && (
