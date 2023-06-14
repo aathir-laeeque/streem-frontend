@@ -369,7 +369,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                 >
                   <div className="list-item">
                     <TimelineOutlinedIcon />
-                    <span>Schedular</span>
+                    <span>Scheduler</span>
                   </div>
                 </MenuItem>
                 {checkPermission(['checklists', 'importExport']) && (

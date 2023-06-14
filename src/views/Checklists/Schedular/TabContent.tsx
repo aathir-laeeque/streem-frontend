@@ -255,7 +255,7 @@ const ListView: FC<any & { label: string }> = ({ label, values }) => {
                             openOverlayAction({
                               type: OverlayNames.REASON_MODAL,
                               props: {
-                                modalTitle: 'Archive Schedular',
+                                modalTitle: 'Archive Scheduler',
                                 modalDesc: `Provide reason for archiving ${selectedScheduler?.name} schedular`,
                                 onSubmitHandler: (
                                   reason: string,
@@ -374,7 +374,7 @@ const ListView: FC<any & { label: string }> = ({ label, values }) => {
               }}
               disabled={!checkPermission(['scheduler', 'create'])}
             >
-              Create Schedular
+              Create Scheduler
             </Button>
           </>
         )}

@@ -668,7 +668,7 @@ const CreateSchedularDrawer: FC<{
   const { name } = watch(['name']);
 
   const { StyledDrawer, setDrawerOpen } = useDrawer({
-    title: readOnly ? 'View Schedular' : schedular?.value ? 'Revise Schedular' : 'Create Scheduler',
+    title: readOnly ? 'View Scheduler' : schedular?.value ? 'Revise Scheduler' : 'Create Scheduler',
     hideCloseIcon: true,
     bodyContent: (
       <SchedulerDrawerWrapper onSubmit={handleSubmit(onSubmit)} showBasic={activeStep}>

@@ -72,7 +72,7 @@ const VersionHistoryDrawer: FC<{
     },
     {
       id: 'name',
-      label: 'Schedular Name',
+      label: 'Scheduler Name',
       minWidth: 100,
       format: function renderComp(item: any) {
         return (
@@ -91,7 +91,7 @@ const VersionHistoryDrawer: FC<{
     },
     {
       id: 'id',
-      label: 'Schedular ID',
+      label: 'Scheduler ID',
       minWidth: 100,
       format: function renderComp(item: any) {
         return <div key={item?.id}>{item?.code}</div>;
