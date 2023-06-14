@@ -87,28 +87,23 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   }, parameterForFiltersValueChange);
 
   useEffect(() => {
-    if (parameter?.autoInitialized && parameter?.response?.choices?.length) {
-      setState((prev) => ({
-        ...prev,
-        value: parametersById[parameter.id].response.choices.map((choice: any) => ({
-          value: choice.objectId,
-          label: choice?.objectDisplayName,
-          externalId: <div>&nbsp;(ID: {choice?.objectExternalId})</div>,
-          option: {
-            id: choice.objectId,
-            displayName: choice?.objectDisplayName,
-            externalId: choice?.objectExternalId,
-            collection: choice?.collection,
-          },
-        })),
-      }));
-    } else if (parametersById?.[parameter.id]?.data?.choices?.length) {
-      setState((prev) => ({
-        ...prev,
-        value: null,
-      }));
-    }
-  }, [parameter?.response?.choices, parameter?.data?.choices]);
+    setState((prev) => ({
+      ...prev,
+      value: parameter.response.choices?.length
+        ? parameter.response.choices.map((choice: any) => ({
+            value: choice.objectId,
+            label: choice?.objectDisplayName,
+            externalId: <div>&nbsp;(ID: {choice?.objectExternalId})</div>,
+            option: {
+              id: choice.objectId,
+              displayName: choice?.objectDisplayName,
+              externalId: choice?.objectExternalId,
+              collection: choice?.collection,
+            },
+          }))
+        : null,
+    }));
+  }, [parameter?.response?.choices]);
 
   const getUrl = (page: number) => {
     if (parameter?.data?.propertyFilters) {
@@ -224,7 +219,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
 
     setState((prev) => ({
       ...prev,
-      value: options,
+      value: options?.length ? options : null,
     }));
 
     if (isCorrectingError) {
