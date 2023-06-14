@@ -296,7 +296,7 @@ const ListView: FC<any & { label: string }> = ({ label, values }) => {
           offLabel="Show Archived"
           onLabel="Showing Archived"
           uncheckedIcon={false}
-          value={!!filterFields.find((field) => field.field === 'archived')?.values[0]}
+          checked={!!filterFields.find((field) => field.field === 'archived')?.values[0]}
           onChange={(isChecked) =>
             setFilterFields((currentFields) => {
               const updatedFilterFields = currentFields.map((field) => ({
