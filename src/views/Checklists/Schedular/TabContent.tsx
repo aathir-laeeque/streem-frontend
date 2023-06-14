@@ -2,7 +2,6 @@ import {
   Button,
   DataTable,
   ListActionMenu,
-  PaginatedFetchData,
   Pagination,
   SearchFilter,
   ToggleSwitch,
@@ -57,7 +56,7 @@ const ListView: FC<any & { label: string }> = ({ label, values }) => {
     },
   ]);
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     dispatch(
       schedulerActions.fetchSchedulers({

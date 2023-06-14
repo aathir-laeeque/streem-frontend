@@ -320,7 +320,7 @@ const AddRelationDrawer: FC<{
           width={48}
           offLabel="Optional"
           onColor="#24a148"
-          value={mandatory}
+          checked={mandatory}
           onChange={(isChecked) => {
             setValue('mandatory', isChecked, {
               shouldDirty: true,
