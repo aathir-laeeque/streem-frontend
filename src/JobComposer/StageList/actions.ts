@@ -21,6 +21,7 @@ export interface fetchActiveStageDataRes {
   parametersOrderInTaskInStage: any;
   hiddenIds: Record<string, boolean>;
   activeTaskId?: string;
+  showVerificationBanner: boolean;
 }
 
 export const setActiveStage = (id: Stage['id'], bringIntoView = false) =>

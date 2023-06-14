@@ -68,7 +68,7 @@ const Wrapper = styled.div.attrs(({ className }) => ({
     border: 1px solid #ccc;
     display: flex;
     flex: 1;
-    padding: 10px 16px;
+    padding: 8px 16px;
 
     @media (max-width: 1200px) {
       padding: 8px;

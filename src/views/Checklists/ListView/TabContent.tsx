@@ -49,6 +49,7 @@ import {
 } from './actions';
 import { ListViewProps } from './types';
 import TimelineOutlinedIcon from '@material-ui/icons/TimelineOutlined';
+import permissionsIcon from '#assets/svg/permissionsIcon.svg';
 
 const getBaseFilter = (label: string): FilterField[] => [
   {
@@ -168,7 +169,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                 modalDesc: `Provide details for ${
                   item.archived ? 'unarchiving' : 'archiving'
                 } the prototype`,
-                onSumbitHandler: (reason: string, setFormErrors: (errors?: Error[]) => void) =>
+                onSubmitHandler: (reason: string, setFormErrors: (errors?: Error[]) => void) =>
                   item.archived
                     ? dispatch(unarchiveChecklist(item.id, reason, setFormErrors))
                     : dispatch(archiveChecklist(item.id, reason, setFormErrors)),
@@ -358,7 +359,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                   onClick={() =>
                     navigate(`/checklists/${selectedChecklist?.id}/scheduler`, {
                       state: {
-                        process: selectedChecklist,
+                        processFilter: {
+                          processName: selectedChecklist?.name,
+                          id: selectedChecklist?.id,
+                        },
                       },
                     })
                   }
@@ -368,7 +372,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     <span>Schedular</span>
                   </div>
                 </MenuItem>
-
                 {checkPermission(['checklists', 'importExport']) && (
                   <MenuItem
                     onClick={() => {
@@ -383,6 +386,23 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     </div>
                   </MenuItem>
                 )}
+                <MenuItem
+                  onClick={() =>
+                    navigate(`/checklists/${selectedChecklist?.id}/permissions`, {
+                      state: {
+                        processFilter: {
+                          processName: selectedChecklist?.name,
+                          id: selectedChecklist?.id,
+                        },
+                      },
+                    })
+                  }
+                >
+                  <div className="list-item">
+                    <img src={permissionsIcon} alt="permission-icon" />
+                    <span>Permissions</span>
+                  </div>
+                </MenuItem>
                 {!item.archived && checkArchiveAndRevisionPermission('revision') && (
                   <MenuItem
                     onClick={() => {
@@ -438,7 +458,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                               modalDesc: `Provide details for ${
                                 selectedChecklist?.archived ? 'unarchiving' : 'archiving'
                               } the checklist`,
-                              onSumbitHandler: (
+                              onSubmitHandler: (
                                 reason: string,
                                 setFormErrors: (errors?: Error[]) => void,
                               ) => {

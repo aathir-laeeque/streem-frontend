@@ -35,7 +35,11 @@ export const LabelValueRow = styled.div.attrs(
   }
 `;
 
-const Wrapper = styled.div<{ isInfoExpanded: boolean }>`
+const Wrapper = styled.div<{
+  isInfoExpanded: boolean;
+  isChildTask: boolean;
+  showVerificationBanner: boolean;
+}>`
   background-color: #ffffff;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   grid-area: header;
@@ -46,8 +50,25 @@ const Wrapper = styled.div<{ isInfoExpanded: boolean }>`
   left: 0;
   right: 0;
   transition: all 0.2s ease-in;
-  height: ${({ isInfoExpanded }) => (isInfoExpanded ? '40vh' : '64px')};
+  height: ${({ isInfoExpanded, isChildTask }) =>
+    isInfoExpanded ? '40vh' : isChildTask ? '108px' : '66px'};
+
   max-height: 80vh;
+
+  .verification-banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 0px;
+    background-color: #ffedd7;
+    color: #ff541e;
+    font-size: 12px;
+
+    span {
+      color: #161616;
+      cursor: pointer;
+    }
+  }
 
   .main-header {
     display: flex;

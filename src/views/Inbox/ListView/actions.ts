@@ -1,6 +1,6 @@
 import { actionSpreader } from '#store/helpers';
 import { Pageable } from '#utils/globalTypes';
-import { Job, fetchJobsType } from '#views/Jobs/ListView/types';
+import { Job, Verification, fetchJobsType } from '#views/Jobs/ListView/types';
 
 import { ListViewAction } from './types';
 
@@ -19,3 +19,11 @@ export const setSelectedState = (state: string) =>
   actionSpreader(ListViewAction.SET_SELECTED_STATE, { state });
 
 export const resetInbox = () => actionSpreader(ListViewAction.RESET_INBOX);
+
+export const fetchVerifications = (payload: any) =>
+  actionSpreader(ListViewAction.FETCH_VERIFICATIONS, payload);
+
+export const fetchVerificationsSuccess = (payload?: {
+  data: Verification[];
+  pageable: Pageable | null;
+}) => actionSpreader(ListViewAction.FETCH_VERIFICATIONS_SUCCESS, payload);

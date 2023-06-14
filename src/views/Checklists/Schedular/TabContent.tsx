@@ -216,7 +216,7 @@ const ListView: FC<any & { label: string }> = ({ label, values }) => {
                         props: {
                           modalTitle: 'Archive Schedular',
                           modalDesc: `Provide reason for archiving ${selectedScheduler?.name} schedular`,
-                          onSumbitHandler: (
+                          onSubmitHandler: (
                             reason: string,
                             setFormErrors: (errors?: Error[]) => void,
                           ) => {

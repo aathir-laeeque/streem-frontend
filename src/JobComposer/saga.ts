@@ -17,7 +17,7 @@ import { Error } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import { navigate } from '@reach/router';
-import { all, call, fork, put, takeLatest, takeLeading } from 'redux-saga/effects';
+import { all, call, fork, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 import {
   completeJob,
   fetchData,
@@ -40,11 +40,14 @@ import { StageListSaga } from './StageList/saga';
 import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
 import { groupJobErrors } from './utils';
+import { RootState } from '#store';
+
+const getUserId = (state: RootState) => state.auth.userId;
 
 function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
   try {
     const { id, entity, setActive } = payload;
-
+    const userId = (yield select(getUserId)) as string;
     yield put(fetchDataOngoing());
 
     const { data, errors, timestamp } = yield call(
@@ -55,7 +58,7 @@ function* fetchDataSaga({ payload }: ReturnType<typeof fetchData>) {
 
     if (data) {
       yield put(setRecentServerTimestamp(timestamp));
-      yield put(fetchDataSuccess(data, entity, setActive));
+      yield put(fetchDataSuccess(data, entity, userId, setActive));
       yield put(updateHiddenIds());
     } else {
       // TODO: handle the api error when design comes

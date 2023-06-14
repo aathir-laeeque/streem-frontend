@@ -46,7 +46,7 @@ const Wrapper = styled.div`
   }
 
   .input-wrapper {
-    padding: 9px 16px;
+    padding: 10px 16px;
 
     .icon {
       font-size: 18px;

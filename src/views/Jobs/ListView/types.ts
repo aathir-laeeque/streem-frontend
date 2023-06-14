@@ -1,4 +1,5 @@
-import { Checklist } from '#PrototypeComposer/checklist.types';
+import { ParameterVerificationStatus } from '#JobComposer/ActivityList/types';
+import { Checklist, ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.types';
 import { User } from '#store/users/types';
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
@@ -11,6 +12,7 @@ import {
   fetchJobsOngoing,
   fetchJobsSuccess,
 } from './actions';
+import { ParameterExecutionState } from '#JobComposer/checklist.types';
 
 export type Assignee = Pick<User, 'employeeId' | 'firstName' | 'id' | 'lastName'> & {
   jobId: string;
@@ -39,6 +41,24 @@ export type Job = {
   endedAt?: number;
   jobScheduler?: Record<string, any>;
   jobSchedulerId?: number;
+};
+
+export type Verification = {
+  parameterName: string;
+  taskName: string;
+  taskId: string;
+  processName: string;
+  code: string;
+  createdBy: Record<string, any>;
+  requestedTo: Record<string, any>;
+  modifiedBy: Pick<User, 'firstName' | 'lastName' | 'employeeId'>;
+  modifiedAt: number;
+  stageId: string;
+  requestedAt: string;
+  verificationStatus: ParameterVerificationStatus;
+  verificationType: ParameterVerificationTypeEnum;
+  comments: string;
+  evaluationState: ParameterExecutionState;
 };
 
 export type ListViewProps = RouteComponentProps<{

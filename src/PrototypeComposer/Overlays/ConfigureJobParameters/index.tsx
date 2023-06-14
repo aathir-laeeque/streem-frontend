@@ -3,7 +3,11 @@ import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { processParametersMapSuccess } from '#PrototypeComposer/actions';
-import { MandatoryParameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
+import {
+  MandatoryParameter,
+  ParameterVerificationTypeEnum,
+  TargetEntityType,
+} from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { apiBatchMapParameters, apiGetParameters } from '#utils/apiUrls';
 import { DEFAULT_PAGINATION } from '#utils/constants';
@@ -30,6 +34,22 @@ import { debounce, findIndex, orderBy } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { withStyles } from '@material-ui/core/styles';
+import { Tooltip } from '@material-ui/core';
+
+const CustomTooltip = withStyles({
+  tooltip: {
+    width: '205px',
+    backgroundColor: '#393939',
+    borderRadius: '0px',
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: '14px',
+  },
+  arrow: {
+    color: '#393939',
+  },
+})(Tooltip);
 
 const Wrapper = styled.div`
   .modal {
@@ -362,22 +382,37 @@ const ConfigureJobParameters: FC<CommonOverlayProps<Props>> = ({
             </span>
             {Object.entries(allItems).map(([key, item]) => {
               return (
-                <Checkbox
+                <CustomTooltip
+                  title={
+                    'Parameter cannot be added to Create Job Form because verifications are enabled. Disable the verification to add them to Create Job Form'
+                  }
+                  arrow
+                  placement="right"
                   key={key}
-                  checked={item.checked}
-                  label={item.label}
-                  onClick={(e) => {
-                    if (e.target.checked) {
-                      setItems((prev) => [...prev, item]);
-                    } else {
-                      setItems((prev) => prev.filter((i) => i.id !== key));
-                    }
-                    setAllItems((prev) => ({
-                      ...prev,
-                      [key]: { ...prev[key], checked: e.target.checked },
-                    }));
-                  }}
-                />
+                  disableHoverListener={
+                    item?.verificationType !== ParameterVerificationTypeEnum.NONE ? false : true
+                  }
+                >
+                  <span>
+                    <Checkbox
+                      key={key}
+                      checked={item.checked}
+                      label={item.label}
+                      onClick={(e) => {
+                        if (e.target.checked) {
+                          setItems((prev) => [...prev, item]);
+                        } else {
+                          setItems((prev) => prev.filter((i) => i.id !== key));
+                        }
+                        setAllItems((prev) => ({
+                          ...prev,
+                          [key]: { ...prev[key], checked: e.target.checked },
+                        }));
+                      }}
+                      disabled={item?.verificationType !== ParameterVerificationTypeEnum.NONE}
+                    />
+                  </span>
+                </CustomTooltip>
               );
             })}
           </div>

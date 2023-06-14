@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 interface BaseModalProps {
   closeAllModals: () => void;
   closeModal: () => void;
-  title?: string;
+  title?: string | ReactNode;
   primaryText?: string;
   secondaryText?: string;
   onPrimary?: () => void;

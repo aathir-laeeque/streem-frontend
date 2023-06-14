@@ -200,7 +200,7 @@ const ObjectList: FC<TabContentProps> = () => {
                             modalDesc: `Provide details for ${
                               selectedObject?.usageStatus === 7 ? 'unarchiving' : 'archiving'
                             } the Object`,
-                            onSumbitHandler: (
+                            onSubmitHandler: (
                               reason: string,
                               setFormErrors: (errors?: Error[]) => void,
                             ) => {

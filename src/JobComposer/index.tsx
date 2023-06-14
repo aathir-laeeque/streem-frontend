@@ -16,6 +16,8 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
   const {
     stages: { activeStageId },
     loading,
+    data,
+    parameters: { showVerificationBanner },
   } = useTypedSelector((state) => state.composer);
 
   useEffect(() => {
@@ -37,7 +39,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
       <CircularProgress />
     </JobLoadingWrapper>
   ) : (
-    <ComposerWrapper>
+    <ComposerWrapper showVerificationBanner={showVerificationBanner}>
       <Header infoExpanded={infoExpanded} overviewOpen={overviewOpen} />
       {activeStageId ? <TaskList overviewOpen={overviewOpen} /> : null}
     </ComposerWrapper>

@@ -60,6 +60,10 @@ import ConfigureJobParameters from '#PrototypeComposer/Overlays/ConfigureJobPara
 import { QRScanner, QRGenerator } from '#components';
 import PutCustomViewModal from '#views/Checklists/JobLogs/Overlays/PutCustomViewModal';
 import { CommonOverlayProps, OverlayNames } from './types';
+import PeerVerificationModal from '#JobComposer/modals/PeerVerificationModal';
+import RecallVerificationModal from '#JobComposer/modals/RecallVerificationModal';
+import JobVerification from '#JobComposer/modals/JobVerification';
+import ViewReason from '#JobComposer/modals/ViewReason';
 
 const Wrapper = styled.div``;
 
@@ -236,9 +240,21 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.SET_DATE:
       return <SetDateModal {...params} />;
+
     case OverlayNames.CONFIGURE_CHECK:
       return <ConfigureCheck {...params} />;
 
+    case OverlayNames.PEER_VERIFICATION_MODAL:
+      return <PeerVerificationModal {...params} />;
+
+    case OverlayNames.RECALL_VERIFICATION_MODAL:
+      return <RecallVerificationModal {...params} />;
+
+    case OverlayNames.JOB_VERIFICATION:
+      return <JobVerification {...params} />;
+
+    case OverlayNames.VIEW_REASON:
+      return <ViewReason {...params} />;
     default:
       return null;
   }

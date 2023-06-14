@@ -1,3 +1,4 @@
+import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { InputTypes } from '#utils/globalTypes';
@@ -52,6 +53,8 @@ export interface Parameter {
   autoInitialize?: Record<string, any>;
   autoInitialized?: boolean;
   mode: ParameterMode;
+  targetEntityType: TargetEntityType;
+  verificationType: string;
 }
 
 export interface Media {
@@ -83,6 +86,15 @@ export enum TaskExecutionState {
   SKIPPED = 'SKIPPED',
   PAUSED = 'PAUSED',
   BLOCKED = 'BLOCKED',
+}
+
+export enum ParameterExecutionState {
+  NOT_STARTED = 'NOT_STARTED',
+  EXECUTED = 'EXECUTED',
+  BEGIN_EXECUTED = 'BEGIN_EXECUTED',
+  APPROVAL_PENDING = 'APPROVAL_PENDING',
+  VERIFICATION_PENDING = 'VERIFICATION_PENDING',
+  BEING_EXECUTED = 'BEING_EXECUTED',
 }
 
 export type AuditUserType = Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName'>;

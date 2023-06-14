@@ -88,3 +88,9 @@ export enum TaskTimerErrorCodes {
   E218 = 'TIMED_TASK_NLT_MIN_PERIOD_CANNOT_BE_ZERO',
   E219 = 'TIMED_TASK_NLT_MAX_PERIOD_SHOULD_BE_GT_MIN_PERIOD',
 }
+
+export enum TaskTypeEnum {
+  DYNAMIC = 'DYNAMIC',
+  SUBPROCESS = 'SUBPROCESS',
+  STATIC = 'STATIC',
+}

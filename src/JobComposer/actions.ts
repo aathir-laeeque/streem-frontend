@@ -14,11 +14,12 @@ export const fetchDataError = (error: any) =>
 export const fetchDataOngoing = () => actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_ONGOING);
 
 // TODO: look into this any data type
-export const fetchDataSuccess = (data: any, entity: Entity, setActive = false) =>
+export const fetchDataSuccess = (data: any, entity: Entity, userId: string, setActive = false) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA_SUCCESS, {
     data,
     entity,
     setActive,
+    userId,
   });
 
 export const resetComposer = () => actionSpreader(ComposerAction.RESET_COMPOSER);

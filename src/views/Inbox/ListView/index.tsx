@@ -6,14 +6,43 @@ import { AssignedJobStates, CompletedJobStates } from '#views/Jobs/ListView/type
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import InboxContent from './InboxContent';
+import VerificationContent from './VerificationsContent';
 import { resetInbox } from './actions';
 import { InboxState, ListViewProps } from './types';
-import { GeneralHeader } from '#components';
+import { GeneralHeader, StyledTabs } from '#components';
 import moment from 'moment';
+import styled from 'styled-components';
+
+const InboxJobsWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  margin-right: -16px;
+  height: 100%;
+
+  .jobs-tabs-list {
+    .MuiTab-root {
+      max-width: 160px;
+    }
+  }
+
+  .jobs-tabs-panel {
+    padding: 16px 0px 0px;
+    height: calc(100% - 49px);
+
+    > div {
+      height: 100%;
+
+      .job-list,
+      .filters {
+        padding-right: 16px;
+      }
+    }
+  }
+`;
 
 const ListView: FC<ListViewProps> = () => {
   const dispatch = useDispatch();
-  const { selectedUseCase } = useTypedSelector((state) => state.auth);
+  const { selectedUseCase, userId } = useTypedSelector((state) => state.auth);
 
   useEffect(() => {
     return () => {
@@ -21,137 +50,187 @@ const ListView: FC<ListViewProps> = () => {
     };
   }, []);
 
+  const jobTabs = () => {
+    return (
+      <InboxJobsWrapper>
+        <StyledTabs
+          containerProps={{
+            className: 'jobs-tabs',
+          }}
+          tabListProps={{
+            className: 'jobs-tabs-list',
+          }}
+          panelsProps={{
+            className: 'jobs-tabs-panel',
+          }}
+          tabs={[
+            {
+              value: '0',
+              label: InboxState.NOT_STARTED,
+              panelContent: (
+                <InboxContent
+                  label={InboxState.NOT_STARTED}
+                  values={{
+                    baseFilters: [
+                      {
+                        field: 'state',
+                        op: FilterOperators.ANY,
+                        values: [AssignedJobStates.ASSIGNED],
+                      },
+                    ],
+                    cards: [
+                      {
+                        label: 'Scheduled',
+                        className: 'blue',
+                        filters: [
+                          {
+                            field: 'isScheduled',
+                            op: FilterOperators.EQ,
+                            values: [true],
+                          },
+                        ],
+                      },
+                      {
+                        label: 'Unscheduled',
+                        className: 'grey',
+                        filters: [
+                          {
+                            field: 'isScheduled',
+                            op: FilterOperators.EQ,
+                            values: [false],
+                          },
+                        ],
+                      },
+                      {
+                        label: 'Over Due',
+                        className: 'orange',
+                        filters: [
+                          {
+                            field: 'expectedEndDate',
+                            op: FilterOperators.LT,
+                            values: [moment(moment.now()).unix().toString()],
+                          },
+                        ],
+                      },
+                      {
+                        label: 'Start Delayed',
+                        className: 'yellow',
+                        filters: [
+                          {
+                            field: 'expectedStartDate',
+                            op: FilterOperators.LT,
+                            values: [moment(moment.now()).unix().toString()],
+                          },
+                        ],
+                      },
+                    ],
+                  }}
+                />
+              ),
+            },
+            {
+              value: '1',
+              label: InboxState.ON_GOING,
+              panelContent: (
+                <InboxContent
+                  label={InboxState.ON_GOING}
+                  values={{
+                    baseFilters: [
+                      {
+                        field: 'state',
+                        op: FilterOperators.ANY,
+                        values: [AssignedJobStates.IN_PROGRESS, AssignedJobStates.BLOCKED],
+                      },
+                    ],
+                    cards: [
+                      {
+                        label: 'Scheduled',
+                        className: 'blue',
+                        filters: [
+                          {
+                            field: 'isScheduled',
+                            op: FilterOperators.EQ,
+                            values: [true],
+                          },
+                        ],
+                      },
+                      {
+                        label: 'Unscheduled',
+                        className: 'grey',
+                        filters: [
+                          {
+                            field: 'isScheduled',
+                            op: FilterOperators.EQ,
+                            values: [false],
+                          },
+                        ],
+                      },
+                      {
+                        label: 'Over Due',
+                        className: 'orange',
+                        filters: [
+                          {
+                            field: 'expectedEndDate',
+                            op: FilterOperators.LT,
+                            values: [moment(moment.now()).unix().toString()],
+                          },
+                        ],
+                      },
+                      {
+                        label: 'Start Delayed',
+                        className: 'yellow',
+                        filters: [
+                          {
+                            field: 'expectedStartDate',
+                            op: FilterOperators.LT,
+                            values: [moment(moment.now()).unix().toString()],
+                          },
+                        ],
+                      },
+                    ],
+                  }}
+                />
+              ),
+            },
+            {
+              value: '2',
+              label: InboxState.COMPLETED,
+              panelContent: (
+                <InboxContent
+                  label={InboxState.COMPLETED}
+                  values={{
+                    baseFilters: [
+                      {
+                        field: 'state',
+                        op: FilterOperators.ANY,
+                        values: [
+                          CompletedJobStates.COMPLETED,
+                          CompletedJobStates.COMPLETED_WITH_EXCEPTION,
+                        ],
+                      },
+                    ],
+                  }}
+                />
+              ),
+            },
+          ]}
+        />
+      </InboxJobsWrapper>
+    );
+  };
+
   const { renderTabHeader, renderTabContent } = useTabs({
     tabs: [
       {
-        label: InboxState.NOT_STARTED,
-        tabContent: InboxContent,
-        values: {
-          baseFilters: [
-            {
-              field: 'state',
-              op: FilterOperators.ANY,
-              values: [AssignedJobStates.ASSIGNED],
-            },
-          ],
-          cards: [
-            {
-              label: 'Scheduled',
-              className: 'blue',
-              filters: [
-                {
-                  field: 'isScheduled',
-                  op: FilterOperators.EQ,
-                  values: [true],
-                },
-              ],
-            },
-            {
-              label: 'Unscheduled',
-              className: 'grey',
-              filters: [
-                {
-                  field: 'isScheduled',
-                  op: FilterOperators.EQ,
-                  values: [false],
-                },
-              ],
-            },
-            {
-              label: 'Over Due',
-              className: 'orange',
-              filters: [
-                {
-                  field: 'expectedEndDate',
-                  op: FilterOperators.LT,
-                  values: [moment(moment.now()).unix().toString()],
-                },
-              ],
-            },
-            {
-              label: 'Start Delayed',
-              className: 'yellow',
-              filters: [
-                {
-                  field: 'expectedStartDate',
-                  op: FilterOperators.LT,
-                  values: [moment(moment.now()).unix().toString()],
-                },
-              ],
-            },
-          ],
-        },
+        label: 'Jobs',
+        tabContent: jobTabs,
       },
       {
-        label: InboxState.ON_GOING,
-        tabContent: InboxContent,
+        label: 'Verifications',
+        tabContent: VerificationContent,
         values: {
-          baseFilters: [
-            {
-              field: 'state',
-              op: FilterOperators.ANY,
-              values: [AssignedJobStates.IN_PROGRESS, AssignedJobStates.BLOCKED],
-            },
-          ],
-          cards: [
-            {
-              label: 'Scheduled',
-              className: 'blue',
-              filters: [
-                {
-                  field: 'isScheduled',
-                  op: FilterOperators.EQ,
-                  values: [true],
-                },
-              ],
-            },
-            {
-              label: 'Unscheduled',
-              className: 'grey',
-              filters: [
-                {
-                  field: 'isScheduled',
-                  op: FilterOperators.EQ,
-                  values: [false],
-                },
-              ],
-            },
-            {
-              label: 'Over Due',
-              className: 'orange',
-              filters: [
-                {
-                  field: 'expectedEndDate',
-                  op: FilterOperators.LT,
-                  values: [moment(moment.now()).unix().toString()],
-                },
-              ],
-            },
-            {
-              label: 'Start Delayed',
-              className: 'yellow',
-              filters: [
-                {
-                  field: 'expectedStartDate',
-                  op: FilterOperators.LT,
-                  values: [moment(moment.now()).unix().toString()],
-                },
-              ],
-            },
-          ],
-        },
-      },
-      {
-        label: InboxState.COMPLETED,
-        tabContent: InboxContent,
-        values: {
-          baseFilters: [
-            {
-              field: 'state',
-              op: FilterOperators.ANY,
-              values: [CompletedJobStates.COMPLETED, CompletedJobStates.COMPLETED_WITH_EXCEPTION],
-            },
-          ],
+          userId,
+          isJobOpen: false,
         },
       },
     ],

@@ -45,11 +45,6 @@ const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) 
   return (
     <div className="textbox-parameter">
       <div className="new-form-field">
-        <label className="new-form-field-label">
-          {parameter.type === MandatoryParameter.MULTI_LINE
-            ? 'Multi Line Input'
-            : 'Single Line Input'}
-        </label>
         {parameter.type === MandatoryParameter.MULTI_LINE ? (
           <textarea
             ref={inputRef}

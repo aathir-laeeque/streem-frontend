@@ -1,25 +1,7 @@
-import { useTypedSelector } from '#store';
-import { getFullName } from '#utils/stringUtils';
-import { formatDateTime } from '#utils/timeUtils';
-import { Error } from '@material-ui/icons';
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
-import { MandatoryParameter, NonMandatoryParameter } from '../checklist.types';
-import CalculationParameter from './Calculation';
-import ChecklistParameter from './Checklist';
-import DateParameter from './Date';
-import InstructionParameter from './Instruction';
-import MaterialParameter from './Material';
-import MediaParameter from './Media';
-import MultiSelectParameter from './MultiSelect';
-import NumberParameter from './Number';
-import ResourceParameter from './Resource';
-import ShouldBeParameter from './ShouldBe';
-import SignatureParameter from './Signature';
-import TextboxParameter from './Textbox';
-import YesNoParameter from './YesNo';
+import Parameter from './Parameter';
 import { ParameterListProps } from './types';
-import FileUploadParameter from './FileUpload';
 
 const Wrapper = styled.div.attrs({
   className: 'parameter-list',
@@ -43,7 +25,7 @@ const Wrapper = styled.div.attrs({
 
     .checklist-parameter,
     .material-parameter,
-    .should-be-parameter,
+    .should-be-parameter > .parameter-content,
     .yes-no-parameter,
     .textbox-parameter,
     .number-parameter,
@@ -84,6 +66,18 @@ const Wrapper = styled.div.attrs({
       font-size: 12px;
       line-height: 0.83;
       margin-top: 8px;
+
+      span {
+        color: #1d84ff;
+        cursor: pointer;
+      }
+    }
+
+    .parameter-verified {
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+      align-items: center;
     }
 
     .calculation-parameter {
@@ -125,6 +119,17 @@ const Wrapper = styled.div.attrs({
       font-size: 14px;
       line-height: 12px;
     }
+
+    .parameter-verification {
+      padding-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      button {
+        margin-right: 0px;
+      }
+    }
   }
 `;
 
@@ -135,12 +140,6 @@ const ParameterList: FC<ParameterListProps> = ({
   isCorrectingError,
   isLoggedInUserAssigned,
 }) => {
-  const {
-    composer: {
-      parameters: { hiddenIds },
-    },
-  } = useTypedSelector((state) => state);
-
   return (
     <Wrapper
       isTaskStarted={isTaskStarted}
@@ -148,164 +147,15 @@ const ParameterList: FC<ParameterListProps> = ({
       isLoggedInUserAssigned={isLoggedInUserAssigned}
       isCorrectingError={isCorrectingError}
     >
-      {parameters.map((parameter) => {
-        const { state, audit } = parameter?.response || {};
-        if (hiddenIds?.[parameter.id]) return null;
-        return (
-          <div key={parameter.id} className="parameter">
-            {parameter.type in MandatoryParameter && !parameter.mandatory && (
-              <div className="optional-badge">Optional</div>
-            )}
-
-            {parameter.hasError && (
-              <div className="error-badge">
-                <Error className="icon" />
-                <span>Mandatory Parameter Incomplete</span>
-              </div>
-            )}
-
-            {parameter?.label &&
-              ![
-                `${MandatoryParameter.YES_NO}`,
-                `${MandatoryParameter.SHOULD_BE}`,
-                `${MandatoryParameter.CALCULATION}`,
-              ].includes(parameter.type) && (
-                <div className="parameter-label" data-for={parameter.id}>
-                  {parameter.label}
-                </div>
-              )}
-            {(() => {
-              switch (parameter.type) {
-                case MandatoryParameter.CHECKLIST:
-                  return (
-                    <ChecklistParameter
-                      parameter={parameter}
-                      isCorrectingError={isCorrectingError}
-                    />
-                  );
-
-                case NonMandatoryParameter.INSTRUCTION:
-                  return (
-                    <InstructionParameter
-                      parameter={parameter}
-                      isCorrectingError={isCorrectingError}
-                    />
-                  );
-
-                case NonMandatoryParameter.MATERIAL:
-                  return (
-                    <MaterialParameter
-                      parameter={parameter}
-                      isCorrectingError={isCorrectingError}
-                    />
-                  );
-
-                case MandatoryParameter.MEDIA:
-                  return (
-                    <MediaParameter
-                      parameter={parameter}
-                      isCorrectingError={isCorrectingError}
-                      isTaskCompleted={isTaskCompleted}
-                      isLoggedInUserAssigned={isLoggedInUserAssigned}
-                    />
-                  );
-                case MandatoryParameter.FILE_UPLOAD:
-                  return (
-                    <FileUploadParameter
-                      parameter={parameter}
-                      isCorrectingError={isCorrectingError}
-                      isTaskCompleted={isTaskCompleted}
-                      isLoggedInUserAssigned={isLoggedInUserAssigned}
-                    />
-                  );
-
-                case MandatoryParameter.MULTISELECT:
-                case MandatoryParameter.SINGLE_SELECT:
-                  return (
-                    <MultiSelectParameter
-                      parameter={parameter}
-                      isCorrectingError={isCorrectingError}
-                      isMulti={parameter.type === MandatoryParameter.MULTISELECT}
-                    />
-                  );
-
-                case MandatoryParameter.SHOULD_BE:
-                  return (
-                    <ShouldBeParameter
-                      parameter={parameter}
-                      isCorrectingError={isCorrectingError}
-                    />
-                  );
-
-                case MandatoryParameter.SIGNATURE:
-                  return (
-                    <SignatureParameter
-                      parameter={parameter}
-                      isCorrectingError={isCorrectingError}
-                      isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
-                    />
-                  );
-
-                case MandatoryParameter.SINGLE_LINE:
-                case MandatoryParameter.MULTI_LINE:
-                  return (
-                    <TextboxParameter parameter={parameter} isCorrectingError={isCorrectingError} />
-                  );
-
-                case MandatoryParameter.YES_NO:
-                  return (
-                    <YesNoParameter parameter={parameter} isCorrectingError={isCorrectingError} />
-                  );
-
-                case MandatoryParameter.NUMBER:
-                  return (
-                    <NumberParameter parameter={parameter} isCorrectingError={isCorrectingError} />
-                  );
-
-                case MandatoryParameter.CALCULATION:
-                  return (
-                    <CalculationParameter
-                      parameter={parameter}
-                      isCorrectingError={isCorrectingError}
-                      isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
-                    />
-                  );
-
-                case MandatoryParameter.RESOURCE:
-                case MandatoryParameter.MULTI_RESOURCE:
-                  return (
-                    <ResourceParameter
-                      parameter={parameter}
-                      isCorrectingError={isCorrectingError}
-                    />
-                  );
-
-                case MandatoryParameter.DATE_TIME:
-                case MandatoryParameter.DATE:
-                  return (
-                    <DateParameter parameter={parameter} isCorrectingError={isCorrectingError} />
-                  );
-
-                default:
-                  return null;
-              }
-            })()}
-
-            {state !== 'NOT_STARTED' && (
-              <div className="parameter-audit">
-                {audit
-                  ? audit.modifiedBy && (
-                      <>
-                        Last updated by {getFullName(audit.modifiedBy)}, ID:{' '}
-                        {audit.modifiedBy.employeeId} on {formatDateTime(audit.modifiedAt)}
-                      </>
-                    )
-                  : 'Updating...'}
-              </div>
-            )}
-          </div>
-        );
-      })}
+      {parameters.map((parameter) => (
+        <Parameter
+          key={parameter.id}
+          parameter={parameter}
+          isTaskCompleted={isTaskCompleted}
+          isLoggedInUserAssigned={isLoggedInUserAssigned}
+          isCorrectingError={isCorrectingError}
+        />
+      ))}
     </Wrapper>
   );
 };

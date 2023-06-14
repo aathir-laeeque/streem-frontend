@@ -14,6 +14,8 @@ import {
 } from '../actions';
 import { ParameterProps, SupervisorResponse } from '../types';
 import { Wrapper } from './styles';
+import { ParameterExecutionState } from '#JobComposer/checklist.types';
+import ParameterVerificationView from '../Verification/ParameterVerificationView';
 
 const generateText = (label: string | undefined, data: any) => {
   if (data.operator === 'BETWEEN') {
@@ -95,7 +97,18 @@ const checkIsOffLimit = ({
   }
 };
 
-const ShouldBeParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
+const ShouldBeParameter: FC<
+  ParameterProps & {
+    verificationsByType: any;
+    verificationType: string;
+  }
+> = ({
+  parameter,
+  isCorrectingError,
+  verificationType,
+  verificationsByType,
+  isLoggedInUserAssigned,
+}) => {
   const {
     auth: { profile, selectedFacility },
     composer: { entityId: jobId },
@@ -112,7 +125,7 @@ const ShouldBeParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   const [state, setState] = useState({
     approvalTime: parameter?.response?.parameterValueApprovalDto?.createdAt,
     approver: parameter?.response?.parameterValueApprovalDto?.approver,
-    isApprovalPending: parameter?.response?.state === 'PENDING_FOR_APPROVAL',
+    isApprovalPending: parameter?.response?.state === ParameterExecutionState.APPROVAL_PENDING,
     isApproved: parameter?.response?.parameterValueApprovalDto
       ? parameter?.response?.parameterValueApprovalDto?.state === 'APPROVED'
       : undefined,
@@ -139,7 +152,7 @@ const ShouldBeParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
       ...prevState,
       approvalTime: parameter?.response?.parameterValueApprovalDto?.createdAt,
       approver: parameter?.response?.parameterValueApprovalDto?.approver,
-      isApprovalPending: parameter?.response?.state === 'PENDING_FOR_APPROVAL',
+      isApprovalPending: parameter?.response?.state === ParameterExecutionState.APPROVAL_PENDING,
       isApproved: parameter?.response?.parameterValueApprovalDto
         ? parameter?.response?.parameterValueApprovalDto?.state === 'APPROVED'
         : undefined,
@@ -289,7 +302,9 @@ const ShouldBeParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
           ...(value !== parameter.response.value && { audit: undefined }),
           value,
           reason: state.reason,
-          state: state.reason ? 'PENDING_FOR_APPROVAL' : 'EXECUTED',
+          state: state.reason
+            ? ParameterExecutionState.APPROVAL_PENDING
+            : ParameterExecutionState.EXECUTED,
         },
       }),
     );
@@ -301,96 +316,98 @@ const ShouldBeParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
 
   return (
     <Wrapper data-id={parameter.id} data-type={parameter.type}>
-      {state.isApprovalPending ? (
-        <span className="pending-approval">
-          <Warning className="icon" />
-          {state.isUserSupervisor
-            ? 'This Parameter Needs Approval'
-            : 'Pending Approval from Supervisor'}
-        </span>
-      ) : null}
+      <div className="parameter-content">
+        {state.isApprovalPending ? (
+          <span className="pending-approval">
+            <Warning className="icon" />
+            {state.isUserSupervisor
+              ? 'This Parameter Needs Approval'
+              : 'Pending Approval from Supervisor'}
+          </span>
+        ) : null}
 
-      {state.isApproved === true ? (
-        <span className="approved">
-          <CheckCircle className="icon" />
-          Observation Approved by {getFullName(state.approver)} on{' '}
-          {formatDateTime(state.approvalTime, dateAndTimeStampFormat)}
-        </span>
-      ) : state.isApproved === false ? (
-        <span className="rejected">
-          <Error className="icon" />
-          Observation rejected by {getFullName(state.approver)} on{' '}
-          {formatDateTime(state.approvalTime, dateAndTimeStampFormat)}
-        </span>
-      ) : null}
+        {state.isApproved === true ? (
+          <span className="approved">
+            <CheckCircle className="icon" />
+            Observation Approved by {getFullName(state.approver)} on{' '}
+            {formatDateTime(state.approvalTime, dateAndTimeStampFormat)}
+          </span>
+        ) : state.isApproved === false ? (
+          <span className="rejected">
+            <Error className="icon" />
+            Observation rejected by {getFullName(state.approver)} on{' '}
+            {formatDateTime(state.approvalTime, dateAndTimeStampFormat)}
+          </span>
+        ) : null}
 
-      <span className="parameter-text" data-for={parameter.id}>
-        {generateText(parameter?.label, parameter?.data)}
-      </span>
+        <span className="parameter-text" data-for={parameter.id}>
+          {generateText(parameter?.label, parameter?.data)}
+        </span>
 
-      <NumberInput
-        defaultValue={state.value}
-        onChange={debounce(({ value }) => {
-          setState((prevState) => ({
-            ...prevState,
-            value,
-            isValueChanged: prevState.value !== value,
-          }));
-          switch (parameter?.data?.operator) {
-            case 'EQUAL_TO':
-              if (!(parseFloat(value) === parseFloat(parameter?.data?.value))) {
-                setState((prevState) => ({ ...prevState, isOffLimit: true }));
-              } else {
-                handleExecution(value);
-              }
-              break;
-            case 'LESS_THAN':
-              if (!(parseFloat(value) < parseFloat(parameter?.data?.value))) {
-                setState((prevState) => ({ ...prevState, isOffLimit: true }));
-              } else {
-                handleExecution(value);
-              }
-              break;
-            case 'LESS_THAN_EQUAL_TO':
-              if (!(parseFloat(value) <= parseFloat(parameter?.data?.value))) {
-                setState((prevState) => ({ ...prevState, isOffLimit: true }));
-              } else {
-                handleExecution(value);
-              }
-              break;
-            case 'MORE_THAN':
-              if (!(parseFloat(value) > parseFloat(parameter?.data?.value))) {
-                setState((prevState) => ({ ...prevState, isOffLimit: true }));
-              } else {
-                handleExecution(value);
-              }
-              break;
-            case 'MORE_THAN_EQUAL_TO':
-              if (!(parseFloat(value) >= parseFloat(parameter?.data?.value))) {
-                setState((prevState) => ({ ...prevState, isOffLimit: true }));
-              } else {
-                handleExecution(value);
-              }
-              break;
-            case 'BETWEEN':
-              if (
-                !(
-                  parseFloat(value) >= parseFloat(parameter?.data?.lowerValue) &&
-                  parseFloat(value) <= parseFloat(parameter?.data?.upperValue)
-                )
-              ) {
-                setState((prevState) => ({ ...prevState, isOffLimit: true }));
-              } else {
-                handleExecution(value);
-              }
-              break;
-            default:
-              setState((prevState) => ({ ...prevState, isOffLimit: false }));
-          }
-        }, 500)}
-        placeholder="Enter Observed Value"
-        ref={numberInputRef}
-      />
+        <NumberInput
+          defaultValue={state.value}
+          onChange={debounce(({ value }) => {
+            setState((prevState) => ({
+              ...prevState,
+              value,
+              isValueChanged: prevState.value !== value,
+            }));
+            switch (parameter?.data?.operator) {
+              case 'EQUAL_TO':
+                if (!(parseFloat(value) === parseFloat(parameter?.data?.value))) {
+                  setState((prevState) => ({ ...prevState, isOffLimit: true }));
+                } else {
+                  handleExecution(value);
+                }
+                break;
+              case 'LESS_THAN':
+                if (!(parseFloat(value) < parseFloat(parameter?.data?.value))) {
+                  setState((prevState) => ({ ...prevState, isOffLimit: true }));
+                } else {
+                  handleExecution(value);
+                }
+                break;
+              case 'LESS_THAN_EQUAL_TO':
+                if (!(parseFloat(value) <= parseFloat(parameter?.data?.value))) {
+                  setState((prevState) => ({ ...prevState, isOffLimit: true }));
+                } else {
+                  handleExecution(value);
+                }
+                break;
+              case 'MORE_THAN':
+                if (!(parseFloat(value) > parseFloat(parameter?.data?.value))) {
+                  setState((prevState) => ({ ...prevState, isOffLimit: true }));
+                } else {
+                  handleExecution(value);
+                }
+                break;
+              case 'MORE_THAN_EQUAL_TO':
+                if (!(parseFloat(value) >= parseFloat(parameter?.data?.value))) {
+                  setState((prevState) => ({ ...prevState, isOffLimit: true }));
+                } else {
+                  handleExecution(value);
+                }
+                break;
+              case 'BETWEEN':
+                if (
+                  !(
+                    parseFloat(value) >= parseFloat(parameter?.data?.lowerValue) &&
+                    parseFloat(value) <= parseFloat(parameter?.data?.upperValue)
+                  )
+                ) {
+                  setState((prevState) => ({ ...prevState, isOffLimit: true }));
+                } else {
+                  handleExecution(value);
+                }
+                break;
+              default:
+                setState((prevState) => ({ ...prevState, isOffLimit: false }));
+            }
+          }, 500)}
+          placeholder="Enter Observed Value"
+          ref={numberInputRef}
+        />
+      </div>
 
       {state.isOffLimit ? (
         <div className="off-limit-reason">
@@ -410,27 +427,30 @@ const ShouldBeParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
 
           {(() => {
             if (state.isUserSupervisor) {
-              if (state.isApprovalPending) {
+              if (
+                state.isApprovalPending &&
+                parameter.response?.parameterValueApprovalDto?.state !== 'APPROVED'
+              )
                 return renderApprovalButtons();
-              } else if (state.isOffLimit && state.isValueChanged) {
-                return renderSubmitButtons();
-              } else if (
-                parameter?.response?.state === 'BEING_EXECUTED_AFTER_REJECTED' ||
-                parameter?.response?.state === 'BEING_EXECUTED_AFTER_APPROVAL' ||
-                state.isExecuted
-              ) {
-                return null;
-              }
-            } else {
-              if (state.isValueChanged) {
-                return renderSubmitButtons();
-              } else {
-                return null;
-              }
+            } else if (state.isValueChanged) {
+              return renderSubmitButtons();
             }
           })()}
         </div>
       ) : null}
+
+      <ParameterVerificationView
+        parameterState={
+          state.isOffLimit && state.isValueChanged
+            ? ParameterExecutionState.NOT_STARTED
+            : parameter.response?.state
+        }
+        verificationsByType={verificationsByType}
+        verificationType={verificationType}
+        isLoggedInUserAssigned={!!isLoggedInUserAssigned}
+        parameterId={parameter.id}
+        modifiedBy={parameter.response?.audit?.modifiedBy?.id}
+      />
     </Wrapper>
   );
 };

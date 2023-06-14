@@ -12,6 +12,7 @@ export const initialState: ParameterListState = {
   parametersOrderInTaskInStage: {},
   parametersMappedToJobById: {},
   hiddenIds: {},
+  showVerificationBanner: false,
 };
 
 const reducer: Reducer<ParameterListState, ParameterListActionType> = (
@@ -23,11 +24,13 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
       const { data, entity } = action.payload;
 
       const checklist = entity === Entity.CHECKLIST ? data : data?.checklist;
-      const { parametersById, parametersOrderInTaskInStage } = getParameters({ checklist });
+      const { parametersById, parametersOrderInTaskInStage, showVerificationBanner } =
+        getParameters({ checklist, userId: action.payload.userId });
       return {
         ...state,
         parametersById,
         parametersOrderInTaskInStage,
+        showVerificationBanner,
         parametersMappedToJobById: keyBy(data?.parameterValues, 'id'),
       };
 
@@ -55,6 +58,7 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
             ..._parametersOrderInTaskInStage,
           },
         },
+        showVerificationBanner: action.payload.data.showVerificationBanner,
       };
 
     case ParameterListAction.UPDATE_EXECUTED_PARAMETER:
@@ -89,6 +93,31 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
             },
             {},
           ),
+        },
+      };
+
+    case ParameterListAction.UPDATE_PARAMETER_VERIFICATION_SUCCESS:
+      const { payload } = action;
+      const { updatedVerification } = payload;
+      return {
+        ...state,
+        parametersById: {
+          ...state.parametersById,
+          [payload.parameterId]: {
+            ...state.parametersById[payload.parameterId],
+            response: {
+              ...state.parametersById[payload.parameterId].response,
+              ...(updatedVerification.evaluationState && {
+                state: updatedVerification.evaluationState,
+              }),
+              parameterVerifications: [
+                ...(
+                  state.parametersById[payload.parameterId].response?.parameterVerifications || []
+                ).filter((v) => v.verificationType !== updatedVerification.verificationType),
+                updatedVerification,
+              ],
+            },
+          },
         },
       };
 

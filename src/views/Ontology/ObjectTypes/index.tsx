@@ -268,7 +268,7 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
                               props: {
                                 modalTitle: 'Archive Property',
                                 modalDesc: `Are you sure you want to archive this property?`,
-                                onSumbitHandler: (
+                                onSubmitHandler: (
                                   reason: string,
                                   setFormErrors: (errors?: Error[]) => void,
                                 ) => {
@@ -444,7 +444,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
                             props: {
                               modalTitle: 'Archive Relation',
                               modalDesc: `Are you sure you want to archive this relation?`,
-                              onSumbitHandler: (
+                              onSubmitHandler: (
                                 reason: string,
                                 setFormErrors: (errors?: Error[]) => void,
                               ) => {

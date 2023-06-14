@@ -390,3 +390,52 @@ export const apiGetObjectAuditChangeLog = () => `${baseUrl}/objects/change-logs`
 export const apiExportChecklist = () => `${baseUrl}/checklists/export`;
 
 export const apiImportChecklist = () => `${baseUrl}/checklists/import`;
+
+export const apiInitiateSelfVerification = ({
+  jobId,
+  parameterId,
+}: {
+  jobId: string;
+  parameterId: string;
+}) => `${baseUrl}/parameter-verifications/jobs/${jobId}/parameters/${parameterId}/self/verify`;
+
+export const apiInitiatePeerVerification = ({
+  jobId,
+  parameterId,
+}: {
+  jobId: string;
+  parameterId: string;
+}) => `${baseUrl}/parameter-verifications/jobs/${jobId}/parameters/${parameterId}/peer/assign`;
+
+export const apiAcceptVerification = ({
+  jobId,
+  parameterId,
+  type,
+}: {
+  jobId: string;
+  parameterId: string;
+  type: 'self' | 'peer';
+}) => `${baseUrl}/parameter-verifications/jobs/${jobId}/parameters/${parameterId}/${type}/accept`;
+
+export const apiRecallVerification = ({
+  jobId,
+  parameterId,
+  type,
+}: {
+  jobId: string;
+  parameterId: string;
+  type: 'self' | 'peer';
+}) => `${baseUrl}/parameter-verifications/jobs/${jobId}/parameters/${parameterId}/${type}/recall`;
+
+export const apiRejectPeerVerification = ({
+  jobId,
+  parameterId,
+}: {
+  jobId: string;
+  parameterId: string;
+}) => `${baseUrl}/parameter-verifications/jobs/${jobId}/parameters/${parameterId}/peer/reject`;
+
+export const apiParameterVerificationList = () => `${baseUrl}/parameter-verifications`;
+
+export const apiVerificationAssignees = (jobId: string) =>
+  `${baseUrl}/parameter-verifications/jobs/${jobId}/assignees`;

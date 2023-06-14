@@ -1,8 +1,11 @@
+import { ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.types';
 import { Error } from '#utils/globalTypes';
+import { Verification } from '#views/Jobs/ListView/types';
 import {
   ParameterErrors,
   ParametersById,
   ParametersOrderInTaskInStage,
+  ParameterVerificationStatus,
 } from './ActivityList/types';
 import { Checklist, Stage, Task, TaskExecutionState } from './checklist.types';
 import { ComposerState } from './composer.reducer.types';
@@ -111,12 +114,14 @@ export const getTasks = ({ checklist, setActiveTask = false }: GetTasksType) => 
 
 type GetParametersType = {
   checklist: Checklist;
+  userId: string;
 };
 
-export const getParameters = ({ checklist }: GetParametersType) => {
+export const getParameters = ({ checklist, userId }: GetParametersType) => {
   const parametersById: ParametersById = {},
     parametersOrderInTaskInStage: ParametersOrderInTaskInStage = {};
   const hiddenIds: Record<string, boolean> = {};
+  let showVerificationBanner = false;
   checklist?.stages?.map((stage) => {
     let hiddenTasksLength = 0;
     parametersOrderInTaskInStage[stage.id] = {};
@@ -131,6 +136,18 @@ export const getParameters = ({ checklist }: GetParametersType) => {
         if (parameter.response?.hidden || task.hidden) {
           hiddenParametersLength++;
           hiddenIds[parameter.id] = true;
+        } else if (
+          !showVerificationBanner &&
+          parameter.verificationType !== ParameterVerificationTypeEnum.NONE
+        ) {
+          const dependantVerification = (parameter.response?.parameterVerifications || []).find(
+            (verification: Verification) =>
+              verification?.requestedTo?.id === userId &&
+              verification?.verificationStatus === ParameterVerificationStatus.PENDING,
+          );
+          if (dependantVerification) {
+            showVerificationBanner = true;
+          }
         }
       });
       if (task.hidden || task?.parameters?.length === hiddenParametersLength) {
@@ -143,7 +160,7 @@ export const getParameters = ({ checklist }: GetParametersType) => {
     }
   });
 
-  return { parametersById, parametersOrderInTaskInStage, hiddenIds };
+  return { parametersById, parametersOrderInTaskInStage, hiddenIds, showVerificationBanner };
 };
 
 export const updateHiddenIds = (composerState: ComposerState) => {

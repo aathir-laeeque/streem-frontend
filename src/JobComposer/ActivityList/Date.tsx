@@ -27,7 +27,7 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
     }
   }, [parameter?.response?.value]);
 
-  const onBlurHandler = (val: string) => {
+  const onChangeHandler = (val: string) => {
     customOnChange(val, (val: string) => {
       const newData = {
         ...parameter,
@@ -59,10 +59,7 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
                 ['data-type']: parameter.type,
                 ref: inputRef,
                 disabled: parameter?.autoInitialized,
-                onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
-                  const value = moment(e.target.value).unix().toString();
-                  onBlurHandler(value);
-                },
+                onChange: ({ value }) => onChangeHandler(value),
               },
             },
           ]}

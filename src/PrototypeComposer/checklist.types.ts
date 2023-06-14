@@ -75,6 +75,9 @@ export type Parameter = {
   autoInitialized?: boolean;
   mode: ParameterMode;
   hidden: boolean;
+  processId?: string;
+  processName?: string;
+  verificationType: string;
 };
 
 export type Media = {
@@ -235,4 +238,11 @@ export enum LogType {
   DATE = 'DATE',
   FILE = 'FILE',
   TEXT = 'TEXT',
+}
+
+export enum ParameterVerificationTypeEnum {
+  SELF = 'SELF',
+  PEER = 'PEER',
+  BOTH = 'BOTH',
+  NONE = 'NONE',
 }

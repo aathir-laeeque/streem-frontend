@@ -22,16 +22,20 @@ import {
   MandatoryParameter,
   NonMandatoryParameter,
   Parameter,
+  ParameterVerificationTypeEnum,
+  TargetEntityType,
 } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap, TargetEntityTypeVisual } from '#PrototypeComposer/constants';
-import { Button, FormGroup, StyledTabs, ToggleSwitch, useDrawer } from '#components';
+import { ComposerEntity } from '#PrototypeComposer/types';
+import { Button, Checkbox, FormGroup, StyledTabs, ToggleSwitch, useDrawer } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { apiDeleteParameter, apiSingleParameter } from '#utils/apiUrls';
 import { InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { Step, StepIconProps, StepLabel, Stepper } from '@material-ui/core';
+import { resetOntology } from '#views/Ontology/actions';
+import { Divider, Step, StepIconProps, StepLabel, Stepper } from '@material-ui/core';
 import {
   CheckCircleOutline,
   DeleteOutlined,
@@ -44,8 +48,22 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { resetTaskParameterError } from './actions';
-import { resetOntology } from '#views/Ontology/actions';
-import { fetchComposerData } from '#PrototypeComposer/actions';
+import { Tooltip } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+
+const CustomTooltip = withStyles({
+  tooltip: {
+    width: '205px',
+    backgroundColor: '#393939',
+    borderRadius: '0px',
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: '14px',
+  },
+  arrow: {
+    color: '#393939',
+  },
+})(Tooltip);
 
 export const AddParameterWrapper = styled.form`
   display: flex;
@@ -116,6 +134,45 @@ const StepIconWrapper = styled.div<{ active?: boolean }>`
   }
 `;
 
+const ParameterVerificationWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 24px;
+  color: #161616;
+
+  .parameter-verification {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 180px;
+  }
+
+  h4 {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.14;
+    letter-spacing: 0.16px;
+    margin: 0px;
+  }
+
+  span {
+    color: #c2c2c2;
+  }
+
+  .checkmark {
+    background-color: #fff;
+    border-color: #333;
+    border-radius: 0;
+    border-width: 2px;
+  }
+
+  input:checked ~ .checkmark {
+    background-color: #1d84ff;
+    border: none;
+  }
+`;
+
 function CustomStepIcon(props: StepIconProps) {
   const { active, completed } = props;
 
@@ -159,6 +216,7 @@ const defaultValues = {
   validations: {},
   autoInitialize: undefined,
   autoInitialized: undefined,
+  verificationType: ParameterVerificationTypeEnum.NONE,
 };
 
 const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntity }> = ({
@@ -187,6 +245,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
     validations: Record<string, any>;
     autoInitialize: Record<string, any>;
     autoInitialized?: boolean;
+    verificationType: string;
   }>({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -220,8 +279,15 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
   register('type', {
     required: true,
   });
+  register('verificationType');
 
-  const { mandatory, label, type, mode } = watch(['mandatory', 'label', 'type', 'mode']);
+  const { mandatory, label, type, mode, verificationType } = watch([
+    'mandatory',
+    'label',
+    'type',
+    'mode',
+    'verificationType',
+  ]);
 
   const isLabelReadOnly = isReadOnly;
   isReadOnly = mode === ParameterMode.READ_ONLY ? true : isReadOnly;
@@ -326,6 +392,78 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
             checked={mandatory}
             disabled={isReadOnly}
           />
+        )}
+        {!(type in NonMandatoryParameter) && (
+          <ParameterVerificationWrapper>
+            <Divider />
+            <h4>
+              Parameter Verification <span>(Optional)</span>
+            </h4>
+            <CustomTooltip
+              title={
+                currentParameter?.targetEntityType === TargetEntityType.PROCESS
+                  ? 'Verification are not applicable for Parameters in the Create Job Form'
+                  : ''
+              }
+              arrow
+              placement="right"
+            >
+              <div className="parameter-verification">
+                <Checkbox
+                  onClick={(e) => {
+                    const { checked } = e.target;
+                    setValue(
+                      'verificationType',
+                      verificationType === ParameterVerificationTypeEnum.PEER
+                        ? ParameterVerificationTypeEnum.BOTH
+                        : verificationType === ParameterVerificationTypeEnum.BOTH
+                        ? ParameterVerificationTypeEnum.PEER
+                        : checked
+                        ? ParameterVerificationTypeEnum.SELF
+                        : ParameterVerificationTypeEnum.NONE,
+                      {
+                        shouldValidate: true,
+                      },
+                    );
+                  }}
+                  checked={
+                    verificationType === ParameterVerificationTypeEnum.SELF ||
+                    verificationType === ParameterVerificationTypeEnum.BOTH
+                  }
+                  label="Self Verification"
+                  disabled={
+                    isReadOnly || currentParameter?.targetEntityType === TargetEntityType.PROCESS
+                  }
+                />
+                <Checkbox
+                  onClick={(e) => {
+                    const { checked } = e.target;
+                    setValue(
+                      'verificationType',
+                      verificationType === ParameterVerificationTypeEnum.SELF
+                        ? ParameterVerificationTypeEnum.BOTH
+                        : verificationType === ParameterVerificationTypeEnum.BOTH
+                        ? ParameterVerificationTypeEnum.SELF
+                        : checked
+                        ? ParameterVerificationTypeEnum.PEER
+                        : ParameterVerificationTypeEnum.NONE,
+                      {
+                        shouldValidate: true,
+                      },
+                    );
+                  }}
+                  checked={
+                    verificationType === ParameterVerificationTypeEnum.PEER ||
+                    verificationType === ParameterVerificationTypeEnum.BOTH
+                  }
+                  label="Peer Verification"
+                  disabled={
+                    isReadOnly || currentParameter?.targetEntityType === TargetEntityType.PROCESS
+                  }
+                />
+              </div>
+            </CustomTooltip>
+          </ParameterVerificationWrapper>
         )}
         {renderSetupViewsByType()}
         {[
@@ -541,7 +679,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
           updateParameterApi({
             ...currentParameter,
             ..._data,
-            ...(formDescription.length > 0 && { description: formDescription }),
+            ...(formDescription?.length > 0 && { description: formDescription }),
             ...((compactFilters?.length > 0 || _data?.data?.propertyValidations) && {
               data: {
                 ..._data.data,
@@ -579,7 +717,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
               taskId: addParameter.taskId,
               stageId: activeStageId,
               ..._data,
-              ...(formDescription.length > 0 && { description: formDescription }),
+              ...(formDescription?.length > 0 && { description: formDescription }),
               ...(compactFilters?.length > 0 && {
                 data: {
                   ..._data.data,
@@ -606,7 +744,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
               checklistId: (data as Checklist).id,
               orderTree,
               ..._data,
-              ...(formDescription.length > 0 && { description: formDescription }),
+              ...(formDescription?.length > 0 && { description: formDescription }),
               ...(compactFilters?.length > 0 && {
                 data: {
                   ..._data.data,
@@ -645,6 +783,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
           validations: response.data.validations,
           autoInitialize: response.data?.autoInitialize,
           autoInitialized: response.data?.autoInitialized,
+          verificationType: response.data?.verificationType,
         });
         setFormDescription(response.data.description);
         setCurrentParameter(cloneDeep(response.data));

@@ -8,6 +8,11 @@ const initialState: ListViewState = {
   selectedState: InboxState.NOT_STARTED,
   jobs: [],
   pageable: DEFAULT_PAGINATION,
+  verifications: {
+    loading: false,
+    list: [],
+    pageable: DEFAULT_PAGINATION,
+  },
 };
 
 const reducer = (state = initialState, action: ListViewActionType): ListViewState => {
@@ -35,6 +40,26 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
 
     case ListViewAction.RESET_INBOX:
       return { ...initialState };
+
+    case ListViewAction.FETCH_VERIFICATIONS:
+      return {
+        ...state,
+        verifications: {
+          ...state.verifications,
+          loading: true,
+        },
+      };
+
+    case ListViewAction.FETCH_VERIFICATIONS_SUCCESS:
+      return {
+        ...state,
+        verifications: {
+          ...state.verifications,
+          loading: false,
+          list: action.payload?.data || [],
+          pageable: action.payload?.pageable || DEFAULT_PAGINATION,
+        },
+      };
 
     default:
       return { ...state };

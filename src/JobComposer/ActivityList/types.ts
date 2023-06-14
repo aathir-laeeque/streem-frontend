@@ -33,6 +33,7 @@ export type ParametersOrderInTaskInStage = Record<
 
 export enum ParameterErrors {
   E401 = 'PARAMETER_INCOMPLETE',
+  E9002 = 'PARAMETER_VERIFICATION_INCOMPLETE',
 }
 
 export enum SupervisorResponse {
@@ -45,3 +46,10 @@ export type approveRejectParameterType = {
   parameterId: Parameter['id'];
   type: SupervisorResponse;
 };
+
+export enum ParameterVerificationStatus {
+  PENDING = 'PENDING',
+  RECALLED = 'RECALLED',
+  REJECTED = 'REJECTED',
+  ACCEPTED = 'ACCEPTED',
+}

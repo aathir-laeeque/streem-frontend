@@ -1,9 +1,16 @@
 import styled from 'styled-components';
 
-export const ComposerWrapper = styled.div`
+export const ComposerWrapper = styled.div<{ isSubJob?: boolean; showVerificationBanner: boolean }>`
   display: grid;
   grid-template-areas: 'header' 'tasks';
-  grid-template-rows: 64px 1fr;
+  grid-template-rows: ${({ isSubJob, showVerificationBanner }) =>
+    isSubJob && showVerificationBanner
+      ? '138px 1fr'
+      : isSubJob
+      ? '108px 1fr'
+      : showVerificationBanner
+      ? '96px 1fr'
+      : '66px 1fr'};
   overflow: hidden;
   height: 100%;
   grid-gap: 0px;

@@ -17,6 +17,8 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import JobHeaderButtons from './JobHeaderButtons';
 import Wrapper, { LabelValueRow } from './styles';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 
 const Header: FC<{
   infoExpanded: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
@@ -27,8 +29,12 @@ const Header: FC<{
   const [assignedUsers, setAssignedUsers] = useState<Users | undefined>(undefined);
   const [isLoggedInUserAssigned, setIsLoggedInUserAssigned] = useState(false);
   const {
-    composer: { jobState, data },
-    auth: { profile },
+    composer: {
+      jobState,
+      data,
+      parameters: { showVerificationBanner },
+    },
+    auth: { profile, userId },
   } = useTypedSelector((state) => state);
   const { id: jobId, checklist } = (data as Job) ?? {};
   const prevJobState = usePrevious(jobState);
@@ -73,7 +79,12 @@ const Header: FC<{
     : 'Not Started';
 
   return (
-    <Wrapper isInfoExpanded={isInfoExpanded} style={{ zIndex: 2 }}>
+    <Wrapper
+      isInfoExpanded={isInfoExpanded}
+      showVerificationBanner={showVerificationBanner}
+      isChildTask={!!data?.parentId}
+      style={{ zIndex: 2 }}
+    >
       <div className="main-header">
         <div className="drawer-toggle" onClick={() => dispatch(toggleIsDrawerOpen())}>
           <Menu />
@@ -106,6 +117,27 @@ const Header: FC<{
           {isInfoExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
         </div>
       </div>
+      {showVerificationBanner && (
+        <div className="verification-banner">
+          This Job has some Parameters Pending Verification by you &nbsp;
+          <span
+            onClick={() => {
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.JOB_VERIFICATION,
+                  props: {
+                    jobId,
+                    userId: userId,
+                    redirectedFromBanner: true,
+                  },
+                }),
+              );
+            }}
+          >
+            View Them
+          </span>
+        </div>
+      )}
       <div className="job-info">
         <div className="content">
           <h4>Process Information</h4>

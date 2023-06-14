@@ -256,7 +256,7 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
               modalDesc: `Provide details for ${
                 data?.archived ? 'unarchiving' : 'archiving'
               } the checklist`,
-              onSumbitHandler: (reason: string, setFormErrors: (errors?: Error[]) => void) =>
+              onSubmitHandler: (reason: string, setFormErrors: (errors?: Error[]) => void) =>
                 data?.archived
                   ? dispatch(unarchiveChecklist(data?.id, reason, setFormErrors))
                   : dispatch(archiveChecklist(data?.id, reason, setFormErrors)),

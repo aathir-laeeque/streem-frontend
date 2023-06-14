@@ -3,7 +3,7 @@ import { RootState } from '#store';
 import { setRecentServerTimestamp } from '#store/extras/action';
 import { apiGetStageData } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { CompletedJobStates } from '#views/Jobs/ListView/types';
+import { CompletedJobStates, Verification } from '#views/Jobs/ListView/types';
 import { keyBy } from 'lodash';
 import { call, delay, put, race, select, take } from 'redux-saga/effects';
 import {
@@ -13,11 +13,14 @@ import {
   stopPollActiveStageData,
 } from './actions';
 import { StageListAction } from './reducer.types';
+import { ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.types';
+import { ParameterVerificationStatus } from '#JobComposer/ActivityList/types';
 
 const getCurrentStatus = (state: RootState) => state.composer.jobState;
 const getActiveStageId = (state: RootState) => state.composer.stages.activeStageId;
 const getHiddenIds = (state: RootState) => state.composer.parameters.hiddenIds;
 const getActiveTaskId = (state: RootState) => state.composer.tasks.activeTaskId;
+const getUserId = (state: RootState) => state.auth.userId;
 
 function* activeStagePollingSaga({ payload }: ReturnType<typeof startPollActiveStageData>) {
   const { jobId } = payload;
@@ -51,6 +54,8 @@ function* activeStagePollingSaga({ payload }: ReturnType<typeof startPollActiveS
         let tasksOrderInStage: any = [];
         let parametersOrderInTaskInStage: any = {};
         let hiddenTasksLength = 0;
+        let showVerificationBanner = false;
+        const userId = (yield select(getUserId)) as string;
 
         const tasksById = tasks.reduce((acc, task) => {
           let hiddenParametersLength = 0;
@@ -62,8 +67,25 @@ function* activeStagePollingSaga({ payload }: ReturnType<typeof startPollActiveS
               if (parameter.response?.hidden || task.hidden) {
                 hiddenParametersLength++;
                 hiddenIds[parameter.id] = true;
-              } else if (hiddenIds[parameter.id]) {
-                delete hiddenIds[parameter.id];
+              } else {
+                if (hiddenIds[parameter.id]) {
+                  delete hiddenIds[parameter.id];
+                }
+                if (
+                  !showVerificationBanner &&
+                  parameter.verificationType !== ParameterVerificationTypeEnum.NONE
+                ) {
+                  const dependantVerification = (
+                    parameter.response?.parameterVerifications || []
+                  ).find(
+                    (verification: Verification) =>
+                      verification?.requestedTo?.id === userId &&
+                      verification?.verificationStatus === ParameterVerificationStatus.PENDING,
+                  );
+                  if (dependantVerification) {
+                    showVerificationBanner = true;
+                  }
+                }
               }
               return { ...ac, [parameter.id]: parameter };
             }, {}),
@@ -101,6 +123,7 @@ function* activeStagePollingSaga({ payload }: ReturnType<typeof startPollActiveS
             hiddenIds,
             activeTaskId,
             parametersOrderInTaskInStage,
+            showVerificationBanner,
           } as fetchActiveStageDataRes),
         );
 

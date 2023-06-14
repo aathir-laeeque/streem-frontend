@@ -1,5 +1,5 @@
 import { Pageable } from '#utils/globalTypes';
-import { Job } from '#views/Jobs/ListView/types';
+import { Job, Verification } from '#views/Jobs/ListView/types';
 import { RouteComponentProps } from '@reach/router';
 
 import {
@@ -7,6 +7,8 @@ import {
   fetchInboxError,
   fetchInboxOngoing,
   fetchInboxSuccess,
+  fetchVerifications,
+  fetchVerificationsSuccess,
   resetInbox,
   setSelectedState,
 } from './actions';
@@ -21,6 +23,11 @@ export interface ListViewState {
   readonly error: any;
   readonly selectedState: string;
   readonly pageable: Pageable;
+  readonly verifications: {
+    loading: boolean;
+    list: Verification[];
+    pageable: Pageable;
+  };
 }
 
 export enum InboxState {
@@ -36,6 +43,8 @@ export enum ListViewAction {
   FETCH_INBOX_SUCCESS = '@@inbox/ListView/FETCH_INBOX_SUCCESS',
   SET_SELECTED_STATE = '@@inbox/ListView/SET_SELECTED_STATE',
   RESET_INBOX = '@@inbox/ListView/RESET_INBOX',
+  FETCH_VERIFICATIONS = '@@inbox/ListView/FETCH_VERIFICATIONS',
+  FETCH_VERIFICATIONS_SUCCESS = '@@inbox/ListView/FETCH_VERIFICATIONS_SUCCESS',
 }
 
 export type ListViewActionType = ReturnType<
@@ -45,4 +54,6 @@ export type ListViewActionType = ReturnType<
   | typeof fetchInboxSuccess
   | typeof setSelectedState
   | typeof resetInbox
+  | typeof fetchVerifications
+  | typeof fetchVerificationsSuccess
 >;

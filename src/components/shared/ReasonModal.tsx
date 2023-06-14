@@ -72,7 +72,7 @@ const Wrapper = styled.div`
 `;
 
 type Props = {
-  onSumbitHandler: (reason: string, setFormErrors: (errors?: Error[]) => void) => void;
+  onSubmitHandler: (reason: string, setFormErrors: (errors?: Error[]) => void) => void;
   modalTitle?: string;
   onSubmitModalText?: string;
   modalDesc?: string;
@@ -80,7 +80,7 @@ type Props = {
 
 const ReasonModal = (props: CommonOverlayProps<Props>) => {
   const {
-    props: { onSumbitHandler, modalTitle, onSubmitModalText, modalDesc },
+    props: { onSubmitHandler, modalTitle, onSubmitModalText, modalDesc },
     closeOverlay,
     closeAllOverlays,
   } = props;
@@ -98,7 +98,7 @@ const ReasonModal = (props: CommonOverlayProps<Props>) => {
 
   const onSubmitModal = async () => {
     if (!reasonTextIsEmpty) {
-      await onSumbitHandler(reason, getApiFormErrors);
+      await onSubmitHandler(reason, getApiFormErrors);
     }
   };
 

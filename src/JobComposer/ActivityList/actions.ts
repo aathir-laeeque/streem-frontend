@@ -1,4 +1,5 @@
 import { actionSpreader } from '#store';
+import { Verification } from '#views/Jobs/ListView/types';
 import { Parameter, Media } from '../checklist.types';
 import { ParameterListAction } from './reducer.types';
 import { SupervisorResponse, approveRejectParameterType } from './types';
@@ -45,3 +46,55 @@ export const approveRejectParameter = ({ parameterId, jobId, type }: approveReje
       : ParameterListAction.REJECT_PARAMETER,
     { parameterId, jobId, type },
   );
+
+export const initiateSelfVerification = ({ parameterId }: { parameterId: string }) =>
+  actionSpreader(ParameterListAction.INITIATE_SELF_VERIFICATION, { parameterId });
+
+export const completeSelfVerification = ({
+  parameterId,
+  password,
+}: {
+  parameterId: string;
+  password: string;
+}) => actionSpreader(ParameterListAction.COMPLETE_SELF_VERIFICATION, { parameterId, password });
+
+export const sendPeerVerification = ({
+  parameterId,
+  userId,
+}: {
+  parameterId: string;
+  userId: string;
+}) => actionSpreader(ParameterListAction.SEND_PEER_VERIFICATION, { parameterId, userId });
+
+export const recallPeerVerification = ({
+  parameterId,
+  type,
+}: {
+  parameterId: string;
+  type: 'self' | 'peer';
+}) => actionSpreader(ParameterListAction.RECALL_PEER_VERIFICATION, { parameterId, type });
+
+export const acceptPeerVerification = ({
+  parameterId,
+  password,
+}: {
+  parameterId: string;
+  password: string;
+}) => actionSpreader(ParameterListAction.ACCEPT_PEER_VERIFICATION, { parameterId, password });
+
+export const rejectPeerVerification = ({
+  parameterId,
+  comment,
+}: {
+  parameterId: string;
+  comment: string;
+}) => actionSpreader(ParameterListAction.REJECT_PEER_VERIFICATION, { parameterId, comment });
+
+export const updateParameterVerificationSuccess = (
+  parameterId: string,
+  updatedVerification: Verification,
+) =>
+  actionSpreader(ParameterListAction.UPDATE_PARAMETER_VERIFICATION_SUCCESS, {
+    parameterId,
+    updatedVerification,
+  });

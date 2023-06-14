@@ -1,6 +1,6 @@
 import { useTypedSelector } from '#store';
 import React, { FC, RefObject, createRef, useEffect } from 'react';
-
+import { useLocation } from '@reach/router';
 import TasksOverview from '#JobComposer/OverviewPage';
 import { setActiveStage } from '#JobComposer/StageList/actions';
 import { useDispatch } from 'react-redux';
@@ -24,6 +24,8 @@ const TaskListView: FC<{ overviewOpen: [boolean, React.Dispatch<React.SetStateAc
       },
       parameters: { hiddenIds },
     } = useTypedSelector((state) => state.composer);
+    const location = useLocation();
+    const { verificationTaskId, VerificationStageId } = location.state;
     const dispatch = useDispatch();
     const tasksListIds = tasksOrderInStage[activeStageId!];
 
@@ -39,6 +41,13 @@ const TaskListView: FC<{ overviewOpen: [boolean, React.Dispatch<React.SetStateAc
       },
       {},
     );
+
+    useEffect(() => {
+      if (verificationTaskId && VerificationStageId) {
+        dispatch(setActiveStage(VerificationStageId));
+        dispatch(setActiveTask(verificationTaskId));
+      }
+    }, []);
 
     useEffect(() => {
       if (activeTaskId) {

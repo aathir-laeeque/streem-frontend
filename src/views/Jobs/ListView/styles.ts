@@ -24,6 +24,7 @@ const TabContentWrapper = styled.div`
   flex-direction: column;
   flex: 1;
   overflow: hidden;
+  height: 100%;
 
   .filters {
     align-items: flex-end;
@@ -38,6 +39,10 @@ const TabContentWrapper = styled.div`
       gap: 6px;
       margin-left: 24px;
       margin-bottom: 8px;
+    }
+    .verification-search {
+      max-width: 306px;
+      width: 306px;
     }
   }
 

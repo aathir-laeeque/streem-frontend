@@ -113,6 +113,21 @@ const JobHeaderButtons: FC<{
         >
           View Activities
         </MenuItem>
+        <MenuItem
+          className="view-verifications"
+          onClick={() => {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.JOB_VERIFICATION,
+                props: {
+                  jobId,
+                },
+              }),
+            );
+          }}
+        >
+          View Verifications
+        </MenuItem>
         {jobState === JobStateEnum.IN_PROGRESS &&
           isLoggedInUserAssigned &&
           checkPermission(['inbox', 'completeWithException']) && (

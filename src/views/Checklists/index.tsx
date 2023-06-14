@@ -10,6 +10,7 @@ import Automation from './Automation';
 import JobLogs from './JobLogs';
 import JobsListView from '#views/Jobs/ListView';
 import Scheduler from './Schedular/index';
+import Permissions from '#views/Checklists/Permissions';
 
 const ChecklistView: FC<RouteComponentProps> = () => (
   <Router>
@@ -22,6 +23,7 @@ const ChecklistView: FC<RouteComponentProps> = () => (
     <JobLogs path="/:id/logs" />
     <NewPrototype path="/prototype" />
     <Scheduler path="/:id/scheduler" />
+    <Permissions path="/:id/permissions" />
   </Router>
 );
 

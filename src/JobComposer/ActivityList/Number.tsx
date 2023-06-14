@@ -6,6 +6,7 @@ import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { executeParameter, fixParameter } from './actions';
 import { ParameterProps } from './types';
+import { PeerVerification, SelfVerification } from './Verification';
 
 const NumberParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();

@@ -16,7 +16,11 @@ import SingleSelectTaskView from '#PrototypeComposer/Parameters/TaskViews/Single
 import TextInstructionTaskView from '#PrototypeComposer/Parameters/TaskViews/TextInstruction';
 import FileUploadTaskView from '#PrototypeComposer/Parameters/TaskViews/FileUpload';
 import YesNoTaskView from '#PrototypeComposer/Parameters/TaskViews/YesNo';
-import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
+import {
+  MandatoryParameter,
+  NonMandatoryParameter,
+  ParameterVerificationTypeEnum,
+} from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap } from '#PrototypeComposer/constants';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
@@ -35,6 +39,25 @@ import {
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import peerVerificationIcon from '#assets/svg/peerVerification.svg';
+import selfVerificationIcon from '#assets/svg/selfVerification.svg';
+import Tooltip from '@material-ui/core/Tooltip';
+
+import { withStyles } from '@material-ui/core/styles';
+
+const CustomTooltip = withStyles({
+  tooltip: {
+    width: '205px',
+    backgroundColor: '#393939',
+    borderRadius: '0px',
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: '14px',
+  },
+  arrow: {
+    color: '#393939',
+  },
+})(Tooltip);
 
 export const ParameterTaskViewWrapper = styled.div<{ isReadOnly: boolean }>`
   padding: ${({ isReadOnly }) => (isReadOnly ? '16px 8px' : '16px 8px 16px 0')};
@@ -166,6 +189,11 @@ export const ParameterTaskViewWrapper = styled.div<{ isReadOnly: boolean }>`
           }
         }
       }
+    }
+
+    .verification-icons {
+      display: flex;
+      gap: 8px;
     }
   }
 `;
@@ -370,6 +398,24 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
             <span className="parameter-label">{parameter?.label}</span>
           </>
           {renderTaskViewByType()}
+          <div className="verification-icons">
+            {parameter?.verificationType === ParameterVerificationTypeEnum.SELF ||
+            parameter?.verificationType === ParameterVerificationTypeEnum.BOTH ? (
+              <CustomTooltip title="Self Verification Enabled" arrow>
+                <img src={selfVerificationIcon} alt="icon" width="24px" />
+              </CustomTooltip>
+            ) : (
+              ''
+            )}
+            {parameter?.verificationType === ParameterVerificationTypeEnum.PEER ||
+            parameter?.verificationType === ParameterVerificationTypeEnum.BOTH ? (
+              <CustomTooltip title="Peer Verification Enabled" arrow>
+                <img src={peerVerificationIcon} alt="icon" width="24px" />
+              </CustomTooltip>
+            ) : (
+              ''
+            )}
+          </div>
         </div>
       </div>
     </ParameterTaskViewWrapper>
