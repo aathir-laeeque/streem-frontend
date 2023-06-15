@@ -63,6 +63,7 @@ const Tasks: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
               onClick={() => {
                 setIsDrawerOpen(true);
               }}
+              disabled
             >
               <AddCircleOutline className="icon" fontSize="small" />
               Add Dynamic Task
