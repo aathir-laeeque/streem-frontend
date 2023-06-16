@@ -294,7 +294,7 @@ const MemoTask: FC<{
           )}
         </View>
       )}
-      {!!correctionReason && (
+      {!!correctionReason && correctedBy && correctedAt && (
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
             This Task was corrected via Leucine {'\n'}
