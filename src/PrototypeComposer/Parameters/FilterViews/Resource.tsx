@@ -669,28 +669,32 @@ const ResourceFilter: FC<{
                                   props: {
                                     id: 'parameter',
                                     label: 'Select Parameter',
-                                    options: parameterOptionsList?.filter((currList) => {
-                                      if (currList?.type === selectedObjectProperty?.inputType) {
-                                        return currList;
-                                      } else if (
-                                        selectedObjectProperty?.inputType ===
-                                          MandatoryParameter.NUMBER &&
-                                        (currList.type === MandatoryParameter.NUMBER ||
-                                          currList.type === MandatoryParameter.CALCULATION)
-                                      ) {
-                                        return currList;
-                                      } else if (
-                                        selectedObjectProperty?.target?.cardinality ===
-                                          InputTypes.ONE_TO_ONE &&
-                                        currList?.type === MandatoryParameter.RESOURCE &&
-                                        currList?.data?.objectTypeId ===
-                                          selectedObjectProperty?.objectTypeId
-                                      ) {
-                                        return currList;
-                                      } else {
-                                        return null;
-                                      }
-                                    }),
+                                    options: !item?.selector
+                                      ? []
+                                      : parameterOptionsList?.filter((currList) => {
+                                          if (
+                                            currList?.type === selectedObjectProperty?.inputType
+                                          ) {
+                                            return currList;
+                                          } else if (
+                                            selectedObjectProperty?.inputType ===
+                                              MandatoryParameter.NUMBER &&
+                                            (currList.type === MandatoryParameter.NUMBER ||
+                                              currList.type === MandatoryParameter.CALCULATION)
+                                          ) {
+                                            return currList;
+                                          } else if (
+                                            selectedObjectProperty?.target?.cardinality ===
+                                              InputTypes.ONE_TO_ONE &&
+                                            currList?.type === MandatoryParameter.RESOURCE &&
+                                            currList?.data?.objectTypeId ===
+                                              selectedObjectProperty?.objectTypeId
+                                          ) {
+                                            return currList;
+                                          } else {
+                                            return null;
+                                          }
+                                        }),
                                     value: item?.referencedParameterId
                                       ? [
                                           {
