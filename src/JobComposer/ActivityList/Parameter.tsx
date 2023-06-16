@@ -22,6 +22,7 @@ import SignatureParameter from './Signature';
 import TextboxParameter from './Textbox';
 import YesNoParameter from './YesNo';
 import ParameterVerificationView from './Verification/ParameterVerificationView';
+import FileUploadParameter from './FileUpload';
 
 const Parameter: FC<{
   parameter: Parameter;
@@ -119,7 +120,15 @@ const Parameter: FC<{
                       isLoggedInUserAssigned={isLoggedInUserAssigned}
                     />
                   );
-
+                case MandatoryParameter.FILE_UPLOAD:
+                  return (
+                    <FileUploadParameter
+                      parameter={parameter}
+                      isCorrectingError={isCorrectingError}
+                      isTaskCompleted={isTaskCompleted}
+                      isLoggedInUserAssigned={isLoggedInUserAssigned}
+                    />
+                  );
                 case MandatoryParameter.MULTISELECT:
                 case MandatoryParameter.SINGLE_SELECT:
                   return (

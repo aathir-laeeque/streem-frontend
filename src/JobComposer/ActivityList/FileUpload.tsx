@@ -153,7 +153,7 @@ const FileUploadParameter: FC<ParameterProps> = ({
                   }}
                   icon={PublishOutlined}
                   onUploadError={onUploadError}
-                  additionalTypes={['.pdf', '.doc', '.docx', '.png', '.jpg', '.jpeg']}
+                  acceptedTypes={['image/*', '.pdf', '.doc', '.docx', '.png', '.jpg', '.jpeg']}
                 />
               </div>
             </>

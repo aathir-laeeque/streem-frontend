@@ -144,7 +144,7 @@ export const FileGallery: FC<FileGalleryProps> = ({ medias, parameter }) => {
                     props: {
                       modalTitle: 'Remove File',
                       modalDesc: `Are you sure you want to remove the updated file?`,
-                      onSumbitHandler: (
+                      onSubmitHandler: (
                         reason: string,
                         setFormErrors: (errors?: Error[]) => void,
                       ) => {
