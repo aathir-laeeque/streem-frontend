@@ -23,6 +23,7 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
   const { id: checklistId, parameters: cjfParameters } = processData!;
   const { register, watch, setValue } = form;
   const type = watch('type', {});
+  const formData = watch('data', {});
   const autoInitialized = watch('autoInitialized', false);
   const autoInitialize = watch('autoInitialize', {});
   const [loading, setLoading] = useState<Boolean>(false);
@@ -72,10 +73,18 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
   const getProperties = async (id: string) => {
     setLoadingProperties(true);
     const response: ResponseObj<ObjectType> = await request('GET', apiGetObjectTypes(id));
-    if (response?.data?.properties) {
-      setObjectProperties(
-        response.data.properties.filter((property) => property.inputType === type) || [],
-      );
+    if (response?.data) {
+      if (type === MandatoryParameter.RESOURCE) {
+        setObjectProperties(
+          response.data.relations.filter(
+            (relation: any) => relation.externalId === formData?.objectTypeExternalId,
+          ) || [],
+        );
+      } else {
+        setObjectProperties(
+          response.data.properties.filter((property) => property.inputType === type) || [],
+        );
+      }
     }
     setLoadingProperties(false);
   };
