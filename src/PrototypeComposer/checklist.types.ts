@@ -1,6 +1,7 @@
 import { AutomationAction, ParameterMode } from '#JobComposer/checklist.types';
 import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
+import { Constraint } from '#views/Ontology/types';
 import { CollaboratorState, Collaborator } from './reviewer.types';
 
 // TODO : merge (job composer & prototype composer) types.
@@ -57,6 +58,18 @@ export enum TargetEntityType {
   UNMAPPED = 'UNMAPPED',
 }
 
+export type BranchingRule = {
+  id: string;
+  constraint: Constraint;
+  thenValue?: any;
+  hide?: {
+    parameters: string[];
+  };
+  show?: {
+    parameters: string[];
+  };
+};
+
 export type Parameter = {
   code: string;
   // TODO: look into this any type for parameter data
@@ -78,6 +91,7 @@ export type Parameter = {
   processId?: string;
   processName?: string;
   verificationType: string;
+  rules?: BranchingRule[];
 };
 
 export type Media = {
@@ -231,7 +245,7 @@ export type Checklist = {
   noOfTasks?: number;
   version: number | null;
   global: boolean;
-  parameters: any[];
+  parameters: Parameter[];
 };
 
 export enum LogType {
