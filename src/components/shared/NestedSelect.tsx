@@ -285,6 +285,9 @@ const MenuTree: FC<MenuTreeProps> = ({
         openPopOut: updatedOpenPopOut,
       };
     });
+    return () => {
+      setState((prev) => ({ ...prev, selectOptions: [] }));
+    };
   }, [parentPath, items]);
 
   const handleMenuScrollToBottom = () => {
