@@ -72,7 +72,8 @@ const InboxContent: FC<TabContentProps> = ({
     let _cardsValues: any[] = [];
 
     cards.forEach((card: any, index: number) => {
-      if (cardsResponse?.[index]?.data?.count) {
+      const cardCountValue = cardsResponse?.[index]?.data?.count;
+      if (cardCountValue && cardCountValue !== 0 && cardCountValue !== '0') {
         _cardsValues.push({
           ...card,
           value: cardsResponse?.[index]?.data?.count,

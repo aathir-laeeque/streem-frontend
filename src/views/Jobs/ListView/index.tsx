@@ -126,9 +126,9 @@ const JobListView: FC<ListViewProps> = ({ location }) => {
               className: 'blue',
               filters: [
                 {
-                  field: 'isScheduled',
-                  op: FilterOperators.EQ,
-                  values: [true],
+                  field: 'expectedStartDate',
+                  op: FilterOperators.GT,
+                  values: [0],
                 },
               ],
             },
@@ -137,9 +137,9 @@ const JobListView: FC<ListViewProps> = ({ location }) => {
               className: 'grey',
               filters: [
                 {
-                  field: 'isScheduled',
-                  op: FilterOperators.EQ,
-                  values: [false],
+                  field: 'expectedStartDate',
+                  op: FilterOperators.IS_NOT_SET,
+                  values: [],
                 },
               ],
             },
@@ -182,6 +182,28 @@ const JobListView: FC<ListViewProps> = ({ location }) => {
             ...processFilter,
           ],
           cards: [
+            {
+              label: 'Scheduled',
+              className: 'blue',
+              filters: [
+                {
+                  field: 'expectedStartDate',
+                  op: FilterOperators.GT,
+                  values: [0],
+                },
+              ],
+            },
+            {
+              label: 'Unscheduled',
+              className: 'grey',
+              filters: [
+                {
+                  field: 'expectedStartDate',
+                  op: FilterOperators.IS_NOT_SET,
+                  values: [],
+                },
+              ],
+            },
             {
               label: 'Over Due',
               className: 'orange',

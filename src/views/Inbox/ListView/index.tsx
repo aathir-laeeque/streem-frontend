@@ -84,9 +84,9 @@ const ListView: FC<ListViewProps> = () => {
                         className: 'blue',
                         filters: [
                           {
-                            field: 'isScheduled',
-                            op: FilterOperators.EQ,
-                            values: [true],
+                            field: 'expectedStartDate',
+                            op: FilterOperators.GT,
+                            values: [0],
                           },
                         ],
                       },
@@ -95,9 +95,9 @@ const ListView: FC<ListViewProps> = () => {
                         className: 'grey',
                         filters: [
                           {
-                            field: 'isScheduled',
-                            op: FilterOperators.EQ,
-                            values: [false],
+                            field: 'expectedStartDate',
+                            op: FilterOperators.IS_NOT_SET,
+                            values: [],
                           },
                         ],
                       },
@@ -148,9 +148,9 @@ const ListView: FC<ListViewProps> = () => {
                         className: 'blue',
                         filters: [
                           {
-                            field: 'isScheduled',
-                            op: FilterOperators.EQ,
-                            values: [true],
+                            field: 'expectedStartDate',
+                            op: FilterOperators.GT,
+                            values: [0],
                           },
                         ],
                       },
@@ -159,9 +159,9 @@ const ListView: FC<ListViewProps> = () => {
                         className: 'grey',
                         filters: [
                           {
-                            field: 'isScheduled',
-                            op: FilterOperators.EQ,
-                            values: [false],
+                            field: 'expectedStartDate',
+                            op: FilterOperators.IS_NOT_SET,
+                            values: [],
                           },
                         ],
                       },

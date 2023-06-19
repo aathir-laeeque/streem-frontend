@@ -43,6 +43,7 @@ import JobInfoDrawer from '../Components/JobInfo';
 import { fetchJobs } from './actions';
 import { TabContentWrapper } from './styles';
 import { AssignedJobStates, CompletedJobStates, Job } from './types';
+import checkIcon from '../../../assets/svg/check-icon.svg';
 
 const CountCardWrapper = styled.div`
   display: flex;
@@ -105,37 +106,64 @@ const CountCardWrapper = styled.div`
   }
 `;
 
+type CountCardItem = {
+  label: string;
+  value: string | number;
+  type?: 'grey' | 'blue' | 'orange' | 'yellow';
+} & Record<string, any>;
+
 type CountCardsType = {
-  items: ({
-    label: string;
-    value: string | number;
-    type?: 'grey' | 'blue' | 'orange' | 'yellow';
-  } & Record<string, any>)[];
+  items: CountCardItem[];
   onChange?: (value: React.SetStateAction<FilterField[]>) => void;
 };
 
 export const CountCards: FC<CountCardsType> = ({ items, onChange }) => {
-  const onClick = (cardFilters: Array<FilterField>) => {
+  const [activeFilterCard, setActiveFilterCard] = useState<string>('');
+
+  const onToggleSmartFilter = (cardFilters: CountCardItem) => {
     if (onChange) {
+      const activeSmartFilters = items
+        .find((item) => item.label === activeFilterCard)
+        ?.filters?.reduce((acc, filter) => {
+          acc[filter.field] = true;
+          return acc;
+        }, {});
+
       onChange((currentFields) => {
         const updatedFilterFields = [
-          ...currentFields.filter(
-            (field) => !(cardFilters || []).some((cF) => cF.field === field.field),
-          ),
-          ...cardFilters,
+          ...currentFields.filter((field) => !activeSmartFilters?.[field.field]),
+          ...(cardFilters.label === activeFilterCard ? [] : cardFilters?.filters),
         ];
         return updatedFilterFields;
       });
+
+      setActiveFilterCard(cardFilters.label === activeFilterCard ? '' : cardFilters.label);
     }
   };
+
   return (
     <CountCardWrapper>
-      {items.map((item) => (
-        <div className={`count-card ${item.type || 'grey'}`} onClick={() => onClick(item.filters)}>
-          <div className={`count-card-label ${item.type || 'grey'}`}>{item.label}</div>
-          <div className={`count-card-value ${item.type || 'grey'}`}>{item.value}</div>
-        </div>
-      ))}
+      {items.map((item) => {
+        return (
+          <div
+            className={`count-card ${item.type || 'grey'}`}
+            onClick={() => {
+              onToggleSmartFilter(item);
+            }}
+          >
+            {activeFilterCard === item.label && (
+              <img
+                src={checkIcon}
+                alt="check-icon"
+                className={`count-card-label ${item.type || 'grey'}`}
+                style={{ padding: '0px 0px 0px 8px' }}
+              />
+            )}
+            <div className={`count-card-label ${item.type || 'grey'}`}>{item.label}</div>
+            <div className={`count-card-value ${item.type || 'grey'}`}>{item.value}</div>
+          </div>
+        );
+      })}
     </CountCardWrapper>
   );
 };

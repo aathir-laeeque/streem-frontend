@@ -58,6 +58,7 @@ export enum FilterOperators {
   GOE = 'GOE',
   LOE = 'LOE',
   AND = 'AND',
+  IS_NOT_SET = 'IS_NOT_SET',
 }
 
 export type FilterField = {
