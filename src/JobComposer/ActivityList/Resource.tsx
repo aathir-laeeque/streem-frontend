@@ -179,7 +179,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   const onSelectWithQR = async (data: string) => {
     try {
       const qrData = await getQrCodeData({
-        shortCode: JSON.stringify(data),
+        shortCode: data,
       });
       if (qrData?.objectId) {
         await qrCodeValidator({

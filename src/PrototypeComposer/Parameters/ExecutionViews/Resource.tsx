@@ -268,7 +268,7 @@ const ResourceTaskView: FC<
   const onSelectWithQR = async (data: string) => {
     try {
       const qrData = await getQrCodeData({
-        shortCode: JSON.stringify(data),
+        shortCode: data,
         objectTypeId: parameter?.data?.objectTypeId,
       });
       if (qrData?.objectId) {

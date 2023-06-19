@@ -40,7 +40,7 @@ const Header: FC = () => {
 
   const onSelectWithQR = async (data: string) => {
     try {
-      const qrData = await getQrCodeData({ shortCode: JSON.stringify(data) });
+      const qrData = await getQrCodeData({ shortCode: data });
       if (qrData?.objectId) {
         await qrCodeValidator({
           data: qrData,
