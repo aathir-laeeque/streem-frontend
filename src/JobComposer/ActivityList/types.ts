@@ -7,6 +7,7 @@ export type ParameterListProps = {
   isTaskCompleted: boolean;
   isCorrectingError: boolean;
   isLoggedInUserAssigned: boolean;
+  isJobInInbox: boolean;
 };
 
 export type ParameterProps = {

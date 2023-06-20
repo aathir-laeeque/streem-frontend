@@ -30,9 +30,12 @@ const Wrapper = styled.div.attrs({
     .textbox-parameter,
     .number-parameter,
     .date-parameter,
-    .calculation-parameter {
-      ${({ isTaskCompleted, isCorrectingError, isLoggedInUserAssigned }) =>
-        (isTaskCompleted && !isCorrectingError) || !isLoggedInUserAssigned
+    .calculation-parameter,
+    .signature-interaction,
+    .parameter-file,
+    .parameter-media {
+      ${({ isTaskCompleted, isCorrectingError, isJobInInbox }) =>
+        (isTaskCompleted && !isCorrectingError) || !isJobInInbox
           ? css`
               pointer-events: none;
             `
@@ -139,6 +142,7 @@ const ParameterList: FC<ParameterListProps> = ({
   isTaskCompleted,
   isCorrectingError,
   isLoggedInUserAssigned,
+  isJobInInbox,
 }) => {
   return (
     <Wrapper
@@ -146,6 +150,7 @@ const ParameterList: FC<ParameterListProps> = ({
       isTaskCompleted={isTaskCompleted}
       isLoggedInUserAssigned={isLoggedInUserAssigned}
       isCorrectingError={isCorrectingError}
+      isJobInInbox={isJobInInbox}
     >
       {parameters.map((parameter) => (
         <Parameter

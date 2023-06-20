@@ -112,6 +112,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overvi
       !(jobState in CompletedJobStates) &&
       location.pathname.split('/')[1] !== 'inbox';
 
+    const isJobInInbox = location.pathname.split('/')[1] === 'inbox';
+
     const [timerState, setTimerState] = useState<{ [index: string]: boolean }>(() => {
       const timeElapsed =
         isTaskCompleted && endedAt && startedAt
@@ -196,6 +198,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overvi
                 isTaskCompleted={isTaskCompleted}
                 isCorrectingError={!!correctionEnabled}
                 isLoggedInUserAssigned={isLoggedInUserAssigned}
+                isJobInInbox={isJobInInbox}
               />
             </div>
             <AutomationInfo task={task} />
