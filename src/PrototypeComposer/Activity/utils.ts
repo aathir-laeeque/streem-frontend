@@ -204,6 +204,13 @@ const updateHiddenParameterIds = (data: Record<string, Array<string>>[]) => {
         hiddenIds[id] = false;
       });
     });
+  } else {
+    data?.hide?.forEach((id: string) => {
+      hiddenIds[id] = true;
+    });
+    data?.show?.forEach((id: string) => {
+      hiddenIds[id] = false;
+    });
   }
   return hiddenIds;
 };
