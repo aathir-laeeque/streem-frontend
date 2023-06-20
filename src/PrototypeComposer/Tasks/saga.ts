@@ -48,6 +48,8 @@ import {
   updateTaskName,
 } from './actions';
 import { TaskListActions } from './reducer.types';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 
 function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
   try {
