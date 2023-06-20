@@ -1,6 +1,6 @@
 import { ImageUploadButton } from '#components';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { FileUploadData } from '#utils/globalTypes';
+import { FileUploadData, ResponseError } from '#utils/globalTypes';
 import { getVideoDevices } from '#utils/inputUtils';
 import { LinearProgress } from '@material-ui/core';
 import React, { FC, useEffect, useState } from 'react';
@@ -11,6 +11,9 @@ import { executeParameter, fixParameter, updateExecutedParameter } from './actio
 import { ParameterProps } from './types';
 import { PublishOutlined } from '@material-ui/icons';
 import FileUploadMedias from './FileUploadMedias';
+import { getErrorMsg } from '#utils/request';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 
 const FileUploadWrapper = styled.div.attrs({
   className: 'parameter-file',
@@ -119,9 +122,19 @@ const FileUploadParameter: FC<ParameterProps> = ({
 
   const onUploadStart = () => setIsUploading(true);
 
-  const onUploadError = (error: string) => {
+  const onUploadError = (error: string | ResponseError[]) => {
     console.log('error :: ', error);
+    let errorMsg = error;
     setIsUploading(false);
+    if (error?.length > 0) {
+      errorMsg = getErrorMsg(error);
+    }
+    dispatch(
+      showNotification({
+        type: NotificationType.ERROR,
+        msg: typeof errorMsg === 'string' ? errorMsg : 'Oops! Please Try Again.',
+      }),
+    );
   };
 
   const fetchVideoDevices = async () => {
