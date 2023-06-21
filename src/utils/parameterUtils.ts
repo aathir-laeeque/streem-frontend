@@ -42,13 +42,11 @@ export const getParameterContent = (parameter: any) => {
       parameterContent = parameter?.response?.choices
         ?.reduce(
           (acc: string, currChoice: any) =>
-            acc + `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId})\n`,
+            acc + `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId}) \n`,
           '',
         )
         ?.split('\n')
-        ?.map((str: string) => {
-          str;
-        });
+        ?.map((str: string) => str);
       break;
     case MandatoryParameter.MULTISELECT:
       parameterContent = responseDetailsForChoiceBasedParameters(parameter);
