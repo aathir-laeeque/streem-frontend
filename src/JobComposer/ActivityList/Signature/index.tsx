@@ -8,6 +8,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ParameterProps } from '../types';
 import { Wrapper } from './styles';
+import { Media } from '#JobComposer/checklist.types';
 
 const Signature: FC<ParameterProps> = ({ parameter, isCorrectingError, isTaskCompleted }) => {
   const {
@@ -18,7 +19,9 @@ const Signature: FC<ParameterProps> = ({ parameter, isCorrectingError, isTaskCom
 
   useEffect(() => {
     if (parameter.response?.medias) {
-      setImageData(parameter.response?.medias[0]?.link);
+      setImageData(
+        parameter.response?.medias?.find((currMedia: Media) => !currMedia.archived)?.link,
+      );
     }
   }, [parameter.response?.medias]);
 

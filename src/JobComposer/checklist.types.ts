@@ -63,6 +63,7 @@ export interface Media {
   link: string;
   type: string;
   filename: string;
+  archived: boolean;
 }
 
 export enum StartedTaskStates {
