@@ -17,7 +17,7 @@ import {
 import { Task } from '#PrototypeComposer/Tasks/types';
 import { useTypedSelector } from '#store';
 import { apiGetObjectTypes, apiGetParameters } from '#utils/apiUrls';
-import { FilterOperators, InputTypes } from '#utils/globalTypes';
+import { FilterOperators, InputTypes, fetchDataParams } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { fetchObjectTypes } from '#views/Ontology/actions';
 import { ObjectType } from '#views/Ontology/types';
@@ -28,6 +28,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import { DEFAULT_PAGE_SIZE } from '#utils/constants';
 
 const Wrapper = styled.div`
   .modal {
@@ -174,7 +175,7 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
   const dispatch = useDispatch();
   const {
     ontology: {
-      objectTypes: { list, listLoading },
+      objectTypes: { list, listLoading, pageable },
     },
     prototypeComposer: {
       tasks: { activeTaskId },
@@ -245,6 +246,30 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
       setSelectedProperty(property);
     }
   }, [editActionFlag]);
+
+  const fetchObjectTypesData = (params: fetchDataParams = {}) => {
+    const { page } = params;
+    dispatch(
+      fetchObjectTypes(
+        {
+          page,
+          size: DEFAULT_PAGE_SIZE,
+          usageStatus: 1,
+        },
+        true,
+      ),
+    );
+  };
+
+  const handleMenuScrollToBottom = () => {
+    if (!listLoading && !pageable.last) {
+      fetchObjectTypesData({ page: pageable.page + 1 });
+    }
+  };
+
+  useEffect(() => {
+    if (!list.length) fetchObjectTypesData({ page: 0 });
+  }, []);
 
   const getParameterByType = (type: MandatoryParameter) =>
     request('GET', apiGetParameters(checklistId), {
@@ -645,6 +670,7 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
                                       isSearchable: false,
                                       isDisabled: isReadOnly,
                                       placeholder: 'Select Object Type',
+                                      onMenuScrollToBottom: handleMenuScrollToBottom,
                                       value: actionDetails?.objectTypeId
                                         ? [
                                             {
