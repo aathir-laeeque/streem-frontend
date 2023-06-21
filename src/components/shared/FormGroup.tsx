@@ -194,6 +194,7 @@ export const FormGroup = ({ inputs, ...rest }: FormGroupProps) => {
                 }
                 {...props}
                 {...([InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(type) && {
+                  max: type === InputTypes.DATE_TIME ? '2999-12-31T00:00' : '2999-12-31',
                   onChange: (e) => {
                     if ('value' in e && 'name' in e) {
                       let value = moment(e.value).unix();
