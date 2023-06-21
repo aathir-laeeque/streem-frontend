@@ -433,12 +433,11 @@ const ResourceFilter: FC<{
                                 value: selectedObjectProperty?.id,
                               },
                             ]
-                          : undefined,
+                          : null,
                         isSearchable: false,
                         placeholder: 'Select Object Property',
                         onChange: (value: any) => {
                           fields[index] = {
-                            op: fields[index]?.op,
                             field: `searchable.${value.value}`,
                             fieldType: value?.target ? 'RELATION' : 'PROPERTY',
                           };
@@ -497,7 +496,7 @@ const ResourceFilter: FC<{
                                       value: item.op,
                                     },
                                   ]
-                                : undefined,
+                                : null,
                               onChange: (value: any) => {
                                 fields[index] = {
                                   ...fields[index],
@@ -551,8 +550,7 @@ const ResourceFilter: FC<{
                                     placeholder: 'Select One',
                                     onChange: (value: any) => {
                                       fields[index] = {
-                                        field: fields[index].field,
-                                        op: fields[index].op,
+                                        ...fields[index],
                                         selector: value?.value,
                                       };
 
@@ -602,15 +600,6 @@ const ResourceFilter: FC<{
                                           );
                                         }
                                       },
-                                      // value: item?.metaData
-                                      //   ? [
-                                      //       {
-                                      //         label: item.metaData.displayName,
-                                      //         value: item.metaData.id,
-                                      //         externalId: item.metaData.externalId,
-                                      //       },
-                                      //     ]
-                                      //   : undefined,
                                       value: item?.displayName
                                         ? [
                                             {
@@ -619,7 +608,7 @@ const ResourceFilter: FC<{
                                               externalId: item?.externalId,
                                             },
                                           ]
-                                        : undefined,
+                                        : null,
                                       onChange: (value: any) => {
                                         fields[index] = {
                                           ...fields[index],
@@ -709,7 +698,7 @@ const ResourceFilter: FC<{
                                             value: item.referencedParameterId,
                                           },
                                         ]
-                                      : undefined,
+                                      : null,
                                     isSearchable: false,
                                     isDisabled: isReadOnly,
                                     placeholder: 'Select One',
@@ -777,7 +766,7 @@ const ResourceFilter: FC<{
                                   value: item.dateUnit,
                                 },
                               ]
-                            : undefined,
+                            : null,
                           onChange: (value: any) => {
                             fields[index] = {
                               ...fields[index],
