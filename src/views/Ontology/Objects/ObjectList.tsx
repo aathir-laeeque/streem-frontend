@@ -96,11 +96,11 @@ const ObjectList: FC<TabContentProps> = () => {
   const createPropertyColumn = (property: ObjectTypeProperty) => {
     const isPrimary = property.externalId === 'displayName';
     return {
-      id: property.externalId,
+      id: property.id,
       label: property.displayName,
       minWidth: 100,
       format: (item: Record<string, string | Choice[] | undefined>) => {
-        let propertyValue = item?.[property.externalId];
+        let propertyValue = item?.[property.id];
         if (propertyValue) {
           if (Array.isArray(propertyValue)) {
             propertyValue = propertyValue.map((option) => option.displayName).join(', ');
@@ -315,9 +315,7 @@ const ObjectList: FC<TabContentProps> = () => {
               ...object,
               ...object?.properties?.reduce<Record<string, string | Choice[] | undefined>>(
                 (acc, property) => {
-                  acc[property.externalId] = property.choices?.length
-                    ? property.choices
-                    : property.value;
+                  acc[property.id] = property.choices?.length ? property.choices : property.value;
                   return acc;
                 },
                 {},
