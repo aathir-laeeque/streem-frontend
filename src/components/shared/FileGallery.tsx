@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { omit } from 'lodash';
+import { request } from '#utils/request';
 
 const FileGalleryWrapper = styled.div.attrs({
   className: 'file-gallery-wrapper',
@@ -125,12 +126,31 @@ export const FileGallery: FC<FileGalleryProps> = ({ medias, parameter }) => {
     setFormErrors(undefined);
   };
 
+  const onDownload = async (media) => {
+    try {
+      const res = await request('GET', media.link, {
+        responseType: 'blob',
+      });
+      if (res) {
+        const url = window.URL.createObjectURL(new Blob([res]));
+        const link = document.createElement('a');
+        const extension = media.filename.split('.').pop();
+        link.href = url;
+        link.setAttribute('download', media.name + '.' + extension);
+        document.body.appendChild(link);
+        link.click();
+      }
+    } catch (error) {
+      console.error('error from fetchJobLogsExcel function in JobLogsSaga :: ', error);
+    }
+  };
+
   return (
     <FileGalleryWrapper>
       <div className="media-list">
         {medias.map((media, index) => (
           <div className="media-list-item" key={index}>
-            <div>
+            <div onClick={() => onDownload(media)}>
               {sectionIcon(media.type, media.link)}
               <div className="media-list-item-name">{media.name}</div>
             </div>

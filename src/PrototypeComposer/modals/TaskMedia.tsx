@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 import { DeleteOutlined } from '@material-ui/icons';
 import { Checklist, EnabledStates, Task } from '#PrototypeComposer/checklist.types';
-
+import fileIcon from '../../assets/svg/file.svg';
 import { addTaskMedia, removeTaskMedia, updateTaskMedia } from '../Tasks/actions';
 import { MediaDetails } from '../Tasks/types';
 import { useTypedSelector } from '#store';
@@ -220,7 +220,9 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
       >
         <div className="wrapper">
           <div className="left-side">
-            <img src={stateMediaDetails.link} />
+            <img
+              src={stateMediaDetails.type.includes('image') ? stateMediaDetails.link : fileIcon}
+            />
             <div className="full-screen-action" onClick={() => setFullScreeen(!fullScreeen)}>
               <FullScreenIcon />
             </div>
@@ -232,7 +234,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                 <TextInput
                   defaultValue={stateMediaDetails.name}
                   error={errors.name}
-                  label="Photo name"
+                  label="File name"
                   name="name"
                   onBlur={(event) => {
                     setStateMediaDetails({
