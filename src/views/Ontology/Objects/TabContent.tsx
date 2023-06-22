@@ -1,10 +1,4 @@
-import {
-  Button,
-  DataTable,
-  LoadingContainer,
-  PaginatedFetchData,
-  Pagination,
-} from '#components';
+import { Button, DataTable, LoadingContainer, PaginatedFetchData, Pagination } from '#components';
 import { useTypedSelector } from '#store';
 import {
   clearAuditLogFilters,
@@ -248,7 +242,7 @@ const TabContent: FC = () => {
                   format: function renderComp(item) {
                     return (
                       <div key={item?.id}>
-                        {`${item?.modifiedBy?.firstName} ${item?.modifiedBy?.lastName}`}
+                        {`${item?.modifiedBy?.firstName} ${item?.modifiedBy?.lastName} (ID: ${item?.modifiedBy?.employeeId})`}
                       </div>
                     );
                   },
