@@ -104,6 +104,17 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
     }
   }, [recurrence]);
 
+  useEffect(() => {
+    if (expectedStartDate) {
+      unregister('rRuleOptions');
+      unregister('weekDays');
+      setValue('recurrence', 'DAILY', {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [expectedStartDate]);
+
   const updateDueDateInterval = () => {
     let durationSeconds = 0;
     Object.entries(dueDateDuration).forEach(([key, value]: any) => {
