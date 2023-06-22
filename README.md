@@ -18,25 +18,34 @@ TODO: Describe and show how to build your code and run the tests.
 # Building Docker image
 
 ### Building with defaults
+
 `./docker/script.sh`
 
 ### Building with custom backend end URL
+
 `./docker/script.sh -a 'http://localhost:8080/v1'`
 
 # Running Docker image
+
 `docker run -p 80:80 -e BACKEND_URL='http://localhost:8080/v1' --name cleen-dwi-frontend leucine.azurecr.io/cleen-dwi/frontend:latest`
 
 ## TODO
+
 - Use Local Fonts Rather Than Google Fonts
 
 ## Fonts To be used (.ttf as Pdf only Supports Those)
+
 - https://github.com/googlefonts/nunito/tree/master/fonts/TTF
 
 ## Notes:
+
 - mui default z-index = 1300
+- For react pdf always use ternary when checking for length of an array because react still renders 0, and react-pdf only allow rendering text in Text component, not in View and thats what breaks it.
 
 ## Documentation Reference:
- **Please refer to the documentation of the version specified in package.json**
+
+**Please refer to the documentation of the version specified in package.json**
+
 - MUIv4 - https://v4.mui.com/
 - react-hook-form - https://react-hook-form.com/
 - react-redux - https://react-redux.js.org/

@@ -636,30 +636,16 @@ const parameterTemplateFormatter = (
         <View style={styles.parameterView} wrap={false}>
           <Text style={styles.text12}>{parameter.label}</Text>
           <Text style={{ ...styles.text12, marginBottom: 16 }}>Uploaded Media:</Text>
-          {parameter.response?.medias?.length > 0 &&
-            parameter.response.medias.map(
-              (imageDetails: {
-                link: string;
-                name: string;
-                id: string;
-                description: string | null;
-              }) => {
-                return (
-                  <View key={imageDetails.id} style={{ marginBottom: 16 }} wrap={false} break>
-                    <Text style={styles.text12}>
-                      <Text
-                        style={{
-                          ...styles.text12,
-                          marginRight: '2px',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        Name-
-                      </Text>
-                      {imageDetails.name}
-                    </Text>
-
-                    {imageDetails.description && (
+          {parameter.response?.medias?.length > 0
+            ? parameter.response.medias.map(
+                (imageDetails: {
+                  link: string;
+                  name: string;
+                  id: string;
+                  description: string | null;
+                }) => {
+                  return (
+                    <View key={imageDetails.id} style={{ marginBottom: 16 }} wrap={false} break>
                       <Text style={styles.text12}>
                         <Text
                           style={{
@@ -668,19 +654,34 @@ const parameterTemplateFormatter = (
                             fontWeight: 'bold',
                           }}
                         >
-                          Description-
+                          Name-
                         </Text>
-                        {imageDetails.description}
+                        {imageDetails.name}
                       </Text>
-                    )}
-                    <Image
-                      src={imageDetails.link}
-                      style={{ maxHeight: '230mm', marginTop: '8px', maxWidth: '100%' }}
-                    />
-                  </View>
-                );
-              },
-            )}
+
+                      {imageDetails.description ? (
+                        <Text style={styles.text12}>
+                          <Text
+                            style={{
+                              ...styles.text12,
+                              marginRight: '2px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            Description-
+                          </Text>
+                          {imageDetails.description}
+                        </Text>
+                      ) : null}
+                      <Image
+                        src={imageDetails.link}
+                        style={{ maxHeight: '230mm', marginTop: '8px', maxWidth: '100%' }}
+                      />
+                    </View>
+                  );
+                },
+              )
+            : null}
         </View>
       );
 

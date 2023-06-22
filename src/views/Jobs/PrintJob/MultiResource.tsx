@@ -19,7 +19,7 @@ const MemoMultiResourceParameter = ({ parameter }: { parameter: Parameter }) => 
       >
         <Text style={styles.parameterHintText}>{parameter.label}</Text>
       </View>
-      {parameter.response?.choices?.length ? (
+      {parameter.response?.choices?.length > 0 ? (
         parameter?.response?.choices?.map((item) => (
           <View
             key={`${item.objectId}`}
