@@ -188,7 +188,7 @@ const ResourceTaskView: FC<
               : [value],
         };
       } else {
-        return currField;
+        return { field: currField?.field, op: currField?.op, values: currField?.values };
       }
     });
     return { op, fields: _fields };
