@@ -16,7 +16,7 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { getParameterContent } from '#utils/parameterUtils';
 import { request } from '#utils/request';
-import { formatDateTime } from '#utils/timeUtils';
+import { checkJobExecutionDelay, formatDateTime } from '#utils/timeUtils';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import JobInfoDrawer from '#views/Jobs/Components/JobInfo';
 import { CountCards } from '#views/Jobs/ListView/JobsContent';
@@ -27,6 +27,7 @@ import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchInbox } from './actions';
+import moment from 'moment';
 
 const InboxContent: FC<TabContentProps> = ({
   label,
@@ -209,49 +210,72 @@ const InboxContent: FC<TabContentProps> = ({
         component={
           <>
             <div className="job-list">
-              {jobs.map((job) => (
-                <div className="job-row" key={job.id}>
-                  <div className="job-row-section left">
-                    <div className="job-row-section-left top">
-                      <h5 className="job-name" onClick={() => navigate(`/inbox/${job.id}`)}>
-                        {job.checklist.name}
-                      </h5>
-                      {job.expectedStartDate && job.expectedEndDate && (
-                        <div className="schedule-info">
-                          <span>{formatDateTime(job.expectedStartDate)}</span>
-                          <span className="icon">
-                            <ArrowForward />
-                          </span>
-                          <span>{formatDateTime(job.expectedEndDate)}</span>
-                        </div>
-                      )}
+              {jobs.map((job) => {
+                const actualStartDate = job?.startedAt || moment().unix();
+                const actualEndDate = job?.endedAt || moment().unix();
+                return (
+                  <div className="job-row" key={job.id}>
+                    <div className="job-row-section left">
+                      <div className="job-row-section-left top">
+                        <h5 className="job-name" onClick={() => navigate(`/inbox/${job.id}`)}>
+                          {job.checklist.name}
+                        </h5>
+                        {job.expectedStartDate && job.expectedEndDate && (
+                          <div className="schedule-info">
+                            <span
+                              style={{
+                                color: checkJobExecutionDelay(
+                                  actualStartDate,
+                                  job.expectedStartDate,
+                                )
+                                  ? '#da1e28'
+                                  : '#161616',
+                              }}
+                            >
+                              {formatDateTime(job.expectedStartDate)}
+                            </span>
+                            <span className="icon">
+                              <ArrowForward />
+                            </span>
+                            <span
+                              style={{
+                                color: checkJobExecutionDelay(actualEndDate, job.expectedEndDate)
+                                  ? '#da1e28'
+                                  : '#161616',
+                              }}
+                            >
+                              {formatDateTime(job.expectedEndDate)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="job-row-section-left bottom">
+                        <LabelValueRow>
+                          {(job?.parameterValues || [])
+                            .filter((p) => p.targetEntityType === TargetEntityType.PROCESS)
+                            .slice(0, 5)
+                            .map((parameter) => (
+                              <div className="info-item" key={parameter.label}>
+                                <label className="info-item-label">{parameter.label}</label>
+                                <span className="info-item-value">
+                                  {getParameterContent(parameter)}
+                                </span>
+                              </div>
+                            ))}
+                        </LabelValueRow>
+                      </div>
                     </div>
-                    <div className="job-row-section-left bottom">
-                      <LabelValueRow>
-                        {(job?.parameterValues || [])
-                          .filter((p) => p.targetEntityType === TargetEntityType.PROCESS)
-                          .slice(0, 5)
-                          .map((parameter) => (
-                            <div className="info-item" key={parameter.label}>
-                              <label className="info-item-label">{parameter.label}</label>
-                              <span className="info-item-value">
-                                {getParameterContent(parameter)}
-                              </span>
-                            </div>
-                          ))}
-                      </LabelValueRow>
+                    <div
+                      className="job-row-section right"
+                      onClick={() => {
+                        setSelectedJob(job);
+                      }}
+                    >
+                      <ChevronLeft />
                     </div>
                   </div>
-                  <div
-                    className="job-row-section right"
-                    onClick={() => {
-                      setSelectedJob(job);
-                    }}
-                  >
-                    <ChevronLeft />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <Pagination pageable={pageable} fetchData={fetchData} />
           </>

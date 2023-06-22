@@ -5,13 +5,11 @@ import { ComposerEntity } from '#PrototypeComposer/types';
 import {
   Button,
   LoadingContainer,
-  PaginatedFetchData,
   Pagination,
   ProgressBar,
   SearchFilter,
   Select,
   TabContentProps,
-  fetchDataParams,
 } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
@@ -19,10 +17,11 @@ import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
 import { apiJobsCount } from '#utils/apiUrls';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { FilterField, FilterOperators, fetchDataParams } from '#utils/globalTypes';
 import { getParameterContent } from '#utils/parameterUtils';
 import { request } from '#utils/request';
 import {
+  checkJobExecutionDelay,
   formatDateTime,
   formatDateTimeToHumanReadable,
   getDelayBetweenEpoch,
@@ -44,6 +43,7 @@ import { fetchJobs } from './actions';
 import { TabContentWrapper } from './styles';
 import { AssignedJobStates, CompletedJobStates, Job } from './types';
 import checkIcon from '../../../assets/svg/check-icon.svg';
+import moment from 'moment';
 
 const CountCardWrapper = styled.div`
   display: flex;
@@ -518,7 +518,7 @@ const JobsContent: FC<TabContentProps> = ({
     dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, page === 0));
   };
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     dispatch(
       fetchJobs({
@@ -660,68 +660,91 @@ const JobsContent: FC<TabContentProps> = ({
         component={
           <>
             <div className="job-list">
-              {jobs.map((job) => (
-                <div className="job-row" key={job.id}>
-                  <div className="job-row-section left">
-                    <div className="job-row-section-left top">
-                      <h5 className="job-name" onClick={() => navigate(`/jobs/${job.id}`)}>
-                        {job.checklist.name}
-                      </h5>
-                      {job.expectedStartDate && job.expectedEndDate ? (
-                        <div className="schedule-info">
-                          <span>{formatDateTime(job.expectedStartDate)}</span>
-                          <span className="icon">
-                            <ArrowForward />
-                          </span>
-                          <span>{formatDateTime(job.expectedEndDate)}</span>
-                        </div>
-                      ) : (
-                        <div className="schedule-info">
-                          <span className="primary" onClick={() => onSetDate(job.id)}>
-                            Set Date
-                          </span>
-                          <span className="icon">
-                            <ArrowForward />
-                          </span>
-                          <span className="primary" onClick={() => onSetDate(job.id)}>
-                            Set Date
-                          </span>
-                        </div>
-                      )}
+              {jobs.map((job) => {
+                const actualStartDate = job?.startedAt || moment().unix();
+                const actualEndDate = job?.endedAt || moment().unix();
+                return (
+                  <div className="job-row" key={job.id}>
+                    <div className="job-row-section left">
+                      <div className="job-row-section-left top">
+                        <h5 className="job-name" onClick={() => navigate(`/jobs/${job.id}`)}>
+                          {job.checklist.name}
+                        </h5>
+                        {job.expectedStartDate && job.expectedEndDate ? (
+                          <div className="schedule-info">
+                            <span
+                              style={{
+                                color: checkJobExecutionDelay(
+                                  actualStartDate,
+                                  job.expectedStartDate,
+                                )
+                                  ? '#da1e28'
+                                  : '#161616',
+                              }}
+                            >
+                              {formatDateTime(job.expectedStartDate)}
+                            </span>
+                            <span className="icon">
+                              <ArrowForward />
+                            </span>
+                            <span
+                              style={{
+                                color: checkJobExecutionDelay(actualEndDate, job.expectedEndDate)
+                                  ? '#da1e28'
+                                  : '#161616',
+                              }}
+                            >
+                              {formatDateTime(job.expectedEndDate)}
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="schedule-info">
+                            <span className="primary" onClick={() => onSetDate(job.id)}>
+                              Set Date
+                            </span>
+                            <span className="icon">
+                              <ArrowForward />
+                            </span>
+                            <span className="primary" onClick={() => onSetDate(job.id)}>
+                              Set Date
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="job-row-section-left bottom">
+                        <LabelValueRow>
+                          {(job?.parameterValues || [])
+                            .filter((p) => p.targetEntityType === TargetEntityType.PROCESS)
+                            .slice(0, 5)
+                            .map((parameter) => (
+                              <div className="info-item" key={parameter.label}>
+                                <label className="info-item-label">{parameter.label}</label>
+                                <span className="info-item-value">
+                                  {getParameterContent(parameter)}
+                                </span>
+                              </div>
+                            ))}
+                        </LabelValueRow>
+                      </div>
                     </div>
-                    <div className="job-row-section-left bottom">
-                      <LabelValueRow>
-                        {(job?.parameterValues || [])
-                          .filter((p) => p.targetEntityType === TargetEntityType.PROCESS)
-                          .slice(0, 5)
-                          .map((parameter) => (
-                            <div className="info-item" key={parameter.label}>
-                              <label className="info-item-label">{parameter.label}</label>
-                              <span className="info-item-value">
-                                {getParameterContent(parameter)}
-                              </span>
-                            </div>
-                          ))}
-                      </LabelValueRow>
+                    <div
+                      className="job-row-section right"
+                      onClick={() => {
+                        setSelectedJob(job);
+                      }}
+                      style={{
+                        height: (job?.parameterValues || []).filter(
+                          (p) => p.targetEntityType === TargetEntityType.PROCESS,
+                        ).length
+                          ? 100
+                          : 50,
+                      }}
+                    >
+                      <ChevronLeft />
                     </div>
                   </div>
-                  <div
-                    className="job-row-section right"
-                    onClick={() => {
-                      setSelectedJob(job);
-                    }}
-                    style={{
-                      height: (job?.parameterValues || []).filter(
-                        (p) => p.targetEntityType === TargetEntityType.PROCESS,
-                      ).length
-                        ? 100
-                        : 50,
-                    }}
-                  >
-                    <ChevronLeft />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <Pagination pageable={pageable} fetchData={fetchData} />
           </>

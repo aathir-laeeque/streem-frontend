@@ -126,3 +126,12 @@ export const getDelayBetweenEpoch = (expected: number, actual: number) => {
     return `Delayed by ${moment.unix(actual).from(moment.unix(expected))}`.replace(' in', '');
   }
 };
+
+export const checkJobExecutionDelay = (actualDate: number, expectedDate: number) => {
+  const difference = moment.unix(actualDate).diff(moment.unix(expectedDate));
+  if (difference > 0) {
+    return true;
+  } else {
+    return false;
+  }
+};
