@@ -253,16 +253,16 @@ const TabContent: FC = () => {
                   minWidth: 152,
                   format: function renderComp(item) {
                     const reason = item?.reason ? (
-                      item?.jobInfo ? (
+                      item?.info ? (
                         <div style={{ display: 'flex' }}>
-                          {item.reason}: {item?.jobInfo?.process} (ID:
+                          {item.reason}: {item?.info?.processName} (ID:
                           <span
                             className="primary"
                             onClick={() => {
-                              navigate(`/jobs/${item.jobInfo.jobId}`);
+                              navigate(`/jobs/${item.info.jobId}`);
                             }}
                           >
-                            {item.jobInfo.jobId}
+                            {item.info.jobCode}
                           </span>
                           )
                         </div>
