@@ -91,13 +91,16 @@ const TabContent: FC = () => {
     }
   };
 
-  const dataParser = (type: string, data: Record<string, any>) => {
+  const dataParser = (type: string, data: Record<string, string>[]) => {
     switch (type) {
       case InputTypes.DATE_TIME:
       case InputTypes.DATE:
-        return formatDateByInputType(type, data?.input);
+        return formatDateByInputType(type, data?.[0]?.input);
+      case InputTypes.MULTI_SELECT:
+      case InputTypes.SINGLE_SELECT:
+        return data.map((currData: Record<string, string>) => currData?.input).join(' ,');
       default:
-        return data?.input;
+        return data?.[0].input;
     }
   };
 
@@ -210,9 +213,7 @@ const TabContent: FC = () => {
                     let contentString;
 
                     if (item.new) {
-                      item?.new?.forEach((currData: Record<string, any>) => {
-                        contentString = dataParser(item?.entityInputType, currData);
-                      });
+                      contentString = dataParser(item?.entityInputType, item?.new);
                     } else {
                       item.usageStatus.new === 1
                         ? (contentString = 'Active')
