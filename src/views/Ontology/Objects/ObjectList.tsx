@@ -143,17 +143,19 @@ const ObjectList: FC<TabContentProps> = () => {
   };
 
   const columns = [
-    ...properties.reduce<DataTableColumn[]>((acc, property) => {
-      const propertyColumn = createPropertyColumn(property);
-      if (property.externalId === 'displayName') {
-        acc.splice(0, 0, propertyColumn);
-      } else if (property.externalId === 'externalId') {
-        acc.splice(1, 0, propertyColumn);
-      } else {
-        acc.push(propertyColumn);
-      }
-      return acc;
-    }, []),
+    ...properties
+      .filter((property) => property.flags !== 1)
+      .reduce<DataTableColumn[]>((acc, property) => {
+        const propertyColumn = createPropertyColumn(property);
+        if (property.externalId === 'displayName') {
+          acc.splice(0, 0, propertyColumn);
+        } else if (property.externalId === 'externalId') {
+          acc.splice(1, 0, propertyColumn);
+        } else {
+          acc.push(propertyColumn);
+        }
+        return acc;
+      }, []),
     ...relations.map((relation) => ({
       id: relation.id,
       label: relation.displayName,
