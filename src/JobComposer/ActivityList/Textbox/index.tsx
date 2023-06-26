@@ -7,12 +7,14 @@ import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { executeParameter, fixParameter } from '../actions';
 import { ParameterProps } from '../types';
+import { keyBy } from 'lodash';
 
 const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const {
     parameters: { parametersById },
+    data: { parameterValues: cjfParameters },
   } = useTypedSelector((state) => state.composer);
   const [value, setValue] = React.useState('');
 
@@ -40,7 +42,9 @@ const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) 
     setValue(v);
   };
 
-  const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
+  const linkedResourceParameter = { ...parametersById, ...keyBy(cjfParameters, 'id') }?.[
+    parameter?.autoInitialize?.parameterId
+  ];
 
   return (
     <div className="textbox-parameter">

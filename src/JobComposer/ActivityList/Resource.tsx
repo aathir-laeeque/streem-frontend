@@ -70,9 +70,11 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     }, []) || [],
   );
 
-  const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
-
   const cjfParametersById = keyBy(data?.parameterValues, 'id');
+
+  const linkedResourceParameter = { ...parametersById, ...cjfParametersById }?.[
+    parameter?.autoInitialize?.parameterId
+  ];
 
   const parameterForFilters = { ...cjfParametersById, ...parametersById };
 

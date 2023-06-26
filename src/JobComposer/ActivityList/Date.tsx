@@ -8,6 +8,7 @@ import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { executeParameter, fixParameter } from './actions';
 import { ParameterProps } from './types';
+import { keyBy } from 'lodash';
 
 const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
@@ -16,6 +17,7 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
   const {
     composer: {
       parameters: { parametersById },
+      data: { parameterValues: cjfParameters },
     },
   } = useTypedSelector((state) => state);
 
@@ -43,7 +45,9 @@ const DateParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrec
     setValue(val);
   };
 
-  const linkedResourceParameter = parametersById?.[parameter?.autoInitialize?.parameterId];
+  const linkedResourceParameter = { ...parametersById, ...keyBy(cjfParameters, 'id') }?.[
+    parameter?.autoInitialize?.parameterId
+  ];
 
   return (
     <div className="date-parameter">
