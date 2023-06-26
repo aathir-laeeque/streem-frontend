@@ -345,10 +345,6 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
                   value: type ? [{ label: ParameterTypeMap[type], value: type }] : undefined,
                   isDisabled: isReadOnly || !!addParameter?.parameterId,
                   onChange: (option: { value: string }) => {
-                    setValue('type', option.value, {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    });
                     if (
                       [
                         MandatoryParameter.DATE,
@@ -361,14 +357,24 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
                         MandatoryParameter.FILE_UPLOAD,
                       ].includes(option.value)
                     ) {
-                      setValue(
-                        'data',
-                        {},
+                      reset(
                         {
-                          shouldDirty: true,
-                          shouldValidate: true,
+                          ...defaultValues,
+                          data: {},
+                          label: label,
+                          mandatory: mandatory,
+                          type: option.value,
                         },
+                        { isDirty: true, isValid: true },
                       );
+                    } else {
+                      reset({
+                        ...defaultValues,
+                        data: undefined,
+                        label: label,
+                        mandatory: mandatory,
+                        type: option.value,
+                      });
                     }
                   },
                 },
