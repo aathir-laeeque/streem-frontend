@@ -152,7 +152,9 @@ export const FileGallery: FC<FileGalleryProps> = ({ medias, parameter }) => {
           <div className="media-list-item" key={index}>
             <div onClick={() => onDownload(media)}>
               {sectionIcon(media.type, media.link)}
-              <div className="media-list-item-name">{media.name}</div>
+              <div className="media-list-item-name">{`${media?.name}.${
+                media?.type?.split('/')?.[1]
+              }`}</div>
             </div>
             <img
               src={closeIcon}

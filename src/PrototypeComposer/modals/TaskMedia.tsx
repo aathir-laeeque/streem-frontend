@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 import { DeleteOutlined } from '@material-ui/icons';
 import { Checklist, EnabledStates, Task } from '#PrototypeComposer/checklist.types';
-import fileIcon from '../../assets/svg/file.svg';
 import { addTaskMedia, removeTaskMedia, updateTaskMedia } from '../Tasks/actions';
 import { MediaDetails } from '../Tasks/types';
 import { useTypedSelector } from '#store';
@@ -24,7 +23,7 @@ const Wrapper = styled.div<{
     ${({ fullScreeen, disableDescInput, disableNameInput }) => {
       return css`
         .modal {
-          min-width: ${fullScreeen ? '100% !important' : 'calc(100vw - 40vw)'};
+          min-width: ${fullScreeen ? '100% !important' : '300px !important'};
           height: ${fullScreeen ? '100%' : 'max-content'};
           background: ${fullScreeen ? 'transparent !important' : 'white'};
           padding: ${fullScreeen ? '10px !important' : 'unset'};
@@ -219,14 +218,14 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
         showFooter={false}
       >
         <div className="wrapper">
-          <div className="left-side">
-            <img
-              src={stateMediaDetails.type.includes('image') ? stateMediaDetails.link : fileIcon}
-            />
-            <div className="full-screen-action" onClick={() => setFullScreeen(!fullScreeen)}>
-              <FullScreenIcon />
+          {stateMediaDetails.type.includes('image') && (
+            <div className="left-side">
+              <img src={stateMediaDetails?.link} />
+              <div className="full-screen-action" onClick={() => setFullScreeen(!fullScreeen)}>
+                <FullScreenIcon />
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="right-side">
             <div className="media-details">
@@ -234,7 +233,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                 <TextInput
                   defaultValue={stateMediaDetails.name}
                   error={errors.name}
-                  label="File name"
+                  label={stateMediaDetails.type.includes('image') ? 'Photo name' : 'File name'}
                   name="name"
                   onBlur={(event) => {
                     setStateMediaDetails({
