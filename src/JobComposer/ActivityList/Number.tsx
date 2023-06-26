@@ -18,6 +18,7 @@ const NumberParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) =
   } = useTypedSelector((state) => state);
   const inputRef = useRef(null);
   const [value, setValue] = React.useState(parameter?.response?.value);
+  const [linkedResourceParameter, setLinkedResourceParameter] = React.useState({});
 
   useEffect(() => {
     if (inputRef.current && document.activeElement !== inputRef.current) {
@@ -26,6 +27,15 @@ const NumberParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) =
       }
     }
   }, [parameter?.response?.value]);
+
+  useEffect(() => {
+    if (parameter.autoInitialized)
+      setLinkedResourceParameter(
+        { ...parametersById, ...keyBy(cjfParameters, 'id') }?.[
+          parameter?.autoInitialize?.parameterId
+        ],
+      );
+  }, [parametersById, ...cjfParameters]);
 
   const onChange = (val: string) => {
     customOnChange(val, (val) => {
@@ -42,10 +52,6 @@ const NumberParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) =
     });
     setValue(val);
   };
-
-  const linkedResourceParameter = { ...parametersById, ...keyBy(cjfParameters, 'id') }?.[
-    parameter?.autoInitialize?.parameterId
-  ];
 
   return (
     <div className="number-parameter">

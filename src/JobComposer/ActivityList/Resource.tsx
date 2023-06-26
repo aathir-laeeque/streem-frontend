@@ -50,12 +50,14 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     isLoading: Boolean;
     options: any[];
     value: any;
+    linkedResourceParameter: any;
   }>({
     isLoading: false,
     options: [],
     value: null,
+    linkedResourceParameter: {},
   });
-  const { options, isLoading, value } = state;
+  const { options, isLoading, value, linkedResourceParameter } = state;
   const pagination = useRef({
     current: -1,
     isLast: false,
@@ -71,10 +73,6 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   );
 
   const cjfParametersById = keyBy(data?.parameterValues, 'id');
-
-  const linkedResourceParameter = { ...parametersById, ...cjfParametersById }?.[
-    parameter?.autoInitialize?.parameterId
-  ];
 
   const parameterForFilters = { ...cjfParametersById, ...parametersById };
 
@@ -106,6 +104,16 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
         : null,
     }));
   }, [parameter?.response?.choices]);
+
+  useEffect(() => {
+    if (parameter.autoInitialized)
+      setState((prev) => ({
+        ...prev,
+        linkedResourceParameter: { ...parametersById, ...cjfParametersById }?.[
+          parameter?.autoInitialize?.parameterId
+        ],
+      }));
+  }, [cjfParametersById, parametersById]);
 
   const getUrl = (page: number) => {
     if (parameter?.data?.propertyFilters) {

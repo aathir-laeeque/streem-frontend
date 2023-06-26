@@ -17,6 +17,7 @@ const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) 
     data: { parameterValues: cjfParameters },
   } = useTypedSelector((state) => state.composer);
   const [value, setValue] = React.useState('');
+  const [linkedResourceParameter, setLinkedResourceParameter] = React.useState({});
 
   useEffect(() => {
     if (inputRef.current && document.activeElement !== inputRef.current) {
@@ -25,6 +26,15 @@ const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) 
       }
     }
   }, [parameter?.response?.value]);
+
+  useEffect(() => {
+    if (parameter.autoInitialized)
+      setLinkedResourceParameter(
+        { ...parametersById, ...keyBy(cjfParameters, 'id') }?.[
+          parameter?.autoInitialize?.parameterId
+        ],
+      );
+  }, [parametersById, ...cjfParameters]);
 
   const onChange = (v: string) => {
     customOnChange(v, (value: string) => {
@@ -41,10 +51,6 @@ const TextboxParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) 
     });
     setValue(v);
   };
-
-  const linkedResourceParameter = { ...parametersById, ...keyBy(cjfParameters, 'id') }?.[
-    parameter?.autoInitialize?.parameterId
-  ];
 
   return (
     <div className="textbox-parameter">
