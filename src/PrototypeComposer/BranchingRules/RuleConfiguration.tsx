@@ -336,6 +336,12 @@ const RuleCard: FC<any> = ({
 
   return (
     <RuleCardWrapper>
+      <input
+        type="hidden"
+        name={`rules.${index}.id`}
+        ref={control.register()}
+        defaultValue={item.id}
+      />
       <div className="upper-row">
         <FormGroup
           inputs={[
@@ -763,7 +769,7 @@ const RuleConfiguration: FC<{ parameter: Parameter; isReadOnly: boolean }> = ({
         }),
       }),
     );
-    reset();
+    reset({ rules: updatedRules });
   };
 
   const onAddNewRule = () => {
