@@ -590,15 +590,6 @@ const RuleConfiguration: FC<{ parameter: Parameter; isReadOnly: boolean }> = ({
     mode: 'onChange',
     reValidateMode: 'onChange',
     criteriaMode: 'all',
-    defaultValues: {
-      rules:
-        parameter?.rules?.map((rule) => ({
-          ...rule,
-          thenValue: rule.hide
-            ? { label: 'Hide', value: 'hide' }
-            : { label: 'Show', value: 'show' },
-        })) ?? [],
-    },
   });
 
   const {
@@ -668,6 +659,15 @@ const RuleConfiguration: FC<{ parameter: Parameter; isReadOnly: boolean }> = ({
     } else {
       filterParameterOptions();
     }
+    reset({
+      rules:
+        parameter?.rules?.map((rule) => ({
+          ...rule,
+          thenValue: rule.hide
+            ? { label: 'Hide', value: 'hide' }
+            : { label: 'Show', value: 'show' },
+        })) ?? [],
+    });
   }, [parameter.id]);
 
   const filterParameterOptions = useCallback(
