@@ -277,7 +277,7 @@ const ResourceTaskView: FC<
           data: {
             ...parameter.data,
             choices: [qrData].map((currOption: any) => ({
-              objectId: currOption.id,
+              objectId: currOption.objectId,
               objectDisplayName: currOption.displayName,
               objectExternalId: currOption.externalId,
               collection: currOption.collection,

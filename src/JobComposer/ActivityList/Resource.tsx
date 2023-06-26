@@ -187,7 +187,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
           callBack: () =>
             onSelectOption([
               {
-                option: qrData,
+                option: { ...qrData, id: qrData?.objectId },
               },
             ]),
           objectTypeValidation: qrData?.objectTypeId === parameter?.data?.objectTypeId,
