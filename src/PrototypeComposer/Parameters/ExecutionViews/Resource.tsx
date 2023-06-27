@@ -56,7 +56,7 @@ const ResourceTaskView: FC<
 
   const referencedParameterIds = useRef(
     parameter?.data?.propertyFilters?.fields?.reduce((acc, currField) => {
-      if (currField.hasOwnProperty('referencedParameterId')) {
+      if (currField?.referencedParameterId) {
         acc.push(currField.referencedParameterId);
       }
       return acc;
@@ -158,7 +158,7 @@ const ResourceTaskView: FC<
   const getFields = (filters: { op: string; fields: any[] }) => {
     const { fields, op } = filters;
     const _fields = fields.map((currField) => {
-      if (currField.hasOwnProperty('referencedParameterId')) {
+      if (currField?.referencedParameterId) {
         const referencedParameterData =
           parameterForFilters?.[currField?.referencedParameterId]?.data?.input ??
           ObjectIdsDataFromChoices(

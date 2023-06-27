@@ -63,7 +63,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
 
   const referencedParameterIds = useRef(
     parameter?.data?.propertyFilters?.fields?.reduce((acc, currField) => {
-      if (currField.hasOwnProperty('referencedParameterId')) {
+      if (currField?.referencedParameterId) {
         acc.push(currField.referencedParameterId);
       }
       return acc;
@@ -118,7 +118,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   const getFields = (filters: { op: string; fields: any[] }) => {
     const { fields, op } = filters;
     const _fields = fields?.map((currField) => {
-      if (currField.hasOwnProperty('referencedParameterId')) {
+      if (currField?.referencedParameterId) {
         const referencedParameterData =
           parametersById[currField.referencedParameterId]?.response?.value ??
           ObjectIdsDataFromChoices(
