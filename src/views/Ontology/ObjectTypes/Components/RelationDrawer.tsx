@@ -156,7 +156,8 @@ const AddRelationDrawer: FC<{
   onCloseDrawer: React.Dispatch<React.SetStateAction<boolean | string>>;
   label: string | boolean;
   relation: any;
-}> = ({ onCloseDrawer, relation, label }) => {
+  setSelectedRelation: React.Dispatch<React.SetStateAction<any>>;
+}> = ({ onCloseDrawer, relation, label, setSelectedRelation }) => {
   const dispatch = useDispatch();
   const {
     ontology: {
@@ -341,6 +342,7 @@ const AddRelationDrawer: FC<{
     setDrawerOpen(false);
     setTimeout(() => {
       onCloseDrawer(false);
+      setSelectedRelation(null);
     }, 200);
   };
 

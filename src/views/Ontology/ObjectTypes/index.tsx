@@ -330,6 +330,7 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
           label={createPropertyDrawer}
           onCloseDrawer={setCreatePropertyDrawer}
           property={selectedProperty}
+          setSelectedProperty={setSelectedProperty}
         />
       )}
     </TabContentWrapper>
@@ -505,6 +506,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
           label={createRelationDrawer}
           onCloseDrawer={setRelationDrawer}
           relation={selectedRelation}
+          setSelectedRelation={setSelectedRelation}
         />
       )}
     </TabContentWrapper>

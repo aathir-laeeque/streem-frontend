@@ -1,9 +1,9 @@
 import { MandatoryParameter, ParameterType } from '#JobComposer/checklist.types';
-import ResourceParameter from '#PrototypeComposer/Parameters/SetupViews/Resource';
 import { Button, FormGroup, ToggleSwitch, useDrawer } from '#components';
 import { useTypedSelector } from '#store';
 import { InputTypes } from '#utils/globalTypes';
-import { createJobSuccess } from '#views/Jobs/ListView/actions';
+import { createObjectTypeProperty, editObjectTypeProperty } from '#views/Ontology/actions';
+import { PropertyFlags } from '#views/Ontology/utils';
 import { Step, StepIconProps, StepLabel, Stepper } from '@material-ui/core';
 import {
   CheckCircleOutline,
@@ -20,10 +20,8 @@ import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { RenderParameterLabel } from './index';
-import { createObjectTypeProperty, editObjectTypeProperty } from '#views/Ontology/actions';
 import ChecklistParameter from './Options';
-import { PropertyFlags } from '#views/Ontology/utils';
+import { RenderParameterLabel } from './index';
 
 type Props = {
   showBasic: number;
@@ -104,7 +102,8 @@ const AddPropertyDrawer: FC<{
   onCloseDrawer: React.Dispatch<React.SetStateAction<boolean | string>>;
   label: string | boolean;
   property: any;
-}> = ({ onCloseDrawer, label, property }) => {
+  setSelectedProperty: React.Dispatch<React.SetStateAction<any>>;
+}> = ({ onCloseDrawer, label, property, setSelectedProperty }) => {
   const dispatch = useDispatch();
   const {
     prototypeComposer: {
@@ -302,6 +301,7 @@ const AddPropertyDrawer: FC<{
     setDrawerOpen(false);
     setTimeout(() => {
       onCloseDrawer(false);
+      setSelectedProperty(null);
     }, 200);
   };
 
