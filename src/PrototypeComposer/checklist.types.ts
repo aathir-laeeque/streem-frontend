@@ -60,7 +60,9 @@ export enum TargetEntityType {
 
 export type BranchingRule = {
   id: string;
+  key: string;
   constraint: Constraint;
+  input: string[];
   thenValue?: any;
   hide?: {
     parameters: string[];

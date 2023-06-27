@@ -14,7 +14,7 @@ import { request } from '#utils/request';
 import { Constraint } from '#views/Ontology/types';
 import { AddCircleOutline, Close } from '@material-ui/icons';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { components, OptionProps } from 'react-select';
 import styled from 'styled-components';
@@ -233,6 +233,7 @@ const RuleCard: FC<any> = ({
   visibleParametersList,
   control,
 }) => {
+  const thenValue = useWatch<{ value: string }>({ name: `rules.${index}.thenValue`, control });
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];
@@ -243,94 +244,49 @@ const RuleCard: FC<any> = ({
   const { options, isLoading } = state;
   const pagination = useRef({
     current: -1,
-    isLast: false,
-  });
-  let selectedValue: any;
-  if (Array.isArray(item?.input)) {
-    if (parameter.type === MandatoryParameter.SINGLE_SELECT) {
-      selectedValue = parameter?.data?.find((o: any) => o?.id === item?.input?.[0]);
-      selectedValue = [
-        {
-          label: selectedValue?.name,
-          value: selectedValue?.id,
-        },
-      ];
-    } else if (parameter.type === MandatoryParameter.RESOURCE) {
-      selectedValue = options.find((o: any) => o?.id === item?.input?.[0]);
-      selectedValue = [
-        {
-          value: selectedValue?.id,
-          label: selectedValue?.displayName,
-          externalId: selectedValue?.externalId,
-        },
-      ];
-    }
-  }
-
-  const selectedParameters: any[] = [];
-  (item?.thenValue?.value
-    ? item?.thenValue?.value === 'hide'
-      ? visibleParametersList
-      : hiddenParametersList
-    : []
-  ).forEach((stage: any) => {
-    stage.options.forEach((task: any) => {
-      task.options.forEach((p: any) => {
-        if (item?.[item?.thenValue?.value]?.parameters?.includes(p.value)) {
-          selectedParameters.push(p);
-        }
-      });
-    });
+    isLast: true,
   });
 
   useEffect(() => {
-    if (!parameter.data.length) {
-      getOptions();
-    }
+    getOptions();
   }, []);
 
-  const inputByParameterType = (type: ParameterType) => {
-    switch (type) {
-      default:
-        return InputTypes.SINGLE_SELECT;
-    }
-  };
-
-  const optionsByParameterType = (type: ParameterType) => {
-    switch (type) {
-      case MandatoryParameter.RESOURCE:
-        return options?.map((option) => ({
-          value: option,
-          label: option.displayName,
-          externalId: option.externalId,
-        }));
-      default:
-        return parameter.data.map((i: any) => ({ label: i.name, value: i.id }));
-    }
-  };
-
   const getOptions = async () => {
-    setState((prev) => ({ ...prev, isLoading: true }));
-    try {
-      const response: ResponseObj<any> = await request(
-        'GET',
-        `${baseUrl}${parameter.data.urlPath}&page=${pagination.current.current + 1}`,
-      );
-      if (response.data) {
-        if (response.pageable) {
-          pagination.current = {
-            current: response.pageable?.page,
-            isLast: response.pageable?.last,
-          };
+    if (!parameter.data.length) {
+      try {
+        setState((prev) => ({ ...prev, isLoading: true }));
+        const response: ResponseObj<any> = await request(
+          'GET',
+          `${baseUrl}${parameter.data.urlPath}&page=${pagination.current.current + 1}`,
+        );
+        if (response.data) {
+          if (response.pageable) {
+            pagination.current = {
+              current: response.pageable?.page,
+              isLast: response.pageable?.last,
+            };
+          }
+          setState((prev) => ({
+            ...prev,
+            options: [
+              ...prev.options,
+              ...(response.data || []).map((option: any) => ({
+                value: option.id,
+                label: option.displayName,
+                externalId: option.externalId,
+              })),
+            ],
+            isLoading: false,
+          }));
         }
-        setState((prev) => ({
-          ...prev,
-          options: [...prev.options, ...response.data],
-          isLoading: false,
-        }));
+      } catch (e) {
+        setState((prev) => ({ ...prev, isLoading: false }));
       }
-    } catch (e) {
-      setState((prev) => ({ ...prev, isLoading: false }));
+    } else if (!options.length) {
+      setState((prev) => ({
+        ...prev,
+        options: parameter.data.map((i: any) => ({ label: i.name, value: i.id })),
+      }));
     }
   };
 
@@ -411,27 +367,24 @@ const RuleCard: FC<any> = ({
           rules={{
             required: true,
           }}
-          render={({ onChange }) => {
+          defaultValue={item.input || null}
+          render={({ onChange, value }) => {
             return (
               <FormGroup
                 inputs={[
                   {
-                    type: inputByParameterType(parameter.type),
+                    type: InputTypes.SINGLE_SELECT,
                     props: {
                       id: 'input',
                       label: 'Value',
-                      options: optionsByParameterType(parameter.type),
-                      value: selectedValue,
+                      options: options,
+                      value: options.find((o: any) => o?.value === value?.[0]),
                       isSearchable: false,
                       isDisabled: isReadOnly,
                       placeholder: 'Select Value',
                       menuPlacement: 'bottom',
-                      onChange: (value: any) => {
-                        onChange(
-                          parameter.type === MandatoryParameter.RESOURCE
-                            ? [value.value.id]
-                            : [value.value],
-                        );
+                      onChange: (option: any) => {
+                        onChange([option.value]);
                       },
                       onMenuScrollToBottom: () => {
                         if (!isLoading && !pagination.current.isLast) {
@@ -456,7 +409,8 @@ const RuleCard: FC<any> = ({
           rules={{
             required: true,
           }}
-          render={({ onChange }) => (
+          defaultValue={item.thenValue || null}
+          render={({ onChange, value }) => (
             <FormGroup
               inputs={[
                 {
@@ -474,7 +428,7 @@ const RuleCard: FC<any> = ({
                         value: 'hide',
                       },
                     ],
-                    value: [item.thenValue],
+                    value: [value],
                     isDisabled: isReadOnly,
                     onChange: (option: { label: string; value: string }) => {
                       onChange(option);
@@ -491,60 +445,88 @@ const RuleCard: FC<any> = ({
             />
           )}
         />
-        {item.thenValue?.value === 'show' ? (
+        {thenValue?.value === 'show' ? (
           <Controller
             control={control}
             name={`rules.${index}.show.parameters`}
-            shouldUnregister
             rules={{
               required: true,
             }}
-            render={({ onChange }) => (
-              <FormGroup
-                inputs={[
-                  {
-                    type: InputTypes.MULTI_SELECT,
-                    props: {
-                      id: 'parameters',
-                      label: 'Show',
-                      options: hiddenParametersList,
-                      value: selectedParameters,
-                      isDisabled: isReadOnly,
-                      placeholder: 'Select Parameters',
-                      closeMenuOnSelect: false,
-                      components: { Option },
-                      menuPlacement: 'bottom',
-                      onChange: (value: any[]) => {
-                        onChange(value.length > 0 ? value.map((v) => v.value) : null);
-                      },
-                      style: {
-                        flex: 1,
-                      },
-                    },
-                  },
-                ]}
-              />
-            )}
-          />
-        ) : (
-          <Controller
-            control={control}
-            name={`rules.${index}.hide.parameters`}
-            shouldUnregister
-            rules={{
-              required: true,
-            }}
-            render={({ onChange }) => {
+            shouldUnregister={true}
+            key={`rules.${index}.show.parameters`}
+            defaultValue={item.show?.parameters || null}
+            render={({ onChange, value, name }) => {
+              const selectedParameters: any[] = [];
+              hiddenParametersList.forEach((stage: any) => {
+                stage.options.forEach((task: any) => {
+                  task.options.forEach((p: any) => {
+                    if (value?.includes(p.value)) {
+                      selectedParameters.push(p);
+                    }
+                  });
+                });
+              });
               return (
                 <FormGroup
                   inputs={[
                     {
                       type: InputTypes.MULTI_SELECT,
                       props: {
-                        id: 'parameters',
+                        id: name,
+                        name,
+                        label: 'Show',
+                        options: hiddenParametersList,
+                        value: selectedParameters,
+                        isDisabled: isReadOnly,
+                        placeholder: 'Select Parameters',
+                        closeMenuOnSelect: false,
+                        components: { Option },
+                        menuPlacement: 'bottom',
+                        onChange: (value: any[]) => {
+                          onChange(value.length > 0 ? value.map((v) => v.value) : null);
+                        },
+                        style: {
+                          flex: 1,
+                        },
+                      },
+                    },
+                  ]}
+                />
+              );
+            }}
+          />
+        ) : (
+          <Controller
+            control={control}
+            name={`rules.${index}.hide.parameters`}
+            rules={{
+              required: true,
+            }}
+            shouldUnregister={true}
+            key={`rules.${index}.hide.parameters`}
+            defaultValue={item.hide?.parameters || null}
+            render={({ onChange, value, name }) => {
+              const selectedParameters: any[] = [];
+              visibleParametersList.forEach((stage: any) => {
+                stage.options.forEach((task: any) => {
+                  task.options.forEach((p: any) => {
+                    if (value?.includes(p.value)) {
+                      selectedParameters.push(p);
+                    }
+                  });
+                });
+              });
+              return (
+                <FormGroup
+                  inputs={[
+                    {
+                      type: InputTypes.MULTI_SELECT,
+                      props: {
+                        id: name,
+                        name,
                         label: 'Hide',
                         value: selectedParameters,
-                        options: item?.thenValue?.value ? visibleParametersList : [],
+                        options: thenValue?.value ? visibleParametersList : [],
                         isDisabled: isReadOnly,
                         placeholder: 'Select Parameters',
                         closeMenuOnSelect: false,
@@ -583,7 +565,6 @@ const RuleConfiguration: FC<{ parameter: Parameter; isReadOnly: boolean }> = ({
   const jobParameters = data?.parameters ?? [];
   const [hiddenParametersList, setHiddenParametersList] = useState<any[]>([]);
   const [visibleParametersList, setVisibleParametersList] = useState<any[]>([]);
-  const isLoading = useRef(true);
   const form = useForm<{
     rules: BranchingRule[];
   }>({
@@ -595,22 +576,17 @@ const RuleConfiguration: FC<{ parameter: Parameter; isReadOnly: boolean }> = ({
   const {
     control,
     reset,
-    register,
-    setValue,
     getValues,
-    watch,
     formState: { isDirty, isValid },
   } = form;
-
-  const watchedRules = watch('rules');
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'rules',
+    keyName: 'key',
   });
 
   useEffect(() => {
-    isLoading.current = false;
     const cjfHiddenListOptions: any[] = [];
     const cjfShowListOptions: any[] = [];
 
@@ -659,16 +635,17 @@ const RuleConfiguration: FC<{ parameter: Parameter; isReadOnly: boolean }> = ({
     } else {
       filterParameterOptions();
     }
-    reset({
-      rules:
-        parameter?.rules?.map((rule) => ({
-          ...rule,
-          thenValue: rule.hide
-            ? { label: 'Hide', value: 'hide' }
-            : { label: 'Show', value: 'show' },
-        })) ?? [],
-    });
+    handleReset();
   }, [parameter.id]);
+
+  const handleReset = () => {
+    reset({
+      rules: (parameter?.rules || []).map((rule) => ({
+        ...rule,
+        thenValue: rule.hide ? { label: 'Hide', value: 'hide' } : { label: 'Show', value: 'show' },
+      })),
+    });
+  };
 
   const filterParameterOptions = useCallback(
     (hiddenParams: any[] = [], shownParams: any[] = []) => {
@@ -748,7 +725,7 @@ const RuleConfiguration: FC<{ parameter: Parameter; isReadOnly: boolean }> = ({
       setHiddenParametersList([...hiddenParams, ...hiddenListOptions]);
       setVisibleParametersList([, ...shownParams, ...visibleListOptions]);
     },
-    [],
+    [parameter.id],
   );
 
   const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -769,13 +746,12 @@ const RuleConfiguration: FC<{ parameter: Parameter; isReadOnly: boolean }> = ({
         }),
       }),
     );
-    reset({ rules: updatedRules });
+    reset({ rules: data.rules });
   };
 
   const onAddNewRule = () => {
     append({
       id: uuidv4(),
-      constraint: Constraint.EQ,
     });
   };
 
@@ -785,14 +761,7 @@ const RuleConfiguration: FC<{ parameter: Parameter; isReadOnly: boolean }> = ({
         Rules for {parameter.label}
         {!isReadOnly && (
           <div className="actions">
-            <Button
-              disabled={!isDirty}
-              variant="secondary"
-              color="red"
-              onClick={() => {
-                reset();
-              }}
-            >
+            <Button disabled={!isDirty} variant="secondary" color="red" onClick={handleReset}>
               Cancel
             </Button>
             <Button onClick={onSubmit} disabled={!isDirty || !isValid}>
@@ -802,26 +771,19 @@ const RuleConfiguration: FC<{ parameter: Parameter; isReadOnly: boolean }> = ({
         )}
       </div>
       <div className="rule-cards">
-        {!isLoading.current &&
-          fields.reduce((acc, item, index) => {
-            acc.push(
-              <RuleCard
-                key={item.id}
-                item={{ ...item, ...watchedRules[index] }}
-                index={index}
-                form={form}
-                remove={remove}
-                isReadOnly={isReadOnly}
-                parameter={parameter}
-                hiddenParametersList={hiddenParametersList}
-                visibleParametersList={visibleParametersList}
-                setValue={setValue}
-                register={register}
-                control={control}
-              />,
-            );
-            return acc;
-          }, [])}
+        {fields.map((item, index) => (
+          <RuleCard
+            key={item.key}
+            item={item}
+            index={index}
+            remove={remove}
+            isReadOnly={isReadOnly}
+            parameter={parameter}
+            hiddenParametersList={hiddenParametersList}
+            visibleParametersList={visibleParametersList}
+            control={control}
+          />
+        ))}
         {!isReadOnly && (
           <Button
             type="button"
