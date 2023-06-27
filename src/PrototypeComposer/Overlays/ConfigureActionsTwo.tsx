@@ -8,12 +8,7 @@ import {
   AutomationTargetEntityType,
 } from '#JobComposer/checklist.types';
 import { MandatoryParameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
-import {
-  addMultipleTaskAction,
-  addTaskAction,
-  archiveTaskAction,
-  updateTaskAction,
-} from '#PrototypeComposer/Tasks/actions';
+import { addMultipleTaskAction, archiveTaskAction } from '#PrototypeComposer/Tasks/actions';
 import { Task } from '#PrototypeComposer/Tasks/types';
 import { useTypedSelector } from '#store';
 import { apiGetObjectTypes, apiGetParameters } from '#utils/apiUrls';
@@ -24,7 +19,7 @@ import { ObjectType } from '#views/Ontology/types';
 import AddIcon from '@material-ui/icons/Add';
 import { startCase, toLower } from 'lodash';
 import React, { FC, useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
@@ -183,13 +178,12 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
   } = useTypedSelector((state) => state);
 
   const {
-    register,
     handleSubmit,
     formState: { isDirty, isValid },
     setValue,
     watch,
     reset,
-    errors,
+    control,
   } = useForm({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -400,7 +394,7 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
         allowEditSave: false,
       }));
     }
-    reset({ actionLabel: '' });
+    reset({ actionLabel: '', actionType: null, actionDetails: null });
   };
 
   const fetchParameters = async () => {
@@ -456,51 +450,32 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
     );
   };
 
-  register('actionLabel', {
-    required: true,
-  });
-
-  register('actionType', {
-    required: true,
-  });
-
-  register('actionDetails', {
-    required: true,
-    validate: {
-      isValid: (v) => {
-        if (actionType) {
-          if (
-            ![
-              AutomationActionActionType.CREATE_OBJECT,
-              AutomationActionActionType.ARCHIVE_OBJECT,
-            ].includes(actionType)
-          ) {
-            let keysToValidate: string[] = [];
-            if (actionType === AutomationActionActionType.SET_PROPERTY) {
-              if (v?.propertyInputType) {
-                if ([InputTypes.DATE, InputTypes.DATE_TIME].includes(v.propertyInputType)) {
-                  keysToValidate = [
-                    'entityType',
-                    'entityId',
-                    'captureProperty',
-                    'dateUnit',
-                    'value',
-                  ];
-                } else {
-                  keysToValidate = ['choices'];
-                }
-              }
+  const customActionDetailValidation = (value: any) => {
+    if (actionType) {
+      if (
+        ![
+          AutomationActionActionType.CREATE_OBJECT,
+          AutomationActionActionType.ARCHIVE_OBJECT,
+        ].includes(actionType)
+      ) {
+        let keysToValidate: string[] = [];
+        if (actionType === AutomationActionActionType.SET_PROPERTY) {
+          if (value?.propertyInputType) {
+            if ([InputTypes.DATE, InputTypes.DATE_TIME].includes(value.propertyInputType)) {
+              keysToValidate = ['entityType', 'entityId', 'captureProperty', 'dateUnit', 'value'];
             } else {
-              keysToValidate = ['parameterId'];
+              keysToValidate = ['choices'];
             }
-            return [...commonKeys, ...keysToValidate].every((key) => !!v?.[key]);
           }
-          return true;
+        } else {
+          keysToValidate = ['parameterId'];
         }
-        return false;
-      },
-    },
-  });
+        return [...commonKeys, ...keysToValidate].every((key) => !!value?.[key]);
+      }
+      return true;
+    }
+    return false;
+  };
 
   return (
     <Wrapper>
@@ -521,18 +496,12 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
                       <div
                         className="actions-card"
                         onClick={() => {
-                          setValue('actionLabel', currAction.displayName, {
-                            shouldDirty: true,
-                            shouldValidate: true,
+                          reset({
+                            actionLabel: currAction.displayName,
+                            actionType: currAction.actionType,
+                            actionDetails: currAction.actionDetails,
                           });
-                          setValue('actionType', currAction.actionType, {
-                            shouldDirty: true,
-                            shouldValidate: true,
-                          });
-                          setValue('actionDetails', currAction.actionDetails, {
-                            shouldDirty: true,
-                            shouldValidate: true,
-                          });
+
                           setState((prev) => ({
                             ...prev,
                             editActionFlag: true,
@@ -576,8 +545,7 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
                           editIndex: null,
                         }));
                       }
-
-                      reset({ actionLabel: '' });
+                      reset({ actionLabel: '', actionType: null, actionDetails: null });
                     }}
                   />
                 )}
@@ -585,310 +553,310 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
 
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="fields">
-                  <FormGroup
-                    inputs={[
-                      {
-                        type: InputTypes.SINGLE_LINE,
-                        props: {
-                          id: 'actionLabel',
-                          label: 'Action Label',
-                          isSearchable: false,
-                          placeholder: 'Enter Label',
-                          value: actionLabel,
-                          disabled: isReadOnly,
-                          onChange: ({ value }: { value: string }) => {
-                            setValue('actionLabel', value, {
-                              shouldDirty: true,
-                              shouldValidate: true,
-                            });
-                          },
-                        },
+                  <Controller
+                    control={control}
+                    name={'actionLabel'}
+                    rules={{
+                      required: true,
+                      pattern: {
+                        value: /^[^\s].*$/, // Regular expression to exclude leading spaces
+                        message: 'Name cannot start with a space',
                       },
-                      {
-                        type: InputTypes.SINGLE_SELECT,
-                        props: {
-                          id: 'actionType',
-                          label: 'Action Type',
-                          options: Object.keys(AutomationActionActionType).map((actionType) => ({
-                            label: startCase(toLower(actionType)),
-                            value: actionType,
-                          })),
-                          isSearchable: false,
-                          placeholder: 'Select Action Type',
-                          isDisabled: isReadOnly,
-                          value: actionType
-                            ? [
-                                {
-                                  label: startCase(toLower(actionType)),
-                                  value: actionType,
+                    }}
+                    render={({ onChange }) => {
+                      return (
+                        <FormGroup
+                          inputs={[
+                            {
+                              type: InputTypes.SINGLE_LINE,
+                              props: {
+                                id: 'actionLabel',
+                                label: 'Action Label',
+                                isSearchable: false,
+                                placeholder: 'Enter Label',
+                                value: actionLabel,
+                                disabled: isReadOnly,
+                                onChange: ({ value }: { value: string }) => {
+                                  onChange(value);
                                 },
-                              ]
-                            : null,
-                          onChange: (_option: { value: string }) => {
-                            setValue(
-                              'actionDetails',
-                              {},
-                              {
-                                shouldDirty: true,
-                                // shouldValidate: true,
                               },
-                            );
-                            setValue('actionType', _option.value, {
-                              shouldDirty: true,
-                              shouldValidate: true,
-                            });
-                            if (
-                              _option.value === AutomationActionActionType.CREATE_OBJECT &&
-                              !list.length
-                            ) {
-                              dispatch(
-                                fetchObjectTypes({
-                                  usageStatus: 1,
-                                }),
-                              );
-                            } else if (!resourceParameters.length) {
-                              fetchParameters();
-                            }
-                          },
-                        },
-                      },
-                      ...(actionType
-                        ? [
-                            ...(actionType === AutomationActionActionType.CREATE_OBJECT
-                              ? [
-                                  {
-                                    type: InputTypes.SINGLE_SELECT,
-                                    props: {
-                                      id: 'actionDetails',
-                                      label: 'Object Type',
-                                      isLoading: listLoading,
-                                      options: list.map((objectType) => ({
-                                        ...objectType,
-                                        label: objectType.displayName,
-                                        value: objectType.id,
-                                      })),
-                                      isSearchable: false,
-                                      isDisabled: isReadOnly,
-                                      placeholder: 'Select Object Type',
-                                      onMenuScrollToBottom: handleMenuScrollToBottom,
-                                      value: actionDetails?.objectTypeId
-                                        ? [
-                                            {
-                                              label: actionDetails?.objectTypeDisplayName,
-                                              value: actionDetails?.objectTypeId,
-                                            },
-                                          ]
-                                        : null,
-                                      onChange: (_option: any) => {
-                                        setValue(
-                                          'actionDetails',
-                                          {
+                            },
+                          ]}
+                        />
+                      );
+                    }}
+                  />
+                  <Controller
+                    control={control}
+                    name={'actionType'}
+                    rules={{
+                      required: true,
+                    }}
+                    render={({ onChange }) => {
+                      return (
+                        <FormGroup
+                          inputs={[
+                            {
+                              type: InputTypes.SINGLE_SELECT,
+                              props: {
+                                id: 'actionType',
+                                label: 'Action Type',
+                                options: Object.keys(AutomationActionActionType).map(
+                                  (actionType) => ({
+                                    label: startCase(toLower(actionType)),
+                                    value: actionType,
+                                  }),
+                                ),
+                                isSearchable: false,
+                                placeholder: 'Select Action Type',
+                                isDisabled: isReadOnly,
+                                value: actionType
+                                  ? [
+                                      {
+                                        label: startCase(toLower(actionType)),
+                                        value: actionType,
+                                      },
+                                    ]
+                                  : null,
+                                onChange: (_option: { value: string }) => {
+                                  onChange(_option.value);
+                                  if (
+                                    _option.value === AutomationActionActionType.CREATE_OBJECT &&
+                                    !list.length
+                                  ) {
+                                    dispatch(
+                                      fetchObjectTypes({
+                                        usageStatus: 1,
+                                      }),
+                                    );
+                                  } else if (!resourceParameters.length) {
+                                    fetchParameters();
+                                  }
+                                },
+                              },
+                            },
+                          ]}
+                        />
+                      );
+                    }}
+                  />
+                  {actionType ? (
+                    <Controller
+                      control={control}
+                      name={'actionDetails'}
+                      rules={{
+                        required: true,
+                        validate: customActionDetailValidation,
+                      }}
+                      render={({ onChange }) => {
+                        return (
+                          <FormGroup
+                            inputs={[
+                              ...(actionType === AutomationActionActionType.CREATE_OBJECT
+                                ? [
+                                    {
+                                      type: InputTypes.SINGLE_SELECT,
+                                      props: {
+                                        id: 'actionDetails',
+                                        label: 'Object Type',
+                                        isLoading: listLoading,
+                                        options: list.map((objectType) => ({
+                                          ...objectType,
+                                          label: objectType.displayName,
+                                          value: objectType.id,
+                                        })),
+                                        isSearchable: false,
+                                        isDisabled: isReadOnly,
+                                        placeholder: 'Select Object Type',
+                                        value: actionDetails?.objectTypeId
+                                          ? [
+                                              {
+                                                label: actionDetails?.objectTypeDisplayName,
+                                                value: actionDetails?.objectTypeId,
+                                              },
+                                            ]
+                                          : null,
+                                        onChange: (_option: any) => {
+                                          onChange({
                                             urlPath: `/objects/partial?collection=${_option.externalId}`,
                                             collection: _option.externalId,
                                             objectTypeId: _option.id,
                                             objectTypeExternalId: _option.externalId,
                                             objectTypeDisplayName: _option.displayName,
-                                          },
-                                          {
-                                            shouldDirty: true,
-                                            shouldValidate: true,
-                                          },
-                                        );
+                                          });
+                                        },
                                       },
                                     },
-                                  },
-                                ]
-                              : [
-                                  {
-                                    type: InputTypes.SINGLE_SELECT,
-                                    props: {
-                                      id: 'objectType',
-                                      label: 'Resource Parameter',
-                                      isLoading: isLoadingParameters,
-                                      options: resourceParameters.map((resource: any) => ({
-                                        ...resource.data,
-                                        label: resource.label,
-                                        value: resource.id,
-                                      })),
-                                      isSearchable: false,
-                                      placeholder: 'Select Resource Parameter',
-                                      isDisabled: isReadOnly,
-                                      value: actionDetails?.referencedParameterId
-                                        ? [
-                                            {
-                                              label: resourceParameters.find(
-                                                (resource: any) =>
-                                                  resource.id ===
-                                                  actionDetails.referencedParameterId,
-                                              )?.label,
-                                              value: actionDetails.referencedParameterId,
-                                            },
-                                          ]
-                                        : null,
-                                      onChange: (_option: any) => {
-                                        setValue(
-                                          'actionDetails',
-                                          {
+                                  ]
+                                : [
+                                    {
+                                      type: InputTypes.SINGLE_SELECT,
+                                      props: {
+                                        id: 'objectType',
+                                        label: 'Resource Parameter',
+                                        isLoading: isLoadingParameters,
+                                        options: resourceParameters.map((resource: any) => ({
+                                          ...resource.data,
+                                          label: resource.label,
+                                          value: resource.id,
+                                        })),
+                                        isSearchable: false,
+                                        placeholder: 'Select Resource Parameter',
+                                        isDisabled: isReadOnly,
+                                        value: actionDetails?.referencedParameterId
+                                          ? [
+                                              {
+                                                label: resourceParameters.find(
+                                                  (resource: any) =>
+                                                    resource.id ===
+                                                    actionDetails.referencedParameterId,
+                                                )?.label,
+                                                value: actionDetails.referencedParameterId,
+                                              },
+                                            ]
+                                          : null,
+                                        onChange: (_option: any) => {
+                                          onChange({
                                             referencedParameterId: _option.value,
                                             parameterId: actionDetails?.parameterId,
                                             objectTypeDisplayName: _option.objectTypeDisplayName,
-                                          },
-                                          {
-                                            shouldDirty: true,
-                                            shouldValidate: true,
-                                          },
-                                        );
+                                          });
 
-                                        if (
-                                          actionType !== AutomationActionActionType.ARCHIVE_OBJECT
-                                        ) {
-                                          fetchObjectType(_option.objectTypeId);
-                                        }
+                                          if (
+                                            actionType !== AutomationActionActionType.ARCHIVE_OBJECT
+                                          ) {
+                                            fetchObjectType(_option.objectTypeId);
+                                          }
+                                        },
                                       },
                                     },
-                                  },
-                                  ...([
-                                    AutomationActionActionType.SET_PROPERTY,
-                                    AutomationActionActionType.ARCHIVE_OBJECT,
-                                  ].includes(actionType)
-                                    ? []
-                                    : [
-                                        {
-                                          type: InputTypes.SINGLE_SELECT,
-                                          props: {
-                                            id: 'numberParameter',
-                                            label: 'Number / Calculation Parameter',
-                                            isLoading: isLoadingParameters,
-                                            options: numberParameters.map((number: any) => ({
-                                              label: number.label,
-                                              value: number.id,
-                                            })),
-                                            isDisabled: isReadOnly,
-                                            value: actionDetails?.parameterId
-                                              ? [
-                                                  {
-                                                    label: numberParameters.find(
-                                                      (number: any) =>
-                                                        number.id === actionDetails.parameterId,
-                                                    )?.label,
-                                                    value: actionDetails.parameterId,
-                                                  },
-                                                ]
-                                              : null,
-                                            isSearchable: false,
-                                            placeholder: 'Select Number Parameter',
-                                            onChange: (_option: any) => {
-                                              setValue(
-                                                'actionDetails',
-                                                {
+                                    ...([
+                                      AutomationActionActionType.SET_PROPERTY,
+                                      AutomationActionActionType.ARCHIVE_OBJECT,
+                                    ].includes(actionType)
+                                      ? []
+                                      : [
+                                          {
+                                            type: InputTypes.SINGLE_SELECT,
+                                            props: {
+                                              id: 'numberParameter',
+                                              label: 'Number / Calculation Parameter',
+                                              isLoading: isLoadingParameters,
+                                              options: numberParameters.map((number: any) => ({
+                                                label: number.label,
+                                                value: number.id,
+                                              })),
+                                              isDisabled: isReadOnly,
+                                              value: actionDetails?.parameterId
+                                                ? [
+                                                    {
+                                                      label: numberParameters.find(
+                                                        (number: any) =>
+                                                          number.id === actionDetails.parameterId,
+                                                      )?.label,
+                                                      value: actionDetails.parameterId,
+                                                    },
+                                                  ]
+                                                : null,
+                                              isSearchable: false,
+                                              placeholder: 'Select Number Parameter',
+                                              onChange: (_option: any) => {
+                                                onChange({
                                                   ...actionDetails,
                                                   parameterId: _option.value,
-                                                },
-                                                {
-                                                  shouldDirty: true,
-                                                  shouldValidate: true,
-                                                },
-                                              );
+                                                });
+                                              },
                                             },
                                           },
-                                        },
-                                      ]),
-                                  ...(selectedObjectType &&
-                                  actionType !== AutomationActionActionType.ARCHIVE_OBJECT
-                                    ? [
-                                        {
-                                          type: InputTypes.SINGLE_SELECT,
-                                          props: {
-                                            id: 'objectProperty',
-                                            label: 'Object Property',
-                                            isLoading: isLoadingObjectType,
-                                            isDisabled: isReadOnly,
-                                            options: selectedObjectType?.properties?.reduce<
-                                              Array<Record<string, any>>
-                                            >((acc, objectTypeProperty) => {
-                                              if (
-                                                (actionType ===
-                                                AutomationActionActionType.SET_PROPERTY
-                                                  ? [
-                                                      InputTypes.SINGLE_SELECT,
-                                                      InputTypes.DATE,
-                                                      InputTypes.DATE_TIME,
-                                                    ]
-                                                  : [InputTypes.NUMBER]
-                                                ).includes(objectTypeProperty.inputType)
-                                              ) {
-                                                acc.push({
-                                                  inputType: objectTypeProperty.inputType,
-                                                  externalId: objectTypeProperty.externalId,
-                                                  label: objectTypeProperty.displayName,
-                                                  value: objectTypeProperty.id,
-                                                  _options: objectTypeProperty.options,
-                                                });
-                                              }
-                                              return acc;
-                                            }, []),
-                                            value: actionDetails?.propertyId
-                                              ? [
-                                                  {
-                                                    label: actionDetails.propertyDisplayName,
-                                                    value: actionDetails.propertyId,
-                                                  },
-                                                ]
-                                              : null,
-                                            isSearchable: false,
-                                            placeholder: 'Select Object Property',
-                                            onChange: (_option: any) => {
-                                              delete actionDetails?.['dateUnit'];
-                                              setValue(
-                                                'actionDetails',
-                                                {
+                                        ]),
+                                    ...(selectedObjectType &&
+                                    actionType !== AutomationActionActionType.ARCHIVE_OBJECT
+                                      ? [
+                                          {
+                                            type: InputTypes.SINGLE_SELECT,
+                                            props: {
+                                              id: 'objectProperty',
+                                              label: 'Object Property',
+                                              isLoading: isLoadingObjectType,
+                                              isDisabled: isReadOnly,
+                                              options: selectedObjectType?.properties?.reduce<
+                                                Array<Record<string, any>>
+                                              >((acc, objectTypeProperty) => {
+                                                if (
+                                                  (actionType ===
+                                                  AutomationActionActionType.SET_PROPERTY
+                                                    ? [
+                                                        InputTypes.SINGLE_SELECT,
+                                                        InputTypes.DATE,
+                                                        InputTypes.DATE_TIME,
+                                                      ]
+                                                    : [InputTypes.NUMBER]
+                                                  ).includes(objectTypeProperty.inputType)
+                                                ) {
+                                                  acc.push({
+                                                    inputType: objectTypeProperty.inputType,
+                                                    externalId: objectTypeProperty.externalId,
+                                                    label: objectTypeProperty.displayName,
+                                                    value: objectTypeProperty.id,
+                                                    _options: objectTypeProperty.options,
+                                                  });
+                                                }
+                                                return acc;
+                                              }, []),
+                                              value: actionDetails?.propertyId
+                                                ? [
+                                                    {
+                                                      label: actionDetails.propertyDisplayName,
+                                                      value: actionDetails.propertyId,
+                                                    },
+                                                  ]
+                                                : null,
+                                              isSearchable: false,
+                                              placeholder: 'Select Object Property',
+                                              onChange: (_option: any) => {
+                                                delete actionDetails?.['dateUnit'];
+                                                onChange({
                                                   ...actionDetails,
                                                   propertyId: _option.value,
                                                   propertyInputType: _option.inputType,
                                                   propertyExternalId: _option.externalId,
                                                   propertyDisplayName: _option.label,
-                                                },
-                                                {
-                                                  shouldDirty: true,
-                                                  shouldValidate: true,
-                                                },
-                                              );
-                                              setSelectedProperty(_option);
+                                                });
+                                                setSelectedProperty(_option);
+                                              },
                                             },
                                           },
-                                        },
-                                      ]
-                                    : []),
-                                  ...(actionType === AutomationActionActionType.SET_PROPERTY &&
-                                  selectedProperty
-                                    ? [
-                                        ...(selectedProperty.inputType === InputTypes.SINGLE_SELECT
-                                          ? [
-                                              {
-                                                type: InputTypes.SINGLE_SELECT,
-                                                props: {
-                                                  id: 'value',
-                                                  label: 'Select Value',
-                                                  options: (
-                                                    selectedProperty?._options ??
-                                                    selectedProperty?.options
-                                                  ).map((o: any) => ({
-                                                    label: o?.displayName,
-                                                    value: o?.id,
-                                                  })),
-                                                  value: actionDetails?.choices
-                                                    ? actionDetails.choices?.map((c: any) => ({
-                                                        label: c.displayName,
-                                                        value: c.id,
-                                                      }))
-                                                    : null,
-                                                  isSearchable: false,
-                                                  isDisabled: isReadOnly,
-                                                  placeholder: 'Select Value',
-                                                  onChange: (_option: any) => {
-                                                    setValue(
-                                                      'actionDetails',
-                                                      {
+                                        ]
+                                      : []),
+                                    ...(actionType === AutomationActionActionType.SET_PROPERTY &&
+                                    selectedProperty
+                                      ? [
+                                          ...(selectedProperty.inputType ===
+                                          InputTypes.SINGLE_SELECT
+                                            ? [
+                                                {
+                                                  type: InputTypes.SINGLE_SELECT,
+                                                  props: {
+                                                    id: 'value',
+                                                    label: 'Select Value',
+                                                    options: (
+                                                      selectedProperty?._options ??
+                                                      selectedProperty?.options
+                                                    ).map((o: any) => ({
+                                                      label: o?.displayName,
+                                                      value: o?.id,
+                                                    })),
+                                                    value: actionDetails?.choices
+                                                      ? actionDetails.choices?.map((c: any) => ({
+                                                          label: c.displayName,
+                                                          value: c.id,
+                                                        }))
+                                                      : null,
+                                                    isSearchable: false,
+                                                    isDisabled: isReadOnly,
+                                                    placeholder: 'Select Value',
+                                                    onChange: (_option: any) => {
+                                                      onChange({
                                                         ...actionDetails,
                                                         choices: [
                                                           {
@@ -896,128 +864,115 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
                                                             displayName: _option.label,
                                                           },
                                                         ],
-                                                      },
-                                                      {
-                                                        shouldDirty: true,
-                                                        shouldValidate: true,
-                                                      },
-                                                    );
+                                                      });
+                                                    },
                                                   },
                                                 },
-                                              },
-                                            ]
-                                          : [
-                                              {
-                                                type: InputTypes.SINGLE_SELECT,
-                                                props: {
-                                                  id: 'setAs',
-                                                  label: 'Set As',
-                                                  options: getSetAsOptions(),
-                                                  value: actionDetails?.entityId
-                                                    ? getSetAsOptions().filter(
-                                                        (o) =>
-                                                          o.value.captureProperty ===
-                                                            actionDetails.captureProperty &&
-                                                          o.value.entityType ===
-                                                            actionDetails.entityType,
-                                                      )
-                                                    : null,
-                                                  isSearchable: false,
-                                                  placeholder: 'Select Set As',
-                                                  isDisabled: isReadOnly,
-                                                  onChange: (_option: any) => {
-                                                    setValue(
-                                                      'actionDetails',
-                                                      {
+                                              ]
+                                            : [
+                                                {
+                                                  type: InputTypes.SINGLE_SELECT,
+                                                  props: {
+                                                    id: 'setAs',
+                                                    label: 'Set As',
+                                                    options: getSetAsOptions(),
+                                                    value: actionDetails?.entityId
+                                                      ? getSetAsOptions().filter(
+                                                          (o) =>
+                                                            o.value.captureProperty ===
+                                                              actionDetails.captureProperty &&
+                                                            o.value.entityType ===
+                                                              actionDetails.entityType,
+                                                        )
+                                                      : null,
+                                                    isSearchable: false,
+                                                    placeholder: 'Select Set As',
+                                                    isDisabled: isReadOnly,
+                                                    onChange: (_option: any) => {
+                                                      onChange({
                                                         ...actionDetails,
                                                         ..._option.value,
-                                                      },
-                                                      {
-                                                        shouldDirty: true,
-                                                        shouldValidate: true,
-                                                      },
-                                                    );
+                                                      });
+                                                    },
                                                   },
                                                 },
-                                              },
-                                            ]),
-                                      ]
-                                    : []),
-                                ]),
-                          ]
-                        : []),
-                    ]}
-                  />
+                                              ]),
+                                        ]
+                                      : []),
+                                  ]),
+                            ]}
+                          />
+                        );
+                      }}
+                    />
+                  ) : null}
                   {[InputTypes.DATE, InputTypes.DATE_TIME].includes(
                     actionDetails?.propertyInputType,
                   ) && (
                     <div className="inline-fields">
-                      <FormGroup
-                        inputs={[
-                          {
-                            type: InputTypes.SINGLE_SELECT,
-                            props: {
-                              id: 'objectPropertyUnit',
-                              label: 'Unit',
-                              options: Object.entries(
-                                getDateUnits(actionDetails.propertyInputType),
-                              ).map(([value, label]) => ({
-                                label,
-                                value,
-                              })),
-                              isDisabled: isReadOnly,
-                              value: actionDetails?.dateUnit
-                                ? [
-                                    {
-                                      label: getDateUnits(actionDetails.propertyInputType)[
-                                        actionDetails.dateUnit as keyof typeof getDateUnits
-                                      ],
-                                      value: actionDetails.dateUnit,
-                                    },
-                                  ]
-                                : null,
-                              isSearchable: false,
-                              placeholder: 'Select Unit',
+                      <Controller
+                        control={control}
+                        name={'actionDetails'}
+                        rules={{
+                          required: true,
+                        }}
+                        render={({ onChange }) => {
+                          return (
+                            <FormGroup
+                              inputs={[
+                                {
+                                  type: InputTypes.SINGLE_SELECT,
+                                  props: {
+                                    id: 'objectPropertyUnit',
+                                    label: 'Unit',
+                                    options: Object.entries(
+                                      getDateUnits(actionDetails.propertyInputType),
+                                    ).map(([value, label]) => ({
+                                      label,
+                                      value,
+                                    })),
+                                    isDisabled: isReadOnly,
+                                    value: actionDetails?.dateUnit
+                                      ? [
+                                          {
+                                            label: getDateUnits(actionDetails.propertyInputType)[
+                                              actionDetails.dateUnit as keyof typeof getDateUnits
+                                            ],
+                                            value: actionDetails.dateUnit,
+                                          },
+                                        ]
+                                      : null,
+                                    isSearchable: false,
+                                    placeholder: 'Select Unit',
 
-                              onChange: (_option: any) => {
-                                setValue(
-                                  'actionDetails',
-                                  {
-                                    ...actionDetails,
-                                    dateUnit: _option.value,
+                                    onChange: (_option: any) => {
+                                      onChange({
+                                        ...actionDetails,
+                                        dateUnit: _option.value,
+                                      });
+                                    },
                                   },
-                                  {
-                                    shouldDirty: true,
-                                    shouldValidate: true,
+                                },
+                                {
+                                  type: InputTypes.NUMBER,
+                                  props: {
+                                    id: 'value',
+                                    label: 'Value',
+                                    placeholder: 'Enter Value',
+                                    value: actionDetails?.value,
+                                    disabled: isReadOnly,
+                                    onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
+                                      onChange({
+                                        ...actionDetails,
+                                        value: e.target.value,
+                                      });
+                                    },
                                   },
-                                );
-                              },
-                            },
-                          },
-                          {
-                            type: InputTypes.NUMBER,
-                            props: {
-                              id: 'value',
-                              label: 'Value',
-                              placeholder: 'Enter Value',
-                              defaultValue: actionDetails?.value,
-                              disabled: isReadOnly,
-                              onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
-                                setValue(
-                                  'actionDetails',
-                                  {
-                                    ...actionDetails,
-                                    value: e.target.value,
-                                  },
-                                  {
-                                    shouldDirty: true,
-                                    shouldValidate: true,
-                                  },
-                                );
-                              },
-                            },
-                          },
-                        ]}
+                                },
+                              ]}
+                            />
+                          );
+                        }}
                       />
                     </div>
                   )}
@@ -1029,7 +984,6 @@ const ConfigureCheck: FC<CommonOverlayProps<Props>> = ({
                       Add
                     </Button>
                     <Button
-                      // className="check-save"
                       variant="primary"
                       disabled={
                         allowEditSave ? false : actions?.length === task?.automations?.length
