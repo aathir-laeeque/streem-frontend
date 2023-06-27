@@ -13,7 +13,7 @@ import { toggleIsDrawerOpen } from '#store/extras/action';
 import { switchFacility } from '#store/facilities/actions';
 import { ALL_FACILITY_ID } from '#utils/constants';
 import { logout, setSelectedUseCase } from '#views/Auth/actions';
-import { qrCodeValidator } from '#views/Ontology/utils';
+import { getQrCodeData, qrCodeValidator } from '#views/Ontology/utils';
 import { UserType } from '#views/UserAccess/ManageUser/types';
 import { useMsal } from '@azure/msal-react';
 import { Divider } from '@material-ui/core';
@@ -90,12 +90,14 @@ const NavigationMenu: FC = () => {
 
   const onSelectWithQR = async (data: string) => {
     try {
-      const qrData = JSON.parse(data);
+      const qrData = await getQrCodeData({
+        shortCode: data,
+      });
       if (qrData) {
         await qrCodeValidator({
           data: qrData,
           callBack: () =>
-            navigate(`/ontology/object-types/${qrData.objectTypeId}/objects/${qrData.id}`),
+            navigate(`/ontology/object-types/${qrData.objectTypeId}/objects/${qrData.objectId}`),
           objectTypeValidation: true,
         });
       }
