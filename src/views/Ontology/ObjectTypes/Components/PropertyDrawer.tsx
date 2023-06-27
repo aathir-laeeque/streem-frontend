@@ -150,7 +150,12 @@ const AddPropertyDrawer: FC<{
     required: true,
   });
 
-  const { mandatory, displayName, inputType } = watch(['mandatory', 'displayName', 'inputType']);
+  const { mandatory, displayName, inputType, description } = watch([
+    'mandatory',
+    'displayName',
+    'inputType',
+    'description',
+  ]);
 
   const basicInformation = () => {
     return (
@@ -229,13 +234,17 @@ const AddPropertyDrawer: FC<{
                   ? [{ label: ParameterTypeMap[inputType], value: inputType }]
                   : null,
                 onChange: (option: { value: string }) => {
-                  setValue(
-                    'inputType',
-                    option.value === MandatoryParameter.MULTISELECT ? 'MULTI_SELECT' : option.value,
+                  reset(
                     {
-                      shouldDirty: true,
-                      shouldValidate: true,
+                      mandatory,
+                      displayName,
+                      description,
+                      inputType:
+                        option.value === MandatoryParameter.MULTISELECT
+                          ? 'MULTI_SELECT'
+                          : option.value,
                     },
+                    { isDirty: true, isValid: true },
                   );
                 },
               },
