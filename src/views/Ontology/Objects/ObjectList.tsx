@@ -184,7 +184,7 @@ const ObjectList: FC<TabContentProps> = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              {checkPermission(['ontology', 'archive']) && (
+              {checkPermission(['ontology', 'archiveObject']) && (
                 <MenuItem
                   onClick={() => {
                     handleClose();
@@ -297,7 +297,7 @@ const ObjectList: FC<TabContentProps> = () => {
                 }));
               }}
             />
-            {checkPermission(['ontology', 'create']) && (
+            {checkPermission(['ontology', 'createObject']) && (
               <Button
                 id="create"
                 onClick={() => {

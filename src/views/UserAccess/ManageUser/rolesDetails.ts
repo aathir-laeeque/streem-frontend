@@ -18,12 +18,15 @@ enum ChecklistFeatures {
 }
 
 enum JobFeatures {
-  CREATE_AND_ASSIGN_JOBS = 'Create and Assign Jobs',
+  CREATE_JOBS = 'Create Jobs',
+  ASSIGN_JOBS = 'Assign Jobs',
+  PEER_VERIFICATION = 'Perform peer verification of process parameters',
+  CREATE_AND_MODIFY_SCHEDULERS = 'Create and modify Schedulers of a Process',
   EXECUTE_AND_COMPLETE_JOBS = 'Execute and Complete Jobs',
   PRINT_JOBS = 'Print Jobs',
   VIEW_JOBS_AND_JOB_PARAMETER = 'View Jobs and Job Parameter',
   COMPLETE_JOB_WITH_EXCEPTION = 'Complete a Job with Exception',
-  MAKE_CORRECTIONS_IN_COMPLETED_TASK = 'Make Corrections in completed Tasks',
+
   MANAGE_TASK_EXCEPTIONS = 'Manage Task Exceptions',
 }
 
@@ -38,6 +41,8 @@ enum OntologyFeatures {
   VIEW_OBJECT_TYPES = 'View Object Types',
   CREATE_AND_UPDATE_OBJECTS = 'Create and Update Objects',
   VIEW_OBJECTS = 'View Objects',
+  CREATE_OBJECT_TYPES = 'Create Object Types',
+  MODIFY_OBJECT_TYPES = 'Modify Object Types',
 }
 
 enum GlobalPortalFeatures {
@@ -80,7 +85,11 @@ export const rolesDetails = {
         AdministrativeFeatures.VIEW_EXISTING_USERS,
         AdministrativeFeatures.VIEW_USER_SESSION_ACTIVITY,
       ],
-      [PermissionCategories.ONTOLOGY_FEATURES]: Object.values(OntologyFeatures).map((v) => v),
+      [PermissionCategories.ONTOLOGY_FEATURES]: [
+        OntologyFeatures.VIEW_OBJECT_TYPES,
+        OntologyFeatures.CREATE_AND_UPDATE_OBJECTS,
+        OntologyFeatures.VIEW_OBJECTS,
+      ],
     },
   },
   [RoleIdByName.CHECKLIST_PUBLISHER]: {
@@ -92,7 +101,11 @@ export const rolesDetails = {
         AdministrativeFeatures.VIEW_EXISTING_USERS,
         AdministrativeFeatures.VIEW_USER_SESSION_ACTIVITY,
       ],
-      [PermissionCategories.ONTOLOGY_FEATURES]: Object.values(OntologyFeatures).map((v) => v),
+      [PermissionCategories.ONTOLOGY_FEATURES]: [
+        OntologyFeatures.VIEW_OBJECT_TYPES,
+        OntologyFeatures.CREATE_AND_UPDATE_OBJECTS,
+        OntologyFeatures.VIEW_OBJECTS,
+      ],
     },
   },
   [RoleIdByName.SYSTEM_ADMIN]: {
@@ -114,6 +127,7 @@ export const rolesDetails = {
       [PermissionCategories.JOB_FEATURES]: Object.values(JobFeatures).map((v) => v),
       [PermissionCategories.ONTOLOGY_FEATURES]: [
         OntologyFeatures.VIEW_OBJECT_TYPES,
+        OntologyFeatures.CREATE_AND_UPDATE_OBJECTS,
         OntologyFeatures.VIEW_OBJECTS,
       ],
     },
@@ -125,10 +139,10 @@ export const rolesDetails = {
         ChecklistFeatures.VIEW_EXISTING_UNIT_LEVEL_CHECKLISTS,
       ],
       [PermissionCategories.JOB_FEATURES]: [
+        JobFeatures.CREATE_JOBS,
         JobFeatures.EXECUTE_AND_COMPLETE_JOBS,
         JobFeatures.PRINT_JOBS,
         JobFeatures.VIEW_JOBS_AND_JOB_PARAMETER,
-        JobFeatures.MAKE_CORRECTIONS_IN_COMPLETED_TASK,
       ],
       [PermissionCategories.ONTOLOGY_FEATURES]: [
         OntologyFeatures.VIEW_OBJECT_TYPES,
@@ -154,6 +168,8 @@ export const rolesDetails = {
       [PermissionCategories.ONTOLOGY_FEATURES]: [
         OntologyFeatures.VIEW_OBJECT_TYPES,
         OntologyFeatures.VIEW_OBJECTS,
+        OntologyFeatures.CREATE_OBJECT_TYPES,
+        OntologyFeatures.MODIFY_OBJECT_TYPES,
       ],
       [PermissionCategories.GLOBAL_PORTAL_FEATURES]: Object.values(GlobalPortalFeatures).map(
         (v) => v,

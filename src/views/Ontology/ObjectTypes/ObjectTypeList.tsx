@@ -1,10 +1,4 @@
-import {
-  Button,
-  DataTable,
-  LoadingContainer,
-  Pagination,
-  TabContentProps,
-} from '#components';
+import { Button, DataTable, LoadingContainer, Pagination, TabContentProps } from '#components';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { fetchDataParams } from '#utils/globalTypes';
@@ -13,6 +7,8 @@ import { navigate } from '@reach/router';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchObjectTypes } from '../actions';
+import checkPermission from '#services/uiPermissions';
+import { DataTableColumn } from '#components/shared/DataTable';
 
 const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
   const dispatch = useDispatch();
@@ -37,16 +33,18 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
 
   return (
     <TabContentWrapper>
-      <div className="filters">
-        <Button
-          id="create"
-          onClick={() => {
-            navigate('/ontology/object-types/add');
-          }}
-        >
-          Add New Object Type
-        </Button>
-      </div>
+      {checkPermission(['ontology', 'createObjectType']) && (
+        <div className="filters">
+          <Button
+            id="create"
+            onClick={() => {
+              navigate('/ontology/object-types/add');
+            }}
+          >
+            Add New Object Type
+          </Button>
+        </div>
+      )}
 
       <LoadingContainer
         loading={listLoading}
@@ -72,24 +70,28 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
                   );
                 },
               },
-              {
-                id: 'actions',
-                label: 'Actions',
-                minWidth: 240,
-                align: 'center',
-                format: function renderComp(item) {
-                  return (
-                    <span
-                      className="primary"
-                      onClick={() => {
-                        navigate(`/ontology/${values.rootPath}/edit/${item.id}`);
-                      }}
-                    >
-                      Edit
-                    </span>
-                  );
-                },
-              },
+              ...(checkPermission(['ontology', 'editObjectType'])
+                ? ([
+                    {
+                      id: 'actions',
+                      label: 'Actions',
+                      minWidth: 240,
+                      align: 'center',
+                      format: function renderComp(item) {
+                        return (
+                          <span
+                            className="primary"
+                            onClick={() => {
+                              navigate(`/ontology/${values.rootPath}/edit/${item.id}`);
+                            }}
+                          >
+                            Edit
+                          </span>
+                        );
+                      },
+                    },
+                  ] as DataTableColumn[])
+                : []),
             ]}
             rows={list}
           />

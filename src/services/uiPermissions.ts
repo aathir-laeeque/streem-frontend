@@ -122,6 +122,7 @@ const uiPermissions: Record<string, any> = {
       roles.FACILITY_ADMIN,
       roles.CHECKLIST_PUBLISHER,
       roles.SUPERVISOR,
+      roles.OPERATOR,
     ],
     prototype: [
       roles.ACCOUNT_OWNER,
@@ -152,9 +153,27 @@ const uiPermissions: Record<string, any> = {
     roles.GLOBAL_ADMIN,
   ],
   ontology: {
-    create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
-    edit: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
-    archive: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+    createObject: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+    ],
+    editObject: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+    ],
+    archiveObject: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+    ],
+    createObjectType: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
+    editObjectType: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
+    archiveObjectType: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
   },
   scheduler: {
     create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
