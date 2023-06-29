@@ -105,7 +105,7 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
   }, [recurrence]);
 
   useEffect(() => {
-    if (expectedStartDate) {
+    if (expectedStartDate && !readOnly) {
       unregister('rRuleOptions');
       unregister('weekDays');
       setValue('recurrence', 'DAILY', {
@@ -194,7 +194,7 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
               case 'WEEKLY':
                 recurrenceString = `Repeat ${recurrenceString} on ${moment(
                   expectedStartDate,
-                ).format('[at] hh:mm A')}`;
+                ).format('dddd [at] hh:mm A')}`;
                 break;
               case 'MONTHLY':
                 recurrenceString = `Repeat ${recurrenceString} on ${moment(
