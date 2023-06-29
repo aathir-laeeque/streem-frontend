@@ -362,7 +362,7 @@ function* archiveTaskActionSaga({ payload }: ReturnType<typeof archiveTaskAction
 
     if (data) {
       yield put(updateTask(data));
-      yield put(closeOverlayAction(OverlayNames.CONFIGURE_ACTIONS));
+      // yield put(closeOverlayAction(OverlayNames.CONFIGURE_ACTIONS));
       yield put(
         showNotification({
           type: NotificationType.SUCCESS,
@@ -411,7 +411,7 @@ function* addMultipleTaskActionSaga({ payload }: ReturnType<typeof addMultipleTa
 
     if (data) {
       yield put(updateTask(data));
-      yield put(closeOverlayAction(OverlayNames.CONFIGURE_CHECK));
+      yield put(closeOverlayAction(OverlayNames.CONFIGURE_ACTIONS));
       yield put(
         showNotification({
           type: NotificationType.SUCCESS,

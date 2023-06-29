@@ -54,7 +54,6 @@ import ConfigureColumnsModal from './ConfigureColumns';
 import { ConfirmationModal } from './ConfirmationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
 import ConfigureActions from '#PrototypeComposer/Overlays/ConfigureActions';
-import ConfigureCheck from '#PrototypeComposer/Overlays/ConfigureActionsTwo';
 import ProcessSharing from '#views/Checklists/Overlays/ProcessSharing';
 import ConfigureJobParameters from '#PrototypeComposer/Overlays/ConfigureJobParameters';
 import { QRScanner, QRGenerator } from '#components';
@@ -240,9 +239,6 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.SET_DATE:
       return <SetDateModal {...params} />;
-
-    case OverlayNames.CONFIGURE_CHECK:
-      return <ConfigureCheck {...params} />;
 
     case OverlayNames.PEER_VERIFICATION_MODAL:
       return <PeerVerificationModal {...params} />;

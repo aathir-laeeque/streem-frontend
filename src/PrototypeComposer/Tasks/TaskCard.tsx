@@ -381,7 +381,7 @@ const TaskCard: FC<
                 onClick={() => {
                   dispatch(
                     openOverlayAction({
-                      type: OverlayNames.CONFIGURE_CHECK,
+                      type: OverlayNames.CONFIGURE_ACTIONS,
                       props: {
                         task,
                         checklistId: data?.id,
