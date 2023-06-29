@@ -75,7 +75,8 @@ export const getTasks = ({ checklist, setActiveTask = false }: GetTasksType) => 
 
   let activeTaskId: Task['id'] | undefined = undefined,
     taskIdWithStop: Task['id'] | undefined = undefined,
-    stageIdWithTaskStop: Stage['id'] | undefined = undefined;
+    stageIdWithTaskStop: Stage['id'] | undefined = undefined,
+    tasksOrderList: any[] = [];
 
   checklist?.stages?.map((stage) => {
     tasksOrderInStage[stage.id] = [];
@@ -84,6 +85,10 @@ export const getTasks = ({ checklist, setActiveTask = false }: GetTasksType) => 
       tasksById[task.id] = { ...task, hasError: false };
 
       tasksOrderInStage[stage.id].push(task.id);
+      tasksOrderList.push({
+        taskId: task.id,
+        stageId: stage.id,
+      });
 
       if (
         !taskIdWithStop &&
@@ -108,6 +113,7 @@ export const getTasks = ({ checklist, setActiveTask = false }: GetTasksType) => 
     taskIdWithStop,
     tasksOrderInStage,
     stageIdWithTaskStop,
+    tasksOrderList,
     ...(setActiveTask ? { activeTaskId } : {}),
   };
 };

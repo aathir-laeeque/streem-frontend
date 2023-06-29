@@ -498,7 +498,13 @@ const Footer: FC<FooterProps> = ({
 
   return (
     <Wrapper>
-      <Button variant="textOnly" onClick={handleOnPreviousTask} disabled={!currentIndex.current}>
+      <Button
+        variant="textOnly"
+        onClick={handleOnPreviousTask}
+        disabled={
+          !currentIndex.current || hiddenIds?.[tasksOrderList[currentIndex.current - 1]?.taskId]
+        }
+      >
         <ArrowBack />
       </Button>
 
@@ -533,7 +539,10 @@ const Footer: FC<FooterProps> = ({
       <Button
         variant="textOnly"
         onClick={handleOnNextTask}
-        disabled={currentIndex.current >= tasksOrderList.length - 1}
+        disabled={
+          currentIndex.current >= tasksOrderList.length - 1 ||
+          hiddenIds?.[tasksOrderList[currentIndex.current + 1]?.taskId]
+        }
       >
         <ArrowForward />
       </Button>
