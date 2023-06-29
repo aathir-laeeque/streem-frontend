@@ -86,7 +86,9 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
     setValue(
       'rRuleOptions',
       {
-        byweekday: compact(Object.keys(weekDays || {})).map((key) => new Weekday(Number(key))),
+        byweekday: compact(Object.keys(weekDays || {}))
+          .filter((key) => weekDays[key] !== false)
+          .map((key) => new Weekday(Number(key))),
       },
       {
         shouldValidate: true,

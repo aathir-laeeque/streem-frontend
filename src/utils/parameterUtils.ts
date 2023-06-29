@@ -4,7 +4,7 @@ import { formatDateTime } from './timeUtils';
 const responseDetailsForChoiceBasedParameters = ({ data, response }: any) => {
   let detailList: any[] = [];
   data.forEach((currData: any) => {
-    if (response.choices?.[currData.id] === 'SELECTED') {
+    if (response?.choices?.[currData.id] === 'SELECTED') {
       return detailList.push(`${currData.name}${response.reason ? ` :${response.reason}` : ''}`);
     }
   });
