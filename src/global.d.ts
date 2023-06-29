@@ -27,3 +27,8 @@ declare module '*.eot' {
   const eot: string;
   export default eot;
 }
+
+declare interface Window {
+  store: any;
+  persistor: any;
+}

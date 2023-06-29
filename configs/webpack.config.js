@@ -1,5 +1,6 @@
 const paths = require('./paths');
 const webpack = require('webpack');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const createStyledComponentsTransformer = require('typescript-plugin-styled-components').default;
 const TerserPlugin = require('terser-webpack-plugin');
@@ -42,7 +43,9 @@ const config = {
                 loader: 'babel-loader',
                 options: {
                   configFile: paths.babelConfig,
-                  plugins: [!isEnvProduction && require.resolve('react-refresh/babel')].filter(Boolean),
+                  plugins: [!isEnvProduction && require.resolve('react-refresh/babel')].filter(
+                    Boolean,
+                  ),
                 },
               },
               {
@@ -63,7 +66,9 @@ const config = {
                 loader: 'babel-loader',
                 options: {
                   configFile: paths.babelConfig,
-                  plugins: [!isEnvProduction && require.resolve('react-refresh/babel')].filter(Boolean),
+                  plugins: [!isEnvProduction && require.resolve('react-refresh/babel')].filter(
+                    Boolean,
+                  ),
                 },
               },
             ],
@@ -94,6 +99,19 @@ const config = {
     ],
   },
   plugins: [
+    // new CircularDependencyPlugin({
+    //   // exclude detection of files based on a RegExp
+    //   exclude: /a\.js|node_modules/,
+    //   // include specific files based on a RegExp
+    //   // include: /src/,
+    //   // add errors to webpack instead of warnings
+    //   failOnError: true,
+    //   // allow import cycles that include an asyncronous import,
+    //   // e.g. via import(/* webpackMode: "weak" */ './file.js')
+    //   allowAsyncCycles: false,
+    //   // set the current working directory for displaying module paths
+    //   cwd: process.cwd(),
+    // }),
     new webpack.DefinePlugin(envKeys),
     // new ForkTsCheckerWebpackPlugin(),
     new webpack.ProvidePlugin({

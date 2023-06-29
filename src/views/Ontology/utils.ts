@@ -1,7 +1,6 @@
 import { ResponseObj } from '#utils/globalTypes';
 import { apiGetObjects, apiQrShortCode } from '#utils/apiUrls';
 import { getErrorMsg, request } from '#utils/request';
-import { store } from '../../App';
 import { Object } from './types';
 
 export const getObjectData = async (data: Record<string, string | number | undefined>) => {
@@ -36,7 +35,7 @@ export const qrCodeValidator = async ({
     });
     const {
       auth: { selectedFacility },
-    } = store.getState();
+    } = window.store.getState();
     if (selectedFacility?.id === fetchedData?.facilityId) {
       callBack();
     } else {

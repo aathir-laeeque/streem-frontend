@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button component handles click event 1`] = `
+<button
+  class="sc-xyEDr eRncUR"
+  type="button"
+>
+  Click Me
+</button>
+`;
+
+exports[`Button component renders button with default props 1`] = `
+<button
+  class="sc-xyEDr eRncUR"
+  type="button"
+>
+  Default Button
+</button>
+`;
+
+exports[`Button component renders button with specified color and variant 1`] = `
+<button
+  class="sc-xyEDr clRztB"
+  color="green"
+  type="button"
+>
+  Secondary Green Button
+</button>
+`;
+
+exports[`Button component renders disabled secondary button 1`] = `
+<button
+  class="sc-xyEDr kbWMhl"
+  disabled=""
+  type="button"
+>
+  Disabled Button
+</button>
+`;
+
+exports[`Button component renders text-only button with transparent background 1`] = `
+<button
+  class="sc-xyEDr hFRXZq"
+  color="red"
+  type="button"
+>
+  Text-only Button
+</button>
+`;

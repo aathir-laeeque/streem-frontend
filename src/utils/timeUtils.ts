@@ -1,13 +1,12 @@
 import 'moment-duration-format';
 import moment from 'moment';
-import { store } from '../App';
 import { InputTypes } from './globalTypes';
 
 export const formatDateTime = (time: number, format?: string) => {
   const {
     auth: { selectedFacility },
     facilityWiseConstants,
-  } = store.getState();
+  } = window.store.getState();
   const { dateAndTimeStampFormat } = facilityWiseConstants[selectedFacility!.id];
 
   return moment.unix(time).format(format || dateAndTimeStampFormat);
@@ -66,7 +65,7 @@ export const formatDateByInputType = (
   const {
     auth: { selectedFacility },
     facilityWiseConstants,
-  } = store.getState();
+  } = window.store.getState();
   const { dateAndTimeStampFormat, timeFormat, dateFormat } =
     facilityWiseConstants[selectedFacility!.id];
   const castedValue = typeof value === 'string' ? parseInt(value) : value;
@@ -93,7 +92,7 @@ export const formatDateTimeToHumanReadable = (epoch: number) => {
   const {
     auth: { selectedFacility },
     facilityWiseConstants,
-  } = store.getState();
+  } = window.store.getState();
   const { dateAndTimeStampFormat, timeFormat } = facilityWiseConstants[selectedFacility!.id];
   let dateText: string | undefined = moment.unix(epoch).from(new Date());
   const startOfToday = moment().startOf('day');

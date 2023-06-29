@@ -4,6 +4,7 @@
     "outDir": "./dist",
     "target": "es5",
     "module": "esnext",
+    "allowJs": true,
     "esModuleInterop": true,
     "jsx": "react",
     "moduleResolution": "node",
@@ -16,9 +17,11 @@
     "noUnusedParameters": true,
     "baseUrl": ".",
     "paths": {
-      "#*": ["./src/*", "./mocks"]
+      "#*": ["./src/*"],
+      "test/*": ["./test/*"],
+      "test-utils": ["./test/__setup__/test-utils"]
     }
   },
   "exclude": ["node_modules"],
-  "include": ["./src/*", "./mocks"]
+  "include": ["./src/*"]
 }

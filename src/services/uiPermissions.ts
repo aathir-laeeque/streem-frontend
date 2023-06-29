@@ -1,4 +1,3 @@
-import { store } from '../App';
 import { get } from 'lodash';
 
 export enum roles {
@@ -199,7 +198,7 @@ const uiPermissions: Record<string, any> = {
 const checkPermission = (keys: string[]) => {
   const {
     auth: { roles: authRoles },
-  } = store.getState();
+  } = window.store.getState();
   const check = get(uiPermissions, keys, false);
   if (check && authRoles && authRoles.length) {
     return authRoles.some((role: string) => check.includes(role));

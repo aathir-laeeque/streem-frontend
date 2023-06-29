@@ -77,6 +77,7 @@ export const Avatar: FC<Props> = ({
       size={size}
       borderColor={borderColor}
       backgroundColor={backgroundColor}
+      data-testid="avatar-wrapper"
       {...(allowMouseEvents
         ? {
             onMouseEnter: (event: MouseEvent) => {
@@ -121,6 +122,7 @@ export const AvatarExtras: FC<AvatarExtrasProps> = ({
       size={size}
       borderColor={borderColor}
       backgroundColor={backgroundColor}
+      data-testid="avatar-extras-wrapper"
       onMouseEnter={(event: MouseEvent) => {
         dispatch(
           openOverlayAction({

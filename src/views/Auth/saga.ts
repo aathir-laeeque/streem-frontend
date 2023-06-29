@@ -33,7 +33,6 @@ import { ValidateCredentialsPurpose } from '#views/UserAccess/types';
 import { IPublicClientApplication } from '@azure/msal-browser';
 import { navigate } from '@reach/router';
 import { call, put, select, takeLeading } from 'redux-saga/effects';
-import { persistor, store } from '../../App';
 import {
   accountLookUp,
   accountLookUpSuccess,
@@ -165,7 +164,7 @@ function* cleanUpSaga() {
   try {
     removeAuthHeader();
     yield put(closeAllOverlayAction());
-    yield call(persistor.purge);
+    yield call(window.persistor.purge);
   } catch (error) {
     yield* handleCatch('Auth', 'cleanUpSaga', error);
   }
@@ -340,7 +339,7 @@ function* setChallengeQuestionSaga({ payload }: ReturnType<typeof setChallengeQu
             props: {
               purpose: ValidateCredentialsPurpose.CHALLENGE_QUESTION_UPDATE,
               onSuccess: (token: string) => {
-                store.dispatch(setIdentityToken({ token }));
+                window.store.dispatch(setIdentityToken({ token }));
               },
             },
           }),

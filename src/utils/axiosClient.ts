@@ -6,8 +6,6 @@ import { logoutSuccess, refreshTokenSuccess } from '#views/Auth/actions';
 import { RefreshTokenResponse } from '#views/Auth/types';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
-import { store } from '../App';
 import { apiRefreshToken } from './apiUrls';
 import {
   ErrorCodesToLogout,
@@ -61,11 +59,11 @@ axiosInstance.interceptors.response.use(
       if (code !== LoginErrorCodes.JWT_ACCESS_TOKEN_EXPIRED) {
         const {
           auth: { isLoggedIn },
-        } = store.getState();
+        } = window.store.getState();
         if (isLoggedIn && Object.values(ErrorCodesToLogout).some((val) => val === code)) {
           const msg = typeof message === 'string' ? message : 'Oops! Please Try Again.';
-          store.dispatch(closeAllOverlayAction());
-          store.dispatch(
+          window.store.dispatch(closeAllOverlayAction());
+          window.store.dispatch(
             logoutSuccess({
               msg,
               type: NotificationType.ERROR,
@@ -77,7 +75,7 @@ axiosInstance.interceptors.response.use(
       } else if (originalReq.url !== REFRESH_TOKEN_URL && !originalReq?.isRetryAttempt) {
         const {
           auth: { refreshToken, accessToken },
-        } = store.getState();
+        } = window.store.getState();
 
         removeAuthHeader();
 
@@ -85,7 +83,7 @@ axiosInstance.interceptors.response.use(
           accessToken,
           refreshToken,
         )) as ResponseObj<RefreshTokenResponse>;
-        store.dispatch(refreshTokenSuccess(data));
+        window.store.dispatch(refreshTokenSuccess(data));
 
         originalReq.isRetryAttempt = true;
         setAuthHeader(data.accessToken);
@@ -99,12 +97,12 @@ axiosInstance.interceptors.response.use(
 
       const {
         extras: { connected },
-      } = store.getState();
+      } = window.store.getState();
       const { config: originalReq } = error;
 
       if (!connected) {
         if (!isMatchAny(originalReq.url, EXCULDE_BY_REGEX_FOR_NO_INTERNET_TOAST)) {
-          store.dispatch(
+          window.store.dispatch(
             showNotification({
               type: NotificationType.ERROR,
               msg: 'No Internet Connection.',
@@ -119,8 +117,8 @@ axiosInstance.interceptors.response.use(
           );
         }
       } else {
-        store.dispatch(closeAllOverlayAction());
-        store.dispatch(setGlobalError(true));
+        window.store.dispatch(closeAllOverlayAction());
+        window.store.dispatch(setGlobalError(true));
       }
       throw e;
     }

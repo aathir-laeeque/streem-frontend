@@ -17,7 +17,6 @@ import {
 import { CustomViewsTargetType, Error, FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, takeLatest, takeLeading } from 'redux-saga/effects';
-import { store } from '../../../App';
 import { Checklist } from '../types';
 import {
   addCustomView,
@@ -147,7 +146,7 @@ function* handlePublishedArchiveSaga({ payload }: ReturnType<typeof handlePublis
             modalTitle: 'Archive Process',
             modalDesc: `Provide details for archiving the process`,
             onPrimaryClick: (reason: string, setFormErrors: (errors?: Error[]) => void) => {
-              store.dispatch(archiveChecklist(id, reason, setFormErrors));
+              window.store.dispatch(archiveChecklist(id, reason, setFormErrors));
             },
           },
         }),

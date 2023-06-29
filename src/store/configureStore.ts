@@ -88,7 +88,10 @@ const handleOnIdle: Middleware = (store) => (next) => (action: AnyAction) => {
   next(action);
 };
 
-export const configureStore = (initialState: Partial<RootState>) => {
+export const configureStore = (
+  initialState: Partial<RootState>,
+  additionalMiddleware: Middleware[] = [],
+) => {
   const middlewares = [handleOnIdle, sagaMiddleware];
 
   const composeEnhancers =
@@ -119,7 +122,7 @@ export const configureStore = (initialState: Partial<RootState>) => {
   const store = createStore(
     persistedReducer,
     initialState,
-    composeEnhancers(applyMiddleware(...middlewares)),
+    composeEnhancers(applyMiddleware(...additionalMiddleware, ...middlewares)),
   );
 
   const persistor = persistStore(store);

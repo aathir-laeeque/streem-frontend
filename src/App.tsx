@@ -17,7 +17,9 @@ import { PersistGate } from 'redux-persist/integration/react';
 import GlobalStyles from './styles/GlobalStyles';
 import { MsalComponent } from './MsalComponent';
 
-export const { store, persistor } = configureStore({});
+const { store, persistor } = configureStore({});
+window.store = store;
+window.persistor = persistor;
 
 const App: FC = () => {
   const onBeforeLift = () => {
