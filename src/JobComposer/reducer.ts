@@ -56,12 +56,16 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
       };
 
     case ComposerAction.UPDATE_HIDDEN_IDS:
-      const { _hiddenIds, _activeStageId } = updateHiddenIds(state);
+      const { _hiddenIds, _activeStageId, tasksOrderList } = updateHiddenIds(state);
       return {
         ...state,
         parameters: {
           ...state.parameters,
           hiddenIds: _hiddenIds,
+        },
+        tasks: {
+          ...state.tasks,
+          tasksOrderList,
         },
         stages: {
           ...state.stages,

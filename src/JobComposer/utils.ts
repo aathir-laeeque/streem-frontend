@@ -75,8 +75,7 @@ export const getTasks = ({ checklist, setActiveTask = false }: GetTasksType) => 
 
   let activeTaskId: Task['id'] | undefined = undefined,
     taskIdWithStop: Task['id'] | undefined = undefined,
-    stageIdWithTaskStop: Stage['id'] | undefined = undefined,
-    tasksOrderList: any[] = [];
+    stageIdWithTaskStop: Stage['id'] | undefined = undefined;
 
   checklist?.stages?.map((stage) => {
     tasksOrderInStage[stage.id] = [];
@@ -85,10 +84,6 @@ export const getTasks = ({ checklist, setActiveTask = false }: GetTasksType) => 
       tasksById[task.id] = { ...task, hasError: false };
 
       tasksOrderInStage[stage.id].push(task.id);
-      tasksOrderList.push({
-        taskId: task.id,
-        stageId: stage.id,
-      });
 
       if (
         !taskIdWithStop &&
@@ -113,7 +108,6 @@ export const getTasks = ({ checklist, setActiveTask = false }: GetTasksType) => 
     taskIdWithStop,
     tasksOrderInStage,
     stageIdWithTaskStop,
-    tasksOrderList,
     ...(setActiveTask ? { activeTaskId } : {}),
   };
 };
@@ -177,6 +171,7 @@ export const updateHiddenIds = (composerState: ComposerState) => {
   } = composerState;
   const _hiddenIds: Record<string, boolean> = {};
   let _activeStageId: string | undefined = activeStageId;
+  let tasksOrderList: any[] = [];
 
   stagesOrder.forEach((stageId) => {
     let hiddenTasksLength = 0;
@@ -194,6 +189,11 @@ export const updateHiddenIds = (composerState: ComposerState) => {
       if (task.hidden || task?.parameters?.length === hiddenParametersLength) {
         hiddenTasksLength++;
         _hiddenIds[task.id] = true;
+      } else {
+        tasksOrderList.push({
+          taskId: task.id,
+          stageId: stage.id,
+        });
       }
     });
     if (stage?.tasks?.length === hiddenTasksLength) {
@@ -207,5 +207,5 @@ export const updateHiddenIds = (composerState: ComposerState) => {
     }
   });
 
-  return { _hiddenIds, _activeStageId };
+  return { _hiddenIds, _activeStageId, tasksOrderList };
 };

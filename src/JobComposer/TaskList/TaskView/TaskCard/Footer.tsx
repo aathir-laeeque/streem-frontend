@@ -149,13 +149,7 @@ const Footer: FC<FooterProps> = ({
   const handleOnNextTask = () => {
     if (currentIndex.current < tasksOrderList.length - 1) {
       currentIndex.current = currentIndex.current + 1;
-      let nextNavOption: any;
-      for (let i = currentIndex.current; i < tasksOrderList.length; i++) {
-        if (!hiddenIds?.[tasksOrderList[i].taskId]) {
-          nextNavOption = tasksOrderList[i];
-          break;
-        }
-      }
+      let nextNavOption = tasksOrderList[currentIndex.current];
       if (nextNavOption) {
         dispatch(setActiveStage(nextNavOption.stageId));
         dispatch(setActiveTask(nextNavOption.taskId));
@@ -166,13 +160,7 @@ const Footer: FC<FooterProps> = ({
   const handleOnPreviousTask = () => {
     if (currentIndex.current > 0) {
       currentIndex.current = currentIndex.current - 1;
-      let nextNavOption: any;
-      for (let i = currentIndex.current; i >= 0; i--) {
-        if (!hiddenIds?.[tasksOrderList[i].taskId]) {
-          nextNavOption = tasksOrderList[i];
-          break;
-        }
-      }
+      let nextNavOption = tasksOrderList[currentIndex.current];
       if (nextNavOption) {
         dispatch(setActiveStage(nextNavOption.stageId));
         dispatch(setActiveTask(nextNavOption.taskId));
@@ -498,13 +486,7 @@ const Footer: FC<FooterProps> = ({
 
   return (
     <Wrapper>
-      <Button
-        variant="textOnly"
-        onClick={handleOnPreviousTask}
-        disabled={
-          !currentIndex.current || hiddenIds?.[tasksOrderList[currentIndex.current - 1]?.taskId]
-        }
-      >
+      <Button variant="textOnly" onClick={handleOnPreviousTask} disabled={!currentIndex.current}>
         <ArrowBack />
       </Button>
 
@@ -539,10 +521,7 @@ const Footer: FC<FooterProps> = ({
       <Button
         variant="textOnly"
         onClick={handleOnNextTask}
-        disabled={
-          currentIndex.current >= tasksOrderList.length - 1 ||
-          hiddenIds?.[tasksOrderList[currentIndex.current + 1]?.taskId]
-        }
+        disabled={currentIndex.current >= tasksOrderList.length - 1}
       >
         <ArrowForward />
       </Button>
