@@ -326,11 +326,12 @@ const AddPropertyDrawer: FC<{
     }
   };
 
-  const findHighestSortOrder = (arr: any) => {
+  const findHighestSortOrder = (arr: any[]) => {
+    //System introduced properties has sortOrder starting at 99991 which caused newly created to be set after that.
     let highestSortOrder = 0;
     if (arr?.length > 0) {
       arr.forEach((currentObject: any) => {
-        if (currentObject.sortOrder > highestSortOrder) {
+        if (currentObject.sortOrder > highestSortOrder && currentObject.sortOrder < 99990) {
           highestSortOrder = currentObject.sortOrder;
         }
       });

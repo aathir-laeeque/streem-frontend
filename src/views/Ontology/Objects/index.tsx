@@ -1,6 +1,7 @@
 import { LabelValueRow } from '#JobComposer/Header/styles';
 import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 import {
+  Avatar,
   Button,
   CardWithTitle,
   LoadingContainer,
@@ -33,6 +34,7 @@ import AddEditObjectDrawer from './components/AddEditObjectDrawer';
 import ProcessTabContent from './components/ProcessTabContent';
 import RelationTabContent from './components/RelationTabContent';
 import TabContent from './TabContent';
+import { getFullName } from '#utils/stringUtils';
 
 const ObjectViewWrapper = styled.div`
   display: flex;
@@ -331,19 +333,47 @@ const OverViewTabContent = () => {
     }
   }, []);
 
+  console.log("zero sorted'", selectedObjectType?.properties, selectedObject);
+
   return (
     <div className="overview-tab">
       <CardWithTitle>
-        <LabelValueRow style={{ padding: '8px 16px' }}>
+        <LabelValueRow style={{ padding: '8px 16px', justifyContent: 'space-between' }}>
           {[...(selectedObjectType?.properties || [])]
-            .filter(({ externalId }) => !['displayName', 'externalId'].includes(externalId))
-            .slice(0, 5)
-            .map((property) => (
-              <div className="info-item" key={property.displayName}>
-                <label className="info-item-label">{property.displayName}</label>
-                <span className="info-item-value">{propertyToValue(property)}</span>
-              </div>
-            ))}
+            .sort((a, b) => a.sortOrder - b.sortOrder)
+            .reduce((acc: any, property) => {
+              if (!['displayName', 'externalId'].includes(property.externalId) && acc.length < 4) {
+                if (['createdBy', 'updatedBy'].includes(property.externalId)) {
+                  let user;
+                  property.externalId === 'createdBy'
+                    ? (user = selectedObject?.createdBy)
+                    : (user = selectedObject?.modifiedBy);
+                  acc.push(
+                    <div className="info-item" key={property.id}>
+                      <label className="info-item-label">{property.displayName}</label>
+                      <div
+                        className="info-item-value"
+                        style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                      >
+                        <Avatar user={user} allowMouseEvents={false} size="small" />
+                        <div className="info-item-value">
+                          <span className="info-item-value">{user.employeeId}</span>
+                          <span className="info-item-value">{getFullName(user)}</span>
+                        </div>
+                      </div>
+                    </div>,
+                  );
+                } else {
+                  acc.push(
+                    <div className="info-item" key={property.id}>
+                      <label className="info-item-label">{property.displayName}</label>
+                      <span className="info-item-value">{propertyToValue(property)}</span>
+                    </div>,
+                  );
+                }
+              }
+              return acc;
+            }, [])}
         </LabelValueRow>
       </CardWithTitle>
       {Object.entries(state).map(([type, values]: any) => {
@@ -493,8 +523,8 @@ const ObjectsContent = ({
               {
                 value: '3',
                 label: 'Audit Logs',
-                panelContent: <TabContent />
-              }
+                panelContent: <TabContent />,
+              },
             ]}
           />
           {selectedObject && selectedObjectType && showAddEditObjectDrawer && (
