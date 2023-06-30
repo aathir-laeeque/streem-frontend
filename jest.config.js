@@ -18,6 +18,7 @@ module.exports = {
     '^#store(.*)$': '<rootDir>/src/store$1',
     '^#utils(.*)$': '<rootDir>/src/utils$1',
     '^#views(.*)$': '<rootDir>/src/views$1',
+    '^#hooks(.*)$': '<rootDir>/src/hooks$1',
   },
   modulePaths: ['.'],
 
