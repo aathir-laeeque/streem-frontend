@@ -240,6 +240,7 @@ const JobListView: FC<ListViewProps> = ({ location }) => {
               op: FilterOperators.ANY,
               values: [CompletedJobStates.COMPLETED, CompletedJobStates.COMPLETED_WITH_EXCEPTION],
             },
+            ...processFilter,
           ],
           processFilter: location?.state?.processFilter,
         },
