@@ -12,6 +12,7 @@ import {
   InputLabelGroup,
   TabLookLike,
 } from './utils';
+import { Parameter } from '#JobComposer/checklist.types';
 
 export type PdfJobDataType = Pick<
   JobSummary,
@@ -216,9 +217,11 @@ export const CommonJobPdfDetails = ({
               endedBy ? `${endedBy.firstName} ${endedBy.lastName} ID:${endedBy.employeeId}` : '-'
             }
           />
-          {parameterValues.map((currParam) => (
-            <InlineInputLabelGroup label={currParam.label} value={getParameterValue(currParam)} />
-          ))}
+          {parameterValues
+            .sort((a: Parameter, b: Parameter) => a?.orderTree - b?.orderTree)
+            .map((currParam) => (
+              <InlineInputLabelGroup label={currParam.label} value={getParameterValue(currParam)} />
+            ))}
         </View>
       </TabLookLike>
 
