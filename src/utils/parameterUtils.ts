@@ -23,7 +23,7 @@ export const getParameterContent = (parameter: any) => {
       break;
     case MandatoryParameter.DATE:
     case MandatoryParameter.DATE_TIME:
-      parameterContent = formatDateTime(parameter.response.value);
+      parameterContent = parameter.response?.value ? formatDateTime(parameter.response.value) : '-';
       break;
     case MandatoryParameter.YES_NO:
       parameterContent = responseDetailsForChoiceBasedParameters(parameter);
@@ -32,7 +32,7 @@ export const getParameterContent = (parameter: any) => {
       parameterContent = responseDetailsForChoiceBasedParameters(parameter);
       break;
     case MandatoryParameter.RESOURCE:
-      parameterContent = parameter.response.choices.reduce(
+      parameterContent = parameter.response?.choices?.reduce(
         (acc: any, currChoice: any) =>
           (acc = `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId})`),
         '',
