@@ -46,8 +46,11 @@ export const processParametersMapSuccess = (
   },
 ) => actionSpreader(ComposerAction.PROCESS_PARAMETER_MAP_SUCCESS, { parameters, payload });
 
-export const executeBranchingRulesParameter = (parameterValues: Record<string, Parameter>) =>
-  actionSpreader(ComposerAction.EXECUTE_LATEST_BRANCHING_RULES, { parameterValues });
+export const executeBranchingRulesParameter = (
+  parameterValues: Record<string, Parameter>,
+  checklistId?: string,
+) =>
+  actionSpreader(ComposerAction.EXECUTE_LATEST_BRANCHING_RULES, { parameterValues, checklistId });
 
 export const updateHiddenParameterIds = (data: Record<string, Array<string>>[]) =>
   actionSpreader(ComposerAction.UPDATE_HIDDEN_PARAMETER_IDS, { data });

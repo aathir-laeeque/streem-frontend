@@ -99,7 +99,7 @@ export const JobForm: FC<JobFormProps> = ({ form, checklist, selectedObject }) =
         parameter: parameterData,
         reason: parameterData?.response?.reason || '',
       };
-      dispatch(executeBranchingRulesParameter(parameterValues));
+      dispatch(executeBranchingRulesParameter(parameterValues, checklistId));
     }
   };
 

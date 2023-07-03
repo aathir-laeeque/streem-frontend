@@ -114,9 +114,9 @@ function* executeBranchingRulesSaga({
   payload,
 }: ReturnType<typeof executeBranchingRulesParameter>) {
   try {
-    const { parameterValues } = payload;
+    const { parameterValues, checklistId = undefined } = payload;
     const { data } = yield call(request, 'PATCH', apiBranchingRuleExecute(), {
-      data: { parameterValues },
+      data: { parameterValues, checklistId },
     });
     yield put(updateHiddenParameterIds(data));
   } catch (error) {
