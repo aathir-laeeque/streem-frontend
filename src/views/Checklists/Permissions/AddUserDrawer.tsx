@@ -4,6 +4,9 @@ import { defaultParams, useUsers } from '#services/users';
 import { Select } from '#components';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
+import { FilterOperators } from '#utils/globalTypes';
+import { InputActionMeta } from 'react-select';
+import { debounce } from 'lodash';
 
 const AddUserFormWrapper = styled.div`
   width: 100%;
@@ -57,7 +60,7 @@ const AddUserDrawer: FC<{
     }, 200);
   };
 
-  const { users } = useUsers({
+  const { users, loadAgain, loadMore } = useUsers({
     params: { ...defaultParams(false) },
   });
 
@@ -76,7 +79,38 @@ const AddUserDrawer: FC<{
               externalId: <div>&nbsp;(ID: {user?.employeeId})</div>,
             })) as any
           }
+          onInputChange={debounce((newValue: string, actionMeta: InputActionMeta) => {
+            if (newValue !== actionMeta.prevInputValue) {
+              loadAgain({
+                newParams: {
+                  ...defaultParams(),
+                  filters: JSON.stringify({
+                    op: 'OR',
+                    fields: [
+                      {
+                        field: 'firstName',
+                        op: FilterOperators.LIKE,
+                        values: [newValue],
+                      },
+                      {
+                        field: 'lastName',
+                        op: FilterOperators.LIKE,
+                        values: [newValue],
+                      },
+                      {
+                        field: 'employeeId',
+                        op: FilterOperators.LIKE,
+                        values: [newValue],
+                      },
+                    ],
+                  }),
+                },
+              });
+            }
+          }, 500)}
           onChange={(data) => setUser(data)}
+          filterOption={() => true}
+          onMenuScrollToBottom={loadMore}
         />
       </AddUserFormWrapper>
     ),

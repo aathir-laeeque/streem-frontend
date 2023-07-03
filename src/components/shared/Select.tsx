@@ -20,6 +20,7 @@ type SelectProps = Props<any> & {
   optional?: boolean;
   style?: React.CSSProperties;
   formatOptionLabel?: Props<any>['formatOptionLabel'];
+  filterProp?: string[];
 };
 
 const Wrapper = styled.div.attrs({
@@ -115,9 +116,16 @@ export const Select: FC<SelectProps> = ({
   label = '',
   error = '',
   style = {},
+  filterProp = [],
   components,
   ...rest
 }) => {
+  const _filterProp = [
+    'label',
+    ...filterProp,
+    ...(rest?.options?.[0]?.externalId ? ['externalId'] : []),
+  ];
+
   return (
     <Wrapper style={style}>
       {label && (
@@ -133,6 +141,23 @@ export const Select: FC<SelectProps> = ({
         captureMenuScroll={true}
         formatOptionLabel={formatOptionLabel}
         components={{ DropdownIndicator, ...components }}
+        filterOption={(option, inputValue) => {
+          if (!inputValue) {
+            return true;
+          }
+          let valid = false;
+          _filterProp.every((key) => {
+            if (
+              typeof option?.data?.[key] === 'string' &&
+              option?.data?.[key]?.toLowerCase()?.indexOf?.(inputValue.toLowerCase()) >= 0
+            ) {
+              valid = true;
+              return false;
+            }
+            return true;
+          });
+          return valid;
+        }}
         {...rest}
       />
       {error && <span className="field-error">{error}</span>}

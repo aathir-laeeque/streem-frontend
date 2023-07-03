@@ -12,7 +12,7 @@ import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { navigate } from '@reach/router';
 import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
-import { components } from 'react-select';
+import { InputActionMeta, components } from 'react-select';
 import rightArrow from '#assets/svg/right-arrow.svg';
 import { ParameterVerificationStatus } from '#JobComposer/ActivityList/types';
 import styled from 'styled-components';
@@ -116,7 +116,7 @@ const VerificationsContent: FC<{
 }> = ({ values = {} }) => {
   const { userId: requestedTo, jobId, isJobOpen, redirectedFromBanner } = values;
 
-  const { users, loadMore } = useUsers({
+  const { users, loadMore, loadAgain } = useUsers({
     params: { ...defaultParams(false) },
   });
 
@@ -190,8 +190,38 @@ const VerificationsContent: FC<{
                 requestedBy: data?.value,
               }));
             }}
+            onInputChange={debounce((newValue: string, actionMeta: InputActionMeta) => {
+              if (newValue !== actionMeta.prevInputValue) {
+                loadAgain({
+                  newParams: {
+                    ...defaultParams(),
+                    filters: JSON.stringify({
+                      op: 'OR',
+                      fields: [
+                        {
+                          field: 'firstName',
+                          op: FilterOperators.LIKE,
+                          values: [newValue],
+                        },
+                        {
+                          field: 'lastName',
+                          op: FilterOperators.LIKE,
+                          values: [newValue],
+                        },
+                        {
+                          field: 'employeeId',
+                          op: FilterOperators.LIKE,
+                          values: [newValue],
+                        },
+                      ],
+                    }),
+                  },
+                });
+              }
+            }, 500)}
             onMenuScrollToBottom={loadMore}
             isClearable={true}
+            filterOption={() => true}
           />
         </div>
         {isJobOpen && !redirectedFromBanner && (
@@ -212,8 +242,38 @@ const VerificationsContent: FC<{
                   requestedTo: data?.value,
                 }));
               }}
+              onInputChange={debounce((newValue: string, actionMeta: InputActionMeta) => {
+                if (newValue !== actionMeta.prevInputValue) {
+                  loadAgain({
+                    newParams: {
+                      ...defaultParams(),
+                      filters: JSON.stringify({
+                        op: 'OR',
+                        fields: [
+                          {
+                            field: 'firstName',
+                            op: FilterOperators.LIKE,
+                            values: [newValue],
+                          },
+                          {
+                            field: 'lastName',
+                            op: FilterOperators.LIKE,
+                            values: [newValue],
+                          },
+                          {
+                            field: 'employeeId',
+                            op: FilterOperators.LIKE,
+                            values: [newValue],
+                          },
+                        ],
+                      }),
+                    },
+                  });
+                }
+              }, 500)}
               onMenuScrollToBottom={loadMore}
               isClearable={true}
+              filterOption={() => true}
             />
           </div>
         )}
