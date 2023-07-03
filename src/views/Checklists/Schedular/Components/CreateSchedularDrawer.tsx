@@ -571,6 +571,8 @@ const CreateSchedularDrawer: FC<{
     }
   };
 
+  const { name } = watch(['name']);
+
   const onSubmit = () => {
     const _data = { ...getValues(), ...formData.current };
     _data.customRecurrence = false;
@@ -626,7 +628,7 @@ const CreateSchedularDrawer: FC<{
         {},
       );
       const newData = {
-        name: _data?.name,
+        name: name,
         description: _data?.description,
         checklistId: _data?.checklistId,
         parameterValues,
@@ -645,7 +647,7 @@ const CreateSchedularDrawer: FC<{
       );
     } else {
       const newData = {
-        name: _data?.name,
+        name: name,
         description: _data?.description,
         checklistId: currentSchedular.checklistId,
         expectedStartDate: _data?.expectedStartDate,
@@ -664,8 +666,6 @@ const CreateSchedularDrawer: FC<{
       );
     }
   };
-
-  const { name } = watch(['name']);
 
   const { StyledDrawer, setDrawerOpen } = useDrawer({
     title: readOnly ? 'View Scheduler' : schedular?.value ? 'Revise Scheduler' : 'Create Scheduler',
