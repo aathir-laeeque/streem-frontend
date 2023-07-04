@@ -1,7 +1,7 @@
 import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { Button, LoadingContainer, StyledTabs, useDrawer } from '#components';
-import { apiJobInfo } from '#utils/apiUrls';
 import { getParameterContent } from '#utils/parameterUtils';
+import { apiJobInfo, apiSingleProcessScheduler } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
 import moment from 'moment';
@@ -94,6 +94,7 @@ const JobInfoDrawer: FC<{
 }> = ({ onCloseDrawer, job }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [jobInfo, setJobInfo] = useState<any>();
+  const [schedulerInfo, setSchedulerInfo] = useState<any>(null);
 
   const fetchJobInfo = async () => {
     try {
@@ -104,9 +105,91 @@ const JobInfoDrawer: FC<{
     }
   };
 
+  const fetchSchedulerById = async () => {
+    try {
+      const { data } = await request('GET', apiSingleProcessScheduler(job.schedulerId));
+      if (data) {
+        setSchedulerInfo(data);
+      }
+    } catch (e) {
+      console.error('Error Fetching Parameter', e);
+    }
+  };
+
   useEffect(() => {
     fetchJobInfo();
+    if (job?.schedulerId) {
+      fetchSchedulerById();
+    }
   }, []);
+
+  const getRecurrenceSummary = () => {
+    try {
+      if (schedulerInfo?.recurrenceRule) {
+        const rule = RRule.fromString(schedulerInfo.recurrenceRule);
+        let recurrenceString = rule?.toText() || null;
+        if (recurrenceString) {
+          const freq = schedulerInfo.recurrenceRule.match('FREQ=([^;]*)')[1];
+          if (schedulerInfo.customRecurrence) {
+            switch (freq) {
+              case 'DAILY':
+              case 'WEEKLY':
+              case 'MONTHLY':
+                recurrenceString = `Repeat ${recurrenceString} at ${moment
+                  .unix(job.expectedStartDate)
+                  .format('hh:mm A')}`;
+                break;
+              case 'YEARLY':
+                recurrenceString = `Repeat ${recurrenceString} on ${moment
+                  .unix(job.expectedStartDate)
+                  .format('Do MMMM [at] hh:mm A')}`;
+                break;
+
+              default:
+                break;
+            }
+          } else {
+            switch (freq) {
+              case 'DAILY':
+                recurrenceString = `Repeat ${recurrenceString} at ${moment
+                  .unix(job.expectedStartDate)
+                  .format('hh:mm A')}`;
+                break;
+              case 'WEEKLY':
+                recurrenceString = `Repeat ${recurrenceString} on ${moment
+                  .unix(job.expectedStartDate)
+                  .format('dddd [at] hh:mm A')}`;
+                break;
+              case 'MONTHLY':
+                recurrenceString = `Repeat ${recurrenceString} on ${moment
+                  .unix(job.expectedStartDate)
+                  .format('Do [at] hh:mm A')}`;
+                break;
+              case 'YEARLY':
+                recurrenceString = `Repeat ${recurrenceString} on ${moment
+                  .unix(job.expectedStartDate)
+                  .format('Do MMMM [at] hh:mm A')}`;
+                break;
+
+              default:
+                break;
+            }
+          }
+
+          return [
+            {
+              label: 'Recurrence',
+              value: recurrenceString,
+            },
+          ];
+        }
+      }
+      return [];
+    } catch (e) {
+      console.error('Error while creating recurrence string', e);
+      return [];
+    }
+  };
 
   const sections = [
     {
@@ -195,6 +278,7 @@ const JobInfoDrawer: FC<{
                               .unix(job.expectedEndDate)
                               .format('Do MMMM, YYYY [at] hh:mm A'),
                           },
+                          ...(schedulerInfo ? getRecurrenceSummary() : []),
                         ]}
                       />
                     ) : (
