@@ -268,7 +268,6 @@ const JobListView: FC<ListViewProps> = ({ location }) => {
         heading={`${selectedUseCase?.label} - Jobs ${
           selectedProcessName ? `for ${selectedProcessName}` : ''
         }`}
-        subHeading="Create, Assign and view Completed Jobs"
       />
 
       <div className="list-table">
