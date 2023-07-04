@@ -30,7 +30,7 @@ const JobFormWrapper = styled.div.attrs({})`
 `;
 
 export const JobForm: FC<JobFormProps> = ({ form, checklist, selectedObject }) => {
-  const { register, setValue, watch } = form;
+  const { register, setValue, watch, getValues } = form;
   const { checklistId } = watch(['checklistId']);
   const dispatch = useDispatch();
   const {
@@ -91,14 +91,19 @@ export const JobForm: FC<JobFormProps> = ({ form, checklist, selectedObject }) =
   };
 
   const onChangeHandler = (parameterData: Parameter) => {
-    let parameterValues: Record<string, any> = {};
     if (
       [MandatoryParameter.SINGLE_SELECT, MandatoryParameter.RESOURCE].includes(parameterData.type)
     ) {
-      parameterValues[parameterData.id] = {
-        parameter: parameterData,
-        reason: parameterData?.response?.reason || '',
-      };
+      const data = getValues();
+      let parameterValues = parametersList.reduce((acc, parameter: any) => {
+        if (data[parameter.id]) {
+          acc[parameter.id] = {
+            parameter: data[parameter.id],
+            reason: data[parameter?.id]?.response?.reason || '',
+          };
+        }
+        return acc;
+      }, {});
       dispatch(executeBranchingRulesParameter(parameterValues, checklistId));
     }
   };
