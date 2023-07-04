@@ -35,7 +35,7 @@ import { navigate } from '@reach/router';
 import { capitalize, debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { RRule } from 'rrule';
+import { Frequency, RRule } from 'rrule';
 import styled from 'styled-components';
 import CreateJob from '../Components/CreateJob';
 import JobInfoDrawer from '../Components/JobInfo';
@@ -43,7 +43,9 @@ import { fetchJobs } from './actions';
 import { TabContentWrapper } from './styles';
 import { AssignedJobStates, CompletedJobStates, Job } from './types';
 import checkIcon from '../../../assets/svg/check-icon.svg';
+import recurrenceIcon from '#assets/svg/Recurrence.svg';
 import moment from 'moment';
+import { Tooltip, withStyles } from '@material-ui/core';
 
 const CountCardWrapper = styled.div`
   display: flex;
@@ -436,6 +438,20 @@ export const getJobsColumnByTab = (label: string, setSelectedJob: any, onSetDate
   return [];
 };
 
+const CustomTooltip = withStyles({
+  tooltip: {
+    width: '205px',
+    backgroundColor: '#393939',
+    borderRadius: '0px',
+    color: '#c2c2c2',
+    textAlign: 'left',
+    fontSize: '14px',
+  },
+  arrow: {
+    color: '#393939',
+  },
+})(Tooltip);
+
 const JobsContent: FC<TabContentProps> = ({
   label,
   values: { baseFilters, cards, processFilter },
@@ -589,6 +605,69 @@ const JobsContent: FC<TabContentProps> = ({
     if (!checklistPageable.last) fetchChecklistData({ page: checklistPageable.page + 1 });
   };
 
+  const getRecurrenceSummary = (job: Job) => {
+    try {
+      if (job?.scheduler?.recurrenceRule) {
+        const rule = RRule.fromString(job?.scheduler?.recurrenceRule);
+        let recurrenceString = rule?.toText() || null;
+        if (recurrenceString) {
+          const freq = job?.scheduler?.recurrenceRule.match('FREQ=([^;]*)')[1];
+          if (job?.scheduler?.customRecurrence) {
+            switch (freq) {
+              case 'DAILY':
+              case 'WEEKLY':
+              case 'MONTHLY':
+                recurrenceString = `Repeat ${recurrenceString} at ${moment
+                  .unix(job.expectedStartDate)
+                  .format('hh:mm A')}`;
+                break;
+              case 'YEARLY':
+                recurrenceString = `Repeat ${recurrenceString} on ${moment
+                  .unix(job.expectedStartDate)
+                  .format('Do MMMM [at] hh:mm A')}`;
+                break;
+
+              default:
+                break;
+            }
+          } else {
+            switch (freq) {
+              case 'DAILY':
+                recurrenceString = `Repeat ${recurrenceString} at ${moment
+                  .unix(job.expectedStartDate)
+                  .format('hh:mm A')}`;
+                break;
+              case 'WEEKLY':
+                recurrenceString = `Repeat ${recurrenceString} on ${moment
+                  .unix(job.expectedStartDate)
+                  .format('dddd [at] hh:mm A')}`;
+                break;
+              case 'MONTHLY':
+                recurrenceString = `Repeat ${recurrenceString} on ${moment
+                  .unix(job.expectedStartDate)
+                  .format('Do [at] hh:mm A')}`;
+                break;
+              case 'YEARLY':
+                recurrenceString = `Repeat ${recurrenceString} on ${moment
+                  .unix(job.expectedStartDate)
+                  .format('Do MMMM [at] hh:mm A')}`;
+                break;
+
+              default:
+                break;
+            }
+          }
+
+          return recurrenceString;
+        }
+      }
+      return '';
+    } catch (e) {
+      console.error('Error while creating recurrence string', e);
+      return [];
+    }
+  };
+
   return (
     <TabContentWrapper>
       {cardsValues.length > 0 && <CountCards items={cardsValues} onChange={setFilterFields} />}
@@ -663,6 +742,17 @@ const JobsContent: FC<TabContentProps> = ({
               {jobs.map((job) => {
                 const actualStartDate = job?.startedAt || moment().unix();
                 const actualEndDate = job?.endedAt || moment().unix();
+                let rule;
+                let rRuleOptions;
+                let frequency;
+
+                if (job?.scheduler) {
+                  rule = RRule?.fromString(job?.scheduler?.recurrenceRule);
+                  rRuleOptions = rule?.origOptions;
+                  frequency =
+                    Object?.keys(Frequency)[Object?.values(Frequency)?.indexOf(rRuleOptions?.freq)];
+                }
+
                 return (
                   <div className="job-row" key={job.id}>
                     <div className="job-row-section left">
@@ -672,6 +762,70 @@ const JobsContent: FC<TabContentProps> = ({
                         </h5>
                         {job.expectedStartDate && job.expectedEndDate ? (
                           <div className="schedule-info">
+                            {frequency && <span>{capitalize(frequency)}</span>}
+                            {job?.scheduler && (
+                              <CustomTooltip
+                                title={
+                                  <div
+                                    style={{
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      gap: '8px',
+                                      padding: '2px',
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                      }}
+                                    >
+                                      <span style={{ fontSize: '12px' }}>Scheduler Name</span>
+                                      <span>{job.scheduler.name}</span>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                      }}
+                                    >
+                                      <span style={{ fontSize: '12px' }}>Start Date and Time</span>
+                                      <span>
+                                        {moment
+                                          .unix(job.expectedStartDate)
+                                          .format('Do MMMM, YYYY [at] hh:mm A')}
+                                      </span>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+
+                                        flexDirection: 'column',
+                                      }}
+                                    >
+                                      <span style={{ fontSize: '12px' }}>End Date and Time</span>
+                                      <span>
+                                        {moment
+                                          .unix(job.expectedEndDate)
+                                          .format('Do MMMM, YYYY [at] hh:mm A')}
+                                      </span>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                      }}
+                                    >
+                                      <span style={{ fontSize: '12px' }}>Recurrence</span>
+                                      <span>{getRecurrenceSummary(job)}</span>
+                                    </div>
+                                  </div>
+                                }
+                                arrow
+                              >
+                                <img className="icon" src={recurrenceIcon} alt="recurrence-icon" />
+                              </CustomTooltip>
+                            )}
                             <span
                               style={{
                                 color: checkJobExecutionDelay(
