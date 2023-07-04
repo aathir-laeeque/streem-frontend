@@ -15,14 +15,16 @@ import { apiGetObjectTypes, apiGetParameters } from '#utils/apiUrls';
 import { FilterOperators, InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { fetchObjectTypes } from '#views/Ontology/actions';
-import { ObjectType } from '#views/Ontology/types';
+import { Cardinality, ObjectType } from '#views/Ontology/types';
 import AddIcon from '@material-ui/icons/Add';
-import { startCase, toLower } from 'lodash';
+import { isArray, startCase, toLower } from 'lodash';
 import React, { FC, useState, useEffect } from 'react';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
+import { createFetchList } from '#hooks/useFetchData';
+import { baseUrl } from '#utils/apiUrls';
 
 const Wrapper = styled.div`
   .modal {
@@ -146,7 +148,7 @@ const getDateUnits = (inputType: InputTypes) => {
   }
 };
 
-const commonKeys = [
+let commonKeys = [
   'propertyId',
   'propertyInputType',
   'propertyExternalId',
@@ -305,7 +307,14 @@ const ActionFormCard: FC<Props> = ({
   const [selectedObjectType, setSelectedObjectType] = useState<ObjectType | undefined>(undefined);
   const [isLoadingObjectType, setIsLoadingObjectType] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any>();
+  const [selectedRelation, setSelectedRelation] = useState<any>();
   const { editActionId, editIndex, selectedAction, editActionFlag } = state;
+  const [objectUrlPath, setObjectUrlPath] = useState<string>('');
+  const { list: objects, reset: resetObjects } = createFetchList(objectUrlPath, {}, false);
+
+  useEffect(() => {
+    resetObjects({ url: objectUrlPath });
+  }, [objectUrlPath]);
 
   const {
     handleSubmit,
@@ -408,6 +417,14 @@ const ActionFormCard: FC<Props> = ({
       ) {
         let keysToValidate: string[] = [];
         if (actionType === AutomationActionActionType.SET_PROPERTY) {
+          commonKeys = [
+            'propertyId',
+            'propertyInputType',
+            'propertyExternalId',
+            'propertyDisplayName',
+            'referencedParameterId',
+            'objectTypeDisplayName',
+          ];
           if (value?.propertyInputType) {
             if ([InputTypes.DATE, InputTypes.DATE_TIME].includes(value.propertyInputType)) {
               keysToValidate = ['entityType', 'entityId', 'captureProperty', 'dateUnit', 'value'];
@@ -415,6 +432,16 @@ const ActionFormCard: FC<Props> = ({
               keysToValidate = ['choices'];
             }
           }
+        } else if (actionType === AutomationActionActionType.SET_RELATION) {
+          commonKeys = [
+            'referencedParameterId',
+            'objectTypeDisplayName',
+            'relationId',
+            'relationExternalId',
+            'relationDisplayName',
+            'relationObjectTypeId',
+          ];
+          keysToValidate = ['target'];
         } else {
           keysToValidate = ['parameterId'];
         }
@@ -489,6 +516,14 @@ const ActionFormCard: FC<Props> = ({
           if (currAction.actionType !== AutomationActionActionType.CREATE_OBJECT) {
             let keysToValidate: string[] = [];
             if (currAction.actionType === AutomationActionActionType.SET_PROPERTY) {
+              commonKeys = [
+                'propertyId',
+                'propertyInputType',
+                'propertyExternalId',
+                'propertyDisplayName',
+                'referencedParameterId',
+                'objectTypeDisplayName',
+              ];
               if (_actionDetails?.propertyInputType) {
                 if (
                   [InputTypes.DATE, InputTypes.DATE_TIME].includes(_actionDetails.propertyInputType)
@@ -504,6 +539,16 @@ const ActionFormCard: FC<Props> = ({
                   keysToValidate = ['choices'];
                 }
               }
+            } else if (currAction.actionType === AutomationActionActionType.SET_RELATION) {
+              commonKeys = [
+                'referencedParameterId',
+                'objectTypeDisplayName',
+                'relationId',
+                'relationExternalId',
+                'relationDisplayName',
+                'relationObjectTypeId',
+              ];
+              keysToValidate = ['target'];
             } else {
               keysToValidate = ['parameterId'];
             }
@@ -557,6 +602,12 @@ const ActionFormCard: FC<Props> = ({
         (currProperty) => currProperty?.id === actionDetails?.propertyId,
       )?.[0];
       setSelectedProperty(property);
+    }
+    if (editActionFlag && actionType === 'SET_RELATION') {
+      const relation = selectedObjectType?.relations?.filter(
+        (currRelation) => currRelation?.id === actionDetails?.relationId,
+      )?.[0];
+      setSelectedRelation(relation);
     }
     reset({
       displayName: selectedAction.displayName,
@@ -731,6 +782,7 @@ const ActionFormCard: FC<Props> = ({
                                   ...resource.data,
                                   label: resource.label,
                                   value: resource.id,
+                                  externalId: resource?.data?.objectTypeDisplayName,
                                 })),
                                 isSearchable: false,
                                 placeholder: 'Select Resource Parameter',
@@ -762,6 +814,7 @@ const ActionFormCard: FC<Props> = ({
                             ...([
                               AutomationActionActionType.SET_PROPERTY,
                               AutomationActionActionType.ARCHIVE_OBJECT,
+                              AutomationActionActionType.SET_RELATION,
                             ].includes(actionType)
                               ? []
                               : [
@@ -798,7 +851,8 @@ const ActionFormCard: FC<Props> = ({
                                   },
                                 ]),
                             ...(selectedObjectType &&
-                            actionType !== AutomationActionActionType.ARCHIVE_OBJECT
+                            actionType !== AutomationActionActionType.ARCHIVE_OBJECT &&
+                            actionType !== AutomationActionActionType.SET_RELATION
                               ? [
                                   {
                                     type: InputTypes.SINGLE_SELECT,
@@ -922,6 +976,101 @@ const ActionFormCard: FC<Props> = ({
                                           },
                                         },
                                       ]),
+                                ]
+                              : []),
+                            ...(selectedObjectType &&
+                            actionType === AutomationActionActionType.SET_RELATION
+                              ? [
+                                  {
+                                    type: InputTypes.SINGLE_SELECT,
+                                    props: {
+                                      id: 'objectRelation',
+                                      label: 'Object Relation',
+                                      isLoading: isLoadingObjectType,
+                                      isDisabled: isReadOnly,
+                                      options: selectedObjectType?.relations?.map((relation) => ({
+                                        value: relation.id,
+                                        label: relation?.displayName,
+                                        externalId: relation?.externalId,
+                                        target: relation?.target,
+                                        objectTypeId: relation?.objectTypeId,
+                                      })),
+                                      value: actionDetails?.relationId
+                                        ? [
+                                            {
+                                              label: actionDetails.relationDisplayName,
+                                              value: actionDetails.relationId,
+                                            },
+                                          ]
+                                        : null,
+                                      isSearchable: false,
+                                      placeholder: 'Select Object Relation',
+                                      onChange: (option: any) => {
+                                        setSelectedRelation(option);
+                                        setObjectUrlPath(`${baseUrl}${option?.target?.urlPath}`);
+                                        onChange({
+                                          ...actionDetails,
+                                          relationId: option.value,
+                                          relationExternalId: option.externalId,
+                                          relationDisplayName: option.label,
+                                          relationObjectTypeId: option.objectTypeId,
+                                        });
+                                      },
+                                    },
+                                  },
+                                ]
+                              : []),
+                            ...(selectedRelation && AutomationActionActionType.SET_RELATION
+                              ? [
+                                  {
+                                    type:
+                                      selectedRelation?.target?.cardinality ===
+                                      Cardinality.ONE_TO_ONE
+                                        ? InputTypes.SINGLE_SELECT
+                                        : InputTypes.MULTI_SELECT,
+                                    props: {
+                                      id: 'value',
+                                      label: 'Set Value',
+                                      options: objects?.map((object) => ({
+                                        value: object.id,
+                                        label: object?.displayName,
+                                        externalId: object?.externalId,
+                                        collection: object?.collection,
+                                      })),
+                                      isSearchable: false,
+                                      isDisabled: isReadOnly,
+                                      placeholder: 'Set Value',
+                                      value: actionDetails?.target
+                                        ? actionDetails?.target?.map((targetRelation) => ({
+                                            label: targetRelation.displayName,
+                                            value: targetRelation.id,
+                                            targetExternalId: targetRelation.externalId,
+                                            collection: targetRelation.collection,
+                                          }))
+                                        : null,
+                                      onChange: (option: any) => {
+                                        const modifiedOption = isArray(option)
+                                          ? option?.map((o) => {
+                                              return {
+                                                id: o?.value,
+                                                displayName: o?.label,
+                                                externalId: o?.externalId || o?.targetExternalId,
+                                                collection: o?.collection,
+                                              };
+                                            })
+                                          : [
+                                              {
+                                                id: option?.value,
+                                                displayName: option?.label,
+                                                externalId:
+                                                  option?.externalId || option?.targetExternalId,
+                                                collection: option?.collection,
+                                              },
+                                            ];
+                                        onChange({ ...actionDetails, target: modifiedOption });
+                                      },
+                                    },
+                                  },
                                 ]
                               : []),
                           ]),

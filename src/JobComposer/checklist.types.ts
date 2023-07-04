@@ -142,6 +142,7 @@ export enum AutomationActionActionType {
   CREATE_OBJECT = 'CREATE_OBJECT',
   SET_PROPERTY = 'SET_PROPERTY',
   ARCHIVE_OBJECT = 'ARCHIVE_OBJECT',
+  SET_RELATION = 'SET_RELATION',
 }
 
 export enum AutomationActionActionTypeVisual {
@@ -150,6 +151,7 @@ export enum AutomationActionActionTypeVisual {
   CREATE_OBJECT = 'Create Object',
   SET_PROPERTY = 'Set Property',
   ARCHIVE_OBJECT = 'Archive Object',
+  SET_RELATION = 'Set Relation',
 }
 
 export enum AutomationActionTriggerType {
