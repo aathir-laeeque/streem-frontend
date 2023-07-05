@@ -31,8 +31,7 @@ const Logs: FC<TabContentProps> = ({ values }) => {
   const {
     prototypeComposer: { data },
     checklistListView: {
-      pageable,
-      jobLogs: { list, loading },
+      jobLogs: { list, loading, pageable },
     },
   } = useTypedSelector((state) => state);
   const [state, setState] = useState<{
