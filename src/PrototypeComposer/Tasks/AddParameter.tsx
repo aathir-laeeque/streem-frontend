@@ -191,6 +191,7 @@ function CustomStepIcon(props: StepIconProps) {
 
 const isFiltersAllowed = (type: ParameterType) => {
   switch (type) {
+    case MandatoryParameter.MULTI_RESOURCE:
     case MandatoryParameter.RESOURCE:
       return true;
     default:
