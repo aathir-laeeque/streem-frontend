@@ -610,11 +610,13 @@ const RuleConfiguration: FC<{ parameter: Parameter; isReadOnly: boolean }> = ({
           };
           createJobOptionHide.options.push(jobParameterOption);
         });
-      cjfHiddenListOptions.push({
-        label: '',
-        value: '',
-        options: [createJobOptionHide],
-      });
+      if (createJobOptionHide.options.length) {
+        cjfHiddenListOptions.push({
+          label: '',
+          value: '',
+          options: [createJobOptionHide],
+        });
+      }
 
       jobParameters
         .filter((currParam) => !currParam?.hidden && currParam?.id !== parameter?.id)
@@ -625,11 +627,14 @@ const RuleConfiguration: FC<{ parameter: Parameter; isReadOnly: boolean }> = ({
           };
           createJobOptionShow.options.push(jobParameterOption);
         });
-      cjfShowListOptions.push({
-        label: '',
-        value: '',
-        options: [createJobOptionShow],
-      });
+
+      if (createJobOptionShow.options.length) {
+        cjfShowListOptions.push({
+          label: '',
+          value: '',
+          options: [createJobOptionShow],
+        });
+      }
 
       filterParameterOptions(cjfHiddenListOptions, cjfShowListOptions);
     } else {
