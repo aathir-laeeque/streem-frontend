@@ -5,14 +5,13 @@ import {
   Button,
   CardWithTitle,
   LoadingContainer,
-  PaginatedFetchData,
   Pagination,
   StyledTabs,
 } from '#components';
 import { useTypedSelector } from '#store';
 import { apiGetJobsByResource } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGINATION } from '#utils/constants';
-import { FilterOperators, InputTypes } from '#utils/globalTypes';
+import { FilterOperators, InputTypes, fetchDataParams } from '#utils/globalTypes';
 import { getParameterContent } from '#utils/parameterUtils';
 import { request } from '#utils/request';
 import { formatDateByInputType, formatDateTime } from '#utils/timeUtils';
@@ -211,10 +210,24 @@ const OverViewTabContent = () => {
   } = useTypedSelector((state) => state);
 
   const [state, setState] = useState<Record<string, any>>({
+    unscheduledNotStarted: {
+      label: 'Unscheduled and Not Started Jobs',
+      list: [],
+      emptyJobListMessage: 'No unscheduled or not started jobs',
+      pageable: { ...DEFAULT_PAGINATION, pageSize: 5 },
+      filters: [
+        {
+          field: 'state',
+          op: FilterOperators.ANY,
+          values: [UnassignedJobStates.UNASSIGNED, AssignedJobStates.ASSIGNED],
+        },
+      ],
+    },
     onGoing: {
       label: 'Ongoing Jobs',
       list: [],
-      pageable: { ...DEFAULT_PAGINATION, pageSize: 7 },
+      emptyJobListMessage: 'No ongoing jobs',
+      pageable: { ...DEFAULT_PAGINATION, pageSize: 5 },
       filters: [
         {
           field: 'state',
@@ -226,7 +239,7 @@ const OverViewTabContent = () => {
     dueToday: {
       label: 'Due Today',
       list: [],
-      pageable: { ...DEFAULT_PAGINATION, pageSize: 3 },
+      pageable: { ...DEFAULT_PAGINATION, pageSize: 5 },
       filters: [
         {
           field: 'state',
@@ -245,10 +258,33 @@ const OverViewTabContent = () => {
         },
       ],
     },
+    overdue: {
+      label: 'Overdue Jobs',
+      emptyJobListMessage: 'No overdue jobs',
+      list: [],
+      pageable: { ...DEFAULT_PAGINATION, pageSize: 5 },
+      filters: [
+        {
+          field: 'state',
+          op: FilterOperators.ANY,
+          values: [
+            AssignedJobStates.IN_PROGRESS,
+            AssignedJobStates.BLOCKED,
+            AssignedJobStates.ASSIGNED,
+            UnassignedJobStates.UNASSIGNED,
+          ],
+        },
+        {
+          field: 'expectedStartDate',
+          op: FilterOperators.GT,
+          values: [moment().endOf('day').unix().toString()],
+        },
+      ],
+    },
     recentlyCompleted: {
       label: 'Recently Completed',
       list: [],
-      pageable: DEFAULT_PAGINATION,
+      pageable: { ...DEFAULT_PAGINATION, pageSize: 5 },
       filters: [
         {
           field: 'state',
@@ -284,7 +320,7 @@ const OverViewTabContent = () => {
     return propertyValue;
   };
 
-  const fetchData = async (type: string, params: PaginatedFetchData = {}) => {
+  const fetchData = async (type: string, params: fetchDataParams = {}) => {
     const {
       page = DEFAULT_PAGE_NUMBER,
       size = state[type].pageable.pageSize,
@@ -333,8 +369,6 @@ const OverViewTabContent = () => {
     }
   }, []);
 
-  console.log("zero sorted'", selectedObjectType?.properties, selectedObject);
-
   return (
     <div className="overview-tab">
       <CardWithTitle>
@@ -376,9 +410,9 @@ const OverViewTabContent = () => {
             }, [])}
         </LabelValueRow>
       </CardWithTitle>
-      {Object.entries(state).map(([type, values]: any) => {
+      {Object.entries(state).map(([type, values]: any, index: number) => {
         return (
-          <CardWithTitle>
+          <CardWithTitle key={index}>
             <h4 className="card-label">{values.label}</h4>
             <div className="job-list">
               {values.list.map((job) => {
