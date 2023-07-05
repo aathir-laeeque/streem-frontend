@@ -126,7 +126,15 @@ const Wrapper = styled.div.attrs({
   }
 `;
 
-export default function DataTable({ columns, rows }: { columns: DataTableColumn[]; rows: any[] }) {
+export default function DataTable({
+  columns,
+  rows,
+  emptyTitle,
+}: {
+  columns: DataTableColumn[];
+  rows: any[];
+  emptyTitle?: string;
+}) {
   return (
     <Wrapper>
       <Paper square>
@@ -149,30 +157,46 @@ export default function DataTable({ columns, rows }: { columns: DataTableColumn[
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => {
-                return (
-                  <TableRow key={row.id}>
-                    {columns.map((column) => {
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format ? (
-                            column.format(row)
-                          ) : (
-                            <span
-                              title={row[column.id]}
-                              style={{
-                                maxWidth: column?.maxWidth,
-                              }}
-                            >
-                              {row[column.id] ?? '-N/A-'}
-                            </span>
-                          )}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
+              {rows.length ? (
+                rows.map((row) => {
+                  return (
+                    <TableRow key={row.id}>
+                      {columns.map((column) => {
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            {column.format ? (
+                              column.format(row)
+                            ) : (
+                              <span
+                                title={row[column.id]}
+                                style={{
+                                  maxWidth: column?.maxWidth,
+                                }}
+                              >
+                                {row[column.id] ?? '-N/A-'}
+                              </span>
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    align="center"
+                    style={{
+                      height: '64px',
+                      color: '#bbbbbb',
+                      verticalAlign: 'middle',
+                    }}
+                  >
+                    No {emptyTitle}
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

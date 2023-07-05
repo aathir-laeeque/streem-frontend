@@ -220,6 +220,7 @@ const ProcessTabContent = () => {
                 ...item,
               };
             })}
+            emptyTitle="Associated Process"
           />
           <Pagination pageable={pageable} fetchData={fetchData} />
         </div>
