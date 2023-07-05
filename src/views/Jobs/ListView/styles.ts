@@ -142,6 +142,15 @@ const TabContentWrapper = styled.div`
                 color: #1d84ff;
                 cursor: pointer;
               }
+              .job-type {
+                font-size: 12px;
+                margin: 0 0 0 12px;
+                font-weight: 400;
+                line-height: 16px;
+                letter-spacing: 0.16px;
+                color: #6f6f6f;
+              }
+
               .schedule-info {
                 margin-left: auto;
                 display: flex;

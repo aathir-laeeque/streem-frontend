@@ -760,6 +760,7 @@ const JobsContent: FC<TabContentProps> = ({
                         <h5 className="job-name" onClick={() => navigate(`/jobs/${job.id}`)}>
                           {job.checklist.name}
                         </h5>
+                        <h5 className="job-type">{job.checklist.global ? 'Global' : 'Local'}</h5>
                         {job.expectedStartDate && job.expectedEndDate ? (
                           <div className="schedule-info">
                             {frequency && <span>{capitalize(frequency)}</span>}

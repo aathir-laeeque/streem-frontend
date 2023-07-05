@@ -1,15 +1,7 @@
 import { LabelValueRow } from '#JobComposer/Header/styles';
 import { Checklist } from '#JobComposer/checklist.types';
 import { TargetEntityType } from '#PrototypeComposer/checklist.types';
-import {
-  LoadingContainer,
-  PaginatedFetchData,
-  Pagination,
-  SearchFilter,
-  Select,
-  TabContentProps,
-  fetchDataParams,
-} from '#components';
+import { LoadingContainer, Pagination, SearchFilter, Select, TabContentProps } from '#components';
 import { useTypedSelector } from '#store/helpers';
 import { apiInboxJobsCount } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
@@ -220,6 +212,7 @@ const InboxContent: FC<TabContentProps> = ({
                         <h5 className="job-name" onClick={() => navigate(`/inbox/${job.id}`)}>
                           {job.checklist.name}
                         </h5>
+                        <h5 className="job-type">{job.checklist.global ? 'Global' : 'Local'}</h5>
                         {job.expectedStartDate && job.expectedEndDate && (
                           <div className="schedule-info">
                             <span
