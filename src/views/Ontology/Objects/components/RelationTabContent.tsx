@@ -101,7 +101,9 @@ const RelationTabContent = () => {
               );
             })}
           </div>
-        ) : undefined
+        ) : (
+          <div className="relation-tab-empty">No Relations Objects</div>
+        )
       }
     />
   );

@@ -126,6 +126,14 @@ const ObjectViewWrapper = styled.div`
     overflow: auto;
   }
 
+  .relation-tab-empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #6f6f6f;
+  }
+
   .job-list {
     display: flex;
     flex-direction: column;
