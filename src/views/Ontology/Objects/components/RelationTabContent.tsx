@@ -94,6 +94,7 @@ const RelationTabContent = () => {
                             name: target?.displayName,
                           };
                         })}
+                        emptyTitle="Relations Found"
                       />
                     </div>
                   </TabContentWrapper>

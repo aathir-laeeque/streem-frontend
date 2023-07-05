@@ -23,6 +23,14 @@ const Wrapper = styled.div.attrs({
   display: flex;
   overflow: hidden;
 
+  .data-table-empty {
+    height: 64px;
+    color: #bbbbbb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .MuiPaper-root {
     display: flex;
     flex-direction: column;
@@ -157,7 +165,7 @@ export default function DataTable({
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.length ? (
+              {rows.length > 0 &&
                 rows.map((row) => {
                   return (
                     <TableRow key={row.id}>
@@ -181,25 +189,11 @@ export default function DataTable({
                       })}
                     </TableRow>
                   );
-                })
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    align="center"
-                    style={{
-                      height: '64px',
-                      color: '#bbbbbb',
-                      verticalAlign: 'middle',
-                    }}
-                  >
-                    No {emptyTitle}
-                  </TableCell>
-                </TableRow>
-              )}
+                })}
             </TableBody>
           </Table>
         </TableContainer>
+        {rows.length === 0 && <div className="data-table-empty">No {emptyTitle}</div>}
       </Paper>
     </Wrapper>
   );

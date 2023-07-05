@@ -380,7 +380,7 @@ const ListView: FC<any & { label: string }> = ({ label, values }) => {
         )}
       </div>
       <div style={{ display: 'contents' }}>
-        <DataTable columns={columns} rows={list} />
+        <DataTable columns={columns} rows={list} emptyTitle="Schedulers Found" />
         <Pagination pageable={pageable} fetchData={fetchData} />
       </div>
       {createSchedulerDrawer && (

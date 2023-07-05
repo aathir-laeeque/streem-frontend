@@ -1,10 +1,4 @@
-import {
-  BodyWrapper,
-  DataTable,
-  GeneralHeader,
-  LoadingContainer,
-  Pagination,
-} from '#components';
+import { BodyWrapper, DataTable, GeneralHeader, LoadingContainer, Pagination } from '#components';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
@@ -88,6 +82,7 @@ const Automation: FC<Props> = ({ id }) => {
                     },
                   ]}
                   rows={automations}
+                  emptyTitle="Automations Found"
                 />
                 <Pagination pageable={pageable} fetchData={fetchData} />
               </TabContentWrapper>

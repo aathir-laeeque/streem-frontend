@@ -364,6 +364,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                   });
                   return acc;
                 }, [])}
+                emptyTitle="Job Logs Found"
               />
               <Pagination pageable={pageable} fetchData={fetchData} />
               {showDrawer && (

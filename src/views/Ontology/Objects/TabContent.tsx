@@ -278,6 +278,7 @@ const TabContent: FC = () => {
                 },
               ]}
               rows={list}
+              emptyTitle="Audit Logs"
             />
             {showDrawer && (
               <FiltersDrawer

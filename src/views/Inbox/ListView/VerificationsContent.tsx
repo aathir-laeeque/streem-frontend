@@ -434,6 +434,7 @@ const VerificationsContent: FC<{
                 },
               ]}
               rows={list}
+              emptyTitle="Parameters Found"
             />
             <Pagination pageable={pageable} fetchData={fetchData} />
           </>

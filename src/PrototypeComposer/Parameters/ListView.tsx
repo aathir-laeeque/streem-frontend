@@ -307,6 +307,7 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
                   },
                 ]}
                 rows={list}
+                emptyTitle="Parameters Found"
               />
               <Pagination pageable={pageable} fetchData={fetchData} />
             </>

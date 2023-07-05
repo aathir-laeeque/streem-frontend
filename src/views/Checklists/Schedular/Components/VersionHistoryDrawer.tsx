@@ -112,7 +112,7 @@ const VersionHistoryDrawer: FC<{
     hideCloseIcon: true,
     bodyContent: (
       <VersionHistoryDrawerWrapper>
-        <DataTable columns={columns} rows={active?.versions || []} />
+        <DataTable columns={columns} rows={active?.versions || []} emptyTitle="Versions Found" />
       </VersionHistoryDrawerWrapper>
     ),
     footerContent: (

@@ -366,6 +366,7 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
               ]
             : []),
         ]}
+        emptyTitle="No Properties Found"
         rows={list}
       />
       <Pagination
@@ -576,6 +577,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
               ]
             : []),
         ]}
+        emptyTitle="No Relations Found"
         rows={list}
       />
       <Pagination

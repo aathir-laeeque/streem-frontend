@@ -497,7 +497,7 @@ const TabContent: React.FC<TabContentProps> = (props) => {
         <CircularProgress style={{ color: 'rgb(29, 132, 255)' }} />
       </div>
       <div style={{ ...(loading ? { display: 'none' } : { display: 'contents' }) }}>
-        <DataTable columns={columns} rows={currentPageData} />
+        <DataTable columns={columns} rows={currentPageData} emptyTitle="Users Found" />
         <Pagination pageable={pageable} fetchData={fetchData} />
       </div>
     </TabContentWrapper>
