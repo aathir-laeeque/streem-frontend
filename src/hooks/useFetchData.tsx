@@ -41,14 +41,7 @@ export function createFetchList<T>(
     status: 'init',
     pagination: DEFAULT_PAGINATION,
     pagesFetched: {},
-    params: {
-      sort: 'createdAt,desc',
-      filters: {
-        op: FilterOperators.AND,
-        fields: [],
-      },
-      ..._params,
-    },
+    params: _params,
   });
 
   const { list, errors, status, pagination, params, listById, pagesFetched, url } = state;
@@ -63,7 +56,7 @@ export function createFetchList<T>(
 
   useEffect(() => {
     if (status !== 'init') fetchData();
-  }, [page, params]);
+  }, [params]);
 
   const fetchData = async () => {
     const queryParams = {
@@ -73,13 +66,10 @@ export function createFetchList<T>(
     };
     const urlString = url + JSON.stringify(queryParams);
     if (url && pagesFetched[page] !== urlString) {
-      const {
-        data,
-        errors: _errors,
-        pageable,
-      }: ResponseObj<T[]> = await request('GET', url, {
+      const response: ResponseObj<T[]> = await request('GET', url, {
         params: queryParams,
       });
+      const { data, errors: _errors, pageable } = response || {};
       if (data) {
         setState((prev) => ({
           ...prev,
