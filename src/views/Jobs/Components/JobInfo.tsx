@@ -1,13 +1,12 @@
 import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { Button, LoadingContainer, StyledTabs, useDrawer } from '#components';
 import { apiJobInfo } from '#utils/apiUrls';
+import { getParameterContent } from '#utils/parameterUtils';
 import { request } from '#utils/request';
 import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
 import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
-import { RRule } from 'rrule';
 import styled from 'styled-components';
-import { getParameterContent } from '#utils/parameterUtils';
 
 const JobInfoDrawerWrapper = styled.div`
   display: flex;
@@ -109,97 +108,6 @@ const JobInfoDrawer: FC<{
     fetchJobInfo();
   }, []);
 
-  const getDueOnSummary = () => {
-    if (job.jobScheduler.dueDateDuration) {
-      const { isValid, values } = Object.entries(job.jobScheduler.dueDateDuration).reduce<any>(
-        (acc, [key, value]: any) => {
-          if (value) {
-            acc.isValid = true;
-            acc.values.push(` ${value} ${value > 1 ? `${key}s` : key}`);
-          }
-          return acc;
-        },
-        { isValid: false, values: [] },
-      );
-      if (isValid) {
-        return [
-          {
-            label: 'Due in',
-            value: values.join() + ' from Start',
-          },
-        ];
-      }
-    }
-    return [];
-  };
-
-  const getRecurrenceSummary = () => {
-    try {
-      if (job.jobScheduler.recurrenceRule) {
-        const rule = RRule.fromString(job.jobScheduler.recurrenceRule);
-        let recurrenceString = rule?.toText() || null;
-        if (recurrenceString) {
-          const freq = job.jobScheduler.recurrenceRule.match('FREQ=([^;]*)')[1];
-          if (job.jobScheduler.customRecurrence) {
-            switch (freq) {
-              case 'DAILY':
-              case 'WEEKLY':
-              case 'MONTHLY':
-                recurrenceString = `Repeat ${recurrenceString} at ${moment
-                  .unix(job.expectedStartDate)
-                  .format('hh:mm A')}`;
-                break;
-              case 'YEARLY':
-                recurrenceString = `Repeat ${recurrenceString} on ${moment
-                  .unix(job.expectedStartDate)
-                  .format('Do MMMM [at] hh:mm A')}`;
-                break;
-
-              default:
-                break;
-            }
-          } else {
-            switch (freq) {
-              case 'DAILY':
-                recurrenceString = `Repeat ${recurrenceString} at ${moment
-                  .unix(job.expectedStartDate)
-                  .format('hh:mm A')}`;
-                break;
-              case 'WEEKLY':
-                recurrenceString = `Repeat ${recurrenceString} on ${moment
-                  .unix(job.expectedStartDate)
-                  .format('dddd [at] hh:mm A')}`;
-                break;
-              case 'MONTHLY':
-                recurrenceString = `Repeat ${recurrenceString} on ${moment
-                  .unix(job.expectedStartDate)
-                  .format('Do [at] hh:mm A')}`;
-                break;
-              case 'YEARLY':
-                recurrenceString = `Repeat ${recurrenceString} on ${moment
-                  .unix(job.expectedStartDate)
-                  .format('Do MMMM [at] hh:mm A')}`;
-                break;
-
-              default:
-                break;
-            }
-          }
-          return [
-            {
-              label: 'Recurrence',
-              value: recurrenceString,
-            },
-          ];
-        }
-      }
-      return [];
-    } catch (e) {
-      console.error('Error while creating recurrence string', e);
-      return [];
-    }
-  };
-
   const sections = [
     {
       label: 'Summary',
@@ -271,7 +179,7 @@ const JobInfoDrawer: FC<{
                     <div className="scheduler-heading">
                       <h4>Schedule</h4>
                     </div>
-                    {job.jobScheduler ? (
+                    {job.expectedStartDate && job.expectedEndDate ? (
                       <ReadOnlyGroup
                         className="read-only-group"
                         items={[
@@ -281,8 +189,12 @@ const JobInfoDrawer: FC<{
                               .unix(job.expectedStartDate)
                               .format('Do MMMM, YYYY [at] hh:mm A'),
                           },
-                          ...getDueOnSummary(),
-                          ...getRecurrenceSummary(),
+                          {
+                            label: 'End Date and Time',
+                            value: moment
+                              .unix(job.expectedEndDate)
+                              .format('Do MMMM, YYYY [at] hh:mm A'),
+                          },
                         ]}
                       />
                     ) : (
