@@ -333,6 +333,14 @@ export const apiInitializeSubTask = (taskId: string) =>
 
 export const apiCreateObjectType = () => `${baseUrl}/object-types`;
 
+export const apigetObjectTypeProperties = (objectTypeId: string) => {
+  return `${baseUrl}/object-types/${objectTypeId}/properties`;
+};
+
+export const apiGetObjectTypeRelations = (objectTypeId: string) => {
+  return `${baseUrl}/object-types/${objectTypeId}/relations`;
+};
+
 export const apiCreateObjectTypeProperty = (objectTypeId: string) =>
   `${baseUrl}/object-types/${objectTypeId}/properties`;
 

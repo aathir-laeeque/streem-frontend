@@ -5,6 +5,9 @@ import {
   LoadingContainer,
   TabContentProps,
   ListActionMenu,
+  TextInput,
+  ToggleSwitch,
+  Pagination,
 } from '#components';
 import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
@@ -22,19 +25,20 @@ import {
   resetOntology,
 } from '../actions';
 import ObjectList from '../Objects/ObjectList';
-import { startCase } from 'lodash';
+import { debounce, startCase } from 'lodash';
 import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import AddPropertyDrawer from './Components/PropertyDrawer';
 import AddRelationDrawer from './Components/RelationDrawer';
-import { ArrowDropDown } from '@material-ui/icons';
+import { ArrowDropDown, Search } from '@material-ui/icons';
 import { MenuItem } from '@material-ui/core';
 import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import { PropertyFlags } from '../utils';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { DEFAULT_PAGE_SIZE } from '#utils/constants';
 import checkPermission from '#services/uiPermissions';
+import { createFetchList } from '#hooks/useFetchData';
+import { apigetObjectTypeProperties, apiGetObjectTypeRelations } from '#utils/apiUrls';
 // TODO change this enum to Object and have positions defined explicity
 export enum FlagPositions {
   SYSTEM,
@@ -118,6 +122,13 @@ const GeneralWrapper = styled.div`
   }
 `;
 
+const urlParams = {
+  page: 0,
+  size: 10,
+  sort: 'createdAt,desc',
+  isArchive: false,
+};
+
 const GeneralTabContent: FC<TabContentProps> = ({ label }) => {
   const {
     objectTypes: { active },
@@ -160,11 +171,18 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
   const {
     objectTypes: { active },
   } = useTypedSelector((state) => state.ontology);
-  const properties = active?.properties || [];
+
+  const objectId = active?.id;
+  const { list, reset, pagination } = createFetchList(
+    apigetObjectTypeProperties(objectId),
+    urlParams,
+  );
+
   const [createPropertyDrawer, setCreatePropertyDrawer] = useState<string | boolean>('');
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
+  const [isChecked, setIsChecked] = useState(false);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -173,8 +191,31 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
 
   return (
     <TabContentWrapper>
-      {checkPermission(['ontology', 'createObjectType']) && (
-        <div className="filters">
+      <div className="filters">
+        <div style={{ maxWidth: '306px', width: '306px' }}>
+          <TextInput
+            afterElementWithoutError
+            AfterElement={Search}
+            afterElementClass=""
+            placeholder={`Search with Property Name`}
+            onChange={debounce(
+              ({ value }) => reset({ params: { ...urlParams, displayName: value } }),
+              500,
+            )}
+          />
+        </div>
+        <ToggleSwitch
+          checkedIcon={false}
+          uncheckedIcon={false}
+          offLabel="Show Archived"
+          onLabel="Showing Archived"
+          checked={isChecked}
+          onChange={(value) => {
+            setIsChecked(value);
+            reset({ params: { ...urlParams, isArchive: value } });
+          }}
+        />
+        {checkPermission(['ontology', 'createObjectType']) && (
           <Button
             id="create"
             onClick={() => {
@@ -183,8 +224,9 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
           >
             Create New Property
           </Button>
-        </div>
-      )}
+        )}
+      </div>
+
       <DataTable
         columns={[
           {
@@ -323,7 +365,11 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
               ]
             : []),
         ]}
-        rows={properties.filter((currProp) => currProp?.usageStatus !== 7)}
+        rows={list}
+      />
+      <Pagination
+        pageable={pagination}
+        fetchData={(p) => reset({ params: { page: p.page, size: p.size } })}
       />
       {createPropertyDrawer && (
         <AddPropertyDrawer
@@ -341,11 +387,18 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
   const {
     objectTypes: { active },
   } = useTypedSelector((state) => state.ontology);
-  const relations = active?.relations || [];
+
+  const objectId = active?.id;
+  const { list, reset, pagination } = createFetchList(
+    apiGetObjectTypeRelations(objectId),
+    urlParams,
+  );
+
   const [createRelationDrawer, setRelationDrawer] = useState<string | boolean>('');
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedRelation, setSelectedRelation] = useState(null);
+  const [isChecked, setIsChecked] = useState(false);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -368,8 +421,31 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
 
   return (
     <TabContentWrapper>
-      {checkPermission(['ontology', 'createObjectType']) && (
-        <div className="filters">
+      <div className="filters">
+        <div style={{ maxWidth: '306px', width: '306px' }}>
+          <TextInput
+            afterElementWithoutError
+            AfterElement={Search}
+            afterElementClass=""
+            placeholder={`Search with Relation Name`}
+            onChange={debounce(
+              ({ value }) => reset({ params: { ...urlParams, displayName: value } }),
+              500,
+            )}
+          />
+        </div>
+        <ToggleSwitch
+          checkedIcon={false}
+          uncheckedIcon={false}
+          offLabel="Show Archived"
+          onLabel="Showing Archived"
+          checked={isChecked}
+          onChange={(value) => {
+            setIsChecked(value);
+            reset({ params: { ...urlParams, isArchive: value } });
+          }}
+        />
+        {checkPermission(['ontology', 'createObjectType']) && (
           <Button
             id="create"
             onClick={() => {
@@ -378,8 +454,8 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
           >
             Create New Relation
           </Button>
-        </div>
-      )}
+        )}
+      </div>
       <DataTable
         columns={[
           {
@@ -499,7 +575,11 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
               ]
             : []),
         ]}
-        rows={relations.filter((currProp) => currProp.usageStatus !== 7)}
+        rows={list}
+      />
+      <Pagination
+        pageable={pagination}
+        fetchData={(p) => reset({ params: { page: p.page, size: p.size } })}
       />
       {createRelationDrawer && (
         <AddRelationDrawer
