@@ -137,8 +137,8 @@ export const conditionByParameterType = (type: ParameterType) => {
   switch (type) {
     case MandatoryParameter.DATE_TIME:
       return {
-        [Constraint.GT]: 'is greater than',
-        [Constraint.LT]: 'is less than',
+        [Constraint.GT]: 'After Date',
+        [Constraint.LT]: 'Before Date',
       };
     default:
       return {
