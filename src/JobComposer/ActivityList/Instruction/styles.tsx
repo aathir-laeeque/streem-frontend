@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div.attrs({})<{ isJobsView: Boolean }>`
   .parameter-header {
     color: #393939;
     font-size: 14px;
@@ -67,4 +67,23 @@ export const Wrapper = styled.div`
       margin: 0;
     }
   }
+
+  ${({ isJobsView }) =>
+    isJobsView
+      ? css`
+          .parameter-header {
+            display: none;
+          }
+
+          .toolbar-class {
+            display: none;
+          }
+
+          .editor-class {
+            border: none;
+            padding: 0px;
+            pointer-events: none;
+          }
+        `
+      : null}
 `;

@@ -8,6 +8,8 @@ import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { ParameterProps } from '../types';
 import { Wrapper } from './styles';
+import { Entity } from '#JobComposer/composer.types';
+import { useTypedSelector } from '#store';
 
 const toolbarOptions = {
   options: ['inline', 'list', 'emoji'],
@@ -20,6 +22,7 @@ const toolbarOptions = {
 };
 
 const InstructionParameter: FC<ParameterProps> = ({ parameter }) => {
+  const { entity } = useTypedSelector((state) => state.composer);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [contentBlock, setContentBlock] = useState(htmlToDraft(parameter.data.text));
 
@@ -36,7 +39,7 @@ const InstructionParameter: FC<ParameterProps> = ({ parameter }) => {
   }, [parameter]);
 
   return (
-    <Wrapper>
+    <Wrapper isJobsView={entity === Entity.JOB}>
       <div className="parameter-header">Write your instruction/notes</div>
 
       <Editor
