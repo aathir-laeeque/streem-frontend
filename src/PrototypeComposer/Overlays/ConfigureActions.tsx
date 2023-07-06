@@ -441,7 +441,7 @@ const ActionFormCard: FC<Props> = ({
             'relationDisplayName',
             'relationObjectTypeId',
           ];
-          keysToValidate = ['target'];
+          keysToValidate = ['parameterId'];
         } else {
           keysToValidate = ['parameterId'];
         }
@@ -548,7 +548,7 @@ const ActionFormCard: FC<Props> = ({
                 'relationDisplayName',
                 'relationObjectTypeId',
               ];
-              keysToValidate = ['target'];
+              keysToValidate = ['parameterId'];
             } else {
               keysToValidate = ['parameterId'];
             }
@@ -994,6 +994,7 @@ const ActionFormCard: FC<Props> = ({
                                         externalId: relation?.externalId,
                                         target: relation?.target,
                                         objectTypeId: relation?.objectTypeId,
+                                        flags: relation?.flags,
                                       })),
                                       value: actionDetails?.relationId
                                         ? [
@@ -1014,6 +1015,7 @@ const ActionFormCard: FC<Props> = ({
                                           relationExternalId: option.externalId,
                                           relationDisplayName: option.label,
                                           relationObjectTypeId: option.objectTypeId,
+                                          flags: option.flags,
                                         });
                                       },
                                     },
@@ -1023,51 +1025,39 @@ const ActionFormCard: FC<Props> = ({
                             ...(selectedRelation && AutomationActionActionType.SET_RELATION
                               ? [
                                   {
-                                    type:
-                                      selectedRelation?.target?.cardinality ===
-                                      Cardinality.ONE_TO_ONE
-                                        ? InputTypes.SINGLE_SELECT
-                                        : InputTypes.MULTI_SELECT,
+                                    type: InputTypes.SINGLE_SELECT,
                                     props: {
                                       id: 'value',
                                       label: 'Set Value',
-                                      options: objects?.map((object) => ({
-                                        value: object.id,
-                                        label: object?.displayName,
-                                        externalId: object?.externalId,
-                                        collection: object?.collection,
-                                      })),
+                                      options: task?.parameters
+                                        ?.filter(
+                                          (param) =>
+                                            param?.data?.objectTypeId ===
+                                            selectedRelation.objectTypeId,
+                                        )
+                                        .map((parameter) => ({
+                                          value: parameter.id,
+                                          label: parameter?.label,
+                                        })),
                                       isSearchable: false,
                                       isDisabled: isReadOnly,
                                       placeholder: 'Set Value',
-                                      value: actionDetails?.target
-                                        ? actionDetails?.target?.map((targetRelation) => ({
-                                            label: targetRelation.displayName,
-                                            value: targetRelation.id,
-                                            targetExternalId: targetRelation.externalId,
-                                            collection: targetRelation.collection,
-                                          }))
+                                      value: value?.parameterId
+                                        ? [
+                                            {
+                                              label: resourceParameters.find(
+                                                (resource: any) =>
+                                                  resource.id === value.parameterId,
+                                              )?.label,
+                                              value: value.parameterId,
+                                            },
+                                          ]
                                         : null,
                                       onChange: (option: any) => {
-                                        const modifiedOption = isArray(option)
-                                          ? option?.map((o) => {
-                                              return {
-                                                id: o?.value,
-                                                displayName: o?.label,
-                                                externalId: o?.externalId || o?.targetExternalId,
-                                                collection: o?.collection,
-                                              };
-                                            })
-                                          : [
-                                              {
-                                                id: option?.value,
-                                                displayName: option?.label,
-                                                externalId:
-                                                  option?.externalId || option?.targetExternalId,
-                                                collection: option?.collection,
-                                              },
-                                            ];
-                                        onChange({ ...actionDetails, target: modifiedOption });
+                                        onChange({
+                                          ...actionDetails,
+                                          parameterId: option.value,
+                                        });
                                       },
                                     },
                                   },
