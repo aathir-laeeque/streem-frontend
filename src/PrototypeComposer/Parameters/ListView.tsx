@@ -22,10 +22,8 @@ import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.types';
-import { components } from 'react-select';
 import tickIcon from '../../assets/svg/tickIcon.svg';
 import { Tooltip } from '@material-ui/core';
-import styled from 'styled-components';
 import { withStyles } from '@material-ui/core/styles';
 
 const CustomTooltip = withStyles({
@@ -92,40 +90,14 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
       value: ParameterVerificationTypeEnum.PEER,
     },
     {
+      label: 'With Both Verifications',
+      value: ParameterVerificationTypeEnum.BOTH,
+    },
+    {
       label: 'No verifications',
       value: ParameterVerificationTypeEnum.NONE,
     },
   ];
-
-  const Option = (props: any) => {
-    const CheckboxWrapper = styled.div`
-      .checkmark {
-        background-color: #fff;
-        border-color: #333;
-        border-radius: 0;
-        border-width: 2px;
-      }
-
-      .container {
-        color: #525252;
-      }
-
-      input:checked ~ .checkmark {
-        background-color: #1d84ff;
-        border: none;
-      }
-    `;
-
-    return (
-      <div>
-        <components.Option {...props}>
-          <CheckboxWrapper>
-            <Checkbox onClick={() => null} label={props.label} checked={props.isSelected} />
-          </CheckboxWrapper>
-        </components.Option>
-      </div>
-    );
-  };
 
   const renderVerificationType = (item: any, type: ParameterVerificationTypeEnum) => {
     const validTypes = [ParameterVerificationTypeEnum.BOTH, type];
@@ -175,6 +147,33 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     return verificationType;
   };
 
+  const handleVerificationTypeFilter = (option: any) => {
+    let verificationTypes: any[] = [];
+
+    if (option?.value) {
+      verificationTypes.push(option.value);
+      if (
+        verificationTypes?.includes(ParameterVerificationTypeEnum.SELF) ||
+        verificationTypes?.includes(ParameterVerificationTypeEnum.PEER)
+      ) {
+        verificationTypes.push(ParameterVerificationTypeEnum.BOTH);
+      }
+    }
+
+    if (verificationTypes?.length > 0) {
+      setFilterFields((prev) => [
+        ...prev.filter((field) => field.field !== 'verificationType'),
+        {
+          field: 'verificationType',
+          op: FilterOperators.ANY,
+          values: verificationTypes,
+        },
+      ]);
+    } else {
+      setFilterFields((prev) => [...prev.filter((field) => field.field !== 'verificationType')]);
+    }
+  };
+
   return (
     <TabPanelWrapper>
       <TabContentWrapper>
@@ -197,36 +196,11 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
           </div>
           <div style={{ marginLeft: '16px', width: '240px' }}>
             <Select
-              placeholder="Select Parameter"
+              placeholder="Select Verification Type"
               options={options}
-              components={{ Option }}
-              isMulti
               hideSelectedOptions={false}
-              onChange={debounce((values) => {
-                const verificationTypes = values.map((selectedValue: any) => selectedValue.value);
-
-                if (
-                  verificationTypes?.includes(ParameterVerificationTypeEnum.SELF) &&
-                  verificationTypes?.includes(ParameterVerificationTypeEnum.PEER)
-                ) {
-                  verificationTypes.push('BOTH');
-                }
-
-                if (verificationTypes?.length > 0) {
-                  setFilterFields((prev) => [
-                    ...prev.filter((field) => field.field !== 'verificationType'),
-                    {
-                      field: 'verificationType',
-                      op: FilterOperators.ANY,
-                      values: verificationTypes,
-                    },
-                  ]);
-                } else {
-                  setFilterFields((prev) => [
-                    ...prev.filter((field) => field.field !== 'verificationType'),
-                  ]);
-                }
-              }, 500)}
+              isClearable={true}
+              onChange={debounce((option) => handleVerificationTypeFilter(option), 500)}
             />
           </div>
           {!isReadOnly && (
