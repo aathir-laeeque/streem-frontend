@@ -530,6 +530,7 @@ const TaskCard: FC<
                   label: 'Checklist',
                 },
               }}
+              popOutProps={{ filterOption: () => true }}
               onChildChange={onChildChange}
             />
           </div>

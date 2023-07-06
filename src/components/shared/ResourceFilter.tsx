@@ -86,7 +86,7 @@ export const ResourceFilter = ({ onChange, onClear }: any) => {
                   apiGetObjects(),
                   {
                     params: {
-                      page: pageNumber + 1,
+                      page: pageNumber,
                       size: DEFAULT_PAGE_SIZE,
                       collection: item.externalId,
                       filters: JSON.stringify({
@@ -178,6 +178,7 @@ export const ResourceFilter = ({ onChange, onClear }: any) => {
       width="200px"
       label={ResourceFilterLabel}
       items={resourceOptions}
+      popOutProps={{ filterOption: () => true }}
       onChildChange={onChildChange}
       pagination={objectTypePagination}
       fetchData={fetchResourcesData}
