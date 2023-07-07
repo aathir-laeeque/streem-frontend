@@ -283,7 +283,8 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
                   label: 'Action',
                   minWidth: 100,
                   format: function renderComp(item) {
-                    return ![PropertyFlags.EXTERNAL_ID].includes(item.flags) ? (
+                    return item.usageStatus === 1 &&
+                      ![PropertyFlags.EXTERNAL_ID, PropertyFlags.SYSTEM].includes(item.flags) ? (
                       <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
                         <div
                           id="more-actions"
@@ -503,7 +504,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
                   label: 'Action',
                   minWidth: 100,
                   format: function renderComp(item) {
-                    return (
+                    return item?.usageStatus === 1 ? (
                       <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
                         <div
                           id="more-actions"
@@ -569,7 +570,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
                           </MenuItem>
                         </ListActionMenu>
                       </div>
-                    );
+                    ) : null;
                   },
                 },
               ]
