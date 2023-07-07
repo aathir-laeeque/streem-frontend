@@ -15,7 +15,15 @@ function getMonthlyOption(mJsDate: moment.Moment) {
   const weekNo = Math.ceil(mJsDate.date() / 7);
   return {
     label: `${
-      weekNo === 1 ? 'First' : weekNo === 2 ? 'Second' : weekNo === 3 ? 'Third' : 'Fourth'
+      weekNo === 1
+        ? 'First'
+        : weekNo === 2
+        ? 'Second'
+        : weekNo === 3
+        ? 'Third'
+        : weekNo === 4
+        ? 'Fourth'
+        : 'Last'
     } ${mJsDate.format('dddd')} of every month`,
     weekNo,
   };
@@ -266,7 +274,10 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
       {
         label,
         value: {
-          byweekday: new Weekday(Number(moment(expectedStartDate).format('e')), weekNo),
+          byweekday: new Weekday(
+            Number(moment(expectedStartDate).format('e')),
+            weekNo > 4 ? 4 - weekNo : weekNo,
+          ),
         },
       },
     ];
