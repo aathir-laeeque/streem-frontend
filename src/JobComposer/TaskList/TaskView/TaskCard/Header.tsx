@@ -151,23 +151,23 @@ const JobHeader: FC<
                 onClose={handleClose}
                 style={{ marginTop: 30 }}
               >
-                {task.taskExecution.state === TaskExecutionState.COMPLETED ||
+                {(task.taskExecution.state === TaskExecutionState.COMPLETED ||
                   task.taskExecution.state === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
-                  (task.taskExecution.state === TaskExecutionState.SKIPPED && (
-                    <MenuItem
-                      onClick={() => {
-                        handleClose();
-                        dispatch(
-                          openOverlayAction({
-                            type: OverlayNames.TASK_ERROR_CORRECTION,
-                            props: { taskId: task.id, setLoadingState },
-                          }),
-                        );
-                      }}
-                    >
-                      Error correction
-                    </MenuItem>
-                  ))}
+                  task.taskExecution.state === TaskExecutionState.SKIPPED) && (
+                  <MenuItem
+                    onClick={() => {
+                      handleClose();
+                      dispatch(
+                        openOverlayAction({
+                          type: OverlayNames.TASK_ERROR_CORRECTION,
+                          props: { taskId: task.id, setLoadingState },
+                        }),
+                      );
+                    }}
+                  >
+                    Error correction
+                  </MenuItem>
+                )}
                 <MenuItem
                   onClick={() => {
                     handleClose();
