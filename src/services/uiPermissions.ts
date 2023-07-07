@@ -176,8 +176,18 @@ const uiPermissions: Record<string, any> = {
     archiveObjectType: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
   },
   scheduler: {
-    create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
-    actions: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN],
+    create: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+    ],
+    actions: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+    ],
   },
 };
 
