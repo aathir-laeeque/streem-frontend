@@ -127,7 +127,7 @@ const urlParams = {
   page: DEFAULT_PAGE_NUMBER,
   size: DEFAULT_PAGE_SIZE,
   sort: 'createdAt,desc',
-  isArchive: false,
+  usageStatus: 1,
 };
 
 const GeneralTabContent: FC<TabContentProps> = ({ label }) => {
@@ -205,7 +205,7 @@ const PropertiesTabContent: FC<TabContentProps> = ({ values }) => {
             afterElementClass=""
             placeholder={`Search with Property Name`}
             onChange={debounce(
-              ({ value }) => reset({ params: { ...urlParams, displayName: value } }),
+              ({ value }) => setFilters({ ...filters, displayName: value ? value : undefined }),
               500,
             )}
           />
@@ -215,10 +215,9 @@ const PropertiesTabContent: FC<TabContentProps> = ({ values }) => {
           uncheckedIcon={false}
           offLabel="Show Archived"
           onLabel="Showing Archived"
-          checked={isChecked}
+          checked={filters.usageStatus === 7}
           onChange={(value) => {
-            setIsChecked(value);
-            reset({ params: { ...urlParams, isArchive: value } });
+            setFilters({ ...filters, usageStatus: value ? 7 : 1 });
           }}
         />
         {checkPermission(['ontology', 'createObjectType']) && (
@@ -444,7 +443,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ values }) => {
             afterElementClass=""
             placeholder={`Search with Relation Name`}
             onChange={debounce(
-              ({ value }) => reset({ params: { ...urlParams, displayName: value } }),
+              ({ value }) => setFilters({ ...filters, displayName: value ? value : undefined }),
               500,
             )}
           />
@@ -454,10 +453,9 @@ const RelationsTabContent: FC<TabContentProps> = ({ values }) => {
           uncheckedIcon={false}
           offLabel="Show Archived"
           onLabel="Showing Archived"
-          checked={isChecked}
+          checked={filters.usageStatus === 7}
           onChange={(value) => {
-            setIsChecked(value);
-            reset({ params: { ...urlParams, isArchive: value } });
+            setFilters({ ...filters, usageStatus: value ? 7 : 1 });
           }}
         />
         {checkPermission(['ontology', 'createObjectType']) && (

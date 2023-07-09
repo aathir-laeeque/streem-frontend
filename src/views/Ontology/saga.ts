@@ -207,7 +207,7 @@ function* createObjectTypeSaga({ payload }: ReturnType<typeof actions.createObje
       throw getErrorMsg(errors);
     }
   } catch (error) {
-    console.error('error in create objectTypes saga :: ', error);
+    yield handleCatch('ontology', 'createObjectTypeSaga', error, true);
   }
 }
 
@@ -271,7 +271,7 @@ function* createObjectTypePropertySaga({
       throw getErrorMsg(errors);
     }
   } catch (error) {
-    console.error('error in createObjectTypePropertySaga :: ', error);
+    yield handleCatch('ontology', 'createObjectTypePropertySaga', error, true);
   }
 }
 
@@ -301,7 +301,7 @@ function* createObjectTypeRelationSaga({
       throw getErrorMsg(errors);
     }
   } catch (error) {
-    console.error('error in createObjectTypeRelationSaga :: ', error);
+    yield handleCatch('ontology', 'createObjectTypeRelationSaga', error, true);
   }
 }
 
@@ -363,7 +363,7 @@ function* editObjectTypeRelationSaga({ payload }: ReturnType<any>) {
       throw getErrorMsg(errors);
     }
   } catch (error) {
-    console.error('error in editObjectRelationSaga :: ', error);
+    yield handleCatch('ontology', 'editObjectTypeRelationSaga', error, true);
   }
 }
 
@@ -392,7 +392,7 @@ function* editObjectTypePropertySaga({ payload }: ReturnType<any>) {
       throw getErrorMsg(errors);
     }
   } catch (error) {
-    console.error('error in editObjectPropertySaga :: ', error);
+    yield handleCatch('ontology', 'editObjectTypePropertySaga', error, true);
   }
 }
 
@@ -416,7 +416,7 @@ function* editObjectTypeSaga({ payload }: ReturnType<any>) {
       throw getErrorMsg(errors);
     }
   } catch (error) {
-    console.error('error in editObjectType :: ', error);
+    yield handleCatch('ontology', 'editObjectTypeSaga', error, true);
   }
 }
 
