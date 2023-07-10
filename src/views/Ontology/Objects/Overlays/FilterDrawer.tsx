@@ -118,7 +118,7 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister, fetchD
                   label: currFilter.label,
                   value: currFilter.value,
                 })),
-                value: selectedParameter
+                value: selectedParameter?.label
                   ? [
                       {
                         label: selectedParameter.label,
