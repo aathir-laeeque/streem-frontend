@@ -10,6 +10,8 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { JobForm } from './JobForm';
 import { Scheduler } from './Scheduler';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 
 const CreateJobDrawerWrapper = styled.form`
   display: flex;
@@ -298,7 +300,15 @@ const CreateJobDrawer: FC<{
           <Button
             variant="secondary"
             style={{ marginLeft: 'auto' }}
-            onClick={() => handleCloseDrawer()}
+            onClick={() => {
+              dispatch(
+                showNotification({
+                  type: NotificationType.SUCCESS,
+                  msg: 'Job is created but not scheduled',
+                }),
+              );
+              handleCloseDrawer();
+            }}
           >
             Schedule Later
           </Button>
