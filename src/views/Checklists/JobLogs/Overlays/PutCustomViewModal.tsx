@@ -64,6 +64,10 @@ const PutCustomViewModal: FC<CommonOverlayProps<any>> = ({
             label="View Name"
             ref={register({
               required: true,
+              pattern: {
+                value: /^[^\s].*$/, // Regex pattern to disallow leading spaces
+                message: 'View Name cannot start with a space',
+              },
             })}
           />
           <div className="buttons-container">

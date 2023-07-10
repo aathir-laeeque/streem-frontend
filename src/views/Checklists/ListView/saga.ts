@@ -15,7 +15,7 @@ import {
   apiExportChecklist,
 } from '#utils/apiUrls';
 import { CustomViewsTargetType, Error, FilterOperators, ResponseObj } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, takeLatest, takeLeading } from 'redux-saga/effects';
 import { store } from '../../../App';
 import { Checklist } from '../types';
@@ -196,7 +196,7 @@ function* fetchProcessLogsSaga({ payload }: ReturnType<typeof fetchProcessLogs>)
 
 function* addCustomViewSaga({ payload }: ReturnType<typeof addCustomView>) {
   try {
-    const { data } = yield call(
+    const { data, errors } = yield call(
       request,
       'POST',
       payload?.checklistId ? apiProcessCustomViews(payload.checklistId) : apiCustomViews(),
@@ -215,6 +215,8 @@ function* addCustomViewSaga({ payload }: ReturnType<typeof addCustomView>) {
         }),
       );
       payload.setActiveTab(data);
+    } else if (errors) {
+      yield* handleCatch('Job Logs Custom View', 'addCustomView', getErrorMsg(errors), true);
     }
   } catch (error) {
     console.error('error from addCustomViewSaga function in Checklist ListView Saga :: ', error);
