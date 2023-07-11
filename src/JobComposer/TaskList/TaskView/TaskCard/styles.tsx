@@ -210,33 +210,7 @@ const Wrapper = styled.div.attrs({
       }
     }
 
-    .skip-reason {
-      /* background-color: #ffedd7; */
-      padding: 16px;
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-
-      .badge {
-        background-color: #ffedd7;
-        padding: 4px 12px;
-        display: flex;
-        align-items: center;
-        color: #ff541e;
-        width: max-content;
-        margin-bottom: 16px;
-      }
-
-      textarea {
-        border: 1px solid #dadada;
-        height: auto;
-        overflow: auto;
-        padding: 12px 16px;
-      }
-    }
-
-    .correction-reason {
-      /* background-color: #fafafa; */
+    .reason-wrapper {
       padding: 16px;
       display: flex;
       flex: 1;
@@ -249,13 +223,18 @@ const Wrapper = styled.div.attrs({
         align-items: center;
         width: max-content;
         margin-bottom: 16px;
+
+        &.skip {
+          background-color: #ffedd7;
+          color: #ff541e;
+        }
       }
 
-      textarea {
+      .reason {
         border: 1px solid #dadada;
-        height: auto;
-        overflow: auto;
         padding: 12px 16px;
+        background-color: #fafafa;
+        color: hsl(0, 0%, 20%);
       }
     }
   }

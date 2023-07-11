@@ -381,6 +381,7 @@ export const apiVersionHistoryProcessScheduler = (schedulerId: string) =>
 
 export const apiSingleProcessScheduler = (schedulerId: string) =>
   `${baseUrl}/schedulers/${schedulerId}`;
+export const apiValidateTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/validate`;
 
 export const apiEditObjectType = (objectTypeId: string) =>
   `${baseUrl}/object-types/${objectTypeId}`;

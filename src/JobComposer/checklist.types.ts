@@ -211,6 +211,11 @@ export interface Task {
   timerOperator: TimerOperator;
   automations: AutomationAction[];
   hidden: boolean;
+  parentTaskId?: string;
+  showInJob?: boolean;
+  data?: {
+    parameterId: string;
+  };
 }
 
 export interface Stage {

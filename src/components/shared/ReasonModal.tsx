@@ -64,7 +64,7 @@ const Wrapper = styled.div`
         border-top: 1px solid #f4f4f4 !important;
         display: flex;
         align-items: center;
-        padding: 16px;
+        padding: 12px 16px;
         justify-content: flex-end;
       }
     }
@@ -98,7 +98,7 @@ const ReasonModal = (props: CommonOverlayProps<Props>) => {
 
   const onSubmitModal = async () => {
     if (!reasonTextIsEmpty) {
-      await onSubmitHandler(reason, getApiFormErrors);
+      onSubmitHandler(reason, getApiFormErrors);
     }
   };
 

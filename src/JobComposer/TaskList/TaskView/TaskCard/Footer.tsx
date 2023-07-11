@@ -1,3 +1,4 @@
+import { setParameterError } from '#JobComposer/ActivityList/actions';
 import {
   fetchActiveStageDataRes,
   fetchActiveStageDataSuccess,
@@ -12,20 +13,17 @@ import {
   CompletedTaskStates,
   Task,
   TaskExecutionState,
+  TimerOperator,
 } from '#JobComposer/checklist.types';
+import { groupJobErrors } from '#JobComposer/utils';
 import { Button } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
-import { User, Users } from '#store/users/types';
-import {
-  apiGetAllUsersAssignedToJob,
-  apiInitializeSubTask,
-  apiPauseJob,
-  apiResumeJob,
-} from '#utils/apiUrls';
+import { User } from '#store/users/types';
+import { apiInitializeSubTask, apiPauseJob, apiResumeJob, apiValidateTask } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
-import { getErrorMsg, handleCatch, request } from '#utils/request';
+import { request } from '#utils/request';
 import { CompletedJobStates, Job, JobStateEnum } from '#views/Jobs/ListView/types';
 import {
   ArrowBack,
@@ -35,19 +33,17 @@ import {
 } from '@material-ui/icons';
 import PauseIcon from '@material-ui/icons/Pause';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import { keyBy } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import {
   completeTask,
   setActiveTask,
+  setTaskError,
   startTask,
   updateTaskExecutionDurationOnResume,
 } from '../../actions';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
-import { put } from 'redux-saga/effects';
+import { keyBy } from 'lodash';
 
 const Wrapper = styled.div.attrs({
   className: 'task-buttons',
@@ -95,8 +91,6 @@ const Wrapper = styled.div.attrs({
 `;
 
 type FooterProps = {
-  canSkipTask: boolean;
-  parametersHasError: boolean;
   task: Omit<Task, 'parameters'>;
   setLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
   timerState: { [index: string]: boolean };
@@ -124,14 +118,7 @@ type TaskPauseResume = {
   pauseReasons: Record<string, string>[];
 };
 
-const Footer: FC<FooterProps> = ({
-  canSkipTask,
-  task,
-  parametersHasError,
-  setLoadingState,
-  timerState,
-  enableStopForTask,
-}) => {
+const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStopForTask }) => {
   const dispatch = useDispatch();
   const {
     auth: { profile },
@@ -144,32 +131,19 @@ const Footer: FC<FooterProps> = ({
     },
   } = useTypedSelector((state) => state);
   const { id: jobId } = (data as Job) ?? {};
-  const [isLoggedInUserAssigned, setIsLoggedInUserAssigned] = useState(false);
-
-  const getAssignments = async () => {
-    if (jobId) {
-      const response: { data: Users; errors: { message: string }[] } = await request(
-        'GET',
-        apiGetAllUsersAssignedToJob(jobId),
-      );
-      if (response.data) {
-        setIsLoggedInUserAssigned(response.data.some((user) => user.id === profile?.id));
-      } else {
-        console.error('error came in fetch assigned users from component :: ', response.errors);
-      }
-    }
-  };
-
-  useEffect(() => {
-    getAssignments();
-  }, [jobId]);
+  // const [shouldAskForReason, setAskForReason] = useState(false);
+  // const [delayReason, setDelayReason] = useState('');
+  const [isUserAssignedToTask, setIsUserAssignedToTask] = useState(false);
+  const currentIndex = useRef(tasksOrderList.findIndex((o) => o.taskId === task.id));
 
   const isJobBlocked = jobState === JobStateEnum.BLOCKED;
   const isJobStarted = jobState === JobStateEnum.IN_PROGRESS || jobState === JobStateEnum.BLOCKED;
 
-  const { state: taskExecutionState, reason, assignees } = task.taskExecution;
+  const { state: taskExecutionState, assignees } = task.taskExecution;
 
-  const currentIndex = useRef(tasksOrderList.findIndex((o) => o.taskId === task.id));
+  useEffect(() => {
+    setIsUserAssignedToTask((assignees || []).some((user) => user.id === profile?.id));
+  }, []);
 
   const handleOnNextTask = () => {
     if (currentIndex.current < tasksOrderList.length - 1) {
@@ -192,8 +166,6 @@ const Footer: FC<FooterProps> = ({
       }
     }
   };
-
-  const isUserAssignedToTask = (assignees || []).some((user) => user.id === profile?.id);
 
   const onCompleteJob = (reason?: string) => {
     setLoadingState(true);
@@ -244,7 +216,56 @@ const Footer: FC<FooterProps> = ({
     }
   };
 
-  let primaryActionProps = {};
+  const onCompleteTask = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isJobBlocked) {
+      if (task.timed && (timerState.earlyCompletion || timerState.limitCrossed)) {
+        const response = await request('GET', apiValidateTask(task.id), {
+          params: {
+            jobId,
+          },
+        });
+        if (response.data) {
+          let modalTitle, modalDesc;
+          if (timerState.limitCrossed) {
+            modalTitle = 'Delayed completion';
+            modalDesc = 'State your reason for delay';
+          } else if (
+            task.timerOperator === TimerOperator.NOT_LESS_THAN &&
+            timerState.earlyCompletion
+          ) {
+            modalTitle = 'Early completion';
+            modalDesc = 'State your reason for early completion';
+          }
+          dispatch(
+            openOverlayAction({
+              type: OverlayNames.REASON_MODAL,
+              props: {
+                modalTitle,
+                modalDesc,
+                onSubmitHandler: (reason: string, closeModal: () => void) => {
+                  onCompleteJob(reason);
+                  closeModal();
+                },
+              },
+            }),
+          );
+        } else {
+          const { parametersErrors } = groupJobErrors(response.errors);
+          if (parametersErrors.length) {
+            parametersErrors.forEach((error) => dispatch(setParameterError(error, error.id)));
+          }
+
+          dispatch(setTaskError('Parameter Incomplete', task.id));
+        }
+      } else {
+        onCompleteJob();
+      }
+    }
+  };
+
+  let primaryActionProps: React.ComponentProps<typeof Button> = {};
   let primaryActionLabel = '';
   const isInboxView = location.pathname.split('/')[1] === 'inbox';
   if (isInboxView) {
@@ -253,7 +274,7 @@ const Footer: FC<FooterProps> = ({
         taskExecutionState,
       )
     ) {
-      if (jobState === JobStateEnum.ASSIGNED && isLoggedInUserAssigned) {
+      if (jobState === JobStateEnum.ASSIGNED && isUserAssignedToTask && !task.parentTaskId) {
         primaryActionLabel = 'Start Job';
         primaryActionProps = {
           onClick: (e) => {
@@ -293,23 +314,7 @@ const Footer: FC<FooterProps> = ({
       } else if (isUserAssignedToTask) {
         primaryActionLabel = 'Complete Task';
         primaryActionProps = {
-          onClick: (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (!isJobBlocked) {
-              if (task.timed && (timerState.earlyCompletion || timerState.limitCrossed)) {
-                // setAskForReason(true);
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.COMPLETE_TASK_WITH_EXCEPTION,
-                    props: { taskId: task.id, setLoadingState },
-                  }),
-                );
-              } else {
-                onCompleteJob();
-              }
-            }
-          },
+          onClick: onCompleteTask,
         };
       }
 
@@ -418,23 +423,7 @@ const Footer: FC<FooterProps> = ({
         } else if (isUserAssignedToTask) {
           primaryActionLabel = 'Complete Task';
           primaryActionProps = {
-            onClick: (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (!isJobBlocked) {
-                if (task.timed && (timerState.earlyCompletion || timerState.limitCrossed)) {
-                  // setAskForReason(true);
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.COMPLETE_TASK_WITH_EXCEPTION,
-                      props: { taskId: task.id, setLoadingState },
-                    }),
-                  );
-                } else {
-                  onCompleteJob();
-                }
-              }
-            },
+            onClick: onCompleteTask,
           };
         }
       }
@@ -472,69 +461,23 @@ const Footer: FC<FooterProps> = ({
     }
   }
 
-  const handleResumeTask = async () => {
-    try {
-      const { data, errors }: ResponseObj<TaskPauseResume> = await request(
-        'PATCH',
-        apiResumeJob(task.id),
-        {
-          data: { jobId },
-        },
-      );
-      if (data) {
-        if (data.state === 'IN_PROGRESS') {
-          dispatch(updateTaskExecutionDurationOnResume(task.id, data));
-          dispatch(
-            showNotification({
-              type: NotificationType.SUCCESS,
-              msg: 'Task Resumed successfully',
-            }),
-          );
-        }
-      } else {
-        throw getErrorMsg(errors);
-      }
-    } catch (error) {
-      dispatch(
-        showNotification({
-          type: NotificationType.ERROR,
-          msg: typeof error === 'string' ? error : 'Oops! Please Try Again.',
-        }),
-      );
-    }
-  };
-
-  const handlePauseTask = async (reason: string, comment: string) => {
-    try {
-      const { data, errors }: ResponseObj<TaskPauseResume> = await request(
-        'POST',
-        apiPauseJob(task.id),
-        {
-          data: { jobId, reason, ...(comment && { comment }) },
-        },
-      );
-      if (data) {
-        dispatch(
-          showNotification({
-            type: NotificationType.SUCCESS,
-            msg: 'Task Paused successfully',
-          }),
-        );
-      } else {
-        throw getErrorMsg(errors);
-      }
-    } catch (error) {
-      dispatch(
-        showNotification({
-          type: NotificationType.ERROR,
-          msg: typeof error === 'string' ? error : 'Oops! Please Try Again.',
-        }),
-      );
+  const togglePauseResume = async () => {
+    const { data }: ResponseObj<TaskPauseResume> = await request(
+      'POST',
+      task.taskExecution.state === TaskExecutionState.PAUSED
+        ? apiResumeJob(task.id)
+        : apiPauseJob(task.id),
+      {
+        data: { jobId },
+      },
+    );
+    if (data.state === TaskExecutionState.IN_PROGRESS) {
+      dispatch(updateTaskExecutionDurationOnResume(task.id, data));
     }
   };
 
   const PauseResumeButton = () => {
-    const iconShow = (state: string) => {
+    const iconShow = (state: TaskExecutionState) => {
       switch (state) {
         case TaskExecutionState.PAUSED:
           return <PlayArrowIcon />;
@@ -546,20 +489,7 @@ const Footer: FC<FooterProps> = ({
       <Button
         variant="primary"
         style={{ minWidth: 'unset', width: '48px' }}
-        onClick={() => {
-          if (task.taskExecution.state === TaskExecutionState.PAUSED) {
-            handleResumeTask();
-          } else {
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.TASK_PAUSE_REASON_MODAL,
-                props: {
-                  onSubmitHandler: handlePauseTask,
-                },
-              }),
-            );
-          }
-        }}
+        onClick={() => togglePauseResume()}
       >
         {iconShow(task.taskExecution.state)}
       </Button>
