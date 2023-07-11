@@ -177,6 +177,7 @@ const PropertiesTabContent: FC<TabContentProps> = ({ values }) => {
   const { list, reset, pagination } = createFetchList(
     apigetObjectTypeProperties(objectTypeId),
     urlParams,
+    false,
   );
 
   const [createPropertyDrawer, setCreatePropertyDrawer] = useState<string | boolean>('');
@@ -401,6 +402,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ values }) => {
   const { list, reset, pagination } = createFetchList(
     apiGetObjectTypeRelations(objectTypeId),
     urlParams,
+    false,
   );
 
   const [createRelationDrawer, setRelationDrawer] = useState<string | boolean>('');
