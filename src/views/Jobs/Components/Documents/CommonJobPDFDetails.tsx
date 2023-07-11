@@ -156,7 +156,7 @@ export const CommonJobPdfDetails = ({
   };
 
   return (
-    <View style={{ paddingHorizontal: 40, paddingVertical: 8 }}>
+    <View style={{ paddingHorizontal: 40 }}>
       <TabLookLike title="Job Summary">
         <View style={jobDataStyles.row}>
           <View style={jobDataStyles.card}>
