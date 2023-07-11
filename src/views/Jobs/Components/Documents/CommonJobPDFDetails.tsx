@@ -34,6 +34,7 @@ export type PdfJobDataType = Pick<
   totalTask: number;
   checklist: Checklist;
   parameterValues: [];
+  scheduler: Record<string, any>;
 };
 
 const jobDataStyles = StyleSheet.create({
@@ -93,6 +94,7 @@ export const CommonJobPdfDetails = ({
     assignees,
     totalTask,
     startedAt,
+    scheduler,
     createdBy,
     endedAt,
     endedBy,
@@ -206,7 +208,9 @@ export const CommonJobPdfDetails = ({
           <InlineInputLabelGroup
             label="Job Created By:"
             value={
-              createdBy
+              scheduler?.name
+                ? `Job created automatically as per Schedule: ${scheduler.name} (ID:${scheduler.code})`
+                : createdBy
                 ? `${createdBy.firstName} ${createdBy.lastName} ID:${createdBy.employeeId}`
                 : '-'
             }
