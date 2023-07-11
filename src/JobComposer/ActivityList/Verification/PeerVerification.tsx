@@ -41,9 +41,11 @@ const PeerVerification: FC<PeerVerificationProps> = ({
   let showVerification = true;
 
   if (
-    verificationType === ParameterVerificationTypeEnum.BOTH &&
-    verifications?.[ParameterVerificationTypeEnum.SELF]?.verificationStatus !==
-      ParameterVerificationStatus.ACCEPTED
+    (verificationType === ParameterVerificationTypeEnum.BOTH &&
+      verifications?.[ParameterVerificationTypeEnum.SELF]?.verificationStatus !==
+        ParameterVerificationStatus.ACCEPTED) ||
+    verifications?.[ParameterVerificationTypeEnum.SELF]?.evaluationState ===
+      ParameterExecutionState.BEING_EXECUTED
   ) {
     showVerification = false;
   }
