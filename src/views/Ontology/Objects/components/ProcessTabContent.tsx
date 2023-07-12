@@ -6,7 +6,12 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { apiGetProcessesByResource } from '#utils/apiUrls';
-import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGINATION } from '#utils/constants';
+import {
+  ALL_FACILITY_ID,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_PAGINATION,
+} from '#utils/constants';
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import CreateJob from '#views/Jobs/Components/CreateJob';
@@ -57,7 +62,7 @@ const ProcessTabContent = () => {
   };
 
   const fetchData = async (params: PaginatedFetchData = {}) => {
-    const { page = DEFAULT_PAGE_NUMBER, size = 7, filters = filterFields } = params;
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     try {
       const { data, pageable } = await request(
         'GET',
@@ -109,7 +114,6 @@ const ProcessTabContent = () => {
   };
 
   useEffect(() => {
-    console.log('filterFields', filterFields);
     if (selectedObject) {
       fetchData({ filters: filterFields });
     }
