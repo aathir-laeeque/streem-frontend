@@ -1,5 +1,7 @@
+import { ParametersById } from '#JobComposer/ActivityList/types';
 import {
   AutomationAction,
+  AutomationActionActionType,
   AutomationActionActionTypeVisual,
   AutomationActionTriggerTypeVisual,
   Stage,
@@ -77,5 +79,26 @@ export const ObjectIdsDataFromChoices = (choices: any) => {
     return data;
   } else {
     return null;
+  }
+};
+
+export const automationInputValidator = (
+  automation: AutomationAction,
+  parametersById: ParametersById,
+) => {
+  switch (automation.actionType) {
+    case AutomationActionActionType.INCREASE_PROPERTY:
+    case AutomationActionActionType.DECREASE_PROPERTY:
+      return !!(
+        parametersById[automation?.actionDetails?.parameterId]?.response?.value &&
+        parametersById[automation?.actionDetails?.referencedParameterId]?.response?.choices
+      );
+
+    case AutomationActionActionType.ARCHIVE_OBJECT:
+    case AutomationActionActionType.SET_PROPERTY:
+      return !!parametersById[automation.actionDetails.referencedParameterId]?.response?.choices;
+
+    default:
+      return true;
   }
 };

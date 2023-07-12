@@ -29,7 +29,7 @@ import {
 } from './actions';
 import { TaskListAction } from './reducer.types';
 import { CompletedTaskErrors, TaskAction } from './types';
-import { getAutomationActionTexts } from './utils';
+import { automationInputValidator, getAutomationActionTexts } from './utils';
 
 type TaskErrorSagaPayload = ErrorGroups & {
   taskId: Task['id'];
@@ -151,17 +151,24 @@ function* performActionOnTaskSaga({
 
         if (automations?.length) {
           for (const automation of automations) {
-            const objectTypeDisplayName =
-              parametersById[automation.actionDetails.referencedParameterId]?.data
-                ?.objectTypeDisplayName ||
-              parametersMappedToJobById[automation.actionDetails.referencedParameterId]?.data
-                ?.objectTypeDisplayName;
-            yield put(
-              showNotification({
-                type: NotificationType.SUCCESS,
-                msg: getAutomationActionTexts(automation, 'success', objectTypeDisplayName),
-              }),
-            );
+            if (
+              automationInputValidator(automation, {
+                ...parametersById,
+                ...parametersMappedToJobById,
+              })
+            ) {
+              const objectTypeDisplayName =
+                parametersById[automation.actionDetails.referencedParameterId]?.data
+                  ?.objectTypeDisplayName ||
+                parametersMappedToJobById[automation.actionDetails.referencedParameterId]?.data
+                  ?.objectTypeDisplayName;
+              yield put(
+                showNotification({
+                  type: NotificationType.SUCCESS,
+                  msg: getAutomationActionTexts(automation, 'success', objectTypeDisplayName),
+                }),
+              );
+            }
           }
         }
 
@@ -170,17 +177,24 @@ function* performActionOnTaskSaga({
       } else {
         if (automations?.length) {
           for (const automation of automations) {
-            const objectTypeDisplayName =
-              parametersById[automation.actionDetails.referencedParameterId]?.data
-                ?.objectTypeDisplayName ||
-              parametersMappedToJobById[automation.actionDetails.referencedParameterId]?.data
-                ?.objectTypeDisplayName;
-            yield put(
-              showNotification({
-                type: NotificationType.ERROR,
-                msg: getAutomationActionTexts(automation, 'error', objectTypeDisplayName),
-              }),
-            );
+            if (
+              automationInputValidator(automation, {
+                ...parametersById,
+                ...parametersMappedToJobById,
+              })
+            ) {
+              const objectTypeDisplayName =
+                parametersById[automation.actionDetails.referencedParameterId]?.data
+                  ?.objectTypeDisplayName ||
+                parametersMappedToJobById[automation.actionDetails.referencedParameterId]?.data
+                  ?.objectTypeDisplayName;
+              yield put(
+                showNotification({
+                  type: NotificationType.ERROR,
+                  msg: getAutomationActionTexts(automation, 'error', objectTypeDisplayName),
+                }),
+              );
+            }
           }
         }
 
