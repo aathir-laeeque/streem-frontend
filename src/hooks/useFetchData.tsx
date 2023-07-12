@@ -65,7 +65,7 @@ export function createFetchList<T>(
       ...params,
     };
     const urlString = url + JSON.stringify(queryParams);
-    if (url && pagesFetched[page] !== urlString) {
+    if (url) {
       const response: ResponseObj<T[]> = await request('GET', url, {
         params: queryParams,
       });

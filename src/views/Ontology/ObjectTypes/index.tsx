@@ -39,6 +39,7 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission from '#services/uiPermissions';
 import { createFetchList } from '#hooks/useFetchData';
 import { apigetObjectTypeProperties, apiGetObjectTypeRelations } from '#utils/apiUrls';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 // TODO change this enum to Object and have positions defined explicity
 export enum FlagPositions {
   SYSTEM,
@@ -123,8 +124,8 @@ const GeneralWrapper = styled.div`
 `;
 
 const urlParams = {
-  page: 0,
-  size: 10,
+  page: DEFAULT_PAGE_NUMBER,
+  size: DEFAULT_PAGE_SIZE,
   sort: 'createdAt,desc',
   isArchive: false,
 };

@@ -6,42 +6,36 @@ import {
   TabContentProps,
   TextInput,
 } from '#components';
-import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { fetchDataParams } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { fetchObjectTypes } from '../actions';
 import checkPermission from '#services/uiPermissions';
 import { DataTableColumn } from '#components/shared/DataTable';
 import { Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
+import { createFetchList } from '#hooks/useFetchData';
+import { apiGetObjectTypes } from '#utils/apiUrls';
+
+const urlParams = {
+  page: DEFAULT_PAGE_NUMBER,
+  size: DEFAULT_PAGE_SIZE,
+  sort: 'createdAt,desc',
+  usageStatus: 1,
+};
 
 const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
-  const dispatch = useDispatch();
-  const {
-    objectTypes: { list, listLoading, pageable },
-  } = useTypedSelector((state) => state.ontology);
+  const [filters, setFilters] = useState<Record<string, any>>(urlParams);
 
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
-  const fetchData = (params: fetchDataParams = {}) => {
-    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
-    dispatch(
-      fetchObjectTypes({
-        page,
-        size,
-        usageStatus: 1,
-        displayName: searchQuery ? searchQuery : undefined,
-      }),
-    );
-  };
+  const { list, reset, pagination, status } = createFetchList(
+    apiGetObjectTypes(),
+    urlParams,
+    false,
+  );
 
   useEffect(() => {
-    fetchData();
-  }, [searchQuery]);
+    reset({ params: { ...filters } });
+  }, [filters]);
 
   return (
     <TabContentWrapper>
@@ -52,7 +46,10 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
             AfterElement={Search}
             afterElementClass=""
             placeholder={`Search with Object Type`}
-            onChange={debounce(({ value }) => setSearchQuery(value), 500)}
+            onChange={debounce(
+              ({ value }) => setFilters({ ...filters, displayName: value ? value : undefined }),
+              500,
+            )}
           />
         </div>
         {checkPermission(['ontology', 'createObjectType']) && (
@@ -67,7 +64,7 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
         )}
       </div>
       <LoadingContainer
-        loading={listLoading}
+        loading={status === 'loading'}
         component={
           <DataTable
             columns={[
@@ -118,7 +115,10 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
           />
         }
       />
-      <Pagination pageable={pageable} fetchData={fetchData} />
+      <Pagination
+        pageable={pagination}
+        fetchData={(p) => reset({ params: { page: p.page, size: p.size } })}
+      />
     </TabContentWrapper>
   );
 };
