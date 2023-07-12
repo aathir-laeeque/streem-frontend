@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux';
 import { executeParameter, fixParameter, updateExecutedParameter } from '../actions';
 import { ParameterProps, Selections } from '../types';
 import { Wrapper } from './styles';
+import ParameterVerificationView from '../Verification/ParameterVerificationView';
+import { ParameterExecutionState } from '#JobComposer/checklist.types';
 
 type YesNoParameterState = {
   reason: string;
@@ -15,7 +17,18 @@ type YesNoParameterState = {
   isEditing?: boolean;
 };
 
-const YesNoParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
+const YesNoParameter: FC<
+  ParameterProps & {
+    verificationsByType: any;
+    verificationType: string;
+  }
+> = ({
+  parameter,
+  isCorrectingError,
+  verificationsByType,
+  verificationType,
+  isLoggedInUserAssigned,
+}) => {
   const dispatch = useDispatch();
 
   const getSelectedIdByChoices = () => {
@@ -26,6 +39,8 @@ const YesNoParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) =>
         )
       : undefined;
   };
+
+  const { state: parameterState, audit } = parameter?.response;
 
   const [state, setState] = useState<YesNoParameterState>({
     reason: parameter?.response?.reason ?? '',
@@ -124,7 +139,14 @@ const YesNoParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) =>
       <div className="parameter-label" data-for={parameter.id}>
         {parameter.label}
       </div>
-      <div className="buttons-container">
+      <div
+        className="buttons-container"
+        {...([ParameterExecutionState.APPROVAL_PENDING].includes(parameterState) && {
+          style: {
+            pointerEvents: 'none',
+          },
+        })}
+      >
         {parameter.data
           .sort((a, b) => (a.type > b.type ? -1 : 1))
           .map((el, index) => {
@@ -207,6 +229,17 @@ const YesNoParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) =>
             </div>
           ) : null}
         </div>
+      ) : null}
+
+      {!state.showButtons || !state.shouldAskForReason ? (
+        <ParameterVerificationView
+          parameterState={parameterState}
+          verificationsByType={verificationsByType}
+          verificationType={verificationType}
+          isLoggedInUserAssigned={!!isLoggedInUserAssigned}
+          parameterId={parameter.id}
+          modifiedBy={audit?.modifiedBy?.id}
+        />
       ) : null}
     </Wrapper>
   );

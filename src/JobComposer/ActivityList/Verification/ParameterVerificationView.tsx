@@ -76,6 +76,7 @@ const ParameterVerificationView: FC<{
 export default memo(ParameterVerificationView, (prev, next) => {
   return (
     prev.parameterState === next.parameterState &&
+    prev.modifiedBy === next.modifiedBy &&
     isEqual(prev.verificationsByType, next.verificationsByType)
   );
 });

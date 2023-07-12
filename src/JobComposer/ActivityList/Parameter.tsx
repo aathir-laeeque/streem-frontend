@@ -68,14 +68,28 @@ const Parameter: FC<{
           </div>
         )}
 
-      {parameter.type === MandatoryParameter.SHOULD_BE ? (
-        <ShouldBeParameter
-          isLoggedInUserAssigned={isLoggedInUserAssigned}
-          verificationType={verificationType}
-          parameter={parameter}
-          verificationsByType={verificationsByType}
-          isCorrectingError={isCorrectingError}
-        />
+      {[`${MandatoryParameter.YES_NO}`, `${MandatoryParameter.SHOULD_BE}`].includes(
+        parameter.type,
+      ) ? (
+        <>
+          {parameter.type === MandatoryParameter.SHOULD_BE ? (
+            <ShouldBeParameter
+              isLoggedInUserAssigned={isLoggedInUserAssigned}
+              verificationType={verificationType}
+              parameter={parameter}
+              verificationsByType={verificationsByType}
+              isCorrectingError={isCorrectingError}
+            />
+          ) : (
+            <YesNoParameter
+              parameter={parameter}
+              isCorrectingError={isCorrectingError}
+              verificationsByType={verificationsByType}
+              verificationType={verificationType}
+              isLoggedInUserAssigned={isLoggedInUserAssigned}
+            />
+          )}
+        </>
       ) : (
         <>
           <div
@@ -152,11 +166,6 @@ const Parameter: FC<{
                 case MandatoryParameter.MULTI_LINE:
                   return (
                     <TextboxParameter parameter={parameter} isCorrectingError={isCorrectingError} />
-                  );
-
-                case MandatoryParameter.YES_NO:
-                  return (
-                    <YesNoParameter parameter={parameter} isCorrectingError={isCorrectingError} />
                   );
 
                 case MandatoryParameter.NUMBER:
