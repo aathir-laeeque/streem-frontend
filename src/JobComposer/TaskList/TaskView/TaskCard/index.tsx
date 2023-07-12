@@ -213,6 +213,9 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overvi
                   dispatch(
                     openOverlayAction({
                       type: OverlayNames.START_TASK_ERROR_MODAL,
+                      props: {
+                        taskState,
+                      },
                     }),
                   );
                 }

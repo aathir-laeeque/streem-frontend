@@ -2,6 +2,7 @@ import { BaseModal } from '#components';
 import React, { FC } from 'react';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import styled from 'styled-components';
+import { TaskExecutionState } from '#JobComposer/checklist.types';
 
 const Wrapper = styled.div`
   .modal {
@@ -33,7 +34,11 @@ const Wrapper = styled.div`
   }
 `;
 
-const StartTaskModal: FC<CommonOverlayProps> = ({ closeAllOverlays, closeOverlay }) => {
+const StartTaskModal: FC<CommonOverlayProps<{ taskState: string }>> = ({
+  closeAllOverlays,
+  closeOverlay,
+  props: { taskState },
+}) => {
   return (
     <Wrapper>
       <BaseModal
@@ -43,8 +48,13 @@ const StartTaskModal: FC<CommonOverlayProps> = ({ closeAllOverlays, closeOverlay
         showFooter={false}
       >
         <div className="start-task">
-          <div className="header">Press Start Task First</div>
-          <div className="body">You need to start the Task before beginning any Parameter</div>
+          <div className="header">
+            Press {taskState === TaskExecutionState.PAUSED ? 'Resume' : 'Start'} Task First
+          </div>
+          <div className="body">
+            You need to {taskState === TaskExecutionState.PAUSED ? 'resume' : 'start'} the Task
+            before beginning any Parameter
+          </div>
         </div>
       </BaseModal>
     </Wrapper>
