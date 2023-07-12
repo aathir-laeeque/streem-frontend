@@ -173,9 +173,9 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
     objectTypes: { active },
   } = useTypedSelector((state) => state.ontology);
 
-  const objectId = active?.id;
+  const objectTypeId = active?.id;
   const { list, reset, pagination } = createFetchList(
-    apigetObjectTypeProperties(objectId),
+    apigetObjectTypeProperties(objectTypeId),
     urlParams,
   );
 
@@ -183,12 +183,17 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
-  const [isChecked, setIsChecked] = useState(false);
+  const [filters, setFilters] = useState<Record<string, any>>(urlParams);
+  const [shouldToggle, setShouldToggle] = useState(false);
 
   const handleClose = () => {
     setAnchorEl(null);
     setTimeout(() => setSelectedProperty(null), 200);
   };
+
+  useEffect(() => {
+    reset({ params: { ...filters } });
+  }, [filters, shouldToggle]);
 
   return (
     <TabContentWrapper>
@@ -329,6 +334,7 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
                                             setFormErrors,
                                           }),
                                         );
+                                        setShouldToggle((prev) => !prev);
                                       },
                                       onSubmitModalText: 'Archive',
                                     },
@@ -380,6 +386,7 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
           onCloseDrawer={setCreatePropertyDrawer}
           property={selectedProperty}
           setSelectedProperty={setSelectedProperty}
+          setShouldToggle={setShouldToggle}
         />
       )}
     </TabContentWrapper>
@@ -391,9 +398,9 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
     objectTypes: { active },
   } = useTypedSelector((state) => state.ontology);
 
-  const objectId = active?.id;
+  const objectTypeId = active?.id;
   const { list, reset, pagination } = createFetchList(
-    apiGetObjectTypeRelations(objectId),
+    apiGetObjectTypeRelations(objectTypeId),
     urlParams,
   );
 
@@ -401,7 +408,8 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedRelation, setSelectedRelation] = useState(null);
-  const [isChecked, setIsChecked] = useState(false);
+  const [filters, setFilters] = useState<Record<string, any>>(urlParams);
+  const [shouldToggle, setShouldToggle] = useState(false);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -417,6 +425,10 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
       }),
     );
   };
+
+  useEffect(() => {
+    reset({ params: { ...filters } });
+  }, [filters, shouldToggle]);
 
   useEffect(() => {
     fetchData(0);
@@ -547,6 +559,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
                                           setFormErrors,
                                         }),
                                       );
+                                      setShouldToggle((prev) => !prev);
                                     },
                                     onSubmitModalText: 'Archive',
                                   },
@@ -591,6 +604,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
           onCloseDrawer={setRelationDrawer}
           relation={selectedRelation}
           setSelectedRelation={setSelectedRelation}
+          setShouldToggle={setShouldToggle}
         />
       )}
     </TabContentWrapper>

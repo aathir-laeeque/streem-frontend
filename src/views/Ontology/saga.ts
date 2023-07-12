@@ -236,7 +236,6 @@ function* archiveObjectTypePropertySaga({
         }),
       );
       setFormErrors(errors);
-      setTimeout(() => location.reload(), 1300);
     } else if (errors) {
       setFormErrors(errors);
       throw getErrorMsg(errors);
@@ -268,7 +267,6 @@ function* createObjectTypePropertySaga({
           msg: `New Object Type Property Created Successfully`,
         }),
       );
-      setTimeout(() => location.reload(), 1300);
     } else if (errors) {
       throw getErrorMsg(errors);
     }
@@ -299,7 +297,6 @@ function* createObjectTypeRelationSaga({
           msg: `New Object Type Relation Created Successfully`,
         }),
       );
-      setTimeout(() => location.reload(), 1300);
     } else if (errors) {
       throw getErrorMsg(errors);
     }
@@ -332,7 +329,6 @@ function* archiveObjectTypeRelationSaga({
         }),
       );
       setFormErrors(errors);
-      setTimeout(() => location.reload(), 1300);
     } else if (errors) {
       throw getErrorMsg(errors);
     }
@@ -363,7 +359,6 @@ function* editObjectTypeRelationSaga({ payload }: ReturnType<any>) {
           msg: `Object Relation Updated`,
         }),
       );
-      setTimeout(() => location.reload(), 1300);
     } else if (errors) {
       throw getErrorMsg(errors);
     }
@@ -393,7 +388,6 @@ function* editObjectTypePropertySaga({ payload }: ReturnType<any>) {
           msg: `Object Property Updated`,
         }),
       );
-      setTimeout(() => location.reload(), 1300);
     } else if (errors) {
       throw getErrorMsg(errors);
     }

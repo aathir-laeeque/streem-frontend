@@ -157,7 +157,8 @@ const AddRelationDrawer: FC<{
   label: string | boolean;
   relation: any;
   setSelectedRelation: React.Dispatch<React.SetStateAction<any>>;
-}> = ({ onCloseDrawer, relation, label, setSelectedRelation }) => {
+  setShouldToggle: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ onCloseDrawer, relation, label, setSelectedRelation, setShouldToggle }) => {
   const dispatch = useDispatch();
   const {
     ontology: {
@@ -401,6 +402,7 @@ const AddRelationDrawer: FC<{
       };
       dispatch(createObjectTypeRelation({ objectTypeId: active?.id, data: newData }));
     }
+    setShouldToggle((prev) => !prev);
     handleCloseDrawer();
   };
 

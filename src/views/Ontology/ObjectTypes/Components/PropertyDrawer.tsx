@@ -103,7 +103,8 @@ const AddPropertyDrawer: FC<{
   label: string | boolean;
   property: any;
   setSelectedProperty: React.Dispatch<React.SetStateAction<any>>;
-}> = ({ onCloseDrawer, label, property, setSelectedProperty }) => {
+  setShouldToggle: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ onCloseDrawer, label, property, setSelectedProperty, setShouldToggle }) => {
   const dispatch = useDispatch();
   const {
     prototypeComposer: {
@@ -380,6 +381,7 @@ const AddPropertyDrawer: FC<{
 
       dispatch(createObjectTypeProperty({ objectTypeId: active?.id, data: newData }));
     }
+    setShouldToggle((prev) => !prev);
     handleCloseDrawer();
   };
 
