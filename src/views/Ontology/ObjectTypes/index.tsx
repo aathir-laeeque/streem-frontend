@@ -280,7 +280,7 @@ const PropertiesTabContent: FC<TabContentProps> = ({ values }) => {
             id: 'status',
             label: 'Status',
             minWidth: 100,
-            format: (item) => 'Active',
+            format: (item) => (item?.usageStatus === 1 ? 'Active' : 'Inactive'),
           },
           ...(checkPermission(['ontology', 'editObjectType'])
             ? [
@@ -509,7 +509,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ values }) => {
             id: 'status',
             label: 'Status',
             minWidth: 100,
-            format: (item) => 'Active',
+            format: (item) => (item?.usageStatus === 1 ? 'Active' : 'Inactive'),
           },
           ...(checkPermission(['ontology', 'editObjectType'])
             ? [
