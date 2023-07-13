@@ -25,6 +25,7 @@ import styled from 'styled-components';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import { createFetchList } from '#hooks/useFetchData';
 import { baseUrl } from '#utils/apiUrls';
+import { DEFAULT_PAGE_SIZE } from '#utils/constants';
 
 const Wrapper = styled.div`
   .modal {
@@ -294,7 +295,7 @@ const ActionFormCard: FC<Props> = ({
 }) => {
   const {
     ontology: {
-      objectTypes: { list, listLoading },
+      objectTypes: { list, listLoading, pageable: objectTypePagination },
     },
     prototypeComposer: {
       tasks: { activeTaskId },
@@ -759,6 +760,20 @@ const ActionFormCard: FC<Props> = ({
                                       },
                                     ]
                                   : null,
+                                onMenuScrollToBottom: () => {
+                                  if (!listLoading && !objectTypePagination.last) {
+                                    dispatch(
+                                      fetchObjectTypes(
+                                        {
+                                          page: objectTypePagination.page + 1,
+                                          size: DEFAULT_PAGE_SIZE,
+                                          usageStatus: 1,
+                                        },
+                                        true,
+                                      ),
+                                    );
+                                  }
+                                },
                                 onChange: (_option: any) => {
                                   onChange({
                                     urlPath: `/objects/partial?collection=${_option.externalId}`,
