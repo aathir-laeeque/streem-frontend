@@ -107,6 +107,7 @@ function* updateJobSaga({ payload }: ReturnType<typeof updateJob>) {
     ),
       yield put(updateJobSuccess(data));
   } catch (e) {
+    yield put(createJobError());
     yield* handleCatch('JobListView', 'updateJobSaga', e, true);
   }
 }

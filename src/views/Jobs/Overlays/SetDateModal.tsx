@@ -93,7 +93,6 @@ const SetDateModal: FC<CommonOverlayProps<SetDateModalProps>> = ({
   props: { jobId },
 }) => {
   const dispatch = useDispatch();
-  const { submitting } = useTypedSelector((state) => state.jobListView);
   const form = useForm({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -108,7 +107,6 @@ const SetDateModal: FC<CommonOverlayProps<SetDateModalProps>> = ({
     watch,
     getValues,
   } = form;
-  console.log('🚀 ~ file: SetDateModal.tsx:111 ~ getValues:', getValues());
 
   useEffect(() => {
     register('expectedStartDate', {
@@ -120,7 +118,6 @@ const SetDateModal: FC<CommonOverlayProps<SetDateModalProps>> = ({
   }, []);
 
   const onSubmit = (data: any) => {
-    console.log(jobId, 'Data', data);
     dispatch(
       updateJob({
         job: {
@@ -143,7 +140,7 @@ const SetDateModal: FC<CommonOverlayProps<SetDateModalProps>> = ({
         title="Schedule"
         primaryText="Save"
         secondaryText="Cancel"
-        disabledPrimary={!isValid || !isDirty || submitting}
+        disabledPrimary={!isValid || !isDirty}
         onPrimary={handleSubmit((data) => onSubmit(data))}
       >
         <form>

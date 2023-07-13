@@ -108,7 +108,7 @@ export enum ListViewAction {
   FETCH_JOBS_SUCCESS = '@@job/New-ListView/FETCH_JOBS_SUCCESS',
   CREATE_JOB = '@@job/ListView/CREATE_JOB',
   CREATE_JOB_SUCCESS = '@@job/ListView/CREATE_JOB_SUCCESS',
-  CREATE_JOB_ERROR = '@@job/ListView/CREATE_JOB_ERROR',
+  CREATE_OR_UPDATE_JOB_ERROR = '@@job/ListView/CREATE_OR_UPDATE_JOB_ERROR',
   UPDATE_JOB = '@@job/ListView/UPDATE_JOB',
   UPDATE_JOB_SUCCESS = '@@job/ListView/UPDATE_JOB_SUCCESS',
 }

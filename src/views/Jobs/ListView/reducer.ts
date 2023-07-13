@@ -50,7 +50,7 @@ const reducer = (state = initialState, action: ListViewActionType): ListViewStat
         reRender: action.payload.shouldReRender ? !state.reRender : state.reRender,
       };
 
-    case ListViewAction.CREATE_JOB_ERROR:
+    case ListViewAction.CREATE_OR_UPDATE_JOB_ERROR:
       return {
         ...state,
         submitting: false,

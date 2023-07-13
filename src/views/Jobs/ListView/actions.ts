@@ -22,7 +22,7 @@ export const createJob = (params: {
 export const createJobSuccess = (data: any, shouldReRender = true) =>
   actionSpreader(ListViewAction.CREATE_JOB_SUCCESS, { data, shouldReRender });
 
-export const createJobError = () => actionSpreader(ListViewAction.CREATE_JOB_ERROR);
+export const createJobError = () => actionSpreader(ListViewAction.CREATE_OR_UPDATE_JOB_ERROR);
 
 export const updateJob = (payload: { job: Partial<Job> }) =>
   actionSpreader(ListViewAction.UPDATE_JOB, payload);
