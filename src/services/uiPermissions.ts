@@ -113,8 +113,8 @@ const uiPermissions: Record<string, any> = {
   checklists: {
     create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
     createGlobal: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
-    revision: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
-    archive: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+    revision: [roles.ACCOUNT_OWNER, roles.CHECKLIST_PUBLISHER],
+    archive: [roles.ACCOUNT_OWNER, roles.CHECKLIST_PUBLISHER],
     release: [roles.ACCOUNT_OWNER, roles.CHECKLIST_PUBLISHER],
     releaseGlobal: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
     createJob: [
