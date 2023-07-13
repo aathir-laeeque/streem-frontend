@@ -34,6 +34,7 @@ import ProcessTabContent from './components/ProcessTabContent';
 import RelationTabContent from './components/RelationTabContent';
 import TabContent from './TabContent';
 import { getFullName } from '#utils/stringUtils';
+import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
 
 const ObjectViewWrapper = styled.div`
   display: flex;
@@ -50,6 +51,12 @@ const ObjectViewWrapper = styled.div`
     border-bottom: 1px solid #e0e0e0;
     .object-header-section {
       display: flex;
+      &.heading {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        cursor: pointer;
+      }
       &.left {
         flex-direction: column;
         gap: 4px;
@@ -518,7 +525,10 @@ const ObjectsContent = ({
         <ObjectViewWrapper>
           <div className="object-header">
             <div className="object-header-section left">
-              <h4>{selectedObject?.displayName}</h4>
+              <div className="object-header-section heading">
+                <KeyboardArrowLeftOutlinedIcon onClick={() => navigate(-1)} />
+                <h4>{selectedObject?.displayName}</h4>
+              </div>
               <div className="meta-info">
                 <div className="badge">
                   {selectedObject?.usageStatus === 1 ? 'Active' : 'Inactive'}
