@@ -1,4 +1,6 @@
-import { Button, DataTable, LoadingContainer, PaginatedFetchData, Pagination } from '#components';
+import DownloadIcon from '#assets/svg/DownloadIcon.svg';
+import FilterIcon from '#assets/svg/FilterIcon.svg';
+import { DataTable, LoadingContainer, Pagination } from '#components';
 import { useTypedSelector } from '#store';
 import {
   clearAuditLogFilters,
@@ -7,11 +9,9 @@ import {
 } from '#store/audit-log-filters/action';
 import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterField, FilterOperators, InputTypes } from '#utils/globalTypes';
+import { FilterField, FilterOperators, InputTypes, fetchDataParams } from '#utils/globalTypes';
 import { formatDateByInputType } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
-import TuneIcon from '@material-ui/icons/Tune';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -37,7 +37,7 @@ const AuditLogsTabWrapper = styled.div`
       display: flex;
       margin-left: 10px;
       align-items: center;
-      button {
+      div {
         margin-right: 16px;
         display: flex;
         align-items: center;
@@ -45,6 +45,17 @@ const AuditLogsTabWrapper = styled.div`
         padding-block: 6px;
         :last-of-type {
           margin-right: 0;
+        }
+
+        .icon {
+          color: #1d84ff;
+          height: 16px;
+          width: 16px;
+        }
+
+        span {
+          color: #1d84ff;
+          font-size: 14px;
         }
       }
     }
@@ -67,7 +78,7 @@ const TabContent: FC = () => {
   } = useTypedSelector((state) => state.ontology);
   const { selectedFacility } = useTypedSelector((state) => state.auth);
   const objectId = activeObject?.id;
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     if (objectId) {
       dispatch(
@@ -167,16 +178,15 @@ const TabContent: FC = () => {
           <TabContentWrapper>
             <div className="filters">
               <div className="filter-buttons-wrapper">
-                <Button
-                  variant="textOnly"
+                <div
                   onClick={() => {
                     setState((prev) => ({ ...prev, showDrawer: true }));
                   }}
                 >
-                  <TuneIcon />
-                </Button>
-                <Button
-                  variant="textOnly"
+                  <img src={FilterIcon} alt="filter icon" className="icon" />
+                  {filterFields?.length > 0 && <span>{`(${filterFields.length})`}</span>}
+                </div>
+                <div
                   onClick={() => {
                     dispatch(
                       setPdfMetaData({
@@ -188,8 +198,8 @@ const TabContent: FC = () => {
                     openLinkInNewTab(`/object-change-logs/${objectId}/print`);
                   }}
                 >
-                  <GetAppOutlinedIcon />
-                </Button>
+                  <img src={DownloadIcon} alt="Download icon" className="icon" />
+                </div>
               </div>
             </div>
             <DataTable
