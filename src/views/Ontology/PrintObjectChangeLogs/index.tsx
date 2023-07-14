@@ -157,7 +157,7 @@ const MyPrintObjectChangeLogs: FC<{ objectId: string }> = () => {
               },
             },
             {
-              text: 'Change To',
+              text: 'Changed To',
               customStyle: {
                 textAlign: 'left',
                 width: '20%',
@@ -240,7 +240,7 @@ const MyPrintObjectChangeLogs: FC<{ objectId: string }> = () => {
                     ? currLog?.jobInfo
                       ? `${currLog?.reason} ${currLog?.jobInfo?.process} (ID:${currLog.jobInfo.jobId})`
                       : currLog?.reason
-                    : '-',
+                    : 'N/A',
                   customStyle: {
                     textAlign: 'left',
                     width: '20%',
