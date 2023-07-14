@@ -228,7 +228,7 @@ const MyPrintObjectChangeLogs: FC<{ objectId: string }> = () => {
                   },
                 },
                 {
-                  text: `${currLog?.modifiedBy?.firstName} ${currLog?.modifiedBy?.lastName}`,
+                  text: `${currLog?.modifiedBy?.firstName} ${currLog?.modifiedBy?.lastName} (ID: ${currLog?.modifiedBy?.employeeId})`,
                   customStyle: {
                     textAlign: 'left',
                     width: '20%',
