@@ -1,11 +1,11 @@
 import { MandatoryParameter } from '#JobComposer/checklist.types';
 import { fetchParameters } from '#PrototypeComposer/Activity/actions';
 import { customOnChange } from '#utils/formEvents';
-import { Button, FormGroup, PaginatedFetchData } from '#components';
+import { Button, FormGroup } from '#components';
 import { useTypedSelector } from '#store';
 import { apiGetObjectTypes, apiGetParameters, baseUrl } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterOperators, InputTypes, ResponseObj } from '#utils/globalTypes';
+import { FilterOperators, InputTypes, ResponseObj, fetchDataParams } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { Choice, ObjectType } from '#views/Ontology/types';
 import { AddCircleOutline, Close } from '@material-ui/icons';
@@ -102,7 +102,7 @@ type ResourceFilterState = {
   isActiveLoading: boolean;
   filterSelectOptions: Record<number, Choice[]>;
   selectedObjectType?: ObjectType;
-  relationObjects?: any[];
+  relationObjects?: Record<string, any[]>;
   parametersData?: any;
 };
 
@@ -120,7 +120,7 @@ const ResourceFilter: FC<{
   const [state, setState] = useState<ResourceFilterState>({
     isActiveLoading: true,
     filterSelectOptions: {},
-    relationObjects: [],
+    relationObjects: {},
     parametersData: {},
   });
   const { propertyFilters = {} } = data;
@@ -167,7 +167,7 @@ const ResourceFilter: FC<{
   //   }
   // };
 
-  const fetchParametersData = async (params: PaginatedFetchData = {}) => {
+  const fetchParametersData = async (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     if (processData?.id) {
       try {
@@ -227,28 +227,31 @@ const ResourceFilter: FC<{
     }
     setState((prev) => ({ ...prev, isActiveLoading: false, selectedObjectType: res?.data }));
   };
-  const pagination = useRef({
-    current: -1,
-    isLast: false,
-  });
+  const pagination = useRef({});
 
-  const fetchRelationObjects = async (urlPath: string) => {
+  const fetchRelationObjects = async (urlPath: string, externalId: string) => {
     setState((prev) => ({ ...prev, isActiveLoading: true }));
+    if (!pagination?.current[externalId]) {
+      pagination.current = { ...pagination.current, [externalId]: { current: -1, isLast: false } };
+    }
     try {
       const response: ResponseObj<any> = await request(
         'GET',
-        `${baseUrl}${urlPath}&page=${pagination.current.current + 1}`,
+        `${baseUrl}${urlPath}&page=${pagination.current[externalId].current + 1}`,
       );
       if (response?.data) {
         if (response?.pageable) {
           pagination.current = {
-            current: response.pageable?.page,
-            isLast: response.pageable?.last,
+            ...pagination.current,
+            [externalId]: { current: response.pageable?.page, isLast: response.pageable?.last },
           };
         }
         setState((prev) => ({
           ...prev,
-          relationObjects: [...prev.relationObjects, ...(response?.data || [])],
+          relationObjects: {
+            ...prev.relationObjects,
+            [externalId]: [...(prev?.relationObjects[externalId] || []), ...(response?.data || [])],
+          },
           isActiveLoading: false,
         }));
       }
@@ -275,6 +278,22 @@ const ResourceFilter: FC<{
     // fetchParametersData();
     fetchParametersData();
   }, []);
+
+  useEffect(() => {
+    if (fields?.length > 0) {
+      fields.forEach((currfilter: any) => {
+        if (currfilter.fieldType === 'RELATION') {
+          const relationId = currfilter.field.split('.')[1];
+          if (propertiesMap.current[relationId]) {
+            fetchRelationObjects(
+              propertiesMap.current[relationId]?.target?.urlPath,
+              propertiesMap.current[relationId]?.externalId,
+            );
+          }
+        }
+      });
+    }
+  }, [propertiesMap.current]);
 
   const updateFilters = (updatedFilters: any) => {
     const isFilter = updatedFilters?.fields?.length;
@@ -460,7 +479,7 @@ const ResourceFilter: FC<{
                               },
                             }));
                           } else if (value?.target?.cardinality && value?.target?.urlPath) {
-                            fetchRelationObjects(value?.target?.urlPath);
+                            fetchRelationObjects(value?.target?.urlPath, value?.externalId);
                           } else {
                             setState((prev) => ({
                               ...prev,
@@ -578,7 +597,7 @@ const ResourceFilter: FC<{
                                       placeholder: 'Enter Value',
                                       options: (
                                         (selectedObjectProperty?.target?.cardinality
-                                          ? relationObjects
+                                          ? relationObjects?.[selectedObjectProperty.externalId]
                                           : filterSelectOptions?.[index]) || []
                                       ).map((option) => ({
                                         ...option,
@@ -592,11 +611,13 @@ const ResourceFilter: FC<{
                                       isDisabled: isReadOnly,
                                       onMenuScrollToBottom: () => {
                                         if (
-                                          !pagination.current.isLast &&
+                                          !pagination.current[selectedObjectProperty?.externalId]
+                                            ?.isLast &&
                                           selectedObjectProperty?.target?.cardinality
                                         ) {
                                           fetchRelationObjects(
                                             selectedObjectProperty?.target?.urlPath,
+                                            selectedObjectProperty?.externalId,
                                           );
                                         }
                                       },
