@@ -503,7 +503,7 @@ const ObjectsContent = ({
   } = useTypedSelector((state) => state.ontology);
 
   useEffect(() => {
-    if (objectTypeId && !selectedObjectType) {
+    if (objectTypeId) {
       dispatch(fetchObjectType(objectTypeId));
     }
 
