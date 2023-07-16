@@ -535,7 +535,10 @@ const ObjectsContent = ({
                 </div>
                 <span>ID: {selectedObject?.externalId}</span>
                 {selectedObject?.createdAt && (
-                  <span>Created Date: {formatDateTime(selectedObject!.createdAt)}</span>
+                  <span>
+                    Created Date:{' '}
+                    {formatDateByInputType(InputTypes.DATE, selectedObject!.createdAt)}
+                  </span>
                 )}
               </div>
             </div>
