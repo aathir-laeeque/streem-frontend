@@ -1,5 +1,5 @@
 import { Select } from '#components';
-import { get, isArray } from 'lodash';
+import { get } from 'lodash';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { executeParameterLeading, fixParameterLeading } from '../actions';
@@ -29,30 +29,18 @@ const MultiSelectParameter: FC<ParameterProps & { isMulti: boolean }> = ({
         )}
         placeholder={isMulti ? 'Select one or more options' : 'You can select one option here'}
         styles={customSelectStyles}
-        onChange={(options) => {
-          let newData;
-
-          if (isArray(options)) {
-            newData = {
-              ...parameter,
-              data: parameter.data.map((el) => ({
-                ...el,
-                ...(options.findIndex((e) => e.value === el.id) > -1
-                  ? { state: Selections.SELECTED }
-                  : { state: Selections.NOT_SELECTED }),
-              })),
-            };
-          } else {
-            newData = {
-              ...parameter,
-              data: parameter.data.map((el) => ({
-                ...el,
-                ...(options.value === el.id
-                  ? { state: Selections.SELECTED }
-                  : { state: Selections.NOT_SELECTED }),
-              })),
-            };
-          }
+        isClearable={true}
+        onChange={(_options) => {
+          const options = _options ? (Array.isArray(_options) ? _options : [_options]) : [];
+          const newData = {
+            ...parameter,
+            data: parameter.data.map((el) => ({
+              ...el,
+              ...(options.findIndex((e) => e.value === el.id) > -1
+                ? { state: Selections.SELECTED }
+                : { state: Selections.NOT_SELECTED }),
+            })),
+          };
 
           if (isCorrectingError) {
             dispatch(fixParameterLeading(newData));

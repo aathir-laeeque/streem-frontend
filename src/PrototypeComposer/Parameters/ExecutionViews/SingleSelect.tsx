@@ -9,6 +9,7 @@ const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId' | 'isReadOnly'>> = 
   onChangeHandler,
 }) => {
   const { setValue } = form;
+
   const typeOfSelect = (type) => {
     if (type === 'MULTISELECT') {
       return InputTypes.MULTI_SELECT;
@@ -17,53 +18,33 @@ const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId' | 'isReadOnly'>> = 
 
   const optionChosen = (selectedOptions: any, optionsList: any) => {
     let choices = {};
-    if (Array.isArray(selectedOptions)) {
-      const selectedOptionsMap = new Map();
-      selectedOptions.forEach((currOption) => {
-        selectedOptionsMap.set(currOption.value, currOption.label);
-      });
+    const selectedOptionsMap = new Map();
+    selectedOptions.forEach((currOption) => {
+      selectedOptionsMap.set(currOption.value, currOption.label);
+    });
 
-      optionsList.forEach((currOption: any) => {
-        choices = selectedOptionsMap.has(currOption.id)
-          ? { ...choices, [currOption.id]: 'SELECTED' }
-          : { ...choices, [currOption.id]: 'NOT_SELECTED' };
-      });
-    } else {
-      optionsList.forEach((currOption: any) => {
-        choices =
-          currOption.id === selectedOptions.value
-            ? { ...choices, [currOption.id]: 'SELECTED' }
-            : { ...choices, [currOption.id]: 'NOT_SELECTED' };
-      });
-    }
+    optionsList.forEach((currOption: any) => {
+      choices = selectedOptionsMap.has(currOption.id)
+        ? { ...choices, [currOption.id]: 'SELECTED' }
+        : { ...choices, [currOption.id]: 'NOT_SELECTED' };
+    });
     return choices;
   };
 
   const selectedData = (selectedOptions: any, optionsList: any) => {
-    if (Array.isArray(selectedOptions)) {
-      const selectedOptionsMap = new Map();
-      selectedOptions.forEach((currOption) => {
-        selectedOptionsMap.set(currOption.value, currOption.label);
-      });
+    const selectedOptionsMap = new Map();
+    selectedOptions.forEach((currOption) => {
+      selectedOptionsMap.set(currOption.value, currOption.label);
+    });
 
-      return optionsList.map((currOption: any) => {
-        return selectedOptionsMap.has(currOption.id)
-          ? {
-              ...currOption,
-              state: 'SELECTED',
-            }
-          : { ...currOption, state: 'NOT_SELECTED' };
-      });
-    } else {
-      return optionsList.map((currOption) => {
-        return currOption.id === selectedOptions.value
-          ? {
-              ...currOption,
-              state: 'SELECTED',
-            }
-          : { ...currOption, state: 'NOT_SELECTED' };
-      });
-    }
+    return optionsList.map((currOption: any) => {
+      return selectedOptionsMap.has(currOption.id)
+        ? {
+            ...currOption,
+            state: 'SELECTED',
+          }
+        : { ...currOption, state: 'NOT_SELECTED' };
+    });
   };
 
   return (
@@ -80,9 +61,15 @@ const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId' | 'isReadOnly'>> = 
             menuPortalTarget: document.body,
             menuPosition: 'fixed',
             menuShouldBlockScroll: true,
+            isClearable: true,
             ['data-id']: parameter.id,
             ['data-type']: parameter.type,
-            onChange: (value: any) => {
+            placeholder:
+              parameter.type === 'MULTISELECT'
+                ? 'Select one or more options'
+                : 'You can select one option here',
+            onChange: (_value: any) => {
+              const value = _value ? (Array.isArray(_value) ? _value : [_value]) : [];
               const parameterData = {
                 ...parameter,
                 data: selectedData(value, parameter.data),
@@ -95,14 +82,13 @@ const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId' | 'isReadOnly'>> = 
                   parameterValueApprovalDto: null,
                 },
               };
-              setValue(parameter.id, parameterData, {
+              setValue(parameter.id, value.length ? parameterData : null, {
                 shouldDirty: true,
                 shouldValidate: true,
               });
               onChangeHandler(parameterData);
             },
             isSearchable: false,
-            placeholder: '',
           },
         },
       ]}
