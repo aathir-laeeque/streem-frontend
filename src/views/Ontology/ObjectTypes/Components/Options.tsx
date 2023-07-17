@@ -166,7 +166,7 @@ const ChecklistParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
           </SortableContext>
         </DndContext>
       </ul>
-      <AddNewItem onClick={() => append({ id: uuidv4(), displayName: '' })} />
+      {!isReadOnly && <AddNewItem onClick={() => append({ id: uuidv4(), displayName: '' })} />}
     </CommonWrapper>
   );
 };

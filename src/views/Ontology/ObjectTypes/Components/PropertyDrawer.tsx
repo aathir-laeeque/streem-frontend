@@ -277,7 +277,7 @@ const AddPropertyDrawer: FC<{
     switch (inputType) {
       case MandatoryParameter.SINGLE_SELECT:
       case 'MULTI_SELECT':
-        return <ChecklistParameter form={form} />;
+        return <ChecklistParameter form={form} isReadOnly={label === 'Edit'} />;
 
       default:
         return null;
