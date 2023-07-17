@@ -10,10 +10,8 @@ import Signature from '#JobComposer/modals/SignatureActivity';
 import SignCompletedTasksModal from '#JobComposer/modals/SignCompletedTasks';
 import SignningNotCompleteModal from '#JobComposer/modals/SignningNotComplete';
 import SignOffState from '#JobComposer/modals/SignOffStatus';
-import SkipTask from '#JobComposer/modals/SkipTask';
 import StartJob from '#JobComposer/modals/StartJob';
 import StartTaskError from '#JobComposer/modals/StartTaskError';
-import TaskErrorCorrection from '#JobComposer/modals/TaskErrorCorrection';
 import { AssignedUserDetailsPopover } from '#JobComposer/Popovers/AssignedUserDetailsPopover';
 import { TaskMediaModal, TimedTaskConfigModal } from '#PrototypeComposer/modals';
 import EditingDisabledModal from '#PrototypeComposer/modals/EditingDisabled';
@@ -85,17 +83,11 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
     case OverlayNames.START_TASK_ERROR_MODAL:
       return <StartTaskError {...params} />;
 
-    case OverlayNames.SKIP_TASK_MODAL:
-      return <SkipTask {...params} />;
-
     case OverlayNames.COMPLETE_TASK_WITH_EXCEPTION:
       return <CompleteTaskWithException {...params} />;
 
     case OverlayNames.COMPLETE_JOB_WITH_EXCEPTION:
       return <CompleteJobWithException {...params} />;
-
-    case OverlayNames.TASK_ERROR_CORRECTION:
-      return <TaskErrorCorrection {...params} />;
 
     case OverlayNames.ADD_STOP:
       return <AddStop {...params} />;

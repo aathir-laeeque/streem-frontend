@@ -13,6 +13,7 @@ import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Timer from './Timer';
 import { Wrapper } from './styles';
+import { completeTask, enableErrorCorrection, skipTask } from '#JobComposer/TaskList/actions';
 
 type HeaderProps = {
   task: Omit<Task, 'parameters'>;
@@ -163,23 +164,30 @@ const Header: FC<HeaderProps> = ({
                   onClose={handleClose}
                   style={{ marginTop: 30 }}
                 >
-                  {task.taskExecution.state === TaskExecutionState.COMPLETED ||
+                  {(task.taskExecution.state === TaskExecutionState.COMPLETED ||
                     task.taskExecution.state === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
-                    (task.taskExecution.state === TaskExecutionState.SKIPPED && (
-                      <MenuItem
-                        onClick={() => {
-                          handleClose();
-                          dispatch(
-                            openOverlayAction({
-                              type: OverlayNames.TASK_ERROR_CORRECTION,
-                              props: { taskId: task.id, setLoadingState },
-                            }),
-                          );
-                        }}
-                      >
-                        Error correction
-                      </MenuItem>
-                    ))}
+                    task.taskExecution.state === TaskExecutionState.SKIPPED) && (
+                    <MenuItem
+                      onClick={() => {
+                        handleClose();
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.REASON_MODAL,
+                            props: {
+                              modalTitle: 'Error Correction',
+                              modalDesc: 'You need to submit a reason to proceed to make changes',
+                              onSubmitHandler: (reason: string) => {
+                                setLoadingState(true);
+                                dispatch(enableErrorCorrection(task.id, reason, setLoadingState));
+                              },
+                            },
+                          }),
+                        );
+                      }}
+                    >
+                      Error correction
+                    </MenuItem>
+                  )}
                   <MenuItem
                     onClick={() => {
                       handleClose();
@@ -187,15 +195,36 @@ const Header: FC<HeaderProps> = ({
                         if (canSkipTask) {
                           dispatch(
                             openOverlayAction({
-                              type: OverlayNames.SKIP_TASK_MODAL,
-                              props: { taskId: task.id, setLoadingState },
+                              type: OverlayNames.REASON_MODAL,
+                              props: {
+                                modalTitle: 'Skip Task',
+                                modalDesc: 'Provide the details for skipping the task',
+                                onSubmitHandler: (reason: string) => {
+                                  setLoadingState(true);
+                                  dispatch(skipTask(task.id, setLoadingState, reason));
+                                },
+                              },
                             }),
                           );
                         } else {
                           dispatch(
                             openOverlayAction({
-                              type: OverlayNames.COMPLETE_TASK_WITH_EXCEPTION,
-                              props: { taskId: task.id, setLoadingState },
+                              type: OverlayNames.REASON_MODAL,
+                              props: {
+                                modalTitle: 'Complete with Exception',
+                                modalDesc: 'Provide the details for Exception',
+                                onSubmitHandler: (reason: string) => {
+                                  setLoadingState(true);
+                                  dispatch(
+                                    completeTask({
+                                      taskId: task.id,
+                                      setLoadingState,
+                                      reason: reason,
+                                      withException: true,
+                                    }),
+                                  );
+                                },
+                              },
                             }),
                           );
                         }
