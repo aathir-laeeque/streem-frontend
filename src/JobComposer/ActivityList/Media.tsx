@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { openOverlayAction } from '../../components/OverlayContainer/actions';
 import { executeParameter, fixParameter, updateExecutedParameter } from './actions';
 import { ParameterProps } from './types';
+import { useTypedSelector } from '#store';
 
 const MediaWrapper = styled.div.attrs({
   className: 'parameter-media',
@@ -64,6 +65,11 @@ const MediaParameter: FC<ParameterProps> = ({
   isLoggedInUserAssigned,
 }) => {
   const dispatch = useDispatch();
+
+  const {
+    tasks: { activeTaskId },
+  } = useTypedSelector((state) => state.composer);
+
   const [isUploading, setIsUploading] = useState(false);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
 
@@ -136,6 +142,7 @@ const MediaParameter: FC<ParameterProps> = ({
     <MediaWrapper data-id={parameter.id} data-type={parameter.type}>
       {parameter.response?.medias?.length > 0 && (
         <TaskMedias
+          taskId={activeTaskId}
           medias={parameter.response?.medias ?? []}
           parameterId={parameter.id}
           isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
