@@ -18,7 +18,7 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
       objectTypes: { list, listLoading, pageable },
     },
   } = useTypedSelector((state) => state);
-  const { register, watch, setValue } = form;
+  const { watch, setValue, unregister } = form;
   const data = watch('data', {});
   const autoInitialized = watch('autoInitialized', false);
 
@@ -48,13 +48,10 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
       shouldDirty: true,
       shouldValidate: true,
     });
+    unregister('autoInitialize');
   };
 
   useEffect(() => {
-    register('data', {
-      required: true,
-    });
-
     if (!list.length) fetchData({ page: 0 });
   }, []);
 

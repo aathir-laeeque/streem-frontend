@@ -120,7 +120,7 @@ const ChecklistParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
   form,
   isReadOnly,
 }) => {
-  const { register, setError, clearErrors, setValue, watch, trigger } = form;
+  const { setError, clearErrors, setValue, watch, trigger } = form;
   const fields = watch('data', []);
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -201,10 +201,8 @@ const ChecklistParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
                   key={item.id}
                   item={item}
                   index={index}
-                  register={register}
                   remove={handleRemove}
                   isReadOnly={isReadOnly}
-                  setValue={setValue}
                   onChangeOptionLabel={onChangeOptionLabel}
                 />
               );

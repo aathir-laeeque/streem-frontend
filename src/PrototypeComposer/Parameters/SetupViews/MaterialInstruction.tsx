@@ -69,16 +69,12 @@ const MaterialWrapper = styled.div`
   }
 `;
 
-const MaterialInstruction: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
-  form,
-  isReadOnly,
-}) => {
+const MaterialInstruction: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({ form }) => {
   const dispatch = useDispatch();
-  const { register, watch, setValue } = form;
-  register('data', { required: true });
+  const { watch, setValue } = form;
   const data = watch('data', []);
 
-  const openMediaModal = (mediaDetails: any, item: any, index: number) => {
+  const openMediaModal = (mediaDetails: any, _: any, index: number) => {
     dispatch(
       openOverlayAction({
         type: OverlayNames.TASK_MEDIA,

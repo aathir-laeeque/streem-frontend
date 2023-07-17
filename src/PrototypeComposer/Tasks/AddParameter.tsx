@@ -222,8 +222,6 @@ const defaultValues = {
 
 const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntity }> = ({
   isReadOnly,
-  id,
-  entity,
 }) => {
   const dispatch = useDispatch();
   const {
@@ -290,6 +288,8 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
     'verificationType',
   ]);
 
+  register('autoInitialized');
+
   const isLabelReadOnly = isReadOnly;
   isReadOnly = mode === ParameterMode.READ_ONLY ? true : isReadOnly;
   const showFiltersSection = isFiltersAllowed(type);
@@ -345,38 +345,16 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
                   placeholder: 'Select Parameter Type',
                   value: type ? [{ label: ParameterTypeMap[type], value: type }] : undefined,
                   isDisabled: isReadOnly || !!addParameter?.parameterId,
-                  onChange: (option: { value: string }) => {
-                    if (
-                      [
-                        MandatoryParameter.DATE,
-                        MandatoryParameter.DATE_TIME,
-                        MandatoryParameter.MEDIA,
-                        MandatoryParameter.MULTI_LINE,
-                        MandatoryParameter.NUMBER,
-                        MandatoryParameter.SIGNATURE,
-                        MandatoryParameter.SINGLE_LINE,
-                        MandatoryParameter.FILE_UPLOAD,
-                      ].includes(option.value)
-                    ) {
-                      reset(
-                        {
-                          ...defaultValues,
-                          data: {},
-                          label: label,
-                          mandatory: mandatory,
-                          type: option.value,
-                        },
-                        { isDirty: true, isValid: true },
-                      );
-                    } else {
-                      reset({
-                        ...defaultValues,
-                        data: undefined,
-                        label: label,
-                        mandatory: mandatory,
-                        type: option.value,
-                      });
-                    }
+                  onChange: async (option: { value: ParameterType }) => {
+                    reset({
+                      ...defaultValues,
+                      data: undefined,
+                      label: label,
+                      mandatory: mandatory,
+                      autoInitialize: undefined,
+                      autoInitialized: false,
+                      type: option.value,
+                    });
                   },
                 },
               },
@@ -653,6 +631,29 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
       setFormDescription('');
     };
   }, [addParameter]);
+
+  useEffect(() => {
+    const _setValue = (value: any) => {
+      setValue('data', value, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    };
+    if (
+      [
+        MandatoryParameter.DATE,
+        MandatoryParameter.DATE_TIME,
+        MandatoryParameter.MEDIA,
+        MandatoryParameter.MULTI_LINE,
+        MandatoryParameter.NUMBER,
+        MandatoryParameter.SIGNATURE,
+        MandatoryParameter.SINGLE_LINE,
+        MandatoryParameter.FILE_UPLOAD,
+      ].includes(type)
+    ) {
+      _setValue({});
+    }
+  }, [type]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
