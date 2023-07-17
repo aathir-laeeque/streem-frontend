@@ -176,9 +176,10 @@ const Header: FC<HeaderProps> = ({
                             props: {
                               modalTitle: 'Error Correction',
                               modalDesc: 'You need to submit a reason to proceed to make changes',
-                              onSubmitHandler: (reason: string) => {
+                              onSubmitHandler: (reason: string, closeModal: () => void) => {
                                 setLoadingState(true);
                                 dispatch(enableErrorCorrection(task.id, reason, setLoadingState));
+                                closeModal();
                               },
                             },
                           }),
@@ -199,9 +200,10 @@ const Header: FC<HeaderProps> = ({
                               props: {
                                 modalTitle: 'Skip Task',
                                 modalDesc: 'Provide the details for skipping the task',
-                                onSubmitHandler: (reason: string) => {
+                                onSubmitHandler: (reason: string, closeModal: () => void) => {
                                   setLoadingState(true);
                                   dispatch(skipTask(task.id, setLoadingState, reason));
+                                  closeModal();
                                 },
                               },
                             }),
@@ -213,7 +215,7 @@ const Header: FC<HeaderProps> = ({
                               props: {
                                 modalTitle: 'Complete with Exception',
                                 modalDesc: 'Provide the details for Exception',
-                                onSubmitHandler: (reason: string) => {
+                                onSubmitHandler: (reason: string, closeModal: () => void) => {
                                   setLoadingState(true);
                                   dispatch(
                                     completeTask({
@@ -223,6 +225,7 @@ const Header: FC<HeaderProps> = ({
                                       withException: true,
                                     }),
                                   );
+                                  closeModal();
                                 },
                               },
                             }),

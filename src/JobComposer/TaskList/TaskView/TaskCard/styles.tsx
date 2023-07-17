@@ -233,7 +233,6 @@ const Wrapper = styled.div.attrs({
       .reason {
         border: 1px solid #dadada;
         padding: 12px 16px;
-        background-color: #fafafa;
         color: hsl(0, 0%, 20%);
       }
     }

@@ -77,6 +77,14 @@ const Wrapper = styled.div.attrs({
     display: ${(props) => (props.isLoading ? 'flex' : 'none')};
     background: rgba(236, 236, 236, 0.3);
   }
+
+  .task-audit {
+    color: #525252;
+    font-size: 12px;
+    line-height: 16px;
+    padding: 14px 16px;
+    background-color: white;
+  }
 `;
 
 const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overviewOpen }) => {
@@ -97,6 +105,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overvi
     endedAt,
     correctionEnabled,
     pauseReasons,
+    audit,
   } = task.taskExecution;
 
   const dispatch = useDispatch();
@@ -239,6 +248,21 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overvi
                     Task Paused by {getFullName(audit.modifiedBy)}, ID:{' '}
                     {audit.modifiedBy.employeeId} on {formatDateTime(audit.modifiedAt)}
                   </div> */}
+                </div>
+              )}
+              {taskState !== 'NOT_STARTED' && (
+                <div
+                  className="task-audit"
+                  style={{ paddingTop: isTaskPaused || !!correctionEnabled ? '0px' : '14px' }}
+                >
+                  {audit
+                    ? audit.modifiedBy && (
+                        <>
+                          Last updated by {getFullName(audit.modifiedBy)}, ID:{' '}
+                          {audit.modifiedBy.employeeId} on {formatDateTime(audit.modifiedAt)}
+                        </>
+                      )
+                    : 'Updating...'}
                 </div>
               )}
               <ParameterList
