@@ -46,6 +46,7 @@ import checkIcon from '../../../assets/svg/check-icon.svg';
 import recurrenceIcon from '#assets/svg/Recurrence.svg';
 import moment from 'moment';
 import { Tooltip, withStyles } from '@material-ui/core';
+import { getActiveSmartFilter } from '#utils/smartFilterUtils';
 
 const CountCardWrapper = styled.div`
   display: flex;
@@ -108,7 +109,7 @@ const CountCardWrapper = styled.div`
   }
 `;
 
-type CountCardItem = {
+export type CountCardItem = {
   label: string;
   value: string | number;
   type?: 'grey' | 'blue' | 'orange' | 'yellow';
@@ -116,33 +117,15 @@ type CountCardItem = {
 
 type CountCardsType = {
   items: CountCardItem[];
-  onChange?: (value: React.SetStateAction<FilterField[]>) => void;
+  onToggleSmartFilter: (cardFilters: CountCardItem) => void;
+  activeFilterCard: string;
 };
 
-export const CountCards: FC<CountCardsType> = ({ items, onChange }) => {
-  const [activeFilterCard, setActiveFilterCard] = useState<string>('');
-
-  const onToggleSmartFilter = (cardFilters: CountCardItem) => {
-    if (onChange) {
-      const activeSmartFilters = items
-        .find((item) => item.label === activeFilterCard)
-        ?.filters?.reduce((acc, filter) => {
-          acc[filter.field] = true;
-          return acc;
-        }, {});
-
-      onChange((currentFields) => {
-        const updatedFilterFields = [
-          ...currentFields.filter((field) => !activeSmartFilters?.[field.field]),
-          ...(cardFilters.label === activeFilterCard ? [] : cardFilters?.filters),
-        ];
-        return updatedFilterFields;
-      });
-
-      setActiveFilterCard(cardFilters.label === activeFilterCard ? '' : cardFilters.label);
-    }
-  };
-
+export const CountCards: FC<CountCardsType> = ({
+  items,
+  onToggleSmartFilter,
+  activeFilterCard,
+}) => {
   return (
     <CountCardWrapper>
       {items.map((item) => {
@@ -473,6 +456,21 @@ const JobsContent: FC<TabContentProps> = ({
   ]);
   const [cardsValues, setCardsValues] = useState<any[]>([]);
   const [selectedJob, setSelectedJob] = useState<any>();
+  const [activeFilterCard, setActiveFilterCard] = useState<string>('');
+
+  const activeSmartFilters = getActiveSmartFilter(cardsValues, activeFilterCard);
+
+  const onToggleSmartFilter = (cardFilters: CountCardItem) => {
+    setFilterFields((currentFields) => {
+      const updatedFilterFields = [
+        ...currentFields.filter((field) => !activeSmartFilters?.[field.field]),
+        ...(cardFilters.label === activeFilterCard ? [] : cardFilters?.filters),
+      ];
+      return updatedFilterFields;
+    });
+
+    setActiveFilterCard(cardFilters.label === activeFilterCard ? '' : cardFilters.label);
+  };
 
   const fetchCardsValues = async () => {
     const cardsResponse = await Promise.all(
@@ -482,10 +480,7 @@ const JobsContent: FC<TabContentProps> = ({
             filters: {
               op: FilterOperators.AND,
               fields: [
-                ...filterFields.filter(
-                  (field) =>
-                    !(card.filters || []).some((cF: FilterField) => cF.field === field.field),
-                ),
+                ...filterFields.filter((field) => !activeSmartFilters?.[field.field]),
                 ...card.filters,
               ],
             },
@@ -670,7 +665,13 @@ const JobsContent: FC<TabContentProps> = ({
 
   return (
     <TabContentWrapper>
-      {cardsValues.length > 0 && <CountCards items={cardsValues} onChange={setFilterFields} />}
+      {cardsValues.length > 0 && (
+        <CountCards
+          items={cardsValues}
+          onToggleSmartFilter={onToggleSmartFilter}
+          activeFilterCard={activeFilterCard}
+        />
+      )}
       <div className="filters">
         <SearchFilter
           label={label}

@@ -11,7 +11,7 @@ import { request } from '#utils/request';
 import { checkJobExecutionDelay, formatDateTime } from '#utils/timeUtils';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import JobInfoDrawer from '#views/Jobs/Components/JobInfo';
-import { CountCards } from '#views/Jobs/ListView/JobsContent';
+import { CountCardItem, CountCards } from '#views/Jobs/ListView/JobsContent';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { ArrowForward, ChevronLeft } from '@material-ui/icons';
 import { navigate } from '@reach/router';
@@ -20,6 +20,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchInbox } from './actions';
 import moment from 'moment';
+import { getActiveSmartFilter } from '#utils/smartFilterUtils';
 
 const InboxContent: FC<TabContentProps> = ({
   label,
@@ -42,6 +43,22 @@ const InboxContent: FC<TabContentProps> = ({
   const [cardsValues, setCardsValues] = useState<any[]>([]);
   const [selectedJob, setSelectedJob] = useState<any>();
 
+  const [activeFilterCard, setActiveFilterCard] = useState<string>('');
+
+  const activeSmartFilters = getActiveSmartFilter(cardsValues, activeFilterCard);
+
+  const onToggleSmartFilter = (cardFilters: CountCardItem) => {
+    setFilterFields((currentFields) => {
+      const updatedFilterFields = [
+        ...currentFields.filter((field) => !activeSmartFilters?.[field.field]),
+        ...(cardFilters.label === activeFilterCard ? [] : cardFilters?.filters),
+      ];
+      return updatedFilterFields;
+    });
+
+    setActiveFilterCard(cardFilters.label === activeFilterCard ? '' : cardFilters.label);
+  };
+
   const fetchCardsValues = async () => {
     const cardsResponse = await Promise.all(
       cards.map((card: any) => {
@@ -50,10 +67,7 @@ const InboxContent: FC<TabContentProps> = ({
             filters: {
               op: FilterOperators.AND,
               fields: [
-                ...filterFields.filter(
-                  (field) =>
-                    !(card.filters || []).some((cF: FilterField) => cF.field === field.field),
-                ),
+                ...filterFields.filter((field) => !activeSmartFilters?.[field.field]),
                 ...card.filters,
               ],
             },
@@ -151,7 +165,13 @@ const InboxContent: FC<TabContentProps> = ({
 
   return (
     <TabContentWrapper>
-      {cardsValues.length > 0 && <CountCards items={cardsValues} onChange={setFilterFields} />}
+      {cardsValues.length > 0 && (
+        <CountCards
+          items={cardsValues}
+          onToggleSmartFilter={onToggleSmartFilter}
+          activeFilterCard={activeFilterCard}
+        />
+      )}
       <div className="filters">
         <SearchFilter
           label={label}
