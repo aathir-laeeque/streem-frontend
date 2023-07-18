@@ -299,6 +299,7 @@ const ActionFormCard: FC<Props> = ({
     },
     prototypeComposer: {
       tasks: { activeTaskId },
+      data: checklistData,
     },
   } = useTypedSelector((state) => state);
   const dispatch = useDispatch();
@@ -312,6 +313,7 @@ const ActionFormCard: FC<Props> = ({
   const { editActionId, editIndex, selectedAction, editActionFlag } = state;
   const [objectUrlPath, setObjectUrlPath] = useState<string>('');
   const { list: objects, reset: resetObjects } = createFetchList(objectUrlPath, {}, false);
+  const parametersForSetRelation = [...task?.parameters, ...checklistData?.parameters];
 
   useEffect(() => {
     resetObjects({ url: objectUrlPath });
@@ -1049,7 +1051,7 @@ const ActionFormCard: FC<Props> = ({
                                     props: {
                                       id: 'value',
                                       label: 'Set Value',
-                                      options: task?.parameters
+                                      options: parametersForSetRelation
                                         ?.filter(
                                           (param) =>
                                             param?.data?.objectTypeId ===
