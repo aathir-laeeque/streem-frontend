@@ -836,7 +836,7 @@ const JobsContent: FC<TabContentProps> = ({
                                   : '#161616',
                               }}
                             >
-                              {formatDateTime(job.expectedStartDate)}
+                              {formatDateTime(job.expectedStartDate, 'MMM DD, YYYY hh:mm A')}
                             </span>
                             <span className="icon">
                               <ArrowForward />
@@ -848,7 +848,7 @@ const JobsContent: FC<TabContentProps> = ({
                                   : '#161616',
                               }}
                             >
-                              {formatDateTime(job.expectedEndDate)}
+                              {formatDateTime(job.expectedEndDate, 'MMM DD, YYYY hh:mm A')}
                             </span>
                           </div>
                         ) : (
