@@ -65,7 +65,6 @@ const MediaParameter: FC<ParameterProps> = ({
   isLoggedInUserAssigned,
 }) => {
   const dispatch = useDispatch();
-
   const {
     tasks: { activeTaskId },
   } = useTypedSelector((state) => state.composer);
@@ -84,6 +83,8 @@ const MediaParameter: FC<ParameterProps> = ({
             description: '',
           },
           isParameter: true,
+          isCorrectingError,
+          taskId: activeTaskId,
           execute: (data) => {
             dispatch(
               updateExecutedParameter({
@@ -146,10 +147,11 @@ const MediaParameter: FC<ParameterProps> = ({
           medias={parameter.response?.medias ?? []}
           parameterId={parameter.id}
           isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
+          isCorrectingError={isCorrectingError}
           isParameter
         />
       )}
-      {!isTaskCompleted && (
+      {(!isTaskCompleted || isCorrectingError) && (
         <div style={{ display: 'flex' }}>
           {isUploading ? (
             <LinearProgress style={{ height: 8, width: '100%', color: '#1d84ff' }} />

@@ -59,8 +59,12 @@ const Signature: FC<ParameterProps> = ({ parameter, isCorrectingError, isTaskCom
   return (
     <Wrapper>
       <div
-        className={!isTaskCompleted ? 'signature-interaction active' : 'signature-interaction'}
-        {...(!isTaskCompleted && {
+        className={
+          !isTaskCompleted || isCorrectingError
+            ? 'signature-interaction active'
+            : 'signature-interaction'
+        }
+        {...((!isTaskCompleted || isCorrectingError) && {
           onClick: openSignatureModal,
         })}
         data-id={parameter.id}
@@ -75,7 +79,7 @@ const Signature: FC<ParameterProps> = ({ parameter, isCorrectingError, isTaskCom
             <MemoSignature fontSize={48} color="#1d84ff" />
           </div>
         )}
-        {!isTaskCompleted && <span>Tap here to sign</span>}
+        {(!isTaskCompleted || isCorrectingError) && <span>Tap here to sign</span>}
       </div>
     </Wrapper>
   );

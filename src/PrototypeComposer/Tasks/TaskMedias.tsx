@@ -14,6 +14,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
   parameterId,
   isParameter = false,
   isTaskCompleted,
+  isCorrectingError,
 }) => {
   const dispatch = useDispatch();
 
@@ -39,6 +40,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
                     mediaDetails: media,
                     disableNameInput: isTaskCompleted,
                     disableDescInput: isTaskCompleted,
+                    isCorrectingError,
                   },
                 }),
               );
@@ -58,6 +60,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
                         description: '',
                       },
                       taskId: taskId,
+                      isCorrectingError,
                     },
                   }),
                 );

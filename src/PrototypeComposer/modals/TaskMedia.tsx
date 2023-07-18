@@ -163,6 +163,7 @@ type Props = {
   disableNameInput?: boolean;
   execute: (data: MediaDetails) => void;
   disableDescInput?: boolean;
+  isCorrectingError?: boolean;
 };
 
 const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
@@ -176,6 +177,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
     execute,
     disableNameInput = false,
     disableDescInput = false,
+    isCorrectingError,
   } = {},
 }) => {
   const dispatch = useDispatch();
@@ -267,7 +269,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                 />
               )}
 
-              {!disableDescInput && (
+              {(isCorrectingError || !disableDescInput) && (
                 <Button
                   id="save-details"
                   onClick={() => {
@@ -307,7 +309,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
               )}
             </div>
 
-            {!disableDescInput && mediaDetails?.id && taskId && (
+            {(isCorrectingError || !disableDescInput) && mediaDetails?.id && taskId && (
               <div
                 className="delete-media"
                 onClick={() => {

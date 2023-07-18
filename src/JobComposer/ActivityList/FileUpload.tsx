@@ -151,7 +151,7 @@ const FileUploadParameter: FC<ParameterProps> = ({
       {parameter.response?.medias?.length > 0 && (
         <FileUploadMedias medias={parameter.response?.medias ?? []} parameter={parameter} />
       )}
-      {!isTaskCompleted && (
+      {(!isTaskCompleted || isCorrectingError) && (
         <div style={{ display: 'flex', marginTop: '24px' }}>
           {isUploading ? (
             <LinearProgress style={{ height: 8, width: '100%', color: '#1d84ff' }} />
