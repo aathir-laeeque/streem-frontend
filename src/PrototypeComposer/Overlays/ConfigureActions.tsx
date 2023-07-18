@@ -713,6 +713,11 @@ const ActionFormCard: FC<Props> = ({
                           } else if (!resourceParameters.length) {
                             fetchParameters();
                           }
+                          reset({
+                            displayName: displayName,
+                            actionType: _option.value,
+                            actionDetails: null,
+                          });
                         },
                       },
                     },
