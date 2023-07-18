@@ -37,6 +37,8 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import {
+  cancelErrorCorrection,
+  completeErrorCorrection,
   completeTask,
   setActiveTask,
   setTaskError,
@@ -87,6 +89,11 @@ const Wrapper = styled.div.attrs({
   button {
     margin: unset;
     padding-inline: 24px;
+  }
+
+  .error-correction-action {
+    display: flex;
+    gap: 16px;
   }
 `;
 
@@ -139,7 +146,7 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
   const isJobBlocked = jobState === JobStateEnum.BLOCKED;
   const isJobStarted = jobState === JobStateEnum.IN_PROGRESS || jobState === JobStateEnum.BLOCKED;
 
-  const { state: taskExecutionState, assignees } = task.taskExecution;
+  const { state: taskExecutionState, assignees, correctionEnabled } = task.taskExecution;
 
   useEffect(() => {
     setIsUserAssignedToTask((assignees || []).some((user) => user.id === profile?.id));
@@ -503,7 +510,31 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
       </Button>
 
       <div className="primary-action">
-        {primaryActionLabel && (
+        {!!correctionEnabled ? (
+          <div className="error-correction-action">
+            <Button
+              style={{ flex: 1, width: '160px' }}
+              variant="secondary"
+              onClick={() => {
+                setLoadingState(true);
+                dispatch(completeErrorCorrection(task.id, setLoadingState));
+              }}
+            >
+              Confirm
+            </Button>
+            <Button
+              style={{ flex: 1, width: '160px' }}
+              variant="secondary"
+              color="red"
+              onClick={() => {
+                setLoadingState(true);
+                dispatch(cancelErrorCorrection(task.id, setLoadingState));
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+        ) : primaryActionLabel ? (
           <>
             {jobState === 'IN_PROGRESS' &&
               [TaskExecutionState.IN_PROGRESS, TaskExecutionState.PAUSED].includes(
@@ -518,7 +549,7 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
               {primaryActionLabel}
             </Button>
           </>
-        )}
+        ) : null}
         {!(jobState in CompletedJobStates) && (
           <>
             {!primaryActionLabel && taskExecutionState === TaskExecutionState.COMPLETED && (
