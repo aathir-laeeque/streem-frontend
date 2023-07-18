@@ -5,7 +5,7 @@ import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
 import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { fetchDataParams, FilterOperators } from '#utils/globalTypes';
+import { fetchDataParams, FilterOperators, InputTypes } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
 import { Job } from '#views/Jobs/ListView/types';
@@ -29,6 +29,7 @@ import { useDispatch } from 'react-redux';
 import { fetchJobAuditLogs } from './actions';
 import { Composer, UserFilterWrapper } from './styles';
 import { JobAuditLogState, JobAuditLogType } from './types';
+import { formatDateTime } from '#utils/timeUtils';
 
 type initialState = {
   dateRange: DateRange<Moment>;
@@ -386,17 +387,28 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
                         <div className="header-item">{item[itemId].length} parameters</div>
                       </div>
                       <div className="log-row">
-                        {(item[itemId] as JobAuditLogType[]).map((log) => (
-                          <div className="log-item" key={`${log.id}`}>
-                            <div className="circle" />
-                            <div className="content">
-                              <div className="content-items" style={{ whiteSpace: 'nowrap' }}>
-                                {moment.unix(log.triggeredAt).format(timeFormat)}
+                        {(item[itemId] as JobAuditLogType[]).map((log) => {
+                          const details = log?.details?.replace(
+                            '{{{0}}}',
+                            formatDateTime(
+                              log?.parameters[0]?.value,
+                              log?.parameters[0]?.type === InputTypes.DATE_TIME
+                                ? 'Do MMMM YYYY hh:mm A'
+                                : 'Do MMMM YYYY',
+                            ),
+                          );
+                          return (
+                            <div className="log-item" key={`${log.id}`}>
+                              <div className="circle" />
+                              <div className="content">
+                                <div className="content-items" style={{ whiteSpace: 'nowrap' }}>
+                                  {moment.unix(log.triggeredAt).format(timeFormat)}
+                                </div>
+                                <div className="content-items">{details}</div>
                               </div>
-                              <div className="content-items">{log.details}</div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
