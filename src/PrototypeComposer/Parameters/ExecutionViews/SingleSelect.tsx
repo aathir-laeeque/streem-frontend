@@ -88,7 +88,7 @@ const SingleSelectTaskView: FC<Omit<ParameterProps, 'taskId' | 'isReadOnly'>> = 
               });
               onChangeHandler(parameterData);
             },
-            isSearchable: false,
+            isSearchable: true,
           },
         },
       ]}

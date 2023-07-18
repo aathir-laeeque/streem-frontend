@@ -382,7 +382,7 @@ const ResourceTaskView: FC<
                       },
                     }))
                   : null,
-                isSearchable: false,
+                isSearchable: true,
                 isDisabled: parameter?.autoInitialized,
               },
             },
