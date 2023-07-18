@@ -13,6 +13,7 @@ import {
   TabLookLike,
 } from './utils';
 import { Parameter } from '#JobComposer/checklist.types';
+import { getParameterContent } from '#utils/parameterUtils';
 
 export type PdfJobDataType = Pick<
   JobSummary,
@@ -125,36 +126,6 @@ export const CommonJobPdfDetails = ({
     return status;
   };
 
-  const getParameterValue = (parameter) => {
-    if (parameter.response.value) {
-      return parameter.response.value;
-    } else if (parameter.response.choices && Array.isArray(parameter.response.choices)) {
-      return parameter.response.choices.map((currChoice) => currChoice.objectDisplayName);
-    } else if (parameter.response.choices && !Array.isArray(parameter.response.choices)) {
-      return choicesValue(parameter);
-    }
-  };
-
-  const choicesValue = (parameter) => {
-    let selectedKeys = [];
-    for (let keys in parameter.response.choices) {
-      if (parameter.response.choices[keys] === 'SELECTED') {
-        selectedKeys.push(keys);
-      }
-    }
-
-    const valuesArray = parameter.data.reduce((acc: [], currData) => {
-      selectedKeys.includes(currData.id) ? acc.push(currData.name) : acc;
-      return acc;
-    }, []);
-
-    const contentString = !!parameter.response.reason
-      ? `${valuesArray.join(', ')} [ Reason: ${parameter.response.reason} ]`
-      : valuesArray.join(', ');
-
-    return contentString;
-  };
-
   return (
     <View style={{ paddingHorizontal: 40 }}>
       <TabLookLike title="Job Summary">
@@ -224,7 +195,10 @@ export const CommonJobPdfDetails = ({
           {parameterValues
             .sort((a: Parameter, b: Parameter) => a?.orderTree - b?.orderTree)
             .map((currParam) => (
-              <InlineInputLabelGroup label={currParam.label} value={getParameterValue(currParam)} />
+              <InlineInputLabelGroup
+                label={currParam.label}
+                value={getParameterContent(currParam)}
+              />
             ))}
         </View>
       </TabLookLike>
