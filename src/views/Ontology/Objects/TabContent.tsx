@@ -266,7 +266,7 @@ const TabContent: FC = () => {
                     const reason = item?.reason ? (
                       item?.info ? (
                         <div style={{ display: 'flex' }}>
-                          {item.reason}: {item?.info?.processName} (ID:
+                          {item.reason} {item?.info?.processName} (ID:
                           <span
                             className="primary"
                             onClick={() => {

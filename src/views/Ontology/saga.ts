@@ -94,12 +94,12 @@ function* objectActionSaga({
 }: ReturnType<typeof actions.createObject | typeof actions.editObject>) {
   try {
     const isEditing = 'objectId' in payload;
-    const { object, objectTypeId, onDone } = payload;
+    const { object, objectTypeId, onDone, reason, info } = payload;
     const { data, errors }: ResponseObj<any> = yield call(
       request,
       isEditing ? 'PATCH' : 'POST',
       apiGetObjects(isEditing ? payload.objectId : undefined),
-      { data: { ...object, objectTypeId } },
+      { data: { ...object, objectTypeId, reason, info } },
     );
     if (errors) {
       throw getErrorMsg(errors);
