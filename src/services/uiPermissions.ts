@@ -131,7 +131,12 @@ const uiPermissions: Record<string, any> = {
       roles.SUPERVISOR,
       roles.GLOBAL_ADMIN,
     ],
-    importExport: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+    importExport: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.GLOBAL_ADMIN,
+    ],
   },
   trainedUsers: {
     edit: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER, roles.SUPERVISOR],
