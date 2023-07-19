@@ -89,10 +89,7 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
 
     const onRemoveLink = () => {
       setValue('autoInitialized', false);
-      setValue('autoInitialize', null, {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
+      unregister('autoInitialize');
     };
 
     const referencedParameter =
