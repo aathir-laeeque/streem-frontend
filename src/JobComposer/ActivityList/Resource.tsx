@@ -51,13 +51,15 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     options: any[];
     value: any;
     linkedResourceParameter: any;
+    parameterForFilters: Record<string, any>;
   }>({
     isLoading: false,
     options: [],
     value: null,
     linkedResourceParameter: {},
+    parameterForFilters: { ...parametersById },
   });
-  const { options, isLoading, value, linkedResourceParameter } = state;
+  const { options, isLoading, value, linkedResourceParameter, parameterForFilters } = state;
   const pagination = useRef({
     current: -1,
     isLast: false,
@@ -71,10 +73,6 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
       return acc;
     }, []) || [],
   );
-
-  const cjfParametersById = keyBy(data?.parameterValues, 'id');
-
-  const parameterForFilters = { ...cjfParametersById, ...parametersById };
 
   const parameterForFiltersValueChange = referencedParameterIds.current?.map(
     (curr) =>
@@ -109,11 +107,19 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     if (parameter.autoInitialized)
       setState((prev) => ({
         ...prev,
-        linkedResourceParameter: { ...parametersById, ...cjfParametersById }?.[
+        linkedResourceParameter: { ...parameterForFilters }?.[
           parameter?.autoInitialize?.parameterId
         ],
       }));
-  }, [cjfParametersById, parametersById]);
+  }, [parameterForFilters]);
+
+  useEffect(() => {
+    const cjfParametersById = keyBy(data?.parameterValues, 'id');
+    setState((prev) => ({
+      ...prev,
+      parameterForFilters: { ...prev.parameterForFilters, ...cjfParametersById },
+    }));
+  }, []);
 
   const getUrl = (page: number) => {
     if (parameter?.data?.propertyFilters) {
@@ -132,8 +138,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
         const referencedParameterData =
           parametersById[currField.referencedParameterId]?.response?.value ??
           ObjectIdsDataFromChoices(
-            parametersById[currField.referencedParameterId]?.response?.choices ??
-              cjfParametersById[currField.referencedParameterId]?.response?.choices,
+            parameterForFilters[currField.referencedParameterId]?.response?.choices,
           );
 
         let value;

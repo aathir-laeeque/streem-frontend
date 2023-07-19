@@ -75,7 +75,9 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
         if (type === MandatoryParameter.RESOURCE) {
           setObjectProperties(
             response.data.relations.filter(
-              (relation: any) => relation.objectTypeId === formData?.objectTypeId,
+              (relation: any) =>
+                relation.objectTypeId === formData?.objectTypeId &&
+                relation.target.cardinality !== InputTypes.ONE_TO_MANY,
             ) || [],
           );
         } else {

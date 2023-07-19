@@ -460,7 +460,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
           MandatoryParameter.DATE_TIME,
           MandatoryParameter.MULTI_LINE,
           MandatoryParameter.RESOURCE,
-        ].includes(type) && <LinkParameter form={form} type={type} isReadOnly={isReadOnly} />}
+        ].includes(type) && <LinkParameter form={form} isReadOnly={isReadOnly} />}
       </div>
     );
   };
