@@ -237,8 +237,8 @@ const MyPrintObjectChangeLogs: FC<{ objectId: string }> = () => {
                 },
                 {
                   text: currLog?.reason
-                    ? currLog?.jobInfo
-                      ? `${currLog?.reason} ${currLog?.jobInfo?.process} (ID:${currLog.jobInfo.jobId})`
+                    ? currLog?.info
+                      ? `${currLog?.reason} ${currLog?.info?.processName} (ID: ${currLog?.info?.jobCode})`
                       : currLog?.reason
                     : 'N/A',
                   customStyle: {
