@@ -54,7 +54,7 @@ const ClickAwayWrapper = styled.div<{ open: boolean }>`
   background: rgba(0, 0, 0, 0.4);
   z-index: 3;
   display: none;
-  width: ${({ open }) => (open ? '100vw' : '0')};
+  width: ${({ open }) => (open ? '100dvw' : '0')};
   transition: ${({ open }) =>
     open
       ? 'width 90ms cubic-bezier(0.0, 0, 0.2, 1) 0ms'

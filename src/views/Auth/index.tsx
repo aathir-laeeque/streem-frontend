@@ -27,7 +27,7 @@ const Wrapper = styled.div.attrs({
   .brand-footer {
     display: flex;
     background-color: #fafafa;
-    padding: 1vh 30px;
+    padding: 1dvh 30px;
 
     > div {
       display: flex;
@@ -43,11 +43,11 @@ const Wrapper = styled.div.attrs({
         margin-left: 8px;
 
         svg {
-          width: 7vw;
-          height: 5vh;
+          width: 7dvw;
+          height: 5dvh;
 
           @media (max-width: 900px) {
-            width: 14vw;
+            width: 14dvw;
           }
         }
       }

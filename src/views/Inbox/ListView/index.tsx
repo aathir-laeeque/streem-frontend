@@ -16,13 +16,16 @@ import styled from 'styled-components';
 const InboxJobsWrapper = styled.div`
   display: flex;
   flex: 1;
-  margin-right: -16px;
   height: 100%;
 
   .jobs-tabs-list {
     .MuiTab-root {
       max-width: 160px;
     }
+  }
+
+  .jobs-tabs {
+    width: 100%;
   }
 
   .jobs-tabs-panel {
@@ -32,9 +35,8 @@ const InboxJobsWrapper = styled.div`
     > div {
       height: 100%;
 
-      .job-list,
-      .filters {
-        padding-right: 16px;
+      .job-list {
+        padding-top: 16px;
       }
     }
   }

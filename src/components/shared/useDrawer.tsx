@@ -6,15 +6,15 @@ import styled from 'styled-components';
 
 export const DrawerWrapper = styled(Drawer)`
   .MuiDrawer-paper {
-    width: 100vw;
+    width: 100dvw;
     @media (min-width: 576px) {
-      width: 100vw;
+      width: 100dvw;
     }
     @media (min-width: 900px) {
-      width: 75vw;
+      width: 75dvw;
     }
     @media (min-width: 1200px) {
-      width: 50vw;
+      width: 50dvw;
     }
     .drawer-header {
       padding: 16px;

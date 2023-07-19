@@ -1113,14 +1113,14 @@ export const createBaseViewConfig = ({
           </div>
         ),
         footerAction: (
-          <div style={{ marginTop: '-3vh' }}>
+          <div style={{ marginTop: '-3dvh' }}>
             <div
               style={{
                 fontWeight: 600,
                 color: '#333333',
-                marginBottom: '4vh',
-                fontSize: '1.6vh',
-                lineHeight: '2vh',
+                marginBottom: '4dvh',
+                fontSize: '1.6dvh',
+                lineHeight: '2dvh',
                 letterSpacing: '0.16px',
               }}
             >
@@ -1150,7 +1150,7 @@ export const createBaseViewConfig = ({
           backgroundColor: '#FFF',
           boxShadow:
             '0 0 1px 0 rgba(0, 0, 0, 0.04), 0 2px 6px 0 rgba(0, 0, 0, 0.04), 0 16px 24px 0 rgba(0, 0, 0, 0.06)',
-          maxWidth: '30vw',
+          maxWidth: '30dvw',
         },
         heading: 'Choose Facility',
         subHeading: 'Select a facility to login to from the list of facilities give below.',

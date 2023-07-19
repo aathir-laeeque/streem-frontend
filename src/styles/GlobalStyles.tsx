@@ -7,7 +7,7 @@ const GlobalStyles = createGlobalStyle`
 
   body {
     height: 100%;
-    width: 100vw;
+    width: 100dvw;
     display: flex;
     flex: 1;
   }

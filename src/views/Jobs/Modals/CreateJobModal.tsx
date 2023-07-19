@@ -29,7 +29,7 @@ const Wrapper = styled.div.attrs({})`
   .modal {
     min-width: 500px !important;
     max-width: 720px !important;
-    max-height: 80vh;
+    max-height: 80dvh;
 
     .modal-body {
       padding: 24px !important;

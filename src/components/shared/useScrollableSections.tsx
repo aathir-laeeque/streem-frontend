@@ -20,7 +20,7 @@ const LabelsWrapper = styled.div.attrs({
 
   h1 {
     margin: 0 0 24px;
-    font-size: 1.9vw;
+    font-size: 1.9dvw;
     line-height: 1.25;
     color: #333333;
   }

@@ -580,6 +580,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
         <SearchFilter
           label={label}
           showDropdown
+          style={{ maxWidth: 'unset' }}
           dropdownOptions={[
             {
               label: 'Process Name',

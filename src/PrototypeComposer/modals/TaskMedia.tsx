@@ -25,6 +25,7 @@ const Wrapper = styled.div<{
       return css`
         .modal {
           min-width: ${fullScreeen ? '100% !important' : '300px !important'};
+          max-width: 80dvw !important;
           height: ${fullScreeen ? '100%' : 'max-content'};
           background: ${fullScreeen ? 'transparent !important' : 'white'};
           padding: ${fullScreeen ? '10px !important' : 'unset'};
@@ -75,7 +76,6 @@ const Wrapper = styled.div<{
                 flex: 1;
                 flex-direction: column;
                 justify-content: center;
-                max-width: 320px;
 
                 .media-details {
                   padding: 24px;

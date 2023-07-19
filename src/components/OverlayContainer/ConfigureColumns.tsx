@@ -29,7 +29,6 @@ import { CommonOverlayProps } from './types';
 
 const Wrapper = styled.div`
   .modal {
-    width: calc(100vw - 40vw);
     padding: 0;
 
     &-body {
@@ -43,7 +42,7 @@ const Wrapper = styled.div`
           display: flex;
           flex: 1;
           padding: 16px 16px 0;
-          height: 70vh;
+          height: 70dvh;
 
           &-left {
             border-right: 1px solid #000;

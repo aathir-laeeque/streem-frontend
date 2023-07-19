@@ -113,6 +113,7 @@ const JobHeaderButtons: FC<{
                 },
               }),
             );
+            handleClose();
           }}
         >
           View Verifications

@@ -6,13 +6,13 @@ import Webcam from 'react-webcam';
 
 const Wrapper = styled.div`
   .modal {
-    min-height: 100vh !important;
-    min-width: 100vw !important;
+    min-height: 100dvh !important;
+    min-width: 100dvw !important;
 
     .modal-body {
       padding: 0px !important;
       height: 100vh;
-      width: calc(100vw - 80px);
+      width: calc(100dvw - 80px);
       margin: 0px 0px 0px 40px;
       justify-content: center;
       align-items: center;
@@ -22,8 +22,8 @@ const Wrapper = styled.div`
       > button {
         position: absolute;
         bottom: 40px;
-        height: 10vh;
-        width: 10vh;
+        height: 10dvh;
+        width: 10dvh;
         border-radius: 50%;
         background-color: #fff;
         cursor: pointer;

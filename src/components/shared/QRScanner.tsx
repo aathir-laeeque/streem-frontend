@@ -6,8 +6,8 @@ import styled from 'styled-components';
 
 const ViewFinderWrapper = styled.div`
   .label {
-    top: calc(50vh - 200px);
-    left: calc(50vw - 6ch);
+    top: calc(50dvh - 200px);
+    left: calc(50dvw - 6ch);
     z-index: 2;
     position: absolute;
     color: rgb(255, 255, 255);
@@ -20,7 +20,7 @@ const ViewFinderWrapper = styled.div`
     left: 0px;
     z-index: 1;
     box-sizing: border-box;
-    border-inline: calc(50vw - 300px) solid rgba(0, 0, 0, 0.72);
+    border-inline: calc(50dvw - 300px) solid rgba(0, 0, 0, 0.72);
     border-block: calc(50vh - 300px) solid rgba(0, 0, 0, 0.72);
     position: absolute;
     width: 100%;
@@ -53,8 +53,8 @@ const Wrapper = styled.div`
   #modal-container {
     z-index: 1301 !important;
     .modal {
-      min-height: 100vh !important;
-      min-width: 100vw !important;
+      min-height: 100dvh !important;
+      min-width: 100dvw !important;
 
       .close-icon {
         font-size: 32px !important;

@@ -120,7 +120,7 @@ const Wrapper = styled.div<{ isModal: boolean }>`
         }
 
         .scrollable-content {
-          height: calc(100vh - (40vh + 163px));
+          height: calc(100dvh - (40dvh + 163px));
           overflow: auto;
 
           .item {

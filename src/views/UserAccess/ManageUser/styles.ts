@@ -71,7 +71,7 @@ export const Composer = styled.form`
   .action-sidebar {
     display: flex;
     flex: 1;
-    max-width: 20vw;
+    max-width: 20dvw;
     background-color: #fff;
     padding: 64px 24px 24px;
     flex-direction: column;

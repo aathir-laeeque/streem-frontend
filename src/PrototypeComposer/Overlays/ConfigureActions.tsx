@@ -42,8 +42,8 @@ const Wrapper = styled.div`
           display: flex;
           flex: 1;
           padding: 16px 16px 0;
-          height: 70vh;
-          min-width: 30vw;
+          height: 70dvh;
+          min-width: 30dvw;
 
           &-left {
             border-right: 1px solid #eeeeee;

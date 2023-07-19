@@ -53,7 +53,7 @@ const CustomTooltip = withStyles({
 
 const Wrapper = styled.div`
   .modal {
-    width: calc(100vw - 40vw);
+    width: 60dvw;
     padding: 0;
 
     &-body {
@@ -67,7 +67,7 @@ const Wrapper = styled.div`
           display: flex;
           flex: 1;
           padding: 16px;
-          height: 70vh;
+          height: 70dvh;
           overflow: auto;
 
           &-left {

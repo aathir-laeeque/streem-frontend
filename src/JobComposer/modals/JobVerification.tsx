@@ -8,8 +8,8 @@ import backIcon from '#assets/svg/back-icon.svg';
 
 const Wrapper = styled.div`
   .modal {
-    height: 100vh;
-    min-width: 100vw !important;
+    min-height: 100dvh;
+    min-width: 100dvw !important;
   }
 
   .modal-body {

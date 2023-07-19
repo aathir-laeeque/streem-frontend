@@ -20,7 +20,7 @@ const Wrapper = styled.div.attrs({
 })<{ config: BaseViewConfigType }>`
   display: flex;
   flex: 1;
-  padding: 6vh 64px;
+  padding: 6dvh 64px;
   align-items: flex-start;
   overflow: auto;
   justify-content: ${({ config: { cardPosition } }) => cardPosition};
@@ -29,25 +29,25 @@ const Wrapper = styled.div.attrs({
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    width: 30vw;
+    width: 30dvw;
     overflow: visible;
-    padding: 3.5vh;
+    padding: 3.5dvh;
 
     .logo {
-      width: 7vw;
-      height: 5vh;
+      width: 7dvw;
+      height: 5dvh;
     }
 
     .logo-caption {
       margin: 8px 9px 0 5px;
-      font-size: 1.6vh;
+      font-size: 1.6dvh;
       line-height: 1.14;
       letter-spacing: 0.16px;
       color: #8e8e8e;
     }
 
     .header-wrapper {
-      margin: 6vh 0 4px 0;
+      margin: 6dvh 0 4px 0;
       display: flex;
       flex: 1;
       align-items: center;
@@ -57,24 +57,24 @@ const Wrapper = styled.div.attrs({
       }
 
       .heading {
-        font-size: 4vh;
+        font-size: 4dvh;
         font-weight: 300;
         color: #333333;
       }
     }
 
     .sub-heading {
-      font-size: 1.6vh;
+      font-size: 1.6dvh;
       letter-spacing: 0.16px;
       color: #999999;
     }
 
     .errors-container {
       display: flex;
-      margin-top: 4vh;
+      margin-top: 4dvh;
       justify-content: flex-start;
       align-items: center;
-      padding: 2vh;
+      padding: 2dvh;
       background-color: #ffebeb;
       border-left: 2px solid #ff6b6b;
 
@@ -88,7 +88,7 @@ const Wrapper = styled.div.attrs({
         display: flex;
         align-self: flex-start;
         align-items: center;
-        font-size: 1.6vh;
+        font-size: 1.6dvh;
         font-weight: bold;
         color: #333333;
 
@@ -101,7 +101,7 @@ const Wrapper = styled.div.attrs({
         display: flex;
         flex: 1;
         padding: 0 32px 0 6px;
-        font-size: 1.6vh;
+        font-size: 1.6dvh;
         font-weight: bold;
         color: #333333;
       }
@@ -113,15 +113,15 @@ const Wrapper = styled.div.attrs({
       flex-direction: column;
 
       button {
-        padding: 1.2vh 2.4vh;
+        padding: 1.2dvh 2.4dvh;
       }
 
       .form-group {
-        padding: 4vh 0;
+        padding: 4dvh 0;
         width: 100%;
 
         > div {
-          margin-bottom: 3vh;
+          margin-bottom: 3dvh;
 
           :last-child {
             margin-bottom: unset;
@@ -129,18 +129,18 @@ const Wrapper = styled.div.attrs({
         }
 
         .input-label {
-          font-size: 1.8vh;
+          font-size: 1.8dvh;
         }
 
         .input-wrapper {
-          padding: 1vh 1.6vh;
+          padding: 1dvh 1.6dvh;
         }
       }
     }
 
     .footer-action {
-      margin-top: 5.5vh;
-      font-size: 1.8vh;
+      margin-top: 5.5dvh;
+      font-size: 1.8dvh;
       line-height: 1.14;
       letter-spacing: 0.16px;
       color: #1c1c1c;
@@ -152,13 +152,14 @@ const Wrapper = styled.div.attrs({
     }
   }
 
-  @media (max-width: 900px) {
-    padding: 6vh 24px;
+  @media (max-width: 1000px) {
+    padding: 6dvh 24px;
 
     .card {
-      width: calc(100vw - 48px);
+      width: calc(100dvw - 48px);
+      max-width: 80dvw !important;
       .logo {
-        width: 14vw;
+        width: 14dvw;
       }
     }
   }

@@ -10,12 +10,12 @@ import { StyledMenu } from './StyledMenu';
 
 const Wrapper = styled.div`
   display: flex;
-  max-width: 500px;
-  width: 500px;
+  max-width: 280px;
+  position: relative;
 
   .dropdown-button {
-    max-width: 200px;
-    width: 200px;
+    max-width: 50px;
+    width: 50px;
 
     button {
       border-bottom-right-radius: 0;
@@ -66,7 +66,7 @@ type SearchFilterProps = {
   dropdownOptions?: DropdownOption[];
   updateFilterFields: (fields: FilterField[]) => void;
   label: string;
-};
+} & React.HTMLAttributes<HTMLDivElement>;
 
 const SearchFilter: FC<SearchFilterProps> = ({
   dropdownOptions,
@@ -126,7 +126,7 @@ const SearchFilter: FC<SearchFilterProps> = ({
       {showDropdown ? (
         <div className="dropdown-button">
           <Button onClick={handleClick}>
-            {selectedOption?.label} <ArrowDropDown className="icon" />
+            <ArrowDropDown className="icon" />
           </Button>
 
           <StyledMenu

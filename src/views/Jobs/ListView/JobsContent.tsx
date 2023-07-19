@@ -675,7 +675,7 @@ const JobsContent: FC<TabContentProps> = ({
       <div className="filters">
         <SearchFilter
           label={label}
-          showDropdown
+          showDropdown={false}
           dropdownOptions={[
             {
               label: 'Name',

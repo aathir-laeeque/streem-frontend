@@ -51,9 +51,9 @@ const Wrapper = styled.div<{
   right: 0;
   transition: all 0.2s ease-in;
   height: ${({ isInfoExpanded, isChildTask }) =>
-    isInfoExpanded ? '40vh' : isChildTask ? '108px' : '66px'};
+    isInfoExpanded ? '40dvh' : isChildTask ? '108px' : '66px'};
 
-  max-height: 80vh;
+  max-height: 80dvh;
 
   .verification-banner {
     display: flex;

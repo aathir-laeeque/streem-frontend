@@ -159,7 +159,7 @@ const VerificationsContent: FC<{
   return (
     <TabContentWrapper>
       <div className="filters">
-        <div style={{ maxWidth: '306px', width: '306px' }}>
+        <div style={{ width: '280px' }}>
           <TextInput
             afterElementWithoutError
             AfterElement={Search}
@@ -173,7 +173,7 @@ const VerificationsContent: FC<{
             }, 500)}
           />
         </div>
-        <div style={{ width: '240px', marginLeft: '16px' }}>
+        <div style={{ width: '25%', marginLeft: '16px' }}>
           <Select
             placeholder="Select"
             label="Requested By"
@@ -225,7 +225,7 @@ const VerificationsContent: FC<{
           />
         </div>
         {isJobOpen && !redirectedFromBanner && (
-          <div style={{ width: '240px', marginLeft: '16px' }}>
+          <div style={{ width: '25%', marginLeft: '16px' }}>
             <Select
               placeholder="Select"
               label="Requested To"
@@ -277,7 +277,7 @@ const VerificationsContent: FC<{
             />
           </div>
         )}
-        <div style={{ width: '240px', marginLeft: '16px' }}>
+        <div style={{ width: '25%', marginLeft: '16px' }}>
           <Select
             placeholder="Select"
             options={options}

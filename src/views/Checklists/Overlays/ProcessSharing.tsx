@@ -16,7 +16,7 @@ import { NotificationType } from '#components/Notification/types';
 
 const Wrapper = styled.div`
   .modal {
-    min-width: 40vw !important;
+    min-width: 40dvw !important;
 
     &-header {
       h2 {
@@ -43,7 +43,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     padding: 24px 24px 12px;
-    min-height: 40vh;
+    min-height: 40dvh;
 
     .row {
       display: flex;

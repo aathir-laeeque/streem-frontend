@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   .overview {
     overflow: auto;
     background-color: #fff;
-    width: 36vw;
+    width: 36dvw;
     display: flex;
 
     @media (max-width: 900px) {
