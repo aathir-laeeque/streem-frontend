@@ -471,14 +471,13 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
     }
   }
 
-  const togglePauseResume = async () => {
+  const togglePauseResume = async (reason = '', comment = '') => {
+    const taskState = task.taskExecution.state === TaskExecutionState.PAUSED;
     const { data }: ResponseObj<TaskPauseResume> = await request(
-      'POST',
-      task.taskExecution.state === TaskExecutionState.PAUSED
-        ? apiResumeJob(task.id)
-        : apiPauseJob(task.id),
+      taskState ? 'PATCH' : 'POST',
+      taskState ? apiResumeJob(task.id) : apiPauseJob(task.id),
       {
-        data: { jobId },
+        data: { jobId, ...(!taskState && { reason, ...(comment && { comment }) }) },
       },
     );
     if (data.state === TaskExecutionState.IN_PROGRESS) {
@@ -499,7 +498,20 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
       <Button
         variant="primary"
         style={{ minWidth: 'unset', width: '48px' }}
-        onClick={() => togglePauseResume()}
+        onClick={() => {
+          if (task.taskExecution.state === TaskExecutionState.PAUSED) {
+            togglePauseResume();
+          } else {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.TASK_PAUSE_REASON_MODAL,
+                props: {
+                  onSubmitHandler: togglePauseResume,
+                },
+              }),
+            );
+          }
+        }}
       >
         {iconShow(task.taskExecution.state)}
       </Button>
