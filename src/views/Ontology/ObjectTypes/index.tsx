@@ -334,7 +334,7 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
                                             setFormErrors,
                                           }),
                                         );
-                                        setShouldToggle((prev) => !prev);
+                                        setTimeout(() => setShouldToggle((prev) => !prev), 300);
                                       },
                                       onSubmitModalText: 'Archive',
                                     },
@@ -559,7 +559,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
                                           setFormErrors,
                                         }),
                                       );
-                                      setShouldToggle((prev) => !prev);
+                                      setTimeout(() => setShouldToggle((prev) => !prev), 300);
                                     },
                                     onSubmitModalText: 'Archive',
                                   },

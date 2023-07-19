@@ -381,7 +381,7 @@ const AddPropertyDrawer: FC<{
 
       dispatch(createObjectTypeProperty({ objectTypeId: active?.id, data: newData }));
     }
-    setShouldToggle((prev) => !prev);
+    setTimeout(() => setShouldToggle((prev) => !prev), 300);
     handleCloseDrawer();
   };
 
