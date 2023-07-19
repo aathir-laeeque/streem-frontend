@@ -600,15 +600,15 @@ const ActionFormCard: FC<Props> = ({
   };
 
   useEffect(() => {
-    if (editActionFlag && actionType === 'SET_PROPERTY') {
+    if (editActionFlag && selectedAction.actionType === 'SET_PROPERTY') {
       const property = selectedObjectType?.properties?.filter(
-        (currProperty) => currProperty?.id === actionDetails?.propertyId,
+        (currProperty) => currProperty?.id === selectedAction?.actionDetails?.propertyId,
       )?.[0];
       setSelectedProperty(property);
     }
-    if (editActionFlag && actionType === 'SET_RELATION') {
+    if (editActionFlag && selectedAction.actionType === 'SET_RELATION') {
       const relation = selectedObjectType?.relations?.filter(
-        (currRelation) => currRelation?.id === actionDetails?.relationId,
+        (currRelation) => currRelation?.id === selectedAction?.actionDetails?.relationId,
       )?.[0];
       setSelectedRelation(relation);
     }
