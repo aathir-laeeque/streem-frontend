@@ -6,7 +6,7 @@ import { RefetchJobErrorType } from '#JobComposer/modals/RefetchJobComposerData'
 import { RootState } from '#store';
 import { setRecentServerTimestamp } from '#store/extras/action';
 import { apiEnableTaskErrorCorrection, apiPerformActionOnTask } from '#utils/apiUrls';
-import { request } from '#utils/request';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { JobStateEnum } from '#views/Jobs/ListView/types';
 import { all, call, put, select, takeLeading } from 'redux-saga/effects';
 import { apiCancelTaskErrorCorrection, apiCompleteTaskErrorCorrection } from '../../utils/apiUrls';
@@ -227,6 +227,9 @@ function* performActionOnTaskSaga({
           }
         }
       }
+      if (errors) {
+        throw getErrorMsg(errors);
+      }
     } else {
       console.log('open modal to start the job');
       yield put(
@@ -238,6 +241,7 @@ function* performActionOnTaskSaga({
     }
   } catch (error) {
     console.error('error came in performActionOnTaskSaga in TaskListSaga :: ', error);
+    yield handleCatch('Job Task Execution', 'performActionOnTaskSaga', error, true);
   } finally {
     const { setLoadingState } = payload;
     setLoadingState(false);
