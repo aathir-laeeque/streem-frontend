@@ -552,13 +552,16 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
         ) : null}
         {!(jobState in CompletedJobStates) && (
           <>
-            {!primaryActionLabel && taskExecutionState === TaskExecutionState.COMPLETED && (
-              <span>
-                <CheckCircleOutlined style={{ color: '#24A148' }} /> Task Completed
-              </span>
-            )}
             {!primaryActionLabel &&
-              taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION && (
+              taskExecutionState === TaskExecutionState.COMPLETED &&
+              !correctionEnabled && (
+                <span>
+                  <CheckCircleOutlined style={{ color: '#24A148' }} /> Task Completed
+                </span>
+              )}
+            {!primaryActionLabel &&
+              taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION &&
+              !correctionEnabled && (
                 <span>
                   <ReportProblemOutlined style={{ color: '#F1C21B' }} /> Task Completed with
                   Exception
