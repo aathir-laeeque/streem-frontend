@@ -166,29 +166,30 @@ const Header: FC<HeaderProps> = ({
                 >
                   {(task.taskExecution.state === TaskExecutionState.COMPLETED ||
                     task.taskExecution.state === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
-                    task.taskExecution.state === TaskExecutionState.SKIPPED) && (
-                    <MenuItem
-                      onClick={() => {
-                        handleClose();
-                        dispatch(
-                          openOverlayAction({
-                            type: OverlayNames.REASON_MODAL,
-                            props: {
-                              modalTitle: 'Error Correction',
-                              modalDesc: 'You need to submit a reason to proceed to make changes',
-                              onSubmitHandler: (reason: string, closeModal: () => void) => {
-                                setLoadingState(true);
-                                dispatch(enableErrorCorrection(task.id, reason, setLoadingState));
-                                closeModal();
+                    task.taskExecution.state === TaskExecutionState.SKIPPED) &&
+                    (!correctionEnabled || !correctionReason) && (
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          dispatch(
+                            openOverlayAction({
+                              type: OverlayNames.REASON_MODAL,
+                              props: {
+                                modalTitle: 'Error Correction',
+                                modalDesc: 'You need to submit a reason to proceed to make changes',
+                                onSubmitHandler: (reason: string, closeModal: () => void) => {
+                                  setLoadingState(true);
+                                  dispatch(enableErrorCorrection(task.id, reason, setLoadingState));
+                                  closeModal();
+                                },
                               },
-                            },
-                          }),
-                        );
-                      }}
-                    >
-                      Error correction
-                    </MenuItem>
-                  )}
+                            }),
+                          );
+                        }}
+                      >
+                        Error correction
+                      </MenuItem>
+                    )}
                   <MenuItem
                     onClick={() => {
                       handleClose();
