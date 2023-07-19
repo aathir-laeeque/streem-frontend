@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import styled from 'styled-components';
 import closeIcon from '../../assets/svg/close.svg';
 import FileIcon from '../../assets/svg/file.svg';
-import { executeParameter } from '#JobComposer/ActivityList/actions';
+import { executeParameter, fixParameter } from '#JobComposer/ActivityList/actions';
 import { Parameter } from '#JobComposer/checklist.types';
 import { useDispatch } from 'react-redux';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
@@ -57,6 +57,7 @@ const FileGalleryWrapper = styled.div.attrs({
 type FileGalleryProps = {
   medias: FilesType[];
   parameter: Parameter;
+  isCorrectingError?: boolean;
 };
 
 type FilesType = {
@@ -80,7 +81,7 @@ enum FileTypes {
   PNG = 'image/png',
 }
 
-export const FileGallery: FC<FileGalleryProps> = ({ medias, parameter }) => {
+export const FileGallery: FC<FileGalleryProps> = ({ medias, parameter, isCorrectingError }) => {
   const sectionIcon = (type: string, mediaLink: string) => {
     switch (type) {
       case FileTypes.PDF:
@@ -115,14 +116,25 @@ export const FileGallery: FC<FileGalleryProps> = ({ medias, parameter }) => {
         'id',
       ),
     );
-    dispatch(
-      executeParameter({
-        ...parameter,
-        data: {
-          medias: updatedMedias,
-        },
-      }),
-    );
+    if (isCorrectingError) {
+      dispatch(
+        fixParameter({
+          ...parameter,
+          data: {
+            medias: updatedMedias,
+          },
+        }),
+      );
+    } else {
+      dispatch(
+        executeParameter({
+          ...parameter,
+          data: {
+            medias: updatedMedias,
+          },
+        }),
+      );
+    }
     setFormErrors(undefined);
   };
 

@@ -149,7 +149,11 @@ const FileUploadParameter: FC<ParameterProps> = ({
   return (
     <FileUploadWrapper>
       {parameter.response?.medias?.length > 0 && (
-        <FileUploadMedias medias={parameter.response?.medias ?? []} parameter={parameter} />
+        <FileUploadMedias
+          medias={parameter.response?.medias ?? []}
+          parameter={parameter}
+          isCorrectingError={isCorrectingError}
+        />
       )}
       {(!isTaskCompleted || isCorrectingError) && (
         <div style={{ display: 'flex', marginTop: '24px' }}>
