@@ -14,6 +14,8 @@ import { useDispatch } from 'react-redux';
 import { CommonJobPdfDetails, PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
 import { LoadingDiv, styles } from './styles';
 import { PrintJobAuditLogProps } from './types';
+import { formatDateTime } from '#utils/timeUtils';
+import { InputTypes } from '#utils/globalTypes';
 
 const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
   const [jobDetails, setJobDetails] = useState<PdfJobDataType | undefined>();
@@ -87,7 +89,6 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
           <View style={styles.container} break>
             {data.map((item) => {
               const day = moment(Object.keys(item)[0]).format(dateFormat);
-
               return (
                 <View style={styles.columns} key={`name_${item.id}`}>
                   <View style={styles.logHeader}>
@@ -95,27 +96,38 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
                     <Text style={styles.headerItemText}>{item[item.id].length} parameters</Text>
                   </View>
                   <View style={styles.logRow}>
-                    {(item[item.id] as JobAuditLogType[]).map((log: JobAuditLogType) => (
-                      <View style={styles.logItem} key={`${log.id}`}>
-                        <View style={styles.circle} />
-                        <View style={styles.content} wrap={false}>
-                          <Text style={styles.contentItems}>
-                            {moment.unix(log.triggeredAt).format(timeFormat)}
-                          </Text>
-                          <Text
-                            style={[
-                              styles.contentItems,
-                              {
-                                paddingRight: 100,
-                              },
-                            ]}
-                            wrap={false}
-                          >
-                            {log.details}
-                          </Text>
+                    {(item[item.id] as JobAuditLogType[]).map((log: JobAuditLogType) => {
+                      const details = log?.details?.replace(
+                        '{{{0}}}',
+                        formatDateTime(
+                          log?.parameters[0]?.value,
+                          log?.parameters[0]?.type === InputTypes.DATE_TIME
+                            ? 'Do MMMM YYYY hh:mm A'
+                            : 'Do MMMM YYYY',
+                        ),
+                      );
+                      return (
+                        <View style={styles.logItem} key={`${log.id}`}>
+                          <View style={styles.circle} />
+                          <View style={styles.content} wrap={false}>
+                            <Text style={styles.contentItems}>
+                              {moment.unix(log.triggeredAt).format(timeFormat)}
+                            </Text>
+                            <Text
+                              style={[
+                                styles.contentItems,
+                                {
+                                  paddingRight: 100,
+                                },
+                              ]}
+                              wrap={false}
+                            >
+                              {details}
+                            </Text>
+                          </View>
                         </View>
-                      </View>
-                    ))}
+                      );
+                    })}
                   </View>
                 </View>
               );
