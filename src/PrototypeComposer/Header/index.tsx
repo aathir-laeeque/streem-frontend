@@ -338,7 +338,7 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
         )}
         {data?.state === ChecklistStates.PUBLISHED || data?.audit?.createdBy?.archived
           ? checkArchivePermission() && <ArchiveMenuItem />
-          : data?.audit?.createdBy?.id === userId && <ArchiveMenuItem />}
+          : null}
       </ListActionMenuButton>
     </>
   );
