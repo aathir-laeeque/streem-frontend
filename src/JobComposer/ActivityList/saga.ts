@@ -39,6 +39,8 @@ import { encrypt } from '#utils/stringUtils';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { ParameterExecutionState } from '#JobComposer/checklist.types';
+import { setActiveTask } from '#JobComposer/TaskList/actions';
+import { setActiveStage } from '#JobComposer/StageList/actions';
 
 function* executeParameterSaga({ payload }: ReturnType<typeof executeParameter>) {
   try {
@@ -98,7 +100,11 @@ function* fixParameterSaga({ payload }: ReturnType<typeof fixParameter>) {
   try {
     const { parameter, reason } = payload;
 
-    const { entityId: jobId } = yield select((state: RootState) => state.composer);
+    const {
+      entityId: jobId,
+      stages: { activeStageId },
+      tasks: { activeTaskId, tasksOrderList },
+    } = yield select((state: RootState) => state.composer);
 
     const { data, errors } = yield call(request, 'PATCH', apiFixParameter(), {
       data: { jobId, parameter, ...(!!reason ? { reason } : {}) },
@@ -122,11 +128,29 @@ function* fixParameterSaga({ payload }: ReturnType<typeof fixParameter>) {
           }),
         );
       } else {
-        yield* handleCatch('Parameter', 'fixParameterSaga', getErrorMsg(errors), true);
+        const taskNotEnabledForErrorCorrection = (errors as Error[]).find(
+          (err) => err.code === 'E214',
+        );
+
+        if (taskNotEnabledForErrorCorrection) {
+          if (activeTaskId !== errors[0]?.id) {
+            const expectedTaskIndex = tasksOrderList.findIndex((o) => o.taskId === errors[0]?.id);
+            const expectedStageId = tasksOrderList[expectedTaskIndex].stageId;
+
+            if (expectedStageId !== activeStageId) {
+              yield put(setActiveStage(expectedStageId, true));
+              yield put(setActiveTask(errors[0]?.id, true));
+            } else {
+              yield put(setActiveTask(errors[0]?.id, true));
+            }
+          }
+        }
+
+        throw getErrorMsg(errors);
       }
     }
   } catch (error) {
-    console.error('error came in the fixParameterSaga in ParameterListSaga :: ', error);
+    yield handleCatch('Parameter', 'fixParameterSaga', error, true);
   }
 }
 
