@@ -103,19 +103,21 @@ export const FileGallery: FC<FileGalleryProps> = ({ medias, parameter, isCorrect
     reason: string,
     setFormErrors: (errors?: Error[]) => void,
   ) => {
-    const updatedMedias = (parameter?.response?.medias || []).map((currMedia) =>
-      omit(
-        {
-          ...currMedia,
-          mediaId: currMedia?.id,
-          ...(currMedia?.id === media?.id && {
-            archived: true,
-            reason,
-          }),
-        },
-        'id',
-      ),
-    );
+    const updatedMedias = (parameter?.response?.medias || [])
+      .map((currMedia) =>
+        omit(
+          {
+            ...currMedia,
+            mediaId: currMedia?.id,
+            ...(currMedia?.id === media?.id && {
+              archived: true,
+              reason,
+            }),
+          },
+          'id',
+        ),
+      )
+      .filter((media: any) => media.archived === true);
     if (isCorrectingError) {
       dispatch(
         fixParameter({
