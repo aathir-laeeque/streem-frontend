@@ -56,7 +56,7 @@ const AfterHeader: FC<any> = ({ setActiveTab, activeTab, checklistId, defaultVie
   const handleSetActiveTab = (view: any) => {
     setActiveTab({
       label: view.label,
-      tabContent: DynamicContent,
+      tabContent: view.id ? DynamicContent : TabContent,
       values: { id: view.id, checklistId },
     });
   };
