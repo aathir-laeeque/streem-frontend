@@ -23,7 +23,7 @@ import { useTypedSelector } from '#store/helpers';
 import { User } from '#store/users/types';
 import { apiInitializeSubTask, apiPauseJob, apiResumeJob, apiValidateTask } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { getErrorMsg, request } from '#utils/request';
 import { CompletedJobStates, Job, JobStateEnum } from '#views/Jobs/ListView/types';
 import {
   ArrowBack,
@@ -46,6 +46,8 @@ import {
   updateTaskExecutionDurationOnResume,
 } from '../../actions';
 import { keyBy } from 'lodash';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-buttons',
@@ -145,6 +147,7 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
 
   const isJobBlocked = jobState === JobStateEnum.BLOCKED;
   const isJobStarted = jobState === JobStateEnum.IN_PROGRESS || jobState === JobStateEnum.BLOCKED;
+  const isTaskPaused = task.taskExecution.state === TaskExecutionState.PAUSED;
 
   const { state: taskExecutionState, assignees, correctionEnabled } = task.taskExecution;
 
@@ -472,16 +475,37 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
   }
 
   const togglePauseResume = async (reason = '', comment = '') => {
-    const taskState = task.taskExecution.state === TaskExecutionState.PAUSED;
-    const { data }: ResponseObj<TaskPauseResume> = await request(
-      taskState ? 'PATCH' : 'POST',
-      taskState ? apiResumeJob(task.id) : apiPauseJob(task.id),
-      {
-        data: { jobId, ...(!taskState && { reason, ...(comment && { comment }) }) },
-      },
-    );
-    if (data.state === TaskExecutionState.IN_PROGRESS) {
-      dispatch(updateTaskExecutionDurationOnResume(task.id, data));
+    try {
+      const { data, errors }: ResponseObj<TaskPauseResume> = await request(
+        isTaskPaused ? 'PATCH' : 'POST',
+        isTaskPaused ? apiResumeJob(task.id) : apiPauseJob(task.id),
+        {
+          data: { jobId, ...(!isTaskPaused && { reason, ...(comment && { comment }) }) },
+        },
+      );
+      if (data) {
+        if (data.state === TaskExecutionState.IN_PROGRESS) {
+          dispatch(updateTaskExecutionDurationOnResume(task.id, data));
+        }
+        dispatch(
+          showNotification({
+            type: NotificationType.SUCCESS,
+            msg:
+              data.state === TaskExecutionState.PAUSED
+                ? 'Task Paused successfully'
+                : 'Task Resumed successfully',
+          }),
+        );
+      } else if (errors) {
+        throw getErrorMsg(errors);
+      }
+    } catch (error) {
+      dispatch(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: typeof error === 'string' ? error : 'Oops! Please Try Again.',
+        }),
+      );
     }
   };
 
@@ -499,7 +523,7 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
         variant="primary"
         style={{ minWidth: 'unset', width: '48px' }}
         onClick={() => {
-          if (task.taskExecution.state === TaskExecutionState.PAUSED) {
+          if (isTaskPaused) {
             togglePauseResume();
           } else {
             dispatch(
@@ -556,11 +580,7 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
                 task.taskExecution.state,
               ) &&
               PauseResumeButton()}
-            <Button
-              variant="primary"
-              {...primaryActionProps}
-              disabled={task.taskExecution.state === TaskExecutionState.PAUSED}
-            >
+            <Button variant="primary" {...primaryActionProps} disabled={isTaskPaused}>
               {primaryActionLabel}
             </Button>
           </>
