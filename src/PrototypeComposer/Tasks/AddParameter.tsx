@@ -33,7 +33,7 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { apiDeleteParameter, apiSingleParameter } from '#utils/apiUrls';
 import { InputTypes } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { getErrorMsg, request } from '#utils/request';
 import { resetOntology } from '#views/Ontology/actions';
 import { Divider, Step, StepIconProps, StepLabel, Stepper } from '@material-ui/core';
 import {
@@ -50,6 +50,8 @@ import styled from 'styled-components';
 import { resetTaskParameterError } from './actions';
 import { Tooltip } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 
 const CustomTooltip = withStyles({
   tooltip: {
@@ -802,19 +804,34 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
   };
 
   const onDelete = async () => {
-    const { data } = await request('PATCH', apiDeleteParameter(addParameter!.parameterId!));
-    if (data) {
+    try {
+      const { data, errors } = await request(
+        'PATCH',
+        apiDeleteParameter(addParameter!.parameterId!),
+      );
+      if (data) {
+        dispatch(
+          deleteParameterSuccess({
+            taskId: data.taskId,
+            stageId: data.stageId,
+            parameterId: addParameter!.parameterId!,
+            targetEntityType: currentParameter?.targetEntityType,
+          }),
+        );
+      } else if (errors) {
+        throw getErrorMsg(errors);
+      }
+      addParameter?.fetchData && addParameter.fetchData();
+      handleCloseDrawer();
+    } catch (error) {
+      console.error('Error Deleting Parameter', error);
       dispatch(
-        deleteParameterSuccess({
-          taskId: data.taskId,
-          stageId: data.stageId,
-          parameterId: addParameter!.parameterId!,
-          targetEntityType: currentParameter?.targetEntityType,
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
         }),
       );
     }
-    addParameter?.fetchData && addParameter.fetchData();
-    handleCloseDrawer();
   };
 
   const handleDeleteParameter = () => {
