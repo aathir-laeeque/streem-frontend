@@ -19,7 +19,7 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
       },
     } = useTypedSelector((state) => state);
     const { id: checklistId, parameters: cjfParameters } = processData!;
-    const { watch, setValue, register, unregister } = form;
+    const { watch, setValue, register, getValues } = form;
     const type = watch('type', {});
     const formData = watch('data', {});
     const autoInitialized = watch('autoInitialized', false);
@@ -75,7 +75,7 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
         if (type === MandatoryParameter.RESOURCE) {
           setObjectProperties(
             response.data.relations.filter(
-              (relation: any) => relation.externalId === formData?.objectTypeExternalId,
+              (relation: any) => relation.objectTypeId === formData?.objectTypeId,
             ) || [],
           );
         } else {
@@ -89,7 +89,7 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
 
     const onRemoveLink = () => {
       setValue('autoInitialized', false);
-      unregister('autoInitialize');
+      setValue('autoInitialize', null, { shouldDirty: true, shouldValidate: true });
     };
 
     const referencedParameter =
@@ -97,7 +97,7 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
       cjfParameters?.find((currParam) => currParam?.id === autoInitialize?.parameterId);
 
     useEffect(() => {
-      register('autoInitialized');
+      if (autoInitialize?.parameterId) fetchResourceParameters();
       if (autoInitialize?.parameterId && referencedParameter?.data?.objectTypeId) {
         getProperties(referencedParameter?.data?.objectTypeId);
       }
@@ -106,7 +106,16 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
     const renderLinkingSection = () => {
       register('autoInitialize', {
         validate: (value) => {
-          return value ? 'parameterId' in value && 'property' in value : true;
+          const _autoInitialized = getValues('autoInitialized');
+          let isValid = !_autoInitialized;
+          if (!isValid && value) {
+            if (MandatoryParameter.RESOURCE === type) {
+              isValid = 'parameterId' in value && 'relation' in value;
+            } else {
+              isValid = 'parameterId' in value && 'property' in value;
+            }
+          }
+          return isValid;
         },
       });
       return (
@@ -161,15 +170,26 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
                     label: properties.displayName,
                     value: properties.id,
                   })),
-                  defaultValue: autoInitialize?.property
-                    ? [
-                        {
-                          label: autoInitialize?.property?.displayName,
-                          value: autoInitialize?.property?.id,
-                          externalId: autoInitialize?.property?.externalId,
-                        },
-                      ]
-                    : undefined,
+                  value:
+                    type === MandatoryParameter.RESOURCE
+                      ? autoInitialize?.relation
+                        ? [
+                            {
+                              label: autoInitialize?.relation?.displayName,
+                              value: autoInitialize?.relation?.id,
+                              externalId: autoInitialize?.relation?.externalId,
+                            },
+                          ]
+                        : null
+                      : autoInitialize?.property
+                      ? [
+                          {
+                            label: autoInitialize?.property?.displayName,
+                            value: autoInitialize?.property?.id,
+                            externalId: autoInitialize?.property?.externalId,
+                          },
+                        ]
+                      : null,
                   isSearchable: false,
                   placeholder: 'Select',
                   isDisabled: isReadOnly,
@@ -178,11 +198,21 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
                       'autoInitialize',
                       {
                         ...autoInitialize,
-                        property: {
-                          id: value.value,
-                          displayName: value.label,
-                          externalId: value.externalId,
-                        },
+                        ...(type === MandatoryParameter.RESOURCE
+                          ? {
+                              relation: {
+                                id: value.value,
+                                displayName: value.label,
+                                externalId: value.externalId,
+                              },
+                            }
+                          : {
+                              property: {
+                                id: value.value,
+                                displayName: value.label,
+                                externalId: value.externalId,
+                              },
+                            }),
                       },
                       {
                         shouldDirty: true,
@@ -225,6 +255,7 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
               fetchResourceParameters();
               setValue('autoInitialized', true, {
                 shouldDirty: true,
+                shouldValidate: true,
               });
             }}
           >

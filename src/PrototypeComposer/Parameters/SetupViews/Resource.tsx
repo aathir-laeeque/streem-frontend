@@ -48,7 +48,6 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
       shouldDirty: true,
       shouldValidate: true,
     });
-    unregister('autoInitialize');
   };
 
   useEffect(() => {
