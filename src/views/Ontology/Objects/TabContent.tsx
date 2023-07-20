@@ -79,7 +79,11 @@ const TabContent: FC = () => {
   const { selectedFacility } = useTypedSelector((state) => state.auth);
   const objectId = activeObject?.id;
   const fetchData = (params: fetchDataParams = {}) => {
-    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
+    const {
+      page = DEFAULT_PAGE_NUMBER,
+      size = DEFAULT_PAGE_SIZE,
+      filters = filterParser(filterFields),
+    } = params;
     if (objectId) {
       dispatch(
         fetchObjectChangeLogs({
@@ -115,8 +119,8 @@ const TabContent: FC = () => {
     }
   };
 
-  const onApplyFilters = (newFilters) => {
-    const parsedFilters = newFilters.map((currFilter) => {
+  const filterParser = (newFilters: any) => {
+    return newFilters.map((currFilter) => {
       if (currFilter?.value?.value === 'usageStatus.new') {
         return {
           values: currFilter.constraint === Constraint.EQ ? [1, 7] : [null],
@@ -132,6 +136,10 @@ const TabContent: FC = () => {
         };
       }
     });
+  };
+
+  const onApplyFilters = (newFilters: any) => {
+    const parsedFilters = filterParser(newFilters);
     setState((prev) => ({
       ...prev,
       filterFields: newFilters,
