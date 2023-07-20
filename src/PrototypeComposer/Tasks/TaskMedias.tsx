@@ -38,9 +38,8 @@ const TaskMedias: FC<TaskMediasProps> = ({
                     isParameter,
                     parameterId,
                     mediaDetails: media,
-                    disableNameInput: isTaskCompleted,
-                    disableDescInput: isTaskCompleted,
-                    isCorrectingError,
+                    disableNameInput: isCorrectingError ? false : isTaskCompleted,
+                    disableDescInput: isCorrectingError ? false : isTaskCompleted,
                   },
                 }),
               );
@@ -60,7 +59,6 @@ const TaskMedias: FC<TaskMediasProps> = ({
                         description: '',
                       },
                       taskId: taskId,
-                      isCorrectingError,
                     },
                   }),
                 );
