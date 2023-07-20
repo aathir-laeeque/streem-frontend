@@ -69,18 +69,24 @@ export const ImageGallery: FC<ImageGalleryProps> = ({ medias, onClickHandler }) 
   return (
     <ImageGalleryWrapper>
       <div className="media-list">
-        {medias.map((media, index) => (
-          <div
-            className="media-list-item"
-            key={index}
-            onClick={() => onClickHandler(media)}
-            style={{
-              background: `url(${media.link}) center/cover no-repeat`,
-            }}
-          >
-            <div className="media-list-item-name">{media.name}</div>
-          </div>
-        ))}
+        {medias.map((media, index) => {
+          if (media?.archived === false) {
+            return (
+              <div
+                className="media-list-item"
+                key={index}
+                onClick={() => onClickHandler(media)}
+                style={{
+                  background: `url(${media.link}) center/cover no-repeat`,
+                }}
+              >
+                <div className="media-list-item-name">{media.name}</div>
+              </div>
+            );
+          } else {
+            return null;
+          }
+        })}
       </div>
     </ImageGalleryWrapper>
   );

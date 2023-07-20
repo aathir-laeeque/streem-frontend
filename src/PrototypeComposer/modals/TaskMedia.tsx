@@ -1,7 +1,7 @@
 import { BaseModal, Button, Textarea, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import FullScreenIcon from '#assets/svg/FullScreen';
-import { debounce } from 'lodash';
+import { debounce, omit } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
@@ -12,6 +12,7 @@ import { MediaDetails } from '../Tasks/types';
 import { useTypedSelector } from '#store';
 import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { Parameter } from '../Activity/types';
+import { executeParameter } from '#JobComposer/ActivityList/actions';
 
 const Wrapper = styled.div<{
   fullScreeen: boolean;
@@ -178,10 +179,11 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
   } = {},
 }) => {
   const dispatch = useDispatch();
-  const { state, collaborators, userId } = useTypedSelector((state) => ({
+  const { state, collaborators, userId, parametersById } = useTypedSelector((state) => ({
     userId: state.auth.userId,
     state: state.prototypeComposer?.data?.state as Checklist['state'],
     collaborators: state.prototypeComposer?.data?.collaborators as Checklist['collaborators'],
+    parametersById: state.composer?.parameters?.parametersById,
   }));
 
   const [stateMediaDetails, setStateMediaDetails] = useState<MediaDetails>(mediaDetails);
@@ -309,7 +311,33 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
               <div
                 className="delete-media"
                 onClick={() => {
-                  dispatch(removeTaskMedia(taskId, mediaDetails.id));
+                  if (isParameter && parameterId) {
+                    const updatedMedias = (parametersById[parameterId]?.response?.medias || []).map(
+                      (currMedia) =>
+                        omit(
+                          {
+                            ...currMedia,
+                            mediaId: currMedia?.id,
+                            ...(currMedia?.id === mediaDetails.id && {
+                              archived: true,
+                              reason: ' ',
+                            }),
+                          },
+                          'id',
+                        ),
+                    );
+                    dispatch(
+                      executeParameter({
+                        ...parametersById[parameterId],
+                        data: {
+                          medias: updatedMedias,
+                        },
+                      }),
+                    );
+                    closeOverlay();
+                  } else {
+                    dispatch(removeTaskMedia(taskId, mediaDetails.id));
+                  }
                 }}
               >
                 <DeleteOutlined className="icon" />

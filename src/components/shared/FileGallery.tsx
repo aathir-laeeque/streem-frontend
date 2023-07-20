@@ -148,37 +148,43 @@ export const FileGallery: FC<FileGalleryProps> = ({ medias, parameter }) => {
   return (
     <FileGalleryWrapper>
       <div className="media-list">
-        {medias.map((media, index) => (
-          <div className="media-list-item" key={index}>
-            <div onClick={() => onDownload(media)}>
-              {sectionIcon(media.type, media.link)}
-              <div className="media-list-item-name">{`${media?.name}.${
-                media?.filename?.split('.')?.[1]
-              }`}</div>
-            </div>
-            <img
-              src={closeIcon}
-              alt="close icon"
-              onClick={() => {
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.REASON_MODAL,
-                    props: {
-                      modalTitle: 'Remove File',
-                      modalDesc: `Are you sure you want to remove the updated file?`,
-                      onSubmitHandler: (
-                        reason: string,
-                        setFormErrors: (errors?: Error[]) => void,
-                      ) => {
-                        handleDelete(media, reason, setFormErrors);
-                      },
-                    },
-                  }),
-                );
-              }}
-            />
-          </div>
-        ))}
+        {medias.map((media, index) => {
+          if (media?.archived === false) {
+            return (
+              <div className="media-list-item" key={index}>
+                <div onClick={() => onDownload(media)}>
+                  {sectionIcon(media.type, media.link)}
+                  <div className="media-list-item-name">{`${media?.name}.${
+                    media?.filename?.split('.')?.[1]
+                  }`}</div>
+                </div>
+                <img
+                  src={closeIcon}
+                  alt="close icon"
+                  onClick={() => {
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.REASON_MODAL,
+                        props: {
+                          modalTitle: 'Remove File',
+                          modalDesc: `Are you sure you want to remove the updated file?`,
+                          onSubmitHandler: (
+                            reason: string,
+                            setFormErrors: (errors?: Error[]) => void,
+                          ) => {
+                            handleDelete(media, reason, setFormErrors);
+                          },
+                        },
+                      }),
+                    );
+                  }}
+                />
+              </div>
+            );
+          } else {
+            return null;
+          }
+        })}
       </div>
     </FileGalleryWrapper>
   );
