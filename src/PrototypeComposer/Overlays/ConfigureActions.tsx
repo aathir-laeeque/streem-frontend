@@ -1044,7 +1044,8 @@ const ActionFormCard: FC<Props> = ({
                                   },
                                 ]
                               : []),
-                            ...(selectedRelation && AutomationActionActionType.SET_RELATION
+                            ...(selectedRelation &&
+                            actionType === AutomationActionActionType.SET_RELATION
                               ? [
                                   {
                                     type: InputTypes.SINGLE_SELECT,
