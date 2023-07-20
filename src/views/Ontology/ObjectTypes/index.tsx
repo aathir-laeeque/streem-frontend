@@ -168,7 +168,7 @@ const GeneralTabContent: FC<TabContentProps> = ({ label }) => {
   );
 };
 
-const PropertiesTabContent: FC<TabContentProps> = () => {
+const PropertiesTabContent: FC<TabContentProps> = ({ values }) => {
   const {
     objectTypes: { active },
   } = useTypedSelector((state) => state.ontology);
@@ -184,7 +184,7 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [filters, setFilters] = useState<Record<string, any>>(urlParams);
-  const [shouldToggle, setShouldToggle] = useState(false);
+  const { shouldToggle, setShouldToggle } = values;
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -393,7 +393,7 @@ const PropertiesTabContent: FC<TabContentProps> = () => {
   );
 };
 
-const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
+const RelationsTabContent: FC<TabContentProps> = ({ values }) => {
   const {
     objectTypes: { active },
   } = useTypedSelector((state) => state.ontology);
@@ -409,7 +409,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ label }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedRelation, setSelectedRelation] = useState(null);
   const [filters, setFilters] = useState<Record<string, any>>(urlParams);
-  const [shouldToggle, setShouldToggle] = useState(false);
+  const { shouldToggle, setShouldToggle } = values;
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -616,6 +616,7 @@ const ObjectTypesContent = ({ id }: RouteComponentProps<{ id: string }>) => {
   const {
     objectTypes: { active, activeLoading },
   } = useTypedSelector((state) => state.ontology);
+  const [shouldToggle, setShouldToggle] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -625,7 +626,7 @@ const ObjectTypesContent = ({ id }: RouteComponentProps<{ id: string }>) => {
     return () => {
       dispatch(resetOntology(['objectTypes', 'activeLoading']));
     };
-  }, []);
+  }, [shouldToggle]);
 
   const { renderTabHeader, renderTabContent } = useTabs({
     tabs: [
@@ -637,10 +638,12 @@ const ObjectTypesContent = ({ id }: RouteComponentProps<{ id: string }>) => {
       {
         label: 'Properties',
         tabContent: PropertiesTabContent,
+        values: { shouldToggle, setShouldToggle },
       },
       {
         label: 'Relations',
         tabContent: RelationsTabContent,
+        values: { shouldToggle, setShouldToggle },
       },
     ],
   });
