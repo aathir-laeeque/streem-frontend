@@ -16,6 +16,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderLeftWidth: 1,
+    borderColor: '#dadada',
   },
 
   tableColumn: {
@@ -26,6 +29,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 8,
     textAlign: 'right',
+    borderRightWidth: 1,
+    borderColor: '#dadada',
   },
 });
 

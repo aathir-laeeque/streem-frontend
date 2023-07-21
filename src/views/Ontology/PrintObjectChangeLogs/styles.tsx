@@ -29,5 +29,6 @@ export const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     fontFamily: 'Nunito',
+    overflow: 'hidden',
   },
 });
