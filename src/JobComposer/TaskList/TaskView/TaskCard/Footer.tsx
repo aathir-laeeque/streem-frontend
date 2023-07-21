@@ -443,7 +443,10 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
         tasksListIds.every((tasksListId) => {
           if (hiddenIds?.[tasksListId]) return true;
           const _task = tasksById[tasksListId];
-          if (!(_task.taskExecution.state in CompletedTaskStates)) {
+          if (
+            !(_task.taskExecution.state in CompletedTaskStates) ||
+            _task.taskExecution.correctionEnabled
+          ) {
             allTaskCompleted = false;
             return false;
           }

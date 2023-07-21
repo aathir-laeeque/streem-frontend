@@ -23,6 +23,7 @@ import TextboxParameter from './Textbox';
 import YesNoParameter from './YesNo';
 import ParameterVerificationView from './Verification/ParameterVerificationView';
 import FileUploadParameter from './FileUpload';
+import { ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.types';
 
 const Parameter: FC<{
   parameter: Parameter;
@@ -36,13 +37,22 @@ const Parameter: FC<{
     },
   } = useTypedSelector((state) => state);
 
+  const parameterHasVerificationEnabled =
+    parameter.verificationType !== ParameterVerificationTypeEnum.NONE;
+
   const { state, audit, parameterVerifications } = parameter?.response;
   const { verificationType } = parameter;
   const verificationsByType = keyBy<Verification>(parameterVerifications || [], 'verificationType');
   if (hiddenIds?.[parameter.id]) return null;
 
   return (
-    <div key={parameter.id} className="parameter">
+    <div
+      key={parameter.id}
+      className="parameter"
+      style={
+        isCorrectingError ? (parameterHasVerificationEnabled ? { pointerEvents: 'none' } : {}) : {}
+      }
+    >
       {parameter.type in MandatoryParameter && !parameter.mandatory && (
         <div className="optional-badge">Optional</div>
       )}
