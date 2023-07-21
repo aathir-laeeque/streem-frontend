@@ -28,7 +28,7 @@ import stopEmoji from '#assets/images/emojis/stop.png';
 import toolboxEmoji from '#assets/images/emojis/toolbox.png';
 import torchEmoji from '#assets/images/emojis/torch.png';
 import vestEmoji from '#assets/images/emojis/vest.png';
-import ReactPDF, { Text, View, StyleSheet, Image } from '@react-pdf/renderer';
+import ReactPDF, { Text, View, StyleSheet, Image, Link } from '@react-pdf/renderer';
 import moment from 'moment';
 import { parseMarkUp } from '#utils/stringUtils';
 import { EmojisUniCodes } from '#utils/constants';
@@ -641,9 +641,11 @@ const parameterTemplateFormatter = (
                 (imageDetails: {
                   link: string;
                   name: string;
+                  filename: string;
                   id: string;
                   description: string | null;
                 }) => {
+                  const fileExtension = imageDetails.filename.split('.').pop();
                   return (
                     <View key={imageDetails.id} style={{ marginBottom: 16 }} wrap={false} break>
                       <Text style={styles.text12}>
@@ -654,9 +656,12 @@ const parameterTemplateFormatter = (
                             fontWeight: 'bold',
                           }}
                         >
-                          Name-
+                          Name -
                         </Text>
-                        {imageDetails.name}
+                        <Link src={imageDetails.link} style={styles.link}>
+                          {' '}
+                          {imageDetails.name}.{fileExtension}
+                        </Link>
                       </Text>
 
                       {imageDetails.description ? (
@@ -668,15 +673,17 @@ const parameterTemplateFormatter = (
                               fontWeight: 'bold',
                             }}
                           >
-                            Description-
-                          </Text>
+                            Description -
+                          </Text>{' '}
                           {imageDetails.description}
                         </Text>
                       ) : null}
-                      <Image
-                        src={imageDetails.link}
-                        style={{ maxHeight: '230mm', marginTop: '8px', maxWidth: '100%' }}
-                      />
+                      {parameter.type === MandatoryParameter.MEDIA ? (
+                        <Image
+                          src={imageDetails.link}
+                          style={{ maxHeight: '230mm', marginTop: '8px', maxWidth: '100%' }}
+                        />
+                      ) : null}
                     </View>
                   );
                 },
