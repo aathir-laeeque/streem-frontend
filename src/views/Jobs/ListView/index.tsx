@@ -216,6 +216,17 @@ const JobListView: FC<ListViewProps> = ({ location }) => {
               ],
             },
             {
+              label: 'Start Delayed',
+              className: 'yellow',
+              filters: [
+                {
+                  field: 'expectedStartDate',
+                  op: FilterOperators.LT,
+                  values: [moment(moment.now()).unix().toString()],
+                },
+              ],
+            },
+            {
               label: 'Pending Approval',
               className: 'yellow',
               filters: [

@@ -14,6 +14,7 @@ const JobInfoDrawerWrapper = styled.div`
   flex-direction: column;
   flex: 1;
   width: 100%;
+  max-height: 0;
 
   .job-summary {
     margin-bottom: 16px;

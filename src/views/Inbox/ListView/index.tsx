@@ -187,6 +187,17 @@ const ListView: FC<ListViewProps> = () => {
                           },
                         ],
                       },
+                      {
+                        label: 'Pending Approval',
+                        className: 'yellow',
+                        filters: [
+                          {
+                            field: 'state',
+                            op: FilterOperators.EQ,
+                            values: [AssignedJobStates.BLOCKED],
+                          },
+                        ],
+                      },
                     ],
                   }}
                 />
