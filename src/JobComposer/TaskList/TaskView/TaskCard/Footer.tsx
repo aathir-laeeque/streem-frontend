@@ -10,6 +10,7 @@ import { completeJob } from '#JobComposer/actions';
 import {
   Audit,
   AutomationActionActionType,
+  AutomationActionTriggerType,
   CompletedTaskStates,
   Task,
   TaskExecutionState,
@@ -17,7 +18,7 @@ import {
 } from '#JobComposer/checklist.types';
 import { groupJobErrors } from '#JobComposer/utils';
 import { Button } from '#components';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
 import { User } from '#store/users/types';
@@ -181,18 +182,22 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
     setLoadingState(true);
     if (task.automations?.length) {
       const createObjectAutomation = (task.automations || []).find(
-        (automation) => automation.actionType === AutomationActionActionType.CREATE_OBJECT,
+        (automation) =>
+          automation.actionType === AutomationActionActionType.CREATE_OBJECT &&
+          automation.triggerType === AutomationActionTriggerType.TASK_COMPLETED,
       );
       if (createObjectAutomation) {
         const otherAutomations = task.automations.filter(
-          (automation) => automation.actionType !== AutomationActionActionType.CREATE_OBJECT,
+          (automation) =>
+            automation.actionType !== AutomationActionActionType.CREATE_OBJECT &&
+            automation.triggerType === AutomationActionTriggerType.TASK_COMPLETED,
         );
         dispatch(
           openOverlayAction({
             type: OverlayNames.AUTOMATION_ACTION,
             props: {
               objectTypeId: createObjectAutomation.actionDetails.objectTypeId,
-              onDone: () =>
+              onDone: () => {
                 dispatch(
                   completeTask({
                     taskId: task.id,
@@ -200,18 +205,24 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
                     reason,
                     automations: otherAutomations.length ? otherAutomations : undefined,
                   }),
-                ),
+                );
+                dispatch(closeOverlayAction(OverlayNames.AUTOMATION_ACTION));
+              },
+
               setLoadingState,
             },
           }),
         );
       } else {
+        const automations = task.automations.filter(
+          (automation) => automation.triggerType === AutomationActionTriggerType.TASK_COMPLETED,
+        );
         dispatch(
           completeTask({
             taskId: task.id,
             setLoadingState,
             reason,
-            automations: task.automations,
+            automations: automations,
           }),
         );
       }
@@ -223,6 +234,44 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
           reason,
         }),
       );
+    }
+  };
+
+  const onStartTask = () => {
+    setLoadingState(true);
+    if (task.automations?.length) {
+      const createObjectAutomation = (task.automations || []).find(
+        (automation) =>
+          automation.actionType === AutomationActionActionType.CREATE_OBJECT &&
+          automation.triggerType === AutomationActionTriggerType.TASK_STARTED,
+      );
+      if (createObjectAutomation) {
+        const otherAutomations = task.automations.filter(
+          (automation) =>
+            automation.actionType !== AutomationActionActionType.CREATE_OBJECT &&
+            automation.triggerType === AutomationActionTriggerType.TASK_STARTED,
+        );
+        dispatch(
+          openOverlayAction({
+            type: OverlayNames.AUTOMATION_ACTION,
+            props: {
+              objectTypeId: createObjectAutomation.actionDetails.objectTypeId,
+              onDone: () => {
+                dispatch(startTask(task.id, setLoadingState, otherAutomations));
+                dispatch(closeOverlayAction(OverlayNames.AUTOMATION_ACTION));
+              },
+              setLoadingState,
+            },
+          }),
+        );
+      } else {
+        const automations = task.automations.filter(
+          (automation) => automation.triggerType === AutomationActionTriggerType.TASK_STARTED,
+        );
+        dispatch(startTask(task.id, setLoadingState, automations));
+      }
+    } else {
+      dispatch(startTask(task.id, setLoadingState));
     }
   };
 
@@ -316,8 +365,7 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
                 }),
               );
             } else {
-              setLoadingState(true);
-              dispatch(startTask(task.id, setLoadingState));
+              onStartTask();
             }
           },
         };
@@ -425,8 +473,7 @@ const Footer: FC<FooterProps> = ({ task, setLoadingState, timerState, enableStop
                   }),
                 );
               } else {
-                setLoadingState(true);
-                dispatch(startTask(task.id, setLoadingState));
+                onStartTask();
               }
             },
           };

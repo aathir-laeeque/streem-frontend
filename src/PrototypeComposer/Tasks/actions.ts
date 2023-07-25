@@ -106,9 +106,6 @@ export const reOrderTaskSuccess = ({
     activeStageId,
   });
 
-export const addTaskAction = (payload: AddActionType) =>
-  actionSpreader(TaskListActions.ADD_TASK_ACTION, payload);
-
 export const updateTaskAction = (payload: UpdateActionType) =>
   actionSpreader(TaskListActions.UPDATE_TASK_ACTION, payload);
 
@@ -127,5 +124,5 @@ export const reOrderParameters = (payload: {
   orderedIds: string[];
 }) => actionSpreader(TaskListActions.REORDER_PARAMETERS, payload);
 
-export const addMultipleTaskAction = (payload: any) =>
-  actionSpreader(TaskListActions.ADD_MULTIPLE_TASK_ACTION, payload);
+export const addTaskAction = (payload: any) =>
+  actionSpreader(TaskListActions.ADD_TASK_ACTION, payload);

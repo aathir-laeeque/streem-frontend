@@ -18,15 +18,14 @@ import {
   apiUpdateTaskAction,
   apiUpdateTaskMedia,
 } from '#utils/apiUrls';
-import { request } from '#utils/request';
+import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, select, takeEvery, takeLatest, takeLeading } from 'redux-saga/effects';
 import { updateMediaParameterSuccess } from '../../JobComposer/ActivityList/actions';
 import {
-  addMultipleTaskAction,
+  addTaskAction,
   addNewTask,
   addNewTaskSuccess,
   addStop,
-  addTaskAction,
   addTaskMedia,
   archiveTaskAction,
   deleteTask,
@@ -319,24 +318,6 @@ function* removeTaskMediaSaga({ payload }: ReturnType<typeof removeTaskMedia>) {
   }
 }
 
-function* addTaskActionSaga({ payload }: ReturnType<typeof addTaskAction>) {
-  try {
-    const { action, taskId } = payload;
-    const { data, errors } = yield call(request, 'POST', apiAddTaskAction(taskId), {
-      data: action,
-    });
-
-    if (data) {
-      yield put(updateTask(data));
-      yield put(closeOverlayAction(OverlayNames.CONFIGURE_ACTIONS));
-    } else {
-      console.error('error from add action to task api :: ', errors);
-    }
-  } catch (error) {
-    console.error('error came in addTaskActionSaga :: ', error);
-  }
-}
-
 function* updateTaskActionSaga({ payload }: ReturnType<typeof updateTaskAction>) {
   try {
     const { taskId, action, actionId } = payload;
@@ -357,23 +338,23 @@ function* updateTaskActionSaga({ payload }: ReturnType<typeof updateTaskAction>)
 
 function* archiveTaskActionSaga({ payload }: ReturnType<typeof archiveTaskAction>) {
   try {
-    const { taskId, actionId } = payload;
+    const { taskId, actionId, setFormErrors } = payload;
     const { data, errors } = yield call(request, 'DELETE', apiUpdateTaskAction(taskId, actionId));
 
     if (data) {
       yield put(updateTask(data));
-      // yield put(closeOverlayAction(OverlayNames.CONFIGURE_ACTIONS));
       yield put(
         showNotification({
           type: NotificationType.SUCCESS,
-          msg: 'Action Deleted Successfully',
+          msg: 'Action Deleted',
         }),
       );
-    } else {
-      console.error('error from archive action from task api :: ', errors);
+      setFormErrors(errors);
+    } else if (errors) {
+      throw getErrorMsg(errors);
     }
   } catch (error) {
-    console.error('error came in archiveTaskActionSaga :: ', error);
+    yield* handleCatch('Configure Actions', 'archiveTaskActionSaga', error, true);
   }
 }
 
@@ -402,7 +383,7 @@ function* reOrderParametersSaga({ payload }: ReturnType<typeof reOrderParameters
   }
 }
 
-function* addMultipleTaskActionSaga({ payload }: ReturnType<typeof addMultipleTaskAction>) {
+function* addTaskActionSaga({ payload }: ReturnType<typeof addTaskAction>) {
   try {
     const { actions, taskId } = payload;
     const { data, errors } = yield call(request, 'POST', apiMultipleTaskAction(taskId), {
@@ -411,18 +392,18 @@ function* addMultipleTaskActionSaga({ payload }: ReturnType<typeof addMultipleTa
 
     if (data) {
       yield put(updateTask(data));
-      yield put(closeOverlayAction(OverlayNames.CONFIGURE_ACTIONS));
       yield put(
         showNotification({
           type: NotificationType.SUCCESS,
-          msg: 'Actions Updated Successfully',
+          msg: actions.id ? 'Action updated successfully!' : 'Action added successfully!',
         }),
       );
-    } else {
-      console.error('error from add action to task api :: ', errors);
+    } else if (errors) {
+      throw getErrorMsg(errors);
     }
   } catch (error) {
     console.error('error came in addTaskActionSaga :: ', error);
+    yield* handleCatch('Configure Actions', 'addTaskActionSaga', error, true);
   }
 }
 
@@ -438,9 +419,8 @@ export function* TaskListSaga() {
   yield takeLeading(TaskListActions.UPDATE_TASK_MEDIA, updateTaskMediaSaga);
   yield takeLatest(TaskListActions.REMOVE_TASK_MEDIA, removeTaskMediaSaga);
   yield takeLeading(TaskListActions.REORDER_TASK, reOrderTaskSaga);
-  yield takeLeading(TaskListActions.ADD_TASK_ACTION, addTaskActionSaga);
   yield takeLeading(TaskListActions.UPDATE_TASK_ACTION, updateTaskActionSaga);
   yield takeLeading(TaskListActions.ARCHIVE_TASK_ACTION, archiveTaskActionSaga);
   yield takeLatest(TaskListActions.REORDER_PARAMETERS, reOrderParametersSaga);
-  yield takeLatest(TaskListActions.ADD_MULTIPLE_TASK_ACTION, addMultipleTaskActionSaga);
+  yield takeLatest(TaskListActions.ADD_TASK_ACTION, addTaskActionSaga);
 }

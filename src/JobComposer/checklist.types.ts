@@ -157,11 +157,13 @@ export enum AutomationActionActionTypeVisual {
 }
 
 export enum AutomationActionTriggerType {
+  TASK_STARTED = 'TASK_STARTED',
   TASK_COMPLETED = 'TASK_COMPLETED',
 }
 
 export enum AutomationActionTriggerTypeVisual {
   TASK_COMPLETED = 'task is completed',
+  TASK_STARTED = 'task is started',
 }
 
 export type AutomationActionDetails = {

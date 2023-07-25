@@ -9,11 +9,13 @@ export const setActiveTask = (id: Task['id'], bringIntoView = false) =>
 export const startTask = (
   taskId: Task['id'],
   setLoadingState: React.Dispatch<React.SetStateAction<boolean>>,
+  automations?: AutomationAction[],
 ) =>
   actionSpreader(TaskListAction.START_TASK, {
     taskId,
     setLoadingState,
     action: TaskAction.START,
+    automations,
   });
 
 export const updateTaskExecutionState = (taskId: Task['id'], data: any) =>

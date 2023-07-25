@@ -76,11 +76,12 @@ type Props = {
   modalTitle?: string;
   onSubmitModalText?: string;
   modalDesc?: string;
+  shouldAskForReason?: boolean;
 };
 
 const ReasonModal = (props: CommonOverlayProps<Props>) => {
   const {
-    props: { onSubmitHandler, modalTitle, onSubmitModalText, modalDesc },
+    props: { onSubmitHandler, modalTitle, onSubmitModalText, modalDesc, shouldAskForReason = true },
     closeOverlay,
     closeAllOverlays,
   } = props;
@@ -97,7 +98,7 @@ const ReasonModal = (props: CommonOverlayProps<Props>) => {
   };
 
   const onSubmitModal = async () => {
-    if (!reasonTextIsEmpty) {
+    if (!reasonTextIsEmpty || !shouldAskForReason) {
       onSubmitHandler(reason, getApiFormErrors);
     }
   };
@@ -109,7 +110,7 @@ const ReasonModal = (props: CommonOverlayProps<Props>) => {
         closeModal={closeOverlay}
         closeAllModals={closeAllOverlays}
         title={modalTitle ? modalTitle : 'Give a reason for the change'}
-        disabledPrimary={reasonTextIsEmpty}
+        disabledPrimary={shouldAskForReason ? reasonTextIsEmpty : false}
         showFooter={false}
       >
         <div className="reason-modal-form-body">
@@ -119,21 +120,23 @@ const ReasonModal = (props: CommonOverlayProps<Props>) => {
               : 'The reason provided here will be useful for future reconciliation purposes and will be displayed in the audit logs'}
           </div>
 
-          <TextareaAutosize
-            className="reason-modal-input"
-            placeholder="Write here"
-            minRows={4}
-            maxRows={8}
-            onChange={debounce((e) => {
-              if (e.target.value.trim() !== '') {
-                setReason(e.target.value);
-                setReasonTextIsEmpty(false);
-                setFormError(undefined);
-              } else {
-                setReasonTextIsEmpty(true);
-              }
-            })}
-          />
+          {shouldAskForReason && (
+            <TextareaAutosize
+              className="reason-modal-input"
+              placeholder="Write here"
+              minRows={4}
+              maxRows={8}
+              onChange={debounce((e) => {
+                if (e.target.value.trim() !== '') {
+                  setReason(e.target.value);
+                  setReasonTextIsEmpty(false);
+                  setFormError(undefined);
+                } else {
+                  setReasonTextIsEmpty(true);
+                }
+              })}
+            />
+          )}
           {!!formError && (
             <div className="inline-form-error">
               <ErrorIcon className="error-icon" />
@@ -145,7 +148,11 @@ const ReasonModal = (props: CommonOverlayProps<Props>) => {
           <Button variant="secondary" onClick={() => closeOverlay()}>
             Cancel
           </Button>
-          <Button color="red" onClick={onSubmitModal} disabled={reasonTextIsEmpty}>
+          <Button
+            color="red"
+            onClick={onSubmitModal}
+            disabled={shouldAskForReason ? reasonTextIsEmpty : false}
+          >
             {onSubmitModalText ? onSubmitModalText : 'Submit'}
           </Button>
         </div>

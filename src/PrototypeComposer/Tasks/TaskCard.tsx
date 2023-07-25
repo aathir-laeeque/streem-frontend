@@ -385,7 +385,6 @@ const TaskCard: FC<
                     openOverlayAction({
                       type: OverlayNames.CONFIGURE_ACTIONS,
                       props: {
-                        task,
                         checklistId: data?.id,
                         isReadOnly,
                       },

@@ -77,6 +77,7 @@ export type UpdateActionType = {
 export type ArchiveActionType = {
   taskId: Task['id'];
   actionId: string;
+  setFormErrors: (errors?: Error[]) => void;
 };
 
 export enum TaskErrors {
