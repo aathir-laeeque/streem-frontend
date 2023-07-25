@@ -119,6 +119,7 @@ export interface TaskExecution {
   correctionReason?: string | null;
   correctedAt?: boolean | null;
   correctedBy?: Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName' | 'archived'>;
+  pauseReasons?: Record<string, string>[];
 }
 
 export enum TimerOperator {

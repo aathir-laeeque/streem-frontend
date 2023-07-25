@@ -42,3 +42,14 @@ export enum CompletedTaskErrors {
 export enum TaskSignOffError {
   E215 = 'TASK_NOT_SIGNNED',
 }
+
+export enum TaskPauseReasons {
+  BIO_BREAK = 'Bio break',
+  SHIFT_BREAK = 'Shift break',
+  EQUIPMENT_BREAKDOWN = 'Equipment Breakdown',
+  LUNCH_BREAK = 'Lunch break',
+  AREA_BREAKDOWN = 'Area Breakdown',
+  EMERGENCY_DRILL = 'Emergency Drill',
+  FIRE_ALARM = 'Fire alarm',
+  OTHER = 'Other',
+}

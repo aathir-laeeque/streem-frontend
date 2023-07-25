@@ -10,17 +10,19 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { CompletedJobStates, JobStateEnum } from '#views/Jobs/ListView/types';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, TextareaAutosize } from '@material-ui/core';
 import moment from 'moment';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { setActiveTask } from '../../actions';
-import { TaskCardProps } from '../../types';
+import { TaskCardProps, TaskPauseReasons } from '../../types';
 import MediaCard from '../MediaCard';
 import AutomationInfo from './AutomationInfo';
 import Footer from './Footer';
 import Header from './Header';
+import { getFullName } from '#utils/stringUtils';
+import { formatDateTime } from '#utils/timeUtils';
 
 const Wrapper = styled.div.attrs({
   className: 'task-card',
@@ -42,6 +44,28 @@ const Wrapper = styled.div.attrs({
 
   :hover {
     box-shadow: 0 8px 8px 0 rgba(153, 153, 153, 0.16);
+  }
+
+  .task-pause-details {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px;
+    background-color: #ffffff;
+    gap: 8px;
+    > div:first-child {
+      background-color: #ffedd7;
+      color: #ff541e;
+      padding: 4px 8px;
+      width: fit-content;
+    }
+
+    &-reason {
+      background-color: #ffffff;
+      padding: 4px 0px 4px 8px;
+      font-weight: 400;
+      font-size: 14px;
+      color: #161616;
+    }
   }
 
   .loading-wrapper {
@@ -72,6 +96,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overvi
     startedAt,
     endedAt,
     correctionEnabled,
+    pauseReasons,
   } = task.taskExecution;
 
   const dispatch = useDispatch();
@@ -102,6 +127,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overvi
       taskState === TaskExecutionState.SKIPPED ||
       taskState === TaskExecutionState.COMPLETED ||
       taskState === TaskExecutionState.COMPLETED_WITH_EXCEPTION;
+    const isTaskPaused = taskState === TaskExecutionState.PAUSED;
 
     const showStartButton =
       (jobState === JobStateEnum.ASSIGNED || jobState === JobStateEnum.IN_PROGRESS) &&
@@ -192,6 +218,26 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overvi
                 }
               }}
             >
+              {isTaskPaused && (
+                <div className="task-pause-details">
+                  <div>Task Paused</div>
+                  <TextareaAutosize
+                    className="task-pause-details-reason"
+                    value={
+                      pauseReasons?.[0]?.comment ??
+                      TaskPauseReasons?.[pauseReasons?.[0]?.taskPauseReason] ??
+                      ''
+                    }
+                    minRows={2}
+                    maxRows={4}
+                    disabled
+                  />
+                  {/* <div>
+                    Task Paused by {getFullName(audit.modifiedBy)}, ID:{' '}
+                    {audit.modifiedBy.employeeId} on {formatDateTime(audit.modifiedAt)}
+                  </div> */}
+                </div>
+              )}
               <ParameterList
                 parameters={parameters}
                 isTaskStarted={isTaskStarted}

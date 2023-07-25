@@ -46,6 +46,7 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import ReasonModal from '../shared/ReasonModal';
+import TaskPauseReasonModal from '#JobComposer/modals/TaskPauseReasonModal';
 import StartErrorModal from '../shared/StartErrorModal';
 import AutomationActionModal from '#JobComposer/modals/AutomationAction';
 import ChecklistUserAssignment from '#views/Checklists/Assignment/ChecklistUserAssignment';
@@ -251,6 +252,10 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.VIEW_REASON:
       return <ViewReason {...params} />;
+
+    case OverlayNames.TASK_PAUSE_REASON_MODAL:
+      return <TaskPauseReasonModal {...params} />;
+
     default:
       return null;
   }
