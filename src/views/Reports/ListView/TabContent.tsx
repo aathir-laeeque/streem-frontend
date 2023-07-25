@@ -79,7 +79,7 @@ const TabContent = () => {
               },
             ]}
             rows={list}
-            emptyTitle="Reports Found"
+            emptyTitle="No Reports Found"
           />
         }
       />

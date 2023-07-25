@@ -278,7 +278,7 @@ const TabContent: FC = () => {
                 },
               ]}
               rows={list}
-              emptyTitle="Audit Logs"
+              emptyTitle="No Audit Logs Found"
             />
             {showDrawer && (
               <FiltersDrawer

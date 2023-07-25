@@ -114,7 +114,7 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
                 : []),
             ]}
             rows={list}
-            emptyTitle="Object Types Found"
+            emptyTitle="No Object Types Found"
           />
         }
       />

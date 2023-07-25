@@ -147,7 +147,7 @@ const Logs: FC<TabContentProps> = ({ values }) => {
                 });
                 return acc;
               }, [])}
-              emptyTitle="Job Logs Found"
+              emptyTitle="No Job Logs Found"
             />
             <Pagination pageable={pageable} fetchData={fetchData} />
           </TabContentWrapper>

@@ -193,7 +193,7 @@ export default function DataTable({
             </TableBody>
           </Table>
         </TableContainer>
-        {rows.length === 0 && <div className="data-table-empty">No {emptyTitle}</div>}
+        {rows.length === 0 && <div className="data-table-empty">{emptyTitle}</div>}
       </Paper>
     </Wrapper>
   );

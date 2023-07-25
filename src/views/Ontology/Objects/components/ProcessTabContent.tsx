@@ -220,7 +220,7 @@ const ProcessTabContent = () => {
                 ...item,
               };
             })}
-            emptyTitle="Associated Process"
+            emptyTitle="No Associated Process Found"
           />
           <Pagination pageable={pageable} fetchData={fetchData} />
         </div>

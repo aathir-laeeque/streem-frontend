@@ -55,7 +55,7 @@ const Permissions: FC<ListViewProps> = ({ location }) => {
             },
           ]}
           rows={['hello']}
-          emptyTitle="Permissions Found"
+          emptyTitle="No Permissions Found"
         />
         {addUserDrawer && <AddUserDrawer label={addUserDrawer} onCloseDrawer={setAddUserDrawer} />}
       </TabContentWrapper>

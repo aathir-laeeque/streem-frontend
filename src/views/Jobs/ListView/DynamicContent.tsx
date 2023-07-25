@@ -527,7 +527,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                   });
                   return acc;
                 }, [])}
-                emptyTitle="Jobs Found"
+                emptyTitle="No Jobs Found"
               />
               <Pagination pageable={pageable} fetchData={fetchData} />
               {showDrawer && (

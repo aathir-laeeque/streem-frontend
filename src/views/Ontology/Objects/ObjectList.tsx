@@ -325,7 +325,7 @@ const ObjectList: FC<TabContentProps> = () => {
                 return acc;
               }, {}),
             }))}
-            emptyTitle="Objects Found"
+            emptyTitle="No Objects Found"
           />
           <Pagination pageable={pageable} fetchData={fetchData} />
           {active && showAddEditObjectDrawer && (

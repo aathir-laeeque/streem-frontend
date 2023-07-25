@@ -82,7 +82,7 @@ const Automation: FC<Props> = ({ id }) => {
                     },
                   ]}
                   rows={automations}
-                  emptyTitle="Automations Found"
+                  emptyTitle="No Automations Found"
                 />
                 <Pagination pageable={pageable} fetchData={fetchData} />
               </TabContentWrapper>
