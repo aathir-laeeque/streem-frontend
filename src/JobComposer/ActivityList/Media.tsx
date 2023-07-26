@@ -12,6 +12,7 @@ import { openOverlayAction } from '../../components/OverlayContainer/actions';
 import { executeParameter, fixParameter, updateExecutedParameter } from './actions';
 import { ParameterProps } from './types';
 import { useTypedSelector } from '#store';
+import { MediaDetails } from '#PrototypeComposer/Tasks/types';
 
 const MediaWrapper = styled.div.attrs({
   className: 'parameter-media',
@@ -72,6 +73,39 @@ const MediaParameter: FC<ParameterProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
 
+  const onExecute = (data: MediaDetails, isDeleting?: boolean) => {
+    dispatch(
+      updateExecutedParameter({
+        ...parameter,
+        response: {
+          ...parameter.response,
+          medias: isDeleting ? data : [...(parameter.response?.medias ?? []), data],
+          audit: undefined,
+          state: 'EXECUTED',
+        },
+      }),
+    );
+    if (isCorrectingError) {
+      dispatch(
+        fixParameter({
+          ...parameter,
+          data: {
+            medias: isDeleting ? data : [...(parameter.data?.medias ?? []), { ...data }],
+          },
+        }),
+      );
+    } else {
+      dispatch(
+        executeParameter({
+          ...parameter,
+          data: {
+            medias: isDeleting ? data : [...(parameter.data?.medias ?? []), { ...data }],
+          },
+        }),
+      );
+    }
+  };
+
   const onUploaded = (fileData: FileUploadData) => {
     dispatch(
       openOverlayAction({
@@ -85,38 +119,7 @@ const MediaParameter: FC<ParameterProps> = ({
           isParameter: true,
           isCorrectingError,
           taskId: activeTaskId,
-          execute: (data) => {
-            dispatch(
-              updateExecutedParameter({
-                ...parameter,
-                response: {
-                  ...parameter.response,
-                  medias: [...(parameter.response?.medias ?? []), data],
-                  audit: undefined,
-                  state: 'EXECUTED',
-                },
-              }),
-            );
-            if (isCorrectingError) {
-              dispatch(
-                fixParameter({
-                  ...parameter,
-                  data: {
-                    medias: [...(parameter.data?.medias ?? []), { ...data }],
-                  },
-                }),
-              );
-            } else {
-              dispatch(
-                executeParameter({
-                  ...parameter,
-                  data: {
-                    medias: [...(parameter.data?.medias ?? []), { ...data }],
-                  },
-                }),
-              );
-            }
-          },
+          execute: onExecute,
         },
       }),
     );
@@ -149,6 +152,7 @@ const MediaParameter: FC<ParameterProps> = ({
           isTaskCompleted={isTaskCompleted || !isLoggedInUserAssigned}
           isCorrectingError={isCorrectingError}
           isParameter
+          execute={onExecute}
         />
       )}
       {(!isTaskCompleted || isCorrectingError) && (

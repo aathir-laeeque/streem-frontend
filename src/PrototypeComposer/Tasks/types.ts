@@ -26,6 +26,7 @@ export type TaskMediasProps = {
   isParameter?: boolean;
   isTaskCompleted?: boolean;
   isCorrectingError?: boolean;
+  execute?: (data: MediaDetails, isDeleting?: boolean) => void;
 };
 
 export type AddNewTaskType = {

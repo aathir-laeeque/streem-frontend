@@ -161,7 +161,7 @@ type Props = {
   parameterId?: Parameter['id'];
   isParameter?: boolean;
   disableNameInput?: boolean;
-  execute: (data: MediaDetails) => void;
+  execute: (data: MediaDetails, isDeleting?: boolean) => void;
   disableDescInput?: boolean;
   isCorrectingError?: boolean;
 };
@@ -312,7 +312,13 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
               <div
                 className="delete-media"
                 onClick={() => {
-                  if (isParameter && parameterId) {
+                  console.log(
+                    'isParameter && parameterId && execute',
+                    isParameter,
+                    parameterId,
+                    execute,
+                  );
+                  if (isParameter && parameterId && execute) {
                     const updatedMedias = (parametersById[parameterId]?.response?.medias || []).map(
                       (currMedia) =>
                         omit(
@@ -327,14 +333,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                           'id',
                         ),
                     );
-                    dispatch(
-                      executeParameter({
-                        ...parametersById[parameterId],
-                        data: {
-                          medias: updatedMedias,
-                        },
-                      }),
-                    );
+                    execute(updatedMedias, true);
                     closeOverlay();
                   } else {
                     dispatch(removeTaskMedia(taskId, mediaDetails.id));

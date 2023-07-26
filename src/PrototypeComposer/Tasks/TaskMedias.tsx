@@ -8,6 +8,7 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { TaskMediasWrapper } from './styles';
 import { TaskMediasProps } from './types';
+
 const TaskMedias: FC<TaskMediasProps> = ({
   medias,
   taskId,
@@ -15,6 +16,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
   isParameter = false,
   isTaskCompleted,
   isCorrectingError,
+  execute,
 }) => {
   const dispatch = useDispatch();
 
@@ -40,6 +42,7 @@ const TaskMedias: FC<TaskMediasProps> = ({
                     mediaDetails: media,
                     disableNameInput: isCorrectingError ? false : isTaskCompleted,
                     disableDescInput: isCorrectingError ? false : isTaskCompleted,
+                    execute,
                   },
                 }),
               );
