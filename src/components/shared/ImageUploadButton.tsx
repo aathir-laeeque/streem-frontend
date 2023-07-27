@@ -1,4 +1,6 @@
 import ImageUploadIcon from '#assets/svg/ImageUpload';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { apiUploadFile } from '#utils/apiUrls';
@@ -50,6 +52,22 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
   const [file, setFile] = useState<Blob | File | null>(null);
   const fileRef = createRef<HTMLInputElement>();
 
+  const validateFile = (file) => {
+    if (!file) return false;
+
+    const validFileTypes = acceptedTypes.filter((type) => type.includes('/'));
+    const validExtensions = acceptedTypes.filter((type) => type.startsWith('.'));
+    const fileExtension = file.name.split('.').pop();
+
+    if (validFileTypes.includes(file.type)) {
+      return true;
+    } else if (validExtensions.includes(`.${fileExtension}`)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   useEffect(() => {
     if (file) {
       (async () => {
@@ -88,6 +106,15 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
         onChange={(event) => {
           event.stopPropagation();
           event.preventDefault();
+          if (!validateFile(event?.target?.files?.[0])) {
+            dispatch(
+              showNotification({
+                type: NotificationType.ERROR,
+                msg: 'Invalid file type',
+              }),
+            );
+            return;
+          }
           setFile((event?.target?.files ?? [])[0]);
           event.currentTarget.value = '';
         }}

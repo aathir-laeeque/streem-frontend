@@ -136,6 +136,7 @@ const MaterialInstruction: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }
               ) : (
                 <ImageUploadButton
                   icon={ImageUploadIcon}
+                  acceptedTypes={['image/*', '.png', '.jpg', '.jpeg']}
                   onUploadSuccess={(fileData) => {
                     openMediaModal(
                       {
