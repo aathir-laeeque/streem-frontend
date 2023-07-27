@@ -41,17 +41,6 @@ const JobHeaderButtons: FC<{
 
   return (
     <div className="buttons-container">
-      {jobState in CompletedJobStates && (
-        <Button
-          className="job-summary"
-          color="blue"
-          variant="secondary"
-          onClick={() => navigate(`/jobs/${jobId}/summary`)}
-        >
-          Job Summary
-        </Button>
-      )}
-
       {jobState === JobStateEnum.COMPLETED_WITH_EXCEPTION && (
         <Button
           className="view-info"
