@@ -6,8 +6,8 @@ import { InputTypes, SelectOptions } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { navigate } from '@reach/router';
 import { get, merge, set } from 'lodash';
-import React, { FC, useRef, useState } from 'react';
-import { RegisterOptions, useForm } from 'react-hook-form';
+import React, { FC, memo, useEffect, useRef, useState } from 'react';
+import { Controller, RegisterOptions, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { FlagPositions, getBooleanFromDecimal } from '../ObjectTypes';
@@ -100,6 +100,123 @@ const getValidations = (validations?: Validation[]) => {
   return validators;
 };
 
+const RelationField = memo<any>(({ relation, isReadOnly, getValues, control }) => {
+  const {
+    objects: { active: selectedObject },
+  } = useTypedSelector((state) => state.ontology);
+
+  const [selectOptions, setSelectOptions] = useState<{
+    isFetching: boolean;
+    options: CommonFields[];
+  }>({
+    isFetching: false,
+    options: [],
+  });
+
+  const count = useRef(0);
+  count.current++;
+
+  const registrationId = `relations.${relation?.id}`;
+
+  const defaultValue = selectedObject?.relations
+    .find((_relation) => _relation.id === relation.id)
+    ?.targets?.map((value) => ({
+      ...value,
+      label: value.displayName,
+      value: value.id,
+      externalId: `(ID: ${value.externalId})`,
+    }));
+
+  const getOptions = async (path: string) => {
+    try {
+      setSelectOptions((prev) => ({
+        ...prev,
+        isFetching: true,
+      }));
+      if (path) {
+        const response: {
+          data: CommonFields[];
+          errors: { message: string }[];
+        } = await request('GET', `${baseUrl}${path}`);
+        if (response.data) {
+          setSelectOptions((prev) => ({
+            isFetching: false,
+            options: [...prev.options, ...response.data],
+          }));
+        }
+      }
+    } catch (e) {
+      console.error(`Error in Fetching Options for ${relation.id}`, e);
+    } finally {
+      setSelectOptions((prev) => ({
+        ...prev,
+        isFetching: false,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if (!isReadOnly) {
+      getOptions(relation.target.urlPath);
+    }
+  }, []);
+
+  return (
+    <Controller
+      name={registrationId}
+      control={control}
+      key={registrationId}
+      rules={{
+        required: !(relation?.flags === 0),
+      }}
+      defaultValue={defaultValue || null}
+      render={({ onChange, value, name }) => {
+        return (
+          <FormGroup
+            inputs={[
+              {
+                type: InputTypes.MULTI_SELECT,
+                props: {
+                  value,
+                  name,
+                  id: name,
+                  isMulti: relation.target.cardinality === Cardinality.ONE_TO_MANY,
+                  placeholder: `Select ${relation.displayName}`,
+                  label: relation.displayName,
+                  isDisabled: isReadOnly,
+                  optional: relation?.flags === 0,
+                  ...(isReadOnly && { styles: undefined }),
+                  options: selectOptions?.options?.map((option) => ({
+                    ...option,
+                    value: option?.id,
+                    label: option.displayName,
+                    externalId: `(ID: ${option.externalId})`,
+                  })),
+                  onChange: (options: any) => {
+                    if (options?.value) {
+                      onChange(
+                        Array.isArray(options) ? options.map((option) => option) : [options],
+                      );
+                    } else {
+                      onChange(
+                        options
+                          ? Array.isArray(options)
+                            ? options?.map((option) => option)
+                            : [options]
+                          : [],
+                      );
+                    }
+                  },
+                },
+              },
+            ]}
+          />
+        );
+      }}
+    />
+  );
+});
+
 const ObjectView: FC<TabContentProps> = ({
   label,
   values: {
@@ -122,64 +239,24 @@ const ObjectView: FC<TabContentProps> = ({
     formState: { isDirty, isValid, errors, dirtyFields },
     getValues,
     setValue,
+    control,
   } = useForm({
     mode: 'onChange',
     criteriaMode: 'all',
   });
-  const [selectOptions, setSelectOptions] = useState<
-    Record<
-      string,
-      {
-        isFetching: boolean;
-        dependency?: string;
-        options?: CommonFields[];
-      }
-    >
-  >();
   const dateTimeInputs = useRef<Record<string, string>>({});
-  const [reRender, setReRender] = useState(false);
   const isArchived = selectedObject?.usageStatus === 7;
   const isReadOnly = readOnly || !checkPermission(['ontology', 'editObject']) || !id || isArchived;
   const isEditing = id && id !== 'new';
-
-  const getOptions = async (path: string, inputId: string, dependency?: string) => {
-    if (!dependency || selectOptions?.[inputId]?.dependency !== dependency) {
-      try {
-        setSelectOptions({
-          ...selectOptions,
-          [inputId]: {
-            isFetching: true,
-            dependency,
-          },
-        });
-        if (inputId && path) {
-          const response: {
-            data: CommonFields[];
-            errors: { message: string }[];
-          } = await request('GET', `${baseUrl}${path}`);
-          if (response.data) {
-            setSelectOptions({
-              ...selectOptions,
-              [inputId]: {
-                isFetching: false,
-                options: response.data,
-                dependency,
-              },
-            });
-          }
-        }
-      } catch (e) {
-        console.error(`Error in Fetching Options for ${inputId}`, e);
-      }
-    }
-  };
 
   const parseData = (data: Record<string, Record<string, string>>) => {
     return merge(
       {
         ...data,
         ...(data?.relations &&
-          Object.entries<string>(data?.relations)?.reduce<Record<string, Record<string, string>>>(
+          Object.entries<string>(data?.relations)?.reduce<
+            Record<string, Record<string, string | null>>
+          >(
             (acc, [key, value]) => {
               const relation = selectedObjectType?.relations.find(
                 (relation) => relation.id === key,
@@ -357,99 +434,17 @@ const ObjectView: FC<TabContentProps> = ({
                 },
                 [],
               ),
-            ...(selectedObjectType?.relations ?? [])?.reduce<FormGroupProps['inputs']>(
-              (acc, relation) => {
-                const registrationId = `relations.${relation?.id}`;
-                register(registrationId);
-                const isMulti = relation.target.cardinality === Cardinality.ONE_TO_MANY;
-                let defaultValue: SelectOptions;
-                if (!isDirty && selectedObject) {
-                  defaultValue = selectedObject.relations
-                    .find((_relation) => _relation.id === relation.id)
-                    ?.targets?.map((value) => ({
-                      ...value,
-                      label: value.displayName,
-                      value: value.id,
-                      externalId: `(ID: ${value.externalId})`,
-                    }));
-                  if (defaultValue)
-                    setValue(registrationId, defaultValue, {
-                      shouldValidate: true,
-                    });
-                }
-                if (!isReadOnly) {
-                  if (relation?.variables && Object.keys(relation.variables).length) {
-                    const keyToCheck = Object.keys(relation.variables)[0];
-                    const parsedKey = keyToCheck.replace('$', '');
-                    const variableValue = getValues(`relations.${parsedKey}`)?.[0]?.[
-                      relation.variables[keyToCheck]
-                    ];
-                    if (variableValue) {
-                      getOptions(
-                        relation.target.urlPath.replace(keyToCheck, variableValue),
-                        relation.id,
-                        variableValue,
-                      );
-                    }
-                  } else if (
-                    !selectOptions?.[relation.id]?.isFetching &&
-                    !selectOptions?.[relation.id]?.options
-                  ) {
-                    getOptions(relation.target.urlPath, relation.id);
-                  }
-                }
-                acc.push({
-                  type: InputTypes.MULTI_SELECT,
-                  props: {
-                    defaultValue,
-                    isMulti,
-                    placeholder: `Select ${relation.displayName}`,
-                    label: relation.displayName,
-                    id: registrationId,
-                    name: registrationId,
-                    isDisabled: isReadOnly,
-                    optional: relation?.flags === 0,
-                    ...(isReadOnly && { styles: undefined }),
-                    options: selectOptions?.[relation.id]?.options?.map((option) => ({
-                      ...option,
-                      value: option?.id,
-                      label: option.displayName,
-                      externalId: `(ID: ${option.externalId})`,
-                    })),
-                    onChange: (options: { value: CommonFields } | { value: CommonFields }[]) => {
-                      if (options?.value) {
-                        setValue(
-                          registrationId,
-                          Array.isArray(options) ? options.map((option) => option) : [options],
-                          {
-                            shouldDirty: true,
-                            shouldValidate: true,
-                          },
-                        );
-                        setReRender(!reRender);
-                      } else {
-                        setValue(
-                          registrationId,
-                          options
-                            ? Array.isArray(options)
-                              ? options?.map((option) => option)
-                              : [options]
-                            : [],
-                          {
-                            shouldDirty: true,
-                            shouldValidate: true,
-                          },
-                        );
-                      }
-                    },
-                  },
-                });
-                return acc;
-              },
-              [],
-            ),
           ]}
         />
+        {(selectedObjectType?.relations ?? [])?.map((relation) => (
+          <RelationField
+            key={relation.id}
+            relation={relation}
+            isReadOnly={isReadOnly}
+            getValues={getValues}
+            control={control}
+          />
+        ))}
         <div className="actions">
           {!isReadOnly && (
             <Button type="submit" disabled={!isDirty || !isValid}>
