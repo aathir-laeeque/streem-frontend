@@ -4,7 +4,7 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { MediaDetails } from '#PrototypeComposer/Tasks/types';
 import { ArrowDropDown, ArrowDropUp, Close } from '@material-ui/icons';
-import { pick } from 'lodash';
+import { debounce, pick } from 'lodash';
 import React, { FC } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -71,7 +71,7 @@ const MaterialWrapper = styled.div`
 
 const MaterialInstruction: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({ form }) => {
   const dispatch = useDispatch();
-  const { watch, setValue } = form;
+  const { watch, setValue, setError, trigger } = form;
   const data = watch('data', []);
 
   const openMediaModal = (mediaDetails: any, _: any, index: number) => {
@@ -100,13 +100,38 @@ const MaterialInstruction: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }
     );
   };
 
+  const validateData = (updatedData: any) => {
+    const keysToValidate = [
+      'name',
+      'mediaId',
+      'filename',
+      'originalFilename',
+      'link',
+      'type',
+      'quantity',
+    ];
+    let isValid = false;
+    isValid =
+      updatedData.length > 0 &&
+      updatedData.every((item) => keysToValidate.every((key) => item?.[key]));
+
+    if (!isValid) {
+      setError('data', {
+        message: 'All fields are mandatory',
+      });
+    } else {
+      trigger();
+    }
+  };
+
   const updateInstructionData = (value: any, index: number) => {
     const updated = [...data];
     updated[index] = { ...updated[index], ...value };
     setValue('data', updated, {
-      shouldValidate: true,
       shouldDirty: true,
     });
+
+    validateData(updated);
   };
 
   return (
@@ -157,9 +182,7 @@ const MaterialInstruction: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }
             <TextInput
               type="text"
               defaultValue={item.name}
-              onBlur={(e) => {
-                updateInstructionData({ name: e.target.value }, index);
-              }}
+              onChange={debounce(({ value }) => updateInstructionData({ name: value }, index), 500)}
             />
             <div className="quantity-control">
               <ArrowDropUp
@@ -185,8 +208,8 @@ const MaterialInstruction: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }
                 updated.splice(index, 1);
                 setValue('data', updated, {
                   shouldDirty: true,
-                  shouldValidate: true,
                 });
+                validateData(updated);
               }}
             />
           </li>
@@ -194,10 +217,11 @@ const MaterialInstruction: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }
       </ul>
       <AddNewItem
         onClick={() => {
-          setValue('data', [...data, { id: uuidv4(), name: '', quantity: 0 }], {
+          const updatedData = [...data, { id: uuidv4(), name: '', quantity: 0 }];
+          setValue('data', updatedData, {
             shouldDirty: true,
-            shouldValidate: true,
           });
+          validateData(updatedData);
         }}
       />
     </MaterialWrapper>
