@@ -175,11 +175,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           <BeforeElement
             className={`icon ${beforeElementClass ? beforeElementClass : ''}`}
             id="before-icon"
+            data-testid="input-element-before-icon"
             onClick={beforeElementClick}
           />
         ) : null}
 
         <input
+          data-testid="input-element"
           {...rest}
           defaultValue={defaultValue}
           name={name}
@@ -198,6 +200,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           <AfterElement
             className={`icon ${afterElementClass ? afterElementClass : ''}`}
             id="after-icon"
+            data-testid="input-element-after-icon"
             onClick={afterElementClick}
           />
         ) : null}
@@ -206,6 +209,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           <AfterElement
             className={`icon ${afterElementClass ? afterElementClass : ''}`}
             id="after-icon"
+            data-testid="input-element-error-icon"
             onClick={afterElementClick}
           />
         ) : null}

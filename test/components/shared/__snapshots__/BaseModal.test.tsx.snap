@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BaseModal calls the onPrimary callback when the primary button is clicked 1`] = `
+<button
+  class="sc-xyEDr eRncUR"
+  type="button"
+>
+  Primary Button
+</button>
+`;
+
+exports[`BaseModal calls the onSecondary callback when the secondary button is clicked 1`] = `
+<button
+  class="sc-xyEDr hcszID"
+  color="red"
+  type="button"
+>
+  Secondary Button
+</button>
+`;

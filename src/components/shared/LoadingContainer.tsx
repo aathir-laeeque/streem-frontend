@@ -20,7 +20,10 @@ export const LoadingContainer = ({
 }) => {
   return loading ? (
     <LoadingContainerWrapper>
-      <CircularProgress style={{ color: 'rgb(29, 132, 255)' }} />
+      <CircularProgress
+        data-testid="loading-container-progress"
+        style={{ color: 'rgb(29, 132, 255)' }}
+      />
     </LoadingContainerWrapper>
   ) : (
     component || <></>

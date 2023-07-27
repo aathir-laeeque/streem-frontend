@@ -245,7 +245,11 @@ export const BaseModal: FC<BaseModalProps> = ({
         <div className="modal-background">
           <div className="modal" style={{ borderRadius: isRound ? '16px' : 'unset', zIndex: 10 }}>
             {showCloseIcon && (
-              <Close className="close-icon" onClick={() => onBaseModalContainerClick(closeModal)} />
+              <Close
+                className="close-icon"
+                data-testid="base-modal-close-icon"
+                onClick={() => onBaseModalContainerClick(closeModal)}
+              />
             )}
             {showHeader && (
               <div className="modal-header">

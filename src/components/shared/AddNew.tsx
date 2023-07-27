@@ -23,8 +23,8 @@ type AddNewProps = {
 };
 
 const AddNew: FC<AddNewProps> = ({ onClick, label = 'Add New' }) => (
-  <Wrapper className="add-new-item" onClick={onClick}>
-    <Add className="icon" fontSize="small" />
+  <Wrapper className="add-new-item" onClick={onClick} data-testid="add-new">
+    <Add className="icon" fontSize="small" data-testid="add-new-icon" />
     {label}
   </Wrapper>
 );
