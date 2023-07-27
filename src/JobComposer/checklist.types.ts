@@ -96,6 +96,7 @@ export enum ParameterExecutionState {
   APPROVAL_PENDING = 'APPROVAL_PENDING',
   VERIFICATION_PENDING = 'VERIFICATION_PENDING',
   BEING_EXECUTED = 'BEING_EXECUTED',
+  PENDING_FOR_APPROVAL = 'PENDING_FOR_APPROVAL',
 }
 
 export type AuditUserType = Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName'>;

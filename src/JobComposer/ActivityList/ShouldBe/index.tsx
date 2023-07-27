@@ -125,7 +125,7 @@ const ShouldBeParameter: FC<
   const [state, setState] = useState({
     approvalTime: parameter?.response?.parameterValueApprovalDto?.createdAt,
     approver: parameter?.response?.parameterValueApprovalDto?.approver,
-    isApprovalPending: parameter?.response?.state === ParameterExecutionState.APPROVAL_PENDING,
+    isApprovalPending: parameter?.response?.state === ParameterExecutionState.PENDING_FOR_APPROVAL,
     isApproved: parameter?.response?.parameterValueApprovalDto
       ? parameter?.response?.parameterValueApprovalDto?.state === 'APPROVED'
       : undefined,
@@ -152,7 +152,8 @@ const ShouldBeParameter: FC<
       ...prevState,
       approvalTime: parameter?.response?.parameterValueApprovalDto?.createdAt,
       approver: parameter?.response?.parameterValueApprovalDto?.approver,
-      isApprovalPending: parameter?.response?.state === ParameterExecutionState.APPROVAL_PENDING,
+      isApprovalPending:
+        parameter?.response?.state === ParameterExecutionState.PENDING_FOR_APPROVAL,
       isApproved: parameter?.response?.parameterValueApprovalDto
         ? parameter?.response?.parameterValueApprovalDto?.state === 'APPROVED'
         : undefined,
@@ -303,7 +304,7 @@ const ShouldBeParameter: FC<
           value,
           reason: state.reason,
           state: state.reason
-            ? ParameterExecutionState.APPROVAL_PENDING
+            ? ParameterExecutionState.PENDING_FOR_APPROVAL
             : ParameterExecutionState.EXECUTED,
         },
       }),
@@ -427,11 +428,7 @@ const ShouldBeParameter: FC<
 
           {(() => {
             if (state.isUserSupervisor) {
-              if (
-                state.isApprovalPending &&
-                parameter.response?.parameterValueApprovalDto?.state !== 'APPROVED'
-              )
-                return renderApprovalButtons();
+              if (state.isApprovalPending) return renderApprovalButtons();
             } else if (state.isValueChanged) {
               return renderSubmitButtons();
             }

@@ -1,25 +1,30 @@
-import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
+import { setActiveStage } from '#JobComposer/StageList/actions';
+import { setActiveTask } from '#JobComposer/TaskList/actions';
+import { ParameterExecutionState } from '#JobComposer/checklist.types';
 import { RefetchJobErrorType } from '#JobComposer/modals/RefetchJobComposerData';
 import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
+import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
 import {
   apiAcceptVerification,
   apiApproveParameter,
   apiExecuteParameter,
   apiFixParameter,
+  apiInitiatePeerVerification,
   apiInitiateSelfVerification,
   apiRecallVerification,
   apiRejectParameter,
   apiRejectPeerVerification,
-  apiInitiatePeerVerification,
   apiValidatePassword,
 } from '#utils/apiUrls';
 import { Error } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
-import { call, put, select, takeLeading, takeLatest } from 'redux-saga/effects';
-import { fetchData, updateHiddenIds } from '../actions';
-import { Entity } from '../composer.types';
+import { encrypt } from '#utils/stringUtils';
+import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
+import { updateHiddenIds } from '../actions';
 import {
   acceptPeerVerification,
   approveRejectParameter,
@@ -35,12 +40,6 @@ import {
 } from './actions';
 import { ParameterListAction } from './reducer.types';
 import { SupervisorResponse } from './types';
-import { encrypt } from '#utils/stringUtils';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
-import { ParameterExecutionState } from '#JobComposer/checklist.types';
-import { setActiveTask } from '#JobComposer/TaskList/actions';
-import { setActiveStage } from '#JobComposer/StageList/actions';
 
 function* executeParameterSaga({ payload }: ReturnType<typeof executeParameter>) {
   try {
@@ -55,7 +54,7 @@ function* executeParameterSaga({ payload }: ReturnType<typeof executeParameter>)
     if (data) {
       if (
         data?.type === MandatoryParameter.SHOULD_BE &&
-        data?.response?.state === ParameterExecutionState.APPROVAL_PENDING
+        data?.response?.state === ParameterExecutionState.PENDING_FOR_APPROVAL
       ) {
         yield put(
           openOverlayAction({
@@ -67,7 +66,6 @@ function* executeParameterSaga({ payload }: ReturnType<typeof executeParameter>)
             },
           }),
         );
-        yield put(fetchData({ id: jobId, entity: Entity.JOB }));
       }
       yield put(updateExecutedParameter(data));
       yield put(updateHiddenIds());
