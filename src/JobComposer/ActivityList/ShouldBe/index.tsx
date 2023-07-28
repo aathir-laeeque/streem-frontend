@@ -317,7 +317,10 @@ const ShouldBeParameter: FC<
 
   return (
     <Wrapper data-id={parameter.id} data-type={parameter.type}>
-      <div className="parameter-content">
+      <div
+        className="parameter-content"
+        style={state.isApprovalPending ? { pointerEvents: 'none' } : {}}
+      >
         {state.isApprovalPending ? (
           <span className="pending-approval">
             <Warning className="icon" />
