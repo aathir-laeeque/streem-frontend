@@ -11,15 +11,19 @@ import PrintJobLogs from '#views/Jobs/PrintJobLogs';
 import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
 import PrintObjectChangeLogs from '#views/Ontology/PrintObjectChangeLogs/index';
 import { Router } from '@reach/router';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import GlobalStyles from './styles/GlobalStyles';
 import { MsalComponent } from './MsalComponent';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 
 const { store, persistor } = configureStore({});
 window.store = store;
 window.persistor = persistor;
+
+type Orientation = 'landscape' | 'portrait';
 
 const App: FC = () => {
   const onBeforeLift = () => {
@@ -30,6 +34,51 @@ const App: FC = () => {
       setAuthHeader(accessToken);
     }
   };
+
+  const dispatch = store.dispatch as typeof store.dispatch;
+
+  (() => {
+    const getOrientation = (): Orientation => {
+      if (window.screen.orientation) {
+        const screenOrientation = window.screen.orientation.type;
+        if (
+          screenOrientation.startsWith('landscape') ||
+          screenOrientation === 'landscape-primary'
+        ) {
+          return 'landscape';
+        } else if (
+          screenOrientation.startsWith('portrait') ||
+          screenOrientation === 'portrait-primary'
+        ) {
+          return 'portrait';
+        }
+      }
+
+      // Fallback for browsers that don't support screen.orientation API
+      return window.matchMedia('(orientation: landscape)').matches ? 'landscape' : 'portrait';
+    };
+
+    const [orientation, setOrientation] = useState<Orientation>(getOrientation());
+
+    const handleOrientationChange = () => {
+      setOrientation(getOrientation());
+    };
+
+    useEffect(() => {
+      window.addEventListener('orientationchange', handleOrientationChange);
+      return () => {
+        window.removeEventListener('orientationchange', handleOrientationChange);
+      };
+    }, []);
+
+    if (orientation === 'portrait') {
+      dispatch(
+        openOverlayAction({
+          type: OverlayNames.ORIENTATION_MODAL,
+        }),
+      );
+    }
+  })();
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -74,6 +123,7 @@ const App: FC = () => {
               pauseOnHover
             />
             <OverlayContainer />
+
             <GlobalStyles />
           </PersistGate>
         </Provider>

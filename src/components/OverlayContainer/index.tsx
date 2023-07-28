@@ -62,6 +62,7 @@ import PeerVerificationModal from '#JobComposer/modals/PeerVerificationModal';
 import RecallVerificationModal from '#JobComposer/modals/RecallVerificationModal';
 import JobVerification from '#JobComposer/modals/JobVerification';
 import ViewReason from '#JobComposer/modals/ViewReason';
+import OrientationModal from './OrientationModal';
 
 const Wrapper = styled.div``;
 
@@ -247,6 +248,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.TASK_PAUSE_REASON_MODAL:
       return <TaskPauseReasonModal {...params} />;
+
+    case OverlayNames.ORIENTATION_MODAL:
+      return <OrientationModal {...params} />;
 
     default:
       return null;
