@@ -195,6 +195,21 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
           }ch`,
           format: (row: any) => {
             if (row[column.id + column.triggerType]) {
+              if (column.triggerType === 'RESOURCE') {
+                const rowValue = row[column.id + column.triggerType];
+                const cellValue = Object.values(rowValue.resourceParameters).reduce<any[]>(
+                  (acc, p: any) => {
+                    acc.push(
+                      `${p.displayName}: ${p.choices
+                        .map((c: any) => c.objectDisplayName)
+                        .join(',')}`,
+                    );
+                    return acc;
+                  },
+                  [],
+                );
+                return cellValue.join(',');
+              }
               if (column.type === LogType.DATE) {
                 return formatDateTime(row[column.id + column.triggerType].value);
               } else if (
