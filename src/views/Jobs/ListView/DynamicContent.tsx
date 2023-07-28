@@ -3,7 +3,6 @@ import {
   DataTable,
   fetchDataParams,
   NestedSelect,
-  PaginatedFetchData,
   Pagination,
   ResourceFilter,
   Select,
@@ -149,7 +148,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
     });
   };
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     if (id)
       dispatch(

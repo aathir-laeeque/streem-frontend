@@ -1,4 +1,4 @@
-import { Button, DataTable, PaginatedFetchData, useDrawer } from '#components';
+import { Button, DataTable, useDrawer } from '#components';
 import { useTypedSelector } from '#store';
 import { formatDateTimeToHumanReadable } from '#utils/timeUtils';
 import React, { FC, useEffect } from 'react';
@@ -46,7 +46,7 @@ const VersionHistoryDrawer: FC<{
     }, 200);
   };
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = () => {
     // const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     dispatch(schedulerActions.fetchSchedulersVersionHistory({ schedularId: schedular.value }));
   };

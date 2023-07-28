@@ -1,6 +1,6 @@
 import { Checklist, DisabledStates } from '#PrototypeComposer/checklist.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
-import { DataTable, PaginatedFetchData, Pagination, SearchFilter, ToggleSwitch } from '#components';
+import { DataTable, Pagination, SearchFilter, ToggleSwitch } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission, { roles } from '#services/uiPermissions';
@@ -12,7 +12,7 @@ import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGINATION,
 } from '#utils/constants';
-import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { FilterField, FilterOperators, fetchDataParams } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import CreateJob from '#views/Jobs/Components/CreateJob';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
@@ -61,7 +61,7 @@ const ProcessTabContent = () => {
     }
   };
 
-  const fetchData = async (params: PaginatedFetchData = {}) => {
+  const fetchData = async (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     try {
       const { data, pageable } = await request(

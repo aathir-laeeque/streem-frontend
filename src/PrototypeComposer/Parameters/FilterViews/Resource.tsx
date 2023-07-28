@@ -137,7 +137,7 @@ const ResourceFilter: FC<{
 
   const { data: processData } = useTypedSelector((state) => state.prototypeComposer);
 
-  // const fetchParametersData = async (params: PaginatedFetchData = {}) => {
+  // const fetchParametersData = async (params: fetchDataParams) => {
   //   const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
   //   if (processData?.id) {
   //     dispatch(

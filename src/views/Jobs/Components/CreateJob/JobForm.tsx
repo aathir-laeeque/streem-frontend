@@ -1,4 +1,4 @@
-import { PaginatedFetchData, Select } from '#components';
+import { Select } from '#components';
 import {
   executeBranchingRulesParameter,
   updateHiddenParameterIds,
@@ -9,7 +9,7 @@ import { MandatoryParameter, TargetEntityType } from '#PrototypeComposer/checkli
 import ParameterView from '#PrototypeComposer/Parameters/ExecutionViews';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import { debounce } from 'lodash';
 import React, { FC, useEffect } from 'react';
@@ -108,7 +108,7 @@ export const JobForm: FC<JobFormProps> = ({ form, checklist, selectedObject }) =
     }
   };
 
-  const fetchParametersListData = async (params: PaginatedFetchData = {}, option: string) => {
+  const fetchParametersListData = async (params: fetchDataParams, option: string) => {
     const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
     if (option) {
       dispatch(

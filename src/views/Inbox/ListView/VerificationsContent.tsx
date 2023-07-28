@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  Checkbox,
-  DataTable,
-  LoadingContainer,
-  PaginatedFetchData,
-  Pagination,
-  TextInput,
-} from '#components';
+import { Avatar, Checkbox, DataTable, LoadingContainer, Pagination, TextInput } from '#components';
 import { Select } from '#components/shared/Select';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { navigate } from '@reach/router';
@@ -17,7 +9,6 @@ import rightArrow from '#assets/svg/right-arrow.svg';
 import { ParameterVerificationStatus } from '#JobComposer/ActivityList/types';
 import styled from 'styled-components';
 import { defaultParams, useUsers } from '#services/users';
-import { Tooltip } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { fetchVerifications, fetchVerificationsSuccess } from './actions';
 import { useTypedSelector } from '#store';
@@ -29,7 +20,7 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { setActiveStage } from '#JobComposer/StageList/actions';
 import { setActiveTask } from '#JobComposer/TaskList/actions';
 import { debounce } from 'lodash';
-import { FilterOperators } from '#utils/globalTypes';
+import { FilterOperators, fetchDataParams } from '#utils/globalTypes';
 
 const options = [
   {
@@ -143,7 +134,7 @@ const VerificationsContent: FC<{
     };
   }, [filters]);
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
     dispatch(
       fetchVerifications({

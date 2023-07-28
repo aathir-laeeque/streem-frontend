@@ -1,11 +1,11 @@
-import { Button, FormGroup, LoadingContainer, PaginatedFetchData, useDrawer } from '#components';
+import { Button, FormGroup, LoadingContainer, useDrawer } from '#components';
 import { conditionByParameterType } from '#PrototypeComposer/BranchingRules/RuleConfiguration';
 import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { fetchUsers } from '#store/users/actions';
 import { UsersListType } from '#store/users/types';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterOperators, InputTypes } from '#utils/globalTypes';
+import { FilterOperators, InputTypes, fetchDataParams } from '#utils/globalTypes';
 import {
   FilterCardWrapper,
   FiltersWrapper,
@@ -344,7 +344,7 @@ const FiltersDrawer: FC<any> = ({ setState: _setState, onApplyMoreFilters, filte
     toggleShouldRegister((prev) => !prev);
   };
 
-  const fetchUsersData = (params: PaginatedFetchData = {}) => {
+  const fetchUsersData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, query = '' } = params;
     const filters = [{ field: 'firstName', op: FilterOperators.LIKE, values: [query] }];
     dispatch(

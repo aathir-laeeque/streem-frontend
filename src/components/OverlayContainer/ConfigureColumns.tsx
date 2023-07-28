@@ -1,4 +1,4 @@
-import { BaseModal, Checkbox, Button, TextInput, PaginatedFetchData } from '#components';
+import { BaseModal, Checkbox, Button, TextInput } from '#components';
 import { JobLogColumnType, LogType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER } from '#utils/constants';
@@ -26,6 +26,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { CommonOverlayProps } from './types';
+import { fetchDataParams } from '#utils/globalTypes';
 
 const Wrapper = styled.div`
   .modal {
@@ -264,7 +265,7 @@ const ConfigureColumnsModal: FC<CommonOverlayProps<Props>> = ({
     setAllItems(allColumns);
   };
 
-  const fetchResourcesData = (params: PaginatedFetchData = {}) => {
+  const fetchResourcesData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
 
     dispatch(

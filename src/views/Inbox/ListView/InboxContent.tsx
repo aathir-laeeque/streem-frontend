@@ -5,7 +5,7 @@ import { LoadingContainer, Pagination, SearchFilter, Select, TabContentProps } f
 import { useTypedSelector } from '#store/helpers';
 import { apiInboxJobsCount } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterField, FilterOperators } from '#utils/globalTypes';
+import { FilterField, FilterOperators, fetchDataParams } from '#utils/globalTypes';
 import { getParameterContent } from '#utils/parameterUtils';
 import { request } from '#utils/request';
 import { checkJobExecutionDelay, formatDateTime } from '#utils/timeUtils';
@@ -117,7 +117,7 @@ const InboxContent: FC<TabContentProps> = ({
     dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, page === 0));
   };
 
-  const fetchData = (params: PaginatedFetchData = {}) => {
+  const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
     dispatch(
       fetchInbox({

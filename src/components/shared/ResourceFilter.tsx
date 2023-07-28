@@ -1,8 +1,8 @@
-import { NestedSelect, NestedSelectProps, PaginatedFetchData } from '#components';
+import { NestedSelect, NestedSelectProps } from '#components';
 import { useTypedSelector } from '#store';
 import { apiGetObjects } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterOperators, ResponseObj } from '#utils/globalTypes';
+import { FilterOperators, ResponseObj, fetchDataParams } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { fetchObjectTypes } from '#views/Ontology/actions';
 import { Object } from '#views/Ontology/types';
@@ -126,7 +126,7 @@ export const ResourceFilter = ({ onChange, onClear }: any) => {
     }
   }, [list]);
 
-  const fetchResourcesData = (params: PaginatedFetchData = {}) => {
+  const fetchResourcesData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
 
     dispatch(
