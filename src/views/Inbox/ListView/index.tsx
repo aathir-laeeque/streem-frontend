@@ -7,11 +7,13 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import InboxContent from './InboxContent';
 import VerificationContent from './VerificationsContent';
+import ApprovalsContent from './ApprovalsContent';
 import { resetInbox } from './actions';
 import { InboxState, ListViewProps } from './types';
 import { GeneralHeader, StyledTabs } from '#components';
 import moment from 'moment';
 import styled from 'styled-components';
+import checkPermission from '#services/uiPermissions';
 
 const InboxJobsWrapper = styled.div`
   display: flex;
@@ -246,6 +248,14 @@ const ListView: FC<ListViewProps> = () => {
           isJobOpen: false,
         },
       },
+      ...(checkPermission(['approvals', 'view'])
+        ? [
+            {
+              label: 'Approvals',
+              tabContent: ApprovalsContent,
+            },
+          ]
+        : []),
     ],
   });
 

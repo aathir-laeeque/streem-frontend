@@ -448,3 +448,5 @@ export const apiParameterVerificationList = () => `${baseUrl}/parameter-verifica
 
 export const apiVerificationAssignees = (jobId: string) =>
   `${baseUrl}/parameter-verifications/jobs/${jobId}/assignees`;
+
+export const apiGetShouldBeApprovals = () => `${baseUrl}/jobs/should-be-parameters`;

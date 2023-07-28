@@ -193,6 +193,9 @@ const uiPermissions: Record<string, any> = {
       roles.SUPERVISOR,
     ],
   },
+  approvals: {
+    view: [roles.SUPERVISOR, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+  },
 };
 
 const checkPermission = (keys: string[]) => {
