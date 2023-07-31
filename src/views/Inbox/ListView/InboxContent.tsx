@@ -1,26 +1,26 @@
 import { LabelValueRow } from '#JobComposer/Header/styles';
 import { Checklist } from '#JobComposer/checklist.types';
-import { TargetEntityType } from '#PrototypeComposer/checklist.types';
+import { Parameter } from '#PrototypeComposer/checklist.types';
 import { LoadingContainer, Pagination, SearchFilter, Select, TabContentProps } from '#components';
 import { useTypedSelector } from '#store/helpers';
 import { apiInboxJobsCount } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators, fetchDataParams } from '#utils/globalTypes';
-import { getParameterContent } from '#utils/parameterUtils';
 import { request } from '#utils/request';
+import { getActiveSmartFilter } from '#utils/smartFilterUtils';
 import { checkJobExecutionDelay, formatDateTime } from '#utils/timeUtils';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
+import JobCard from '#views/Jobs/Components/JobCard';
 import JobInfoDrawer from '#views/Jobs/Components/JobInfo';
 import { CountCardItem, CountCards } from '#views/Jobs/ListView/JobsContent';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { ArrowForward, ChevronLeft } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import { debounce } from 'lodash';
+import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchInbox } from './actions';
-import moment from 'moment';
-import { getActiveSmartFilter } from '#utils/smartFilterUtils';
 
 const InboxContent: FC<TabContentProps> = ({
   label,
@@ -265,15 +265,10 @@ const InboxContent: FC<TabContentProps> = ({
                       <div className="job-row-section-left bottom">
                         <LabelValueRow>
                           {(job?.parameterValues || [])
-                            .filter((p) => p.targetEntityType === TargetEntityType.PROCESS)
+                            .sort((a: Parameter, b: Parameter) => a.orderTree - b.orderTree)
                             .slice(0, 5)
-                            .map((parameter) => (
-                              <div className="info-item" key={parameter.label}>
-                                <label className="info-item-label">{parameter.label}</label>
-                                <span className="info-item-value">
-                                  {getParameterContent(parameter)}
-                                </span>
-                              </div>
+                            .map((parameter: Parameter) => (
+                              <JobCard parameter={parameter} />
                             ))}
                         </LabelValueRow>
                       </div>

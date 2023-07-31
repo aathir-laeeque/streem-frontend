@@ -35,6 +35,8 @@ import RelationTabContent from './components/RelationTabContent';
 import TabContent from './TabContent';
 import { getFullName } from '#utils/stringUtils';
 import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
+import JobCard from '#views/Jobs/Components/JobCard';
+import { Parameter } from '#PrototypeComposer/Activity/types';
 
 const ObjectViewWrapper = styled.div`
   display: flex;
@@ -451,15 +453,10 @@ const OverViewTabContent = () => {
                       <div className="job-row-section-left bottom">
                         <LabelValueRow>
                           {(job?.parameterValues || [])
-                            .filter((p) => p.targetEntityType === TargetEntityType.PROCESS)
+                            .sort((a: Parameter, b: Parameter) => a.orderTree - b.orderTree)
                             .slice(0, 5)
-                            .map((parameter) => (
-                              <div className="info-item" key={parameter.label}>
-                                <label className="info-item-label">{parameter.label}</label>
-                                <span className="info-item-value">
-                                  {getParameterContent(parameter)}
-                                </span>
-                              </div>
+                            .map((parameter: Parameter) => (
+                              <JobCard parameter={parameter} />
                             ))}
                         </LabelValueRow>
                       </div>

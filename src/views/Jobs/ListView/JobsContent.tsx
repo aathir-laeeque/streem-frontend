@@ -1,7 +1,8 @@
 import { LabelValueRow } from '#JobComposer/Header/styles';
 import { Checklist } from '#JobComposer/checklist.types';
-import { TargetEntityType } from '#PrototypeComposer/checklist.types';
+import { Parameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
+import recurrenceIcon from '#assets/svg/Recurrence.svg';
 import {
   Button,
   LoadingContainer,
@@ -18,8 +19,8 @@ import { useTypedSelector } from '#store/helpers';
 import { apiJobsCount } from '#utils/apiUrls';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators, fetchDataParams } from '#utils/globalTypes';
-import { getParameterContent } from '#utils/parameterUtils';
 import { request } from '#utils/request';
+import { getActiveSmartFilter } from '#utils/smartFilterUtils';
 import {
   checkJobExecutionDelay,
   formatDateTime,
@@ -28,25 +29,24 @@ import {
   getOverDueByEpoch,
 } from '#utils/timeUtils';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
+import { Tooltip, withStyles } from '@material-ui/core';
 import { ArrowForward, ChevronLeft, FiberManualRecord } from '@material-ui/icons';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import RepeatIcon from '@material-ui/icons/Repeat';
 import { navigate } from '@reach/router';
 import { capitalize, debounce } from 'lodash';
+import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Frequency, RRule } from 'rrule';
 import styled from 'styled-components';
+import checkIcon from '../../../assets/svg/check-icon.svg';
 import CreateJob from '../Components/CreateJob';
+import JobCard from '#views/Jobs/Components/JobCard';
 import JobInfoDrawer from '../Components/JobInfo';
 import { fetchJobs } from './actions';
 import { TabContentWrapper } from './styles';
 import { AssignedJobStates, CompletedJobStates, Job } from './types';
-import checkIcon from '../../../assets/svg/check-icon.svg';
-import recurrenceIcon from '#assets/svg/Recurrence.svg';
-import moment from 'moment';
-import { Tooltip, withStyles } from '@material-ui/core';
-import { getActiveSmartFilter } from '#utils/smartFilterUtils';
 
 const CountCardWrapper = styled.div`
   display: flex;
@@ -876,15 +876,10 @@ const JobsContent: FC<TabContentProps> = ({
                       <div className="job-row-section-left bottom">
                         <LabelValueRow>
                           {(job?.parameterValues || [])
-                            .filter((p) => p.targetEntityType === TargetEntityType.PROCESS)
+                            .sort((a: Parameter, b: Parameter) => a.orderTree - b.orderTree)
                             .slice(0, 5)
-                            .map((parameter) => (
-                              <div className="info-item" key={parameter.label}>
-                                <label className="info-item-label">{parameter.label}</label>
-                                <span className="info-item-value">
-                                  {getParameterContent(parameter)}
-                                </span>
-                              </div>
+                            .map((parameter: Parameter) => (
+                              <JobCard parameter={parameter} />
                             ))}
                         </LabelValueRow>
                       </div>
