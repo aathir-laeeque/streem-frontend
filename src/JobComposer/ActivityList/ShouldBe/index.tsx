@@ -16,6 +16,7 @@ import { ParameterProps, SupervisorResponse } from '../types';
 import { Wrapper } from './styles';
 import { ParameterExecutionState } from '#JobComposer/checklist.types';
 import ParameterVerificationView from '../Verification/ParameterVerificationView';
+import { roles } from '#services/uiPermissions';
 
 const generateText = (label: string | undefined, data: any) => {
   if (data.operator === 'BETWEEN') {
@@ -140,7 +141,9 @@ const ShouldBeParameter: FC<
           }
         : { desiredValue1: parseFloat(parameter?.data?.value) }),
     }),
-    isUserSupervisor: profile?.roles?.some((role) => role.name === 'SUPERVISOR'),
+    isUserAuthorisedForApproval: profile?.roles?.some((role) =>
+      [roles.SUPERVISOR, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER].includes(role.name),
+    ),
     isValueChanged: false,
     reason: parameter?.response?.reason ?? '',
     value: parameter?.response?.value ?? null,
@@ -324,7 +327,7 @@ const ShouldBeParameter: FC<
         {state.isApprovalPending ? (
           <span className="pending-approval">
             <Warning className="icon" />
-            {state.isUserSupervisor
+            {state.isUserAuthorisedForApproval
               ? 'This Parameter Needs Approval'
               : 'Pending Approval from Supervisor'}
           </span>
@@ -430,7 +433,7 @@ const ShouldBeParameter: FC<
           />
 
           {(() => {
-            if (state.isUserSupervisor) {
+            if (state.isUserAuthorisedForApproval) {
               if (state.isApprovalPending) return renderApprovalButtons();
             } else if (state.isValueChanged) {
               return renderSubmitButtons();
