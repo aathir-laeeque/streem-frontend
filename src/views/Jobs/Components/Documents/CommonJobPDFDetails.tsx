@@ -194,12 +194,17 @@ export const CommonJobPdfDetails = ({
           />
           {parameterValues
             .sort((a: Parameter, b: Parameter) => a?.orderTree - b?.orderTree)
-            .map((currParam) => (
-              <InlineInputLabelGroup
-                label={currParam.label}
-                value={getParameterContent(currParam)}
-              />
-            ))}
+            .map((currParam) => {
+              if (currParam.response.hidden) return null;
+
+              return (
+                <InlineInputLabelGroup
+                  key={currParam.id}
+                  label={currParam.label}
+                  value={getParameterContent(currParam)}
+                />
+              );
+            })}
         </View>
       </TabLookLike>
 
