@@ -196,15 +196,47 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
       const qrData = await getQrCodeData({
         shortCode: data,
       });
+      const isMultiResource = parameter?.type === MandatoryParameter.MULTI_RESOURCE;
+      const existingChoice = parameter?.response?.choices?.find(
+        (currChoice) => currChoice.objectId === qrData.objectId,
+      );
+
+      const newChoice = isMultiResource
+        ? !existingChoice
+          ? {
+              option: { ...qrData, id: qrData?.objectId },
+            }
+          : null
+        : {
+            option: { ...qrData, id: qrData?.objectId },
+          };
+
+      const choicesArray = isMultiResource
+        ? parameter?.response?.choices?.map((currParam) => ({
+            option: {
+              id: currParam.objectId,
+              displayName: currParam?.objectDisplayName,
+              externalId: currParam?.objectExternalId,
+              collection: currParam?.collection,
+            },
+            value: currParam.objectId,
+            label: currParam?.objectDisplayName,
+            externalId: currParam?.objectExternalId,
+          }))
+        : [];
+
+      const result = isMultiResource
+        ? newChoice
+          ? [newChoice, ...choicesArray]
+          : choicesArray
+        : newChoice
+        ? [newChoice]
+        : [];
+
       if (qrData?.objectId) {
         await qrCodeValidator({
           data: qrData,
-          callBack: () =>
-            onSelectOption([
-              {
-                option: { ...qrData, id: qrData?.objectId },
-              },
-            ]),
+          callBack: () => onSelectOption(result),
           objectTypeValidation: qrData?.objectTypeId === parameter?.data?.objectTypeId,
         });
       }

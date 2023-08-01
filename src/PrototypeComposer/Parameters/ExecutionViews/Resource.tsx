@@ -271,17 +271,30 @@ const ResourceTaskView: FC<
         shortCode: data,
         objectTypeId: parameter?.data?.objectTypeId,
       });
+      const isObjectIdPresent = (choices, objectId) =>
+        choices.some((choice) => choice.objectId === objectId);
+
+      const isObjectIdInChoices = isObjectIdPresent(
+        parameterInForm?.data?.choices || [],
+        qrData.objectId,
+      );
       if (qrData?.objectId) {
         const parameterData = {
           ...parameter,
           data: {
             ...parameter.data,
-            choices: [qrData].map((currOption: any) => ({
-              objectId: currOption.objectId,
-              objectDisplayName: currOption.displayName,
-              objectExternalId: currOption.externalId,
-              collection: currOption.collection,
-            })),
+            choices: isObjectIdInChoices
+              ? parameterInForm?.data?.choices || []
+              : [
+                  ...[qrData].map((currOption) => ({
+                    objectId: currOption.objectId,
+                    objectDisplayName: currOption.displayName,
+                    objectExternalId: currOption.externalId,
+                    collection: currOption.collection,
+                    value: currOption.objectId,
+                  })),
+                  ...(parameterInForm?.data?.choices || []),
+                ],
           },
           response: {
             value: null,
