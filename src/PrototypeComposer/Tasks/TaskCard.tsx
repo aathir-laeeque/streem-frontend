@@ -343,6 +343,7 @@ const TaskCard: FC<
                     onUploadError={(error) => {
                       console.error('error in fileUpload :: ', error);
                     }}
+                    acceptedTypes={['image/*', '.png', '.jpg', '.jpeg']}
                     label="Attach Media"
                     icon={hasMedias ? PermMedia : PermMediaOutlined}
                     disabled={isReadOnly}
