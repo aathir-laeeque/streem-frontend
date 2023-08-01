@@ -2,7 +2,7 @@ import { Button, selectStyles, Textarea, TextInput } from '#components';
 import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { apiGetParameters } from '#utils/apiUrls';
-import { FilterOperators } from '#utils/globalTypes';
+import { fetchDataParams, FilterOperators } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { Add, Clear, DragHandle } from '@material-ui/icons';
 import { EquationNode, EquationParserError, parse } from 'equation-parser';
@@ -18,6 +18,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import Select from 'react-select';
 import { CommonWrapper } from './styles';
+import { DEFAULT_PAGE_NUMBER } from '#utils/constants';
 
 const comparisons = [
   'equals',
@@ -116,11 +117,14 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
   const parsedEquations = math(equations, defaultVariables);
   const equationError = getEquationError(parsedEquations);
 
-  const getParametersForCalc = async () => {
+  const getParametersForCalc = async (params: fetchDataParams = {}) => {
+    const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
     if (checklistId) {
       setLoading(true);
       const parametersForCalc = await request('GET', apiGetParameters(checklistId), {
         params: {
+          page,
+          size,
           filters: {
             op: FilterOperators.AND,
             fields: [
