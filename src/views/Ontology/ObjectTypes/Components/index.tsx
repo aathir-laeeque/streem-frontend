@@ -1,15 +1,12 @@
-import { Button, Checkbox, FormGroup } from '#components';
+import { Button, FormGroup } from '#components';
 import { InputTypes } from '#utils/globalTypes';
 
+import { createObjectType, editObjectType } from '#views/Ontology/actions';
+import { navigate, useLocation } from '@reach/router';
 import React, { FC, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { ShortTextOutlined } from '@material-ui/icons';
-import { MandatoryParameter, NonMandatoryParameter } from '#JobComposer/checklist.types';
-import { useForm } from 'react-hook-form';
-import { createObjectType, editObjectType } from '#views/Ontology/actions';
-import { navigate } from '@reach/router';
-import { useTypedSelector } from '#store';
 
 const AddObjectTypeWrapper = styled.form`
   display: flex;
@@ -153,10 +150,9 @@ export const RenderParameterLabel: React.FC<{ label: string; icon: JSX.Element }
 };
 const AddObjectType: FC<{ path: string; id?: string }> = ({ path, id: editObjectTypeId }) => {
   const dispatch = useDispatch();
-
   const {
-    objectTypes: { list },
-  } = useTypedSelector((state) => state.ontology);
+    state: { objectType: activeObjectType },
+  } = useLocation();
 
   const form = useForm<{
     label: string;
@@ -349,8 +345,6 @@ const AddObjectType: FC<{ path: string; id?: string }> = ({ path, id: editObject
       </Wrapper>
     );
   };
-
-  const activeObjectType = list.filter((curr) => curr.id === editObjectTypeId)?.[0];
 
   const onSubmit = (data: any) => {
     if (editObjectTypeId) {

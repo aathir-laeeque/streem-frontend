@@ -99,7 +99,9 @@ const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
                           <span
                             className="primary"
                             onClick={() => {
-                              navigate(`/ontology/${values.rootPath}/edit/${item.id}`);
+                              navigate(`/ontology/${values.rootPath}/edit/${item.id}`, {
+                                state: { objectType: item },
+                              });
                             }}
                           >
                             Edit
