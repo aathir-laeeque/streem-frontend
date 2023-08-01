@@ -92,6 +92,7 @@ export function createFetchList<T>(
       setState((prev) => ({
         ...prev,
         status: 'loadingNext',
+        params: { ...prev.params, page: prev.pagination.page + 1 },
         pagination: {
           ...prev.pagination,
           page: prev.pagination.page + 1,
@@ -116,7 +117,7 @@ export function createFetchList<T>(
           ...params,
           filters: {
             ...prev.params.filters,
-            fields: params.fields,
+            fields: params?.filters?.fields,
           },
         },
         status: 'loading',

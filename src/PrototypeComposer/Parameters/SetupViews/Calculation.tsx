@@ -18,7 +18,8 @@ import React, { FC, useEffect, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import Select from 'react-select';
 import { CommonWrapper } from './styles';
-import { DEFAULT_PAGE_NUMBER } from '#utils/constants';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { createFetchList } from '#hooks/useFetchData';
 
 const comparisons = [
   'equals',
@@ -97,11 +98,6 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
   const variables = watch('data.variables', {});
   const expression = watch('data.expression', '');
 
-  const [loading, setLoading] = useState<Boolean>(false);
-  const [parametersForCalc, updateParametersForCalc] = useState<
-    { id: string; type: ParameterType; label: string; taskId: string }[]
-  >([]);
-
   const equations = (expression as string)
     .split(/\n/g)
     .map((s) => s.trim())
@@ -117,48 +113,49 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
   const parsedEquations = math(equations, defaultVariables);
   const equationError = getEquationError(parsedEquations);
 
-  const getParametersForCalc = async (params: fetchDataParams = {}) => {
-    const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
-    if (checklistId) {
-      setLoading(true);
-      const parametersForCalc = await request('GET', apiGetParameters(checklistId), {
-        params: {
-          page,
-          size,
-          filters: {
-            op: FilterOperators.AND,
-            fields: [
-              { field: 'archived', op: FilterOperators.EQ, values: [false] },
-              {
-                field: 'type',
-                op: FilterOperators.ANY,
-                values: [
-                  MandatoryParameter.NUMBER,
-                  MandatoryParameter.CALCULATION,
-                  MandatoryParameter.SHOULD_BE,
-                ],
-              },
-              ...(addParameter?.parameterId
-                ? [
-                    {
-                      field: 'id',
-                      op: FilterOperators.NE,
-                      values: [addParameter.parameterId],
-                    },
-                  ]
-                : []),
-            ],
-          },
+  const urlParams = {
+    page: DEFAULT_PAGE_NUMBER,
+    size: DEFAULT_PAGE_SIZE,
+    filters: {
+      op: FilterOperators.AND,
+      fields: [
+        { field: 'archived', op: FilterOperators.EQ, values: [false] },
+        {
+          field: 'type',
+          op: FilterOperators.ANY,
+          values: [
+            MandatoryParameter.NUMBER,
+            MandatoryParameter.CALCULATION,
+            MandatoryParameter.SHOULD_BE,
+          ],
         },
-      });
-      updateParametersForCalc(parametersForCalc.data);
-      setLoading(false);
-    }
+        ...(addParameter?.parameterId
+          ? [
+              {
+                field: 'id',
+                op: FilterOperators.NE,
+                values: [addParameter.parameterId],
+              },
+            ]
+          : []),
+      ],
+    },
   };
+
+  const { list, reset, status, fetchNext } = createFetchList(
+    apiGetParameters(checklistId),
+    urlParams,
+    false,
+  );
+
+  useEffect(() => {
+    if (checklistId) {
+      reset({ params: { ...urlParams } });
+    }
+  }, []);
 
   useEffect(() => {
     register('data.variables');
-    getParametersForCalc();
   }, []);
 
   useEffect(() => {
@@ -225,10 +222,10 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
                 >
                   <Select
                     isDisabled={isReadOnly || variableName === 'undefined'}
-                    isLoading={!!loading}
+                    isLoading={status === 'loadingNext'}
                     styles={selectStyles}
                     isSearchable={false}
-                    options={parametersForCalc.map((parameter) => ({
+                    options={list.map((parameter) => ({
                       value: parameter.id,
                       ...parameter,
                     }))}
@@ -257,6 +254,7 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
                         },
                       );
                     }}
+                    onMenuScrollToBottom={() => fetchNext()}
                   />
                 </div>
               </div>
