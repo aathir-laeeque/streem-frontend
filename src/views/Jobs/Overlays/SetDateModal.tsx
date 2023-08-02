@@ -1,14 +1,11 @@
 import { BaseModal, FormGroup } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { InputTypes } from '#utils/globalTypes';
-import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
-import moment from 'moment';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { updateJob } from '../ListView/actions';
-import { useTypedSelector } from '#store';
 
 export interface SetDateModalProps {
   jobId: string;
@@ -103,19 +100,23 @@ const SetDateModal: FC<CommonOverlayProps<SetDateModalProps>> = ({
     register,
     formState: { isDirty, isValid },
     setValue,
-    errors,
-    watch,
-    getValues,
   } = form;
 
-  useEffect(() => {
-    register('expectedStartDate', {
-      required: true,
-    });
-    register('expectedEndDate', {
-      required: true,
-    });
-  }, []);
+  const validateEpoch = (value: number) => {
+    if (isNaN(value)) {
+      return false;
+    }
+    return true;
+  };
+
+  register('expectedStartDate', {
+    required: true,
+    validate: validateEpoch,
+  });
+  register('expectedEndDate', {
+    required: true,
+    validate: validateEpoch,
+  });
 
   const onSubmit = (data: any) => {
     dispatch(
@@ -144,43 +145,41 @@ const SetDateModal: FC<CommonOverlayProps<SetDateModalProps>> = ({
         onPrimary={handleSubmit((data) => onSubmit(data))}
       >
         <form>
-          <>
-            <FormGroup
-              key="basic-info-section"
-              inputs={[
-                {
-                  type: InputTypes.DATE_TIME,
-                  props: {
-                    placeholder: 'Start Date & Time',
-                    label: 'Start Date & Time',
-                    id: 'expectedStartDate',
-                    name: 'expectedStartDate',
-                    onChange: ({ value }: { value: string }) => {
-                      setValue('expectedStartDate', value, {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      });
-                    },
+          <FormGroup
+            key="basic-info-section"
+            inputs={[
+              {
+                type: InputTypes.DATE_TIME,
+                props: {
+                  placeholder: 'Start Date & Time',
+                  label: 'Start Date & Time',
+                  id: 'expectedStartDate',
+                  name: 'expectedStartDate',
+                  onChange: ({ value }: { value: string }) => {
+                    setValue('expectedStartDate', Number(value), {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    });
                   },
                 },
-                {
-                  type: InputTypes.DATE_TIME,
-                  props: {
-                    placeholder: 'End Date & Time',
-                    label: 'End Date & Time',
-                    id: 'expectedEndDate',
-                    name: 'expectedEndDate',
-                    onChange: ({ value }: { value: string }) => {
-                      setValue('expectedEndDate', value, {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      });
-                    },
+              },
+              {
+                type: InputTypes.DATE_TIME,
+                props: {
+                  placeholder: 'End Date & Time',
+                  label: 'End Date & Time',
+                  id: 'expectedEndDate',
+                  name: 'expectedEndDate',
+                  onChange: ({ value }: { value: string }) => {
+                    setValue('expectedEndDate', Number(value), {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    });
                   },
                 },
-              ]}
-            />
-          </>
+              },
+            ]}
+          />
         </form>
       </BaseModal>
     </Wrapper>
