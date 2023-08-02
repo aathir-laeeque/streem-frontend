@@ -2,6 +2,7 @@ import { ResponseObj } from '#utils/globalTypes';
 import { apiGetObjects, apiQrShortCode } from '#utils/apiUrls';
 import { getErrorMsg, request } from '#utils/request';
 import { Object } from './types';
+import { ALL_FACILITY_ID } from '#utils/constants';
 
 export const getObjectData = async (data: Record<string, string | number | undefined>) => {
   try {
@@ -36,7 +37,10 @@ export const qrCodeValidator = async ({
     const {
       auth: { selectedFacility },
     } = window.store.getState();
-    if (selectedFacility?.id === fetchedData?.facilityId) {
+    if (
+      selectedFacility?.id === fetchedData?.facilityId ||
+      selectedFacility?.id === ALL_FACILITY_ID
+    ) {
       callBack();
     } else {
       throw "Object doesn't belong in the facility";
