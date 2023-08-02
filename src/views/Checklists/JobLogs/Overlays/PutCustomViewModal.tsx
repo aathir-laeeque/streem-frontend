@@ -46,8 +46,16 @@ const PutCustomViewModal: FC<CommonOverlayProps<any>> = ({
     formState: { isDirty, isValid },
   } = form;
 
-  const onSubmit = (data: any) => {
-    onPrimary(data);
+  const onSubmit = (data: Record<string, string>) => {
+    const { label } = data;
+    onPrimary({ label: label.trim() });
+  };
+
+  const validateName = (value: string) => {
+    if (value.trim() === '') {
+      return false;
+    }
+    return true;
   };
 
   return (
@@ -64,10 +72,7 @@ const PutCustomViewModal: FC<CommonOverlayProps<any>> = ({
             label="View Name"
             ref={register({
               required: true,
-              pattern: {
-                value: /^[^\s].*$/, // Regex pattern to disallow leading spaces
-                message: 'View Name cannot start with a space',
-              },
+              validate: validateName,
             })}
           />
           <div className="buttons-container">
