@@ -212,9 +212,9 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
           };
 
       const choicesArray = isMultiResource
-        ? parameter?.response?.choices?.map((currParam) => ({
+        ? (parameter?.response?.choices || [])?.map((currParam) => ({
             option: {
-              id: currParam.objectId,
+              id: currParam?.objectId,
               displayName: currParam?.objectDisplayName,
               externalId: currParam?.objectExternalId,
               collection: currParam?.collection,
