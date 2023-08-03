@@ -82,3 +82,6 @@ export const releasePrototype = (
   password: string,
   instance?: IPublicClientApplication,
 ) => actionSpreader(ComposerAction.RELEASE_PROTOTYPE, { checklistId, password, instance });
+
+export const recallProcess = (reason: string, checklistId: Checklist['id']) =>
+  actionSpreader(ComposerAction.RECALL_PROCESS, { reason, checklistId });

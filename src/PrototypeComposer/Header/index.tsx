@@ -1,5 +1,6 @@
 import { ProcessInitialState } from '#PrototypeComposer';
 import {
+  recallProcess,
   startChecklistReview,
   submitChecklistForReview,
 } from '#PrototypeComposer/reviewer.actions';
@@ -281,6 +282,24 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
     return false;
   };
 
+  const checkDisplayRecallProcess = (checklistState: string) => {
+    const recallProcessValidStates = [
+      ChecklistStates.SUBMITTED_FOR_REVIEW,
+      ChecklistStates.BEING_REVIEWED,
+      ChecklistStates.REQUESTED_CHANGES,
+      ChecklistStates.READY_FOR_SIGNING,
+      ChecklistStates.SIGN_OFF_INITIATED,
+      ChecklistStates.SIGNING_IN_PROGRESS,
+      ChecklistStates.READY_FOR_RELEASE,
+    ];
+
+    if (recallProcessValidStates.includes(checklistState)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const MoreButton = () => (
     <>
       <Button
@@ -328,6 +347,32 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
             <span>View Activities</span>
           </div>
         </MenuItem>
+        {checkDisplayRecallProcess(data?.state) && checkRecallPermission() ? (
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.REASON_MODAL,
+                  props: {
+                    modalTitle: 'Recall Process',
+                    modalDesc:
+                      'Provide details for recalling this process in the middle for the review cycle. All reviewers will be notified that this process has been recalled due to the reason stated below',
+                    onSubmitHandler: (reason: string, closeModal: () => void) => {
+                      dispatch(recallProcess(reason, data?.id)), closeModal();
+                    },
+                  },
+                }),
+              );
+            }}
+          >
+            <div className="list-item">
+              <MemoViewInfo />
+              <span>Recall Process</span>
+            </div>
+          </MenuItem>
+        ) : null}
+
         {facilityId !== ALL_FACILITY_ID && (
           <MenuItem onClick={() => navigate(`/checklists/${data?.id}/logs`)}>
             <div className="list-item">
@@ -444,6 +489,14 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
       }
     }
     return false;
+  };
+
+  const checkRecallPermission = () => {
+    if (facilityId === ALL_FACILITY_ID) {
+      return checkPermission(['checklists', 'recallGlobal']);
+    } else {
+      return checkPermission(['checklists', 'recall']);
+    }
   };
 
   return (

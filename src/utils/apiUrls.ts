@@ -107,6 +107,10 @@ export const apiCreateNewPrototype = () => `${baseUrl}/checklists`;
 export const apiCreateRevisionPrototype = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/revision`;
 
+export const apiRecallProcess = (checklistId: Checklist['id']) => {
+  return `${baseUrl}/checklists/${checklistId}/recall`;
+};
+
 export const apiCreateStage = (checklistId: Checklist['id']) =>
   `${baseUrl}/checklists/${checklistId}/stages`;
 

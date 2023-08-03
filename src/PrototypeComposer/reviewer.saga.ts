@@ -14,6 +14,7 @@ import {
   apiGetReviewersForChecklist,
   apiPrototypeRelease,
   apiPrototypeSignOff,
+  apiRecallProcess,
   apiSendReviewToCr,
   apiSignOffOrder,
   apiStartChecklistReview,
@@ -38,6 +39,7 @@ import {
   fetchAssignedReviewersForChecklist,
   fetchAssignedReviewersForChecklistSuccess,
   initiateSignOff,
+  recallProcess,
   releasePrototype,
   sendReviewToCr,
   signOffPrototype,
@@ -101,6 +103,38 @@ function* fetchApproversSaga({ payload }: ReturnType<typeof fetchApprovers>) {
     );
   } catch (error) {
     yield* handleCatch('Prototype Composer', 'fetchApproversSaga', error);
+  }
+}
+
+function* recallProcessSaga({ payload }: ReturnType<typeof recallProcess>) {
+  const { reason, checklistId } = payload;
+
+  try {
+    const { data, errors }: ResponseObj<CommonReviewResponse> = yield call(
+      request,
+      'POST',
+      apiRecallProcess(checklistId),
+      {
+        data: { reason },
+      },
+    );
+
+    if (errors) {
+      throw getErrorMsg(errors);
+    }
+
+    yield* onSuccess(data, true);
+
+    yield put(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'Process Recalled Successfully!',
+      }),
+    );
+
+    return data;
+  } catch (error) {
+    yield* handleCatch('Prototype Composer', 'recallProcessSaga', error, true);
   }
 }
 
@@ -209,7 +243,7 @@ function* startChecklistReviewSaga({ payload }: ReturnType<typeof startChecklist
   }
 }
 
-function* onSuccess(data: CommonReviewResponse) {
+function* onSuccess(data: CommonReviewResponse, isRecallProcess?: boolean) {
   try {
     const payloadToSend: CommonReviewPayload = {
       collaborators: [],
@@ -221,56 +255,59 @@ function* onSuccess(data: CommonReviewResponse) {
     let allDoneOk = true;
 
     if (data?.collaborators?.length) {
-      const currentReviewers = getCurrentReviewers(yield select());
+      if (isRecallProcess) {
+        payloadToSend.collaborators = data.collaborators;
+      } else {
+        const currentReviewers = getCurrentReviewers(yield select());
+        const addedIndexes: number[] = [];
+        const collaborators: Collaborator[] = [];
 
-      const addedIndexes: number[] = [];
-      const collaborators: Collaborator[] = [];
+        data.collaborators.forEach((collab) => {
+          let isUpdated = false;
+          const { id, phase, phaseType } = collab;
+          collaborators.push(
+            ...currentReviewers.reduce((accumulator, reviewer, index) => {
+              if (reviewer.phase === phase && reviewer.phaseType === phaseType) {
+                if (reviewer.id === id) {
+                  if (!isUpdated && reviewer.state !== CollaboratorState.SIGNED) {
+                    accumulator.push(collab || reviewer);
+                    isUpdated = true;
+                  } else if (!addedIndexes.includes(index)) {
+                    accumulator.push(reviewer);
+                    addedIndexes.push(index);
+                  }
 
-      data.collaborators.forEach((collab) => {
-        let isUpdated = false;
-        const { id, phase, phaseType } = collab;
-        collaborators.push(
-          ...currentReviewers.reduce((accumulator, reviewer, index) => {
-            if (reviewer.phase === phase && reviewer.phaseType === phaseType) {
-              if (reviewer.id === id) {
-                if (!isUpdated && reviewer.state !== CollaboratorState.SIGNED) {
-                  accumulator.push(collab || reviewer);
-                  isUpdated = true;
-                } else if (!addedIndexes.includes(index)) {
-                  accumulator.push(reviewer);
-                  addedIndexes.push(index);
-                }
+                  if (collab.state !== CollaboratorState.COMMENTED_OK) {
+                    allDoneOk = false;
+                  }
+                } else {
+                  if (!addedIndexes.includes(index)) {
+                    accumulator.push(reviewer);
+                    addedIndexes.push(index);
+                  }
 
-                if (collab.state !== CollaboratorState.COMMENTED_OK) {
-                  allDoneOk = false;
+                  if (reviewer.state !== CollaboratorState.COMMENTED_OK) {
+                    allDoneOk = false;
+                    if (reviewer.state !== CollaboratorState.COMMENTED_CHANGES) {
+                      isLast = false;
+                    }
+                  }
                 }
               } else {
                 if (!addedIndexes.includes(index)) {
                   accumulator.push(reviewer);
                   addedIndexes.push(index);
                 }
-
-                if (reviewer.state !== CollaboratorState.COMMENTED_OK) {
-                  allDoneOk = false;
-                  if (reviewer.state !== CollaboratorState.COMMENTED_CHANGES) {
-                    isLast = false;
-                  }
-                }
               }
-            } else {
-              if (!addedIndexes.includes(index)) {
-                accumulator.push(reviewer);
-                addedIndexes.push(index);
-              }
-            }
-            return accumulator;
-          }, [] as Collaborator[]),
-        );
+              return accumulator;
+            }, [] as Collaborator[]),
+          );
 
-        if (!isUpdated) collaborators.push(collab);
-      });
+          if (!isUpdated) collaborators.push(collab);
+        });
 
-      payloadToSend.collaborators = collaborators;
+        payloadToSend.collaborators = collaborators;
+      }
     }
 
     if (data.comment) {
@@ -557,4 +594,5 @@ export function* ReviewerSaga() {
   yield takeLatest(ComposerAction.SEND_REVIEW_TO_CR, sendReviewToCrSaga);
   yield takeLatest(ComposerAction.SIGN_OFF_PROTOTYPE, signOffPrototypeSaga);
   yield takeLatest(ComposerAction.RELEASE_PROTOTYPE, releasePrototypeSaga);
+  yield takeLatest(ComposerAction.RECALL_PROCESS, recallProcessSaga);
 }

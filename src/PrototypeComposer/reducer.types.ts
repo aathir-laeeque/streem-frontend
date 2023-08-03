@@ -15,6 +15,7 @@ import {
   assignReviewerToChecklist,
   fetchApproversSuccess,
   fetchAssignedReviewersForChecklistSuccess,
+  recallProcess,
   revertReviewersForChecklist,
   unAssignReviewerFromChecklist,
   updateChecklistForReview,
@@ -64,6 +65,7 @@ export enum ComposerAction {
   UPDATE_FOR_REVIEW_PROCESS = '@@prototypeComposer/prototype/UPDATE_FOR_REVIEW_PROCESS',
   VALIDATE_PROTOTYPE = '@@prototypeComposer/prototype/validate',
   PROCESS_PARAMETER_MAP_SUCCESS = '@@prototypeComposer/prototype/PROCESS_PARAMETER_MAP_SUCCESS',
+  RECALL_PROCESS = '@@prototypeComposer/prototype/RECALL_PROCESS',
 }
 
 export type ComposerActionType = ReturnType<
@@ -82,4 +84,5 @@ export type ComposerActionType = ReturnType<
   | typeof executeBranchingRulesParameter
   | typeof updateHiddenParameterIds
   | typeof deleteParameterSuccess
+  | typeof recallProcess
 >;

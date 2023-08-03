@@ -15,6 +15,7 @@ enum ChecklistFeatures {
   REVIEW_AND_APPROVE_UNIT_LEVEL_CHECKLISTS = 'Review and Approve Unit-Level Processes',
   RELEASE_UNIT_LEVEL_CHECKLISTS = 'Release Unit-Level Processes',
   REVISE_AND_ARCHIVE_UNIT_LEVEL_CHECKLISTS = 'Revise and Archive Unit-Level Processes',
+  RECALL_CHECKLISTS = 'Recall Unit-Level Processes',
 }
 
 enum JobFeatures {
@@ -26,7 +27,6 @@ enum JobFeatures {
   PRINT_JOBS = 'Print Jobs',
   VIEW_JOBS_AND_JOB_PARAMETER = 'View Jobs and Job Parameter',
   COMPLETE_JOB_WITH_EXCEPTION = 'Complete a Job with Exception',
-
   MANAGE_TASK_EXCEPTIONS = 'Manage Task Exceptions',
 }
 
@@ -59,7 +59,9 @@ export const rolesDetails = {
   [RoleIdByName.ACCOUNT_OWNER]: {
     name: 'Account Owner',
     permissions: {
-      [PermissionCategories.CHECKLIST_FEATURES]: Object.values(ChecklistFeatures).map((v) => v),
+      [PermissionCategories.CHECKLIST_FEATURES]: Object.values(ChecklistFeatures)
+        .filter((feature) => feature !== ChecklistFeatures.RECALL_CHECKLISTS)
+        .map((v) => v),
       [PermissionCategories.JOB_FEATURES]: Object.values(JobFeatures).map((v) => v),
       [PermissionCategories.ADMINISTRATIVE_FEATURES]: Object.values(AdministrativeFeatures).map(
         (v) => v,
@@ -78,6 +80,8 @@ export const rolesDetails = {
         ChecklistFeatures.VIEW_EXISTING_UNIT_LEVEL_CHECKLISTS,
         ChecklistFeatures.VIEW_UNIT_LEVEL_PROTOTYPES,
         ChecklistFeatures.REVIEW_AND_APPROVE_UNIT_LEVEL_CHECKLISTS,
+        ChecklistFeatures.REVISE_AND_ARCHIVE_UNIT_LEVEL_CHECKLISTS,
+        ChecklistFeatures.RECALL_CHECKLISTS,
       ],
       [PermissionCategories.JOB_FEATURES]: Object.values(JobFeatures).map((v) => v),
       [PermissionCategories.ADMINISTRATIVE_FEATURES]: [
