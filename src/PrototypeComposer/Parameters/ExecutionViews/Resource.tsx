@@ -377,7 +377,7 @@ const ResourceTaskView: FC<
                       })),
                     },
                   };
-                  setValue(parameter.id, parameterData, {
+                  setValue(parameter.id, selectedOption?.length ? parameterData : null, {
                     shouldDirty: true,
                     shouldValidate: true,
                   });
