@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { initiateSelfVerification } from '../actions';
 import { ParameterVerificationStatus } from '../types';
 import SelfVerificationAction from './SelfVerificationAction';
+import { JobStateEnum } from '#views/Jobs/ListView/types';
 
 const SelfVerification: FC<{
   parameterId: string;
@@ -20,6 +21,7 @@ const SelfVerification: FC<{
   const dispatch = useDispatch();
   const {
     auth: { userId },
+    composer: { jobState },
   } = useTypedSelector((state) => state);
 
   const SelfVerifyButton = () => {
@@ -37,6 +39,12 @@ const SelfVerification: FC<{
       );
     return null;
   };
+
+  if (
+    jobState === JobStateEnum.COMPLETED_WITH_EXCEPTION &&
+    verification?.verificationStatus !== ParameterVerificationStatus.ACCEPTED
+  )
+    return null;
 
   if (parameterState === ParameterExecutionState.BEING_EXECUTED && isLoggedInUserAssigned) {
     return <SelfVerifyButton />;

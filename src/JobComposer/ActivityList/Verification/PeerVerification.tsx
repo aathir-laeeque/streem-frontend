@@ -7,7 +7,7 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
 import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
-import { Verification } from '#views/Jobs/ListView/types';
+import { JobStateEnum, Verification } from '#views/Jobs/ListView/types';
 import { Dictionary } from 'lodash';
 import React, { FC, memo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -35,10 +35,18 @@ const PeerVerification: FC<PeerVerificationProps> = ({
 }) => {
   const {
     auth: { userId },
+    composer: { jobState },
   } = useTypedSelector((state) => state);
   const dispatch = useDispatch();
   const verification = verifications?.[ParameterVerificationTypeEnum.PEER];
   let showVerification = true;
+
+  if (
+    jobState === JobStateEnum.COMPLETED_WITH_EXCEPTION &&
+    verification?.verificationStatus !== ParameterVerificationStatus.ACCEPTED &&
+    verification?.verificationStatus !== ParameterVerificationStatus.REJECTED
+  )
+    return null;
 
   if (
     (verificationType === ParameterVerificationTypeEnum.BOTH &&
@@ -58,6 +66,7 @@ const PeerVerification: FC<PeerVerificationProps> = ({
     if (
       modifiedBy === userId &&
       isLoggedInUserAssigned &&
+      jobState !== JobStateEnum.COMPLETED_WITH_EXCEPTION &&
       (parameterState === ParameterExecutionState.BEING_EXECUTED ||
         parameterState === ParameterExecutionState.VERIFICATION_PENDING)
     )
