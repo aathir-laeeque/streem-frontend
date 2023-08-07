@@ -336,14 +336,14 @@ const ShouldBeParameter: FC<
         {state.isApproved === true ? (
           <span className="approved">
             <CheckCircle className="icon" />
-            Observation Approved by {getFullName(state.approver)} on{' '}
-            {formatDateTime(state.approvalTime, dateAndTimeStampFormat)}
+            Observation Approved by {getFullName(state.approver)}, ID: {state.approver.employeeId}{' '}
+            on {formatDateTime(state.approvalTime, dateAndTimeStampFormat)}
           </span>
         ) : state.isApproved === false ? (
           <span className="rejected">
             <Error className="icon" />
-            Observation rejected by {getFullName(state.approver)} on{' '}
-            {formatDateTime(state.approvalTime, dateAndTimeStampFormat)}
+            Observation rejected by {getFullName(state.approver)}, ID: {state.approver.employeeId}{' '}
+            on {formatDateTime(state.approvalTime, dateAndTimeStampFormat)}
           </span>
         ) : null}
 
@@ -433,8 +433,8 @@ const ShouldBeParameter: FC<
           />
 
           {(() => {
-            if (state.isUserAuthorisedForApproval) {
-              if (state.isApprovalPending) return renderApprovalButtons();
+            if (state.isUserAuthorisedForApproval && state.isApprovalPending) {
+              return renderApprovalButtons();
             } else if (state.isValueChanged) {
               return renderSubmitButtons();
             }
