@@ -189,6 +189,7 @@ const ConfigureJobParameters: FC<CommonOverlayProps<Props>> = ({
             MandatoryParameter.FILE_UPLOAD,
             MandatoryParameter.SIGNATURE,
             MandatoryParameter.CALCULATION,
+            MandatoryParameter.SHOULD_BE,
           ].includes(type),
       ),
     },
