@@ -34,6 +34,7 @@ export const reEvaluateTaskWithStop = ({
       if (
         !taskIdWithStop &&
         (task.taskExecution.state === TaskExecutionState.NOT_STARTED ||
+          task.taskExecution.state === TaskExecutionState.PAUSED ||
           task.taskExecution.state === TaskExecutionState.IN_PROGRESS) &&
         task.hasStop
       ) {
