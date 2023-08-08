@@ -3,7 +3,7 @@ import { InputTypes } from '#utils/globalTypes';
 import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
 import { compact } from 'lodash';
 import moment from 'moment';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { RRule, Weekday } from 'rrule';
 
 export interface SchedulerProps {
@@ -44,7 +44,15 @@ const getUpdatedWeekDays = (weekDayIndex: string, weekDays?: Record<string, bool
 };
 
 export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
-  const { register, unregister, setValue, watch, errors } = form;
+  const {
+    register,
+    unregister,
+    setValue,
+    watch,
+    errors,
+    getValues,
+    formState: { dirtyFields },
+  } = form;
 
   const {
     expectedStartDate,
@@ -78,7 +86,19 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
   register('dueDateInterval', {
     required: true,
   });
-  register('weekDays');
+  register('weekDays', {
+    validate: (value) => {
+      const _recurrence = getValues('recurrence');
+      const _repeatEvery = getValues('repeatEvery');
+      if (_recurrence === 'custom' && _repeatEvery === 'WEEKLY') {
+        if (!Object.values(value).some((weekDay) => weekDay === true)) {
+          return 'Please select at least one day';
+        }
+      }
+    },
+  });
+
+  register('repeatEvery');
 
   const { year, month, week, day, hour, minute } = dueDateDuration;
 
@@ -103,21 +123,32 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
   }, [weekDays]);
 
   useEffect(() => {
-    if (recurrence === 'custom') {
-      register('repeatEvery');
-    } else {
-      unregister('repeatEvery');
+    if (dirtyFields?.recurrence) {
+      if (recurrence === 'custom') {
+        setValue('repeatEvery', 'DAILY', {
+          shouldValidate: true,
+        });
+      } else {
+        setValue('repeatEvery', null, {
+          shouldValidate: true,
+        });
+      }
     }
   }, [recurrence]);
+
+  const prevExpectedStartDate = useRef(expectedStartDate);
 
   useEffect(() => {
     if (expectedStartDate && !readOnly) {
       unregister('rRuleOptions');
       unregister('weekDays');
-      setValue('recurrence', 'DAILY', {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
+      if (prevExpectedStartDate.current !== expectedStartDate) {
+        setValue('recurrence', 'DAILY', {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      }
+      prevExpectedStartDate.current = expectedStartDate;
     }
   }, [expectedStartDate]);
 
@@ -461,16 +492,6 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
                   shouldDirty: true,
                   shouldValidate: true,
                 });
-                if (option.value === 'custom') {
-                  register('repeatEvery', {
-                    required: true,
-                  });
-                  setValue('repeatEvery', 'DAILY', {
-                    shouldValidate: true,
-                  });
-                } else {
-                  unregister('repeatEvery');
-                }
               },
             },
           },
