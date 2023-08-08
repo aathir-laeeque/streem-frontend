@@ -66,6 +66,7 @@ const ResourceTaskView: FC<
   const { setValue, watch } = form;
   const parameterInForm = watch(parameter.id, {});
   const linkedParameter = watch(parameter?.autoInitialize?.parameterId);
+  const linkedParameterObjectId = useRef(linkedParameter?.data?.choices?.[0]?.objectId);
   const parameterForFilters = watch(referencedParameterIds.current, {});
   let interval: number | undefined = undefined;
 
@@ -136,7 +137,8 @@ const ResourceTaskView: FC<
         }
         setState((prev) => ({
           ...prev,
-          options: [...prev.options, ...response.data],
+          options:
+            pagination.current.current === 0 ? response.data : [...prev.options, ...response.data],
           isLoading: false,
         }));
       } catch (e) {
@@ -197,71 +199,74 @@ const ResourceTaskView: FC<
   const handleAutoInitialize = async () => {
     const objectId = linkedParameter?.data?.choices[0]?.objectId;
     const collection = linkedParameter?.data?.choices[0]?.collection;
-    try {
-      if (linkedParameter && objectId && collection) {
-        const res: ResponseObj<Object> = await request('GET', apiGetObjects(objectId), {
-          params: {
-            collection,
-          },
-        });
-        if (res.data) {
-          const relation = res.data.relations.find(
-            (r) => r.id === parameter.autoInitialize?.relation.id,
-          );
-          if (relation) {
-            const target = relation.targets[0];
-            const parameterData = {
-              ...parameter,
-              data: {
-                ...parameter.data,
-                choices: [
-                  {
-                    objectId: target.id,
-                    objectDisplayName: target.displayName,
-                    objectExternalId: target.externalId,
-                    collection: target.collection,
-                  },
-                ],
-              },
-              response: {
-                value: null,
-                reason: '',
-                state: 'EXECUTED',
-                choices: {},
-                medias: [],
-                parameterValueApprovalDto: null,
-              },
-            };
-            setValue(parameter.id, parameterData, {
-              shouldDirty: true,
-              shouldValidate: true,
-            });
-            onChangeHandler(parameterData);
+    if (linkedParameterObjectId.current !== objectId) {
+      try {
+        if (linkedParameter && objectId && collection) {
+          const res: ResponseObj<Object> = await request('GET', apiGetObjects(objectId), {
+            params: {
+              collection,
+            },
+          });
+          if (res.data) {
+            const relation = res.data.relations.find(
+              (r) => r.id === parameter.autoInitialize?.relation.id,
+            );
+            if (relation) {
+              const target = relation.targets[0];
+              const parameterData = {
+                ...parameter,
+                data: {
+                  ...parameter.data,
+                  choices: [
+                    {
+                      objectId: target.id,
+                      objectDisplayName: target.displayName,
+                      objectExternalId: target.externalId,
+                      collection: target.collection,
+                    },
+                  ],
+                },
+                response: {
+                  value: null,
+                  reason: '',
+                  state: 'EXECUTED',
+                  choices: {},
+                  medias: [],
+                  parameterValueApprovalDto: null,
+                },
+              };
+              setValue(parameter.id, parameterData, {
+                shouldDirty: true,
+                shouldValidate: true,
+              });
+              linkedParameterObjectId.current = objectId;
+              onChangeHandler(parameterData);
+            }
           }
+        } else {
+          throw `${linkedParameter?.label} must be selected before selecting ${parameter.label} parameter`;
         }
-      } else {
-        throw `${linkedParameter?.label} must be selected before selecting ${parameter.label} parameter`;
+      } catch (error) {
+        dispatch(
+          showNotification({
+            type: NotificationType.ERROR,
+            msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
+          }),
+        );
+        clearInterval(interval);
+        const parameterData = {
+          ...parameter,
+          data: {
+            ...parameter.data,
+            choices: undefined,
+          },
+        };
+        setValue(parameter.id, parameterData, {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
+        onChangeHandler(parameterData);
       }
-    } catch (error) {
-      dispatch(
-        showNotification({
-          type: NotificationType.ERROR,
-          msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
-        }),
-      );
-      clearInterval(interval);
-      const parameterData = {
-        ...parameter,
-        data: {
-          ...parameter.data,
-          choices: undefined,
-        },
-      };
-      setValue(parameter.id, parameterData, {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
-      onChangeHandler(parameterData);
     }
   };
 
