@@ -118,7 +118,6 @@ const JobHeaderWrapper = styled.div<{
         }
 
         .bulk-assign,
-        .job-summary,
         .print-job,
         .sign-off,
         .view-info {

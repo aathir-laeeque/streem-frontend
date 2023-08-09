@@ -1,152 +1,97 @@
-import logo from '#assets/images/logo.png';
-import { getParameters } from '#utils/parameterUtils';
+import { ProgressBar } from '#components';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { apiPrintJobDetails } from '#utils/apiUrls';
-import { ALL_FACILITY_ID } from '#utils/constants';
+import { getParameters } from '#utils/parameterUtils';
 import { request } from '#utils/request';
-import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
-import React, { FC, useEffect, useState } from 'react';
-import { CommonJobPdfDetails, PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
-import { ValueLabelGroup } from '../Components/Documents/utils';
-import { LoadingDiv, styles } from './styles';
-import TaskView from './Task';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
+import usePdfWorkerHook from '../PdfWorker/usePdfWorkerHook';
+import { LoadingDiv } from './styles';
 import { PrintJobProps } from './types';
-import { keyBy } from 'lodash';
-import { getUnixTime } from 'date-fns';
-import { ParametersById } from '#PrototypeComposer/Activity/reducer.types';
-import { Checklist, Task } from '#types';
-import { formatDateTime } from '#utils/timeUtils';
+import { COMPLETED_JOB_STATES } from '#types';
 
-const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
-  const [data, setData] = useState<PdfJobDataType | undefined>();
-  const [parametersData, setParametersData] = useState<{
-    parametersById: ParametersById;
-    parametersOrderInTaskInStage: any;
-    hiddenIds: Record<string, boolean>;
-    cjfParametersById: ParametersById;
-  }>({
-    parametersById: {},
-    parametersOrderInTaskInStage: {},
-    hiddenIds: {},
-    cjfParametersById: {},
-  });
-  const { parametersById, hiddenIds, cjfParametersById } = parametersData;
+const Download: FC<PrintJobProps> = ({ jobId }) => {
   const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
-
-  const { dateAndTimeStampFormat, timeFormat, dateFormat } = useTypedSelector(
-    (state) => state.facilityWiseConstants[selectedFacility!.id],
-  );
+  const { facilityWiseConstants } = useTypedSelector((state) => state);
+  const { dateAndTimeStampFormat, dateFormat, timeFormat } =
+    facilityWiseConstants[selectedFacility!.id];
+  const [progress, setProgress] = useState(0);
+  const [progressName, setProgressName] = useState('Fetching Data...');
+  const [stageNo, setStageNo] = useState<number>();
+  const [data, setData] = useState<PdfJobDataType | undefined>();
+  const [hiddenIds, setHiddenIds] = useState({});
+  const isInitiated = useRef(false);
 
   useEffect(() => {
-    setKeepPersistedData();
-    const fetchJobPdfData = async () => {
-      try {
-        const response: { data: PdfJobDataType } = await request('GET', apiPrintJobDetails(jobId));
-        setParametersData({
-          ...getParameters({ checklist: response.data.checklist as unknown as Checklist }),
-          cjfParametersById: { ...keyBy(response.data.parameterValues || [], 'id') },
-        });
-        setData(response.data);
-      } catch (err) {
-        console.error('error from fetch job PDF data api ==>', err);
+    if (!isInitiated.current) {
+      isInitiated.current = true;
+      setKeepPersistedData();
+      const fetchJobPdfData = async () => {
+        try {
+          const response: { data: PdfJobDataType } = await request(
+            'GET',
+            apiPrintJobDetails(jobId!),
+          );
+          if (response.data.state in COMPLETED_JOB_STATES) {
+            setHiddenIds(getParameters({ checklist: response.data.checklist }).hiddenIds);
+          }
+          setData(response.data);
+        } catch (err) {
+          console.error('error from fetch job PDF data api ==>', err);
+        }
+      };
+
+      if (jobId) {
+        fetchJobPdfData();
       }
-    };
-
-    if (jobId) {
-      fetchJobPdfData();
     }
-  }, []);
+  }, [jobId]);
 
-  if (!data || !profile || !Object.keys(parametersById).length) return null;
+  const progressCallback = (val: any, name: string, stageNum: number) => {
+    setProgressName(name);
+    setProgress(val);
+    setStageNo(stageNum);
+  };
 
-  const { checklist, code } = data;
+  const workerProps = {
+    jobId,
+    hiddenIds,
+    profile,
+    settings,
+    selectedFacility,
+    dateAndTimeStampFormat,
+    timeFormat,
+    dateFormat,
+    data,
+    type: 'JOB',
+    progressCallback,
+  };
+
+  usePdfWorkerHook({
+    keysToCheck: [
+      'dateAndTimeStampFormat',
+      'timeFormat',
+      'dateFormat',
+      'profile',
+      'settings',
+      'jobId',
+      'data',
+    ],
+    ...workerProps,
+  });
 
   return (
-    <PDFViewer style={{ width: '100%', height: '100%' }}>
-      <Document>
-        <Page style={styles.page}>
-          <View style={styles.header} fixed>
-            <Image src={logo} style={{ height: '24px' }} />
-            <View
-              style={[
-                styles.flexRow,
-                {
-                  justifyContent: 'flex-end',
-                },
-              ]}
-            >
-              <Text style={[styles.text12, { fontWeight: 'bold' }]}>Job ID : {code}</Text>
-            </View>
-          </View>
-
-          <View style={styles.mainHeader}>
-            <Image src={settings?.logoUrl || ''} style={{ height: '24px' }} />
-            <Image src={logo} style={{ height: '24px' }} />
-          </View>
-          <CommonJobPdfDetails jobPdfData={data} />
-          {checklist?.stages.map((stage) => {
-            if (hiddenIds[stage.id] === undefined) {
-              return (
-                <View key={`${stage.id}`} break>
-                  <View style={styles.stageHeader}>
-                    <ValueLabelGroup label="Stage :" value={`${stage.orderTree}`} />
-                    <Text style={{ marginVertical: 8 }}>{stage.name}</Text>
-                    <ValueLabelGroup label="Tasks :" value={`${stage.tasks.length}`} />
-                  </View>
-                  {(stage.tasks as unknown as Array<Task>).map((task, taskIndex: number) => {
-                    if (hiddenIds[task.id] === undefined) {
-                      return (
-                        <TaskView
-                          parametersById={parametersById}
-                          taskIndex={taskIndex}
-                          dateFormat={dateFormat}
-                          timeFormat={timeFormat}
-                          dateAndTimeStampFormat={dateAndTimeStampFormat}
-                          task={task}
-                          key={task.id}
-                          hiddenIds={hiddenIds}
-                          cjfParametersById={cjfParametersById}
-                        />
-                      );
-                    }
-                  })}
-                </View>
-              );
-            }
-          })}
-
-          <View fixed style={styles.footer}>
-            <Text style={styles.footerInfo}>
-              Downloaded on{' '}
-              {formatDateTime({
-                value: getUnixTime(new Date()),
-              })}
-              . By {profile.firstName} {profile.lastName} ID: {profile.employeeId} for{' '}
-              {selectedFacility!.id !== ALL_FACILITY_ID ? 'Facility: ' : ''}
-              {selectedFacility?.name} using Leucine App
-            </Text>
-            <View style={styles.pageInfo}>
-              <Text
-                style={{ fontSize: 10, minHeight: 10 }}
-                render={({ pageNumber, totalPages }) => `${pageNumber}/${totalPages}`}
-                fixed
-              />
-            </View>
-          </View>
-        </Page>
-      </Document>
-    </PDFViewer>
+    <LoadingDiv>
+      Loading...
+      <ProgressBar percentage={progress} />
+      {progressName && (
+        <div style={{ padding: '20px', fontWeight: 'bold' }}>
+          Stage {stageNo} : {progressName}
+        </div>
+      )}
+    </LoadingDiv>
   );
 };
 
-const MemoMyPrintJob = React.memo(MyPrintJob);
-
-const PrintJob: FC<PrintJobProps> = ({ jobId }) => (
-  <>
-    <LoadingDiv>Loading...</LoadingDiv>
-    {jobId && <MemoMyPrintJob jobId={jobId} />}
-  </>
-);
-
-export default PrintJob;
+export default Download;

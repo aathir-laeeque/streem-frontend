@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from '@react-pdf/renderer';
+import { PdfLabelGroup, PdfTab, PdfText } from '#components/documents';
+import { StyleSheet, View } from '@react-pdf/renderer';
 import React from 'react';
-import { commonStyles, InlineInputLabelGroup, TabLookLike } from '../Components/Documents/utils';
 
 const assigneStyles = StyleSheet.create({
   assigneWrapper: {
@@ -17,7 +17,6 @@ const assigneStyles = StyleSheet.create({
   },
   assigneHeading: {
     fontSize: 10,
-    fontFamily: 'Nunito',
     textAlign: 'center',
     paddingVertical: 5,
   },
@@ -62,53 +61,57 @@ export const FirstPage = ({
 }) => {
   return (
     <View style={{ paddingHorizontal: 40, paddingVertical: 8 }}>
-      <Text style={{ fontSize: 30 }}>Job Logs</Text>
+      <PdfText style={{ fontSize: 30 }}>Job Logs</PdfText>
 
       {log && showProcessSection && (
-        <TabLookLike title="Process Details">
-          <View>
-            <InlineInputLabelGroup label="Process Name" value={log.checklistName} />
-            <InlineInputLabelGroup label="Process ID" value={log.checklistCode} />
-            <InlineInputLabelGroup label="Facility" value={selectedFacility?.name} />
-            {checklist.properties?.map((property) => (
-              <InlineInputLabelGroup
-                label={`${property.label}:`}
+        <PdfTab title="Process Details">
+          <View style={{ gap: 8 }}>
+            <PdfLabelGroup label="Process Name" value={log.checklistName} />
+            <PdfLabelGroup label="Process ID" value={log.checklistCode} />
+            <PdfLabelGroup label="Facility" value={selectedFacility?.name} />
+            {checklist.properties?.map((property: any) => (
+              <PdfLabelGroup
+                label={`${property.label}`}
                 value={property.value || '-'}
                 key={property.id}
               />
             ))}
           </View>
-        </TabLookLike>
+        </PdfTab>
       )}
       {!!Object.values(filters).length && (
-        <TabLookLike title="Filters Applied">
+        <PdfTab title="Filters Applied">
           <View style={[assigneStyles.assigneWrapper, { alignItems: 'flex-start' }]}>
             <View style={assigneStyles.assignView}>
               {Object.values(filters).map((currField, index) => {
                 return (
                   <View style={assigneStyles.assigneRow} wrap={false}>
-                    <Text style={{ ...assigneStyles.assigneHeading, width: '12%' }}>
+                    <PdfText style={{ ...assigneStyles.assigneHeading, width: '12%' }}>
                       Filter {index + 1} - Where:
-                    </Text>
+                    </PdfText>
                     <View style={assigneStyles.assigneInput}>
-                      <Text style={commonStyles.text12}>{currField.label}</Text>
+                      <PdfText>{currField.label}</PdfText>
                     </View>
-                    <Text style={{ ...assigneStyles.assigneHeading, width: '8%' }}>Condition:</Text>
+                    <PdfText style={{ ...assigneStyles.assigneHeading, width: '8%' }}>
+                      Condition:
+                    </PdfText>
                     <View style={assigneStyles.assigneInput}>
-                      <Text style={commonStyles.text12}>
+                      <PdfText>
                         {ConstraintVisual[currField.op as keyof typeof ConstraintVisual]}
-                      </Text>
+                      </PdfText>
                     </View>
-                    <Text style={{ ...assigneStyles.assigneHeading, width: '6%' }}>Value:</Text>
+                    <PdfText style={{ ...assigneStyles.assigneHeading, width: '6%' }}>
+                      Value:
+                    </PdfText>
                     <View style={assigneStyles.assigneInput}>
-                      <Text style={commonStyles.text12}>{currField.value}</Text>
+                      <PdfText>{currField.value}</PdfText>
                     </View>
                   </View>
                 );
               })}
             </View>
           </View>
-        </TabLookLike>
+        </PdfTab>
       )}
     </View>
   );

@@ -1,219 +1,412 @@
-import { JobStateEnum } from '#views/Jobs/ListView/types';
-import { StyleSheet, Text, View } from '@react-pdf/renderer';
-import React, { ReactNode } from 'react';
-import { PdfJobDataType } from './CommonJobPDFDetails';
+import { Media, Parameter, TaskExecutionState } from '#PrototypeComposer/checklist.types';
+import { PdfText, commonPdfStyles, tableStyles } from '#components/documents';
+import { getUserName } from '#services/users/helpers';
+import {
+  MandatoryParameter,
+  NonMandatoryParameter,
+  ParameterState,
+  ParameterVerificationStatus,
+  ParameterVerificationTypeEnum,
+} from '#types';
+import { responseDetailsForChoiceBasedParameters } from '#utils/parameterUtils';
+import { parseMarkUp } from '#utils/stringUtils';
+import { formatDateTime } from '#utils/timeUtils';
+import { PrintContext } from '#views/Jobs/PrintJob/PrintContext';
+import { DEFAULT_VALUE } from '#views/Jobs/PrintJob/constant';
+import { InstructionTags } from '#views/Jobs/PrintJob/types';
+import { Link, StyleSheet, View } from '@react-pdf/renderer';
+import { Style } from '@react-pdf/types';
+import { parseHTML } from 'linkedom';
+import { capitalize } from 'lodash';
+import React, { useContext } from 'react';
 
-export const commonStyles = StyleSheet.create({
-  flexView: {
-    display: 'flex',
-    flex: 1,
-  },
-  flexRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    flex: 1,
-  },
-  text12: {
-    fontSize: 12,
-    fontFamily: 'Nunito',
-  },
-  inputLabel: {
-    fontSize: 12,
-    color: '#666666',
-    fontFamily: 'Nunito',
-    textTransform: 'capitalize',
-  },
-  inputView: {
-    borderWidth: 1,
-    borderColor: '#000',
-    display: 'flex',
-    flex: 1,
-    marginLeft: 7,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    minHeight: 22,
-  },
-});
+const renderVerificationText = (
+  verificationData: any[],
+  type: string,
+  isTaskCompleted: boolean,
+  dateAndTimeStampFormat: string,
+) => {
+  const renderOutPutView = (verification: any) => {
+    return verification?.verificationStatus ? (
+      <PdfText style={tableStyles.columnText}>
+        {capitalize(type)} Verified by:{' '}
+        <PdfText style={{ ...tableStyles.columnText, fontWeight: 600 }}>
+          {getUserName({ user: verification.modifiedBy, withEmployeeId: true })}
+        </PdfText>{' '}
+        on{' '}
+        {formatDateTime({
+          value: verification.modifiedAt,
+          format: dateAndTimeStampFormat,
+        })}
+        {verification.verificationStatus === ParameterVerificationStatus.REJECTED && ' [REJECTED]'}
+      </PdfText>
+    ) : (
+      <PdfText style={tableStyles.columnText}>
+        {capitalize(type)} Verified by: {isTaskCompleted ? DEFAULT_VALUE : '_________ '}
+      </PdfText>
+    );
+  };
 
-const tabLookLikeStyles = StyleSheet.create({
-  tabLook: {
-    display: 'flex',
-    paddingVertical: 8,
-  },
-  tabLookHeaderText: {
-    fontSize: 12,
-    color: '#ffffff',
-    backgroundColor: '#000',
-    minWidth: 155,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    fontFamily: 'Nunito',
-  },
-  tabLookBody: {
-    display: 'flex',
-    backgroundColor: '#f4f4f4',
-    padding: '8px 10 8px 10px',
-  },
-});
+  const verificationPayload = verificationData?.find(
+    ({ verificationType }) => verificationType === type,
+  );
 
-export const TabLookLike = ({
-  children,
-  title,
-  wrap = true,
-}: {
-  children: ReactNode;
-  title: string;
-  wrap?: boolean;
-}) => (
-  <View style={tabLookLikeStyles.tabLook} wrap={wrap}>
-    <View style={commonStyles.flexRow}>
-      <Text style={tabLookLikeStyles.tabLookHeaderText}>{title}</Text>
-    </View>
-    <View style={tabLookLikeStyles.tabLookBody}>{children}</View>
-  </View>
-);
+  return renderOutPutView(verificationPayload);
+};
 
-export const inputLabelGroupStyles = StyleSheet.create({
-  labelInputGroupView: {
-    flexDirection: 'row',
-    paddingVertical: 4,
-    alignItems: 'center',
-    width: '100%',
-    margin: 'auto',
-  },
-  inputLabelView: {
-    display: 'flex',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    width: '25%',
-  },
-});
+const parameterVerificationStatus = (
+  parameter: Parameter,
+  dateAndTimeStampFormat: string,
+  isTaskCompleted: boolean,
+) => {
+  if (!parameter?.verificationType || parameter?.verificationType === 'NONE') {
+    return null;
+  }
 
-export const InlineInputLabelGroup = ({
-  label,
-  value,
-  minWidth = 30,
-}: {
-  label: string;
-  value: string;
-  minWidth?: number;
-}) => (
-  <View style={inputLabelGroupStyles.labelInputGroupView}>
-    <View style={[commonStyles.inputLabelView, { width: `${minWidth}%` }]}>
-      <Text style={commonStyles.inputLabel}>{label}</Text>
-    </View>
-    <View style={commonStyles.inputView}>
-      <Text style={commonStyles.text12}>{value}</Text>
-    </View>
-  </View>
-);
+  let verifications = [parameter.verificationType];
 
-export const InputLabelGroup = ({ label, value }: { label: string; value: string }) => (
-  <View>
-    <View>
-      <Text style={commonStyles.inputLabel}>{label}:</Text>
-    </View>
-    <View style={commonStyles.inputView}>
-      <Text style={commonStyles.text12}>{value}</Text>
-    </View>
-  </View>
-);
-
-const assigneStyles = StyleSheet.create({
-  assigneWrapper: {
-    flexDirection: 'row',
-    paddingVertical: 4,
-    alignItems: 'center',
-    width: '100%',
-    margin: 'auto',
-  },
-  assigneRow: {
-    flexDirection: 'row',
-    display: 'flex',
-    marginTop: '4px',
-  },
-  assigneHeading: {
-    fontSize: 10,
-    fontFamily: 'Nunito',
-  },
-  assignView: {
-    display: 'flex',
-    flex: 1,
-    marginLeft: 7,
-    paddingHorizontal: 8,
-  },
-  assigneInput: {
-    borderWidth: 1,
-    borderColor: '#000',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    minHeight: 20,
-    display: 'flex',
-    flex: 1,
-  },
-});
-
-export const Assigness = ({
-  assignees,
-  jobState,
-}: {
-  assignees: PdfJobDataType['assignees'];
-  jobState: string;
-  dateAndTimeStampFormat: string;
-  minWidth?: number;
-}) => {
-  let rows = [];
-  if (jobState === JobStateEnum.UNASSIGNED) {
-    for (let i = 0; i < 8; i++) {
-      rows.push(
-        <View style={assigneStyles.assigneRow} key={`assignes_${i}`}>
-          <View style={assigneStyles.assigneInput} />
-          <View style={[assigneStyles.assigneInput, { margin: '0px 8px' }]} />
-          <View style={[assigneStyles.assigneInput, { margin: '0px 8px' }]} />
-        </View>,
-      );
-    }
-  } else {
-    rows = assignees.map(({ firstName, lastName, employeeId }) => (
-      <View style={assigneStyles.assigneRow} key={`assignes_${employeeId}`}>
-        <View style={assigneStyles.assigneInput}>
-          <Text style={commonStyles.text12}>{firstName}</Text>
-        </View>
-        <View style={[assigneStyles.assigneInput, { margin: '0px 8px' }]}>
-          <Text style={commonStyles.text12}>{lastName}</Text>
-        </View>
-        <View style={[assigneStyles.assigneInput, { margin: '0px 8px' }]}>
-          <Text style={commonStyles.text12}>{employeeId}</Text>
-        </View>
-      </View>
-    ));
+  if (parameter.verificationType === ParameterVerificationTypeEnum.BOTH) {
+    verifications = [ParameterVerificationTypeEnum.SELF, ParameterVerificationTypeEnum.PEER];
   }
 
   return (
-    <View style={[assigneStyles.assigneWrapper, { alignItems: 'flex-start' }]} wrap={false}>
-      <View style={assigneStyles.assignView}>
-        <View style={[assigneStyles.assigneRow]}>
-          <View style={commonStyles.flexView}>
-            <Text style={assigneStyles.assigneHeading}>First Name</Text>
-          </View>
-          <View style={[commonStyles.flexView, { margin: '0px 8px' }]}>
-            <Text style={assigneStyles.assigneHeading}>Last Name</Text>
-          </View>
-          <View style={[commonStyles.flexView, { margin: '0px 8px' }]}>
-            <Text style={assigneStyles.assigneHeading}>Employee Id</Text>
-          </View>
-        </View>
-        {rows}
-      </View>
+    <View>
+      {verifications.map((verificationType) => {
+        return renderVerificationText(
+          parameter.response?.parameterVerifications,
+          verificationType,
+          isTaskCompleted,
+          dateAndTimeStampFormat,
+        );
+      })}
     </View>
   );
 };
 
-export const ValueLabelGroup = ({ label, value }: { label: string; value: string }) => (
-  <View style={{ display: 'flex', flexDirection: 'row' }}>
-    <Text style={commonStyles.inputLabel}>{label}</Text>
-    <Text style={[commonStyles.text12, { marginLeft: 8 }]}>{value}</Text>
-  </View>
-);
+const getIsTaskCompleted = (taskState: string) =>
+  [
+    TaskExecutionState.COMPLETED,
+    TaskExecutionState.COMPLETED_WITH_EXCEPTION,
+    TaskExecutionState.SKIPPED,
+  ].includes(taskState as any);
+
+const styles = StyleSheet.create({
+  text10: {
+    fontSize: 10,
+  },
+  wrappedView: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+});
+
+type Response = { tag: string; text: string; childs: Response[] };
+
+const getInstructionTemplate = (res: Response[]): JSX.Element[] => {
+  const items: JSX.Element[][] = [];
+  let newLine = -1;
+  const getTagBasedDesign: any = (
+    element: Response,
+    childIndex: number,
+    parent: Response | null = null,
+    extraStyles: Style = {},
+    listValue: string | null = null,
+  ) => {
+    switch (element.tag) {
+      case InstructionTags.UL:
+      case InstructionTags.OL:
+      case InstructionTags.P:
+        newLine++;
+        return element.childs.map((child, i) =>
+          getTagBasedDesign(child, i, element, extraStyles, i === 0 ? listValue : null),
+        );
+      case InstructionTags.LI:
+        newLine++;
+        return element.childs.map((child, i) =>
+          getTagBasedDesign(
+            child,
+            i,
+            element,
+            extraStyles,
+            i === 0 ? (parent?.tag === InstructionTags.UL ? '• ' : childIndex + 1 + '. ') : null,
+          ),
+        );
+      case InstructionTags.SPAN:
+        return element.childs.map((child, i) =>
+          getTagBasedDesign(child, i, element, extraStyles, i === 0 ? listValue : null),
+        );
+      case InstructionTags.STRONG:
+        return element.childs.map((child, i) =>
+          getTagBasedDesign(
+            child,
+            i,
+            element,
+            {
+              ...extraStyles,
+              fontWeight: 700,
+            },
+            listValue,
+          ),
+        );
+      case InstructionTags.INS:
+        return element.childs.map((child, i) =>
+          getTagBasedDesign(
+            child,
+            i,
+            element,
+            {
+              ...extraStyles,
+              textDecoration: 'underline',
+            },
+            listValue,
+          ),
+        );
+      case InstructionTags.TEXT:
+        if (!items[newLine]) items[newLine] = [];
+        items[newLine].push(
+          <PdfText style={{ ...styles.text10, ...extraStyles }}>
+            {(listValue || '') + element.text + ' '}
+          </PdfText>,
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
+  res.forEach((parent, i) => getTagBasedDesign(parent, i));
+  return items.map((item, i) => (
+    <View style={styles.wrappedView} wrap={false} key={'instructionItem_' + i}>
+      {item}
+    </View>
+  ));
+};
+
+const getShouldBeOperator = (params: any) => {
+  switch (params?.operator) {
+    case 'EQUAL_TO':
+      return `Equal To ${params.value}`;
+    case 'LESS_THAN':
+      return `Less Than ${params.value}`;
+    case 'LESS_THAN_EQUAL_TO':
+      return `Less Than Equal To ${params.value}`;
+    case 'MORE_THAN':
+      return `More Than ${params.value}`;
+    case 'MORE_THAN_EQUAL_TO':
+      return `More Than Equal To ${params.value}`;
+    case 'BETWEEN':
+      return `Between ${params.lowerValue} - ${params.upperValue}`;
+    default:
+      return;
+  }
+};
+
+const renderInstructionParameter = (parameter: any) => {
+  const { document } = parseHTML(`
+  `);
+  const node = document.createElement('div');
+  node.innerHTML = parameter.data.text;
+  const res = parseMarkUp(node);
+  return <View>{getInstructionTemplate(res)}</View>;
+};
+
+const renderMaterialParameter = (parameter: any) => {
+  return (
+    <View style={{ display: 'flex', flexDirection: 'row', gap: 2, flexWrap: 'wrap' }}>
+      {(parameter.data || []).map((media: Media) => (
+        <Link src={media.link}>
+          <PdfText style={commonPdfStyles.link}>{media.name || media.filename}</PdfText>
+        </Link>
+      ))}
+    </View>
+  );
+};
+
+export const isParameterNeeded = (parameter: Parameter, hiddenIds: Record<string, boolean>) => {
+  if (
+    (parameter.type === MandatoryParameter.MEDIA ||
+      parameter.type === MandatoryParameter.FILE_UPLOAD) &&
+    parameter.response?.state !== ParameterState.EXECUTED
+  ) {
+    return false;
+  }
+  if (hiddenIds[parameter.id]) {
+    return false;
+  }
+  return true;
+};
+
+export const getLabelDetails = (parameter: Parameter) => {
+  switch (parameter?.type) {
+    case MandatoryParameter.SHOULD_BE:
+      return parameter.label + ' ' + `( ${getShouldBeOperator(parameter?.data)} )`;
+    case MandatoryParameter.CALCULATION:
+      let content = '';
+      let calculationParameter = parameter.label + ' ';
+      for (let key in parameter?.data?.variables) {
+        calculationParameter =
+          calculationParameter + key + ' = ' + parameter?.data?.variables[key]?.label + '; ';
+      }
+      calculationParameter = calculationParameter + ' Output = ' + parameter?.data?.expression;
+      content = calculationParameter;
+      return content;
+    default:
+      return parameter.label;
+  }
+};
+
+export const getParameterDetails = (parameter: any, taskState: string) => {
+  const { dateAndTimeStampFormat, dateFormat } = useContext(PrintContext);
+  let parameterContent: (() => JSX.Element) | string = '';
+  const isTaskCompleted = getIsTaskCompleted(taskState);
+  if (parameter.response.state !== ParameterState.NOT_STARTED || isTaskCompleted) {
+    switch (parameter.type) {
+      case MandatoryParameter.SHOULD_BE:
+        parameterContent = DEFAULT_VALUE;
+        if (parameter.response?.value) {
+          parameterContent =
+            (parameter.response.value || DEFAULT_VALUE) +
+            (parameter.response.reason ? ' Remarks:' + parameter.response.reason : '') +
+            `${
+              parameter.response.state === ParameterVerificationStatus.PENDING
+                ? 'Pending Approval'
+                : parameter.response.state === ParameterVerificationStatus.REJECTED
+                ? `Rejected by [${getUserName({
+                    user: parameter.response?.audit?.modifiedBy,
+                    withEmployeeId: true,
+                  })}]`
+                : ''
+            }`;
+        } else if (!isTaskCompleted) {
+          parameterContent = () => <View style={commonPdfStyles.input} />;
+        }
+        break;
+      case MandatoryParameter.MULTI_LINE:
+      case MandatoryParameter.SINGLE_LINE:
+      case MandatoryParameter.NUMBER:
+        parameterContent = DEFAULT_VALUE;
+        if (parameter.response?.value) {
+          parameterContent = parameter.response?.value;
+        } else if (!isTaskCompleted) {
+          parameterContent = () => <View style={commonPdfStyles.input} />;
+        }
+        break;
+      case MandatoryParameter.DATE:
+      case MandatoryParameter.DATE_TIME:
+        parameterContent = parameter.response.value
+          ? formatDateTime({
+              value: parameter.response.value,
+              format:
+                parameter.type === MandatoryParameter.DATE ? dateFormat : dateAndTimeStampFormat,
+            })
+          : DEFAULT_VALUE;
+        break;
+      case MandatoryParameter.MULTISELECT:
+      case MandatoryParameter.CHECKLIST:
+        parameterContent = DEFAULT_VALUE;
+        if (parameter.response.choices) {
+          parameterContent = responseDetailsForChoiceBasedParameters(parameter);
+        } else if (!isTaskCompleted) {
+          parameterContent =
+            parameter.data?.map((value: any) => `[ ] ${value.name}`).join(', ') || '';
+        }
+        break;
+      case MandatoryParameter.SINGLE_SELECT:
+      case MandatoryParameter.YES_NO:
+        parameterContent = DEFAULT_VALUE;
+        if (parameter.response.choices) {
+          parameterContent = responseDetailsForChoiceBasedParameters(parameter);
+        } else if (!isTaskCompleted) {
+          parameterContent =
+            parameter.data?.map((value: any) => `( ) ${value.name}`).join(', ') || '';
+        }
+        break;
+      case NonMandatoryParameter.MATERIAL:
+        parameterContent = () => renderMaterialParameter(parameter);
+        break;
+      case MandatoryParameter.RESOURCE:
+      case MandatoryParameter.MULTI_RESOURCE:
+        parameterContent = DEFAULT_VALUE;
+        if (parameter.response?.choices?.length) {
+          parameterContent = (parameter.response.choices || [])
+            .map(
+              (currChoice: any) =>
+                `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId})`,
+            )
+            .join(', ');
+        } else if (!isTaskCompleted) {
+          parameterContent = () => <View style={commonPdfStyles.input} />;
+        }
+        break;
+      case MandatoryParameter.SIGNATURE:
+      case MandatoryParameter.FILE_UPLOAD:
+      case MandatoryParameter.MEDIA:
+        parameterContent = () => (
+          <View style={{ display: 'flex', flexDirection: 'row', gap: 2, flexWrap: 'wrap' }}>
+            {parameter.response.medias?.length ? (
+              parameter.response.medias.map((media: Media) => (
+                <Link src={media.link}>
+                  <PdfText style={commonPdfStyles.link}>
+                    {parameter.type === MandatoryParameter.SIGNATURE
+                      ? 'Signature'
+                      : media.name || media.filename}
+                  </PdfText>
+                </Link>
+              ))
+            ) : (
+              <PdfText style={tableStyles.columnText}>{DEFAULT_VALUE}</PdfText>
+            )}
+          </View>
+        );
+        break;
+      case NonMandatoryParameter.INSTRUCTION:
+        parameterContent = () => renderInstructionParameter(parameter);
+        break;
+      case MandatoryParameter.CALCULATION:
+        parameterContent = parameter.response.value || DEFAULT_VALUE;
+        break;
+      default:
+        break;
+    }
+  } else {
+    switch (parameter.type) {
+      case MandatoryParameter.SINGLE_SELECT:
+      case MandatoryParameter.YES_NO:
+        parameterContent =
+          parameter.data?.map((value: any) => `( ) ${value.name}`).join(', ') || '';
+        break;
+      case MandatoryParameter.MULTISELECT:
+      case MandatoryParameter.CHECKLIST:
+        parameterContent =
+          parameter.data?.map((value: any) => `[ ] ${value.name}`).join(', ') || '';
+        break;
+      case NonMandatoryParameter.MATERIAL:
+        parameterContent = () => renderMaterialParameter(parameter);
+        break;
+      case NonMandatoryParameter.INSTRUCTION:
+        parameterContent = () => renderInstructionParameter(parameter);
+        break;
+      default:
+        parameterContent = () => <View style={commonPdfStyles.input} />;
+        break;
+    }
+  }
+
+  return (
+    <View style={{ display: 'flex' }}>
+      {typeof parameterContent === 'string' ? (
+        <View>
+          <PdfText style={tableStyles.columnText}>{parameterContent || DEFAULT_VALUE}</PdfText>
+        </View>
+      ) : (
+        parameterContent()
+      )}
+      <View>
+        <PdfText style={tableStyles.columnText}>
+          {parameterVerificationStatus(parameter, dateAndTimeStampFormat, isTaskCompleted)}
+        </PdfText>
+      </View>
+    </View>
+  );
+};

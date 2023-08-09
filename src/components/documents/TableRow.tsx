@@ -1,14 +1,16 @@
-import ReactPdf, { StyleSheet, Text, View } from '@react-pdf/renderer';
+import ReactPdf, { StyleSheet, View } from '@react-pdf/renderer';
+import { Style } from '@react-pdf/types';
 import React, { ReactNode } from 'react';
+import { PdfText } from './PdfText';
 
 interface TableColumn {
-  customStyle?: ReactPdf.Style;
+  customStyle?: Style;
   text: string | ReactNode;
 }
 
 interface TableRowProps extends ReactPdf.ViewProps {
   columns: TableColumn[];
-  customStyle?: ReactPdf.Style;
+  customStyle?: Style;
 }
 
 const styles = StyleSheet.create({
@@ -16,7 +18,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
-    borderBottomWidth: 1,
+    borderTopWidth: 1,
     borderLeftWidth: 1,
     borderColor: '#dadada',
   },
@@ -27,10 +29,10 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: 'normal',
     paddingHorizontal: 4,
-    paddingVertical: 8,
-    textAlign: 'right',
+    paddingVertical: 4,
     borderRightWidth: 1,
     borderColor: '#dadada',
+    height: '100%',
   },
 });
 
@@ -53,27 +55,25 @@ function breakWord(word: string): string[] {
   }
 }
 
-const TableRow = ({
+export const TableRow = ({
   columns,
   customStyle = {},
   fixed = false,
   break: breakView = false,
 }: TableRowProps) => (
-  <View break={breakView} fixed={fixed} style={[styles.tableRow, customStyle]}>
+  <View break={breakView} fixed={fixed} style={{ ...styles.tableRow, ...customStyle }}>
     {columns.map(({ text, customStyle = {} }, index) =>
       typeof text === 'string' ? (
-        <Text
+        <PdfText
           key={`${text}-${index}`}
-          style={[styles.tableColumn, customStyle]}
+          style={{ ...styles.tableColumn, ...customStyle }}
           hyphenationCallback={(e) => breakWord(e)}
         >
           {text}
-        </Text>
+        </PdfText>
       ) : (
         text
       ),
     )}
   </View>
 );
-
-export default TableRow;

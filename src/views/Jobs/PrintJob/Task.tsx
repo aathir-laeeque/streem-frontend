@@ -1,386 +1,204 @@
-import { ParametersById } from '#PrototypeComposer/Activity/reducer.types';
-import { TimerOperator } from '#PrototypeComposer/checklist.types';
-import clockIcon from '#assets/images/clock.png';
-import handIcon from '#assets/images/hand.png';
-import { NonMandatoryParameter, Task } from '#types';
-import { InputTypes } from '#utils/globalTypes';
+import { TaskExecutionState } from '#PrototypeComposer/checklist.types';
+import { Task } from '#types';
 import { formatDateTime, formatDuration } from '#utils/timeUtils';
-import { Image, StyleSheet, Text, View } from '@react-pdf/renderer';
-import { differenceInSeconds, fromUnixTime } from 'date-fns';
-import React, { FC } from 'react';
-import ParameterList, { styles as parameterStyles } from './ActivityList';
+import { Image, Link, StyleSheet, View } from '@react-pdf/renderer';
+import React, { FC, useContext } from 'react';
+import {
+  getLabelDetails,
+  getParameterDetails,
+  isParameterNeeded,
+} from '../Components/Documents/utils';
+import { PrintContext } from './PrintContext';
+import { TaskState } from './constant';
+import { PdfTable, PdfText, tableStyles } from '#components/documents';
 
-const styles = StyleSheet.create({
-  flexView: {
-    display: 'flex',
-    flex: 1,
-  },
+const taskStyles = StyleSheet.create({
   taskView: {
-    paddingTop: 8,
-    paddingHorizontal: 40,
+    paddingHorizontal: 20,
+  },
+  taskName: {
+    fontWeight: 700,
   },
   taskHeader: {
     display: 'flex',
-  },
-  taskTopHeader: {
-    paddingHorizontal: 12,
     paddingVertical: 8,
-    display: 'flex',
-    flexDirection: 'row',
-    backgroundColor: '#eeeeee',
-    width: '43%',
   },
-  taskTopHeaderTitle: {
-    fontSize: 12,
-    fontFamily: 'Nunito',
-  },
-  taskBottomHeader: {
-    padding: 16,
-    backgroundColor: '#dadada',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  taskHasTimed: {
-    paddingTop: 10,
-    paddingBottom: 16,
-    paddingLeft: 16,
-    backgroundColor: '#dadada',
-    borderTopWidth: 1,
-    borderTopColor: '#bababa',
-  },
-  taskHasStopHeader: {
-    paddingVertical: 13,
-    backgroundColor: '#bababa',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  taskStartTime: {
-    marginLeft: 24,
-  },
-  taskStartDateInput: {
+  taskState: {
     fontSize: 10,
-    letterSpacing: 0,
-    fontFamily: 'Nunito',
-  },
-  taskTitle: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    fontFamily: 'Nunito',
-    textOverflow: 'hidden',
-  },
-  taskFooter: {
-    display: 'flex',
-    paddingVertical: 8,
-    paddingTop: 16,
-  },
-  taskFooterInputs: {
-    borderWidth: 1,
-    borderColor: '#000',
-    minHeight: 20,
-    paddingVertical: 2,
-    paddingHorizontal: 2,
-  },
-  taskFooterLabel: {
-    fontSize: 12,
-    marginBottom: 0,
-    fontFamily: 'Nunito',
-  },
-  text12: {
-    fontSize: 12,
-    fontFamily: 'Nunito',
-  },
-  comments: {
+    textTransform: 'capitalize',
+    color: '#666666',
     marginTop: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderWidth: 1,
-    borderColor: '#000',
   },
-  lightInput: {
-    marginHorizontal: 1,
-    width: 20,
-    height: 20,
+  timedTask: {
+    fontSize: 10,
+    paddingVertical: 2,
+  },
+  mediaContainer: {
+    paddingVertical: 2,
+  },
+  imageStyleContainer: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
+    flexDirection: 'row',
+  },
+  imageStyle: {
+    width: '100px',
+    padding: '5px',
   },
 });
 
 const MemoTask: FC<{
   task: Task;
-  dateFormat: string;
-  timeFormat: string;
-  dateAndTimeStampFormat: string;
-  taskIndex: number;
-  parametersById: ParametersById;
-  hiddenIds: Record<string, boolean>;
-  cjfParametersById: ParametersById;
-}> = ({
-  task,
-  dateFormat,
-  timeFormat,
-  dateAndTimeStampFormat,
-  parametersById,
-  hiddenIds,
-  cjfParametersById,
-}) => {
+  stageOrderTree: string;
+}> = ({ task, stageOrderTree }) => {
   const {
     startedAt,
-    audit: { modifiedBy, modifiedAt },
+    endedAt,
     state: taskExecutionState,
+    correctionEnabled,
     correctionReason,
-    correctedBy,
-    correctedAt,
+    startedBy,
+    endedBy,
   } = task.taskExecution;
 
-  const canSkipTask = !task.parameters.reduce((acc, parameter) => {
-    if (
-      parameter.type === NonMandatoryParameter.INSTRUCTION ||
-      parameter.type === NonMandatoryParameter.MATERIAL
-    ) {
-      return acc;
-    }
-    acc = acc || parameter.mandatory;
-    return acc;
-  }, false);
+  const {
+    dateAndTimeStampFormat,
+    extra: { hiddenIds },
+  } = useContext(PrintContext);
 
   return (
-    <View style={styles.taskView} key={`${task.id}`}>
-      <View style={styles.taskHeader} wrap={false}>
-        <View style={styles.taskTopHeader}>
-          <View style={styles.taskStartDate}>
-            <Text style={styles.taskTopHeaderTitle}>Start Date</Text>
-            <Text
-              style={[
-                styles.taskStartDateInput,
-                {
-                  letterSpacing: 2.5,
-                  margin: '8px 0px 2px 0px',
-                },
-              ]}
-            >
-              {taskExecutionState !== 'NOT_STARTED' && startedAt
-                ? formatDateTime({ value: startedAt, type: InputTypes.DATE })
-                : '___/__/____'}
-            </Text>
-            <Text style={styles.taskStartDateInput}>MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;YYYY</Text>
-          </View>
-          <View style={styles.taskStartTime}>
-            <Text style={styles.taskTopHeaderTitle}>Start Time</Text>
-            <Text
-              style={[
-                styles.taskStartDateInput,
-                {
-                  letterSpacing: 2.6,
-                  margin: '8px 0px 2px 0px',
-                },
-              ]}
-            >
-              {taskExecutionState !== 'NOT_STARTED' && startedAt
-                ? formatDateTime({ value: startedAt, type: InputTypes.TIME })
-                : '__:__ am / pm'}
-            </Text>
-            <Text style={styles.taskStartDateInput}>HH&nbsp;&nbsp;MM</Text>
-          </View>
-        </View>
-        {task.hasStop && (
-          <View style={styles.taskHasStopHeader}>
-            <Image src={handIcon} style={{ height: '20px', marginRight: 8 }} />
-            <Text style={[styles.text12, { fontWeight: 600 }]}>
-              Complete this task before proceeding to the next task.
-            </Text>
-          </View>
-        )}
-        <View style={styles.taskBottomHeader}>
-          <Text style={[styles.taskTitle, { maxWidth: '80%' }]}>
-            Task {`${task.orderTree}. ${task.name}`}
-          </Text>
-          <Text style={styles.taskTitle}>{!canSkipTask ? `Mandatory` : `Optional`}</Text>
-        </View>
-        {task.timed && (
-          <View>
-            <View style={styles.taskHasTimed}>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}
-              >
-                <Image src={clockIcon} style={{ height: '18px', marginRight: 8 }} />
-                <Text style={[styles.text12, { display: 'flex' }]}>
-                  {task.timerOperator === TimerOperator.NOT_LESS_THAN
-                    ? `Perform task in Not Less Than ${formatDuration(
-                        task.minPeriod as number,
-                      )} :: Max Time limit - ${formatDuration(task?.maxPeriod as number)}`
-                    : `Complete under ${formatDuration(task.maxPeriod as number)}`}
-                </Text>
-              </View>
-            </View>
-          </View>
-        )}
+    <View style={taskStyles.taskView} key={`${task.id}`}>
+      <View style={taskStyles.taskHeader}>
+        <PdfText style={taskStyles.taskName}>
+          Task {stageOrderTree}.{task.orderTree} - {task.name}
+        </PdfText>
+        <PdfText style={taskStyles.taskState}>Task State : {TaskState[taskExecutionState]}</PdfText>
       </View>
-
-      {task?.medias?.length > 0 && (
-        <View style={parameterStyles.parameterView} wrap={false}>
-          {task.medias.map((imageDetails: { id: string; link: string }) => {
-            return (
-              <View key={imageDetails.id} style={{ marginBottom: 16 }} wrap={false} break>
-                <Image
-                  src={imageDetails.link}
-                  style={{
-                    maxHeight: '230mm',
-                    marginTop: '8px',
-                    maxWidth: '100%',
-                    objectFit: 'contain',
-                  }}
-                />
+      {task.timed && (
+        <View>
+          <View>
+            {task.timerOperator === 'NOT_LESS_THAN' ? (
+              <View>
+                <PdfText style={taskStyles.timedTask}>
+                  Perform task in NLT {task.minPeriod && formatDuration(task.minPeriod)}
+                </PdfText>
+                <PdfText style={taskStyles.timedTask}>
+                  Max Time limit - {task.maxPeriod && formatDuration(task?.maxPeriod)}
+                </PdfText>
               </View>
-            );
-          })}
+            ) : (
+              <PdfText style={taskStyles.timedTask}>
+                Complete under {task.maxPeriod && formatDuration(task?.maxPeriod)}
+              </PdfText>
+            )}
+          </View>
+          <View>
+            {task.taskExecution?.reason && (
+              <PdfText style={taskStyles.timedTask}>Reason : {task.taskExecution?.reason}</PdfText>
+            )}
+          </View>
         </View>
       )}
-
-      <ParameterList
-        parametersById={parametersById}
-        parameters={task.parameters}
-        dateAndTimeStampFormat={dateAndTimeStampFormat}
-        hiddenIds={hiddenIds}
-        cjfParametersById={cjfParametersById}
+      {correctionEnabled ? (
+        <View>
+          <PdfText style={taskStyles.timedTask}>
+            Error Correction is Enabled, Reason : {correctionReason}
+          </PdfText>
+        </View>
+      ) : correctionReason ? (
+        <View>
+          <PdfText style={taskStyles.timedTask}>Correction Reason: {correctionReason}</PdfText>
+        </View>
+      ) : null}
+      {task?.taskExecution?.state === TaskExecutionState.COMPLETED_WITH_EXCEPTION && (
+        <View>
+          <PdfText style={taskStyles.timedTask}>
+            Completed With Exception: {task.taskExecution?.reason || ''}
+          </PdfText>
+        </View>
+      )}
+      {task?.taskExecution?.state === TaskExecutionState.SKIPPED && (
+        <View>
+          <PdfText style={taskStyles.timedTask}>
+            Task Skipped: {task.taskExecution?.reason || ''}
+          </PdfText>
+        </View>
+      )}
+      {task.medias &&
+        !!task.medias.length &&
+        (task?.taskExecution?.state === TaskExecutionState.COMPLETED ||
+        task?.taskExecution?.state === TaskExecutionState.COMPLETED_WITH_EXCEPTION ? (
+          <View style={taskStyles.mediaContainer}>
+            <View style={taskStyles.imageStyleContainer}>
+              <PdfText style={taskStyles.timedTask}>Attached Medias: </PdfText>
+              {task.medias.map((medias, i) => (
+                <PdfText style={taskStyles.timedTask}>
+                  <Link src={medias.link}>
+                    {medias.name || medias.filename}
+                    {i < task.medias.length - 1 ? ', ' : ''}
+                  </Link>
+                </PdfText>
+              ))}
+            </View>
+          </View>
+        ) : (
+          <View style={taskStyles.mediaContainer}>
+            <PdfText style={taskStyles.timedTask}>Attached Medias: </PdfText>
+            <View style={taskStyles.imageStyleContainer}>
+              {task.medias.map((medias) => (
+                <Image src={medias.link} style={taskStyles.imageStyle} />
+              ))}
+            </View>
+          </View>
+        ))}
+      <PdfTable
+        columns={[
+          { name: 'Attribute', id: 'attribute' },
+          { name: 'Details/Value', id: 'value' },
+        ]}
+        data={[
+          {
+            attribute: 'Start Date/Time and done by',
+            value: () => {
+              return startedAt && startedBy ? (
+                <PdfText style={tableStyles.columnText}>{`${formatDateTime({
+                  value: startedAt,
+                  format: dateAndTimeStampFormat,
+                })} by ${startedBy.firstName} ${startedBy.lastName} (ID: ${
+                  startedBy.employeeId
+                })`}</PdfText>
+              ) : (
+                <View style={tableStyles.commentsRow} />
+              );
+            },
+            id: 'task-start',
+          },
+          ...task.parameters.reduce((acc, p) => {
+            if (isParameterNeeded(p, hiddenIds)) {
+              acc.push({
+                attribute: getLabelDetails(p),
+                value: () => getParameterDetails(p, taskExecutionState),
+              });
+            }
+            return acc;
+          }, [] as any[]),
+          {
+            attribute: 'End Date/Time and done by',
+            value: () => {
+              return endedAt ? (
+                <PdfText style={tableStyles.columnText}>{`${formatDateTime({
+                  value: endedAt,
+                  format: dateAndTimeStampFormat,
+                })} by ${endedBy.firstName} ${endedBy.lastName} (ID: ${
+                  endedBy.employeeId
+                })`}</PdfText>
+              ) : (
+                <View style={tableStyles.commentsRow} />
+              );
+            },
+            id: 'task-end',
+          },
+        ]}
       />
-
-      {taskExecutionState === 'COMPLETED' && (
-        <View style={styles.taskFooter} wrap={false}>
-          <Text style={styles.text12}>
-            This Task was digitally completed via Leucine{' '}
-            {task.timed &&
-            task.taskExecution.endedAt &&
-            task.taskExecution.startedAt &&
-            task.taskExecution.reason
-              ? (() => {
-                  let text = `${'\n'}`;
-                  if (
-                    task.maxPeriod &&
-                    differenceInSeconds(
-                      fromUnixTime(task.taskExecution.endedAt),
-                      fromUnixTime(task.taskExecution.startedAt),
-                    ) > task.maxPeriod
-                  ) {
-                    text = `after the set time ${'\n'}`;
-                  } else if (
-                    task.timerOperator === 'NOT_LESS_THAN' &&
-                    task.minPeriod &&
-                    differenceInSeconds(
-                      fromUnixTime(task.taskExecution.endedAt),
-                      fromUnixTime(task.taskExecution.startedAt),
-                    ) < task.minPeriod
-                  ) {
-                    text = `before the set time ${'\n'}`;
-                  }
-                  return text;
-                })()
-              : `${'\n'}`}
-            by {modifiedBy.firstName} {modifiedBy.lastName}, ID: {modifiedBy.employeeId} on{' '}
-            {formatDateTime({ value: modifiedAt })}
-          </Text>
-          {task.timed && task.taskExecution.reason && (
-            <View style={styles.comments}>
-              <Text style={styles.text12}>{task.taskExecution.reason}</Text>
-            </View>
-          )}
-        </View>
-      )}
-      {!!correctionReason && correctedBy && correctedAt && (
-        <View style={styles.taskFooter} wrap={false}>
-          <Text style={styles.text12}>
-            This Task was corrected via Leucine {'\n'}
-            by {correctedBy.firstName} {correctedBy.lastName}, ID: {correctedBy.employeeId} on{' '}
-            {formatDateTime({ value: correctedAt })}
-          </Text>
-          <View style={styles.comments}>
-            <Text style={styles.text12}>{task.taskExecution.correctionReason}</Text>
-          </View>
-        </View>
-      )}
-      {(taskExecutionState === 'COMPLETED_WITH_EXCEPTION' || taskExecutionState === 'SKIPPED') && (
-        <View style={styles.taskFooter} wrap={false}>
-          <Text style={styles.text12}>
-            This Task was
-            {taskExecutionState === 'COMPLETED_WITH_EXCEPTION'
-              ? ' Completed with Exception '
-              : ' skipped '}
-            via Leucine {'\n'}
-            by {modifiedBy.firstName} {modifiedBy.lastName}, ID: {modifiedBy.employeeId} on{' '}
-            {formatDateTime({ value: modifiedAt })}
-          </Text>
-          <View style={styles.comments}>
-            <Text style={styles.text12}>{task.taskExecution.reason}</Text>
-          </View>
-        </View>
-      )}
-      {(taskExecutionState === 'NOT_STARTED' || taskExecutionState === 'IN_PROGRESS') && (
-        <View style={[styles.taskFooter, { flexDirection: 'row' }]} wrap={false}>
-          <View style={styles.flexView}>
-            <Text style={styles.taskFooterLabel}>First Name</Text>
-            <View style={styles.taskFooterInputs}>
-              <Text style={styles.text12} />
-            </View>
-            <Text style={[styles.taskFooterLabel, { marginTop: 5 }]}>Last Name</Text>
-            <View style={styles.taskFooterInputs}>
-              <Text style={styles.text12} />
-            </View>
-          </View>
-          <View style={[styles.flexView, { margin: '0px 4px' }]}>
-            <View
-              style={{
-                paddingLeft: 40,
-              }}
-            >
-              <Text style={styles.taskTopHeaderTitle}>End Date</Text>
-              <Text
-                style={[
-                  styles.taskStartDateInput,
-                  {
-                    letterSpacing: 2.8,
-                    margin: '8px 0px 2px 0px',
-                  },
-                ]}
-              >
-                ___/__/____
-              </Text>
-              <Text style={styles.taskStartDateInput}>MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;YYYY</Text>
-            </View>
-          </View>
-          <View style={[styles.flexView, { margin: '0px 4px' }]}>
-            <View style={{ paddingLeft: 20 }}>
-              <Text style={styles.taskTopHeaderTitle}>End Time</Text>
-              <Text
-                style={[
-                  styles.taskStartDateInput,
-                  {
-                    letterSpacing: 2.6,
-                    margin: '8px 0px 2px 0px',
-                  },
-                ]}
-              >
-                __:__ am / pm
-              </Text>
-              <Text style={styles.taskStartDateInput}>HH&nbsp;&nbsp;MM</Text>
-            </View>
-          </View>
-          <View style={[styles.flexView, { margin: '0px 4px' }]}>
-            <Text style={styles.taskFooterLabel}>Signature</Text>
-            <View style={[styles.taskFooterInputs, { minHeight: 50 }]}>
-              <Text style={styles.text12} />
-            </View>
-          </View>
-        </View>
-      )}
     </View>
   );
 };

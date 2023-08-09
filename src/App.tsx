@@ -1,6 +1,4 @@
-import NunitoRegular from '#assets/fonts/nunito/nunito-v14-latin-300.ttf';
-import NunitoBold from '#assets/fonts/nunito/nunito-v14-latin-700.ttf';
-import { CustomRoute, Notification, OverlayContainer } from '#components';
+import { CustomRoute, Notification, OpenFileUrl, OverlayContainer } from '#components';
 import { MultiTabChecker } from '#components/OverlayContainer/MultiTabChecker';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
@@ -9,15 +7,12 @@ import { configureStore } from '#store';
 import { setAuthHeader } from '#utils/axiosClient';
 import { AuthView, FacilitySelectionView, HomeView, UseCaseSelectionView } from '#views';
 import { SsoView } from '#views/Auth/SsoView';
-import PrintFileUpload from '#views/Jobs/Components/Documents/PrintFileUpload';
 import PrintJob from '#views/Jobs/PrintJob';
 import PrintJobAuditLogs from '#views/Jobs/PrintJobAuditLogs';
 import PrintJobLogs from '#views/Jobs/PrintJobLogs';
-import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
 import PrintObjectChangeLogs from '#views/Ontology/PrintObjectChangeLogs/index';
 import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
 import { Router } from '@reach/router';
-import { Font } from '@react-pdf/renderer';
 import { enableMapSet } from 'immer';
 import React, { FC, useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
@@ -33,16 +28,6 @@ window.store = store;
 window.persistor = persistor;
 
 type Orientation = 'landscape' | 'portrait';
-
-Font.register({
-  family: 'Nunito',
-  src: NunitoRegular,
-});
-
-Font.register({
-  family: 'NunitoBold',
-  src: NunitoBold,
-});
 
 const App: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -130,11 +115,10 @@ const App: FC = () => {
                   <CustomRoute as={FacilitySelectionView} path="facility/selection" />
                   <CustomRoute as={HomeView} path="home" />
                   <CustomRoute as={PrintJob} path="jobs/:jobId/print" />
-                  <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
                   <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
                   <CustomRoute as={PrintJobAuditLogs} path="job-activity/:jobId/print" />
                   <CustomRoute as={PrintJobLogs} path="job-logs/:viewId/print" />
-                  <CustomRoute as={PrintFileUpload} path="jobs/:jobId/fileUpload/print" />
+                  <CustomRoute as={OpenFileUrl} path="jobs/:jobId/fileUpload/print" />
                   <CustomRoute
                     as={PrintObjectChangeLogs}
                     path="object-change-logs/:objectId/print"

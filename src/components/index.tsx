@@ -41,3 +41,4 @@ export * from './shared/ResourceFilter';
 export * from './shared/GeneralHeader';
 export * from './shared/FileGallery';
 export * from './shared/CustomTag';
+export * from './shared/OpenFileUrl';

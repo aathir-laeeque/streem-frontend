@@ -1,10 +1,16 @@
-import logo from '#assets/images/logo.png';
+import {
+  PdfFooter,
+  PdfHeader,
+  PdfText,
+  auditLogStyles,
+  commonPdfStyles,
+} from '#components/documents';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
-import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER } from '#utils/constants';
+import { DEFAULT_PAGE_NUMBER } from '#utils/constants';
 import { InputTypes } from '#utils/globalTypes';
 import { formatDateTime } from '#utils/timeUtils';
-import { Document, Image, PDFViewer, Page, Text, View } from '@react-pdf/renderer';
+import { Document, PDFViewer, Page, View } from '@react-pdf/renderer';
 import { getUnixTime } from 'date-fns';
 import { groupBy } from 'lodash';
 import React, { FC, useEffect } from 'react';
@@ -14,12 +20,14 @@ import {
   SessionActivitySeverity,
   SessionActivity as SessionActivityType,
 } from '../ListView/SessionActivity/types';
-import { LoadingDiv, styles } from './styles';
+import { LoadingDiv } from './styles';
 
 const MyPrintSessionActivity: FC = () => {
   const { logs } = useTypedSelector((state) => state.sessionActivity);
+  const { facilityWiseConstants } = useTypedSelector((state) => state);
   const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
   const { filters } = useTypedSelector((state) => state.auditLogFilters);
+  const { dateAndTimeStampFormat } = facilityWiseConstants[selectedFacility!.id];
 
   const dispatch = useDispatch();
 
@@ -47,25 +55,9 @@ const MyPrintSessionActivity: FC = () => {
   return (
     <PDFViewer style={{ width: '100%', height: '100%' }}>
       <Document>
-        <Page style={styles.page}>
-          <View style={styles.header} fixed>
-            <Image src={logo} style={{ height: '24px' }} />
-            <View
-              style={[
-                styles.flexRow,
-                {
-                  justifyContent: 'flex-end',
-                },
-              ]}
-            ></View>
-          </View>
-
-          <View style={styles.mainHeader}>
-            <Image src={settings?.logoUrl || ''} style={{ height: '24px' }} />
-            <Image src={logo} style={{ height: '24px' }} />
-          </View>
-
-          <View style={styles.container}>
+        <Page style={commonPdfStyles.page}>
+          <PdfHeader logoUrl={settings?.logoUrl} />
+          <View style={commonPdfStyles.container}>
             {data.map((item) => {
               const day = formatDateTime({
                 value: getUnixTime(new Date(Object.keys(item)[0])),
@@ -76,39 +68,23 @@ const MyPrintSessionActivity: FC = () => {
               (item[itemId] as SessionActivityType[]).forEach((element) => {
                 if (element.severity === SessionActivitySeverity.CRITICAL) criticalCount++;
               });
-
               return (
-                <View style={styles.columns} key={`name_${item.id}`}>
-                  <View style={styles.logHeader}>
-                    <Text style={styles.headerItemText}>{day}</Text>
-                    <Text style={styles.headerItemText}>{item[itemId].length} activities</Text>
-                    {criticalCount !== 0 && (
-                      <>
-                        <Text style={styles.headerItemText}>{criticalCount} Critical</Text>
-                      </>
-                    )}
-                  </View>
-                  <View style={styles.logRow}>
+                <View style={auditLogStyles.section} key={`name_${itemId}`}>
+                  <PdfText style={auditLogStyles.sectionHeader}>
+                    {day} - {item[itemId].length} activities
+                    {criticalCount !== 0 && ` - ${criticalCount} Critical`}
+                  </PdfText>
+                  <View style={auditLogStyles.sectionBody}>
                     {(item[itemId] as SessionActivityType[]).map((log) => (
-                      <View style={styles.logItem} key={`${log.id}`}>
-                        <View style={styles.circle} />
-                        <View style={styles.content} wrap={false}>
-                          <Text style={styles.contentItems}>
-                            {formatDateTime({ value: log.triggeredAt, type: InputTypes.TIME })}
-                          </Text>
-                          {log.severity === SessionActivitySeverity.CRITICAL && <View />}
-                          <Text
-                            style={[
-                              styles.contentItems,
-                              {
-                                paddingRight: 100,
-                              },
-                            ]}
-                            wrap={false}
-                          >
-                            {log.details}
-                          </Text>
-                        </View>
+                      <View style={auditLogStyles.logRow} wrap={false} key={`${log.id}`}>
+                        <View style={auditLogStyles.circle} />
+                        <PdfText style={auditLogStyles.logInfo}>
+                          {formatDateTime({ value: log.triggeredAt, type: InputTypes.TIME })}
+                        </PdfText>
+                        {log.severity === SessionActivitySeverity.CRITICAL && <View />}
+                        <PdfText style={{ ...auditLogStyles.logInfo, flex: 1 }}>
+                          {log.details}
+                        </PdfText>
                       </View>
                     ))}
                   </View>
@@ -116,22 +92,11 @@ const MyPrintSessionActivity: FC = () => {
               );
             })}
           </View>
-
-          <View fixed style={styles.footer}>
-            <Text style={styles.footerInfo}>
-              Downloaded on {formatDateTime({ value: getUnixTime(new Date()) })}. By{' '}
-              {profile.firstName} {profile.lastName} ID: {profile.employeeId} for{' '}
-              {selectedFacility!.id !== ALL_FACILITY_ID ? 'Facility: ' : ''}
-              {selectedFacility?.name} using Leucine App
-            </Text>
-            <View style={styles.pageInfo}>
-              <Text
-                style={{ fontSize: 10, minHeight: 10 }}
-                render={({ pageNumber, totalPages }) => `${pageNumber}/${totalPages}`}
-                fixed
-              />
-            </View>
-          </View>
+          <PdfFooter
+            profile={profile}
+            selectedFacility={selectedFacility}
+            dateAndTimeStampFormat={dateAndTimeStampFormat}
+          />
         </Page>
       </Document>
     </PDFViewer>

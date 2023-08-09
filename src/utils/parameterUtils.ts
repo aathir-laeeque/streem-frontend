@@ -1,29 +1,27 @@
-import { ParametersById } from '#PrototypeComposer/Activity/reducer.types';
 import {
   AutomationAction,
   AutomationActionActionTypeVisual,
   AutomationActionTriggerTypeVisual,
+  TriggerTypeEnum,
 } from '#PrototypeComposer/checklist.types';
-import {
-  MandatoryParameter,
-  ParameterVerificationStatus,
-  ParameterVerificationTypeEnum,
-} from '#types';
-import { Verification } from '#views/Jobs/ListView/types';
+import { MandatoryParameter } from '#types';
+import { DEFAULT_VALUE } from '#views/Jobs/PrintJob/constant';
 import { InputTypes } from './globalTypes';
 import { formatDateTime } from './timeUtils';
 
-const responseDetailsForChoiceBasedParameters = ({ data, response }: any) => {
+export const responseDetailsForChoiceBasedParameters = ({ data, response }: any) => {
   let detailList: any[] = [];
-  data.forEach((currData: any) => {
+  data?.forEach((currData: any) => {
     if (response?.choices?.[currData.id] === 'SELECTED') {
-      return detailList.push(`${currData.name}${response.reason ? ` :${response.reason}` : ''}`);
+      return detailList.push(
+        `${currData.name}${response.reason ? ` : Remarks - ${response.reason}` : ''}`,
+      );
     }
   });
   return detailList.join(', ');
 };
 
-export const getParameterContent = (parameter: any) => {
+export const getParameterContent = (parameter: any, format?: string) => {
   let parameterContent;
 
   switch (parameter.type) {
@@ -40,8 +38,9 @@ export const getParameterContent = (parameter: any) => {
             value: parameter.response.value,
             type:
               parameter.type === MandatoryParameter.DATE ? InputTypes.DATE : InputTypes.DATE_TIME,
+            format,
           })
-        : '-';
+        : DEFAULT_VALUE;
       break;
     case MandatoryParameter.YES_NO:
       parameterContent = responseDetailsForChoiceBasedParameters(parameter);
@@ -50,21 +49,10 @@ export const getParameterContent = (parameter: any) => {
       parameterContent = responseDetailsForChoiceBasedParameters(parameter);
       break;
     case MandatoryParameter.RESOURCE:
-      parameterContent = parameter.response?.choices?.reduce(
-        (acc: any, currChoice: any) =>
-          (acc = `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId})`),
-        '',
-      );
-      break;
     case MandatoryParameter.MULTI_RESOURCE:
-      parameterContent = parameter?.response?.choices
-        ?.reduce(
-          (acc: string, currChoice: any) =>
-            acc + `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId}) \n`,
-          '',
-        )
-        ?.split('\n')
-        ?.map((str: string) => str);
+      parameterContent = (parameter.response.choices || [])
+        .map((c: any) => `${c.objectDisplayName} (ID: ${c.objectExternalId})`)
+        .join(', ');
       break;
     case MandatoryParameter.MULTISELECT:
       parameterContent = responseDetailsForChoiceBasedParameters(parameter);
@@ -73,7 +61,7 @@ export const getParameterContent = (parameter: any) => {
       return;
   }
 
-  return parameterContent ? parameterContent : '-';
+  return parameterContent ? parameterContent : DEFAULT_VALUE;
 };
 
 export const ObjectIdsDataFromChoices = (choices: any) => {
@@ -110,40 +98,19 @@ export const getAutomationActionTexts = (
   } when the ${AutomationActionTriggerTypeVisual[automation.triggerType]}.`;
 };
 
-export const getParameters = ({ checklist, userId }: { checklist: any; userId: string }) => {
-  const parametersById: ParametersById = {},
-    parametersOrderInTaskInStage: any = {};
+export const getParameters = ({ checklist }: { checklist: any }) => {
   const hiddenIds: Record<string, boolean> = {};
-  let showVerificationBanner = false;
-  checklist?.stages?.map((stage) => {
+  checklist?.stages?.map((stage: any) => {
     let hiddenTasksLength = 0;
-    parametersOrderInTaskInStage[stage.id] = {};
-
-    stage?.tasks?.map((task) => {
+    stage?.tasks?.map((task: any) => {
       let hiddenParametersLength = 0;
-      parametersOrderInTaskInStage[stage.id][task.id] = [];
-
-      task?.parameters?.map((parameter) => {
-        parametersOrderInTaskInStage[stage.id][task.id].push(parameter.id);
-        parametersById[parameter.id] = { ...parameter, hasError: false };
-        if (parameter.response?.hidden || task.hidden) {
+      task?.parameters?.map((parameter: any) => {
+        if (parameter.response?.hidden) {
           hiddenParametersLength++;
           hiddenIds[parameter.id] = true;
-        } else if (
-          !showVerificationBanner &&
-          parameter.verificationType !== ParameterVerificationTypeEnum.NONE
-        ) {
-          const dependantVerification = (parameter.response?.parameterVerifications || []).find(
-            (verification: Verification) =>
-              verification?.requestedTo?.id === userId &&
-              verification?.verificationStatus === ParameterVerificationStatus.PENDING,
-          );
-          if (dependantVerification) {
-            showVerificationBanner = true;
-          }
         }
       });
-      if (task.hidden || task?.parameters?.length === hiddenParametersLength) {
+      if (task?.parameters?.length === hiddenParametersLength) {
         hiddenTasksLength++;
         hiddenIds[task.id] = true;
       }
@@ -153,9 +120,47 @@ export const getParameters = ({ checklist, userId }: { checklist: any; userId: s
     }
   });
 
-  return { parametersById, parametersOrderInTaskInStage, hiddenIds, showVerificationBanner };
+  return { hiddenIds };
 };
 
 export const fileTypeCheck = (collectionOfTypes: string[] = [], type: string) => {
   return collectionOfTypes.includes(type);
+};
+
+export const logsResourceChoicesMapper = (list: any[]) => {
+  return list.reduce((result, jobLog) => {
+    const jobId = jobLog.id;
+    result[jobId] = {};
+
+    jobLog.logs.forEach((log: any) => {
+      if (log.triggerType === TriggerTypeEnum.RESOURCE && log.resourceParameters) {
+        for (const key in log.resourceParameters) {
+          if (log.resourceParameters.hasOwnProperty(key)) {
+            result[jobId][key] = { ...log.resourceParameters[key] };
+          }
+        }
+      }
+    });
+
+    return result;
+  }, {});
+};
+
+export const logsParser = (log: any, jobId: string, resourceParameterChoicesMap: any) => {
+  switch (log.triggerType) {
+    case TriggerTypeEnum.RESOURCE_PARAMETER:
+      const selectedChoices = (
+        resourceParameterChoicesMap?.[jobId]?.[log.entityId]?.choices || []
+      ).reduce((acc: any[], c: any) => {
+        acc.push(`${c?.objectDisplayName} (ID: ${c?.objectExternalId})`);
+        return acc;
+      }, []);
+
+      return {
+        ...log,
+        value: selectedChoices?.join(', '),
+      };
+    default:
+      return log;
+  }
 };

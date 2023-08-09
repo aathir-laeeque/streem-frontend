@@ -1,4 +1,4 @@
-import { LogType, MandatoryParameter, TriggerTypeEnum } from '#PrototypeComposer/checklist.types';
+import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { apiGetChecklist, apiGetParameters, baseUrl } from '#utils/apiUrls';
@@ -6,25 +6,13 @@ import { request } from '#utils/request';
 import { formatDateTime } from '#utils/timeUtils';
 import { logsResourceChoicesMapper } from '#views/Checklists/JobLogs/DynamicContent';
 import { fetchProcessLogs } from '#views/Checklists/ListView/actions';
-import { Document, PDFViewer, Page, View } from '@react-pdf/renderer';
 import { camelCase, startCase } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { logsParser } from '../../Checklists/JobLogs/TabContent';
+import usePdfWorkerHook from '../PdfWorker/usePdfWorkerHook';
 import { LoadingDiv } from '../PrintJob/styles';
-import Footer from '../SummaryPdf/Footer';
-import Header from '../SummaryPdf/Header';
-import TableRow from '../SummaryPdf/TableRow';
-import { FirstPage } from './FirstPage';
-import { styles } from './styles';
-import { InputTypes } from '#utils/globalTypes';
 
-const COLUMNS_PER_PAGE = 10;
-const FREEZED_COLUMNS = 1;
-const ROWS_PER_PAGE = 16;
-const WIDTH_PER_COLUMN = 100 / 10;
-
-const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
+const Download: FC<any> = ({ viewId }) => {
   const {
     checklistListView: {
       jobLogs: { list, loading },
@@ -35,6 +23,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
   const { dateAndTimeStampFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
+
   const [state, setState] = useState<{
     loadingFilters: boolean;
     parsedFilters?: Record<string, any>;
@@ -214,214 +203,54 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
     }
   }, [list]);
 
-  const renderCell = (row: any, column: any) => {
-    if (row[column.id + column.triggerType]) {
-      if (column.triggerType === TriggerTypeEnum.RESOURCE) {
-        const rowValue = row[column.id + column.triggerType];
-        const cellValue = Object.values(rowValue.resourceParameters).reduce<any[]>(
-          (acc, p: any) => {
-            acc.push(
-              `${p.displayName}: ${p.choices
-                .map((c: any) => `${c.objectDisplayName} (ID: ${c.objectExternalId})`)
-                .join(',')}`,
-            );
-            return acc;
-          },
-          [],
-        );
-        return cellValue.join(',');
-      }
-      if (column.type === LogType.DATE) {
-        return formatDateTime({
-          value: row[column.id + column.triggerType].value,
-          type: InputTypes.DATE,
-        });
-      } else if (column.type === LogType.DATE_TIME) {
-        return formatDateTime({
-          value: row[column.id + column.triggerType].value,
-          type: InputTypes.DATE_TIME,
-        });
-      } else if (
-        column.type === LogType.FILE &&
-        row[column.id + column.triggerType]?.medias?.length
-      ) {
-        return row[column.id + column.triggerType].medias.map((media: any) => media.name).join(',');
-      }
-      if (column.triggerType === TriggerTypeEnum.JOB_STATE) {
-        return startCase(camelCase(row[column.id + column.triggerType].value));
-      } else if (column.triggerType === TriggerTypeEnum.PARAMETER_SELF_VERIFIED_BY) {
-        const selfVerifiedAt = row[column.id + TriggerTypeEnum.PARAMETER_SELF_VERIFIED_AT]?.value;
-        if (row[column.id + column.triggerType].value) {
-          return `Perfomed at ${formatDateTime({ value: selfVerifiedAt })}, by
-          ${row[column.id + column.triggerType].value}`;
-        } else {
-          return '-';
-        }
-      } else if (column.triggerType === TriggerTypeEnum.PARAMETER_PEER_VERIFIED_BY) {
-        const peerVerifiedAt = row[column.id + TriggerTypeEnum.PARAMETER_PEER_VERIFIED_AT]?.value;
-        if (row[column.id + column.triggerType].value) {
-          return `Perfomed at ${formatDateTime({ value: peerVerifiedAt })}, by
-              ${row[column.id + column.triggerType].value}`;
-        } else {
-          return '-';
-        }
-      }
-      return row[column.id + column.triggerType].value || '-';
+  useEffect(() => {
+    if (parsedFilters) {
+      setKeepPersistedData();
+      dispatch(
+        fetchProcessLogs({
+          page: 0,
+          size: 250,
+          filters: parsedFilters,
+          sort: 'id,desc',
+        }),
+      );
     }
-    return '-';
+  }, [parsedFilters]);
+
+  const workerProps = {
+    visibleColumns,
+    viewId,
+    profile,
+    settings,
+    filtersVisualMap,
+    list,
+    showProcessSection,
+    selectedFacility,
+    dateAndTimeStampFormat,
+    resourceParameterChoicesMap,
+    process,
+    type: 'CUSTOM_VIEW_JOB_LOGS',
   };
 
-  const reArrangeColumns = (arr: any[]) => {
-    let orderTree = 1;
-    const orderedArr = arr.map((item) => {
-      if (item.triggerType === 'JOB_ID') {
-        orderTree = 1;
-      } else {
-        orderTree++;
-      }
-      return { ...item, orderTree };
-    });
-    return orderedArr?.sort((a, b) => a.orderTree - b.orderTree) || [];
-  };
-
-  // Filter out the self and peer verification timestamp columns
-  const filteredVisibleColumns = visibleColumns.filter((item: any) => {
-    return (
-      item.triggerType !== TriggerTypeEnum.PARAMETER_SELF_VERIFIED_AT &&
-      item.triggerType !== TriggerTypeEnum.PARAMETER_PEER_VERIFIED_AT
-    );
+  usePdfWorkerHook({
+    keysToCheck: [
+      'visibleColumns',
+      'viewId',
+      'profile',
+      'settings',
+      'filtersVisualMap',
+      'list',
+      'showProcessSection',
+      'selectedFacility',
+      'dateAndTimeStampFormat',
+      'resourceParameterChoicesMap',
+      'process',
+    ],
+    loadingKeysToCheck: { loading, loadingFilters, loadingProcess },
+    ...workerProps,
   });
 
-  const renderTableRow = (columnByPageIndex: number, rowByPageIndex: number) => {
-    const reArrangedColumns = reArrangeColumns(filteredVisibleColumns);
-    const columnsForRow = [
-      ...reArrangedColumns?.slice(0, FREEZED_COLUMNS),
-      ...reArrangedColumns?.slice(
-        FREEZED_COLUMNS + columnByPageIndex * COLUMNS_TO_ADD_PER_PAGE,
-        FREEZED_COLUMNS + columnByPageIndex * COLUMNS_TO_ADD_PER_PAGE + COLUMNS_TO_ADD_PER_PAGE,
-      ),
-    ];
-
-    return (
-      <View style={styles.table}>
-        <TableRow
-          columns={columnsForRow.map((column, i) => ({
-            text: column.displayName,
-            customStyle: {
-              textAlign: 'left',
-              width: `${WIDTH_PER_COLUMN}%`,
-              height: 70,
-              paddingVertical: 5,
-              backgroundColor: i < FREEZED_COLUMNS ? '#dadada' : '#F5F5F5',
-            },
-          }))}
-          customStyle={{ fontFamily: 'NunitoBold' }}
-          key={`columns${columnByPageIndex}`}
-        />
-        {[
-          ...parsedJobLogs.slice(
-            rowByPageIndex * ROWS_PER_PAGE,
-            rowByPageIndex * ROWS_PER_PAGE + ROWS_PER_PAGE,
-          ),
-        ].map((row, ri) => (
-          <TableRow
-            columns={columnsForRow.map((column) => ({
-              text: renderCell(row, column),
-              customStyle: {
-                textAlign: 'left',
-                width: `${WIDTH_PER_COLUMN}%`,
-                borderColor: '#F5F5F5',
-                // borderWidth: 1,  // removing this style as we have this in default style, hence not required here.
-                minHeight: 25,
-                height: '100%',
-                paddingVertical: 5,
-              },
-            }))}
-            customStyle={{ backgroundColor: '#fff' }}
-            key={`rows${rowByPageIndex}${ri}`}
-          />
-        ))}
-      </View>
-    );
-  };
-
-  if (!profile || loading || loadingFilters || loadingProcess) return null;
-
-  const parsedJobLogs = list.reduce((acc, jobLog, index) => {
-    jobLog.logs.forEach((log: any) => {
-      acc[index] = {
-        ...acc[index],
-        [log.entityId + log.triggerType]: logsParser(
-          log,
-          jobLog.id,
-          resourceParameterChoicesMap.current,
-        ),
-      };
-    });
-    return acc;
-  }, []);
-
-  const COLUMNS_TO_ADD_PER_PAGE = COLUMNS_PER_PAGE - FREEZED_COLUMNS;
-  const pagesByColumns = Array.from(
-    {
-      length: Math.ceil((visibleColumns.length - COLUMNS_PER_PAGE) / COLUMNS_TO_ADD_PER_PAGE) + 1,
-    },
-    (_, i) => i,
-  );
-
-  const pagesByRows = Array.from(
-    {
-      length: Math.ceil(parsedJobLogs.length / ROWS_PER_PAGE),
-    },
-    (_, i) => i,
-  );
-
-  return (
-    <PDFViewer style={{ width: '100%', height: '100%' }}>
-      <Document>
-        <Page style={styles.page} orientation="landscape">
-          <Header logoUrl={settings?.logoUrl ?? ''} />
-          <FirstPage
-            filters={filtersVisualMap}
-            log={list?.[0]}
-            showProcessSection={showProcessSection}
-            checklist={process}
-            selectedFacility={selectedFacility}
-          />
-          <Footer
-            user={profile}
-            selectedFacility={selectedFacility!}
-            dateAndTimeStampFormat={dateAndTimeStampFormat}
-          />
-        </Page>
-
-        {pagesByRows.map((_, rowsPagesIndex) => (
-          <>
-            {pagesByColumns.map((_, i) => (
-              <Page style={styles.page} orientation="landscape">
-                <Header logoUrl={settings?.logoUrl ?? ''} />
-                <View style={styles.container}>{renderTableRow(i, rowsPagesIndex)}</View>
-                <Footer
-                  user={profile}
-                  selectedFacility={selectedFacility!}
-                  dateAndTimeStampFormat={dateAndTimeStampFormat}
-                />
-              </Page>
-            ))}
-          </>
-        ))}
-      </Document>
-    </PDFViewer>
-  );
+  return <LoadingDiv>Loading...</LoadingDiv>;
 };
 
-const MemoPrintJobAuditLogs = React.memo(MyPrintJobAuditLogs);
-
-const PrintJobAuditLogs: FC<any> = ({ viewId }) => (
-  <>
-    <LoadingDiv>Loading...</LoadingDiv>
-    {viewId && <MemoPrintJobAuditLogs viewId={viewId} />}
-  </>
-);
-
-export default PrintJobAuditLogs;
+export default Download;

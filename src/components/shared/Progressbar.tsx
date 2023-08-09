@@ -14,10 +14,10 @@ const Wrapper = styled.div.attrs({
   border-radius: 4px;
   position: relative;
   width: 100%;
-
   background-color: ${({ whiteBackground }) => (whiteBackground ? '#ffffff' : '#eee')};
   height: ${({ height }) => `${height}px`};
   box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.08);
+  text-align: center;
 
   .filler {
     border-radius: inherit;
@@ -42,6 +42,12 @@ const Wrapper = styled.div.attrs({
       }
     }}
   }
+
+  .text {
+    font-weight: 800;
+    font-size: 13px;
+    margin-top: 16px;
+  }
 `;
 
 const ProgressBar: FC<Props> = ({
@@ -57,6 +63,7 @@ const ProgressBar: FC<Props> = ({
     danger={danger}
   >
     <div className="filler"></div>
+    <span className="text">{Math.ceil(percentage)} %</span>
   </Wrapper>
 );
 

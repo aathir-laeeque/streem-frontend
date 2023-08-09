@@ -293,12 +293,13 @@ function getJobAuditLogsSuccess(draft: JobStore, payload: typeof actions.getJobA
   draft.auditLogs.loading = false;
   draft.auditLogs.pageable = payload.pageable;
   draft.auditLogs.logs = payload.data;
+  draft.loading = false;
 }
 
 // REDUCER
 
 export const jobReducer = (state = initialState, action: JobActionsType) =>
-  produce(state, (draft) => {
+  produce(state, (draft) => { 
     switch (action.type) {
       case JobActionsEnum.getJob:
         draft.loading = true;
