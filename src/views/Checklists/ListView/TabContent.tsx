@@ -386,7 +386,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     </div>
                   </MenuItem>
                 )}
-                <MenuItem
+                {/* <MenuItem
                   onClick={() =>
                     navigate(`/checklists/${selectedChecklist?.id}/permissions`, {
                       state: {
@@ -402,7 +402,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     <img src={permissionsIcon} alt="permission-icon" />
                     <span>Permissions</span>
                   </div>
-                </MenuItem>
+                </MenuItem> */}
                 {!item.archived && checkArchiveAndRevisionPermission('revision') && (
                   <MenuItem
                     onClick={() => {
@@ -504,14 +504,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                       <div className="list-item">
                         <MemoViewInfo />
                         <span>Trained Users</span>
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => navigate(`/checklists/${selectedChecklist?.id}/automation`)}
-                    >
-                      <div className="list-item">
-                        <MemoViewInfo />
-                        <span>Automations</span>
                       </div>
                     </MenuItem>
                   </>
