@@ -151,9 +151,15 @@ const Header: FC<HeaderProps> = ({
           <div className="right-section" style={{ paddingRight: 16 }}>
             {isJobStarted && isUserAssignedToTask && (
               <>
-                <div onClick={handleClick} className="more">
-                  <MoreVert />
-                </div>
+                {(jobState !== JobStateEnum.BLOCKED ||
+                  ((task.taskExecution.state === TaskExecutionState.COMPLETED ||
+                    task.taskExecution.state === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
+                    task.taskExecution.state === TaskExecutionState.SKIPPED) &&
+                    (!correctionEnabled || !correctionReason))) && (
+                  <div onClick={handleClick} className="more">
+                    <MoreVert />
+                  </div>
+                )}
 
                 <StyledMenu
                   id="task-error-correction"
@@ -190,10 +196,10 @@ const Header: FC<HeaderProps> = ({
                         Error correction
                       </MenuItem>
                     )}
-                  <MenuItem
-                    onClick={() => {
-                      handleClose();
-                      if (jobState !== JobStateEnum.BLOCKED) {
+                  {jobState !== JobStateEnum.BLOCKED && (
+                    <MenuItem
+                      onClick={() => {
+                        handleClose();
                         if (canSkipTask) {
                           dispatch(
                             openOverlayAction({
@@ -232,11 +238,11 @@ const Header: FC<HeaderProps> = ({
                             }),
                           );
                         }
-                      }
-                    }}
-                  >
-                    {canSkipTask ? 'Skip the task' : 'Complete with Exception'}
-                  </MenuItem>
+                      }}
+                    >
+                      {canSkipTask ? 'Skip the task' : 'Complete with Exception'}
+                    </MenuItem>
+                  )}
                 </StyledMenu>
               </>
             )}
