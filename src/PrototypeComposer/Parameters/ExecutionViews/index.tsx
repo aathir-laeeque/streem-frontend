@@ -60,6 +60,11 @@ export const ParameterViewWrapper = styled.div`
         line-height: 1.33;
         letter-spacing: 0.32px;
         color: #525252;
+        &-optional {
+          color: #999999;
+          font-size: 12px;
+          margin-left: 4px;
+        }
       }
 
       .form-group {
@@ -158,7 +163,10 @@ const ParameterView: FC<ParameterProps> = ({
     <ParameterViewWrapper>
       <div className="container">
         <div className="content">
-          <span className="parameter-label">{parameter.label}</span>
+          <div className="parameter-label">
+            {parameter.label}
+            {!parameter.mandatory && <span className="parameter-label-optional">optional</span>}
+          </div>
           {renderTaskViewByType()}
         </div>
       </div>
