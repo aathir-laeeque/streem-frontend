@@ -7,7 +7,7 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { baseUrl } from '#utils/apiUrls';
-import { ResponseObj } from '#utils/globalTypes';
+import { FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { getQrCodeData, qrCodeValidator } from '#views/Ontology/utils';
 import { LinkOutlined } from '@material-ui/icons';
@@ -238,6 +238,15 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
           data: qrData,
           callBack: () => onSelectOption(result),
           objectTypeValidation: qrData?.objectTypeId === parameter?.data?.objectTypeId,
+          filters: parameter?.data?.propertyFilters
+            ? {
+                ...parameter?.data?.propertyFilters,
+                fields: [
+                  ...parameter?.data?.propertyFilters?.fields,
+                  { field: 'id', op: FilterOperators.EQ, values: [qrData?.objectId] },
+                ],
+              }
+            : {},
         });
       }
     } catch (error) {

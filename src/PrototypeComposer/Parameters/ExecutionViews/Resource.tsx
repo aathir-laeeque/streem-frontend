@@ -9,7 +9,7 @@ import { ObjectIdsDataFromChoices } from '#JobComposer/TaskList/utils';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
 import { apiGetObjects, baseUrl } from '#utils/apiUrls';
-import { InputTypes, ResponseObj } from '#utils/globalTypes';
+import { FilterOperators, InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { Object } from '#views/Ontology/types';
 import { getQrCodeData, qrCodeValidator } from '#views/Ontology/utils';
@@ -315,6 +315,15 @@ const ResourceTaskView: FC<
             onChangeHandler(parameterData);
           },
           objectTypeValidation: qrData?.objectTypeId === parameter?.data?.objectTypeId,
+          filters: parameter?.data?.propertyFilters
+            ? {
+                ...parameter?.data?.propertyFilters,
+                fields: [
+                  ...parameter?.data?.propertyFilters?.fields,
+                  { field: 'id', op: FilterOperators.EQ, values: [qrData?.objectId] },
+                ],
+              }
+            : {},
         });
       }
     } catch (error) {

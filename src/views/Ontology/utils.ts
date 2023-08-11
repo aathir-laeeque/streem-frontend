@@ -1,8 +1,8 @@
 import { ResponseObj } from '#utils/globalTypes';
-import { apiGetObjects, apiQrShortCode } from '#utils/apiUrls';
+import { apiGetObjects, apiQrShortCode, baseUrl } from '#utils/apiUrls';
 import { getErrorMsg, request } from '#utils/request';
 import { Object } from './types';
-import { ALL_FACILITY_ID } from '#utils/constants';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 
 export const getObjectData = async (data: Record<string, string | number | undefined>) => {
   try {
@@ -20,30 +20,37 @@ export const getObjectData = async (data: Record<string, string | number | undef
   }
 };
 
+export const getObjectPartialCall = async (data: Record<string, any>) => {
+  try {
+    const response: ResponseObj<Object> = await request('GET', `${baseUrl}/objects/partial`, {
+      params: { page: DEFAULT_PAGE_NUMBER, size: DEFAULT_PAGE_SIZE, ...data },
+    });
+    if (response.data) {
+      return response.data;
+    }
+    throw response?.errors;
+  } catch (error) {
+    throw getErrorMsg(error as any);
+  }
+};
+
 export const qrCodeValidator = async ({
   data,
   callBack,
   objectTypeValidation,
+  filters = {},
 }: {
   data: Record<string, string>;
   callBack: () => void;
   objectTypeValidation: boolean;
+  filters: any;
 }) => {
   if (objectTypeValidation && data?.entityType === 'OBJECTS') {
-    const fetchedData = await getObjectData({
-      id: data.objectId,
-      collection: data.collection,
-    });
-    const {
-      auth: { selectedFacility },
-    } = window.store.getState();
-    if (
-      selectedFacility?.id === fetchedData?.facilityId ||
-      selectedFacility?.id === ALL_FACILITY_ID
-    ) {
+    const fetchedData = await getObjectPartialCall({ collection: data.collection, filters });
+    if (fetchedData?.length > 0) {
       callBack();
     } else {
-      throw "Object doesn't belong in the facility";
+      throw 'Resource Not Found';
     }
   } else {
     throw 'Resource Not Found';
