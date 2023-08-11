@@ -98,7 +98,7 @@ function SortableItem({ item, index, remove, register, isReadOnly }: any) {
             required: true,
           })}
           defaultValue={item.displayName}
-          disabled={isReadOnly}
+          disabled={item?.displayName?.length}
         />
       </div>
       {!isReadOnly && (
@@ -114,7 +114,7 @@ const ChecklistParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
   form,
   isReadOnly,
 }) => {
-  const { register, control, setError, clearErrors, errors, unregister } = form;
+  const { register, control, setError, clearErrors, errors } = form;
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: 'data',
@@ -166,7 +166,7 @@ const ChecklistParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
           </SortableContext>
         </DndContext>
       </ul>
-      {!isReadOnly && <AddNewItem onClick={() => append({ id: uuidv4(), displayName: '' })} />}
+      <AddNewItem onClick={() => append({ id: uuidv4(), displayName: '' })} />
     </CommonWrapper>
   );
 };
