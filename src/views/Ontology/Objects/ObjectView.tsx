@@ -113,8 +113,10 @@ const RelationField = memo<any>(({ relation, isReadOnly, getValues, control }) =
     options: [],
   });
 
-  const count = useRef(0);
-  count.current++;
+  const pagination = useRef({
+    current: -1,
+    isLast: true,
+  });
 
   const registrationId = `relations.${relation?.id}`;
 
@@ -137,7 +139,14 @@ const RelationField = memo<any>(({ relation, isReadOnly, getValues, control }) =
         const response: {
           data: CommonFields[];
           errors: { message: string }[];
-        } = await request('GET', `${baseUrl}${path}`);
+          pageable: any;
+        } = await request('GET', `${baseUrl}${path}&page=${pagination.current.current + 1}`);
+        if (response.pageable) {
+          pagination.current = {
+            current: response.pageable?.page,
+            isLast: response.pageable?.last,
+          };
+        }
         if (response.data) {
           setSelectOptions((prev) => ({
             isFetching: false,
@@ -160,6 +169,12 @@ const RelationField = memo<any>(({ relation, isReadOnly, getValues, control }) =
       getOptions(relation.target.urlPath);
     }
   }, []);
+
+  const handleMenuScrollToBottom = () => {
+    if (!selectOptions.isFetching && !pagination.current.isLast) {
+      getOptions(relation.target.urlPath);
+    }
+  };
 
   return (
     <Controller
@@ -192,6 +207,7 @@ const RelationField = memo<any>(({ relation, isReadOnly, getValues, control }) =
                     label: option.displayName,
                     externalId: `(ID: ${option.externalId})`,
                   })),
+                  onMenuScrollToBottom: handleMenuScrollToBottom,
                   onChange: (options: any) => {
                     if (options?.value) {
                       onChange(
