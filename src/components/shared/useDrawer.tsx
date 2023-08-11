@@ -39,6 +39,7 @@ export const DrawerWrapper = styled(Drawer)`
     }
     .drawer-body {
       padding: 0px 12px;
+      overflow-y: auto;
       @media (min-width: 900px) {
         padding: 0px 16px;
       }

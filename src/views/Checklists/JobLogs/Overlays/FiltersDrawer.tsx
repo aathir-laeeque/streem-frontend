@@ -30,7 +30,6 @@ export const FiltersWrapper = styled.form`
   }
 
   .filter-cards {
-    overflow-y: auto;
     display: flex;
     flex: 1;
     flex-direction: column;

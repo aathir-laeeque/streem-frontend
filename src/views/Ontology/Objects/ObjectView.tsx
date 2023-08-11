@@ -16,7 +16,6 @@ import { Cardinality, CommonFields, Constraint, Validation } from '../types';
 
 const ObjectFormWrapper = styled.div`
   background-color: #fff;
-  overflow: auto;
   height: 100%;
   display: flex;
   flex: 1;
