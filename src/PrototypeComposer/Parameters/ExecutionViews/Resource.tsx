@@ -157,7 +157,7 @@ const ResourceTaskView: FC<
 
   const getFields = (filters: { op: string; fields: any[] }) => {
     const { fields, op } = filters;
-    const _fields = fields.map((currField) => {
+    const _fields = fields?.map((currField) => {
       if (currField?.referencedParameterId) {
         const referencedParameterData =
           parameterForFilters?.[currField?.referencedParameterId]?.data?.input ??
