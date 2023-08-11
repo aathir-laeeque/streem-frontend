@@ -96,7 +96,8 @@ const SearchFilter: FC<SearchFilterProps> = ({
       updatedOption.field === 'firstName' ||
       updatedOption.field === 'lastName' ||
       updatedOption.field === 'email' ||
-      updatedOption.field === 'employeeId'
+      updatedOption.field === 'employeeId' ||
+      updatedOption.field === 'code'
         ? [
             {
               field: updatedOption.field,

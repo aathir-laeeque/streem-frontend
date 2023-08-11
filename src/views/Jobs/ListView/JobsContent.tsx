@@ -675,12 +675,18 @@ const JobsContent: FC<TabContentProps> = ({
       <div className="filters">
         <SearchFilter
           label={label}
-          showDropdown={false}
+          showDropdown
           dropdownOptions={[
             {
               label: 'Name',
               value: 'checklist.name',
               field: 'checklist.name',
+              operator: FilterOperators.LIKE,
+            },
+            {
+              label: 'Job ID',
+              value: 'code',
+              field: 'code',
               operator: FilterOperators.LIKE,
             },
           ]}

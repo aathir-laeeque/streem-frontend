@@ -580,12 +580,12 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
               field: 'name',
               operator: FilterOperators.LIKE,
             },
-            ...checklistProperties.map(({ label, id }) => ({
-              label,
-              value: id,
-              field: 'checklistPropertyValues.facilityUseCasePropertyMapping.propertiesId',
-              operator: FilterOperators.EQ,
-            })),
+            {
+              label: 'Process ID',
+              value: 'code',
+              field: 'code',
+              operator: FilterOperators.LIKE,
+            },
           ]}
           updateFilterFields={(fields) => {
             setFilterFields((currentFields) => {
