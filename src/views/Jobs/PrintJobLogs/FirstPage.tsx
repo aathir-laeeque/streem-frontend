@@ -51,10 +51,12 @@ export const FirstPage = ({
   filters,
   log,
   showProcessSection,
+  checklist,
 }: {
   filters: Record<string, any>;
   showProcessSection: boolean;
   log?: any;
+  checklist: any;
 }) => {
   return (
     <View style={{ paddingHorizontal: 40, paddingVertical: 8 }}>
@@ -65,6 +67,13 @@ export const FirstPage = ({
           <View>
             <InlineInputLabelGroup label="Process Name" value={log.checklistName} />
             <InlineInputLabelGroup label="Process ID" value={log.checklistCode} />
+            {checklist.properties?.map((property) => (
+              <InlineInputLabelGroup
+                label={`${property.label}:`}
+                value={property.value || '-'}
+                key={property.id}
+              />
+            ))}
           </View>
         </TabLookLike>
       )}

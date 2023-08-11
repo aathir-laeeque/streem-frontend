@@ -1,9 +1,12 @@
 import { LogType, MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
+import { apiGetChecklist, apiGetParameters, baseUrl } from '#utils/apiUrls';
+import { InputTypes } from '#utils/globalTypes';
+import { request } from '#utils/request';
 import { formatDateByInputType, formatDateTime } from '#utils/timeUtils';
 import { fetchProcessLogs } from '#views/Checklists/ListView/actions';
-import { Document, Page, PDFViewer, View } from '@react-pdf/renderer';
+import { Document, PDFViewer, Page, View } from '@react-pdf/renderer';
 import { camelCase, startCase } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -11,11 +14,8 @@ import { LoadingDiv } from '../PrintJob/styles';
 import Footer from '../SummaryPdf/Footer';
 import Header from '../SummaryPdf/Header';
 import TableRow from '../SummaryPdf/TableRow';
-import { styles } from './styles';
 import { FirstPage } from './FirstPage';
-import { InputTypes } from '#utils/globalTypes';
-import { request } from '#utils/request';
-import { apiGetParameters, baseUrl } from '#utils/apiUrls';
+import { styles } from './styles';
 
 const COLUMNS_PER_PAGE = 8;
 const FREEZED_COLUMNS = 3;
@@ -40,12 +40,15 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
     parameterList: any[];
     filtersVisualMap: Record<string, any>;
     showProcessSection: boolean;
+    loadingProcess: boolean;
+    process?: any;
   }>({
     loadingFilters: true,
     loadingParameters: true,
     parameterList: [],
     filtersVisualMap: {},
     showProcessSection: false,
+    loadingProcess: true,
   });
   const {
     loadingFilters,
@@ -54,6 +57,8 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
     loadingParameters,
     filtersVisualMap,
     showProcessSection,
+    loadingProcess,
+    process,
   } = state;
   const dispatch = useDispatch();
 
@@ -75,6 +80,21 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
       }));
     } else {
       setState((prev) => ({ ...prev, loadingParameters: false }));
+    }
+  };
+
+  const fetchProcess = async (fields: { field: string; op: string; values: string[] }[]) => {
+    const checklistId = fields.find((field) => field.field === 'checklistId')?.values?.[0];
+    if (checklistId) {
+      const process = await request('GET', apiGetChecklist(checklistId));
+      setState((prev) => ({
+        ...prev,
+        process: process.data,
+        loadingProcess: false,
+        showProcessSection: true,
+      }));
+    } else {
+      setState((prev) => ({ ...prev, loadingProcess: false }));
     }
   };
 
@@ -167,6 +187,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
     const _parsedFilters = JSON.parse(filters);
     setState((prev) => ({ ...prev, parsedFilters: _parsedFilters }));
     fetchParameters(_parsedFilters?.fields || []);
+    fetchProcess(_parsedFilters?.fields || []);
   }, [filters]);
 
   useEffect(() => {
@@ -271,7 +292,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
     );
   };
 
-  if (!profile || loading || loadingFilters) return null;
+  if (!profile || loading || loadingFilters || loadingProcess) return null;
 
   const parsedJobLogs = list.reduce((acc, jobLog, index) => {
     jobLog.logs.forEach((log: any) => {
@@ -307,6 +328,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
             filters={filtersVisualMap}
             log={list?.[0]}
             showProcessSection={showProcessSection}
+            checklist={process}
           />
           <Footer
             user={profile}
