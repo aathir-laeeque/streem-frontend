@@ -42,6 +42,7 @@ import styled from 'styled-components';
 import peerVerificationIcon from '#assets/svg/peerVerification.svg';
 import selfVerificationIcon from '#assets/svg/selfVerification.svg';
 import Tooltip from '@material-ui/core/Tooltip';
+import { Error as ErrorIcon } from '@material-ui/icons';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -177,6 +178,20 @@ export const ParameterTaskViewWrapper = styled.div<{ isReadOnly: boolean }>`
         line-height: 1.33;
         letter-spacing: 0.32px;
         color: #161616;
+      }
+      .parameter-error {
+        align-items: center;
+        color: #eb5757;
+        display: flex;
+        font-size: 12px;
+        justify-content: flex-start;
+        margin-top: 8px;
+
+        .icon {
+          font-size: 16px;
+          color: #eb5757;
+          margin-right: 5px;
+        }
       }
 
       .form-group {
@@ -397,6 +412,12 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
             {ParameterTypeMap[parameter?.type]}
             <span className="parameter-label">{parameter?.label}</span>
           </>
+          {parameter.errors?.length > 0 && (
+            <span className="parameter-error">
+              <ErrorIcon className="icon" />
+              {parameter.errors?.[0]?.message}
+            </span>
+          )}
           {renderTaskViewByType()}
           <div className="verification-icons">
             {parameter?.verificationType === ParameterVerificationTypeEnum.SELF ||
