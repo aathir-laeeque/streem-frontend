@@ -78,7 +78,6 @@ export const rolesDetails = {
         ChecklistFeatures.VIEW_EXISTING_UNIT_LEVEL_CHECKLISTS,
         ChecklistFeatures.VIEW_UNIT_LEVEL_PROTOTYPES,
         ChecklistFeatures.REVIEW_AND_APPROVE_UNIT_LEVEL_CHECKLISTS,
-        ChecklistFeatures.REVISE_AND_ARCHIVE_UNIT_LEVEL_CHECKLISTS,
       ],
       [PermissionCategories.JOB_FEATURES]: Object.values(JobFeatures).map((v) => v),
       [PermissionCategories.ADMINISTRATIVE_FEATURES]: [
