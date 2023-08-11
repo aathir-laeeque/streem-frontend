@@ -20,7 +20,6 @@ import { apiGetObjectTypes } from '#utils/apiUrls';
 const urlParams = {
   page: DEFAULT_PAGE_NUMBER,
   size: DEFAULT_PAGE_SIZE,
-  sort: 'createdAt,desc',
   usageStatus: 1,
 };
 
