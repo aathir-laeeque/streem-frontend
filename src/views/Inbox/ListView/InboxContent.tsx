@@ -1,6 +1,4 @@
-import { LabelValueRow } from '#JobComposer/Header/styles';
 import { Checklist } from '#JobComposer/checklist.types';
-import { Parameter } from '#PrototypeComposer/checklist.types';
 import { LoadingContainer, Pagination, SearchFilter, Select, TabContentProps } from '#components';
 import { useTypedSelector } from '#store/helpers';
 import { apiInboxJobsCount } from '#utils/apiUrls';
@@ -8,16 +6,12 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators, fetchDataParams } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { getActiveSmartFilter } from '#utils/smartFilterUtils';
-import { checkJobExecutionDelay, formatDateTime } from '#utils/timeUtils';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import JobCard from '#views/Jobs/Components/JobCard';
 import JobInfoDrawer from '#views/Jobs/Components/JobInfo';
 import { CountCardItem, CountCards } from '#views/Jobs/ListView/JobsContent';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { ArrowForward, ChevronLeft } from '@material-ui/icons';
-import { navigate } from '@reach/router';
 import { debounce } from 'lodash';
-import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchInbox } from './actions';
@@ -221,70 +215,7 @@ const InboxContent: FC<TabContentProps> = ({
         loading={loading}
         component={
           <>
-            <div className="job-list">
-              {jobs.map((job) => {
-                const actualStartDate = job?.startedAt || moment().unix();
-                const actualEndDate = job?.endedAt || moment().unix();
-                return (
-                  <div className="job-row" key={job.id}>
-                    <div className="job-row-section left">
-                      <div className="job-row-section-left top">
-                        <h5 className="job-name" onClick={() => navigate(`/inbox/${job.id}`)}>
-                          {job.checklist.name}
-                        </h5>
-                        <h5 className="job-type">{job.checklist.global ? 'Global' : 'Local'}</h5>
-                        {job.expectedStartDate && job.expectedEndDate && (
-                          <div className="schedule-info">
-                            <span
-                              style={{
-                                color: checkJobExecutionDelay(
-                                  actualStartDate,
-                                  job.expectedStartDate,
-                                )
-                                  ? '#da1e28'
-                                  : '#161616',
-                              }}
-                            >
-                              {formatDateTime(job.expectedStartDate, 'MMM DD, YYYY hh:mm A')}
-                            </span>
-                            <span className="icon">
-                              <ArrowForward />
-                            </span>
-                            <span
-                              style={{
-                                color: checkJobExecutionDelay(actualEndDate, job.expectedEndDate)
-                                  ? '#da1e28'
-                                  : '#161616',
-                              }}
-                            >
-                              {formatDateTime(job.expectedEndDate, 'MMM DD, YYYY hh:mm A')}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="job-row-section-left bottom">
-                        <LabelValueRow>
-                          {(job?.parameterValues || [])
-                            .sort((a: Parameter, b: Parameter) => a.orderTree - b.orderTree)
-                            .slice(0, 5)
-                            .map((parameter: Parameter) => (
-                              <JobCard parameter={parameter} />
-                            ))}
-                        </LabelValueRow>
-                      </div>
-                    </div>
-                    <div
-                      className="job-row-section right"
-                      onClick={() => {
-                        setSelectedJob(job);
-                      }}
-                    >
-                      <ChevronLeft />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <JobCard jobs={jobs} setSelectedJob={setSelectedJob} view="Inbox" />
             <Pagination pageable={pageable} fetchData={fetchData} />
           </>
         }

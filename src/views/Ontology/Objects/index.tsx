@@ -1,5 +1,4 @@
 import { LabelValueRow } from '#JobComposer/Header/styles';
-import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 import {
   Avatar,
   Button,
@@ -12,16 +11,17 @@ import { useTypedSelector } from '#store';
 import { apiGetJobsByResource } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGINATION } from '#utils/constants';
 import { FilterOperators, InputTypes, fetchDataParams } from '#utils/globalTypes';
-import { getParameterContent } from '#utils/parameterUtils';
 import { request } from '#utils/request';
-import { formatDateByInputType, formatDateTime } from '#utils/timeUtils';
+import { getFullName } from '#utils/stringUtils';
+import { formatDateByInputType } from '#utils/timeUtils';
+import JobCard from '#views/Jobs/Components/JobCard';
 import JobInfoDrawer from '#views/Jobs/Components/JobInfo';
 import {
   AssignedJobStates,
   CompletedJobStates,
   UnassignedJobStates,
 } from '#views/Jobs/ListView/types';
-import { ArrowForward, ChevronLeft } from '@material-ui/icons';
+import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
 import { RouteComponentProps, navigate } from '@reach/router';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -29,14 +29,10 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { fetchObject, fetchObjectType, resetOntology } from '../actions';
 import { Choice, ObjectTypeProperty } from '../types';
+import TabContent from './TabContent';
 import AddEditObjectDrawer from './components/AddEditObjectDrawer';
 import ProcessTabContent from './components/ProcessTabContent';
 import RelationTabContent from './components/RelationTabContent';
-import TabContent from './TabContent';
-import { getFullName } from '#utils/stringUtils';
-import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
-import JobCard from '#views/Jobs/Components/JobCard';
-import { Parameter } from '#PrototypeComposer/Activity/types';
 
 const ObjectViewWrapper = styled.div`
   display: flex;
@@ -174,6 +170,14 @@ const ObjectViewWrapper = styled.div`
                 letter-spacing: 0.16px;
                 color: #1d84ff;
                 cursor: pointer;
+              }
+              .job-type {
+                font-size: 12px;
+                margin: 0 0 0 12px;
+                font-weight: 400;
+                line-height: 16px;
+                letter-spacing: 0.16px;
+                color: #6f6f6f;
               }
               .schedule-info {
                 margin-left: auto;
@@ -431,54 +435,13 @@ const OverViewTabContent = () => {
         return (
           <CardWithTitle key={index}>
             <h4 className="card-label">{values.label}</h4>
-            <div className="job-list">
-              {values.list.map((job) => {
-                return (
-                  <div className="job-row" key={job.id}>
-                    <div className="job-row-section left">
-                      <div className="job-row-section-left top">
-                        <h5 className="job-name" onClick={() => navigate(`/inbox/${job.id}`)}>
-                          {job.checklist.name}
-                        </h5>
-                        {job.expectedStartDate && job.expectedEndDate && (
-                          <div className="schedule-info">
-                            <span>{formatDateTime(job.expectedStartDate)}</span>
-                            <span className="icon">
-                              <ArrowForward />
-                            </span>
-                            <span>{formatDateTime(job.expectedEndDate)}</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="job-row-section-left bottom">
-                        <LabelValueRow>
-                          {(job?.parameterValues || [])
-                            .sort((a: Parameter, b: Parameter) => a.orderTree - b.orderTree)
-                            .slice(0, 5)
-                            .map((parameter: Parameter) => (
-                              <JobCard parameter={parameter} />
-                            ))}
-                        </LabelValueRow>
-                      </div>
-                    </div>
-                    <div
-                      className="job-row-section right"
-                      onClick={() => {
-                        setSelectedJob(job);
-                      }}
-                    >
-                      <ChevronLeft />
-                    </div>
-                  </div>
-                );
-              })}
-              <Pagination
-                pageable={values.pageable}
-                fetchData={(pagination) => {
-                  fetchData(type, pagination);
-                }}
-              />
-            </div>
+            <JobCard jobs={values.list} view={'Object View'} setSelectedJob={setSelectedJob} />
+            <Pagination
+              pageable={values.pageable}
+              fetchData={(pagination) => {
+                fetchData(type, pagination);
+              }}
+            />
           </CardWithTitle>
         );
       })}
