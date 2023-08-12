@@ -205,11 +205,6 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
         if (recurrenceString) {
           if (recurrence === 'custom') {
             switch (freq) {
-              case 'HOURLY':
-                recurrenceString = `Repeat ${recurrenceString} at ${moment(
-                  expectedStartDate,
-                ).format('mm')}`;
-                break;
               case 'DAILY':
               case 'WEEKLY':
               case 'MONTHLY':
@@ -228,11 +223,6 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
             }
           } else {
             switch (freq) {
-              case 'HOURLY':
-                recurrenceString = `Repeat ${recurrenceString} at ${moment(
-                  expectedStartDate,
-                ).format('mm')}`;
-                break;
               case 'DAILY':
                 recurrenceString = `Repeat ${recurrenceString} at ${moment(
                   expectedStartDate,
@@ -280,10 +270,6 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
   if (expectedStartDate) {
     recurrenceOptions = [
       {
-        label: `Hourly at ${moment(expectedStartDate).format('mm')}`,
-        value: 'HOURLY',
-      },
-      {
         label: `Daily at ${moment(expectedStartDate).format('hh:mm A')}`,
         value: 'DAILY',
       },
@@ -327,10 +313,6 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
   }
 
   const repeatEveryOptions = [
-    {
-      label: repeatCount > 1 ? 'Hours' : 'Hour',
-      value: 'HOURLY',
-    },
     {
       label: repeatCount > 1 ? 'Days' : 'Day',
       value: 'DAILY',
