@@ -248,14 +248,14 @@ const ListView: FC<ListViewProps> = () => {
           isJobOpen: false,
         },
       },
-      ...(checkPermission(['approvals', 'view'])
-        ? [
-            {
-              label: 'Approvals',
-              tabContent: ApprovalsContent,
-            },
-          ]
-        : []),
+      // ...(checkPermission(['approvals', 'view'])
+      //   ? [
+      //       {
+      //         label: 'Approvals',
+      //         tabContent: ApprovalsContent,
+      //       },
+      //     ]
+      //   : []),
     ],
   });
 
