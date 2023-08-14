@@ -90,7 +90,19 @@ const reducer = (state = initialState, action: OntologyActionType): OntologyStat
     case OntologyAction.UPDATE_OBJECTS_LIST:
       return updateKey('objects', {
         listLoading: false,
-        list: state.objects.list.filter((object) => object.id !== action.payload.id),
+        list: state.objects.list.reduce<Object[]>((acc, item) => {
+          if (item.id === action.payload.id) {
+            if (action.payload.value) {
+              acc.push({
+                ...item,
+                ...action.payload.value,
+              });
+            }
+          } else {
+            acc.push(item);
+          }
+          return acc;
+        }, []),
       });
 
     case OntologyAction.FETCH_OBJECT_CHANGE_LOGS:

@@ -32,6 +32,8 @@ import {
 } from '../actions';
 import { Choice, Object, ObjectTypeProperty } from '../types';
 import AddEditObjectDrawer from './components/AddEditObjectDrawer';
+import { request } from '#utils/request';
+import { apiQrShortCode } from '#utils/apiUrls';
 
 const ObjectList: FC<TabContentProps> = () => {
   const dispatch = useDispatch();
@@ -260,8 +262,8 @@ const ObjectList: FC<TabContentProps> = () => {
                   } else if (!selectedObject?.shortCode) {
                     dispatch(
                       fetchQrShortCodeData({
-                        objectId: selectedObject?.id,
-                        objectTypeId: selectedObject?.objectType?.id,
+                        object: selectedObject,
+                        handlePrintQRCode,
                       }),
                     );
                   }

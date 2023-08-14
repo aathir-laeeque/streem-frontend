@@ -94,8 +94,8 @@ export const unarchiveObject = (
     collectionName,
   });
 
-export const updateObjectsList = (id: Object['id']) =>
-  actionSpreader(OntologyAction.UPDATE_OBJECTS_LIST, { id });
+export const updateObjectsList = (id: Object['id'], value?: Object) =>
+  actionSpreader(OntologyAction.UPDATE_OBJECTS_LIST, { id, value });
 
 export const createObjectType = (params: any) =>
   actionSpreader(OntologyAction.CREATE_OBJECT_TYPE, { params });
@@ -121,7 +121,7 @@ export const editObjectTypeProperty = (params: any) =>
 export const editObjectType = (params: any) =>
   actionSpreader(OntologyAction.EDIT_OBJECT_TYPE, { params });
 
-export const fetchQrShortCodeData = (params: Record<string, string | undefined>) =>
+export const fetchQrShortCodeData = (params: any) =>
   actionSpreader(OntologyAction.SHORT_CODE_QR_DATA, { params });
 
 export const editQrData = (params: any) => actionSpreader(OntologyAction.EDIT_QR_DATA, { params });

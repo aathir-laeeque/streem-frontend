@@ -423,11 +423,34 @@ function* editObjectTypeSaga({ payload }: ReturnType<any>) {
 function* postQrShortCodeSaga({ payload }: ReturnType<typeof actions.fetchQrShortCodeData>) {
   try {
     const { params } = payload;
-    yield call(request, 'POST', apiQrShortCode(), {
-      data: params,
+    const { object, handlePrintQRCode } = params;
+    const { data, errors } = yield call(request, 'POST', apiQrShortCode(), {
+      data: {
+        objectId: object?.id,
+        objectTypeId: object?.objectType?.id,
+      },
     });
+
+    if (data?.shortCode) {
+      yield put(actions.updateObjectsList(object?.id, data));
+      yield put(
+        openOverlayAction({
+          type: OverlayNames.QR_GENERATOR,
+          props: {
+            data: data?.shortCode,
+            selectedObject: object,
+            id: 'QRCode',
+            onPrimary: handlePrintQRCode,
+            primaryText: 'Print',
+            title: `QR Code for ${object?.displayName}`,
+          },
+        }),
+      );
+    } else {
+      throw getErrorMsg(errors);
+    }
   } catch (error) {
-    console.error('error in postQrShortCodeSaga :: ', error);
+    yield handleCatch('Ontology', 'postQrShortCodeSaga', error, true);
   }
 }
 
