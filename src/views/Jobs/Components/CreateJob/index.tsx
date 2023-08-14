@@ -12,6 +12,7 @@ import { JobForm } from './JobForm';
 import { Scheduler } from './Scheduler';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
+import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 
 const CreateJobDrawerWrapper = styled.form`
   display: flex;
@@ -228,10 +229,47 @@ const CreateJobDrawer: FC<{
     const data = getValues();
     const parameterValues = parametersList.reduce((acc, parameter: any) => {
       if (data[parameter.id]) {
-        acc[parameter.id] = {
-          parameter: data[parameter.id],
-          reason: data[parameter?.id]?.response?.reason || '',
-        };
+        if (
+          [
+            MandatoryParameter.NUMBER,
+            MandatoryParameter.DATE,
+            MandatoryParameter.DATE_TIME,
+            MandatoryParameter.SINGLE_LINE,
+            MandatoryParameter.MULTI_LINE,
+          ].includes(data[parameter.id]?.type)
+        ) {
+          if (data[parameter.id]?.data?.input && data[parameter.id]?.data?.input !== null) {
+            acc[parameter.id] = {
+              parameter: data[parameter.id],
+              reason: data[parameter?.id]?.response?.reason || '',
+            };
+          }
+        } else if (
+          [
+            MandatoryParameter.SINGLE_SELECT,
+            MandatoryParameter.MULTISELECT,
+            MandatoryParameter.YES_NO,
+            MandatoryParameter.CHECKLIST,
+          ].includes(data[parameter.id]?.type)
+        ) {
+          if (
+            data[parameter.id]?.data?.length > 0 &&
+            data[parameter.id]?.data?.some((item) => item.state === 'SELECTED')
+          ) {
+            acc[parameter.id] = {
+              parameter: data[parameter.id],
+              reason: data[parameter?.id]?.response?.reason || '',
+            };
+          }
+        } else if (
+          Object.keys(data[parameter.id]?.data).length === 0 ||
+          (data[parameter.id]?.data?.choices && data[parameter.id]?.data?.choices !== null)
+        ) {
+          acc[parameter.id] = {
+            parameter: data[parameter.id],
+            reason: data[parameter?.id]?.response?.reason || '',
+          };
+        }
       }
       return acc;
     }, {});
