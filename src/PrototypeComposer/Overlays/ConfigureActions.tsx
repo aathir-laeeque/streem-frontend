@@ -18,7 +18,7 @@ import { fetchObjectTypes } from '#views/Ontology/actions';
 import { Cardinality, ObjectType } from '#views/Ontology/types';
 import AddIcon from '@material-ui/icons/Add';
 import { isArray, startCase, toLower } from 'lodash';
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -312,6 +312,24 @@ const ActionFormCard: FC<Props> = ({
   const { editActionId, editIndex, selectedAction, editActionFlag } = state;
   const [objectUrlPath, setObjectUrlPath] = useState<string>('');
   const { list: objects, reset: resetObjects } = createFetchList(objectUrlPath, {}, false);
+  const parametersPagination = useRef({
+    resource: {
+      current: -1,
+      isLast: true,
+    },
+    multiResource: {
+      current: -1,
+      isLast: true,
+    },
+    number: {
+      current: -1,
+      isLast: true,
+    },
+    calculation: {
+      current: -1,
+      isLast: true,
+    },
+  });
 
   useEffect(() => {
     resetObjects({ url: objectUrlPath });
@@ -349,9 +367,10 @@ const ActionFormCard: FC<Props> = ({
     );
   };
 
-  const getParameterByType = (type: MandatoryParameter) =>
+  const getParameterByType = (type: MandatoryParameter, page: Number = 0) =>
     request('GET', apiGetParameters(checklistId), {
       params: {
+        page,
         filters: {
           op: FilterOperators.AND,
           fields: [
@@ -473,8 +492,90 @@ const ActionFormCard: FC<Props> = ({
           fetchObjectType(_selectedResource.data.objectTypeId);
         }
       }
-      setResourceParameters([...resources.data, ...multiresource.data]);
-      setNumberParameters([...numbers.data, ...calculation.data]);
+      setResourceParameters([...resources?.data, ...multiresource?.data]);
+      setNumberParameters([...numbers?.data, ...calculation?.data]);
+      parametersPagination.current = {
+        resource: {
+          current: resources.pageable?.page,
+          isLast: resources.pageable?.last,
+        },
+        multiResource: {
+          current: multiresource.pageable?.page,
+          isLast: multiresource.pageable?.last,
+        },
+        number: {
+          current: numbers.pageable?.page,
+          isLast: numbers.pageable?.last,
+        },
+        calculation: {
+          current: calculation.pageable?.page,
+          isLast: calculation.pageable?.last,
+        },
+      };
+      setIsLoadingParameters(false);
+    }
+  };
+
+  const resourceHandleScrollToBottom = async () => {
+    if (
+      !parametersPagination?.current?.resource?.isLast ||
+      !parametersPagination?.current?.multiResource?.isLast
+    ) {
+      setIsLoadingParameters(true);
+      const [resources, multiresource] = await Promise.all([
+        getParameterByType(
+          MandatoryParameter.RESOURCE,
+          parametersPagination?.current?.resource?.current + 1,
+        ),
+        getParameterByType(
+          MandatoryParameter.MULTI_RESOURCE,
+          parametersPagination?.current?.multiResource?.current + 1,
+        ),
+      ]);
+      setResourceParameters((prev) => [...prev, ...resources?.data, ...multiresource?.data]);
+      parametersPagination.current = {
+        ...parametersPagination.current,
+        resource: {
+          current: resources.pageable?.page,
+          isLast: resources.pageable?.last,
+        },
+        multiResource: {
+          current: multiresource.pageable?.page,
+          isLast: multiresource.pageable?.last,
+        },
+      };
+      setIsLoadingParameters(false);
+    }
+  };
+
+  const numberHandleScrollToBottom = async () => {
+    if (
+      !parametersPagination?.current?.number?.isLast ||
+      !parametersPagination?.current?.calculation?.isLast
+    ) {
+      setIsLoadingParameters(true);
+      const [numbers, calculation] = await Promise.all([
+        getParameterByType(
+          MandatoryParameter.NUMBER,
+          parametersPagination?.current?.number?.current + 1,
+        ),
+        getParameterByType(
+          MandatoryParameter.CALCULATION,
+          parametersPagination?.current?.calculation?.current + 1,
+        ),
+      ]);
+      setNumberParameters((prev) => [...prev, ...numbers.data, ...calculation.data]);
+      parametersPagination.current = {
+        ...parametersPagination.current,
+        number: {
+          current: numbers.pageable?.page,
+          isLast: numbers.pageable?.last,
+        },
+        calculation: {
+          current: calculation.pageable?.page,
+          isLast: calculation.pageable?.last,
+        },
+      };
       setIsLoadingParameters(false);
     }
   };
@@ -807,6 +908,7 @@ const ActionFormCard: FC<Props> = ({
                                 isSearchable: false,
                                 placeholder: 'Select Resource Parameter',
                                 isDisabled: isReadOnly,
+                                onMenuScrollToBottom: resourceHandleScrollToBottom,
                                 value: value?.referencedParameterId
                                   ? [
                                       {
@@ -861,6 +963,7 @@ const ActionFormCard: FC<Props> = ({
                                         : null,
                                       isSearchable: false,
                                       placeholder: 'Select Number Parameter',
+                                      onMenuScrollToBottom: numberHandleScrollToBottom,
                                       onChange: (_option: any) => {
                                         onChange({
                                           ...actionDetails,
