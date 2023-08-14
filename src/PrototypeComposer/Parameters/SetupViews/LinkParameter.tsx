@@ -1,5 +1,9 @@
 import { Button, FormGroup } from '#components';
-import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
+import {
+  MandatoryParameter,
+  ParameterType,
+  TargetEntityType,
+} from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { apiGetObjectTypes, apiGetParameters } from '#utils/apiUrls';
 import { FilterOperators, InputTypes, ResponseObj } from '#utils/globalTypes';
@@ -18,6 +22,7 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
         parameters: { listById },
       },
     } = useTypedSelector((state) => state);
+
     const { id: checklistId, parameters: cjfParameters } = processData!;
     const { watch, setValue, register, getValues } = form;
     const type = watch('type', {});
@@ -52,6 +57,11 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
                   field: 'type',
                   op: FilterOperators.EQ,
                   values: [MandatoryParameter.RESOURCE],
+                },
+                {
+                  field: 'targetEntityType',
+                  op: FilterOperators.NE,
+                  values: [TargetEntityType.UNMAPPED],
                 },
               ],
             },
