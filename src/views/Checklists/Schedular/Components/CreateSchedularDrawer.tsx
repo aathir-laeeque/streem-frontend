@@ -558,7 +558,7 @@ const CreateSchedularDrawer: FC<{
           recurrence: response.data.customRecurrence ? 'custom' : frequency,
           rRuleOptions: omit(rRuleOptions, ['dtstart', 'interval', 'freq']) || {},
           repeatCount: rRuleOptions.interval,
-          repeatEvery: frequency,
+          repeatEvery: response.data.customRecurrence ? frequency : null,
           weekDays: rRuleOptions?.byweekday?.reduce((acc, week) => {
             acc[week.weekday] = true;
             return acc;
