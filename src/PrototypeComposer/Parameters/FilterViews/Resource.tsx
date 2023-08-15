@@ -168,7 +168,7 @@ const ResourceFilter: FC<{
   // };
 
   const fetchParametersData = async (params: fetchDataParams = {}) => {
-    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
+    const { page = DEFAULT_PAGE_NUMBER, size = 256 } = params;
     if (processData?.id) {
       try {
         const response: ResponseObj<any> = await request('GET', apiGetParameters(processData?.id), {
