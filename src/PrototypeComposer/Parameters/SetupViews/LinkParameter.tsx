@@ -13,6 +13,7 @@ import { LinkOffOutlined, LinkOutlined } from '@material-ui/icons';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import { CommonWrapper } from './styles';
+import { DEFAULT_PAGE_NUMBER } from '#utils/constants';
 
 const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: ParameterType }> =
   ({ form, isReadOnly }) => {
@@ -40,11 +41,12 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
       isLast: false,
     });
 
-    const fetchResourceParameters = async () => {
+    const fetchResourceParameters = async (page: number = DEFAULT_PAGE_NUMBER) => {
       if (checklistId && !loading && !pagination.current.isLast) {
         setLoading(true);
         const resources = await request('GET', apiGetParameters(checklistId), {
           params: {
+            page,
             filters: {
               op: FilterOperators.AND,
               fields: [
@@ -73,7 +75,11 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
             isLast: resources.pageable?.last,
           };
         }
-        setResourceParameters(resources.data || []);
+        if (resources.data) {
+          setResourceParameters((prev) =>
+            pagination.current.current === 0 ? resources.data : [...prev, ...resources.data],
+          );
+        }
         setLoading(false);
       }
     };
@@ -153,7 +159,8 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
                       ]
                     : undefined,
                   isSearchable: false,
-                  onMenuScrollToBottom: fetchResourceParameters,
+                  onMenuScrollToBottom: () =>
+                    fetchResourceParameters(pagination.current.current + 1),
                   placeholder: 'Select',
                   isDisabled: isReadOnly,
                   onChange: (value: any) => {
