@@ -5,7 +5,13 @@ import { Button, FormGroup } from '#components';
 import { useTypedSelector } from '#store';
 import { apiGetObjectTypes, apiGetParameters, baseUrl } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterOperators, InputTypes, ResponseObj, fetchDataParams } from '#utils/globalTypes';
+import {
+  FilterField,
+  FilterOperators,
+  InputTypes,
+  ResponseObj,
+  fetchDataParams,
+} from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { Choice, ObjectType } from '#views/Ontology/types';
 import { AddCircleOutline, Close } from '@material-ui/icons';
@@ -104,6 +110,7 @@ type ResourceFilterState = {
   selectedObjectType?: ObjectType;
   relationObjects?: Record<string, any[]>;
   parametersData?: any;
+  parametersFilterFields: FilterField[];
 };
 
 const ResourceFilter: FC<{
@@ -265,6 +272,7 @@ const ResourceFormCard: FC<{
     filterSelectOptions: {},
     relationObjects: {},
     parametersData: {},
+    parametersFilterFields: [],
   });
   const {
     isActiveLoading,
@@ -272,6 +280,7 @@ const ResourceFormCard: FC<{
     filterSelectOptions,
     relationObjects,
     parametersData,
+    parametersFilterFields,
   } = state;
 
   const parameterOptionsList =
@@ -355,7 +364,8 @@ const ResourceFormCard: FC<{
   };
 
   const fetchParametersData = async (params: fetchDataParams = {}) => {
-    const { page = DEFAULT_PAGE_NUMBER, size = 256 } = params;
+    const { page = DEFAULT_PAGE_NUMBER, size = 2560, filters = parametersFilterFields } = params;
+    // TODO: size is increased to 2560 to fetch all parameters at once cause mongo filter doesnt support for data.objectTypeId in case of resource type call.
     if (processData?.id) {
       try {
         const response: ResponseObj<any> = await request('GET', apiGetParameters(processData?.id), {
@@ -364,22 +374,7 @@ const ResourceFormCard: FC<{
             size,
             filters: {
               op: FilterOperators.AND,
-              fields: [
-                { field: 'archived', op: FilterOperators.EQ, values: [false] },
-                {
-                  field: 'type',
-                  op: FilterOperators.ANY,
-                  values: [
-                    MandatoryParameter.NUMBER,
-                    MandatoryParameter.CALCULATION,
-                    MandatoryParameter.RESOURCE,
-                    MandatoryParameter.SINGLE_SELECT,
-                    MandatoryParameter.SINGLE_LINE,
-                    MandatoryParameter.MULTI_LINE,
-                    'MULTI_SELECT',
-                  ],
-                },
-              ],
+              fields: [{ field: 'archived', op: FilterOperators.EQ, values: [false] }, ...filters],
             },
             sort: 'id,desc',
           },
@@ -387,7 +382,13 @@ const ResourceFormCard: FC<{
         if (response.data) {
           setState((prev) => ({
             ...prev,
-            parametersData: { data: response.data, pageable: response.pageable },
+            parametersData: {
+              data:
+                response?.pageable?.page === 0
+                  ? response.data
+                  : [...prev.parametersData.data, ...response.data],
+              pageable: response.pageable,
+            },
           }));
         }
       } catch (e) {
@@ -397,18 +398,18 @@ const ResourceFormCard: FC<{
   };
 
   useEffect(() => {
-    fetchParametersData();
-  }, []);
-
-  useEffect(() => {
     if (data?.objectTypeId) {
       fetchObjectType(data.objectTypeId);
     }
   }, [data?.objectTypeId]);
 
   const handleMenuScrollToBottom = () => {
-    if (!parametersData?.pageable?.last)
-      fetchParametersData({ page: parametersData?.pageable?.page + 1 });
+    if (!parametersData?.pageable?.last) {
+      fetchParametersData({
+        page: parametersData?.pageable?.page + 1,
+        filters: parametersFilterFields,
+      });
+    }
   };
 
   useEffect(() => {
@@ -423,9 +424,28 @@ const ResourceFormCard: FC<{
             );
           }
         }
+        setState((prev) => ({
+          ...prev,
+          parametersFilterFields: [
+            {
+              field: 'type',
+              op: FilterOperators.ANY,
+              values:
+                currfilter.propertyType === 'NUMBER'
+                  ? [MandatoryParameter.NUMBER, MandatoryParameter.CALCULATION]
+                  : [currfilter.propertyType],
+            },
+          ],
+        }));
       });
     }
   }, [propertiesMap.current]);
+
+  useEffect(() => {
+    if (parametersFilterFields?.length) {
+      fetchParametersData({ filters: parametersFilterFields });
+    }
+  }, [parametersFilterFields]);
 
   return (fields || []).map((item: any, index: number) => {
     if (!item) return null;
@@ -493,10 +513,30 @@ const ResourceFormCard: FC<{
                       }));
                     } else if (value?.target?.cardinality && value?.target?.urlPath) {
                       fetchRelationObjects(value?.target?.urlPath, value?.externalId);
+                      setState((prev) => ({
+                        ...prev,
+                        parametersFilterFields: [
+                          {
+                            field: 'type',
+                            op: FilterOperators.ANY,
+                            values: [MandatoryParameter.RESOURCE],
+                          },
+                        ],
+                      }));
                     } else {
                       setState((prev) => ({
                         ...prev,
                         filterSelectOptions: { ...prev.filterSelectOptions, [index]: [] },
+                        parametersFilterFields: [
+                          {
+                            field: 'type',
+                            op: FilterOperators.ANY,
+                            values:
+                              value.inputType === MandatoryParameter.NUMBER
+                                ? [value.inputType, MandatoryParameter.CALCULATION]
+                                : [value.inputType],
+                          },
+                        ],
                       }));
                     }
                   },
@@ -704,16 +744,7 @@ const ResourceFormCard: FC<{
                               options: !item?.selector
                                 ? []
                                 : parameterOptionsList?.filter((currList) => {
-                                    if (currList?.type === selectedObjectProperty?.inputType) {
-                                      return currList;
-                                    } else if (
-                                      selectedObjectProperty?.inputType ===
-                                        MandatoryParameter.NUMBER &&
-                                      (currList.type === MandatoryParameter.NUMBER ||
-                                        currList.type === MandatoryParameter.CALCULATION)
-                                    ) {
-                                      return currList;
-                                    } else if (
+                                    if (
                                       selectedObjectProperty?.target?.cardinality ===
                                         InputTypes.ONE_TO_ONE &&
                                       currList?.type === MandatoryParameter.RESOURCE &&
