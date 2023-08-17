@@ -348,7 +348,7 @@ const CreateJobDrawer: FC<{
               handleCloseDrawer();
             }}
           >
-            Schedule Later
+            Skip For Now
           </Button>
           <Button type="submit" disabled={!isDirty || !isValid} onClick={handleScheduleJob}>
             Save
