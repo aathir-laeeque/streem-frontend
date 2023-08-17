@@ -1,12 +1,22 @@
-import { FileGallery } from '#components';
+import { FileGallery, FileGalleryProps } from '#components';
 import { TaskMediasWrapper } from '#PrototypeComposer/Tasks/styles';
 import React, { FC } from 'react';
 
-const FileUploadMedias: FC<any> = ({ medias, parameter, isCorrectingError }) => {
+const FileUploadMedias: FC<FileGalleryProps> = ({
+  medias,
+  parameter,
+  isCorrectingError,
+  isTaskCompleted,
+}) => {
   return (
     <TaskMediasWrapper>
       <div className="container">
-        <FileGallery medias={medias} parameter={parameter} isCorrectingError={isCorrectingError} />
+        <FileGallery
+          medias={medias}
+          parameter={parameter}
+          isCorrectingError={isCorrectingError}
+          isTaskCompleted={isTaskCompleted}
+        />
       </div>
     </TaskMediasWrapper>
   );

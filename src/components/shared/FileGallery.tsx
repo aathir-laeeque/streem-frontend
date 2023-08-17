@@ -12,7 +12,7 @@ import { request } from '#utils/request';
 
 const FileGalleryWrapper = styled.div.attrs({
   className: 'file-gallery-wrapper',
-})`
+})<Pick<FileGalleryProps, 'isTaskCompleted'>>`
   display: flex;
   margin-top: 16px;
   justify-content: space-between;
@@ -52,12 +52,16 @@ const FileGalleryWrapper = styled.div.attrs({
     color: #1d84ff;
     font-size: 14px;
   }
+
+  .media-list-item-remove-icon {
+    pointer-events: ${({ isTaskCompleted }) => (isTaskCompleted ? 'none' : 'unset')}
 `;
 
-type FileGalleryProps = {
+export type FileGalleryProps = {
   medias: FilesType[];
   parameter: Parameter;
   isCorrectingError?: boolean;
+  isTaskCompleted?: boolean;
 };
 
 type FilesType = {
@@ -81,7 +85,12 @@ enum FileTypes {
   PNG = 'image/png',
 }
 
-export const FileGallery: FC<FileGalleryProps> = ({ medias, parameter, isCorrectingError }) => {
+export const FileGallery: FC<FileGalleryProps> = ({
+  medias,
+  parameter,
+  isCorrectingError,
+  isTaskCompleted,
+}) => {
   const sectionIcon = (type: string, mediaLink: string) => {
     switch (type) {
       case FileTypes.PDF:
@@ -160,7 +169,7 @@ export const FileGallery: FC<FileGalleryProps> = ({ medias, parameter, isCorrect
   };
 
   return (
-    <FileGalleryWrapper>
+    <FileGalleryWrapper isTaskCompleted={isTaskCompleted}>
       <div className="media-list">
         {medias.map((media, index) => {
           if (media?.archived === false) {
@@ -174,7 +183,7 @@ export const FileGallery: FC<FileGalleryProps> = ({ medias, parameter, isCorrect
                 </div>
                 <img
                   src={closeIcon}
-                  alt="close icon"
+                  className="media-list-item-remove-icon"
                   onClick={() => {
                     dispatch(
                       openOverlayAction({

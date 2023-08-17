@@ -153,6 +153,7 @@ const FileUploadParameter: FC<ParameterProps> = ({
           medias={parameter.response?.medias ?? []}
           parameter={parameter}
           isCorrectingError={isCorrectingError}
+          isTaskCompleted={isTaskCompleted}
         />
       )}
       {(!isTaskCompleted || isCorrectingError) && (
