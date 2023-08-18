@@ -20,8 +20,8 @@ const GlobalStyles = createGlobalStyle`
 
   /* width */
   ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
+    width: 18px;
+    height: 18px;
   }
 
   /* Track */
@@ -30,10 +30,15 @@ const GlobalStyles = createGlobalStyle`
     border-radius: 10px;
   }
 
+  ::-webkit-scrollbar-track:vertical {
+    border-right:1px solid #E0E0E0;
+    border-left:1px solid #E0E0E0;
+}
   /* Handle */
   ::-webkit-scrollbar-thumb {
     background: #1d84ff;
     border-radius: 10px;
+    border:4px solid #eeeeee;
   }
 
   /* Handle on hover */
