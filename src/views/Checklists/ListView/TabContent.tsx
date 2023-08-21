@@ -100,6 +100,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
   const [createJobDrawerVisible, setCreateJobDrawerVisible] = useState(false);
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(null);
   const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(label));
+  const [searchFilterFields, setSearchFilterFields] = useState<FilterField[]>([]);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -118,6 +119,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
           op: FilterOperators.AND,
           fields: [
             ...filters,
+            ...searchFilterFields,
             {
               field: 'useCaseId',
               op: FilterOperators.EQ,
@@ -152,7 +154,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
 
   useEffect(() => {
     fetchData({ filters: filterFields });
-  }, [filterFields]);
+  }, [filterFields, searchFilterFields]);
 
   const prototypeActionsTemplate = (item: Checklist | null = null) => {
     if (!item) return <div style={{ display: 'flex', justifyContent: 'center' }}>-N/A-</div>;
@@ -587,23 +589,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
               operator: FilterOperators.LIKE,
             },
           ]}
-          updateFilterFields={(fields) => {
-            setFilterFields((currentFields) => {
-              const updatedFilterFields = [
-                ...currentFields.filter(
-                  (field) =>
-                    ![
-                      ...fields,
-                      {
-                        field: 'name',
-                      },
-                    ].some((newField) => newField.field === field.field),
-                ),
-                ...fields.filter((f) => f?.values?.[0]),
-              ];
-              return updatedFilterFields;
-            });
-          }}
+          updateFilterFields={(fields) => setSearchFilterFields(fields)}
         />
 
         {label === 'prototype' && (

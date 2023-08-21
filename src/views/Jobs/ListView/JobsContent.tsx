@@ -436,6 +436,7 @@ const JobsContent: FC<TabContentProps> = ({
       values: [selectedUseCase?.id],
     },
   ]);
+  const [searchFilterFields, setSearchFilterFields] = useState<FilterField[]>([]);
   const [cardsValues, setCardsValues] = useState<any[]>([]);
   const [selectedJob, setSelectedJob] = useState<any>();
   const [activeFilterCard, setActiveFilterCard] = useState<string>('');
@@ -528,7 +529,7 @@ const JobsContent: FC<TabContentProps> = ({
         objectId,
         filters: {
           op: FilterOperators.AND,
-          fields: [...filters],
+          fields: [...filters, ...searchFilterFields],
         },
       }),
     );
@@ -537,7 +538,7 @@ const JobsContent: FC<TabContentProps> = ({
   useEffect(() => {
     fetchData({ filters: filterFields });
     if (cards?.length) fetchCardsValues();
-  }, [filterFields, reRender, resourceFilter]);
+  }, [filterFields, reRender, resourceFilter, searchFilterFields]);
 
   const handleOnCreateJob = () => {
     if (selectedFacility?.id === ALL_FACILITY_ID) {
@@ -621,15 +622,7 @@ const JobsContent: FC<TabContentProps> = ({
               operator: FilterOperators.LIKE,
             },
           ]}
-          updateFilterFields={(fields) => {
-            setFilterFields((currentFields) => {
-              const updatedFilterFields = [
-                ...currentFields.filter((field) => field.field !== fields?.[0]?.field),
-                ...fields.filter((f) => f?.values?.[0]),
-              ];
-              return updatedFilterFields;
-            });
-          }}
+          updateFilterFields={(fields) => setSearchFilterFields(fields)}
         />
         <Select
           className="process-filter"
