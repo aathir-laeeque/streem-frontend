@@ -106,6 +106,8 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overvi
     correctionEnabled,
     pauseReasons,
     audit,
+    correctedAt,
+    correctedBy,
   } = task.taskExecution;
 
   const dispatch = useDispatch();
@@ -255,14 +257,21 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overvi
                   className="task-audit"
                   style={{ paddingTop: isTaskPaused || !!correctionEnabled ? '0px' : '14px' }}
                 >
-                  {audit
-                    ? audit.modifiedBy && (
-                        <>
-                          Last updated by {getFullName(audit.modifiedBy)}, ID:{' '}
-                          {audit.modifiedBy.employeeId} on {formatDateTime(audit.modifiedAt)}
-                        </>
-                      )
-                    : 'Updating...'}
+                  {correctedBy ? (
+                    <>
+                      Last updated by {getFullName(correctedBy)}, ID: {correctedBy.employeeId} on{' '}
+                      {formatDateTime(correctedAt)}
+                    </>
+                  ) : audit ? (
+                    audit.modifiedBy && (
+                      <>
+                        Last updated by {getFullName(audit.modifiedBy)}, ID:{' '}
+                        {audit.modifiedBy.employeeId} on {formatDateTime(audit.modifiedAt)}
+                      </>
+                    )
+                  ) : (
+                    'Updating...'
+                  )}
                 </div>
               )}
               <ParameterList

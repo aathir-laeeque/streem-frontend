@@ -118,7 +118,7 @@ export interface TaskExecution {
   assignees: User[];
   correctionEnabled: boolean;
   correctionReason?: string | null;
-  correctedAt?: boolean | null;
+  correctedAt?: number | null;
   correctedBy?: Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName' | 'archived'>;
   pauseReasons?: Record<string, string>[];
 }
