@@ -79,6 +79,7 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
       setState((prev) => ({ ...prev, isLoadingParameters: true }));
       const resources = await request('GET', apiGetParameters(checklistId), {
         params: {
+          sort: 'createdAt,desc',
           filters: {
             op: FilterOperators.AND,
             fields: [

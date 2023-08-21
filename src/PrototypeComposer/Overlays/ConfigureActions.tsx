@@ -371,6 +371,7 @@ const ActionFormCard: FC<Props> = ({
     request('GET', apiGetParameters(checklistId), {
       params: {
         page,
+        sort: 'createdAt,desc',
         filters: {
           op: FilterOperators.AND,
           fields: [

@@ -450,6 +450,7 @@ const FiltersDrawer: FC<any> = ({
     setState((prev) => ({ ...prev, loading: true }));
     const parametersForCalc = await request('GET', apiGetParameters(checklistId), {
       params: {
+        sort: 'createdAt,desc',
         filters: {
           op: FilterOperators.AND,
           fields: [

@@ -116,6 +116,7 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
   const urlParams = {
     page: DEFAULT_PAGE_NUMBER,
     size: DEFAULT_PAGE_SIZE,
+    sort: 'createdAt,desc',
     filters: {
       op: FilterOperators.AND,
       fields: [

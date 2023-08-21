@@ -47,6 +47,7 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
         const resources = await request('GET', apiGetParameters(checklistId), {
           params: {
             page,
+            sort: 'createdAt,desc',
             filters: {
               op: FilterOperators.AND,
               fields: [

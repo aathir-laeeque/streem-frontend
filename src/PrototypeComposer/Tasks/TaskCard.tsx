@@ -468,6 +468,7 @@ const TaskCard: FC<
                               {
                                 params: {
                                   page: pageNumber,
+                                  sort: 'createdAt,desc',
                                   size: DEFAULT_PAGE_SIZE,
                                   filters: {
                                     op: FilterOperators.AND,

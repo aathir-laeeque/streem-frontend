@@ -98,6 +98,7 @@ const DynamicTaskDrawer: FC<{
       setIsLoadingParameters(true);
       const parameters = await request('GET', apiGetParameters(checklist.id), {
         params: {
+          sort: 'createdAt,desc',
           filters: {
             op: FilterOperators.AND,
             fields: [
