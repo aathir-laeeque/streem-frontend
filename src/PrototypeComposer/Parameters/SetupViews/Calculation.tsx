@@ -1,9 +1,10 @@
 import { Button, selectStyles, Textarea, TextInput } from '#components';
-import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
+import { createFetchList } from '#hooks/useFetchData';
+import { MandatoryParameter, Parameter } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { apiGetParameters } from '#utils/apiUrls';
-import { fetchDataParams, FilterOperators } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { FilterOperators } from '#utils/globalTypes';
 import { Add, Clear, DragHandle } from '@material-ui/icons';
 import { EquationNode, EquationParserError, parse } from 'equation-parser';
 import {
@@ -14,12 +15,11 @@ import {
   resolve,
   VariableLookup,
 } from 'equation-resolver';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import Select from 'react-select';
 import { CommonWrapper } from './styles';
-import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { createFetchList } from '#hooks/useFetchData';
+import { debounce } from 'lodash';
 
 const comparisons = [
   'equals',
@@ -86,32 +86,25 @@ const math = (equationsArr: string[], defaultVariables: VariableLookup) => {
   return equations;
 };
 
-const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
-  form,
+const MapVariable: FC<{
+  variableName: string;
+  value: string;
+  isReadOnly: boolean;
+  onRemoveVariable: (variableName: string) => void;
+  onParameterSelect: (option: any, variableName: string) => void;
+  onVariableNameChange: (value: string, variableName: string) => void;
+}> = ({
+  variableName,
+  value,
   isReadOnly,
-}) => {
+  onRemoveVariable,
+  onParameterSelect,
+  onVariableNameChange,
+}: any) => {
   const { id: checklistId } = useTypedSelector((state) => state.prototypeComposer.data!);
   const {
     parameters: { addParameter },
   } = useTypedSelector((state) => state.prototypeComposer);
-  const { register, watch, setValue, errors, setError, clearErrors } = form;
-  const variables = watch('data.variables', {});
-  const expression = watch('data.expression', '');
-
-  const equations = (expression as string)
-    .split(/\n/g)
-    .map((s) => s.trim())
-    .filter((s) => s);
-
-  const defaultVariables = Object.keys(variables).reduce(
-    (acc: VariableLookup, variableName: string) => {
-      acc[variableName] = { type: 'number', value: 1 };
-      return acc;
-    },
-    {},
-  );
-  const parsedEquations = math(equations, defaultVariables);
-  const equationError = getEquationError(parsedEquations);
 
   const urlParams = {
     page: DEFAULT_PAGE_NUMBER,
@@ -143,7 +136,7 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
     },
   };
 
-  const { list, reset, status, fetchNext } = createFetchList(
+  const { list, reset, status, fetchNext } = createFetchList<Parameter>(
     apiGetParameters(checklistId),
     urlParams,
     false,
@@ -154,6 +147,108 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
       reset({ params: { ...urlParams } });
     }
   }, []);
+
+  return (
+    <li className="list-item" key={variableName}>
+      <TextInput
+        placeholder="X"
+        type="text"
+        label="Parameter Name"
+        defaultValue={variableName === 'undefined' ? undefined : variableName}
+        disabled={isReadOnly}
+        onBlur={(e: any) => {
+          onVariableNameChange(e.target.value, variableName);
+        }}
+      />
+      <DragHandle style={{ marginInline: 16 }} />
+      <div
+        style={{
+          flex: 1,
+        }}
+      >
+        <label className="input-label">Select Parameter</label>
+        <div
+          style={{
+            flex: 1,
+            ...(variableName === 'undefined' && {
+              background: '#f4f4f4',
+            }),
+          }}
+        >
+          <Select
+            isDisabled={isReadOnly || variableName === 'undefined'}
+            isLoading={status === 'loadingNext'}
+            styles={selectStyles}
+            onInputChange={debounce((searchedValue: string, actionMeta) => {
+              if (searchedValue !== actionMeta.prevInputValue)
+                reset({
+                  params: {
+                    ...urlParams,
+                    filters: {
+                      ...urlParams.filters,
+                      fields: [
+                        ...urlParams.filters.fields,
+                        ...(searchedValue
+                          ? [{ field: 'label', op: FilterOperators.LIKE, values: [searchedValue] }]
+                          : []),
+                      ],
+                    },
+                  },
+                });
+            }, 500)}
+            options={list.map((parameter) => ({
+              value: parameter.id,
+              ...parameter,
+            }))}
+            defaultValue={
+              value?.parameterId
+                ? {
+                    value: value.parameterId,
+                    label: value.label,
+                  }
+                : undefined
+            }
+            onChange={(option: any) => {
+              onParameterSelect(option, variableName);
+            }}
+            onMenuScrollToBottom={() => fetchNext()}
+          />
+        </div>
+      </div>
+      {!isReadOnly && (
+        <Clear
+          style={{ marginLeft: 16, cursor: 'pointer' }}
+          onClick={() => {
+            onRemoveVariable(variableName);
+          }}
+        />
+      )}
+    </li>
+  );
+};
+
+const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
+  form,
+  isReadOnly,
+}) => {
+  const { register, watch, setValue, errors, setError, clearErrors } = form;
+  const variables = watch('data.variables', {});
+  const expression = watch('data.expression', '');
+
+  const equations = (expression as string)
+    .split(/\n/g)
+    .map((s) => s.trim())
+    .filter((s) => s);
+
+  const defaultVariables = Object.keys(variables).reduce(
+    (acc: VariableLookup, variableName: string) => {
+      acc[variableName] = { type: 'number', value: 1 };
+      return acc;
+    },
+    {},
+  );
+  const parsedEquations = math(equations, defaultVariables);
+  const equationError = getEquationError(parsedEquations);
 
   useEffect(() => {
     register('data.variables');
@@ -169,6 +264,54 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
     }
   }, [equationError]);
 
+  const onVariableNameChange = (value: string, variableName: string) => {
+    const formValue = variables[variableName];
+    delete variables[variableName];
+    setValue(
+      'data.variables',
+      {
+        ...variables,
+        [value]: formValue,
+      },
+      {
+        shouldDirty: true,
+        shouldValidate: true,
+      },
+    );
+  };
+
+  const onParameterSelect = (option: any, variableName: string) => {
+    setValue(
+      'data.variables',
+      {
+        ...variables,
+        [variableName]: {
+          parameterId: option.id,
+          taskId: option.taskId,
+          label: option.label,
+        },
+      },
+      {
+        shouldDirty: true,
+        shouldValidate: true,
+      },
+    );
+  };
+
+  const onRemoveVariable = (variableName: string) => {
+    delete variables[variableName];
+    setValue(
+      'data.variables',
+      {
+        ...variables,
+      },
+      {
+        shouldDirty: true,
+        shouldValidate: true,
+      },
+    );
+  };
+
   return (
     <CommonWrapper>
       <TextInput
@@ -183,101 +326,15 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
       <ul className="list" {...(isReadOnly && { style: { marginBottom: '16px' } })}>
         {Object.entries(variables).map(([variableName, value]: [string, any], index) => {
           return (
-            <li className="list-item" key={variableName}>
-              <TextInput
-                placeholder="X"
-                type="text"
-                label="Parameter Name"
-                defaultValue={variableName === 'undefined' ? undefined : variableName}
-                disabled={isReadOnly}
-                onBlur={(e: any) => {
-                  const formValue = variables[variableName];
-                  delete variables[variableName];
-                  setValue(
-                    'data.variables',
-                    {
-                      ...variables,
-                      [e.target.value]: formValue,
-                    },
-                    {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    },
-                  );
-                }}
-              />
-              <DragHandle style={{ marginInline: 16 }} />
-              <div
-                style={{
-                  flex: 1,
-                }}
-              >
-                <label className="input-label">Select Parameter</label>
-                <div
-                  style={{
-                    flex: 1,
-                    ...(variableName === 'undefined' && {
-                      background: '#f4f4f4',
-                    }),
-                  }}
-                >
-                  <Select
-                    isDisabled={isReadOnly || variableName === 'undefined'}
-                    isLoading={status === 'loadingNext'}
-                    styles={selectStyles}
-                    isSearchable={false}
-                    options={list.map((parameter) => ({
-                      value: parameter.id,
-                      ...parameter,
-                    }))}
-                    defaultValue={
-                      value?.parameterId
-                        ? {
-                            value: value.parameterId,
-                            label: value.label,
-                          }
-                        : undefined
-                    }
-                    onChange={(option: any) => {
-                      setValue(
-                        'data.variables',
-                        {
-                          ...variables,
-                          [variableName]: {
-                            parameterId: option.id,
-                            taskId: option.taskId,
-                            label: option.label,
-                          },
-                        },
-                        {
-                          shouldDirty: true,
-                          shouldValidate: true,
-                        },
-                      );
-                    }}
-                    onMenuScrollToBottom={() => fetchNext()}
-                  />
-                </div>
-              </div>
-              {!isReadOnly && (
-                <Clear
-                  style={{ marginLeft: 16, cursor: 'pointer' }}
-                  onClick={() => {
-                    delete variables[variableName];
-                    setValue(
-                      'data.variables',
-                      {
-                        ...variables,
-                      },
-                      {
-                        shouldDirty: true,
-                        shouldValidate: true,
-                      },
-                    );
-                  }}
-                />
-              )}
-            </li>
+            <MapVariable
+              key={index}
+              variableName={variableName}
+              value={value}
+              isReadOnly={isReadOnly}
+              onRemoveVariable={onRemoveVariable}
+              onParameterSelect={onParameterSelect}
+              onVariableNameChange={onVariableNameChange}
+            />
           );
         })}
       </ul>
