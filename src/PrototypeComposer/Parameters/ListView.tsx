@@ -1,30 +1,25 @@
-import {
-  Button,
-  DataTable,
-  LoadingContainer,
-  Pagination,
-  TextInput,
-  Select,
-  Checkbox,
-} from '#components';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
 import { fetchParameters, toggleNewParameter } from '#PrototypeComposer/Activity/actions';
-import { MandatoryParameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
+import {
+  MandatoryParameter,
+  ParameterVerificationTypeEnum,
+  TargetEntityType,
+} from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap, TargetEntityTypeVisual } from '#PrototypeComposer/constants';
 import { TabPanelWrapper } from '#PrototypeComposer/styles';
+import { Button, DataTable, LoadingContainer, Pagination, Select, TextInput } from '#components';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
+import { FilterField, FilterOperators, fetchDataParams } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
+import { Tooltip } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 import { Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.types';
 import tickIcon from '../../assets/svg/tickIcon.svg';
-import { Tooltip } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
 
 const CustomTooltip = withStyles({
   tooltip: {
@@ -48,6 +43,9 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     },
   } = useTypedSelector((state) => state.prototypeComposer);
   const dispatch = useDispatch();
+  const [parameterOptions, setParameterOptions] = useState<
+    { label: string | JSX.Element; value: string }[]
+  >([]);
   const [filterFields, setFilterFields] = useState<FilterField[]>([
     { field: 'archived', op: FilterOperators.EQ, values: [false] },
     {
@@ -79,6 +77,15 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   useEffect(() => {
     fetchData();
   }, [filterFields]);
+
+  useEffect(() => {
+    setParameterOptions(
+      Object.entries(ParameterTypeMap).map(([value, label]) => ({
+        label,
+        value,
+      })),
+    );
+  }, []);
 
   const options = [
     {
@@ -147,6 +154,21 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     return verificationType;
   };
 
+  const updateFilterField = (filedName: string, op: FilterOperators, value?: any) => {
+    if (value) {
+      setFilterFields((prev) => [
+        ...prev.filter((field) => field.field !== filedName),
+        {
+          field: filedName,
+          op,
+          values: [value],
+        },
+      ]);
+    } else {
+      setFilterFields((prev) => [...prev.filter((field) => field.field !== filedName)]);
+    }
+  };
+
   const handleVerificationTypeFilter = (option: any) => {
     let verificationTypes: any[] = [];
 
@@ -160,18 +182,11 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
       }
     }
 
-    if (verificationTypes?.length > 0) {
-      setFilterFields((prev) => [
-        ...prev.filter((field) => field.field !== 'verificationType'),
-        {
-          field: 'verificationType',
-          op: FilterOperators.ANY,
-          values: verificationTypes,
-        },
-      ]);
-    } else {
-      setFilterFields((prev) => [...prev.filter((field) => field.field !== 'verificationType')]);
-    }
+    updateFilterField(
+      'verificationType',
+      FilterOperators.ANY,
+      verificationTypes.length ? verificationTypes : undefined,
+    );
   };
 
   return (
@@ -201,6 +216,34 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
               hideSelectedOptions={false}
               isClearable={true}
               onChange={debounce((option) => handleVerificationTypeFilter(option), 500)}
+            />
+          </div>
+          <div style={{ marginLeft: '16px', width: '240px' }}>
+            <Select
+              placeholder="Select Location"
+              options={Object.entries(TargetEntityTypeVisual).map(([value, label]) => ({
+                label,
+                value,
+              }))}
+              hideSelectedOptions={false}
+              isClearable={true}
+              onChange={debounce(
+                (option) =>
+                  updateFilterField('targetEntityType', FilterOperators.EQ, option?.value),
+                500,
+              )}
+            />
+          </div>
+          <div style={{ marginLeft: '16px', width: '240px' }}>
+            <Select
+              placeholder="Select Type"
+              options={parameterOptions}
+              hideSelectedOptions={false}
+              isClearable={true}
+              onChange={debounce(
+                (option) => updateFilterField('type', FilterOperators.EQ, option?.value),
+                500,
+              )}
             />
           </div>
           {!isReadOnly && (
