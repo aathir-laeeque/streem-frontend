@@ -97,164 +97,170 @@ const JobCard: FC<{
 }> = ({ jobs, view, onSetDate, setSelectedJob }) => {
   return (
     <div className="job-list">
-      {jobs.map((job) => {
-        const actualStartDate = job?.startedAt || moment().unix();
-        const actualEndDate = job?.endedAt || moment().unix();
-        let rule;
-        let rRuleOptions;
-        let frequency;
+      {jobs.length > 0 ? (
+        jobs.map((job) => {
+          const actualStartDate = job?.startedAt || moment().unix();
+          const actualEndDate = job?.endedAt || moment().unix();
+          let rule;
+          let rRuleOptions;
+          let frequency;
 
-        if (job?.scheduler) {
-          rule = RRule?.fromString(job?.scheduler?.recurrenceRule);
-          rRuleOptions = rule?.origOptions;
-          frequency =
-            Object?.keys(Frequency)[Object?.values(Frequency)?.indexOf(rRuleOptions?.freq)];
-        }
+          if (job?.scheduler) {
+            rule = RRule?.fromString(job?.scheduler?.recurrenceRule);
+            rRuleOptions = rule?.origOptions;
+            frequency =
+              Object?.keys(Frequency)[Object?.values(Frequency)?.indexOf(rRuleOptions?.freq)];
+          }
 
-        return (
-          <div className="job-row" key={job.id}>
-            <div className="job-row-section left">
-              <div className="job-row-section-left top">
-                <h5
-                  className="job-name"
-                  onClick={() => navigate(`/${view === 'Jobs' ? 'jobs' : 'inbox'}/${job.id}`)}
-                >
-                  {job.checklist.name}
-                </h5>
-                <h5 className="job-type">{job.checklist.global ? 'Global' : 'Local'}</h5>
-                {job.expectedStartDate && job.expectedEndDate ? (
-                  <div className="schedule-info">
-                    {frequency && <span>{capitalize(frequency)}</span>}
-                    {job?.scheduler && (
-                      <CustomTooltip
-                        title={
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: '8px',
-                              padding: '2px',
-                            }}
-                          >
+          return (
+            <div className="job-row" key={job.id}>
+              <div className="job-row-section left">
+                <div className="job-row-section-left top">
+                  <h5
+                    className="job-name"
+                    onClick={() => navigate(`/${view === 'Jobs' ? 'jobs' : 'inbox'}/${job.id}`)}
+                  >
+                    {job.checklist.name}
+                  </h5>
+                  <h5 className="job-type">{job.checklist.global ? 'Global' : 'Local'}</h5>
+                  {job.expectedStartDate && job.expectedEndDate ? (
+                    <div className="schedule-info">
+                      {frequency && <span>{capitalize(frequency)}</span>}
+                      {job?.scheduler && (
+                        <CustomTooltip
+                          title={
                             <div
                               style={{
                                 display: 'flex',
                                 flexDirection: 'column',
+                                gap: '8px',
+                                padding: '2px',
                               }}
                             >
-                              <span style={{ fontSize: '12px' }}>Scheduler Name</span>
-                              <span>{job.scheduler.name}</span>
-                            </div>
-                            <div
-                              style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                              }}
-                            >
-                              <span style={{ fontSize: '12px' }}>Start Date and Time</span>
-                              <span>
-                                {moment
-                                  .unix(job.expectedStartDate)
-                                  .format('Do MMMM, YYYY [at] hh:mm A')}
-                              </span>
-                            </div>
-                            <div
-                              style={{
-                                display: 'flex',
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                }}
+                              >
+                                <span style={{ fontSize: '12px' }}>Scheduler Name</span>
+                                <span>{job.scheduler.name}</span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                }}
+                              >
+                                <span style={{ fontSize: '12px' }}>Start Date and Time</span>
+                                <span>
+                                  {moment
+                                    .unix(job.expectedStartDate)
+                                    .format('Do MMMM, YYYY [at] hh:mm A')}
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
 
-                                flexDirection: 'column',
-                              }}
-                            >
-                              <span style={{ fontSize: '12px' }}>End Date and Time</span>
-                              <span>
-                                {moment
-                                  .unix(job.expectedEndDate)
-                                  .format('Do MMMM, YYYY [at] hh:mm A')}
-                              </span>
+                                  flexDirection: 'column',
+                                }}
+                              >
+                                <span style={{ fontSize: '12px' }}>End Date and Time</span>
+                                <span>
+                                  {moment
+                                    .unix(job.expectedEndDate)
+                                    .format('Do MMMM, YYYY [at] hh:mm A')}
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                }}
+                              >
+                                <span style={{ fontSize: '12px' }}>Recurrence</span>
+                                <span>{getRecurrenceSummary(job)}</span>
+                              </div>
                             </div>
-                            <div
-                              style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                              }}
-                            >
-                              <span style={{ fontSize: '12px' }}>Recurrence</span>
-                              <span>{getRecurrenceSummary(job)}</span>
-                            </div>
-                          </div>
-                        }
-                        arrow
+                          }
+                          arrow
+                        >
+                          <img className="icon" src={recurrenceIcon} alt="recurrence-icon" />
+                        </CustomTooltip>
+                      )}
+                      <span
+                        style={{
+                          color: checkJobExecutionDelay(actualStartDate, job.expectedStartDate)
+                            ? '#da1e28'
+                            : '#161616',
+                        }}
                       >
-                        <img className="icon" src={recurrenceIcon} alt="recurrence-icon" />
-                      </CustomTooltip>
-                    )}
-                    <span
-                      style={{
-                        color: checkJobExecutionDelay(actualStartDate, job.expectedStartDate)
-                          ? '#da1e28'
-                          : '#161616',
-                      }}
-                    >
-                      {formatDateTime(job.expectedStartDate, 'MMM DD, YYYY hh:mm A')}
-                    </span>
-                    <span className="icon">
-                      <ArrowForward />
-                    </span>
-                    <span
-                      style={{
-                        color: checkJobExecutionDelay(actualEndDate, job.expectedEndDate)
-                          ? '#da1e28'
-                          : '#161616',
-                      }}
-                    >
-                      {formatDateTime(job.expectedEndDate, 'MMM DD, YYYY hh:mm A')}
-                    </span>
-                  </div>
-                ) : onSetDate ? (
-                  <div className="schedule-info">
-                    <span className="primary" onClick={() => onSetDate(job.id)}>
-                      Set Date
-                    </span>
-                    <span className="icon">
-                      <ArrowForward />
-                    </span>
-                    <span className="primary" onClick={() => onSetDate(job.id)}>
-                      Set Date
-                    </span>
-                  </div>
-                ) : null}
+                        {formatDateTime(job.expectedStartDate, 'MMM DD, YYYY hh:mm A')}
+                      </span>
+                      <span className="icon">
+                        <ArrowForward />
+                      </span>
+                      <span
+                        style={{
+                          color: checkJobExecutionDelay(actualEndDate, job.expectedEndDate)
+                            ? '#da1e28'
+                            : '#161616',
+                        }}
+                      >
+                        {formatDateTime(job.expectedEndDate, 'MMM DD, YYYY hh:mm A')}
+                      </span>
+                    </div>
+                  ) : onSetDate ? (
+                    <div className="schedule-info">
+                      <span className="primary" onClick={() => onSetDate(job.id)}>
+                        Set Date
+                      </span>
+                      <span className="icon">
+                        <ArrowForward />
+                      </span>
+                      <span className="primary" onClick={() => onSetDate(job.id)}>
+                        Set Date
+                      </span>
+                    </div>
+                  ) : null}
+                </div>
+                <div className="job-row-section-left bottom">
+                  <LabelValueRow>
+                    {(job?.parameterValues || [])
+                      .sort((a: Parameter, b: Parameter) => a.orderTree - b.orderTree)
+                      .slice(0, 5)
+                      .map((parameter: Parameter) => {
+                        if (parameter?.response?.hidden) return null;
+                        return (
+                          <div className="info-item" key={parameter.label}>
+                            <label className="info-item-label">{parameter.label}</label>
+                            <span className="info-item-value">
+                              {getParameterContent(parameter)}
+                            </span>
+                          </div>
+                        );
+                      })}
+                  </LabelValueRow>
+                </div>
               </div>
-              <div className="job-row-section-left bottom">
-                <LabelValueRow>
-                  {(job?.parameterValues || [])
-                    .sort((a: Parameter, b: Parameter) => a.orderTree - b.orderTree)
-                    .slice(0, 5)
-                    .map((parameter: Parameter) => {
-                      if (parameter?.response?.hidden) return null;
-                      return (
-                        <div className="info-item" key={parameter.label}>
-                          <label className="info-item-label">{parameter.label}</label>
-                          <span className="info-item-value">{getParameterContent(parameter)}</span>
-                        </div>
-                      );
-                    })}
-                </LabelValueRow>
+              <div
+                className="job-row-section right"
+                onClick={() => {
+                  setSelectedJob(job);
+                }}
+                style={{
+                  height: job?.parameterValues?.length ? 100 : 50,
+                }}
+              >
+                <ChevronLeft />
               </div>
             </div>
-            <div
-              className="job-row-section right"
-              onClick={() => {
-                setSelectedJob(job);
-              }}
-              style={{
-                height: job?.parameterValues?.length ? 100 : 50,
-              }}
-            >
-              <ChevronLeft />
-            </div>
-          </div>
-        );
-      })}
+          );
+        })
+      ) : (
+        <div className="job-list-empty">No Jobs Found</div>
+      )}
     </div>
   );
 };

@@ -214,6 +214,11 @@ const ObjectViewWrapper = styled.div`
         }
       }
     }
+
+    .job-list-empty {
+      margin: auto;
+      color: #bbbbbb;
+    }
   }
 
   .MuiTableRow-root {

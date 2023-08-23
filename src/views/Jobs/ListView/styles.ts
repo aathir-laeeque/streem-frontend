@@ -201,6 +201,10 @@ const TabContentWrapper = styled.div`
         }
       }
     }
+    .job-list-empty {
+      margin: auto;
+      color: #bbbbbb;
+    }
   }
 `;
 

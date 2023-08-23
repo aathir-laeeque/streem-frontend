@@ -786,7 +786,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
               }, {}),
             };
           })}
-          emptyTitle="No Checklists Found"
+          emptyTitle="No Processes Found"
         />
 
         <Pagination pageable={pageable} fetchData={fetchData} />
