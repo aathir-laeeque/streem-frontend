@@ -753,7 +753,7 @@ const ResourceFormCard: FC<{
                                     ) {
                                       return currList;
                                     } else {
-                                      return null;
+                                      return currList;
                                     }
                                   }),
                               value: item?.referencedParameterId
