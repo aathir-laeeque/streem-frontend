@@ -342,7 +342,9 @@ const ResourceFormCard: FC<{
   const updateFilterOptions = (filter: any[]) => {
     const updatedOptions: Record<number, Choice[]> = {};
     filter.forEach((filter: any, index: number) => {
-      if (filter) updatedOptions[index] = propertiesMap.current?.[filter.propertyId]?.options || [];
+      if (filter)
+        updatedOptions[index] =
+          propertiesMap.current?.[filter.field?.split('.')?.[1]]?.options || [];
     });
     setState((prev) => ({ ...prev, filterSelectOptions: updatedOptions }));
   };
