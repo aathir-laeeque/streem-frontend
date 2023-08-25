@@ -102,4 +102,5 @@ export type fetchDataParams = {
   size?: number;
   query?: string;
   filters?: FilterField[];
+  objectId?: string;
 };

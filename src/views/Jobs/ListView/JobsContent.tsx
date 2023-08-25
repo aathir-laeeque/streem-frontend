@@ -5,6 +5,7 @@ import {
   LoadingContainer,
   Pagination,
   ProgressBar,
+  ResourceFilter,
   SearchFilter,
   Select,
   TabContentProps,
@@ -438,6 +439,7 @@ const JobsContent: FC<TabContentProps> = ({
   const [cardsValues, setCardsValues] = useState<any[]>([]);
   const [selectedJob, setSelectedJob] = useState<any>();
   const [activeFilterCard, setActiveFilterCard] = useState<string>('');
+  const [resourceFilter, setResourceFilter] = useState<string>('');
 
   const activeSmartFilters = getActiveSmartFilter(cardsValues, activeFilterCard);
 
@@ -458,6 +460,7 @@ const JobsContent: FC<TabContentProps> = ({
       cards.map((card: any) => {
         return request('GET', apiJobsCount(), {
           params: {
+            objectId: resourceFilter,
             filters: {
               op: FilterOperators.AND,
               fields: [
@@ -511,12 +514,18 @@ const JobsContent: FC<TabContentProps> = ({
   };
 
   const fetchData = (params: fetchDataParams = {}) => {
-    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
+    const {
+      page = DEFAULT_PAGE_NUMBER,
+      size = DEFAULT_PAGE_SIZE,
+      filters = filterFields,
+      objectId = resourceFilter,
+    } = params;
     dispatch(
       fetchJobs({
         page,
         size,
         sort: 'createdAt,desc',
+        objectId,
         filters: {
           op: FilterOperators.AND,
           fields: [...filters],
@@ -528,7 +537,7 @@ const JobsContent: FC<TabContentProps> = ({
   useEffect(() => {
     fetchData({ filters: filterFields });
     if (cards?.length) fetchCardsValues();
-  }, [filterFields, reRender]);
+  }, [filterFields, reRender, resourceFilter]);
 
   const handleOnCreateJob = () => {
     if (selectedFacility?.id === ALL_FACILITY_ID) {
@@ -579,6 +588,10 @@ const JobsContent: FC<TabContentProps> = ({
 
   const handleMenuScrollToBottom = () => {
     if (!checklistPageable.last) fetchChecklistData({ page: checklistPageable.page + 1 });
+  };
+
+  const onChildChange = (option: any) => {
+    setResourceFilter(option.id);
   };
 
   return (
@@ -640,6 +653,9 @@ const JobsContent: FC<TabContentProps> = ({
             defaultValue: [{ label: processFilter.processName, value: processFilter.id }],
           })}
         />
+        <div className="resource-filter">
+          <ResourceFilter onChange={onChildChange} onClear={() => setResourceFilter('')} />
+        </div>
         {processFilter?.schedulerId && (
           <Select
             className="process-filter"

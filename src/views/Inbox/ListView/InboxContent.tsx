@@ -1,5 +1,12 @@
 import { Checklist } from '#JobComposer/checklist.types';
-import { LoadingContainer, Pagination, SearchFilter, Select, TabContentProps } from '#components';
+import {
+  LoadingContainer,
+  Pagination,
+  ResourceFilter,
+  SearchFilter,
+  Select,
+  TabContentProps,
+} from '#components';
 import { useTypedSelector } from '#store/helpers';
 import { apiInboxJobsCount } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
@@ -40,6 +47,7 @@ const InboxContent: FC<TabContentProps> = ({
   const [activeFilterCard, setActiveFilterCard] = useState<string>('');
 
   const activeSmartFilters = getActiveSmartFilter(cardsValues, activeFilterCard);
+  const [resourceFilter, setResourceFilter] = useState<string>('');
 
   const onToggleSmartFilter = (cardFilters: CountCardItem) => {
     setFilterFields((currentFields) => {
@@ -58,6 +66,7 @@ const InboxContent: FC<TabContentProps> = ({
       cards.map((card: any) => {
         return request('GET', apiInboxJobsCount(), {
           params: {
+            objectId: resourceFilter,
             filters: {
               op: FilterOperators.AND,
               fields: [
@@ -112,12 +121,18 @@ const InboxContent: FC<TabContentProps> = ({
   };
 
   const fetchData = (params: fetchDataParams = {}) => {
-    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
+    const {
+      page = DEFAULT_PAGE_NUMBER,
+      size = DEFAULT_PAGE_SIZE,
+      filters = filterFields,
+      objectId = resourceFilter,
+    } = params;
     dispatch(
       fetchInbox({
         facilityId,
         page,
         size,
+        objectId,
         sort: 'createdAt,desc',
         filters: {
           op: FilterOperators.AND,
@@ -130,7 +145,7 @@ const InboxContent: FC<TabContentProps> = ({
   useEffect(() => {
     fetchData({ filters: filterFields });
     if (cards?.length) fetchCardsValues();
-  }, [filterFields]);
+  }, [filterFields, resourceFilter]);
 
   const onSelectUpdate = (option: Checklist) => {
     if (option) {
@@ -155,6 +170,10 @@ const InboxContent: FC<TabContentProps> = ({
 
   const handleMenuScrollToBottom = () => {
     if (!checklistPageable.last) fetchChecklistData({ page: checklistPageable.page + 1 });
+  };
+
+  const onChildChange = (option: any) => {
+    setResourceFilter(option.id);
   };
 
   return (
@@ -210,6 +229,9 @@ const InboxContent: FC<TabContentProps> = ({
             defaultValue: [{ label: processFilter.processName, value: processFilter.id }],
           })}
         />
+        <div className="resource-filter">
+          <ResourceFilter onChange={onChildChange} onClear={() => setResourceFilter('')} />
+        </div>
       </div>
       <LoadingContainer
         loading={loading}

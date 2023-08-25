@@ -31,10 +31,12 @@ const TabContentWrapper = styled.div`
     display: flex;
     padding: 0 0 16px;
 
-    .process-filter {
+    .process-filter,
+    .resource-filter {
       margin-left: 16px;
       width: 200px;
     }
+
     .upload-image > div {
       gap: 6px;
       margin-left: 24px;
