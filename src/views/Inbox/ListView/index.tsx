@@ -229,6 +229,7 @@ const ListView: FC<ListViewProps> = () => {
               ),
             },
           ]}
+          activeTab="1"
         />
       </InboxJobsWrapper>
     );
