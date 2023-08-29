@@ -72,7 +72,7 @@ const ParameterApprovalModal: FC<CommonOverlayProps<Props>> = ({
               return (
                 <>
                   <ObservationAccepted className="icon" />
-                  <div className="observation-sent">Observation sent to Supervisor</div>
+                  <div className="observation-sent">Observation sent for Approval</div>
                 </>
               );
             }
