@@ -48,6 +48,9 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
         selectedUseCaseId: payload.selectedUseCaseId,
         checklistId: payload.checklistId,
       },
+      params: {
+        validateUserRole: payload.validateUserRole,
+      },
     });
     if (errors) {
       throw getErrorMsg(errors);

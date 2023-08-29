@@ -277,6 +277,7 @@ const CreateJobDrawer: FC<{
     dispatch(
       createJob({
         parameterValues,
+        validateUserRole: checklist ? true : false,
         checklistId: data.checklistId,
         selectedUseCaseId: selectedUseCase!.id,
       }),
