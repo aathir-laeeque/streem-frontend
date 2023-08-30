@@ -91,6 +91,7 @@ const TaskCard: FC<
     name,
     timed,
     timerOperator,
+    automations,
   } = task;
 
   const handleDragEnd = (e: DragEndEvent) => {
@@ -394,7 +395,7 @@ const TaskCard: FC<
               >
                 <div>
                   <Autorenew className="icon" />
-                  Configure Actions
+                  Configure Actions {automations.length > 0 && `(${automations.length})`}
                 </div>
               </div>
             </div>
