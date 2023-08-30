@@ -1,6 +1,7 @@
 import { Button } from '#components';
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
+import 'jest-styled-components';
 
 describe('Button component', () => {
   it('renders button with default props', () => {
