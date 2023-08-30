@@ -198,6 +198,24 @@ const uiPermissions: Record<string, any> = {
   approvals: {
     view: [roles.SUPERVISOR, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
   },
+  jobLogsViews: {
+    create: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+      roles.GLOBAL_ADMIN,
+      roles.SYSTEM_ADMIN,
+    ],
+    edit: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+      roles.GLOBAL_ADMIN,
+      roles.SYSTEM_ADMIN,
+    ],
+  },
 };
 
 const checkPermission = (keys: string[]) => {

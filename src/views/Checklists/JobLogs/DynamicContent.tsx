@@ -29,6 +29,7 @@ import { fetchProcessLogs, saveCustomView } from '../ListView/actions';
 import { CustomView } from '../ListView/types';
 import { fetchJobLogsExcel } from './actions';
 import FiltersDrawer from './Overlays/FiltersDrawer';
+import checkPermission from '#services/uiPermissions';
 
 const JobLogsTabWrapper = styled.div`
   display: flex;
@@ -351,7 +352,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
               }}
             />
           </div>
-          {isChanged && (
+          {isChanged && checkPermission(['jobLogsViews', 'edit']) && (
             <div id="create" style={{ display: 'flex' }}>
               {!customViewLoading && (
                 <Button variant="textOnly" onClick={onResetToDefault}>

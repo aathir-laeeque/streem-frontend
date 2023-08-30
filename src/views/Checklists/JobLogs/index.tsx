@@ -15,6 +15,7 @@ import styled from 'styled-components';
 import { addCustomView, deleteCustomView, getCustomViews } from '../ListView/actions';
 import DynamicContent from './DynamicContent';
 import TabContent from './TabContent';
+import checkPermission from '#services/uiPermissions';
 
 const AfterHeaderWrapper = styled.div`
   display: flex;
@@ -121,7 +122,7 @@ const AfterHeader: FC<any> = ({ setActiveTab, activeTab, checklistId, defaultVie
       <components.Option {...props}>
         <OptionWrapper>
           {props.label}
-          {props.data.id && (
+          {props.data.id && checkPermission(['jobLogsViews', 'edit']) && (
             <DeleteOutlineOutlined
               className="delete-icon"
               onClick={(e) => onClickDeleteView(e, props.data)}
@@ -134,9 +135,11 @@ const AfterHeader: FC<any> = ({ setActiveTab, activeTab, checklistId, defaultVie
 
   return (
     <AfterHeaderWrapper>
-      <Button variant="secondary" onClick={handleAddNew}>
-        Add New
-      </Button>
+      {checkPermission(['jobLogsViews', 'create']) ? (
+        <Button variant="secondary" onClick={handleAddNew}>
+          Add New
+        </Button>
+      ) : null}
       <Select
         options={[defaultView, ...Object.values(customViews.views)]}
         value={[{ value: 'more views', label: 'More Views' }]}
