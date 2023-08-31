@@ -27,6 +27,7 @@ export enum LoginErrorCodes {
   REGISTRATION_TOKEN_EXPIRED = '101005',
   USER_ACCOUNT_LOCKED = '104014',
   USER_INVITE_EXPIRED = '104010',
+  SSO_INVALID_CREDENTIALS = '105001',
 }
 
 export enum ErrorCodesToLogout {

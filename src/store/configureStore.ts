@@ -10,7 +10,9 @@ import { rootSaga } from './rootSaga';
 import { RootState } from './types';
 
 const isPageReloaded = () => {
-  if (window.performance.getEntriesByType) {
+  if (location?.pathname.includes('/sso')) {
+    return true;
+  } else if (window.performance.getEntriesByType) {
     return window.performance.getEntriesByType('navigation')[0].type === 'reload';
   }
 };

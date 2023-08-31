@@ -40,6 +40,8 @@ import {
 } from './actions';
 import { ParameterListAction } from './reducer.types';
 import { SupervisorResponse } from './types';
+import { LoginErrorCodes } from '#utils/constants';
+import { navigate } from '@reach/router';
 
 function* executeParameterSaga({ payload }: ReturnType<typeof executeParameter>) {
   try {
@@ -225,13 +227,13 @@ function* initiateSelfVerificationSaga({ payload }: ReturnType<typeof initiateSe
 
 function* completeSelfVerificationSaga({ payload }: ReturnType<typeof completeSelfVerification>) {
   try {
-    const { parameterId, password } = payload;
+    const { parameterId, password, code, state } = payload;
 
     const { data: validateData, errors: validateErrors } = yield call(
       request,
       'PATCH',
       apiValidatePassword(),
-      { data: { password: encrypt(password) } },
+      { data: { password: password ? encrypt(password) : null, code, state } },
     );
 
     if (validateData) {
@@ -254,6 +256,8 @@ function* completeSelfVerificationSaga({ payload }: ReturnType<typeof completeSe
       } else {
         throw getErrorMsg(errors);
       }
+    } else if (validateErrors[0].code === LoginErrorCodes.SSO_INVALID_CREDENTIALS) {
+      throw getErrorMsg(validateErrors);
     } else {
       throw getErrorMsg(validateErrors);
     }
@@ -325,13 +329,13 @@ function* recallPeerVerificationSaga({ payload }: ReturnType<typeof recallPeerVe
 
 function* acceptPeerVerificationSaga({ payload }: ReturnType<typeof acceptPeerVerification>) {
   try {
-    const { parameterId, password } = payload;
+    const { parameterId, password, code, state } = payload;
 
     const { data: validateData, errors: validateErrors } = yield call(
       request,
       'PATCH',
       apiValidatePassword(),
-      { data: { password: encrypt(password) } },
+      { data: { password: password ? encrypt(password) : null, code, state } },
     );
 
     if (validateData) {
@@ -348,6 +352,8 @@ function* acceptPeerVerificationSaga({ payload }: ReturnType<typeof acceptPeerVe
       } else {
         throw getErrorMsg(errors);
       }
+    } else if (validateErrors[0].code === LoginErrorCodes.SSO_INVALID_CREDENTIALS) {
+      throw getErrorMsg(validateErrors);
     } else {
       throw getErrorMsg(validateErrors);
     }

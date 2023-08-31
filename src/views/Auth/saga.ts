@@ -1,6 +1,10 @@
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
-import { closeAllOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
+import {
+  closeAllOverlayAction,
+  closeOverlayAction,
+  openOverlayAction,
+} from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
 import { setInitialFacilityWiseConstants } from '#store/facilityWiseConstants/actions';
@@ -69,13 +73,15 @@ const getAccessToken = (state: RootState) => state.auth.accessToken;
 
 function* loginSaga({ payload }: ReturnType<typeof login>) {
   try {
-    const { username, password, idToken } = payload;
+    const { username, password, idToken, code, state } = payload;
     const isLoggedIn = (yield select(getIsLoggedIn)) as boolean;
     const { data, errors }: ResponseObj<LoginResponse> = yield call(request, 'POST', apiLogin(), {
       data: {
         username,
-        password: encrypt(password!),
+        password: password ? encrypt(password!) : null,
         idToken,
+        code,
+        state,
       },
     });
 
@@ -95,6 +101,9 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
         if (errors?.[0]?.code === LoginErrorCodes.PASSWORD_EXPIRED) {
           yield put(authError(undefined));
           navigate('/auth/password-expired');
+        } else if (errors?.[0]?.code === LoginErrorCodes.SSO_INVALID_CREDENTIALS) {
+          navigate('/auth/login');
+          yield handleCatch('Auth SSO', 'loginSaga', getErrorMsg(errors), true);
         } else {
           throw getErrorMsg(errors);
         }
@@ -113,14 +122,30 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
 
 function* reLoginSaga({ payload }: ReturnType<typeof reLogin>) {
   try {
-    const { username, password, idToken } = payload;
+    const { username, password, idToken, code, state, pathname } = payload;
     const accessToken = (yield select(getAccessToken)) as string;
     const { data, errors }: ResponseObj<LoginResponse> = yield call(request, 'POST', apiReLogin(), {
-      data: { username, accessToken, password: encrypt(password), idToken },
+      data: {
+        username,
+        accessToken,
+        password: password ? encrypt(password) : null,
+        idToken,
+        code,
+        state,
+      },
     });
 
     if (errors) {
-      if (errors?.[0]?.code !== LoginErrorCodes.INVALID_CREDENTIALS) {
+      if (errors?.[0]?.code === LoginErrorCodes.SSO_INVALID_CREDENTIALS) {
+        if (pathname) {
+          navigate(pathname);
+        }
+      }
+      if (
+        ![LoginErrorCodes.INVALID_CREDENTIALS, LoginErrorCodes.SSO_INVALID_CREDENTIALS]?.includes(
+          errors?.[0]?.code,
+        )
+      ) {
         yield put(closeAllOverlayAction());
         yield put(cleanUp());
       }
@@ -135,6 +160,10 @@ function* reLoginSaga({ payload }: ReturnType<typeof reLogin>) {
       yield put(loginSuccess(data));
       yield put(fetchProfile({ id: data.id }));
       yield put(setInitialFacilityWiseConstants(data.facilities));
+      yield put(closeOverlayAction(OverlayNames.SESSION_EXPIRE));
+      if (pathname) {
+        navigate(pathname);
+      }
     }
   } catch (error) {
     error = yield* handleCatch('Auth', 'reLoginSaga', error);
@@ -144,8 +173,15 @@ function* reLoginSaga({ payload }: ReturnType<typeof reLogin>) {
 
 function* logoutSaga({ payload }: ReturnType<typeof logout>) {
   try {
-    const { instance } = payload;
-    const { errors }: ResponseObj<LoginResponse> = yield call(request, 'POST', apiLogOut());
+    const { instance, ssoIdToken = '' } = payload;
+    const { data, errors }: ResponseObj<LoginResponse> = yield call(request, 'POST', apiLogOut(), {
+      data: { idToken: ssoIdToken },
+    });
+    // TODO: Remove id token payload from logout api and navigate redirect url need to sort in below navigate
+
+    if (data?.logoutUrl) {
+      navigate(data.logoutUrl);
+    }
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -486,6 +522,9 @@ function* accountLookUpSaga({ payload }: ReturnType<typeof accountLookUp>) {
       yield put(accountLookUpSuccess(data));
       if (data.type === 'LOCAL') {
         navigate('/auth/login-password');
+      } else if (data.type !== 'LOCAL') {
+        localStorage.setItem('username', username);
+        navigate(data.redirectUrl);
       } else if (instance) {
         const ssoResponse = yield call(ssoLogin, data.username, instance);
         yield put(login({ username, idToken: ssoResponse.idToken }));

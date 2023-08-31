@@ -41,6 +41,7 @@ import {
   ChecklistStatesContent,
 } from '../checklist.types';
 import HeaderWrapper from './styles';
+import { ssoSigningRedirect } from '#utils/request';
 
 const ListActionMenuButton = styled(ListActionMenu)`
   .MuiPaper-root {
@@ -68,12 +69,14 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
     listOrder,
     profile,
     selectedFacility: { id: facilityId = '' } = {},
+    ssoIdToken,
   } = useTypedSelector((state) => ({
     userId: state.auth.userId,
     data: state.prototypeComposer.data as Checklist,
     listOrder: state.prototypeComposer.stages.listOrder,
     profile: state.auth.profile,
     selectedFacility: state.auth.selectedFacility,
+    ssoIdToken: state.auth.ssoIdToken,
   }));
 
   const handleSubmitForReview = (isViewer = false, showAssignment = true) => {
@@ -428,7 +431,17 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
   const SignOffButton = () => (
     <Button
       className="submit"
-      onClick={() => dispatch(openOverlayAction({ type: OverlayNames.PASSWORD_INPUT }))}
+      onClick={() => {
+        if (ssoIdToken) {
+          ssoSigningRedirect({
+            checklistId: data.id,
+            location: `/checklists/${data.id}`,
+            state: 'SIGN_OFF',
+          });
+        } else {
+          dispatch(openOverlayAction({ type: OverlayNames.PASSWORD_INPUT }));
+        }
+      }}
     >
       Sign
     </Button>
@@ -554,16 +567,24 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
             {checkReleasePermission() && (
               <Button
                 className="submit"
-                onClick={() =>
-                  dispatch(
-                    openOverlayAction({
-                      type: OverlayNames.PASSWORD_INPUT,
-                      props: {
-                        isReleasing: true,
-                      },
-                    }),
-                  )
-                }
+                onClick={() => {
+                  if (ssoIdToken) {
+                    ssoSigningRedirect({
+                      checklistId: data.id,
+                      location: `/checklists/${data.id}`,
+                      state: 'RELEASE',
+                    });
+                  } else {
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.PASSWORD_INPUT,
+                        props: {
+                          isReleasing: true,
+                        },
+                      }),
+                    );
+                  }
+                }}
               >
                 Release Prototype
               </Button>

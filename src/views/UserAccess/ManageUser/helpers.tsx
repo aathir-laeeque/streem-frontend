@@ -136,6 +136,9 @@ export const createSectionConfig = ({
   const [selectedRole, setSelectedRole] = useState<string | undefined>(
     selectedUser?.roles && selectedUser.roles[0].id,
   );
+  const {
+    settings: { ssoType },
+  } = useTypedSelector((state) => state.auth);
   const [currentlySelectedFacilities, setCurrentlySelectedFacilities] = useState<
     Option[] | undefined
   >(
@@ -162,13 +165,13 @@ export const createSectionConfig = ({
         },
       }),
     });
-    if (response.data) {
+    if (response?.data) {
       setUsers(response.data);
     }
   };
 
   useEffect(() => {
-    if (userType === UserType.AZURE_AD && !users.length) {
+    if (userType && userType !== UserType.LOCAL && !users.length) {
       fetchUsers();
     }
   }, [userType]);
@@ -232,14 +235,15 @@ export const createSectionConfig = ({
                         value: UserType.LOCAL,
                       },
                       {
-                        key: UserType.AZURE_AD,
+                        key: ssoType,
                         label: 'Add from Active Directory',
-                        value: UserType.AZURE_AD,
+                        value: ssoType,
+                        disabled: ssoType === null,
                       },
                     ],
                   },
                 },
-                ...(userType === UserType.AZURE_AD
+                ...(userType !== UserType.LOCAL
                   ? [
                       {
                         type: InputTypes.SINGLE_SELECT,
@@ -267,7 +271,7 @@ export const createSectionConfig = ({
             />
           ) : (
             <div style={{ padding: '24px 16px' }}>
-              {selectedUser?.userType === UserType.AZURE_AD
+              {selectedUser?.userType !== UserType.LOCAL
                 ? 'Added from Active Directory'
                 : 'Added Manually'}
             </div>
@@ -360,7 +364,12 @@ export const createSectionConfig = ({
                   name: 'email',
                   error: errors['email']?.message,
                   readOnly: disabledKeys?.['email'],
-                  disabled: pageType === PAGE_TYPE.PROFILE ? false : !isEditable,
+                  disabled:
+                    selectedUser?.userType !== UserType.LOCAL
+                      ? true
+                      : pageType === PAGE_TYPE.PROFILE
+                      ? false
+                      : !isEditable,
                   optional: true,
                   ref: register({
                     pattern: {
@@ -388,7 +397,7 @@ export const createSectionConfig = ({
                   name: 'department',
                   ref: register,
                   optional: true,
-                  disabled: !isEditable,
+                  disabled: selectedUser?.userType !== UserType.LOCAL ? true : !isEditable,
                 },
               },
             ]}

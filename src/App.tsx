@@ -4,6 +4,7 @@ import '#i18n';
 import { configureStore } from '#store';
 import { setAuthHeader } from '#utils/axiosClient';
 import { AuthView, FacilitySelectionView, HomeView, UseCaseSelectionView } from '#views';
+import { SsoView } from '#views/Auth/SsoView';
 import PrintJob from '#views/Jobs/PrintJob';
 import PrintJobAuditLogs from '#views/Jobs/PrintJobAuditLogs';
 import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
@@ -120,6 +121,7 @@ const App: FC = () => {
               <>
                 <Router style={{ display: 'flex', flex: 1 }} basepath="/">
                   <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
+                  <CustomRoute isProtected={false} as={SsoView} path="sso/auth" />
                   <CustomRoute as={FacilitySelectionView} path="facility/selection" />
                   <CustomRoute as={HomeView} path="home" />
                   <CustomRoute as={PrintJob} path="jobs/:jobId/print" />

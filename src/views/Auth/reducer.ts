@@ -23,6 +23,7 @@ export const authInitialState: AuthState = {
   NonGenuineLicenseMap: {},
   useCaseMap: {},
   fetchingUseCaseList: false,
+  ssoIdToken: '',
 };
 
 const reducer = (state = authInitialState, action: AuthActionType): AuthState => {
@@ -50,6 +51,7 @@ const reducer = (state = authInitialState, action: AuthActionType): AuthState =>
         loading: false,
         isLoggedIn: true,
         userId: action.payload.id,
+        ssoIdToken: action.payload.idToken,
         ...action.payload,
         selectedFacility:
           action.payload?.facilities?.length < 2 ||

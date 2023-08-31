@@ -12,8 +12,14 @@ type Props = RouteComponentProps & {
 };
 
 export const CustomRoute: FC<Props> = ({ as: Component, isProtected = true, ...props }) => {
-  const { isLoggedIn, selectedFacility, hasSetChallengeQuestion, token, selectedUseCase } =
-    useTypedSelector((state) => state.auth);
+  const {
+    isLoggedIn,
+    selectedFacility,
+    hasSetChallengeQuestion,
+    token,
+    selectedUseCase,
+    ssoIdToken,
+  } = useTypedSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -31,7 +37,7 @@ export const CustomRoute: FC<Props> = ({ as: Component, isProtected = true, ...p
     if (!hasSetChallengeQuestion) {
       if (location?.pathname !== '/auth/register/recovery') {
         if (token) return <Redirect from="" to="/auth/register/recovery" noThrow />;
-        dispatch(logout());
+        dispatch(logout({ ssoIdToken: ssoIdToken }));
       }
     } else {
       const isFacilitySelectionPage = props.path === 'facility/selection';
@@ -40,9 +46,11 @@ export const CustomRoute: FC<Props> = ({ as: Component, isProtected = true, ...p
         if (
           isFacilitySelectionPage ||
           location?.pathname.includes('/users') ||
+          location?.pathname.includes('/sso') ||
           (props.path === 'home' && userCanAccessHomePage) ||
           (selectedUseCase && isProtected && location?.pathname !== '/')
         ) {
+          //sso path is included as it is getting redirected to home page.
           return <Component {...props} />;
         } else if (userCanAccessHomePage) {
           return <Redirect from="" to="/home" noThrow />;

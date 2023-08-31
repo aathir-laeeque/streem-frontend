@@ -56,6 +56,7 @@ import {
   CommonReviewPayload,
   CommonReviewResponse,
 } from './reviewer.types';
+import { navigate } from '@reach/router';
 
 const getState = (state: RootState) => state.prototypeComposer.data?.state;
 const getCurrentPhase = (state: RootState) => state.prototypeComposer.data?.phase;
@@ -65,6 +66,7 @@ const getCurrentComments = (state: RootState) =>
   (state.prototypeComposer.data as Checklist)?.comments || [];
 const getUserType = (state: RootState) => state.auth.userType;
 const getUserName = (state: RootState) => state.auth.profile?.username;
+const getSsoIdToken = (state: RootState) => state.auth?.ssoIdToken;
 
 function* fetchReviewersForChecklistSaga({
   payload,
@@ -477,16 +479,17 @@ function* initiateSignOffSaga({ payload }: ReturnType<typeof initiateSignOff>) {
 
 function* signOffPrototypeSaga({ payload }: ReturnType<typeof signOffPrototype>) {
   try {
-    const { checklistId, password, instance } = payload;
+    const { checklistId, password, instance, code, state } = payload;
     const userType = getUserType(yield select());
+    const ssoIdToken = getSsoIdToken(yield select());
     let validateData, validateErrors;
 
-    if (userType === UserType.LOCAL) {
+    if (userType === UserType.LOCAL || ssoIdToken) {
       const { data: _validateData, errors: _validateErrors } = yield call(
         request,
         'PATCH',
         apiValidatePassword(),
-        { data: { password: encrypt(password) } },
+        { data: { password: password ? encrypt(password) : null, code, state } },
       );
       validateData = _validateData;
       validateErrors = _validateErrors;
@@ -522,6 +525,8 @@ function* signOffPrototypeSaga({ payload }: ReturnType<typeof signOffPrototype>)
     } else {
       if (validateErrors[0].code === LoginErrorCodes.INVALID_CREDENTIALS) {
         throw 'Incorrect Password';
+      } else if (validateErrors[0].code === LoginErrorCodes.SSO_INVALID_CREDENTIALS) {
+        throw getErrorMsg(validateErrors);
       }
       throw 'Could Not Sign Off the Prototype';
     }
@@ -532,16 +537,17 @@ function* signOffPrototypeSaga({ payload }: ReturnType<typeof signOffPrototype>)
 
 function* releasePrototypeSaga({ payload }: ReturnType<typeof releasePrototype>) {
   try {
-    const { checklistId, password, instance } = payload;
+    const { checklistId, password, instance, code, state } = payload;
     const userType = getUserType(yield select());
+    const ssoIdToken = getSsoIdToken(yield select());
     let validateData, validateErrors;
 
-    if (userType === UserType.LOCAL) {
+    if (userType === UserType.LOCAL || ssoIdToken) {
       const { data: _validateData, errors: _validateErrors } = yield call(
         request,
         'PATCH',
         apiValidatePassword(),
-        { data: { password: encrypt(password) } },
+        { data: { password: password ? encrypt(password) : null, code, state } },
       );
       validateData = _validateData;
       validateErrors = _validateErrors;
@@ -574,6 +580,8 @@ function* releasePrototypeSaga({ payload }: ReturnType<typeof releasePrototype>)
           type: OverlayNames.RELEASE_SUCCESS,
         }),
       );
+    } else if (validateErrors[0].code === LoginErrorCodes.SSO_INVALID_CREDENTIALS) {
+      throw getErrorMsg(validateErrors);
     } else {
       throw validateErrors?.[0]?.message || 'Unable to Release the Prototype';
     }

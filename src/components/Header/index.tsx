@@ -30,8 +30,16 @@ const Header: FC = () => {
   const dispatch = useDispatch();
   const { instance } = useMsal();
 
-  const { profile, facilities, selectedFacility, userId, selectedUseCase, useCaseMap, userType } =
-    useTypedSelector((state) => state.auth);
+  const {
+    profile,
+    facilities,
+    selectedFacility,
+    userId,
+    selectedUseCase,
+    useCaseMap,
+    userType,
+    ssoIdToken,
+  } = useTypedSelector((state) => state.auth);
 
   const facilitiesOptions: FacilityOption[] = facilities.map((facility) => ({
     label: facility.name,
@@ -154,7 +162,12 @@ const Header: FC = () => {
             if (option.value === 'my-account') {
               navigate(`/users/profile/${profile?.id}`);
             } else {
-              dispatch(logout(userType === UserType.AZURE_AD ? instance : undefined));
+              dispatch(
+                logout({
+                  instance: userType === UserType.AZURE_AD ? instance : undefined,
+                  ssoIdToken: ssoIdToken,
+                }),
+              );
             }
           }}
           label={() => (

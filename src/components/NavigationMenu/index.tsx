@@ -68,6 +68,7 @@ const NavigationMenu: FC = () => {
       profile,
       userType,
       features,
+      ssoIdToken,
     },
     extras: { isDrawerOpen },
   } = useTypedSelector((state) => state);
@@ -257,7 +258,12 @@ const NavigationMenu: FC = () => {
             if (option.value === 'my-account') {
               navigate(`/users/profile/${profile?.id}`);
             } else {
-              dispatch(logout(userType === UserType.AZURE_AD ? instance : undefined));
+              dispatch(
+                logout({
+                  instance: userType === UserType.AZURE_AD ? instance : undefined,
+                  ssoIdToken: ssoIdToken,
+                }),
+              );
             }
           }}
           label={() => (

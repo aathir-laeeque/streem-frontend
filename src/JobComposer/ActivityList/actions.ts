@@ -53,10 +53,20 @@ export const initiateSelfVerification = ({ parameterId }: { parameterId: string 
 export const completeSelfVerification = ({
   parameterId,
   password,
+  code,
+  state,
 }: {
   parameterId: string;
-  password: string;
-}) => actionSpreader(ParameterListAction.COMPLETE_SELF_VERIFICATION, { parameterId, password });
+  password?: string;
+  code?: string;
+  state?: string;
+}) =>
+  actionSpreader(ParameterListAction.COMPLETE_SELF_VERIFICATION, {
+    parameterId,
+    password,
+    code,
+    state,
+  });
 
 export const sendPeerVerification = ({
   parameterId,
@@ -77,10 +87,20 @@ export const recallPeerVerification = ({
 export const acceptPeerVerification = ({
   parameterId,
   password,
+  code,
+  state,
 }: {
   parameterId: string;
-  password: string;
-}) => actionSpreader(ParameterListAction.ACCEPT_PEER_VERIFICATION, { parameterId, password });
+  password?: string;
+  code?: string;
+  state?: string;
+}) =>
+  actionSpreader(ParameterListAction.ACCEPT_PEER_VERIFICATION, {
+    parameterId,
+    password,
+    code,
+    state,
+  });
 
 export const rejectPeerVerification = ({
   parameterId,

@@ -14,6 +14,7 @@ import styled from 'styled-components';
 
 import { createBaseViewConfig } from './helpers';
 import { BaseViewConfigType, BaseViewProps, PAGE_NAMES } from './types';
+import { navigate } from '@reach/router';
 
 const Wrapper = styled.div.attrs({
   className: 'auth-base-view',
@@ -167,7 +168,7 @@ const Wrapper = styled.div.attrs({
 
 function BaseView<T = Record<string, unknown>>({ pageName }: BaseViewProps) {
   const dispatch = useDispatch();
-  const { error, loading } = useTypedSelector((state) => state.auth);
+  const { error, loading, isLoggedIn, ssoIdToken } = useTypedSelector((state) => state.auth);
   const [state, setState] = useState<{
     questions?: Option[];
   }>();
@@ -217,6 +218,12 @@ function BaseView<T = Record<string, unknown>>({ pageName }: BaseViewProps) {
       };
 
       fetchQuestions();
+    }
+
+    if (pageName === PAGE_NAMES.FACILITY_SELECTION) {
+      if (isLoggedIn && ssoIdToken) {
+        navigate('/facility/selection');
+      }
     }
   }, []);
 

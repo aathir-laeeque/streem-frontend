@@ -3,9 +3,16 @@ import { NotificationType } from '#components/Notification/types';
 import { AxiosRequestConfig } from 'axios';
 import { put } from 'redux-saga/effects';
 
-import { apiCheckTokenExpiry, apiLogin, apiRefreshToken, apiReLogin } from './apiUrls';
+import {
+  apiCheckTokenExpiry,
+  apiLogin,
+  apiRefreshToken,
+  apiReLogin,
+  apiSsoRedirect,
+} from './apiUrls';
 import axiosInstance, { removeAuthHeader } from './axiosClient';
-import { ResponseError } from './globalTypes';
+import { ResponseError, ResponseObj } from './globalTypes';
+import { navigate } from '@reach/router';
 
 interface RequestOptions {
   data?: Record<string | number, any>;
@@ -60,3 +67,27 @@ export function* handleCatch(origin: string, sagaName: string, error: unknown, n
     );
   return error;
 }
+
+export const ssoSigningRedirect = async (data: any) => {
+  try {
+    const {
+      auth: { accessToken },
+    } = window.store.getState();
+    const { data: responseData, errors }: ResponseObj<any> = await request(
+      'POST',
+      apiSsoRedirect(),
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        data: { data: data },
+      },
+    );
+    if (responseData?.redirectUrl) {
+      navigate(responseData.redirectUrl);
+    }
+    if (errors) {
+      handleCatch('Sso Signing', 'ssoSigningRedirect', getErrorMsg(errors), true);
+    }
+  } catch (error) {
+    console.error('error came in ssoSigningRedirect :: ', error);
+  }
+};

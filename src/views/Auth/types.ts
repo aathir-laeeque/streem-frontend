@@ -28,6 +28,7 @@ import {
 interface Settings {
   logoUrl: string;
   sessionIdleTimeoutInMinutes: number;
+  ssoType?: string;
 }
 
 export interface LoginResponse {
@@ -89,6 +90,7 @@ export interface AuthState {
   readonly fetchingUseCaseList: boolean;
   readonly userType?: string;
   readonly features?: Record<string, boolean>;
+  readonly ssoIdToken?: string;
 }
 
 export enum TokenTypes {

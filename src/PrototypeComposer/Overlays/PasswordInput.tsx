@@ -97,9 +97,21 @@ const PasswordInputModal: FC<
   const onSubmit = (data: Inputs) => {
     const _instance = userType === UserType.AZURE_AD ? instance : undefined;
     if (isReleasing) {
-      dispatch(releasePrototype(checklist.id, data.password, _instance));
+      dispatch(
+        releasePrototype({
+          checklistId: checklist.id,
+          password: data.password,
+          instance: _instance,
+        }),
+      );
     } else {
-      dispatch(signOffPrototype(checklist.id, data.password, _instance));
+      dispatch(
+        signOffPrototype({
+          checklistId: checklist.id,
+          password: data.password,
+          instance: _instance,
+        }),
+      );
     }
   };
 

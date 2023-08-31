@@ -71,17 +71,21 @@ export const fetchApproversSuccess = (data: Collaborator[]) =>
     data,
   });
 
-export const signOffPrototype = (
-  checklistId: Checklist['id'],
-  password: string,
-  instance?: IPublicClientApplication,
-) => actionSpreader(ComposerAction.SIGN_OFF_PROTOTYPE, { checklistId, password, instance });
+export const signOffPrototype = (payload: {
+  checklistId: Checklist['id'];
+  password?: string | null;
+  instance?: IPublicClientApplication;
+  code?: string;
+  state?: string;
+}) => actionSpreader(ComposerAction.SIGN_OFF_PROTOTYPE, payload);
 
-export const releasePrototype = (
-  checklistId: Checklist['id'],
-  password: string,
-  instance?: IPublicClientApplication,
-) => actionSpreader(ComposerAction.RELEASE_PROTOTYPE, { checklistId, password, instance });
+export const releasePrototype = (payload: {
+  checklistId: Checklist['id'];
+  password?: string;
+  instance?: IPublicClientApplication;
+  code?: string;
+  state?: string;
+}) => actionSpreader(ComposerAction.RELEASE_PROTOTYPE, payload);
 
 export const recallProcess = (reason: string, checklistId: Checklist['id']) =>
   actionSpreader(ComposerAction.RECALL_PROCESS, { reason, checklistId });

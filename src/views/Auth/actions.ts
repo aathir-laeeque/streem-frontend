@@ -13,20 +13,31 @@ import {
   TokenTypes,
 } from './types';
 
-export const login = (payload: { username: string; password?: string; idToken?: string }) =>
-  actionSpreader(AuthAction.LOGIN, payload);
+export const login = (payload: {
+  username: string;
+  password?: string;
+  idToken?: string;
+  code?: string;
+  state?: string;
+}) => actionSpreader(AuthAction.LOGIN, payload);
 
 export const loginSuccess = (data: LoginResponse) => actionSpreader(AuthAction.LOGIN_SUCCESS, data);
 
-export const reLogin = (payload: { username: string; password: string; idToken?: string }) =>
-  actionSpreader(AuthAction.RE_LOGIN, payload);
+export const reLogin = (payload: {
+  username: string;
+  password?: string;
+  idToken?: string;
+  code?: string;
+  state?: string;
+  pathname?: string;
+}) => actionSpreader(AuthAction.RE_LOGIN, payload);
 
 export const authError = (error: string) => actionSpreader(AuthAction.AUTH_ERROR, error);
 
 export const setIdle = (data: boolean) => actionSpreader(AuthAction.SET_IDLE, data);
 
-export const logout = (instance?: IPublicClientApplication) =>
-  actionSpreader(AuthAction.LOGOUT, { instance });
+export const logout = (payload: { instance?: IPublicClientApplication; ssoIdToken?: string }) =>
+  actionSpreader(AuthAction.LOGOUT, payload);
 
 export const logoutSuccess = (payload?: {
   type?: NotificationType;

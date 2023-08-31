@@ -438,3 +438,5 @@ export const apiVerificationAssignees = (jobId: string) =>
   `${baseUrl}/parameter-verifications/jobs/${jobId}/assignees`;
 
 export const apiGetShouldBeApprovals = () => `${baseUrl}/jobs/should-be-parameters`;
+
+export const apiSsoRedirect = () => `${baseUrl}/auth/sso/redirect-url`;

@@ -45,4 +45,5 @@ export type TogglesState = {
 export enum UserType {
   LOCAL = 'LOCAL',
   AZURE_AD = 'AZURE_AD',
+  OKTA = 'OKTA',
 }

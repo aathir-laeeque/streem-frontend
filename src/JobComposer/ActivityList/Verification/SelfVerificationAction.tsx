@@ -5,6 +5,9 @@ import { useDispatch } from 'react-redux';
 import { completeSelfVerification, recallPeerVerification } from '../actions';
 import { useForm } from 'react-hook-form';
 import { Parameter } from '#JobComposer/checklist.types';
+import { useTypedSelector } from '#store';
+import { ssoSigningRedirect } from '#utils/request';
+import { useLocation } from '@reach/router';
 
 type Inputs = {
   password: string;
@@ -12,6 +15,10 @@ type Inputs = {
 
 const SelfVerificationAction: FC<{ parameterId: Parameter['id'] }> = ({ parameterId }) => {
   const [passwordInputType, setPasswordInputType] = useState(true);
+  const {
+    auth: { ssoIdToken },
+  } = useTypedSelector((state) => state);
+  const { pathname } = useLocation();
   const dispatch = useDispatch();
   const {
     register,
@@ -23,12 +30,20 @@ const SelfVerificationAction: FC<{ parameterId: Parameter['id'] }> = ({ paramete
   });
 
   const onSubmit = (data: Inputs) => {
-    dispatch(
-      completeSelfVerification({
+    if (ssoIdToken) {
+      ssoSigningRedirect({
+        state: 'SELF_VERIFICATION',
         parameterId,
-        password: data.password,
-      }),
-    );
+        location: pathname,
+      });
+    } else {
+      dispatch(
+        completeSelfVerification({
+          parameterId,
+          password: data.password,
+        }),
+      );
+    }
   };
 
   const AfterIcon = () => (
@@ -39,16 +54,22 @@ const SelfVerificationAction: FC<{ parameterId: Parameter['id'] }> = ({ paramete
   );
   return (
     <form className="parameter-verification" onSubmit={handleSubmit(onSubmit)}>
-      <TextInput
-        AfterElement={AfterIcon}
-        name="password"
-        placeholder="Enter Your Account Password"
-        ref={register({
-          required: true,
-        })}
-        type={passwordInputType ? 'password' : 'text'}
-      />
-      <Button style={{ marginRight: 'unset' }} type="submit" disabled={!isValid || !isDirty}>
+      {!ssoIdToken && (
+        <TextInput
+          AfterElement={AfterIcon}
+          name="password"
+          placeholder="Enter Your Account Password"
+          ref={register({
+            required: true,
+          })}
+          type={passwordInputType ? 'password' : 'text'}
+        />
+      )}
+      <Button
+        style={{ marginRight: 'unset' }}
+        type="submit"
+        disabled={ssoIdToken ? false : !isValid || !isDirty}
+      >
         Verify
       </Button>
       <Button

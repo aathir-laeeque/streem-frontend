@@ -12,6 +12,8 @@ import { fetch } from '#store/properties/actions';
 import { useMsal } from '@azure/msal-react';
 import { UserType } from '#views/UserAccess/ManageUser/types';
 import { ssoLogin } from '../saga';
+import { ssoSigningRedirect } from '#utils/request';
+import { useLocation } from '@reach/router';
 
 // TODO Handle closing of this modal if relogin api fails for some reason.
 const Wrapper = styled.div`
@@ -86,7 +88,9 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
 }) => {
   const dispatch = useDispatch();
   const { instance } = useMsal();
-  const { profile, selectedUseCase, userType } = useTypedSelector((state) => state.auth);
+  const { profile, selectedUseCase, userType, ssoIdToken } = useTypedSelector(
+    (state) => state.auth,
+  );
   const [passwordInputType, setPasswordInputType] = useState(true);
   const { register, handleSubmit, formState } = useForm<Inputs>({
     mode: 'onChange',
@@ -96,23 +100,28 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
 
   const onSubmit = async (data: Inputs) => {
     if (profile && profile.username) {
-      let idToken;
-      if (userType === UserType.AZURE_AD) {
-        const ssoResponse = await ssoLogin(profile.username, instance);
-        idToken = ssoResponse.idToken;
+      if (ssoIdToken) {
+        ssoSigningRedirect({ state: 'RE_LOGIN', location: window?.location?.pathname });
+        // if (selectedUseCase) {
+        //   dispatch(fetch([ComposerEntity.CHECKLIST], selectedUseCase.id));
+        // }
+      } else {
+        let idToken;
+        if (userType === UserType.AZURE_AD) {
+          const ssoResponse = await ssoLogin(profile.username, instance);
+          idToken = ssoResponse.idToken;
+        }
+        dispatch(
+          reLogin({
+            ...data,
+            username: profile.username,
+            idToken,
+          }),
+        );
+        if (selectedUseCase) {
+          dispatch(fetch([ComposerEntity.CHECKLIST], selectedUseCase.id));
+        }
       }
-      dispatch(
-        reLogin({
-          ...data,
-          username: profile.username,
-          idToken,
-        }),
-      );
-      if (selectedUseCase) {
-        dispatch(fetch([ComposerEntity.CHECKLIST], selectedUseCase.id));
-      }
-
-      closeOverlay();
     }
   };
 
@@ -171,7 +180,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
               style={{ width: 'auto' }}
               variant="secondary"
               onClick={() => {
-                dispatch(logout());
+                dispatch(logout({ ssoIdToken: ssoIdToken }));
               }}
             >
               Logout

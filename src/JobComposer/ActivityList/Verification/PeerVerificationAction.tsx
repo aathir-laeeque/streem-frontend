@@ -7,6 +7,9 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { Visibility } from '@material-ui/icons';
 import { useForm } from 'react-hook-form';
+import { useLocation } from '@reach/router';
+import { useTypedSelector } from '#store';
+import { ssoSigningRedirect } from '#utils/request';
 
 type Inputs = {
   password: string;
@@ -24,6 +27,8 @@ const PeerVerificationAction: FC<{ parameterId: Parameter['id'] }> = ({ paramete
     mode: 'onChange',
     criteriaMode: 'all',
   });
+  const { ssoIdToken } = useTypedSelector((state) => state.auth);
+  const { pathname } = useLocation();
 
   const onSubmit = (data: Inputs) => {
     dispatch(
@@ -70,7 +75,15 @@ const PeerVerificationAction: FC<{ parameterId: Parameter['id'] }> = ({ paramete
         <div className="parameter-verification">
           <Button
             onClick={() => {
-              setShowPasswordField(true);
+              if (ssoIdToken) {
+                ssoSigningRedirect({
+                  state: 'PEER_VERIFICATION',
+                  parameterId,
+                  location: pathname,
+                });
+              } else {
+                setShowPasswordField(true);
+              }
             }}
           >
             Approve
