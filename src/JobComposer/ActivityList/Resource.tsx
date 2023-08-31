@@ -57,7 +57,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     options: [],
     value: null,
     linkedResourceParameter: {},
-    parameterForFilters: { ...parametersById },
+    parameterForFilters: { ...parametersById, ...keyBy(data?.parameterValues || [], 'id') },
   });
   const { options, isLoading, value, linkedResourceParameter, parameterForFilters } = state;
   const pagination = useRef({
@@ -113,14 +113,6 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
       }));
   }, [parameterForFilters]);
 
-  useEffect(() => {
-    const cjfParametersById = keyBy(data?.parameterValues, 'id');
-    setState((prev) => ({
-      ...prev,
-      parameterForFilters: { ...prev.parameterForFilters, ...cjfParametersById },
-    }));
-  }, []);
-
   const getUrl = (page: number) => {
     if (parameter?.data?.propertyFilters) {
       return `${baseUrl}${parameter.data.urlPath}&page=${page}&filters=${encodeURIComponent(
@@ -136,7 +128,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     const _fields = fields?.map((currField) => {
       if (currField?.referencedParameterId) {
         const referencedParameterData =
-          parametersById[currField.referencedParameterId]?.response?.value ??
+          parameterForFilters[currField.referencedParameterId]?.response?.value ??
           ObjectIdsDataFromChoices(
             parameterForFilters[currField.referencedParameterId]?.response?.choices,
           );
@@ -144,9 +136,9 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
         let value;
         if (referencedParameterData) {
           if (
-            parametersById[currField.referencedParameterId]?.type ===
+            parameterForFilters[currField.referencedParameterId]?.type ===
               MandatoryParameter.CALCULATION ||
-            parametersById[currField.referencedParameterId]?.type === MandatoryParameter.NUMBER
+            parameterForFilters[currField.referencedParameterId]?.type === MandatoryParameter.NUMBER
           ) {
             value = Number(referencedParameterData);
           } else {
