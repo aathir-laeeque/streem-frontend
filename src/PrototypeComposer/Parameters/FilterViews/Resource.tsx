@@ -111,6 +111,7 @@ type ResourceFilterState = {
   relationObjects?: Record<string, any[]>;
   parametersData?: any;
   parametersFilterFields: FilterField[];
+  allParametersData?: Record<string, Parameter>;
 };
 
 const ResourceFilter: FC<{
@@ -140,11 +141,7 @@ const ResourceFilter: FC<{
           if (filter?.selector === 'CONSTANT') {
             keyToValidate.push('values');
           } else if (filter?.selector === 'PARAMETER') {
-            keyToValidate = [
-              ...keyToValidate,
-              'referencedParameterId',
-              'referencedParameterDisplayName',
-            ];
+            keyToValidate = [...keyToValidate, 'referencedParameterId'];
           } else {
             keyToValidate = [...keyToValidate, 'values'];
           }
@@ -273,6 +270,7 @@ const ResourceFormCard: FC<{
     relationObjects: {},
     parametersData: {},
     parametersFilterFields: [],
+    allParametersData: {},
   });
   const {
     isActiveLoading,
@@ -281,6 +279,7 @@ const ResourceFormCard: FC<{
     relationObjects,
     parametersData,
     parametersFilterFields,
+    allParametersData,
   } = state;
 
   const parameterOptionsList =
@@ -389,6 +388,7 @@ const ResourceFormCard: FC<{
                   : [...prev.parametersData.data, ...response.data],
               pageable: response.pageable,
             },
+            allParametersData: { ...prev.allParametersData, ...keyBy(response.data, 'id') },
           }));
         }
       } catch (e) {
@@ -424,32 +424,18 @@ const ResourceFormCard: FC<{
             );
           }
         }
-        setState((prev) => ({
-          ...prev,
-          parametersFilterFields: [
-            {
-              field: 'type',
-              op: FilterOperators.ANY,
-              values:
-                currfilter.propertyType === 'NUMBER'
-                  ? [MandatoryParameter.NUMBER, MandatoryParameter.CALCULATION]
-                  : [currfilter.propertyType],
-            },
-          ],
-        }));
       });
     }
   }, [propertiesMap.current]);
 
   useEffect(() => {
-    if (parametersFilterFields?.length) {
-      fetchParametersData({ filters: parametersFilterFields });
-    }
+    fetchParametersData({ filters: parametersFilterFields });
   }, [parametersFilterFields]);
 
   return (fields || []).map((item: any, index: number) => {
     if (!item) return null;
     const selectedObjectProperty = propertiesMap?.current[item?.field?.split('.')?.[1]];
+    const selectedParameter = allParametersData?.[item?.referencedParameterId];
     return (
       <div className="filter" key={index}>
         <div className="upper-row">
@@ -759,7 +745,7 @@ const ResourceFormCard: FC<{
                               value: item?.referencedParameterId
                                 ? [
                                     {
-                                      label: item.referencedParameterDisplayName,
+                                      label: selectedParameter?.label,
                                       value: item.referencedParameterId,
                                     },
                                   ]
@@ -772,7 +758,6 @@ const ResourceFormCard: FC<{
                                 fields[index] = {
                                   ...fields[index],
                                   referencedParameterId: value?.id,
-                                  referencedParameterDisplayName: value?.label,
                                   propertyType: value?.type,
                                 };
                                 const _propertyFilters = {
