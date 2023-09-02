@@ -624,8 +624,8 @@ const JobsContent: FC<TabContentProps> = ({
           updateFilterFields={(fields) => {
             setFilterFields((currentFields) => {
               const updatedFilterFields = [
-                ...currentFields.filter((field) => field.field !== fields?.[0].field),
-                ...fields,
+                ...currentFields.filter((field) => field.field !== fields?.[0]?.field),
+                ...fields.filter((f) => f?.values?.[0]),
               ];
               return updatedFilterFields;
             });

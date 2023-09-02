@@ -1,16 +1,28 @@
 import { FilterField, FilterOperators } from '#utils/globalTypes';
 import { MenuItem } from '@material-ui/core';
-import { ArrowDropDown, Search } from '@material-ui/icons';
+import { ArrowDropDown } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { FC, MouseEvent, useEffect, useState } from 'react';
+import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Button } from './Button';
 import { TextInput } from './Input';
 import { StyledMenu } from './StyledMenu';
 
+const equityOptions = [
+  {
+    label: 'Contains',
+    value: FilterOperators.LIKE,
+    icon: '/images/contains.svg',
+  },
+  {
+    label: 'Equals',
+    value: FilterOperators.EQ,
+    icon: '/images/equals.svg',
+  },
+];
+
 const Wrapper = styled.div`
   display: flex;
-  max-width: 280px;
   position: relative;
 
   .dropdown-button {
@@ -27,6 +39,19 @@ const Wrapper = styled.div`
         font-size: 18px;
         margin-left: auto;
       }
+    }
+
+    .equity-dropdown-menu {
+      .equity-dropdown-menu-item {
+      }
+    }
+  }
+
+  .equity {
+    button {
+      background-color: #fff;
+      border: 1px solid #dadada;
+      border-left: 0px;
     }
   }
 
@@ -47,7 +72,7 @@ const Wrapper = styled.div`
 
   .input-wrapper {
     padding: 10px 16px;
-
+    border-right: 0;
     .icon {
       font-size: 18px;
     }
@@ -76,20 +101,33 @@ const SearchFilter: FC<SearchFilterProps> = ({
   ...rest
 }) => {
   const [selectedOption, setSelectedOption] = useState<DropdownOption>((dropdownOptions ?? [])[0]);
-
-  const [searchValue, setSearchValue] = useState('');
-
+  // const [searchValue, setSearchValue] = useState('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorEl1, setAnchorEl1] = useState<null | HTMLElement>(null);
+  const [equityOption, setEquityOption] = useState<any>(equityOptions[0]);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
 
+  const handleEquityToggle = (event: MouseEvent<HTMLButtonElement>) =>
+    setAnchorEl1(event.currentTarget);
+
   const handleClose = () => setAnchorEl(null);
+  const handleEquityClose = () => setAnchorEl1(null);
 
   useEffect(() => {
-    setSearchValue('');
+    // setSearchValue('');
+    if (inputRef.current) inputRef.current.value = '';
   }, [label]);
 
-  const onUpdate = (updatedOption: DropdownOption, updatedSearchValue: string) => {
+  const onUpdate = ({
+    updatedOption = selectedOption,
+    equity = equityOption,
+  }: {
+    updatedOption?: DropdownOption;
+    equity?: any;
+  }) => {
+    const updatedSearchValue = inputRef?.current?.value ?? '';
     const searchFilterFields = [
       ...(updatedOption.field === 'name' ||
       updatedOption.field === 'checklist.name' ||
@@ -101,19 +139,19 @@ const SearchFilter: FC<SearchFilterProps> = ({
         ? [
             {
               field: updatedOption.field,
-              op: updatedOption.operator,
+              op: equity.value,
               values: [updatedSearchValue],
             },
           ]
         : [
             {
               field: updatedOption.field,
-              op: updatedOption.operator,
+              op: equity.value,
               values: [updatedOption.value],
             },
             {
               field: `${updatedOption.field.split('.')[0]}.value`,
-              op: FilterOperators.LIKE,
+              op: equity.value,
               values: [updatedSearchValue],
             },
           ]),
@@ -145,7 +183,9 @@ const SearchFilter: FC<SearchFilterProps> = ({
                 key={index}
                 onClick={() => {
                   setSelectedOption(option);
-                  onUpdate(option, searchValue);
+                  onUpdate({
+                    updatedOption: option,
+                  });
                   handleClose();
                 }}
               >
@@ -156,15 +196,45 @@ const SearchFilter: FC<SearchFilterProps> = ({
         </div>
       ) : null}
       <TextInput
-        afterElementWithoutError
-        AfterElement={Search}
-        afterElementClass=""
         placeholder={`Search ${showDropdown ? `with ${selectedOption?.label}` : ''}`}
         onChange={debounce(({ value }) => {
-          setSearchValue(value);
-          onUpdate(selectedOption, value);
+          // setSearchValue(value);
+          onUpdate({});
         }, 500)}
+        ref={inputRef}
       />
+      <div className="dropdown-button equity">
+        <Button onClick={handleEquityToggle}>
+          <img className="icon" src={equityOption.icon} />
+        </Button>
+
+        <StyledMenu
+          keepMounted
+          disableEnforceFocus
+          anchorEl={anchorEl1}
+          className="equity-dropdown-menu"
+          onClose={handleEquityClose}
+          open={Boolean(anchorEl1)}
+          style={{ marginTop: 40 }}
+        >
+          {equityOptions?.map((option, index) => (
+            <MenuItem
+              className="equity-dropdown-menu-item"
+              key={index}
+              onClick={() => {
+                setEquityOption(option);
+                onUpdate({
+                  equity: option,
+                });
+                handleEquityClose();
+              }}
+            >
+              <img src={option.icon} />
+              {option.label}
+            </MenuItem>
+          ))}
+        </StyledMenu>
+      </div>
     </Wrapper>
   );
 };

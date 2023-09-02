@@ -599,7 +599,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                       },
                     ].some((newField) => newField.field === field.field),
                 ),
-                ...fields,
+                ...fields.filter((f) => f?.values?.[0]),
               ];
               return updatedFilterFields;
             });

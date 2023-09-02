@@ -190,7 +190,7 @@ const ProcessTabContent = () => {
               setFilterFields((currentFields) => {
                 const updatedFilterFields = [
                   ...currentFields.filter((field) => field.field !== 'name'),
-                  ...fields,
+                  ...fields.filter((f) => f?.values?.[0]),
                 ];
                 return updatedFilterFields;
               });

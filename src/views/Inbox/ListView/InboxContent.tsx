@@ -201,7 +201,7 @@ const InboxContent: FC<TabContentProps> = ({
             setFilterFields((currentFields) => {
               const updatedFilterFields = [
                 ...currentFields.filter((field) => field.field !== fields?.[0].field),
-                ...fields,
+                ...fields.filter((f) => f?.values?.[0]),
               ];
               return updatedFilterFields;
             });

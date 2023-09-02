@@ -340,7 +340,7 @@ const ListView: FC<any & { label: string }> = ({ label, values }) => {
                       },
                     ].some((newField) => newField.field === field.field),
                 ),
-                ...fields,
+                ...fields.filter((f) => f?.values?.[0]),
               ];
               return updatedFilterFields;
             });
