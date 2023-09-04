@@ -5,7 +5,11 @@ import {
   AutomationActionType,
   AutomationTargetEntityType,
 } from '#JobComposer/checklist.types';
-import { addTaskAction, archiveTaskAction } from '#PrototypeComposer/Tasks/actions';
+import {
+  addTaskAction,
+  archiveTaskAction,
+  updateTaskAction,
+} from '#PrototypeComposer/Tasks/actions';
 import { Task } from '#PrototypeComposer/Tasks/types';
 import {
   MandatoryParameter,
@@ -666,16 +670,17 @@ const ActionFormCard: FC<Props> = ({
     };
     if (editActionFlag && selectedAction?.id) {
       dispatch(
-        addTaskAction({
+        updateTaskAction({
           taskId: task.id,
-          actions: { ...commonData, ...selectedAction, ...data },
+          action: { ...commonData, ...selectedAction, ...data },
+          actionId: selectedAction.id,
         }),
       );
     } else {
       dispatch(
         addTaskAction({
           taskId: task.id,
-          actions: { ...commonData, ...data },
+          action: { ...commonData, ...data },
         }),
       );
     }

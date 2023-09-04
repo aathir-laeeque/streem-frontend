@@ -190,8 +190,6 @@ export const apiRemoveTaskTimer = (taskId: Task['id']) => `${baseUrl}/tasks/${ta
 
 export const apiAddMediaToTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/medias`;
 
-export const apiAddTaskAction = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/automations`;
-
 export const apiUpdateTaskAction = (taskId: Task['id'], actionId: string) =>
   `${baseUrl}/tasks/${taskId}/automations/${actionId}`;
 
@@ -359,8 +357,7 @@ export const apiCreateObjectTypeRelation = (objectTypeId: string) =>
 export const apiArchiveObjectTypeRelation = (objectTypeId: string, relationId: string) =>
   `${baseUrl}/object-types/${objectTypeId}/relations/${relationId}/archive`;
 
-export const apiMultipleTaskAction = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/automations`;
+export const apiAddTaskAction = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/automations`;
 
 export const apiGetProcessesByResource = (objectTypeId: string) =>
   `${baseUrl}/checklists/by/resource/${objectTypeId}`;

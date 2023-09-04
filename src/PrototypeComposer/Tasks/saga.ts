@@ -7,7 +7,6 @@ import {
   apiAddTaskAction,
   apiCreateTask,
   apiDeleteTask,
-  apiMultipleTaskAction,
   apiRemoveStop,
   apiRemoveTaskMedia,
   apiRemoveTaskTimer,
@@ -326,8 +325,13 @@ function* updateTaskActionSaga({ payload }: ReturnType<typeof updateTaskAction>)
     });
 
     if (data) {
-      yield put(updateTaskActionSuccess({ action: data, taskId }));
-      yield put(closeOverlayAction(OverlayNames.CONFIGURE_ACTIONS));
+      yield put(updateTask(data));
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: 'Action updated successfully!',
+        }),
+      );
     } else {
       console.error('error from update action to task api :: ', errors);
     }
@@ -385,9 +389,9 @@ function* reOrderParametersSaga({ payload }: ReturnType<typeof reOrderParameters
 
 function* addTaskActionSaga({ payload }: ReturnType<typeof addTaskAction>) {
   try {
-    const { actions, taskId } = payload;
-    const { data, errors } = yield call(request, 'POST', apiMultipleTaskAction(taskId), {
-      data: actions,
+    const { action, taskId } = payload;
+    const { data, errors } = yield call(request, 'POST', apiAddTaskAction(taskId), {
+      data: action,
     });
 
     if (data) {
@@ -395,7 +399,7 @@ function* addTaskActionSaga({ payload }: ReturnType<typeof addTaskAction>) {
       yield put(
         showNotification({
           type: NotificationType.SUCCESS,
-          msg: actions.id ? 'Action updated successfully!' : 'Action added successfully!',
+          msg: 'Action added successfully!',
         }),
       );
     } else if (errors) {
