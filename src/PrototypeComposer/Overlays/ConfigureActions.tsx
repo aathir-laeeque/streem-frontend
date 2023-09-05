@@ -402,6 +402,7 @@ const ActionFormCard: FC<Props> = ({
     watch,
     reset,
     control,
+    getValues,
   } = useForm({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -623,17 +624,26 @@ const ActionFormCard: FC<Props> = ({
   const fetchObjectType = async (id: string) => {
     setSelectedObjectType(undefined);
     setIsLoadingObjectType(true);
+    const { actionType: _actionType, actionDetails: _actionDetails } = getValues();
     const res = await request('GET', apiGetObjectTypes(id));
     setSelectedObjectType(res?.data);
-    if (actionType === AutomationActionActionType.SET_PROPERTY && actionDetails?.propertyId) {
+    if (
+      (_actionType === AutomationActionActionType.SET_PROPERTY && _actionDetails?.propertyId) ||
+      (_actionType === AutomationActionActionType.SET_RELATION && _actionDetails?.relationId)
+    ) {
       const _selectedProperty = (res?.data?.properties || []).find(
-        (property: any) => actionDetails?.propertyId === property.id,
+        (property: any) => _actionDetails?.propertyId === property.id,
+      );
+      const _selectedRelation = (res?.data?.relations || []).find(
+        (property: any) => _actionDetails?.relationId === property.id,
       );
       if (_selectedProperty) {
         setSelectedProperty({
           ..._selectedProperty,
           _options: _selectedProperty.options,
         });
+      } else if (_selectedRelation) {
+        setSelectedRelation(_selectedRelation);
       }
     }
     setIsLoadingObjectType(false);
@@ -673,18 +683,6 @@ const ActionFormCard: FC<Props> = ({
   };
 
   useEffect(() => {
-    if (editActionFlag && selectedAction.actionType === 'SET_PROPERTY') {
-      const property = selectedObjectType?.properties?.filter(
-        (currProperty) => currProperty?.id === selectedAction?.actionDetails?.propertyId,
-      )?.[0];
-      setSelectedProperty(property);
-    }
-    if (editActionFlag && selectedAction.actionType === 'SET_RELATION') {
-      const relation = selectedObjectType?.relations?.filter(
-        (currRelation) => currRelation?.id === selectedAction?.actionDetails?.relationId,
-      )?.[0];
-      setSelectedRelation(relation);
-    }
     reset({
       displayName: selectedAction.displayName,
       actionType: selectedAction.actionType,
@@ -1092,7 +1090,6 @@ const ActionFormCard: FC<Props> = ({
                                           placeholder: 'Select Set As',
                                           isDisabled: isReadOnly,
                                           onChange: (_option: any) => {
-                                            console.log('zero check', _option);
                                             onChange({
                                               ...actionDetails,
                                               ..._option.value,
