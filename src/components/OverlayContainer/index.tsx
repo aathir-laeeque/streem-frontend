@@ -1,42 +1,51 @@
-import WebCamOverlay from '#components/shared/WebCamOverlay';
+import { AssignedUserDetailsPopover } from '#JobComposer/Popovers/AssignedUserDetailsPopover';
 import AddStop from '#JobComposer/modals/AddStop';
+import AutomationActionModal from '#JobComposer/modals/AutomationAction';
 import JobCompleteAllTasksError from '#JobComposer/modals/CompleteAllTasksError';
-import CompletedWithExceptionInfo from '#JobComposer/modals/CompletedWithExceptionInfo';
 import CompleteJobWithException from '#JobComposer/modals/CompleteJobWithException';
-import CompleteTaskWithException from '#JobComposer/modals/CompleteTaskWithException';
+import CompletedWithExceptionInfo from '#JobComposer/modals/CompletedWithExceptionInfo';
+import JobVerification from '#JobComposer/modals/JobVerification';
 import ParameterApprovalModal from '#JobComposer/modals/ParameterApproval';
+import PeerVerificationModal from '#JobComposer/modals/PeerVerificationModal';
+import RecallVerificationModal from '#JobComposer/modals/RecallVerificationModal';
 import RefetchJobComposerData from '#JobComposer/modals/RefetchJobComposerData';
-import Signature from '#JobComposer/modals/SignatureActivity';
 import SignCompletedTasksModal from '#JobComposer/modals/SignCompletedTasks';
+import Signature from '#JobComposer/modals/SignatureActivity';
 import SignningNotCompleteModal from '#JobComposer/modals/SignningNotComplete';
-import SignOffState from '#JobComposer/modals/SignOffStatus';
 import StartJob from '#JobComposer/modals/StartJob';
 import StartTaskError from '#JobComposer/modals/StartTaskError';
-import { AssignedUserDetailsPopover } from '#JobComposer/Popovers/AssignedUserDetailsPopover';
-import { TaskMediaModal, TimedTaskConfigModal } from '#PrototypeComposer/modals';
-import EditingDisabledModal from '#PrototypeComposer/modals/EditingDisabled';
+import TaskPauseReasonModal from '#JobComposer/modals/TaskPauseReasonModal';
+import ViewReason from '#JobComposer/modals/ViewReason';
 import { AuthorsDetailsPopover } from '#PrototypeComposer/Overlays/AuthorsDetailsPopover';
+import ConfigureActions from '#PrototypeComposer/Overlays/ConfigureActions';
+import ConfigureJobParameters from '#PrototypeComposer/Overlays/ConfigureJobParameters';
 import InitiateSignOffModal from '#PrototypeComposer/Overlays/InitiateSignOff';
 import PasswordInputModal from '#PrototypeComposer/Overlays/PasswordInput';
 import ReleaseSuccessModal from '#PrototypeComposer/Overlays/ReleaseSuccess';
+import ReviewSubmitSuccessModal from '#PrototypeComposer/Overlays/ReviewSubmitSuccess';
 import ReviewerAssignmentModal from '#PrototypeComposer/Overlays/ReviewerAssignmentModal';
 import { ReviewerAssignmentPopover } from '#PrototypeComposer/Overlays/ReviewerAssignmentPopover';
 import ReviewerAssignmentSuccessModal from '#PrototypeComposer/Overlays/ReviewerAssignmentSuccess';
 import { ReviewersDetailsPopover } from '#PrototypeComposer/Overlays/ReviewersDetailsPopover';
-import ReviewSubmitSuccessModal from '#PrototypeComposer/Overlays/ReviewSubmitSuccess';
 import SentToAuthorSuccessModal from '#PrototypeComposer/Overlays/SentToAuthorSuccess';
 import SignOffInitiatedSuccessModal from '#PrototypeComposer/Overlays/SignOffInitiatedSuccess';
 import SignOffProgressModal from '#PrototypeComposer/Overlays/SignOffProgress';
 import SignOffSuccessModal from '#PrototypeComposer/Overlays/SignOffSuccess';
 import { SubmitReviewModal } from '#PrototypeComposer/Overlays/SubmitReview';
+import { TaskMediaModal, TimedTaskConfigModal } from '#PrototypeComposer/modals';
+import EditingDisabledModal from '#PrototypeComposer/modals/EditingDisabled';
+import { QRGenerator, QRScanner } from '#components';
+import WebCamOverlay from '#components/shared/WebCamOverlay';
 import { useTypedSelector } from '#store';
 import SessionExpireModal from '#views/Auth/Overlays/SessionExpire';
+import ChecklistUserAssignment from '#views/Checklists/Assignment/ChecklistUserAssignment';
+import PutCustomViewModal from '#views/Checklists/JobLogs/Overlays/PutCustomViewModal';
 import ArchiveModal from '#views/Checklists/ListView/ArchiveModal';
 import ChecklistInfoModal from '#views/Checklists/ListView/ChecklistInfoModal';
+import ProcessSharing from '#views/Checklists/Overlays/ProcessSharing';
 import RevisionErrorModal from '#views/Checklists/Overlays/RevisionErrorModal';
 import AssingnmentInfo from '#views/Jobs/Assignment/AssignmentInfo';
 import UserAssignment from '#views/Jobs/Assignment/UserAssignmentModal';
-import { CreateJobModal } from '#views/Jobs/Modals/CreateJobModal';
 import SetDateModal from '#views/Jobs/Overlays/SetDateModal';
 import SecretKeyModal from '#views/UserAccess/Overlays/SecretKeyModal';
 import ValidateCredentialsModal from '#views/UserAccess/Overlays/ValidateCredentialsModal';
@@ -44,34 +53,19 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import ReasonModal from '../shared/ReasonModal';
-import TaskPauseReasonModal from '#JobComposer/modals/TaskPauseReasonModal';
 import StartErrorModal from '../shared/StartErrorModal';
-import AutomationActionModal from '#JobComposer/modals/AutomationAction';
-import ChecklistUserAssignment from '#views/Checklists/Assignment/ChecklistUserAssignment';
-import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import ConfigureColumnsModal from './ConfigureColumns';
 import { ConfirmationModal } from './ConfirmationModal';
-import SimpleConfirmationModal from './SimpleConfirmationModal';
-import ConfigureActions from '#PrototypeComposer/Overlays/ConfigureActions';
-import ProcessSharing from '#views/Checklists/Overlays/ProcessSharing';
-import ConfigureJobParameters from '#PrototypeComposer/Overlays/ConfigureJobParameters';
-import { QRScanner, QRGenerator } from '#components';
-import PutCustomViewModal from '#views/Checklists/JobLogs/Overlays/PutCustomViewModal';
-import { CommonOverlayProps, OverlayNames } from './types';
-import PeerVerificationModal from '#JobComposer/modals/PeerVerificationModal';
-import RecallVerificationModal from '#JobComposer/modals/RecallVerificationModal';
-import JobVerification from '#JobComposer/modals/JobVerification';
-import ViewReason from '#JobComposer/modals/ViewReason';
 import OrientationModal from './OrientationModal';
+import SimpleConfirmationModal from './SimpleConfirmationModal';
+import { closeAllOverlayAction, closeOverlayAction } from './actions';
+import { CommonOverlayProps, OverlayNames } from './types';
 
 const Wrapper = styled.div``;
 
 const getOverlay = (params: CommonOverlayProps<any>) => {
   const { type } = params;
   switch (type) {
-    case OverlayNames.CREATE_JOB_MODAL:
-      return <CreateJobModal {...params} />;
-
     case OverlayNames.SIGNATURE_MODAL:
       return <Signature {...params} />;
 
@@ -83,9 +77,6 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.START_TASK_ERROR_MODAL:
       return <StartTaskError {...params} />;
-
-    case OverlayNames.COMPLETE_TASK_WITH_EXCEPTION:
-      return <CompleteTaskWithException {...params} />;
 
     case OverlayNames.COMPLETE_JOB_WITH_EXCEPTION:
       return <CompleteJobWithException {...params} />;
@@ -149,9 +140,6 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.TASK_MEDIA:
       return <TaskMediaModal {...params} />;
-
-    case OverlayNames.SIGN_OFF_STATE:
-      return <SignOffState {...params} />;
 
     case OverlayNames.SIGN_COMPLETED_TASKS:
       return <SignCompletedTasksModal {...params} />;

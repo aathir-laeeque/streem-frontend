@@ -20,7 +20,5 @@ export const fetchReport = (params: Record<string, string | number>) =>
 export const fetchReportSuccess = ({ data }: Partial<ResponseObj<any>>) =>
   actionSpreader(ReportsAction.FETCH_REPORT_SUCCESS, { data });
 
-export const fetchReportOngoing = () => actionSpreader(ReportsAction.FETCH_REPORT_ONGOING);
-
 export const fetchReportError = (error: any) =>
   actionSpreader(ReportsAction.FETCH_REPORT_ERROR, { error });

@@ -53,8 +53,6 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
       throw getErrorMsg(errors);
     }
 
-    yield put(closeOverlayAction(OverlayNames.CREATE_JOB_MODAL));
-
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,

@@ -9,9 +9,6 @@ import { fetchBaseUrl } from './constants';
 
 export const baseUrl = fetchBaseUrl();
 
-export const apiGetParametersForCalc = (checklistId: Checklist['id']) =>
-  `${baseUrl}/checklists/${checklistId}/parameters-for-calculation`;
-
 export const apiGetChecklists = () => `${baseUrl}/checklists`;
 
 export const apiGetChecklist = (checklistId: Checklist['id']) =>
@@ -48,9 +45,6 @@ export const apiUpdatePassword = (id: User['id']) => `${baseUrl}/users/${id}/pas
 export const apiGetSelectedJob = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}`;
 
 export const apiExecuteParameter = () => `${baseUrl}/parameters/execute`;
-
-export const apiAutoInitialize = (parameterId: string) =>
-  `${baseUrl}/parameters/${parameterId}/auto-initialize`;
 
 export const apiFixParameter = () => `${baseUrl}/parameters/error-correction`;
 
@@ -321,9 +315,6 @@ export const apiGetJobLogsExcel = () => `${baseUrl}/job-logs/download`;
 
 export const apiBranchingRuleExecute = () => `${baseUrl}/parameters/execute/temporary`;
 
-export const apiJobSchedulers = (jobId: string, schedulerId?: string) =>
-  `${baseUrl}/jobs/${jobId}/schedulers${schedulerId ? `/${schedulerId}` : ''}`;
-
 export const apiJobsCount = () => `${baseUrl}/jobs/count`;
 
 export const apiInboxJobsCount = () => `${baseUrl}/jobs/assignee/me/count`;
@@ -364,13 +355,9 @@ export const apiGetProcessesByResource = (objectTypeId: string) =>
 
 export const apiGetJobsByResource = (objectId: string) => `${baseUrl}/jobs/by/resource/${objectId}`;
 
-export const apiGetJobsForObject = () => `${baseUrl}/jobs/by/resource`;
-
 export const apiPauseJob = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/pause`;
 
 export const apiResumeJob = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/resume`;
-
-export const apiScheduleJob = (jobId: string) => `${baseUrl}/jobs/${jobId}/schedule`;
 
 export const apiProcessScheduler = () => `${baseUrl}/schedulers`;
 
