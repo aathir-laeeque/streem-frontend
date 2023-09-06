@@ -177,15 +177,6 @@ const getDateUnits = (inputType: InputTypes) => {
   }
 };
 
-let commonKeys = [
-  'propertyId',
-  'propertyInputType',
-  'propertyExternalId',
-  'propertyDisplayName',
-  'referencedParameterId',
-  'objectTypeDisplayName',
-];
-
 const ConfigureActions: FC<CommonOverlayProps<Pick<Props, 'checklistId' | 'isReadOnly'>>> = ({
   closeAllOverlays,
   closeOverlay,
@@ -480,16 +471,16 @@ const ActionFormCard: FC<Props> = ({
           AutomationActionActionType.ARCHIVE_OBJECT,
         ].includes(actionType)
       ) {
-        let keysToValidate: string[] = [];
+        let keysToValidate: string[] = ['parameterId'];
+        let commonKeys = [
+          'propertyId',
+          'propertyInputType',
+          'propertyExternalId',
+          'propertyDisplayName',
+          'referencedParameterId',
+          'objectTypeDisplayName',
+        ];
         if (actionType === AutomationActionActionType.SET_PROPERTY) {
-          commonKeys = [
-            'propertyId',
-            'propertyInputType',
-            'propertyExternalId',
-            'propertyDisplayName',
-            'referencedParameterId',
-            'objectTypeDisplayName',
-          ];
           if (value?.propertyInputType) {
             if ([InputTypes.DATE, InputTypes.DATE_TIME].includes(value.propertyInputType)) {
               keysToValidate = ['entityType', 'entityId', 'captureProperty', 'dateUnit', 'value'];
@@ -506,9 +497,6 @@ const ActionFormCard: FC<Props> = ({
             'relationDisplayName',
             'relationObjectTypeId',
           ];
-          keysToValidate = ['parameterId'];
-        } else {
-          keysToValidate = ['parameterId'];
         }
         return [...commonKeys, ...keysToValidate].every((key) => !!value?.[key]);
       }
@@ -684,7 +672,11 @@ const ActionFormCard: FC<Props> = ({
         }),
       );
     }
-    setState((prev) => ({ ...prev, addNewAction: false }));
+    setState((prev) => ({
+      addNewAction: false,
+      selectedAction: {},
+      editActionFlag: false,
+    }));
   };
 
   useEffect(() => {
