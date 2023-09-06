@@ -18,6 +18,7 @@ import { FacilityWiseConstantsReducer } from './facilityWiseConstants/reducer';
 import { OntologyReducer } from '../views/Ontology/reducer';
 import { ReportsListViewReducer } from '../views/Reports/ListView/reducer';
 import { SchedulerReducer } from '#views/Checklists/Schedular/schedulerStore';
+import { jobReducer } from '#views/Job/jobStore';
 
 export const rootReducer = combineReducers({
   auth: AuthReducer,
@@ -39,4 +40,5 @@ export const rootReducer = combineReducers({
   ontology: OntologyReducer,
   reports: ReportsListViewReducer,
   schedular: SchedulerReducer,
+  job: jobReducer,
 });

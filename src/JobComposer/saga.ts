@@ -2,6 +2,7 @@ import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { RootState } from '#store';
 import { setRecentServerTimestamp } from '#store/extras/action';
 import {
   apiCompleteJob,
@@ -18,6 +19,12 @@ import { request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import { navigate } from '@reach/router';
 import { all, call, fork, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
+import { setParameterError } from './ActivityList/actions';
+import { ParameterListSaga } from './ActivityList/saga';
+import { JobAuditLogsSaga } from './JobAuditLogs/saga';
+import { StageListSaga } from './StageList/saga';
+import { setTaskError } from './TaskList/actions';
+import { TaskListSaga } from './TaskList/saga';
 import {
   completeJob,
   fetchData,
@@ -30,17 +37,10 @@ import {
   startJobSuccess,
   updateHiddenIds,
 } from './actions';
-import { setParameterError } from './ActivityList/actions';
-import { ParameterListSaga } from './ActivityList/saga';
 import { ComposerAction } from './composer.reducer.types';
 import { Entity, JobErrors, JobWithExceptionInCompleteTaskErrors } from './composer.types';
-import { JobAuditLogsSaga } from './JobAuditLogs/saga';
 import { RefetchJobErrorType } from './modals/RefetchJobComposerData';
-import { StageListSaga } from './StageList/saga';
-import { setTaskError } from './TaskList/actions';
-import { TaskListSaga } from './TaskList/saga';
 import { groupJobErrors } from './utils';
-import { RootState } from '#store';
 
 const getUserId = (state: RootState) => state.auth.userId;
 
@@ -75,7 +75,7 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
     console.log('payload for start job :: ', payload);
     const { jobId } = payload;
 
-    const { data, errors } = yield call(request, 'PATCH', apiStartJob(jobId, 'start'));
+    const { data, errors } = yield call(request, 'PATCH', apiStartJob(jobId));
 
     if (data) {
       yield put(startJobSuccess());

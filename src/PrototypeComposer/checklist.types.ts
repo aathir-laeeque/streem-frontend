@@ -2,7 +2,7 @@ import { AutomationAction, ParameterMode } from '#JobComposer/checklist.types';
 import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
 import { Constraint } from '#views/Ontology/types';
-import { CollaboratorState, Collaborator } from './reviewer.types';
+import { Collaborator, CollaboratorState } from './reviewer.types';
 
 // TODO : merge (job composer & prototype composer) types.
 
@@ -50,6 +50,7 @@ export enum ParameterState {
 export type ParameterResponse = {
   audit: Audit;
   state: ParameterState;
+  hidden: boolean;
 };
 
 export enum TargetEntityType {
@@ -146,8 +147,14 @@ export type Task = {
   orderTree: number;
   taskExecution: TaskExecution;
   timed: boolean;
-  timerOperator?: TimerOperator;
+  timerOperator: TimerOperator;
   automations: AutomationAction[];
+  hidden: boolean;
+  parentTaskId?: string;
+  showInJob?: boolean;
+  data?: {
+    parameterId: string;
+  };
 };
 
 export type Stage = {

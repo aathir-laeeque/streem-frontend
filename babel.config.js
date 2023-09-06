@@ -26,6 +26,7 @@ module.exports = function (api) {
             '#views': './src/views',
             '#services': './src/services',
             '#hooks': './src/hooks',
+            '#types': './src/types',
             test: ['./test'],
             'test-utils': './test/__setup__/test-utils',
           },

@@ -12,6 +12,7 @@ export interface Pageable {
 }
 
 export type ResponseError = {
+  id: string;
   code: string;
   field: string;
   ignore: string;
@@ -26,6 +27,7 @@ export interface ResponseObj<T> {
   data: T;
   pageable: Pageable | null;
   errors?: ResponseError[];
+  timestamp: number;
 }
 
 export type ValidatorProps = {

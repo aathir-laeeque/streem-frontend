@@ -1,4 +1,4 @@
-import { Media, Task as TaskType, Stage } from '../checklist.types';
+import { Media, Stage, Task as TaskType } from '../checklist.types';
 
 type Task = TaskType & { hasError: boolean; errorMessage?: string };
 
@@ -24,6 +24,9 @@ export enum TaskAction {
   COMPLETE = 'complete',
   SKIP = 'skip',
   COMPLETE_WITH_EXCEPTION = 'complete-with-exception',
+  ENABLE_ERROR_CORRECTION = 'correction/start',
+  COMPLETE_ERROR_CORRECTION = 'correction/complete',
+  CANCEL_ERROR_CORRECTION = 'correction/cancel',
 }
 
 export enum TaskErrors {

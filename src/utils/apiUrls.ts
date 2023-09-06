@@ -20,8 +20,7 @@ export const apiGetInbox = () => `${baseUrl}/jobs/assignee/me`;
 // Job
 export const apiGetJobs = () => `${baseUrl}/jobs`;
 
-export const apiStartJob = (jobId: Job['id'], action: string) =>
-  `${baseUrl}/jobs/${jobId}/${action}`;
+export const apiStartJob = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}/start`;
 
 export const apiGetStageData = (jobId: Job['id'], stageId: Stage['id']) =>
   `${baseUrl}/jobs/${jobId}/stages/state?stageId=${stageId}`;

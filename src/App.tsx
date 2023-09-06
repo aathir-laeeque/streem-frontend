@@ -23,6 +23,9 @@ import { Font } from '@react-pdf/renderer';
 import NunitoRegular from '#assets/fonts/nunito/nunito-v14-latin-300.ttf';
 import NunitoBold from '#assets/fonts/nunito/nunito-v14-latin-700.ttf';
 import { MultiTabChecker } from '#components/OverlayContainer/MultiTabChecker';
+import { enableMapSet } from 'immer';
+
+enableMapSet();
 
 const { store, persistor } = configureStore({});
 window.store = store;
