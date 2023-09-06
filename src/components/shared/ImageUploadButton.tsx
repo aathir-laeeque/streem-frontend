@@ -61,7 +61,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
 
     if (validFileTypes.includes(file.type)) {
       return true;
-    } else if (validExtensions.includes(`.${fileExtension}`)) {
+    } else if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
       return true;
     } else {
       return false;
