@@ -1,12 +1,12 @@
 import { DataTable, LoadingContainer, Pagination } from '#components';
 import { useTypedSelector } from '#store';
-import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { fetchDataParams } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
+import { navigate } from '@reach/router';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchReport, fetchReports, fetchReportSuccess } from './action';
+import { fetchReport, fetchReportSuccess, fetchReports } from './action';
 
 const TabContent = () => {
   const dispatch = useDispatch();
@@ -33,12 +33,14 @@ const TabContent = () => {
   const reportClickHandler = (item) => {
     if (item.type === 'NON_EMBEDDED') {
       dispatch(fetchReport({ id: item.id, useCaseId: selectedUseCase.id }));
+      navigate(`/reports/${item.id}`);
     }
   };
 
   useEffect(() => {
-    if (report.id) {
-      openLinkInNewTab(report.uri);
+    //  if only one report is there directly open dashboard view
+    if (list?.length === 1) {
+      reportClickHandler(list?.[0]);
     }
   }, [report.id]);
 
