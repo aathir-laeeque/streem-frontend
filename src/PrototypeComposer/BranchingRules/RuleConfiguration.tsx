@@ -12,6 +12,7 @@ import { baseUrl } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { Constraint } from '#views/Ontology/types';
+import { getObjectData } from '#views/Ontology/utils';
 import { AddCircleOutline, Close } from '@material-ui/icons';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
@@ -237,11 +238,13 @@ const RuleCard: FC<any> = ({
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];
+    selectedOption: Record<string, string> | null;
   }>({
     isLoading: false,
     options: [],
+    selectedOption: null,
   });
-  const { options, isLoading } = state;
+  const { options, isLoading, selectedOption } = state;
   const pagination = useRef({
     current: -1,
     isLast: true,
@@ -249,6 +252,25 @@ const RuleCard: FC<any> = ({
 
   useEffect(() => {
     getOptions();
+
+    if (item?.input && item.input?.length > 0) {
+      (async () => {
+        const object = await getObjectData({
+          id: item.input[0],
+          collection: parameter.data.collection,
+        });
+        if (object) {
+          setState((prev) => ({
+            ...prev,
+            selectedOption: {
+              value: object.id,
+              label: object.displayName,
+              externalId: object.externalId,
+            },
+          }));
+        }
+      })();
+    }
   }, []);
 
   const getOptions = async () => {
@@ -378,7 +400,7 @@ const RuleCard: FC<any> = ({
                       id: 'input',
                       label: 'Value',
                       options: options,
-                      value: options.find((o: any) => o?.value === value?.[0]),
+                      value: options?.find((o: any) => o?.value === value?.[0]) ?? selectedOption,
                       isSearchable: false,
                       isDisabled: isReadOnly,
                       placeholder: 'Select Value',
