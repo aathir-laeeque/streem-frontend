@@ -55,5 +55,5 @@ export const getParameterContent = (parameter: any) => {
       return;
   }
 
-  return parameterContent;
+  return parameterContent ? parameterContent : '-';
 };
