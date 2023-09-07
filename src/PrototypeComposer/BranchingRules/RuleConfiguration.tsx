@@ -253,7 +253,11 @@ const RuleCard: FC<any> = ({
   useEffect(() => {
     getOptions();
 
-    if (item?.input && item.input?.length > 0) {
+    if (
+      item?.input &&
+      item.input?.length > 0 &&
+      [MandatoryParameter.RESOURCE, MandatoryParameter.MULTI_RESOURCE]?.includes(parameter.type)
+    ) {
       (async () => {
         const object = await getObjectData({
           id: item.input[0],
