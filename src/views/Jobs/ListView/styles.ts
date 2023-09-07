@@ -118,7 +118,6 @@ const TabContentWrapper = styled.div`
     flex: 1;
     overflow: auto;
     gap: 16px;
-    padding-top: 16px;
     .job-row {
       display: flex;
       flex-direction: row;

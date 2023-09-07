@@ -36,10 +36,6 @@ const InboxJobsWrapper = styled.div`
 
     > div {
       height: 100%;
-
-      .job-list {
-        padding-top: 16px;
-      }
     }
   }
 `;

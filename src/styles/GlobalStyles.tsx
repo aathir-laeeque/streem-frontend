@@ -26,19 +26,14 @@ const GlobalStyles = createGlobalStyle`
 
   /* Track */
   ::-webkit-scrollbar-track {
-    background: #eeeeee;
-    border-radius: 10px;
+    background: #fafafa;
   }
 
-  ::-webkit-scrollbar-track:vertical {
-    border-right:1px solid #E0E0E0;
-    border-left:1px solid #E0E0E0;
-}
   /* Handle */
   ::-webkit-scrollbar-thumb {
     background: #1d84ff;
     border-radius: 10px;
-    border:4px solid #eeeeee;
+    border:4px solid #fafafa;
   }
 
   /* Handle on hover */
