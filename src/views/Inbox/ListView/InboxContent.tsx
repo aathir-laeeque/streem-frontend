@@ -33,6 +33,7 @@ const InboxContent: FC<TabContentProps> = ({
     auth: { selectedFacility: { id: facilityId = '' } = {}, selectedUseCase },
     checklistListView: { checklists, pageable: checklistPageable, loading: checklistsLoading },
   } = useTypedSelector((state) => state);
+  const [searchFilterFields, setSearchFilterFields] = useState<FilterField[]>([]);
   const [filterFields, setFilterFields] = useState<FilterField[]>([
     ...(baseFilters || []),
     {
@@ -136,7 +137,7 @@ const InboxContent: FC<TabContentProps> = ({
         sort: 'createdAt,desc',
         filters: {
           op: FilterOperators.AND,
-          fields: [...filters],
+          fields: [...filters, ...searchFilterFields],
         },
       }),
     );
@@ -145,7 +146,7 @@ const InboxContent: FC<TabContentProps> = ({
   useEffect(() => {
     fetchData({ filters: filterFields });
     if (cards?.length) fetchCardsValues();
-  }, [filterFields, resourceFilter]);
+  }, [filterFields, resourceFilter, searchFilterFields]);
 
   const onSelectUpdate = (option: Checklist) => {
     if (option) {
@@ -188,7 +189,7 @@ const InboxContent: FC<TabContentProps> = ({
       <div className="filters">
         <SearchFilter
           label={label}
-          showDropdown={false}
+          showDropdown
           dropdownOptions={[
             {
               label: 'Name',
@@ -196,16 +197,14 @@ const InboxContent: FC<TabContentProps> = ({
               field: 'checklist.name',
               operator: FilterOperators.LIKE,
             },
+            {
+              label: 'Job ID',
+              value: 'code',
+              field: 'code',
+              operator: FilterOperators.LIKE,
+            },
           ]}
-          updateFilterFields={(fields) => {
-            setFilterFields((currentFields) => {
-              const updatedFilterFields = [
-                ...currentFields.filter((field) => field.field !== fields?.[0].field),
-                ...fields.filter((f) => f?.values?.[0]),
-              ];
-              return updatedFilterFields;
-            });
-          }}
+          updateFilterFields={(fields) => setSearchFilterFields(fields)}
         />
         <Select
           className="process-filter"

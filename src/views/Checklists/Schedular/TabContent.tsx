@@ -63,6 +63,7 @@ const ListView: FC<any & { label: string }> = ({ label, values }) => {
   const [createSchedulerDrawer, setCreateSchedulerDrawer] = useState(false);
   const [versionHistoryDrawer, setVersionHistoryDrawer] = useState(false);
   const [readOnlyMode, setReadOnlyMode] = useState(false);
+  const [searchFilterFields, setSearchFilterFields] = useState<FilterField[]>([]);
   const { schedulerActions } = schedulersActionObjects;
   const { list, pageable, checklistInfo } = useTypedSelector((state) => state.schedular);
 
@@ -83,7 +84,7 @@ const ListView: FC<any & { label: string }> = ({ label, values }) => {
         sort: 'id,desc',
         filters: JSON.stringify({
           op: FilterOperators.AND,
-          fields: [...filters],
+          fields: [...filters, ...searchFilterFields],
         }),
       }),
     );
@@ -91,7 +92,7 @@ const ListView: FC<any & { label: string }> = ({ label, values }) => {
 
   useEffect(() => {
     fetchData();
-  }, [filterFields]);
+  }, [filterFields, searchFilterFields]);
 
   useEffect(() => {
     if (label === 'Active') {
@@ -328,23 +329,7 @@ const ListView: FC<any & { label: string }> = ({ label, values }) => {
               operator: FilterOperators.LIKE,
             },
           ]}
-          updateFilterFields={(fields) => {
-            setFilterFields((currentFields) => {
-              const updatedFilterFields = [
-                ...currentFields.filter(
-                  (field) =>
-                    ![
-                      ...fields,
-                      {
-                        field: 'name',
-                      },
-                    ].some((newField) => newField.field === field.field),
-                ),
-                ...fields.filter((f) => f?.values?.[0]),
-              ];
-              return updatedFilterFields;
-            });
-          }}
+          updateFilterFields={(fields) => setSearchFilterFields(fields)}
         />
         {label === 'Active' && (
           <>

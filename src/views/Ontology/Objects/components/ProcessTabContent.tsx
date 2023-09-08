@@ -34,6 +34,7 @@ const ProcessTabContent = () => {
     },
   } = useTypedSelector((state) => state);
 
+  const [searchFilterFields, setSearchFilterFields] = useState<FilterField[]>([]);
   const [createJobDrawerVisible, setCreateJobDrawerVisible] = useState(false);
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(null);
   const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter());
@@ -77,6 +78,7 @@ const ProcessTabContent = () => {
               op: FilterOperators.AND,
               fields: [
                 ...filters,
+                ...searchFilterFields,
                 {
                   field: 'useCaseId',
                   op: FilterOperators.EQ,
@@ -117,7 +119,7 @@ const ProcessTabContent = () => {
     if (selectedObject) {
       fetchData({ filters: filterFields });
     }
-  }, [filterFields]);
+  }, [filterFields, searchFilterFields]);
 
   const columns = [
     {
@@ -186,15 +188,7 @@ const ProcessTabContent = () => {
                 operator: FilterOperators.LIKE,
               },
             ]}
-            updateFilterFields={(fields) => {
-              setFilterFields((currentFields) => {
-                const updatedFilterFields = [
-                  ...currentFields.filter((field) => field.field !== 'name'),
-                  ...fields.filter((f) => f?.values?.[0]),
-                ];
-                return updatedFilterFields;
-              });
-            }}
+            updateFilterFields={(fields) => setSearchFilterFields(fields)}
           />
 
           <ToggleSwitch

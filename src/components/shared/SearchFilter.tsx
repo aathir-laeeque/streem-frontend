@@ -32,7 +32,7 @@ const Wrapper = styled.div`
     button {
       border-bottom-right-radius: 0;
       border-top-right-radius: 0;
-      padding: 10px 16px;
+      padding: 11px 16px;
       width: 100%;
 
       > .icon {
@@ -40,18 +40,16 @@ const Wrapper = styled.div`
         margin-left: auto;
       }
     }
-
-    .equity-dropdown-menu {
-      .equity-dropdown-menu-item {
-      }
-    }
   }
 
   .equity {
+    position: relative;
     button {
       background-color: #fff;
-      border: 1px solid #dadada;
-      border-left: 0px;
+
+      .icon {
+        height: 17px;
+      }
     }
   }
 
@@ -71,11 +69,7 @@ const Wrapper = styled.div`
   }
 
   .input-wrapper {
-    padding: 10px 16px;
-    border-right: 0;
-    .icon {
-      font-size: 18px;
-    }
+    padding: 0px 0px 0px 16px;
   }
 `;
 
@@ -93,6 +87,46 @@ type SearchFilterProps = {
   label: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
+const EquityMenu: FC<any> = ({ equityOption, setEquityOption, onUpdate }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const handleEquityToggle = (event: MouseEvent<HTMLButtonElement>) =>
+    setAnchorEl(event.currentTarget);
+  const handleEquityClose = () => setAnchorEl(null);
+
+  return (
+    <div className="dropdown-button equity">
+      <Button onClick={handleEquityToggle} id="equity-btn" key="equity-btn">
+        <img className="icon" src={equityOption.icon} />
+      </Button>
+      <StyledMenu
+        keepMounted
+        disableEnforceFocus
+        anchorEl={anchorEl}
+        getContentAnchorEl={null}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        onClose={handleEquityClose}
+        open={Boolean(anchorEl)}
+      >
+        {equityOptions?.map((option, index) => (
+          <MenuItem
+            key={index}
+            onClick={() => {
+              setEquityOption(option);
+              onUpdate({
+                equity: option,
+              });
+              handleEquityClose();
+            }}
+          >
+            <img src={option.icon} />
+            {option.label}
+          </MenuItem>
+        ))}
+      </StyledMenu>
+    </div>
+  );
+};
+
 const SearchFilter: FC<SearchFilterProps> = ({
   dropdownOptions,
   showDropdown = false,
@@ -101,22 +135,16 @@ const SearchFilter: FC<SearchFilterProps> = ({
   ...rest
 }) => {
   const [selectedOption, setSelectedOption] = useState<DropdownOption>((dropdownOptions ?? [])[0]);
-  // const [searchValue, setSearchValue] = useState('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [anchorEl1, setAnchorEl1] = useState<null | HTMLElement>(null);
-  const [equityOption, setEquityOption] = useState<any>(equityOptions[0]);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
 
-  const handleEquityToggle = (event: MouseEvent<HTMLButtonElement>) =>
-    setAnchorEl1(event.currentTarget);
+  const [equityOption, setEquityOption] = useState<any>(equityOptions[0]);
 
   const handleClose = () => setAnchorEl(null);
-  const handleEquityClose = () => setAnchorEl1(null);
 
   useEffect(() => {
-    // setSearchValue('');
     if (inputRef.current) inputRef.current.value = '';
   }, [label]);
 
@@ -127,36 +155,15 @@ const SearchFilter: FC<SearchFilterProps> = ({
     updatedOption?: DropdownOption;
     equity?: any;
   }) => {
-    const updatedSearchValue = inputRef?.current?.value ?? '';
-    const searchFilterFields = [
-      ...(updatedOption.field === 'name' ||
-      updatedOption.field === 'checklist.name' ||
-      updatedOption.field === 'firstName' ||
-      updatedOption.field === 'lastName' ||
-      updatedOption.field === 'email' ||
-      updatedOption.field === 'employeeId' ||
-      updatedOption.field === 'code'
-        ? [
-            {
-              field: updatedOption.field,
-              op: equity.value,
-              values: [updatedSearchValue],
-            },
-          ]
-        : [
-            {
-              field: updatedOption.field,
-              op: equity.value,
-              values: [updatedOption.value],
-            },
-            {
-              field: `${updatedOption.field.split('.')[0]}.value`,
-              op: equity.value,
-              values: [updatedSearchValue],
-            },
-          ]),
-    ] as FilterField[];
-
+    const searchFilterFields = inputRef?.current?.value
+      ? [
+          {
+            field: updatedOption.field,
+            op: equity.value,
+            values: [inputRef.current.value],
+          },
+        ]
+      : [];
     updateFilterFields(searchFilterFields);
   };
 
@@ -197,44 +204,19 @@ const SearchFilter: FC<SearchFilterProps> = ({
       ) : null}
       <TextInput
         placeholder={`Search ${showDropdown ? `with ${selectedOption?.label}` : ''}`}
-        onChange={debounce(({ value }) => {
-          // setSearchValue(value);
+        onChange={debounce(() => {
           onUpdate({});
         }, 500)}
         ref={inputRef}
+        afterElementWithoutError
+        AfterElement={() => (
+          <EquityMenu
+            equityOption={equityOption}
+            setEquityOption={setEquityOption}
+            onUpdate={onUpdate}
+          />
+        )}
       />
-      <div className="dropdown-button equity">
-        <Button onClick={handleEquityToggle}>
-          <img className="icon" src={equityOption.icon} />
-        </Button>
-
-        <StyledMenu
-          keepMounted
-          disableEnforceFocus
-          anchorEl={anchorEl1}
-          className="equity-dropdown-menu"
-          onClose={handleEquityClose}
-          open={Boolean(anchorEl1)}
-          style={{ marginTop: 40 }}
-        >
-          {equityOptions?.map((option, index) => (
-            <MenuItem
-              className="equity-dropdown-menu-item"
-              key={index}
-              onClick={() => {
-                setEquityOption(option);
-                onUpdate({
-                  equity: option,
-                });
-                handleEquityClose();
-              }}
-            >
-              <img src={option.icon} />
-              {option.label}
-            </MenuItem>
-          ))}
-        </StyledMenu>
-      </div>
     </Wrapper>
   );
 };
