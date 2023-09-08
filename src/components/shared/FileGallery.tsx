@@ -12,7 +12,7 @@ import { request } from '#utils/request';
 
 const FileGalleryWrapper = styled.div.attrs({
   className: 'file-gallery-wrapper',
-})<Pick<FileGalleryProps, 'isTaskCompleted'>>`
+})<Pick<FileGalleryProps, 'isTaskCompleted' | 'isCorrectingError'>>`
   display: flex;
   margin-top: 16px;
   justify-content: space-between;
@@ -54,7 +54,8 @@ const FileGalleryWrapper = styled.div.attrs({
   }
 
   .media-list-item-remove-icon {
-    pointer-events: ${({ isTaskCompleted }) => (isTaskCompleted ? 'none' : 'unset')}
+    pointer-events: ${({ isTaskCompleted, isCorrectingError }) =>
+      isTaskCompleted && !isCorrectingError ? 'none' : 'unset'}
 `;
 
 export type FileGalleryProps = {
@@ -169,7 +170,7 @@ export const FileGallery: FC<FileGalleryProps> = ({
   };
 
   return (
-    <FileGalleryWrapper isTaskCompleted={isTaskCompleted}>
+    <FileGalleryWrapper isTaskCompleted={isTaskCompleted} isCorrectingError={isCorrectingError}>
       <div className="media-list">
         {medias.map((media, index) => {
           if (media?.archived === false) {
