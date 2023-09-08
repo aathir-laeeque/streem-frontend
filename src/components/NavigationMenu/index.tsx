@@ -59,7 +59,16 @@ const NavigationMenu: FC = () => {
   const dispatch = useDispatch();
   const { instance } = useMsal();
   const {
-    auth: { facilities, selectedFacility, userId, selectedUseCase, useCaseMap, profile, userType },
+    auth: {
+      facilities,
+      selectedFacility,
+      userId,
+      selectedUseCase,
+      useCaseMap,
+      profile,
+      userType,
+      features,
+    },
     extras: { isDrawerOpen },
   } = useTypedSelector((state) => state);
 
@@ -84,7 +93,13 @@ const NavigationMenu: FC = () => {
     if (
       checkPermission([selectedFacility?.id === ALL_FACILITY_ID ? 'globalSidebar' : 'sidebar', key])
     ) {
-      menuItems.push({ ...value, path: `/${key}` });
+      if (key === 'reports') {
+        if (features?.metabaseReports) {
+          menuItems.push({ ...value, path: `/${key}` });
+        }
+      } else {
+        menuItems.push({ ...value, path: `/${key}` });
+      }
     }
   });
 

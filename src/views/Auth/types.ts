@@ -88,6 +88,7 @@ export interface AuthState {
   readonly selectedUseCase?: UseCaseType;
   readonly fetchingUseCaseList: boolean;
   readonly userType?: string;
+  readonly features?: Record<string, boolean>;
 }
 
 export enum TokenTypes {
