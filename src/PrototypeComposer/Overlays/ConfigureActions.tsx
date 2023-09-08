@@ -30,7 +30,7 @@ import { fetchObjectTypes } from '#views/Ontology/actions';
 import { ObjectType } from '#views/Ontology/types';
 import { Close } from '@material-ui/icons';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import { startCase, toLower } from 'lodash';
+import { keyBy, startCase, toLower } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -354,7 +354,10 @@ const ActionFormCard: FC<Props> = ({
     ontology: {
       objectTypes: { list, listLoading, pageable: objectTypePagination },
     },
-    prototypeComposer: { data: checklistData },
+    prototypeComposer: {
+      data: checklistData,
+      parameters: { listById: taskParametersById },
+    },
   } = useTypedSelector((state) => state);
   const dispatch = useDispatch();
   const [isLoadingParameters, setIsLoadingParameters] = useState(false);
@@ -367,24 +370,6 @@ const ActionFormCard: FC<Props> = ({
   const { selectedAction, editActionFlag } = state;
   const [objectUrlPath, setObjectUrlPath] = useState<string>('');
   const { list: objects, reset: resetObjects } = createFetchList(objectUrlPath, {}, false);
-  const parametersPagination = useRef({
-    resource: {
-      current: -1,
-      isLast: true,
-    },
-    multiResource: {
-      current: -1,
-      isLast: true,
-    },
-    number: {
-      current: -1,
-      isLast: true,
-    },
-    calculation: {
-      current: -1,
-      isLast: true,
-    },
-  });
 
   useEffect(() => {
     resetObjects({ url: objectUrlPath });
@@ -416,33 +401,8 @@ const ActionFormCard: FC<Props> = ({
     'triggerType',
   ]);
 
-  const getParameterByType = (type: MandatoryParameter, page: Number = 0) =>
-    request('GET', apiGetParameters(checklistId), {
-      params: {
-        page,
-        sort: 'createdAt,desc',
-        filters: {
-          op: FilterOperators.AND,
-          fields: [
-            { field: 'archived', op: FilterOperators.EQ, values: [false] },
-            {
-              field: 'type',
-              op: FilterOperators.EQ,
-              values: [type],
-            },
-            {
-              field: 'targetEntityType',
-              op: FilterOperators.NE,
-              values: [TargetEntityType.UNMAPPED],
-            },
-          ],
-        },
-      },
-    });
-
   const getSetAsOptions = (triggerType: string) => {
     return [
-      // {
       triggerType === AutomationActionTriggerType.TASK_STARTED
         ? {
             label: 'Task Start time',
@@ -478,7 +438,6 @@ const ActionFormCard: FC<Props> = ({
           'propertyExternalId',
           'propertyDisplayName',
           'referencedParameterId',
-          'objectTypeDisplayName',
         ];
         if (actionType === AutomationActionActionType.SET_PROPERTY) {
           if (value?.propertyInputType) {
@@ -491,7 +450,6 @@ const ActionFormCard: FC<Props> = ({
         } else if (actionType === AutomationActionActionType.SET_RELATION) {
           commonKeys = [
             'referencedParameterId',
-            'objectTypeDisplayName',
             'relationId',
             'relationExternalId',
             'relationDisplayName',
@@ -508,107 +466,49 @@ const ActionFormCard: FC<Props> = ({
   const fetchParameters = async () => {
     if (!resourceParameters.length && !numberParameters.length) {
       setIsLoadingParameters(true);
-      const [resources, numbers, calculation, multiresource] = await Promise.all([
-        getParameterByType(MandatoryParameter.RESOURCE),
-        getParameterByType(MandatoryParameter.NUMBER),
-        getParameterByType(MandatoryParameter.CALCULATION),
-        getParameterByType(MandatoryParameter.MULTI_RESOURCE),
-      ]);
-      if (
-        task.automations.length &&
-        task.automations[0].actionType !== AutomationActionActionType.CREATE_OBJECT
-      ) {
-        const _selectedResource = resources.data.find(
-          (r: any) => r.id === selectedAction?.actionDetails?.referencedParameterId,
-        );
+      const allParameters = {
+        ...keyBy(checklistData?.parameters || {}, 'id'),
+        ...taskParametersById,
+      };
+      const filterParametersByType = (
+        objectHashMap: Record<string, Parameter>,
+        parameterType: string[],
+      ) => {
+        const resultArray = [];
+
+        for (const key in objectHashMap) {
+          if (objectHashMap?.hasOwnProperty(key)) {
+            const object = objectHashMap[key];
+            if (parameterType.includes(object.type)) {
+              resultArray.push(object);
+            }
+          }
+        }
+
+        return resultArray;
+      };
+
+      setResourceParameters(
+        filterParametersByType(allParameters, [
+          MandatoryParameter.RESOURCE,
+          MandatoryParameter.MULTI_RESOURCE,
+        ]),
+      );
+
+      setNumberParameters(
+        filterParametersByType(allParameters, [
+          MandatoryParameter.NUMBER,
+          MandatoryParameter.CALCULATION,
+        ]),
+      );
+
+      if (task.automations.length) {
+        const _selectedResource =
+          allParameters[selectedAction?.actionDetails?.referencedParameterId];
         if (_selectedResource) {
           fetchObjectType(_selectedResource.data.objectTypeId);
         }
       }
-      setResourceParameters([...resources?.data, ...multiresource?.data]);
-      setNumberParameters([...numbers?.data, ...calculation?.data]);
-      parametersPagination.current = {
-        resource: {
-          current: resources.pageable?.page,
-          isLast: resources.pageable?.last,
-        },
-        multiResource: {
-          current: multiresource.pageable?.page,
-          isLast: multiresource.pageable?.last,
-        },
-        number: {
-          current: numbers.pageable?.page,
-          isLast: numbers.pageable?.last,
-        },
-        calculation: {
-          current: calculation.pageable?.page,
-          isLast: calculation.pageable?.last,
-        },
-      };
-      setIsLoadingParameters(false);
-    }
-  };
-
-  const resourceHandleScrollToBottom = async () => {
-    if (
-      !parametersPagination?.current?.resource?.isLast ||
-      !parametersPagination?.current?.multiResource?.isLast
-    ) {
-      setIsLoadingParameters(true);
-      const [resources, multiresource] = await Promise.all([
-        getParameterByType(
-          MandatoryParameter.RESOURCE,
-          parametersPagination?.current?.resource?.current + 1,
-        ),
-        getParameterByType(
-          MandatoryParameter.MULTI_RESOURCE,
-          parametersPagination?.current?.multiResource?.current + 1,
-        ),
-      ]);
-      setResourceParameters((prev) => [...prev, ...resources?.data, ...multiresource?.data]);
-      parametersPagination.current = {
-        ...parametersPagination.current,
-        resource: {
-          current: resources.pageable?.page,
-          isLast: resources.pageable?.last,
-        },
-        multiResource: {
-          current: multiresource.pageable?.page,
-          isLast: multiresource.pageable?.last,
-        },
-      };
-      setIsLoadingParameters(false);
-    }
-  };
-
-  const numberHandleScrollToBottom = async () => {
-    if (
-      !parametersPagination?.current?.number?.isLast ||
-      !parametersPagination?.current?.calculation?.isLast
-    ) {
-      setIsLoadingParameters(true);
-      const [numbers, calculation] = await Promise.all([
-        getParameterByType(
-          MandatoryParameter.NUMBER,
-          parametersPagination?.current?.number?.current + 1,
-        ),
-        getParameterByType(
-          MandatoryParameter.CALCULATION,
-          parametersPagination?.current?.calculation?.current + 1,
-        ),
-      ]);
-      setNumberParameters((prev) => [...prev, ...numbers.data, ...calculation.data]);
-      parametersPagination.current = {
-        ...parametersPagination.current,
-        number: {
-          current: numbers.pageable?.page,
-          isLast: numbers.pageable?.last,
-        },
-        calculation: {
-          current: calculation.pageable?.page,
-          isLast: calculation.pageable?.last,
-        },
-      };
       setIsLoadingParameters(false);
     }
   };
@@ -616,9 +516,9 @@ const ActionFormCard: FC<Props> = ({
   const fetchObjectType = async (id: string) => {
     setSelectedObjectType(undefined);
     setIsLoadingObjectType(true);
-    const { actionType: _actionType, actionDetails: _actionDetails } = getValues();
     const res = await request('GET', apiGetObjectTypes(id));
     setSelectedObjectType(res?.data);
+    const { actionType: _actionType, actionDetails: _actionDetails } = getValues();
     if (
       (_actionType === AutomationActionActionType.SET_PROPERTY && _actionDetails?.propertyId) ||
       (_actionType === AutomationActionActionType.SET_RELATION && _actionDetails?.relationId)
@@ -898,15 +798,22 @@ const ActionFormCard: FC<Props> = ({
                               id: 'objectType',
                               label: 'Resource Parameter',
                               isLoading: isLoadingParameters,
-                              options: resourceParameters.map((resource: any) => ({
-                                ...resource.data,
-                                label: resource.label,
-                                value: resource.id,
-                                externalId: resource?.data?.objectTypeDisplayName,
-                              })),
+                              options: resourceParameters
+                                .filter((parameter: Parameter) => {
+                                  if (actionType === AutomationActionActionType.SET_RELATION) {
+                                    return parameter.type === MandatoryParameter.RESOURCE;
+                                  } else {
+                                    return true;
+                                  }
+                                })
+                                .map((resource: Parameter) => ({
+                                  ...resource.data,
+                                  label: resource.label,
+                                  value: resource.id,
+                                  externalId: resource?.data?.objectTypeDisplayName,
+                                })),
                               isSearchable: false,
                               placeholder: 'Select Resource Parameter',
-                              onMenuScrollToBottom: resourceHandleScrollToBottom,
                               isDisabled: isReadOnly,
                               value: value?.referencedParameterId
                                 ? [
@@ -923,7 +830,6 @@ const ActionFormCard: FC<Props> = ({
                                 onChange({
                                   referencedParameterId: _option.value,
                                   parameterId: value?.parameterId,
-                                  objectTypeDisplayName: _option.objectTypeDisplayName,
                                 });
 
                                 if (actionType !== AutomationActionActionType.ARCHIVE_OBJECT) {
@@ -962,7 +868,6 @@ const ActionFormCard: FC<Props> = ({
                                       : null,
                                     isSearchable: false,
                                     placeholder: 'Select Number Parameter',
-                                    onMenuScrollToBottom: numberHandleScrollToBottom,
                                     onChange: (_option: any) => {
                                       onChange({
                                         ...actionDetails,
