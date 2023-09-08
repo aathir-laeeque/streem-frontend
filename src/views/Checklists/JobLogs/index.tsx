@@ -145,7 +145,7 @@ const AfterHeader: FC<any> = ({ setActiveTab, activeTab, checklistId, defaultVie
         value={[{ value: 'more views', label: 'More Views' }]}
         components={{ Option }}
         onChange={handleSetActiveTab}
-        style={{ minWidth: 180 }}
+        style={{ minWidth: 180, marginLeft: 'auto' }}
       />
     </AfterHeaderWrapper>
   );
