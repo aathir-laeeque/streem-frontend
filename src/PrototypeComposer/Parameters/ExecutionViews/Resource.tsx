@@ -298,7 +298,9 @@ const ResourceTaskView: FC<
                     collection: currOption.collection,
                     value: currOption.objectId,
                   })),
-                  ...(parameterInForm?.data?.choices || []),
+                  ...(parameter.type === MandatoryParameter.MULTI_RESOURCE
+                    ? parameterInForm?.data?.choices
+                    : []),
                 ],
           },
           response: {
