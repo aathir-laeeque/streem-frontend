@@ -15,6 +15,7 @@ import { ValueLabelGroup } from '../Components/Documents/utils';
 import { LoadingDiv, styles } from './styles';
 import TaskView from './Task';
 import { PrintJobProps } from './types';
+import { keyBy } from 'lodash';
 
 const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   const [data, setData] = useState<PdfJobDataType | undefined>();
@@ -22,12 +23,14 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
     parametersById: ParametersById;
     parametersOrderInTaskInStage: ParametersOrderInTaskInStage;
     hiddenIds: Record<string, boolean>;
+    cjfParametersById: ParametersById;
   }>({
     parametersById: {},
     parametersOrderInTaskInStage: {},
     hiddenIds: {},
+    cjfParametersById: {},
   });
-  const { parametersById, hiddenIds } = parametersData;
+  const { parametersById, hiddenIds, cjfParametersById } = parametersData;
   const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
 
   const { dateAndTimeStampFormat, timeFormat, dateFormat } = useTypedSelector(
@@ -39,9 +42,10 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
     const fetchJobPdfData = async () => {
       try {
         const response: { data: PdfJobDataType } = await request('GET', apiPrintJobDetails(jobId));
-        setParametersData(
-          getParameters({ checklist: response.data.checklist as unknown as Checklist }),
-        );
+        setParametersData({
+          ...getParameters({ checklist: response.data.checklist as unknown as Checklist }),
+          cjfParametersById: { ...keyBy(response.data.parameterValues || [], 'id') },
+        });
         setData(response.data);
       } catch (err) {
         console.error('error from fetch job PDF data api ==>', err);
@@ -101,6 +105,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
                           task={task}
                           key={task.id}
                           hiddenIds={hiddenIds}
+                          cjfParametersById={cjfParametersById}
                         />
                       );
                     }

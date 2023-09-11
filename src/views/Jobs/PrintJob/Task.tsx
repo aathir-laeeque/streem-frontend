@@ -122,6 +122,7 @@ const MemoTask: FC<{
   taskIndex: number;
   parametersById: ParametersById;
   hiddenIds: Record<string, boolean>;
+  cjfParametersById: ParametersById;
 }> = ({
   task,
   dateFormat,
@@ -130,6 +131,7 @@ const MemoTask: FC<{
   taskIndex,
   parametersById,
   hiddenIds,
+  cjfParametersById,
 }) => {
   const {
     startedAt,
@@ -253,6 +255,7 @@ const MemoTask: FC<{
         parameters={task.parameters}
         dateAndTimeStampFormat={dateAndTimeStampFormat}
         hiddenIds={hiddenIds}
+        cjfParametersById={cjfParametersById}
       />
 
       {taskExecutionState === TaskExecutionState.COMPLETED && (

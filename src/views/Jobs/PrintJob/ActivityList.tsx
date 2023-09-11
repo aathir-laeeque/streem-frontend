@@ -297,6 +297,7 @@ const parameterTemplateFormatter = (
   parameterIndex: number,
   dateAndTimeStampFormat: string,
   parametersById: ParametersById,
+  cjfParametersById: ParametersById,
 ) => {
   switch (parameter.type) {
     case NonMandatoryParameter.INSTRUCTION:
@@ -703,6 +704,8 @@ const parameterTemplateFormatter = (
       );
 
     case MandatoryParameter.CALCULATION:
+      const allParameterById = { ...parametersById, ...cjfParametersById };
+
       return (
         <View style={styles.parameterView} wrap={false}>
           <Text style={{ ...styles.parameterHintText, marginBottom: 6 }}>Calculation</Text>
@@ -716,8 +719,8 @@ const parameterTemplateFormatter = (
             return (
               <Text style={styles.text12}>
                 {key}:{' '}
-                {parametersById?.[value.parameterId]?.response?.value
-                  ? parametersById?.[value.parameterId]?.response.value
+                {allParameterById?.[value.parameterId]?.response?.value
+                  ? allParameterById?.[value.parameterId]?.response.value
                   : '____'}
               </Text>
             );
@@ -764,7 +767,8 @@ const MemoParameterList: FC<{
   dateAndTimeStampFormat: string;
   parametersById: ParametersById;
   hiddenIds: Record<string, boolean>;
-}> = ({ parameters, dateAndTimeStampFormat, parametersById, hiddenIds }) => {
+  cjfParametersById: ParametersById;
+}> = ({ parameters, dateAndTimeStampFormat, parametersById, hiddenIds, cjfParametersById }) => {
   return (
     <>
       {(parameters as Array<Parameter>).map((parameter, parameterIndex: number) => {
@@ -776,6 +780,7 @@ const MemoParameterList: FC<{
                 parameterIndex,
                 dateAndTimeStampFormat,
                 parametersById,
+                cjfParametersById,
               )}
               <View style={styles.parameterSeprator} />
               {parameter.response.state !== TaskExecutionState.NOT_STARTED &&
