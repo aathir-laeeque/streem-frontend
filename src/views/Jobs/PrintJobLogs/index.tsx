@@ -358,6 +358,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
             log={list?.[0]}
             showProcessSection={showProcessSection}
             checklist={process}
+            selectedFacility={selectedFacility}
           />
           <Footer
             user={profile}
