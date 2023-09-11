@@ -12,6 +12,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { fetchProcessLogs } from '../ListView/actions';
+import { navigate } from '@reach/router';
 
 const JobLogsTabWrapper = styled.div`
   display: flex;
@@ -92,6 +93,19 @@ const Logs: FC<TabContentProps> = ({ values }) => {
             }ch`,
             format: (row: any) => {
               if (row[column.id + column.triggerType]) {
+                if (column.triggerType === 'JOB_ID') {
+                  return (
+                    <span
+                      title={row[column.id + column.triggerType].value}
+                      className="primary"
+                      onClick={() => {
+                        navigate(`/jobs/${row[column.id + column.triggerType].jobId}`);
+                      }}
+                    >
+                      {row[column.id + column.triggerType].value}
+                    </span>
+                  );
+                }
                 if (column.type === LogType.DATE) {
                   return formatDateTime(row[column.id + column.triggerType].value);
                 } else if (
@@ -140,10 +154,17 @@ const Logs: FC<TabContentProps> = ({ values }) => {
               columns={columns}
               rows={list.reduce((acc, jobLog, index) => {
                 jobLog.logs.forEach((log: any) => {
-                  acc[index] = {
-                    ...acc[index],
-                    [log.entityId + log.triggerType]: log,
-                  };
+                  if (log.triggerType === 'JOB_ID') {
+                    acc[index] = {
+                      ...acc[index],
+                      [log.entityId + log.triggerType]: { ...log, jobId: jobLog.id },
+                    };
+                  } else {
+                    acc[index] = {
+                      ...acc[index],
+                      [log.entityId + log.triggerType]: log,
+                    };
+                  }
                 });
                 return acc;
               }, [])}

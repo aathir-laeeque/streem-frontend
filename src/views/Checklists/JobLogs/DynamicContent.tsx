@@ -30,6 +30,7 @@ import { CustomView } from '../ListView/types';
 import { fetchJobLogsExcel } from './actions';
 import FiltersDrawer from './Overlays/FiltersDrawer';
 import checkPermission from '#services/uiPermissions';
+import { navigate } from '@reach/router';
 
 const JobLogsTabWrapper = styled.div`
   display: flex;
@@ -211,6 +212,19 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                 );
                 return cellValue.join(',');
               }
+              if (column.triggerType === 'JOB_ID') {
+                return (
+                  <span
+                    title={row[column.id + column.triggerType].value}
+                    className="primary"
+                    onClick={() => {
+                      navigate(`/jobs/${row[column.id + column.triggerType].jobId}`);
+                    }}
+                  >
+                    {row[column.id + column.triggerType].value}
+                  </span>
+                );
+              }
               if (column.type === LogType.DATE) {
                 return formatDateTime(row[column.id + column.triggerType].value);
               } else if (
@@ -373,10 +387,17 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                 columns={columns}
                 rows={list.reduce((acc, jobLog, index) => {
                   jobLog.logs.forEach((log: any) => {
-                    acc[index] = {
-                      ...acc[index],
-                      [log.entityId + log.triggerType]: log,
-                    };
+                    if (log.triggerType === 'JOB_ID') {
+                      acc[index] = {
+                        ...acc[index],
+                        [log.entityId + log.triggerType]: { ...log, jobId: jobLog.id },
+                      };
+                    } else {
+                      acc[index] = {
+                        ...acc[index],
+                        [log.entityId + log.triggerType]: log,
+                      };
+                    }
                   });
                   return acc;
                 }, [])}
