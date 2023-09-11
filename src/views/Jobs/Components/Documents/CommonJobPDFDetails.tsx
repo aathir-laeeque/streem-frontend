@@ -5,13 +5,7 @@ import { JobSummary } from '#views/Jobs/Summary/types';
 import { Link, StyleSheet, Text, View } from '@react-pdf/renderer';
 import React from 'react';
 import { AssignedJobStates, CompletedJobStates, JobStateType } from '../../ListView/types';
-import {
-  Assigness,
-  commonStyles,
-  InlineInputLabelGroup,
-  InputLabelGroup,
-  TabLookLike,
-} from './utils';
+import { commonStyles, InlineInputLabelGroup, InputLabelGroup, TabLookLike } from './utils';
 import { Parameter } from '#JobComposer/checklist.types';
 import { getParameterContent } from '#utils/parameterUtils';
 
@@ -92,7 +86,6 @@ export const CommonJobPdfDetails = ({
     checklist,
     code,
     state: jobState,
-    assignees,
     totalTask,
     startedAt,
     scheduler,
@@ -245,14 +238,6 @@ export const CommonJobPdfDetails = ({
           ) : null}
         </TabLookLike>
       )}
-
-      <TabLookLike title="Assignees">
-        <Assigness
-          assignees={assignees}
-          jobState={jobState}
-          dateAndTimeStampFormat={dateAndTimeStampFormat}
-        />
-      </TabLookLike>
 
       <TabLookLike title="Stage and Task Details">
         <View>
