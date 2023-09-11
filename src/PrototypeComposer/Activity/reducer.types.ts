@@ -16,6 +16,7 @@ import {
   fetchParameters,
   fetchParametersError,
   fetchParametersSuccess,
+  toggleAddParameterRender,
 } from './actions';
 import { Parameter } from './types';
 
@@ -40,6 +41,7 @@ export type ParameterListState = {
     pageable: Pageable;
     list: any[];
     error?: any;
+    reRender: boolean;
   };
 };
 
@@ -62,6 +64,7 @@ export enum ParameterListActions {
   FETCH_PARAMETERS = '@@prototypeComposer/prototype/parameter-list/FETCH_PARAMETERS',
   FETCH_PARAMETERS_SUCCESS = '@@prototypeComposer/prototype/parameter-list/FETCH_PARAMETERS_SUCCESS',
   FETCH_PARAMETERS_ERROR = '@@prototypeComposer/prototype/parameter-list/FETCH_PARAMETERS_ERROR',
+  TOGGLE_ADD_PARAMETER_RENDER = '@@prototypeComposer/prototype/parameter-list/TOGGLE_ADD_PARAMETER_RENDER',
 }
 
 export type ParameterListActionType =
@@ -80,6 +83,7 @@ export type ParameterListActionType =
       | typeof fetchParametersError
       | typeof fetchParametersSuccess
       | typeof reOrderParameters
+      | typeof toggleAddParameterRender
     >
   | ReturnType<typeof addNewTaskSuccess | typeof deleteTaskSuccess>
   | ComposerActionType;

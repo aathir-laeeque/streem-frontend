@@ -39,7 +39,7 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   const {
     data,
     parameters: {
-      parameters: { list, listLoading, pageable },
+      parameters: { list, listLoading, pageable, reRender },
     },
   } = useTypedSelector((state) => state.prototypeComposer);
   const dispatch = useDispatch();
@@ -76,7 +76,7 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
 
   useEffect(() => {
     fetchData();
-  }, [filterFields]);
+  }, [filterFields, reRender]);
 
   useEffect(() => {
     setParameterOptions(

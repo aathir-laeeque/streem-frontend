@@ -15,6 +15,7 @@ export const initialState: ParameterListState = {
     list: [],
     listLoading: true,
     pageable: DEFAULT_PAGINATION,
+    reRender: false,
   },
 };
 
@@ -58,6 +59,16 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
         },
       };
 
+    case ParameterListActions.TOGGLE_ADD_PARAMETER_RENDER:
+      return {
+        ...state,
+        parameters: {
+          ...state.parameters,
+          reRender: action.payload.shouldReRender
+            ? !state.parameters.reRender
+            : state.parameters.reRender,
+        },
+      };
     case ParameterListActions.DELETE_PARAMETER_SUCCESS:
       return {
         ...state,
@@ -244,6 +255,7 @@ const reducer: Reducer<ParameterListState, ParameterListActionType> = (
           list: action.payload.data,
           pageable: action.payload.pageable!,
           listLoading: false,
+          reRender: state.parameters.reRender,
         },
       };
 

@@ -1,16 +1,15 @@
+import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
-import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
-import { RootState } from '#store';
 import {
   apiAddNewParameter,
   apiGetParameters,
   apiSingleParameter,
   apiUnmapParameter,
 } from '#utils/apiUrls';
-import { FilterOperators, ResponseObj } from '#utils/globalTypes';
+import { ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
-import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
+import { call, put, takeLatest, takeLeading } from 'redux-saga/effects';
 import {
   addNewParameter,
   addNewParameterSuccess,
@@ -20,6 +19,7 @@ import {
   fetchParameters,
   fetchParametersError,
   fetchParametersSuccess,
+  toggleAddParameterRender,
   toggleNewParameter,
   updateParameterApi,
   updateParameterError,
@@ -82,22 +82,7 @@ function* addNewParameterSaga({ payload }: ReturnType<typeof addNewParameter>) {
       if (stageId && taskId) {
         yield put(addNewParameterSuccess({ parameter: data, stageId, taskId }));
       } else {
-        const {
-          parameters: {
-            parameters: { pageable },
-          },
-        } = yield select((state: RootState) => state.prototypeComposer);
-        yield put(
-          fetchParameters(checklistId, {
-            page: pageable.page,
-            size: pageable.size,
-            filters: {
-              op: FilterOperators.AND,
-              fields: [{ field: 'archived', op: FilterOperators.EQ, values: [false] }],
-            },
-            sort: 'id,desc',
-          }),
-        );
+        yield put(toggleAddParameterRender({ shouldReRender: true }));
       }
       yield put(toggleNewParameter());
       yield put(

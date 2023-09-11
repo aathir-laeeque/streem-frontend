@@ -75,3 +75,6 @@ export const fetchParametersSuccess = ({ data, pageable }: fetchListSuccessType<
 
 export const fetchParametersError = (error: any) =>
   actionSpreader(ParameterListActions.FETCH_PARAMETERS_ERROR, { error });
+
+export const toggleAddParameterRender = (payload: Record<string, boolean>) =>
+  actionSpreader(ParameterListActions.TOGGLE_ADD_PARAMETER_RENDER, payload);
