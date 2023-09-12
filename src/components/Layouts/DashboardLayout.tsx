@@ -11,6 +11,7 @@ import { useIdleTimer } from 'react-idle-timer';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { useMsal } from '@azure/msal-react';
+import { useLocation } from '@reach/router';
 
 const Layout = styled.div.attrs<React.HTMLAttributes<HTMLDivElement>>({
   className: 'main-layout-view',
@@ -27,6 +28,7 @@ const Layout = styled.div.attrs<React.HTMLAttributes<HTMLDivElement>>({
 
 const DashboardLayout: FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, ...rest }) => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const { instance } = useMsal();
   const { isIdle, isLoggedIn, settings, userType } = useTypedSelector((state) => state.auth);
 
@@ -53,7 +55,11 @@ const DashboardLayout: FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, .
   }, []);
 
   const handleOnIdle = () => {
-    if (!isIdle && isLoggedIn) {
+    const { pathname } = location;
+    const splitPath = pathname.split('/');
+    if (splitPath?.[1] === 'reports') {
+      reset();
+    } else if (!isIdle && isLoggedIn) {
       if (userType === UserType.AZURE_AD) {
         ssoLogout(instance);
       }
@@ -66,7 +72,7 @@ const DashboardLayout: FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, .
     }
   };
 
-  useIdleTimer({
+  const { reset } = useIdleTimer({
     timeout: 1000 * 60 * (settings?.sessionIdleTimeoutInMinutes || DEFAULT_SESSION_TIMEOUT_IN_MIN),
     onIdle: handleOnIdle,
     debounce: 500,
