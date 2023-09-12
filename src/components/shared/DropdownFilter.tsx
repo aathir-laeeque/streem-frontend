@@ -1,6 +1,6 @@
-import React, { ChangeEvent, FC } from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
-import { Select, Option } from './Select';
+import { Option, Select } from './Select';
 
 const Wrapper = styled.div`
   margin-left: 16px;
@@ -20,20 +20,12 @@ type DropdownFilterProps = {
   options: Option[];
   updateFilter: (option: Option) => void;
   label?: string;
+  placeholder?: string;
 };
 
 const DropdownFilter: FC<DropdownFilterProps> = ({ options, updateFilter, label }) => (
   <Wrapper>
-    <Select
-      label={label}
-      options={options}
-      onChange={
-        ((option: Option) => updateFilter(option)) as ((option: Option) => void) &
-          ((event: ChangeEvent<HTMLSelectElement>) => void)
-      }
-      placeholder="State"
-      defaultValue={options.filter((el) => el.value === 'all' || el.value === 'any')[0]}
-    />
+    <Select label={label} options={options} onChange={updateFilter} isClearable />
   </Wrapper>
 );
 

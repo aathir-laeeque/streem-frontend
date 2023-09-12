@@ -27,13 +27,14 @@ import checkPermission, { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { apiImportChecklist } from '#utils/apiUrls';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { Error, FilterField, FilterOperators, fetchDataParams } from '#utils/globalTypes';
 import CreateJob from '#views/Jobs/Components/CreateJob';
-import { Error, fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { Chip, CircularProgress, MenuItem } from '@material-ui/core';
 import { ArrowDropDown, FiberManualRecord } from '@material-ui/icons';
 import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
 import PublishOutlinedIcon from '@material-ui/icons/PublishOutlined';
+import TimelineOutlinedIcon from '@material-ui/icons/TimelineOutlined';
 import { navigate as navigateTo } from '@reach/router';
 import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -48,15 +49,8 @@ import {
   unarchiveChecklist,
 } from './actions';
 import { ListViewProps } from './types';
-import TimelineOutlinedIcon from '@material-ui/icons/TimelineOutlined';
-import permissionsIcon from '#assets/svg/permissionsIcon.svg';
 
 const getBaseFilter = (label: string): FilterField[] => [
-  {
-    field: 'state',
-    op: label === 'published' ? FilterOperators.EQ : FilterOperators.NE,
-    values: [DisabledStates.PUBLISHED],
-  },
   { field: 'archived', op: FilterOperators.EQ, values: [false] },
   ...(label === 'prototype'
     ? ([
@@ -65,8 +59,19 @@ const getBaseFilter = (label: string): FilterField[] => [
           op: FilterOperators.NE,
           values: [DisabledStates.DEPRECATED],
         },
+        {
+          field: 'state',
+          op: FilterOperators.NE,
+          values: [DisabledStates.PUBLISHED],
+        },
       ] as FilterField[])
-    : []),
+    : [
+        {
+          field: 'state',
+          op: FilterOperators.EQ,
+          values: [DisabledStates.PUBLISHED],
+        },
+      ]),
 ];
 
 const TypeChip = styled(Chip)<{ fontColor: string; backGroundColor: string }>`
@@ -604,19 +609,20 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                   value: key,
                 })),
             ]}
+            placeholder="Select"
             updateFilter={(option) =>
-              setFilterFields((currentFields) => {
-                const updatedFilterFields = currentFields.map((field) => ({
-                  ...field,
-                  ...(field.field === 'state'
-                    ? {
+              setFilterFields((currentFields) => [
+                ...currentFields.filter((field) => field.field !== 'state'),
+                ...(option
+                  ? [
+                      {
+                        field: 'state',
                         op: option.value === 'all' ? FilterOperators.NE : FilterOperators.EQ,
-                        values: [option.value === 'all' ? 'PUBLISHED' : option.value],
-                      }
-                    : { values: field.values }),
-                })) as FilterField[];
-                return updatedFilterFields;
-              })
+                        values: [option.value === 'all' ? 'PUBLISHED' : `${option.value}`],
+                      },
+                    ]
+                  : getBaseFilter(label).filter((field) => field.field === 'state')),
+              ])
             }
           />
         )}
@@ -625,13 +631,13 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
           <DropdownFilter
             label="I am involved as"
             options={[
-              { label: 'Any', value: 'any' },
               { label: 'As Author', value: 'collaborators.type' },
               { label: 'As Collaborator', value: 'collaborators.user.id' },
               { label: 'Not Involved', value: 'not.a.collaborator' },
             ]}
+            placeholder="Select"
             updateFilter={(option) => {
-              if (option.value === 'any') {
+              if (!option) {
                 setFilterFields((currentFields) => {
                   const updatedFilterFields = currentFields.filter(
                     (field) =>
