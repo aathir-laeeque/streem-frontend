@@ -290,7 +290,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
                 width: `${WIDTH_PER_COLUMN}%`,
                 borderColor: '#F5F5F5',
                 borderWidth: 1,
-                height: 25,
+                minHeight: 25,
                 paddingVertical: 5,
               },
             }))}
