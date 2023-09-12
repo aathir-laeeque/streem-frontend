@@ -299,7 +299,7 @@ const ResourceTaskView: FC<
                     value: currOption.objectId,
                   })),
                   ...(parameter.type === MandatoryParameter.MULTI_RESOURCE
-                    ? parameterInForm?.data?.choices
+                    ? parameterInForm?.data?.choices || []
                     : []),
                 ],
           },
