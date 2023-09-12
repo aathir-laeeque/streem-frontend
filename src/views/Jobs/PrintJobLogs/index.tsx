@@ -8,7 +8,7 @@ import { formatDateByInputType, formatDateTime } from '#utils/timeUtils';
 import { fetchProcessLogs } from '#views/Checklists/ListView/actions';
 import { Document, PDFViewer, Page, View } from '@react-pdf/renderer';
 import { camelCase, startCase } from 'lodash';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { LoadingDiv } from '../PrintJob/styles';
 import Footer from '../SummaryPdf/Footer';
@@ -16,6 +16,7 @@ import Header from '../SummaryPdf/Header';
 import TableRow from '../SummaryPdf/TableRow';
 import { FirstPage } from './FirstPage';
 import { styles } from './styles';
+import { logsResourceChoicesMapper } from '#views/Checklists/JobLogs/DynamicContent';
 
 const COLUMNS_PER_PAGE = 8;
 const FREEZED_COLUMNS = 3;
@@ -60,6 +61,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
     loadingProcess,
     process,
   } = state;
+  const resourceParameterChoicesMap = useRef(logsResourceChoicesMapper(list));
   const dispatch = useDispatch();
 
   const fetchParameters = async (fields: { field: string; op: string; values: string[] }[]) => {
@@ -197,6 +199,12 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
   }, [loadingParameters]);
 
   useEffect(() => {
+    if (list.length) {
+      resourceParameterChoicesMap.current = logsResourceChoicesMapper(list);
+    }
+  }, [list]);
+
+  useEffect(() => {
     if (parsedFilters) {
       setKeepPersistedData();
       dispatch(
@@ -217,7 +225,9 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
         const cellValue = Object.values(rowValue.resourceParameters).reduce<any[]>(
           (acc, p: any) => {
             acc.push(
-              `${p.displayName}: ${p.choices.map((c: any) => c.objectDisplayName).join(',')}`,
+              `${p.displayName}: ${p.choices
+                .map((c: any) => `${c.objectDisplayName} (ID: ${c.objectExternalId})`)
+                .join(',')}`,
             );
             return acc;
           },
@@ -294,11 +304,30 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
 
   if (!profile || loading || loadingFilters || loadingProcess) return null;
 
+  const logsParser = (log: any, jobId: string) => {
+    switch (log.triggerType) {
+      case 'RESOURCE_PARAMETER':
+        const selectedChoices = (
+          resourceParameterChoicesMap.current?.[jobId]?.[log.entityId]?.choices || []
+        ).reduce<any[]>((acc: any[], c: any) => {
+          acc.push(`${c?.objectDisplayName} (ID: ${c?.objectExternalId})`);
+          return acc;
+        }, []);
+
+        return {
+          ...log,
+          value: selectedChoices?.join(', '),
+        };
+      default:
+        return log;
+    }
+  };
+
   const parsedJobLogs = list.reduce((acc, jobLog, index) => {
     jobLog.logs.forEach((log: any) => {
       acc[index] = {
         ...acc[index],
-        [log.entityId + log.triggerType]: log,
+        [log.entityId + log.triggerType]: logsParser(log, jobLog.id),
       };
     });
     return acc;

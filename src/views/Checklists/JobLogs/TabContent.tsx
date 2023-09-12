@@ -8,11 +8,12 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
 import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { fetchProcessLogs } from '../ListView/actions';
 import { navigate } from '@reach/router';
+import { logsResourceChoicesMapper } from './DynamicContent';
 
 const JobLogsTabWrapper = styled.div`
   display: flex;
@@ -44,6 +45,7 @@ const Logs: FC<TabContentProps> = ({ values }) => {
   const { selectedFacility } = useTypedSelector((state) => state.auth);
 
   const [filterFields, setFilterFields] = useState<FilterField[]>([]);
+  const resourceParameterChoicesMap = useRef(logsResourceChoicesMapper(list));
 
   const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
@@ -144,6 +146,31 @@ const Logs: FC<TabContentProps> = ({ values }) => {
     }
   }, [data?.jobLogColumns]);
 
+  useEffect(() => {
+    if (list.length) {
+      resourceParameterChoicesMap.current = logsResourceChoicesMapper(list);
+    }
+  }, [list]);
+
+  const logsParser = (log: any, jobId: string) => {
+    switch (log.triggerType) {
+      case 'RESOURCE_PARAMETER':
+        const selectedChoices = (
+          resourceParameterChoicesMap.current?.[jobId]?.[log.entityId]?.choices || []
+        ).reduce<any[]>((acc: any[], c: any) => {
+          acc.push(`${c?.objectDisplayName} (ID: ${c?.objectExternalId})`);
+          return acc;
+        }, []);
+
+        return {
+          ...log,
+          value: selectedChoices?.join(', '),
+        };
+      default:
+        return log;
+    }
+  };
+
   return (
     <JobLogsTabWrapper>
       <LoadingContainer
@@ -157,12 +184,15 @@ const Logs: FC<TabContentProps> = ({ values }) => {
                   if (log.triggerType === 'JOB_ID') {
                     acc[index] = {
                       ...acc[index],
-                      [log.entityId + log.triggerType]: { ...log, jobId: jobLog.id },
+                      [log.entityId + log.triggerType]: logsParser(
+                        { ...log, jobId: jobLog.id },
+                        jobLog.id,
+                      ),
                     };
                   } else {
                     acc[index] = {
                       ...acc[index],
-                      [log.entityId + log.triggerType]: log,
+                      [log.entityId + log.triggerType]: logsParser(log, jobLog.id),
                     };
                   }
                 });

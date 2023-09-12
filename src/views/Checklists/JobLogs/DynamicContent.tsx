@@ -22,7 +22,7 @@ import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { GetAppOutlined, Tune } from '@material-ui/icons';
 import { isEqual } from 'lodash';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { fetchProcessLogs, saveCustomView } from '../ListView/actions';
@@ -70,6 +70,25 @@ const JobLogsTabWrapper = styled.div`
   }
 `;
 
+export const logsResourceChoicesMapper = (list: any[]) => {
+  return list.reduce((result, jobLog) => {
+    const jobId = jobLog.id;
+    result[jobId] = {};
+
+    jobLog.logs.forEach((log) => {
+      if (log.triggerType === 'RESOURCE' && log.resourceParameters) {
+        for (const key in log.resourceParameters) {
+          if (log.resourceParameters.hasOwnProperty(key)) {
+            result[jobId][key] = { ...log.resourceParameters[key] };
+          }
+        }
+      }
+    });
+
+    return result;
+  }, {});
+};
+
 const DynamicContent: FC<TabContentProps> = ({ values }) => {
   const { id, checklistId } = values;
   const dispatch = useDispatch();
@@ -102,6 +121,8 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
     isChanged: false,
   });
   const { columns, showDrawer, viewDetails, isChanged } = state;
+
+  const resourceParameterChoicesMap = useRef(logsResourceChoicesMapper(list));
 
   const compareKeys = (key: keyof CustomView, _viewDetails = viewDetails) => {
     let _isChanged = isChanged;
@@ -203,8 +224,8 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                   (acc, p: any) => {
                     acc.push(
                       `${p.displayName}: ${p.choices
-                        .map((c: any) => c.objectDisplayName)
-                        .join(',')}`,
+                        .map((c: any) => `${c.objectDisplayName} (ID: ${c.objectExternalId})`)
+                        .join(', ')}`,
                     );
                     return acc;
                   },
@@ -290,6 +311,25 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
         values: [option.id],
       },
     ]);
+  };
+
+  const logsParser = (log: any, jobId: string) => {
+    switch (log.triggerType) {
+      case 'RESOURCE_PARAMETER':
+        const selectedChoices = (
+          resourceParameterChoicesMap.current?.[jobId]?.[log.entityId]?.choices || []
+        ).reduce<any[]>((acc, c: any) => {
+          acc.push(`${c?.objectDisplayName} (ID: ${c?.objectExternalId})`);
+          return acc;
+        }, []);
+
+        return {
+          ...log,
+          value: selectedChoices?.join(', '),
+        };
+      default:
+        return log;
+    }
   };
 
   return (
@@ -390,12 +430,15 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                     if (log.triggerType === 'JOB_ID') {
                       acc[index] = {
                         ...acc[index],
-                        [log.entityId + log.triggerType]: { ...log, jobId: jobLog.id },
+                        [log.entityId + log.triggerType]: logsParser(
+                          { ...log, jobId: jobLog.id },
+                          jobLog.id,
+                        ),
                       };
                     } else {
                       acc[index] = {
                         ...acc[index],
-                        [log.entityId + log.triggerType]: log,
+                        [log.entityId + log.triggerType]: logsParser(log, jobLog.id),
                       };
                     }
                   });
