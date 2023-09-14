@@ -190,6 +190,7 @@ export type fetchDataType = {
   usageStatus?: number;
   collection?: string;
   sort?: string;
+  displayName?: string | null;
 };
 
 export type fetchListSuccessType<T = unknown> = {

@@ -1,8 +1,9 @@
 import { FormGroup } from '#components';
 import { useTypedSelector } from '#store';
-import { DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { InputTypes, fetchDataParams } from '#utils/globalTypes';
 import { fetchObjectTypes } from '#views/Ontology/actions';
+import { debounce } from 'lodash';
 import React, { FC, useEffect } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -23,13 +24,14 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
   const autoInitialized = watch('autoInitialized', false);
 
   const fetchData = (params: fetchDataParams = {}) => {
-    const { page } = params;
+    const { page = DEFAULT_PAGE_NUMBER, query = '' } = params;
     dispatch(
       fetchObjectTypes(
         {
           page,
           size: DEFAULT_PAGE_SIZE,
           usageStatus: 1,
+          displayName: query ? query : null,
         },
         true,
       ),
@@ -70,6 +72,13 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
                 label: objectType.displayName,
                 value: objectType.id,
               })),
+              onInputChange: debounce((value: string, actionMeta: string) => {
+                if (value !== actionMeta.prevInputValue) {
+                  fetchData({
+                    query: value,
+                  });
+                }
+              }, 500),
               defaultValue: data?.objectTypeId
                 ? [
                     {
@@ -78,7 +87,7 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
                     },
                   ]
                 : undefined,
-              isSearchable: false,
+              isSearchable: true,
               placeholder: 'Select Object Type',
               isDisabled: isReadOnly,
               onChange: (value: any) => {
