@@ -46,6 +46,18 @@ const TabContentWrapper = styled.div`
       max-width: 306px;
       width: 306px;
     }
+    .filter-buttons-wrapper {
+      padding: 2px 16px;
+      margin-block: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      span {
+        color: #1d84ff;
+        font-size: 14px;
+      }
+    }
   }
 
   #create {

@@ -49,6 +49,9 @@ import {
   unarchiveChecklist,
 } from './actions';
 import { ListViewProps } from './types';
+import permissionsIcon from '#assets/svg/permissionsIcon.svg';
+import FilterIcon from '#assets/svg/FilterIcon.svg';
+import FiltersDrawer from '../Overlays/FilterDrawer';
 
 const getBaseFilter = (label: string): FilterField[] => [
   { field: 'archived', op: FilterOperators.EQ, values: [false] },
@@ -106,6 +109,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist | null>(null);
   const [filterFields, setFilterFields] = useState<FilterField[]>(getBaseFilter(label));
   const [searchFilterFields, setSearchFilterFields] = useState<FilterField[]>([]);
+  const [showPrototypeFilterDrawer, setPrototypeFilterDrawer] = useState<boolean>(false);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -151,6 +155,24 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
         }),
       }),
     );
+  };
+
+  const onApplyMoreFilters = (filters: any) => {
+    const stateFilter = filters?.find((filter: any) => filter.field === 'state');
+    const collaboratorFilter = filters?.find((filter: any) => filter.field !== 'state');
+    setFilterFields((currentFields) => [
+      ...currentFields.filter((field) => field.field !== 'state'),
+      ...(stateFilter?.value
+        ? [
+            {
+              id: stateFilter.id,
+              field: 'state',
+              op: stateFilter.value === 'all' ? FilterOperators.NE : FilterOperators.EQ,
+              values: [stateFilter.value === 'all' ? 'PUBLISHED' : `${stateFilter.value}`],
+            },
+          ]
+        : getBaseFilter(label).filter((field) => field.field === 'state')),
+    ]);
   };
 
   useEffect(() => {
@@ -598,36 +620,17 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
         />
 
         {label === 'prototype' && (
-          <DropdownFilter
-            label="Prototype State is"
-            options={[
-              { label: 'All', value: 'all' },
-              ...Object.keys(ChecklistStatesContent)
-                .filter((key) => key !== 'PUBLISHED')
-                .map((key) => ({
-                  label: ChecklistStatesContent[key as keyof typeof ChecklistStatesContent],
-                  value: key,
-                })),
-            ]}
-            placeholder="Select"
-            updateFilter={(option) =>
-              setFilterFields((currentFields) => [
-                ...currentFields.filter((field) => field.field !== 'state'),
-                ...(option
-                  ? [
-                      {
-                        field: 'state',
-                        op: option.value === 'all' ? FilterOperators.NE : FilterOperators.EQ,
-                        values: [option.value === 'all' ? 'PUBLISHED' : `${option.value}`],
-                      },
-                    ]
-                  : getBaseFilter(label).filter((field) => field.field === 'state')),
-              ])
-            }
-          />
+          <div className="filter-buttons-wrapper" onClick={() => setPrototypeFilterDrawer(true)}>
+            <img src={FilterIcon} alt="filter icon" />
+            {filterFields.filter((field) => field?.hasOwnProperty('id')).length > 0 && (
+              <span>{`(${
+                filterFields.filter((field) => field?.hasOwnProperty('id')).length
+              })`}</span>
+            )}
+          </div>
         )}
 
-        {label === 'prototype' && (
+        {/* {label === 'prototype' && (
           <DropdownFilter
             label="I am involved as"
             options={[
@@ -705,7 +708,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
               }
             }}
           />
-        )}
+        )} */}
 
         <ToggleSwitch
           checkedIcon={false}
@@ -801,6 +804,13 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
         <CreateJob
           checklist={{ label: selectedChecklist.name, value: selectedChecklist.id }}
           onCloseDrawer={setCreateJobDrawerVisible}
+        />
+      )}
+      {showPrototypeFilterDrawer && (
+        <FiltersDrawer
+          setState={setPrototypeFilterDrawer}
+          onApplyMoreFilters={onApplyMoreFilters}
+          filters={filterFields.filter((field) => field?.hasOwnProperty('id'))}
         />
       )}
     </TabContentWrapper>
