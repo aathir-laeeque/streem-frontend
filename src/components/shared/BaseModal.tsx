@@ -121,6 +121,7 @@ const Wrapper = styled.div.attrs({ className: 'base-modal' })<{
         .modal-body {
           padding: 16px;
           overflow: auto;
+          line-height: 20px;
         }
       }
     }
