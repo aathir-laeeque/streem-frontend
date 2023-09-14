@@ -1,6 +1,7 @@
 import { BaseModal } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import React, { FC } from 'react';
+import { getVideoDevices } from '#utils/inputUtils';
+import React, { FC, useEffect } from 'react';
 import { QrReader } from 'react-qr-reader';
 import styled from 'styled-components';
 
@@ -84,6 +85,12 @@ export const QRScanner: FC<CommonOverlayProps<Props>> = ({
   closeOverlay,
   props: { onSuccess },
 }) => {
+  useEffect(() => {
+    return () => {
+      getVideoDevices();
+    };
+  }, []);
+
   return (
     <Wrapper>
       <BaseModal
