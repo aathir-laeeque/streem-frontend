@@ -87,6 +87,13 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   useEffect(() => {
     setState((prev) => ({
       ...prev,
+      parameterForFilters: { ...prev.parameterForFilters, ...parametersById },
+    }));
+  }, [parametersById]);
+
+  useEffect(() => {
+    setState((prev) => ({
+      ...prev,
       value: parameter.response.choices?.length
         ? parameter.response.choices.map((choice: any) => ({
             value: choice.objectId,
