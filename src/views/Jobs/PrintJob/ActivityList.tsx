@@ -475,25 +475,6 @@ const parameterTemplateFormatter = (
       return (
         <View style={styles.parameterView}>
           <Text style={styles.text12}>{parameter.label}</Text>
-          <View
-            style={[
-              styles.materialParameterItems,
-              {
-                justifyContent: 'flex-start',
-                borderBottomWidth: 0,
-                paddingTop: 2,
-              },
-            ]}
-            wrap={false}
-          >
-            <Text style={styles.parameterHintText}>
-              {parameter.type === MandatoryParameter.MULTISELECT
-                ? 'You can select multiple items . E.g. -'
-                : 'You can select only one item. E.g. - '}
-            </Text>
-            <Image src={checkmark} style={{ height: '16px', marginHorizontal: 5 }} />
-            <Text style={styles.parameterHintText}>Remove the jacket from the assembly</Text>
-          </View>
           {parameter.data.map((item) => (
             <View
               key={`${item.id}`}
@@ -528,22 +509,6 @@ const parameterTemplateFormatter = (
       }
       return (
         <View style={styles.parameterView}>
-          <View
-            style={[
-              styles.materialParameterItems,
-              {
-                justifyContent: 'flex-start',
-                borderBottomWidth: 0,
-                paddingTop: 2,
-              },
-            ]}
-            wrap={false}
-          >
-            <Text style={styles.parameterHintText}>Check either one option E.g. -</Text>
-            <Image src={checkmark} style={{ height: '16px', marginHorizontal: 5 }} />
-            <Text style={styles.parameterHintText}>or</Text>
-            <View style={styles.checkBoxFaded} />
-          </View>
           <Text style={styles.yesNoLabel}>{parameter.label}</Text>
           <View
             style={[
