@@ -1,16 +1,4 @@
-import NunitoBold from '../../../assets/fonts/nunito/nunito-v14-latin-700.ttf';
-import NunitoRegular from '../../../assets/fonts/nunito/nunito-v14-latin-300.ttf';
-import { Font, StyleSheet } from '@react-pdf/renderer';
-
-Font.register({
-  family: 'Nunito',
-  src: NunitoRegular,
-});
-
-Font.register({
-  family: 'NunitoBold',
-  src: NunitoBold,
-});
+import { StyleSheet } from '@react-pdf/renderer';
 
 export const styles = StyleSheet.create({
   page: {

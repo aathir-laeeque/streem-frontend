@@ -18,6 +18,9 @@ import GlobalStyles from './styles/GlobalStyles';
 import { MsalComponent } from './MsalComponent';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { Font } from '@react-pdf/renderer';
+import NunitoRegular from '#assets/fonts/nunito/nunito-v14-latin-300.ttf';
+import NunitoBold from '#assets/fonts/nunito/nunito-v14-latin-700.ttf';
 
 const { store, persistor } = configureStore({});
 window.store = store;
@@ -25,7 +28,18 @@ window.persistor = persistor;
 
 type Orientation = 'landscape' | 'portrait';
 
+Font.register({
+  family: 'Nunito',
+  src: NunitoRegular,
+});
+
+Font.register({
+  family: 'NunitoBold',
+  src: NunitoBold,
+});
+
 const App: FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const onBeforeLift = () => {
     const {
       auth: { accessToken },
@@ -33,6 +47,9 @@ const App: FC = () => {
     if (accessToken) {
       setAuthHeader(accessToken);
     }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
   };
 
   const dispatch = store.dispatch as typeof store.dispatch;
@@ -99,32 +116,39 @@ const App: FC = () => {
       <MsalComponent>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor} onBeforeLift={onBeforeLift}>
-            <Router style={{ display: 'flex', flex: 1 }} basepath="/">
-              <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
-              <CustomRoute as={FacilitySelectionView} path="facility/selection" />
-              <CustomRoute as={HomeView} path="home" />
-              <CustomRoute as={PrintJob} path="jobs/:jobId/print" />
-              <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
-              <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
-              <CustomRoute as={PrintJobAuditLogs} path="job-activity/:jobId/print" />
-              <CustomRoute as={PrintJobLogs} path="job-logs/:viewId/print" />
-              <CustomRoute as={PrintObjectChangeLogs} path="object-change-logs/:objectId/print" />
-              <CustomRoute as={UseCaseSelectionView} path="/*" />
-            </Router>
-            <Notification
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={true}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-            />
-            <OverlayContainer />
+            {!isLoading && (
+              <>
+                <Router style={{ display: 'flex', flex: 1 }} basepath="/">
+                  <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
+                  <CustomRoute as={FacilitySelectionView} path="facility/selection" />
+                  <CustomRoute as={HomeView} path="home" />
+                  <CustomRoute as={PrintJob} path="jobs/:jobId/print" />
+                  <CustomRoute as={JobSummaryPdf} path="jobs/:jobId/summary/print" />
+                  <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
+                  <CustomRoute as={PrintJobAuditLogs} path="job-activity/:jobId/print" />
+                  <CustomRoute as={PrintJobLogs} path="job-logs/:viewId/print" />
+                  <CustomRoute
+                    as={PrintObjectChangeLogs}
+                    path="object-change-logs/:objectId/print"
+                  />
+                  <CustomRoute as={UseCaseSelectionView} path="/*" />
+                </Router>
+                <Notification
+                  position="top-right"
+                  autoClose={5000}
+                  hideProgressBar={true}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                />
+                <OverlayContainer />
 
-            <GlobalStyles />
+                <GlobalStyles />
+              </>
+            )}
           </PersistGate>
         </Provider>
       </MsalComponent>

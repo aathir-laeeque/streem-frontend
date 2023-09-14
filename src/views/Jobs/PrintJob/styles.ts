@@ -1,7 +1,5 @@
+import { StyleSheet } from '@react-pdf/renderer';
 import styled from 'styled-components';
-import { StyleSheet, Font } from '@react-pdf/renderer';
-import NunitoRegular from '../../../assets/fonts/nunito/nunito-v14-latin-300.ttf';
-import NunitoBold from '../../../assets/fonts/nunito/nunito-v14-latin-700.ttf';
 
 export const LoadingDiv = styled.div`
   display: flex;
@@ -12,16 +10,6 @@ export const LoadingDiv = styled.div`
   height: 100%;
   z-index: -1;
 `;
-
-Font.register({
-  family: 'Nunito',
-  src: NunitoRegular,
-});
-
-Font.register({
-  family: 'NunitoBold',
-  src: NunitoBold,
-});
 
 export const styles = StyleSheet.create({
   page: {
