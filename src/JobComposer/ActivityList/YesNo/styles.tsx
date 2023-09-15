@@ -10,7 +10,6 @@ export const Wrapper = styled.div.attrs({
     display: flex;
 
     .button-item {
-      flex: 1;
       display: flex;
       background-color: #ffffff;
       button {
