@@ -31,14 +31,14 @@ const GlobalStyles = createGlobalStyle`
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: #1d84ff;
+    background: #E0E0E0;
     border-radius: 10px;
     border:4px solid #fafafa;
   }
 
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: #005dcc;
+    background: #C6C6C6;
   }
 
   #root {
