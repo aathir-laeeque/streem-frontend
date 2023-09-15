@@ -152,33 +152,29 @@ const Header: FC<{
               </div>
             ))}
           </LabelValueRow>
-          {data?.parameterValues?.length > 0 && (
-            <>
-              <h4>Job Information</h4>
-              <LabelValueRow>
-                <div className="info-item" key={'Job ID'}>
-                  <label className="info-item-label">Job ID</label>
-                  <span className="info-item-value">{data?.code}</span>
+          <h4>Job Information</h4>
+          <LabelValueRow>
+            <div className="info-item" key={'Job ID'}>
+              <label className="info-item-label">Job ID</label>
+              <span className="info-item-value">{data?.code}</span>
+            </div>
+            {(data?.parameterValues || [])
+              ?.reduce((acc: any, parameter: any) => {
+                if (parameter.targetEntityType === TargetEntityType.PROCESS) {
+                  acc.push({
+                    label: parameter.label,
+                    value: getParameterContent(parameter),
+                  });
+                }
+                return acc;
+              }, [])
+              ?.map(({ label, value }) => (
+                <div className="info-item" key={label}>
+                  <label className="info-item-label">{label}</label>
+                  <span className="info-item-value">{value}</span>
                 </div>
-                {(data?.parameterValues || [])
-                  .reduce((acc: any, parameter: any) => {
-                    if (parameter.targetEntityType === TargetEntityType.PROCESS) {
-                      acc.push({
-                        label: parameter.label,
-                        value: getParameterContent(parameter),
-                      });
-                    }
-                    return acc;
-                  }, [])
-                  .map(({ label, value }) => (
-                    <div className="info-item" key={label}>
-                      <label className="info-item-label">{label}</label>
-                      <span className="info-item-value">{value}</span>
-                    </div>
-                  ))}
-              </LabelValueRow>
-            </>
-          )}
+              ))}
+          </LabelValueRow>
         </div>
       </div>
     </Wrapper>
