@@ -1,4 +1,5 @@
 import { ChecklistStatesContent } from '#PrototypeComposer/checklist.types';
+import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { Button, FormGroup, LoadingContainer, useDrawer } from '#components';
 import { FilterOperators, InputTypes } from '#utils/globalTypes';
 import {
@@ -16,11 +17,11 @@ const metaFilters = [
     value: 'state',
     field: 'state',
   },
-  // {
-  //   label: 'I am Involved as',
-  //   value: 'collaborator',
-  //   field: 'collaborators.type',
-  // },
+  {
+    label: 'I am Involved as',
+    value: 'collaborator',
+    field: 'collaborator',
+  },
 ];
 
 const metaFiltersValues = (filterType: string) => {
@@ -37,9 +38,9 @@ const metaFiltersValues = (filterType: string) => {
       ];
     case 'collaborator':
       return [
-        { label: 'As Author', value: 'collaborators.type' },
-        { label: 'As Collaborator', value: 'collaborators.user.id' },
-        { label: 'Not Involved', value: 'not.a.collaborator' },
+        { label: 'As Author', value: CollaboratorType.AUTHOR },
+        { label: 'As Collaborator', value: CollaboratorType.REVIEWER },
+        { label: 'Not Involved', value: 'NOT' },
       ];
     default:
       return;
@@ -56,7 +57,9 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
   }>({
     selectedFilter: {},
     showStateFilter: !formValues?.some((item: any) => item?.field === 'state'),
-    showCollaboratorFilter: !formValues?.some((item: any) => item?.field === 'collaborators.type'),
+    showCollaboratorFilter: !formValues?.some((item: any) =>
+      ['collaborator', 'collaborators.type', 'not.a.collaborator'].includes(item?.field),
+    ),
   });
 
   const { selectedFilter, showStateFilter, showCollaboratorFilter } = state;
@@ -84,16 +87,22 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
     setValue(`filters.${index}.field`, item?.field, {
       shouldValidate: true,
     });
-    setValue(`filters.${index}.value`, item?.values, {
+    setValue(`filters.${index}.value`, item?.values?.[0], {
       shouldValidate: true,
     });
 
     if (item) {
-      const _selectedFilter = metaFilters.find((currFilter) => currFilter.value === item.field);
+      const _selectedFilter = metaFilters.find((currFilter) => {
+        if (item.field === 'state') {
+          return currFilter.value === item.field;
+        } else {
+          return currFilter.value === 'collaborator';
+        }
+      });
 
       setState((prev) => ({
         ...prev,
-        selectedFilter: _selectedFilter,
+        selectedFilter: _selectedFilter?.field,
       }));
     }
   }, [shouldRegister]);
@@ -127,7 +136,13 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
                     value: currFilter.value,
                   })),
                 value: item?.field
-                  ? metaFilters.find((currFilter) => currFilter.value === item.field)
+                  ? metaFilters.find((currFilter) => {
+                      if (item.field === 'state') {
+                        return currFilter.value === item.field;
+                      } else {
+                        return currFilter.value === 'collaborator';
+                      }
+                    })
                   : undefined,
                 onChange: (value: any) => {
                   setValue(`filters.${index}.field`, value.field, {
@@ -155,9 +170,7 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
                   { label: 'Is', value: FilterOperators.EQ },
                   // { label: 'Is Not', value: FilterOperators.NE },
                 ],
-                value: item?.op
-                  ? { label: item.op === FilterOperators.EQ ? 'Is' : 'Is Not', value: item.op }
-                  : undefined,
+                value: item?.op ? [{ label: 'Is', value: FilterOperators.EQ }] : undefined,
                 onChange: (value: any) => {
                   setValue(`filters.${index}.op`, value.value, {
                     shouldDirty: true,
@@ -182,8 +195,14 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
                     shouldValidate: true,
                   });
                 },
-                value: item?.field
-                  ? [{ label: ChecklistStatesContent[item.values?.[0]], value: item.values?.[0] }]
+                defaultValue: item?.field
+                  ? item.field === 'state'
+                    ? [{ label: ChecklistStatesContent[item.values?.[0]], value: item.values?.[0] }]
+                    : item.values?.[0] === CollaboratorType.AUTHOR
+                    ? [{ label: 'As Author', value: CollaboratorType.AUTHOR }]
+                    : item.values?.[0] === CollaboratorType.REVIEWER
+                    ? [{ label: 'As Collaborator', value: CollaboratorType.REVIEWER }]
+                    : [{ label: 'Not Involved', value: 'NOT' }]
                   : undefined,
                 style: {
                   flex: 1,
@@ -211,8 +230,6 @@ const FiltersDrawer: FC<any> = ({ setState: _setState, onApplyMoreFilters, filte
       filters,
     },
   });
-
-  console.log('zero filters drawer', filters);
 
   const {
     handleSubmit,
@@ -280,6 +297,7 @@ const FiltersDrawer: FC<any> = ({ setState: _setState, onApplyMoreFilters, filte
                 variant="secondary"
                 style={{ marginBottom: 16, padding: '6px 8px' }}
                 onClick={onAddNewFilter}
+                disabled={fields.length >= 2}
               >
                 <AddCircleOutline style={{ marginRight: 8 }} /> Add Filter
               </Button>

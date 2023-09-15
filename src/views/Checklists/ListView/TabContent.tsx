@@ -157,24 +157,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
     );
   };
 
-  const onApplyMoreFilters = (filters: any) => {
-    const stateFilter = filters?.find((filter: any) => filter.field === 'state');
-    const collaboratorFilter = filters?.find((filter: any) => filter.field !== 'state');
-    setFilterFields((currentFields) => [
-      ...currentFields.filter((field) => field.field !== 'state'),
-      ...(stateFilter?.value
-        ? [
-            {
-              id: stateFilter.id,
-              field: 'state',
-              op: stateFilter.value === 'all' ? FilterOperators.NE : FilterOperators.EQ,
-              values: [stateFilter.value === 'all' ? 'PUBLISHED' : `${stateFilter.value}`],
-            },
-          ]
-        : getBaseFilter(label).filter((field) => field.field === 'state')),
-    ]);
-  };
-
   useEffect(() => {
     dispatch(clearData());
   }, []);
@@ -595,6 +577,72 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
       : []),
   ];
 
+  const onApplyMoreFilters = (filters: any) => {
+    const stateFilter = filters?.find((filter: any) => filter?.field === 'state');
+    const collaboratorFilter = filters?.find((filter: any) => filter?.field !== 'state');
+    setFilterFields((currentFields) => [
+      ...currentFields.filter((field) => field?.field !== 'state'),
+      ...(stateFilter?.value
+        ? [
+            {
+              id: stateFilter?.id,
+              field: 'state',
+              op: stateFilter?.value === 'all' ? FilterOperators.NE : FilterOperators.EQ,
+              values: [stateFilter.value === 'all' ? 'PUBLISHED' : `${stateFilter.value}`],
+            },
+          ]
+        : getBaseFilter(label).filter((field) => field?.field === 'state')),
+    ]);
+
+    setFilterFields((currentFields) => [
+      ...currentFields.filter(
+        (field) =>
+          field?.field !== 'collaborators.type' &&
+          field?.field !== 'collaborators.user.id' &&
+          field?.field !== 'not.a.collaborator',
+      ),
+      ...(collaboratorFilter?.id
+        ? collaboratorFilter?.value === CollaboratorType.AUTHOR
+          ? [
+              {
+                field: 'collaborators.user.id',
+                op: FilterOperators.EQ,
+                values: [userId],
+              },
+              {
+                id: collaboratorFilter.id,
+                field: 'collaborators.type',
+                op: FilterOperators.ANY,
+                values: [CollaboratorType.AUTHOR, CollaboratorType.PRIMARY_AUTHOR],
+              },
+            ]
+          : collaboratorFilter?.value === CollaboratorType.REVIEWER
+          ? [
+              {
+                field: 'collaborators.user.id',
+                op: FilterOperators.EQ,
+                values: [userId],
+              },
+              {
+                id: collaboratorFilter.id,
+                field: 'collaborators.type',
+                op: FilterOperators.ANY,
+                values: [CollaboratorType.REVIEWER],
+              },
+              ,
+            ]
+          : [
+              {
+                id: collaboratorFilter.id,
+                field: 'not.a.collaborator',
+                op: FilterOperators.NE,
+                values: [userId],
+              },
+            ]
+        : []),
+    ]);
+  };
+
   return (
     <TabContentWrapper>
       <div className="filters">
@@ -629,86 +677,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
             )}
           </div>
         )}
-
-        {/* {label === 'prototype' && (
-          <DropdownFilter
-            label="I am involved as"
-            options={[
-              { label: 'As Author', value: 'collaborators.type' },
-              { label: 'As Collaborator', value: 'collaborators.user.id' },
-              { label: 'Not Involved', value: 'not.a.collaborator' },
-            ]}
-            placeholder="Select"
-            updateFilter={(option) => {
-              if (!option) {
-                setFilterFields((currentFields) => {
-                  const updatedFilterFields = currentFields.filter(
-                    (field) =>
-                      field.field !== 'collaborators.type' &&
-                      field.field !== 'collaborators.user.id' &&
-                      field.field !== 'not.a.collaborator',
-                  );
-                  return updatedFilterFields;
-                });
-              } else if (option.value === 'not.a.collaborator') {
-                setFilterFields((currentFields) => {
-                  const updatedFilterFields = [
-                    ...currentFields.filter(
-                      (field) =>
-                        field.field !== 'collaborators.type' &&
-                        field.field !== 'collaborators.user.id',
-                    ),
-                    {
-                      field: 'not.a.collaborator',
-                      op: FilterOperators.NE,
-                      values: [userId],
-                    },
-                  ] as FilterField[];
-                  return updatedFilterFields;
-                });
-              } else if (option.value === 'collaborators.type') {
-                setFilterFields((currentFields) => {
-                  const updatedFilterFields = [
-                    ...currentFields.filter((field) => field.field !== 'not.a.collaborator'),
-                    {
-                      field: 'collaborators.user.id',
-                      op: FilterOperators.EQ,
-                      values: [userId],
-                    },
-                    {
-                      field: 'collaborators.type',
-                      op: FilterOperators.ANY,
-                      values: [CollaboratorType.AUTHOR, CollaboratorType.PRIMARY_AUTHOR],
-                    },
-                  ] as FilterField[];
-                  return updatedFilterFields;
-                });
-              } else {
-                setFilterFields((currentFields) => {
-                  const updatedFilterFields = [
-                    ...currentFields.filter(
-                      (field) =>
-                        field.field !== 'collaborators.type' &&
-                        field.field !== 'collaborators.user.id' &&
-                        field.field !== 'not.a.collaborator',
-                    ),
-                    {
-                      field: option.value,
-                      op: FilterOperators.EQ,
-                      values: [userId],
-                    },
-                    {
-                      field: 'collaborators.type',
-                      op: FilterOperators.ANY,
-                      values: [CollaboratorType.REVIEWER],
-                    },
-                  ] as FilterField[];
-                  return updatedFilterFields;
-                });
-              }
-            }}
-          />
-        )} */}
 
         <ToggleSwitch
           checkedIcon={false}
