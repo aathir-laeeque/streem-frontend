@@ -204,8 +204,6 @@ const Wrapper = styled.div<{
 
       @media (min-width: 900px) {
         bottom: ${({ isInfoExpanded }) => (isInfoExpanded ? '-16px' : '16px')};
-        right: 68px;
-        left: unset;
       }
     }
   }
