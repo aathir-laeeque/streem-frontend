@@ -31,8 +31,7 @@ const Wrapper = styled.div.attrs({
     .number-parameter,
     .date-parameter,
     .calculation-parameter,
-    .signature-interaction,
-    .parameter-media {
+    .signature-interaction {
       ${({ isTaskCompleted, isCorrectingError, isJobInInbox }) =>
         (isTaskCompleted && !isCorrectingError) || !isJobInInbox
           ? css`
