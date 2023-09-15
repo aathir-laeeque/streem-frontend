@@ -9,6 +9,7 @@ const useStyles = makeStyles({
     marginTop: '5px',
     overflow: 'auto',
     padding: '8px',
+    maxHeight: '50%',
 
     '&::before': {
       content: '""',
