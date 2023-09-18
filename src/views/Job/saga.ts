@@ -39,9 +39,10 @@ import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import { Job, Verification } from '#views/Jobs/ListView/types';
 import { navigate } from '@reach/router';
-import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
+import { all, call, put, select, takeLatest, takeLeading, fork } from 'redux-saga/effects';
 import { JobActionsEnum, jobActions } from './jobStore';
 import { parseJobData } from './utils';
+import { StagePollingSaga } from './stagePollingSaga';
 
 const getUserId = (state: RootState) => state.auth.userId;
 
@@ -857,4 +858,8 @@ export function* jobSaga() {
   yield takeLeading(JobActionsEnum.recallPeerVerification, recallPeerVerificationSaga);
   yield takeLeading(JobActionsEnum.acceptPeerVerification, acceptPeerVerificationSaga);
   yield takeLeading(JobActionsEnum.rejectPeerVerification, rejectPeerVerificationSaga);
+  yield all([
+    // fork other sagas here
+    // fork(StagePollingSaga),
+  ]);
 }

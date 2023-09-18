@@ -2,27 +2,31 @@ import { JOB_STAGE_POLLING_TIMEOUT } from '#JobComposer/composer.types';
 import { RootState } from '#store';
 import { apiGetStageData } from '#utils/apiUrls';
 import { request } from '#utils/request';
-import { jobActions } from '#views/Job/jobStore';
-import { parseJobData, parseJobDataByStage } from '#views/Job/utils';
 import { CompletedJobStates } from '#views/Jobs/ListView/types';
 import { call, delay, put, race, select, take } from 'redux-saga/effects';
-import { startPollActiveStageData, stopPollActiveStageData } from './actions';
-import { StageListAction } from './reducer.types';
+import { jobActions } from './jobStore';
+import { parseJobData, parseJobDataByStage } from './utils';
+export const a = 10;
 
 const getCurrentStatus = (state: RootState) => state.composer.jobState;
 const getActiveStageId = (state: RootState) => state.composer.stages.activeStageId;
 const getUserId = (state: RootState) => state.auth.userId;
 
-function* activeStagePollingSaga({ payload }: ReturnType<typeof startPollActiveStageData>) {
+function* activeStagePollingSaga({
+  payload,
+}: ReturnType<typeof jobActions.startPollActiveStageData>) {
   const { jobId } = payload;
+  console.log('zero check saga state', jobId);
   while (true) {
     try {
       const currentStatus = getCurrentStatus(yield select());
       const activeStageId = getActiveStageId(yield select());
 
       if (currentStatus in CompletedJobStates) {
-        yield put(stopPollActiveStageData());
+        yield put(jobActions.stopPollActiveStageData());
       }
+
+      console.log('zero check two', activeStageId, currentStatus);
 
       if (activeStageId) {
         const { data, errors, timestamp } = yield call(
@@ -38,39 +42,37 @@ function* activeStagePollingSaga({ payload }: ReturnType<typeof startPollActiveS
 
         // const parsedStageData = parseJobDataByStage(activeStageId, data, timestamp, userId!);
 
-        const parsedJobData = parseJobData(data, userId!);
-
-        // yield put();
-        // jobActions.getJobSuccess({
-        //   data: parsedJobData,
-        // }),
-
         // yield put(
         //   jobActions.getStagePollingSuccess({
         //     stageId: activeStageId,
         //     data: parsedStageData,
         //   }),
         // );
+        const parsedJobData = parseJobData(data, userId!);
+
+        // yield put(
+        //   jobActions.getJobSuccess({
+        //     data: parsedJobData,
+        //   }),
+        // );
 
         if (data.jobState in CompletedJobStates) {
-          yield put(stopPollActiveStageData());
+          yield put(jobActions.stopPollActiveStageData());
         }
       }
 
       yield delay(JOB_STAGE_POLLING_TIMEOUT);
     } catch (err) {
-      console.error('error from startPollActiveStageData in Stage Saga :: ', err);
+      console.error('error from startPollActiveStageData in Job Saga :: ', err);
       yield delay(JOB_STAGE_POLLING_TIMEOUT);
     }
   }
 }
 
-export function* StageListSaga() {
+export function* StagePollingSaga() {
   while (true) {
-    const action = yield take(StageListAction.START_POLL_ACTIVE_STAGE_DATA);
-    yield race([
-      call(activeStagePollingSaga, action),
-      take(StageListAction.STOP_POLL_ACTIVE_STAGE_DATA),
-    ]);
+    const action = yield take(jobActions.startPollActiveStageData);
+    // console.log('zero check saga polling', action);
+    yield race([call(activeStagePollingSaga, action), take(jobActions.stopPollActiveStageData)]);
   }
 }

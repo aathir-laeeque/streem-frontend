@@ -8,6 +8,7 @@ import JobHeader from './components/Header';
 import Task from './components/Task';
 import TaskNavigation from './components/TaskNavigation';
 import { jobActions } from './jobStore';
+import { startPollActiveStageData } from '#JobComposer/StageList/actions';
 
 const JobWrapper = styled.div`
   display: flex;
@@ -46,8 +47,11 @@ const JobContainer: FC<
     if (id) {
       dispatch(jobActions.getJob({ id }));
       dispatch(jobActions.getAssignments({ id }));
+      // for poling
+      // dispatch(jobActions.startPollActiveStageData({ jobId: id }));
     }
     return () => {
+      // dispatch(jobActions.stopPollActiveStageData());
       dispatch(jobActions.reset());
     };
   }, []);

@@ -73,6 +73,9 @@ const actions = {
   acceptPeerVerification: {} as { parameterId: string; password: string },
   rejectPeerVerification: {} as { parameterId: string; comment: string },
   reset: undefined,
+  startPollActiveStageData: {} as { jobId: string },
+  stopPollActiveStageData: undefined,
+  getActiveStageDataSuccess: { data: {} as any },
 };
 
 export const initialState: JobStore = {
@@ -277,6 +280,7 @@ export const jobReducer = (state = initialState, action: JobActionsType) =>
       case JobActionsEnum.completeJob:
       case JobActionsEnum.togglePauseResume:
       case JobActionsEnum.performTaskAction:
+        // case JobActionsEnum.startPollActiveStageData:
         draft.updating = true;
         break;
       case JobActionsEnum.setUpdating:
