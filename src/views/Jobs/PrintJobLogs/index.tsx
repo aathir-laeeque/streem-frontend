@@ -18,10 +18,10 @@ import { FirstPage } from './FirstPage';
 import { styles } from './styles';
 import { logsResourceChoicesMapper } from '#views/Checklists/JobLogs/DynamicContent';
 
-const COLUMNS_PER_PAGE = 8;
-const FREEZED_COLUMNS = 3;
+const COLUMNS_PER_PAGE = 10;
+const FREEZED_COLUMNS = 1;
 const ROWS_PER_PAGE = 16;
-const WIDTH_PER_COLUMN = 100 / 8;
+const WIDTH_PER_COLUMN = 100 / 10;
 
 const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
   const {
@@ -251,10 +251,24 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
     return '-';
   };
 
+  const reArrangeColumns = (arr: any[]) => {
+    let orderTree = 1;
+    const orderedArr = arr.map((item) => {
+      if (item.triggerType === 'JOB_ID') {
+        orderTree = 1;
+      } else {
+        orderTree++;
+      }
+      return { ...item, orderTree };
+    });
+    return orderedArr?.sort((a, b) => a.orderTree - b.orderTree) || [];
+  };
+
   const renderTableRow = (columnByPageIndex: number, rowByPageIndex: number) => {
+    const reArrangedColumns = reArrangeColumns(visibleColumns);
     const columnsForRow = [
-      ...visibleColumns.slice(0, FREEZED_COLUMNS),
-      ...visibleColumns.slice(
+      ...reArrangedColumns?.slice(0, FREEZED_COLUMNS),
+      ...reArrangedColumns?.slice(
         FREEZED_COLUMNS + columnByPageIndex * COLUMNS_TO_ADD_PER_PAGE,
         FREEZED_COLUMNS + columnByPageIndex * COLUMNS_TO_ADD_PER_PAGE + COLUMNS_TO_ADD_PER_PAGE,
       ),
