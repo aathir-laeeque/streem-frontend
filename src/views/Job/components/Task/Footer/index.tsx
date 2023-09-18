@@ -286,12 +286,6 @@ const Footer: FC<FooterProps> = ({ task, timerState }) => {
           };
         }
       } else {
-        console.log(
-          'isJobStarted && isUserAssignedToTask && isTaskStarted',
-          isJobStarted,
-          isUserAssignedToTask,
-          isTaskStarted,
-        );
         if (jobState === JobStateEnum.ASSIGNED && isUserAssignedToTask && !task.parentTaskId) {
           primaryActionLabel = 'Start Job';
           primaryActionProps = {

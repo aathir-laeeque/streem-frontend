@@ -131,7 +131,7 @@ function getJobSuccess(draft: JobStore, payload: typeof actions.getJobSuccess) {
   draft.processName = data.processName;
   draft.processCode = data.processCode;
   draft.id = data.id;
-  draft.isInboxView = !(location.pathname.split('/')[1] === 'inbox');
+  draft.isInboxView = location.pathname.split('/')[1] === 'inbox';
 }
 
 function getStagePollingSuccess(draft: JobStore, payload: typeof actions.getStagePollingSuccess) {

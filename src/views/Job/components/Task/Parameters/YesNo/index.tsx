@@ -46,7 +46,7 @@ const YesNoParameter: FC<
     reason: parameter?.response?.reason ?? '',
     shouldAskForReason: !!parameter?.response?.reason,
     showButtons: parameter?.response?.state !== 'EXECUTED',
-    selectedId: getSelectedIdByChoices(),
+    selectedId: undefined,
   });
 
   const dispatchActions = (data: any) => {
@@ -76,18 +76,16 @@ const YesNoParameter: FC<
   useEffect(() => {
     if (state.shouldCallApi) {
       if (state.selectedId) {
-        if (parameter?.response?.choices) {
-          const data = parameter.data.map((d: any) => ({
-            ...d,
-            state: d.id === state.selectedId ? Selections.SELECTED : Selections.NOT_SELECTED,
-          }));
-          if (state.shouldAskForReason) {
-            if (state.reason) {
-              dispatchActions(data);
-            }
-          } else {
+        const data = parameter.data.map((d: any) => ({
+          ...d,
+          state: d.id === state.selectedId ? Selections.SELECTED : Selections.NOT_SELECTED,
+        }));
+        if (state.shouldAskForReason) {
+          if (state.reason) {
             dispatchActions(data);
           }
+        } else {
+          dispatchActions(data);
         }
       }
       setState((prev) => ({
@@ -111,21 +109,6 @@ const YesNoParameter: FC<
 
   const handleExecution = (id: string) => {
     if (id) {
-      // dispatch(
-      //   updateExecutedParameter({
-      //     ...parameter,
-      //     response: {
-      //       ...parameter.response,
-      //       audit: undefined,
-      //       choices: parameter.data.reduce((acc: any, d: any) => {
-      //         acc[d.id] = d.id === id ? Selections.SELECTED : Selections.NOT_SELECTED;
-      //         return acc;
-      //       }, {}),
-      //       reason: state.reason,
-      //       state: 'EXECUTED',
-      //     },
-      //   }),
-      // );
       setState((prevState) => ({
         ...prevState,
         shouldCallApi: true,
@@ -147,7 +130,7 @@ const YesNoParameter: FC<
           },
         })}
       >
-        {parameter.data
+        {[...parameter.data]
           .sort((a, b) => (a.type > b.type ? -1 : 1))
           .map((el, index) => {
             const isSelected = state.selectedId === el.id;

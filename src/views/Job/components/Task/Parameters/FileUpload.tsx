@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import FileUploadMedias from './FileUploadMedias';
 import { ParameterProps } from './Parameter';
+import { isEqual } from 'lodash';
 
 const FileUploadWrapper = styled.div.attrs({
   className: 'parameter-file',
@@ -70,6 +71,8 @@ const FileUploadParameter: FC<ParameterProps> = ({
   const dispatch = useDispatch();
   const [isUploading, setIsUploading] = useState(false);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
+
+  const [uploadedMedia, setUploadedMedia] = useState([]);
 
   const onUploaded = (fileData: FileUploadData) => {
     dispatch(
@@ -150,11 +153,20 @@ const FileUploadParameter: FC<ParameterProps> = ({
     fetchVideoDevices();
   }, []);
 
+  useEffect(() => {
+    if (
+      parameter?.response?.medias?.length > 0 &&
+      !isEqual(parameter?.response?.medias, uploadedMedia)
+    ) {
+      setUploadedMedia(parameter?.response?.medias);
+    }
+  }, [parameter?.response?.medias]);
+
   return (
     <FileUploadWrapper>
-      {parameter.response?.medias?.length > 0 && (
+      {uploadedMedia.length > 0 && (
         <FileUploadMedias
-          medias={parameter.response?.medias ?? []}
+          medias={uploadedMedia}
           parameter={parameter}
           isCorrectingError={isCorrectingError}
         />

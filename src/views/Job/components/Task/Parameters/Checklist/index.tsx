@@ -2,8 +2,8 @@ import { CheckboxWithLabel } from '#components';
 import { Selections } from '#types';
 import { jobActions } from '#views/Job/jobStore';
 import { Close } from '@material-ui/icons';
-import { get } from 'lodash';
-import React, { FC, useEffect, useRef } from 'react';
+import { get, isEqual } from 'lodash';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ParameterProps } from '../Parameter';
 import { Wrapper } from './styles';
@@ -14,14 +14,29 @@ const ChecklistParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }
   }>({});
   const dispatch = useDispatch();
 
+  const [selectedOptions, setSelectedOptions] = useState({});
+
+  const checklistOptions = parameter?.data?.reduce((acc, option) => {
+    acc[option.id] = Selections.NOT_SELECTED;
+    return acc;
+  }, {});
+
+  useEffect(() => {
+    if (parameter?.response?.choices && !isEqual(selectedOptions, checklistOptions)) {
+      setSelectedOptions(parameter?.response?.choices);
+    } else {
+      setSelectedOptions(checklistOptions);
+    }
+  }, [parameter?.response?.choices]);
+
   useEffect(() => {
     if (metaInfo.current?.shouldCallApi) {
       metaInfo.current.shouldCallApi = false;
-      if (parameter?.response?.choices) {
+      if (selectedOptions) {
         const data = parameter.data.map((d: any) => {
           return {
             ...d,
-            state: get(parameter?.response?.choices, d.id, Selections.NOT_SELECTED),
+            state: get(selectedOptions, d.id, Selections.NOT_SELECTED),
           };
         });
         if (isCorrectingError) {
@@ -45,35 +60,21 @@ const ChecklistParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }
         }
       }
     }
-  }, [parameter?.response?.choices]);
+  }, [selectedOptions]);
 
   const handleExecution = (id: string, choice: Selections) => {
     metaInfo.current.shouldCallApi = true;
-    // dispatch(
-    //   updateExecutedParameter({
-    //     ...parameter,
-    //     response: {
-    //       ...parameter.response,
-    //       audit: undefined,
-    //       choices: {
-    //         ...parameter.response?.choices,
-    //         ...parameter.data.reduce((acc: any, d: any) => {
-    //           if (d.id === id) {
-    //             acc[d.id] = choice;
-    //           }
-    //           return acc;
-    //         }, {}),
-    //       },
-    //     },
-    //   }),
-    // );
+    setSelectedOptions((prevChoices) => ({
+      ...prevChoices,
+      [id]: choice,
+    }));
   };
 
   return (
     <Wrapper>
       <ul className="list-container" data-id={parameter.id} data-type={parameter.type}>
         {parameter.data.map((el, index) => {
-          const isItemSelected = get(parameter?.response?.choices, el.id) === Selections.SELECTED;
+          const isItemSelected = get(selectedOptions, el.id) === Selections.SELECTED;
 
           return (
             <li key={index} className="list-item">

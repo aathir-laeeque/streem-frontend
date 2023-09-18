@@ -1,6 +1,6 @@
 import { Router } from '@reach/router';
 import React, { FC } from 'react';
-
+import Job from '#views/Job';
 import ListView from './ListView';
 import { InboxViewProps } from './types';
 
@@ -10,7 +10,8 @@ import { Entity } from '#JobComposer/composer.types';
 const InboxView: FC<InboxViewProps> = () => (
   <Router>
     <ListView path="/" />
-    <Composer path="/:id" entity={Entity.JOB} />
+    <Job path="/:id" />
+    {/* <Composer path="/:id" entity={Entity.JOB} /> */}
   </Router>
 );
 

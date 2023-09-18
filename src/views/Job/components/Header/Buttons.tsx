@@ -26,8 +26,10 @@ const JobHeaderButtons: FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const showBulkAssignButton =
-    // !isInboxView &&
-    !isCompleted && !isCompletedWithException && checkPermission(['checklists', 'createJob']);
+    !isInboxView &&
+    !isCompleted &&
+    !isCompletedWithException &&
+    checkPermission(['checklists', 'createJob']);
 
   const handleClose = () => setAnchorEl(null);
 

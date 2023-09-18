@@ -2,13 +2,13 @@ import React, { FC } from 'react';
 import styled from 'styled-components';
 import closeIcon from '../../assets/svg/close.svg';
 import FileIcon from '../../assets/svg/file.svg';
-import { executeParameter, fixParameter } from '#JobComposer/ActivityList/actions';
 import { Parameter } from '#JobComposer/checklist.types';
 import { useDispatch } from 'react-redux';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { omit } from 'lodash';
 import { request } from '#utils/request';
+import { jobActions } from '#views/Job/jobStore';
 
 const FileGalleryWrapper = styled.div.attrs({
   className: 'file-gallery-wrapper',
@@ -130,20 +130,12 @@ export const FileGallery: FC<FileGalleryProps> = ({
       .filter((media: any) => media.archived === true);
     if (isCorrectingError) {
       dispatch(
-        fixParameter({
-          ...parameter,
-          data: {
-            medias: updatedMedias,
-          },
-        }),
+        jobActions.fixParameter({ parameter: { ...parameter, data: { medias: updatedMedias } } }),
       );
     } else {
       dispatch(
-        executeParameter({
-          ...parameter,
-          data: {
-            medias: updatedMedias,
-          },
+        jobActions.executeParameter({
+          parameter: { ...parameter, data: { medias: updatedMedias } },
         }),
       );
     }

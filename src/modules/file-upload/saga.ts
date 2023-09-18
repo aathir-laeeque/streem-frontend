@@ -1,13 +1,9 @@
-import {
-  executeParameter,
-  fixParameter,
-  updateExecutedParameter,
-} from '#JobComposer/ActivityList/actions';
 import { apiUploadFile } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { uploadFile } from './action';
 import { FileUploadAction } from './types';
+import { jobActions } from '#views/Job/jobStore';
 
 function* uploadFileSaga({ payload }: ReturnType<typeof uploadFile>) {
   try {
@@ -22,7 +18,7 @@ function* uploadFileSaga({ payload }: ReturnType<typeof uploadFile>) {
         // execute parameter if in upload file action parameter is passed
         const medias = [data];
         yield put(
-          updateExecutedParameter({
+          jobActions.updateParameter({
             ...parameter,
             response: {
               ...parameter.response,
@@ -33,9 +29,9 @@ function* uploadFileSaga({ payload }: ReturnType<typeof uploadFile>) {
           }),
         );
         if (isCorrectingError) {
-          yield put(fixParameter({ ...parameter, data: { medias } }));
+          yield put(jobActions.fixParameter({ parameter: { ...parameter, data: { medias } } }));
         } else {
-          yield put(executeParameter({ ...parameter, data: { medias } }));
+          yield put(jobActions.executeParameter({ parameter: { ...parameter, data: { medias } } }));
         }
       }
     } else {

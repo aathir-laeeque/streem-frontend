@@ -123,7 +123,7 @@ const Task: FC = () => {
 
   const handleTaskBodyClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation();
-    e.preventDefault();
+    // e.preventDefault();         // Commenting for the working of date, date-time and file upload parameters
 
     if (jobState === JobStateEnum.ASSIGNED && !isTaskCompleted && !isInboxView) {
       dispatch(
