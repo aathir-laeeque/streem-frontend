@@ -1,4 +1,4 @@
-import { LogType, MandatoryParameter } from '#PrototypeComposer/checklist.types';
+import { LogType, MandatoryParameter, TriggerTypeEnum } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { apiGetChecklist, apiGetParameters, baseUrl } from '#utils/apiUrls';
@@ -17,6 +17,7 @@ import TableRow from '../SummaryPdf/TableRow';
 import { FirstPage } from './FirstPage';
 import { styles } from './styles';
 import { logsResourceChoicesMapper } from '#views/Checklists/JobLogs/DynamicContent';
+import { logsParser } from '../../Checklists/JobLogs/TabContent';
 
 const COLUMNS_PER_PAGE = 10;
 const FREEZED_COLUMNS = 1;
@@ -220,7 +221,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
 
   const renderCell = (row: any, column: any) => {
     if (row[column.id + column.triggerType]) {
-      if (column.triggerType === 'RESOURCE') {
+      if (column.triggerType === TriggerTypeEnum.RESOURCE) {
         const rowValue = row[column.id + column.triggerType];
         const cellValue = Object.values(rowValue.resourceParameters).reduce<any[]>(
           (acc, p: any) => {
@@ -243,8 +244,24 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
       ) {
         return row[column.id + column.triggerType].medias.map((media: any) => media.name).join(',');
       }
-      if (column.triggerType === 'JOB_STATE') {
+      if (column.triggerType === TriggerTypeEnum.JOB_STATE) {
         return startCase(camelCase(row[column.id + column.triggerType].value));
+      } else if (column.triggerType === TriggerTypeEnum.PARAMETER_SELF_VERIFIED_BY) {
+        const selfVerifiedAt = row[column.id + TriggerTypeEnum.PARAMETER_SELF_VERIFIED_AT]?.value;
+        if (row[column.id + column.triggerType].value) {
+          return `Perfomed at ${formatDateTime(selfVerifiedAt)}, by
+          ${row[column.id + column.triggerType].value}`;
+        } else {
+          return '-';
+        }
+      } else if (column.triggerType === TriggerTypeEnum.PARAMETER_PEER_VERIFIED_BY) {
+        const peerVerifiedAt = row[column.id + TriggerTypeEnum.PARAMETER_PEER_VERIFIED_AT]?.value;
+        if (row[column.id + column.triggerType].value) {
+          return `Perfomed at ${formatDateTime(peerVerifiedAt)}, by 
+              ${row[column.id + column.triggerType].value}`;
+        } else {
+          return '-';
+        }
       }
       return row[column.id + column.triggerType].value;
     }
@@ -264,8 +281,16 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
     return orderedArr?.sort((a, b) => a.orderTree - b.orderTree) || [];
   };
 
+  // Filter out the self and peer verification timestamp columns
+  const filteredVisibleColumns = visibleColumns.filter((item: any) => {
+    return (
+      item.triggerType !== TriggerTypeEnum.PARAMETER_SELF_VERIFIED_AT &&
+      item.triggerType !== TriggerTypeEnum.PARAMETER_PEER_VERIFIED_AT
+    );
+  });
+
   const renderTableRow = (columnByPageIndex: number, rowByPageIndex: number) => {
-    const reArrangedColumns = reArrangeColumns(visibleColumns);
+    const reArrangedColumns = reArrangeColumns(filteredVisibleColumns);
     const columnsForRow = [
       ...reArrangedColumns?.slice(0, FREEZED_COLUMNS),
       ...reArrangedColumns?.slice(
@@ -303,8 +328,9 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
                 textAlign: 'left',
                 width: `${WIDTH_PER_COLUMN}%`,
                 borderColor: '#F5F5F5',
-                borderWidth: 1,
+                // borderWidth: 1,  // removing this style as we have this in default style, hence not required here.
                 minHeight: 25,
+                height: '100%',
                 paddingVertical: 5,
               },
             }))}
@@ -318,30 +344,15 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
 
   if (!profile || loading || loadingFilters || loadingProcess) return null;
 
-  const logsParser = (log: any, jobId: string) => {
-    switch (log.triggerType) {
-      case 'RESOURCE_PARAMETER':
-        const selectedChoices = (
-          resourceParameterChoicesMap.current?.[jobId]?.[log.entityId]?.choices || []
-        ).reduce<any[]>((acc: any[], c: any) => {
-          acc.push(`${c?.objectDisplayName} (ID: ${c?.objectExternalId})`);
-          return acc;
-        }, []);
-
-        return {
-          ...log,
-          value: selectedChoices?.join(', '),
-        };
-      default:
-        return log;
-    }
-  };
-
   const parsedJobLogs = list.reduce((acc, jobLog, index) => {
     jobLog.logs.forEach((log: any) => {
       acc[index] = {
         ...acc[index],
-        [log.entityId + log.triggerType]: logsParser(log, jobLog.id),
+        [log.entityId + log.triggerType]: logsParser(
+          log,
+          jobLog.id,
+          resourceParameterChoicesMap.current,
+        ),
       };
     });
     return acc;

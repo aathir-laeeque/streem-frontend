@@ -69,7 +69,6 @@ const Wrapper = styled.div.attrs({
 
           .MuiTableCell-root {
             span {
-              -webkit-line-clamp: 2;
               -webkit-box-orient: vertical;
               overflow: hidden;
               display: -webkit-inline-box;

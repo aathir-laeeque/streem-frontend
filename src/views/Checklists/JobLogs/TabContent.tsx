@@ -1,7 +1,7 @@
 import { DataTable, LoadingContainer, Pagination, TabContentProps } from '#components';
 import { DataTableColumn } from '#components/shared/DataTable';
 import { fetchComposerData } from '#PrototypeComposer/actions';
-import { LogType } from '#PrototypeComposer/checklist.types';
+import { LogType, TriggerTypeEnum } from '#PrototypeComposer/checklist.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
@@ -26,6 +26,145 @@ const JobLogsTabWrapper = styled.div`
     }
   }
 `;
+
+interface ColumnsResult {
+  columns: DataTableColumn[];
+}
+
+export const logsParser = (log: any, jobId: string, resourceParameterChoicesMap: any) => {
+  switch (log.triggerType) {
+    case TriggerTypeEnum.RESOURCE_PARAMETER:
+      const selectedChoices = (
+        resourceParameterChoicesMap?.[jobId]?.[log.entityId]?.choices || []
+      ).reduce((acc: any[], c: any) => {
+        acc.push(`${c?.objectDisplayName} (ID: ${c?.objectExternalId})`);
+        return acc;
+      }, []);
+
+      return {
+        ...log,
+        value: selectedChoices?.join(', '),
+      };
+    default:
+      return log;
+  }
+};
+
+export const getFormattedJobLogs = (jobLogColumns: any) => {
+  // Filtering out the self and peer verification timestamp columns as we don't want to show them.
+
+  const updatedColumns = jobLogColumns.filter((item: any) => {
+    return (
+      item.triggerType !== TriggerTypeEnum.PARAMETER_SELF_VERIFIED_AT &&
+      item.triggerType !== TriggerTypeEnum.PARAMETER_PEER_VERIFIED_AT
+    );
+  });
+
+  const result = (updatedColumns || []).reduce(
+    (acc: ColumnsResult, column: any) => {
+      const _id = column.id + column.triggerType;
+      const _column = {
+        id: _id,
+        label: column.displayName,
+        minWidth: `${
+          (column.displayName.length > 40
+            ? column.displayName.length / 3
+            : column.displayName.length + 10) + 5
+        }ch`,
+        format: (row: any) => {
+          if (row[column.id + column.triggerType]) {
+            if (column.triggerType === TriggerTypeEnum.RESOURCE) {
+              const rowValue = row[column.id + column.triggerType];
+              const cellValue = Object.values(rowValue.resourceParameters).reduce<any[]>(
+                (acc, p: any) => {
+                  acc.push(
+                    `${p.displayName}: ${p.choices
+                      .map((c: any) => `${c.objectDisplayName} (ID: ${c.objectExternalId})`)
+                      .join(', ')}`,
+                  );
+                  return acc;
+                },
+                [],
+              );
+              return cellValue.join(',');
+            }
+            if (column.triggerType === TriggerTypeEnum.JOB_ID) {
+              return (
+                <span
+                  title={row[column.id + column.triggerType].value}
+                  className="primary"
+                  onClick={() => {
+                    navigate(`/jobs/${row[column.id + column.triggerType].jobId}`);
+                  }}
+                >
+                  {row[column.id + column.triggerType].value}
+                </span>
+              );
+            } else if (column.triggerType === TriggerTypeEnum.PARAMETER_SELF_VERIFIED_BY) {
+              const selfVerifiedAt =
+                row[column.id + TriggerTypeEnum.PARAMETER_SELF_VERIFIED_AT]?.value;
+              return (
+                <>
+                  {row[column.id + column.triggerType].value ? (
+                    <span title={row[column.id + column.triggerType].value}>
+                      Perfomed at {formatDateTime(selfVerifiedAt)}, by{' '}
+                      {row[column.id + column.triggerType].value}
+                    </span>
+                  ) : (
+                    '-'
+                  )}
+                </>
+              );
+            } else if (column.triggerType === TriggerTypeEnum.PARAMETER_PEER_VERIFIED_BY) {
+              const peerVerifiedAt =
+                row[column.id + TriggerTypeEnum.PARAMETER_PEER_VERIFIED_AT]?.value;
+              return (
+                <>
+                  {row[column.id + column.triggerType].value ? (
+                    <span title={row[column.id + column.triggerType].value}>
+                      Perfomed at {formatDateTime(peerVerifiedAt)}, by{' '}
+                      {row[column.id + column.triggerType].value}
+                    </span>
+                  ) : (
+                    '-'
+                  )}
+                </>
+              );
+            }
+
+            if (column.type === LogType.DATE) {
+              return formatDateTime(row[column.id + column.triggerType].value);
+            } else if (
+              column.type === LogType.FILE &&
+              row[column.id + column.triggerType]?.medias?.length
+            ) {
+              return (
+                <div className="file-links">
+                  {row[column.id + column.triggerType].medias.map((media: any) => (
+                    <a target="_blank" title={media.name} href={media.link}>
+                      {media.name}
+                    </a>
+                  ))}
+                </div>
+              );
+            }
+            return (
+              <span title={row[column.id + column.triggerType].value}>
+                {row[column.id + column.triggerType].value}
+              </span>
+            );
+          }
+          return '-';
+        },
+      };
+      acc.columns.push(_column);
+      return acc;
+    },
+    { columns: [] },
+  );
+
+  return result;
+};
 
 const Logs: FC<TabContentProps> = ({ values }) => {
   const { checklistId: id } = values;
@@ -80,64 +219,7 @@ const Logs: FC<TabContentProps> = ({ values }) => {
 
   useEffect(() => {
     if (data?.jobLogColumns?.length) {
-      const result = data.jobLogColumns.reduce<{
-        columns: DataTableColumn[];
-      }>(
-        (acc, column) => {
-          const _id = column.id + column.triggerType;
-          const _column = {
-            id: _id,
-            label: column.displayName,
-            minWidth: `${
-              (column.displayName.length > 30
-                ? column.displayName.length / 3
-                : column.displayName.length + 10) + 5
-            }ch`,
-            format: (row: any) => {
-              if (row[column.id + column.triggerType]) {
-                if (column.triggerType === 'JOB_ID') {
-                  return (
-                    <span
-                      title={row[column.id + column.triggerType].value}
-                      className="primary"
-                      onClick={() => {
-                        navigate(`/jobs/${row[column.id + column.triggerType].jobId}`);
-                      }}
-                    >
-                      {row[column.id + column.triggerType].value}
-                    </span>
-                  );
-                }
-                if (column.type === LogType.DATE) {
-                  return formatDateTime(row[column.id + column.triggerType].value);
-                } else if (
-                  column.type === LogType.FILE &&
-                  row[column.id + column.triggerType]?.medias?.length
-                ) {
-                  return (
-                    <div className="file-links">
-                      {row[column.id + column.triggerType].medias.map((media: any) => (
-                        <a target="_blank" title={media.name} href={media.link}>
-                          {media.name}
-                        </a>
-                      ))}
-                    </div>
-                  );
-                }
-                return (
-                  <span title={row[column.id + column.triggerType].value}>
-                    {row[column.id + column.triggerType].value}
-                  </span>
-                );
-              }
-              return '-';
-            },
-          };
-          acc.columns.push(_column);
-          return acc;
-        },
-        { columns: [] },
-      );
+      const result = getFormattedJobLogs(data.jobLogColumns);
 
       setState((prev) => ({
         ...prev,
@@ -152,25 +234,6 @@ const Logs: FC<TabContentProps> = ({ values }) => {
     }
   }, [list]);
 
-  const logsParser = (log: any, jobId: string) => {
-    switch (log.triggerType) {
-      case 'RESOURCE_PARAMETER':
-        const selectedChoices = (
-          resourceParameterChoicesMap.current?.[jobId]?.[log.entityId]?.choices || []
-        ).reduce<any[]>((acc: any[], c: any) => {
-          acc.push(`${c?.objectDisplayName} (ID: ${c?.objectExternalId})`);
-          return acc;
-        }, []);
-
-        return {
-          ...log,
-          value: selectedChoices?.join(', '),
-        };
-      default:
-        return log;
-    }
-  };
-
   return (
     <JobLogsTabWrapper>
       <LoadingContainer
@@ -181,18 +244,23 @@ const Logs: FC<TabContentProps> = ({ values }) => {
               columns={columns}
               rows={list.reduce((acc, jobLog, index) => {
                 jobLog.logs.forEach((log: any) => {
-                  if (log.triggerType === 'JOB_ID') {
+                  if (log.triggerType === TriggerTypeEnum.JOB_ID) {
                     acc[index] = {
                       ...acc[index],
                       [log.entityId + log.triggerType]: logsParser(
                         { ...log, jobId: jobLog.id },
                         jobLog.id,
+                        resourceParameterChoicesMap.current,
                       ),
                     };
                   } else {
                     acc[index] = {
                       ...acc[index],
-                      [log.entityId + log.triggerType]: logsParser(log, jobLog.id),
+                      [log.entityId + log.triggerType]: logsParser(
+                        log,
+                        jobLog.id,
+                        resourceParameterChoicesMap.current,
+                      ),
                     };
                   }
                 });

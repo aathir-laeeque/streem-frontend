@@ -11,14 +11,13 @@ import {
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { DataTableColumn } from '#components/shared/DataTable';
-import { JobLogColumnType, LogType } from '#PrototypeComposer/checklist.types';
+import { JobLogColumnType, TriggerTypeEnum } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { setAuditLogFilters, setPdfColumns } from '#store/audit-log-filters/action';
 import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { filtersToQueryParams } from '#utils/filtersToQueryParams';
 import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
-import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { GetAppOutlined, Tune } from '@material-ui/icons';
 import { isEqual } from 'lodash';
@@ -30,7 +29,7 @@ import { CustomView } from '../ListView/types';
 import { fetchJobLogsExcel } from './actions';
 import FiltersDrawer from './Overlays/FiltersDrawer';
 import checkPermission from '#services/uiPermissions';
-import { navigate } from '@reach/router';
+import { logsParser, getFormattedJobLogs } from './TabContent';
 
 const JobLogsTabWrapper = styled.div`
   display: flex;
@@ -76,7 +75,7 @@ export const logsResourceChoicesMapper = (list: any[]) => {
     result[jobId] = {};
 
     jobLog.logs.forEach((log) => {
-      if (log.triggerType === 'RESOURCE' && log.resourceParameters) {
+      if (log.triggerType === TriggerTypeEnum.RESOURCE && log.resourceParameters) {
         for (const key in log.resourceParameters) {
           if (log.resourceParameters.hasOwnProperty(key)) {
             result[jobId][key] = { ...log.resourceParameters[key] };
@@ -203,83 +202,13 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
   }, [id, customViews.views?.[id]]);
 
   useEffect(() => {
-    const result = (viewDetails?.columns || []).reduce<{
-      columns: DataTableColumn[];
-    }>(
-      (acc, column) => {
-        const _id = column.id + column.triggerType;
-        const _column = {
-          id: _id,
-          label: column.displayName,
-          minWidth: `${
-            (column.displayName.length > 30
-              ? column.displayName.length / 3
-              : column.displayName.length + 10) + 5
-          }ch`,
-          format: (row: any) => {
-            if (row[column.id + column.triggerType]) {
-              if (column.triggerType === 'RESOURCE') {
-                const rowValue = row[column.id + column.triggerType];
-                const cellValue = Object.values(rowValue.resourceParameters).reduce<any[]>(
-                  (acc, p: any) => {
-                    acc.push(
-                      `${p.displayName}: ${p.choices
-                        .map((c: any) => `${c.objectDisplayName} (ID: ${c.objectExternalId})`)
-                        .join(', ')}`,
-                    );
-                    return acc;
-                  },
-                  [],
-                );
-                return cellValue.join(',');
-              }
-              if (column.triggerType === 'JOB_ID') {
-                return (
-                  <span
-                    title={row[column.id + column.triggerType].value}
-                    className="primary"
-                    onClick={() => {
-                      navigate(`/jobs/${row[column.id + column.triggerType].jobId}`);
-                    }}
-                  >
-                    {row[column.id + column.triggerType].value}
-                  </span>
-                );
-              }
-              if (column.type === LogType.DATE) {
-                return formatDateTime(row[column.id + column.triggerType].value);
-              } else if (
-                column.type === LogType.FILE &&
-                row[column.id + column.triggerType]?.medias?.length
-              ) {
-                return (
-                  <div className="file-links">
-                    {row[column.id + column.triggerType].medias.map((media: any) => (
-                      <a target="_blank" title={media.name} href={media.link}>
-                        {media.name}
-                      </a>
-                    ))}
-                  </div>
-                );
-              }
-              return (
-                <span title={row[column.id + column.triggerType].value}>
-                  {row[column.id + column.triggerType].value}
-                </span>
-              );
-            }
-            return '-';
-          },
-        };
-        acc.columns.push(_column);
-        return acc;
-      },
-      { columns: [] },
-    );
-    setState((prev) => ({
-      ...prev,
-      ...result,
-    }));
+    if (viewDetails?.columns?.length) {
+      const result = getFormattedJobLogs(viewDetails?.columns);
+      setState((prev) => ({
+        ...prev,
+        ...result,
+      }));
+    }
   }, [data?.jobLogColumns, viewDetails?.columns]);
 
   const onResetToDefault = () => {
@@ -304,32 +233,17 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
   const onChildChange = (option: any) => {
     setFilterFields((prev) => [
       ...prev,
-      { field: 'logs.triggerType', op: FilterOperators.EQ, values: ['RESOURCE_PARAMETER'] },
+      {
+        field: 'logs.triggerType',
+        op: FilterOperators.EQ,
+        values: [TriggerTypeEnum.RESOURCE_PARAMETER],
+      },
       {
         field: 'logs.identifierValue',
         op: FilterOperators.EQ,
         values: [option.id],
       },
     ]);
-  };
-
-  const logsParser = (log: any, jobId: string) => {
-    switch (log.triggerType) {
-      case 'RESOURCE_PARAMETER':
-        const selectedChoices = (
-          resourceParameterChoicesMap.current?.[jobId]?.[log.entityId]?.choices || []
-        ).reduce<any[]>((acc, c: any) => {
-          acc.push(`${c?.objectDisplayName} (ID: ${c?.objectExternalId})`);
-          return acc;
-        }, []);
-
-        return {
-          ...log,
-          value: selectedChoices?.join(', '),
-        };
-      default:
-        return log;
-    }
   };
 
   return (
@@ -427,18 +341,23 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                 columns={columns}
                 rows={list.reduce((acc, jobLog, index) => {
                   jobLog.logs.forEach((log: any) => {
-                    if (log.triggerType === 'JOB_ID') {
+                    if (log.triggerType === TriggerTypeEnum.JOB_ID) {
                       acc[index] = {
                         ...acc[index],
                         [log.entityId + log.triggerType]: logsParser(
                           { ...log, jobId: jobLog.id },
                           jobLog.id,
+                          resourceParameterChoicesMap.current,
                         ),
                       };
                     } else {
                       acc[index] = {
                         ...acc[index],
-                        [log.entityId + log.triggerType]: logsParser(log, jobLog.id),
+                        [log.entityId + log.triggerType]: logsParser(
+                          log,
+                          jobLog.id,
+                          resourceParameterChoicesMap.current,
+                        ),
                       };
                     }
                   });

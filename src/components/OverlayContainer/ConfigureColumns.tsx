@@ -1,5 +1,5 @@
 import { BaseModal, Checkbox, Button, TextInput } from '#components';
-import { JobLogColumnType, LogType } from '#PrototypeComposer/checklist.types';
+import { JobLogColumnType, LogType, TriggerTypeEnum } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER } from '#utils/constants';
 import { fetchObjectTypes } from '#views/Ontology/actions';
@@ -250,7 +250,7 @@ const ConfigureColumnsModal: FC<CommonOverlayProps<Props>> = ({
         id: ot.id,
         type: LogType.TEXT,
         displayName: ot.displayName,
-        triggerType: 'RESOURCE',
+        triggerType: TriggerTypeEnum.RESOURCE,
         orderTree: columns.length + i + 1,
       })),
     ].reduce((acc, column) => {
@@ -292,14 +292,19 @@ const ConfigureColumnsModal: FC<CommonOverlayProps<Props>> = ({
 
   const allColumns = Object.entries(allItems).reduce<Record<string, Record<string, any>>>(
     (acc, [key, c]) => {
-      if (c.triggerType !== 'RESOURCE') {
-        if (c.id === '-1') {
-          acc.commonColumns[key] = c;
+      if (
+        c.triggerType !== TriggerTypeEnum.PARAMETER_SELF_VERIFIED_AT &&
+        c.triggerType !== TriggerTypeEnum.PARAMETER_PEER_VERIFIED_AT
+      ) {
+        if (c.triggerType !== TriggerTypeEnum.RESOURCE) {
+          if (c.id === '-1') {
+            acc.commonColumns[key] = c;
+          } else {
+            acc.processColumns[key] = c;
+          }
         } else {
-          acc.processColumns[key] = c;
+          acc.resourceColumns[key] = c;
         }
-      } else {
-        acc.resourceColumns[key] = c;
       }
       return acc;
     },

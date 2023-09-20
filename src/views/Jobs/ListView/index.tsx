@@ -1,4 +1,4 @@
-import { LogType } from '#PrototypeComposer/checklist.types';
+import { LogType, TriggerTypeEnum } from '#PrototypeComposer/checklist.types';
 import { GeneralHeader } from '#components';
 import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
@@ -14,70 +14,70 @@ export const commonColumns = [
     id: '-1',
     type: LogType.DATE,
     displayName: 'Job Start',
-    triggerType: 'JOB_START_TIME',
+    triggerType: TriggerTypeEnum.JOB_START_TIME,
     orderTree: 1,
   },
   {
     id: '-1',
     type: LogType.DATE,
     displayName: 'Job Created At',
-    triggerType: 'JOB_CREATED_AT',
+    triggerType: TriggerTypeEnum.JOB_CREATED_AT,
     orderTree: 2,
   },
   {
     id: '-1',
     type: LogType.TEXT,
     displayName: 'Job Created By',
-    triggerType: 'JOB_CREATED_BY',
+    triggerType: TriggerTypeEnum.JOB_CREATED_BY,
     orderTree: 3,
   },
   {
     id: '-1',
     type: LogType.TEXT,
     displayName: 'Job Id',
-    triggerType: 'JOB_ID',
+    triggerType: TriggerTypeEnum.JOB_ID,
     orderTree: 4,
   },
   {
     id: '-1',
     type: LogType.TEXT,
     displayName: 'Job State',
-    triggerType: 'JOB_STATE',
+    triggerType: TriggerTypeEnum.JOB_STATE,
     orderTree: 5,
   },
   {
     id: '-1',
     type: LogType.TEXT,
     displayName: 'Process Id',
-    triggerType: 'CHK_ID',
+    triggerType: TriggerTypeEnum.CHK_ID,
     orderTree: 6,
   },
   {
     id: '-1',
     type: LogType.TEXT,
     displayName: 'Process Name',
-    triggerType: 'CHK_NAME',
+    triggerType: TriggerTypeEnum.CHK_NAME,
     orderTree: 7,
   },
   {
     id: '-1',
     type: LogType.TEXT,
     displayName: 'Job Started By',
-    triggerType: 'JOB_STARTED_BY',
+    triggerType: TriggerTypeEnum.JOB_STARTED_BY,
     orderTree: 8,
   },
   {
     id: '-1',
     type: LogType.DATE,
     displayName: 'Job End',
-    triggerType: 'JOB_END_TIME',
+    triggerType: TriggerTypeEnum.JOB_END_TIME,
     orderTree: 9,
   },
   {
     id: '-1',
     type: LogType.TEXT,
     displayName: 'Job Ended By',
-    triggerType: 'JOB_ENDED_BY',
+    triggerType: TriggerTypeEnum.JOB_ENDED_BY,
     orderTree: 10,
   },
 ];

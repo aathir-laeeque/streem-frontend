@@ -224,7 +224,7 @@ export type JobLogColumnType = {
   id: string;
   type: LogType;
   displayName: string;
-  triggerType: string;
+  triggerType: TriggerTypeEnum;
   orderTree: number;
 };
 
@@ -254,6 +254,29 @@ export enum LogType {
   DATE = 'DATE',
   FILE = 'FILE',
   TEXT = 'TEXT',
+}
+
+export enum TriggerTypeEnum {
+  JOB_ID = 'JOB_ID',
+  CHK_ID = 'CHK_ID',
+  CHK_NAME = 'CHK_NAME',
+  JOB_STATE = 'JOB_STATE',
+  JOB_CREATED_AT = 'JOB_CREATED_AT',
+  JOB_CREATED_BY = 'JOB_CREATED_BY',
+  JOB_MODIFIED_BY = 'JOB_MODIFIED_BY',
+  JOB_STARTED_BY = 'JOB_STARTED_BY',
+  JOB_START_TIME = 'JOB_START_TIME',
+  JOB_END_TIME = 'JOB_END_TIME',
+  JOB_ENDED_BY = 'JOB_ENDED_BY',
+  TSK_STARTED_BY = 'TSK_STARTED_BY',
+  TSK_START_TIME = 'TSK_START_TIME',
+  PARAMETER_VALUE = 'PARAMETER_VALUE',
+  RESOURCE = 'RESOURCE',
+  RESOURCE_PARAMETER = 'RESOURCE_PARAMETER',
+  PARAMETER_SELF_VERIFIED_AT = 'PARAMETER_SELF_VERIFIED_AT',
+  PARAMETER_SELF_VERIFIED_BY = 'PARAMETER_SELF_VERIFIED_BY',
+  PARAMETER_PEER_VERIFIED_AT = 'PARAMETER_PEER_VERIFIED_AT',
+  PARAMETER_PEER_VERIFIED_BY = 'PARAMETER_PEER_VERIFIED_BY',
 }
 
 export enum ParameterVerificationTypeEnum {
