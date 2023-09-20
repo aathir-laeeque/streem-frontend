@@ -104,3 +104,12 @@ export type fetchDataParams = {
   filters?: FilterField[];
   objectId?: string;
 };
+
+export enum SsoStates {
+  LOGIN = 'LOGIN',
+  RE_LOGIN = 'RE_LOGIN',
+  SIGN_OFF = 'SIGN_OFF',
+  RELEASE = 'RELEASE',
+  SELF_VERIFICATION = 'SELF_VERIFICATION',
+  PEER_VERIFICATION = 'PEER_VERIFICATION',
+}

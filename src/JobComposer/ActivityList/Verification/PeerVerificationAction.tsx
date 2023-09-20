@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { useLocation } from '@reach/router';
 import { useTypedSelector } from '#store';
 import { ssoSigningRedirect } from '#utils/request';
+import { SsoStates } from '#utils/globalTypes';
 
 type Inputs = {
   password: string;
@@ -77,7 +78,7 @@ const PeerVerificationAction: FC<{ parameterId: Parameter['id'] }> = ({ paramete
             onClick={() => {
               if (ssoIdToken) {
                 ssoSigningRedirect({
-                  state: 'PEER_VERIFICATION',
+                  state: SsoStates.PEER_VERIFICATION,
                   parameterId,
                   location: pathname,
                 });

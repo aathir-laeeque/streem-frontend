@@ -15,7 +15,7 @@ import checkPermission, { RoleIdByName } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { toggleIsDrawerOpen } from '#store/extras/action';
 import { ALL_FACILITY_ID } from '#utils/constants';
-import { Error } from '#utils/globalTypes';
+import { Error, SsoStates } from '#utils/globalTypes';
 import { archiveChecklist, unarchiveChecklist } from '#views/Checklists/ListView/actions';
 import { FormMode } from '#views/Checklists/NewPrototype/types';
 import { MenuItem } from '@material-ui/core';
@@ -436,7 +436,7 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
           ssoSigningRedirect({
             checklistId: data.id,
             location: `/checklists/${data.id}`,
-            state: 'SIGN_OFF',
+            state: SsoStates.SIGN_OFF,
           });
         } else {
           dispatch(openOverlayAction({ type: OverlayNames.PASSWORD_INPUT }));
@@ -572,7 +572,7 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
                     ssoSigningRedirect({
                       checklistId: data.id,
                       location: `/checklists/${data.id}`,
-                      state: 'RELEASE',
+                      state: SsoStates.RELEASE,
                     });
                   } else {
                     dispatch(

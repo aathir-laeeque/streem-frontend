@@ -523,12 +523,7 @@ function* signOffPrototypeSaga({ payload }: ReturnType<typeof signOffPrototype>)
         }),
       );
     } else {
-      if (validateErrors[0].code === LoginErrorCodes.INVALID_CREDENTIALS) {
-        throw 'Incorrect Password';
-      } else if (validateErrors[0].code === LoginErrorCodes.SSO_INVALID_CREDENTIALS) {
-        throw getErrorMsg(validateErrors);
-      }
-      throw 'Could Not Sign Off the Prototype';
+      throw getErrorMsg(validateErrors);
     }
   } catch (error) {
     yield* handleCatch('Prototype Composer', 'signOffPrototypeSaga', error, true);

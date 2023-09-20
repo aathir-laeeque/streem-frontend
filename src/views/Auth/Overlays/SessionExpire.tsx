@@ -13,7 +13,7 @@ import { useMsal } from '@azure/msal-react';
 import { UserType } from '#views/UserAccess/ManageUser/types';
 import { ssoLogin } from '../saga';
 import { ssoSigningRedirect } from '#utils/request';
-import { useLocation } from '@reach/router';
+import { SsoStates } from '#utils/globalTypes';
 
 // TODO Handle closing of this modal if relogin api fails for some reason.
 const Wrapper = styled.div`
@@ -101,10 +101,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
   const onSubmit = async (data: Inputs) => {
     if (profile && profile.username) {
       if (ssoIdToken) {
-        ssoSigningRedirect({ state: 'RE_LOGIN', location: window?.location?.pathname });
-        // if (selectedUseCase) {
-        //   dispatch(fetch([ComposerEntity.CHECKLIST], selectedUseCase.id));
-        // }
+        ssoSigningRedirect({ state: SsoStates.RE_LOGIN, location: window?.location?.pathname });
       } else {
         let idToken;
         if (userType === UserType.AZURE_AD) {

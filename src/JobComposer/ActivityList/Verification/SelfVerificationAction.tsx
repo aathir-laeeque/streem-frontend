@@ -8,6 +8,7 @@ import { Parameter } from '#JobComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { ssoSigningRedirect } from '#utils/request';
 import { useLocation } from '@reach/router';
+import { SsoStates } from '#utils/globalTypes';
 
 type Inputs = {
   password: string;
@@ -32,7 +33,7 @@ const SelfVerificationAction: FC<{ parameterId: Parameter['id'] }> = ({ paramete
   const onSubmit = (data: Inputs) => {
     if (ssoIdToken) {
       ssoSigningRedirect({
-        state: 'SELF_VERIFICATION',
+        state: SsoStates.SELF_VERIFICATION,
         parameterId,
         location: pathname,
       });

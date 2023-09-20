@@ -9,6 +9,7 @@ import {
   acceptPeerVerification,
   completeSelfVerification,
 } from '#JobComposer/ActivityList/actions';
+import { SsoStates } from '#utils/globalTypes';
 
 const SsoViewWrapper = styled.div`
   display: flex;
@@ -29,16 +30,16 @@ export const SsoView = () => {
   useEffect(() => {
     const userName = localStorage.getItem('username') || '';
     switch (state) {
-      case 'LOGIN':
+      case SsoStates.LOGIN:
         dispatch(login({ code: extractedTOkenCode, username: userName, state: state }));
         break;
-      case 'SIGN_OFF':
+      case SsoStates.SIGN_OFF:
         dispatch(signOffPrototype({ checklistId, code: extractedTOkenCode, state: state }));
         break;
-      case 'RELEASE':
+      case SsoStates.RELEASE:
         dispatch(releasePrototype({ checklistId, code: extractedTOkenCode, state: state }));
         break;
-      case 'SELF_VERIFICATION':
+      case SsoStates.SELF_VERIFICATION:
         dispatch(
           completeSelfVerification({
             parameterId: parsedState.parameterId,
@@ -47,7 +48,7 @@ export const SsoView = () => {
           }),
         );
         break;
-      case 'PEER_VERIFICATION':
+      case SsoStates.PEER_VERIFICATION:
         dispatch(
           acceptPeerVerification({
             parameterId: parsedState.parameterId,
@@ -56,7 +57,7 @@ export const SsoView = () => {
           }),
         );
         break;
-      case 'RE_LOGIN':
+      case SsoStates.RE_LOGIN:
         dispatch(
           reLogin({
             username: userName,
@@ -69,7 +70,7 @@ export const SsoView = () => {
       default:
         break;
     }
-    if (state !== 'RE_LOGIN') {
+    if (state !== SsoStates.RE_LOGIN) {
       navigate(location);
     }
   }, [extractedTOkenCode]);

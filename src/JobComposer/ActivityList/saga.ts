@@ -256,8 +256,6 @@ function* completeSelfVerificationSaga({ payload }: ReturnType<typeof completeSe
       } else {
         throw getErrorMsg(errors);
       }
-    } else if (validateErrors[0].code === LoginErrorCodes.SSO_INVALID_CREDENTIALS) {
-      throw getErrorMsg(validateErrors);
     } else {
       throw getErrorMsg(validateErrors);
     }
@@ -352,8 +350,6 @@ function* acceptPeerVerificationSaga({ payload }: ReturnType<typeof acceptPeerVe
       } else {
         throw getErrorMsg(errors);
       }
-    } else if (validateErrors[0].code === LoginErrorCodes.SSO_INVALID_CREDENTIALS) {
-      throw getErrorMsg(validateErrors);
     } else {
       throw getErrorMsg(validateErrors);
     }
