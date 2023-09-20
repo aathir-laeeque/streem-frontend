@@ -582,13 +582,15 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
     const collaboratorFilter = filters?.find((filter: any) => filter?.field !== 'state');
     setFilterFields((currentFields) => [
       ...currentFields.filter((field) => field?.field !== 'state'),
-      ...(stateFilter?.value
+      ...(stateFilter?.values
         ? [
             {
               id: stateFilter?.id,
               field: 'state',
-              op: stateFilter?.value === 'all' ? FilterOperators.NE : FilterOperators.EQ,
-              values: [stateFilter.value === 'all' ? 'PUBLISHED' : `${stateFilter.value}`],
+              op: stateFilter?.values?.[0] === 'all' ? FilterOperators.NE : FilterOperators.EQ,
+              values: [
+                stateFilter.values?.[0] === 'all' ? 'PUBLISHED' : `${stateFilter?.values[0]}`,
+              ],
             },
           ]
         : getBaseFilter(label).filter((field) => field?.field === 'state')),
@@ -602,7 +604,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
           field?.field !== 'not.a.collaborator',
       ),
       ...(collaboratorFilter?.id
-        ? collaboratorFilter?.value === CollaboratorType.AUTHOR
+        ? collaboratorFilter?.values?.[0] === CollaboratorType.AUTHOR
           ? [
               {
                 field: 'collaborators.user.id',
@@ -616,7 +618,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                 values: [CollaboratorType.AUTHOR, CollaboratorType.PRIMARY_AUTHOR],
               },
             ]
-          : collaboratorFilter?.value === CollaboratorType.REVIEWER
+          : collaboratorFilter?.values?.[0] === CollaboratorType.REVIEWER
           ? [
               {
                 field: 'collaborators.user.id',

@@ -48,14 +48,14 @@ const metaFiltersValues = (filterType: string) => {
 };
 
 const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
-  const { setValue, register, watch } = form;
+  const { setValue, watch, setError, clearErrors } = form;
   const formValues = watch('filters', []);
   const [state, setState] = useState<{
-    selectedFilter?: any;
+    selectedFilter?: string;
     showStateFilter: boolean;
     showCollaboratorFilter: boolean;
   }>({
-    selectedFilter: {},
+    selectedFilter: '',
     showStateFilter: !formValues?.some((item: any) => item?.field === 'state'),
     showCollaboratorFilter: !formValues?.some((item: any) =>
       ['collaborator', 'collaborators.type', 'not.a.collaborator'].includes(item?.field),
@@ -65,37 +65,13 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
   const { selectedFilter, showStateFilter, showCollaboratorFilter } = state;
 
   useEffect(() => {
-    register(`filters.${index}.value`, {
-      required: true,
-    });
-    register(`filters.${index}.field`, {
-      required: true,
-    });
-    register(`filters.${index}.id`, {
-      required: true,
-    });
-    register(`filters.${index}.op`, {
-      required: true,
-    });
-
-    setValue(`filters.${index}.id`, item.id, {
-      shouldValidate: true,
-    });
-    setValue(`filters.${index}.op`, item?.op, {
-      shouldValidate: true,
-    });
-    setValue(`filters.${index}.field`, item?.field, {
-      shouldValidate: true,
-    });
-    setValue(`filters.${index}.value`, item?.values?.[0], {
-      shouldValidate: true,
-    });
-
     if (item) {
       const _selectedFilter = metaFilters.find((currFilter) => {
         if (item.field === 'state') {
           return currFilter.value === item.field;
-        } else {
+        } else if (
+          ['collaborator', 'collaborators.type', 'not.a.collaborator'].includes(item?.field)
+        ) {
           return currFilter.value === 'collaborator';
         }
       });
@@ -106,6 +82,33 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
       }));
     }
   }, [shouldRegister]);
+
+  const updateFilters = (updatedFilters: any) => {
+    let isValid = true;
+    if (updatedFilters?.length) {
+      let keysToValidate = ['field', 'op', 'values'];
+      keysToValidate.forEach((key) => {
+        updatedFilters?.every((filter: any) => {
+          if (!filter) return true;
+          const checkSingleProperty = filter?.[key];
+          if (!checkSingleProperty) {
+            isValid = false;
+          }
+          return isValid;
+        });
+      });
+    }
+    setValue('filters', updatedFilters, {
+      shouldDirty: true,
+    });
+    if (!isValid) {
+      setError('filters', {
+        message: 'All Filters Options Should be Filled.',
+      });
+    } else {
+      clearErrors('filters');
+    }
+  };
 
   return (
     <FilterCardWrapper>
@@ -143,15 +146,18 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
                         return currFilter.value === 'collaborator';
                       }
                     })
-                  : undefined,
+                  : null,
                 onChange: (value: any) => {
-                  setValue(`filters.${index}.field`, value.field, {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  });
+                  formValues[index] = {
+                    id: item.id,
+                    field: value.field,
+                  };
+                  updateFilters(formValues);
                   setState((prev) => ({
                     ...prev,
                     selectedFilter: value.value,
+                    showCollaboratorFilter: false,
+                    showStateFilter: false,
                   }));
                 },
                 style: {
@@ -170,12 +176,13 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
                   { label: 'Is', value: FilterOperators.EQ },
                   // { label: 'Is Not', value: FilterOperators.NE },
                 ],
-                value: item?.op ? [{ label: 'Is', value: FilterOperators.EQ }] : undefined,
+                value: item?.op ? [{ label: 'Is', value: FilterOperators.EQ }] : null,
                 onChange: (value: any) => {
-                  setValue(`filters.${index}.op`, value.value, {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  });
+                  formValues[index] = {
+                    ...formValues[index],
+                    op: value.value,
+                  };
+                  updateFilters(formValues);
                 },
                 style: {
                   flex: 1,
@@ -190,12 +197,13 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
                 placeholder: 'Enter Value',
                 options: metaFiltersValues(selectedFilter),
                 onChange: (value: any) => {
-                  setValue(`filters.${index}.value`, value.value, {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  });
+                  formValues[index] = {
+                    ...formValues[index],
+                    values: [value.value],
+                  };
+                  updateFilters(formValues);
                 },
-                defaultValue: item?.field
+                value: item?.values
                   ? item.field === 'state'
                     ? [{ label: ChecklistStatesContent[item.values?.[0]], value: item.values?.[0] }]
                     : item.values?.[0] === CollaboratorType.AUTHOR
@@ -203,7 +211,7 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
                     : item.values?.[0] === CollaboratorType.REVIEWER
                     ? [{ label: 'As Collaborator', value: CollaboratorType.REVIEWER }]
                     : [{ label: 'Not Involved', value: 'NOT' }]
-                  : undefined,
+                  : null,
                 style: {
                   flex: 1,
                 },
@@ -250,8 +258,7 @@ const FiltersDrawer: FC<any> = ({ setState: _setState, onApplyMoreFilters, filte
   };
 
   const onSubmit = () => {
-    const data = getValues();
-    onApplyMoreFilters(data.filters);
+    onApplyMoreFilters(fields);
     handleCloseDrawer();
   };
 
