@@ -420,11 +420,13 @@ const InitiateSignOffModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, c
                 </td>
                 <td>
                   <div className="checkmark-wrapper">
-                    <Checkbox
-                      checked={u.checkedApprover}
-                      label=""
-                      onClick={() => onCheckChange(u.id, 3)}
-                    />
+                    {u.type === CollaboratorType.REVIEWER && (
+                      <Checkbox
+                        checked={u.checkedApprover}
+                        label=""
+                        onClick={() => onCheckChange(u.id, 3)}
+                      />
+                    )}
                   </div>
                 </td>
               </tr>
