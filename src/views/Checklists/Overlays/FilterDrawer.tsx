@@ -79,6 +79,10 @@ const FilterCard: FC<any> = ({ item, index, remove, form, shouldRegister }) => {
       setState((prev) => ({
         ...prev,
         selectedFilter: _selectedFilter?.field,
+        showStateFilter: !formValues?.some((item: any) => item?.field === 'state'),
+        showCollaboratorFilter: !formValues?.some((item: any) =>
+          ['collaborator', 'collaborators.type', 'not.a.collaborator'].includes(item?.field),
+        ),
       }));
     }
   }, [shouldRegister]);
@@ -267,6 +271,7 @@ const FiltersDrawer: FC<any> = ({ setState: _setState, onApplyMoreFilters, filte
     append({
       id,
     });
+    toggleShouldRegister((prev) => !prev);
   };
 
   const onRemoveFilter = (index: number) => {
