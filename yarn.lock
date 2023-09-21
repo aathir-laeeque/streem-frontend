@@ -2535,6 +2535,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.1.tgz#c6b9198178da504dfca1fd0be9b2e1002f1586f0"
   integrity sha512-ncRdc45SoYJ2H4eWU9ReDfp3vtFqDYhjOsKlFFUDEn8V1Bgr2RjYal8YT5byfadWIRluhPFU6JiDOl0H6Sl87A==
 
+"@types/offscreencanvas@^2019.6.4":
+  version "2019.7.1"
+  resolved "https://registry.yarnpkg.com/@types/offscreencanvas/-/offscreencanvas-2019.7.1.tgz#1ac01f5dfed9e093663cc25c62310714fe282016"
+  integrity sha512-+HSrJgjBW77ALieQdMJvXhRZUIRN1597L+BKvsyeiIlHHERnqjcuOLyodK3auJ3Y3zRezNKtKAhuQWYJfEgFHQ==
+
 "@types/parse-json@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
@@ -7584,6 +7589,13 @@ pure-rand@^6.0.0:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/pure-rand/-/pure-rand-6.0.2.tgz#a9c2ddcae9b68d736a8163036f088a2781c8b306"
   integrity sha512-6Yg0ekpKICSjPswYOuC5sku/TSWaRYlA0qsXqJgM/d/4pLPHPuTxK7Nbf7jFKzAeedUhR8C7K9Uv63FBsSo8xQ==
+
+qr-scanner@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/qr-scanner/-/qr-scanner-1.4.2.tgz#bc4fb88022a8c9be95c49527a1c8fb8724b47dc4"
+  integrity sha512-kV1yQUe2FENvn59tMZW6mOVfpq9mGxGf8l6+EGaXUOd4RBOLg7tRC83OrirM5AtDvZRpdjdlXURsHreAOSPOUw==
+  dependencies:
+    "@types/offscreencanvas" "^2019.6.4"
 
 qr.js@0.0.0:
   version "0.0.0"
