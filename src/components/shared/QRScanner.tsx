@@ -68,11 +68,11 @@ export const QRScanner: FC<CommonOverlayProps<Props>> = ({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const foundResult = useRef(false);
 
-  const setResult = (result: any) => {
+  const setResult = ({ data }: { data: string }) => {
     if (!foundResult.current) {
       foundResult.current = true;
       setTimeout(() => {
-        onSuccess(result);
+        onSuccess(data);
         closeOverlay();
       }, 700);
     }
