@@ -115,11 +115,11 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overvi
   const isLoggedInUserAssigned = (assignees || []).some((user) => user.id === profile?.id);
 
   if (activeStageId) {
-    const parameters = parametersOrderInTaskInStage[activeStageId]?.[task.id].map(
+    const parameters = parametersOrderInTaskInStage[activeStageId]?.[task.id]?.map(
       (parameterId) => parametersById[parameterId],
     );
 
-    const { canSkipTask, parametersHasError } = parameters.reduce(
+    const { canSkipTask, parametersHasError } = parameters?.reduce(
       ({ canSkipTask, parametersHasError }, parameter) => {
         parametersHasError ||= parameter.hasError;
 

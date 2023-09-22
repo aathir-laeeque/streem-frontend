@@ -5,12 +5,19 @@ import { ArrowDropDown, ArrowRight } from '@material-ui/icons';
 import React, { Dispatch, FC, useState } from 'react';
 import styled from 'styled-components';
 import AssigneeList from './AssigneeList';
+import { Task } from '#PrototypeComposer/Tasks/types';
+import { User } from '#services/users';
+
+export type AllowedUser = Pick<User, 'id' | 'lastName' | 'employeeId' | 'firstName'> & {
+  taskIds: string[];
+};
 
 type Props = {
   stage: Stage;
   sectionState: Record<string, [boolean, string]>;
   localDispatch: Dispatch<any>;
   isFirst: boolean;
+  trainedUsersList: AllowedUser[];
 };
 
 export const AssignmentSectionWrapper = styled.div.attrs({
@@ -144,7 +151,13 @@ export const AssignmentSectionWrapper = styled.div.attrs({
   }
 `;
 
-const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }) => {
+const Section: FC<Props> = ({
+  stage,
+  sectionState = {},
+  localDispatch,
+  isFirst,
+  trainedUsersList,
+}) => {
   const [isOpen, toggleIsOpen] = useState(isFirst);
   const {
     parameters: { hiddenIds },
@@ -160,6 +173,14 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
 
   const isAllTaskSelected = Object.values(sectionState).every((val) => val[0] === true);
   const isNoTaskSelected = Object.values(sectionState).every((val) => val[0] === false);
+
+  const trainedUsersAssignedTaskIds = trainedUsersList.reduce((acc: string[], curr) => {
+    acc = [...acc, ...curr.taskIds];
+    return acc;
+  }, []);
+  const isAllTasksAssignedToTrainedUser = stage.tasks.every((currTask: Task) => {
+    return trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === currTask.id);
+  });
 
   return (
     <AssignmentSectionWrapper>
@@ -178,6 +199,7 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
             : isNoTaskSelected
             ? { checked: false, partial: false }
             : { checked: false, partial: true })}
+          disabled={isAllTasksAssignedToTrainedUser}
           label={
             <div>
               <span style={{ fontWeight: 'bold' }}>Stage {stage.orderTree}</span> {stage.name}
@@ -189,11 +211,19 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
               payload: {
                 stageId: stage.id,
                 taskExecutionIds: stage.tasks
-                  .filter((task) => !(task.taskExecution.state in CompletedTaskStates))
+                  .filter(
+                    (task) =>
+                      !(task.taskExecution.state in CompletedTaskStates) &&
+                      !trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id),
+                  )
                   .map((task) => task.taskExecution.id),
 
                 states: stage.tasks
-                  .filter((task) => !(task.taskExecution.state in CompletedTaskStates))
+                  .filter(
+                    (task) =>
+                      !(task.taskExecution.state in CompletedTaskStates) &&
+                      !trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id),
+                  )
                   .map(() => (isAllTaskSelected ? false : isNoTaskSelected ? true : false)),
               },
             });
@@ -212,10 +242,13 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
         <div className="section-body">
           {stage.tasks.map((task) => {
             const isTaskCompleted = task.taskExecution.state in CompletedTaskStates;
+            const isTaskAssignedToTrainedUser = trainedUsersList.some((user) => {
+              return task.taskExecution.assignees?.some((assignee) => assignee.id === user.id);
+            });
             return (
               <div className="section-body-item" key={task.id}>
                 <Checkbox
-                  disabled={isTaskCompleted}
+                  disabled={isTaskCompleted || isTaskAssignedToTrainedUser}
                   checked={(sectionState[task.taskExecution.id] ?? [])[0] ?? false}
                   label={`Task ${stage.orderTree}.${task.orderTree} : ${task.name}`}
                   onClick={() => {
