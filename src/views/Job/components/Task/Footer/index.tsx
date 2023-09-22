@@ -83,6 +83,7 @@ const Footer: FC<FooterProps> = ({ task, timerState }) => {
     taskNavState: { previous, next, stopExecution },
     isInboxView,
     pendingTasks,
+    code,
   } = useTypedSelector((state) => state.job);
 
   if (!jobState) return null;
@@ -330,7 +331,8 @@ const Footer: FC<FooterProps> = ({ task, timerState }) => {
       primaryActionLabel = 'Complete Job';
       primaryActionProps = {
         onClick: () => {
-          // dispatch(completeJob({ jobId, details: { code: data!.code }, isInboxView }));
+          if (jobId && code)
+            dispatch(jobActions.completeJob({ jobId, details: { code }, isInboxView }));
         },
       };
     }
