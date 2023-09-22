@@ -19,36 +19,40 @@ type WrapperProps = Pick<Props, 'withIcon' | 'className'>;
 const Wrapper = styled.div.attrs(({ className }) => ({
   className: className ?? 'link',
 }))<WrapperProps>`
-  align-items: center;
-  cursor: pointer;
   display: flex;
-  margin: 8px 0 16px;
 
-  .icon {
-    color: #1d84ff;
-    font-size: 16px;
+  > div {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    margin: 8px 0 16px;
 
-    &.before {
-      margin-right: 8px;
+    .icon {
+      color: #1d84ff;
+      font-size: 16px;
+
+      &.before {
+        margin-right: 8px;
+      }
+
+      &.after {
+        margin-left: 8px;
+      }
+
+      ${({ withIcon }) =>
+        withIcon
+          ? css`
+              display: block;
+            `
+          : css`
+              display: none;
+            `}
     }
 
-    &.after {
-      margin-left: 8px;
+    .label {
+      color: #1d84ff;
+      font-size: 14px;
     }
-
-    ${({ withIcon }) =>
-      withIcon
-        ? css`
-            display: block;
-          `
-        : css`
-            display: none;
-          `}
-  }
-
-  .label {
-    color: #1d84ff;
-    font-size: 14px;
   }
 `;
 
@@ -59,15 +63,11 @@ export const Link = ({
   withIcon = true,
   iconPosition = 'before',
 }: Props) => (
-  <Wrapper
-    className={className}
-    onClick={() => navigate((link as string) ?? -1)}
-    withIcon={withIcon}
-  >
-    {iconPosition === 'before' ? <ArrowBack className="icon before" /> : null}
-
-    <span className="label">{label}</span>
-
-    {iconPosition === 'after' ? <ArrowForward className="icon after" /> : null}
+  <Wrapper className={className} withIcon={withIcon}>
+    <div onClick={() => navigate((link as string) ?? -1)}>
+      {iconPosition === 'before' ? <ArrowBack className="icon before" /> : null}
+      <span className="label">{label}</span>
+      {iconPosition === 'after' ? <ArrowForward className="icon after" /> : null}
+    </div>
   </Wrapper>
 );
