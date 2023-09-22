@@ -24,6 +24,7 @@ type HeaderProps = {
   timerState: { [index: string]: boolean };
   setTimerState: React.Dispatch<React.SetStateAction<{ [index: string]: boolean }>>;
   canSkipTask: boolean;
+  isTaskCompleted: boolean;
 };
 
 const Header: FC<HeaderProps> = ({
@@ -35,6 +36,7 @@ const Header: FC<HeaderProps> = ({
   timerState,
   setTimerState,
   canSkipTask,
+  isTaskCompleted,
 }) => {
   const dispatch = useDispatch();
   const { profile } = useTypedSelector((state) => state.auth);
@@ -151,15 +153,13 @@ const Header: FC<HeaderProps> = ({
           <div className="right-section" style={{ paddingRight: 16 }}>
             {isJobStarted && isUserAssignedToTask && (
               <>
-                {(jobState !== JobStateEnum.BLOCKED ||
-                  ((task.taskExecution.state === TaskExecutionState.COMPLETED ||
-                    task.taskExecution.state === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
-                    task.taskExecution.state === TaskExecutionState.SKIPPED) &&
-                    (!correctionEnabled || !correctionReason))) && (
-                  <div onClick={handleClick} className="more">
-                    <MoreVert />
-                  </div>
-                )}
+                {jobState !== JobStateEnum.BLOCKED &&
+                  isTaskStarted &&
+                  (!correctionEnabled || !correctionReason) && (
+                    <div onClick={handleClick} className="more">
+                      <MoreVert />
+                    </div>
+                  )}
 
                 <StyledMenu
                   id="task-error-correction"
@@ -170,33 +170,31 @@ const Header: FC<HeaderProps> = ({
                   onClose={handleClose}
                   style={{ marginTop: 30 }}
                 >
-                  {(task.taskExecution.state === TaskExecutionState.COMPLETED ||
-                    task.taskExecution.state === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
-                    task.taskExecution.state === TaskExecutionState.SKIPPED) &&
-                    (!correctionEnabled || !correctionReason) && (
-                      <MenuItem
-                        onClick={() => {
-                          handleClose();
-                          dispatch(
-                            openOverlayAction({
-                              type: OverlayNames.REASON_MODAL,
-                              props: {
-                                modalTitle: 'Error Correction',
-                                modalDesc: 'You need to submit a reason to proceed to make changes',
-                                onSubmitHandler: (reason: string, closeModal: () => void) => {
-                                  setLoadingState(true);
-                                  dispatch(enableErrorCorrection(task.id, reason, setLoadingState));
-                                  closeModal();
-                                },
+                  {isTaskCompleted && (
+                    <MenuItem
+                      onClick={() => {
+                        handleClose();
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.REASON_MODAL,
+                            props: {
+                              modalTitle: 'Error Correction',
+                              modalDesc: 'You need to submit a reason to proceed to make changes',
+                              onSubmitHandler: (reason: string, closeModal: () => void) => {
+                                setLoadingState(true);
+                                dispatch(enableErrorCorrection(task.id, reason, setLoadingState));
+                                closeModal();
                               },
-                            }),
-                          );
-                        }}
-                      >
-                        Error correction
-                      </MenuItem>
-                    )}
-                  {jobState !== JobStateEnum.BLOCKED && (
+                            },
+                          }),
+                        );
+                      }}
+                    >
+                      Error correction
+                    </MenuItem>
+                  )}
+
+                  {!isTaskCompleted && (
                     <MenuItem
                       onClick={() => {
                         handleClose();

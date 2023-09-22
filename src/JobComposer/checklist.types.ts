@@ -71,6 +71,7 @@ export enum StartedTaskStates {
   COMPLETED_WITH_EXCEPTION = 'COMPLETED_WITH_EXCEPTION',
   IN_PROGRESS = 'IN_PROGRESS',
   SKIPPED = 'SKIPPED',
+  PAUSED = 'PAUSED',
 }
 
 export enum CompletedTaskStates {

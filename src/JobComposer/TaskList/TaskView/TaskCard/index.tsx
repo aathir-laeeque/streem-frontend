@@ -199,6 +199,7 @@ const TaskCard: FC<TaskCardProps> = ({ task, isActive, enableStopForTask, overvi
               timerState={timerState}
               setTimerState={setTimerState}
               canSkipTask={!canSkipTask}
+              isTaskCompleted={isTaskCompleted}
             />
             <MediaCard medias={task.medias} isTaskActive={isActive} />
             <div
