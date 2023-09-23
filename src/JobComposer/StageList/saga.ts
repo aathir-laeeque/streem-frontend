@@ -3,7 +3,6 @@ import { RootState } from '#store';
 import { apiGetStageData } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { jobActions } from '#views/Job/jobStore';
-import { parseJobData, parseJobDataByStage } from '#views/Job/utils';
 import { CompletedJobStates } from '#views/Jobs/ListView/types';
 import { call, delay, put, race, select, take } from 'redux-saga/effects';
 import { startPollActiveStageData, stopPollActiveStageData } from './actions';
@@ -22,39 +21,6 @@ function* activeStagePollingSaga({ payload }: ReturnType<typeof startPollActiveS
 
       if (currentStatus in CompletedJobStates) {
         yield put(stopPollActiveStageData());
-      }
-
-      if (activeStageId) {
-        const { data, errors, timestamp } = yield call(
-          request,
-          'GET',
-          apiGetStageData(jobId, activeStageId.toString()),
-        );
-
-        if (errors) {
-          throw 'Could Not Fetch Active Stage Data';
-        }
-        const userId = (yield select(getUserId)) as string;
-
-        // const parsedStageData = parseJobDataByStage(activeStageId, data, timestamp, userId!);
-
-        const parsedJobData = parseJobData(data, userId!);
-
-        // yield put();
-        // jobActions.getJobSuccess({
-        //   data: parsedJobData,
-        // }),
-
-        // yield put(
-        //   jobActions.getStagePollingSuccess({
-        //     stageId: activeStageId,
-        //     data: parsedStageData,
-        //   }),
-        // );
-
-        if (data.jobState in CompletedJobStates) {
-          yield put(stopPollActiveStageData());
-        }
       }
 
       yield delay(JOB_STAGE_POLLING_TIMEOUT);

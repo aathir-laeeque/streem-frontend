@@ -11,20 +11,21 @@ import {
   StoreTask,
 } from '#types';
 import { Job, Verification } from '#views/Jobs/ListView/types';
-import { cloneDeep, keyBy } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { useEffect, useState } from 'react';
 import { initialState } from './jobStore';
 
 export function parseJobData(
   data: Job,
   userId: string,
+  currentState = initialState,
 ): Omit<JobStore, 'loading' | 'isInboxView' | 'assignments'> {
   const stages: JobStore['stages'] = new Map();
   const tasks: JobStore['tasks'] = new Map();
   const parameters: JobStore['parameters'] = new Map();
   const pendingTasks: JobStore['pendingTasks'] = new Set();
   const taskNavState = {
-    ...initialState.taskNavState,
+    ...currentState.taskNavState,
   };
   let showVerificationBanner = false;
   const taskIdsWithStop: string[] = [];
@@ -185,120 +186,6 @@ export function parseJobData(
     processName: data.checklist.name,
     processCode: data.checklist.code,
     id: data.id,
-  };
-}
-
-export function parseJobDataByStage(
-  stageId: string,
-  data: any,
-  timestamp: number,
-  userId: string,
-): any {
-  const tasks: JobStore['tasks'] = new Map();
-  const parameters: JobStore['parameters'] = new Map();
-  const pendingTasks: JobStore['pendingTasks'] = new Set();
-  const taskNavState = {
-    ...initialState.taskNavState,
-  };
-  let showVerificationBanner = false;
-  const taskIdsWithStop: string[] = [];
-  let taskIdsWithStopActiveIndex = -1;
-
-  const { jobId, jobState, stage, stageReports: reports } = data;
-
-  stage?.tasks?.forEach((task, taskIndex, _tasks) => {
-    const _task: StoreTask = {
-      ...task,
-      errors: [],
-      isUserAssignedToTask: false,
-      canSkipTask: true,
-      parameters: [],
-      visibleParametersCount: 0,
-      stageId: stage.id,
-      parametersErrors: new Map(),
-    };
-
-    if (
-      task.hasStop &&
-      [TaskExecutionState.NOT_STARTED, TaskExecutionState.IN_PROGRESS].includes(
-        task.taskExecution.state,
-      )
-    ) {
-      taskIdsWithStop.push(task.id);
-      if (taskIdsWithStopActiveIndex === -1) {
-        taskIdsWithStopActiveIndex = 0;
-      }
-    }
-
-    task?.parameters?.forEach((parameter) => {
-      const _parameter: StoreParameter = {
-        ...parameter,
-        isHidden: false,
-        taskId: task.id,
-        stageId: stage.id,
-      };
-      if (parameter.response?.hidden || task.hidden) {
-        _parameter.isHidden = true;
-      } else {
-        _task.visibleParametersCount++;
-
-        if (
-          !showVerificationBanner &&
-          parameter.verificationType !== ParameterVerificationTypeEnum.NONE
-        ) {
-          const dependantVerification = (parameter.response?.parameterVerifications || []).some(
-            (verification: Verification) =>
-              verification?.requestedTo?.id === userId &&
-              verification?.verificationStatus === ParameterVerificationStatus.PENDING,
-          );
-          if (dependantVerification) {
-            showVerificationBanner = true;
-          }
-        }
-
-        if (_task.canSkipTask) {
-          _task.canSkipTask = !parameter.mandatory;
-        }
-      }
-
-      _task.parameters.push(parameter.id);
-      parameters.set(parameter.id, _parameter);
-    });
-
-    // SET TASK NAV STATE & TASK VISIBILITY
-
-    if (task.hidden || !_task.visibleParametersCount) {
-      // hiddenTasksLength++;
-    } else {
-      if (!(task.taskExecution.state in COMPLETED_TASK_STATES)) {
-        pendingTasks.add(task.id);
-      }
-
-      if (!taskNavState.current) {
-        taskNavState.current = _task.id;
-        taskNavState.previous = _task.previous;
-        taskNavState.next = _task.next;
-      }
-
-      // SET USER ASSIGNED TO TASK
-      _task.isUserAssignedToTask = task.taskExecution.assignees.some((user) => user.id === userId);
-    }
-
-    stage.tasks.push(_task.id);
-    tasks.set(_task.id, _task);
-  });
-
-  const stageReports = keyBy(reports, 'stageId');
-
-  return {
-    tasks,
-    stageReports,
-    parameters,
-    state: jobState,
-    pendingTasks,
-    showVerificationBanner,
-    taskIdsWithStop,
-    taskIdsWithStopActiveIndex,
   };
 }
 

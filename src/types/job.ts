@@ -104,6 +104,7 @@ export interface JobStore {
   expectedStartDate?: number;
   completedTasks?: number;
   code?: string;
+  jobFromBE?: Job;
   processId?: string;
   processName?: string;
   processCode?: string;

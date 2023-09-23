@@ -6,7 +6,10 @@ import {
   AutomationActionActionType,
   MandatoryParameter,
 } from '#JobComposer/checklist.types';
-import { JobWithExceptionInCompleteTaskErrors } from '#JobComposer/composer.types';
+import {
+  JOB_STAGE_POLLING_TIMEOUT,
+  JobWithExceptionInCompleteTaskErrors,
+} from '#JobComposer/composer.types';
 import { RefetchJobErrorType } from '#JobComposer/modals/RefetchJobComposerData';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
@@ -15,7 +18,7 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
 import { setRecentServerTimestamp } from '#store/extras/action';
 import { Users } from '#store/users/types';
-import { Parameter, REFETCH_JOB_ERROR_CODES, StoreTask, TaskExecution } from '#types';
+import { JobStore, Parameter, REFETCH_JOB_ERROR_CODES, StoreTask, TaskExecution } from '#types';
 import {
   apiAcceptVerification,
   apiApproveParameter,
@@ -23,6 +26,7 @@ import {
   apiExecuteParameter,
   apiGetAllUsersAssignedToJob,
   apiGetSelectedJob,
+  apiGetStageData,
   apiInitiatePeerVerification,
   apiInitiateSelfVerification,
   apiPauseJob,
@@ -37,14 +41,14 @@ import {
 import { ResponseError, ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
-import { Job, Verification } from '#views/Jobs/ListView/types';
+import { CompletedJobStates, Job, Verification } from '#views/Jobs/ListView/types';
 import { navigate } from '@reach/router';
-import { all, call, put, select, takeLatest, takeLeading, fork } from 'redux-saga/effects';
+import { call, delay, put, race, select, take, takeLatest, takeLeading } from 'redux-saga/effects';
 import { JobActionsEnum, jobActions } from './jobStore';
 import { parseJobData } from './utils';
-import { StagePollingSaga } from './stagePollingSaga';
 
 const getUserId = (state: RootState) => state.auth.userId;
+const getJobStore = (state: RootState) => state.job;
 
 // TODO: remove this and make respective changes in the Parameters
 function getParametersDataByTaskId(task: StoreTask, parameters: RootState['job']['parameters']) {
@@ -153,6 +157,7 @@ function* getJobSaga({ payload }: ReturnType<typeof jobActions.getJob>) {
     yield put(
       jobActions.getJobSuccess({
         data: parsedJobData,
+        jobFromBE: data,
       }),
     );
   } catch (error) {
@@ -842,6 +847,58 @@ function* rejectPeerVerificationSaga({
   }
 }
 
+function* activeStagePollingSaga({
+  payload,
+}: ReturnType<typeof jobActions.startPollActiveStageData>) {
+  const { jobId, state, stageId } = payload;
+  while (true) {
+    try {
+      if (state in CompletedJobStates) {
+        yield put(jobActions.stopPollActiveStageData());
+      }
+      const { data, errors } = yield call(request, 'GET', apiGetStageData(jobId, stageId));
+
+      if (errors) {
+        throw 'Could Not Fetch Active Stage Data';
+      }
+      const userId = (yield select(getUserId)) as string;
+      const jobStore = (yield select(getJobStore)) as JobStore;
+      const { jobFromBE } = jobStore;
+      if (jobFromBE && userId) {
+        const updatedJobData = {
+          ...jobFromBE,
+          state: data.jobState,
+          checklist: {
+            ...jobFromBE.checklist,
+            stages: jobFromBE.checklist.stages.map((stage: any) => {
+              if (stage.id === data.stage.id) {
+                return data.stage;
+              }
+              return stage;
+            }),
+          },
+        };
+        const parsedJobData = parseJobData(updatedJobData, userId!, jobStore);
+        yield put(
+          jobActions.getJobSuccess({
+            data: parsedJobData,
+            jobFromBE: updatedJobData,
+          }),
+        );
+      }
+
+      if (data.jobState in CompletedJobStates) {
+        yield put(jobActions.stopPollActiveStageData());
+      }
+
+      yield delay(JOB_STAGE_POLLING_TIMEOUT);
+    } catch (err) {
+      console.error('error from startPollActiveStageData in Job Saga :: ', err);
+      yield delay(JOB_STAGE_POLLING_TIMEOUT);
+    }
+  }
+}
+
 export function* jobSaga() {
   yield takeLatest(JobActionsEnum.getJob, getJobSaga);
   yield takeLatest(JobActionsEnum.getAssignments, getAssignmentsSaga);
@@ -858,8 +915,13 @@ export function* jobSaga() {
   yield takeLeading(JobActionsEnum.recallPeerVerification, recallPeerVerificationSaga);
   yield takeLeading(JobActionsEnum.acceptPeerVerification, acceptPeerVerificationSaga);
   yield takeLeading(JobActionsEnum.rejectPeerVerification, rejectPeerVerificationSaga);
-  yield all([
-    // fork other sagas here
-    // fork(StagePollingSaga),
-  ]);
+
+  // Keep this at the very last
+  while (true) {
+    const action = yield take(JobActionsEnum.startPollActiveStageData);
+    yield race([
+      call(activeStagePollingSaga, action),
+      take(JobActionsEnum.stopPollActiveStageData),
+    ]);
+  }
 }

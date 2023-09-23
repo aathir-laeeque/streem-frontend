@@ -5,6 +5,7 @@ import { Users } from '#store/users/types';
 import {
   COMPLETED_TASK_STATES,
   ExceptionValues,
+  JobStates,
   JobStore,
   Parameter,
   StoreParameter,
@@ -17,20 +18,9 @@ import { produce } from 'immer';
 
 const actions = {
   getJob: { id: '' },
-  getJobSuccess: { data: {} as Omit<JobStore, 'loading' | 'isInboxView' | 'assignments'> },
-  getStagePollingSuccess: {
-    stageId: '',
-    data: {} as Pick<
-      JobStore,
-      | 'tasks'
-      | 'parameters'
-      | 'state'
-      | 'pendingTasks'
-      | 'showVerificationBanner'
-      | 'taskIdsWithStop'
-      | 'taskIdsWithStopActiveIndex'
-      | 'stageReports'
-    >,
+  getJobSuccess: {
+    data: {} as Omit<JobStore, 'loading' | 'isInboxView' | 'assignments'>,
+    jobFromBE: {} as any,
   },
   getAssignments: { id: '' },
   getAssignmentsSuccess: { assignees: {} as Users, userId: '' },
@@ -73,7 +63,7 @@ const actions = {
   acceptPeerVerification: {} as { parameterId: string; password: string },
   rejectPeerVerification: {} as { parameterId: string; comment: string },
   reset: undefined,
-  startPollActiveStageData: {} as { jobId: string },
+  startPollActiveStageData: {} as { jobId: string; stageId: string; state: JobStates },
   stopPollActiveStageData: undefined,
   getActiveStageDataSuccess: { data: {} as any },
 };
@@ -109,9 +99,10 @@ export type JobActionsType = ReturnType<typeof jobActions[keyof typeof jobAction
 // REDUCER FUNCTIONS
 
 function getJobSuccess(draft: JobStore, payload: typeof actions.getJobSuccess) {
-  const { data } = payload;
+  const { data, jobFromBE } = payload;
 
   draft.loading = false;
+  draft.jobFromBE = jobFromBE;
   draft.cjfValues = data.cjfValues;
   draft.stages = new Map(data.stages);
   draft.tasks = new Map(data.tasks);
@@ -132,17 +123,6 @@ function getJobSuccess(draft: JobStore, payload: typeof actions.getJobSuccess) {
   draft.processCode = data.processCode;
   draft.id = data.id;
   draft.isInboxView = location.pathname.split('/')[1] === 'inbox';
-}
-
-function getStagePollingSuccess(draft: JobStore, payload: typeof actions.getStagePollingSuccess) {
-  const { data } = payload;
-  draft.parameters = new Map(data.parameters);
-  draft.pendingTasks = new Set(data.pendingTasks);
-  draft.showVerificationBanner = data.showVerificationBanner;
-  draft.taskIdsWithStop = data.taskIdsWithStop;
-  draft.taskIdsWithStopActiveIndex = data.taskIdsWithStopActiveIndex;
-  draft.state = data.state;
-  draft.tasks = new Map(data.tasks);
 }
 
 function getAssignmentsSuccess(draft: JobStore, payload: typeof actions.getAssignmentsSuccess) {
@@ -288,9 +268,6 @@ export const jobReducer = (state = initialState, action: JobActionsType) =>
         break;
       case JobActionsEnum.getJobSuccess:
         getJobSuccess(draft, action.payload);
-        break;
-      case JobActionsEnum.getStagePollingSuccess:
-        getStagePollingSuccess(draft, action.payload);
         break;
       case JobActionsEnum.getAssignmentsSuccess:
         getAssignmentsSuccess(draft, action.payload);

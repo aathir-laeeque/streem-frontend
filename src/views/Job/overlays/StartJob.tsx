@@ -70,9 +70,9 @@ const StartJobModal: FC<
   CommonOverlayProps<{
     jobId: string;
   }>
-> = ({ closeAllOverlays, closeOverlay, props: { jobId } }) => {
+> = ({ closeAllOverlays, closeOverlay, props }) => {
   const dispatch = useDispatch();
-
+  const { jobId } = props || {};
   return (
     <Wrapper>
       <BaseModal

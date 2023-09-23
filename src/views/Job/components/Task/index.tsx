@@ -2,20 +2,21 @@ import MediaCard from '#JobComposer/TaskList/TaskView/MediaCard';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
-import { TaskPauseReasons } from '#types';
+import { StoreTask, TaskPauseReasons } from '#types';
 import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
 import { useJobStateToFlags } from '#views/Job/utils';
 import { JobStateEnum } from '#views/Jobs/ListView/types';
 import { TextareaAutosize } from '@material-ui/core';
 import moment from 'moment';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import AutomationInfo from './AutomationInfo';
 import Footer from './Footer';
 import Header from './Header';
 import ParameterList from './Parameters';
+import { jobActions } from '#views/Job/jobStore';
 
 const TaskWrapper = styled.div`
   flex: 6.5;
@@ -75,25 +76,27 @@ const TaskWrapper = styled.div`
   }
 `;
 
-const Task: FC = () => {
+const Task: FC<{ task: StoreTask }> = ({ task }) => {
   const dispatch = useDispatch();
   const {
     taskNavState,
-    tasks,
     assignments: { isUserAssigned },
     state: jobState,
     isInboxView,
+    id,
+    state,
   } = useTypedSelector((state) => state.job);
 
   const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
 
   const { isTaskStarted, isTaskCompleted, isTaskPaused } = useJobStateToFlags();
 
-  if (!jobState || !taskNavState.current) return null;
-
-  const task = tasks.get(taskNavState.current);
-
-  if (!task) return null;
+  useEffect(() => {
+    dispatch(jobActions.stopPollActiveStageData());
+    dispatch(
+      jobActions.startPollActiveStageData({ jobId: id!, stageId: task.stageId!, state: state! }),
+    );
+  }, [task.stageId]);
 
   const {
     parameters: parameterIds,
@@ -201,4 +204,16 @@ const Task: FC = () => {
   );
 };
 
-export default Task;
+const TaskContainer: FC = () => {
+  const { taskNavState, tasks, state: jobState } = useTypedSelector((state) => state.job);
+
+  if (!jobState || !taskNavState.current) return null;
+
+  const task = tasks.get(taskNavState.current);
+
+  if (!task) return null;
+
+  return <Task task={task} />;
+};
+
+export default TaskContainer;
