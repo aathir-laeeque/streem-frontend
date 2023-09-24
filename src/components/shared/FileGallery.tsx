@@ -14,7 +14,6 @@ const FileGalleryWrapper = styled.div.attrs({
   className: 'file-gallery-wrapper',
 })<Pick<FileGalleryProps, 'isTaskCompleted' | 'isCorrectingError'>>`
   display: flex;
-  margin-top: 16px;
   justify-content: space-between;
   align-items: center;
   .media-list {

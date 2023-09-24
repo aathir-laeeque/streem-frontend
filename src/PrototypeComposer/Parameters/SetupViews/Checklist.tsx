@@ -94,7 +94,6 @@ function SortableItem({ item, index, remove, isReadOnly, onChangeOptionLabel }: 
         {!isReadOnly && <DragIndicator {...attributes} {...listeners} />}
         <input type="hidden" name={`data${index}.id`} defaultValue={item.id} />
         <TextInput
-          type="text"
           name={`data${index}.name`}
           defaultValue={item.name}
           disabled={isReadOnly}

@@ -4,9 +4,10 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { openLinkInNewTab } from '#utils';
+import { jobActions } from '#views/Job/jobStore';
 import { useJobStateToFlags } from '#views/Job/utils';
 import { MenuItem } from '@material-ui/core';
-import { MoreVert } from '@material-ui/icons';
+import { ChevronLeft, ChevronRight, MoreVert } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -14,14 +15,13 @@ import { useDispatch } from 'react-redux';
 const JobHeaderButtons: FC = () => {
   const dispatch = useDispatch();
   const {
-    job: {
-      processName,
-      id: jobId,
-      code,
-      isInboxView,
-      assignments: { isUserAssigned },
-    },
-  } = useTypedSelector((state) => state);
+    processName,
+    id: jobId,
+    code,
+    isInboxView,
+    assignments: { isUserAssigned },
+    taskNavState: { isMobileDrawerOpen },
+  } = useTypedSelector((state) => state.job);
   const { isCompletedWithException, isCompleted, isInProgress } = useJobStateToFlags();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -66,9 +66,14 @@ const JobHeaderButtons: FC = () => {
         </Button>
       )}
 
-      {/* <div className="more open-overview" onClick={() => setOverviewOpen((prev) => !prev)}>
-        {isOverviewOpen ? <ChevronRight /> : <ChevronLeft />}
-      </div> */}
+      <div
+        className="more open-overview"
+        onClick={() => {
+          dispatch(jobActions.toggleMobileDrawer());
+        }}
+      >
+        {isMobileDrawerOpen ? <ChevronRight /> : <ChevronLeft />}
+      </div>
 
       <div className="more" onClick={handleClick}>
         <MoreVert />

@@ -15,11 +15,11 @@ import {
   resolve,
   VariableLookup,
 } from 'equation-resolver';
+import { debounce } from 'lodash';
 import React, { FC, useEffect } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import Select from 'react-select';
 import { CommonWrapper } from './styles';
-import { debounce } from 'lodash';
 
 const comparisons = [
   'equals',
@@ -152,7 +152,6 @@ const MapVariable: FC<{
     <li className="list-item" key={variableName}>
       <TextInput
         placeholder="X"
-        type="text"
         label="Parameter Name"
         defaultValue={variableName === 'undefined' ? undefined : variableName}
         disabled={isReadOnly}
@@ -315,7 +314,6 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
   return (
     <CommonWrapper>
       <TextInput
-        type="text"
         name={`data.uom`}
         label="Unit of Measurement"
         disabled={isReadOnly}

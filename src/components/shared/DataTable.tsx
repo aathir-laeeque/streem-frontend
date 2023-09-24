@@ -170,7 +170,7 @@ export default function DataTable({
                     <TableRow key={row.id}>
                       {columns.map((column) => {
                         return (
-                          <TableCell key={column.id} align={column.align}>
+                          <TableCell key={row.id + column.id} align={column.align}>
                             {column.format ? (
                               column.format(row)
                             ) : (

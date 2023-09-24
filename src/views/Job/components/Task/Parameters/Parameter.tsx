@@ -14,17 +14,15 @@ import { capitalize, keyBy } from 'lodash';
 import React, { FC } from 'react';
 import CalculationParameter from './Calculation';
 import ChecklistParameter from './Checklist';
-import DateParameter from './Date';
 import FileUploadParameter from './FileUpload';
+import InputParameter from './Input';
 import InstructionParameter from './Instruction';
 import MaterialParameter from './Material';
-import MediaParameter from './Media';
+import ImageCaptureParameter from './ImageCapture';
 import MultiSelectParameter from './MultiSelect';
-import NumberParameter from './Number';
 import ResourceParameter from './Resource';
 import ShouldBeParameter from './ShouldBe';
 import SignatureParameter from './Signature';
-import TextboxParameter from './Textbox';
 import ParameterVerificationView from './Verification/ParameterVerificationView';
 import YesNoParameter from './YesNo';
 
@@ -142,7 +140,7 @@ const Parameter: FC<ParameterProps> = ({
 
                 case MandatoryParameter.MEDIA:
                   return (
-                    <MediaParameter
+                    <ImageCaptureParameter
                       parameter={parameter}
                       isCorrectingError={isCorrectingError}
                       isTaskCompleted={isTaskCompleted}
@@ -177,17 +175,6 @@ const Parameter: FC<ParameterProps> = ({
                     />
                   );
 
-                case MandatoryParameter.SINGLE_LINE:
-                case MandatoryParameter.MULTI_LINE:
-                  return (
-                    <TextboxParameter parameter={parameter} isCorrectingError={isCorrectingError} />
-                  );
-
-                case MandatoryParameter.NUMBER:
-                  return (
-                    <NumberParameter parameter={parameter} isCorrectingError={isCorrectingError} />
-                  );
-
                 case MandatoryParameter.CALCULATION:
                   return (
                     <CalculationParameter
@@ -206,10 +193,13 @@ const Parameter: FC<ParameterProps> = ({
                     />
                   );
 
+                case MandatoryParameter.SINGLE_LINE:
+                case MandatoryParameter.MULTI_LINE:
+                case MandatoryParameter.NUMBER:
                 case MandatoryParameter.DATE_TIME:
                 case MandatoryParameter.DATE:
                   return (
-                    <DateParameter parameter={parameter} isCorrectingError={isCorrectingError} />
+                    <InputParameter parameter={parameter} isCorrectingError={isCorrectingError} />
                   );
 
                 default:

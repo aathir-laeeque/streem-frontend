@@ -1,4 +1,4 @@
-import { Button, NumberInput, Textarea } from '#components';
+import { Button, TextInput, Textarea } from '#components';
 import { useTypedSelector } from '#store';
 import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
@@ -17,6 +17,7 @@ import { Wrapper } from './styles';
 import { ParameterExecutionState } from '#JobComposer/checklist.types';
 import ParameterVerificationView from '../Verification/ParameterVerificationView';
 import { roles } from '#services/uiPermissions';
+import { InputTypes } from '#utils/globalTypes';
 
 const generateText = (label: string | undefined, data: any) => {
   if (data.operator === 'BETWEEN') {
@@ -351,7 +352,8 @@ const ShouldBeParameter: FC<
           {generateText(parameter?.label, parameter?.data)}
         </span>
 
-        <NumberInput
+        <TextInput
+          type={InputTypes.NUMBER}
           defaultValue={state.value}
           onChange={debounce(({ value }) => {
             setState((prevState) => ({

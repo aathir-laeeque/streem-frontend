@@ -5,6 +5,7 @@ import {
   AutomationAction,
   AutomationActionActionType,
   MandatoryParameter,
+  TimerOperator,
 } from '#JobComposer/checklist.types';
 import {
   JOB_STAGE_POLLING_TIMEOUT,
@@ -43,8 +44,19 @@ import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import { CompletedJobStates, Job, Verification } from '#views/Jobs/ListView/types';
 import { navigate } from '@reach/router';
-import { call, delay, put, race, select, take, takeLatest, takeLeading } from 'redux-saga/effects';
-import { JobActionsEnum, jobActions } from './jobStore';
+import {
+  all,
+  call,
+  delay,
+  fork,
+  put,
+  race,
+  select,
+  take,
+  takeLatest,
+  takeLeading,
+} from 'redux-saga/effects';
+import { JobActionsEnum, initialState, jobActions } from './jobStore';
 import { parseJobData } from './utils';
 
 const getUserId = (state: RootState) => state.auth.userId;
@@ -847,9 +859,9 @@ function* rejectPeerVerificationSaga({
   }
 }
 
-function* activeStagePollingSaga({
-  payload,
-}: ReturnType<typeof jobActions.startPollActiveStageData>) {
+function* activeStagePollingSaga(
+  payload: ReturnType<typeof jobActions.startPollActiveStageData>['payload'],
+) {
   const { jobId, state, stageId } = payload;
   while (true) {
     try {
@@ -899,6 +911,81 @@ function* activeStagePollingSaga({
   }
 }
 
+/**
+ * Saga to update the timer state of the task
+ * This saga keeps track of task's duration provided by the BE & keeps incrementing by 1/sec till its changed.
+ */
+function* taskTimerSaga(payload: ReturnType<typeof jobActions.startTaskTimer>['payload']) {
+  const { id } = payload;
+  // default time elapsed value
+  let previousTaskDuration: number = 0;
+  // reset the timer state on task change
+  yield put(jobActions.setTimerState(initialState.timerState));
+  while (true) {
+    try {
+      // get the current task and timer state
+      const { tasks, timerState } = (yield select(getJobStore)) as JobStore;
+      const _timerState = { ...timerState };
+      const task = tasks.get(id);
+      if (task) {
+        const { state, duration } = task.taskExecution;
+        // duration is updated only through stage polling ie (BE is the source of truth)
+        // it could be null if the task is not started, so only update the time elapsed if the duration is not null or 0
+        // BUG: duration is not updated in the taskExecution object when the task is completed [BE bug]
+        if (duration && previousTaskDuration !== duration) {
+          previousTaskDuration = duration;
+          _timerState.timeElapsed = duration;
+        } else {
+          _timerState.timeElapsed++;
+        }
+
+        // task.timerOperator is null for tasks that are not time bound
+        if (task.timerOperator === TimerOperator.NOT_LESS_THAN) {
+          if (task.minPeriod && _timerState.timeElapsed < task.minPeriod) {
+            _timerState.earlyCompletion = true;
+          } else {
+            _timerState.earlyCompletion = false;
+          }
+        }
+
+        if (task.maxPeriod && _timerState.timeElapsed > task.maxPeriod) {
+          _timerState.limitCrossed = true;
+        }
+
+        yield put(jobActions.setTimerState(_timerState));
+
+        // if task is not in progress, stop the timer
+        if (state !== 'IN_PROGRESS') {
+          yield put(jobActions.stopTaskTimer());
+        }
+      }
+
+      // wait for 1 second before updating the timer
+      yield delay(1000);
+    } catch (err) {
+      console.error('error from taskTimerSaga in Job Saga :: ', err);
+      yield put(jobActions.stopTaskTimer());
+    }
+  }
+}
+
+function* StagePollSaga() {
+  while (true) {
+    const { payload } = yield take(JobActionsEnum.startPollActiveStageData);
+    yield race([
+      call(activeStagePollingSaga, payload),
+      take(JobActionsEnum.stopPollActiveStageData),
+    ]);
+  }
+}
+
+function* TaskTimerSaga() {
+  while (true) {
+    const { payload } = yield take(JobActionsEnum.startTaskTimer);
+    yield race([call(taskTimerSaga, payload), take(JobActionsEnum.stopTaskTimer)]);
+  }
+}
+
 export function* jobSaga() {
   yield takeLatest(JobActionsEnum.getJob, getJobSaga);
   yield takeLatest(JobActionsEnum.getAssignments, getAssignmentsSaga);
@@ -917,11 +1004,5 @@ export function* jobSaga() {
   yield takeLeading(JobActionsEnum.rejectPeerVerification, rejectPeerVerificationSaga);
 
   // Keep this at the very last
-  while (true) {
-    const action = yield take(JobActionsEnum.startPollActiveStageData);
-    yield race([
-      call(activeStagePollingSaga, action),
-      take(JobActionsEnum.stopPollActiveStageData),
-    ]);
-  }
+  yield all([fork(StagePollSaga), fork(TaskTimerSaga)]);
 }

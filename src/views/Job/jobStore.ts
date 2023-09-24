@@ -66,6 +66,10 @@ const actions = {
   startPollActiveStageData: {} as { jobId: string; stageId: string; state: JobStates },
   stopPollActiveStageData: undefined,
   getActiveStageDataSuccess: { data: {} as any },
+  setTimerState: {} as JobStore['timerState'],
+  startTaskTimer: {} as { id: string },
+  stopTaskTimer: undefined,
+  toggleMobileDrawer: undefined,
 };
 
 export const initialState: JobStore = {
@@ -78,6 +82,7 @@ export const initialState: JobStore = {
   isInboxView: false,
   taskNavState: {
     stopExecution: false,
+    isMobileDrawerOpen: false,
   },
   showVerificationBanner: false,
   taskIdsWithStop: [],
@@ -86,6 +91,11 @@ export const initialState: JobStore = {
     loading: true,
     isUserAssigned: false,
     assignees: [],
+  },
+  timerState: {
+    earlyCompletion: false,
+    limitCrossed: false,
+    timeElapsed: -1,
   },
 };
 
@@ -163,6 +173,7 @@ function navigateByTaskId(draft: JobStore, payload: typeof actions.navigateByTas
       current: task.id,
       previous: task.previous,
       next: task.next,
+      isMobileDrawerOpen: false,
       stopExecution:
         draft.taskIdsWithStopActiveIndex !== -1
           ? taskIds.indexOf(task.id) >
@@ -289,6 +300,13 @@ export const jobReducer = (state = initialState, action: JobActionsType) =>
         break;
       case JobActionsEnum.updateParameterVerifications:
         updateParameterVerifications(draft, action.payload);
+        break;
+      case JobActionsEnum.setTimerState:
+        draft.timerState = action.payload;
+        break;
+      case JobActionsEnum.toggleMobileDrawer:
+        draft.taskNavState.isMobileDrawerOpen = !draft.taskNavState.isMobileDrawerOpen;
+        break;
       case JobActionsEnum.reset:
         draft = initialState;
         break;

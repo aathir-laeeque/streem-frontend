@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { useMsal } from '@azure/msal-react';
 import { UserType } from '#views/UserAccess/ManageUser/types';
+import { InputTypes } from '#utils/globalTypes';
 
 const Wrapper = styled.div`
   .modal {
@@ -145,7 +146,7 @@ const PasswordInputModal: FC<
               label="Password"
               placeholder="Password"
               error={true}
-              type={passwordInputType ? 'password' : 'text'}
+              type={passwordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE}
             />
           )}
           <Button

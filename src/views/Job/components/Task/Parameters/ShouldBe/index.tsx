@@ -1,4 +1,4 @@
-import { Button, NumberInput, Textarea } from '#components';
+import { Button, TextInput, Textarea } from '#components';
 import { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { ParameterExecutionState, ParameterState, SupervisorResponse } from '#types';
@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import { ParameterProps } from '../Parameter';
 import ParameterVerificationView from '../Verification/ParameterVerificationView';
 import { Wrapper } from './styles';
+import { InputTypes } from '#utils/globalTypes';
 
 const generateText = (label: string | undefined, data: any) => {
   if (data.operator === 'BETWEEN') {
@@ -343,8 +344,9 @@ const ShouldBeParameter: FC<
           {generateText(parameter?.label, parameter?.data)}
         </span>
 
-        <NumberInput
-          defaultValue={state.value}
+        <TextInput
+          type={InputTypes.NUMBER}
+          defaultValue={state.value!}
           onChange={debounce(({ value }) => {
             setState((prevState) => ({
               ...prevState,

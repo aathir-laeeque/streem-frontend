@@ -92,7 +92,6 @@ function SortableItem({ item, index, remove, register, isReadOnly }: any) {
           defaultValue={item.id}
         />
         <TextInput
-          type="text"
           name={`data.${index}.displayName`}
           ref={register({
             required: true,

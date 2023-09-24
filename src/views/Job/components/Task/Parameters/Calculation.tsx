@@ -14,7 +14,7 @@ const CalculationParameter: FC<ParameterProps> = ({ parameter }) => {
       <span className="head">Input(s)</span>
       {Object.entries(parameter.data.variables).map(([key, value]: any) => {
         return (
-          <span className="variable">
+          <span className="variable" key={key}>
             <span className="name">{key}:</span>
             <span className="value">
               {value.label} ={parameters.get(value.parameterId)?.response?.value || ' -'}

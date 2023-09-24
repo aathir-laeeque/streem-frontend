@@ -37,8 +37,6 @@ const InstructionParameter: FC<ParameterProps> = ({ parameter }) => {
 
   return (
     <Wrapper>
-      <div className="parameter-header">Write your instruction/notes</div>
-
       <Editor
         editorState={editorState}
         wrapperClassName="wrapper-class"

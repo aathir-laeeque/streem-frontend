@@ -46,7 +46,6 @@ const YesNoParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = (
               defaultValue={item.type}
             />
             <TextInput
-              type="text"
               name={`data.${index}.name`}
               label={`Label for ${capitalize(item.type)}`}
               ref={register({

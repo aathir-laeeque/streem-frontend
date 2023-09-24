@@ -5,10 +5,10 @@ import { useTypedSelector } from '#store';
 import { StoreTask, TaskPauseReasons } from '#types';
 import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
+import { jobActions } from '#views/Job/jobStore';
 import { useJobStateToFlags } from '#views/Job/utils';
 import { JobStateEnum } from '#views/Jobs/ListView/types';
 import { TextareaAutosize } from '@material-ui/core';
-import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -16,10 +16,15 @@ import AutomationInfo from './AutomationInfo';
 import Footer from './Footer';
 import Header from './Header';
 import ParameterList from './Parameters';
-import { jobActions } from '#views/Job/jobStore';
 
-const TaskWrapper = styled.div`
-  flex: 6.5;
+const TaskWrapper = styled.div.attrs({
+  id: 'task-wrapper',
+})<{ $isMobileDrawerOpen: boolean }>`
+  width: ${({ $isMobileDrawerOpen }) => ($isMobileDrawerOpen ? '0%' : '100%')};
+  @media (min-width: 900px) {
+    width: 65%;
+  }
+  transition: all 0.3s;
   background-color: #ffffff;
   border: 1px solid #eeeeee;
   box-shadow: 0 1px 4px 0 rgba(18, 170, 179, 0.08);
@@ -42,7 +47,7 @@ const TaskWrapper = styled.div`
   .task-body {
     grid-area: task-body;
     overflow: auto;
-    background: #f4f4f4;
+    background: hsl(0, 0%, 96%);
   }
 
   .task-pause-details {
@@ -86,9 +91,7 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
     id,
     state,
   } = useTypedSelector((state) => state.job);
-
-  const { recentServerTimestamp } = useTypedSelector((state) => state.extras);
-
+  const [opacity, setOpacity] = useState(0);
   const { isTaskStarted, isTaskCompleted, isTaskPaused } = useJobStateToFlags();
 
   useEffect(() => {
@@ -96,37 +99,23 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
     dispatch(
       jobActions.startPollActiveStageData({ jobId: id!, stageId: task.stageId!, state: state! }),
     );
-  }, [task.stageId]);
+    setOpacity(1);
+    return () => {
+      dispatch(jobActions.stopPollActiveStageData());
+    };
+  }, []);
 
   const {
     parameters: parameterIds,
     isUserAssignedToTask,
     parametersErrors,
-    taskExecution: { state: taskState, startedAt, endedAt, correctionEnabled, pauseReasons, audit },
+    taskExecution: { state: taskState, correctionEnabled, pauseReasons, audit },
   } = task!;
-
-  const [timerState, setTimerState] = useState<{ [index: string]: boolean }>(() => {
-    const timeElapsed =
-      isTaskCompleted && endedAt && startedAt
-        ? moment.unix(endedAt).diff(moment.unix(startedAt), 'seconds')
-        : isTaskStarted && recentServerTimestamp && startedAt
-        ? moment.unix(recentServerTimestamp).diff(moment.unix(startedAt), 'seconds')
-        : 0;
-
-    return {
-      earlyCompletion: !!(
-        task.timed &&
-        task.minPeriod &&
-        timeElapsed &&
-        timeElapsed < task.minPeriod
-      ),
-      limitCrossed: !!(task.timed && task.maxPeriod && timeElapsed && timeElapsed > task.maxPeriod),
-    };
-  });
 
   const handleTaskBodyClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation();
-    // e.preventDefault();         // Commenting for the working of date, date-time and file upload parameters
+    // Commenting for the working of date, date-time and file upload parameters
+    // e.preventDefault();
 
     if (jobState === JobStateEnum.ASSIGNED && !isTaskCompleted && !isInboxView) {
       dispatch(
@@ -148,8 +137,13 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
   };
 
   return (
-    <TaskWrapper data-testid="task-wrapper" key={taskNavState.current}>
-      <Header task={task} timerState={timerState} setTimerState={setTimerState} />
+    <TaskWrapper
+      $isMobileDrawerOpen={taskNavState.isMobileDrawerOpen}
+      data-testid="task-wrapper"
+      key={taskNavState.current}
+      style={{ opacity }}
+    >
+      <Header task={task} />
       <MediaCard medias={task.medias} isTaskActive={true} />
       <div className="task-body" onClick={handleTaskBodyClick}>
         {isTaskPaused && (
@@ -168,10 +162,6 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
               maxRows={4}
               disabled
             />
-            {/* <div>
-                    Task Paused by {getFullName(audit.modifiedBy)}, ID:{' '}
-                    {audit.modifiedBy.employeeId} on {formatDateTime(audit.modifiedAt)}
-                  </div> */}
           </div>
         )}
         {!isTaskStarted && (
@@ -199,7 +189,7 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
         />
       </div>
       <AutomationInfo task={task} />
-      <Footer task={task} timerState={timerState} />
+      <Footer task={task} />
     </TaskWrapper>
   );
 };
@@ -209,11 +199,8 @@ const TaskContainer: FC = () => {
 
   if (!jobState || !taskNavState.current) return null;
 
-  const task = tasks.get(taskNavState.current);
-
-  if (!task) return null;
-
-  return <Task task={task} />;
+  const task = tasks.get(taskNavState.current)!;
+  return <Task task={task} key={task.id} />;
 };
 
 export default TaskContainer;

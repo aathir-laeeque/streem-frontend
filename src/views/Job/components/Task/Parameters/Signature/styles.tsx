@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export const Wrapper = styled.div.attrs({})`
   /* TODO: make styles better */
   .signature-interaction {
-    border-radius: 4px;
     padding: 16px;
     display: flex;
     flex-direction: column;

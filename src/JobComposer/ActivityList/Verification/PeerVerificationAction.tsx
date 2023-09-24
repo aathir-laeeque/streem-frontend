@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import { useLocation } from '@reach/router';
 import { useTypedSelector } from '#store';
 import { ssoSigningRedirect } from '#utils/request';
-import { SsoStates } from '#utils/globalTypes';
+import { InputTypes, SsoStates } from '#utils/globalTypes';
 
 type Inputs = {
   password: string;
@@ -58,7 +58,7 @@ const PeerVerificationAction: FC<{ parameterId: Parameter['id'] }> = ({ paramete
             ref={register({
               required: true,
             })}
-            type={passwordInputType ? 'password' : 'text'}
+            type={passwordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE}
           />
           <Button style={{ marginRight: 'unset' }} type="submit" disabled={!isValid || !isDirty}>
             Verify

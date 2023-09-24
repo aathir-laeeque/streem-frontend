@@ -1,20 +1,17 @@
-import { Role, Textarea, TextInput, Select } from '#components';
+import { Role, Select, TextInput, Textarea } from '#components';
 import { InputTypes } from '#utils/globalTypes';
-import { formatDateByInputType } from '#utils/timeUtils';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio, { RadioProps } from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import { makeStyles } from '@material-ui/core/styles';
 import CheckCircle from '@material-ui/icons/CheckCircle';
-import moment from 'moment';
 import React from 'react';
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 import { RoleProps } from './Role';
 
 type FormInput = {
   type: InputTypes;
-  props: Record<any, any>;
+  props: Record<any, any> & { id: string };
 };
 
 export type FormGroupProps = {
@@ -157,10 +154,11 @@ export const FormGroup = ({ inputs, ...rest }: FormGroupProps) => {
   return (
     <Wrapper {...rest}>
       {inputs.map(({ type, props }: FormInput) => {
+        const key = `${type}_${props.id}`;
         switch (type) {
           case InputTypes.ERROR_CONTAINER:
             return (
-              <div key={uuidv4()} className="error-container">
+              <div key={key} className="error-container">
                 {Object.keys(props?.messages).map(
                   (item): JSX.Element => (
                     <div key={`${item}`}>
@@ -182,56 +180,14 @@ export const FormGroup = ({ inputs, ...rest }: FormGroupProps) => {
           case InputTypes.DATE:
           case InputTypes.TIME:
           case InputTypes.DATE_TIME:
-            return (
-              <TextInput
-                key={props.id}
-                type={
-                  type === InputTypes.SINGLE_LINE
-                    ? 'text'
-                    : type === InputTypes.DATE_TIME
-                    ? 'datetime-local'
-                    : type.toLowerCase()
-                }
-                {...props}
-                {...([InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(type) && {
-                  max: type === InputTypes.DATE_TIME ? '2999-12-31T00:00' : '2999-12-31',
-                  onChange: (e) => {
-                    if ('value' in e && 'name' in e) {
-                      let value = moment(e.value).unix();
-                      if (type === InputTypes.TIME) {
-                        const [hour, min] = (e.value as string).split(':');
-                        value = moment()
-                          .set('hour', parseInt(hour))
-                          .set('minute', parseInt(min))
-                          .unix();
-                      }
-                      props?.onChange && props.onChange({ name, value: value.toString() });
-                    }
-                  },
-                  ...(props?.defaultValue && {
-                    defaultValue: formatDateByInputType(
-                      type,
-                      props.defaultValue,
-                      type === InputTypes.DATE
-                        ? 'YYYY-MM-DD'
-                        : type === InputTypes.TIME
-                        ? 'HH:mm'
-                        : 'YYYY-MM-DDTHH:mm',
-                    ),
-                  }),
-                })}
-                {...(type === InputTypes.NUMBER && {
-                  step: 'any',
-                })}
-              />
-            );
+            return <TextInput key={key} type={type} {...props} />;
           case InputTypes.MULTI_LINE:
-            return <Textarea key={props.id} {...props} />;
+            return <Textarea key={key} {...props} />;
           case InputTypes.SINGLE_SELECT:
           case InputTypes.MULTI_SELECT:
-            return <Select key={props.id} isMulti={type === InputTypes.MULTI_SELECT} {...props} />;
+            return <Select key={key} isMulti={type === InputTypes.MULTI_SELECT} {...props} />;
           case InputTypes.ROLE:
-            return <Role key={props.id} {...(props as RoleProps)} />;
+            return <Role key={key} {...(props as RoleProps)} />;
           case InputTypes.RADIO:
             return (
               <RadioGroup key={props.groupProps.id} {...props.groupProps}>

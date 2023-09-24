@@ -72,10 +72,9 @@ const Wrapper = styled.div.attrs({
 
 type FooterProps = {
   task: StoreTask;
-  timerState: { [index: string]: boolean };
 };
 
-const Footer: FC<FooterProps> = ({ task, timerState }) => {
+const Footer: FC<FooterProps> = ({ task }) => {
   const dispatch = useDispatch();
   const {
     id: jobId,
@@ -84,6 +83,7 @@ const Footer: FC<FooterProps> = ({ task, timerState }) => {
     isInboxView,
     pendingTasks,
     code,
+    timerState,
   } = useTypedSelector((state) => state.job);
 
   if (!jobState) return null;

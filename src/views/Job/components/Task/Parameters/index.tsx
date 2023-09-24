@@ -31,6 +31,7 @@ const Wrapper = styled.div.attrs({
 
   .parameter {
     padding: 14px 16px;
+    background-color: #fff;
 
     :last-child {
       border-bottom: none;
@@ -40,9 +41,7 @@ const Wrapper = styled.div.attrs({
     .material-parameter,
     .should-be-parameter > .parameter-content,
     .yes-no-parameter,
-    .textbox-parameter,
-    .number-parameter,
-    .date-parameter,
+    .input-parameter,
     .calculation-parameter,
     .signature-interaction,
     .parameter-file,
@@ -159,11 +158,11 @@ const ParameterList: FC<ParameterListProps> = ({
 }) => {
   const { isInboxView, parameters, stages, tasks } = useTypedSelector((state) => state.job);
 
-  useEffect(() => {
-    console.log('parameters', parameters);
-    console.log('stages', stages);
-    console.log('tasks', tasks);
-  }, [stages, parameters, tasks]);
+  // useEffect(() => {
+  //   console.log('parameters', parameters);
+  //   console.log('stages', stages);
+  //   console.log('tasks', tasks);
+  // }, [stages, parameters, tasks]);
 
   return (
     <Wrapper

@@ -15,7 +15,7 @@ export * from './shared/InfiniteListView';
 export { default as AddNewItem } from './shared/AddNew';
 export { default as ProgressBar } from './shared/Progressbar';
 export { Avatar, AvatarExtras } from './shared/Avatar';
-export { TextInput, NumberInput } from './shared/Input';
+export { TextInput } from './shared/Input';
 export { default as Textarea } from './shared/Textarea';
 export { default as ImageUploadButton } from './shared/ImageUploadButton';
 export { default as SearchFilter } from './shared/SearchFilter';

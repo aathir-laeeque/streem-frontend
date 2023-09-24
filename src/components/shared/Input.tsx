@@ -1,6 +1,9 @@
+import { InputTypes } from '#utils/globalTypes';
+import { formatDateByInputType } from '#utils/timeUtils';
 import { Error as ErrorIcon, SvgIconComponent } from '@material-ui/icons';
 import { noop } from 'lodash';
-import React, { ComponentPropsWithRef, forwardRef } from 'react';
+import moment from 'moment';
+import React, { ComponentPropsWithRef, forwardRef, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
 type OnChangeType = {
@@ -26,15 +29,14 @@ type InputProps = {
   };
   disabled?: boolean;
   description?: string;
-} & ComponentPropsWithRef<'input'>;
+  type?: InputTypes;
+} & Omit<ComponentPropsWithRef<'input'>, 'onChange' | 'type'>;
 
 type WrapperProps = {
   hasError: boolean;
 };
 
-const Wrapper = styled.div.attrs(({ className }) => ({
-  className: `input ${className ? className : ''}`,
-}))<WrapperProps>`
+const Wrapper = styled.div<WrapperProps>`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -101,6 +103,7 @@ const Wrapper = styled.div.attrs(({ className }) => ({
       flex: 1;
       outline: none;
       padding: 0;
+      line-height: 1;
 
       :disabled {
         color: hsl(0, 0%, 20%);
@@ -131,7 +134,7 @@ const Wrapper = styled.div.attrs(({ className }) => ({
   }
 `;
 
-const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+const TextInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const {
     AfterElement = ErrorIcon,
     afterElementClass = 'error',
@@ -142,12 +145,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     beforeElementClick = noop,
     error = '',
     label,
+    key,
     // NATIVE HTML INPUT PROPS
     optional = false,
     defaultValue = '',
     disabled = false,
     placeholder = 'Write here',
-    type = 'text',
+    type = InputTypes.SINGLE_LINE,
     name,
     onChange,
     className,
@@ -156,8 +160,63 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     ...rest
   } = props;
 
+  const onChangeHandler = ({ target }: any) => {
+    let { name, value } = target;
+    if (
+      [InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(
+        type as unknown as InputTypes,
+      )
+    ) {
+      value = moment(value).unix().toString();
+      if (type === InputTypes.TIME) {
+        const [hour, min] = value.split(':');
+        value = moment().set('hour', parseInt(hour)).set('minute', parseInt(min)).unix().toString();
+      }
+    }
+    if (typeof onChange === 'function') {
+      onChange({ name, value });
+    }
+  };
+
+  const propsByType = useMemo(() => {
+    const isDateOrTime = [InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(type);
+    const valueKey = rest.value ? 'value' : defaultValue ? 'defaultValue' : null;
+    return {
+      type:
+        type === InputTypes.SINGLE_LINE
+          ? 'text'
+          : type === InputTypes.DATE_TIME
+          ? 'datetime-local'
+          : type.toLowerCase(),
+      ...(isDateOrTime && {
+        max: type === InputTypes.DATE_TIME ? '2999-12-31T00:00' : '2999-12-31',
+      }),
+      ...(valueKey && {
+        [valueKey]: isDateOrTime
+          ? formatDateByInputType(
+              type,
+              (rest.value || defaultValue) as number,
+              type === InputTypes.DATE
+                ? 'YYYY-MM-DD'
+                : type === InputTypes.TIME
+                ? 'HH:mm'
+                : 'YYYY-MM-DDTHH:mm',
+            )
+          : rest.value || defaultValue,
+      }),
+      ...(type === InputTypes.NUMBER && {
+        step: 'any',
+      }),
+    };
+  }, [type, rest.value]);
+
   return (
-    <Wrapper hasError={!!error} className={className}>
+    <Wrapper
+      hasError={!!error}
+      className={`input ${className ? className : ''}`}
+      key={key}
+      onWheel={(e) => (e.target as HTMLInputElement).blur()}
+    >
       {label ? (
         <label className="input-label">
           {label}
@@ -183,17 +242,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         <input
           data-testid="input-element"
           {...rest}
-          defaultValue={defaultValue}
           name={name}
-          onChange={({ target: { name, value } }) => {
-            if (typeof onChange === 'function') {
-              onChange({ name, value });
-            }
-          }}
+          onChange={onChangeHandler}
           placeholder={placeholder}
           ref={ref}
           disabled={disabled}
-          type={type}
+          {...propsByType}
         />
 
         {afterElementWithoutError ? (
@@ -220,23 +274,4 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   );
 });
 
-Input.displayName = 'Input';
-
-const TextInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => (
-  <Input type="text" onWheel={(e) => (e.target as HTMLInputElement).blur()} ref={ref} {...props} />
-));
-
-TextInput.displayName = 'TextInput';
-
-const NumberInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => (
-  <Input
-    type="number"
-    onWheel={(e) => (e.target as HTMLInputElement).blur()}
-    ref={ref}
-    {...props}
-  />
-));
-
-NumberInput.displayName = 'NumberInput';
-
-export { Input, TextInput, NumberInput };
+export { TextInput };

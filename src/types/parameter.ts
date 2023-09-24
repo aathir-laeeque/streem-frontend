@@ -79,7 +79,7 @@ export interface Parameter {
   label: string;
   mandatory: boolean;
   orderTree: number;
-  response?: ParameterResponse;
+  response: ParameterResponse;
   description?: string;
   type: ParameterType;
   validations: any;

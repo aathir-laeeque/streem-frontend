@@ -59,7 +59,6 @@ const TaskNavCard: FC<{ task: any; taskNo: number }> = ({ task, taskNo }) => {
 
   return (
     <TaskDetailCardWrapper
-      key={task.id}
       onClick={() => {
         // dispatch(setActiveStage(stageId, true));
         // dispatch(setActiveTask(task?.id, true));

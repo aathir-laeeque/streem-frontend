@@ -29,6 +29,7 @@ export const Wrapper = styled.div.attrs({
     font-weight: 400;
     font-size: 14px;
     line-height: 12px;
+    display: inline-block;
   }
 
   .off-limit-reason {

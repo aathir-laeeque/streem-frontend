@@ -180,7 +180,6 @@ const MaterialInstruction: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }
               )}
             </div>
             <TextInput
-              type="text"
               defaultValue={item.name}
               onChange={debounce(({ value }) => updateInstructionData({ name: value }, index), 500)}
             />

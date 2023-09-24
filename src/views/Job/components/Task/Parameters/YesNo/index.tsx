@@ -40,7 +40,7 @@ const YesNoParameter: FC<
       : undefined;
   };
 
-  const { state: parameterState, audit } = parameter?.response;
+  const { state: parameterState, audit } = parameter.response;
 
   const [state, setState] = useState<YesNoParameterState>({
     reason: parameter?.response?.reason ?? '',
@@ -166,7 +166,7 @@ const YesNoParameter: FC<
           })}
       </div>
 
-      {state.shouldAskForReason ? (
+      {state.shouldAskForReason && (
         <div className="decline-reason">
           <Textarea
             allowResize={false}
@@ -179,9 +179,10 @@ const YesNoParameter: FC<
               }));
             }, 500)}
             rows={4}
+            disabled={!state.showButtons}
           />
 
-          {state.showButtons ? (
+          {state.showButtons && (
             <div className="buttons-container">
               <Button
                 variant="secondary"
@@ -210,20 +211,21 @@ const YesNoParameter: FC<
                 Cancel
               </Button>
             </div>
-          ) : null}
+          )}
         </div>
-      ) : null}
+      )}
 
-      {!state.showButtons || !state.shouldAskForReason ? (
-        <ParameterVerificationView
-          parameterState={parameterState}
-          verificationsByType={verificationsByType}
-          verificationType={verificationType}
-          isLoggedInUserAssigned={!!isLoggedInUserAssigned}
-          parameterId={parameter.id}
-          modifiedBy={audit?.modifiedBy?.id}
-        />
-      ) : null}
+      {!state.showButtons ||
+        (!state.shouldAskForReason && (
+          <ParameterVerificationView
+            parameterState={parameterState}
+            verificationsByType={verificationsByType}
+            verificationType={verificationType}
+            isLoggedInUserAssigned={!!isLoggedInUserAssigned}
+            parameterId={parameter.id}
+            modifiedBy={audit?.modifiedBy?.id}
+          />
+        ))}
     </Wrapper>
   );
 };

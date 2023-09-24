@@ -5,7 +5,6 @@ const ImageGalleryWrapper = styled.div.attrs({
   className: 'image-gallery-wrapper',
 })`
   display: flex;
-  margin-top: 16px;
   justify-content: space-between;
   align-items: center;
 
@@ -14,10 +13,11 @@ const ImageGalleryWrapper = styled.div.attrs({
     flex-wrap: nowrap;
     gap: 10px;
     overflow: auto;
-    padding: 4px 8px;
+    padding: 4px;
+
     &-item {
       border: 1px solid #eeeeee;
-      border-radius: 5px;
+      border-radius: 4px;
       box-sizing: border-box;
       cursor: pointer;
       height: 100px;

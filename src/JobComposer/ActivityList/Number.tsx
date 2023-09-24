@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { executeParameter, fixParameter } from './actions';
 import { ParameterProps } from './types';
 import { keyBy } from 'lodash';
+import { InputTypes } from '#utils/globalTypes';
 
 const NumberParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
@@ -58,7 +59,7 @@ const NumberParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) =
       <div className="new-form-field">
         <TextInput
           placeholder="Ex. 2"
-          type="number"
+          type={InputTypes.NUMBER}
           className="number-parameter-input"
           data-id={parameter.id}
           data-type={parameter.type}

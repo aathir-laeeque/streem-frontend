@@ -14,23 +14,24 @@ import { capitalize } from 'lodash';
 import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Wrapper } from './styles';
+import { useTypedSelector } from '#store';
 
 type HeaderProps = {
   task: StoreTask;
-  timerState: { [index: string]: boolean };
-  setTimerState: React.Dispatch<React.SetStateAction<{ [index: string]: boolean }>>;
 };
 
-const Header: FC<HeaderProps> = ({ task, timerState, setTimerState }) => {
+const Header: FC<HeaderProps> = ({ task }) => {
   const dispatch = useDispatch();
-  const { isJobStarted, isTaskCompleted, isBlocked } = useJobStateToFlags();
-
+  const { limitCrossed } = useTypedSelector((state) => state.job.timerState);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const { isJobStarted, isTaskCompleted, isBlocked } = useJobStateToFlags();
 
   const {
     taskExecution: { state, reason, correctionEnabled, correctionReason, assignees },
     canSkipTask,
     isUserAssignedToTask,
+    id,
   } = task;
 
   const handleClose = () => setAnchorEl(null);
@@ -54,7 +55,7 @@ const Header: FC<HeaderProps> = ({ task, timerState, setTimerState }) => {
   const reasonTitle = () => {
     switch (state) {
       case 'COMPLETED':
-        if (timerState.limitCrossed) return 'Delayed Completion';
+        if (limitCrossed) return 'Delayed Completion';
         return 'Early Completion';
       case 'SKIPPED':
         return 'Task Skipped';
@@ -80,7 +81,7 @@ const Header: FC<HeaderProps> = ({ task, timerState, setTimerState }) => {
         <div className="task-config">
           <div className="wrapper">
             <div className="task-name">{task.name}</div>
-            <Timer task={task} timerState={timerState} setTimerState={setTimerState} />
+            <Timer state={state} id={id} />
           </div>
         </div>
         <div className="task-info">

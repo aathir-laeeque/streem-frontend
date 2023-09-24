@@ -13,7 +13,7 @@ import { useMsal } from '@azure/msal-react';
 import { UserType } from '#views/UserAccess/ManageUser/types';
 import { ssoLogin } from '../saga';
 import { ssoSigningRedirect } from '#utils/request';
-import { SsoStates } from '#utils/globalTypes';
+import { InputTypes, SsoStates } from '#utils/globalTypes';
 
 // TODO Handle closing of this modal if relogin api fails for some reason.
 const Wrapper = styled.div`
@@ -169,7 +169,7 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
               label="Password"
               placeholder="Password"
               error={true}
-              type={passwordInputType ? 'password' : 'text'}
+              type={passwordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE}
             />
           )}
           <div style={{ display: 'flex' }}>

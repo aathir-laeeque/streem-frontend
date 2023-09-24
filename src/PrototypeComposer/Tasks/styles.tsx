@@ -219,9 +219,8 @@ const TaskMediasWrapper = styled.div`
   .container {
     background-color: #ffffff;
     border: solid 1px #eeeeee;
-    border-radius: 4px;
     box-shadow: 0 1px 4px 0 rgba(102, 102, 102, 0.08);
-    padding: 24px;
+    padding: 16px;
 
     @media (max-width: 1200px) {
       padding: 12px;

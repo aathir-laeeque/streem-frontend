@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { ParameterProps } from './Parameter';
 
-const MediaWrapper = styled.div.attrs({
+const ImageCaptureWrapper = styled.div.attrs({
   className: 'parameter-media',
 })`
   display: flex;
@@ -59,7 +59,7 @@ const MediaWrapper = styled.div.attrs({
   }
 `;
 
-const MediaParameter: FC<ParameterProps> = ({
+const ImageCapture: FC<ParameterProps> = ({
   parameter,
   isCorrectingError,
   isTaskCompleted,
@@ -136,7 +136,7 @@ const MediaParameter: FC<ParameterProps> = ({
   }, []);
 
   return (
-    <MediaWrapper data-id={parameter.id} data-type={parameter.type}>
+    <ImageCaptureWrapper data-id={parameter.id} data-type={parameter.type}>
       {parameter.response?.medias?.length > 0 && (
         <TaskMedias
           taskId={activeTaskId}
@@ -173,8 +173,8 @@ const MediaParameter: FC<ParameterProps> = ({
           )}
         </div>
       )}
-    </MediaWrapper>
+    </ImageCaptureWrapper>
   );
 };
 
-export default MediaParameter;
+export default ImageCapture;

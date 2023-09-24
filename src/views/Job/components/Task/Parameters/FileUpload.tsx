@@ -1,4 +1,5 @@
-import { ImageUploadButton } from '#components';
+import { TaskMediasWrapper } from '#PrototypeComposer/Tasks/styles';
+import { FileGallery, ImageUploadButton } from '#components';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
@@ -9,12 +10,21 @@ import { getErrorMsg } from '#utils/request';
 import { jobActions } from '#views/Job/jobStore';
 import { LinearProgress } from '@material-ui/core';
 import { PublishOutlined } from '@material-ui/icons';
+import { isEqual } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import FileUploadMedias from './FileUploadMedias';
 import { ParameterProps } from './Parameter';
-import { isEqual } from 'lodash';
+
+const FileUploadMedias: FC<any> = ({ medias, parameter, isCorrectingError }) => {
+  return (
+    <TaskMediasWrapper>
+      <div className="container">
+        <FileGallery medias={medias} parameter={parameter} isCorrectingError={isCorrectingError} />
+      </div>
+    </TaskMediasWrapper>
+  );
+};
 
 const FileUploadWrapper = styled.div.attrs({
   className: 'parameter-file',
@@ -24,9 +34,8 @@ const FileUploadWrapper = styled.div.attrs({
 
   .card {
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1px solid #1d84ff;
-    border-radius: 4px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -172,7 +181,7 @@ const FileUploadParameter: FC<ParameterProps> = ({
         />
       )}
       {(!isTaskCompleted || isCorrectingError) && (
-        <div style={{ display: 'flex', marginTop: '24px' }}>
+        <div style={{ display: 'flex' }}>
           {isUploading ? (
             <LinearProgress style={{ height: 8, width: '100%', color: '#1d84ff' }} />
           ) : (

@@ -7,12 +7,12 @@ import {
 import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import MemoArchive from '#assets/svg/Archive';
+import FilterIcon from '#assets/svg/FilterIcon.svg';
 import MemoStartRevision from '#assets/svg/StartRevision';
 import MemoViewInfo from '#assets/svg/ViewInfo';
 import {
   Button,
   DataTable,
-  DropdownFilter,
   ImageUploadButton,
   ListActionMenu,
   Pagination,
@@ -41,6 +41,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { addRevisionPrototype } from '../NewPrototype/actions';
 import { FormMode } from '../NewPrototype/types';
+import FiltersDrawer from '../Overlays/FilterDrawer';
 import {
   archiveChecklist,
   clearData,
@@ -49,9 +50,6 @@ import {
   unarchiveChecklist,
 } from './actions';
 import { ListViewProps } from './types';
-import permissionsIcon from '#assets/svg/permissionsIcon.svg';
-import FilterIcon from '#assets/svg/FilterIcon.svg';
-import FiltersDrawer from '../Overlays/FilterDrawer';
 
 const getBaseFilter = (label: string): FilterField[] => [
   { field: 'archived', op: FilterOperators.EQ, values: [false] },
@@ -77,10 +75,10 @@ const getBaseFilter = (label: string): FilterField[] => [
       ]),
 ];
 
-const TypeChip = styled(Chip)<{ fontColor: string; backGroundColor: string }>`
+const TypeChip = styled(Chip)<{ $fontColor: string; $backGroundColor: string }>`
   height: 24px !important;
-  background-color: ${({ backGroundColor }) => backGroundColor} !important;
-  color: ${({ fontColor }) => fontColor} !important;
+  background-color: ${({ $backGroundColor }) => $backGroundColor} !important;
+  color: ${({ $fontColor }) => $fontColor} !important;
   line-height: 1.33;
   letter-spacing: 0.32px;
   font-size: 12px !important;
@@ -273,8 +271,8 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
           <span title={tagTitle}>
             <TypeChip
               label={tagTitle}
-              backGroundColor={item?.global ? '#d0e2ff' : '#a7f0ba'}
-              fontColor={item?.global ? '#0043ce' : '#0e6027'}
+              $backGroundColor={item?.global ? '#d0e2ff' : '#a7f0ba'}
+              $fontColor={item?.global ? '#0043ce' : '#0e6027'}
             />
           </span>
         );
@@ -397,23 +395,6 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     </div>
                   </MenuItem>
                 )}
-                {/* <MenuItem
-                  onClick={() =>
-                    navigate(`/checklists/${selectedChecklist?.id}/permissions`, {
-                      state: {
-                        processFilter: {
-                          processName: selectedChecklist?.name,
-                          id: selectedChecklist?.id,
-                        },
-                      },
-                    })
-                  }
-                >
-                  <div className="list-item">
-                    <img src={permissionsIcon} alt="permission-icon" />
-                    <span>Permissions</span>
-                  </div>
-                </MenuItem> */}
                 {!item.archived && checkArchiveAndRevisionPermission('revision') && (
                   <MenuItem
                     onClick={() => {
@@ -501,43 +482,45 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
                     </div>
                   </MenuItem>
                 )}
-                {facilityId !== ALL_FACILITY_ID ? (
-                  <>
-                    <MenuItem onClick={() => navigate(`/checklists/${selectedChecklist?.id}/logs`)}>
-                      <div className="list-item">
-                        <MemoViewInfo />
-                        <span>View Job Logs</span>
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => navigate(`/checklists/${selectedChecklist?.id}/assignment`)}
-                    >
-                      <div className="list-item">
-                        <MemoViewInfo />
-                        <span>Trained Users</span>
-                      </div>
-                    </MenuItem>
-                  </>
-                ) : (
-                  !item.archived && (
-                    <MenuItem
-                      onClick={() => {
-                        handleClose();
-                        dispatch(
-                          openOverlayAction({
-                            type: OverlayNames.PROCESS_SHARING,
-                            props: { checklistId: selectedChecklist?.id },
-                          }),
-                        );
-                      }}
-                    >
-                      <div className="list-item">
-                        <MemoViewInfo />
-                        <span>Sharing with Units</span>
-                      </div>
-                    </MenuItem>
-                  )
-                )}
+                {facilityId !== ALL_FACILITY_ID
+                  ? [
+                      <MenuItem
+                        key={item.id + '-job-logs'}
+                        onClick={() => navigate(`/checklists/${selectedChecklist?.id}/logs`)}
+                      >
+                        <div className="list-item">
+                          <MemoViewInfo />
+                          <span>View Job Logs</span>
+                        </div>
+                      </MenuItem>,
+                      <MenuItem
+                        key={item.id + '-trained-users'}
+                        onClick={() => navigate(`/checklists/${selectedChecklist?.id}/assignment`)}
+                      >
+                        <div className="list-item">
+                          <MemoViewInfo />
+                          <span>Trained Users</span>
+                        </div>
+                      </MenuItem>,
+                    ]
+                  : !item.archived && (
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          dispatch(
+                            openOverlayAction({
+                              type: OverlayNames.PROCESS_SHARING,
+                              props: { checklistId: selectedChecklist?.id },
+                            }),
+                          );
+                        }}
+                      >
+                        <div className="list-item">
+                          <MemoViewInfo />
+                          <span>Sharing with Units</span>
+                        </div>
+                      </MenuItem>
+                    )}
               </ListActionMenu>
             </div>
           );

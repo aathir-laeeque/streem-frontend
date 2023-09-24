@@ -131,6 +131,7 @@ export const CountCards: FC<CountCardsType> = ({
             onClick={() => {
               onToggleSmartFilter(item);
             }}
+            key={item.label}
           >
             {activeFilterCard === item.label && (
               <img

@@ -11,6 +11,7 @@ import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
 import { resetSignOffTaskError, signOffTasks } from '../actions';
+import { InputTypes } from '#utils/globalTypes';
 
 const Wrapper = styled.div<{ isErrorPresent: boolean }>`
   .modal-body {
@@ -242,7 +243,7 @@ const SignCompletedTasksModal: FC<CommonOverlayProps<Props>> = ({
                             setPassword(value);
                           }, 500)}
                           placeholder="Password"
-                          type={showPassword ? 'text' : 'password'}
+                          type={showPassword ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE}
                         />
 
                         {signOffError ? <div className="input-error">{signOffError}</div> : null}

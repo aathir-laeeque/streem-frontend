@@ -1,4 +1,5 @@
 import { Button, TextInput } from '#components';
+import { InputTypes } from '#utils/globalTypes';
 import { jobActions } from '#views/Job/jobStore';
 import { Visibility } from '@material-ui/icons';
 import React, { FC, memo, useState } from 'react';
@@ -45,7 +46,7 @@ const SelfVerificationAction: FC<{ parameterId: string }> = ({ parameterId }) =>
         ref={register({
           required: true,
         })}
-        type={passwordInputType ? 'password' : 'text'}
+        type={passwordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE}
       />
       <Button style={{ marginRight: 'unset' }} type="submit" disabled={!isValid || !isDirty}>
         Verify

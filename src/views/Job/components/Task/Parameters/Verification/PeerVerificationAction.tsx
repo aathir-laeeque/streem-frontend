@@ -1,6 +1,7 @@
 import { Button, TextInput } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
+import { InputTypes } from '#utils/globalTypes';
 import { jobActions } from '#views/Job/jobStore';
 import { Visibility } from '@material-ui/icons';
 import React, { FC, useState } from 'react';
@@ -51,7 +52,7 @@ const PeerVerificationAction: FC<{ parameterId: string }> = ({ parameterId }) =>
             ref={register({
               required: true,
             })}
-            type={passwordInputType ? 'password' : 'text'}
+            type={passwordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE}
           />
           <Button style={{ marginRight: 'unset' }} type="submit" disabled={!isValid || !isDirty}>
             Verify

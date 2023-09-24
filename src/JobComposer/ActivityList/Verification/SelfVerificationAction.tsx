@@ -8,7 +8,7 @@ import { Parameter } from '#JobComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { ssoSigningRedirect } from '#utils/request';
 import { useLocation } from '@reach/router';
-import { SsoStates } from '#utils/globalTypes';
+import { InputTypes, SsoStates } from '#utils/globalTypes';
 
 type Inputs = {
   password: string;
@@ -63,7 +63,7 @@ const SelfVerificationAction: FC<{ parameterId: Parameter['id'] }> = ({ paramete
           ref={register({
             required: true,
           })}
-          type={passwordInputType ? 'password' : 'text'}
+          type={passwordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE}
         />
       )}
       <Button

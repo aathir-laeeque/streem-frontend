@@ -1,4 +1,5 @@
 export const fetchBaseUrl = () => {
+  return 'https://api.qa.platform.leucinetech.com/v1';
   const { hostname, protocol } = window.location;
 
   let apiUrl = '';

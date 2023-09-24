@@ -114,6 +114,7 @@ export interface JobStore {
     current?: string;
     next?: string;
     stopExecution: boolean;
+    isMobileDrawerOpen: boolean;
   };
   pendingTasks: Set<string>;
   showVerificationBanner: boolean;
@@ -132,4 +133,5 @@ export interface JobStore {
     tasksInProgress: boolean;
     totalTasks: number;
   };
+  timerState: { earlyCompletion: boolean; limitCrossed: boolean; timeElapsed: number };
 }
