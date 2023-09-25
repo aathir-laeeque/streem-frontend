@@ -23,7 +23,7 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
   const data = watch('data', {});
   const autoInitialized = watch('autoInitialized', false);
 
-  const fetchData = (params: fetchDataParams = {}) => {
+  const fetchData = (params: fetchDataParams = {}, appendData: boolean = false) => {
     const { page = DEFAULT_PAGE_NUMBER, query = '' } = params;
     dispatch(
       fetchObjectTypes(
@@ -33,14 +33,14 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
           usageStatus: 1,
           displayName: query ? query : null,
         },
-        true,
+        appendData,
       ),
     );
   };
 
   const handleMenuScrollToBottom = () => {
     if (!listLoading && !pageable.last) {
-      fetchData({ page: pageable.page + 1 });
+      fetchData({ page: pageable.page + 1 }, true);
     }
   };
 
