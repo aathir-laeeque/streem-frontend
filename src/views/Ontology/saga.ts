@@ -27,7 +27,7 @@ import { ObjectType, OntologyAction } from './types';
 function* fetchObjectTypesSaga({ payload }: ReturnType<typeof actions.fetchObjectTypes>) {
   try {
     const { params, appendData } = payload;
-    const { data, pageable }: ResponseObj<ObjectType[]> = yield call(
+    const { data, pageable, errors }: ResponseObj<ObjectType[]> = yield call(
       request,
       'GET',
       apiGetObjectTypes(),
@@ -38,6 +38,10 @@ function* fetchObjectTypesSaga({ payload }: ReturnType<typeof actions.fetchObjec
 
     if (data && pageable) {
       yield put(actions.fetchObjectTypesSuccess({ data, pageable, appendData }));
+    }
+
+    if (errors) {
+      throw getErrorMsg(errors);
     }
   } catch (error) {
     console.error('error from fetchObjectTypesSaga function in Ontology Saga :: ', error);
