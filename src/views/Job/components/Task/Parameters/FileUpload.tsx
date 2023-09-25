@@ -163,10 +163,7 @@ const FileUploadParameter: FC<ParameterProps> = ({
   }, []);
 
   useEffect(() => {
-    if (
-      parameter?.response?.medias?.length > 0 &&
-      !isEqual(parameter?.response?.medias, uploadedMedia)
-    ) {
+    if (!isEqual(parameter?.response?.medias, uploadedMedia)) {
       setUploadedMedia(parameter?.response?.medias);
     }
   }, [parameter?.response?.medias]);
