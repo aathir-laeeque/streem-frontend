@@ -66,6 +66,7 @@ export enum OverlayNames {
   VIEW_REASON = 'VIEW_REASON',
   TASK_PAUSE_REASON_MODAL = 'TASK_PAUSE_REASON_MODAL',
   ORIENTATION_MODAL = 'ORIENTATION_MODAL',
+  MULTI_TAB_MODAL = 'MULTI_TAB_MODAL',
 }
 
 export interface CommonOverlayProps<T> {

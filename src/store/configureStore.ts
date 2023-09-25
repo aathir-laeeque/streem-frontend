@@ -1,5 +1,4 @@
 import { Overlay, OverlayContainerAction } from '#components/OverlayContainer/types';
-import { authInitialState } from '#views/Auth/reducer';
 import { AuthAction } from '#views/Auth/types';
 import { AnyAction, applyMiddleware, compose, createStore, Middleware } from 'redux';
 import { createTransform, persistReducer, persistStore } from 'redux-persist';
@@ -8,14 +7,6 @@ import createSagaMiddleware from 'redux-saga';
 import { rootReducer } from './rootReducer';
 import { rootSaga } from './rootSaga';
 import { RootState } from './types';
-
-const isPageReloaded = () => {
-  if (location?.pathname.includes('/sso')) {
-    return true;
-  } else if (window.performance.getEntriesByType) {
-    return window.performance.getEntriesByType('navigation')[0].type === 'reload';
-  }
-};
 
 const sagaMiddleware = createSagaMiddleware();
 const persistConfig = {
@@ -40,11 +31,7 @@ const persistConfig = {
         }
       },
       (outboundState: RootState, key) => {
-        const pageReloaded = isPageReloaded();
-        const keepPersistedData = localStorage.getItem('keepPersistedData');
         switch (key) {
-          case 'auth':
-            return pageReloaded || keepPersistedData ? outboundState : authInitialState;
           default:
             return outboundState;
         }

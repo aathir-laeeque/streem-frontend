@@ -58,6 +58,7 @@ import ConfigureColumnsModal from './ConfigureColumns';
 import { ConfirmationModal } from './ConfirmationModal';
 import OrientationModal from './OrientationModal';
 import SimpleConfirmationModal from './SimpleConfirmationModal';
+import { MultiTabModal } from './MultiTabChecker';
 import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import { CommonOverlayProps, OverlayNames } from './types';
 
@@ -239,6 +240,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.ORIENTATION_MODAL:
       return <OrientationModal {...params} />;
+
+    case OverlayNames.MULTI_TAB_MODAL:
+      return <MultiTabModal {...params} />;
 
     default:
       return null;

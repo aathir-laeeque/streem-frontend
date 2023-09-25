@@ -22,6 +22,7 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { Font } from '@react-pdf/renderer';
 import NunitoRegular from '#assets/fonts/nunito/nunito-v14-latin-300.ttf';
 import NunitoBold from '#assets/fonts/nunito/nunito-v14-latin-700.ttf';
+import { MultiTabChecker } from '#components/OverlayContainer/MultiTabChecker';
 
 const { store, persistor } = configureStore({});
 window.store = store;
@@ -119,6 +120,7 @@ const App: FC = () => {
           <PersistGate loading={null} persistor={persistor} onBeforeLift={onBeforeLift}>
             {!isLoading && (
               <>
+                <MultiTabChecker />
                 <Router style={{ display: 'flex', flex: 1 }} basepath="/">
                   <CustomRoute isProtected={false} as={AuthView} path="auth/*" />
                   <CustomRoute isProtected={false} as={SsoView} path="sso/auth" />
