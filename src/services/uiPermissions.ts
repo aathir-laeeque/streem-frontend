@@ -97,8 +97,8 @@ const uiPermissions: Record<string, any> = {
     editAccountOwner: [roles.ACCOUNT_OWNER],
     selectedUser: {
       form: {
-        editable: [roles.ACCOUNT_OWNER, roles.SYSTEM_ADMIN, roles.GLOBAL_ADMIN],
-        nonEditable: [roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+        editable: [roles.ACCOUNT_OWNER, roles.SYSTEM_ADMIN],
+        nonEditable: [roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER, roles.GLOBAL_ADMIN],
       },
     },
     sessionActivity: [
