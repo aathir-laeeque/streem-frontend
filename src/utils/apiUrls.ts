@@ -265,8 +265,8 @@ export const apiGetAllUsersAssignedToChecklistTask = (id: string) =>
 export const apiAssignUsersForChecklist = (checklistId: string) =>
   `${baseUrl}/checklists/${checklistId}/users/assignment`;
 
-export const apiGetAllUsersAssignedToChecklist = (checklistId: string) =>
-  `${baseUrl}/checklists/${checklistId}/users/allowed`;
+export const apiGetAllTrainedUsersAssignedToChecklist = (checklistId: string) =>
+  `${baseUrl}/checklists/${checklistId}/users/trained`;
 
 export const apiBulkAssignUsers = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}/assignments`;
 

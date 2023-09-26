@@ -13,7 +13,7 @@ import { Job, CompletedJobStates } from '../ListView/types';
 import Section, { AllowedUser } from './Section';
 import { ResponseObj } from '#utils/globalTypes';
 import { User } from '#services/users';
-import { apiGetAllUsersAssignedToChecklist } from '#utils/apiUrls';
+import { apiGetAllTrainedUsersAssignedToChecklist } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { Task } from '#JobComposer/checklist.types';
 
@@ -135,7 +135,7 @@ const Assignments: FC<Props> = (props) => {
       try {
         const assignedUsersData: ResponseObj<AllowedUser[]> = await request(
           'GET',
-          apiGetAllUsersAssignedToChecklist(data.checklist.id),
+          apiGetAllTrainedUsersAssignedToChecklist(data.checklist.id),
         );
         setTrainedUsersList(assignedUsersData.data);
       } catch (error) {

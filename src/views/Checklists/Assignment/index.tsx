@@ -11,7 +11,7 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import Section from './Section';
 import { Wrapper } from '#views/Jobs/Assignment';
-import { apiGetAllUsersAssignedToChecklist } from '#utils/apiUrls';
+import { apiGetAllTrainedUsersAssignedToChecklist } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { ResponseObj } from '#utils/globalTypes';
 import { User } from '#services/users';
@@ -199,7 +199,7 @@ const Logs: FC<Props> = ({ id }) => {
         try {
           const assignedUsersData: ResponseObj<AllowedUser[]> = await request(
             'GET',
-            apiGetAllUsersAssignedToChecklist(id),
+            apiGetAllTrainedUsersAssignedToChecklist(id),
           );
           const _data = assignedUsersData.data.reduce<State>(
             (acc, user) => {
