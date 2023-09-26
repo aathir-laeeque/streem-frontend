@@ -427,8 +427,8 @@ const ShouldBeParameter: FC<
           />
 
           {(() => {
-            if (state.isUserAuthorisedForApproval) {
-              if (state.isApprovalPending) return renderApprovalButtons();
+            if (state.isUserAuthorisedForApproval && state.isApprovalPending) {
+              return renderApprovalButtons();
             } else if (state.isValueChanged) {
               return renderSubmitButtons();
             }
