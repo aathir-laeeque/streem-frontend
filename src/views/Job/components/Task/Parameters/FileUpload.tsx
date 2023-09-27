@@ -1,5 +1,5 @@
 import { TaskMediasWrapper } from '#PrototypeComposer/Tasks/styles';
-import { FileGallery, ImageUploadButton } from '#components';
+import { FileGallery, FileGalleryProps, ImageUploadButton } from '#components';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
@@ -16,11 +16,21 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { ParameterProps } from './Parameter';
 
-const FileUploadMedias: FC<any> = ({ medias, parameter, isCorrectingError }) => {
+const FileUploadMedias: FC<FileGalleryProps> = ({
+  medias,
+  parameter,
+  isCorrectingError,
+  isTaskCompleted,
+}) => {
   return (
     <TaskMediasWrapper>
       <div className="container">
-        <FileGallery medias={medias} parameter={parameter} isCorrectingError={isCorrectingError} />
+        <FileGallery
+          medias={medias}
+          parameter={parameter}
+          isCorrectingError={isCorrectingError}
+          isTaskCompleted={isTaskCompleted}
+        />
       </div>
     </TaskMediasWrapper>
   );
@@ -175,6 +185,7 @@ const FileUploadParameter: FC<ParameterProps> = ({
           medias={uploadedMedia}
           parameter={parameter}
           isCorrectingError={isCorrectingError}
+          isTaskCompleted={isTaskCompleted}
         />
       )}
       {(!isTaskCompleted || isCorrectingError) && (

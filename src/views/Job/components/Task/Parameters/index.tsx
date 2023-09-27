@@ -1,5 +1,5 @@
 import { useTypedSelector } from '#store';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
 import Parameter from './Parameter';
 
@@ -43,9 +43,7 @@ const Wrapper = styled.div.attrs({
     .yes-no-parameter,
     .input-parameter,
     .calculation-parameter,
-    .signature-interaction,
-    .parameter-file,
-    .parameter-media {
+    .signature-interaction {
       ${({ isTaskCompleted, isCorrectingError, isInboxView }) =>
         (isTaskCompleted && !isCorrectingError) || !isInboxView
           ? css`
