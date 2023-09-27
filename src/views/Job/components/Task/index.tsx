@@ -16,6 +16,7 @@ import AutomationInfo from './AutomationInfo';
 import Footer from './Footer';
 import Header from './Header';
 import ParameterList from './Parameters';
+import { useLocation } from '@reach/router';
 
 const TaskWrapper = styled.div.attrs({
   id: 'task-wrapper',
@@ -91,6 +92,8 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
     id,
     state,
   } = useTypedSelector((state) => state.job);
+  const location = useLocation();
+  const { verificationTaskId } = location.state;
   const [opacity, setOpacity] = useState(0);
   const { isTaskStarted, isTaskCompleted, isTaskPaused } = useJobStateToFlags();
 
@@ -100,6 +103,13 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
       jobActions.startPollActiveStageData({ jobId: id!, stageId: task.stageId!, state: state! }),
     );
     setOpacity(1);
+    if (verificationTaskId) {
+      dispatch(
+        jobActions.navigateByTaskId({
+          id: verificationTaskId,
+        }),
+      );
+    }
     return () => {
       dispatch(jobActions.stopPollActiveStageData());
     };

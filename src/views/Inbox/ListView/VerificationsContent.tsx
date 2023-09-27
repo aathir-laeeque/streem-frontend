@@ -6,7 +6,6 @@ import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { InputActionMeta, components } from 'react-select';
 import rightArrow from '#assets/svg/right-arrow.svg';
-import { ParameterVerificationStatus } from '#JobComposer/ActivityList/types';
 import styled from 'styled-components';
 import { defaultParams, useUsers } from '#services/users';
 import { useDispatch } from 'react-redux';
@@ -17,10 +16,10 @@ import { ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.type
 import { FiberManualRecord, Search } from '@material-ui/icons';
 import { closeOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { setActiveStage } from '#JobComposer/StageList/actions';
-import { setActiveTask } from '#JobComposer/TaskList/actions';
 import { debounce } from 'lodash';
 import { FilterOperators, fetchDataParams } from '#utils/globalTypes';
+import { jobActions } from '#views/Job/jobStore';
+import { ParameterVerificationStatus } from '#types';
 
 const options = [
   {
@@ -405,8 +404,11 @@ const VerificationsContent: FC<{
                         className="primary"
                         onClick={() => {
                           if (isJobOpen) {
-                            dispatch(setActiveStage(item?.stageId));
-                            dispatch(setActiveTask(item?.taskId));
+                            dispatch(
+                              jobActions.navigateByTaskId({
+                                id: item?.taskId,
+                              }),
+                            );
                             dispatch(closeOverlayAction(OverlayNames.JOB_VERIFICATION));
                           } else {
                             navigate(`/inbox/${item.jobId}`, {

@@ -6,8 +6,8 @@ import CompleteJobWithException from '#JobComposer/modals/CompleteJobWithExcepti
 import CompletedWithExceptionInfo from '#JobComposer/modals/CompletedWithExceptionInfo';
 import JobVerification from '#JobComposer/modals/JobVerification';
 import ParameterApprovalModal from '#JobComposer/modals/ParameterApproval';
-import PeerVerificationModal from '#JobComposer/modals/PeerVerificationModal';
-import RecallVerificationModal from '#JobComposer/modals/RecallVerificationModal';
+import PeerVerificationModal from '#views/Job/overlays/PeerVerificationModal';
+import RecallVerificationModal from '#views/Job/overlays/RecallVerificationModal';
 import RefetchJobComposerData from '#JobComposer/modals/RefetchJobComposerData';
 import SignCompletedTasksModal from '#JobComposer/modals/SignCompletedTasks';
 import Signature from '#JobComposer/modals/SignatureActivity';

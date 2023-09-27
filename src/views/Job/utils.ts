@@ -1,4 +1,3 @@
-import { ParameterVerificationStatus } from '#JobComposer/ActivityList/types';
 import { TaskExecutionState } from '#JobComposer/checklist.types';
 import { ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
@@ -6,6 +5,7 @@ import {
   COMPLETED_TASK_STATES,
   IN_PROGRESS_TASK_STATES,
   JobStore,
+  ParameterVerificationStatus,
   StoreParameter,
   StoreStage,
   StoreTask,

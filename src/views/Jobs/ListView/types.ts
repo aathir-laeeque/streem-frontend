@@ -1,4 +1,3 @@
-import { ParameterVerificationStatus } from '#JobComposer/ActivityList/types';
 import { Checklist, ParameterExecutionState } from '#JobComposer/checklist.types';
 import {
   // Checklist,
@@ -19,6 +18,7 @@ import {
   updateJob,
   updateJobSuccess,
 } from './actions';
+import { ParameterVerificationStatus } from '#types';
 
 export type Assignee = Pick<User, 'employeeId' | 'firstName' | 'id' | 'lastName'> & {
   jobId: string;
