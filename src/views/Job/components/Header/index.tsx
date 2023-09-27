@@ -93,26 +93,22 @@ const JobHeader: FC = () => {
               </div>
             ))}
           </LabelValueRow>
-          {cjfValues.length > 0 && (
-            <>
-              <h4>Job Information</h4>
-              <LabelValueRow>
-                <div className="info-item" key={'Job ID'}>
-                  <label className="info-item-label">Job ID</label>
-                  <span className="info-item-value">{code}</span>
+          <h4>Job Information</h4>
+          <LabelValueRow>
+            <div className="info-item" key={'Job ID'}>
+              <label className="info-item-label">Job ID</label>
+              <span className="info-item-value">{code}</span>
+            </div>
+            {cjfValues?.map((parameterId) => {
+              const parameter = parameters.get(parameterId);
+              return (
+                <div className="info-item" key={parameter.label}>
+                  <label className="info-item-label">{parameter.label}</label>
+                  <span className="info-item-value">{getParameterContent(parameter)}</span>
                 </div>
-                {cjfValues.map((parameterId) => {
-                  const parameter = parameters.get(parameterId);
-                  return (
-                    <div className="info-item" key={parameter.label}>
-                      <label className="info-item-label">{parameter.label}</label>
-                      <span className="info-item-value">{getParameterContent(parameter)}</span>
-                    </div>
-                  );
-                })}
-              </LabelValueRow>
-            </>
-          )}
+              );
+            })}
+          </LabelValueRow>
         </div>
       </div>
     </JobHeaderWrapper>
