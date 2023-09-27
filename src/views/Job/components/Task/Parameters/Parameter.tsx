@@ -60,10 +60,10 @@ const Parameter: FC<ParameterProps> = ({
         <div className="optional-badge">Optional</div>
       )}
 
-      {errors && errors.length > 0 && (
+      {errors && (
         <div className="error-badge">
           <Error className="icon" />
-          <span>{capitalize(errors[0])}</span>
+          <span>{capitalize(errors)}</span>
         </div>
       )}
 
