@@ -11,15 +11,16 @@ import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 const valueChecker = (value: string, type: InputTypes) => {
+  const trimmedValue = value.trim();
   switch (type) {
     case InputTypes.DATE:
-      return parseInt(value);
+      return parseInt(trimmedValue);
     case InputTypes.DATE_TIME:
-      return parseInt(value);
+      return parseInt(trimmedValue);
     case InputTypes.SINGLE_LINE:
     case InputTypes.MULTI_LINE:
     case InputTypes.NUMBER:
-      return value;
+      return trimmedValue;
     default:
       return;
   }
@@ -79,9 +80,10 @@ const SingleLineTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, for
   };
 
   const handleOnChange = (value?: any) => {
+    const isValueValid = value && value.toString().trim() !== '';
     setValue(parameter.id, {
       ...parameter,
-      data: value ? { ...parameter.data, input: valueChecker(value, parameterType) } : {},
+      data: isValueValid ? { ...parameter.data, input: valueChecker(value, parameterType) } : {},
       response: {
         value: valueChecker(value, parameterType),
         reason: '',
@@ -91,7 +93,7 @@ const SingleLineTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, for
         parameterValueApprovalDto: null,
       },
     });
-    if (value) {
+    if (isValueValid) {
       clearErrors(parameter.id);
       trigger(parameter.id);
     } else {

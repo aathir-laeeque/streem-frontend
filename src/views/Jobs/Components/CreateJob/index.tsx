@@ -238,7 +238,9 @@ const CreateJobDrawer: FC<{
             MandatoryParameter.MULTI_LINE,
           ].includes(data[parameter.id]?.type)
         ) {
-          if (data[parameter.id]?.data?.input && data[parameter.id]?.data?.input !== null) {
+          const inputValue = data[parameter.id]?.data?.input;
+
+          if (inputValue && inputValue !== null) {
             acc[parameter.id] = {
               parameter: data[parameter.id],
               reason: data[parameter?.id]?.response?.reason || '',
