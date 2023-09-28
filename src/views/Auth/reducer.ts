@@ -79,7 +79,7 @@ const reducer = (state = authInitialState, action: AuthActionType): AuthState =>
       return { ...state, loading: false, error: action.payload };
 
     case AuthAction.FETCH_PROFILE_SUCCESS:
-      return { ...state, profile: action.payload };
+      return { ...state, profile: action.payload, userType: action.payload?.userType };
 
     case AuthAction.REFRESH_TOKEN_SUCCESS:
       return {
