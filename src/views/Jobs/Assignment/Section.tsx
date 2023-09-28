@@ -159,16 +159,21 @@ const Section: FC<Props> = ({
   trainedUsersList,
 }) => {
   const [isOpen, toggleIsOpen] = useState(isFirst);
-  const {
-    parameters: { hiddenIds },
-  } = useTypedSelector((state) => state.composer);
+
+  const { tasks } = useTypedSelector((state) => state.job);
 
   const isAllTaskAssigned = stage.tasks
-    .map((task) => !!task.taskExecution.assignees?.length)
+    .map((taskId) => {
+      const task = tasks.get(taskId);
+      return !!task.taskExecution.assignees?.length;
+    })
     .every(Boolean);
 
   const isNoTaskAssigned = stage.tasks
-    .map((task) => !!task.taskExecution.assignees?.length)
+    .map((taskId) => {
+      const task = tasks.get(taskId);
+      return !!task.taskExecution.assignees?.length;
+    })
     .every((val) => val === false);
 
   const isAllTaskSelected = Object.values(sectionState).every((val) => val[0] === true);
@@ -210,21 +215,25 @@ const Section: FC<Props> = ({
               type: 'SET_TASK_SELECTED_STATE',
               payload: {
                 stageId: stage.id,
-                taskExecutionIds: stage.tasks
-                  .filter(
-                    (task) =>
-                      !(task.taskExecution.state in CompletedTaskStates) &&
-                      !trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id),
+                taskExecutionIds: stage.tasks.reduce<string[]>((acc, taskId) => {
+                  const task = tasks.get(taskId);
+                  if (
+                    task.taskExecution.state in CompletedTaskStates &&
+                    !trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id)
                   )
-                  .map((task) => task.taskExecution.id),
+                    return acc;
+                  return [...acc, task.taskExecution.id];
+                }, []),
 
-                states: stage.tasks
-                  .filter(
-                    (task) =>
-                      !(task.taskExecution.state in CompletedTaskStates) &&
-                      !trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id),
+                states: stage.tasks.reduce<string[]>((acc, taskId) => {
+                  const task = tasks.get(taskId);
+                  if (
+                    task.taskExecution.state in CompletedTaskStates &&
+                    !trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id)
                   )
-                  .map(() => (isAllTaskSelected ? false : isNoTaskSelected ? true : false)),
+                    return acc;
+                  return [...acc, isAllTaskSelected ? false : isNoTaskSelected ? true : false];
+                }, []),
               },
             });
           }}
@@ -240,7 +249,8 @@ const Section: FC<Props> = ({
       </div>
       {isOpen ? (
         <div className="section-body">
-          {stage.tasks.map((task) => {
+          {stage.tasks.map((taskId) => {
+            const task = tasks.get(taskId);
             const isTaskCompleted = task.taskExecution.state in CompletedTaskStates;
             const isTaskAssignedToTrainedUser = trainedUsersList.some((user) => {
               return task.taskExecution.assignees?.some((assignee) => assignee.id === user.id);

@@ -1,21 +1,16 @@
 import { Button, Checkbox, Link as GoBack } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { fetchData } from '#JobComposer/actions';
-import { Entity } from '#JobComposer/composer.types';
 import { useTypedSelector } from '#store/helpers';
+import { apiGetAllTrainedUsersAssignedToChecklist } from '#utils/apiUrls';
+import { ResponseObj } from '#utils/globalTypes';
+import { request } from '#utils/request';
 import { RouteComponentProps } from '@reach/router';
-import { isEmpty } from 'lodash';
 import React, { FC, useEffect, useReducer, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { Job, CompletedJobStates } from '../ListView/types';
+import { CompletedJobStates, Job } from '../ListView/types';
 import Section, { AllowedUser } from './Section';
-import { ResponseObj } from '#utils/globalTypes';
-import { User } from '#services/users';
-import { apiGetAllTrainedUsersAssignedToChecklist } from '#utils/apiUrls';
-import { request } from '#utils/request';
-import { Task } from '#JobComposer/checklist.types';
 
 export const Wrapper = styled.div.attrs({})`
   background-color: #ffffff;
@@ -60,13 +55,11 @@ const reducer = (state: State, action: any): State => {
 
   switch (action.type) {
     case 'SET_INITIAL_STATE':
-      (action.payload as Job).checklist.stages.forEach((stage) => {
-        stage.tasks.forEach((task) => {
-          temp[stage.id] = {
-            ...temp[stage.id],
-            [task.taskExecution.id]: [false, task.id],
-          };
-        });
+      action.payload.forEach((task) => {
+        temp[task.stageId] = {
+          ...temp[task.stageId],
+          [task.taskExecution.id]: [false, task.id],
+        };
       });
       return { ...state, ...temp };
 
@@ -84,22 +77,18 @@ const reducer = (state: State, action: any): State => {
       };
 
     case 'SET_ALL_TASK_STATE':
-      (action.payload.data as Job).checklist.stages.forEach((stage) => {
-        stage.tasks.forEach((task) => {
-          if (
-            !action.payload.trainedUsersAssignedTaskIds?.some(
-              (taskId: string) => taskId === task.id,
-            )
-          ) {
-            temp[stage.id] = {
-              ...temp[stage.id],
-              [task.taskExecution.id]: [
-                task.taskExecution.state in CompletedJobStates ? false : action.payload.state,
-                task.id,
-              ],
-            };
-          }
-        });
+      action.payload.tasks.forEach((task) => {
+        if (
+          !action.payload.trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id)
+        ) {
+          temp[task.stageId] = {
+            ...temp[task.stageId],
+            [task.taskExecution.id]: [
+              task.taskExecution.state in CompletedJobStates ? false : action.payload.state,
+              task.id,
+            ],
+          };
+        }
       });
       return { ...state, ...temp };
 
@@ -113,11 +102,9 @@ const Assignments: FC<Props> = (props) => {
 
   const dispatch = useDispatch();
 
-  const {
-    data,
-    loading,
-    stages: { stagesById, stagesOrder },
-  } = useTypedSelector((state) => state.composer);
+  const { stages, tasks, loading, processId } = useTypedSelector((state) => state.job);
+
+  const [totalTasksCount, setTotalTasksCount] = useState(0);
 
   const [state, localDispatch] = useReducer(reducer, {});
   const [trainedUsersList, setTrainedUsersList] = useState<AllowedUser[]>([]);
@@ -131,7 +118,7 @@ const Assignments: FC<Props> = (props) => {
     .every(Boolean);
 
   const getTrainedUsersList = async () => {
-    if (data?.checklist?.id) {
+    if (processId) {
       try {
         const assignedUsersData: ResponseObj<AllowedUser[]> = await request(
           'GET',
@@ -145,20 +132,12 @@ const Assignments: FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (jobId) {
-      dispatch(fetchData({ id: jobId, entity: Entity.JOB }));
+    if (stages) {
+      localDispatch({ type: 'SET_INITIAL_STATE', payload: tasks });
+      setTotalTasksCount(tasks.size);
     }
-  }, []);
-
-  useEffect(() => {
-    if (data && !isEmpty(data)) {
-      localDispatch({ type: 'SET_INITIAL_STATE', payload: data });
-    }
-
-    if (data?.checklist) {
-      getTrainedUsersList();
-    }
-  }, [data]);
+    getTrainedUsersList();
+  }, [stages]);
 
   const selectedTasks = Object.keys(state).reduce<[string, string][]>((acc, stageId) => {
     Object.entries(state[stageId]).forEach(([taskExecutionId, val]) =>
@@ -167,19 +146,37 @@ const Assignments: FC<Props> = (props) => {
     return acc;
   }, []);
 
-  const totalTasksCount = data?.totalTasks;
+  const renderStages = () => {
+    const _stages: JSX.Element[] = [];
+    stages.forEach((stage, index) => {
+      _stages.push(
+        <Section
+          stage={stage}
+          key={stage.id}
+          sectionState={state[stage.id]}
+          localDispatch={localDispatch}
+          isFirst={!!index}
+          trainedUsersList={trainedUsersList}
+        />,
+      );
+    });
+    return _stages;
+  };
 
   const trainedUsersAssignedTaskIds = trainedUsersList.reduce((acc: string[], curr) => {
     acc = [...acc, ...curr.taskIds];
     return acc;
   }, []);
-  const isAllStagesAndTasksAssignedToTrainedUser = Object.values(stagesById).every(
-    (currStage: any) => {
-      return currStage.tasks.every((currTask: Task) => {
-        return trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === currTask.id);
+
+  let isAllStagesAndTasksAssignedToTrainedUser = false;
+  stages.forEach((stage) => {
+    if (!isAllStagesAndTasksAssignedToTrainedUser)
+      stage.tasks.every((_taskId: string) => {
+        if (trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === _taskId)) {
+          isAllStagesAndTasksAssignedToTrainedUser = true;
+        }
       });
-    },
-  );
+  });
 
   if (loading) {
     return <div>Loading..</div>;
@@ -201,7 +198,7 @@ const Assignments: FC<Props> = (props) => {
                 localDispatch({
                   type: 'SET_ALL_TASK_STATE',
                   payload: {
-                    data,
+                    tasks,
                     state: isAllTaskSelected ? false : isNoTaskSelected,
                     trainedUsersAssignedTaskIds,
                   },
@@ -227,19 +224,7 @@ const Assignments: FC<Props> = (props) => {
               {selectedTasks.length ? `Assign ${selectedTasks.length} Tasks` : 'Assign Tasks'}
             </Button>
           </div>
-
-          {stagesOrder.map((stageId, index) => {
-            return (
-              <Section
-                stage={stagesById[stageId]}
-                key={stageId}
-                sectionState={state[stageId]}
-                localDispatch={localDispatch}
-                isFirst={index === 0}
-                trainedUsersList={trainedUsersList}
-              />
-            );
-          })}
+          {renderStages()}
         </Wrapper>
       </div>
     );
