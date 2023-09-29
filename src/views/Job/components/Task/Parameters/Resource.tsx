@@ -41,6 +41,7 @@ const ResourceParameterWrapper = styled.div`
 const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
   const { parameters } = useTypedSelector((state) => state.job);
+  const [linkedResourceParameter, setlinkedResourceParameter] = useState();
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];
@@ -64,11 +65,11 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
       return acc;
     }, []) || [],
   );
-  let linkedResourceParameter;
 
   useEffect(() => {
     if (parameter.autoInitialized) {
-      linkedResourceParameter = parameters.get(parameter!.autoInitialize!.parameterId);
+      const linkedResourceParameter = parameters.get(parameter!.autoInitialize!.parameterId);
+      setlinkedResourceParameter(linkedResourceParameter);
     }
   }, []);
 
