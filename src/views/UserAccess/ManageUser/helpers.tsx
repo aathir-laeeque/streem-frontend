@@ -56,6 +56,7 @@ const UserItem = {
   employeeId: '',
   lastName: '',
   email: '',
+  department: '',
 };
 
 type UserItem = typeof UserItem;
@@ -329,7 +330,6 @@ export const createSectionConfig = ({
                   name: 'employeeId',
                   error: errors['employeeId']?.message,
                   disabled: pageType !== PAGE_TYPE.ADD,
-                  readOnly: disabledKeys?.['employeeId'],
                   ref:
                     pageType === PAGE_TYPE.ADD
                       ? register({
@@ -364,12 +364,7 @@ export const createSectionConfig = ({
                   name: 'email',
                   error: errors['email']?.message,
                   readOnly: disabledKeys?.['email'],
-                  disabled:
-                    selectedUser?.userType !== UserType.LOCAL
-                      ? true
-                      : pageType === PAGE_TYPE.PROFILE
-                      ? false
-                      : !isEditable,
+                  disabled: pageType === PAGE_TYPE.PROFILE ? false : !isEditable,
                   optional: true,
                   ref: register({
                     pattern: {
@@ -397,7 +392,7 @@ export const createSectionConfig = ({
                   name: 'department',
                   ref: register,
                   optional: true,
-                  disabled: selectedUser?.userType !== UserType.LOCAL ? true : !isEditable,
+                  disabled: !isEditable,
                 },
               },
             ]}

@@ -50,7 +50,7 @@ const ManageUser: FC<EditUserProps> = ({
     criteriaMode: 'all',
   });
 
-  const { register, handleSubmit, formState, setValue, reset } = formData;
+  const { register, handleSubmit, formState, setValue, reset, getValues } = formData;
   const { isDirty, isValid } = formState;
 
   useEffect(() => {
@@ -75,7 +75,8 @@ const ManageUser: FC<EditUserProps> = ({
   register('userType', { required: true });
   register('username');
 
-  const onSubmit = (data: EditUserRequestInputs) => {
+  const onSubmit = () => {
+    const data = getValues();
     const body = {
       ...data,
       email: data.email ? data.email.toLowerCase() : null,
