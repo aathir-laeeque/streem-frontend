@@ -1,4 +1,3 @@
-import AuditLogs from '#JobComposer/JobAuditLogs';
 import Job from '#views/Job';
 import { Router } from '@reach/router';
 import React, { FC } from 'react';
@@ -6,6 +5,7 @@ import Assignments from './Assignment';
 import ListView from './ListView';
 import JobSummary from './Summary';
 import { JobsViewProps } from './types';
+import AuditLogs from '#views/Job/JobAuditLogs';
 
 const JobsView: FC<JobsViewProps> = () => (
   <Router>

@@ -1,6 +1,6 @@
 import { Checklist, Parameter } from '#PrototypeComposer/checklist.types';
 import { Users } from '#store/users/types';
-import { FileUploadData } from '#utils/globalTypes';
+import { FileUploadData, Pageable } from '#utils/globalTypes';
 import { ObjectKeys, PartialUser } from './common';
 import { StoreParameter } from './parameter';
 import { StoreStage } from './stage';
@@ -134,4 +134,21 @@ export interface JobStore {
     totalTasks: number;
   };
   timerState: { earlyCompletion: boolean; limitCrossed: boolean; timeElapsed: number };
+  auditLogs: { logs: JobAuditLogType[]; pageable: Pageable; loading: boolean; error?: any };
 }
+
+export interface JobAuditLogState {
+  readonly logs: JobAuditLogType[];
+  readonly pageable: Pageable;
+  readonly loading: boolean;
+  readonly error?: any;
+}
+
+export type JobAuditLogType = {
+  id: string;
+  jobId: string;
+  action: string;
+  details: string;
+  triggeredAt: number;
+  triggeredBy: number;
+};

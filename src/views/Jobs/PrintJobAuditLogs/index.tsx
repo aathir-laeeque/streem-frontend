@@ -1,12 +1,14 @@
-import logo from '#assets/images/logo.png';
-import { fetchJobAuditLogs } from '#JobComposer/JobAuditLogs/actions';
 import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
+import logo from '#assets/images/logo.png';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { apiPrintJobDetails } from '#utils/apiUrls';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER } from '#utils/constants';
+import { InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
+import { formatDateTime } from '#utils/timeUtils';
+import { jobActions } from '#views/Job/jobStore';
+import { Document, Image, PDFViewer, Page, Text, View } from '@react-pdf/renderer';
 import { groupBy } from 'lodash';
 import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
@@ -14,12 +16,12 @@ import { useDispatch } from 'react-redux';
 import { CommonJobPdfDetails, PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
 import { LoadingDiv, styles } from './styles';
 import { PrintJobAuditLogProps } from './types';
-import { formatDateTime } from '#utils/timeUtils';
-import { InputTypes } from '#utils/globalTypes';
 
 const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
   const [jobDetails, setJobDetails] = useState<PdfJobDataType | undefined>();
-  const { logs } = useTypedSelector((state) => state.composer.auditLogs);
+  const {
+    auditLogs: { logs },
+  } = useTypedSelector((state) => state.job);
   const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
   const { filters } = useTypedSelector((state) => state.auditLogFilters);
   const { dateAndTimeStampFormat, timeFormat, dateFormat } = useTypedSelector(
@@ -46,7 +48,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
 
   const fetchLogs = (page = DEFAULT_PAGE_NUMBER, size = 250) => {
     dispatch(
-      fetchJobAuditLogs({
+      jobActions.getJobAuditLogs({
         jobId,
         params: { size, filters, sort: 'triggeredAt,desc', page },
       }),

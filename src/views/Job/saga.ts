@@ -19,13 +19,21 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { RootState } from '#store';
 import { setRecentServerTimestamp } from '#store/extras/action';
 import { Users } from '#store/users/types';
-import { JobStore, Parameter, REFETCH_JOB_ERROR_CODES, StoreTask, TaskExecution } from '#types';
+import {
+  JobAuditLogType,
+  JobStore,
+  Parameter,
+  REFETCH_JOB_ERROR_CODES,
+  StoreTask,
+  TaskExecution,
+} from '#types';
 import {
   apiAcceptVerification,
   apiApproveParameter,
   apiCompleteJob,
   apiExecuteParameter,
   apiGetAllUsersAssignedToJob,
+  apiGetJobAuditLogs,
   apiGetSelectedJob,
   apiGetStageData,
   apiInitiatePeerVerification,
@@ -58,6 +66,7 @@ import {
 } from 'redux-saga/effects';
 import { JobActionsEnum, initialState, jobActions } from './jobStore';
 import { parseJobData } from './utils';
+import moment from 'moment';
 
 const getUserId = (state: RootState) => state.auth.userId;
 const getJobStore = (state: RootState) => state.job;
@@ -986,6 +995,37 @@ function* TaskTimerSaga() {
   }
 }
 
+function* jobAuditLogsSaga({ payload }: ReturnType<typeof jobActions.getJobAuditLogs>) {
+  try {
+    const { jobId, params } = payload;
+
+    const { data, pageable, errors }: ResponseObj<JobAuditLogType[]> = yield call(
+      request,
+      'GET',
+      apiGetJobAuditLogs(jobId),
+      { params },
+    );
+
+    if (errors) {
+      throw getErrorMsg(errors);
+    }
+
+    const newData = data.map((el) => ({
+      ...el,
+      triggeredOn: moment.unix(el.triggeredAt).format('YYYY-MM-DD'),
+    }));
+
+    yield put(
+      jobActions.getJobAuditLogsSuccess({
+        data: newData,
+        pageable,
+      }),
+    );
+  } catch (e) {
+    const error = yield* handleCatch('JobParameter', 'fetchJobAuditLogsSaga', e);
+  }
+}
+
 export function* jobSaga() {
   yield takeLatest(JobActionsEnum.getJob, getJobSaga);
   yield takeLatest(JobActionsEnum.getAssignments, getAssignmentsSaga);
@@ -1002,7 +1042,7 @@ export function* jobSaga() {
   yield takeLeading(JobActionsEnum.recallPeerVerification, recallPeerVerificationSaga);
   yield takeLeading(JobActionsEnum.acceptPeerVerification, acceptPeerVerificationSaga);
   yield takeLeading(JobActionsEnum.rejectPeerVerification, rejectPeerVerificationSaga);
-
+  yield takeLatest(JobActionsEnum.getJobAuditLogs, jobAuditLogsSaga);
   // Keep this at the very last
   yield all([fork(StagePollSaga), fork(TaskTimerSaga)]);
 }

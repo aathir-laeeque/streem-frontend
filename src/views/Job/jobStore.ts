@@ -11,6 +11,8 @@ import {
   StoreParameter,
   TaskExecution,
 } from '#types';
+import { DEFAULT_PAGINATION } from '#utils/constants';
+import { Pageable } from '#utils/globalTypes';
 import { Verification } from '#views/Jobs/ListView/types';
 import { produce } from 'immer';
 
@@ -70,6 +72,8 @@ const actions = {
   startTaskTimer: {} as { id: string },
   stopTaskTimer: undefined,
   toggleMobileDrawer: undefined,
+  getJobAuditLogs: {} as { jobId: string; params: Record<string, any> },
+  getJobAuditLogsSuccess: { data: [] as any, pageable: {} as Pageable },
 };
 
 export const initialState: JobStore = {
@@ -96,6 +100,11 @@ export const initialState: JobStore = {
     earlyCompletion: false,
     limitCrossed: false,
     timeElapsed: -1,
+  },
+  auditLogs: {
+    logs: [],
+    loading: true,
+    pageable: DEFAULT_PAGINATION,
   },
 };
 
@@ -255,6 +264,12 @@ function updateParameterVerifications(
   }
 }
 
+function getJobAuditLogsSuccess(draft: JobStore, payload: typeof actions.getJobAuditLogsSuccess) {
+  draft.auditLogs.loading = false;
+  draft.auditLogs.pageable = payload.pageable;
+  draft.auditLogs.logs = payload.data;
+}
+
 // REDUCER
 
 export const jobReducer = (state = initialState, action: JobActionsType) =>
@@ -309,6 +324,9 @@ export const jobReducer = (state = initialState, action: JobActionsType) =>
         break;
       case JobActionsEnum.reset:
         draft = initialState;
+        break;
+      case JobActionsEnum.getJobAuditLogsSuccess:
+        getJobAuditLogsSuccess(draft, action.payload);
         break;
       default:
         break;
