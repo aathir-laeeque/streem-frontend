@@ -13,6 +13,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { jobActions } from '../jobStore';
+import { ExceptionValues } from '#types';
 
 const Wrapper = styled.div`
   .modal-body {
@@ -165,12 +166,6 @@ export const ExceptionReason = [
   { label: 'Job completed offline', value: 'JOB_COMPLETED_OFFLINE' },
   { label: 'Other', value: 'OTHER' },
 ];
-
-export type ExceptionValues = {
-  comment: string;
-  medias: FileUploadData[];
-  reason: string;
-};
 
 const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
   closeAllOverlays,

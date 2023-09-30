@@ -1,9 +1,9 @@
 import { actionSpreader } from '#store';
+import { ExceptionValues } from '#types';
 import { Job } from '#views/Jobs/ListView/types';
 
 import { ComposerAction } from './composer.reducer.types';
 import { Entity, FetchDataType } from './composer.types';
-import { ExceptionValues } from './modals/CompleteJobWithException';
 
 export const fetchData = ({ id, entity, setActive = false }: FetchDataType) =>
   actionSpreader(ComposerAction.FETCH_COMPOSER_DATA, { id, entity, setActive });

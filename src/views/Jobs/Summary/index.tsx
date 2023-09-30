@@ -1,5 +1,4 @@
 import { Avatar, Link as GoBack } from '#components';
-import { ExceptionReason } from '#JobComposer/modals/CompleteJobWithException';
 import { PARAMETER_OPERATORS } from '#PrototypeComposer/constants';
 import { useTypedSelector } from '#store';
 import { openLinkInNewTab } from '#utils';
@@ -21,6 +20,7 @@ import {
   ParameterDeviation,
   Timer,
 } from './types';
+import { ExceptionReason } from '#views/Job/overlays/CompleteJobWithException';
 
 type SummaryViewProps = RouteComponentProps<{ jobId: Job['id'] }>;
 
