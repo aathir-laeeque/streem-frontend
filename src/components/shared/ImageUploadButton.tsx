@@ -21,6 +21,7 @@ type ImageUploadButtonProps = {
   allowCapture?: boolean;
   acceptedTypes?: string[];
   apiCall?: () => string;
+  useCaseId?: string;
 };
 
 const Wrapper = styled.div.attrs({
@@ -47,6 +48,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
   allowCapture = false,
   acceptedTypes = ['image/*'],
   apiCall = apiUploadFile,
+  useCaseId,
 }) => {
   const dispatch = useDispatch();
   const [file, setFile] = useState<Blob | File | null>(null);
@@ -83,6 +85,7 @@ const ImageUploadButton: FC<ImageUploadButtonProps> = ({
         onUploadStart && onUploadStart();
         const res = await request('POST', apiCall(), {
           formData,
+          ...(useCaseId && { params: { useCaseId } }),
         });
 
         if (res?.data) {

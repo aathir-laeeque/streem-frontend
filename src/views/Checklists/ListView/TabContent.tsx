@@ -722,6 +722,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
             }}
             apiCall={apiImportChecklist}
             acceptedTypes={['.json']}
+            useCaseId={selectedUseCase!.id}
           />
         )}
         {checkStartPrototypePermission() && (
