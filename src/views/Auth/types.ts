@@ -68,6 +68,7 @@ export type UseCaseType = {
 export interface AuthState {
   readonly accessToken: string;
   readonly email?: string;
+  readonly identity: string;
   readonly employeeId?: string;
   readonly error?: string;
   readonly facilities: Facility[];
@@ -244,7 +245,7 @@ export enum AuthAction {
   REGISTER = '@@auth/Register/REGISTER',
   RESET_ERROR = '@@auth/Login/RESET_ERROR',
   RESET_PASSWORD = '@@auth/Register/RESET_PASSWORD',
-  RESET_TOKEN = '@@auth/Forgot/RESET_TOKEN',
+  RESET_BY_MAIL = '@@auth/Forgot/RESET_BY_MAIL',
   SET_CHALLENGE_QUESTION = '@@auth/Register/SET_CHALLENGE_QUESTION',
   SET_CHALLENGE_QUESTION_SUCCESS = '@@auth/Register/SET_CHALLENGE_QUESTION_SUCCESS',
   SET_IDENTITY_TOKEN = '@@auth/Register/SET_IDENTITY_TOKEN',

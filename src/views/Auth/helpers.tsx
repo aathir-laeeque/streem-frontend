@@ -15,7 +15,7 @@ import {
   notifyAdmin,
   register as registerAction,
   resetPassword,
-  resetToken,
+  resetByMail,
   setChallengeQuestion,
   validateIdentity,
   validateQuestion,
@@ -133,6 +133,7 @@ export const createBaseViewConfig = ({
     hasSetChallengeQuestion,
     facilities,
     userId,
+    identity,
   } = useTypedSelector((state) => state.auth);
   const [isPasswordInputType, setIsPasswordInputType] = useState(true);
   const [isConfirmPasswordTextHidden, setIsConfirmPasswordTextHidden] = useState(true);
@@ -156,18 +157,19 @@ export const createBaseViewConfig = ({
   }
 
   if (
-    [
+    ([
       PAGE_NAMES.REGISTER_CREDENTIALS,
       PAGE_NAMES.REGISTER_EMPLOYEE_ID,
       PAGE_NAMES.REGISTER_RECOVERY,
-      PAGE_NAMES.FORGOT_RECOVERY,
-      PAGE_NAMES.FORGOT_QUESTIONS,
       PAGE_NAMES.FORGOT_NEW_PASSWORD,
       PAGE_NAMES.INVITATION_EXPIRED,
       PAGE_NAMES.KEY_EXPIRED,
-      PAGE_NAMES.ACCOUNT_LOCKED,
     ].includes(pageName) &&
-    !token
+      !token) ||
+    ([PAGE_NAMES.FORGOT_RECOVERY, PAGE_NAMES.FORGOT_QUESTIONS, PAGE_NAMES.ACCOUNT_LOCKED].includes(
+      pageName,
+    ) &&
+      !identity)
   ) {
     navigate('/auth/login');
   }
@@ -417,23 +419,21 @@ export const createBaseViewConfig = ({
             },
           ],
           onSubmit: (data: ForgotPasswordRecoveryInputs) => {
-            if (token) {
-              if (data.recoveryOption === RecoveryOptions.EMAIL) {
-                dispatch(
-                  resetToken({
-                    token,
-                  }),
-                );
-              } else if (data.recoveryOption === RecoveryOptions.CHALLENGE_QUESTION) {
-                navigate('/auth/forgot-password/challenge');
-              } else if (data.recoveryOption === RecoveryOptions.CONTACT_ADMIN) {
-                dispatch(
-                  notifyAdmin({
-                    token,
-                    purpose: ChallengeQuestionPurpose.PASSWORD_RECOVERY_CHALLENGE_QUESTION_NOT_SET,
-                  }),
-                );
-              }
+            if (data.recoveryOption === RecoveryOptions.EMAIL) {
+              dispatch(
+                resetByMail({
+                  identity,
+                }),
+              );
+            } else if (data.recoveryOption === RecoveryOptions.CHALLENGE_QUESTION) {
+              navigate('/auth/forgot-password/challenge');
+            } else if (data.recoveryOption === RecoveryOptions.CONTACT_ADMIN) {
+              dispatch(
+                notifyAdmin({
+                  identity,
+                  purpose: ChallengeQuestionPurpose.PASSWORD_RECOVERY_CHALLENGE_QUESTION_NOT_SET,
+                }),
+              );
             }
           },
           buttons: [
@@ -504,14 +504,12 @@ export const createBaseViewConfig = ({
             },
           ],
           onSubmit: (data: RecoveryInputs) => {
-            if (token) {
-              dispatch(
-                validateQuestion({
-                  ...data,
-                  token,
-                }),
-              );
-            }
+            dispatch(
+              validateQuestion({
+                ...data,
+                identity,
+              }),
+            );
           },
           buttons: [
             <Button
@@ -1030,7 +1028,7 @@ export const createBaseViewConfig = ({
               onClick={() => {
                 dispatch(
                   notifyAdmin({
-                    token,
+                    identity,
                     purpose: ChallengeQuestionPurpose.PASSWORD_RECOVERY_KEY_EXPIRED,
                   }),
                 );
@@ -1055,7 +1053,7 @@ export const createBaseViewConfig = ({
               onClick={() => {
                 dispatch(
                   notifyAdmin({
-                    token,
+                    identity,
                     purpose: ChallengeQuestionPurpose.PASSWORD_RECOVERY_ACCOUNT_LOCKED,
                   }),
                 );
@@ -1083,7 +1081,7 @@ export const createBaseViewConfig = ({
               onClick={() => {
                 dispatch(
                   notifyAdmin({
-                    token,
+                    identity,
                     purpose: ChallengeQuestionPurpose.INVITE_EXPIRED,
                   }),
                 );

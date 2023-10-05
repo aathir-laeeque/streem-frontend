@@ -24,6 +24,7 @@ export const authInitialState: AuthState = {
   useCaseMap: {},
   fetchingUseCaseList: false,
   ssoIdToken: '',
+  identity: '',
 };
 
 const reducer = (state = authInitialState, action: AuthActionType): AuthState => {
@@ -133,6 +134,7 @@ const reducer = (state = authInitialState, action: AuthActionType): AuthState =>
         loading: false,
         userType: action.payload.type,
         email: action.payload.username,
+        identity: action.payload.username,
       };
 
     default:

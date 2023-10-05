@@ -250,7 +250,7 @@ export const apiValidateChallengeQuestion = () => `${baseUrl}/auth/challenge-que
 
 export const apiNotifyAdmin = () => `${baseUrl}/auth/admin/notify`;
 
-export const apiResetToken = () => `${baseUrl}/auth/token/reset`;
+export const apiResetByEmail = () => `${baseUrl}/auth/token/reset`;
 
 export const apiSwitchFacility = (userId: string, facilityId: string) =>
   `${baseUrl}/users/${userId}/facilities/${facilityId}/switch`;

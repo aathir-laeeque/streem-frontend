@@ -98,13 +98,13 @@ export const setChallengeQuestionSuccess = () =>
 export const validateIdentity = (payload: { identity: string }) =>
   actionSpreader(AuthAction.VALIDATE_IDENTITY, payload);
 
-export const resetToken = (payload: { token: string }) =>
-  actionSpreader(AuthAction.RESET_TOKEN, payload);
+export const resetByMail = (payload: { identity: string }) =>
+  actionSpreader(AuthAction.RESET_BY_MAIL, payload);
 
-export const notifyAdmin = (payload: { token: string; purpose: ChallengeQuestionPurpose }) =>
+export const notifyAdmin = (payload: { identity: string; purpose: ChallengeQuestionPurpose }) =>
   actionSpreader(AuthAction.NOTIFY_ADMIN, payload);
 
-export const validateQuestion = (payload: { id: string; answer: string; token: string }) =>
+export const validateQuestion = (payload: { identity: string; id: string; answer: string }) =>
   actionSpreader(AuthAction.VALIDATE_QUESTION, payload);
 
 export const fetchUseCaseList = () => actionSpreader(AuthAction.FETCH_USE_CASE_LIST);

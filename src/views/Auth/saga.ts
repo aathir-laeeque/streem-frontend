@@ -24,7 +24,7 @@ import {
   apiRegister,
   apiReLogin,
   apiResetPassword,
-  apiResetToken,
+  apiResetByEmail,
   apiValidateChallengeQuestion,
   apiValidateIdentity,
 } from '#utils/apiUrls';
@@ -57,7 +57,7 @@ import {
   register,
   reLogin,
   resetPassword,
-  resetToken,
+  resetByMail,
   setChallengeQuestion,
   setChallengeQuestionSuccess,
   setIdentityToken,
@@ -412,13 +412,12 @@ function* validateIdentitySaga({ payload }: ReturnType<typeof validateIdentity>)
 
 function* validateQuestionSaga({ payload }: ReturnType<typeof validateQuestion>) {
   try {
-    const { data, errors, token } = yield call(request, 'PATCH', apiValidateChallengeQuestion(), {
+    const { data, errors } = yield call(request, 'PATCH', apiValidateChallengeQuestion(), {
       data: payload,
     });
 
     if (errors) {
       if (errors?.[0].code === LoginErrorCodes.USER_ACCOUNT_LOCKED) {
-        yield put(setIdentityToken({ token }));
         navigate('/auth/account-locked');
       } else {
         throw getErrorMsg(errors);
@@ -433,9 +432,9 @@ function* validateQuestionSaga({ payload }: ReturnType<typeof validateQuestion>)
   }
 }
 
-function* resetTokenSaga({ payload }: ReturnType<typeof resetToken>) {
+function* resetByEmailSaga({ payload }: ReturnType<typeof resetByMail>) {
   try {
-    const { errors } = yield call(request, 'PATCH', apiResetToken(), {
+    const { errors } = yield call(request, 'PATCH', apiResetByEmail(), {
       data: payload,
     });
 
@@ -445,7 +444,7 @@ function* resetTokenSaga({ payload }: ReturnType<typeof resetToken>) {
     yield put(authError(undefined));
     navigate('/auth/forgot-password/email-sent');
   } catch (error) {
-    error = yield* handleCatch('Auth', 'resetTokenSaga', error);
+    error = yield* handleCatch('Auth', 'resetByEmailSaga', error);
     yield put(authError(error));
   }
 }
@@ -551,7 +550,7 @@ export function* AuthSaga() {
   yield takeLeading(AuthAction.SET_CHALLENGE_QUESTION, setChallengeQuestionSaga);
   yield takeLeading(AuthAction.VALIDATE_IDENTITY, validateIdentitySaga);
   yield takeLeading(AuthAction.VALIDATE_QUESTION, validateQuestionSaga);
-  yield takeLeading(AuthAction.RESET_TOKEN, resetTokenSaga);
+  yield takeLeading(AuthAction.RESET_BY_MAIL, resetByEmailSaga);
   yield takeLeading(AuthAction.NOTIFY_ADMIN, notifyAdminSaga);
   yield takeLeading(AuthAction.FETCH_USE_CASE_LIST, fetchUseCaseListSaga);
   yield takeLeading(AuthAction.ACCOUNT_LOOKUP, accountLookUpSaga);
