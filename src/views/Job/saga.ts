@@ -32,6 +32,7 @@ import {
   apiApproveParameter,
   apiCompleteJob,
   apiExecuteParameter,
+  apiFixParameter,
   apiGetAllUsersAssignedToJob,
   apiGetJobAuditLogs,
   apiGetSelectedJob,
@@ -567,7 +568,7 @@ function* fixParameterSaga({ payload }: ReturnType<typeof jobActions.fixParamete
     const { data, errors }: ResponseObj<Parameter> = yield call(
       request,
       'PATCH',
-      apiExecuteParameter(),
+      apiFixParameter(),
       {
         data: { jobId, parameter, ...(!!reason ? { reason } : {}) },
       },

@@ -27,32 +27,35 @@ const InputParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorre
     }
   }, [parameter.response.value, updating]);
 
-  const onChange = useCallback(({ value }: { value: string }) => {
-    customOnChange(value, (value: string) => {
-      const _parameter = {
-        ...parameter,
-        data: {
-          ...parameter.data,
-          input: parameter.type === MandatoryParameter.NUMBER ? parseFloat(value) : value,
-        },
-      };
+  const onChange = useCallback(
+    ({ value }: { value: string }) => {
+      customOnChange(value, (value: string) => {
+        const _parameter = {
+          ...parameter,
+          data: {
+            ...parameter.data,
+            input: parameter.type === MandatoryParameter.NUMBER ? parseFloat(value) : value,
+          },
+        };
 
-      if (isCorrectingError) {
-        dispatch(
-          jobActions.fixParameter({
-            parameter: _parameter,
-          }),
-        );
-      } else {
-        dispatch(
-          jobActions.executeParameter({
-            parameter: _parameter,
-          }),
-        );
-      }
-    });
-    setValue(value);
-  }, []);
+        if (isCorrectingError) {
+          dispatch(
+            jobActions.fixParameter({
+              parameter: _parameter,
+            }),
+          );
+        } else {
+          dispatch(
+            jobActions.executeParameter({
+              parameter: _parameter,
+            }),
+          );
+        }
+      });
+      setValue(value);
+    },
+    [isCorrectingError],
+  );
 
   const propsByType = useMemo(() => {
     switch (parameter.type) {
