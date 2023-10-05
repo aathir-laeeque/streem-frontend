@@ -35,19 +35,14 @@ type AutomationInfoProps = {
 };
 
 const AutomationInfo: FC<AutomationInfoProps> = ({ task }) => {
-  const {
-    parameters: { parametersById, parametersMappedToJobById },
-  } = useTypedSelector((state) => state.composer);
+  const { parameters } = useTypedSelector((state) => state.job);
 
   if (task.automations?.length) {
     return (
       <Wrapper>
         {task.automations.map((automation) => {
-          const objectTypeDisplayName =
-            parametersById[automation.actionDetails.referencedParameterId]?.data
-              ?.objectTypeDisplayName ||
-            parametersMappedToJobById[automation.actionDetails.referencedParameterId]?.data
-              ?.objectTypeDisplayName;
+          const parameterData = parameters.get(automation.actionDetails.referencedParameterId);
+          const objectTypeDisplayName = parameterData?.data?.objectTypeDisplayName;
           return (
             <div className="automation">
               <span className="heading">Automation:</span>
