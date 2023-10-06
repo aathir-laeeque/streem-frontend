@@ -67,8 +67,8 @@ const ImageCapture: FC<ParameterProps> = ({
 }) => {
   const dispatch = useDispatch();
   const {
-    tasks: { activeTaskId },
-  } = useTypedSelector((state) => state.composer);
+    taskNavState: { current: activeTaskId },
+  } = useTypedSelector((state) => state.job);
 
   const [isUploading, setIsUploading] = useState(false);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);

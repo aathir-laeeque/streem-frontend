@@ -79,7 +79,7 @@ const AssignmentInfo: FC<CommonOverlayProps<AssignmentInfoProps>> = ({
   closeOverlay,
   props: { assignedUsers = [], errors = [], selectedTasks = [], unassignedUsers = [] } = {},
 }) => {
-  const { tasksById } = useTypedSelector((state) => state.composer.tasks);
+  const { tasks } = useTypedSelector((state) => state.job);
 
   return (
     <Wrapper>
@@ -99,7 +99,7 @@ const AssignmentInfo: FC<CommonOverlayProps<AssignmentInfoProps>> = ({
                   ([taskExecutionId]) => taskExecutionId === error.id,
                 ) ?? [])[1];
 
-                const taskName = tasksById[taskId as string].name;
+                const taskName = tasks?.get(taskId)?.name;
 
                 const user = [...assignedUsers, ...unassignedUsers].find(
                   (user) => user.id === error.userId,

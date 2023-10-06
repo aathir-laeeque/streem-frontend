@@ -247,7 +247,7 @@ const ObjectView: FC<TabContentProps> = ({
     objects: { active: selectedObject },
     objectTypes: { active: selectedObjectType },
   } = useTypedSelector((state) => state.ontology);
-  const { data: jobData } = useTypedSelector((state) => state.composer);
+  const { jobFromBE: jobData } = useTypedSelector((state) => state.job);
   const {
     register,
     handleSubmit,

@@ -180,11 +180,11 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
   } = {},
 }) => {
   const dispatch = useDispatch();
-  const { state, collaborators, userId, parametersById } = useTypedSelector((state) => ({
+  const { state, collaborators, userId, parameters } = useTypedSelector((state) => ({
     userId: state.auth.userId,
     state: state.prototypeComposer?.data?.state as Checklist['state'],
     collaborators: state.prototypeComposer?.data?.collaborators as Checklist['collaborators'],
-    parametersById: state.composer?.parameters?.parametersById,
+    parameters: state.job?.parameters,
   }));
 
   const [stateMediaDetails, setStateMediaDetails] = useState<MediaDetails>(mediaDetails);
@@ -319,19 +319,20 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                     execute,
                   );
                   if (isParameter && parameterId && execute) {
-                    const updatedMedias = (parametersById[parameterId]?.response?.medias || []).map(
-                      (currMedia) =>
-                        omit(
-                          {
-                            ...currMedia,
-                            mediaId: currMedia?.id,
-                            ...(currMedia?.id === mediaDetails.id && {
-                              archived: true,
-                              reason: ' ',
-                            }),
-                          },
-                          'id',
-                        ),
+                    const updatedMedias = (
+                      parameters?.get(parameterId)?.response?.medias || []
+                    ).map((currMedia) =>
+                      omit(
+                        {
+                          ...currMedia,
+                          mediaId: currMedia?.id,
+                          ...(currMedia?.id === mediaDetails.id && {
+                            archived: true,
+                            reason: ' ',
+                          }),
+                        },
+                        'id',
+                      ),
                     );
                     execute(updatedMedias, true);
                     closeOverlay();
