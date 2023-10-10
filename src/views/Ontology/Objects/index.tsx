@@ -468,14 +468,16 @@ const ObjectsContent = ({
   } = useTypedSelector((state) => state.ontology);
 
   useEffect(() => {
-    if (objectTypeId) {
-      dispatch(fetchObjectType(objectTypeId));
-    }
-
     return () => {
       dispatch(resetOntology(['objects', 'activeLoading']));
     };
   }, []);
+
+  useEffect(() => {
+    if (objectTypeId) {
+      dispatch(fetchObjectType(objectTypeId));
+    }
+  }, [id]);
 
   useEffect(() => {
     if (selectedObjectType && selectedObjectType.externalId && id) {
