@@ -73,7 +73,7 @@ const getAccessToken = (state: RootState) => state.auth.accessToken;
 
 function* loginSaga({ payload }: ReturnType<typeof login>) {
   try {
-    const { username, password, idToken, code, state } = payload;
+    const { username, password, idToken, code, state, pathname } = payload;
     const isLoggedIn = (yield select(getIsLoggedIn)) as boolean;
     const { data, errors }: ResponseObj<LoginResponse> = yield call(request, 'POST', apiLogin(), {
       data: {
@@ -113,6 +113,9 @@ function* loginSaga({ payload }: ReturnType<typeof login>) {
       yield put(loginSuccess(data));
       yield put(fetchProfile({ id: data.id }));
       yield put(setInitialFacilityWiseConstants(data.facilities));
+      if (pathname) {
+        navigate(pathname);
+      }
     }
   } catch (error) {
     error = yield* handleCatch('Auth', 'loginSaga', error);
@@ -522,7 +525,6 @@ function* accountLookUpSaga({ payload }: ReturnType<typeof accountLookUp>) {
       if (data.type === 'LOCAL') {
         navigate('/auth/login-password');
       } else if (data.type !== 'LOCAL') {
-        localStorage.setItem('username', username);
         navigate(data.redirectUrl);
       } else if (instance) {
         const ssoResponse = yield call(ssoLogin, data.username, instance);

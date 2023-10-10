@@ -19,6 +19,7 @@ export const login = (payload: {
   idToken?: string;
   code?: string;
   state?: string;
+  pathname?: string;
 }) => actionSpreader(AuthAction.LOGIN, payload);
 
 export const loginSuccess = (data: LoginResponse) => actionSpreader(AuthAction.LOGIN_SUCCESS, data);

@@ -92,6 +92,7 @@ export interface AuthState {
   readonly userType?: string;
   readonly features?: Record<string, boolean>;
   readonly ssoIdToken?: string;
+  readonly identity: string;
 }
 
 export enum TokenTypes {

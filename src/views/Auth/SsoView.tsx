@@ -10,6 +10,7 @@ import {
   completeSelfVerification,
 } from '#JobComposer/ActivityList/actions';
 import { SsoStates } from '#utils/globalTypes';
+import { useTypedSelector } from '#store';
 
 const SsoViewWrapper = styled.div`
   display: flex;
@@ -22,16 +23,18 @@ const SsoViewWrapper = styled.div`
 export const SsoView = () => {
   const { search } = useLocation();
   const dispatch = useDispatch();
+  const { identity } = useTypedSelector((state) => state.auth);
   const extractedTOkenCode = search?.match(/code=([^&]*)/)?.[1] || '';
   const extractedState = search?.match(/state=([^&]*)/)?.[1] || '';
   const parsedState = JSON.parse(decodeURIComponent(extractedState));
-  const { state, checklistId, location } = parsedState;
+  const { state, checklistId, location = '/' } = parsedState;
 
   useEffect(() => {
-    const userName = localStorage.getItem('username') || '';
     switch (state) {
       case SsoStates.LOGIN:
-        dispatch(login({ code: extractedTOkenCode, username: userName, state: state }));
+        dispatch(
+          login({ code: extractedTOkenCode, username: identity, state: state, pathname: location }),
+        );
         break;
       case SsoStates.SIGN_OFF:
         dispatch(signOffPrototype({ checklistId, code: extractedTOkenCode, state: state }));
@@ -60,7 +63,7 @@ export const SsoView = () => {
       case SsoStates.RE_LOGIN:
         dispatch(
           reLogin({
-            username: userName,
+            username: identity,
             code: extractedTOkenCode,
             state,
             pathname: location,
@@ -70,7 +73,7 @@ export const SsoView = () => {
       default:
         break;
     }
-    if (state !== SsoStates.RE_LOGIN) {
+    if (![SsoStates.RE_LOGIN, SsoStates.LOGIN].includes(state)) {
       navigate(location);
     }
   }, [extractedTOkenCode]);
