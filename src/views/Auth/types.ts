@@ -63,6 +63,7 @@ export type UseCaseType = {
   metadata: {
     ['card-color']: string;
   };
+  orderTree: string;
 };
 
 export interface AuthState {

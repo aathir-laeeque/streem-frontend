@@ -65,7 +65,7 @@ const Header: FC = () => {
             id="use-case-selector"
             items={Object.values(useCaseMap).reduce<any>((acc, useCase) => {
               if (useCase.enabled) {
-                acc[useCase.id] = {
+                acc[useCase.orderTree] = {
                   ...useCase,
                   disabled: !useCase.enabled,
                 };

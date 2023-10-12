@@ -119,7 +119,7 @@ const reducer = (state = authInitialState, action: AuthActionType): AuthState =>
       return {
         ...state,
         fetchingUseCaseList: false,
-        useCaseMap: keyBy(action.payload.useCases, 'id'),
+        useCaseMap: keyBy(action.payload.useCases, 'orderTree'),
       };
 
     case AuthAction.SET_SELECTED_USE_CASE:
