@@ -48,7 +48,7 @@ export type SetTaskTimerType = {
 export type MediaDetails = FileUploadData & {
   name: string;
   description?: string;
-  id: string;
+  id?: string;
 };
 
 export type AddMediaType = {

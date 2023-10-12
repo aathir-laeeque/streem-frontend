@@ -278,7 +278,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                   onClick={() => {
                     if (disableNameInput || !!stateMediaDetails.name) {
                       if (isParameter && execute) {
-                        execute(stateMediaDetails);
+                        execute(omit({...stateMediaDetails, mediaId: stateMediaDetails?.mediaId || stateMediaDetails?.id || ''}, 'id'));
                         closeOverlay();
                       } else {
                         if (mediaDetails?.id) {
