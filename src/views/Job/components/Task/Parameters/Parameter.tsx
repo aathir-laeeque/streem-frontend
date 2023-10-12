@@ -1,11 +1,5 @@
 import PadLockIcon from '#assets/svg/padlock.svg';
-import {
-  MandatoryParameter,
-  NonMandatoryParameter,
-  ParameterState,
-  ParameterVerificationTypeEnum,
-  StoreParameter,
-} from '#types';
+import { MandatoryParameter, NonMandatoryParameter, ParameterState, StoreParameter } from '#types';
 import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
 import { Verification } from '#views/Jobs/ListView/types';
@@ -41,21 +35,13 @@ const Parameter: FC<ParameterProps> = ({
   isTaskCompleted,
   errors,
 }) => {
-  const parameterHasVerificationEnabled =
-    parameter.verificationType !== ParameterVerificationTypeEnum.NONE;
-
   const { state, audit, parameterVerifications } = parameter.response!;
+
   const { verificationType } = parameter;
   const verificationsByType = keyBy<Verification>(parameterVerifications || [], 'verificationType');
 
   return (
-    <div
-      key={parameter.id}
-      className="parameter"
-      style={
-        isCorrectingError ? (parameterHasVerificationEnabled ? { pointerEvents: 'none' } : {}) : {}
-      }
-    >
+    <div key={parameter.id} className="parameter">
       {parameter.type in MandatoryParameter && !parameter.mandatory && (
         <div className="optional-badge">Optional</div>
       )}
