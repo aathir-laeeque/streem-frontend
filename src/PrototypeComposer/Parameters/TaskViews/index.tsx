@@ -1,4 +1,3 @@
-import { ParameterMode } from '#JobComposer/checklist.types';
 import {
   deleteParameter,
   deleteParameterSuccess,
@@ -45,6 +44,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { Error as ErrorIcon } from '@material-ui/icons';
 
 import { withStyles } from '@material-ui/core/styles';
+import { ParameterMode } from '#types';
 
 const CustomTooltip = withStyles({
   tooltip: {

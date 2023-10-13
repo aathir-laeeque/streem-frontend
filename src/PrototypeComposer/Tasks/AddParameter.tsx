@@ -1,4 +1,3 @@
-import { ParameterMode, ParameterType } from '#JobComposer/checklist.types';
 import {
   addNewParameter,
   deleteParameterSuccess,
@@ -52,6 +51,7 @@ import { Tooltip } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
+import { ParameterMode, ParameterType } from '#types';
 
 const CustomTooltip = withStyles({
   tooltip: {

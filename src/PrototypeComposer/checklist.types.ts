@@ -1,6 +1,7 @@
-import { AutomationAction, ParameterMode } from '#JobComposer/checklist.types';
 import { Property } from '#store/properties/types';
 import { User } from '#store/users/types';
+import { ParameterMode } from '#types';
+import { InputTypes } from '#utils/globalTypes';
 import { Constraint } from '#views/Ontology/types';
 import { Collaborator, CollaboratorState } from './reviewer.types';
 
@@ -292,3 +293,59 @@ export enum ParameterVerificationTypeEnum {
   BOTH = 'BOTH',
   NONE = 'NONE',
 }
+
+export enum AutomationActionActionType {
+  INCREASE_PROPERTY = 'INCREASE_PROPERTY',
+  DECREASE_PROPERTY = 'DECREASE_PROPERTY',
+  CREATE_OBJECT = 'CREATE_OBJECT',
+  SET_PROPERTY = 'SET_PROPERTY',
+  ARCHIVE_OBJECT = 'ARCHIVE_OBJECT',
+  SET_RELATION = 'SET_RELATION',
+}
+
+export type AutomationActionDetails = {
+  value?: number;
+  sortOrder: number;
+  parameterId?: string;
+  propertyId: string;
+  propertyInputType: InputTypes;
+  propertyExternalId: string;
+  propertyDisplayName: string;
+  relationId: number;
+  urlPath: string;
+  collection: string;
+  objectTypeId: string;
+  objectTypeExternalId: string;
+  objectTypeDisplayName: string;
+  referencedParameterId: string;
+  choices?: any[];
+  entityId?: string;
+  entityType?: string;
+  dateUnit?: string;
+  captureProperty?: string;
+};
+
+export enum AutomationActionTriggerType {
+  TASK_STARTED = 'TASK_STARTED',
+  TASK_COMPLETED = 'TASK_COMPLETED',
+}
+
+export enum AutomationActionType {
+  PROCESS_BASED = 'PROCESS_BASED',
+  OBJECT_BASED = 'OBJECT_BASED',
+}
+
+export enum AutomationTargetEntityType {
+  OBJECT = 'OBJECT',
+  RESOURCE_PARAMETER = 'RESOURCE_PARAMETER',
+}
+
+export type AutomationAction = {
+  id: string;
+  type: AutomationActionType;
+  actionType: AutomationActionActionType;
+  actionDetails: AutomationActionDetails;
+  triggerType: AutomationActionTriggerType;
+  displayName: string;
+  orderTree: number;
+};

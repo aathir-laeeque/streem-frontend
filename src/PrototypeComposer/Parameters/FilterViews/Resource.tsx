@@ -1,4 +1,3 @@
-import { MandatoryParameter } from '#JobComposer/checklist.types';
 import { fetchParameters } from '#PrototypeComposer/Activity/actions';
 import { customOnChange } from '#utils/formEvents';
 import { Button, FormGroup } from '#components';
@@ -23,6 +22,7 @@ import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
 import { getDateUnits, labelByConstraint } from '../ValidationViews/Resource';
 import { Parameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
+import { MandatoryParameter } from '#types';
 
 export const FilterWrapper = styled.div`
   .filters-constraint {

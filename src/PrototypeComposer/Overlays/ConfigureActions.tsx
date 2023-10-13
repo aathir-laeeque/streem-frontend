@@ -1,17 +1,15 @@
 import {
-  AutomationActionActionType,
-  AutomationActionDetails,
-  AutomationActionTriggerType,
-  AutomationActionType,
-  AutomationTargetEntityType,
-} from '#JobComposer/checklist.types';
-import {
   addTaskAction,
   archiveTaskAction,
   updateTaskAction,
 } from '#PrototypeComposer/Tasks/actions';
 import { Task } from '#PrototypeComposer/Tasks/types';
 import {
+  AutomationActionActionType,
+  AutomationActionDetails,
+  AutomationActionTriggerType,
+  AutomationActionType,
+  AutomationTargetEntityType,
   MandatoryParameter,
   Parameter,
   TargetEntityType,

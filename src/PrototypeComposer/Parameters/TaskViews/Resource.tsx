@@ -1,6 +1,6 @@
 import { FormGroup } from '#components';
-import { ParameterMode } from '#JobComposer/checklist.types';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
+import { ParameterMode } from '#types';
 import { baseUrl } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';

@@ -1,4 +1,3 @@
-import { ObjectIdsDataFromChoices } from '#JobComposer/TaskList/utils';
 import QRIcon from '#assets/svg/QR';
 import { Select } from '#components';
 import { showNotification } from '#components/Notification/actions';
@@ -20,6 +19,7 @@ import styled from 'styled-components';
 import { customSelectStyles } from './MultiSelect/commonStyles';
 import { Wrapper } from './MultiSelect/styles';
 import { ParameterProps } from './Parameter';
+import { ObjectIdsDataFromChoices } from '#utils/parameterUtils';
 
 const ResourceParameterWrapper = styled.div`
   display: flex;

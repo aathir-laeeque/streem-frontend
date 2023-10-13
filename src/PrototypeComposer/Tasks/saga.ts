@@ -19,7 +19,7 @@ import {
 } from '#utils/apiUrls';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, select, takeEvery, takeLatest, takeLeading } from 'redux-saga/effects';
-import { updateMediaParameterSuccess } from '../../JobComposer/ActivityList/actions';
+// import { updateMediaParameterSuccess } from '../../JobComposer/ActivityList/actions';
 import {
   addTaskAction,
   addNewTask,
