@@ -1,4 +1,4 @@
-import { TargetEntityType } from '#PrototypeComposer/checklist.types';
+import { Parameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { Button, LoadingContainer, StyledTabs, useDrawer } from '#components';
 import { apiJobInfo, apiSingleProcessScheduler } from '#utils/apiUrls';
 import { InputTypes } from '#utils/globalTypes';
@@ -236,7 +236,7 @@ const JobInfoDrawer: FC<{
                           label: 'Job ID',
                           value: jobInfo.code,
                         },
-                        ...(jobInfo.parameterValues || []).reduce((acc: any, parameter: any) => {
+                        ...(jobInfo.parameterValues || []).sort((a: Parameter, b: Parameter) => a.orderTree > b.orderTree ? 1 : -1).reduce((acc: any, parameter: any) => {
                           if (parameter.targetEntityType === TargetEntityType.PROCESS) {
                             acc.push({
                               label: parameter.label,
