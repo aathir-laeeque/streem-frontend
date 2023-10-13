@@ -4,7 +4,7 @@ import { parameterListReducer, initialState as parameterListState } from './Acti
 import { ComposerAction, ComposerActionType, ComposerState } from './composer.reducer.types';
 import { Entity } from './composer.types';
 import { initialState as stageListState, stageListReducer } from './StageList/reducer';
-import { initialState as auditLogsState, jobAuditLogsReducer } from './JobAuditLogs/reducer';
+
 import { initialState as taskListState, taskListReducer } from './TaskList/reducer';
 import { StageListAction } from './StageList/reducer.types';
 import { updateHiddenIds } from './utils';
@@ -25,8 +25,6 @@ const initialState: ComposerState = {
   tasks: taskListState,
 
   assignees: [],
-
-  auditLogs: auditLogsState,
 };
 
 /**
@@ -103,7 +101,6 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
         parameters: parameterListReducer(state.parameters, action),
         stages: stageListReducer(state.stages, action),
         tasks: taskListReducer(state.tasks, action),
-        auditLogs: jobAuditLogsReducer(state.auditLogs, action),
       };
   }
 };

@@ -21,7 +21,6 @@ import { navigate } from '@reach/router';
 import { all, call, fork, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 import { setParameterError } from './ActivityList/actions';
 import { ParameterListSaga } from './ActivityList/saga';
-import { JobAuditLogsSaga } from './JobAuditLogs/saga';
 import { StageListSaga } from './StageList/saga';
 import { setTaskError } from './TaskList/actions';
 import { TaskListSaga } from './TaskList/saga';
@@ -257,6 +256,5 @@ export function* ComposerSaga() {
     fork(StageListSaga),
     fork(TaskListSaga),
     fork(ParameterListSaga),
-    fork(JobAuditLogsSaga),
   ]);
 }
