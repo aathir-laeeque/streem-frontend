@@ -2,7 +2,7 @@ import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
 import logo from '#assets/images/logo.png';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
-import { apiPrintJobDetails } from '#utils/apiUrls';
+import { apiPrintJobActivity } from '#utils/apiUrls';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER } from '#utils/constants';
 import { InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
@@ -33,7 +33,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
     setKeepPersistedData();
     const fetchJobPdfData = async () => {
       try {
-        const response: { data: PdfJobDataType } = await request('GET', apiPrintJobDetails(jobId));
+        const response: { data: PdfJobDataType } = await request('GET', apiPrintJobActivity(jobId));
         fetchLogs();
         setJobDetails(response.data);
       } catch (err) {
