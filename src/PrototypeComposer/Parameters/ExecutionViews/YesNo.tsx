@@ -1,7 +1,8 @@
 import { Button, FormGroup } from '#components';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { InputTypes } from '#utils/globalTypes';
-import React, { FC, useState } from 'react';
+import { debounce } from 'lodash';
+import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const YesNoTaskViewWrapper = styled.div<{ type: string }>`
@@ -39,12 +40,13 @@ type InitialState = {
   id: string;
   name: string;
   type: string;
+  reason?: string;
 };
 
 const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
-  const initialState: InitialState = { id: '', name: '', type: '' };
+  const initialState: InitialState = { id: '', name: '', type: '', reason: '' };
   const [selection, setSelection] = useState(initialState);
-  const { setValue } = form;
+  const { setValue, setError, clearErrors } = form;
 
   const selectedData = (selectedOptions: any, optionsList: any) => {
     return optionsList.map((currOption) => {
@@ -57,6 +59,70 @@ const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
     });
   };
 
+  const setFormValues = (selectedOption: InitialState) => {
+    setValue(
+      parameter.id,
+      {
+        ...parameter,
+        data: selectedData(selectedOption, parameter.data),
+        response: {
+          value: null,
+          reason: selectedOption?.reason || '',
+          state: 'EXECUTED',
+          choices: {
+            [parameter.data[0].id]:
+              selectedOption.id === parameter.data[0].id ? 'SELECTED' : 'NOT_SELECTED',
+            [parameter.data[1].id]:
+              selectedOption.id === parameter.data[1].id ? 'SELECTED' : 'NOT_SELECTED',
+          },
+          medias: [],
+          parameterValueApprovalDto: null,
+        },
+      },
+      {
+        shouldDirty: true,
+        shouldValidate: true,
+      },
+    );
+  };
+
+  const updateValue = () => {
+    let isValid = true;
+    if (selection?.type === parameter.data[1].type) {
+      if (!selection?.reason && parameter.mandatory) {
+        isValid = false;
+      } else {
+        isValid = true;
+      }
+    }
+
+    if (selection.id) {
+      if (selection?.type === parameter.data[1].type) {
+        if (parameter.mandatory) {
+          if (selection?.reason) {
+            setFormValues(selection);
+          }
+        } else {
+          setFormValues(selection);
+        }
+      } else if (selection?.type === parameter.data[0].type) {
+        setFormValues(selection);
+      }
+    }
+
+    if (!isValid) {
+      setError(parameter.id, {
+        message: 'Yes No Parameter Value Invalid',
+      });
+    } else {
+      clearErrors(parameter.id);
+    }
+  };
+
+  useEffect(() => {
+    updateValue();
+  }, [selection]);
+
   return (
     <YesNoTaskViewWrapper type={selection?.type} data-id={parameter.id} data-type={parameter.type}>
       <div className="parameter-header">
@@ -65,28 +131,6 @@ const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
           color="green"
           onClick={() => {
             setSelection(parameter.data[0]);
-            setValue(
-              parameter.id,
-              {
-                ...parameter,
-                data: selectedData(parameter.data[0], parameter.data),
-                response: {
-                  value: null,
-                  reason: '',
-                  state: 'EXECUTED',
-                  choices: {
-                    [parameter.data[0].id]: 'SELECTED',
-                    [parameter.data[1].id]: 'NOT_SELECTED',
-                  },
-                  medias: [],
-                  parameterValueApprovalDto: null,
-                },
-              },
-              {
-                shouldDirty: true,
-                shouldValidate: true,
-              },
-            );
           }}
         >
           {parameter.data[0].name}
@@ -101,7 +145,7 @@ const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
           {parameter.data[1].name}
         </Button>
       </div>
-      {selection?.name === parameter.data[1].name && (
+      {selection?.type === parameter.data[1].type && (
         <div className="parameter-textarea">
           <div className="input-label">State your Reason</div>
           <FormGroup
@@ -112,30 +156,9 @@ const YesNoTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) 
                 props: {
                   placeholder: 'Write Here',
                   rows: '4',
-                  onChange: (value: any) => {
-                    setValue(
-                      parameter.id,
-                      {
-                        ...parameter,
-                        data: selectedData(parameter.data[1], parameter.data),
-                        response: {
-                          value: null,
-                          reason: value.value,
-                          state: 'EXECUTED',
-                          choices: {
-                            [parameter.data[1].id]: 'SELECTED',
-                            [parameter.data[0].id]: 'NOT_SELECTED',
-                          },
-                          medias: [],
-                          parameterValueApprovalDto: null,
-                        },
-                      },
-                      {
-                        shouldDirty: true,
-                        shouldValidate: true,
-                      },
-                    );
-                  },
+                  onChange: debounce(({ value }) => {
+                    setSelection((prev) => ({ ...prev, reason: value }));
+                  }, 500),
                 },
               },
             ]}
