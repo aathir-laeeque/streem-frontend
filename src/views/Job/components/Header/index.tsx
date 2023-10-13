@@ -1,4 +1,3 @@
-import { LabelValueRow } from '#JobComposer/Header/styles';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
@@ -9,7 +8,7 @@ import { FiberManualRecord, KeyboardArrowDown, KeyboardArrowUp, Menu } from '@ma
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import JobHeaderButtons from './Buttons';
-import JobHeaderWrapper from './styles';
+import JobHeaderWrapper, { LabelValueRow } from './styles';
 
 const JobHeader: FC = () => {
   const dispatch = useDispatch();

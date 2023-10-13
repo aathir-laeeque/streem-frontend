@@ -8,9 +8,9 @@ import { Frequency, RRule } from 'rrule';
 import recurrenceIcon from '#assets/svg/Recurrence.svg';
 import { checkJobExecutionDelay, formatDateTime } from '#utils/timeUtils';
 import { ArrowForward, ChevronLeft } from '@material-ui/icons';
-import { LabelValueRow } from '#JobComposer/Header/styles';
 import { navigate } from '@reach/router';
 import { Job } from '../ListView/types';
+import { LabelValueRow } from '#views/Job/components/Header/styles';
 
 const CustomTooltip = withStyles({
   tooltip: {

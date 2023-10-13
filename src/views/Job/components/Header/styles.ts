@@ -1,5 +1,40 @@
 import styled from 'styled-components';
 
+export const LabelValueRow = styled.div.attrs(
+  ({ className = 'label-value-row', id = 'label-value-row' }) => ({
+    className,
+    id,
+  }),
+)`
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  @media (max-width: 900px) {
+    gap: 10px;
+    flex-direction: column;
+  }
+  .info-item {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-weight: 400;
+    line-height: 16px;
+    margin-block: 8px;
+    padding-inline: 8px;
+    .info-item-label {
+      font-size: 12px;
+      letter-spacing: 0.32px;
+      color: #525252;
+    }
+    .info-item-value {
+      font-size: 14px;
+      letter-spacing: 0.16px;
+      color: #161616;
+    }
+  }
+`;
+
 const JobHeaderWrapper = styled.div<{
   isInfoExpanded: boolean;
 }>`

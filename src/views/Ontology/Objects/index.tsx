@@ -1,4 +1,3 @@
-import { LabelValueRow } from '#JobComposer/Header/styles';
 import {
   Avatar,
   Button,
@@ -33,6 +32,7 @@ import TabContent from './TabContent';
 import AddEditObjectDrawer from './components/AddEditObjectDrawer';
 import ProcessTabContent from './components/ProcessTabContent';
 import RelationTabContent from './components/RelationTabContent';
+import { LabelValueRow } from '#views/Job/components/Header/styles';
 
 const ObjectViewWrapper = styled.div`
   display: flex;
