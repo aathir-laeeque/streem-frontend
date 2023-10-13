@@ -11,7 +11,6 @@ import {
   JOB_STAGE_POLLING_TIMEOUT,
   JobWithExceptionInCompleteTaskErrors,
 } from '#JobComposer/composer.types';
-import { RefetchJobErrorType } from '#JobComposer/modals/RefetchJobComposerData';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
@@ -270,22 +269,6 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
     );
 
     if (errors) {
-      const shouldRefetch = errors.find((error) => error.code in REFETCH_JOB_ERROR_CODES);
-
-      if (shouldRefetch) {
-        yield put(
-          openOverlayAction({
-            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
-            props: {
-              modalTitle: shouldRefetch.message,
-              jobId,
-              errorType: RefetchJobErrorType.TASK,
-            },
-          }),
-        );
-        return false;
-      }
-
       if (
         action !== TaskAction.COMPLETE_ERROR_CORRECTION &&
         isCompleteAction &&
@@ -403,22 +386,6 @@ function* startJobSaga({ payload }: ReturnType<typeof jobActions.startJob>) {
     const { errors }: ResponseObj<Job> = yield call(request, 'PATCH', apiStartJob(id));
 
     if (errors) {
-      const shouldRefetch = errors.find((error) => error.code in REFETCH_JOB_ERROR_CODES);
-
-      if (shouldRefetch) {
-        yield put(
-          openOverlayAction({
-            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
-            props: {
-              modalTitle: shouldRefetch.message,
-              jobId: id,
-              errorType: RefetchJobErrorType.JOB,
-            },
-          }),
-        );
-        return false;
-      }
-
       throw getErrorMsg(errors);
     }
 
@@ -453,35 +420,20 @@ function* completeJobSaga({ payload }: ReturnType<typeof jobActions.completeJob>
     }
 
     if (errors) {
-      const shouldRefetch = errors.find((error) => error.code in REFETCH_JOB_ERROR_CODES);
-
-      if (shouldRefetch) {
-        yield put(
-          openOverlayAction({
-            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
-            props: {
-              modalTitle: shouldRefetch.message,
-              jobId,
-              errorType: RefetchJobErrorType.JOB,
-            },
-          }),
-        );
+      if (!withException) {
+        // const { taskErrors, parametersErrors } = groupTaskErrors(errors);
+        // yield put(jobActions.updateTaskErrors()
       } else {
-        if (!withException) {
-          // const { taskErrors, parametersErrors } = groupTaskErrors(errors);
-          // yield put(jobActions.updateTaskErrors()
-        } else {
-          const showInCompleteTasksError = errors.some(
-            (err) => err.code in JobWithExceptionInCompleteTaskErrors,
+        const showInCompleteTasksError = errors.some(
+          (err) => err.code in JobWithExceptionInCompleteTaskErrors,
+        );
+        if (showInCompleteTasksError) {
+          yield put(closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION));
+          yield put(
+            openOverlayAction({
+              type: OverlayNames.JOB_COMPLETE_ALL_TASKS_ERROR,
+            }),
           );
-          if (showInCompleteTasksError) {
-            yield put(closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION));
-            yield put(
-              openOverlayAction({
-                type: OverlayNames.JOB_COMPLETE_ALL_TASKS_ERROR,
-              }),
-            );
-          }
         }
       }
     }
@@ -525,22 +477,6 @@ function* executeParameterSaga({ payload }: ReturnType<typeof jobActions.execute
     );
 
     if (errors) {
-      const shouldRefetch = errors.find((error) => error.code in REFETCH_JOB_ERROR_CODES);
-
-      if (shouldRefetch) {
-        yield put(
-          openOverlayAction({
-            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
-            props: {
-              modalTitle: shouldRefetch.message,
-              jobId,
-              errorType: RefetchJobErrorType.PARAMETER,
-            },
-          }),
-        );
-        return false;
-      }
-
       throw getErrorMsg(errors);
     }
 

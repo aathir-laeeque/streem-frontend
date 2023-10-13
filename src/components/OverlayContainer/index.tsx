@@ -8,8 +8,6 @@ import JobVerification from '#views/Job/overlays/JobVerification';
 import ParameterApprovalModal from '#views/Job/overlays/ParameterApproval';
 import PeerVerificationModal from '#views/Job/overlays/PeerVerificationModal';
 import RecallVerificationModal from '#views/Job/overlays/RecallVerificationModal';
-import RefetchJobComposerData from '#JobComposer/modals/RefetchJobComposerData';
-import SignCompletedTasksModal from '#JobComposer/modals/SignCompletedTasks';
 import Signature from '#views/Job/overlays/SignatureActivity';
 import SignningNotCompleteModal from '#views/Job/overlays/SignningNotComplete';
 import StartTaskError from '#views/Job/overlays/StartTaskError';
@@ -142,9 +140,6 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
     case OverlayNames.TASK_MEDIA:
       return <TaskMediaModal {...params} />;
 
-    case OverlayNames.SIGN_COMPLETED_TASKS:
-      return <SignCompletedTasksModal {...params} />;
-
     case OverlayNames.SIGNNING_NOT_COMPLETE:
       return <SignningNotCompleteModal {...params} />;
 
@@ -192,9 +187,6 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.WEBCAM_OVERLAY:
       return <WebCamOverlay {...params} />;
-
-    case OverlayNames.REFETCH_JOB_COMPOSER_DATA:
-      return <RefetchJobComposerData {...params} />;
 
     case OverlayNames.AUTOMATION_ACTION:
       return <AutomationActionModal {...params} />;

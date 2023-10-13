@@ -2,7 +2,6 @@ import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { RefetchJobErrorType } from '#JobComposer/modals/RefetchJobComposerData';
 import { RootState } from '#store';
 import { setRecentServerTimestamp } from '#store/extras/action';
 import { apiEnableTaskErrorCorrection, apiPerformActionOnTask } from '#utils/apiUrls';
@@ -202,16 +201,6 @@ function* performActionOnTaskSaga({
           (err) => err.code in CompletedTaskErrors,
         );
         if (hasCompletedTaskError) {
-          yield put(
-            openOverlayAction({
-              type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
-              props: {
-                modalTitle: hasCompletedTaskError.message,
-                jobId,
-                errorType: RefetchJobErrorType.TASK,
-              },
-            }),
-          );
         } else {
           const { stagesErrors, tasksErrors, parametersErrors, signOffErrors } =
             groupJobErrors(errors);

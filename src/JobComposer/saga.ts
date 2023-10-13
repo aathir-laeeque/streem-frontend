@@ -38,7 +38,6 @@ import {
 } from './actions';
 import { ComposerAction } from './composer.reducer.types';
 import { Entity, JobErrors, JobWithExceptionInCompleteTaskErrors } from './composer.types';
-import { RefetchJobErrorType } from './modals/RefetchJobComposerData';
 import { groupJobErrors } from './utils';
 
 const getUserId = (state: RootState) => state.auth.userId;
@@ -84,16 +83,6 @@ function* startJobSaga({ payload }: ReturnType<typeof startJob>) {
       const alreadyStartedError = (errors as Error[]).find((err) => err.code === 'E707');
       if (alreadyStartedError) {
         yield put(closeOverlayAction(OverlayNames.START_JOB_MODAL));
-        yield put(
-          openOverlayAction({
-            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
-            props: {
-              modalTitle: alreadyStartedError.message,
-              jobId,
-              errorType: RefetchJobErrorType.JOB,
-            },
-          }),
-        );
       }
     }
   } catch (error) {
@@ -134,17 +123,6 @@ function* completeJobSaga({ payload }: ReturnType<typeof completeJob>) {
         if (withException) {
           yield put(closeOverlayAction(OverlayNames.COMPLETE_JOB_WITH_EXCEPTION));
         }
-
-        yield put(
-          openOverlayAction({
-            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
-            props: {
-              modalTitle: jobErrors.message,
-              jobId,
-              errorType: RefetchJobErrorType.JOB,
-            },
-          }),
-        );
       } else {
         if (!withException) {
           const { tasksErrors, parametersErrors, signOffErrors } = groupJobErrors(errors);

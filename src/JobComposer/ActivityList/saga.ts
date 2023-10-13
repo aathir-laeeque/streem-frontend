@@ -1,7 +1,6 @@
 import { setActiveStage } from '#JobComposer/StageList/actions';
 import { setActiveTask } from '#JobComposer/TaskList/actions';
 import { ParameterExecutionState } from '#JobComposer/checklist.types';
-import { RefetchJobErrorType } from '#JobComposer/modals/RefetchJobComposerData';
 import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
@@ -77,16 +76,6 @@ function* executeParameterSaga({ payload }: ReturnType<typeof executeParameter>)
       const taskAlreadyCompletedError = (errors as Error[]).find((err) => err.code === 'E403');
 
       if (taskAlreadyCompletedError) {
-        yield put(
-          openOverlayAction({
-            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
-            props: {
-              modalTitle: taskAlreadyCompletedError.message,
-              jobId,
-              errorType: RefetchJobErrorType.PARAMETER,
-            },
-          }),
-        );
       } else {
         yield* handleCatch('Parameter', 'executeParameterSaga', getErrorMsg(errors), true);
       }
