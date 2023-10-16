@@ -170,7 +170,7 @@ export const ExceptionReason = [
 const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: { jobId, name, code, isInboxView },
+  props: { jobId, name, code },
 }) => {
   const dispatch = useDispatch();
 
@@ -199,7 +199,6 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
           withException: true,
           values,
           details: { name, code },
-          isInboxView,
         }),
       );
     }

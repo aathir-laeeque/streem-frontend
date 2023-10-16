@@ -120,23 +120,7 @@ const JobHeaderButtons: FC = () => {
         >
           View Verifications
         </MenuItem>
-        {isInProgress && isUserAssigned && checkPermission(['inbox', 'completeWithException']) && (
-          <MenuItem
-            onClick={() => {
-              dispatch(
-                openOverlayAction({
-                  type: OverlayNames.COMPLETE_JOB_WITH_EXCEPTION,
-                  props: { jobId, code, name, isInboxView },
-                }),
-              );
-              handleClose();
-            }}
-          >
-            <span style={{ color: '#da1e28' }}>Complete Job with Exception</span>
-          </MenuItem>
-        )}
-        {!isInProgress &&
-          !isCompleted &&
+        {!isCompleted &&
           !isCompletedWithException &&
           checkPermission(['inbox', 'completeWithException']) && (
             <MenuItem

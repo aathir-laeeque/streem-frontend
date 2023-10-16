@@ -404,7 +404,7 @@ function* startJobSaga({ payload }: ReturnType<typeof jobActions.startJob>) {
 
 function* completeJobSaga({ payload }: ReturnType<typeof jobActions.completeJob>) {
   try {
-    const { jobId, withException = false, values, details, isInboxView } = payload;
+    const { jobId, withException = false, values, details } = payload;
 
     const { errors }: ResponseObj<Job> = yield call(
       request,
@@ -438,11 +438,7 @@ function* completeJobSaga({ payload }: ReturnType<typeof jobActions.completeJob>
       }
     }
 
-    if (isInboxView) {
-      navigate('/inbox');
-    } else {
-      navigate('/jobs');
-    }
+    navigate(-1);
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,

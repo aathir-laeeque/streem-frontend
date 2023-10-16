@@ -37,7 +37,6 @@ const actions = {
       code: string;
       name?: string;
     };
-    isInboxView: boolean;
   },
   startJobSuccess: undefined,
   updateTaskExecution: { id: '', data: {} as TaskExecution },

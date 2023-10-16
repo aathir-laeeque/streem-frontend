@@ -330,8 +330,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
       primaryActionLabel = 'Complete Job';
       primaryActionProps = {
         onClick: () => {
-          if (jobId && code)
-            dispatch(jobActions.completeJob({ jobId, details: { code }, isInboxView }));
+          if (jobId && code) dispatch(jobActions.completeJob({ jobId, details: { code } }));
         },
       };
     }
