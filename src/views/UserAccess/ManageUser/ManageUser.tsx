@@ -349,14 +349,16 @@ const ManageUser: FC<EditUserProps> = ({
 
         {showButtons()}
 
-        <Button
-          className="primary-button"
-          type="submit"
-          variant={pageType === PAGE_TYPE.EDIT ? 'secondary' : 'primary'}
-          disabled={!isValid || !isDirty}
-        >
-          Save Changes
-        </Button>
+        {isEditable && (
+          <Button
+            className="primary-button"
+            type="submit"
+            variant={pageType === PAGE_TYPE.EDIT ? 'secondary' : 'primary'}
+            disabled={!isValid || !isDirty}
+          >
+            Save Changes
+          </Button>
+        )}
         <Button className="cancel-button" variant="textOnly" onClick={() => navigate(-1)}>
           Go Back
         </Button>
