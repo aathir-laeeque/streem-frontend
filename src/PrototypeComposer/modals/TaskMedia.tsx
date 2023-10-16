@@ -1,18 +1,18 @@
+import FullScreenIcon from '#assets/svg/FullScreen';
 import { BaseModal, Button, Textarea, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import FullScreenIcon from '#assets/svg/FullScreen';
+import { Checklist, EnabledStates, Task } from '#PrototypeComposer/checklist.types';
+import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
+import { useTypedSelector } from '#store';
+import { getFileExtension } from '#utils/stringUtils';
+import { DeleteOutlined } from '@material-ui/icons';
 import { debounce, omit } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled, { css } from 'styled-components';
-import { DeleteOutlined } from '@material-ui/icons';
-import { Checklist, EnabledStates, Task } from '#PrototypeComposer/checklist.types';
+import { Parameter } from '../Activity/types';
 import { addTaskMedia, removeTaskMedia, updateTaskMedia } from '../Tasks/actions';
 import { MediaDetails } from '../Tasks/types';
-import { useTypedSelector } from '#store';
-import { CollaboratorType } from '#PrototypeComposer/reviewer.types';
-import { Parameter } from '../Activity/types';
-import { executeParameter } from '#JobComposer/ActivityList/actions';
 
 const Wrapper = styled.div<{
   fullScreeen: boolean;
@@ -208,6 +208,10 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
     disableDescInput = true;
   }
 
+  const isImage = ['png', 'jpg', 'jpeg'].includes(
+    getFileExtension(stateMediaDetails?.filename!) || '',
+  );
+
   return (
     <Wrapper
       fullScreeen={fullScreeen}
@@ -221,7 +225,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
         showFooter={false}
       >
         <div className="wrapper">
-          {stateMediaDetails.type.includes('image') && (
+          {isImage && (
             <div className="left-side">
               <img src={stateMediaDetails?.link} />
               <div className="full-screen-action" onClick={() => setFullScreeen(!fullScreeen)}>
@@ -236,7 +240,7 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                 <TextInput
                   defaultValue={stateMediaDetails.name}
                   error={errors.name}
-                  label={stateMediaDetails.type.includes('image') ? 'Photo name' : 'File name'}
+                  label={isImage ? 'Photo name' : 'File name'}
                   name="name"
                   onBlur={(event) => {
                     setStateMediaDetails({

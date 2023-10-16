@@ -56,3 +56,7 @@ export const encrypt = (data: string) => btoa(data);
 
 export const isMatchAny = (url: string, patterns: string[]) =>
   !patterns.every((pattern) => url.match(pattern) === null);
+
+export const getFileExtension = (filename: string) => {
+  return filename.split('.').pop();
+};
