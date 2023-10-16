@@ -4,7 +4,6 @@ import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-// import { ParameterMode } from '#JobComposer/checklist.types';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { MandatoryParameter, ParameterType } from '#PrototypeComposer/checklist.types';
 import { apiGetObjects, baseUrl } from '#utils/apiUrls';

@@ -1,4 +1,3 @@
-// import MediaCard from '#JobComposer/TaskList/TaskView/MediaCard';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';

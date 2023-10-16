@@ -1,9 +1,4 @@
-import { Checklist, ParameterExecutionState } from '#JobComposer/checklist.types';
-import {
-  // Checklist,
-  Parameter,
-  ParameterVerificationTypeEnum,
-} from '#PrototypeComposer/checklist.types';
+import { Parameter, ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.types';
 import { User } from '#store/users/types';
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
@@ -18,7 +13,7 @@ import {
   updateJob,
   updateJobSuccess,
 } from './actions';
-import { ParameterVerificationStatus } from '#types';
+import { Checklist, ParameterExecutionState, ParameterVerificationStatus } from '#types';
 
 export type Assignee = Pick<User, 'employeeId' | 'firstName' | 'id' | 'lastName'> & {
   jobId: string;

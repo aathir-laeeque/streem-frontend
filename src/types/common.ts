@@ -38,13 +38,6 @@ export enum Selections {
   NOT_SELECTED = 'NOT_SELECTED',
 }
 
-export enum ParameterVerificationStatus {
-  PENDING = 'PENDING',
-  RECALLED = 'RECALLED',
-  REJECTED = 'REJECTED',
-  ACCEPTED = 'ACCEPTED',
-}
-
 export enum SupervisorResponse {
   APPROVE = 'APPROVE',
   REJECT = 'REJECT',

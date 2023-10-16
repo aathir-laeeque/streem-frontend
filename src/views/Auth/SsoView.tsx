@@ -5,10 +5,6 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { login, reLogin } from './actions';
 import { releasePrototype, signOffPrototype } from '#PrototypeComposer/reviewer.actions';
-// import {
-//   acceptPeerVerification,
-//   completeSelfVerification,
-// } from '#JobComposer/ActivityList/actions';
 import { SsoStates } from '#utils/globalTypes';
 import { useTypedSelector } from '#store';
 import { jobActions } from '#views/Job/jobStore';
@@ -44,13 +40,6 @@ export const SsoView = () => {
         dispatch(releasePrototype({ checklistId, code: extractedTOkenCode, state: state }));
         break;
       case SsoStates.SELF_VERIFICATION:
-        // dispatch(
-        //   completeSelfVerification({
-        //     parameterId: parsedState.parameterId,
-        //     code: extractedTOkenCode,
-        //     state: state,
-        //   }),
-        // );
         dispatch(
           jobActions.completeSelfVerification({
             parameterId: parsedState.parameterId,

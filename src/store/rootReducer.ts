@@ -22,7 +22,6 @@ import { jobReducer } from '#views/Job/jobStore';
 export const rootReducer = combineReducers({
   auth: AuthReducer,
   checklistListView: ChecklistListViewReducer,
-  // composer: ComposerReducer,
   facilities: FacilitiesReducer,
   fileUpload: FileUploadReducer,
   inboxListView: InboxListViewReducer,

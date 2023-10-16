@@ -1,8 +1,6 @@
 import { Avatar, BaseModal, Checkbox, TextInput } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { CommonOverlayProps, OverlayNames } from '#components/OverlayContainer/types';
-// import { fetchData } from '#JobComposer/actions';
-// import { Entity } from '#JobComposer/composer.types';
 import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
 import {
   apiBulkAssignUsers,
