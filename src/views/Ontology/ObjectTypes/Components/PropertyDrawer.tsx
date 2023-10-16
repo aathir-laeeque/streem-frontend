@@ -1,4 +1,3 @@
-import { MandatoryParameter, ParameterType } from '#JobComposer/checklist.types';
 import { Button, FormGroup, ToggleSwitch, useDrawer } from '#components';
 import { useTypedSelector } from '#store';
 import { InputTypes } from '#utils/globalTypes';
@@ -22,6 +21,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import ChecklistParameter from './Options';
 import { RenderParameterLabel } from './index';
+import { MandatoryParameter, ParameterType } from '#types';
 
 type Props = {
   showBasic: number;

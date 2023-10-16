@@ -1,16 +1,3 @@
-import { ParameterErrors, SupervisorResponse } from '#JobComposer/ActivityList/types';
-import { TaskAction, TaskErrors } from '#JobComposer/TaskList/types';
-import { getAutomationActionTexts } from '#JobComposer/TaskList/utils';
-import {
-  AutomationAction,
-  AutomationActionActionType,
-  MandatoryParameter,
-  TimerOperator,
-} from '#JobComposer/checklist.types';
-import {
-  JOB_STAGE_POLLING_TIMEOUT,
-  JobWithExceptionInCompleteTaskErrors,
-} from '#JobComposer/composer.types';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
@@ -21,9 +8,15 @@ import { Users } from '#store/users/types';
 import {
   JobAuditLogType,
   JobStore,
+  JobWithExceptionInCompleteTaskErrors,
+  MandatoryParameter,
   Parameter,
+  ParameterErrors,
   REFETCH_JOB_ERROR_CODES,
   StoreTask,
+  SupervisorResponse,
+  TaskAction,
+  TaskErrors,
   TaskExecution,
 } from '#types';
 import {
@@ -67,6 +60,13 @@ import {
 import { JobActionsEnum, initialState, jobActions } from './jobStore';
 import { parseJobData } from './utils';
 import moment from 'moment';
+import { getAutomationActionTexts } from '#utils/parameterUtils';
+import {
+  AutomationAction,
+  AutomationActionActionType,
+  TimerOperator,
+} from '#PrototypeComposer/checklist.types';
+import { JOB_STAGE_POLLING_TIMEOUT } from '#utils/constants';
 
 const getUserId = (state: RootState) => state.auth.userId;
 const getJobStore = (state: RootState) => state.job;
@@ -629,10 +629,10 @@ function* completeSelfVerificationSaga({
   payload,
 }: ReturnType<typeof jobActions.completeSelfVerification>) {
   try {
-    const { parameterId, password } = payload;
+    const { parameterId, password, code, state } = payload;
 
     const { errors: validateErrors } = yield call(request, 'PATCH', apiValidatePassword(), {
-      data: { password: encrypt(password) },
+      data: { password: password ? encrypt(password) : null, code, state },
     });
 
     if (validateErrors) {
@@ -739,10 +739,10 @@ function* acceptPeerVerificationSaga({
   payload,
 }: ReturnType<typeof jobActions.acceptPeerVerification>) {
   try {
-    const { parameterId, password } = payload;
+    const { parameterId, password, code, state } = payload;
 
     const { errors: validateErrors } = yield call(request, 'PATCH', apiValidatePassword(), {
-      data: { password: encrypt(password) },
+      data: { password: password ? encrypt(password) : null, code, state },
     });
 
     if (validateErrors) {

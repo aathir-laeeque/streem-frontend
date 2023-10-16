@@ -104,3 +104,19 @@ export interface StoreTask extends Omit<Task, 'parameters'> {
   errors: string[];
   parametersErrors: Map<string, string[]>;
 }
+
+export enum TaskAction {
+  START = 'start',
+  COMPLETE = 'complete',
+  SKIP = 'skip',
+  COMPLETE_WITH_EXCEPTION = 'complete-with-exception',
+  ENABLE_ERROR_CORRECTION = 'correction/start',
+  COMPLETE_ERROR_CORRECTION = 'correction/complete',
+  CANCEL_ERROR_CORRECTION = 'correction/cancel',
+}
+
+// From Job Composer
+export enum TaskErrors {
+  E201 = 'TASK_INCOMPLETE',
+  E202 = 'TASK_NOT_FOUND',
+}

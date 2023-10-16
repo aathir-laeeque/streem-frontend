@@ -1,4 +1,3 @@
-import { ComposerSaga } from '#JobComposer/saga';
 import { ComposerSaga as prototypeComposerSaga } from '#PrototypeComposer/saga';
 import { showNotificationSaga } from '#components/Notification/saga';
 import { AuthSaga } from '#views/Auth/saga';
@@ -34,7 +33,6 @@ export function* rootSaga() {
     fork(OntologySaga),
     fork(FileUploadSaga),
     fork(SessionActivitySaga),
-    fork(ComposerSaga),
     fork(prototypeComposerSaga),
     fork(NewPrototypeSaga),
     fork(FileUploadSagaNew),

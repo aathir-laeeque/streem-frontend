@@ -1,5 +1,4 @@
 import { Checkbox } from '#components';
-import { CompletedTaskStates, Stage } from '#JobComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import { ArrowDropDown, ArrowRight } from '@material-ui/icons';
 import React, { Dispatch, FC, useState } from 'react';
@@ -7,6 +6,7 @@ import styled from 'styled-components';
 import AssigneeList from './AssigneeList';
 import { Task } from '#PrototypeComposer/Tasks/types';
 import { User } from '#services/users';
+import { COMPLETED_TASK_STATES, Stage } from '#types';
 
 export type AllowedUser = Pick<User, 'id' | 'lastName' | 'employeeId' | 'firstName'> & {
   taskIds: string[];
@@ -218,7 +218,7 @@ const Section: FC<Props> = ({
                 taskExecutionIds: stage.tasks.reduce<string[]>((acc, taskId) => {
                   const task = tasks.get(taskId);
                   if (
-                    task.taskExecution.state in CompletedTaskStates &&
+                    task.taskExecution.state in COMPLETED_TASK_STATES &&
                     !trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id)
                   )
                     return acc;
@@ -228,7 +228,7 @@ const Section: FC<Props> = ({
                 states: stage.tasks.reduce<string[]>((acc, taskId) => {
                   const task = tasks.get(taskId);
                   if (
-                    task.taskExecution.state in CompletedTaskStates &&
+                    task.taskExecution.state in COMPLETED_TASK_STATES &&
                     !trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id)
                   )
                     return acc;
@@ -251,7 +251,7 @@ const Section: FC<Props> = ({
         <div className="section-body">
           {stage.tasks.map((taskId) => {
             const task = tasks.get(taskId);
-            const isTaskCompleted = task.taskExecution.state in CompletedTaskStates;
+            const isTaskCompleted = task.taskExecution.state in COMPLETED_TASK_STATES;
             const isTaskAssignedToTrainedUser = trainedUsersList.some((user) => {
               return task.taskExecution.assignees?.some((assignee) => assignee.id === user.id);
             });

@@ -152,3 +152,8 @@ export type JobAuditLogType = {
   triggeredAt: number;
   triggeredBy: number;
 };
+
+export enum JobWithExceptionInCompleteTaskErrors {
+  E224 = 'TASK_IN_PROGRESS',
+  E223 = 'TASK_ENABLED_FOR_CORRECTION',
+}

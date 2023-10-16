@@ -1,6 +1,5 @@
 import { BaseModal, Button, Select } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { customSelectStyles } from '#JobComposer/ActivityList/MultiSelect/commonStyles';
 import { useTypedSelector } from '#store';
 import { v4 as uuidv4 } from 'uuid';
 import { fetchFacilities } from '#store/facilities/actions';
@@ -13,6 +12,7 @@ import { apiProcessSharing } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
+import { customSelectStyles } from '#views/Job/components/Task/Parameters/MultiSelect/commonStyles';
 
 const Wrapper = styled.div`
   .modal {

@@ -1,5 +1,4 @@
 import { OverlayContainerReducer } from '#components/OverlayContainer/reducer';
-import { ComposerReducer } from '#JobComposer/reducer';
 import { ComposerReducer as prototypeComposer } from '#PrototypeComposer/reducer';
 import { AuthReducer } from '#views/Auth/reducer';
 import { ChecklistListViewReducer } from '#views/Checklists/ListView/reducer';
@@ -23,7 +22,7 @@ import { jobReducer } from '#views/Job/jobStore';
 export const rootReducer = combineReducers({
   auth: AuthReducer,
   checklistListView: ChecklistListViewReducer,
-  composer: ComposerReducer,
+  // composer: ComposerReducer,
   facilities: FacilitiesReducer,
   fileUpload: FileUploadReducer,
   inboxListView: InboxListViewReducer,

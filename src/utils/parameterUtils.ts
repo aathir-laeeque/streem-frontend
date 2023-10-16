@@ -1,4 +1,16 @@
-import { MandatoryParameter } from '#JobComposer/checklist.types';
+import { ParametersById } from '#PrototypeComposer/Activity/reducer.types';
+import {
+  AutomationAction,
+  AutomationActionActionTypeVisual,
+  AutomationActionTriggerTypeVisual,
+  Checklist,
+} from '#PrototypeComposer/checklist.types';
+import {
+  MandatoryParameter,
+  ParameterVerificationStatus,
+  ParameterVerificationTypeEnum,
+} from '#types';
+import { Verification } from '#views/Jobs/ListView/types';
 import { formatDateTime } from './timeUtils';
 
 const responseDetailsForChoiceBasedParameters = ({ data, response }: any) => {
@@ -68,4 +80,72 @@ export const ObjectIdsDataFromChoices = (choices: any) => {
   } else {
     return null;
   }
+};
+
+export const getAutomationActionTexts = (
+  automation: AutomationAction,
+  forNotify?: 'success' | 'error' | null,
+  objectTypeDisplayName?: string,
+) => {
+  if (forNotify === 'success') {
+    return `Triggered "${AutomationActionActionTypeVisual[automation.actionType]} ${
+      automation.actionDetails.propertyDisplayName || ''
+    } of the selected ${automation.actionDetails.objectTypeDisplayName || objectTypeDisplayName}"`;
+  } else if (forNotify === 'error') {
+    return `Not able to trigger "${AutomationActionActionTypeVisual[automation.actionType]} ${
+      automation.actionDetails.propertyDisplayName || ''
+    } of the selected ${automation.actionDetails.objectTypeDisplayName || objectTypeDisplayName}"`;
+  }
+
+  return `${AutomationActionActionTypeVisual[automation.actionType]} ${
+    automation.actionDetails.propertyDisplayName || ''
+  } of the selected ${
+    automation.actionDetails.objectTypeDisplayName || objectTypeDisplayName
+  } when the ${AutomationActionTriggerTypeVisual[automation.triggerType]}.`;
+};
+
+export const getParameters = ({ checklist, userId }: { checklist: any; userId: string }) => {
+  const parametersById: ParametersById = {},
+    parametersOrderInTaskInStage: any = {};
+  const hiddenIds: Record<string, boolean> = {};
+  let showVerificationBanner = false;
+  checklist?.stages?.map((stage) => {
+    let hiddenTasksLength = 0;
+    parametersOrderInTaskInStage[stage.id] = {};
+
+    stage?.tasks?.map((task) => {
+      let hiddenParametersLength = 0;
+      parametersOrderInTaskInStage[stage.id][task.id] = [];
+
+      task?.parameters?.map((parameter) => {
+        parametersOrderInTaskInStage[stage.id][task.id].push(parameter.id);
+        parametersById[parameter.id] = { ...parameter, hasError: false };
+        if (parameter.response?.hidden || task.hidden) {
+          hiddenParametersLength++;
+          hiddenIds[parameter.id] = true;
+        } else if (
+          !showVerificationBanner &&
+          parameter.verificationType !== ParameterVerificationTypeEnum.NONE
+        ) {
+          const dependantVerification = (parameter.response?.parameterVerifications || []).find(
+            (verification: Verification) =>
+              verification?.requestedTo?.id === userId &&
+              verification?.verificationStatus === ParameterVerificationStatus.PENDING,
+          );
+          if (dependantVerification) {
+            showVerificationBanner = true;
+          }
+        }
+      });
+      if (task.hidden || task?.parameters?.length === hiddenParametersLength) {
+        hiddenTasksLength++;
+        hiddenIds[task.id] = true;
+      }
+    });
+    if (stage?.tasks?.length === hiddenTasksLength) {
+      hiddenIds[stage.id] = true;
+    }
+  });
+
+  return { parametersById, parametersOrderInTaskInStage, hiddenIds, showVerificationBanner };
 };

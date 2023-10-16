@@ -1,9 +1,8 @@
-import { TaskAction } from '#JobComposer/TaskList/types';
 import { StyledMenu } from '#components';
 import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { User } from '#store/users/types';
-import { StoreTask } from '#types';
+import { StoreTask, TaskAction } from '#types';
 import { formatDuration } from '#utils/timeUtils';
 import Timer from '#views/Job/components/Task/Timer';
 import { jobActions } from '#views/Job/jobStore';

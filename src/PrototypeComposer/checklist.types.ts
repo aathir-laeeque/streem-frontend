@@ -349,3 +349,17 @@ export type AutomationAction = {
   displayName: string;
   orderTree: number;
 };
+
+export enum AutomationActionActionTypeVisual {
+  INCREASE_PROPERTY = 'Increase',
+  DECREASE_PROPERTY = 'Decrease',
+  CREATE_OBJECT = 'Create Object',
+  SET_PROPERTY = 'Set Property',
+  ARCHIVE_OBJECT = 'Archive Object',
+  SET_RELATION = 'Set Relation',
+}
+
+export enum AutomationActionTriggerTypeVisual {
+  TASK_COMPLETED = 'task is completed',
+  TASK_STARTED = 'task is started',
+}

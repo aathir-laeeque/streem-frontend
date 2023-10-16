@@ -1,4 +1,3 @@
-import { TaskExecutionState } from '#JobComposer/checklist.types';
 import { ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.types';
 import { useTypedSelector } from '#store';
 import {
@@ -9,6 +8,7 @@ import {
   StoreParameter,
   StoreStage,
   StoreTask,
+  TASK_EXECUTION_STATES,
 } from '#types';
 import { Job, Verification } from '#views/Jobs/ListView/types';
 import { cloneDeep } from 'lodash';
@@ -62,7 +62,7 @@ export function parseJobData(
 
       if (
         task.hasStop &&
-        [TaskExecutionState.NOT_STARTED, TaskExecutionState.IN_PROGRESS].includes(
+        [TASK_EXECUTION_STATES.NOT_STARTED, TASK_EXECUTION_STATES.IN_PROGRESS].includes(
           task.taskExecution.state,
         )
       ) {

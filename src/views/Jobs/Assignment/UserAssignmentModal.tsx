@@ -1,8 +1,8 @@
 import { Avatar, BaseModal, Checkbox, TextInput } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { CommonOverlayProps, OverlayNames } from '#components/OverlayContainer/types';
-import { fetchData } from '#JobComposer/actions';
-import { Entity } from '#JobComposer/composer.types';
+// import { fetchData } from '#JobComposer/actions';
+// import { Entity } from '#JobComposer/composer.types';
 import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
 import {
   apiBulkAssignUsers,
@@ -19,6 +19,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Job } from '../ListView/types';
 import { Wrapper } from './styles';
+import { jobActions } from '#views/Job/jobStore';
 
 type Props = {
   jobId: Job['id'];
@@ -129,8 +130,10 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
       },
       params: { notify },
     });
-
-    dispatch(fetchData({ id: jobId as string, entity: Entity.JOB }));
+    if (jobId) {
+      dispatch(jobActions.getJob({ id: jobId }));
+      dispatch(jobActions.getAssignments({ id: jobId }));
+    }
     dispatch(
       openOverlayAction({
         type: OverlayNames.ASSIGNMENT_INFO,

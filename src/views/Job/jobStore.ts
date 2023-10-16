@@ -58,11 +58,21 @@ const actions = {
   approveRejectParameter: {} as { parameterId: string; type: SupervisorResponse },
   updateParameter: {} as { data: Parameter },
   initiateSelfVerification: {} as { parameterId: string },
-  completeSelfVerification: {} as { parameterId: string; password: string },
+  completeSelfVerification: {} as {
+    parameterId: string;
+    password?: string;
+    code?: string;
+    state?: string;
+  },
   updateParameterVerifications: {} as { parameterId: string; data: Verification },
   sendPeerVerification: {} as { parameterId: string; userId: string },
   recallPeerVerification: {} as { parameterId: string; type: 'self' | 'peer' },
-  acceptPeerVerification: {} as { parameterId: string; password: string },
+  acceptPeerVerification: {} as {
+    parameterId: string;
+    password?: string;
+    code?: string;
+    state?: string;
+  },
   rejectPeerVerification: {} as { parameterId: string; comment: string },
   reset: undefined,
   startPollActiveStageData: {} as { jobId: string; stageId: string; state: JobStates },

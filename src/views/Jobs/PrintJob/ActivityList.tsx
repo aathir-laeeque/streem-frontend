@@ -1,10 +1,4 @@
 import React, { FC } from 'react';
-import {
-  TaskExecutionState,
-  Parameter,
-  MandatoryParameter,
-  NonMandatoryParameter,
-} from '#JobComposer/checklist.types';
 import checkmark from '#assets/images/checkmark.png';
 import checkEmoji from '#assets/images/emojis/check.png';
 import binEmoji from '#assets/images/emojis/bin.png';
@@ -33,11 +27,17 @@ import moment from 'moment';
 import { parseMarkUp } from '#utils/stringUtils';
 import { EmojisUniCodes } from '#utils/constants';
 import { InstructionTags } from './types';
-import { ParametersById } from '#JobComposer/ActivityList/types';
 import ResourceParameter from './Resource';
 import MultiResourceParameter from './MultiResource';
 import { formatDateByInputType } from '#utils/timeUtils';
 import { InputTypes } from '#utils/globalTypes';
+import {
+  MandatoryParameter,
+  NonMandatoryParameter,
+  Parameter,
+  TASK_EXECUTION_STATES,
+} from '#types';
+import { ParametersById } from '#PrototypeComposer/Activity/reducer.types';
 export const styles = StyleSheet.create({
   text12: {
     fontSize: 12,
@@ -733,7 +733,7 @@ const MemoParameterList: FC<{
                 cjfParametersById,
               )}
               <View style={styles.parameterSeprator} />
-              {parameter.response.state !== TaskExecutionState.NOT_STARTED &&
+              {parameter.response.state !== TASK_EXECUTION_STATES.NOT_STARTED &&
                 parameter.response.audit.modifiedBy && (
                   <View style={styles.taskFooter} wrap={false}>
                     <Text style={styles.text12}>

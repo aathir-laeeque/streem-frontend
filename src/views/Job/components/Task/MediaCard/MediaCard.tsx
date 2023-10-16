@@ -5,7 +5,12 @@ import { ImageGallery } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useDispatch } from 'react-redux';
-import { MediaCardProps } from '../types';
+import { Media } from '#PrototypeComposer/checklist.types';
+
+export type MediaCardProps = {
+  medias: Media[];
+  isTaskActive: boolean;
+};
 
 const Wrapper = styled.div.attrs({
   className: 'task-media-card',

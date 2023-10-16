@@ -177,3 +177,5 @@ export const emojis = [
     name: 'Protected',
   },
 ];
+
+export const JOB_STAGE_POLLING_TIMEOUT = 3000;

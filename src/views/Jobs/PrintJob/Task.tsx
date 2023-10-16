@@ -1,17 +1,13 @@
 import clockIcon from '#assets/images/clock.png';
 import handIcon from '#assets/images/hand.png';
-import { ParametersById } from '#JobComposer/ActivityList/types';
-import {
-  NonMandatoryParameter,
-  Task,
-  TaskExecutionState,
-  TimerOperator,
-} from '#JobComposer/checklist.types';
 import { formatDuration } from '#utils/timeUtils';
 import { Image, StyleSheet, Text, View } from '@react-pdf/renderer';
 import moment from 'moment';
 import React, { FC } from 'react';
 import ParameterList, { styles as parameterStyles } from './ActivityList';
+import { ParametersById } from '#PrototypeComposer/Activity/reducer.types';
+import { NonMandatoryParameter, TASK_EXECUTION_STATES, Task } from '#types';
+import { TimerOperator } from '#PrototypeComposer/checklist.types';
 
 const styles = StyleSheet.create({
   flexView: {
@@ -168,7 +164,7 @@ const MemoTask: FC<{
                 },
               ]}
             >
-              {taskExecutionState !== TaskExecutionState.NOT_STARTED && startedAt
+              {taskExecutionState !== TASK_EXECUTION_STATES.NOT_STARTED && startedAt
                 ? moment.unix(startedAt).format(dateFormat)
                 : '___/__/____'}
             </Text>
@@ -185,7 +181,7 @@ const MemoTask: FC<{
                 },
               ]}
             >
-              {taskExecutionState !== TaskExecutionState.NOT_STARTED && startedAt
+              {taskExecutionState !== TASK_EXECUTION_STATES.NOT_STARTED && startedAt
                 ? moment.unix(startedAt).format(timeFormat)
                 : '__:__ am / pm'}
             </Text>
@@ -258,7 +254,7 @@ const MemoTask: FC<{
         cjfParametersById={cjfParametersById}
       />
 
-      {taskExecutionState === TaskExecutionState.COMPLETED && (
+      {taskExecutionState === TASK_EXECUTION_STATES.COMPLETED && (
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
             This Task was digitally completed via Leucine{' '}
@@ -309,12 +305,12 @@ const MemoTask: FC<{
           </View>
         </View>
       )}
-      {(taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION ||
-        taskExecutionState === TaskExecutionState.SKIPPED) && (
+      {(taskExecutionState === TASK_EXECUTION_STATES.COMPLETED_WITH_EXCEPTION ||
+        taskExecutionState === TASK_EXECUTION_STATES.SKIPPED) && (
         <View style={styles.taskFooter} wrap={false}>
           <Text style={styles.text12}>
             This Task was
-            {taskExecutionState === TaskExecutionState.COMPLETED_WITH_EXCEPTION
+            {taskExecutionState === TASK_EXECUTION_STATES.COMPLETED_WITH_EXCEPTION
               ? ' Completed with Exception '
               : ' skipped '}
             via Leucine {'\n'}
@@ -326,8 +322,8 @@ const MemoTask: FC<{
           </View>
         </View>
       )}
-      {(taskExecutionState === TaskExecutionState.NOT_STARTED ||
-        taskExecutionState === TaskExecutionState.IN_PROGRESS) && (
+      {(taskExecutionState === TASK_EXECUTION_STATES.NOT_STARTED ||
+        taskExecutionState === TASK_EXECUTION_STATES.IN_PROGRESS) && (
         <View style={[styles.taskFooter, { flexDirection: 'row' }]} wrap={false}>
           <View style={styles.flexView}>
             <Text style={styles.taskFooterLabel}>First Name</Text>

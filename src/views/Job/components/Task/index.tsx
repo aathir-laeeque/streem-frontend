@@ -1,4 +1,4 @@
-import MediaCard from '#JobComposer/TaskList/TaskView/MediaCard';
+// import MediaCard from '#JobComposer/TaskList/TaskView/MediaCard';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
@@ -17,6 +17,7 @@ import Footer from './Footer';
 import Header from './Header';
 import ParameterList from './Parameters';
 import { useLocation } from '@reach/router';
+import MediaCard from './MediaCard/MediaCard';
 
 const TaskWrapper = styled.div.attrs({
   id: 'task-wrapper',

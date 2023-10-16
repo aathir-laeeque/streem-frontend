@@ -1,7 +1,5 @@
 import logo from '#assets/images/logo.png';
-import { ParametersById, ParametersOrderInTaskInStage } from '#JobComposer/ActivityList/types';
-import { Checklist, Task } from '#JobComposer/checklist.types';
-import { getParameters } from '#JobComposer/utils';
+import { getParameters } from '#utils/parameterUtils';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { apiPrintJobDetails } from '#utils/apiUrls';
@@ -16,12 +14,14 @@ import { LoadingDiv, styles } from './styles';
 import TaskView from './Task';
 import { PrintJobProps } from './types';
 import { keyBy } from 'lodash';
+import { ParametersById } from '#PrototypeComposer/Activity/reducer.types';
+import { Checklist, Task } from '#types';
 
 const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   const [data, setData] = useState<PdfJobDataType | undefined>();
   const [parametersData, setParametersData] = useState<{
     parametersById: ParametersById;
-    parametersOrderInTaskInStage: ParametersOrderInTaskInStage;
+    parametersOrderInTaskInStage: any;
     hiddenIds: Record<string, boolean>;
     cjfParametersById: ParametersById;
   }>({

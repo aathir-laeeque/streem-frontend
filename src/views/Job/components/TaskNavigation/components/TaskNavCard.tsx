@@ -1,12 +1,12 @@
-import { CompletedTaskStates, TaskExecutionState } from '#JobComposer/checklist.types';
 import { useTypedSelector } from '#store';
+import { COMPLETED_TASK_STATES, TaskExecutionStates } from '#types';
 import { jobActions } from '#views/Job/jobStore';
 import { FiberManualRecord } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-const taskStateColor = (taskStatus: TaskExecutionState) => {
+const taskStateColor = (taskStatus: TaskExecutionStates) => {
   switch (taskStatus) {
     case 'NOT_STARTED':
       return '#F4F4F4';
@@ -55,7 +55,7 @@ const TaskDetailCardWrapper = styled.div.attrs({
 const TaskNavCard: FC<{ task: any; taskNo: number }> = ({ task, taskNo }) => {
   const dispatch = useDispatch();
   const activeTaskId = useTypedSelector((state) => state.job.taskNavState.current);
-  const nameColor = task?.taskExecution?.state in CompletedTaskStates ? '#C2C2C2' : '#161616';
+  const nameColor = task?.taskExecution?.state in COMPLETED_TASK_STATES ? '#C2C2C2' : '#161616';
 
   return (
     <TaskDetailCardWrapper

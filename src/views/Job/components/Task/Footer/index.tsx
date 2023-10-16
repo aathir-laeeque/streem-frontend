@@ -1,10 +1,9 @@
-import { TaskAction } from '#JobComposer/TaskList/types';
-import { AutomationActionActionType, TimerOperator } from '#JobComposer/checklist.types';
+import { AutomationActionActionType, TimerOperator } from '#PrototypeComposer/checklist.types';
 import { Button } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
-import { StoreTask, TaskExecutionStates } from '#types';
+import { StoreTask, TaskAction, TaskExecutionStates } from '#types';
 import { jobActions } from '#views/Job/jobStore';
 import { useJobStateToFlags } from '#views/Job/utils';
 import { CompletedJobStates, JobStateEnum } from '#views/Jobs/ListView/types';

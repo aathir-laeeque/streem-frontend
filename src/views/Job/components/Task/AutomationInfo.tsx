@@ -1,6 +1,7 @@
-import { getAutomationActionTexts } from '#JobComposer/TaskList/utils';
+// import { getAutomationActionTexts } from '#JobComposer/TaskList/utils';
 import { useTypedSelector } from '#store';
 import { StoreTask } from '#types';
+import { getAutomationActionTexts } from '#utils/parameterUtils';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
