@@ -40,6 +40,12 @@ const JobLogsTabWrapper = styled.div`
     a {
       margin-right: 8px;
     }
+
+    div {
+      color: #1d84ff;
+      margin-right: 8px;
+      cursor: pointer;
+    }
   }
 
   .filters {
@@ -341,25 +347,14 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                 columns={columns}
                 rows={list.reduce((acc, jobLog, index) => {
                   jobLog.logs.forEach((log: any) => {
-                    if (log.triggerType === TriggerTypeEnum.JOB_ID) {
-                      acc[index] = {
-                        ...acc[index],
-                        [log.entityId + log.triggerType]: logsParser(
-                          { ...log, jobId: jobLog.id },
-                          jobLog.id,
-                          resourceParameterChoicesMap.current,
-                        ),
-                      };
-                    } else {
-                      acc[index] = {
-                        ...acc[index],
-                        [log.entityId + log.triggerType]: logsParser(
-                          log,
-                          jobLog.id,
-                          resourceParameterChoicesMap.current,
-                        ),
-                      };
-                    }
+                    acc[index] = {
+                      ...acc[index],
+                      [log.entityId + log.triggerType]: logsParser(
+                        { ...log, jobId: jobLog.id },
+                        jobLog.id,
+                        resourceParameterChoicesMap.current,
+                      ),
+                    };
                   });
                   return acc;
                 }, [])}

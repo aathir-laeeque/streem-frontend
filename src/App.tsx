@@ -23,6 +23,7 @@ import { Font } from '@react-pdf/renderer';
 import NunitoRegular from '#assets/fonts/nunito/nunito-v14-latin-300.ttf';
 import NunitoBold from '#assets/fonts/nunito/nunito-v14-latin-700.ttf';
 import { MultiTabChecker } from '#components/OverlayContainer/MultiTabChecker';
+import PrintFileUpload from '#views/Jobs/Components/Documents/PrintFileUpload';
 import { enableMapSet } from 'immer';
 
 enableMapSet();
@@ -134,6 +135,7 @@ const App: FC = () => {
                   <CustomRoute as={PrintSessionActivity} path="users-activity/print" />
                   <CustomRoute as={PrintJobAuditLogs} path="job-activity/:jobId/print" />
                   <CustomRoute as={PrintJobLogs} path="job-logs/:viewId/print" />
+                  <CustomRoute as={PrintFileUpload} path="jobs/:jobId/fileUpload/print" />
                   <CustomRoute
                     as={PrintObjectChangeLogs}
                     path="object-change-logs/:objectId/print"

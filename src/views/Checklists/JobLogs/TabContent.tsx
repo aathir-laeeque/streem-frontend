@@ -1,4 +1,4 @@
-import { DataTable, LoadingContainer, Pagination, TabContentProps } from '#components';
+import { CustomTag, DataTable, LoadingContainer, Pagination, TabContentProps } from '#components';
 import { DataTableColumn } from '#components/shared/DataTable';
 import { fetchComposerData } from '#PrototypeComposer/actions';
 import { LogType, TriggerTypeEnum } from '#PrototypeComposer/checklist.types';
@@ -14,6 +14,8 @@ import styled from 'styled-components';
 import { fetchProcessLogs } from '../ListView/actions';
 import { navigate } from '@reach/router';
 import { logsResourceChoicesMapper } from './DynamicContent';
+import { openLinkInNewTab } from '#utils';
+import { fileTypeCheck } from '#utils/parameterUtils';
 
 const JobLogsTabWrapper = styled.div`
   display: flex;
@@ -23,6 +25,11 @@ const JobLogsTabWrapper = styled.div`
     display: flex;
     a {
       margin-right: 8px;
+    }
+    div {
+      color: #1d84ff;
+      margin-right: 8px;
+      cursor: pointer;
     }
   }
 `;
@@ -140,11 +147,33 @@ export const getFormattedJobLogs = (jobLogColumns: any) => {
             ) {
               return (
                 <div className="file-links">
-                  {row[column.id + column.triggerType].medias.map((media: any) => (
-                    <a target="_blank" title={media.name} href={media.link}>
-                      {media.name}
-                    </a>
-                  ))}
+                  {row[column.id + column.triggerType].medias.map((media: any) => {
+                    const mediaType = media?.type?.split('/')[1];
+                    const isImage = fileTypeCheck(['png', 'jpg', 'jpeg'], mediaType);
+                    return (
+                      <CustomTag
+                        as={isImage ? 'a' : 'div'}
+                        target={isImage ? '_blank' : undefined}
+                        href={isImage ? media.link : undefined}
+                        onClick={
+                          isImage
+                            ? undefined
+                            : () => {
+                                const queryString = new URLSearchParams({
+                                  link: media.link,
+                                }).toString();
+                                openLinkInNewTab(
+                                  `/jobs/${
+                                    row[column.id + column.triggerType].jobId
+                                  }/fileUpload/print?${queryString}`,
+                                );
+                              }
+                        }
+                      >
+                        <span> {media.name}</span>
+                      </CustomTag>
+                    );
+                  })}
                 </div>
               );
             }
@@ -244,25 +273,14 @@ const Logs: FC<TabContentProps> = ({ values }) => {
               columns={columns}
               rows={list.reduce((acc, jobLog, index) => {
                 jobLog.logs.forEach((log: any) => {
-                  if (log.triggerType === TriggerTypeEnum.JOB_ID) {
-                    acc[index] = {
-                      ...acc[index],
-                      [log.entityId + log.triggerType]: logsParser(
-                        { ...log, jobId: jobLog.id },
-                        jobLog.id,
-                        resourceParameterChoicesMap.current,
-                      ),
-                    };
-                  } else {
-                    acc[index] = {
-                      ...acc[index],
-                      [log.entityId + log.triggerType]: logsParser(
-                        log,
-                        jobLog.id,
-                        resourceParameterChoicesMap.current,
-                      ),
-                    };
-                  }
+                  acc[index] = {
+                    ...acc[index],
+                    [log.entityId + log.triggerType]: logsParser(
+                      { ...log, jobId: jobLog.id },
+                      jobLog.id,
+                      resourceParameterChoicesMap.current,
+                    ),
+                  };
                 });
                 return acc;
               }, [])}

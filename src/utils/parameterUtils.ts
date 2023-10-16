@@ -149,3 +149,7 @@ export const getParameters = ({ checklist, userId }: { checklist: any; userId: s
 
   return { parametersById, parametersOrderInTaskInStage, hiddenIds, showVerificationBanner };
 };
+
+export const fileTypeCheck = (collectionOfTypes: string[] = [], type: string) => {
+  return collectionOfTypes.includes(type);
+};

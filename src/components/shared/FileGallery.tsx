@@ -9,6 +9,10 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { omit } from 'lodash';
 import { request } from '#utils/request';
 import { jobActions } from '#views/Job/jobStore';
+import { openLinkInNewTab } from '#utils';
+import { useTypedSelector } from '#store';
+import { fileTypeCheck } from '#utils/parameterUtils';
+import { CustomTag } from './CustomTag';
 
 const FileGalleryWrapper = styled.div.attrs({
   className: 'file-gallery-wrapper',
@@ -30,11 +34,11 @@ const FileGalleryWrapper = styled.div.attrs({
     justify-content: space-between;
     cursor: pointer;
     align-items: center;
+  }
 
-    > div {
-      display: flex;
-      gap: 8px;
-    }
+  .media-list-item-head{
+    display: flex;
+    gap: 8px;
   }
 
   .media-list-item-img {
@@ -106,6 +110,8 @@ export const FileGallery: FC<FileGalleryProps> = ({
     }
   };
 
+  const { jobFromBE: data } = useTypedSelector((state) => state.job);
+
   const dispatch = useDispatch();
   const handleDelete = (
     media: FilesType,
@@ -141,66 +147,61 @@ export const FileGallery: FC<FileGalleryProps> = ({
     setFormErrors(undefined);
   };
 
-  const onDownload = async (media) => {
-    try {
-      const res = await request('GET', media.link, {
-        responseType: 'blob',
-      });
-      if (res) {
-        const url = window.URL.createObjectURL(new Blob([res]));
-        const link = document.createElement('a');
-        const extension = media.filename.split('.').pop();
-        link.href = url;
-        link.setAttribute('download', media.name + '.' + extension);
-        document.body.appendChild(link);
-        link.click();
-      }
-    } catch (error) {
-      console.error('error from fetchJobLogsExcel function in JobLogsSaga :: ', error);
-    }
+  const onClickView = (media: any) => {
+    const queryString = new URLSearchParams({ link: media.link }).toString();
+    openLinkInNewTab(`/jobs/${data!.id as string}/fileUpload/print?${queryString}`);
   };
 
   return (
     <FileGalleryWrapper isTaskCompleted={isTaskCompleted} isCorrectingError={isCorrectingError}>
       <div className="media-list">
-        {medias.length > 0 &&
-          medias.map((media, index) => {
-            if (media?.archived === false) {
-              return (
-                <div className="media-list-item" key={index}>
-                  <div onClick={() => onDownload(media)}>
-                    {sectionIcon(media.type, media.link)}
-                    <div className="media-list-item-name">{`${media?.name}.${
-                      media?.filename?.split('.')?.[1]
-                    }`}</div>
-                  </div>
-                  <img
-                    src={closeIcon}
-                    className="media-list-item-remove-icon"
-                    onClick={() => {
-                      dispatch(
-                        openOverlayAction({
-                          type: OverlayNames.REASON_MODAL,
-                          props: {
-                            modalTitle: 'Remove File',
-                            modalDesc: `Are you sure you want to remove the updated file?`,
-                            onSubmitHandler: (
-                              reason: string,
-                              setFormErrors: (errors?: Error[]) => void,
-                            ) => {
-                              handleDelete(media, reason, setFormErrors);
-                            },
+        {medias.map((media, index) => {
+          const mediaType = media?.type?.split('/')[1];
+          const isImage = fileTypeCheck(['png', 'jpg', 'jpeg'], mediaType);
+          if (media?.archived === false) {
+            return (
+              <div className="media-list-item" key={index}>
+                <CustomTag
+                  as={isImage ? 'a' : 'div'}
+                  target={isImage ? '_blank' : undefined}
+                  href={isImage ? media.link : undefined}
+                  onClick={isImage ? undefined : () => onClickView(media)}
+                  children={
+                    <div className="media-list-item-head">
+                      {sectionIcon(media.type, media.link)}
+                      <div className="media-list-item-name">{`${media?.name}.${
+                        media?.filename?.split('.')?.[1]
+                      }`}</div>
+                    </div>
+                  }
+                />
+                <img
+                  src={closeIcon}
+                  className="media-list-item-remove-icon"
+                  onClick={() => {
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.REASON_MODAL,
+                        props: {
+                          modalTitle: 'Remove File',
+                          modalDesc: `Are you sure you want to remove the updated file?`,
+                          onSubmitHandler: (
+                            reason: string,
+                            setFormErrors: (errors?: Error[]) => void,
+                          ) => {
+                            handleDelete(media, reason, setFormErrors);
                           },
-                        }),
-                      );
-                    }}
-                  />
-                </div>
-              );
-            } else {
-              return null;
-            }
-          })}
+                        },
+                      }),
+                    );
+                  }}
+                />
+              </div>
+            );
+          } else {
+            return null;
+          }
+        })}
       </div>
     </FileGalleryWrapper>
   );
