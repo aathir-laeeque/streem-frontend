@@ -17,6 +17,7 @@ import { isArray } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { ParameterMode } from '#types';
 
 const ResourceParameterWrapper = styled.div`
   display: flex;
