@@ -40,7 +40,12 @@ const actions = {
   },
   startJobSuccess: undefined,
   updateTaskExecution: { id: '', data: {} as TaskExecution },
-  performTaskAction: {} as { id: string; reason?: string; action: TaskAction },
+  performTaskAction: {} as {
+    id: string;
+    reason?: string;
+    action: TaskAction;
+    createObjectAutomations?: any[];
+  },
   togglePauseResume: {} as {
     id: string;
     reason?: string;

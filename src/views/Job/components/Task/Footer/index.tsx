@@ -1,6 +1,10 @@
-import { AutomationActionActionType, TimerOperator } from '#PrototypeComposer/checklist.types';
+import {
+  AutomationActionActionType,
+  AutomationActionTriggerType,
+  TimerOperator,
+} from '#PrototypeComposer/checklist.types';
 import { Button } from '#components';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
 import { StoreTask, TaskAction, TaskExecutionStates } from '#types';
@@ -113,19 +117,24 @@ const Footer: FC<FooterProps> = ({ task }) => {
   };
 
   const preCompleteTask = (reason?: string) => {
-    const handleCompleteTask = () => {
+    const handleCompleteTask = (createObjectAutomation: any[] = []) => {
       dispatch(
         jobActions.performTaskAction({
           id: task.id,
           action: TaskAction.COMPLETE,
           reason: reason!,
+          ...(createObjectAutomation.length > 0 && {
+            createObjectAutomations: createObjectAutomation,
+          }),
         }),
       );
     };
 
     if (task.automations?.length) {
       const createObjectAutomation = (task.automations || []).find(
-        (automation) => automation.actionType === AutomationActionActionType.CREATE_OBJECT,
+        (automation) =>
+          automation.actionType === AutomationActionActionType.CREATE_OBJECT &&
+          automation.triggerType === AutomationActionTriggerType.TASK_COMPLETED,
       );
       if (createObjectAutomation) {
         dispatch(
@@ -133,7 +142,16 @@ const Footer: FC<FooterProps> = ({ task }) => {
             type: OverlayNames.AUTOMATION_ACTION,
             props: {
               objectTypeId: createObjectAutomation.actionDetails.objectTypeId,
-              onDone: handleCompleteTask,
+              onDone: (createObjectData: any) => {
+                const createObjectAutomations = [
+                  {
+                    automationId: createObjectAutomation.id,
+                    entityObjectValueRequest: createObjectData,
+                  },
+                ];
+                handleCompleteTask(createObjectAutomations);
+                dispatch(closeOverlayAction(OverlayNames.AUTOMATION_ACTION));
+              },
               setLoadingState: () => {},
             },
           }),
@@ -176,6 +194,52 @@ const Footer: FC<FooterProps> = ({ task }) => {
       } else {
         preCompleteTask();
       }
+    }
+  };
+
+  const onStartTask = () => {
+    const handleStartTask = (createObjectAutomation: any[] = []) => {
+      dispatch(
+        jobActions.performTaskAction({
+          id: task.id,
+          action: TaskAction.START,
+          ...(createObjectAutomation.length > 0 && {
+            createObjectAutomations: createObjectAutomation,
+          }),
+        }),
+      );
+    };
+    if (task.automations?.length) {
+      const createObjectAutomation = (task.automations || []).find(
+        (automation) =>
+          automation.actionType === AutomationActionActionType.CREATE_OBJECT &&
+          automation.triggerType === AutomationActionTriggerType.TASK_STARTED,
+      );
+      if (createObjectAutomation) {
+        dispatch(
+          openOverlayAction({
+            type: OverlayNames.AUTOMATION_ACTION,
+            props: {
+              objectTypeId: createObjectAutomation.actionDetails.objectTypeId,
+              onDone: (createObjectData: any) => {
+                const createObjectAutomations = [
+                  {
+                    automationId: createObjectAutomation.id,
+                    entityObjectValueRequest: createObjectData,
+                  },
+                ];
+                handleStartTask(createObjectAutomations);
+                dispatch(closeOverlayAction(OverlayNames.AUTOMATION_ACTION));
+              },
+              setLoadingState: () => {},
+            },
+          }),
+        );
+      } else {
+        handleStartTask();
+      }
+    } else {
+      handleStartTask();
     }
   };
 
@@ -270,12 +334,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
                   }),
                 );
               } else {
-                dispatch(
-                  jobActions.performTaskAction({
-                    id: task.id,
-                    action: TaskAction.START,
-                  }),
-                );
+                onStartTask();
               }
             },
           };
@@ -310,12 +369,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
                   }),
                 );
               } else {
-                dispatch(
-                  jobActions.performTaskAction({
-                    id: task.id,
-                    action: TaskAction.START,
-                  }),
-                );
+                onStartTask();
               }
             },
           };

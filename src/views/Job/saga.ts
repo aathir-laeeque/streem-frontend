@@ -64,6 +64,7 @@ import { getAutomationActionTexts } from '#utils/parameterUtils';
 import {
   AutomationAction,
   AutomationActionActionType,
+  AutomationActionTriggerType,
   TimerOperator,
 } from '#PrototypeComposer/checklist.types';
 import { JOB_STAGE_POLLING_TIMEOUT } from '#utils/constants';
@@ -215,7 +216,7 @@ function* getAssignmentsSaga({ payload }: ReturnType<typeof jobActions.getAssign
 
 function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.performTaskAction>) {
   try {
-    const { id, reason, action } = payload;
+    const { id, reason, action, createObjectAutomations } = payload;
     const {
       id: jobId,
       parameters,
@@ -258,23 +259,32 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
           ...(isCompleteAction && {
             parameters: getParametersDataByTaskId(task, parameters),
           }),
+          ...(createObjectAutomations?.length > 0 && {
+            createObjectAutomations,
+          }),
         },
       },
     );
 
     const { automations: allAutomations } = task;
+    const isAutomamationTriggered = [TaskAction.COMPLETE, TaskAction.START].includes(action);
+    let filteredAutomations: AutomationAction[] = [];
 
-    const automations = allAutomations?.filter(
-      (automation) => automation.actionType !== AutomationActionActionType.CREATE_OBJECT,
-    );
+    if (action === TaskAction.COMPLETE) {
+      filteredAutomations = allAutomations?.filter(
+        (automation: AutomationAction) =>
+          automation.triggerType === AutomationActionTriggerType.TASK_COMPLETED,
+      );
+    } else if (action === TaskAction.START) {
+      filteredAutomations = allAutomations?.filter(
+        (automation: AutomationAction) =>
+          automation.triggerType === AutomationActionTriggerType.TASK_STARTED,
+      );
+    }
 
     if (errors) {
-      if (
-        action !== TaskAction.COMPLETE_ERROR_CORRECTION &&
-        isCompleteAction &&
-        automations?.length
-      ) {
-        for (const automation of automations) {
+      if (isAutomamationTriggered && filteredAutomations?.length) {
+        for (const automation of filteredAutomations) {
           if (automationInputValidator(automation, parameters)) {
             const objectTypeDisplayName = parameters.get(
               automation.actionDetails.referencedParameterId,
@@ -300,12 +310,8 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
       throw getErrorMsg(errors);
     }
 
-    if (
-      action !== TaskAction.COMPLETE_ERROR_CORRECTION &&
-      isCompleteAction &&
-      automations?.length
-    ) {
-      for (const automation of automations) {
+    if (isAutomamationTriggered && filteredAutomations?.length) {
+      for (const automation of filteredAutomations) {
         if (automationInputValidator(automation, parameters)) {
           const objectTypeDisplayName = parameters.get(
             automation.actionDetails.referencedParameterId,

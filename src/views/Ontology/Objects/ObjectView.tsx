@@ -315,17 +315,11 @@ const ObjectView: FC<TabContentProps> = ({
         dispatch(editObject(parsedData, objectTypeId, id, onDone));
       } else {
         const parsedData = parseData(data);
-        const reason = label ? 'Changed as per Process:' : null;
-        const info = label
-          ? {
-              jobCode: jobData?.code,
-              jobId: jobData?.id,
-              processCode: jobData?.checklist?.code,
-              processId: jobData?.checklist?.id,
-              processName: jobData?.checklist?.name,
-            }
-          : null;
-        dispatch(createObject(parsedData, objectTypeId, onDone, reason, info));
+        if (label) {
+          onDone({ objectTypeId, ...parsedData });
+        } else {
+          dispatch(createObject(parsedData, objectTypeId, onDone));
+        }
       }
     }
   };

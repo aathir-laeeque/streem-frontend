@@ -44,13 +44,8 @@ export const fetchObjectError = (error: any) =>
 export const setActiveObject = (object?: Object) =>
   actionSpreader(OntologyAction.SET_ACTIVE_OBJECT, { object });
 
-export const createObject = (
-  object: any,
-  objectTypeId: string,
-  onDone: () => void,
-  reason: string | null,
-  info: Record<string, string> | null,
-) => actionSpreader(OntologyAction.CREATE_OBJECT, { object, objectTypeId, onDone, reason, info });
+export const createObject = (object: any, objectTypeId: string, onDone: () => void) =>
+  actionSpreader(OntologyAction.CREATE_OBJECT, { object, objectTypeId, onDone });
 
 export const editObject = (
   object: any,

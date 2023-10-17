@@ -26,7 +26,7 @@ const AutomationActionModal: FC<
   CommonOverlayProps<{
     objectTypeId: string;
     actionType: string;
-    onDone: () => void;
+    onDone: (createObjectData: any) => void;
     setLoadingState: (loading: boolean) => void;
   }>
 > = ({
