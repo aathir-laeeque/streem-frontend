@@ -45,7 +45,11 @@ const YesNoParameter: FC<
   const [state, setState] = useState<YesNoParameterState>({
     reason: parameter?.response?.reason ?? '',
     shouldAskForReason: !!parameter?.response?.reason,
-    showButtons: parameter?.response?.state !== 'EXECUTED',
+    showButtons: ![
+      ParameterState.BEING_EXECUTED,
+      ParameterState.EXECUTED,
+      ParameterState.APPROVAL_PENDING,
+    ].includes(parameterState),
     selectedId: undefined,
   });
 
@@ -100,7 +104,11 @@ const YesNoParameter: FC<
           ...prevState,
           reason: parameter?.response?.reason ?? '',
           shouldAskForReason: !!parameter?.response?.reason,
-          showButtons: parameter?.response?.state !== 'EXECUTED',
+          showButtons: ![
+            ParameterState.BEING_EXECUTED,
+            ParameterState.EXECUTED,
+            ParameterState.APPROVAL_PENDING,
+          ].includes(parameterState),
           selectedId: selectedIoFromStore,
         }));
       }
@@ -215,17 +223,16 @@ const YesNoParameter: FC<
         </div>
       )}
 
-      {!state.showButtons ||
-        (!state.shouldAskForReason && (
-          <ParameterVerificationView
-            parameterState={parameterState}
-            verificationsByType={verificationsByType}
-            verificationType={verificationType}
-            isLoggedInUserAssigned={!!isLoggedInUserAssigned}
-            parameterId={parameter.id}
-            modifiedBy={audit?.modifiedBy?.id}
-          />
-        ))}
+      {!state.showButtons && (
+        <ParameterVerificationView
+          parameterState={parameterState}
+          verificationsByType={verificationsByType}
+          verificationType={verificationType}
+          isLoggedInUserAssigned={!!isLoggedInUserAssigned}
+          parameterId={parameter.id}
+          modifiedBy={audit?.modifiedBy?.id}
+        />
+      )}
     </Wrapper>
   );
 };
