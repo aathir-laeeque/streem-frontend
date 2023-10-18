@@ -338,7 +338,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
               }
             },
           };
-        } else if (isUserAssignedToTask) {
+        } else if (isUserAssignedToTask && !(jobState in CompletedJobStates)) {
           primaryActionLabel = 'Complete Task';
           primaryActionProps = {
             onClick: onCompleteTask,
@@ -373,7 +373,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
               }
             },
           };
-        } else if (isUserAssignedToTask) {
+        } else if (isUserAssignedToTask && !(jobState in CompletedJobStates)) {
           primaryActionLabel = 'Complete Task';
           primaryActionProps = {
             onClick: onCompleteTask,
