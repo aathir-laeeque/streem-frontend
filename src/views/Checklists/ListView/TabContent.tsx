@@ -301,11 +301,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
       format: function renderComp(item: Checklist) {
         if (label === 'published') {
           return (
-            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
               {!item.archived && checkPermission(['checklists', 'createJob']) && (
                 <div
                   className="primary"
-                  style={{ height: 18 }}
                   onClick={async () => {
                     handleOnCreateJob(item);
                   }}

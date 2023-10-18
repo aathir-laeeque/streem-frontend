@@ -154,11 +154,10 @@ const ProcessTabContent = () => {
       minWidth: 100,
       format: function renderComp(item: Checklist) {
         return (
-          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
             {!item.archived && checkPermission(['checklists', 'createJob']) && (
               <div
                 className="primary"
-                style={{ height: 18 }}
                 onClick={async () => {
                   handleOnCreateJob(item);
                 }}
