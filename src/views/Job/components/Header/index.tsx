@@ -53,8 +53,8 @@ const JobHeader: FC = () => {
           </div>
           <JobHeaderButtons />
         </div>
-        <div className="expand-job-meta" onClick={() => setInfoExpanded((prev) => !prev)}>
-          {isInfoExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+        <div className="expand-job-meta in-active" onClick={() => setInfoExpanded((prev) => !prev)}>
+          <KeyboardArrowDown />
         </div>
       </div>
       {showVerificationBanner && (
@@ -80,37 +80,42 @@ const JobHeader: FC = () => {
       )}
       <div className="job-info">
         <div className="content">
-          <h4>Process Information</h4>
-          <LabelValueRow style={{ paddingBottom: 16, borderBottom: '1px solid #E0E0E0' }}>
-            {[
-              { label: 'Process Name', value: processName },
-              { label: 'Process ID', value: processCode },
-            ].map(({ label, value }) => (
-              <div className="info-item" key={label}>
-                <label className="info-item-label">{label}</label>
-                <span className="info-item-value">{value}</span>
-              </div>
-            ))}
-          </LabelValueRow>
-          <h4>Job Information</h4>
-          <LabelValueRow>
-            <div className="info-item" key={'Job ID'}>
-              <label className="info-item-label">Job ID</label>
-              <span className="info-item-value">{code}</span>
-            </div>
-            {cjfValues?.map((parameterId) => {
-              const parameter = parameters.get(parameterId);
-              const value = getParameterContent(parameter);
-              return (
-                <div className="info-item" key={parameter.label}>
-                  <label className="info-item-label">{parameter.label}</label>
-                  <span className="info-item-value" title={value}>
-                    {value}
-                  </span>
+          <div className="meta-content">
+            <h4>Process Information</h4>
+            <LabelValueRow style={{ paddingBottom: 16, borderBottom: '1px solid #E0E0E0' }}>
+              {[
+                { label: 'Process Name', value: processName },
+                { label: 'Process ID', value: processCode },
+              ].map(({ label, value }) => (
+                <div className="info-item" key={label}>
+                  <label className="info-item-label">{label}</label>
+                  <span className="info-item-value">{value}</span>
                 </div>
-              );
-            })}
-          </LabelValueRow>
+              ))}
+            </LabelValueRow>
+            <h4>Job Information</h4>
+            <LabelValueRow>
+              <div className="info-item" key={'Job ID'}>
+                <label className="info-item-label">Job ID</label>
+                <span className="info-item-value">{code}</span>
+              </div>
+              {cjfValues?.map((parameterId) => {
+                const parameter = parameters.get(parameterId);
+                const value = getParameterContent(parameter);
+                return (
+                  <div className="info-item" key={parameter.label}>
+                    <label className="info-item-label">{parameter.label}</label>
+                    <span className="info-item-value" title={value}>
+                      {value}
+                    </span>
+                  </div>
+                );
+              })}
+            </LabelValueRow>
+          </div>
+          <div className="expand-job-meta" onClick={() => setInfoExpanded((prev) => !prev)}>
+            <KeyboardArrowUp />
+          </div>
         </div>
       </div>
     </JobHeaderWrapper>

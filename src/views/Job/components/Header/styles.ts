@@ -109,10 +109,6 @@ const JobHeaderWrapper = styled.div<{
           color: #161616;
           display: flex;
           align-items: center;
-
-          @media (min-width: 900px) {
-            margin-right: 56px;
-          }
         }
 
         .open-overview {
@@ -180,48 +176,66 @@ const JobHeaderWrapper = styled.div<{
         cursor: pointer;
       }
     }
+  }
 
-    .expand-job-meta {
-      z-index: 3;
-      position: absolute;
-      width: 32px;
-      height: 32px;
+  .expand-job-meta {
+    z-index: 3;
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    left: calc(50% - 16px);
+    border-radius: 50%;
+    background: #f4f4f4;
+    transition: all 0.15s ease-in;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
+      0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    bottom: -16px;
+    opacity: ${({ isInfoExpanded }) => (isInfoExpanded ? 1 : 0)};
+    pointer-events: ${({ isInfoExpanded }) => (!isInfoExpanded ? 'none' : 'unset')};
+    cursor: ${({ isInfoExpanded }) => (!isInfoExpanded ? 'unset' : 'pointer')};
+
+    &.in-active {
+      pointer-events: ${({ isInfoExpanded }) => (isInfoExpanded ? 'none' : 'unset')};
+      cursor: ${({ isInfoExpanded }) => (isInfoExpanded ? 'unset' : 'pointer')};
+      opacity: ${({ isInfoExpanded }) => (isInfoExpanded ? 0 : 1)};
       left: calc(50% - 16px);
-      bottom: -16px;
-      border-radius: 50%;
-      background: #f4f4f4;
-      transition: all 0.15s ease-in;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
-        0 2px 4px -1px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
+      top: calc(50% - 16px);
+      bottom: unset;
     }
   }
 
   .job-info {
     display: grid;
     position: relative;
+
     .content {
       z-index: 2;
       background-color: #fff;
       box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
       height: ${({ isInfoExpanded }) => (isInfoExpanded ? '30dvh' : '0px')};
-      overflow: auto;
-      padding: ${({ isInfoExpanded }) => (isInfoExpanded ? '0px 24px 24px' : '0px')};
+      overflow: visible;
       position: absolute;
       transition: all 0.15s ease-in;
       top: 0;
       right: 0%;
       left: 0;
-      h4 {
-        font-weight: 700;
-        font-size: 14px;
-        line-height: 16px;
-        letter-spacing: 0.16px;
-        color: #161616;
-        margin-bottom: 8px;
+
+      .meta-content {
+        height: ${({ isInfoExpanded }) => (isInfoExpanded ? '30dvh' : '0px')};
+        padding: ${({ isInfoExpanded }) => (isInfoExpanded ? '0px 24px 24px' : '0px')};
+        overflow: auto;
+        h4 {
+          font-weight: 700;
+          font-size: 14px;
+          line-height: 16px;
+          letter-spacing: 0.16px;
+          color: #161616;
+          margin-bottom: 8px;
+        }
       }
     }
   }
