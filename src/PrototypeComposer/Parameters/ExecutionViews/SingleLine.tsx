@@ -117,7 +117,7 @@ const SingleLineTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, for
               ['data-id']: parameter.id,
               ['data-type']: parameter.type,
               disabled: parameter?.autoInitialized,
-              defaultValue: parameterInForm?.data?.input,
+              value: parameterInForm?.data?.input,
             },
           },
         ]}
