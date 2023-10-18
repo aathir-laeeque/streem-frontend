@@ -841,7 +841,7 @@ function* activeStagePollingSaga(
             }),
           },
         };
-        const parsedJobData = parseJobData(updatedJobData, userId!, jobStore);
+        const parsedJobData = parseJobData(updatedJobData, userId!, jobStore, stageId);
         yield put(
           jobActions.getJobSuccess({
             data: parsedJobData,

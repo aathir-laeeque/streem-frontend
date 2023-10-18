@@ -19,6 +19,8 @@ export function parseJobData(
   data: Job,
   userId: string,
   currentState = initialState,
+  // for polling stageId is available.
+  stageId?: string,
 ): Omit<JobStore, 'loading' | 'isInboxView' | 'assignments'> {
   const stages: JobStore['stages'] = new Map();
   const tasks: JobStore['tasks'] = new Map();
@@ -35,7 +37,7 @@ export function parseJobData(
 
   const process = cloneDeep(checklist);
 
-  const cjfValues = parameterValues
+  const cjfValues = [...parameterValues]
     .sort((a, b) => a.orderTree - b.orderTree)
     .map((p) => {
       parameters.set(p.id, p as StoreParameter);
@@ -72,13 +74,18 @@ export function parseJobData(
         }
       }
 
-      task?.parameters?.forEach((parameter) => {
+      task?.parameters?.forEach((__parameter) => {
+        let parameter = __parameter;
+        if (stageId && stageId !== stage.id) {
+          parameter = currentState.parameters.get(__parameter.id)!;
+        }
         const _parameter: StoreParameter = {
           ...parameter,
           isHidden: false,
           taskId: task.id,
           stageId: stage.id,
         };
+
         if (parameter.response?.hidden || task.hidden) {
           _parameter.isHidden = true;
         } else {
