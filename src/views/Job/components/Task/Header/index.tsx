@@ -74,6 +74,11 @@ const Header: FC<HeaderProps> = ({ task }) => {
     closeModal();
   };
 
+  const showMenuActions = () =>
+    isJobStarted &&
+    isUserAssignedToTask &&
+    (!isTaskCompleted || (isTaskCompleted && (!correctionEnabled || !correctionReason)));
+
   return (
     <Wrapper>
       <div className="task-header">
@@ -142,7 +147,7 @@ const Header: FC<HeaderProps> = ({ task }) => {
             </div>
           </div>
           <div className="right-section" style={{ paddingRight: 16 }}>
-            {isJobStarted && isUserAssignedToTask && (
+            {showMenuActions() && (
               <>
                 <div onClick={handleClick} className="more">
                   <MoreVert />
