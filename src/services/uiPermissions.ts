@@ -114,7 +114,7 @@ const uiPermissions: Record<string, any> = {
     create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
     createGlobal: [roles.ACCOUNT_OWNER, roles.GLOBAL_ADMIN],
     revision: [roles.ACCOUNT_OWNER, roles.CHECKLIST_PUBLISHER, roles.FACILITY_ADMIN],
-    archive: [roles.ACCOUNT_OWNER, roles.CHECKLIST_PUBLISHER, roles.FACILITY_ADMIN],
+    archive: [roles.ACCOUNT_OWNER, roles.CHECKLIST_PUBLISHER],
     release: [roles.ACCOUNT_OWNER, roles.CHECKLIST_PUBLISHER],
     recall: [roles.CHECKLIST_PUBLISHER, roles.FACILITY_ADMIN],
     recallGlobal: [roles.ACCOUNT_OWNER],
