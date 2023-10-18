@@ -796,12 +796,15 @@ function* rejectPeerVerificationSaga({
       throw getErrorMsg(errors);
     }
 
-    yield put(
-      jobActions.updateParameterVerifications({
-        parameterId,
-        data,
-      }),
-    );
+    if (data) {
+      yield put(
+        jobActions.updateParameterVerifications({
+          parameterId,
+          data,
+        }),
+      );
+      yield put(closeOverlayAction(OverlayNames.REASON_MODAL));
+    }
   } catch (error) {
     yield* handleCatch('Job', 'rejectPeerVerificationSaga', error, true);
   }
