@@ -18,6 +18,7 @@ import Tasks from './Tasks';
 import AddParameter from './Tasks/AddParameter';
 import { ComposerProps } from './types';
 import HiddenParameters from './HiddenParameters';
+import { closeAllOverlayAction } from '#components/OverlayContainer/actions';
 
 export type ProcessInitialState = {
   isPrimaryAuthor: boolean;
@@ -178,6 +179,12 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
       setState(newState);
     }
   }, [data?.collaborators, data?.state]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(closeAllOverlayAction());
+    };
+  }, []);
 
   const { author } = state;
 
