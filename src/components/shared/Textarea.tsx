@@ -164,6 +164,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
     placeholder = 'Write here',
     rows = 1,
     onBlur,
+    value,
   } = props;
 
   const internalRef = createRef<HTMLTextAreaElement>();
@@ -217,6 +218,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
           placeholder={placeholder}
           ref={ref ?? internalRef}
           rows={rows}
+          value={value}
         />
       </div>
 
