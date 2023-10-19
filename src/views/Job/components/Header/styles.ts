@@ -9,6 +9,7 @@ export const LabelValueRow = styled.div.attrs(
   flex: 1;
   display: flex;
   flex-wrap: wrap;
+  max-width: 100%;
   @media (max-width: 900px) {
     gap: 10px;
     flex-direction: column;
@@ -31,6 +32,8 @@ export const LabelValueRow = styled.div.attrs(
       font-size: 14px;
       letter-spacing: 0.16px;
       color: #161616;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 `;

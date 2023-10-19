@@ -1,16 +1,114 @@
-import { Parameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
+import { Parameter } from '#PrototypeComposer/checklist.types';
+import recurrenceIcon from '#assets/svg/Recurrence.svg';
 import { getParameterContent } from '#utils/parameterUtils';
+import { checkJobExecutionDelay, formatDateTime } from '#utils/timeUtils';
+import { LabelValueRow } from '#views/Job/components/Header/styles';
 import { Tooltip, withStyles } from '@material-ui/core';
+import { ArrowForward, ChevronLeft } from '@material-ui/icons';
+import { navigate } from '@reach/router';
 import { capitalize } from 'lodash';
 import moment from 'moment';
 import React, { FC } from 'react';
 import { Frequency, RRule } from 'rrule';
-import recurrenceIcon from '#assets/svg/Recurrence.svg';
-import { checkJobExecutionDelay, formatDateTime } from '#utils/timeUtils';
-import { ArrowForward, ChevronLeft } from '@material-ui/icons';
-import { navigate } from '@reach/router';
+import styled from 'styled-components';
 import { Job } from '../ListView/types';
-import { LabelValueRow } from '#views/Job/components/Header/styles';
+
+const JobCardWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: auto;
+  gap: 16px;
+  .job-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #e0e0e0;
+    position: relative;
+    .job-row-section {
+      display: flex;
+      max-width: calc(100% - 52px);
+      &.left {
+        flex: 1;
+        flex-direction: column;
+        gap: 8px;
+        padding: 16px 16px 8px 16px;
+        height: 100%;
+        .job-row-section-left {
+          display: flex;
+          &.top {
+            .job-name {
+              margin: 0;
+              font-weight: 400;
+              font-size: 14px;
+              line-height: 16px;
+              letter-spacing: 0.16px;
+              color: #1d84ff;
+              cursor: pointer;
+            }
+            .job-type {
+              font-size: 12px;
+              margin: 0 0 0 12px;
+              font-weight: 400;
+              line-height: 16px;
+              letter-spacing: 0.16px;
+              color: #6f6f6f;
+            }
+
+            .schedule-info {
+              margin-left: auto;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              span {
+                font-weight: 400;
+                font-size: 12px;
+                line-height: 12px;
+                letter-spacing: 0.32px;
+                color: #161616;
+                &.primary {
+                  color: #1d84ff;
+                  cursor: pointer;
+                }
+              }
+              .icon {
+                padding: 2px;
+                background: #e0e0e0;
+                border-radius: 50%;
+
+                svg {
+                  font-size: 12px;
+                }
+              }
+              .primary {
+                cursor: pointer;
+                color: #1d84ff;
+
+                :hover {
+                  color: #1d84ff;
+                }
+              }
+            }
+          }
+        }
+      }
+      &.right {
+        width: 36px;
+        height: 100px;
+        background-color: #f4f4f4;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+    }
+  }
+  .job-list-empty {
+    margin: auto;
+    color: #bbbbbb;
+    line-height: 1.5;
+  }
+`;
 
 const CustomTooltip = withStyles({
   tooltip: {
@@ -28,7 +126,7 @@ const CustomTooltip = withStyles({
 
 const getRecurrenceSummary = (job: Job) => {
   try {
-    if (job?.scheduler?.recurrenceRule) {
+    if (job?.scheduler?.recurrenceRule && job.expectedStartDate) {
       const rule = RRule.fromString(job?.scheduler?.recurrenceRule);
       let recurrenceString = rule?.toText() || null;
       if (recurrenceString) {
@@ -96,7 +194,7 @@ const JobCard: FC<{
   setSelectedJob: React.Dispatch<React.SetStateAction<Job | undefined>>;
 }> = ({ jobs, view, onSetDate, setSelectedJob }) => {
   return (
-    <div className="job-list">
+    <JobCardWrapper className="job-list">
       {jobs.length > 0 ? (
         jobs.map((job) => {
           const actualStartDate = job?.startedAt || moment().unix();
@@ -109,7 +207,7 @@ const JobCard: FC<{
             rule = RRule?.fromString(job?.scheduler?.recurrenceRule);
             rRuleOptions = rule?.origOptions;
             frequency =
-              Object?.keys(Frequency)[Object?.values(Frequency)?.indexOf(rRuleOptions?.freq)];
+              Object?.keys(Frequency)[Object?.values(Frequency)?.indexOf(rRuleOptions?.freq!)];
           }
 
           return (
@@ -232,11 +330,12 @@ const JobCard: FC<{
                       .slice(0, 5)
                       .map((parameter: Parameter) => {
                         if (parameter?.response?.hidden) return null;
+                        const value = getParameterContent(parameter);
                         return (
                           <div className="info-item" key={parameter.label}>
                             <label className="info-item-label">{parameter.label}</label>
-                            <span className="info-item-value">
-                              {getParameterContent(parameter)}
+                            <span className="info-item-value" title={value}>
+                              {value}
                             </span>
                           </div>
                         );
@@ -261,7 +360,7 @@ const JobCard: FC<{
       ) : (
         <div className="job-list-empty">No Jobs Found</div>
       )}
-    </div>
+    </JobCardWrapper>
   );
 };
 

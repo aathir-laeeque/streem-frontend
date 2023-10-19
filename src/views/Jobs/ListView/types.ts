@@ -40,7 +40,7 @@ export type Job = {
   expectedEndDate?: number;
   startedAt?: number;
   endedAt?: number;
-  jobScheduler?: Record<string, any>;
+  scheduler?: Record<string, any>;
   jobSchedulerId?: number;
   parameterValues: Parameter[];
 };

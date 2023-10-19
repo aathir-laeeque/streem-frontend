@@ -13,4 +13,5 @@ export interface Checklist {
   noOfJobs?: number;
   properties?: ChecklistProperty[];
   noOfTasks?: number;
+  global: boolean;
 }
