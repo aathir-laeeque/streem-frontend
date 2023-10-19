@@ -263,14 +263,18 @@ function updateParameterVerifications(
   const { data, parameterId } = payload;
   let parameter = draft.parameters.get(parameterId);
   if (parameter && parameter.response) {
-    parameter.response.parameterVerifications = (
-      parameter.response.parameterVerifications || []
-    ).map((verification) => {
-      if (verification.verificationType === data.verificationType) {
-        return data;
-      }
-      return verification;
-    });
+    if (parameter.response.parameterVerifications?.length) {
+      parameter.response.parameterVerifications = parameter.response.parameterVerifications.map(
+        (verification) => {
+          if (verification.verificationType === data.verificationType) {
+            return data;
+          }
+          return verification;
+        },
+      );
+    } else {
+      parameter.response.parameterVerifications = [data];
+    }
 
     if (data.evaluationState) {
       parameter.response.state = data.evaluationState;
