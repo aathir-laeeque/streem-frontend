@@ -161,7 +161,7 @@ const ChecklistParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
       if (!validation) return true;
       const keyToValidate = ['name'];
       keyToValidate.every((key) => {
-        const checkSingleProperty = !!validation?.[key]?.length;
+        const checkSingleProperty = !!validation?.[key]?.length && validation?.[key]?.trim() !== '';
         if (!checkSingleProperty) {
           isValid = false;
         }
@@ -173,9 +173,10 @@ const ChecklistParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
   };
 
   const onChangeOptionLabel = (value: string, index: number) => {
+    const trimmedValue = value.trim();
     fields[index] = {
       ...fields[index],
-      name: value,
+      name: trimmedValue,
     };
     setValue('data', fields, {
       shouldDirty: true,
