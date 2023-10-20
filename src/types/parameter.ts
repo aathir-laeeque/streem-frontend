@@ -34,6 +34,7 @@ export enum ParameterState {
   VERIFICATION_PENDING = 'VERIFICATION_PENDING',
   BEING_EXECUTED = 'BEING_EXECUTED',
   PENDING_FOR_APPROVAL = 'PENDING_FOR_APPROVAL',
+  APPROVED = 'APPROVED',
 }
 
 export interface ParameterResponse {

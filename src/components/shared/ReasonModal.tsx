@@ -77,11 +77,19 @@ type Props = {
   onSubmitModalText?: string;
   modalDesc?: string;
   shouldAskForReason?: boolean;
+  onCancelHandler?: () => void;
 };
 
 const ReasonModal = (props: CommonOverlayProps<Props>) => {
   const {
-    props: { onSubmitHandler, modalTitle, onSubmitModalText, modalDesc, shouldAskForReason = true },
+    props: {
+      onSubmitHandler,
+      modalTitle,
+      onSubmitModalText,
+      modalDesc,
+      shouldAskForReason = true,
+      onCancelHandler = () => {},
+    },
     closeOverlay,
     closeAllOverlays,
   } = props;
@@ -145,7 +153,13 @@ const ReasonModal = (props: CommonOverlayProps<Props>) => {
           )}
         </div>
         <div className="reason-modal-footer">
-          <Button variant="secondary" onClick={() => closeOverlay()}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              onCancelHandler();
+              closeOverlay();
+            }}
+          >
             Cancel
           </Button>
           <Button

@@ -54,11 +54,9 @@ const Parameter: FC<ParameterProps> = ({
       )}
 
       {parameter?.label &&
-        ![
-          `${MandatoryParameter.YES_NO}`,
-          `${MandatoryParameter.SHOULD_BE}`,
-          `${MandatoryParameter.CALCULATION}`,
-        ].includes(parameter.type) && (
+        ![`${MandatoryParameter.SHOULD_BE}`, `${MandatoryParameter.CALCULATION}`].includes(
+          parameter.type,
+        ) && (
           <div className="parameter-label" data-for={parameter.id}>
             {[ParameterState.APPROVAL_PENDING].includes(state) && (
               <img src={PadLockIcon} alt="parameter-locked" style={{ marginRight: 8 }} />
@@ -67,28 +65,14 @@ const Parameter: FC<ParameterProps> = ({
           </div>
         )}
 
-      {[`${MandatoryParameter.YES_NO}`, `${MandatoryParameter.SHOULD_BE}`].includes(
-        parameter.type,
-      ) ? (
-        <>
-          {parameter.type === MandatoryParameter.SHOULD_BE ? (
-            <ShouldBeParameter
-              isLoggedInUserAssigned={isLoggedInUserAssigned}
-              verificationType={verificationType}
-              parameter={parameter}
-              verificationsByType={verificationsByType}
-              isCorrectingError={isCorrectingError}
-            />
-          ) : (
-            <YesNoParameter
-              parameter={parameter}
-              isCorrectingError={isCorrectingError}
-              verificationsByType={verificationsByType}
-              verificationType={verificationType}
-              isLoggedInUserAssigned={isLoggedInUserAssigned}
-            />
-          )}
-        </>
+      {[`${MandatoryParameter.SHOULD_BE}`].includes(parameter.type) ? (
+        <ShouldBeParameter
+          isLoggedInUserAssigned={isLoggedInUserAssigned}
+          verificationType={verificationType}
+          parameter={parameter}
+          verificationsByType={verificationsByType}
+          isCorrectingError={isCorrectingError}
+        />
       ) : (
         <>
           <div
@@ -186,6 +170,11 @@ const Parameter: FC<ParameterProps> = ({
                 case MandatoryParameter.DATE:
                   return (
                     <InputParameter parameter={parameter} isCorrectingError={isCorrectingError} />
+                  );
+
+                case MandatoryParameter.YES_NO:
+                  return (
+                    <YesNoParameter parameter={parameter} isCorrectingError={isCorrectingError} />
                   );
 
                 default:
