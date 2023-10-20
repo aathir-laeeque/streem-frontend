@@ -14,6 +14,7 @@ import React, { FC, MouseEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Wrapper } from './styles';
 import { useTypedSelector } from '#store';
+import checkPermission from '#services/uiPermissions';
 
 type HeaderProps = {
   task: StoreTask;
@@ -181,58 +182,60 @@ const Header: FC<HeaderProps> = ({ task }) => {
                       Error correction
                     </MenuItem>
                   )}
-                  {!isTaskCompleted && (
-                    <MenuItem
-                      onClick={() => {
-                        handleClose();
-                        if (!isBlocked) {
-                          if (canSkipTask) {
-                            dispatch(
-                              openOverlayAction({
-                                type: OverlayNames.REASON_MODAL,
-                                props: {
-                                  modalTitle: 'Skip Task',
-                                  modalDesc: 'Provide the details for skipping the task',
-                                  onSubmitHandler: (reason: string, closeModal: () => void) => {
-                                    dispatch(
-                                      jobActions.performTaskAction({
-                                        id: task.id,
-                                        reason,
-                                        action: TaskAction.SKIP,
-                                      }),
-                                    );
-                                    closeModal();
+                  {!isTaskCompleted &&
+                    !isBlocked &&
+                    checkPermission(['inbox', 'completeWithException']) && (
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          if (!isBlocked) {
+                            if (canSkipTask) {
+                              dispatch(
+                                openOverlayAction({
+                                  type: OverlayNames.REASON_MODAL,
+                                  props: {
+                                    modalTitle: 'Skip Task',
+                                    modalDesc: 'Provide the details for skipping the task',
+                                    onSubmitHandler: (reason: string, closeModal: () => void) => {
+                                      dispatch(
+                                        jobActions.performTaskAction({
+                                          id: task.id,
+                                          reason,
+                                          action: TaskAction.SKIP,
+                                        }),
+                                      );
+                                      closeModal();
+                                    },
                                   },
-                                },
-                              }),
-                            );
-                          } else {
-                            dispatch(
-                              openOverlayAction({
-                                type: OverlayNames.REASON_MODAL,
-                                props: {
-                                  modalTitle: 'Complete with Exception',
-                                  modalDesc: 'Provide the details for Exception',
-                                  onSubmitHandler: (reason: string, closeModal: () => void) => {
-                                    dispatch(
-                                      jobActions.performTaskAction({
-                                        id: task.id,
-                                        reason,
-                                        action: TaskAction.COMPLETE_WITH_EXCEPTION,
-                                      }),
-                                    );
-                                    closeModal();
+                                }),
+                              );
+                            } else {
+                              dispatch(
+                                openOverlayAction({
+                                  type: OverlayNames.REASON_MODAL,
+                                  props: {
+                                    modalTitle: 'Complete with Exception',
+                                    modalDesc: 'Provide the details for Exception',
+                                    onSubmitHandler: (reason: string, closeModal: () => void) => {
+                                      dispatch(
+                                        jobActions.performTaskAction({
+                                          id: task.id,
+                                          reason,
+                                          action: TaskAction.COMPLETE_WITH_EXCEPTION,
+                                        }),
+                                      );
+                                      closeModal();
+                                    },
                                   },
-                                },
-                              }),
-                            );
+                                }),
+                              );
+                            }
                           }
-                        }
-                      }}
-                    >
-                      {canSkipTask ? 'Skip the task' : 'Complete with Exception'}
-                    </MenuItem>
-                  )}
+                        }}
+                      >
+                        {canSkipTask ? 'Skip the task' : 'Complete with Exception'}
+                      </MenuItem>
+                    )}
                 </StyledMenu>
               </>
             )}

@@ -413,7 +413,7 @@ function* completeJobSaga({ payload }: ReturnType<typeof jobActions.completeJob>
   try {
     const { jobId, withException = false, values, details } = payload;
 
-    const { errors }: ResponseObj<Job> = yield call(
+    const { errors, data }: ResponseObj<Job> = yield call(
       request,
       'PATCH',
       apiCompleteJob(withException, jobId),
@@ -445,15 +445,17 @@ function* completeJobSaga({ payload }: ReturnType<typeof jobActions.completeJob>
       }
     }
 
-    navigate(-1);
-    yield put(
-      showNotification({
-        type: NotificationType.SUCCESS,
-        msg: `JobId ${details?.code} was successfully completed ${
-          withException ? 'with exception' : ''
-        }`,
-      }),
-    );
+    if (data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `JobId ${details?.code} was successfully completed ${
+            withException ? 'with exception' : ''
+          }`,
+        }),
+      );
+      navigate(-1);
+    }
   } catch (error) {
     yield* handleCatch('Job', 'completeJobSaga', error);
   } finally {
