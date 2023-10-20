@@ -12,6 +12,7 @@ import {
   MandatoryParameter,
   Parameter,
   ParameterErrors,
+  ParameterExecutionState,
   REFETCH_JOB_ERROR_CODES,
   StoreTask,
   SupervisorResponse,
@@ -480,6 +481,24 @@ function* executeParameterSaga({ payload }: ReturnType<typeof jobActions.execute
 
     if (errors) {
       throw getErrorMsg(errors);
+    }
+
+    if (data) {
+      if (
+        data?.type === MandatoryParameter.SHOULD_BE &&
+        data?.response?.state === ParameterExecutionState.PENDING_FOR_APPROVAL
+      ) {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.PARAMETER_APPROVAL,
+            props: {
+              observationSent: true,
+              observationApproved: false,
+              observationRejected: false,
+            },
+          }),
+        );
+      }
     }
 
     yield put(
