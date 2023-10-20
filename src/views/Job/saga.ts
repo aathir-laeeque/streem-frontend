@@ -536,20 +536,13 @@ function* fixParameterSaga({ payload }: ReturnType<typeof jobActions.fixParamete
     if (errors) {
       const shouldRefetch = errors.find((error) => error.code in REFETCH_JOB_ERROR_CODES);
 
-      if (shouldRefetch) {
+      if (shouldRefetch && shouldRefetch.code === 'E214') {
         yield put(
-          openOverlayAction({
-            type: OverlayNames.REFETCH_JOB_COMPOSER_DATA,
-            props: {
-              modalTitle: shouldRefetch.message,
-              jobId,
-              errorType: RefetchJobErrorType.PARAMETER,
-            },
+          jobActions.navigateByTaskId({
+            id: shouldRefetch.id,
           }),
         );
-        return false;
       }
-
       throw getErrorMsg(errors);
     }
 
