@@ -167,10 +167,16 @@ const TextInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         type as unknown as InputTypes,
       )
     ) {
-      value = moment(value).unix().toString();
+      value = value ? moment(value).unix().toString() : '';
       if (type === InputTypes.TIME) {
-        const [hour, min] = value.split(':');
-        value = moment().set('hour', parseInt(hour)).set('minute', parseInt(min)).unix().toString();
+        if (value) {
+          const [hour, min] = value.split(':');
+          value = moment()
+            .set('hour', parseInt(hour))
+            .set('minute', parseInt(min))
+            .unix()
+            .toString();
+        }
       }
     }
     if (typeof onChange === 'function') {
