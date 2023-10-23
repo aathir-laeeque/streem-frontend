@@ -188,8 +188,17 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
   useEffect(() => {
     const _parsedFilters = JSON.parse(filters);
     setState((prev) => ({ ...prev, parsedFilters: _parsedFilters }));
+    dispatch(
+      fetchProcessLogs({
+        page: 0,
+        size: 250,
+        filters: _parsedFilters,
+        sort: 'id,desc',
+      }),
+    );
     fetchParameters(_parsedFilters?.fields || []);
     fetchProcess(_parsedFilters?.fields || []);
+    setKeepPersistedData();
   }, [filters]);
 
   useEffect(() => {
@@ -203,20 +212,6 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
       resourceParameterChoicesMap.current = logsResourceChoicesMapper(list);
     }
   }, [list]);
-
-  useEffect(() => {
-    if (parsedFilters) {
-      setKeepPersistedData();
-      dispatch(
-        fetchProcessLogs({
-          page: 0,
-          size: 250,
-          filters: parsedFilters,
-          sort: 'id,desc',
-        }),
-      );
-    }
-  }, [parsedFilters]);
 
   const renderCell = (row: any, column: any) => {
     if (row[column.id + column.triggerType]) {
