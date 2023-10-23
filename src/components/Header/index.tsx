@@ -1,18 +1,12 @@
 import AvatarIcon from '#assets/svg/AvatarIcon';
 import Logo from '#assets/svg/Logo';
 import MoreOptionsIcon from '#assets/svg/MoreOptionsIcon';
-import QRIcon from '#assets/svg/QR';
 import SettingsIcon from '#assets/svg/SettingsIcon';
 import { NestedSelect, Select } from '#components';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { switchFacility } from '#store/facilities/actions';
 import { logout, setSelectedUseCase } from '#views/Auth/actions';
-import { getQrCodeData, qrCodeValidator } from '#views/Ontology/utils';
 import { UserType } from '#views/UserAccess/ManageUser/types';
 import { useMsal } from '@azure/msal-react';
 import { navigate } from '@reach/router';
@@ -46,46 +40,12 @@ const Header: FC = () => {
     value: facility.id,
   }));
 
-  const onSelectWithQR = async (data: string) => {
-    try {
-      const qrData = await getQrCodeData({ shortCode: data });
-      if (qrData?.objectId) {
-        await qrCodeValidator({
-          data: qrData,
-          callBack: () =>
-            navigate(`/ontology/object-types/${qrData.objectTypeId}/objects/${qrData.objectId}`),
-          objectTypeValidation: true,
-        });
-      }
-    } catch (error) {
-      dispatch(
-        showNotification({
-          type: NotificationType.ERROR,
-          msg: typeof error !== 'string' ? 'Oops! Please Try Again.' : error,
-        }),
-      );
-    }
-  };
-
   return (
     <Wrapper className="header-bar">
       <ImageWrapper className="header-logo">
         <Logo style={{ width: '125px', cursor: 'pointer' }} onClick={() => navigate('/')} />
       </ImageWrapper>
       <div className="right-section">
-        <div
-          className="qr-scanner"
-          onClick={() => {
-            dispatch(
-              openOverlayAction({
-                type: OverlayNames.QR_SCANNER,
-                props: { onSuccess: onSelectWithQR },
-              }),
-            );
-          }}
-        >
-          <QRIcon />
-        </div>
         {selectedFacility ? (
           <Select
             options={facilitiesOptions}
