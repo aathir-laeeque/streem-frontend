@@ -442,7 +442,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
       </Button>
 
       <div className="primary-action">
-        {!!correctionEnabled ? (
+        {!!correctionEnabled && isInboxView ? (
           <div className="error-correction-action">
             <Button
               style={{ flex: 1, width: '160px' }}

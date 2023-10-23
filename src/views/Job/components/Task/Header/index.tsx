@@ -22,7 +22,10 @@ type HeaderProps = {
 
 const Header: FC<HeaderProps> = ({ task }) => {
   const dispatch = useDispatch();
-  const { limitCrossed } = useTypedSelector((state) => state.job.timerState);
+  const {
+    timerState: { limitCrossed },
+    isInboxView,
+  } = useTypedSelector((state) => state.job);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const { isJobStarted, isTaskCompleted, isBlocked } = useJobStateToFlags();
@@ -76,6 +79,7 @@ const Header: FC<HeaderProps> = ({ task }) => {
   };
 
   const showMenuActions = () =>
+    isInboxView &&
     isJobStarted &&
     isUserAssignedToTask &&
     (!isTaskCompleted || (isTaskCompleted && (!correctionEnabled || !correctionReason)));
