@@ -1,6 +1,6 @@
 import { BaseModal, ImageUploadButton, Textarea } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { FileUploadData } from '#utils/globalTypes';
+import { ExceptionValues } from '#types';
 import {
   Add,
   DeleteOutlined,
@@ -9,11 +9,10 @@ import {
   RadioButtonUnchecked,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { jobActions } from '../jobStore';
-import { ExceptionValues } from '#types';
 
 const Wrapper = styled.div`
   .modal-body {

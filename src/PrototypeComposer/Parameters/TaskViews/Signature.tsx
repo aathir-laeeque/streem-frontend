@@ -1,4 +1,3 @@
-import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import SignatureIcon from '#assets/svg/Signature';
 import React, { FC } from 'react';
 import styled from 'styled-components';
@@ -27,7 +26,7 @@ const SignatureTaskViewWrapper = styled.div`
   }
 `;
 
-const SignatureTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
+const SignatureTaskView: FC = () => {
   return (
     <SignatureTaskViewWrapper>
       <SignatureIcon className="icon" />

@@ -1,32 +1,32 @@
-import { JobLogColumnType, LogType } from '#PrototypeComposer/checklist.types';
+import { JobLogColumnType } from '#PrototypeComposer/checklist.types';
 import { Pageable } from '#utils/globalTypes';
 import { RouteComponentProps } from '@reach/router';
 import { Checklist } from '../types';
 import {
+  addCustomView,
+  addCustomViewError,
+  addCustomViewSuccess,
   clearData,
+  deleteCustomViewError,
+  deleteCustomViewSuccess,
+  exportChecklist,
+  fetchAutomations,
+  fetchAutomationsError,
+  fetchAutomationsSuccess,
   fetchChecklists,
   fetchChecklistsError,
   fetchChecklistsOngoing,
   fetchChecklistsSuccess,
-  updateList,
-  fetchAutomations,
-  fetchAutomationsError,
-  fetchAutomationsSuccess,
   fetchProcessLogs,
   fetchProcessLogsError,
   fetchProcessLogsSuccess,
-  addCustomView,
-  addCustomViewError,
-  addCustomViewSuccess,
   getCustomViews,
   getCustomViewsError,
   getCustomViewsSuccess,
   saveCustomView,
   saveCustomViewError,
   saveCustomViewSuccess,
-  deleteCustomViewError,
-  deleteCustomViewSuccess,
-  exportChecklist,
+  updateList,
 } from './actions';
 
 export type ListViewProps = RouteComponentProps;

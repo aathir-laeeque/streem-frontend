@@ -44,7 +44,7 @@ export function createFetchList<T>(
     params: _params,
   });
 
-  const { list, errors, status, pagination, params, listById, pagesFetched, url } = state;
+  const { list, errors, status, pagination, params, listById, url } = state;
   const { last, page, pageSize } = pagination;
 
   useEffect(() => {

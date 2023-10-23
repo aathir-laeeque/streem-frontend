@@ -6,16 +6,16 @@ import {
   TabContentProps,
   TextInput,
 } from '#components';
+import { DataTableColumn } from '#components/shared/DataTable';
+import { createFetchList } from '#hooks/useFetchData';
+import checkPermission from '#services/uiPermissions';
+import { apiGetObjectTypes } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { navigate } from '@reach/router';
-import React, { FC, useEffect, useState } from 'react';
-import checkPermission from '#services/uiPermissions';
-import { DataTableColumn } from '#components/shared/DataTable';
 import { Search } from '@material-ui/icons';
+import { navigate } from '@reach/router';
 import { debounce } from 'lodash';
-import { createFetchList } from '#hooks/useFetchData';
-import { apiGetObjectTypes } from '#utils/apiUrls';
+import React, { FC, useEffect, useState } from 'react';
 
 const urlParams = {
   page: DEFAULT_PAGE_NUMBER,
@@ -23,7 +23,7 @@ const urlParams = {
   usageStatus: 1,
 };
 
-const ObjectTypeList: FC<TabContentProps> = ({ label, values }) => {
+const ObjectTypeList: FC<TabContentProps> = ({ values }) => {
   const [filters, setFilters] = useState<Record<string, any>>(urlParams);
 
   const { list, reset, pagination, status } = createFetchList(

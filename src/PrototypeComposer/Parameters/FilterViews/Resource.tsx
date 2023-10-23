@@ -1,9 +1,10 @@
-import { fetchParameters } from '#PrototypeComposer/Activity/actions';
-import { customOnChange } from '#utils/formEvents';
+import { Parameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { Button, FormGroup } from '#components';
 import { useTypedSelector } from '#store';
+import { MandatoryParameter } from '#types';
 import { apiGetObjectTypes, apiGetParameters, baseUrl } from '#utils/apiUrls';
-import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { DEFAULT_PAGE_NUMBER } from '#utils/constants';
+import { customOnChange } from '#utils/formEvents';
 import {
   FilterField,
   FilterOperators,
@@ -14,15 +15,12 @@ import {
 import { request } from '#utils/request';
 import { Choice, ObjectType } from '#views/Ontology/types';
 import { AddCircleOutline, Close } from '@material-ui/icons';
-import { capitalize, isArray, keyBy } from 'lodash';
+import { capitalize, keyBy } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
 import { getDateUnits, labelByConstraint } from '../ValidationViews/Resource';
-import { Parameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
-import { MandatoryParameter } from '#types';
 
 export const FilterWrapper = styled.div`
   .filters-constraint {
@@ -341,7 +339,7 @@ const ResourceFormCard: FC<{
     });
   };
 
-  const updateFilterOptions = (objectType: ObjectType, filter: any[]) => {
+  const updateFilterOptions = (filter: any[]) => {
     const updatedOptions: Record<number, Choice[]> = {};
     filter.forEach((filter: any, index: number) => {
       if (filter) updatedOptions[index] = propertiesMap.current?.[filter.propertyId]?.options || [];
@@ -357,7 +355,7 @@ const ResourceFormCard: FC<{
         [...(res?.data?.properties || []), ...(res?.data?.relations || [])] || [],
         'id',
       );
-      updateFilterOptions(res.data, fields);
+      updateFilterOptions(fields);
     }
     setState((prev) => ({ ...prev, isActiveLoading: false, selectedObjectType: res?.data }));
   };

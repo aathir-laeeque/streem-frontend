@@ -14,7 +14,7 @@ import { DataTableColumn } from '#components/shared/DataTable';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { fetchDataParams, InputTypes } from '#utils/globalTypes';
+import { InputTypes, fetchDataParams } from '#utils/globalTypes';
 import { formatDateByInputType } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { MenuItem } from '@material-ui/core';
@@ -32,8 +32,6 @@ import {
 } from '../actions';
 import { Choice, Object, ObjectTypeProperty } from '../types';
 import AddEditObjectDrawer from './components/AddEditObjectDrawer';
-import { request } from '#utils/request';
-import { apiQrShortCode } from '#utils/apiUrls';
 
 const ObjectList: FC<TabContentProps> = () => {
   const dispatch = useDispatch();

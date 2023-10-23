@@ -154,13 +154,7 @@ const ParameterList: FC<ParameterListProps> = ({
   isUserAssignedToTask,
   parametersErrors,
 }) => {
-  const { isInboxView, parameters, stages, tasks } = useTypedSelector((state) => state.job);
-
-  // useEffect(() => {
-  //   console.log('parameters', parameters);
-  //   console.log('stages', stages);
-  //   console.log('tasks', tasks);
-  // }, [stages, parameters, tasks]);
+  const { isInboxView, parameters } = useTypedSelector((state) => state.job);
 
   return (
     <Wrapper

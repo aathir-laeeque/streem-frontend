@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-interface */
 import { resources } from '#i18n';
 
 declare module 'react-i18next' {

@@ -1,13 +1,13 @@
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGINATION } from '#utils/constants';
 import { customOnChange } from '#utils/formEvents';
-import { fetchDataParams, Pageable } from '#utils/globalTypes';
+import { Pageable, fetchDataParams } from '#utils/globalTypes';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select, { SelectProps } from '@material-ui/core/Select';
 import { makeStyles } from '@material-ui/core/styles';
 import { NavigateBefore, NavigateNext, Search } from '@material-ui/icons';
 import { get } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { StylesConfig, Props } from 'react-select';
+import { Props, StylesConfig } from 'react-select';
 import styled from 'styled-components';
 import { Select as CustomSelect } from './Select';
 

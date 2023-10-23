@@ -19,7 +19,7 @@ const ResourceParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> 
       objectTypes: { list, listLoading, pageable },
     },
   } = useTypedSelector((state) => state);
-  const { watch, setValue, unregister } = form;
+  const { watch, setValue } = form;
   const data = watch('data', {});
   const autoInitialized = watch('autoInitialized', false);
 

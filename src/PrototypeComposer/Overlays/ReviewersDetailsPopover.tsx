@@ -1,13 +1,12 @@
-import React, { FC } from 'react';
-import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { Popover } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import {
   Collaborator,
   CollaboratorStateColors,
   CollaboratorStateContent,
 } from '#PrototypeComposer/reviewer.types';
-import { removeUnderscore } from '#utils/stringUtils';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
+import { Popover } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import React, { FC } from 'react';
 
 const useStyles = makeStyles({
   popover: {

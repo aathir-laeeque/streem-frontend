@@ -5,6 +5,7 @@ import {
 } from '#PrototypeComposer/Activity/actions';
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import CalculationTaskView from '#PrototypeComposer/Parameters/TaskViews/Calculation';
+import FileUploadTaskView from '#PrototypeComposer/Parameters/TaskViews/FileUpload';
 import MaterialInstructionTaskView from '#PrototypeComposer/Parameters/TaskViews/MaterialInstruction';
 import MediaTaskView from '#PrototypeComposer/Parameters/TaskViews/Media';
 import ShouldBeTaskView from '#PrototypeComposer/Parameters/TaskViews/Parameter';
@@ -13,7 +14,6 @@ import SignatureTaskView from '#PrototypeComposer/Parameters/TaskViews/Signature
 import SingleLineTaskView from '#PrototypeComposer/Parameters/TaskViews/SingleLine';
 import SingleSelectTaskView from '#PrototypeComposer/Parameters/TaskViews/SingleSelect';
 import TextInstructionTaskView from '#PrototypeComposer/Parameters/TaskViews/TextInstruction';
-import FileUploadTaskView from '#PrototypeComposer/Parameters/TaskViews/FileUpload';
 import YesNoTaskView from '#PrototypeComposer/Parameters/TaskViews/YesNo';
 import {
   MandatoryParameter,
@@ -21,6 +21,8 @@ import {
   ParameterVerificationTypeEnum,
 } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap } from '#PrototypeComposer/constants';
+import peerVerificationIcon from '#assets/svg/peerVerification.svg';
+import selfVerificationIcon from '#assets/svg/selfVerification.svg';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
@@ -28,9 +30,11 @@ import { apiDeleteParameter } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import Tooltip from '@material-ui/core/Tooltip';
 import {
   DragIndicator,
   EditOutlined,
+  Error as ErrorIcon,
   FilterList,
   RemoveCircleOutlineOutlined,
   VisibilityOutlined,
@@ -38,13 +42,9 @@ import {
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import peerVerificationIcon from '#assets/svg/peerVerification.svg';
-import selfVerificationIcon from '#assets/svg/selfVerification.svg';
-import Tooltip from '@material-ui/core/Tooltip';
-import { Error as ErrorIcon } from '@material-ui/icons';
 
-import { withStyles } from '@material-ui/core/styles';
 import { ParameterMode } from '#types';
+import { withStyles } from '@material-ui/core/styles';
 
 const CustomTooltip = withStyles({
   tooltip: {
@@ -280,10 +280,10 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
   const renderTaskViewByType = () => {
     switch (parameterType) {
       case MandatoryParameter.MEDIA:
-        return <MediaTaskView parameter={parameter} />;
+        return <MediaTaskView />;
 
       case MandatoryParameter.FILE_UPLOAD:
-        return <FileUploadTaskView parameter={parameter} />;
+        return <FileUploadTaskView />;
 
       case MandatoryParameter.CHECKLIST:
       case MandatoryParameter.MULTISELECT:
@@ -294,7 +294,7 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
         return <ShouldBeTaskView parameter={parameter} />;
 
       case MandatoryParameter.SIGNATURE:
-        return <SignatureTaskView parameter={parameter} />;
+        return <SignatureTaskView />;
 
       case MandatoryParameter.NUMBER:
         return (

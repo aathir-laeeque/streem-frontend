@@ -1,8 +1,6 @@
-import { RoleIdByName } from '#services/uiPermissions';
 import { Facilities } from '#store/facilities/types';
 import { User } from '#store/users/types';
 import { RouteComponentProps } from '@reach/router';
-import { InitialState } from '.';
 import { Toggleables } from './helpers';
 
 export enum PAGE_TYPE {

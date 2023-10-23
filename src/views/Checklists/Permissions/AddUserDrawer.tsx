@@ -1,12 +1,11 @@
-import React, { FC, useEffect } from 'react';
-import { Button, useDrawer } from '#components';
+import { Button, Select, useDrawer } from '#components';
 import { defaultParams, useUsers } from '#services/users';
-import { Select } from '#components';
-import { useForm } from 'react-hook-form';
-import styled from 'styled-components';
 import { FilterOperators } from '#utils/globalTypes';
-import { InputActionMeta } from 'react-select';
 import { debounce } from 'lodash';
+import React, { FC, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { InputActionMeta } from 'react-select';
+import styled from 'styled-components';
 
 const AddUserFormWrapper = styled.div`
   width: 100%;
@@ -16,7 +15,7 @@ const AddUserFormWrapper = styled.div`
 const AddUserDrawer: FC<{
   onCloseDrawer: React.Dispatch<React.SetStateAction<boolean | string>>;
   label: string | boolean;
-}> = ({ onCloseDrawer, label }) => {
+}> = ({ onCloseDrawer }) => {
   const form = useForm<{
     user: Record<string, any>;
   }>({
@@ -27,18 +26,11 @@ const AddUserDrawer: FC<{
 
   const {
     register,
-    handleSubmit,
     formState: { isDirty, isValid },
     setValue,
-    watch,
-    getValues,
-    // errors,
-    reset,
   } = form;
 
   register('user', { required: true });
-
-  const user = watch('user');
 
   const setUser = (data: any) => {
     if (data) {

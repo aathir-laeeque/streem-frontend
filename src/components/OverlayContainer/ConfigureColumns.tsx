@@ -204,7 +204,7 @@ const ConfigureColumnsModal: FC<CommonOverlayProps<Props>> = ({
   };
 
   const onRemoveAll = () => {
-    Object.entries(allItems).forEach(([key, column]) => {
+    Object.entries(allItems).forEach(([key]) => {
       setAllItems((prev) => ({
         ...prev,
         [key]: { ...prev[key], checked: false },

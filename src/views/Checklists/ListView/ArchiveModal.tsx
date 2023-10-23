@@ -1,4 +1,3 @@
-import EditingDisabledIcon from '#assets/svg/EditingDisabledIcon';
 import ArchiveSuccessful from '#assets/svg/ArchiveSuccessful';
 import CannotArchive from '#assets/svg/CannotArchive';
 import { BaseModal } from '#components';

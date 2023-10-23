@@ -279,7 +279,7 @@ function* updateTaskMediaSaga({ payload }: ReturnType<typeof updateTaskMedia>) {
   try {
     const { mediaDetails, taskId, parameterId, mediaId } = payload;
 
-    const { data, errors } = yield call(request, 'PATCH', apiUpdateTaskMedia(taskId, mediaId), {
+    const { data, errors } = yield call(request, 'PATCH', apiUpdateTaskMedia(mediaId), {
       data: { ...mediaDetails },
     });
 

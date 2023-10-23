@@ -1,10 +1,10 @@
+import { GeneralHeader } from '#components';
 import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
 import { ViewWrapper } from '#views/Jobs/ListView/styles';
-import React, { FC } from 'react';
+import React from 'react';
 import TabContent from './TabContent';
 import { ReportState } from './types';
-import { GeneralHeader } from '#components';
 
 const ListView = () => {
   const { selectedUseCase } = useTypedSelector((state) => state.auth);

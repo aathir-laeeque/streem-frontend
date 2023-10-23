@@ -29,11 +29,7 @@ const AutomationActionModal: FC<
     onDone: (createObjectData: any) => void;
     setLoadingState: (loading: boolean) => void;
   }>
-> = ({
-  closeAllOverlays,
-  closeOverlay,
-  props: { objectTypeId, onDone, setLoadingState, actionType },
-}) => {
+> = ({ closeAllOverlays, closeOverlay, props: { objectTypeId, onDone, setLoadingState } }) => {
   const dispatch = useDispatch();
   const {
     objectTypes: { active, activeLoading },

@@ -1,13 +1,12 @@
 import { ParameterProps } from '#PrototypeComposer/Activity/types';
-import React, { FC, useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { OverlayNames } from '#components/OverlayContainer/types';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { dataUriToBlob } from '#utils/dataUriToBlob';
-import { uploadFile } from '#modules/file-upload/action';
-import { useTypedSelector } from '#store';
-import { useDispatch } from 'react-redux';
 import MemoSignature from '#assets/svg/Signature';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { useTypedSelector } from '#store';
+import { dataUriToBlob } from '#utils/dataUriToBlob';
+import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 
 const SignatureTaskViewWrapper = styled.div`
   align-items: center;
@@ -33,7 +32,7 @@ const SignatureTaskViewWrapper = styled.div`
   }
 `;
 
-const SignatureTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form }) => {
+const SignatureTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) => {
   const {
     auth: { profile },
   } = useTypedSelector((state) => state);

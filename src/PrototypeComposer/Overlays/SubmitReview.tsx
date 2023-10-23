@@ -1,54 +1,53 @@
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import MemoAllOk from '#assets/svg/AllOk';
-import MemoNeedsCommenting from '#assets/svg/NeedsCommenting';
-import MemoSentToAuthor from '#assets/svg/SentToAuthor';
-import MemoRemoveComments from '#assets/svg/RemoveComments';
-import MemoMoreComments from '#assets/svg/MoreComments';
-import { Avatar, BaseModal, Button, Select } from '#components';
-import React, { FC, useEffect, useState } from 'react';
-import {
-  Message,
-  FiberManualRecord,
-  Person,
-  Assignment,
-  PersonAdd,
-  ThumbUp,
-} from '@material-ui/icons';
-import { Editor } from 'react-draft-wysiwyg';
-import { ContentState, convertToRaw, EditorState } from 'draft-js';
-import draftToHtml from 'draftjs-to-html';
-import htmlToDraft from 'html-to-draftjs';
-import { CommonOverlayProps, OverlayNames } from '#components/OverlayContainer/types';
-import { useTypedSelector } from '#store';
 import {
   Checklist,
   ChecklistStates,
   ChecklistStatesColors,
   ChecklistStatesContent,
-  EnabledStates,
 } from '#PrototypeComposer/checklist.types';
-import {
-  Collaborator,
-  CollaboratorState,
-  CollaboratorType,
-} from '#PrototypeComposer/reviewer.types';
 import {
   fetchAssignedReviewersForChecklist,
   sendReviewToCr,
   submitChecklistReview,
   submitChecklistReviewWithCR,
 } from '#PrototypeComposer/reviewer.actions';
-import { useDispatch } from 'react-redux';
-import { groupBy, orderBy, pick } from 'lodash';
-import { getOrdinal } from '#utils/stringUtils';
-import { Wrapper, AntSwitch } from './SubmitReview.styles';
 import {
-  openOverlayAction,
+  Collaborator,
+  CollaboratorState,
+  CollaboratorType,
+} from '#PrototypeComposer/reviewer.types';
+import MemoAllOk from '#assets/svg/AllOk';
+import MemoMoreComments from '#assets/svg/MoreComments';
+import MemoNeedsCommenting from '#assets/svg/NeedsCommenting';
+import MemoRemoveComments from '#assets/svg/RemoveComments';
+import MemoSentToAuthor from '#assets/svg/SentToAuthor';
+import { Avatar, BaseModal, Button, Select } from '#components';
+import {
   closeOverlayAction,
+  openOverlayAction,
   updatePropsAction,
 } from '#components/OverlayContainer/actions';
+import { CommonOverlayProps, OverlayNames } from '#components/OverlayContainer/types';
+import { useTypedSelector } from '#store';
 import { User } from '#store/users/types';
+import { getOrdinal } from '#utils/stringUtils';
+import {
+  Assignment,
+  FiberManualRecord,
+  Message,
+  Person,
+  PersonAdd,
+  ThumbUp,
+} from '@material-ui/icons';
+import { ContentState, EditorState, convertToRaw } from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
+import { groupBy, orderBy } from 'lodash';
 import moment from 'moment';
+import React, { FC, useEffect, useState } from 'react';
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import { useDispatch } from 'react-redux';
+import { AntSwitch, Wrapper } from './SubmitReview.styles';
 
 enum Options {
   OK = 'OK',

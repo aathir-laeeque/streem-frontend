@@ -1,5 +1,4 @@
 import { DEFAULT_PAGINATION } from '#utils/constants';
-import { List } from '@material-ui/core';
 import { ListViewAction, ListViewActionType, ListViewState } from './types';
 
 const initialState: ListViewState = {

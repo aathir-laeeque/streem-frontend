@@ -1,17 +1,16 @@
 import { Avatar, BaseModal, Checkbox, TextInput } from '#components';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
+import { OtherUserState, User, defaultParams, useUsers } from '#services/users';
 import { apiAssignUsersForChecklist, apiGetAllUsersAssignedToChecklistTask } from '#utils/apiUrls';
 import { FilterOperators } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { getFullName } from '#utils/stringUtils';
 import { usePrevious } from '#utils/usePrevious';
+import { Checklist } from '#views/Checklists/types';
+import { Wrapper } from '#views/Jobs/Assignment/styles';
 import { Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Wrapper } from '#views/Jobs/Assignment/styles';
-import { Checklist } from '#views/Checklists/types';
 
 type Props = {
   checklistId: Checklist['id'];

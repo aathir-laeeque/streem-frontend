@@ -1,22 +1,21 @@
+import PadLockIcon from '#assets/svg/padlock.svg';
 import { Button, TextInput, Textarea } from '#components';
+import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { ParameterState, SupervisorResponse } from '#types';
+import { customOnChange } from '#utils/formEvents';
+import { InputTypes } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
 import { jobActions } from '#views/Job/jobStore';
 import { CheckCircle, Error, Warning } from '@material-ui/icons';
-import { debounce } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ParameterProps } from '../Parameter';
 import ParameterVerificationView from '../Verification/ParameterVerificationView';
 import { Wrapper } from './styles';
-import { InputTypes } from '#utils/globalTypes';
-import { OverlayNames } from '#components/OverlayContainer/types';
-import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
-import PadLockIcon from '#assets/svg/padlock.svg';
-import { customOnChange } from '#utils/formEvents';
 
 const generateText = (label: string | undefined, data: any) => {
   if (data.operator === 'BETWEEN') {

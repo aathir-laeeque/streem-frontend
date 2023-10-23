@@ -99,7 +99,7 @@ const getValidations = (validations?: Validation[]) => {
   return validators;
 };
 
-const RelationField = memo<any>(({ relation, isReadOnly, getValues, control }) => {
+const RelationField = memo<any>(({ relation, isReadOnly, control }) => {
   const {
     objects: { active: selectedObject },
   } = useTypedSelector((state) => state.ontology);
@@ -247,7 +247,6 @@ const ObjectView: FC<TabContentProps> = ({
     objects: { active: selectedObject },
     objectTypes: { active: selectedObjectType },
   } = useTypedSelector((state) => state.ontology);
-  const { jobFromBE: jobData } = useTypedSelector((state) => state.job);
   const {
     register,
     handleSubmit,
@@ -434,6 +433,7 @@ const ObjectView: FC<TabContentProps> = ({
                     acc.push({
                       type: InputTypes.ERROR_CONTAINER,
                       props: {
+                        id: 'object-form-errors',
                         messages: errorsValues?.types,
                       },
                     });

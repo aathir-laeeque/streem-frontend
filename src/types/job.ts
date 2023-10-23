@@ -2,7 +2,7 @@ import { Checklist, Parameter } from '#PrototypeComposer/checklist.types';
 import { Users } from '#store/users/types';
 import { FileUploadData, InputTypes, Pageable } from '#utils/globalTypes';
 import { ObjectKeys, PartialUser } from './common';
-import { ParameterType, StoreParameter } from './parameter';
+import { StoreParameter } from './parameter';
 import { StoreStage } from './stage';
 import { StoreTask } from './task';
 

@@ -7,14 +7,14 @@ import {
   apiArchiveValidate,
   apiCustomViews,
   apiCustomViewsArchive,
+  apiExportChecklist,
   apiGetAutomations,
   apiGetChecklists,
   apiGetJobLogs,
   apiProcessCustomViews,
   apiUnarchiveChecklist,
-  apiExportChecklist,
 } from '#utils/apiUrls';
-import { CustomViewsTargetType, Error, FilterOperators, ResponseObj } from '#utils/globalTypes';
+import { Error, ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, takeLatest, takeLeading } from 'redux-saga/effects';
 import { Checklist } from '../types';
@@ -26,6 +26,7 @@ import {
   deleteCustomView,
   deleteCustomViewError,
   deleteCustomViewSuccess,
+  exportChecklist,
   fetchAutomations,
   fetchAutomationsError,
   fetchAutomationsSuccess,
@@ -45,7 +46,6 @@ import {
   saveCustomViewSuccess,
   unarchiveChecklist,
   updateList,
-  exportChecklist,
 } from './actions';
 import { ListViewAction } from './types';
 

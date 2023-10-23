@@ -3,7 +3,6 @@ import {
   AutomationAction,
   AutomationActionActionTypeVisual,
   AutomationActionTriggerTypeVisual,
-  Checklist,
 } from '#PrototypeComposer/checklist.types';
 import {
   MandatoryParameter,

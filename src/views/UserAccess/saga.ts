@@ -1,34 +1,33 @@
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
+import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { fetchSelectedUserSuccess } from '#store/users/actions';
+import { User } from '#store/users/types';
 import {
-  apiResendInvite,
-  apiGetUsers,
   apiArchiveUser,
+  apiCancelInvite,
+  apiGetUsers,
+  apiResendInvite,
   apiUnArchiveUser,
   apiUnLockUser,
-  apiCancelInvite,
   apiValidatePassword,
 } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
-import { navigate } from '@reach/router';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
-import { User } from '#store/users/types';
+import { navigate } from '@reach/router';
+import { call, put, takeLatest } from 'redux-saga/effects';
+import { UserType } from './ManageUser/types';
 import {
-  resendInvite,
-  archiveUser,
-  unArchiveUser,
   addUser,
-  unLockUser,
+  archiveUser,
   cancelInvite,
+  resendInvite,
+  unArchiveUser,
+  unLockUser,
   validateCredentials,
 } from './actions';
-import { call, put, takeLatest } from 'redux-saga/effects';
 import { UserAccessAction } from './types';
-import { fetchSelectedUserSuccess } from '#store/users/actions';
-import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
-import { encrypt } from '#utils/stringUtils';
-import { UserType } from './ManageUser/types';
 
 function* resendInviteSaga({ payload }: ReturnType<typeof resendInvite>) {
   try {

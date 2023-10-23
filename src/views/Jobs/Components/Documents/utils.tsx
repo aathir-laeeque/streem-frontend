@@ -158,8 +158,6 @@ const assigneStyles = StyleSheet.create({
 export const Assigness = ({
   assignees,
   jobState,
-  dateAndTimeStampFormat,
-  minWidth = 30,
 }: {
   assignees: PdfJobDataType['assignees'];
   jobState: string;
@@ -178,7 +176,7 @@ export const Assigness = ({
       );
     }
   } else {
-    rows = assignees.map(({ firstName, lastName, employeeId, recentSignOffAt }, index) => (
+    rows = assignees.map(({ firstName, lastName, employeeId }) => (
       <View style={assigneStyles.assigneRow} key={`assignes_${employeeId}`}>
         <View style={assigneStyles.assigneInput}>
           <Text style={commonStyles.text12}>{firstName}</Text>

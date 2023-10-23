@@ -19,10 +19,9 @@ const JobHeaderButtons: FC = () => {
     id: jobId,
     code,
     isInboxView,
-    assignments: { isUserAssigned },
     taskNavState: { isMobileDrawerOpen },
   } = useTypedSelector((state) => state.job);
-  const { isCompletedWithException, isCompleted, isInProgress } = useJobStateToFlags();
+  const { isCompletedWithException, isCompleted } = useJobStateToFlags();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const showBulkAssignButton =

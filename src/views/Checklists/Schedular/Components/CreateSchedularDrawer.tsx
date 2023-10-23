@@ -251,7 +251,6 @@ const CreateSchedularDrawer: FC<{
 }> = ({ onCloseDrawer, checklist, schedular, readOnly, setReadOnly, handleClose }) => {
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
-  const { active } = useTypedSelector((state) => state.schedular);
   const { data: checklistData } = useTypedSelector((state) => state.prototypeComposer);
   const [currentSchedular, setCurrentSchedular] = useState<any>(null);
   const formData = useRef<any>(null);
@@ -310,7 +309,7 @@ const CreateSchedularDrawer: FC<{
     const selectedParameter = checklistData?.parameters?.find(
       (item: any) => item.id === parameterId,
     );
-    const responseDetailsForChoiceBasedParameters = ({ data, response }: any) => {
+    const responseDetailsForChoiceBasedParameters = ({ data }: any) => {
       let detailList = data?.reduce((acc, currData: any) => {
         if (currData.state === 'SELECTED') {
           acc.push(currData.name);

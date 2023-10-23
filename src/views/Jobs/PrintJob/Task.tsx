@@ -124,7 +124,6 @@ const MemoTask: FC<{
   dateFormat,
   timeFormat,
   dateAndTimeStampFormat,
-  taskIndex,
   parametersById,
   hiddenIds,
   cjfParametersById,

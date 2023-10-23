@@ -4,7 +4,7 @@ import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { apiUploadFile } from '#utils/apiUrls';
-import { FileUploadData } from '#utils/globalTypes';
+import { FileUploadData, ResponseError } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { SvgIconComponent } from '@material-ui/icons';
 import React, { createRef, FC, useEffect, useState } from 'react';
@@ -15,7 +15,7 @@ type ImageUploadButtonProps = {
   icon?: SvgIconComponent;
   label?: string;
   onUploadSuccess: (data: FileUploadData) => void;
-  onUploadError: (error: string) => void;
+  onUploadError: (error: string | ResponseError[]) => void;
   onUploadStart?: () => void;
   disabled?: boolean;
   allowCapture?: boolean;

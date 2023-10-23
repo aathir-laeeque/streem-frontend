@@ -5,7 +5,6 @@ import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { FileUploadData, ResponseError } from '#utils/globalTypes';
-import { getVideoDevices } from '#utils/inputUtils';
 import { getErrorMsg } from '#utils/request';
 import { jobActions } from '#views/Job/jobStore';
 import { LinearProgress } from '@material-ui/core';
@@ -15,6 +14,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { ParameterProps } from './Parameter';
+import { Media } from '#PrototypeComposer/checklist.types';
 
 const FileUploadMedias: FC<FileGalleryProps> = ({
   medias,
@@ -85,13 +85,11 @@ const FileUploadParameter: FC<ParameterProps> = ({
   parameter,
   isCorrectingError,
   isTaskCompleted,
-  isLoggedInUserAssigned,
 }) => {
   const dispatch = useDispatch();
   const [isUploading, setIsUploading] = useState(false);
-  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
 
-  const [uploadedMedia, setUploadedMedia] = useState([]);
+  const [uploadedMedia, setUploadedMedia] = useState<Media[]>([]);
 
   const onUploaded = (fileData: FileUploadData) => {
     dispatch(
@@ -104,18 +102,7 @@ const FileUploadParameter: FC<ParameterProps> = ({
             description: '',
           },
           isParameter: true,
-          execute: (data) => {
-            // dispatch(
-            //   updateExecutedParameter({
-            //     ...parameter,
-            //     response: {
-            //       ...parameter.response,
-            //       medias: [...(parameter.response?.medias ?? []), data],
-            //       audit: undefined,
-            //       state: 'EXECUTED',
-            //     },
-            //   }),
-            // );
+          execute: (data: Media) => {
             if (isCorrectingError) {
               dispatch(
                 jobActions.fixParameter({
@@ -150,9 +137,9 @@ const FileUploadParameter: FC<ParameterProps> = ({
 
   const onUploadError = (error: string | ResponseError[]) => {
     console.log('error :: ', error);
-    let errorMsg = error;
+    let errorMsg: string | ResponseError[] = error;
     setIsUploading(false);
-    if (error?.length > 0) {
+    if (typeof error !== 'string' && error?.length > 0) {
       errorMsg = getErrorMsg(error);
     }
     dispatch(
@@ -163,18 +150,9 @@ const FileUploadParameter: FC<ParameterProps> = ({
     );
   };
 
-  const fetchVideoDevices = async () => {
-    const devices = await getVideoDevices();
-    setVideoDevices(devices);
-  };
-
-  useEffect(() => {
-    fetchVideoDevices();
-  }, []);
-
   useEffect(() => {
     if (!isEqual(parameter?.response?.medias, uploadedMedia)) {
-      setUploadedMedia(parameter?.response?.medias);
+      setUploadedMedia(parameter.response!.medias!);
     }
   }, [parameter?.response?.medias]);
 

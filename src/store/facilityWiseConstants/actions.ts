@@ -3,7 +3,6 @@ import { actionSpreader } from '#store/helpers';
 import { FacilityWiseConstantsAction } from './types';
 
 export const setInitialFacilityWiseConstants = (facilities: Facility[]) => {
-  const data = facilities.map((facilityData) => {});
   const initialFacilityWiseConstants = facilities.reduce(
     (data, facilityData) => ({
       ...data,

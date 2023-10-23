@@ -16,6 +16,7 @@ import { useTypedSelector } from '#store';
 import { toggleIsDrawerOpen } from '#store/extras/action';
 import { ALL_FACILITY_ID } from '#utils/constants';
 import { Error, SsoStates } from '#utils/globalTypes';
+import { ssoSigningRedirect } from '#utils/request';
 import { archiveChecklist, unarchiveChecklist } from '#views/Checklists/ListView/actions';
 import { FormMode } from '#views/Checklists/NewPrototype/types';
 import { MenuItem } from '@material-ui/core';
@@ -35,13 +36,13 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { validatePrototype } from '../actions';
 import {
+  AllChecklistStates,
   Checklist,
   ChecklistStates,
   ChecklistStatesColors,
   ChecklistStatesContent,
 } from '../checklist.types';
 import HeaderWrapper from './styles';
-import { ssoSigningRedirect } from '#utils/request';
 
 const ListActionMenuButton = styled(ListActionMenu)`
   .MuiPaper-root {
@@ -65,7 +66,6 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
 
   const {
     data,
-    userId,
     listOrder,
     profile,
     selectedFacility: { id: facilityId = '' } = {},
@@ -285,7 +285,7 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
     return false;
   };
 
-  const checkDisplayRecallProcess = (checklistState: string) => {
+  const checkDisplayRecallProcess = (checklistState: AllChecklistStates) => {
     const recallProcessValidStates = [
       ChecklistStates.SUBMITTED_FOR_REVIEW,
       ChecklistStates.BEING_REVIEWED,

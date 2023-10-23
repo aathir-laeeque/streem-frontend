@@ -1,5 +1,6 @@
 import { Button, FormGroup, ToggleSwitch, useDrawer } from '#components';
 import { useTypedSelector } from '#store';
+import { MandatoryParameter, ParameterType } from '#types';
 import { InputTypes } from '#utils/globalTypes';
 import { createObjectTypeProperty, editObjectTypeProperty } from '#views/Ontology/actions';
 import { PropertyFlags } from '#views/Ontology/utils';
@@ -21,7 +22,6 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import ChecklistParameter from './Options';
 import { RenderParameterLabel } from './index';
-import { MandatoryParameter, ParameterType } from '#types';
 
 type Props = {
   showBasic: number;
@@ -106,13 +106,6 @@ const AddPropertyDrawer: FC<{
   setShouldToggle: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ onCloseDrawer, label, property, setSelectedProperty, setShouldToggle }) => {
   const dispatch = useDispatch();
-  const {
-    prototypeComposer: {
-      parameters: {
-        parameters: { list: parametersList },
-      },
-    },
-  } = useTypedSelector((state) => state);
   const [activeStep, setActiveStep] = useState(0);
 
   const {

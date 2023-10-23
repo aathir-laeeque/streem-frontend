@@ -1,6 +1,5 @@
 import { Button, FormGroup } from '#components';
 import { InputTypes } from '#utils/globalTypes';
-
 import { createObjectType, editObjectType } from '#views/Ontology/actions';
 import { navigate, useLocation } from '@reach/router';
 import React, { FC, useEffect } from 'react';
@@ -15,7 +14,6 @@ const AddObjectTypeWrapper = styled.form`
   overflow: auto;
   gap: 20px;
   margin: 32px;
-  // position: relative;
   .header {
     > div {
       font-size: 20px;
@@ -34,7 +32,6 @@ const AddObjectTypeWrapper = styled.form`
   .footer {
     display: flex;
     flex: 1;
-    // width: 100%;
     padding: 16px 10px;
     background: #fff;
     border-top: 1px solid #f4f4f4;
@@ -56,59 +53,52 @@ const AddObjectTypeWrapper = styled.form`
 const Wrapper = styled.div.attrs({
   className: 'basic-details-wrapper',
 })`
-
   display: flex;
   justify-content: center;
   flex-direction: column;
-  // border: 1px solid;
-  background:#fff;
+  background: #fff;
 
   .header {
     border-bottom: 1px solid #e0e0e0;
-    padding-inline:20px;
+    padding-inline: 20px;
   }
 
   .sub-header {
     margin: 20px 20px 20px 24px;
-    font-size:12px;
+    font-size: 12px;
   }
 
   .property-section {
-    display:flex;
-    gap:12px;
+    display: flex;
+    gap: 12px;
     border-top: 1px solid #e0e0e0;
-    margin-inline:8px;
-    padding-block:8px;
-    flex-direction:column;
+    margin-inline: 8px;
+    padding-block: 8px;
+    flex-direction: column;
 
-    .property-section-header{
-      font-size:14px;
+    .property-section-header {
+      font-size: 14px;
       font-weight: bold;
     }
-    .property-section-sub-header{
-      font-size:12px;
+    .property-section-sub-header {
+      font-size: 12px;
     }
 
-    
-    >div:last-child{
-      font-size:12px;
-      padding:0px 16px 8px 16px;
+    > div:last-child {
+      font-size: 12px;
+      padding: 0px 16px 8px 16px;
 
-      >span{
-        color:#da1e28;
+      > span {
+        color: #da1e28;
       }
-
     }
 
- 
-      &-icon, &-header, &-sub-header{
-        margin-left:16px;
-      }
- 
+    &-icon,
+    &-header,
+    &-sub-header {
+      margin-left: 16px;
     }
   }
-
-
 `;
 
 const ParameterLabelWrapper = styled.div`
@@ -148,7 +138,7 @@ export const RenderParameterLabel: React.FC<{ label: string; icon: JSX.Element }
     </ParameterLabelWrapper>
   );
 };
-const AddObjectType: FC<{ path: string; id?: string }> = ({ path, id: editObjectTypeId }) => {
+const AddObjectType: FC<{ id?: string }> = ({ id: editObjectTypeId }) => {
   const dispatch = useDispatch();
   const {
     state: { objectType: activeObjectType },
@@ -159,6 +149,7 @@ const AddObjectType: FC<{ path: string; id?: string }> = ({ path, id: editObject
     description: string;
     pluralName: string;
     properties: any;
+    displayName: string;
   }>({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -176,19 +167,14 @@ const AddObjectType: FC<{ path: string; id?: string }> = ({ path, id: editObject
   } = form;
 
   register(`properties`, {
-    validate: (value, formValues) =>
+    validate: (value) =>
       value.length >= 2 &&
       value.every((currValue) => {
         return currValue.hasOwnProperty('displayName');
       }),
   });
 
-  const { label, pluralName, properties, description } = watch([
-    'label',
-    'pluralName',
-    'properties',
-    'description',
-  ]);
+  const { properties } = watch(['properties']);
 
   const basicDetails = () => {
     return (
@@ -214,6 +200,7 @@ const AddObjectType: FC<{ path: string; id?: string }> = ({ path, id: editObject
                 type: InputTypes.NUMBER,
                 props: {
                   label: 'ID',
+                  id: 'id',
                   placeholder: 'Auto Generated',
                   disabled: true,
                 },
@@ -308,6 +295,7 @@ const AddObjectType: FC<{ path: string; id?: string }> = ({ path, id: editObject
                     type: InputTypes.NUMBER,
                     props: {
                       label: 'ID',
+                      id: 'id',
                       placeholder: 'Auto Generated',
                       disabled: true,
                     },

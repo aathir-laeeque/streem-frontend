@@ -1,6 +1,6 @@
 import { StyledRadio } from '#components';
 import { RoleIdByName } from '#services/uiPermissions';
-import { RoleType } from '#views/UserAccess/types';
+import { rolesDetails } from '#views/UserAccess/ManageUser/rolesDetails';
 import { FormControlLabel, RadioGroup } from '@material-ui/core';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -9,7 +9,6 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
-import { rolesDetails } from '#views/UserAccess/ManageUser/rolesDetails';
 
 export interface RoleProps {
   id: string;
@@ -312,7 +311,7 @@ export const Role: FC<RoleProps> = ({ label, selected, disabled = false, id, err
                   }}
                 >
                   {Object.entries(rolesDetails[selected].permissions).map(
-                    ([permissionCategory, permissionArr], index) => (
+                    ([permissionCategory, permissionArr]) => (
                       <div>
                         <div
                           style={{

@@ -2,13 +2,13 @@ import { Button, FormGroup } from '#components';
 import { apiGetObjectTypes } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { v4 as uuidv4 } from 'uuid';
 import { Choice, Constraint, ObjectType } from '#views/Ontology/types';
 import { AddCircleOutline, Close } from '@material-ui/icons';
-import { compact, isArray, keyBy } from 'lodash';
+import { isArray, keyBy } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import styled from 'styled-components';
+import { v4 as uuidv4 } from 'uuid';
 
 export const ValidationWrapper = styled.div`
   .validation {

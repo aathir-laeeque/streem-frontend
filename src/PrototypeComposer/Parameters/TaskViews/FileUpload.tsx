@@ -1,4 +1,3 @@
-import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { PublishOutlined } from '@material-ui/icons';
 import React, { FC } from 'react';
 import styled from 'styled-components';
@@ -25,7 +24,7 @@ const FileUploadViewWrapper = styled.div`
   }
 `;
 
-const FileUploadTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
+const FileUploadTaskView: FC = () => {
   return (
     <FileUploadViewWrapper>
       <PublishOutlined className="icon" />

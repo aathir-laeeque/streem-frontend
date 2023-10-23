@@ -1,21 +1,21 @@
-import { CustomTag, DataTable, LoadingContainer, Pagination, TabContentProps } from '#components';
-import { DataTableColumn } from '#components/shared/DataTable';
 import { fetchComposerData } from '#PrototypeComposer/actions';
 import { LogType, TriggerTypeEnum } from '#PrototypeComposer/checklist.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
+import { CustomTag, DataTable, LoadingContainer, Pagination, TabContentProps } from '#components';
+import { DataTableColumn } from '#components/shared/DataTable';
 import { useTypedSelector } from '#store';
+import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
+import { FilterOperators, fetchDataParams } from '#utils/globalTypes';
+import { fileTypeCheck } from '#utils/parameterUtils';
 import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import React, { FC, useEffect, useState, useRef } from 'react';
+import { navigate } from '@reach/router';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { fetchProcessLogs } from '../ListView/actions';
-import { navigate } from '@reach/router';
 import { logsResourceChoicesMapper } from './DynamicContent';
-import { openLinkInNewTab } from '#utils';
-import { fileTypeCheck } from '#utils/parameterUtils';
 
 const JobLogsTabWrapper = styled.div`
   display: flex;
@@ -211,12 +211,10 @@ const Logs: FC<TabContentProps> = ({ values }) => {
   });
   const { columns } = state;
   const { selectedFacility } = useTypedSelector((state) => state.auth);
-
-  const [filterFields, setFilterFields] = useState<FilterField[]>([]);
   const resourceParameterChoicesMap = useRef(logsResourceChoicesMapper(list));
 
   const fetchData = (params: fetchDataParams = {}) => {
-    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
+    const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = [] } = params;
     if (id)
       dispatch(
         fetchProcessLogs({

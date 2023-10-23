@@ -12,7 +12,6 @@ import {
   AutomationTargetEntityType,
   MandatoryParameter,
   Parameter,
-  TargetEntityType,
 } from '#PrototypeComposer/checklist.types';
 import backIcon from '#assets/svg/back-icon.svg';
 import { BaseModal, Button, FormGroup } from '#components';
@@ -20,16 +19,16 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { CommonOverlayProps, OverlayNames } from '#components/OverlayContainer/types';
 import { createFetchList } from '#hooks/useFetchData';
 import { useTypedSelector } from '#store';
-import { apiGetObjectTypes, apiGetParameters, baseUrl } from '#utils/apiUrls';
+import { apiGetObjectTypes, baseUrl } from '#utils/apiUrls';
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterOperators, InputTypes } from '#utils/globalTypes';
+import { InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { fetchObjectTypes } from '#views/Ontology/actions';
 import { ObjectType } from '#views/Ontology/types';
 import { Close } from '@material-ui/icons';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import { keyBy, startCase, toLower } from 'lodash';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -340,14 +339,7 @@ const ConfigureActions: FC<CommonOverlayProps<Pick<Props, 'checklistId' | 'isRea
   );
 };
 
-const ActionFormCard: FC<Props> = ({
-  isReadOnly,
-  state,
-  setState,
-  task,
-  checklistId,
-  activeTaskId,
-}) => {
+const ActionFormCard: FC<Props> = ({ isReadOnly, state, setState, task, activeTaskId }) => {
   const {
     ontology: {
       objectTypes: { list, listLoading, pageable: objectTypePagination },
@@ -367,7 +359,7 @@ const ActionFormCard: FC<Props> = ({
   const [selectedRelation, setSelectedRelation] = useState<any>();
   const { selectedAction, editActionFlag } = state;
   const [objectUrlPath, setObjectUrlPath] = useState<string>('');
-  const { list: objects, reset: resetObjects } = createFetchList(objectUrlPath, {}, false);
+  const { reset: resetObjects } = createFetchList(objectUrlPath, {}, false);
 
   useEffect(() => {
     resetObjects({ url: objectUrlPath });
@@ -570,11 +562,11 @@ const ActionFormCard: FC<Props> = ({
         }),
       );
     }
-    setState((prev) => ({
+    setState({
       addNewAction: false,
       selectedAction: {},
       editActionFlag: false,
-    }));
+    });
   };
 
   useEffect(() => {

@@ -1,3 +1,9 @@
+import {
+  AutomationAction,
+  AutomationActionActionType,
+  AutomationActionTriggerType,
+  TimerOperator,
+} from '#PrototypeComposer/checklist.types';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
@@ -41,11 +47,14 @@ import {
   apiStartJob,
   apiValidatePassword,
 } from '#utils/apiUrls';
+import { JOB_STAGE_POLLING_TIMEOUT } from '#utils/constants';
 import { ResponseError, ResponseObj } from '#utils/globalTypes';
+import { getAutomationActionTexts } from '#utils/parameterUtils';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
 import { CompletedJobStates, Job, Verification } from '#views/Jobs/ListView/types';
 import { navigate } from '@reach/router';
+import moment from 'moment';
 import {
   all,
   call,
@@ -60,15 +69,6 @@ import {
 } from 'redux-saga/effects';
 import { JobActionsEnum, initialState, jobActions } from './jobStore';
 import { parseJobData } from './utils';
-import moment from 'moment';
-import { getAutomationActionTexts } from '#utils/parameterUtils';
-import {
-  AutomationAction,
-  AutomationActionActionType,
-  AutomationActionTriggerType,
-  TimerOperator,
-} from '#PrototypeComposer/checklist.types';
-import { JOB_STAGE_POLLING_TIMEOUT } from '#utils/constants';
 
 const getUserId = (state: RootState) => state.auth.userId;
 const getJobStore = (state: RootState) => state.job;
@@ -978,7 +978,7 @@ function* jobAuditLogsSaga({ payload }: ReturnType<typeof jobActions.getJobAudit
       }),
     );
   } catch (e) {
-    const error = yield* handleCatch('JobParameter', 'fetchJobAuditLogsSaga', e);
+    yield* handleCatch('JobParameter', 'fetchJobAuditLogsSaga', e);
   }
 }
 

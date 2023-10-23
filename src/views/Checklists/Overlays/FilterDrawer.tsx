@@ -246,7 +246,6 @@ const FiltersDrawer: FC<any> = ({ setState: _setState, onApplyMoreFilters, filte
   const {
     handleSubmit,
     formState: { isDirty, isValid },
-    getValues,
     control,
   } = form;
   const { fields, append, remove } = useFieldArray({

@@ -1,5 +1,4 @@
 import { Pageable } from '#utils/globalTypes';
-import { RouteComponentProps } from '@reach/router';
 
 import {
   fetchSessionActivities,

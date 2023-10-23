@@ -192,7 +192,7 @@ export const apiReOrderParameters = (
   stageId: Stage['id'],
 ) => `${baseUrl}/checklists/${checklistId}/stages/${stageId}/tasks/${taskId}/parameters/reorder`;
 
-export const apiUpdateTaskMedia = (taskId: Task['id'], mediaId: MediaDetails['mediaId']) =>
+export const apiUpdateTaskMedia = (mediaId: MediaDetails['mediaId']) =>
   `${baseUrl}/medias/${mediaId}`;
 
 export const apiGetParameters = (checklistId: Checklist['id'], type?: string) =>

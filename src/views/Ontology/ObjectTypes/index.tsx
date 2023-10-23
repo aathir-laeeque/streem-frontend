@@ -1,22 +1,35 @@
+import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import {
   Button,
-  GeneralHeader,
   DataTable,
-  LoadingContainer,
-  TabContentProps,
+  GeneralHeader,
   ListActionMenu,
+  LoadingContainer,
+  Pagination,
+  TabContentProps,
   TextInput,
   ToggleSwitch,
-  Pagination,
 } from '#components';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import useTabs from '#components/shared/useTabs';
+import { createFetchList } from '#hooks/useFetchData';
+import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
+import { apiGetObjectTypeRelations, apigetObjectTypeProperties } from '#utils/apiUrls';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper, ViewWrapper } from '#views/Jobs/ListView/styles';
+import { MenuItem } from '@material-ui/core';
+import { ArrowDropDown, Search } from '@material-ui/icons';
+import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import { RouteComponentProps } from '@reach/router';
+import { debounce, startCase } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import ObjectList from '../Objects/ObjectList';
 import {
   archiveObjectTypeProperty,
   archiveObjectTypeRelation,
@@ -24,22 +37,9 @@ import {
   fetchObjectTypes,
   resetOntology,
 } from '../actions';
-import ObjectList from '../Objects/ObjectList';
-import { debounce, startCase } from 'lodash';
-import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
+import { PropertyFlags } from '../utils';
 import AddPropertyDrawer from './Components/PropertyDrawer';
 import AddRelationDrawer from './Components/RelationDrawer';
-import { ArrowDropDown, Search } from '@material-ui/icons';
-import { MenuItem } from '@material-ui/core';
-import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined';
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import { PropertyFlags } from '../utils';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
-import checkPermission from '#services/uiPermissions';
-import { createFetchList } from '#hooks/useFetchData';
-import { apigetObjectTypeProperties, apiGetObjectTypeRelations } from '#utils/apiUrls';
-import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 // TODO change this enum to Object and have positions defined explicity
 export enum FlagPositions {
   SYSTEM,
@@ -130,7 +130,7 @@ const urlParams = {
   usageStatus: 1,
 };
 
-const GeneralTabContent: FC<TabContentProps> = ({ label }) => {
+const GeneralTabContent: FC<TabContentProps> = () => {
   const {
     objectTypes: { active },
   } = useTypedSelector((state) => state.ontology);

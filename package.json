@@ -24,7 +24,7 @@
     "lint:fix": "eslint --fix .eslintrc 'src/**/*{.ts,.tsx}'",
     "prettier:check": "prettier --config .prettierrc --check 'src/**/*{.ts,.tsx}'",
     "prettier:write": "prettier --config .prettierrc --write 'src/**/*{.ts,.tsx}'",
-    "ts:check": "tsc > ts-error",
+    "ts:check": "tsc > ts-error.log",
     "ts:count": "tsc 2>/dev/null | grep 'error TS' | wc -l | awk '{print $1}'",
     "test": "jest",
     "prepare": "husky install"

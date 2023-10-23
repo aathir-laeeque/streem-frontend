@@ -56,7 +56,6 @@ import {
   CommonReviewPayload,
   CommonReviewResponse,
 } from './reviewer.types';
-import { navigate } from '@reach/router';
 
 const getState = (state: RootState) => state.prototypeComposer.data?.state;
 const getCurrentPhase = (state: RootState) => state.prototypeComposer.data?.phase;

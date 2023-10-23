@@ -1,4 +1,3 @@
-import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { PhotoCamera } from '@material-ui/icons';
 import React, { FC } from 'react';
 import styled from 'styled-components';
@@ -25,7 +24,7 @@ const MediaTaskViewWrapper = styled.div`
   }
 `;
 
-const MediaTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) => {
+const MediaTaskView: FC = () => {
   return (
     <MediaTaskViewWrapper>
       <PhotoCamera className="icon" />
