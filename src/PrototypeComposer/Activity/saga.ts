@@ -114,9 +114,10 @@ function* deleteParameterSaga({ payload }: ReturnType<typeof deleteParameter>) {
       yield put(deleteParameterSuccess(payload));
     } else {
       yield put(deleteParameterError(errors));
+      throw getErrorMsg(errors);
     }
   } catch (error) {
-    console.error('error came in deleteParameterSaga :: ', error);
+    yield* handleCatch('Parameter', 'deleteParameterSaga', error, true);
   }
 }
 
