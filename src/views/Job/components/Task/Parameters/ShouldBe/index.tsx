@@ -351,7 +351,7 @@ const ShouldBeParameter: FC<
             <Warning className="icon" />
             {state.isUserAuthorisedForApproval
               ? 'This Parameter Needs Approval'
-              : 'Pending Approval'}
+              : 'Pending for Approval'}
           </span>
         ) : null}
 
