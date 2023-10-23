@@ -1,4 +1,3 @@
-// import { getAutomationActionTexts } from '#JobComposer/TaskList/utils';
 import { useTypedSelector } from '#store';
 import { StoreTask } from '#types';
 import { getAutomationActionTexts } from '#utils/parameterUtils';

@@ -1,8 +1,8 @@
-import { Task } from '#JobComposer/checklist.types';
 import { AddNewParameterType } from '#PrototypeComposer/Activity/types';
 import { Checklist, Parameter, Stage } from '#PrototypeComposer/checklist.types';
 import { AddNewTaskType, MediaDetails } from '#PrototypeComposer/Tasks/types';
 import { User } from '#store/users/types';
+import { Task } from '#types';
 import { Job } from '#views/Jobs/ListView/types';
 import { Object } from '#views/Ontology/types';
 import { fetchBaseUrl } from './constants';

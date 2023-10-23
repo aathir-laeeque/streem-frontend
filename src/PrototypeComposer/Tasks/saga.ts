@@ -19,12 +19,13 @@ import {
 } from '#utils/apiUrls';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, select, takeEvery, takeLatest, takeLeading } from 'redux-saga/effects';
-// import { updateMediaParameterSuccess } from '../../JobComposer/ActivityList/actions';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import {
-  addTaskAction,
   addNewTask,
   addNewTaskSuccess,
   addStop,
+  addTaskAction,
   addTaskMedia,
   archiveTaskAction,
   deleteTask,
@@ -40,14 +41,11 @@ import {
   setValidationError,
   updateTask,
   updateTaskAction,
-  updateTaskActionSuccess,
   updateTaskMedia,
   updateTaskMediaSuccess,
   updateTaskName,
 } from './actions';
 import { TaskListActions } from './reducer.types';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
 
 function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
   try {
@@ -291,7 +289,6 @@ function* updateTaskMediaSaga({ payload }: ReturnType<typeof updateTaskMedia>) {
       yield put(updateTaskMediaSuccess({ media: data, taskId }));
     } else if (data && parameterId) {
       yield put(closeOverlayAction(OverlayNames.TASK_MEDIA));
-      yield put(updateMediaParameterSuccess(data, parameterId));
     } else {
       console.error('error from update media to task api :: ', errors);
     }

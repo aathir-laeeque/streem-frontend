@@ -1,5 +1,9 @@
-import { AutomationAction, Media, TimerOperator } from '#JobComposer/checklist.types';
-import { Parameter } from '#PrototypeComposer/checklist.types';
+import {
+  AutomationAction,
+  Media,
+  Parameter,
+  TimerOperator,
+} from '#PrototypeComposer/checklist.types';
 import { User } from '#store/users/types';
 import { Audit, ObjectKeys, PartialUser } from './common';
 

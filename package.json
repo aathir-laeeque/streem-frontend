@@ -24,6 +24,8 @@
     "lint:fix": "eslint --fix .eslintrc 'src/**/*{.ts,.tsx}'",
     "prettier:check": "prettier --config .prettierrc --check 'src/**/*{.ts,.tsx}'",
     "prettier:write": "prettier --config .prettierrc --write 'src/**/*{.ts,.tsx}'",
+    "ts:check": "tsc > ts-error",
+    "ts:count": "tsc 2>/dev/null | grep 'error TS' | wc -l | awk '{print $1}'",
     "test": "jest",
     "prepare": "husky install"
   },
@@ -83,7 +85,7 @@
     "terser-webpack-plugin": "^5.3.3",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.3.0",
-    "typescript": "^4.3.5",
+    "typescript": "^4.9.3",
     "typescript-plugin-styled-components": "^2.0.0",
     "util": "^0.12.4",
     "webpack": "^5.73.0",

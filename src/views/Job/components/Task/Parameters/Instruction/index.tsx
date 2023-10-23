@@ -6,8 +6,8 @@ import htmlToDraft from 'html-to-draftjs';
 import React, { FC, useEffect, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import { ParameterProps } from '../types';
 import { Wrapper } from './styles';
+import { ParameterProps } from '../Parameter';
 
 const toolbarOptions = {
   options: ['inline', 'list', 'emoji'],

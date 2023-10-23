@@ -1,8 +1,8 @@
 import { Checklist, Parameter } from '#PrototypeComposer/checklist.types';
 import { Users } from '#store/users/types';
-import { FileUploadData, Pageable } from '#utils/globalTypes';
+import { FileUploadData, InputTypes, Pageable } from '#utils/globalTypes';
 import { ObjectKeys, PartialUser } from './common';
-import { StoreParameter } from './parameter';
+import { ParameterType, StoreParameter } from './parameter';
 import { StoreStage } from './stage';
 import { StoreTask } from './task';
 
@@ -151,6 +151,7 @@ export type JobAuditLogType = {
   details: string;
   triggeredAt: number;
   triggeredBy: number;
+  parameters: { value: string | number; type: InputTypes }[];
 };
 
 export enum JobWithExceptionInCompleteTaskErrors {

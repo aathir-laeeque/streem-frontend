@@ -11,6 +11,7 @@
     "noImplicitAny": true,
     "strict": true,
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
     "noUnusedLocals": true,

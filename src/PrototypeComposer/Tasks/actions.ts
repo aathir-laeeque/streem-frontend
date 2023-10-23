@@ -1,8 +1,7 @@
-import { AutomationAction } from '#JobComposer/checklist.types';
 import { ReOrderType } from '#PrototypeComposer/types';
 import { actionSpreader } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
-import { Media, Stage, Task } from '../checklist.types';
+import { AutomationAction, Media, Stage, Task } from '../checklist.types';
 import { TaskListActions } from './reducer.types';
 import {
   AddActionType,

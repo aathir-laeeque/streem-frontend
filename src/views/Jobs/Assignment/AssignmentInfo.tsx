@@ -1,12 +1,12 @@
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import AssignmentSuccess from '#assets/svg/AssignmentSuccess';
 import { BaseModal } from '#components/shared/BaseModal';
-import { Task } from '#JobComposer/checklist.types';
 import { getUserName, User } from '#services/users';
 import { useTypedSelector } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
 import React, { FC } from 'react';
 import styled from 'styled-components';
+import { Task } from '#types';
 
 type AssignmentError = Error & {
   userId: User['id'];
@@ -97,7 +97,7 @@ const AssignmentInfo: FC<CommonOverlayProps<AssignmentInfoProps>> = ({
               {errors.map((error) => {
                 const taskId = (selectedTasks.find(
                   ([taskExecutionId]) => taskExecutionId === error.id,
-                ) ?? [])[1];
+                ) ?? [])[1]!;
 
                 const taskName = tasks?.get(taskId)?.name;
 

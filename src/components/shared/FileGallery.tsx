@@ -1,18 +1,18 @@
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { useTypedSelector } from '#store';
+import { openLinkInNewTab } from '#utils';
+import { fileTypeCheck } from '#utils/parameterUtils';
+import { jobActions } from '#views/Job/jobStore';
+import { omit } from 'lodash';
 import React, { FC } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import closeIcon from '../../assets/svg/close.svg';
 import FileIcon from '../../assets/svg/file.svg';
-import { Parameter } from '#JobComposer/checklist.types';
-import { useDispatch } from 'react-redux';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
-import { omit } from 'lodash';
-import { request } from '#utils/request';
-import { jobActions } from '#views/Job/jobStore';
-import { openLinkInNewTab } from '#utils';
-import { useTypedSelector } from '#store';
-import { fileTypeCheck } from '#utils/parameterUtils';
 import { CustomTag } from './CustomTag';
+import { Parameter } from '#types';
+import { Media } from '#PrototypeComposer/checklist.types';
 
 const FileGalleryWrapper = styled.div.attrs({
   className: 'file-gallery-wrapper',
@@ -36,7 +36,7 @@ const FileGalleryWrapper = styled.div.attrs({
     align-items: center;
   }
 
-  .media-list-item-head{
+  .media-list-item-head {
     display: flex;
     gap: 8px;
   }
@@ -58,26 +58,15 @@ const FileGalleryWrapper = styled.div.attrs({
 
   .media-list-item-remove-icon {
     pointer-events: ${({ isTaskCompleted, isCorrectingError }) =>
-      isTaskCompleted && !isCorrectingError ? 'none' : 'unset'}
+      isTaskCompleted && !isCorrectingError ? 'none' : 'unset'};
+  }
 `;
 
 export type FileGalleryProps = {
-  medias: FilesType[];
+  medias: Media[];
   parameter: Parameter;
   isCorrectingError?: boolean;
   isTaskCompleted?: boolean;
-};
-
-type FilesType = {
-  archived: boolean;
-  reason: string;
-  description: string | null;
-  filename: string;
-  mediaId: string;
-  link: string;
-  name: string;
-  originalFilename: string;
-  type: string;
 };
 
 enum FileTypes {
@@ -114,7 +103,7 @@ export const FileGallery: FC<FileGalleryProps> = ({
 
   const dispatch = useDispatch();
   const handleDelete = (
-    media: FilesType,
+    media: Media,
     reason: string,
     setFormErrors: (errors?: Error[]) => void,
   ) => {

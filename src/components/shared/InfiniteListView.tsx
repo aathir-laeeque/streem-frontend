@@ -1,5 +1,4 @@
 import NestedMenuItem from '#components/shared/NestedMenuItem';
-import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
 import { ChecklistAuditLogsType } from '#PrototypeComposer/ChecklistAuditLogs/types';
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { fetchDataParams } from '#utils/globalTypes';
@@ -10,6 +9,7 @@ import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import { Button } from './Button';
 import { StyledMenu } from './StyledMenu';
+import { JobAuditLogType } from '#types';
 
 type Filter = {
   label: string;

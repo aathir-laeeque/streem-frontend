@@ -1,3 +1,4 @@
+import { Media } from '#PrototypeComposer/checklist.types';
 import { Audit, Constraint } from './common';
 
 export enum MandatoryParameter {
@@ -37,6 +38,13 @@ export enum ParameterState {
   APPROVED = 'APPROVED',
 }
 
+export interface ParameterResponseChoice {
+  objectId: string;
+  objectExternalId: string;
+  objectDisplayName: string;
+  collection: string;
+}
+
 export interface ParameterResponse {
   audit: Audit;
   state: ParameterState;
@@ -45,6 +53,8 @@ export interface ParameterResponse {
   reason?: string;
   value?: string | number;
   parameterValueApprovalDto?: Audit | null;
+  medias?: Media[];
+  choices?: ParameterResponseChoice[];
 }
 
 export enum TargetEntityType {

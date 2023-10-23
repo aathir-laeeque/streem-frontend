@@ -105,6 +105,10 @@ export type Media = {
   type: string;
   filename: string;
   description: string;
+  archived: boolean;
+  reason: string;
+  mediaId: string;
+  originalFilename: string;
 };
 
 export enum TaskExecutionState {

@@ -1,4 +1,5 @@
-import { Parameter } from '#JobComposer/checklist.types';
+import { Parameter } from '#types';
+
 export enum FileUploadAction {
   UPLOAD_FILE = '@@file-upload/UPLOAD_FILE',
   UPLOAD_FILE_ERROR = '@@file-upload/UPLOAD_FILE_ERROR',

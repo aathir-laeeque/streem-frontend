@@ -1,5 +1,5 @@
-import { StageCardProps } from '#JobComposer/StageList/types';
 import styled, { css } from 'styled-components';
+import { StageCardProps } from './types';
 
 const StageListWrapper = styled.div.attrs({
   className: 'stage-list-container',

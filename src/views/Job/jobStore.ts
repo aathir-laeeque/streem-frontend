@@ -1,5 +1,3 @@
-import { SupervisorResponse } from '#JobComposer/ActivityList/types';
-import { TaskAction } from '#JobComposer/TaskList/types';
 import { generateActions } from '#store/helpers';
 import { Users } from '#store/users/types';
 import {
@@ -9,6 +7,8 @@ import {
   JobStore,
   Parameter,
   StoreParameter,
+  SupervisorResponse,
+  TaskAction,
   TaskExecution,
 } from '#types';
 import { DEFAULT_PAGINATION } from '#utils/constants';

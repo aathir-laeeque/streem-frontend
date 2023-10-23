@@ -5,7 +5,7 @@ import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
-import { MandatoryParameter, ParameterMode } from '#types';
+import { MandatoryParameter, ParameterMode, StoreParameter } from '#types';
 import { baseUrl } from '#utils/apiUrls';
 import { ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
@@ -41,7 +41,9 @@ const ResourceParameterWrapper = styled.div`
 const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
   const { parameters } = useTypedSelector((state) => state.job);
-  const [linkedResourceParameter, setlinkedResourceParameter] = useState();
+  const [linkedResourceParameter, setLinkedResourceParameter] = useState<
+    StoreParameter | undefined
+  >();
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];
@@ -57,7 +59,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     isLast: false,
   });
 
-  const referencedParameterIds = useRef(
+  const referencedParameterIds = useRef<string>(
     parameter?.data?.propertyFilters?.fields?.reduce((acc, currField) => {
       if (currField?.referencedParameterId) {
         acc.push(currField.referencedParameterId);
@@ -69,7 +71,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   useEffect(() => {
     if (parameter.autoInitialized) {
       const linkedResourceParameter = parameters.get(parameter!.autoInitialize!.parameterId);
-      setlinkedResourceParameter(linkedResourceParameter);
+      setLinkedResourceParameter(linkedResourceParameter);
     }
   }, []);
 

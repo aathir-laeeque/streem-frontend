@@ -1,4 +1,4 @@
-import { Parameter } from '#JobComposer/checklist.types';
+import { Parameter } from '#types';
 import { Text, View } from '@react-pdf/renderer';
 import React from 'react';
 import { styles } from './ActivityList';
@@ -19,7 +19,7 @@ const MemoMultiResourceParameter = ({ parameter }: { parameter: Parameter }) => 
       >
         <Text style={styles.parameterHintText}>{parameter.label}</Text>
       </View>
-      {parameter.response?.choices?.length > 0 ? (
+      {parameter.response?.choices?.length && parameter.response.choices.length > 0 ? (
         parameter?.response?.choices?.map((item) => (
           <View
             key={`${item.objectId}`}

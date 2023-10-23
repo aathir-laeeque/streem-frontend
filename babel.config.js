@@ -18,7 +18,6 @@ module.exports = function (api) {
             '#i18n': './src/i18n',
             '#assets': './src/assets',
             '#components': './src/components',
-            '#JobComposer': './src/JobComposer',
             '#PrototypeComposer': './src/PrototypeComposer',
             '#modules': './src/modules',
             '#store': './src/store',

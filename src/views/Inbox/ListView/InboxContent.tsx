@@ -1,4 +1,3 @@
-import { Checklist } from '#JobComposer/checklist.types';
 import {
   LoadingContainer,
   Pagination,
@@ -22,6 +21,7 @@ import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchInbox } from './actions';
+import { Checklist } from '#types';
 
 const InboxContent: FC<TabContentProps> = ({
   label,

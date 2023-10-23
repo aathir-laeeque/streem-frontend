@@ -1,6 +1,6 @@
-import { JobAuditLogType } from '#JobComposer/JobAuditLogs/types';
 import logo from '#assets/images/logo.png';
 import { useTypedSelector } from '#store';
+import { JobAuditLogType } from '#types';
 import { setKeepPersistedData } from '#utils';
 import { apiPrintJobActivity } from '#utils/apiUrls';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER } from '#utils/constants';
@@ -102,7 +102,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
                       const details = log?.details?.replace(
                         '{{{0}}}',
                         formatDateTime(
-                          log?.parameters[0]?.value,
+                          log?.parameters[0]?.value as number,
                           log?.parameters[0]?.type === InputTypes.DATE_TIME
                             ? 'Do MMMM YYYY hh:mm A'
                             : 'Do MMMM YYYY',

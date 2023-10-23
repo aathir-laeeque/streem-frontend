@@ -1,13 +1,13 @@
 import { Checklist } from '#PrototypeComposer/checklist.types';
 import { User } from '#store/users/types';
+import { Parameter } from '#types';
+import { getParameterContent } from '#utils/parameterUtils';
 import { formatDateTime, formatDuration1 } from '#utils/timeUtils';
 import { JobSummary } from '#views/Jobs/Summary/types';
 import { Link, StyleSheet, Text, View } from '@react-pdf/renderer';
 import React from 'react';
 import { AssignedJobStates, CompletedJobStates, JobStateType } from '../../ListView/types';
-import { commonStyles, InlineInputLabelGroup, InputLabelGroup, TabLookLike } from './utils';
-import { Parameter } from '#JobComposer/checklist.types';
-import { getParameterContent } from '#utils/parameterUtils';
+import { InlineInputLabelGroup, InputLabelGroup, TabLookLike, commonStyles } from './utils';
 
 export type PdfJobDataType = Pick<
   JobSummary,
@@ -28,7 +28,7 @@ export type PdfJobDataType = Pick<
   totalStages: number;
   totalTask: number;
   checklist: Checklist;
-  parameterValues: [];
+  parameterValues: Parameter[];
   scheduler: Record<string, any>;
 };
 
@@ -186,7 +186,7 @@ export const CommonJobPdfDetails = ({
             }
           />
           {parameterValues
-            .sort((a: Parameter, b: Parameter) => a?.orderTree - b?.orderTree)
+            .sort((a, b) => a?.orderTree - b?.orderTree)
             .map((currParam) => {
               if (currParam.response.hidden) return null;
 

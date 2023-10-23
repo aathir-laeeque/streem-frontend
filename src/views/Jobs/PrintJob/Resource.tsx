@@ -1,4 +1,4 @@
-import { Parameter } from '#JobComposer/checklist.types';
+import { Parameter } from '#types';
 import { Text, View } from '@react-pdf/renderer';
 import React from 'react';
 import { styles } from './ActivityList';

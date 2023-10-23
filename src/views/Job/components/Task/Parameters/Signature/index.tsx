@@ -1,4 +1,3 @@
-import { Media } from '#JobComposer/checklist.types';
 import MemoSignature from '#assets/svg/Signature';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
@@ -9,13 +8,14 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ParameterProps } from '../Parameter';
 import { Wrapper } from './styles';
+import { Media } from '#PrototypeComposer/checklist.types';
 
 const Signature: FC<ParameterProps> = ({ parameter, isCorrectingError, isTaskCompleted }) => {
   const {
     auth: { profile },
   } = useTypedSelector((state) => state);
 
-  const [imageData, setImageData] = useState<string | null>(null);
+  const [imageData, setImageData] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (parameter.response?.medias) {

@@ -1,10 +1,8 @@
-import { Checklist } from '#JobComposer/checklist.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
 import {
   Button,
   LoadingContainer,
   Pagination,
-  ProgressBar,
   ResourceFilter,
   SearchFilter,
   Select,
@@ -14,35 +12,24 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store/helpers';
+import { Checklist } from '#types';
 import { apiJobsCount } from '#utils/apiUrls';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators, fetchDataParams } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { getActiveSmartFilter } from '#utils/smartFilterUtils';
-import {
-  formatDateTimeToHumanReadable,
-  getDelayBetweenEpoch,
-  getOverDueByEpoch,
-} from '#utils/timeUtils';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import JobCard from '#views/Jobs/Components/JobCard';
-import { Tooltip, withStyles } from '@material-ui/core';
-import { FiberManualRecord } from '@material-ui/icons';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import RepeatIcon from '@material-ui/icons/Repeat';
-import { navigate } from '@reach/router';
-import { capitalize, debounce } from 'lodash';
-import moment from 'moment';
+import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { RRule } from 'rrule';
 import styled from 'styled-components';
 import checkIcon from '../../../assets/svg/check-icon.svg';
 import CreateJob from '../Components/CreateJob';
 import JobInfoDrawer from '../Components/JobInfo';
 import { fetchJobs } from './actions';
 import { TabContentWrapper } from './styles';
-import { AssignedJobStates, CompletedJobStates, Job } from './types';
+import { CompletedJobStates } from './types';
 
 const CountCardWrapper = styled.div`
   display: flex;
