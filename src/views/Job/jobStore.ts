@@ -194,8 +194,6 @@ function navigateByTaskId(draft: JobStore, payload: typeof actions.navigateByTas
     const taskIds = [...draft.tasks.keys()];
     draft.taskNavState = {
       current: task.id,
-      previous: task.previous,
-      next: task.next,
       isMobileDrawerOpen: false,
       stopExecution:
         draft.taskIdsWithStopActiveIndex !== -1
@@ -227,6 +225,17 @@ function updateParameter(draft: JobStore, payload: typeof actions.updateParamete
               if (stage) {
                 stage.visibleTasksCount--;
               }
+
+              const previousTask = task.previous ? draft.tasks.get(task.previous) : undefined;
+              if (previousTask) {
+                previousTask.next = task.next;
+                if (task.next) {
+                  const nextTask = draft.tasks.get(task.next);
+                  if (nextTask) {
+                    nextTask.previous = task.previous;
+                  }
+                }
+              }
             }
           }
         }
@@ -249,6 +258,18 @@ function updateParameter(draft: JobStore, payload: typeof actions.updateParamete
               }
             }
             task.visibleParametersCount++;
+
+            const previousTask = task.previous ? draft.tasks.get(task.previous) : undefined;
+            if (previousTask) {
+              task.next = previousTask.next;
+              previousTask.next = task.id;
+              if (task.next) {
+                const nextTask = task.previous ? draft.tasks.get(task.next) : undefined;
+                if (nextTask) {
+                  nextTask.previous = task.id;
+                }
+              }
+            }
           }
         }
       });

@@ -60,9 +60,6 @@ const TaskNavCard: FC<{ task: any; taskNo: number }> = ({ task, taskNo }) => {
   return (
     <TaskDetailCardWrapper
       onClick={() => {
-        // dispatch(setActiveStage(stageId, true));
-        // dispatch(setActiveTask(task?.id, true));
-        // setOverviewOpen?.(false);
         dispatch(
           jobActions.navigateByTaskId({
             id: task.id,

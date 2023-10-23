@@ -4,14 +4,13 @@ import {
   COMPLETED_TASK_STATES,
   IN_PROGRESS_TASK_STATES,
   JobStore,
+  NOT_STARTED_TASK_STATES,
   ParameterVerificationStatus,
   StoreParameter,
   StoreStage,
   StoreTask,
-  TASK_EXECUTION_STATES,
 } from '#types';
 import { Job, Verification } from '#views/Jobs/ListView/types';
-import { cloneDeep } from 'lodash';
 import { useEffect, useState } from 'react';
 import { initialState } from './jobStore';
 
@@ -35,8 +34,6 @@ export function parseJobData(
 
   const { checklist, parameterValues } = data;
 
-  const process = cloneDeep(checklist);
-
   const cjfValues = [...parameterValues]
     .sort((a, b) => a.orderTree - b.orderTree)
     .map((p) => {
@@ -44,12 +41,14 @@ export function parseJobData(
       return p.id;
     });
 
-  checklist?.stages?.forEach((stage, stageIndex) => {
+  let prevVisibleTaskId: string = '';
+  checklist?.stages?.forEach((stage) => {
     const _stage: StoreStage = {
       ...stage,
       visibleTasksCount: 0,
       tasks: [],
     };
+
     stage?.tasks?.forEach((task, taskIndex, _tasks) => {
       const _task: StoreTask = {
         ...task,
@@ -61,18 +60,6 @@ export function parseJobData(
         stageId: stage.id,
         parametersErrors: new Map(),
       };
-
-      if (
-        task.hasStop &&
-        [TASK_EXECUTION_STATES.NOT_STARTED, TASK_EXECUTION_STATES.IN_PROGRESS].includes(
-          task.taskExecution.state,
-        )
-      ) {
-        taskIdsWithStop.push(task.id);
-        if (taskIdsWithStopActiveIndex === -1) {
-          taskIdsWithStopActiveIndex = 0;
-        }
-      }
 
       task?.parameters?.forEach((__parameter) => {
         let parameter = __parameter;
@@ -114,51 +101,36 @@ export function parseJobData(
         parameters.set(parameter.id, _parameter);
       });
 
-      // CALCULATE PREVIOUS AND NEXT TASKS
-      let prevStageIndex = stageIndex;
-      let nextStageIndex = stageIndex;
+      _task.previous = prevVisibleTaskId;
 
-      let prevTaskIndex = taskIndex - 1;
-      let nextTaskIndex = taskIndex + 1;
-
-      if (taskIndex === 0 || taskIndex === _tasks.length - 1) {
-        if (_tasks.length === 1) {
-          prevStageIndex = stageIndex - 1;
-          nextStageIndex = stageIndex + 1;
-
-          prevTaskIndex = process.stages![prevStageIndex]?.tasks?.length - 1;
-          nextTaskIndex = 0;
-        } else {
-          if (taskIndex === 0) {
-            prevStageIndex = stageIndex - 1;
-            nextStageIndex = stageIndex;
-            prevTaskIndex = process.stages![prevStageIndex]?.tasks?.length - 1;
-          } else {
-            prevStageIndex = stageIndex;
-            nextStageIndex = stageIndex + 1;
-            nextTaskIndex = 0;
+      if (!_task.hidden && _task.visibleParametersCount) {
+        if (
+          _task.hasStop &&
+          _task.taskExecution.state in { ...IN_PROGRESS_TASK_STATES, ...NOT_STARTED_TASK_STATES }
+        ) {
+          taskIdsWithStop.push(task.id);
+          if (taskIdsWithStopActiveIndex === -1) {
+            taskIdsWithStopActiveIndex = 0;
           }
         }
-      }
 
-      _task.previous = process.stages?.[prevStageIndex]?.tasks?.[prevTaskIndex]?.id;
-      _task.next = process.stages?.[nextStageIndex]?.tasks[nextTaskIndex]?.id;
-
-      // SET TASK NAV STATE & TASK VISIBILITY
-
-      if (task.hidden || !_task.visibleParametersCount) {
-        // hiddenTasksLength++;
-      } else {
         _stage.visibleTasksCount++;
         if (!(task.taskExecution.state in COMPLETED_TASK_STATES)) {
-          pendingTasks.add(task.id);
+          pendingTasks.add(_task.id);
         }
 
-        if (!taskNavState.current) {
-          taskNavState.current = _task.id;
-          taskNavState.previous = _task.previous;
-          taskNavState.next = _task.next;
+        if (prevVisibleTaskId) {
+          const previousTask = tasks.get(prevVisibleTaskId)!;
+          tasks.set(prevVisibleTaskId, {
+            ...previousTask,
+            next: _task.id,
+          });
+          if (!taskNavState.current) {
+            taskNavState.current = prevVisibleTaskId;
+          }
         }
+
+        prevVisibleTaskId = _task.id;
 
         // SET USER ASSIGNED TO TASK
         _task.isUserAssignedToTask = task.taskExecution.assignees.some(

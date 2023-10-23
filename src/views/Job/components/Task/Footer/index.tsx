@@ -82,7 +82,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
   const {
     id: jobId,
     state: jobState,
-    taskNavState: { previous, next, stopExecution },
+    taskNavState: { stopExecution },
     isInboxView,
     pendingTasks,
     code,
@@ -99,19 +99,19 @@ const Footer: FC<FooterProps> = ({ task }) => {
   const { state: taskExecutionState, correctionEnabled } = task.taskExecution;
 
   const handleOnNextTask = () => {
-    if (next)
+    if (task.next)
       dispatch(
         jobActions.navigateByTaskId({
-          id: next,
+          id: task.next,
         }),
       );
   };
 
   const handleOnPreviousTask = () => {
-    if (previous)
+    if (task.previous)
       dispatch(
         jobActions.navigateByTaskId({
-          id: previous,
+          id: task.previous,
         }),
       );
   };
@@ -437,7 +437,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
 
   return (
     <Wrapper>
-      <Button variant="textOnly" onClick={handleOnPreviousTask} disabled={!previous}>
+      <Button variant="textOnly" onClick={handleOnPreviousTask} disabled={!task.previous}>
         <ArrowBack />
       </Button>
 
@@ -502,7 +502,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
           </>
         )}
       </div>
-      <Button variant="textOnly" onClick={handleOnNextTask} disabled={!next}>
+      <Button variant="textOnly" onClick={handleOnNextTask} disabled={!task.next}>
         <ArrowForward />
       </Button>
     </Wrapper>

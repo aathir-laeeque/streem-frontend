@@ -110,9 +110,7 @@ export interface JobStore {
   processCode?: string;
   isInboxView: boolean;
   taskNavState: {
-    previous?: string;
     current?: string;
-    next?: string;
     stopExecution: boolean;
     isMobileDrawerOpen: boolean;
   };
