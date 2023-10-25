@@ -65,7 +65,9 @@ const ResourceTaskView: FC<
 
   const { setValue, watch } = form;
   const parameterInForm = watch(parameter.id, {});
-  const linkedParameter = watch(parameter?.autoInitialize?.parameterId);
+  const linkedParameter = parameter?.autoInitialize?.parameterId
+    ? watch(parameter?.autoInitialize?.parameterId)
+    : undefined;
   const linkedParameterObjectId = useRef(linkedParameter?.data?.choices?.[0]?.objectId);
   const parameterForFilters = watch(referencedParameterIds.current, {});
   let interval: number | undefined = undefined;
@@ -199,7 +201,7 @@ const ResourceTaskView: FC<
   const handleAutoInitialize = async () => {
     const objectId = linkedParameter?.data?.choices[0]?.objectId;
     const collection = linkedParameter?.data?.choices[0]?.collection;
-    if (linkedParameterObjectId.current !== objectId) {
+    if (linkedParameterObjectId.current !== objectId || !parameterInForm?.data?.choices) {
       try {
         if (linkedParameter && objectId && collection) {
           const res: ResponseObj<Object> = await request('GET', apiGetObjects(objectId), {
