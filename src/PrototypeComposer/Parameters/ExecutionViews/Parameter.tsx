@@ -3,6 +3,7 @@ import { ParameterProps } from '#PrototypeComposer/Activity/types';
 import { InputTypes } from '#utils/globalTypes';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
+import { generateShouldBeText } from '#utils/stringUtils';
 
 const Wrapper = styled.div`
   .parameter-text {
@@ -42,35 +43,6 @@ const ShouldBeTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
   const [inputValue, setInputValue] = useState('');
   const { setValue } = form;
 
-  const generateText = (data, label) => {
-    if (data.operator === 'BETWEEN') {
-      return `${label} should be between ${data.lowerValue} ${data.uom} and ${data.upperValue} ${data.uom}`;
-    } else {
-      let operatorString: string;
-
-      switch (data.operator) {
-        case 'EQUAL_TO':
-          operatorString = '(=) equal to';
-          break;
-        case 'LESS_THAN':
-          operatorString = '(<) less than';
-          break;
-        case 'LESS_THAN_EQUAL_TO':
-          operatorString = '(≤) less than equal to';
-          break;
-        case 'MORE_THAN':
-          operatorString = '(>) more than';
-          break;
-        case 'MORE_THAN_EQUAL_TO':
-          operatorString = '(≥) more than equal to';
-          break;
-        default:
-          return;
-      }
-      return `${label} should be ${operatorString} ${data?.value ?? 50} ${data.uom}`;
-    }
-  };
-
   const observedValueChecker = (input, data) => {
     if (inputValue !== '') {
       let warningFlag: boolean;
@@ -107,7 +79,7 @@ const ShouldBeTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
 
   return (
     <Wrapper>
-      <div className="parameter-text">{generateText(parameter?.data, parameter.label)}</div>
+      <div className="parameter-text">{generateShouldBeText(parameter.label, parameter?.data)}</div>
       <FormGroup
         style={{ padding: 0 }}
         inputs={[
@@ -146,7 +118,7 @@ const ShouldBeTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, form 
       {observedValueChecker(Number(inputValue), parameter?.data) && (
         <div className="parameter-textarea">
           <div className="warning-label">
-            Warning! {generateText(parameter?.data, parameter.label)}
+            Warning! {generateShouldBeText(parameter.label, parameter?.data)}
           </div>
           <div className="input-label">State your Reason</div>
           <FormGroup

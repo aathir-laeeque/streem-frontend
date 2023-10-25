@@ -15,37 +15,8 @@ import { useDispatch } from 'react-redux';
 import { ParameterProps } from '../Parameter';
 import ParameterVerificationView from '../Verification/ParameterVerificationView';
 import { Wrapper } from './styles';
+import { generateShouldBeText } from '#utils/stringUtils';
 import { debounce } from 'lodash';
-
-const generateText = (label: string | undefined, data: any) => {
-  if (data.operator === 'BETWEEN') {
-    return `${label} should be between ${data.lowerValue} ${data.uom} and ${data.upperValue} ${data.uom}`;
-  } else {
-    let operatorString: string;
-
-    switch (data.operator) {
-      case 'EQUAL_TO':
-        operatorString = '(=) equal to';
-        break;
-      case 'LESS_THAN':
-        operatorString = '(<) less than';
-        break;
-      case 'LESS_THAN_EQUAL_TO':
-        operatorString = '(≤) less than equal to';
-        break;
-      case 'MORE_THAN':
-        operatorString = '(>) more than';
-        break;
-      case 'MORE_THAN_EQUAL_TO':
-        operatorString = '(≥) more than equal to';
-        break;
-      default:
-        return;
-    }
-
-    return `${label} should be ${operatorString} ${data?.value ?? 50} ${data.uom}`;
-  }
-};
 
 const checkIsOffLimit = ({
   observedValue,
@@ -215,7 +186,7 @@ const ShouldBeParameter: FC<
         type: OverlayNames.REASON_MODAL,
         props: {
           modalTitle: 'State your Reason',
-          modalDesc: `Warning! ${generateText(parameter?.label, parameter?.data)}`,
+          modalDesc: `Warning! ${generateShouldBeText(parameter?.label, parameter?.data)}`,
           onSubmitHandler: (reason: string) => {
             dispatchActions(value, reason);
             dispatch(closeOverlayAction(OverlayNames.REASON_MODAL));
@@ -372,7 +343,7 @@ const ShouldBeParameter: FC<
           {state.isVerificationPending && (
             <img src={PadLockIcon} alt="parameter-locked" style={{ marginRight: 8 }} />
           )}
-          {generateText(parameter?.label, parameter?.data)}
+          {generateShouldBeText(parameter?.label, parameter?.data)}
         </span>
         <TextInput
           type={InputTypes.NUMBER}

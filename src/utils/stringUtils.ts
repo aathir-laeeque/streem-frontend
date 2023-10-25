@@ -60,3 +60,34 @@ export const isMatchAny = (url: string, patterns: string[]) =>
 export const getFileExtension = (filename: string) => {
   return filename.split('.').pop();
 };
+
+export const generateShouldBeText = (label: string | undefined, data: any) => {
+  const uom = data.uom || '';
+  if (data.operator === 'BETWEEN') {
+    return `${label} should be between ${data.lowerValue} ${uom} and ${data.upperValue} ${uom}`;
+  } else {
+    let operatorString: string;
+
+    switch (data.operator) {
+      case 'EQUAL_TO':
+        operatorString = '(=) equal to';
+        break;
+      case 'LESS_THAN':
+        operatorString = '(<) less than';
+        break;
+      case 'LESS_THAN_EQUAL_TO':
+        operatorString = '(≤) less than equal to';
+        break;
+      case 'MORE_THAN':
+        operatorString = '(>) more than';
+        break;
+      case 'MORE_THAN_EQUAL_TO':
+        operatorString = '(≥) more than equal to';
+        break;
+      default:
+        return;
+    }
+
+    return `${label} should be ${operatorString} ${data?.value ?? 50} ${uom}`;
+  }
+};

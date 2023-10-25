@@ -356,24 +356,25 @@ const parameterTemplateFormatter = (
     case MandatoryParameter.SHOULD_BE:
       let content = '';
       const { data } = parameter;
+      const uom = data.uom || '';
       switch (data.operator) {
         case 'EQUAL_TO':
-          content = ` (=) Equal to ${data.value} ${data.uom}`;
+          content = ` (=) Equal to ${data.value} ${uom}`;
           break;
         case 'LESS_THAN':
-          content = ` (<) Less than ${data.value} ${data.uom}`;
+          content = ` (<) Less than ${data.value} ${uom}`;
           break;
         case 'LESS_THAN_EQUAL_TO':
-          content = `(<=) Less than equal to ${data.value} ${data.uom}`;
+          content = `(<=) Less than equal to ${data.value} ${uom}`;
           break;
         case 'BETWEEN':
-          content = ` In between ${data.lowerValue} - ${data.upperValue} ${data.uom}`;
+          content = ` In between ${data.lowerValue} - ${data.upperValue} ${uom}`;
           break;
         case 'MORE_THAN':
-          content = ` (>) More than ${data.value} ${data.uom}`;
+          content = ` (>) More than ${data.value} ${uom}`;
           break;
         case 'MORE_THAN_EQUAL_TO':
-          content = `(>=) More than equal to ${data.value} ${data.uom}`;
+          content = `(>=) More than equal to ${data.value} ${uom}`;
           break;
         default:
           break;
@@ -678,7 +679,7 @@ const parameterTemplateFormatter = (
           </Text>
           <Text style={{ ...styles.text12, backgroundColor: '#F0F0F0', padding: 8 }}>
             {parameter.label} = {parameter.response?.value ? parameter.response.value : '_________'}{' '}
-            {parameter.data.uom}
+            {parameter.data.uom || ''}
           </Text>
         </View>
       );

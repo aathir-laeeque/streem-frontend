@@ -28,7 +28,7 @@ const CalculationParameter: FC<ParameterProps> = ({ parameter }) => {
             Result
           </span>
           <span className="result">
-            {parameter.label} = {parameter.response.value} {parameter.data.uom}
+            {parameter.label} = {parameter.response.value} {parameter.data.uom || ''}
           </span>
         </>
       )}

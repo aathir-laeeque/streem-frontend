@@ -18,16 +18,21 @@ const ShouldBeTaskView: FC<Pick<ParameterProps, 'parameter'>> = ({ parameter }) 
   return (
     <FormGroup
       inputs={[
-        {
-          type: InputTypes.SINGLE_LINE,
-          props: {
-            id: 'uom',
-            label: 'Unit of Measurement',
-            placeholder: '',
-            value: parameter.data.uom,
-            disabled: true,
-          },
-        },
+        ...(parameter.data.uom !== ''
+          ? [
+              {
+                type: InputTypes.SINGLE_LINE,
+                props: {
+                  id: 'uom',
+                  label: 'Unit of Measurement',
+                  placeholder: '',
+                  value: parameter.data.uom,
+                  disabled: true,
+                },
+              },
+            ]
+          : []),
+
         {
           type: InputTypes.SINGLE_SELECT,
           props: {
