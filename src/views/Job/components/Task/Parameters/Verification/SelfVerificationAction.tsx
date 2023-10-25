@@ -1,7 +1,10 @@
 import { Button, TextInput } from '#components';
-import { InputTypes } from '#utils/globalTypes';
+import { useTypedSelector } from '#store';
+import { InputTypes, SsoStates } from '#utils/globalTypes';
+import { ssoSigningRedirect } from '#utils/request';
 import { jobActions } from '#views/Job/jobStore';
 import { Visibility } from '@material-ui/icons';
+import { useLocation } from '@reach/router';
 import React, { FC, memo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -21,14 +24,26 @@ const SelfVerificationAction: FC<{ parameterId: string }> = ({ parameterId }) =>
     mode: 'onChange',
     criteriaMode: 'all',
   });
+  const {
+    auth: { ssoIdToken },
+  } = useTypedSelector((state) => state);
+  const { pathname } = useLocation();
 
   const onSubmit = (data: Inputs) => {
-    dispatch(
-      jobActions.completeSelfVerification({
+    if (ssoIdToken) {
+      ssoSigningRedirect({
+        state: SsoStates.SELF_VERIFICATION,
         parameterId,
-        password: data.password,
-      }),
-    );
+        location: pathname,
+      });
+    } else {
+      dispatch(
+        jobActions.completeSelfVerification({
+          parameterId,
+          password: data.password,
+        }),
+      );
+    }
   };
 
   const AfterIcon = () => (
@@ -39,16 +54,22 @@ const SelfVerificationAction: FC<{ parameterId: string }> = ({ parameterId }) =>
   );
   return (
     <form className="parameter-verification" onSubmit={handleSubmit(onSubmit)}>
-      <TextInput
-        AfterElement={AfterIcon}
-        name="password"
-        placeholder="Enter Your Account Password"
-        ref={register({
-          required: true,
-        })}
-        type={passwordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE}
-      />
-      <Button style={{ marginRight: 'unset' }} type="submit" disabled={!isValid || !isDirty}>
+      {!ssoIdToken && (
+        <TextInput
+          AfterElement={AfterIcon}
+          name="password"
+          placeholder="Enter Your Account Password"
+          ref={register({
+            required: true,
+          })}
+          type={passwordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE}
+        />
+      )}
+      <Button
+        style={{ marginRight: 'unset' }}
+        type="submit"
+        disabled={ssoIdToken ? false : !isValid || !isDirty}
+      >
         Verify
       </Button>
       <Button

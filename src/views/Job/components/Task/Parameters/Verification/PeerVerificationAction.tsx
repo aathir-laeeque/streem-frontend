@@ -1,9 +1,12 @@
 import { Button, TextInput } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { InputTypes } from '#utils/globalTypes';
+import { useTypedSelector } from '#store';
+import { InputTypes, SsoStates } from '#utils/globalTypes';
+import { ssoSigningRedirect } from '#utils/request';
 import { jobActions } from '#views/Job/jobStore';
 import { Visibility } from '@material-ui/icons';
+import { useLocation } from '@reach/router';
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -24,6 +27,8 @@ const PeerVerificationAction: FC<{ parameterId: string }> = ({ parameterId }) =>
     mode: 'onChange',
     criteriaMode: 'all',
   });
+  const { ssoIdToken } = useTypedSelector((state) => state.auth);
+  const { pathname } = useLocation();
 
   const onSubmit = (data: Inputs) => {
     dispatch(
@@ -70,7 +75,15 @@ const PeerVerificationAction: FC<{ parameterId: string }> = ({ parameterId }) =>
         <div className="parameter-verification">
           <Button
             onClick={() => {
-              setShowPasswordField(true);
+              if (ssoIdToken) {
+                ssoSigningRedirect({
+                  state: SsoStates.PEER_VERIFICATION,
+                  parameterId,
+                  location: pathname,
+                });
+              } else {
+                setShowPasswordField(true);
+              }
             }}
           >
             Approve
