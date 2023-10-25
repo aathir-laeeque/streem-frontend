@@ -266,8 +266,9 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: isPasswordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
+              type: InputTypes.PASSWORD,
               props: {
+                type: isPasswordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
                 placeholder: 'Enter your Password',
                 label: 'Password',
                 id: 'password',
@@ -694,8 +695,9 @@ export const createBaseViewConfig = ({
         formData: {
           formInputs: [
             {
-              type: isPasswordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
+              type: InputTypes.PASSWORD,
               props: {
+                type: isPasswordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
                 placeholder: 'Enter your new Password',
                 label: 'New Password',
                 id: 'password',
@@ -719,8 +721,9 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: isConfirmPasswordTextHidden ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
+              type: InputTypes.PASSWORD,
               props: {
+                type: isConfirmPasswordTextHidden ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
                 placeholder: 'Enter your new Password again',
                 label: 'Confirm Password',
                 id: 'confirmPassword',
