@@ -4,8 +4,8 @@ import { Checklist } from '#PrototypeComposer/checklist.types';
 import { fetchApprovers } from '#PrototypeComposer/reviewer.actions';
 import { CollaboratorState } from '#PrototypeComposer/reviewer.types';
 import { useTypedSelector } from '#store';
+import { formatDateTime } from '#utils/timeUtils';
 import { groupBy } from 'lodash';
-import moment from 'moment';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -200,11 +200,6 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, c
     data: state.prototypeComposer.data as Checklist,
   }));
 
-  const { selectedFacility } = useTypedSelector((state) => state.auth);
-  const { dateAndTimeStampFormat } = useTypedSelector(
-    (state) => state.facilityWiseConstants[selectedFacility!.id],
-  );
-
   useEffect(() => {
     dispatch(fetchApprovers(data.id));
   }, []);
@@ -250,9 +245,7 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, c
                   <>
                     <div className="right success">Signed</div>
                     {groupedApprovers[key][0].modifiedAt &&
-                      moment
-                        .unix(groupedApprovers[key][0].modifiedAt)
-                        .format(dateAndTimeStampFormat)}
+                      formatDateTime({ value: groupedApprovers[key][0].modifiedAt })}
                   </>
                 )}
               </div>
@@ -276,7 +269,7 @@ const SignOffProgressModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, c
                   ) : (
                     <>
                       <div className="right success">Signed</div>
-                      {a.modifiedAt && moment.unix(a.modifiedAt).format(dateAndTimeStampFormat)}
+                      {a.modifiedAt && formatDateTime({ value: a.modifiedAt })}
                     </>
                   )}
                 </div>

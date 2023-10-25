@@ -22,20 +22,20 @@ import {
   StaticDateRangePicker,
   TimePicker,
 } from '@material-ui/pickers';
-import MomentUtils from '@material-ui/pickers/adapter/moment';
+import DateFnsUtils from '@material-ui/pickers/adapter/date-fns';
 import { RouteComponentProps } from '@reach/router';
 import { groupBy } from 'lodash';
-import moment, { Moment } from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { jobActions } from '../jobStore';
+import { endOfDay, getHours, getMinutes, getUnixTime, set, startOfDay, subDays } from 'date-fns';
 import { Composer, UserFilterWrapper } from './styles';
 
 type initialState = {
-  dateRange: DateRange<Moment>;
+  dateRange: DateRange<Date>;
   appliedFilters: Record<string, boolean>;
-  startTime: Moment | null;
-  endTime: Moment | null;
+  startTime: Date | null;
+  endTime: Date | null;
   searchQuery: string;
   selectedUsers: User[];
   unSelectedUsers: User[];
@@ -43,12 +43,12 @@ type initialState = {
 };
 
 // TODO Change appliedUsers, selectedUsers, unSelectedUsers to HashMap as we only need the id's of the users So we can keep it like { userId : boolean }.
-const currentDate = moment().startOf('day');
+const currentDate = startOfDay(new Date());
 const initialState: initialState = {
   dateRange: [null, null],
   appliedFilters: {},
   startTime: currentDate,
-  endTime: moment().endOf('day'),
+  endTime: endOfDay(new Date()),
   searchQuery: '',
   selectedUsers: [],
   unSelectedUsers: [],
@@ -61,11 +61,6 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
   const {
     auditLogs: { logs, loading, pageable },
   } = useTypedSelector((state) => state.job);
-
-  const { selectedFacility } = useTypedSelector((state) => state.auth);
-  const { timeFormat: timeFormat, dateFormat } = useTypedSelector(
-    (state) => state.facilityWiseConstants[selectedFacility!.id],
-  );
   const {
     list,
     pageable: { last, page },
@@ -145,7 +140,7 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
           });
         },
         content: (
-          <LocalizationProvider dateAdapter={MomentUtils}>
+          <LocalizationProvider dateAdapter={DateFnsUtils}>
             <StaticDateRangePicker
               displayStaticWrapperAs="desktop"
               value={state.dateRange}
@@ -293,8 +288,8 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
   const fetchLogs = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
     const { dateRange, startTime, endTime } = state;
-    let greaterDate = moment().startOf('day').subtract(7, 'days');
-    let lowerDate = moment().endOf('day');
+    let greaterDate = subDays(currentDate, 7);
+    let lowerDate = endOfDay(new Date());
     if (dateRange[0]) {
       greaterDate = dateRange[0];
       lowerDate = dateRange[0];
@@ -303,12 +298,18 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
       }
     }
     if (greaterDate && lowerDate && startTime && endTime) {
-      const greaterThan = moment(
-        `${greaterDate.format('YYYY-MM-DD')} ${startTime.format('HH:mm')}`,
-      ).unix();
-      const lowerThan = moment(
-        `${lowerDate.format('YYYY-MM-DD')} ${endTime.format('HH:mm')}`,
-      ).unix();
+      const greaterThan = getUnixTime(
+        set(greaterDate, {
+          hours: getHours(startTime),
+          minutes: getMinutes(startTime),
+        }),
+      );
+      const lowerThan = getUnixTime(
+        set(lowerDate, {
+          hours: getHours(endTime),
+          minutes: getMinutes(endTime),
+        }),
+      );
 
       const userFilter = appliedUsers.map((u) => u.id);
       const fields = [
@@ -377,7 +378,10 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
             {
               header: 'TIME',
               template: function renderComp(item) {
-                const day = moment(Object.keys(item)[0]).format(dateFormat);
+                const day = formatDateTime({
+                  value: getUnixTime(new Date(Object.keys(item)[0])),
+                  type: InputTypes.DATE,
+                });
                 const itemId = item.id as string;
 
                 return (
@@ -391,19 +395,20 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
                         {(item[itemId] as JobAuditLogType[]).map((log) => {
                           const details = log?.details?.replace(
                             '{{{0}}}',
-                            formatDateTime(
-                              log?.parameters[0]?.value,
-                              log?.parameters[0]?.type === InputTypes.DATE_TIME
-                                ? 'Do MMMM YYYY hh:mm A'
-                                : 'Do MMMM YYYY',
-                            ),
+                            formatDateTime({
+                              value: log?.parameters[0]?.value,
+                              type: log?.parameters[0]?.type,
+                            }),
                           );
                           return (
                             <div className="log-item" key={`${log.id}`}>
                               <div className="circle" />
                               <div className="content">
                                 <div className="content-items" style={{ whiteSpace: 'nowrap' }}>
-                                  {moment.unix(log.triggeredAt).format(timeFormat)}
+                                  {formatDateTime({
+                                    value: log.triggeredAt,
+                                    type: InputTypes.TIME,
+                                  })}
                                 </div>
                                 <div className="content-items">{details}</div>
                               </div>

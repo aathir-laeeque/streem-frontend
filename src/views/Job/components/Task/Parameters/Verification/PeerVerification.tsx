@@ -123,7 +123,8 @@ const PeerVerification: FC<PeerVerificationProps> = ({
               <img src={PeerVerifiedIcon} alt="Peer Verified" />
               <div>
                 Peer Verification approved by {getFullName(verification.modifiedBy)}, ID:{' '}
-                {verification.modifiedBy.employeeId} on {formatDateTime(verification.modifiedAt)}.
+                {verification.modifiedBy.employeeId} on{' '}
+                {formatDateTime({ value: verification.modifiedAt })}.
               </div>
             </div>
           </div>
@@ -135,7 +136,8 @@ const PeerVerification: FC<PeerVerificationProps> = ({
               <img src={peerRejectedIcon} alt="Peer rejected" />
               <div>
                 Peer Verification has been rejected by {getFullName(verification.modifiedBy)}, ID:{' '}
-                {verification.modifiedBy.employeeId} on {formatDateTime(verification.modifiedAt)}.{' '}
+                {verification.modifiedBy.employeeId} on{' '}
+                {formatDateTime({ value: verification.modifiedAt })}.{' '}
                 <span
                   onClick={() => {
                     dispatch(

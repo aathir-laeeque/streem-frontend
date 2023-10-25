@@ -192,7 +192,7 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   return (
     <TabPanelWrapper>
       <TabContentWrapper>
-        <div className="filters" style={{ padding: '0 0 16px' }}>
+        <div className="filters">
           <div style={{ maxWidth: 500 }}>
             <TextInput
               afterElementWithoutError
@@ -209,7 +209,7 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
               )}
             />
           </div>
-          <div style={{ marginLeft: '16px', width: '240px' }}>
+          <div style={{ width: '240px' }}>
             <Select
               placeholder="Select Verification Type"
               options={options}
@@ -218,7 +218,7 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
               onChange={debounce((option) => handleVerificationTypeFilter(option), 500)}
             />
           </div>
-          <div style={{ marginLeft: '16px', width: '240px' }}>
+          <div style={{ width: '240px' }}>
             <Select
               placeholder="Select Location"
               options={Object.entries(TargetEntityTypeVisual).map(([value, label]) => ({
@@ -234,7 +234,7 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
               )}
             />
           </div>
-          <div style={{ marginLeft: '16px', width: '240px' }}>
+          <div style={{ width: '240px' }}>
             <Select
               placeholder="Select Type"
               options={parameterOptions}

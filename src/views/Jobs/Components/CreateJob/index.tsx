@@ -1,18 +1,18 @@
+import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { Button, useDrawer } from '#components';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { useTypedSelector } from '#store';
 import { createJob, createJobSuccess, updateJob } from '#views/Jobs/ListView/actions';
 import { Step, StepIconProps, StepLabel, Stepper } from '@material-ui/core';
 import { CheckCircleOutline, RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons';
-import moment from 'moment';
+import { getUnixTime } from 'date-fns';
 import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { JobForm } from './JobForm';
 import { Scheduler } from './Scheduler';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
-import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 
 const CreateJobDrawerWrapper = styled.form`
   display: flex;
@@ -292,8 +292,8 @@ const CreateJobDrawer: FC<{
       updateJob({
         job: {
           id: createdData?.id,
-          expectedStartDate: moment(_data.expectedStartDate).unix(),
-          expectedEndDate: moment(_data.expectedEndDate).unix(),
+          expectedStartDate: getUnixTime(new Date(_data.expectedStartDate)),
+          expectedEndDate: getUnixTime(new Date(_data.expectedEndDate)),
         },
       }),
     );

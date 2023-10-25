@@ -1,10 +1,10 @@
 import { useTypedSelector } from '#store';
-import { Document, Page, PDFViewer, View } from '@react-pdf/renderer';
-import React, { FC, useEffect, useState } from 'react';
 import { setKeepPersistedData } from '#utils';
 import { InputTypes } from '#utils/globalTypes';
-import { formatDateByInputType } from '#utils/timeUtils';
+import { formatDateTime } from '#utils/timeUtils';
 import TableRow from '#views/Jobs/SummaryPdf/TableRow';
+import { Document, Page, PDFViewer, View } from '@react-pdf/renderer';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { LoadingDiv } from '../../Jobs/PrintJob/styles';
 import Footer from '../../Jobs/SummaryPdf/Footer';
@@ -45,7 +45,7 @@ const MyPrintObjectChangeLogs: FC<{ objectId: string }> = () => {
           fieldsVisualMap[field.key] = {
             ...fieldsVisualMap[field.key],
             label: 'Change Done At',
-            value: formatDateByInputType(InputTypes.DATE_TIME, field?.value),
+            value: formatDateTime({ value: field?.value }),
             op: field.constraint,
           };
           break;
@@ -87,7 +87,7 @@ const MyPrintObjectChangeLogs: FC<{ objectId: string }> = () => {
     switch (type) {
       case InputTypes.DATE_TIME:
       case InputTypes.DATE:
-        return formatDateByInputType(type, data?.input);
+        return formatDateTime({ value: data?.input, type });
       default:
         return data?.input;
     }
@@ -219,7 +219,7 @@ const MyPrintObjectChangeLogs: FC<{ objectId: string }> = () => {
                 },
                 {
                   text: currLog?.modifiedAt
-                    ? formatDateByInputType(InputTypes.DATE_TIME, currLog?.modifiedAt)
+                    ? formatDateTime({ value: currLog?.modifiedAt })
                     : 'N/A',
                   customStyle: {
                     textAlign: 'left',

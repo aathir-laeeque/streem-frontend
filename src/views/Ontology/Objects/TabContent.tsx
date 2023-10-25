@@ -10,7 +10,7 @@ import {
 import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators, InputTypes, fetchDataParams } from '#utils/globalTypes';
-import { formatDateByInputType } from '#utils/timeUtils';
+import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { navigate } from '@reach/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -24,40 +24,11 @@ const AuditLogsTabWrapper = styled.div`
   display: flex;
   height: 100%;
   justify-content: center;
+
   .file-links {
     display: flex;
     a {
       margin-right: 8px;
-    }
-  }
-
-  .filters {
-    gap: 12px;
-    .filter-buttons-wrapper {
-      display: flex;
-      margin-left: 10px;
-      align-items: center;
-      div {
-        margin-right: 16px;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        padding-block: 6px;
-        :last-of-type {
-          margin-right: 0;
-        }
-
-        .icon {
-          color: #1d84ff;
-          height: 16px;
-          width: 16px;
-        }
-
-        span {
-          color: #1d84ff;
-          font-size: 14px;
-        }
-      }
     }
   }
 `;
@@ -110,7 +81,7 @@ const TabContent: FC = () => {
     switch (type) {
       case InputTypes.DATE_TIME:
       case InputTypes.DATE:
-        return formatDateByInputType(type, data?.[0]?.input);
+        return formatDateTime({ value: data?.[0]?.input, type });
       case InputTypes.MULTI_SELECT:
       case InputTypes.SINGLE_SELECT:
         return data.map((currData: Record<string, string>) => currData?.input).join(' ,');
@@ -185,29 +156,29 @@ const TabContent: FC = () => {
         component={
           <TabContentWrapper>
             <div className="filters">
-              <div className="filter-buttons-wrapper">
-                <div
-                  onClick={() => {
-                    setState((prev) => ({ ...prev, showDrawer: true }));
-                  }}
-                >
-                  <img src={FilterIcon} alt="filter icon" className="icon" />
-                  {filterFields?.length > 0 && <span>{`(${filterFields.length})`}</span>}
-                </div>
-                <div
-                  onClick={() => {
-                    dispatch(
-                      setPdfMetaData({
-                        objectTypeDisplayName: activeObject?.objectType?.displayName!,
-                        objectDisplayName: activeObject?.displayName!,
-                        objectExternalId: activeObject?.externalId!,
-                      }),
-                    );
-                    openLinkInNewTab(`/object-change-logs/${objectId}/print`);
-                  }}
-                >
-                  <img src={DownloadIcon} alt="Download icon" className="icon" />
-                </div>
+              <div
+                className="filter-buttons-wrapper"
+                onClick={() => {
+                  setState((prev) => ({ ...prev, showDrawer: true }));
+                }}
+              >
+                <img src={FilterIcon} alt="filter icon" className="icon" />
+                {filterFields?.length > 0 && <span>{`(${filterFields.length})`}</span>}
+              </div>
+              <div
+                className="filter-buttons-wrapper"
+                onClick={() => {
+                  dispatch(
+                    setPdfMetaData({
+                      objectTypeDisplayName: activeObject?.objectType?.displayName!,
+                      objectDisplayName: activeObject?.displayName!,
+                      objectExternalId: activeObject?.externalId!,
+                    }),
+                  );
+                  openLinkInNewTab(`/object-change-logs/${objectId}/print`);
+                }}
+              >
+                <img src={DownloadIcon} alt="Download icon" className="icon" />
               </div>
             </div>
             <DataTable
@@ -248,7 +219,7 @@ const TabContent: FC = () => {
                     return (
                       <div key={item?.id}>
                         {item?.modifiedAt
-                          ? formatDateByInputType(InputTypes.DATE_TIME, item?.modifiedAt)
+                          ? formatDateTime({ value: item.modifiedAt, type: InputTypes.DATE_TIME })
                           : 'N/A'}
                       </div>
                     );

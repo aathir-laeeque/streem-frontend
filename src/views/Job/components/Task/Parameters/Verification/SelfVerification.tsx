@@ -49,7 +49,8 @@ const SelfVerification: FC<{
             <img src={selfVerifiedIcon} alt="Self Verified" />
             <div>
               Self Verified by {getFullName(verification.modifiedBy)}, ID:{' '}
-              {verification.modifiedBy.employeeId} on {formatDateTime(verification.modifiedAt)}
+              {verification.modifiedBy.employeeId} on{' '}
+              {formatDateTime({ value: verification.modifiedAt })}
             </div>
           </div>
         </div>

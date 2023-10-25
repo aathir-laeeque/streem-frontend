@@ -18,13 +18,8 @@ const ResourceFilterWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 7.5px 0px 7.5px 12px;
-  background-color: #f4f4f4;
-  border-bottom: 1px solid #bababa;
+  border: 1px solid #bababa;
   color: #808ba5;
-
-  :hover {
-    border-bottom: 1px solid #005dcc;
-  }
 
   .resource-filter-label {
     display: inline-block;

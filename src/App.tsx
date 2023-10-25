@@ -1,30 +1,30 @@
-import { AppVersionCheck } from './AppVersionCheck';
+import NunitoRegular from '#assets/fonts/nunito/nunito-v14-latin-300.ttf';
+import NunitoBold from '#assets/fonts/nunito/nunito-v14-latin-700.ttf';
 import { CustomRoute, Notification, OverlayContainer } from '#components';
+import { MultiTabChecker } from '#components/OverlayContainer/MultiTabChecker';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
 import '#i18n';
 import { configureStore } from '#store';
 import { setAuthHeader } from '#utils/axiosClient';
 import { AuthView, FacilitySelectionView, HomeView, UseCaseSelectionView } from '#views';
 import { SsoView } from '#views/Auth/SsoView';
+import PrintFileUpload from '#views/Jobs/Components/Documents/PrintFileUpload';
 import PrintJob from '#views/Jobs/PrintJob';
 import PrintJobAuditLogs from '#views/Jobs/PrintJobAuditLogs';
-import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
 import PrintJobLogs from '#views/Jobs/PrintJobLogs';
-import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
+import JobSummaryPdf from '#views/Jobs/SummaryPdf/index';
 import PrintObjectChangeLogs from '#views/Ontology/PrintObjectChangeLogs/index';
+import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
 import { Router } from '@reach/router';
+import { Font } from '@react-pdf/renderer';
+import { enableMapSet } from 'immer';
 import React, { FC, useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import GlobalStyles from './styles/GlobalStyles';
+import { AppVersionCheck } from './AppVersionCheck';
 import { MsalComponent } from './MsalComponent';
-import { openOverlayAction } from '#components/OverlayContainer/actions';
-import { OverlayNames } from '#components/OverlayContainer/types';
-import { Font } from '@react-pdf/renderer';
-import NunitoRegular from '#assets/fonts/nunito/nunito-v14-latin-300.ttf';
-import NunitoBold from '#assets/fonts/nunito/nunito-v14-latin-700.ttf';
-import { MultiTabChecker } from '#components/OverlayContainer/MultiTabChecker';
-import PrintFileUpload from '#views/Jobs/Components/Documents/PrintFileUpload';
-import { enableMapSet } from 'immer';
+import GlobalStyles from './styles/GlobalStyles';
 
 enableMapSet();
 
@@ -76,7 +76,6 @@ const App: FC = () => {
           return 'portrait';
         }
       }
-
       // Fallback for browsers that don't support screen.orientation API
       return window.matchMedia('(orientation: landscape)').matches ? 'landscape' : 'portrait';
     };

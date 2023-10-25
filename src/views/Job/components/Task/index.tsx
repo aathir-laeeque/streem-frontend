@@ -183,7 +183,7 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
               ? audit.modifiedBy && (
                   <>
                     Last updated by {getFullName(audit.modifiedBy)}, ID:{' '}
-                    {audit.modifiedBy.employeeId} on {formatDateTime(audit.modifiedAt)}
+                    {audit.modifiedBy.employeeId} on {formatDateTime({ value: audit.modifiedAt })}
                   </>
                 )
               : 'Updating...'}

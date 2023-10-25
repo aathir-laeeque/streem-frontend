@@ -48,13 +48,13 @@ import {
   apiValidatePassword,
 } from '#utils/apiUrls';
 import { JOB_STAGE_POLLING_TIMEOUT } from '#utils/constants';
-import { ResponseError, ResponseObj } from '#utils/globalTypes';
+import { InputTypes, ResponseError, ResponseObj } from '#utils/globalTypes';
 import { getAutomationActionTexts } from '#utils/parameterUtils';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { encrypt } from '#utils/stringUtils';
+import { formatDateTime } from '#utils/timeUtils';
 import { CompletedJobStates, Job, Verification } from '#views/Jobs/ListView/types';
 import { navigate } from '@reach/router';
-import moment from 'moment';
 import {
   all,
   call,
@@ -968,7 +968,7 @@ function* jobAuditLogsSaga({ payload }: ReturnType<typeof jobActions.getJobAudit
 
     const newData = data.map((el) => ({
       ...el,
-      triggeredOn: moment.unix(el.triggeredAt).format('YYYY-MM-DD'),
+      triggeredOn: formatDateTime({ value: el.triggeredAt, type: InputTypes.DATE }),
     }));
 
     yield put(

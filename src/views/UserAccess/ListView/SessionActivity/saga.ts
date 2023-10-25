@@ -1,16 +1,15 @@
 import { apiGetSessionActivities } from '#utils/apiUrls';
-import { ResponseObj } from '#utils/globalTypes';
+import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
+import { formatDateTime } from '#utils/timeUtils';
 import { call, put, takeLeading } from 'redux-saga/effects';
-import moment from 'moment';
-import { SessionActivity } from './types';
 import {
+  fetchSessionActivities,
   fetchSessionActivitiesError,
   fetchSessionActivitiesOngoing,
   fetchSessionActivitiesSuccess,
-  fetchSessionActivities,
 } from './actions';
-import { SessionActivityAction } from './types';
+import { SessionActivity, SessionActivityAction } from './types';
 
 function* fetchSessionActivitiesSaga({ payload }: ReturnType<typeof fetchSessionActivities>) {
   try {
@@ -32,7 +31,7 @@ function* fetchSessionActivitiesSaga({ payload }: ReturnType<typeof fetchSession
 
     const newData = data.map((el) => ({
       ...el,
-      triggeredOn: moment.unix(el.triggeredAt).format('YYYY-MM-DD'),
+      triggeredOn: formatDateTime({ value: el.triggeredAt, type: InputTypes.DATE }),
     }));
 
     yield put(

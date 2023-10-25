@@ -653,7 +653,7 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
 
         {label === 'prototype' && (
           <div className="filter-buttons-wrapper" onClick={() => setPrototypeFilterDrawer(true)}>
-            <img src={FilterIcon} alt="filter icon" />
+            <img className="icon" src={FilterIcon} alt="filter icon" />
             {filterFields.filter((field) => field?.hasOwnProperty('id')).length > 0 && (
               <span>{`(${
                 filterFields.filter((field) => field?.hasOwnProperty('id')).length

@@ -3,8 +3,8 @@ import { GeneralHeader } from '#components';
 import useTabs from '#components/shared/useTabs';
 import { useTypedSelector } from '#store';
 import { FilterOperators } from '#utils/globalTypes';
-import moment from 'moment';
 import React, { FC } from 'react';
+import { getUnixTime } from 'date-fns';
 import JobsContent from './JobsContent';
 import { ViewWrapper } from './styles';
 import { AssignedJobStates, CompletedJobStates, ListViewProps, UnassignedJobStates } from './types';
@@ -150,7 +150,7 @@ const JobListView: FC<ListViewProps> = ({ location }) => {
                 {
                   field: 'expectedEndDate',
                   op: FilterOperators.LT,
-                  values: [moment(moment.now()).unix().toString()],
+                  values: [getUnixTime(new Date()).toString()],
                 },
               ],
             },
@@ -161,7 +161,7 @@ const JobListView: FC<ListViewProps> = ({ location }) => {
                 {
                   field: 'expectedStartDate',
                   op: FilterOperators.LT,
-                  values: [moment(moment.now()).unix().toString()],
+                  values: [getUnixTime(new Date()).toString()],
                 },
               ],
             },
@@ -211,7 +211,7 @@ const JobListView: FC<ListViewProps> = ({ location }) => {
                 {
                   field: 'expectedEndDate',
                   op: FilterOperators.LT,
-                  values: [moment(moment.now()).unix().toString()],
+                  values: [getUnixTime(new Date()).toString()],
                 },
               ],
             },
@@ -222,7 +222,7 @@ const JobListView: FC<ListViewProps> = ({ location }) => {
                 {
                   field: 'expectedStartDate',
                   op: FilterOperators.LT,
-                  values: [moment(moment.now()).unix().toString()],
+                  values: [getUnixTime(new Date()).toString()],
                 },
               ],
             },

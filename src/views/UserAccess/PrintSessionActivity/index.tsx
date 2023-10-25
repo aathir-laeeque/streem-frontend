@@ -2,25 +2,23 @@ import logo from '#assets/images/logo.png';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER } from '#utils/constants';
-import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
+import { InputTypes } from '#utils/globalTypes';
+import { formatDateTime } from '#utils/timeUtils';
+import { Document, Image, PDFViewer, Page, Text, View } from '@react-pdf/renderer';
+import { getUnixTime } from 'date-fns';
 import { groupBy } from 'lodash';
-import moment from 'moment';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { fetchSessionActivities } from '../ListView/SessionActivity/actions';
 import {
-  SessionActivity as SessionActivityType,
   SessionActivitySeverity,
+  SessionActivity as SessionActivityType,
 } from '../ListView/SessionActivity/types';
 import { LoadingDiv, styles } from './styles';
 
 const MyPrintSessionActivity: FC = () => {
   const { logs } = useTypedSelector((state) => state.sessionActivity);
   const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
-  const { timeFormat, dateAndTimeStampFormat, dateFormat } = useTypedSelector(
-    (state) => state.facilityWiseConstants[selectedFacility!.id],
-  );
   const { filters } = useTypedSelector((state) => state.auditLogFilters);
 
   const dispatch = useDispatch();
@@ -69,7 +67,10 @@ const MyPrintSessionActivity: FC = () => {
 
           <View style={styles.container}>
             {data.map((item) => {
-              const day = moment(Object.keys(item)[0]).format(dateFormat);
+              const day = formatDateTime({
+                value: getUnixTime(new Date(Object.keys(item)[0])),
+                type: InputTypes.DATE,
+              });
               let criticalCount = 0;
               const itemId = item.id as string;
               (item[itemId] as SessionActivityType[]).forEach((element) => {
@@ -93,7 +94,7 @@ const MyPrintSessionActivity: FC = () => {
                         <View style={styles.circle} />
                         <View style={styles.content} wrap={false}>
                           <Text style={styles.contentItems}>
-                            {moment.unix(log.triggeredAt).format(timeFormat)}
+                            {formatDateTime({ value: log.triggeredAt, type: InputTypes.TIME })}
                           </Text>
                           {log.severity === SessionActivitySeverity.CRITICAL && <View />}
                           <Text
@@ -118,8 +119,8 @@ const MyPrintSessionActivity: FC = () => {
 
           <View fixed style={styles.footer}>
             <Text style={styles.footerInfo}>
-              Downloaded on {moment().format(dateAndTimeStampFormat)}. By {profile.firstName}{' '}
-              {profile.lastName} ID: {profile.employeeId} for{' '}
+              Downloaded on {formatDateTime({ value: getUnixTime(new Date()) })}. By{' '}
+              {profile.firstName} {profile.lastName} ID: {profile.employeeId} for{' '}
               {selectedFacility!.id !== ALL_FACILITY_ID ? 'Facility: ' : ''}
               {selectedFacility?.name} using Leucine App
             </Text>

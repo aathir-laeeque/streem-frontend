@@ -52,7 +52,7 @@ const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }
   display: flex;
   font-size: 14px;
   justify-content: center;
-  margin-right: 24px;
+  margin-right: 12px;
   outline: none;
   padding-block: 12px;
   padding-inline: 24px;

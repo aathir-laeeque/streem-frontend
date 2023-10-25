@@ -6,8 +6,8 @@ import { LabelValueRow } from '#views/Job/components/Header/styles';
 import { Tooltip, withStyles } from '@material-ui/core';
 import { ArrowForward, ChevronLeft } from '@material-ui/icons';
 import { navigate } from '@reach/router';
+import { getUnixTime } from 'date-fns';
 import { capitalize } from 'lodash';
-import moment from 'moment';
 import React, { FC } from 'react';
 import { Frequency, RRule } from 'rrule';
 import styled from 'styled-components';
@@ -136,14 +136,16 @@ const getRecurrenceSummary = (job: Job) => {
             case 'DAILY':
             case 'WEEKLY':
             case 'MONTHLY':
-              recurrenceString = `Repeat ${recurrenceString} at ${moment
-                .unix(job.expectedStartDate)
-                .format('hh:mm A')}`;
+              recurrenceString = `Repeat ${recurrenceString} at ${formatDateTime({
+                value: job.expectedStartDate!,
+                format: 'hh:mm a',
+              })}`;
               break;
             case 'YEARLY':
-              recurrenceString = `Repeat ${recurrenceString} on ${moment
-                .unix(job.expectedStartDate)
-                .format('Do MMMM [at] hh:mm A')}`;
+              recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
+                value: job.expectedStartDate!,
+                format: `do MMMM 'at' hh:mm a`,
+              })}`;
               break;
 
             default:
@@ -152,24 +154,28 @@ const getRecurrenceSummary = (job: Job) => {
         } else {
           switch (freq) {
             case 'DAILY':
-              recurrenceString = `Repeat ${recurrenceString} at ${moment
-                .unix(job.expectedStartDate)
-                .format('hh:mm A')}`;
+              recurrenceString = `Repeat ${recurrenceString} at ${formatDateTime({
+                value: job.expectedStartDate!,
+                format: 'hh:mm a',
+              })}`;
               break;
             case 'WEEKLY':
-              recurrenceString = `Repeat ${recurrenceString} on ${moment
-                .unix(job.expectedStartDate)
-                .format('dddd [at] hh:mm A')}`;
+              recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
+                value: job.expectedStartDate!,
+                format: `iiii 'at' hh:mm a`,
+              })}`;
               break;
             case 'MONTHLY':
-              recurrenceString = `Repeat ${recurrenceString} on ${moment
-                .unix(job.expectedStartDate)
-                .format('Do [at] hh:mm A')}`;
+              recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
+                value: job.expectedStartDate!,
+                format: `do 'at' hh:mm a`,
+              })}`;
               break;
             case 'YEARLY':
-              recurrenceString = `Repeat ${recurrenceString} on ${moment
-                .unix(job.expectedStartDate)
-                .format('Do MMMM [at] hh:mm A')}`;
+              recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
+                value: job.expectedStartDate!,
+                format: `do MMMM 'at' hh:mm a`,
+              })}`;
               break;
 
             default:
@@ -197,8 +203,8 @@ const JobCard: FC<{
     <JobCardWrapper className="job-list">
       {jobs.length > 0 ? (
         jobs.map((job) => {
-          const actualStartDate = job?.startedAt || moment().unix();
-          const actualEndDate = job?.endedAt || moment().unix();
+          const actualStartDate = job?.startedAt || getUnixTime(new Date());
+          const actualEndDate = job?.endedAt || getUnixTime(new Date());
           let rule;
           let rRuleOptions;
           let frequency;
@@ -252,9 +258,10 @@ const JobCard: FC<{
                               >
                                 <span style={{ fontSize: '12px' }}>Start Date and Time</span>
                                 <span>
-                                  {moment
-                                    .unix(job.expectedStartDate)
-                                    .format('Do MMMM, YYYY [at] hh:mm A')}
+                                  {formatDateTime({
+                                    value: job.expectedStartDate,
+                                    format: `do MMMM, yyyy 'at' hh:mm a`,
+                                  })}
                                 </span>
                               </div>
                               <div
@@ -266,9 +273,10 @@ const JobCard: FC<{
                               >
                                 <span style={{ fontSize: '12px' }}>End Date and Time</span>
                                 <span>
-                                  {moment
-                                    .unix(job.expectedEndDate)
-                                    .format('Do MMMM, YYYY [at] hh:mm A')}
+                                  {formatDateTime({
+                                    value: job.expectedEndDate,
+                                    format: `do MMMM, yyyy 'at' hh:mm a`,
+                                  })}
                                 </span>
                               </div>
                               <div
@@ -294,7 +302,10 @@ const JobCard: FC<{
                             : '#161616',
                         }}
                       >
-                        {formatDateTime(job.expectedStartDate, 'MMM DD, YYYY hh:mm A')}
+                        {formatDateTime({
+                          value: job.expectedStartDate,
+                          format: 'MMM dd, yyyy hh:mm a',
+                        })}
                       </span>
                       <span className="icon">
                         <ArrowForward />
@@ -306,7 +317,10 @@ const JobCard: FC<{
                             : '#161616',
                         }}
                       >
-                        {formatDateTime(job.expectedEndDate, 'MMM DD, YYYY hh:mm A')}
+                        {formatDateTime({
+                          value: job.expectedEndDate,
+                          format: 'MMM dd, yyyy hh:mm a',
+                        })}
                       </span>
                     </div>
                   ) : onSetDate ? (

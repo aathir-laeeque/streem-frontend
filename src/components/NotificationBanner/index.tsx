@@ -1,7 +1,8 @@
 import { useTypedSelector } from '#store';
+import { InputTypes } from '#utils/globalTypes';
+import { formatDateTime } from '#utils/timeUtils';
 import { LicenseState } from '#views/Auth/types';
 import { Info } from '@material-ui/icons';
-import moment from 'moment';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -66,13 +67,13 @@ const NotificationBanner = () => {
       msgType: MessageType.ERROR,
     };
   } else if (license) {
-    const expiredDate = moment(license.renewalDate).format('Do MMMM YYYY');
+    const expiredDate = formatDateTime({ value: license.renewalDate, type: InputTypes.DATE });
     msgObj = {
       msgText: `Your Leucine subscription will expire on ${expiredDate}. Please get in touch with your Account Manager to renew the subscription.`,
       msgType: MessageType.WARNING,
     };
     if (license.state !== LicenseState.INTIMATE) {
-      const graceEndsOn = moment(license.graceEndsOn).format('Do MMMM YYYY');
+      const graceEndsOn = formatDateTime({ value: license.graceEndsOn, type: InputTypes.DATE });
       msgObj = {
         msgText: `Your Leucine subscription expired on ${expiredDate}. Please renew before ${graceEndsOn} to ensure uninterrupted access to Leucine.`,
         msgType: MessageType.ERROR,

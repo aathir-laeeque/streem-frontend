@@ -15,7 +15,7 @@ import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { InputTypes, fetchDataParams } from '#utils/globalTypes';
-import { formatDateByInputType } from '#utils/timeUtils';
+import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { MenuItem } from '@material-ui/core';
 import { ArrowDropDown, CropFree } from '@material-ui/icons';
@@ -108,7 +108,7 @@ const ObjectList: FC<TabContentProps> = () => {
             if (
               [InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(property.inputType)
             ) {
-              propertyValue = formatDateByInputType(property.inputType, propertyValue);
+              propertyValue = formatDateTime({ value: propertyValue, type: property.inputType });
             }
           }
         } else {

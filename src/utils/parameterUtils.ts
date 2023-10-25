@@ -34,7 +34,9 @@ export const getParameterContent = (parameter: any) => {
       break;
     case MandatoryParameter.DATE:
     case MandatoryParameter.DATE_TIME:
-      parameterContent = parameter.response?.value ? formatDateTime(parameter.response.value) : '-';
+      parameterContent = parameter.response?.value
+        ? formatDateTime({ value: parameter.response.value })
+        : '-';
       break;
     case MandatoryParameter.YES_NO:
       parameterContent = responseDetailsForChoiceBasedParameters(parameter);

@@ -30,6 +30,7 @@ import { CommonOverlayProps, OverlayNames } from '#components/OverlayContainer/t
 import { useTypedSelector } from '#store';
 import { User } from '#store/users/types';
 import { getOrdinal } from '#utils/stringUtils';
+import { formatDateTime } from '#utils/timeUtils';
 import {
   Assignment,
   FiberManualRecord,
@@ -42,7 +43,6 @@ import { ContentState, EditorState, convertToRaw } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import { groupBy, orderBy } from 'lodash';
-import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -102,16 +102,11 @@ export const SubmitReviewModal: FC<
   const allDoneOk = props?.allDoneOk || false;
 
   const dispatch = useDispatch();
-  const { data, userId, collaborators, selectedFacility } = useTypedSelector((state) => ({
+  const { data, userId, collaborators } = useTypedSelector((state) => ({
     userId: state.auth.userId,
     collaborators: state.prototypeComposer.collaborators,
     data: state.prototypeComposer.data as Checklist,
-    selectedFacility: state.auth.selectedFacility,
   }));
-
-  const { dateAndTimeStampFormat } = useTypedSelector(
-    (state) => state.facilityWiseConstants[selectedFacility!.id],
-  );
 
   const [state, setState] = useState(initialState);
 
@@ -180,22 +175,22 @@ export const SubmitReviewModal: FC<
     .sort()
     .reverse()
     .forEach((item) => {
-      let shouldInculde = true;
-      let shouldInculdeUser = true;
+      let shouldInclude = true;
+      let shouldIncludeUser = true;
       if (state.selectedCycle) {
-        shouldInculde = state.selectedCycle === Number(item);
+        shouldInclude = state.selectedCycle === Number(item);
       }
       if (state.selectedReviewer) {
-        shouldInculdeUser = false;
+        shouldIncludeUser = false;
       }
-      if (shouldInculde) {
+      if (shouldInclude) {
         groupedComments[item] = orderBy(groupedComments[item], ['commentedAt'], ['desc']);
         comments.push(
           <div className="reviews-group" key={`reviewerGroup_${item}`}>
             <span>{`${getOrdinal(Number(item))} Review`}</span>
             <div className="comments-group">
               {groupedComments[item].map((comment) => {
-                if (!shouldInculdeUser && state.selectedReviewer !== comment.commentedBy.id)
+                if (!shouldIncludeUser && state.selectedReviewer !== comment.commentedBy.id)
                   return null;
                 return (
                   <div className="comment-section" key={`comment_${comment.id}`}>
@@ -206,9 +201,7 @@ export const SubmitReviewModal: FC<
                         <h5>{`ID : ${comment.commentedBy.employeeId}`}</h5>
                       </div>
                       <div>
-                        <span>
-                          {moment.unix(comment.commentedAt).format(dateAndTimeStampFormat)}
-                        </span>
+                        <span>{formatDateTime({ value: comment.commentedAt })}</span>
                       </div>
                     </div>
                     {comment.state === CollaboratorState.COMMENTED_OK ||

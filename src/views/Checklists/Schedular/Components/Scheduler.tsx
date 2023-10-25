@@ -2,7 +2,17 @@ import { FormGroup } from '#components';
 import { InputTypes } from '#utils/globalTypes';
 import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
 import { compact } from 'lodash';
-import moment from 'moment';
+import { formatDateTime } from '#utils/timeUtils';
+import {
+  fromUnixTime,
+  getUnixTime,
+  getWeek,
+  hoursToSeconds,
+  minutesToSeconds,
+  weeksToDays,
+  yearsToMonths,
+  setDefaultOptions,
+} from 'date-fns';
 import React, { FC, useEffect, useRef } from 'react';
 import { RRule, Weekday } from 'rrule';
 
@@ -11,8 +21,14 @@ export interface SchedulerProps {
   readOnly?: boolean;
 }
 
-function getMonthlyOption(mJsDate: moment.Moment) {
-  const weekNo = Math.ceil(mJsDate.date() / 7);
+setDefaultOptions({ weekStartsOn: 1 });
+
+function getMonthlyOption(expectedStartDate: number) {
+  const mJsDate = fromUnixTime(expectedStartDate);
+  mJsDate.getDay;
+  const weekNo = getWeek(mJsDate, {
+    weekStartsOn: 1,
+  });
   return {
     label: `${
       weekNo === 1
@@ -24,20 +40,21 @@ function getMonthlyOption(mJsDate: moment.Moment) {
         : weekNo === 4
         ? 'Fourth'
         : 'Last'
-    } ${mJsDate.format('dddd')} of every month`,
+    } ${formatDateTime({ value: expectedStartDate, format: 'iiii' })} of every month`,
     weekNo,
   };
 }
 
 const ALL_WEEKDAYS = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
 
-const getUpdatedWeekDays = (weekDayIndex: string, weekDays?: Record<string, boolean>) => {
-  const weekDay = ALL_WEEKDAYS[Number(weekDayIndex)];
+const getUpdatedWeekDays = (weekDayIndex: number, weekDays?: Record<string, boolean>) => {
+  const enumIndex = weekDayIndex - 1;
+  const weekDay = ALL_WEEKDAYS[enumIndex];
   if (weekDay) {
     let updatedWeekDays = { ...weekDays };
     updatedWeekDays = {
       ...updatedWeekDays,
-      [weekDayIndex]: !updatedWeekDays?.[weekDayIndex],
+      [enumIndex]: !updatedWeekDays?.[enumIndex],
     };
     return { ...updatedWeekDays };
   }
@@ -72,14 +89,6 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
     'weekDays',
   ]);
 
-  useEffect(() => {
-    moment.updateLocale('en', {
-      week: {
-        dow: 1, // Monday is the first day of the week.
-      },
-    });
-  }, []);
-
   register('recurrence', {
     required: true,
   });
@@ -87,7 +96,7 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
     required: true,
   });
   register('weekDays', {
-    validate: (value) => {
+    validate: (value: Record<string, boolean>) => {
       const _recurrence = getValues('recurrence');
       const _repeatEvery = getValues('repeatEvery');
       if (_recurrence === 'custom' && _repeatEvery === 'WEEKLY') {
@@ -155,14 +164,37 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
   const updateDueDateInterval = () => {
     let durationSeconds = 0;
     Object.entries(dueDateDuration).forEach(([key, value]: any) => {
-      if (value) durationSeconds += moment.duration(value, key).asSeconds();
+      if (value) {
+        switch (key) {
+          case 'year':
+            durationSeconds += hoursToSeconds(yearsToMonths(value) * 30 * 24);
+            break;
+          case 'month':
+            durationSeconds += hoursToSeconds(value * 30 * 24);
+            break;
+          case 'week':
+            durationSeconds += hoursToSeconds(weeksToDays(value) * 24);
+            break;
+          case 'day':
+            durationSeconds += hoursToSeconds(value * 24);
+            break;
+          case 'hour':
+            durationSeconds += hoursToSeconds(value);
+            break;
+          case 'minute':
+            durationSeconds += minutesToSeconds(value);
+            break;
+          default:
+            break;
+        }
+      }
     });
     setValue('dueDateInterval', durationSeconds, {
       shouldValidate: true,
     });
   };
 
-  const updateWeekDays = (weekDayIndex: string) => {
+  const updateWeekDays = (weekDayIndex: number) => {
     const updated = getUpdatedWeekDays(weekDayIndex, weekDays);
     setValue('weekDays', updated, { shouldValidate: true });
   };
@@ -198,7 +230,7 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
         const rule = new RRule({
           freq: RRule[freq as keyof typeof RRule],
           interval: repeatCount || 1,
-          dtstart: moment(expectedStartDate).toDate(),
+          dtstart: new Date(expectedStartDate),
           ...(rRuleOptions || {}),
         });
         let recurrenceString = rule?.toText() || null;
@@ -208,14 +240,16 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
               case 'DAILY':
               case 'WEEKLY':
               case 'MONTHLY':
-                recurrenceString = `Repeat ${recurrenceString} at ${moment(
-                  expectedStartDate,
-                ).format('hh:mm A')}`;
+                recurrenceString = `Repeat ${recurrenceString} at ${formatDateTime({
+                  value: getUnixTime(new Date(expectedStartDate)),
+                  format: 'hh:mm a',
+                })}`;
                 break;
               case 'YEARLY':
-                recurrenceString = `Repeat ${recurrenceString} on ${moment(
-                  expectedStartDate,
-                ).format('Do MMMM [at] hh:mm A')}`;
+                recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
+                  value: getUnixTime(new Date(expectedStartDate)),
+                  format: `do MMMM 'at' hh:mm a`,
+                })}`;
                 break;
 
               default:
@@ -224,24 +258,28 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
           } else {
             switch (freq) {
               case 'DAILY':
-                recurrenceString = `Repeat ${recurrenceString} at ${moment(
-                  expectedStartDate,
-                ).format('hh:mm A')}`;
+                recurrenceString = `Repeat ${recurrenceString} at ${formatDateTime({
+                  value: getUnixTime(new Date(expectedStartDate)),
+                  format: 'hh:mm a',
+                })}`;
                 break;
               case 'WEEKLY':
-                recurrenceString = `Repeat ${recurrenceString} on ${moment(
-                  expectedStartDate,
-                ).format('dddd [at] hh:mm A')}`;
+                recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
+                  value: getUnixTime(new Date(expectedStartDate)),
+                  format: `iiii 'at' hh:mm a`,
+                })}`;
                 break;
               case 'MONTHLY':
-                recurrenceString = `Repeat ${recurrenceString} on ${moment(
-                  expectedStartDate,
-                ).format('Do [at] hh:mm A')}`;
+                recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
+                  value: getUnixTime(new Date(expectedStartDate)),
+                  format: `do 'at' hh:mm a`,
+                })}`;
                 break;
               case 'YEARLY':
-                recurrenceString = `Repeat ${recurrenceString} on ${moment(
-                  expectedStartDate,
-                ).format('Do MMMM [at] hh:mm A')}`;
+                recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
+                  value: getUnixTime(new Date(expectedStartDate)),
+                  format: `do MMMM 'at' hh:mm a`,
+                })}`;
                 break;
 
               default:
@@ -270,19 +308,31 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
   if (expectedStartDate) {
     recurrenceOptions = [
       {
-        label: `Daily at ${moment(expectedStartDate).format('hh:mm A')}`,
+        label: `Daily at ${formatDateTime({
+          value: getUnixTime(new Date(expectedStartDate)),
+          format: 'hh:mm a',
+        })}`,
         value: 'DAILY',
       },
       {
-        label: `Weekly on ${moment(expectedStartDate).format('dddd [at] hh:mm A')}`,
+        label: `Weekly on ${formatDateTime({
+          value: getUnixTime(new Date(expectedStartDate)),
+          format: `iiii 'at' hh:mm a`,
+        })}`,
         value: 'WEEKLY',
       },
       {
-        label: `Monthly on ${moment(expectedStartDate).format('Do [at] hh:mm A')}`,
+        label: `Monthly on ${formatDateTime({
+          value: getUnixTime(new Date(expectedStartDate)),
+          format: `do 'at' hh:mm a`,
+        })}`,
         value: 'MONTHLY',
       },
       {
-        label: `Annually on ${moment(expectedStartDate).format('Do MMMM [at] hh:mm A')}`,
+        label: `Annually on ${formatDateTime({
+          value: getUnixTime(new Date(expectedStartDate)),
+          format: `do MMMM 'at' hh:mm a`,
+        })}`,
         value: 'YEARLY',
       },
       {
@@ -291,20 +341,27 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
       },
     ];
 
-    const { label, weekNo } = getMonthlyOption(moment(expectedStartDate));
-
+    const { label, weekNo } = getMonthlyOption(expectedStartDate);
     monthlyOptions = [
       {
-        label: `${moment(expectedStartDate).format('Do')} of every month`,
+        label: `${formatDateTime({
+          value: getUnixTime(new Date(expectedStartDate)),
+          format: 'do',
+        })} of every month`,
         value: {
-          bymonthday: moment(expectedStartDate).format('DD'),
+          bymonthday: formatDateTime({
+            value: getUnixTime(new Date(expectedStartDate)),
+            format: 'dd',
+          }),
         },
       },
       {
         label,
         value: {
           byweekday: new Weekday(
-            Number(moment(expectedStartDate).format('e')),
+            Number(
+              formatDateTime({ value: getUnixTime(new Date(expectedStartDate)), format: 'e' }),
+            ) - 1,
             weekNo > 4 ? 4 - weekNo : weekNo,
           ),
         },
@@ -330,6 +387,28 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
       value: 'YEARLY',
     },
   ];
+
+  const renderSchedulerSummary = () => {
+    return (
+      <div className="scheduler-summary">
+        <h4>Summary</h4>
+        <ReadOnlyGroup
+          className="read-only-group"
+          items={[
+            {
+              label: 'Start Date and Time',
+              value: formatDateTime({
+                value: getUnixTime(new Date(expectedStartDate)),
+                format: `do MMMM, yyyy 'at' hh:mm a`,
+              }),
+            },
+            ...getDueOnSummary(),
+            ...getRecurrenceSummary(),
+          ]}
+        />
+      </div>
+    );
+  };
 
   return !readOnly ? (
     <>
@@ -524,7 +603,14 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
                             shouldValidate: true,
                           });
                         } else {
-                          updateWeekDays(moment(expectedStartDate).format('e'));
+                          updateWeekDays(
+                            Number(
+                              formatDateTime({
+                                value: getUnixTime(new Date(expectedStartDate)),
+                                format: 'e',
+                              }),
+                            ),
+                          );
                         }
                       } else {
                         unregister('rRuleOptions');
@@ -573,7 +659,7 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
                 style={
                   weekDays?.[index.toString()] ? { backgroundColor: '#1d84ff', color: '#fff' } : {}
                 }
-                onClick={() => updateWeekDays(index.toString())}
+                onClick={() => updateWeekDays(index + 1)}
               >
                 {weekDay}
               </span>
@@ -581,39 +667,9 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
           </div>
         </div>
       )}
-      {expectedStartDate && (
-        <div className="scheduler-summary">
-          <h4>Summary</h4>
-          <ReadOnlyGroup
-            className="read-only-group"
-            items={[
-              {
-                label: 'Start Date and Time',
-                value: moment(expectedStartDate).format('Do MMMM, YYYY [at] hh:mm A'),
-              },
-              ...getDueOnSummary(),
-              ...getRecurrenceSummary(),
-            ]}
-          />
-        </div>
-      )}
+      {expectedStartDate && renderSchedulerSummary()}
     </>
   ) : (
-    <>
-      <div className="scheduler-summary">
-        <h4>Summary</h4>
-        <ReadOnlyGroup
-          className="read-only-group"
-          items={[
-            {
-              label: 'Start Date and Time',
-              value: moment(expectedStartDate).format('Do MMMM, YYYY [at] hh:mm A'),
-            },
-            ...getDueOnSummary(),
-            ...getRecurrenceSummary(),
-          ]}
-        />
-      </div>
-    </>
+    renderSchedulerSummary()
   );
 };

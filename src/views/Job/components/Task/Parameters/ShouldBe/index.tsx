@@ -110,12 +110,9 @@ const ShouldBeParameter: FC<
   isLoggedInUserAssigned,
 }) => {
   const {
-    auth: { profile, selectedFacility },
+    auth: { profile },
     job: { updating },
   } = useTypedSelector((state) => state);
-  const { dateAndTimeStampFormat } = useTypedSelector(
-    (state) => state.facilityWiseConstants[selectedFacility!.id],
-  );
 
   const numberInputRef = useRef<HTMLInputElement>(null);
 
@@ -358,13 +355,13 @@ const ShouldBeParameter: FC<
           <span className="approved">
             <CheckCircle className="icon" />
             Observation Approved by {getFullName(state.approver)} on{' '}
-            {formatDateTime(state.approvalTime, dateAndTimeStampFormat)}
+            {formatDateTime({ value: state.approvalTime! })}
           </span>
         ) : state.isApproved === false ? (
           <span className="rejected">
             <Error className="icon" />
             Observation rejected by {getFullName(state.approver)} on{' '}
-            {formatDateTime(state.approvalTime, dateAndTimeStampFormat)}
+            {formatDateTime({ value: state.approvalTime! })}
           </span>
         ) : null}
 

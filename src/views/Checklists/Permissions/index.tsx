@@ -19,8 +19,8 @@ const Permissions: FC<ListViewProps> = ({ location }) => {
       </div>
       <TabContentWrapper>
         <div className="filters">
-          <Select placeholder="Object Relation" />
-          <Select placeholder="Permission Set" className="process-filter" />
+          <Select placeholder="Object Relation" className="select-filter" />
+          <Select placeholder="Permission Set" className="select-filter" />
           <Button
             onClick={() => {
               setAddUserDrawer(true);

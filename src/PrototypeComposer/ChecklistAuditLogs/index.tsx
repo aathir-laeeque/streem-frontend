@@ -1,11 +1,12 @@
-import { Checkbox, FilterProp, InfiniteListView, Link as GoBack } from '#components';
+import { Checkbox, FilterProp, Link as GoBack, InfiniteListView } from '#components';
 import { useTypedSelector } from '#store';
 import { clearAuditLogFilters, setAuditLogFilters } from '#store/audit-log-filters/action';
 import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { fetchDataParams, FilterOperators } from '#utils/globalTypes';
+import { FilterOperators, InputTypes, fetchDataParams } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
+import { formatDateTime } from '#utils/timeUtils';
 import { usePrevious } from '#utils/usePrevious';
 import TextField from '@material-ui/core/TextField';
 import { Search } from '@material-ui/icons';
@@ -19,10 +20,10 @@ import {
   StaticDateRangePicker,
   TimePicker,
 } from '@material-ui/pickers';
-import MomentUtils from '@material-ui/pickers/adapter/moment';
+import DateFnsUtils from '@material-ui/pickers/adapter/date-fns';
 import { RouteComponentProps } from '@reach/router';
+import { endOfDay, getHours, getMinutes, getUnixTime, set, startOfDay, subDays } from 'date-fns';
 import { groupBy } from 'lodash';
-import moment, { Moment } from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchChecklistAuditLogs } from './actions';
@@ -30,10 +31,10 @@ import { Composer, UserFilterWrapper } from './styles';
 import { ChecklistAuditLogsState, ChecklistAuditLogsType } from './types';
 
 type initialState = {
-  dateRange: DateRange<Moment>;
+  dateRange: DateRange<Date>;
   appliedFilters: Record<string, boolean>;
-  startTime: Moment | null;
-  endTime: Moment | null;
+  startTime: Date | null;
+  endTime: Date | null;
   searchQuery: string;
   selectedUsers: User[];
   unSelectedUsers: User[];
@@ -41,12 +42,12 @@ type initialState = {
 };
 
 // TODO Change appliedUsers, selectedUsers, unSelectedUsers to HashMap as we only need the id's of the users So we can keep it like { userId : boolean }.
-const currentDate = moment().startOf('day');
+const currentDate = startOfDay(new Date());
 const initialState: initialState = {
   dateRange: [null, null],
   appliedFilters: {},
   startTime: currentDate,
-  endTime: moment().endOf('day'),
+  endTime: endOfDay(new Date()),
   searchQuery: '',
   selectedUsers: [],
   unSelectedUsers: [],
@@ -58,10 +59,6 @@ type Props = RouteComponentProps<{ id: string }>;
 const AuditLogs: FC<Props> = ({ id }) => {
   const { logs, loading, pageable }: ChecklistAuditLogsState = useTypedSelector(
     (state) => state.prototypeComposer.auditLogs,
-  );
-  const { selectedFacility } = useTypedSelector((state) => state.auth);
-  const { timeFormat: timeFormat, dateFormat } = useTypedSelector(
-    (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
   const {
     list,
@@ -142,7 +139,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
           });
         },
         content: (
-          <LocalizationProvider dateAdapter={MomentUtils}>
+          <LocalizationProvider dateAdapter={DateFnsUtils}>
             <StaticDateRangePicker
               displayStaticWrapperAs="desktop"
               value={state.dateRange}
@@ -290,8 +287,8 @@ const AuditLogs: FC<Props> = ({ id }) => {
   const fetchLogs = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
     const { dateRange, startTime, endTime } = state;
-    let greaterDate = moment().startOf('day').subtract(7, 'days');
-    let lowerDate = moment().endOf('day');
+    let greaterDate = subDays(currentDate, 7);
+    let lowerDate = endOfDay(new Date());
     if (dateRange[0]) {
       greaterDate = dateRange[0];
       lowerDate = dateRange[0];
@@ -300,12 +297,18 @@ const AuditLogs: FC<Props> = ({ id }) => {
       }
     }
     if (greaterDate && lowerDate && startTime && endTime) {
-      const greaterThan = moment(
-        `${greaterDate.format('YYYY-MM-DD')} ${startTime.format('HH:mm')}`,
-      ).unix();
-      const lowerThan = moment(
-        `${lowerDate.format('YYYY-MM-DD')} ${endTime.format('HH:mm')}`,
-      ).unix();
+      const greaterThan = getUnixTime(
+        set(greaterDate, {
+          hours: getHours(startTime),
+          minutes: getMinutes(startTime),
+        }),
+      );
+      const lowerThan = getUnixTime(
+        set(lowerDate, {
+          hours: getHours(endTime),
+          minutes: getMinutes(endTime),
+        }),
+      );
 
       const userFilter = appliedUsers.map((u) => u.id);
       const fields = [
@@ -371,7 +374,10 @@ const AuditLogs: FC<Props> = ({ id }) => {
             {
               header: 'TIME',
               template: function renderComp(item) {
-                const day = moment(Object.keys(item)[0]).format(dateFormat);
+                const day = formatDateTime({
+                  value: getUnixTime(new Date(Object.keys(item)[0])),
+                  type: InputTypes.DATE,
+                });
                 let criticalCount = 0;
                 const itemId = item.id as string;
 
@@ -396,7 +402,7 @@ const AuditLogs: FC<Props> = ({ id }) => {
                             <div className="circle" />
                             <div className="content">
                               <div className="content-items" style={{ whiteSpace: 'nowrap' }}>
-                                {moment.unix(log.triggeredAt).format(timeFormat)}
+                                {formatDateTime({ value: log.triggeredAt, type: InputTypes.TIME })}
                               </div>
                               <div className="content-items">{log.details}</div>
                             </div>

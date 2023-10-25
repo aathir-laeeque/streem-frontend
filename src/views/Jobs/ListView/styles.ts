@@ -30,50 +30,48 @@ const TabContentWrapper = styled.div`
     align-items: flex-end;
     display: flex;
     padding: 0 0 16px;
+    gap: 12px;
 
-    .process-filter,
-    .resource-filter {
-      margin-left: 16px;
-      width: 200px;
+    > button {
+      margin-right: 0;
+      padding: 8px;
+    }
+
+    .select-filter {
+      width: 240px;
+    }
+
+    .dropdown-filter {
+      padding-block: 4px;
+      color: #1d84ff;
     }
 
     .upload-image > div {
-      gap: 6px;
-      margin-left: 24px;
+      gap: 4px;
       margin-bottom: 8px;
     }
-    .verification-search {
-      max-width: 306px;
-      width: 306px;
-    }
+
     .filter-buttons-wrapper {
-      padding: 2px 16px;
-      margin-block: auto;
       display: flex;
-      justify-content: center;
       align-items: center;
+      gap: 4px;
+      padding: 10px 8px;
+      color: #1d84ff;
+      font-size: 14px;
       cursor: pointer;
-      span {
-        color: #1d84ff;
-        font-size: 14px;
+
+      .icon {
+        height: 18px;
+        width: 18px;
+        color: inherit;
       }
     }
   }
 
   #create {
     margin-left: auto;
-  }
-
-  .task-progress {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-
-    > span {
-      color: #666666;
-      font-size: 12px;
-      margin-top: 8px;
-    }
+    padding-block: 12px;
+    padding-inline: 24px;
   }
 
   #more-actions {
@@ -97,19 +95,6 @@ const TabContentWrapper = styled.div`
 
     > .icon {
       color: #bbbbbb;
-    }
-  }
-
-  .item-state {
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    margin-top: 4px;
-
-    .icon {
-      font-size: 12px;
-      margin: 0px 4px 0px 0px;
-      color: inherit;
     }
   }
 

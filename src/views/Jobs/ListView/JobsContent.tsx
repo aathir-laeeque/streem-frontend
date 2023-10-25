@@ -345,7 +345,7 @@ const JobsContent: FC<TabContentProps> = ({
           updateFilterFields={(fields) => setSearchFilterFields(fields)}
         />
         <Select
-          className="process-filter"
+          className="select-filter"
           backspaceRemovesValue={false}
           hideSelectedOptions={false}
           onChange={(newValue) => {
@@ -366,12 +366,12 @@ const JobsContent: FC<TabContentProps> = ({
             defaultValue: [{ label: processFilter.processName, value: processFilter.id }],
           })}
         />
-        <div className="resource-filter">
+        <div className="select-filter">
           <ResourceFilter onChange={onChildChange} onClear={() => setResourceFilter('')} />
         </div>
         {processFilter?.schedulerId && (
           <Select
-            className="process-filter"
+            className="select-filter"
             isDisabled={!!processFilter?.schedulerId}
             {...(processFilter && {
               defaultValue: [

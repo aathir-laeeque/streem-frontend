@@ -1,14 +1,14 @@
-import { Avatar, Link as GoBack } from '#components';
 import { PARAMETER_OPERATORS } from '#PrototypeComposer/constants';
-import { useTypedSelector } from '#store';
+import { Avatar, Link as GoBack } from '#components';
 import { openLinkInNewTab } from '#utils';
 import { apiGetJobSummary } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { getFullName } from '#utils/stringUtils';
-import { formatDateTime, formatDuration1 } from '#utils/timeUtils';
+import { formatDateTime, formatDuration } from '#utils/timeUtils';
+import { ExceptionReason } from '#views/Job/overlays/CompleteJobWithException';
 import { Print } from '@material-ui/icons';
 import { RouteComponentProps } from '@reach/router';
-import moment from 'moment';
+import { differenceInSeconds, fromUnixTime } from 'date-fns';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { CompletedJobStates, Job } from '../ListView/types';
 import { Wrapper } from './styles';
@@ -20,7 +20,6 @@ import {
   ParameterDeviation,
   Timer,
 } from './types';
-import { ExceptionReason } from '#views/Job/overlays/CompleteJobWithException';
 
 type SummaryViewProps = RouteComponentProps<{ jobId: Job['id'] }>;
 
@@ -31,11 +30,11 @@ const generateDescription = (exception: Exception): ReactNode => {
     case 'DURATION_EXCEPTION':
       const { endedAt, maxPeriod, minPeriod, startedAt, timerOperator } = exception.timer as Timer;
 
-      const taskStartTime = moment.unix(startedAt);
+      const taskStartTime = fromUnixTime(startedAt);
 
-      const taskCompleteTime = moment.unix(endedAt);
+      const taskCompleteTime = fromUnixTime(endedAt);
 
-      const taskDuration = taskCompleteTime.diff(taskStartTime, 's');
+      const taskDuration = differenceInSeconds(taskCompleteTime, taskStartTime);
 
       const deviation = (() => {
         if (timerOperator === 'NOT_LESS_THAN') {
@@ -50,23 +49,20 @@ const generateDescription = (exception: Exception): ReactNode => {
 
       const expectedString =
         timerOperator === 'NOT_LESS_THAN'
-          ? `NLT ${formatDuration1({ duration: minPeriod ?? 0, unit: 's' })}`
-          : `Complete under ${formatDuration1({
-              duration: maxPeriod ?? 0,
-              unit: 's',
-            })}`;
+          ? `NLT ${formatDuration(minPeriod ?? 0)}`
+          : `Complete under ${formatDuration(maxPeriod ?? 0)}`;
 
       description = (
         <div>
           <span>
-            Task Completed {formatDuration1({ duration: Math.abs(deviation) ?? 0, unit: 's' })}{' '}
+            Task Completed {formatDuration(Math.abs(deviation) ?? 0)}{' '}
             {deviation > 0 ? 'late' : 'early'}
           </span>
           <br />
           <span>Expected: {expectedString}</span>
           <br />
           {timerOperator === 'NOT_LESS_THAN' ? (
-            <span>Max Time : {formatDuration1({ duration: maxPeriod ?? 0, unit: 's' })}</span>
+            <span>Max Time : {formatDuration(maxPeriod ?? 0)}</span>
           ) : null}
         </div>
       );
@@ -121,10 +117,6 @@ const generateDescription = (exception: Exception): ReactNode => {
 const JobSummaryView = ({ jobId }: SummaryViewProps) => {
   const [loading, toggleLoading] = useState(false);
   const [data, setData] = useState<JobSummary | null>(null);
-  const { selectedFacility } = useTypedSelector((state) => state.auth);
-  const { dateAndTimeStampFormat } = useTypedSelector(
-    (state) => state.facilityWiseConstants[selectedFacility!.id],
-  );
 
   useEffect(() => {
     (async () => {
@@ -167,19 +159,19 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
           <div className="card">
             <div className="card-header">Job Started on</div>
             <div className="card-body">
-              {data.startedAt ? formatDateTime(data.startedAt, dateAndTimeStampFormat) : 'N/A'}
+              {data.startedAt ? formatDateTime({ value: data.startedAt }) : 'N/A'}
             </div>
           </div>
           <div className="card">
             <div className="card-header">Job Completed on</div>
             <div className="card-body">
-              {data.endedAt ? formatDateTime(data.endedAt, dateAndTimeStampFormat) : 'N/A'}
+              {data.endedAt ? formatDateTime({ value: data.endedAt }) : 'N/A'}
             </div>
           </div>
           <div className="card">
             <div className="card-header">Job Duration</div>
             <div className="card-body">
-              {data.totalDuration ? formatDuration1({ duration: data.totalDuration }) : 'N/A'}
+              {data.totalDuration ? formatDuration(data.totalDuration) : 'N/A'}
             </div>
           </div>
           <div className="card">
@@ -221,9 +213,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
               <div className="job-duration">
                 <div className="job-duration-label">Total Stage Duration</div>
                 <div className="job-duration-value">
-                  {formatDuration1({
-                    duration: data.totalStageDuration ?? 0,
-                  })}
+                  {formatDuration(data.totalStageDuration ?? 0)}
                 </div>
               </div>
               <table className="duration-detail-table">
@@ -244,15 +234,9 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
                           <span className="stage-name">{stage.name}</span>
                         </div>
                       </td>
-                      <td className="stage-duration">
-                        {formatDuration1({
-                          duration: stage.totalDuration ?? 0,
-                        })}
-                      </td>
+                      <td className="stage-duration">{formatDuration(stage.totalDuration ?? 0)}</td>
                       <td className="task-duration">
-                        {formatDuration1({
-                          duration: stage.averageTaskCompletionDuration ?? 0,
-                        })}
+                        {formatDuration(stage.averageTaskCompletionDuration ?? 0)}
                       </td>
                       <td className={`exceptions${stage.totalTaskExceptions ? ' colored' : ''}`}>
                         {stage.totalTaskExceptions ? stage.totalTaskExceptions : '-'}
@@ -263,9 +247,7 @@ const JobSummaryView = ({ jobId }: SummaryViewProps) => {
                   <tr className="total-value-row">
                     <td className="name">Total</td>
                     <td className="stage-duration">
-                      {formatDuration1({
-                        duration: data.totalStageDuration ?? 0,
-                      })}
+                      {formatDuration(data.totalStageDuration ?? 0)}
                     </td>
                     <td className="task-duration">-</td>
                     <td className={`exceptions${data.totalTaskExceptions ? ' colored' : ''}`}>

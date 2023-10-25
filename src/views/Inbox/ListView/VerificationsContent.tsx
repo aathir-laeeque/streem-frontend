@@ -1,25 +1,25 @@
-import { Avatar, Checkbox, DataTable, LoadingContainer, Pagination, TextInput } from '#components';
-import { Select } from '#components/shared/Select';
-import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { navigate } from '@reach/router';
-import moment from 'moment';
-import React, { FC, useEffect, useState } from 'react';
-import { InputActionMeta, components } from 'react-select';
-import rightArrow from '#assets/svg/right-arrow.svg';
-import styled from 'styled-components';
-import { defaultParams, useUsers } from '#services/users';
-import { useDispatch } from 'react-redux';
-import { fetchVerifications, fetchVerificationsSuccess } from './actions';
-import { useTypedSelector } from '#store';
-import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.types';
-import { FiberManualRecord, Search } from '@material-ui/icons';
+import rightArrow from '#assets/svg/right-arrow.svg';
+import { Avatar, Checkbox, DataTable, LoadingContainer, Pagination, TextInput } from '#components';
 import { closeOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
-import { debounce } from 'lodash';
-import { FilterOperators, fetchDataParams } from '#utils/globalTypes';
-import { jobActions } from '#views/Job/jobStore';
+import { Select } from '#components/shared/Select';
+import { defaultParams, useUsers } from '#services/users';
+import { useTypedSelector } from '#store';
 import { ParameterVerificationStatus } from '#types';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { FilterOperators, InputTypes, fetchDataParams } from '#utils/globalTypes';
+import { formatDateTime } from '#utils/timeUtils';
+import { jobActions } from '#views/Job/jobStore';
+import { TabContentWrapper } from '#views/Jobs/ListView/styles';
+import { FiberManualRecord, Search } from '@material-ui/icons';
+import { navigate } from '@reach/router';
+import { debounce } from 'lodash';
+import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { InputActionMeta, components } from 'react-select';
+import styled from 'styled-components';
+import { fetchVerifications, fetchVerificationsSuccess } from './actions';
 
 const options = [
   {
@@ -163,7 +163,7 @@ const VerificationsContent: FC<{
             }, 500)}
           />
         </div>
-        <div style={{ width: '25%', marginLeft: '16px' }}>
+        <div className="select-filter">
           <Select
             placeholder="Select"
             label="Requested By"
@@ -215,7 +215,7 @@ const VerificationsContent: FC<{
           />
         </div>
         {isJobOpen && !redirectedFromBanner && (
-          <div style={{ width: '25%', marginLeft: '16px' }}>
+          <div className="select-filter">
             <Select
               placeholder="Select"
               label="Requested To"
@@ -267,7 +267,7 @@ const VerificationsContent: FC<{
             />
           </div>
         )}
-        <div style={{ width: '25%', marginLeft: '16px' }}>
+        <div className="select-filter">
           <Select
             placeholder="Select"
             options={options}
@@ -391,7 +391,7 @@ const VerificationsContent: FC<{
                   label: 'Requested At',
                   minWidth: 100,
                   format: (item) => {
-                    return moment.unix(item?.createdAt).format('DD/MM/YYYY');
+                    return formatDateTime({ value: item?.createdAt, type: InputTypes.DATE });
                   },
                 },
                 {

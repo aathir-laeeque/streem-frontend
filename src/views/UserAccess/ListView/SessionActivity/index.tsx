@@ -5,8 +5,9 @@ import { fetchUsers } from '#store/users/actions';
 import { User, UsersListType } from '#store/users/types';
 import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { fetchDataParams, FilterOperators } from '#utils/globalTypes';
+import { FilterOperators, InputTypes, fetchDataParams } from '#utils/globalTypes';
 import { getInitials } from '#utils/stringUtils';
+import { formatDateTime } from '#utils/timeUtils';
 import { usePrevious } from '#utils/usePrevious';
 import TextField from '@material-ui/core/TextField';
 import { Search } from '@material-ui/icons';
@@ -20,25 +21,25 @@ import {
   StaticDateRangePicker,
   TimePicker,
 } from '@material-ui/pickers';
-import MomentUtils from '@material-ui/pickers/adapter/moment';
+import DateFnsUtils from '@material-ui/pickers/adapter/date-fns';
+import { endOfToday, getHours, getMinutes, getUnixTime, set, startOfDay, subDays } from 'date-fns';
 import { groupBy } from 'lodash';
-import moment, { Moment } from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { TabViewProps } from '../types';
 import { fetchSessionActivities } from './actions';
 import { Composer, UserFilterWrapper } from './styles';
 import {
-  SessionActivity as SessionActivityType,
   SessionActivitySeverity,
   SessionActivityState,
+  SessionActivity as SessionActivityType,
 } from './types';
 
 type initialState = {
-  dateRange: DateRange<Moment>;
+  dateRange: DateRange<Date>;
   appliedFilters: Record<string, boolean>;
-  startTime: Moment | null;
-  endTime: Moment | null;
+  startTime: Date | null;
+  endTime: Date | null;
   searchQuery: string;
   selectedUsers: User[];
   unSelectedUsers: User[];
@@ -46,12 +47,12 @@ type initialState = {
 };
 
 // TODO Change appliedUsers, selectedUsers, unSelectedUsers to HashMap as we only need the id's of the users SO we can keep it like { userId : boolean }.
-const currentDate = moment().startOf('day');
+const currentDate = startOfDay(new Date());
 const initialState: initialState = {
   dateRange: [null, null],
   appliedFilters: {},
   startTime: currentDate,
-  endTime: moment().endOf('day'),
+  endTime: endOfToday(),
   searchQuery: '',
   selectedUsers: [],
   unSelectedUsers: [],
@@ -62,37 +63,33 @@ const SessionActivity: FC<TabViewProps> = () => {
   const { logs, loading, pageable }: SessionActivityState = useTypedSelector(
     (state) => state.sessionActivity,
   );
-  const { selectedFacility } = useTypedSelector((state) => state.auth);
-  const { dateFormat, timeFormat } = useTypedSelector(
-    (state) => state.facilityWiseConstants[selectedFacility!.id],
-  );
   const {
     list,
     pageable: { last, page },
   } = useTypedSelector((state) => state.users.all);
 
   const dispatch = useDispatch();
-  const [state, setstate] = useState(initialState);
+  const [state, setState] = useState(initialState);
   const { searchQuery, selectedUsers, unSelectedUsers, appliedUsers } = state;
 
   const prevSearch = usePrevious(searchQuery);
 
   const resetFilter = () => {
-    setstate(initialState);
+    setState(initialState);
     dispatch(clearAuditLogFilters());
   };
 
   const onCheckChanged = (user: User, checked: boolean) => {
     if (checked) {
       const newSelected = selectedUsers.filter((u) => user.id !== u.id);
-      setstate({
+      setState({
         ...state,
         selectedUsers: newSelected,
         unSelectedUsers: [...unSelectedUsers, user],
       });
     } else {
       const newUnSelected = unSelectedUsers.filter((u) => user.id !== u.id);
-      setstate({
+      setState({
         ...state,
         unSelectedUsers: newUnSelected,
         selectedUsers: [...selectedUsers, user],
@@ -123,7 +120,7 @@ const SessionActivity: FC<TabViewProps> = () => {
   };
 
   const handleUnselectAll = () => {
-    setstate({
+    setState({
       ...state,
       unSelectedUsers: [],
       selectedUsers: [],
@@ -136,7 +133,7 @@ const SessionActivity: FC<TabViewProps> = () => {
       {
         label: 'Date/Time Range',
         onApply: () => {
-          setstate({
+          setState({
             ...state,
             appliedFilters: {
               ...state.appliedFilters,
@@ -145,12 +142,12 @@ const SessionActivity: FC<TabViewProps> = () => {
           });
         },
         content: (
-          <LocalizationProvider dateAdapter={MomentUtils}>
+          <LocalizationProvider dateAdapter={DateFnsUtils}>
             <StaticDateRangePicker
               displayStaticWrapperAs="desktop"
               value={state.dateRange}
               calendars={1}
-              onChange={(newValue) => setstate({ ...state, dateRange: newValue })}
+              onChange={(newValue) => setState({ ...state, dateRange: newValue })}
               renderInput={(startProps, endProps) => (
                 <>
                   <TextField {...startProps} />
@@ -170,7 +167,7 @@ const SessionActivity: FC<TabViewProps> = () => {
                   startAdornment: <AccessTimeIcon />,
                 }}
                 openPickerIcon={<ArrowDropDownIcon />}
-                onChange={(newValue) => setstate({ ...state, startTime: newValue })}
+                onChange={(newValue) => setState({ ...state, startTime: newValue })}
               />
               <TimePicker
                 renderInput={(props) => <TextField {...props} />}
@@ -181,7 +178,7 @@ const SessionActivity: FC<TabViewProps> = () => {
                   startAdornment: <AccessTimeIcon />,
                 }}
                 openPickerIcon={<ArrowDropDownIcon />}
-                onChange={(newValue) => setstate({ ...state, endTime: newValue })}
+                onChange={(newValue) => setState({ ...state, endTime: newValue })}
               />
             </div>
           </LocalizationProvider>
@@ -190,23 +187,23 @@ const SessionActivity: FC<TabViewProps> = () => {
       {
         label: 'Users',
         onApply: () => {
-          const applicapleUsers = [
+          const applicableUsers = [
             ...selectedUsers,
             ...appliedUsers.filter((user) => !unSelectedUsers.some((item) => item.id === user.id)),
           ];
-          if (!!applicapleUsers.length) {
-            setstate({
+          if (!!applicableUsers.length) {
+            setState({
               ...state,
               appliedFilters: {
                 ...state.appliedFilters,
                 Users: true,
               },
-              appliedUsers: applicapleUsers,
+              appliedUsers: applicableUsers,
               selectedUsers: [],
               unSelectedUsers: [],
             });
           } else {
-            setstate({
+            setState({
               ...state,
               appliedFilters: {
                 ...state.appliedFilters,
@@ -245,7 +242,7 @@ const SessionActivity: FC<TabViewProps> = () => {
                   <input
                     className="searchbox"
                     type="text"
-                    onChange={(e) => setstate({ ...state, searchQuery: e.target.value })}
+                    onChange={(e) => setState({ ...state, searchQuery: e.target.value })}
                     defaultValue={searchQuery}
                     placeholder="First Name"
                   />
@@ -293,8 +290,8 @@ const SessionActivity: FC<TabViewProps> = () => {
   const fetchLogs = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
     const { dateRange, startTime, endTime } = state;
-    let greaterDate = moment().startOf('day').subtract(7, 'days');
-    let lowerDate = moment().endOf('day');
+    let greaterDate = subDays(currentDate, 7);
+    let lowerDate = endOfToday();
     if (dateRange[0]) {
       greaterDate = dateRange[0];
       lowerDate = dateRange[0];
@@ -303,12 +300,18 @@ const SessionActivity: FC<TabViewProps> = () => {
       }
     }
     if (greaterDate && lowerDate && startTime && endTime) {
-      const greaterThan = moment(
-        `${greaterDate.format('YYYY-MM-DD')} ${startTime.format('HH:mm')}`,
-      ).unix();
-      const lowerThan = moment(
-        `${lowerDate.format('YYYY-MM-DD')} ${endTime.format('HH:mm')}`,
-      ).unix();
+      const greaterThan = getUnixTime(
+        set(greaterDate, {
+          hours: getHours(startTime),
+          minutes: getMinutes(startTime),
+        }),
+      );
+      const lowerThan = getUnixTime(
+        set(lowerDate, {
+          hours: getHours(endTime),
+          minutes: getMinutes(endTime),
+        }),
+      );
 
       const userFilter = appliedUsers.map((u) => u.id);
       const fields = [
@@ -379,7 +382,10 @@ const SessionActivity: FC<TabViewProps> = () => {
           {
             header: 'TIME',
             template: function renderComp(item) {
-              const day = moment(Object.keys(item)[0]).format(dateFormat);
+              const day = formatDateTime({
+                value: getUnixTime(new Date(Object.keys(item)[0])),
+                type: InputTypes.DATE,
+              });
               let criticalCount = 0;
               const itemId = item.id as string;
               (item[itemId] as SessionActivityType[]).forEach((element) => {
@@ -406,7 +412,7 @@ const SessionActivity: FC<TabViewProps> = () => {
                           <div className="circle" />
                           <div className="content">
                             <div className="content-items" style={{ whiteSpace: 'nowrap' }}>
-                              {moment.unix(log.triggeredAt).format(timeFormat)}
+                              {formatDateTime({ value: log.triggeredAt, type: InputTypes.TIME })}
                             </div>
                             {log.severity === SessionActivitySeverity.CRITICAL && (
                               <div className="content-items">

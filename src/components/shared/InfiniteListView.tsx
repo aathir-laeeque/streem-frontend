@@ -63,6 +63,12 @@ const Wrapper = styled.div.attrs({})`
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    .left-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
   }
 
   .list-body {
@@ -368,69 +374,71 @@ export const InfiniteListView: FC<ListViewProps> = ({
   return (
     <Wrapper>
       <div className="list-options">
-        {filterProp && (
-          <>
-            <Button
-              variant="secondary"
-              aria-controls="top-menu"
-              aria-haspopup="true"
-              onClick={handleOpen}
-              style={{ padding: '8px 16px 8px 24px' }}
-            >
-              {filterProp?.activeCount !== 0 ? `${filterProp?.activeCount} Filters` : 'Filters '}
-              <ExpandMore style={{ fontSize: 20, marginLeft: 8 }} />
-            </Button>
-            <StyledMenu
-              id="filter-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              disableEnforceFocus
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              style={{ marginTop: 40 }}
-            >
-              {filterProp.filters.map((filter) => {
-                return (
-                  <NestedMenuItem
-                    key={`filter_${filter.label}`}
-                    right
-                    disabled={true}
-                    label={filter.label}
-                    mainMenuOpen={anchorEl ? true : false}
-                  >
-                    <FilterWrapper
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                      onKeyDown={(e) => e.stopPropagation()}
+        <div className="left-section">
+          {filterProp && (
+            <>
+              <Button
+                variant="secondary"
+                aria-controls="top-menu"
+                aria-haspopup="true"
+                onClick={handleOpen}
+                style={{ padding: '8px 16px 8px 24px' }}
+              >
+                {filterProp?.activeCount !== 0 ? `${filterProp?.activeCount} Filters` : 'Filters '}
+                <ExpandMore style={{ fontSize: 20, marginLeft: 8 }} />
+              </Button>
+              <StyledMenu
+                id="filter-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                disableEnforceFocus
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                style={{ marginTop: 40 }}
+              >
+                {filterProp.filters.map((filter) => {
+                  return (
+                    <NestedMenuItem
+                      key={`filter_${filter.label}`}
+                      right
+                      disabled={true}
+                      label={filter.label}
+                      mainMenuOpen={anchorEl ? true : false}
                     >
-                      {typeof filter.content === 'function' ? filter.content() : filter.content}
-                      <div className="picker-actions">
-                        <Button
-                          style={{ padding: '6px 12px' }}
-                          onClick={(e) => onApplyFilter(e, filter.onApply)}
-                        >
-                          Apply Filter
-                        </Button>
-                      </div>
-                    </FilterWrapper>
-                  </NestedMenuItem>
-                );
-              })}
-            </StyledMenu>
-          </>
-        )}
-        {isSearchable && (
-          <div className="searchboxwrapper">
-            <input className="searchbox" type="text" placeholder="Search" />
-            <Search className="searchsubmit" />
-          </div>
-        )}
-        {filterProp?.activeCount && filterProp?.activeCount > 0 ? (
-          <span className="resetOption" onClick={filterProp?.onReset}>
-            Reset
-          </span>
-        ) : null}
+                      <FilterWrapper
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        onKeyDown={(e) => e.stopPropagation()}
+                      >
+                        {typeof filter.content === 'function' ? filter.content() : filter.content}
+                        <div className="picker-actions">
+                          <Button
+                            style={{ padding: '6px 12px' }}
+                            onClick={(e) => onApplyFilter(e, filter.onApply)}
+                          >
+                            Apply Filter
+                          </Button>
+                        </div>
+                      </FilterWrapper>
+                    </NestedMenuItem>
+                  );
+                })}
+              </StyledMenu>
+            </>
+          )}
+          {isSearchable && (
+            <div className="searchboxwrapper">
+              <input className="searchbox" type="text" placeholder="Search" />
+              <Search className="searchsubmit" />
+            </div>
+          )}
+          {filterProp?.activeCount && filterProp?.activeCount > 0 ? (
+            <span className="resetOption" onClick={filterProp?.onReset}>
+              Reset
+            </span>
+          ) : null}
+        </div>
         {primaryButtonText && <Button onClick={onPrimaryClick}>{primaryButtonText}</Button>}
       </div>
       <div className="list-header">

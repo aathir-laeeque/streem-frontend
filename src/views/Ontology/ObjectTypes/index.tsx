@@ -159,7 +159,7 @@ const GeneralTabContent: FC<TabContentProps> = () => {
             },
             {
               label: 'Added On',
-              value: formatDateTime(active.createdAt, 'Do MMMM YYYY, h:mm A'),
+              value: formatDateTime({ value: active.createdAt, format: 'do MMMM yyyy, h:mm a' }),
             },
           ]}
         />

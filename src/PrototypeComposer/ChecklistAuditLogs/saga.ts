@@ -1,16 +1,16 @@
 import { apiGetChecklistAuditLogs } from '#utils/apiUrls';
-import { ResponseObj } from '#utils/globalTypes';
+import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
-import moment from 'moment';
 import { call, put, takeLeading } from 'redux-saga/effects';
 
+import { formatDateTime } from '#utils/timeUtils';
 import {
   fetchChecklistAuditLogs,
+  fetchChecklistAuditLogsError,
   fetchChecklistAuditLogsOngoing,
   fetchChecklistAuditLogsSuccess,
-  fetchChecklistAuditLogsError,
 } from './actions';
-import { ChecklistAuditLogsType, ChecklistAuditLogActions } from './types';
+import { ChecklistAuditLogActions, ChecklistAuditLogsType } from './types';
 
 function* fetchChecklistAuditLogsSaga({ payload }: ReturnType<typeof fetchChecklistAuditLogs>) {
   try {
@@ -35,7 +35,7 @@ function* fetchChecklistAuditLogsSaga({ payload }: ReturnType<typeof fetchCheckl
 
     const newData = data.map((el) => ({
       ...el,
-      triggeredOn: moment.unix(el.triggeredAt).format('YYYY-MM-DD'),
+      triggeredOn: formatDateTime({ value: el.triggeredAt, type: InputTypes.DATE }),
     }));
 
     yield put(

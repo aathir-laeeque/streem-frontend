@@ -1,7 +1,8 @@
 import { FormGroup } from '#components';
 import { InputTypes } from '#utils/globalTypes';
+import { formatDateTime } from '#utils/timeUtils';
 import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
-import moment from 'moment';
+import { getUnixTime } from 'date-fns';
 import React, { FC } from 'react';
 
 export interface SchedulerProps {
@@ -52,13 +53,19 @@ export const Scheduler: FC<SchedulerProps> = ({ form }) => {
             items={[
               {
                 label: 'Start Date and Time',
-                value: moment(expectedStartDate).format('Do MMMM, YYYY [at] hh:mm A'),
+                value: formatDateTime({
+                  value: getUnixTime(new Date(expectedStartDate)),
+                  format: `do MMMM, yyyy 'at' hh:mm a`,
+                }),
               },
               ...(expectedEndDate
                 ? [
                     {
                       label: 'End Date and Time',
-                      value: moment(expectedEndDate).format('Do MMMM, YYYY [at] hh:mm A'),
+                      value: formatDateTime({
+                        value: getUnixTime(new Date(expectedEndDate)),
+                        format: `do MMMM, yyyy 'at' hh:mm a`,
+                      }),
                     },
                   ]
                 : []),

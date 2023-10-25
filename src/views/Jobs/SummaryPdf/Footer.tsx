@@ -1,8 +1,9 @@
 import { Facility } from '#services/commonTypes';
 import { getUserName, User } from '#services/users';
 import { ALL_FACILITY_ID } from '#utils/constants';
+import { formatDateTime } from '#utils/timeUtils';
 import { StyleSheet, Text, View } from '@react-pdf/renderer';
-import moment from 'moment';
+import { getUnixTime } from 'date-fns';
 import React from 'react';
 
 const styles = StyleSheet.create({
@@ -41,8 +42,8 @@ interface Props {
   dateAndTimeStampFormat: string;
 }
 
-const Footer = ({ user, selectedFacility, dateAndTimeStampFormat }: Props) => {
-  const now = moment().format(dateAndTimeStampFormat);
+const Footer = ({ user, selectedFacility }: Props) => {
+  const now = formatDateTime({ value: getUnixTime(new Date()) });
   const userName = getUserName({ user, withEmployeeId: true });
 
   return (

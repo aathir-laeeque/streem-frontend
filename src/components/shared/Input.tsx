@@ -1,8 +1,8 @@
 import { InputTypes } from '#utils/globalTypes';
-import { formatDateByInputType } from '#utils/timeUtils';
+import { formatDateTime } from '#utils/timeUtils';
 import { Error as ErrorIcon, SvgIconComponent } from '@material-ui/icons';
+import { getUnixTime, parseISO, set } from 'date-fns';
 import { noop } from 'lodash';
-import moment from 'moment';
 import React, { ComponentPropsWithRef, forwardRef, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -160,24 +160,20 @@ const TextInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     ...rest
   } = props;
 
+  const formatByType =
+    type === InputTypes.DATE
+      ? 'yyyy-MM-dd'
+      : type === InputTypes.TIME
+      ? 'HH:mm'
+      : 'yyyy-MM-dd HH:mm';
+
   const onChangeHandler = ({ target }: any) => {
     let { name, value } = target;
-    if (
-      [InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(
-        type as unknown as InputTypes,
-      )
-    ) {
-      value = value ? moment(value).unix().toString() : '';
-      if (type === InputTypes.TIME) {
-        if (value) {
-          const [hour, min] = value.split(':');
-          value = moment()
-            .set('hour', parseInt(hour))
-            .set('minute', parseInt(min))
-            .unix()
-            .toString();
-        }
-      }
+    if (InputTypes.TIME === type) {
+      const [hours, minutes] = value.split(':');
+      value = hours && minutes ? getUnixTime(set(new Date(), { hours, minutes })).toString() : '';
+    } else {
+      value = value ? getUnixTime(parseISO(value)).toString() : '';
     }
     if (typeof onChange === 'function') {
       onChange({ name, value });
@@ -199,15 +195,7 @@ const TextInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       }),
       ...(valueKey && {
         [valueKey]: isDateOrTime
-          ? formatDateByInputType(
-              type,
-              (rest.value || defaultValue) as number,
-              type === InputTypes.DATE
-                ? 'YYYY-MM-DD'
-                : type === InputTypes.TIME
-                ? 'HH:mm'
-                : 'YYYY-MM-DDTHH:mm',
-            )
+          ? formatDateTime({ value: (rest.value || defaultValue) as number, format: formatByType })
           : rest.value || defaultValue,
       }),
       ...(type === InputTypes.NUMBER && {

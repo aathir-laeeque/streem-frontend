@@ -1,11 +1,10 @@
-import { Avatar, BaseModal, Textarea } from '#components';
-import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import {
   Collaborator,
   CollaboratorState,
   CollaboratorType,
 } from '#PrototypeComposer/reviewer.types';
-import { useTypedSelector } from '#store';
+import { Avatar, BaseModal, Textarea } from '#components';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { apiGetChecklistInfo } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { getFullName } from '#utils/stringUtils';
@@ -294,10 +293,6 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
   props: { checklistId } = {},
 }) => {
   const [state, setState] = useState<ChecklistInfo | null>(null);
-  const { selectedFacility } = useTypedSelector((state) => state.auth);
-  const { dateAndTimeStampFormat } = useTypedSelector(
-    (state) => state.facilityWiseConstants[selectedFacility!.id],
-  );
 
   useEffect(() => {
     if (checklistId) {
@@ -361,7 +356,9 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                   <div className="column">
                     <label className="column-label">Creation Date</label>
                     <div className="creation-date">
-                      {formatDateTime(state?.audit?.createdAt, dateAndTimeStampFormat)}
+                      {formatDateTime({
+                        value: state?.audit?.createdAt,
+                      })}
                     </div>
                   </div>
                 </div>
@@ -425,7 +422,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
 
                     {state.signOff.map((user) => (
                       <div className="date" key={user.employeeId}>
-                        {user.signedAt && formatDateTime(user.signedAt, dateAndTimeStampFormat)}
+                        {user.signedAt && formatDateTime({ value: user.signedAt })}
                       </div>
                     ))}
                   </div>
@@ -459,7 +456,9 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                     <label className="column-label">Date</label>
 
                     <div className="date">
-                      {formatDateTime(state.release.releaseAt, dateAndTimeStampFormat)}
+                      {formatDateTime({
+                        value: state.release.releaseAt,
+                      })}
                     </div>
                   </div>
                 </div>
@@ -504,7 +503,7 @@ const ChecklistInfoModal: FC<CommonOverlayProps<ChecklistInfoModalProps>> = ({
                     {state.versions.map((version, index) => (
                       <div key={index}>
                         {version.deprecatedAt
-                          ? formatDateTime(version.deprecatedAt, dateAndTimeStampFormat)
+                          ? formatDateTime({ value: version.deprecatedAt })
                           : 'Current'}
                       </div>
                     ))}

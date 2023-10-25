@@ -9,7 +9,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { fetchAutomations } from './ListView/actions';
-import { Automation, AutomationVisual } from './ListView/types';
+import { Automation as AutomationType, AutomationVisual } from './ListView/types';
 
 const AutomationWrapper = styled(ViewWrapper)`
   .list-table {
@@ -71,13 +71,13 @@ const Automation: FC<Props> = ({ id }) => {
                       id: 'action',
                       label: 'Automate',
                       minWidth: 240,
-                      format: (item: Automation) => AutomationVisual[item.action],
+                      format: (item: AutomationType) => AutomationVisual[item.action],
                     },
                     {
                       id: 'details',
                       label: 'Automation Details',
                       minWidth: 152,
-                      format: (item: Automation) =>
+                      format: (item: AutomationType) =>
                         cronstrue.toString(item.cron, { verbose: true }),
                     },
                   ]}

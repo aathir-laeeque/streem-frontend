@@ -7,7 +7,6 @@ const Wrapper = styled.div.attrs({
 })`
   align-items: center;
   display: flex;
-  margin-left: 24px;
   margin-bottom: 12px;
 
   .label {

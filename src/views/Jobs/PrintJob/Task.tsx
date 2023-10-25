@@ -1,13 +1,14 @@
+import { ParametersById } from '#PrototypeComposer/Activity/reducer.types';
+import { TimerOperator } from '#PrototypeComposer/checklist.types';
 import clockIcon from '#assets/images/clock.png';
 import handIcon from '#assets/images/hand.png';
-import { formatDuration } from '#utils/timeUtils';
+import { NonMandatoryParameter, TASK_EXECUTION_STATES, Task } from '#types';
+import { InputTypes } from '#utils/globalTypes';
+import { formatDateTime, formatDuration } from '#utils/timeUtils';
 import { Image, StyleSheet, Text, View } from '@react-pdf/renderer';
-import moment from 'moment';
+import { differenceInSeconds, fromUnixTime } from 'date-fns';
 import React, { FC } from 'react';
 import ParameterList, { styles as parameterStyles } from './ActivityList';
-import { ParametersById } from '#PrototypeComposer/Activity/reducer.types';
-import { NonMandatoryParameter, TASK_EXECUTION_STATES, Task } from '#types';
-import { TimerOperator } from '#PrototypeComposer/checklist.types';
 
 const styles = StyleSheet.create({
   flexView: {
@@ -164,10 +165,10 @@ const MemoTask: FC<{
               ]}
             >
               {taskExecutionState !== TASK_EXECUTION_STATES.NOT_STARTED && startedAt
-                ? moment.unix(startedAt).format(dateFormat)
+                ? formatDateTime({ value: startedAt, type: InputTypes.DATE })
                 : '___/__/____'}
             </Text>
-            <Text style={styles.taskStartDateInput}>MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;YYYY</Text>
+            <Text style={styles.taskStartDateInput}>MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;yyyy</Text>
           </View>
           <View style={styles.taskStartTime}>
             <Text style={styles.taskTopHeaderTitle}>Start Time</Text>
@@ -181,7 +182,7 @@ const MemoTask: FC<{
               ]}
             >
               {taskExecutionState !== TASK_EXECUTION_STATES.NOT_STARTED && startedAt
-                ? moment.unix(startedAt).format(timeFormat)
+                ? formatDateTime({ value: startedAt, type: InputTypes.TIME })
                 : '__:__ am / pm'}
             </Text>
             <Text style={styles.taskStartDateInput}>HH&nbsp;&nbsp;MM</Text>
@@ -265,17 +266,19 @@ const MemoTask: FC<{
                   let text = `${'\n'}`;
                   if (
                     task.maxPeriod &&
-                    moment
-                      .unix(task.taskExecution.endedAt)
-                      .diff(moment.unix(task.taskExecution.startedAt), 'seconds') > task.maxPeriod
+                    differenceInSeconds(
+                      fromUnixTime(task.taskExecution.endedAt),
+                      fromUnixTime(task.taskExecution.startedAt),
+                    ) > task.maxPeriod
                   ) {
                     text = `after the set time ${'\n'}`;
                   } else if (
                     task.timerOperator === 'NOT_LESS_THAN' &&
                     task.minPeriod &&
-                    moment
-                      .unix(task.taskExecution.endedAt)
-                      .diff(moment.unix(task.taskExecution.startedAt), 'seconds') < task.minPeriod
+                    differenceInSeconds(
+                      fromUnixTime(task.taskExecution.endedAt),
+                      fromUnixTime(task.taskExecution.startedAt),
+                    ) < task.minPeriod
                   ) {
                     text = `before the set time ${'\n'}`;
                   }
@@ -283,7 +286,7 @@ const MemoTask: FC<{
                 })()
               : `${'\n'}`}
             by {modifiedBy.firstName} {modifiedBy.lastName}, ID: {modifiedBy.employeeId} on{' '}
-            {moment.unix(modifiedAt).format(dateAndTimeStampFormat)}
+            {formatDateTime({ value: modifiedAt })}
           </Text>
           {task.timed && task.taskExecution.reason && (
             <View style={styles.comments}>
@@ -297,7 +300,7 @@ const MemoTask: FC<{
           <Text style={styles.text12}>
             This Task was corrected via Leucine {'\n'}
             by {correctedBy.firstName} {correctedBy.lastName}, ID: {correctedBy.employeeId} on{' '}
-            {moment.unix(correctedAt).format(dateAndTimeStampFormat)}
+            {formatDateTime({ value: correctedAt })}
           </Text>
           <View style={styles.comments}>
             <Text style={styles.text12}>{task.taskExecution.correctionReason}</Text>
@@ -314,7 +317,7 @@ const MemoTask: FC<{
               : ' skipped '}
             via Leucine {'\n'}
             by {modifiedBy.firstName} {modifiedBy.lastName}, ID: {modifiedBy.employeeId} on{' '}
-            {moment.unix(modifiedAt).format(dateAndTimeStampFormat)}
+            {formatDateTime({ value: modifiedAt })}
           </Text>
           <View style={styles.comments}>
             <Text style={styles.text12}>{task.taskExecution.reason}</Text>
@@ -352,7 +355,7 @@ const MemoTask: FC<{
               >
                 ___/__/____
               </Text>
-              <Text style={styles.taskStartDateInput}>MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;YYYY</Text>
+              <Text style={styles.taskStartDateInput}>MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;yyyy</Text>
             </View>
           </View>
           <View style={[styles.flexView, { margin: '0px 4px' }]}>
@@ -384,6 +387,6 @@ const MemoTask: FC<{
   );
 };
 
-const Task = React.memo(MemoTask);
+const PrintTask = React.memo(MemoTask);
 
-export default Task;
+export default PrintTask;

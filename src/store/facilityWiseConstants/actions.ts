@@ -7,9 +7,9 @@ export const setInitialFacilityWiseConstants = (facilities: Facility[]) => {
     (data, facilityData) => ({
       ...data,
       [facilityData.id]: {
-        timeFormat: 'HH:mm',
-        dateFormat: 'MMM DD, YYYY',
-        dateAndTimeStampFormat: `MMM DD, YYYY HH:mm`,
+        timeFormat: facilityData.timeFormat || 'HH:mm',
+        dateFormat: facilityData.dateFormat || 'MMM dd, yyyy',
+        dateAndTimeStampFormat: facilityData.dateTimeFormat || `MMM dd, yyyy HH:mm`,
       },
     }),
     {},

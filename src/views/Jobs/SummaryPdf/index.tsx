@@ -90,10 +90,7 @@ const JobSummaryPdf = ({ jobId }: Props) => {
         <Page style={styles.page}>
           <Header logoUrl={settings?.logoUrl ?? ''} />
 
-          <CommonJobPdfDetails
-            jobPdfData={jobSummaryReportDetails as unknown as PdfJobDataType}
-            dateAndTimeStampFormat={dateAndTimeStampFormat}
-          />
+          <CommonJobPdfDetails jobPdfData={jobSummaryReportDetails as unknown as PdfJobDataType} />
           <View style={styles.container}>
             <DurationSummary
               stages={jobSummaryReportDetails?.stages ?? []}

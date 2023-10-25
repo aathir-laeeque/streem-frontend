@@ -6,7 +6,6 @@ import { apiPrintJobDetails } from '#utils/apiUrls';
 import { ALL_FACILITY_ID } from '#utils/constants';
 import { request } from '#utils/request';
 import { Document, Image, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
-import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
 import { CommonJobPdfDetails, PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
 import { ValueLabelGroup } from '../Components/Documents/utils';
@@ -14,8 +13,10 @@ import { LoadingDiv, styles } from './styles';
 import TaskView from './Task';
 import { PrintJobProps } from './types';
 import { keyBy } from 'lodash';
+import { getUnixTime } from 'date-fns';
 import { ParametersById } from '#PrototypeComposer/Activity/reducer.types';
 import { Checklist, Task } from '#types';
+import { formatDateTime } from '#utils/timeUtils';
 
 const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
   const [data, setData] = useState<PdfJobDataType | undefined>();
@@ -83,7 +84,7 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
             <Image src={settings?.logoUrl || ''} style={{ height: '24px' }} />
             <Image src={logo} style={{ height: '24px' }} />
           </View>
-          <CommonJobPdfDetails jobPdfData={data} dateAndTimeStampFormat={dateAndTimeStampFormat} />
+          <CommonJobPdfDetails jobPdfData={data} />
           {checklist?.stages.map((stage) => {
             if (hiddenIds[stage.id] === undefined) {
               return (
@@ -117,8 +118,11 @@ const MyPrintJob: FC<{ jobId: string }> = ({ jobId }) => {
 
           <View fixed style={styles.footer}>
             <Text style={styles.footerInfo}>
-              Downloaded on {moment().format(dateAndTimeStampFormat)}. By {profile.firstName}{' '}
-              {profile.lastName} ID: {profile.employeeId} for{' '}
+              Downloaded on{' '}
+              {formatDateTime({
+                value: getUnixTime(new Date()),
+              })}
+              . By {profile.firstName} {profile.lastName} ID: {profile.employeeId} for{' '}
               {selectedFacility!.id !== ALL_FACILITY_ID ? 'Facility: ' : ''}
               {selectedFacility?.name} using Leucine App
             </Text>

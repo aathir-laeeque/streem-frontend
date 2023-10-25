@@ -9,10 +9,10 @@ import React, { FC } from 'react';
 import CalculationParameter from './Calculation';
 import ChecklistParameter from './Checklist';
 import FileUploadParameter from './FileUpload';
+import ImageCaptureParameter from './ImageCapture';
 import InputParameter from './Input';
 import InstructionParameter from './Instruction';
 import MaterialParameter from './Material';
-import ImageCaptureParameter from './ImageCapture';
 import MultiSelectParameter from './MultiSelect';
 import ResourceParameter from './Resource';
 import ShouldBeParameter from './ShouldBe';
@@ -200,7 +200,7 @@ const Parameter: FC<ParameterProps> = ({
             ? audit.modifiedBy && (
                 <>
                   Last updated by {getFullName(audit.modifiedBy)}, ID: {audit.modifiedBy.employeeId}{' '}
-                  on {formatDateTime(audit.modifiedAt)}
+                  on {formatDateTime({ value: audit.modifiedAt })}
                 </>
               )
             : 'Updating...'}

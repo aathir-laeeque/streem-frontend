@@ -12,7 +12,8 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGINATION } from '#utils/constants';
 import { FilterOperators, InputTypes, fetchDataParams } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { getFullName } from '#utils/stringUtils';
-import { formatDateByInputType } from '#utils/timeUtils';
+import { formatDateTime } from '#utils/timeUtils';
+import { LabelValueRow } from '#views/Job/components/Header/styles';
 import JobCard from '#views/Jobs/Components/JobCard';
 import JobInfoDrawer from '#views/Jobs/Components/JobInfo';
 import {
@@ -22,7 +23,7 @@ import {
 } from '#views/Jobs/ListView/types';
 import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
 import { RouteComponentProps, navigate } from '@reach/router';
-import moment from 'moment';
+import { endOfToday, getUnixTime } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -32,7 +33,6 @@ import TabContent from './TabContent';
 import AddEditObjectDrawer from './components/AddEditObjectDrawer';
 import ProcessTabContent from './components/ProcessTabContent';
 import RelationTabContent from './components/RelationTabContent';
-import { LabelValueRow } from '#views/Job/components/Header/styles';
 
 const ObjectViewWrapper = styled.div`
   display: flex;
@@ -202,7 +202,7 @@ const OverViewTabContent = () => {
         {
           field: 'expectedEndDate',
           op: FilterOperators.LT,
-          values: [moment().endOf('day').unix().toString()],
+          values: [getUnixTime(endOfToday()).toString()],
         },
       ],
     },
@@ -225,7 +225,7 @@ const OverViewTabContent = () => {
         {
           field: 'expectedStartDate',
           op: FilterOperators.GT,
-          values: [moment().endOf('day').unix().toString()],
+          values: [getUnixTime(endOfToday()).toString()],
         },
       ],
     },
@@ -259,7 +259,7 @@ const OverViewTabContent = () => {
         propertyValue = propertyValue.map((option) => option.displayName).join(', ');
       } else {
         if ([InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(property.inputType)) {
-          propertyValue = formatDateByInputType(property.inputType, propertyValue);
+          propertyValue = formatDateTime({ value: propertyValue, type: property.inputType });
         }
       }
     } else {
@@ -426,7 +426,7 @@ const ObjectsContent = ({
                 {selectedObject?.createdAt && (
                   <span>
                     Created Date:{' '}
-                    {formatDateByInputType(InputTypes.DATE, selectedObject!.createdAt)}
+                    {formatDateTime({ value: selectedObject!.createdAt, type: InputTypes.DATE })}
                   </span>
                 )}
               </div>

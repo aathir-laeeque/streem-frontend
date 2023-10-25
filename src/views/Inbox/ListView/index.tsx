@@ -1,19 +1,19 @@
+import { GeneralHeader, StyledTabs } from '#components';
 import useTabs from '#components/shared/useTabs';
+import checkPermission from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { FilterOperators } from '#utils/globalTypes';
 import { ViewWrapper } from '#views/Jobs/ListView/styles';
 import { AssignedJobStates, CompletedJobStates } from '#views/Jobs/ListView/types';
+import { getUnixTime } from 'date-fns';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
+import ApprovalsContent from './ApprovalsContent';
 import InboxContent from './InboxContent';
 import VerificationContent from './VerificationsContent';
-import ApprovalsContent from './ApprovalsContent';
 import { resetInbox } from './actions';
 import { InboxState, ListViewProps } from './types';
-import { GeneralHeader, StyledTabs } from '#components';
-import moment from 'moment';
-import styled from 'styled-components';
-import checkPermission from '#services/uiPermissions';
 
 const InboxJobsWrapper = styled.div`
   display: flex;
@@ -108,7 +108,7 @@ const ListView: FC<ListViewProps> = () => {
                           {
                             field: 'expectedEndDate',
                             op: FilterOperators.LT,
-                            values: [moment(moment.now()).unix().toString()],
+                            values: [getUnixTime(new Date()).toString()],
                           },
                         ],
                       },
@@ -119,7 +119,7 @@ const ListView: FC<ListViewProps> = () => {
                           {
                             field: 'expectedStartDate',
                             op: FilterOperators.LT,
-                            values: [moment(moment.now()).unix().toString()],
+                            values: [getUnixTime(new Date()).toString()],
                           },
                         ],
                       },
@@ -172,7 +172,7 @@ const ListView: FC<ListViewProps> = () => {
                           {
                             field: 'expectedEndDate',
                             op: FilterOperators.LT,
-                            values: [moment(moment.now()).unix().toString()],
+                            values: [getUnixTime(new Date()).toString()],
                           },
                         ],
                       },
@@ -183,7 +183,7 @@ const ListView: FC<ListViewProps> = () => {
                           {
                             field: 'expectedStartDate',
                             op: FilterOperators.LT,
-                            values: [moment(moment.now()).unix().toString()],
+                            values: [getUnixTime(new Date()).toString()],
                           },
                         ],
                       },

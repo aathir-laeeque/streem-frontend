@@ -2,7 +2,7 @@ import { Checklist } from '#PrototypeComposer/checklist.types';
 import { User } from '#store/users/types';
 import { Parameter } from '#types';
 import { getParameterContent } from '#utils/parameterUtils';
-import { formatDateTime, formatDuration1 } from '#utils/timeUtils';
+import { formatDateTime, formatDuration } from '#utils/timeUtils';
 import { JobSummary } from '#views/Jobs/Summary/types';
 import { Link, StyleSheet, Text, View } from '@react-pdf/renderer';
 import React from 'react';
@@ -75,13 +75,7 @@ const jobDataStyles = StyleSheet.create({
   },
 });
 
-export const CommonJobPdfDetails = ({
-  jobPdfData,
-  dateAndTimeStampFormat,
-}: {
-  jobPdfData: PdfJobDataType;
-  dateAndTimeStampFormat: string;
-}) => {
+export const CommonJobPdfDetails = ({ jobPdfData }: { jobPdfData: PdfJobDataType }) => {
   const {
     checklist,
     code,
@@ -127,7 +121,7 @@ export const CommonJobPdfDetails = ({
             <Text style={jobDataStyles.cardHeader}>Job Started On</Text>
 
             <Text style={jobDataStyles.cardBody}>
-              {startedAt ? formatDateTime(startedAt, dateAndTimeStampFormat) : 'N/A'}
+              {startedAt ? formatDateTime({ value: startedAt }) : 'N/A'}
             </Text>
           </View>
 
@@ -135,7 +129,7 @@ export const CommonJobPdfDetails = ({
             <Text style={jobDataStyles.cardHeader}>Job Completed On</Text>
 
             <Text style={jobDataStyles.cardBody}>
-              {endedAt ? formatDateTime(endedAt, dateAndTimeStampFormat) : 'N/A'}
+              {endedAt ? formatDateTime({ value: endedAt }) : 'N/A'}
             </Text>
           </View>
 
@@ -143,7 +137,7 @@ export const CommonJobPdfDetails = ({
             <Text style={jobDataStyles.cardHeader}>Job Duration</Text>
 
             <Text style={jobDataStyles.cardBody}>
-              {totalDuration ? formatDuration1({ duration: totalDuration }) : 'N/A'}
+              {totalDuration ? formatDuration(totalDuration) : 'N/A'}
             </Text>
           </View>
         </View>

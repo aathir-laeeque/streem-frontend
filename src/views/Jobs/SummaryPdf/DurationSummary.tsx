@@ -1,4 +1,4 @@
-import { formatDuration1 } from '#utils/timeUtils';
+import { formatDuration } from '#utils/timeUtils';
 import { StyleSheet, Text, View } from '@react-pdf/renderer';
 import React from 'react';
 
@@ -46,7 +46,7 @@ const DurationSummary = ({ stages = [], totalStageDuration, totalTaskExceptions 
 
       {stages.length ? (
         <Text style={styles.totalStageDuration}>
-          Total Stage Duration : {formatDuration1({ duration: totalStageDuration ?? 0 })}
+          Total Stage Duration : {formatDuration(totalStageDuration ?? 0)}
         </Text>
       ) : null}
     </View>
@@ -92,13 +92,11 @@ const DurationSummary = ({ stages = [], totalStageDuration, totalTaskExceptions 
                   customStyle: { flex: 4, textAlign: 'left' },
                 },
                 {
-                  text: formatDuration1({ duration: totalDuration }),
+                  text: formatDuration(totalDuration),
                   customStyle: { flex: 2 },
                 },
                 {
-                  text: formatDuration1({
-                    duration: averageTaskCompletionDuration,
-                  }),
+                  text: formatDuration(averageTaskCompletionDuration),
                   customStyle: { flex: 2 },
                 },
                 {
@@ -119,7 +117,7 @@ const DurationSummary = ({ stages = [], totalStageDuration, totalTaskExceptions 
               customStyle: { flex: 4, textAlign: 'left' },
             },
             {
-              text: formatDuration1({ duration: totalStageDuration ?? 0 }),
+              text: formatDuration(totalStageDuration ?? 0),
               customStyle: { flex: 2 },
             },
             {

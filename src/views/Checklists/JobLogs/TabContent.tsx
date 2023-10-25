@@ -114,7 +114,7 @@ export const getFormattedJobLogs = (jobLogColumns: any) => {
                 <>
                   {row[column.id + column.triggerType].value ? (
                     <span title={row[column.id + column.triggerType].value}>
-                      Perfomed at {formatDateTime(selfVerifiedAt)}, by{' '}
+                      Perfomed at {formatDateTime({ value: selfVerifiedAt })}, by{' '}
                       {row[column.id + column.triggerType].value}
                     </span>
                   ) : (
@@ -129,7 +129,7 @@ export const getFormattedJobLogs = (jobLogColumns: any) => {
                 <>
                   {row[column.id + column.triggerType].value ? (
                     <span title={row[column.id + column.triggerType].value}>
-                      Perfomed at {formatDateTime(peerVerifiedAt)}, by{' '}
+                      Perfomed at {formatDateTime({ value: peerVerifiedAt })}, by{' '}
                       {row[column.id + column.triggerType].value}
                     </span>
                   ) : (
@@ -140,7 +140,7 @@ export const getFormattedJobLogs = (jobLogColumns: any) => {
             }
 
             if (column.type === LogType.DATE) {
-              return formatDateTime(row[column.id + column.triggerType].value);
+              return formatDateTime({ value: row[column.id + column.triggerType].value });
             } else if (
               column.type === LogType.FILE &&
               row[column.id + column.triggerType]?.medias?.length

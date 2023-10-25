@@ -2,22 +2,21 @@ import { LogType, MandatoryParameter, TriggerTypeEnum } from '#PrototypeComposer
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { apiGetChecklist, apiGetParameters, baseUrl } from '#utils/apiUrls';
-import { InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
-import { formatDateByInputType, formatDateTime } from '#utils/timeUtils';
+import { formatDateTime } from '#utils/timeUtils';
+import { logsResourceChoicesMapper } from '#views/Checklists/JobLogs/DynamicContent';
 import { fetchProcessLogs } from '#views/Checklists/ListView/actions';
 import { Document, PDFViewer, Page, View } from '@react-pdf/renderer';
 import { camelCase, startCase } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { logsParser } from '../../Checklists/JobLogs/TabContent';
 import { LoadingDiv } from '../PrintJob/styles';
 import Footer from '../SummaryPdf/Footer';
 import Header from '../SummaryPdf/Header';
 import TableRow from '../SummaryPdf/TableRow';
 import { FirstPage } from './FirstPage';
 import { styles } from './styles';
-import { logsResourceChoicesMapper } from '#views/Checklists/JobLogs/DynamicContent';
-import { logsParser } from '../../Checklists/JobLogs/TabContent';
 
 const COLUMNS_PER_PAGE = 10;
 const FREEZED_COLUMNS = 1;
@@ -140,7 +139,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
               fieldsVisualMap[field.field] = {
                 ...fieldsVisualMap[field.field],
                 label: 'Job Created At',
-                value: formatDateByInputType(InputTypes.DATE_TIME, field.values[0]),
+                value: formatDateTime({ value: field.values[0] }),
               };
               break;
             }
@@ -148,7 +147,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
               fieldsVisualMap[field.field] = {
                 ...fieldsVisualMap[field.field],
                 label: 'Job Started At',
-                value: formatDateByInputType(InputTypes.DATE_TIME, field.values[0]),
+                value: formatDateTime({ value: field.values[0] }),
               };
               break;
             }
@@ -156,7 +155,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
               fieldsVisualMap[field.field] = {
                 ...fieldsVisualMap[field.field],
                 label: 'Job Ended At',
-                value: formatDateByInputType(InputTypes.DATE_TIME, field.values[0]),
+                value: formatDateTime({ value: field.values[0] }),
               };
               break;
             }
@@ -237,7 +236,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
         return cellValue.join(',');
       }
       if (column.type === LogType.DATE) {
-        return formatDateTime(row[column.id + column.triggerType].value);
+        return formatDateTime({ value: row[column.id + column.triggerType].value });
       } else if (
         column.type === LogType.FILE &&
         row[column.id + column.triggerType]?.medias?.length
@@ -249,7 +248,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
       } else if (column.triggerType === TriggerTypeEnum.PARAMETER_SELF_VERIFIED_BY) {
         const selfVerifiedAt = row[column.id + TriggerTypeEnum.PARAMETER_SELF_VERIFIED_AT]?.value;
         if (row[column.id + column.triggerType].value) {
-          return `Perfomed at ${formatDateTime(selfVerifiedAt)}, by
+          return `Perfomed at ${formatDateTime({ value: selfVerifiedAt })}, by
           ${row[column.id + column.triggerType].value}`;
         } else {
           return '-';
@@ -257,7 +256,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
       } else if (column.triggerType === TriggerTypeEnum.PARAMETER_PEER_VERIFIED_BY) {
         const peerVerifiedAt = row[column.id + TriggerTypeEnum.PARAMETER_PEER_VERIFIED_AT]?.value;
         if (row[column.id + column.triggerType].value) {
-          return `Perfomed at ${formatDateTime(peerVerifiedAt)}, by 
+          return `Perfomed at ${formatDateTime({ value: peerVerifiedAt })}, by
               ${row[column.id + column.triggerType].value}`;
         } else {
           return '-';

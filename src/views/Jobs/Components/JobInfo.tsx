@@ -1,11 +1,13 @@
 import { TargetEntityType } from '#PrototypeComposer/checklist.types';
 import { Button, LoadingContainer, StyledTabs, useDrawer } from '#components';
-import { getParameterContent } from '#utils/parameterUtils';
 import { apiJobInfo, apiSingleProcessScheduler } from '#utils/apiUrls';
+import { InputTypes } from '#utils/globalTypes';
+import { getParameterContent } from '#utils/parameterUtils';
 import { request } from '#utils/request';
+import { formatDateTime } from '#utils/timeUtils';
 import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
-import moment from 'moment';
 import React, { FC, useEffect, useState } from 'react';
+import { RRule } from 'rrule';
 import styled from 'styled-components';
 
 const JobInfoDrawerWrapper = styled.div`
@@ -135,14 +137,16 @@ const JobInfoDrawer: FC<{
               case 'DAILY':
               case 'WEEKLY':
               case 'MONTHLY':
-                recurrenceString = `Repeat ${recurrenceString} at ${moment
-                  .unix(job.expectedStartDate)
-                  .format('hh:mm A')}`;
+                recurrenceString = `Repeat ${recurrenceString} at ${formatDateTime({
+                  value: job.expectedStartDate,
+                  type: InputTypes.TIME,
+                })}`;
                 break;
               case 'YEARLY':
-                recurrenceString = `Repeat ${recurrenceString} on ${moment
-                  .unix(job.expectedStartDate)
-                  .format('Do MMMM [at] hh:mm A')}`;
+                recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
+                  value: job.expectedStartDate,
+                  format: `do MMMM 'at' hh:mm a`,
+                })}`;
                 break;
 
               default:
@@ -151,24 +155,28 @@ const JobInfoDrawer: FC<{
           } else {
             switch (freq) {
               case 'DAILY':
-                recurrenceString = `Repeat ${recurrenceString} at ${moment
-                  .unix(job.expectedStartDate)
-                  .format('hh:mm A')}`;
+                recurrenceString = `Repeat ${recurrenceString} at ${formatDateTime({
+                  value: job.expectedStartDate,
+                  type: InputTypes.TIME,
+                })}`;
                 break;
               case 'WEEKLY':
-                recurrenceString = `Repeat ${recurrenceString} on ${moment
-                  .unix(job.expectedStartDate)
-                  .format('dddd [at] hh:mm A')}`;
+                recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
+                  value: job.expectedStartDate,
+                  format: `dddd 'at' hh:mm a`,
+                })}`;
                 break;
               case 'MONTHLY':
-                recurrenceString = `Repeat ${recurrenceString} on ${moment
-                  .unix(job.expectedStartDate)
-                  .format('Do [at] hh:mm A')}`;
+                recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
+                  value: job.expectedStartDate,
+                  format: `do 'at' hh:mm a`,
+                })}`;
                 break;
               case 'YEARLY':
-                recurrenceString = `Repeat ${recurrenceString} on ${moment
-                  .unix(job.expectedStartDate)
-                  .format('Do MMMM [at] hh:mm A')}`;
+                recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
+                  value: job.expectedStartDate,
+                  format: `do MMMM 'at' hh:mm a`,
+                })}`;
                 break;
 
               default:
@@ -268,15 +276,17 @@ const JobInfoDrawer: FC<{
                         items={[
                           {
                             label: 'Start Date and Time',
-                            value: moment
-                              .unix(job.expectedStartDate)
-                              .format('Do MMMM, YYYY [at] hh:mm A'),
+                            value: formatDateTime({
+                              value: job.expectedStartDate,
+                              format: `do MMMM, yyyy 'at' hh:mm a`,
+                            }),
                           },
                           {
                             label: 'End Date and Time',
-                            value: moment
-                              .unix(job.expectedEndDate)
-                              .format('Do MMMM, YYYY [at] hh:mm A'),
+                            value: formatDateTime({
+                              value: job.expectedEndDate,
+                              format: `do MMMM, yyyy 'at' hh:mm a`,
+                            }),
                           },
                           ...(schedulerInfo ? getRecurrenceSummary() : []),
                         ]}

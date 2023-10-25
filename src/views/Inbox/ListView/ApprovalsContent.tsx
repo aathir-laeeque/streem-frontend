@@ -86,7 +86,8 @@ const ApprovalsContent: FC = () => {
                   id: 'modifiedAt',
                   label: 'Modified At',
                   minWidth: 100,
-                  format: (item) => formatDateTime(item.modifiedAt, 'DD/MM/YYYY'),
+                  format: (item) =>
+                    formatDateTime({ value: item.modifiedAt, format: 'dd/MM/yyyy' }),
                 },
                 {
                   id: 'action',

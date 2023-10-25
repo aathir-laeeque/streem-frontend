@@ -1,79 +1,53 @@
-import 'moment-duration-format';
-import moment from 'moment';
+import {
+  differenceInDays,
+  differenceInMilliseconds,
+  format,
+  formatDistanceStrict,
+  formatDistanceToNowStrict,
+  fromUnixTime,
+  intervalToDuration,
+  startOfDay,
+} from 'date-fns';
 import { InputTypes } from './globalTypes';
 
-export const formatDateTime = (time: number, format?: string) => {
-  const {
-    auth: { selectedFacility },
-    facilityWiseConstants,
-  } = window.store.getState();
-  const { dateAndTimeStampFormat } = facilityWiseConstants[selectedFacility!.id];
-
-  return moment.unix(time).format(format || dateAndTimeStampFormat);
-};
-
-// TODO:Deprecate this function and use the one below this one.
-export const formatDuration = (duration: number) => {
-  const time = moment.duration(duration, 'seconds');
-
-  const days = time.days();
-  const hours = time.hours();
-  const minutes = time.minutes();
-  const seconds = time.seconds();
-
-  if (days || hours) {
-    return (days * 24 + hours)
-      .toString()
-      .padStart(2, '0')
-      .concat(' : ')
-      .concat(minutes.toString().padStart(2, '0').concat(' : '))
-      .concat(seconds.toString().padStart(2, '0'));
-  } else if (minutes) {
-    return minutes
-      .toString()
-      .padStart(2, '0')
-      .concat(' : ')
-      .concat(seconds.toString().padStart(2, '0'));
-  } else {
-    return seconds.toString().padStart(2, '0');
-  }
-};
-
-/**
- * TODO: rename this function to formatDuration once the above function is deprecated
- */
-type formatDurationArgs = {
-  duration: number;
+export const formatDateTime = ({
+  value,
+  type = InputTypes.DATE_TIME,
+  format: _format,
+}: {
+  value: number | string;
+  type?: InputTypes;
   format?: string;
-  unit?: moment.unitOfTime.DurationConstructor;
-  formatSettings?: moment.DurationFormatSettings;
-};
-
-export const formatDuration1 = ({
-  duration,
-  format = 'DDD [day] : HH [hr] : mm [min] : ss [sec]',
-  unit,
-  formatSettings = {},
-}: formatDurationArgs) =>
-  moment.duration(duration, unit ?? 's').format(format, { ...formatSettings, trim: 'all' });
-
-export const formatDateByInputType = (
-  inputType: InputTypes,
-  value: string | number,
-  format?: string,
-) => {
+}) => {
+  const time = typeof value === 'string' ? parseInt(value) : value;
+  if (_format) {
+    return format(fromUnixTime(time), _format);
+  }
   const {
     auth: { selectedFacility },
     facilityWiseConstants,
   } = window.store.getState();
-  const { dateAndTimeStampFormat, timeFormat, dateFormat } =
+  const { dateAndTimeStampFormat, dateFormat, timeFormat } =
     facilityWiseConstants[selectedFacility!.id];
-  const castedValue = typeof value === 'string' ? parseInt(value) : value;
-  return inputType === InputTypes.DATE
-    ? formatDateTime(castedValue, format || dateFormat)
-    : inputType === InputTypes.TIME
-    ? formatDateTime(castedValue, format || timeFormat)
-    : formatDateTime(castedValue, format || dateAndTimeStampFormat);
+  return format(
+    fromUnixTime(time),
+    type === InputTypes.DATE_TIME
+      ? dateAndTimeStampFormat
+      : type === InputTypes.DATE
+      ? dateFormat
+      : timeFormat,
+  );
+};
+
+export const formatDuration = (seconds: number) => {
+  const duration = intervalToDuration({ start: 0, end: seconds * 1000 });
+  const zeroPad = (num?: number) => String(num).padStart(2, '0');
+  const formatted = [duration.hours, duration.minutes, duration.seconds]
+    .filter(Boolean)
+    .map(zeroPad)
+    .join(':');
+
+  return formatted;
 };
 
 export const convertSecondsToTime = (seconds: number) => {
@@ -88,16 +62,13 @@ export const convertSecondsToTime = (seconds: number) => {
   };
 };
 
-export const formatDateTimeToHumanReadable = (epoch: number) => {
-  const {
-    auth: { selectedFacility },
-    facilityWiseConstants,
-  } = window.store.getState();
-  const { dateAndTimeStampFormat, timeFormat } = facilityWiseConstants[selectedFacility!.id];
-  let dateText: string | undefined = moment.unix(epoch).from(new Date());
-  const startOfToday = moment().startOf('day');
-  const startOfDate = moment.unix(epoch).startOf('day');
-  const daysDiff = startOfDate.diff(startOfToday, 'days');
+export const formatDateTimeToHumanReadable = (value: number) => {
+  const epochDate = fromUnixTime(value);
+  const now = new Date();
+  let dateText: string | undefined = formatDistanceToNowStrict(epochDate, { addSuffix: true });
+  const startOfDate = startOfDay(epochDate);
+  const startOfToday = startOfDay(now);
+  const daysDiff = differenceInDays(startOfDate, startOfToday);
   const days: any = {
     '0': 'Today',
     '-1': 'Yesterday',
@@ -109,25 +80,31 @@ export const formatDateTimeToHumanReadable = (epoch: number) => {
     dateText = undefined;
   }
   if (dateText) {
-    return `${dateText}, ${moment.unix(epoch).format(timeFormat)}`;
+    return `${dateText}, ${formatDateTime({ value, type: InputTypes.TIME })}`;
   }
-  return moment.unix(epoch).format(dateAndTimeStampFormat);
+  return formatDateTime({ value });
 };
 
 export const getOverDueByEpoch = (epoch: number) => {
-  if (moment.unix(epoch).diff(moment()) < 1) {
-    return `Overdue by ${moment.unix(epoch).fromNow()}`.replace(' ago', '');
+  const epochDate = fromUnixTime(epoch);
+  const now = new Date();
+  if (differenceInMilliseconds(now, epochDate) < 1) {
+    return `Overdue by ${formatDistanceToNowStrict(epochDate)}`;
   }
 };
 
 export const getDelayBetweenEpoch = (expected: number, actual: number) => {
-  if (moment.unix(actual).diff(moment.unix(expected)) > 1) {
-    return `Delayed by ${moment.unix(actual).from(moment.unix(expected))}`.replace(' in', '');
+  const actualDate = fromUnixTime(actual);
+  const expectedDate = fromUnixTime(expected);
+  if (differenceInMilliseconds(expectedDate, actualDate) > 1) {
+    return `Delayed by ${formatDistanceStrict(actualDate, expectedDate)}`;
   }
 };
 
-export const checkJobExecutionDelay = (actualDate: number, expectedDate: number) => {
-  const difference = moment.unix(actualDate).diff(moment.unix(expectedDate));
+export const checkJobExecutionDelay = (actual: number, expected: number) => {
+  const actualDate = fromUnixTime(actual);
+  const expectedDate = fromUnixTime(expected);
+  const difference = differenceInMilliseconds(actualDate, expectedDate);
   if (difference > 0) {
     return true;
   } else {

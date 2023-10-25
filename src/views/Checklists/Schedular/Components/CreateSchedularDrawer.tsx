@@ -11,8 +11,8 @@ import { JobForm } from '#views/Jobs/Components/CreateJob/JobForm';
 import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
 import { Step, StepIconProps, StepLabel, Stepper } from '@material-ui/core';
 import { CheckCircleOutline, RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons';
+import { getUnixTime } from 'date-fns';
 import { omit } from 'lodash';
-import moment from 'moment';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -111,7 +111,6 @@ const SchedulerDrawerWrapper = styled.form.attrs({})<Props>`
             line-height: 1.14;
             letter-spacing: 0.16px;
             color: #161616;
-            padding-top: 4px;
           }
         }
       }
@@ -288,7 +287,6 @@ const CreateSchedularDrawer: FC<{
     register,
     handleSubmit,
     formState: { isDirty, isValid },
-    setValue,
     watch,
     getValues,
     reset,
@@ -328,7 +326,7 @@ const CreateSchedularDrawer: FC<{
         break;
       case MandatoryParameter.DATE:
       case MandatoryParameter.DATE_TIME:
-        parameterContent = formatDateTime(parameter.data.input);
+        parameterContent = formatDateTime({ value: parameter.data.input });
         break;
       case MandatoryParameter.YES_NO:
         parameterContent = responseDetailsForChoiceBasedParameters(parameter);
@@ -337,11 +335,10 @@ const CreateSchedularDrawer: FC<{
         parameterContent = responseDetailsForChoiceBasedParameters(parameter);
         break;
       case MandatoryParameter.RESOURCE:
-        parameterContent = parameter.data.choices.reduce(
-          (acc: any, currChoice: any) =>
-            (acc = `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId})`),
-          '',
-        );
+        parameterContent = parameter.data.choices.reduce((acc: any, currChoice: any) => {
+          acc = `${currChoice.objectDisplayName} (ID: ${currChoice.objectExternalId})`;
+          return acc;
+        }, '');
         break;
       case MandatoryParameter.MULTI_RESOURCE:
         parameterContent = parameter?.data?.choices
@@ -551,9 +548,10 @@ const CreateSchedularDrawer: FC<{
           description: response.data?.description,
           dueDateDuration: response.data.dueDateDuration,
           dueDateInterval: response.data.dueDateInterval,
-          expectedStartDate: moment
-            .unix(response.data.expectedStartDate)
-            .format('YYYY-MM-DDTHH:mm'),
+          expectedStartDate: formatDateTime({
+            value: response.data.expectedStartDate,
+            format: `yyyy-MM-dd'T'HH:mm`,
+          }),
           recurrence: response.data.customRecurrence ? 'custom' : frequency,
           rRuleOptions: omit(rRuleOptions, ['dtstart', 'interval', 'freq']) || {},
           repeatCount: rRuleOptions.interval,
@@ -588,12 +586,12 @@ const CreateSchedularDrawer: FC<{
       const rule = new RRule({
         freq: RRule[freq as keyof typeof RRule],
         interval: _data.repeatCount || 1,
-        dtstart: moment(_data.expectedStartDate).toDate(),
+        dtstart: new Date(_data.expectedStartDate),
         ...(_data.rRuleOptions || {}),
       });
       _data.recurrence = rule.toString();
     }
-    _data.expectedStartDate = moment(_data.expectedStartDate).unix();
+    _data.expectedStartDate = getUnixTime(new Date(_data.expectedStartDate));
 
     if (!schedular?.value) {
       const parameterValues = Object.keys(_data).reduce<Record<string, any>>(

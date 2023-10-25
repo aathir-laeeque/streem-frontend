@@ -1,13 +1,12 @@
 import { PARAMETER_OPERATORS } from '#PrototypeComposer/constants';
 import { getUserName } from '#services/users';
-import { formatDuration1 } from '#utils/timeUtils';
+import { formatDuration } from '#utils/timeUtils';
 import { StyleSheet, Text, View } from '@react-pdf/renderer';
-import moment from 'moment';
+import { differenceInSeconds, fromUnixTime } from 'date-fns';
 import React, { Fragment, ReactNode } from 'react';
-
 import { Exception, Exceptions, JobSummary, ParameterDeviation, Timer } from '../Summary/types';
-import { styles as baseStyles } from './styles';
 import TableRow from './TableRow';
+import { styles as baseStyles } from './styles';
 
 type Props = Pick<JobSummary, 'stages' | 'totalTaskExceptions'>;
 
@@ -20,32 +19,23 @@ const generateDescription = (exception: Exception): ReactNode => {
     case 'DURATION_EXCEPTION':
       const { endedAt, maxPeriod, minPeriod, startedAt, timerOperator } = exception.timer as Timer;
 
-      const taskStartTime = moment.unix(startedAt);
+      const taskStartTime = fromUnixTime(startedAt);
 
-      const taskCompleteTime = moment.unix(endedAt);
+      const taskCompleteTime = fromUnixTime(endedAt);
 
-      const taskDuration = taskCompleteTime.diff(taskStartTime, 's');
+      const taskDuration = differenceInSeconds(taskCompleteTime, taskStartTime);
 
       const deviation = taskDuration - (timerOperator === 'NOT_LESS_THAN' ? minPeriod : maxPeriod);
 
       const expectedString =
         timerOperator === 'NOT_LESS_THAN'
-          ? `NLT ${formatDuration1({ duration: minPeriod ?? 0, unit: 's' })}.`
-          : `Complete under ${formatDuration1({
-              duration: maxPeriod ?? 0,
-              unit: 's',
-            })}`;
+          ? `NLT ${formatDuration(minPeriod ?? 0)}.`
+          : `Complete under ${formatDuration(maxPeriod ?? 0)}`;
 
-      description = `Task Completed ${formatDuration1({
-        duration: Math.abs(deviation) ?? 0,
-        unit: 's',
-      })} ${deviation > 0 ? 'late' : 'early'}. Expected: ${expectedString}. ${
-        timerOperator === 'NOT_LESS_THAN'
-          ? `Max Time : ${formatDuration1({
-              duration: maxPeriod ?? 0,
-              unit: 's',
-            })}`
-          : null
+      description = `Task Completed ${formatDuration(Math.abs(deviation) ?? 0)} ${
+        deviation > 0 ? 'late' : 'early'
+      }. Expected: ${expectedString}. ${
+        timerOperator === 'NOT_LESS_THAN' ? `Max Time : ${formatDuration(maxPeriod ?? 0)}` : null
       }`;
 
       break;

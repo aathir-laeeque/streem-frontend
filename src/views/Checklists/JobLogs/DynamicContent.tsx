@@ -49,10 +49,7 @@ const JobLogsTabWrapper = styled.div`
   }
 
   .filters {
-    gap: 12px;
     .filter-buttons-wrapper {
-      display: flex;
-      margin-left: 10px;
       button {
         margin-right: 16px;
         display: flex;
@@ -263,69 +260,68 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
             value={{ label: data?.name }}
           />
           <ResourceFilter onChange={onChildChange} onClear={() => setFilterFields([])} />
-          <div className="filter-buttons-wrapper">
-            <Button
-              variant="textOnly"
-              onClick={() => {
+          <Button
+            variant="textOnly"
+            onClick={() => {
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.CONFIGURE_COLUMNS,
+                  props: {
+                    selectedColumns: viewDetails?.columns || [],
+                    columns: data?.jobLogColumns || [],
+                    onColumnSelection,
+                  },
+                }),
+              );
+            }}
+          >
+            <Tune />
+            Configure Columns <span>{`(${viewDetails?.columns.length || 0})`}</span>
+          </Button>
+          <Button
+            variant="textOnly"
+            onClick={() => {
+              setState((prev) => ({ ...prev, showDrawer: true }));
+            }}
+          >
+            <Tune />
+            Filters <span>{`(${viewDetails?.filters.length || 0})`}</span>
+          </Button>
+          <NestedSelect
+            id="download-logs"
+            className="dropdown-filter"
+            label={() => <GetAppOutlined className="button-download" />}
+            items={{
+              excel: {
+                label: 'Excel',
+              },
+              pdf: {
+                label: 'PDF',
+              },
+            }}
+            onChildChange={(option: any) => {
+              if (option.value === 'excel') {
                 dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.CONFIGURE_COLUMNS,
-                    props: {
-                      selectedColumns: viewDetails?.columns || [],
-                      columns: data?.jobLogColumns || [],
-                      onColumnSelection,
-                    },
+                  fetchJobLogsExcel({
+                    customViewId: id,
+                    ...(filterFields.length || viewDetails?.filters?.length
+                      ? {
+                          filters: {
+                            op: FilterOperators.AND,
+                            fields: [
+                              ...filterFields,
+                              ...filtersToQueryParams(viewDetails?.filters || []),
+                            ],
+                          },
+                        }
+                      : {}),
                   }),
                 );
-              }}
-            >
-              <Tune />
-              Configure Columns <span>{`(${viewDetails?.columns.length || 0})`}</span>
-            </Button>
-            <Button
-              variant="textOnly"
-              onClick={() => {
-                setState((prev) => ({ ...prev, showDrawer: true }));
-              }}
-            >
-              <Tune />
-              Filters <span>{`(${viewDetails?.filters.length || 0})`}</span>
-            </Button>
-            <NestedSelect
-              id="download-logs"
-              label={() => <GetAppOutlined className="button-download" />}
-              items={{
-                excel: {
-                  label: 'Excel',
-                },
-                pdf: {
-                  label: 'PDF',
-                },
-              }}
-              onChildChange={(option: any) => {
-                if (option.value === 'excel') {
-                  dispatch(
-                    fetchJobLogsExcel({
-                      customViewId: id,
-                      ...(filterFields.length || viewDetails?.filters?.length
-                        ? {
-                            filters: {
-                              op: FilterOperators.AND,
-                              fields: [
-                                ...filterFields,
-                                ...filtersToQueryParams(viewDetails?.filters || []),
-                              ],
-                            },
-                          }
-                        : {}),
-                    }),
-                  );
-                } else {
-                  openLinkInNewTab(`/job-logs/${id}/print`);
-                }
-              }}
-            />
-          </div>
+              } else {
+                openLinkInNewTab(`/job-logs/${id}/print`);
+              }
+            }}
+          />
           {isChanged && checkPermission(['jobLogsViews', 'edit']) && (
             <div id="create" style={{ display: 'flex' }}>
               {!customViewLoading && (

@@ -7,6 +7,7 @@ import {
   TabContentProps,
 } from '#components';
 import { useTypedSelector } from '#store/helpers';
+import { Checklist } from '#types';
 import { apiInboxJobsCount } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators, fetchDataParams } from '#utils/globalTypes';
@@ -21,7 +22,6 @@ import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchInbox } from './actions';
-import { Checklist } from '#types';
 
 const InboxContent: FC<TabContentProps> = ({
   label,
@@ -142,7 +142,6 @@ const InboxContent: FC<TabContentProps> = ({
       }),
     );
   };
-
   useEffect(() => {
     fetchData({ filters: filterFields });
     if (cards?.length) fetchCardsValues();
@@ -207,7 +206,7 @@ const InboxContent: FC<TabContentProps> = ({
           updateFilterFields={(fields) => setSearchFilterFields(fields)}
         />
         <Select
-          className="process-filter"
+          className="select-filter"
           backspaceRemovesValue={false}
           hideSelectedOptions={false}
           onChange={(newValue) => {
@@ -228,7 +227,7 @@ const InboxContent: FC<TabContentProps> = ({
             defaultValue: [{ label: processFilter.processName, value: processFilter.id }],
           })}
         />
-        <div className="resource-filter">
+        <div className="select-filter">
           <ResourceFilter onChange={onChildChange} onClear={() => setResourceFilter('')} />
         </div>
       </div>

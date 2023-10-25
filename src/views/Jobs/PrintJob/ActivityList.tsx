@@ -23,13 +23,12 @@ import toolboxEmoji from '#assets/images/emojis/toolbox.png';
 import torchEmoji from '#assets/images/emojis/torch.png';
 import vestEmoji from '#assets/images/emojis/vest.png';
 import ReactPDF, { Text, View, StyleSheet, Image, Link } from '@react-pdf/renderer';
-import moment from 'moment';
 import { parseMarkUp } from '#utils/stringUtils';
 import { EmojisUniCodes } from '#utils/constants';
 import { InstructionTags } from './types';
 import ResourceParameter from './Resource';
 import MultiResourceParameter from './MultiResource';
-import { formatDateByInputType } from '#utils/timeUtils';
+import { formatDateTime } from '#utils/timeUtils';
 import { InputTypes } from '#utils/globalTypes';
 import {
   MandatoryParameter,
@@ -433,9 +432,7 @@ const parameterTemplateFormatter = (
                 by {parameter.response.parameterValueApprovalDto.approver.firstName}{' '}
                 {parameter.response.parameterValueApprovalDto.approver.lastName}, ID:{' '}
                 {parameter.response.parameterValueApprovalDto.approver.employeeId} on{' '}
-                {moment
-                  .unix(parameter.response.parameterValueApprovalDto.createdAt)
-                  .format(dateAndTimeStampFormat)}
+                {formatDateTime({ value: parameter.response.parameterValueApprovalDto.createdAt })}
               </Text>
             </View>
           )}
@@ -698,10 +695,10 @@ const parameterTemplateFormatter = (
           <Text style={{ ...styles.text12, marginTop: 6 }}>
             {parameter.label}:{' '}
             {parameter.response?.value
-              ? formatDateByInputType(
-                  parameter.type as unknown as InputTypes,
-                  parameter.response?.value,
-                )
+              ? formatDateTime({
+                  value: parameter.response?.value,
+                  type: parameter.type as unknown as InputTypes,
+                })
               : '_____'}
           </Text>
         </View>
@@ -741,9 +738,7 @@ const MemoParameterList: FC<{
                       by {parameter.response.audit.modifiedBy.firstName}{' '}
                       {parameter.response.audit.modifiedBy.lastName}, ID:{' '}
                       {parameter.response.audit.modifiedBy.employeeId} on{' '}
-                      {moment
-                        .unix(parameter.response.audit.modifiedAt)
-                        .format(dateAndTimeStampFormat)}
+                      {formatDateTime({ value: parameter.response.audit.modifiedAt })}
                     </Text>
                   </View>
                 )}
