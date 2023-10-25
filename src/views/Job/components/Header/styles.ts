@@ -203,7 +203,7 @@ const JobHeaderWrapper = styled.div<{
       cursor: ${({ isInfoExpanded }) => (isInfoExpanded ? 'unset' : 'pointer')};
       opacity: ${({ isInfoExpanded }) => (isInfoExpanded ? 0 : 1)};
       left: calc(50% - 16px);
-      top: calc(50% - 16px);
+      top: calc(100% - 16px);
       bottom: unset;
     }
   }
