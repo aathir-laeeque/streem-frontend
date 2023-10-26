@@ -122,7 +122,7 @@ const Assignments: FC<Props> = (props) => {
       try {
         const assignedUsersData: ResponseObj<AllowedUser[]> = await request(
           'GET',
-          apiGetAllTrainedUsersAssignedToChecklist(data.checklist.id),
+          apiGetAllTrainedUsersAssignedToChecklist(processId),
         );
         setTrainedUsersList(assignedUsersData.data);
       } catch (error) {

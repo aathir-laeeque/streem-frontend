@@ -183,8 +183,8 @@ const Section: FC<Props> = ({
     acc = [...acc, ...curr.taskIds];
     return acc;
   }, []);
-  const isAllTasksAssignedToTrainedUser = stage.tasks.every((currTask: Task) => {
-    return trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === currTask.id);
+  const isAllTasksAssignedToTrainedUser = stage.tasks.every((currTaskId: string) => {
+    return trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === currTaskId);
   });
 
   return (
@@ -218,8 +218,8 @@ const Section: FC<Props> = ({
                 taskExecutionIds: stage.tasks.reduce<string[]>((acc, taskId) => {
                   const task = tasks.get(taskId);
                   if (
-                    task.taskExecution.state in COMPLETED_TASK_STATES &&
-                    !trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id)
+                    !(task.taskExecution.state in COMPLETED_TASK_STATES) &&
+                    trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id)
                   )
                     return acc;
                   return [...acc, task.taskExecution.id];
@@ -228,8 +228,8 @@ const Section: FC<Props> = ({
                 states: stage.tasks.reduce<string[]>((acc, taskId) => {
                   const task = tasks.get(taskId);
                   if (
-                    task.taskExecution.state in COMPLETED_TASK_STATES &&
-                    !trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id)
+                    !(task.taskExecution.state in COMPLETED_TASK_STATES) &&
+                    trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id)
                   )
                     return acc;
                   return [...acc, isAllTaskSelected ? false : isNoTaskSelected ? true : false];
