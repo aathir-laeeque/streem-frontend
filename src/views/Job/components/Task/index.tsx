@@ -93,7 +93,7 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
     state,
   } = useTypedSelector((state) => state.job);
   const location = useLocation();
-  const { verificationTaskId } = location.state;
+  const { verificationTaskId } = location.state || {};
   const [opacity, setOpacity] = useState(0);
   const { isTaskStarted, isTaskCompleted, isTaskPaused } = useJobStateToFlags();
 
