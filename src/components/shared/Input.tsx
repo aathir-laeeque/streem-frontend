@@ -169,11 +169,17 @@ const TextInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
   const onChangeHandler = ({ target }: any) => {
     let { name, value } = target;
-    if (InputTypes.TIME === type) {
-      const [hours, minutes] = value.split(':');
-      value = hours && minutes ? getUnixTime(set(new Date(), { hours, minutes })).toString() : '';
-    } else {
-      value = value ? getUnixTime(parseISO(value)).toString() : '';
+    if (
+      [InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(
+        type as unknown as InputTypes,
+      )
+    ) {
+      if (InputTypes.TIME === type) {
+        const [hours, minutes] = value.split(':');
+        value = hours && minutes ? getUnixTime(set(new Date(), { hours, minutes })).toString() : '';
+      } else {
+        value = value ? getUnixTime(parseISO(value)).toString() : '';
+      }
     }
     if (typeof onChange === 'function') {
       onChange({ name, value });
