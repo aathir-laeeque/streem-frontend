@@ -393,13 +393,15 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
                       </div>
                       <div className="log-row">
                         {(item[itemId] as JobAuditLogType[]).map((log) => {
-                          const details = log?.details?.replace(
-                            '{{{0}}}',
-                            formatDateTime({
-                              value: log?.parameters[0]?.value,
-                              type: log?.parameters[0]?.type,
-                            }),
-                          );
+                          const details = log?.parameters[0]?.value
+                            ? log?.details?.replace(
+                                '{{{0}}}',
+                                formatDateTime({
+                                  value: log?.parameters[0]?.value,
+                                  type: log?.parameters[0]?.type,
+                                }),
+                              )
+                            : log?.details;
                           return (
                             <div className="log-item" key={`${log.id}`}>
                               <div className="circle" />

@@ -19,24 +19,28 @@ export const formatDateTime = ({
   type?: InputTypes;
   format?: string;
 }) => {
-  const time = typeof value === 'string' ? parseInt(value) : value;
-  if (_format) {
-    return format(fromUnixTime(time), _format);
+  if (value) {
+    const time = typeof value === 'string' ? parseInt(value) : value;
+    if (_format) {
+      return format(fromUnixTime(time), _format);
+    }
+    const {
+      auth: { selectedFacility },
+      facilityWiseConstants,
+    } = window.store.getState();
+    const { dateAndTimeStampFormat, dateFormat, timeFormat } =
+      facilityWiseConstants[selectedFacility!.id];
+    return format(
+      fromUnixTime(time),
+      type === InputTypes.DATE_TIME
+        ? dateAndTimeStampFormat
+        : type === InputTypes.DATE
+        ? dateFormat
+        : timeFormat,
+    );
+  } else {
+    return '-';
   }
-  const {
-    auth: { selectedFacility },
-    facilityWiseConstants,
-  } = window.store.getState();
-  const { dateAndTimeStampFormat, dateFormat, timeFormat } =
-    facilityWiseConstants[selectedFacility!.id];
-  return format(
-    fromUnixTime(time),
-    type === InputTypes.DATE_TIME
-      ? dateAndTimeStampFormat
-      : type === InputTypes.DATE
-      ? dateFormat
-      : timeFormat,
-  );
 };
 
 export const formatDuration = (seconds: number) => {

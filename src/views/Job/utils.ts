@@ -42,7 +42,7 @@ export function parseJobData(
     });
 
   let prevVisibleTaskId: string = '';
-  checklist?.stages?.forEach((stage) => {
+  checklist?.stages?.forEach((stage, stageIndex) => {
     const _stage: StoreStage = {
       ...stage,
       visibleTasksCount: 0,
@@ -119,12 +119,19 @@ export function parseJobData(
           pendingTasks.add(_task.id);
         }
 
+        if (!stageIndex && stage.tasks.length === 1) {
+          prevVisibleTaskId = _task.id;
+        }
+
         if (prevVisibleTaskId) {
           const previousTask = tasks.get(prevVisibleTaskId)!;
-          tasks.set(prevVisibleTaskId, {
-            ...previousTask,
-            next: _task.id,
-          });
+          if (previousTask) {
+            tasks.set(prevVisibleTaskId, {
+              ...previousTask,
+              next: _task.id,
+            });
+          }
+
           if (!taskNavState.current) {
             taskNavState.current = prevVisibleTaskId;
           }
