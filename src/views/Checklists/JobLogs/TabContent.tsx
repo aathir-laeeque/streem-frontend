@@ -6,7 +6,7 @@ import { DataTableColumn } from '#components/shared/DataTable';
 import { useTypedSelector } from '#store';
 import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterOperators, fetchDataParams } from '#utils/globalTypes';
+import { FilterOperators, InputTypes, fetchDataParams } from '#utils/globalTypes';
 import { fileTypeCheck } from '#utils/parameterUtils';
 import { formatDateTime } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
@@ -140,7 +140,15 @@ export const getFormattedJobLogs = (jobLogColumns: any) => {
             }
 
             if (column.type === LogType.DATE) {
-              return formatDateTime({ value: row[column.id + column.triggerType].value });
+              return formatDateTime({
+                value: row[column.id + column.triggerType].value,
+                type: InputTypes.DATE,
+              });
+            } else if (column.type === LogType.DATE_TIME) {
+              return formatDateTime({
+                value: row[column.id + column.triggerType].value,
+                type: InputTypes.DATE_TIME,
+              });
             } else if (
               column.type === LogType.FILE &&
               row[column.id + column.triggerType]?.medias?.length
