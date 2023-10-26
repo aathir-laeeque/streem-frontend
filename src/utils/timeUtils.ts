@@ -111,3 +111,13 @@ export const checkJobExecutionDelay = (actual: number, expected: number) => {
     return false;
   }
 };
+
+export const getLocalTimeOffset = () => {
+  const date = new Date();
+  const localTimeOffsetMinutes = date.getTimezoneOffset();
+  const hours = Math.floor(Math.abs(localTimeOffsetMinutes) / 60);
+  const minutes = Math.abs(localTimeOffsetMinutes) % 60;
+  const sign = localTimeOffsetMinutes < 0 ? '-' : '+';
+  const localTimeOffset = `${sign}${hours}:${minutes}`;
+  return localTimeOffset;
+};

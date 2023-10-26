@@ -18,6 +18,7 @@ import { openLinkInNewTab } from '#utils';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { filtersToQueryParams } from '#utils/filtersToQueryParams';
 import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
+import { getLocalTimeOffset } from '#utils/timeUtils';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { GetAppOutlined, Tune } from '@material-ui/icons';
 import { isEqual } from 'lodash';
@@ -304,6 +305,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
                 dispatch(
                   fetchJobLogsExcel({
                     customViewId: id,
+                    timezoneOffset: getLocalTimeOffset(),
                     ...(filterFields.length || viewDetails?.filters?.length
                       ? {
                           filters: {
