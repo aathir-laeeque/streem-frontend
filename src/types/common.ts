@@ -42,3 +42,8 @@ export enum SupervisorResponse {
   APPROVE = 'APPROVE',
   REJECT = 'REJECT',
 }
+
+export type Emoji = {
+  name: string;
+  value: string;
+};

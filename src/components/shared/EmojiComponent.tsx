@@ -1,35 +1,28 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { Emoji } from '#types';
 
-export class EmojiComponent extends Component {
-  onChange = (event): void => {
-    const { onChange } = this.props;
-    onChange(event.target.innerHTML);
+export const EmojiComponent = (props) => {
+  const { config: { icon, title, popupClassName = '', emojis }, expanded, onExpandEvent, translations, onChange } = props;
+
+  const selectEmoji = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
+    const { target } = event;
+    onChange((target as HTMLButtonElement).innerHTML);
   };
 
-  renderEmojiModal() {
-    const {
-      config: { popupClassName = '', emojis },
-    } = this.props;
+  const renderEmojiModal = () => {
     return (
       <div className={`rdw-emoji-modal ${popupClassName}`} onClick={(e) => e.stopPropagation()}>
-        {emojis.map((Emoji, index) => (
-          <span key={index} className="rdw-emoji-icon" title={Emoji.name} onClick={this.onChange}>
+        {emojis.map((Emoji: Emoji, index: number) => (
+          <span key={index} className="rdw-emoji-icon" title={Emoji.name} onClick={selectEmoji}>
             {Emoji.value}
           </span>
         ))}
       </div>
     );
-  }
+  }  
 
-  render() {
-    const {
-      config: { icon, className, title },
-      expanded,
-      onExpandEvent,
-      translations,
-    } = this.props;
-    return (
-      <div
+  return (
+    <div
         className="rdw-emoji-wrapper"
         aria-haspopup="true"
         aria-label="rdw-emoji-control"
@@ -39,8 +32,7 @@ export class EmojiComponent extends Component {
         <div className="rdw-option-wrapper" onClick={onExpandEvent}>
           <img src={icon} alt="" />
         </div>
-        {expanded ? this.renderEmojiModal() : undefined}
+        {expanded ? renderEmojiModal() : undefined}
       </div>
-    );
-  }
+  )
 }
