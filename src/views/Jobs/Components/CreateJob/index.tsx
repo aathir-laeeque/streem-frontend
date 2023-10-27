@@ -242,7 +242,17 @@ const CreateJobDrawer: FC<{
 
           if (inputValue && inputValue !== null) {
             acc[parameter.id] = {
-              parameter: data[parameter.id],
+              parameter: [MandatoryParameter.SINGLE_LINE, MandatoryParameter.MULTI_LINE].includes(
+                data[parameter.id]?.type,
+              )
+                ? {
+                    ...data[parameter.id],
+                    data: {
+                      ...data[parameter.id]?.data,
+                      input: inputValue.trim(),
+                    },
+                  }
+                : data[parameter.id],
               reason: data[parameter?.id]?.response?.reason || '',
             };
           }

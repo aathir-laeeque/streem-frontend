@@ -11,16 +11,15 @@ import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 const valueChecker = (value: string, type: InputTypes) => {
-  const trimmedValue = value.trim();
   switch (type) {
     case InputTypes.DATE:
-      return parseInt(trimmedValue);
+      return parseInt(value);
     case InputTypes.DATE_TIME:
-      return parseInt(trimmedValue);
+      return parseInt(value);
     case InputTypes.SINGLE_LINE:
     case InputTypes.MULTI_LINE:
     case InputTypes.NUMBER:
-      return trimmedValue;
+      return value;
     default:
       return;
   }
