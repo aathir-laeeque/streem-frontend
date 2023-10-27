@@ -15,7 +15,7 @@ import AutomationInfo from './AutomationInfo';
 import Footer from './Footer';
 import Header from './Header';
 import ParameterList from './Parameters';
-import { useLocation } from '@reach/router';
+import { navigate, useLocation } from '@reach/router';
 import MediaCard from './MediaCard/MediaCard';
 
 const TaskWrapper = styled.div.attrs({
@@ -109,6 +109,9 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
           id: verificationTaskId,
         }),
       );
+      navigate('', {
+        state: {},
+      });
     }
     return () => {
       dispatch(jobActions.stopPollActiveStageData());
