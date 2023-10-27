@@ -289,7 +289,7 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
           <ol className="body">
             {values.medias.map((media, index) => (
               <li className="item" key={index}>
-                <div>{media.filename}</div>
+                <div>{media.originalFilename}</div>
                 <div className="remove">
                   <DeleteOutlined className="icon" />
                   Delete
