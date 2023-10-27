@@ -55,7 +55,6 @@ export const Scheduler: FC<SchedulerProps> = ({ form }) => {
                 label: 'Start Date and Time',
                 value: formatDateTime({
                   value: getUnixTime(new Date(expectedStartDate)),
-                  format: `do MMMM, yyyy 'at' hh:mm a`,
                 }),
               },
               ...(expectedEndDate
@@ -64,7 +63,6 @@ export const Scheduler: FC<SchedulerProps> = ({ form }) => {
                       label: 'End Date and Time',
                       value: formatDateTime({
                         value: getUnixTime(new Date(expectedEndDate)),
-                        format: `do MMMM, yyyy 'at' hh:mm a`,
                       }),
                     },
                   ]

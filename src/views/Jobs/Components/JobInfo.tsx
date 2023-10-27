@@ -145,7 +145,6 @@ const JobInfoDrawer: FC<{
               case 'YEARLY':
                 recurrenceString = `Repeat ${recurrenceString} on ${formatDateTime({
                   value: job.expectedStartDate,
-                  format: `do MMMM 'at' hh:mm a`,
                 })}`;
                 break;
 
@@ -236,15 +235,19 @@ const JobInfoDrawer: FC<{
                           label: 'Job ID',
                           value: jobInfo.code,
                         },
-                        ...(jobInfo.parameterValues || []).sort((a: Parameter, b: Parameter) => a.orderTree > b.orderTree ? 1 : -1).reduce((acc: any, parameter: any) => {
-                          if (parameter.targetEntityType === TargetEntityType.PROCESS) {
-                            acc.push({
-                              label: parameter.label,
-                              value: getParameterContent(parameter),
-                            });
-                          }
-                          return acc;
-                        }, []),
+                        ...(jobInfo.parameterValues || [])
+                          .sort((a: Parameter, b: Parameter) =>
+                            a.orderTree > b.orderTree ? 1 : -1,
+                          )
+                          .reduce((acc: any, parameter: any) => {
+                            if (parameter.targetEntityType === TargetEntityType.PROCESS) {
+                              acc.push({
+                                label: parameter.label,
+                                value: getParameterContent(parameter),
+                              });
+                            }
+                            return acc;
+                          }, []),
                       ]}
                     />
                   </div>
@@ -278,14 +281,12 @@ const JobInfoDrawer: FC<{
                             label: 'Start Date and Time',
                             value: formatDateTime({
                               value: job.expectedStartDate,
-                              format: `do MMMM, yyyy 'at' hh:mm a`,
                             }),
                           },
                           {
                             label: 'End Date and Time',
                             value: formatDateTime({
                               value: job.expectedEndDate,
-                              format: `do MMMM, yyyy 'at' hh:mm a`,
                             }),
                           },
                           ...(schedulerInfo ? getRecurrenceSummary() : []),

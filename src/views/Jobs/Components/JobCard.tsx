@@ -260,7 +260,6 @@ const JobCard: FC<{
                                 <span>
                                   {formatDateTime({
                                     value: job.expectedStartDate,
-                                    format: `do MMMM, yyyy 'at' hh:mm a`,
                                   })}
                                 </span>
                               </div>
@@ -275,7 +274,6 @@ const JobCard: FC<{
                                 <span>
                                   {formatDateTime({
                                     value: job.expectedEndDate,
-                                    format: `do MMMM, yyyy 'at' hh:mm a`,
                                   })}
                                 </span>
                               </div>
@@ -304,7 +302,6 @@ const JobCard: FC<{
                       >
                         {formatDateTime({
                           value: job.expectedStartDate,
-                          format: 'MMM dd, yyyy hh:mm a',
                         })}
                       </span>
                       <span className="icon">
@@ -319,7 +316,6 @@ const JobCard: FC<{
                       >
                         {formatDateTime({
                           value: job.expectedEndDate,
-                          format: 'MMM dd, yyyy hh:mm a',
                         })}
                       </span>
                     </div>

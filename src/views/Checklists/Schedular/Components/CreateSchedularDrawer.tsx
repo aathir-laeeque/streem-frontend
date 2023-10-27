@@ -326,7 +326,10 @@ const CreateSchedularDrawer: FC<{
         break;
       case MandatoryParameter.DATE:
       case MandatoryParameter.DATE_TIME:
-        parameterContent = formatDateTime({ value: parameter.data.input });
+        parameterContent = formatDateTime({
+          value: parameter.data.input,
+          type: parameter.type === MandatoryParameter.DATE ? InputTypes.DATE : InputTypes.DATE_TIME,
+        });
         break;
       case MandatoryParameter.YES_NO:
         parameterContent = responseDetailsForChoiceBasedParameters(parameter);

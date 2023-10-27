@@ -391,7 +391,7 @@ const VerificationsContent: FC<{
                   label: 'Requested At',
                   minWidth: 100,
                   format: (item) => {
-                    return formatDateTime({ value: item?.createdAt, type: InputTypes.DATE });
+                    return formatDateTime({ value: item?.createdAt, type: InputTypes.DATE_TIME });
                   },
                 },
                 {

@@ -10,6 +10,7 @@ import {
   ParameterVerificationTypeEnum,
 } from '#types';
 import { Verification } from '#views/Jobs/ListView/types';
+import { InputTypes } from './globalTypes';
 import { formatDateTime } from './timeUtils';
 
 const responseDetailsForChoiceBasedParameters = ({ data, response }: any) => {
@@ -35,7 +36,11 @@ export const getParameterContent = (parameter: any) => {
     case MandatoryParameter.DATE:
     case MandatoryParameter.DATE_TIME:
       parameterContent = parameter.response?.value
-        ? formatDateTime({ value: parameter.response.value })
+        ? formatDateTime({
+            value: parameter.response.value,
+            type:
+              parameter.type === MandatoryParameter.DATE ? InputTypes.DATE : InputTypes.DATE_TIME,
+          })
         : '-';
       break;
     case MandatoryParameter.YES_NO:
