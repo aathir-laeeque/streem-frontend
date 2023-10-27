@@ -36,7 +36,7 @@ export const CommonWrapper = styled.div`
 
     > div {
       flex: 1;
-      margin-bottom: 16px;
+      margin-bottom: 16px !important;
     }
   }
 `;

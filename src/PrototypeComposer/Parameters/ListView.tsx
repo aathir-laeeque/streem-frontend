@@ -272,6 +272,7 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
                     toggleNewParameter({ action: 'list', title: 'Create a New Process Parameter' }),
                   );
                 }}
+                style={{ padding: '12px' }}
               >
                 Create Parameter
               </Button>
