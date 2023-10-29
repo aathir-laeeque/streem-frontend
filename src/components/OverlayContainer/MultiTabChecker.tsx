@@ -71,28 +71,36 @@ export const MultiTabModal: FC<CommonOverlayProps<Props>> = ({
 
 export const MultiTabChecker: FC = () => {
   const dispatch = useDispatch();
+  const isModalOpen = useRef(false);
   const bc = useRef<BroadcastChannel | null>(null);
 
   const onUseHere = () => {
     if (bc.current) {
+      isModalOpen.current = false;
       bc.current.postMessage('CLOSE_WINDOW');
     }
   };
 
   const onClose = () => {
+    if (bc.current) {
+      bc.current.close();
+    }
     window.location.replace('https://leucine.io');
   };
 
   const onAnotherOpen = () => {
-    dispatch(
-      openOverlayAction({
-        type: OverlayNames.MULTI_TAB_MODAL,
-        props: {
-          onUseHere,
-          onClose,
-        },
-      }),
-    );
+    if (!isModalOpen.current) {
+      isModalOpen.current = true;
+      dispatch(
+        openOverlayAction({
+          type: OverlayNames.MULTI_TAB_MODAL,
+          props: {
+            onUseHere,
+            onClose,
+          },
+        }),
+      );
+    }
   };
 
   useEffect(() => {
@@ -109,6 +117,11 @@ export const MultiTabChecker: FC = () => {
 
       bc.current.postMessage('ON_OPEN');
     }
+    return () => {
+      if (bc.current) {
+        bc.current.close();
+      }
+    };
   }, []);
 
   return null;
