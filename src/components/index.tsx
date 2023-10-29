@@ -7,6 +7,7 @@ export * from './shared/useScrollableSections';
 export { BaseModal } from './shared/BaseModal';
 export * from './shared/FormGroup';
 export { Button } from './shared/Button';
+export { StepperContainer } from './shared/StepperContainer';
 export { CustomRoute } from './shared/CustomRoute';
 export { Role } from './shared/Role';
 export { Checkbox } from './shared/Checkbox';

@@ -1,11 +1,9 @@
 import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
-import { Button, useDrawer } from '#components';
+import { Button, StepperContainer, useDrawer } from '#components';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { useTypedSelector } from '#store';
 import { createJob, createJobSuccess, updateJob } from '#views/Jobs/ListView/actions';
-import { Step, StepIconProps, StepLabel, Stepper } from '@material-ui/core';
-import { CheckCircleOutline, RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons';
 import { getUnixTime } from 'date-fns';
 import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -105,61 +103,6 @@ const CreateJobDrawerWrapper = styled.form`
     }
   }
 `;
-
-const StepperWrapper = styled(Stepper)`
-  display: flex;
-  padding: 16px 0 !important;
-`;
-
-const StepWrapper = styled(Step)<{ active?: boolean }>`
-  border-top: 2px solid ${(p) => (p.active ? '#1d84ff' : '#e0e0e0')};
-  padding: 8px 0 !important;
-
-  .MuiStepLabel-root.MuiStepLabel-alternativeLabel {
-    align-items: flex-start;
-  }
-
-  .MuiStepLabel-label.MuiStepLabel-alternativeLabel {
-    margin-top: -20px;
-    text-align: left;
-    padding-left: 28px;
-    font-weight: bold;
-    font-family: inherit;
-  }
-
-  .label-description {
-    font-size: 12px;
-    line-height: 1.33;
-    letter-spacing: 0.32px;
-    color: #525252;
-  }
-`;
-
-const StepIconWrapper = styled.div<{ active?: boolean }>`
-  display: flex;
-  align-items: center;
-
-  svg {
-    color: #1d84ff;
-    font-size: 20px;
-  }
-`;
-
-function CustomStepIcon(props: StepIconProps) {
-  const { active, completed } = props;
-
-  return (
-    <StepIconWrapper active={active}>
-      {completed ? (
-        <CheckCircleOutline />
-      ) : active ? (
-        <RadioButtonChecked />
-      ) : (
-        <RadioButtonUnchecked />
-      )}
-    </StepIconWrapper>
-  );
-}
 
 const CreateJobDrawer: FC<{
   onCloseDrawer: React.Dispatch<React.SetStateAction<any>>;
@@ -315,13 +258,7 @@ const CreateJobDrawer: FC<{
     hideCloseIcon: true,
     bodyContent: (
       <CreateJobDrawerWrapper onSubmit={handleSubmit(handleCreateJob)}>
-        <StepperWrapper activeStep={activeStep} alternativeLabel connector={<div />}>
-          {sections.map((step, index) => (
-            <StepWrapper key={step.label} active={index <= activeStep}>
-              <StepLabel StepIconComponent={CustomStepIcon}>{step.label}</StepLabel>
-            </StepWrapper>
-          ))}
-        </StepperWrapper>
+        <StepperContainer sections={sections} activeStep={activeStep} />
         {sections.map((section) => {
           return activeStep === parseInt(section.value) ? section.renderFn() : null;
         })}

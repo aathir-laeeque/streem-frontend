@@ -26,7 +26,7 @@ import {
 } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap, TargetEntityTypeVisual } from '#PrototypeComposer/constants';
 import { ComposerEntity } from '#PrototypeComposer/types';
-import { Button, Checkbox, FormGroup, StyledTabs, ToggleSwitch, useDrawer } from '#components';
+import { Button, Checkbox, FormGroup, StepperContainer, StyledTabs, ToggleSwitch, useDrawer } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
@@ -34,13 +34,8 @@ import { apiDeleteParameter, apiSingleParameter } from '#utils/apiUrls';
 import { InputTypes } from '#utils/globalTypes';
 import { getErrorMsg, request } from '#utils/request';
 import { resetOntology } from '#views/Ontology/actions';
-import { Divider, Step, StepIconProps, StepLabel, Stepper } from '@material-ui/core';
-import {
-  CheckCircleOutline,
-  DeleteOutlined,
-  RadioButtonChecked,
-  RadioButtonUnchecked,
-} from '@material-ui/icons';
+import { Divider } from '@material-ui/core';
+import { DeleteOutlined } from '@material-ui/icons';
 import { cloneDeep } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -97,45 +92,6 @@ export const AddParameterWrapper = styled.form`
   }
 `;
 
-const StepperWrapper = styled(Stepper)`
-  display: flex;
-  padding: 24px 0 !important;
-`;
-
-const StepWrapper = styled(Step)<{ active?: boolean }>`
-  border-top: 2px solid ${(p) => (p.active ? '#1d84ff' : '#e0e0e0')};
-  padding: 8px 0 !important;
-
-  .MuiStepLabel-root.MuiStepLabel-alternativeLabel {
-    align-items: flex-start;
-  }
-
-  .MuiStepLabel-label.MuiStepLabel-alternativeLabel {
-    margin-top: -20px;
-    text-align: left;
-    padding-left: 28px;
-    font-weight: bold;
-    font-family: inherit;
-  }
-
-  .label-description {
-    font-size: 12px;
-    line-height: 1.33;
-    letter-spacing: 0.32px;
-    color: #525252;
-  }
-`;
-
-const StepIconWrapper = styled.div<{ active?: boolean }>`
-  display: flex;
-  align-items: center;
-
-  svg {
-    color: #1d84ff;
-    font-size: 20px;
-  }
-`;
-
 const ParameterVerificationWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -174,22 +130,6 @@ const ParameterVerificationWrapper = styled.div`
     border: none;
   }
 `;
-
-function CustomStepIcon(props: StepIconProps) {
-  const { active, completed } = props;
-
-  return (
-    <StepIconWrapper active={active}>
-      {completed ? (
-        <CheckCircleOutline />
-      ) : active ? (
-        <RadioButtonChecked />
-      ) : (
-        <RadioButtonUnchecked />
-      )}
-    </StepIconWrapper>
-  );
-}
 
 const isFiltersAllowed = (type: ParameterType) => {
   switch (type) {
@@ -889,18 +829,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
                 tabs={sections}
               />
             ) : (
-              <StepperWrapper activeStep={activeStep} alternativeLabel connector={<div />}>
-                {sections.map((step, index) => (
-                  <StepWrapper key={step.label} active={index <= activeStep}>
-                    <StepLabel StepIconComponent={CustomStepIcon}>
-                      {step.label}
-                      {step.description && (
-                        <div className="label-description">{step.description}</div>
-                      )}
-                    </StepLabel>
-                  </StepWrapper>
-                ))}
-              </StepperWrapper>
+              <StepperContainer activeStep={activeStep} sections={sections} />
             )}
           </>
         )}

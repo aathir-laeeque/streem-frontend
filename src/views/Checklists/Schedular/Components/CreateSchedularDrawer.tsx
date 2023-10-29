@@ -1,7 +1,7 @@
 import { fetchComposerData, resetComposer } from '#PrototypeComposer/actions';
 import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
-import { Button, FormGroup, LoadingContainer, StyledTabs, useDrawer } from '#components';
+import { Button, FormGroup, LoadingContainer, StepperContainer, StyledTabs, useDrawer } from '#components';
 import { useTypedSelector } from '#store';
 import { apiSingleProcessScheduler } from '#utils/apiUrls';
 import { InputTypes } from '#utils/globalTypes';
@@ -9,8 +9,6 @@ import { request } from '#utils/request';
 import { formatDateTime } from '#utils/timeUtils';
 import { JobForm } from '#views/Jobs/Components/CreateJob/JobForm';
 import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
-import { Step, StepIconProps, StepLabel, Stepper } from '@material-ui/core';
-import { CheckCircleOutline, RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons';
 import { getUnixTime } from 'date-fns';
 import { omit } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -188,57 +186,6 @@ const SchedulerDrawerWrapper = styled.form.attrs({})<Props>`
     display: ${({ showBasic }) => (showBasic === 2 ? 'unset' : 'none')};
   }
 `;
-
-const StepperWrapper = styled(Stepper)`
-  display: flex;
-  padding: 16px 0 !important;
-`;
-
-const StepWrapper = styled(Step)<{ active?: boolean }>`
-  border-top: 2px solid ${(p) => (p.active ? '#1d84ff' : '#e0e0e0')};
-  padding: 8px 0 !important;
-  .MuiStepLabel-root.MuiStepLabel-alternativeLabel {
-    align-items: flex-start;
-  }
-  .MuiStepLabel-label.MuiStepLabel-alternativeLabel {
-    margin-top: -20px;
-    text-align: left;
-    padding-left: 28px;
-    font-weight: bold;
-    font-family: inherit;
-  }
-  .label-description {
-    font-size: 12px;
-    line-height: 1.33;
-    letter-spacing: 0.32px;
-    color: #525252;
-  }
-`;
-
-const StepIconWrapper = styled.div<{ active?: boolean }>`
-  display: flex;
-  align-items: center;
-  svg {
-    color: #1d84ff;
-    font-size: 20px;
-  }
-`;
-
-function CustomStepIcon(props: StepIconProps) {
-  const { active, completed } = props;
-
-  return (
-    <StepIconWrapper active={active}>
-      {completed ? (
-        <CheckCircleOutline />
-      ) : active ? (
-        <RadioButtonChecked />
-      ) : (
-        <RadioButtonUnchecked />
-      )}
-    </StepIconWrapper>
-  );
-}
 
 const CreateSchedularDrawer: FC<{
   onCloseDrawer: React.Dispatch<React.SetStateAction<boolean>>;
@@ -719,13 +666,7 @@ const CreateSchedularDrawer: FC<{
             tabs={sections}
           />
         ) : (
-          <StepperWrapper activeStep={activeStep} alternativeLabel connector={<div />}>
-            {sections.map((step, index) => (
-              <StepWrapper key={step.label} active={index <= activeStep}>
-                <StepLabel StepIconComponent={CustomStepIcon}>{step.label}</StepLabel>
-              </StepWrapper>
-            ))}
-          </StepperWrapper>
+          <StepperContainer activeStep={activeStep} sections={sections} />
         )}
 
         {sections.map((section) => {
