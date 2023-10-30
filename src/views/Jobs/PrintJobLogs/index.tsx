@@ -17,6 +17,7 @@ import Header from '../SummaryPdf/Header';
 import TableRow from '../SummaryPdf/TableRow';
 import { FirstPage } from './FirstPage';
 import { styles } from './styles';
+import { InputTypes } from '#utils/globalTypes';
 
 const COLUMNS_PER_PAGE = 10;
 const FREEZED_COLUMNS = 1;
@@ -231,7 +232,15 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
         return cellValue.join(',');
       }
       if (column.type === LogType.DATE) {
-        return formatDateTime({ value: row[column.id + column.triggerType].value });
+        return formatDateTime({
+          value: row[column.id + column.triggerType].value,
+          type: InputTypes.DATE,
+        });
+      } else if (column.type === LogType.DATE_TIME) {
+        return formatDateTime({
+          value: row[column.id + column.triggerType].value,
+          type: InputTypes.DATE_TIME,
+        });
       } else if (
         column.type === LogType.FILE &&
         row[column.id + column.triggerType]?.medias?.length

@@ -122,6 +122,8 @@ export const getLocalTimeOffset = () => {
   const hours = Math.floor(Math.abs(localTimeOffsetMinutes) / 60);
   const minutes = Math.abs(localTimeOffsetMinutes) % 60;
   const sign = localTimeOffsetMinutes < 0 ? '-' : '+';
-  const localTimeOffset = `${sign}${hours}:${minutes}`;
+  const formattedHours = hours.toString().padStart(2, '0');
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  const localTimeOffset = `${sign}${formattedHours}:${formattedMinutes}`;
   return localTimeOffset;
 };
