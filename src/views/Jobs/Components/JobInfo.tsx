@@ -240,7 +240,7 @@ const JobInfoDrawer: FC<{
                             a.orderTree > b.orderTree ? 1 : -1,
                           )
                           .reduce((acc: any, parameter: any) => {
-                            if (parameter.targetEntityType === TargetEntityType.PROCESS) {
+                            if (!parameter.response?.hidden) {
                               acc.push({
                                 label: parameter.label,
                                 value: getParameterContent(parameter),

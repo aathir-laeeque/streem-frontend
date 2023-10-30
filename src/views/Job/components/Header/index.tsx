@@ -100,16 +100,16 @@ const JobHeader: FC = () => {
                 <span className="info-item-value">{code}</span>
               </div>
               {cjfValues?.map((parameterId) => {
-                const parameter = parameters.get(parameterId);
+                const parameter = parameters.get(parameterId)!;
                 const value = getParameterContent(parameter);
-                return (
+                return !parameter.response.hidden ? (
                   <div className="info-item" key={parameter.label}>
                     <label className="info-item-label">{parameter.label}</label>
                     <span className="info-item-value" title={value}>
                       {value}
                     </span>
                   </div>
-                );
+                ) : null;
               })}
             </LabelValueRow>
           </div>
