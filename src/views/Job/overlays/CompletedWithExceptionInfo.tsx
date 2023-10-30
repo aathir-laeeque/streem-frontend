@@ -153,7 +153,7 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
             <ol className="body">
               {state.data?.medias?.map((media, index) => (
                 <li key={index} className="item">
-                  <div>{media.filename}</div>
+                  <div>{media.originalFilename}</div>
                   <div className="download" onClick={() => window.open(media.link, '_blank')}>
                     <GetAppOutlined className="icon" />
                     Download
