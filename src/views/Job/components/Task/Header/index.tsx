@@ -78,11 +78,16 @@ const Header: FC<HeaderProps> = ({ task }) => {
     closeModal();
   };
 
-  const showMenuActions = () =>
-    isInboxView &&
-    isJobStarted &&
-    isUserAssignedToTask &&
-    (!isTaskCompleted || (isTaskCompleted && (!correctionEnabled || !correctionReason)));
+  const showMenuActions = () => {
+    const isErrorCorrectionVisible = isTaskCompleted && (!correctionEnabled || !correctionReason);
+
+    const isSkipOrCweVisible =
+      !isTaskCompleted && !isBlocked && checkPermission(['inbox', 'completeWithException']);
+
+    const menuOptionsVisible = isErrorCorrectionVisible || isSkipOrCweVisible;
+
+    return isInboxView && isJobStarted && isUserAssignedToTask && menuOptionsVisible;
+  };
 
   return (
     <Wrapper>
