@@ -118,7 +118,8 @@ export const checkJobExecutionDelay = (actual: number, expected: number) => {
 
 export const getLocalTimeOffset = () => {
   const date = new Date();
-  const localTimeOffsetMinutes = date.getTimezoneOffset();
+  const localTimeOffsetMinutes = -date.getTimezoneOffset();
+  //We need to negate above because it represents the number of minutes you need to subtract from the current local time to get to Coordinated Universal Time (UTC).
   const hours = Math.floor(Math.abs(localTimeOffsetMinutes) / 60);
   const minutes = Math.abs(localTimeOffsetMinutes) % 60;
   const sign = localTimeOffsetMinutes < 0 ? '-' : '+';
