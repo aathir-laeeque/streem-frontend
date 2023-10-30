@@ -167,10 +167,10 @@ const AddObjectType: FC<{ id?: string }> = ({ id: editObjectTypeId }) => {
   } = form;
 
   register(`properties`, {
-    validate: (value) =>
+    validate: (value = []) =>
       value.length >= 2 &&
       value.every((currValue) => {
-        return currValue.hasOwnProperty('displayName');
+        return currValue?.hasOwnProperty('displayName');
       }),
   });
 
@@ -271,7 +271,7 @@ const AddObjectType: FC<{ id?: string }> = ({ id: editObjectTypeId }) => {
                       id: 'label',
                       name: 'label',
                       disabled: editObjectTypeId ? true : false,
-                      defaultValue: editObjectTypeId ? properties[index]?.displayName : null,
+                      value: editObjectTypeId ? properties[index]?.displayName : null,
                       onChange: (value: any) => {
                         let _properties = [...properties];
                         _properties[index] = {
@@ -310,7 +310,7 @@ const AddObjectType: FC<{ id?: string }> = ({ id: editObjectTypeId }) => {
                       optional: true,
                       rows: 3,
                       disabled: editObjectTypeId ? true : false,
-                      defaultValue: editObjectTypeId ? properties[index]?.description : null,
+                      value: editObjectTypeId ? properties[index]?.description : null,
                       onChange: (value: any) => {
                         let _properties = [...properties];
                         _properties[index] = { ...properties[index], description: value.value };
