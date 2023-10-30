@@ -267,12 +267,12 @@ const ShouldBeParameter: FC<
 
   const onChangeHandler = ({ value }: { value: string }) => {
     customOnChange(value, (value: string) => {
+      setState((prevState) => ({
+        ...prevState,
+        value,
+        isValueChanged: prevState.value !== value,
+      }));
       if (value) {
-        setState((prevState) => ({
-          ...prevState,
-          value,
-          isValueChanged: prevState.value !== value,
-        }));
         switch (parameter?.data?.operator) {
           case 'EQUAL_TO':
             if (!(parseFloat(value) === parseFloat(parameter?.data?.value))) {
@@ -330,6 +330,8 @@ const ShouldBeParameter: FC<
           default:
             setState((prevState) => ({ ...prevState, isOffLimit: false }));
         }
+      } else {
+        dispatchActions(value);
       }
     });
   };
