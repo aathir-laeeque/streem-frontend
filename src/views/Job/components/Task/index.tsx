@@ -94,6 +94,9 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
   } = useTypedSelector((state) => state.job);
   const location = useLocation();
   const { verificationTaskId } = location.state || {};
+
+  //state variable to track if the user is navigated to the task for parameter verification or should be approval.
+  const [isNavigated, setIsNavigated] = useState(false);
   const [opacity, setOpacity] = useState(0);
   const { isTaskStarted, isTaskCompleted, isTaskPaused } = useJobStateToFlags();
 
@@ -109,14 +112,20 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
           id: verificationTaskId,
         }),
       );
-      navigate('', {
-        state: {},
-      });
+      setIsNavigated(true);
     }
     return () => {
       dispatch(jobActions.stopPollActiveStageData());
     };
   }, []);
+
+  useEffect(() => {
+    if (isNavigated) {
+      navigate('', {
+        state: {},
+      });
+    }
+  }, [isNavigated]);
 
   const {
     parameters: parameterIds,
