@@ -44,14 +44,11 @@ export const formatDateTime = ({
 };
 
 export const formatDuration = (seconds: number) => {
-  const duration = intervalToDuration({ start: 0, end: seconds * 1000 });
-  const zeroPad = (num?: number) => String(num).padStart(2, '0');
-  const formatted = [duration.hours, duration.minutes, duration.seconds]
-    .filter(Boolean)
-    .map(zeroPad)
-    .join(':');
-
-  return formatted;
+  const { hours, minutes, seconds: remainingSeconds } = convertSecondsToTime(seconds);
+  const formattedHours = hours.toString().padStart(2, '0');
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  const formattedSeconds = remainingSeconds.toString().padStart(2, '0');
+  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 };
 
 export const convertSecondsToTime = (seconds: number) => {
