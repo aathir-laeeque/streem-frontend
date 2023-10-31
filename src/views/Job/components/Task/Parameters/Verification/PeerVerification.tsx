@@ -14,6 +14,7 @@ import { Dictionary } from 'lodash';
 import React, { FC, memo } from 'react';
 import { useDispatch } from 'react-redux';
 import PeerVerificationAction from './PeerVerificationAction';
+import { useJobStateToFlags } from '#views/Job/utils';
 
 type PeerVerificationProps = {
   parameterId: string;
@@ -35,9 +36,18 @@ const PeerVerification: FC<PeerVerificationProps> = ({
   const {
     auth: { userId },
   } = useTypedSelector((state) => state);
+
+  const { isCompletedWithException, isTaskCompletedWithException } = useJobStateToFlags();
   const dispatch = useDispatch();
   const verification = verifications?.[ParameterVerificationTypeEnum.PEER];
   let showVerification = true;
+
+  if (
+    (isCompletedWithException || isTaskCompletedWithException) &&
+    verification?.verificationStatus !== ParameterVerificationStatus.ACCEPTED &&
+    verification?.verificationStatus !== ParameterVerificationStatus.REJECTED
+  )
+    return null;
 
   if (
     (verificationType === ParameterVerificationTypeEnum.BOTH &&
@@ -57,6 +67,8 @@ const PeerVerification: FC<PeerVerificationProps> = ({
     if (
       modifiedBy === userId &&
       isLoggedInUserAssigned &&
+      !isCompletedWithException &&
+      !isTaskCompletedWithException &&
       (parameterState === ParameterState.BEING_EXECUTED ||
         parameterState === ParameterState.VERIFICATION_PENDING)
     )

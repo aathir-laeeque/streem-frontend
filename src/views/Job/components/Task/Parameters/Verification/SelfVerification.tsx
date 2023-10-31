@@ -8,6 +8,7 @@ import { jobActions } from '#views/Job/jobStore';
 import React, { FC, memo } from 'react';
 import { useDispatch } from 'react-redux';
 import SelfVerificationAction from './SelfVerificationAction';
+import { useJobStateToFlags } from '#views/Job/utils';
 
 const SelfVerification: FC<{
   parameterId: string;
@@ -20,6 +21,8 @@ const SelfVerification: FC<{
   const {
     auth: { userId },
   } = useTypedSelector((state) => state);
+
+  const { isCompletedWithException, isTaskCompletedWithException } = useJobStateToFlags();
 
   const SelfVerifyButton = () => {
     if (modifiedBy === userId)
@@ -36,6 +39,12 @@ const SelfVerification: FC<{
       );
     return null;
   };
+
+  if (
+    (isCompletedWithException || isTaskCompletedWithException) &&
+    verification?.verificationStatus !== ParameterVerificationStatus.ACCEPTED
+  )
+    return null;
 
   if (parameterState === ParameterState.BEING_EXECUTED && isLoggedInUserAssigned) {
     return <SelfVerifyButton />;

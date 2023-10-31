@@ -196,6 +196,7 @@ export const useJobStateToFlags = () => {
     isTaskDelayed?: boolean;
     isTaskCompleted?: boolean;
     isTaskPaused?: boolean;
+    isTaskCompletedWithException?: boolean;
   }>({});
 
   useEffect(() => {
@@ -213,6 +214,7 @@ export const useJobStateToFlags = () => {
         isTaskCompleted: taskState in COMPLETED_TASK_STATES,
         isTaskDelayed: taskState === 'COMPLETED' && !!reason,
         isTaskPaused: taskState === 'PAUSED',
+        isTaskCompletedWithException: taskState === 'COMPLETED_WITH_EXCEPTION',
       });
     }
   }, [jobState, taskState]);
