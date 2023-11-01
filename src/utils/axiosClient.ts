@@ -54,7 +54,7 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     try {
       const { config: originalReq, response } = error;
-      const { code, message } = response?.data?.errors?.[0];
+      const { code, message } = response?.data?.errors?.[0] || {};
 
       if (code !== LoginErrorCodes.JWT_ACCESS_TOKEN_EXPIRED) {
         const {
