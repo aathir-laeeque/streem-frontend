@@ -64,7 +64,7 @@ const NavigationMenu: FC = () => {
       selectedFacility,
       userId,
       selectedUseCase,
-      useCaseMap,
+      useCases,
       profile,
       userType,
       features,
@@ -197,7 +197,7 @@ const NavigationMenu: FC = () => {
         {selectedUseCase && !location.pathname.includes('/home') && (
           <NestedSelect
             id="use-case-selector"
-            items={Object.values(useCaseMap).reduce<any>((acc, useCase) => {
+            items={useCases.reduce<any>((acc, useCase) => {
               if (useCase.enabled) {
                 acc[useCase.orderTree] = {
                   ...useCase,

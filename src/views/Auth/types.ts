@@ -87,7 +87,7 @@ export interface AuthState {
   readonly token?: string;
   readonly userId: User['id'] | null;
   readonly NonGenuineLicenseMap: { [facilityId: string]: LicenseType };
-  readonly useCaseMap: Record<UseCaseType['id'], UseCaseType>;
+  readonly useCases: UseCaseType[];
   readonly selectedUseCase?: UseCaseType;
   readonly fetchingUseCaseList: boolean;
   readonly userType?: string;

@@ -19,7 +19,7 @@ const Home = () => {
     firstName,
     lastName,
     fetchingUseCaseList,
-    useCaseMap,
+    useCases,
     selectedFacility: { id: facilityId = '' } = {},
   } = useTypedSelector((state) => state.auth);
 
@@ -52,7 +52,7 @@ const Home = () => {
             </span>
           </div>
           <div className="use-case-list-wrapper">
-            {Object.values(useCaseMap).map((useCaseDetails) => (
+            {useCases.map((useCaseDetails) => (
               <UseCaseCard
                 cardColor={useCaseDetails.metadata['card-color']}
                 cardEnabled={useCaseDetails.enabled}

@@ -21,7 +21,7 @@ export const authInitialState: AuthState = {
   loading: false,
   facilities: [],
   NonGenuineLicenseMap: {},
-  useCaseMap: {},
+  useCases: [],
   fetchingUseCaseList: false,
   ssoIdToken: '',
   identity: '',
@@ -119,7 +119,7 @@ const reducer = (state = authInitialState, action: AuthActionType): AuthState =>
       return {
         ...state,
         fetchingUseCaseList: false,
-        useCaseMap: keyBy(action.payload.useCases, 'orderTree'),
+        useCases: action.payload.useCases,
       };
 
     case AuthAction.SET_SELECTED_USE_CASE:
