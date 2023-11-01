@@ -16,13 +16,14 @@
     "downlevelIteration": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "#*": ["./src/*"],
-      "test/*": ["./test/*"],
-      "test-utils": ["./test/__setup__/test-utils"]
+      "#*": ["src/*"],
+      "test/*": ["test/*"],
+      "test-utils": ["test/__setup__/test-utils"]
     }
   },
   "exclude": ["node_modules"],
-  "include": ["./src/*"]
+  "include": ["src/*"]
 }

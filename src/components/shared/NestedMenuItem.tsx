@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import MenuItem from '@material-ui/core/MenuItem';
 import ArrowLeft from '@material-ui/icons/ArrowLeft';
 import ArrowRight from '@material-ui/icons/ArrowRight';

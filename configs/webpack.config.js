@@ -8,6 +8,7 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const dotenv = require('dotenv');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 // const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const isEnvProduction = process.env.NODE_ENV === 'production';
 const styledComponentsTransformer = createStyledComponentsTransformer();
@@ -24,6 +25,7 @@ const envKeys =
 const config = {
   mode: isEnvProduction ? 'production' : 'development',
   entry: paths.appIndex,
+  devtool: isEnvProduction ? undefined : 'inline-source-map',
   output: {
     path: paths.appBuild,
     publicPath: '/',
@@ -40,15 +42,6 @@ const config = {
             exclude: /(node_modules|bower_components)/,
             use: [
               {
-                loader: 'babel-loader',
-                options: {
-                  configFile: paths.babelConfig,
-                  plugins: [!isEnvProduction && require.resolve('react-refresh/babel')].filter(
-                    Boolean,
-                  ),
-                },
-              },
-              {
                 loader: 'ts-loader',
                 options: {
                   // disable type checker - we will use it in fork plugin
@@ -59,7 +52,7 @@ const config = {
             ],
           },
           {
-            test: /\.js$/,
+            test: /\.js(x?)$/,
             exclude: /node_modules/,
             use: [
               {
@@ -128,7 +121,8 @@ const config = {
     !isEnvProduction && new ReactRefreshWebpackPlugin(),
   ].filter(Boolean),
   resolve: {
-    extensions: ['.ts', '.tsx', '.js'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    plugins: [new TsconfigPathsPlugin({ configFile: paths.appTsConfig })],
     fallback: {
       process: require.resolve('process/browser'),
       zlib: require.resolve('browserify-zlib'),
