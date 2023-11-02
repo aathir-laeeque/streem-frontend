@@ -34,6 +34,7 @@ import {
   MandatoryParameter,
   NonMandatoryParameter,
   Parameter,
+  ParameterVerificationTypeEnum,
   TASK_EXECUTION_STATES,
 } from '#types';
 import { ParametersById } from '#PrototypeComposer/Activity/reducer.types';
@@ -709,6 +710,106 @@ const parameterTemplateFormatter = (
   }
 };
 
+const parameterVerificationAudits = (parameterVerifications: []) => {
+  return parameterVerifications.map((verification) => {
+    switch (verification.verificationType) {
+      case ParameterVerificationTypeEnum.SELF:
+        return (
+          <View style={styles.parameterView} wrap={false}>
+            <Text style={styles.text12}>
+              This activity was self-verified and accepted digitally via Leucine {'\n'}
+              by{' '}
+              {verification.verificationStatus === 'ACCEPTED'
+                ? `${verification.requestedTo.firstName} ${verification.requestedTo.lastName}, ID: ${verification.requestedTo.employeeId}`
+                : `__________`}{' '}
+              on{' '}
+              {verification.verificationStatus === 'ACCEPTED'
+                ? `${formatDateTime({ value: verification.modifiedAt })}`
+                : `__________`}
+            </Text>
+          </View>
+        );
+
+      case ParameterVerificationTypeEnum.PEER:
+        if (verification.verificationStatus === 'REJECTED') {
+          return (
+            <View style={styles.parameterView} wrap={false}>
+              <Text style={styles.text12}>
+                This activity was peer-verified and rejected digitally via Leucine {'\n'}
+                by {verification.requestedTo.firstName} {verification.requestedTo.lastName}, ID:{' '}
+                {verification.requestedTo.employeeId} on{' '}
+                {formatDateTime({ value: verification.modifiedAt })}
+              </Text>
+              <View style={styles.comments}>
+                <Text style={styles.text12}>{verification.comments}</Text>
+              </View>
+            </View>
+          );
+        } else {
+          return (
+            <View style={styles.parameterView} wrap={false}>
+              <Text style={styles.text12}>
+                This activity was peer-verified and{' '}
+                {verification.verificationStatus === 'ACCEPTED' ? 'accepted' : '_________'}{' '}
+                digitally via Leucine {'\n'}
+                by{' '}
+                {verification.verificationStatus === 'ACCEPTED'
+                  ? `${verification.requestedTo.firstName} ${verification.requestedTo.lastName}, ID: ${verification.requestedTo.employeeId}`
+                  : `__________`}{' '}
+                on{' '}
+                {verification.verificationStatus === 'ACCEPTED'
+                  ? `${formatDateTime({ value: verification.modifiedAt })}`
+                  : `__________`}
+              </Text>
+            </View>
+          );
+        }
+    }
+  });
+};
+
+const parameterVerificationDetails = (verificationType: string) => {
+  switch (verificationType) {
+    case ParameterVerificationTypeEnum.SELF:
+      return (
+        <View style={styles.parameterView} wrap={false}>
+          <Text style={styles.text12}>
+            {' '}
+            This activity was self-verified and accepted digitally via Leucine by _________ on
+            ________
+          </Text>
+        </View>
+      );
+
+    case ParameterVerificationTypeEnum.PEER:
+      return (
+        <View style={styles.parameterView} wrap={false}>
+          <Text style={styles.text12}>
+            {' '}
+            This activity was peer-verified and __________ digitally via Leucine by _________ on
+            ________
+          </Text>
+        </View>
+      );
+
+    case ParameterVerificationTypeEnum.BOTH:
+      return (
+        <View style={styles.parameterView} wrap={false}>
+          <Text style={styles.text12}>
+            {' '}
+            This activity was self-verified and accepted digitally via Leucine by _________ on
+            ________
+          </Text>
+          <Text style={styles.text12}>
+            {' '}
+            This activity was peer-verified and __________ digitally via Leucine by _________ on
+            ________
+          </Text>
+        </View>
+      );
+  }
+};
+
 const MemoParameterList: FC<{
   parameters: Parameter[];
   dateAndTimeStampFormat: string;
@@ -742,6 +843,12 @@ const MemoParameterList: FC<{
                     </Text>
                   </View>
                 )}
+              {parameter.response.verificationType !== ParameterVerificationTypeEnum.NONE &&
+                parameter.response.parameterVerifications &&
+                parameterVerificationAudits(parameter.response.parameterVerifications)}
+              {parameter.response.verificationType !== ParameterVerificationTypeEnum.NONE &&
+                !parameter.response.parameterVerifications &&
+                parameterVerificationDetails(parameter.verificationType)}
             </View>
           );
         }
