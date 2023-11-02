@@ -186,7 +186,7 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
             />
           </div>
         )}
-        {!isTaskStarted && (
+        {isTaskStarted && (
           <div
             className="task-audit"
             style={{ paddingTop: isTaskPaused || !!correctionEnabled ? '0px' : '14px' }}
