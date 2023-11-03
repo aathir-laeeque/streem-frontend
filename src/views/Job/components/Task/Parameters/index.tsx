@@ -2,11 +2,10 @@ import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
 import Parameter from './Parameter';
+import { useJobStateToFlags } from '#views/Job/utils';
 
 export type ParameterListProps = {
   parameterIds: string[];
-  isTaskStarted?: boolean;
-  isTaskCompleted?: boolean;
   isCorrectingError: boolean;
   isUserAssignedToTask?: boolean;
   parametersErrors: Map<string, string[]>;
@@ -14,16 +13,17 @@ export type ParameterListProps = {
 
 const Wrapper = styled.div.attrs({
   className: 'parameter-list',
-})<
-  {
-    isInboxView: boolean;
-  } & Omit<ParameterListProps, 'parameterIds' | 'isUserAssignedToTask' | 'parametersErrors'>
->`
+})<{
+  isInboxView: boolean;
+  isReadOnly?: boolean;
+  isTaskCompleted?: boolean;
+  isCorrectingError: boolean;
+}>`
   display: flex;
   flex-direction: column;
 
-  ${({ isTaskStarted }) =>
-    !isTaskStarted
+  ${({ isReadOnly }) =>
+    isReadOnly
       ? css`
           pointer-events: none;
         `
@@ -148,17 +148,15 @@ const Wrapper = styled.div.attrs({
 
 const ParameterList: FC<ParameterListProps> = ({
   parameterIds,
-  isTaskStarted,
-  isTaskCompleted,
   isCorrectingError,
   isUserAssignedToTask,
   parametersErrors,
 }) => {
   const { isInboxView, parameters } = useTypedSelector((state) => state.job);
-
+  const { isTaskStarted, isTaskCompleted, isTaskPaused } = useJobStateToFlags();
   return (
     <Wrapper
-      isTaskStarted={isTaskStarted}
+      isReadOnly={!isTaskStarted || isTaskPaused}
       isTaskCompleted={isTaskCompleted}
       isCorrectingError={isCorrectingError}
       isInboxView={isInboxView}

@@ -146,7 +146,11 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
         }),
       );
     }
-    if (jobState === JobStateEnum.IN_PROGRESS && !isTaskStarted && isUserAssigned) {
+    if (
+      jobState === JobStateEnum.IN_PROGRESS &&
+      (!isTaskStarted || isTaskPaused) &&
+      isUserAssigned
+    ) {
       dispatch(
         openOverlayAction({
           type: OverlayNames.START_TASK_ERROR_MODAL,
@@ -203,8 +207,6 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
         )}
         <ParameterList
           parameterIds={parameterIds}
-          isTaskStarted={isTaskStarted}
-          isTaskCompleted={isTaskCompleted}
           isCorrectingError={!!correctionEnabled}
           isUserAssignedToTask={isUserAssignedToTask}
           parametersErrors={parametersErrors}

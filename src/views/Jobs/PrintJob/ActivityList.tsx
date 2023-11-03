@@ -34,8 +34,8 @@ import {
   MandatoryParameter,
   NonMandatoryParameter,
   Parameter,
+  ParameterState,
   ParameterVerificationTypeEnum,
-  TASK_EXECUTION_STATES,
 } from '#types';
 import { ParametersById } from '#PrototypeComposer/Activity/reducer.types';
 export const styles = StyleSheet.create({
@@ -831,7 +831,7 @@ const MemoParameterList: FC<{
                 cjfParametersById,
               )}
               <View style={styles.parameterSeprator} />
-              {parameter.response.state !== TASK_EXECUTION_STATES.NOT_STARTED &&
+              {parameter.response.state !== ParameterState.NOT_STARTED &&
                 parameter.response.audit.modifiedBy && (
                   <View style={styles.taskFooter} wrap={false}>
                     <Text style={styles.text12}>
