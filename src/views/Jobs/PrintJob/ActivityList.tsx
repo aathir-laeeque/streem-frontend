@@ -791,23 +791,31 @@ const parameterVerificationDetails = (verificationType: string) => {
           </Text>
         </View>
       );
-
-    case ParameterVerificationTypeEnum.BOTH:
-      return (
-        <View style={styles.parameterView} wrap={false}>
-          <Text style={styles.text12}>
-            {' '}
-            This activity was self-verified and accepted digitally via Leucine by _________ on
-            ________
-          </Text>
-          <Text style={styles.text12}>
-            {' '}
-            This activity was peer-verified and __________ digitally via Leucine by _________ on
-            ________
-          </Text>
-        </View>
-      );
   }
+};
+
+const verificationAudits = (parameterVerifications: [] = [], verificationType) => {
+  const selfVerification = parameterVerifications?.filter(
+    (v) => v.verificationType === ParameterVerificationTypeEnum.SELF,
+  );
+  const peerVerification = parameterVerifications?.filter(
+    (v) => v.verificationType === ParameterVerificationTypeEnum.PEER,
+  );
+  return [
+    verificationType === ParameterVerificationTypeEnum.SELF ||
+    verificationType === ParameterVerificationTypeEnum.BOTH
+      ? selfVerification?.length
+        ? parameterVerificationAudits(selfVerification)
+        : parameterVerificationDetails(ParameterVerificationTypeEnum.SELF)
+      : null,
+
+    verificationType === ParameterVerificationTypeEnum.PEER ||
+    verificationType === ParameterVerificationTypeEnum.BOTH
+      ? peerVerification?.length
+        ? parameterVerificationAudits(peerVerification)
+        : parameterVerificationDetails(ParameterVerificationTypeEnum.PEER)
+      : null,
+  ];
 };
 
 const MemoParameterList: FC<{
@@ -843,12 +851,11 @@ const MemoParameterList: FC<{
                     </Text>
                   </View>
                 )}
-              {parameter.response.verificationType !== ParameterVerificationTypeEnum.NONE &&
-                parameter.response.parameterVerifications &&
-                parameterVerificationAudits(parameter.response.parameterVerifications)}
-              {parameter.response.verificationType !== ParameterVerificationTypeEnum.NONE &&
-                !parameter.response.parameterVerifications &&
-                parameterVerificationDetails(parameter.verificationType)}
+              {parameter.verificationType !== ParameterVerificationTypeEnum.NONE &&
+                verificationAudits(
+                  parameter.response.parameterVerifications,
+                  parameter.verificationType,
+                )}
             </View>
           );
         }
