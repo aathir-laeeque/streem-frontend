@@ -174,7 +174,7 @@ const PropertiesTabContent: FC<TabContentProps> = ({ values }) => {
   } = useTypedSelector((state) => state.ontology);
 
   const objectTypeId = active?.id;
-  const { list, reset, pagination } = createFetchList(
+  const { list, reset, pagination, status } = createFetchList(
     apigetObjectTypeProperties(objectTypeId),
     urlParams,
     false,
@@ -233,148 +233,155 @@ const PropertiesTabContent: FC<TabContentProps> = ({ values }) => {
         )}
       </div>
 
-      <DataTable
-        columns={[
-          {
-            id: 'displayName',
-            label: 'Property Name',
-            minWidth: 100,
-          },
-          {
-            id: 'inputType',
-            label: 'Input Type',
-            minWidth: 100,
-            format: (item) => {
-              const contentString = (inputType: string) => {
-                switch (inputType) {
-                  case MandatoryParameter.SINGLE_LINE:
-                    return 'Single Line';
-                  case MandatoryParameter.MULTI_LINE:
-                    return 'Multi Line';
-                  case MandatoryParameter.DATE:
-                    return 'Date';
-                  case MandatoryParameter.DATE_TIME:
-                    return 'Date Time';
-                  case MandatoryParameter.NUMBER:
-                    return 'Number';
-                  case MandatoryParameter.SINGLE_SELECT:
-                    return 'Single Select';
-                  case MandatoryParameter.MULTISELECT:
-                  case 'MULTI_SELECT':
-                    return 'Multi Select';
-                  default:
-                    return '';
-                }
-              };
-              return contentString(item.inputType);
-            },
-          },
-          {
-            id: 'mandatory',
-            label: 'Is Mandatory?',
-            minWidth: 100,
-            format: (item) =>
-              getBooleanFromDecimal(item.flags, FlagPositions.MANDATORY) ? 'Yes' : 'No',
-          },
-          {
-            id: 'status',
-            label: 'Status',
-            minWidth: 100,
-            format: (item) => (item?.usageStatus === 1 ? 'Active' : 'Inactive'),
-          },
-          ...(checkPermission(['ontology', 'editObjectType'])
-            ? [
-                {
-                  id: 'action',
-                  label: 'Action',
-                  minWidth: 100,
-                  format: function renderComp(item) {
-                    return item.usageStatus === 1 &&
-                      ![PropertyFlags.EXTERNAL_ID, PropertyFlags.SYSTEM].includes(item.flags) ? (
-                      <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-                        <div
-                          id="more-actions"
-                          onClick={(event: any) => {
-                            setAnchorEl(event.currentTarget);
-                            setSelectedProperty(item);
-                          }}
-                        >
-                          More <ArrowDropDown className="icon" />
-                        </div>
-
-                        <ListActionMenu
-                          id="row-more-actions"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          disableEnforceFocus
-                          open={Boolean(anchorEl)}
-                          onClose={handleClose}
-                        >
-                          {[PropertyFlags.MANDATORY, PropertyFlags.OPTIONAL]?.includes(
-                            selectedProperty?.flags,
-                          ) && (
-                            <MenuItem
-                              onClick={() => {
-                                handleClose();
-                                dispatch(
-                                  openOverlayAction({
-                                    type: OverlayNames.REASON_MODAL,
-                                    props: {
-                                      modalTitle: 'Archive Property',
-                                      modalDesc: `Are you sure you want to archive this property?`,
-                                      onSubmitHandler: (
-                                        reason: string,
-                                        setFormErrors: (errors?: Error[]) => void,
-                                      ) => {
-                                        dispatch(
-                                          archiveObjectTypeProperty({
-                                            objectTypeId: active?.id,
-                                            propertyId: selectedProperty?.id,
-                                            reason,
-                                            setFormErrors,
-                                          }),
-                                        );
-                                        setTimeout(() => setShouldToggle((prev) => !prev), 300);
-                                      },
-                                      onSubmitModalText: 'Archive',
-                                    },
-                                  }),
-                                );
-                              }}
-                            >
-                              <div className="list-item">
-                                <ArchiveOutlinedIcon />
-                                <span>Archive</span>
-                              </div>
-                            </MenuItem>
-                          )}
-                          {[
-                            PropertyFlags.MANDATORY,
-                            PropertyFlags.DISPLAY_NAME,
-                            PropertyFlags.OPTIONAL,
-                          ]?.includes(selectedProperty?.flags) && (
-                            <MenuItem
-                              onClick={() => {
-                                setAnchorEl(null);
-                                setCreatePropertyDrawer('Edit');
-                              }}
-                            >
-                              <div className="list-item">
-                                <EditOutlinedIcon />
-                                <span>Edit</span>
-                              </div>
-                            </MenuItem>
-                          )}
-                        </ListActionMenu>
-                      </div>
-                    ) : null;
-                  },
+      <LoadingContainer
+        loading={status === 'loading' || status === 'loadingNext'}
+        component={
+          <DataTable
+            columns={[
+              {
+                id: 'displayName',
+                label: 'Property Name',
+                minWidth: 100,
+              },
+              {
+                id: 'inputType',
+                label: 'Input Type',
+                minWidth: 100,
+                format: (item) => {
+                  const contentString = (inputType: string) => {
+                    switch (inputType) {
+                      case MandatoryParameter.SINGLE_LINE:
+                        return 'Single Line';
+                      case MandatoryParameter.MULTI_LINE:
+                        return 'Multi Line';
+                      case MandatoryParameter.DATE:
+                        return 'Date';
+                      case MandatoryParameter.DATE_TIME:
+                        return 'Date Time';
+                      case MandatoryParameter.NUMBER:
+                        return 'Number';
+                      case MandatoryParameter.SINGLE_SELECT:
+                        return 'Single Select';
+                      case MandatoryParameter.MULTISELECT:
+                      case 'MULTI_SELECT':
+                        return 'Multi Select';
+                      default:
+                        return '';
+                    }
+                  };
+                  return contentString(item.inputType);
                 },
-              ]
-            : []),
-        ]}
-        emptyTitle="No Properties Found"
-        rows={list}
+              },
+              {
+                id: 'mandatory',
+                label: 'Is Mandatory?',
+                minWidth: 100,
+                format: (item) =>
+                  getBooleanFromDecimal(item.flags, FlagPositions.MANDATORY) ? 'Yes' : 'No',
+              },
+              {
+                id: 'status',
+                label: 'Status',
+                minWidth: 100,
+                format: (item) => (item?.usageStatus === 1 ? 'Active' : 'Inactive'),
+              },
+              ...(checkPermission(['ontology', 'editObjectType'])
+                ? [
+                    {
+                      id: 'action',
+                      label: 'Action',
+                      minWidth: 100,
+                      format: function renderComp(item) {
+                        return item.usageStatus === 1 &&
+                          ![PropertyFlags.EXTERNAL_ID, PropertyFlags.SYSTEM].includes(
+                            item.flags,
+                          ) ? (
+                          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                            <div
+                              id="more-actions"
+                              onClick={(event: any) => {
+                                setAnchorEl(event.currentTarget);
+                                setSelectedProperty(item);
+                              }}
+                            >
+                              More <ArrowDropDown className="icon" />
+                            </div>
+
+                            <ListActionMenu
+                              id="row-more-actions"
+                              anchorEl={anchorEl}
+                              keepMounted
+                              disableEnforceFocus
+                              open={Boolean(anchorEl)}
+                              onClose={handleClose}
+                            >
+                              {[PropertyFlags.MANDATORY, PropertyFlags.OPTIONAL]?.includes(
+                                selectedProperty?.flags,
+                              ) && (
+                                <MenuItem
+                                  onClick={() => {
+                                    handleClose();
+                                    dispatch(
+                                      openOverlayAction({
+                                        type: OverlayNames.REASON_MODAL,
+                                        props: {
+                                          modalTitle: 'Archive Property',
+                                          modalDesc: `Are you sure you want to archive this property?`,
+                                          onSubmitHandler: (
+                                            reason: string,
+                                            setFormErrors: (errors?: Error[]) => void,
+                                          ) => {
+                                            dispatch(
+                                              archiveObjectTypeProperty({
+                                                objectTypeId: active?.id,
+                                                propertyId: selectedProperty?.id,
+                                                reason,
+                                                setFormErrors,
+                                              }),
+                                            );
+                                            setTimeout(() => setShouldToggle((prev) => !prev), 300);
+                                          },
+                                          onSubmitModalText: 'Archive',
+                                        },
+                                      }),
+                                    );
+                                  }}
+                                >
+                                  <div className="list-item">
+                                    <ArchiveOutlinedIcon />
+                                    <span>Archive</span>
+                                  </div>
+                                </MenuItem>
+                              )}
+                              {[
+                                PropertyFlags.MANDATORY,
+                                PropertyFlags.DISPLAY_NAME,
+                                PropertyFlags.OPTIONAL,
+                              ]?.includes(selectedProperty?.flags) && (
+                                <MenuItem
+                                  onClick={() => {
+                                    setAnchorEl(null);
+                                    setCreatePropertyDrawer('Edit');
+                                  }}
+                                >
+                                  <div className="list-item">
+                                    <EditOutlinedIcon />
+                                    <span>Edit</span>
+                                  </div>
+                                </MenuItem>
+                              )}
+                            </ListActionMenu>
+                          </div>
+                        ) : null;
+                      },
+                    },
+                  ]
+                : []),
+            ]}
+            emptyTitle="No Properties Found"
+            rows={list}
+          />
+        }
       />
       <Pagination
         pageable={pagination}
@@ -399,7 +406,7 @@ const RelationsTabContent: FC<TabContentProps> = ({ values }) => {
   } = useTypedSelector((state) => state.ontology);
 
   const objectTypeId = active?.id;
-  const { list, reset, pagination } = createFetchList(
+  const { list, reset, pagination, status } = createFetchList(
     apiGetObjectTypeRelations(objectTypeId),
     urlParams,
     false,
@@ -471,128 +478,133 @@ const RelationsTabContent: FC<TabContentProps> = ({ values }) => {
           </Button>
         )}
       </div>
-      <DataTable
-        columns={[
-          {
-            id: 'relatedTo',
-            label: 'Related To',
-            minWidth: 100,
-            format: (item) => {
-              return startCase(item.externalId);
-            },
-          },
-          {
-            id: 'displayName',
-            label: 'Relation Name',
-            minWidth: 100,
-          },
-          {
-            id: 'cardinality',
-            label: 'Cardinality',
-            minWidth: 100,
-            format: (item) => {
-              const contentString = (cardinality: string) => {
-                switch (cardinality) {
-                  case 'ONE_TO_ONE':
-                    return 'One to One';
-                  case 'ONE_TO_MANY':
-                    return 'One to Many';
-                  default:
-                    return '';
-                }
-              };
-              return contentString(item?.target?.cardinality);
-            },
-          },
-
-          {
-            id: 'status',
-            label: 'Status',
-            minWidth: 100,
-            format: (item) => (item?.usageStatus === 1 ? 'Active' : 'Inactive'),
-          },
-          ...(checkPermission(['ontology', 'editObjectType'])
-            ? [
-                {
-                  id: 'action',
-                  label: 'Action',
-                  minWidth: 100,
-                  format: function renderComp(item) {
-                    return item?.usageStatus === 1 ? (
-                      <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-                        <div
-                          id="more-actions"
-                          onClick={(event: any) => {
-                            setAnchorEl(event.currentTarget);
-                            setSelectedRelation(item);
-                          }}
-                        >
-                          More <ArrowDropDown className="icon" />
-                        </div>
-
-                        <ListActionMenu
-                          id="row-more-actions"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          disableEnforceFocus
-                          open={Boolean(anchorEl)}
-                          onClose={handleClose}
-                        >
-                          <MenuItem
-                            onClick={() => {
-                              handleClose();
-                              dispatch(
-                                openOverlayAction({
-                                  type: OverlayNames.REASON_MODAL,
-                                  props: {
-                                    modalTitle: 'Archive Relation',
-                                    modalDesc: `Are you sure you want to archive this relation?`,
-                                    onSubmitHandler: (
-                                      reason: string,
-                                      setFormErrors: (errors?: Error[]) => void,
-                                    ) => {
-                                      dispatch(
-                                        archiveObjectTypeRelation({
-                                          objectTypeId: active?.id,
-                                          relationId: selectedRelation?.id,
-                                          reason,
-                                          setFormErrors,
-                                        }),
-                                      );
-                                      setTimeout(() => setShouldToggle((prev) => !prev), 300);
-                                    },
-                                    onSubmitModalText: 'Archive',
-                                  },
-                                }),
-                              );
-                            }}
-                          >
-                            <div className="list-item">
-                              <ArchiveOutlinedIcon />
-                              <span>Archive</span>
-                            </div>
-                          </MenuItem>
-                          <MenuItem
-                            onClick={() => {
-                              setAnchorEl(null);
-                              setRelationDrawer('Edit');
-                            }}
-                          >
-                            <div className="list-item">
-                              <EditOutlinedIcon />
-                              <span>Edit</span>
-                            </div>
-                          </MenuItem>
-                        </ListActionMenu>
-                      </div>
-                    ) : null;
-                  },
+      <LoadingContainer
+        loading={status === 'loading' || status === 'loadingNext'}
+        component={
+          <DataTable
+            columns={[
+              {
+                id: 'relatedTo',
+                label: 'Related To',
+                minWidth: 100,
+                format: (item) => {
+                  return startCase(item.externalId);
                 },
-              ]
-            : []),
-        ]}
-        emptyTitle="No Relations Found"
-        rows={list}
+              },
+              {
+                id: 'displayName',
+                label: 'Relation Name',
+                minWidth: 100,
+              },
+              {
+                id: 'cardinality',
+                label: 'Cardinality',
+                minWidth: 100,
+                format: (item) => {
+                  const contentString = (cardinality: string) => {
+                    switch (cardinality) {
+                      case 'ONE_TO_ONE':
+                        return 'One to One';
+                      case 'ONE_TO_MANY':
+                        return 'One to Many';
+                      default:
+                        return '';
+                    }
+                  };
+                  return contentString(item?.target?.cardinality);
+                },
+              },
+
+              {
+                id: 'status',
+                label: 'Status',
+                minWidth: 100,
+                format: (item) => (item?.usageStatus === 1 ? 'Active' : 'Inactive'),
+              },
+              ...(checkPermission(['ontology', 'editObjectType'])
+                ? [
+                    {
+                      id: 'action',
+                      label: 'Action',
+                      minWidth: 100,
+                      format: function renderComp(item) {
+                        return item?.usageStatus === 1 ? (
+                          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                            <div
+                              id="more-actions"
+                              onClick={(event: any) => {
+                                setAnchorEl(event.currentTarget);
+                                setSelectedRelation(item);
+                              }}
+                            >
+                              More <ArrowDropDown className="icon" />
+                            </div>
+
+                            <ListActionMenu
+                              id="row-more-actions"
+                              anchorEl={anchorEl}
+                              keepMounted
+                              disableEnforceFocus
+                              open={Boolean(anchorEl)}
+                              onClose={handleClose}
+                            >
+                              <MenuItem
+                                onClick={() => {
+                                  handleClose();
+                                  dispatch(
+                                    openOverlayAction({
+                                      type: OverlayNames.REASON_MODAL,
+                                      props: {
+                                        modalTitle: 'Archive Relation',
+                                        modalDesc: `Are you sure you want to archive this relation?`,
+                                        onSubmitHandler: (
+                                          reason: string,
+                                          setFormErrors: (errors?: Error[]) => void,
+                                        ) => {
+                                          dispatch(
+                                            archiveObjectTypeRelation({
+                                              objectTypeId: active?.id,
+                                              relationId: selectedRelation?.id,
+                                              reason,
+                                              setFormErrors,
+                                            }),
+                                          );
+                                          setTimeout(() => setShouldToggle((prev) => !prev), 300);
+                                        },
+                                        onSubmitModalText: 'Archive',
+                                      },
+                                    }),
+                                  );
+                                }}
+                              >
+                                <div className="list-item">
+                                  <ArchiveOutlinedIcon />
+                                  <span>Archive</span>
+                                </div>
+                              </MenuItem>
+                              <MenuItem
+                                onClick={() => {
+                                  setAnchorEl(null);
+                                  setRelationDrawer('Edit');
+                                }}
+                              >
+                                <div className="list-item">
+                                  <EditOutlinedIcon />
+                                  <span>Edit</span>
+                                </div>
+                              </MenuItem>
+                            </ListActionMenu>
+                          </div>
+                        ) : null;
+                      },
+                    },
+                  ]
+                : []),
+            ]}
+            emptyTitle="No Relations Found"
+            rows={list}
+          />
+        }
       />
       <Pagination
         pageable={pagination}
