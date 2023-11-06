@@ -875,8 +875,9 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: isPasswordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
+              type: InputTypes.PASSWORD,
               props: {
+                type: isPasswordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
                 placeholder: 'Enter your new Password',
                 label: 'Create Password',
                 id: 'password',
@@ -900,8 +901,9 @@ export const createBaseViewConfig = ({
               },
             },
             {
-              type: isConfirmPasswordTextHidden ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
+              type: InputTypes.PASSWORD,
               props: {
+                type: isConfirmPasswordTextHidden ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
                 placeholder: 'Enter your new Password again',
                 label: 'Confirm Password',
                 id: 'confirmPassword',
