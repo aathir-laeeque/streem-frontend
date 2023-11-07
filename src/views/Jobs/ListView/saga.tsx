@@ -56,6 +56,7 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
       throw getErrorMsg(errors);
     }
 
+    // NOTE: we are intentionally trying to navigate to inbox page rather than job. (even if there's no user assigned)
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,

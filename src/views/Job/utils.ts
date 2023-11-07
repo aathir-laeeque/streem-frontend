@@ -143,6 +143,10 @@ export function parseJobData(
         _task.isUserAssignedToTask = task.taskExecution.assignees.some(
           (user) => user.id === userId,
         );
+      } else {
+        if (!taskNavState.current) {
+          taskNavState.current = prevVisibleTaskId;
+        }
       }
 
       _stage.tasks.push(_task.id);
