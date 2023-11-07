@@ -139,6 +139,7 @@ export const createSectionConfig = ({
   );
   const {
     settings: { ssoType },
+    userId,
   } = useTypedSelector((state) => state.auth);
   const [currentlySelectedFacilities, setCurrentlySelectedFacilities] = useState<
     Option[] | undefined
@@ -194,6 +195,13 @@ export const createSectionConfig = ({
     });
     setDisabledKeys(keysToDisable);
   };
+
+  const getUserPermissionChangeRole = () => {
+    if(selectedUser && selectedRole === RoleIdByName.SYSTEM_ADMIN && userId === selectedUser.id) {
+      return true;
+    }
+    return !isEditable || isAccountOwner;
+  }
 
   const onChangeUserType = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === UserType.LOCAL) {
@@ -439,7 +447,7 @@ export const createSectionConfig = ({
                 props: {
                   id: 'roles',
                   selected: selectedRole,
-                  disabled: !isEditable || isAccountOwner,
+                  disabled: getUserPermissionChangeRole(),
                   error: errors['roles']?.message,
                   onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
                     if (
