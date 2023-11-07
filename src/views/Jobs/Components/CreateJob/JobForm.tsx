@@ -12,7 +12,7 @@ import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { fetchDataParams, FilterField, FilterOperators } from '#utils/globalTypes';
 import { fetchChecklists } from '#views/Checklists/ListView/actions';
 import { debounce } from 'lodash';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
@@ -31,6 +31,7 @@ const JobFormWrapper = styled.div.attrs({})`
 
 export const JobForm: FC<JobFormProps> = ({ form, checklist, selectedObject }) => {
   const { register, setValue, watch, getValues } = form;
+  const [isHiddenParamsUpdated, setIsHiddenParamsUpdated] = useState(false);
   const { checklistId } = watch(['checklistId']);
   const dispatch = useDispatch();
   const {
@@ -59,6 +60,8 @@ export const JobForm: FC<JobFormProps> = ({ form, checklist, selectedObject }) =
         }
       });
     }
+
+    setIsHiddenParamsUpdated(true);
 
     return () => {
       dispatch(updateHiddenParameterIds([]));
@@ -201,18 +204,19 @@ export const JobForm: FC<JobFormProps> = ({ form, checklist, selectedObject }) =
           isDisabled: true,
         })}
       />
-      {parametersList.map(
-        (parameter) =>
-          !hiddenParameterIds[parameter.id] && (
-            <ParameterView
-              key={parameter.id}
-              form={form}
-              parameter={parameter}
-              onChangeHandler={onChangeHandler}
-              selectedObject={selectedObject}
-            />
-          ),
-      )}
+      {isHiddenParamsUpdated &&
+        parametersList.map(
+          (parameter) =>
+            !hiddenParameterIds[parameter.id] && (
+              <ParameterView
+                key={parameter.id}
+                form={form}
+                parameter={parameter}
+                onChangeHandler={onChangeHandler}
+                selectedObject={selectedObject}
+              />
+            ),
+        )}
     </JobFormWrapper>
   );
 };
