@@ -5,7 +5,7 @@ import { call, delay, takeLatest } from 'redux-saga/effects';
 import { NotificationActions, NotificationActionType, NotificationType } from './types';
 
 function* showNotificationGenerator({ payload }: NotificationActionType) {
-  const { type, msg, delayTime, detail, icon, iconProps } = payload;
+  const { type, msg, delayTime, detail, icon, iconProps, autoClose } = payload;
   if (delayTime) yield delay(delayTime);
 
   const showIcon = (IconComponent: SvgIconComponent, classes = '') => (
@@ -23,7 +23,9 @@ function* showNotificationGenerator({ payload }: NotificationActionType) {
       </div>
     </div>
   );
-  yield call(toast, Layout);
+  yield call(toast, Layout, {
+    autoClose: autoClose || 5000,
+  });
 }
 
 export function* showNotificationSaga() {

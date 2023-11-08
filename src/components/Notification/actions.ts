@@ -10,4 +10,5 @@ export const showNotification = (payload: {
   detail?: string;
   icon?: SvgIconComponent;
   iconProps?: SvgIconProps;
+  autoClose?: number;
 }) => actionSpreader(NotificationActions.SHOW_NOTIFICATION, payload);

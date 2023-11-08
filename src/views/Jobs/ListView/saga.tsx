@@ -60,6 +60,7 @@ function* createJobSaga({ payload }: ReturnType<typeof createJob>) {
     yield put(
       showNotification({
         type: NotificationType.SUCCESS,
+        autoClose: 15000,
         msg: (
           <div>
             <a className="clickable" onClick={() => navigate(`/inbox/${data.id}`)}>
