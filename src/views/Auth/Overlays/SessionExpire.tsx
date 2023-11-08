@@ -14,6 +14,7 @@ import { UserType } from '#views/UserAccess/ManageUser/types';
 import { ssoLogin } from '../saga';
 import { ssoSigningRedirect } from '#utils/request';
 import { InputTypes, SsoStates } from '#utils/globalTypes';
+import { AppVersionCheck } from '../../../AppVersionCheck';
 
 // TODO Handle closing of this modal if relogin api fails for some reason.
 const Wrapper = styled.div`
@@ -138,59 +139,63 @@ const SessionExpireModal: FC<CommonOverlayProps<unknown>> = ({
         title="Session Expired!"
         allowCloseOnOutsideClick={false}
       >
-        {profile && (
-          <div style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
-            <Avatar
-              user={profile!}
-              size="large"
-              color="blue"
-              borderColor="#ffffff"
-              allowMouseEvents={false}
-            />
-            <div>
-              <div style={{ fontSize: '12px', color: '#c2c2c2' }}>{profile!.employeeId}</div>
-              <div style={{ color: '#161616', fontSize: '16px', marginTop: '4px' }}>
-                {profile!.firstName} {profile!.lastName}
+        <AppVersionCheck>
+          <>
+            {profile && (
+              <div style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
+                <Avatar
+                  user={profile!}
+                  size="large"
+                  color="blue"
+                  borderColor="#ffffff"
+                  allowMouseEvents={false}
+                />
+                <div>
+                  <div style={{ fontSize: '12px', color: '#c2c2c2' }}>{profile!.employeeId}</div>
+                  <div style={{ color: '#161616', fontSize: '16px', marginTop: '4px' }}>
+                    {profile!.firstName} {profile!.lastName}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
-        <span style={{ marginTop: '8px' }}>
-          Your current session has expired. You may continue by log in again.
-        </span>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {userType === UserType.LOCAL && (
-            <TextInput
-              ref={register({
-                required: true,
-              })}
-              AfterElement={AfterIcon}
-              name="password"
-              label="Password"
-              placeholder="Password"
-              error={true}
-              type={passwordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE}
-            />
-          )}
-          <div style={{ display: 'flex' }}>
-            <Button
-              style={{ width: 'auto' }}
-              variant="secondary"
-              onClick={() => {
-                dispatch(logout({ ssoIdToken: ssoIdToken }));
-              }}
-            >
-              Logout
-            </Button>
-            <Button
-              type="submit"
-              style={{ marginLeft: 'auto', width: 'auto' }}
-              disabled={userType === UserType.LOCAL ? !isValid || !isDirty : false}
-            >
-              Proceed to Login
-            </Button>
-          </div>
-        </form>
+            )}
+            <span style={{ marginTop: '8px' }}>
+              Your current session has expired. You may continue by log in again.
+            </span>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {userType === UserType.LOCAL && (
+                <TextInput
+                  ref={register({
+                    required: true,
+                  })}
+                  AfterElement={AfterIcon}
+                  name="password"
+                  label="Password"
+                  placeholder="Password"
+                  error={true}
+                  type={passwordInputType ? 'password' : 'text'}
+                />
+              )}
+              <div style={{ display: 'flex' }}>
+                <Button
+                  style={{ width: 'auto' }}
+                  variant="secondary"
+                  onClick={() => {
+                    dispatch(logout({ ssoIdToken: ssoIdToken }));
+                  }}
+                >
+                  Logout
+                </Button>
+                <Button
+                  type="submit"
+                  style={{ marginLeft: 'auto', width: 'auto' }}
+                  disabled={userType === UserType.LOCAL ? !isValid || !isDirty : false}
+                >
+                  Proceed to Login
+                </Button>
+              </div>
+            </form>
+          </>
+        </AppVersionCheck>
       </BaseModal>
     </Wrapper>
   );
