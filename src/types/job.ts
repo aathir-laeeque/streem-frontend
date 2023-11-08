@@ -89,6 +89,7 @@ export const REFETCH_JOB_ERROR_CODES = {
   E214: 'TASK_NOT_ENABLED_FOR_CORRECTION',
   E224: 'TASK_ALREADY_IN_PROGRESS',
   E450: 'PARAMETER_DATA_INCONSISTENT',
+  E236: 'PRECEDING_TASKS_NOT_COMPLETED',
 } as const;
 
 export interface JobStore {
@@ -111,13 +112,10 @@ export interface JobStore {
   isInboxView: boolean;
   taskNavState: {
     current?: string;
-    stopExecution: boolean;
     isMobileDrawerOpen: boolean;
   };
   pendingTasks: Set<string>;
   showVerificationBanner: boolean;
-  taskIdsWithStop: string[];
-  taskIdsWithStopActiveIndex: number;
   updating?: boolean;
   assignments: {
     loading: boolean;

@@ -300,6 +300,18 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
         }
       }
 
+      const shouldRefetch = errors.find((error) => error.code in REFETCH_JOB_ERROR_CODES);
+      if (shouldRefetch && shouldRefetch.code === 'E236') {
+        yield put(
+          openOverlayAction({
+            type: OverlayNames.ADD_STOP,
+            props: {
+              id: shouldRefetch.id,
+            },
+          }),
+        );
+      }
+
       const { taskErrors, parametersErrors } = groupTaskErrors(errors);
       yield put(
         jobActions.updateTaskErrors({

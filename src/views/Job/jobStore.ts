@@ -99,12 +99,9 @@ export const initialState: JobStore = {
   cjfValues: [],
   isInboxView: false,
   taskNavState: {
-    stopExecution: false,
     isMobileDrawerOpen: false,
   },
   showVerificationBanner: false,
-  taskIdsWithStop: [],
-  taskIdsWithStopActiveIndex: -1,
   assignments: {
     loading: true,
     isUserAssigned: false,
@@ -143,8 +140,6 @@ function getJobSuccess(draft: JobStore, payload: typeof actions.getJobSuccess) {
   draft.pendingTasks = new Set(data.pendingTasks);
   draft.taskNavState = data.taskNavState;
   draft.showVerificationBanner = data.showVerificationBanner;
-  draft.taskIdsWithStop = data.taskIdsWithStop;
-  draft.taskIdsWithStopActiveIndex = data.taskIdsWithStopActiveIndex;
   draft.state = data.state;
   draft.totalTasks = data.totalTasks;
   draft.expectedEndDate = data.expectedEndDate;
@@ -173,9 +168,6 @@ function updateTaskExecution(draft: JobStore, payload: typeof actions.updateTask
   }
   if (payload.data.state in COMPLETED_TASK_STATES) {
     draft.pendingTasks.delete(payload.id);
-    if (payload.id === draft.taskIdsWithStop[draft.taskIdsWithStopActiveIndex]) {
-      draft.taskIdsWithStopActiveIndex += 1;
-    }
   }
 }
 
@@ -191,15 +183,9 @@ function updateTaskErrors(draft: JobStore, payload: typeof actions.updateTaskErr
 function navigateByTaskId(draft: JobStore, payload: typeof actions.navigateByTaskId) {
   const task = draft.tasks.get(payload.id);
   if (task) {
-    const taskIds = [...draft.tasks.keys()];
     draft.taskNavState = {
       current: task.id,
       isMobileDrawerOpen: false,
-      stopExecution:
-        draft.taskIdsWithStopActiveIndex !== -1
-          ? taskIds.indexOf(task.id) >
-            taskIds.indexOf(draft.taskIdsWithStop[draft.taskIdsWithStopActiveIndex])
-          : false,
     };
   }
 }

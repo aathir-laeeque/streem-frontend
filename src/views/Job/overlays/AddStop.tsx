@@ -51,13 +51,17 @@ const Wrapper = styled.div`
   }
 `;
 
-const TaskStopModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, closeOverlay }) => {
+const TaskStopModal: FC<CommonOverlayProps<{ id: string }>> = ({
+  closeAllOverlays,
+  closeOverlay,
+  props,
+}) => {
   const dispatch = useDispatch();
 
-  const { taskIdsWithStop, taskIdsWithStopActiveIndex, tasks, stages } = useTypedSelector(
-    (state) => state.job,
-  );
-  const taskWithStop = tasks.get(taskIdsWithStop[taskIdsWithStopActiveIndex]);
+  const { id } = props;
+
+  const { tasks, stages } = useTypedSelector((state) => state.job);
+  const taskWithStop = tasks.get(id);
   const stageWithTaskStop = stages.get(taskWithStop.stageId);
 
   const { orderTree: stageNumber } = stageWithTaskStop;
@@ -78,13 +82,11 @@ const TaskStopModal: FC<CommonOverlayProps<any>> = ({ closeAllOverlays, closeOve
             Stop
           </div>
           <div className="body">
-            {`You need to complete Task No. ${stageNumber}.${taskNumber} in Stage No. ${stageNumber} before coming to this task`}
+            {`You need to complete Task No.${taskNumber} in Stage No. ${stageNumber} before coming to this task`}
           </div>
           <div
             className="footer"
             onClick={() => {
-              //   dispatch(setActiveStage(stageIdWithTaskStop, true));
-              //   dispatch(setActiveTask(taskIdWithStop, true));
               dispatch(
                 jobActions.navigateByTaskId({
                   id: taskWithStop!.id,

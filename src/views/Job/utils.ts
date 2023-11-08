@@ -4,7 +4,6 @@ import {
   COMPLETED_TASK_STATES,
   IN_PROGRESS_TASK_STATES,
   JobStore,
-  NOT_STARTED_TASK_STATES,
   ParameterVerificationStatus,
   StoreParameter,
   StoreStage,
@@ -29,8 +28,6 @@ export function parseJobData(
     ...currentState.taskNavState,
   };
   let showVerificationBanner = false;
-  const taskIdsWithStop: string[] = [];
-  let taskIdsWithStopActiveIndex = -1;
 
   const { checklist, parameterValues } = data;
 
@@ -104,16 +101,6 @@ export function parseJobData(
       _task.previous = prevVisibleTaskId;
 
       if (!_task.hidden && _task.visibleParametersCount) {
-        if (
-          _task.hasStop &&
-          _task.taskExecution.state in { ...IN_PROGRESS_TASK_STATES, ...NOT_STARTED_TASK_STATES }
-        ) {
-          taskIdsWithStop.push(task.id);
-          if (taskIdsWithStopActiveIndex === -1) {
-            taskIdsWithStopActiveIndex = 0;
-          }
-        }
-
         _stage.visibleTasksCount++;
         if (!(task.taskExecution.state in COMPLETED_TASK_STATES)) {
           pendingTasks.add(_task.id);
@@ -164,8 +151,6 @@ export function parseJobData(
     taskNavState,
     pendingTasks,
     showVerificationBanner,
-    taskIdsWithStop,
-    taskIdsWithStopActiveIndex,
     state: data.state,
     totalTasks: data.totalTasks,
     expectedEndDate: data.expectedEndDate,

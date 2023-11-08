@@ -82,7 +82,6 @@ const Footer: FC<FooterProps> = ({ task }) => {
   const {
     id: jobId,
     state: jobState,
-    taskNavState: { stopExecution },
     isInboxView,
     pendingTasks,
     code,
@@ -326,16 +325,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
           primaryActionLabel = 'Start task';
           primaryActionProps = {
             onClick: () => {
-              if (stopExecution) {
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.ADD_STOP,
-                    props: {},
-                  }),
-                );
-              } else {
-                onStartTask();
-              }
+              onStartTask();
             },
           };
         } else if (isUserAssignedToTask && !(jobState in CompletedJobStates)) {
@@ -361,16 +351,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
           primaryActionLabel = 'Start task';
           primaryActionProps = {
             onClick: () => {
-              if (stopExecution) {
-                dispatch(
-                  openOverlayAction({
-                    type: OverlayNames.ADD_STOP,
-                    props: {},
-                  }),
-                );
-              } else {
-                onStartTask();
-              }
+              onStartTask();
             },
           };
         } else if (isUserAssignedToTask && !(jobState in CompletedJobStates)) {
