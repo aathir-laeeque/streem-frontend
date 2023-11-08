@@ -116,6 +116,7 @@ const generateNewParameter = ({
           expression: '',
           uom: '',
           variables: {},
+          precision: 9,
         },
         label,
         mandatory,

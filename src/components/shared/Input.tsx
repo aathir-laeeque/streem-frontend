@@ -5,6 +5,9 @@ import { getUnixTime, parseISO, set } from 'date-fns';
 import { noop } from 'lodash';
 import React, { ComponentPropsWithRef, forwardRef, useMemo } from 'react';
 import styled, { css } from 'styled-components';
+import InfoIcon from '#assets/svg/info-icon.svg';
+import { withStyles } from '@material-ui/styles';
+import { Tooltip } from '@material-ui/core';
 
 type OnChangeType = {
   name: string;
@@ -30,37 +33,62 @@ type InputProps = {
   disabled?: boolean;
   description?: string;
   type?: InputTypes;
+  tooltipLabel?: string;
 } & Omit<ComponentPropsWithRef<'input'>, 'onChange' | 'type'>;
 
 type WrapperProps = {
   hasError: boolean;
 };
 
+const CustomTooltip = withStyles({
+  tooltip: {
+    width: '205px',
+    backgroundColor: '#393939',
+    borderRadius: '0px',
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: '14px',
+  },
+  arrow: {
+    color: '#393939',
+  },
+})(Tooltip);
+
 const Wrapper = styled.div<WrapperProps>`
   display: flex;
   flex: 1;
   flex-direction: column;
 
-  .input-label {
-    align-items: center;
-    color: #525252;
+  .label-wrapper {
     display: flex;
-    font-size: 12px;
-    justify-content: flex-start;
-    letter-spacing: 0.32px;
-    line-height: 1.33;
-    margin-bottom: 8px;
 
-    .optional-badge {
-      color: #999999;
+    .input-label {
+      align-items: center;
+      color: #525252;
+      display: flex;
       font-size: 12px;
-      margin-left: 4px;
+      justify-content: flex-start;
+      letter-spacing: 0.32px;
+      line-height: 1.33;
+      margin-bottom: 8px;
+
+      .optional-badge {
+        color: #999999;
+        font-size: 12px;
+        margin-left: 4px;
+      }
+
+      .secondary-action {
+        color: #1d84ff;
+        cursor: pointer;
+        margin-left: auto;
+      }
     }
 
-    .secondary-action {
-      color: #1d84ff;
-      cursor: pointer;
-      margin-left: auto;
+    .info-icon-wrapper {
+      height: 16px;
+      width: 16px;
+      margin-left: 6px;
     }
   }
 
@@ -158,6 +186,7 @@ const TextInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     className,
     secondaryAction,
     description = '',
+    tooltipLabel,
     ...rest
   } = props;
 
@@ -218,17 +247,26 @@ const TextInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       key={key}
       onWheel={(e) => (e.target as HTMLInputElement).blur()}
     >
-      {label ? (
-        <label className="input-label">
-          {label}
-          {optional ? <span className="optional-badge">Optional</span> : null}
-          {secondaryAction && (
-            <span className="secondary-action" onClick={secondaryAction.action}>
-              {secondaryAction.text}
-            </span>
-          )}
-        </label>
-      ) : null}
+      <div className="label-wrapper">
+        {label ? (
+          <label className="input-label">
+            {label}
+            {optional ? <span className="optional-badge">Optional</span> : null}
+            {secondaryAction && (
+              <span className="secondary-action" onClick={secondaryAction.action}>
+                {secondaryAction.text}
+              </span>
+            )}
+          </label>
+        ) : null}
+        {tooltipLabel && (
+          <span className="info-icon-wrapper">
+            <CustomTooltip title={tooltipLabel} arrow placement="right">
+              <img src={InfoIcon}></img>
+            </CustomTooltip>
+          </span>
+        )}
+      </div>
 
       <div className="input-wrapper">
         {BeforeElement ? (

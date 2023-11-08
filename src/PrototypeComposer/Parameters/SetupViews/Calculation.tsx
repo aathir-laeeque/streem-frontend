@@ -4,7 +4,7 @@ import { MandatoryParameter, Parameter } from '#PrototypeComposer/checklist.type
 import { useTypedSelector } from '#store';
 import { apiGetParameters } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterOperators } from '#utils/globalTypes';
+import { FilterOperators, InputTypes } from '#utils/globalTypes';
 import { Add, Clear, DragHandle } from '@material-ui/icons';
 import { EquationNode, EquationParserError, parse } from 'equation-parser';
 import {
@@ -233,6 +233,7 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
   const { register, watch, setValue, errors, setError, clearErrors } = form;
   const variables = watch('data.variables', {});
   const expression = watch('data.expression', '');
+  const precision = watch('data.precision', '9');
 
   const equations = (expression as string)
     .split(/\n/g)
@@ -313,13 +314,26 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
 
   return (
     <CommonWrapper>
-      <TextInput
-        name={`data.uom`}
-        label="Unit of Measurement"
-        disabled={isReadOnly}
-        optional={true}
-        ref={register}
-      />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <TextInput
+          name={`data.precision`}
+          label="Enter Desired Precision"
+          type={InputTypes.NUMBER}
+          placeholder="Round off number value"
+          ref={register({
+            required: true,
+          })}
+          value={precision}
+          tooltipLabel='The precision indicates the number of decimal places to which the number will be rounded. For instance, a precision of "2" will round to two decimal places.'
+        />
+        <TextInput
+          name={`data.uom`}
+          label="Unit of Measurement"
+          disabled={isReadOnly}
+          optional={true}
+          ref={register}
+        />
+      </div>
       <ul className="list" {...(isReadOnly && { style: { marginBottom: '16px' } })}>
         {Object.entries(variables).map(([variableName, value]: [string, any], index) => {
           return (
