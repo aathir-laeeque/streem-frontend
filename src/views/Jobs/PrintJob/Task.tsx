@@ -168,7 +168,7 @@ const MemoTask: FC<{
                 ? formatDateTime({ value: startedAt, type: InputTypes.DATE })
                 : '___/__/____'}
             </Text>
-            <Text style={styles.taskStartDateInput}>MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;yyyy</Text>
+            <Text style={styles.taskStartDateInput}>MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;YYYY</Text>
           </View>
           <View style={styles.taskStartTime}>
             <Text style={styles.taskTopHeaderTitle}>Start Time</Text>
@@ -353,7 +353,7 @@ const MemoTask: FC<{
               >
                 ___/__/____
               </Text>
-              <Text style={styles.taskStartDateInput}>MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;yyyy</Text>
+              <Text style={styles.taskStartDateInput}>MMM&nbsp;&nbsp;DD&nbsp;&nbsp;&nbsp;YYYY</Text>
             </View>
           </View>
           <View style={[styles.flexView, { margin: '0px 4px' }]}>
