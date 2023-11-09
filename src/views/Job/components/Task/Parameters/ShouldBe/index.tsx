@@ -5,7 +5,6 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { roles } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { ParameterState, SupervisorResponse } from '#types';
-import { customOnChange } from '#utils/formEvents';
 import { InputTypes } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
@@ -16,6 +15,7 @@ import { useDispatch } from 'react-redux';
 import { ParameterProps } from '../Parameter';
 import ParameterVerificationView from '../Verification/ParameterVerificationView';
 import { Wrapper } from './styles';
+import { debounce } from 'lodash';
 
 const generateText = (label: string | undefined, data: any) => {
   if (data.operator === 'BETWEEN') {
@@ -115,6 +115,7 @@ const ShouldBeParameter: FC<
   } = useTypedSelector((state) => state);
 
   const numberInputRef = useRef<HTMLInputElement>(null);
+  const debounceInputRef = useRef(debounce((event, functor) => functor(event), 2000));
 
   const dispatch = useDispatch();
 
@@ -266,7 +267,7 @@ const ShouldBeParameter: FC<
   };
 
   const onChangeHandler = ({ value }: { value: string }) => {
-    customOnChange(value, (value: string) => {
+    debounceInputRef.current(value, (value: string) => {
       setState((prevState) => ({
         ...prevState,
         value,
