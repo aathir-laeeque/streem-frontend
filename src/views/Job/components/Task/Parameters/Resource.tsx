@@ -7,7 +7,7 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { MandatoryParameter, ParameterMode, StoreParameter } from '#types';
 import { baseUrl } from '#utils/apiUrls';
-import { ResponseObj } from '#utils/globalTypes';
+import { FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { jobActions } from '#views/Job/jobStore';
 import { getQrCodeData, qrCodeValidator } from '#views/Ontology/utils';
@@ -221,6 +221,15 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
           data: qrData,
           callBack: () => onSelectOption(result),
           objectTypeValidation: qrData?.objectTypeId === parameter?.data?.objectTypeId,
+          filters: parameter?.data?.propertyFilters
+            ? {
+                op: getFields(parameter.data.propertyFilters).op,
+                fields: [
+                  ...(getFields(parameter.data.propertyFilters)?.fields || []),
+                  { field: 'id', op: FilterOperators.EQ, values: [qrData?.objectId] },
+                ],
+              }
+            : {},
         });
       }
     } catch (error) {

@@ -326,9 +326,9 @@ const ResourceTaskView: FC<
           objectTypeValidation: qrData?.objectTypeId === parameter?.data?.objectTypeId,
           filters: parameter?.data?.propertyFilters
             ? {
-                ...parameter?.data?.propertyFilters,
+                op: getFields(parameter.data.propertyFilters).op,
                 fields: [
-                  ...parameter?.data?.propertyFilters?.fields,
+                  ...(getFields(parameter.data.propertyFilters)?.fields || []),
                   { field: 'id', op: FilterOperators.EQ, values: [qrData?.objectId] },
                 ],
               }
