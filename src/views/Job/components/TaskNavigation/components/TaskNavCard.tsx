@@ -25,7 +25,7 @@ const taskStateColor = (taskStatus: TaskExecutionStates) => {
 
 const TaskDetailCardWrapper = styled.div.attrs({
   className: 'task-detail-card-wrapper',
-})<{ backgroundColor?: string }>`
+})<{ backgroundColor?: string; error: boolean }>`
   display: flex;
   align-items: center;
   padding: 8px 16px;
@@ -43,6 +43,7 @@ const TaskDetailCardWrapper = styled.div.attrs({
 
   .title {
     white-space: nowrap;
+    color: ${({ error }) => `${error ? '#DA1E28' : 'unset'}`};
   }
 
   .task-detail-right {
@@ -52,10 +53,17 @@ const TaskDetailCardWrapper = styled.div.attrs({
   }
 `;
 
-const TaskNavCard: FC<{ task: any; taskNo: number }> = ({ task, taskNo }) => {
+const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[] }> = ({
+  task,
+  taskNo,
+  errors,
+}) => {
   const dispatch = useDispatch();
   const activeTaskId = useTypedSelector((state) => state.job.taskNavState.current);
+  const isError = !!errors.length;
   const nameColor = task?.taskExecution?.state in COMPLETED_TASK_STATES ? '#C2C2C2' : '#161616';
+  const backgroundColor =
+    task.id === activeTaskId ? (isError ? '#FFF1F1' : '#e7f1fd') : isError ? '#FFF1F1' : '#ffffff';
 
   return (
     <TaskDetailCardWrapper
@@ -66,7 +74,8 @@ const TaskNavCard: FC<{ task: any; taskNo: number }> = ({ task, taskNo }) => {
           }),
         );
       }}
-      backgroundColor={task.id === activeTaskId ? '#e7f1fd' : '#ffffff'}
+      backgroundColor={backgroundColor}
+      error={isError && task.id === activeTaskId}
     >
       <div className="title">Task {taskNo}</div>
       <div className="task-detail-right">

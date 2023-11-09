@@ -154,7 +154,7 @@ export const groupTaskErrors = (errors: ResponseError[]) => {
   errors.forEach((error) => {
     if (error.code in ParameterErrors) {
       parametersErrors.set(error.id, error.message);
-    } else if (error.code in TaskErrors) {
+    } else if (error.code in { ...TaskErrors, ...JobWithExceptionInCompleteTaskErrors }) {
       taskErrors.push(error.message);
     }
   });
@@ -423,8 +423,8 @@ function* startJobSaga({ payload }: ReturnType<typeof jobActions.startJob>) {
 
 function* completeJobSaga({ payload }: ReturnType<typeof jobActions.completeJob>) {
   try {
+    const { stages, tasks }: RootState['job'] = yield select((state: RootState) => state.job);
     const { jobId, withException = false, values, details } = payload;
-
     const { errors, data }: ResponseObj<Job> = yield call(
       request,
       'PATCH',
@@ -439,6 +439,19 @@ function* completeJobSaga({ payload }: ReturnType<typeof jobActions.completeJob>
     }
 
     if (errors) {
+      const { taskErrors, parametersErrors } = groupTaskErrors(errors);
+      yield all(
+        errors.map((error) =>
+          put(
+            jobActions.updateTaskErrors({
+              id: error.id,
+              taskErrors,
+              parametersErrors,
+            }),
+          ),
+        ),
+      );
+
       if (!withException) {
         // const { taskErrors, parametersErrors } = groupTaskErrors(errors);
         // yield put(jobActions.updateTaskErrors()
@@ -453,8 +466,27 @@ function* completeJobSaga({ payload }: ReturnType<typeof jobActions.completeJob>
               type: OverlayNames.JOB_COMPLETE_ALL_TASKS_ERROR,
             }),
           );
+
+          const filteredErrors = errors.filter((err) => err.code === 'E223');
+
+          if (filteredErrors.length) {
+            let errorText = 'Error Correction has been initiated but not completed for Tasks:';
+            const errorMessages = filteredErrors.map((error) => {
+              const task = tasks.get(error.id);
+              let stage;
+              if (task?.stageId) {
+                stage = stages.get(task.stageId);
+              }
+              return `${stage?.orderTree}.${task?.orderTree}`;
+            });
+            if (errorMessages.length > 0) {
+              errorText += ` ${errorMessages.join(', ')}${errorMessages.length > 1 ? '.' : ''}`;
+            }
+            throw errorText;
+          }
         }
       }
+      throw getErrorMsg(errors);
     }
 
     if (data) {
@@ -469,7 +501,7 @@ function* completeJobSaga({ payload }: ReturnType<typeof jobActions.completeJob>
       navigate(-1);
     }
   } catch (error) {
-    yield* handleCatch('Job', 'completeJobSaga', error);
+    yield* handleCatch('Job', 'completeJobSaga', error, true);
   } finally {
     yield put(
       jobActions.setUpdating({
