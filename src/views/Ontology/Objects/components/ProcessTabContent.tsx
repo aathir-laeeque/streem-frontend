@@ -70,6 +70,7 @@ const ProcessTabContent = () => {
         apiGetProcessesByResource(selectedObjectType!.id),
         {
           params: {
+            objectId: selectedObject!.id,
             facilityId,
             page,
             size,
