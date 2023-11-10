@@ -7,7 +7,7 @@ import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { NestedSelect, NestedSelectProps } from '#components/shared/NestedSelect';
-import checkPermission from '#services/uiPermissions';
+import checkPermission, { isFeatureAllowed } from '#services/uiPermissions';
 import { useTypedSelector } from '#store';
 import { toggleIsDrawerOpen } from '#store/extras/action';
 import { switchFacility } from '#store/facilities/actions';
@@ -95,7 +95,7 @@ const NavigationMenu: FC = () => {
       checkPermission([selectedFacility?.id === ALL_FACILITY_ID ? 'globalSidebar' : 'sidebar', key])
     ) {
       if (key === 'reports') {
-        if (features?.metabaseReports) {
+        if (isFeatureAllowed('metabaseReports')) {
           menuItems.push({ ...value, path: `/${key}` });
         }
       } else {

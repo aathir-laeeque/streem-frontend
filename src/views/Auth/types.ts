@@ -91,10 +91,14 @@ export interface AuthState {
   readonly selectedUseCase?: UseCaseType;
   readonly fetchingUseCaseList: boolean;
   readonly userType?: string;
-  readonly features?: Record<string, boolean>;
+  readonly features?: FeatureFlags;
   readonly ssoIdToken?: string;
   readonly identity: string;
 }
+
+export type FeatureFlags = {
+  metabaseReports: boolean;
+};
 
 export enum TokenTypes {
   PASSWORD_RESET = 'PASSWORD_RESET',

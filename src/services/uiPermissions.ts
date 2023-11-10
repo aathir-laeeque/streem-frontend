@@ -1,3 +1,4 @@
+import { FeatureFlags } from '#views/Auth/types';
 import { get } from 'lodash';
 
 export enum roles {
@@ -228,6 +229,13 @@ const checkPermission = (keys: string[]) => {
   }
 
   return false;
+};
+
+export const isFeatureAllowed = (feature: keyof FeatureFlags) => {
+  const {
+    auth: { features },
+  } = window.store.getState();
+  return features && features[feature];
 };
 
 export default checkPermission;
