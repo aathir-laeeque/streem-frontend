@@ -1,3 +1,4 @@
+import { omitBy } from 'lodash';
 import { User } from './types';
 
 type getUserNameArgs = {
@@ -5,7 +6,7 @@ type getUserNameArgs = {
   withEmployeeId?: boolean;
 };
 
-export const getUserName = ({
-  user: { firstName, lastName, employeeId },
-  withEmployeeId = false,
-}: getUserNameArgs) => `${firstName} ${lastName}${withEmployeeId ? ` ID: ${employeeId}` : ''}`;
+export const getUserName = ({ user, withEmployeeId = false }: getUserNameArgs) => {
+  const { firstName = '', lastName = '', employeeId } = omitBy(user, (v) => !v);
+  return `${firstName} ${lastName}${withEmployeeId ? ` ID: ${employeeId}` : ''}`;
+};

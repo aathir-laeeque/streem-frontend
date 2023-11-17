@@ -1,4 +1,5 @@
 import { User } from '#store/users/types';
+import { omitBy } from 'lodash';
 
 export const getInitials = (name: string) => {
   let initials: RegExpMatchArray | string = name.match(/\b\w/g) || [];
@@ -7,7 +8,8 @@ export const getInitials = (name: string) => {
 };
 
 // TODO : remove this function from here and use the one defined in the helpers of users service
-export const getFullName = ({ firstName, lastName }: Pick<User, 'firstName' | 'lastName'>) => {
+export const getFullName = (props: Pick<User, 'firstName' | 'lastName'>) => {
+  const { firstName = '', lastName = '' } = omitBy(props, (v) => !v);
   return `${firstName} ${lastName}`;
 };
 
