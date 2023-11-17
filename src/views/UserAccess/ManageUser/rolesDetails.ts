@@ -9,13 +9,14 @@ enum PermissionCategories {
 }
 
 enum ChecklistFeatures {
-  CREATE_UNIT_LEVEL_CHECKLISTS = 'Create Unit-Level Processes',
+  CREATE_AND_REVISE_UNIT_LEVEL_CHECKLISTS = 'Create and Revise Unit-Level Processes',
   VIEW_EXISTING_UNIT_LEVEL_CHECKLISTS = 'View existing Unit-Level Processes',
   VIEW_UNIT_LEVEL_PROTOTYPES = 'View Unit-Level Prototypes',
+  ARCHIVE_UNIT_LEVEL_PROTOTYPES = 'Archive Unit-Level Prototypes',
   REVIEW_AND_APPROVE_UNIT_LEVEL_CHECKLISTS = 'Review and Approve Unit-Level Processes',
-  RELEASE_UNIT_LEVEL_CHECKLISTS = 'Release Unit-Level Processes',
-  REVISE_AND_ARCHIVE_UNIT_LEVEL_CHECKLISTS = 'Revise and Archive Unit-Level Processes',
-  RECALL_CHECKLISTS = 'Recall Unit-Level Processes',
+  RELEASE_UNIT_LEVEL_CHECKLISTS = 'Publish Unit-Level Processes',
+  ARCHIVE_UNIT_LEVEL_CHECKLISTS = 'Archive Unit-Level Processes',
+  RECALL_CHECKLISTS = 'Recall a Process',
 }
 
 enum JobFeatures {
@@ -53,15 +54,14 @@ enum GlobalPortalFeatures {
   REVIEW_AND_APPROVE_GLOBAL_CHECKLISTS = 'Review and Approve Global Processes',
   RELEASE_GLOBAL_CHECKLISTS = 'Release Global Processes',
   REVISE_AND_ARCHIVE_GLOBAL_CHECKLISTS = 'Revise and Archive Global Processes',
+  RECALL_GLOBAL_CHECKLISTS = 'Recall a Global Process',
 }
 
 export const rolesDetails = {
   [RoleIdByName.ACCOUNT_OWNER]: {
     name: 'Account Owner',
     permissions: {
-      [PermissionCategories.CHECKLIST_FEATURES]: Object.values(ChecklistFeatures)
-        .filter((feature) => feature !== ChecklistFeatures.RECALL_CHECKLISTS)
-        .map((v) => v),
+      [PermissionCategories.CHECKLIST_FEATURES]: Object.values(ChecklistFeatures).map((v) => v),
       [PermissionCategories.JOB_FEATURES]: Object.values(JobFeatures).map((v) => v),
       [PermissionCategories.ADMINISTRATIVE_FEATURES]: Object.values(AdministrativeFeatures).map(
         (v) => v,
@@ -76,11 +76,11 @@ export const rolesDetails = {
     name: 'Facility Admin',
     permissions: {
       [PermissionCategories.CHECKLIST_FEATURES]: [
-        ChecklistFeatures.CREATE_UNIT_LEVEL_CHECKLISTS,
+        ChecklistFeatures.CREATE_AND_REVISE_UNIT_LEVEL_CHECKLISTS,
         ChecklistFeatures.VIEW_EXISTING_UNIT_LEVEL_CHECKLISTS,
         ChecklistFeatures.VIEW_UNIT_LEVEL_PROTOTYPES,
         ChecklistFeatures.REVIEW_AND_APPROVE_UNIT_LEVEL_CHECKLISTS,
-        ChecklistFeatures.REVISE_AND_ARCHIVE_UNIT_LEVEL_CHECKLISTS,
+        ChecklistFeatures.ARCHIVE_UNIT_LEVEL_PROTOTYPES,
         ChecklistFeatures.RECALL_CHECKLISTS,
       ],
       [PermissionCategories.JOB_FEATURES]: Object.values(JobFeatures).map((v) => v),

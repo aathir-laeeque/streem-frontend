@@ -524,7 +524,10 @@ const ListView: FC<ListViewProps & { label: string }> = ({ navigate = navigateTo
             </div>
           );
         } else {
-          if (item?.audit?.createdBy?.id === userId || checkPermission(['checklists', 'archive'])) {
+          if (
+            item?.audit?.createdBy?.id === userId ||
+            checkPermission(['checklists', 'archivePrototype'])
+          ) {
             return prototypeActionsTemplate(item);
           }
           return prototypeActionsTemplate();
