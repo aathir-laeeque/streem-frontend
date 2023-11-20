@@ -460,7 +460,7 @@ export const apiArchiveParameterVariation = () => `${baseUrl}/parameter-executio
 
 export const apiGetVariationsListByParameterId = (parameterResponseId: string) =>
   `${baseUrl}/parameter-executions/variations/parameter/${parameterResponseId}`;
-//above parameterResponseId send
+
 export const apiSetTaskRecurrence = (taskId: string) => `${baseUrl}/tasks/${taskId}/recurrence/set`;
 
 export const apiRemoveTaskRecurrence = (taskId: string) =>
@@ -480,3 +480,8 @@ export const apiGetJobAnnotation = (jobId: Job['id']) => `${baseUrl}/jobs/annota
 
 export const apiPostPatchJobAnnotation = (jobId?: Job['id']) =>
   `${baseUrl}/jobs/annotations${jobId ? `/${jobId}` : ``}`;
+
+export const apiTaskInterLocks = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/interlocks`;
+
+export const apiTaskInterLocksArchive = (taskId: Task['id'], interlockId: string) =>
+  `${baseUrl}/tasks/${taskId}/interlocks/${interlockId}`;

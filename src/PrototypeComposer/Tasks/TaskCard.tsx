@@ -60,6 +60,7 @@ import taskRecurrenceIcon from '#assets/svg/task-recurrence-icon.svg';
 import taskRecurrenceActive from '#assets/svg/task-recurrence-blue.svg';
 import scheduleTaskIcon from '#assets/svg/schedule-icon-black.svg';
 import scheduleTaskIconActive from '#assets/svg/schedule-icon-blue.svg';
+import taskConditionsIcon from '#assets/svg/TaskInterlocks.svg';
 
 const AddActivity = () => {
   return (
@@ -461,6 +462,26 @@ const TaskCard: FC<
                   </div>
                 </div>
               )}
+              <div
+                className="task-config-control-item"
+                id="add-interlocks"
+                onClick={() => {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.CONFIGURE_TASK_CONDITIONS,
+                      props: {
+                        checklistId: data?.id,
+                        isReadOnly,
+                      },
+                    }),
+                  );
+                }}
+              >
+                <div>
+                  <img src={taskConditionsIcon} alt="icon" width="24px" className="icon" />
+                  Configure Conditions
+                </div>
+              </div>
             </div>
           </div>
 

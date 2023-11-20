@@ -34,6 +34,7 @@ import SignOffSuccessModal from '#PrototypeComposer/Overlays/SignOffSuccess';
 import { SubmitReviewModal } from '#PrototypeComposer/Overlays/SubmitReview';
 import { TaskMediaModal, TimedTaskConfigModal } from '#PrototypeComposer/modals';
 import EditingDisabledModal from '#PrototypeComposer/modals/EditingDisabled';
+import ConfigureTaskConditions from '#PrototypeComposer/Overlays/ConfigureTaskConditions';
 import { QRGenerator, QRScanner } from '#components';
 import WebCamOverlay from '#components/shared/WebCamOverlay';
 import { useTypedSelector } from '#store';
@@ -273,6 +274,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
       return <ScheduleTaskModal {...params} />;
     case OverlayNames.ADD_REMARK_MODAL:
       return <AddRemark {...params} />;
+
+    case OverlayNames.CONFIGURE_TASK_CONDITIONS:
+      return <ConfigureTaskConditions {...params} />;
 
     default:
       return null;
