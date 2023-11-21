@@ -1,6 +1,14 @@
 import { ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.types';
 import rightArrow from '#assets/svg/right-arrow.svg';
-import { Avatar, Checkbox, DataTable, LoadingContainer, Pagination, TextInput } from '#components';
+import {
+  Avatar,
+  Checkbox,
+  DataTable,
+  LoadingContainer,
+  Pagination,
+  ResourceFilter,
+  TextInput,
+} from '#components';
 import { closeOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { Select } from '#components/shared/Select';
@@ -124,6 +132,7 @@ const VerificationsContent: FC<{
     jobId,
     status: ParameterVerificationStatus.PENDING,
   });
+  const [resourceFilter, setResourceFilter] = useState<string>('');
 
   useEffect(() => {
     fetchData();
@@ -131,7 +140,7 @@ const VerificationsContent: FC<{
     return () => {
       dispatch(fetchVerificationsSuccess());
     };
-  }, [filters]);
+  }, [filters, resourceFilter]);
 
   const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE } = params;
@@ -140,10 +149,15 @@ const VerificationsContent: FC<{
         params: {
           page,
           size,
+          ...(resourceFilter && { objectId: resourceFilter }),
           ...filters,
         },
       }),
     );
+  };
+
+  const onChildChange = (option: any) => {
+    setResourceFilter(option.id);
   };
 
   return (
@@ -280,6 +294,9 @@ const VerificationsContent: FC<{
             }}
             isClearable={true}
           />
+        </div>
+        <div className="select-filter">
+          <ResourceFilter onChange={onChildChange} onClear={() => setResourceFilter('')} />
         </div>
       </div>
       <LoadingContainer
