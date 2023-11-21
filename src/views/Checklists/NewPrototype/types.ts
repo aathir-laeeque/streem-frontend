@@ -31,12 +31,22 @@ export enum FormMode {
   VIEW = 'VIEW',
 }
 
+export type KeyValue = {
+  label: string;
+  value: string;
+};
+
+export type PropertyTag = {
+  [key: string]: KeyValue;
+};
+
 export type FormValues = {
   authors: Author[];
   description: string;
   name: string;
   createdBy: Pick<User, 'id' | 'employeeId' | 'firstName' | 'lastName' | 'email'>;
   properties: PrototypeProperties[];
+  property: PropertyTag;
 };
 
 export type FormValuesOnlyWithAuthorIds = Pick<

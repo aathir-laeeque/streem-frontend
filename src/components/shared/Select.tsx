@@ -53,6 +53,13 @@ const Wrapper = styled.div.attrs({
       color: #101010;
     }
   }
+
+  .field-error {
+    color: #eb5757;
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
 `;
 
 export type Option = { label: string; value: string | number };

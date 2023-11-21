@@ -107,6 +107,7 @@ export type fetchDataParams = {
   query?: string;
   filters?: FilterField[];
   objectId?: string;
+  propertyId?: string;
 };
 
 export enum SsoStates {

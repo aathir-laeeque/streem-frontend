@@ -2,17 +2,21 @@ import { AddNewItem, Avatar, Button, Select, Textarea, TextInput, Option } from 
 import { ComposerEntity } from '#PrototypeComposer/types';
 import { defaultParams, OtherUserState, User, useUsers } from '#services/users';
 import { useTypedSelector } from '#store/helpers';
-import { ALL_FACILITY_ID } from '#utils/constants';
-import { Error } from '#utils/globalTypes';
+import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { Error, FilterOperators, fetchDataParams } from '#utils/globalTypes';
 import { getFullName } from '#utils/stringUtils';
 import { Close, Error as ErrorIcon } from '@material-ui/icons';
 import { navigate } from '@reach/router';
-import { debounce, isEmpty, pick } from 'lodash';
+import { debounce, isEmpty, keyBy, pick } from 'lodash';
 import React, { FC, FormEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { addNewPrototype, updatePrototype } from './actions';
-import { Author, FormErrors, FormMode, FormValues, Props } from './types';
+import { Author, FormErrors, FormMode, FormValues, KeyValue, Props } from './types';
+import { fetchChecklists } from '../ListView/actions';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
+import { Checklist } from '#PrototypeComposer/checklist.types';
 
 const FormError = styled.div`
   align-items: center;
@@ -33,6 +37,12 @@ const FormError = styled.div`
 const validateForm = (values: FormValues) => {
   const formErrors: FormErrors = { name: '', properties: {} };
   let isValid = true;
+
+  values.properties.map((el) => {
+    if (values.property && values.property[el.id] && values.property[el.id].value) {
+      el.value = values.property[el.id].label;
+    }
+  });
 
   if (!values.name) {
     isValid = false;
@@ -56,6 +66,11 @@ const PrototypeForm: FC<Props> = (props) => {
   const { selectedFacility: { id: facilityId = '' } = {} } = useTypedSelector(
     (state) => state.auth,
   );
+  const {
+    pageable,
+    currentPageData,
+    loading: checklistDataLoading,
+  } = useTypedSelector((state) => state.checklistListView);
 
   const { users, usersById, loadMore } = useUsers({
     userState:
@@ -81,6 +96,7 @@ const PrototypeForm: FC<Props> = (props) => {
       'email',
     ]),
     properties: [],
+    property: {},
   });
 
   const [formErrors, setFormErrors] = useState<FormErrors>({
@@ -89,9 +105,27 @@ const PrototypeForm: FC<Props> = (props) => {
   });
 
   useEffect(() => {
+    fetchChecklistData({ page: 0 });
+  }, []);
+
+  const getPrefillPropertyDetails = (values) => {
+    let obj = {};
+    for (let key in values) {
+      if (formData?.properties?.find((el) => el.id === values[key].id)?.value) {
+        obj[key] = {
+          value: values[key].id,
+          label: formData?.properties?.find((el) => el.id === values[key].id)?.value ?? '',
+        };
+      }
+    }
+    return obj;
+  };
+
+  useEffect(() => {
     if (!isEmpty(listById)) {
       setFormValues((values) => ({
         ...values,
+        property: getPrefillPropertyDetails(listById),
         properties: Object.values(listById).map((property) => ({
           id: property.id,
           label: property.label,
@@ -118,6 +152,44 @@ const PrototypeForm: FC<Props> = (props) => {
       });
       setFormErrors(updatedFormErrors);
     }
+  };
+
+  const fetchChecklistData = ({
+    page = DEFAULT_PAGE_NUMBER,
+    size = DEFAULT_PAGE_SIZE,
+    query = '',
+    propertyId,
+  }: fetchDataParams) => {
+    const filters = JSON.stringify({
+      op: FilterOperators.AND,
+      fields: [
+        ...(propertyId
+          ? [
+              {
+                field: 'checklistPropertyValues.facilityUseCasePropertyMapping.propertiesId',
+                op: FilterOperators.EQ,
+                values: [propertyId],
+              },
+            ]
+          : [{}]),
+        { field: 'checklistPropertyValues.value', op: FilterOperators.LIKE, values: [query] },
+        {
+          field: 'useCaseId',
+          op: FilterOperators.EQ,
+          values: [selectedUseCase!.id],
+        },
+      ],
+    });
+    if (query && propertyId) {
+      setFormValues((values) => ({
+        ...values,
+        property: {
+          ...formValues.property,
+          [propertyId]: { value: query, label: query },
+        },
+      }));
+    }
+    dispatch(fetchChecklists({ page, size, filters, sort: 'id' }, page === 0));
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -179,6 +251,46 @@ const PrototypeForm: FC<Props> = (props) => {
     return filteredUsers;
   };
 
+  const filterProperties = (values: Checklist[], propertyId: string) => {
+    const arr = values.map((value) => {
+      const data = keyBy(value.properties, 'id');
+      return {
+        label: data[propertyId]?.value,
+        value: data[propertyId]?.id,
+      };
+    });
+    return arr;
+  };
+
+  const checkUniquenessData = (values: Checklist[], propertyId: string, typeValue: KeyValue) => {
+    if (values.length) {
+      values.map((value) => {
+        const data = keyBy(value.properties, 'id');
+        if (
+          data[propertyId] &&
+          typeValue &&
+          data[propertyId].value.trim().toLowerCase() === typeValue.value.trim().toLowerCase()
+        ) {
+          dispatch(
+            showNotification({
+              type: NotificationType.WARNING,
+              msg: 'The value entered is not unique',
+            }),
+          );
+        }
+      });
+    } else {
+      if (typeValue) {
+        dispatch(
+          showNotification({
+            type: NotificationType.SUCCESS,
+            msg: 'The value entered is unique',
+          }),
+        );
+      }
+    }
+  };
+
   if (!users.length) {
     return null;
   }
@@ -224,32 +336,58 @@ const PrototypeForm: FC<Props> = (props) => {
             setFormValues((values) => ({ ...values, [name]: value }));
           }, 500)}
         />
-
         {formValues.properties.map((property, index) => (
-          <TextInput
-            key={index}
-            defaultValue={property.value}
-            disabled={formMode === FormMode.VIEW}
-            error={formErrors.properties[property.id.toString()]}
-            label={property.label}
-            onChange={debounce(({ value }) => {
-              setFormErrors((errors) => ({
-                ...errors,
-                properties: {
-                  ...errors.properties,
-                  [property.id.toString()]: '',
-                },
-              }));
-              setFormValues((values) => ({
-                ...values,
-                properties: [
-                  ...values.properties.slice(0, index),
-                  { ...property, value },
-                  ...values.properties.slice(index + 1),
-                ],
-              }));
-            }, 500)}
-          />
+          <div style={{ margin: '10px 0' }}>
+            <Select
+              key={index}
+              placeholder={property.placeHolder}
+              label={property.label}
+              isClearable
+              isLoading={checklistDataLoading}
+              value={formValues.property && formValues.property[property.id]}
+              onBlur={() =>
+                checkUniquenessData(
+                  currentPageData,
+                  property.id,
+                  formValues.property && formValues.property[property.id],
+                )
+              }
+              onChange={(selectedOption) => {
+                setFormValues((values) => ({
+                  ...values,
+                  property: {
+                    ...formValues.property,
+                    [property.id]: selectedOption,
+                  },
+                }));
+                if (selectedOption) {
+                  dispatch(
+                    showNotification({
+                      type: NotificationType.WARNING,
+                      msg: 'The value entered is not unique.',
+                    }),
+                  );
+                }
+              }}
+              onMenuScrollToBottom={() => {
+                if (!pageable.last) {
+                  fetchChecklistData({
+                    page: pageable.page + 1,
+                    propertyId: property.id,
+                  });
+                }
+              }}
+              onInputChange={debounce((value, actionMeta) => {
+                if (actionMeta.prevInputValue !== value)
+                  fetchChecklistData({
+                    query: value,
+                    propertyId: property.id,
+                  });
+              }, 500)}
+              error={formErrors && formErrors.properties[property.id]}
+              options={filterProperties(currentPageData, property.id)}
+            />
+          </div>
         ))}
       </div>
 
