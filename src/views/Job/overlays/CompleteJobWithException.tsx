@@ -148,6 +148,7 @@ const Wrapper = styled.div`
           color: #ff6b6b;
           display: flex;
           margin-left: auto;
+          cursor: pointer;
 
           .icon {
             color: #ff6b6b;
@@ -290,7 +291,15 @@ const CompleteJobWithExceptionModal: FC<CommonOverlayProps<any>> = ({
             {values.medias.map((media, index) => (
               <li className="item" key={index}>
                 <div>{media.originalFilename}</div>
-                <div className="remove">
+                <div
+                  className="remove"
+                  onClick={() => {
+                    setValues((val) => {
+                      const medias = val.medias.filter((m) => m.mediaId !== media.mediaId);
+                      return { ...val, medias };
+                    });
+                  }}
+                >
                   <DeleteOutlined className="icon" />
                   Delete
                 </div>
