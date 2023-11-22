@@ -16,6 +16,7 @@ import TextInstruction from '#PrototypeComposer/Parameters/SetupViews/TextInstru
 import YesNoParameter from '#PrototypeComposer/Parameters/SetupViews/YesNo';
 import NumberValidation from '#PrototypeComposer/Parameters/ValidationViews/Number';
 import ResourceValidation from '#PrototypeComposer/Parameters/ValidationViews/Resource';
+import LeastCount from '#PrototypeComposer/Parameters/SetupViews/LeastCount';
 import {
   Checklist,
   MandatoryParameter,
@@ -26,7 +27,15 @@ import {
 } from '#PrototypeComposer/checklist.types';
 import { ParameterTypeMap, TargetEntityTypeVisual } from '#PrototypeComposer/constants';
 import { ComposerEntity } from '#PrototypeComposer/types';
-import { Button, Checkbox, FormGroup, StepperContainer, StyledTabs, ToggleSwitch, useDrawer } from '#components';
+import {
+  Button,
+  Checkbox,
+  FormGroup,
+  StepperContainer,
+  StyledTabs,
+  ToggleSwitch,
+  useDrawer,
+} from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
@@ -302,6 +311,9 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
               },
             ]}
           />
+        )}
+        {[MandatoryParameter.SHOULD_BE, MandatoryParameter.NUMBER].includes(type) && (
+          <LeastCount form={form} isReadOnly={isReadOnly} />
         )}
         {!(type in NonMandatoryParameter) && (
           <ToggleSwitch
@@ -581,19 +593,22 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
         shouldValidate: true,
       });
     };
-    if (
-      [
-        MandatoryParameter.DATE,
-        MandatoryParameter.DATE_TIME,
-        MandatoryParameter.MEDIA,
-        MandatoryParameter.MULTI_LINE,
-        MandatoryParameter.NUMBER,
-        MandatoryParameter.SIGNATURE,
-        MandatoryParameter.SINGLE_LINE,
-        MandatoryParameter.FILE_UPLOAD,
-      ].includes(type)
-    ) {
-      _setValue({});
+    const dataExists = !!getValues()?.data;
+    if (!dataExists) {
+      if (
+        [
+          MandatoryParameter.DATE,
+          MandatoryParameter.DATE_TIME,
+          MandatoryParameter.MEDIA,
+          MandatoryParameter.MULTI_LINE,
+          MandatoryParameter.NUMBER,
+          MandatoryParameter.SIGNATURE,
+          MandatoryParameter.SINGLE_LINE,
+          MandatoryParameter.FILE_UPLOAD,
+        ].includes(type)
+      ) {
+        _setValue({});
+      }
     }
   }, [type]);
 
