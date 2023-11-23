@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { debounce } from 'lodash';
 import { Search } from '@material-ui/icons';
-import { DataTable, LoadingContainer, Pagination, TextInput } from '#components';
+import { DataTable, LoadingContainer, Pagination, ResourceFilter, TextInput } from '#components';
 import { formatDateTime } from '#utils/timeUtils';
 import { navigate } from '@reach/router';
 import { apiGetShouldBeApprovals } from '#utils/apiUrls';
@@ -17,6 +17,7 @@ const urlParams = {
 
 const ApprovalsContent: FC = () => {
   const [filters, setFilters] = useState<Record<string, any>>(urlParams);
+  const [resourceFilter, setResourceFilter] = useState<string>('');
 
   const { list, reset, pagination, status } = createFetchList(
     apiGetShouldBeApprovals(),
@@ -24,9 +25,13 @@ const ApprovalsContent: FC = () => {
     false,
   );
 
+  const onChildChange = (option: any) => {
+    setResourceFilter(option.id);
+  };
+
   useEffect(() => {
-    reset({ params: { ...filters } });
-  }, [filters]);
+    reset({ params: { ...filters, objectId: resourceFilter } });
+  }, [filters, resourceFilter]);
 
   return (
     <TabContentWrapper>
@@ -42,6 +47,9 @@ const ApprovalsContent: FC = () => {
               500,
             )}
           />
+        </div>
+        <div className="select-filter">
+          <ResourceFilter onChange={onChildChange} onClear={() => setResourceFilter('')} />
         </div>
       </div>
       <LoadingContainer
