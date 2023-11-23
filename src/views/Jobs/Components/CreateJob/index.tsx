@@ -156,6 +156,12 @@ const CreateJobDrawer: FC<{
     }
   }, [submitting, createdData]);
 
+  useEffect(() => {
+    return () => {
+      handleCloseDrawer();
+    };
+  }, []);
+
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
