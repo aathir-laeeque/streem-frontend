@@ -198,7 +198,7 @@ const uiPermissions: Record<string, any> = {
     ],
   },
   approvals: {
-    view: [roles.SUPERVISOR, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+    view: [roles.ACCOUNT_OWNER, roles.SUPERVISOR, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
   },
   jobLogsViews: {
     create: [
