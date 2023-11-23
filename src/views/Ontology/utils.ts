@@ -22,13 +22,17 @@ export const getObjectData = async (data: Record<string, string | number | undef
 
 export const getObjectPartialCall = async (data: Record<string, any>) => {
   try {
-    const response: ResponseObj<Object> = await request('GET', `${baseUrl}/objects/partial`, {
-      params: { page: DEFAULT_PAGE_NUMBER, size: DEFAULT_PAGE_SIZE, ...data },
-    });
-    if (response.data) {
-      return response.data;
+    const response: ResponseObj<Array<Object>> = await request(
+      'GET',
+      `${baseUrl}/objects/partial`,
+      {
+        params: { page: DEFAULT_PAGE_NUMBER, size: DEFAULT_PAGE_SIZE, ...data },
+      },
+    );
+    if (response?.errors) {
+      throw response?.errors;
     }
-    throw response?.errors;
+    return response;
   } catch (error) {
     throw getErrorMsg(error as any);
   }
@@ -46,7 +50,10 @@ export const qrCodeValidator = async ({
   filters: any;
 }) => {
   if (objectTypeValidation && data?.entityType === 'OBJECTS') {
-    const fetchedData = await getObjectPartialCall({ collection: data.collection, filters });
+    const { data: fetchedData } = await getObjectPartialCall({
+      collection: data.collection,
+      filters,
+    });
     if (fetchedData?.length > 0) {
       callBack();
     } else {

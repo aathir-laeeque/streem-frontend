@@ -1,11 +1,10 @@
 import { NestedSelect, NestedSelectProps } from '#components';
 import { useTypedSelector } from '#store';
-import { apiGetObjects } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
-import { FilterOperators, ResponseObj, fetchDataParams } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { FilterOperators, fetchDataParams } from '#utils/globalTypes';
 import { fetchObjectTypes } from '#views/Ontology/actions';
 import { Object } from '#views/Ontology/types';
+import { getObjectPartialCall } from '#views/Ontology/utils';
 import { ExpandMore } from '@material-ui/icons';
 import ClearIcon from '@material-ui/icons/Clear';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
@@ -75,40 +74,28 @@ export const ResourceFilter = ({ onChange, onClear }: any) => {
           label: item.displayName,
           fetchItems: async (pageNumber?: number, query = '') => {
             if (typeof pageNumber === 'number') {
-              try {
-                const { data: resData, pageable }: ResponseObj<any[]> = await request(
-                  'GET',
-                  apiGetObjects(),
-                  {
-                    params: {
-                      page: pageNumber,
-                      size: DEFAULT_PAGE_SIZE,
-                      collection: item.externalId,
-                      filters: JSON.stringify({
-                        op: FilterOperators.AND,
-                        fields: [
-                          ...(query
-                            ? [{ field: 'displayName', op: FilterOperators.LIKE, values: [query] }]
-                            : []),
-                        ],
-                      }),
-                      usageStatus: 1,
-                    },
-                  },
-                );
-                if (resData && pageable) {
-                  return {
-                    options: resData.map((item) => ({
-                      ...item,
-                      value: item.id,
-                      label: item.displayName,
-                    })),
-                    pageable,
-                  };
-                }
-              } catch (e) {
-                console.error('Error while fetching existing unmapped parameters', e);
-              }
+              const { data: resData, pageable } = await getObjectPartialCall({
+                page: pageNumber,
+                size: DEFAULT_PAGE_SIZE,
+                collection: item.externalId,
+                filters: JSON.stringify({
+                  op: FilterOperators.AND,
+                  fields: [
+                    ...(query
+                      ? [{ field: 'displayName', op: FilterOperators.LIKE, values: [query] }]
+                      : []),
+                  ],
+                }),
+                usageStatus: 1,
+              });
+              return {
+                options: resData.map((item) => ({
+                  ...item,
+                  value: item.id,
+                  label: item.displayName,
+                })),
+                pageable,
+              };
             }
             return {
               options: [],
