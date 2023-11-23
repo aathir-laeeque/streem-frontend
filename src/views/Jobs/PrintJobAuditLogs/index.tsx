@@ -4,18 +4,69 @@ import { JobAuditLogType } from '#types';
 import { setKeepPersistedData } from '#utils';
 import { apiPrintJobActivity } from '#utils/apiUrls';
 import { ALL_FACILITY_ID, DEFAULT_PAGE_NUMBER } from '#utils/constants';
-import { InputTypes } from '#utils/globalTypes';
+import { FilterOperators, InputTypes } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { formatDateTime } from '#utils/timeUtils';
 import { jobActions } from '#views/Job/jobStore';
-import { Document, Image, PDFViewer, Page, Text, View } from '@react-pdf/renderer';
+import { Document, Image, PDFViewer, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { getUnixTime } from 'date-fns';
 import { groupBy } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { CommonJobPdfDetails, PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
 import { LoadingDiv, styles } from './styles';
-import { PrintJobAuditLogProps } from './types';
+import { Field, PrintJobAuditLogProps } from './types';
+import { TabLookLike } from '../Components/Documents/utils';
+import { getUserName } from '#services/users';
+
+const jobDataStyles = StyleSheet.create({
+  appliedFilter: {
+    marginHorizontal: 40,
+    marginVertical: 10,
+  },
+  filterContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  filterContainerTime: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  cardDetail: {
+    borderColor: '#000',
+    borderRadius: 4,
+    borderWidth: 1,
+    display: 'flex',
+    flex: 1,
+    marginRight: 8,
+    backgroundColor: '#fff',
+    marginVertical: 2,
+  },
+  cardDetailHeader: {
+    backgroundColor: '#000',
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 600,
+    padding: 4,
+    textAlign: 'left',
+  },
+
+  cardDetailBody: {
+    color: '#000',
+    fontSize: 12,
+    fontWeight: 600,
+    padding: 8,
+    textAlign: 'left',
+  },
+});
 
 const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
   const [jobDetails, setJobDetails] = useState<PdfJobDataType | undefined>();
@@ -24,6 +75,9 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
   } = useTypedSelector((state) => state.job);
   const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
   const { filters } = useTypedSelector((state) => state.auditLogFilters);
+  const _parsedAuditLogsFilter = JSON.parse(filters).fields;
+  const _parsedAuditLogsNames = JSON.parse(filters).names;
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -42,6 +96,28 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
       fetchJobPdfData();
     }
   }, []);
+
+  const getLabelForJobActivity = (fieldValue: Field) => {
+    if (fieldValue?.field === 'triggeredAt' && fieldValue?.op === 'GOE') {
+      return 'Start Time';
+    } else if (fieldValue?.field === 'triggeredAt' && fieldValue?.op === 'LOE') {
+      return 'End Time';
+    } else {
+      return 'Users';
+    }
+  };
+
+  const getValuesForJobActivity = (fieldValue: Field) => {
+    if (fieldValue?.field === 'triggeredAt') {
+      return formatDateTime({ value: fieldValue.values[0] }) || 'N/A';
+    } else {
+      let filteredUsers: string[] = [];
+      _parsedAuditLogsNames?.map((user) => {
+        filteredUsers.push(getUserName({ user, withEmployeeId: true }));
+      });
+      return filteredUsers.join(', ') || 'N/A';
+    }
+  };
 
   const fetchLogs = (page = DEFAULT_PAGE_NUMBER, size = 250) => {
     dispatch(
@@ -81,6 +157,47 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
             <Image src={logo} style={{ height: '24px' }} />
           </View>
           <CommonJobPdfDetails jobPdfData={jobDetails} />
+          <View style={jobDataStyles.appliedFilter} wrap={false}>
+            <TabLookLike title="Filters Applied">
+              <View style={jobDataStyles.filterContainer}>
+                <View style={jobDataStyles.filterContainerTime}>
+                  {_parsedAuditLogsFilter
+                    .filter((field: Field) => field.field === 'triggeredAt')
+                    .reduce((acc, field: Field) => {
+                      let index = 1;
+                      if (field.field === 'triggeredAt' && field.op === FilterOperators.GOE) {
+                        index = 0;
+                      }
+                      acc[index] = (
+                        <View style={jobDataStyles.cardDetail}>
+                          <Text style={jobDataStyles.cardDetailHeader}>
+                            {getLabelForJobActivity(field)}
+                          </Text>
+                          <Text style={jobDataStyles.cardDetailBody}>
+                            {getValuesForJobActivity(field)}
+                          </Text>
+                        </View>
+                      );
+                      return acc;
+                    }, [])}
+                </View>
+                {_parsedAuditLogsFilter
+                  .filter((field: Field) => field.field === 'triggeredBy')
+                  .map((field) => {
+                    return (
+                      <View style={jobDataStyles.cardDetail}>
+                        <Text style={jobDataStyles.cardDetailHeader}>
+                          {getLabelForJobActivity(field)}
+                        </Text>
+                        <Text style={jobDataStyles.cardDetailBody}>
+                          {getValuesForJobActivity(field)}
+                        </Text>
+                      </View>
+                    );
+                  })}
+              </View>
+            </TabLookLike>
+          </View>
 
           <View style={styles.container} break>
             {data.map((item) => {

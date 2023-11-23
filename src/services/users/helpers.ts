@@ -8,5 +8,5 @@ type getUserNameArgs = {
 
 export const getUserName = ({ user, withEmployeeId = false }: getUserNameArgs) => {
   const { firstName = '', lastName = '', employeeId } = omitBy(user, (v) => !v);
-  return `${firstName} ${lastName}${withEmployeeId ? ` ID: ${employeeId}` : ''}`;
+  return `${firstName} ${lastName}${withEmployeeId ? ` (ID: ${employeeId})` : ''}`;
 };

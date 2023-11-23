@@ -312,6 +312,10 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
       );
 
       const userFilter = appliedUsers.map((u) => u.id);
+      const nameOfTheUser = appliedUsers.map((u) => {
+        return { id: u.id, firstName: u.firstName, lastName: u.lastName, employeeId: u.employeeId };
+      });
+
       const fields = [
         {
           field: 'triggeredAt',
@@ -336,6 +340,7 @@ const AuditLogs: FC<Props> = ({ jobId }) => {
       const filters = JSON.stringify({
         op: FilterOperators.AND,
         fields,
+        names: nameOfTheUser,
       });
 
       dispatch(setAuditLogFilters(filters));
