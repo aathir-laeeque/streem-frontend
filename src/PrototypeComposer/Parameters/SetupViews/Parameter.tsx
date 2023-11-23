@@ -24,9 +24,10 @@ const ParameterParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
               label: 'Unit of Measurement',
               placeholder: 'Write Here',
               name: 'data.uom',
-              optional: true,
               disabled: isReadOnly,
-              ref: register,
+              ref: register({
+                required: true,
+              }),
             },
           },
           {
