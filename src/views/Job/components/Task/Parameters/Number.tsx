@@ -1,21 +1,21 @@
 import { FormGroup } from '#components';
 import { useTypedSelector } from '#store';
-import { customOnChange } from '#utils/formEvents';
 import { InputTypes } from '#utils/globalTypes';
 import { jobActions } from '#views/Job/jobStore';
 import { LinkOutlined } from '@material-ui/icons';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { debounce } from 'lodash';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ParameterProps } from './Parameter';
-import { MandatoryParameter } from '#types';
 
-const InputParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrectingError }) => {
+const NumberParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
   const [linkParamLabel, setLinkParamLabel] = useState<string>('');
   const [value, setValue] = useState(
     parameter.response.value ? parameter.response.value : undefined,
   );
   const { parameters, updating } = useTypedSelector((state) => state.job);
+  const debounceInputRef = useRef(debounce((event, functor) => functor(event), 2000));
 
   useEffect(() => {
     if (parameter.autoInitialize) {
@@ -31,12 +31,12 @@ const InputParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorre
 
   const onChange = useCallback(
     ({ value }: { value: string }) => {
-      customOnChange(value, (value: string) => {
+      debounceInputRef.current(value, (value: string) => {
         const _parameter = {
           ...parameter,
           data: {
             ...parameter.data,
-            input: value,
+            input: parseFloat(value),
           },
         };
 
@@ -59,17 +59,6 @@ const InputParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorre
     [isCorrectingError],
   );
 
-  const propsByType = useMemo(() => {
-    switch (parameter.type) {
-      case MandatoryParameter.SINGLE_LINE:
-        return { placeholder: 'Write here' };
-      case MandatoryParameter.MULTI_LINE:
-        return { placeholder: 'Users will write their comments here', rows: 4 };
-      default:
-        return undefined;
-    }
-  }, [parameter.type]);
-
   return (
     <div className="input-parameter">
       <div className="new-form-field">
@@ -77,7 +66,7 @@ const InputParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorre
           style={{ padding: 0 }}
           inputs={[
             {
-              type: parameter.type as unknown as InputTypes,
+              type: InputTypes.NUMBER,
               props: {
                 id: parameter.id,
                 value: value,
@@ -85,7 +74,7 @@ const InputParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorre
                 ['data-type']: parameter.type,
                 disabled: parameter?.autoInitialized,
                 onChange,
-                ...propsByType,
+                placeholder: 'Ex. 2',
               },
             },
           ]}
@@ -100,4 +89,4 @@ const InputParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorre
   );
 };
 
-export default InputParameter;
+export default NumberParameter;

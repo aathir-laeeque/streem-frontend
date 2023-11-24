@@ -19,6 +19,7 @@ import ShouldBeParameter from './ShouldBe';
 import SignatureParameter from './Signature';
 import ParameterVerificationView from './Verification/ParameterVerificationView';
 import YesNoParameter from './YesNo';
+import NumberParameter from './Number';
 
 export type ParameterProps = {
   parameter: StoreParameter;
@@ -163,9 +164,13 @@ const Parameter: FC<ParameterProps> = ({
                     />
                   );
 
+                case MandatoryParameter.NUMBER:
+                  return (
+                    <NumberParameter parameter={parameter} isCorrectingError={isCorrectingError} />
+                  );
+
                 case MandatoryParameter.SINGLE_LINE:
                 case MandatoryParameter.MULTI_LINE:
-                case MandatoryParameter.NUMBER:
                 case MandatoryParameter.DATE_TIME:
                 case MandatoryParameter.DATE:
                   return (
