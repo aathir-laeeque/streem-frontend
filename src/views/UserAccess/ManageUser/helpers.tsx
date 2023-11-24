@@ -57,6 +57,7 @@ const UserItem = {
   lastName: '',
   email: '',
   department: '',
+  reason: '',
 };
 
 type UserItem = typeof UserItem;
@@ -151,7 +152,13 @@ export const createSectionConfig = ({
   );
   const [users, setUsers] = useState<UserItem[]>([]);
   const [disabledKeys, setDisabledKeys] = useState<Record<string, boolean>>({});
-  const { register, errors, getValues, setValue } = formData;
+  const {
+    register,
+    errors,
+    getValues,
+    setValue,
+    formState: { isDirty },
+  } = formData;
   const { roles: rolesValues, userType } = getValues(['roles', 'userType']);
   const shouldShowAllFacilities = [
     RoleIdByName.ACCOUNT_OWNER,
@@ -171,6 +178,8 @@ export const createSectionConfig = ({
       setUsers(response.data);
     }
   };
+
+  console.log('zero check', isDirty);
 
   useEffect(() => {
     if (userType && userType !== UserType.LOCAL && !users.length) {
@@ -197,11 +206,11 @@ export const createSectionConfig = ({
   };
 
   const getUserPermissionChangeRole = () => {
-    if(selectedUser && selectedRole === RoleIdByName.SYSTEM_ADMIN && userId === selectedUser.id) {
+    if (selectedUser && selectedRole === RoleIdByName.SYSTEM_ADMIN && userId === selectedUser.id) {
       return true;
     }
     return !isEditable || isAccountOwner;
-  }
+  };
 
   const onChangeUserType = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === UserType.LOCAL) {
@@ -528,6 +537,37 @@ export const createSectionConfig = ({
           </>
         ),
       },
+      ...(isDirty
+        ? [
+            {
+              label: 'Reason',
+              view: (
+                <>
+                  <FormGroup
+                    inputs={[
+                      {
+                        type: InputTypes.MULTI_LINE,
+                        props: {
+                          placeholder: 'Enter Reason',
+                          label: 'Reason',
+                          id: 'reason',
+                          name: 'reason',
+                          error: errors['reason']?.message,
+                          readOnly: disabledKeys?.['reason'],
+                          disabled: pageType === PAGE_TYPE.PROFILE ? false : !isEditable,
+                          rows: 3,
+                          ref: register({
+                            required: true,
+                          }),
+                        },
+                      },
+                    ]}
+                  />
+                </>
+              ),
+            },
+          ]
+        : []),
     ],
   };
 

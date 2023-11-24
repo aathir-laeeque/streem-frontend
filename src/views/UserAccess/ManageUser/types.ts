@@ -33,6 +33,7 @@ export type EditUserRequestInputs = {
   password?: string;
   confirmPassword?: string;
   userType?: string;
+  reason?: string;
 };
 
 export type TogglesState = {
