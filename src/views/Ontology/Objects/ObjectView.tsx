@@ -268,7 +268,7 @@ const PropertyField = memo<{
           label: value.displayName,
           value: value.id,
         }))
-    : selectedObject?.properties.find((_property) => _property.id === property.id)?.value;
+    : selectedObject?.properties.find((_property) => _property.id === property.id)?.value || '';
 
   return (
     <Controller
@@ -282,7 +282,7 @@ const PropertyField = memo<{
           pattern: /.*\S+.*/,
         }),
       }}
-      defaultValue={defaultValue || null}
+      defaultValue={defaultValue}
       render={({ onChange, value, name }) => {
         return (
           <FormGroup
