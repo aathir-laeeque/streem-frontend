@@ -14,6 +14,7 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import { CommonWrapper } from './styles';
 import { DEFAULT_PAGE_NUMBER } from '#utils/constants';
+import { ParameterVerificationTypeEnum } from '#types';
 
 const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: ParameterType }> =
   ({ form, isReadOnly }) => {
@@ -28,6 +29,7 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
     const { watch, setValue, register, getValues } = form;
     const type = watch('type', {});
     const formData = watch('data', {});
+    const verificationType = watch('verificationType', {});
     const autoInitialized = watch('autoInitialized', false);
     const autoInitialize = watch('autoInitialize', {});
     const [loading, setLoading] = useState<Boolean>(false);
@@ -271,6 +273,10 @@ const LinkParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean; type: 
             type="button"
             variant="secondary"
             style={{ padding: '8px', marginBlock: 16 }}
+            disabled={[
+              ParameterVerificationTypeEnum.SELF,
+              ParameterVerificationTypeEnum.BOTH,
+            ].includes(verificationType)}
             onClick={() => {
               fetchResourceParameters();
               setValue('autoInitialized', true, {

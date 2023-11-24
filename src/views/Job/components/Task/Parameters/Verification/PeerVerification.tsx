@@ -65,7 +65,7 @@ const PeerVerification: FC<PeerVerificationProps> = ({
 
   const renderByParameterState = () => {
     if (
-      modifiedBy === userId &&
+      [userId, '1'].includes(modifiedBy) &&
       isLoggedInUserAssigned &&
       !isCompletedWithException &&
       !isTaskCompletedWithException &&

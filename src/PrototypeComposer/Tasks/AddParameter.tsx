@@ -230,16 +230,16 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
     required: true,
   });
   register('verificationType');
+  register('autoInitialized');
 
-  const { mandatory, label, type, mode, verificationType } = watch([
+  const { mandatory, label, type, mode, verificationType, autoInitialized } = watch([
     'mandatory',
     'label',
     'type',
     'mode',
     'verificationType',
+    'autoInitialized',
   ]);
-
-  register('autoInitialized');
 
   const isLabelReadOnly = isReadOnly;
   isReadOnly = mode === ParameterMode.READ_ONLY ? true : isReadOnly;
@@ -348,32 +348,34 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
               placement="right"
             >
               <div className="parameter-verification">
-                <Checkbox
-                  onClick={(e) => {
-                    const { checked } = e.target;
-                    setValue(
-                      'verificationType',
-                      verificationType === ParameterVerificationTypeEnum.PEER
-                        ? ParameterVerificationTypeEnum.BOTH
-                        : verificationType === ParameterVerificationTypeEnum.BOTH
-                        ? ParameterVerificationTypeEnum.PEER
-                        : checked
-                        ? ParameterVerificationTypeEnum.SELF
-                        : ParameterVerificationTypeEnum.NONE,
-                      {
-                        shouldValidate: true,
-                      },
-                    );
-                  }}
-                  checked={
-                    verificationType === ParameterVerificationTypeEnum.SELF ||
-                    verificationType === ParameterVerificationTypeEnum.BOTH
-                  }
-                  label="Self Verification"
-                  disabled={
-                    isReadOnly || currentParameter?.targetEntityType === TargetEntityType.PROCESS
-                  }
-                />
+                {type !== MandatoryParameter.CALCULATION && !autoInitialized && (
+                  <Checkbox
+                    onClick={(e) => {
+                      const { checked } = e.target;
+                      setValue(
+                        'verificationType',
+                        verificationType === ParameterVerificationTypeEnum.PEER
+                          ? ParameterVerificationTypeEnum.BOTH
+                          : verificationType === ParameterVerificationTypeEnum.BOTH
+                          ? ParameterVerificationTypeEnum.PEER
+                          : checked
+                          ? ParameterVerificationTypeEnum.SELF
+                          : ParameterVerificationTypeEnum.NONE,
+                        {
+                          shouldValidate: true,
+                        },
+                      );
+                    }}
+                    checked={
+                      verificationType === ParameterVerificationTypeEnum.SELF ||
+                      verificationType === ParameterVerificationTypeEnum.BOTH
+                    }
+                    label="Self Verification"
+                    disabled={
+                      isReadOnly || currentParameter?.targetEntityType === TargetEntityType.PROCESS
+                    }
+                  />
+                )}
                 <Checkbox
                   onClick={(e) => {
                     const { checked } = e.target;
