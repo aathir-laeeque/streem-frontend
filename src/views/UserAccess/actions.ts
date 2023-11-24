@@ -9,11 +9,19 @@ export const resendInvite = (payload: { id: User['id'] }) =>
 export const cancelInvite = (payload: { id: User['id']; fetchData?: () => void }) =>
   actionSpreader(UserAccessAction.CANCEL_INVITE, payload);
 
-export const archiveUser = (payload: { id: User['id']; fetchData?: () => void }) =>
-  actionSpreader(UserAccessAction.ARCHIVE_USER, payload);
+export const archiveUser = (payload: {
+  id: User['id'];
+  reason: string;
+  setFormErrors: (errors?: Error[]) => void;
+  fetchData?: () => void;
+}) => actionSpreader(UserAccessAction.ARCHIVE_USER, payload);
 
-export const unArchiveUser = (payload: { id: User['id']; fetchData?: () => void }) =>
-  actionSpreader(UserAccessAction.UNARCHIVE_USER, payload);
+export const unArchiveUser = (payload: {
+  id: User['id'];
+  reason: string;
+  setFormErrors: (errors?: Error[]) => void;
+  fetchData?: () => void;
+}) => actionSpreader(UserAccessAction.UNARCHIVE_USER, payload);
 
 export const unLockUser = (payload: { id: User['id']; fetchData?: () => void }) =>
   actionSpreader(UserAccessAction.UNLOCK_USER, payload);

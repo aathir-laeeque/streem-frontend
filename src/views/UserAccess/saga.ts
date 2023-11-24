@@ -84,8 +84,10 @@ function* cancelInviteSaga({ payload }: ReturnType<typeof cancelInvite>) {
 
 function* archiveUserSaga({ payload }: ReturnType<typeof archiveUser>) {
   try {
-    const { id, fetchData } = payload;
-    const { data, errors }: ResponseObj<User> = yield call(request, 'PATCH', apiArchiveUser(id));
+    const { id, reason, setFormErrors, fetchData } = payload;
+    const { data, errors }: ResponseObj<User> = yield call(request, 'PATCH', apiArchiveUser(id), {
+      data: { reason },
+    });
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -97,6 +99,7 @@ function* archiveUserSaga({ payload }: ReturnType<typeof archiveUser>) {
         msg: 'User Archived!',
       }),
     );
+    setFormErrors(errors);
     if (fetchData) {
       yield call(fetchData);
     } else {
@@ -109,8 +112,10 @@ function* archiveUserSaga({ payload }: ReturnType<typeof archiveUser>) {
 
 function* unArchiveUserSaga({ payload }: ReturnType<typeof unArchiveUser>) {
   try {
-    const { id, fetchData } = payload;
-    const { data, errors }: ResponseObj<User> = yield call(request, 'PATCH', apiUnArchiveUser(id));
+    const { id, reason, setFormErrors, fetchData } = payload;
+    const { data, errors }: ResponseObj<User> = yield call(request, 'PATCH', apiUnArchiveUser(id), {
+      data: { reason },
+    });
 
     if (errors) {
       throw getErrorMsg(errors);
@@ -122,6 +127,7 @@ function* unArchiveUserSaga({ payload }: ReturnType<typeof unArchiveUser>) {
         msg: 'User Unarchived !!',
       }),
     );
+    setFormErrors(errors);
     if (fetchData) {
       yield call(fetchData);
     } else {

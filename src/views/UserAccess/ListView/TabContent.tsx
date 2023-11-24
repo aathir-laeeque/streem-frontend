@@ -80,18 +80,20 @@ const TabContent: React.FC<TabContentProps> = (props) => {
   const onArchiveUser = (user: User) => {
     dispatch(
       openOverlayAction({
-        type: OverlayNames.CONFIRMATION_MODAL,
+        type: OverlayNames.REASON_MODAL,
         props: {
-          title: 'Archiving a User',
-          primaryText: 'Archive User',
-          onPrimary: () =>
+          modalTitle: 'Archive User',
+          modalDesc: modalBody('You’re about to archive', user),
+          onSubmitHandler: (reason: string, setFormErrors: (errors?: Error[]) => void) => {
             dispatch(
               archiveUser({
                 id: user.id,
-                fetchData,
+                reason,
+                setFormErrors,
               }),
-            ),
-          body: modalBody('You’re about to archive', user),
+            );
+          },
+          onSubmitModalText: 'Confirm',
         },
       }),
     );
@@ -100,18 +102,20 @@ const TabContent: React.FC<TabContentProps> = (props) => {
   const onUnArchiveUser = (user: User) => {
     dispatch(
       openOverlayAction({
-        type: OverlayNames.CONFIRMATION_MODAL,
+        type: OverlayNames.REASON_MODAL,
         props: {
-          title: 'Unarchiving a User',
-          primaryText: 'Unarchive User',
-          onPrimary: () =>
+          modalTitle: 'Unarchive User',
+          modalDesc: modalBody('You’re about to unarchive', user),
+          onSubmitHandler: (reason: string, setFormErrors: (errors?: Error[]) => void) => {
             dispatch(
               unArchiveUser({
                 id: user.id,
-                fetchData,
+                reason,
+                setFormErrors,
               }),
-            ),
-          body: modalBody('You’re about to unarchive', user),
+            );
+          },
+          onSubmitModalText: 'Confirm',
         },
       }),
     );
