@@ -558,6 +558,10 @@ export const createSectionConfig = ({
                           rows: 3,
                           ref: register({
                             required: true,
+                            maxLength: {
+                              value: 255,
+                              message: "Shouldn't be greater than 255 characters.",
+                            },
                           }),
                         },
                       },
