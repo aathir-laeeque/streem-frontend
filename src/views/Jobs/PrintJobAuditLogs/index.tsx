@@ -128,7 +128,7 @@ const MyPrintJobAuditLogs: FC<{ jobId: string }> = ({ jobId }) => {
     );
   };
 
-  if (!logs || logs.length === 0 || !profile || !jobDetails) return null;
+  if (!logs || !profile || !jobDetails) return null;
 
   const grouped: { [index: string]: JobAuditLogType[] } = groupBy(logs, 'triggeredOn');
   const data = Object.keys(grouped).map((item) => ({
