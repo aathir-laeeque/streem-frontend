@@ -179,8 +179,6 @@ export const createSectionConfig = ({
     }
   };
 
-  console.log('zero check', isDirty);
-
   useEffect(() => {
     if (userType && userType !== UserType.LOCAL && !users.length) {
       fetchUsers();

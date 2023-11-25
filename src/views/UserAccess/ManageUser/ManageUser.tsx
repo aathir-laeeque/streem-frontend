@@ -76,9 +76,10 @@ const ManageUser: FC<EditUserProps> = ({
   register('username');
 
   const onSubmit = () => {
-    const data = getValues();
+    const { reason, ...data } = getValues();
     const body = {
       ...data,
+      reason,
       email: data.email ? data.email.toLowerCase() : null,
       roles: [{ id: data.roles }],
     };
