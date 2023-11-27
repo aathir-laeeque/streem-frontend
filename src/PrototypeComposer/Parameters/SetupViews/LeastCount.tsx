@@ -32,12 +32,14 @@ const LeastCount: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
             {
               type: InputTypes.NUMBER,
               props: {
+                style: { width: '100%' },
                 id: 'leastCount',
                 label: 'Enter Least Count Value',
                 placeholder: '0',
                 disabled: isReadOnly,
                 name: 'data.leastCount',
                 ref: register({
+                  min: 0,
                   validate: (value) => {
                     if (leastCountEnabled) {
                       return !!value;
