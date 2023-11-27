@@ -266,7 +266,7 @@ const MyPrintJobAuditLogs: FC<{ viewId: string }> = () => {
           return '-';
         }
       }
-      return row[column.id + column.triggerType].value;
+      return row[column.id + column.triggerType].value || '-';
     }
     return '-';
   };
