@@ -32,7 +32,13 @@ const StageNavCard: FC<{ stage: any; stageNo: number }> = ({ stage, stageNo }) =
       const task = tasks.get(taskId);
       task!.visibleParametersCount &&
         _tasks.push(
-          <TaskNavCard task={task} taskNo={taskNo} key={task!.id} errors={task!.errors} />,
+          <TaskNavCard
+            task={task}
+            taskNo={taskNo}
+            key={task!.id}
+            errors={task!.errors}
+            stageNo={stageNo}
+          />,
         );
       taskNo++;
     });

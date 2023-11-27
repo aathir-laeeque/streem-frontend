@@ -53,10 +53,11 @@ const TaskDetailCardWrapper = styled.div.attrs({
   }
 `;
 
-const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[] }> = ({
+const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[]; stageNo: number }> = ({
   task,
   taskNo,
   errors,
+  stageNo,
 }) => {
   const dispatch = useDispatch();
   const activeTaskId = useTypedSelector((state) => state.job.taskNavState.current);
@@ -77,7 +78,9 @@ const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[] }> = ({
       backgroundColor={backgroundColor}
       error={isError && task.id === activeTaskId}
     >
-      <div className="title">Task {taskNo}</div>
+      <div className="title">
+        Task {stageNo}.{taskNo}
+      </div>
       <div className="task-detail-right">
         <FiberManualRecord
           className="icon"
