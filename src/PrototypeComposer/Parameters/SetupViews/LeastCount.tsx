@@ -30,7 +30,7 @@ const LeastCount: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
           style={{ marginTop: '24px', width: '160px' }}
           inputs={[
             {
-              type: InputTypes.SINGLE_LINE,
+              type: InputTypes.NUMBER,
               props: {
                 id: 'leastCount',
                 label: 'Enter Least Count Value',
