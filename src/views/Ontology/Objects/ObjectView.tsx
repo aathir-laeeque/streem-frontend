@@ -476,16 +476,14 @@ const ObjectView: FC<TabContentProps> = ({
               {isEditing ? 'Update' : 'Create'}
             </Button>
           )}
-          {(!isReadOnly || isArchived) && (
-            <Button
-              variant="secondary"
-              onClick={() => {
-                onCancel();
-              }}
-            >
-              Cancel
-            </Button>
-          )}
+          <Button
+            variant="secondary"
+            onClick={() => {
+              onCancel();
+            }}
+          >
+            Cancel
+          </Button>
         </div>
       </form>
     </ObjectFormWrapper>
