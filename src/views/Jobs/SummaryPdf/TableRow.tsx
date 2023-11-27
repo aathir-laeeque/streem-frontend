@@ -34,6 +34,25 @@ const styles = StyleSheet.create({
   },
 });
 
+const chunkSubstr = (str: string, size: number) => {
+  const numChunks = Math.ceil(str.length / size);
+  const chunks = new Array(numChunks);
+
+  for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
+    chunks[i] = str.substr(o, size);
+  }
+
+  return chunks;
+};
+
+function breakWord(word: string): string[] {
+  if (word.length > 12) {
+    return chunkSubstr(word, 10);
+  } else {
+    return [word];
+  }
+}
+
 const TableRow = ({
   columns,
   customStyle = {},
@@ -43,7 +62,11 @@ const TableRow = ({
   <View break={breakView} fixed={fixed} style={[styles.tableRow, customStyle]}>
     {columns.map(({ text, customStyle = {} }, index) =>
       typeof text === 'string' ? (
-        <Text key={`${text}-${index}`} style={[styles.tableColumn, customStyle]}>
+        <Text
+          key={`${text}-${index}`}
+          style={[styles.tableColumn, customStyle]}
+          hyphenationCallback={(e) => breakWord(e)}
+        >
           {text}
         </Text>
       ) : (
