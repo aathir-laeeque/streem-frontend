@@ -409,6 +409,14 @@ function* startJobSaga({ payload }: ReturnType<typeof jobActions.startJob>) {
     }
 
     yield put(jobActions.startJobSuccess());
+    yield put(
+      showNotification({
+        type: NotificationType.SUCCESS,
+        msg: 'Job Started',
+        detail:
+          'You have started the Job. To start the Task you have to press the ‘Start Task’ button',
+      }),
+    );
     yield put(closeOverlayAction(OverlayNames.START_JOB_MODAL));
   } catch (error) {
     yield* handleCatch('Job', 'startJobSaga', error, true);

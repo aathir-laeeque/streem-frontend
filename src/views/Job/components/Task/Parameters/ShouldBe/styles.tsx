@@ -25,8 +25,8 @@ export const Wrapper = styled.div.attrs({
 
   .parameter-text {
     margin-bottom: 8px;
-    color: #525252;
-    font-weight: 400;
+    color: #161616;
+    font-weight: 600;
     font-size: 14px;
     line-height: 12px;
     display: inline-block;

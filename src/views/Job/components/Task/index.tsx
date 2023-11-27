@@ -131,7 +131,7 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
     parameters: parameterIds,
     isUserAssignedToTask,
     parametersErrors,
-    taskExecution: { state: taskState, correctionEnabled, pauseReasons, audit },
+    taskExecution: { correctionEnabled, pauseReasons, audit },
   } = task!;
 
   const handleTaskBodyClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -139,10 +139,11 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
     // Commenting for the working of date, date-time and file upload parameters
     // e.preventDefault();
 
-    if (jobState === JobStateEnum.ASSIGNED && !isTaskCompleted && !isInboxView) {
+    if (jobState === JobStateEnum.ASSIGNED && isInboxView && isUserAssigned) {
       dispatch(
         openOverlayAction({
           type: OverlayNames.START_JOB_MODAL,
+          props: { jobId: id },
         }),
       );
     }
@@ -155,7 +156,7 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
         openOverlayAction({
           type: OverlayNames.START_TASK_ERROR_MODAL,
           props: {
-            taskState,
+            task,
           },
         }),
       );

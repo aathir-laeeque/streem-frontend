@@ -63,9 +63,8 @@ const Wrapper = styled.div.attrs(({ className }) => ({
         : null}
 
     textarea {
-      background-color: #f4f4f4;
-      border: 1px solid transparent;
-      border-bottom-color: #bababa;
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
       color: #000000;
       outline: none;
       overflow: hidden;

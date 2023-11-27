@@ -31,7 +31,7 @@ const Wrapper = styled.div.attrs({
 
   .parameter {
     padding: 14px 16px;
-    background-color: #fff;
+    background-color: #f4f4f4;
 
     :last-child {
       border-bottom: none;
@@ -127,8 +127,8 @@ const Wrapper = styled.div.attrs({
 
     .parameter-label {
       margin-bottom: 8px;
-      color: #525252;
-      font-weight: 400;
+      color: #161616;
+      font-weight: 600;
       font-size: 14px;
       line-height: 12px;
     }
