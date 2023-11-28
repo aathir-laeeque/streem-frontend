@@ -955,8 +955,9 @@ const UpdatePassword = ({
       <FormGroup
         inputs={[
           {
-            type: isPasswordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
+            type: InputTypes.PASSWORD,
             props: {
+              type: isPasswordInputType ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
               placeholder: 'Create Password',
               label: 'Create Password',
               id: 'password',
@@ -976,8 +977,9 @@ const UpdatePassword = ({
             },
           },
           {
-            type: isConfirmPasswordTextHidden ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
+            type: InputTypes.PASSWORD,
             props: {
+              type: isConfirmPasswordTextHidden ? InputTypes.PASSWORD : InputTypes.SINGLE_LINE,
               placeholder: 'Confirm New Password',
               label: 'Confirm New Password',
               id: 'confirmPassword',
