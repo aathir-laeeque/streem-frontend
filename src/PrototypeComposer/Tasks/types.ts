@@ -2,6 +2,7 @@ import { FileUploadData, Error } from '#utils/globalTypes';
 import { Parameter, Checklist, Stage, Task as TaskType } from '../checklist.types';
 
 export type Task = TaskType & {
+  stageId: Stage['id'];
   errors: Error[];
 };
 

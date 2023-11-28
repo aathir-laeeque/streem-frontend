@@ -46,6 +46,7 @@ import {
   updateTaskName,
 } from './actions';
 import { TaskListActions } from './reducer.types';
+import { resetChecklistValidationErrors } from '#PrototypeComposer/actions';
 
 function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
   try {
@@ -78,6 +79,8 @@ function* addNewTaskSaga({ payload }: ReturnType<typeof addNewTask>) {
 
     if (_data) {
       yield put(addNewTaskSuccess({ ..._data }, stageId));
+      // E128 = 'STAGE_MUST_CONTAIN_ATLEAST_ONE_TASK',
+      yield put(resetChecklistValidationErrors(stageId, 'E128'));
     } else {
       yield put(setTaskError(errors));
     }
@@ -213,6 +216,8 @@ function* updateTaskSaga({ payload }: ReturnType<typeof updateTaskName>) {
 
     if (data) {
       yield put(updateTask(data));
+      // E210 = 'TASK_NAME_CANNOT_BE_EMPTY',
+      yield put(resetChecklistValidationErrors(task.id, 'E210'));
     } else {
       yield put(setTaskError(errors));
     }

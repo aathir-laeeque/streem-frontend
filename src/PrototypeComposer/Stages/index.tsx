@@ -1,19 +1,34 @@
 import { Button } from '#components';
 import { useTypedSelector } from '#store/helpers';
 import { AddCircleOutline } from '@material-ui/icons';
-import React, { createRef, FC } from 'react';
+import React, { createRef, FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { addNewStage } from './actions';
+import { addNewStage, setActiveStage } from './actions';
 import StageCard from './StageCard';
 import { StageListWrapper } from './styles';
+import { useLocation } from '@reach/router';
 
 const Stages: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+
+  const stageId = params.get('stageId');
+
   const dispatch = useDispatch();
   const { activeStageId, listOrder, listById } = useTypedSelector(
     (state) => state.prototypeComposer.stages,
   );
 
   const refMap = listOrder.map(() => createRef<HTMLDivElement>());
+
+  useEffect(() => {
+    if (stageId) {
+      dispatch(setActiveStage({ id: stageId }));
+
+      const index = listOrder.findIndex((id) => id === stageId);
+      refMap[index]?.current?.scrollIntoView();
+    }
+  }, [stageId]);
 
   return (
     <StageListWrapper>

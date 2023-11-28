@@ -19,6 +19,7 @@ import {
   updateStageNameSuccess,
 } from './actions';
 import { StageListActions } from './reducer.types';
+import { resetChecklistValidationErrors } from '#PrototypeComposer/actions';
 
 function* addNewStageSaga() {
   try {
@@ -127,6 +128,8 @@ function* updateStageNameSaga({ payload }: ReturnType<typeof updateStageName>) {
 
     if (data) {
       yield put(updateStageNameSuccess(data));
+      //E303 = 'STAGE_NAME_CANNOT_BE_EMPTY',
+      yield put(resetChecklistValidationErrors(id, 'E303'));
     } else {
       yield put(updateStageNameError(errors));
     }

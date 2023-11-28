@@ -16,6 +16,7 @@ import {
   fetchComposerData,
   fetchComposerDataOngoing,
   fetchComposerDataSuccess,
+  setChecklistValidationErrors,
   updateHiddenParameterIds,
   validatePrototype,
 } from './actions';
@@ -70,7 +71,8 @@ function* validatePrototypeSaga({ payload }: ReturnType<typeof validatePrototype
     const { errors } = yield call(request, 'GET', apiValidatePrototype(id));
 
     if ((errors as Array<Error>)?.length) {
-      const { stagesErrors, tasksErrors, parametersErrors, otherErrors } = groupErrors(errors);
+      const { stagesErrors, tasksErrors, parametersErrors, otherErrors, errorsWithEntity } =
+        groupErrors(errors);
       if (stagesErrors.length) {
         yield all(stagesErrors.map((error) => put(setStageValidationError(error))));
       }
@@ -81,6 +83,10 @@ function* validatePrototypeSaga({ payload }: ReturnType<typeof validatePrototype
 
       if (parametersErrors.length) {
         yield all(parametersErrors.map((error) => put(setParameterValidationError(error))));
+      }
+
+      if (errorsWithEntity.length) {
+        yield put(setChecklistValidationErrors(errorsWithEntity));
       }
 
       if (otherErrors.length) {

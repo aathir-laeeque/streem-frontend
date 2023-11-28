@@ -1,4 +1,5 @@
 import { actionSpreader } from '#store';
+import { Error } from '#utils/globalTypes';
 import { Parameter } from './Activity/types';
 import { Checklist } from './checklist.types';
 import { ComposerAction } from './reducer.types';
@@ -54,3 +55,9 @@ export const executeBranchingRulesParameter = (
 
 export const updateHiddenParameterIds = (data: Record<string, Array<string>>[]) =>
   actionSpreader(ComposerAction.UPDATE_HIDDEN_PARAMETER_IDS, { data });
+
+export const setChecklistValidationErrors = (errors: Error[]) =>
+  actionSpreader(ComposerAction.SET_CHECKLIST_VALIDATION_ERRORS, { errors });
+
+export const resetChecklistValidationErrors = (id: string, code: string) =>
+  actionSpreader(ComposerAction.RESET_CHECKLIST_VALIDATION_ERRORS, { id, code });

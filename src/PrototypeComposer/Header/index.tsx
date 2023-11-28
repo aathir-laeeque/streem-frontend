@@ -5,6 +5,7 @@ import {
   submitChecklistForReview,
 } from '#PrototypeComposer/reviewer.actions';
 import { CollaboratorState, CollaboratorType } from '#PrototypeComposer/reviewer.types';
+import errorIcon from '#assets/svg/error-icon.svg';
 import ActivityIcon from '#assets/svg/ActivityIcon';
 import MemoArchive from '#assets/svg/Archive';
 import MemoViewInfo from '#assets/svg/ViewInfo';
@@ -70,6 +71,7 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
     profile,
     selectedFacility: { id: facilityId = '' } = {},
     ssoIdToken,
+    checklistErrors,
   } = useTypedSelector((state) => ({
     userId: state.auth.userId,
     data: state.prototypeComposer.data as Checklist,
@@ -77,6 +79,7 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
     profile: state.auth.profile,
     selectedFacility: state.auth.selectedFacility,
     ssoIdToken: state.auth.ssoIdToken,
+    checklistErrors: state.prototypeComposer.errors,
   }));
 
   const handleSubmitForReview = (isViewer = false, showAssignment = true) => {
@@ -539,6 +542,26 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
           </div>
 
           <div className="header-content-right">
+            {checklistErrors.length > 0 ? (
+              <div
+                className="error-popover"
+                aria-haspopup="true"
+                onClick={(event) => {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.CHECKLIST_ERRORS,
+                      popOverAnchorEl: event.currentTarget,
+                      props: { errors: checklistErrors },
+                    }),
+                  );
+                }}
+              >
+                <div className="checklist-errors">
+                  <img src={errorIcon} />
+                  <span>{checklistErrors.length} issues found</span>
+                </div>
+              </div>
+            ) : null}
             {<PrototypeEditButton />}
             {author && !approver && renderButtonsForAuthor()}
 

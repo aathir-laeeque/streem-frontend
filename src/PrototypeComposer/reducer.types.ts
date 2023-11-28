@@ -1,10 +1,13 @@
+import { Error } from '#utils/globalTypes';
 import {
   executeBranchingRulesParameter,
   fetchComposerDataError,
   fetchComposerDataOngoing,
   fetchComposerDataSuccess,
   processParametersMapSuccess,
+  resetChecklistValidationErrors,
   resetComposer,
+  setChecklistValidationErrors,
   updateHiddenParameterIds,
 } from './actions';
 import { deleteParameterSuccess, updateStoreParameter } from './Activity/actions';
@@ -36,6 +39,7 @@ export type ComposerState = {
   readonly stages: StageListState;
   readonly tasks: TaskListState;
   auditLogs: ChecklistAuditLogsState;
+  errors: Error[];
 };
 
 export enum ComposerAction {
@@ -66,6 +70,8 @@ export enum ComposerAction {
   VALIDATE_PROTOTYPE = '@@prototypeComposer/prototype/validate',
   PROCESS_PARAMETER_MAP_SUCCESS = '@@prototypeComposer/prototype/PROCESS_PARAMETER_MAP_SUCCESS',
   RECALL_PROCESS = '@@prototypeComposer/prototype/RECALL_PROCESS',
+  SET_CHECKLIST_VALIDATION_ERRORS = '@@prototypeComposer/prototype/SET_CHECKLIST_VALIDATION_ERRORS',
+  RESET_CHECKLIST_VALIDATION_ERRORS = '@@prototypeComposer/prototype/RESET_CHECKLIST_VALIDATION_ERRORS',
 }
 
 export type ComposerActionType = ReturnType<
@@ -85,4 +91,6 @@ export type ComposerActionType = ReturnType<
   | typeof updateHiddenParameterIds
   | typeof deleteParameterSuccess
   | typeof recallProcess
+  | typeof setChecklistValidationErrors
+  | typeof resetChecklistValidationErrors
 >;

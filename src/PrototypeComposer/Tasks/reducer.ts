@@ -44,7 +44,7 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (state = initialStat
         ...state,
         listById: {
           ...state.listById,
-          [newTask.id]: { ...newTask, errors: [] },
+          [newTask.id]: { ...newTask, stageId, errors: [] },
         },
         tasksOrderInStage: {
           ...state.tasksOrderInStage,

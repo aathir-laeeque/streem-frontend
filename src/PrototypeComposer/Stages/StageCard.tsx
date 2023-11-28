@@ -23,11 +23,12 @@ import { StageCardProps } from './types';
 const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
   const { index, isActive, isFirstItem, isLastItem, stage, isReadOnly } = props;
 
-  const { tasksInStage, data, parametersInStage, userId } = useTypedSelector((state) => ({
+  const { tasksInStage, data, errors, parametersInStage, userId } = useTypedSelector((state) => ({
     tasksInStage: state.prototypeComposer.tasks.tasksOrderInStage[stage.id].map(
       (taskId) => state.prototypeComposer.tasks.listById[taskId],
     ),
     data: state.prototypeComposer.data,
+    errors: state.prototypeComposer.errors,
     userId: state.auth.userId,
     parametersInStage: Object.keys(
       state.prototypeComposer.parameters.parameterOrderInTaskInStage[stage.id] ?? {},
@@ -70,8 +71,9 @@ const StageCard = forwardRef<HTMLDivElement, StageCardProps>((props, ref) => {
 
   const dispatch = useDispatch();
 
+  // E128 = 'STAGE_MUST_CONTAIN_ATLEAST_ONE_TASK',
   const stageWiseError =
-    !!stage.errors.length && stage.errors.find((error) => error.code === 'E128');
+    !!stage.errors.length && errors.find((error) => error.code === 'E128' && error.id === stage.id);
 
   const stageHasError = !!stage.errors.length || anyParameterHasError || anyTaskHasError;
 

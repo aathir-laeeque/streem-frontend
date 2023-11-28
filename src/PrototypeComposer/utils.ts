@@ -11,15 +11,34 @@ export const groupErrors = (errors: Error[]) =>
     (acc, error) => {
       if (error.code in ParameterErrors) {
         acc.parametersErrors.push(error);
+        acc.errorsWithEntity.push({
+          ...error,
+          entity: 'parameter',
+        });
       } else if (error.code in TaskErrors) {
         acc.tasksErrors.push(error);
+        acc.errorsWithEntity.push({
+          ...error,
+          entity: 'task',
+        });
       } else if (error.code in StageErrors) {
         acc.stagesErrors.push(error);
+        acc.errorsWithEntity.push({
+          ...error,
+          entity: 'stage',
+        });
       } else {
         acc.otherErrors.push(error);
+        acc.errorsWithEntity.push(error);
       }
 
       return acc;
     },
-    { stagesErrors: [], tasksErrors: [], parametersErrors: [], otherErrors: [] },
+    {
+      stagesErrors: [],
+      tasksErrors: [],
+      parametersErrors: [],
+      otherErrors: [],
+      errorsWithEntity: [],
+    },
   );

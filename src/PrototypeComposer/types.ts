@@ -24,4 +24,5 @@ export type ErrorGroups = {
   tasksErrors: Error[];
   parametersErrors: Error[];
   otherErrors: Error[];
+  errorsWithEntity: Error[];
 };

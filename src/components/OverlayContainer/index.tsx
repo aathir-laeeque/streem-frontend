@@ -14,6 +14,7 @@ import StartTaskError from '#views/Job/overlays/StartTaskError';
 import TaskPauseReasonModal from '#views/Job/overlays/TaskPauseReasonModal';
 import ViewReason from '#views/Job/overlays/ViewReason';
 import { AuthorsDetailsPopover } from '#PrototypeComposer/Overlays/AuthorsDetailsPopover';
+import { ChecklistErrorsPopover } from '#PrototypeComposer/Overlays/ChecklistErrorsPopover';
 import ConfigureActions from '#PrototypeComposer/Overlays/ConfigureActions';
 import ConfigureJobParameters from '#PrototypeComposer/Overlays/ConfigureJobParameters';
 import InitiateSignOffModal from '#PrototypeComposer/Overlays/InitiateSignOff';
@@ -130,6 +131,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.REVIEWERS_DETAIL:
       return params.popOverAnchorEl ? <ReviewersDetailsPopover {...params} /> : null;
+
+    case OverlayNames.CHECKLIST_ERRORS:
+      return params.popOverAnchorEl ? <ChecklistErrorsPopover {...params} /> : null;
 
     case OverlayNames.SIMPLE_CONFIRMATION_MODAL:
       return <SimpleConfirmationModal {...params} />;

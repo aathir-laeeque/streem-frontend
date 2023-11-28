@@ -56,6 +56,22 @@ const HeaderWrapper = styled.div`
     background-color: #ffffff;
     display: flex;
 
+    .checklist-errors {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background-color: #fff1f1;
+      color: #da1e28;
+      border: 1px solid #da1e28;
+      cursor: pointer;
+    }
+
+    .error-popover {
+      margin: 0px 16px;
+    }
+
     .drawer-toggle {
       width: 0px;
       overflow: hidden;

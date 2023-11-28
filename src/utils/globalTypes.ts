@@ -40,6 +40,7 @@ export type Error = {
   code: string;
   message: string;
   type: string;
+  entity?: string;
 };
 
 export type FileUploadData = {

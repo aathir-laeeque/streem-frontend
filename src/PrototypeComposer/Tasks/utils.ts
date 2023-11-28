@@ -11,7 +11,7 @@ export const getTasks = (checklist: Checklist | Partial<Checklist>) => {
     stage?.tasks?.map((task) => {
       tasksOrderInStage[stage.id.toString()].push(task.id);
 
-      listById[task.id.toString()] = { ...task, errors: [] };
+      listById[task.id.toString()] = { ...task, stageId: stage.id, errors: [] };
     });
   });
 

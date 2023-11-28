@@ -23,6 +23,7 @@ const initialState: ComposerState = {
   collaborators: [],
   approvers: [],
   auditLogs: auditLogsState,
+  errors: [],
 };
 
 /**
@@ -141,6 +142,19 @@ const reducer: Reducer<ComposerState, ComposerActionType> = (state = initialStat
           parameters: action.payload.parameters,
         },
         parameters: parameterReducer(state.parameters, action),
+      };
+
+    case ComposerAction.SET_CHECKLIST_VALIDATION_ERRORS:
+      return {
+        ...state,
+        errors: action.payload.errors,
+      };
+
+    case ComposerAction.RESET_CHECKLIST_VALIDATION_ERRORS:
+      const { id, code } = action.payload;
+      return {
+        ...state,
+        errors: state.errors.filter((error) => !(error.id === id && error.code === code)),
       };
 
     default:

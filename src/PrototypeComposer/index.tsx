@@ -198,6 +198,7 @@ const Composer: FC<ComposerProps> = ({ id, entity }) => {
           <ComposerWrapper>
             <Header {...state} />
             <StyledTabs
+              queryString={true}
               containerProps={{
                 className: 'process-tabs',
               }}

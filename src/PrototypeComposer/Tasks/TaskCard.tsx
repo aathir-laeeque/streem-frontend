@@ -76,6 +76,7 @@ const TaskCard: FC<
     parameters: { parameterOrderInTaskInStage, listById },
     stages: { activeStageId, listOrder },
     tasks: { activeTaskId },
+    errors: checklistErrors,
   } = useTypedSelector((state) => state.prototypeComposer);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const stageIndex = listOrder.indexOf(activeStageId as string);
@@ -190,8 +191,14 @@ const TaskCard: FC<
     onPrimaryClick: () => dispatch(deleteTask(taskId)),
   };
 
-  const noParameterError = task.errors.find((error) => error.code === 'E211') ?? undefined;
-  const archiveParameterError = task.errors.find((error) => error.code === 'E225');
+  // E211 = 'TASK_SHOULD_HAVE_ATLEAST_ONE_EXECUTABLE_PARAMETER'
+  const noParameterError =
+    checklistErrors.find((error) => error.code === 'E211' && error.id === task.id) ?? undefined;
+
+  // E225 = 'TASK_AUTOMATION_INVALID_MAPPED_PARAMETERS',
+  const archiveParameterError = checklistErrors.find(
+    (error) => error.code === 'E225' && error.id === task.id,
+  );
 
   if (activeStageId) {
     const taskParameters = parameterOrderInTaskInStage[activeStageId][taskId];
@@ -282,6 +289,7 @@ const TaskCard: FC<
 
             <Textarea
               defaultValue={name}
+              //E210 = 'TASK_NAME_CANNOT_BE_EMPTY',
               error={!task.name && task.errors.find((error) => error.code === 'E210')?.message}
               label={task.type === TaskTypeEnum.SUBPROCESS ? 'Process Name' : 'Name the task'}
               disabled={isReadOnly || task.type === TaskTypeEnum.SUBPROCESS}

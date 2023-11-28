@@ -26,6 +26,7 @@ import {
   updateStoreParameter,
 } from './actions';
 import { ParameterListActions } from './reducer.types';
+import { resetChecklistValidationErrors } from '#PrototypeComposer/actions';
 
 function* updateParameterSaga({ payload }: ReturnType<typeof updateParameterApi>) {
   try {
@@ -81,6 +82,8 @@ function* addNewParameterSaga({ payload }: ReturnType<typeof addNewParameter>) {
     if (data) {
       if (stageId && taskId) {
         yield put(addNewParameterSuccess({ parameter: data, stageId, taskId }));
+        //E211 = 'TASK_SHOULD_HAVE_ATLEAST_ONE_EXECUTABLE_PARAMETER',
+        yield put(resetChecklistValidationErrors(taskId, 'E211'));
       } else {
         yield put(toggleAddParameterRender({ shouldReRender: true }));
       }
