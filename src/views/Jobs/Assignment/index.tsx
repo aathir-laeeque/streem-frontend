@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { CompletedJobStates, Job } from '../ListView/types';
 import Section, { AllowedUser } from './Section';
+import { jobActions } from '#views/Job/jobStore';
 
 export const Wrapper = styled.div.attrs({})`
   background-color: #ffffff;
@@ -138,6 +139,12 @@ const Assignments: FC<Props> = (props) => {
     }
     getTrainedUsersList();
   }, [stages]);
+
+  useEffect(() => {
+    if (jobId && loading) {
+      dispatch(jobActions.getJob({ id: jobId }));
+    }
+  }, []);
 
   const selectedTasks = Object.keys(state).reduce<[string, string][]>((acc, stageId) => {
     Object.entries(state[stageId]).forEach(([taskExecutionId, val]) =>
