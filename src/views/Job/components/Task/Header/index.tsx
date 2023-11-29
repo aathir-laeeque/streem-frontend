@@ -15,7 +15,7 @@ import { Wrapper } from './styles';
 import { useTypedSelector } from '#store';
 import checkPermission from '#services/uiPermissions';
 import Timer from '#views/Job/components/Task/Timer';
-import repeatTaskIcon from '#assets/svg/repeat-task-icon.svg';
+import repeatTaskIcon from '#assets/svg/repeatIcon.svg';
 import taskRecurrenceIcon from '#assets/svg/task-recurrence-icon.svg';
 import taskRecurrenceIconDisabled from '#assets/svg/task-recurrence-grey.svg';
 import Tooltip from '#components/shared/Tooltip';
