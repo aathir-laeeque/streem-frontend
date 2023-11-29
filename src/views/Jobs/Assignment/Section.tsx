@@ -147,19 +147,21 @@ export const AssignmentSectionWrapper = styled.div.attrs({
 const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }) => {
   const [isOpen, toggleIsOpen] = useState(isFirst);
 
-  const { tasks } = useTypedSelector((state) => state.job);
+  const { tasks, taskExecutions } = useTypedSelector((state) => state.job);
 
   const isAllTaskAssigned = stage.tasks
     .map((taskId) => {
       const task = tasks.get(taskId);
-      return !!task.taskExecution.assignees?.length;
+      const taskExecution = taskExecutions.get(task.taskExecutions[0]);
+      return !!taskExecution?.assignees?.length;
     })
     .every(Boolean);
 
   const isNoTaskAssigned = stage.tasks
     .map((taskId) => {
       const task = tasks.get(taskId);
-      return !!task.taskExecution.assignees?.length;
+      const taskExecution = taskExecutions.get(task.taskExecutions[0]);
+      return !!taskExecution?.assignees?.length;
     })
     .every((val) => val === false);
 
@@ -195,13 +197,15 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
                 stageId: stage.id,
                 taskExecutionIds: stage.tasks.reduce<string[]>((acc, taskId) => {
                   const task = tasks.get(taskId);
-                  if (task.taskExecution.state in COMPLETED_TASK_STATES) return acc;
-                  return [...acc, task.taskExecution.id];
+                  const taskExecution = taskExecutions.get(task.taskExecutions[0]);
+                  if (taskExecution.state in COMPLETED_TASK_STATES) return acc;
+                  return [...acc, taskExecution.id];
                 }, []),
 
                 states: stage.tasks.reduce<string[]>((acc, taskId) => {
                   const task = tasks.get(taskId);
-                  if (task.taskExecution.state in COMPLETED_TASK_STATES) return acc;
+                  const taskExecution = taskExecutions.get(task.taskExecutions[0]);
+                  if (taskExecution.state in COMPLETED_TASK_STATES) return acc;
                   return [...acc, isAllTaskSelected ? false : isNoTaskSelected ? true : false];
                 }, []),
               },
@@ -221,27 +225,28 @@ const Section: FC<Props> = ({ stage, sectionState = {}, localDispatch, isFirst }
         <div className="section-body">
           {stage.tasks.map((taskId) => {
             const task = tasks.get(taskId);
-            const isTaskCompleted = task.taskExecution.state in COMPLETED_TASK_STATES;
+            const taskExecution = taskExecutions.get(task.taskExecutions[0]);
+            const isTaskCompleted = taskExecution?.state in COMPLETED_TASK_STATES;
             return (
               <div className="section-body-item" key={task.id}>
                 <Checkbox
                   disabled={isTaskCompleted}
-                  checked={(sectionState[task.taskExecution.id] ?? [])[0] ?? false}
+                  checked={(sectionState[taskExecution.id] ?? [])[0] ?? false}
                   label={`Task ${stage.orderTree}.${task.orderTree} : ${task.name}`}
                   onClick={() => {
                     localDispatch({
                       type: 'SET_TASK_SELECTED_STATE',
                       payload: {
                         stageId: stage.id,
-                        taskExecutionIds: [task.taskExecution.id],
-                        states: [!sectionState[task.taskExecution.id][0]],
+                        taskExecutionIds: [taskExecution.id],
+                        states: [!sectionState[taskExecution.id][0]],
                       },
                     });
                   }}
                 />
 
-                {task.taskExecution.assignees.length ? (
-                  <AssigneeList users={task.taskExecution.assignees} />
+                {taskExecution.assignees.length ? (
+                  <AssigneeList users={taskExecution?.assignees} />
                 ) : (
                   <div className="pill unassigned">Unassigned</div>
                 )}

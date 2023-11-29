@@ -64,7 +64,7 @@ const reducer = (state: State, action: any): State => {
       action.payload.forEach((task) => {
         temp[task.stageId] = {
           ...temp[task.stageId],
-          [task.taskExecution.id]: [false, task.id],
+          [task.taskExecutions[0]]: [false, task.id],
         };
       });
       return { ...state, ...temp };
@@ -84,10 +84,11 @@ const reducer = (state: State, action: any): State => {
 
     case 'SET_ALL_TASK_STATE':
       action.payload.tasks.forEach((task) => {
+        const taskExecution = action.payload.taskExecutions.get(task.taskExecutions[0]);
         temp[task.stageId] = {
           ...temp[task.stageId],
-          [task.taskExecution.id]: [
-            task.taskExecution.state in CompletedJobStates ? false : action.payload.state,
+          [taskExecution.id]: [
+            taskExecution.state in CompletedJobStates ? false : action.payload.state,
             task.id,
           ],
         };
@@ -104,7 +105,9 @@ const Assignments: FC<Props> = (props) => {
 
   const dispatch = useDispatch();
 
-  const { stages, tasks, loading, processId } = useTypedSelector((state) => state.job);
+  const { stages, tasks, loading, taskExecutions, processId } = useTypedSelector(
+    (state) => state.job,
+  );
 
   const [totalTasksCount, setTotalTasksCount] = useState(0);
 
@@ -191,6 +194,7 @@ const Assignments: FC<Props> = (props) => {
                   payload: {
                     tasks,
                     state: isAllTaskSelected ? false : isNoTaskSelected,
+                    taskExecutions,
                   },
                 });
               }}

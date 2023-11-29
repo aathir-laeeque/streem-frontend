@@ -15,7 +15,7 @@ type Inputs = {
   password: string;
 };
 
-const PeerVerificationAction: FC<{ parameterId: string }> = ({ parameterId }) => {
+const PeerVerificationAction: FC<{ parameterResponseId: string }> = ({ parameterResponseId }) => {
   const [showPasswordField, setShowPasswordField] = useState(false);
   const [passwordInputType, setPasswordInputType] = useState(true);
   const dispatch = useDispatch();
@@ -33,7 +33,7 @@ const PeerVerificationAction: FC<{ parameterId: string }> = ({ parameterId }) =>
   const onSubmit = (data: Inputs) => {
     dispatch(
       jobActions.acceptPeerVerification({
-        parameterId,
+        parameterResponseId,
         password: data.password,
       }),
     );
@@ -99,7 +99,9 @@ const PeerVerificationAction: FC<{ parameterId: string }> = ({ parameterId }) =>
                     modalTitle: 'Reject Verification',
                     modalDesc: 'Provide reason for rejection',
                     onSubmitHandler: (reason: string) =>
-                      dispatch(jobActions.rejectPeerVerification({ parameterId, comment: reason })),
+                      dispatch(
+                        jobActions.rejectPeerVerification({ parameterResponseId, comment: reason }),
+                      ),
                   },
                 }),
               );

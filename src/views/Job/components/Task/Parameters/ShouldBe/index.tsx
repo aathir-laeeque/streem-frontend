@@ -180,6 +180,7 @@ const ShouldBeParameter: FC<
           dispatch(
             jobActions.approveRejectParameter({
               parameterId: parameter.id,
+              parameterResponseId: parameter.response.id,
               type: SupervisorResponse.APPROVE,
             }),
           );
@@ -194,6 +195,7 @@ const ShouldBeParameter: FC<
           dispatch(
             jobActions.approveRejectParameter({
               parameterId: parameter.id,
+              parameterResponseId: parameter.response.id,
               type: SupervisorResponse.REJECT,
             }),
           );
@@ -449,7 +451,7 @@ const ShouldBeParameter: FC<
         verificationsByType={verificationsByType}
         verificationType={verificationType}
         isLoggedInUserAssigned={!!isLoggedInUserAssigned}
-        parameterId={parameter.id}
+        parameterResponseId={parameter.response.id}
         modifiedBy={parameter.response?.audit?.modifiedBy?.id}
       />
     </Wrapper>

@@ -16,6 +16,10 @@ import {
   apiUpdateTask,
   apiUpdateTaskAction,
   apiUpdateTaskMedia,
+  apiSetTaskRecurrence,
+  apiRemoveTaskRecurrence,
+  apiTaskSchedule,
+  apiRemoveTaskSchedule,
 } from '#utils/apiUrls';
 import { getErrorMsg, handleCatch, request } from '#utils/request';
 import { call, put, select, takeEvery, takeLatest, takeLeading } from 'redux-saga/effects';
@@ -31,12 +35,14 @@ import {
   deleteTask,
   deleteTaskSuccess,
   removeTaskMedia,
+  removeTaskRecurrence,
   removeTaskTimer,
   reOrderParameters,
   reOrderTask,
   reOrderTaskError,
   reOrderTaskSuccess,
   setTaskError,
+  setTaskRecurrence,
   setTaskTimer,
   setValidationError,
   updateTask,
@@ -44,6 +50,7 @@ import {
   updateTaskMedia,
   updateTaskMediaSuccess,
   updateTaskName,
+  setTaskSchedule,
 } from './actions';
 import { TaskListActions } from './reducer.types';
 import { resetChecklistValidationErrors } from '#PrototypeComposer/actions';
@@ -261,6 +268,122 @@ function* removeTaskTimerSaga({ payload }: ReturnType<typeof removeTaskTimer>) {
   }
 }
 
+function* setTaskRecurrenceSaga({ payload }: ReturnType<typeof setTaskRecurrence>) {
+  try {
+    const { taskId, startDateDuration, startDateInterval, dueDateDuration, dueDateInterval } =
+      payload;
+
+    const { data, errors } = yield call(request, 'PATCH', apiSetTaskRecurrence(taskId), {
+      data: { startDateDuration, startDateInterval, dueDateDuration, dueDateInterval },
+    });
+
+    if (data) {
+      yield put(updateTask(data));
+      yield put(closeOverlayAction(OverlayNames.TASK_RECURRENCE_MODAL));
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: 'Task recurrence is enabled',
+        }),
+      );
+    } else if (errors) {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    yield* handleCatch('Prototype Composer', 'setTaskRecurrenceSaga', error, true);
+  }
+}
+
+function* removeTaskRecurrenceSaga({ payload }: ReturnType<typeof removeTaskRecurrence>) {
+  try {
+    const { taskId } = payload;
+
+    const { data, errors } = yield call(request, 'PATCH', apiRemoveTaskRecurrence(taskId));
+
+    if (data) {
+      yield put(updateTask(data));
+      yield put(closeOverlayAction(OverlayNames.TASK_RECURRENCE_MODAL));
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: 'Task recurrence is removed',
+        }),
+      );
+    } else if (errors) {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    yield* handleCatch('Prototype Composer', 'removeTaskRecurrenceSaga', error, true);
+  }
+}
+
+function* setTaskScheduleSaga({ payload }: ReturnType<typeof setTaskSchedule>) {
+  try {
+    const {
+      taskId,
+      type,
+      condition,
+      scheduledTaskId,
+      referencedTaskId,
+      startDateDuration,
+      startDateInterval,
+      dueDateDuration,
+      dueDateInterval,
+    } = payload;
+
+    const { data, errors } = yield call(request, 'PATCH', apiTaskSchedule(taskId), {
+      data: {
+        type,
+        condition,
+        scheduledTaskId,
+        referencedTaskId,
+        startDateDuration,
+        startDateInterval,
+        dueDateDuration,
+        dueDateInterval,
+      },
+    });
+
+    if (data) {
+      yield put(updateTask(data));
+      yield put(closeOverlayAction(OverlayNames.SCHEDULE_TASK_MODAL));
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: 'Task is scheduled successfully!',
+        }),
+      );
+    } else if (errors) {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    yield* handleCatch('Prototype Composer', 'setTaskScheduleSaga', error, true);
+  }
+}
+
+function* removeTaskScheduleSaga({ payload }: ReturnType<typeof removeTaskRecurrence>) {
+  try {
+    const { taskId } = payload;
+
+    const { data, errors } = yield call(request, 'PATCH', apiRemoveTaskSchedule(taskId));
+
+    if (data) {
+      yield put(updateTask(data));
+      yield put(closeOverlayAction(OverlayNames.SCHEDULE_TASK_MODAL));
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: 'Task schedule is removed',
+        }),
+      );
+    } else if (errors) {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    yield* handleCatch('Prototype Composer', 'removeTaskScheduleSaga', error, true);
+  }
+}
+
 function* addTaskMediaSaga({ payload }: ReturnType<typeof addTaskMedia>) {
   try {
     const { mediaDetails, taskId } = payload;
@@ -421,6 +544,10 @@ export function* TaskListSaga() {
   yield takeEvery(TaskListActions.UPDATE_TASK_NAME, updateTaskSaga);
   yield takeLatest(TaskListActions.SET_TASK_TIMER, setTaskTimerSaga);
   yield takeLatest(TaskListActions.REMOVE_TASK_TIMER, removeTaskTimerSaga);
+  yield takeLatest(TaskListActions.SET_TASK_RECURRENCE, setTaskRecurrenceSaga);
+  yield takeLatest(TaskListActions.REMOVE_TASK_RECURRENCE, removeTaskRecurrenceSaga);
+  yield takeLatest(TaskListActions.SET_TASK_SCHEDULE, setTaskScheduleSaga);
+  yield takeLatest(TaskListActions.REMOVE_TASK_SCHEDULE, removeTaskScheduleSaga);
   yield takeLatest(TaskListActions.ADD_TASK_MEDIA, addTaskMediaSaga);
   yield takeLeading(TaskListActions.UPDATE_TASK_MEDIA, updateTaskMediaSaga);
   yield takeLatest(TaskListActions.REMOVE_TASK_MEDIA, removeTaskMediaSaga);

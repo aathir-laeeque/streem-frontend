@@ -58,6 +58,7 @@ export interface ParameterResponse {
   stageOrderTree: number;
   taskOrderTree: number;
   variations: any[] | null;
+  taskExecutionId: string;
 }
 
 export enum TargetEntityType {
@@ -111,10 +112,10 @@ export interface Parameter {
   show?: string[];
 }
 
-export interface StoreParameter extends Parameter {
-  isHidden: boolean;
+export interface StoreParameter extends Omit<Parameter, 'response'> {
   taskId: string;
   stageId: string;
+  responses: string[];
 }
 
 export enum ParameterExecutionState {

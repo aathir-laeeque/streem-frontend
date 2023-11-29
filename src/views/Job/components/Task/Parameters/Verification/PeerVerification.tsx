@@ -17,7 +17,7 @@ import PeerVerificationAction from './PeerVerificationAction';
 import { useJobStateToFlags } from '#views/Job/utils';
 
 type PeerVerificationProps = {
-  parameterId: string;
+  parameterResponseId: string;
   verificationType: ParameterVerificationTypeEnum | ParameterVerificationTypeEnum.BOTH;
   verifications: Dictionary<Verification>;
   isLoggedInUserAssigned?: boolean;
@@ -26,7 +26,7 @@ type PeerVerificationProps = {
 };
 
 const PeerVerification: FC<PeerVerificationProps> = ({
-  parameterId,
+  parameterResponseId,
   verificationType,
   verifications,
   isLoggedInUserAssigned,
@@ -82,7 +82,10 @@ const PeerVerification: FC<PeerVerificationProps> = ({
                   props: {
                     onSubmit: (data: any) =>
                       dispatch(
-                        jobActions.sendPeerVerification({ parameterId, userId: data.value }),
+                        jobActions.sendPeerVerification({
+                          parameterResponseId,
+                          userId: data.value,
+                        }),
                       ),
                   },
                 }),
@@ -101,7 +104,7 @@ const PeerVerification: FC<PeerVerificationProps> = ({
         return userId === verification?.createdBy?.id || verification?.requestedTo?.id ? (
           <div>
             {verification?.requestedTo?.id === userId ? (
-              <PeerVerificationAction parameterId={parameterId} />
+              <PeerVerificationAction parameterResponseId={parameterResponseId} />
             ) : verification?.createdBy?.id === userId ? (
               <div className="parameter-verification">
                 <Button
@@ -114,7 +117,10 @@ const PeerVerification: FC<PeerVerificationProps> = ({
                           modalDesc: `Are you sure you want to Recall from verification ?`,
                           onSubmitHandler: () =>
                             dispatch(
-                              jobActions.recallPeerVerification({ parameterId, type: 'peer' }),
+                              jobActions.recallPeerVerification({
+                                parameterResponseId,
+                                type: 'peer',
+                              }),
                             ),
                         },
                       }),

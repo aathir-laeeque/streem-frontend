@@ -44,9 +44,12 @@ import {
   apiRecallVerification,
   apiRejectParameter,
   apiRejectPeerVerification,
+  apiRepeatTask,
+  apiRemoveRepeatTask,
   apiResumeJob,
   apiStartJob,
   apiValidatePassword,
+  apiEndTaskRecurrence,
 } from '#utils/apiUrls';
 import { JOB_STAGE_POLLING_TIMEOUT } from '#utils/constants';
 import { InputTypes, ResponseError, ResponseObj } from '#utils/globalTypes';
@@ -75,18 +78,23 @@ const getUserId = (state: RootState) => state.auth.userId;
 const getJobStore = (state: RootState) => state.job;
 
 // TODO: remove this and make respective changes in the Parameters
-function getParametersDataByTaskId(task: StoreTask, parameters: RootState['job']['parameters']) {
+function getParametersDataByTaskId(
+  task: StoreTask,
+  parameters: RootState['job']['parameters'],
+  taskExecutionId: string,
+) {
   const { parameters: parameterIds } = task;
   return parameterIds.map((id) => {
     const parameter = parameters.get(id);
+    const response = parameter?.response?.find((r) => r.taskExecutionId === taskExecutionId);
     if (parameter)
       switch (parameter.type) {
         case MandatoryParameter.SIGNATURE:
         case MandatoryParameter.MEDIA:
           return {
             ...parameter,
-            reason: parameter?.response?.reason || null,
-            data: { medias: parameter?.response?.medias },
+            reason: response?.reason || null,
+            data: { medias: response?.medias },
           };
 
         case MandatoryParameter.SHOULD_BE:
@@ -97,8 +105,8 @@ function getParametersDataByTaskId(task: StoreTask, parameters: RootState['job']
         case MandatoryParameter.NUMBER:
           return {
             ...parameter,
-            reason: parameter?.response?.reason || null,
-            data: { ...parameter.data, input: parameter?.response?.value },
+            reason: response?.reason || null,
+            data: { ...parameter.data, input: response?.value },
           };
 
         case MandatoryParameter.MULTISELECT:
@@ -107,20 +115,21 @@ function getParametersDataByTaskId(task: StoreTask, parameters: RootState['job']
         case MandatoryParameter.YES_NO:
           return {
             ...parameter,
-            reason: parameter?.response?.reason || null,
+            reason: response?.reason || null,
             data: parameter.data.map((d: any) => ({
               ...d,
-              ...(parameter?.response?.choices?.[d.id] && {
-                state: parameter.response.choices[d.id],
+              ...(response?.choices?.[d.id] && {
+                state: response.choices[d.id],
               }),
             })),
           };
         case MandatoryParameter.RESOURCE:
+        case MandatoryParameter.MULTI_RESOURCE:
         case MandatoryParameter.CALCULATION:
           return {
             ...parameter,
-            reason: parameter?.response?.reason || null,
-            data: parameter?.response?.choices,
+            reason: response?.reason || null,
+            data: response?.choices,
           };
 
         default:
@@ -138,15 +147,33 @@ const automationInputValidator = (
     case AutomationActionActionType.DECREASE_PROPERTY:
       const parameter = parameters.get(automation.actionDetails.parameterId!);
       const referencedParameter = parameters.get(automation.actionDetails.referencedParameterId);
-      return parameter?.response?.value && referencedParameter?.response?.choices;
+      return parameter?.response[0]?.value && referencedParameter?.response[0]?.choices;
 
     case AutomationActionActionType.ARCHIVE_OBJECT:
     case AutomationActionActionType.SET_PROPERTY:
-      return !!parameters.get(automation.actionDetails.referencedParameterId)?.response?.choices;
+      return !!parameters.get(automation.actionDetails.referencedParameterId)?.response[0]?.choices;
 
     default:
       return true;
   }
+};
+
+const getScheduleTasksMessage = (
+  scheduledTaskExecutionIds: String[],
+  taskExecutions: RootState['job']['taskExecutions'],
+  tasks: RootState['job']['tasks'],
+  stages: RootState['job']['stages'],
+) => {
+  const message = scheduledTaskExecutionIds
+    .map((id, index) => {
+      const taskExecution = taskExecutions.get(id);
+      const task = tasks.get(taskExecution?.taskId);
+      const stage = stages.get(task?.stageId);
+      return `Task ${stage?.orderTree}.${task?.orderTree}`;
+    })
+    .join('\n');
+
+  return message;
 };
 
 export const groupTaskErrors = (errors: ResponseError[]) => {
@@ -236,14 +263,27 @@ function* getAssignmentsSaga({ payload }: ReturnType<typeof jobActions.getAssign
 
 function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.performTaskAction>) {
   try {
-    const { id, reason, action, createObjectAutomations } = payload;
+    const {
+      id,
+      reason,
+      action,
+      createObjectAutomations,
+      continueRecurrence,
+      recurringOverdueCompletionReason,
+      recurringPrematureStartReason,
+      scheduleOverdueCompletionReason,
+    } = payload;
     const {
       id: jobId,
       parameters,
+      stages,
       tasks,
+      taskExecutions,
     }: RootState['job'] = yield select((state: RootState) => state.job);
 
-    const task = tasks.get(id);
+    const taskExecution = taskExecutions.get(id);
+
+    const task = tasks.get(taskExecution?.taskId);
 
     if (!task) {
       return false;
@@ -251,7 +291,7 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
 
     yield put(
       jobActions.updateTaskErrors({
-        id,
+        id: task.id,
         taskErrors: [],
         parametersErrors: new Map(),
       }),
@@ -275,9 +315,15 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
             ? {
                 correctionReason: reason,
               }
-            : { reason }),
+            : {
+                reason,
+                continueRecurrence,
+                recurringOverdueCompletionReason,
+                recurringPrematureStartReason,
+                scheduleOverdueCompletionReason,
+              }),
           ...(isCompleteAction && {
-            parameters: getParametersDataByTaskId(task, parameters),
+            parameters: getParametersDataByTaskId(task, parameters, id),
           }),
           ...(createObjectAutomations?.length > 0 && {
             createObjectAutomations,
@@ -334,7 +380,7 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
       const { taskErrors, parametersErrors } = groupTaskErrors(errors);
       yield put(
         jobActions.updateTaskErrors({
-          id,
+          id: task.id,
           taskErrors,
           parametersErrors,
         }),
@@ -365,8 +411,152 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
         data,
       }),
     );
+
+    if (data?.scheduledTaskExecutionIds?.length) {
+      const message = getScheduleTasksMessage(
+        data.scheduledTaskExecutionIds,
+        taskExecutions,
+        tasks,
+        stages,
+      );
+
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `The following tasks are scheduled:\n${message}`,
+        }),
+      );
+    }
+
+    if (task?.enableRecurrence) {
+      if (isCompleteAction && data?.continueRecurrence) {
+        yield put(
+          showNotification({
+            type: NotificationType.SUCCESS,
+            msg: 'Recurring Task created successfully',
+          }),
+        );
+      } else if (isCompleteAction && !data?.continueRecurrence) {
+        yield put(
+          showNotification({
+            type: NotificationType.SUCCESS,
+            msg: 'Recurrence Ended. No new recurring task can be created.',
+          }),
+        );
+      }
+    }
   } catch (error) {
     yield* handleCatch('Job', 'performTaskActionSaga', error, true);
+  } finally {
+    yield put(
+      jobActions.setUpdating({
+        updating: false,
+      }),
+    );
+  }
+}
+
+function* repeatTaskSaga({ payload }: ReturnType<typeof jobActions.repeatTask>) {
+  try {
+    const { id: taskId } = payload;
+
+    const { id: jobId }: RootState['job'] = yield select((state: RootState) => state.job);
+
+    const { data, errors } = yield call(request, 'POST', apiRepeatTask(), {
+      data: {
+        taskId,
+        jobId,
+      },
+    });
+
+    if (data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: 'Repeated Task created successfully',
+        }),
+      );
+    }
+
+    if (errors) {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    yield put(
+      openOverlayAction({
+        type: OverlayNames.REPEAT_TASK_ERROR_MODAL,
+      }),
+    );
+    yield handleCatch('Task', 'repeatTaskSaga', error, true);
+  } finally {
+    yield put(
+      jobActions.setUpdating({
+        updating: false,
+      }),
+    );
+  }
+}
+
+function* removeRepeatTaskSaga({ payload }: ReturnType<typeof jobActions.removeRepeatTask>) {
+  try {
+    const { taskExecutionId } = payload;
+
+    const { taskExecutions }: RootState['job'] = yield select((state: RootState) => state.job);
+    const taskExecution = taskExecutions.get(taskExecutionId);
+
+    const { data, errors } = yield call(request, 'DELETE', apiRemoveRepeatTask(taskExecutionId));
+
+    if (data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: 'Repeated Task removed successfully',
+        }),
+      );
+
+      if (taskExecution?.previous) {
+        yield put(
+          jobActions.navigateByTaskId({
+            id: taskExecution?.previous,
+          }),
+        );
+      }
+    }
+
+    if (errors) {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    yield handleCatch('Task', 'removeRepeatTaskSaga', error, true);
+  } finally {
+    yield put(
+      jobActions.setUpdating({
+        updating: false,
+      }),
+    );
+  }
+}
+
+function* endTaskRecurrenceSaga({ payload }: ReturnType<typeof jobActions.endTaskRecurrence>) {
+  try {
+    const { taskExecutionId } = payload;
+
+    const { data, errors } = yield call(request, 'PATCH', apiEndTaskRecurrence(taskExecutionId));
+
+    if (data) {
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: 'Recurrence Ended. No new recurring task can be created.',
+        }),
+      );
+    }
+
+    if (errors) {
+      throw getErrorMsg(errors);
+    }
+  } catch (error) {
+    yield handleCatch('Task', 'endTaskRecurrenceSaga', error, true);
   } finally {
     yield put(
       jobActions.setUpdating({
@@ -420,11 +610,30 @@ function* togglePauseResumeSaga({ payload }: ReturnType<typeof jobActions.toggle
 function* startJobSaga({ payload }: ReturnType<typeof jobActions.startJob>) {
   try {
     const { id } = payload;
+    const { taskExecutions, tasks, stages }: RootState['job'] = yield select(
+      (state: RootState) => state.job,
+    );
 
-    const { errors }: ResponseObj<Job> = yield call(request, 'PATCH', apiStartJob(id));
+    const { data, errors }: ResponseObj<Job> = yield call(request, 'PATCH', apiStartJob(id));
 
     if (errors) {
       throw getErrorMsg(errors);
+    }
+
+    if (data?.scheduledTaskExecutionIds?.length) {
+      const message = getScheduleTasksMessage(
+        data.scheduledTaskExecutionIds,
+        taskExecutions,
+        tasks,
+        stages,
+      );
+
+      yield put(
+        showNotification({
+          type: NotificationType.SUCCESS,
+          msg: `The following tasks are scheduled:\n${message}`,
+        }),
+      );
     }
 
     yield put(jobActions.startJobSuccess());
@@ -546,7 +755,7 @@ function* executeParameterSaga({ payload }: ReturnType<typeof jobActions.execute
     const { data, errors }: ResponseObj<Parameter> = yield call(
       request,
       'PATCH',
-      apiExecuteParameter(),
+      apiExecuteParameter(parameter?.response?.id),
       {
         data: { jobId, parameter, ...(!!reason ? { reason } : {}) },
       },
@@ -599,7 +808,7 @@ function* fixParameterSaga({ payload }: ReturnType<typeof jobActions.fixParamete
     const { data, errors }: ResponseObj<Parameter> = yield call(
       request,
       'PATCH',
-      apiFixParameter(),
+      apiFixParameter(parameter?.response?.id),
       {
         data: { jobId, parameter, ...(!!reason ? { reason } : {}) },
       },
@@ -639,7 +848,7 @@ function* approveRejectParameterSaga({
   payload,
 }: ReturnType<typeof jobActions.approveRejectParameter>) {
   try {
-    const { parameterId, type } = payload;
+    const { parameterId, parameterResponseId, type } = payload;
     const { id: jobId }: RootState['job'] = yield select((state: RootState) => state.job);
 
     const isApproving = type === SupervisorResponse.APPROVE;
@@ -647,9 +856,9 @@ function* approveRejectParameterSaga({
     let url: string;
 
     if (isApproving) {
-      url = apiApproveParameter();
+      url = apiApproveParameter(parameterResponseId);
     } else {
-      url = apiRejectParameter();
+      url = apiRejectParameter(parameterResponseId);
     }
 
     const { data, errors }: ResponseObj<Parameter> = yield call(request, 'PATCH', url, {
@@ -690,13 +899,12 @@ function* initiateSelfVerificationSaga({
   payload,
 }: ReturnType<typeof jobActions.initiateSelfVerification>) {
   try {
-    const { parameterId } = payload;
-    const { id: jobId }: RootState['job'] = yield select((state: RootState) => state.job);
+    const { parameterResponseId } = payload;
 
     const { data, errors }: ResponseObj<Verification> = yield call(
       request,
       'POST',
-      apiInitiateSelfVerification({ parameterId, jobId: jobId! }),
+      apiInitiateSelfVerification({ parameterResponseId }),
     );
 
     if (errors) {
@@ -705,7 +913,7 @@ function* initiateSelfVerificationSaga({
 
     yield put(
       jobActions.updateParameterVerifications({
-        parameterId,
+        parameterResponseId,
         data,
       }),
     );
@@ -718,7 +926,7 @@ function* completeSelfVerificationSaga({
   payload,
 }: ReturnType<typeof jobActions.completeSelfVerification>) {
   try {
-    const { parameterId, password, code, state } = payload;
+    const { parameterResponseId, password, code, state } = payload;
 
     const { errors: validateErrors } = yield call(request, 'PATCH', apiValidatePassword(), {
       data: { password: password ? encrypt(password) : null, code, state },
@@ -728,12 +936,10 @@ function* completeSelfVerificationSaga({
       throw getErrorMsg(validateErrors);
     }
 
-    const { id: jobId }: RootState['job'] = yield select((state: RootState) => state.job);
-
     const { data, errors }: ResponseObj<Verification> = yield call(
       request,
       'PATCH',
-      apiAcceptVerification({ parameterId, jobId: jobId!, type: 'self' }),
+      apiAcceptVerification({ parameterResponseId, type: 'self' }),
     );
 
     if (errors) {
@@ -742,7 +948,7 @@ function* completeSelfVerificationSaga({
 
     yield put(
       jobActions.updateParameterVerifications({
-        parameterId,
+        parameterResponseId,
         data,
       }),
     );
@@ -761,13 +967,12 @@ function* sendPeerVerificationSaga({
   payload,
 }: ReturnType<typeof jobActions.sendPeerVerification>) {
   try {
-    const { parameterId, userId } = payload;
-    const { id: jobId }: RootState['job'] = yield select((state: RootState) => state.job);
+    const { parameterResponseId, userId } = payload;
 
     const { data, errors }: ResponseObj<Verification> = yield call(
       request,
       'POST',
-      apiInitiatePeerVerification({ parameterId, jobId: jobId! }),
+      apiInitiatePeerVerification({ parameterResponseId }),
       {
         data: {
           userId,
@@ -781,7 +986,7 @@ function* sendPeerVerificationSaga({
 
     yield put(
       jobActions.updateParameterVerifications({
-        parameterId,
+        parameterResponseId,
         data,
       }),
     );
@@ -800,13 +1005,12 @@ function* recallPeerVerificationSaga({
   payload,
 }: ReturnType<typeof jobActions.recallPeerVerification>) {
   try {
-    const { parameterId, type } = payload;
-    const { id: jobId }: RootState['job'] = yield select((state: RootState) => state.job);
+    const { parameterResponseId, type } = payload;
 
     const { data, errors }: ResponseObj<Verification> = yield call(
       request,
       'PATCH',
-      apiRecallVerification({ parameterId, jobId: jobId!, type }),
+      apiRecallVerification({ parameterResponseId, type }),
     );
 
     if (errors) {
@@ -815,7 +1019,7 @@ function* recallPeerVerificationSaga({
 
     yield put(
       jobActions.updateParameterVerifications({
-        parameterId,
+        parameterResponseId,
         data,
       }),
     );
@@ -828,7 +1032,7 @@ function* acceptPeerVerificationSaga({
   payload,
 }: ReturnType<typeof jobActions.acceptPeerVerification>) {
   try {
-    const { parameterId, password, code, state } = payload;
+    const { parameterResponseId, password, code, state } = payload;
 
     const { errors: validateErrors } = yield call(request, 'PATCH', apiValidatePassword(), {
       data: { password: password ? encrypt(password) : null, code, state },
@@ -838,12 +1042,10 @@ function* acceptPeerVerificationSaga({
       throw getErrorMsg(validateErrors);
     }
 
-    const { id: jobId }: RootState['job'] = yield select((state: RootState) => state.job);
-
     const { data, errors }: ResponseObj<Verification> = yield call(
       request,
       'PATCH',
-      apiAcceptVerification({ parameterId, jobId: jobId!, type: 'peer' }),
+      apiAcceptVerification({ parameterResponseId, type: 'peer' }),
     );
 
     if (errors) {
@@ -852,7 +1054,7 @@ function* acceptPeerVerificationSaga({
 
     yield put(
       jobActions.updateParameterVerifications({
-        parameterId,
+        parameterResponseId,
         data,
       }),
     );
@@ -865,13 +1067,12 @@ function* rejectPeerVerificationSaga({
   payload,
 }: ReturnType<typeof jobActions.rejectPeerVerification>) {
   try {
-    const { parameterId, comment } = payload;
-    const { id: jobId }: RootState['job'] = yield select((state: RootState) => state.job);
+    const { parameterResponseId, comment } = payload;
 
     const { data, errors }: ResponseObj<Verification> = yield call(
       request,
       'PATCH',
-      apiRejectPeerVerification({ parameterId, jobId: jobId! }),
+      apiRejectPeerVerification({ parameterResponseId }),
       {
         data: {
           comments: comment,
@@ -883,15 +1084,13 @@ function* rejectPeerVerificationSaga({
       throw getErrorMsg(errors);
     }
 
-    if (data) {
-      yield put(
-        jobActions.updateParameterVerifications({
-          parameterId,
-          data,
-        }),
-      );
-      yield put(closeOverlayAction(OverlayNames.REASON_MODAL));
-    }
+    yield put(
+      jobActions.updateParameterVerifications({
+        parameterResponseId,
+        data,
+      }),
+    );
+    yield put(closeOverlayAction(OverlayNames.REASON_MODAL));
   } catch (error) {
     yield* handleCatch('Job', 'rejectPeerVerificationSaga', error, true);
   }
@@ -962,12 +1161,14 @@ function* taskTimerSaga(payload: ReturnType<typeof jobActions.startTaskTimer>['p
   while (true) {
     try {
       // get the current task and timer state
-      const { tasks, timerState } = (yield select(getJobStore)) as JobStore;
+      const { taskExecutions, tasks, timerState } = (yield select(getJobStore)) as JobStore;
       const _timerState = { ...timerState };
-      const task = tasks.get(id);
-      if (task) {
-        const { state, duration } = task.taskExecution;
-        // duration is updated only through stage polling ie (BE is the source of truth)
+      const taskExecution = taskExecutions.get(id);
+
+      if (taskExecution) {
+        const task = tasks.get(taskExecution.taskId)!;
+        const { state, duration } = taskExecution;
+        // duration is updated only ttaskExecutionsByIdhrough stage polling ie (BE is the source of truth)
         // it could be null if the task is not started, so only update the time elapsed if the duration is not null or 0
         // BUG: duration is not updated in the taskExecution object when the task is completed [BE bug]
         if (duration && previousTaskDuration !== duration) {
@@ -1059,6 +1260,9 @@ export function* jobSaga() {
   yield takeLatest(JobActionsEnum.getJob, getJobSaga);
   yield takeLatest(JobActionsEnum.getAssignments, getAssignmentsSaga);
   yield takeLeading(JobActionsEnum.performTaskAction, performTaskActionSaga);
+  yield takeLeading(JobActionsEnum.repeatTask, repeatTaskSaga);
+  yield takeLeading(JobActionsEnum.removeRepeatTask, removeRepeatTaskSaga);
+  yield takeLeading(JobActionsEnum.endTaskRecurrence, endTaskRecurrenceSaga);
   yield takeLeading(JobActionsEnum.togglePauseResume, togglePauseResumeSaga);
   yield takeLeading(JobActionsEnum.startJob, startJobSaga);
   yield takeLeading(JobActionsEnum.completeJob, completeJobSaga);

@@ -5,8 +5,13 @@ import {
   formatDistanceStrict,
   formatDistanceToNowStrict,
   fromUnixTime,
-  intervalToDuration,
   startOfDay,
+  isBefore,
+  isAfter,
+  hoursToSeconds,
+  minutesToSeconds,
+  weeksToDays,
+  yearsToMonths,
 } from 'date-fns';
 import { InputTypes } from './globalTypes';
 
@@ -124,4 +129,48 @@ export const getLocalTimeOffset = () => {
   const formattedMinutes = minutes.toString().padStart(2, '0');
   const localTimeOffset = `${sign}${formattedHours}:${formattedMinutes}`;
   return localTimeOffset;
+};
+
+export const getEpochTimeDifference = (epoch: number) => {
+  const current = new Date();
+  const expectedTime = fromUnixTime(epoch);
+
+  if (isBefore(current, expectedTime)) {
+    return 'EARLY';
+  } else if (isAfter(current, expectedTime)) {
+    return 'LATE';
+  } else {
+    return 'ON TIME';
+  }
+};
+
+export const calculateSecondsFromDuration = (duration: Record<string, number>) => {
+  let durationSeconds = 0;
+  Object.entries(duration).forEach(([key, value]: any) => {
+    if (value) {
+      switch (key) {
+        case 'year':
+          durationSeconds += hoursToSeconds(yearsToMonths(value) * 30 * 24);
+          break;
+        case 'month':
+          durationSeconds += hoursToSeconds(value * 30 * 24);
+          break;
+        case 'week':
+          durationSeconds += hoursToSeconds(weeksToDays(value) * 24);
+          break;
+        case 'day':
+          durationSeconds += hoursToSeconds(value * 24);
+          break;
+        case 'hour':
+          durationSeconds += hoursToSeconds(value);
+          break;
+        case 'minute':
+          durationSeconds += minutesToSeconds(value);
+          break;
+        default:
+          break;
+      }
+    }
+  });
+  return durationSeconds;
 };

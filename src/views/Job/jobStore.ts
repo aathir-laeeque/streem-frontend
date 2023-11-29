@@ -45,7 +45,14 @@ const actions = {
     reason?: string;
     action: TaskAction;
     createObjectAutomations?: any[];
+    continueRecurrence?: boolean;
+    recurringOverdueCompletionReason?: string;
+    recurringPrematureStartReason?: string;
+    scheduleOverdueCompletionReason?: string;
   },
+  repeatTask: {} as { id: string },
+  removeRepeatTask: {} as { taskExecutionId: string },
+  endTaskRecurrence: {} as { taskExecutionId: string },
   togglePauseResume: {} as {
     id: string;
     reason?: string;
@@ -59,25 +66,29 @@ const actions = {
   },
   executeParameter: {} as { parameter: StoreParameter; reason?: string },
   fixParameter: {} as { parameter: StoreParameter; reason?: string },
-  approveRejectParameter: {} as { parameterId: string; type: SupervisorResponse },
+  approveRejectParameter: {} as {
+    parameterId: string;
+    parameterResponseId: string;
+    type: SupervisorResponse;
+  },
   updateParameter: {} as { data: Parameter },
-  initiateSelfVerification: {} as { parameterId: string },
+  initiateSelfVerification: {} as { parameterResponseId: string },
   completeSelfVerification: {} as {
-    parameterId: string;
-    password?: string;
-    code?: string;
-    state?: string;
+    parameterResponseId: string;
+    password: string;
+    code: string;
+    state: string;
   },
-  updateParameterVerifications: {} as { parameterId: string; data: Verification },
-  sendPeerVerification: {} as { parameterId: string; userId: string },
-  recallPeerVerification: {} as { parameterId: string; type: 'self' | 'peer' },
+  updateParameterVerifications: {} as { parameterResponseId: string; data: Verification },
+  sendPeerVerification: {} as { parameterResponseId: string; userId: string },
+  recallPeerVerification: {} as { parameterResponseId: string; type: 'self' | 'peer' },
   acceptPeerVerification: {} as {
-    parameterId: string;
-    password?: string;
-    code?: string;
-    state?: string;
+    parameterResponseId: string;
+    password: string;
+    code: string;
+    state: string;
   },
-  rejectPeerVerification: {} as { parameterId: string; comment: string },
+  rejectPeerVerification: {} as { parameterResponseId: string; comment: string },
   reset: undefined,
   startPollActiveStageData: {} as { jobId: string; stageId: string; state: JobStates },
   stopPollActiveStageData: undefined,
@@ -94,6 +105,8 @@ export const initialState: JobStore = {
   loading: true,
   stages: new Map(),
   tasks: new Map(),
+  taskExecutions: new Map(),
+  parameterResponseById: new Map(),
   parameters: new Map(),
   pendingTasks: new Set(),
   cjfValues: [],
@@ -137,6 +150,8 @@ function getJobSuccess(draft: JobStore, payload: typeof actions.getJobSuccess) {
   draft.stages = new Map(data.stages);
   draft.tasks = new Map(data.tasks);
   draft.parameters = new Map(data.parameters);
+  draft.taskExecutions = new Map(data.taskExecutions);
+  draft.parameterResponseById = new Map(data.parameterResponseById);
   draft.pendingTasks = new Set(data.pendingTasks);
   draft.taskNavState = data.taskNavState;
   draft.showVerificationBanner = data.showVerificationBanner;
@@ -160,12 +175,13 @@ function getAssignmentsSuccess(draft: JobStore, payload: typeof actions.getAssig
 }
 
 function updateTaskExecution(draft: JobStore, payload: typeof actions.updateTaskExecution) {
-  const task = draft.tasks.get(payload.id);
+  const taskExecution = draft.taskExecutions.get(payload.id);
   draft.updating = false;
 
-  if (task) {
-    task.taskExecution = payload.data;
+  if (taskExecution) {
+    draft.taskExecutions.set(payload.id, { ...taskExecution, ...payload.data });
   }
+
   if (payload.data.state in COMPLETED_TASK_STATES) {
     draft.pendingTasks.delete(payload.id);
   }
@@ -181,44 +197,65 @@ function updateTaskErrors(draft: JobStore, payload: typeof actions.updateTaskErr
 }
 
 function navigateByTaskId(draft: JobStore, payload: typeof actions.navigateByTaskId) {
-  const task = draft.tasks.get(payload.id);
-  if (task) {
+  const taskExecution = draft.taskExecutions.get(payload.id);
+  if (taskExecution) {
     draft.taskNavState = {
-      current: task.id,
       isMobileDrawerOpen: false,
+      current: taskExecution.id,
     };
   }
 }
 
 function updateParameter(draft: JobStore, payload: typeof actions.updateParameter) {
   const { data } = payload;
-  let parameter = draft.parameters.get(data.id);
-  if (parameter) {
-    draft.parameters.set(data.id, { ...parameter, ...data });
+  const reponseId = data.response[0].id;
+  let response = draft.parameterResponseById.get(reponseId);
+  if (response) {
+    draft.parameterResponseById.set(reponseId, { ...response, ...data.response[0] });
     if (data?.hide?.length) {
       data.hide.forEach((id) => {
-        const param = draft.parameters.get(id);
-        if (param) {
-          param.response!.hidden = true;
-          param.isHidden = true;
+        const paramRes = draft.parameterResponseById.get(id);
+        if (paramRes && !paramRes.hidden) {
+          paramRes.hidden = true;
 
-          const task = draft.tasks.get(param.taskId);
-          if (task) {
-            task.visibleParametersCount--;
+          const taskExecution = draft.taskExecutions.get(paramRes.taskExecutionId);
+          if (taskExecution) {
+            taskExecution.visibleParametersCount--;
 
-            if (task.visibleParametersCount === 0) {
-              const stage = draft.stages.get(param.stageId);
-              if (stage) {
-                stage.visibleTasksCount--;
+            if (taskExecution.visibleParametersCount < 0) {
+              taskExecution.visibleParametersCount = 0;
+            }
+
+            if (taskExecution.visibleParametersCount === 0) {
+              const task = draft.tasks.get(taskExecution.taskId);
+              if (task) {
+                task.visibleTaskExecutionsCount--;
+
+                if (task.visibleTaskExecutionsCount < 0) {
+                  task.visibleTaskExecutionsCount = 0;
+                }
+
+                if (task.visibleTaskExecutionsCount === 0) {
+                  const stage = draft.stages.get(task.stageId);
+                  if (stage) {
+                    stage.visibleTasksCount--;
+
+                    if (stage.visibleTasksCount < 0) {
+                      stage.visibleTasksCount = 0;
+                    }
+                  }
+                }
               }
 
-              const previousTask = task.previous ? draft.tasks.get(task.previous) : undefined;
-              if (previousTask) {
-                previousTask.next = task.next;
-                if (task.next) {
-                  const nextTask = draft.tasks.get(task.next);
-                  if (nextTask) {
-                    nextTask.previous = task.previous;
+              const prevVisibleTaskExecution = taskExecution.previous
+                ? draft.taskExecutions.get(taskExecution.previous)
+                : undefined;
+              if (prevVisibleTaskExecution) {
+                prevVisibleTaskExecution.next = taskExecution.next;
+                if (taskExecution.next) {
+                  const nextTaskExecution = draft.taskExecutions.get(taskExecution.next);
+                  if (nextTaskExecution) {
+                    nextTaskExecution.previous = taskExecution.previous;
                   }
                 }
               }
@@ -230,29 +267,38 @@ function updateParameter(draft: JobStore, payload: typeof actions.updateParamete
 
     if (data?.show?.length) {
       data.show.forEach((id) => {
-        const param = draft.parameters.get(id);
-        if (param) {
-          param.response!.hidden = false;
-          param.isHidden = false;
+        const paramRes = draft.parameterResponseById.get(id);
+        if (paramRes && paramRes.hidden) {
+          paramRes.hidden = false;
 
-          const task = draft.tasks.get(param.taskId);
-          if (task) {
-            if (task.visibleParametersCount === 0) {
-              const stage = draft.stages.get(param.stageId);
-              if (stage) {
-                stage.visibleTasksCount++;
+          const taskExecution = draft.taskExecutions.get(paramRes.taskExecutionId);
+
+          if (taskExecution) {
+            if (taskExecution.visibleParametersCount === 0) {
+              const task = draft.tasks.get(taskExecution.taskId);
+              if (task) {
+                if (task.visibleTaskExecutionsCount === 0) {
+                  const stage = draft.stages.get(task.stageId);
+                  if (stage) {
+                    stage.visibleTasksCount++;
+                  }
+                }
+                task.visibleTaskExecutionsCount++;
               }
             }
-            task.visibleParametersCount++;
 
-            const previousTask = task.previous ? draft.tasks.get(task.previous) : undefined;
-            if (previousTask) {
-              task.next = previousTask.next;
-              previousTask.next = task.id;
-              if (task.next) {
-                const nextTask = task.previous ? draft.tasks.get(task.next) : undefined;
-                if (nextTask) {
-                  nextTask.previous = task.id;
+            taskExecution.visibleParametersCount++;
+
+            const prevVisibleTaskExecution = taskExecution.previous
+              ? draft.taskExecutions.get(taskExecution.previous)
+              : undefined;
+            if (prevVisibleTaskExecution) {
+              taskExecution.next = prevVisibleTaskExecution.next;
+              prevVisibleTaskExecution.next = taskExecution.id;
+              if (taskExecution.next) {
+                const nextTaskExecution = draft.taskExecutions.get(taskExecution.next);
+                if (nextTaskExecution) {
+                  nextTaskExecution.previous = taskExecution.id;
                 }
               }
             }
@@ -267,12 +313,12 @@ function updateParameterVerifications(
   draft: JobStore,
   payload: typeof actions.updateParameterVerifications,
 ) {
-  const { data, parameterId } = payload;
-  let parameter = draft.parameters.get(parameterId);
-  if (parameter && parameter.response) {
-    if (parameter.response.parameterVerifications?.length) {
-      parameter.response.parameterVerifications = parameter.response.parameterVerifications.map(
-        (verification) => {
+  const { data, parameterResponseId } = payload;
+  let response = draft.parameterResponseById.get(parameterResponseId);
+  if (response) {
+    if (response.parameterVerifications?.length) {
+      response.parameterVerifications = (response.parameterVerifications || []).map(
+        (verification: any) => {
           if (verification.verificationType === data.verificationType) {
             return data;
           }
@@ -280,11 +326,11 @@ function updateParameterVerifications(
         },
       );
     } else {
-      parameter.response.parameterVerifications = [data];
+      response.parameterVerifications = [data];
     }
 
     if (data.evaluationState) {
-      parameter.response.state = data.evaluationState;
+      response.state = data.evaluationState;
     }
   }
 }
@@ -312,7 +358,10 @@ export const jobReducer = (state = initialState, action: JobActionsType) =>
       case JobActionsEnum.completeJob:
       case JobActionsEnum.togglePauseResume:
       case JobActionsEnum.performTaskAction:
-        // case JobActionsEnum.startPollActiveStageData:
+      // case JobActionsEnum.startPollActiveStageData:
+      case JobActionsEnum.repeatTask:
+      case JobActionsEnum.removeRepeatTask:
+      case JobActionsEnum.endTaskRecurrence:
         draft.updating = true;
         break;
       case JobActionsEnum.setUpdating:

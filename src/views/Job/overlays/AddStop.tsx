@@ -6,6 +6,7 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { jobActions } from '../jobStore';
+import { TaskExecutionType } from '#types';
 
 const Wrapper = styled.div`
   .modal {
@@ -60,13 +61,21 @@ const TaskStopModal: FC<CommonOverlayProps<{ id: string }>> = ({
 
   const { id } = props;
 
-  const { tasks, stages } = useTypedSelector((state) => state.job);
-  const taskWithStop = tasks.get(id);
+  const { tasks, stages, taskExecutions } = useTypedSelector((state) => state.job);
+
+  const taskExecutionWithStop = taskExecutions.get(id);
+
+  const taskWithStop = tasks.get(taskExecutionWithStop?.taskId);
   const stageWithTaskStop = stages.get(taskWithStop.stageId);
 
   const { orderTree: stageNumber } = stageWithTaskStop;
 
   const { orderTree: taskNumber } = taskWithStop;
+
+  const { orderTree: taskExecutionNumber, type } = taskExecutionWithStop!;
+
+  const modalTaskNumber =
+    type !== TaskExecutionType.MASTER ? `${stageNumber}.${taskNumber}.${taskExecutionNumber - 1}` : `${stageNumber}.${taskNumber}`;
 
   return (
     <Wrapper>
@@ -82,14 +91,14 @@ const TaskStopModal: FC<CommonOverlayProps<{ id: string }>> = ({
             Stop
           </div>
           <div className="body">
-            {`You need to complete Task No. ${stageNumber}.${taskNumber} in Stage No. ${stageNumber} before coming to this task`}
+            {`You need to complete Task No. ${modalTaskNumber} in Stage No. ${stageNumber} before coming to this task`}
           </div>
           <div
             className="footer"
             onClick={() => {
               dispatch(
                 jobActions.navigateByTaskId({
-                  id: taskWithStop!.id,
+                  id: taskExecutionWithStop!.id,
                 }),
               );
 

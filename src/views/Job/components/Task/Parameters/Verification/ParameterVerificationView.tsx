@@ -10,14 +10,14 @@ const ParameterVerificationView: FC<{
   parameterState: ParameterState;
   verificationsByType: any;
   verificationType: string;
-  parameterId: string;
+  parameterResponseId: string;
   modifiedBy: string;
 }> = ({
   isLoggedInUserAssigned,
   parameterState,
   verificationsByType,
   verificationType,
-  parameterId,
+  parameterResponseId,
   modifiedBy,
 }) => {
   const renderVerificationView = () => {
@@ -25,7 +25,7 @@ const ParameterVerificationView: FC<{
       case ParameterVerificationTypeEnum.SELF:
         return (
           <SelfVerification
-            parameterId={parameterId}
+            parameterResponseId={parameterResponseId}
             verification={verificationsByType?.[ParameterVerificationTypeEnum.SELF]}
             isLoggedInUserAssigned={isLoggedInUserAssigned}
             parameterState={parameterState}
@@ -35,7 +35,7 @@ const ParameterVerificationView: FC<{
       case ParameterVerificationTypeEnum.PEER:
         return (
           <PeerVerification
-            parameterId={parameterId}
+            parameterResponseId={parameterResponseId}
             verifications={verificationsByType}
             verificationType={verificationType}
             isLoggedInUserAssigned={isLoggedInUserAssigned}
@@ -47,14 +47,14 @@ const ParameterVerificationView: FC<{
         return (
           <>
             <SelfVerification
-              parameterId={parameterId}
+              parameterResponseId={parameterResponseId}
               verification={verificationsByType?.[ParameterVerificationTypeEnum.SELF]}
               isLoggedInUserAssigned={isLoggedInUserAssigned}
               parameterState={parameterState}
               modifiedBy={modifiedBy}
             />
             <PeerVerification
-              parameterId={parameterId}
+              parameterResponseId={parameterResponseId}
               verificationType={verificationType}
               verifications={verificationsByType}
               isLoggedInUserAssigned={isLoggedInUserAssigned}

@@ -1,5 +1,6 @@
 import { FileUploadData, Error } from '#utils/globalTypes';
 import { Parameter, Checklist, Stage, Task as TaskType } from '../checklist.types';
+import { ScheduledTaskCondition, ScheduledTaskType } from '#types';
 
 export type Task = TaskType & {
   stageId: Stage['id'];
@@ -44,6 +45,26 @@ export type SetTaskTimerType = {
   minPeriod?: number;
   taskId: Task['id'];
   timerOperator: string;
+};
+
+export type SetTaskRecurrenceType = {
+  taskId: Task['id'];
+  startDateDuration: Record<string, number>;
+  startDateInterval: number;
+  dueDateDuration: Record<string, number>;
+  dueDateInterval: number;
+};
+
+export type SetTaskScheduleType = {
+  taskId: Task['id'];
+  type: ScheduledTaskType;
+  condition: ScheduledTaskCondition;
+  referencedTaskId: string | null;
+  scheduledTaskId: string;
+  startDateDuration: Record<string, number>;
+  startDateInterval: number;
+  dueDateDuration: Record<string, number>;
+  dueDateInterval: number;
 };
 
 export type MediaDetails = FileUploadData & {

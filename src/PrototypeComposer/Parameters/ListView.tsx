@@ -13,27 +13,12 @@ import { useTypedSelector } from '#store';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterField, FilterOperators, fetchDataParams } from '#utils/globalTypes';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
-import { Tooltip } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
 import { Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import tickIcon from '../../assets/svg/tickIcon.svg';
-
-const CustomTooltip = withStyles({
-  tooltip: {
-    width: '205px',
-    backgroundColor: '#393939',
-    borderRadius: '0px',
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: '14px',
-  },
-  arrow: {
-    color: '#393939',
-  },
-})(Tooltip);
+import Tooltip from '#components/shared/Tooltip';
 
 const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
   const {
@@ -110,7 +95,7 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     const validTypes = [ParameterVerificationTypeEnum.BOTH, type];
 
     let verificationType = (
-      <CustomTooltip
+      <Tooltip
         title={
           item.targetEntityType === TargetEntityType.PROCESS
             ? 'Verification are not applicable for Parameters in the Create Job Form'
@@ -119,7 +104,7 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
         arrow
       >
         <span>NA</span>
-      </CustomTooltip>
+      </Tooltip>
     );
 
     if (validTypes.includes(item?.verificationType)) {

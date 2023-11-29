@@ -5,7 +5,7 @@ import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
-import { MandatoryParameter, StoreParameter } from '#types';
+import { MandatoryParameter, ParameterMode, StoreParameter, TaskExecutionType } from '#types';
 import { baseUrl } from '#utils/apiUrls';
 import { FilterField, FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { ObjectIdsDataFromChoices } from '#utils/parameterUtils';
@@ -40,10 +40,11 @@ const ResourceParameterWrapper = styled.div`
 
 const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError }) => {
   const dispatch = useDispatch();
-  const { parameters } = useTypedSelector((state) => state.job);
+  const { parameters, taskExecutions } = useTypedSelector((state) => state.job);
   const [linkedResourceParameter, setLinkedResourceParameter] = useState<
     StoreParameter | undefined
   >();
+
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];
@@ -63,6 +64,21 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
 
   const propertyFilters = useRef(null);
 
+  const referencedParameterIds = useRef<string>(
+    propertyFilters.current?.fields?.reduce((acc, currField) => {
+      if (currField?.referencedParameterId) {
+        acc.push(currField.referencedParameterId);
+      }
+      return acc;
+    }, []) || [],
+  );
+
+  // Allow user to select the resource only from the list of resources selected in the MASTER task
+  const taskExecution = taskExecutions.get(parameter.response.taskExecutionId);
+  const isTaskRepeatOrRecurring =
+    taskExecution?.type === TaskExecutionType.REPEAT ||
+    taskExecution?.type === TaskExecutionType.RECURRING;
+
   useEffect(() => {
     if (parameter.autoInitialized) {
       const linkedResourceParameter = parameters.get(parameter!.autoInitialize!.parameterId);
@@ -78,6 +94,31 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
 
   useEffect(() => {
     propertyFilters.current = getPropertyFilters();
+  }, [parameter.response.variations]);
+
+  const parameterForFiltersValueChange = referencedParameterIds.current?.map((curr) => {
+    const _parameter = parameters?.get(curr);
+    return _parameter?.response?.value || _parameter?.response?.choices;
+  });
+
+  useEffect(() => {
+    if (isTaskRepeatOrRecurring) {
+      const parameterResponses = parameters.get(parameter.id)?.response;
+
+      const sortedResponses = [...parameterResponses].sort((a, b) => {
+        return a.taskExecutionOrderTree - b.taskExecutionOrderTree;
+      });
+
+      setState((prev) => ({
+        ...prev,
+        options: sortedResponses[0]?.choices,
+      }));
+    } else {
+      if (parameter?.mode !== ParameterMode.READ_ONLY) getOptions(getUrl(0));
+    }
+  }, parameterForFiltersValueChange);
+
+  useEffect(() => {
     setState((prev) => ({
       ...prev,
       value: parameter.response.choices?.length
@@ -131,6 +172,13 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     }
   };
 
+  const getLatestValue = (responseArray: any[]) => {
+    if (!responseArray || responseArray.length === 0) {
+      return null;
+    }
+    return responseArray[responseArray.length - 1];
+  };
+
   const getFields = (filters: { op: string; fields: any[] }) => {
     const { fields, op } = filters;
     const _fields: {
@@ -141,10 +189,10 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     fields?.forEach((currField) => {
       if (currField?.referencedParameterId) {
         const referencedParameter = parameters.get(currField.referencedParameterId);
+
         if (referencedParameter) {
-          let value =
-            referencedParameter?.response?.value ??
-            ObjectIdsDataFromChoices(referencedParameter?.response?.choices);
+          const latestResponse = getLatestValue(referencedParameter?.response);
+          let value = latestResponse?.value ?? ObjectIdsDataFromChoices(latestResponse?.choices);
 
           if (value) {
             if (
@@ -266,9 +314,9 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
       data: {
         ...parameter?.data,
         choices: options?.map((o: any) => ({
-          objectId: o.option?.id,
-          objectDisplayName: o.option?.displayName,
-          objectExternalId: o.option?.externalId,
+          objectId: o.option?.id || o.option?.objectId,
+          objectDisplayName: o.option?.displayName || o.option?.objectDisplayName,
+          objectExternalId: o.option?.externalId || o.option?.objectExternalId,
           collection: o.option?.collection,
         })),
       },
@@ -300,9 +348,9 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
         <Select
           isDisabled={parameter?.autoInitialized}
           options={options?.map((option) => ({
-            value: option.id,
-            label: option?.displayName,
-            externalId: option?.externalId,
+            value: option.id || option.objectId,
+            label: option?.displayName || option?.objectDisplayName,
+            externalId: option?.externalId || option?.objectExternalId,
             option,
           }))}
           onMenuOpen={() => setState((prev) => ({ ...prev, isOpen: true }))}

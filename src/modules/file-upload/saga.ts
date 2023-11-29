@@ -19,12 +19,16 @@ function* uploadFileSaga({ payload }: ReturnType<typeof uploadFile>) {
         const medias = [data];
         yield put(
           jobActions.updateParameter({
-            ...parameter,
-            response: {
-              ...parameter.response,
-              medias,
-              audit: undefined,
-              state: 'EXECUTED',
+            data: {
+              ...parameter,
+              response: [
+                {
+                  ...parameter.response,
+                  medias,
+                  audit: undefined,
+                  state: 'EXECUTED',
+                },
+              ],
             },
           }),
         );

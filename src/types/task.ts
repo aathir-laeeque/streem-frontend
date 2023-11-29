@@ -41,6 +41,12 @@ export const TASK_TYPE = {
 
 export type TaskType = ObjectKeys<typeof TASK_TYPE>;
 
+export enum TaskExecutionType {
+  MASTER = 'MASTER',
+  REPEAT = 'REPEAT',
+  RECURRING = 'RECURRING',
+}
+
 export enum TaskPauseReasons {
   BIO_BREAK = 'Bio break',
   SHIFT_BREAK = 'Shift break',
@@ -71,6 +77,7 @@ export interface TaskExecution {
   correctedAt: number;
   duration: number;
   pauseReasons: Record<string, string>[];
+  type: TaskExecutionType;
 }
 
 export interface Task {
@@ -84,7 +91,7 @@ export interface Task {
   minPeriod?: number;
   name: string;
   orderTree: number;
-  taskExecution: TaskExecution;
+  taskExecutions: TaskExecution[];
   timed: boolean;
   timerOperator: TimerOperator;
   automations: AutomationAction[];
@@ -95,16 +102,17 @@ export interface Task {
   data?: {
     parameterId: string;
   };
+  enableRecurrence?: boolean;
+  enableScheduling?: boolean;
 }
 
-export interface StoreTask extends Omit<Task, 'parameters'> {
-  isUserAssignedToTask?: boolean;
+export interface StoreTask extends Omit<Task, 'parameters' | 'taskExecutions'> {
   stageId?: string;
-  visibleParametersCount: number;
-  previous?: string;
-  next?: string;
+  visibleTaskExecutionsCount: number;
   canSkipTask: boolean;
   parameters: string[];
+  taskExecutions: string[];
+  taskExecution?: StoreTaskExecution;
   errors: string[];
   parametersErrors: Map<string, string[]>;
 }
@@ -123,4 +131,24 @@ export enum TaskAction {
 export enum TaskErrors {
   E201 = 'TASK_INCOMPLETE',
   E202 = 'TASK_NOT_FOUND',
+}
+export interface StoreTaskExecution extends TaskExecution {
+  previous?: string;
+  next?: string;
+  taskId: string;
+  stageId: string;
+  isUserAssignedToTask: boolean;
+  parameterResponses?: string[];
+  visibleParametersCount: number;
+  scheduleTaskSummary?: string;
+}
+
+export enum ScheduledTaskType {
+  TASK = 'TASK',
+  JOB = 'JOB',
+}
+
+export enum ScheduledTaskCondition {
+  START = 'START',
+  COMPLETE = 'COMPLETE',
 }

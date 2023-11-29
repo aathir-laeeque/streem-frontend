@@ -2,9 +2,9 @@ import { Checklist, Parameter } from '#PrototypeComposer/checklist.types';
 import { Users } from '#store/users/types';
 import { FileUploadData, InputTypes, Pageable } from '#utils/globalTypes';
 import { ObjectKeys, PartialUser } from './common';
-import { StoreParameter } from './parameter';
+import { StoreParameter, ParameterResponse } from './parameter';
 import { StoreStage } from './stage';
-import { StoreTask } from './task';
+import { StoreTask, StoreTaskExecution } from './task';
 
 export const UNASSIGNED_JOB_STATES = {
   UNASSIGNED: {
@@ -96,7 +96,9 @@ export interface JobStore {
   id?: string;
   stages: Map<string, StoreStage>;
   tasks: Map<string, StoreTask>;
+  taskExecutions: Map<string, StoreTaskExecution>;
   parameters: Map<string, StoreParameter>;
+  parameterResponseById: Map<string, ParameterResponse>;
   cjfValues: string[];
   loading: boolean;
   state?: JobStates;

@@ -8,6 +8,8 @@ import {
   AddMediaType,
   AddNewTaskType,
   ArchiveActionType,
+  SetTaskRecurrenceType,
+  SetTaskScheduleType,
   SetTaskTimerType,
   UpdateActionType,
   UpdateMediaType,
@@ -62,6 +64,18 @@ export const setTaskTimer = (setTimerType: SetTaskTimerType) =>
 
 export const removeTaskTimer = (taskId: Task['id']) =>
   actionSpreader(TaskListActions.REMOVE_TASK_TIMER, { taskId });
+
+export const setTaskRecurrence = (setTaskRecurrenceType: SetTaskRecurrenceType) =>
+  actionSpreader(TaskListActions.SET_TASK_RECURRENCE, setTaskRecurrenceType);
+
+export const removeTaskRecurrence = (taskId: Task['id']) =>
+  actionSpreader(TaskListActions.REMOVE_TASK_RECURRENCE, { taskId });
+
+export const setTaskSchedule = (setTaskScheduleType: SetTaskScheduleType) =>
+  actionSpreader(TaskListActions.SET_TASK_SCHEDULE, setTaskScheduleType);
+
+export const removeTaskSchedule = (taskId: Task['id']) =>
+  actionSpreader(TaskListActions.REMOVE_TASK_SCHEDULE, { taskId });
 
 export const updateTask = (task: Task) => actionSpreader(TaskListActions.UPDATE_TASK, { task });
 

@@ -3,18 +3,10 @@ import { InputTypes } from '#utils/globalTypes';
 import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
 import { compact } from 'lodash';
 import { formatDateTime } from '#utils/timeUtils';
-import {
-  fromUnixTime,
-  getUnixTime,
-  getWeek,
-  hoursToSeconds,
-  minutesToSeconds,
-  weeksToDays,
-  yearsToMonths,
-  setDefaultOptions,
-} from 'date-fns';
+import { fromUnixTime, getUnixTime, getWeek, setDefaultOptions } from 'date-fns';
 import React, { FC, useEffect, useRef } from 'react';
 import { RRule, Weekday } from 'rrule';
+import { calculateSecondsFromDuration } from '#utils/timeUtils';
 
 export interface SchedulerProps {
   form: any;
@@ -162,33 +154,7 @@ export const Scheduler: FC<SchedulerProps> = ({ form, readOnly }) => {
   }, [expectedStartDate]);
 
   const updateDueDateInterval = () => {
-    let durationSeconds = 0;
-    Object.entries(dueDateDuration).forEach(([key, value]: any) => {
-      if (value) {
-        switch (key) {
-          case 'year':
-            durationSeconds += hoursToSeconds(yearsToMonths(value) * 30 * 24);
-            break;
-          case 'month':
-            durationSeconds += hoursToSeconds(value * 30 * 24);
-            break;
-          case 'week':
-            durationSeconds += hoursToSeconds(weeksToDays(value) * 24);
-            break;
-          case 'day':
-            durationSeconds += hoursToSeconds(value * 24);
-            break;
-          case 'hour':
-            durationSeconds += hoursToSeconds(value);
-            break;
-          case 'minute':
-            durationSeconds += minutesToSeconds(value);
-            break;
-          default:
-            break;
-        }
-      }
-    });
+    const durationSeconds = calculateSecondsFromDuration(dueDateDuration);
     setValue('dueDateInterval', durationSeconds, {
       shouldValidate: true,
     });

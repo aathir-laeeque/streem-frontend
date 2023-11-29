@@ -82,7 +82,7 @@ export type Parameter = {
   label: string;
   mandatory: boolean;
   orderTree: number;
-  response?: ParameterResponse | null;
+  response?: ParameterResponse[];
   description: string | null;
   type: ParameterType;
   validations: any;
@@ -160,6 +160,9 @@ export type Task = {
   data?: {
     parameterId: string;
   };
+  type: string;
+  enableRecurrence: boolean;
+  enableScheduling: boolean;
 };
 
 export type Stage = {

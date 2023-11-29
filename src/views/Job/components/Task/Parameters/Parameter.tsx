@@ -57,7 +57,7 @@ const Parameter: FC<ParameterProps> = ({
   isTaskCompleted,
   errors,
 }) => {
-  const { state, audit, parameterVerifications, variations } = parameter.response!;
+  const { state, audit, parameterVerifications, variations, id } = parameter.response!;
   const dispatch = useDispatch();
   const { id: jobId } = useTypedSelector((state) => state.job);
 
@@ -256,7 +256,7 @@ const Parameter: FC<ParameterProps> = ({
             verificationsByType={verificationsByType}
             verificationType={verificationType}
             isLoggedInUserAssigned={isLoggedInUserAssigned}
-            parameterId={parameter.id}
+            parameterResponseId={id}
             modifiedBy={audit?.modifiedBy?.id}
           />
         </>

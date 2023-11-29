@@ -11,12 +11,18 @@ import SelfVerificationAction from './SelfVerificationAction';
 import { useJobStateToFlags } from '#views/Job/utils';
 
 const SelfVerification: FC<{
-  parameterId: string;
+  parameterResponseId: string;
   verification: any;
   isLoggedInUserAssigned?: boolean;
   parameterState: string;
   modifiedBy: string;
-}> = ({ parameterId, verification, isLoggedInUserAssigned, parameterState, modifiedBy }) => {
+}> = ({
+  parameterResponseId,
+  verification,
+  isLoggedInUserAssigned,
+  parameterState,
+  modifiedBy,
+}) => {
   const dispatch = useDispatch();
   const {
     auth: { userId },
@@ -30,7 +36,7 @@ const SelfVerification: FC<{
         <div className="parameter-verification">
           <Button
             onClick={() => {
-              dispatch(jobActions.initiateSelfVerification({ parameterId }));
+              dispatch(jobActions.initiateSelfVerification({ parameterResponseId }));
             }}
           >
             Self Verify
@@ -67,7 +73,7 @@ const SelfVerification: FC<{
 
     case ParameterVerificationStatus.PENDING:
       return userId !== verification?.requestedTo?.id ? null : (
-        <SelfVerificationAction parameterId={parameterId} />
+        <SelfVerificationAction parameterResponseId={parameterResponseId} />
       );
 
     default:

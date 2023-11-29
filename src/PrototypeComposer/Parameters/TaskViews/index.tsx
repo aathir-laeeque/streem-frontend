@@ -30,7 +30,6 @@ import { apiDeleteParameter } from '#utils/apiUrls';
 import { request } from '#utils/request';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import Tooltip from '@material-ui/core/Tooltip';
 import {
   DragIndicator,
   EditOutlined,
@@ -44,21 +43,8 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { ParameterMode } from '#types';
-import { withStyles } from '@material-ui/core/styles';
-
-const CustomTooltip = withStyles({
-  tooltip: {
-    width: '205px',
-    backgroundColor: '#393939',
-    borderRadius: '0px',
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: '14px',
-  },
-  arrow: {
-    color: '#393939',
-  },
-})(Tooltip);
+import Tooltip from '#components/shared/Tooltip';
+import { ParameterMode } from '#types';
 
 export const ParameterTaskViewWrapper = styled.div<{ isReadOnly: boolean }>`
   padding: ${({ isReadOnly }) => (isReadOnly ? '16px 8px' : '16px 8px 16px 0')};
@@ -422,17 +408,17 @@ const ParameterTaskView: FC<ParameterProps> = ({ parameter, taskId, isReadOnly }
           <div className="verification-icons">
             {parameter?.verificationType === ParameterVerificationTypeEnum.SELF ||
             parameter?.verificationType === ParameterVerificationTypeEnum.BOTH ? (
-              <CustomTooltip title="Self Verification Enabled" arrow>
+              <Tooltip title="Self Verification Enabled" arrow>
                 <img src={selfVerificationIcon} alt="icon" width="24px" />
-              </CustomTooltip>
+              </Tooltip>
             ) : (
               ''
             )}
             {parameter?.verificationType === ParameterVerificationTypeEnum.PEER ||
             parameter?.verificationType === ParameterVerificationTypeEnum.BOTH ? (
-              <CustomTooltip title="Peer Verification Enabled" arrow>
+              <Tooltip title="Peer Verification Enabled" arrow>
                 <img src={peerVerificationIcon} alt="icon" width="24px" />
-              </CustomTooltip>
+              </Tooltip>
             ) : (
               ''
             )}

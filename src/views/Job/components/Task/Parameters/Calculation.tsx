@@ -1,10 +1,7 @@
-import { useTypedSelector } from '#store';
 import React, { FC } from 'react';
 import { ParameterProps } from './Parameter';
 
 const CalculationParameter: FC<ParameterProps> = ({ parameter }) => {
-  const { parameters } = useTypedSelector((state) => state.job);
-
   return (
     <div className="calculation-parameter" data-id={parameter.id} data-type={parameter.type}>
       <span className="head">Calculation</span>
@@ -13,11 +10,15 @@ const CalculationParameter: FC<ParameterProps> = ({ parameter }) => {
       </span>
       <span className="head">Input(s)</span>
       {Object.entries(parameter.data.variables).map(([key, value]: any) => {
+        const response = parameter?.response?.choices?.find((choice: any) => {
+          return choice.parameterId === value.parameterId;
+        });
+
         return (
           <span className="variable" key={key}>
             <span className="name">{key}:</span>
             <span className="value">
-              {value.label} ={parameters.get(value.parameterId)?.response?.value || ' -'}
+              {value.label} = {response?.value || ' -'}
             </span>
           </span>
         );

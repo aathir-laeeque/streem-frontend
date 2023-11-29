@@ -6,6 +6,10 @@ import { useJobStateToFlags } from '#views/Job/utils';
 
 export type ParameterListProps = {
   parameterIds: string[];
+  taskExecution: any;
+  isTaskStarted?: boolean;
+  isTaskCompleted?: boolean;
+  isTaskPaused?: boolean;
   isCorrectingError: boolean;
   isUserAssignedToTask?: boolean;
   parametersErrors: Map<string, string[]>;
@@ -13,12 +17,15 @@ export type ParameterListProps = {
 
 const Wrapper = styled.div.attrs({
   className: 'parameter-list',
-})<{
-  isInboxView: boolean;
-  isReadOnly?: boolean;
-  isTaskCompleted?: boolean;
-  isCorrectingError: boolean;
-}>`
+})<
+  {
+    isInboxView: boolean;
+    isReadOnly?: boolean;
+  } & Omit<
+    ParameterListProps,
+    'parameterIds' | 'isUserAssignedToTask' | 'parametersErrors' | 'taskExecution'
+  >
+>`
   display: flex;
   flex-direction: column;
 
@@ -159,12 +166,16 @@ const Wrapper = styled.div.attrs({
 
 const ParameterList: FC<ParameterListProps> = ({
   parameterIds,
+  taskExecution,
+  isTaskStarted,
+  isTaskCompleted,
+  isTaskPaused,
   isCorrectingError,
   isUserAssignedToTask,
   parametersErrors,
 }) => {
-  const { isInboxView, parameters } = useTypedSelector((state) => state.job);
-  const { isTaskStarted, isTaskCompleted, isTaskPaused } = useJobStateToFlags();
+  const { isInboxView, parameters, parameterResponseById } = useTypedSelector((state) => state.job);
+
   return (
     <Wrapper
       isReadOnly={!isTaskStarted || isTaskPaused}
@@ -172,17 +183,21 @@ const ParameterList: FC<ParameterListProps> = ({
       isCorrectingError={isCorrectingError}
       isInboxView={isInboxView}
     >
-      {parameterIds.map((parameterId) => {
-        const parameter = parameters.get(parameterId);
-        if (!parameter || parameter.isHidden) return null;
+      {taskExecution?.parameterResponses?.map((parameterResponseId: string) => {
+        const response = parameterResponseById.get(parameterResponseId);
+        const _parameter = parameters.get(response?.parameterId);
+
+        const parameter = { ..._parameter, response: response };
+        if (!parameter || response?.hidden) return null;
+
         return (
           <Parameter
-            key={parameter.id}
+            key={parameterResponseId}
             parameter={parameter}
             isTaskCompleted={isTaskCompleted}
             isLoggedInUserAssigned={isUserAssignedToTask}
             isCorrectingError={isCorrectingError}
-            errors={parametersErrors.get(parameter.id)}
+            errors={parametersErrors.get(parameter.response.id)}
           />
         );
       })}

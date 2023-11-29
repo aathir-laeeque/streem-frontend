@@ -30,7 +30,7 @@ const StageNavCard: FC<{ stage: any; stageNo: number }> = ({ stage, stageNo }) =
     let taskNo = 1;
     taskIds.forEach((taskId) => {
       const task = tasks.get(taskId);
-      task!.visibleParametersCount &&
+      task!.visibleTaskExecutionsCount &&
         _tasks.push(
           <TaskNavCard
             task={task}

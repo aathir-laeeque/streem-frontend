@@ -12,6 +12,7 @@ import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
 import { apiGetParameters, apiMapParameterToTask } from '#utils/apiUrls';
+import { isFeatureAllowed } from '#services/uiPermissions';
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
@@ -55,6 +56,10 @@ import {
 } from './actions';
 import { AddActivityItemWrapper, TaskCardWrapper } from './styles';
 import { TaskCardProps, TaskTypeEnum } from './types';
+import taskRecurrenceIcon from '#assets/svg/task-recurrence-icon.svg';
+import taskRecurrenceActive from '#assets/svg/task-recurrence-blue.svg';
+import scheduleTaskIcon from '#assets/svg/schedule-icon-black.svg';
+import scheduleTaskIconActive from '#assets/svg/schedule-icon-blue.svg';
 
 const AddActivity = () => {
   return (
@@ -93,6 +98,8 @@ const TaskCard: FC<
     timed,
     timerOperator,
     automations,
+    enableScheduling,
+    enableRecurrence,
   } = task;
 
   const handleDragEnd = (e: DragEndEvent) => {
@@ -385,7 +392,6 @@ const TaskCard: FC<
                 </div>
               </>
               <div
-                style={{ alignItems: isReadOnly ? 'flex-end' : 'center' }}
                 className="task-config-control-item"
                 id="add-actions"
                 onClick={() => {
@@ -405,6 +411,56 @@ const TaskCard: FC<
                   Configure Actions {automations.length > 0 && `(${automations.length})`}
                 </div>
               </div>
+              {isFeatureAllowed('recurringTask') && (
+                <div
+                  className="task-config-control-item"
+                  id="add-task-recurrence"
+                  onClick={() => {
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.TASK_RECURRENCE_MODAL,
+                        props: {
+                          task,
+                          isReadOnly,
+                        },
+                      }),
+                    );
+                  }}
+                >
+                  <div>
+                    <img
+                      src={enableRecurrence ? taskRecurrenceActive : taskRecurrenceIcon}
+                      style={{ marginRight: '8px' }}
+                    />
+                    Task Recurrence
+                  </div>
+                </div>
+              )}
+              {isFeatureAllowed('scheduleTask') && (
+                <div
+                  className="task-config-control-item"
+                  id="schedule-task"
+                  onClick={() => {
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.SCHEDULE_TASK_MODAL,
+                        props: {
+                          task,
+                          isReadOnly,
+                        },
+                      }),
+                    );
+                  }}
+                >
+                  <div>
+                    <img
+                      src={enableScheduling ? scheduleTaskIconActive : scheduleTaskIcon}
+                      style={{ marginRight: '8px' }}
+                    />
+                    Schedule Task
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

@@ -61,6 +61,12 @@ import SimpleConfirmationModal from './SimpleConfirmationModal';
 import { MultiTabModal } from './MultiTabChecker';
 import { closeAllOverlayAction, closeOverlayAction } from './actions';
 import { CommonOverlayProps, OverlayNames } from './types';
+import TaskRecurrenceModal from '#PrototypeComposer/Overlays/TaskRecurrenceModal';
+import RepeatTaskError from '#views/Job/overlays/RepeatTaskError';
+import RecurrenceExecutionModal from '#views/Job/overlays/RecurrenceExecutionModal';
+import EndRecurrenceModal from '#views/Job/overlays/EndRecurrenceModal';
+import ViewReasonModal from '#views/Job/overlays/ViewReasonModal';
+import ScheduleTaskModal from '#PrototypeComposer/Overlays/ScheduleTaskModal';
 
 const Wrapper = styled.div``;
 
@@ -243,6 +249,23 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.JOB_PARAMETER_VARIATION:
       return <ParameterVariationContent {...params} />;
+    case OverlayNames.TASK_RECURRENCE_MODAL:
+      return <TaskRecurrenceModal {...params} />;
+
+    case OverlayNames.REPEAT_TASK_ERROR_MODAL:
+      return <RepeatTaskError {...params} />;
+
+    case OverlayNames.TASK_RECURRENCE_EXECUTION_MODAL:
+      return <RecurrenceExecutionModal {...params} />;
+
+    case OverlayNames.END_TASK_RECURRENCE_MODAL:
+      return <EndRecurrenceModal {...params} />;
+
+    case OverlayNames.VIEW_REASON_MODAL:
+      return <ViewReasonModal {...params} />;
+
+    case OverlayNames.SCHEDULE_TASK_MODAL:
+      return <ScheduleTaskModal {...params} />;
 
     default:
       return null;

@@ -93,11 +93,12 @@ export interface AuthState {
   readonly userType?: string;
   readonly features?: FeatureFlags;
   readonly ssoIdToken?: string;
-  readonly identity: string;
 }
 
 export type FeatureFlags = {
   metabaseReports: boolean;
+  recurringTask: boolean;
+  scheduleTask: boolean;
 };
 
 export enum TokenTypes {

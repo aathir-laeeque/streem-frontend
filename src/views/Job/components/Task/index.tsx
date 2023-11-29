@@ -129,9 +129,13 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
 
   const {
     parameters: parameterIds,
-    isUserAssignedToTask,
     parametersErrors,
-    taskExecution: { correctionEnabled, pauseReasons, audit },
+    taskExecution: {
+      correctionEnabled,
+      pauseReasons,
+      audit,
+      isUserAssignedToTask,
+    },
   } = task!;
 
   const handleTaskBodyClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -208,6 +212,10 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
         )}
         <ParameterList
           parameterIds={parameterIds}
+          taskExecution={task.taskExecution}
+          isTaskStarted={isTaskStarted}
+          isTaskCompleted={isTaskCompleted}
+          isTaskPaused={isTaskPaused}
           isCorrectingError={!!correctionEnabled}
           isUserAssignedToTask={isUserAssignedToTask}
           parametersErrors={parametersErrors}
@@ -220,12 +228,24 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
 };
 
 const TaskContainer: FC = () => {
-  const { taskNavState, tasks, state: jobState } = useTypedSelector((state) => state.job);
+  const {
+    taskNavState,
+    tasks,
+    taskExecutions,
+    state: jobState,
+  } = useTypedSelector((state) => state.job);
 
   if (!jobState || !taskNavState.current) return null;
 
-  const task = tasks.get(taskNavState.current)!;
-  return <Task task={task} key={task.id} />;
+  const taskExecution = taskExecutions.get(taskNavState.current)!;
+
+  if (!taskExecution) return null;
+
+  const activeTask = tasks.get(taskExecution.taskId)!;
+
+  const _task = { ...activeTask, taskExecution: taskExecution };
+
+  return <Task task={_task} key={taskExecution.id} />;
 };
 
 export default TaskContainer;

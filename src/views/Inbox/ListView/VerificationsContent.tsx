@@ -123,6 +123,7 @@ const VerificationsContent: FC<{
     inboxListView: {
       verifications: { loading, list, pageable },
     },
+    job: { parameterResponseById },
     // auth: { userId: loggedInUserId },
   } = useTypedSelector((state) => state);
 
@@ -418,6 +419,9 @@ const VerificationsContent: FC<{
                   label: 'Action',
                   minWidth: 100,
                   format: (item) => {
+                    const taskExecutionId = parameterResponseById.get(
+                      item?.parameterValueId,
+                    )?.taskExecutionId;
                     return (
                       <span
                         className="primary"
@@ -425,15 +429,14 @@ const VerificationsContent: FC<{
                           if (isJobOpen) {
                             dispatch(
                               jobActions.navigateByTaskId({
-                                id: item?.taskId,
+                                id: taskExecutionId!,
                               }),
                             );
                             dispatch(closeOverlayAction(OverlayNames.JOB_VERIFICATION));
                           } else {
                             navigate(`/inbox/${item.jobId}`, {
                               state: {
-                                verificationTaskId: item?.taskId,
-                                VerificationStageId: item?.stageId,
+                                taskExecutionId,
                               },
                             });
                           }

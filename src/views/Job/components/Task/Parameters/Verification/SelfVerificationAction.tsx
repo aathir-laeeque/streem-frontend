@@ -13,7 +13,7 @@ type Inputs = {
   password: string;
 };
 
-const SelfVerificationAction: FC<{ parameterId: string }> = ({ parameterId }) => {
+const SelfVerificationAction: FC<{ parameterResponseId: string }> = ({ parameterResponseId }) => {
   const [passwordInputType, setPasswordInputType] = useState(true);
   const dispatch = useDispatch();
   const {
@@ -33,13 +33,13 @@ const SelfVerificationAction: FC<{ parameterId: string }> = ({ parameterId }) =>
     if (ssoIdToken) {
       ssoSigningRedirect({
         state: SsoStates.SELF_VERIFICATION,
-        parameterId,
+        parameterResponseId,
         location: pathname,
       });
     } else {
       dispatch(
         jobActions.completeSelfVerification({
-          parameterId,
+          parameterResponseId,
           password: data.password,
         }),
       );
@@ -75,7 +75,7 @@ const SelfVerificationAction: FC<{ parameterId: string }> = ({ parameterId }) =>
       <Button
         variant="secondary"
         onClick={() => {
-          dispatch(jobActions.recallPeerVerification({ parameterId, type: 'self' }));
+          dispatch(jobActions.recallPeerVerification({ parameterResponseId, type: 'self' }));
         }}
       >
         Cancel

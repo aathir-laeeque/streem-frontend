@@ -2,12 +2,13 @@ import { ParameterVerificationTypeEnum } from '#PrototypeComposer/checklist.type
 import { useTypedSelector } from '#store';
 import {
   COMPLETED_TASK_STATES,
-  IN_PROGRESS_TASK_STATES,
   JobStore,
   ParameterVerificationStatus,
   StoreParameter,
   StoreStage,
   StoreTask,
+  IN_PROGRESS_TASK_STATES,
+  StoreTaskExecution,
 } from '#types';
 import { Job, Verification } from '#views/Jobs/ListView/types';
 import { useEffect, useState } from 'react';
@@ -22,7 +23,9 @@ export function parseJobData(
 ): Omit<JobStore, 'loading' | 'isInboxView' | 'assignments'> {
   const stages: JobStore['stages'] = new Map();
   const tasks: JobStore['tasks'] = new Map();
+  const taskExecutions: JobStore['taskExecutions'] = new Map();
   const parameters: JobStore['parameters'] = new Map();
+  const parameterResponseById: JobStore['parameterResponseById'] = new Map();
   const pendingTasks: JobStore['pendingTasks'] = new Set();
   const taskNavState = {
     ...currentState.taskNavState,
@@ -38,7 +41,7 @@ export function parseJobData(
       return p.id;
     });
 
-  let prevVisibleTaskId: string = '';
+  let prevVisibleTaskExecutionId: string = '';
   checklist?.stages?.forEach((stage, stageIndex) => {
     const _stage: StoreStage = {
       ...stage,
@@ -46,14 +49,14 @@ export function parseJobData(
       tasks: [],
     };
 
-    stage?.tasks?.forEach((task, taskIndex, _tasks) => {
+    stage?.tasks?.forEach((task, taskIndex) => {
       const _task: StoreTask = {
         ...task,
         errors: [],
-        isUserAssignedToTask: false,
         canSkipTask: true,
         parameters: [],
-        visibleParametersCount: 0,
+        taskExecutions: [],
+        visibleTaskExecutionsCount: 0,
         stageId: stage.id,
         parametersErrors: new Map(),
       };
@@ -69,21 +72,47 @@ export function parseJobData(
         }
         const _parameter: StoreParameter = {
           ...parameter,
-          isHidden: false,
           taskId: task.id,
           stageId: stage.id,
+          responses: [],
         };
 
-        if (parameter.response?.hidden || task.hidden) {
-          _parameter.isHidden = true;
-        } else {
-          _task.visibleParametersCount++;
+        parameter?.response?.forEach((__response: any) => {
+          let response = __response;
+          if (stageId && stageId !== stage.id) {
+            response = currentState.parameterResponseById.get(__response.id)!;
+          }
+          const _response = {
+            ...response,
+            parameterId: parameter.id,
+          };
+          _parameter.responses.push(response.id);
+
+          let taskExecution = taskExecutions.get(response.taskExecutionId) || {
+            taskId: task.id,
+            stageId: stage.id,
+            isUserAssignedToTask: false,
+            visibleParametersCount: 0,
+            parameterResponses: [],
+          };
+
+          if (!response.hidden) {
+            if (taskExecution) {
+              taskExecution.visibleParametersCount++;
+              _task.visibleTaskExecutionsCount++;
+            }
+          }
+
+          taskExecutions.set(response.taskExecutionId, {
+            ...taskExecution,
+            parameterResponses: [...(taskExecution?.parameterResponses || []), response.id],
+          } as StoreTaskExecution);
 
           if (
             !showVerificationBanner &&
             parameter.verificationType !== ParameterVerificationTypeEnum.NONE
           ) {
-            const dependantVerification = (parameter.response?.parameterVerifications || []).some(
+            const dependantVerification = (response?.parameterVerifications || []).some(
               (verification: Verification) =>
                 verification?.requestedTo?.id === userId &&
                 verification?.verificationStatus === ParameterVerificationStatus.PENDING,
@@ -93,51 +122,75 @@ export function parseJobData(
             }
           }
 
-          if (_task.canSkipTask) {
-            _task.canSkipTask = !parameter.mandatory;
-          }
+          parameterResponseById.set(response.id, _response);
+        });
+
+        if (_task.canSkipTask) {
+          _task.canSkipTask = !parameter.mandatory;
         }
 
         _task.parameters.push(parameter.id);
         parameters.set(parameter.id, _parameter);
       });
 
-      _task.previous = prevVisibleTaskId;
-
-      if (!_task.hidden && _task.visibleParametersCount) {
-        _stage.visibleTasksCount++;
-        if (!(task.taskExecution.state in COMPLETED_TASK_STATES)) {
-          pendingTasks.add(_task.id);
+      task?.taskExecutions?.forEach((__taskExecution) => {
+        let taskExecution = __taskExecution;
+        if (stageId && stageId !== stage.id) {
+          taskExecution = currentState.taskExecutions.get(__taskExecution.id)!;
         }
 
-        if (!stageIndex && stage.tasks.length === 1) {
-          prevVisibleTaskId = _task.id;
-        }
+        const _taskExecution = {
+          ...taskExecutions.get(taskExecution.id),
+          ...taskExecution,
+          // scheduleTaskSummary is getting set in scheduleTaskSummary in taskNavCard, we need to retain it.
+          scheduleTaskSummary: currentState.taskExecutions.get(taskExecution.id)
+            ?.scheduleTaskSummary,
+        } as StoreTaskExecution;
 
-        if (prevVisibleTaskId) {
-          const previousTask = tasks.get(prevVisibleTaskId)!;
-          if (previousTask) {
-            tasks.set(prevVisibleTaskId, {
-              ...previousTask,
-              next: _task.id,
-            });
-          }
-
-          if (!taskNavState.current) {
-            taskNavState.current = prevVisibleTaskId;
-          }
-        }
-
-        prevVisibleTaskId = _task.id;
-
-        // SET USER ASSIGNED TO TASK
-        _task.isUserAssignedToTask = task.taskExecution.assignees.some(
+        _taskExecution.isUserAssignedToTask = taskExecution.assignees.some(
           (user) => user.id === userId,
         );
-      } else {
-        if (!taskNavState.current) {
-          taskNavState.current = prevVisibleTaskId;
+
+        _task.taskExecutions.push(taskExecution.id);
+        taskExecutions.set(taskExecution.id, _taskExecution);
+
+        _taskExecution.previous = prevVisibleTaskExecutionId;
+
+        if (_taskExecution.visibleParametersCount) {
+          if (!(_taskExecution.state in COMPLETED_TASK_STATES)) {
+            pendingTasks.add(_taskExecution.id);
+          }
+
+          if (!stageIndex && stage.tasks.length === 1) {
+            if (!taskIndex && task.taskExecutions.length === 1) {
+              prevVisibleTaskExecutionId = _taskExecution.id;
+            }
+          }
+
+          if (prevVisibleTaskExecutionId) {
+            const prevTaskExecution = taskExecutions.get(prevVisibleTaskExecutionId);
+            if (prevTaskExecution && prevTaskExecution.id !== _taskExecution.id) {
+              taskExecutions.set(prevVisibleTaskExecutionId, {
+                ...prevTaskExecution,
+                next: _taskExecution.id,
+              });
+            }
+
+            if (!taskNavState.current) {
+              taskNavState.current = prevVisibleTaskExecutionId;
+            }
+          }
+
+          prevVisibleTaskExecutionId = _taskExecution.id;
+        } else {
+          if (!taskNavState.current) {
+            taskNavState.current = prevVisibleTaskExecutionId;
+          }
         }
+      });
+
+      if (_task.visibleTaskExecutionsCount) {
+        _stage.visibleTasksCount++;
       }
 
       _stage.tasks.push(_task.id);
@@ -151,7 +204,9 @@ export function parseJobData(
     cjfValues,
     stages,
     tasks,
+    taskExecutions,
     parameters,
+    parameterResponseById,
     taskNavState,
     pendingTasks,
     showVerificationBanner,
@@ -170,11 +225,13 @@ export function parseJobData(
 
 export const useJobStateToFlags = () => {
   const jobState = useTypedSelector((state) => state.job.state);
-  const activeTaskId = useTypedSelector((state) => state.job.taskNavState.current);
-  const task = useTypedSelector((state) => state.job.tasks.get(activeTaskId!));
+  const activeTaskExecutionId = useTypedSelector((state) => state.job.taskNavState.current);
+  const taskExecution = useTypedSelector((state) =>
+    state.job.taskExecutions.get(activeTaskExecutionId!),
+  );
 
-  const taskState = task?.taskExecution?.state;
-  const reason = task?.taskExecution?.reason;
+  const taskState = taskExecution?.state;
+  const reason = taskExecution?.reason;
 
   const [state, setState] = useState<{
     isBlocked?: boolean;

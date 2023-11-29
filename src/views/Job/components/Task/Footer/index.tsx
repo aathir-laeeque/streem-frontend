@@ -7,7 +7,7 @@ import { Button } from '#components';
 import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
-import { StoreTask, TaskAction, TaskExecutionStates } from '#types';
+import { StoreTask, TaskAction, TaskExecutionStates, TaskExecutionType } from '#types';
 import { jobActions } from '#views/Job/jobStore';
 import { useJobStateToFlags } from '#views/Job/utils';
 import { CompletedJobStates, JobStateEnum } from '#views/Jobs/ListView/types';
@@ -22,6 +22,9 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { getEpochTimeDifference } from '#utils/timeUtils';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-buttons',
@@ -90,41 +93,138 @@ const Footer: FC<FooterProps> = ({ task }) => {
 
   if (!jobState) return null;
 
-  const { isUserAssignedToTask } = task;
-
   const { isBlocked, isJobStarted, isTaskPaused, isTaskStarted, isTaskCompleted } =
     useJobStateToFlags();
 
-  const { state: taskExecutionState, correctionEnabled } = task.taskExecution;
+  const {
+    state: taskExecutionState,
+    correctionEnabled,
+    id: taskExecutionId,
+    isUserAssignedToTask,
+    recurringExpectedStartedAt,
+    recurringExpectedDueAt,
+    schedulingExpectedDueAt,
+    schedulingExpectedStartedAt,
+    type,
+    previous,
+    next,
+  } = task.taskExecution;
 
   const handleOnNextTask = () => {
-    if (task.next)
+    if (next)
       dispatch(
         jobActions.navigateByTaskId({
-          id: task.next,
+          id: next,
         }),
       );
   };
 
   const handleOnPreviousTask = () => {
-    if (task.previous)
+    if (previous)
       dispatch(
         jobActions.navigateByTaskId({
-          id: task.previous,
+          id: previous,
         }),
       );
   };
 
-  const preCompleteTask = (reason?: string) => {
+  const handleRecurringTaskCompletion = (reason?: string) => {
+    if (
+      type === TaskExecutionType.RECURRING &&
+      getEpochTimeDifference(recurringExpectedDueAt) === 'LATE'
+    ) {
+      dispatch(
+        openOverlayAction({
+          type: OverlayNames.REASON_MODAL,
+          props: {
+            modalTitle: 'Recurring Task Overdue',
+            modalDesc: 'This recurring task is overdue. Kindly provide reason for delay.',
+            onSubmitHandler: (recurringOverdueCompletionReason: string, closeModal: () => void) => {
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.TASK_RECURRENCE_EXECUTION_MODAL,
+                  props: {
+                    onPrimary: () => {
+                      preCompleteTask({
+                        reason,
+                        continueRecurrence: true,
+                        recurringOverdueCompletionReason,
+                      });
+                    },
+                    onSecondary: () => {
+                      dispatch(
+                        openOverlayAction({
+                          type: OverlayNames.END_TASK_RECURRENCE_MODAL,
+                          props: {
+                            onPrimary: () => {
+                              preCompleteTask({
+                                reason,
+                                continueRecurrence: false,
+                                recurringOverdueCompletionReason,
+                              });
+                            },
+                          },
+                        }),
+                      );
+                    },
+                  },
+                }),
+              );
+              closeModal();
+            },
+          },
+        }),
+      );
+    } else {
+      dispatch(
+        openOverlayAction({
+          type: OverlayNames.TASK_RECURRENCE_EXECUTION_MODAL,
+          props: {
+            onPrimary: () => {
+              preCompleteTask({ reason, continueRecurrence: true });
+            },
+            onSecondary: () => {
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.END_TASK_RECURRENCE_MODAL,
+                  props: {
+                    onPrimary: () => {
+                      preCompleteTask({ reason, continueRecurrence: false });
+                    },
+                  },
+                }),
+              );
+            },
+          },
+        }),
+      );
+    }
+  };
+
+  const preCompleteTask = (params?: {
+    reason?: string;
+    continueRecurrence?: boolean;
+    recurringOverdueCompletionReason?: string;
+    scheduleOverdueCompletionReason?: string;
+  }) => {
+    const {
+      reason = '',
+      continueRecurrence = false,
+      recurringOverdueCompletionReason = '',
+      scheduleOverdueCompletionReason = '',
+    } = params || {};
     const handleCompleteTask = (createObjectAutomation: any[] = []) => {
       dispatch(
         jobActions.performTaskAction({
-          id: task.id,
+          id: taskExecutionId,
           action: TaskAction.COMPLETE,
-          reason: reason!,
+          reason,
           ...(createObjectAutomation.length > 0 && {
             createObjectAutomations: createObjectAutomation,
           }),
+          continueRecurrence,
+          recurringOverdueCompletionReason,
+          scheduleOverdueCompletionReason,
         }),
       );
     };
@@ -177,14 +277,52 @@ const Footer: FC<FooterProps> = ({ task }) => {
           modalTitle = 'Early completion';
           modalDesc = 'State your reason for early completion';
         }
+        if (task.enableRecurrence) {
+          dispatch(
+            openOverlayAction({
+              type: OverlayNames.REASON_MODAL,
+              props: {
+                modalTitle,
+                modalDesc,
+                onSubmitHandler: (reason: string) => {
+                  handleRecurringTaskCompletion(reason);
+                },
+              },
+            }),
+          );
+        } else {
+          dispatch(
+            openOverlayAction({
+              type: OverlayNames.REASON_MODAL,
+              props: {
+                modalTitle,
+                modalDesc,
+                onSubmitHandler: (reason: string, closeModal: () => void) => {
+                  preCompleteTask({ reason });
+                  closeModal();
+                },
+              },
+            }),
+          );
+        }
+      } else if (task.enableRecurrence) {
+        handleRecurringTaskCompletion();
+      } else if (
+        task.enableScheduling &&
+        getEpochTimeDifference(schedulingExpectedDueAt) === 'LATE'
+      ) {
         dispatch(
           openOverlayAction({
             type: OverlayNames.REASON_MODAL,
             props: {
-              modalTitle,
-              modalDesc,
-              onSubmitHandler: (reason: string, closeModal: () => void) => {
-                preCompleteTask(reason);
+              modalTitle: 'Scheduled Task Overdue',
+              modalDesc:
+                'This task is overdue. Kindly provide the reason for the delay in its execution.',
+              onSubmitHandler: (
+                scheduleOverdueCompletionReason: string,
+                closeModal: () => void,
+              ) => {
+                preCompleteTask({ scheduleOverdueCompletionReason });
                 closeModal();
               },
             },
@@ -196,15 +334,16 @@ const Footer: FC<FooterProps> = ({ task }) => {
     }
   };
 
-  const onStartTask = () => {
+  const onStartTask = (recurringPrematureStartReason: string = '') => {
     const handleStartTask = (createObjectAutomation: any[] = []) => {
       dispatch(
         jobActions.performTaskAction({
-          id: task.id,
+          id: taskExecutionId,
           action: TaskAction.START,
           ...(createObjectAutomation.length > 0 && {
             createObjectAutomations: createObjectAutomation,
           }),
+          ...(recurringPrematureStartReason && { recurringPrematureStartReason }),
         }),
       );
     };
@@ -351,7 +490,38 @@ const Footer: FC<FooterProps> = ({ task }) => {
           primaryActionLabel = 'Start task';
           primaryActionProps = {
             onClick: () => {
-              onStartTask();
+              if (
+                task.enableScheduling &&
+                getEpochTimeDifference(schedulingExpectedStartedAt) === 'EARLY'
+              ) {
+                dispatch(
+                  showNotification({
+                    type: NotificationType.ERROR,
+                    msg: 'Task cannot be started before its scheduled start time.',
+                  }),
+                );
+              } else if (
+                task?.enableRecurrence &&
+                type === TaskExecutionType.RECURRING &&
+                getEpochTimeDifference(recurringExpectedStartedAt) === 'EARLY'
+              ) {
+                dispatch(
+                  openOverlayAction({
+                    type: OverlayNames.REASON_MODAL,
+                    props: {
+                      modalTitle: 'Start the Task',
+                      modalDesc:
+                        'Are you sure you want to start the task before it’s start time ? Please provide a reason for it.',
+                      onSubmitHandler: (reason: string) => {
+                        onStartTask(reason);
+                        dispatch(closeOverlayAction(OverlayNames.REASON_MODAL));
+                      },
+                    },
+                  }),
+                );
+              } else {
+                onStartTask();
+              }
             },
           };
         } else if (isUserAssignedToTask && !(jobState in CompletedJobStates)) {
@@ -374,7 +544,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
   const togglePauseResume = async (reason = '', comment = '') => {
     dispatch(
       jobActions.togglePauseResume({
-        id: task.id,
+        id: taskExecutionId,
         reason,
         comment,
         isTaskPaused,
@@ -411,14 +581,14 @@ const Footer: FC<FooterProps> = ({ task }) => {
           }
         }}
       >
-        {iconShow(task.taskExecution.state)}
+        {iconShow(taskExecutionState)}
       </Button>
     );
   };
 
   return (
     <Wrapper>
-      <Button variant="textOnly" onClick={handleOnPreviousTask} disabled={!task.previous}>
+      <Button variant="textOnly" onClick={handleOnPreviousTask} disabled={!previous}>
         <ArrowBack />
       </Button>
 
@@ -431,7 +601,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
               onClick={() => {
                 dispatch(
                   jobActions.performTaskAction({
-                    id: task.id,
+                    id: taskExecutionId,
                     action: TaskAction.COMPLETE_ERROR_CORRECTION,
                   }),
                 );
@@ -446,7 +616,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
               onClick={() => {
                 dispatch(
                   jobActions.performTaskAction({
-                    id: task.id,
+                    id: taskExecutionId,
                     action: TaskAction.CANCEL_ERROR_CORRECTION,
                   }),
                 );
@@ -458,7 +628,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
         ) : primaryActionLabel ? (
           <>
             {jobState === 'IN_PROGRESS' &&
-              ['IN_PROGRESS', 'PAUSED'].includes(task.taskExecution.state) &&
+              ['IN_PROGRESS', 'PAUSED'].includes(taskExecutionState) &&
               PauseResumeButton()}
             <Button variant="primary" {...primaryActionProps} disabled={isTaskPaused}>
               {primaryActionLabel}
@@ -483,7 +653,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
           </>
         )}
       </div>
-      <Button variant="textOnly" onClick={handleOnNextTask} disabled={!task.next}>
+      <Button variant="textOnly" onClick={handleOnNextTask} disabled={!next}>
         <ArrowForward />
       </Button>
     </Wrapper>

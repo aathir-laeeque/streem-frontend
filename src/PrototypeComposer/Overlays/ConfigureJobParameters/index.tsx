@@ -34,22 +34,7 @@ import { debounce, findIndex, orderBy } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { withStyles } from '@material-ui/core/styles';
-import { Tooltip } from '@material-ui/core';
-
-const CustomTooltip = withStyles({
-  tooltip: {
-    width: '205px',
-    backgroundColor: '#393939',
-    borderRadius: '0px',
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: '14px',
-  },
-  arrow: {
-    color: '#393939',
-  },
-})(Tooltip);
+import Tooltip from '#components/shared/Tooltip';
 
 const Wrapper = styled.div`
   .modal {
@@ -383,7 +368,7 @@ const ConfigureJobParameters: FC<CommonOverlayProps<Props>> = ({
             </span>
             {Object.entries(allItems).map(([key, item]) => {
               return (
-                <CustomTooltip
+                <Tooltip
                   title={
                     'Parameter cannot be added to Create Job Form because verifications are enabled. Disable the verification to add them to Create Job Form'
                   }
@@ -413,7 +398,7 @@ const ConfigureJobParameters: FC<CommonOverlayProps<Props>> = ({
                       disabled={item?.verificationType !== ParameterVerificationTypeEnum.NONE}
                     />
                   </span>
-                </CustomTooltip>
+                </Tooltip>
               );
             })}
           </div>

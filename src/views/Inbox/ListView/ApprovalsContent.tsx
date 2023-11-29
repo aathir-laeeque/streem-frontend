@@ -8,6 +8,7 @@ import { navigate } from '@reach/router';
 import { apiGetShouldBeApprovals } from '#utils/apiUrls';
 import { createFetchList } from '#hooks/useFetchData';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
+import { useTypedSelector } from '#store';
 
 const urlParams = {
   page: DEFAULT_PAGE_NUMBER,
@@ -16,6 +17,7 @@ const urlParams = {
 };
 
 const ApprovalsContent: FC = () => {
+  const { parameterResponseById } = useTypedSelector((state) => state.job);
   const [filters, setFilters] = useState<Record<string, any>>(urlParams);
   const [resourceFilter, setResourceFilter] = useState<string>('');
 
@@ -101,14 +103,16 @@ const ApprovalsContent: FC = () => {
                   label: 'Action',
                   minWidth: 100,
                   format: (item) => {
+                    const taskExecutionId = parameterResponseById.get(
+                      item?.parameterValueId,
+                    )?.taskExecutionId;
                     return (
                       <span
                         className="primary"
                         onClick={() => {
                           navigate(`/inbox/${item.jobId}`, {
                             state: {
-                              verificationTaskId: item?.taskId,
-                              VerificationStageId: item?.stageId,
+                              taskExecutionId,
                             },
                           });
                         }}

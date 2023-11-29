@@ -15,6 +15,27 @@ const Wrapper = styled.div.attrs({
     display: flex;
     flex-direction: column;
 
+    .task-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+      height: 24px;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 400;
+    }
+
+    .task-overdue-banner {
+      color: #a2191f;
+      background-color: #ffd7d9;
+    }
+
+    .scheduled-task-banner {
+      color: #0043ce;
+      background-color: #d0e2ff;
+    }
+
     .task-info {
       padding-block: 16px;
       display: flex;
@@ -169,11 +190,13 @@ const Wrapper = styled.div.attrs({
       }
     }
 
-    .reason-wrapper {
-      padding: 16px;
+    .reason-tags {
       display: flex;
-      flex: 1;
-      flex-direction: column;
+      flex-wrap: wrap;
+    }
+
+    .reason-wrapper {
+      padding: 16px 0px 16px 16px;
 
       .badge {
         background-color: #e0e0e0;
@@ -181,7 +204,9 @@ const Wrapper = styled.div.attrs({
         display: flex;
         align-items: center;
         width: max-content;
-        margin-bottom: 16px;
+        cursor: pointer;
+        font-size: 12px;
+        line-height: 16px;
 
         &.skip {
           background-color: #ffedd7;

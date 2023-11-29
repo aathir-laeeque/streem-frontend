@@ -40,12 +40,16 @@ export enum TaskListActions {
   REMOVE_STOP = '@@prototypeComposer/prototype/task-list/REMOVE_STOP',
   REMOVE_TASK_MEDIA = '@@prototypeComposer/prototype/task-list/REMOVE_TASK_MEDIA',
   REMOVE_TASK_TIMER = '@@prototypeComposer/prototype/task-list/REMOVE_TASK_TIMER',
+  REMOVE_TASK_RECURRENCE = '@@prototypeComposer/prototype/task-list/REMOVE_TASK_RECURRENCE',
+  REMOVE_TASK_SCHEDULE = '@@prototypeComposer/prototype/task-list/REMOVE_TASK_SCHEDULE',
   RESET_TASK_PARAMETER_ERROR = '@@prototypeComposer/prototype/task-list/RESET_TASK_PARAMETER_ERROR',
   RESET_TASK_ERROR = '@@prototypeComposer/prototype/task-list/RESET_TASK_ERROR',
 
   SET_ACTIVE_TASK = '@@prototypeComposer/prototype/task-list/SET_ACTIVE_TASK',
   SET_TASK_ERROR = '@@prototypeComposer/prototype/task-list/SET_TASK_ERROR',
   SET_TASK_TIMER = '@@prototypeComposer/prototype/task-list/SET_TASK_TIMER',
+  SET_TASK_RECURRENCE = '@@prototypeComposer/prototype/task-list/SET_TASK_RECURRENCE',
+  SET_TASK_SCHEDULE = '@@prototypeComposer/prototype/task-list/SET_TASK_SCHEDULE',
   SET_VALIDATION_ERROR = '@@prototypeComposer/prototype/task-list/SET_VALIDATION_ERROR',
 
   UPDATE_TASK = '@@prototypeComposer/prototype/task-list/UPDATE_TASK',

@@ -3,7 +3,6 @@ import recurrenceIcon from '#assets/svg/Recurrence.svg';
 import { getParameterContent } from '#utils/parameterUtils';
 import { checkJobExecutionDelay, formatDateTime } from '#utils/timeUtils';
 import { LabelValueRow } from '#views/Job/components/Header/styles';
-import { Tooltip, withStyles } from '@material-ui/core';
 import { ArrowForward, ChevronLeft } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import { getUnixTime } from 'date-fns';
@@ -12,6 +11,7 @@ import React, { FC } from 'react';
 import { Frequency, RRule } from 'rrule';
 import styled from 'styled-components';
 import { Job } from '../ListView/types';
+import Tooltip from '#components/shared/Tooltip';
 
 const JobCardWrapper = styled.div`
   display: flex;
@@ -109,20 +109,6 @@ const JobCardWrapper = styled.div`
     line-height: 1.5;
   }
 `;
-
-const CustomTooltip = withStyles({
-  tooltip: {
-    width: '205px',
-    backgroundColor: '#393939',
-    borderRadius: '0px',
-    color: '#c2c2c2',
-    textAlign: 'left',
-    fontSize: '14px',
-  },
-  arrow: {
-    color: '#393939',
-  },
-})(Tooltip);
 
 const getRecurrenceSummary = (job: Job) => {
   try {
@@ -231,7 +217,7 @@ const JobCard: FC<{
                     <div className="schedule-info">
                       {frequency && <span>{capitalize(frequency)}</span>}
                       {job?.scheduler && (
-                        <CustomTooltip
+                        <Tooltip
                           title={
                             <div
                               style={{
@@ -291,7 +277,7 @@ const JobCard: FC<{
                           arrow
                         >
                           <img className="icon" src={recurrenceIcon} alt="recurrence-icon" />
-                        </CustomTooltip>
+                        </Tooltip>
                       )}
                       <span
                         style={{

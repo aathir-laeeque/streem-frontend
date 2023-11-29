@@ -3,6 +3,7 @@ import { Checklist, Parameter, Stage } from '#PrototypeComposer/checklist.types'
 import { AddNewTaskType, MediaDetails } from '#PrototypeComposer/Tasks/types';
 import { User } from '#store/users/types';
 import { Task } from '#types';
+import { TaskExecution } from '#types';
 import { Job } from '#views/Jobs/ListView/types';
 import { Object } from '#views/Ontology/types';
 import { fetchBaseUrl } from './constants';
@@ -25,8 +26,13 @@ export const apiStartJob = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}/start
 export const apiGetStageData = (jobId: Job['id'], stageId: Stage['id']) =>
   `${baseUrl}/jobs/${jobId}/stages/state?stageId=${stageId}`;
 
-export const apiPerformActionOnTask = (taskId: Task['id'], action: string) =>
-  `${baseUrl}/tasks/${taskId}/${action}`;
+export const apiPerformActionOnTask = (taskExecutionId: TaskExecution['id'], action: string) =>
+  `${baseUrl}/task-executions/${taskExecutionId}/${action}`;
+
+export const apiRepeatTask = () => `${baseUrl}/task-executions/repeat`;
+
+export const apiRemoveRepeatTask = (taskExecutionId: TaskExecution['id']) =>
+  `${baseUrl}/task-executions/${taskExecutionId}/remove`;
 
 export const apiCompleteJob = (withException: boolean, jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}/${withException ? 'complete-with-exception' : 'complete'}`;
@@ -43,18 +49,20 @@ export const apiUpdatePassword = (id: User['id']) => `${baseUrl}/users/${id}/pas
 
 export const apiGetSelectedJob = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}`;
 
-export const apiExecuteParameter = () => `${baseUrl}/parameters/execute`;
+export const apiExecuteParameter = (parameterExecutionId: string) =>
+  `${baseUrl}/parameter-executions/${parameterExecutionId}/execute`;
 
-export const apiFixParameter = () => `${baseUrl}/parameters/error-correction`;
+export const apiFixParameter = (parameterExecutionId: string) =>
+  `${baseUrl}/parameter-executions/${parameterExecutionId}/error-correction`;
 
-export const apiEnableTaskErrorCorrection = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/correction/start`;
+export const apiEnableTaskErrorCorrection = (taskExecutionId: TaskExecution['id']) =>
+  `${baseUrl}/task-executions/${taskExecutionId}/correction/start`;
 
-export const apiCompleteTaskErrorCorrection = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/correction/complete`;
+export const apiCompleteTaskErrorCorrection = (taskExecutionId: TaskExecution['id']) =>
+  `${baseUrl}/task-executions/${taskExecutionId}/correction/complete`;
 
-export const apiCancelTaskErrorCorrection = (taskId: Task['id']) =>
-  `${baseUrl}/tasks/${taskId}/correction/cancel`;
+export const apiCancelTaskErrorCorrection = (taskExecutionId: TaskExecution['id']) =>
+  `${baseUrl}/task-executions/${taskExecutionId}/correction/cancel`;
 
 export const apiUploadFile = () => `${baseUrl}/medias/upload`;
 
@@ -214,9 +222,11 @@ export const apiValidatePassword = () => `${baseUrl}/auth/credentials/validate`;
 
 export const apiTaskSignOff = () => `${baseUrl}/tasks/sign-off`;
 
-export const apiApproveParameter = () => `${baseUrl}/parameters/approve`;
+export const apiApproveParameter = (parameterResponseId: string) =>
+  `${baseUrl}/parameter-executions/${parameterResponseId}/approve`;
 
-export const apiRejectParameter = () => `${baseUrl}/parameters/reject`;
+export const apiRejectParameter = (parameterResponseId: string) =>
+  `${baseUrl}/parameter-executions/${parameterResponseId}/reject`;
 
 export const apiArchiveChecklist = (id: Checklist['id']) => `${baseUrl}/checklists/${id}/archive`;
 
@@ -256,7 +266,7 @@ export const apiSwitchFacility = (userId: string, facilityId: string) =>
 export const apiGetAllUsersAssignedToJob = (jobId: Job['id']) =>
   `${baseUrl}/jobs/${jobId}/assignments`;
 
-export const apiGetAllUsersAssignedToTask = () => `${baseUrl}/tasks/assignments`;
+export const apiGetAllUsersAssignedToTask = () => `${baseUrl}/task-executions/assignments`;
 
 export const apiGetAllUsersAssignedToChecklistTask = (id: string) =>
   `${baseUrl}/checklists/${id}/users/task/assignment`;
@@ -312,7 +322,7 @@ export const apiCustomViewsArchive = (id?: string) => `${baseUrl}/custom-views/$
 
 export const apiGetJobLogsExcel = () => `${baseUrl}/job-logs/download`;
 
-export const apiBranchingRuleExecute = () => `${baseUrl}/parameters/execute/temporary`;
+export const apiBranchingRuleExecute = () => `${baseUrl}/parameter-executions/execute/temporary`;
 
 export const apiJobsCount = () => `${baseUrl}/jobs/count`;
 
@@ -354,9 +364,11 @@ export const apiGetProcessesByResource = (objectTypeId: string) =>
 
 export const apiGetJobsByResource = (objectId: string) => `${baseUrl}/jobs/by/resource/${objectId}`;
 
-export const apiPauseJob = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/pause`;
+export const apiPauseJob = (taskExecutionId: TaskExecution['id']) =>
+  `${baseUrl}/task-executions/${taskExecutionId}/pause`;
 
-export const apiResumeJob = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/resume`;
+export const apiResumeJob = (taskExecutionId: TaskExecution['id']) =>
+  `${baseUrl}/task-executions/${taskExecutionId}/resume`;
 
 export const apiProcessScheduler = () => `${baseUrl}/schedulers`;
 
@@ -368,7 +380,9 @@ export const apiVersionHistoryProcessScheduler = (schedulerId: string) =>
 
 export const apiSingleProcessScheduler = (schedulerId: string) =>
   `${baseUrl}/schedulers/${schedulerId}`;
-export const apiValidateTask = (taskId: Task['id']) => `${baseUrl}/tasks/${taskId}/validate`;
+
+export const apiValidateTask = (taskExecutionId: TaskExecution['id']) =>
+  `${baseUrl}/task-executions/${taskExecutionId}/validate`;
 
 export const apiEditObjectType = (objectTypeId: string) =>
   `${baseUrl}/object-types/${objectTypeId}`;
@@ -388,48 +402,40 @@ export const apiExportChecklist = () => `${baseUrl}/checklists/export`;
 export const apiImportChecklist = () => `${baseUrl}/checklists/import`;
 
 export const apiInitiateSelfVerification = ({
-  jobId,
-  parameterId,
+  parameterResponseId,
 }: {
-  jobId: string;
-  parameterId: string;
-}) => `${baseUrl}/parameter-verifications/jobs/${jobId}/parameters/${parameterId}/self/verify`;
+  parameterResponseId: string;
+}) => `${baseUrl}/parameter-verifications/parameter-executions/${parameterResponseId}/self/verify`;
 
 export const apiInitiatePeerVerification = ({
-  jobId,
-  parameterId,
+  parameterResponseId,
 }: {
-  jobId: string;
-  parameterId: string;
-}) => `${baseUrl}/parameter-verifications/jobs/${jobId}/parameters/${parameterId}/peer/assign`;
+  parameterResponseId: string;
+}) => `${baseUrl}/parameter-verifications/parameter-executions/${parameterResponseId}/peer/assign`;
 
 export const apiAcceptVerification = ({
-  jobId,
-  parameterId,
+  parameterResponseId,
   type,
 }: {
-  jobId: string;
-  parameterId: string;
+  parameterResponseId: string;
   type: 'self' | 'peer';
-}) => `${baseUrl}/parameter-verifications/jobs/${jobId}/parameters/${parameterId}/${type}/accept`;
+}) =>
+  `${baseUrl}/parameter-verifications/parameter-executions/${parameterResponseId}/${type}/accept`;
 
 export const apiRecallVerification = ({
-  jobId,
-  parameterId,
+  parameterResponseId,
   type,
 }: {
-  jobId: string;
-  parameterId: string;
+  parameterResponseId: string;
   type: 'self' | 'peer';
-}) => `${baseUrl}/parameter-verifications/jobs/${jobId}/parameters/${parameterId}/${type}/recall`;
+}) =>
+  `${baseUrl}/parameter-verifications/parameter-executions/${parameterResponseId}/${type}/recall`;
 
 export const apiRejectPeerVerification = ({
-  jobId,
-  parameterId,
+  parameterResponseId,
 }: {
-  jobId: string;
-  parameterId: string;
-}) => `${baseUrl}/parameter-verifications/jobs/${jobId}/parameters/${parameterId}/peer/reject`;
+  parameterResponseId: string;
+}) => `${baseUrl}/parameter-verifications/parameter-executions/${parameterResponseId}/peer/reject`;
 
 export const apiParameterVerificationList = () => `${baseUrl}/parameter-verifications`;
 
@@ -454,3 +460,17 @@ export const apiArchiveParameterVariation = () => `${baseUrl}/parameters/variati
 
 export const apiGetVariationsListByParameterId = (parameterId: string) =>
   `${baseUrl}/parameters/variations/parameter/${parameterId}`;
+export const apiSetTaskRecurrence = (taskId: string) => `${baseUrl}/tasks/${taskId}/recurrence/set`;
+
+export const apiRemoveTaskRecurrence = (taskId: string) =>
+  `${baseUrl}/tasks/${taskId}/recurrence/unset`;
+
+export const apiEndTaskRecurrence = (taskExecutionId: TaskExecution['id']) =>
+  `${baseUrl}/task-executions/${taskExecutionId}/stop-recurring`;
+
+export const apiGetTaskRecurrence = (taskId: string) => `${baseUrl}/tasks/${taskId}/recurrence`;
+
+export const apiTaskSchedule = (taskId: string) => `${baseUrl}/tasks/${taskId}/schedules`;
+
+export const apiRemoveTaskSchedule = (taskId: string) =>
+  `${baseUrl}/tasks/${taskId}/schedules/unset`;

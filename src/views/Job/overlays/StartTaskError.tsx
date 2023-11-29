@@ -2,7 +2,7 @@ import { BaseModal } from '#components';
 import React, { FC } from 'react';
 import { CommonOverlayProps, OverlayNames } from '#components/OverlayContainer/types';
 import styled from 'styled-components';
-import { StoreTask, TaskAction } from '#types';
+import { StoreTask, TaskAction, TaskExecutionType } from '#types';
 import { useDispatch } from 'react-redux';
 import { jobActions } from '../jobStore';
 import {
@@ -10,6 +10,9 @@ import {
   AutomationActionTriggerType,
 } from '#PrototypeComposer/checklist.types';
 import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
+import { getEpochTimeDifference } from '#utils/timeUtils';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 
 const Wrapper = styled.div`
   .modal {
@@ -37,17 +40,25 @@ const StartTaskModal: FC<CommonOverlayProps<{ task: StoreTask }>> = ({
   props: { task },
 }) => {
   const dispatch = useDispatch();
-  const action = task.taskExecution.state === 'PAUSED' ? 'Resume' : 'Start';
+  const action = task?.taskExecution?.state === 'PAUSED' ? 'Resume' : 'Start';
 
-  const onStartTask = (task: StoreTask) => {
+  const {
+    id: taskExecutionId,
+    recurringExpectedStartedAt,
+    schedulingExpectedStartedAt,
+    type,
+  } = task?.taskExecution;
+
+  const onStartTask = (recurringPrematureStartReason: string = '') => {
     const handleStartTask = (createObjectAutomation: any[] = []) => {
       dispatch(
         jobActions.performTaskAction({
-          id: task.id,
+          id: taskExecutionId,
           action: TaskAction.START,
           ...(createObjectAutomation.length > 0 && {
             createObjectAutomations: createObjectAutomation,
           }),
+          ...(recurringPrematureStartReason && { recurringPrematureStartReason }),
         }),
       );
     };
@@ -85,6 +96,38 @@ const StartTaskModal: FC<CommonOverlayProps<{ task: StoreTask }>> = ({
     }
   };
 
+  const onPrimary = () => {
+    if (task.enableScheduling && getEpochTimeDifference(schedulingExpectedStartedAt) === 'EARLY') {
+      dispatch(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: 'Task cannot be started before its scheduled start time.',
+        }),
+      );
+    } else if (
+      task?.enableRecurrence &&
+      type === TaskExecutionType.RECURRING &&
+      getEpochTimeDifference(recurringExpectedStartedAt) === 'EARLY'
+    ) {
+      dispatch(
+        openOverlayAction({
+          type: OverlayNames.REASON_MODAL,
+          props: {
+            modalTitle: 'Start the Task',
+            modalDesc:
+              'Are you sure you want to start the task before it’s start time ? Please provide a reason for it.',
+            onSubmitHandler: (reason: string) => {
+              onStartTask(reason);
+              dispatch(closeOverlayAction(OverlayNames.REASON_MODAL));
+            },
+          },
+        }),
+      );
+    } else {
+      onStartTask();
+    }
+  };
+
   return (
     <Wrapper>
       <BaseModal
@@ -93,7 +136,7 @@ const StartTaskModal: FC<CommonOverlayProps<{ task: StoreTask }>> = ({
         title={modalTitle(action)}
         primaryText={`${action} task`}
         secondaryText="Cancel"
-        onPrimary={() => onStartTask(task)}
+        onPrimary={() => onPrimary()}
       >
         <div>
           You need to {action.toLowerCase()} the Task before executing any

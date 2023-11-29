@@ -51,25 +51,10 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { resetTaskParameterError } from './actions';
-import { Tooltip } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
-import { ParameterMode, ParameterType } from '#types';
-
-const CustomTooltip = withStyles({
-  tooltip: {
-    width: '205px',
-    backgroundColor: '#393939',
-    borderRadius: '0px',
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: '14px',
-  },
-  arrow: {
-    color: '#393939',
-  },
-})(Tooltip);
+import Tooltip from '#components/shared/Tooltip';
+import { ParameterMode } from '#types';
 
 export const AddParameterWrapper = styled.form`
   display: flex;
@@ -338,7 +323,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
             <h4>
               Parameter Verification <span>(Optional)</span>
             </h4>
-            <CustomTooltip
+            <Tooltip
               title={
                 currentParameter?.targetEntityType === TargetEntityType.PROCESS
                   ? 'Verification are not applicable for Parameters in the Create Job Form'
@@ -403,7 +388,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
                   }
                 />
               </div>
-            </CustomTooltip>
+            </Tooltip>
           </ParameterVerificationWrapper>
         )}
         {renderSetupViewsByType()}
