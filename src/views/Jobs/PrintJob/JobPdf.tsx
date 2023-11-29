@@ -45,6 +45,8 @@ export const JobPdf: FC<any> = ({
         dateAndTimeStampFormat,
         timeFormat,
         dateFormat,
+        selectedFacility,
+        profile,
         extra: {
           hiddenIds,
         },

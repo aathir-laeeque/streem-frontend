@@ -7,8 +7,7 @@ import { jobActions } from '#views/Job/jobStore';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
-import usePdfWorkerHook from '../PdfWorker/usePdfWorkerHook';
-import { LoadingDiv } from './styles';
+import { PdfWorkerContainer } from '../PdfWorker/loadPdfWorker';
 
 const Download: FC<any> = ({ jobId }) => {
   const [jobDetails, setJobDetails] = useState<PdfJobDataType | undefined>();
@@ -64,23 +63,11 @@ const Download: FC<any> = ({ jobId }) => {
     type: 'JOB_AUDIT_LOGS',
   };
 
-  usePdfWorkerHook({
-    keysToCheck: [
-      'jobId',
-      'profile',
-      'settings',
-      'selectedFacility',
-      'dateAndTimeStampFormat',
-      'timeFormat',
-      'dateFormat',
-      'logs',
-      'jobDetails',
-    ],
-    loadingKeysToCheck: { loading },
-    ...workerProps,
-  });
-
-  return <LoadingDiv>Loading...</LoadingDiv>;
+  return (
+    <>
+      <PdfWorkerContainer loading={!(logs && jobDetails && !loading)} {...workerProps} />
+    </>
+  );
 };
 
 export default Download;

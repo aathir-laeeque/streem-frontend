@@ -4,6 +4,8 @@ const INITIAL_VALUE = {
   timeFormat: 'HH:mm',
   dateFormat: 'MMM dd, yyyy',
   dateAndTimeStampFormat: `MMM dd, yyyy HH:mm`,
+  selectedFacility: {},
+  profile: {},
 };
 
 export const PrintContext = createContext<

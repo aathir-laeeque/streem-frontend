@@ -6,8 +6,7 @@ import { getParameters } from '#utils/parameterUtils';
 import { request } from '#utils/request';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
-import usePdfWorkerHook from '../PdfWorker/usePdfWorkerHook';
-import { LoadingDiv } from './styles';
+import { PdfWorkerContainer } from '../PdfWorker/loadPdfWorker';
 import { PrintJobProps } from './types';
 import { COMPLETED_JOB_STATES } from '#types';
 
@@ -68,29 +67,16 @@ const Download: FC<PrintJobProps> = ({ jobId }) => {
     progressCallback,
   };
 
-  usePdfWorkerHook({
-    keysToCheck: [
-      'dateAndTimeStampFormat',
-      'timeFormat',
-      'dateFormat',
-      'profile',
-      'settings',
-      'jobId',
-      'data',
-    ],
-    ...workerProps,
-  });
-
   return (
-    <LoadingDiv>
-      Loading...
-      <ProgressBar percentage={progress} />
-      {progressName && (
-        <div style={{ padding: '20px', fontWeight: 'bold' }}>
-          Stage {stageNo} : {progressName}
-        </div>
-      )}
-    </LoadingDiv>
+    <>
+      <PdfWorkerContainer
+        loading={!!!data}
+        progress={progress}
+        progressName={progressName}
+        stageNo={stageNo}
+        {...workerProps}
+      />
+    </>
   );
 };
 

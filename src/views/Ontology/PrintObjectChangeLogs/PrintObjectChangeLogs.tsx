@@ -4,6 +4,8 @@ import { formatDateTime } from '#utils/timeUtils';
 import { Document, Page, StyleSheet, View } from '@react-pdf/renderer';
 import React, { FC } from 'react';
 import { FirstPage } from './FirstPage';
+import { PrintContext } from '../../Jobs/PrintJob/PrintContext';
+import { useContext } from 'react';
 
 export const styles = StyleSheet.create({
   container: {
@@ -19,13 +21,13 @@ const ROWS_PER_PAGE = 12;
 
 export const MyPrintObjectChangeLogs: FC<any> = ({
   list,
-  profile,
   settings,
   pdfMetaData,
-  dateAndTimeStampFormat,
   filtersVisualMap,
-  selectedFacility,
 }) => {
+  const context = useContext(PrintContext);
+  const { dateAndTimeStampFormat, selectedFacility, profile } = context;
+
   const pagesByRows = Array.from(
     {
       length: Math.ceil(list.length / ROWS_PER_PAGE),
@@ -155,27 +157,34 @@ export const MyPrintObjectChangeLogs: FC<any> = ({
   };
 
   return (
-    <Document>
-      <Page style={commonPdfStyles.page} orientation="landscape">
-        <PdfHeader logoUrl={settings?.logoUrl} />
-        <FirstPage filters={filtersVisualMap} objectDetails={pdfMetaData} />
-        <PdfFooter
-          profile={profile}
-          selectedFacility={selectedFacility}
-          dateAndTimeStampFormat={dateAndTimeStampFormat}
-        />
-      </Page>
-      {pagesByRows.map((_, index) => (
+    <PrintContext.Provider
+      value={{
+        ...context,
+        extra: {},
+      }}
+    >
+      <Document>
         <Page style={commonPdfStyles.page} orientation="landscape">
           <PdfHeader logoUrl={settings?.logoUrl} />
-          <View style={styles.container}>{renderTableRow(index)}</View>
+          <FirstPage filters={filtersVisualMap} objectDetails={pdfMetaData} />
           <PdfFooter
             profile={profile}
             selectedFacility={selectedFacility}
             dateAndTimeStampFormat={dateAndTimeStampFormat}
           />
         </Page>
-      ))}
-    </Document>
+        {pagesByRows.map((_, index) => (
+          <Page style={commonPdfStyles.page} orientation="landscape">
+            <PdfHeader logoUrl={settings?.logoUrl} />
+            <View style={styles.container}>{renderTableRow(index)}</View>
+            <PdfFooter
+              profile={profile}
+              selectedFacility={selectedFacility}
+              dateAndTimeStampFormat={dateAndTimeStampFormat}
+            />
+          </Page>
+        ))}
+      </Document>
+    </PrintContext.Provider>
   );
 };

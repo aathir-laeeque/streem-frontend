@@ -1,7 +1,6 @@
 import { pdf } from '@react-pdf/renderer';
 import PDFMerger from 'pdf-merger-js';
 import * as Comlink from 'comlink';
-import { v4 as uuidv4 } from 'uuid';
 import React from 'react';
 import { MyPrintObjectChangeLogs } from '../../Ontology/PrintObjectChangeLogs/PrintObjectChangeLogs';
 import { JobPdf } from '../PrintJob/JobPdf';
@@ -16,6 +15,7 @@ import Nunito700 from '#assets/fonts/nunito/nunito-v14-latin-700.ttf';
 import Nunito800 from '#assets/fonts/nunito/nunito-v14-latin-800.ttf';
 import Nunito900 from '#assets/fonts/nunito/nunito-v14-latin-900.ttf';
 import { cloneDeep, noop } from 'lodash';
+import { PrintContext } from '../PrintJob/PrintContext';
 
 Font.register({
   family: 'Nunito',
@@ -43,6 +43,7 @@ function progress(count: number, total: number, name: string, stageNo: number) {
 
 const generateSingle = async (data: any) => {
   let pdfBuilder: any;
+  let pdfContent: any;
 
   switch (data.type) {
     case 'JOB':
@@ -81,20 +82,33 @@ const generateSingle = async (data: any) => {
       return new Blob([mergedPdfBuffer], { type: 'application/pdf' });
 
     case 'JOB_AUDIT_LOGS':
-      pdfBuilder = pdf(<JobAuditLogsPdf {...data} />);
+      pdfContent = <JobAuditLogsPdf {...data} />;
       break;
 
     case 'CUSTOM_VIEW_JOB_LOGS':
-      pdfBuilder = pdf(<MyCustomViewJobAuditLogs {...data} />);
+      pdfContent = <MyCustomViewJobAuditLogs {...data} />;
       break;
 
     case 'OBJECT_CHANGE_LOGS':
-      pdfBuilder = pdf(<MyPrintObjectChangeLogs {...data} />);
+      pdfContent = <MyPrintObjectChangeLogs {...data} />;
       break;
-
     default:
       break;
   }
+
+  pdfBuilder = pdf(
+    <PrintContext.Provider
+      value={{
+        timeFormat: data.timeFormat,
+        dateFormat: data.dateFormat,
+        dateAndTimeStampFormat: data.dateAndTimeStampFormat,
+        selectedFacility: data.selectedFacility,
+        profile: data.profile,
+      }}
+    >
+      {pdfContent}
+    </PrintContext.Provider>,
+  );
   const blob = await pdfBuilder.toBlob();
   return blob;
 };
@@ -105,18 +119,3 @@ Comlink.expose({
   generateSingle,
   onProgress,
 });
-
-export const pdfWorker = (request: any, cb = noop) => {
-  const worker = new Worker(new URL('./worker.tsx', import.meta.url));
-  const pdfWorker = Comlink.wrap(worker);
-  pdfWorker.onProgress(Comlink.proxy(cb));
-  pdfWorker.generateSingle(request).then((pdfBlob: Blob) => {
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(pdfBlob);
-    link.download = uuidv4() + '.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.close();
-  });
-};

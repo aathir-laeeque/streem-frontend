@@ -1,11 +1,10 @@
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { formatDateTime } from '#utils/timeUtils';
-import usePdfWorkerHook from '#views/Jobs/PdfWorker/usePdfWorkerHook';
-import { LoadingDiv } from '#views/Jobs/PrintJob/styles';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchObjectChangeLogs } from '../actions';
+import { PdfWorkerContainer } from '#views/Jobs/PdfWorker/loadPdfWorker';
 
 const Download: FC<{ objectId: string }> = ({ objectId }) => {
   const {
@@ -15,7 +14,7 @@ const Download: FC<{ objectId: string }> = ({ objectId }) => {
     },
     auditLogFilters: { filters, pdfMetaData },
   } = useTypedSelector((state) => state);
-  const { dateAndTimeStampFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat, dateFormat, timeFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
   const dispatch = useDispatch();
@@ -108,28 +107,19 @@ const Download: FC<{ objectId: string }> = ({ objectId }) => {
     settings,
     pdfMetaData,
     dateAndTimeStampFormat,
+    dateFormat,
+    timeFormat,
     filtersVisualMap,
     selectedFacility,
     objectId,
     type: 'OBJECT_CHANGE_LOGS',
   };
 
-  usePdfWorkerHook({
-    keysToCheck: [
-      'list',
-      'profile',
-      'settings',
-      'pdfMetaData',
-      'dateAndTimeStampFormat',
-      'filtersVisualMap',
-      'selectedFacility',
-      'objectId',
-    ],
-    loadingKeysToCheck: { listLoading, loadingFilters },
-    ...workerProps,
-  });
-
-  return <LoadingDiv>Loading...</LoadingDiv>;
+  return (
+    <>
+      <PdfWorkerContainer loading={state.loadingFilters || listLoading} {...workerProps} />
+    </>
+  );
 };
 
 export default Download;

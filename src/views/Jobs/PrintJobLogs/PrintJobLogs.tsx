@@ -6,6 +6,8 @@ import { Document, Page, StyleSheet, View } from '@react-pdf/renderer';
 import { camelCase, startCase } from 'lodash';
 import React, { FC } from 'react';
 import { FirstPage } from './FirstPage';
+import { PrintContext } from '../PrintJob/PrintContext';
+import { useContext } from 'react';
 
 export const styles = StyleSheet.create({
   container: {
@@ -25,16 +27,16 @@ const COLUMNS_TO_ADD_PER_PAGE = COLUMNS_PER_PAGE - FREEZED_COLUMNS;
 
 export const MyCustomViewJobAuditLogs: FC<any> = ({
   visibleColumns,
-  profile,
   settings,
   filtersVisualMap,
   list,
   showProcessSection,
-  selectedFacility,
-  dateAndTimeStampFormat,
   process,
   resourceParameterChoicesMap,
 }) => {
+  const context = useContext(PrintContext);
+  const { dateAndTimeStampFormat, selectedFacility, profile } = context;
+
   const renderCell = (row: any, column: any) => {
     if (row[column.id + column.triggerType]) {
       if (column.triggerType === TriggerTypeEnum.RESOURCE) {
@@ -187,36 +189,43 @@ export const MyCustomViewJobAuditLogs: FC<any> = ({
   );
 
   return (
-    <Document>
-      <Page style={commonPdfStyles.page} orientation="landscape">
-        <PdfHeader logoUrl={settings?.logoUrl} />
-        <FirstPage
-          filters={filtersVisualMap}
-          log={list?.[0]}
-          showProcessSection={showProcessSection}
-          checklist={process}
-          selectedFacility={selectedFacility}
-        />
-        <PdfFooter
-          profile={profile}
-          selectedFacility={selectedFacility}
-          dateAndTimeStampFormat={dateAndTimeStampFormat}
-        />
-      </Page>
+    <PrintContext.Provider
+      value={{
+        ...context,
+        extra: {},
+      }}
+    >
+      <Document>
+        <Page style={commonPdfStyles.page} orientation="landscape">
+          <PdfHeader logoUrl={settings?.logoUrl} />
+          <FirstPage
+            filters={filtersVisualMap}
+            log={list?.[0]}
+            showProcessSection={showProcessSection}
+            checklist={process}
+            selectedFacility={selectedFacility}
+          />
+          <PdfFooter
+            profile={profile}
+            selectedFacility={selectedFacility}
+            dateAndTimeStampFormat={dateAndTimeStampFormat}
+          />
+        </Page>
 
-      {pagesByRows.map((_, rowsPagesIndex) =>
-        pagesByColumns.map((_, i) => (
-          <Page style={commonPdfStyles.page} orientation="landscape" key={i}>
-            <PdfHeader logoUrl={settings?.logoUrl} />
-            <View style={styles.container}>{renderTableRow(i, rowsPagesIndex)}</View>
-            <PdfFooter
-              profile={profile}
-              selectedFacility={selectedFacility}
-              dateAndTimeStampFormat={dateAndTimeStampFormat}
-            />
-          </Page>
-        )),
-      )}
-    </Document>
+        {pagesByRows.map((_, rowsPagesIndex) =>
+          pagesByColumns.map((_, i) => (
+            <Page style={commonPdfStyles.page} orientation="landscape" key={i}>
+              <PdfHeader logoUrl={settings?.logoUrl} />
+              <View style={styles.container}>{renderTableRow(i, rowsPagesIndex)}</View>
+              <PdfFooter
+                profile={profile}
+                selectedFacility={selectedFacility}
+                dateAndTimeStampFormat={dateAndTimeStampFormat}
+              />
+            </Page>
+          )),
+        )}
+      </Document>
+    </PrintContext.Provider>
   );
 };

@@ -9,8 +9,7 @@ import { fetchProcessLogs } from '#views/Checklists/ListView/actions';
 import { camelCase, startCase } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import usePdfWorkerHook from '../PdfWorker/usePdfWorkerHook';
-import { LoadingDiv } from '../PrintJob/styles';
+import { PdfWorkerContainer } from '../PdfWorker/loadPdfWorker';
 
 const Download: FC<any> = ({ viewId }) => {
   const {
@@ -20,7 +19,7 @@ const Download: FC<any> = ({ viewId }) => {
     auth: { profile, settings, selectedFacility },
     auditLogFilters: { filters, columns: visibleColumns },
   } = useTypedSelector((state) => state);
-  const { dateAndTimeStampFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat, dateFormat, timeFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
 
@@ -227,30 +226,18 @@ const Download: FC<any> = ({ viewId }) => {
     showProcessSection,
     selectedFacility,
     dateAndTimeStampFormat,
+    dateFormat,
+    timeFormat,
     resourceParameterChoicesMap,
     process,
     type: 'CUSTOM_VIEW_JOB_LOGS',
   };
 
-  usePdfWorkerHook({
-    keysToCheck: [
-      'visibleColumns',
-      'viewId',
-      'profile',
-      'settings',
-      'filtersVisualMap',
-      'list',
-      'showProcessSection',
-      'selectedFacility',
-      'dateAndTimeStampFormat',
-      'resourceParameterChoicesMap',
-      'process',
-    ],
-    loadingKeysToCheck: { loading, loadingFilters, loadingProcess },
-    ...workerProps,
-  });
-
-  return <LoadingDiv>Loading...</LoadingDiv>;
+  return (
+    <>
+      <PdfWorkerContainer loading={state.loadingProcess || loading} {...workerProps} />
+    </>
+  );
 };
 
 export default Download;
