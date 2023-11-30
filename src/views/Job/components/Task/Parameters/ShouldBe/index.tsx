@@ -213,7 +213,10 @@ const ShouldBeParameter: FC<
     }
   }, [parameter.response.value, updating]);
 
-  const dispatchActions = (value: string, reason: string = '') => {
+  //TODO: In Data field Which Payload should go variation Data or configuration data.
+
+  const dispatchActions = (_value: string, reason: string = '') => {
+    const value = parseFloat(_value);
     if (isCorrectingError) {
       dispatch(
         jobActions.fixParameter({
