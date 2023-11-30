@@ -1,7 +1,7 @@
 import { ExtendButtonBase, Tab, Tabs, TabsProps, TabsTypeMap } from '@material-ui/core';
 import { TabContext, TabPanel, TabPanelProps } from '@material-ui/lab';
 import { navigate, useLocation } from '@reach/router';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 export const TabsWrapper = styled.div`
@@ -72,15 +72,21 @@ export const StyledTabs: FC<StyledTabProps> = ({
   const location = useLocation();
   const params = new URLSearchParams(location.search);
 
-  const currentValue = params.get('tab') || activeTab || tabs?.[0]?.value;
+  const tab = params.get('tab') || activeTab || tabs?.[0]?.value;
+
+  const [currentValue, setCurrentValue] = useState(tab);
+
+  useEffect(() => {
+    if (tab) setCurrentValue(tab);
+  }, [tab]);
 
   const handleChange: TabsTypeMap['props']['onChange'] = (_, newValue) => {
     if (queryString) {
       navigate(`?tab=${newValue}`);
-    } else {
-      if (onChange) {
-        onChange(newValue);
-      }
+    }
+    setCurrentValue(newValue);
+    if (onChange) {
+      onChange(newValue);
     }
   };
 
