@@ -170,7 +170,13 @@ const DeviateParameterDrawer: FC<{
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
 
-  const { processId, id: jobId } = useTypedSelector((state) => state.job);
+  const {
+    processId,
+    id: jobId,
+    tasks,
+    parameters: parametersMap,
+    stages,
+  } = useTypedSelector((state) => state.job);
   const [filters, setFilters] = useState<Record<string, any>>(urlParams);
   const [selectedParameter, setSelectedParameter] = useState<Parameter | null>(null);
 
@@ -266,11 +272,16 @@ const DeviateParameterDrawer: FC<{
                 label: 'Select Parameter',
                 isSearchable: true,
                 placeholder: 'Select Parameter',
-                options: parameters.map((parameter) => ({
-                  ...parameter,
-                  externalId: `(Task ${parameter.response.stageOrderTree}.${parameter.response.taskOrderTree})`,
-                  value: parameter.id,
-                })),
+                options: parameters.map((parameter) => {
+                  const _parameter = parametersMap.get(parameter.id);
+                  const task = tasks.get(_parameter.taskId);
+                  const stage = stages.get(task.stageId);
+                  return {
+                    ...parameter,
+                    externalId: `(Task ${stage.orderTree}.${task.orderTree})`,
+                    value: parameter.id,
+                  };
+                }),
                 onMenuScrollToBottom: () => fetchNextParameters(),
                 onInputChange: debounce((searchedValue: string, actionMeta) => {
                   if (searchedValue !== actionMeta.prevInputValue)

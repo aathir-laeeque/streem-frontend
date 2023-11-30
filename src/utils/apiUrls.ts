@@ -442,15 +442,15 @@ export const apiSsoRedirect = () => `${baseUrl}/auth/sso/redirect-url`;
 
 export const apiPrintJobActivity = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}/activity/print`;
 
-export const apiCreateEditParameterVariation = () => `${baseUrl}/parameters/variations/create`;
+export const apiCreateEditParameterVariation = () => `${baseUrl}/parameters/variations`;
 
 export const apiGetParameterVariations = (jobId: Job['id']) =>
-  `${baseUrl}/parameters/variations/allowed/${jobId}`;
+  `${baseUrl}/parameters/variations/${jobId}/allowed`;
 
 export const apiGetVariationsList = (jobId: Job['id']) =>
   `${baseUrl}/parameters/variations/${jobId}`;
 
-export const apiArchiveParameterVariation = () => `${baseUrl}/parameters/variations/delete`;
+export const apiArchiveParameterVariation = () => `${baseUrl}/parameters/variations`;
 
 export const apiGetVariationsListByParameterId = (parameterId: string) =>
-  `${baseUrl}/parameters/variations/${parameterId}/parameter`;
+  `${baseUrl}/parameters/variations/parameter/${parameterId}`;
