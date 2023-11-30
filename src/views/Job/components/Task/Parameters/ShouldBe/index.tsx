@@ -104,11 +104,7 @@ const ShouldBeParameter: FC<
   const { variations } = parameter.response;
   const numberInputRef = useRef<HTMLInputElement>(null);
   const debounceInputRef = useRef(debounce((event, functor) => functor(event), 2000));
-  const parameterDataRef = useRef(
-    parameter.response?.variations?.length > 0
-      ? parameter.response?.variations[0]?.newVariation
-      : parameter.data,
-  );
+  const parameterDataRef = useRef(parameter.data);
 
   const dispatch = useDispatch();
 
@@ -168,6 +164,12 @@ const ShouldBeParameter: FC<
           : parameter?.response?.value ?? null,
     }));
   }, [parameter]);
+
+  useEffect(() => {
+    if (parameter.response?.variations?.[0]?.newVariation) {
+      parameterDataRef.current = parameter.response.variations[0].newVariation;
+    }
+  }, [parameter.response?.variations]);
 
   const renderApprovalButtons = () => (
     <div className="buttons-container">

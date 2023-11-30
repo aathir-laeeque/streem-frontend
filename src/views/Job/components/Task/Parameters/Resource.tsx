@@ -75,8 +75,11 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
       const linkedResourceParameter = parameters.get(parameter!.autoInitialize!.parameterId);
       setLinkedResourceParameter(linkedResourceParameter);
     }
-    propertyFilters.current = getPropertyFilters();
   }, []);
+
+  useEffect(() => {
+    propertyFilters.current = getPropertyFilters();
+  }, [parameter.response.variations]);
 
   const parameterForFiltersValueChange = referencedParameterIds.current?.map((curr) => {
     const _parameter = parameters?.get(curr);
