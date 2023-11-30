@@ -30,37 +30,34 @@ export const FilterWrapper = styled.div`
     }
   }
   .filters {
-    margin-left: 50px;
-    margin-bottom: 38px;
-    padding-left: 18px;
-    padding-block: 24px;
-    background-image: linear-gradient(#6f6f6f 33%, rgba(255, 255, 255, 0) 0%);
-    background-position: left;
-    background-size: 1px 3px;
-    background-repeat: repeat-y;
-    position: relative;
+    padding-bottom: 24px;
 
     .add-button {
       padding: 6px 8px;
-      position: absolute;
-      bottom: -19px;
-      :before {
-        content: '';
-        display: inline-block;
-        height: 1px;
-        position: absolute;
-        vertical-align: middle;
-        width: 18px;
-        left: -18px;
-        border-top: 1px dotted #6f6f6f;
-      }
     }
 
     .filter {
       margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
 
       :last-of-type {
         margin-bottom: 0;
+      }
+
+      .filter-header {
+        background-color: #f4f4f4;
+        padding: 12px;
+        > div {
+          font-size: 14px;
+          font-weight: 700;
+        }
+      }
+
+      .filter-text {
+        font-size: 14px;
+        font-weight: 400;
       }
 
       .upper-row {
@@ -95,6 +92,10 @@ export const FilterWrapper = styled.div`
       flex: 1;
       margin-bottom: 16px;
     }
+
+    > div:last-child {
+      margin-bottom: 16px;
+    }
   }
 
   .custom-select__menu {
@@ -116,7 +117,9 @@ const ResourceFilter: FC<{
   form: UseFormMethods<any>;
   isReadOnly: boolean;
   parameter?: Parameter;
-}> = ({ form, isReadOnly, parameter }) => {
+  checklistId?: string;
+  isVariationView?: boolean;
+}> = ({ form, isReadOnly, parameter, checklistId, isVariationView = false }) => {
   const { watch, setValue, clearErrors, setError } = form;
   const data = watch('data', {
     propertyFilters: { op: '', fields: [] },
@@ -229,8 +232,10 @@ const ResourceFilter: FC<{
           isReadOnly={isReadOnly}
           updateFilters={updateFilters}
           form={form}
+          checklistId={checklistId}
+          isVariationView={isVariationView}
         />
-        {!isReadOnly && (
+        {!isReadOnly && !isVariationView && (
           <Button
             type="button"
             variant="secondary"
@@ -238,6 +243,7 @@ const ResourceFilter: FC<{
             onClick={() => {
               fields[fields.length] = {
                 key: uuidv4(),
+                id: uuidv4(),
               };
 
               const _propertyFilters = {
@@ -259,9 +265,11 @@ const ResourceFilter: FC<{
 const ResourceFormCard: FC<{
   form: UseFormMethods<any>;
   isReadOnly: boolean;
+  isVariationView: boolean;
   parameter?: Parameter;
   updateFilters: (updatedFilters: any) => void;
-}> = ({ parameter, isReadOnly, updateFilters, form }) => {
+  checklistId?: string;
+}> = ({ parameter, isReadOnly, updateFilters, form, checklistId, isVariationView = false }) => {
   const [state, setState] = useState<ResourceFilterState>({
     isActiveLoading: true,
     filterSelectOptions: {},
@@ -300,7 +308,10 @@ const ResourceFormCard: FC<{
 
   const pagination = useRef({});
 
-  const { data: processData } = useTypedSelector((state) => state.prototypeComposer);
+  if (!checklistId) {
+    const { data: processData } = useTypedSelector((state) => state.prototypeComposer);
+    checklistId = processData?.id;
+  }
 
   const fetchRelationObjects = async (urlPath: string, externalId: string) => {
     setState((prev) => ({ ...prev, isActiveLoading: true }));
@@ -365,9 +376,9 @@ const ResourceFormCard: FC<{
   const fetchParametersData = async (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = 2560, filters = parametersFilterFields } = params;
     // TODO: size is increased to 2560 to fetch all parameters at once cause mongo filter doesnt support for data.objectTypeId in case of resource type call.
-    if (processData?.id) {
+    if (checklistId) {
       try {
-        const response: ResponseObj<any> = await request('GET', apiGetParameters(processData?.id), {
+        const response: ResponseObj<any> = await request('GET', apiGetParameters(checklistId), {
           params: {
             page,
             size,
@@ -438,6 +449,10 @@ const ResourceFormCard: FC<{
     const selectedParameter = allParametersData?.[item?.referencedParameterId];
     return (
       <div className="filter" key={index}>
+        <div className="filter-header">
+          <div>Filter {index + 1}</div>
+        </div>
+        <div className="filter-text">For {selectedObjectType?.displayName} filter by</div>
         <div className="upper-row">
           <FormGroup
             inputs={[
@@ -445,7 +460,7 @@ const ResourceFormCard: FC<{
                 type: InputTypes.SINGLE_SELECT,
                 props: {
                   id: 'objectProperty',
-                  label: 'Object Property / Relations',
+                  label: 'Object Property/Relations',
                   isLoading: isActiveLoading,
                   options: [
                     ...(selectedObjectType?.properties || []),
@@ -478,6 +493,7 @@ const ResourceFormCard: FC<{
                   placeholder: 'Select Object Property',
                   onChange: (value: any) => {
                     fields[index] = {
+                      id: fields[index].id,
                       field: `searchable.${value.value}`,
                       fieldType: value?.target ? 'RELATION' : 'PROPERTY',
                     };
@@ -534,7 +550,7 @@ const ResourceFormCard: FC<{
                       type: InputTypes.SINGLE_SELECT,
                       props: {
                         id: 'objectPropertyCondition',
-                        label: 'Condition',
+                        label: 'Condition is',
                         options: Object.entries(
                           labelByConstraint(
                             selectedObjectProperty?.target?.cardinality ||
@@ -542,7 +558,7 @@ const ResourceFormCard: FC<{
                           ),
                         ).map(([value, label]) => ({ label, value })),
                         isSearchable: false,
-                        placeholder: 'Select Condition',
+                        placeholder: 'Select One',
                         isDisabled: isReadOnly,
                         value: item?.op
                           ? [
@@ -773,7 +789,7 @@ const ResourceFormCard: FC<{
                 : []),
             ]}
           />
-          {!isReadOnly && (
+          {!isReadOnly && !isVariationView && (
             <Close
               className="remove-icon"
               onClick={() => {

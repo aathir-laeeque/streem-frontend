@@ -12,12 +12,29 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const ValidationWrapper = styled.div`
   .validation {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     border-bottom: 1px solid #e0e0e0;
     margin-bottom: 24px;
     padding-bottom: 8px;
     :last-of-type {
       border-bottom: none;
       margin-bottom: 0;
+    }
+
+    .validation-header {
+      background-color: #f4f4f4;
+      padding: 12px;
+      > div {
+        font-size: 14px;
+        font-weight: 700;
+      }
+    }
+
+    .validation-text {
+      font-size: 14px;
+      font-weight: 400;
     }
 
     .upper-row {
@@ -38,6 +55,10 @@ export const ValidationWrapper = styled.div`
 
     > div {
       flex: 1;
+      margin-bottom: 16px;
+    }
+
+    > div:last-child {
       margin-bottom: 16px;
     }
 
@@ -105,10 +126,11 @@ type ResourceValidationState = {
   selectedObjectType?: ObjectType;
 };
 
-const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
-  form,
-  isReadOnly,
-}) => {
+const ResourceValidation: FC<{
+  form: UseFormMethods<any>;
+  isReadOnly: boolean;
+  isVariationView?: boolean;
+}> = ({ form, isReadOnly, isVariationView = false }) => {
   const { watch, setValue, setError, clearErrors } = form;
   const data = watch('data', {
     propertyValidations: [],
@@ -202,6 +224,10 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
         if (!item) return null;
         return (
           <div className="validation" key={index}>
+            <div className="validation-header">
+              <div>Validation {index + 1}</div>
+            </div>
+            <div className="validation-text">Check if</div>
             <div className="upper-row">
               <FormGroup
                 inputs={[
@@ -209,7 +235,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
                     type: InputTypes.SINGLE_SELECT,
                     props: {
                       id: 'objectProperty',
-                      label: 'Object Property',
+                      label: 'Object Property is',
                       isLoading: isActiveLoading,
                       options: selectedObjectType?.properties.map((objectTypeProperty) => ({
                         _options: objectTypeProperty.options,
@@ -231,6 +257,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
                       placeholder: 'Select Object Property',
                       onChange: (value: any) => {
                         propertyValidations[index] = {
+                          id: propertyValidations[index]?.id,
                           propertyId: value.value,
                           propertyInputType: value.inputType,
                           propertyExternalId: value.externalId,
@@ -267,7 +294,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
                           type: InputTypes.SINGLE_SELECT,
                           props: {
                             id: 'objectPropertyCondition',
-                            label: 'Condition',
+                            label: 'Condition is',
                             options: Object.entries(labelByConstraint(item.propertyInputType)).map(
                               ([value, label]) => ({ label, value }),
                             ),
@@ -301,7 +328,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
                                 type: item.propertyInputType,
                                 props: {
                                   id: 'objectPropertyValue',
-                                  label: 'Value',
+                                  label: 'Value is',
                                   placeholder: 'Select Property Option',
                                   isSearchable: false,
                                   options: (validationSelectOptions?.[index] || []).map(
@@ -346,7 +373,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
                                   : item.propertyInputType,
                                 props: {
                                   id: 'objectPropertyValue',
-                                  label: 'Value',
+                                  label: 'Value is',
                                   disabled: isReadOnly,
                                   placeholder: 'Enter Value',
                                   defaultValue: item?.value,
@@ -360,15 +387,54 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
                                 },
                               },
                             ]),
+                        ...([InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(
+                          item.propertyInputType,
+                        )
+                          ? [
+                              {
+                                type: InputTypes.SINGLE_SELECT,
+                                props: {
+                                  id: 'objectPropertyUnit',
+                                  label: 'Unit',
+                                  options: Object.entries(getDateUnits(item.propertyInputType)).map(
+                                    ([value, label]) => ({
+                                      label,
+                                      value,
+                                    }),
+                                  ),
+                                  isDisabled: isReadOnly,
+                                  isSearchable: false,
+                                  placeholder: 'Select Unit',
+                                  defaultValue: item?.dateUnit
+                                    ? [
+                                        {
+                                          label: getDateUnits(item.propertyInputType)[
+                                            item.dateUnit as keyof typeof getDateUnits
+                                          ],
+                                          value: item.dateUnit,
+                                        },
+                                      ]
+                                    : undefined,
+                                  onChange: (value: any) => {
+                                    propertyValidations[index] = {
+                                      ...propertyValidations[index],
+                                      dateUnit: value.value,
+                                    };
+                                    updateValidations(propertyValidations);
+                                  },
+                                },
+                              },
+                            ]
+                          : []),
                       ]
                     : []),
                 ]}
               />
-              {!isReadOnly && (
+              {!isReadOnly && !isVariationView && (
                 <Close
                   className="remove-icon"
                   onClick={() => {
-                    propertyValidations[index] = undefined;
+                    propertyValidations?.splice(index, 1);
                     updateValidations(propertyValidations);
                     updateValidationOptions(propertyValidations);
                   }}
@@ -376,73 +442,39 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
               )}
             </div>
             {item?.propertyInputType && (
-              <FormGroup
-                inputs={[
-                  ...([InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(
-                    item.propertyInputType,
-                  )
-                    ? [
-                        {
-                          type: InputTypes.SINGLE_SELECT,
-                          props: {
-                            id: 'objectPropertyUnit',
-                            label: 'Unit',
-                            options: Object.entries(getDateUnits(item.propertyInputType)).map(
-                              ([value, label]) => ({
-                                label,
-                                value,
-                              }),
-                            ),
-                            isDisabled: isReadOnly,
-                            isSearchable: false,
-                            placeholder: 'Select Unit',
-                            defaultValue: item?.dateUnit
-                              ? [
-                                  {
-                                    label: getDateUnits(item.propertyInputType)[
-                                      item.dateUnit as keyof typeof getDateUnits
-                                    ],
-                                    value: item.dateUnit,
-                                  },
-                                ]
-                              : undefined,
-                            onChange: (value: any) => {
-                              propertyValidations[index] = {
-                                ...propertyValidations[index],
-                                dateUnit: value.value,
-                              };
-                              updateValidations(propertyValidations);
-                            },
-                          },
+              <>
+                <div className="validation-text">
+                  If the condition is breached display an error message
+                </div>
+                <FormGroup
+                  inputs={[
+                    {
+                      type: InputTypes.SINGLE_LINE,
+                      props: {
+                        id: 'objectPropertyErrorMsg',
+                        label: 'Error Message',
+                        placeholder: 'Enter Error Message',
+                        description:
+                          'This message will be displayed when the validation rule is breached',
+                        defaultValue: item?.errorMessage,
+                        disabled: isReadOnly,
+                        onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
+                          propertyValidations[index] = {
+                            ...propertyValidations[index],
+                            errorMessage: e.target.value,
+                          };
+                          updateValidations(propertyValidations);
                         },
-                      ]
-                    : []),
-                  {
-                    type: InputTypes.SINGLE_LINE,
-                    props: {
-                      id: 'objectPropertyErrorMsg',
-                      label: 'Error Message',
-                      placeholder: 'Enter Error Message',
-                      description:
-                        'This message will be displayed when the validation rule is breached',
-                      defaultValue: item?.errorMessage,
-                      disabled: isReadOnly,
-                      onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
-                        propertyValidations[index] = {
-                          ...propertyValidations[index],
-                          errorMessage: e.target.value,
-                        };
-                        updateValidations(propertyValidations);
                       },
                     },
-                  },
-                ]}
-              />
+                  ]}
+                />
+              </>
             )}
           </div>
         );
       })}
-      {!isReadOnly && (
+      {!isReadOnly && !isVariationView && (
         <Button
           type="button"
           variant="secondary"
@@ -450,6 +482,7 @@ const ResourceValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
           onClick={() => {
             propertyValidations[propertyValidations.length] = {
               key: uuidv4(),
+              id: uuidv4(),
             };
             updateValidations(propertyValidations);
           }}

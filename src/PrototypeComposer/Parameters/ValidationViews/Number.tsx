@@ -10,6 +10,7 @@ import { keyBy } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import { labelByConstraint, ValidationWrapper } from './Resource';
+import { v4 as uuidv4 } from 'uuid';
 
 type NumberValidationState = {
   isLoadingObjectType: Record<number, boolean>;
@@ -28,11 +29,17 @@ const keyToValidate = [
   'errorMessage',
 ];
 
-const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
-  form,
-  isReadOnly,
-}) => {
-  const { id: checklistId } = useTypedSelector((state) => state.prototypeComposer.data!);
+const NumberValidation: FC<{
+  form: UseFormMethods<any>;
+  isReadOnly: boolean;
+  checklistId?: string;
+  isVariationView?: boolean;
+}> = ({ form, isReadOnly, checklistId, isVariationView = false }) => {
+  if (!checklistId) {
+    const { id } = useTypedSelector((state) => state.prototypeComposer.data!);
+    checklistId = id;
+  }
+
   const { watch, setValue, register, setError, clearErrors } = form;
   const validations = watch('validations', {});
   const { resourceParameterValidations = [] } = validations;
@@ -77,7 +84,7 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
   const fetchParameters = async () => {
     if (!resourceParameters.length) {
       setState((prev) => ({ ...prev, isLoadingParameters: true }));
-      const resources = await request('GET', apiGetParameters(checklistId), {
+      const resources = await request('GET', apiGetParameters(checklistId!), {
         params: {
           sort: 'createdAt,desc',
           filters: {
@@ -158,6 +165,10 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
     <ValidationWrapper>
       {resourceParameterValidations.map((item: any, index: number) => (
         <div className="validation" key={index}>
+          <div className="validation-header">
+            <div>Validation {index + 1}</div>
+          </div>
+          <div className="validation-text">Check if</div>
           <div className="upper-row">
             <FormGroup
               inputs={[
@@ -275,7 +286,7 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
                   : []),
               ]}
             />
-            {!isReadOnly && (
+            {!isReadOnly && !isVariationView && (
               <Close
                 className="remove-icon"
                 onClick={() => {
@@ -288,6 +299,9 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
           </div>
           {item?.propertyInputType && (
             <>
+              <div className="validation-text">
+                If the condition is breached display an error message
+              </div>
               <FormGroup
                 inputs={[
                   {
@@ -315,13 +329,13 @@ const NumberValidation: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> =
           )}
         </div>
       ))}
-      {!isReadOnly && (
+      {!isReadOnly && !isVariationView && (
         <Button
           type="button"
           variant="secondary"
           style={{ marginBottom: 24, padding: '6px 8px' }}
           onClick={() => {
-            updateValidations([...resourceParameterValidations, {}]);
+            updateValidations([...resourceParameterValidations, { id: uuidv4() }]);
           }}
         >
           <AddCircleOutline style={{ marginRight: 8 }} /> Add

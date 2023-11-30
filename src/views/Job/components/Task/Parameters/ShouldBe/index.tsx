@@ -17,6 +17,23 @@ import ParameterVerificationView from '../Verification/ParameterVerificationView
 import { Wrapper } from './styles';
 import { generateShouldBeText } from '#utils/stringUtils';
 import { debounce } from 'lodash';
+import { Tooltip } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import InfoIcon from '#assets/svg/info.svg';
+
+const CustomTooltip = withStyles({
+  tooltip: {
+    width: '205px',
+    backgroundColor: '#393939',
+    borderRadius: '0px',
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: '14px',
+  },
+  arrow: {
+    color: '#393939',
+  },
+})(Tooltip);
 
 const checkIsOffLimit = ({
   observedValue,
@@ -82,11 +99,16 @@ const ShouldBeParameter: FC<
 }) => {
   const {
     auth: { profile },
-    job: { updating },
+    job: { updating, id: jobId },
   } = useTypedSelector((state) => state);
-
+  const { variations } = parameter.response;
   const numberInputRef = useRef<HTMLInputElement>(null);
   const debounceInputRef = useRef(debounce((event, functor) => functor(event), 2000));
+  const parameterDataRef = useRef(
+    parameter.response?.variations?.length > 0
+      ? parameter.response?.variations[0]?.newVariation
+      : parameter.data,
+  );
 
   const dispatch = useDispatch();
 
@@ -101,13 +123,13 @@ const ShouldBeParameter: FC<
 
     isOffLimit: checkIsOffLimit({
       observedValue: parseFloat(parameter?.response?.value) ?? null,
-      operator: parameter?.data?.operator,
-      ...(parameter?.data?.operator === 'BETWEEN'
+      operator: parameterDataRef.current?.operator,
+      ...(parameterDataRef.current?.operator === 'BETWEEN'
         ? {
-            desiredValue1: parseFloat(parameter?.data?.lowerValue),
-            desiredValue2: parseFloat(parameter?.data?.upperValue),
+            desiredValue1: parseFloat(parameterDataRef.current?.lowerValue),
+            desiredValue2: parseFloat(parameterDataRef.current?.upperValue),
           }
-        : { desiredValue1: parseFloat(parameter?.data?.value) }),
+        : { desiredValue1: parseFloat(parameterDataRef.current?.value) }),
     }),
     isUserAuthorisedForApproval: profile?.roles?.some((role) =>
       [roles.SUPERVISOR, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER].includes(role.name),
@@ -131,13 +153,13 @@ const ShouldBeParameter: FC<
           prevState.value !== parameter?.response?.value
             ? prevState.value
             : parseFloat(parameter?.response?.value) ?? null,
-        operator: parameter?.data?.operator,
-        ...(parameter?.data?.operator === 'BETWEEN'
+        operator: parameterDataRef.current?.operator,
+        ...(parameterDataRef.current?.operator === 'BETWEEN'
           ? {
-              desiredValue1: parseFloat(parameter?.data?.lowerValue),
-              desiredValue2: parseFloat(parameter?.data?.upperValue),
+              desiredValue1: parseFloat(parameterDataRef.current?.lowerValue),
+              desiredValue2: parseFloat(parameterDataRef.current?.upperValue),
             }
-          : { desiredValue1: parseFloat(parameter?.data?.value) }),
+          : { desiredValue1: parseFloat(parameterDataRef.current?.value) }),
       }),
       isValueChanged: prevState.value !== parameter?.response?.value,
       value:
@@ -186,7 +208,7 @@ const ShouldBeParameter: FC<
         type: OverlayNames.REASON_MODAL,
         props: {
           modalTitle: 'State your Reason',
-          modalDesc: `Warning! ${generateShouldBeText(parameter?.label, parameter?.data)}`,
+          modalDesc: `Warning! ${generateShouldBeText(parameter?.label, parameterDataRef.current)}`,
           onSubmitHandler: (reason: string) => {
             dispatchActions(value, reason);
             dispatch(closeOverlayAction(OverlayNames.REASON_MODAL));
@@ -212,6 +234,8 @@ const ShouldBeParameter: FC<
       numberInputRef.current!.value = parameter.response.value!;
     }
   }, [parameter.response.value, updating]);
+
+  //TODO: In Data field Which Payload should go variation Data or configuration data.
 
   const dispatchActions = (value: string, reason: string = '') => {
     if (isCorrectingError) {
@@ -245,9 +269,9 @@ const ShouldBeParameter: FC<
         isValueChanged: prevState.value !== value,
       }));
       if (value) {
-        switch (parameter?.data?.operator) {
+        switch (parameterDataRef.current?.operator) {
           case 'EQUAL_TO':
-            if (!(parseFloat(value) === parseFloat(parameter?.data?.value))) {
+            if (!(parseFloat(value) === parseFloat(parameterDataRef.current?.value))) {
               setState((prevState) => ({ ...prevState, isOffLimit: true }));
               deviationValueHandler(value);
             } else {
@@ -255,7 +279,7 @@ const ShouldBeParameter: FC<
             }
             break;
           case 'LESS_THAN':
-            if (!(parseFloat(value) < parseFloat(parameter?.data?.value))) {
+            if (!(parseFloat(value) < parseFloat(parameterDataRef.current?.value))) {
               setState((prevState) => ({ ...prevState, isOffLimit: true }));
               deviationValueHandler(value);
             } else {
@@ -263,7 +287,7 @@ const ShouldBeParameter: FC<
             }
             break;
           case 'LESS_THAN_EQUAL_TO':
-            if (!(parseFloat(value) <= parseFloat(parameter?.data?.value))) {
+            if (!(parseFloat(value) <= parseFloat(parameterDataRef.current?.value))) {
               setState((prevState) => ({ ...prevState, isOffLimit: true }));
               deviationValueHandler(value);
             } else {
@@ -271,7 +295,7 @@ const ShouldBeParameter: FC<
             }
             break;
           case 'MORE_THAN':
-            if (!(parseFloat(value) > parseFloat(parameter?.data?.value))) {
+            if (!(parseFloat(value) > parseFloat(parameterDataRef.current?.value))) {
               setState((prevState) => ({ ...prevState, isOffLimit: true }));
               deviationValueHandler(value);
             } else {
@@ -279,7 +303,7 @@ const ShouldBeParameter: FC<
             }
             break;
           case 'MORE_THAN_EQUAL_TO':
-            if (!(parseFloat(value) >= parseFloat(parameter?.data?.value))) {
+            if (!(parseFloat(value) >= parseFloat(parameterDataRef.current?.value))) {
               setState((prevState) => ({ ...prevState, isOffLimit: true }));
               deviationValueHandler(value);
             } else {
@@ -289,8 +313,8 @@ const ShouldBeParameter: FC<
           case 'BETWEEN':
             if (
               !(
-                parseFloat(value) >= parseFloat(parameter?.data?.lowerValue) &&
-                parseFloat(value) <= parseFloat(parameter?.data?.upperValue)
+                parseFloat(value) >= parseFloat(parameterDataRef.current?.lowerValue) &&
+                parseFloat(value) <= parseFloat(parameterDataRef.current?.upperValue)
               )
             ) {
               setState((prevState) => ({ ...prevState, isOffLimit: true }));
@@ -339,12 +363,53 @@ const ShouldBeParameter: FC<
           </span>
         ) : null}
 
-        <span className="parameter-text" data-for={parameter.id}>
-          {state.isVerificationPending && (
-            <img src={PadLockIcon} alt="parameter-locked" style={{ marginRight: 8 }} />
-          )}
-          {generateShouldBeText(parameter?.label, parameter?.data)}
-        </span>
+        <div className="parameter-text" style={{ width: '100%' }} data-for={parameter.id}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            {state.isVerificationPending && (
+              <img src={PadLockIcon} alt="parameter-locked" style={{ marginRight: 8 }} />
+            )}
+            {generateShouldBeText(parameter?.label, parameterDataRef.current)}
+            {variations?.length > 0 && (
+              <div
+                className="parameter-variation"
+                onClick={() => {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.JOB_PARAMETER_VARIATION,
+                      props: {
+                        jobId: jobId,
+                        isReadOnly: true,
+                        parameterId: parameter.id,
+                      },
+                    }),
+                  );
+                }}
+              >
+                <CustomTooltip
+                  title={
+                    <div>
+                      {variations.map((currentVariation) => (
+                        <>
+                          <div>Variation Name: {currentVariation.name}</div>
+                          <div>Variation Number: {currentVariation.variationNumber}</div>
+                          {currentVariation?.description && (
+                            <div>Variation Description: {currentVariation.description}</div>
+                          )}
+                        </>
+                      ))}
+                    </div>
+                  }
+                  arrow
+                  placement="bottom"
+                >
+                  <img src={InfoIcon} alt="parameter-info" style={{ marginRight: 8 }} />
+                </CustomTooltip>
+                Variation Planned
+              </div>
+            )}
+          </div>
+        </div>
+
         <TextInput
           type={InputTypes.NUMBER}
           defaultValue={state.value!}

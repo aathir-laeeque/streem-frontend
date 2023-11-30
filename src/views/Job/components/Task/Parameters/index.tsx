@@ -126,11 +126,23 @@ const Wrapper = styled.div.attrs({
     }
 
     .parameter-label {
+      display: flex;
+      justify-content: space-between;
       margin-bottom: 8px;
       color: #161616;
       font-weight: 600;
       font-size: 14px;
       line-height: 12px;
+    }
+
+    .parameter-variation {
+      color: #1d84ff;
+      font-size: 14px;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      pointer-events: all;
+      cursor: pointer;
     }
 
     .parameter-verification {

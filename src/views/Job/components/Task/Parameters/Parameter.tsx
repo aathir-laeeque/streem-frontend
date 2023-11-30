@@ -20,6 +20,13 @@ import SignatureParameter from './Signature';
 import ParameterVerificationView from './Verification/ParameterVerificationView';
 import YesNoParameter from './YesNo';
 import NumberParameter from './Number';
+import InfoIcon from '#assets/svg/info.svg';
+import { Tooltip } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import { openOverlayAction } from '#components/OverlayContainer/actions';
+import { OverlayNames } from '#components/OverlayContainer/types';
+import { useDispatch } from 'react-redux';
+import { useTypedSelector } from '#store';
 
 export type ParameterProps = {
   parameter: StoreParameter;
@@ -29,6 +36,20 @@ export type ParameterProps = {
   errors?: string[];
 };
 
+const CustomTooltip = withStyles({
+  tooltip: {
+    width: '205px',
+    backgroundColor: '#393939',
+    borderRadius: '0px',
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: '14px',
+  },
+  arrow: {
+    color: '#393939',
+  },
+})(Tooltip);
+
 const Parameter: FC<ParameterProps> = ({
   parameter,
   isCorrectingError,
@@ -36,7 +57,9 @@ const Parameter: FC<ParameterProps> = ({
   isTaskCompleted,
   errors,
 }) => {
-  const { state, audit, parameterVerifications } = parameter.response!;
+  const { state, audit, parameterVerifications, variations } = parameter.response!;
+  const dispatch = useDispatch();
+  const { id: jobId } = useTypedSelector((state) => state.job);
 
   const { verificationType } = parameter;
   const verificationsByType = keyBy<Verification>(parameterVerifications || [], 'verificationType');
@@ -58,11 +81,51 @@ const Parameter: FC<ParameterProps> = ({
         ![`${MandatoryParameter.SHOULD_BE}`, `${MandatoryParameter.CALCULATION}`].includes(
           parameter.type,
         ) && (
-          <div className="parameter-label" data-for={parameter.id}>
-            {[ParameterState.APPROVAL_PENDING].includes(state) && (
-              <img src={PadLockIcon} alt="parameter-locked" style={{ marginRight: 8 }} />
+          <div className="parameter-label">
+            <div>
+              {[ParameterState.APPROVAL_PENDING].includes(state) && (
+                <img src={PadLockIcon} alt="parameter-locked" style={{ marginRight: 8 }} />
+              )}
+              {parameter.label}
+            </div>
+            {variations?.length > 0 && (
+              <div
+                className="parameter-variation"
+                onClick={() => {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.JOB_PARAMETER_VARIATION,
+                      props: {
+                        jobId: jobId,
+                        isReadOnly: true,
+                        parameterId: parameter.id,
+                      },
+                    }),
+                  );
+                }}
+              >
+                <CustomTooltip
+                  title={
+                    <div>
+                      {variations.map((currentVariation) => (
+                        <>
+                          <div>Variation Name: {currentVariation.name}</div>
+                          <div>Variation Number: {currentVariation.variationNumber}</div>
+                          {currentVariation?.description && (
+                            <div>Variation Description: {currentVariation.description}</div>
+                          )}
+                        </>
+                      ))}
+                    </div>
+                  }
+                  arrow
+                  placement="bottom"
+                >
+                  <img src={InfoIcon} alt="parameter-info" style={{ marginRight: 8 }} />
+                </CustomTooltip>
+                Variation Planned
+              </div>
             )}
-            {parameter.label}
           </div>
         )}
 

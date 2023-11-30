@@ -55,6 +55,9 @@ export interface ParameterResponse {
   parameterValueApprovalDto?: Audit | null;
   medias?: Media[];
   choices?: ParameterResponseChoice[];
+  stageOrderTree: number;
+  taskOrderTree: number;
+  variations: any[] | null;
 }
 
 export enum TargetEntityType {
@@ -127,4 +130,10 @@ export enum ParameterExecutionState {
 export enum ParameterErrors {
   E401 = 'PARAMETER_INCOMPLETE',
   E9002 = 'PARAMETER_VERIFICATION_INCOMPLETE',
+}
+
+export enum ParameterVariationType {
+  SHOULD_BE = 'SHOULD_BE',
+  FILTER = 'FILTER',
+  VALIDATION = 'VALIDATION',
 }

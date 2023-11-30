@@ -68,28 +68,29 @@ export const generateShouldBeText = (label: string | undefined, data: any) => {
   if (data.operator === 'BETWEEN') {
     return `${label} should be between ${data.lowerValue} ${uom} and ${data.upperValue} ${uom}`;
   } else {
-    let operatorString: string;
-
-    switch (data.operator) {
-      case 'EQUAL_TO':
-        operatorString = '(=) equal to';
-        break;
-      case 'LESS_THAN':
-        operatorString = '(<) less than';
-        break;
-      case 'LESS_THAN_EQUAL_TO':
-        operatorString = '(≤) less than equal to';
-        break;
-      case 'MORE_THAN':
-        operatorString = '(>) more than';
-        break;
-      case 'MORE_THAN_EQUAL_TO':
-        operatorString = '(≥) more than equal to';
-        break;
-      default:
-        return;
-    }
-
+    let operatorString = generateShouldBeCriteria(data);
     return `${label} should be ${operatorString} ${data?.value ?? 50} ${uom}`;
+  }
+};
+
+export const generateShouldBeCriteria = (data: Record<string, string>) => {
+  switch (data.operator) {
+    case 'EQUAL_TO':
+      return '(=) equal to';
+    case 'LESS_THAN':
+      return '(<) less than';
+
+    case 'LESS_THAN_EQUAL_TO':
+
+    case 'MORE_THAN':
+      return '(>) more than';
+
+    case 'MORE_THAN_EQUAL_TO':
+      return '(≥) more than equal to';
+
+    case 'BETWEEN':
+      return 'between';
+    default:
+      return;
   }
 };

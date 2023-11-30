@@ -5,6 +5,7 @@ import JobCompleteAllTasksError from '#views/Job/overlays/CompleteAllTasksError'
 import CompleteJobWithException from '#views/Job/overlays/CompleteJobWithException';
 import CompletedWithExceptionInfo from '#views/Job/overlays/CompletedWithExceptionInfo';
 import JobVerification from '#views/Job/overlays/JobVerification';
+import ParameterVariationContent from '#views/Job/overlays/ParameterVariationContent';
 import ParameterApprovalModal from '#views/Job/overlays/ParameterApproval';
 import PeerVerificationModal from '#views/Job/overlays/PeerVerificationModal';
 import RecallVerificationModal from '#views/Job/overlays/RecallVerificationModal';
@@ -239,6 +240,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.MULTI_TAB_MODAL:
       return <MultiTabModal {...params} />;
+
+    case OverlayNames.JOB_PARAMETER_VARIATION:
+      return <ParameterVariationContent {...params} />;
 
     default:
       return null;

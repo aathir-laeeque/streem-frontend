@@ -1,8 +1,9 @@
-import { FormGroup } from '#components';
 import { PARAMETER_OPERATORS } from '#PrototypeComposer/constants';
+import { FormGroup } from '#components';
 import { InputTypes } from '#utils/globalTypes';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { UseFormMethods } from 'react-hook-form';
+import { v4 as uuidv4 } from 'uuid';
 import { CommonWrapper } from './styles';
 
 const ParameterParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }> = ({
@@ -11,7 +12,18 @@ const ParameterParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
 }) => {
   const { register, watch, setValue } = form;
   register('data.operator', { required: true });
+  register('data.id');
   const operator = watch('data.operator');
+  const data = watch('data');
+
+  useEffect(() => {
+    if (!data?.id) {
+      setValue('data.id', uuidv4(), {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    }
+  }, []);
 
   return (
     <CommonWrapper>

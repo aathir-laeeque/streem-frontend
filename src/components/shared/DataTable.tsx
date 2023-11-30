@@ -92,6 +92,15 @@ const Wrapper = styled.div.attrs({
             }
           }
 
+          .secondary {
+            cursor: pointer;
+            color: #da1e28;
+
+            :hover {
+              color: #da1e28;
+            }
+          }
+
           .flex-column {
             display: flex;
             align-items: flex-start;

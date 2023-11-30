@@ -65,6 +65,7 @@ export enum FilterOperators {
 }
 
 export type FilterField = {
+  id?: string;
   field: string;
   op: FilterOperators;
   values: [string | boolean] | string[];

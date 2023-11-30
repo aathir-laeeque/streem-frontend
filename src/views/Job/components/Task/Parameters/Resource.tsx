@@ -7,7 +7,7 @@ import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
 import { MandatoryParameter, ParameterMode, StoreParameter } from '#types';
 import { baseUrl } from '#utils/apiUrls';
-import { FilterOperators, ResponseObj } from '#utils/globalTypes';
+import { FilterField, FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
 import { jobActions } from '#views/Job/jobStore';
 import { getQrCodeData, qrCodeValidator } from '#views/Ontology/utils';
@@ -59,8 +59,10 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     isLast: false,
   });
 
+  const propertyFilters = useRef(null);
+
   const referencedParameterIds = useRef<string>(
-    parameter?.data?.propertyFilters?.fields?.reduce((acc, currField) => {
+    propertyFilters.current?.fields?.reduce((acc, currField) => {
       if (currField?.referencedParameterId) {
         acc.push(currField.referencedParameterId);
       }
@@ -73,6 +75,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
       const linkedResourceParameter = parameters.get(parameter!.autoInitialize!.parameterId);
       setLinkedResourceParameter(linkedResourceParameter);
     }
+    propertyFilters.current = getPropertyFilters();
   }, []);
 
   const parameterForFiltersValueChange = referencedParameterIds.current?.map((curr) => {
@@ -103,10 +106,35 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     }));
   }, [parameter?.response?.choices]);
 
+  //  A flag to check if the parameter has variation  from backend
+
+  const getPropertyFilters = () => {
+    const filterFieldsFromVariation =
+      parameter.response?.variations?.find((variation) => variation.type === 'FILTER')
+        ?.newVariation || [];
+    const filters = {
+      ...parameter.data?.propertyFilters,
+      fields: (parameter.data?.propertyFilters?.fields || []).map((currField: FilterField) => {
+        if (
+          filterFieldsFromVariation?.some(
+            (currVariationField: FilterField) => currVariationField.id === currField.id,
+          )
+        ) {
+          return filterFieldsFromVariation.find(
+            (currVariationField: FilterField) => currVariationField.id === currField.id,
+          );
+        } else {
+          return currField;
+        }
+      }),
+    };
+    return filters;
+  };
+
   const getUrl = (page: number) => {
-    if (parameter?.data?.propertyFilters) {
+    if (propertyFilters.current?.op) {
       return `${baseUrl}${parameter.data.urlPath}&page=${page}&filters=${encodeURIComponent(
-        JSON.stringify(getFields(parameter?.data?.propertyFilters)),
+        JSON.stringify(getFields(propertyFilters.current)),
       )}`;
     } else {
       return `${baseUrl}${parameter.data.urlPath}&page=${page}`;
@@ -221,11 +249,11 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
           data: qrData,
           callBack: () => onSelectOption(result),
           objectTypeValidation: qrData?.objectTypeId === parameter?.data?.objectTypeId,
-          filters: parameter?.data?.propertyFilters
+          filters: propertyFilters.current
             ? {
-                op: getFields(parameter.data.propertyFilters).op,
+                op: getFields(propertyFilters.current).op,
                 fields: [
-                  ...(getFields(parameter.data.propertyFilters)?.fields || []),
+                  ...(getFields(propertyFilters.current)?.fields || []),
                   { field: 'id', op: FilterOperators.EQ, values: [qrData?.objectId] },
                 ],
               }

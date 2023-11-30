@@ -218,6 +218,9 @@ const uiPermissions: Record<string, any> = {
       roles.SYSTEM_ADMIN,
     ],
   },
+  plannedVariation: {
+    create: [roles.ACCOUNT_OWNER, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER],
+  },
 };
 
 const checkPermission = (keys: string[]) => {

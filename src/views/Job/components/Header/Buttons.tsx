@@ -119,6 +119,23 @@ const JobHeaderButtons: FC = () => {
         >
           View Verifications
         </MenuItem>
+        <MenuItem
+          className="view-verifications"
+          onClick={() => {
+            dispatch(
+              openOverlayAction({
+                type: OverlayNames.JOB_PARAMETER_VARIATION,
+                props: {
+                  jobId,
+                  isReadOnly: isCompleted || isCompletedWithException ? true : false,
+                },
+              }),
+            );
+            handleClose();
+          }}
+        >
+          Parameter Variation
+        </MenuItem>
         {!isCompleted &&
           !isCompletedWithException &&
           checkPermission(['inbox', 'completeWithException']) && (
