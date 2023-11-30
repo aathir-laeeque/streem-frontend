@@ -7,7 +7,7 @@ import { jobActions } from '#views/Job/jobStore';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
-import { PdfWorkerContainer } from '../PdfWorker/loadPdfWorker';
+import { PdfWorkerContainer } from '../PdfWorker/LoadPdfWorker';
 
 const Download: FC<any> = ({ jobId }) => {
   const [jobDetails, setJobDetails] = useState<PdfJobDataType | undefined>();

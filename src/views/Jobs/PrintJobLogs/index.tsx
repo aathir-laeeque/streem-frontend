@@ -9,7 +9,7 @@ import { fetchProcessLogs } from '#views/Checklists/ListView/actions';
 import { camelCase, startCase } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { PdfWorkerContainer } from '../PdfWorker/loadPdfWorker';
+import { PdfWorkerContainer } from '../PdfWorker/LoadPdfWorker';
 
 const Download: FC<any> = ({ viewId }) => {
   const {

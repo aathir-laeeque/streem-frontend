@@ -4,7 +4,7 @@ import { formatDateTime } from '#utils/timeUtils';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchObjectChangeLogs } from '../actions';
-import { PdfWorkerContainer } from '#views/Jobs/PdfWorker/loadPdfWorker';
+import { PdfWorkerContainer } from '#views/Jobs/PdfWorker/LoadPdfWorker';
 
 const Download: FC<{ objectId: string }> = ({ objectId }) => {
   const {

@@ -6,7 +6,7 @@ import { getParameters } from '#utils/parameterUtils';
 import { request } from '#utils/request';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
-import { PdfWorkerContainer } from '../PdfWorker/loadPdfWorker';
+import { PdfWorkerContainer } from '../PdfWorker/LoadPdfWorker';
 import { PrintJobProps } from './types';
 import { COMPLETED_JOB_STATES } from '#types';
 
