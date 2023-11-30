@@ -83,6 +83,7 @@ const reducer: Reducer<TaskListState, TaskListActionType> = (state = initialStat
           ...state.listById,
           [updatedTaskId]: {
             ...action.payload.task,
+            stageId: state.listById[updatedTaskId].stageId,
             errors: [],
           },
         },
